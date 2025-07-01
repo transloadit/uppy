@@ -1,4 +1,5 @@
 import type Cropper from 'cropperjs'
+
 // See this cropperjs image to understand how container/image/canavas/cropbox relate to each other.
 // (https://github.com/fengyuanchen/cropperjs/blob/9b528a8baeaae876dc090085e37992a1683c6f34/docs/images/layers.jpg)
 //

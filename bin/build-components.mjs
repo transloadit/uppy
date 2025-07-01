@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'node:fs/promises'
 import { existsSync } from 'node:fs'
+import fs from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -13,7 +13,10 @@ const rootDir = path.resolve(scriptDir, '..')
 // source:
 const COMPONENTS_DIR = path.join(rootDir, 'packages/@uppy/components/src')
 // destinations:
-const REACT_DIR = path.join(rootDir, 'packages/@uppy/react/src/headless/generated')
+const REACT_DIR = path.join(
+  rootDir,
+  'packages/@uppy/react/src/headless/generated',
+)
 const VUE_DIR = path.join(rootDir, 'packages/@uppy/vue/src/headless/generated')
 const SVELTE_DIR = path.join(
   rootDir,
@@ -222,7 +225,10 @@ try {
     const reactIndexContent = reactComponents
       .map((name) => `export { default as ${name} } from './${name}.js'`)
       .join('\n')
-    await fs.writeFile(path.join(REACT_DIR, 'index.ts'), `${reactIndexContent}\n`)
+    await fs.writeFile(
+      path.join(REACT_DIR, 'index.ts'),
+      `${reactIndexContent}\n`,
+    )
     console.log(`\nExporting React components from ${REACT_DIR}`)
   }
 
@@ -238,7 +244,10 @@ try {
     const svelteIndexContent = svelteComponents
       .map((name) => `export { default as ${name} } from './${name}.svelte'`)
       .join('\n')
-    await fs.writeFile(path.join(SVELTE_DIR, 'index.ts'), `${svelteIndexContent}\n`)
+    await fs.writeFile(
+      path.join(SVELTE_DIR, 'index.ts'),
+      `${svelteIndexContent}\n`,
+    )
     console.log(`Exporting Svelte components from ${SVELTE_DIR}`)
   }
 

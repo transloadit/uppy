@@ -1,19 +1,18 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
-  Uppy,
-  UIPluginOptions,
-  DefinePluginOpts,
   Body,
+  DefinePluginOpts,
   Meta,
+  UIPluginOptions,
+  Uppy,
 } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import ScreenRecIcon from './ScreenRecIcon.js'
-import RecorderScreen from './RecorderScreen.js'
-
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
+import RecorderScreen from './RecorderScreen.js'
+import ScreenRecIcon from './ScreenRecIcon.js'
 
 // Check if screen capturing is supported.
 // mediaDevices is supprted on mobile Safari, getDisplayMedia is not
@@ -79,6 +78,7 @@ export type ScreenCaptureState = {
   recordedVideo: string | null
   screenRecError: string | null
   capturedScreenshotUrl: string | null
+  status: ScreenCaptureStatus
 }
 
 export default class ScreenCapture<
@@ -119,7 +119,6 @@ export default class ScreenCapture<
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
-    // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.type = 'acquirer'
@@ -155,6 +154,7 @@ export default class ScreenCapture<
       recordedVideo: null,
       screenRecError: null,
       capturedScreenshotUrl: null,
+      status: 'init',
     })
   }
 
@@ -167,6 +167,7 @@ export default class ScreenCapture<
     this.setPluginState({
       streamActive: false,
       audioStreamActive: false,
+      status: 'init',
     })
 
     const { target } = this.opts
@@ -185,22 +186,6 @@ export default class ScreenCapture<
     this.unmount()
   }
 
-  getStatus(): ScreenCaptureStatus {
-    const {
-      recording,
-      recordedVideo,
-      capturedScreenshotUrl,
-      screenRecError,
-      streamActive,
-    } = this.getPluginState()
-
-    if (recording) return 'recording'
-    if (recordedVideo || capturedScreenshotUrl) return 'captured'
-    if (screenRecError) return 'error'
-    if (streamActive) return 'ready'
-    return 'init'
-  }
-
   start(): Promise<void> {
     if (!this.mediaDevices) {
       return Promise.reject(new Error('Screen recorder access not supported'))
@@ -216,7 +201,7 @@ export default class ScreenCapture<
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
-        if (this.parent && this.parent.hideAllPanels) {
+        if (this.parent?.hideAllPanels) {
           // @ts-expect-error we can't know Dashboard types here
           this.parent.hideAllPanels()
           this.captureActive = false
@@ -245,6 +230,7 @@ export default class ScreenCapture<
 
         this.setPluginState({
           streamActive: true,
+          status: 'ready',
           screenRecError: null,
         })
 
@@ -253,6 +239,7 @@ export default class ScreenCapture<
       .catch((err) => {
         this.setPluginState({
           screenRecError: err,
+          status: 'error',
         })
 
         this.userDenied = true
@@ -341,11 +328,12 @@ export default class ScreenCapture<
         // set plugin state to recording
         this.setPluginState({
           recording: true,
+          status: 'recording',
         })
       })
       .catch((err) => {
         this.uppy.log(err, 'error')
-        this.setPluginState({ screenRecError: err.message })
+        this.setPluginState({ screenRecError: err.message, status: 'error' })
       })
   }
 
@@ -357,10 +345,11 @@ export default class ScreenCapture<
       // Close the Dashboard panel if plugin is installed
       // into Dashboard (could be other parent UI plugin)
       // @ts-expect-error we can't know Dashboard types here
-      if (this.parent && this.parent.hideAllPanels) {
+      if (this.parent?.hideAllPanels) {
         // @ts-expect-error we can't know Dashboard types here
         this.parent.hideAllPanels()
       }
+      this.setPluginState({ status: 'init' })
     } else if (recording) {
       // stop recorder if it is active
       this.uppy.log('Capture stream inactive — stop recording')
@@ -401,6 +390,7 @@ export default class ScreenCapture<
         // create object url for capture result preview
         this.setPluginState({
           recordedVideo: URL.createObjectURL(file.data),
+          status: 'captured',
         })
       })
       .then(
@@ -431,6 +421,7 @@ export default class ScreenCapture<
     this.setPluginState({
       recordedVideo: null,
       capturedScreenshotUrl: null,
+      status: this.getPluginState().streamActive ? 'ready' : 'init',
     })
   }
 
@@ -498,6 +489,7 @@ export default class ScreenCapture<
       audioStreamActive: false,
       recordedVideo: null,
       capturedScreenshotUrl: null,
+      status: 'init',
     })
 
     this.captureActive = false
@@ -603,6 +595,7 @@ export default class ScreenCapture<
               const screenshotUrl = URL.createObjectURL(blob)
               this.setPluginState({
                 capturedScreenshotUrl: screenshotUrl,
+                status: 'captured',
               })
               resolve()
             } catch (err) {
@@ -644,7 +637,7 @@ export default class ScreenCapture<
 
     return (
       <RecorderScreen<M, B>
-        {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
+        {...recorderState}
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
         enableScreenshots={this.opts.enableScreenshots}

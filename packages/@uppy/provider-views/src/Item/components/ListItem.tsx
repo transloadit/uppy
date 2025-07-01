@@ -3,7 +3,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core'
-import { h } from 'preact'
+import type { h } from 'preact'
 import ItemIcon from './ItemIcon.js'
 
 // if folder:
@@ -37,9 +37,9 @@ export default function ListItem({
     <li
       className={className}
       title={
-        file.status !== 'checked' && restrictionError ?
-          restrictionError
-        : undefined
+        file.status !== 'checked' && restrictionError
+          ? restrictionError
+          : undefined
       }
     >
       <input
@@ -51,46 +51,47 @@ export default function ListItem({
         id={file.id}
         checked={file.status === 'checked'}
         aria-label={
-          file.data.isFolder ?
-            i18n('allFilesFromFolderNamed', {
-              name: file.data.name ?? i18n('unnamed'),
-            })
-          : null
+          file.data.isFolder
+            ? i18n('allFilesFromFolderNamed', {
+                name: file.data.name ?? i18n('unnamed'),
+              })
+            : null
         }
         disabled={isDisabled}
         data-uppy-super-focusable
       />
 
-      {
-        file.data.isFolder ?
-          // button to open a folder
-          <button
-            type="button"
-            className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
-            onClick={() => openFolder(file.id)}
-            aria-label={i18n('openFolderNamed', {
-              name: file.data.name ?? i18n('unnamed'),
-            })}
-          >
-            <div className="uppy-ProviderBrowserItem-iconWrap">
-              <ItemIcon itemIconString={file.data.icon} />
-            </div>
-            {showTitles && file.data.name ?
-              <span>{file.data.name}</span>
-            : i18n('unnamed')}
-          </button>
-          // label for a checkbox
-        : <label
-            htmlFor={file.id}
-            className="uppy-u-reset uppy-ProviderBrowserItem-inner"
-          >
-            <div className="uppy-ProviderBrowserItem-iconWrap">
-              <ItemIcon itemIconString={file.data.icon} />
-            </div>
-            {showTitles && (file.data.name ?? i18n('unnamed'))}
-          </label>
-
-      }
+      {file.data.isFolder ? (
+        // button to open a folder
+        <button
+          type="button"
+          className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
+          onClick={() => openFolder(file.id)}
+          aria-label={i18n('openFolderNamed', {
+            name: file.data.name ?? i18n('unnamed'),
+          })}
+        >
+          <div className="uppy-ProviderBrowserItem-iconWrap">
+            <ItemIcon itemIconString={file.data.icon} />
+          </div>
+          {showTitles && file.data.name ? (
+            <span>{file.data.name}</span>
+          ) : (
+            i18n('unnamed')
+          )}
+        </button>
+      ) : (
+        // label for a checkbox
+        <label
+          htmlFor={file.id}
+          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+        >
+          <div className="uppy-ProviderBrowserItem-iconWrap">
+            <ItemIcon itemIconString={file.data.icon} />
+          </div>
+          {showTitles && (file.data.name ?? i18n('unnamed'))}
+        </label>
+      )}
     </li>
   )
 }

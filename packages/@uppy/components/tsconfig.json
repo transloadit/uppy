@@ -2,27 +2,27 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../audio/tsconfig.build.json",
+      "path": "../audio/tsconfig.build.json"
     },
     {
-      "path": "../core/tsconfig.build.json",
+      "path": "../core/tsconfig.build.json"
     },
     {
-      "path": "../google-drive-picker/tsconfig.build.json",
+      "path": "../google-drive-picker/tsconfig.build.json"
     },
     {
-      "path": "../image-editor/tsconfig.build.json",
+      "path": "../image-editor/tsconfig.build.json"
     },
     {
-      "path": "../utils/tsconfig.build.json",
+      "path": "../utils/tsconfig.build.json"
     },
     {
-      "path": "../core/tsconfig.build.json",
-    },
-  ],
+      "path": "../core/tsconfig.build.json"
+    }
+  ]
 }

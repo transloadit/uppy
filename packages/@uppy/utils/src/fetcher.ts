@@ -81,7 +81,7 @@ export function fetcher(
   const timer = new ProgressTimeout(timeout, onTimeout)
 
   function requestWithRetry(retryCount = 0): Promise<XMLHttpRequest> {
-    // eslint-disable-next-line no-async-promise-executor
+    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: it's fine
     return new Promise(async (resolve, reject) => {
       const xhr = new XMLHttpRequest()
       const onError = (error: Error) => {

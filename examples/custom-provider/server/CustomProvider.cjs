@@ -2,7 +2,7 @@ const { Readable } = require('node:stream')
 
 const BASE_URL = 'https://api.unsplash.com'
 
-function adaptData (res) {
+function adaptData(res) {
   const data = {
     username: null,
     items: [],
@@ -34,27 +34,29 @@ function adaptData (res) {
 class MyCustomProvider {
   static version = 2
 
-  static get oauthProvider () {
+  static get oauthProvider() {
     return 'myunsplash'
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async list ({ token, directory }) {
+  async list({ token, directory }) {
     const path = directory ? `/${directory}/photos` : ''
 
     const resp = await fetch(`${BASE_URL}/collections${path}`, {
-      headers:{
+      headers: {
         Authorization: `Bearer ${token}`,
       },
     })
     if (!resp.ok) {
-      throw new Error(`Errornous HTTP response (${resp.status} ${resp.statusText})`)
+      throw new Error(
+        `Errornous HTTP response (${resp.status} ${resp.statusText})`,
+      )
     }
     return adaptData(await resp.json())
   }
 
   // eslint-disable-next-line class-methods-use-this
-  async download ({ id, token }) {
+  async download({ id, token }) {
     const resp = await fetch(`${BASE_URL}/photos/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -62,11 +64,16 @@ class MyCustomProvider {
     })
 
     const contentLengthStr = resp.headers['content-length']
-    const contentLength = parseInt(contentLengthStr, 10);
-    const size = !Number.isNaN(contentLength) && contentLength >= 0 ? contentLength : undefined;
+    const contentLength = parseInt(contentLengthStr, 10)
+    const size =
+      !Number.isNaN(contentLength) && contentLength >= 0
+        ? contentLength
+        : undefined
 
     if (!resp.ok) {
-      throw new Error(`Errornous HTTP response (${resp.status} ${resp.statusText})`)
+      throw new Error(
+        `Errornous HTTP response (${resp.status} ${resp.statusText})`,
+      )
     }
     return { stream: Readable.fromWeb(resp.body), size }
   }

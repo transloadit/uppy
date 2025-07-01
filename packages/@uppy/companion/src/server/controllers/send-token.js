@@ -62,8 +62,16 @@ module.exports = function sendToken(req, res, next) {
     return next()
   }
 
-  const clientOrigin = oAuthState.getFromState(state, 'origin', companion.options.secret)
-  const customerDefinedAllowedOrigins = oAuthState.getFromState(state, 'customerDefinedAllowedOrigins', companion.options.secret)
+  const clientOrigin = oAuthState.getFromState(
+    state,
+    'origin',
+    companion.options.secret,
+  )
+  const customerDefinedAllowedOrigins = oAuthState.getFromState(
+    state,
+    'customerDefinedAllowedOrigins',
+    companion.options.secret,
+  )
 
   if (
     customerDefinedAllowedOrigins &&

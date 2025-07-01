@@ -1,9 +1,0 @@
-node_modules/
-*.js
-*.jsx
-*.cjs
-*.mjs
-!private/js2ts/*
-!examples/svelte-example/*
-*.lock
-CHANGELOG.md

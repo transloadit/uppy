@@ -1,7 +1,6 @@
-/* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
-import { useMemo, useEffect } from 'preact/hooks'
 import type { Body, Meta, UppyFile } from '@uppy/core'
+import { h } from 'preact'
+import { useEffect, useMemo } from 'preact/hooks'
 import type { UppyContext } from './types.js'
 
 export type ThumbnailProps = {
@@ -9,7 +8,6 @@ export type ThumbnailProps = {
   width?: string
   height?: string
   images?: boolean
-  // eslint-disable-next-line react/no-unused-prop-types
   ctx?: UppyContext
 }
 
@@ -62,17 +60,17 @@ export default function Thumbnail(props: ThumbnailProps) {
         aspectRatio: '1',
       }}
     >
-      {showThumbnail ?
+      {showThumbnail ? (
         <img
           className="uppy:w-full uppy:h-full uppy:object-cover"
           src={objectUrl}
           alt={props.file.name}
         />
-      : null}
-      {!showThumbnail ?
+      ) : null}
+      {!showThumbnail ? (
         <div className="uppy:flex uppy:flex-col uppy:items-center uppy:justify-center uppy:w-full uppy:h-full">
           <div className="uppy:flex-1 uppy:flex uppy:items-center uppy:justify-center uppy:w-full">
-            {!props.file.type ?
+            {!props.file.type ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -83,8 +81,8 @@ export default function Thumbnail(props: ThumbnailProps) {
                   <path d="M15 4v3a1 1 0 0 0 1 1h3V7h-3V4h-1z" />
                 </g>
               </svg>
-            : null}
-            {fileTypeGeneral === 'text' ?
+            ) : null}
+            {fileTypeGeneral === 'text' ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -96,8 +94,8 @@ export default function Thumbnail(props: ThumbnailProps) {
                   fill-rule="nonzero"
                 />
               </svg>
-            : null}
-            {fileTypeGeneral === 'image' && !showThumbnail ?
+            ) : null}
+            {fileTypeGeneral === 'image' && !showThumbnail ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -115,8 +113,8 @@ export default function Thumbnail(props: ThumbnailProps) {
                   <circle cx="7.5" cy="9.5" r="1.5" />
                 </g>
               </svg>
-            : null}
-            {fileTypeGeneral === 'audio' ?
+            ) : null}
+            {fileTypeGeneral === 'audio' ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -128,8 +126,8 @@ export default function Thumbnail(props: ThumbnailProps) {
                   fill-rule="nonzero"
                 />
               </svg>
-            : null}
-            {fileTypeGeneral === 'video' ?
+            ) : null}
+            {fileTypeGeneral === 'video' ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -141,8 +139,8 @@ export default function Thumbnail(props: ThumbnailProps) {
                   fill-rule="nonzero"
                 />
               </svg>
-            : null}
-            {isPDF ?
+            ) : null}
+            {isPDF ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -154,8 +152,8 @@ export default function Thumbnail(props: ThumbnailProps) {
                   fill-rule="nonzero"
                 />
               </svg>
-            : null}
-            {isArchive ?
+            ) : null}
+            {isArchive ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -167,8 +165,8 @@ export default function Thumbnail(props: ThumbnailProps) {
                   fill-rule="nonzero"
                 />
               </svg>
-            : null}
-            {props.file.type && !fileTypeGeneral && !isPDF && !isArchive ?
+            ) : null}
+            {props.file.type && !fileTypeGeneral && !isPDF && !isArchive ? (
               <svg
                 aria-hidden="true"
                 className="uppy:w-3/4 uppy:h-3/4"
@@ -179,10 +177,10 @@ export default function Thumbnail(props: ThumbnailProps) {
                   <path d="M15 4v3a1 1 0 0 0 1 1h3V7h-3V4h-1z" />
                 </g>
               </svg>
-            : null}
+            ) : null}
           </div>
         </div>
-      : null}
+      ) : null}
     </div>
   )
 }

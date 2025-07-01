@@ -1,6 +1,5 @@
-/* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
 import classNames from 'classnames'
+import { h } from 'preact'
 import AddFiles from './AddFiles.js'
 
 type $TSFixMe = any
@@ -15,6 +14,7 @@ const AddFilesPanel = (props: $TSFixMe): $TSFixMe => {
       <div className="uppy-DashboardContent-bar">
         <div
           className="uppy-DashboardContent-title"
+          // biome-ignore lint/a11y/useSemanticElements: ...
           role="heading"
           aria-level={1}
         >
@@ -28,7 +28,7 @@ const AddFilesPanel = (props: $TSFixMe): $TSFixMe => {
           {props.i18n('back')}
         </button>
       </div>
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      {}
       <AddFiles {...props} />
     </div>
   )

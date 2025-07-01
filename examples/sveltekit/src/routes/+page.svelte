@@ -1,43 +1,43 @@
 <script lang="ts">
-  import Uppy from '@uppy/core'
-  import Tus from '@uppy/tus'
-  import UppyWebcam from '@uppy/webcam'
-  import UppyRemoteSources from '@uppy/remote-sources'
-  import UppyScreenCapture from '@uppy/screen-capture'
-  import {
-    UppyContextProvider,
-    Dropzone,
-    FilesList,
-    FilesGrid,
-    UploadButton,
-  } from '@uppy/svelte'
-  import '@uppy/svelte/dist/styles.css'
+import Uppy from '@uppy/core'
+import UppyRemoteSources from '@uppy/remote-sources'
+import UppyScreenCapture from '@uppy/screen-capture'
+import {
+  Dropzone,
+  FilesGrid,
+  FilesList,
+  UploadButton,
+  UppyContextProvider,
+} from '@uppy/svelte'
+import Tus from '@uppy/tus'
+import UppyWebcam from '@uppy/webcam'
+import '@uppy/svelte/dist/styles.css'
 
-  import CustomDropzone from '../components/CustomDropzone.svelte'
-  import Webcam from '../components/Webcam.svelte'
-  import RemoteSource from '../components/RemoteSource.svelte'
-  import ScreenCapture from '../components/ScreenCapture.svelte'
+import CustomDropzone from '../components/CustomDropzone.svelte'
+import RemoteSource from '../components/RemoteSource.svelte'
+import ScreenCapture from '../components/ScreenCapture.svelte'
+import Webcam from '../components/Webcam.svelte'
 
-  const uppy = new Uppy()
-    .use(Tus, {
-      endpoint: 'https://tusd.tusdemo.net/files/',
-    })
-    .use(UppyWebcam)
-    .use(UppyScreenCapture)
-    .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' })
+const uppy = new Uppy()
+  .use(Tus, {
+    endpoint: 'https://tusd.tusdemo.net/files/',
+  })
+  .use(UppyWebcam)
+  .use(UppyScreenCapture)
+  .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' })
 
-  let dialogRef: HTMLDialogElement
-  let modalPlugin = $state<'webcam' | 'dropbox' | 'screen-capture' | null>(null)
+let dialogRef: HTMLDialogElement
+let modalPlugin = $state<'webcam' | 'dropbox' | 'screen-capture' | null>(null)
 
-  function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
-    modalPlugin = plugin
-    dialogRef?.showModal()
-  }
+function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
+  modalPlugin = plugin
+  dialogRef?.showModal()
+}
 
-  function closeModal() {
-    modalPlugin = null
-    dialogRef?.close()
-  }
+function closeModal() {
+  modalPlugin = null
+  dialogRef?.close()
+}
 </script>
 
 <UppyContextProvider {uppy}>

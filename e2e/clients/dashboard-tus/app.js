@@ -7,7 +7,7 @@ import Url from '@uppy/url'
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 
-function onShouldRetry (err, retryAttempt, options, next) {
+function onShouldRetry(err, retryAttempt, options, next) {
   if (err?.originalResponse?.getStatus() === 418) {
     return true
   }

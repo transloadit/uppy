@@ -1,5 +1,5 @@
 import { inject } from 'vue'
-import { UppyContextSymbol, type UppyContext } from './context-provider.js'
+import { type UppyContext, UppyContextSymbol } from './context-provider.js'
 
 export function useUppyContext(): UppyContext {
   const context = inject<UppyContext>(UppyContextSymbol)

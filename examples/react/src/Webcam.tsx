@@ -1,7 +1,5 @@
-/* eslint-disable react/jsx-props-no-spreading */
-/* eslint-disable react/react-in-jsx-scope */
-import React, { useEffect } from 'react'
 import { useWebcam } from '@uppy/react'
+import React, { useEffect } from 'react'
 import MediaCapture from './MediaCapture.tsx'
 
 export interface WebcamProps {

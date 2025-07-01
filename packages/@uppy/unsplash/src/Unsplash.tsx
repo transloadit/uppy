@@ -1,24 +1,24 @@
 import {
-  getAllowedHosts,
-  tokenStorage,
   type CompanionPluginOptions,
+  getAllowedHosts,
   SearchProvider,
+  tokenStorage,
 } from '@uppy/companion-client'
-import { UIPlugin, Uppy } from '@uppy/core'
-import { SearchProviderViews } from '@uppy/provider-views'
-import { h, type ComponentChild } from 'preact'
-
 import type {
-  UppyFile,
+  AsyncStore,
   Body,
   Meta,
-  AsyncStore,
   UnknownSearchProviderPlugin,
   UnknownSearchProviderPluginState,
+  UppyFile,
 } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
+import { SearchProviderViews } from '@uppy/provider-views'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import locale from './locale.js'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
 
 export type UnsplashOptions = {
   utmSource?: string

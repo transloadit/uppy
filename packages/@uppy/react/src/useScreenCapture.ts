@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import {
   createScreenCaptureController,
   type ScreenCaptureSnapshot,
 } from '@uppy/components'
+import { useMemo } from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type ScreenCaptureProps = {

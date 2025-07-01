@@ -21,7 +21,6 @@ const mimeToExtensions = {
 
 export default function getFileTypeExtension(mimeType: string): string | null {
   // Remove the ; bit in 'video/x-matroska;codecs=avc1'
-  // eslint-disable-next-line no-param-reassign
   ;[mimeType] = mimeType.split(';', 1)
   return mimeToExtensions[mimeType] || null
 }

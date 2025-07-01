@@ -6,7 +6,7 @@ const upload = multer({
   storage: multer.memoryStorage(),
 })
 
-function uploadRoute (req, res) {
+function uploadRoute(req, res) {
   res.json({
     files: req.files.map((file) => {
       // eslint-disable-next-line no-param-reassign

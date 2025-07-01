@@ -1,21 +1,19 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-import Cropper from 'cropperjs'
-import { h, Component } from 'preact'
-import type { Meta, Body, UppyFile } from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
+import Cropper from 'cropperjs'
+import { Component, h } from 'preact'
+import type ImageEditor from './ImageEditor.js'
 import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
 import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
 import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
 import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
-import type ImageEditor from './ImageEditor.js'
 
 type Props<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B>
   storeCropperInstance: (cropper: Cropper) => void
   opts: ImageEditor<M, B>['opts']
   i18n: I18n
-  // eslint-disable-next-line react/no-unused-prop-types
-  save: () => void // eslint confused
+  save: () => void
 }
 
 type State = {
@@ -62,7 +60,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     this.imgElement.removeEventListener('cropend', this.limitCropboxMovement)
   }
 
-  // eslint-disable-next-line react/sort-comp
   storePrevCropboxData(): void {
     this.setState({ prevCropboxData: this.cropper.getCropBoxData() })
   }

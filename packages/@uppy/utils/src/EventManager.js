@@ -7,22 +7,22 @@ export default class EventManager {
 
   #events = []
 
-  constructor (uppy) {
+  constructor(uppy) {
     this.#uppy = uppy
   }
 
-  on (event, fn) {
+  on(event, fn) {
     this.#events.push([event, fn])
     return this.#uppy.on(event, fn)
   }
 
-  remove () {
+  remove() {
     for (const [event, fn] of this.#events.splice(0)) {
       this.#uppy.off(event, fn)
     }
   }
 
-  onFilePause (fileID, cb) {
+  onFilePause(fileID, cb) {
     this.on('upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
         cb(isPaused)
@@ -30,13 +30,13 @@ export default class EventManager {
     })
   }
 
-  onFileRemove (fileID, cb) {
+  onFileRemove(fileID, cb) {
     this.on('file-removed', (file) => {
       if (fileID === file.id) cb(file.id)
     })
   }
 
-  onPause (fileID, cb) {
+  onPause(fileID, cb) {
     this.on('upload-pause', (targetFileID, isPaused) => {
       if (fileID === targetFileID) {
         // const isPaused = this.#uppy.pauseResume(fileID)
@@ -45,7 +45,7 @@ export default class EventManager {
     })
   }
 
-  onRetry (fileID, cb) {
+  onRetry(fileID, cb) {
     this.on('upload-retry', (targetFileID) => {
       if (fileID === targetFileID) {
         cb()
@@ -53,28 +53,28 @@ export default class EventManager {
     })
   }
 
-  onRetryAll (fileID, cb) {
+  onRetryAll(fileID, cb) {
     this.on('retry-all', () => {
       if (!this.#uppy.getFile(fileID)) return
       cb()
     })
   }
 
-  onPauseAll (fileID, cb) {
+  onPauseAll(fileID, cb) {
     this.on('pause-all', () => {
       if (!this.#uppy.getFile(fileID)) return
       cb()
     })
   }
 
-  onCancelAll (fileID, eventHandler) {
+  onCancelAll(fileID, eventHandler) {
     this.on('cancel-all', (...args) => {
       if (!this.#uppy.getFile(fileID)) return
       eventHandler(...args)
     })
   }
 
-  onResumeAll (fileID, cb) {
+  onResumeAll(fileID, cb) {
     this.on('resume-all', () => {
       if (!this.#uppy.getFile(fileID)) return
       cb()

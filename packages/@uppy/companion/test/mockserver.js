@@ -1,7 +1,9 @@
 const express = require('express')
 const session = require('express-session')
 
-const { expects: { localZoomKey, localZoomSecret, localZoomVerificationToken } } = require('./fixtures/zoom')
+const {
+  expects: { localZoomKey, localZoomSecret, localZoomVerificationToken },
+} = require('./fixtures/zoom')
 
 const defaultEnv = {
   NODE_ENV: 'test',
@@ -50,7 +52,7 @@ const defaultEnv = {
   COMPANION_CLIENT_ORIGINS: 'true',
 }
 
-function updateEnv (env) {
+function updateEnv(env) {
   Object.keys(env).forEach((key) => {
     process.env[key] = env[key]
   })
@@ -72,11 +74,12 @@ module.exports.getServer = (extraEnv) => {
   // todo rewrite companion to not use global state
   // https://github.com/transloadit/uppy/issues/3284
   jest.resetModules()
-  // eslint-disable-next-line global-require
   const standalone = require('../src/standalone')
   const authServer = express()
 
-  authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
+  authServer.use(
+    session({ secret: 'grant', resave: true, saveUninitialized: true }),
+  )
   authServer.all('*/callback', (req, res, next) => {
     req.session.grant = {
       response: { access_token: module.exports.grantToken },
@@ -84,7 +87,9 @@ module.exports.getServer = (extraEnv) => {
     next()
   })
   authServer.all(['*/send-token', '*/redirect'], (req, res, next) => {
-    req.session.grant = { dynamic: { state: req.query.state || 'non-empty-value' } }
+    req.session.grant = {
+      dynamic: { state: req.query.state || 'non-empty-value' },
+    }
     next()
   })
 

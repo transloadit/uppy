@@ -2,114 +2,114 @@
   "extends": "../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../@uppy/audio/tsconfig.build.json",
+      "path": "../@uppy/audio/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/aws-s3/tsconfig.build.json",
+      "path": "../@uppy/aws-s3/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/box/tsconfig.build.json",
+      "path": "../@uppy/box/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/companion-client/tsconfig.build.json",
+      "path": "../@uppy/companion-client/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/compressor/tsconfig.build.json",
+      "path": "../@uppy/compressor/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/core/tsconfig.build.json",
+      "path": "../@uppy/core/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/dashboard/tsconfig.build.json",
+      "path": "../@uppy/dashboard/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/drag-drop/tsconfig.build.json",
+      "path": "../@uppy/drag-drop/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/drop-target/tsconfig.build.json",
+      "path": "../@uppy/drop-target/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/dropbox/tsconfig.build.json",
+      "path": "../@uppy/dropbox/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/facebook/tsconfig.build.json",
+      "path": "../@uppy/facebook/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/file-input/tsconfig.build.json",
+      "path": "../@uppy/file-input/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/form/tsconfig.build.json",
+      "path": "../@uppy/form/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/golden-retriever/tsconfig.build.json",
+      "path": "../@uppy/golden-retriever/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/google-drive/tsconfig.build.json",
+      "path": "../@uppy/google-drive/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/google-drive-picker/tsconfig.build.json",
+      "path": "../@uppy/google-drive-picker/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/google-photos-picker/tsconfig.build.json",
+      "path": "../@uppy/google-photos-picker/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/image-editor/tsconfig.build.json",
+      "path": "../@uppy/image-editor/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/informer/tsconfig.build.json",
+      "path": "../@uppy/informer/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/instagram/tsconfig.build.json",
+      "path": "../@uppy/instagram/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/onedrive/tsconfig.build.json",
+      "path": "../@uppy/onedrive/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/progress-bar/tsconfig.build.json",
+      "path": "../@uppy/progress-bar/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/provider-views/tsconfig.build.json",
+      "path": "../@uppy/provider-views/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/remote-sources/tsconfig.build.json",
+      "path": "../@uppy/remote-sources/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/screen-capture/tsconfig.build.json",
+      "path": "../@uppy/screen-capture/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/status-bar/tsconfig.build.json",
+      "path": "../@uppy/status-bar/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/store-default/tsconfig.build.json",
+      "path": "../@uppy/store-default/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/thumbnail-generator/tsconfig.build.json",
+      "path": "../@uppy/thumbnail-generator/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/transloadit/tsconfig.build.json",
+      "path": "../@uppy/transloadit/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/tus/tsconfig.build.json",
+      "path": "../@uppy/tus/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/unsplash/tsconfig.build.json",
+      "path": "../@uppy/unsplash/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/url/tsconfig.build.json",
+      "path": "../@uppy/url/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/webcam/tsconfig.build.json",
+      "path": "../@uppy/webcam/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/xhr-upload/tsconfig.build.json",
+      "path": "../@uppy/xhr-upload/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/zoom/tsconfig.build.json",
-    },
-  ],
+      "path": "../@uppy/zoom/tsconfig.build.json"
+    }
+  ]
 }

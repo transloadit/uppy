@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-types
+// biome-ignore lint/complexity/noBannedTypes: ...
 function isFunction(v: any): v is Function {
   return typeof v === 'function'
 }
@@ -22,7 +22,6 @@ interface AudioOscilloscopeOptions {
     strokeStyle?: MaybeFunction<string>
   }
 
-  // eslint-disable-next-line no-use-before-define
   onDrawFrame?: (oscilloscope: AudioOscilloscope) => void
 }
 
@@ -44,7 +43,6 @@ export default class AudioOscilloscope {
 
   private dataArray?: Uint8Array
 
-  // eslint-disable-next-line no-use-before-define
   private onDrawFrame: (oscilloscope: AudioOscilloscope) => void
 
   private streamSource?: MediaStreamAudioSourceNode
@@ -75,8 +73,9 @@ export default class AudioOscilloscope {
     this.canvasContext.strokeStyle =
       result(canvasContextOptions.strokeStyle) || 'rgb(0, 0, 0)'
     this.canvasContext.lineWidth = result(canvasContextOptions.lineWidth) || 1
-    this.onDrawFrame =
-      isFunction(options.onDrawFrame) ? options.onDrawFrame : () => {}
+    this.onDrawFrame = isFunction(options.onDrawFrame)
+      ? options.onDrawFrame
+      : () => {}
   }
 
   addSource(streamSource: MediaStreamAudioSourceNode): void {
