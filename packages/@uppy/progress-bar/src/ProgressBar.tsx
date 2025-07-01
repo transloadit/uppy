@@ -1,17 +1,15 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin } from '@uppy/core'
 import type {
-  Uppy,
+  Body,
+  DefinePluginOpts,
+  Meta,
   State,
   UIPluginOptions,
-  Body,
-  Meta,
-  DefinePluginOpts,
+  Uppy,
 } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import { type ComponentChild, h } from 'preact'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 export interface ProgressBarOptions extends UIPluginOptions {
   hideAfterFinish?: boolean

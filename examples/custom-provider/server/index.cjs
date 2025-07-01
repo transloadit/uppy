@@ -2,7 +2,9 @@ const { mkdtempSync } = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
 
-require('dotenv').config({ path: path.join(__dirname, '..', '..', '..', '.env') })
+require('dotenv').config({
+  path: path.join(__dirname, '..', '..', '..', '.env'),
+})
 const express = require('express')
 // the ../../../packages is just to use the local version
 // instead of the npm version—in a real app use `require('@uppy/companion')`
@@ -14,11 +16,13 @@ const MyCustomProvider = require('./CustomProvider.cjs')
 const app = express()
 
 app.use(bodyParser.json())
-app.use(session({
-  secret: 'some-secret',
-  resave: true,
-  saveUninitialized: true,
-}))
+app.use(
+  session({
+    secret: 'some-secret',
+    resave: true,
+    saveUninitialized: true,
+  }),
+)
 
 // Routes
 app.get('/', (req, res) => {

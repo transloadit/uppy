@@ -42,23 +42,23 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import Uppy from '@uppy/core'
-import Tus from '@uppy/tus'
-import {
-  UppyContextProvider,
-  Dropzone,
-  FilesList,
-  FilesGrid,
-  UploadButton,
-} from '@uppy/vue'
-import CustomDropzone from './Dropzone.vue'
-import Webcam from './Webcam.vue'
-import RemoteSource from './RemoteSource.vue'
-import ScreenCapture from './ScreenCapture.vue'
-import UppyWebcam from '@uppy/webcam'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
+import Tus from '@uppy/tus'
+import {
+  Dropzone,
+  FilesGrid,
+  FilesList,
+  UploadButton,
+  UppyContextProvider,
+} from '@uppy/vue'
+import UppyWebcam from '@uppy/webcam'
+import { computed, ref } from 'vue'
+import CustomDropzone from './Dropzone.vue'
+import RemoteSource from './RemoteSource.vue'
+import ScreenCapture from './ScreenCapture.vue'
+import Webcam from './Webcam.vue'
 
 const dialogRef = ref<HTMLDialogElement | null>(null)
 const modalPlugin = ref<'webcam' | 'dropbox' | 'screen-capture' | null>(null)

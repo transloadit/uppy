@@ -1,6 +1,6 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
+import type Webcam from '@uppy/webcam'
 import type { WebcamState, WebcamStatus } from '@uppy/webcam'
-import Webcam from '@uppy/webcam'
 import { Subscribers } from './utils.js'
 
 export type { WebcamStatus }

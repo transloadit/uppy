@@ -1,14 +1,9 @@
-/* eslint-disable jsx-a11y/no-noninteractive-element-interactions  */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-import { h, type ComponentChild } from 'preact'
+import type { Body, Meta, State, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { State, UIPluginOptions, Uppy, Body, Meta } from '@uppy/core'
-import FadeIn from './FadeIn.jsx'
+import { type ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
 
 export type InformerOptions = UIPluginOptions
 
@@ -42,13 +37,13 @@ export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
               <p role="alert">
                 {info.message}{' '}
                 {info.details && (
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: ...
                   <span
-                    aria-label={info.details}
+                    aria-label={info.details as string}
                     data-microtip-position="top-left"
                     data-microtip-size="medium"
                     role="tooltip"
                     onClick={() =>
-                      // eslint-disable-next-line no-alert
                       alert(`${info.message} \n\n ${info.details}`)
                     }
                   >

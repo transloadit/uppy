@@ -16,49 +16,50 @@ const { mkdir, writeFile } = fs.promises
 const cwd = process.cwd()
 let chalk
 
-function handleErr (err) {
+function handleErr(err) {
   console.error(chalk.red('✗ Error:'), chalk.red(err.message))
 }
 
-async function compileCSS () {
-  ({ default:chalk } = await import('chalk'))
+async function compileCSS() {
+  ;({ default: chalk } = await import('chalk'))
   const files = await glob('packages/{,@uppy/}*/src/style.scss')
 
   for (const file of files) {
     const importedFiles = new Set()
     const scssResult = await renderScss({
       file,
-      importer (url, from, done) {
-        resolve(url, {
-          basedir: path.dirname(from),
-          filename: from,
-          extensions: ['.scss'],
-        }, (err, resolved) => {
-          if (err) {
-            done(err)
-            return
-          }
+      importer(url, from, done) {
+        resolve(
+          url,
+          {
+            basedir: path.dirname(from),
+            filename: from,
+            extensions: ['.scss'],
+          },
+          (err, resolved) => {
+            if (err) {
+              done(err)
+              return
+            }
 
-          const realpath = fs.realpathSync(resolved)
+            const realpath = fs.realpathSync(resolved)
 
-          if (importedFiles.has(realpath)) {
-            done({ contents: '' })
-            return
-          }
-          importedFiles.add(realpath)
+            if (importedFiles.has(realpath)) {
+              done({ contents: '' })
+              return
+            }
+            importedFiles.add(realpath)
 
-          done({ file: realpath })
-        })
+            done({ file: realpath })
+          },
+        )
       },
     })
 
-    const plugins = [
-      autoprefixer,
-      postcssLogical(),
-      postcssDirPseudoClass(),
-    ]
-    const postcssResult = await postcss(plugins)
-      .process(scssResult.css, { from: file })
+    const plugins = [autoprefixer, postcssLogical(), postcssDirPseudoClass()]
+    const postcssResult = await postcss(plugins).process(scssResult.css, {
+      from: file,
+    })
     postcssResult.warnings().forEach((warn) => {
       console.warn(warn.toString())
     })
@@ -79,9 +80,10 @@ async function compileCSS () {
       chalk.magenta(path.relative(cwd, outfile)),
     )
 
-    const minifiedResult = await postcss([
-      cssnano({ safe: true }),
-    ]).process(postcssResult.css, { from: outfile })
+    const minifiedResult = await postcss([cssnano({ safe: true })]).process(
+      postcssResult.css,
+      { from: outfile },
+    )
     minifiedResult.warnings().forEach((warn) => {
       console.warn(warn.toString())
     })

@@ -1,15 +1,15 @@
 import React from 'react'
 import {
-  StyleSheet,
   Modal,
-  Text,
   ScrollView,
+  StyleSheet,
+  Text,
   TouchableOpacity,
 } from 'react-native'
-import takePicture from './takePicture.js'
-import selectImage from './selectImage.js'
-import selectDocument from './selectDocument.js'
 import Provider from './provider.js'
+import selectDocument from './selectDocument.js'
+import selectImage from './selectImage.js'
+import takePicture from './takePicture.js'
 
 const styles = StyleSheet.create({
   providerList: {
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
 })
 
 export default class UppyReactNativeFilePicker extends React.Component {
-  constructor () {
+  constructor() {
     super()
 
     this.state = {
@@ -65,61 +65,64 @@ export default class UppyReactNativeFilePicker extends React.Component {
     this.selectDocument = this.selectDocument.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.uppy = this.props.uppy
   }
 
-  takePicture () {
-    takePicture().then((file) => {
-      this.uppy.addFile({
-        source: 'React Native',
-        name: `media_${Date.now()}.jpg`,
-        type: file.type,
-        data: file,
+  takePicture() {
+    takePicture()
+      .then((file) => {
+        this.uppy.addFile({
+          source: 'React Native',
+          name: `media_${Date.now()}.jpg`,
+          type: file.type,
+          data: file,
+        })
+        this.props.onRequestClose()
       })
-      this.props.onRequestClose()
-    }).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
-  selectImage () {
-    selectImage({ exif: true }).then((file) => {
-      this.uppy.addFile({
-        source: 'React Native',
-        name: `media_${Date.now()}.jpg`,
-        type: file.type,
-        data: file,
+  selectImage() {
+    selectImage({ exif: true })
+      .then((file) => {
+        this.uppy.addFile({
+          source: 'React Native',
+          name: `media_${Date.now()}.jpg`,
+          type: file.type,
+          data: file,
+        })
+        this.props.onRequestClose()
       })
-      this.props.onRequestClose()
-    }).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
-  selectDocument () {
-    selectDocument().then((file) => {
-      this.uppy.addFile({
-        source: 'React Native',
-        name: file.name,
-        data: file,
+  selectDocument() {
+    selectDocument()
+      .then((file) => {
+        this.uppy.addFile({
+          source: 'React Native',
+          name: file.name,
+          data: file,
+        })
+        this.props.onRequestClose()
       })
-      this.props.onRequestClose()
-    }).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
-  openProvider (id) {
+  openProvider(id) {
     this.setState({
       openProvider: id,
     })
   }
 
-  chooseProvider (id) {
+  chooseProvider(id) {
     switch (id) {
       case 'LocalImages':
         this.selectImage()
@@ -135,11 +138,9 @@ export default class UppyReactNativeFilePicker extends React.Component {
     }
   }
 
-  renderSourceList () {
+  renderSourceList() {
     return (
-      <ScrollView
-        contentContainerStyle={styles.providerList}
-      >
+      <ScrollView contentContainerStyle={styles.providerList}>
         {this.state.providers.map((item) => {
           return (
             <TouchableOpacity
@@ -161,31 +162,34 @@ export default class UppyReactNativeFilePicker extends React.Component {
     )
   }
 
-  render () {
+  render() {
     return (
       <Modal
         animationType="slide"
         transparent={false}
         visible={this.props.show}
-        supportedOrientations={['portrait', 'portrait-upside-down', 'landscape', 'landscape-left', 'landscape-right']}
+        supportedOrientations={[
+          'portrait',
+          'portrait-upside-down',
+          'landscape',
+          'landscape-left',
+          'landscape-right',
+        ]}
         onRequestClose={this.props.onRequestClose}
       >
-        {this.state.openProvider ? (
-          <Provider
-            providerID={this.state.openProvider}
-            uppy={this.uppy}
-            onDone={() => {
-              this.setState({
-                openProvider: null,
-              })
-              this.props.onRequestClose()
-            }}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...this.props}
-          />
-        ) : (
-          this.renderSourceList()
-        )}
+        {this.state.openProvider
+          ? <Provider
+              providerID={this.state.openProvider}
+              uppy={this.uppy}
+              onDone={() => {
+                this.setState({
+                  openProvider: null,
+                })
+                this.props.onRequestClose()
+              }}
+              {...this.props}
+            />
+          : this.renderSourceList()}
       </Modal>
     )
   }

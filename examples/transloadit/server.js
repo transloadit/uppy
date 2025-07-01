@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
-/* eslint-disable compat/compat */
 import http from 'node:http'
 import qs from 'node:querystring'
 import he from 'he'
 
 const e = he.encode
 
-function Header () {
+function Header() {
   return `
     <!DOCTYPE html>
     <html>
@@ -28,7 +27,7 @@ function Header () {
   `
 }
 
-function Footer () {
+function Footer() {
   return `
     </main>
     </body>
@@ -36,31 +35,28 @@ function Footer () {
   `
 }
 
-function FormFields (fields) {
-  function Field ([name, value]) {
+function FormFields(fields) {
+  function Field([name, value]) {
     if (name === 'transloadit') return ''
     let isValueJSON = false
     if (value.startsWith('{') || value.startsWith('[')) {
       try {
-        // eslint-disable-next-line no-param-reassign
-        value = JSON.stringify(
-          JSON.parse(value),
-          null,
-          2,
-        )
+        value = JSON.stringify(JSON.parse(value), null, 2)
         isValueJSON = true
       } catch {
         // Nothing
       }
     }
 
-    const prettyValue = isValueJSON ? `
+    const prettyValue = isValueJSON
+      ? `
         <details open>
           <code>
             <pre style="max-width: 100%; max-height: 400px; white-space: pre-wrap; overflow: auto;">${e(value)}</pre>
           </code>
         </details>
-      ` : e(value)
+      `
+      : e(value)
 
     return `
       <dt>${e(name)}</dt>
@@ -78,8 +74,8 @@ function FormFields (fields) {
 `
 }
 
-function UploadsList (uploads) {
-  function Upload (upload) {
+function UploadsList(uploads) {
+  function Upload(upload) {
     return `<li>${e(upload.name)}</li>`
   }
 
@@ -90,12 +86,12 @@ function UploadsList (uploads) {
   `
 }
 
-function ResultsList (results) {
-  function Result (result) {
+function ResultsList(results) {
+  function Result(result) {
     return `<li>${e(result.name)} <a href="${result.ssl_url}" target="_blank">View</a></li>`
   }
 
-  function ResultsSection (stepName) {
+  function ResultsSection(stepName) {
     return `
     <h2>${e(stepName)}</h2>
     <ul>
@@ -104,12 +100,10 @@ function ResultsList (results) {
     `
   }
 
-  return Object.keys(results)
-    .map(ResultsSection)
-    .join('\n')
+  return Object.keys(results).map(ResultsSection).join('\n')
 }
 
-function AssemblyResult (assembly) {
+function AssemblyResult(assembly) {
   return `
     <h1>${e(assembly.assembly_id)} (${e(assembly.ok)})</h1>
     ${UploadsList(assembly.uploads)}
@@ -117,14 +111,14 @@ function AssemblyResult (assembly) {
   `
 }
 
-function onrequest (req, res) {
+function onrequest(req, res) {
   if (req.url !== '/test') {
     res.writeHead(404, { 'content-type': 'text/html' })
     res.end('404')
     return
   }
 
-  function onbody (body) {
+  function onbody(body) {
     const fields = qs.parse(body)
     const result = JSON.parse(fields.uppyResult)
     const assemblies = result[0].transloadit
@@ -140,7 +134,9 @@ function onrequest (req, res) {
 
   {
     let body = ''
-    req.on('data', (chunk) => { body += chunk })
+    req.on('data', (chunk) => {
+      body += chunk
+    })
     req.on('end', () => {
       onbody(body)
     })

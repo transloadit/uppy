@@ -1,22 +1,20 @@
-import type { ComponentChild } from 'preact'
 import type {
   Body,
-  Meta,
-  UppyFile,
   DefinePluginOpts,
-  Uppy,
+  Meta,
   State,
+  Uppy,
+  UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
-import statusBarStates from './StatusBarStates.js'
-import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.jsx'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import type { ComponentChild } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import type { StatusBarOptions } from './StatusBarOptions.js'
+import statusBarStates from './StatusBarStates.js'
+import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
@@ -136,17 +134,17 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }
     const currentSpeed = uploadedBytesSinceLastTick / dt
     const filteredSpeed =
-      this.#previousSpeed == null ?
-        currentSpeed
-      : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
+      this.#previousSpeed == null
+        ? currentSpeed
+        : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
     this.#previousSpeed = filteredSpeed
     const instantETA = remaining / filteredSpeed
 
     const updatedPreviousETA = Math.max(this.#previousETA! - dt, 0)
     const filteredETA =
-      this.#previousETA == null ?
-        instantETA
-      : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+      this.#previousETA == null
+        ? instantETA
+        : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
     this.#previousETA = filteredETA
     this.#lastUpdateTime = performance.now()
 

@@ -1,23 +1,18 @@
-import { afterAll, beforeAll, describe, it, expect } from 'vitest'
-
-import Core, { UIPlugin } from '@uppy/core'
-import StatusBarPlugin from '@uppy/status-bar'
+import Core, { type UIPlugin } from '@uppy/core'
 import GoogleDrivePlugin from '@uppy/google-drive'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped
-import WebcamPlugin from '@uppy/webcam'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import StatusBarPlugin from '@uppy/status-bar'
 // @ts-ignore untyped
 import Url from '@uppy/url'
-
+// @ts-ignore untyped
+import WebcamPlugin from '@uppy/webcam'
 import resizeObserverPolyfill from 'resize-observer-polyfill'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import DashboardPlugin from './index.js'
 
 type $TSFixMe = any
 
 describe('Dashboard', () => {
   beforeAll(() => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore we're touching globals for the test
     globalThis.ResizeObserver =
       (resizeObserverPolyfill as any).default || resizeObserverPolyfill
@@ -88,7 +83,7 @@ describe('Dashboard', () => {
     core.use(DashboardPlugin, { inline: false })
     core.use(WebcamPlugin)
 
-    const dashboardPlugins = core.getState().plugins['Dashboard']!
+    const dashboardPlugins = core.getState().plugins.Dashboard!
       .targets as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below
@@ -103,12 +98,12 @@ describe('Dashboard', () => {
 
   it('should not automatically add plugins which have a non-Dashboard target', () => {
     const core = new Core()
-    WebcamPlugin.prototype.start = () => {}
+    WebcamPlugin.prototype.start = () => undefined
     core.use(Url, { companionUrl: 'https://companion.uppy.io' })
     core.use(DashboardPlugin, { inline: false })
     core.use(WebcamPlugin, { target: 'body' })
 
-    const dashboardPlugins = core.getState().plugins['Dashboard']!
+    const dashboardPlugins = core.getState().plugins.Dashboard!
       .targets as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below

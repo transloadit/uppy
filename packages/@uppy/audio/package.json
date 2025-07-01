@@ -29,6 +29,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
   "peerDependencies": {
@@ -36,5 +37,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
   }
 }

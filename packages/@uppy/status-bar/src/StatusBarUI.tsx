@@ -1,21 +1,20 @@
-import type { Body, Meta, UppyFile, Uppy, State } from '@uppy/core'
+import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
 import classNames from 'classnames'
-import statusBarStates from './StatusBarStates.js'
-import calculateProcessingProgress from './calculateProcessingProgress.js'
-
+import { h } from 'preact'
 import {
-  UploadBtn,
-  RetryBtn,
   CancelBtn,
-  PauseResumeButton,
   DoneBtn,
-  ProgressBarProcessing,
-  ProgressBarError,
-  ProgressBarUploading,
+  PauseResumeButton,
   ProgressBarComplete,
-} from './Components.jsx'
+  ProgressBarError,
+  ProgressBarProcessing,
+  ProgressBarUploading,
+  RetryBtn,
+  UploadBtn,
+} from './Components.js'
+import calculateProcessingProgress from './calculateProcessingProgress.js'
+import statusBarStates from './StatusBarStates.js'
 
 const {
   STATE_ERROR,
@@ -242,7 +241,7 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
       {progressBarStateEl}
 
       <div className="uppy-StatusBar-actions">
-        {showUploadBtn ?
+        {showUploadBtn ? (
           <UploadBtn
             newFiles={newFiles}
             isUploadStarted={isUploadStarted}
@@ -252,13 +251,11 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
             startUpload={startUpload}
             uploadState={uploadState}
           />
-        : null}
+        ) : null}
 
-        {showRetryBtn ?
-          <RetryBtn i18n={i18n} uppy={uppy} />
-        : null}
+        {showRetryBtn ? <RetryBtn i18n={i18n} uppy={uppy} /> : null}
 
-        {showPauseResumeBtn ?
+        {showPauseResumeBtn ? (
           <PauseResumeButton
             isAllPaused={isAllPaused}
             i18n={i18n}
@@ -266,15 +263,13 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
             resumableUploads={resumableUploads}
             uppy={uppy}
           />
-        : null}
+        ) : null}
 
-        {showCancelBtn ?
-          <CancelBtn i18n={i18n} uppy={uppy} />
-        : null}
+        {showCancelBtn ? <CancelBtn i18n={i18n} uppy={uppy} /> : null}
 
-        {showDoneBtn ?
+        {showDoneBtn ? (
           <DoneBtn i18n={i18n} doneButtonHandler={doneButtonHandler} />
-        : null}
+        ) : null}
       </div>
     </div>
   )

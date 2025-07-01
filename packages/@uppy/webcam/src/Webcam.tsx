@@ -1,28 +1,27 @@
-import { h, type ComponentChild } from 'preact'
-
-import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import type {
-  Uppy,
-  UIPluginOptions,
-  DefinePluginOpts,
   Body,
+  DefinePluginOpts,
   Meta,
   MinimalRequiredUppyFile,
+  UIPluginOptions,
+  Uppy,
 } from '@uppy/core'
+
+import { UIPlugin } from '@uppy/core'
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
+import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
-import isMobile from 'is-mobile'
-import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
-import CameraIcon from './CameraIcon.jsx'
-import CameraScreen from './CameraScreen.jsx'
-import PermissionsScreen from './PermissionsScreen.jsx'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { isMobile } from 'is-mobile'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import CameraIcon from './CameraIcon.js'
+import CameraScreen from './CameraScreen.js'
 import locale from './locale.js'
+import PermissionsScreen from './PermissionsScreen.js'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 /**
  * Normalize a MIME type or file extension into a MIME type.
@@ -53,7 +52,7 @@ function isImageMimeType(mimeType?: string): boolean {
 
 function getMediaDevices() {
   // bug in the compatibility data
-  // eslint-disable-next-line compat/compat
+
   return navigator.mediaDevices
 }
 
@@ -151,7 +150,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
-    // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.type = 'acquirer'
@@ -276,12 +274,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  // eslint-disable-next-line consistent-return
   start(
     options: {
       deviceId: string
     } | null = null,
-  ): Promise<never> | void {
+  ): Promise<never> | undefined {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
@@ -307,9 +304,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.stream = stream
 
           let currentDeviceId = null
-          const tracks =
-            this.isAudioOnly() ?
-              stream.getAudioTracks()
+          const tracks = this.isAudioOnly()
+            ? stream.getAudioTracks()
             : stream.getVideoTracks()
 
           if (!options || !options.deviceId) {
@@ -364,7 +360,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         preferredVideoMimeTypes.filter(filterSupportedTypes)
 
       if (acceptableMimeTypes.length > 0) {
-        // eslint-disable-next-line prefer-destructuring
         options.mimeType = acceptableMimeTypes[0]
       }
     }
@@ -374,7 +369,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   startRecording(): void {
     // only used if supportsMediaRecorder() returned true
-    // eslint-disable-next-line compat/compat
+
     this.recorder = new MediaRecorder(
       this.stream!,
       this.getMediaRecorderOptions(),
@@ -458,7 +453,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.capturedMediaFile = file
           // create object url for capture result preview
           this.setPluginState({
-            // eslint-disable-next-line compat/compat
             recordedVideo: URL.createObjectURL(file.data as Blob),
           })
           this.#enableMirror = false
@@ -557,7 +551,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     return new Promise((resolve, reject) => {
       let count = this.opts.countdown
 
-      // eslint-disable-next-line consistent-return
       const countDown = setInterval(() => {
         if (!this.webcamActive) {
           clearInterval(countDown)
@@ -719,7 +712,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     return (
       <CameraScreen
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...webcamState}
         onChangeVideoSource={this.changeVideoSource}
         onSnapshot={this.takeSnapshot}

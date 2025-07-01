@@ -1,19 +1,18 @@
-import { h, type ComponentChild } from 'preact'
+import type {
+  Body,
+  DefinePluginOpts,
+  Meta,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
 
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import type {
-  Uppy,
-  UIPluginOptions,
-  Body,
-  Meta,
-  DefinePluginOpts,
-} from '@uppy/core'
 import toArray from '@uppy/utils/lib/toArray'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
 export interface FileInputOptions extends UIPluginOptions {
@@ -79,7 +78,6 @@ export default class FileInput<M extends Meta, B extends Body> extends UIPlugin<
 
     // Clear the input so that Chrome can detect file section when the same file is repeatedly selected
     // (see https://github.com/transloadit/uppy/issues/768#issuecomment-2264902758)
-    // eslint-disable-next-line no-param-reassign
     event.currentTarget.value = ''
   }
 

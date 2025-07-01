@@ -1,10 +1,13 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "4.3.0",
+  "version": "4.4.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -32,7 +35,8 @@
     "@types/react": "^18.0.8",
     "@types/use-sync-external-store": "^0.0.6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

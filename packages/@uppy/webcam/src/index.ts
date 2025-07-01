@@ -1,3 +1,2 @@
-export { default } from './Webcam.jsx'
-export type { WebcamOptions, WebcamState } from './Webcam.jsx'
-export { defaultOptions, type WebcamStatus } from './Webcam.jsx'
+export type { WebcamOptions, WebcamState } from './Webcam.js'
+export { default, defaultOptions, type WebcamStatus } from './Webcam.js'

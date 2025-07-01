@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-import fetchContrib from 'github-contributors-list/lib/contributors.js'
-import layoutStrategy from 'github-contributors-list/lib/strategies/layout_strategies/json.js'
-import sortStrategy from 'github-contributors-list/lib/strategies/sort_strategies/sort_desc.js'
-import filterStrategy from 'github-contributors-list/lib/strategies/filter_strategies/login.js'
 import { Buffer } from 'node:buffer'
 import fs from 'node:fs/promises'
 import process from 'node:process'
+import fetchContrib from 'github-contributors-list/lib/contributors.js'
+import filterStrategy from 'github-contributors-list/lib/strategies/filter_strategies/login.js'
+import layoutStrategy from 'github-contributors-list/lib/strategies/layout_strategies/json.js'
+import sortStrategy from 'github-contributors-list/lib/strategies/sort_strategies/sort_desc.js'
 
 const README_FILE_NAME = new URL('../README.md', import.meta.url)
 

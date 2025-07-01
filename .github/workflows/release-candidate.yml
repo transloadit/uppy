@@ -1,7 +1,8 @@
 name: Release candidate
 on:
   push:
-    branches: release
+    branches: 
+      - release
 
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
@@ -50,8 +51,8 @@ jobs:
           releases.json | xargs git add
       - name: Update contributors table
         run:
-          corepack yarn contributors:save && corepack yarn remark -foq README.md
-          && corepack yarn prettier -w README.md && git add README.md
+          corepack yarn contributors:save
+          && git add README.md
       - name: Update CDN URLs
         run:
           corepack yarn workspace @uppy-dev/release update-version-URLs | xargs

@@ -10,7 +10,9 @@ let emitter
  */
 module.exports = (redisClient, redisPubSubScope) => {
   if (!emitter) {
-    emitter = redisClient ? redisEmitter(redisClient, redisPubSubScope) : nodeEmitter()
+    emitter = redisClient
+      ? redisEmitter(redisClient, redisPubSubScope)
+      : nodeEmitter()
   }
 
   return emitter

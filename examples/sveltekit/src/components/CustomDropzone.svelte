@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { useDropzone, useFileInput, ProviderIcon } from '@uppy/svelte'
+import { ProviderIcon, useDropzone, useFileInput } from '@uppy/svelte'
 
-  interface Props {
-    openModal: (plugin: 'webcam' | 'dropbox' | 'screen-capture') => void
-  }
+interface Props {
+  openModal: (plugin: 'webcam' | 'dropbox' | 'screen-capture') => void
+}
 
-  const { openModal }: Props = $props()
+const { openModal }: Props = $props()
 
-  const { getRootProps, getInputProps } = useDropzone({ noClick: true })
-  const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
+const { getRootProps, getInputProps } = useDropzone({ noClick: true })
+const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
 </script>
 
 <div>

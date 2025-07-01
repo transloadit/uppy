@@ -17,10 +17,22 @@ const companion = require('../../packages/@uppy/companion')
  *   - COMPANION_AWS_FORCE_PATH_STYLE - Indicates if s3ForcePathStyle should be used rather than subdomain for S3 buckets.
  */
 
-if (!process.env.COMPANION_AWS_REGION) throw new Error('Missing Space region, please set the COMPANION_AWS_REGION environment variable (eg. "COMPANION_AWS_REGION=ams3")')
-if (!process.env.COMPANION_AWS_KEY) throw new Error('Missing access key, please set the COMPANION_AWS_KEY environment variable')
-if (!process.env.COMPANION_AWS_SECRET) throw new Error('Missing secret key, please set the COMPANION_AWS_SECRET environment variable')
-if (!process.env.COMPANION_AWS_BUCKET) throw new Error('Missing Space name, please set the COMPANION_AWS_BUCKET environment variable')
+if (!process.env.COMPANION_AWS_REGION)
+  throw new Error(
+    'Missing Space region, please set the COMPANION_AWS_REGION environment variable (eg. "COMPANION_AWS_REGION=ams3")',
+  )
+if (!process.env.COMPANION_AWS_KEY)
+  throw new Error(
+    'Missing access key, please set the COMPANION_AWS_KEY environment variable',
+  )
+if (!process.env.COMPANION_AWS_SECRET)
+  throw new Error(
+    'Missing secret key, please set the COMPANION_AWS_SECRET environment variable',
+  )
+if (!process.env.COMPANION_AWS_BUCKET)
+  throw new Error(
+    'Missing Space name, please set the COMPANION_AWS_BUCKET environment variable',
+  )
 
 // Prepare the server.
 const PORT = process.env.PORT || 3452
@@ -54,9 +66,11 @@ const { app: companionApp } = companion.app({
 
 app.use('/companion', companionApp)
 
-require('vite').createServer({ clearScreen: false, server:{ middlewareMode: true } }).then(({ middlewares }) => {
-  app.use(middlewares)
-  app.listen(PORT, () => {
-    console.log(`Listening on http://localhost:${PORT}/...`)
+require('vite')
+  .createServer({ clearScreen: false, server: { middlewareMode: true } })
+  .then(({ middlewares }) => {
+    app.use(middlewares)
+    app.listen(PORT, () => {
+      console.log(`Listening on http://localhost:${PORT}/...`)
+    })
   })
-})

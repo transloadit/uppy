@@ -1,30 +1,30 @@
 <script lang="ts">
-  type ButtonProps = Record<string, unknown>
-  type VideoProps = Record<string, unknown>
+type ButtonProps = Record<string, unknown>
+type VideoProps = Record<string, unknown>
 
-  interface Props {
-    title: string
-    close: () => void
-    videoProps: VideoProps
-    primaryActionButtonProps: ButtonProps
-    primaryActionButtonLabel: string
-    recordButtonProps: ButtonProps
-    stopRecordingButtonProps: ButtonProps
-    submitButtonProps: ButtonProps
-    discardButtonProps: ButtonProps
-  }
+interface Props {
+  title: string
+  close: () => void
+  videoProps: VideoProps
+  primaryActionButtonProps: ButtonProps
+  primaryActionButtonLabel: string
+  recordButtonProps: ButtonProps
+  stopRecordingButtonProps: ButtonProps
+  submitButtonProps: ButtonProps
+  discardButtonProps: ButtonProps
+}
 
-  const {
-    title,
-    close,
-    videoProps,
-    primaryActionButtonProps,
-    primaryActionButtonLabel,
-    recordButtonProps,
-    stopRecordingButtonProps,
-    submitButtonProps,
-    discardButtonProps,
-  }: Props = $props()
+const {
+  title,
+  close,
+  videoProps,
+  primaryActionButtonProps,
+  primaryActionButtonLabel,
+  recordButtonProps,
+  stopRecordingButtonProps,
+  submitButtonProps,
+  discardButtonProps,
+}: Props = $props()
 </script>
 
 <div class="p-4 max-w-lg w-full">

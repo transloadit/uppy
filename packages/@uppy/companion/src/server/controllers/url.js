@@ -24,7 +24,11 @@ const meta = async (req, res) => {
     logger.debug('URL file import handler running', null, req.id)
     const { allowLocalUrls } = req.companion.options
     if (!validateURL(req.body.url, allowLocalUrls)) {
-      logger.debug('Invalid request body detected. Exiting url meta handler.', null, req.id)
+      logger.debug(
+        'Invalid request body detected. Exiting url meta handler.',
+        null,
+        req.id,
+      )
       res.status(400).json({ error: 'Invalid request body' })
       return
     }
@@ -49,7 +53,11 @@ const get = async (req, res) => {
   logger.debug('URL file import handler running', null, req.id)
   const { allowLocalUrls } = req.companion.options
   if (!validateURL(req.body.url, allowLocalUrls)) {
-    logger.debug('Invalid request body detected. Exiting url import handler.', null, req.id)
+    logger.debug(
+      'Invalid request body detected. Exiting url import handler.',
+      null,
+      req.id,
+    )
     res.status(400).json({ error: 'Invalid request body' })
     return
   }
@@ -65,6 +73,8 @@ const get = async (req, res) => {
   }
 }
 
-module.exports = () => express.Router()
-  .post('/meta', express.json(), meta)
-  .post('/get', express.json(), get)
+module.exports = () =>
+  express
+    .Router()
+    .post('/meta', express.json(), meta)
+    .post('/get', express.json(), get)

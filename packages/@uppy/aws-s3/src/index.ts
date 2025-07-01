@@ -1,33 +1,31 @@
+import { RequestClient } from '@uppy/companion-client'
 import {
+  BasePlugin,
   type DefinePluginOpts,
   type PluginOpts,
-  Uppy,
-  BasePlugin,
+  type Uppy,
 } from '@uppy/core'
-import { RequestClient } from '@uppy/companion-client'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import EventManager from '@uppy/core/lib/EventManager.js'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import {
-  filterNonFailedFiles,
-  filterFilesToEmitUploadStarted,
-} from '@uppy/utils/lib/fileFilters'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
+import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
+import {
+  filterFilesToEmitUploadStarted,
+  filterNonFailedFiles,
+} from '@uppy/utils/lib/fileFilters'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import MultipartUploader from './MultipartUploader.js'
-import { throwIfAborted } from './utils.js'
-import type {
-  UploadResult,
-  UploadResultWithSignal,
-  MultipartUploadResultWithSignal,
-  UploadPartBytesResult,
-} from './utils.js'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import packageJson from '../package.json' with { type: 'json' }
 import createSignedURL from './createSignedURL.js'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import MultipartUploader from './MultipartUploader.js'
+import type {
+  MultipartUploadResultWithSignal,
+  UploadPartBytesResult,
+  UploadResult,
+  UploadResultWithSignal,
+} from './utils.js'
+import { throwIfAborted } from './utils.js'
 
 interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
   s3Multipart: UploadResult
@@ -168,6 +166,7 @@ type AWSS3WithoutCompanion = {
   }) => Promise<UploadPartBytesResult>
 }
 
+// biome-ignore lint/complexity/noBannedTypes: ...
 type AWSS3NonMultipartWithCompanionMandatory = {
   // No related options
 }
@@ -346,13 +345,11 @@ export default class AwsS3Multipart<
       listParts: this.listParts,
       abortMultipartUpload: this.abortMultipartUpload,
       completeMultipartUpload: this.completeMultipartUpload,
-      signPart:
-        opts?.getTemporarySecurityCredentials ?
-          this.createSignedURL
+      signPart: opts?.getTemporarySecurityCredentials
+        ? this.createSignedURL
         : this.signPart,
-      getUploadParameters:
-        opts?.getTemporarySecurityCredentials ?
-          (this.createSignedURL as any)
+      getUploadParameters: opts?.getTemporarySecurityCredentials
+        ? (this.createSignedURL as any)
         : this.getUploadParameters,
     } satisfies Partial<AwsS3MultipartOptions<M, B>>
 
@@ -500,15 +497,16 @@ export default class AwsS3Multipart<
     { key, uploadId, signal }: UploadResultWithSignal,
     oldSignal?: AbortSignal,
   ): Promise<AwsS3Part[]> {
-    signal ??= oldSignal // eslint-disable-line no-param-reassign
+    signal ??= oldSignal
     this.#assertHost('listParts')
     throwIfAborted(signal)
 
     const filename = encodeURIComponent(key)
     return this.#client
-      .get<
-        AwsS3Part[]
-      >(`s3/multipart/${encodeURIComponent(uploadId!)}?key=${filename}`, { signal })
+      .get<AwsS3Part[]>(
+        `s3/multipart/${encodeURIComponent(uploadId!)}?key=${filename}`,
+        { signal },
+      )
       .then(assertServerError)
   }
 
@@ -517,7 +515,7 @@ export default class AwsS3Multipart<
     { key, uploadId, parts, signal }: MultipartUploadResultWithSignal,
     oldSignal?: AbortSignal,
   ): Promise<B> {
-    signal ??= oldSignal // eslint-disable-line no-param-reassign
+    signal ??= oldSignal
     this.#assertHost('completeMultipartUpload')
     throwIfAborted(signal)
 
@@ -763,13 +761,11 @@ export default class AwsS3Multipart<
         // https://github.com/transloadit/uppy/issues/5388#issuecomment-2464885562
         if (method.toUpperCase() === 'POST' && location == null) {
           // Not being able to read the Location header is not a fatal error.
-          // eslint-disable-next-line no-console
           console.error(
             '@uppy/aws-s3: Could not read the Location header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
           )
         }
         if (etag == null) {
-          // eslint-disable-next-line no-console
           console.error(
             '@uppy/aws-s3: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
           )
@@ -819,7 +815,7 @@ export default class AwsS3Multipart<
   }
 
   #uploadLocalFile(file: UppyFile<M, B>) {
-    return new Promise<void | string>((resolve, reject) => {
+    return new Promise<undefined | string>((resolve, reject) => {
       const onProgress = (bytesUploaded: number, bytesTotal: number) => {
         const latestFile = this.uppy.getFile(file.id)
         this.uppy.emit('upload-progress', latestFile, {
@@ -854,7 +850,7 @@ export default class AwsS3Multipart<
           this.uppy.log(`Download ${file.name} from ${result.location}`)
         }
 
-        resolve()
+        resolve(undefined)
       }
 
       const upload = new MultipartUploader<M, B>(file.data, {
@@ -862,9 +858,8 @@ export default class AwsS3Multipart<
         companionComm: this.#companionCommunicationQueue,
 
         log: (...args: Parameters<Uppy<M, B>['log']>) => this.uppy.log(...args),
-        getChunkSize:
-          this.opts.getChunkSize ?
-            this.opts.getChunkSize.bind(this)
+        getChunkSize: this.opts.getChunkSize
+          ? this.opts.getChunkSize.bind(this)
           : undefined,
 
         onProgress,
@@ -920,7 +915,6 @@ export default class AwsS3Multipart<
     })
   }
 
-  // eslint-disable-next-line class-methods-use-this
   #getCompanionClientArgs(file: UppyFile<M, B>) {
     return {
       ...file.remote?.body,

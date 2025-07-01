@@ -10,8 +10,7 @@
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
-    "noEmitOnError": true,
-    "skipLibCheck": true,
+    "noEmitOnError": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*"]
 }

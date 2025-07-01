@@ -1,8 +1,8 @@
 import {
   interceptCompanionUrlMetaRequest,
   interceptCompanionUrlRequest,
-  runRemoteUrlImageUploadTest,
   runRemoteUnsplashUploadTest,
+  runRemoteUrlImageUploadTest,
 } from './reusable-tests.ts'
 
 describe('Dashboard with XHR', () => {

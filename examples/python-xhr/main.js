@@ -1,6 +1,6 @@
 import Uppy from '@uppy/core'
-import Webcam from '@uppy/webcam'
 import Dashboard from '@uppy/dashboard'
+import Webcam from '@uppy/webcam'
 import XHRUpload from '@uppy/xhr-upload'
 
 import '@uppy/core/dist/style.css'

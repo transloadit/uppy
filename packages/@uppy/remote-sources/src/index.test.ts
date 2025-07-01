@@ -1,13 +1,12 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import resizeObserverPolyfill from 'resize-observer-polyfill'
 import Core from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
+import resizeObserverPolyfill from 'resize-observer-polyfill'
+import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import RemoteSources from './index.js'
 
 describe('RemoteSources', () => {
   beforeAll(() => {
     globalThis.ResizeObserver =
-      // @ts-expect-error .default is fine
       resizeObserverPolyfill.default || resizeObserverPolyfill
   })
 

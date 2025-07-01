@@ -1,15 +1,13 @@
-/* eslint-disable jsx-a11y/media-has-caption */
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, Component, type ComponentChild } from 'preact'
-import type { HTMLAttributes } from 'preact/compat'
-import SnapshotButton from './SnapshotButton.jsx'
-import RecordButton from './RecordButton.jsx'
-import RecordingLength from './RecordingLength.jsx'
+import { Component, type ComponentChild, type ComponentProps, h } from 'preact'
+import DiscardButton from './DiscardButton.js'
+import RecordButton from './RecordButton.js'
+import RecordingLength from './RecordingLength.js'
+import SnapshotButton from './SnapshotButton.js'
+import SubmitButton from './SubmitButton.js'
 import VideoSourceSelect, {
   type VideoSourceSelectProps,
-} from './VideoSourceSelect.jsx'
-import SubmitButton from './SubmitButton.jsx'
-import DiscardButton from './DiscardButton.jsx'
+} from './VideoSourceSelect.js'
 
 function isModeAvailable<T>(modes: T[], mode: any): mode is T {
   return modes.includes(mode)
@@ -89,7 +87,7 @@ class CameraScreen extends Component<CameraScreenProps> {
     const shouldShowVideoSourceDropdown =
       showVideoSourceDropdown && videoSources && videoSources.length > 1
 
-    const videoProps: HTMLAttributes<HTMLVideoElement> = {
+    const videoProps: ComponentProps<'video'> = {
       playsInline: true,
     }
 
@@ -105,7 +103,6 @@ class CameraScreen extends Component<CameraScreenProps> {
     } else {
       videoProps.muted = true
       videoProps.autoPlay = true
-      // @ts-expect-error srcObject does not exist on <video> props
       videoProps.srcObject = src
     }
     return (
@@ -130,14 +127,13 @@ class CameraScreen extends Component<CameraScreenProps> {
                 /* eslint-disable-next-line react/jsx-props-no-spreading */
                 {...videoProps}
               />
-
           }
         </div>
         <div className="uppy-Webcam-footer">
           <div className="uppy-Webcam-videoSourceContainer">
-            {shouldShowVideoSourceDropdown ?
-              VideoSourceSelect(this.props)
-            : null}
+            {shouldShowVideoSourceDropdown
+              ? VideoSourceSelect(this.props)
+              : null}
           </div>
           <div className="uppy-Webcam-buttonContainer">
             {shouldShowSnapshotButton && (
@@ -166,7 +162,6 @@ class CameraScreen extends Component<CameraScreenProps> {
             {shouldShowRecordingLength && (
               <RecordingLength
                 recordingLengthSeconds={recordingLengthSeconds}
-                i18n={i18n}
               />
             )}
           </div>

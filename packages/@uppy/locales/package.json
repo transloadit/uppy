@@ -1,9 +1,12 @@
 {
   "name": "@uppy/locales",
   "description": "Uppy language packs",
-  "version": "4.5.3",
+  "version": "4.6.0",
   "license": "MIT",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "uppy",
     "uppy-plugin",
@@ -19,5 +22,8 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

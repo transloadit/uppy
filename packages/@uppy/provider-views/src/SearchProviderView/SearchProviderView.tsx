@@ -1,9 +1,7 @@
-import { h } from 'preact'
-
 import type {
   Body,
-  Meta,
   DefinePluginOpts,
+  Meta,
   PartialTree,
   PartialTreeFile,
   PartialTreeFolderNode,
@@ -11,23 +9,22 @@ import type {
   UnknownSearchProviderPlugin,
   UnknownSearchProviderPluginState,
 } from '@uppy/core'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
+import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import SearchInput from '../SearchInput.jsx'
-import Browser from '../Browser.jsx'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import classNames from 'classnames'
+import type { h } from 'preact'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
+import Browser from '../Browser.js'
+import FooterActions from '../FooterActions.js'
+import SearchInput from '../SearchInput.js'
+import addFiles from '../utils/addFiles.js'
+import getClickedRange from '../utils/getClickedRange.js'
+import handleError from '../utils/handleError.js'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
-import handleError from '../utils/handleError.js'
-import getClickedRange from '../utils/getClickedRange.js'
-import FooterActions from '../FooterActions.jsx'
-import addFiles from '../utils/addFiles.js'
-import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 
 const defaultState: UnknownSearchProviderPluginState = {
   loading: false,
@@ -111,7 +108,6 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   tearDown(): void {
     // Nothing.
   }

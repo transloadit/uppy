@@ -10,7 +10,7 @@ export default defineConfig({
     baseUrl: 'http://localhost:1234',
     specPattern: 'cypress/integration/*.spec.ts',
 
-    setupNodeEvents (on) {
+    setupNodeEvents(on) {
       // implement node event listeners here
       installLogsPrinter(on)
 

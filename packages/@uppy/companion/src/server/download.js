@@ -14,7 +14,10 @@ const { prepareStream } = require('./helpers/utils')
 const downloadURL = async (url, allowLocalIPs, traceId, options) => {
   try {
     const protectedGot = await getProtectedGot({ allowLocalIPs })
-    const stream = protectedGot.stream.get(url, { responseType: 'json', ...options })
+    const stream = protectedGot.stream.get(url, {
+      responseType: 'json',
+      ...options,
+    })
     const { size } = await prepareStream(stream)
     return { stream, size }
   } catch (err) {

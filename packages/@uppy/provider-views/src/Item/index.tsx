@@ -1,15 +1,13 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import { h } from 'preact'
-
-import classNames from 'classnames'
-import type { I18n } from '@uppy/utils/lib/Translator'
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core'
-import GridItem from './components/GridItem.jsx'
-import ListItem from './components/ListItem.jsx'
+import type { I18n } from '@uppy/utils/lib/Translator'
+import classNames from 'classnames'
+import type { h } from 'preact'
+import GridItem from './components/GridItem.js'
+import ListItem from './components/ListItem.js'
 
 type ItemProps = {
   file: PartialTreeFile | PartialTreeFolderNode

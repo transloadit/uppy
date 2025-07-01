@@ -1,5 +1,5 @@
-import { useMemo, useSyncExternalStore } from 'react'
 import { createWebcamController, type WebcamSnapshot } from '@uppy/components'
+import { useMemo, useSyncExternalStore } from 'react'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type WebcamProps = {

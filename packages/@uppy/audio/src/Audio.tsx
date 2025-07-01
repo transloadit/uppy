@@ -1,23 +1,21 @@
-import { h } from 'preact'
-
-import { UIPlugin } from '@uppy/core'
 import type {
-  Uppy,
-  UIPluginOptions,
   Body,
   Meta,
   MinimalRequiredUppyFile,
+  UIPluginOptions,
+  Uppy,
 } from '@uppy/core'
 
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { UIPlugin } from '@uppy/core'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
-import RecordingScreen from './RecordingScreen.jsx'
-import PermissionsScreen from './PermissionsScreen.jsx'
+
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import { h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import PermissionsScreen from './PermissionsScreen.js'
+import RecordingScreen from './RecordingScreen.js'
+import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
@@ -115,8 +113,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  // eslint-disable-next-line consistent-return
-  #start = (options?: { deviceId?: string }): Promise<never> | void => {
+  #start = (options?: { deviceId?: string }): Promise<never> | undefined => {
     if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
     }
@@ -165,7 +162,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
   #startRecording = (): void => {
     // only used if supportsMediaRecorder() returned true
-    // eslint-disable-next-line compat/compat
     this.#recorder = new MediaRecorder(this.#stream!)
     this.#recordingChunks = []
     let stoppingBecauseOfMaxSize = false
@@ -370,7 +366,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
     return (
       <RecordingScreen
-        // eslint-disable-next-line react/jsx-props-no-spreading
         {...audioState}
         onChangeSource={this.#changeSource}
         onStartRecording={this.#startRecording}

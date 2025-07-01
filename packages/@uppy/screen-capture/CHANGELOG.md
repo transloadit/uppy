@@ -1,5 +1,12 @@
 # @uppy/screen-capture
 
+## 4.3.1
+
+Released: 2025-06-30
+Included in: Uppy v4.18.0
+
+- @uppy/components,@uppy/screen-capture: useScreenCapture fixes (Prakash / #5793)
+
 ## 4.3.0
 
 Released: 2025-06-02

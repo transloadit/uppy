@@ -6,6 +6,9 @@
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -30,7 +33,6 @@
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
-    "memoize-one": "^6.0.0",
     "nanoid": "^5.0.9",
     "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"
@@ -41,6 +43,7 @@
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "resize-observer-polyfill": "^1.5.0",
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
   "peerDependencies": {

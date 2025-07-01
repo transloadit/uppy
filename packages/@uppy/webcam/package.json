@@ -1,11 +1,14 @@
 {
   "name": "@uppy/webcam",
   "description": "Uppy plugin that takes photos or records videos using the device's camera.",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -31,6 +34,7 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
   "peerDependencies": {

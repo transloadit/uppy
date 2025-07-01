@@ -1,13 +1,13 @@
-import { useMemo } from 'react'
-import type {
-  DragEvent as ReactDragEvent,
-  ChangeEvent as ReactChangeEvent,
-} from 'react'
 import {
   createDropzone,
   type DropzoneOptions,
   type DropzoneReturn,
 } from '@uppy/components'
+import type {
+  ChangeEvent as ReactChangeEvent,
+  DragEvent as ReactDragEvent,
+} from 'react'
+import { useMemo } from 'react'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type TDragEvent = DragEvent & ReactDragEvent<HTMLDivElement>
@@ -21,7 +21,6 @@ export function useDropzone(
   const dropzone = useMemo(
     () => createDropzone<TDragEvent, TChangeEvent>(ctx, options),
     // We need every value on options to be memoized to avoid re-creating the dropzone on every render
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       ctx,
       options?.noClick,
@@ -30,6 +29,7 @@ export function useDropzone(
       options?.onDragLeave,
       options?.onDrop,
       options?.onFileInputChange,
+      options,
     ],
   )
 

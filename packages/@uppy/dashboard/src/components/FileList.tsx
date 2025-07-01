@@ -1,12 +1,11 @@
-import { h } from 'preact'
-import { useMemo } from 'preact/hooks'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
+import type { I18n } from '@uppy/utils/lib/Translator'
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import type { UppyFile, Uppy, State, Body, Meta } from '@uppy/core'
-import type { I18n } from '@uppy/utils/lib/Translator'
-import FileItem from './FileItem/index.jsx'
+import { h } from 'preact'
+import { useMemo } from 'preact/hooks'
 import type { DashboardState } from '../Dashboard.js'
+import FileItem from './FileItem/index.js'
 
 type FileListProps<M extends Meta, B extends Body> = {
   id: string
@@ -77,11 +76,11 @@ export default function FileList<M extends Meta, B extends Body>({
   // It's not great that this is hardcoded!
   // It's ESPECIALLY not great that this is checking against `itemsPerRow`!
   const rowHeight =
-    itemsPerRow === 1 ?
-      // Mobile
-      71
-      // 190px height + 2 * 5px margin
-    : 200
+    itemsPerRow === 1
+      ? // Mobile
+        71
+      : // 190px height + 2 * 5px margin
+        200
 
   // Sort files by file.isGhost, ghost files first, only if recoveredState is present
   const rows = useMemo(() => {

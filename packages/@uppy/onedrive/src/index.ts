@@ -1,2 +1,2 @@
-export { default } from './OneDrive.jsx'
-export type { OneDriveOptions } from './OneDrive.jsx'
+export type { OneDriveOptions } from './OneDrive.js'
+export { default } from './OneDrive.js'

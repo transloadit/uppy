@@ -1,5 +1,12 @@
 # @uppy/react
 
+## 4.4.0
+
+Released: 2025-06-30
+Included in: Uppy v4.18.0
+
+- @uppy/react,@uppy/svelte,@uppy/vue: Add useDropzone & useFileInput (Merlijn Vos / #5735)
+
 ## 4.2.2
 
 Released: 2025-03-13

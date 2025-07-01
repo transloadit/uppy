@@ -1,4 +1,4 @@
-import type { Uppy, Body, Meta } from '@uppy/core'
+import type { Body, Meta, Uppy } from '@uppy/core'
 import Emitter from 'component-emitter'
 import type { AssemblyResponse } from './index.js'
 

@@ -1,5 +1,12 @@
 # @uppy/locales
 
+## 4.6.0
+
+Released: 2025-06-30
+Included in: Uppy v4.18.0
+
+- @uppy/locales: Update pt_BR localization (Gabriel Pereira / #5780)
+
 ## 4.5.3
 
 Released: 2025-06-02

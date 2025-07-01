@@ -1,10 +1,9 @@
-/* eslint-disable react/react-in-jsx-scope */
+/** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
 import Uppy from '@uppy/core'
-/* eslint-disable-next-line no-unused-vars */
-import React, { useState } from 'react'
 import { Dashboard, DashboardModal, DragDrop } from '@uppy/react'
-import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import RemoteSources from '@uppy/remote-sources'
+import ThumbnailGenerator from '@uppy/thumbnail-generator'
+import React, { useState } from 'react'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'

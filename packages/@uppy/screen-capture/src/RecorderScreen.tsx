@@ -1,14 +1,13 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import { h, Component, type ComponentChild, Fragment } from 'preact'
 import type { Body, Meta } from '@uppy/core'
-import RecordButton from './RecordButton.jsx'
-import SubmitButton from './SubmitButton.jsx'
-import StopWatch from './StopWatch.jsx'
-import StreamStatus from './StreamStatus.jsx'
-import DiscardButton from './DiscardButton.jsx'
-
-import ScreenCapture, { type ScreenCaptureState } from './ScreenCapture.jsx'
+import { Component, type ComponentChild, Fragment, h } from 'preact'
+import DiscardButton from './DiscardButton.js'
+import RecordButton from './RecordButton.js'
+import type ScreenCapture from './ScreenCapture.js'
+import type { ScreenCaptureState } from './ScreenCapture.js'
 import ScreenshotButton from './ScreenshotButton.js'
+import StopWatch from './StopWatch.js'
+import StreamStatus from './StreamStatus.js'
+import SubmitButton from './SubmitButton.js'
 
 type RecorderScreenProps<M extends Meta, B extends Body> = {
   onStartRecording: ScreenCapture<M, B>['startRecording']
@@ -76,43 +75,42 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
       <div className="uppy uppy-ScreenCapture-container">
         <div className="uppy-ScreenCapture-mediaContainer">
           <StreamStatus {...this.props} />
-          {
-            capturedScreenshotUrl && !recording && !recordedVideo ?
-              <div className="uppy-ScreenCapture-imageContainer">
-                <img
-                  src={capturedScreenshotUrl}
-                  className="uppy-ScreenCapture-media"
-                  alt="screenshotPreview"
-                />
-              </div>
-              // eslint-disable-next-line jsx-a11y/media-has-caption
-            : <video
-                ref={(videoElement) => {
-                  this.videoElement = videoElement
-                }}
+          {capturedScreenshotUrl && !recording && !recordedVideo ? (
+            <div className="uppy-ScreenCapture-imageContainer">
+              <img
+                src={capturedScreenshotUrl}
                 className="uppy-ScreenCapture-media"
-                {...videoProps}
+                alt="screenshotPreview"
               />
-
-          }
+            </div>
+          ) : (
+            <video
+              ref={(videoElement) => {
+                this.videoElement = videoElement
+              }}
+              className="uppy-ScreenCapture-media"
+              {...videoProps}
+            />
+          )}
           <div>
             <StopWatch {...this.props} />
           </div>
         </div>
 
         <div className="uppy-ScreenCapture-buttonContainer">
-          {recordedVideo || capturedScreenshotUrl ?
+          {recordedVideo || capturedScreenshotUrl ? (
             <Fragment>
               <SubmitButton {...this.props} />
               <DiscardButton {...this.props} />
             </Fragment>
-          : <Fragment>
+          ) : (
+            <Fragment>
               {enableScreenshots && !recording && (
                 <ScreenshotButton {...this.props} />
               )}
               <RecordButton {...this.props} />
             </Fragment>
-          }
+          )}
         </div>
       </div>
     )

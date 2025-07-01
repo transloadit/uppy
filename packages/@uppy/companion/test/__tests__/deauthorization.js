@@ -10,19 +10,19 @@ afterAll(() => {
 })
 
 describe('handle deauthorization callback', () => {
-  nock('https://api.zoom.us')
-    .post('/oauth/data/compliance')
-    .reply(200)
+  nock('https://api.zoom.us').post('/oauth/data/compliance').reply(200)
 
   test('providers without support for callback endpoint', () => {
-    return request(authServer)
-      .post('/dropbox/deauthorization/callback')
-      .set('Content-Type', 'application/json')
-      .send({
-        foo: 'bar',
-      })
-    // @todo consider receiving 501 instead
-      .expect(500)
+    return (
+      request(authServer)
+        .post('/dropbox/deauthorization/callback')
+        .set('Content-Type', 'application/json')
+        .send({
+          foo: 'bar',
+        })
+        // @todo consider receiving 501 instead
+        .expect(500)
+    )
   })
 
   test('validate that request credentials match', () => {
@@ -36,7 +36,8 @@ describe('handle deauthorization callback', () => {
           user_data_retention: 'false',
           account_id: 'EabCDEFghiLHMA',
           user_id: 'z9jkdsfsdfjhdkfjQ',
-          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          signature:
+            '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
           client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
         },
@@ -55,7 +56,8 @@ describe('handle deauthorization callback', () => {
           user_data_retention: 'false',
           account_id: 'EabCDEFghiLHMA',
           user_id: 'z9jkdsfsdfjhdkfjQ',
-          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          signature:
+            '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
           client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
         },
@@ -85,7 +87,8 @@ describe('handle deauthorization callback', () => {
           user_data_retention: 'false',
           account_id: 'EabCDEFghiLHMA',
           user_id: 'z9jkdsfsdfjhdkfjQ',
-          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          signature:
+            '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
           client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
         },
@@ -104,7 +107,8 @@ describe('handle deauthorization callback', () => {
           user_data_retention: 'false',
           account_id: 'EabCDEFghiLHMA',
           user_id: 'z9jkdsfsdfjhdkfjQ',
-          signature: '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
+          signature:
+            '827edc3452044f0bc86bdd5684afb7d1e6becfa1a767f24df1b287853cf73000',
           deauthorization_time: '2019-06-17T13:52:28.632Z',
           client_id: 'ADZ9k9bTWmGUoUbECUKU_a',
         },

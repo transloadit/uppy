@@ -1,5 +1,12 @@
 # @uppy/provider-views
 
+## 4.4.5
+
+Released: 2025-06-30
+Included in: Uppy v4.18.0
+
+- @uppy/provider-views: improve metadata handling in Google Photos Picker (ben rosenbaum / #5769)
+
 ## 4.4.4
 
 Released: 2025-06-02

@@ -1,7 +1,6 @@
-import debounce from 'lodash/debounce.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
 import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
+import debounce from 'lodash/debounce.js'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 type $TSFixMe = any

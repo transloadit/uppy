@@ -2,8 +2,8 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
-  "references": [],
+  "references": []
 }

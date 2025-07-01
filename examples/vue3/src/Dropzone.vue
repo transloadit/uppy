@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDropzone, useFileInput, ProviderIcon } from '@uppy/vue'
+import { ProviderIcon, useDropzone, useFileInput } from '@uppy/vue'
 
 const props = defineProps<{
   openModal: (plugin: 'webcam' | 'dropbox' | 'screen-capture') => void

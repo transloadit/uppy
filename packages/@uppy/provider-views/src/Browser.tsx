@@ -1,8 +1,3 @@
-import { h } from 'preact'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore untyped
-import VirtualList from '@uppy/utils/lib/VirtualList'
 import type {
   Body,
   Meta,
@@ -10,9 +5,12 @@ import type {
   PartialTreeFolderNode,
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
+// @ts-ignore untyped
+import VirtualList from '@uppy/utils/lib/VirtualList'
+import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
-import Item from './Item/index.jsx'
-import ProviderView from './ProviderView/ProviderView.jsx'
+import Item from './Item/index.js'
+import type ProviderView from './ProviderView/ProviderView.js'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -113,7 +111,6 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       <ul
         className="uppy-ProviderBrowser-list"
         onScroll={handleScroll}
-        role="listbox"
         // making <ul> not focusable for firefox
         tabIndex={-1}
       >
