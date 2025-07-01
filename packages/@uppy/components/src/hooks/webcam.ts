@@ -151,7 +151,7 @@ export function createWebcamController(
   const getDiscardButtonProps = () => ({
     type: 'button' as const,
     onClick: () => {
-      plugin.discardRecordedVideo()
+      plugin.discardRecordedMedia()
     },
     disabled: plugin.getStatus() !== 'captured',
   })
