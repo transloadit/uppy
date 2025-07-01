@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
 import Uppy from '@uppy/core'
 import { Dashboard, DashboardModal, DragDrop } from '@uppy/react'
 import RemoteSources from '@uppy/remote-sources'

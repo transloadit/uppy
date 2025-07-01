@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
 import Uppy from '@uppy/core'
 import {
   Dropzone,

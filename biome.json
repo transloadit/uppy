@@ -31,11 +31,7 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "off",
-        "noAsyncPromiseExecutor": "off"
-      },
-      "nursery": {
-        "useUniqueElementIds": "off"
+        "noExplicitAny": "off"
       },
       "correctness": {
         "noUnusedImports": "off",
