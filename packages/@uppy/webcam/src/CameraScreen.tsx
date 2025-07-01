@@ -108,26 +108,26 @@ class CameraScreen extends Component<CameraScreenProps> {
     return (
       <div className="uppy uppy-Webcam-container">
         <div className="uppy-Webcam-videoContainer">
-          {
-            capturedSnapshot && !recording && !recordedVideo ?
-              <div className="uppy-Webcam-imageContainer">
-                <img
-                  src={capturedSnapshot}
-                  className="uppy-Webcam-video"
-                  alt="capturedSnapshot"
-                />
-              </div>
-              // eslint-disable-next-line jsx-a11y/media-has-caption
-            : <video
-                /* eslint-disable-next-line no-return-assign */
-                ref={(videoElement) => (this.videoElement = videoElement!)}
-                className={`uppy-Webcam-video  ${
-                  mirror ? 'uppy-Webcam-video--mirrored' : ''
-                }`}
-                /* eslint-disable-next-line react/jsx-props-no-spreading */
-                {...videoProps}
+          {capturedSnapshot && !recording && !recordedVideo ? (
+            <div className="uppy-Webcam-imageContainer">
+              <img
+                src={capturedSnapshot}
+                className="uppy-Webcam-video"
+                alt="capturedSnapshot"
               />
-          }
+            </div>
+          ) : (
+            // eslint-disable-next-line jsx-a11y/media-has-caption
+            <video
+              /* eslint-disable-next-line no-return-assign */
+              ref={(videoElement) => (this.videoElement = videoElement!)}
+              className={`uppy-Webcam-video  ${
+                mirror ? 'uppy-Webcam-video--mirrored' : ''
+              }`}
+              /* eslint-disable-next-line react/jsx-props-no-spreading */
+              {...videoProps}
+            />
+          )}
         </div>
         <div className="uppy-Webcam-footer">
           <div className="uppy-Webcam-videoSourceContainer">
