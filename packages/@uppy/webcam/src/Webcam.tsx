@@ -13,15 +13,13 @@ import type {
 import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
-import isMobile from 'is-mobile'
+import { isMobile } from 'is-mobile'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
-import CameraIcon from './CameraIcon.jsx'
-import CameraScreen from './CameraScreen.jsx'
-import PermissionsScreen from './PermissionsScreen.jsx'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import CameraIcon from './CameraIcon.js'
+import CameraScreen from './CameraScreen.js'
+import PermissionsScreen from './PermissionsScreen.js'
+import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
 /**
@@ -53,7 +51,7 @@ function isImageMimeType(mimeType?: string): boolean {
 
 function getMediaDevices() {
   // bug in the compatibility data
-  // eslint-disable-next-line compat/compat
+
   return navigator.mediaDevices
 }
 
@@ -93,7 +91,6 @@ export interface WebcamState {
   currentDeviceId: string | MediaStreamTrack | null | undefined
   recordedVideo: null | string
   isRecording: boolean
-  status: WebcamStatus
   [key: string]: unknown
 }
 
@@ -127,7 +124,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private mediaDevices
 
-  public supportsUserMedia
+  private supportsUserMedia
 
   private protocol: 'http' | 'https'
 
@@ -208,8 +205,22 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       recordingLengthSeconds: 0,
       videoSources: [],
       currentDeviceId: null,
-      status: 'init',
     })
+  }
+
+  getStatus(): WebcamStatus {
+    const {
+      recordedVideo,
+      capturedSnapshot,
+      isRecording,
+      cameraReady,
+      cameraError,
+    } = this.getPluginState()
+    if (isRecording) return 'recording'
+    if (recordedVideo != null || capturedSnapshot != null) return 'captured'
+    if (cameraReady) return 'ready'
+    if (cameraError) return 'error'
+    return 'init'
   }
 
   setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
@@ -313,14 +324,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.setPluginState({
             currentDeviceId,
             cameraReady: true,
-            status: 'ready',
           })
         })
         .catch((err) => {
           this.setPluginState({
             cameraReady: false,
             cameraError: err,
-            status: 'error',
           })
           this.uppy.info(err.message, 'error')
         })
@@ -361,7 +370,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   startRecording(): void {
     // only used if supportsMediaRecorder() returned true
-    // eslint-disable-next-line compat/compat
+
     this.recorder = new MediaRecorder(
       this.stream!,
       this.getMediaRecorderOptions(),
@@ -416,7 +425,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({
       isRecording: true,
-      status: 'recording',
     })
   }
 
@@ -446,9 +454,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.capturedMediaFile = file
           // create object url for capture result preview
           this.setPluginState({
-            // eslint-disable-next-line compat/compat
             recordedVideo: URL.createObjectURL(file.data as Blob),
-            status: 'captured',
           })
           this.#enableMirror = false
         } catch (err) {
@@ -472,7 +478,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   discardRecordedVideo(): void {
-    this.setPluginState({ recordedVideo: null, status: 'ready' })
+    this.setPluginState({ recordedVideo: null })
 
     if (this.opts.mirror) {
       this.#enableMirror = true
@@ -522,7 +528,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       recordedVideo: null,
       isRecording: false,
       recordingLengthSeconds: 0,
-      status: 'init',
     })
   }
 
@@ -571,7 +576,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       const tagFile = await this.getImage()
       this.captureInProgress = false
       this.uppy.addFile(tagFile)
-      this.setPluginState({ status: 'captured' })
     } catch (error) {
       // Logging the error, except restrictions, which is handled in Core
       this.captureInProgress = false
@@ -727,16 +731,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         showNativePhotoCameraButton: isModeAvailable(modes, 'picture'),
         nativeCameraFacingMode: videoConstraints?.facingMode,
       })
-      // For mobile native camera, the webcam plugin itself isn't really "started"
-      // so 'init' might be the most appropriate status.
-      this.setPluginState({ status: 'init' })
       return
     }
 
     this.setPluginState({
       cameraReady: false,
       recordingLengthSeconds: 0,
-      status: 'init',
     })
 
     if (target) {

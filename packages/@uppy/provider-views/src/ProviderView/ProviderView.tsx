@@ -15,9 +15,9 @@ import classNames from 'classnames'
 import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import AuthView from './AuthView.jsx'
-import Header from './Header.jsx'
-import Browser from '../Browser.jsx'
+import AuthView from './AuthView.js'
+import Header from './Header.js'
+import Browser from '../Browser.js'
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore We don't want TS to generate types for the package.json
@@ -26,11 +26,12 @@ import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
 import handleError from '../utils/handleError.js'
 import getClickedRange from '../utils/getClickedRange.js'
-import SearchInput from '../SearchInput.jsx'
-import FooterActions from '../FooterActions.jsx'
+import SearchInput from '../SearchInput.js'
+import FooterActions from '../FooterActions.js'
 import addFiles from '../utils/addFiles.js'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
+import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 
 export function defaultPickerIcon(): h.JSX.Element {
   return (
@@ -407,6 +408,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return filtered
   }
 
+  getBreadcrumbs = (): PartialTreeFolder[] => {
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    return getBreadcrumbs(partialTree, currentFolderId)
+  }
+
+  getSelectedAmount = (): number => {
+    const { partialTree } = this.plugin.getPluginState()
+    return getNumberOfSelectedFiles(partialTree)
+  }
+
   validateAggregateRestrictions = (partialTree: PartialTree) => {
     const checkedFiles = partialTree.filter(
       (item) => item.type === 'file' && item.status === 'checked',
@@ -442,9 +453,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, currentFolderId, username, searchString } =
-      this.plugin.getPluginState()
-    const breadcrumbs = getBreadcrumbs(partialTree, currentFolderId)
+    const { partialTree, username, searchString } = this.plugin.getPluginState()
+    const breadcrumbs = this.getBreadcrumbs()
 
     return (
       <div

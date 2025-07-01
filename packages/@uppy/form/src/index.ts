@@ -14,9 +14,7 @@ import toArray from '@uppy/utils/lib/toArray'
 // @ts-ignore untyped
 import getFormData from 'get-form-data'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 type Result<M extends Meta, B extends Body> = Parameters<
   UppyEventMap<M, B>['complete']

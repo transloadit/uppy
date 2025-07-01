@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "xhr",
@@ -29,6 +32,7 @@
   },
   "devDependencies": {
     "nock": "^13.1.0",
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
   "peerDependencies": {

@@ -5,7 +5,7 @@ import { useMemo } from 'preact/hooks'
 import VirtualList from '@uppy/utils/lib/VirtualList'
 import type { UppyFile, Uppy, State, Body, Meta } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import FileItem from './FileItem/index.jsx'
+import FileItem from './FileItem/index.js'
 import type { DashboardState } from '../Dashboard.js'
 
 type FileListProps<M extends Meta, B extends Body> = {

@@ -1,6 +1,7 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
 import type { WebcamState, WebcamStatus } from '@uppy/webcam'
 import Webcam from '@uppy/webcam'
+import { Subscribers } from './utils.js'
 
 export type { WebcamStatus }
 
@@ -34,25 +35,6 @@ export type WebcamStore = {
 }
 
 const videoId = 'uppy-webcam-video'
-
-class Subscribers {
-  private subscribers: Set<() => void> = new Set()
-
-  add = (listener: () => void): (() => void) => {
-    this.subscribers.add(listener)
-    return () => this.subscribers.delete(listener)
-  }
-
-  emit = (): void => {
-    for (const listener of this.subscribers) {
-      listener()
-    }
-  }
-
-  clear = (): void => {
-    this.subscribers.clear()
-  }
-}
 
 export function createWebcamController(
   uppy: Uppy,
@@ -94,7 +76,8 @@ export function createWebcamController(
   const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
     plugin.getVideoElement = () => ref
-    const { status, recordedVideo } = plugin.getPluginState()
+    const { recordedVideo } = plugin.getPluginState()
+    const status = plugin.getStatus()
 
     if (status === 'captured' && recordedVideo) {
       if (ref) {
@@ -135,8 +118,7 @@ export function createWebcamController(
       onSubmit?.()
     },
     disabled:
-      plugin.getPluginState().status !== 'ready' ||
-      plugin.getPluginState().isRecording,
+      plugin.getStatus() !== 'ready' || plugin.getPluginState().isRecording,
   })
 
   const getRecordButtonProps = () => ({
@@ -145,8 +127,7 @@ export function createWebcamController(
       plugin.startRecording()
     },
     disabled:
-      plugin.getPluginState().status !== 'ready' ||
-      plugin.getPluginState().isRecording,
+      plugin.getStatus() !== 'ready' || plugin.getPluginState().isRecording,
   })
 
   const getStopRecordingButtonProps = () => ({
@@ -154,7 +135,7 @@ export function createWebcamController(
     onClick: () => {
       plugin.stopRecording()
     },
-    disabled: plugin.getPluginState().status !== 'recording',
+    disabled: plugin.getStatus() !== 'recording',
   })
 
   const getSubmitButtonProps = () => ({
@@ -164,7 +145,7 @@ export function createWebcamController(
       plugin.stop()
       onSubmit?.()
     },
-    disabled: plugin.getPluginState().status !== 'captured',
+    disabled: plugin.getStatus() !== 'captured',
   })
 
   const getDiscardButtonProps = () => ({
@@ -172,14 +153,11 @@ export function createWebcamController(
     onClick: () => {
       plugin.discardRecordedVideo()
     },
-    disabled: plugin.getPluginState().status !== 'captured',
+    disabled: plugin.getStatus() !== 'captured',
   })
 
-  // Keep a cached snapshot so that the reference stays stable when nothing
-  // has changed, as expected by `useSyncExternalStore` from React
-  let cachedState = plugin.getPluginState()
-  let snapshot: WebcamSnapshot = {
-    state: cachedState,
+  const getSnapshot = (): WebcamSnapshot => ({
+    state: plugin.getPluginState(),
     stop,
     start,
     getVideoProps,
@@ -188,22 +166,22 @@ export function createWebcamController(
     getStopRecordingButtonProps,
     getSubmitButtonProps,
     getDiscardButtonProps,
-  }
+  })
 
-  const getSnapshot = () => {
-    const nextState = plugin.getPluginState()
+  // Keep a cached snapshot so that the reference stays stable when nothing
+  // has changed, as expected by `useSyncExternalStore` from React
+  let cachedSnapshot = getSnapshot()
 
-    // If the reference hasn't changed we can safely return the cached
+  const getCachedSnapshot = () => {
+    const nextSnapshot = getSnapshot()
+
+    // If the reference hasn't changed we need to return the cached
     // snapshot to avoid unnecessary re-renders.
-    if (nextState === cachedState) return snapshot
+    if (nextSnapshot.state === cachedSnapshot.state) return cachedSnapshot
 
-    cachedState = nextState
-    snapshot = {
-      ...snapshot,
-      state: nextState,
-    }
-    return snapshot
+    cachedSnapshot = nextSnapshot
+    return cachedSnapshot
   }
 
-  return { subscribe: subscribers.add, getSnapshot }
+  return { subscribe: subscribers.add, getSnapshot: getCachedSnapshot }
 }

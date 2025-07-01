@@ -4,14 +4,10 @@
 import { useDropzone, useFileInput, ProviderIcon } from '@uppy/react'
 
 export interface CustomDropzoneProps {
-  openWebcamModal: () => void
-  openScreenCaptureModal: () => void
+  openModal: (plugin: 'webcam' | 'dropbox' | 'screen-capture') => void
 }
 
-export function CustomDropzone({
-  openWebcamModal,
-  openScreenCaptureModal,
-}: CustomDropzoneProps) {
+export function CustomDropzone({ openModal }: CustomDropzoneProps) {
   const { getRootProps, getInputProps } = useDropzone({ noClick: true })
   const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
 
@@ -34,9 +30,10 @@ export function CustomDropzone({
             </div>
             Device
           </button>
+
           <button
             type="button"
-            onClick={openWebcamModal}
+            onClick={() => openModal('webcam')}
             className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
           >
             <div className="bg-white shadow-md rounded-md p-1">
@@ -44,15 +41,27 @@ export function CustomDropzone({
             </div>
             Webcam
           </button>
+
           <button
             type="button"
-            onClick={openScreenCaptureModal}
+            onClick={() => openModal('screen-capture')}
             className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
           >
             <div className="bg-white shadow-md rounded-md p-1">
               <ProviderIcon provider="screen-capture" fill="#FF5733" />
             </div>
             Screen Capture
+          </button>
+
+          <button
+            type="button"
+            onClick={() => openModal('dropbox')}
+            className="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+          >
+            <div className="bg-white shadow-md rounded-md p-1">
+              <ProviderIcon provider="dropbox" />
+            </div>
+            Dropbox
           </button>
         </div>
       </div>

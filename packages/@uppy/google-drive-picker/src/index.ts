@@ -1,1 +1,1 @@
-export { default } from './GoogleDrivePicker.jsx'
+export { default } from './GoogleDrivePicker.js'

@@ -1,27 +1,20 @@
 <script lang="ts">
   import MediaCapture from './MediaCapture.svelte'
-  import { onDestroy, untrack } from 'svelte'
+  import { untrack } from 'svelte'
   import { useScreenCapture } from '@uppy/svelte'
 
   interface Props {
-    isOpen: boolean
     close: () => void
   }
 
-  const { isOpen, close }: Props = $props()
+  const { close }: Props = $props()
   const screenCaptureStore = useScreenCapture({ onSubmit: close })
 
   $effect(() => {
-    if (isOpen) {
-      // Use untrack to not trigger the effect again
-      untrack(() => screenCaptureStore.start())
-    } else {
+    untrack(() => screenCaptureStore.start())
+    return () => {
       untrack(() => screenCaptureStore.stop())
     }
-  })
-
-  onDestroy(() => {
-    untrack(() => screenCaptureStore.stop())
   })
 </script>
 

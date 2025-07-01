@@ -2,22 +2,17 @@
   "compilerOptions": {
     "composite": true,
     "incremental": true,
-    "target": "ESnext",
-    "module": "preserve",
-    "lib": ["dom", "ESnext"],
+    "target": "ESNext",
+    "module": "NodeNext",
     "resolveJsonModule": true,
     "useUnknownInCatchVariables": false,
-    "allowJs": false,
     "declaration": true,
-    "emitDeclarationOnly": true,
     "declarationMap": true,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "noImplicitAny": true,
-    "noImplicitThis": true,
+    "types": ["preact"],
     "strict": true,
     "verbatimModuleSyntax": true,
-    "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   }
 }

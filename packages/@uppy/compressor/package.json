@@ -35,6 +35,10 @@
     "access": "public"
   },
   "devDependencies": {
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
   }
 }

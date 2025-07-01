@@ -11,8 +11,8 @@ import type {
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import { useEffect, useState } from 'preact/hooks'
-import Item from './Item/index.jsx'
-import ProviderView from './ProviderView/ProviderView.jsx'
+import Item from './Item/index.js'
+import ProviderView from './ProviderView/ProviderView.js'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]

@@ -66,7 +66,6 @@ export default function ItemIcon({
         <img
           src={itemIconString}
           alt={alt}
-          // @ts-expect-error TS does not understand but attribute exists here.
           referrerPolicy="no-referrer"
           loading="lazy"
           width={16}

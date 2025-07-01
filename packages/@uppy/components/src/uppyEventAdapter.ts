@@ -1,5 +1,5 @@
 import Uppy, { type UppyEventMap } from '@uppy/core'
-import type { UploadStatus } from './types'
+import type { UploadStatus } from './types.js'
 
 export function createUppyEventAdapter({
   uppy,
@@ -12,6 +12,11 @@ export function createUppyEventAdapter({
 }): { cleanup: () => void } {
   const onFileAdded = () => {
     onStatusChange('ready')
+  }
+  const onFileRemoved = () => {
+    if (uppy.getFiles().length === 0) {
+      onStatusChange('init')
+    }
   }
   const onUploadStarted = () => {
     onStatusChange('uploading')
@@ -43,6 +48,7 @@ export function createUppyEventAdapter({
   }
 
   uppy.on('file-added', onFileAdded)
+  uppy.on('file-removed', onFileRemoved)
   uppy.on('progress', onProgress)
   uppy.on('upload', onUploadStarted)
   uppy.on('complete', onComplete)

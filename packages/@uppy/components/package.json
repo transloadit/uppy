@@ -1,7 +1,7 @@
 {
   "name": "@uppy/components",
   "description": "Headless Uppy components, made in Preact",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -21,12 +21,14 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
+    "build": "tsc --build tsconfig.build.json",
     "build:tailwind": "tailwindcss -i ./src/input.css -o ./dist/styles.css"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.0.6",
     "@webcam/core": "^1.0.1",
     "clsx": "^2.1.1",
+    "dequal": "^2.0.3",
     "preact": "^10.5.13",
     "pretty-bytes": "^6.1.1",
     "tailwindcss": "^4.0.6"
@@ -35,6 +37,7 @@
     "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/image-editor": "workspace:^",
+    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^"
   },
@@ -48,11 +51,17 @@
     "@uppy/image-editor": {
       "optional": true
     },
+    "@uppy/remote-sources": {
+      "optional": true
+    },
     "@uppy/screen-capture": {
       "optional": true
     },
     "@uppy/webcam": {
       "optional": true
     }
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

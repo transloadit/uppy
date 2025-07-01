@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable react/button-has-type */
 /* eslint-disable react/jsx-props-no-spreading */
@@ -13,7 +14,10 @@ import {
 import Uppy from '@uppy/core'
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
+import UppyRemoteSources from '@uppy/remote-sources'
+
 import UppyScreenCapture from '@uppy/screen-capture'
+import { RemoteSource } from './RemoteSource.js'
 import Webcam from './Webcam.tsx'
 import ScreenCapture from './ScreenCapture.tsx'
 import CustomDropzone from './CustomDropzone.tsx'
@@ -27,48 +31,24 @@ function App() {
       .use(Tus, {
         endpoint: 'https://tusd.tusdemo.net/files/',
       })
-      .use(UppyScreenCapture, {
-        preferredVideoMimeType: 'video/webm',
-        displayMediaConstraints: {
-          video: {
-            width: 1280,
-            height: 720,
-            frameRate: {
-              ideal: 3,
-              max: 5,
-            },
-          },
-          audio: false,
-        },
-        enableScreenshots: true,
-        preferredImageMimeType: 'image/webp',
-      })
-      .use(UppyWebcam),
+      .use(UppyWebcam)
+      .use(UppyScreenCapture)
+      .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
   )
 
-  const webcamDialogRef = useRef<HTMLDialogElement>(null)
-  const screenCaptureDialogRef = useRef<HTMLDialogElement>(null)
-  const [isWebcamOpen, setIsWebcamOpen] = useState(false)
-  const [isScreenCaptureOpen, setIsScreenCaptureOpen] = useState(false)
+  const dialogRef = useRef<HTMLDialogElement>(null)
+  const [modalPlugin, setModalPlugin] = useState<
+    'webcam' | 'dropbox' | 'screen-capture' | null
+  >(null)
 
-  function openWebcamModal() {
-    setIsWebcamOpen(true)
-    webcamDialogRef.current?.showModal()
+  function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
+    setModalPlugin(plugin)
+    dialogRef.current?.showModal()
   }
 
-  function closeWebcamModal() {
-    setIsWebcamOpen(false)
-    webcamDialogRef.current?.close()
-  }
-
-  function openScreenCaptureModal() {
-    setIsScreenCaptureOpen(true)
-    screenCaptureDialogRef.current?.showModal()
-  }
-
-  function closeScreenCaptureModal() {
-    setIsScreenCaptureOpen(false)
-    screenCaptureDialogRef.current?.close()
+  function closeModal() {
+    setModalPlugin(null)
+    dialogRef.current?.close()
   }
 
   return (
@@ -79,20 +59,21 @@ function App() {
         <UploadButton />
 
         <dialog
-          ref={webcamDialogRef}
+          ref={dialogRef}
           className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
         >
-          <Webcam isOpen={isWebcamOpen} close={() => closeWebcamModal()} />
-        </dialog>
-
-        <dialog
-          ref={screenCaptureDialogRef}
-          className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
-        >
-          <ScreenCapture
-            isOpen={isScreenCaptureOpen}
-            close={() => closeScreenCaptureModal()}
-          />
+          {(() => {
+            switch (modalPlugin) {
+              case 'webcam':
+                return <Webcam close={() => closeModal()} />
+              case 'dropbox':
+                return <RemoteSource id="Dropbox" close={() => closeModal()} />
+              case 'screen-capture':
+                return <ScreenCapture close={() => closeModal()} />
+              default:
+                return null
+            }
+          })()}
         </dialog>
 
         <article>
@@ -109,11 +90,7 @@ function App() {
 
         <article>
           <h2 className="text-2xl my-4">With custom dropzone</h2>
-          <CustomDropzone
-            openWebcamModal={() => openWebcamModal()}
-            openScreenCaptureModal={() => openScreenCaptureModal()}
-          />
-          <FilesList />
+          <CustomDropzone openModal={(plugin) => openModal(plugin)} />
         </article>
       </main>
     </UppyContextProvider>

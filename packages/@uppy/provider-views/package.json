@@ -1,11 +1,14 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "4.4.4",
+  "version": "4.4.5",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "uppy"
@@ -29,6 +32,7 @@
     "@types/gapi": "^0.0.47",
     "@types/google.accounts": "^0.0.14",
     "@types/google.picker": "^0.0.42",
+    "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
   "peerDependencies": {

@@ -11,6 +11,7 @@
     "@tailwindcss/vite": "^4.0.9",
     "@uppy/core": "workspace:*",
     "@uppy/react": "workspace:*",
+    "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/webcam": "workspace:*",

@@ -25,9 +25,7 @@ import type {
 } from './utils.js'
 import createSignedURL from './createSignedURL.js'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
   s3Multipart: UploadResult

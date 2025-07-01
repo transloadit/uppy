@@ -2,11 +2,10 @@
   import { useDropzone, useFileInput, ProviderIcon } from '@uppy/svelte'
 
   interface Props {
-    openWebcamModal: () => void
-    openScreenCaptureModal: () => void
+    openModal: (plugin: 'webcam' | 'dropbox' | 'screen-capture') => void
   }
 
-  const { openWebcamModal, openScreenCaptureModal }: Props = $props()
+  const { openModal }: Props = $props()
 
   const { getRootProps, getInputProps } = useDropzone({ noClick: true })
   const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
@@ -32,7 +31,7 @@
       </button>
 
       <button
-        onclick={openWebcamModal}
+        onclick={() => openModal('webcam')}
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
         <div class="bg-white shadow-md rounded-md p-1">
@@ -42,13 +41,23 @@
       </button>
 
       <button
-        onclick={openScreenCaptureModal}
+        onclick={() => openModal('screen-capture')}
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
         <div class="bg-white shadow-md rounded-md p-1">
           <ProviderIcon provider="screen-capture" fill="#FF69B4" />
         </div>
         Screen Capture
+      </button>
+
+      <button
+        onclick={() => openModal('dropbox')}
+        class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+      >
+        <div class="bg-white shadow-md rounded-md p-1">
+          <ProviderIcon provider="dropbox" />
+        </div>
+        Dropbox
       </button>
     </div>
   </div>

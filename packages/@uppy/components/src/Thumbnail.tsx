@@ -2,7 +2,7 @@
 import { h } from 'preact'
 import { useMemo, useEffect } from 'preact/hooks'
 import type { Body, Meta, UppyFile } from '@uppy/core'
-import type { UppyContext } from './types'
+import type { UppyContext } from './types.js'
 
 export type ThumbnailProps = {
   file: UppyFile<Meta, Body>
@@ -33,9 +33,15 @@ export default function Thumbnail(props: ThumbnailProps) {
   const isPDF = fileTypeGeneral === 'application' && fileTypeSpecific === 'pdf'
 
   const objectUrl = useMemo(() => {
-    if (!props.images) return ''
+    if (!props.images) {
+      return ''
+    }
+    if (props.file.isRemote) {
+      return props.file.preview
+    }
     return URL.createObjectURL(props.file.data)
-  }, [props.file.data, props.images])
+  }, [props.file.data, props.images, props.file.isRemote, props.file.preview])
+
   const showThumbnail = props.images && isImage && objectUrl
 
   useEffect(() => {

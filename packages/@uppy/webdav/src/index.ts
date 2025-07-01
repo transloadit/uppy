@@ -1,1 +1,1 @@
-export { default } from './Webdav.jsx'
+export { default } from './Webdav.js'
