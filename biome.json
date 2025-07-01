@@ -16,8 +16,6 @@
       "!packages/**/{dist,lib}/**",
       "!node_modules",
       "!.svelte-kit",
-      "!**/*.vue",
-      "!**/*.svelte",
       "!packages/@uppy/components/src/input.css"
     ]
   },
@@ -28,6 +26,7 @@
   },
   "linter": {
     "enabled": true,
+    "includes": ["!**/*.vue", "!**/*.svelte"],
     "rules": {
       "recommended": true,
       "suspicious": {
