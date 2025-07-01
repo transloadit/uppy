@@ -6,6 +6,6 @@
     "allowJs": true
   },
   "include": ["./src/**/*.*"],
-  "exclude": ["./src/**/*.test.ts"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.test.js"],
   "references": []
 }

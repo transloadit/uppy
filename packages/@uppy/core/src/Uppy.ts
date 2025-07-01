@@ -40,9 +40,7 @@ import {
   defaultOptions as defaultRestrictionOptions,
   RestrictionError,
 } from './Restricter.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
 import type BasePlugin from './BasePlugin.js'

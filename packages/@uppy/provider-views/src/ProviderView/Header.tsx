@@ -3,8 +3,8 @@ import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
 import classNames from 'classnames'
-import User from './User.jsx'
-import Breadcrumbs from '../Breadcrumbs.jsx'
+import User from './User.js'
+import Breadcrumbs from '../Breadcrumbs.js'
 import type ProviderView from './ProviderView.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {

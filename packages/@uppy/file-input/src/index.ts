@@ -1,2 +1,2 @@
-export { default } from './FileInput.jsx'
-export type { FileInputOptions } from './FileInput.jsx'
+export { default } from './FileInput.js'
+export type { FileInputOptions } from './FileInput.js'

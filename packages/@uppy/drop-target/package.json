@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -31,5 +34,8 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

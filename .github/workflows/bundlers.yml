@@ -97,12 +97,13 @@ jobs:
       - name: Add Rollup as a dev dependency
         run: >-
           npm i --save-dev @rollup/plugin-commonjs @rollup/plugin-node-resolve
-          rollup@${{matrix.bundler-version}}
+          @rollup/plugin-json rollup@${{matrix.bundler-version}}
       - run: npx rollup --version
       - name: Create Rollup config file
         run: >-
           echo ' import cjs from "@rollup/plugin-commonjs"; import { nodeResolve
-          } from "@rollup/plugin-node-resolve";
+          } from "@rollup/plugin-node-resolve"; import json from
+          "@rollup/plugin-json";
 
           export default {
             input: "./lib/index.js",
@@ -110,6 +111,7 @@ jobs:
               file: "/dev/null",
             },
             plugins: [
+              json(),
               cjs(),
               nodeResolve({ browser: true, exportConditions: ["browser"] }),
             ],

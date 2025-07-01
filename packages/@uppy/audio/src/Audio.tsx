@@ -12,12 +12,10 @@ import type {
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
-import RecordingScreen from './RecordingScreen.jsx'
-import PermissionsScreen from './PermissionsScreen.jsx'
+import RecordingScreen from './RecordingScreen.js'
+import PermissionsScreen from './PermissionsScreen.js'
 import locale from './locale.js'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
@@ -165,7 +163,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
 
   #startRecording = (): void => {
     // only used if supportsMediaRecorder() returned true
-    // eslint-disable-next-line compat/compat
     this.#recorder = new MediaRecorder(this.#stream!)
     this.#recordingChunks = []
     let stoppingBecauseOfMaxSize = false

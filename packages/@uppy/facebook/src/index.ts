@@ -1,2 +1,2 @@
-export { default } from './Facebook.jsx'
-export type { FacebookOptions } from './Facebook.jsx'
+export { default } from './Facebook.js'
+export type { FacebookOptions } from './Facebook.js'
