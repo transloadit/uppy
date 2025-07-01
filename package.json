@@ -62,7 +62,6 @@
     "@types/webpack-dev-server": "^4",
     "@vitest/utils": "patch:@vitest/utils@npm%3A1.2.1#./.yarn/patches/@vitest-utils-npm-1.2.1-3028846845.patch",
     "p-queue": "patch:p-queue@npm%3A8.0.1#~/.yarn/patches/p-queue-npm-8.0.1-fe1ddcd827.patch",
-    "pre-commit": "patch:pre-commit@npm:1.2.2#.yarn/patches/pre-commit-npm-1.2.2-f30af83877.patch",
     "resize-observer-polyfill": "patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch",
     "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
     "uuid@^8.3.2": "patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch"
