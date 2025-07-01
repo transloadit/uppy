@@ -1,7 +1,7 @@
 import { h } from 'preact'
+import getFileTypeIcon from '../../../utils/getFileTypeIcon.js'
 import FilePreview from '../../FilePreview.js'
 import MetaErrorMessage from '../MetaErrorMessage.js'
-import getFileTypeIcon from '../../../utils/getFileTypeIcon.js'
 
 type $TSFixMe = any
 
@@ -9,8 +9,9 @@ export default function FilePreviewAndLink(props: $TSFixMe) {
   const { file, i18n, toggleFileCard, metaFields, showLinkToFileUploadResult } =
     props
   const white = 'rgba(255, 255, 255, 0.5)'
-  const previewBackgroundColor =
-    file.preview ? white : getFileTypeIcon(file.type).color
+  const previewBackgroundColor = file.preview
+    ? white
+    : getFileTypeIcon(file.type).color
 
   return (
     <div

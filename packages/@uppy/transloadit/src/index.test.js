@@ -1,7 +1,7 @@
-import { createServer } from 'node:http'
 import { once } from 'node:events'
-import { describe, expect, it } from 'vitest'
+import { createServer } from 'node:http'
 import Core from '@uppy/core'
+import { describe, expect, it } from 'vitest'
 import Transloadit from './index.ts'
 import 'whatwg-fetch'
 

@@ -1,10 +1,10 @@
-import { useMemo, useEffect } from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import {
   createRemoteSourceController,
-  type RemoteSourceSnapshot,
   type RemoteSourceKeys,
+  type RemoteSourceSnapshot,
 } from '@uppy/components'
+import { useEffect, useMemo } from 'react'
+import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 export function useRemoteSource(

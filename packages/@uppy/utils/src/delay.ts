@@ -13,13 +13,13 @@ export default function delay(
     }
 
     const timeout = setTimeout(() => {
-      cleanup() // eslint-disable-line no-use-before-define
+      cleanup()
       resolve()
     }, ms)
 
     function onabort(): void {
       clearTimeout(timeout)
-      cleanup() // eslint-disable-line no-use-before-define
+      cleanup()
       reject(createAbortError())
     }
     opts?.signal?.addEventListener('abort', onabort)

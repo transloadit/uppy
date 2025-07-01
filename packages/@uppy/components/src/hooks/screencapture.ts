@@ -1,6 +1,6 @@
 import type { Uppy, UppyEventMap } from '@uppy/core'
+import type ScreenCapture from '@uppy/screen-capture'
 import type { ScreenCaptureState } from '@uppy/screen-capture'
-import ScreenCapture from '@uppy/screen-capture'
 
 type ButtonProps = {
   type: 'button'
@@ -90,8 +90,8 @@ export function createScreenCaptureController(
 
   const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
-    const { recordedVideo, capturedScreenshotUrl } = plugin.getPluginState()
-    const status = plugin.getStatus()
+    const { status, recordedVideo, capturedScreenshotUrl } =
+      plugin.getPluginState()
     if (status === 'captured' && recordedVideo) {
       if (ref) {
         ref.srcObject = null
@@ -143,36 +143,40 @@ export function createScreenCaptureController(
   }
 
   const getScreenshotButtonProps = () => {
+    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: async () => {
         await plugin.captureScreenshot()
       },
-      disabled: plugin.getStatus() !== 'ready',
+      disabled: status !== 'ready',
     }
   }
 
   const getRecordButtonProps = () => {
+    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
         plugin.startRecording()
       },
-      disabled: plugin.getStatus() !== 'ready',
+      disabled: status !== 'ready',
     }
   }
 
   const getStopRecordingButtonProps = () => {
+    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
         plugin.stopRecording()
       },
-      disabled: plugin.getStatus() !== 'recording',
+      disabled: status !== 'recording',
     }
   }
 
   const getSubmitButtonProps = () => {
+    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
@@ -180,17 +184,18 @@ export function createScreenCaptureController(
         plugin.stop()
         onSubmit?.()
       },
-      disabled: plugin.getStatus() !== 'captured',
+      disabled: !(status === 'captured'),
     }
   }
 
   const getDiscardButtonProps = () => {
+    const { status } = plugin.getPluginState()
     return {
       type: 'button' as const,
       onClick: () => {
         plugin.discardRecordedMedia()
       },
-      disabled: plugin.getStatus() !== 'captured',
+      disabled: !(status === 'captured'),
     }
   }
 

@@ -1,7 +1,7 @@
 const defaults = {
   transport: 'session',
   state: true, // Enable CSRF check
-};
+}
 
 // oauth configuration for provider services that are used.
 module.exports = () => {
@@ -15,11 +15,11 @@ module.exports = () => {
       // receive no refresh tokens from them. This seems to be happen when running on different subdomains.
       // therefore to be safe that we always get refresh tokens, we set this.
       // https://stackoverflow.com/questions/10827920/not-receiving-google-oauth-refresh-token/65108513#65108513
-      custom_params: { access_type : 'offline', prompt: 'consent' },
+      custom_params: { access_type: 'offline', prompt: 'consent' },
 
       // copied from https://github.com/simov/grant/blob/master/config/oauth.json
-      authorize_url: "https://accounts.google.com/o/oauth2/v2/auth",
-      access_url: "https://oauth2.googleapis.com/token",
+      authorize_url: 'https://accounts.google.com/o/oauth2/v2/auth',
+      access_url: 'https://oauth2.googleapis.com/token',
       oauth: 2,
       scope_delimiter: ' ',
       state: true,
@@ -31,7 +31,7 @@ module.exports = () => {
       authorize_url: 'https://www.dropbox.com/oauth2/authorize',
       access_url: 'https://api.dropbox.com/oauth2/token',
       callback: '/dropbox/callback',
-      custom_params: { token_access_type : 'offline' },
+      custom_params: { token_access_type: 'offline' },
     },
     box: {
       ...defaults,

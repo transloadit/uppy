@@ -1,6 +1,6 @@
-import { defineComponent, ref, h, type PropType } from 'vue'
-import FileInputPlugin, { type FileInputOptions } from '@uppy/file-input'
 import { Uppy } from '@uppy/core'
+import FileInputPlugin, { type FileInputOptions } from '@uppy/file-input'
+import { defineComponent, h, type PropType, ref } from 'vue'
 import useUppy from './useUppy.js'
 
 export default defineComponent({

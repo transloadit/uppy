@@ -1,4 +1,4 @@
-import { h, Component, createRef, type ComponentChild } from 'preact'
+import { Component, type ComponentChild, createRef, h } from 'preact'
 
 const TRANSITION_MS = 300
 

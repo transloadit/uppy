@@ -1,6 +1,4 @@
-/* eslint-disable no-shadow */
-/* eslint-disable react/react-in-jsx-scope */
-import { type PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
 import { useRemoteSource } from '@uppy/react'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'
 import { useEffect, useRef } from 'react'
@@ -104,11 +102,12 @@ export function RemoteSource({
         {state.breadcrumbs.map((breadcrumb, index) => (
           <>
             {index > 0 && <span className="text-gray-500">&gt;</span>}{' '}
-            {index === state.breadcrumbs.length - 1 ?
+            {index === state.breadcrumbs.length - 1 ? (
               <span>
                 {breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name}
               </span>
-            : <button
+            ) : (
+              <button
                 type="button"
                 className="text-blue-500"
                 key={breadcrumb.id}
@@ -116,7 +115,7 @@ export function RemoteSource({
               >
                 {breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name}
               </button>
-            }
+            )}
           </>
         ))}
         <div className="flex items-center gap-2 ml-auto">
@@ -134,9 +133,10 @@ export function RemoteSource({
       </div>
 
       <ul className="p-4 flex-1 overflow-y-auto">
-        {state.loading ?
+        {state.loading ? (
           <p>loading...</p>
-        : state.partialTree.map((item) => {
+        ) : (
+          state.partialTree.map((item) => {
             if (item.type === 'file') {
               return <File key={item.id} item={item} checkbox={checkbox} />
             }
@@ -152,7 +152,7 @@ export function RemoteSource({
             }
             return null
           })
-        }
+        )}
       </ul>
 
       {state.selectedAmount > 0 && (

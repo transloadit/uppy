@@ -1,8 +1,16 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  type Mock,
+  vi,
+} from 'vitest'
 
 import 'whatwg-fetch'
-import nock from 'nock'
 import Core, { type UppyFile } from '@uppy/core'
+import nock from 'nock'
 import AwsS3Multipart, {
   type AwsBody,
   type AwsS3MultipartOptions,
@@ -256,8 +264,8 @@ describe('AwsS3Multipart', () => {
       scope.persist()
 
       // Spy on the busy/done state of the test chunk (part 7, chunk index 6)
-      let busySpy
-      let doneSpy
+      let busySpy: Mock
+      let doneSpy: Mock
       awsS3Multipart.setOptions({
         shouldUseMultipart: true,
         retryDelays: [10],
@@ -349,12 +357,10 @@ describe('AwsS3Multipart', () => {
         createMultipartUpload,
         completeMultipartUpload: vi.fn(async () => ({ location: 'test' })),
         abortMultipartUpload: vi.fn(() => {
-          // eslint-disable-next-line no-throw-literal
           throw 'should ignore'
         }),
         signPart,
         uploadPartBytes: uploadPartBytes.mockImplementationOnce(() =>
-          // eslint-disable-next-line prefer-promise-reject-errors
           Promise.reject({ source: { status: 500 } }),
         ),
         listParts: undefined as any,
@@ -394,7 +400,6 @@ describe('AwsS3Multipart', () => {
               setTimeout(() => resolve({ status: 200 }), 100)
             })
           }
-          // eslint-disable-next-line prefer-promise-reject-errors
           return Promise.reject({ source: { status: 500 } })
         }),
         listParts: undefined as any,

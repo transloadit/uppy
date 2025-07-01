@@ -1,13 +1,12 @@
+import Url from '@uppy/url'
 import React from 'react'
-
 import {
   StyleSheet,
-  TouchableOpacity,
   Text,
   TextInput,
+  TouchableOpacity,
   View,
 } from 'react-native'
-import Url from '@uppy/url'
 
 const styles = StyleSheet.create({
   container: {
@@ -47,7 +46,7 @@ const styles = StyleSheet.create({
 })
 
 export default class UppyRNUrl extends React.Component {
-  constructor () {
+  constructor() {
     super()
 
     this.state = {
@@ -57,12 +56,11 @@ export default class UppyRNUrl extends React.Component {
     this.onPressImport = this.onPressImport.bind(this)
   }
 
-  componentDidMount () {
+  componentDidMount() {
     const { uppy } = this.props
     const options = {
       id: 'uppyRN:Url',
       ...this.props,
-
     }
     delete options.uppy
 
@@ -70,29 +68,31 @@ export default class UppyRNUrl extends React.Component {
     this.plugin = uppy.getPlugin(options.id)
   }
 
-  componentWillUnmount () {
+  componentWillUnmount() {
     const { uppy } = this.props
     uppy.removePlugin(this.plugin)
   }
 
-  onPressImport () {
-    this.plugin.addFile(this.state.url)
+  onPressImport() {
+    this.plugin
+      .addFile(this.state.url)
       .then(this.props.onDone)
       .catch((err) => {
-        // eslint-disable-next-line no-console
         console.log(err)
       })
   }
 
-  render () {
+  render() {
     return (
       <View style={styles.container}>
         <TextInput
           style={styles.input}
           autoFocus
-          onChangeText={(text) => this.setState({
-            url: text,
-          })}
+          onChangeText={(text) =>
+            this.setState({
+              url: text,
+            })
+          }
           placeholder="Enter URL to import a file"
         />
         <TouchableOpacity

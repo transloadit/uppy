@@ -2,138 +2,138 @@
   "files": [],
   "references": [
     {
-      "path": "./packages/@uppy/audio/tsconfig.json",
+      "path": "./packages/@uppy/audio/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/aws-s3/tsconfig.json",
+      "path": "./packages/@uppy/aws-s3/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/box/tsconfig.json",
+      "path": "./packages/@uppy/box/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/companion-client/tsconfig.json",
+      "path": "./packages/@uppy/companion-client/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/compressor/tsconfig.json",
+      "path": "./packages/@uppy/compressor/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/core/tsconfig.json",
+      "path": "./packages/@uppy/core/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/dashboard/tsconfig.json",
+      "path": "./packages/@uppy/dashboard/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/drag-drop/tsconfig.json",
+      "path": "./packages/@uppy/drag-drop/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/drop-target/tsconfig.json",
+      "path": "./packages/@uppy/drop-target/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/dropbox/tsconfig.json",
+      "path": "./packages/@uppy/dropbox/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/facebook/tsconfig.json",
+      "path": "./packages/@uppy/facebook/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/file-input/tsconfig.json",
+      "path": "./packages/@uppy/file-input/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/form/tsconfig.json",
+      "path": "./packages/@uppy/form/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/golden-retriever/tsconfig.json",
+      "path": "./packages/@uppy/golden-retriever/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/google-drive/tsconfig.json",
+      "path": "./packages/@uppy/google-drive/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/google-drive-picker/tsconfig.json",
+      "path": "./packages/@uppy/google-drive-picker/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/google-photos-picker/tsconfig.json",
+      "path": "./packages/@uppy/google-photos-picker/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/image-editor/tsconfig.json",
+      "path": "./packages/@uppy/image-editor/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/informer/tsconfig.json",
+      "path": "./packages/@uppy/informer/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/instagram/tsconfig.json",
+      "path": "./packages/@uppy/instagram/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/locales/tsconfig.json",
+      "path": "./packages/@uppy/locales/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/onedrive/tsconfig.json",
+      "path": "./packages/@uppy/onedrive/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/progress-bar/tsconfig.json",
+      "path": "./packages/@uppy/progress-bar/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/provider-views/tsconfig.json",
+      "path": "./packages/@uppy/provider-views/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/remote-sources/tsconfig.json",
+      "path": "./packages/@uppy/remote-sources/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/screen-capture/tsconfig.json",
+      "path": "./packages/@uppy/screen-capture/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/status-bar/tsconfig.json",
+      "path": "./packages/@uppy/status-bar/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/store-default/tsconfig.json",
+      "path": "./packages/@uppy/store-default/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/thumbnail-generator/tsconfig.json",
+      "path": "./packages/@uppy/thumbnail-generator/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/transloadit/tsconfig.json",
+      "path": "./packages/@uppy/transloadit/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/tus/tsconfig.json",
+      "path": "./packages/@uppy/tus/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/unsplash/tsconfig.json",
+      "path": "./packages/@uppy/unsplash/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/url/tsconfig.json",
+      "path": "./packages/@uppy/url/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/utils/tsconfig.json",
+      "path": "./packages/@uppy/utils/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/webcam/tsconfig.json",
+      "path": "./packages/@uppy/webcam/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/xhr-upload/tsconfig.json",
+      "path": "./packages/@uppy/xhr-upload/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/zoom/tsconfig.json",
+      "path": "./packages/@uppy/zoom/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/webdav/tsconfig.json",
+      "path": "./packages/@uppy/webdav/tsconfig.json"
     },
     {
-      "path": "./packages/uppy/tsconfig.json",
+      "path": "./packages/uppy/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/store-redux/tsconfig.build.json",
+      "path": "./packages/@uppy/store-redux/tsconfig.build.json"
     },
     {
-      "path": "./packages/@uppy/redux-dev-tools/tsconfig.build.json",
+      "path": "./packages/@uppy/redux-dev-tools/tsconfig.build.json"
     },
     // The order matters. @uppy/components must come after all other packages
     // Then the framework implementations must go after @uppy/components
     {
-      "path": "./packages/@uppy/components/tsconfig.build.json",
+      "path": "./packages/@uppy/components/tsconfig.build.json"
     },
     {
-      "path": "./packages/@uppy/react/tsconfig.build.json",
+      "path": "./packages/@uppy/react/tsconfig.build.json"
     },
     {
-      "path": "./packages/@uppy/vue/tsconfig.build.json",
-    },
-  ],
+      "path": "./packages/@uppy/vue/tsconfig.build.json"
+    }
+  ]
 }

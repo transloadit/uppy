@@ -21,11 +21,11 @@ function getAsFileSystemHandleFromEntry(
 ): FileSystemFileHandle | FileSystemDirectoryHandle | null | undefined {
   if (entry == null) return entry
   return {
-    kind:
-      // eslint-disable-next-line no-nested-ternary
-      entry.isFile ? 'file'
-      : entry.isDirectory ? 'directory'
-      : (undefined as never),
+    kind: entry.isFile
+      ? 'file'
+      : entry.isDirectory
+        ? 'directory'
+        : (undefined as never),
     name: entry.name,
     getFile(): ReturnType<FileSystemFileHandle['getFile']> {
       return new Promise((resolve, reject) =>
@@ -94,6 +94,7 @@ export default async function* getFilesFromDataTransfer(
   // https://github.com/transloadit/uppy/pull/3998
   const fileSystemHandles = await Promise.all(
     Array.from(dataTransfer.items, async (item) => {
+      // biome-ignore lint/style/useConst: ...
       let fileSystemHandle:
         | FileSystemFileHandle
         | FileSystemDirectoryHandle
@@ -112,10 +113,9 @@ export default async function* getFilesFromDataTransfer(
       const getAsEntry = (): ReturnType<
         DataTransferItem['webkitGetAsEntry']
       > =>
-        typeof (item as any).getAsEntry === 'function' ?
-          (item as any).getAsEntry()
-        : item.webkitGetAsEntry()
-      // eslint-disable-next-line prefer-const
+        typeof (item as any).getAsEntry === 'function'
+          ? (item as any).getAsEntry()
+          : item.webkitGetAsEntry()
       fileSystemHandle ??= getAsFileSystemHandleFromEntry(
         getAsEntry(),
         logDropError,

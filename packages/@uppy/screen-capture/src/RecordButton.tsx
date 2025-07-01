@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { h } from 'preact'
 import type { I18n } from '@uppy/utils/lib/Translator'
+import type { h } from 'preact'
 
 interface RecordButtonProps {
   recording: boolean | undefined

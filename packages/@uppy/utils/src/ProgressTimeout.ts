@@ -13,11 +13,7 @@ class ProgressTimeout {
 
   #timeout: number
 
-  constructor(
-    timeout: number,
-    // eslint-disable-next-line no-shadow
-    timeoutHandler: (timeout: number) => void,
-  ) {
+  constructor(timeout: number, timeoutHandler: (timeout: number) => void) {
     this.#timeout = timeout
     this.#onTimedOut = () => timeoutHandler(timeout)
   }

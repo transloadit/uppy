@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { RateLimitedQueue } from './RateLimitedQueue.js'
 import delay from './delay.js'
+import { RateLimitedQueue } from './RateLimitedQueue.js'
 
 describe('RateLimitedQueue', () => {
   let pending = 0

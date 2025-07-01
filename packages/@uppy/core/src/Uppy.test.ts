@@ -1,31 +1,27 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint no-console: "off", no-restricted-syntax: "off" */
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-
 import assert from 'node:assert'
 import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
 import type { Locale } from '@uppy/utils/lib/Translator'
-import Core from './index.js'
-import UIPlugin from './UIPlugin.js'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+// @ts-expect-error trying to import a file from outside the package
+import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 import BasePlugin, {
   type DefinePluginOpts,
   type PluginOpts,
 } from './BasePlugin.js'
+import Core from './index.js'
 import { debugLogger } from './loggers.js'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 import InvalidPlugin from './mocks/invalidPlugin.js'
 import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
 import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
-// @ts-expect-error trying to import a file from outside the package
-import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
+import UIPlugin from './UIPlugin.js'
 import type { State } from './Uppy.js'
 
 const sampleImage = fs.readFileSync(
-  // eslint-disable-next-line no-restricted-globals
   path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
 )
 
@@ -1249,9 +1245,9 @@ describe('src/Core', () => {
         core
           .upload()
           .then((r) =>
-            typeof r!.uploadID === 'string' && r!.uploadID.length === 21 ?
-              { ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }
-            : r,
+            typeof r!.uploadID === 'string' && r!.uploadID.length === 21
+              ? { ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }
+              : r,
           ),
       ).resolves.toMatchSnapshot()
     })
@@ -1783,8 +1779,8 @@ describe('src/Core', () => {
 
     it('should work with unsized files', async () => {
       const core = new Core()
-      let proceedUpload
-      let finishUpload
+      let proceedUpload: (value?: unknown) => void
+      let finishUpload: (value?: unknown) => void
       const promise = new Promise((resolve) => {
         proceedUpload = resolve
       })
@@ -2547,7 +2543,6 @@ describe('src/Core', () => {
         data: testImage,
       })
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore accessing private method
       core[Symbol.for('uppy test: createUpload')](
         Object.keys(core.getState().files),

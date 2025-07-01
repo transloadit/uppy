@@ -1,12 +1,17 @@
-import { createInterface } from 'node:readline'
-import { createWriteStream } from 'node:fs'
 import { spawn } from 'node:child_process'
+import { createWriteStream } from 'node:fs'
+import { createInterface } from 'node:readline'
 
 import prompts from 'prompts'
 
-const subsystem = /((?<=^packages\/)@uppy\/[a-z0-9-]+|(?<=^)(?:docs|e2e|examples))\//
-async function inferPackageForCommit (sha, spawnOptions) {
-  const cp = spawn('git', ['--no-pager', 'log', '-1', '--name-only', sha], spawnOptions)
+const subsystem =
+  /((?<=^packages\/)@uppy\/[a-z0-9-]+|(?<=^)(?:docs|e2e|examples))\//
+async function inferPackageForCommit(sha, spawnOptions) {
+  const cp = spawn(
+    'git',
+    ['--no-pager', 'log', '-1', '--name-only', sha],
+    spawnOptions,
+  )
   const candidates = {}
   for await (const path of createInterface({ input: cp.stdout })) {
     const match = subsystem.exec(path)
@@ -18,28 +23,35 @@ async function inferPackageForCommit (sha, spawnOptions) {
   const maxVal = Math.max(...Object.values(candidates))
   return {
     inferredPackages: Number.isFinite(maxVal)
-      ? Object.entries(candidates).flatMap(
-        ([pkg, nbOfFiles]) => (nbOfFiles === maxVal || nbOfFiles === maxVal - 1 ? [pkg] : []),
-      ).join(',')
+      ? Object.entries(candidates)
+          .flatMap(([pkg, nbOfFiles]) =>
+            nbOfFiles === maxVal || nbOfFiles === maxVal - 1 ? [pkg] : [],
+          )
+          .join(',')
       : 'meta',
     candidates,
   }
 }
 
-export default async function formatChangeLog (
+export default async function formatChangeLog(
   spawnOptions,
   LAST_RELEASE_COMMIT,
   changeLogUrl,
 ) {
   const changeLogCommits = createWriteStream(changeLogUrl)
 
-  const gitLog = spawn('git', [
-    '--no-pager',
-    'log',
-    '--format="%H::%s::%an"',
-    `${LAST_RELEASE_COMMIT}..HEAD`,
-  ], spawnOptions)
-  const expectedFormat = /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+(?:,@uppy\/[a-z0-9-]+)*)|meta|docs|e2e|examples):\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/ // eslint-disable-line max-len
+  const gitLog = spawn(
+    'git',
+    [
+      '--no-pager',
+      'log',
+      '--format="%H::%s::%an"',
+      `${LAST_RELEASE_COMMIT}..HEAD`,
+    ],
+    spawnOptions,
+  )
+  const expectedFormat =
+    /^"([a-f0-9]+)::(?:((?:@uppy\/[a-z0-9-]+(?:,@uppy\/[a-z0-9-]+)*)|meta|docs|e2e|examples):\s?)?(.+?)(\s\(#\d+\))?::(.+)"$/
   for await (const log of createInterface({ input: gitLog.stdout })) {
     const [, sha, packageName, title, PR, authorName] = expectedFormat.exec(log)
 
@@ -54,7 +66,10 @@ export default async function formatChangeLog (
         `No package info found in commit title: ${sha} (https://github.com/transloadit/uppy/commit/${sha})`,
       )
       console.log(log)
-      const { inferredPackages, candidates } = await inferPackageForCommit(sha, spawnOptions)
+      const { inferredPackages, candidates } = await inferPackageForCommit(
+        sha,
+        spawnOptions,
+      )
       const { useInferred } = await prompts({
         type: 'confirm',
         name: 'useInferred',

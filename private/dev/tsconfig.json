@@ -3,63 +3,63 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
-    "allowJs": true,
+    "allowJs": true
   },
   "include": ["./package.json", "./*.ts", "./*.js"],
   "references": [
     {
-      "path": "../../packages/@uppy/store-default/tsconfig.build.json",
+      "path": "../../packages/@uppy/store-default/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/utils/tsconfig.build.json",
+      "path": "../../packages/@uppy/utils/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/core/tsconfig.build.json",
+      "path": "../../packages/@uppy/core/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/dashboard/tsconfig.build.json",
+      "path": "../../packages/@uppy/dashboard/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/remote-sources/tsconfig.build.json",
+      "path": "../../packages/@uppy/remote-sources/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/webcam/tsconfig.build.json",
+      "path": "../../packages/@uppy/webcam/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/screen-capture/tsconfig.build.json",
+      "path": "../../packages/@uppy/screen-capture/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/golden-retriever/tsconfig.build.json",
+      "path": "../../packages/@uppy/golden-retriever/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/tus/tsconfig.build.json",
+      "path": "../../packages/@uppy/tus/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/aws-s3/tsconfig.build.json",
+      "path": "../../packages/@uppy/aws-s3/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/xhr-upload/tsconfig.build.json",
+      "path": "../../packages/@uppy/xhr-upload/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/transloadit/tsconfig.build.json",
+      "path": "../../packages/@uppy/transloadit/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/form/tsconfig.build.json",
+      "path": "../../packages/@uppy/form/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/image-editor/tsconfig.build.json",
+      "path": "../../packages/@uppy/image-editor/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/drop-target/tsconfig.build.json",
+      "path": "../../packages/@uppy/drop-target/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/audio/tsconfig.build.json",
+      "path": "../../packages/@uppy/audio/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/compressor/tsconfig.build.json",
+      "path": "../../packages/@uppy/compressor/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/google-drive/tsconfig.build.json",
-    },
-  ],
+      "path": "../../packages/@uppy/google-drive/tsconfig.build.json"
+    }
+  ]
 }

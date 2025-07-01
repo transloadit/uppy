@@ -1,13 +1,13 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin } from '@uppy/core'
 import type {
-  Uppy,
+  Body,
+  DefinePluginOpts,
+  Meta,
   State,
   UIPluginOptions,
-  Body,
-  Meta,
-  DefinePluginOpts,
+  Uppy,
 } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import { type ComponentChild, h } from 'preact'
 
 import packageJson from '../package.json' with { type: 'json' }
 

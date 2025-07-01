@@ -1,22 +1,21 @@
-import hasProperty from '@uppy/utils/lib/hasProperty'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
-import { BasePlugin } from '@uppy/core'
 import type {
+  Body,
   DefinePluginOpts,
+  Meta,
   PluginOpts,
   Uppy,
-  Body,
-  Meta,
   UppyFile,
 } from '@uppy/core'
-import Assembly from './Assembly.js'
-import Client, { AssemblyError } from './Client.js'
-import AssemblyWatcher from './AssemblyWatcher.js'
-
-import locale from './locale.js'
+import { BasePlugin } from '@uppy/core'
+import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
+import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
+import hasProperty from '@uppy/utils/lib/hasProperty'
+import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import packageJson from '../package.json' with { type: 'json' }
+import Assembly from './Assembly.js'
+import AssemblyWatcher from './AssemblyWatcher.js'
+import Client, { type AssemblyError } from './Client.js'
+import locale from './locale.js'
 
 export interface AssemblyFile {
   id: string
@@ -124,8 +123,7 @@ export type OptionsWithRestructuredFields = Omit<AssemblyOptions, 'fields'> & {
   fields: Record<string, string | number>
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface TransloaditOptions<M extends Meta, B extends Body>
+export interface TransloaditOptions<_M extends Meta, _B extends Body>
   extends PluginOpts {
   service?: string
   errorReporting?: boolean
@@ -179,7 +177,7 @@ type PersistentState = {
 }
 
 declare module '@uppy/core' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, TransloaditState>) => void
@@ -219,7 +217,6 @@ declare module '@uppy/core' {
 }
 
 declare module '@uppy/utils/lib/UppyFile' {
-  // eslint-disable-next-line no-shadow, @typescript-eslint/no-unused-vars
   export interface UppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
     tus?: TusOpts<M, B>
@@ -230,7 +227,6 @@ const sendErrorToConsole = (originalErr: Error) => (err: Error) => {
   const error = new ErrorWithCause('Failed to send error to the client', {
     cause: err,
   })
-  // eslint-disable-next-line no-console
   console.error(error, originalErr)
 }
 
@@ -241,7 +237,6 @@ function validateParams(params?: AssemblyParameters | null): void {
 
   if (typeof params === 'string') {
     try {
-      // eslint-disable-next-line no-param-reassign
       params = JSON.parse(params)
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
@@ -467,8 +462,9 @@ export default class Transloadit<
 
   #createAssemblyWatcher(idOrArrayOfIds: string | string[]) {
     // AssemblyWatcher tracks completion states of all Assemblies in this upload.
-    const ids =
-      Array.isArray(idOrArrayOfIds) ? idOrArrayOfIds : [idOrArrayOfIds]
+    const ids = Array.isArray(idOrArrayOfIds)
+      ? idOrArrayOfIds
+      : [idOrArrayOfIds]
     const watcher = new AssemblyWatcher(this.uppy, ids)
 
     watcher.on('assembly-complete', (id: string) => {
@@ -589,7 +585,7 @@ export default class Transloadit<
     const state = this.getPluginState()
     const file = state.files[result.original_id]
     // The `file` may not exist if an import robot was used instead of a file upload.
-    result.localId = file ? file.id : null // eslint-disable-line no-param-reassign
+    result.localId = file ? file.id : null
 
     const entry = {
       result,
@@ -611,7 +607,6 @@ export default class Transloadit<
   #onAssemblyFinished(assembly: Assembly) {
     const url = assembly.status.assembly_ssl_url
     this.client.getAssemblyStatus(url).then((finalStatus) => {
-      // eslint-disable-next-line no-param-reassign
       assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
     })
@@ -650,9 +645,8 @@ export default class Transloadit<
 
   #onRestored = (pluginData: Record<string, unknown>) => {
     const savedState = (
-      pluginData && pluginData[this.id] ?
-        pluginData[this.id]
-      : {}) as PersistentState
+      pluginData?.[this.id] ? pluginData[this.id] : {}
+    ) as PersistentState
     const previousAssembly = savedState.assemblyResponse
 
     if (!previousAssembly) {
@@ -736,7 +730,7 @@ export default class Transloadit<
       this.#onFileUploadComplete(id, file)
     })
     assembly.on('error', (error: AssemblyError) => {
-      error.assembly = assembly.status // eslint-disable-line no-param-reassign
+      error.assembly = assembly.status
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 
@@ -798,9 +792,10 @@ export default class Transloadit<
 
   #prepareUpload = async (fileIDs: string[]) => {
     const assemblyOptions = (
-      typeof this.opts.assemblyOptions === 'function' ?
-        await this.opts.assemblyOptions()
-      : this.opts.assemblyOptions) as OptionsWithRestructuredFields
+      typeof this.opts.assemblyOptions === 'function'
+        ? await this.opts.assemblyOptions()
+        : this.opts.assemblyOptions
+    ) as OptionsWithRestructuredFields
 
     assemblyOptions.fields ??= {}
     validateParams(assemblyOptions.params)

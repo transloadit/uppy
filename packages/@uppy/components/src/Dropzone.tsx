@@ -1,10 +1,8 @@
-/* eslint-disable jsx-a11y/click-events-have-key-events */
-/* eslint-disable react/jsx-props-no-spreading */
+import { clsx } from 'clsx'
 import { h } from 'preact'
 import { useMemo } from 'preact/hooks'
-import { clsx } from 'clsx'
-import type { NonNullableUppyContext, UppyContext } from './types.js'
 import { createDropzone } from './hooks/dropzone.js'
+import type { NonNullableUppyContext, UppyContext } from './types.js'
 
 export type DropzoneProps = {
   width?: string
@@ -31,7 +29,6 @@ export default function Dropzone(props: DropzoneProps) {
       <input {...getInputProps()} className="uppy:hidden" />
       <div
         {...getRootProps()}
-        role="button"
         style={{
           width: width || '100%',
           height: height || '100%',
@@ -50,9 +47,9 @@ export default function Dropzone(props: DropzoneProps) {
             Drop files here or click to add them
           </p>
         </div>
-        {note ?
+        {note ? (
           <div className="uppy:text-sm uppy:text-gray-500">{note}</div>
-        : null}
+        ) : null}
       </div>
     </div>
   )
