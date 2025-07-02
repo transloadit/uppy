@@ -1,5 +1,6 @@
-@import '@uppy/core/src/_utils.scss';
-@import '@uppy/core/src/_variables.scss';
+@use "sass:color";
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 
 .uppy-ScreenCapture-container {
   display: flex;
@@ -17,7 +18,7 @@
   width: 100%;
   overflow: hidden;
   text-align: center;
-  background-color: $gray-800;
+  background-color: variables.$gray-800;
 
   .uppy-size--md & {
     max-width: 100%;
@@ -43,27 +44,27 @@
   width: 100%;
   height: 75px;
   padding: 0 20px;
-  background-color: $white;
-  border-top: 1px solid $gray-200;
+  background-color: variables.$white;
+  border-top: 1px solid variables.$gray-200;
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-900;
-    border-top: 1px solid $gray-800;
+    background-color: variables.$gray-900;
+    border-top: 1px solid variables.$gray-800;
   }
 }
 
 .uppy-ScreenCapture-button {
-  @include blue-border-focus;
+  @include utils.blue-border-focus;
 
   width: 45px;
   height: 45px;
-  color: $white;
+  color: variables.$white;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s;
 
   [data-uppy-theme='dark'] & {
-    @include blue-border-focus--dark;
+    @include utils.blue-border-focus--dark;
   }
 
   .uppy-size--md & {
@@ -72,7 +73,7 @@
   }
 
   &:hover {
-    background-color: darken($red, 5%);
+    background-color: color.adjust(variables.$red, $lightness: -5%);
   }
 }
 
@@ -88,32 +89,32 @@
 }
 
 .uppy-ScreenCapture-button--submit {
-  background-color: $blue;
+  background-color: variables.$blue;
 
   &:hover {
-    background-color: darken($blue, 5%);
+    background-color: color.adjust(variables.$blue, $lightness: -5%);
   }
 
   &:disabled {
-    background-color: $gray-500;
+    background-color: variables.$gray-500;
     cursor: default;
   }
 
   &:disabled:hover {
-    background-color: $gray-200;
+    background-color: variables.$gray-200;
   }
 }
 
 .uppy-ScreenCapture-button--discard {
   margin-left: 8px;
-  background-color: $red;
+  background-color: variables.$red;
 
   svg {
-    fill: $white;
+    fill: variables.$white;
   }
 
   &:hover {
-    background-color: darken($red, 10%);
+    background-color: color.adjust(variables.$red, $lightness: -10%);
   }
 }
 
@@ -122,7 +123,7 @@
   margin: 0;
   margin-bottom: 5px;
   padding: 0 15px;
-  color: $gray-800;
+  color: variables.$gray-800;
   font-weight: 400;
   font-size: 22px;
   line-height: 1.35;
@@ -137,7 +138,7 @@
   margin: 1rem;
 
   svg {
-    fill: $gray-500;
+    fill: variables.$gray-500;
   }
 }
 
@@ -148,33 +149,33 @@
 
 @keyframes uppy-ScreenCapture-icon--blink {
   0% {
-    fill: $blue;
+    fill: variables.$blue;
   }
   50% {
-    fill: $gray-500;
+    fill: variables.$gray-500;
   }
   100% {
-    fill: $blue;
+    fill: variables.$blue;
   }
 }
 
 .uppy-ScreenCapture-button--video {
-  color: $white;
-  background: $red;
+  color: variables.$white;
+  background: variables.$red;
 
   &:hover {
-    background-color: darken($red, 10%);
+    background-color: color.adjust(variables.$red, $lightness: -10%);
   }
 }
 
 .uppy-ScreenCapture-button--screenshot {
   margin-right: 8px;
-  background-color: $gray-500;
-  color: $white;
+  background-color: variables.$gray-500;
+  color: variables.$white;
   outline: none;
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-700;
+    background-color: variables.$gray-700;
   }
 
   svg {
@@ -189,7 +190,7 @@
   }
 
   &:hover {
-    background-color: darken($gray-500, 10%);
+    background-color: color.adjust(variables.$gray-500, $lightness: -10%);
   }
 
   &:focus {

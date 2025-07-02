@@ -17,9 +17,9 @@
   $track-border-width: 0,
   $track-border-color: transparent
 );
-@import '@uppy/core/src/_utils.scss';
-@import '@uppy/core/src/_variables.scss';
-@import './cropper.scss';
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
+@use 'cropper.scss';
 
 .uppy-ImageCropper {
   display: flex;
@@ -49,8 +49,8 @@
   align-items: center;
   justify-content: center;
   padding-top: 38px;
-  color: $white;
-  background-color: rgba($black, 0.6);
+  color: variables.$white;
+  background-color: rgba(variables.$black, 0.6);
   transform: translateX(-50%);
   border-radius: 5px;
 
