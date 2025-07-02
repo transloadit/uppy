@@ -7,7 +7,8 @@
   "style": "dist/style.min.css",
   "type": "module",
   "scripts": {
-    "build": "tsc --build tsconfig.build.json"
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "sass --load-path=../../.. src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css"
   },
   "keywords": [
     "file uploader",

@@ -21,7 +21,7 @@
     "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
     "build:companion": "yarn workspace @uppy/companion build",
     "build:components": "node bin/build-components.mjs",
-    "build:css": "yarn node ./bin/build-css.js && yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs",
+    "build:css": "yarn workspaces foreach --all --parallel run build:css && yarn workspace @uppy/components build:tailwind && yarn node ./bin/copy-tailwind-css.mjs",
     "build:js": "npm-run-all build:js:typeless build:locale-pack build:angular build:bundle",
     "build:js:typeless": "npm-run-all build:companion build:svelte",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && yarn workspace @uppy-dev/locale-pack test unused",
