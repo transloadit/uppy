@@ -1,7 +1,7 @@
 @use "sass:color";
-@use '@uppy/core/src/_utils.scss';
-@use '@uppy/core/src/_variables.scss';
-@use '@uppy/utils/src/microtip.scss';
+@use '../../core/src/_utils.scss';
+@use '../../core/src/_variables.scss';
+@use '../../utils/src/microtip.scss';
 
 .uppy-StatusBar {
   position: relative;

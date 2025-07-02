@@ -1,4 +1,4 @@
-@use '@uppy/core/src/_variables.scss';
+@use '../../core/src/_variables.scss';
 
 .uppy-is-drag-over::after {
   position: fixed;

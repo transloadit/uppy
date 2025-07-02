@@ -1,6 +1,6 @@
 @use "sass:color";
-@use '@uppy/core/src/_utils.scss';
-@use '@uppy/core/src/_variables.scss';
+@use '../../core/src/_utils.scss';
+@use '../../core/src/_variables.scss';
 
 .uppy-Webcam-container {
   display: flex;

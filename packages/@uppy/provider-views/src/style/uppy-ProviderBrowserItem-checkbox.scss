@@ -1,3 +1,6 @@
+@use '../../../core/src/_variables.scss' as *;
+@use '../../../core/src/_utils.scss' as *;
+
 .uppy-ProviderBrowserItem-checkbox {
   position: relative;
   flex-shrink: 0;

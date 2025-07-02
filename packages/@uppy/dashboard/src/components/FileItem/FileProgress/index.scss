@@ -1,3 +1,6 @@
+@use '../../../../../core/src/_variables.scss' as *;
+@use '../../../../../core/src/_utils.scss' as *;
+
 .uppy-Dashboard-Item-progress {
   position: absolute;
   top: 50%;
