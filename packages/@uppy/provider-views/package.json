@@ -32,6 +32,10 @@
     "@types/gapi": "^0.0.47",
     "@types/google.accounts": "^0.0.14",
     "@types/google.picker": "^0.0.42",
+    "cssnano": "^7.0.7",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.89.2",
     "typescript": "^5.8.3",
     "vitest": "^1.6.1"
   },
