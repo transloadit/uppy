@@ -152,7 +152,7 @@ async function main(packageName, version) {
     const packagePath = packageName.startsWith('@uppy/')
       ? path.join(__dirname, '..', packageName)
       : path.join(__dirname)
-    
+
     resolvedVersion = require(path.join(packagePath, 'package.json')).version
   }
 
