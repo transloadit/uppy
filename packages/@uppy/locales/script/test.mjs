@@ -143,5 +143,3 @@ function test() {
 }
 
 await test()
-console.log('\n')
-console.log('No blocking issues found')

@@ -44,5 +44,5 @@ await Promise.all([
       'en_US.strings = {}',
       `en_US.strings = ${formattedLocale}`,
     ),
-  ).then(() => console.log(`✅ Generated '${englishLocalePath}'`)),
+  ),
 ])

@@ -6,9 +6,8 @@
   "type": "module",
   "main": "locale-pack/index.mjs",
   "scripts": {
-    "build": "tsc --build tsconfig.build.json",
-    "build:locale-pack": "yarn node locale-pack/index.mjs",
-    "test": "yarn node locale-pack/test.mjs"
+    "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",
+    "test": "yarn node script/test.mjs unused"
   },
   "keywords": [
     "uppy",
