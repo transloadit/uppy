@@ -88,8 +88,10 @@ async function getRemoteDistFiles(packageName, version) {
  * @returns a Map<string, Buffer>, filename → content
  */
 async function getLocalDistFiles(packageName) {
-  // Base file path of the package, eg. ./packages/@uppy/locales
-  const packagePath = path.join(__dirname, '..', '..', 'packages', packageName)
+  // Base file path of the package, eg. ./packages/@uppy/locales or ./packages/uppy
+  const packagePath = packageName.startsWith('@uppy/')
+    ? path.join(__dirname, '..', packageName)
+    : path.join(__dirname, '..', packageName)
 
   console.log('Making local package from', packagePath)
 
@@ -132,7 +134,7 @@ async function main(packageName, version) {
   // version should only be a positional arg and semver string
   // this deals with usage like `npm run uploadcdn uppy -- --force`
   // where we force push a local build
-  if (version?.startsWith('-')) version = undefined
+  let resolvedVersion = version?.startsWith('-') ? undefined : version
 
   const s3Client = new S3Client({
     credentials: {
@@ -142,11 +144,16 @@ async function main(packageName, version) {
     region: AWS_REGION,
   })
 
-  const remote = !!version
+  const remote = !!resolvedVersion
 
   console.log('Using', remote ? 'Remote' : 'Local', 'build')
   if (!remote) {
-    version = require(`../../packages/${packageName}/package.json`).version
+    // Updated path logic: now running from packages/uppy, need to reference the package directly
+    const packagePath = packageName.startsWith('@uppy/')
+      ? path.join(__dirname, '..', packageName)
+      : path.join(__dirname)
+    
+    resolvedVersion = require(path.join(packagePath, 'package.json')).version
   }
 
   // Warn if uploading a local build not from CI:
@@ -166,7 +173,7 @@ async function main(packageName, version) {
     ? packageName.replace(/^@/, '')
     : 'uppy'
 
-  const s3Dir = path.posix.join(dirName, `v${version}`)
+  const s3Dir = path.posix.join(dirName, `v${resolvedVersion}`)
 
   const { Contents: existing } = await s3Client.send(
     new ListObjectsV2Command({
@@ -178,18 +185,18 @@ async function main(packageName, version) {
   if (existing?.length > 0) {
     if (process.argv.includes('--force')) {
       console.warn(
-        `WARN Release files for ${dirName} v${version} already exist, overwriting...`,
+        `WARN Release files for ${dirName} v${resolvedVersion} already exist, overwriting...`,
       )
     } else {
       console.error(
-        `Release files for ${dirName} v${version} already exist, exiting...`,
+        `Release files for ${dirName} v${resolvedVersion} already exist, exiting...`,
       )
       process.exit(1)
     }
   }
 
   const files = remote
-    ? await getRemoteDistFiles(packageName, version)
+    ? await getRemoteDistFiles(packageName, resolvedVersion)
     : await getLocalDistFiles(packageName)
 
   if (packageName === 'uppy') {
@@ -200,7 +207,7 @@ async function main(packageName, version) {
       zip.addFile(filename, buffer)
     }
 
-    files.set(`uppy-v${version}.zip`, zip.toBuffer())
+    files.set(`uppy-v${resolvedVersion}.zip`, zip.toBuffer())
   }
 
   if (files.size === 0) console.warn('No files to upload')

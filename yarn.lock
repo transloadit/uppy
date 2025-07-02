@@ -11105,20 +11105,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-dev/upload-to-cdn@workspace:private/upload-to-cdn":
-  version: 0.0.0-use.local
-  resolution: "@uppy-dev/upload-to-cdn@workspace:private/upload-to-cdn"
-  dependencies:
-    "@aws-sdk/client-s3": "npm:^3.338.0"
-    adm-zip: "npm:^0.5.5"
-    concat-stream: "npm:^2.0.0"
-    mime-types: "npm:^2.1.26"
-    npm-packlist: "npm:^5.0.0"
-    pacote: "npm:^13.0.0"
-    tar: "npm:^6.1.0"
-  languageName: unknown
-  linkType: soft
-
 "@uppy-example/angular@workspace:examples/angular-example":
   version: 0.0.0-use.local
   resolution: "@uppy-example/angular@workspace:examples/angular-example"
@@ -31394,6 +31380,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
+    "@aws-sdk/client-s3": "npm:^3.338.0"
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/box": "workspace:^"
@@ -31432,8 +31419,14 @@ __metadata:
     "@uppy/webdav": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
     "@uppy/zoom": "workspace:^"
+    adm-zip: "npm:^0.5.5"
     chalk: "npm:^5.0.0"
+    concat-stream: "npm:^2.0.0"
     esbuild: "npm:^0.25.0"
+    mime-types: "npm:^2.1.26"
+    npm-packlist: "npm:^5.0.0"
+    pacote: "npm:^13.0.0"
+    tar: "npm:^6.1.0"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft

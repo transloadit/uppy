@@ -51,7 +51,7 @@
     "test:ts": "yarn tsc -b && yarn workspace @uppy/svelte check",
     "test:unit": "yarn run build && yarn test:watch --run",
     "test:watch": "vitest --environment jsdom --dir packages/@uppy",
-    "uploadcdn": "yarn node ./private/upload-to-cdn/index.js",
+    "uploadcdn": "yarn workspace uppy run upload-to-cdn",
     "version": "yarn node ./bin/after-version-bump.js",
     "watch": "npm-run-all --parallel watch:js:bundle watch:js:lib",
     "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:bundle",
