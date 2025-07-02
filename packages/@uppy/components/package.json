@@ -22,16 +22,20 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:tailwind": "tailwindcss -i ./src/input.css -o ./dist/styles.css"
+    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css && yarn copy-css",
+    "copy-css": "mkdir -p ../react/dist ../vue/dist ../svelte/dist && cp ./dist/styles.css ../react/dist/ && cp ./dist/styles.css ../vue/dist/ && cp ./dist/styles.css ../svelte/dist/"
   },
   "dependencies": {
-    "@tailwindcss/cli": "^4.0.6",
     "@webcam/core": "^1.0.1",
     "clsx": "^2.1.1",
     "dequal": "^2.0.3",
     "preact": "^10.5.13",
-    "pretty-bytes": "^6.1.1",
-    "tailwindcss": "^4.0.6"
+    "pretty-bytes": "^6.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.6",
+    "tailwindcss": "^4.0.6",
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "@uppy/audio": "workspace:^",
@@ -60,8 +64,5 @@
     "@uppy/webcam": {
       "optional": true
     }
-  },
-  "devDependencies": {
-    "typescript": "^5.8.3"
   }
 }
