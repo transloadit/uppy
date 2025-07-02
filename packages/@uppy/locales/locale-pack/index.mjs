@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 
 import { getLocales, sortObjectAlphabetically } from './helpers.mjs'
 
-const root = fileURLToPath(new URL('../../../', import.meta.url))
+const root = fileURLToPath(new URL('../../../../', import.meta.url))
 
 const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.ts')

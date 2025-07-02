@@ -9,7 +9,7 @@ import glob from 'glob'
 
 import { getLocales, getPaths, omit } from './helpers.mjs'
 
-const root = fileURLToPath(new URL('../../../', import.meta.url))
+const root = fileURLToPath(new URL('../../../../', import.meta.url))
 const leadingLocaleName = 'en_US'
 const mode = process.argv[2]
 const pluginLocaleDependencies = {
