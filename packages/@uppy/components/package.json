@@ -22,8 +22,7 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css && yarn copy-css",
-    "copy-css": "mkdir -p ../react/dist ../vue/dist ../svelte/dist && cp ./dist/styles.css ../react/dist/ && cp ./dist/styles.css ../vue/dist/ && cp ./dist/styles.css ../svelte/dist/"
+    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css"
   },
   "dependencies": {
     "@webcam/core": "^1.0.1",

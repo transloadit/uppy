@@ -2,9 +2,9 @@
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "build:css"],
+      "dependsOn": ["^build"],
       "inputs": [
-        "src/**/*.{js,ts,jsx,tsx,vue,svelte}",
+        "src/**/*.{js,ts,jsx,tsx,vue}",
         "package.json",
         "tsconfig.json",
         "tsconfig.build.json"
@@ -12,6 +12,7 @@
       "outputs": ["lib/**", "dist/**"]
     },
     "build:css": {
+      "dependsOn": ["build"],
       "inputs": ["src/**/*.scss", "src/**/*.css"],
       "outputs": ["lib/**/*.css", "dist/**/*.css"]
     },

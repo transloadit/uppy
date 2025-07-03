@@ -14,7 +14,8 @@
     "e2e"
   ],
   "scripts": {
-    "build": "turbo run build --filter='./packages/*'",
+    "build": "turbo run build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
+    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
     "build:components": "node bin/build-components.mjs",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && yarn workspace @uppy-dev/locale-pack test unused",
     "check": "yarn exec biome check --write",
@@ -43,7 +44,7 @@
     "test:unit": "yarn run build && yarn test:watch --run",
     "test:watch": "vitest --environment jsdom --dir packages/@uppy",
     "uploadcdn": "yarn node ./private/upload-to-cdn/index.js",
-    "watch": "turbo watch build --filter='./packages/@uppy/*'"
+    "watch": "turbo watch build build:css --filter='./packages/@uppy/*'"
   },
   "resolutions": {
     "@types/react": "^18",
