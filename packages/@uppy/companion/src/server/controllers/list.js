@@ -1,11 +1,14 @@
 const { respondWithError } = require('../provider/error')
 
-async function list ({ query, params, companion }, res, next) {
+async function list({ query, params, companion }, res, next) {
   const { providerUserSession } = companion
 
   try {
     const data = await companion.provider.list({
-      companion, providerUserSession, directory: params.id, query,
+      companion,
+      providerUserSession,
+      directory: params.id,
+      query,
     })
     res.json(data)
   } catch (err) {

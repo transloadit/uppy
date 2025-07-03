@@ -132,19 +132,29 @@ module.exports.decrypt = (encrypted, secret) => {
   // NOTE: The first 32 characters are the nonce, in hex format.
   const nonce = Buffer.from(encrypted.slice(0, nonceHexLength), 'hex')
   // The rest is the encrypted string, in base64url format.
-  const encryptionWithoutNonce = Buffer.from(encrypted.slice(nonceHexLength), 'base64url')
+  const encryptionWithoutNonce = Buffer.from(
+    encrypted.slice(nonceHexLength),
+    'base64url',
+  )
   // The last 16 bytes of the rest is the authentication tag
   const authTag = encryptionWithoutNonce.subarray(-authTagLength)
   // and the rest (from beginning) is the encrypted data
-  const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(0, -authTagLength)
-  
+  const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(
+    0,
+    -authTagLength,
+  )
+
   if (nonce.length < nonceLength) {
-    throw new Error('Invalid encrypted value. Maybe it was generated with an old Companion version?')
+    throw new Error(
+      'Invalid encrypted value. Maybe it was generated with an old Companion version?',
+    )
   }
-  
+
   const { key, iv } = createSecrets(secret, nonce)
 
-  const decipher = crypto.createDecipheriv('aes-256-ccm', key, iv, { authTagLength })
+  const decipher = crypto.createDecipheriv('aes-256-ccm', key, iv, {
+    authTagLength,
+  })
   decipher.setAuthTag(authTag)
 
   const decrypted = Buffer.concat([
