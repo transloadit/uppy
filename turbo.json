@@ -1,0 +1,50 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "build:css"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx,vue,svelte}",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.build.json"
+      ],
+      "outputs": ["lib/**", "dist/**"]
+    },
+    "build:css": {
+      "inputs": ["src/**/*.scss", "src/**/*.css"],
+      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+    },
+    "@uppy/components#build": {
+      "dependsOn": [
+        "@uppy/audio#build",
+        "@uppy/core#build", 
+        "@uppy/image-editor#build",
+        "@uppy/remote-sources#build",
+        "@uppy/screen-capture#build",
+        "@uppy/webcam#build"
+      ],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx,svelte}",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.build.json"
+      ],
+      "outputs": ["lib/**", "dist/**"]
+    },
+    "uppy#build": {
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "bundle.mjs",
+        "build-bundle.mjs"
+      ],
+      "outputs": ["lib/**", "dist/**"]
+    },
+    "watch": {
+      "persistent": true,
+      "cache": false
+    }
+  }
+}

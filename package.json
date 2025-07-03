@@ -14,18 +14,9 @@
     "e2e"
   ],
   "scripts": {
-    "build": "yarn build:lib && npm-run-all --parallel build:js build:css --serial build:components size",
-    "build:lib": "tsc --build tsconfig.build.json",
-    "build:angular": "yarn workspace angular build",
-    "build:bundle": "yarn workspace uppy build:bundle",
-    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
-    "build:companion": "yarn workspace @uppy/companion build",
+    "build": "turbo run build --filter='./packages/*'",
     "build:components": "node bin/build-components.mjs",
-    "build:css": "yarn workspaces foreach --all --no-private --parallel --exclude @uppy/components run build:css && yarn workspace @uppy/components build:css",
-    "build:js": "npm-run-all build:js:typeless build:locale-pack build:angular build:bundle",
-    "build:js:typeless": "npm-run-all build:companion build:svelte",
     "build:locale-pack": "yarn workspace @uppy-dev/locale-pack build && yarn workspace @uppy-dev/locale-pack test unused",
-    "build:svelte": "yarn workspace @uppy/svelte build",
     "check": "yarn exec biome check --write",
     "check:ci": "yarn exec biome ci",
     "contributors:save": "yarn node ./bin/update-contributors.mjs",
@@ -52,10 +43,7 @@
     "test:unit": "yarn run build && yarn test:watch --run",
     "test:watch": "vitest --environment jsdom --dir packages/@uppy",
     "uploadcdn": "yarn node ./private/upload-to-cdn/index.js",
-    "version": "yarn node ./bin/after-version-bump.js",
-    "watch": "npm-run-all --parallel watch:js:bundle watch:js:lib",
-    "watch:js:bundle": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build:bundle",
-    "watch:js:lib": "onchange 'packages/{@uppy/,}*/src/**/*.{js,ts,jsx,tsx,svelte,scss,css}' --initial --verbose -- yarn run build"
+    "watch": "turbo watch build --filter='./packages/@uppy/*'"
   },
   "resolutions": {
     "@types/react": "^18",
@@ -81,6 +69,7 @@
     "onchange": "^7.1.0",
     "resolve": "^1.17.0",
     "start-server-and-test": "^1.14.0",
+    "turbo": "^2.5.4",
     "typescript": "^5.8.3",
     "vitest": "^1.6.1",
     "vue-template-compiler": "workspace:*"
