@@ -1,0 +1,22 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "@uppy/audio#build",
+        "@uppy/core#build",
+        "@uppy/image-editor#build",
+        "@uppy/remote-sources#build",
+        "@uppy/screen-capture#build",
+        "@uppy/webcam#build"
+      ],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.build.json"
+      ],
+      "outputs": ["lib/**"]
+    }
+  }
+}
