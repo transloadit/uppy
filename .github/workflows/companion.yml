@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         # fix node versions so we don't get sudden unrelated CI breakage
-        node-version: [18.20.8, 20.19.1]
+        node-version: [20.19.3, 22.17.0]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4

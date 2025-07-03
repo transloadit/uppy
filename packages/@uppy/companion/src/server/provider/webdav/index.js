@@ -3,6 +3,7 @@ const { getProtectedHttpAgent, validateURL } = require('../../helpers/request')
 const { ProviderApiError, ProviderAuthError } = require('../error')
 const { ProviderUserError } = require('../error')
 const logger = require('../../logger')
+const { AuthType, createClient } = require('webdav')
 
 const defaultDirectory = '/'
 
@@ -24,11 +25,6 @@ class WebdavProvider extends Provider {
     if (!validateURL(webdavUrl, allowLocalUrls)) {
       throw new Error('invalid public link url')
     }
-
-    // dynamic import because Companion currently uses CommonJS and webdav is shipped as ESM
-    // todo implement as regular require as soon as Node 20.17 or 22 is required
-    // or as regular import when Companion is ported to ESM
-    const { AuthType } = await import('webdav')
 
     // Is this an ownCloud or Nextcloud public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
     // they have specific urls that we can identify
@@ -84,10 +80,6 @@ class WebdavProvider extends Provider {
       allowLocalIPs: !allowLocalUrls,
     })
 
-    // dynamic import because Companion currently uses CommonJS and webdav is shipped as ESM
-    // todo implement as regular require as soon as Node 20.17 or 22 is required
-    // or as regular import when Companion is ported to ESM
-    const { createClient } = await import('webdav')
     return createClient(url, {
       ...options,
       [`${protocol}Agent`]: new HttpAgentClass(),

@@ -1,4 +1,5 @@
 const crypto = require('node:crypto')
+const got = require('got')
 
 const Provider = require('../Provider')
 const logger = require('../../logger')
@@ -6,8 +7,6 @@ const { adaptData, sortImages } = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 const { HttpError } = require('../../helpers/utils')
-
-const got = require('../../got')
 
 async function runRequestBatch({ secret, token, requests }) {
   // https://developers.facebook.com/docs/facebook-login/security/#appsecret
@@ -26,7 +25,7 @@ async function runRequestBatch({ secret, token, requests }) {
     batch: JSON.stringify(requests),
   }
 
-  const responsesRaw = await (await got)
+  const responsesRaw = await got.default
     .post('https://graph.facebook.com', { form })
     .json()
 
@@ -109,7 +108,7 @@ class Facebook extends Provider {
       'provider.facebook.download.error',
       async () => {
         const url = await getMediaUrl({ secret: this.secret, token, id })
-        const stream = (await got).stream.get(url, { responseType: 'json' })
+        const stream = got.default.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
       },

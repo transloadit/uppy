@@ -6,16 +6,15 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const throttle = require('lodash/throttle')
 const { once } = require('node:events')
-
+const got = require('got')
 const { Upload } = require('@aws-sdk/lib-storage')
+const { serializeError } = require('serialize-error')
 
 const {
   rfc2047EncodeMetadata,
   getBucket,
   truncateFilename,
 } = require('./helpers/utils')
-
-const got = require('./got')
 
 const { createReadStream, createWriteStream, ReadStream } = fs
 const { stat, unlink } = fs.promises
@@ -535,8 +534,6 @@ class Uploader {
   async #emitError(err) {
     // delete stack to avoid sending server info to client
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
-    // @ts-ignore
-    const { serializeError } = await import('serialize-error')
     const { stack, ...serializedErr } = serializeError(err)
     const dataToEmit = {
       action: 'error',
@@ -694,7 +691,7 @@ class Uploader {
     try {
       const httpMethod =
         (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = (await got)[httpMethod]
+      const runRequest = await got.default[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 

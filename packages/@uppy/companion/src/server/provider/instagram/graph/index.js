@@ -1,13 +1,13 @@
+const got = require('got')
+
 const Provider = require('../../Provider')
 const logger = require('../../../logger')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../../providerErrors')
 const { prepareStream } = require('../../../helpers/utils')
 
-const got = require('../../../got')
-
-const getClient = async ({ token }) =>
-  (await got).extend({
+const getClient = ({ token }) =>
+  got.default.extend({
     prefixUrl: 'https://graph.instagram.com',
     headers: {
       authorization: `Bearer ${token}`,
@@ -15,7 +15,7 @@ const getClient = async ({ token }) =>
   })
 
 async function getMediaUrl({ token, id }) {
-  const body = await (await getClient({ token }))
+  const body = await getClient({ token })
     .get(String(id), {
       searchParams: { fields: 'media_url' },
       responseType: 'json',
@@ -55,7 +55,7 @@ class Instagram extends Provider {
 
         if (query.cursor) qs.after = query.cursor
 
-        const client = await getClient({ token })
+        const client = getClient({ token })
 
         const [{ username }, list] = await Promise.all([
           client
@@ -78,7 +78,7 @@ class Instagram extends Provider {
       'provider.instagram.download.error',
       async () => {
         const url = await getMediaUrl({ token, id })
-        const stream = (await got).stream.get(url, { responseType: 'json' })
+        const stream = got.default.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
       },

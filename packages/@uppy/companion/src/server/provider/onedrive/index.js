@@ -1,21 +1,20 @@
+const got = require('got')
 const Provider = require('../Provider')
 const logger = require('../../logger')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 
-const got = require('../../got')
-
-const getClient = async ({ token }) =>
-  (await got).extend({
+const getClient = ({ token }) =>
+  got.default.extend({
     prefixUrl: 'https://graph.microsoft.com/v1.0',
     headers: {
       authorization: `Bearer ${token}`,
     },
   })
 
-const getOauthClient = async () =>
-  (await got).extend({
+const getOauthClient = () =>
+  got.default.extend({
     prefixUrl: 'https://login.live.com',
   })
 
@@ -54,7 +53,7 @@ class OneDrive extends Provider {
         qs.$skiptoken = query.cursor
       }
 
-      const client = await getClient({ token })
+      const client = getClient({ token })
 
       const [{ mail, userPrincipalName }, list] = await Promise.all([
         client.get('me', { responseType: 'json' }).json(),
@@ -74,7 +73,7 @@ class OneDrive extends Provider {
     return this.#withErrorHandling(
       'provider.onedrive.download.error',
       async () => {
-        const stream = (await getClient({ token })).stream.get(
+        const stream = getClient({ token }).stream.get(
           `${getRootPath(query)}/items/${id}/content`,
           { responseType: 'json' },
         )
@@ -96,7 +95,7 @@ class OneDrive extends Provider {
 
   async size({ id, query, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
-      const { size } = await (await getClient({ token }))
+      const { size } = await getClient({ token })
         .get(`${getRootPath(query)}/items/${id}`, { responseType: 'json' })
         .json()
       return size
@@ -116,7 +115,7 @@ class OneDrive extends Provider {
     return this.#withErrorHandling(
       'provider.onedrive.token.refresh.error',
       async () => {
-        const { access_token: accessToken } = await (await getOauthClient())
+        const { access_token: accessToken } = await getOauthClient()
           .post('oauth20_token.srf', {
             responseType: 'json',
             form: {
