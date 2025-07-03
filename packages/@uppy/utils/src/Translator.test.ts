@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import Translator, { type Locale } from './Translator.js'
+import Translator, { type Locale, type LocaleStrings } from './Translator.js'
 
 const english: Locale<0 | 1> = {
   strings: {
@@ -168,6 +168,87 @@ describe('Translator', () => {
       }).toThrow(
         'Attempted to use a string with plural forms, but no value was given for %{smart_count}',
       )
+    })
+  })
+
+  describe('LocaleStrings type intersection issue', () => {
+    // Mock Dashboard and StatusBar locale types for testing
+    const dashboardLocale = {
+      strings: {
+        closeModal: 'Close Modal',
+        addMoreFiles: 'Add more files',
+        dashboardTitle: 'Uppy Dashboard',
+      },
+      pluralize: (n: number) => (n === 1 ? 0 : 1),
+    }
+
+    const statusBarLocale = {
+      strings: {
+        uploading: 'Uploading',
+        complete: 'Complete',
+        uploadFailed: 'Upload failed',
+        retry: 'Retry',
+        cancel: 'Cancel',
+      },
+      pluralize: (n: number) => (n === 1 ? 0 : 1),
+    }
+
+    it('should allow partial locale strings in intersection types', () => {
+      // This should work - user wants to override just one key
+      type IntersectionLocale = LocaleStrings<typeof dashboardLocale> & typeof statusBarLocale
+      
+      // This should be valid - user should be able to pass just partial strings
+      const partialLocale: IntersectionLocale = {
+        strings: {
+          closeModal: 'Custom Close Modal', // Only overriding one dashboard string
+          // StatusBar strings should be optional due to LocaleStrings<>
+          uploading: 'Uploading',
+          complete: 'Complete', 
+          uploadFailed: 'Upload failed',
+          retry: 'Retry',
+          cancel: 'Cancel',
+        },
+        pluralize: (n: number) => (n === 1 ? 0 : 1),
+      }
+
+      // This should also work - minimal override
+      const minimalLocale: IntersectionLocale = {
+        strings: {
+          closeModal: 'Custom Close Modal', // Only this should be required
+          // All other strings should be optional
+          uploading: 'Uploading',
+          complete: 'Complete',
+          uploadFailed: 'Upload failed', 
+          retry: 'Retry',
+          cancel: 'Cancel',
+        },
+        pluralize: (n: number) => (n === 1 ? 0 : 1),
+      }
+
+      expect(partialLocale.strings.closeModal).toBe('Custom Close Modal')
+      expect(minimalLocale.strings.closeModal).toBe('Custom Close Modal')
+    })
+
+    it('should work with deeply nested intersection types like Dashboard', () => {
+      // Simulate the actual Dashboard locale intersection type
+      type DashboardLocaleType = LocaleStrings<typeof dashboardLocale> & typeof statusBarLocale
+      
+      // This should work - user should only need to provide the keys they want to override
+      const customLocale: DashboardLocaleType = {
+        strings: {
+          // Should be able to override just dashboard strings
+          closeModal: 'My Custom Close',
+          // StatusBar strings should be optional but let's provide them for the test
+          uploading: 'Uploading',
+          complete: 'Complete',
+          uploadFailed: 'Upload failed',
+          retry: 'Retry', 
+          cancel: 'Cancel',
+        },
+        pluralize: (n: number) => (n === 1 ? 0 : 1),
+      }
+
+      expect(customLocale.strings.closeModal).toBe('My Custom Close')
     })
   })
 })
