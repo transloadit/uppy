@@ -91,6 +91,7 @@ export interface WebcamState {
   videoSources: MediaDeviceInfo[]
   currentDeviceId: string | MediaStreamTrack | null | undefined
   recordedVideo: null | string
+  capturedSnapshot: null | string
   isRecording: boolean
   [key: string]: unknown
 }
@@ -186,7 +187,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     this.takeSnapshot = this.takeSnapshot.bind(this)
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
-    this.discardRecordedVideo = this.discardRecordedVideo.bind(this)
+    this.discardRecordedMedia = this.discardRecordedMedia.bind(this)
     this.submit = this.submit.bind(this)
     this.oneTwoThreeSmile = this.oneTwoThreeSmile.bind(this)
     this.focus = this.focus.bind(this)
@@ -205,6 +206,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       recordingLengthSeconds: 0,
       videoSources: [],
       currentDeviceId: null,
+      capturedSnapshot: null,
     })
   }
 
@@ -474,8 +476,20 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       )
   }
 
-  discardRecordedVideo(): void {
-    this.setPluginState({ recordedVideo: null })
+  discardRecordedMedia(): void {
+    const { recordedVideo, capturedSnapshot } = this.getPluginState()
+
+    if (recordedVideo) {
+      URL.revokeObjectURL(recordedVideo)
+    }
+    if (capturedSnapshot) {
+      URL.revokeObjectURL(capturedSnapshot)
+    }
+
+    this.setPluginState({
+      recordedVideo: null,
+      capturedSnapshot: null,
+    })
 
     if (this.opts.mirror) {
       this.#enableMirror = true
@@ -523,6 +537,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     this.setPluginState({
       recordedVideo: null,
+      capturedSnapshot: null,
       isRecording: false,
       recordingLengthSeconds: 0,
     })
@@ -570,8 +585,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     try {
       const tagFile = await this.getImage()
+      this.capturedMediaFile = tagFile
+
+      // Create object URL for preview
+      const capturedSnapshotUrl = URL.createObjectURL(tagFile.data as Blob)
+      this.setPluginState({ capturedSnapshot: capturedSnapshotUrl })
       this.captureInProgress = false
-      this.uppy.addFile(tagFile)
     } catch (error) {
       // Logging the error, except restrictions, which is handled in Core
       this.captureInProgress = false
@@ -698,7 +717,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
         onSnapshot={this.takeSnapshot}
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
-        onDiscardRecordedVideo={this.discardRecordedVideo}
+        onDiscardRecordedMedia={this.discardRecordedMedia}
         onSubmit={this.submit}
         onFocus={this.focus}
         onStop={this.stop}
