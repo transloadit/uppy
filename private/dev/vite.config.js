@@ -17,9 +17,7 @@ const config = {
     },
   },
   esbuild: {
-    jsx: 'transform',
-    jsxFactory: 'h',
-    jsxFragment: 'Fragment',
+    jsx: 'automatic',
   },
   resolve: {
     alias: [
