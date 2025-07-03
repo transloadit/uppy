@@ -11,7 +11,7 @@ export type OptionalPluralizeLocale<T extends number = number> =
   | undefined
 
 export type LocaleStrings<T extends NonNullable<OptionalPluralizeLocale>> = {
-  strings: Partial<T['strings']>
+  strings?: Partial<T['strings']>
 }
 
 export type I18n = Translator['translate']
@@ -32,7 +32,7 @@ function insertReplacement(
     // When the source contains multiple placeholders for interpolation,
     // we should ignore chunks that are not strings, because those
     // can be JSX objects and will be otherwise incorrectly turned into strings.
-    // Without this condition we’d get this: [object Object] hello [object Object] my <button>
+    // Without this condition we'd get this: [object Object] hello [object Object] my <button>
     if (typeof chunk !== 'string') {
       return newParts.push(chunk)
     }

@@ -170,7 +170,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailWidth?: number
   trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
-  locale?: LocaleStrings<typeof locale> & typeof StatusBarLocale
+  locale?: LocaleStrings<typeof locale> & LocaleStrings<typeof StatusBarLocale>
 }
 
 export type DashboardOptions<
@@ -643,7 +643,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
         !isModalAndClosed
       ) {
         this.uppy.log(
-          '[Dashboard] resize event didn’t fire on time: defaulted to mobile layout',
+          '[Dashboard] resize event didn't fire on time: defaulted to mobile layout',
           'warning',
         )
 
@@ -691,7 +691,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       )
 
     for (const node of nodesToDisable) {
-      // Links can’t have `disabled` attr, so we use `aria-disabled` for a11y
+      // Links can't have `disabled` attr, so we use `aria-disabled` for a11y
       if (node.tagName === 'A') {
         node.setAttribute('aria-disabled', disable)
       } else {
@@ -1288,7 +1288,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   #addSupportedPluginIfNoTarget = (plugin?: UnknownPlugin<M, B>) => {
     // Only these types belong on the Dashboard,
-    // we wouldn’t want to try and mount Compressor or Tus, for example.
+    // we wouldn't want to try and mount Compressor or Tus, for example.
     const typesAllowed = ['acquirer', 'editor']
     if (plugin && !plugin.opts?.target && typesAllowed.includes(plugin.type)) {
       const pluginAlreadyAdded = this.getPluginState().targets.some(

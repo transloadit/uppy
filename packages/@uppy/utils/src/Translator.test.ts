@@ -201,7 +201,7 @@ describe('Translator', () => {
       const partialLocale: IntersectionLocale = {
         strings: {
           closeModal: 'Custom Close Modal', // Only overriding one dashboard string
-          // StatusBar strings should be optional due to LocaleStrings<>
+          // StatusBar strings are required by the intersection
           uploading: 'Uploading',
           complete: 'Complete', 
           uploadFailed: 'Upload failed',
@@ -211,14 +211,14 @@ describe('Translator', () => {
         pluralize: (n: number) => (n === 1 ? 0 : 1),
       }
 
-      // This should also work - minimal override
+      // This should also work - minimal override with optional strings
       const minimalLocale: IntersectionLocale = {
         strings: {
-          closeModal: 'Custom Close Modal', // Only this should be required
-          // All other strings should be optional
+          closeModal: 'Custom Close Modal', // Only overriding one dashboard string
+          // StatusBar strings are required by the intersection
           uploading: 'Uploading',
           complete: 'Complete',
-          uploadFailed: 'Upload failed', 
+          uploadFailed: 'Upload failed',
           retry: 'Retry',
           cancel: 'Cancel',
         },
@@ -238,7 +238,7 @@ describe('Translator', () => {
         strings: {
           // Should be able to override just dashboard strings
           closeModal: 'My Custom Close',
-          // StatusBar strings should be optional but let's provide them for the test
+          // StatusBar strings are required by the intersection
           uploading: 'Uploading',
           complete: 'Complete',
           uploadFailed: 'Upload failed',
@@ -249,6 +249,57 @@ describe('Translator', () => {
       }
 
       expect(customLocale.strings.closeModal).toBe('My Custom Close')
+    })
+
+    it('should handle missing strings gracefully', () => {
+      // Test that strings can be completely optional
+      type OptionalLocale = LocaleStrings<typeof dashboardLocale>
+      
+      const emptyLocale: OptionalLocale = {
+        // strings is optional, so this should work
+      }
+
+      const partialLocale: OptionalLocale = {
+        strings: {
+          closeModal: 'Only this one',
+        },
+      }
+
+      expect(emptyLocale.strings).toBeUndefined()
+      expect(partialLocale.strings?.closeModal).toBe('Only this one')
+    })
+
+    it('should work with Dashboard-style intersection of LocaleStrings types', () => {
+      // Simulate the actual fixed Dashboard locale intersection type
+      type DashboardLocaleType = LocaleStrings<typeof dashboardLocale> & LocaleStrings<typeof statusBarLocale>
+      
+      // This should now work - user can provide just partial strings from either locale
+      const customLocale: DashboardLocaleType = {
+        strings: {
+          // Override just one Dashboard string
+          closeModal: 'My Custom Close',
+          // Override just one StatusBar string
+          uploading: 'Custom Uploading',
+          // All other strings are optional now
+        },
+      }
+
+      // This should also work - completely minimal
+      const minimalLocale: DashboardLocaleType = {
+        strings: {
+          closeModal: 'Just This One',
+        },
+      }
+
+      // This should work - no strings at all
+      const emptyLocale: DashboardLocaleType = {
+        // strings is completely optional
+      }
+
+      expect(customLocale.strings?.closeModal).toBe('My Custom Close')
+      expect(customLocale.strings?.uploading).toBe('Custom Uploading')
+      expect(minimalLocale.strings?.closeModal).toBe('Just This One')
+      expect(emptyLocale.strings).toBeUndefined()
     })
   })
 })
