@@ -63,6 +63,7 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
         providerGrantConfig,
         allowLocalUrls,
       })
+      req.companion.providerName = providerName
       req.companion.providerClass = ProviderClass
     } else {
       logger.warn(
