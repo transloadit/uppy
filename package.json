@@ -40,9 +40,9 @@
     "test:locale-packs": "yarn locale-packs:unused && yarn locale-packs:warnings",
     "test:locale-packs:unused": "yarn workspace @uppy-dev/locale-pack test unused",
     "test:locale-packs:warnings": "yarn workspace @uppy-dev/locale-pack test warnings",
-    "test:ts": "yarn tsc -b && yarn workspace @uppy/svelte check",
     "test:unit": "yarn run build && yarn test:watch --run",
     "test:watch": "vitest --environment jsdom --dir packages/@uppy",
+    "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "uploadcdn": "yarn node ./private/upload-to-cdn/index.js",
     "watch": "turbo watch build build:css --filter='./packages/@uppy/*'"
   },

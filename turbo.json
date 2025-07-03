@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": [
-        "src/**/*.{js,ts,jsx,tsx,vue}",
+        "src/**/*.{js,ts,jsx,tsx}",
         "package.json",
         "tsconfig.json",
         "tsconfig.build.json"
@@ -14,6 +14,9 @@
     "build:css": {
       "inputs": ["src/**/*.scss", "src/**/*.css"],
       "outputs": ["lib/**/*.css", "dist/**/*.css"]
+    },
+    "typecheck": {
+      "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
     },
     "uppy#build": {
       "dependsOn": ["^build"],

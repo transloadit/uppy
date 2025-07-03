@@ -72,7 +72,8 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:bundle": "node build-bundle.mjs"
+    "build:bundle": "node build-bundle.mjs",
+    "typecheck": "tsc --build"
   },
   "devDependencies": {
     "chalk": "^5.0.0",
