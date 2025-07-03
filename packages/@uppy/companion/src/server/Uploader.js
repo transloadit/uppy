@@ -166,16 +166,21 @@ class Uploader {
    * @property {string} [httpMethod]
    * @property {boolean} [useFormData]
    * @property {number} [chunkSize]
+   * @property {string} [providerName]
    *
    * @param {UploaderOptions} options
    */
   constructor(options) {
     validateOptions(options)
 
+    this.providerName = options.providerName
     this.options = options
     this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.options.metadata = this.options.metadata || {}
+    this.options.metadata = {
+      ...(this.providerName != null && { provider: this.providerName }),
+      ...(this.options.metadata || {}), // allow user to override provider
+    }
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     const { maxFilenameLength } = this.options.companionOptions
@@ -394,12 +399,11 @@ class Uploader {
       protocol: req.body.protocol,
       endpoint: req.body.endpoint,
       uploadUrl: req.body.uploadUrl,
-      metadata: {
-        provider: req.companion.providerName,
-        ...req.body.metadata,
-      },
+      metadata: req.body.metadata,
       fieldname: req.body.fieldname,
       useFormData,
+
+      providerName: req.companion.providerName,
 
       // Info coming from companion server configuration:
       size,
