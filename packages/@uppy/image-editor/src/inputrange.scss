@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Styling Cross-Browser Compatible Range Inputs with Sass
 // Github: https://github.com/darlanrod/input-range-sass
 // Author: Darlan Rod https://github.com/darlanrod
@@ -29,12 +31,12 @@ $track-border-color: #cfd8dc !default;
 $track-radius: 5px !default;
 $contrast: 5% !default;
 
-$ie-bottom-track-color: darken($track-color, $contrast) !default;
+$ie-bottom-track-color: color.adjust($track-color, $lightness: -$contrast, $space: hsl) !default;
 
 @mixin shadow($shadow-size, $shadow-blur, $shadow-color) {
   box-shadow:
     $shadow-size $shadow-size $shadow-blur $shadow-color,
-    0 0 $shadow-size lighten($shadow-color, 5%);
+    0 0 $shadow-size color.adjust($shadow-color, $lightness: 5%, $space: hsl);
 }
 
 @mixin track {
@@ -71,7 +73,7 @@ $ie-bottom-track-color: darken($track-color, $contrast) !default;
     outline: 0;
 
     &::-webkit-slider-runnable-track {
-      background: lighten($track-color, $contrast);
+      background: color.adjust($track-color, $lightness: $contrast, $space: hsl);
     }
 
     &::-ms-fill-lower {
@@ -79,7 +81,7 @@ $ie-bottom-track-color: darken($track-color, $contrast) !default;
     }
 
     &::-ms-fill-upper {
-      background: lighten($track-color, $contrast);
+      background: color.adjust($track-color, $lightness: $contrast, $space: hsl);
     }
   }
 

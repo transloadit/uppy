@@ -1,3 +1,6 @@
+@use '../../../../../core/src/_variables.scss' as *;
+@use '../../../../../core/src/_utils.scss' as *;
+
 // On both mobile and .md+ screens
 .uppy-Dashboard-Item-action {
   @include blue-border-focus;
