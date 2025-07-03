@@ -394,7 +394,10 @@ class Uploader {
       protocol: req.body.protocol,
       endpoint: req.body.endpoint,
       uploadUrl: req.body.uploadUrl,
-      metadata: req.body.metadata,
+      metadata: {
+        provider: req.companion.providerName,
+        ...req.body.metadata,
+      },
       fieldname: req.body.fieldname,
       useFormData,
 
