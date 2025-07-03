@@ -3,7 +3,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const { setTimeout: sleep } = require('node:timers/promises')
 
-const got = require('./got')
+const got = require('got')
 
 const { FILE_NAME_PREFIX } = require('./Uploader')
 const logger = require('./logger')
@@ -67,7 +67,7 @@ async function runPeriodicPing({ urls, payload, requestTimeout }) {
   await Promise.all(
     urls.map(async (url) => {
       try {
-        await (await got).post(url, {
+        await got.default.post(url, {
           json: payload,
           timeout: { request: requestTimeout },
         })

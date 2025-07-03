@@ -5,8 +5,7 @@ const ipaddr = require('ipaddr.js')
 const path = require('node:path')
 const contentDisposition = require('content-disposition')
 const validator = require('validator')
-
-const got = require('../got')
+const got = require('got')
 
 const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
@@ -102,7 +101,7 @@ const getProtectedHttpAgent = ({ protocol, allowLocalIPs }) => {
 
 module.exports.getProtectedHttpAgent = getProtectedHttpAgent
 
-async function getProtectedGot({ allowLocalIPs }) {
+function getProtectedGot({ allowLocalIPs }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', allowLocalIPs })
   const HttpsAgent = getProtectedHttpAgent({
     protocol: 'https',
@@ -112,7 +111,7 @@ async function getProtectedGot({ allowLocalIPs }) {
   const httpsAgent = new HttpsAgent()
 
   // @ts-ignore
-  return (await got).extend({ agent: { http: httpAgent, https: httpsAgent } })
+  return got.default.extend({ agent: { http: httpAgent, https: httpsAgent } })
 }
 
 module.exports.getProtectedGot = getProtectedGot
@@ -130,7 +129,7 @@ exports.getURLMeta = async (
   options = undefined,
 ) => {
   async function requestWithMethod(method) {
-    const protectedGot = await getProtectedGot({ allowLocalIPs })
+    const protectedGot = getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream(url, {
       method,
       throwHttpErrors: false,

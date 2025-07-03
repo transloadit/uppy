@@ -1,15 +1,14 @@
+const got = require('got')
 const Provider = require('../Provider')
 const adaptData = require('./adapter')
 const { withProviderErrorHandling } = require('../providerErrors')
 const { prepareStream } = require('../../helpers/utils')
 const { ProviderApiError } = require('../error')
 
-const got = require('../../got')
-
 const BASE_URL = 'https://api.unsplash.com'
 
-const getClient = async ({ token }) =>
-  (await got).extend({
+const getClient = ({ token }) =>
+  got.default.extend({
     prefixUrl: BASE_URL,
     headers: {
       authorization: `Client-ID ${token}`,
@@ -35,7 +34,7 @@ class Unsplash extends Provider {
       const qs = { per_page: 40, query: query.q }
       if (query.cursor) qs.page = query.cursor
 
-      const response = await (await getClient({ token }))
+      const response = await getClient({ token })
         .get('search/photos', { searchParams: qs, responseType: 'json' })
         .json()
       return adaptData(response, query)
@@ -46,13 +45,13 @@ class Unsplash extends Provider {
     return this.#withErrorHandling(
       'provider.unsplash.download.error',
       async () => {
-        const client = await getClient({ token })
+        const client = getClient({ token })
 
         const {
           links: { download: url, download_location: attributionUrl },
         } = await getPhotoMeta(client, id)
 
-        const stream = (await got).stream.get(url, { responseType: 'json' })
+        const stream = got.default.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
 
         // To attribute the author of the image, we call the `download_location`

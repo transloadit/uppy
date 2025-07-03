@@ -1,12 +1,12 @@
 const { htmlEscape } = require('escape-goat')
+const got = require('got')
+
 const logger = require('../logger')
 const oAuthState = require('../helpers/oauth-state')
 const tokenService = require('../helpers/jwt')
 const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
 // biome-ignore lint/correctness/noUnusedVariables: used in types
 const Provider = require('./Provider')
-
-const got = require('../got')
 
 /**
  * @param {string} url
@@ -15,7 +15,7 @@ const got = require('../got')
  */
 async function fetchKeys(url, providerName, credentialRequestParams) {
   try {
-    const { credentials } = await (await got)
+    const { credentials } = await got.default
       .post(url, {
         json: { provider: providerName, parameters: credentialRequestParams },
       })

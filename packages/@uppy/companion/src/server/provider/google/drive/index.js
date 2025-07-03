@@ -1,4 +1,4 @@
-const got = require('../../../got')
+const got = require('got')
 
 const { logout, refreshToken } = require('../index')
 const logger = require('../../../logger')
@@ -29,8 +29,8 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = async ({ token }) =>
-  (await got).extend({
+const getClient = ({ token }) =>
+  got.default.extend({
     prefixUrl: 'https://www.googleapis.com/drive/v3',
     headers: {
       authorization: `Bearer ${token}`,
@@ -38,7 +38,7 @@ const getClient = async ({ token }) =>
   })
 
 async function getStats({ id, token }) {
-  const client = await getClient({ token })
+  const client = getClient({ token })
 
   const getStatsInner = async (statsOfId) =>
     client
@@ -57,7 +57,7 @@ async function getStats({ id, token }) {
 }
 
 async function streamGoogleFile({ token, id: idIn }) {
-  const client = await getClient({ token })
+  const client = getClient({ token })
 
   const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
 
@@ -76,12 +76,10 @@ async function streamGoogleFile({ token, id: idIn }) {
     // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
     const mimeTypeExportLink = exportLinks?.[mimeType2]
     if (mimeTypeExportLink) {
-      const gSuiteFilesClient = (await got).extend({
+      stream = got.default.stream.get(mimeTypeExportLink, {
         headers: {
           authorization: `Bearer ${token}`,
         },
-      })
-      stream = gSuiteFilesClient.stream.get(mimeTypeExportLink, {
         responseType: 'json',
       })
     } else {
@@ -128,7 +126,7 @@ class Drive extends Provider {
         const isRoot = directory === 'root'
         const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-        const client = await getClient({ token })
+        const client = getClient({ token })
 
         async function fetchSharedDrives(pageToken = null) {
           const shouldListSharedDrives = isRoot && !query.cursor
