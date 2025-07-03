@@ -70,7 +70,11 @@ class Facebook extends Provider {
     return 'facebook'
   }
 
-  async list({ directory, token, query = { cursor: null } }) {
+  async list({
+    directory,
+    providerUserSession: { accessToken: token },
+    query = { cursor: null },
+  }) {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
       const qs = { fields: 'name,cover_photo,created_time,type' }
 
@@ -100,7 +104,7 @@ class Facebook extends Provider {
     })
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.facebook.download.error',
       async () => {
@@ -112,6 +116,7 @@ class Facebook extends Provider {
     )
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async thumbnail() {
     // not implementing this because a public thumbnail from facebook will be used instead
     logger.error(
@@ -121,7 +126,7 @@ class Facebook extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async logout({ token }) {
+  async logout({ providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.facebook.logout.error',
       async () => {
@@ -136,6 +141,7 @@ class Facebook extends Provider {
     )
   }
 
+  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling(tag, fn) {
     return withProviderErrorHandling({
       fn,

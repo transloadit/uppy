@@ -23,9 +23,7 @@ async function logout(req, res, next) {
   }
 
   try {
-    const { accessToken } = providerUserSession
     const data = await companion.provider.logout({
-      token: accessToken,
       providerUserSession,
       companion,
     })

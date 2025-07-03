@@ -187,8 +187,6 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
 
       next()
     } catch (keyErr) {
-      // TODO we should return an html page here that can communicate the error
-      // back to the Uppy client, just like /send-token does
       res.send(`
         <!DOCTYPE html>
         <html>

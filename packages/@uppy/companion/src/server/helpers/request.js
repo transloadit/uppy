@@ -181,8 +181,6 @@ exports.getURLMeta = async (
   }
 
   if (urlMeta.statusCode >= 300) {
-    // @todo possibly set a status code in the error object to get a more helpful
-    // hint at what the cause of error is.
     throw new Error(`URL server responded with status: ${urlMeta.statusCode}`)
   }
 

@@ -69,7 +69,6 @@ class WebdavProvider extends Provider {
       if (['ECONNREFUSED', 'ENOTFOUND'].includes(err.code)) {
         throw new ProviderUserError({ message: 'Cannot connect to server' })
       }
-      // todo report back to the user what actually went wrong
       throw err
     }
   }
@@ -168,7 +167,7 @@ class WebdavProvider extends Provider {
       let err2 = err
       if (err.status === 401) err2 = new ProviderAuthError()
       if (err.response) {
-        err2 = new ProviderApiError('WebDAV API error', err.status) // todo improve (read err?.response?.body readable stream and parse response)
+        err2 = new ProviderApiError('WebDAV API error', err.status)
       }
       logger.error(err2, tag)
       throw err2

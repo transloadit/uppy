@@ -8,12 +8,10 @@ const { respondWithError } = require('../provider/error')
 async function thumbnail(req, res, next) {
   const { id } = req.params
   const { provider, providerUserSession } = req.companion
-  const { accessToken } = providerUserSession
 
   try {
     const { stream, contentType } = await provider.thumbnail({
       id,
-      token: accessToken,
       providerUserSession,
     })
     if (contentType != null) res.set('Content-Type', contentType)
