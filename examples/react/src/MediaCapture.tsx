@@ -12,6 +12,7 @@ export interface MediaCaptureProps {
   getVideoProps: () => Record<string, unknown>
   getPrimaryActionButtonProps: () => ButtonProps
   primaryActionButtonLabel: string
+  mediaError: Error | null
   getRecordButtonProps: () => ButtonProps
   getStopRecordingButtonProps: () => ButtonProps
   getSubmitButtonProps: () => ButtonProps
@@ -25,10 +26,28 @@ export function MediaCapture({
   getPrimaryActionButtonProps,
   primaryActionButtonLabel,
   getRecordButtonProps,
+  mediaError,
   getStopRecordingButtonProps,
   getSubmitButtonProps,
   getDiscardButtonProps,
 }: MediaCaptureProps) {
+
+    const renderError = () => {
+    if (mediaError) {
+      let errorMessage = 'An unknown camera error occurred.'
+      if (mediaError.message) {
+        errorMessage = `Camera error: ${mediaError.message}`
+      }
+      return (
+        <div className="p-4 my-2 text-red-700 bg-red-100 border border-red-400 rounded">
+          <p className="font-bold">Error</p>
+          <p>{errorMessage}</p>
+        </div>
+      )
+    }
+    return null
+  }
+
   return (
     <div className="p-4 max-w-lg w-full">
       <div className="flex justify-between items-center mb-4">
@@ -41,6 +60,7 @@ export function MediaCapture({
           ✕
         </button>
       </div>
+      {renderError()}
       <video
         className="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
         {...getVideoProps()}
