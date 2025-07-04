@@ -918,7 +918,10 @@ export class Uppy<
       this.#restricter.getMissingRequiredMetaFields(file)
 
     if (missingFields.length > 0) {
-      this.setFileState(file.id, { missingRequiredMetaFields: missingFields, error: error.message })
+      this.setFileState(file.id, {
+        missingRequiredMetaFields: missingFields,
+        error: error.message,
+      })
       this.log(error.message)
       this.emit('restriction-failed', file, error)
       return false
@@ -1380,7 +1383,7 @@ export class Uppy<
   }
 
   async #doRetryAll(): Promise<UploadResult<M, B> | undefined> {
-      const filesToRetry = this.#getFilesToRetry()
+    const filesToRetry = this.#getFilesToRetry()
     if (filesToRetry.length === 0) {
       return {
         successful: [],
@@ -1389,10 +1392,13 @@ export class Uppy<
     }
 
     // Get files to retry and validate them BEFORE clearing errors
-    const filesToValidate = filesToRetry.reduce((acc, fileID) => {
-      acc[fileID] = this.getFile(fileID)
-      return acc
-    }, {} as Record<string, UppyFile<M, B>>)
+    const filesToValidate = filesToRetry.reduce(
+      (acc, fileID) => {
+        acc[fileID] = this.getFile(fileID)
+        return acc
+      },
+      {} as Record<string, UppyFile<M, B>>,
+    )
 
     // Re-validate restrictions for files being retried
     try {
@@ -1408,8 +1414,8 @@ export class Uppy<
 
     // After validation passes, get the updated list of files that are still eligible for retry
     // (some files might have been marked with errors during validation)
-    const validFilesToRetry = this.#getFilesToRetry().filter(fileID =>
-      filesToRetry.includes(fileID) && this.getFile(fileID).error
+    const validFilesToRetry = this.#getFilesToRetry().filter(
+      (fileID) => filesToRetry.includes(fileID) && this.getFile(fileID).error,
     )
 
     if (validFilesToRetry.length === 0) {
