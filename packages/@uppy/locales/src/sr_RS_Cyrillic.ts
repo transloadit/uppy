@@ -131,7 +131,8 @@ sr_RS_Cyrillic.strings = {
     '1': 'Број додатих датотека: %{smart_count}',
   },
   xTimeLeft: 'Преостало време %{time} ',
-  youCanOnlyUploadFileTypes: 'Можете да отпремите само: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} није подржан. Можете да отпремите само: %{types}',
   youCanOnlyUploadX: {
     '0': 'Дозвољени број датотека за отпремање: %{smart_count}',
     '1': 'Дозвољени број датотека за отпремање: %{smart_count}',

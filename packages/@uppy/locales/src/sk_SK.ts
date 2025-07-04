@@ -166,7 +166,8 @@ sk_SK.strings = {
     '1': '%{smart_count} ďalšie pridané súbory',
   },
   xTimeLeft: '%{time} zostáva',
-  youCanOnlyUploadFileTypes: 'Môžete nahrať iba tieto typy súborov: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} nie je podporovaný. Môžete nahrať iba tieto typy súborov: %{types}',
   youCanOnlyUploadX: {
     '0': 'Môžete nahrať iba %{smart_count} súbor',
     '1': 'Môžete nahrať iba %{smart_count} súbory',

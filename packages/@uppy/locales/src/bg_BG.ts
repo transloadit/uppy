@@ -155,7 +155,8 @@ bg_BG.strings = {
     '1': 'Оше %{smart_count} файла са добавени',
   },
   xTimeLeft: 'Остават %{time}',
-  youCanOnlyUploadFileTypes: 'Можете да качване само файлове: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} не се поддържа. Можете да качвате само: %{types}',
   youCanOnlyUploadX: {
     '0': 'Може да качвате само %{smart_count} файл',
     '1': 'Може да качвате само %{smart_count} файлове',

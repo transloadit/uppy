@@ -250,7 +250,7 @@ cs_CZ.strings = {
   },
   xTimeLeft: '%{time} zbývá',
   youCanOnlyUploadFileTypes:
-    'Lze nahrát pouze následující typy souborů: %{types}',
+    '%{file} není podporován. Lze nahrát pouze následující typy souborů: %{types}',
   youCanOnlyUploadX: {
     '0': 'Lze nahrát pouze %{smart_count} soubor',
     '1': 'Lze nahrát pouze %{smart_count} soubory',

@@ -226,7 +226,8 @@ uk_UA.strings = {
     '2': '%{smart_count} додаткових файлів додано',
   },
   xTimeLeft: 'залишилося %{time}',
-  youCanOnlyUploadFileTypes: 'Ви можете завантажити тільки: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} не підтримується. Ви можете завантажити тільки: %{types}',
   youCanOnlyUploadX: {
     '0': 'Ви можете завантажити тільки %{smart_count} файл',
     '1': 'Ви можете завантажити тільки %{smart_count} файли',

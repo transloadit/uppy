@@ -220,7 +220,8 @@ es_ES.strings = {
     '1': 'Se agregaron %{smart_count} archivos más',
   },
   xTimeLeft: '%{time} restante',
-  youCanOnlyUploadFileTypes: 'Solo puedes subir: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} no es compatible. Solo puedes subir: %{types}',
   youCanOnlyUploadX: {
     '0': 'Solo puedes subir %{smart_count} archivo',
     '1': 'Solo puedes subir %{smart_count} archivos',

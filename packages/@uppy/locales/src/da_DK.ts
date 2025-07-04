@@ -132,7 +132,8 @@ da_DK.strings = {
     '1': '%{smart_count} flere filer tilføjet',
   },
   xTimeLeft: '%{time} tilbage',
-  youCanOnlyUploadFileTypes: 'Du kan kun uploade: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} er ikke understøttet. Du kan kun uploade: %{types}',
   youCanOnlyUploadX: {
     '0': 'Du kan kun uploade %{smart_count} fil',
     '1': 'Du kan kun uploade %{smart_count} filer',

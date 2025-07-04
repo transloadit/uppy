@@ -19,7 +19,8 @@ export default {
     missingRequiredMetaFieldOnFile:
       'Missing required meta fields in %{fileName}',
     inferiorSize: 'This file is smaller than the allowed size of %{size}',
-    youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+    youCanOnlyUploadFileTypes:
+      '%{file} is not supported. You can only upload: %{types}',
     noMoreFilesAllowed: 'Cannot add more files',
     noDuplicates:
       "Cannot add the duplicate file '%{fileName}', it already exists",
