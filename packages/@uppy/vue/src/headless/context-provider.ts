@@ -2,10 +2,10 @@ import type { NonNullableUppyContext, UploadStatus } from '@uppy/components'
 import { createUppyEventAdapter } from '@uppy/components'
 import type Uppy from '@uppy/core'
 import type { PropType } from 'vue'
-import { markRaw } from 'vue'
 import {
   defineComponent,
   inject,
+  markRaw,
   onBeforeUnmount,
   onMounted,
   provide,
