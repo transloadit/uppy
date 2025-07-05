@@ -9,6 +9,7 @@
     :stop-recording-button-props="webcam.getStopRecordingButtonProps()"
     :submit-button-props="webcam.getSubmitButtonProps()"
     :discard-button-props="webcam.getDiscardButtonProps()"
+    :media-error="webcam.state.cameraError"
   />
 </template>
 
