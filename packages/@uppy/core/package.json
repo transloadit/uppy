@@ -11,7 +11,8 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "sass --load-path=../../.. src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css"
+    "build:css": "sass --load-path=../../.. src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "typecheck": "tsc --build"
   },
   "keywords": [
     "file uploader",

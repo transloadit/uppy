@@ -1,0 +1,21 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["@uppy/components#build"],
+      "inputs": [
+        "src/**/*.{js,ts,svelte}",
+        "package.json",
+        "tsconfig.json",
+        "svelte.config.js",
+        "vite.config.js"
+      ],
+      "outputs": [".svelte-kit/**", "dist/**"]
+    },
+    "build:css": {
+      "dependsOn": ["@uppy/svelte#build"],
+      "inputs": ["../components/dist/styles.css"],
+      "outputs": ["dist/styles.css"]
+    }
+  }
+}
