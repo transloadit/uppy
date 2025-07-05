@@ -2,6 +2,7 @@ import type { NonNullableUppyContext, UploadStatus } from '@uppy/components'
 import { createUppyEventAdapter } from '@uppy/components'
 import type Uppy from '@uppy/core'
 import type { PropType } from 'vue'
+import { markRaw } from 'vue'
 import {
   defineComponent,
   inject,
@@ -33,7 +34,7 @@ export const UppyContextProvider = defineComponent({
     const progress = ref(0)
 
     const uppyContext = reactive<UppyContext>({
-      uppy: props.uppy,
+      uppy: markRaw(props.uppy),
       status: 'init',
       progress: 0,
     })
