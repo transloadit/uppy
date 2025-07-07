@@ -1040,10 +1040,10 @@ export class Uppy<
     validFilesToAdd: UppyFile<M, B>[]
     errors: RestrictionError<M, B>[]
   } {
-    let { files: existingFiles } = this.getState()
+    const { files: existingFiles } = this.getState()
 
     // create a copy of the files object only once
-    let nextFilesState = { ...existingFiles }
+    const nextFilesState = { ...existingFiles }
     const validFilesToAdd: UppyFile<M, B>[] = []
     const errors: RestrictionError<M, B>[] = []
 
@@ -1072,10 +1072,6 @@ export class Uppy<
           newFile,
           nextFilesState,
         )
-
-        // update state after onBeforeFileAdded
-        existingFiles = this.getState().files
-        nextFilesState = { ...existingFiles }
 
         if (
           !onBeforeFileAddedResult &&
