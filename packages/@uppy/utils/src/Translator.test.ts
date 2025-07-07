@@ -71,8 +71,6 @@ describe('Translator', () => {
     })
   })
 
-
-
   describe('translation strings inheritance / overriding', () => {
     const launguagePackLoadedInCore = english
     const defaultStrings = {

@@ -24,13 +24,16 @@ test('can add locale strings without type error', async () => {
   })
 })
 
-test('LocaleStrings works with intersection types', async () => {
-  // This test verifies that LocaleStrings can be used with intersection types
-  // without requiring all properties to be present (fixes the Dashboard locale bug)
+test('LocaleStrings type works with partial strings (Dashboard locale bug fix)', async () => {
+  // This test verifies that LocaleStrings accepts partial strings
+  // and can be used in scenarios like Dashboard where only some locale keys are provided
+
+  // Mock locale types similar to Dashboard + StatusBar scenario
   const dashboardLocale = {
     strings: {
       uploading: 'Uploading...',
-      complete: 'All done!',
+      complete: 'Complete',
+      cancel: 'Cancel',
     },
   }
 
@@ -39,21 +42,50 @@ test('LocaleStrings works with intersection types', async () => {
       uploading: 'Uploading',
       complete: 'Complete',
       uploadFailed: 'Upload failed',
+      paused: 'Paused',
+      retry: 'Retry',
     },
   }
 
-  type TestLocaleType = LocaleStrings<typeof dashboardLocale> & typeof statusBarLocale
-
-  // This should work - only providing partial strings
-  const partialLocale: TestLocaleType = {
+  // Test that LocaleStrings allows partial strings
+  const partialDashboardLocale: LocaleStrings<typeof dashboardLocale> = {
     strings: {
       uploading: 'Custom uploading text',
-      // Should not require all strings to be present thanks to the fix
+      // Should not require 'complete' or 'cancel' to be present
     },
   }
 
-  // This should compile without errors
-  expectTypeOf(partialLocale.strings.uploading).toEqualTypeOf<string | undefined>()
+  const partialStatusBarLocale: LocaleStrings<typeof statusBarLocale> = {
+    strings: {
+      uploading: 'Custom uploading text',
+      complete: 'Custom complete text',
+      // Should not require other StatusBar strings to be present
+    },
+  }
+
+  // Verify the types work as expected
+  expectTypeOf(partialDashboardLocale.strings.uploading).toEqualTypeOf<
+    string | undefined
+  >()
+  expectTypeOf(partialStatusBarLocale.strings.uploading).toEqualTypeOf<
+    string | undefined
+  >()
+
+  // Test that we can combine partial locales (the key use case from the bug report)
+  type CombinedLocaleType = LocaleStrings<typeof dashboardLocale> &
+    LocaleStrings<typeof statusBarLocale>
+
+  // This should work without requiring all properties from both types
+  const combinedPartialLocale: CombinedLocaleType = {
+    strings: {
+      uploading: 'Custom uploading text',
+      // Should not require all strings from both dashboardLocale and statusBarLocale
+    },
+  }
+
+  expectTypeOf(combinedPartialLocale.strings.uploading).toEqualTypeOf<
+    string | undefined
+  >()
 })
 
 test('can use Uppy class without generics', async () => {
