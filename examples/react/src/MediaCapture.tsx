@@ -31,8 +31,7 @@ export function MediaCapture({
   getSubmitButtonProps,
   getDiscardButtonProps,
 }: MediaCaptureProps) {
-
-    const renderError = () => {
+  const renderError = () => {
     if (mediaError) {
       let errorMessage = 'An unknown camera error occurred.'
       if (mediaError.message) {
