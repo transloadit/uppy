@@ -24,6 +24,38 @@ test('can add locale strings without type error', async () => {
   })
 })
 
+test('LocaleStrings works with intersection types', async () => {
+  // This test verifies that LocaleStrings can be used with intersection types
+  // without requiring all properties to be present (fixes the Dashboard locale bug)
+  const dashboardLocale = {
+    strings: {
+      uploading: 'Uploading...',
+      complete: 'All done!',
+    },
+  }
+
+  const statusBarLocale = {
+    strings: {
+      uploading: 'Uploading',
+      complete: 'Complete',
+      uploadFailed: 'Upload failed',
+    },
+  }
+
+  type TestLocaleType = LocaleStrings<typeof dashboardLocale> & typeof statusBarLocale
+
+  // This should work - only providing partial strings
+  const partialLocale: TestLocaleType = {
+    strings: {
+      uploading: 'Custom uploading text',
+      // Should not require all strings to be present thanks to the fix
+    },
+  }
+
+  // This should compile without errors
+  expectTypeOf(partialLocale.strings.uploading).toEqualTypeOf<string | undefined>()
+})
+
 test('can use Uppy class without generics', async () => {
   const core = new Uppy()
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()

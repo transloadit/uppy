@@ -10,9 +10,10 @@ export type OptionalPluralizeLocale<T extends number = number> =
   | (Omit<Locale<T>, 'pluralize'> & Partial<Pick<Locale<T>, 'pluralize'>>)
   | undefined
 
-export type LocaleStrings<T extends NonNullable<OptionalPluralizeLocale>> = {
-  strings: Partial<T['strings']>
-}
+export type LocaleStrings<T extends NonNullable<OptionalPluralizeLocale>> = 
+  Partial<T> & {
+    strings: Partial<T['strings']>
+  }
 
 export type I18n = Translator['translate']
 
