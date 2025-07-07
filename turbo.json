@@ -16,6 +16,7 @@
       "outputs": ["lib/**/*.css", "dist/**/*.css"]
     },
     "typecheck": {
+      "dependsOn": ["build"],
       "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
     },
     "uppy#build": {

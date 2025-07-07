@@ -2,14 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "@uppy/audio#build",
-        "@uppy/core#build",
-        "@uppy/image-editor#build",
-        "@uppy/remote-sources#build",
-        "@uppy/screen-capture#build",
-        "@uppy/webcam#build"
-      ],
+      "dependsOn": ["@uppy/components#build"],
       "inputs": [
         "src/**/*.{js,ts,jsx,tsx}",
         "package.json",
@@ -19,7 +12,8 @@
       "outputs": ["lib/**"]
     },
     "build:css": {
-      "inputs": ["src/input.css", "src/**/*.{js,ts,jsx,tsx}"],
+      "dependsOn": ["@uppy/react#build"],
+      "inputs": ["../components/dist/styles.css"],
       "outputs": ["dist/styles.css"]
     }
   }
