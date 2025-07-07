@@ -12,7 +12,7 @@
       "outputs": ["lib/**"]
     },
     "build:css": {
-      "dependsOn": ["@uppy/react#build"],
+      "dependsOn": ["build", "@uppy/components#build:css"],
       "inputs": ["../components/dist/styles.css"],
       "outputs": ["dist/styles.css"]
     }

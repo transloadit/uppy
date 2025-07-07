@@ -30,7 +30,7 @@
         "@uppy/drag-drop#build"
       ],
       "inputs": [
-        "src/**/*.{js,ts,jsx,tsx}",
+        "../*/src/locale.ts",
         "script/**/*.{js,ts,jsx,tsx}",
         "package.json",
         "tsconfig.json",
