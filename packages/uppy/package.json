@@ -72,8 +72,7 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:bundle": "node build-bundle.mjs",
-    "upload-to-cdn": "node upload-to-cdn.js"
+    "build:bundle": "node build-bundle.mjs"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
