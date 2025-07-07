@@ -75,8 +75,15 @@
     "build:bundle": "node build-bundle.mjs"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.338.0",
+    "adm-zip": "^0.5.5",
     "chalk": "^5.0.0",
+    "concat-stream": "^2.0.0",
     "esbuild": "^0.25.0",
+    "mime-types": "^2.1.26",
+    "npm-packlist": "^5.0.0",
+    "pacote": "^13.0.0",
+    "tar": "^6.1.0",
     "typescript": "^5.8.3"
   }
 }
