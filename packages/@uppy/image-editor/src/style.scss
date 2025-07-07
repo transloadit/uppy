@@ -17,8 +17,8 @@
   $track-border-width: 0,
   $track-border-color: transparent
 );
-@use '../../core/src/_utils.scss';
-@use '../../core/src/_variables.scss';
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 @use 'cropper.scss';
 
 .uppy-ImageCropper {

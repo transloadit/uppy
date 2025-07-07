@@ -1,6 +1,6 @@
 @use "sass:color";
-@use '../../core/src/_utils.scss' as *;
-@use '../../core/src/_variables.scss' as *;
+@use '@uppy/core/src/_utils.scss' as *;
+@use '@uppy/core/src/_variables.scss' as *;
 
 .uppy-Audio-container {
   width: 100%;

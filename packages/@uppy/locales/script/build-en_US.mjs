@@ -1,4 +1,5 @@
-/* eslint-disable no-console, prefer-arrow-callback */
+// We use locale.ts in all packages.
+// They need to be combined into a single file (en_US.ts).
 
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
@@ -6,7 +7,7 @@ import { fileURLToPath } from 'node:url'
 
 import { getLocales, sortObjectAlphabetically } from './helpers.mjs'
 
-const root = fileURLToPath(new URL('../../', import.meta.url))
+const root = fileURLToPath(new URL('../../../../', import.meta.url))
 
 const localesPath = path.join(root, 'packages', '@uppy', 'locales')
 const templatePath = path.join(localesPath, 'template.ts')
@@ -44,5 +45,5 @@ await Promise.all([
       'en_US.strings = {}',
       `en_US.strings = ${formattedLocale}`,
     ),
-  ).then(() => console.log(`✅ Generated '${englishLocalePath}'`)),
+  ),
 ])
