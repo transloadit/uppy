@@ -1,4 +1,5 @@
-/* eslint-disable no-console, prefer-arrow-callback */
+// We use locale.ts in all packages.
+// They need to be combined into a single file (en_US.ts).
 
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
