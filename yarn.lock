@@ -11085,16 +11085,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-dev/locale-pack@workspace:private/locale-pack":
-  version: 0.0.0-use.local
-  resolution: "@uppy-dev/locale-pack@workspace:private/locale-pack"
-  dependencies:
-    chalk: "npm:^5.0.0"
-    dedent: "npm:^1.0.0"
-    glob: "npm:^8.0.0"
-  languageName: unknown
-  linkType: soft
-
 "@uppy-dev/release@workspace:private/release":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/release@workspace:private/release"
@@ -11888,6 +11878,9 @@ __metadata:
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
     "@uppy/utils": "workspace:^"
+    chalk: "npm:^5.0.0"
+    dedent: "npm:^1.0.0"
+    glob: "npm:^8.0.0"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
