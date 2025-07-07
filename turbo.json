@@ -2,7 +2,7 @@
   "$schema": "https://turborepo.com/schema.json",
   "tasks": {
     "build": {
-      "outputLogs": "hash-only",
+      "outputLogs": "new-only",
       "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{js,ts,jsx,tsx}",
@@ -13,17 +13,17 @@
       "outputs": ["lib/**", "dist/**"]
     },
     "build:css": {
-      "outputLogs": "hash-only",
+      "outputLogs": "new-only",
       "inputs": ["src/**/*.scss"],
       "outputs": ["lib/**/*.css", "dist/**/*.css"]
     },
     "typecheck": {
-      "outputLogs": "hash-only",
+      "outputLogs": "new-only",
       "dependsOn": ["build"],
       "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
     },
     "uppy#build": {
-      "outputLogs": "hash-only",
+      "outputLogs": "new-only",
       "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{js,ts,jsx,tsx}",
