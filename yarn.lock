@@ -11202,7 +11202,6 @@ __metadata:
     dotenv: "npm:^16.0.0"
     esbuild: "npm:^0.25.0"
     execa: "npm:^9.5.1"
-    github-contributors-list: "npm:^1.2.4"
     glob: "npm:^8.0.0"
     jsdom: "npm:^24.0.0"
     npm-run-all: "npm:^4.1.5"
@@ -11224,36 +11223,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-dev/locale-pack@workspace:private/locale-pack":
-  version: 0.0.0-use.local
-  resolution: "@uppy-dev/locale-pack@workspace:private/locale-pack"
-  dependencies:
-    chalk: "npm:^5.0.0"
-    dedent: "npm:^1.0.0"
-    glob: "npm:^8.0.0"
-  languageName: unknown
-  linkType: soft
-
 "@uppy-dev/release@workspace:private/release":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/release@workspace:private/release"
   dependencies:
     globby: "npm:^13.0.0"
     prompts: "npm:^2.4.2"
-  languageName: unknown
-  linkType: soft
-
-"@uppy-dev/upload-to-cdn@workspace:private/upload-to-cdn":
-  version: 0.0.0-use.local
-  resolution: "@uppy-dev/upload-to-cdn@workspace:private/upload-to-cdn"
-  dependencies:
-    "@aws-sdk/client-s3": "npm:^3.338.0"
-    adm-zip: "npm:^0.5.5"
-    concat-stream: "npm:^2.0.0"
-    mime-types: "npm:^2.1.26"
-    npm-packlist: "npm:^5.0.0"
-    pacote: "npm:^13.0.0"
-    tar: "npm:^6.1.0"
   languageName: unknown
   linkType: soft
 
@@ -12073,6 +12048,9 @@ __metadata:
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
     "@uppy/utils": "workspace:^"
+    chalk: "npm:^5.0.0"
+    dedent: "npm:^1.0.0"
+    glob: "npm:^8.0.0"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
@@ -19560,21 +19538,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"github-contributors-list@npm:^1.2.4":
-  version: 1.2.5
-  resolution: "github-contributors-list@npm:1.2.5"
-  dependencies:
-    marked: "npm:^0.8.0"
-    merge: "npm:^2.1.1"
-    minimist: "npm:^1.2.0"
-    q: "npm:^1.5.1"
-    sprintf-js: "npm:^1.1.2"
-  bin:
-    githubcontrib: ./bin/githubcontrib
-  checksum: 10/44f49d21c029d934c75e48c28b6120adfa7fbdef1c2b93a5e6c1c0df2a25162768aeb0d8c901650a0611b5dc2a923a77c5115f6dc604ef72653379ab0d60e3b0
-  languageName: node
-  linkType: hard
-
 "glob-parent@npm:^5.1.2, glob-parent@npm:~5.1.2":
   version: 5.1.2
   resolution: "glob-parent@npm:5.1.2"
@@ -23820,15 +23783,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^0.8.0":
-  version: 0.8.2
-  resolution: "marked@npm:0.8.2"
-  bin:
-    marked: bin/marked
-  checksum: 10/6e84b05f749abb49e5a6ae174d5845cfb191f96931b335216f1d7eeea4f5afa7eb26fb941d4d7d32d7ee1bea2a1d6f3f83ff6c57498cfd761d40a7a3574b4896
-  languageName: node
-  linkType: hard
-
 "marked@npm:^12.0.0":
   version: 12.0.2
   resolution: "marked@npm:12.0.2"
@@ -23941,13 +23895,6 @@ __metadata:
   version: 1.4.1
   resolution: "merge2@npm:1.4.1"
   checksum: 10/7268db63ed5169466540b6fb947aec313200bcf6d40c5ab722c22e242f651994619bcd85601602972d3c85bd2cc45a358a4c61937e9f11a061919a1da569b0c2
-  languageName: node
-  linkType: hard
-
-"merge@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "merge@npm:2.1.1"
-  checksum: 10/1875521a8e429ba8d82c6d24bf3f229b4b64a348873c41a1245851b422c0caa7fbeb958118c24fbfcbb71e416a29924b3b1c4518911529db175f49eb5bcb5e62
   languageName: node
   linkType: hard
 
@@ -27690,7 +27637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"q@npm:^1.0.1, q@npm:^1.5.1":
+"q@npm:^1.0.1":
   version: 1.5.1
   resolution: "q@npm:1.5.1"
   checksum: 10/70c4a30b300277165cd855889cd3aa681929840a5940413297645c5691e00a3549a2a4153131efdf43fe8277ee8cf5a34c9636dcb649d83ad47f311a015fd380
@@ -30185,7 +30132,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sprintf-js@npm:^1.1.2, sprintf-js@npm:^1.1.3":
+"sprintf-js@npm:^1.1.3":
   version: 1.1.3
   resolution: "sprintf-js@npm:1.1.3"
   checksum: 10/e7587128c423f7e43cc625fe2f87e6affdf5ca51c1cc468e910d8aaca46bb44a7fbcfa552f787b1d3987f7043aeb4527d1b99559e6621e01b42b3f45e5a24cbb
@@ -31821,6 +31768,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
+    "@aws-sdk/client-s3": "npm:^3.338.0"
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
     "@uppy/box": "workspace:^"
@@ -31859,12 +31807,18 @@ __metadata:
     "@uppy/webdav": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
     "@uppy/zoom": "workspace:^"
+    adm-zip: "npm:^0.5.5"
     chalk: "npm:^5.0.0"
+    concat-stream: "npm:^2.0.0"
     cssnano: "npm:^7.0.7"
     esbuild: "npm:^0.25.0"
+    mime-types: "npm:^2.1.26"
+    npm-packlist: "npm:^5.0.0"
+    pacote: "npm:^13.0.0"
     postcss: "npm:^8.5.6"
     postcss-cli: "npm:^11.0.1"
     sass: "npm:^1.89.2"
+    tar: "npm:^6.1.0"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft

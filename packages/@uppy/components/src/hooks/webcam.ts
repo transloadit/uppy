@@ -76,12 +76,11 @@ export function createWebcamController(
   const getVideoProps = () => {
     const ref = document.getElementById(videoId) as HTMLVideoElement | null
     plugin.getVideoElement = () => ref
-    const { recordedVideo } = plugin.getPluginState()
+    const { recordedVideo, capturedSnapshot } = plugin.getPluginState()
     const status = plugin.getStatus()
 
     if (status === 'captured' && recordedVideo) {
       if (ref) {
-        // Remove preview image/video
         ref.srcObject = null
       }
       return {
@@ -95,7 +94,28 @@ export function createWebcamController(
       }
     }
 
-    if (ref) {
+    /*
+     * If the status is 'captured', we use the capturedScreenshotUrl as the poster
+     * for the video element. This allows us to display the screenshot as a static image
+     * disabling controls and autoplay helps disguise the video element
+     * as a result we're using the same video element for both the screenshot and the recorded video.
+     */
+    if (status === 'captured' && capturedSnapshot) {
+      if (ref) {
+        ref.srcObject = null
+      }
+      return {
+        id: videoId,
+        'data-uppy-mirrored': false,
+        playsInline: true,
+        controls: false,
+        muted: true,
+        poster: capturedSnapshot,
+        autoPlay: undefined,
+      }
+    }
+
+    if (ref && plugin.stream && !(capturedSnapshot || recordedVideo)) {
       ref.srcObject = plugin.stream
     }
 
@@ -114,8 +134,6 @@ export function createWebcamController(
     type: 'button' as const,
     onClick: async () => {
       await plugin.takeSnapshot()
-      await plugin.stop()
-      onSubmit?.()
     },
     disabled:
       plugin.getStatus() !== 'ready' || plugin.getPluginState().isRecording,
@@ -151,7 +169,7 @@ export function createWebcamController(
   const getDiscardButtonProps = () => ({
     type: 'button' as const,
     onClick: () => {
-      plugin.discardRecordedVideo()
+      plugin.discardRecordedMedia()
     },
     disabled: plugin.getStatus() !== 'captured',
   })

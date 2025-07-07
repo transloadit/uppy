@@ -9,9 +9,7 @@ const PACKAGES_ROOT = fileURLToPath(new URL('./packages/', ROOT))
 const config = {
   envDir: fileURLToPath(ROOT),
   esbuild: {
-    jsx: 'transform',
-    jsxFactory: 'h',
-    jsxFragment: 'Fragment',
+    jsx: 'automatic',
   },
   resolve: {
     alias: [
