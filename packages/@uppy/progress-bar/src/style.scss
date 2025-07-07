@@ -1,5 +1,5 @@
-@import '@uppy/core/src/_utils.scss';
-@import '@uppy/core/src/_variables.scss';
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 
 .uppy-ProgressBar {
   /* no important */
@@ -22,8 +22,8 @@
   height: 100%;
 
   /* no important */
-  background-color: $blue;
-  box-shadow: 0 0 10px rgba($blue, 0.7);
+  background-color: variables.$blue;
+  box-shadow: 0 0 10px rgba(variables.$blue, 0.7);
   transition: width 0.4s ease;
 }
 
@@ -34,7 +34,7 @@
 
   /* no important */
   display: none;
-  color: $white;
+  color: variables.$white;
   text-align: center;
   transform: translate(-50%, -50%);
 }

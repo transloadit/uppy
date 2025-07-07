@@ -1,4 +1,6 @@
-@import '@uppy/core/src/_variables.scss';
+@use "sass:color";
+
+@use './_variables.scss' as *;
 
 $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
 
@@ -30,7 +32,7 @@ $focus-shadow: 0 0 0 3px rgba($blue, 0.5);
   @include clear-focus();
 
   &:hover {
-    color: darken($blue, 10%);
+    color: color.adjust($blue, $lightness: -10%, $space: hsl);
   }
 
   &:focus {

@@ -1,4 +1,4 @@
-@import '@uppy/core/src/_variables.scss';
+@use '@uppy/core/src/_variables.scss';
 
 .uppy-is-drag-over::after {
   position: fixed;
@@ -8,8 +8,8 @@
   left: 7px;
   // border-radius: 5px;
   z-index: 10000;
-  background-color: rgba($gray-200, 0.5);
-  border: 5px dashed $gray-400;
+  background-color: rgba(variables.$gray-200, 0.5);
+  border: 5px dashed variables.$gray-400;
   content: '';
   // prevents flickering (https://stackoverflow.com/a/18582960/3192470)
   pointer-events: none;

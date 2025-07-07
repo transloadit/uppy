@@ -1,7 +1,4 @@
 import { fileURLToPath } from 'node:url'
-import autoprefixer from 'autoprefixer'
-import postcssDirPseudoClass from 'postcss-dir-pseudo-class'
-import postcssLogical from 'postcss-logical'
 
 const ROOT = new URL('../../', import.meta.url)
 const PACKAGES_ROOT = fileURLToPath(new URL('./packages/', ROOT))
@@ -11,11 +8,6 @@ const PACKAGES_ROOT = fileURLToPath(new URL('./packages/', ROOT))
  */
 const config = {
   envDir: fileURLToPath(ROOT),
-  css: {
-    postcss: {
-      plugins: [autoprefixer, postcssLogical(), postcssDirPseudoClass()],
-    },
-  },
   esbuild: {
     jsx: 'automatic',
   },

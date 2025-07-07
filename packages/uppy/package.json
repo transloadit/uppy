@@ -72,17 +72,22 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:bundle": "node build-bundle.mjs"
+    "build:bundle": "node build-bundle.mjs",
+    "build:css": "sass --load-path=../../packages src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
     "adm-zip": "^0.5.5",
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
+    "cssnano": "^7.0.7",
     "esbuild": "^0.25.0",
     "mime-types": "^2.1.26",
     "npm-packlist": "^5.0.0",
     "pacote": "^13.0.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.89.2",
     "tar": "^6.1.0",
     "typescript": "^5.8.3"
   }
