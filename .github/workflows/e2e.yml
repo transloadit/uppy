@@ -1,5 +1,9 @@
 name: End-to-end tests
 # SECURITY NOTE: This workflow uses pull_request_target which has access to secrets.
+# This is needed because we want to be able to run e2e tests on someone else's code, but with our own credentials (which is needed for the tests).
+# `pull_request_target` will always run without manual approval, even if "Require approval for all external contributors" is enabled in the repo settings.
+# Therefore we implement a "safe to test" label that must be manually added once we have checked that the diff is safe.
+# Example of how this could be exploited before we implemented this label: https://github.com/transloadit/uppy/pull/5798/commits/d214a893355bd72ae771fb1c52ebe87948a98440
 # For PRs from forks, secrets are only provided when the "safe to test" label is present.
 # This allows maintainers to safely test external contributions while preventing
 # malicious actors from accessing secrets.
