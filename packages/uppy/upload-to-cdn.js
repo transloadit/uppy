@@ -91,7 +91,7 @@ async function getLocalDistFiles(packageName) {
   // Base file path of the package, eg. ./packages/@uppy/locales or ./packages/uppy
   const packagePath = packageName.startsWith('@uppy/')
     ? path.join(__dirname, '..', packageName)
-    : path.join(__dirname, '..', packageName)
+    : path.join(__dirname)
 
   console.log('Making local package from', packagePath)
 
