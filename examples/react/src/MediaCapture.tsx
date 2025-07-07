@@ -6,6 +6,25 @@ type ButtonProps = {
   disabled: boolean
 }
 
+interface ErrorDisplayProps {
+  error: Error | null
+}
+
+function ErrorDisplay({ error }: ErrorDisplayProps) {
+  if (!error) return null
+
+  const errorMessage = error.message
+    ? `Camera error: ${error.message}`
+    : 'An unknown camera error occurred.'
+
+  return (
+    <div className="p-4 my-2 text-red-700 bg-red-100 border border-red-400 rounded">
+      <p className="font-bold">Error</p>
+      <p>{errorMessage}</p>
+    </div>
+  )
+}
+
 export interface MediaCaptureProps {
   title: string
   close: () => void
@@ -31,21 +50,7 @@ export function MediaCapture({
   getSubmitButtonProps,
   getDiscardButtonProps,
 }: MediaCaptureProps) {
-  const renderError = () => {
-    if (mediaError) {
-      let errorMessage = 'An unknown camera error occurred.'
-      if (mediaError.message) {
-        errorMessage = `Camera error: ${mediaError.message}`
-      }
-      return (
-        <div className="p-4 my-2 text-red-700 bg-red-100 border border-red-400 rounded">
-          <p className="font-bold">Error</p>
-          <p>{errorMessage}</p>
-        </div>
-      )
-    }
-    return null
-  }
+
 
   return (
     <div className="p-4 max-w-lg w-full">
@@ -59,7 +64,7 @@ export function MediaCapture({
           ✕
         </button>
       </div>
-      {renderError()}
+      <ErrorDisplay error={mediaError} />
       <video
         className="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
         {...getVideoProps()}
