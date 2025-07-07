@@ -17,6 +17,9 @@
         "tsconfig.build.json"
       ],
       "outputs": ["lib/**"]
+    },
+    "typecheck": {
+      "dependsOn": ["@uppy/components#build"]
     }
   }
 }
