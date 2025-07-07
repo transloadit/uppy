@@ -1,7 +1,8 @@
 name: End-to-end tests
 # SECURITY NOTE: This workflow uses pull_request_target which has access to secrets.
-# Secrets are conditionally provided only for trusted PRs (not from forks) to prevent
-# malicious actors from accessing secrets via forked PRs.
+# For PRs from forks, secrets are only provided when the "safe to test" label is present.
+# This allows maintainers to safely test external contributions while preventing
+# malicious actors from accessing secrets.
 on:
   push:
     branches: [main]
@@ -14,7 +15,7 @@ on:
       - '.github/**'
       - '!.github/workflows/e2e.yml'
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -35,6 +36,11 @@ env:
 jobs:
   compare_diff:
     runs-on: ubuntu-latest
+    # Apply same security condition as e2e job
+    if: |
+      github.event_name == 'push' || 
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      contains(github.event.pull_request.labels.*.name, 'safe to test')
     env:
       DIFF_BUILDER: true
     outputs:
@@ -124,6 +130,13 @@ jobs:
   e2e:
     name: Browser tests
     runs-on: ubuntu-latest
+    # Only run E2E tests with secrets if:
+    # 1. PR is from the same repository (trusted), OR
+    # 2. PR has the "safe to test" label (maintainer approved)
+    if: |
+      github.event_name == 'push' || 
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      contains(github.event.pull_request.labels.*.name, 'safe to test')
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -173,18 +186,19 @@ jobs:
           COMPANION_DOMAIN: localhost:3020
           COMPANION_PROTOCOL: http
           COMPANION_REDIS_URL: redis://localhost:6379
-          # Only provide secrets for trusted PRs (not from forks)
-          COMPANION_UNSPLASH_KEY: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.COMPANION_UNSPLASH_KEY || '' }}
-          COMPANION_UNSPLASH_SECRET: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.COMPANION_UNSPLASH_SECRET || '' }}
-          COMPANION_AWS_KEY: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.COMPANION_AWS_KEY || '' }}
-          COMPANION_AWS_SECRET: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.COMPANION_AWS_SECRET || '' }}
-          COMPANION_AWS_BUCKET: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.COMPANION_AWS_BUCKET || '' }}
-          COMPANION_AWS_REGION: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.COMPANION_AWS_REGION || '' }}
+          # Secrets are safe to provide here because job-level condition ensures
+          # this only runs for trusted PRs or PRs with "safe to test" label
+          COMPANION_UNSPLASH_KEY: ${{ secrets.COMPANION_UNSPLASH_KEY }}
+          COMPANION_UNSPLASH_SECRET: ${{ secrets.COMPANION_UNSPLASH_SECRET }}
+          COMPANION_AWS_KEY: ${{ secrets.COMPANION_AWS_KEY }}
+          COMPANION_AWS_SECRET: ${{ secrets.COMPANION_AWS_SECRET }}
+          COMPANION_AWS_BUCKET: ${{ secrets.COMPANION_AWS_BUCKET }}
+          COMPANION_AWS_REGION: ${{ secrets.COMPANION_AWS_REGION }}
           VITE_COMPANION_URL: http://localhost:3020
-          VITE_TRANSLOADIT_KEY: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.TRANSLOADIT_KEY || '' }}
-          VITE_TRANSLOADIT_SECRET: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.TRANSLOADIT_SECRET || '' }}
-          VITE_TRANSLOADIT_TEMPLATE: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.TRANSLOADIT_TEMPLATE || '' }}
-          VITE_TRANSLOADIT_SERVICE_URL: ${{ github.event.pull_request.head.repo.full_name == github.repository && secrets.TRANSLOADIT_SERVICE_URL || '' }}
+          VITE_TRANSLOADIT_KEY: ${{ secrets.TRANSLOADIT_KEY }}
+          VITE_TRANSLOADIT_SECRET: ${{ secrets.TRANSLOADIT_SECRET }}
+          VITE_TRANSLOADIT_TEMPLATE: ${{ secrets.TRANSLOADIT_TEMPLATE }}
+          VITE_TRANSLOADIT_SERVICE_URL: ${{ secrets.TRANSLOADIT_SERVICE_URL }}
           # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
           CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Upload videos in case of failure
