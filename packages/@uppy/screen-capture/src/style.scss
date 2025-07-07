@@ -1,6 +1,6 @@
 @use "sass:color";
-@use '../../core/src/_utils.scss';
-@use '../../core/src/_variables.scss';
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 
 .uppy-ScreenCapture-container {
   display: flex;
