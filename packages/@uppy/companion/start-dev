@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Load local env vars. In CI, these are injected.
-if [ -f .env ]; then
-  node --watch -r dotenv/config ./packages/@uppy/companion/src/standalone/start-server.js
+if [ -f ../../../.env ]; then
+  DOTENV_CONFIG_PATH=../../../.env node --watch -r dotenv/config src/standalone/start-server.js
 else
   env \
     COMPANION_DATADIR="./output" \
@@ -13,6 +13,5 @@ else
     COMPANION_SECRET="development" \
     COMPANION_PREAUTH_SECRET="development2" \
     COMPANION_ALLOW_LOCAL_URLS="true" \
-    node --watch ./packages/@uppy/companion/src/standalone/start-server.js
-fi
-
+    node --watch src/standalone/start-server.js
+fi 

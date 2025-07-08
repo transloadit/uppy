@@ -23,6 +23,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css",
+    "migrate": "node migrate.mjs",
     "typecheck": "tsc --build"
   },
   "dependencies": {

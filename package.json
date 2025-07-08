@@ -16,7 +16,7 @@
   "scripts": {
     "build": "turbo run build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
-    "build:components": "node bin/build-components.mjs",
+    "migrate:components": "yarn workspace @uppy/components migrate",
     "check": "yarn exec biome check --write",
     "check:ci": "yarn exec biome ci",
     "dev": "yarn workspace @uppy-dev/dev dev",
@@ -30,7 +30,7 @@
     "e2e:skip-build": "npm-run-all --parallel watch:js:lib e2e:client start:companion:with-loadbalancer e2e:cypress",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
-    "start:companion": "bash bin/companion.sh",
+    "start:companion": "yarn workspace @uppy/companion start:dev",
     "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
     "test": "npm-run-all lint test:locale-pack test:unit test:companion",
     "test:companion": "yarn workspace @uppy/companion test",
