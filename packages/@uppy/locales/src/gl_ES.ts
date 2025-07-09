@@ -131,7 +131,8 @@ gl_ES.strings = {
     '1': '%{smart_count} arquivos máis engadidos',
   },
   xTimeLeft: '%{time} restantes',
-  youCanOnlyUploadFileTypes: 'Soamente podes subir: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} non é compatible. Soamente podes subir: %{types}',
   youCanOnlyUploadX: {
     '0': 'Soamente podes subir %{smart_count} arquivo',
     '1': 'Soamente podes subir %{smart_count} arquivos',

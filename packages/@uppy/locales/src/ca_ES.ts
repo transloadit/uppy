@@ -217,7 +217,8 @@ ca_ES.strings = {
     '1': "S'han afegit %{smart_count} arxius més",
   },
   xTimeLeft: '%{time} restant',
-  youCanOnlyUploadFileTypes: 'Només pots pujar: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} no és compatible. Només pots pujar: %{types}',
   youCanOnlyUploadX: {
     '0': 'Només pots pujar %{smart_count} arxiu',
     '1': 'Només pots pujar %{smart_count} arxius',

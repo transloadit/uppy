@@ -136,7 +136,8 @@ el_GR.strings = {
     '1': '%{smart_count} ακόμα αρχείο προστέθηκε',
   },
   xTimeLeft: '%{time} απομένουν',
-  youCanOnlyUploadFileTypes: 'Μπορείτε να ανεβάσετε μόνο: %{types}',
+  youCanOnlyUploadFileTypes:
+    'Το %{file} δεν υποστηρίζεται. Μπορείτε να ανεβάσετε μόνο: %{types}',
   youCanOnlyUploadX: {
     '0': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχεία',
     '1': 'Μπορείτε να ανεβάσετε μόνο %{smart_count} αρχείο',

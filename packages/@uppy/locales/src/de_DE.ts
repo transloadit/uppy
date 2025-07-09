@@ -200,7 +200,7 @@ de_DE.strings = {
   },
   xTimeLeft: '%{time} verbleibend',
   youCanOnlyUploadFileTypes:
-    'Sie können nur folgende Dateitypen hochladen: %{types}',
+    '%{file} wird nicht unterstützt. Sie können nur folgende Dateitypen hochladen: %{types}',
   youCanOnlyUploadX: {
     '0': 'Sie können nur eine Datei hochladen',
     '1': 'Sie können nur %{smart_count} Dateien hochladen',

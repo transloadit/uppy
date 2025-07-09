@@ -123,7 +123,7 @@ ar_SA.strings = {
     '1': '%{smart_count} ملفات اضافيه جديده',
   },
   xTimeLeft: '%{time} متبقي',
-  youCanOnlyUploadFileTypes: 'تستطيع فقط رفع : %{types}',
+  youCanOnlyUploadFileTypes: '%{types} :غير مدعوم. تستطيع فقط رفع %{file}',
   youCanOnlyUploadX: {
     '0': 'تستطيع فقط رفع %{smart_count} الملف',
     '1': 'تستطيع فقط رفع %{smart_count} ملفات',
