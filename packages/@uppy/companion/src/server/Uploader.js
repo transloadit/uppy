@@ -691,7 +691,6 @@ class Uploader {
 
       formData.append(
         this.options.fieldname,
-        // @ts-expect-error Our StreamableBlob is actually spec compliant enough for our purpose
         await StreamableBlob.fromStream(stream),
         this.uploadFileName,
       )
