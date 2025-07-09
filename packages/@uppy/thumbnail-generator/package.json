@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -30,6 +31,7 @@
     "exifr": "^7.0.0"
   },
   "devDependencies": {
+    "jsdom": "^26.1.0",
     "namespace-emitter": "2.0.1",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"

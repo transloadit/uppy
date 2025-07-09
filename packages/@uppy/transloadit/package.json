@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -41,6 +42,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "jsdom": "^26.1.0",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
     "whatwg-fetch": "^3.6.2"

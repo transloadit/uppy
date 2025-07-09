@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "concurrency": "20",
   "tasks": {
     "build": {
       "outputLogs": "new-only",
@@ -9,6 +10,17 @@
         "package.json",
         "tsconfig.json",
         "tsconfig.build.json"
+      ],
+      "outputs": ["lib/**", "dist/**"]
+    },
+    "uppy#build": {
+      "outputLogs": "new-only",
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "bundle.mjs",
+        "build-bundle.mjs"
       ],
       "outputs": ["lib/**", "dist/**"]
     },
@@ -22,16 +34,14 @@
       "dependsOn": ["build"],
       "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
     },
-    "uppy#build": {
+    "test": {
+      "outputLogs": "errors-only",
+      "dependsOn": ["^test"]
+    },
+    "test:watch": {
       "outputLogs": "new-only",
-      "dependsOn": ["^build"],
-      "inputs": [
-        "src/**/*.{js,ts,jsx,tsx}",
-        "package.json",
-        "bundle.mjs",
-        "build-bundle.mjs"
-      ],
-      "outputs": ["lib/**", "dist/**"]
+      "cache": false,
+      "persistent": true
     },
     "watch": {
       "persistent": true,

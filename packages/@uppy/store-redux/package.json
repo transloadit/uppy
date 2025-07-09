@@ -23,11 +23,13 @@
     "nanoid": "^5.0.9"
   },
   "devDependencies": {
+    "jsdom": "^26.1.0",
     "redux": "^4.0.0",
     "vitest": "^3.2.4"
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   }
 }
