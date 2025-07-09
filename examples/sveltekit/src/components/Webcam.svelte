@@ -28,4 +28,5 @@ $effect(() => {
   stopRecordingButtonProps={webcamStore.getStopRecordingButtonProps()}
   submitButtonProps={webcamStore.getSubmitButtonProps()}
   discardButtonProps={webcamStore.getDiscardButtonProps()}
+  mediaError={webcamStore.state.cameraError}
 />
