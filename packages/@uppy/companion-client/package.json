@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

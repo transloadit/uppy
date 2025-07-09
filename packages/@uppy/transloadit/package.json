@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "typescript": "^5.8.3",
-    "vitest": "^1.6.1",
+    "vitest": "^3.2.4",
     "whatwg-fetch": "^3.6.2"
   }
 }
