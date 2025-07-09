@@ -126,19 +126,27 @@ const states = {
   done: 'done',
 }
 
-class StreamableBlob {
+class StreamableBlob extends Blob {
   #stream
 
-  constructor(stream) {
-    this.#stream = stream
+  static async fromStream(stream) {
+    // Buffer the stream content to create a proper Blob
+    const chunks = []
+    for await (const chunk of stream) {
+      chunks.push(chunk)
+    }
+    const buffer = Buffer.concat(chunks)
+    return new StreamableBlob(buffer, stream)
+  }
+
+  constructor(buffer, originalStream) {
+    // Create a Blob with the actual content
+    super([buffer], { type: 'application/octet-stream' })
+    this.#stream = originalStream
   }
 
   stream() {
     return this.#stream
-  }
-
-  get [Symbol.toStringTag]() {
-    return 'File'
   }
 }
 
@@ -684,7 +692,7 @@ class Uploader {
       formData.append(
         this.options.fieldname,
         // @ts-expect-error Our StreamableBlob is actually spec compliant enough for our purpose
-        new StreamableBlob(stream),
+        await StreamableBlob.fromStream(stream),
         this.uploadFileName,
       )
 
