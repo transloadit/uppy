@@ -10,12 +10,6 @@
         "@uppy/screen-capture#build",
         "@uppy/webcam#build"
       ],
-      "inputs": [
-        "src/**/*.{js,ts,jsx,tsx}",
-        "package.json",
-        "tsconfig.json",
-        "tsconfig.build.json"
-      ],
       "outputs": ["lib/**"]
     },
     "build:css": {

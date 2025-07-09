@@ -2,18 +2,11 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@uppy/components#build"],
-      "inputs": [
-        "src/**/*.{js,ts,jsx,tsx}",
-        "package.json",
-        "tsconfig.json",
-        "tsconfig.build.json"
-      ],
+      "dependsOn": ["@uppy/components#build", "@uppy/core#build"],
       "outputs": ["lib/**"]
     },
     "build:css": {
       "dependsOn": ["build", "@uppy/components#build:css"],
-      "inputs": ["../components/dist/styles.css"],
       "outputs": ["dist/styles.css"]
     }
   }

@@ -2,7 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@uppy/components#build"],
+      "dependsOn": ["@uppy/components#build", "@uppy/core#build"],
       "inputs": [
         "src/**/*.{js,ts,svelte}",
         "package.json",
@@ -14,7 +14,6 @@
     },
     "build:css": {
       "dependsOn": ["build", "@uppy/components#build:css"],
-      "inputs": ["../components/dist/styles.css"],
       "outputs": ["dist/styles.css"]
     }
   }
