@@ -50,8 +50,6 @@ export function MediaCapture({
   getSubmitButtonProps,
   getDiscardButtonProps,
 }: MediaCaptureProps) {
-
-
   return (
     <div className="p-4 max-w-lg w-full">
       <div className="flex justify-between items-center mb-4">
