@@ -18,9 +18,9 @@ import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 import InvalidPlugin from './mocks/invalidPlugin.js'
 import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
 import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
+import { RestrictionError } from './Restricter.js'
 import UIPlugin from './UIPlugin.js'
 import type { State } from './Uppy.js'
-import { RestrictionError } from './Restricter.js'
 
 const sampleImage = fs.readFileSync(
   path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
