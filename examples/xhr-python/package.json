@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/python-xhr",
+  "name": "example-xhr-python",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {

@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/digitalocean-spaces",
+  "name": "example-companion-digitalocean-spaces",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {

@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/php-xhr",
+  "name": "example-xhr-php",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {

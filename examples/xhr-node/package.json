@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/node-xhr",
+  "name": "example-xhr-node",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
