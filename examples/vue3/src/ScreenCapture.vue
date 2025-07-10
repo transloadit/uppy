@@ -9,6 +9,7 @@
     :stop-recording-button-props="screenCapture.getStopRecordingButtonProps()"
     :submit-button-props="screenCapture.getSubmitButtonProps()"
     :discard-button-props="screenCapture.getDiscardButtonProps()"
+    :media-error="screenCapture.state.screenRecError"
   />
 </template>
 

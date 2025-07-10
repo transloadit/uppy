@@ -76,7 +76,7 @@ export type ScreenCaptureState = {
   audioStreamActive: boolean
   recording: boolean
   recordedVideo: string | null
-  screenRecError: string | null
+  screenRecError: Error | null
   capturedScreenshotUrl: string | null
   status: ScreenCaptureStatus
 }
@@ -333,7 +333,7 @@ export default class ScreenCapture<
       })
       .catch((err) => {
         this.uppy.log(err, 'error')
-        this.setPluginState({ screenRecError: err.message, status: 'error' })
+        this.setPluginState({ screenRecError: err, status: 'error' })
       })
   }
 

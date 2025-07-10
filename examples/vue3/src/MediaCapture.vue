@@ -10,6 +10,13 @@
         ✕
       </button>
     </div>
+    <div
+      v-if="mediaError"
+      class="p-4 my-2 text-red-700 bg-red-100 border border-red-400 rounded"
+    >
+      <p class="font-bold">Error</p>
+      <p>{{ mediaError.message ? `Camera error: ${mediaError.message}` : 'An unknown camera error occurred.' }}</p>
+    </div>
     <video
       class="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
       v-bind="videoProps"
@@ -62,5 +69,6 @@ defineProps<{
   stopRecordingButtonProps: Record<string, unknown>
   submitButtonProps: Record<string, unknown>
   discardButtonProps: Record<string, unknown>
+  mediaError?: Error | null
 }>()
 </script>

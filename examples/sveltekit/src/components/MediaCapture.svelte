@@ -12,6 +12,7 @@ interface Props {
   stopRecordingButtonProps: ButtonProps
   submitButtonProps: ButtonProps
   discardButtonProps: ButtonProps
+  mediaError?: Error | null
 }
 
 const {
@@ -24,6 +25,7 @@ const {
   stopRecordingButtonProps,
   submitButtonProps,
   discardButtonProps,
+  mediaError,
 }: Props = $props()
 </script>
 
@@ -34,6 +36,12 @@ const {
       ✕
     </button>
   </div>
+  {#if mediaError}
+    <div class="p-4 my-2 text-red-700 bg-red-100 border border-red-400 rounded">
+      <p class="font-bold">Error</p>
+      <p>{mediaError.message ? `Camera error: ${mediaError.message}` : 'An unknown camera error occurred.'}</p>
+    </div>
+  {/if}
   <video
     class="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
     {...videoProps}

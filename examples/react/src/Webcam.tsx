@@ -16,6 +16,7 @@ export function Webcam({ close }: WebcamProps) {
     getStopRecordingButtonProps,
     getSubmitButtonProps,
     getDiscardButtonProps,
+    state,
   } = useWebcam({ onSubmit: close })
 
   useEffect(() => {
@@ -30,6 +31,7 @@ export function Webcam({ close }: WebcamProps) {
       title="Camera"
       close={close}
       getVideoProps={getVideoProps}
+      mediaError={state.cameraError}
       getPrimaryActionButtonProps={getSnapshotButtonProps}
       primaryActionButtonLabel="Snapshot"
       getRecordButtonProps={getRecordButtonProps}
