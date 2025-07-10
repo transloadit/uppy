@@ -39,6 +39,7 @@
     "vitest": "^1.6.1"
   },
   "scripts": {
-    "build": "tsc --build tsconfig.build.json"
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build"
   }
 }

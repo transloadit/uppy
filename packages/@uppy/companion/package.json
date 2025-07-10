@@ -107,7 +107,9 @@
     "build": "tsc -p .",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
+    "start:dev": "bash start-dev",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand",
+    "typecheck": "tsc --build"
   },
   "engines": {
     "node": "^18.20.0 || ^20.15.0 || >=22.0.0"

@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+// When new components are added (not when existing ones are changed),
+// run this script to generate React, Vue, and Svelte wrappers
 import { existsSync } from 'node:fs'
 import fs from 'node:fs/promises'
 import path from 'node:path'
@@ -7,7 +9,7 @@ import { fileURLToPath } from 'node:url'
 
 // Get the directory of this script
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
-const rootDir = path.resolve(scriptDir, '..')
+const rootDir = path.resolve(scriptDir, '../../..')
 
 // Define paths
 // source:
@@ -214,7 +216,7 @@ try {
       vueComponents.push(componentName)
       svelteComponents.push(componentName)
 
-      console.log(`✔︎ ${componentName}`)
+      console.log(`√ ${componentName}`)
     } catch (error) {
       console.error(`Error processing component ${file}:`, error)
     }
