@@ -22,5 +22,9 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build"
   }
 }
