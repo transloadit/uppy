@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/custom-provider",
+  "name": "example-companion-custom-provider",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {

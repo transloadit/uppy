@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/cdn",
+  "name": "example-cdn",
   "version": "0.0.0",
   "private": true,
   "scripts": {
