@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/xhr-bundle",
+  "name": "example-xhr-bundle",
   "version": "0.0.0",
   "dependencies": {
     "@uppy/core": "workspace:*",
