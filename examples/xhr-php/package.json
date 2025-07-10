@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/python-xhr",
+  "name": "example-xhr-php",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {
@@ -14,9 +14,8 @@
   },
   "private": true,
   "scripts": {
-    "installPythonDeps": "python3 -m pip install -r requirements.txt",
     "start": "npm-run-all --parallel start:server start:client",
     "start:client": "vite",
-    "start:server": "mkdir -p uploads && python3 server.py"
+    "start:server": "mkdir -p uploads && php -S 0.0.0.0:3020 server.php"
   }
 }

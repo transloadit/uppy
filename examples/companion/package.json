@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/uppy-with-companion",
+  "name": "example-companion",
   "version": "0.0.0",
   "dependencies": {
     "@uppy/companion": "workspace:*",

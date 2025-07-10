@@ -1,13 +1,11 @@
 {
-  "name": "@uppy-example/angular",
+  "name": "example-angular",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "lint": "ng lint"
+    "watch": "ng build --watch --configuration development"
   },
   "private": true,
   "dependencies": {
@@ -32,20 +30,8 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^18.0.2",
-    "@angular-eslint/eslint-plugin": "18.0.1",
-    "@angular-eslint/eslint-plugin-template": "18.0.1",
     "@angular/cli": "^18.0.2",
     "@angular/compiler-cli": "^18.0.0",
-    "@types/jasmine": "~5.1.0",
-    "@typescript-eslint/eslint-plugin": "^7.2.0",
-    "@typescript-eslint/parser": "^7.2.0",
-    "eslint": "^8.57.0",
-    "jasmine-core": "~5.1.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
     "typescript": "~5.4"
   }
 }
