@@ -11232,9 +11232,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/angular@workspace:examples/angular-example":
+"@uppy-example/angular@workspace:examples/angular":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/angular@workspace:examples/angular-example"
+  resolution: "@uppy-example/angular@workspace:examples/angular"
   dependencies:
     "@angular-devkit/build-angular": "npm:^18.0.2"
     "@angular-eslint/eslint-plugin": "npm:18.0.1"
@@ -11319,30 +11319,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/bundled@workspace:examples/bundled":
+"@uppy-example/cdn@workspace:examples/cdn":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/bundled@workspace:examples/bundled"
-  dependencies:
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/google-drive": "workspace:*"
-    "@uppy/instagram": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/url": "workspace:*"
-    "@uppy/webcam": "workspace:*"
-    parcel: "npm:^2.0.0"
+  resolution: "@uppy-example/cdn@workspace:examples/cdn"
   languageName: unknown
   linkType: soft
 
-"@uppy-example/cdn@workspace:examples/cdn-example":
+"@uppy-example/custom-provider@workspace:examples/companion-custom-provider":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/cdn@workspace:examples/cdn-example"
-  languageName: unknown
-  linkType: soft
-
-"@uppy-example/custom-provider@workspace:examples/custom-provider":
-  version: 0.0.0-use.local
-  resolution: "@uppy-example/custom-provider@workspace:examples/custom-provider"
+  resolution: "@uppy-example/custom-provider@workspace:examples/companion-custom-provider"
   dependencies:
     "@uppy/companion": "workspace:*"
     "@uppy/companion-client": "workspace:*"
@@ -11361,9 +11346,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/digitalocean-spaces@workspace:examples/digitalocean-spaces":
+"@uppy-example/digitalocean-spaces@workspace:examples/companion-digitalocean-spaces":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/digitalocean-spaces@workspace:examples/digitalocean-spaces"
+  resolution: "@uppy-example/digitalocean-spaces@workspace:examples/companion-digitalocean-spaces"
   dependencies:
     "@uppy/aws-s3": "workspace:*"
     "@uppy/core": "workspace:*"
@@ -11376,20 +11361,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/multiple-instances@workspace:examples/multiple-instances":
+"@uppy-example/node-xhr@workspace:examples/xhr-node":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/multiple-instances@workspace:examples/multiple-instances"
-  dependencies:
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/golden-retriever": "workspace:*"
-    vite: "npm:^5.4.17"
-  languageName: unknown
-  linkType: soft
-
-"@uppy-example/node-xhr@workspace:examples/node-xhr":
-  version: 0.0.0-use.local
-  resolution: "@uppy-example/node-xhr@workspace:examples/node-xhr"
+  resolution: "@uppy-example/node-xhr@workspace:examples/xhr-node"
   dependencies:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
@@ -11401,9 +11375,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/php-xhr@workspace:examples/php-xhr":
+"@uppy-example/php-xhr@workspace:examples/xhr-php":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/php-xhr@workspace:examples/php-xhr"
+  resolution: "@uppy-example/php-xhr@workspace:examples/xhr-php"
   dependencies:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
@@ -11414,9 +11388,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/python-xhr@workspace:examples/python-xhr":
+"@uppy-example/python-xhr@workspace:examples/xhr-python":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/python-xhr@workspace:examples/python-xhr"
+  resolution: "@uppy-example/python-xhr@workspace:examples/xhr-python"
   dependencies:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
@@ -11514,22 +11488,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/transloadit-markdown-bin@workspace:examples/transloadit-markdown-bin":
-  version: 0.0.0-use.local
-  resolution: "@uppy-example/transloadit-markdown-bin@workspace:examples/transloadit-markdown-bin"
-  dependencies:
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/drop-target": "workspace:*"
-    "@uppy/image-editor": "workspace:*"
-    "@uppy/remote-sources": "workspace:*"
-    "@uppy/transloadit": "workspace:*"
-    "@uppy/webcam": "workspace:*"
-    marked: "npm:^12.0.0"
-    vite: "npm:^5.4.17"
-  languageName: unknown
-  linkType: soft
-
 "@uppy-example/transloadit@workspace:examples/transloadit":
   version: 0.0.0-use.local
   resolution: "@uppy-example/transloadit@workspace:examples/transloadit"
@@ -11550,9 +11508,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/uppy-with-companion@workspace:examples/uppy-with-companion":
+"@uppy-example/uppy-with-companion@workspace:examples/companion":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/uppy-with-companion@workspace:examples/uppy-with-companion"
+  resolution: "@uppy-example/uppy-with-companion@workspace:examples/companion"
   dependencies:
     "@uppy/companion": "workspace:*"
     body-parser: "npm:^1.20.3"
@@ -11562,9 +11520,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-example/vue3@workspace:examples/vue3":
+"@uppy-example/vue3@workspace:examples/vue":
   version: 0.0.0-use.local
-  resolution: "@uppy-example/vue3@workspace:examples/vue3"
+  resolution: "@uppy-example/vue3@workspace:examples/vue"
   dependencies:
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
@@ -11942,7 +11900,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/golden-retriever@workspace:*, @uppy/golden-retriever@workspace:^, @uppy/golden-retriever@workspace:packages/@uppy/golden-retriever":
+"@uppy/golden-retriever@workspace:^, @uppy/golden-retriever@workspace:packages/@uppy/golden-retriever":
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
@@ -23783,15 +23741,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"marked@npm:^12.0.0":
-  version: 12.0.2
-  resolution: "marked@npm:12.0.2"
-  bin:
-    marked: bin/marked.js
-  checksum: 10/24d4fc58d37c1779197fa7f93c504d8c71d4df54eb69cbbc14a55ba2a8e2ad83d723801fc25452c21ce74b38a483c5863c53449f130253a597be9e9c1d3e7e2b
-  languageName: node
-  linkType: hard
-
 "md5-file@npm:^3.2.3":
   version: 3.2.3
   resolution: "md5-file@npm:3.2.3"
@@ -26333,7 +26282,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"parcel@npm:^2.0.0, parcel@npm:^2.9.3":
+"parcel@npm:^2.9.3":
   version: 2.12.0
   resolution: "parcel@npm:2.12.0"
   dependencies:
