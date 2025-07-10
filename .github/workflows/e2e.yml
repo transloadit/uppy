@@ -82,13 +82,13 @@ jobs:
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack yarn build:js:typeless
+      - run: corepack yarn build
       - name: Store output file
         run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
       - name: Fetch source from the PR
         run: |
           git checkout FETCH_HEAD -- packages
-      - run: corepack yarn build:js:typeless
+      - run: corepack yarn build
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
       - name: Setup git
