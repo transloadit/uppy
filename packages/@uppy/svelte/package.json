@@ -25,10 +25,35 @@
     "dist"
   ],
   "exports": {
-    "./dist/styles.css": "./dist/styles.css",
     ".": {
       "types": "./dist/index.d.ts",
-      "svelte": "./dist/index.js"
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.js"
+    },
+    "./dashboard": {
+      "types": "./dist/components/Dashboard.svelte.d.ts",
+      "svelte": "./src/lib/components/Dashboard.svelte",
+      "import": "./dist/components/Dashboard.svelte.js"
+    },
+    "./dashboard-modal": {
+      "types": "./dist/components/DashboardModal.svelte.d.ts",
+      "svelte": "./src/lib/components/DashboardModal.svelte",
+      "import": "./dist/components/DashboardModal.svelte.js"
+    },
+    "./drag-drop": {
+      "types": "./dist/components/DragDrop.svelte.d.ts",
+      "svelte": "./src/lib/components/DragDrop.svelte",
+      "import": "./dist/components/DragDrop.svelte.js"
+    },
+    "./progress-bar": {
+      "types": "./dist/components/ProgressBar.svelte.d.ts",
+      "svelte": "./src/lib/components/ProgressBar.svelte",
+      "import": "./dist/components/ProgressBar.svelte.js"
+    },
+    "./status-bar": {
+      "types": "./dist/components/StatusBar.svelte.d.ts",
+      "svelte": "./src/lib/components/StatusBar.svelte",
+      "import": "./dist/components/StatusBar.svelte.js"
     }
   },
   "scripts": {
@@ -54,10 +79,6 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
-    "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "publishConfig": {

@@ -18,31 +18,18 @@
     "typescript": "^5.8.3",
     "vue": "^3.5.14"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./dashboard": "./lib/dashboard.js",
+    "./dashboard-modal": "./lib/dashboard-modal.js",
+    "./drag-drop": "./lib/drag-drop.js",
+    "./file-input": "./lib/file-input.js",
+    "./progress-bar": "./lib/progress-bar.js",
+    "./status-bar": "./lib/status-bar.js"
+  },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
-    "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
-    "@uppy/file-input": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "vue": ">=3.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@uppy/dashboard": {
-      "optional": true
-    },
-    "@uppy/drag-drop": {
-      "optional": true
-    },
-    "@uppy/file-input": {
-      "optional": true
-    },
-    "@uppy/progress-bar": {
-      "optional": true
-    },
-    "@uppy/status-bar": {
-      "optional": true
-    }
   },
   "publishConfig": {
     "access": "public"
