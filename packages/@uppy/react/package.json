@@ -8,7 +8,8 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -36,9 +37,11 @@
     "@testing-library/react": "^14.2.2",
     "@types/react": "^18.0.8",
     "@types/use-sync-external-store": "^0.0.6",
+    "jsdom": "^26.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

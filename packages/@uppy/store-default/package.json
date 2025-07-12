@@ -7,7 +7,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -19,8 +20,9 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "devDependencies": {
+    "jsdom": "^26.1.0",
     "typescript": "^5.8.3",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.4"
   },
   "repository": {
     "type": "git",

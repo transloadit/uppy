@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "concurrency": "20",
   "tasks": {
     "build": {
       "outputLogs": "new-only",
@@ -12,16 +13,6 @@
       ],
       "outputs": ["lib/**", "dist/**"]
     },
-    "build:css": {
-      "outputLogs": "new-only",
-      "inputs": ["src/**/*.scss"],
-      "outputs": ["lib/**/*.css", "dist/**/*.css"]
-    },
-    "typecheck": {
-      "outputLogs": "new-only",
-      "dependsOn": ["build"],
-      "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
-    },
     "uppy#build": {
       "outputLogs": "new-only",
       "dependsOn": ["^build"],
@@ -33,7 +24,27 @@
       ],
       "outputs": ["lib/**", "dist/**"]
     },
-    "watch": {
+    "build:watch": {
+      "outputLogs": "new-only",
+      "persistent": true,
+      "cache": false
+    },
+    "build:css": {
+      "outputLogs": "new-only",
+      "inputs": ["src/**/*.scss"],
+      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+    },
+    "typecheck": {
+      "outputLogs": "new-only",
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
+    },
+    "test": {
+      "outputLogs": "errors-only",
+      "dependsOn": ["^test"]
+    },
+    "test:watch": {
+      "outputLogs": "new-only",
       "persistent": true,
       "cache": false
     }
