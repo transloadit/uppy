@@ -336,7 +336,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
           </Slide>
 
           <div className="uppy-Dashboard-progressindicators">
-          {!props.disableInformer && <Informer uppy={props.uppy} />}
+            {!props.disableInformer && <Informer uppy={props.uppy} />}
             {props.progressindicators.map((target: TargetWithRender) => {
               // TODO
               // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`

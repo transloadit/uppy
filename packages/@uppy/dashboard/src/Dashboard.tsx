@@ -10,7 +10,6 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import Informer from './components/Informer/Informer.js'
 import { defaultPickerIcon } from '@uppy/provider-views'
 import StatusBar from '@uppy/status-bar'
 import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
@@ -24,6 +23,7 @@ import type { ComponentChild, VNode } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
+import Informer from './components/Informer/Informer.js'
 import locale from './locale.js'
 import createSuperFocus from './utils/createSuperFocus.js'
 import * as trapFocus from './utils/trapFocus.js'
@@ -1342,7 +1342,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-
   setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
@@ -1361,8 +1360,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   #getThumbnailGeneratorId() {
     return `${this.id}:ThumbnailGenerator`
   }
-
-
 
   install = (): void => {
     // Set default state for Dashboard
@@ -1411,7 +1408,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
         ...this.#getStatusBarOpts(),
       })
     }
-
 
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
