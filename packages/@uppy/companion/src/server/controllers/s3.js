@@ -1,23 +1,21 @@
-const express = require('express')
-const {
+import {
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
   ListPartsCommand,
   UploadPartCommand,
-  AbortMultipartUploadCommand,
-  CompleteMultipartUploadCommand,
-} = require('@aws-sdk/client-s3')
-const { STSClient, GetFederationTokenCommand } = require('@aws-sdk/client-sts')
-
-const { createPresignedPost } = require('@aws-sdk/s3-presigned-post')
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
-
-const {
-  rfc2047EncodeMetadata,
+} from '@aws-sdk/client-s3'
+import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import express from 'express'
+import {
   getBucket,
+  rfc2047EncodeMetadata,
   truncateFilename,
-} = require('../helpers/utils')
+} from '../helpers/utils.js'
 
-module.exports = function s3(config) {
+export default function s3(config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
     throw new TypeError('s3: The `acl` option must be a string or null')
   }

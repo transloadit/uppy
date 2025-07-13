@@ -1,9 +1,10 @@
-const express = require('express')
-const session = require('express-session')
+import express from 'express'
+import session from 'express-session'
+import standalone from '../src/standalone'
+import { expects as zoomExpects } from './fixtures/zoom.js'
 
-const {
-  expects: { localZoomKey, localZoomSecret, localZoomVerificationToken },
-} = require('./fixtures/zoom')
+const { localZoomKey, localZoomSecret, localZoomVerificationToken } =
+  zoomExpects
 
 const defaultEnv = {
   NODE_ENV: 'test',
@@ -58,11 +59,11 @@ function updateEnv(env) {
   })
 }
 
-module.exports.setDefaultEnv = () => updateEnv(defaultEnv)
+export const setDefaultEnv = () => updateEnv(defaultEnv)
 
-module.exports.grantToken = 'fake token'
+export const grantToken = 'fake token'
 
-module.exports.getServer = (extraEnv) => {
+export const getServer = (extraEnv) => {
   const env = {
     ...defaultEnv,
     ...extraEnv,
@@ -74,7 +75,6 @@ module.exports.getServer = (extraEnv) => {
   // todo rewrite companion to not use global state
   // https://github.com/transloadit/uppy/issues/3284
   jest.resetModules()
-  const standalone = require('../src/standalone')
   const authServer = express()
 
   authServer.use(
@@ -82,7 +82,7 @@ module.exports.getServer = (extraEnv) => {
   )
   authServer.all('*/callback', (req, res, next) => {
     req.session.grant = {
-      response: { access_token: module.exports.grantToken },
+      response: { access_token: grantToken },
     }
     next()
   })

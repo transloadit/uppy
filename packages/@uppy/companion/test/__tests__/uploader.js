@@ -1,15 +1,14 @@
 jest.mock('tus-js-client')
 
-const { Readable } = require('node:stream')
-const fs = require('node:fs')
-const { createServer } = require('node:http')
-const { once } = require('node:events')
-const nock = require('nock')
-
-const Uploader = require('../../src/server/Uploader')
-const socketClient = require('../mocksocket')
-const standalone = require('../../src/standalone')
-const Emitter = require('../../src/server/emitter')
+import { once } from 'node:events'
+import fs from 'node:fs'
+import { createServer } from 'node:http'
+import { Readable } from 'node:stream'
+import nock from 'nock'
+import Emitter from '../../src/server/emitter.js'
+import Uploader from '../../src/server/Uploader.js'
+import standalone from '../../src/standalone/index.js'
+import * as socketClient from '../mocksocket.js'
 
 afterAll(() => {
   nock.cleanAll()

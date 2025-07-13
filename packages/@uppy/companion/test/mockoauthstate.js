@@ -1,4 +1,4 @@
-module.exports = () => {
+const mockOauthState = () => {
   return {
     generateState: () => 'some-cool-nice-encrytpion',
     addToState: () => 'some-cool-nice-encrytpion',
@@ -12,3 +12,5 @@ module.exports = () => {
     encodeState: () => 'some-cool-nice-encrytpion',
   }
 }
+
+export default mockOauthState

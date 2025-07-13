@@ -1,10 +1,9 @@
-const nock = require('nock')
-const request = require('supertest')
-
-const mockOauthState = require('../mockoauthstate')
-const { version } = require('../../package.json')
-const { nockGoogleDownloadFile } = require('../fixtures/drive')
-const defaults = require('../fixtures/constants')
+import nock from 'nock'
+import request from 'supertest'
+import { version } from '../../package.json'
+import defaults from '../fixtures/constants.js'
+import { nockGoogleDownloadFile } from '../fixtures/drive.js'
+import mockOauthState from '../mockoauthstate.js'
 
 jest.mock('tus-js-client')
 jest.mock('../../src/server/helpers/oauth-state', () => ({
@@ -27,8 +26,8 @@ jest.mock('node:dns', () => {
   }
 })
 
-const tokenService = require('../../src/server/helpers/jwt')
-const { getServer } = require('../mockserver')
+import tokenService from '../../src/server/helpers/jwt'
+import { getServer } from '../mockserver'
 
 // todo don't share server between tests. rewrite to not use env variables
 const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })

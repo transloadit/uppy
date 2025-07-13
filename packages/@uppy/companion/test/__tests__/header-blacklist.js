@@ -1,4 +1,4 @@
-const headerSanitize = require('../../src/server/header-blacklist')
+import headerSanitize from '../../src/server/header-blacklist.js'
 
 describe('Header black-list testing', () => {
   test('All headers invalid by name', () => {

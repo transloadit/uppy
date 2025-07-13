@@ -1,4 +1,4 @@
-const { cors } = require('../../src/server/middlewares')
+import { cors } from '../../src/server/middlewares.js'
 
 function testWithMock({
   corsOptions,

@@ -7,6 +7,7 @@
   "author": "Transloadit.com",
   "license": "MIT",
   "homepage": "https://github.com/transloadit/uppy#readme",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
@@ -48,7 +49,7 @@
     "fast-safe-stringify": "^2.1.1",
     "formdata-node": "^6.0.3",
     "got": "^13.0.0",
-    "grant": "5.4.22",
+    "grant": "^5.4.24",
     "helmet": "^7.1.0",
     "ioredis": "^5.3.2",
     "ipaddr.js": "^2.0.1",

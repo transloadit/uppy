@@ -1,21 +1,19 @@
-const http = require('node:http')
-const https = require('node:https')
-const dns = require('node:dns')
-const ipaddr = require('ipaddr.js')
-const path = require('node:path')
-const contentDisposition = require('content-disposition')
-const validator = require('validator')
-const got = require('got')
+import dns from 'node:dns'
+import http from 'node:http'
+import https from 'node:https'
+import path from 'node:path'
+import contentDisposition from 'content-disposition'
+import got from 'got'
+import ipaddr from 'ipaddr.js'
+import validator from 'validator'
 
-const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
+export const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
 // ::ffff:7f00:1
 const isDisallowedIP = (ipAddress) =>
   ipaddr.parse(ipAddress).range() !== 'unicast'
-
-module.exports.FORBIDDEN_IP_ADDRESS = FORBIDDEN_IP_ADDRESS
 
 /**
  * Validates that the download URL is secure
@@ -40,7 +38,7 @@ const validateURL = (url, allowLocalUrls) => {
   return true
 }
 
-module.exports.validateURL = validateURL
+export { validateURL }
 
 /**
  * Returns http Agent that will prevent requests to private IPs (to prevent SSRF)
@@ -99,7 +97,7 @@ const getProtectedHttpAgent = ({ protocol, allowLocalIPs }) => {
   }
 }
 
-module.exports.getProtectedHttpAgent = getProtectedHttpAgent
+export { getProtectedHttpAgent }
 
 function getProtectedGot({ allowLocalIPs }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', allowLocalIPs })
@@ -114,7 +112,7 @@ function getProtectedGot({ allowLocalIPs }) {
   return got.default.extend({ agent: { http: httpAgent, https: httpsAgent } })
 }
 
-module.exports.getProtectedGot = getProtectedGot
+export { getProtectedGot }
 
 /**
  * Gets the size and content type of a url's content
@@ -123,11 +121,11 @@ module.exports.getProtectedGot = getProtectedGot
  * @param {boolean} allowLocalIPs
  * @returns {Promise<{name: string, type: string, size: number}>}
  */
-exports.getURLMeta = async (
+export async function getURLMeta(
   url,
   allowLocalIPs = false,
   options = undefined,
-) => {
+) {
   async function requestWithMethod(method) {
     const protectedGot = getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream(url, {

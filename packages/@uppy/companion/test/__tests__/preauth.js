@@ -7,8 +7,9 @@ jest.mock('../../src/server/helpers/jwt', () => {
   }
 })
 
-const request = require('supertest')
-const { getServer } = require('../mockserver')
+import request from 'supertest'
+import { getServer } from '../mockserver.js'
+
 // the order in which getServer is called matters because, once an env is passed,
 // it won't be overridden when you call getServer without an argument
 const serverWithFixedOauth = getServer()

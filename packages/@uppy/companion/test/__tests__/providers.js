@@ -1,7 +1,6 @@
-const request = require('supertest')
-const nock = require('nock')
-
-const mockOauthState = require('../mockoauthstate')
+import nock from 'nock'
+import request from 'supertest'
+import mockOauthState from '../mockoauthstate.js'
 
 jest.mock('tus-js-client')
 jest.mock('../../src/server/helpers/request', () => {
@@ -11,22 +10,24 @@ jest.mock('../../src/server/helpers/request', () => {
 })
 jest.mock('../../src/server/helpers/oauth-state', () => mockOauthState())
 
-const fixtures = require('../fixtures')
-const { nockGoogleDownloadFile } = require('../fixtures/drive')
-const {
+import tokenService from '../../src/server/helpers/jwt.js'
+import defaults from '../fixtures/constants.js'
+import { nockGoogleDownloadFile } from '../fixtures/drive.js'
+import fixtures from '../fixtures/index.js'
+import {
   nockZoomRecordings,
   nockZoomRevoke,
-  expects: { localZoomKey, localZoomSecret },
-} = require('../fixtures/zoom')
-const defaults = require('../fixtures/constants')
-
-const tokenService = require('../../src/server/helpers/jwt')
-const { getServer } = require('../mockserver')
+  expects as zoomExpects,
+} from '../fixtures/zoom.js'
+import { getServer } from '../mockserver.js'
 
 // todo don't share server between tests. rewrite to not use env variables
 const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
-const providers = require('../../src/server/provider').getDefaultProviders()
+
+import providerModule from '../../src/server/provider'
+
+const providers = providerModule.getDefaultProviders()
 
 const providerNames = Object.keys(providers)
 const oauthProviders = Object.fromEntries(

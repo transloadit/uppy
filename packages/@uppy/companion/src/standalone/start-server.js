@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const companion = require('../companion')
 // @ts-ignore
-const { version } = require('../../package.json')
-const standalone = require('.')
-const logger = require('../server/logger')
+import { version } from '../../package.json'
+import * as companion from '../companion.js'
+import logger from '../server/logger.js'
+import standalone from './index.js'
 
 const port = process.env.COMPANION_PORT || process.env.PORT || 3020
 

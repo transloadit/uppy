@@ -1,10 +1,10 @@
-const querystring = require('node:querystring')
+import querystring from 'node:querystring'
 
 const getUsername = (data) => {
   return data.user.emailAddress
 }
 
-exports.isGsuiteFile = (mimeType) => {
+export const isGsuiteFile = (mimeType) => {
   return mimeType?.startsWith('application/vnd.google')
 }
 
@@ -19,7 +19,7 @@ const isFolder = (item) => {
   )
 }
 
-exports.isShortcut = (mimeType) => {
+export const isShortcut = (mimeType) => {
   return mimeType === 'application/vnd.google-apps.shortcut'
 }
 
@@ -60,7 +60,7 @@ const getItemSubList = (item) => {
   return item.files.filter((i) => {
     return (
       isFolder(i) ||
-      !exports.isGsuiteFile(i.mimeType) ||
+      !isGsuiteFile(i.mimeType) ||
       allowedGSuiteTypes.includes(i.mimeType)
     )
   })
@@ -83,7 +83,7 @@ const getItemName = (item) => {
   return item.name ? item.name : '/'
 }
 
-exports.getGsuiteExportType = (mimeType) => {
+export const getGsuiteExportType = (mimeType) => {
   const typeMaps = {
     'application/vnd.google-apps.document':
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -100,14 +100,14 @@ exports.getGsuiteExportType = (mimeType) => {
 }
 
 function getMimeType2(mimeType) {
-  if (exports.isGsuiteFile(mimeType)) {
-    return exports.getGsuiteExportType(mimeType)
+  if (isGsuiteFile(mimeType)) {
+    return getGsuiteExportType(mimeType)
   }
   return mimeType
 }
 
 const getMimeType = (item) => {
-  if (exports.isShortcut(item.mimeType)) {
+  if (isShortcut(item.mimeType)) {
     return getMimeType2(item.shortcutDetails.targetMimeType)
   }
   return getMimeType2(item.mimeType)
@@ -152,9 +152,9 @@ const getVideoWidth = (item) => item.videoMediaMetadata?.width
 const getVideoDurationMillis = (item) => item.videoMediaMetadata?.durationMillis
 
 // Hopefully this name will not be used by Google
-exports.VIRTUAL_SHARED_DIR = 'shared-with-me'
+export const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-exports.adaptData = (
+export const adaptData = (
   listFilesResp,
   sharedDrivesResp,
   directory,
@@ -194,8 +194,8 @@ exports.adaptData = (
     icon: 'folder',
     name: 'Shared with me',
     mimeType: 'application/vnd.google-apps.folder',
-    id: exports.VIRTUAL_SHARED_DIR,
-    requestPath: exports.VIRTUAL_SHARED_DIR,
+    id: VIRTUAL_SHARED_DIR,
+    requestPath: VIRTUAL_SHARED_DIR,
   }
 
   const adaptedItems = [

@@ -1,16 +1,19 @@
-const Provider = require('../Provider')
-const { getProtectedHttpAgent, validateURL } = require('../../helpers/request')
-const { ProviderApiError, ProviderAuthError } = require('../error')
-const { ProviderUserError } = require('../error')
-const logger = require('../../logger')
-const { AuthType, createClient } = require('webdav')
+import { AuthType, createClient } from 'webdav'
+import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
+import logger from '../../logger.js'
+import {
+  ProviderApiError,
+  ProviderAuthError,
+  ProviderUserError,
+} from '../error.js'
+import Provider from '../Provider.js'
 
 const defaultDirectory = '/'
 
 /**
  * Adapter for WebDAV servers that support simple auth (non-OAuth).
  */
-class WebdavProvider extends Provider {
+export default class WebdavProvider extends Provider {
   static get hasSimpleAuth() {
     return true
   }
@@ -166,5 +169,3 @@ class WebdavProvider extends Provider {
     }
   }
 }
-
-module.exports = WebdavProvider

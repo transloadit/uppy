@@ -1,12 +1,10 @@
-const { htmlEscape } = require('escape-goat')
-const got = require('got')
-
-const logger = require('../logger')
-const oAuthState = require('../helpers/oauth-state')
-const tokenService = require('../helpers/jwt')
-const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
-// biome-ignore lint/correctness/noUnusedVariables: used in types
-const Provider = require('./Provider')
+import { htmlEscape } from 'escape-goat'
+import got from 'got'
+import * as tokenService from '../helpers/jwt.js'
+import * as oAuthState from '../helpers/oauth-state.js'
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
+import logger from '../logger.js'
+import Provider from './Provider.js'
 
 /**
  * @param {string} url
@@ -15,7 +13,7 @@ const Provider = require('./Provider')
  */
 async function fetchKeys(url, providerName, credentialRequestParams) {
   try {
-    const { credentials } = await got.default
+    const { credentials } = await got
       .post(url, {
         json: { provider: providerName, parameters: credentialRequestParams },
       })
@@ -79,7 +77,10 @@ async function fetchProviderKeys(
  * @param {object} companionOptions companion options object
  * @returns {import('express').RequestHandler}
  */
-exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
+export const getCredentialsOverrideMiddleware = (
+  providers,
+  companionOptions,
+) => {
   return async (req, res, next) => {
     try {
       const { oauthProvider, override } = req.params
@@ -215,11 +216,7 @@ exports.getCredentialsOverrideMiddleware = (providers, companionOptions) => {
  * @param {object} req the express request object for the said request
  * @returns {(providerName: string, companionOptions: object, credentialRequestParams?: object) => Promise}
  */
-module.exports.getCredentialsResolver = (
-  providerName,
-  companionOptions,
-  req,
-) => {
+export const getCredentialsResolver = (providerName, companionOptions, req) => {
   const credentialsResolver = () => {
     const encodedCredentialsParams = req.header('uppy-credentials-params')
     let credentialRequestParams = null

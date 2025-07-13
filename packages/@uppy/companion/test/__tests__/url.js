@@ -1,5 +1,5 @@
-const nock = require('nock')
-const request = require('supertest')
+import nock from 'nock'
+import request from 'supertest'
 
 jest.mock('tus-js-client')
 jest.mock('../../src/server/helpers/request', () => {
@@ -10,7 +10,8 @@ jest.mock('../../src/server/helpers/request', () => {
     },
   }
 })
-const { getServer } = require('../mockserver')
+
+import { getServer } from '../mockserver'
 
 const mockServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 

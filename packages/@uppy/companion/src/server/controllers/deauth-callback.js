@@ -1,6 +1,10 @@
-const { respondWithError } = require('../provider/error')
+import { respondWithError } from '../provider/error.js'
 
-async function deauthCallback({ body, companion, headers }, res, next) {
+export default async function deauthCallback(
+  { body, companion, headers },
+  res,
+  next,
+) {
   // we need the provider instance to decide status codes because
   // this endpoint does not cater to a uniform client.
   // It doesn't respond to Uppy client like other endpoints.
@@ -17,5 +21,3 @@ async function deauthCallback({ body, companion, headers }, res, next) {
     next(err)
   }
 }
-
-module.exports = deauthCallback

@@ -1,13 +1,12 @@
-const got = require('got')
-
-const Provider = require('../../Provider')
-const logger = require('../../../logger')
-const adaptData = require('./adapter')
-const { withProviderErrorHandling } = require('../../providerErrors')
-const { prepareStream } = require('../../../helpers/utils')
+import got from 'got'
+import { prepareStream } from '../../../helpers/utils.js'
+import logger from '../../../logger.js'
+import Provider from '../../Provider.js'
+import { withProviderErrorHandling } from '../../providerErrors.js'
+import adaptData from './adapter.js'
 
 const getClient = ({ token }) =>
-  got.default.extend({
+  got.extend({
     prefixUrl: 'https://graph.instagram.com',
     headers: {
       authorization: `Bearer ${token}`,
@@ -27,7 +26,7 @@ async function getMediaUrl({ token, id }) {
 /**
  * Adapter for API https://developers.facebook.com/docs/instagram-api/overview
  */
-class Instagram extends Provider {
+export default class Instagram extends Provider {
   // for "grant"
   static getExtraGrantConfig() {
     return {
@@ -78,7 +77,7 @@ class Instagram extends Provider {
       'provider.instagram.download.error',
       async () => {
         const url = await getMediaUrl({ token, id })
-        const stream = got.default.stream.get(url, { responseType: 'json' })
+        const stream = got.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
       },
@@ -113,5 +112,3 @@ class Instagram extends Provider {
     })
   }
 }
-
-module.exports = Instagram

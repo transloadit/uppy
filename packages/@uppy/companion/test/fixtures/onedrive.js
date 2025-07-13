@@ -1,5 +1,5 @@
-const defaults = require('./constants')
+import defaults from './constants'
 
-module.exports.expects = {
+export const expects = {
   itemRequestPath: `${defaults.ITEM_ID}?driveId=DUMMY-DRIVE-ID`,
 }

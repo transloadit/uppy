@@ -1,8 +1,7 @@
-const mockOauthState = require('../mockoauthstate')()
-
-const request = require('supertest')
-const tokenService = require('../../src/server/helpers/jwt')
-const { getServer, grantToken } = require('../mockserver')
+import request from 'supertest'
+import tokenService from '../../src/server/helpers/jwt.js'
+import mockOauthState from '../mockoauthstate.js'
+import { getServer, grantToken } from '../mockserver.js'
 
 jest.mock('../../src/server/helpers/oauth-state', () => ({
   ...jest.requireActual('../../src/server/helpers/oauth-state'),

@@ -1,6 +1,6 @@
-const nock = require('nock')
-const request = require('supertest')
-const { getServer } = require('../mockserver')
+import nock from 'nock'
+import request from 'supertest'
+import { getServer } from '../mockserver.js'
 
 const authServer = getServer()
 

@@ -1,6 +1,7 @@
-const providerManager = require('../../src/server/provider')
-const { getCompanionOptions } = require('../../src/standalone/helper')
-const { setDefaultEnv } = require('../mockserver')
+import GrantConfig from '../../src/config/grant'
+import providerManager from '../../src/server/provider'
+import { getCompanionOptions } from '../../src/standalone/helper'
+import { setDefaultEnv } from '../mockserver'
 
 let grantConfig
 let companionOptions
@@ -11,7 +12,7 @@ const getOauthProvider = (providerName) =>
 describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
-    grantConfig = require('../../src/config/grant')()
+    grantConfig = GrantConfig()
     companionOptions = getCompanionOptions()
   })
 

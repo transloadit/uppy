@@ -1,30 +1,27 @@
-const tus = require('tus-js-client')
-const { randomUUID } = require('node:crypto')
-const validator = require('validator')
-const { pipeline } = require('node:stream/promises')
-const { join } = require('node:path')
-const fs = require('node:fs')
-const throttle = require('lodash/throttle')
-const { once } = require('node:events')
-const got = require('got')
-const { FormData } = require('formdata-node')
-const { Upload } = require('@aws-sdk/lib-storage')
-const { serializeError } = require('serialize-error')
-
-const {
-  rfc2047EncodeMetadata,
+import { randomUUID } from 'node:crypto'
+import { once } from 'node:events'
+import fs, { createReadStream, createWriteStream, ReadStream } from 'node:fs'
+import { stat, unlink } from 'node:fs/promises'
+import { join } from 'node:path'
+import { pipeline } from 'node:stream/promises'
+import { Upload } from '@aws-sdk/lib-storage'
+import { FormData } from 'formdata-node'
+import got from 'got'
+import throttle from 'lodash/throttle.js'
+import { serializeError } from 'serialize-error'
+import tus from 'tus-js-client'
+import validator from 'validator'
+import emitter from './emitter/index.js'
+import headerSanitize from './header-blacklist.js'
+import {
   getBucket,
+  hasMatch,
+  jsonStringify,
+  rfc2047EncodeMetadata,
   truncateFilename,
-} = require('./helpers/utils')
-
-const { createReadStream, createWriteStream, ReadStream } = fs
-const { stat, unlink } = fs.promises
-
-const emitter = require('./emitter')
-const { jsonStringify, hasMatch } = require('./helpers/utils')
-const logger = require('./logger')
-const headerSanitize = require('./header-blacklist')
-const redis = require('./redis')
+} from './helpers/utils.js'
+import * as logger from './logger.js'
+import * as redis from './redis.js'
 
 // Need to limit length or we can get
 // "MetadataTooLarge: Your metadata headers exceed the maximum allowed metadata size" in tus / S3
@@ -39,7 +36,7 @@ function exceedsMaxFileSize(maxFileSize, size) {
   return maxFileSize && size && size > maxFileSize
 }
 
-class ValidationError extends Error {
+export class ValidationError extends Error {
   name = 'ValidationError'
 }
 
@@ -125,7 +122,7 @@ const states = {
   done: 'done',
 }
 
-class Uploader {
+export default class Uploader {
   /** @type {import('ioredis').Redis} */
   storage
 
@@ -685,7 +682,7 @@ class Uploader {
     try {
       const httpMethod =
         (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = await got.default[httpMethod]
+      const runRequest = await got[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 
@@ -776,6 +773,3 @@ class Uploader {
 
 Uploader.FILE_NAME_PREFIX = 'uppy-file'
 Uploader.STORAGE_PREFIX = 'companion'
-
-module.exports = Uploader
-module.exports.ValidationError = ValidationError

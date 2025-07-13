@@ -1,6 +1,7 @@
 // We don't care about colors in our tests, so force `supports-color` to disable colors.
 process.env.FORCE_COLOR = 'false'
-const logger = require('../../src/server/logger')
+
+import logger from '../../src/server/logger.js'
 
 const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
 

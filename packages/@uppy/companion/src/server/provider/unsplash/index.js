@@ -1,14 +1,14 @@
-const got = require('got')
-const Provider = require('../Provider')
-const adaptData = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
-const { ProviderApiError } = require('../error')
+import got from 'got'
+import { prepareStream } from '../../helpers/utils.js'
+import { ProviderApiError } from '../error.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BASE_URL = 'https://api.unsplash.com'
 
 const getClient = ({ token }) =>
-  got.default.extend({
+  got.extend({
     prefixUrl: BASE_URL,
     headers: {
       authorization: `Client-ID ${token}`,
@@ -21,7 +21,7 @@ const getPhotoMeta = async (client, id) =>
 /**
  * Adapter for API https://api.unsplash.com
  */
-class Unsplash extends Provider {
+export default class Unsplash extends Provider {
   async list({
     providerUserSession: { accessToken: token },
     query = { cursor: null, q: null },
@@ -51,7 +51,7 @@ class Unsplash extends Provider {
           links: { download: url, download_location: attributionUrl },
         } = await getPhotoMeta(client, id)
 
-        const stream = got.default.stream.get(url, { responseType: 'json' })
+        const stream = got.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
 
         // To attribute the author of the image, we call the `download_location`
@@ -78,5 +78,3 @@ class Unsplash extends Provider {
     })
   }
 }
-
-module.exports = Unsplash

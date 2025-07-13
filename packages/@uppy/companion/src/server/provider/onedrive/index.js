@@ -1,12 +1,12 @@
-const got = require('got')
-const Provider = require('../Provider')
-const logger = require('../../logger')
-const adaptData = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
+import got from 'got'
+import { prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const getClient = ({ token }) =>
-  got.default.extend({
+  got.extend({
     prefixUrl: 'https://graph.microsoft.com/v1.0',
     headers: {
       authorization: `Bearer ${token}`,
@@ -14,7 +14,7 @@ const getClient = ({ token }) =>
   })
 
 const getOauthClient = () =>
-  got.default.extend({
+  got.extend({
     prefixUrl: 'https://login.live.com',
   })
 
@@ -24,7 +24,7 @@ const getRootPath = (query) =>
 /**
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
-class OneDrive extends Provider {
+export default class OneDrive extends Provider {
   static get oauthProvider() {
     return 'microsoft'
   }
@@ -146,5 +146,3 @@ class OneDrive extends Provider {
     })
   }
 }
-
-module.exports = OneDrive

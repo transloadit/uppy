@@ -1,11 +1,11 @@
-const request = require('supertest')
-const nock = require('nock')
-const tokenService = require('../../src/server/helpers/jwt')
-const { getServer } = require('../mockserver')
-const { nockZoomRevoke } = require('../fixtures/zoom')
+import nock from 'nock'
+import request from 'supertest'
+import tokenService from '../../src/server/helpers/jwt.js'
+import { nockZoomRevoke, expects as zoomExpects } from '../fixtures/zoom.js'
+import { getServer } from '../mockserver.js'
 
 const { remoteZoomKey, remoteZoomSecret, remoteZoomVerificationToken } =
-  require('../fixtures/zoom').expects
+  zoomExpects
 
 const authServer = getServer({
   COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys',

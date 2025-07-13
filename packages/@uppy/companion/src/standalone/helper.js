@@ -1,12 +1,11 @@
-const fs = require('node:fs')
-const merge = require('lodash/merge')
-const stripIndent = require('common-tags/lib/stripIndent')
-const crypto = require('node:crypto')
-
-const utils = require('../server/helpers/utils')
-const logger = require('../server/logger')
+import crypto from 'node:crypto'
+import fs from 'node:fs'
+import { stripIndent } from 'common-tags'
+import merge from 'lodash/merge.js'
 // @ts-ignore
-const { version } = require('../../package.json')
+import { version } from '../../package.json'
+import * as utils from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
@@ -28,7 +27,7 @@ const getSecret = (baseEnvVar) => {
  *
  * @returns {string}
  */
-exports.generateSecret = (secretName) => {
+export const generateSecret = (secretName) => {
   logger.warn(
     `auto-generating server ${secretName} because none was specified`,
     'startup.secret',
@@ -261,11 +260,11 @@ const getConfigFromFile = () => {
  *
  * @returns {object}
  */
-exports.getCompanionOptions = (options = {}) => {
+export const getCompanionOptions = (options = {}) => {
   return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
-exports.buildHelpfulStartupMessage = (companionOptions) => {
+export const buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {

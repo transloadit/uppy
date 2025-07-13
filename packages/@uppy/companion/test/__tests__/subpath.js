@@ -1,5 +1,5 @@
-const request = require('supertest')
-const { getServer } = require('../mockserver')
+import request from 'supertest'
+import { getServer } from '../mockserver.js'
 
 it('can be served under a subpath', async () => {
   const server = getServer({ COMPANION_PATH: '/subpath' })
