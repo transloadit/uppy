@@ -23,7 +23,6 @@ import type { ComponentChild, VNode } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
-import Informer from './components/Informer/Informer.js'
 import locale from './locale.js'
 import createSuperFocus from './utils/createSuperFocus.js'
 import * as trapFocus from './utils/trapFocus.js'
