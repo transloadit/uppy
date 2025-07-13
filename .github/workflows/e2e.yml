@@ -84,7 +84,7 @@ jobs:
       - name: Fetch source from the PR
         run: |
           git checkout FETCH_HEAD -- packages
-      - run: corepack yarn install
+      - run: corepack yarn install --no-immutable
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
