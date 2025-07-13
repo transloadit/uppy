@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/redux",
+  "name": "example-redux",
   "version": "0.0.0",
   "type": "module",
   "dependencies": {

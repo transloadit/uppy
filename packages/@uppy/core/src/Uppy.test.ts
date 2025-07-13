@@ -18,6 +18,7 @@ import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
 import InvalidPlugin from './mocks/invalidPlugin.js'
 import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
 import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
+import { RestrictionError } from './Restricter.js'
 import UIPlugin from './UIPlugin.js'
 import type { State } from './Uppy.js'
 
@@ -1282,10 +1283,8 @@ describe('src/Core', () => {
         data: testImage,
       })
       return core.upload().catch((err) => {
-        expect(err).toMatchObject(
-          new Error(
-            'Not starting the upload because onBeforeUpload returned false',
-          ),
+        expect(err.message).toStrictEqual(
+          'Not starting the upload because onBeforeUpload returned false',
         )
       })
     })
@@ -1615,7 +1614,8 @@ describe('src/Core', () => {
           data: new File([sampleImage], { type: 'image/png' }),
         })
       } catch (err) {
-        expect(err).toMatchObject(new Error('You can only upload: image/jpeg'))
+        expect(err).toBeInstanceOf(RestrictionError)
+        expect(err.message).toEqual('You can only upload: image/jpeg')
       }
 
       core.setOptions({
@@ -1631,8 +1631,9 @@ describe('src/Core', () => {
           data: new File([sampleImage], { type: 'image/png' }),
         })
       } catch (err) {
-        expect(err).toMatchObject(
-          new Error('Vous pouvez seulement téléverser: image/jpeg'),
+        expect(err).toBeInstanceOf(RestrictionError)
+        expect(err.message).toEqual(
+          'Vous pouvez seulement téléverser: image/jpeg',
         )
       }
 
@@ -2069,7 +2070,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(new Error('You can only upload 1 file'))
+        expect(err).toBeInstanceOf(RestrictionError)
+        expect(err.message).toStrictEqual('You can only upload 1 file')
         expect(core.getState().info[0].message).toEqual(
           'You can only upload 1 file',
         )
@@ -2121,8 +2123,9 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(
-          new Error('You can only upload: image/gif, image/png'),
+        expect(err).toBeInstanceOf(RestrictionError)
+        expect(err.message).toStrictEqual(
+          'You can only upload: image/gif, image/png',
         )
         expect(core.getState().info[0].message).toEqual(
           'You can only upload: image/gif, image/png',
@@ -2162,8 +2165,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(
-          new Error('You can only upload: .gif, .jpg, .jpeg'),
+        expect(err.message).toStrictEqual(
+          'You can only upload: .gif, .jpg, .jpeg',
         )
         expect(core.getState().info[0].message).toEqual(
           'You can only upload: .gif, .jpg, .jpeg',
@@ -2196,8 +2199,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(
-          new Error('foo.jpg exceeds maximum allowed size of 1.2 KB'),
+        expect(err.message).toStrictEqual(
+          'foo.jpg exceeds maximum allowed size of 1.2 KB',
         )
         expect(core.getState().info[0].message).toEqual(
           'foo.jpg exceeds maximum allowed size of 1.2 KB',
@@ -2221,8 +2224,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err).toMatchObject(
-          new Error('This file is smaller than the allowed size of 1 GB'),
+        expect(err.message).toStrictEqual(
+          'This file is smaller than the allowed size of 1 GB',
         )
         expect(core.getState().info[0].message).toEqual(
           'This file is smaller than the allowed size of 1 GB',
@@ -2252,7 +2255,7 @@ describe('src/Core', () => {
           data: testImage,
         })
       }).toThrowError(
-        new Error(
+        new RestrictionError(
           'You selected 34 KB of files, but maximum allowed size is 20 KB',
         ),
       )
