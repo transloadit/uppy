@@ -56,9 +56,6 @@
       "path": "./packages/@uppy/image-editor/tsconfig.json"
     },
     {
-      "path": "./packages/@uppy/informer/tsconfig.json"
-    },
-    {
       "path": "./packages/@uppy/instagram/tsconfig.json"
     },
     {
