@@ -5,6 +5,7 @@ import type { PropType } from 'vue'
 import {
   defineComponent,
   inject,
+  markRaw,
   onBeforeUnmount,
   onMounted,
   provide,
@@ -33,7 +34,7 @@ export const UppyContextProvider = defineComponent({
     const progress = ref(0)
 
     const uppyContext = reactive<UppyContext>({
-      uppy: props.uppy,
+      uppy: markRaw(props.uppy),
       status: 'init',
       progress: 0,
     })
