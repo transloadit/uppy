@@ -69,7 +69,6 @@ class Unsplash extends Provider {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling(tag, fn) {
     // @ts-ignore
     return withProviderErrorHandling({

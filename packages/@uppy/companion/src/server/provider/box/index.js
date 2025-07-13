@@ -142,7 +142,6 @@ class Box extends Provider {
     })
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling(tag, fn) {
     return withProviderErrorHandling({
       fn,

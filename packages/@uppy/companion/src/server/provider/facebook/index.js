@@ -116,7 +116,6 @@ class Facebook extends Provider {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async thumbnail() {
     // not implementing this because a public thumbnail from facebook will be used instead
     logger.error(
@@ -141,7 +140,6 @@ class Facebook extends Provider {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling(tag, fn) {
     return withProviderErrorHandling({
       fn,
