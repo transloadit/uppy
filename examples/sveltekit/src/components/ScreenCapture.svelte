@@ -28,4 +28,5 @@ $effect(() => {
   stopRecordingButtonProps={screenCaptureStore.getStopRecordingButtonProps()}
   submitButtonProps={screenCaptureStore.getSubmitButtonProps()}
   discardButtonProps={screenCaptureStore.getDiscardButtonProps()}
+  mediaError={screenCaptureStore.state.screenRecError}
 />

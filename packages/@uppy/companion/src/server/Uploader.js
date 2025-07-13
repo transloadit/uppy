@@ -6,6 +6,7 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const throttle = require('lodash/throttle')
 const { once } = require('node:events')
+const { FormData } = require('formdata-node')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
@@ -125,22 +126,6 @@ const states = {
   done: 'done',
 }
 
-class StreamableBlob {
-  #stream
-
-  constructor(stream) {
-    this.#stream = stream
-  }
-
-  stream() {
-    return this.#stream
-  }
-
-  get [Symbol.toStringTag]() {
-    return 'File'
-  }
-}
-
 class Uploader {
   /** @type {import('ioredis').Redis} */
   storage
@@ -165,16 +150,21 @@ class Uploader {
    * @property {string} [httpMethod]
    * @property {boolean} [useFormData]
    * @property {number} [chunkSize]
+   * @property {string} [providerName]
    *
    * @param {UploaderOptions} options
    */
   constructor(options) {
     validateOptions(options)
 
+    this.providerName = options.providerName
     this.options = options
     this.token = randomUUID()
     this.fileName = `${Uploader.FILE_NAME_PREFIX}-${this.token}`
-    this.options.metadata = this.options.metadata || {}
+    this.options.metadata = {
+      ...(this.providerName != null && { provider: this.providerName }),
+      ...(this.options.metadata || {}), // allow user to override provider
+    }
     this.options.fieldname = this.options.fieldname || DEFAULT_FIELD_NAME
     this.size = options.size
     const { maxFilenameLength } = this.options.companionOptions
@@ -394,6 +384,8 @@ class Uploader {
       metadata: req.body.metadata,
       fieldname: req.body.fieldname,
       useFormData,
+
+      providerName: req.companion.providerName,
 
       // Info coming from companion server configuration:
       size,
@@ -678,12 +670,14 @@ class Uploader {
         formData.append(key, value),
       )
 
-      formData.append(
-        this.options.fieldname,
-        // @ts-expect-error Our StreamableBlob is actually spec compliant enough for our purpose
-        new StreamableBlob(stream),
-        this.uploadFileName,
-      )
+      // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
+      formData.set(this.options.fieldname, {
+        name: this.uploadFileName,
+        [Symbol.toStringTag]: 'File',
+        stream() {
+          return stream
+        },
+      })
 
       reqOptions.body = formData
     } else {

@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/react",
+  "name": "example-react",
   "private": true,
   "type": "module",
   "scripts": {
