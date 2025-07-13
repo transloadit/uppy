@@ -6,7 +6,7 @@ const { join } = require('node:path')
 const fs = require('node:fs')
 const throttle = require('lodash/throttle')
 const { once } = require('node:events')
-const {FormData} = require("formdata-node")
+const { FormData } = require('formdata-node')
 
 const { Upload } = require('@aws-sdk/lib-storage')
 
@@ -669,10 +669,10 @@ class Uploader {
       // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
       formData.set(this.options.fieldname, {
         name: this.uploadFileName,
-        [Symbol.toStringTag]: "File",
+        [Symbol.toStringTag]: 'File',
         stream() {
           return stream
-        }
+        },
       })
 
       reqOptions.body = formData
