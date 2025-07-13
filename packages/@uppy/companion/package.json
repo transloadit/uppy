@@ -46,6 +46,7 @@
     "express-prom-bundle": "7.0.0",
     "express-session": "1.18.1",
     "fast-safe-stringify": "^2.1.1",
+    "formdata-node": "^6.0.3",
     "got": "^13.0.0",
     "grant": "5.4.22",
     "helmet": "^7.1.0",

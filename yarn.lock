@@ -11722,6 +11722,7 @@ __metadata:
     express-prom-bundle: "npm:7.0.0"
     express-session: "npm:1.18.1"
     fast-safe-stringify: "npm:^2.1.1"
+    formdata-node: "npm:^6.0.3"
     got: "npm:^13.0.0"
     grant: "npm:5.4.22"
     helmet: "npm:^7.1.0"
@@ -19156,6 +19157,13 @@ __metadata:
     combined-stream: "npm:^1.0.6"
     mime-types: "npm:^2.1.12"
   checksum: 10/1b6f3ccbf4540e535887b42218a2431a3f6cfdea320119c2affa2a7a374ad8fdd1e60166fc865181f45d49b1684c3e90e7b2190d3fe016692957afb9cf0d0d02
+  languageName: node
+  linkType: hard
+
+"formdata-node@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "formdata-node@npm:6.0.3"
+  checksum: 10/26ec90f5dd5d5572dceb524b86f42e28b148022e5c50b2af83ee8ad99d56f26157a7b5583ddbf10725e567bba30ad8bf6b6527f17f5e94d64ccaa950d1fe0b5f
   languageName: node
   linkType: hard
 
