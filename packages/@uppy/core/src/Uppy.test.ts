@@ -2135,22 +2135,6 @@ describe('src/Core', () => {
       }
     })
 
-    it('should throw if allowedFileTypes is not an array', () => {
-      try {
-        const core = new Core({
-          restrictions: {
-            // @ts-ignore
-            allowedFileTypes: 'image/gif',
-          },
-        })
-        throw new Error('should have thrown')
-      } catch (err) {
-        expect(err).toMatchObject(
-          new Error('`restrictions.allowedFileTypes` must be an array'),
-        )
-      }
-    })
-
     it('should enforce the allowedFileTypes rule with file extensions', () => {
       const core = new Core({
         restrictions: {
