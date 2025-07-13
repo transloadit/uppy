@@ -1,0 +1,24 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "@uppy/core#build",
+        "@uppy/dashboard#build",
+        "@uppy/drag-drop#build",
+        "@uppy/progress-bar#build",
+        "@uppy/status-bar#build",
+        "@uppy/utils#build"
+      ],
+      "inputs": [
+        "projects/uppy/angular/src/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "angular.json",
+        "projects/uppy/angular/ng-package.json",
+        "projects/uppy/angular/tsconfig.lib.json",
+        "projects/uppy/angular/tsconfig.lib.prod.json"
+      ],
+      "outputs": ["dist/uppy/angular/**"]
+    }
+  }
+}

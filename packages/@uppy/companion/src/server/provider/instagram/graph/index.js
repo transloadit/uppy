@@ -85,7 +85,6 @@ class Instagram extends Provider {
     )
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async thumbnail() {
     // not implementing this because a public thumbnail from instagram will be used instead
     logger.error(
@@ -95,7 +94,6 @@ class Instagram extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async logout() {
     // access revoke is not supported by Instagram's API
     return {
@@ -104,7 +102,6 @@ class Instagram extends Provider {
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling(tag, fn) {
     return withProviderErrorHandling({
       fn,

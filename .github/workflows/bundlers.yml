@@ -1,4 +1,4 @@
-name: Test different bundlers with Uppy
+name: Bundlers
 
 on:
   push:
@@ -42,14 +42,12 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
+          corepack yarn install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - name: Build lib
-        run: corepack yarn run build:lib
+      - name: Build
+        run: corepack yarn run build
       - name: Make Uppy bundle use local version
         run: |
           node <<'EOF'

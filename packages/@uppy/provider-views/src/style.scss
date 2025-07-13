@@ -1,9 +1,10 @@
-@import '@uppy/core/src/_utils.scss';
-@import '@uppy/core/src/_variables.scss';
-@import './style/uppy-ProviderBrowser-viewType--grid';
-@import './style/uppy-ProviderBrowser-viewType--list';
-@import './style/uppy-ProviderBrowserItem-checkbox';
-@import './style/uppy-SearchProvider-input.scss';
+@use "sass:color";
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
+@use 'style/uppy-ProviderBrowser-viewType--grid';
+@use 'style/uppy-ProviderBrowser-viewType--list';
+@use 'style/uppy-ProviderBrowserItem-checkbox';
+@use 'style/uppy-SearchProvider-input.scss';
 
 .uppy-DashboardContent-panelBody {
   display: flex;
@@ -12,7 +13,7 @@
   justify-content: center;
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-900;
+    background-color: variables.$gray-900;
   }
 }
 
@@ -25,11 +26,11 @@
   flex-flow: column wrap;
   align-items: center;
   justify-content: center;
-  color: $gray-500;
+  color: variables.$gray-500;
 }
 
 .uppy-Provider-empty {
-  color: $gray-500;
+  color: variables.$gray-500;
 }
 
 .uppy-Provider-authIcon svg {
@@ -41,7 +42,7 @@
   max-width: 500px;
   margin-bottom: 30px;
   padding: 0 15px;
-  color: $gray-600;
+  color: variables.$gray-600;
   font-weight: 400;
   font-size: 17px;
   line-height: 1.4;
@@ -52,7 +53,7 @@
   }
 
   [data-uppy-theme='dark'] & {
-    color: $gray-300;
+    color: variables.$gray-300;
   }
 }
 
@@ -63,7 +64,7 @@
   background: #4285f4;
 
   &:hover {
-    background-color: darken(#4285f4, 10%);
+    background-color: color.adjust(#4285f4, $lightness: -10%);
   }
 
   &:focus {
@@ -79,7 +80,7 @@
 .uppy-Provider-breadcrumbs {
   flex: 1;
   margin-bottom: 10px;
-  color: $gray-700;
+  color: variables.$gray-700;
   font-size: 12px;
   text-align: start;
 
@@ -88,13 +89,13 @@
   }
 
   [data-uppy-theme='dark'] & {
-    color: $gray-200;
+    color: variables.$gray-200;
   }
 }
 
 .uppy-Provider-breadcrumbsIcon {
   display: inline-block;
-  color: $gray-700;
+  color: variables.$gray-700;
   line-height: 1;
   vertical-align: middle;
   margin-inline-end: 4px;
@@ -103,11 +104,11 @@
 .uppy-Provider-breadcrumbsIcon svg {
   width: 13px;
   height: 13px;
-  fill: $gray-700;
+  fill: variables.$gray-700;
 }
 
 .uppy-Provider-breadcrumbs button {
-  @include highlight-focus;
+  @include utils.highlight-focus;
 
   display: inline-block;
   // for focus
@@ -120,7 +121,7 @@
   }
 
   &:last-of-type {
-    color: $gray-800;
+    color: variables.$gray-800;
     font-weight: 500;
     cursor: normal;
     pointer-events: none;
@@ -131,7 +132,7 @@
   }
 
   [data-uppy-theme='dark'] & {
-    color: $gray-200;
+    color: variables.$gray-200;
   }
 }
 // ...uppy-Provider-breadcrumbs|
@@ -147,17 +148,17 @@
 
 .uppy-ProviderBrowser-user {
   margin: 0 8px 0 0;
-  color: $gray-800;
+  color: variables.$gray-800;
   font-weight: 500;
 
   [data-uppy-theme='dark'] & {
-    color: $gray-200;
+    color: variables.$gray-200;
   }
 }
 
 .uppy-ProviderBrowser-user::after {
   position: relative;
-  color: $gray-500;
+  color: variables.$gray-500;
   font-weight: normal;
   content: '\00B7';
   inset-inline-start: 4px;
@@ -165,21 +166,21 @@
 
 .uppy-ProviderBrowser-header {
   position: relative;
-  z-index: $zIndex-2;
-  border-bottom: 1px solid $gray-200;
+  z-index: variables.$zIndex-2;
+  border-bottom: 1px solid variables.$gray-200;
 
   [data-uppy-theme='dark'] & {
-    border-bottom: 1px solid $gray-800;
+    border-bottom: 1px solid variables.$gray-800;
   }
 }
 
 .uppy-ProviderBrowser-headerBar {
-  z-index: $zIndex-2;
+  z-index: variables.$zIndex-2;
   padding: 7px 15px;
-  color: $gray-600;
+  color: variables.$gray-600;
   font-size: 12px;
   line-height: 1.4;
-  background-color: $gray-50;
+  background-color: variables.$gray-50;
 
   .uppy-size--md & {
     display: flex;
@@ -187,7 +188,7 @@
   }
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-900;
+    background-color: variables.$gray-900;
   }
 }
 
@@ -218,67 +219,67 @@
 }
 
 .uppy-ProviderBrowser-searchFilterInput {
-  z-index: $zIndex-2;
+  z-index: variables.$zIndex-2;
   width: 100%;
   height: 30px;
   font-size: 13px;
-  font-family: $font-family-base;
+  font-family: variables.$font-family-base;
   line-height: 1.4;
-  background-color: $gray-200;
+  background-color: variables.$gray-200;
   border: 0;
   border-radius: 4px;
   outline: 0;
   padding-inline-start: 30px;
   padding-inline-end: 30px;
-  color: $gray-800;
+  color: variables.$gray-800;
 
   &::-webkit-search-cancel-button {
     display: none;
   }
 
   [data-uppy-theme='dark'] & {
-    color: $gray-200;
-    background-color: $gray-900;
+    color: variables.$gray-200;
+    background-color: variables.$gray-900;
   }
 }
 
 .uppy-ProviderBrowser-searchFilterInput:focus {
-  background-color: $gray-300;
+  background-color: variables.$gray-300;
   border: 0;
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-800;
+    background-color: variables.$gray-800;
   }
 }
 
 .uppy-ProviderBrowser-searchFilterIcon {
   position: absolute;
-  z-index: $zIndex-3;
+  z-index: variables.$zIndex-3;
   width: 12px;
   height: 12px;
-  color: $gray-600;
+  color: variables.$gray-600;
   inset-inline-start: 16px;
 }
 
 .uppy-ProviderBrowser-searchFilterInput::placeholder {
-  color: $gray-500;
+  color: variables.$gray-500;
   opacity: 1;
 }
 
 .uppy-ProviderBrowser-searchFilterReset {
-  @include blue-border-focus;
+  @include utils.blue-border-focus;
   border-radius: 3px;
   position: absolute;
-  z-index: $zIndex-3;
+  z-index: variables.$zIndex-3;
   width: 22px;
   height: 22px;
   padding: 6px;
-  color: $gray-500;
+  color: variables.$gray-500;
   cursor: pointer;
   inset-inline-end: 16px;
 
   &:hover {
-    color: $gray-600;
+    color: variables.$gray-600;
   }
 
   svg {
@@ -287,10 +288,10 @@
 }
 
 .uppy-ProviderBrowser-userLogout {
-  @include highlight-focus;
+  @include utils.highlight-focus;
   // for focus
   padding: 4px;
-  color: $blue;
+  color: variables.$blue;
   line-height: inherit;
   border-radius: 3px;
   cursor: pointer;
@@ -300,7 +301,7 @@
   }
 
   [data-uppy-theme='dark'] & {
-    color: $gray-200;
+    color: variables.$gray-200;
   }
 }
 
@@ -324,12 +325,12 @@
   overflow-x: hidden;
   overflow-y: auto;
   list-style: none;
-  background-color: $white;
+  background-color: variables.$white;
   border-spacing: 0;
   -webkit-overflow-scrolling: touch;
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-900;
+    background-color: variables.$gray-900;
   }
 
   &:focus {
@@ -348,16 +349,16 @@
   align-items: center;
   justify-content: space-between;
   padding: 15px;
-  background-color: $white;
-  border-top: 1px solid $gray-200;
+  background-color: variables.$white;
+  border-top: 1px solid variables.$gray-200;
 
   & button {
     margin-inline-end: 8px;
   }
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-900;
-    border-top: 1px solid $gray-800;
+    background-color: variables.$gray-900;
+    border-top: 1px solid variables.$gray-800;
   }
 }
 
@@ -366,7 +367,7 @@
 }
 
 .uppy-ProviderBrowser-footer-error {
-  color: $red;
+  color: variables.$red;
   line-height: 18px;
 }
 

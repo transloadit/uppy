@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/aws-php",
+  "name": "example-aws-php",
   "version": "0.0.0",
   "dependencies": {
     "@uppy/aws-s3": "workspace:*",

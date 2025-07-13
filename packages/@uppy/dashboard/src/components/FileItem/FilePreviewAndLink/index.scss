@@ -1,3 +1,8 @@
+@use "sass:color";
+
+@use '@uppy/core/src/_variables.scss' as *;
+@use '@uppy/core/src/_utils.scss' as *;
+
 .uppy-Dashboard-Item-previewInnerWrap {
   // For :after positioning
   position: relative;
@@ -41,11 +46,11 @@
   z-index: $zIndex-3;
 
   &:focus {
-    box-shadow: inset 0 0 0 3px lighten($blue, 20%);
+    box-shadow: inset 0 0 0 3px color.adjust($blue, $lightness: 20%, $space: hsl);
   }
 
   [data-uppy-theme='dark'] &:focus {
-    box-shadow: inset 0 0 0 3px darken($highlight--dark, 20%);
+    box-shadow: inset 0 0 0 3px color.adjust($highlight--dark, $lightness: -20%, $space: hsl);
   }
 }
 

@@ -4,8 +4,12 @@
   "version": "4.6.0",
   "license": "MIT",
   "type": "module",
+  "main": "locale-pack/index.mjs",
   "scripts": {
-    "build": "tsc --build tsconfig.build.json"
+    "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && yarn format",
+    "format": "cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",
+    "test": "yarn node script/test.mjs unused",
+    "typecheck": "tsc --build"
   },
   "keywords": [
     "uppy",
@@ -21,7 +25,10 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^"
+    "@uppy/utils": "workspace:^",
+    "chalk": "^5.0.0",
+    "dedent": "^1.0.0",
+    "glob": "^8.0.0"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

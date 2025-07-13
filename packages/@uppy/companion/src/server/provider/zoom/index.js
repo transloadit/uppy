@@ -237,7 +237,6 @@ class Zoom extends Provider {
     })
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async #withErrorHandling(tag, fn) {
     const authErrorCodes = [
       124, // expired token

@@ -1,13 +1,14 @@
-@import '@uppy/core/src/_utils.scss';
-@import '@uppy/core/src/_variables.scss';
+@use "sass:color";
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 
 .uppy-DragDrop-container {
   display: flex;
   align-items: center;
   justify-content: center;
   max-width: 100%;
-  font-family: $font-family-base;
-  background-color: $white;
+  font-family: variables.$font-family-base;
+  background-color: variables.$white;
   border-radius: 7px;
   cursor: pointer;
 
@@ -18,7 +19,7 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($blue, 0.4);
+    box-shadow: 0 0 0 3px rgba(variables.$blue, 0.4);
   }
 }
 
@@ -33,19 +34,19 @@
   width: 60px;
   height: 60px;
   margin-bottom: 17px;
-  fill: lighten($gray-500, 30%);
+  fill: color.adjust(variables.$gray-500, $lightness: 30%);
 }
 
 .uppy-DragDrop--isDragDropSupported {
-  border: 2px dashed lighten($gray-500, 10%);
+  border: 2px dashed color.adjust(variables.$gray-500, $lightness: 10%);
 }
 
 .uppy-DragDrop--isDraggingOver {
-  background: $gray-200;
-  border: 2px dashed $blue;
+  background: variables.$gray-200;
+  border: 2px dashed variables.$blue;
 
   .uppy-DragDrop-arrow {
-    fill: $gray-500;
+    fill: variables.$gray-500;
   }
 }
 
@@ -56,11 +57,11 @@
 }
 
 .uppy-DragDrop-browse {
-  color: $blue;
+  color: variables.$blue;
   cursor: pointer;
 }
 
 .uppy-DragDrop-note {
-  color: lighten($gray-500, 10%);
+  color: color.adjust(variables.$gray-500, $lightness: 10%);
   font-size: 1em;
 }

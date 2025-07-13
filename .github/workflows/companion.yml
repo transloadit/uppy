@@ -47,6 +47,6 @@ jobs:
       - name: Install dependencies
         run: corepack yarn workspaces focus @uppy/companion
       - name: Run tests
-        run: corepack yarn run test:companion
+        run: corepack yarn workspace @uppy/companion test
       - name: Run type checks in focused workspace
-        run: corepack yarn run build:companion
+        run: corepack yarn workspace @uppy/companion typecheck

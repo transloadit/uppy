@@ -16,6 +16,7 @@ export function ScreenCapture({ close }: ScreenCaptureProps) {
     getStopRecordingButtonProps,
     getSubmitButtonProps,
     getDiscardButtonProps,
+    state,
   } = useScreenCapture({ onSubmit: close })
 
   useEffect(() => {
@@ -29,6 +30,7 @@ export function ScreenCapture({ close }: ScreenCaptureProps) {
     <MediaCapture
       title="Screen Capture"
       close={close}
+      mediaError={state.screenRecError}
       getVideoProps={getVideoProps}
       getPrimaryActionButtonProps={getScreenshotButtonProps}
       primaryActionButtonLabel="Screenshot"

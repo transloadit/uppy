@@ -1,4 +1,12 @@
 name: End-to-end tests
+# SECURITY NOTE: This workflow uses pull_request_target which has access to secrets.
+# This is needed because we want to be able to run e2e tests on someone else's code, but with our own credentials (which is needed for the tests).
+# `pull_request_target` will always run without manual approval, even if "Require approval for all external contributors" is enabled in the repo settings.
+# Therefore we implement a "safe to test" label that must be manually added once we have checked that the diff is safe.
+# Example of how this could be exploited before we implemented this label: https://github.com/transloadit/uppy/pull/5798/commits/d214a893355bd72ae771fb1c52ebe87948a98440
+# For PRs from forks, secrets are only provided when the "safe to test" label is present.
+# This allows maintainers to safely test external contributions while preventing
+# malicious actors from accessing secrets.
 on:
   push:
     branches: [main]
@@ -11,7 +19,7 @@ on:
       - '.github/**'
       - '!.github/workflows/e2e.yml'
   pull_request_target:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize, reopened, labeled]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -32,6 +40,11 @@ env:
 jobs:
   compare_diff:
     runs-on: ubuntu-latest
+    # Apply same security condition as e2e job
+    if: |
+      github.event_name == 'push' || 
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      contains(github.event.pull_request.labels.*.name, 'safe to test')
     env:
       DIFF_BUILDER: true
     outputs:
@@ -61,21 +74,21 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - name: Install dependencies
-        run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
+      - run: corepack yarn install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack yarn build:js:typeless
+      - run: corepack yarn build
       - name: Store output file
         run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
       - name: Fetch source from the PR
         run: |
           git checkout FETCH_HEAD -- packages
-      - run: corepack yarn build:js:typeless
+      - run: corepack yarn install --no-immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - run: corepack yarn build
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
       - name: Setup git
@@ -121,6 +134,13 @@ jobs:
   e2e:
     name: Browser tests
     runs-on: ubuntu-latest
+    # Only run E2E tests with secrets if:
+    # 1. PR is from the same repository (trusted), OR
+    # 2. PR has the "safe to test" label (maintainer approved)
+    if: |
+      github.event_name == 'push' || 
+      github.event.pull_request.head.repo.full_name == github.repository ||
+      contains(github.event.pull_request.labels.*.name, 'safe to test')
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -170,17 +190,19 @@ jobs:
           COMPANION_DOMAIN: localhost:3020
           COMPANION_PROTOCOL: http
           COMPANION_REDIS_URL: redis://localhost:6379
-          COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
-          COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
-          COMPANION_AWS_KEY: ${{secrets.COMPANION_AWS_KEY}}
-          COMPANION_AWS_SECRET: ${{secrets.COMPANION_AWS_SECRET}}
-          COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
-          COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
+          # Secrets are safe to provide here because job-level condition ensures
+          # this only runs for trusted PRs or PRs with "safe to test" label
+          COMPANION_UNSPLASH_KEY: ${{ secrets.COMPANION_UNSPLASH_KEY }}
+          COMPANION_UNSPLASH_SECRET: ${{ secrets.COMPANION_UNSPLASH_SECRET }}
+          COMPANION_AWS_KEY: ${{ secrets.COMPANION_AWS_KEY }}
+          COMPANION_AWS_SECRET: ${{ secrets.COMPANION_AWS_SECRET }}
+          COMPANION_AWS_BUCKET: ${{ secrets.COMPANION_AWS_BUCKET }}
+          COMPANION_AWS_REGION: ${{ secrets.COMPANION_AWS_REGION }}
           VITE_COMPANION_URL: http://localhost:3020
-          VITE_TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
-          VITE_TRANSLOADIT_SECRET: ${{secrets.TRANSLOADIT_SECRET}}
-          VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
-          VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
+          VITE_TRANSLOADIT_KEY: ${{ secrets.TRANSLOADIT_KEY }}
+          VITE_TRANSLOADIT_SECRET: ${{ secrets.TRANSLOADIT_SECRET }}
+          VITE_TRANSLOADIT_TEMPLATE: ${{ secrets.TRANSLOADIT_TEMPLATE }}
+          VITE_TRANSLOADIT_SERVICE_URL: ${{ secrets.TRANSLOADIT_SERVICE_URL }}
           # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
           CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
       - name: Upload videos in case of failure
