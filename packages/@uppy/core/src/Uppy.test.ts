@@ -1613,6 +1613,7 @@ describe('src/Core', () => {
           // @ts-ignore
           data: new File([sampleImage], { type: 'image/png' }),
         })
+        throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err.message).toEqual('You can only upload: image/jpeg')
@@ -1630,6 +1631,7 @@ describe('src/Core', () => {
           // @ts-ignore
           data: new File([sampleImage], { type: 'image/png' }),
         })
+        throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err.message).toEqual(
@@ -2141,7 +2143,7 @@ describe('src/Core', () => {
             allowedFileTypes: 'image/gif',
           },
         })
-        core.log('hi')
+        throw new Error('should have thrown')
       } catch (err) {
         expect(err).toMatchObject(
           new Error('`restrictions.allowedFileTypes` must be an array'),
