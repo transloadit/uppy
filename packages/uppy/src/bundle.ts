@@ -45,7 +45,6 @@ export { default as ProgressBar } from '@uppy/progress-bar'
 export { default as ReduxDevTools } from '@uppy/redux-dev-tools'
 export { default as RemoteSources } from '@uppy/remote-sources'
 export { default as ScreenCapture } from '@uppy/screen-capture'
-export { default as StatusBar } from '@uppy/status-bar'
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'
 // not yet typed
