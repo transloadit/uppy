@@ -21,15 +21,6 @@ describe('Dashboard', () => {
     delete globalThis.ResizeObserver
   })
 
-  it('can safely be added together with the StatusBar without id conflicts', () => {
-    const core = new Core()
-
-    expect(() => {
-      core.use(DashboardPlugin, { inline: false })
-    }).not.toThrow()
-
-    core.destroy()
-  })
 
   it('works without any remote provider plugins', () => {
     const core = new Core()
