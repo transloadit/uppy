@@ -38,9 +38,6 @@
     },
     "@uppy/progress-bar": {
       "optional": true
-    },
-    "@uppy/status-bar": {
-      "optional": true
     }
   },
   "publishConfig": {
