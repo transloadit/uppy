@@ -11,8 +11,6 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/provider-views'
-import StatusBar from '@uppy/status-bar'
-import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
@@ -169,7 +167,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailWidth?: number
   trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
-  locale?: LocaleStrings<typeof locale> & typeof StatusBarLocale
+  locale?: LocaleStrings<typeof locale>
 }
 
 export type DashboardOptions<
