@@ -1,0 +1,463 @@
+@use "sass:color";
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
+@use '@uppy/utils/src/microtip.scss';
+
+.uppy-StatusBar {
+  position: relative;
+  z-index: variables.$zIndex-2;
+  display: flex;
+  height: 46px;
+  color: variables.$white;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 40px;
+  background-color: variables.$white;
+  transition: height 0.2s;
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-900;
+  }
+}
+
+.uppy-StatusBar::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: variables.$gray-200;
+  content: '';
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-600;
+  }
+}
+
+.uppy-StatusBar[aria-hidden='true'] {
+  height: 0;
+  overflow-y: hidden;
+}
+
+.uppy-StatusBar.is-complete .uppy-StatusBar-progress {
+  background-color: variables.$green;
+}
+
+.uppy-StatusBar.is-error .uppy-StatusBar-progress {
+  background-color: variables.$red;
+}
+
+.uppy-StatusBar.is-complete .uppy-StatusBar-statusIndicator {
+  color: variables.$green;
+}
+
+.uppy-StatusBar.is-error .uppy-StatusBar-statusIndicator {
+  color: variables.$red;
+}
+
+.uppy-StatusBar:not([aria-hidden='true']).is-waiting {
+  height: 65px;
+  background-color: variables.$white;
+  border-top: 1px solid variables.$gray-200;
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-900;
+    border-top: 1px solid variables.$gray-800;
+  }
+}
+
+.uppy-StatusBar-progress {
+  position: absolute;
+  z-index: variables.$zIndex-2;
+  height: 2px;
+  background-color: variables.$blue;
+  transition:
+    background-color,
+    width 0.3s ease-out;
+
+  &.is-indeterminate {
+    $stripe-color: rgba(0, 0, 0, 0.3);
+
+    background-image: linear-gradient(
+      45deg,
+      $stripe-color 25%,
+      transparent 25%,
+      transparent 50%,
+      $stripe-color 50%,
+      $stripe-color 75%,
+      transparent 75%,
+      transparent
+    );
+    background-size: 64px 64px;
+    animation: uppy-StatusBar-ProgressStripes 1s linear infinite;
+  }
+}
+
+@keyframes uppy-StatusBar-ProgressStripes {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 64px 0;
+  }
+}
+
+.uppy-StatusBar.is-preprocessing .uppy-StatusBar-progress,
+.uppy-StatusBar.is-postprocessing .uppy-StatusBar-progress {
+  background-color: variables.$orange;
+}
+
+.uppy-StatusBar.is-waiting .uppy-StatusBar-progress {
+  display: none;
+}
+
+.uppy-StatusBar-content {
+  position: relative;
+  z-index: variables.$zIndex-3;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  color: variables.$gray-800;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-inline-start: 10px;
+
+  .uppy-size--md & {
+    padding-inline-start: 15px;
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+  }
+}
+
+.uppy-StatusBar-status {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-weight: normal;
+  line-height: 1.4;
+  padding-inline-end: 0.3em;
+}
+
+.uppy-StatusBar-statusPrimary {
+  font-weight: 500;
+  line-height: 1;
+  display: flex;
+
+  button.uppy-StatusBar-details {
+    margin-left: 5px;
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+  }
+}
+
+.uppy-StatusBar-statusSecondary {
+  display: inline-block;
+  margin-top: 1px;
+  color: variables.$gray-600;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-400;
+  }
+}
+
+.uppy-StatusBar-statusSecondaryHint {
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+  margin-inline-end: 5px;
+
+  .uppy-size--md & {
+    margin-inline-end: 8px;
+  }
+}
+
+.uppy-StatusBar-statusIndicator {
+  position: relative;
+  top: 1px;
+  color: variables.$gray-700;
+  margin-inline-end: 7px;
+
+  svg {
+    vertical-align: text-bottom;
+  }
+}
+
+.uppy-StatusBar-actions {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: variables.$zIndex-4;
+  display: flex;
+  align-items: center;
+  inset-inline-end: 10px;
+}
+
+.uppy-StatusBar.is-waiting .uppy-StatusBar-actions {
+  position: static;
+  width: 100%;
+  height: 100%;
+  padding: 0 15px;
+  background-color: variables.$gray-50;
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-900;
+  }
+}
+
+.uppy-StatusBar:not([aria-hidden='true']).is-waiting.has-ghosts {
+  flex-direction: column;
+  height: 90px;
+
+  .uppy-size--md & {
+    flex-direction: row;
+    height: 65px;
+  }
+
+  .uppy-StatusBar-actions {
+    flex-direction: column;
+    justify-content: center;
+
+    .uppy-size--md & {
+      flex-direction: row;
+      justify-content: initial;
+    }
+  }
+}
+
+.uppy-StatusBar-actionCircleBtn {
+  @include utils.blue-border-focus;
+
+  margin: 3px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.9;
+
+  [data-uppy-theme='dark'] & {
+    @include utils.blue-border-focus--dark;
+  }
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:focus {
+    border-radius: 50%;
+  }
+}
+
+.uppy-StatusBar-actionCircleBtn svg {
+  vertical-align: bottom;
+}
+
+.uppy-StatusBar-actionBtn {
+  display: inline-block;
+  color: variables.$blue;
+  font-size: 10px;
+  line-height: inherit;
+  vertical-align: middle;
+
+  .uppy-size--md & {
+    font-size: 11px;
+  }
+}
+
+.uppy-StatusBar-actionBtn--disabled {
+  opacity: 0.4;
+
+  [data-uppy-theme='dark'] & {
+    opacity: 0.7;
+  }
+}
+
+.uppy-StatusBar-actionBtn--retry {
+  @include utils.blue-border-focus();
+
+  position: relative;
+  height: 16px;
+  padding: 1px 6px 3px 18px;
+  color: #fff;
+  line-height: 1;
+  background-color: variables.$pomegranate;
+  border-radius: 8px;
+  margin-inline-end: 6px;
+
+  [data-uppy-theme='dark'] & {
+    @include utils.blue-border-focus--dark;
+  }
+
+  &:hover {
+    background-color: color.adjust(variables.$pomegranate, $lightness: -8%);
+  }
+
+  svg {
+    position: absolute;
+    top: 3px;
+    inset-inline-start: 6px;
+  }
+}
+
+.uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+  width: 100%;
+  padding: 15px 10px;
+  color: variables.$white;
+  font-size: 14px;
+  line-height: 1;
+  background-color: variables.$green;
+
+  &:hover {
+    background-color: color.adjust(variables.$green, $lightness: -5%);
+  }
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$darkgreen;
+  }
+
+  [data-uppy-theme='dark'] &:hover {
+    background-color: color.adjust(variables.$darkgreen, $lightness: -5%);
+  }
+}
+
+.uppy-size--md .uppy-StatusBar.is-waiting .uppy-StatusBar-actionBtn--upload {
+  width: auto;
+  padding: 13px 22px;
+}
+
+.uppy-StatusBar.is-waiting
+  .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
+  background-color: variables.$green;
+  cursor: not-allowed;
+}
+
+[data-uppy-theme='dark']
+  .uppy-StatusBar.is-waiting
+  .uppy-StatusBar-actionBtn--upload.uppy-StatusBar-actionBtn--disabled:hover {
+  background-color: variables.$darkgreen;
+}
+
+.uppy-StatusBar:not(.is-waiting) .uppy-StatusBar-actionBtn--upload {
+  color: variables.$blue;
+  background-color: transparent;
+}
+
+.uppy-StatusBar-actionBtn--uploadNewlyAdded {
+  // for focus
+  @include utils.blue-border-focus;
+
+  padding-inline-end: 3px;
+  padding-inline-start: 3px;
+  padding-bottom: 1px;
+  border-radius: 3px;
+
+  [data-uppy-theme='dark'] & {
+    @include utils.blue-border-focus--dark;
+  }
+
+  .uppy-StatusBar.is-preprocessing &,
+  .uppy-StatusBar.is-postprocessing & {
+    display: none;
+  }
+}
+
+.uppy-StatusBar-actionBtn--done {
+  @include utils.highlight-focus;
+
+  padding: 7px 8px;
+  line-height: 1;
+  border-radius: 3px;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$highlight--dark;
+  }
+}
+
+.uppy-size--md .uppy-StatusBar-actionBtn--done {
+  font-size: 14px;
+}
+
+.uppy-StatusBar-serviceMsg {
+  padding-left: 10px;
+  color: variables.$black;
+  font-size: 11px;
+  line-height: 1.1;
+
+  .uppy-size--md & {
+    padding-left: 15px;
+    font-size: 14px;
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+  }
+}
+
+.uppy-StatusBar-serviceMsg-ghostsIcon {
+  position: relative;
+  top: 2px;
+  left: 6px;
+  width: 10px;
+  vertical-align: text-bottom;
+  opacity: 0.5;
+
+  .uppy-size--md & {
+    top: 1px;
+    left: 10px;
+    width: 15px;
+  }
+}
+
+.uppy-StatusBar-details {
+  position: relative;
+  top: 0;
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  color: variables.$white;
+  font-weight: 600;
+  font-size: 10px;
+  line-height: 12px;
+  text-align: center;
+  vertical-align: middle;
+  background-color: variables.$gray-500;
+  border-radius: 50%;
+  cursor: help;
+  appearance: none;
+  inset-inline-start: 2px;
+}
+
+.uppy-StatusBar-details::after {
+  line-height: 1.3;
+  word-wrap: break-word;
+}
+
+.uppy-StatusBar-spinner {
+  animation-name: uppy-StatusBar-spinnerAnimation;
+  animation-duration: 1s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  fill: variables.$blue;
+  margin-inline-end: 10px;
+}
+
+.uppy-StatusBar.is-preprocessing .uppy-StatusBar-spinner,
+.uppy-StatusBar.is-postprocessing .uppy-StatusBar-spinner {
+  fill: variables.$orange;
+}
+
+@keyframes uppy-StatusBar-spinnerAnimation {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
