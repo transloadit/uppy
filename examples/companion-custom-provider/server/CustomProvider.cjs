@@ -38,7 +38,6 @@ class MyCustomProvider {
     return 'myunsplash'
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async list({ token, directory }) {
     const path = directory ? `/${directory}/photos` : ''
 
@@ -55,7 +54,6 @@ class MyCustomProvider {
     return adaptData(await resp.json())
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async download({ id, token }) {
     const resp = await fetch(`${BASE_URL}/photos/${id}`, {
       headers: {

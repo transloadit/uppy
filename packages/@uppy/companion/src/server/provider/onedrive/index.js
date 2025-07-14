@@ -37,9 +37,13 @@ class OneDrive extends Provider {
    * @param {object} options
    * @param {string} options.directory
    * @param {any} options.query
-   * @param {string} options.token
+   * @param {{ accessToken: string }} options.providerUserSession
    */
-  async list({ directory, query, token }) {
+  async list({
+    directory,
+    query,
+    providerUserSession: { accessToken: token },
+  }) {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const path = directory ? `items/${directory}` : 'root'
       // https://learn.microsoft.com/en-us/graph/query-parameters?tabs=http#top-parameter
@@ -66,7 +70,7 @@ class OneDrive extends Provider {
     })
   }
 
-  async download({ id, token, query }) {
+  async download({ id, providerUserSession: { accessToken: token }, query }) {
     return this.#withErrorHandling(
       'provider.onedrive.download.error',
       async () => {
@@ -89,7 +93,7 @@ class OneDrive extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async size({ id, query, token }) {
+  async size({ id, query, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
       const { size } = await (await getClient({ token }))
         .get(`${getRootPath(query)}/items/${id}`, { responseType: 'json' })

@@ -123,7 +123,7 @@ class DropBox extends Provider {
   async list(options) {
     return this.#withErrorHandling('provider.dropbox.list.error', async () => {
       const { client, userInfo } = await getClient({
-        token: options.token,
+        token: options.providerUserSession.accessToken,
         namespaced: true,
       })
 
@@ -133,7 +133,7 @@ class DropBox extends Provider {
     })
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.dropbox.download.error',
       async () => {
@@ -155,7 +155,7 @@ class DropBox extends Provider {
     )
   }
 
-  async thumbnail({ id, token }) {
+  async thumbnail({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.dropbox.thumbnail.error',
       async () => {
@@ -180,7 +180,7 @@ class DropBox extends Provider {
     )
   }
 
-  async size({ id, token }) {
+  async size({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.dropbox.size.error', async () => {
       const { size } = await (
         await getClient({ token, namespaced: true })
@@ -194,7 +194,7 @@ class DropBox extends Provider {
     })
   }
 
-  async logout({ token }) {
+  async logout({ providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.dropbox.logout.error',
       async () => {

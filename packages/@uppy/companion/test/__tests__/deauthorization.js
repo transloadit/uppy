@@ -13,16 +13,13 @@ describe('handle deauthorization callback', () => {
   nock('https://api.zoom.us').post('/oauth/data/compliance').reply(200)
 
   test('providers without support for callback endpoint', () => {
-    return (
-      request(authServer)
-        .post('/dropbox/deauthorization/callback')
-        .set('Content-Type', 'application/json')
-        .send({
-          foo: 'bar',
-        })
-        // @todo consider receiving 501 instead
-        .expect(500)
-    )
+    return request(authServer)
+      .post('/dropbox/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .send({
+        foo: 'bar',
+      })
+      .expect(500)
   })
 
   test('validate that request credentials match', () => {

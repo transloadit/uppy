@@ -45,7 +45,9 @@ class Zoom extends Provider {
 
   async list(options) {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
-      const { token } = options
+      const {
+        providerUserSession: { accessToken: token },
+      } = options
       const query = options.query || {}
       const meetingId = options.directory || ''
       const requestedYear = query.year ? parseInt(query.year, 10) : null
@@ -141,7 +143,11 @@ class Zoom extends Provider {
     })
   }
 
-  async download({ id: meetingId, token, query }) {
+  async download({
+    id: meetingId,
+    providerUserSession: { accessToken: token },
+    query,
+  }) {
     return this.#withErrorHandling('provider.zoom.download.error', async () => {
       // meeting id + file id required
       // cc files don't have an ID or size
@@ -167,7 +173,11 @@ class Zoom extends Provider {
     })
   }
 
-  async size({ id: meetingId, token, query }) {
+  async size({
+    id: meetingId,
+    providerUserSession: { accessToken: token },
+    query,
+  }) {
     return this.#withErrorHandling('provider.zoom.size.error', async () => {
       const client = await getClient({ token })
       const { recordingStart, recordingId: fileId } = query
@@ -183,7 +193,7 @@ class Zoom extends Provider {
     })
   }
 
-  async logout({ companion, token }) {
+  async logout({ companion, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.zoom.logout.error', async () => {
       const { key, secret } = await companion.getProviderCredentials()
 
