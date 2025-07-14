@@ -45,7 +45,6 @@
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"

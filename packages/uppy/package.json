@@ -56,7 +56,6 @@
     "@uppy/redux-dev-tools": "workspace:^",
     "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/store-default": "workspace:^",
     "@uppy/store-redux": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
