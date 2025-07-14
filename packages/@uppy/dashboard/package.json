@@ -8,7 +8,9 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css"
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -43,12 +45,13 @@
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "cssnano": "^7.0.7",
+    "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "resize-observer-polyfill": "^1.5.0",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
-    "vitest": "^1.6.1"
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

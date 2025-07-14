@@ -34,8 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # fix node versions so we don't get sudden unrelated CI breakage
-        node-version: [18.20.8, 20.19.1]
+        node-version: [lts/*]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -57,14 +56,14 @@ jobs:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
         run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
+          corepack yarn install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
+      - name: Build
+        run: corepack yarn run build
       - name: Run tests
-        run: corepack yarn run test:unit
+        run: corepack yarn run test
 
   types:
     name: Type tests
@@ -90,10 +89,8 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
+          corepack yarn install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack yarn run test:ts
+      - run: corepack yarn run typecheck

@@ -1,0 +1,20 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "@uppy/audio#build",
+        "@uppy/core#build",
+        "@uppy/image-editor#build",
+        "@uppy/remote-sources#build",
+        "@uppy/screen-capture#build",
+        "@uppy/webcam#build"
+      ],
+      "outputs": ["lib/**"]
+    },
+    "build:css": {
+      "inputs": ["src/input.css", "src/**/*.{js,ts,jsx,tsx}"],
+      "outputs": ["dist/styles.css"]
+    }
+  }
+}

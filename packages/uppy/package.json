@@ -72,7 +72,8 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:bundle": "node build-bundle.mjs",
-    "build:css": "sass --load-path=../../packages src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css"
+    "build:css": "sass --load-path=../../packages src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "typecheck": "tsc --build"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",

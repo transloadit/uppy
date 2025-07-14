@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/aws-nodejs",
+  "name": "example-aws-nodejs",
   "version": "1.0.0",
   "description": "Uppy for AWS S3 with a custom Node.js backend for signing URLs",
   "main": "index.js",
