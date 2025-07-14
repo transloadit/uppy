@@ -24,7 +24,6 @@
     "@uppy/drag-drop": "workspace:^",
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
