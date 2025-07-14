@@ -1239,9 +1239,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       fileManagerSelectionType: this.opts.fileManagerSelectionType,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
-      hideCancelButton: this.opts.hideCancelButton,
-      hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeButton: this.opts.hidePauseResumeButton,
       showRemoveButtonAfterComplete: this.opts.showRemoveButtonAfterComplete,
       containerWidth: pluginState.containerWidth,
       containerHeight: pluginState.containerHeight,
@@ -1263,6 +1260,15 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       handleDragOver: this.handleDragOver,
       handleDragLeave: this.handleDragLeave,
       handleDrop: this.handleDrop,
+      // status-bar props
+      disableStatusBar: this.opts.disableStatusBar,
+      showProgressDetails: this.opts.showProgressDetails,
+      hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
+      hidePauseResumeButton: this.opts.hidePauseResumeButton,
+      hideCancelButton: this.opts.hideCancelButton,
+      hideProgressAfterFinish: this.opts.hideProgressAfterFinish,
+      doneButtonHandler: this.opts.doneButtonHandler,
     })
   }
 
@@ -1300,28 +1306,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  #getStatusBarOpts() {
-    const {
-      hideUploadButton,
-      hideRetryButton,
-      hidePauseResumeButton,
-      hideCancelButton,
-      showProgressDetails,
-      hideProgressAfterFinish,
-      locale: l,
-      doneButtonHandler,
-    } = this.opts
-    return {
-      hideUploadButton,
-      hideRetryButton,
-      hidePauseResumeButton,
-      hideCancelButton,
-      showProgressDetails,
-      hideAfterFinish: hideProgressAfterFinish,
-      locale: l,
-      doneButtonHandler,
-    }
-  }
 
   #getThumbnailGeneratorOpts() {
     const {
@@ -1349,16 +1333,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
-      .getPlugin(this.#getStatusBarId())
-      ?.setOptions(this.#getStatusBarOpts())
-
-    this.uppy
       .getPlugin(this.#getThumbnailGeneratorId())
       ?.setOptions(this.#getThumbnailGeneratorOpts())
-  }
-
-  #getStatusBarId() {
-    return `${this.id}:StatusBar`
   }
 
   #getThumbnailGeneratorId() {
@@ -1409,13 +1385,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.mount(target, this)
     }
 
-    if (!this.opts.disableStatusBar) {
-      this.uppy.use(StatusBar, {
-        id: this.#getStatusBarId(),
-        target: this,
-        ...this.#getStatusBarOpts(),
-      })
-    }
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
@@ -1461,11 +1430,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       // Checking if this plugin exists, in case it was removed by uppy-core
       // before the Dashboard was.
       if (informer) this.uppy.removePlugin(informer)
-    }
-
-    if (!this.opts.disableStatusBar) {
-      const statusBar = this.uppy.getPlugin(`${this.id}:StatusBar`)
-      if (statusBar) this.uppy.removePlugin(statusBar)
     }
 
     if (!this.opts.disableThumbnailGenerator) {

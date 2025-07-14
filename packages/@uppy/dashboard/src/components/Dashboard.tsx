@@ -22,7 +22,7 @@ import FileList from './FileList.js'
 import PickerPanelContent from './PickerPanelContent.js'
 import PanelTopBar from './PickerPanelTopBar.js'
 import Slide from './Slide.js'
-
+import StatusBar from './StatusBar/StatusBar.js'
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
 
@@ -119,6 +119,11 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   handleDragOver: (event: DragEvent) => void
   handleDragLeave: (event: DragEvent) => void
   handleDrop: (event: DragEvent) => void
+  disableStatusBar: boolean
+  showProgressDetails: boolean
+  hideUploadButton: boolean
+  hideProgressAfterFinish: boolean
+  doneButtonHandler: (() => void) | null
 }
 
 export default function Dashboard<M extends Meta, B extends Body>(
@@ -335,6 +340,20 @@ export default function Dashboard<M extends Meta, B extends Body>(
 
           <div className="uppy-Dashboard-progressindicators">
             {props.progressindicators.map((target: TargetWithRender) => {
+            {!props.disableStatusBar && (
+              <StatusBar
+                uppy={props.uppy}
+                i18n={props.i18n}
+                showProgressDetails={props.showProgressDetails}
+                hideUploadButton={props.hideUploadButton}
+                hideRetryButton={props.hideRetryButton}
+                hidePauseResumeButton={props.hidePauseResumeButton}
+                hideCancelButton={props.hideCancelButton}
+                hideAfterFinish={props.hideProgressAfterFinish}
+                doneButtonHandler={props.doneButtonHandler}
+              />
+            )}
+
               // TODO
               // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`
               // This is factually true in Uppy right now, but maybe it doesn't have to be
