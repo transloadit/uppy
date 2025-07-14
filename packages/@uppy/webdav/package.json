@@ -37,6 +37,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy/core": "workspace:^",
     "typescript": "^5.8.3"
   }
 }

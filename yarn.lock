@@ -12343,6 +12343,7 @@ __metadata:
   resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
   dependencies:
     "@uppy/aws-s3": "workspace:^"
+    "@uppy/core": "workspace:^"
     typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
@@ -12354,6 +12355,7 @@ __metadata:
     "@aws-sdk/client-s3": "npm:^3.362.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.362.0"
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/utils": "workspace:^"
     jsdom: "npm:^26.1.0"
     nock: "npm:^13.1.0"
@@ -12370,6 +12372,7 @@ __metadata:
   resolution: "@uppy/box@workspace:packages/@uppy/box"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12542,6 +12545,7 @@ __metadata:
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
     "@transloadit/prettier-bytes": "npm:^0.3.4"
+    "@uppy/core": "workspace:^"
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/provider-views": "workspace:^"
@@ -12604,6 +12608,7 @@ __metadata:
   resolution: "@uppy/dropbox@workspace:packages/@uppy/dropbox"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12618,6 +12623,7 @@ __metadata:
   resolution: "@uppy/facebook@workspace:packages/@uppy/facebook"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12672,6 +12678,7 @@ __metadata:
   resolution: "@uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12686,6 +12693,7 @@ __metadata:
   resolution: "@uppy/google-drive@workspace:packages/@uppy/google-drive"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12700,6 +12708,7 @@ __metadata:
   resolution: "@uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12747,6 +12756,7 @@ __metadata:
   resolution: "@uppy/instagram@workspace:packages/@uppy/instagram"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12773,6 +12783,7 @@ __metadata:
   resolution: "@uppy/onedrive@workspace:packages/@uppy/onedrive"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -12902,6 +12913,7 @@ __metadata:
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
     "@uppy/box": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
@@ -12984,6 +12996,7 @@ __metadata:
     "@sveltejs/package": "npm:^2.3.11"
     "@sveltejs/vite-plugin-svelte": "npm:^5.0.3"
     "@uppy/components": "workspace:^"
+    "@uppy/core": "workspace:^"
     preact: "npm:^10.26.5"
     svelte: "npm:^5.27.0"
     svelte-check: "npm:^4.1.6"
@@ -13020,6 +13033,7 @@ __metadata:
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/tus": "workspace:^"
     "@uppy/utils": "workspace:^"
@@ -13038,6 +13052,7 @@ __metadata:
   resolution: "@uppy/tus@workspace:packages/@uppy/tus"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/utils": "workspace:^"
     jsdom: "npm:^26.1.0"
     tus-js-client: "npm:^4.2.3"
@@ -13053,6 +13068,7 @@ __metadata:
   resolution: "@uppy/unsplash@workspace:packages/@uppy/unsplash"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -13067,6 +13083,7 @@ __metadata:
   resolution: "@uppy/url@workspace:packages/@uppy/url"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/utils": "workspace:^"
     cssnano: "npm:^7.0.7"
     nanoid: "npm:^5.0.9"
@@ -13098,6 +13115,7 @@ __metadata:
   resolution: "@uppy/vue@workspace:packages/@uppy/vue"
   dependencies:
     "@uppy/components": "workspace:^"
+    "@uppy/core": "workspace:^"
     preact: "npm:^10.5.13"
     shallow-equal: "npm:^3.0.0"
     typescript: "npm:^5.8.3"
@@ -13148,6 +13166,7 @@ __metadata:
   resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
@@ -13162,6 +13181,7 @@ __metadata:
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/utils": "workspace:^"
     jsdom: "npm:^26.1.0"
     nock: "npm:^13.1.0"
@@ -13177,6 +13197,7 @@ __metadata:
   resolution: "@uppy/zoom@workspace:packages/@uppy/zoom"
   dependencies:
     "@uppy/companion-client": "workspace:^"
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
