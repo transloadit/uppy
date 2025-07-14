@@ -11448,7 +11448,6 @@ __metadata:
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/utils": "workspace:^"
   languageName: unknown
   linkType: soft
@@ -11677,7 +11676,6 @@ __metadata:
     "@uppy/google-drive": "workspace:^"
     "@uppy/informer": "workspace:^"
     "@uppy/provider-views": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
     "@uppy/url": "workspace:^"
     "@uppy/utils": "workspace:^"
@@ -11995,7 +11993,6 @@ __metadata:
     "@uppy/file-input": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
@@ -12009,8 +12006,6 @@ __metadata:
     "@uppy/progress-bar":
       optional: true
     "@uppy/screen-capture":
-      optional: true
-    "@uppy/status-bar":
       optional: true
     "@uppy/webcam":
       optional: true
@@ -12064,24 +12059,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/status-bar@workspace:^, @uppy/status-bar@workspace:packages/@uppy/status-bar":
-  version: 0.0.0-use.local
-  resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
-  dependencies:
-    "@transloadit/prettier-bytes": "npm:^0.3.4"
-    "@uppy/utils": "workspace:^"
-    classnames: "npm:^2.2.6"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/store-default@workspace:^, @uppy/store-default@workspace:packages/@uppy/store-default":
   version: 0.0.0-use.local
   resolution: "@uppy/store-default@workspace:packages/@uppy/store-default"
@@ -12123,7 +12100,6 @@ __metadata:
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   languageName: unknown
   linkType: soft
@@ -12236,7 +12212,6 @@ __metadata:
     "@uppy/drag-drop": "workspace:^"
     "@uppy/file-input": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
@@ -12246,8 +12221,6 @@ __metadata:
     "@uppy/file-input":
       optional: true
     "@uppy/progress-bar":
-      optional: true
-    "@uppy/status-bar":
       optional: true
   languageName: unknown
   linkType: soft
@@ -16659,7 +16632,6 @@ __metadata:
     "@uppy/progress-bar": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/store-default": "workspace:^"
     "@uppy/store-redux": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
@@ -31947,7 +31919,6 @@ __metadata:
     "@uppy/redux-dev-tools": "workspace:^"
     "@uppy/remote-sources": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/store-default": "workspace:^"
     "@uppy/store-redux": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
