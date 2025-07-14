@@ -77,9 +77,6 @@
       "path": "./packages/@uppy/screen-capture/tsconfig.build.json"
     },
     {
-      "path": "./packages/@uppy/status-bar/tsconfig.build.json"
-    },
-    {
       "path": "./packages/@uppy/store-default/tsconfig.build.json"
     },
     {
