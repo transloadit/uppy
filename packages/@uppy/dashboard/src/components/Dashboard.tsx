@@ -342,7 +342,6 @@ export default function Dashboard<M extends Meta, B extends Body>(
 
           <div className="uppy-Dashboard-progressindicators">
             {!props.disableInformer && <Informer uppy={props.uppy} />}
-            {props.progressindicators.map((target: TargetWithRender) => {
             {!props.disableStatusBar && (
               <StatusBar
                 uppy={props.uppy}
@@ -356,7 +355,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
                 doneButtonHandler={props.doneButtonHandler}
               />
             )}
-
+            {props.progressindicators.map((target: TargetWithRender) => {
               // TODO
               // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`
               // This is factually true in Uppy right now, but maybe it doesn't have to be
