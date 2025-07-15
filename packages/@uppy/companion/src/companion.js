@@ -4,8 +4,7 @@ import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
 import merge from 'lodash/merge.js'
-// @ts-ignore
-import { version } from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 import {
   defaultOptions,
   getMaskableSecrets,
@@ -307,7 +306,7 @@ export function app(optionsArg = {}) {
     interval: options.periodicPingInterval,
     count: options.periodicPingCount,
     staticPayload: options.periodicPingStaticPayload,
-    version,
+    version: packageJson.version,
     processId,
   })
 

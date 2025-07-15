@@ -2,8 +2,7 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
-// @ts-ignore
-import { version } from '../../package.json'
+import packageJson from '../../package.json' with { type: 'json' }
 import * as utils from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 
@@ -272,7 +271,7 @@ export const buildHelpfulStartupMessage = (companionOptions) => {
   })
 
   return stripIndent`
-    Welcome to Companion v${version}
+    Welcome to Companion v${packageJson.version}
     ===================================
 
     Congratulations on setting up Companion! Thanks for joining our cause, you have taken

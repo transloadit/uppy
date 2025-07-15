@@ -1,8 +1,7 @@
 import corsImport from 'cors'
 import promBundle from 'express-prom-bundle'
 
-// @ts-ignore
-import { version } from '../../package.json'
+import packageJson from '../../package.json' with { type: 'json' }
 import * as tokenService from './helpers/jwt.js'
 import { getURLBuilder } from './helpers/utils.js'
 import * as logger from './logger.js'
@@ -231,7 +230,7 @@ export const metrics = ({ path = undefined } = {}) => {
     name: 'companion_version',
     help: 'npm version as an integer',
   })
-  const numberVersion = Number(version.replace(/\D/g, ''))
+  const numberVersion = Number(packageJson.version.replace(/\D/g, ''))
   versionGauge.set(numberVersion)
   return metricsMiddleware
 }

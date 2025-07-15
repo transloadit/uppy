@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { isURL } from 'validator'
+import validator from 'validator'
 import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 
@@ -148,7 +148,7 @@ export const validateConfig = (companionOptions) => {
     (!Array.isArray(periodicPingUrls) ||
       periodicPingUrls.some(
         (url2) =>
-          !isURL(url2, {
+          !validator.isURL(url2, {
             protocols: ['http', 'https'],
             require_protocol: true,
             require_tld: false,
