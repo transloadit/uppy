@@ -74,11 +74,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - name: Install dependencies
-        run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
+      - run: corepack yarn install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
@@ -88,6 +84,10 @@ jobs:
       - name: Fetch source from the PR
         run: |
           git checkout FETCH_HEAD -- packages
+      - run: corepack yarn install --no-immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
       - run: corepack yarn build
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
