@@ -1,6 +1,6 @@
-import { vi, test, expect, afterAll, describe } from 'vitest'
 import nock from 'nock'
 import request from 'supertest'
+import { afterAll, describe, expect, test, vi } from 'vitest'
 import * as tokenService from '../src/server/helpers/jwt.js'
 import { nockZoomRevoke, expects as zoomExpects } from './fixtures/zoom.js'
 import { getServer } from './mockserver.js'
@@ -12,16 +12,14 @@ vi.mock('express-prom-bundle')
 
 const secret = 'secret'
 
-const getZoomServer = async () => getServer({
-  COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys',
-})
+const getZoomServer = async () =>
+  getServer({
+    COMPANION_ZOOM_KEYS_ENDPOINT: 'http://localhost:2111/zoom-keys',
+  })
 const authData = {
   zoom: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedAuthToken(
-  authData,
-  secret,
-)
+const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
 afterAll(() => {
   nock.cleanAll()

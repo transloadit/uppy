@@ -1,8 +1,7 @@
-import { vi, describe, test, afterAll } from 'vitest'
 import nock from 'nock'
 import request from 'supertest'
+import { afterAll, describe, test, vi } from 'vitest'
 import { getServer } from './mockserver.js'
-
 
 vi.mock('express-prom-bundle')
 

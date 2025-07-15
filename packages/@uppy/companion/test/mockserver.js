@@ -2,7 +2,6 @@ import express from 'express'
 import session from 'express-session'
 import { expects as zoomExpects } from './fixtures/zoom.js'
 
-
 const { localZoomKey, localZoomSecret, localZoomVerificationToken } =
   zoomExpects
 
@@ -61,7 +60,7 @@ const defaultEnv = {
 
 function updateEnv(env) {
   Object.keys(env).forEach((key) => {
-    const value = env[key];
+    const value = env[key]
     if (value == null) delete process.env[key]
     else process.env[key] = value
   })

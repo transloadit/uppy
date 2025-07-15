@@ -1,14 +1,12 @@
-
-import { test, expect, afterAll, describe, it } from 'vitest'
 import nock from 'nock'
 import request from 'supertest'
-import { vi } from 'vitest'
+import { afterAll, describe, expect, it, test, vi } from 'vitest'
 import packageJson from '../package.json' with { type: 'json' }
+import * as tokenService from '../src/server/helpers/jwt.js'
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
-import { getServer } from './mockserver.js'
-import * as tokenService from '../src/server/helpers/jwt.js'
 import mockOauthState from './mockoauthstate.js'
+import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
@@ -17,7 +15,7 @@ mockOauthState()
 const fakeLocalhost = 'localhost.com'
 
 vi.mock('node:dns', () => ({
-    default:{
+  default: {
     lookup: (hostname, options, callback) => {
       if (fakeLocalhost === hostname || hostname === 'localhost') {
         return callback(null, '127.0.0.1', 4)
@@ -27,7 +25,8 @@ vi.mock('node:dns', () => ({
   },
 }))
 
-const getServerWithEnv = async () => getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
+const getServerWithEnv = async () =>
+  getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
 const secret = 'secret'
 const authData = {
@@ -35,10 +34,7 @@ const authData = {
   box: { accessToken: 'token value' },
   drive: { accessToken: 'token value' },
 }
-const token = tokenService.generateEncryptedAuthToken(
-  authData,
-  secret,
-)
+const token = tokenService.generateEncryptedAuthToken(authData, secret)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
 afterAll(() => {

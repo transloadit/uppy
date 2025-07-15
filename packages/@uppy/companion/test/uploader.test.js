@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import { createServer } from 'node:http'
 import { Readable } from 'node:stream'
 import nock from 'nock'
-import { describe, expect, test, vi, afterAll } from 'vitest'
+import { afterAll, describe, expect, test, vi } from 'vitest'
 import Emitter from '../src/server/emitter/index.js'
 import Uploader, { ValidationError } from '../src/server/Uploader.js'
 import standalone from '../src/standalone/index.js'
@@ -11,7 +11,6 @@ import * as socketClient from './mocksocket.js'
 
 vi.mock('tus-js-client')
 vi.mock('express-prom-bundle')
-
 
 afterAll(() => {
   nock.cleanAll()
@@ -171,7 +170,7 @@ describe('uploader with tus protocol', () => {
         // @ts-ignore
         uploader.tryUploadStream(stream, mockReq).then(() => {
           try {
-    // @ts-ignore
+            // @ts-ignore
             expect(fs.existsSync(uploader.path)).toBe(false)
             resolve()
           } catch (err) {
@@ -244,7 +243,7 @@ describe('uploader with tus protocol', () => {
       await once(server, 'listening')
 
       const ret = await runMultipartTest({
-    // @ts-ignore
+        // @ts-ignore
         address: `localhost:${server.address().port}`,
       })
       expect(ret).toMatchObject({
@@ -274,7 +273,7 @@ describe('uploader with tus protocol', () => {
     nock('http://localhost').post('/', formDataNoMetaMatch).reply(200)
 
     const ret = await runMultipartTest({
-    // @ts-ignore
+      // @ts-ignore
       useFormData: true,
       includeSize: false,
     })
@@ -366,7 +365,7 @@ describe('uploader with tus protocol', () => {
     // validate that the test is resolved on socket connection
     uploader
       .awaitReady(60000)
-    // @ts-ignore
+      // @ts-ignore
       .then(() => uploader.tryUploadStream(stream, mockReq))
     socketClient.connect(uploadToken)
 

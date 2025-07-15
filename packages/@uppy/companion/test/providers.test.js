@@ -1,9 +1,8 @@
 import nock from 'nock'
 import request from 'supertest'
-import { beforeAll, describe, expect, test, vi, afterAll } from 'vitest'
-
-import mockOauthState from './mockoauthstate.js'
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
 import * as tokenService from '../src/server/helpers/jwt.js'
+import * as providerModule from '../src/server/provider/index.js'
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
 import * as fixtures from './fixtures/index.js'
@@ -12,8 +11,8 @@ import {
   nockZoomRevoke,
   expects as zoomExpects,
 } from './fixtures/zoom.js'
+import mockOauthState from './mockoauthstate.js'
 import { getServer } from './mockserver.js'
-import * as providerModule from '../src/server/provider/index.js'
 
 const { localZoomKey, localZoomSecret } = zoomExpects
 
@@ -28,11 +27,11 @@ vi.mock('../../src/server/helpers/request.js', () => {
   }
 })
 
-const getServerWithEnv = async () => getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
+const getServerWithEnv = async () =>
+  getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
 const secret = 'secret'
-
 
 const providers = providerModule.getDefaultProviders()
 
@@ -46,10 +45,7 @@ const authData = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
 })
-const token = tokenService.generateEncryptedAuthToken(
-  authData,
-  secret,
-)
+const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
 const thisOrThat = (value1, value2) => {
   if (value1 !== undefined) {

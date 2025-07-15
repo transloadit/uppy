@@ -38,7 +38,7 @@ describe('cors', () => {
     }
 
     const { res } = testWithMock({
-  // @ts-ignore
+      // @ts-ignore
       corsOptions: {
         sendSelfEndpoint: true,
         corsOrigins: /^https:\/\/localhost:.*$/,
@@ -76,14 +76,14 @@ describe('cors', () => {
   })
 
   test('should support disabling cors', () => {
-  // @ts-ignore
+    // @ts-ignore
     const { res } = testWithMock({ corsOptions: { corsOrigins: false } })
     expect(res.setHeader.mock.calls).toEqual([])
   })
 
   test('should support incorrect url', () => {
     const { res } = testWithMock({
-  // @ts-ignore
+      // @ts-ignore
       corsOptions: { corsOrigins: /^incorrect$/ },
     })
     expect(res.setHeader.mock.calls).toEqual([
@@ -100,7 +100,7 @@ describe('cors', () => {
 
   test('should support array origin', () => {
     const { res } = testWithMock({
-  // @ts-ignore
+      // @ts-ignore
       corsOptions: {
         corsOrigins: ['http://google.com', 'https://localhost:1234'],
       },

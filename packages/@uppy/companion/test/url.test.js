@@ -1,6 +1,6 @@
 import nock from 'nock'
 import request from 'supertest'
-import { vi, test, beforeAll, afterAll, describe, expect } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
 
 import { getServer } from './mockserver.js'
 
@@ -15,15 +15,14 @@ vi.mock('../src/server/helpers/request.js', async () => {
   }
 })
 
-const getMockServer = async () => getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
+const getMockServer = async () =>
+  getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
-beforeAll(
-  () => {
-    nock('http://url.myendpoint.com')
-      .get('/files')
-      .reply(200, () => '')
-  },
-)
+beforeAll(() => {
+  nock('http://url.myendpoint.com')
+    .get('/files')
+    .reply(200, () => '')
+})
 
 afterAll(() => {
   nock.cleanAll()

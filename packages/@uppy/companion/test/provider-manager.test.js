@@ -1,4 +1,4 @@
-import { test, describe, beforeEach, expect } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import GrantConfig from '../src/config/grant.js'
 import * as providerManager from '../src/server/provider/index.js'
 import { getCompanionOptions } from '../src/standalone/helper.js'

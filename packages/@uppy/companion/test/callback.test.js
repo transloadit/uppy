@@ -1,16 +1,13 @@
-import { vi, test, describe, expect } from 'vitest'
 import request from 'supertest'
+import { describe, expect, test, vi } from 'vitest'
 import * as tokenService from '../src/server/helpers/jwt.js'
-import { getServer, grantToken } from './mockserver.js'
 import mockOauthState from './mockoauthstate.js'
+import { getServer, grantToken } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 mockOauthState()
 
-
 const secret = 'secret'
-
-
 
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', async () => {
@@ -51,10 +48,7 @@ describe('test authentication callback', () => {
       dropbox: { accessToken: 'token value' },
       drive: { accessToken: 'token value' },
     }
-    const token = tokenService.generateEncryptedAuthToken(
-      authData,
-      secret,
-    )
+    const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
     // see mock ../../src/server/helpers/oauth-state above for state values
     return request(await getServer())

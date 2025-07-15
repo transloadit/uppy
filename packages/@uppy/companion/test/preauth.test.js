@@ -1,6 +1,5 @@
-import { describe, expect, test, vi } from 'vitest'
-
 import request from 'supertest'
+import { describe, expect, test, vi } from 'vitest'
 import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
@@ -14,9 +13,10 @@ vi.mock('../src/server/helpers/jwt.js', () => {
   }
 })
 
-const getServerWithDynamicOauth = async () => getServer({
-  COMPANION_DROPBOX_KEYS_ENDPOINT: 'http://localhost:1000/endpoint',
-})
+const getServerWithDynamicOauth = async () =>
+  getServer({
+    COMPANION_DROPBOX_KEYS_ENDPOINT: 'http://localhost:1000/endpoint',
+  })
 
 describe('handle preauth endpoint', () => {
   test('happy path', async () => {
