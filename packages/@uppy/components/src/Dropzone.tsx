@@ -25,8 +25,13 @@ export default function Dropzone(props: DropzoneProps) {
   )
 
   return (
-    <div className="uppy-reset" data-uppy-element="dropzone">
-      <input {...getInputProps()} className="uppy:hidden" />
+    <div
+      className="uppy-reset"
+      data-uppy-element="dropzone"
+      role="presentation"
+      tabIndex={0}
+    >
+      <input {...getInputProps()} tabIndex={-1} name="uppy-dropzone-file-input" className="uppy:hidden" />
       <div
         {...getRootProps()}
         style={{
