@@ -57,9 +57,8 @@ jobs:
       - name: Install dependencies
         run:
           corepack yarn install
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
+      - name: Install Playwright Browsers
+        run: yarn dlx playwright install --with-deps
       - name: Build
         run: corepack yarn run build
       - name: Run tests
@@ -90,7 +89,4 @@ jobs:
       - name: Install dependencies
         run:
           corepack yarn install
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
       - run: corepack yarn run typecheck
