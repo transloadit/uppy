@@ -18,6 +18,7 @@ import { UppyAngularWrapper } from "../../utils/wrapper";
 	selector: "uppy-dashboard",
 	template: "",
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
 })
 export class DashboardComponent<M extends Meta, B extends Body>
 	extends UppyAngularWrapper<M, B, DashboardOptions<M, B>>

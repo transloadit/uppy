@@ -18,6 +18,7 @@ import { UppyAngularWrapper } from "../../utils/wrapper";
 	selector: "uppy-progress-bar",
 	template: "",
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
 })
 export class ProgressBarComponent<M extends Meta, B extends Body>
 	extends UppyAngularWrapper<M, B, ProgressBarOptions>
