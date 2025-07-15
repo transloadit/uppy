@@ -31,7 +31,12 @@ export default function Dropzone(props: DropzoneProps) {
       role="presentation"
       tabIndex={0}
     >
-      <input {...getInputProps()} tabIndex={-1} name="uppy-dropzone-file-input" className="uppy:hidden" />
+      <input
+        {...getInputProps()}
+        tabIndex={-1}
+        name="uppy-dropzone-file-input"
+        className="uppy:hidden"
+      />
       <div
         {...getRootProps()}
         style={{

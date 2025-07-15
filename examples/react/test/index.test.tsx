@@ -11,7 +11,6 @@ describe('App', () => {
   test('renders all main sections and upload button is initially disabled', async () => {
     const screen = render(<App />)
 
-    // Check that main sections are rendered
     await expect.element(screen.getByText('With list')).toBeInTheDocument()
     await expect.element(screen.getByText('With grid')).toBeInTheDocument()
     await expect
