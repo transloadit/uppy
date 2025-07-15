@@ -9,7 +9,9 @@
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
-    "noEmitOnError": true
+    "noEmitOnError": true,
+    "resolveJsonModule": true,
+    "types": []
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "test/**/*"],
 }

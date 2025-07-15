@@ -1,7 +1,9 @@
+import { vi } from 'vitest'
+
 const mockOauthState = () => {
-  return {
-    generateState: () => 'some-cool-nice-encrytpion',
-    addToState: () => 'some-cool-nice-encrytpion',
+  vi.mock('../src/server/helpers/oauth-state.js', async () => ({
+    ...(await vi.importActual('../src/server/helpers/oauth-state.js')),
+    generateState: () => ({}),
     getFromState: (state) => {
       if (state === 'state-with-invalid-instance-url') {
         return 'http://localhost:3452'
@@ -10,7 +12,7 @@ const mockOauthState = () => {
       return 'http://localhost:3020'
     },
     encodeState: () => 'some-cool-nice-encrytpion',
-  }
+  }))
 }
 
 export default mockOauthState

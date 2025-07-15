@@ -1,4 +1,4 @@
-import defaults from './constants'
+import * as defaults from './constants.js'
 
 export const expects = {
   listPath: 'ALBUM-ID',

@@ -2,7 +2,7 @@ import util from 'node:util'
 import escapeStringRegexp from 'escape-string-regexp'
 import supportsColors from 'supports-color'
 
-const valuesToMask = []
+let valuesToMask = []
 /**
  * Adds a list of strings that should be masked by the logger.
  * This function can only be called once through out the life of the server.
@@ -10,11 +10,7 @@ const valuesToMask = []
  * @param {Array} maskables a list of strings to be masked
  */
 export function setMaskables(maskables) {
-  maskables.forEach((i) => {
-    valuesToMask.push(escapeStringRegexp(i))
-  })
-
-  Object.freeze(valuesToMask)
+  valuesToMask = maskables.map((i) => escapeStringRegexp(i))
 }
 
 /**

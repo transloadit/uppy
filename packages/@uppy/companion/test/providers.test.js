@@ -1,31 +1,38 @@
 import nock from 'nock'
 import request from 'supertest'
-import mockOauthState from '../mockoauthstate.js'
+import { beforeAll, describe, expect, test, vi, afterAll } from 'vitest'
 
-jest.mock('tus-js-client')
-jest.mock('../../src/server/helpers/request', () => {
-  return {
-    getURLMeta: () => Promise.resolve({ size: 758051 }),
-  }
-})
-jest.mock('../../src/server/helpers/oauth-state', () => mockOauthState())
-
-import tokenService from '../../src/server/helpers/jwt.js'
-import defaults from '../fixtures/constants.js'
-import { nockGoogleDownloadFile } from '../fixtures/drive.js'
-import fixtures from '../fixtures/index.js'
+import mockOauthState from './mockoauthstate.js'
+import * as tokenService from '../src/server/helpers/jwt.js'
+import * as defaults from './fixtures/constants.js'
+import { nockGoogleDownloadFile } from './fixtures/drive.js'
+import * as fixtures from './fixtures/index.js'
 import {
   nockZoomRecordings,
   nockZoomRevoke,
   expects as zoomExpects,
-} from '../fixtures/zoom.js'
-import { getServer } from '../mockserver.js'
+} from './fixtures/zoom.js'
+import { getServer } from './mockserver.js'
+import * as providerModule from '../src/server/provider/index.js'
 
-// todo don't share server between tests. rewrite to not use env variables
-const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
+const { localZoomKey, localZoomSecret } = zoomExpects
+
+vi.mock('express-prom-bundle')
+vi.mock('tus-js-client')
+
+mockOauthState()
+
+vi.mock('../../src/server/helpers/request.js', () => {
+  return {
+    getURLMeta: () => Promise.resolve({ size: 758051 }),
+  }
+})
+
+const getServerWithEnv = async () => getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
-import providerModule from '../../src/server/provider'
+const secret = 'secret'
+
 
 const providers = providerModule.getDefaultProviders()
 
@@ -41,7 +48,7 @@ providerNames.forEach((provider) => {
 })
 const token = tokenService.generateEncryptedAuthToken(
   authData,
-  process.env.COMPANION_SECRET,
+  secret,
 )
 
 const thisOrThat = (value1, value2) => {
@@ -89,7 +96,7 @@ afterAll(() => {
 describe('list provider files', () => {
   async function runTest(providerName) {
     const providerFixture = fixtures.providers[providerName]?.expects ?? {}
-    return request(authServer)
+    return request(await getServerWithEnv())
       .get(`/${providerName}/list/${providerFixture.listPath || ''}`)
       .set('uppy-auth-token', token)
       .expect(200)
@@ -377,7 +384,7 @@ describe('list provider files', () => {
 describe('provider file gets downloaded from', () => {
   async function runTest(providerName) {
     const providerFixture = fixtures.providers[providerName]?.expects ?? {}
-    const res = await request(authServer)
+    const res = await request(await getServerWithEnv())
       .post(
         `/${providerName}/get/${providerFixture.itemRequestPath || defaults.ITEM_ID}`,
       )
@@ -493,7 +500,7 @@ describe('connect to provider', () => {
 
       if (oauthProvider == null) return
 
-      await request(authServer)
+      await request(await getServerWithEnv())
         .get(`/${providerName}/connect?foo=bar`)
         .set('uppy-auth-token', token)
         .expect(302)
@@ -507,7 +514,7 @@ describe('connect to provider', () => {
 
 describe('logout of provider', () => {
   async function runTest(providerName) {
-    const res = await request(authServer)
+    const res = await request(await getServerWithEnv())
       .get(`/${providerName}/logout/`)
       .set('uppy-auth-token', token)
       .expect(200)

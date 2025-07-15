@@ -1,4 +1,4 @@
-import emitter from '../src/server/emitter.js'
+import emitter from '../src/server/emitter/index.js'
 
 export const connect = (uploadToken) => {
   emitter().emit(`connection:${uploadToken}`)

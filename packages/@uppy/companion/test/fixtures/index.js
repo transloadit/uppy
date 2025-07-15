@@ -1,11 +1,11 @@
-import box from './box'
-import constants from './constants'
-import drive from './drive'
-import dropbox from './dropbox'
-import facebook from './facebook'
-import instagram from './instagram'
-import onedrive from './onedrive'
-import zoom from './zoom'
+import * as box from './box.js'
+import * as constants from './constants.js'
+import * as drive from './drive.js'
+import * as dropbox from './dropbox.js'
+import * as facebook from './facebook.js'
+import * as instagram from './instagram.js'
+import * as onedrive from './onedrive.js'
+import * as zoom from './zoom.js'
 
 export const providers = {
   box,

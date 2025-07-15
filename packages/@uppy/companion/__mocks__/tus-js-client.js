@@ -17,3 +17,5 @@ export class Upload {
     // noop
   }
 }
+
+export default { Upload }

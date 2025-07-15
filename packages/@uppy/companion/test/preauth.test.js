@@ -1,4 +1,11 @@
-jest.mock('../../src/server/helpers/jwt', () => {
+import { describe, expect, test, vi } from 'vitest'
+
+import request from 'supertest'
+import { getServer } from './mockserver.js'
+
+vi.mock('express-prom-bundle')
+
+vi.mock('../src/server/helpers/jwt.js', () => {
   return {
     generateEncryptedToken: () => 'dummy token',
     verifyEncryptedToken: () => '',
@@ -7,20 +14,14 @@ jest.mock('../../src/server/helpers/jwt', () => {
   }
 })
 
-import request from 'supertest'
-import { getServer } from '../mockserver.js'
-
-// the order in which getServer is called matters because, once an env is passed,
-// it won't be overridden when you call getServer without an argument
-const serverWithFixedOauth = getServer()
-const serverWithDynamicOauth = getServer({
+const getServerWithDynamicOauth = async () => getServer({
   COMPANION_DROPBOX_KEYS_ENDPOINT: 'http://localhost:1000/endpoint',
 })
 
 describe('handle preauth endpoint', () => {
-  test('happy path', () => {
+  test('happy path', async () => {
     return (
-      request(serverWithDynamicOauth)
+      request(await getServerWithDynamicOauth())
         .post('/dropbox/preauth')
         .set('Content-Type', 'application/json')
         .send({
@@ -32,8 +33,8 @@ describe('handle preauth endpoint', () => {
     )
   })
 
-  test('preauth request without params in body', () => {
-    return request(serverWithDynamicOauth)
+  test('preauth request without params in body', async () => {
+    return request(await getServerWithDynamicOauth())
       .post('/dropbox/preauth')
       .set('Content-Type', 'application/json')
       .send({
@@ -42,8 +43,8 @@ describe('handle preauth endpoint', () => {
       .expect(400)
   })
 
-  test('providers with dynamic credentials disabled', () => {
-    return request(serverWithDynamicOauth)
+  test('providers with dynamic credentials disabled', async () => {
+    return request(await getServerWithDynamicOauth())
       .post('/drive/preauth')
       .set('Content-Type', 'application/json')
       .send({
@@ -52,8 +53,8 @@ describe('handle preauth endpoint', () => {
       .expect(501)
   })
 
-  test('server with dynamic credentials disabled', () => {
-    return request(serverWithFixedOauth)
+  test('server with dynamic credentials disabled', async () => {
+    return request(await getServer())
       .post('/dropbox/preauth')
       .set('Content-Type', 'application/json')
       .send({

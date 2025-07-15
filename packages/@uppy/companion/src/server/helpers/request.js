@@ -109,7 +109,7 @@ function getProtectedGot({ allowLocalIPs }) {
   const httpsAgent = new HttpsAgent()
 
   // @ts-ignore
-  return got.default.extend({ agent: { http: httpAgent, https: httpsAgent } })
+  return got.extend({ agent: { http: httpAgent, https: httpsAgent } })
 }
 
 export { getProtectedGot }

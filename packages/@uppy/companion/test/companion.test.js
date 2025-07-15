@@ -1,36 +1,35 @@
+
+import { test, expect, afterAll, describe, it } from 'vitest'
 import nock from 'nock'
 import request from 'supertest'
-import { version } from '../../package.json'
-import defaults from '../fixtures/constants.js'
-import { nockGoogleDownloadFile } from '../fixtures/drive.js'
-import mockOauthState from '../mockoauthstate.js'
+import { vi } from 'vitest'
+import packageJson from '../package.json' with { type: 'json' }
+import * as defaults from './fixtures/constants.js'
+import { nockGoogleDownloadFile } from './fixtures/drive.js'
+import { getServer } from './mockserver.js'
+import * as tokenService from '../src/server/helpers/jwt.js'
+import mockOauthState from './mockoauthstate.js'
 
-jest.mock('tus-js-client')
-jest.mock('../../src/server/helpers/oauth-state', () => ({
-  ...jest.requireActual('../../src/server/helpers/oauth-state'),
-  ...mockOauthState(),
-}))
+vi.mock('express-prom-bundle')
+vi.mock('tus-js-client')
+mockOauthState()
 
 const fakeLocalhost = 'localhost.com'
 
-jest.mock('node:dns', () => {
-  const actual = jest.requireActual('node:dns')
-  return {
-    ...actual,
+vi.mock('node:dns', () => ({
+    default:{
     lookup: (hostname, options, callback) => {
       if (fakeLocalhost === hostname || hostname === 'localhost') {
         return callback(null, '127.0.0.1', 4)
       }
       return callback(new Error(`Unexpected call to hostname ${hostname}`))
     },
-  }
-})
+  },
+}))
 
-import tokenService from '../../src/server/helpers/jwt'
-import { getServer } from '../mockserver'
+const getServerWithEnv = async () => getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
-// todo don't share server between tests. rewrite to not use env variables
-const authServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
+const secret = 'secret'
 const authData = {
   dropbox: { accessToken: 'token value' },
   box: { accessToken: 'token value' },
@@ -38,7 +37,7 @@ const authData = {
 }
 const token = tokenService.generateEncryptedAuthToken(
   authData,
-  process.env.COMPANION_SECRET,
+  secret,
 )
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
@@ -48,7 +47,7 @@ afterAll(() => {
 })
 
 describe('validate upload data', () => {
-  test('access token expired or invalid when starting provider download', () => {
+  test('access token expired or invalid when starting provider download', async () => {
     const meta = {
       size: null,
       mimeType: 'video/mp4',
@@ -72,7 +71,7 @@ describe('validate upload data', () => {
         },
       })
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -89,10 +88,10 @@ describe('validate upload data', () => {
       )
   })
 
-  test('invalid upload protocol gets rejected', () => {
+  test('invalid upload protocol gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -106,10 +105,10 @@ describe('validate upload data', () => {
       )
   })
 
-  test('invalid upload fieldname gets rejected', () => {
+  test('invalid upload fieldname gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -124,10 +123,10 @@ describe('validate upload data', () => {
       )
   })
 
-  test('invalid upload metadata gets rejected', () => {
+  test('invalid upload metadata gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -142,10 +141,10 @@ describe('validate upload data', () => {
       )
   })
 
-  test('invalid upload headers get rejected', () => {
+  test('invalid upload headers get rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -158,10 +157,10 @@ describe('validate upload data', () => {
       .then((res) => expect(res.body.message).toBe('headers must be an object'))
   })
 
-  test('invalid upload HTTP Method gets rejected', () => {
+  test('invalid upload HTTP Method gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -176,10 +175,10 @@ describe('validate upload data', () => {
       )
   })
 
-  test('valid upload data is allowed - tus', () => {
+  test('valid upload data is allowed - tus', async () => {
     nockGoogleDownloadFile()
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -198,10 +197,10 @@ describe('validate upload data', () => {
       .expect(200)
   })
 
-  test('valid upload data is allowed - s3-multipart', () => {
+  test('valid upload data is allowed - s3-multipart', async () => {
     nockGoogleDownloadFile()
 
-    return request(authServer)
+    return request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -221,8 +220,8 @@ describe('validate upload data', () => {
   })
 })
 
-describe('handle main oauth redirect', () => {
-  const serverWithMainOauth = getServer({
+describe('handle main oauth redirect', async () => {
+  const serverWithMainOauth = await getServer({
     COMPANION_OAUTH_DOMAIN: 'localhost:3040',
   })
   test('redirect to a valid uppy instance', () => {
@@ -245,33 +244,36 @@ describe('handle main oauth redirect', () => {
   })
 })
 
-it('periodically pings', (done) => {
-  nock('http://localhost')
-    .post(
-      '/ping',
-      (body) =>
-        body.some === 'value' &&
-        body.version === version &&
-        typeof body.processId === 'string',
-    )
-    .reply(200, () => done())
-
-  getServer({
-    COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
-    COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD: '{"some": "value"}',
-    COMPANION_PERIODIC_PING_INTERVAL: '10',
-    COMPANION_PERIODIC_PING_COUNT: '1',
-  })
+it('periodically pings', async () => {
+  await Promise.all([
+    getServer({
+      COMPANION_PERIODIC_PING_URLS: 'http://localhost/ping',
+      COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD: '{"some": "value"}',
+      COMPANION_PERIODIC_PING_INTERVAL: '10',
+      COMPANION_PERIODIC_PING_COUNT: '1',
+    }),
+    new Promise((resolve) => {
+      nock('http://localhost')
+        .post(
+          '/ping',
+          (body) =>
+            body.some === 'value' &&
+            body.version === packageJson.version &&
+            typeof body.processId === 'string',
+        )
+        .reply(200, () => resolve())
+    }),
+  ])
 }, 3000)
 
 async function runUrlMetaTest(url) {
-  const server = getServer()
+  const server = await getServer()
 
   return request(server).post('/url/meta').send({ url })
 }
 
 async function runUrlGetTest(url) {
-  const server = getServer()
+  const server = await getServer()
 
   return request(server).post('/url/get').send({
     fileId: url,

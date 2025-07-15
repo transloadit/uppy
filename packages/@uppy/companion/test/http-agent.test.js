@@ -1,8 +1,9 @@
 import nock from 'nock'
+import { afterAll, describe, expect, test } from 'vitest'
 import {
   FORBIDDEN_IP_ADDRESS,
   getProtectedGot,
-} from '../../src/server/helpers/request.js'
+} from '../src/server/helpers/request.js'
 
 afterAll(() => {
   nock.cleanAll()
@@ -27,14 +28,14 @@ describe('test protected request Agent', () => {
     const url = 'http://172.20.10.4:8090'
     await expect(
       getProtectedGot({ allowLocalIPs: false }).get(url),
-    ).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
+    ).rejects.toThrow(FORBIDDEN_IP_ADDRESS)
   })
 
   test('blocks private https IP address', async () => {
     const url = 'https://172.20.10.4:8090'
     await expect(
       getProtectedGot({ allowLocalIPs: false }).get(url),
-    ).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
+    ).rejects.toThrow(FORBIDDEN_IP_ADDRESS)
   })
 
   test('blocks various private IP addresses', async () => {
@@ -63,13 +64,13 @@ describe('test protected request Agent', () => {
       const url = `http://${ip}:8090`
       await expect(
         getProtectedGot({ allowLocalIPs: false }).get(url),
-      ).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
+      ).rejects.toThrow(FORBIDDEN_IP_ADDRESS)
     }
     for (const ip of ipv6s) {
       const url = `http://[${ip}]:8090`
       await expect(
         getProtectedGot({ allowLocalIPs: false }).get(url),
-      ).rejects.toThrow(new Error(FORBIDDEN_IP_ADDRESS))
+      ).rejects.toThrow(FORBIDDEN_IP_ADDRESS)
     }
   })
 })

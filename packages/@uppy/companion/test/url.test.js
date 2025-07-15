@@ -1,25 +1,29 @@
 import nock from 'nock'
 import request from 'supertest'
+import { vi, test, beforeAll, afterAll, describe, expect } from 'vitest'
 
-jest.mock('tus-js-client')
-jest.mock('../../src/server/helpers/request', () => {
+import { getServer } from './mockserver.js'
+
+vi.mock('express-prom-bundle')
+vi.mock('tus-js-client')
+vi.mock('../src/server/helpers/request.js', async () => {
   return {
-    ...jest.requireActual('../../src/server/helpers/request'),
+    ...(await vi.importActual('../src/server/helpers/request.js')),
     getURLMeta: () => {
       return Promise.resolve({ size: 7580, type: 'image/jpg' })
     },
   }
 })
 
-import { getServer } from '../mockserver'
+const getMockServer = async () => getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
-const mockServer = getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
-
-beforeAll(() => {
-  nock('http://url.myendpoint.com')
-    .get('/files')
-    .reply(200, () => '')
-})
+beforeAll(
+  () => {
+    nock('http://url.myendpoint.com')
+      .get('/files')
+      .reply(200, () => '')
+  },
+)
 
 afterAll(() => {
   nock.cleanAll()
@@ -34,8 +38,8 @@ const invalids = [
 ]
 
 describe('url meta', () => {
-  test("return a url's meta data", () => {
-    return request(mockServer)
+  test("return a url's meta data", async () => {
+    return request(await getMockServer())
       .post('/url/meta')
       .set('Content-Type', 'application/json')
       .send({
@@ -48,8 +52,8 @@ describe('url meta', () => {
       })
   })
 
-  test.each(invalids)('return 400 for invalid url', (urlCase) => {
-    return request(mockServer)
+  test.each(invalids)('return 400 for invalid url', async (urlCase) => {
+    return request(await getMockServer())
       .post('/url/meta')
       .set('Content-Type', 'application/json')
       .send({
@@ -61,8 +65,8 @@ describe('url meta', () => {
 })
 
 describe('url get', () => {
-  test('url download gets instanitated', () => {
-    return request(mockServer)
+  test('url download gets instanitated', async () => {
+    return request(await getMockServer())
       .post('/url/get')
       .set('Content-Type', 'application/json')
       .send({
@@ -76,8 +80,8 @@ describe('url get', () => {
 
   test.each(invalids)(
     'downloads are not instantiated for invalid urls',
-    (urlCase) => {
-      return request(mockServer)
+    async (urlCase) => {
+      return request(await getMockServer())
         .post('/url/get')
         .set('Content-Type', 'application/json')
         .send({
