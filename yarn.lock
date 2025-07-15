@@ -13010,6 +13010,15 @@ __metadata:
     "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
+  peerDependenciesMeta:
+    "@uppy/dashboard":
+      optional: true
+    "@uppy/drag-drop":
+      optional: true
+    "@uppy/progress-bar":
+      optional: true
+    "@uppy/status-bar":
+      optional: true
   languageName: unknown
   linkType: soft
 
