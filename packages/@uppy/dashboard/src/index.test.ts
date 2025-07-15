@@ -21,7 +21,6 @@ describe('Dashboard', () => {
     delete globalThis.ResizeObserver
   })
 
-
   it('works without any remote provider plugins', () => {
     const core = new Core()
 

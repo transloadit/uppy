@@ -23,6 +23,7 @@ import PickerPanelContent from './PickerPanelContent.js'
 import PanelTopBar from './PickerPanelTopBar.js'
 import Slide from './Slide.js'
 import StatusBar from './StatusBar/StatusBar.js'
+
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
 

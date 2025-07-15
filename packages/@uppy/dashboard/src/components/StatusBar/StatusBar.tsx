@@ -1,15 +1,14 @@
 import type { Body, Meta, Uppy, UppyFile } from '@uppy/core'
-import { h, Component } from 'preact'
-import type { ComponentChild } from 'preact'
+import emaFilter from '@uppy/utils/lib/emaFilter'
 import type { I18n } from '@uppy/utils/lib/Translator'
+import type { ComponentChild } from 'preact'
+import { Component, h } from 'preact'
+import type { StatusBarOptions } from './StatusBarOptions.js'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
-import type { StatusBarOptions } from './StatusBarOptions.js'
-import emaFilter from '@uppy/utils/lib/emaFilter'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
-
 
 type StatusBarProps<M extends Meta, B extends Body> = {
   uppy: Uppy<M, B>
@@ -64,8 +63,6 @@ function getUploadingState(
   return state
 }
 
-
-
 const defaultOptions = {
   hideUploadButton: false,
   hideRetryButton: false,
@@ -80,7 +77,6 @@ export default class StatusBar<
   M extends Meta,
   B extends Body,
 > extends Component<StatusBarProps<M, B>> {
-
   #lastUpdateTime!: ReturnType<typeof performance.now>
 
   #previousUploadedBytes!: number | null
@@ -88,7 +84,6 @@ export default class StatusBar<
   #previousSpeed!: number | null
 
   #previousETA!: number | null
-
 
   #computeSmoothETA(totalBytes: {
     uploaded: number

@@ -1304,7 +1304,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-
   #getThumbnailGeneratorOpts() {
     const {
       thumbnailWidth,
@@ -1382,7 +1381,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (target) {
       this.mount(target, this)
     }
-
 
     if (!this.opts.disableInformer) {
       this.uppy.use(Informer, {
