@@ -24,6 +24,70 @@ test('can add locale strings without type error', async () => {
   })
 })
 
+test('LocaleStrings type works with partial strings (Dashboard locale bug fix)', async () => {
+  // This test verifies that LocaleStrings accepts partial strings
+  // and can be used in scenarios like Dashboard where only some locale keys are provided
+
+  // Mock locale types similar to Dashboard + StatusBar scenario
+  const dashboardLocale = {
+    strings: {
+      uploading: 'Uploading...',
+      complete: 'Complete',
+      cancel: 'Cancel',
+    },
+  }
+
+  const statusBarLocale = {
+    strings: {
+      uploading: 'Uploading',
+      complete: 'Complete',
+      uploadFailed: 'Upload failed',
+      paused: 'Paused',
+      retry: 'Retry',
+    },
+  }
+
+  // Test that LocaleStrings allows partial strings
+  const partialDashboardLocale: LocaleStrings<typeof dashboardLocale> = {
+    strings: {
+      uploading: 'Custom uploading text',
+      // Should not require 'complete' or 'cancel' to be present
+    },
+  }
+
+  const partialStatusBarLocale: LocaleStrings<typeof statusBarLocale> = {
+    strings: {
+      uploading: 'Custom uploading text',
+      complete: 'Custom complete text',
+      // Should not require other StatusBar strings to be present
+    },
+  }
+
+  // Verify the types work as expected
+  expectTypeOf(partialDashboardLocale.strings.uploading).toEqualTypeOf<
+    string | undefined
+  >()
+  expectTypeOf(partialStatusBarLocale.strings.uploading).toEqualTypeOf<
+    string | undefined
+  >()
+
+  // Test that we can combine partial locales (the key use case from the bug report)
+  type CombinedLocaleType = LocaleStrings<typeof dashboardLocale> &
+    LocaleStrings<typeof statusBarLocale>
+
+  // This should work without requiring all properties from both types
+  const combinedPartialLocale: CombinedLocaleType = {
+    strings: {
+      uploading: 'Custom uploading text',
+      // Should not require all strings from both dashboardLocale and statusBarLocale
+    },
+  }
+
+  expectTypeOf(combinedPartialLocale.strings.uploading).toEqualTypeOf<
+    string | undefined
+  >()
+})
+
 test('can use Uppy class without generics', async () => {
   const core = new Uppy()
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
