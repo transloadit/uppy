@@ -44,6 +44,7 @@
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "jsdom": "^26.1.0",
+    "msw": "^2.10.4",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
     "whatwg-fetch": "^3.6.2"
