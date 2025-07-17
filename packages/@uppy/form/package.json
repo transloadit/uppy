@@ -23,6 +23,9 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "exports": {
+    ".": "./lib/index.js"
+  },
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "get-form-data": "^3.0.0"
