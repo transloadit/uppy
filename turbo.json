@@ -41,7 +41,8 @@
     },
     "test": {
       "outputLogs": "errors-only",
-      "dependsOn": ["^test"]
+      "dependsOn": ["^test"],
+      "cache": false
     },
     "test:watch": {
       "outputLogs": "new-only",

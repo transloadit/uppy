@@ -28,6 +28,14 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./src/style.scss": "./src/style.scss",
+    "./dist/style.min.css": "./dist/style.min.css",
+    "./lib/EventManager.js": "./lib/EventManager.js",
+    "./lib/UIPlugin.js": "./lib/UIPlugin.js",
+    "./lib/Restricter.js": "./lib/Restricter.js"
+  },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
     "@uppy/store-default": "workspace:^",
