@@ -12294,15 +12294,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-dev/release@workspace:private/release":
-  version: 0.0.0-use.local
-  resolution: "@uppy-dev/release@workspace:private/release"
-  dependencies:
-    globby: "npm:^13.0.0"
-    prompts: "npm:^2.4.2"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular":
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular"
@@ -21112,7 +21103,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globby@npm:^13.0.0, globby@npm:^13.1.1":
+"globby@npm:^13.1.1":
   version: 13.2.2
   resolution: "globby@npm:13.2.2"
   dependencies:
