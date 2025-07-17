@@ -11,6 +11,11 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "exports": {
+    ".": "./lib/companion.js",
+    "./standalone": "./lib/standalone/index.js",
+    "./package.json": "./package.json"
+  },
   "keywords": [
     "file uploader",
     "progress",
