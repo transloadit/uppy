@@ -1,7 +1,5 @@
 import type { Body, Meta, State, UIPluginOptions, Uppy } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
-import { type ComponentChild, h } from 'preact'
-import packageJson from '../package.json' with { type: 'json' }
+import { Component, type ComponentChild, h } from 'preact'
 import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
 
@@ -14,30 +12,23 @@ export type InformerOptions = UIPluginOptions
  * or for errors: `uppy.info('Error uploading img.jpg', 'error', 5000)`
  *
  */
-export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
-  UIPluginOptions,
-  M,
-  B
-> {
-  static VERSION = packageJson.version
+type InformerProps = {
+  uppy: Uppy<any, any>
+}
 
-  constructor(uppy: Uppy<M, B>, opts?: UIPluginOptions) {
-    super(uppy, opts)
-    this.type = 'progressindicator'
-    this.id = this.opts.id || 'Informer'
-    this.title = 'Informer'
-  }
+export default class Informer extends Component<InformerProps> {
+  render(): ComponentChild {
+    // Get info from the uppy instance passed in props
+    const { info } = this.props.uppy.getState()
 
-  render = (state: State<M, B>): ComponentChild => {
     return (
       <div className="uppy uppy-Informer">
         <TransitionGroup>
-          {state.info.map((info) => (
+          {info.map((info) => (
             <FadeIn key={info.message}>
               <p role="alert">
                 {info.message}{' '}
                 {info.details && (
-                  // biome-ignore lint/a11y/useKeyWithClickEvents: ...
                   <span
                     aria-label={info.details as string}
                     data-microtip-position="top-left"
@@ -56,12 +47,5 @@ export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
         </TransitionGroup>
       </div>
     )
-  }
-
-  install(): void {
-    const { target } = this.opts
-    if (target) {
-      this.mount(target, this)
-    }
   }
 }
