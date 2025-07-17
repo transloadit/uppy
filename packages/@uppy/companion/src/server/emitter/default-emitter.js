@@ -1,5 +1,5 @@
-const { EventEmitter } = require('node:events')
+import { EventEmitter } from 'node:events'
 
-module.exports = () => {
+export default function defaultEmitter() {
   return new EventEmitter()
 }

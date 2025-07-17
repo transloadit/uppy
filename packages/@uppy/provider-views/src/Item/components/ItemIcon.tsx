@@ -1,4 +1,4 @@
-import type { h } from 'preact'
+import { h } from 'preact'
 
 function FileIcon() {
   return (

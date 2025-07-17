@@ -1,10 +1,10 @@
-const querystring = require('node:querystring')
+import querystring from 'node:querystring'
 
 const isFolder = (item) => {
   return !!item.type
 }
 
-exports.sortImages = (images) => {
+export const sortImages = (images) => {
   // sort in ascending order of dimension
   return images.slice().sort((a, b) => a.width - b.width)
 }
@@ -13,7 +13,7 @@ const getItemIcon = (item) => {
   if (isFolder(item)) {
     return 'folder'
   }
-  return exports.sortImages(item.images)[0].source
+  return sortImages(item.images)[0].source
 }
 
 const getItemSubList = (item) => {
@@ -41,7 +41,7 @@ const getItemModifiedDate = (item) => {
 }
 
 const getItemThumbnailUrl = (item) => {
-  return isFolder(item) ? null : exports.sortImages(item.images)[0].source
+  return isFolder(item) ? null : sortImages(item.images)[0].source
 }
 
 const getNextPagePath = (data, currentQuery, currentPath) => {
@@ -53,7 +53,7 @@ const getNextPagePath = (data, currentQuery, currentPath) => {
   return `${currentPath || ''}?${querystring.stringify(query)}`
 }
 
-exports.adaptData = (res, username, directory, currentQuery) => {
+export const adaptData = (res, username, directory, currentQuery) => {
   const data = { username, items: [] }
   const items = getItemSubList(res)
   items.forEach((item) => {

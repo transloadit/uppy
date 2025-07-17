@@ -1,21 +1,20 @@
-const Provider = require('../Provider')
-const logger = require('../../logger')
-const adaptData = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
+import got from 'got'
+import { prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
-const got = require('../../got')
-
-const getClient = async ({ token }) =>
-  (await got).extend({
+const getClient = ({ token }) =>
+  got.extend({
     prefixUrl: 'https://graph.microsoft.com/v1.0',
     headers: {
       authorization: `Bearer ${token}`,
     },
   })
 
-const getOauthClient = async () =>
-  (await got).extend({
+const getOauthClient = () =>
+  got.extend({
     prefixUrl: 'https://login.live.com',
   })
 
@@ -25,7 +24,7 @@ const getRootPath = (query) =>
 /**
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
-class OneDrive extends Provider {
+export default class OneDrive extends Provider {
   static get oauthProvider() {
     return 'microsoft'
   }
@@ -37,9 +36,13 @@ class OneDrive extends Provider {
    * @param {object} options
    * @param {string} options.directory
    * @param {any} options.query
-   * @param {string} options.token
+   * @param {{ accessToken: string }} options.providerUserSession
    */
-  async list({ directory, query, token }) {
+  async list({
+    directory,
+    query,
+    providerUserSession: { accessToken: token },
+  }) {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const path = directory ? `items/${directory}` : 'root'
       // https://learn.microsoft.com/en-us/graph/query-parameters?tabs=http#top-parameter
@@ -50,7 +53,7 @@ class OneDrive extends Provider {
         qs.$skiptoken = query.cursor
       }
 
-      const client = await getClient({ token })
+      const client = getClient({ token })
 
       const [{ mail, userPrincipalName }, list] = await Promise.all([
         client.get('me', { responseType: 'json' }).json(),
@@ -66,11 +69,11 @@ class OneDrive extends Provider {
     })
   }
 
-  async download({ id, token, query }) {
+  async download({ id, providerUserSession: { accessToken: token }, query }) {
     return this.#withErrorHandling(
       'provider.onedrive.download.error',
       async () => {
-        const stream = (await getClient({ token })).stream.get(
+        const stream = getClient({ token }).stream.get(
           `${getRootPath(query)}/items/${id}/content`,
           { responseType: 'json' },
         )
@@ -89,9 +92,9 @@ class OneDrive extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async size({ id, query, token }) {
+  async size({ id, query, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
-      const { size } = await (await getClient({ token }))
+      const { size } = await getClient({ token })
         .get(`${getRootPath(query)}/items/${id}`, { responseType: 'json' })
         .json()
       return size
@@ -110,7 +113,7 @@ class OneDrive extends Provider {
     return this.#withErrorHandling(
       'provider.onedrive.token.refresh.error',
       async () => {
-        const { access_token: accessToken } = await (await getOauthClient())
+        const { access_token: accessToken } = await getOauthClient()
           .post('oauth20_token.srf', {
             responseType: 'json',
             form: {
@@ -143,5 +146,3 @@ class OneDrive extends Provider {
     })
   }
 }
-
-module.exports = OneDrive

@@ -9,7 +9,6 @@ const upload = multer({
 function uploadRoute(req, res) {
   res.json({
     files: req.files.map((file) => {
-      // eslint-disable-next-line no-param-reassign
       delete file.buffer
       return file
     }),

@@ -1,15 +1,19 @@
-const Provider = require('../Provider')
-const { getProtectedHttpAgent, validateURL } = require('../../helpers/request')
-const { ProviderApiError, ProviderAuthError } = require('../error')
-const { ProviderUserError } = require('../error')
-const logger = require('../../logger')
+import { AuthType, createClient } from 'webdav'
+import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
+import logger from '../../logger.js'
+import {
+  ProviderApiError,
+  ProviderAuthError,
+  ProviderUserError,
+} from '../error.js'
+import Provider from '../Provider.js'
 
 const defaultDirectory = '/'
 
 /**
  * Adapter for WebDAV servers that support simple auth (non-OAuth).
  */
-class WebdavProvider extends Provider {
+export default class WebdavProvider extends Provider {
   static get hasSimpleAuth() {
     return true
   }
@@ -24,11 +28,6 @@ class WebdavProvider extends Provider {
     if (!validateURL(webdavUrl, allowLocalUrls)) {
       throw new Error('invalid public link url')
     }
-
-    // dynamic import because Companion currently uses CommonJS and webdav is shipped as ESM
-    // todo implement as regular require as soon as Node 20.17 or 22 is required
-    // or as regular import when Companion is ported to ESM
-    const { AuthType } = await import('webdav')
 
     // Is this an ownCloud or Nextcloud public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
     // they have specific urls that we can identify
@@ -69,7 +68,6 @@ class WebdavProvider extends Provider {
       if (['ECONNREFUSED', 'ENOTFOUND'].includes(err.code)) {
         throw new ProviderUserError({ message: 'Cannot connect to server' })
       }
-      // todo report back to the user what actually went wrong
       throw err
     }
   }
@@ -85,10 +83,6 @@ class WebdavProvider extends Provider {
       allowLocalIPs: !allowLocalUrls,
     })
 
-    // dynamic import because Companion currently uses CommonJS and webdav is shipped as ESM
-    // todo implement as regular require as soon as Node 20.17 or 22 is required
-    // or as regular import when Companion is ported to ESM
-    const { createClient } = await import('webdav')
     return createClient(url, {
       ...options,
       [`${protocol}Agent`]: new HttpAgentClass(),
@@ -168,12 +162,10 @@ class WebdavProvider extends Provider {
       let err2 = err
       if (err.status === 401) err2 = new ProviderAuthError()
       if (err.response) {
-        err2 = new ProviderApiError('WebDAV API error', err.status) // todo improve (read err?.response?.body readable stream and parse response)
+        err2 = new ProviderApiError('WebDAV API error', err.status)
       }
       logger.error(err2, tag)
       throw err2
     }
   }
 }
-
-module.exports = WebdavProvider

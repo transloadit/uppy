@@ -31,14 +31,13 @@ function adaptData(res) {
 /**
  * an example of a custom provider module. It implements @uppy/companion's Provider interface
  */
-class MyCustomProvider {
+export default class MyCustomProvider {
   static version = 2
 
   static get oauthProvider() {
     return 'myunsplash'
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async list({ token, directory }) {
     const path = directory ? `/${directory}/photos` : ''
 
@@ -55,7 +54,6 @@ class MyCustomProvider {
     return adaptData(await resp.json())
   }
 
-  // eslint-disable-next-line class-methods-use-this
   async download({ id, token }) {
     const resp = await fetch(`${BASE_URL}/photos/${id}`, {
       headers: {
@@ -78,5 +76,3 @@ class MyCustomProvider {
     return { stream: Readable.fromWeb(resp.body), size }
   }
 }
-
-module.exports = MyCustomProvider

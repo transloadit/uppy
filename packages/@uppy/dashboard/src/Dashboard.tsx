@@ -20,6 +20,7 @@ import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import toArray from '@uppy/utils/lib/toArray'
 import { nanoid } from 'nanoid/non-secure'
 import type { ComponentChild, VNode } from 'preact'
+import { h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'

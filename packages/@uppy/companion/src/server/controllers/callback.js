@@ -1,11 +1,10 @@
 /**
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
-const serialize = require('serialize-javascript')
-
-const tokenService = require('../helpers/jwt')
-const logger = require('../logger')
-const oAuthState = require('../helpers/oauth-state')
+import serialize from 'serialize-javascript'
+import * as tokenService from '../helpers/jwt.js'
+import * as oAuthState from '../helpers/oauth-state.js'
+import logger from '../logger.js'
 
 const closePageHtml = (origin) => `
   <!DOCTYPE html>
@@ -28,7 +27,7 @@ const closePageHtml = (origin) => `
  * @param {object} res
  * @param {Function} next
  */
-module.exports = function callback(req, res, next) {
+export default function callback(req, res, next) {
   const { providerName } = req.params
 
   const grant = req.session.grant || {}

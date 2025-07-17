@@ -1,20 +1,17 @@
-const moment = require('moment-timezone')
-
-const Provider = require('../Provider')
-const { adaptData } = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream, getBasicAuthHeader } = require('../../helpers/utils')
-
-const got = require('../../got')
-
-const pMap = import('p-map')
+import got from 'got'
+import moment from 'moment-timezone'
+import pMap from 'p-map'
+import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BASE_URL = 'https://zoom.us/v2'
 const PAGE_SIZE = 300
 const DEAUTH_EVENT_NAME = 'app_deauthorized'
 
-const getClient = async ({ token }) =>
-  (await got).extend({
+const getClient = ({ token }) =>
+  got.extend({
     prefixUrl: BASE_URL,
     headers: {
       authorization: `Bearer ${token}`,
@@ -38,19 +35,21 @@ async function findFile({ client, meetingId, fileId, recordingStart }) {
 /**
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
  */
-class Zoom extends Provider {
+export default class Zoom extends Provider {
   static get oauthProvider() {
     return 'zoom'
   }
 
   async list(options) {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
-      const { token } = options
+      const {
+        providerUserSession: { accessToken: token },
+      } = options
       const query = options.query || {}
       const meetingId = options.directory || ''
       const requestedYear = query.year ? parseInt(query.year, 10) : null
 
-      const client = await getClient({ token })
+      const client = getClient({ token })
       const user = await client.get('users/me', { responseType: 'json' }).json()
       const { timezone } = user
       const userTz = timezone || 'UTC'
@@ -72,9 +71,7 @@ class Zoom extends Provider {
 
         // Run each month in parallel:
         const allMeetingsInYear = (
-          await (
-            await pMap
-          ).default(
+          await pMap(
             monthsToCheck,
             async (month) => {
               const startDate = moment
@@ -141,13 +138,17 @@ class Zoom extends Provider {
     })
   }
 
-  async download({ id: meetingId, token, query }) {
+  async download({
+    id: meetingId,
+    providerUserSession: { accessToken: token },
+    query,
+  }) {
     return this.#withErrorHandling('provider.zoom.download.error', async () => {
       // meeting id + file id required
       // cc files don't have an ID or size
       const { recordingStart, recordingId: fileId } = query
 
-      const client = await getClient({ token })
+      const client = getClient({ token })
 
       const foundFile = await findFile({
         client,
@@ -167,9 +168,13 @@ class Zoom extends Provider {
     })
   }
 
-  async size({ id: meetingId, token, query }) {
+  async size({
+    id: meetingId,
+    providerUserSession: { accessToken: token },
+    query,
+  }) {
     return this.#withErrorHandling('provider.zoom.size.error', async () => {
-      const client = await getClient({ token })
+      const client = getClient({ token })
       const { recordingStart, recordingId: fileId } = query
 
       const foundFile = await findFile({
@@ -183,11 +188,11 @@ class Zoom extends Provider {
     })
   }
 
-  async logout({ companion, token }) {
+  async logout({ companion, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.zoom.logout.error', async () => {
       const { key, secret } = await companion.getProviderCredentials()
 
-      const { status } = await (await got)
+      const { status } = await got
         .post('https://zoom.us/oauth/revoke', {
           searchParams: { token },
           headers: { Authorization: getBasicAuthHeader(key, secret) },
@@ -213,7 +218,7 @@ class Zoom extends Provider {
         return { data: {}, status: 400 }
       }
 
-      await (await got).post('https://api.zoom.us/oauth/data/compliance', {
+      await got.post('https://api.zoom.us/oauth/data/compliance', {
         headers: { Authorization: getBasicAuthHeader(key, secret) },
         json: {
           client_id: key,
@@ -244,5 +249,3 @@ class Zoom extends Provider {
     })
   }
 }
-
-module.exports = Zoom

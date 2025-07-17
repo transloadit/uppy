@@ -1,4 +1,4 @@
-class Upload {
+export class Upload {
   constructor(file, options) {
     this.url = 'https://tus.endpoint/files/foo-bar'
     this.options = options
@@ -18,4 +18,4 @@ class Upload {
   }
 }
 
-module.exports = { Upload }
+export default { Upload }

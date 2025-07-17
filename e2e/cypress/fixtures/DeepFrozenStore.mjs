@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import deepFreeze from 'deep-freeze'
 
 /* eslint-disable no-underscore-dangle */
