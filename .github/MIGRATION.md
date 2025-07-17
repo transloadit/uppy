@@ -18,36 +18,47 @@ This is a temporary file that can be updated with any pending migration changes,
   `logout()`, `thumbnail()`. Please use: `providerUserSession`.`accessToken`
   instead.
 
+
+### @uppy/informer merged into @uppy/dashboard
+
+The `@uppy/informer` plugin has been merged into `@uppy/dashboard` to reduce bundle size and improve maintainability. The `@uppy/informer` package is no longer maintained as a standalone package and should be removed from your dependencies.
+
+
 ### @uppy/status-bar merged into @uppy/dashboard
 
-The standalone `@uppy/status-bar` package has been merged into `@uppy/dashboard`. This change simplifies the architecture and reduces bundle size for most users.
+The `@uppy/status-bar` package has been merged into `@uppy/dashboard` to simplify the architecture and reduce bundle size. StatusBar is now rendered as an integrated component within Dashboard rather than as a separate plugin. The standalone `@uppy/status-bar` package is no longer maintained.
 
-**Breaking changes:**
+**Migration steps:**
 
-- The `@uppy/status-bar` package no longer exists as a standalone plugin
-- StatusBar is now a Preact component integrated directly into Dashboard, not a separate UIPlugin
-- StatusBar-specific React, Vue, Svelte, and Angular wrapper components have been removed
-- All StatusBar locale strings have been merged into Dashboard's locale file
-- StatusBar options are now passed as Dashboard options (e.g., `showProgressDetails`, `hideUploadButton`, etc.)
+1. Remove `@uppy/status-bar` from your dependencies
+2. Replace StatusBar usage with Dashboard
+3. Move all StatusBar options directly to Dashboard options
 
-**Migration:**
-
-If you were using StatusBar as a standalone plugin:
+All StatusBar configuration options are now available as Dashboard options:
+- `showProgressDetails` - Show detailed progress information
+- `hideUploadButton` - Hide the upload button
+- `hideAfterFinish` - Hide status bar after upload completion
+- `hideRetryButton` - Hide the retry button
+- `hidePauseResumeButton` - Hide pause/resume controls
+- `hideCancelButton` - Hide the cancel button
+- `doneButtonHandler` - Custom handler for the done button
 
 ```js
 // Before - separate StatusBar plugin
 import StatusBar from '@uppy/status-bar'
 uppy.use(StatusBar, {
   target: '#status-bar',
-  showProgressDetails: true
+  showProgressDetails: true,
+  hideUploadButton: false,
+  hideAfterFinish: true
 })
 
-// After - use Dashboard instead
+// After - use Dashboard with StatusBar options
 import Dashboard from '@uppy/dashboard'
 uppy.use(Dashboard, {
   target: '#dashboard',
   showProgressDetails: true,
-  // other StatusBar options are now Dashboard options
+  hideUploadButton: false,
+  hideAfterFinish: true
 })
 ```
-
