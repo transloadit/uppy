@@ -11,9 +11,6 @@
       "path": "../provider-views/tsconfig.build.json"
     },
     {
-      "path": "../status-bar/tsconfig.build.json"
-    },
-    {
       "path": "../thumbnail-generator/tsconfig.build.json"
     },
     {

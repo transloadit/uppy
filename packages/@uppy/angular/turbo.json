@@ -7,7 +7,6 @@
         "@uppy/dashboard#build",
         "@uppy/drag-drop#build",
         "@uppy/progress-bar#build",
-        "@uppy/status-bar#build",
         "@uppy/utils#build"
       ],
       "inputs": [

@@ -440,7 +440,6 @@ Your `package.json` should resemble something like this:
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/utils": "workspace:^",
     "prop-types": "^15.6.1"
   },
