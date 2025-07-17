@@ -20,6 +20,9 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "exports": {
+    ".": "./file-picker/index.js"
+  },
   "dependencies": {
     "@uppy/core": "workspace:*",
     "@uppy/instagram": "workspace:^",

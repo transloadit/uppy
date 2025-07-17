@@ -27,6 +27,11 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./src/style.scss": "./src/style.scss",
+    "./dist/style.min.css": "./dist/style.min.css"
+  },
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "preact": "^10.5.13"
