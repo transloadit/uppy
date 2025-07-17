@@ -4,6 +4,7 @@
   "version": "6.1.5",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build",

@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": false,
   "keywords": [
     "file uploader",
     "uppy",
@@ -18,6 +19,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "nanoid": "^5.0.9"
