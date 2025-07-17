@@ -17,3 +17,36 @@ This is a temporary file that can be updated with any pending migration changes,
 - Removed `token` param from `Provider` class methods: `list()`, `download()`,
   `logout()`, `thumbnail()`. Please use: `providerUserSession`.`accessToken`
   instead.
+
+### @uppy/status-bar merged into @uppy/dashboard
+
+The standalone `@uppy/status-bar` package has been merged into `@uppy/dashboard`. This change simplifies the architecture and reduces bundle size for most users.
+
+**Breaking changes:**
+
+- The `@uppy/status-bar` package no longer exists as a standalone plugin
+- StatusBar is now a Preact component integrated directly into Dashboard, not a separate UIPlugin
+- StatusBar-specific React, Vue, Svelte, and Angular wrapper components have been removed
+- All StatusBar locale strings have been merged into Dashboard's locale file
+- StatusBar options are now passed as Dashboard options (e.g., `showProgressDetails`, `hideUploadButton`, etc.)
+
+**Migration:**
+
+If you were using StatusBar as a standalone plugin:
+
+```js
+// Before - separate StatusBar plugin
+import StatusBar from '@uppy/status-bar'
+uppy.use(StatusBar, {
+  target: '#status-bar',
+  showProgressDetails: true
+})
+
+// After - use Dashboard instead
+import Dashboard from '@uppy/dashboard'
+uppy.use(Dashboard, {
+  target: '#dashboard',
+  showProgressDetails: true,
+  // other StatusBar options are now Dashboard options
+})
+```
