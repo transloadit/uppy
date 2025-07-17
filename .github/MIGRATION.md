@@ -18,11 +18,6 @@ This is a temporary file that can be updated with any pending migration changes,
   `logout()`, `thumbnail()`. Please use: `providerUserSession`.`accessToken`
   instead.
 
-### Merge @uppy/informer into @uppy/dashboard
+### @uppy/informer merged into @uppy/dashboard
 
-- Source files were moved from `packages/@uppy/informer/src` to `packages/@uppy/dashboard/src/components/Informer/`.
-- The Informer class no longer extends `UIPlugin` since it's no longer a plugin.
-- Informer is now a Preact class component that receives `uppy` as a prop.
-- It destructures `info` from `props.uppy.getState()` and renders the toast notifications.
-- All references to `@uppy/informer` have been removed from turbo config and TypeScript config files.
-- `@uppy/informer` package was deleted.
+The `@uppy/informer` plugin has been merged into `@uppy/dashboard` to reduce bundle size and improve maintainability. The `@uppy/informer` package is no longer maintained as a standalone package and should be removed from your dependencies.
