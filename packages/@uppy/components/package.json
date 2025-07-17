@@ -27,7 +27,9 @@
     "typecheck": "tsc --build"
   },
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./lib/index.js",
+    "./dist/styles.css": "./dist/styles.css",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@webcam/core": "^1.0.1",

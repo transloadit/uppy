@@ -50,7 +50,8 @@
     "./file-input": "./lib/FileInput.js",
     "./progress-bar": "./lib/ProgressBar.js",
     "./dashboard-modal": "./lib/DashboardModal.js",
-    "./status-bar": "./lib/StatusBar.js"
+    "./status-bar": "./lib/StatusBar.js",
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

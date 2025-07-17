@@ -34,7 +34,8 @@
     "./dist/style.min.css": "./dist/style.min.css",
     "./lib/EventManager.js": "./lib/EventManager.js",
     "./lib/UIPlugin.js": "./lib/UIPlugin.js",
-    "./lib/Restricter.js": "./lib/Restricter.js"
+    "./lib/Restricter.js": "./lib/Restricter.js",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
