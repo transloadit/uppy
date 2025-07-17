@@ -1,6 +1,8 @@
 /** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
 import Uppy from '@uppy/core'
-import { Dashboard, DashboardModal, DragDrop } from '@uppy/react'
+import Dashboard from '@uppy/react/dashboard'
+import DashboardModal from '@uppy/react/dashboard-modal'
+import DragDrop from '@uppy/react/drag-drop'
 import RemoteSources from '@uppy/remote-sources'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import React, { useState } from 'react'
