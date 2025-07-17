@@ -17,3 +17,12 @@ This is a temporary file that can be updated with any pending migration changes,
 - Removed `token` param from `Provider` class methods: `list()`, `download()`,
   `logout()`, `thumbnail()`. Please use: `providerUserSession`.`accessToken`
   instead.
+
+### Merge @uppy/informer into @uppy/dashboard
+
+- Source files were moved from `packages/@uppy/informer/src` to `packages/@uppy/dashboard/src/components/Informer/`.
+- The Informer class no longer extends `UIPlugin` since it's no longer a plugin.
+- Informer is now a Preact class component that receives `uppy` as a prop.
+- It destructures `info` from `props.uppy.getState()` and renders the toast notifications.
+- All references to `@uppy/informer` have been removed from turbo config and TypeScript config files.
+- `@uppy/informer` package was deleted.
