@@ -50,3 +50,4 @@ uppy.use(Dashboard, {
   // other StatusBar options are now Dashboard options
 })
 ```
+
