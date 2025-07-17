@@ -11748,6 +11748,7 @@ __metadata:
     "@uppy/url": "workspace:^"
     "@uppy/utils": "workspace:^"
     "@uppy/webcam": "workspace:^"
+    "@vitest/browser": "npm:^3.2.4"
     classnames: "npm:^2.2.6"
     cssnano: "npm:^7.0.7"
     jsdom: "npm:^26.1.0"
