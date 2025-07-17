@@ -1,12 +1,5 @@
-name: End-to-end tests
-# SECURITY NOTE: This workflow uses pull_request_target which has access to secrets.
-# This is needed because we want to be able to run e2e tests on someone else's code, but with our own credentials (which is needed for the tests).
-# `pull_request_target` will always run without manual approval, even if "Require approval for all external contributors" is enabled in the repo settings.
-# Therefore we implement a "safe to test" label that must be manually added once we have checked that the diff is safe.
-# Example of how this could be exploited before we implemented this label: https://github.com/transloadit/uppy/pull/5798/commits/d214a893355bd72ae771fb1c52ebe87948a98440
-# For PRs from forks, secrets are only provided when the "safe to test" label is present.
-# This allows maintainers to safely test external contributions while preventing
-# malicious actors from accessing secrets.
+name: Output
+
 on:
   push:
     branches: [main]
@@ -18,8 +11,8 @@ on:
       - 'website/**'
       - '.github/**'
       - '!.github/workflows/e2e.yml'
-  pull_request_target:
-    types: [opened, synchronize, reopened, labeled]
+  pull_request:
+    types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -27,10 +20,6 @@ on:
       - 'private/**'
       - 'website/**'
       - '.github/**'
-  pull_request:
-    types: [opened, synchronize, reopened]
-    paths:
-      - .github/workflows/e2e.yml
 
 permissions:
   pull-requests: write
@@ -39,12 +28,8 @@ env:
 
 jobs:
   compare_diff:
+    name: Diff lib folders
     runs-on: ubuntu-latest
-    # Apply same security condition as e2e job
-    if: |
-      github.event_name == 'push' ||
-      github.event.pull_request.head.repo.full_name == github.repository ||
-      contains(github.event.pull_request.labels.*.name, 'safe to test')
     env:
       DIFF_BUILDER: true
     outputs:
@@ -54,9 +39,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 2
-          ref:
-            ${{ github.event.pull_request && format('refs/pull/{0}/merge',
-            github.event.pull_request.number) || github.sha }}
+          ref: ${{ github.event.pull_request && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.sha }}
       - run: git reset HEAD^ --hard
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path

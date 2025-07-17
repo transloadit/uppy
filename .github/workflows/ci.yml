@@ -30,7 +30,7 @@ env:
 
 jobs:
   unit_tests:
-    name: Unit tests
+    name: Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -65,7 +65,7 @@ jobs:
         run: corepack yarn run test
 
   types:
-    name: Type tests
+    name: Types
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
@@ -90,3 +90,21 @@ jobs:
         run:
           corepack yarn install
       - run: corepack yarn run typecheck
+
+  lint_js:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: yarn
+      - name: Install dependencies
+        run:
+          corepack yarn workspaces focus @uppy-dev/build
+      - name: Run linter
+        run: corepack yarn run check:ci
