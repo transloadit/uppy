@@ -19,6 +19,7 @@ import AddFilesPanel from './AddFilesPanel.js'
 import EditorPanel from './EditorPanel.js'
 import FileCard from './FileCard/index.js'
 import FileList from './FileList.js'
+import Informer from './Informer/Informer.js'
 import PickerPanelContent from './PickerPanelContent.js'
 import PanelTopBar from './PickerPanelTopBar.js'
 import Slide from './Slide.js'
@@ -120,6 +121,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   handleDragOver: (event: DragEvent) => void
   handleDragLeave: (event: DragEvent) => void
   handleDrop: (event: DragEvent) => void
+  disableInformer: boolean
   disableStatusBar: boolean
   showProgressDetails: boolean
   hideUploadButton: boolean
@@ -340,6 +342,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
           </Slide>
 
           <div className="uppy-Dashboard-progressindicators">
+            {!props.disableInformer && <Informer uppy={props.uppy} />}
             {!props.disableStatusBar && (
               <StatusBar
                 uppy={props.uppy}

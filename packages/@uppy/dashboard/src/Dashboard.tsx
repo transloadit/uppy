@@ -10,7 +10,6 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import Informer from '@uppy/informer'
 import { defaultPickerIcon } from '@uppy/provider-views'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
@@ -1258,6 +1257,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       handleDragOver: this.handleDragOver,
       handleDragLeave: this.handleDragLeave,
       handleDrop: this.handleDrop,
+      // informer props
+      disableInformer: this.opts.disableInformer,
       // status-bar props
       disableStatusBar: this.opts.disableStatusBar,
       showProgressDetails: this.opts.showProgressDetails,
@@ -1321,12 +1322,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  #getInformerOpts() {
-    return {
-      // currently no options
-    }
-  }
-
   setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
@@ -1336,10 +1331,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   #getThumbnailGeneratorId() {
     return `${this.id}:ThumbnailGenerator`
-  }
-
-  #getInformerId() {
-    return `${this.id}:Informer`
   }
 
   install = (): void => {
@@ -1380,6 +1371,14 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
     if (target) {
       this.mount(target, this)
+    }
+
+    if (!this.opts.disableStatusBar) {
+      this.uppy.use(StatusBar, {
+        id: this.#getStatusBarId(),
+        target: this,
+        ...this.#getStatusBarOpts(),
+      })
     }
 
     if (!this.opts.disableInformer) {

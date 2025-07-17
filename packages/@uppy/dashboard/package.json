@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
-    "@uppy/informer": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
     "@uppy/utils": "workspace:^",

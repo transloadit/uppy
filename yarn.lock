@@ -11675,7 +11675,6 @@ __metadata:
   dependencies:
     "@transloadit/prettier-bytes": "npm:^0.3.4"
     "@uppy/google-drive": "workspace:^"
-    "@uppy/informer": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
     "@uppy/url": "workspace:^"
@@ -11846,22 +11845,6 @@ __metadata:
   dependencies:
     "@uppy/utils": "workspace:^"
     cropperjs: "npm:^1.6.2"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@uppy/informer@workspace:^, @uppy/informer@workspace:packages/@uppy/informer":
-  version: 0.0.0-use.local
-  resolution: "@uppy/informer@workspace:packages/@uppy/informer"
-  dependencies:
-    "@uppy/utils": "workspace:^"
     cssnano: "npm:^7.0.7"
     postcss: "npm:^8.5.6"
     postcss-cli: "npm:^11.0.1"
@@ -16627,7 +16610,6 @@ __metadata:
     "@uppy/google-drive-picker": "workspace:^"
     "@uppy/google-photos-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
-    "@uppy/informer": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
@@ -31919,7 +31901,6 @@ __metadata:
     "@uppy/google-drive-picker": "workspace:^"
     "@uppy/google-photos-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
-    "@uppy/informer": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
     "@uppy/progress-bar": "workspace:^"
