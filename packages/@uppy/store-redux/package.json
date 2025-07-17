@@ -19,6 +19,10 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "nanoid": "^5.0.9"
   },

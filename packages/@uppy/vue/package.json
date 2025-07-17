@@ -25,7 +25,8 @@
     "./drag-drop": "./lib/drag-drop.js",
     "./file-input": "./lib/file-input.js",
     "./progress-bar": "./lib/progress-bar.js",
-    "./status-bar": "./lib/status-bar.js"
+    "./status-bar": "./lib/status-bar.js",
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

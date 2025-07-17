@@ -21,7 +21,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "exports": {
-    ".": "./file-picker/index.js"
+    ".": "./file-picker/index.js",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",
