@@ -75,7 +75,7 @@ describe('Dashboard', () => {
       .targets as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below
-    expect(dashboardPlugins.length).toEqual(3)
+    expect(dashboardPlugins.length).toEqual(2)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Url')).toEqual(true)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(
       true,
@@ -95,7 +95,7 @@ describe('Dashboard', () => {
       .targets as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below
-    expect(dashboardPlugins.length).toEqual(2)
+    expect(dashboardPlugins.length).toEqual(1)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Url')).toEqual(true)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(
       false,
