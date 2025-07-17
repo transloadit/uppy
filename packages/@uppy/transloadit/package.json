@@ -31,6 +31,9 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "exports": {
+    ".": "./lib/index.js"
+  },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/provider-views": "workspace:^",
