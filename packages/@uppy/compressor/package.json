@@ -4,7 +4,6 @@
   "version": "2.2.1",
   "license": "MIT",
   "main": "lib/index.js",
-  "style": "dist/style.min.css",
   "keywords": [
     "file uploader",
     "uppy",
