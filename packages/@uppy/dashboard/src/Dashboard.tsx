@@ -1373,22 +1373,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.mount(target, this)
     }
 
-    if (!this.opts.disableStatusBar) {
-      this.uppy.use(StatusBar, {
-        id: this.#getStatusBarId(),
-        target: this,
-        ...this.#getStatusBarOpts(),
-      })
-    }
-
-    if (!this.opts.disableInformer) {
-      this.uppy.use(Informer, {
-        id: this.#getInformerId(),
-        target: this,
-        ...this.#getInformerOpts(),
-      })
-    }
-
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
         id: this.#getThumbnailGeneratorId(),
@@ -1420,13 +1404,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   uninstall = (): void => {
-    if (!this.opts.disableInformer) {
-      const informer = this.uppy.getPlugin(`${this.id}:Informer`)
-      // Checking if this plugin exists, in case it was removed by uppy-core
-      // before the Dashboard was.
-      if (informer) this.uppy.removePlugin(informer)
-    }
-
     if (!this.opts.disableThumbnailGenerator) {
       const thumbnail = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
       if (thumbnail) this.uppy.removePlugin(thumbnail)
