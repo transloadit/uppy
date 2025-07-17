@@ -1,4 +1,6 @@
+export { default as Dashboard } from './Dashboard.js'
 export { default as DashboardModal } from './DashboardModal.js'
+export { default as DragDrop } from './DragDrop.js'
 export * from './headless/generated/index.js'
 // Headless components
 export {
