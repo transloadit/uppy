@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "keywords": [
     "uppy",
     "uppy-plugin",

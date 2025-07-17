@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": false,
   "keywords": [
     "file uploader",
     "uppy",

@@ -14,6 +14,7 @@
   ],
   "type": "module",
   "homepage": "https://uppy.io",
+  "sideEffects": false,
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
   },

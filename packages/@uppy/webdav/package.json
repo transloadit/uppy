@@ -6,6 +6,7 @@
   "main": "lib/index.js",
   "types": "types/index.d.ts",
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build"

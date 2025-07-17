@@ -16,6 +16,9 @@
     "mediarecorder"
   ],
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "homepage": "https://uppy.io",
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"

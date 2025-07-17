@@ -32,10 +32,11 @@
     ".": "./lib/index.js",
     "./src/style.scss": "./src/style.scss",
     "./dist/style.min.css": "./dist/style.min.css",
+    "./dist/style.css": "./dist/style.css",
+    "./lib/Uppy.js": "./lib/Uppy.js",
     "./lib/EventManager.js": "./lib/EventManager.js",
     "./lib/UIPlugin.js": "./lib/UIPlugin.js",
     "./lib/Restricter.js": "./lib/Restricter.js",
-    "./lib/Uppy.js": "./lib/Uppy.js",
     "./package.json": "./package.json"
   },
   "dependencies": {

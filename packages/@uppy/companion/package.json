@@ -6,6 +6,7 @@
   "types": "lib/companion.d.ts",
   "author": "Transloadit.com",
   "license": "MIT",
+  "sideEffects": false,
   "homepage": "https://github.com/transloadit/uppy#readme",
   "repository": {
     "type": "git",

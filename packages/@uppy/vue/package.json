@@ -3,6 +3,9 @@
   "version": "2.3.0",
   "license": "MIT",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
