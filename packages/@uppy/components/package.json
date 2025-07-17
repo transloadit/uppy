@@ -26,6 +26,9 @@
     "migrate": "node migrate.mjs",
     "typecheck": "tsc --build"
   },
+  "exports": {
+    ".": "./lib/index.js"
+  },
   "dependencies": {
     "@webcam/core": "^1.0.1",
     "clsx": "^2.1.1",

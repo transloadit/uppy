@@ -11991,30 +11991,8 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/file-input": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
-    "@uppy/screen-capture": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
-    "@uppy/webcam": "workspace:^"
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
-  peerDependenciesMeta:
-    "@uppy/dashboard":
-      optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/file-input":
-      optional: true
-    "@uppy/progress-bar":
-      optional: true
-    "@uppy/screen-capture":
-      optional: true
-    "@uppy/status-bar":
-      optional: true
-    "@uppy/webcam":
-      optional: true
   languageName: unknown
   linkType: soft
 
@@ -12121,10 +12099,6 @@ __metadata:
     vite: "npm:^6.3.0"
   peerDependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   languageName: unknown
   linkType: soft
@@ -12233,23 +12207,7 @@ __metadata:
     vue: "npm:^3.5.14"
   peerDependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/file-input": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     vue: ">=3.0.0"
-  peerDependenciesMeta:
-    "@uppy/dashboard":
-      optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/file-input":
-      optional: true
-    "@uppy/progress-bar":
-      optional: true
-    "@uppy/status-bar":
-      optional: true
   languageName: unknown
   linkType: soft
 
