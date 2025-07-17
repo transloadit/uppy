@@ -21,13 +21,10 @@
     "dev": "yarn workspace @uppy-dev/dev dev",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
-    "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "start:companion": "yarn workspace @uppy/companion start:dev",
     "test": "turbo run test --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./examples/{react,vue,sveltekit}'",
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "uploadcdn": "yarn workspace uppy exec -- node upload-to-cdn.js",
-    "version": "yarn node ./bin/after-version-bump.js"
+    "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.5",

@@ -59,7 +59,7 @@ jobs:
         run: corepack yarn run build
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ !inputs.force }}
-        run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION"
+        run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}
@@ -67,7 +67,7 @@ jobs:
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ inputs.force }}
-        run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION" -- --force
+        run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION" --force
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}

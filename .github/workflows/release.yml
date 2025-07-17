@@ -94,12 +94,12 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload `uppy` to CDN
-        run: corepack yarn run uploadcdn uppy -- --force
+        run: corepack yarn workspace uppy node upload-to-cdn.js uppy --force
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload `@uppy/locales` to CDN if it was released
-        run: corepack yarn run uploadcdn @uppy/locales -- --force
+        run: corepack yarn workspace uppy node upload-to-cdn.js @uppy/locales --force
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
