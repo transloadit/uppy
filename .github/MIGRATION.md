@@ -17,3 +17,7 @@ This is a temporary file that can be updated with any pending migration changes,
 - Removed `token` param from `Provider` class methods: `list()`, `download()`,
   `logout()`, `thumbnail()`. Please use: `providerUserSession`.`accessToken`
   instead.
+
+### @uppy/informer merged into @uppy/dashboard
+
+The `@uppy/informer` plugin has been merged into `@uppy/dashboard` to reduce bundle size and improve maintainability. The `@uppy/informer` package is no longer maintained as a standalone package and should be removed from your dependencies.
