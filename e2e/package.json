@@ -35,7 +35,6 @@
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/store-default": "workspace:^",
-    "@uppy/store-redux": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
     "@uppy/transloadit": "workspace:^",
     "@uppy/tus": "workspace:^",

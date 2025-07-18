@@ -39,17 +39,11 @@ export { default as ImageEditor } from '@uppy/image-editor'
 export { default as Instagram } from '@uppy/instagram'
 export { default as OneDrive } from '@uppy/onedrive'
 export { default as ProgressBar } from '@uppy/progress-bar'
-// not yet typed
-// @ts-ignore
-export { default as ReduxDevTools } from '@uppy/redux-dev-tools'
 export { default as RemoteSources } from '@uppy/remote-sources'
 export { default as ScreenCapture } from '@uppy/screen-capture'
 export { default as StatusBar } from '@uppy/status-bar'
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'
-// not yet typed
-// @ts-ignore
-export { default as ReduxStore } from '@uppy/store-redux'
 export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'
 export { default as Transloadit } from '@uppy/transloadit'
 export { default as Tus } from '@uppy/tus'
