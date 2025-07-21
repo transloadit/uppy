@@ -8,7 +8,6 @@ export {
   UppyContext,
   UppyContextProvider,
 } from './headless/UppyContextProvider.js'
-export { default as ProgressBar } from './ProgressBar.js'
 export { default as StatusBar } from './StatusBar.js'
 export { useDropzone } from './useDropzone.js'
 export { useFileInput } from './useFileInput.js'

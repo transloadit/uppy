@@ -68,9 +68,6 @@
       "path": "../@uppy/onedrive/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/progress-bar/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/provider-views/tsconfig.build.json"
     },
     {

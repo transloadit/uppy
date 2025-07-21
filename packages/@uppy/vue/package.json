@@ -23,7 +23,6 @@
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",
     "@uppy/file-input": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "vue": ">=3.0.0"
   },
@@ -35,9 +34,6 @@
       "optional": true
     },
     "@uppy/file-input": {
-      "optional": true
-    },
-    "@uppy/progress-bar": {
       "optional": true
     },
     "@uppy/status-bar": {

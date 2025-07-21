@@ -30,7 +30,6 @@
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/utils": "workspace:^"
   },

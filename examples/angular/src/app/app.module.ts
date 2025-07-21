@@ -5,7 +5,6 @@ import {
   UppyAngularDashboardModalModule,
   UppyAngularDashboardModule,
   UppyAngularDragDropModule,
-  UppyAngularProgressBarModule,
   UppyAngularStatusBarModule,
 } from '@uppy/angular'
 import { AppComponent } from './app.component'
@@ -18,7 +17,6 @@ import { AppComponent } from './app.component'
     UppyAngularStatusBarModule,
     UppyAngularDashboardModalModule,
     UppyAngularDragDropModule,
-    UppyAngularProgressBarModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

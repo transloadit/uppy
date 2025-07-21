@@ -21,3 +21,36 @@ This is a temporary file that can be updated with any pending migration changes,
 ### @uppy/informer merged into @uppy/dashboard
 
 The `@uppy/informer` plugin has been merged into `@uppy/dashboard` to reduce bundle size and improve maintainability. The `@uppy/informer` package is no longer maintained as a standalone package and should be removed from your dependencies.
+
+### @uppy/progress-bar removed
+
+The `@uppy/progress-bar` plugin has been removed as it provided minimal functionality that can be easily replicated with Uppy's built-in state management.
+
+**Before:**
+```js
+import ProgressBar from '@uppy/progress-bar'
+
+uppy.use(ProgressBar, { target: '#progress' })
+```
+
+**After:**
+```js
+// Custom progress bar using Uppy state
+uppy.on('upload-progress', (file, progress) => {
+  const progressElement = document.getElementById('progress')
+  progressElement.style.width = `${progress.percentage}%`
+  progressElement.textContent = `${progress.percentage}%`
+})
+
+// Or listen to total progress
+uppy.on('progress', (progress) => {
+  const progressElement = document.getElementById('progress')
+  progressElement.style.width = `${progress}%`
+  progressElement.textContent = `${progress}%`
+})
+```
+
+**Migration steps:**
+1. Remove `@uppy/progress-bar` from your dependencies
+2. Create a custom progress indicator using Uppy's `progress` or `upload-progress` events
+3. Style your progress bar according to your design system

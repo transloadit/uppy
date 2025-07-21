@@ -48,7 +48,6 @@
     "@uppy/dashboard": "workspace:^",
     "@uppy/drag-drop": "workspace:^",
     "@uppy/file-input": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
@@ -63,9 +62,6 @@
       "optional": true
     },
     "@uppy/file-input": {
-      "optional": true
-    },
-    "@uppy/progress-bar": {
       "optional": true
     },
     "@uppy/screen-capture": {

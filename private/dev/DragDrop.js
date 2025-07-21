@@ -1,7 +1,6 @@
 // The @uppy/ dependencies are resolved from source
 import Uppy from '@uppy/core'
 import DragDrop from '@uppy/drag-drop'
-import ProgressBar from '@uppy/progress-bar'
 import Tus from '@uppy/tus'
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
@@ -18,10 +17,6 @@ export default () => {
   })
     .use(DragDrop, {
       target: '#uppyDragDrop',
-    })
-    .use(ProgressBar, {
-      target: '#uppyDragDrop-progress',
-      hideAfterFinish: false,
     })
     .use(Tus, { endpoint: TUS_ENDPOINT })
 

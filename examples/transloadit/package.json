@@ -12,7 +12,6 @@
     "@uppy/drop-target": "workspace:*",
     "@uppy/form": "workspace:*",
     "@uppy/image-editor": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/transloadit": "workspace:*",
     "@uppy/webcam": "workspace:*",

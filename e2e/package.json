@@ -30,7 +30,6 @@
     "@uppy/image-editor": "workspace:^",
     "@uppy/instagram": "workspace:^",
     "@uppy/onedrive": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
