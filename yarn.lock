@@ -11427,7 +11427,6 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/utils": "workspace:^"
   languageName: unknown
@@ -11878,22 +11877,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/progress-bar@workspace:*, @uppy/progress-bar@workspace:^, @uppy/progress-bar@workspace:packages/@uppy/progress-bar":
-  version: 0.0.0-use.local
-  resolution: "@uppy/progress-bar@workspace:packages/@uppy/progress-bar"
-  dependencies:
-    "@uppy/utils": "workspace:^"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/provider-views@workspace:*, @uppy/provider-views@workspace:^, @uppy/provider-views@workspace:packages/@uppy/provider-views":
   version: 0.0.0-use.local
   resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
@@ -11957,7 +11940,6 @@ __metadata:
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
     "@uppy/file-input": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -11969,8 +11951,6 @@ __metadata:
     "@uppy/drag-drop":
       optional: true
     "@uppy/file-input":
-      optional: true
-    "@uppy/progress-bar":
       optional: true
     "@uppy/screen-capture":
       optional: true
@@ -12067,7 +12047,6 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   languageName: unknown
@@ -12180,7 +12159,6 @@ __metadata:
     "@uppy/dashboard": "workspace:^"
     "@uppy/drag-drop": "workspace:^"
     "@uppy/file-input": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
@@ -12189,8 +12167,6 @@ __metadata:
     "@uppy/drag-drop":
       optional: true
     "@uppy/file-input":
-      optional: true
-    "@uppy/progress-bar":
       optional: true
     "@uppy/status-bar":
       optional: true
@@ -16593,7 +16569,6 @@ __metadata:
     "@uppy/image-editor": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
@@ -17931,7 +17906,6 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
     "@uppy/google-drive": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
     rxjs: "npm:~7.8.0"
@@ -18100,7 +18074,6 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
@@ -18122,7 +18095,6 @@ __metadata:
     "@uppy/drop-target": "workspace:*"
     "@uppy/form": "workspace:*"
     "@uppy/image-editor": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/transloadit": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -18141,7 +18113,6 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/drag-drop": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
@@ -31835,7 +31806,6 @@ __metadata:
     "@uppy/image-editor": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/remote-sources": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
