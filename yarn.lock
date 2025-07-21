@@ -11449,15 +11449,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/aws-s3-multipart@workspace:^, @uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart":
-  version: 0.0.0-use.local
-  resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
-  dependencies:
-    "@uppy/aws-s3": "workspace:^"
-    typescript: "npm:^5.8.3"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/aws-s3@workspace:*, @uppy/aws-s3@workspace:^, @uppy/aws-s3@workspace:packages/@uppy/aws-s3":
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
@@ -16505,7 +16496,6 @@ __metadata:
     "@parcel/transformer-vue": "npm:^2.9.3"
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
-    "@uppy/aws-s3-multipart": "workspace:^"
     "@uppy/box": "workspace:^"
     "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
