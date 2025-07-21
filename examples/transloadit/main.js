@@ -180,14 +180,13 @@ const uppyWithoutUI = new Uppy({
   restrictions: {
     allowedFileTypes: ['.png'],
   },
+}).use(Transloadit, {
+  waitForEncoding: true,
+  params: {
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID,
+  },
 })
-  .use(Transloadit, {
-    waitForEncoding: true,
-    params: {
-      auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
-    },
-  })
 
 window.doUpload = (event) => {
   const resultEl = document.querySelector('#upload-result')
