@@ -20,6 +20,7 @@ import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 import toArray from '@uppy/utils/lib/toArray'
 import { nanoid } from 'nanoid/non-secure'
+import { h } from 'preact'
 import type { ComponentChild, VNode } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import packageJson from '../package.json' with { type: 'json' }

@@ -9,6 +9,7 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
+import { h } from 'preact'
 import type { ComponentChild } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
