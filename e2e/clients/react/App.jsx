@@ -32,24 +32,28 @@ function CustomDropzone({ uppy }) {
     e.preventDefault()
     setIsDragging(false)
     const files = Array.from(e.dataTransfer.files)
-    files.forEach(file => uppy.addFile({
-      name: file.name,
-      type: file.type,
-      data: file,
-      source: 'Local',
-      isRemote: false,
-    }))
+    files.forEach((file) =>
+      uppy.addFile({
+        name: file.name,
+        type: file.type,
+        data: file,
+        source: 'Local',
+        isRemote: false,
+      }),
+    )
   }
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files)
-    files.forEach(file => uppy.addFile({
-      name: file.name,
-      type: file.type,
-      data: file,
-      source: 'Local',
-      isRemote: false,
-    }))
+    files.forEach((file) =>
+      uppy.addFile({
+        name: file.name,
+        type: file.type,
+        data: file,
+        source: 'Local',
+        isRemote: false,
+      }),
+    )
   }
 
   return (
@@ -75,7 +79,10 @@ function CustomDropzone({ uppy }) {
         style={{ display: 'none' }}
         id="file-input"
       />
-      <label htmlFor="file-input" style={{ cursor: 'pointer', display: 'block' }}>
+      <label
+        htmlFor="file-input"
+        style={{ cursor: 'pointer', display: 'block' }}
+      >
         <p>Drag and drop files here, or click to select files</p>
         {isDragging && <p style={{ color: '#007acc' }}>Drop files here...</p>}
       </label>
