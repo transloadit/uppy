@@ -3,7 +3,7 @@ describe('@uppy/react', () => {
     cy.visit('/react')
     cy.get('#dashboard .uppy-Dashboard-input:first').as('dashboard-input')
     cy.get('#modal .uppy-Dashboard-input:first').as('modal-input')
-    cy.get('#drag-drop .uppy-DragDrop-input').as('dragdrop-input')
+    cy.get('#drag-drop #file-input').as('dragdrop-input')
   })
 
   it('should render Dashboard in React and show thumbnails', () => {
@@ -49,7 +49,7 @@ describe('@uppy/react', () => {
       .each((element) => expect(element).attr('src').to.include('blob:'))
   })
 
-  it('should render Drag & Drop in React and create a thumbail with @uppy/thumbnail-generator', () => {
+  it('should render custom dropzone using useDropzone hook and create a thumbnail with @uppy/thumbnail-generator', () => {
     const spy = cy.spy()
 
     // @ts-ignore fix me
