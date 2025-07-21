@@ -46,8 +46,6 @@
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
-    "@uppy/file-input": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
@@ -56,12 +54,6 @@
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
-      "optional": true
-    },
-    "@uppy/drag-drop": {
-      "optional": true
-    },
-    "@uppy/file-input": {
       "optional": true
     },
     "@uppy/screen-capture": {

@@ -55,7 +55,6 @@
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "svelte": "^4.0.0 || ^5.0.0"
   },

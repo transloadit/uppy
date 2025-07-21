@@ -19,7 +19,6 @@
     "@angular/router": "^18.0.0",
     "@uppy/angular": "workspace:*",
     "@uppy/core": "workspace:*",
-    "@uppy/drag-drop": "workspace:*",
     "@uppy/google-drive": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/webcam": "workspace:*",

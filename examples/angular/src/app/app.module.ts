@@ -4,7 +4,6 @@ import { BrowserModule } from '@angular/platform-browser'
 import {
   UppyAngularDashboardModalModule,
   UppyAngularDashboardModule,
-  UppyAngularDragDropModule,
   UppyAngularStatusBarModule,
 } from '@uppy/angular'
 import { AppComponent } from './app.component'
@@ -16,7 +15,6 @@ import { AppComponent } from './app.component'
     UppyAngularDashboardModule,
     UppyAngularStatusBarModule,
     UppyAngularDashboardModalModule,
-    UppyAngularDragDropModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

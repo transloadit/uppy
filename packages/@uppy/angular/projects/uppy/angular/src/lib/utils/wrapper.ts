@@ -1,6 +1,5 @@
 import type { ElementRef, SimpleChanges } from "@angular/core";
 import type { UIPlugin, UIPluginOptions, Uppy } from "@uppy/core";
-import type { DragDropOptions } from "@uppy/drag-drop";
 import type { StatusBarOptions } from "@uppy/status-bar";
 import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
 
@@ -10,7 +9,7 @@ export abstract class UppyAngularWrapper<
 	Opts extends UIPluginOptions,
 	PluginType extends UIPlugin<Opts, M, B> = UIPlugin<Opts, M, B>,
 > {
-	abstract props: DragDropOptions | StatusBarOptions;
+	abstract props: StatusBarOptions;
 	abstract el: ElementRef;
 	abstract uppy: Uppy<M, B>;
 	private options: any;

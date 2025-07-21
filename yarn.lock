@@ -11426,7 +11426,6 @@ __metadata:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/utils": "workspace:^"
   languageName: unknown
@@ -11679,22 +11678,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/drag-drop@workspace:*, @uppy/drag-drop@workspace:^, @uppy/drag-drop@workspace:packages/@uppy/drag-drop":
-  version: 0.0.0-use.local
-  resolution: "@uppy/drag-drop@workspace:packages/@uppy/drag-drop"
-  dependencies:
-    "@uppy/utils": "workspace:^"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/drop-target@workspace:*, @uppy/drop-target@workspace:^, @uppy/drop-target@workspace:packages/@uppy/drop-target":
   version: 0.0.0-use.local
   resolution: "@uppy/drop-target@workspace:packages/@uppy/drop-target"
@@ -11732,22 +11715,6 @@ __metadata:
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@uppy/file-input@workspace:^, @uppy/file-input@workspace:packages/@uppy/file-input":
-  version: 0.0.0-use.local
-  resolution: "@uppy/file-input@workspace:packages/@uppy/file-input"
-  dependencies:
-    "@uppy/utils": "workspace:^"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -11938,8 +11905,6 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/file-input": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -11947,10 +11912,6 @@ __metadata:
     react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/file-input":
       optional: true
     "@uppy/screen-capture":
       optional: true
@@ -12046,7 +12007,6 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   languageName: unknown
@@ -12157,16 +12117,10 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/file-input": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/file-input":
       optional: true
     "@uppy/status-bar":
       optional: true
@@ -16556,11 +16510,9 @@ __metadata:
     "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
     "@uppy/drop-target": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
-    "@uppy/file-input": "workspace:^"
     "@uppy/form": "workspace:^"
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
@@ -17904,7 +17856,6 @@ __metadata:
     "@angular/router": "npm:^18.0.0"
     "@uppy/angular": "workspace:*"
     "@uppy/core": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
     "@uppy/google-drive": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -18073,7 +18024,6 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
@@ -18112,7 +18062,6 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
@@ -31793,11 +31742,9 @@ __metadata:
     "@uppy/compressor": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
     "@uppy/drop-target": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
-    "@uppy/file-input": "workspace:^"
     "@uppy/form": "workspace:^"
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"

@@ -36,9 +36,6 @@ import Webcam from '@uppy/webcam'
       </button>
     </div>
 
-    <h2>Drag Drop Area</h2>
-    <uppy-drag-drop [uppy]="uppy" [props]="{}"></uppy-drag-drop>
-
     <h2>Progress Bar</h2>
     <uppy-progress-bar
       [uppy]="uppy"
