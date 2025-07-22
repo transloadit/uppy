@@ -360,7 +360,7 @@ interface ProgressBarUploadingProps {
   i18n: I18n
   supportsUploadProgress: boolean
   totalProgress: number
-  showProgressDetails: boolean | undefined
+  hideProgressDetails: boolean | undefined
   isUploadStarted: boolean
   isAllComplete: boolean
   isAllPaused: boolean
@@ -378,7 +378,7 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
     i18n,
     supportsUploadProgress,
     totalProgress,
-    showProgressDetails,
+    hideProgressDetails,
     isUploadStarted,
     isAllComplete,
     isAllPaused,
@@ -400,7 +400,7 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
   const title = isAllPaused ? i18n('paused') : i18n('uploading')
 
   function renderProgressDetails() {
-    if (!isAllPaused && !showUploadNewlyAddedFiles && showProgressDetails) {
+    if (!isAllPaused && !showUploadNewlyAddedFiles && hideProgressDetails) {
       if (supportsUploadProgress) {
         return (
           <ProgressDetails

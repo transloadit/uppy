@@ -157,7 +157,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   showLinkToFileUploadResult?: boolean
   showNativePhotoCameraButton?: boolean
   showNativeVideoCameraButton?: boolean
-  showProgressDetails?: boolean
+  hideProgressDetails?: boolean
   showRemoveButtonAfterComplete?: boolean
   showSelectedFiles?: boolean
   singleFileFullScreen?: boolean
@@ -184,7 +184,7 @@ const defaultOptions = {
   waitForThumbnailsBeforeUpload: false,
   defaultPickerIcon,
   showLinkToFileUploadResult: false,
-  showProgressDetails: false,
+  hideProgressDetails: false,
   hideUploadButton: false,
   hideCancelButton: false,
   hideRetryButton: false,
@@ -1261,7 +1261,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       disableInformer: this.opts.disableInformer,
       // status-bar props
       disableStatusBar: this.opts.disableStatusBar,
-      showProgressDetails: this.opts.showProgressDetails,
+      hideProgressDetails: this.opts.hideProgressDetails,
       hideUploadButton: this.opts.hideUploadButton,
       hideRetryButton: this.opts.hideRetryButton,
       hidePauseResumeButton: this.opts.hidePauseResumeButton,

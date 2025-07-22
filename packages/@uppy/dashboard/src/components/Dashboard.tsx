@@ -123,7 +123,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   handleDrop: (event: DragEvent) => void
   disableInformer: boolean
   disableStatusBar: boolean
-  showProgressDetails: boolean
+  hideProgressDetails: boolean
   hideUploadButton: boolean
   hideProgressAfterFinish: boolean
   doneButtonHandler: (() => void) | null
@@ -347,7 +347,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
               <StatusBar
                 uppy={props.uppy}
                 i18n={props.i18n}
-                showProgressDetails={props.showProgressDetails}
+                hideProgressDetails={props.hideProgressDetails}
                 hideUploadButton={props.hideUploadButton}
                 hideRetryButton={props.hideRetryButton}
                 hidePauseResumeButton={props.hidePauseResumeButton}

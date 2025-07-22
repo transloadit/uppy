@@ -49,7 +49,7 @@ export interface StatusBarUIProps<M extends Meta, B extends Body> {
   startUpload: () => void
   uppy: Uppy<M, B>
   isAllComplete: boolean
-  showProgressDetails?: boolean
+  hideProgressDetails?: boolean
   numUploads: number
   complete: number
   totalSize: number | null
@@ -81,7 +81,7 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
   startUpload,
   uppy,
   isAllComplete,
-  showProgressDetails = undefined,
+  hideProgressDetails = undefined,
   numUploads,
   complete,
   totalSize,
@@ -192,7 +192,7 @@ export default function StatusBarUI<M extends Meta, B extends Body>({
             i18n={i18n}
             supportsUploadProgress={supportsUploadProgress}
             totalProgress={totalProgress}
-            showProgressDetails={showProgressDetails}
+            hideProgressDetails={hideProgressDetails}
             isUploadStarted={isUploadStarted}
             isAllComplete={isAllComplete}
             isAllPaused={isAllPaused}

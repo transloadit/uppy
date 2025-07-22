@@ -12,7 +12,7 @@ const ETAFilterHalfLife = 2000
 
 type StatusBarProps<M extends Meta, B extends Body> = {
   uppy: Uppy<M, B>
-  showProgressDetails: boolean
+  hideProgressDetails: boolean
   hideUploadButton: boolean
   hideRetryButton: boolean
   hidePauseResumeButton: boolean
@@ -68,7 +68,7 @@ const defaultOptions = {
   hideRetryButton: false,
   hidePauseResumeButton: false,
   hideCancelButton: false,
-  showProgressDetails: false,
+  hideProgressDetails: false,
   hideAfterFinish: true,
   doneButtonHandler: null,
 } satisfies StatusBarOptions
@@ -285,7 +285,7 @@ export default class StatusBar<
         doneButtonHandler={this.props.doneButtonHandler}
         resumableUploads={resumableUploads}
         supportsUploadProgress={supportsUploadProgress}
-        showProgressDetails={this.props.showProgressDetails}
+        hideProgressDetails={this.props.hideProgressDetails}
         hideUploadButton={this.props.hideUploadButton}
         hideRetryButton={this.props.hideRetryButton}
         hidePauseResumeButton={this.props.hidePauseResumeButton}

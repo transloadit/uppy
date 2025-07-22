@@ -1,7 +1,7 @@
 import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
 
 export interface StatusBarOptions extends UIPluginOptions {
-  showProgressDetails?: boolean
+  hideProgressDetails?: boolean
   hideUploadButton?: boolean
   hideAfterFinish?: boolean
   hideRetryButton?: boolean

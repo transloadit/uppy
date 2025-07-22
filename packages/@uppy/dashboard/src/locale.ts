@@ -108,15 +108,15 @@ export default {
     resume: 'Resume',
     // Used as the label for the button that resets the upload state after an upload
     done: 'Done',
-    // When `showProgressDetails` is set, shows the number of files that have been fully uploaded so far.
+    // When `hideProgressDetails` is set, shows the number of files that have been fully uploaded so far.
     filesUploadedOfTotal: {
       0: '%{complete} of %{smart_count} file uploaded',
       1: '%{complete} of %{smart_count} files uploaded',
     },
-    // When `showProgressDetails` is set, shows the amount of bytes that have been uploaded so far.
+    // When `hideProgressDetails` is set, shows the amount of bytes that have been uploaded so far.
     dataUploadedOfTotal: '%{complete} of %{total}',
     dataUploadedOfUnknown: '%{complete} of unknown',
-    // When `showProgressDetails` is set, shows an estimation of how long the upload will take to complete.
+    // When `hideProgressDetails` is set, shows an estimation of how long the upload will take to complete.
     xTimeLeft: '%{time} left',
     // Used as the label for the button that starts an upload.
     uploadXFiles: {
