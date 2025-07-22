@@ -85,10 +85,46 @@ export default class StatusBar<
 
   #previousETA!: number | null
 
+  componentDidMount(): void {
+    // Initialize ETA calculation variables
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = this.props.uppy
+      .getFiles()
+      .reduce((pv, file) => pv + (file.progress.bytesUploaded || 0), 0)
+
+    // Listen for upload start to reset ETA calculation
+    this.props.uppy.on('upload', this.#onUploadStart)
+  }
+
+  componentWillUnmount(): void {
+    this.props.uppy.off('upload', this.#onUploadStart)
+  }
+
+  #onUploadStart = (): void => {
+    const { recoveredState } = this.props.uppy.getState()
+
+    this.#previousSpeed = null
+    this.#previousETA = null
+
+    if (recoveredState) {
+      this.#previousUploadedBytes = Object.values(recoveredState.files).reduce(
+        (pv, { progress }) => pv + (progress.bytesUploaded || 0),
+        0,
+      )
+      // We don't set `#lastUpdateTime` at this point because the upload won't
+      // actually resume until the user asks for it.
+      this.props.uppy.emit('restore-confirmed')
+      return
+    }
+
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = 0
+  }
+
   #computeSmoothETA(totalBytes: {
     uploaded: number
     total: number | null // null means indeterminate
-  }) {
+  }): number | null {
     if (totalBytes.total == null || totalBytes.total === 0) {
       return null
     }
@@ -105,8 +141,14 @@ export default class StatusBar<
       return Math.round((this.#previousETA ?? 0) / 100) / 10
     }
 
+    // Initialize previousUploadedBytes if it's null
+    if (this.#previousUploadedBytes == null) {
+      this.#previousUploadedBytes = totalBytes.uploaded
+      return null // Can't calculate speed on first call
+    }
+
     const uploadedBytesSinceLastTick =
-      totalBytes.uploaded - this.#previousUploadedBytes!
+      totalBytes.uploaded - this.#previousUploadedBytes
     this.#previousUploadedBytes = totalBytes.uploaded
 
     // uploadedBytesSinceLastTick can be negative in some cases (packet loss?)
@@ -115,18 +157,41 @@ export default class StatusBar<
       return Math.round((this.#previousETA ?? 0) / 100) / 10
     }
     const currentSpeed = uploadedBytesSinceLastTick / dt
+
+    // Guard against invalid speed values
+    if (!Number.isFinite(currentSpeed) || currentSpeed <= 0) {
+      return null
+    }
+
     const filteredSpeed =
       this.#previousSpeed == null
         ? currentSpeed
         : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
+
+    // Guard against invalid filtered speed
+    if (!Number.isFinite(filteredSpeed) || filteredSpeed <= 0) {
+      return null
+    }
+
     this.#previousSpeed = filteredSpeed
     const instantETA = remaining / filteredSpeed
 
-    const updatedPreviousETA = Math.max(this.#previousETA! - dt, 0)
+    // Guard against invalid instantETA
+    if (!Number.isFinite(instantETA) || instantETA < 0) {
+      return null
+    }
+
+    const updatedPreviousETA = Math.max((this.#previousETA ?? 0) - dt, 0)
     const filteredETA =
       this.#previousETA == null
         ? instantETA
         : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+
+    // Guard against invalid filteredETA
+    if (!Number.isFinite(filteredETA) || filteredETA < 0) {
+      return null
+    }
+
     this.#previousETA = filteredETA
     this.#lastUpdateTime = performance.now()
 
@@ -138,6 +203,7 @@ export default class StatusBar<
       // Error logged in Core
     }) as () => undefined)
   }
+
   render(): ComponentChild {
     const {
       capabilities,
@@ -163,6 +229,32 @@ export default class StatusBar<
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
 
+    let totalSize: number | null = null
+    let totalUploadedSize = 0
+
+    // Only if all files have a known size, does it make sense to display a total size
+    if (
+      startedFiles.every(
+        (f) => f.progress.bytesTotal != null && f.progress.bytesTotal !== 0,
+      )
+    ) {
+      totalSize = 0
+      startedFiles.forEach((file) => {
+        totalSize! += file.progress.bytesTotal || 0
+        totalUploadedSize += file.progress.bytesUploaded || 0
+      })
+    } else {
+      // however uploaded size we will always have
+      startedFiles.forEach((file) => {
+        totalUploadedSize += file.progress.bytesUploaded || 0
+      })
+    }
+
+    const totalETA = this.#computeSmoothETA({
+      uploaded: totalUploadedSize,
+      total: totalSize,
+    })
+
     return (
       <StatusBarUI
         error={error}
@@ -174,8 +266,8 @@ export default class StatusBar<
         )}
         allowNewUpload={allowNewUpload}
         totalProgress={totalProgress}
-        totalSize={null}
-        totalUploadedSize={0}
+        totalSize={totalSize}
+        totalUploadedSize={totalUploadedSize}
         isAllComplete={isAllComplete}
         isAllPaused={isAllPaused}
         isUploadStarted={isUploadStarted}
@@ -185,7 +277,7 @@ export default class StatusBar<
         complete={completeFiles.length}
         newFiles={newFilesOrRecovered.length}
         numUploads={startedFiles.length}
-        totalETA={0}
+        totalETA={totalETA}
         files={files}
         i18n={this.props.i18n}
         uppy={this.props.uppy}
