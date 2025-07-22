@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import {
   type ComponentChildren,
   cloneElement,
+  h,
   toChildArray,
   type VNode,
 } from 'preact'

@@ -36,6 +36,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy/core": "workspace:^",
     "cssnano": "^7.0.7",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",

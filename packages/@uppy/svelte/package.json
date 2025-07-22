@@ -46,6 +46,7 @@
     "@sveltejs/kit": "^2.20.7",
     "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@uppy/core": "workspace:^",
     "svelte": "^5.27.0",
     "svelte-check": "^4.1.6",
     "tslib": "^2.8.1",
@@ -58,6 +59,20 @@
     "@uppy/drag-drop": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "svelte": "^4.0.0 || ^5.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@uppy/dashboard": {
+      "optional": true
+    },
+    "@uppy/drag-drop": {
+      "optional": true
+    },
+    "@uppy/progress-bar": {
+      "optional": true
+    },
+    "@uppy/status-bar": {
+      "optional": true
+    }
   },
   "publishConfig": {
     "access": "public"

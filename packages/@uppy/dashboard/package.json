@@ -39,6 +39,7 @@
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
+    "@uppy/core": "workspace:^",
     "@uppy/google-drive": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
