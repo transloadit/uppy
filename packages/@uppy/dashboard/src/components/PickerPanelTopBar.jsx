@@ -85,24 +85,7 @@ function PanelTopBar (props) {
 
   return (
     <div className="uppy-DashboardContent-bar">
-      {!isAllComplete && !hideCancelButton ? (
-        <button
-          className="uppy-DashboardContent-back"
-          type="button"
-          onClick={() => uppy.cancelAll()}
-        >
-          {i18n('cancel')}
-        </button>
-      ) : (
-          <div />
-        )}
-
-      <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <UploadStatus {...props} />
-      </div>
-      <div className="uppy-SpeakerCount">Speaker Count</div>
-      {allowNewUpload ? (
+      {allowNewUpload && (
         <button
           className="uppy-DashboardContent-addMore"
           type="button"
@@ -115,9 +98,21 @@ function PanelTopBar (props) {
           </svg>
           <span className="uppy-DashboardContent-addMoreCaption">{i18n('addMore')}</span>
         </button>
-      ) : (
-        <div />
       )}
+      {!isAllComplete && !hideCancelButton && (
+        <button
+          className="uppy-DashboardContent-back"
+          type="button"
+          onClick={() => uppy.cancelAll()}
+        >
+          {i18n('cancel')}
+        </button>
+      )}
+      <div className="uppy-DashboardContent-title" role="heading" aria-level="1">
+        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+        <UploadStatus {...props} />
+      </div>
+      <div className="uppy-SpeakerCount">Speaker Count</div>
     </div>
   )
 }

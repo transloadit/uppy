@@ -6,6 +6,19 @@ import FileProgress from './FileProgress/index.jsx'
 import FileInfo from './FileInfo/index.jsx'
 import Buttons from './Buttons/index.jsx'
 
+export const SpeakerCountOptions = [
+  { value: 'auto', label: 'Auto' },
+  { value: '1', label: '1' },
+  { value: '2', label: '2' },
+  { value: '3', label: '3' },
+  { value: '4', label: '4' },
+  { value: '5', label: '5' },
+  { value: '6', label: '6' },
+  { value: '7', label: '7' },
+  { value: '8', label: '8' },
+  { value: '9', label: '9' }
+];
+
 export default class FileItem extends Component {
   constructor(props) {
     super(props)
@@ -13,7 +26,7 @@ export default class FileItem extends Component {
       speakers: 1
     }
   }
-  
+
   componentDidMount () {
     const { file } = this.props
     if (!file.preview) {
@@ -142,15 +155,15 @@ export default class FileItem extends Component {
           />
           <div class="uppy-DropDown-SpeakerCount">
             <select class="uppy-Dropdown-SpeakerCount-Select" value={this.state.speakers} onChange={this.setSpeakers}>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="9">9</option>
+             {
+              SpeakerCountOptions.map((option) => {
+                return (
+                  <option value={option.value} key={option.value} id={`uppy_speakerCount_${option.value}`}>
+                    {option.label}
+                  </option>
+                )
+              })
+             }
             </select>
           </div>
         </div>
