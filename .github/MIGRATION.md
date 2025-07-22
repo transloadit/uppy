@@ -57,7 +57,7 @@ uppy.use(StatusBar, {
 import Dashboard from '@uppy/dashboard'
 uppy.use(Dashboard, {
   target: '#dashboard',
-  hideProgressDetails: true,
+  hideProgressDetails: false,
   hideUploadButton: false,
   hideAfterFinish: true
 })

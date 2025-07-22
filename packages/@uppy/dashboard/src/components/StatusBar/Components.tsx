@@ -400,7 +400,7 @@ function ProgressBarUploading(props: ProgressBarUploadingProps) {
   const title = isAllPaused ? i18n('paused') : i18n('uploading')
 
   function renderProgressDetails() {
-    if (!isAllPaused && !showUploadNewlyAddedFiles && hideProgressDetails) {
+    if (!isAllPaused && !showUploadNewlyAddedFiles && !hideProgressDetails) {
       if (supportsUploadProgress) {
         return (
           <ProgressDetails
