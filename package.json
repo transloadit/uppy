@@ -35,8 +35,8 @@
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "uploadcdn": "yarn workspace uppy exec -- node upload-to-cdn.js",
-    "version": "changeset version && yarn install && yarn check",
-    "release": "yarn run build && changeset publish"
+    "version": "changeset version && corepack yarn install --mode=update-lockfile",
+    "release": "changeset publish"
   },
   "resolutions": {
     "@types/react": "^18",
