@@ -28,36 +28,12 @@
     "dist"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "svelte": "./dist/index.js",
-      "import": "./dist/index.js"
-    },
-    "./dashboard": {
-      "types": "./dist/components/Dashboard.svelte.d.ts",
-      "svelte": "./src/lib/components/Dashboard.svelte",
-      "import": "./dist/components/Dashboard.svelte.js"
-    },
-    "./dashboard-modal": {
-      "types": "./dist/components/DashboardModal.svelte.d.ts",
-      "svelte": "./src/lib/components/DashboardModal.svelte",
-      "import": "./dist/components/DashboardModal.svelte.js"
-    },
-    "./drag-drop": {
-      "types": "./dist/components/DragDrop.svelte.d.ts",
-      "svelte": "./src/lib/components/DragDrop.svelte",
-      "import": "./dist/components/DragDrop.svelte.js"
-    },
-    "./progress-bar": {
-      "types": "./dist/components/ProgressBar.svelte.d.ts",
-      "svelte": "./src/lib/components/ProgressBar.svelte",
-      "import": "./dist/components/ProgressBar.svelte.js"
-    },
-    "./status-bar": {
-      "types": "./dist/components/StatusBar.svelte.d.ts",
-      "svelte": "./src/lib/components/StatusBar.svelte",
-      "import": "./dist/components/StatusBar.svelte.js"
-    },
+    ".": "./dist/index.js",
+    "./dashboard": "./dist/components/Dashboard.svelte.js",
+    "./dashboard-modal": "./dist/components/DashboardModal.svelte.js",
+    "./drag-drop": "./dist/components/DragDrop.svelte.js",
+    "./progress-bar": "./dist/components/ProgressBar.svelte.js",
+    "./status-bar": "./dist/components/StatusBar.svelte.js",
     "./package.json": "./package.json"
   },
   "scripts": {
