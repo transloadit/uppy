@@ -31,8 +31,8 @@
     ".": "./lib/index.js",
     "./lib/GooglePicker/googlePicker.js": "./lib/GooglePicker/googlePicker.js",
     "./lib/GooglePicker/icons.js": "./lib/GooglePicker/icons.js",
-    "./dist/style.min.css": "./dist/style.min.css",
-    "./dist/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./css/style.css": "./dist/style.css",
     "./package.json": "./package.json"
   },
   "dependencies": {

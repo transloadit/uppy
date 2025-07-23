@@ -30,8 +30,8 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./dist/style.min.css": "./dist/style.min.css",
-    "./dist/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./css/style.css": "./dist/style.css",
     "./lib/Uppy.js": "./lib/Uppy.js",
     "./lib/EventManager.js": "./lib/EventManager.js",
     "./lib/UIPlugin.js": "./lib/UIPlugin.js",

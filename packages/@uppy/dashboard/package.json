@@ -32,7 +32,8 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./dist/style.min.css": "./dist/style.min.css",
+    "./css/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
     "./package.json": "./package.json"
   },
   "dependencies": {

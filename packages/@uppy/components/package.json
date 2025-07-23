@@ -31,7 +31,7 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./dist/styles.css": "./dist/styles.css",
+    "./css/style.css": "./dist/styles.css",
     "./package.json": "./package.json"
   },
   "dependencies": {
