@@ -2,7 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@uppy/components#build", "@uppy/core#build"],
+      "dependsOn": ["^build", "@uppy/core#build"],
       "inputs": [
         "src/**/*.{js,ts,svelte}",
         "package.json",

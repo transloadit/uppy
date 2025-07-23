@@ -2,14 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "@uppy/audio#build",
-        "@uppy/core#build",
-        "@uppy/image-editor#build",
-        "@uppy/remote-sources#build",
-        "@uppy/screen-capture#build",
-        "@uppy/webcam#build"
-      ],
+      "dependsOn": ["^build", "@uppy/core#build"],
       "outputs": ["lib/**"]
     },
     "build:css": {

@@ -12471,33 +12471,18 @@ __metadata:
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
     "@tailwindcss/cli": "npm:^4.0.6"
-    "@webcam/core": "npm:^1.0.1"
-    clsx: "npm:^2.1.1"
-    dequal: "npm:^2.0.3"
-    preact: "npm:^10.5.13"
-    pretty-bytes: "npm:^6.1.1"
-    tailwindcss: "npm:^4.0.6"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
     "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/remote-sources": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/webcam": "workspace:^"
-  peerDependenciesMeta:
-    "@uppy/audio":
-      optional: true
-    "@uppy/google-drive-picker":
-      optional: true
-    "@uppy/image-editor":
-      optional: true
-    "@uppy/remote-sources":
-      optional: true
-    "@uppy/screen-capture":
-      optional: true
-    "@uppy/webcam":
-      optional: true
+    clsx: "npm:^2.1.1"
+    dequal: "npm:^2.0.3"
+    preact: "npm:^10.5.13"
+    pretty-bytes: "npm:^6.1.1"
+    tailwindcss: "npm:^4.0.6"
+    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -13713,13 +13698,6 @@ __metadata:
     "@webassemblyjs/ast": "npm:1.14.1"
     "@xtuc/long": "npm:4.2.2"
   checksum: 10/cef09aad2fcd291bfcf9efdae2ea1e961a1ba0f925d1d9dcdd8c746d32fbaf431b6d26a0241699c0e39f82139018aa720b4ceb84ac6f4c78f13072747480db69
-  languageName: node
-  linkType: hard
-
-"@webcam/core@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@webcam/core@npm:1.0.1"
-  checksum: 10/1ccd52fb6cf3d547a99415bcbe752789916473369550ef49024a61f97ee07d41031720ae46208138e094148dff4aa70784d3102c6d0b168e1fa6e77d56947ae6
   languageName: node
   linkType: hard
 
