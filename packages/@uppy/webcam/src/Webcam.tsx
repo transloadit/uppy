@@ -3,12 +3,11 @@ import type {
   DefinePluginOpts,
   Meta,
   MinimalRequiredUppyFile,
+  PluginTarget,
   UIPluginOptions,
   Uppy,
 } from '@uppy/core'
-
 import { UIPlugin } from '@uppy/core'
-import type { PluginTarget } from '@uppy/core/lib/UIPlugin.js'
 import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'

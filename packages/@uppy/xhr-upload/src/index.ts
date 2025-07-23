@@ -8,8 +8,7 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin } from '@uppy/core'
-import EventManager from '@uppy/core/lib/EventManager.js'
+import { BasePlugin, EventManager } from '@uppy/core'
 import { type FetcherOptions, fetcher } from '@uppy/utils/lib/fetcher'
 import {
   filterFilesToEmitUploadStarted,
