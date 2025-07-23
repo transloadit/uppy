@@ -74,7 +74,6 @@ class Provider {
    * @returns {Promise}
    */
   async deauthorizationCallback(options) {
-    // @todo consider doing something like throw new NotImplementedError() instead
     throw new Error('method not implemented')
   }
 

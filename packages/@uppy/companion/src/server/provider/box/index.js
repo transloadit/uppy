@@ -56,10 +56,15 @@ class Box extends Provider {
    * @param {object} options
    * @param {string} options.directory
    * @param {any} options.query
-   * @param {string} options.token
+   * @param {{ accessToken: string }} options.providerUserSession
    * @param {unknown} options.companion
    */
-  async list({ directory, token, query, companion }) {
+  async list({
+    directory,
+    providerUserSession: { accessToken: token },
+    query,
+    companion,
+  }) {
     return this.#withErrorHandling('provider.box.list.error', async () => {
       const [userInfo, files] = await Promise.all([
         getUserInfo({ token }),
@@ -70,7 +75,7 @@ class Box extends Provider {
     })
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.box.download.error', async () => {
       const stream = (await getClient({ token })).stream.get(
         `files/${id}/content`,
@@ -82,7 +87,7 @@ class Box extends Provider {
     })
   }
 
-  async thumbnail({ id, token }) {
+  async thumbnail({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.box.thumbnail.error', async () => {
       const extension = 'jpg' // you can set this to png to more easily reproduce http 202 retry-after
 
@@ -111,7 +116,7 @@ class Box extends Provider {
     })
   }
 
-  async size({ id, token }) {
+  async size({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const { size } = await (await getClient({ token }))
         .get(`files/${id}`, { responseType: 'json' })
@@ -120,7 +125,7 @@ class Box extends Provider {
     })
   }
 
-  logout({ companion, token }) {
+  logout({ companion, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.box.logout.error', async () => {
       const { key, secret } = companion.options.providerOptions.box
       await (await getClient({ token })).post('oauth2/revoke', {

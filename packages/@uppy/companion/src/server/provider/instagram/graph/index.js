@@ -40,7 +40,11 @@ class Instagram extends Provider {
     return 'instagram'
   }
 
-  async list({ directory, token, query = { cursor: null } }) {
+  async list({
+    directory,
+    providerUserSession: { accessToken: token },
+    query = { cursor: null },
+  }) {
     return this.#withErrorHandling(
       'provider.instagram.list.error',
       async () => {
@@ -69,7 +73,7 @@ class Instagram extends Provider {
     )
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.instagram.download.error',
       async () => {

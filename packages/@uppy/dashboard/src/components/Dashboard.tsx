@@ -127,6 +127,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   hideUploadButton: boolean
   hideProgressAfterFinish: boolean
   doneButtonHandler: (() => void) | null
+  disableInformer: boolean
 }
 
 export default function Dashboard<M extends Meta, B extends Body>(
@@ -356,6 +357,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
                 doneButtonHandler={props.doneButtonHandler}
               />
             )}
+            {!props.disableInformer && <Informer uppy={props.uppy} />}
             {props.progressindicators.map((target: TargetWithRender) => {
               // TODO
               // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`

@@ -23,7 +23,10 @@ const getPhotoMeta = async (client, id) =>
  * Adapter for API https://api.unsplash.com
  */
 class Unsplash extends Provider {
-  async list({ token, query = { cursor: null, q: null } }) {
+  async list({
+    providerUserSession: { accessToken: token },
+    query = { cursor: null, q: null },
+  }) {
     if (typeof query.q !== 'string') {
       throw new ProviderApiError('Search query missing', 400)
     }
@@ -39,7 +42,7 @@ class Unsplash extends Provider {
     })
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.unsplash.download.error',
       async () => {

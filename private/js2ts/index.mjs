@@ -47,7 +47,6 @@ const paths = Object.fromEntries(
     const require = createRequire(packageRoot)
     for (const pkg of uppyDeps) {
       const nickname = pkg.slice('@uppy/'.length)
-      // eslint-disable-next-line import/no-dynamic-require
       const pkgJson = require(`../${nickname}/package.json`)
       if (pkgJson.main) {
         yield [
@@ -89,7 +88,7 @@ for await (const dirent of dir) {
   if (!dirent.isDirectory()) {
     const { name } = dirent
     const ext = extname(name)
-    if (ext !== '.js' && ext !== '.jsx') continue // eslint-disable-line no-continue
+    if (ext !== '.js' && ext !== '.jsx') continue
     const filePath =
       basename(dirent.path) === name
         ? dirent.path // Some versions of Node.js give the full path as dirent.path.
@@ -100,14 +99,14 @@ for await (const dirent of dir) {
         .replace(
           // The following regex aims to capture all imports and reexports of local .js(x) files to replace it to .ts(x)
           // It's far from perfect and will have false positives and false negatives.
-          /((?:^|\n)(?:import(?:\s+\w+\s+from)?|export\s*\*\s*from|(?:import|export)\s*(?:\{[^}]*\}|\*\s*as\s+\w+\s)\s*from)\s*["']\.\.?\/[^'"]+\.)js(x?["'])/g, // eslint-disable-line max-len
+          /((?:^|\n)(?:import(?:\s+\w+\s+from)?|export\s*\*\s*from|(?:import|export)\s*(?:\{[^}]*\}|\*\s*as\s+\w+\s)\s*from)\s*["']\.\.?\/[^'"]+\.)js(x?["'])/g,
           '$1ts$2',
         )
         .replace(
           // The following regex aims to capture all local package.json imports.
           /\nimport \w+ from ['"]..\/([^'"]+\/)*package.json['"]\n/g,
           (originalImport) =>
-            `\n// eslint-disable-next-line @typescript-eslint/ban-ts-comment\n` +
+            `\n` +
             `// @ts-ignore We don't want TS to generate types for the package.json${originalImport}`,
         ),
     )
