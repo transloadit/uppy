@@ -18,6 +18,7 @@
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
+    "@uppy/core": "workspace:^",
     "typescript": "^5.8.3",
     "vue": "^3.5.14"
   },
