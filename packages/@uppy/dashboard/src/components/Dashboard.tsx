@@ -127,7 +127,6 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   hideUploadButton: boolean
   hideProgressAfterFinish: boolean
   doneButtonHandler: (() => void) | null
-  disableInformer: boolean
 }
 
 export default function Dashboard<M extends Meta, B extends Body>(
