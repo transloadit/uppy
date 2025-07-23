@@ -23,6 +23,10 @@
   },
   "exports": {
     ".": "./file-picker/index.js",
+    "./file-picker": "./file-picker/index.js",
+    "./provider": "./file-picker/provider.js",
+    "./url": "./file-picker/url.js",
+    "./instagram": "./file-picker/instagram.js",
     "./package.json": "./package.json"
   },
   "dependencies": {
