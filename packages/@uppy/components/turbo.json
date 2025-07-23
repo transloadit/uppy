@@ -6,7 +6,11 @@
       "outputs": ["lib/**"]
     },
     "build:css": {
-      "inputs": ["src/input.css", "src/**/*.{js,ts,jsx,tsx}"],
+      "inputs": [
+        "src/input.css",
+        "src/**/*.{js,ts,jsx,tsx}",
+        "tailwind.config.js"
+      ],
       "outputs": ["dist/styles.css"]
     }
   }
