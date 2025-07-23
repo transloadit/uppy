@@ -31,7 +31,6 @@
     ".": "./lib/index.js",
     "./lib/GooglePicker/googlePicker.js": "./lib/GooglePicker/googlePicker.js",
     "./lib/GooglePicker/icons.js": "./lib/GooglePicker/icons.js",
-    "./src/style.scss": "./src/style.scss",
     "./dist/style.min.css": "./dist/style.min.css",
     "./dist/style.css": "./dist/style.css",
     "./package.json": "./package.json"

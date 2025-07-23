@@ -33,7 +33,6 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./src/style.scss": "./src/style.scss",
     "./dist/style.min.css": "./dist/style.min.css",
     "./package.json": "./package.json"
   },

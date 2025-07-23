@@ -30,7 +30,6 @@
   },
   "exports": {
     ".": "./lib/index.js",
-    "./src/style.scss": "./src/style.scss",
     "./dist/style.min.css": "./dist/style.min.css",
     "./dist/style.css": "./dist/style.css",
     "./lib/Uppy.js": "./lib/Uppy.js",
