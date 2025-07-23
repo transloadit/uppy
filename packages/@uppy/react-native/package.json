@@ -4,6 +4,7 @@
   "version": "0.6.1",
   "main": "file-picker/index.js",
   "license": "MIT",
+  "sideEffects": false,
   "keywords": [
     "file uploader",
     "uppy",
@@ -19,6 +20,14 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    ".": "./file-picker/index.js",
+    "./file-picker": "./file-picker/index.js",
+    "./provider": "./file-picker/provider.js",
+    "./url": "./file-picker/url.js",
+    "./instagram": "./file-picker/instagram.js",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",

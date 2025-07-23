@@ -8,8 +8,8 @@ import type {
   PartialTreeFolderRoot,
   UnknownSearchProviderPlugin,
   UnknownSearchProviderPluginState,
+  ValidateableFile,
 } from '@uppy/core'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import classNames from 'classnames'

@@ -2,10 +2,10 @@ import { RequestClient } from '@uppy/companion-client'
 import {
   BasePlugin,
   type DefinePluginOpts,
+  EventManager,
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
-import EventManager from '@uppy/core/lib/EventManager.js'
 import { createAbortError } from '@uppy/utils/lib/AbortController'
 import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
 import {

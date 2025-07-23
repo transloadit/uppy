@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
@@ -44,6 +47,16 @@
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./dashboard": "./lib/Dashboard.js",
+    "./drag-drop": "./lib/DragDrop.js",
+    "./file-input": "./lib/FileInput.js",
+    "./progress-bar": "./lib/ProgressBar.js",
+    "./dashboard-modal": "./lib/DashboardModal.js",
+    "./status-bar": "./lib/StatusBar.js",
+    "./package.json": "./package.json"
+  },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
@@ -51,7 +64,6 @@
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
@@ -70,9 +82,6 @@
       "optional": true
     },
     "@uppy/screen-capture": {
-      "optional": true
-    },
-    "@uppy/status-bar": {
       "optional": true
     },
     "@uppy/webcam": {

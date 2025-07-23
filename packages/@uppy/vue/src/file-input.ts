@@ -7,7 +7,7 @@ export default defineComponent({
   name: 'FileInput',
   props: {
     uppy: {
-      type: Uppy<any, any>,
+      type: Object as PropType<Uppy<any, any>>,
       required: true,
     },
     props: {
