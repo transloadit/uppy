@@ -33,7 +33,6 @@
     "@uppy/progress-bar": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/store-default": "workspace:^",
     "@uppy/store-redux": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",

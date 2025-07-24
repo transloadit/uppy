@@ -1,24 +1,26 @@
-import type {
-  Body,
-  DefinePluginOpts,
-  Meta,
-  State,
-  Uppy,
-  UppyFile,
-} from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
+import type { Body, Meta, Uppy, UppyFile } from '@uppy/core'
 import emaFilter from '@uppy/utils/lib/emaFilter'
-import getTextDirection from '@uppy/utils/lib/getTextDirection'
+import type { I18n } from '@uppy/utils/lib/Translator'
 import type { ComponentChild } from 'preact'
-import { h } from 'preact'
-import packageJson from '../package.json' with { type: 'json' }
-import locale from './locale.js'
+import { Component, h } from 'preact'
 import type { StatusBarOptions } from './StatusBarOptions.js'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
+
+type StatusBarProps<M extends Meta, B extends Body> = {
+  uppy: Uppy<M, B>
+  hideProgressDetails: boolean
+  hideUploadButton: boolean
+  hideRetryButton: boolean
+  hidePauseResumeButton: boolean
+  hideCancelButton: boolean
+  hideAfterFinish: boolean
+  doneButtonHandler: (() => void) | null
+  i18n: I18n
+}
 
 function getUploadingState(
   error: unknown,
@@ -66,22 +68,15 @@ const defaultOptions = {
   hideRetryButton: false,
   hidePauseResumeButton: false,
   hideCancelButton: false,
-  showProgressDetails: false,
+  hideProgressDetails: false,
   hideAfterFinish: true,
   doneButtonHandler: null,
 } satisfies StatusBarOptions
 
-/**
- * StatusBar: renders a status bar with upload/pause/resume/cancel/retry buttons,
- * progress percentage and time remaining.
- */
-export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
-  DefinePluginOpts<StatusBarOptions, keyof typeof defaultOptions>,
-  M,
-  B
-> {
-  static VERSION = packageJson.version
-
+export default class StatusBar<
+  M extends Meta,
+  B extends Body,
+> extends Component<StatusBarProps<M, B>> {
   #lastUpdateTime!: ReturnType<typeof performance.now>
 
   #previousUploadedBytes!: number | null
@@ -90,24 +85,46 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
 
   #previousETA!: number | null
 
-  constructor(uppy: Uppy<M, B>, opts?: StatusBarOptions) {
-    super(uppy, { ...defaultOptions, ...opts })
-    this.id = this.opts.id || 'StatusBar'
-    this.title = 'StatusBar'
-    this.type = 'progressindicator'
+  componentDidMount(): void {
+    // Initialize ETA calculation variables
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = this.props.uppy
+      .getFiles()
+      .reduce((pv, file) => pv + (file.progress.bytesUploaded || 0), 0)
 
-    this.defaultLocale = locale
+    // Listen for upload start to reset ETA calculation
+    this.props.uppy.on('upload', this.#onUploadStart)
+  }
 
-    this.i18nInit()
+  componentWillUnmount(): void {
+    this.props.uppy.off('upload', this.#onUploadStart)
+  }
 
-    this.render = this.render.bind(this)
-    this.install = this.install.bind(this)
+  #onUploadStart = (): void => {
+    const { recoveredState } = this.props.uppy.getState()
+
+    this.#previousSpeed = null
+    this.#previousETA = null
+
+    if (recoveredState) {
+      this.#previousUploadedBytes = Object.values(recoveredState.files).reduce(
+        (pv, { progress }) => pv + (progress.bytesUploaded || 0),
+        0,
+      )
+      // We don't set `#lastUpdateTime` at this point because the upload won't
+      // actually resume until the user asks for it.
+      this.props.uppy.emit('restore-confirmed')
+      return
+    }
+
+    this.#lastUpdateTime = performance.now()
+    this.#previousUploadedBytes = 0
   }
 
   #computeSmoothETA(totalBytes: {
     uploaded: number
     total: number | null // null means indeterminate
-  }) {
+  }): number | null {
     if (totalBytes.total == null || totalBytes.total === 0) {
       return null
     }
@@ -124,8 +141,14 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       return Math.round((this.#previousETA ?? 0) / 100) / 10
     }
 
+    // Initialize previousUploadedBytes if it's null
+    if (this.#previousUploadedBytes == null) {
+      this.#previousUploadedBytes = totalBytes.uploaded
+      return null // Can't calculate speed on first call
+    }
+
     const uploadedBytesSinceLastTick =
-      totalBytes.uploaded - this.#previousUploadedBytes!
+      totalBytes.uploaded - this.#previousUploadedBytes
     this.#previousUploadedBytes = totalBytes.uploaded
 
     // uploadedBytesSinceLastTick can be negative in some cases (packet loss?)
@@ -134,18 +157,41 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       return Math.round((this.#previousETA ?? 0) / 100) / 10
     }
     const currentSpeed = uploadedBytesSinceLastTick / dt
+
+    // Guard against invalid speed values
+    if (!Number.isFinite(currentSpeed) || currentSpeed <= 0) {
+      return null
+    }
+
     const filteredSpeed =
       this.#previousSpeed == null
         ? currentSpeed
         : emaFilter(currentSpeed, this.#previousSpeed, speedFilterHalfLife, dt)
+
+    // Guard against invalid filtered speed
+    if (!Number.isFinite(filteredSpeed) || filteredSpeed <= 0) {
+      return null
+    }
+
     this.#previousSpeed = filteredSpeed
     const instantETA = remaining / filteredSpeed
 
-    const updatedPreviousETA = Math.max(this.#previousETA! - dt, 0)
+    // Guard against invalid instantETA
+    if (!Number.isFinite(instantETA) || instantETA < 0) {
+      return null
+    }
+
+    const updatedPreviousETA = Math.max((this.#previousETA ?? 0) - dt, 0)
     const filteredETA =
       this.#previousETA == null
         ? instantETA
         : emaFilter(instantETA, updatedPreviousETA, ETAFilterHalfLife, dt)
+
+    // Guard against invalid filteredETA
+    if (!Number.isFinite(filteredETA) || filteredETA < 0) {
+      return null
+    }
+
     this.#previousETA = filteredETA
     this.#lastUpdateTime = performance.now()
 
@@ -153,12 +199,12 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   startUpload = (): ReturnType<Uppy<M, B>['upload']> => {
-    return this.uppy.upload().catch((() => {
+    return this.props.uppy.upload().catch((() => {
       // Error logged in Core
     }) as () => undefined)
   }
 
-  render(state: State<M, B>): ComponentChild {
+  render(): ComponentChild {
     const {
       capabilities,
       files,
@@ -166,23 +212,19 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       totalProgress,
       error,
       recoveredState,
-    } = state
+    } = this.props.uppy.getState()
 
     const {
       newFiles,
       startedFiles,
       completeFiles,
-
       isUploadStarted,
       isAllComplete,
       isAllPaused,
       isUploadInProgress,
       isSomeGhost,
-    } = this.uppy.getObjectOfFilesPerState()
+    } = this.props.uppy.getObjectOfFilesPerState()
 
-    // If some state was recovered, we want to show Upload button/counter
-    // for all the files, because in this case it’s not an Upload button,
-    // but “Confirm Restore Button”
     const newFilesOrRecovered = recoveredState ? Object.values(files) : newFiles
     const resumableUploads = !!capabilities.resumableUploads
     const supportsUploadProgress = capabilities.uploadProgress !== false
@@ -213,91 +255,43 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       total: totalSize,
     })
 
-    return StatusBarUI({
-      error,
-      uploadState: getUploadingState(
-        error,
-        isAllComplete,
-        recoveredState,
-        state.files || {},
-      ),
-      allowNewUpload,
-      totalProgress,
-      totalSize,
-      totalUploadedSize,
-      isAllComplete: false,
-      isAllPaused,
-      isUploadStarted,
-      isUploadInProgress,
-      isSomeGhost,
-      recoveredState,
-      complete: completeFiles.length,
-      newFiles: newFilesOrRecovered.length,
-      numUploads: startedFiles.length,
-      totalETA,
-      files,
-      i18n: this.i18n,
-      uppy: this.uppy,
-      startUpload: this.startUpload,
-      doneButtonHandler: this.opts.doneButtonHandler,
-      resumableUploads,
-      supportsUploadProgress,
-      showProgressDetails: this.opts.showProgressDetails,
-      hideUploadButton: this.opts.hideUploadButton,
-      hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeButton: this.opts.hidePauseResumeButton,
-      hideCancelButton: this.opts.hideCancelButton,
-      hideAfterFinish: this.opts.hideAfterFinish,
-    })
-  }
-
-  onMount(): void {
-    // Set the text direction if the page has not defined one.
-    const element = this.el!
-    const direction = getTextDirection(element)
-    if (!direction) {
-      element.dir = 'ltr'
-    }
-  }
-
-  #onUploadStart = (): void => {
-    const { recoveredState } = this.uppy.getState()
-
-    this.#previousSpeed = null
-    this.#previousETA = null
-    if (recoveredState) {
-      this.#previousUploadedBytes = Object.values(recoveredState.files).reduce(
-        (pv, { progress }) => pv + (progress.bytesUploaded as number),
-        0,
-      )
-
-      // We don't set `#lastUpdateTime` at this point because the upload won't
-      // actually resume until the user asks for it.
-
-      this.uppy.emit('restore-confirmed')
-      return
-    }
-    this.#lastUpdateTime = performance.now()
-    this.#previousUploadedBytes = 0
-  }
-
-  install(): void {
-    const { target } = this.opts
-    if (target) {
-      this.mount(target, this)
-    }
-    this.uppy.on('upload', this.#onUploadStart)
-
-    // To cover the use case where the status bar is installed while the upload
-    // has started, we set `lastUpdateTime` right away.
-    this.#lastUpdateTime = performance.now()
-    this.#previousUploadedBytes = this.uppy
-      .getFiles()
-      .reduce((pv, file) => pv + (file.progress.bytesUploaded as number), 0)
-  }
-
-  uninstall(): void {
-    this.unmount()
-    this.uppy.off('upload', this.#onUploadStart)
+    return (
+      <StatusBarUI
+        error={error}
+        uploadState={getUploadingState(
+          error,
+          isAllComplete,
+          recoveredState,
+          files || {},
+        )}
+        allowNewUpload={allowNewUpload}
+        totalProgress={totalProgress}
+        totalSize={totalSize}
+        totalUploadedSize={totalUploadedSize}
+        isAllComplete={isAllComplete}
+        isAllPaused={isAllPaused}
+        isUploadStarted={isUploadStarted}
+        isUploadInProgress={isUploadInProgress}
+        isSomeGhost={isSomeGhost}
+        recoveredState={recoveredState}
+        complete={completeFiles.length}
+        newFiles={newFilesOrRecovered.length}
+        numUploads={startedFiles.length}
+        totalETA={totalETA}
+        files={files}
+        i18n={this.props.i18n}
+        uppy={this.props.uppy}
+        startUpload={this.startUpload}
+        doneButtonHandler={this.props.doneButtonHandler}
+        resumableUploads={resumableUploads}
+        supportsUploadProgress={supportsUploadProgress}
+        hideProgressDetails={this.props.hideProgressDetails}
+        hideUploadButton={this.props.hideUploadButton}
+        hideRetryButton={this.props.hideRetryButton}
+        hidePauseResumeButton={this.props.hidePauseResumeButton}
+        hideCancelButton={this.props.hideCancelButton}
+        hideAfterFinish={this.props.hideAfterFinish}
+      />
+    )
   }
 }
