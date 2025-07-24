@@ -27,7 +27,7 @@
     "e2e:cypress": "yarn workspace e2e cypress:open",
     "e2e:generate": "yarn workspace e2e generate-test",
     "e2e:headless": "yarn workspace e2e cypress:headless",
-    "e2e": "npm-run-all --parallel watch e2e:client start:companion:with-loadbalancer e2e:cypress",
+    "e2e": "npm-run-all --parallel build:watch e2e:client start:companion:with-loadbalancer e2e:cypress",
     "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "start:companion": "yarn workspace @uppy/companion start:dev",

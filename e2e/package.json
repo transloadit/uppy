@@ -28,7 +28,6 @@
     "@uppy/google-drive-picker": "workspace:^",
     "@uppy/google-photos-picker": "workspace:^",
     "@uppy/image-editor": "workspace:^",
-    "@uppy/informer": "workspace:^",
     "@uppy/instagram": "workspace:^",
     "@uppy/onedrive": "workspace:^",
     "@uppy/progress-bar": "workspace:^",

@@ -10,7 +10,6 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import Informer from '@uppy/informer'
 import { defaultPickerIcon } from '@uppy/provider-views'
 import StatusBar from '@uppy/status-bar'
 import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
@@ -1264,6 +1263,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       handleDragOver: this.handleDragOver,
       handleDragLeave: this.handleDragLeave,
       handleDrop: this.handleDrop,
+      // informer props
+      disableInformer: this.opts.disableInformer,
     })
   }
 
@@ -1341,12 +1342,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  #getInformerOpts() {
-    return {
-      // currently no options
-    }
-  }
-
   setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
@@ -1364,10 +1359,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   #getThumbnailGeneratorId() {
     return `${this.id}:ThumbnailGenerator`
-  }
-
-  #getInformerId() {
-    return `${this.id}:Informer`
   }
 
   install = (): void => {
@@ -1418,14 +1409,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       })
     }
 
-    if (!this.opts.disableInformer) {
-      this.uppy.use(Informer, {
-        id: this.#getInformerId(),
-        target: this,
-        ...this.#getInformerOpts(),
-      })
-    }
-
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
         id: this.#getThumbnailGeneratorId(),
@@ -1457,13 +1440,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   uninstall = (): void => {
-    if (!this.opts.disableInformer) {
-      const informer = this.uppy.getPlugin(`${this.id}:Informer`)
-      // Checking if this plugin exists, in case it was removed by uppy-core
-      // before the Dashboard was.
-      if (informer) this.uppy.removePlugin(informer)
-    }
-
     if (!this.opts.disableStatusBar) {
       const statusBar = this.uppy.getPlugin(`${this.id}:StatusBar`)
       if (statusBar) this.uppy.removePlugin(statusBar)

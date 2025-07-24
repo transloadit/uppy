@@ -29,7 +29,6 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
-    "@uppy/informer": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
@@ -41,6 +40,7 @@
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
+    "@uppy/core": "workspace:^",
     "@uppy/google-drive": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/url": "workspace:^",
