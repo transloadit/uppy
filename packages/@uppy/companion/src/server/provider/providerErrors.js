@@ -1,10 +1,12 @@
-const logger = require('../logger')
-const {
+import * as logger from '../logger.js'
+import {
   ProviderApiError,
-  ProviderUserError,
   ProviderAuthError,
+  ProviderUserError,
   parseHttpError,
-} = require('./error')
+} from './error.js'
+
+export { parseHttpError }
 
 /**
  *
@@ -18,7 +20,7 @@ const {
  * }} param0
  * @returns
  */
-async function withProviderErrorHandling({
+export async function withProviderErrorHandling({
   fn,
   tag,
   providerName,
@@ -71,7 +73,7 @@ async function withProviderErrorHandling({
   }
 }
 
-async function withGoogleErrorHandling(providerName, tag, fn) {
+export async function withGoogleErrorHandling(providerName, tag, fn) {
   return withProviderErrorHandling({
     fn,
     tag,
@@ -81,10 +83,4 @@ async function withGoogleErrorHandling(providerName, tag, fn) {
       (response.statusCode === 400 && response.body?.error === 'invalid_grant'), // Refresh token has expired or been revoked
     getJsonErrorMessage: (body) => body?.error?.message,
   })
-}
-
-module.exports = {
-  withProviderErrorHandling,
-  withGoogleErrorHandling,
-  parseHttpError,
 }

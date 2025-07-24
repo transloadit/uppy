@@ -1,27 +1,17 @@
-const mockOauthState = require('../mockoauthstate')()
+import request from 'supertest'
+import { describe, expect, test, vi } from 'vitest'
+import * as tokenService from '../src/server/helpers/jwt.js'
+import mockOauthState from './mockoauthstate.js'
+import { getServer, grantToken } from './mockserver.js'
 
-const request = require('supertest')
-const tokenService = require('../../src/server/helpers/jwt')
-const { getServer, grantToken } = require('../mockserver')
+vi.mock('express-prom-bundle')
+mockOauthState()
 
-jest.mock('../../src/server/helpers/oauth-state', () => ({
-  ...jest.requireActual('../../src/server/helpers/oauth-state'),
-  ...mockOauthState,
-}))
-
-const authServer = getServer()
-const authData = {
-  dropbox: { accessToken: 'token value' },
-  drive: { accessToken: 'token value' },
-}
-const token = tokenService.generateEncryptedAuthToken(
-  authData,
-  process.env.COMPANION_SECRET,
-)
+const secret = 'secret'
 
 describe('test authentication callback', () => {
-  test('authentication callback redirects to send-token url', () => {
-    return request(authServer)
+  test('authentication callback redirects to send-token url', async () => {
+    return request(await getServer())
       .get('/drive/callback')
       .expect(302)
       .expect((res) => {
@@ -31,9 +21,8 @@ describe('test authentication callback', () => {
       })
   })
 
-  test('authentication callback sets cookie', () => {
-    console.log(process.env.COMPANION_SECRET)
-    return request(authServer)
+  test('authentication callback sets cookie', async () => {
+    return request(await getServer())
       .get('/dropbox/callback')
       .expect(302)
       .expect((res) => {
@@ -47,17 +36,23 @@ describe('test authentication callback', () => {
         )
         const payload = tokenService.verifyEncryptedAuthToken(
           authToken,
-          process.env.COMPANION_SECRET,
+          secret,
           'dropbox',
         )
         expect(payload).toEqual({ dropbox: { accessToken: grantToken } })
       })
   })
 
-  test('the token gets sent via html', () => {
+  test('the token gets sent via html', async () => {
+    const authData = {
+      dropbox: { accessToken: 'token value' },
+      drive: { accessToken: 'token value' },
+    }
+    const token = tokenService.generateEncryptedAuthToken(authData, secret)
+
     // see mock ../../src/server/helpers/oauth-state above for state values
-    return request(authServer)
-      .get(`/dropbox/send-token?uppyAuthToken=${token}`)
+    return request(await getServer())
+      .get(`/dropbox/send-token?uppyAuthToken=${encodeURIComponent(token)}`)
       .expect(200)
       .expect((res) => {
         expect(res.text).toMatch(`var data = {"token":"${token}"};`)

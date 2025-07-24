@@ -1,6 +1,6 @@
-const { respondWithError } = require('../provider/error')
+import { respondWithError } from '../provider/error.js'
 
-async function list({ query, params, companion }, res, next) {
+export default async function list({ query, params, companion }, res, next) {
   const { providerUserSession } = companion
 
   try {
@@ -16,5 +16,3 @@ async function list({ query, params, companion }, res, next) {
     next(err)
   }
 }
-
-module.exports = list

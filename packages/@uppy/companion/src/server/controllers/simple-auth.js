@@ -1,8 +1,8 @@
-const tokenService = require('../helpers/jwt')
-const { respondWithError } = require('../provider/error')
-const logger = require('../logger')
+import * as tokenService from '../helpers/jwt.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
 
-async function simpleAuth(req, res, next) {
+export default async function simpleAuth(req, res, next) {
   const { providerName } = req.params
 
   try {
@@ -39,5 +39,3 @@ async function simpleAuth(req, res, next) {
     next(err)
   }
 }
-
-module.exports = simpleAuth

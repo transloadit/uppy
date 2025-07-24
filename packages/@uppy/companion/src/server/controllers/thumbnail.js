@@ -1,4 +1,4 @@
-const { respondWithError } = require('../provider/error')
+import { respondWithError } from '../provider/error.js'
 
 /**
  *
@@ -22,4 +22,4 @@ async function thumbnail(req, res, next) {
   }
 }
 
-module.exports = thumbnail
+export default thumbnail

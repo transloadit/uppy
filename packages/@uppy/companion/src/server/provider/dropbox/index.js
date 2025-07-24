@@ -1,16 +1,15 @@
-const Provider = require('../Provider')
-const adaptData = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
-const { MAX_AGE_REFRESH_TOKEN } = require('../../helpers/jwt')
-const logger = require('../../logger')
-
-const gotPromise = require('../../got')
-
 // From https://www.dropbox.com/developers/reference/json-encoding:
 //
 // This function is simple and has OK performance compared to more
 // complicated ones: http://jsperf.com/json-escape-unicode/4
+import got from 'got'
+import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
+import { prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
+
 const charsToEncode = /[\u007f-\uffff]/g
 function httpHeaderSafeJson(v) {
   return JSON.stringify(v).replace(charsToEncode, (c) => {
@@ -25,8 +24,6 @@ async function getUserInfo({ client }) {
 }
 
 async function getClient({ token, namespaced }) {
-  const got = await gotPromise
-
   const makeClient = (namespace) =>
     got.extend({
       prefixUrl: 'https://api.dropboxapi.com/2',
@@ -70,8 +67,8 @@ async function getClient({ token, namespaced }) {
   }
 }
 
-const getOauthClient = async () =>
-  (await gotPromise).extend({
+const getOauthClient = () =>
+  got.extend({
     prefixUrl: 'https://api.dropboxapi.com/oauth2',
   })
 
@@ -102,7 +99,7 @@ async function list({ client, directory, query }) {
 /**
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
  */
-class DropBox extends Provider {
+export default class Dropbox extends Provider {
   constructor(options) {
     super(options)
     this.needsCookieAuth = true
@@ -211,7 +208,7 @@ class DropBox extends Provider {
     return this.#withErrorHandling(
       'provider.dropbox.token.refresh.error',
       async () => {
-        const { access_token: accessToken } = await (await getOauthClient())
+        const { access_token: accessToken } = await getOauthClient()
           .post('token', {
             form: {
               refresh_token: refreshToken,
@@ -230,11 +227,9 @@ class DropBox extends Provider {
     return withProviderErrorHandling({
       fn,
       tag,
-      providerName: DropBox.oauthProvider,
+      providerName: Dropbox.oauthProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.error_summary,
     })
   }
 }
-
-module.exports = DropBox

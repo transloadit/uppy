@@ -1,7 +1,7 @@
-const Uploader = require('../Uploader')
-const logger = require('../logger')
+import logger from '../logger.js'
+import Uploader from '../Uploader.js'
 
-async function startDownUpload({ req, res, getSize, download }) {
+export async function startDownUpload({ req, res, getSize, download }) {
   logger.debug('Starting download stream.', null, req.id)
   const { stream, size: maybeSize } = await download()
 
@@ -48,5 +48,3 @@ async function startDownUpload({ req, res, getSize, download }) {
   // NOTE: the Uploader will continue running after the http request is responded
   res.status(200).json({ token: uploader.token })
 }
-
-module.exports = { startDownUpload }

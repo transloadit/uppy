@@ -1,8 +1,8 @@
-const logger = require('../logger')
-const { startDownUpload } = require('../helpers/upload')
-const { respondWithError } = require('../provider/error')
+import { startDownUpload } from '../helpers/upload.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
 
-async function get(req, res) {
+export default async function get(req, res) {
   const { id } = req.params
   const { providerUserSession } = req.companion
   const { provider } = req.companion
@@ -22,5 +22,3 @@ async function get(req, res) {
     res.status(500).json({ message: 'Failed to download file' })
   }
 }
-
-module.exports = get

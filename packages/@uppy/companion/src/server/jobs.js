@@ -1,12 +1,10 @@
-const schedule = require('node-schedule')
-const fs = require('node:fs')
-const path = require('node:path')
-const { setTimeout: sleep } = require('node:timers/promises')
-
-const got = require('./got')
-
-const { FILE_NAME_PREFIX } = require('./Uploader')
-const logger = require('./logger')
+import fs from 'node:fs'
+import path from 'node:path'
+import { setTimeout as sleep } from 'node:timers/promises'
+import got from 'got'
+import schedule from 'node-schedule'
+import * as logger from './logger.js'
+import Uploader from './Uploader.js'
 
 const cleanUpFinishedUploads = (dirPath) => {
   logger.info(
@@ -24,7 +22,7 @@ const cleanUpFinishedUploads = (dirPath) => {
       // if it does not contain FILE_NAME_PREFIX then it probably wasn't created by companion.
       // this is to avoid deleting unintended files, e.g if a wrong path was accidentally given
       // by a developer.
-      if (!file.startsWith(FILE_NAME_PREFIX)) {
+      if (!file.startsWith(Uploader.FILE_NAME_PREFIX)) {
         logger.info(`skipping file ${file}`, 'jobs.cleanup.skip')
         return
       }
@@ -56,7 +54,7 @@ const cleanUpFinishedUploads = (dirPath) => {
  *
  * @param {string} dirPath path to the directory which you want to clean
  */
-exports.startCleanUpJob = (dirPath) => {
+export function startCleanUpJob(dirPath) {
   logger.info('starting clean up job', 'jobs.cleanup.start')
   // run once a day
   schedule.scheduleJob('0 23 * * *', () => cleanUpFinishedUploads(dirPath))
@@ -67,7 +65,7 @@ async function runPeriodicPing({ urls, payload, requestTimeout }) {
   await Promise.all(
     urls.map(async (url) => {
       try {
-        await (await got).post(url, {
+        await got.post(url, {
           json: payload,
           timeout: { request: requestTimeout },
         })
@@ -80,14 +78,14 @@ async function runPeriodicPing({ urls, payload, requestTimeout }) {
 
 // This function is used to start a periodic POST request against a user-defined URL
 // or set of URLs, for example as a watch dog health check.
-exports.startPeriodicPingJob = async ({
+export async function startPeriodicPingJob({
   urls,
   interval = 60000,
   count,
   staticPayload = {},
   version,
   processId,
-}) => {
+}) {
   if (urls.length === 0) return
 
   logger.info('Starting periodic ping job', 'jobs.periodic.ping.start')

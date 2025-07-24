@@ -31,7 +31,7 @@ function adaptData(res) {
 /**
  * an example of a custom provider module. It implements @uppy/companion's Provider interface
  */
-class MyCustomProvider {
+export default class MyCustomProvider {
   static version = 2
 
   static get oauthProvider() {
@@ -76,5 +76,3 @@ class MyCustomProvider {
     return { stream: Readable.fromWeb(resp.body), size }
   }
 }
-
-module.exports = MyCustomProvider

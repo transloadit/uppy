@@ -1,27 +1,26 @@
-const express = require('express')
-const qs = require('node:querystring')
-const { randomUUID } = require('node:crypto')
-const helmet = require('helmet')
-const morgan = require('morgan')
-const { URL } = require('node:url')
-const session = require('express-session')
-const RedisStore = require('connect-redis').default
-
-const logger = require('../server/logger')
-const redis = require('../server/redis')
-const companion = require('../companion')
-const {
-  getCompanionOptions,
-  generateSecret,
+import { randomUUID } from 'node:crypto'
+import qs from 'node:querystring'
+import { URL } from 'node:url'
+import RedisStore from 'connect-redis'
+import express from 'express'
+import session from 'express-session'
+import helmet from 'helmet'
+import morgan from 'morgan'
+import * as companion from '../companion.js'
+import logger from '../server/logger.js'
+import * as redis from '../server/redis.js'
+import {
   buildHelpfulStartupMessage,
-} = require('./helper')
+  generateSecret,
+  getCompanionOptions,
+} from './helper.js'
 
 /**
  * Configures an Express app for running Companion standalone
  *
  * @returns {object}
  */
-module.exports = function server(inputCompanionOptions) {
+export default function server(inputCompanionOptions) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
