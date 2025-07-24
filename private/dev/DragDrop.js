@@ -1,7 +1,6 @@
 // The @uppy/ dependencies are resolved from source
 import Uppy from '@uppy/core'
-import DragDrop from '@uppy/drag-drop'
-import ProgressBar from '@uppy/progress-bar'
+import Dashboard from '@uppy/dashboard'
 import Tus from '@uppy/tus'
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
@@ -12,22 +11,19 @@ import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in
 console.log(import.meta.env)
 
 export default () => {
-  const uppyDragDrop = new Uppy({
+  const uppyDashboard = new Uppy({
     debug: true,
-    autoProceed: true,
+    autoProceed: false,
   })
-    .use(DragDrop, {
+    .use(Dashboard, {
       target: '#uppyDragDrop',
-    })
-    .use(ProgressBar, {
-      target: '#uppyDragDrop-progress',
-      hideAfterFinish: false,
+      inline: true,
     })
     .use(Tus, { endpoint: TUS_ENDPOINT })
 
-  window.uppy = uppyDragDrop
+  window.uppy = uppyDashboard
 
-  uppyDragDrop.on('complete', (result) => {
+  uppyDashboard.on('complete', (result) => {
     if (result.failed.length === 0) {
       console.log('Upload successful 😀')
     } else {

@@ -9284,26 +9284,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reduxjs/toolkit@npm:^1.9.3":
-  version: 1.9.7
-  resolution: "@reduxjs/toolkit@npm:1.9.7"
-  dependencies:
-    immer: "npm:^9.0.21"
-    redux: "npm:^4.2.1"
-    redux-thunk: "npm:^2.4.2"
-    reselect: "npm:^4.1.8"
-  peerDependencies:
-    react: ^16.9.0 || ^17.0.0 || ^18
-    react-redux: ^7.2.1 || ^8.0.2
-  peerDependenciesMeta:
-    react:
-      optional: true
-    react-redux:
-      optional: true
-  checksum: 10/11c718270bb378e5b26e172eb84cc549d6f263748b6f330b07ee9c366c6474b013fd410e5b2f65a5742e73b7873a3ac14e06cae4bb01480ba03b423c4fd92583
-  languageName: node
-  linkType: hard
-
 "@rolldown/pluginutils@npm:1.0.0-beta.19":
   version: 1.0.0-beta.19
   resolution: "@rolldown/pluginutils@npm:1.0.0-beta.19"
@@ -12313,8 +12293,6 @@ __metadata:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/utils": "workspace:^"
   languageName: unknown
@@ -12335,16 +12313,6 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@uppy/aws-s3-multipart@workspace:^, @uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart":
-  version: 0.0.0-use.local
-  resolution: "@uppy/aws-s3-multipart@workspace:packages/@uppy/aws-s3-multipart"
-  dependencies:
-    "@uppy/aws-s3": "workspace:^"
-    "@uppy/core": "workspace:^"
-    typescript: "npm:^5.8.3"
   languageName: unknown
   linkType: soft
 
@@ -12571,22 +12539,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/drag-drop@workspace:*, @uppy/drag-drop@workspace:^, @uppy/drag-drop@workspace:packages/@uppy/drag-drop":
-  version: 0.0.0-use.local
-  resolution: "@uppy/drag-drop@workspace:packages/@uppy/drag-drop"
-  dependencies:
-    "@uppy/utils": "workspace:^"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/drop-target@workspace:*, @uppy/drop-target@workspace:^, @uppy/drop-target@workspace:packages/@uppy/drop-target":
   version: 0.0.0-use.local
   resolution: "@uppy/drop-target@workspace:packages/@uppy/drop-target"
@@ -12626,22 +12578,6 @@ __metadata:
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
     preact: "npm:^10.5.13"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@uppy/file-input@workspace:^, @uppy/file-input@workspace:packages/@uppy/file-input":
-  version: 0.0.0-use.local
-  resolution: "@uppy/file-input@workspace:packages/@uppy/file-input"
-  dependencies:
-    "@uppy/utils": "workspace:^"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -12776,22 +12712,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/progress-bar@workspace:*, @uppy/progress-bar@workspace:^, @uppy/progress-bar@workspace:packages/@uppy/progress-bar":
-  version: 0.0.0-use.local
-  resolution: "@uppy/progress-bar@workspace:packages/@uppy/progress-bar"
-  dependencies:
-    "@uppy/utils": "workspace:^"
-    cssnano: "npm:^7.0.7"
-    postcss: "npm:^8.5.6"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.5.13"
-    sass: "npm:^1.89.2"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/provider-views@workspace:*, @uppy/provider-views@workspace:^, @uppy/provider-views@workspace:packages/@uppy/provider-views":
   version: 0.0.0-use.local
   resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
@@ -12857,9 +12777,6 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/file-input": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -12868,26 +12785,12 @@ __metadata:
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/file-input":
-      optional: true
-    "@uppy/progress-bar":
-      optional: true
     "@uppy/screen-capture":
       optional: true
     "@uppy/status-bar":
       optional: true
     "@uppy/webcam":
       optional: true
-  languageName: unknown
-  linkType: soft
-
-"@uppy/redux-dev-tools@workspace:^, @uppy/redux-dev-tools@workspace:packages/@uppy/redux-dev-tools":
-  version: 0.0.0-use.local
-  resolution: "@uppy/redux-dev-tools@workspace:packages/@uppy/redux-dev-tools"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
   languageName: unknown
   linkType: soft
 
@@ -12959,17 +12862,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/store-redux@workspace:*, @uppy/store-redux@workspace:^, @uppy/store-redux@workspace:packages/@uppy/store-redux":
-  version: 0.0.0-use.local
-  resolution: "@uppy/store-redux@workspace:packages/@uppy/store-redux"
-  dependencies:
-    jsdom: "npm:^26.1.0"
-    nanoid: "npm:^5.0.9"
-    redux: "npm:^4.0.0"
-    vitest: "npm:^3.2.4"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/svelte@workspace:*, @uppy/svelte@workspace:packages/@uppy/svelte":
   version: 0.0.0-use.local
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
@@ -12989,8 +12881,6 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
@@ -13115,19 +13005,10 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/file-input": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/file-input":
-      optional: true
-    "@uppy/progress-bar":
       optional: true
     "@uppy/status-bar":
       optional: true
@@ -17227,13 +17108,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deep-diff@npm:^0.3.5":
-  version: 0.3.8
-  resolution: "deep-diff@npm:0.3.8"
-  checksum: 10/d995680fa7913a2d5eda1f35a2676d29d97a64ac3ab56ac8b0511725eb74afc54476a2621fa5248e8b510de0e5357c30fc09efd69459346a74ad6b61fd4594d8
-  languageName: node
-  linkType: hard
-
 "deep-eql@npm:^5.0.1":
   version: 5.0.2
   resolution: "deep-eql@npm:5.0.2"
@@ -17738,16 +17612,13 @@ __metadata:
     "@parcel/transformer-vue": "npm:^2.9.3"
     "@uppy/audio": "workspace:^"
     "@uppy/aws-s3": "workspace:^"
-    "@uppy/aws-s3-multipart": "workspace:^"
     "@uppy/box": "workspace:^"
     "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
     "@uppy/drop-target": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
-    "@uppy/file-input": "workspace:^"
     "@uppy/form": "workspace:^"
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
@@ -17756,12 +17627,10 @@ __metadata:
     "@uppy/image-editor": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/store-default": "workspace:^"
-    "@uppy/store-redux": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
     "@uppy/transloadit": "workspace:^"
     "@uppy/tus": "workspace:^"
@@ -19100,9 +18969,7 @@ __metadata:
     "@angular/router": "npm:^18.0.0"
     "@uppy/angular": "workspace:*"
     "@uppy/core": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
     "@uppy/google-drive": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
     rxjs: "npm:~7.8.0"
@@ -19260,21 +19127,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-redux@workspace:examples/redux":
-  version: 0.0.0-use.local
-  resolution: "example-redux@workspace:examples/redux"
-  dependencies:
-    "@reduxjs/toolkit": "npm:^1.9.3"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/store-redux": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    redux: "npm:^4.2.1"
-    redux-logger: "npm:^3.0.6"
-    vite: "npm:^5.4.17"
-  languageName: unknown
-  linkType: soft
-
 "example-sveltekit@workspace:examples/sveltekit":
   version: 0.0.0-use.local
   resolution: "example-sveltekit@workspace:examples/sveltekit"
@@ -19285,8 +19137,6 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
@@ -19308,7 +19158,6 @@ __metadata:
     "@uppy/drop-target": "workspace:*"
     "@uppy/form": "workspace:*"
     "@uppy/image-editor": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/transloadit": "workspace:*"
     "@uppy/webcam": "workspace:*"
@@ -19326,8 +19175,6 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
-    "@uppy/progress-bar": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
@@ -21882,13 +21729,6 @@ __metadata:
   bin:
     image-size: bin/image-size.js
   checksum: 10/f41ec6cfccfa6471980e83568033a66ec53f84d1bcb70033e946a7db9c1b6bbf5645ec90fa5a8bdcdc84d86af0032014eff6fa078a60c2398dfce6676c46bdb7
-  languageName: node
-  linkType: hard
-
-"immer@npm:^9.0.21":
-  version: 9.0.21
-  resolution: "immer@npm:9.0.21"
-  checksum: 10/8455d6b4dc8abfe40f06eeec9bcc944d147c81279424c0f927a4d4905ae34e5af19ab6da60bcc700c14f51c452867d7089b3b9236f5a9a2248e39b4a09ee89de
   languageName: node
   linkType: hard
 
@@ -29750,33 +29590,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"redux-logger@npm:^3.0.6":
-  version: 3.0.6
-  resolution: "redux-logger@npm:3.0.6"
-  dependencies:
-    deep-diff: "npm:^0.3.5"
-  checksum: 10/bf98b53288423c345c58c1cd6b166513e173389d15ddef8ba3cb40459aa2efa309fc293407f1caebcfed0e7ab4ef21c32568e0a5153689ac6d1662eba74311a2
-  languageName: node
-  linkType: hard
-
-"redux-thunk@npm:^2.4.2":
-  version: 2.4.2
-  resolution: "redux-thunk@npm:2.4.2"
-  peerDependencies:
-    redux: ^4
-  checksum: 10/9bcb1193835128ecebf1e1a1b1a37bc15e8dfbdf6b6ee1b5566dd4c8e4ca05a81175f0c6dda34ab47f87053cd13b74d9f881d59446691d7b192831852b5d7a72
-  languageName: node
-  linkType: hard
-
-"redux@npm:^4.0.0, redux@npm:^4.2.1":
-  version: 4.2.1
-  resolution: "redux@npm:4.2.1"
-  dependencies:
-    "@babel/runtime": "npm:^7.9.2"
-  checksum: 10/371e4833b671193303a7dea7803c8fdc8e0d566740c78f580e0a3b77b4161da25037626900a2205a5d616117fa6ad09a4232e5a110bd437186b5c6355a041750
-  languageName: node
-  linkType: hard
-
 "reflect-metadata@npm:^0.2.0":
   version: 0.2.2
   resolution: "reflect-metadata@npm:0.2.2"
@@ -30020,7 +29833,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"reselect@npm:^4.0.0, reselect@npm:^4.1.8":
+"reselect@npm:^4.0.0":
   version: 4.1.8
   resolution: "reselect@npm:4.1.8"
   checksum: 10/199984d9872f71cd207f4aa6e6fd2bd48d95154f7aa9b3aee3398335f39f5491059e732f28c12e9031d5d434adab2c458dc8af5afb6564d0ad37e1644445e09c
@@ -33651,11 +33464,9 @@ __metadata:
     "@uppy/compressor": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
     "@uppy/drop-target": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
-    "@uppy/file-input": "workspace:^"
     "@uppy/form": "workspace:^"
     "@uppy/golden-retriever": "workspace:^"
     "@uppy/google-drive": "workspace:^"
@@ -33664,14 +33475,11 @@ __metadata:
     "@uppy/image-editor": "workspace:^"
     "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
-    "@uppy/progress-bar": "workspace:^"
     "@uppy/provider-views": "workspace:^"
-    "@uppy/redux-dev-tools": "workspace:^"
     "@uppy/remote-sources": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/store-default": "workspace:^"
-    "@uppy/store-redux": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
     "@uppy/transloadit": "workspace:^"
     "@uppy/tus": "workspace:^"

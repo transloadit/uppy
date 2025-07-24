@@ -1,8 +1,0 @@
-{
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "noEmit": true,
-    "allowJs": true
-  },
-  "include": ["./package.json", "./src/**/*.*"]
-}
