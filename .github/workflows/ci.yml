@@ -63,6 +63,11 @@ jobs:
         run: corepack yarn run build
       - name: Run tests
         run: corepack yarn run test
+        env:
+          COMPANION_DATADIR: ./output
+          COMPANION_DOMAIN: localhost:3020
+          COMPANION_PROTOCOL: http
+          COMPANION_REDIS_URL: redis://localhost:6379
 
   types:
     name: Types
