@@ -918,7 +918,10 @@ export class Uppy<
       this.#restricter.getMissingRequiredMetaFields(file)
 
     if (missingFields.length > 0) {
-      this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
+      this.setFileState(file.id, {
+        missingRequiredMetaFields: missingFields,
+        error: error.message,
+      })
       this.log(error.message)
       this.emit('restriction-failed', file, error)
       return false
@@ -1385,9 +1388,50 @@ export class Uppy<
 
   async #doRetryAll(): Promise<UploadResult<M, B> | undefined> {
     const filesToRetry = this.#getFilesToRetry()
+    if (filesToRetry.length === 0) {
+      return {
+        successful: [],
+        failed: [],
+      }
+    }
 
+    // Get files to retry and validate them BEFORE clearing errors
+    const filesToValidate = filesToRetry.reduce(
+      (acc, fileID) => {
+        acc[fileID] = this.getFile(fileID)
+        return acc
+      },
+      {} as Record<string, UppyFile<M, B>>,
+    )
+
+    // Re-validate restrictions for files being retried
+    try {
+      // Validate required meta fields - this will set error state for files that still fail
+      if (!this.#checkRequiredMetaFields(filesToValidate)) {
+        throw new RestrictionError(this.i18n('missingRequiredMetaField'))
+      }
+    } catch (err) {
+      // If validation fails, don't proceed with retry
+      this.#informAndEmit([err])
+      throw err
+    }
+
+    // After validation passes, get the updated list of files that are still eligible for retry
+    // (some files might have been marked with errors during validation)
+    const validFilesToRetry = this.#getFilesToRetry().filter(
+      (fileID) => filesToRetry.includes(fileID) && this.getFile(fileID).error,
+    )
+
+    if (validFilesToRetry.length === 0) {
+      return {
+        successful: [],
+        failed: [],
+      }
+    }
+
+    // Clear errors only for the files that will actually be retried
     const updatedFiles = { ...this.getState().files }
-    filesToRetry.forEach((fileID) => {
+    validFilesToRetry.forEach((fileID) => {
       updatedFiles[fileID] = {
         ...updatedFiles[fileID],
         isPaused: false,
@@ -1400,16 +1444,9 @@ export class Uppy<
       error: null,
     })
 
-    this.emit('retry-all', this.getFilesByIds(filesToRetry))
+    this.emit('retry-all', this.getFilesByIds(validFilesToRetry))
 
-    if (filesToRetry.length === 0) {
-      return {
-        successful: [],
-        failed: [],
-      }
-    }
-
-    const uploadID = this.#createUpload(filesToRetry, {
+    const uploadID = this.#createUpload(validFilesToRetry, {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
     })
     return this.#runUpload(uploadID)
