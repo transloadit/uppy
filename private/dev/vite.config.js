@@ -10,6 +10,7 @@ const config = {
   envDir: fileURLToPath(ROOT),
   esbuild: {
     jsx: 'automatic',
+    jsxImportSource: 'preact',
   },
   resolve: {
     alias: [

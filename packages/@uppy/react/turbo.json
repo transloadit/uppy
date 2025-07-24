@@ -2,11 +2,11 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@uppy/components#build", "@uppy/core#build"],
+      "dependsOn": ["^build", "@uppy/core#build"],
       "outputs": ["lib/**"]
     },
     "build:css": {
-      "dependsOn": ["build", "@uppy/components#build:css"],
+      "dependsOn": ["@uppy/components#build:css"],
       "outputs": ["dist/styles.css"]
     }
   }

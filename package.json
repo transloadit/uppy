@@ -20,14 +20,17 @@
     "check:ci": "yarn exec biome ci",
     "dev": "yarn workspace @uppy-dev/dev dev",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
-    "release": "PACKAGES=$(yarn workspaces list --json) yarn workspace @uppy-dev/release interactive",
     "start:companion": "yarn workspace @uppy/companion start:dev",
     "test": "turbo run test --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./examples/{react,vue,sveltekit}'",
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'"
+    "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
+    "version": "changeset version && corepack yarn install --mode=update-lockfile",
+    "release": "changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.5",
+    "@changesets/changelog-github": "^0.5.1",
+    "@changesets/cli": "^2.29.5",
     "npm-run-all": "^4.1.5",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3"
