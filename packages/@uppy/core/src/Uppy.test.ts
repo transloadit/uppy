@@ -5,8 +5,6 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
 import type { Locale } from '@uppy/utils/lib/Translator'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-// @ts-expect-error trying to import a file from outside the package
-import DeepFrozenStore from '../../../../e2e/cypress/fixtures/DeepFrozenStore.mjs'
 import BasePlugin, {
   type DefinePluginOpts,
   type PluginOpts,
@@ -15,6 +13,8 @@ import Core from './index.js'
 import { debugLogger } from './loggers.js'
 import AcquirerPlugin1 from './mocks/acquirerPlugin1.js'
 import AcquirerPlugin2 from './mocks/acquirerPlugin2.js'
+// @ts-expect-error untyped
+import DeepFrozenStore from './mocks/DeepFrozenStore.mjs'
 import InvalidPlugin from './mocks/invalidPlugin.js'
 import InvalidPluginWithoutId from './mocks/invalidPluginWithoutId.js'
 import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
@@ -23,7 +23,7 @@ import UIPlugin from './UIPlugin.js'
 import type { State } from './Uppy.js'
 
 const sampleImage = fs.readFileSync(
-  path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
+  path.join(__dirname, '../../compressor/fixtures/image.jpg'),
 )
 
 // @ts-expect-error type object can be second argument

@@ -1,7 +1,0 @@
-{
-  "name": "@types/jasmine",
-  "version": "0.0.0",
-  "private": true,
-  "description": "This package is here to avoid type conflict between @types/jasmine used by Angular and @types/mocha used by everything else.",
-  "types": "types.d.ts"
-}
