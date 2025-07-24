@@ -33,6 +33,7 @@
     "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
+    "@uppy/core": "workspace:^",
     "jsdom": "^26.1.0",
     "nock": "^13.1.0",
     "typescript": "^5.8.3",

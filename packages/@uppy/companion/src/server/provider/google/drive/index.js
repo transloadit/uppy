@@ -120,7 +120,9 @@ class Drive extends Provider {
       async () => {
         const directory = options.directory || 'root'
         const query = options.query || {}
-        const { token } = options
+        const {
+          providerUserSession: { accessToken: token },
+        } = options
 
         const isRoot = directory === 'root'
         const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
@@ -204,7 +206,7 @@ class Drive extends Provider {
     )
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 

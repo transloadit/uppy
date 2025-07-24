@@ -36,7 +36,7 @@ async function refreshToken({
   )
 }
 
-async function logout({ token }) {
+async function logout({ providerUserSession: { accessToken: token } }) {
   return withGoogleErrorHandling(
     'google',
     'provider.google.logout.error',
