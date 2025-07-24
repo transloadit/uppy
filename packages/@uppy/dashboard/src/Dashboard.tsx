@@ -171,7 +171,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailWidth?: number
   trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
-  locale?: LocaleStrings<typeof locale> & typeof StatusBarLocale
+  locale?: LocaleStrings<typeof locale>
 }
 
 export type DashboardOptions<
@@ -1319,7 +1319,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       hideCancelButton,
       showProgressDetails,
       hideAfterFinish: hideProgressAfterFinish,
-      locale: l,
+      locale: l, // Dashboard locale is partial, StatusBar will handle merging with defaults
       doneButtonHandler,
     }
   }
