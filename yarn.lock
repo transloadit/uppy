@@ -12556,6 +12556,7 @@ __metadata:
     "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/utils": "workspace:^"
+    "@vitest/browser": "npm:^3.2.4"
     cssnano: "npm:^7.0.7"
     nanoid: "npm:^5.0.9"
     postcss: "npm:^8.5.6"
@@ -12563,6 +12564,7 @@ __metadata:
     preact: "npm:^10.5.13"
     sass: "npm:^1.89.2"
     typescript: "npm:^5.8.3"
+    vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
