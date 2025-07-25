@@ -31,13 +31,22 @@ function isReactNative() {
 // fingerprint handling take charge.
 export default function getFingerprint<M extends Meta, B extends Body>(
   uppyFile: UppyFile<M, B>,
+  extraKeys?: string[]
 ): tus.UploadOptions['fingerprint'] {
   return (file, options) => {
     if (isCordova() || isReactNative()) {
       return tus.defaultOptions.fingerprint(file, options)
     }
 
-    const uppyFingerprint = ['tus', uppyFile.id, options.endpoint].join('-')
+    let uppyFingerprintParts = ['tus', uppyFile.id, options.endpoint]
+
+    if (extraKeys && Array.isArray(extraKeys)) {
+      const extras = extraKeys.map((key) => String(uppyFile.meta?.[key] ?? '')).join(':')
+      uppyFingerprintParts.push(extras)
+    }
+
+    const uppyFingerprint = uppyFingerprintParts.join('-')
+
 
     return Promise.resolve(uppyFingerprint)
   }
