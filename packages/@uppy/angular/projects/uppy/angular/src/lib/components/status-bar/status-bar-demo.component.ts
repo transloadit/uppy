@@ -4,6 +4,7 @@ import FileInput from "@uppy/file-input";
 import type * as StatusBar from "@uppy/status-bar";
 import Tus from "@uppy/tus";
 import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
+import { StatusBarComponent } from "./status-bar.component";
 
 @Component({
 	selector: "uppy-status-bar-demo",
@@ -12,6 +13,8 @@ import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
     <uppy-status-bar [uppy]="uppy" [props]="props"></uppy-status-bar>
   `,
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [StatusBarComponent],
 })
 export class StatusBarDemoComponent<M extends Meta, B extends Body>
 	implements OnInit

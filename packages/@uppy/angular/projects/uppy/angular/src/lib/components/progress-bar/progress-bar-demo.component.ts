@@ -9,6 +9,9 @@ import { Uppy } from "@uppy/core";
 import type { ProgressBarOptions } from "@uppy/progress-bar";
 import Tus from "@uppy/tus";
 import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
+import { ProgressBarComponent } from "./progress-bar.component";
+import { DragDropComponent } from "../drag-drop/drag-drop.component";
+import { CommonModule } from "@angular/common";
 
 @Component({
 	selector: "uppy-progress-bar-demo",
@@ -56,6 +59,8 @@ import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
     </section>
   `,
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [ProgressBarComponent, DragDropComponent, CommonModule],
 })
 export class ProgressBarDemoComponent<M extends Meta, B extends Body>
 	implements OnInit
@@ -81,9 +86,9 @@ export class ProgressBarDemoComponent<M extends Meta, B extends Body>
 
 	updateFileList =
 		(target: string) =>
-		(file, response): void => {
-			this[target] = [
-				...this[target],
+		(file: any, response: any): void => {
+			(this as any)[target] = [
+				...(this as any)[target],
 				{ url: response.uploadURL, fileName: file.name },
 			];
 			this.cdr.markForCheck();
