@@ -3,7 +3,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": ["jasmine"],
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true
   },
   "files": ["src/main.ts"],
   "include": ["src/**/*.d.ts"]
