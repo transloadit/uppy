@@ -2,7 +2,6 @@ import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Form from '@uppy/form'
 import ImageEditor from '@uppy/image-editor'
-import ProgressBar from '@uppy/progress-bar'
 import RemoteSources from '@uppy/remote-sources'
 import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Webcam from '@uppy/webcam'
@@ -10,7 +9,6 @@ import Webcam from '@uppy/webcam'
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 import '@uppy/image-editor/dist/style.css'
-import '@uppy/progress-bar/dist/style.css'
 
 const TRANSLOADIT_KEY = '35c1aed03f5011e982b6afe82599b6a0'
 // A trivial template that resizes images, just for example purposes.
@@ -182,15 +180,13 @@ const uppyWithoutUI = new Uppy({
   restrictions: {
     allowedFileTypes: ['.png'],
   },
+}).use(Transloadit, {
+  waitForEncoding: true,
+  params: {
+    auth: { key: TRANSLOADIT_KEY },
+    template_id: TEMPLATE_ID,
+  },
 })
-  .use(Transloadit, {
-    waitForEncoding: true,
-    params: {
-      auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
-    },
-  })
-  .use(ProgressBar, { target: '#upload-progress' })
 
 window.doUpload = (event) => {
   const resultEl = document.querySelector('#upload-result')
