@@ -9,9 +9,7 @@
     "packages/@uppy/*",
     "packages/@uppy/angular/projects/uppy/*",
     "packages/uppy",
-    "private/*",
-    "test/endtoend",
-    "e2e"
+    "private/*"
   ],
   "scripts": {
     "build": "turbo run build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
@@ -22,39 +20,20 @@
     "check:ci": "yarn exec biome ci",
     "dev": "yarn workspace @uppy-dev/dev dev",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
-    "e2e:ci": "start-server-and-test 'npm-run-all --parallel e2e:client start:companion:with-loadbalancer' '1234|3020' e2e:headless",
-    "e2e:client": "yarn workspace e2e client:start",
-    "e2e:cypress": "yarn workspace e2e cypress:open",
-    "e2e:generate": "yarn workspace e2e generate-test",
-    "e2e:headless": "yarn workspace e2e cypress:headless",
-    "e2e": "npm-run-all --parallel build:watch e2e:client start:companion:with-loadbalancer e2e:cypress",
-    "size": "echo 'JS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.js | gzip | wc -c && echo 'CSS Bundle mingz:' && cat ./packages/uppy/dist/uppy.min.css | gzip | wc -c",
     "start:companion": "yarn workspace @uppy/companion start:dev",
-    "start:companion:with-loadbalancer": "e2e/start-companion-with-load-balancer.mjs",
-    "test": "turbo run test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
+    "test": "turbo run test --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./examples/{react,vue,sveltekit}'",
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "uploadcdn": "yarn workspace uppy exec -- node upload-to-cdn.js",
     "version": "changeset version && corepack yarn install --mode=update-lockfile",
     "release": "changeset publish"
-  },
-  "resolutions": {
-    "@types/react": "^18",
-    "@types/webpack-dev-server": "^4",
-    "p-queue": "patch:p-queue@npm%3A8.0.1#~/.yarn/patches/p-queue-npm-8.0.1-fe1ddcd827.patch",
-    "resize-observer-polyfill": "patch:resize-observer-polyfill@npm%3A1.5.1#./.yarn/patches/resize-observer-polyfill-npm-1.5.1-603120e8a0.patch",
-    "start-server-and-test": "patch:start-server-and-test@npm:1.14.0#.yarn/patches/start-server-and-test-npm-1.14.0-841aa34fdf.patch",
-    "uuid@^8.3.2": "patch:uuid@npm:8.3.2#.yarn/patches/uuid-npm-8.3.2-eca0baba53.patch"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.5",
     "@changesets/changelog-github": "^0.5.1",
     "@changesets/cli": "^2.29.5",
     "npm-run-all": "^4.1.5",
-    "start-server-and-test": "^1.14.0",
     "turbo": "^2.5.4",
-    "typescript": "^5.8.3",
-    "vue-template-compiler": "workspace:*"
+    "typescript": "^5.8.3"
   },
   "packageManager": "yarn@4.4.1+sha224.fd21d9eb5fba020083811af1d4953acc21eeb9f6ff97efd1b3f9d4de",
   "engines": {
