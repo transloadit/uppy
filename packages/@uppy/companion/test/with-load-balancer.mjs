@@ -71,6 +71,8 @@ const startCompanion = ({ name, port }) =>
       COMPANION_ENABLE_URL_ENDPOINT: 'true',
       COMPANION_LOGGER_PROCESS_NAME: name,
       COMPANION_CLIENT_ORIGINS: 'true',
+      COMPANION_DATADIR: '/tmp',
+      COMPANION_DOMAIN: 'localhost:3020',
     },
   })
 
