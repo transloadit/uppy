@@ -14,9 +14,13 @@
     "@uppy/react": "latest",
     "@uppy/tus": "latest",
     "@uppy/webcam": "latest",
+    "@uppy/transloadit": "latest",
+    "@uppy/xhr-upload": "latest",
     "next": "14.0.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "@tus/server": "0.13.3",
+    "@tus/file-store": "0.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",
