@@ -2,4 +2,4 @@
 "@uppy/core": patch
 ---
 
-Resolve stale state in checkAndUpdateFileState
+Resolve stale state in `checkAndUpdateFileState`
