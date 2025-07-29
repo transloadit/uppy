@@ -12293,7 +12293,6 @@ __metadata:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/utils": "workspace:^"
   languageName: unknown
   linkType: soft
@@ -12859,16 +12858,9 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/progress-bar":
-      optional: true
-    "@uppy/status-bar":
       optional: true
   languageName: unknown
   linkType: soft
@@ -12983,12 +12975,9 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/status-bar":
       optional: true
   languageName: unknown
   linkType: soft
