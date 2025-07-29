@@ -1,0 +1,50 @@
+---
+"@uppy/angular": patch
+"@uppy/google-photos-picker": patch
+"@uppy/google-drive-picker": patch
+"@uppy/thumbnail-generator": patch
+"@uppy/aws-s3-multipart": patch
+"@uppy/companion-client": patch
+"@uppy/golden-retriever": patch
+"@uppy/redux-dev-tools": patch
+"@uppy/provider-views": patch
+"@uppy/remote-sources": patch
+"@uppy/screen-capture": patch
+"@uppy/store-default": patch
+"@uppy/google-drive": patch
+"@uppy/image-editor": patch
+"@uppy/progress-bar": patch
+"@uppy/react-native": patch
+"@uppy/drop-target": patch
+"@uppy/store-redux": patch
+"@uppy/transloadit": patch
+"@uppy/components": patch
+"@uppy/compressor": patch
+"@uppy/file-input": patch
+"@uppy/status-bar": patch
+"@uppy/xhr-upload": patch
+"@uppy/dashboard": patch
+"@uppy/drag-drop": patch
+"@uppy/instagram": patch
+"@uppy/facebook": patch
+"@uppy/informer": patch
+"@uppy/onedrive": patch
+"@uppy/unsplash": patch
+"@uppy/dropbox": patch
+"@uppy/locales": patch
+"@uppy/aws-s3": patch
+"@uppy/webcam": patch
+"@uppy/webdav": patch
+"@uppy/audio": patch
+"@uppy/react": patch
+"@uppy/utils": patch
+"@uppy/core": patch
+"@uppy/form": patch
+"@uppy/zoom": patch
+"@uppy/box": patch
+"@uppy/tus": patch
+"@uppy/url": patch
+"@uppy/vue": patch
+---
+
+Define "files" in package.json
