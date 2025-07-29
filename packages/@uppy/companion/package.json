@@ -99,7 +99,7 @@
     "lib/"
   ],
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsc --build tsconfig.build.json",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "start": "node ./lib/standalone/start-server.js",
     "start:dev": "bash start-dev",
