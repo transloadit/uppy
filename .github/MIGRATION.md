@@ -53,7 +53,7 @@ uppy.on('progress', (progress) => {
 
 **Migration steps:**
 1. Remove `@uppy/progress-bar` from your dependencies
-2. Create a custom progress indicator using Uppy's `progress` or `upload-progress` events
+2. Create a custom progress indicator using Uppy's `progress` or `upload-progress` events.
 3. Style your progress bar according to your design system.
 
 ### @uppy/drag-drop and @uppy/file-input removed
