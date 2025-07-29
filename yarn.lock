@@ -11340,7 +11340,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=10.0.0, @types/node@npm:^20.0.0":
+"@types/node@npm:*, @types/node@npm:>=10.0.0":
   version: 20.14.7
   resolution: "@types/node@npm:20.14.7"
   dependencies:
@@ -11353,6 +11353,15 @@ __metadata:
   version: 12.20.55
   resolution: "@types/node@npm:12.20.55"
   checksum: 10/1f916a06fff02faadb09a16ed6e31820ce170798b202ef0b14fc244bfbd721938c54a3a99836e185e4414ca461fe96c5bb5c67c3d248f153555b7e6347f061dd
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^20.19.0":
+  version: 20.19.9
+  resolution: "@types/node@npm:20.19.9"
+  dependencies:
+    undici-types: "npm:~6.21.0"
+  checksum: 10/7631e541fb3cdef57d73b626cbcf4365ae5979345ee920429f0de0acceff69dbf843d4815404b58eb3957bace3f825d0ea38889051d2d218301c5dc48ada6cff
   languageName: node
   linkType: hard
 
@@ -11814,7 +11823,7 @@ __metadata:
     "@types/lodash": "npm:4.14.191"
     "@types/morgan": "npm:1.7.37"
     "@types/ms": "npm:0.7.31"
-    "@types/node": "npm:^20.0.0"
+    "@types/node": "npm:^20.19.0"
     "@types/react": "npm:^18.0.0"
     "@types/request": "npm:2.48.8"
     "@types/webpack": "npm:^5.28.0"
@@ -18092,7 +18101,6 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/instagram": "workspace:*"
-    "@uppy/react": "workspace:*"
     "@uppy/react-native": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/url": "workspace:*"
@@ -31821,6 +31829,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10/0097779d94bc0fd26f0418b3a05472410408877279141ded2bd449167be1aed7ea5b76f756562cb3586a07f251b90799bab22d9019ceba49c037c76445f7cddd
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.21.0":
+  version: 6.21.0
+  resolution: "undici-types@npm:6.21.0"
+  checksum: 10/ec8f41aa4359d50f9b59fa61fe3efce3477cc681908c8f84354d8567bb3701fafdddf36ef6bff307024d3feb42c837cf6f670314ba37fc8145e219560e473d14
   languageName: node
   linkType: hard
 

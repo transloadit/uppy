@@ -14,7 +14,6 @@
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
     "@uppy/instagram": "workspace:*",
-    "@uppy/react": "workspace:*",
     "@uppy/react-native": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/url": "workspace:*",
