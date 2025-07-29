@@ -13,7 +13,8 @@
     "build": "tsc --build tsconfig.build.json",
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
     "typecheck": "tsc --build",
-    "test": "vitest run --environment=jsdom --silent='passed-only'"
+    "test": "vitest run --silent='passed-only'",
+    "test:e2e": "vitest watch --project browser --browser.headless false"
   },
   "keywords": [
     "file uploader",
@@ -54,6 +55,7 @@
     "@uppy/status-bar": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
+    "@vitest/browser": "^3.2.4",
     "cssnano": "^7.0.7",
     "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
