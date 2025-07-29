@@ -1,5 +1,22 @@
 # @uppy/dashboard
 
+## 4.4.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/informer@4.3.0
+  - @uppy/provider-views@4.5.0
+  - @uppy/status-bar@4.2.0
+  - @uppy/thumbnail-generator@4.2.0
+  - @uppy/utils@6.2.0
+
 ## 4.3.4
 
 Released: 2025-05-18
@@ -47,8 +64,8 @@ Included in: Uppy v4.6.0
 Released: 2024-10-15
 Included in: Uppy v4.5.0
 
-- @uppy/dashboard: Dashboard - convert some files to typescript  (Evgenia Karunus / #5367)
-- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input:  `.handleInputChange()` - use `.currentTarget`; clear the input using `''` (Evgenia Karunus / #5381)
+- @uppy/dashboard: Dashboard - convert some files to typescript (Evgenia Karunus / #5367)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input: `.handleInputChange()` - use `.currentTarget`; clear the input using `''` (Evgenia Karunus / #5381)
 
 ## 4.1.0
 
@@ -215,7 +232,7 @@ Included in: Uppy v3.16.0
 Released: 2023-09-05
 Included in: Uppy v3.15.0
 
-- @uppy/dashboard: when showAddFilesPanel  is true, aria-hidden should be the opposite (Artur Paikin / #4643)
+- @uppy/dashboard: when showAddFilesPanel is true, aria-hidden should be the opposite (Artur Paikin / #4643)
 
 ## 3.4.1
 

@@ -1,5 +1,11 @@
 # @uppy/store-default
 
+## 4.3.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
 ## 4.1.2
 
 Released: 2024-12-05

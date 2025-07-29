@@ -1,5 +1,27 @@
 # @uppy/remote-sources
 
+## 2.4.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/box@3.3.0
+  - @uppy/dashboard@4.4.0
+  - @uppy/dropbox@4.3.0
+  - @uppy/facebook@4.3.0
+  - @uppy/google-drive@4.4.0
+  - @uppy/instagram@4.3.0
+  - @uppy/onedrive@4.3.0
+  - @uppy/unsplash@4.4.0
+  - @uppy/url@4.3.0
+  - @uppy/zoom@3.3.0
+
 ## 2.3.3
 
 Released: 2025-05-18

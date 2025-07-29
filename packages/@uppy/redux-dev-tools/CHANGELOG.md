@@ -1,5 +1,17 @@
 # @uppy/redux-dev-tools
 
+## 4.1.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+
 ## 4.0.1
 
 Released: 2024-10-31

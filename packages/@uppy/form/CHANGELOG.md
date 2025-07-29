@@ -1,5 +1,18 @@
 # @uppy/form
 
+## 4.2.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/utils@6.2.0
+
 ## 4.1.0
 
 Released: 2025-01-06
@@ -83,6 +96,7 @@ Released: 2022-04-27
 Included in: Uppy v2.9.4
 
 - @uppy/form: refactor to ESM (Antoine du Hamel / #3654)
+
 ## 3.0.0
 
 Released: 2022-08-22

@@ -1,5 +1,11 @@
 # @uppy/store-redux
 
+## 4.1.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
 ## 4.0.2
 
 Released: 2025-01-06
