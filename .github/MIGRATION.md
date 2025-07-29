@@ -21,3 +21,91 @@ This is a temporary file that can be updated with any pending migration changes,
 ### @uppy/informer merged into @uppy/dashboard
 
 The `@uppy/informer` plugin has been merged into `@uppy/dashboard` to reduce bundle size and improve maintainability. The `@uppy/informer` package is no longer maintained as a standalone package and should be removed from your dependencies.
+
+### @uppy/progress-bar removed
+
+The `@uppy/progress-bar` plugin has been removed as it provided minimal functionality that can be easily replicated with Uppy's built-in state management.
+
+**Before:**
+```js
+import ProgressBar from '@uppy/progress-bar'
+
+uppy.use(ProgressBar, { target: '#progress' })
+```
+
+**After:**
+```js
+// Custom progress bar using Uppy state
+uppy.on('upload-progress', (file, progress) => {
+  const progressElement = document.getElementById('progress')
+  progressElement.style.width = `${progress.percentage}%`
+  progressElement.textContent = `${progress.percentage}%`
+})
+
+// Or listen to total progress
+uppy.on('progress', (progress) => {
+  const progressElement = document.getElementById('progress')
+  progressElement.style.width = `${progress}%`
+  progressElement.textContent = `${progress}%`
+})
+```
+
+**Migration steps:**
+1. Remove `@uppy/progress-bar` from your dependencies
+2. Create a custom progress indicator using Uppy's `progress` or `upload-progress` events
+3. Style your progress bar according to your design system.
+
+### @uppy/drag-drop and @uppy/file-input removed
+
+The `@uppy/drag-drop` and `@uppy/file-input` plugins have been removed in favor of more flexible, headless hooks. These hooks provide the same functionality but with maximum customization freedom.
+
+**Before:**
+```js
+import DragDrop from '@uppy/drag-drop'
+import FileInput from '@uppy/file-input'
+
+uppy
+  .use(DragDrop, { target: '#drag-drop' })
+  .use(FileInput, { target: '#file-input' })
+```
+
+**After:**
+```js
+// React example
+import { useDropzone, useFileInput } from '@uppy/react'
+
+function MyUploader() {
+  const { getRootProps, getInputProps, isDragging } = useDropzone()
+  const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
+
+  return (
+    <div>
+      <input {...getInputProps()} className="hidden" />
+      <div {...getRootProps()} className={`dropzone ${isDragging ? 'dragging' : ''}`}>
+        <input {...getFileInputProps()} className="hidden" />
+        <button {...getButtonProps()}>Choose files</button>
+        <p>or drag and drop files here</p>
+      </div>
+    </div>
+  )
+}
+```
+
+**Alternative: Use Dashboard**
+```js
+// If you want a complete UI solution, use Dashboard instead
+import Dashboard from '@uppy/dashboard'
+
+uppy.use(Dashboard, {
+  target: '#uppy-dashboard',
+  inline: true,
+})
+```
+
+**Migration steps:**
+1. Remove `@uppy/drag-drop` and `@uppy/file-input` from your dependencies
+2. Choose one of these approaches:
+   - Use the framework-specific hooks (`@uppy/react`, `@uppy/vue`, `@uppy/svelte`) for maximum flexibility
+   - Use `@uppy/dashboard` for a complete, ready-to-use UI solution
+3. Replace your existing components with custom implementations using the hooks or Dashboard
+4. See [examples/](../examples/) for complete implementation examples

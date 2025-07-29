@@ -1,20 +1,18 @@
 /** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
 import Uppy from '@uppy/core'
-import { Dashboard, DashboardModal, DragDrop } from '@uppy/react'
+import { Dashboard, DashboardModal } from '@uppy/react'
 import RemoteSources from '@uppy/remote-sources'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import React, { useState } from 'react'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
-import '@uppy/drag-drop/dist/style.css'
 
 const uppyDashboard = new Uppy({ id: 'dashboard' }).use(RemoteSources, {
   companionUrl: 'http://companion.uppy.io',
   sources: ['GoogleDrive', 'OneDrive', 'Unsplash', 'Zoom', 'Url'],
 })
 const uppyModal = new Uppy({ id: 'modal' })
-const uppyDragDrop = new Uppy({ id: 'drag-drop' }).use(ThumbnailGenerator)
 
 export default function App() {
   const [open, setOpen] = useState(false)
@@ -22,8 +20,7 @@ export default function App() {
   // We are using Parcel in an odd way and I don't think there is an easy fix.
   // const files = useUppyState(uppyDashboard, (state) => state.files)
 
-  // drag-drop has no visual output so we test it via the uppy instance
-  window.uppy = uppyDragDrop
+  // window.uppy = uppyDashboard // (if you want to expose for tests)
 
   return (
     <div
@@ -41,7 +38,6 @@ export default function App() {
 
       <Dashboard id="dashboard" uppy={uppyDashboard} />
       <DashboardModal id="modal" open={open} uppy={uppyModal} />
-      <DragDrop id="drag-drop" uppy={uppyDragDrop} />
     </div>
   )
 }

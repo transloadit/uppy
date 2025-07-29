@@ -60,9 +60,6 @@
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
-    "@uppy/file-input": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "react": "^18.0.0 || ^19.0.0",
@@ -70,15 +67,6 @@
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
-      "optional": true
-    },
-    "@uppy/drag-drop": {
-      "optional": true
-    },
-    "@uppy/file-input": {
-      "optional": true
-    },
-    "@uppy/progress-bar": {
       "optional": true
     },
     "@uppy/screen-capture": {
