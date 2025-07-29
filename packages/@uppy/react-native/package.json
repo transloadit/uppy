@@ -24,14 +24,14 @@
     "@uppy/core": "workspace:*",
     "@uppy/instagram": "workspace:^",
     "@uppy/url": "workspace:^",
-    "expo-document-picker": "^10.3.0",
-    "expo-image-picker": "^13.3.1",
-    "react-native-super-grid": "*"
+    "expo-document-picker": "^12.0.0",
+    "expo-image-picker": "^15.0.0",
+    "react-native-super-grid": "^6.0.0"
   },
   "devDependencies": {
-    "expo": ">=33.0.0",
+    "expo": ">=52.0.0",
     "react": "^18.0.0",
-    "react-native": "^0.64.0"
+    "react-native": "^0.76.0"
   },
   "peerDependencies": {
     "expo": ">=33.0.0",
