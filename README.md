@@ -67,7 +67,7 @@ Uppy has first-class support for plain JS/HTML,
 [React](https://uppy.io/docs/react/), [Svelte](https://uppy.io/docs/svelte/),
 [Vue](https://uppy.io/docs/vue/), and [Angular](https://uppy.io/docs/angular/).
 
-For the supported frameworks Uppy offers three ways to build user interfaces:
+For the supported frameworks (except Angular) Uppy offers three ways to build user interfaces:
 
 1. **Pre-composed, plug-and-play components.** Mainly `<Dashboard />`.
    The downside is that you can’t customize the UI.
