@@ -45,7 +45,9 @@
     "preact": "^10.5.13"
   },
   "devDependencies": {
+    "@types/deep-freeze": "^0",
     "cssnano": "^7.0.7",
+    "deep-freeze": "^0.0.1",
     "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",

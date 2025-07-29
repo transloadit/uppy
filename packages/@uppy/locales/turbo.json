@@ -28,7 +28,6 @@
         "@uppy/instagram#build"
       ],
       "inputs": [
-        "../*/src/locale.ts",
         "script/**/*.{js,ts,jsx,tsx}",
         "package.json",
         "tsconfig.json",
