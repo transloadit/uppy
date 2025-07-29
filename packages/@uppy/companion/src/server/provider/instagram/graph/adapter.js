@@ -1,4 +1,4 @@
-const querystring = require('node:querystring')
+import querystring from 'node:querystring'
 
 const MEDIA_TYPES = Object.freeze({
   video: 'VIDEO',
@@ -55,7 +55,7 @@ const getNextPagePath = (data, currentQuery, currentPath) => {
   return `${currentPath || ''}?${querystring.stringify(query)}`
 }
 
-module.exports = (res, username, directory, currentQuery) => {
+const adaptData = (res, username, directory, currentQuery) => {
   const data = { username, items: [] }
   const items = getItemSubList(res)
   items.forEach((item, i) => {
@@ -75,3 +75,5 @@ module.exports = (res, username, directory, currentQuery) => {
   data.nextPagePath = getNextPagePath(res, currentQuery, directory)
   return data
 }
+
+export default adaptData

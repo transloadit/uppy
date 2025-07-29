@@ -1,12 +1,11 @@
-const express = require('express')
-const assert = require('node:assert')
-
-const { startDownUpload } = require('../helpers/upload')
-const { validateURL } = require('../helpers/request')
-const logger = require('../logger')
-const { downloadURL } = require('../download')
-const { streamGoogleFile } = require('../provider/google/drive')
-const { respondWithError } = require('../provider/error')
+import assert from 'node:assert'
+import express from 'express'
+import { downloadURL } from '../download.js'
+import { validateURL } from '../helpers/request.js'
+import { startDownUpload } from '../helpers/upload.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
+import { streamGoogleFile } from '../provider/google/drive/index.js'
 
 const getAuthHeader = (token) => ({ authorization: `Bearer ${token}` })
 
@@ -47,4 +46,4 @@ const get = async (req, res) => {
   }
 }
 
-module.exports = () => express.Router().post('/get', express.json(), get)
+export default () => express.Router().post('/get', express.json(), get)

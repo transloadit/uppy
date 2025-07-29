@@ -1,12 +1,12 @@
-const tokenService = require('../helpers/jwt')
-const { respondWithError } = require('../provider/error')
+import * as tokenService from '../helpers/jwt.js'
+import { respondWithError } from '../provider/error.js'
 
 /**
  *
  * @param {object} req
  * @param {object} res
  */
-async function logout(req, res, next) {
+export default async function logout(req, res, next) {
   const cleanSession = () => {
     if (req.session.grant) {
       req.session.grant.state = null
@@ -40,5 +40,3 @@ async function logout(req, res, next) {
     next(err)
   }
 }
-
-module.exports = logout

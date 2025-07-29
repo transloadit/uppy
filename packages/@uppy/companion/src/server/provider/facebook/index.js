@@ -1,13 +1,10 @@
-const crypto = require('node:crypto')
-
-const Provider = require('../Provider')
-const logger = require('../../logger')
-const { adaptData, sortImages } = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
-const { HttpError } = require('../../helpers/utils')
-
-const got = require('../../got')
+import crypto from 'node:crypto'
+import got from 'got'
+import { HttpError, prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import { adaptData, sortImages } from './adapter.js'
 
 async function runRequestBatch({ secret, token, requests }) {
   // https://developers.facebook.com/docs/facebook-login/security/#appsecret
@@ -26,7 +23,7 @@ async function runRequestBatch({ secret, token, requests }) {
     batch: JSON.stringify(requests),
   }
 
-  const responsesRaw = await (await got)
+  const responsesRaw = await got
     .post('https://graph.facebook.com', { form })
     .json()
 
@@ -65,7 +62,7 @@ async function getMediaUrl({ secret, token, id }) {
 /**
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
-class Facebook extends Provider {
+export default class Facebook extends Provider {
   static get oauthProvider() {
     return 'facebook'
   }
@@ -109,7 +106,7 @@ class Facebook extends Provider {
       'provider.facebook.download.error',
       async () => {
         const url = await getMediaUrl({ secret: this.secret, token, id })
-        const stream = (await got).stream.get(url, { responseType: 'json' })
+        const stream = got.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
       },
@@ -151,5 +148,3 @@ class Facebook extends Provider {
     })
   }
 }
-
-module.exports = Facebook

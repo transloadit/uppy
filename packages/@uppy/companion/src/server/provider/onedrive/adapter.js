@@ -61,7 +61,7 @@ const getNextPagePath = ({ res, query: currentQuery, directory }) => {
   return `${directory ?? ''}?${new URLSearchParams(query).toString()}`
 }
 
-module.exports = (res, username, query, directory) => {
+const adaptData = (res, username, query, directory) => {
   const data = { username, items: [] }
   const items = getItemSubList(res)
   items.forEach((item) => {
@@ -82,3 +82,5 @@ module.exports = (res, username, query, directory) => {
 
   return data
 }
+
+export default adaptData

@@ -1,4 +1,4 @@
-const crypto = require('node:crypto')
+import crypto from 'node:crypto'
 
 const authTagLength = 16
 const nonceLength = 16
@@ -11,7 +11,7 @@ const ivLength = 12
  * @param {string[]} criteria
  * @returns {boolean}
  */
-exports.hasMatch = (value, criteria) => {
+export const hasMatch = (value, criteria) => {
   return criteria.some((i) => {
     return value === i || new RegExp(i).test(value)
   })
@@ -22,7 +22,7 @@ exports.hasMatch = (value, criteria) => {
  * @param {object} data
  * @returns {string}
  */
-exports.jsonStringify = (data) => {
+export const jsonStringify = (data) => {
   const cache = []
   return JSON.stringify(data, (key, value) => {
     if (typeof value === 'object' && value !== null) {
@@ -42,7 +42,7 @@ exports.jsonStringify = (data) => {
  *
  * @param {object} options companion options
  */
-module.exports.getURLBuilder = (options) => {
+export function getURLBuilder(options) {
   /**
    * Builds companion targeted url
    *
@@ -73,7 +73,7 @@ module.exports.getURLBuilder = (options) => {
   return buildURL
 }
 
-module.exports.getRedirectPath = (providerName) => `/${providerName}/redirect`
+export const getRedirectPath = (providerName) => `/${providerName}/redirect`
 
 /**
  * Create an AES-CCM encryption key and initialization vector from the provided secret
@@ -104,7 +104,7 @@ function createSecrets(secret, nonce) {
  * @param {string|Buffer} secret
  * @returns {string} Ciphertext as a hex string, prefixed with 32 hex characters containing the iv.
  */
-module.exports.encrypt = (input, secret) => {
+export const encrypt = (input, secret) => {
   const nonce = crypto.randomBytes(nonceLength)
   const { key, iv } = createSecrets(secret, nonce)
   const cipher = crypto.createCipheriv('aes-256-ccm', key, iv, {
@@ -126,7 +126,7 @@ module.exports.encrypt = (input, secret) => {
  * @param {string|Buffer} secret
  * @returns {string} Decrypted value.
  */
-module.exports.decrypt = (encrypted, secret) => {
+export const decrypt = (encrypted, secret) => {
   const nonceHexLength = nonceLength * 2 // because hex encoding uses 2 bytes per byte
 
   // NOTE: The first 32 characters are the nonce, in hex format.
@@ -164,14 +164,14 @@ module.exports.decrypt = (encrypted, secret) => {
   return decrypted.toString('utf8')
 }
 
-module.exports.defaultGetKey = ({ filename }) => {
+export const defaultGetKey = ({ filename }) => {
   return `${crypto.randomUUID()}-${filename}`
 }
 
 /**
  * Our own HttpError in cases where we can't use `got`'s `HTTPError`
  */
-class HttpError extends Error {
+export class HttpError extends Error {
   statusCode
 
   responseJson
@@ -184,9 +184,7 @@ class HttpError extends Error {
   }
 }
 
-module.exports.HttpError = HttpError
-
-module.exports.prepareStream = async (stream) =>
+export const prepareStream = async (stream) =>
   new Promise((resolve, reject) => {
     stream
       .on('response', (response) => {
@@ -229,7 +227,7 @@ module.exports.prepareStream = async (stream) =>
       })
   })
 
-module.exports.getBasicAuthHeader = (key, secret) => {
+export const getBasicAuthHeader = (key, secret) => {
   const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
   return `Basic ${base64}`
 }
@@ -241,7 +239,7 @@ const rfc2047Encode = (dataIn) => {
   return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }
 
-module.exports.rfc2047EncodeMetadata = (metadata) =>
+export const rfc2047EncodeMetadata = (metadata) =>
   Object.fromEntries(
     Object.entries(metadata).map((entry) => entry.map(rfc2047Encode)),
   )
@@ -260,7 +258,7 @@ module.exports.rfc2047EncodeMetadata = (metadata) =>
  * }} param0
  * @returns
  */
-module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
+export const getBucket = ({ bucketOrFn, req, metadata, filename }) => {
   const bucket =
     typeof bucketOrFn === 'function'
       ? bucketOrFn({ req, metadata, filename })
@@ -282,6 +280,6 @@ module.exports.getBucket = ({ bucketOrFn, req, metadata, filename }) => {
  * @param {number} maxFilenameLength
  * @returns {string}
  */
-module.exports.truncateFilename = (filename, maxFilenameLength) => {
+export const truncateFilename = (filename, maxFilenameLength) => {
   return filename.slice(maxFilenameLength * -1)
 }

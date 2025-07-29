@@ -1,6 +1,8 @@
-const providerManager = require('../../src/server/provider')
-const { getCompanionOptions } = require('../../src/standalone/helper')
-const { setDefaultEnv } = require('../mockserver')
+import { beforeEach, describe, expect, test } from 'vitest'
+import GrantConfig from '../src/config/grant.js'
+import * as providerManager from '../src/server/provider/index.js'
+import { getCompanionOptions } from '../src/standalone/helper.js'
+import { setDefaultEnv } from './mockserver.js'
 
 let grantConfig
 let companionOptions
@@ -11,7 +13,7 @@ const getOauthProvider = (providerName) =>
 describe('Test Provider options', () => {
   beforeEach(() => {
     setDefaultEnv()
-    grantConfig = require('../../src/config/grant')()
+    grantConfig = GrantConfig()
     companionOptions = getCompanionOptions()
   })
 
@@ -198,6 +200,7 @@ describe('Test Custom Provider options', () => {
             key: 'foo_key',
             secret: 'foo_secret',
           },
+          // @ts-ignore
           module: { oauthProvider: 'some_provider' },
         },
       },
