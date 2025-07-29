@@ -17,7 +17,7 @@ CompressorPlugin.prototype.compress = async (blob: File) => {
 }
 
 const sampleImage = fs.readFileSync(
-  path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
+  path.join(__dirname, '../fixtures/image.jpg'),
 )
 
 const file1 = {

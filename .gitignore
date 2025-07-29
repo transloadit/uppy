@@ -18,6 +18,7 @@ tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
 .svelte-kit
 .turbo
+__screenshots__
 
 dist/
 lib/

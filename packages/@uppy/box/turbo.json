@@ -2,7 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@uppy/core#build"]
+      "dependsOn": ["^build", "@uppy/core#build"]
     }
   }
 }
