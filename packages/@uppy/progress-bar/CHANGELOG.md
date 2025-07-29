@@ -1,5 +1,18 @@
 # @uppy/progress-bar
 
+## 4.3.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/utils@6.2.0
+
 ## 4.2.0
 
 Released: 2025-01-06

@@ -1,5 +1,18 @@
 # @uppy/companion-client
 
+## 4.5.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/utils@6.2.0
+
 ## 4.4.2
 
 Released: 2025-05-18
@@ -92,7 +105,7 @@ Included in: Uppy v3.22.2
 Released: 2024-02-19
 Included in: Uppy v3.22.0
 
--  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
 - @uppy/companion-client: fix tests and linter (antoine du hamel / #4890)
 - @uppy/companion-client: migrate to ts (merlijn vos / #4864)
 - @uppy/companion-client: fix `typeerror` (antoine du hamel)

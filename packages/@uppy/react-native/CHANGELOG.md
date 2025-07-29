@@ -1,5 +1,15 @@
 # @uppy/react-native
 
+## 0.6.2
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/instagram@4.3.0
+  - @uppy/url@4.3.0
+
 ## 0.6.1
 
 Released: 2024-10-31

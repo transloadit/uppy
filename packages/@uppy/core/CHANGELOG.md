@@ -1,5 +1,18 @@
 # @uppy/core
 
+## 4.5.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- 0c24c5a: Resolve stale state in `checkAndUpdateFileState`
+- Updated dependencies [0c24c5a]
+  - @uppy/store-default@4.3.0
+  - @uppy/utils@6.2.0
+
 ## 4.4.6
 
 Released: 2025-06-02
