@@ -6,9 +6,37 @@
   "sideEffects": [
     "*.css"
   ],
-  "svelte": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    },
+    "./dashboard": {
+      "types": "./dist/components/Dashboard.svelte.d.ts",
+      "svelte": "./dist/components/Dashboard.svelte.js"
+    },
+    "./dashboard-modal": {
+      "types": "./dist/components/DashboardModal.svelte.d.ts",
+      "svelte": "./dist/components/DashboardModal.svelte.js"
+    },
+    "./drag-drop": {
+      "types": "./dist/components/DragDrop.svelte.d.ts",
+      "svelte": "./dist/components/DragDrop.svelte.js"
+    },
+    "./progress-bar": {
+      "types": "./dist/components/ProgressBar.svelte.d.ts",
+      "svelte": "./dist/components/ProgressBar.svelte.js"
+    },
+    "./status-bar": {
+      "types": "./dist/components/StatusBar.svelte.d.ts",
+      "svelte": "./dist/components/StatusBar.svelte.js"
+    },
+    "./package.json": "./package.json"
+  },
   "homepage": "https://uppy.io",
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
@@ -23,19 +51,6 @@
     "uppy-plugin",
     "svelte"
   ],
-  "files": [
-    "src",
-    "dist"
-  ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./dashboard": "./dist/components/Dashboard.svelte.js",
-    "./dashboard-modal": "./dist/components/DashboardModal.svelte.js",
-    "./drag-drop": "./dist/components/DragDrop.svelte.js",
-    "./progress-bar": "./dist/components/ProgressBar.svelte.js",
-    "./status-bar": "./dist/components/StatusBar.svelte.js",
-    "./package.json": "./package.json"
-  },
   "scripts": {
     "build": "svelte-kit sync && svelte-package",
     "build:css": "cp ../components/dist/styles.css dist/styles.css",
