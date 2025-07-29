@@ -163,8 +163,11 @@ describe('XHRUpload', () => {
       const core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
-        endpoint: (file) => !Array.isArray(file) ? `https://fake-endpoint.uppy.io/upload/${file.name}` : '',
-        bundle: false
+        endpoint: (file) =>
+          !Array.isArray(file)
+            ? `https://fake-endpoint.uppy.io/upload/${file.name}`
+            : '',
+        bundle: false,
       })
       core.addFile({
         type: 'image/png',
@@ -188,8 +191,11 @@ describe('XHRUpload', () => {
       const core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
-        endpoint: (file) => Array.isArray(file) ? `https://fake-endpoint.uppy.io/upload-bundle/${file.map(f => f.name).join(',')}` : '',
-        bundle: true
+        endpoint: (file) =>
+          Array.isArray(file)
+            ? `https://fake-endpoint.uppy.io/upload-bundle/${file.map((f) => f.name).join(',')}`
+            : '',
+        bundle: true,
       })
       core.addFile({
         type: 'image/png',
