@@ -15,16 +15,16 @@
     "build": "turbo run build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
     "build:watch": "turbo watch build build:css --filter='./packages/@uppy/*'",
-    "migrate:components": "yarn workspace @uppy/components migrate",
-    "check": "yarn exec biome check --write",
-    "check:ci": "yarn exec biome ci",
-    "dev": "yarn workspace @uppy-dev/dev dev",
+    "migrate:components": "pnpm --filter @uppy/components migrate",
+    "check": "pnpm exec biome check --write",
+    "check:ci": "pnpm exec biome ci",
+    "dev": "pnpm --filter @uppy-dev/dev dev",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",
-    "start:companion": "yarn workspace @uppy/companion start:dev",
+    "start:companion": "pnpm --filter @uppy/companion start:dev",
     "test": "turbo run test --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./examples/{react,vue,sveltekit}'",
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "version": "changeset version && corepack yarn install --mode=update-lockfile",
+    "version": "changeset version && corepack pnpm install --lockfile-only",
     "release": "changeset publish"
   },
   "devDependencies": {
@@ -35,7 +35,7 @@
     "turbo": "^2.5.4",
     "typescript": "^5.8.3"
   },
-  "packageManager": "yarn@4.4.1+sha224.fd21d9eb5fba020083811af1d4953acc21eeb9f6ff97efd1b3f9d4de",
+  "packageManager": "pnpm@10.14.0-0+sha512.2cd47a0cbf5f1d1de7693a88307a0ede5be94e0d3b34853d800ee775efbea0650cb562b77605ec80bc8d925f5cd27c4dfe8bb04d3a0b76090784c664450d32d6",
   "engines": {
     "node": ">=20.19.0"
   }

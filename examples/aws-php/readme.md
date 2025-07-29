@@ -8,8 +8,8 @@ To run this example, make sure you've correctly installed the **repository
 root**:
 
 ```bash
-yarn || corepack yarn install
-yarn build || corepack yarn build
+pnpm install || corepack pnpm install
+pnpm build || corepack pnpm build
 ```
 
 That will also install the npm dependencies for this example.
@@ -19,7 +19,7 @@ This example also uses the AWS PHP SDK. To install it,
 folder.
 
 ```bash
-corepack yarn workspace @uppy-example/aws-php exec "composer update"
+corepack pnpm --filter @uppy-example/aws-php exec "composer update"
 ```
 
 Configure AWS S3 credentials using
@@ -31,7 +31,7 @@ Configure a bucket name and region in the `s3-sign.php` file.
 Then, again in the **repository root**, start this example by doing:
 
 ```bash
-corepack yarn workspace @uppy-example/aws-php start
+corepack pnpm --filter @uppy-example/aws-php start
 ```
 
 The demo should now be available at http://localhost:8080.
@@ -44,5 +44,5 @@ appropriate environment variables:
 AWS_PROFILE="gcs" \
 COMPANION_AWS_ENDPOINT="https://storage.googleapis.com" \
 COMPANION_AWS_BUCKET="test-bucket-name" \
-  corepack yarn run example aws-php
+  corepack pnpm run example aws-php
 ```

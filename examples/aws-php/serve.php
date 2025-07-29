@@ -3,7 +3,7 @@
 
 if(str_starts_with($_SERVER['REQUEST_URI'], '/main.js')) {
     header("Content-Type: text/javascript; charset=UTF-8");
-    passthru('corepack yarn outputBundle');
+    passthru('corepack pnpm outputBundle');
     return true;
 } else if (str_starts_with($_SERVER['REQUEST_URI'], '/uppy.min.css')) {
     header("Content-Type: text/css; charset=UTF-8");

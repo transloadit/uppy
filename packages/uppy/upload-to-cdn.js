@@ -11,11 +11,11 @@
 //
 // Run as:
 //
-//  yarn uploadcdn <package-name> [version]
+//  pnpm uploadcdn <package-name> [version]
 //
 // To override an existing release (DANGER!)
 //
-//  yarn uploadcdn <package-name> [version] -- --force
+//  pnpm uploadcdn <package-name> [version] -- --force
 //
 // Authors:
 //

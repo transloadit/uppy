@@ -379,7 +379,7 @@ app.get('/uppy.min.mjs', (req, res) => {
     res.sendFile(bundlePath)
   } else {
     console.warn(
-      'No local JS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.',
+      'No local JS bundle found, using the CDN as a fallback. Run `corepack pnpm build` to make this warning disappear.',
     )
     res.end(
       'export * from "https://releases.transloadit.com/uppy/v4.0.0-beta.11/uppy.min.mjs";\n',
@@ -398,7 +398,7 @@ app.get('/uppy.min.css', (req, res) => {
     res.sendFile(bundlePath)
   } else {
     console.warn(
-      'No local CSS bundle found, using the CDN as a fallback. Run `corepack yarn build` to make this warning disappear.',
+      'No local CSS bundle found, using the CDN as a fallback. Run `corepack pnpm build` to make this warning disappear.',
     )
     res.end(
       '@import "https://releases.transloadit.com/uppy/v4.0.0-beta.11/uppy.min.css";\n',

@@ -20,7 +20,7 @@ To run the example, from the root directory of this repo, run the following
 commands:
 
 ```sh
-corepack yarn install
-corepack yarn build
-corepack yarn workspace @uppy-example/custom-provider start
+corepack pnpm install
+corepack pnpm build
+corepack pnpm --filter @uppy-example/custom-provider start
 ```

@@ -13,8 +13,8 @@ To run this example, make sure you've correctly installed the **repository
 root**:
 
 ```bash
-corepack yarn install
-corepack yarn build
+corepack pnpm install
+corepack pnpm build
 ```
 
 That will also install the dependencies for this example.
@@ -41,5 +41,5 @@ s3cmd setcors examples/digitalocean-spaces/setcors.xml "s3://$COMPANION_AWS_BUCK
 Then you can start the dev server:
 
 ```bash
-corepack yarn workspace @uppy-example/digitalocean-spaces start
+corepack pnpm --filter @uppy-example/digitalocean-spaces start
 ```

@@ -86,7 +86,7 @@ You may use existing AWS credentials or create a new user in the IAM page.
 Download this code or clone repository into a folder and install dependencies:
 
 ```sh
-CYPRESS_INSTALL_BINARY=0 corepack yarn install
+CYPRESS_INSTALL_BINARY=0 corepack pnpm install
 ```
 
 Add a `.env` file to the root directory and define the S3 bucket name and port
@@ -109,7 +109,7 @@ uses Companion at all.
 Start the application:
 
 ```sh
-corepack yarn workspace @uppy-example/aws-nodejs start
+corepack pnpm --filter @uppy-example/aws-nodejs start
 ```
 
 Dashboard demo should now be available at http://localhost:8080.

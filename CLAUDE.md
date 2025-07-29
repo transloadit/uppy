@@ -4,34 +4,34 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Repository Overview
 
-Uppy is a modular JavaScript file uploader that integrates seamlessly with any application. It's built using a monorepo structure with Yarn workspaces, Turbo for build orchestration, and Biome for linting/formatting.
+Uppy is a modular JavaScript file uploader that integrates seamlessly with any application. It's built using a monorepo structure with pnpm workspaces, Turbo for build orchestration, and Biome for linting/formatting.
 
 ## Development Commands
 
 ### Core Commands
-- `yarn build` - Build all packages (uses Turbo)
-- `yarn build:watch` - Watch mode for building packages
-- `yarn test` - Run tests for all packages
-- `yarn test:watch` - Run tests in watch mode
-- `yarn typecheck` - Type checking across all packages
-- `yarn check` - Run Biome linting and formatting
-- `yarn check:ci` - Run Biome in CI mode (no writes)
+- `pnpm build` - Build all packages (uses Turbo)
+- `pnpm build:watch` - Watch mode for building packages
+- `pnpm test` - Run tests for all packages
+- `pnpm test:watch` - Run tests in watch mode
+- `pnpm typecheck` - Type checking across all packages
+- `pnpm check` - Run Biome linting and formatting
+- `pnpm check:ci` - Run Biome in CI mode (no writes)
 
 ### Development Server
-- `yarn dev` - Start development server (from private/dev workspace)
-- `yarn dev:with-companion` - Start dev server with Companion backend
-- `yarn start:companion` - Start only the Companion server
+- `pnpm dev` - Start development server (from private/dev workspace)
+- `pnpm dev:with-companion` - Start dev server with Companion backend
+- `pnpm start:companion` - Start only the Companion server
 
 ### Single Test Execution
 To run tests for a specific package:
 ```bash
-yarn workspace @uppy/[package-name] test
-# Example: yarn workspace @uppy/core test
+pnpm --filter @uppy/[package-name] test
+# Example: pnpm --filter @uppy/core test
 ```
 
 ### Individual Package Development
 ```bash
-yarn workspace @uppy/[package-name] build
+pnpm --filter @uppy/[package-name] build
 ```
 
 ## Architecture
@@ -109,7 +109,7 @@ The build system uses Turbo (turbo.json) for task orchestration:
 ### Running Tests
 - Tests run in parallel across packages via Turbo
 - Examples also include tests (React, Vue, SvelteKit examples)
-- Use `yarn test` for development
+- Use `pnpm test` for development
 
 ## Companion Server
 
@@ -125,6 +125,6 @@ The Companion server enables integration with remote file sources:
 - Follow existing code conventions and patterns within each package
 - Use the `@uppy/utils` package for shared functionality
 - UI components should be accessible and support internationalization
-- Always run `yarn check` and `yarn typecheck` before committing
-- When adding a new component to `@uppy/components`, you have to run `yarn migrate:components` from root.
+- Always run `pnpm check` and `pnpm typecheck` before committing
+- When adding a new component to `@uppy/components`, you have to run `pnpm migrate:components` from root.
   This is not needed for changing existing components.

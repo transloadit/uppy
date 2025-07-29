@@ -1,0 +1,15 @@
+packages:
+  - examples/*
+  - packages/@uppy/*
+  - packages/@uppy/angular/projects/uppy/*
+  - packages/uppy
+  - private/*
+
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@tailwindcss/oxide'
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - msw
+  - nice-napi

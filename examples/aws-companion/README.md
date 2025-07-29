@@ -18,6 +18,6 @@ First, set up the `COMPANION_AWS_KEY`, `COMPANION_AWS_SECRET`,
 To run this example, from the **repository root**, run:
 
 ```sh
-corepack yarn install
-corepack yarn workspace @uppy-example/aws-companion start
+corepack pnpm install
+corepack pnpm --filter @uppy-example/aws-companion start
 ```

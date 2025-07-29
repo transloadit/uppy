@@ -12,8 +12,8 @@ To run this example, make sure you've correctly installed the **repository
 root**:
 
 ```bash
-yarn install
-yarn run build
+pnpm install
+pnpm run build
 ```
 
 That will also install the dependencies for this example.
@@ -22,7 +22,7 @@ Then, start this example by doing:
 
 ```bash
 cd examples/react-native-expo
-yarn start
+pnpm start
 ```
 
 Then you'll see a menu within your terminal where you can chose where to open

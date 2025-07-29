@@ -9,8 +9,8 @@ To run this example, make sure you've correctly installed the **repository
 root**:
 
 ```bash
-corepack yarn install
-corepack yarn build
+corepack pnpm install
+corepack pnpm build
 ```
 
 That will also install the dependencies for this example.
@@ -18,5 +18,5 @@ That will also install the dependencies for this example.
 Then, again in the **repository root**, start this example by doing:
 
 ```bash
-corepack yarn workspace @uppy-example/uppy-with-companion start
+corepack pnpm --filter @uppy-example/uppy-with-companion start
 ```
