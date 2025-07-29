@@ -30,11 +30,12 @@
     "@uppy/components": "workspace:^",
     "@uppy/utils": "workspace:^",
     "preact": "^10.5.13",
-    "use-sync-external-store": "^1.2.0"
+    "use-sync-external-store": "^1.2.2"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.4.2",
-    "@testing-library/react": "^14.2.2",
+    "@testing-library/react": "^16.0.0",
     "@types/react": "^18.0.8",
     "@types/use-sync-external-store": "^0.0.6",
     "@uppy/core": "workspace:^",
