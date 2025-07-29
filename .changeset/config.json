@@ -7,5 +7,27 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": []
+  "___experimentalUnsafeOptions_WILL_CHANGE_IN_PATCH": {
+    "onlyUpdatePeerDependentsWhenOutOfRange": true
+  },
+  "ignore": [
+    "example-angular",
+    "example-aws-companion",
+    "example-aws-nodejs",
+    "example-aws-php",
+    "example-cdn",
+    "example-companion",
+    "example-companion-custom-provider",
+    "example-companion-digitalocean-spaces",
+    "example-react",
+    "example-react-native-expo",
+    "example-redux",
+    "example-sveltekit",
+    "example-transloadit",
+    "example-vue",
+    "example-xhr-bundle",
+    "example-xhr-node",
+    "example-xhr-php",
+    "example-xhr-python"
+  ]
 }
