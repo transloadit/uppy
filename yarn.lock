@@ -12343,10 +12343,6 @@ __metadata:
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/progress-bar":
-      optional: true
     "@uppy/status-bar":
       optional: true
   languageName: unknown
