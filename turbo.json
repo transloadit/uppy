@@ -23,11 +23,6 @@
       ],
       "outputs": ["lib/**", "dist/**"]
     },
-    "build:watch": {
-      "outputLogs": "new-only",
-      "persistent": true,
-      "cache": false
-    },
     "build:css": {
       "outputLogs": "new-only",
       "inputs": ["src/**/*.scss"],
@@ -41,11 +36,6 @@
     "test": {
       "outputLogs": "errors-only",
       "dependsOn": ["^test"]
-    },
-    "test:watch": {
-      "outputLogs": "new-only",
-      "persistent": true,
-      "cache": false
     }
   }
 }
