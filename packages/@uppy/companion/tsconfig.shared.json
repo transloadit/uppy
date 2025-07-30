@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "declaration": true,
+    "target": "es2022",
+    "noImplicitAny": false,
+    "sourceMap": false,
+    "allowJs": true,
+    "checkJs": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": []
+  }
+}

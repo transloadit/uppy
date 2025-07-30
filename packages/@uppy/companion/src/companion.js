@@ -1,40 +1,42 @@
-const express = require('express')
-const Grant = require('grant').default.express()
-const merge = require('lodash/merge')
-const cookieParser = require('cookie-parser')
-const interceptor = require('express-interceptor')
-const { randomUUID } = require('node:crypto')
-
-const grantConfig = require('./config/grant')()
-const providerManager = require('./server/provider')
-const controllers = require('./server/controllers')
-const s3 = require('./server/controllers/s3')
-const url = require('./server/controllers/url')
-const googlePicker = require('./server/controllers/googlePicker')
-const createEmitter = require('./server/emitter')
-const redis = require('./server/redis')
-const jobs = require('./server/jobs')
-const logger = require('./server/logger')
-const middlewares = require('./server/middlewares')
-const {
-  getMaskableSecrets,
+import { randomUUID } from 'node:crypto'
+import cookieParser from 'cookie-parser'
+import express from 'express'
+import interceptor from 'express-interceptor'
+import grant from 'grant'
+import merge from 'lodash/merge.js'
+import packageJson from '../package.json' with { type: 'json' }
+import {
   defaultOptions,
+  getMaskableSecrets,
   validateConfig,
-} = require('./config/companion')
-const {
+} from './config/companion.js'
+import grantConfigFn from './config/grant.js'
+import googlePicker from './server/controllers/googlePicker.js'
+import * as controllers from './server/controllers/index.js'
+import s3 from './server/controllers/s3.js'
+import url from './server/controllers/url.js'
+import createEmitter from './server/emitter/index.js'
+import { getURLBuilder } from './server/helpers/utils.js'
+import * as jobs from './server/jobs.js'
+import logger from './server/logger.js'
+import * as middlewares from './server/middlewares.js'
+import { getCredentialsOverrideMiddleware } from './server/provider/credentials.js'
+import {
   ProviderApiError,
-  ProviderUserError,
   ProviderAuthError,
-} = require('./server/provider/error')
-const {
-  getCredentialsOverrideMiddleware,
-} = require('./server/provider/credentials')
-const { getURLBuilder } = require('./server/helpers/utils')
-// @ts-ignore
-const { version } = require('../package.json')
-const { isOAuthProvider } = require('./server/provider/Provider')
+  ProviderUserError,
+} from './server/provider/error.js'
+import * as providerManager from './server/provider/index.js'
+import { isOAuthProvider } from './server/provider/Provider.js'
+import * as redis from './server/redis.js'
 
-function setLoggerProcessName({ loggerProcessName }) {
+import socket from './server/socket.js'
+
+export { socket }
+
+const grantConfig = grantConfigFn()
+
+export function setLoggerProcessName({ loggerProcessName }) {
   if (loggerProcessName != null) logger.setProcessName(loggerProcessName)
 }
 
@@ -72,14 +74,11 @@ const interceptGrantErrorResponse = interceptor((req, res) => {
 })
 
 // make the errors available publicly for custom providers
-module.exports.errors = {
+export const errors = {
   ProviderApiError,
   ProviderUserError,
   ProviderAuthError,
 }
-module.exports.socket = require('./server/socket')
-
-module.exports.setLoggerProcessName = setLoggerProcessName
 
 /**
  * Entry point into initializing the Companion app.
@@ -87,7 +86,7 @@ module.exports.setLoggerProcessName = setLoggerProcessName
  * @param {object} optionsArg
  * @returns {{ app: import('express').Express, emitter: any }}}
  */
-module.exports.app = (optionsArg = {}) => {
+export function app(optionsArg = {}) {
   setLoggerProcessName(optionsArg)
 
   validateConfig(optionsArg)
@@ -131,7 +130,7 @@ module.exports.app = (optionsArg = {}) => {
     express.urlencoded({ extended: false }),
     getCredentialsOverrideMiddleware(providers, options),
   )
-  app.use(Grant(grantConfig))
+  app.use(grant.default.express(grantConfig))
 
   app.use((req, res, next) => {
     if (options.sendSelfEndpoint) {
@@ -307,7 +306,7 @@ module.exports.app = (optionsArg = {}) => {
     interval: options.periodicPingInterval,
     count: options.periodicPingCount,
     staticPayload: options.periodicPingStaticPayload,
-    version,
+    version: packageJson.version,
     processId,
   })
 

@@ -1,20 +1,16 @@
-const escapeStringRegexp = require('escape-string-regexp')
-const util = require('node:util')
-const supportsColors = require('supports-color')
+import util from 'node:util'
+import escapeStringRegexp from 'escape-string-regexp'
+import supportsColors from 'supports-color'
 
-const valuesToMask = []
+let valuesToMask = []
 /**
  * Adds a list of strings that should be masked by the logger.
  * This function can only be called once through out the life of the server.
  *
  * @param {Array} maskables a list of strings to be masked
  */
-exports.setMaskables = (maskables) => {
-  maskables.forEach((i) => {
-    valuesToMask.push(escapeStringRegexp(i))
-  })
-
-  Object.freeze(valuesToMask)
+export function setMaskables(maskables) {
+  valuesToMask = maskables.map((i) => escapeStringRegexp(i))
 }
 
 /**
@@ -34,7 +30,7 @@ function maskMessage(msg) {
 
 let processName = 'companion'
 
-exports.setProcessName = (newProcessName) => {
+export function setProcessName(newProcessName) {
   processName = newProcessName
 }
 
@@ -90,7 +86,7 @@ const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
  * @param {string} [tag] a unique tag to easily search for this message
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
-exports.info = (msg, tag, traceId) => {
+export function info(msg, tag, traceId) {
   log({ arg: msg, tag, level: 'info', traceId })
 }
 
@@ -101,7 +97,7 @@ exports.info = (msg, tag, traceId) => {
  * @param {string} [tag] a unique tag to easily search for this message
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
-exports.warn = (msg, tag, traceId) => {
+export function warn(msg, tag, traceId) {
   log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
 }
 
@@ -112,7 +108,7 @@ exports.warn = (msg, tag, traceId) => {
  * @param {string} [tag] a unique tag to easily search for this message
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
-exports.error = (msg, tag, traceId) => {
+export function error(msg, tag, traceId) {
   log({ arg: msg, tag, level: 'error', traceId, color: ['bold', 'red'] })
 }
 
@@ -123,8 +119,11 @@ exports.error = (msg, tag, traceId) => {
  * @param {string} [tag] a unique tag to easily search for this message
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
-exports.debug = (msg, tag, traceId) => {
+export function debug(msg, tag, traceId) {
   if (process.env.NODE_ENV !== 'production') {
     log({ arg: msg, tag, level: 'debug', traceId, color: ['bold', 'blue'] })
   }
 }
+
+const logger = { setMaskables, setProcessName, info, warn, error, debug }
+export default logger

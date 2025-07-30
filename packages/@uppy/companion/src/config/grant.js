@@ -4,7 +4,7 @@ const defaults = {
 }
 
 // oauth configuration for provider services that are used.
-module.exports = () => {
+export default () => {
   return {
     // we need separate auth providers because scopes are different,
     // and because it would be a too big rewrite to allow reuse of the same provider.

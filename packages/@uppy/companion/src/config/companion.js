@@ -1,9 +1,9 @@
-const fs = require('node:fs')
-const { isURL } = require('validator')
-const logger = require('../server/logger')
-const { defaultGetKey } = require('../server/helpers/utils')
+import fs from 'node:fs'
+import validator from 'validator'
+import { defaultGetKey } from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
-const defaultOptions = {
+export const defaultOptions = {
   server: {
     protocol: 'http',
     path: '',
@@ -28,7 +28,7 @@ const defaultOptions = {
 /**
  * @param {object} companionOptions
  */
-function getMaskableSecrets(companionOptions) {
+export function getMaskableSecrets(companionOptions) {
   const secrets = []
   const { providerOptions, customProviders, s3 } = companionOptions
 
@@ -60,7 +60,7 @@ function getMaskableSecrets(companionOptions) {
  *
  * @param {object} companionOptions
  */
-const validateConfig = (companionOptions) => {
+export const validateConfig = (companionOptions) => {
   const mandatoryOptions = ['secret', 'filePath', 'server.host']
   /** @type {string[]} */
   const unspecified = []
@@ -148,7 +148,7 @@ const validateConfig = (companionOptions) => {
     (!Array.isArray(periodicPingUrls) ||
       periodicPingUrls.some(
         (url2) =>
-          !isURL(url2, {
+          !validator.isURL(url2, {
             protocols: ['http', 'https'],
             require_protocol: true,
             require_tld: false,
@@ -161,10 +161,4 @@ const validateConfig = (companionOptions) => {
   if (companionOptions.maxFilenameLength <= 0) {
     throw new TypeError('Option maxFilenameLength must be greater than 0')
   }
-}
-
-module.exports = {
-  defaultOptions,
-  getMaskableSecrets,
-  validateConfig,
 }

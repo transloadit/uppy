@@ -1,4 +1,4 @@
-const { S3Client } = require('@aws-sdk/client-s3')
+import { S3Client } from '@aws-sdk/client-s3'
 
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
@@ -6,7 +6,10 @@ const { S3Client } = require('@aws-sdk/client-s3')
  * @param {object} companionOptions the companion options object
  * @param {boolean} createPresignedPostMode whether this s3 client is for createPresignedPost
  */
-module.exports = (companionOptions, createPresignedPostMode = false) => {
+export default function s3Client(
+  companionOptions,
+  createPresignedPostMode = false,
+) {
   let s3Client = null
   if (companionOptions.s3) {
     const { s3 } = companionOptions

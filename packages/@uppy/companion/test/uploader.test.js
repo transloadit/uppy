@@ -1,15 +1,16 @@
-jest.mock('tus-js-client')
+import { once } from 'node:events'
+import fs from 'node:fs'
+import { createServer } from 'node:http'
+import { Readable } from 'node:stream'
+import nock from 'nock'
+import { afterAll, describe, expect, test, vi } from 'vitest'
+import Emitter from '../src/server/emitter/index.js'
+import Uploader, { ValidationError } from '../src/server/Uploader.js'
+import standalone from '../src/standalone/index.js'
+import * as socketClient from './mocksocket.js'
 
-const { Readable } = require('node:stream')
-const fs = require('node:fs')
-const { createServer } = require('node:http')
-const { once } = require('node:events')
-const nock = require('nock')
-
-const Uploader = require('../../src/server/Uploader')
-const socketClient = require('../mocksocket')
-const standalone = require('../../src/standalone')
-const Emitter = require('../../src/server/emitter')
+vi.mock('tus-js-client')
+vi.mock('express-prom-bundle')
 
 afterAll(() => {
   nock.cleanAll()
@@ -33,8 +34,9 @@ describe('uploader with tus protocol', () => {
       },
     }
 
+    // @ts-ignore
     expect(() => new Uploader(opts)).toThrow(
-      new Uploader.ValidationError(
+      new ValidationError(
         'upload destination does not match any allowed destinations',
       ),
     )
@@ -49,6 +51,7 @@ describe('uploader with tus protocol', () => {
       },
     }
 
+    // @ts-ignore
     new Uploader(opts) // no validation error
   })
 
@@ -61,6 +64,7 @@ describe('uploader with tus protocol', () => {
       },
     }
 
+    // @ts-ignore
     new Uploader(opts) // no validation error
   })
 
@@ -75,16 +79,18 @@ describe('uploader with tus protocol', () => {
       pathPrefix: companionOptions.filePath,
     }
 
+    // @ts-ignore
     const uploader = new Uploader(opts)
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
 
     let firstReceivedProgress
 
-    const onProgress = jest.fn()
-    const onUploadSuccess = jest.fn()
-    const onBeginUploadEvent = jest.fn()
-    const onUploadEvent = jest.fn()
+    const onProgress = vi.fn()
+    const onUploadSuccess = vi.fn()
+    const onUploadError = vi.fn()
+    const onBeginUploadEvent = vi.fn()
+    const onUploadEvent = vi.fn()
 
     const emitter = Emitter()
     emitter.on('upload-start', onBeginUploadEvent)
@@ -98,9 +104,13 @@ describe('uploader with tus protocol', () => {
         firstReceivedProgress = message.payload.bytesUploaded
       onProgress(message)
     })
+    socketClient.onUploadError(uploadToken, onUploadError)
     socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
     await promise
+    // @ts-ignore
     await uploader.tryUploadStream(stream, mockReq)
+
+    expect(onUploadError).not.toHaveBeenCalled()
 
     expect(firstReceivedProgress).toBe(8)
 
@@ -139,6 +149,7 @@ describe('uploader with tus protocol', () => {
       pathPrefix: companionOptions.filePath,
     }
 
+    // @ts-ignore
     const uploader = new Uploader(opts)
     const originalTryDeleteTmpPath = uploader.tryDeleteTmpPath.bind(uploader)
     uploader.tryDeleteTmpPath = async () => {
@@ -156,8 +167,10 @@ describe('uploader with tus protocol', () => {
     return new Promise((resolve, reject) => {
       // validate that the test is resolved on socket connection
       uploader.awaitReady(60000).then(() => {
+        // @ts-ignore
         uploader.tryUploadStream(stream, mockReq).then(() => {
           try {
+            // @ts-ignore
             expect(fs.existsSync(uploader.path)).toBe(false)
             resolve()
           } catch (err) {
@@ -188,7 +201,9 @@ describe('uploader with tus protocol', () => {
   })
 
   async function runMultipartTest({
+    // @ts-ignore
     metadata,
+    // @ts-ignore
     useFormData,
     includeSize = true,
     address = 'localhost',
@@ -207,6 +222,7 @@ describe('uploader with tus protocol', () => {
     }
 
     const uploader = new Uploader(opts)
+    // @ts-ignore
     return uploader.uploadStream(stream)
   }
 
@@ -227,6 +243,7 @@ describe('uploader with tus protocol', () => {
       await once(server, 'listening')
 
       const ret = await runMultipartTest({
+        // @ts-ignore
         address: `localhost:${server.address().port}`,
       })
       expect(ret).toMatchObject({
@@ -244,6 +261,7 @@ describe('uploader with tus protocol', () => {
   test('upload functions with xhr formdata', async () => {
     nock('http://localhost').post('/', formDataNoMetaMatch).reply(200)
 
+    // @ts-ignore
     const ret = await runMultipartTest({ useFormData: true })
     expect(ret).toMatchObject({
       url: null,
@@ -255,6 +273,7 @@ describe('uploader with tus protocol', () => {
     nock('http://localhost').post('/', formDataNoMetaMatch).reply(200)
 
     const ret = await runMultipartTest({
+      // @ts-ignore
       useFormData: true,
       includeSize: false,
     })
@@ -271,6 +290,7 @@ describe('uploader with tus protocol', () => {
         '/',
         /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => \{\}\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/,
       )
+      .times(10)
       .reply(200)
 
     const metadata = {
@@ -280,6 +300,7 @@ describe('uploader with tus protocol', () => {
       key4: {},
       key5: () => {},
     }
+    // @ts-ignore
     const ret = await runMultipartTest({ useFormData: true, metadata })
     expect(ret).toMatchObject({
       url: null,
@@ -293,10 +314,12 @@ describe('uploader with tus protocol', () => {
       endpoint: 'http://localhost',
     }
 
+    // @ts-ignore
     new Uploader({ ...opts, metadata: { key: 'string value' } })
 
+    // @ts-ignore
     expect(() => new Uploader({ ...opts, metadata: '' })).toThrow(
-      new Uploader.ValidationError('metadata must be an object'),
+      new ValidationError('metadata must be an object'),
     )
   })
 
@@ -307,8 +330,9 @@ describe('uploader with tus protocol', () => {
       size: 101,
     }
 
+    // @ts-ignore
     expect(() => new Uploader(opts)).toThrow(
-      new Uploader.ValidationError('maxFileSize exceeded'),
+      new ValidationError('maxFileSize exceeded'),
     )
   })
 
@@ -319,6 +343,7 @@ describe('uploader with tus protocol', () => {
       size: 99,
     }
 
+    // @ts-ignore
     new Uploader(opts) // no validation error
   })
 
@@ -333,12 +358,14 @@ describe('uploader with tus protocol', () => {
       pathPrefix: companionOptions.filePath,
     }
 
+    // @ts-ignore
     const uploader = new Uploader(opts)
     const uploadToken = uploader.token
 
     // validate that the test is resolved on socket connection
     uploader
       .awaitReady(60000)
+      // @ts-ignore
       .then(() => uploader.tryUploadStream(stream, mockReq))
     socketClient.connect(uploadToken)
 
