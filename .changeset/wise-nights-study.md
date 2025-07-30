@@ -45,4 +45,25 @@
 "example-vue": minor
 ---
 
-Added Export Maps and sideEffects to all the uppy packages , uppy/vue , uppy/react and uppy/svelte will have a breaking change as their import paths would change. Export maps are now the default way to specify entrypoint for each package.
+### Breaking Changes for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`
+
+**WHAT:** Component imports for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte` have been moved to subpaths. This change was made to resolve runtime errors caused by the monolithic `index.js` and to make peer dependencies truly optional.
+
+**WHY:** Previously, all components were exported from a single entry point (e.g., `@uppy/react`). This forced users to install all peer dependencies (like `@uppy/status-bar`, `@uppy/dashboard`, etc.), even if they only needed one component.
+
+**HOW TO UPDATE:** Update your import paths to use the new subpaths for each component.
+
+**Example for `@uppy/react`:**
+
+**Before:**
+```javascript
+import { Dashboard, StatusBar } from '@uppy/react'
+```
+
+**Now:**
+```javascript
+import Dashboard from '@uppy/react/dashboard'
+import StatusBar from '@uppy/react/status-bar'
+```
+
+This change allows you to only install the peer dependencies for the components you use, leading to a smaller bundle size and improved performance.
