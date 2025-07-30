@@ -15,6 +15,7 @@
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js"
     },
+    "./css/style.css": "./dist/styles.css",
     "./dashboard": {
       "types": "./dist/components/Dashboard.svelte.d.ts",
       "svelte": "./dist/components/Dashboard.svelte"

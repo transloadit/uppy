@@ -11,7 +11,7 @@ import {
 } from '@uppy/svelte'
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
-import '@uppy/svelte/dist/styles.css'
+import '@uppy/svelte/css/style.css'
 
 import CustomDropzone from '../components/CustomDropzone.svelte'
 import RemoteSource from '../components/RemoteSource.svelte'

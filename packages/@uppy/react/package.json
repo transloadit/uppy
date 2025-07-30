@@ -49,6 +49,7 @@
   },
   "exports": {
     ".": "./lib/index.js",
+    "./css/style.css": "./dist/styles.css",
     "./dashboard": "./lib/Dashboard.js",
     "./drag-drop": "./lib/DragDrop.js",
     "./file-input": "./lib/FileInput.js",
