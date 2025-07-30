@@ -25,12 +25,12 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^"
-  },
-  "devDependencies": {
+    "@uppy/utils": "workspace:^",
     "chalk": "^5.0.0",
     "dedent": "^1.0.0",
-    "glob": "^8.0.0",
+    "glob": "^8.0.0"
+  },
+  "devDependencies": {
     "typescript": "^5.8.3"
   }
 }
