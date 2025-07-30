@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "turbo run build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
+    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage .turbo; mv .gitignore.bak .gitignore",
     "build:watch": "yarn build && turbo watch build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "migrate:components": "yarn workspace @uppy/components migrate",
     "check": "yarn exec biome check --write",
