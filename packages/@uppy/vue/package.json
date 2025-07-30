@@ -24,6 +24,7 @@
   },
   "exports": {
     ".": "./lib/index.js",
+    "./css/style.css": "./dist/styles.css",
     "./dashboard": "./lib/dashboard.js",
     "./dashboard-modal": "./lib/dashboard-modal.js",
     "./drag-drop": "./lib/drag-drop.js",
