@@ -30,7 +30,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.0.5",
     "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.5",
+    "@changesets/cli": "patch:@changesets/cli@npm%3A2.29.5#~/.yarn/patches/@changesets-cli-npm-2.29.5-68d8030bf3.patch",
     "npm-run-all": "^4.1.5",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3"
