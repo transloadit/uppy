@@ -110,7 +110,7 @@ uppy.use(Dashboard, {
 3. Replace your existing components with custom implementations using the hooks or Dashboard
 4. See [examples/](../examples/) for complete implementation examples
 
-### Introduction of Export Maps and Subpath Imports
+### Introduction of Export Maps and Side Effects.
 
 To improve tree-shaking and reduce bundle sizes, Uppy now uses `exports` maps in `package.json`. This is a breaking change for framework-specific packages like `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`.
 
