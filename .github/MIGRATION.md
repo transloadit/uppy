@@ -109,3 +109,24 @@ uppy.use(Dashboard, {
    - Use `@uppy/dashboard` for a complete, ready-to-use UI solution
 3. Replace your existing components with custom implementations using the hooks or Dashboard
 4. See [examples/](../examples/) for complete implementation examples
+
+### Introduction of Export Maps and Subpath Imports
+
+To improve tree-shaking and reduce bundle sizes, Uppy now uses `exports` maps in `package.json`. This is a breaking change for framework-specific packages like `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`.
+
+This change was made to resolve runtime errors and to avoid forcing the installation of all peer dependencies when only a single component is needed.
+
+**Before:**
+All components were imported from the root of the package:
+```javascript
+import { Dashboard, StatusBar } from '@uppy/react'
+```
+
+**After:**
+Components are now imported from their own subpath:
+```javascript
+import Dashboard from '@uppy/react/dashboard'
+import StatusBar from '@uppy/react/status-bar'
+```
+
+This change means you only need to install the peer dependencies for the components you actually use. For example, if you only use `Dashboard`, you no longer need to install `@uppy/status-bar`.
