@@ -11620,7 +11620,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/components@workspace:^, @uppy/components@workspace:packages/@uppy/components":
+"@uppy/components@npm:0.2.0, @uppy/components@workspace:^, @uppy/components@workspace:packages/@uppy/components":
   version: 0.0.0-use.local
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
@@ -11657,7 +11657,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/core@workspace:*, @uppy/core@workspace:^, @uppy/core@workspace:packages/@uppy/core":
+"@uppy/core@npm:^4.0.0, @uppy/core@workspace:*, @uppy/core@workspace:^, @uppy/core@workspace:packages/@uppy/core":
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
@@ -12041,8 +12041,8 @@ __metadata:
     "@sveltejs/kit": "npm:^2.20.7"
     "@sveltejs/package": "npm:^2.3.11"
     "@sveltejs/vite-plugin-svelte": "npm:^5.0.3"
-    "@uppy/components": "workspace:^"
-    "@uppy/core": "workspace:^"
+    "@uppy/components": "npm:0.2.0"
+    "@uppy/core": "npm:^4.0.0"
     preact: "npm:^10.26.5"
     svelte: "npm:^5.27.0"
     svelte-check: "npm:^4.1.6"
@@ -12050,8 +12050,8 @@ __metadata:
     typescript: "npm:^5.8.3"
     vite: "npm:^6.3.0"
   peerDependencies:
-    "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
+    "@uppy/core": ^4.0.0
+    "@uppy/dashboard": ^4.0.0
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
