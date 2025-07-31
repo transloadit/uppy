@@ -2,7 +2,8 @@ import Uppy from '@uppy/core'
 import { page, userEvent } from '@vitest/browser/context'
 import { expect, test } from 'vitest'
 import Dashboard from './Dashboard.js'
-
+import '@uppy/core/dist/style.css';
+import '@uppy/dashboard/dist/style.css';
 
 // Normally you would use one of vitest's framework renderers, such as vitest-browser-react,
 // but that's overkill for us so we write our own plain HTML renderer.
@@ -52,7 +53,7 @@ test('Upload, pause, and resume functionality', async () => {
     inline: true,
   })
 
-  // Add MockUploader following the pattern from Uppy.test.ts
+
   uppy.addUploader(async (fileIDs) => {
     const files = fileIDs.map(id => uppy.getFile(id))
 
@@ -96,7 +97,7 @@ test('Upload, pause, and resume functionality', async () => {
 
         // Only progress if not paused
         if (!isPaused && progress < 100) {
-          progress += 10 // 10% increments for controlled testing
+          progress += 10
 
           // Set uploadStarted on first progress update
           const uploadStarted = file.progress.uploadStarted || Date.now()
