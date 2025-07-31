@@ -1,5 +1,11 @@
 # @uppy/redux-dev-tools
 
+## 4.1.2
+
+### Patch Changes
+
+- c71a8e7: Nothing, testing release tooling
+
 ## 4.1.0
 
 ### Minor Changes
