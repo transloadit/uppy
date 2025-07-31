@@ -45,13 +45,11 @@
 "example-vue": minor
 ---
 
-### Breaking Changes for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`
+### Changed imports for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`
 
-**WHAT:** Component imports for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte` have been moved to subpaths. This change was made to resolve runtime errors caused by the monolithic `index.js` and to make peer dependencies truly optional.
+Some components, like Dashboard, require a peer dependency to work but since all components were exported from a single file you were forced to install all peer dependencies. Even if you never imported, for instance, the status bar component.
 
-**WHY:** Previously, all components were exported from a single entry point (e.g., `@uppy/react`). This forced users to install all peer dependencies (like `@uppy/status-bar`, `@uppy/dashboard`, etc.), even if they only needed one component.
-
-**HOW TO UPDATE:** Update your import paths to use the new subpaths for each component.
+Every component that requires a peer dependency has now been moved to a subpath, such as `@uppy/react/dashboard`, so you only need to install the peer dependencies you need.
 
 **Example for `@uppy/react`:**
 
@@ -66,4 +64,3 @@ import Dashboard from '@uppy/react/dashboard'
 import StatusBar from '@uppy/react/status-bar'
 ```
 
-This change allows you to only install the peer dependencies for the components you use, leading to a smaller bundle size and improved performance.
