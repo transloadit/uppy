@@ -3,6 +3,9 @@
   "version": "2.3.0",
   "license": "MIT",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "lib/index.js",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
@@ -19,10 +22,17 @@
     "typescript": "^5.8.3",
     "vue": "^3.5.14"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/styles.css",
+    "./dashboard": "./lib/dashboard.js",
+    "./dashboard-modal": "./lib/dashboard-modal.js",
+    "./status-bar": "./lib/status-bar.js",
+    "./package.json": "./package.json"
+  },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {

@@ -11952,7 +11952,6 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
@@ -11960,8 +11959,6 @@ __metadata:
     "@uppy/dashboard":
       optional: true
     "@uppy/screen-capture":
-      optional: true
-    "@uppy/status-bar":
       optional: true
     "@uppy/webcam":
       optional: true
@@ -12055,14 +12052,9 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/drag-drop":
-      optional: true
-    "@uppy/progress-bar":
       optional: true
     "@uppy/status-bar":
       optional: true
@@ -12182,7 +12174,6 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":

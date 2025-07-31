@@ -6,11 +6,17 @@
   "types": "lib/companion.d.ts",
   "author": "Transloadit.com",
   "license": "MIT",
+  "sideEffects": false,
   "homepage": "https://github.com/transloadit/uppy#readme",
   "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    ".": "./lib/companion.js",
+    "./standalone": "./lib/standalone/index.js",
+    "./package.json": "./package.json"
   },
   "keywords": [
     "file uploader",
@@ -96,7 +102,9 @@
   },
   "files": [
     "bin/",
-    "lib/"
+    "lib/",
+    "src/",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
