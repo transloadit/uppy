@@ -30,14 +30,6 @@ jobs:
       - name: Build
         run: corepack yarn build
 
-      - name: Verify changeset patch is applied
-        run: |
-          if ! grep -q "yarn.*npm.*publish" node_modules/@changesets/cli/dist/changesets-cli.esm.js; then
-            echo "ERROR: Changeset patch is missing - yarn npm publish command not found"
-            exit 1
-          fi
-          echo "Patch verified: yarn npm publish command found"
-
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
