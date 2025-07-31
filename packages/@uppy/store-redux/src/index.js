@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure'
 
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 // Redux action name.
 export const STATE_UPDATE = 'uppy/STATE_UPDATE'
