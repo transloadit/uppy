@@ -1,5 +1,11 @@
 # @uppy/locales
 
+## 4.8.0
+
+### Minor Changes
+
+- 28f0886: Move dev dependencies from "dependencies" to "devDependencies"
+
 ## 4.7.0
 
 ### Minor Changes
