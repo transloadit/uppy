@@ -102,7 +102,9 @@
   },
   "files": [
     "bin/",
-    "lib/"
+    "lib/",
+    "src/",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
