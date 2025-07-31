@@ -110,23 +110,28 @@ uppy.use(Dashboard, {
 3. Replace your existing components with custom implementations using the hooks or Dashboard
 4. See [examples/](../examples/) for complete implementation examples
 
-### Introduction of Export Maps and Side Effects.
+### Export maps for all packages
 
-To improve tree-shaking and reduce bundle sizes, Uppy now uses `exports` maps in `package.json`. This is a breaking change for framework-specific packages like `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`.
+All packages now have export maps. This is a breaking change in two cases:
 
-This change was made to resolve runtime errors and to avoid forcing the installation of all peer dependencies when only a single component is needed.
+1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
+2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
+
+#### Changed imports for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`
+
+Some components, like Dashboard, require a peer dependency to work but since all components were exported from a single file you were forced to install all peer dependencies. Even if you never imported, for instance, the status bar component.
+
+Every component that requires a peer dependency has now been moved to a subpath, such as `@uppy/react/dashboard`, so you only need to install the peer dependencies you need.
+
+**Example for `@uppy/react`:**
 
 **Before:**
-All components were imported from the root of the package:
 ```javascript
 import { Dashboard, StatusBar } from '@uppy/react'
 ```
 
-**After:**
-Components are now imported from their own subpath:
+**Now:**
 ```javascript
 import Dashboard from '@uppy/react/dashboard'
 import StatusBar from '@uppy/react/status-bar'
 ```
-
-This change means you only need to install the peer dependencies for the components you actually use. For example, if you only use `Dashboard`, you no longer need to install `@uppy/status-bar`.
