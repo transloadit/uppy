@@ -17,6 +17,10 @@ const {
   truncateFilename,
 } = require('../helpers/utils')
 
+/**
+ * @param {Object} config
+ * @returns {import('express').Router}
+ */
 module.exports = function s3(config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
     throw new TypeError('s3: The `acl` option must be a string or null')

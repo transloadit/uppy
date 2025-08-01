@@ -32,8 +32,8 @@
     "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.362.0",
-    "@aws-sdk/s3-request-presigner": "^3.362.0",
+    "@aws-sdk/client-s3": "3.362.0",
+    "@aws-sdk/s3-request-presigner": "3.362.0",
     "@uppy/core": "workspace:^",
     "jsdom": "^26.1.0",
     "nock": "^13.1.0",

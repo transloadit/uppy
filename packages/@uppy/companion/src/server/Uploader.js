@@ -767,6 +767,8 @@ class Uploader {
 
     const data = await upload.done()
     return {
+      // @ts-expect-error data can be multiple types of which only one contains Location
+      // but for the functionality it does not matter
       url: data?.Location || null,
       extraData: {
         response: {

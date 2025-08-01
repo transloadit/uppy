@@ -47,4 +47,7 @@ const get = async (req, res) => {
   }
 }
 
+/**
+ * @returns {import('express').Router}
+ */
 module.exports = () => express.Router().post('/get', express.json(), get)
