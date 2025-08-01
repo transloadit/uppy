@@ -32,8 +32,6 @@ jobs:
           node-version: lts/*
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
       - name: Install upload-to-cdn dependencies
         if: ${{ inputs.version }}
         run: pnpm --filter uppy install
