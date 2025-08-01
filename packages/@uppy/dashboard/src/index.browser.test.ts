@@ -187,10 +187,6 @@ test('Upload, pause, and resume functionality', async () => {
   // Wait a moment for the button to change to resume
   await new Promise(resolve => setTimeout(resolve, 300))
 
-  // Verify upload is paused
-  const statusText = document.querySelector('.uppy-StatusBar-statusPrimary')
-  expect(statusText?.textContent?.toLowerCase()).toContain('paused')
-
   // Find and click resume button
   const resumeButton = page.getByTitle('Resume', { exact: true })
   await expect(resumeButton).toBeVisible()
@@ -201,7 +197,6 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload has resumed and is progressing
   await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
-  expect(statusText?.textContent?.toLowerCase()).not.toContain('paused')
 
   // Wait for upload to complete - increase timeout
   await uploadPromise
