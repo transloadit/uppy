@@ -72,13 +72,9 @@ export default function FileCard(props: $TSFixMe) {
     form.addEventListener('submit', handleSave)
     return () => {
       form.removeEventListener('submit', handleSave)
-      // Defensive cleanup - check if form is still in the DOM before removing
-      try {
-        if (form.parentNode) {
-          document.body.removeChild(form)
-        }
-      } catch (error) {
-        // Ignore errors if form is already removed or not a child
+      // check if form is still in the DOM before removing
+      if (form.parentNode) {
+        document.body.removeChild(form)
       }
     }
   }, [form, handleSave])
