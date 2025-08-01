@@ -225,6 +225,9 @@ test('Upload, pause, and resume functionality', async () => {
   // Wait for upload to complete
   await uploadPromise
 
+  // Add a small delay to allow StatusBar to render
+  await new Promise(resolve => setTimeout(resolve, 100))
+
   // Verify upload completion state
   const completedStatusBar = document.querySelector('.uppy-StatusBar')
   const completedText = document.querySelector('.uppy-StatusBar-statusPrimary')?.textContent
