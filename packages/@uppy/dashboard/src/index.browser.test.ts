@@ -184,16 +184,10 @@ test('Upload, pause, and resume functionality', async () => {
   await expect(pauseButton).toBeVisible()
   await pauseButton.click()
 
-  // Wait a moment for the button to change to resume
-  await new Promise(resolve => setTimeout(resolve, 300))
-
   // Find and click resume button
   const resumeButton = page.getByTitle('Resume', { exact: true })
   await expect(resumeButton).toBeVisible()
   await resumeButton.click()
-
-  // Wait for upload to resume and make progress
-  await new Promise(resolve => setTimeout(resolve, 500))
 
   // Verify upload has resumed and is progressing
   await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
@@ -204,9 +198,7 @@ test('Upload, pause, and resume functionality', async () => {
   // Add a longer delay to allow StatusBar to render final state
   await new Promise(resolve => setTimeout(resolve, 500))
 
-  // Verify upload completion state
-  const finalStatusText = document.querySelector('.uppy-StatusBar-statusPrimary')
-  console.log('Final status text:', finalStatusText?.textContent)
-  expect(finalStatusText?.textContent?.toLowerCase()).toContain('complete')
+  // Verify upload completion state using Playwright selector
+  await expect(page.getByText('Complete', { exact: true })).toBeVisible()
 })
 
