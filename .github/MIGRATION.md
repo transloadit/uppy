@@ -136,3 +136,43 @@ import { Dashboard, StatusBar } from '@uppy/react'
 import Dashboard from '@uppy/react/dashboard'
 import StatusBar from '@uppy/react/status-bar'
 ```
+
+
+### @uppy/status-bar merged into @uppy/dashboard
+
+The `@uppy/status-bar` package has been merged into `@uppy/dashboard` to simplify the architecture and reduce bundle size. StatusBar is now rendered as an integrated component within Dashboard rather than as a separate plugin. The standalone `@uppy/status-bar` package is no longer maintained.
+
+**Migration steps:**
+
+1. Remove `@uppy/status-bar` from your dependencies
+2. Replace StatusBar usage with Dashboard
+3. Move all StatusBar options directly to Dashboard options
+
+All StatusBar configuration options are now available as Dashboard options:
+- `hideProgressDetails` - Show detailed progress information
+- `hideUploadButton` - Hide the upload button
+- `hideAfterFinish` - Hide status bar after upload completion
+- `hideRetryButton` - Hide the retry button
+- `hidePauseResumeButton` - Hide pause/resume controls
+- `hideCancelButton` - Hide the cancel button
+- `doneButtonHandler` - Custom handler for the done button
+
+```js
+// Before - separate StatusBar plugin
+import StatusBar from '@uppy/status-bar'
+uppy.use(StatusBar, {
+  target: '#status-bar',
+  hideProgressDetails: true,
+  hideUploadButton: false,
+  hideAfterFinish: true
+})
+
+// After - use Dashboard with StatusBar options
+import Dashboard from '@uppy/dashboard'
+uppy.use(Dashboard, {
+  target: '#dashboard',
+  hideProgressDetails: false,
+  hideUploadButton: false,
+  hideAfterFinish: true
+})
+```
