@@ -1,5 +1,23 @@
 # @uppy/remote-sources
 
+## 2.4.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/google-drive@4.4.2
+  - @uppy/dashboard@4.4.2
+  - @uppy/instagram@4.3.2
+  - @uppy/facebook@4.3.2
+  - @uppy/onedrive@4.3.2
+  - @uppy/unsplash@4.4.2
+  - @uppy/dropbox@4.3.2
+  - @uppy/core@4.5.2
+  - @uppy/zoom@3.3.2
+  - @uppy/box@3.3.2
+  - @uppy/url@4.3.2
+
 ## 2.4.0
 
 ### Minor Changes

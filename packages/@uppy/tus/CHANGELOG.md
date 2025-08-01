@@ -1,5 +1,15 @@
 # @uppy/tus
 
+## 4.3.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/companion-client@4.5.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+
 ## 4.3.0
 
 ### Minor Changes

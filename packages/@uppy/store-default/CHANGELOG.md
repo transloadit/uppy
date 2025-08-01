@@ -1,5 +1,11 @@
 # @uppy/store-default
 
+## 4.3.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+
 ## 4.3.0
 
 ### Minor Changes

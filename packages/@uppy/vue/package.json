@@ -1,6 +1,6 @@
 {
   "name": "@uppy/vue",
-  "version": "2.4.1",
+  "version": "2.4.2",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",

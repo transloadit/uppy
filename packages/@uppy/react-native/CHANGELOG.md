@@ -1,5 +1,15 @@
 # @uppy/react-native
 
+## 0.6.4
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/instagram@4.3.2
+  - @uppy/core@4.5.2
+  - @uppy/url@4.3.2
+
 ## 0.6.2
 
 ### Patch Changes
