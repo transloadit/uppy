@@ -131,9 +131,9 @@ test('Upload, pause, and resume functionality', async () => {
                 ...file.progress,
                 uploadComplete: true,
                 percentage: 100,
-                bytesUploaded: file.size || 0,
+                bytesUploaded: (progress / 100) * (file.size || 0),
                 bytesTotal: file.size || 0,
-              },
+              } as any, // Type assertion to bypass strict union type checking
             })
 
             // Emit upload-success event
