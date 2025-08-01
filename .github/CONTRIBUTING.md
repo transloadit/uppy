@@ -20,14 +20,14 @@ corepack enable
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
-[Yarn]: https://yarnpkg.com/
+[pnpm]: https://pnpm.io/
 
 ## Development
 
 First of all, install Uppy dependencies:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 ### Basic
@@ -35,10 +35,10 @@ yarn install
 To run a basic development version of Uppy, run:
 
 ```bash
-yarn dev
+pnpm dev
 ```
 
-and go to http://localhost:5174 (or whatever link the yarn command outputted).
+and go to http://localhost:5174 (or whatever link the pnpm command outputted).
 As you edit Uppy code, the browser will live reload the changes.
 
 ### Companion
@@ -49,13 +49,13 @@ etc., you need to set up your `.env` file (copy the contents of `.env.example`
 and adjust them based on what you need to work on), and run:
 
 ```bash
-yarn run dev:with-companion
+pnpm run dev:with-companion
 ```
 
 Or, if you only want to run the Companion server:
 
 ```bash
-yarn run start:companion
+pnpm run start:companion
 ```
 
 This would get the Companion instance running on `http://localhost:3020`. It
@@ -118,7 +118,7 @@ Authenticates and Uploads from Dropbox through Companion:
 Unit tests are using Vitest and can be run with:
 
 ```bash
-yarn test:unit
+pnpm test:unit
 ```
 
 ### End-to-End tests
@@ -138,24 +138,24 @@ test(s) you are trying to run.
 To start the testing suite run:
 
 ```
-yarn e2e
+pnpm e2e
 ```
 
 This will run Cypress in watch-mode, and it will pick up and rebuild any changes
 to JS files. If you need to change other files (like CSS for example), you need
-to run the respective `yarn build:*` scripts.
+to run the respective `pnpm build:*` scripts.
 
 Alternatively the following command is the same as the above, except it doesn’t
 run `build` first:
 
 ```
-yarn e2e:skip-build
+pnpm e2e:skip-build
 ```
 
 To generate the boilerplate for a new test run:
 
 ```
-yarn e2e:generate
+pnpm e2e:generate
 ```
 
 ## Releases
@@ -163,7 +163,7 @@ yarn e2e:generate
 Releases are managed by GitHub Actions, here’s an overview of the process to
 release a new Uppy version:
 
-- Run `yarn release` on your local machine.
+- Run `pnpm release` on your local machine.
 - Follow the instructions and select what packages to release. **Warning:**
   skipping packages results in those changes being “lost”, meaning they won’t be
   picked up in the changelog automatically next release. Always try to release
@@ -227,10 +227,10 @@ Now create a branch for your hotfix:
 git checkout -b x.y.z-hotfix
 ```
 
-Run yarn to make sure all packages are consistent:
+Run pnpm to make sure all packages are consistent:
 
 ```bash
-corepack yarn
+corepack pnpm install
 ```
 
 Now navigate to the Companion workspace:
@@ -257,19 +257,19 @@ mkdir -p .git && npm version --workspaces-update=false --tag-version-prefix='@up
 **Important:** Build Companion lib folder
 
 ```bash
-yarn run build
+pnpm run build
 ```
 
 Run a “dry-run” first:
 
 ```bash
-corepack yarn pack
+corepack pnpm pack
 ```
 
 If the earlier command succeeded, let’s publish!
 
 ```bash
-corepack yarn npm publish --access public --tag=none
+corepack pnpm publish --access public --no-git-checks
 ```
 
 Now we can push our branch and tags.
@@ -281,7 +281,7 @@ git push && git push --tags
 #### Hotfix other packages
 
 For other Uppy packages, the process should be like Companion, but hasn’t been
-documented yet. Make sure to remember to run `yarn` as well as building the
+documented yet. Make sure to remember to run `pnpm` as well as building the
 package first, then you can release it. If you do release any other packages,
 please update this doc.
 
@@ -523,7 +523,7 @@ script usually looks something like this:
 ```json
 {
   "scripts": {
-    "build:framework": "cd framework && yarn run build"
+    "build:framework": "cd framework && pnpm run build"
   }
 }
 ```

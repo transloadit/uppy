@@ -24,7 +24,7 @@ on:
 permissions:
   pull-requests: write
 env:
-  YARN_ENABLE_GLOBAL_CACHE: false
+  PNPM_HOME: /tmp/pnpm
 
 jobs:
   compare_diff:
@@ -41,37 +41,25 @@ jobs:
           fetch-depth: 2
           ref: ${{ github.event.pull_request && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.sha }}
       - run: git reset HEAD^ --hard
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run:
-          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
-      - uses: actions/cache@v4
-        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
       - name: Install Node.js
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - run: corepack yarn install
+      - run: corepack pnpm install --frozen-lockfile
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack yarn build
+      - run: corepack pnpm build
       - name: Store output file
         run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
       - name: Fetch source from the PR
         run: |
           git checkout FETCH_HEAD -- packages
-      - run: corepack yarn install --no-immutable
+      - run: corepack pnpm install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack yarn build
+      - run: corepack pnpm build
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
       - name: Setup git

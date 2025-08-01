@@ -20,22 +20,22 @@ jobs:
         with:
           node-version: lts/*
 
-      # Allow yarn to make changes during release
-      - run: corepack yarn config set enableHardenedMode false
-      - run: corepack yarn --mode=update-lockfile
+      # Allow pnpm to make changes during release
+      - run: corepack pnpm config set auto-install-peers false
+      - run: corepack pnpm install --no-frozen-lockfile
 
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: corepack pnpm install --frozen-lockfile
 
       - name: Build
-        run: corepack yarn build
+        run: corepack pnpm build
 
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
-          version: corepack yarn run version
-          publish: corepack yarn run release
+          version: corepack pnpm run version
+          publish: corepack pnpm run release
           commit: '[ci] release'
           title: '[ci] release'
         env:
