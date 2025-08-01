@@ -2,8 +2,8 @@ import Uppy from '@uppy/core'
 import { page, userEvent } from '@vitest/browser/context'
 import { expect, test } from 'vitest'
 import Dashboard from './Dashboard.js'
-import '@uppy/core/dist/style.css'
-import '@uppy/dashboard/dist/style.css'
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
 
 // Normally you would use one of vitest's framework renderers, such as vitest-browser-react,
 // but that's overkill for us so we write our own plain HTML renderer.
