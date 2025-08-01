@@ -149,7 +149,7 @@ The `@uppy/status-bar` package has been merged into `@uppy/dashboard` to simplif
 3. Move all StatusBar options directly to Dashboard options
 
 All StatusBar configuration options are now available as Dashboard options:
-- `hideProgressDetails` - Show detailed progress information
+- `hideProgressDetails` - Hide detailed progress information
 - `hideUploadButton` - Hide the upload button
 - `hideAfterFinish` - Hide status bar after upload completion
 - `hideRetryButton` - Hide the retry button
