@@ -51,6 +51,7 @@ test('Upload, pause, and resume functionality', async () => {
   }).use(Dashboard, {
     target: '#uppy',
     inline: true,
+    hideProgressAfterFinish: false, // Keep StatusBar visible after completion
   })
 
 
@@ -219,6 +220,18 @@ test('Upload, pause, and resume functionality', async () => {
 
   if (!isUploading) {
     throw new Error('Upload should have resumed and be in uploading state')
+  }
+
+  // Wait for upload to complete
+  await uploadPromise
+
+  // Verify upload completion state
+  const completedStatusBar = document.querySelector('.uppy-StatusBar')
+  const completedText = document.querySelector('.uppy-StatusBar-statusPrimary')?.textContent
+
+  // Should show completion state - the text content includes both SVG and "Complete"
+  if (!completedText?.toLowerCase().includes('complete')) {
+    throw new Error('Upload should show completion state')
   }
 
 })
