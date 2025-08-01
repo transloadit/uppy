@@ -29,13 +29,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Install dependencies
-        run: corepack pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
       - name: Build
-        run: corepack pnpm run build
+        run: pnpm run build
       - name: Make Uppy bundle use local version
         run: |
           node <<'EOF'
@@ -55,7 +59,7 @@ jobs:
           EOF
       - name: Eject public packages from repo
         run:
-          mkdir /tmp/artifacts && corepack pnpm -r exec --all
+          mkdir /tmp/artifacts && pnpm -r exec --all
           --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{
           github.sha }}.tgz
       - name: Upload artifact

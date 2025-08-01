@@ -20,22 +20,23 @@ jobs:
         with:
           node-version: lts/*
 
-      # Allow pnpm to make changes during release
-      - run: corepack pnpm config set auto-install-peers false
-      - run: corepack pnpm install --no-frozen-lockfile
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
       - name: Install dependencies
-        run: corepack pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: corepack pnpm build
+        run: pnpm build
 
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
         with:
-          version: corepack pnpm run version
-          publish: corepack pnpm run release
+          version: pnpm run version
+          publish: pnpm run release
           commit: '[ci] release'
           title: '[ci] release'
         env:

@@ -30,24 +30,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Install upload-to-cdn dependencies
         if: ${{ inputs.version }}
-        run: corepack pnpm --filter uppy install
+        run: pnpm --filter uppy install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
       - name: Install all dependencies
         if: ${{ !inputs.version }}
-        run: corepack pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
       - name: Build before publishing
         if: ${{ !inputs.version }}
-        run: corepack pnpm run build
+        run: pnpm run build
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ !inputs.force }}
-        run: corepack pnpm workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"
+        run: pnpm workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}
@@ -55,7 +59,7 @@ jobs:
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ inputs.force }}
-        run: corepack pnpm workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION" --force
+        run: pnpm workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION" --force
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}

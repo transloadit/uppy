@@ -45,21 +45,25 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - run: corepack pnpm install --frozen-lockfile
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - run: pnpm install --frozen-lockfile
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack pnpm build
+      - run: pnpm build
       - name: Store output file
         run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
       - name: Fetch source from the PR
         run: |
           git checkout FETCH_HEAD -- packages
-      - run: corepack pnpm install
+      - run: pnpm install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - run: corepack pnpm build
+      - run: pnpm build
       - name: Store output file
         run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
       - name: Setup git

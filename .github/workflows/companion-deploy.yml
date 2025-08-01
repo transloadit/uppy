@@ -27,9 +27,13 @@ jobs:
           pkg=require("./package.json");pkg.version+="+${{ github.sha
           }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined,
           2)+"\n")')
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Create Companion tarball
         run:
-          corepack pnpm --filter @uppy/companion pack -o
+          pnpm --filter @uppy/companion pack -o
           /tmp/companion-${{ github.sha }}.tar.gz
       - name: Upload artifact
         if: success()
