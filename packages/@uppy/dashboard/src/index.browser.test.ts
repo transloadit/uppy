@@ -2,8 +2,8 @@ import Uppy from '@uppy/core'
 import { page, userEvent } from '@vitest/browser/context'
 import { expect, test } from 'vitest'
 import Dashboard from './Dashboard.js'
-import '@uppy/core/dist/style.css';
-import '@uppy/dashboard/dist/style.css';
+import '@uppy/core/dist/style.css'
+import '@uppy/dashboard/dist/style.css'
 
 // Normally you would use one of vitest's framework renderers, such as vitest-browser-react,
 // but that's overkill for us so we write our own plain HTML renderer.
@@ -24,7 +24,9 @@ test('Basic Dashboard functionality works in the browser', async () => {
   })
 
   await expect.element(page.getByText('Drop files here')).toBeVisible()
-  const fileInput = document.querySelector('.uppy-Dashboard-input') as HTMLInputElement
+  const fileInput = document.querySelector(
+    '.uppy-Dashboard-input',
+  ) as HTMLInputElement
   await userEvent.upload(fileInput, new File(['Hello, World!'], 'test.txt'))
   await expect.element(page.getByText('test.txt')).toBeVisible()
   await page.getByTitle('Edit file test.txt').click()
@@ -47,22 +49,21 @@ test('Upload, pause, and resume functionality', async () => {
 
   const uppy = new Uppy({
     // Enable resumable uploads capability for pause/resume functionality
-    restrictions: { maxNumberOfFiles: 1 }
+    restrictions: { maxNumberOfFiles: 1 },
   }).use(Dashboard, {
     target: '#uppy',
     inline: true,
     hideProgressAfterFinish: false, // Keep StatusBar visible after completion
   })
 
-
   uppy.addUploader(async (fileIDs) => {
-    const files = fileIDs.map(id => uppy.getFile(id))
+    const files = fileIDs.map((id) => uppy.getFile(id))
 
     // Emit upload-start event
     uppy.emit('upload-start', files)
 
     // Set initial progress state for all files
-    fileIDs.forEach(fileID => {
+    fileIDs.forEach((fileID) => {
       const file = uppy.getFile(fileID)
       if (file) {
         uppy.setFileState(fileID, {
@@ -73,14 +74,14 @@ test('Upload, pause, and resume functionality', async () => {
             percentage: 0,
             bytesUploaded: false,
             bytesTotal: file.size,
-          }
+          },
         })
       }
     })
 
     // Simulate upload progress with pause/resume support
     const progressInterval = setInterval(() => {
-      fileIDs.forEach(fileID => {
+      fileIDs.forEach((fileID) => {
         const file = uppy.getFile(fileID)
         if (!file) {
           clearInterval(progressInterval)
@@ -111,7 +112,7 @@ test('Upload, pause, and resume functionality', async () => {
               percentage: progress,
               bytesUploaded: (progress / 100) * (file.size || 0),
               bytesTotal: file.size || 0,
-            }
+            },
           })
 
           // Emit upload-progress event
@@ -132,7 +133,7 @@ test('Upload, pause, and resume functionality', async () => {
                 percentage: 100,
                 bytesUploaded: file.size || 0,
                 bytesTotal: file.size || 0,
-              }
+              },
             })
 
             // Emit upload-success event
@@ -158,7 +159,9 @@ test('Upload, pause, and resume functionality', async () => {
     },
   })
 
-  const fileInput = document.querySelector('.uppy-Dashboard-input') as HTMLInputElement
+  const fileInput = document.querySelector(
+    '.uppy-Dashboard-input',
+  ) as HTMLInputElement
   await userEvent.upload(
     fileInput,
     new File(['a'.repeat(50000)], 'test.txt'), // 50KB file
@@ -174,7 +177,7 @@ test('Upload, pause, and resume functionality', async () => {
   await page.getByRole('button', { name: 'Upload 1 file' }).click()
 
   // Wait for upload to start
-  await new Promise(resolve => setTimeout(resolve, 300))
+  await new Promise((resolve) => setTimeout(resolve, 300))
 
   // Verify upload has started by checking StatusBar state
   await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
@@ -196,9 +199,8 @@ test('Upload, pause, and resume functionality', async () => {
   await uploadPromise
 
   // Add a longer delay to allow StatusBar to render final state
-  await new Promise(resolve => setTimeout(resolve, 500))
+  await new Promise((resolve) => setTimeout(resolve, 500))
 
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
 })
-
