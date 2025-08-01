@@ -18,6 +18,7 @@ import { UppyAngularWrapper } from "../../utils/wrapper";
 	selector: "uppy-status-bar",
 	template: "",
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
 })
 export class StatusBarComponent<M extends Meta, B extends Body>
 	extends UppyAngularWrapper<M, B, StatusBarOptions>

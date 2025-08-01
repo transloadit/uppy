@@ -18,6 +18,7 @@ import { UppyAngularWrapper } from "../../utils/wrapper";
 	selector: "uppy-drag-drop",
 	template: "",
 	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
 })
 export class DragDropComponent<M extends Meta, B extends Body>
 	extends UppyAngularWrapper<M, B, DragDropOptions>
