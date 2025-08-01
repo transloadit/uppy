@@ -24,7 +24,7 @@ test('Basic Dashboard functionality works in the browser', async () => {
   })
 
   await expect.element(page.getByText('Drop files here')).toBeVisible()
-  const fileInput = document.getElementsByClassName('uppy-Dashboard-input')[0]
+  const fileInput = document.querySelector('.uppy-Dashboard-input') as HTMLInputElement
   await userEvent.upload(fileInput, new File(['Hello, World!'], 'test.txt'))
   await expect.element(page.getByText('test.txt')).toBeVisible()
   await page.getByTitle('Edit file test.txt').click()
@@ -130,6 +130,8 @@ test('Upload, pause, and resume functionality', async () => {
                 ...file.progress,
                 uploadComplete: true,
                 percentage: 100,
+                bytesUploaded: file.size || 0,
+                bytesTotal: file.size || 0,
               }
             })
 
@@ -156,7 +158,7 @@ test('Upload, pause, and resume functionality', async () => {
     },
   })
 
-  const fileInput = document.getElementsByClassName('uppy-Dashboard-input')[0]
+  const fileInput = document.querySelector('.uppy-Dashboard-input') as HTMLInputElement
   await userEvent.upload(
     fileInput,
     new File(['a'.repeat(50000)], 'test.txt'), // 50KB file
@@ -176,66 +178,41 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload has started by checking StatusBar state
   const statusBar = document.querySelector('.uppy-StatusBar')
-  const hasUploadingClass = statusBar?.classList.contains('is-uploading')
-
-  if (!hasUploadingClass) {
-    throw new Error('Upload state not detected - StatusBar should have is-uploading class')
-  }
+  expect(statusBar?.classList.contains('is-uploading')).toBe(true)
 
   // Find and click pause button
-  const pauseButton = document.querySelector('button[title="Pause"]') as HTMLButtonElement
-  if (!pauseButton) {
-    throw new Error('Pause button not found')
-  }
-  pauseButton.click()
+  const pauseButton = page.getByTitle('Pause', { exact: true })
+  await expect(pauseButton).toBeVisible()
+  await pauseButton.click()
 
   // Wait a moment for the button to change to resume
   await new Promise(resolve => setTimeout(resolve, 300))
 
   // Verify upload is paused
-  const pausedStatusBar = document.querySelector('.uppy-StatusBar')
-  const pausedText = document.querySelector('.uppy-StatusBar-statusPrimary')?.textContent
-
-  if (!pausedText?.toLowerCase().includes('paused')) {
-    throw new Error('Upload should show paused state')
-  }
+  const statusText = document.querySelector('.uppy-StatusBar-statusPrimary')
+  expect(statusText?.textContent?.toLowerCase()).toContain('paused')
 
   // Find and click resume button
-  const resumeButton = (document.querySelector('button[title="Resume"]') || document.querySelector('button[aria-label="Resume"]')) as HTMLButtonElement
-  if (!resumeButton) {
-    throw new Error('Resume button not found')
-  }
-  resumeButton.click()
+  const resumeButton = page.getByTitle('Resume', { exact: true })
+  await expect(resumeButton).toBeVisible()
+  await resumeButton.click()
 
   // Wait for upload to resume and make progress
   await new Promise(resolve => setTimeout(resolve, 500))
 
   // Verify upload has resumed and is progressing
-  const finalStatusBar = document.querySelector('.uppy-StatusBar')
-  const finalStatusText = document.querySelector('.uppy-StatusBar-statusPrimary')?.textContent || ''
+  expect(statusBar?.classList.contains('is-uploading')).toBe(true)
+  expect(statusText?.textContent?.toLowerCase()).not.toContain('paused')
 
-  // The upload should be back to uploading state (not paused)
-  const isUploading = finalStatusBar?.classList.contains('is-uploading') &&
-                     !finalStatusText.toLowerCase().includes('paused')
-
-  if (!isUploading) {
-    throw new Error('Upload should have resumed and be in uploading state')
-  }
-
-  // Wait for upload to complete
+  // Wait for upload to complete - increase timeout
   await uploadPromise
 
-  // Add a small delay to allow StatusBar to render
-  await new Promise(resolve => setTimeout(resolve, 100))
+  // Add a longer delay to allow StatusBar to render final state
+  await new Promise(resolve => setTimeout(resolve, 500))
 
   // Verify upload completion state
-  const completedStatusBar = document.querySelector('.uppy-StatusBar')
-  const completedText = document.querySelector('.uppy-StatusBar-statusPrimary')?.textContent
-
-  // Should show completion state - the text content includes both SVG and "Complete"
-  if (!completedText?.toLowerCase().includes('complete')) {
-    throw new Error('Upload should show completion state')
-  }
-
+  const finalStatusText = document.querySelector('.uppy-StatusBar-statusPrimary')
+  console.log('Final status text:', finalStatusText?.textContent)
+  expect(finalStatusText?.textContent?.toLowerCase()).toContain('complete')
 })
 
