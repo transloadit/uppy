@@ -21,6 +21,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "exports": {
     "./package.json": "./package.json",
     "./lib/Translator": "./lib/Translator.js",
