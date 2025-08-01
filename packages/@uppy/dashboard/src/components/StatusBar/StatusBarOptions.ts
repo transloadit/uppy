@@ -1,4 +1,4 @@
-import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
+import type { UIPluginOptions } from '@uppy/core'
 
 export interface StatusBarOptions extends UIPluginOptions {
   hideProgressDetails?: boolean

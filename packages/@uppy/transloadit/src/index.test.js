@@ -23,7 +23,7 @@ describe('Transloadit', () => {
     })
 
     uppy.addFile({
-      source: 'jest',
+      source: 'test',
       name: 'abc',
       data: new Uint8Array(100),
     })
@@ -56,7 +56,7 @@ describe('Transloadit', () => {
       Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
 
     uppy.addFile({
-      source: 'jest',
+      source: 'test',
       name: 'abc',
       data: new Uint8Array(100),
     })

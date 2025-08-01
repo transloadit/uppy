@@ -1,6 +1,9 @@
-const { cors } = require('../../src/server/middlewares')
+import { describe, expect, test, vi } from 'vitest'
+
+import { cors } from '../src/server/middlewares.js'
 
 function testWithMock({
+  // @ts-ignore
   corsOptions,
   get = () => {},
   origin = 'https://localhost:1234',
@@ -8,8 +11,8 @@ function testWithMock({
   const res = {
     get,
     getHeader: get,
-    setHeader: jest.fn(),
-    end: jest.fn(),
+    setHeader: vi.fn(),
+    end: vi.fn(),
   }
   const req = {
     method: 'OPTIONS',
@@ -17,7 +20,7 @@ function testWithMock({
       origin,
     },
   }
-  const next = jest.fn()
+  const next = vi.fn()
   cors(corsOptions)(req, res, next)
   return { res }
 }
@@ -35,6 +38,7 @@ describe('cors', () => {
     }
 
     const { res } = testWithMock({
+      // @ts-ignore
       corsOptions: {
         sendSelfEndpoint: true,
         corsOrigins: /^https:\/\/localhost:.*$/,
@@ -72,12 +76,14 @@ describe('cors', () => {
   })
 
   test('should support disabling cors', () => {
+    // @ts-ignore
     const { res } = testWithMock({ corsOptions: { corsOrigins: false } })
     expect(res.setHeader.mock.calls).toEqual([])
   })
 
   test('should support incorrect url', () => {
     const { res } = testWithMock({
+      // @ts-ignore
       corsOptions: { corsOrigins: /^incorrect$/ },
     })
     expect(res.setHeader.mock.calls).toEqual([
@@ -94,6 +100,7 @@ describe('cors', () => {
 
   test('should support array origin', () => {
     const { res } = testWithMock({
+      // @ts-ignore
       corsOptions: {
         corsOrigins: ['http://google.com', 'https://localhost:1234'],
       },

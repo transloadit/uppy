@@ -6,6 +6,9 @@
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
@@ -27,6 +30,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",

@@ -111,42 +111,28 @@ uppy.use(Dashboard, {
 3. Replace your existing components with custom implementations using the hooks or Dashboard
 4. See [examples/](../examples/) for complete implementation examples
 
+### Export maps for all packages
 
-### @uppy/status-bar merged into @uppy/dashboard
+All packages now have export maps. This is a breaking change in two cases:
 
-The `@uppy/status-bar` package has been merged into `@uppy/dashboard` to simplify the architecture and reduce bundle size. StatusBar is now rendered as an integrated component within Dashboard rather than as a separate plugin. The standalone `@uppy/status-bar` package is no longer maintained.
+1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
+2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 
-**Migration steps:**
+#### Changed imports for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`
 
-1. Remove `@uppy/status-bar` from your dependencies
-2. Replace StatusBar usage with Dashboard
-3. Move all StatusBar options directly to Dashboard options
+Some components, like Dashboard, require a peer dependency to work but since all components were exported from a single file you were forced to install all peer dependencies. Even if you never imported, for instance, the status bar component.
 
-All StatusBar configuration options are now available as Dashboard options:
-- `hideProgressDetails` - Show detailed progress information
-- `hideUploadButton` - Hide the upload button
-- `hideAfterFinish` - Hide status bar after upload completion
-- `hideRetryButton` - Hide the retry button
-- `hidePauseResumeButton` - Hide pause/resume controls
-- `hideCancelButton` - Hide the cancel button
-- `doneButtonHandler` - Custom handler for the done button
+Every component that requires a peer dependency has now been moved to a subpath, such as `@uppy/react/dashboard`, so you only need to install the peer dependencies you need.
 
-```js
-// Before - separate StatusBar plugin
-import StatusBar from '@uppy/status-bar'
-uppy.use(StatusBar, {
-  target: '#status-bar',
-  hideProgressDetails: true,
-  hideUploadButton: false,
-  hideAfterFinish: true
-})
+**Example for `@uppy/react`:**
 
-// After - use Dashboard with StatusBar options
-import Dashboard from '@uppy/dashboard'
-uppy.use(Dashboard, {
-  target: '#dashboard',
-  hideProgressDetails: false,
-  hideUploadButton: false,
-  hideAfterFinish: true
-})
+**Before:**
+```javascript
+import { Dashboard, StatusBar } from '@uppy/react'
+```
+
+**Now:**
+```javascript
+import Dashboard from '@uppy/react/dashboard'
+import StatusBar from '@uppy/react/status-bar'
 ```

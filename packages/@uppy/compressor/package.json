@@ -4,7 +4,6 @@
   "version": "2.2.1",
   "license": "MIT",
   "main": "lib/index.js",
-  "style": "dist/style.min.css",
   "keywords": [
     "file uploader",
     "uppy",
@@ -14,12 +13,17 @@
   ],
   "type": "module",
   "homepage": "https://uppy.io",
+  "sideEffects": false,
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",

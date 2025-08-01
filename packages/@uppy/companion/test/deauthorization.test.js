@@ -1,8 +1,9 @@
-const nock = require('nock')
-const request = require('supertest')
-const { getServer } = require('../mockserver')
+import nock from 'nock'
+import request from 'supertest'
+import { afterAll, describe, test, vi } from 'vitest'
+import { getServer } from './mockserver.js'
 
-const authServer = getServer()
+vi.mock('express-prom-bundle')
 
 afterAll(() => {
   nock.cleanAll()
@@ -12,8 +13,8 @@ afterAll(() => {
 describe('handle deauthorization callback', () => {
   nock('https://api.zoom.us').post('/oauth/data/compliance').reply(200)
 
-  test('providers without support for callback endpoint', () => {
-    return request(authServer)
+  test('providers without support for callback endpoint', async () => {
+    return request(await getServer())
       .post('/dropbox/deauthorization/callback')
       .set('Content-Type', 'application/json')
       .send({
@@ -22,8 +23,8 @@ describe('handle deauthorization callback', () => {
       .expect(500)
   })
 
-  test('validate that request credentials match', () => {
-    return request(authServer)
+  test('validate that request credentials match', async () => {
+    return request(await getServer())
       .post('/zoom/deauthorization/callback')
       .set('Content-Type', 'application/json')
       .set('Authorization', 'wrong-verfication-token')
@@ -42,9 +43,9 @@ describe('handle deauthorization callback', () => {
       .expect(400)
   })
 
-  test('validate request credentials is present', () => {
+  test('validate request credentials is present', async () => {
     // Authorization header is absent
-    return request(authServer)
+    return request(await getServer())
       .post('/zoom/deauthorization/callback')
       .set('Content-Type', 'application/json')
       .send({
@@ -62,8 +63,8 @@ describe('handle deauthorization callback', () => {
       .expect(400)
   })
 
-  test('validate request content', () => {
-    return request(authServer)
+  test('validate request content', async () => {
+    return request(await getServer())
       .post('/zoom/deauthorization/callback')
       .set('Content-Type', 'application/json')
       .set('Authorization', 'zoom_verfication_token')
@@ -73,8 +74,8 @@ describe('handle deauthorization callback', () => {
       .expect(400)
   })
 
-  test('validate request content (event name)', () => {
-    return request(authServer)
+  test('validate request content (event name)', async () => {
+    return request(await getServer())
       .post('/zoom/deauthorization/callback')
       .set('Content-Type', 'application/json')
       .set('Authorization', 'zoom_verfication_token')
@@ -93,8 +94,8 @@ describe('handle deauthorization callback', () => {
       .expect(400)
   })
 
-  test('allow valid request', () => {
-    return request(authServer)
+  test('allow valid request', async () => {
+    return request(await getServer())
       .post('/zoom/deauthorization/callback')
       .set('Content-Type', 'application/json')
       .set('Authorization', 'zoom_verfication_token')

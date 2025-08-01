@@ -1,5 +1,3 @@
-export { default as Dashboard } from './dashboard.js'
-export { default as DashboardModal } from './dashboard-modal.js'
 export { UppyContextProvider } from './headless/context-provider.js'
 export * from './headless/generated/index.js'
 

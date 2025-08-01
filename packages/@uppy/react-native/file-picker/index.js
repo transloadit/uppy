@@ -11,6 +11,14 @@ import selectDocument from './selectDocument.js'
 import selectImage from './selectImage.js'
 import takePicture from './takePicture.js'
 
+export { default as Instagram } from './instagram.js'
+export { default as Provider } from './provider.js'
+export { default as ProviderGrid } from './provider-grid.js'
+export { default as selectDocument } from './selectDocument.js'
+export { default as selectImage } from './selectImage.js'
+export { default as takePicture } from './takePicture.js'
+export { default as Url } from './url.js'
+
 const styles = StyleSheet.create({
   providerList: {
     flex: 1,
