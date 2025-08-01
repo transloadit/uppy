@@ -23,6 +23,9 @@ jobs:
       # Allow yarn to make changes during release
       - run: corepack yarn config set enableHardenedMode false
       - run: corepack yarn --mode=update-lockfile
+      - run: |
+          echo '' >> .yarnrc.yml
+          echo 'npmAuthToken: "${NPM_TOKEN}"' >> .yarnrc.yml
 
       - name: Install dependencies
         run: corepack yarn install --immutable
