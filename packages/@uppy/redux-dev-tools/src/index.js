@@ -1,6 +1,6 @@
 import { UIPlugin } from '@uppy/core'
 
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 /**
  * Add Redux DevTools support to Uppy
