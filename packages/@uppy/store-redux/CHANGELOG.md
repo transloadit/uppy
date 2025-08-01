@@ -1,5 +1,12 @@
 # @uppy/store-redux
 
+## 4.1.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- c66fd85: Fix package.json import
+
 ## 4.1.0
 
 ### Minor Changes

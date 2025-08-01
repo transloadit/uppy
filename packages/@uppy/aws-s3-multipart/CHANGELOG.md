@@ -1,5 +1,13 @@
 # @uppy/aws-s3-multipart
 
+## 4.1.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/aws-s3@4.3.2
+
 ## 4.1.0
 
 ### Minor Changes

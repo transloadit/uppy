@@ -1,5 +1,11 @@
 # @uppy/utils
 
+## 6.2.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+
 ## 6.2.0
 
 ### Minor Changes

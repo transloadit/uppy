@@ -1,5 +1,14 @@
 # @uppy/redux-dev-tools
 
+## 4.1.3
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- c66fd85: Fix package.json import
+- Updated dependencies [1b1a9e3]
+  - @uppy/core@4.5.2
+
 ## 4.1.2
 
 ### Patch Changes
