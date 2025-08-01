@@ -87,6 +87,6 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run:
-          corepack pnpm --filter @uppy-dev/build
+          corepack pnpm install --frozen-lockfile
       - name: Run linter
         run: corepack pnpm run check:ci
