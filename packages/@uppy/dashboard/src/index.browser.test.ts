@@ -177,8 +177,7 @@ test('Upload, pause, and resume functionality', async () => {
   await new Promise(resolve => setTimeout(resolve, 300))
 
   // Verify upload has started by checking StatusBar state
-  const statusBar = document.querySelector('.uppy-StatusBar')
-  expect(statusBar?.classList.contains('is-uploading')).toBe(true)
+  await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
 
   // Find and click pause button
   const pauseButton = page.getByTitle('Pause', { exact: true })
@@ -201,7 +200,7 @@ test('Upload, pause, and resume functionality', async () => {
   await new Promise(resolve => setTimeout(resolve, 500))
 
   // Verify upload has resumed and is progressing
-  expect(statusBar?.classList.contains('is-uploading')).toBe(true)
+  await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
   expect(statusText?.textContent?.toLowerCase()).not.toContain('paused')
 
   // Wait for upload to complete - increase timeout
