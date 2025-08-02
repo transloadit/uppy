@@ -153,7 +153,7 @@ export default function FileCard(props: $TSFixMe) {
           <button
             className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Dashboard-FileCard-actionsBtn"
             // If `form` attribute is supported, we want a submit button to trigger the form validation.
-            // Otherwise, fallback to a classic button with a onClick event handler.
+            // Otherwise, fallback to a classic button with a onClick event handler
             type="submit"
             form={form.id}
           >
