@@ -39,3 +39,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Generated files from prepublishOnly
+projects/uppy/angular/.npmignore
+projects/uppy/angular/fesm2022/
+projects/uppy/angular/index.d.ts
+projects/uppy/angular/public-api.d.ts
