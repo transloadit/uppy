@@ -3,24 +3,23 @@
   generics="M extends import('@uppy/utils/lib/UppyFile').Meta, B extends import('@uppy/utils/lib/UppyFile').Body"
 >
 import type { Uppy } from "@uppy/core";
-import ProgressBarPlugin from "@uppy/progress-bar";
+import ProgressBarPlugin, { type ProgressBarOptions } from "@uppy/progress-bar";
 import { onDestroy, onMount } from "svelte";
 
 let container: HTMLElement;
 let plugin: ProgressBarPlugin<M, B>;
 
 export let uppy: Uppy<M, B>;
-export const props: Object | undefined = {};
+export let props: ProgressBarOptions | undefined = {};
 
 const installPlugin = () => {
 	const options = {
 		id: "svelte:ProgressBar",
-		inline: true,
 		...props,
 		target: container,
-	};
+	} satisfies ProgressBarOptions;
 
-	uppy.use(ProgressBarPlugin, options);
+	uppy.use(ProgressBarPlugin<M, B>, options);
 	plugin = uppy.getPlugin(options.id) as ProgressBarPlugin<M, B>;
 };
 const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
@@ -35,7 +34,7 @@ $: {
 		id: "svelte:ProgressBar",
 		...props,
 		target: container,
-	};
+	} satisfies ProgressBarOptions;
 	uppy.setOptions(options);
 }
 </script>
