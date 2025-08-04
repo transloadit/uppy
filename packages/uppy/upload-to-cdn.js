@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 // Upload Uppy releases to tlcdn.com (CDN). Copyright (c) 2018, Transloadit Ltd.
 //
 // This file:
@@ -21,21 +22,24 @@
 //
 //  - Kevin van Zonneveld <kevin@transloadit.com>
 
-const path = require('node:path')
-const { pipeline, finished } = require('node:stream/promises')
-const { readFile } = require('node:fs/promises')
-const {
-  S3Client,
+import { readFile } from 'node:fs/promises'
+import path from 'node:path'
+import { finished, pipeline } from 'node:stream/promises'
+import { fileURLToPath } from 'node:url'
+import {
   ListObjectsV2Command,
   PutObjectCommand,
-} = require('@aws-sdk/client-s3')
+  S3Client,
+} from '@aws-sdk/client-s3'
+import AdmZip from 'adm-zip'
+import concat from 'concat-stream'
+import mime from 'mime-types'
+import packlist from 'npm-packlist'
+import pacote from 'pacote'
+import tar from 'tar'
 
-const packlist = require('npm-packlist')
-const tar = require('tar')
-const pacote = require('pacote')
-const concat = require('concat-stream')
-const mime = require('mime-types')
-const AdmZip = require('adm-zip')
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -153,7 +157,11 @@ async function main(packageName, version) {
       ? path.join(__dirname, '..', packageName)
       : path.join(__dirname)
 
-    resolvedVersion = require(path.join(packagePath, 'package.json')).version
+    const packageJsonContent = await readFile(
+      path.join(packagePath, 'package.json'),
+      'utf8',
+    )
+    resolvedVersion = JSON.parse(packageJsonContent).version
   }
 
   // Warn if uploading a local build not from CI:

@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
+      published: ${{ steps.changesets.outputs.published }}
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -59,28 +60,33 @@ jobs:
 
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
+        if: steps.changesets.outputs.published == 'true'
         run: |
           git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
 
       - name: Upload `uppy` to CDN
+        if: steps.changesets.outputs.published == 'true'
         run: node packages/uppy/upload-to-cdn.js uppy --force
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
 
       - name: Upload `@uppy/locales` to CDN if it was released
+        if: steps.changesets.outputs.published == 'true'
         run: node packages/uppy/upload-to-cdn.js @uppy/locales --force
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
 
       - name: Update CDN version references
+        if: steps.changesets.outputs.published == 'true'
         run: |
           VERSION=$(yarn workspace uppy exec npm pkg get version | grep -o '"[0-9]*\.[0-9]*\.[0-9]*"' | tr -d '"')
           sed -i "s|https://releases\.transloadit\.com/uppy/v[0-9]*\.[0-9]*\.[0-9]*/|https://releases.transloadit.com/uppy/v$VERSION/|g" README.md
           sed -i "s|https://releases\.transloadit\.com/uppy/v[0-9]*\.[0-9]*\.[0-9]*/|https://releases.transloadit.com/uppy/v$VERSION/|g" BUNDLE-README.md
 
       - name: Commit README updates
+        if: steps.changesets.outputs.published == 'true'
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
@@ -94,7 +100,7 @@ jobs:
   docker:
     name: DockerHub
     needs: release
-    if: ${{ needs.release.outputs.companionWasReleased }}
+    if: ${{ needs.release.outputs.published == 'true' && needs.release.outputs.companionWasReleased }}
     runs-on: ubuntu-latest
     env:
       DOCKER_BUILDKIT: 0
