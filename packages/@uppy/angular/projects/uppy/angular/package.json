@@ -18,9 +18,6 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "prepublishOnly": "rm -fr * && cp -r ../../../dist/uppy/angular .."
   },
