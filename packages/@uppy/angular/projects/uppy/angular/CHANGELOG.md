@@ -1,5 +1,11 @@
 # @uppy/angular
 
+## 0.9.2
+
+### Patch Changes
+
+- 8f8ee09: Nothing changed, just a release to fix the broken previous release.
+
 ## 0.9.1
 
 ### Patch Changes
