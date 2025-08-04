@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -55,6 +57,11 @@ jobs:
         run: |
           sed -i '/npmAuthToken:/d' .yarnrc.yml
 
+      - name: Check if Companion was released
+        id: checkIfCompanionWasReleased
+        run: |
+          git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
+
       - name: Upload `uppy` to CDN
         run: corepack yarn run uploadcdn uppy -- --force
         env:
@@ -73,10 +80,15 @@ jobs:
           sed -i "s|https://releases\.transloadit\.com/uppy/v[0-9]*\.[0-9]*\.[0-9]*/|https://releases.transloadit.com/uppy/v$VERSION/|g" README.md
           sed -i "s|https://releases\.transloadit\.com/uppy/v[0-9]*\.[0-9]*\.[0-9]*/|https://releases.transloadit.com/uppy/v$VERSION/|g" BUNDLE-README.md
 
-      - name: Check if Companion was released
-        id: checkIfCompanionWasReleased
+      - name: Commit README updates
         run: |
-          git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md BUNDLE-README.md
+          git commit -m "Update CDN version references to latest release" || exit 0
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # See also companion-deploy.yml
   docker:
