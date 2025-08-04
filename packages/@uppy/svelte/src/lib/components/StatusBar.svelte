@@ -3,24 +3,23 @@
   generics="M extends import('@uppy/utils/lib/UppyFile').Meta, B extends import('@uppy/utils/lib/UppyFile').Body"
 >
 import type { Uppy } from "@uppy/core";
-import StatusBarPlugin from "@uppy/status-bar";
+import StatusBarPlugin, { type StatusBarOptions } from "@uppy/status-bar";
 import { onDestroy, onMount } from "svelte";
 
 let container: HTMLElement;
 let plugin: StatusBarPlugin<M, B>;
 
 export let uppy: Uppy<M, B>;
-export const props: Object | undefined = {};
+export let props: StatusBarOptions | undefined = {};
 
 const installPlugin = () => {
 	const options = {
 		id: "svelte:StatusBar",
-		inline: true,
 		...props,
 		target: container,
-	};
+	} satisfies StatusBarOptions;
 
-	uppy.use(StatusBarPlugin, options);
+	uppy.use(StatusBarPlugin<M, B>, options);
 	plugin = uppy.getPlugin(options.id) as StatusBarPlugin<M, B>;
 };
 const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
@@ -35,7 +34,7 @@ $: {
 		id: "svelte:StatusBar",
 		...props,
 		target: container,
-	};
+	} satisfies StatusBarOptions;
 	uppy.setOptions(options);
 }
 </script>
