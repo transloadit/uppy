@@ -1,5 +1,11 @@
 # @uppy/svelte
 
+## 4.6.2
+
+### Patch Changes
+
+- 4aa708a: Fix prop passing and types
+
 ## 4.6.0
 
 ### Minor Changes
