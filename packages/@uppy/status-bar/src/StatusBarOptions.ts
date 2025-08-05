@@ -1,5 +1,6 @@
 import type { UIPluginOptions } from '@uppy/core/lib/UIPlugin.js'
 import type StatusBarLocale from './locale.js'
+import type { LocaleStrings } from '@uppy/utils/lib/Translator'
 
 export interface StatusBarOptions extends UIPluginOptions {
   showProgressDetails?: boolean
@@ -9,5 +10,5 @@ export interface StatusBarOptions extends UIPluginOptions {
   hidePauseResumeButton?: boolean
   hideCancelButton?: boolean
   doneButtonHandler?: (() => void) | null
-  locale?: typeof StatusBarLocale
+  locale?: LocaleStrings<typeof StatusBarLocale>
 }
