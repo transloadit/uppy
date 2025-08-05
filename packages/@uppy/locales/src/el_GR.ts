@@ -147,4 +147,11 @@ el_GR.strings = {
   },
 }
 
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.el_GR = el_GR
+}
+
 export default el_GR

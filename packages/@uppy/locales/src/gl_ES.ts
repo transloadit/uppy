@@ -145,4 +145,11 @@ gl_ES.strings = {
   openFolderNamed: 'Cartafol aberto %{name}',
 }
 
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.gl_ES = gl_ES
+}
+
 export default gl_ES

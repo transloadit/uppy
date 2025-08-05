@@ -147,4 +147,11 @@ is_IS.strings = {
   },
 }
 
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.is_IS = is_IS
+}
+
 export default is_IS
