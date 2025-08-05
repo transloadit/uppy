@@ -15,9 +15,6 @@
     },
     {
       "path": "../dashboard/tsconfig.build.json"
-    },
-    {
-      "path": "../status-bar/tsconfig.build.json"
     }
   ]
 }

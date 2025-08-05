@@ -111,7 +111,7 @@ export default () => {
         { id: 'license', name: 'License', placeholder: 'specify license' },
         { id: 'caption', name: 'Caption', placeholder: 'add caption' },
       ],
-      showProgressDetails: true,
+      hideProgressDetails: true,
       proudlyDisplayPoweredByUppy: true,
       note: `${JSON.stringify(restrictions)}`,
     })

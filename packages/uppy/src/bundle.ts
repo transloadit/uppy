@@ -38,7 +38,6 @@ export { default as Instagram } from '@uppy/instagram'
 export { default as OneDrive } from '@uppy/onedrive'
 export { default as RemoteSources } from '@uppy/remote-sources'
 export { default as ScreenCapture } from '@uppy/screen-capture'
-export { default as StatusBar } from '@uppy/status-bar'
 // Stores
 export { default as DefaultStore } from '@uppy/store-default'
 export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'

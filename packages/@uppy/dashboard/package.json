@@ -40,7 +40,6 @@
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
     "@uppy/provider-views": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
@@ -52,7 +51,6 @@
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/google-drive": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "@vitest/browser": "^3.2.4",

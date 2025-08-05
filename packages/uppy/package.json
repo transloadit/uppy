@@ -52,7 +52,6 @@
     "@uppy/provider-views": "workspace:^",
     "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/store-default": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
     "@uppy/transloadit": "workspace:^",

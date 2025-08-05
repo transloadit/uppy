@@ -23,7 +23,6 @@
         "@uppy/dropbox#build",
         "@uppy/webdav#build",
         "@uppy/unsplash#build",
-        "@uppy/status-bar#build",
         "@uppy/webcam#build",
         "@uppy/instagram#build"
       ],
