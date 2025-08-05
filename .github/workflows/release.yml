@@ -66,14 +66,14 @@ jobs:
 
       - name: Upload `uppy` to CDN
         if: steps.changesets.outputs.published == 'true'
-        run: node packages/uppy/upload-to-cdn.js uppy --force
+        run: node packages/uppy/upload-to-cdn.js uppy
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
 
       - name: Upload `@uppy/locales` to CDN if it was released
         if: steps.changesets.outputs.published == 'true'
-        run: node packages/uppy/upload-to-cdn.js @uppy/locales --force
+        run: node packages/uppy/upload-to-cdn.js @uppy/locales
         env:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
