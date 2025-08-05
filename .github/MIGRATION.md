@@ -140,7 +140,7 @@ import StatusBar from '@uppy/react/status-bar'
 
 ### @uppy/status-bar merged into @uppy/dashboard
 
-The `@uppy/status-bar` package has been merged into `@uppy/dashboard` to simplify the architecture and reduce bundle size. StatusBar is now rendered as an integrated component within Dashboard rather than as a separate plugin. The standalone `@uppy/status-bar` package is no longer maintained.
+The `@uppy/status-bar` package has been merged into `@uppy/dashboard`. The plugin gave a false promise of flexibility as a standalone plugin but was always built tightly coupled for `@uppy/dashboard`. With the new headless components and hooks, we want go all in those components and remove the confusing, inflexible ones.
 
 **Migration steps:**
 
