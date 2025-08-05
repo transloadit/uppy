@@ -137,7 +137,6 @@ ar_SA.strings = {
   openFolderNamed: '%{name} افتح المجلد',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

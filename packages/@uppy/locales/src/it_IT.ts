@@ -142,7 +142,6 @@ it_IT.strings = {
   openFolderNamed: 'Cartella aperta %{name}',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

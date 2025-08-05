@@ -200,7 +200,6 @@ es_MX.strings = {
   zoomOut: 'Alejar',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

@@ -255,7 +255,6 @@ ru_RU.strings = {
   zoomOut: 'Отдалить',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

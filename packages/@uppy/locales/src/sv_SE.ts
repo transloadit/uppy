@@ -247,7 +247,6 @@ sv_SE.strings = {
   zoomOut: 'Zooma ut',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

@@ -251,7 +251,6 @@ pt_BR.strings = {
   zoomOut: 'Diminuir o zoom',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

@@ -235,7 +235,6 @@ es_ES.strings = {
   unselectFileNamed: 'Deseleccionar archivo %{name}',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

@@ -213,7 +213,6 @@ de_DE.strings = {
   zoomOut: 'Verkleinern',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

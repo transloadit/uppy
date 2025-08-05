@@ -232,7 +232,6 @@ ca_ES.strings = {
   unselectFileNamed: 'Desselecciona arxiu %{name}',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

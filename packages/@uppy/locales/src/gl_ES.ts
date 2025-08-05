@@ -145,7 +145,6 @@ gl_ES.strings = {
   openFolderNamed: 'Cartafol aberto %{name}',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

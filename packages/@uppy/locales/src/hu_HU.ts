@@ -107,7 +107,6 @@ hu_HU.strings = {
   openFolderNamed: 'Nyitott mappa %{name}',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

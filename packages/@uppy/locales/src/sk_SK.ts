@@ -179,7 +179,6 @@ sk_SK.strings = {
   zoomOut: 'Oddialiť',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

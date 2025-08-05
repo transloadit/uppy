@@ -169,7 +169,6 @@ zh_TW.strings = {
   zoomOut: '縮小',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

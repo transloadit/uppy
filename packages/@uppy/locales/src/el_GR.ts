@@ -147,7 +147,6 @@ el_GR.strings = {
   },
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

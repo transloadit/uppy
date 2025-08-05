@@ -215,7 +215,6 @@ nl_NL.strings = {
   zoomOut: 'Zoom uit',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

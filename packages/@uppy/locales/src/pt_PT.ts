@@ -142,7 +142,6 @@ pt_PT.strings = {
   openFolderNamed: 'Pasta aberta %{name}',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

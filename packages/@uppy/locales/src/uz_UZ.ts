@@ -224,7 +224,6 @@ uz_UZ.strings = {
   zoomOut: 'Kichraytirish',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped

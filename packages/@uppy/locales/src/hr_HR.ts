@@ -145,7 +145,6 @@ hr_HR.strings = {
   openFolderNamed: 'Otvori mapu %{name}',
 }
 
-
 // @ts-ignore untyped
 if (typeof Uppy !== 'undefined') {
   // @ts-ignore untyped
