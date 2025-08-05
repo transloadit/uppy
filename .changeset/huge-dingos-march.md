@@ -4,7 +4,7 @@
 
 ### Merge @uppy/status-bar into @uppy/dashboard
 
-The `@uppy/status-bar` package has been merged into `@uppy/dashboard` to simplify the architecture and reduce bundle size. This is a breaking change if you were using StatusBar as a standalone plugin.
+The `@uppy/status-bar` package has been merged into `@uppy/dashboard`. The plugin gave a false promise of flexibility as a standalone plugin but was always built tightly coupled for `@uppy/dashboard`. With the new headless components and hooks, we want go all in those components and remove the confusing, inflexible ones.
 
 StatusBar is now rendered as an integrated component within Dashboard rather than as a separate plugin. The standalone `@uppy/status-bar` package is no longer maintained and should be removed from your dependencies.
 
