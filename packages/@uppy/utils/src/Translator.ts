@@ -1,4 +1,4 @@
-import { h } from 'preact'
+import type { h } from 'preact'
 
 // We're using a generic because languages have different plural rules.
 export interface Locale<T extends number = number> {
