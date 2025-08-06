@@ -257,15 +257,12 @@ export default class ThumbnailGenerator<
       aspect = img.height / img.width
     }
 
-    let targetWidth = width
-    let targetHeight = height
-
-    // Thumbnail shouldn’t be enlarged / upscaled, only reduced.
-    // If img is already smaller than width/height, leave it as is.
-    if (img.width < width) targetWidth = img.width
-    if (img.height < height) targetHeight = img.height
-
     if (width != null) {
+    let targetWidth = width
+      // Thumbnail shouldn’t be enlarged / upscaled, only reduced.
+      // If img is already smaller than width/height, leave it as is.
+      if (img.width < width) targetWidth = img.width
+
       return {
         width: targetWidth,
         height: Math.round(targetWidth / aspect),
@@ -273,6 +270,8 @@ export default class ThumbnailGenerator<
     }
 
     if (height != null) {
+      let targetHeight = height
+      if (img.height < height) targetHeight = img.height
       return {
         width: Math.round(targetHeight * aspect),
         height: targetHeight,
