@@ -1,7 +1,8 @@
-name: End-to-end tests
+name: Output
+
 on:
   push:
-    branches: [ main ]
+    branches: [main]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -10,8 +11,8 @@ on:
       - 'website/**'
       - '.github/**'
       - '!.github/workflows/e2e.yml'
-  pull_request_target:
-    types: [ opened, synchronize, reopened, labeled ]
+  pull_request:
+    types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
       - '**.d.ts'
@@ -19,113 +20,96 @@ on:
       - 'private/**'
       - 'website/**'
       - '.github/**'
-  pull_request:
-    types: [ opened, synchronize, reopened ]
-    paths:
-      - .github/workflows/e2e.yml
 
-concurrency: ${{ github.workflow }}--${{ github.ref }}
-
+permissions:
+  pull-requests: write
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
 
 jobs:
-  e2e:
-    if: ${{ !github.event.pull_request || (contains(github.event.pull_request.labels.*.name, 'safe to test') && github.event.pull_request.state == 'open') || (github.event.pull_request.head.repo.full_name == github.repository && github.event.event_name != 'labeled') }}
-    name: Browser tests
+  compare_diff:
+    name: Diff lib folders
     runs-on: ubuntu-latest
+    env:
+      DIFF_BUILDER: true
+    outputs:
+      diff: ${{ steps.diff.outputs.OUTPUT_DIFF }}
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
+          ref: ${{ github.event.pull_request && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.sha }}
+      - run: git reset HEAD^ --hard
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-
-      - name: Create cache folder for Cypress
-        id: cypress-cache-dir-path
-        run: echo "dir=$(mktemp -d)" >> $GITHUB_OUTPUT
-      - uses: actions/cache@v3
-        with:
-          path: ${{ steps.cypress-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-cypress
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
-
-      - name: Start Redis
-        uses: supercharge/redis-github-action@1.4.0
+      - run: corepack yarn install
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - run: corepack yarn build
+      - name: Store output file
+        run: tar cf /tmp/previousVersion.tar packages/@uppy/*/lib
+      - name: Fetch source from the PR
+        run: |
+          git checkout FETCH_HEAD -- packages
+      - run: corepack yarn install --no-immutable
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - run: corepack yarn build
+      - name: Store output file
+        run: tar cf /tmp/newVersion.tar packages/@uppy/*/lib
+      - name: Setup git
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git init /tmp/uppy
+          echo '*.map' > /tmp/uppy/.gitignore
+      - name: Install dformat
+        run: |
+          curl -fsSL https://dprint.dev/install.sh | sh
+          cd /tmp/uppy && echo '{"plugins":[]}' > dprint.json && "$HOME/.dprint/bin/dprint" config add typescript
+      - name: Extract previous version
+        run: cd /tmp/uppy && tar xf /tmp/previousVersion.tar
+      - name: Format previous output code
+        run: cd /tmp/uppy && "$HOME/.dprint/bin/dprint" fmt **/*.js
+      - name: Commit previous version
+        run: cd /tmp/uppy && git add -A . && git commit -m 'previous version'
+      - name: Extract new version
+        run: cd /tmp/uppy && tar xf /tmp/newVersion.tar
+      - name: Format new output code
+        run: cd /tmp/uppy && "$HOME/.dprint/bin/dprint" fmt **/*.js
+      - name: Build diff
+        id: diff
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          echo "OUTPUT_DIFF<<$EOF" >> "$GITHUB_OUTPUT"
+          cd /tmp/uppy && git --no-pager diff >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+      - name: Add/update comment
+        if: github.event.pull_request
+        uses: marocchino/sticky-pull-request-comment@v2
         with:
-          redis-version: 7
+          message: |
+            <details><summary>Diff output files</summary>
 
-      - name: Install dependencies
-        run: corepack yarn install --immutable
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
-          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
-      - name: Build Uppy packages
-        run: corepack yarn build
-      - name: Run end-to-end browser tests
-        run: corepack yarn run e2e:ci
-        env:
-          COMPANION_DATADIR: ./output
-          COMPANION_DOMAIN: localhost:3020
-          COMPANION_PROTOCOL: http
-          COMPANION_REDIS_URL: redis://localhost:6379
-          COMPANION_UNSPLASH_KEY: ${{secrets.COMPANION_UNSPLASH_KEY}}
-          COMPANION_UNSPLASH_SECRET: ${{secrets.COMPANION_UNSPLASH_SECRET}}
-          COMPANION_AWS_KEY: ${{secrets.COMPANION_AWS_KEY}}
-          COMPANION_AWS_SECRET: ${{secrets.COMPANION_AWS_SECRET}}
-          COMPANION_AWS_BUCKET: ${{secrets.COMPANION_AWS_BUCKET}}
-          COMPANION_AWS_REGION: ${{secrets.COMPANION_AWS_REGION}}
-          VITE_COMPANION_URL: http://localhost:3020
-          VITE_TRANSLOADIT_KEY: ${{secrets.TRANSLOADIT_KEY}}
-          VITE_TRANSLOADIT_SECRET: ${{secrets.TRANSLOADIT_SECRET}}
-          VITE_TRANSLOADIT_TEMPLATE: ${{secrets.TRANSLOADIT_TEMPLATE}}
-          VITE_TRANSLOADIT_SERVICE_URL: ${{secrets.TRANSLOADIT_SERVICE_URL}}
-          # https://docs.cypress.io/guides/references/advanced-installation#Binary-cache
-          CYPRESS_CACHE_FOLDER: ${{ steps.cypress-cache-dir-path.outputs.dir }}
-      - name: Upload videos in case of failure
-        uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: videos-and-screenshots
-          path: |
-            e2e/cypress/videos/
-            e2e/cypress/screenshots/
-      - name: Remove 'pending end-to-end tests' label
-        # Remove the 'pending end-to-end tests' label if tests ran successfully
-        if: github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')
-        run: gh pr edit "$NUMBER" --remove-label 'pending end-to-end tests'
-        env:
-          NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Remove 'safe to test' label
-        # Remove the 'safe to test' label to ensure next commit needs approval before re-running this.
-        if: always() && github.event.pull_request && contains(github.event.pull_request.labels.*.name, 'safe to test')
-        run: gh pr edit "$NUMBER" --remove-label 'safe to test'
-        env:
-          NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  add-pending-e2e-label:
-    # Add the 'pending end-to-end tests' label for PRs that come from forks.
-    # For those PRs, we want to review the code before running e2e tests.
-    # See https://securitylab.github.com/research/github-actions-preventing-pwn-requests/.
-    if: github.event.pull_request.state == 'open' && github.event.pull_request.head.repo.full_name != github.repository && !contains(github.event.pull_request.labels.*.name, 'safe to test') && !contains(github.event.pull_request.labels.*.name, 'pending end-to-end tests')
-    runs-on: ubuntu-latest
-    steps:
-      - name: Add label
-        env:
-          NUMBER: ${{ github.event.pull_request.number }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh pr edit "$NUMBER" --repo ${{ github.repository }} --add-label 'pending end-to-end tests'
+            ```diff
+            ${{ steps.diff.outputs.OUTPUT_DIFF || 'No diff' }}
+            ```
+
+            </details>

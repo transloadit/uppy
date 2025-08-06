@@ -1,11 +1,14 @@
 {
   "name": "@uppy/golden-retriever",
   "description": "The GoldenRetriever Uppy plugin saves selected files in browser cache to seamlessly resume uploding after browser crash or accidentally closed tab",
-  "version": "3.0.2",
+  "version": "4.2.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build"
+  },
   "keywords": [
     "file uploader",
     "restore files",
@@ -23,12 +26,20 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
-    "@transloadit/prettier-bytes": "0.0.9",
     "@uppy/utils": "workspace:^",
-    "lodash.throttle": "^4.1.1"
+    "lodash": "^4.17.21"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

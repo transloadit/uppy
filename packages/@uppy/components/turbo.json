@@ -1,0 +1,17 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "@uppy/core#build"],
+      "outputs": ["lib/**"]
+    },
+    "build:css": {
+      "inputs": [
+        "src/input.css",
+        "src/**/*.{js,ts,jsx,tsx}",
+        "tailwind.config.js"
+      ],
+      "outputs": ["dist/styles.css"]
+    }
+  }
+}

@@ -1,0 +1,69 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`src/Core > plugins > should not be able to add a plugin that has no id 1`] = `[Error: Your plugin must have an id]`;
+
+exports[`src/Core > plugins > should not be able to add a plugin that has no type 1`] = `[Error: Your plugin must have a type]`;
+
+exports[`src/Core > plugins > should not be able to add an invalid plugin 1`] = `[TypeError: Expected a plugin class, but got object. Please verify that the plugin was imported and spelled correctly.]`;
+
+exports[`src/Core > plugins > should prevent the same plugin from being added more than once 1`] = `
+[Error: Already found a plugin named 'TestSelector1'. Tried to use: 'TestSelector1'.
+Uppy plugins must have unique \`id\` options.]
+`;
+
+exports[`src/Core > uploading a file > should only upload files that are not already assigned to another upload id 1`] = `
+{
+  "failed": [],
+  "successful": [
+    {
+      "data": Uint8Array [],
+      "extension": "jpg",
+      "id": "uppy-foo/jpg-1e-image/jpeg",
+      "isGhost": false,
+      "isRemote": false,
+      "meta": {
+        "name": "foo.jpg",
+        "type": "image/jpeg",
+      },
+      "name": "foo.jpg",
+      "preview": undefined,
+      "progress": {
+        "bytesTotal": null,
+        "bytesUploaded": false,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": null,
+      },
+      "remote": undefined,
+      "size": null,
+      "source": "vi",
+      "type": "image/jpeg",
+    },
+    {
+      "data": Uint8Array [],
+      "extension": "jpg",
+      "id": "uppy-bar/jpg-1e-image/jpeg",
+      "isGhost": false,
+      "isRemote": false,
+      "meta": {
+        "name": "bar.jpg",
+        "type": "image/jpeg",
+      },
+      "name": "bar.jpg",
+      "preview": undefined,
+      "progress": {
+        "bytesTotal": null,
+        "bytesUploaded": false,
+        "percentage": 0,
+        "uploadComplete": false,
+        "uploadStarted": null,
+      },
+      "remote": undefined,
+      "size": null,
+      "source": "vi",
+      "type": "image/jpeg",
+    },
+  ],
+  "uploadID": "cjd09qwxb000dlql4tp4doz8h",
+}
+`;

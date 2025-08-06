@@ -1,10 +1,9 @@
 {
   "name": "@uppy/store-redux",
   "description": "Make Uppy use your existing Redux store.",
-  "version": "3.0.2",
+  "version": "4.1.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
   "keywords": [
     "file uploader",
@@ -20,11 +19,23 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
-    "nanoid": "^4.0.0"
+    "nanoid": "^5.0.9"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
-    "redux": "^4.0.0"
+    "jsdom": "^26.1.0",
+    "redux": "^4.0.0",
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   }
 }

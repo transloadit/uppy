@@ -1,0 +1,19 @@
+{
+  "name": "example-companion",
+  "version": "0.0.0",
+  "dependencies": {
+    "@uppy/companion": "workspace:*",
+    "body-parser": "^1.20.3",
+    "express": "^4.19.2",
+    "express-session": "^1.15.6",
+    "light-server": "^2.4.0"
+  },
+  "license": "ISC",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "client": "light-server -p 3000 -s client",
+    "server": "node ./server/index.js",
+    "start": "yarn run server & yarn run client"
+  }
+}

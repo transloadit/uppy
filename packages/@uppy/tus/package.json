@@ -1,11 +1,15 @@
 {
   "name": "@uppy/tus",
   "description": "Resumable uploads for Uppy using Tus.io",
-  "version": "3.0.6",
+  "version": "4.3.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -22,13 +26,22 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "tus-js-client": "^3.0.0"
+    "tus-js-client": "^4.2.3"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0"
+    "@uppy/core": "workspace:^",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

@@ -1,11 +1,16 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "3.1.1",
+  "version": "4.5.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -21,13 +26,30 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
+    "@uppy/components": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "prop-types": "^15.6.1"
+    "preact": "^10.5.13",
+    "use-sync-external-store": "^1.2.2"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.4.2",
+    "@testing-library/react": "^16.0.0",
     "@types/react": "^18.0.8",
-    "react": "^18.1.0"
+    "@types/use-sync-external-store": "^0.0.6",
+    "@uppy/core": "workspace:^",
+    "jsdom": "^26.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
@@ -35,8 +57,11 @@
     "@uppy/drag-drop": "workspace:^",
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
-    "react": "^16.0.0 || ^17.0.0 || ^18.0.0"
+    "@uppy/webcam": "workspace:^",
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
@@ -51,7 +76,13 @@
     "@uppy/progress-bar": {
       "optional": true
     },
+    "@uppy/screen-capture": {
+      "optional": true
+    },
     "@uppy/status-bar": {
+      "optional": true
+    },
+    "@uppy/webcam": {
       "optional": true
     }
   }

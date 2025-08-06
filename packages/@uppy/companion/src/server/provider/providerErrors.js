@@ -1,40 +1,90 @@
 const logger = require('../logger')
-const { ProviderApiError, ProviderAuthError } = require('./error')
+const {
+  ProviderApiError,
+  ProviderUserError,
+  ProviderAuthError,
+  parseHttpError,
+} = require('./error')
 
-function convertProviderError ({ err, providerName, isAuthError = () => false, getJsonErrorMessage }) {
-  const { response } = err
-
-  function getErrorMessage () {
-    if (typeof response.body === 'object') {
-      const message = getJsonErrorMessage(response.body)
+/**
+ *
+ * @param {{
+ *   fn: () => any,
+ *   tag: string,
+ * providerName: string,
+ *   isAuthError?: (a: { statusCode: number, body?: object }) => boolean,
+ * isUserFacingError?: (a: { statusCode: number, body?: object }) => boolean,
+ *   getJsonErrorMessage: (a: object) => string
+ * }} param0
+ * @returns
+ */
+async function withProviderErrorHandling({
+  fn,
+  tag,
+  providerName,
+  isAuthError = () => false,
+  isUserFacingError = () => false,
+  getJsonErrorMessage,
+}) {
+  function getErrorMessage({ statusCode, body }) {
+    if (typeof body === 'object') {
+      const message = getJsonErrorMessage(body)
       if (message != null) return message
     }
 
-    if (typeof response.body === 'string') {
-      return response.body
+    if (typeof body === 'string') {
+      return body
     }
 
-    return `request to ${providerName} returned ${response.statusCode}`
+    return `request to ${providerName} returned ${statusCode}`
   }
 
-  if (response) {
-    // @ts-ignore
-    if (isAuthError(response)) return new ProviderAuthError()
-
-    return new ProviderApiError(getErrorMessage(), response.statusCode)
-  }
-
-  return err
-}
-
-async function withProviderErrorHandling ({ fn, tag, providerName, isAuthError, getJsonErrorMessage }) {
   try {
     return await fn()
   } catch (err) {
-    const err2 = convertProviderError({ err, providerName, isAuthError, getJsonErrorMessage })
-    logger.error(err2, tag)
-    throw err2
+    const httpError = parseHttpError(err)
+
+    // Wrap all HTTP errors according to the provider's desired error handling
+    if (httpError) {
+      const { statusCode, body } = httpError
+      let knownErr
+      if (isAuthError({ statusCode, body })) {
+        knownErr = new ProviderAuthError()
+      } else if (isUserFacingError({ statusCode, body })) {
+        knownErr = new ProviderUserError({
+          message: getErrorMessage({ statusCode, body }),
+        })
+      } else {
+        knownErr = new ProviderApiError(
+          getErrorMessage({ statusCode, body }),
+          statusCode,
+        )
+      }
+
+      logger.error(knownErr, tag)
+      throw knownErr
+    }
+
+    // non HTTP errors will be passed through
+    logger.error(err, tag)
+    throw err
   }
 }
 
-module.exports = { withProviderErrorHandling }
+async function withGoogleErrorHandling(providerName, tag, fn) {
+  return withProviderErrorHandling({
+    fn,
+    tag,
+    providerName,
+    isAuthError: (response) =>
+      response.statusCode === 401 ||
+      (response.statusCode === 400 && response.body?.error === 'invalid_grant'), // Refresh token has expired or been revoked
+    getJsonErrorMessage: (body) => body?.error?.message,
+  })
+}
+
+module.exports = {
+  withProviderErrorHandling,
+  withGoogleErrorHandling,
+  parseHttpError,
+}

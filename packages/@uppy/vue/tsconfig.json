@@ -1,0 +1,31 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "emitDeclarationOnly": false,
+    "noEmit": true
+  },
+  "include": ["./package.json", "./src/**/*.*"],
+  "references": [
+    {
+      "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../components/tsconfig.build.json"
+    },
+    {
+      "path": "../dashboard/tsconfig.build.json"
+    },
+    {
+      "path": "../drag-drop/tsconfig.build.json"
+    },
+    {
+      "path": "../file-input/tsconfig.build.json"
+    },
+    {
+      "path": "../progress-bar/tsconfig.build.json"
+    },
+    {
+      "path": "../status-bar/tsconfig.build.json"
+    }
+  ]
+}

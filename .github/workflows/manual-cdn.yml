@@ -2,10 +2,20 @@ name: Manually triggered CDN upload
 on:
   workflow_dispatch:
     inputs:
-      name:
-        description: "Package to upload"
+      package:
+        description: Package to upload
         required: true
-        default: "uppy"
+        type: choice
+        options:
+          - uppy
+          - '@uppy/locales'
+      version:
+        description: Version to upload (from npm)
+        type: string
+      force:
+        description: --force
+        type: boolean
+        default: false
 
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
@@ -15,12 +25,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
-        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -28,18 +39,37 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
-      - name: Install dependencies
+      - name: Install upload-to-cdn dependencies
+        if: ${{ inputs.version }}
+        run: corepack yarn workspaces focus uppy
+        env:
+          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
+          CYPRESS_INSTALL_BINARY: 0
+      - name: Install all dependencies
+        if: ${{ !inputs.version }}
         run: corepack yarn install --immutable
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
       - name: Build before publishing
+        if: ${{ !inputs.version }}
         run: corepack yarn run build
-      - name: Upload `${{ github.event.inputs.name }}` to CDN
-        run: corepack yarn run uploadcdn ${{ github.event.inputs.name }}
+      - name: Upload "${{ inputs.package }}" to CDN
+        if: ${{ !inputs.force }}
+        run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"
         env:
+          PACKAGE: ${{inputs.package}}
+          VERSION: ${{inputs.version}}
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+      - name: Upload "${{ inputs.package }}" to CDN
+        if: ${{ inputs.force }}
+        run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION" --force
+        env:
+          PACKAGE: ${{inputs.package}}
+          VERSION: ${{inputs.version}}
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}

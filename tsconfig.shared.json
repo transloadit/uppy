@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "target": "ESNext",
+    "module": "NodeNext",
+    "resolveJsonModule": true,
+    "useUnknownInCatchVariables": false,
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "types": ["preact"],
+    "strict": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true
+  }
+}

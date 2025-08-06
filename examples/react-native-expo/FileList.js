@@ -1,8 +1,7 @@
-import React from 'react'
-import { StyleSheet, View, FlatList, Text, Image } from 'react-native'
-
 import getFileTypeIcon from '@uppy/dashboard/lib/utils/getFileTypeIcon.js'
 import renderStringFromJSX from 'preact-render-to-string'
+import React from 'react'
+import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 
 const fileIcon = require('./assets/file-icon.png')
 
@@ -15,18 +14,15 @@ const truncateString = (str) => {
   return str
 }
 
-function FileIcon () {
+function FileIcon() {
   return (
     <View style={styles.itemIconContainer}>
-      <Image
-        style={styles.itemIcon}
-        source={fileIcon}
-      />
+      <Image style={styles.itemIcon} source={fileIcon} />
     </View>
   )
 }
 
-function UppyDashboardFileIcon ({ type }) {
+function UppyDashboardFileIcon({ type }) {
   const icon = renderStringFromJSX(getFileTypeIcon(type).icon)
   if (!icon) {
     return <FileIcon />
@@ -44,7 +40,7 @@ function UppyDashboardFileIcon ({ type }) {
   )
 }
 
-export default function FileList ({ uppy }) {
+export default function FileList({ uppy }) {
   const uppyFiles = uppy.store.state.files
   const uppyFilesArray = Object.keys(uppyFiles).map((id) => uppyFiles[id])
 
@@ -57,15 +53,15 @@ export default function FileList ({ uppy }) {
         renderItem={({ item }) => {
           return (
             <View style={styles.item}>
-              {item.type === 'image' ? (
-                <Image
-                  style={styles.itemImage}
-                  source={{ uri: item.data.uri }}
-                />
-              ) : (
-                <UppyDashboardFileIcon type={item.type} />
-              )}
-              <Text style={styles.itemName}>{truncateString(item.name, 20)}</Text>
+              {item.type === 'image'
+                ? <Image
+                    style={styles.itemImage}
+                    source={{ uri: item.data.uri }}
+                  />
+                : <UppyDashboardFileIcon type={item.type} />}
+              <Text style={styles.itemName}>
+                {truncateString(item.name, 20)}
+              </Text>
               <Text style={styles.itemType}>{item.type}</Text>
             </View>
           )
@@ -81,7 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     flex: 1,
     justifyContent: 'center',
-    alignItems:'center',
+    alignItems: 'center',
     marginRight: -25,
   },
   item: {

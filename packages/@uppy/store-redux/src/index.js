@@ -1,6 +1,6 @@
 import { nanoid } from 'nanoid/non-secure'
 
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
 // Redux action name.
 export const STATE_UPDATE = 'uppy/STATE_UPDATE'
@@ -8,7 +8,7 @@ export const STATE_UPDATE = 'uppy/STATE_UPDATE'
 // Pluck Uppy state from the Redux store in the default location.
 const defaultSelector = (id) => (state) => state.uppy[id]
 
-function getPatch (prev, next) {
+function getPatch(prev, next) {
   const nextKeys = Object.keys(next)
   const patch = {}
   nextKeys.forEach((k) => {
@@ -35,7 +35,7 @@ export class ReduxStore {
 
   #store
 
-  constructor (opts) {
+  constructor(opts) {
     this.#store = opts.store
     this.#id = opts.id || nanoid()
     this.#selector = opts.selector || defaultSelector(this.#id)
@@ -45,7 +45,7 @@ export class ReduxStore {
     this.setState({})
   }
 
-  setState (patch) {
+  setState(patch) {
     this.#store.dispatch({
       type: STATE_UPDATE,
       id: this.#id,
@@ -53,11 +53,11 @@ export class ReduxStore {
     })
   }
 
-  getState () {
+  getState() {
     return this.#selector(this.#store.getState())
   }
 
-  subscribe (cb) {
+  subscribe(cb) {
     let prevState = this.getState()
     return this.#store.subscribe(() => {
       const nextState = this.getState()
@@ -69,12 +69,12 @@ export class ReduxStore {
     })
   }
 
-  [Symbol.for('uppy test: get id')] () {
+  [Symbol.for('uppy test: get id')]() {
     return this.#id
   }
 }
 
-export function reducer (state = {}, action) {
+export function reducer(state = {}, action) {
   if (action.type === STATE_UPDATE) {
     const newState = { ...state[action.id], ...action.payload }
     return { ...state, [action.id]: newState }
@@ -82,7 +82,7 @@ export function reducer (state = {}, action) {
   return state
 }
 
-export function middleware () {
+export function middleware() {
   // Do nothing, at the moment.
   return () => (next) => (action) => {
     next(action)

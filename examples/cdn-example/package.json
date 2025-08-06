@@ -1,8 +1,0 @@
-{
-  "name": "@uppy-example/cdn",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "dev": "deno run --allow-net --allow-read https://deno.land/std/http/file_server.ts || python3 -m http.server || php -S localhost:8000"
-  }
-}

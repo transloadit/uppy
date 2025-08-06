@@ -1,5 +1,209 @@
 # @uppy/transloadit
 
+## 4.3.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+- Updated dependencies [c66fd85]
+  - @uppy/companion-client@4.5.2
+  - @uppy/provider-views@4.5.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+  - @uppy/tus@4.3.2
+
+## 4.3.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/companion-client@4.5.0
+  - @uppy/provider-views@4.5.0
+  - @uppy/tus@4.3.0
+  - @uppy/utils@6.2.0
+
+## 4.2.0
+
+Released: 2025-01-06
+Included in: Uppy v4.11.0
+
+- @uppy/angular,@uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive-picker,@uppy/google-drive,@uppy/google-photos-picker,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/vue,@uppy/webcam,@uppy/webdav,@uppy/xhr-upload,@uppy/zoom: Remove "paths" from all tsconfig's (Merlijn Vos / #5572)
+
+## 4.1.4
+
+Released: 2024-12-05
+Included in: Uppy v4.8.0
+
+- @uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: cleanup tsconfig (Mikael Finstad / #5520)
+
+## 4.1.3
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+
+## 4.1.2
+
+Released: 2024-09-30
+Included in: Uppy v4.4.1
+
+- @uppy/transloadit: fix multiple upload batches & run again (Merlijn Vos / #5478)
+
+## 4.1.0
+
+Released: 2024-08-20
+Included in: Uppy v4.2.0
+
+- @uppy/transloadit: add execution_progress to AssemblyResponse type (Merlijn Vos / #5420)
+- @uppy/transloadit: fix check if all files have been removed (Merlijn Vos / #5419)
+
+## 4.0.2
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/transloadit: fix issue with `allowMultipleUploadBatches` (Mikael Finstad / #5400)
+- @uppy/transloadit: fix many lurking `TypeError` (Mikael Finstad / #5399)
+
+## 4.0.1
+
+Released: 2024-07-30
+Included in: Uppy v4.1.0
+
+- @uppy/transloadit: do not mark `opts` as mandatory (Antoine du Hamel / #5375)
+
+## 4.0.0-beta.10
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/transloadit: fix strict type errors (Antoine du Hamel / #5271)
+- @uppy/transloadit: simplify plugin to always run a single assembly (Merlijn Vos / #5158)
+
+## 4.0.0-beta.9
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
+## 4.0.0-beta.6
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+
+## 4.0.0-beta.2
+
+Released: 2024-04-11
+Included in: Uppy v4.0.0-beta.2
+
+- @uppy/transloadit: remove deprecated options (Merlijn Vos / #5056)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
+## 3.8.0
+
+Released: 2024-06-18
+Included in: Uppy v3.27.0
+
+- @uppy/transloadit: also fix outdated assembly transloadit:result (Merlijn Vos / #5246)
+
+## 3.7.1
+
+Released: 2024-06-11
+Included in: Uppy v3.26.1
+
+- @uppy/transloadit: fix transloadit:result event (Merlijn Vos / #5231)
+
+## 3.7.0
+
+Released: 2024-06-04
+Included in: Uppy v3.26.0
+
+- @uppy/transloadit: remove `updateNumberOfFilesInAssembly` (Merlijn Vos / #5202)
+
+## 3.6.2
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/transloadit: do not cancel assembly when removing all files (Merlijn Vos / #5191)
+
+## 3.6.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/transloadit: migrate to TS (Merlijn Vos / #4987)
+
+## 3.5.0
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/transloadit: add `clientname` option (marius / #4920)
+
+## 3.3.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/transloadit: Emit assembly progress events (Marius / #4603)
+- @uppy/transloadit: remove Socket.io (Antoine du Hamel / #4281)
+
+## 3.2.1
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+
+## 3.2.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/transloadit: fix error message (Antoine du Hamel / #4572)
+- @uppy/transloadit: implement Server-sent event API (Antoine du Hamel / #4098)
+
+## 3.1.6
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/transloadit: ensure `fields` is not nullish when there no uploaded files (Antoine du Hamel / #4487)
+
+## 3.1.5
+
+Released: 2023-05-15
+Included in: Uppy v3.9.1
+
+- @uppy/transloadit: clean up event listener to prevent cancelled assemblies (Merlijn Vos / #4447)
+
+## 3.1.4
+
+Released: 2023-05-02
+Included in: Uppy v3.9.0
+
+- @uppy/transloadit: Reset `tus` key in the file on error, so retried files are re-uploaded (Artur Paikin / #4421)
+
 ## 3.1.2
 
 Released: 2023-04-04

@@ -1,16 +1,15 @@
-import { compose, combineReducers, applyMiddleware } from 'redux'
 import { configureStore } from '@reduxjs/toolkit'
-import logger from 'redux-logger'
 import Uppy from '@uppy/core'
-import ReduxStore from '@uppy/store-redux'
-import * as uppyReduxStore from '@uppy/store-redux'
 import Dashboard from '@uppy/dashboard'
+import ReduxStore, * as uppyReduxStore from '@uppy/store-redux'
 import Tus from '@uppy/tus'
+import { applyMiddleware, combineReducers, compose } from 'redux'
+import logger from 'redux-logger'
 
 import '@uppy/core/dist/style.css'
 import '@uppy/dashboard/dist/style.css'
 
-function counter (state = 0, action) {
+function counter(state = 0, action) {
   switch (action.type) {
     case 'INCREMENT':
       return state + 1
@@ -28,31 +27,30 @@ const reducer = combineReducers({
   uppy: uppyReduxStore.reducer,
 })
 
-let enhancer = applyMiddleware(
-  uppyReduxStore.middleware(),
-  logger,
-)
+let enhancer = applyMiddleware(uppyReduxStore.middleware(), logger)
 if (typeof __REDUX_DEVTOOLS_EXTENSION__ !== 'undefined') {
-  // eslint-disable-next-line no-undef
   enhancer = compose(enhancer, __REDUX_DEVTOOLS_EXTENSION__())
 }
 
 const store = configureStore({
   reducer,
   enhancers: [enhancer],
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware({
-    serializableCheck: {
-      ignoredActions: [uppyReduxStore.STATE_UPDATE],
-      ignoreState: true,
-    },
-  }),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [uppyReduxStore.STATE_UPDATE],
+        ignoreState: true,
+      },
+    }),
 })
 
 // Counter example from https://github.com/reactjs/redux/blob/master/examples/counter-vanilla/index.html
 const valueEl = document.querySelector('#value')
 
-function getCounter () { return store.getState().counter }
-function render () {
+function getCounter() {
+  return store.getState().counter
+}
+function render() {
   valueEl.innerHTML = getCounter().toString()
 }
 render()

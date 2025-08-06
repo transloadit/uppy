@@ -1,5 +1,227 @@
 # @uppy/xhr-upload
 
+## 4.4.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/companion-client@4.5.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+
+## 4.4.0
+
+### Minor Changes
+
+- 49e98ab: The `endpoint` option now also accepts a callback to dynamically set it (`endpoint: (fileOrFiles) => '<url>'`).
+  If `bundle` is `true`, you get `UppyFile[]` otherwise `UppyFile`.
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/companion-client@4.5.0
+  - @uppy/utils@6.2.0
+
+## 4.3.3
+
+Released: 2025-02-25
+Included in: Uppy v4.13.3
+
+- @uppy/xhr-upload: fix when responseType is set to JSON (Merlijn Vos / #5651)
+
+## 4.3.1
+
+Released: 2025-01-08
+Included in: Uppy v4.12.0
+
+- @uppy/xhr-upload: allow custom error message in onAfterResponse (Merlijn Vos / #5578)
+
+## 4.3.0
+
+Released: 2025-01-06
+Included in: Uppy v4.11.0
+
+- @uppy/angular,@uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive-picker,@uppy/google-drive,@uppy/google-photos-picker,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/vue,@uppy/webcam,@uppy/webdav,@uppy/xhr-upload,@uppy/zoom: Remove "paths" from all tsconfig's (Merlijn Vos / #5572)
+
+## 4.2.3
+
+Released: 2024-12-05
+Included in: Uppy v4.8.0
+
+- @uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: cleanup tsconfig (Mikael Finstad / #5520)
+
+## 4.2.2
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- @uppy/xhr-upload: fix stale file references in events (Merlijn Vos / #5499)
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+
+## 4.2.1
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/xhr-upload: add response to upload-error callback (Caleb Hardin / #5486)
+
+## 4.2.0
+
+Released: 2024-09-20
+Included in: Uppy v4.4.0
+
+- @uppy/xhr-upload: pass files to onBeforeRequest (Merlijn Vos / #5447)
+
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/compressor,@uppy/dropbox,@uppy/facebook,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/onedrive,@uppy/screen-capture,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/xhr-upload,@uppy/zoom: export plugin options (Antoine du Hamel / #5433)
+
+## 4.0.2
+
+Released: 2024-07-18
+Included in: Uppy v4.0.5
+
+- @uppy/xhr-upload: bring back getResponseData (Merlijn Vos / #5354)
+
+## 4.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.3
+
+- @uppy/xhr-upload: correctly type xhrUpload meta (Merlijn Vos / #5344)
+
+## 4.0.0-beta.6
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: remove `uploader` from `upload-progress` event (Mikael Finstad / #5200)
+
+## 4.0.0-beta.5
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+
+## 4.0.0-beta.4
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/xhr-upload: introduce hooks similar to tus (Merlijn Vos / #5094)
+
+## 4.0.0-beta.3
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 4.0.0-beta.2
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
+## 4.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Make `allowedMetaFields` consistent (Merlijn Vos / #5011)
+
+## 3.6.8
+
+Released: 2024-06-27
+Included in: Uppy v3.27.1
+
+- @uppy/xhr-upload: add `'PATCH'` as valid method (Quinn Daley / #5279)
+
+## 3.6.7
+
+Released: 2024-05-23
+Included in: Uppy v3.25.5
+
+- @uppy/xhr-upload: fix regression for lowercase HTTP methods (Antoine du Hamel / #5179)
+
+## 3.6.6
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/xhr-upload: do not throw when res is missing url (Merlijn Vos / #5132)
+
+## 3.6.5
+
+Released: 2024-04-29
+Included in: Uppy v3.25.0
+
+- @uppy/xhr-upload: refactor to use `fetcher` (Merlijn Vos / #5074)
+
+## 3.6.4
+
+Released: 2024-02-28
+Included in: Uppy v3.23.0
+
+- @uppy/companion-client,@uppy/utils,@uppy/xhr-upload: improvements for #4922 (Mikael Finstad / #4960)
+- @uppy/xhr-upload: fix getResponseData regression (Merlijn Vos / #4964)
+
+## 3.6.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/xhr-upload: migrate to ts (merlijn vos / #4892)
+- @uppy/xhr-upload: show remove button (merlijn vos / #4851)
+
+## 3.4.0
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/core,@uppy/tus,@uppy/utils,@uppy/xhr-upload: Move remote file upload logic into companion-client (Merlijn Vos / #4573)
+
+## 3.3.2
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+
+## 3.3.1
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/xhr-upload: export `Headers` type (Masum ULU / #4549)
+
+## 3.3.0
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/tus,@uppy/utils,@uppy/xhr-upload: When file is removed (or all are canceled), controller.abort queued requests (Artur Paikin / #4504)
+- @uppy/aws-s3-multipart,@uppy/tus,@uppy/xhr-upload: Don't close socket while upload is still in progress (Artur Paikin / #4479)
+- @uppy/xhr-upload: add support for arrays in metadata (Vasiliy Matyushin / #4431)
+
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/xhr-upload: fix type in README.md (Top Master / #4416)
+
 ## 3.1.1
 
 Released: 2023-04-04

@@ -1,0 +1,18 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "types": ["google.accounts", "google.picker", "gapi"]
+  },
+  "include": ["./src/**/*.*"],
+  "exclude": ["./src/**/*.test.ts"],
+  "references": [
+    {
+      "path": "../utils/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
+    }
+  ]
+}

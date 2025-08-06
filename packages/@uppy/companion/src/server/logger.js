@@ -1,7 +1,6 @@
-const chalk = require('chalk')
 const escapeStringRegexp = require('escape-string-regexp')
 const util = require('node:util')
-const { ProviderApiError, ProviderAuthError } = require('./provider/error')
+const supportsColors = require('supports-color')
 
 const valuesToMask = []
 /**
@@ -24,7 +23,7 @@ exports.setMaskables = (maskables) => {
  * @param {string} msg the message whose content should be masked
  * @returns {string}
  */
-function maskMessage (msg) {
+function maskMessage(msg) {
   let out = msg
   for (const toBeMasked of valuesToMask) {
     const toBeReplaced = new RegExp(toBeMasked, 'gi')
@@ -39,24 +38,37 @@ exports.setProcessName = (newProcessName) => {
   processName = newProcessName
 }
 
+const styleText =
+  typeof util.styleText === 'function' && supportsColors.stderr
+    ? util.styleText
+    : (style, text) => text
+
 /**
  * message log
+ *
+ * @typedef {import('node:util').styleText} styleText
+ * @typedef {Parameters<styleText>[0]} Colors
  *
  * @param {object} params
  * @param {string | Error} params.arg the message or error to log
  * @param {string} params.tag a unique tag to easily search for this message
  * @param {string} params.level error | info | debug
  * @param {string} [params.traceId] a unique id to easily trace logs tied to a request
- * @param {Function} [params.color] function to display the log in appropriate color
+ * @param {Colors} [params.color] Format(s) that can be passed to `util.styleText`.
  */
-const log = ({ arg, tag = '', level, traceId = '', color = (message) => message }) => {
+const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
   const time = new Date().toISOString()
   const whitespace = tag && traceId ? ' ' : ''
 
-  function msgToString () {
+  function msgToString() {
     // We don't need to log stack trace on special errors that we ourselves have produced
     // (to reduce log noise)
-    if ((arg instanceof ProviderApiError || arg instanceof ProviderAuthError) && typeof arg.message === 'string') {
+    // @ts-ignore
+    if (
+      arg instanceof Error &&
+      arg.name === 'ProviderApiError' &&
+      typeof arg.message === 'string'
+    ) {
       return arg.message
     }
     if (typeof arg === 'string') return arg
@@ -65,8 +77,13 @@ const log = ({ arg, tag = '', level, traceId = '', color = (message) => message 
 
   const msgString = msgToString()
   const masked = maskMessage(msgString)
-  // eslint-disable-next-line no-console
-  console.log(color(`${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`), color(masked))
+  console.log(
+    styleText(
+      color,
+      `${processName}: ${time} [${level}] ${traceId}${whitespace}${tag}`,
+    ),
+    styleText(color, masked),
+  )
 }
 
 /**
@@ -88,7 +105,7 @@ exports.info = (msg, tag, traceId) => {
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.warn = (msg, tag, traceId) => {
-  log({ arg: msg, tag, level: 'warn', traceId, color: chalk.bold.yellow })
+  log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
 }
 
 /**
@@ -99,7 +116,7 @@ exports.warn = (msg, tag, traceId) => {
  * @param {string} [traceId] a unique id to easily trace logs tied to a request
  */
 exports.error = (msg, tag, traceId) => {
-  log({ arg: msg, tag, level: 'error', traceId, color: chalk.bold.red })
+  log({ arg: msg, tag, level: 'error', traceId, color: ['bold', 'red'] })
 }
 
 /**
@@ -111,6 +128,6 @@ exports.error = (msg, tag, traceId) => {
  */
 exports.debug = (msg, tag, traceId) => {
   if (process.env.NODE_ENV !== 'production') {
-    log({ arg: msg, tag, level: 'debug', traceId, color: chalk.bold.blue })
+    log({ arg: msg, tag, level: 'debug', traceId, color: ['bold', 'blue'] })
   }
 }

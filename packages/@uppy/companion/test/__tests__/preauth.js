@@ -1,14 +1,8 @@
 jest.mock('../../src/server/helpers/jwt', () => {
   return {
-    generateToken: () => {},
-    verifyToken: () => {},
-    generateEncryptedToken: () => {
-      return 'dummy token'
-    },
-    verifyEncryptedToken: () => {
-      return { payload: '' }
-    },
-    addToCookies: () => {},
+    generateEncryptedToken: () => 'dummy token',
+    verifyEncryptedToken: () => '',
+    addToCookiesIfNeeded: () => {},
     removeFromCookies: () => {},
   }
 })
@@ -18,19 +12,23 @@ const { getServer } = require('../mockserver')
 // the order in which getServer is called matters because, once an env is passed,
 // it won't be overridden when you call getServer without an argument
 const serverWithFixedOauth = getServer()
-const serverWithDynamicOauth = getServer({ COMPANION_DROPBOX_KEYS_ENDPOINT: 'http://localhost:1000/endpoint' })
+const serverWithDynamicOauth = getServer({
+  COMPANION_DROPBOX_KEYS_ENDPOINT: 'http://localhost:1000/endpoint',
+})
 
 describe('handle preauth endpoint', () => {
   test('happy path', () => {
-    return request(serverWithDynamicOauth)
-      .post('/dropbox/preauth')
-      .set('Content-Type', 'application/json')
-      .send({
-        params: 'param value',
-      })
-      .expect(200)
-      // see jwt.generateEncryptedToken mock above
-      .then((res) => expect(res.body.token).toBe('dummy token'))
+    return (
+      request(serverWithDynamicOauth)
+        .post('/dropbox/preauth')
+        .set('Content-Type', 'application/json')
+        .send({
+          params: 'param value',
+        })
+        .expect(200)
+        // see jwt.generateEncryptedToken mock above
+        .then((res) => expect(res.body.token).toBe('dummy token'))
+    )
   })
 
   test('preauth request without params in body', () => {

@@ -1,3 +1,8 @@
+@use "sass:color";
+
+@use './_variables.scss' as *;
+@use './_utils.scss' as *;
+
 /**
 * General Uppy styles that apply to everything inside the .uppy-Root container
 */
@@ -15,8 +20,8 @@
 
 // One selector uses the dir attribute declared by the page. If that does not exist, Uppy adds a
 // fallback dir attribute on the root element itself, and we need a second selector to match that.
-[dir="rtl"] .uppy-Root,
-.uppy-Root[dir="rtl"] {
+[dir='rtl'] .uppy-Root,
+.uppy-Root[dir='rtl'] {
   text-align: right;
 }
 
@@ -40,16 +45,17 @@
   line-height: 1;
 }
 
-[dir="rtl"] .uppy-u-reset {
+[dir='rtl'] .uppy-u-reset {
   text-align: right;
 }
 
 // Inputs
 
 .uppy-c-textInput {
-  padding: 6px 8px;
+  font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
+  padding: 6px 8px;
   background-color: $white;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -64,13 +70,13 @@
     box-shadow: 0 0 0 3px rgba($blue, 0.15);
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
     background-color: $gray-800;
     border-color: $gray-800;
   }
 
-  [data-uppy-theme="dark"] &:focus {
+  [data-uppy-theme='dark'] &:focus {
     border-color: $gray-700;
     box-shadow: none;
   }
@@ -106,7 +112,9 @@
   user-select: none;
 
   // Override right-to-left variant of the uppy-u-reset class
-  [dir="rtl"] & { text-align: center; }
+  [dir='rtl'] & {
+    text-align: center;
+  }
 }
 
 .uppy-c-btn:not(:disabled):not(.disabled) {
@@ -124,8 +132,8 @@
   background-color: $blue;
   border-radius: 4px;
 
-  &:hover {
-    background-color: darken($blue, 10%);
+  &:not(:disabled):hover {
+    background-color: color.adjust($blue, $lightness: -10%, $space: hsl);
   }
 
   &:focus {
@@ -137,10 +145,14 @@
     padding: 13px 22px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
 
     @include blue-border-focus--dark;
+  }
+
+  &.uppy-c-btn--disabled {
+    background-color: rgb(142, 178, 219);
   }
 }
 
@@ -165,13 +177,13 @@
     padding: 13px 18px;
   }
 
-  [data-uppy-theme="dark"] & {
+  [data-uppy-theme='dark'] & {
     color: $gray-200;
 
     @include blue-border-focus--dark;
   }
 
-  [data-uppy-theme="dark"] &:hover {
+  [data-uppy-theme='dark'] &:hover {
     color: $gray-500;
   }
 }

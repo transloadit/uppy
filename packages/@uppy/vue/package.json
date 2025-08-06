@@ -1,14 +1,29 @@
 {
   "name": "@uppy/vue",
-  "version": "1.0.1",
+  "version": "2.4.2",
   "license": "MIT",
+  "type": "module",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
+    "typecheck": "tsc --build"
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
-    "shallow-equal": "^1.2.1"
+    "@uppy/components": "workspace:^",
+    "preact": "^10.5.13",
+    "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
-    "vue": "^2.6.14"
+    "@uppy/core": "workspace:^",
+    "typescript": "^5.8.3",
+    "vue": "^3.5.14"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
@@ -17,7 +32,7 @@
     "@uppy/file-input": "workspace:^",
     "@uppy/progress-bar": "workspace:^",
     "@uppy/status-bar": "workspace:^",
-    "vue": ">=2.6.11"
+    "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {

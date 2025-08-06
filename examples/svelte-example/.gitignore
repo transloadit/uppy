@@ -1,6 +1,0 @@
-/node_modules/
-/uploads/
-/public/build/
-
-.DS_Store
-package-lock.json

@@ -1,11 +1,15 @@
 {
   "name": "@uppy/remote-sources",
   "description": "Uppy plugin that includes all remote sources that Uppy+Companion offer, like Instagram, Google Drive, Dropox, Box, Unsplash, Url etc",
-  "version": "1.0.2",
+  "version": "2.4.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "instagram",
@@ -26,6 +30,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/box": "workspace:^",
     "@uppy/dashboard": "workspace:^",
@@ -45,7 +55,10 @@
     "access": "public"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
-    "resize-observer-polyfill": "^1.5.1"
+    "@uppy/core": "workspace:^",
+    "jsdom": "^26.1.0",
+    "resize-observer-polyfill": "^1.5.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

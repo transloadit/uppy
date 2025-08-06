@@ -1,8 +1,6 @@
-const { URL } = require('node:url')
 const serialize = require('serialize-javascript')
+const { isOriginAllowed } = require('./connect')
 
-const tokenService = require('../helpers/jwt')
-const { hasMatch } = require('../helpers/utils')
 const oAuthState = require('../helpers/oauth-state')
 
 /**
@@ -17,36 +15,70 @@ const htmlContent = (token, origin) => {
     <head>
         <meta charset="utf-8" />
         <script>
-          window.opener.postMessage(${serialize({ token })}, ${serialize(origin)})
-          window.close()
+          (function() {
+            'use strict';
+
+            var data = ${serialize({ token })};
+            var origin = ${serialize(origin)};
+
+            if (window.opener != null) {
+              window.opener.postMessage(data, origin);
+              window.close();
+            } else {
+              // maybe this will work? (note that it's not possible to try/catch this to see whether it worked)
+              window.postMessage(data, origin);
+
+              console.warn('Unable to send the authentication token to the web app. This probably means that the web app was served from a HTTP server that includes the \`Cross-Origin-Opener-Policy: same-origin\` header. Make sure that the Uppy app is served from a server that does not send this header, or set to \`same-origin-allow-popups\`.');
+
+              addEventListener("DOMContentLoaded", function() {
+                document.body.appendChild(document.createTextNode('Something went wrong. Please contact the site administrator. You may now exit this page.'));
+              });
+            }
+          })();
         </script>
     </head>
-    <body></body>
+    <body>
+    <noscript>
+      JavaScript must be enabled for this to work.
+    </noscript>
+    </body>
     </html>`
 }
 
 /**
  *
- * @param {object} req
- * @param {object} res
- * @param {Function} next
+ * @param {import('express').Request} req
+ * @param {import('express').Response} res
+ * @param {import('express').NextFunction} next
  */
-module.exports = function sendToken (req, res, next) {
-  const uppyAuthToken = req.companion.authToken
-  // some providers need the token in cookies for thumbnail/image requests
-  if (req.companion.provider.needsCookieAuth) {
-    tokenService.addToCookies(res, uppyAuthToken, req.companion.options, req.companion.provider.authProvider)
+module.exports = function sendToken(req, res, next) {
+  // @ts-expect-error untyped
+  const { companion } = req
+  const uppyAuthToken = companion.authToken
+
+  const { state } = oAuthState.getGrantDynamicFromRequest(req)
+
+  if (!state) {
+    return next()
   }
 
-  const state = oAuthState.getDynamicStateFromRequest(req)
-  if (state) {
-    const origin = oAuthState.getFromState(state, 'origin', req.companion.options.secret)
-    const allowedClients = req.companion.options.clients
-    // if no preset clients then allow any client
-    if (!allowedClients || hasMatch(origin, allowedClients) || hasMatch((new URL(origin)).host, allowedClients)) {
-      res.send(htmlContent(uppyAuthToken, origin))
-      return
-    }
+  const clientOrigin = oAuthState.getFromState(
+    state,
+    'origin',
+    companion.options.secret,
+  )
+  const customerDefinedAllowedOrigins = oAuthState.getFromState(
+    state,
+    'customerDefinedAllowedOrigins',
+    companion.options.secret,
+  )
+
+  if (
+    customerDefinedAllowedOrigins &&
+    !isOriginAllowed(clientOrigin, customerDefinedAllowedOrigins)
+  ) {
+    return next()
   }
-  next()
+
+  return res.send(htmlContent(uppyAuthToken, clientOrigin))
 }

@@ -1,0 +1,23 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src"
+  },
+  "include": ["./src/**/*.*"],
+  "exclude": ["./src/**/*.test.ts"],
+  "references": [
+    {
+      "path": "../utils/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../provider-views/tsconfig.build.json"
+    },
+    {
+      "path": "../companion-client/tsconfig.build.json"
+    }
+  ]
+}

@@ -1,11 +1,14 @@
 {
   "name": "@uppy/form",
   "description": "Connect Uppy to an existing HTML <form>.",
-  "version": "3.0.1",
+  "version": "4.2.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
-  "types": "types/index.d.ts",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -20,11 +23,20 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "get-form-data": "^3.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
   }
 }

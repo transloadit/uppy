@@ -1,12 +1,17 @@
 {
   "name": "@uppy/webcam",
   "description": "Uppy plugin that takes photos or records videos using the device's camera.",
-  "version": "3.3.0",
+  "version": "4.3.2",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -26,13 +31,25 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "is-mobile": "^3.1.1",
+    "is-mobile": "^4.0.0",
     "preact": "^10.5.13"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0"
+    "cssnano": "^7.0.7",
+    "jsdom": "^26.1.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.89.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

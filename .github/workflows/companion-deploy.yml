@@ -5,7 +5,7 @@ name: Companion Edge Deploy
 
 on:
   push:
-    branches: [ 'main' ]
+    branches: ['main']
     paths:
       - yarn.lock
       - 'packages/@uppy/companion/**'
@@ -20,14 +20,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set SHA commit in version
-        run: (cd packages/@uppy/companion && node -e 'const pkg=require("./package.json");pkg.version+="+${{ github.sha }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined, 2)+"\n")')
+        run:
+          (cd packages/@uppy/companion && node -e 'const
+          pkg=require("./package.json");pkg.version+="+${{ github.sha
+          }}";fs.writeFileSync("package.json",JSON.stringify(pkg, undefined,
+          2)+"\n")')
       - name: Create Companion tarball
-        run: corepack yarn workspace @uppy/companion pack --install-if-needed -o /tmp/companion-${{ github.sha }}.tar.gz
+        run:
+          corepack yarn workspace @uppy/companion pack --install-if-needed -o
+          /tmp/companion-${{ github.sha }}.tar.gz
       - name: Upload artifact
         if: success()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: companion-${{ github.sha }}.tar.gz
           path: /tmp/companion-${{ github.sha }}.tar.gz
@@ -40,24 +46,24 @@ jobs:
       COMPOSE_DOCKER_CLI_BUILD: 0
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Docker meta
         id: docker_meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
         with:
           images: transloadit/companion
           tags: |
             type=edge
             type=raw,value=latest,enable=false
-      - uses: docker/setup-qemu-action@v2
-      - uses: docker/setup-buildx-action@v2
+      - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+      - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           username: ${{secrets.DOCKER_USERNAME}}
           password: ${{secrets.DOCKER_PASSWORD}}
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
         with:
           push: true
           context: .
@@ -71,12 +77,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Alter dockerfile
         run: |
           sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
+      # https://github.com/AkhileshNS/heroku-deploy/issues/188
+      - name: Install Heroku CLI
+        run: |
+          curl https://cli-assets.heroku.com/install.sh | sh
       - name: Deploy to heroku
-        uses: akhileshns/heroku-deploy@v3.12.12
+        uses: akhileshns/heroku-deploy@e3eb99d45a8e2ec5dca08735e089607befa4bf28 # v3.14.15
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
           heroku_app_name: companion-demo

@@ -1,11 +1,15 @@
 {
   "name": "@uppy/xhr-upload",
   "description": "Plain and simple classic HTML multipart form uploads with Uppy, as well as uploads using the HTTP PUT method.",
-  "version": "3.1.1",
+  "version": "4.4.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "xhr",
@@ -24,14 +28,22 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^",
-    "nanoid": "^4.0.0"
+    "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
-    "nock": "^13.1.0"
+    "@uppy/core": "workspace:^",
+    "jsdom": "^26.1.0",
+    "nock": "^13.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

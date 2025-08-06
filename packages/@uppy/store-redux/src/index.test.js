@@ -1,10 +1,13 @@
-import { describe, expect, it } from '@jest/globals'
 import Redux from 'redux'
+import { describe, expect, it } from 'vitest'
 import { ReduxStore, reducer } from './index.js'
 
 describe('ReduxStore', () => {
-  function createStore (reducers = {}) {
-    const combinedReducers = Redux.combineReducers({ ...reducers, uppy: reducer })
+  function createStore(reducers = {}) {
+    const combinedReducers = Redux.combineReducers({
+      ...reducers,
+      uppy: reducer,
+    })
     return Redux.createStore(combinedReducers)
   }
 
@@ -34,7 +37,7 @@ describe('ReduxStore', () => {
   it('notifies subscriptions when state changes', () => {
     let expected = []
     let calls = 0
-    function listener (prevState, nextState, patch) {
+    function listener(prevState, nextState, patch) {
       calls++
       expect([prevState, nextState, patch]).toEqual(expected)
     }
@@ -66,7 +69,7 @@ describe('ReduxStore', () => {
 
     let expected = []
     let calls = 0
-    function listener (prevState, nextState, patch) {
+    function listener(prevState, nextState, patch) {
       calls++
       expect([prevState, nextState, patch]).toEqual(expected)
     }
@@ -99,7 +102,7 @@ describe('ReduxStore', () => {
     const store = new ReduxStore({
       store: r,
       id: 'world',
-      selector: state => state.hello.world,
+      selector: (state) => state.hello.world,
     })
     store.setState({ a: 1 })
 

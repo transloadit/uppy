@@ -14,9 +14,16 @@ node_modules
 yarn-error.log
 .idea
 .env
+tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
+.svelte-kit
+.turbo
+__screenshots__
 
 dist/
 lib/
+# @uppy/svelte needs lib inside src
+!src/lib
 coverage/
 examples/dev/bundle.js
 examples/aws-php/vendor/*
@@ -24,6 +31,7 @@ test/endtoend/create-react-app/build/
 test/endtoend/create-react-app/coverage/
 uppy-*.tgz
 generatedLocale.d.ts
+packages/@uppy/locales/src/en_US.js
 
 **/output/*
 !output/.keep

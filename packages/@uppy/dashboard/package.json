@@ -1,12 +1,18 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "3.3.2",
+  "version": "4.4.3",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "typecheck": "tsc --build",
+    "test": "vitest run --silent='passed-only'",
+    "test:e2e": "vitest watch --project browser --browser.headless false"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -22,25 +28,40 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
-    "@transloadit/prettier-bytes": "0.0.7",
+    "@transloadit/prettier-bytes": "^0.3.4",
     "@uppy/informer": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
-    "is-shallow-equal": "^1.0.1",
-    "lodash.debounce": "^4.0.8",
-    "memoize-one": "^6.0.0",
-    "nanoid": "^4.0.0",
-    "preact": "^10.5.13"
+    "lodash": "^4.17.21",
+    "nanoid": "^5.0.9",
+    "preact": "^10.5.13",
+    "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0",
+    "@uppy/core": "workspace:^",
     "@uppy/google-drive": "workspace:^",
     "@uppy/status-bar": "workspace:^",
-    "resize-observer-polyfill": "^1.5.0"
+    "@uppy/url": "workspace:^",
+    "@uppy/webcam": "workspace:^",
+    "@vitest/browser": "^3.2.4",
+    "cssnano": "^7.0.7",
+    "jsdom": "^26.1.0",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "resize-observer-polyfill": "^1.5.0",
+    "sass": "^1.89.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

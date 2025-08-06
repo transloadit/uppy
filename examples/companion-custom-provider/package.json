@@ -1,0 +1,32 @@
+{
+  "name": "example-companion-custom-provider",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@uppy/companion-client": "workspace:*",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/google-drive": "workspace:*",
+    "@uppy/provider-views": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "preact": "^10.5.13"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@uppy/companion": "workspace:*",
+    "body-parser": "^1.20.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.19.2",
+    "express-session": "^1.15.6",
+    "npm-run-all": "^4.1.2",
+    "vite": "^7.0.6"
+  },
+  "scripts": {
+    "start": "npm-run-all --parallel start:server start:client",
+    "start:client": "vite",
+    "start:server": "node server/index.cjs"
+  }
+}

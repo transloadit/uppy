@@ -1,19 +1,17 @@
 import { UIPlugin } from '@uppy/core'
 
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
 
-/* eslint-disable max-len */
 /**
  * Add Redux DevTools support to Uppy
  *
  * See https://medium.com/@zalmoxis/redux-devtools-without-redux-or-how-to-have-a-predictable-state-with-any-architecture-61c5f5a7716f
  * and https://github.com/zalmoxisus/mobx-remotedev/blob/master/src/monitorActions.js
  */
-/* eslint-enable max-len */
 export default class ReduxDevTools extends UIPlugin {
   static VERSION = packageJson.version
 
-  constructor (uppy, opts) {
+  constructor(uppy, opts) {
     super(uppy, opts)
     this.type = 'debugger'
     this.id = this.opts.id || 'ReduxDevTools'
@@ -29,11 +27,11 @@ export default class ReduxDevTools extends UIPlugin {
     this.initDevTools = this.initDevTools.bind(this)
   }
 
-  handleStateChange (prevState, nextState) {
+  handleStateChange(prevState, nextState) {
     this.devTools.send('UPPY_STATE_UPDATE', nextState)
   }
 
-  initDevTools () {
+  initDevTools() {
     this.devTools = window.devToolsExtension.connect()
     this.devToolsUnsubscribe = this.devTools.subscribe((message) => {
       if (message.type === 'DISPATCH') {
@@ -44,13 +42,19 @@ export default class ReduxDevTools extends UIPlugin {
             return
           case 'IMPORT_STATE': {
             const { computedStates } = message.payload.nextLiftedState
-            this.uppy.store.state = { ...this.uppy.getState(), ...computedStates[computedStates.length - 1].state }
+            this.uppy.store.state = {
+              ...this.uppy.getState(),
+              ...computedStates[computedStates.length - 1].state,
+            }
             this.uppy.updateAll(this.uppy.getState())
             return
           }
           case 'JUMP_TO_STATE':
           case 'JUMP_TO_ACTION':
-            this.uppy.store.state = { ...this.uppy.getState(), ...JSON.parse(message.state) }
+            this.uppy.store.state = {
+              ...this.uppy.getState(),
+              ...JSON.parse(message.state),
+            }
             this.uppy.updateAll(this.uppy.getState())
             break
 
@@ -60,16 +64,16 @@ export default class ReduxDevTools extends UIPlugin {
     })
   }
 
-  install () {
-    // eslint-disable-next-line no-underscore-dangle
-    this.withDevTools = typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
+  install() {
+    this.withDevTools =
+      typeof window !== 'undefined' && window.__REDUX_DEVTOOLS_EXTENSION__
     if (this.withDevTools) {
       this.initDevTools()
       this.uppy.on('state-update', this.handleStateChange)
     }
   }
 
-  uninstall () {
+  uninstall() {
     if (this.withDevTools) {
       this.devToolsUnsubscribe()
       this.uppy.off('state-update', this.handleStateUpdate)

@@ -1,5 +1,197 @@
 # @uppy/locales
 
+## 4.8.3
+
+### Patch Changes
+
+- 1a0beb9: Add all locales to globalThis.Uppy.locales.[locale-name]
+
+## 4.8.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/utils@6.2.2
+
+## 4.8.0
+
+### Minor Changes
+
+- 28f0886: Move dev dependencies from "dependencies" to "devDependencies"
+
+## 4.7.0
+
+### Minor Changes
+
+- 0c24c5a: Update Swedish translations
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+  - @uppy/utils@6.2.0
+
+## 4.6.0
+
+Released: 2025-06-30
+Included in: Uppy v4.18.0
+
+- @uppy/locales: Update pt_BR localization (Gabriel Pereira / #5780)
+
+## 4.5.3
+
+Released: 2025-06-02
+Included in: Uppy v4.17.0
+
+- @uppy/locales: Update cs_CZ.ts (Martin Štorek / #5749)
+
+## 4.5.2
+
+Released: 2025-04-08
+Included in: Uppy v4.14.0
+
+- @uppy/locales: Update nb_NO.ts (Tore Sinding Bekkedal / #5678)
+- @uppy/locales: Update cs_CZ.ts (David Petrásek / #5658)
+
+## 4.5.0
+
+Released: 2025-01-06
+Included in: Uppy v4.11.0
+
+- @uppy/angular,@uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive-picker,@uppy/google-drive,@uppy/google-photos-picker,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/vue,@uppy/webcam,@uppy/webdav,@uppy/xhr-upload,@uppy/zoom: Remove "paths" from all tsconfig's (Merlijn Vos / #5572)
+
+## 4.4.0
+
+Released: 2024-12-17
+Included in: Uppy v4.9.0
+
+- @uppy/google-drive-picker,@uppy/google-photos-picker,@uppy/locales: Add missing Google Picker locale entries (Merlijn Vos / #5552)
+- @uppy/locales: Add missing French locale entries (Steven SAN / #5549)
+
+## 4.3.1
+
+Released: 2024-12-05
+Included in: Uppy v4.8.0
+
+- @uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: cleanup tsconfig (Mikael Finstad / #5520)
+
+## 4.3.0
+
+Released: 2024-11-11
+Included in: Uppy v4.7.0
+
+- @uppy/locales: Add ms_MY (Malay) locale (Salimi / #5488)
+
+## 4.2.1
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+
+## 4.2.0
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/locales: Update packages/@uppy/locales/src/fr_FR.ts (Zéfyx / #5472)
+
+## 4.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/locales: Fix locale-pack for en_US (Merlijn Vos / #5431)
+
+## 4.0.0-beta.4
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/locales: fix `fa_IR` export (Merlijn Vos / #5241)
+- examples,@uppy/locales,@uppy/provider-views,@uppy/transloadit: Release: uppy@3.26.1 (github-actions[bot] / #5242)
+- @uppy/locales: Added translation string (it_IT) (Samuel / #5237)
+
+## 4.0.0-beta.2
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/locales: remove hacks for legacy bundle (Mikael Finstad / #5200)
+
+## 3.5.3
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/locales: Update ru_RU locale (Uladzislau Bodryi / #5120)
+
+## 3.5.2
+
+Released: 2024-02-20
+Included in: Uppy v3.22.1
+
+- @uppy/locales: update vi_VN translation (David Nguyen / #4930)
+
+## 3.5.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/locales: fix "save" button translation in hr_hr.ts (žan žlender / #4830)
+
+## 3.5.0
+
+Released: 2023-11-24
+Included in: Uppy v3.20.0
+
+- @uppy/locales: Add missing translations to de_DE (Leonhard Melzer / #4800)
+- @uppy/locales: use TypeScript for source files (Antoine du Hamel / #4779)
+
+## 3.4.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/locales: locales: add ca_ES (ordago / #4772)
+
+## 3.3.1
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/locales: Feature/updating i18n farsi (Parsa Arvaneh / #4638)
+
+## 3.2.4
+
+Released: 2023-07-20
+Included in: Uppy v3.13.0
+
+- @uppy/locales: update zh_TW translation (5idereal / #4583)
+
+## 3.2.3
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/locales: fix expression and spelling errors in es_ES (Rubén / #4567)
+- @uppy/locales: Add missing pt-BR locales for ImageEditor plugin (Mateus Cruz / #4558)
+
+## 3.2.2
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/locales: update `fr_FR.js` (Samuel De Backer / #4499)
+
+## 3.2.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/core,@uppy/locales,@uppy/provider-views: User feedback adding recursive folders take 2 (Mikael Finstad / #4399)
+
 ## 3.1.0
 
 Released: 2023-04-04

@@ -1,5 +1,5 @@
 const fs = require('node:fs')
-const merge = require('lodash.merge')
+const merge = require('lodash/merge')
 const stripIndent = require('common-tags/lib/stripIndent')
 const crypto = require('node:crypto')
 
@@ -28,8 +28,11 @@ const getSecret = (baseEnvVar) => {
  *
  * @returns {string}
  */
-exports.generateSecret = () => {
-  logger.warn('auto-generating server secret because none was specified', 'startup.secret')
+exports.generateSecret = (secretName) => {
+  logger.warn(
+    `auto-generating server ${secretName} because none was specified`,
+    'startup.secret',
+  )
   return crypto.randomBytes(64).toString('hex')
 }
 
@@ -41,11 +44,23 @@ const hasProtocol = (url) => {
   return url.startsWith('https://') || url.startsWith('http://')
 }
 
-function getCorsOrigins () {
+const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
+
+function getCorsOrigins() {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
-    return process.env.COMPANION_CLIENT_ORIGINS
-      .split(',')
-      .map((url) => (hasProtocol(url) ? url : `${process.env.COMPANION_PROTOCOL || 'http'}://${url}`))
+    switch (process.env.COMPANION_CLIENT_ORIGINS) {
+      case 'true':
+        return true
+      case 'false':
+        return false
+      case '*':
+        return '*'
+
+      default:
+        return process.env.COMPANION_CLIENT_ORIGINS.split(',').map((url) =>
+          hasProtocol(url) ? url : `${companionProtocol}://${url}`,
+        )
+    }
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -60,7 +75,8 @@ const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
  *
  * @returns {string}
  */
-const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
+const defaultStandaloneGetKey = (...args) =>
+  `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
  * Loads the config from environment variables
@@ -69,7 +85,8 @@ const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(.
  */
 const getConfigFromEnv = () => {
   const uploadUrls = process.env.COMPANION_UPLOAD_URLS
-  const domains = process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
+  const domains =
+    process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
   const validHosts = domains ? domains.split(',') : []
 
   return {
@@ -87,6 +104,7 @@ const getConfigFromEnv = () => {
       box: {
         key: process.env.COMPANION_BOX_KEY,
         secret: getSecret('COMPANION_BOX_SECRET'),
+        credentialsURL: process.env.COMPANION_BOX_KEYS_ENDPOINT,
       },
       instagram: {
         key: process.env.COMPANION_INSTAGRAM_KEY,
@@ -122,31 +140,50 @@ const getConfigFromEnv = () => {
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
       region: process.env.COMPANION_AWS_REGION,
       useAccelerateEndpoint:
-      process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+        process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
       expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
+      forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
     },
     server: {
       host: process.env.COMPANION_DOMAIN,
-      protocol: process.env.COMPANION_PROTOCOL,
+      protocol: companionProtocol,
       path: process.env.COMPANION_PATH,
       implicitPath: process.env.COMPANION_IMPLICIT_PATH,
       oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
       validHosts,
     },
-    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
+    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
+    enableGooglePickerEndpoint:
+      process.env.COMPANION_ENABLE_GOOGLE_PICKER_ENDPOINT === 'true',
+    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS
+      ? process.env.COMPANION_PERIODIC_PING_URLS.split(',')
+      : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
-    periodicPingStaticPayload: process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
-      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD) : undefined,
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10)
+      : undefined,
+    periodicPingStaticPayload: process.env
+      .COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
+      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD)
+      : undefined,
     periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10)
+      : undefined,
     filePath: process.env.COMPANION_DATADIR,
-    redisUrl: process.env.COMPANION_REDIS_URL,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
-    // adding redisOptions to keep all companion options easily visible
-    //  redisOptions refers to https://www.npmjs.com/package/redis#options-object-properties
-    redisOptions: {},
+    redisUrl: process.env.COMPANION_REDIS_URL,
+    //  redisOptions refers to https://redis.github.io/ioredis/index.html#RedisOptions
+    redisOptions: (() => {
+      try {
+        if (!process.env.COMPANION_REDIS_OPTIONS) {
+          return undefined
+        }
+        return JSON.parse(process.env.COMPANION_REDIS_OPTIONS)
+      } catch (e) {
+        logger.warn('COMPANION_REDIS_OPTIONS parse error', e)
+      }
+      return undefined
+    })(),
     sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET'),
@@ -154,14 +191,32 @@ const getConfigFromEnv = () => {
     allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD === 'true',
-    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
-    chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
-    clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
-      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
+    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD
+      ? process.env.COMPANION_STREAMING_UPLOAD === 'true'
+      : undefined,
+    tusDeferredUploadLength: process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH
+      ? process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH === 'true'
+      : true,
+    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE
+      ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10)
+      : undefined,
+    maxFilenameLength: process.env.COMPANION_MAX_FILENAME_LENGTH
+      ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10)
+      : 500,
+    chunkSize: process.env.COMPANION_CHUNK_SIZE
+      ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10)
+      : undefined,
+    clientSocketConnectTimeout: process.env
+      .COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
+      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10)
+      : undefined,
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
     loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
     corsOrigins: getCorsOrigins(),
+    testDynamicOauthCredentials:
+      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
+    testDynamicOauthCredentialsSecret:
+      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
   }
 }
 
@@ -174,7 +229,8 @@ const getConfigPath = () => {
   let configPath
 
   for (let i = process.argv.length - 1; i >= 0; i--) {
-    const isConfigFlag = process.argv[i] === '-c' || process.argv[i] === '--config'
+    const isConfigFlag =
+      process.argv[i] === '-c' || process.argv[i] === '--config'
     const flagHasValue = i + 1 <= process.argv.length
     if (isConfigFlag && flagHasValue) {
       configPath = process.argv[i + 1]
@@ -213,7 +269,7 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
-    callbackURLs.push(buildURL(`/connect/${providerName}/redirect`, true))
+    callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
   })
 
   return stripIndent`
@@ -227,7 +283,8 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
     While you did an awesome job on getting Companion running, this is just the welcome
     message, so let's talk about the places that really matter:
 
-    - Be sure to add ${callbackURLs.join(', ')} as your Oauth redirect uris on their corresponding developer interfaces.
+    - Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
+        ${callbackURLs.join(', ')}
     - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
     - https://github.com/transloadit/uppy/issues - report your bugs here
 

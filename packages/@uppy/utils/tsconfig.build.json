@@ -1,0 +1,11 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "rootDir": "./src",
+    "allowJs": true
+  },
+  "include": ["./src/**/*.*"],
+  "exclude": ["./src/**/*.test.ts", "./src/**/*.test.js"],
+  "references": []
+}

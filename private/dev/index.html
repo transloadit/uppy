@@ -1,12 +1,18 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Dashboard</title>
+    <link rel="icon" type="image/png" href="https://uppy.io/img/logo.svg" />
     <style>
       main {
-        padding-top: 100px;
+        display: block;
+        width: fit-content;
+        margin: 100px auto;
+      }
+
+      h1 {
         text-align: center;
       }
 
@@ -16,6 +22,7 @@
         margin: auto;
       }
 
+      /* css to make sure that Dashboard's css overrides page css */
       button,
       input {
         color: green;
@@ -23,8 +30,6 @@
         text-align: right;
         border: 2px solid purple;
       }
-
-      /* css to make sure that Dashboard's css overrides page css */
       ul {
         margin: 60px;
       }
@@ -33,6 +38,14 @@
       }
       a {
         color: purple;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: green;
       }
     </style>
   </head>
@@ -43,10 +56,11 @@
 
       <!-- some inputs in a form to check focus management in Dashboard -->
       <form id="upload-form" action="/">
-        <button type="button" id="pick-files">Pick Files</button><br>
-        True ? <input type="checkbox" name="check_test" value="1" checked><br>
-        Something: <input type="text" name="yo" value="1"><br>
-        <input type="hidden" name="bla" value="12333"><br>
+        <button type="button" id="pick-files">Pick Files</button><br />
+        True ?
+        <input type="checkbox" name="check_test" value="1" checked /><br />
+        Something: <input type="text" name="yo" value="1" /><br />
+        <input type="hidden" name="bla" value="12333" /><br />
         <button type="submit">Submit</button>
       </form>
     </main>

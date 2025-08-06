@@ -1,0 +1,149 @@
+---
+description: Read this when you are about to use the Uppy class from @uppy/core
+globs: 
+alwaysApply: false
+---
+# Uppy Core Summary
+
+If you need to reference or work with the `Uppy` class from `@uppy/core`, here is an high-level overview of the class.
+
+## `Uppy<M extends Meta, B extends Body>` Class
+
+A modular file uploader. Manages plugins, state, events, and file handling.
+
+**Generics:**
+
+*   `M`: Metadata object shape associated with files (`Meta`).
+*   `B`: Body object shape associated with files (`Body`).
+
+**Key Public Properties:**
+
+*   `opts: NonNullableUppyOptions<M, B>`: The fully resolved Uppy options.
+*   `store: Store<State<M, B>>`: The state management store (defaults to `DefaultStore`).
+*   `i18n: I18n`: The translation function.
+*   `i18nArray: Translator['translateArray']`: The array translation function.
+*   `locale: Locale`: The active locale object.
+
+**Constructor:**
+
+*   `constructor(opts?: UppyOptionsWithOptionalRestrictions<M, B>)`
+
+**Core Public Methods:**
+
+*   `use<T extends typeof BasePlugin<any, M, B>>(Plugin: T, ...args: OmitFirstArg<ConstructorParameters<T>>): this`: Adds a plugin instance.
+*   `getPlugin<T extends UnknownPlugin<M, B> = UnknownPlugin<M, B>>(id: string): T | undefined`: Retrieves a plugin instance by ID.
+*   `iteratePlugins(method: (plugin: UnknownPlugin<M, B>) => void): void`: Executes a function on all installed plugins.
+*   `removePlugin(instance: UnknownPlugin<M, B>): void`: Removes a plugin instance.
+*   `addFile(file: File | MinimalRequiredUppyFile<M, B>): UppyFile<M, B>['id']`: Adds a single file.
+*   `addFiles(fileDescriptors: MinimalRequiredUppyFile<M, B>[]): void`: Adds multiple files.
+*   `removeFile(fileID: string): void`: Removes a file by ID.
+*   `removeFiles(fileIDs: string[]): void`: Removes multiple files by ID.
+*   `getFile(fileID: string): UppyFile<M, B>`: Retrieves a file object by ID.
+*   `getFiles(): UppyFile<M, B>[]`: Retrieves all file objects as an array.
+*   `setOptions(newOpts: MinimalRequiredOptions<M, B>): void`: Updates Uppy options.
+*   `setState(patch?: Partial<State<M, B>>): void`: Updates the Uppy state.
+*   `getState(): State<M, B>`: Retrieves the current Uppy state.
+*   `setFileState(fileID: string, state: Partial<UppyFile<M, B>>): void`: Updates the state for a specific file.
+*   `setMeta(data: Partial<M>): void`: Merges metadata into the global `state.meta` and all file `meta` objects.
+*   `setFileMeta(fileID: string, data: Partial<M>): void`: Merges metadata into a specific file's `meta` object.
+*   `upload(): Promise<NonNullable<UploadResult<M, B>> | undefined>`: Starts the upload process for all new files.
+*   `retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined>`: Retries a failed upload for a specific file.
+*   `retryAll(): Promise<UploadResult<M, B> | undefined>`: Retries all failed uploads.
+*   `cancelAll(): void`: Cancels all uploads and removes all files.
+*   `pauseResume(fileID: string): boolean | undefined`: Toggles pause/resume state for a resumable upload.
+*   `pauseAll(): void`: Pauses all resumable uploads.
+*   `resumeAll(): void`: Resumes all paused uploads.
+*   `info(message: string | { message: string; details?: string | Record<string, string> }, type?: LogLevel, duration?: number): void`: Displays an informational message via UI plugins.
+*   `hideInfo(): void`: Hides the oldest info message.
+*   `log(message: unknown, type?: 'error' | 'warning'): void`: Logs a message using the configured logger.
+*   `on<K extends keyof UppyEventMap<M, B>>(event: K, callback: UppyEventMap<M, B>[K]): this`: Registers an event listener.
+*   `off<K extends keyof UppyEventMap<M, B>>(event: K, callback: UppyEventMap<M, B>[K]): this`: Unregisters an event listener.
+*   `emit<T extends keyof UppyEventMap<M, B>>(event: T, ...args: Parameters<UppyEventMap<M, B>[T]>): void`: Emits an event.
+*   `destroy(): void`: Uninstalls all plugins and cleans up the Uppy instance.
+
+**Internal Lifecycle Methods (Called by Uppy):**
+
+*   `addPreProcessor(fn: Processor): void`
+*   `removePreProcessor(fn: Processor): boolean`
+*   `addPostProcessor(fn: Processor): void`
+*   `removePostProcessor(fn: Processor): boolean`
+*   `addUploader(fn: Processor): void`
+*   `removeUploader(fn: Processor): boolean`
+
+---
+
+## Key Associated Types
+
+*   **`UppyFile<M extends Meta, B extends Body>`**: Represents a file within Uppy.
+    *   `id: string`: Unique file ID.
+    *   `source?: string`: Source plugin ID.
+    *   `name: string`: File name.
+    *   `type?: string`: MIME type.
+    *   `data: Blob | File`: The actual file data.
+    *   `meta: M & { name: string, type: string }`: User and Uppy metadata.
+    *   `size: number | null`: File size in bytes.
+    *   `isRemote: boolean`: If the file is from a remote source (Companion).
+    *   `remote?: { requestClientId: string, ... }`: Remote source details.
+    *   `progress: FileProgressStarted | FileProgressNotStarted`: Upload progress state.
+    *   `error?: string`: Error message if upload failed.
+    *   `isPaused?: boolean`: If upload is paused (for resumable uploads).
+    *   `isGhost?: boolean`: If file is restored without data (Golden Retriever).
+    *   `response?: { status: number, body: B, uploadURL?: string, ... }`: Upload response details.
+    *   `preview?: string`: URL to a preview image.
+    *   `[key: string]: any`: Extensible with plugin-specific state.
+
+*   **`State<M extends Meta, B extends Body>`**: The main Uppy state object.
+    *   `files: { [fileID: string]: UppyFile<M, B> }`: Object map of files by ID.
+    *   `currentUploads: { [uploadID: string]: CurrentUpload<M, B> }`: Map of active uploads.
+    *   `capabilities: { uploadProgress: boolean, individualCancellation: boolean, resumableUploads: boolean, ... }`: Detected/configured capabilities.
+    *   `totalProgress: number`: Overall upload progress (0-100).
+    *   `meta: M`: Global metadata.
+    *   `info: Array<{ type: LogLevel, message: string, details?: string | Record<string, string> }>`: Info messages for UI display.
+    *   `error: string | null`: Global error message.
+    *   `allowNewUpload: boolean`: Whether new uploads can be started.
+    *   `plugins: { [pluginID: string]: Record<string, unknown> }`: State managed by plugins.
+    *   `recoveredState: null | { files: ..., currentUploads: ... }`: State recovered by Golden Retriever.
+
+*   **`UppyOptions<M extends Meta, B extends Body>`**: Options for the Uppy constructor.
+    *   `id?: string`: Instance ID (default: 'uppy').
+    *   `autoProceed?: boolean`: Start upload automatically after files are added (default: false).
+    *   `allowMultipleUploadBatches?: boolean`: Allow adding files while an upload is in progress (default: true).
+    *   `debug?: boolean`: Enable debug logging (default: false).
+    *   `restrictions: Restrictions`: File restrictions (type, size, number).
+    *   `meta?: M`: Initial global metadata.
+    *   `onBeforeFileAdded?: (currentFile: UppyFile<M, B>, files: { ... }) => UppyFile<M, B> | boolean | undefined`: Hook before a file is added.
+    *   `onBeforeUpload?: (files: { ... }) => { ... } | boolean`: Hook before an upload starts.
+    *   `locale?: Locale`: Custom locale strings.
+    *   `store?: Store<State<M, B>>`: Custom state store.
+    *   `logger?: { debug, warn, error }`: Custom logger.
+    *   `infoTimeout?: number`: Duration for info messages (ms).
+
+*   **`Restrictions`**: File restriction options.
+    *   `maxFileSize?: number | null`: Max individual file size (bytes).
+    *   `minFileSize?: number | null`: Min individual file size (bytes).
+    *   `maxTotalFileSize?: number | null`: Max total size of all files (bytes).
+    *   `maxNumberOfFiles?: number | null`: Max number of files allowed.
+    *   `minNumberOfFiles?: number | null`: Min number of files required.
+    *   `allowedFileTypes?: string[] | null`: Allowed MIME types or extensions (e.g., `['image/*', '.pdf']`).
+    *   `requiredMetaFields?: string[]`: Meta fields that must be present before upload.
+
+*   **`UppyEventMap<M extends Meta, B extends Body>`**: Map of event names to their callback signatures (includes events like `file-added`, `upload-progress`, `upload-success`, `complete`, `error`, `restriction-failed`, etc.).
+
+*   **`UploadResult<M extends Meta, B extends Body>`**: The object returned when an upload completes.
+    *   `successful?: UppyFile<M, B>[]`: Array of successfully uploaded files.
+    *   `failed?: UppyFile<M, B>[]`: Array of files that failed to upload.
+    *   `uploadID?: string`: The ID of the upload batch.
+
+*   **`BasePlugin<...> `**: The base class for all Uppy plugins.
+    *   `id: string`: Unique plugin ID.
+    *   `type: string`: Plugin type ('acquirer', 'modifier', 'uploader', 'presenter', 'orchestrator', 'logger').
+    *   `uppy: Uppy<M, B>`: Reference to the Uppy instance.
+    *   `install(): void`: Called when the plugin is added.
+    *   `uninstall(): void`: Called when the plugin is removed.
+    *   `update(state: Partial<State<M, B>>): void`: Called on every Uppy state update.
+
+*   **`Processor`**: Type for pre/post/upload processor functions `(fileIDs: string[], uploadID: string) => Promise<unknown> | void`.
+
+*   **`LogLevel`**: `'info' | 'warning' | 'error' | 'success'`.
+
+*   **`PartialTree`**: Type used by Provider plugins (like Google Drive) to represent folder structures (`(PartialTreeFile | PartialTreeFolder)[]`).

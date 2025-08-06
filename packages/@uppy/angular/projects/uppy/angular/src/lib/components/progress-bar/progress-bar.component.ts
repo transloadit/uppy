@@ -1,31 +1,53 @@
-import { Component, ChangeDetectionStrategy, ElementRef, Input, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
-import { Uppy } from '@uppy/core';
-import ProgressBar from '@uppy/progress-bar';
-import type { ProgressBarOptions } from '@uppy/progress-bar';
-import { UppyAngularWrapper } from '../../utils/wrapper';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input,
+	inject,
+	type OnChanges,
+	type OnDestroy,
+	type SimpleChanges,
+} from "@angular/core";
+import { Uppy } from "@uppy/core";
+import type { ProgressBarOptions } from "@uppy/progress-bar";
+import ProgressBar from "@uppy/progress-bar";
+import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
+import { UppyAngularWrapper } from "../../utils/wrapper";
 
 @Component({
-  selector: 'uppy-progress-bar',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: "uppy-progress-bar",
+	template: "",
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
 })
-export class ProgressBarComponent extends UppyAngularWrapper implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy = new Uppy;
-  @Input() props: ProgressBarOptions = {};
+export class ProgressBarComponent<M extends Meta, B extends Body>
+	extends UppyAngularWrapper<M, B, ProgressBarOptions>
+	implements OnDestroy, OnChanges
+{
+	el = inject(ElementRef);
 
-  constructor(public el: ElementRef) {
-    super();
-   }
+	@Input() uppy: Uppy<M, B> = new Uppy();
+	@Input() props: ProgressBarOptions = {};
 
-  ngOnInit() {
-    this.onMount({ id: 'angular:ProgressBar', target: this.el.nativeElement }, ProgressBar)
-  }
+	/** Inserted by Angular inject() migration for backwards compatibility */
+	constructor(...args: unknown[]);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.handleChanges(changes, ProgressBar);
-  }
+	constructor() {
+		super();
+	}
 
-  ngOnDestroy(): void {
-    this.uninstall();
-  }
+	ngOnInit() {
+		this.onMount(
+			{ id: "angular:ProgressBar", target: this.el.nativeElement },
+			ProgressBar,
+		);
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		this.handleChanges(changes, ProgressBar);
+	}
+
+	ngOnDestroy(): void {
+		this.uninstall();
+	}
 }

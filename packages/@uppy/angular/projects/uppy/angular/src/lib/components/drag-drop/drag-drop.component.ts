@@ -1,32 +1,53 @@
-import { Component, ChangeDetectionStrategy, Input, OnDestroy, OnChanges, SimpleChanges, ElementRef } from '@angular/core';
-import { Uppy } from '@uppy/core';
-import DragDrop from '@uppy/drag-drop';
-import type { DragDropOptions } from '@uppy/drag-drop';
-import { UppyAngularWrapper } from '../../utils/wrapper';
+import {
+	ChangeDetectionStrategy,
+	Component,
+	ElementRef,
+	Input,
+	inject,
+	type OnChanges,
+	type OnDestroy,
+	type SimpleChanges,
+} from "@angular/core";
+import { Uppy } from "@uppy/core";
+import type { DragDropOptions } from "@uppy/drag-drop";
+import DragDrop from "@uppy/drag-drop";
+import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
+import { UppyAngularWrapper } from "../../utils/wrapper";
 
 @Component({
-  selector: 'uppy-drag-drop',
-  template: '',
-  changeDetection: ChangeDetectionStrategy.OnPush
+	selector: "uppy-drag-drop",
+	template: "",
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
 })
-export class DragDropComponent extends UppyAngularWrapper implements OnDestroy, OnChanges {
-  @Input() uppy: Uppy = new Uppy;
-  @Input() props: DragDropOptions = {};
+export class DragDropComponent<M extends Meta, B extends Body>
+	extends UppyAngularWrapper<M, B, DragDropOptions>
+	implements OnDestroy, OnChanges
+{
+	el = inject(ElementRef);
 
-  constructor(public el: ElementRef) {
-    super();
-  }
+	@Input() uppy: Uppy<M, B> = new Uppy();
+	@Input() props: DragDropOptions = {};
 
-  ngOnInit() {
-    this.onMount({ id: 'angular:DragDrop', target: this.el.nativeElement }, DragDrop)
-  }
+	/** Inserted by Angular inject() migration for backwards compatibility */
+	constructor(...args: unknown[]);
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.handleChanges(changes, DragDrop);
-  }
+	constructor() {
+		super();
+	}
 
-  ngOnDestroy(): void {
-    this.uninstall();
-  }
+	ngOnInit() {
+		this.onMount(
+			{ id: "angular:DragDrop", target: this.el.nativeElement },
+			DragDrop,
+		);
+	}
 
+	ngOnChanges(changes: SimpleChanges): void {
+		this.handleChanges(changes, DragDrop);
+	}
+
+	ngOnDestroy(): void {
+		this.uninstall();
+	}
 }

@@ -1,11 +1,15 @@
 {
   "name": "@uppy/store-default",
   "description": "The default simple object-based store for Uppy.",
-  "version": "3.0.2",
+  "version": "4.3.2",
   "license": "MIT",
   "main": "lib/index.js",
-  "types": "types/index.d.ts",
   "type": "module",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "uppy",
@@ -16,10 +20,18 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "devDependencies": {
-    "@jest/globals": "^29.0.0"
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
-  }
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ]
 }

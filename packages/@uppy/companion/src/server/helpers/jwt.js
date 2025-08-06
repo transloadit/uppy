@@ -1,15 +1,37 @@
 const jwt = require('jsonwebtoken')
 const { encrypt, decrypt } = require('./utils')
 
-const EXPIRY = 60 * 60 * 24 // one day (24 hrs)
+// The Uppy auth token is an encrypted JWT & JSON encoded container.
+// It used to simply contain an OAuth access_token and refresh_token for a specific provider.
+// However now we allow more data to be stored in it. This allows for storing other state or parameters needed for that
+// specific provider, like username, password, host names etc.
+// The different providers APIs themselves will verify these inner tokens through Provider classes.
+// The expiry of the Uppy auth token should be higher than the expiry of the refresh token.
+// Because some refresh tokens normally never expire, we set the Uppy auth token expiry very high.
+// Chrome has a maximum cookie expiry of 400 days, so we'll use that (we also store the auth token in a cookie)
+//
+// If the Uppy auth token expiry were set too low (e.g. 24hr), we could risk this situation:
+// A user starts an upload, thus creating an auth token. They leave the upload running over night.
+// The upload finishes after a few hours, but with some failed files. Then the next day (say after 25hr)
+// they would retry the failed tiles, however now the Uppy auth token has expired and
+// even though the provider refresh token would still have been accepted and
+// there's no way for them to retry their failed files.
+// With 400 days, there's still a theoretical possibility but very low.
+const MAX_AGE_REFRESH_TOKEN = 60 * 60 * 24 * 400
+
+const MAX_AGE_24H = 60 * 60 * 24
+
+module.exports.MAX_AGE_24H = MAX_AGE_24H
+module.exports.MAX_AGE_REFRESH_TOKEN = MAX_AGE_REFRESH_TOKEN
 
 /**
  *
- * @param {*} payload
+ * @param {*} data
  * @param {string} secret
+ * @param {number} maxAge
  */
-module.exports.generateToken = (payload, secret) => {
-  return jwt.sign({ data: payload }, secret, { expiresIn: EXPIRY })
+const generateToken = (data, secret, maxAge) => {
+  return jwt.sign({ data }, secret, { expiresIn: maxAge })
 }
 
 /**
@@ -17,13 +39,9 @@ module.exports.generateToken = (payload, secret) => {
  * @param {string} token
  * @param {string} secret
  */
-module.exports.verifyToken = (token, secret) => {
-  try {
-    // @ts-ignore
-    return { payload: jwt.verify(token, secret, {}).data }
-  } catch (err) {
-    return { err }
-  }
+const verifyToken = (token, secret) => {
+  // @ts-ignore
+  return jwt.verify(token, secret, {}).data
 }
 
 /**
@@ -31,8 +49,25 @@ module.exports.verifyToken = (token, secret) => {
  * @param {*} payload
  * @param {string} secret
  */
-module.exports.generateEncryptedToken = (payload, secret) => {
-  return encrypt(module.exports.generateToken(payload, secret), secret)
+module.exports.generateEncryptedToken = (
+  payload,
+  secret,
+  maxAge = MAX_AGE_24H,
+) => {
+  // return payload // for easier debugging
+  return encrypt(generateToken(payload, secret, maxAge), secret)
+}
+
+/**
+ * @param {*} payload
+ * @param {string} secret
+ */
+module.exports.generateEncryptedAuthToken = (payload, secret, maxAge) => {
+  return module.exports.generateEncryptedToken(
+    JSON.stringify(payload),
+    secret,
+    maxAge,
+  )
 }
 
 /**
@@ -41,21 +76,33 @@ module.exports.generateEncryptedToken = (payload, secret) => {
  * @param {string} secret
  */
 module.exports.verifyEncryptedToken = (token, secret) => {
-  try {
-    return module.exports.verifyToken(decrypt(token, secret), secret)
-  } catch (err) {
-    return { err }
-  }
+  const ret = verifyToken(decrypt(token, secret), secret)
+  if (!ret) throw new Error('No payload')
+  return ret
 }
 
-const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
+/**
+ *
+ * @param {string} token
+ * @param {string} secret
+ */
+module.exports.verifyEncryptedAuthToken = (token, secret, providerName) => {
+  const json = module.exports.verifyEncryptedToken(token, secret)
+  const tokens = JSON.parse(json)
+  if (!tokens[providerName])
+    throw new Error(`Missing token payload for provider ${providerName}`)
+  return tokens
+}
+
+function getCommonCookieOptions({ companionOptions }) {
   const cookieOptions = {
-    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
     httpOnly: true,
   }
 
   // Fix to show thumbnails on Chrome
   // https://community.transloadit.com/t/dropbox-and-box-thumbnails-returning-401-unauthorized/15781/2
+  // Note that sameSite cookies also require secure (which needs https), so thumbnails don't work from localhost
+  // to test locally, you can manually find the URL of the image and open it in a separate browser tab
   if (companionOptions.server && companionOptions.server.protocol === 'https') {
     cookieOptions.sameSite = 'none'
     cookieOptions.secure = true
@@ -64,36 +111,51 @@ const addToCookies = (res, token, companionOptions, authProvider, prefix) => {
   if (companionOptions.cookieDomain) {
     cookieOptions.domain = companionOptions.cookieDomain
   }
-  // send signed token to client.
-  res.cookie(`${prefix}--${authProvider}`, token, cookieOptions)
+
+  return cookieOptions
 }
 
-/**
- *
- * @param {object} res
- * @param {string} token
- * @param {object} companionOptions
- * @param {string} authProvider
- */
-module.exports.addToCookies = (res, token, companionOptions, authProvider) => {
-  addToCookies(res, token, companionOptions, authProvider, 'uppyAuthToken')
-}
+const getCookieName = (oauthProvider) => `uppyAuthToken--${oauthProvider}`
 
-/**
- *
- * @param {object} res
- * @param {object} companionOptions
- * @param {string} authProvider
- */
-module.exports.removeFromCookies = (res, companionOptions, authProvider) => {
+const addToCookies = ({
+  res,
+  token,
+  companionOptions,
+  oauthProvider,
+  maxAge = MAX_AGE_24H,
+}) => {
   const cookieOptions = {
-    maxAge: 1000 * EXPIRY, // would expire after one day (24 hrs)
-    httpOnly: true,
+    ...getCommonCookieOptions({ companionOptions }),
+    maxAge: maxAge * 1000,
   }
 
-  if (companionOptions.cookieDomain) {
-    cookieOptions.domain = companionOptions.cookieDomain
-  }
+  // send signed token to client.
+  res.cookie(getCookieName(oauthProvider), token, cookieOptions)
+}
 
-  res.clearCookie(`uppyAuthToken--${authProvider}`, cookieOptions)
+module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
+  // some providers need the token in cookies for thumbnail/image requests
+  if (req.companion.provider.needsCookieAuth) {
+    addToCookies({
+      res,
+      token: uppyAuthToken,
+      companionOptions: req.companion.options,
+      oauthProvider: req.companion.providerClass.oauthProvider,
+      maxAge,
+    })
+  }
+}
+
+/**
+ *
+ * @param {object} res
+ * @param {object} companionOptions
+ * @param {string} oauthProvider
+ */
+module.exports.removeFromCookies = (res, companionOptions, oauthProvider) => {
+  // options must be identical to those given to res.cookie(), excluding expires and maxAge.
+  // https://expressjs.com/en/api.html#res.clearCookie
+  const cookieOptions = getCommonCookieOptions({ companionOptions })
+
+  res.clearCookie(getCookieName(oauthProvider), cookieOptions)
 }

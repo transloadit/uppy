@@ -1,5 +1,415 @@
 # @uppy/companion
 
+## 5.9.0
+
+### Minor Changes
+
+- 0c24c5a: Add provider name to metadata for observability
+
+### Patch Changes
+
+- 0c24c5a: Make StreamableBlob spec compliant for Node.js 24+
+
+## 5.8.0
+
+Released: 2025-06-02
+Included in: Uppy v4.17.0
+
+- @uppy/companion: add max filename length env var (Freeman / #5763)
+- @uppy/companion: fix cookie maxAge to milliseconds (zolotarov@brights.io / #5746)
+- @uppy/companion: improve Zoom folder structure (Merlijn Vos / #5739)
+
+## 5.7.0
+
+Released: 2025-05-18
+Included in: Uppy v4.16.0
+
+- @uppy/companion: implement credentials param `transloadit_gateway` (Mikael Finstad / #5725)
+- @uppy/companion: Fix AES key wear-out (Florian Maury / #5724)
+
+## 5.6.0
+
+Released: 2025-04-08
+Included in: Uppy v4.14.0
+
+- @uppy/companion: implement dropbox business teams (Mikael Finstad / #5708)
+
+## 5.5.2
+
+Released: 2025-02-25
+Included in: Uppy v4.13.3
+
+- @uppy/companion: log when tus uploaded size differs (Mikael Finstad / #5647)
+- @uppy/companion: remove redundant HEAD request for file size (Mikael Finstad / #5648)
+
+## 5.5.1
+
+Released: 2025-01-22
+Included in: Uppy v4.13.1
+
+- @uppy/companion: unify http error responses (Mikael Finstad / #5595)
+
+## 5.5.0
+
+Released: 2025-01-15
+Included in: Uppy v4.13.0
+
+- @uppy/companion: fix forcePathStyle boolean conversion (Mikael Finstad / #5308)
+- @uppy/companion: add COMPANION_TUS_DEFERRED_UPLOAD_LENGTH (Dominik Schmidt / #5561)
+
+## 5.4.1
+
+Released: 2025-01-08
+Included in: Uppy v4.12.1
+
+- @uppy/companion: upgrade express & express-session (Merlijn Vos / #5582)
+
+## 5.4.0
+
+Released: 2025-01-06
+Included in: Uppy v4.10.0
+
+- @uppy/companion: pass fetched origins to window.postMessage() (Merlijn Vos / #5529)
+
+## 5.2.0
+
+Released: 2024-12-05
+Included in: Uppy v4.8.0
+
+- @uppy/companion,@uppy/google-drive-picker,@uppy/google-photos-picker: Google Picker (Mikael Finstad / #5443)
+
+## 5.1.4
+
+Released: 2024-11-11
+Included in: Uppy v4.7.0
+
+- @uppy/companion: Enable CSRF protection in grant (OAuth2) (Mikael Finstad / #5504)
+
+## 5.1.3
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- docs,@uppy/companion: disallow corsOrigins "\*" (Mikael Finstad / #5496)
+
+## 5.1.2
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/companion: Fix redis emitter (Mikael Finstad / #5474)
+
+## 5.1.0
+
+Released: 2024-08-29
+Included in: Uppy v4.3.0
+
+- @uppy/companion: do not use unsafe call to `JSON.stringify` (Antoine du Hamel / #5422)
+
+## 5.0.5
+
+Released: 2024-08-15
+Included in: Uppy v4.1.1
+
+- @uppy/companion: fix code for custom providers (Mikael Finstad / #5398)
+
+## 5.0.3
+
+Released: 2024-07-15
+Included in: Uppy v4.0.3
+
+- @uppy/companion: Improve error message when `window.opener == null` (Mikael Finstad / #5340)
+
+## 5.0.1
+
+Released: 2024-07-15
+Included in: Uppy v4.0.1
+
+- @uppy/companion: bump `ws` from 8.17.0 to 8.17.1 (dependabot[bot] / #5324)
+
+## 5.0.0
+
+Released: 2024-07-10
+Included in: Uppy v4.0.0
+
+- @uppy/companion: make streaming upload default to `true` (Mikael Finstad / #5315)
+- @uppy/companion: remove `oauthOrigin` (Antoine du Hamel / #5311)
+- @uppy/companion: do not list Node.js 20.12 as compatible (Antoine du Hamel / #5309)
+- examples,@uppy/companion: Release: uppy@3.27.3 (github-actions[bot] / #5304)
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+## 5.0.0-beta.12
+
+Released: 2024-07-02
+Included in: Uppy v4.0.0-beta.14
+
+- @uppy/companion: make `oauthOrigin` option required (Mikael Finstad / #5276)
+
+## 5.0.0-beta.11
+
+Released: 2024-06-27
+Included in: Uppy v4.0.0-beta.13
+
+- @uppy/companion: implement facebook app secret proof (Mikael Finstad / #5249)
+
+## 5.0.0-beta.10
+
+Released: 2024-06-18
+Included in: Uppy v4.0.0-beta.12
+
+- @uppy/companion: coalesce options `bucket` and `getKey` (Mikael Finstad / #5169)
+- @uppy/companion: improve companion logging (Mikael Finstad / #5250)
+
+## 5.0.0-beta.9
+
+Released: 2024-06-04
+Included in: Uppy v4.0.0-beta.10
+
+- @uppy/companion: invert some internal boolean options (Mikael Finstad / #5198)
+- @uppy/companion: rename `authProvider` to `oauthProvider` (Mikael Finstad / #5198)
+- @uppy/companion: remove unused headers (Mikael Finstad / #5198)
+- @uppy/companion: remove sanitizing of metadata (Mikael Finstad / #5198)
+- @uppy/companion: remove `error.extraData` (Mikael Finstad / #5198)
+- @uppy/companion: capitalize POST (Mikael Finstad / #5198)
+- @uppy/companion: simplify code by using modern Node.js APIs (Mikael Finstad / #5198)
+- @uppy/companion: rename `getExtraConfig` to `getExtraGrantConfig` (Mikael Finstad / #5198)
+- @uppy/companion: change `COMPANION_ENABLE_URL_ENDPOINT` default (Mikael Finstad / #5198)
+- @uppy/companion: change default value for Redis session prefix (Mikael Finstad / #5198)
+
+## 5.0.0-beta.8
+
+Released: 2024-05-23
+Included in: Uppy v4.0.0-beta.9
+
+- @uppy/companion: remove `chalk` from dependencies (Antoine du Hamel / #5178)
+
+## 5.0.0-beta.7
+
+Released: 2024-05-22
+Included in: Uppy v4.0.0-beta.8
+
+- @uppy/companion: encode `uploadId` (Mikael Finstad / #5168)
+- @uppy/companion: bump `express-session` (Antoine du Hamel / #5177)
+- @uppy/companion: remove dependency on `express-request-id` (Antoine du Hamel / #5176)
+- @uppy/companion: bump prom to v15 (Antoine du Hamel / #5175)
+- @uppy/companion: upgrade deps (Antoine du Hamel / #5119)
+
+## 5.0.0-beta.6
+
+Released: 2024-05-14
+Included in: Uppy v4.0.0-beta.7
+
+- @uppy/companion: switch from `node-redis` to `ioredis` (Dominik Schmidt / #4623)
+
+## 5.0.0-beta.5
+
+Released: 2024-05-03
+Included in: Uppy v4.0.0-beta.5
+
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+
+## 5.0.0-beta.4
+
+Released: 2024-04-29
+Included in: Uppy v4.0.0-beta.4
+
+- @uppy/companion: bump Node.js version support matrix (Antoine du Hamel / #5035)
+- @uppy/companion,@uppy/file-input: Release: uppy@3.24.1 (github-actions[bot] / #5069)
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
+## 5.0.0-beta.1
+
+Released: 2024-03-28
+Included in: Uppy v4.0.0-beta.1
+
+- @uppy/companion: improve error msg (Mikael Finstad / #5010)
+- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.15.1
+
+Released: 2024-07-03
+Included in: Uppy v3.27.3
+
+- @uppy/companion: fix `TypeError` when parsing request (Antoine du Hamel / #5303)
+
+## 4.15.0
+
+Released: 2024-07-02
+Included in: Uppy v3.27.2
+
+- @uppy/companion: add `s3.forcePathStyle` option (Nadeem Reinhardt / #5066)
+- @uppy/companion: add `oauthOrigin` option (Antoine du Hamel / #5297)
+
+## 4.14.0
+
+Released: 2024-06-18
+Included in: Uppy v3.27.0
+
+- @uppy/google-photos: add plugin (Mikael Finstad / #5061)
+- @uppy/companion: Bump ws from 8.8.1 to 8.17.1 (#5256)
+
+## 4.13.3
+
+Released: 2024-05-22
+Included in: Uppy v3.25.4
+
+- @uppy/companion: fix google drive gsuite export large size (Milan Nakum / #5144)
+- @uppy/companion: handle ws `'error'` event (Mikael Finstad / #5167)
+
+## 4.13.2
+
+Released: 2024-05-03
+Included in: Uppy v3.25.1
+
+- @uppy/companion: coerce `requestUrl` to a string (Antoine du Hamel / #5128)
+
+## 4.13.1
+
+Released: 2024-04-10
+Included in: Uppy v3.24.1
+
+- @uppy/companion: upgrade redis (Mikael Finstad / #5065)
+- @uppy/companion: Bump express from 4.18.1 to 4.19.2 (dependabot[bot] / #5037)
+
+## 4.13.0
+
+Released: 2024-03-27
+Included in: Uppy v3.24.0
+
+- @uppy/companion: improve error msg (Mikael Finstad / #5010)
+- @uppy/companion: crash if trying to set path to / (Mikael Finstad / #5003)
+
+## 4.12.1
+
+Released: 2024-02-19
+Included in: Uppy v3.22.0
+
+- @uppy/companion: fix companion dns and allow redirects from http->https again (mikael finstad / #4895)
+- @uppy/companion,@uppy/tus: bump `tus-js-client` version range (merlijn vos / #4848)
+
+## 4.12.0
+
+Released: 2023-12-12
+Included in: Uppy v3.21.0
+
+- @uppy/companion: fix double tus uploads (Mikael Finstad / #4816)
+- @uppy/companion: fix accelerated endpoints for presigned POST (Mikael Finstad / #4817)
+- @uppy/companion: fix `authProvider` property inconsistency (Mikael Finstad / #4672)
+- @uppy/companion: send certain onedrive errors to the user (Mikael Finstad / #4671)
+- @uppy/companion: Provider user sessions (Mikael Finstad / #4619)
+
+## 4.11.0
+
+Released: 2023-11-08
+Included in: Uppy v3.19.0
+
+- @uppy/companion: Companion+client stability fixes, error handling and retry (Mikael Finstad / #4734)
+- @uppy/companion: add getBucket metadata argument (Mikael Finstad / #4770)
+
+## 4.10.1
+
+Released: 2023-10-23
+Included in: Uppy v3.18.1
+
+- @uppy/companion: Bump jsonwebtoken from 8.5.1 to 9.0.0 in /packages/@uppy/companion (dependabot[bot] / #4751)
+
+## 4.10.0
+
+Released: 2023-10-20
+Included in: Uppy v3.18.0
+
+- @uppy/companion: Bucket fn also remote files (Mikael Finstad / #4693)
+
+## 4.9.1
+
+Released: 2023-09-29
+Included in: Uppy v3.17.0
+
+- @uppy/companion: upgrade TS target (Mikael Finstad / #4670)
+- @uppy/companion: use deferred length for tus streams (Mikael Finstad / #4697)
+- @uppy/companion: fix instagram/facebook auth error regression (Mikael Finstad / #4692)
+- @uppy/companion: add test endpoint for dynamic oauth creds (Mikael Finstad / #4667)
+- @uppy/companion: fix edge case for pagination on root (Mikael Finstad / #4689)
+- @uppy/companion: fix onedrive pagination (Mikael Finstad / #4686)
+
+## 4.9.0
+
+Released: 2023-09-18
+Included in: Uppy v3.16.0
+
+- @uppy/companion: add missing credentialsURL for box (Mikael Finstad / #4681)
+- @uppy/companion: remove s3 endpoints if s3 disabled (Mikael Finstad / #4675)
+- @uppy/companion: Onedrive refresh tokens (Mikael Finstad / #4655)
+- @uppy/companion: catch "invalid initialization vector" instead of crashing (Mikael Finstad / #4661)
+
+## 4.8.2
+
+Released: 2023-09-05
+Included in: Uppy v3.15.0
+
+- @uppy/companion: refactor `getProtectedHttpAgent` to make TS happy (Antoine du Hamel / #4654)
+- @uppy/companion: Alias "removeListener" as "off" in Redis emitter (Elliot Dickison / #4647)
+
+## 4.8.1
+
+Released: 2023-08-23
+Included in: Uppy v3.14.1
+
+- @uppy/companion: harden lint rules (Antoine du Hamel / #4641)
+
+## 4.8.0
+
+Released: 2023-08-15
+Included in: Uppy v3.14.0
+
+- @uppy/companion: Fix typos and add env vars to .env.example (Dominik Schmidt / #4624)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
+- @uppy/companion: make CSRF protection helpers available to providers (Dominik Schmidt / #4554)
+- @uppy/companion: fix Redis key default TTL (Subha Sarkar / #4607)
+- @uppy/companion: Fix Uploader.js metadata normalisation (Subha Sarkar / #4608)
+- @uppy/companion: Unify redis initialization (Dominik Schmidt / #4597)
+- @uppy/companion: allow dynamic S3 bucket (rmoura-92 / #4579)
+
+## 4.7.0
+
+Released: 2023-07-13
+Included in: Uppy v3.12.0
+
+- @uppy/companion: fix esm imports in production/transpiled builds (Dominik Schmidt / #4561)
+- @uppy/box,@uppy/companion,@uppy/dropbox,@uppy/google-drive,@uppy/onedrive,@uppy/provider-views: Load Google Drive / OneDrive lists 5-10x faster & always load all files (Merlijn Vos / #4513)
+
+## 4.6.0
+
+Released: 2023-07-06
+Included in: Uppy v3.11.0
+
+- @uppy/companion: fix infinite recursion in uploader test (Mikael Finstad / #4536)
+- @uppy/companion: bump semver from 7.3.7 to 7.5.3 (dependabot[bot] / #4529)
+- @uppy/companion: fix part listing in s3 (Antoine du Hamel / #4524)
+- @uppy/companion: implement refresh for authentication tokens (Mikael Finstad / #4448)
+
+## 4.5.1
+
+Released: 2023-06-19
+Included in: Uppy v3.10.0
+
+- @uppy/companion: switch from aws-sdk v2 to @aws-sdk/\* (v3) (Scott Bessler / #4285)
+- @uppy/companion,@uppy/core,@uppy/dashboard,@uppy/golden-retriever,@uppy/status-bar,@uppy/utils: Migrate all lodash' per-method-packages usage to lodash. (LinusMain / #4274)
+- @uppy/companion: revert randomness from file names (Mikael Finstad / #4509)
+- @uppy/companion: Custom provider fixes (Mikael Finstad / #4498)
+- @uppy/companion: fix 500 when file name contains non-ASCII chars (Antoine du Hamel / #4493)
+- @uppy/companion: Use filename from content-disposition instead of relying on url, with fallback (Artur Paikin / #4489)
+- @uppy/companion: fix companion implicitpath (Mikael Finstad / #4484)
+- @uppy/companion: fix undefined protocol and example page (Mikael Finstad / #4483)
+
+## 4.5.0
+
+Released: 2023-04-18
+Included in: Uppy v3.8.0
+
+- @uppy/companion: increase max limits for remote file list operations (Mikael Finstad / #4417)
+
 ## 4.4.0
 
 Released: 2023-04-04

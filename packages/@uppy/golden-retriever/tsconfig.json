@@ -1,0 +1,16 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "emitDeclarationOnly": false,
+    "noEmit": true
+  },
+  "include": ["./package.json", "./src/**/*.*"],
+  "references": [
+    {
+      "path": "../utils/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
+    }
+  ]
+}

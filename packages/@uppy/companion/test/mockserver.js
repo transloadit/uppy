@@ -1,7 +1,9 @@
 const express = require('express')
 const session = require('express-session')
 
-const { expects: { localZoomKey, localZoomSecret, localZoomVerificationToken } } = require('./fixtures/zoom')
+const {
+  expects: { localZoomKey, localZoomSecret, localZoomVerificationToken },
+} = require('./fixtures/zoom')
 
 const defaultEnv = {
   NODE_ENV: 'test',
@@ -12,6 +14,7 @@ const defaultEnv = {
   COMPANION_HIDE_WELCOME: 'false',
 
   COMPANION_STREAMING_UPLOAD: 'true',
+  COMPANION_TUS_DEFERRED_UPLOAD_LENGTH: 'true',
   COMPANION_ALLOW_LOCAL_URLS: 'false',
 
   COMPANION_PROTOCOL: 'http',
@@ -31,6 +34,9 @@ const defaultEnv = {
   COMPANION_INSTAGRAM_KEY: 'instagram_key',
   COMPANION_INSTAGRAM_SECRET: 'instagram_secret',
 
+  COMPANION_FACEBOOK_KEY: 'facebook_key',
+  COMPANION_FACEBOOK_SECRET: 'facebook_secret',
+
   COMPANION_ZOOM_KEY: localZoomKey,
   COMPANION_ZOOM_SECRET: localZoomSecret,
   COMPANION_ZOOM_VERIFICATION_TOKEN: localZoomVerificationToken,
@@ -40,15 +46,21 @@ const defaultEnv = {
   COMPANION_PERIODIC_PING_URLS: '',
 
   COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '',
+
+  COMPANION_ENABLE_URL_ENDPOINT: 'true',
+
+  COMPANION_CLIENT_ORIGINS: 'true',
 }
 
-function updateEnv (env) {
+function updateEnv(env) {
   Object.keys(env).forEach((key) => {
     process.env[key] = env[key]
   })
 }
 
 module.exports.setDefaultEnv = () => updateEnv(defaultEnv)
+
+module.exports.grantToken = 'fake token'
 
 module.exports.getServer = (extraEnv) => {
   const env = {
@@ -62,19 +74,22 @@ module.exports.getServer = (extraEnv) => {
   // todo rewrite companion to not use global state
   // https://github.com/transloadit/uppy/issues/3284
   jest.resetModules()
-  // eslint-disable-next-line global-require
   const standalone = require('../src/standalone')
   const authServer = express()
 
-  authServer.use(session({ secret: 'grant', resave: true, saveUninitialized: true }))
+  authServer.use(
+    session({ secret: 'grant', resave: true, saveUninitialized: true }),
+  )
   authServer.all('*/callback', (req, res, next) => {
     req.session.grant = {
-      response: { access_token: 'fake token' },
+      response: { access_token: module.exports.grantToken },
     }
     next()
   })
   authServer.all(['*/send-token', '*/redirect'], (req, res, next) => {
-    req.session.grant = { dynamic: { state: req.query.state || 'non-empty-value' } }
+    req.session.grant = {
+      dynamic: { state: req.query.state || 'non-empty-value' },
+    }
     next()
   })
 
