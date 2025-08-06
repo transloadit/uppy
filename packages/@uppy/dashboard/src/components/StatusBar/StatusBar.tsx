@@ -63,16 +63,6 @@ function getUploadingState(
   return state
 }
 
-const defaultOptions = {
-  hideUploadButton: false,
-  hideRetryButton: false,
-  hidePauseResumeButton: false,
-  hideCancelButton: false,
-  hideProgressDetails: false,
-  hideAfterFinish: true,
-  doneButtonHandler: null,
-} satisfies StatusBarOptions
-
 export default class StatusBar<
   M extends Meta,
   B extends Body,
