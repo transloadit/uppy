@@ -64,10 +64,6 @@ jobs:
         run: |
           git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
 
-      - name: Build CDN bundles
-        if: steps.changesets.outputs.published == 'true'
-        run: corepack yarn workspace uppy build:bundle
-
       - name: Upload `uppy` to CDN
         if: steps.changesets.outputs.published == 'true'
         run: node packages/uppy/upload-to-cdn.js uppy
