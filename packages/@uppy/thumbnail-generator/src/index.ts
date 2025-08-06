@@ -258,7 +258,7 @@ export default class ThumbnailGenerator<
     }
 
     if (width != null) {
-    let targetWidth = width
+      let targetWidth = width
       // Thumbnail shouldn’t be enlarged / upscaled, only reduced.
       // If img is already smaller than width/height, leave it as is.
       if (img.width < width) targetWidth = img.width
