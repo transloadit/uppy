@@ -1,5 +1,11 @@
 # @uppy/status-bar
 
+## 4.2.3
+
+### Patch Changes
+
+- c15c6fd: Make each entry in `strings` in locale type optional
+
 ## 4.2.2
 
 ### Patch Changes
