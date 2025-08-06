@@ -13,7 +13,7 @@ import type {
 import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import classNames from 'classnames'
-import { h } from 'preact'
+import type { h } from 'preact'
 // @ts-ignore We don't want TS to generate types for the package.json
 import packageJson from '../../package.json'
 import Browser from '../Browser.js'
