@@ -1,5 +1,13 @@
 # @uppy/dashboard
 
+## 4.4.3
+
+### Patch Changes
+
+- c15c6fd: Make each entry in `strings` in locale type optional
+- Updated dependencies [c15c6fd]
+  - @uppy/status-bar@4.2.3
+
 ## 4.4.2
 
 ### Patch Changes

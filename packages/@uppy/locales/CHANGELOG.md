@@ -1,5 +1,11 @@
 # @uppy/locales
 
+## 4.8.3
+
+### Patch Changes
+
+- 1a0beb9: Add all locales to globalThis.Uppy.locales.[locale-name]
+
 ## 4.8.2
 
 ### Patch Changes

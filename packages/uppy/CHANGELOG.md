@@ -1,5 +1,15 @@
 # uppy
 
+## 4.18.1
+
+### Patch Changes
+
+- Updated dependencies [c15c6fd]
+- Updated dependencies [1a0beb9]
+  - @uppy/status-bar@4.2.3
+  - @uppy/dashboard@4.4.3
+  - @uppy/locales@4.8.3
+
 ## 4.19.0
 
 ### Minor Changes
