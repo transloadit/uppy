@@ -168,4 +168,10 @@ th_TH.strings = {
   zoomOut: 'ซูมออก',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.th_TH = th_TH
+}
+
 export default th_TH

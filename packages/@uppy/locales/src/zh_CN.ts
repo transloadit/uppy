@@ -119,4 +119,10 @@ zh_CN.strings = {
   youHaveToAtLeastSelectX: '您至少要选择 %{smart_count} 个文件',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.zh_CN = zh_CN
+}
+
 export default zh_CN

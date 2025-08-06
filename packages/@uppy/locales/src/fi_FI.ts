@@ -148,4 +148,10 @@ fi_FI.strings = {
   recording: 'Tallennetaan',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.fi_FI = fi_FI
+}
+
 export default fi_FI

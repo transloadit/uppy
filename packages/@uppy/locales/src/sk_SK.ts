@@ -179,4 +179,10 @@ sk_SK.strings = {
   zoomOut: 'Oddialiť',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.sk_SK = sk_SK
+}
+
 export default sk_SK

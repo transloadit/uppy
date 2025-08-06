@@ -224,4 +224,10 @@ uz_UZ.strings = {
   zoomOut: 'Kichraytirish',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.uz_UZ = uz_UZ
+}
+
 export default uz_UZ

@@ -235,4 +235,10 @@ es_ES.strings = {
   unselectFileNamed: 'Deseleccionar archivo %{name}',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.es_ES = es_ES
+}
+
 export default es_ES

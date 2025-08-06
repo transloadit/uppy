@@ -247,4 +247,10 @@ sv_SE.strings = {
   zoomOut: 'Zooma ut',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.sv_SE = sv_SE
+}
+
 export default sv_SE

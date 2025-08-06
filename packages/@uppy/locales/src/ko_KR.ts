@@ -110,4 +110,10 @@ ko_KR.strings = {
   youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ko_KR = ko_KR
+}
+
 export default ko_KR

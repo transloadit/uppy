@@ -141,4 +141,10 @@ he_IL.strings = {
   },
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.he_IL = he_IL
+}
+
 export default he_IL

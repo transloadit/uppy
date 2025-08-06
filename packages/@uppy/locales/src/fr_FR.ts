@@ -217,4 +217,10 @@ fr_FR.strings = {
   },
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.fr_FR = fr_FR
+}
+
 export default fr_FR

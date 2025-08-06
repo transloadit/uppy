@@ -166,4 +166,10 @@ bg_BG.strings = {
   },
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.bg_BG = bg_BG
+}
+
 export default bg_BG

@@ -156,4 +156,10 @@ ro_RO.strings = {
   },
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ro_RO = ro_RO
+}
+
 export default ro_RO

@@ -142,4 +142,10 @@ it_IT.strings = {
   openFolderNamed: 'Cartella aperta %{name}',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.it_IT = it_IT
+}
+
 export default it_IT
