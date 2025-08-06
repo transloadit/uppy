@@ -1497,7 +1497,8 @@ describe('src/Core', () => {
         try {
           await core.upload()
         } catch (error) {
-          // Expected to fail due to missing metadata
+          expect(error).toBeInstanceOf(RestrictionError)
+          expect(error.message).toContain('Missing required meta fields')
         }
 
         // File should now have missing metadata error after upload attempt
@@ -1507,8 +1508,8 @@ describe('src/Core', () => {
 
         // Should not retry files with outstanding metadata issues
         await core.retryAll()
-        expect(onRetryAll.mock.calls[0][0]).toEqual([]) // Check first argument is empty array
-        expect(onUpload).toHaveBeenCalledTimes(0) // Upload never succeeds due to metadata validation
+        expect(onRetryAll.mock.calls[0][0]).toEqual([])
+        expect(onUpload).toHaveBeenCalledTimes(0)
       })
 
       it('should retry files after metadata is corrected', async () => {
@@ -1530,11 +1531,12 @@ describe('src/Core', () => {
           data: testImage,
         })
 
-        // Simulate an upload attempt which triggers metadata validation
+
         try {
           await core.upload()
         } catch (error) {
-          // Expected to fail due to missing metadata
+          expect(error).toBeInstanceOf(RestrictionError)
+          expect(error.message).toContain('Missing required meta fields')
         }
 
         // Verify file has missing metadata error after upload attempt
@@ -1593,17 +1595,17 @@ describe('src/Core', () => {
           data: testImage,
         })
 
-        // Simulate an upload attempt which triggers metadata validation
         try {
           await core.upload()
         } catch (error) {
-          // Expected to fail due to missing metadata
+          expect(error).toBeInstanceOf(RestrictionError)
+          expect(error.message).toContain('Missing required meta fields')
         }
 
         // Give one file a different error (not metadata-related)
         core.setFileState(fileId3, {
           error: 'Network error',
-          missingRequiredMetaFields: [], // This file has no metadata issues
+          missingRequiredMetaFields: [],
         })
 
         // Fix metadata for first file only
@@ -1622,7 +1624,7 @@ describe('src/Core', () => {
         const retriedFiles = onRetryAll.mock.calls[0][0]
         expect(retriedFiles).toContainEqual(expect.objectContaining({ id: fileId1 }))
         expect(retriedFiles).toContainEqual(expect.objectContaining({ id: fileId3 }))
-        expect(onUpload).toHaveBeenCalledTimes(1) // Called once during retry (initial upload failed at validation)
+        expect(onUpload).toHaveBeenCalledTimes(1)
       })
     })
   })
