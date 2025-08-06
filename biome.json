@@ -26,7 +26,7 @@
   },
   "linter": {
     "enabled": true,
-    "includes": ["!**/*.vue", "!**/*.svelte"],
+    "includes": ["**", "!**/*.vue", "!**/*.svelte"],
     "rules": {
       "recommended": true,
       "suspicious": {
