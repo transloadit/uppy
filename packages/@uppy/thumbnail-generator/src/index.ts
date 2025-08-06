@@ -221,9 +221,6 @@ export default class ThumbnailGenerator<
 
     return Promise.all([onload, orientationPromise])
       .then(([image, orientation]) => {
-        const originalImageDimensions = { width: image.width, height: image.height }
-        this.uppy.setFileMeta(file.id, { dimensions: originalImageDimensions })
-
         const dimensions = this.getProportionalDimensions(
           image,
           targetWidth,
