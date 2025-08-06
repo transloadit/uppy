@@ -4,7 +4,6 @@
   "version": "4.8.3",
   "license": "MIT",
   "type": "module",
-  "main": "locale-pack/index.mjs",
   "scripts": {
     "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && yarn format",
     "format": "cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",
@@ -26,6 +25,8 @@
   },
   "files": [
     "lib",
+    "src",
+    "dist",
     "CHANGELOG.md"
   ],
   "dependencies": {

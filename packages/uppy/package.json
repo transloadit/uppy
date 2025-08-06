@@ -8,6 +8,12 @@
   "type": "module",
   "unpkg": "dist/uppy.min.js",
   "style": "dist/uppy.min.css",
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "keywords": [
     "file uploader",
     "drag-drop",
