@@ -29,7 +29,6 @@ export default function Dropzone(props: DropzoneProps) {
       className="uppy-reset"
       data-uppy-element="dropzone"
       role="presentation"
-      tabIndex={0}
     >
       <input
         {...getInputProps()}

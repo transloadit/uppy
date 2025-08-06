@@ -37,7 +37,7 @@ export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
               <p role="alert">
                 {info.message}{' '}
                 {info.details && (
-                  // biome-ignore lint/a11y/useKeyWithClickEvents: ...
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: don't think it's needed
                   <span
                     aria-label={info.details as string}
                     data-microtip-position="top-left"
