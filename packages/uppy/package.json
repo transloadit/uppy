@@ -72,7 +72,7 @@
     "@uppy/zoom": "workspace:*"
   },
   "scripts": {
-    "build": "tsc --build tsconfig.build.json && yarn build:bundle",
+    "build": "tsc --build tsconfig.build.json",
     "build:bundle": "node build-bundle.mjs",
     "build:css": "sass --load-path=../../packages src/style.scss dist/uppy.css && postcss dist/uppy.css -u cssnano -o dist/uppy.min.css",
     "typecheck": "tsc --build"
