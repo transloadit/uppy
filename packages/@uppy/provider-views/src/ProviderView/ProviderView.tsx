@@ -14,7 +14,7 @@ import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
 import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
-import { h } from 'preact'
+import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
 import FooterActions from '../FooterActions.js'
