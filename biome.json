@@ -33,6 +33,8 @@
         "noExplicitAny": "off"
       },
       "correctness": {
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error",
         "noUnusedImports": "off",
         "noUnusedFunctionParameters": "off",
         "noUnusedVariables": {
@@ -47,6 +49,10 @@
       },
       "a11y": {
         "noSvgWithoutTitle": "off"
+      },
+      "nursery": {
+        "noNestedComponentDefinitions": "error",
+        "noReactPropAssign": "error"
       }
     }
   },
