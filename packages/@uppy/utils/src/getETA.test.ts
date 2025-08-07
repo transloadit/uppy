@@ -8,7 +8,7 @@ describe('getETA', () => {
     const fileProgress = {
       bytesUploaded: 1024,
       bytesTotal: 3096,
-      uploadStarted: date5SecondsAgo.getTime(), // Convert Date to timestamp (number)
+      uploadStarted: date5SecondsAgo.getTime(),
     }
     expect(getETA(fileProgress)).toEqual(10.1)
   })
