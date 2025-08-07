@@ -1,5 +1,5 @@
 ---
-"@uppy/thumbnail-generator": minor
+"@uppy/thumbnail-generator": patch
 ---
 
-@uppy/thumbnail-generator: don't enlarge already small thumbnails
+Make tiny/small thumbnails look better by not scaling them to cover the entire grid item
