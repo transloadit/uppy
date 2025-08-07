@@ -11,11 +11,11 @@ import { BasePlugin, EventManager } from '@uppy/core'
 import {
   filterFilesToEmitUploadStarted,
   filterNonFailedFiles,
-} from '@uppy/utils/lib/fileFilters'
-import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import hasProperty from '@uppy/utils/lib/hasProperty'
-import isNetworkError from '@uppy/utils/lib/isNetworkError'
-import NetworkError from '@uppy/utils/lib/NetworkError'
+  getAllowedMetaFields,
+  hasProperty,
+  isNetworkError,
+  NetworkError,
+} from '@uppy/utils'
 // @ts-ignore untyped
 import { RateLimitedQueue } from '@uppy/utils'
 import * as tus from 'tus-js-client'
@@ -97,7 +97,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   keyof typeof defaultOptions
 >
 
-declare module '@uppy/utils/lib/UppyFile' {
+declare module '@uppy/utils' {
   export interface UppyFile<M extends Meta, B extends Body> {
     tus?: TusOpts<M, B>
   }

@@ -99,7 +99,9 @@ export type {
   UppyFile,
   MinimalRequiredUppyFile,
   InternalMetadata,
-  TagFile
+  TagFile,
+  Body,
+  Meta,
 } from './UppyFile.js'
 
 export type { CompanionFile } from './CompanionFile.js'

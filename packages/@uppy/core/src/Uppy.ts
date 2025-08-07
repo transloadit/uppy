@@ -1,30 +1,26 @@
 /* global AggregateError */
 
 import DefaultStore, { type Store } from '@uppy/store-default'
+import {
+  getSafeFileId,
+  getFileNameAndExtension,
+  getFileType,
+  Translator,
+} from '@uppy/utils'
 import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
-} from '@uppy/utils/lib/CompanionClientProvider'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type {
+  CompanionFile,
   FileProgressNotStarted,
   FileProgressStarted,
-} from '@uppy/utils/lib/FileProgress'
-import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-import getFileType from '@uppy/utils/lib/getFileType'
-import type {
   I18n,
   Locale,
   OptionalPluralizeLocale,
-} from '@uppy/utils'
-import { Translator }  from '@uppy/utils'
-import type {
   Body,
   Meta,
   MinimalRequiredUppyFile,
   UppyFile,
-} from '@uppy/utils/lib/UppyFile'
+} from '@uppy/utils'
 import throttle from 'lodash/throttle.js'
 // @ts-ignore untyped
 import ee from 'namespace-emitter'
