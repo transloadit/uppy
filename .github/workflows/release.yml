@@ -78,23 +78,6 @@ jobs:
           EDGLY_KEY: ${{secrets.EDGLY_KEY}}
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
 
-      - name: Update CDN version references
-        if: steps.changesets.outputs.published == 'true'
-        run: |
-          VERSION=$(yarn workspace uppy exec npm pkg get version | grep -o '"[0-9]*\.[0-9]*\.[0-9]*"' | tr -d '"')
-          sed -i "s|https://releases\.transloadit\.com/uppy/v[0-9]*\.[0-9]*\.[0-9]*/|https://releases.transloadit.com/uppy/v$VERSION/|g" README.md
-          sed -i "s|https://releases\.transloadit\.com/uppy/v[0-9]*\.[0-9]*\.[0-9]*/|https://releases.transloadit.com/uppy/v$VERSION/|g" BUNDLE-README.md
-
-      - name: Commit README updates
-        if: steps.changesets.outputs.published == 'true'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add README.md BUNDLE-README.md
-          git commit -m "Update CDN version references to latest release" || exit 0
-          git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   # See also companion-deploy.yml
   docker:
