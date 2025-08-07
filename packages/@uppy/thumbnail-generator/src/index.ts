@@ -1,6 +1,6 @@
 import type { DefinePluginOpts, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
+import { dataURItoBlob } from '@uppy/utils'
 import isObjectURL from '@uppy/utils/lib/isObjectURL'
 import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'

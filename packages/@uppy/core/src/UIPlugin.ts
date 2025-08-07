@@ -1,4 +1,4 @@
-import findDOMElement from '@uppy/utils/lib/findDOMElement'
+import { findDOMElement } from '@uppy/utils'
 import getTextDirection from '@uppy/utils/lib/getTextDirection'
 import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 import { render } from 'preact/compat'

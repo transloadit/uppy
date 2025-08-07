@@ -12,7 +12,7 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/provider-views'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
-import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
+import { findAllDOMElements } from '@uppy/utils'
 import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
 import type { LocaleStrings } from '@uppy/utils'
 import toArray from '@uppy/utils/lib/toArray'
