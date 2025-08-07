@@ -9,14 +9,15 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin, EventManager } from '@uppy/core'
-import { type FetcherOptions, fetcher } from '@uppy/utils/lib/fetcher'
 import {
+  type FetcherOptions,
+  fetcher,
   filterFilesToEmitUploadStarted,
   filterNonFailedFiles,
-} from '@uppy/utils/lib/fileFilters'
-import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import isNetworkError from '@uppy/utils/lib/isNetworkError'
-import NetworkError from '@uppy/utils/lib/NetworkError'
+  getAllowedMetaFields,
+  isNetworkError,
+  NetworkError,
+} from '@uppy/utils'
 import {
   internalRateLimitedQueue,
   RateLimitedQueue,
@@ -67,7 +68,7 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
 
 export type { XhrUploadOpts as XHRUploadOptions }
 
-declare module '@uppy/utils/lib/UppyFile' {
+declare module '@uppy/utils' {
   export interface UppyFile<M extends Meta, B extends Body> {
     xhrUpload?: XhrUploadOpts<M, B>
   }
