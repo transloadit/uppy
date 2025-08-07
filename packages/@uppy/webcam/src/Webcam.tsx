@@ -9,8 +9,7 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import { canvasToBlob } from '@uppy/utils'
-import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import mimeTypes from '@uppy/utils/lib/mimeTypes'
+import { getFileTypeExtension, mimeTypes } from '@uppy/utils'
 import type { LocaleStrings } from '@uppy/utils'
 import { isMobile } from 'is-mobile'
 // biome-ignore lint/style/useImportType: h is not a type

@@ -7,7 +7,7 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
+import { isDragDropSupported } from '@uppy/utils'
 import type { Translator } from '@uppy/utils'
 import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'

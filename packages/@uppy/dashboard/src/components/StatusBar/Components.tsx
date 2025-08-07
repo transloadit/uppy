@@ -1,8 +1,7 @@
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta, State, Uppy } from '@uppy/core'
-import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
-import prettyETA from '@uppy/utils/lib/prettyETA'
-import type { I18n } from '@uppy/utils'
+import type { FileProcessingInfo, I18n } from '@uppy/utils'
+import { prettyETA } from '@uppy/utils'
 import classNames from 'classnames'
 import { h } from 'preact'
 

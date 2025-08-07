@@ -1,6 +1,4 @@
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import has from '@uppy/utils/lib/hasProperty'
-import NetworkError from '@uppy/utils/lib/NetworkError'
+import { fetchWithNetworkError, hasProperty as has, NetworkError } from '@uppy/utils'
 // @ts-ignore untyped
 import type {
   RateLimitedQueue,

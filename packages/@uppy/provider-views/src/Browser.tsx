@@ -6,7 +6,7 @@ import type {
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 // @ts-ignore untyped
-import VirtualList from '@uppy/utils/lib/VirtualList'
+import { VirtualList } from '@uppy/utils'
 import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.js'

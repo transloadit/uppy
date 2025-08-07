@@ -10,9 +10,8 @@ import type {
   UnknownProviderPluginState,
   ValidateableFile,
 } from '@uppy/core'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import type { I18n } from '@uppy/utils'
+import type { CompanionFile, I18n } from '@uppy/utils'
+import { remoteFileObjToLocal } from '@uppy/utils'
 import classNames from 'classnames'
 import { h } from 'preact'
 // @ts-ignore We don't want TS to generate types for the package.json

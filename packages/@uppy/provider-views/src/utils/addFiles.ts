@@ -2,10 +2,12 @@ import type { UnknownPlugin } from '@uppy/core'
 import type {
   CompanionClientProvider,
   CompanionClientSearchProvider,
-} from '@uppy/utils/lib/CompanionClientProvider'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import type { Body, Meta, TagFile } from '@uppy/utils/lib/UppyFile'
+  CompanionFile,
+  Body,
+  Meta,
+  TagFile,
+} from '@uppy/utils'
+import { getSafeFileId } from '@uppy/utils'
 import getTagFile from './getTagFile.js'
 
 const addFiles = <M extends Meta, B extends Body>(
