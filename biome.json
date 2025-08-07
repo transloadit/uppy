@@ -27,7 +27,18 @@
   },
   "linter": {
     "enabled": true,
-    "includes": ["!**/*.vue", "!**/*.svelte"],
+    "includes": [
+      "packages/**",
+      "examples/**",
+      "scripts/**",
+      "private/**",
+      "!packages/**/{dist,lib}/**",
+      "!node_modules",
+      "!.svelte-kit",
+      "!packages/@uppy/components/src/input.css",
+      "!**/*.vue",
+      "!**/*.svelte"
+    ],
     "rules": {
       "recommended": true,
       "suspicious": {
