@@ -12,6 +12,7 @@ export default defineComponent({
   name: 'DashboardModal',
   props: {
     uppy: {
+      // @ts-expect-error not sure what's this voodoo
       type: Uppy<any, any>,
       required: true,
     },
