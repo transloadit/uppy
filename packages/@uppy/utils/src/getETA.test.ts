@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getETA from './getETA.ts'
+import getETA from './getETA.js'
 
 describe('getETA', () => {
   it('should get the ETA remaining based on a fileProgress object', () => {
@@ -8,7 +8,7 @@ describe('getETA', () => {
     const fileProgress = {
       bytesUploaded: 1024,
       bytesTotal: 3096,
-      uploadStarted: date5SecondsAgo,
+      uploadStarted: date5SecondsAgo.getTime(), // Convert Date to timestamp (number)
     }
     expect(getETA(fileProgress)).toEqual(10.1)
   })
