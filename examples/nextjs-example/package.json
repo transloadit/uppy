@@ -20,7 +20,7 @@
     "react": "^18",
     "react-dom": "^18",
     "@tus/server": "0.13.3",
-    "@tus/file-store": "0.4.0"
+    "@tus/file-store": "^2.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

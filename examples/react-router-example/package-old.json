@@ -27,7 +27,6 @@
     "@types/react": "^18.3.2",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.0.0",
-    "concurrently": "^8.0.0",
     "typescript": "^5.0.0",
     "vite": "^6.0.0"
   },
@@ -38,7 +37,8 @@
     "start": "vite",
     "server": "node server.js",
     "dev:full": "concurrently \"npm run server\" \"npm run dev\""
-  },
+  }
+}
   "eslintConfig": {
     "extends": [
       "react-app",
