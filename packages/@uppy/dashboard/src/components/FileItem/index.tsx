@@ -1,6 +1,6 @@
 import type Uppy from '@uppy/core'
 import type { Body, Meta, State, UppyFile } from '@uppy/core'
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'
 // biome-ignore lint/style/useImportType: h is not a type
 import { Component, type ComponentChild, h } from 'preact'

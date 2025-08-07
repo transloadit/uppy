@@ -17,8 +17,8 @@ import type {
   I18n,
   Locale,
   OptionalPluralizeLocale,
-} from '@uppy/utils/lib/Translator'
-import Translator from '@uppy/utils/lib/Translator'
+} from '@uppy/utils'
+import { Translator }  from '@uppy/utils'
 import type {
   Body,
   Meta,

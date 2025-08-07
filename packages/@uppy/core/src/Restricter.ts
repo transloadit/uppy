@@ -1,5 +1,5 @@
 import prettierBytes from '@transloadit/prettier-bytes'
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 // @ts-ignore untyped
 import match from 'mime-match'

@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BasePlugin, {
   type DefinePluginOpts,

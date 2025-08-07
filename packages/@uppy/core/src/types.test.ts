@@ -1,4 +1,4 @@
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import type { LocaleStrings } from '@uppy/utils'
 
 import type { Body, InternalMetadata, Meta } from '@uppy/utils/lib/UppyFile'
 import { expectTypeOf, test } from 'vitest'

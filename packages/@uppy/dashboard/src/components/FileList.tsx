@@ -1,5 +1,5 @@
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils'
 // @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
 import { h } from 'preact'
