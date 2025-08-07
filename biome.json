@@ -31,8 +31,6 @@
       "packages/**",
       "examples/**",
       "scripts/**",
-      "bin/**",
-      "e2e/**",
       "private/**",
       "!packages/**/{dist,lib}/**",
       "!node_modules",
