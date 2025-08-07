@@ -8,7 +8,7 @@ import type {
   Uppy,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import canvasToBlob from '@uppy/utils/lib/canvasToBlob'
+import { canvasToBlob } from '@uppy/utils'
 import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
 import mimeTypes from '@uppy/utils/lib/mimeTypes'
 import type { LocaleStrings } from '@uppy/utils'
