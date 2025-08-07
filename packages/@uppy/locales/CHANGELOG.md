@@ -1,5 +1,11 @@
 # @uppy/locales
 
+## 4.8.4
+
+### Patch Changes
+
+- ea04a4d: Add "files" in package.json to only publish what's needed
+
 ## 4.8.3
 
 ### Patch Changes
