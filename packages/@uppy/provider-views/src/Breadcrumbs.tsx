@@ -1,5 +1,5 @@
 import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
-import { Fragment, h } from 'preact'
+import { Fragment, type h } from 'preact'
 import type ProviderView from './ProviderView/index.js'
 
 type BreadcrumbsProps<M extends Meta, B extends Body> = {

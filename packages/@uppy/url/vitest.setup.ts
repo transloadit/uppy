@@ -3,7 +3,7 @@ import { createServer } from 'node:http'
 import { dirname, join } from 'node:path'
 import { setTimeout } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
-import { TestProject } from 'vitest/node'
+import type { TestProject } from 'vitest/node'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)

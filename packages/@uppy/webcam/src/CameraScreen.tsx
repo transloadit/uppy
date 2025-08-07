@@ -118,7 +118,9 @@ class CameraScreen extends Component<CameraScreenProps> {
             </div>
           ) : (
             <video
-              ref={(videoElement) => (this.videoElement = videoElement!)}
+              ref={(videoElement) => {
+                this.videoElement = videoElement!
+              }}
               className={`uppy-Webcam-video  ${
                 mirror ? 'uppy-Webcam-video--mirrored' : ''
               }`}
