@@ -39,6 +39,8 @@ export default function Dropzone(props: DropzoneProps) {
       />
       <div
         {...getRootProps()}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: it is also a button. getRootProps returns keyboard event handlers
+        tabIndex={0}
         style={{
           width: width || '100%',
           height: height || '100%',
