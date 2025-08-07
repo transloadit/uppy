@@ -1,5 +1,5 @@
-import { createAbortError } from '@uppy/utils'
 import type { Body } from '@uppy/utils'
+import { createAbortError } from '@uppy/utils'
 
 import type { AwsS3Part } from './index.js'
 

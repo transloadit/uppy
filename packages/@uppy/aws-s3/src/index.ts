@@ -6,18 +6,13 @@ import {
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
+import type { Body, Meta, RequestOptions, UppyFile } from '@uppy/utils'
 import {
   createAbortError,
   filterFilesToEmitUploadStarted,
   filterNonFailedFiles,
   getAllowedMetaFields,
   RateLimitedQueue,
-} from '@uppy/utils'
-import type {
-  RequestOptions,
-  Body,
-  Meta,
-  UppyFile,
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import createSignedURL from './createSignedURL.js'

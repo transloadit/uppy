@@ -8,9 +8,8 @@ import type {
   Uppy,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import { canvasToBlob } from '@uppy/utils'
-import { getFileTypeExtension, mimeTypes } from '@uppy/utils'
 import type { LocaleStrings } from '@uppy/utils'
+import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/utils'
 import { isMobile } from 'is-mobile'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'

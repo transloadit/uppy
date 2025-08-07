@@ -1,13 +1,8 @@
 /* global AggregateError */
 
 import DefaultStore, { type Store } from '@uppy/store-default'
-import {
-  getSafeFileId,
-  getFileNameAndExtension,
-  getFileType,
-  Translator,
-} from '@uppy/utils'
 import type {
+  Body,
   CompanionClientProvider,
   CompanionClientSearchProvider,
   CompanionFile,
@@ -15,11 +10,16 @@ import type {
   FileProgressStarted,
   I18n,
   Locale,
-  OptionalPluralizeLocale,
-  Body,
   Meta,
   MinimalRequiredUppyFile,
+  OptionalPluralizeLocale,
   UppyFile,
+} from '@uppy/utils'
+import {
+  getFileNameAndExtension,
+  getFileType,
+  getSafeFileId,
+  Translator,
 } from '@uppy/utils'
 import throttle from 'lodash/throttle.js'
 // @ts-ignore untyped

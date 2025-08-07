@@ -1,5 +1,4 @@
-import type { Translator } from '@uppy/utils'
-import type { I18n } from '@uppy/utils'
+import type { I18n, Translator } from '@uppy/utils'
 import { Component, type ComponentChild, Fragment, h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'

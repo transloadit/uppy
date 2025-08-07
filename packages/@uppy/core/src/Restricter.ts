@@ -1,6 +1,5 @@
 import prettierBytes from '@transloadit/prettier-bytes'
-import type { I18n } from '@uppy/utils'
-import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { Body, I18n, Meta, UppyFile } from '@uppy/utils'
 // @ts-ignore untyped
 import match from 'mime-match'
 import type { NonNullableUppyOptions, State } from './Uppy.js'

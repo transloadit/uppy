@@ -8,8 +8,7 @@ import type {
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
 import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
-import { ErrorWithCause, hasProperty } from '@uppy/utils'
-import { RateLimitedQueue } from '@uppy/utils'
+import { ErrorWithCause, hasProperty, RateLimitedQueue } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'

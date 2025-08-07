@@ -1,10 +1,5 @@
 import type Uppy from '@uppy/core'
-import type {
-  RequestOptions,
-  Body,
-  Meta,
-  UppyFile,
-} from '@uppy/utils'
+import type { Body, Meta, RequestOptions, UppyFile } from '@uppy/utils'
 import {
   ErrorWithCause,
   fetchWithNetworkError,

@@ -1,6 +1,6 @@
 import type { Body, Meta, Uppy, UppyFile } from '@uppy/core'
-import { emaFilter } from '@uppy/utils'
 import type { I18n } from '@uppy/utils'
+import { emaFilter } from '@uppy/utils'
 import type { ComponentChild } from 'preact'
 import { Component, h } from 'preact'
 import type { StatusBarOptions } from './StatusBarOptions.js'

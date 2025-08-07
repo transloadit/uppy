@@ -1,8 +1,9 @@
-import { fetchWithNetworkError, hasProperty as has, NetworkError } from '@uppy/utils'
 // @ts-ignore untyped
-import type {
-  RateLimitedQueue,
-  WrapPromiseFunctionType,
+import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
+import {
+  fetchWithNetworkError,
+  hasProperty as has,
+  NetworkError,
 } from '@uppy/utils'
 import Emitter from 'component-emitter'
 import type { AssemblyResponse } from './index.js'

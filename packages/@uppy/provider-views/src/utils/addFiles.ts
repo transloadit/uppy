@@ -1,9 +1,9 @@
 import type { UnknownPlugin } from '@uppy/core'
 import type {
+  Body,
   CompanionClientProvider,
   CompanionClientSearchProvider,
   CompanionFile,
-  Body,
   Meta,
   TagFile,
 } from '@uppy/utils'

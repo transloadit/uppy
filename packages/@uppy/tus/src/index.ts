@@ -8,6 +8,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin, EventManager } from '@uppy/core'
+// @ts-ignore untyped
 import {
   filterFilesToEmitUploadStarted,
   filterNonFailedFiles,
@@ -15,9 +16,8 @@ import {
   hasProperty,
   isNetworkError,
   NetworkError,
+  RateLimitedQueue,
 } from '@uppy/utils'
-// @ts-ignore untyped
-import { RateLimitedQueue } from '@uppy/utils'
 import * as tus from 'tus-js-client'
 import packageJson from '../package.json' with { type: 'json' }
 import getFingerprint from './getFingerprint.js'
