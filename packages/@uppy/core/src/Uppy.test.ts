@@ -1531,7 +1531,6 @@ describe('src/Core', () => {
           data: testImage,
         })
 
-
         try {
           await core.upload()
         } catch (error) {
@@ -1556,7 +1555,9 @@ describe('src/Core', () => {
 
         // Now retry should work
         await core.retryAll()
-        expect(onRetryAll.mock.calls[0][0]).toContainEqual(expect.objectContaining({ id: fileId }))
+        expect(onRetryAll.mock.calls[0][0]).toContainEqual(
+          expect.objectContaining({ id: fileId }),
+        )
         expect(onUpload).toHaveBeenCalledTimes(1) // Called once during retry (initial upload failed at validation)
       })
 
@@ -1619,8 +1620,12 @@ describe('src/Core', () => {
         await core.retryAll()
 
         const retriedFiles = onRetryAll.mock.calls[0][0]
-        expect(retriedFiles).toContainEqual(expect.objectContaining({ id: fileId1 }))
-        expect(retriedFiles).toContainEqual(expect.objectContaining({ id: fileId3 }))
+        expect(retriedFiles).toContainEqual(
+          expect.objectContaining({ id: fileId1 }),
+        )
+        expect(retriedFiles).toContainEqual(
+          expect.objectContaining({ id: fileId3 }),
+        )
         expect(onUpload).toHaveBeenCalledTimes(1)
       })
     })
