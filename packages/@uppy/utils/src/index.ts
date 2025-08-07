@@ -7,7 +7,8 @@ export { default as ProgressTimeout } from './ProgressTimeout.js'
 export {
   RateLimitedQueue,
   type AbortablePromise,
-  internalRateLimitedQueue
+  internalRateLimitedQueue,
+  type WrapPromiseFunctionType
 } from './RateLimitedQueue.js'
 
 // Canvas and data URI utilities

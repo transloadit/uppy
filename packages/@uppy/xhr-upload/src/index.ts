@@ -21,7 +21,7 @@ import {
   internalRateLimitedQueue,
   RateLimitedQueue,
   // @ts-ignore untyped
-} from '@uppy/utils/lib/RateLimitedQueue'
+} from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

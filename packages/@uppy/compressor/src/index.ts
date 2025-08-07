@@ -3,7 +3,7 @@ import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
 import { BasePlugin, type Uppy } from '@uppy/core'
 import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 // @ts-ignore
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import { RateLimitedQueue } from '@uppy/utils'
 
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import CompressorJS from 'compressorjs'

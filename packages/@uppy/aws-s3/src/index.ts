@@ -13,7 +13,7 @@ import {
   filterNonFailedFiles,
 } from '@uppy/utils/lib/fileFilters'
 import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import { RateLimitedQueue } from '@uppy/utils'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import packageJson from '../package.json' with { type: 'json' }
 import createSignedURL from './createSignedURL.js'

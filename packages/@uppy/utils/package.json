@@ -25,8 +25,6 @@
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json",
-    "./lib/ProgressTimeout": "./lib/ProgressTimeout.js",
-    "./lib/RateLimitedQueue": "./lib/RateLimitedQueue.js",
     "./lib/canvasToBlob": "./lib/canvasToBlob.js",
     "./lib/dataURItoBlob": "./lib/dataURItoBlob.js",
     "./lib/dataURItoFile": "./lib/dataURItoFile.js",

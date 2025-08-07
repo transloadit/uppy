@@ -5,7 +5,7 @@ import NetworkError from '@uppy/utils/lib/NetworkError'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
-} from '@uppy/utils/lib/RateLimitedQueue'
+} from '@uppy/utils'
 import Emitter from 'component-emitter'
 import type { AssemblyResponse } from './index.js'
 

@@ -2,7 +2,7 @@ import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
-} from '@uppy/utils/lib/RateLimitedQueue'
+} from '@uppy/utils'
 import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
 import type {
   AssemblyResponse,
