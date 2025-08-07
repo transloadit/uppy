@@ -1554,9 +1554,6 @@ describe('src/Core', () => {
         const updatedFile = core.getFile(fileId)
         expect(updatedFile.missingRequiredMetaFields).toEqual([])
 
-        // Add an upload error to make the file eligible for retry
-        core.setFileState(fileId, { error: 'Upload failed' })
-
         // Now retry should work
         await core.retryAll()
         expect(onRetryAll.mock.calls[0][0]).toContainEqual(expect.objectContaining({ id: fileId }))
