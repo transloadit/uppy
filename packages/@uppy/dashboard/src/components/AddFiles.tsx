@@ -1,4 +1,4 @@
-import type Translator from '@uppy/utils'
+import type { Translator } from '@uppy/utils'
 import type { I18n } from '@uppy/utils'
 import { Component, type ComponentChild, Fragment, h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
