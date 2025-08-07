@@ -1,5 +1,11 @@
 # @uppy/transloadit
 
+## 4.3.3
+
+### Patch Changes
+
+- ee0b2fc: Add `user_meta` type to `AssemblyResult`
+
 ## 4.3.2
 
 ### Patch Changes
