@@ -1,4 +1,5 @@
-import type { Body, Meta, Uppy } from '@uppy/core'
+import type { Body, Meta } from '@uppy/core'
+import { Uppy } from '@uppy/core'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
 import { defineComponent, h, type PropType, ref, watch } from 'vue'
 import useUppy from './useUppy.js'
@@ -12,7 +13,6 @@ export default defineComponent({
   name: 'DashboardModal',
   props: {
     uppy: {
-      // @ts-expect-error not sure what's this voodoo
       type: Uppy<any, any>,
       required: true,
     },
