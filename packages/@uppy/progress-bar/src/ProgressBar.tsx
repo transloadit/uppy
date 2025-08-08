@@ -7,7 +7,7 @@ import type {
   Uppy,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import { type ComponentChild, h } from 'preact'
+import type { ComponentChild } from 'preact'
 
 import packageJson from '../package.json' with { type: 'json' }
 

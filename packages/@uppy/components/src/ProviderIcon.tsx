@@ -1,4 +1,3 @@
-import { h } from 'preact'
 import type { UppyContext } from './types.js'
 
 export type ProviderIconProps = {

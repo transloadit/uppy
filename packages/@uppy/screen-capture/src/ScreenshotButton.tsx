@@ -1,5 +1,3 @@
-import { h } from 'preact'
-
 interface ScreenshotButtonProps {
   onScreenshot: () => void
   i18n: (key: string) => string

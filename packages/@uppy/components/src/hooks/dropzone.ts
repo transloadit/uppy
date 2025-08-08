@@ -76,6 +76,18 @@ export function createDropzone<
     input?.click()
   }
 
+  const handleKeyPress = (event: KeyboardEvent) => {
+    // taken from https://github.com/react-dropzone/react-dropzone/blob/d6911c991e077151e302b599b92269432ab0472b/src/index.js#L830C1-L836C1
+    if (
+      event.key === ' ' ||
+      event.key === 'Enter' ||
+      event.keyCode === 32 ||
+      event.keyCode === 13
+    ) {
+      handleClick()
+    }
+  }
+
   const handleFileInputChange = (event: ChangeEventType) => {
     const input = event.target as HTMLInputElement
     const files = Array.from(input.files ?? [])
@@ -103,6 +115,7 @@ export function createDropzone<
       onDragLeave: handleDragLeave,
       onDrop: handleDrop,
       onClick: handleClick,
+      onKeyPress: handleKeyPress,
     }),
     getInputProps: () => ({
       id: fileInputId,

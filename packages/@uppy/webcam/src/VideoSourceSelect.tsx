@@ -1,4 +1,4 @@
-import { type ComponentChild, h } from 'preact'
+import type { ComponentChild } from 'preact'
 
 export interface VideoSourceSelectProps {
   currentDeviceId: string | MediaStreamTrack | null | undefined

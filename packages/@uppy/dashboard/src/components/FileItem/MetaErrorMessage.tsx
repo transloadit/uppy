@@ -1,5 +1,3 @@
-import { h } from 'preact'
-
 type $TSFixMe = any
 
 const metaFieldIdToName = (metaFieldId: $TSFixMe, metaFields: $TSFixMe) => {

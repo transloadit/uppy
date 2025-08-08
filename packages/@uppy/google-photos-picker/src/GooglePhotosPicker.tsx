@@ -9,7 +9,6 @@ import { GooglePickerView } from '@uppy/provider-views'
 import type { PickedItem } from '@uppy/provider-views/lib/GooglePicker/googlePicker.js'
 import { GooglePhotosIcon } from '@uppy/provider-views/lib/GooglePicker/icons.js'
 import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
 
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'

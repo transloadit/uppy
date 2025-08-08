@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid/non-secure'
-import { h } from 'preact'
 import type { ChangeEvent } from 'preact/compat'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 

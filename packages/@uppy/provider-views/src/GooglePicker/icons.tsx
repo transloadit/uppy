@@ -1,5 +1,3 @@
-import { h } from 'preact'
-
 export const GooglePhotosIcon = () => (
   <svg
     aria-hidden="true"

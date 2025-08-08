@@ -1,6 +1,6 @@
 import type { Body, Meta, State, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import { type ComponentChild, h } from 'preact'
+import type { ComponentChild } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
@@ -37,7 +37,7 @@ export default class Informer<M extends Meta, B extends Body> extends UIPlugin<
               <p role="alert">
                 {info.message}{' '}
                 {info.details && (
-                  // biome-ignore lint/a11y/useKeyWithClickEvents: ...
+                  // biome-ignore lint/a11y/useKeyWithClickEvents: don't think it's needed
                   <span
                     aria-label={info.details as string}
                     data-microtip-position="top-left"

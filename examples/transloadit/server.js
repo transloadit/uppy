@@ -36,6 +36,7 @@ function Footer() {
 }
 
 function FormFields(fields) {
+  // biome-ignore lint/nursery/noNestedComponentDefinitions: not a react component
   function Field([name, value]) {
     if (name === 'transloadit') return ''
     let isValueJSON = false
@@ -75,6 +76,7 @@ function FormFields(fields) {
 }
 
 function UploadsList(uploads) {
+  // biome-ignore lint/nursery/noNestedComponentDefinitions: not a react component
   function Upload(upload) {
     return `<li>${e(upload.name)}</li>`
   }
@@ -87,10 +89,12 @@ function UploadsList(uploads) {
 }
 
 function ResultsList(results) {
+  // biome-ignore lint/nursery/noNestedComponentDefinitions: not a react component
   function Result(result) {
     return `<li>${e(result.name)} <a href="${result.ssl_url}" target="_blank">View</a></li>`
   }
 
+  // biome-ignore lint/nursery/noNestedComponentDefinitions: not a react component
   function ResultsSection(stepName) {
     return `
     <h2>${e(stepName)}</h2>

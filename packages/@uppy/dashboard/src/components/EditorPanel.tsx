@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import { h } from 'preact'
 
 type $TSFixMe = any
 

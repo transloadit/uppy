@@ -5,9 +5,7 @@ import type {
   PartialTreeFolderNode,
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-// @ts-ignore untyped
 import VirtualList from '@uppy/utils/lib/VirtualList'
-import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'

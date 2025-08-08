@@ -1,5 +1,3 @@
-import React from 'react'
-
 type ButtonProps = {
   type: 'button'
   onClick: () => void
