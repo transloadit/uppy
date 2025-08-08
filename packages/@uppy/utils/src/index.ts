@@ -103,4 +103,4 @@ export type {
 } from './UppyFile.js'
 export { default as UserFacingApiError } from './UserFacingApiError.js'
 
-export { default as VirtualList } from './VirtualList.jsx'
+export { default as VirtualList } from './VirtualList.js'
