@@ -23,7 +23,7 @@
     "lib": ["ES2022", "dom"],
     "allowSyntheticDefaultImports": true,
     "paths": {
-      "@uppy/utils": ["../utils/lib/index.d.ts"],
+      "@uppy/utils": ["../utils/lib/index.d.ts"]
     }
   },
   "angularCompilerOptions": {
