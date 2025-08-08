@@ -1,8 +1,5 @@
 import type { Body, Meta, UppyFile } from '@uppy/core'
-import type {
-  RateLimitedQueue,
-  WrapPromiseFunctionType,
-} from '@uppy/utils/lib/RateLimitedQueue'
+import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
 import type AwsS3Multipart from './index.js'
 import type {
   AwsS3MultipartOptions,

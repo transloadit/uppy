@@ -1,4 +1,4 @@
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils'
 import { h } from 'preact'
 
 interface DiscardButtonProps {

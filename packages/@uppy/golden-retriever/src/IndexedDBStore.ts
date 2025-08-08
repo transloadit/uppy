@@ -1,4 +1,4 @@
-import type { UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { UppyFile } from '@uppy/utils'
 
 const indexedDB =
   typeof window !== 'undefined' &&

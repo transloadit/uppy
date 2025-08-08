@@ -1,4 +1,4 @@
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import { RateLimitedQueue } from '@uppy/utils'
 import { describe, expect, it, vi } from 'vitest'
 import Assembly from './Assembly.ts'
 
