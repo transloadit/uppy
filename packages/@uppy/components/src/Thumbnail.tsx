@@ -1,5 +1,4 @@
 import type { Body, Meta, UppyFile } from '@uppy/core'
-import { h } from 'preact'
 import { useEffect, useMemo } from 'preact/hooks'
 import type { UppyContext } from './types.js'
 

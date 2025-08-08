@@ -1,4 +1,3 @@
-import { h } from 'preact'
 import formatSeconds from './formatSeconds.js'
 
 interface RecordingLengthProps {

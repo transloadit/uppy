@@ -3,7 +3,6 @@
 import { getAllowedHosts, Provider, tokenStorage } from '@uppy/companion-client'
 import { UIPlugin } from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
-import { h } from 'preact'
 
 const defaultOptions = {}
 

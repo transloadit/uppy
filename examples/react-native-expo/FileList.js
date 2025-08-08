@@ -1,6 +1,5 @@
 import getFileTypeIcon from '@uppy/dashboard/lib/utils/getFileTypeIcon.js'
 import renderStringFromJSX from 'preact-render-to-string'
-import React from 'react'
 import { FlatList, Image, StyleSheet, Text, View } from 'react-native'
 
 const fileIcon = require('./assets/file-icon.png')

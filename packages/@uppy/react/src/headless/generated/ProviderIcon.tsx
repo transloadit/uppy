@@ -7,7 +7,7 @@ import {
 } from '@uppy/components'
 import { h as preactH } from 'preact'
 import { render as preactRender } from 'preact/compat'
-import { createElement as h, useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { UppyContext } from '../UppyContextProvider.js'
 
 export default function ProviderIcon(props: Omit<ProviderIconProps, 'ctx'>) {
