@@ -1472,6 +1472,163 @@ describe('src/Core', () => {
       await core.retryAll()
       expect(onUpload).not.toHaveBeenCalled()
     })
+
+    describe('with required metadata', () => {
+      it('should not retry files that have missing required metadata', async () => {
+        const onUpload = vi.fn()
+        const onRetryAll = vi.fn()
+
+        const core = new Core({
+          restrictions: {
+            requiredMetaFields: ['caption'],
+          },
+        })
+        core.on('upload', onUpload)
+        core.on('retry-all', onRetryAll)
+
+        const fileId = core.addFile({
+          source: 'vi',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: testImage,
+        })
+
+        // Simulate an upload attempt which triggers metadata validation
+        try {
+          await core.upload()
+        } catch (error) {
+          expect(error).toBeInstanceOf(RestrictionError)
+          expect(error.message).toContain('Missing required meta fields')
+        }
+
+        // File should now have missing metadata error after upload attempt
+        const file = core.getFile(fileId)
+        expect(file.missingRequiredMetaFields).toEqual(['caption'])
+        expect(file.error).toContain('Missing required meta fields in foo.jpg')
+
+        // Should not retry files with outstanding metadata issues
+        await core.retryAll()
+        expect(onRetryAll.mock.calls[0][0]).toEqual([])
+        expect(onUpload).toHaveBeenCalledTimes(0)
+      })
+
+      it('should retry files after metadata is corrected', async () => {
+        const onUpload = vi.fn()
+        const onRetryAll = vi.fn()
+
+        const core = new Core({
+          restrictions: {
+            requiredMetaFields: ['caption'],
+          },
+        })
+        core.on('upload', onUpload)
+        core.on('retry-all', onRetryAll)
+
+        const fileId = core.addFile({
+          source: 'vi',
+          name: 'foo.jpg',
+          type: 'image/jpeg',
+          data: testImage,
+        })
+
+        try {
+          await core.upload()
+        } catch (error) {
+          expect(error).toBeInstanceOf(RestrictionError)
+          expect(error.message).toContain('Missing required meta fields')
+        }
+
+        // Verify file has missing metadata error after upload attempt
+        const file = core.getFile(fileId)
+        expect(file.missingRequiredMetaFields).toEqual(['caption'])
+        expect(file.error).toContain('Missing required meta fields in foo.jpg')
+
+        // Fix the metadata
+        core.setFileMeta(fileId, { caption: 'Test caption' })
+
+        // Trigger the dashboard:file-edit-complete event to update validation state
+        // @ts-ignore
+        core.emit('dashboard:file-edit-complete', core.getFile(fileId))
+
+        const updatedFile = core.getFile(fileId)
+        expect(updatedFile.missingRequiredMetaFields).toEqual([])
+
+        // Now retry should work
+        await core.retryAll()
+        expect(onRetryAll.mock.calls[0][0]).toContainEqual(
+          expect.objectContaining({ id: fileId }),
+        )
+        expect(onUpload).toHaveBeenCalledTimes(1) // Called once during retry (initial upload failed at validation)
+      })
+
+      it('should handle multiple files with mixed metadata states', async () => {
+        const onUpload = vi.fn()
+        const onRetryAll = vi.fn()
+
+        const core = new Core({
+          restrictions: {
+            requiredMetaFields: ['caption'],
+          },
+        })
+        core.on('upload', onUpload)
+        core.on('retry-all', onRetryAll)
+
+        // Add files with missing metadata
+        const fileId1 = core.addFile({
+          source: 'vi',
+          name: 'file1.jpg',
+          type: 'image/jpeg',
+          data: testImage,
+        })
+        const _fileId2 = core.addFile({
+          source: 'vi',
+          name: 'file2.jpg',
+          type: 'image/jpeg',
+          data: testImage,
+        })
+        const fileId3 = core.addFile({
+          source: 'vi',
+          name: 'file3.jpg',
+          type: 'image/jpeg',
+          data: testImage,
+        })
+
+        try {
+          await core.upload()
+        } catch (error) {
+          expect(error).toBeInstanceOf(RestrictionError)
+          expect(error.message).toContain('Missing required meta fields')
+        }
+
+        // Give one file a different error (not metadata-related)
+        core.setFileState(fileId3, {
+          error: 'Network error',
+          missingRequiredMetaFields: [],
+        })
+
+        // Fix metadata for first file only
+        core.setFileMeta(fileId1, { caption: 'Fixed caption' })
+        // @ts-ignore
+        core.emit('dashboard:file-edit-complete', core.getFile(fileId1))
+
+        // Add an error to file1 so it can be retried
+        core.setFileState(fileId1, {
+          error: 'Upload failed',
+        })
+
+        // Retry should only include file1 and file3 (file2 still has missing metadata)
+        await core.retryAll()
+
+        const retriedFiles = onRetryAll.mock.calls[0][0]
+        expect(retriedFiles).toContainEqual(
+          expect.objectContaining({ id: fileId1 }),
+        )
+        expect(retriedFiles).toContainEqual(
+          expect.objectContaining({ id: fileId3 }),
+        )
+        expect(onUpload).toHaveBeenCalledTimes(1)
+      })
+    })
   })
 
   describe('restoring a file', () => {
