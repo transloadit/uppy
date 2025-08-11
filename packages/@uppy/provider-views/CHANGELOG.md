@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 4.5.3
+
+### Patch Changes
+
+- 2f62f40: VirtualList now virtualises rows in the file list, as was intented. This means better performance when scrolling thousands for files.
+- Updated dependencies [eee05db]
+  - @uppy/core@4.5.3
+
 ## 4.5.2
 
 ### Patch Changes
