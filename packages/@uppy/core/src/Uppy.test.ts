@@ -1539,7 +1539,7 @@ describe('src/Core', () => {
         }
 
         // Verify file has missing metadata error after upload attempt
-        let file = core.getFile(fileId)
+        const file = core.getFile(fileId)
         expect(file.missingRequiredMetaFields).toEqual(['caption'])
         expect(file.error).toContain('Missing required meta fields in foo.jpg')
 
@@ -1580,7 +1580,7 @@ describe('src/Core', () => {
           type: 'image/jpeg',
           data: testImage,
         })
-        const fileId2 = core.addFile({
+        const _fileId2 = core.addFile({
           source: 'vi',
           name: 'file2.jpg',
           type: 'image/jpeg',
