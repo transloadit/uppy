@@ -5,13 +5,7 @@ import {
 } from '@uppy/components'
 import type Uppy from '@uppy/core'
 import type React from 'react'
-import {
-  createContext,
-  createElement as h,
-  useContext,
-  useEffect,
-  useState,
-} from 'react'
+import { createContext, useContext, useEffect, useState } from 'react'
 
 interface UppyContextValue {
   uppy: Uppy | undefined

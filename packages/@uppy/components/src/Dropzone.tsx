@@ -1,5 +1,4 @@
 import { clsx } from 'clsx'
-import { h } from 'preact'
 import { useMemo } from 'preact/hooks'
 import { createDropzone } from './hooks/dropzone.js'
 import type { NonNullableUppyContext, UppyContext } from './types.js'
@@ -29,7 +28,6 @@ export default function Dropzone(props: DropzoneProps) {
       className="uppy-reset"
       data-uppy-element="dropzone"
       role="presentation"
-      tabIndex={0}
     >
       <input
         {...getInputProps()}
@@ -39,6 +37,8 @@ export default function Dropzone(props: DropzoneProps) {
       />
       <div
         {...getRootProps()}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: it is also a button. getRootProps returns keyboard event handlers
+        tabIndex={0}
         style={{
           width: width || '100%',
           height: height || '100%',
