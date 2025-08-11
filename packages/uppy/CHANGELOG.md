@@ -1,5 +1,15 @@
 # uppy
 
+## 4.18.2
+
+### Patch Changes
+
+- ea04a4d: Add "files" in package.json to only publish what's needed
+- Updated dependencies [ee0b2fc]
+- Updated dependencies [ea04a4d]
+  - @uppy/transloadit@4.3.3
+  - @uppy/locales@4.8.4
+
 ## 4.18.1
 
 ### Patch Changes

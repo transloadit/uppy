@@ -12,8 +12,8 @@
     "private/*"
   ],
   "scripts": {
-    "build": "turbo run build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage; mv .gitignore.bak .gitignore",
+    "build": "turbo run --no-daemon build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
+    "build:clean": "git clean -Xfd packages e2e .parcel-cache coverage .turbo -e '!node_modules' -e '!**/node_modules/**/*'",
     "build:watch": "turbo watch build build:css --filter='./packages/@uppy/*'",
     "migrate:components": "yarn workspace @uppy/components migrate",
     "check": "yarn exec biome check --write",
@@ -24,7 +24,7 @@
     "test": "turbo run test --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./examples/{react,vue,sveltekit}'",
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "version": "changeset version && corepack yarn install --mode=update-lockfile",
+    "version": "changeset version && corepack yarn install --mode=update-lockfile && node scripts/update-readme-versions.mjs",
     "release": "changeset publish"
   },
   "devDependencies": {

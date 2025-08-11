@@ -1,6 +1,5 @@
 import type { AsyncStore, Uppy } from '@uppy/core'
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import AuthView from '../ProviderView/AuthView.js'
 import {

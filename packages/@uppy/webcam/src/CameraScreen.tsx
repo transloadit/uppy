@@ -1,5 +1,5 @@
 import type { I18n } from '@uppy/utils/lib/Translator'
-import { Component, type ComponentChild, type ComponentProps, h } from 'preact'
+import { Component, type ComponentChild, type ComponentProps } from 'preact'
 import DiscardButton from './DiscardButton.js'
 import RecordButton from './RecordButton.js'
 import RecordingLength from './RecordingLength.js'
@@ -119,8 +119,9 @@ class CameraScreen extends Component<CameraScreenProps> {
           ) : (
             // eslint-disable-next-line jsx-a11y/media-has-caption
             <video
-              /* eslint-disable-next-line no-return-assign */
-              ref={(videoElement) => (this.videoElement = videoElement!)}
+              ref={(videoElement) => {
+                this.videoElement = videoElement!
+              }}
               className={`uppy-Webcam-video  ${
                 mirror ? 'uppy-Webcam-video--mirrored' : ''
               }`}

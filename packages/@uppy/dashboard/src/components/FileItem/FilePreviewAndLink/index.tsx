@@ -1,4 +1,3 @@
-import { h } from 'preact'
 import getFileTypeIcon from '../../../utils/getFileTypeIcon.js'
 import FilePreview from '../../FilePreview.js'
 import MetaErrorMessage from '../MetaErrorMessage.js'

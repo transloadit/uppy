@@ -1,6 +1,6 @@
 import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
 import { clsx } from 'clsx'
-import { Fragment, h } from 'preact'
+import { Fragment } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import prettyBytes from 'pretty-bytes'
 import { Thumbnail } from './index.js'

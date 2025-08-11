@@ -10,6 +10,7 @@
     "includes": [
       "packages/**",
       "examples/**",
+      "scripts/**",
       "bin/**",
       "e2e/**",
       "private/**",
@@ -26,14 +27,26 @@
   },
   "linter": {
     "enabled": true,
-    "includes": ["!**/*.vue", "!**/*.svelte"],
+    "includes": [
+      "packages/**",
+      "examples/**",
+      "scripts/**",
+      "private/**",
+      "!packages/**/{dist,lib}/**",
+      "!node_modules",
+      "!.svelte-kit",
+      "!packages/@uppy/components/src/input.css",
+      "!**/*.vue",
+      "!**/*.svelte"
+    ],
     "rules": {
       "recommended": true,
       "suspicious": {
         "noExplicitAny": "off"
       },
       "correctness": {
-        "noUnusedImports": "off",
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error",
         "noUnusedFunctionParameters": "off",
         "noUnusedVariables": {
           "level": "error",
@@ -47,6 +60,10 @@
       },
       "a11y": {
         "noSvgWithoutTitle": "off"
+      },
+      "nursery": {
+        "noNestedComponentDefinitions": "error",
+        "noReactPropAssign": "error"
       }
     }
   },

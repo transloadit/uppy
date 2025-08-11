@@ -1,4 +1,4 @@
-import { Component, h } from 'preact'
+import { Component } from 'preact'
 
 type $TSFixMe = any
 
