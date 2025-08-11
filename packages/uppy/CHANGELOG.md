@@ -1,5 +1,14 @@
 # uppy
 
+## 4.18.3
+
+### Patch Changes
+
+- Updated dependencies [2f62f40]
+- Updated dependencies [eee05db]
+  - @uppy/provider-views@4.5.3
+  - @uppy/core@4.5.3
+
 ## 4.18.2
 
 ### Patch Changes
