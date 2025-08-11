@@ -22,9 +22,6 @@
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
     "allowSyntheticDefaultImports": true,
-    "paths": {
-      "@uppy/utils": ["../utils/lib/index.d.ts"]
-    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
