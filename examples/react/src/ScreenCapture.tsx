@@ -1,5 +1,5 @@
 import { useScreenCapture } from '@uppy/react'
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import MediaCapture from './MediaCapture.tsx'
 
 export interface ScreenCaptureProps {

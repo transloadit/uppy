@@ -4,7 +4,6 @@ import type { FileProcessingInfo } from '@uppy/utils/lib/FileProgress'
 import prettyETA from '@uppy/utils/lib/prettyETA'
 import type { I18n } from '@uppy/utils/lib/Translator'
 import classNames from 'classnames'
-import { h } from 'preact'
 
 import statusBarStates from './StatusBarStates.js'
 

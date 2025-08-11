@@ -1,4 +1,3 @@
-import React from 'react'
 import { StyleSheet, Text, TouchableHighlight } from 'react-native'
 
 export default function SelectFiles({ showFilePicker }) {

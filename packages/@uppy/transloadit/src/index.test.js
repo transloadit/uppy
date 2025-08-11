@@ -77,13 +77,10 @@ describe('Transloadit', () => {
   })
 
   it('should complete when resuming after pause', async () => {
-    let assemblyCallCount = 0
     let firstUploadCallCount = 0
-    let secondUploadCallCount = 0
 
     const server = setupServer(
       http.post('*/assemblies', ({ request }) => {
-        assemblyCallCount++
         return HttpResponse.json({
           assembly_id: 'test-assembly-id',
           websocket_url: 'ws://localhost:8080',
@@ -107,7 +104,6 @@ describe('Transloadit', () => {
         })
       }),
       http.patch('*/resumable/files/*', () => {
-        secondUploadCallCount++
         return HttpResponse.json({
           ok: 'RESUMABLE_FILE_UPLOADED',
         })
