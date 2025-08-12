@@ -1,4 +1,4 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
 import type { _UppyEventMap, Uppy, UppyEventMap } from './Uppy.js'
 
 /**

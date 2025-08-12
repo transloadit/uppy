@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import Core from '@uppy/core'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
+import { getFileNameAndExtension } from '@uppy/utils'
 import { describe, expect, it } from 'vitest'
 import CompressorPlugin from './index.js'
 

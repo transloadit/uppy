@@ -1,4 +1,4 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
 import * as tus from 'tus-js-client'
 
 function isCordova() {

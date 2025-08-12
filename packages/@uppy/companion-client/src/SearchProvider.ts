@@ -1,5 +1,5 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
-import type { CompanionClientSearchProvider } from '@uppy/utils/lib/CompanionClientProvider'
+import type { CompanionClientSearchProvider } from '@uppy/utils'
 import RequestClient, { type Opts } from './RequestClient.js'
 
 const getName = (id: string): string => {

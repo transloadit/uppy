@@ -5,10 +5,7 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '@uppy/core'
-import type {
-  CompanionClientProvider,
-  RequestOptions,
-} from '@uppy/utils/lib/CompanionClientProvider'
+import type { CompanionClientProvider, RequestOptions } from '@uppy/utils'
 import { isOriginAllowed } from './getAllowedHosts.js'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'

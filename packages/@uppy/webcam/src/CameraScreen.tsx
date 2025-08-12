@@ -1,4 +1,4 @@
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils'
 import { Component, type ComponentChild, type ComponentProps, h } from 'preact'
 import DiscardButton from './DiscardButton.js'
 import RecordButton from './RecordButton.js'

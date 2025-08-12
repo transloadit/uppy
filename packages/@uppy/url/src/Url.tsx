@@ -4,9 +4,8 @@ import {
 } from '@uppy/companion-client'
 import type { Body, Meta } from '@uppy/core'
 import { UIPlugin, type Uppy } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import toArray from '@uppy/utils/lib/toArray'
-import type { TagFile } from '@uppy/utils/lib/UppyFile'
+import type { LocaleStrings, TagFile } from '@uppy/utils'
+import { toArray } from '@uppy/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
