@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Set SHA commit in version
         run:
           (cd packages/@uppy/companion && node -e 'const
@@ -46,7 +46,7 @@ jobs:
       COMPOSE_DOCKER_CLI_BUILD: 0
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Docker meta
         id: docker_meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Alter dockerfile
         run: |
           sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
