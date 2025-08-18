@@ -8,7 +8,6 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin, EventManager } from '@uppy/core'
-// @ts-ignore untyped
 import {
   filterFilesToEmitUploadStarted,
   filterNonFailedFiles,
