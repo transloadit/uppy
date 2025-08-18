@@ -46,6 +46,7 @@ const companionOptions = {
     },
     // you can also add options for additional providers here
   },
+  corsOrigins: ['*'], // Note: this is not safe for production
   server: {
     host: 'localhost:3020',
     protocol: 'http',
