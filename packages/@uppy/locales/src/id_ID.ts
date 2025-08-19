@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const id_ID: Locale<0 | 1> = {
   strings: {},

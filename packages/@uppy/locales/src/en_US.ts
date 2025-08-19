@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const en_US: Locale<0 | 1> = {
   strings: {},
@@ -39,7 +39,7 @@ en_US.strings = {
   authenticateWithTitle:
     'Please authenticate with %{pluginName} to select files',
   back: 'Back',
-  browse: 'browse',
+  browse: 'Browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
   cancel: 'Cancel',

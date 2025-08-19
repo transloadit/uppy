@@ -10,7 +10,7 @@ import {
   GooglePickerView,
   type PickedItem,
 } from '@uppy/provider-views'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import type { LocaleStrings } from '@uppy/utils'
 import { h } from 'preact'
 
 import packageJson from '../package.json' with { type: 'json' }

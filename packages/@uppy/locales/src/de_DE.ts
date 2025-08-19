@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const de_DE: Locale<0 | 1> = {
   strings: {},

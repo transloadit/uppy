@@ -1,9 +1,11 @@
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
 import type {
+  Body,
+  Meta,
   RateLimitedQueue,
+  UppyFile,
   WrapPromiseFunctionType,
-} from '@uppy/utils/lib/RateLimitedQueue'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+} from '@uppy/utils'
+import { fetchWithNetworkError } from '@uppy/utils'
 import type {
   AssemblyResponse,
   OptionsWithRestructuredFields,

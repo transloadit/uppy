@@ -7,8 +7,7 @@ import type {
   UppyEventMap,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import findDOMElement from '@uppy/utils/lib/findDOMElement'
-import toArray from '@uppy/utils/lib/toArray'
+import { findDOMElement, toArray } from '@uppy/utils'
 
 // @ts-ignore untyped
 import getFormData from 'get-form-data'
