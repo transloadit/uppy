@@ -1,10 +1,11 @@
 import type Uppy from '@uppy/core'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import getSocketHost from '@uppy/utils/lib/getSocketHost'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
+import type { Body, Meta, RequestOptions, UppyFile } from '@uppy/utils'
+import {
+  ErrorWithCause,
+  fetchWithNetworkError,
+  getSocketHost,
+  UserFacingApiError,
+} from '@uppy/utils'
 import pRetry, { AbortError } from 'p-retry'
 import packageJson from '../package.json' with { type: 'json' }
 import AuthError from './AuthError.js'

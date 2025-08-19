@@ -1,4 +1,4 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
 
 const isSupported =
   typeof navigator !== 'undefined' && 'serviceWorker' in navigator

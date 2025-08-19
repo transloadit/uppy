@@ -4,7 +4,7 @@ export type {
   Meta,
   MinimalRequiredUppyFile,
   UppyFile,
-} from '@uppy/utils/lib/UppyFile'
+} from '@uppy/utils'
 export type { DefinePluginOpts, PluginOpts } from './BasePlugin.js'
 export { default as BasePlugin } from './BasePlugin.js'
 export { default as EventManager } from './EventManager.js'
