@@ -1,7 +1,7 @@
 {
   "name": "@uppy/box",
   "description": "Import files from Box, into Uppy.",
-  "version": "3.2.3",
+  "version": "3.3.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -24,6 +24,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json"

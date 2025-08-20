@@ -191,4 +191,10 @@ hi_IN.strings = {
   zoomOut: 'ज़ूम आउट',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.hi_IN = hi_IN
+}
+
 export default hi_IN

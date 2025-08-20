@@ -1,4 +1,4 @@
-import { type ComponentChild, h } from 'preact'
+import type { ComponentChild } from 'preact'
 
 export default function CameraIcon(): ComponentChild {
   return (

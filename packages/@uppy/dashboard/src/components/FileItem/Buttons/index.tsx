@@ -1,7 +1,6 @@
 import type Uppy from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
-import { h } from 'preact'
 import type { DashboardState } from '../../../Dashboard.js'
 import copyToClipboard from '../../../utils/copyToClipboard.js'
 

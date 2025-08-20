@@ -1,7 +1,7 @@
 {
   "name": "@uppy/store-default",
   "description": "The default simple object-based store for Uppy.",
-  "version": "4.2.0",
+  "version": "4.3.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -32,5 +32,11 @@
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json"
-  }
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ]
 }

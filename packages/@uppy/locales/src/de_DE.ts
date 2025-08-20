@@ -213,4 +213,10 @@ de_DE.strings = {
   zoomOut: 'Verkleinern',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.de_DE = de_DE
+}
+
 export default de_DE

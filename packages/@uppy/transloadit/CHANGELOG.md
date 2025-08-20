@@ -1,5 +1,40 @@
 # @uppy/transloadit
 
+## 4.3.3
+
+### Patch Changes
+
+- ee0b2fc: Add `user_meta` type to `AssemblyResult`
+
+## 4.3.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+- Updated dependencies [c66fd85]
+  - @uppy/companion-client@4.5.2
+  - @uppy/provider-views@4.5.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+  - @uppy/tus@4.3.2
+
+## 4.3.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/companion-client@4.5.0
+  - @uppy/provider-views@4.5.0
+  - @uppy/tus@4.3.0
+  - @uppy/utils@6.2.0
+
 ## 4.2.0
 
 Released: 2025-01-06

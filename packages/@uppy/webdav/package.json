@@ -1,7 +1,7 @@
 {
   "name": "@uppy/webdav",
   "description": "Import files from WebDAV into Uppy.",
-  "version": "0.3.3",
+  "version": "0.4.2",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -28,6 +28,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json"

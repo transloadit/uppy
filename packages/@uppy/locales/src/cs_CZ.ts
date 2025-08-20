@@ -275,4 +275,10 @@ cs_CZ.strings = {
   zoomOut: 'Oddálit',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.cs_CZ = cs_CZ
+}
+
 export default cs_CZ

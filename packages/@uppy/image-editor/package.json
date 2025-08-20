@@ -1,7 +1,7 @@
 {
   "name": "@uppy/image-editor",
   "description": "Image editor and cropping UI",
-  "version": "3.3.3",
+  "version": "3.4.2",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -33,6 +33,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "exports": {
     ".": "./lib/index.js",
     "./css/style.css": "./dist/style.css",

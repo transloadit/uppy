@@ -5,7 +5,7 @@ import type {
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'
-import { h } from 'preact'
+import type { h } from 'preact'
 import GridItem from './components/GridItem.js'
 import ListItem from './components/ListItem.js'
 

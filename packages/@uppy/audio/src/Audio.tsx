@@ -9,7 +9,6 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils'
 import { getFileTypeExtension } from '@uppy/utils'
-import { h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import PermissionsScreen from './PermissionsScreen.js'

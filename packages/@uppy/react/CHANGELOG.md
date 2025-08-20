@@ -1,5 +1,44 @@
 # @uppy/react
 
+## 4.5.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/screen-capture@4.4.2
+  - @uppy/progress-bar@4.3.2
+  - @uppy/components@0.3.2
+  - @uppy/file-input@4.2.2
+  - @uppy/status-bar@4.2.2
+  - @uppy/dashboard@4.4.2
+  - @uppy/drag-drop@4.2.2
+  - @uppy/webcam@4.3.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+
+## 4.5.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/webcam@4.3.0
+  - @uppy/core@4.5.0
+  - @uppy/components@0.3.0
+  - @uppy/dashboard@4.4.0
+  - @uppy/drag-drop@4.2.0
+  - @uppy/file-input@4.2.0
+  - @uppy/progress-bar@4.3.0
+  - @uppy/screen-capture@4.4.0
+  - @uppy/status-bar@4.2.0
+  - @uppy/utils@6.2.0
+
 ## 4.4.0
 
 Released: 2025-06-30

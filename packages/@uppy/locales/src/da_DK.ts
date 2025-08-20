@@ -143,4 +143,10 @@ da_DK.strings = {
   },
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.da_DK = da_DK
+}
+
 export default da_DK

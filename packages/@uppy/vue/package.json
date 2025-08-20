@@ -1,6 +1,6 @@
 {
   "name": "@uppy/vue",
-  "version": "2.3.0",
+  "version": "2.4.2",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -12,6 +12,12 @@
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
     "typecheck": "tsc --build"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/components": "workspace:^",
     "preact": "^10.5.13",

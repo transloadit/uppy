@@ -1,5 +1,31 @@
 # @uppy/xhr-upload
 
+## 4.4.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/companion-client@4.5.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+
+## 4.4.0
+
+### Minor Changes
+
+- 49e98ab: The `endpoint` option now also accepts a callback to dynamically set it (`endpoint: (fileOrFiles) => '<url>'`).
+  If `bundle` is `true`, you get `UppyFile[]` otherwise `UppyFile`.
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/companion-client@4.5.0
+  - @uppy/utils@6.2.0
+
 ## 4.3.3
 
 Released: 2025-02-25
@@ -154,7 +180,7 @@ Included in: Uppy v3.23.0
 Released: 2024-02-19
 Included in: Uppy v3.22.0
 
--  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
 - @uppy/xhr-upload: migrate to ts (merlijn vos / #4892)
 - @uppy/xhr-upload: show remove button (merlijn vos / #4851)
 
@@ -171,7 +197,7 @@ Released: 2023-08-15
 Included in: Uppy v3.14.0
 
 - @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion,@uppy/transloadit,@uppy/xhr-upload: use uppercase HTTP method names (Antoine du Hamel / #4612)
-- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: Invoke headers function for remote uploads (Dominik Schmidt / #4596)
 
 ## 3.3.1
 

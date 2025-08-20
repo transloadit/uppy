@@ -251,4 +251,10 @@ pt_BR.strings = {
   zoomOut: 'Diminuir o zoom',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.pt_BR = pt_BR
+}
+
 export default pt_BR

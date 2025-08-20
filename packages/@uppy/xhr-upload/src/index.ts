@@ -25,7 +25,11 @@ import locale from './locale.js'
 
 export interface XhrUploadOpts<M extends Meta, B extends Body>
   extends PluginOpts {
-  endpoint: string
+  endpoint:
+    | string
+    | ((
+        fileOrBundle: UppyFile<M, B> | UppyFile<M, B>[],
+      ) => string | Promise<string>)
   method?:
     | 'GET'
     | 'HEAD'
@@ -368,7 +372,11 @@ export default class XHRUpload<
       const body = opts.formData
         ? this.createFormDataUpload(file, opts)
         : file.data
-      return fetch(opts.endpoint, {
+      const endpoint =
+        typeof opts.endpoint === 'string'
+          ? opts.endpoint
+          : await opts.endpoint(file)
+      return fetch(endpoint, {
         ...opts,
         body,
         signal: controller.signal,
@@ -401,7 +409,11 @@ export default class XHRUpload<
         ...this.opts,
         ...optsFromState,
       })
-      return fetch(this.opts.endpoint, {
+      const endpoint =
+        typeof this.opts.endpoint === 'string'
+          ? this.opts.endpoint
+          : await this.opts.endpoint(files)
+      return fetch(endpoint, {
         // headers can't be a function with bundle: true
         ...(this.opts as OptsWithHeaders<M, B>),
         body,

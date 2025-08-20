@@ -1,5 +1,28 @@
 # @uppy/provider-views
 
+## 4.5.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- c66fd85: Fix package.json import
+- Updated dependencies [1b1a9e3]
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+
+## 4.5.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/utils@6.2.0
+
 ## 4.4.5
 
 Released: 2025-06-30
@@ -190,7 +213,7 @@ Included in: Uppy v3.13.0
 
 - @uppy/provider-views: Add VirtualList to ProviderView (Merlijn Vos / #4566)
 - @uppy/provider-views: fix race conditions with folder loading (Mikael Finstad / #4578)
-- @uppy/provider-views: fix infinite folder loading  (Mikael Finstad / #4590)
+- @uppy/provider-views: fix infinite folder loading (Mikael Finstad / #4590)
 
 ## 3.4.0
 
@@ -280,6 +303,7 @@ Included in: Uppy v2.5.0
 
 - @uppy/companion-client,@uppy/companion,@uppy/provider-views,@uppy/robodog: Finishing touches on Companion dynamic Oauth (Renée Kooi / #2802)
 - @uppy/provider-views: Unsplash: UI improvements (Artur Paikin / #3438)
+
 ## 3.0.0
 
 Released: 2022-08-22

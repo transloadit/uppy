@@ -5,9 +5,7 @@ import type {
   PartialTreeFolderNode,
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
-// @ts-ignore untyped
 import { VirtualList } from '@uppy/utils'
-import { h } from 'preact'
 import { useEffect, useState } from 'preact/hooks'
 import Item from './Item/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
@@ -76,6 +74,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
 
   const renderItem = (item: PartialTreeFile | PartialTreeFolderNode) => (
     <Item
+      key={item.id}
       viewType={viewType}
       toggleCheckbox={(event: Event) => {
         event.stopPropagation()
@@ -93,16 +92,16 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     />
   )
 
+  // todo remove virtuallist option and always use virtual list
   if (virtualList) {
     return (
       <div className="uppy-ProviderBrowser-body">
-        <ul className="uppy-ProviderBrowser-list">
-          <VirtualList
-            data={displayedPartialTree}
-            renderRow={renderItem}
-            rowHeight={31}
-          />
-        </ul>
+        <VirtualList
+          className="uppy-ProviderBrowser-list"
+          data={displayedPartialTree}
+          renderRow={renderItem}
+          rowHeight={35.5}
+        />
       </div>
     )
   }

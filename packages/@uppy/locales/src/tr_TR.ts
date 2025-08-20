@@ -143,4 +143,10 @@ tr_TR.strings = {
   openFolderNamed: 'Açık dosya %{name}',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.tr_TR = tr_TR
+}
+
 export default tr_TR

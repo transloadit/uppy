@@ -9,7 +9,6 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils'
 import type Cropper from 'cropperjs'
-import { h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import Editor from './Editor.js'
 import locale from './locale.js'

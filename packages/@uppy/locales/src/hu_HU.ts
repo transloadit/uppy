@@ -107,4 +107,10 @@ hu_HU.strings = {
   openFolderNamed: 'Nyitott mappa %{name}',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.hu_HU = hu_HU
+}
+
 export default hu_HU

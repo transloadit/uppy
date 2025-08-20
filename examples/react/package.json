@@ -9,7 +9,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.0.9",
+    "@tailwindcss/vite": "^4.1.11",
     "@uppy/core": "workspace:*",
     "@uppy/react": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
@@ -27,7 +27,7 @@
     "@vitest/browser": "^3.2.4",
     "playwright": "^1.53.2",
     "typescript": "^5.7.3",
-    "vite": "^7.0.3",
+    "vite": "^7.0.6",
     "vitest": "^3.2.4",
     "vitest-browser-react": "^1.0.0"
   }

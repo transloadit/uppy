@@ -150,4 +150,10 @@ ja_JP.strings = {
   openFolderNamed: '開いたフォルダ %{name}',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ja_JP = ja_JP
+}
+
 export default ja_JP

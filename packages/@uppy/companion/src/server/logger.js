@@ -42,12 +42,15 @@ const styleText =
 /**
  * message log
  *
+ * @typedef {import('node:util').styleText} styleText
+ * @typedef {Parameters<styleText>[0]} Colors
+ *
  * @param {object} params
  * @param {string | Error} params.arg the message or error to log
  * @param {string} params.tag a unique tag to easily search for this message
  * @param {string} params.level error | info | debug
  * @param {string} [params.traceId] a unique id to easily trace logs tied to a request
- * @param {string[]} [params.color] Format(s) that can be passed to `util.styleText`.
+ * @param {Colors} [params.color] Format(s) that can be passed to `util.styleText`.
  */
 const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
   const time = new Date().toISOString()

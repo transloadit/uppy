@@ -177,4 +177,10 @@ nb_NO.strings = {
   zoomOut: 'Zoom ut',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.nb_NO = nb_NO
+}
+
 export default nb_NO

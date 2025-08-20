@@ -11,9 +11,14 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    outputs:
+      companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
+      published: ${{ steps.changesets.outputs.published }}
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 2
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,6 +35,13 @@ jobs:
       - name: Build
         run: corepack yarn build
 
+      - name: '@uppy/angular prepublish'
+        run: corepack yarn workspace @uppy/angular prepublishOnly
+
+      - run: |
+          echo '' >> .yarnrc.yml
+          echo 'npmAuthToken: "${NPM_TOKEN}"' >> .yarnrc.yml
+
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
@@ -41,3 +53,67 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Remove npmAuthToken from yarnrc
+        run: |
+          sed -i '/npmAuthToken:/d' .yarnrc.yml
+
+      - name: Check if Companion was released
+        id: checkIfCompanionWasReleased
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          git diff --exit-code --quiet HEAD^ -- packages/@uppy/companion/package.json || echo "version=$(jq -r .version < packages/@uppy/companion/package.json)" >> $GITHUB_OUTPUT
+
+      - name: Upload `uppy` to CDN
+        if: steps.changesets.outputs.published == 'true'
+        run: node packages/uppy/upload-to-cdn.js uppy
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+
+      - name: Upload `@uppy/locales` to CDN if it was released
+        if: steps.changesets.outputs.published == 'true'
+        run: node packages/uppy/upload-to-cdn.js @uppy/locales
+        env:
+          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
+          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+
+
+  # See also companion-deploy.yml
+  docker:
+    name: DockerHub
+    needs: release
+    if: ${{ needs.release.outputs.published == 'true' && needs.release.outputs.companionWasReleased }}
+    runs-on: ubuntu-latest
+    env:
+      DOCKER_BUILDKIT: 0
+      COMPOSE_DOCKER_CLI_BUILD: 0
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v5
+      - name: Docker meta
+        id: docker_meta
+        uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
+        with:
+          images: transloadit/companion
+          tags: |
+            type=edge
+            type=semver,pattern={{version}},value=${{ needs.release.outputs.companionWasReleased }}
+            # set latest tag for default branch
+            type=raw,value=latest,enable=true
+      - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+      - uses: docker/setup-buildx-action@v3
+      - name: Log in to DockerHub
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
+        with:
+          username: ${{secrets.DOCKER_USERNAME}}
+          password: ${{secrets.DOCKER_PASSWORD}}
+      - name: Build and push
+        uses: docker/build-push-action@471d1dc4e07e5cdedd4c2171150001c434f0b7a4 # v6.15.0
+        with:
+          push: true
+          context: .
+          platforms: linux/amd64,linux/arm64
+          file: Dockerfile
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}

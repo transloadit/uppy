@@ -142,4 +142,10 @@ pt_PT.strings = {
   openFolderNamed: 'Pasta aberta %{name}',
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.pt_PT = pt_PT
+}
+
 export default pt_PT

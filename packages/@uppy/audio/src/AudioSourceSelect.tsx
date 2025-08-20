@@ -1,5 +1,3 @@
-import { h } from 'preact'
-
 export interface AudioSourceSelectProps {
   currentDeviceId: string | MediaStreamTrack | null | undefined
   audioSources: MediaDeviceInfo[]

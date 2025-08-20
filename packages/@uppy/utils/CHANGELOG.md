@@ -1,5 +1,17 @@
 # @uppy/utils
 
+## 6.2.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+
+## 6.2.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
 ## 6.1.4
 
 Released: 2025-05-18
@@ -83,7 +95,6 @@ Included in: Uppy v4.0.0-beta.1
 - @uppy/utils: fix `findAllDOMElements` type (Antoine du Hamel / #4997)
 - @uppy/utils: fix `AbortablePromise` type (Antoine du Hamel / #4988)
 - @uppy/utils: migrate RateLimitedQueue to TS (Merlijn Vos / #4981)
-
 
 ## 5.9.0
 

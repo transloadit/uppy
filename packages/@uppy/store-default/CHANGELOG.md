@@ -1,5 +1,17 @@
 # @uppy/store-default
 
+## 4.3.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+
+## 4.3.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
 ## 4.1.2
 
 Released: 2024-12-05

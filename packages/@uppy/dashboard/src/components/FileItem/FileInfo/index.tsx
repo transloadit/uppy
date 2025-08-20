@@ -2,7 +2,6 @@ import prettierBytes from '@transloadit/prettier-bytes'
 import type { UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import { truncateString } from '@uppy/utils'
-import { h } from 'preact'
 import type { DashboardState } from '../../../Dashboard.js'
 import MetaErrorMessage from '../MetaErrorMessage.js'
 

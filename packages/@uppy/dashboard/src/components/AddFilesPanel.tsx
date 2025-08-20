@@ -1,5 +1,4 @@
 import classNames from 'classnames'
-import { h } from 'preact'
 import AddFiles from './AddFiles.js'
 
 type $TSFixMe = any

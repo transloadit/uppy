@@ -1,7 +1,7 @@
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import Cropper from 'cropperjs'
-import { Component, h } from 'preact'
+import { Component } from 'preact'
 import type ImageEditor from './ImageEditor.js'
 import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
 import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'

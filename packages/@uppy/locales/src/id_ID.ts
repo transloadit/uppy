@@ -142,4 +142,10 @@ id_ID.strings = {
   },
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.id_ID = id_ID
+}
+
 export default id_ID

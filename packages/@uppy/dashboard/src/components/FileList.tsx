@@ -2,7 +2,6 @@ import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 // @ts-ignore untyped
 import { VirtualList } from '@uppy/utils'
-import { h } from 'preact'
 import { useMemo } from 'preact/hooks'
 import type { DashboardState } from '../Dashboard.js'
 import FileItem from './FileItem/index.js'

@@ -153,4 +153,10 @@ pl_PL.strings = {
   },
 }
 
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.pl_PL = pl_PL
+}
+
 export default pl_PL
