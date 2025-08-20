@@ -201,15 +201,6 @@ server-side component, is needed for a plugin to work.
   image previews (included by default with `Dashboard`)
 - [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right
   before an Uppy upload, then optionally appends results back to the form
-- [`Redux`](https://uppy.io/docs/guides/custom-stores#reduxstore) — for your
-  emerging [time traveling](https://github.com/gaearon/redux-devtools) needs
-
-## React
-
-- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
-  with React apps
-- [React Native](./examples/react-native-expo/) — basic Uppy component for React
-  Native with Expo
 
 ## Browser Support
 
