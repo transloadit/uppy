@@ -21,7 +21,6 @@
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
     "@uppy/google-drive": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/utils": "workspace:*",
     "@uppy/webcam": "workspace:*",
