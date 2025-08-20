@@ -110,53 +110,33 @@ export default class GoldenRetriever<
     }
   }
 
-  /**
-   * Get file objects that are currently waiting: they've been selected,
-   * but aren't yet being uploaded.
-   */
-  getWaitingFiles(): Record<string, UppyFile<M, B>> {
-    const waitingFiles: Record<string, UppyFile<M, B>> = {}
-
-    this.uppy.getFiles().forEach((file) => {
-      if (!file.progress || !file.progress.uploadStarted) {
-        waitingFiles[file.id] = file
-      }
-    })
-
-    return waitingFiles
-  }
-
-  /**
-   * Get file objects that are currently being uploaded. If a file has finished
-   * uploading, but the other files in the same batch have not, the finished
-   * file is also returned.
-   */
-  getUploadingFiles(): Record<string, UppyFile<M, B>> {
-    const uploadingFiles: Record<string, UppyFile<M, B>> = {}
-
-    const { currentUploads } = this.uppy.getState()
-    if (currentUploads) {
-      const uploadIDs = Object.keys(currentUploads)
-      uploadIDs.forEach((uploadID) => {
-        const filesInUpload = currentUploads[uploadID].fileIDs
-        filesInUpload.forEach((fileID) => {
-          uploadingFiles[fileID] = this.uppy.getFile(fileID)
-        })
-      })
-    }
-
-    return uploadingFiles
-  }
-
   saveFilesStateToLocalStorage(): void {
-    const filesToSave = {
-      ...this.getWaitingFiles(),
-      ...this.getUploadingFiles(),
-    }
-    const fileToSaveEntries = Object.entries(filesToSave)
+    // File objects that are currently waiting: they've been selected,
+    // but aren't yet being uploaded.
+    const waitingFiles = this.uppy
+      .getFiles()
+      .filter((file) => !file.progress || !file.progress.uploadStarted)
+
+    // File objects that are currently being uploaded. If a file has finished
+    // uploading, but the other files in the same batch have not, the finished
+    // file is also returned.
+    const uploadingFiles = Object.values(this.uppy.getState().currentUploads)
+      .map((currentUpload) =>
+        currentUpload.fileIDs.map((fileID) => {
+          const file = this.uppy.getFile(fileID)
+          return file != null ? [file] : [] // file might have been removed
+        }),
+      )
+      .flat(2)
+
+    const allFiles = [...waitingFiles, ...uploadingFiles]
+    // unique by file.id
+    const fileToSave = Object.values(
+      Object.fromEntries(allFiles.map((file) => [file.id, file])),
+    )
 
     // If all files have been removed by the user, clear recovery state
-    if (fileToSaveEntries.length === 0) {
+    if (fileToSave.length === 0) {
       if (this.uppy.getState().recoveredState !== null) {
         this.uppy.setState({ recoveredState: null })
       }
@@ -168,8 +148,8 @@ export default class GoldenRetriever<
     // and we want to avoid having weird properties in the serialized object.
     // Also adding file.isRestored to all files, since they will be restored from local storage
     const filesToSaveWithoutData = Object.fromEntries(
-      fileToSaveEntries.map(([id, fileInfo]) => [
-        id,
+      fileToSave.map((fileInfo) => [
+        fileInfo.id,
         fileInfo.isRemote
           ? {
               ...fileInfo,
