@@ -1,5 +1,13 @@
 # @uppy/thumbnail-generator
 
+## 4.2.3
+
+### Patch Changes
+
+- 79502f7: Make tiny/small thumbnails look better by not scaling them to cover the entire grid item
+- Updated dependencies [eee05db]
+  - @uppy/core@4.5.3
+
 ## 4.2.2
 
 ### Patch Changes

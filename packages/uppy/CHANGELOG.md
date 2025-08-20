@@ -1,5 +1,18 @@
 # uppy
 
+## 4.18.3
+
+### Patch Changes
+
+- Updated dependencies [a0a248a]
+- Updated dependencies [2f62f40]
+- Updated dependencies [eee05db]
+- Updated dependencies [79502f7]
+  - @uppy/golden-retriever@4.2.3
+  - @uppy/provider-views@4.5.3
+  - @uppy/core@4.5.3
+  - @uppy/thumbnail-generator@4.2.3
+
 ## 4.18.2
 
 ### Patch Changes
