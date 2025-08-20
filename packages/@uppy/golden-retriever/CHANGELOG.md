@@ -1,5 +1,13 @@
 # @uppy/golden-retriever
 
+## 4.2.3
+
+### Patch Changes
+
+- a0a248a: Fix golden retriever crash when removing a file after restoring and clicking upload
+- Updated dependencies [eee05db]
+  - @uppy/core@4.5.3
+
 ## 4.2.2
 
 ### Patch Changes
