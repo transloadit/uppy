@@ -11,6 +11,8 @@
     "onlyUpdatePeerDependentsWhenOutOfRange": true
   },
   "ignore": [
+    "angular",
+    "@uppy-dev/dev",
     "example-angular",
     "example-aws-companion",
     "example-aws-nodejs",
