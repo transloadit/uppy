@@ -58,7 +58,7 @@ jobs:
         run:
           corepack yarn install
       - name: Install Playwright Browsers
-        run: corepack yarn dlx playwright install --with-deps
+        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps
       - name: Build
         run: corepack yarn run build
       - name: Run tests
