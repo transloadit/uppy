@@ -6,10 +6,6 @@ on:
     paths-ignore:
       - '**.md'
       - 'assets/**'
-      - 'e2e/**'
-      - 'examples/**'
-      - 'private/**'
-      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
   pull_request:
@@ -17,11 +13,6 @@ on:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
-      - 'assets/**'
-      - 'e2e/**'
-      - 'examples/**'
-      - 'private/**'
-      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
 
