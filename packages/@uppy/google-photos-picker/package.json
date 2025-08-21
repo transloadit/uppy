@@ -1,7 +1,7 @@
 {
   "name": "@uppy/google-photos-picker",
   "description": "The Google Photos Picker plugin for Uppy lets users import files from their Google Photos account",
-  "version": "0.3.6",
+  "version": "0.4.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -26,6 +26,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json"

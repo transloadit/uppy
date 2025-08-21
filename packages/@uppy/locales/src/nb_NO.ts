@@ -34,7 +34,6 @@ nb_NO.strings = {
   browseFolders: 'velg mapper',
   cancel: 'Avbryt',
   cancelUpload: 'Avbryt opplasting',
-  chooseFiles: 'Velg filer',
   closeModal: 'Lukk vindu',
   companionError: 'Kobling til Companion feilet',
   companionUnauthorizeHint:
@@ -50,7 +49,6 @@ nb_NO.strings = {
   dashboardWindowTitle: 'Opplastingsvindu (Trykk Esc-knappen for å lukke)',
   dataUploadedOfTotal: '%{complete} av %{total}',
   done: 'Ferdig',
-  dropHereOr: 'Dra filer hit eller %{browse}',
   dropHint: 'Dra filer hit',
   dropPasteBoth: 'Dra filer hit, %{browseFiles} eller %{browseFolders}',
   dropPasteFiles: 'Dra filer hit eller %{browseFiles}',
@@ -175,6 +173,12 @@ nb_NO.strings = {
   },
   zoomIn: 'Zoom inn',
   zoomOut: 'Zoom ut',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.nb_NO = nb_NO
 }
 
 export default nb_NO

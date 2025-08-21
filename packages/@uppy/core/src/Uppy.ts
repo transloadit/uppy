@@ -25,7 +25,7 @@ import throttle from 'lodash/throttle.js'
 // @ts-ignore untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
-import { h } from 'preact'
+import type { h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import type BasePlugin from './BasePlugin.js'
 import getFileName from './getFileName.js'
@@ -914,13 +914,18 @@ export class Uppy<
       this.#restricter.getMissingRequiredMetaFields(file)
 
     if (missingFields.length > 0) {
-      this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
+      this.setFileState(file.id, {
+        missingRequiredMetaFields: missingFields,
+        error: error.message,
+      })
       this.log(error.message)
       this.emit('restriction-failed', file, error)
       return false
     }
     if (missingFields.length === 0 && file.missingRequiredMetaFields) {
-      this.setFileState(file.id, { missingRequiredMetaFields: [] })
+      this.setFileState(file.id, {
+        missingRequiredMetaFields: [],
+      })
     }
     return true
   }
@@ -1374,8 +1379,14 @@ export class Uppy<
 
   #getFilesToRetry() {
     const { files } = this.getState()
-    return Object.keys(files).filter((file) => {
-      return files[file].error
+    return Object.keys(files).filter((fileId) => {
+      const file = files[fileId]
+      // Only retry files that have errors AND don't have missing required metadata
+      return (
+        file.error &&
+        (!file.missingRequiredMetaFields ||
+          file.missingRequiredMetaFields.length === 0)
+      )
     })
   }
 

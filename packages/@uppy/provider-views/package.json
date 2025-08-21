@@ -1,7 +1,7 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "4.4.5",
+  "version": "4.5.3",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
@@ -27,6 +27,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "exports": {
     ".": "./lib/index.js",
     "./css/style.min.css": "./dist/style.min.css",

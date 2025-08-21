@@ -12,8 +12,8 @@
     "private/*"
   ],
   "scripts": {
-    "build": "turbo run build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "build:clean": "cp .gitignore .gitignore.bak && printf '!node_modules\n!**/node_modules/**/*\n' >> .gitignore; git clean -Xfd packages e2e .parcel-cache coverage .turbo; mv .gitignore.bak .gitignore",
+    "build": "turbo run --no-daemon build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
+    "build:clean": "git clean -Xfd packages e2e .parcel-cache coverage .turbo .turbo -e '!node_modules' -e '!**/node_modules/**/*'",
     "build:watch": "yarn build && turbo watch build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "migrate:components": "yarn workspace @uppy/components migrate",
     "check": "yarn exec biome check --write",
@@ -24,20 +24,19 @@
     "test": "turbo run test --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./examples/{react,vue,sveltekit}'",
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "typecheck": "turbo run typecheck --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "version": "changeset version && corepack yarn install --mode=update-lockfile",
+    "version": "changeset version && corepack yarn install --mode=update-lockfile && node scripts/update-readme-versions.mjs",
     "release": "changeset publish"
   },
   "devDependencies": {
     "@biomejs/biome": "2.0.5",
     "@changesets/changelog-github": "^0.5.1",
-    "@changesets/cli": "^2.29.5",
+    "@changesets/cli": "patch:@changesets/cli@npm%3A2.29.5#~/.yarn/patches/@changesets-cli-npm-2.29.5-68d8030bf3.patch",
     "npm-run-all": "^4.1.5",
     "turbo": "^2.5.4",
     "typescript": "^5.8.3"
   },
   "packageManager": "yarn@4.4.1+sha224.fd21d9eb5fba020083811af1d4953acc21eeb9f6ff97efd1b3f9d4de",
   "engines": {
-    "node": "^16.15.0 || >=18.0.0",
-    "yarn": "3.6.1"
+    "node": ">=20.19.0"
   }
 }

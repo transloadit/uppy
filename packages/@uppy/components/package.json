@@ -1,7 +1,7 @@
 {
   "name": "@uppy/components",
   "description": "Headless Uppy components, made in Preact",
-  "version": "0.2.0",
+  "version": "0.3.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -23,6 +23,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css",

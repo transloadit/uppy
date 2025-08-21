@@ -44,7 +44,6 @@ pt_BR.strings = {
   browseFolders: 'selecionar pastas',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar envio',
-  chooseFiles: 'Selecionar arquivos',
   closeModal: 'Fechar Janela',
   companionError: 'Conexão com serviço falhou',
   companionUnauthorizeHint:
@@ -66,7 +65,6 @@ pt_BR.strings = {
   discardMediaFile: 'Descartar mídia',
   discardRecordedFile: 'Descartar gravação',
   done: 'Concluído',
-  dropHereOr: 'Solte ou cole arquivos aqui ou %{browse}',
   dropHint: 'Solte ou cole seus arquivos aqui',
   dropPasteBoth:
     'Solte ou cole arquivos aqui, %{browseFiles} ou %{browseFolders}',
@@ -249,6 +247,12 @@ pt_BR.strings = {
   },
   zoomIn: 'Aumentar o zoom',
   zoomOut: 'Diminuir o zoom',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.pt_BR = pt_BR
 }
 
 export default pt_BR

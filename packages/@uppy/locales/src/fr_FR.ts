@@ -43,7 +43,6 @@ fr_FR.strings = {
   browseFolders: 'naviguer dans les dossiers',
   cancel: 'Annuler',
   cancelUpload: 'Annuler le téléversement',
-  chooseFiles: 'Choisir des fichiers',
   closeModal: 'Fermer la fenêtre',
   companionError: 'Connexion à Companion a échoué',
   companionUnauthorizeHint:
@@ -63,7 +62,6 @@ fr_FR.strings = {
   dataUploadedOfTotal: '%{complete} sur %{total}',
   discardRecordedFile: 'Supprimer le fichier enregistré',
   done: 'Terminé',
-  dropHereOr: 'Déposer les fichiers ici ou %{browse}',
   dropHint: 'Déposez vos fichiers ici',
   dropPasteBoth: 'Déposer les fichiers ici, coller ou %{browse}',
   dropPasteFiles: 'Déposer les fichiers ici, coller ou %{browse}',
@@ -215,6 +213,12 @@ fr_FR.strings = {
     '0': 'Vous devez sélectionner au moins %{smart_count} fichier',
     '1': 'Vous devez sélectionner au moins %{smart_count} fichiers',
   },
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.fr_FR = fr_FR
 }
 
 export default fr_FR

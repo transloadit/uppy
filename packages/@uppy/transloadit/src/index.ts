@@ -43,6 +43,7 @@ export interface AssemblyResult extends AssemblyFile {
   queue: string
   queueTime: number
   localId: string | null
+  user_meta?: Record<string, string>
 }
 
 export interface AssemblyResponse {

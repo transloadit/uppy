@@ -55,7 +55,6 @@ cs_CZ.strings = {
   browseFolders: 'procházet složky',
   cancel: 'Zrušit',
   cancelUpload: 'Zrušit nahrávání',
-  chooseFiles: 'Vyberte soubory',
   closeModal: 'Zavřít dialog',
   companionError: 'Spojení s modulem Companion se nezdařilo',
   companionUnauthorizeHint:
@@ -85,7 +84,6 @@ cs_CZ.strings = {
   discardMediaFile: 'Zahodit mediální soubor',
   discardRecordedFile: 'Zahodit nahraný soubor',
   done: 'Dokončeno',
-  dropHereOr: 'Přetáhněte soubory sem nebo %{browse}',
   dropHint: 'Přetáhněte soubory sem',
   dropPasteBoth: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',
   dropPasteFiles: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',
@@ -273,6 +271,12 @@ cs_CZ.strings = {
   },
   zoomIn: 'Přiblížit',
   zoomOut: 'Oddálit',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.cs_CZ = cs_CZ
 }
 
 export default cs_CZ

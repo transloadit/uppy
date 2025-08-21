@@ -151,4 +151,68 @@ describe('XHRUpload', () => {
       expect(scope.isDone()).toBe(true)
     })
   })
+
+  describe('endpoint', () => {
+    it('can be a function', async () => {
+      const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
+        'access-control-allow-origin': '*',
+      })
+      scope.options('/upload/test.jpg').reply(200, {})
+      scope.post('/upload/test.jpg').reply(200, {})
+
+      const core = new Core()
+      core.use(XHRUpload, {
+        id: 'XHRUpload',
+        endpoint: (file) =>
+          !Array.isArray(file)
+            ? `https://fake-endpoint.uppy.io/upload/${file.name}`
+            : '',
+        bundle: false,
+      })
+      core.addFile({
+        type: 'image/png',
+        source: 'test',
+        name: 'test.jpg',
+        data: new Blob([new Uint8Array(8192)]),
+      })
+
+      await core.upload()
+
+      expect(scope.isDone()).toBe(true)
+    })
+
+    it('can be a function (bundle)', async () => {
+      const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
+        'access-control-allow-origin': '*',
+      })
+      scope.options('/upload-bundle/test.jpg,test2.jpg').reply(200, {})
+      scope.post('/upload-bundle/test.jpg,test2.jpg').reply(200, {})
+
+      const core = new Core()
+      core.use(XHRUpload, {
+        id: 'XHRUpload',
+        endpoint: (file) =>
+          Array.isArray(file)
+            ? `https://fake-endpoint.uppy.io/upload-bundle/${file.map((f) => f.name).join(',')}`
+            : '',
+        bundle: true,
+      })
+      core.addFile({
+        type: 'image/png',
+        source: 'test',
+        name: 'test.jpg',
+        data: new Blob([new Uint8Array(8192)]),
+      })
+      core.addFile({
+        type: 'image/png',
+        source: 'test',
+        name: 'test2.jpg',
+        data: new Blob([new Uint8Array(8192)]),
+      })
+
+      await core.upload()
+
+      expect(scope.isDone()).toBe(true)
+    })
+  })
 })

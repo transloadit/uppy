@@ -1,13 +1,19 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "4.18.0",
+  "version": "4.18.3",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "lib/index.js",
   "type": "module",
   "unpkg": "dist/uppy.min.js",
   "style": "dist/uppy.min.css",
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "keywords": [
     "file uploader",
     "drag-drop",
@@ -48,6 +54,7 @@
     "@uppy/google-photos-picker": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/instagram": "workspace:^",
+    "@uppy/locales": "workspace:^",
     "@uppy/onedrive": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/remote-sources": "workspace:^",
@@ -64,9 +71,9 @@
     "@uppy/zoom": "workspace:^"
   },
   "scripts": {
-    "build": "tsc --build tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json && yarn build:bundle",
     "build:bundle": "node build-bundle.mjs",
-    "build:css": "sass --load-path=../../packages src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "build:css": "sass --load-path=../../packages src/style.scss dist/uppy.css && postcss dist/uppy.css -u cssnano -o dist/uppy.min.css",
     "typecheck": "tsc --build"
   },
   "devDependencies": {

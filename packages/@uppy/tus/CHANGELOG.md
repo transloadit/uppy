@@ -1,5 +1,29 @@
 # @uppy/tus
 
+## 4.3.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+  - @uppy/companion-client@4.5.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+
+## 4.3.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/companion-client@4.5.0
+  - @uppy/utils@6.2.0
+
 ## 4.2.2
 
 Released: 2025-01-22
@@ -99,7 +123,7 @@ Included in: Uppy v3.25.4
 Released: 2024-02-19
 Included in: Uppy v3.22.0
 
--  @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
+- @uppy/aws-s3-multipart,@uppy/aws-s3,@uppy/companion-client,@uppy/tus,@uppy/xhr-upload: update `uppyfile` objects before emitting events (antoine du hamel / #4928)
 - @uppy/tus: migrate to ts (merlijn vos / #4899)
 - @uppy/companion,@uppy/tus: bump `tus-js-client` version range (merlijn vos / #4848)
 
@@ -122,7 +146,7 @@ Included in: Uppy v3.15.0
 Released: 2023-08-15
 Included in: Uppy v3.14.0
 
-- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload:  Invoke headers function for remote uploads (Dominik Schmidt / #4596)
+- @uppy/aws-s3,@uppy/tus,@uppy/xhr-upload: Invoke headers function for remote uploads (Dominik Schmidt / #4596)
 
 ## 3.1.2
 

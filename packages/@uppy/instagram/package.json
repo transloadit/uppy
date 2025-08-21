@@ -1,7 +1,7 @@
 {
   "name": "@uppy/instagram",
   "description": "Import photos and videos from Instagram, into Uppy.",
-  "version": "4.2.3",
+  "version": "4.3.2",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -27,6 +27,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "exports": {
     ".": "./lib/index.js",
     "./package.json": "./package.json"

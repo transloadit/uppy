@@ -10,7 +10,6 @@ import type {
 import type { I18n, Translator } from '@uppy/utils'
 import { isDragDropSupported } from '@uppy/utils'
 import classNames from 'classnames'
-import { h } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 import AddFiles from './AddFiles.js'

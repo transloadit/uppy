@@ -1,4 +1,3 @@
-import { h } from 'preact'
 import getFileTypeIcon from '../utils/getFileTypeIcon.js'
 
 type $TSFixMe = any

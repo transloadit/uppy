@@ -1,6 +1,6 @@
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
-import { type ComponentChild, h } from 'preact'
+import type { ComponentChild } from 'preact'
 
 interface Props<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>

@@ -1,5 +1,5 @@
 import type { I18n } from '@uppy/utils'
-import { h } from 'preact'
+import type { h } from 'preact'
 
 interface PermissionsScreenProps {
   icon: () => h.JSX.Element | null

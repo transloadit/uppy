@@ -1,7 +1,6 @@
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'
-import { h } from 'preact'
 import {
   CancelBtn,
   DoneBtn,

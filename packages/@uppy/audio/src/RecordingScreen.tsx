@@ -1,5 +1,4 @@
 import type { I18n } from '@uppy/utils'
-import { h } from 'preact'
 import { useEffect, useRef } from 'preact/hooks'
 import AudioSourceSelect, {
   type AudioSourceSelectProps,

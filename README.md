@@ -30,7 +30,7 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile API to handle any file in your app.
 
 <table>
-<tr><th>Tests</th><td><img src="https://github.com/transloadit/uppy/workflows/CI/badge.svg" alt="CI status for Uppy tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg" alt="CI status for browser tests"></td></tr>
+<tr><th>Tests</th><td><img src="https://github.com/transloadit/uppy/workflows/CI/badge.svg" alt="CI status for Uppy tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"></td></tr>
 <tr><th>Deploys</th><td><img src="https://github.com/transloadit/uppy/workflows/Release/badge.svg" alt="CI status for CDN deployment"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion%20Edge%20Deploy/badge.svg" alt="CI status for Companion deployment"></td><td><img src="https://github.com/transloadit/uppy.io/workflows/Deploy%20to%20GitHub%20Pages/badge.svg" alt="CI status for website deployment"></td></tr>
 </table>
 
@@ -61,6 +61,22 @@ const uppy = new Uppy()
 **[read the docs](https://uppy.io/docs)** for more details on how to use Uppy
 and its plugins.
 
+## Integrations
+
+Uppy has first-class support for plain JS/HTML,
+[React](https://uppy.io/docs/react/), [Svelte](https://uppy.io/docs/svelte/),
+[Vue](https://uppy.io/docs/vue/), and [Angular](https://uppy.io/docs/angular/).
+
+For the supported frameworks (except Angular) Uppy offers three ways to build user interfaces:
+
+1. **Pre-composed, plug-and-play components.** Mainly `<Dashboard />`.
+   The downside is that you can’t customize the UI.
+2. **Headless components.** Smaller components, easier to override the styles
+   or compose them together with your own components.
+3. **Hooks.** Attach our logic to your own components, no restrictions, create a
+   tailor-made UI.
+
+
 ## Features
 
 - Lightweight, modular plugin-based architecture, light on dependencies :zap:
@@ -87,7 +103,7 @@ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 Add CSS
-[uppy.min.css](https://releases.transloadit.com/uppy/v4.18.0/uppy.min.css),
+[uppy.min.css](https://releases.transloadit.com/uppy/v4.18.3/uppy.min.css),
 either to your HTML page’s `<head>` or include in JS, if your bundler of choice
 supports it.
 
@@ -101,7 +117,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 ```html
 <!-- 1. Add CSS to `<head>` -->
 <link
-  href="https://releases.transloadit.com/uppy/v4.18.0/uppy.min.css"
+  href="https://releases.transloadit.com/uppy/v4.18.3/uppy.min.css"
   rel="stylesheet"
 />
 
@@ -112,7 +128,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
     Uppy,
     Dashboard,
     Tus,
-  } from 'https://releases.transloadit.com/uppy/v4.18.0/uppy.min.mjs'
+  } from 'https://releases.transloadit.com/uppy/v4.18.3/uppy.min.mjs'
 
   const uppy = new Uppy()
   uppy.use(Dashboard, { target: '#files-drag-drop' })
@@ -138,14 +154,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 - [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews,
   progress bars, metadata editor and all the cool stuff. Required for most UI
   plugins like Webcam and Instagram
-- [`Progress Bar`](https://uppy.io/docs/progress-bar/) — minimal progress bar
-  that fills itself when upload progresses
-- [`Status Bar`](https://uppy.io/docs/status-bar/) — more detailed progress,
-  pause/resume/cancel buttons, percentage, speed, uploaded/total sizes (included
-  by default with `Dashboard`)
-- [`Informer`](https://uppy.io/docs/informer/) — send notifications like “smile”
-  before taking a selfie or “upload failed” when all is lost (also included by
-  default with `Dashboard`)
+- Headless components ([react](https://uppy.io/docs/react/), [svelte](https://uppy.io/docs/svelte/), [vue](https://uppy.io/docs/vue/))
 
 ### Sources
 
@@ -177,8 +186,6 @@ server-side component, is needed for a plugin to work.
   backend out there (like Apache, Nginx)
 - [`AWS S3`](https://uppy.io/docs/aws-s3/) — plain upload to AWS S3 or
   compatible services
-- [`AWS S3 Multipart`](https://uppy.io/docs/aws-s3-multipart/) — S3-style
-  “Multipart” upload to AWS or compatible services
 
 ### File Processing
 
@@ -194,13 +201,6 @@ server-side component, is needed for a plugin to work.
   image previews (included by default with `Dashboard`)
 - [`Form`](https://uppy.io/docs/form/) — collects metadata from `<form>` right
   before an Uppy upload, then optionally appends results back to the form
-
-## React
-
-- [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
-  with React apps
-- [React Native](./examples/react-native-expo/) — basic Uppy component for React
-  Native with Expo
 
 ## Browser Support
 

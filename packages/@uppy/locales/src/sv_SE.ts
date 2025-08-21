@@ -43,7 +43,6 @@ sv_SE.strings = {
   browseFolders: 'bläddra mappar',
   cancel: 'Avbryt',
   cancelUpload: 'Avbryt uppladdning',
-  chooseFiles: 'Välj filer',
   closeModal: 'Stäng fönster',
   companionError: 'Anslutning till Companion misslyckades',
   companionUnauthorizeHint:
@@ -65,7 +64,6 @@ sv_SE.strings = {
   discardMediaFile: 'Kasta mediafil',
   discardRecordedFile: 'Kasta inspelad fil',
   done: 'Klart',
-  dropHereOr: 'Släpp filer här eller %{browse}',
   dropHint: 'Släpp dina filer här',
   dropPasteBoth: 'Släpp filer här, %{browseFiles} eller %{browseFolders}',
   dropPasteFiles: 'Släpp filer här eller %{browseFiles}',
@@ -245,6 +243,12 @@ sv_SE.strings = {
   },
   zoomIn: 'Zooma in',
   zoomOut: 'Zooma ut',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.sv_SE = sv_SE
 }
 
 export default sv_SE

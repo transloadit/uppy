@@ -1,8 +1,4 @@
-import type {
-  UnknownPlugin,
-  UnknownSearchProviderPlugin,
-  UnknownSearchProviderPluginState,
-} from '@uppy/core'
+import type { UnknownPlugin } from '@uppy/core'
 import type {
   Body,
   CompanionClientProvider,

@@ -3,18 +3,18 @@
   generics="M extends import('@uppy/utils').Meta, B extends import('@uppy/utils').Body"
 >
 import type { Uppy } from "@uppy/core";
-import DashboardPlugin from "@uppy/dashboard";
+import DashboardPlugin, { type DashboardOptions } from "@uppy/dashboard";
 import { onDestroy, onMount } from "svelte";
 
 let container: HTMLElement;
 let plugin: DashboardPlugin<M, B>;
 
 export let uppy: Uppy<M, B>;
-export const props: Object | undefined = {};
+export let props: DashboardOptions<M, B> | undefined = {};
 export let open: boolean;
 let lastOpen: boolean = open;
 
-export const plugins: string[] = [];
+export let plugins: string[] = [];
 
 const installPlugin = () => {
 	const options = {
@@ -22,9 +22,9 @@ const installPlugin = () => {
 		plugins,
 		...props,
 		target: container,
-	};
+	} satisfies DashboardOptions<M, B>;
 
-	uppy.use(DashboardPlugin, options);
+	uppy.use(DashboardPlugin<M, B>, options);
 	plugin = uppy.getPlugin(options.id) as DashboardPlugin<M, B>;
 	if (open) plugin.openModal();
 };
@@ -41,7 +41,7 @@ $: {
 		plugins,
 		...props,
 		target: container,
-	};
+	} satisfies DashboardOptions<M, B>;
 	uppy.setOptions(options);
 }
 $: {
