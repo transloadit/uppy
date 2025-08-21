@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "4.5.2",
+  "version": "5.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",

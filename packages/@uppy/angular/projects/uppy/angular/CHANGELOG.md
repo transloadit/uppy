@@ -1,5 +1,16 @@
 # @uppy/angular
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [e869243]
+- Updated dependencies [d301c01]
+- Updated dependencies [c5b51f6]
+  - @uppy/dashboard@5.0.0
+  - @uppy/utils@7.0.0
+  - @uppy/core@5.0.0
+
 ## 0.9.2
 
 ### Patch Changes
