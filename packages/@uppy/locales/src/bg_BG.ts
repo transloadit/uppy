@@ -46,7 +46,6 @@ bg_BG.strings = {
     'Прозорец за качване на файлове (Натиснете ESC за затваряне)',
   dataUploadedOfTotal: '%{complete} от %{total}',
   done: 'Готово',
-  dropHereOr: 'Пуснете файлове тук или %{browse}',
   dropHint: 'Пуснете файловете си тук',
   dropPasteBoth: 'Пуснете файловете си тук, поставете или %{browse}',
   dropPasteFiles: 'Пуснете файловете си тук, поставете или %{browse}',

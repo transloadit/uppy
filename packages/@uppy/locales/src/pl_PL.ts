@@ -44,7 +44,6 @@ pl_PL.strings = {
   dashboardWindowTitle: 'Okno przesyłania plików (Naciśnij ESC aby zamknąć)',
   dataUploadedOfTotal: 'Przesłano %{complete} z %{total}',
   done: 'Ukończono',
-  dropHereOr: 'Upuść plik tutaj albo %{browse}',
   dropHint: 'Upuść swoje pliki tutaj',
   dropPasteBoth: 'Upuść pliki tutaj, wklej, albo %{browse}',
   dropPasteFiles: 'Upuść pliki tutaj, wklej, albo %{browse}',

@@ -61,7 +61,6 @@ es_ES.strings = {
   dataUploadedOfTotal: '%{complete} de %{total}',
   discardRecordedFile: 'Descartar archivo grabado',
   done: 'Hecho',
-  dropHereOr: 'Suelta archivos aquí o %{browse}',
   dropHint: 'Suelta tus archivos aquí',
   dropPasteBoth: 'Suelta archivos aquí, %{browseFiles} o %{browseFolders}',
   dropPasteFiles: 'Suelta archivos aquí o %{browseFiles}',

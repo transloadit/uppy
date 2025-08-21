@@ -64,7 +64,6 @@ uk_UA.strings = {
   dataUploadedOfTotal: '%{complete} із %{total}',
   discardRecordedFile: 'Відкинути записаний файл',
   done: 'Готово',
-  dropHereOr: 'Перетягніть файли або %{browse}',
   dropHint: 'Перетягніть файли сюди',
   dropPasteBoth: 'Перетягніть файли, вставте або %{browse}',
   dropPasteFiles: 'Перетягніть файли, вставте або %{browse}',

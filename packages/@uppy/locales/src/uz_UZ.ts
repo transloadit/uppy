@@ -58,7 +58,6 @@ uz_UZ.strings = {
   dataUploadedOfTotal: '%{total} dan %{complete}',
   discardRecordedFile: 'Yozib olingan faylni olib tashlang',
   done: 'Bajarildi',
-  dropHereOr: 'Bu yerga tashlang yoki %{browse}',
   dropHint: 'Fayllaringizni shu yerga tashlang',
   dropPasteBoth:
     'Fayllarni bu yerga, %{browseFiles} yoki %{browseFolders} qoldiring.',

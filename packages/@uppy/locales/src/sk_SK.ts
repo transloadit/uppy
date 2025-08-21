@@ -50,7 +50,6 @@ sk_SK.strings = {
     'Okno na nahrávanie súborov. (Stlačením ESC ho zavriete)',
   dataUploadedOfTotal: '%{complete} z %{total}',
   done: 'Dokončené',
-  dropHereOr: 'Presuňte sem súbory alebo %{browse}',
   dropHint: 'Presuňte sem súbory',
   dropPasteBoth: 'Presuňte sem súbory alebo %{browse}',
   dropPasteFiles: 'Presuňte sem súbory alebo %{browse}',

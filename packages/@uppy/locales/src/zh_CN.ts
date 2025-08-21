@@ -37,7 +37,6 @@ zh_CN.strings = {
   dashboardWindowTitle: '文件上传工具窗口（点击离开以关闭）',
   dataUploadedOfTotal: '%{total} / %{complete}',
   done: '完成',
-  dropHereOr: '拖拽文件到这里，或%{browse}',
   dropHint: '拖拽文件到这里',
   dropPasteBoth: '拖拽文件到这里，或者%{browse}文件',
   dropPasteFiles: '拖拽文件到这里，或者%{browse}文件',

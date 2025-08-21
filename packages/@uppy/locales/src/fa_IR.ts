@@ -58,7 +58,6 @@ fa_IR.strings = {
   dataUploadedOfTotal: '%{complete} از %{total}',
   discardRecordedFile: 'دورانداختن فایل ضبط شده',
   done: 'انجام شد',
-  dropHereOr: 'فایل را بکشید و اینجا رها کنید یا  %{browse}',
   dropHint: 'فایل‌ها را بکشید و اینجا رها کنید',
   dropPasteBoth: 'فایل‌ها را اینجا رها کنید، بچسبانید یا  %{browse}',
   dropPasteFiles: 'فایل‌ها را اینجا رها کنید، بچسبانید یا  %{browse}',

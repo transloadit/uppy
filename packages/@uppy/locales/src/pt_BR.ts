@@ -66,7 +66,6 @@ pt_BR.strings = {
   discardMediaFile: 'Descartar mídia',
   discardRecordedFile: 'Descartar gravação',
   done: 'Concluído',
-  dropHereOr: 'Solte ou cole arquivos aqui ou %{browse}',
   dropHint: 'Solte ou cole seus arquivos aqui',
   dropPasteBoth:
     'Solte ou cole arquivos aqui, %{browseFiles} ou %{browseFolders}',

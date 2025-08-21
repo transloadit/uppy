@@ -39,7 +39,6 @@ fi_FI.strings = {
   dashboardWindowTitle: 'Tiedoston latausikkuna (Paina Esc sulkeaksesi)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: 'Valmis',
-  dropHereOr: 'Raahaa tiedostot tähän tai %{browse}',
   dropHint: 'Raahaa tiedostot tähän',
   dropPasteBoth: 'Raahaa tiedostot tähän, liitä tai %{browse}',
   dropPasteFiles: 'Raahaa tiedostot tähän, liitä tai %{browse}',

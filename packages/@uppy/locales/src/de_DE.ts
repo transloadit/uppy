@@ -52,7 +52,6 @@ de_DE.strings = {
   dataUploadedOfTotal: '%{complete} von %{total}',
   discardRecordedFile: 'Aufgenommene Datei verwerfen',
   done: 'Abgeschlossen',
-  dropHereOr: 'Dateien hier ablegen oder %{browse}',
   dropHint: 'Dateien hier ablegen',
   dropPasteBoth:
     'Dateien hier ablegen/einfügen, %{browseFiles} oder %{browseFolders}',

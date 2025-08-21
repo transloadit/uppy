@@ -47,7 +47,6 @@ th_TH.strings = {
   dashboardWindowTitle: 'หน้าต่างอัพโหลดไฟล์ (กด escape เพื่อปิด)',
   dataUploadedOfTotal: '%{complete} จาก %{total}',
   done: 'เสร็จสิ้น',
-  dropHereOr: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',
   dropHint: 'ลากไฟล์มาวางที่นี่',
   dropPasteBoth: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',
   dropPasteFiles: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',

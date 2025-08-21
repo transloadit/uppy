@@ -37,7 +37,6 @@ hu_HU.strings = {
   dashboardWindowTitle: 'Fájlfeltöltő ablak (Escape a bezáráshoz)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: 'Kész',
-  dropHereOr: 'Húzza ide vagy %{browse} fájlt',
   dropHint: 'Húzza ide a fájlokat',
   dropPasteBoth: 'Húzza ide a fájlokat vagy %{browse}',
   dropPasteFiles: 'Húzza ide a fájlokat vagy %{browse}',

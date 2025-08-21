@@ -50,7 +50,6 @@ hi_IN.strings = {
   dataUploadedOfTotal: '%{complete} का %{total}',
   discardRecordedFile: 'रिकॉर्डेड फ़ाइल को छोड़ें',
   done: 'हो गया',
-  dropHereOr: 'यहाँ फ़ाइलें ड्रॉप करें या %{browse}',
   dropHint: 'यहाँ अपनी फ़ाइलें ड्रॉप करें',
   dropPasteBoth: 'यहाँ फ़ाइलें ड्रॉप करें, %{browseFiles} या %{browseFolders}',
   dropPasteFiles: 'यहाँ फ़ाइलें ड्रॉप करें या %{browseFiles}',

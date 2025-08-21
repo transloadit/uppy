@@ -40,7 +40,6 @@ sr_RS_Cyrillic.strings = {
     'Прозор за отпремање датотека (притирните ESC за излаз)',
   dataUploadedOfTotal: '%{complete} од %{total}',
   done: 'Завршено',
-  dropHereOr: 'Спусти датотеке овде или %{browse}',
   dropHint: 'Спусти датотеке овде',
   dropPasteBoth: 'Спусти датотеке овде, уметни или %{browse}',
   dropPasteFiles: 'Спусти датотеке овде, уметни или %{browse}',

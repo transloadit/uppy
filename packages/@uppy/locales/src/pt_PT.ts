@@ -40,7 +40,6 @@ pt_PT.strings = {
     'Janela para envio de ficheiros (Pressione esc para fechar)',
   dataUploadedOfTotal: '%{complete} de %{total}',
   done: 'Concluir',
-  dropHereOr: 'Arraste ficheiros ou %{browse}',
   dropHint: 'Pode simplesmente arrastar os seus ficheiros para aqui',
   dropPasteBoth: 'Arraste ficheiros, cole ou %{browse}',
   dropPasteFiles: 'Arraste ficheiros, cole ou %{browse}',

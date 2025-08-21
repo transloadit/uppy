@@ -39,7 +39,6 @@ hr_HR.strings = {
   dashboardWindowTitle: 'Prozor za prijenos datoteka (pritisnite ESC za izlaz)',
   dataUploadedOfTotal: '%{complete} od %{total}',
   done: 'Završeno',
-  dropHereOr: 'Ispusti datoteke ovdje ili %{browse}',
   dropHint: 'Ispusti datoteke ovdje',
   dropPasteBoth: 'Ispusti datoteke ovdje, zalijepi ili %{browse}',
   dropPasteFiles: 'Ispusti datoteke ovdje, zalijepi ili %{browse}',

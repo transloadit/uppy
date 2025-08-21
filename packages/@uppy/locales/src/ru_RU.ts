@@ -75,7 +75,6 @@ ru_RU.strings = {
   dataUploadedOfTotal: '%{complete} из %{total}',
   discardRecordedFile: 'Удалить записанный файл',
   done: 'Готово',
-  dropHereOr: 'Перетащите файлы или %{browse}',
   dropHint: 'Перетащите файлы сюда',
   dropPasteBoth: 'Перетащите файлы, вставьте или %{browse}',
   dropPasteFiles: 'Перетащите файлы, вставьте или %{browse}',

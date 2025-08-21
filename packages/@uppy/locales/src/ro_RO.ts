@@ -46,7 +46,6 @@ ro_RO.strings = {
     'Fereastră încărcare fișier (Apasă tasta escape pentru a închide)',
   dataUploadedOfTotal: '%{complete} din %{total}',
   done: 'Finalizat',
-  dropHereOr: 'Trage fișierele aici sau %{browse}',
   dropHint: 'Trage fișierele tale aici',
   dropPasteBoth: 'Trage fișierele aici, copy/paste sau %{browse}',
   dropPasteFiles: 'Trage fișierele aici, copy/paste sau %{browse}',

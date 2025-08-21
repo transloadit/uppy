@@ -85,7 +85,6 @@ cs_CZ.strings = {
   discardMediaFile: 'Zahodit mediální soubor',
   discardRecordedFile: 'Zahodit nahraný soubor',
   done: 'Dokončeno',
-  dropHereOr: 'Přetáhněte soubory sem nebo %{browse}',
   dropHint: 'Přetáhněte soubory sem',
   dropPasteBoth: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',
   dropPasteFiles: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',

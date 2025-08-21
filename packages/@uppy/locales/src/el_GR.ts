@@ -40,7 +40,6 @@ el_GR.strings = {
     'Παράθυρο μεταφόρτωσης αρχείων (Πατήστε escape για να κλείσει)',
   dataUploadedOfTotal: '%{complete} από %{total}',
   done: 'Τέλος',
-  dropHereOr: 'Σύρετε τα αρχεία εδώ ή %{browse}',
   dropHint: 'Σύρετε τα αρχεία σας εδώ',
   dropPasteBoth: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
   dropPasteFiles: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',

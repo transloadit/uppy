@@ -58,7 +58,6 @@ vi_VN.strings = {
   dataUploadedOfTotal: '%{complete} trên %{total}',
   discardRecordedFile: 'Hủy tệp đã ghi âm',
   done: 'Hoàn tất',
-  dropHereOr: 'Kéo và thả vào đây hoặc %{browse}',
   dropHint: 'Kéo và thả tệp của bạn vào đây',
   dropPasteBoth: 'Kéo và thả tệp vào đây, %{browseFiles} hoặc %{browseFolders}',
   dropPasteFiles: 'Kéo và thả tệp vào đây hoặc %{browseFiles}',

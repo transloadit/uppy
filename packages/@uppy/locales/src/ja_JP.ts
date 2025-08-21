@@ -42,7 +42,6 @@ ja_JP.strings = {
     'ファイルアップローダーウィンドウ（閉じるにはEscapeキーを押してください）',
   dataUploadedOfTotal: '%{total} %{complete}',
   done: '完了しました',
-  dropHereOr: 'ここにファイルをドロップするか%{browse}してください',
   dropHint: 'ここにファイルをドロップしてください',
   dropPasteBoth:
     'ここにファイルをドロップするか、貼り付けるか、%{browse}してください',

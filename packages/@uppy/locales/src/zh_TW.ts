@@ -49,7 +49,6 @@ zh_TW.strings = {
   dataUploadedOfTotal: '%{complete}/%{total}',
   discardRecordedFile: '捨棄錄影檔',
   done: '完成',
-  dropHereOr: '拖曳至此處，或%{browse}',
   dropHint: '將檔案拖曳至此處',
   dropPasteBoth: '將檔案拖曳至此處、%{browseFiles}，或%{browseFolders}',
   dropPasteFiles: '將檔案拖曳至此處，或%{browseFiles}',

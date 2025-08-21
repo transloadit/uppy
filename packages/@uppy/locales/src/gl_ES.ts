@@ -40,7 +40,6 @@ gl_ES.strings = {
     'Xanela para cargar arquivos (Presiona escape para cerrar)',
   dataUploadedOfTotal: '%{complete} de %{total}',
   done: 'Feito',
-  dropHereOr: 'Soltar arquivos aquí ou %{browse}',
   dropHint: 'Solta os teus arqivos aquí',
   dropPasteBoth: 'Soltar arquivos aquí, pegar ou %{browse}',
   dropPasteFiles: 'Soltar arquivos aquí, pegar ou %{browse}',

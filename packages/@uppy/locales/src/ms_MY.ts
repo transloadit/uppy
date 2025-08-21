@@ -61,7 +61,6 @@ ms_MY.strings = {
   dataUploadedOfTotal: '%{complete} dari %{total}',
   discardRecordedFile: 'Buang fail yang dirakam',
   done: 'Selesai',
-  dropHereOr: 'Letakkan di sini atau %{browse}',
   dropHint: 'Letakkan fail anda di sini',
   dropPasteBoth: 'Letakkan fail di sini, %{browseFiles} atau %{browseFolders}',
   dropPasteFiles: 'Letakkan fail di sini atau %{browseFiles}',

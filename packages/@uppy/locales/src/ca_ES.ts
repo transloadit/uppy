@@ -61,7 +61,6 @@ ca_ES.strings = {
   dataUploadedOfTotal: '%{complete} de %{total}',
   discardRecordedFile: "Descarta l'arxiu gravat",
   done: 'Fet',
-  dropHereOr: 'Deixa els arxius aquí o %{browse}',
   dropHint: 'Deixa els teus arxius aquí',
   dropPasteBoth: 'Deixa arxius aquí, %{browseFiles} o %{browseFolders}',
   dropPasteFiles: 'Deixa arxius aquí o %{browseFiles}',

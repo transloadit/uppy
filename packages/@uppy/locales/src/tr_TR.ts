@@ -39,7 +39,6 @@ tr_TR.strings = {
   dashboardWindowTitle: 'Dosya Yükle (Kapatmak için Esc)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: 'Bitti',
-  dropHereOr: 'Sürükleyip bırak veya %{browse}',
   dropHint: 'Buraya sürükleyip bırakın',
   dropPasteBoth: 'Sürükleyip bırak, yapıştır veya %{browse}',
   dropPasteFiles: 'Sürükleyip bırak, yapıştır veya %{browse}',

@@ -50,7 +50,6 @@ nb_NO.strings = {
   dashboardWindowTitle: 'Opplastingsvindu (Trykk Esc-knappen for å lukke)',
   dataUploadedOfTotal: '%{complete} av %{total}',
   done: 'Ferdig',
-  dropHereOr: 'Dra filer hit eller %{browse}',
   dropHint: 'Dra filer hit',
   dropPasteBoth: 'Dra filer hit, %{browseFiles} eller %{browseFolders}',
   dropPasteFiles: 'Dra filer hit eller %{browseFiles}',

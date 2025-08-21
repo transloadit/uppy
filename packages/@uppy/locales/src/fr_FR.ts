@@ -63,7 +63,6 @@ fr_FR.strings = {
   dataUploadedOfTotal: '%{complete} sur %{total}',
   discardRecordedFile: 'Supprimer le fichier enregistré',
   done: 'Terminé',
-  dropHereOr: 'Déposer les fichiers ici ou %{browse}',
   dropHint: 'Déposez vos fichiers ici',
   dropPasteBoth: 'Déposer les fichiers ici, coller ou %{browse}',
   dropPasteFiles: 'Déposer les fichiers ici, coller ou %{browse}',

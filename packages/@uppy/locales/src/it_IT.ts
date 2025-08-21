@@ -38,7 +38,6 @@ it_IT.strings = {
   dashboardWindowTitle: 'File Uploader (Premi Esc per chiudere)',
   dataUploadedOfTotal: '%{complete} di %{total}',
   done: 'Fatto',
-  dropHereOr: 'Trascina i file qui o %{browse}',
   dropHint: 'Trascina i file qui',
   dropPasteBoth: 'Trascina i file qui, incolla o %{browse}',
   dropPasteFiles: 'Trascina i file qui, incolla o %{browse}',

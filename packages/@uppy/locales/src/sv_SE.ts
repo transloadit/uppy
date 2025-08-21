@@ -65,7 +65,6 @@ sv_SE.strings = {
   discardMediaFile: 'Kasta mediafil',
   discardRecordedFile: 'Kasta inspelad fil',
   done: 'Klart',
-  dropHereOr: 'Släpp filer här eller %{browse}',
   dropHint: 'Släpp dina filer här',
   dropPasteBoth: 'Släpp filer här, %{browseFiles} eller %{browseFolders}',
   dropPasteFiles: 'Släpp filer här eller %{browseFiles}',

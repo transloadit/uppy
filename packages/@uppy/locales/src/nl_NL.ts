@@ -56,7 +56,6 @@ nl_NL.strings = {
   dataUploadedOfTotal: '%{complete} van %{total}',
   discardRecordedFile: 'Verwijder opgenomen bestand',
   done: 'Klaar',
-  dropHereOr: 'Sleep hier je bestanden naartoe of %{browse}',
   dropHint: 'Sleep hier je bestanden naartoe',
   dropPasteBoth: 'Sleep hier je bestanden naartoe, plak of %{browse}',
   dropPasteFiles: 'Sleep hier je bestanden naartoe, plak of %{browse}',

@@ -40,7 +40,6 @@ id_ID.strings = {
     'Jendela Pengunggah Berkas (Tekan escape untuk menutup)',
   dataUploadedOfTotal: '%{complete} dari %{total}',
   done: 'Selesai',
-  dropHereOr: 'Letakkan berkas di sini atau %{browse}',
   dropHint: 'Letakkan berkas Anda di sini',
   dropPasteBoth: 'Letakkan berkas di sini, tempelkan atau %{browse}',
   dropPasteFiles: 'Letakkan berkas di sini, tempelkan atau %{browse}',

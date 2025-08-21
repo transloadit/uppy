@@ -39,7 +39,6 @@ da_DK.strings = {
   dashboardWindowTitle: 'Fil Uploader Vindue (Tryk escape for at lukke)',
   dataUploadedOfTotal: '%{complete} af %{total}',
   done: 'Færdig',
-  dropHereOr: 'Træk filer her eller %{browse}',
   dropHint: 'Træk dine filer her',
   dropPasteBoth: 'Træk filer her, sæt ind eller %{browse}',
   dropPasteFiles: 'Træk filer her, sæt ind eller %{browse}',

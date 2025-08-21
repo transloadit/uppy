@@ -38,7 +38,6 @@ ko_KR.strings = {
   dashboardWindowTitle: '파일 업로더 창 (ESC를 누르면 닫힙니다.)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: '완료',
-  dropHereOr: '파일을 드래그 앤 드롭 또는 %{browse}',
   dropHint: '여기에 파일을 드래그 앤 드롭 해주세요.',
   dropPasteBoth:
     '여기에 파일을 드래그 앤 드롭 하거나, %{browseFiles}, %{browseFolders}',

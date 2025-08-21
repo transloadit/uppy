@@ -41,7 +41,6 @@ is_IS.strings = {
   dashboardWindowTitle: 'Upphleðslugluggi (Smelltu á ESC til að loka)',
   dataUploadedOfTotal: '%{complete} af %{total}',
   done: 'Búið',
-  dropHereOr: 'Dragðu skrár hingað eða %{browse}',
   dropHint: 'Dragðu skrárnar þínar hingað',
   dropPasteBoth: 'Slepptu skrám hérna, límdu (paste) eða %{browse}',
   dropPasteFiles: 'Slepptu skrám hérna, límdu (paste) eða %{browse}',
