@@ -1,4 +1,4 @@
-const oAuthState = require('../helpers/oauth-state')
+import * as oAuthState from '../helpers/oauth-state.js'
 
 /**
  * Derived from `cors` npm package.
@@ -82,7 +82,7 @@ function getClientOrigin(base64EncodedState) {
  * @param {object} req
  * @param {object} res
  */
-module.exports = function connect(req, res, next) {
+export default function connect(req, res, next) {
   const stateObj = oAuthState.generateState()
 
   if (req.companion.options.server.oauthDomain) {
@@ -116,4 +116,5 @@ module.exports = function connect(req, res, next) {
   }
   encodeStateAndRedirect(req, res, stateObj)
 }
-module.exports.isOriginAllowed = isOriginAllowed
+
+export { isOriginAllowed }

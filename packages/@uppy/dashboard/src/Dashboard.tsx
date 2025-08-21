@@ -10,15 +10,10 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import Informer from '@uppy/informer'
 import { defaultPickerIcon } from '@uppy/provider-views'
-import StatusBar from '@uppy/status-bar'
-import type StatusBarLocale from '@uppy/status-bar/lib/locale.js'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
-import findAllDOMElements from '@uppy/utils/lib/findAllDOMElements'
-import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-import toArray from '@uppy/utils/lib/toArray'
+import type { LocaleStrings } from '@uppy/utils'
+import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/utils'
 import { nanoid } from 'nanoid/non-secure'
 import type { ComponentChild, VNode } from 'preact'
 import type { TargetedEvent } from 'preact/compat'
@@ -160,7 +155,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   showLinkToFileUploadResult?: boolean
   showNativePhotoCameraButton?: boolean
   showNativeVideoCameraButton?: boolean
-  showProgressDetails?: boolean
+  hideProgressDetails?: boolean
   showRemoveButtonAfterComplete?: boolean
   showSelectedFiles?: boolean
   singleFileFullScreen?: boolean
@@ -170,7 +165,7 @@ interface DashboardMiscOptions<M extends Meta, B extends Body>
   thumbnailWidth?: number
   trigger?: string | Element | null
   waitForThumbnailsBeforeUpload?: boolean
-  locale?: LocaleStrings<typeof locale> & LocaleStrings<typeof StatusBarLocale>
+  locale?: LocaleStrings<typeof locale>
 }
 
 export type DashboardOptions<
@@ -187,7 +182,7 @@ const defaultOptions = {
   waitForThumbnailsBeforeUpload: false,
   defaultPickerIcon,
   showLinkToFileUploadResult: false,
-  showProgressDetails: false,
+  hideProgressDetails: false,
   hideUploadButton: false,
   hideCancelButton: false,
   hideRetryButton: false,
@@ -1239,9 +1234,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       showLinkToFileUploadResult: this.opts.showLinkToFileUploadResult,
       fileManagerSelectionType: this.opts.fileManagerSelectionType,
       proudlyDisplayPoweredByUppy: this.opts.proudlyDisplayPoweredByUppy,
-      hideCancelButton: this.opts.hideCancelButton,
-      hideRetryButton: this.opts.hideRetryButton,
-      hidePauseResumeButton: this.opts.hidePauseResumeButton,
       showRemoveButtonAfterComplete: this.opts.showRemoveButtonAfterComplete,
       containerWidth: pluginState.containerWidth,
       containerHeight: pluginState.containerHeight,
@@ -1263,6 +1255,17 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       handleDragOver: this.handleDragOver,
       handleDragLeave: this.handleDragLeave,
       handleDrop: this.handleDrop,
+      // informer props
+      disableInformer: this.opts.disableInformer,
+      // status-bar props
+      disableStatusBar: this.opts.disableStatusBar,
+      hideProgressDetails: this.opts.hideProgressDetails,
+      hideUploadButton: this.opts.hideUploadButton,
+      hideRetryButton: this.opts.hideRetryButton,
+      hidePauseResumeButton: this.opts.hidePauseResumeButton,
+      hideCancelButton: this.opts.hideCancelButton,
+      hideProgressAfterFinish: this.opts.hideProgressAfterFinish,
+      doneButtonHandler: this.opts.doneButtonHandler,
     })
   }
 
@@ -1300,29 +1303,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  #getStatusBarOpts() {
-    const {
-      hideUploadButton,
-      hideRetryButton,
-      hidePauseResumeButton,
-      hideCancelButton,
-      showProgressDetails,
-      hideProgressAfterFinish,
-      locale: l,
-      doneButtonHandler,
-    } = this.opts
-    return {
-      hideUploadButton,
-      hideRetryButton,
-      hidePauseResumeButton,
-      hideCancelButton,
-      showProgressDetails,
-      hideAfterFinish: hideProgressAfterFinish,
-      locale: l,
-      doneButtonHandler,
-    }
-  }
-
   #getThumbnailGeneratorOpts() {
     const {
       thumbnailWidth,
@@ -1340,33 +1320,15 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  #getInformerOpts() {
-    return {
-      // currently no options
-    }
-  }
-
   setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
-    this.uppy
-      .getPlugin(this.#getStatusBarId())
-      ?.setOptions(this.#getStatusBarOpts())
-
     this.uppy
       .getPlugin(this.#getThumbnailGeneratorId())
       ?.setOptions(this.#getThumbnailGeneratorOpts())
   }
 
-  #getStatusBarId() {
-    return `${this.id}:StatusBar`
-  }
-
   #getThumbnailGeneratorId() {
     return `${this.id}:ThumbnailGenerator`
-  }
-
-  #getInformerId() {
-    return `${this.id}:Informer`
   }
 
   install = (): void => {
@@ -1409,22 +1371,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       this.mount(target, this)
     }
 
-    if (!this.opts.disableStatusBar) {
-      this.uppy.use(StatusBar, {
-        id: this.#getStatusBarId(),
-        target: this,
-        ...this.#getStatusBarOpts(),
-      })
-    }
-
-    if (!this.opts.disableInformer) {
-      this.uppy.use(Informer, {
-        id: this.#getInformerId(),
-        target: this,
-        ...this.#getInformerOpts(),
-      })
-    }
-
     if (!this.opts.disableThumbnailGenerator) {
       this.uppy.use(ThumbnailGenerator, {
         id: this.#getThumbnailGeneratorId(),
@@ -1456,18 +1402,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   uninstall = (): void => {
-    if (!this.opts.disableInformer) {
-      const informer = this.uppy.getPlugin(`${this.id}:Informer`)
-      // Checking if this plugin exists, in case it was removed by uppy-core
-      // before the Dashboard was.
-      if (informer) this.uppy.removePlugin(informer)
-    }
-
-    if (!this.opts.disableStatusBar) {
-      const statusBar = this.uppy.getPlugin(`${this.id}:StatusBar`)
-      if (statusBar) this.uppy.removePlugin(statusBar)
-    }
-
     if (!this.opts.disableThumbnailGenerator) {
       const thumbnail = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
       if (thumbnail) this.uppy.removePlugin(thumbnail)

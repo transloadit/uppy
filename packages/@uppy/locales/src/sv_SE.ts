@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const sv_SE: Locale<0 | 1> = {
   strings: {},
@@ -43,7 +43,6 @@ sv_SE.strings = {
   browseFolders: 'bläddra mappar',
   cancel: 'Avbryt',
   cancelUpload: 'Avbryt uppladdning',
-  chooseFiles: 'Välj filer',
   closeModal: 'Stäng fönster',
   companionError: 'Anslutning till Companion misslyckades',
   companionUnauthorizeHint:
@@ -65,7 +64,6 @@ sv_SE.strings = {
   discardMediaFile: 'Kasta mediafil',
   discardRecordedFile: 'Kasta inspelad fil',
   done: 'Klart',
-  dropHereOr: 'Släpp filer här eller %{browse}',
   dropHint: 'Släpp dina filer här',
   dropPasteBoth: 'Släpp filer här, %{browseFiles} eller %{browseFolders}',
   dropPasteFiles: 'Släpp filer här eller %{browseFiles}',

@@ -4,6 +4,7 @@
   "version": "4.8.4",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && yarn format",
     "format": "cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",

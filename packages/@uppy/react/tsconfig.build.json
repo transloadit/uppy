@@ -22,18 +22,6 @@
       "path": "../dashboard/tsconfig.build.json"
     },
     {
-      "path": "../drag-drop/tsconfig.build.json"
-    },
-    {
-      "path": "../file-input/tsconfig.build.json"
-    },
-    {
-      "path": "../progress-bar/tsconfig.build.json"
-    },
-    {
-      "path": "../status-bar/tsconfig.build.json"
-    },
-    {
       "path": "../screen-capture/tsconfig.build.json"
     },
     {

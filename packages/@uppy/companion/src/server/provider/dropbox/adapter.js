@@ -1,5 +1,5 @@
-const mime = require('mime-types')
-const querystring = require('node:querystring')
+import querystring from 'node:querystring'
+import mime from 'mime-types'
 
 const isFolder = (item) => {
   return item['.tag'] === 'folder'
@@ -49,7 +49,7 @@ const getNextPagePath = (data) => {
   return `?${querystring.stringify(query)}`
 }
 
-module.exports = (res, email, buildURL) => {
+const adaptData = (res, email, buildURL) => {
   const items = getItemSubList(res).map((item) => ({
     isFolder: isFolder(item),
     icon: getItemIcon(item),
@@ -69,3 +69,5 @@ module.exports = (res, email, buildURL) => {
     nextPagePath: getNextPagePath(res),
   }
 }
+
+export default adaptData

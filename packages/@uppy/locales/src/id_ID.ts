@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const id_ID: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ id_ID.strings = {
   browseFiles: 'Telusuri',
   cancel: 'Batal',
   cancelUpload: 'Batalkan pengungahan',
-  chooseFiles: 'Pilih berkas',
   closeModal: 'Tutup Modal',
   companionError: 'Koneksi ke Companion gagal',
   complete: 'Komplit',
@@ -40,7 +39,6 @@ id_ID.strings = {
     'Jendela Pengunggah Berkas (Tekan escape untuk menutup)',
   dataUploadedOfTotal: '%{complete} dari %{total}',
   done: 'Selesai',
-  dropHereOr: 'Letakkan berkas di sini atau %{browse}',
   dropHint: 'Letakkan berkas Anda di sini',
   dropPasteBoth: 'Letakkan berkas di sini, tempelkan atau %{browse}',
   dropPasteFiles: 'Letakkan berkas di sini, tempelkan atau %{browse}',

@@ -34,6 +34,12 @@
     "dist",
     "CHANGELOG.md"
   ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./css/style.css": "./dist/style.css",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
     "@uppy/store-default": "workspace:^",

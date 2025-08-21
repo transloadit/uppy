@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build",
@@ -27,6 +28,10 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
   },
   "files": [
     "src",

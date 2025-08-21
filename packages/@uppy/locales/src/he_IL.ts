@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const he_IL: Locale<0 | 1> = {
   strings: {},
@@ -24,7 +24,6 @@ he_IL.strings = {
   browseFiles: 'בחר',
   cancel: 'ביטול',
   cancelUpload: 'בטל העלאה',
-  chooseFiles: 'בחר קבצים',
   closeModal: 'חלון',
   companionError: 'הזדהות מול השירות נכשלה',
   companionUnauthorizeHint:
@@ -40,7 +39,6 @@ he_IL.strings = {
   dashboardWindowTitle: 'חלון העלאת קבצים (לחץ escape לסגירה)',
   dataUploadedOfTotal: '%{complete} מתוך %{total}',
   done: 'סיים',
-  dropHereOr: 'גרור קבצים לכאן או %{browse}',
   dropHint: 'גרור קבצים לכאן',
   dropPasteBoth: 'גרור לכאן קבצים, הדבק או %{browse}',
   dropPasteFiles: 'גרור לכאן קבצים, הדבק או %{browse}',

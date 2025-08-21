@@ -1,7 +1,7 @@
-const tokenService = require('../helpers/jwt')
-const logger = require('../logger')
+import * as tokenService from '../helpers/jwt.js'
+import logger from '../logger.js'
 
-function preauth(req, res) {
+export default function preauth(req, res) {
   if (!req.body || !req.body.params) {
     logger.info('invalid request data received', 'preauth.bad')
     return res.sendStatus(400)
@@ -19,5 +19,3 @@ function preauth(req, res) {
   )
   return res.json({ token: preAuthToken })
 }
-
-module.exports = preauth

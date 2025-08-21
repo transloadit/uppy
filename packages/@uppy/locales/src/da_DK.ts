@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const da_DK: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ da_DK.strings = {
   browseFiles: 'gennemse',
   cancel: 'Annuller',
   cancelUpload: 'Annuller upload',
-  chooseFiles: 'Vælg filer',
   closeModal: 'Luk Modal',
   companionError: 'Forbindelse til Companion fejlede',
   complete: 'Afsluttet',
@@ -39,7 +38,6 @@ da_DK.strings = {
   dashboardWindowTitle: 'Fil Uploader Vindue (Tryk escape for at lukke)',
   dataUploadedOfTotal: '%{complete} af %{total}',
   done: 'Færdig',
-  dropHereOr: 'Træk filer her eller %{browse}',
   dropHint: 'Træk dine filer her',
   dropPasteBoth: 'Træk filer her, sæt ind eller %{browse}',
   dropPasteFiles: 'Træk filer her, sæt ind eller %{browse}',

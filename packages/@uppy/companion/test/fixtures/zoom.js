@@ -1,8 +1,7 @@
-const nock = require('nock')
+import nock from 'nock'
+import { getBasicAuthHeader } from '../../src/server/helpers/utils.js'
 
-const { getBasicAuthHeader } = require('../../src/server/helpers/utils')
-
-module.exports.expects = {
+export const expects = {
   listPath: 'DUMMY-UUID%3D%3D',
   itemName:
     'DUMMY TOPIC - shared screen with speaker view (2020-05-29, 13:23).mp4',
@@ -17,7 +16,7 @@ module.exports.expects = {
   remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN',
 }
 
-module.exports.nockZoomRecordings = ({ times = 1 } = {}) => {
+export const nockZoomRecordings = ({ times = 1 } = {}) => {
   nock('https://zoom.us')
     .get('/v2/meetings/DUMMY-UUID%3D%3D/recordings')
     .times(times)
@@ -51,12 +50,11 @@ module.exports.nockZoomRecordings = ({ times = 1 } = {}) => {
     })
 }
 
-module.exports.nockZoomRevoke = ({ key, secret }) => {
+export const nockZoomRevoke = ({ key, secret }) => {
   nock('https://zoom.us')
     .post('/oauth/revoke?token=token+value')
     .reply(function () {
       const { headers } = this.req
-
       const expected = getBasicAuthHeader(key, secret)
       const success = headers.authorization === expected
       return success ? [200, { status: 'success' }] : [400]

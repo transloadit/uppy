@@ -1,4 +1,4 @@
-const moment = require('moment-timezone')
+import moment from 'moment-timezone'
 
 const MIMETYPES = {
   MP4: 'video/mp4',
@@ -109,7 +109,7 @@ const getItemTopic = (item) => {
   return item.topic
 }
 
-exports.adaptData = (userResponse, results) => {
+const adaptData = (userResponse, results) => {
   if (!results) {
     return { items: [] }
   }
@@ -162,3 +162,5 @@ exports.adaptData = (userResponse, results) => {
   })
   return data
 }
+
+export default adaptData

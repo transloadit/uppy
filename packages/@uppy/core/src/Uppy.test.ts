@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BasePlugin, {
   type DefinePluginOpts,
@@ -1770,6 +1770,7 @@ describe('src/Core', () => {
           // @ts-ignore
           data: new File([sampleImage], { type: 'image/png' }),
         })
+        throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err.message).toEqual('You can only upload: image/jpeg')
@@ -1787,6 +1788,7 @@ describe('src/Core', () => {
           // @ts-ignore
           data: new File([sampleImage], { type: 'image/png' }),
         })
+        throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err.message).toEqual(
@@ -2286,22 +2288,6 @@ describe('src/Core', () => {
         )
         expect(core.getState().info[0].message).toEqual(
           'You can only upload: image/gif, image/png',
-        )
-      }
-    })
-
-    it('should throw if allowedFileTypes is not an array', () => {
-      try {
-        const core = new Core({
-          restrictions: {
-            // @ts-ignore
-            allowedFileTypes: 'image/gif',
-          },
-        })
-        core.log('hi')
-      } catch (err) {
-        expect(err).toMatchObject(
-          new Error('`restrictions.allowedFileTypes` must be an array'),
         )
       }
     })

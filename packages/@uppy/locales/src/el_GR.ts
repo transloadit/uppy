@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const el_GR: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ el_GR.strings = {
   browseFiles: 'Περιήγηση',
   cancel: 'Άκυρο',
   cancelUpload: 'Ακύρωση μεταφόρτωσης',
-  chooseFiles: 'Επιλέξτε αρχεία',
   closeModal: 'Κλείσιμο παραθύρου',
   companionError: 'Η σύνδεση με το Companion απέτυχε',
   complete: 'Ολοκληρώθηκε',
@@ -40,7 +39,6 @@ el_GR.strings = {
     'Παράθυρο μεταφόρτωσης αρχείων (Πατήστε escape για να κλείσει)',
   dataUploadedOfTotal: '%{complete} από %{total}',
   done: 'Τέλος',
-  dropHereOr: 'Σύρετε τα αρχεία εδώ ή %{browse}',
   dropHint: 'Σύρετε τα αρχεία σας εδώ',
   dropPasteBoth: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
   dropPasteFiles: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',

@@ -1,6 +1,4 @@
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
-
-import type { Body, InternalMetadata, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Body, InternalMetadata, LocaleStrings, Meta } from '@uppy/utils'
 import { expectTypeOf, test } from 'vitest'
 import UIPlugin, { type UIPluginOptions } from './UIPlugin.js'
 import Uppy, { type UnknownPlugin } from './Uppy.js'

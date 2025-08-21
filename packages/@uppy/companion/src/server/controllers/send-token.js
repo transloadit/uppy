@@ -1,7 +1,6 @@
-const serialize = require('serialize-javascript')
-const { isOriginAllowed } = require('./connect')
-
-const oAuthState = require('../helpers/oauth-state')
+import serialize from 'serialize-javascript'
+import * as oAuthState from '../helpers/oauth-state.js'
+import { isOriginAllowed } from './connect.js'
 
 /**
  *
@@ -51,7 +50,7 @@ const htmlContent = (token, origin) => {
  * @param {import('express').Response} res
  * @param {import('express').NextFunction} next
  */
-module.exports = function sendToken(req, res, next) {
+export default function sendToken(req, res, next) {
   // @ts-expect-error untyped
   const { companion } = req
   const uppyAuthToken = companion.authToken

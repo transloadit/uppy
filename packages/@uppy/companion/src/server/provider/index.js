@@ -1,21 +1,21 @@
 /**
  * @module provider
  */
-const dropbox = require('./dropbox')
-const box = require('./box')
-const { Drive } = require('./google/drive')
-const instagram = require('./instagram/graph')
-const facebook = require('./facebook')
-const onedrive = require('./onedrive')
-const unsplash = require('./unsplash')
-const webdav = require('./webdav')
-const zoom = require('./zoom')
-const { getURLBuilder, getRedirectPath } = require('../helpers/utils')
-const logger = require('../logger')
-const { getCredentialsResolver } = require('./credentials')
-const Provider = require('./Provider')
 
-const { isOAuthProvider } = Provider
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
+import * as logger from '../logger.js'
+import box from './box/index.js'
+import { getCredentialsResolver } from './credentials.js'
+import dropbox from './dropbox/index.js'
+import facebook from './facebook/index.js'
+import { Drive } from './google/drive/index.js'
+import instagram from './instagram/graph/index.js'
+import onedrive from './onedrive/index.js'
+// biome-ignore lint/correctness/noUnusedImports: It's used as a type
+import Provider, { isOAuthProvider } from './Provider.js'
+import unsplash from './unsplash/index.js'
+import webdav from './webdav/index.js'
+import zoom from './zoom/index.js'
 
 /**
  *
@@ -31,7 +31,7 @@ const validOptions = (options) => {
  *
  * @param {Record<string, typeof Provider>} providers
  */
-module.exports.getProviderMiddleware = (providers, grantConfig) => {
+export function getProviderMiddleware(providers, grantConfig) {
   /**
    *
    * @param {object} req
@@ -81,7 +81,7 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
 /**
  * @returns {Record<string, typeof Provider>}
  */
-module.exports.getDefaultProviders = () => {
+export function getDefaultProviders() {
   const providers = {
     dropbox,
     box,
@@ -105,11 +105,7 @@ module.exports.getDefaultProviders = () => {
  * @param {Record<string, typeof Provider>} providers
  * @param {object} grantConfig
  */
-module.exports.addCustomProviders = (
-  customProviders,
-  providers,
-  grantConfig,
-) => {
+export function addCustomProviders(customProviders, providers, grantConfig) {
   Object.keys(customProviders).forEach((providerName) => {
     const customProvider = customProviders[providerName]
 
@@ -135,11 +131,11 @@ module.exports.addCustomProviders = (
  * @param {object} grantConfig
  * @param {(a: string) => string} getOauthProvider
  */
-module.exports.addProviderOptions = (
+export function addProviderOptions(
   companionOptions,
   grantConfig,
   getOauthProvider,
-) => {
+) {
   const { server, providerOptions } = companionOptions
   if (!validOptions({ server })) {
     logger.warn(
@@ -173,7 +169,7 @@ module.exports.addProviderOptions = (
         ]
       }
 
-      const provider = exports.getDefaultProviders()[providerName]
+      const provider = getDefaultProviders()[providerName]
       Object.assign(grantConfig[oauthProvider], provider.getExtraGrantConfig())
 
       // override grant.js redirect uri with companion's custom redirect url

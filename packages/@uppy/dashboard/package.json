@@ -6,6 +6,9 @@
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
@@ -34,11 +37,15 @@
     "dist",
     "CHANGELOG.md"
   ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
-    "@uppy/informer": "workspace:^",
     "@uppy/provider-views": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
@@ -50,7 +57,6 @@
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/google-drive": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "@vitest/browser": "^3.2.4",

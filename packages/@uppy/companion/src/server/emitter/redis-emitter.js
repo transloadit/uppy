@@ -1,7 +1,6 @@
-const { EventEmitter } = require('node:events')
-const { default: safeStringify } = require('fast-safe-stringify')
-
-const logger = require('../logger')
+import { EventEmitter } from 'node:events'
+import safeStringify from 'fast-safe-stringify'
+import * as logger from '../logger.js'
 
 function replacer(key, value) {
   // Remove the circular structure and internal ones
@@ -17,7 +16,7 @@ function replacer(key, value) {
  * @param {string} redisPubSubScope
  * @returns
  */
-module.exports = (redisClient, redisPubSubScope) => {
+export default function redisEmitter(redisClient, redisPubSubScope) {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
   const getPrefixedEventName = (eventName) => `${prefix}${eventName}`
 
@@ -176,7 +175,7 @@ module.exports = (redisClient, redisPubSubScope) => {
     await runWhenConnected(async ({ publisher }) =>
       publisher.publish(
         getPrefixedEventName(eventName),
-        safeStringify(args, replacer),
+        safeStringify.default(args, replacer),
       ),
     )
   }

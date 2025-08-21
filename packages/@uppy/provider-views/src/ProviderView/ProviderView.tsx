@@ -8,11 +8,10 @@ import type {
   PartialTreeId,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
+  ValidateableFile,
 } from '@uppy/core'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { CompanionFile, I18n } from '@uppy/utils'
+import { remoteFileObjToLocal } from '@uppy/utils'
 import classNames from 'classnames'
 import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }

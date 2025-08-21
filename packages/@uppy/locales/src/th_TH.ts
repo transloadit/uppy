@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const th_TH: Locale<0 | 1> = {
   strings: {},
@@ -32,7 +32,6 @@ th_TH.strings = {
   browseFolders: 'เรียกดูทั้งโฟลเดอร์',
   cancel: 'ยกเลิก',
   cancelUpload: 'ยกเลิกการอัปโหลด',
-  chooseFiles: 'เลือกไฟล์',
   closeModal: 'ปิดหน้าต่างนี้',
   companionError: 'การเชื่อมต่อกับ Companion ล้มเหลว',
   companionUnauthorizeHint: 'หากคุณต้องการลงชื่อออกจาก %{provider}, กรุณาไปที่ %{url}',
@@ -47,7 +46,6 @@ th_TH.strings = {
   dashboardWindowTitle: 'หน้าต่างอัพโหลดไฟล์ (กด escape เพื่อปิด)',
   dataUploadedOfTotal: '%{complete} จาก %{total}',
   done: 'เสร็จสิ้น',
-  dropHereOr: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',
   dropHint: 'ลากไฟล์มาวางที่นี่',
   dropPasteBoth: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',
   dropPasteFiles: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',

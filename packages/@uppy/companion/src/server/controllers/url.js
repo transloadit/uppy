@@ -1,11 +1,9 @@
-const express = require('express')
-
-const { startDownUpload } = require('../helpers/upload')
-const { downloadURL } = require('../download')
-const { validateURL } = require('../helpers/request')
-const { getURLMeta } = require('../helpers/request')
-const logger = require('../logger')
-const { respondWithError } = require('../provider/error')
+import express from 'express'
+import { downloadURL } from '../download.js'
+import { getURLMeta, validateURL } from '../helpers/request.js'
+import { startDownUpload } from '../helpers/upload.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
 
 /**
  * @callback downloadCallback
@@ -73,7 +71,7 @@ const get = async (req, res) => {
   }
 }
 
-module.exports = () =>
+export default () =>
   express
     .Router()
     .post('/meta', express.json(), meta)

@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "keywords": [
     "uppy",
     "uppy-plugin",
@@ -31,6 +34,11 @@
     "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css",
     "migrate": "node migrate.mjs",
     "typecheck": "tsc --build"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/styles.css",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@uppy/audio": "workspace:^",

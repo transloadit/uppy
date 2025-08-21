@@ -1,9 +1,7 @@
 import type { DefinePluginOpts, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
-import isObjectURL from '@uppy/utils/lib/isObjectURL'
-import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
+import { dataURItoBlob, isObjectURL, isPreviewSupported } from '@uppy/utils'
 // @ts-ignore untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
 import packageJson from '../package.json' with { type: 'json' }

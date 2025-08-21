@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const cs_CZ: Locale<0 | 1 | 2> = {
   strings: {},
@@ -55,7 +55,6 @@ cs_CZ.strings = {
   browseFolders: 'procházet složky',
   cancel: 'Zrušit',
   cancelUpload: 'Zrušit nahrávání',
-  chooseFiles: 'Vyberte soubory',
   closeModal: 'Zavřít dialog',
   companionError: 'Spojení s modulem Companion se nezdařilo',
   companionUnauthorizeHint:
@@ -85,7 +84,6 @@ cs_CZ.strings = {
   discardMediaFile: 'Zahodit mediální soubor',
   discardRecordedFile: 'Zahodit nahraný soubor',
   done: 'Dokončeno',
-  dropHereOr: 'Přetáhněte soubory sem nebo %{browse}',
   dropHint: 'Přetáhněte soubory sem',
   dropPasteBoth: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',
   dropPasteFiles: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',

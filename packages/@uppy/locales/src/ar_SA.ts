@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const ar_SA: Locale<0 | 1> = {
   strings: {},
@@ -23,7 +23,6 @@ ar_SA.strings = {
   browseFiles: 'تصفح',
   cancel: 'الغاء',
   cancelUpload: 'الغاء الدفع',
-  chooseFiles: 'اختار الملفات',
   closeModal: 'اغلاق الشكل',
   companionError: 'الربط مع Companion فشل',
   complete: ' اكتمل ',

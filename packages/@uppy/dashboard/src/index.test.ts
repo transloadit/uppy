@@ -1,6 +1,5 @@
 import Core, { type UIPlugin } from '@uppy/core'
 import GoogleDrivePlugin from '@uppy/google-drive'
-import StatusBarPlugin from '@uppy/status-bar'
 // @ts-ignore untyped
 import Url from '@uppy/url'
 // @ts-ignore untyped
@@ -20,17 +19,6 @@ describe('Dashboard', () => {
   afterAll(() => {
     // @ts-expect-error we're touching globals for the test
     delete globalThis.ResizeObserver
-  })
-
-  it('can safely be added together with the StatusBar without id conflicts', () => {
-    const core = new Core()
-    core.use(StatusBarPlugin)
-
-    expect(() => {
-      core.use(DashboardPlugin, { inline: false })
-    }).not.toThrow()
-
-    core.destroy()
   })
 
   it('works without any remote provider plugins', () => {
@@ -87,7 +75,7 @@ describe('Dashboard', () => {
       .targets as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below
-    expect(dashboardPlugins.length).toEqual(4)
+    expect(dashboardPlugins.length).toEqual(2)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Url')).toEqual(true)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(
       true,
@@ -107,7 +95,7 @@ describe('Dashboard', () => {
       .targets as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below
-    expect(dashboardPlugins.length).toEqual(3)
+    expect(dashboardPlugins.length).toEqual(1)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Url')).toEqual(true)
     expect(dashboardPlugins.some((plugin) => plugin.id === 'Webcam')).toEqual(
       false,

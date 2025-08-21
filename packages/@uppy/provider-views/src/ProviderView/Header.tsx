@@ -1,5 +1,5 @@
 import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'
 import type { h } from 'preact'
 import Breadcrumbs from '../Breadcrumbs.js'

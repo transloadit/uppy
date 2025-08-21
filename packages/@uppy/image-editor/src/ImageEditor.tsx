@@ -7,7 +7,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils/lib/Translator'
+import type { LocaleStrings } from '@uppy/utils'
 import type Cropper from 'cropperjs'
 import packageJson from '../package.json' with { type: 'json' }
 import Editor from './Editor.js'

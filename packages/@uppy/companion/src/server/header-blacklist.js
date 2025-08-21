@@ -1,4 +1,4 @@
-const logger = require('./logger')
+import * as logger from './logger.js'
 
 /**
  * Forbidden header names.
@@ -49,7 +49,7 @@ const isForbiddenHeader = (header) => {
   return forbidden
 }
 
-module.exports = (headers) => {
+export default function headerBlacklist(headers) {
   if (
     headers == null ||
     typeof headers !== 'object' ||

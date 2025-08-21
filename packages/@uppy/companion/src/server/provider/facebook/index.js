@@ -1,13 +1,10 @@
-const crypto = require('node:crypto')
-
-const Provider = require('../Provider')
-const logger = require('../../logger')
-const { adaptData, sortImages } = require('./adapter')
-const { withProviderErrorHandling } = require('../providerErrors')
-const { prepareStream } = require('../../helpers/utils')
-const { HttpError } = require('../../helpers/utils')
-
-const got = require('../../got')
+import crypto from 'node:crypto'
+import got from 'got'
+import { HttpError, prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import { adaptData, sortImages } from './adapter.js'
 
 async function runRequestBatch({ secret, token, requests }) {
   // https://developers.facebook.com/docs/facebook-login/security/#appsecret
@@ -26,7 +23,7 @@ async function runRequestBatch({ secret, token, requests }) {
     batch: JSON.stringify(requests),
   }
 
-  const responsesRaw = await (await got)
+  const responsesRaw = await got
     .post('https://graph.facebook.com', { form })
     .json()
 
@@ -65,12 +62,16 @@ async function getMediaUrl({ secret, token, id }) {
 /**
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
-class Facebook extends Provider {
+export default class Facebook extends Provider {
   static get oauthProvider() {
     return 'facebook'
   }
 
-  async list({ directory, token, query = { cursor: null } }) {
+  async list({
+    directory,
+    providerUserSession: { accessToken: token },
+    query = { cursor: null },
+  }) {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
       const qs = { fields: 'name,cover_photo,created_time,type' }
 
@@ -100,12 +101,12 @@ class Facebook extends Provider {
     })
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.facebook.download.error',
       async () => {
         const url = await getMediaUrl({ secret: this.secret, token, id })
-        const stream = (await got).stream.get(url, { responseType: 'json' })
+        const stream = got.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
       },
@@ -121,7 +122,7 @@ class Facebook extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async logout({ token }) {
+  async logout({ providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
       'provider.facebook.logout.error',
       async () => {
@@ -147,5 +148,3 @@ class Facebook extends Provider {
     })
   }
 }
-
-module.exports = Facebook

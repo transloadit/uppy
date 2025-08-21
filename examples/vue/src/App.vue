@@ -84,4 +84,4 @@ const uppy = computed(() =>
 )
 </script>
 
-<style src="@uppy/vue/dist/styles.css"></style>
+<style src="@uppy/vue/css/style.css"></style>

@@ -1,15 +1,14 @@
-const cors = require('cors')
-const promBundle = require('express-prom-bundle')
+import corsImport from 'cors'
+import promBundle from 'express-prom-bundle'
 
-// @ts-ignore
-const { version } = require('../../package.json')
-const tokenService = require('./helpers/jwt')
-const logger = require('./logger')
-const getS3Client = require('./s3-client')
-const { getURLBuilder } = require('./helpers/utils')
-const { isOAuthProvider } = require('./provider/Provider')
+import packageJson from '../../package.json' with { type: 'json' }
+import * as tokenService from './helpers/jwt.js'
+import { getURLBuilder } from './helpers/utils.js'
+import * as logger from './logger.js'
+import { isOAuthProvider } from './provider/Provider.js'
+import getS3Client from './s3-client.js'
 
-exports.hasSessionAndProvider = (req, res, next) => {
+export const hasSessionAndProvider = (req, res, next) => {
   if (!req.session) {
     logger.debug(
       'No session attached to req object. Exiting dispatcher.',
@@ -40,7 +39,7 @@ const isSimpleAuthProviderReq = (req) =>
  * Middleware can be used to verify that the current request is to an OAuth provider
  * This is because not all requests are supported by non-oauth providers (formerly known as SearchProviders)
  */
-exports.hasOAuthProvider = (req, res, next) => {
+export const hasOAuthProvider = (req, res, next) => {
   if (!isOAuthProviderReq(req)) {
     logger.debug('Provider does not support OAuth.', null, req.id)
     return res.sendStatus(400)
@@ -49,7 +48,7 @@ exports.hasOAuthProvider = (req, res, next) => {
   return next()
 }
 
-exports.hasSimpleAuthProvider = (req, res, next) => {
+export const hasSimpleAuthProvider = (req, res, next) => {
   if (!isSimpleAuthProviderReq(req)) {
     logger.debug('Provider does not support simple auth.', null, req.id)
     return res.sendStatus(400)
@@ -58,7 +57,7 @@ exports.hasSimpleAuthProvider = (req, res, next) => {
   return next()
 }
 
-exports.hasBody = (req, res, next) => {
+export const hasBody = (req, res, next) => {
   if (!req.body) {
     logger.debug(
       'No body attached to req object. Exiting dispatcher.',
@@ -71,7 +70,7 @@ exports.hasBody = (req, res, next) => {
   return next()
 }
 
-exports.hasSearchQuery = (req, res, next) => {
+export const hasSearchQuery = (req, res, next) => {
   if (typeof req.query.q !== 'string') {
     logger.debug(
       'search request has no search query',
@@ -84,7 +83,7 @@ exports.hasSearchQuery = (req, res, next) => {
   return next()
 }
 
-exports.verifyToken = (req, res, next) => {
+export const verifyToken = (req, res, next) => {
   if (isOAuthProviderReq(req) || isSimpleAuthProviderReq(req)) {
     // For OAuth / simple auth provider, we find the encrypted auth token from the header:
     const token = req.companion.authToken
@@ -133,7 +132,7 @@ exports.verifyToken = (req, res, next) => {
 }
 
 // does not fail if token is invalid
-exports.gentleVerifyToken = (req, res, next) => {
+export const gentleVerifyToken = (req, res, next) => {
   const { providerName } = req.params
   if (req.companion.authToken) {
     try {
@@ -150,13 +149,13 @@ exports.gentleVerifyToken = (req, res, next) => {
   next()
 }
 
-exports.cookieAuthToken = (req, res, next) => {
+export const cookieAuthToken = (req, res, next) => {
   req.companion.authToken =
     req.cookies[`uppyAuthToken--${req.companion.providerClass.oauthProvider}`]
   return next()
 }
 
-exports.cors =
+export const cors =
   (options = {}) =>
   (req, res, next) => {
     // HTTP headers are not case sensitive, and express always handles them in lower case, so that's why we lower case them.
@@ -207,7 +206,7 @@ exports.cors =
     const { corsOrigins: origin = true } = options
 
     // Because we need to merge with existing headers, we need to call cors inside our own middleware
-    return cors({
+    return corsImport({
       credentials: true,
       origin,
       methods: Array.from(allowMethodsSet),
@@ -216,7 +215,7 @@ exports.cors =
     })(req, res, next)
   }
 
-exports.metrics = ({ path = undefined } = {}) => {
+export const metrics = ({ path = undefined } = {}) => {
   const metricsMiddleware = promBundle({
     includeMethod: true,
     metricsPath: path ? `${path}/metrics` : undefined,
@@ -231,7 +230,7 @@ exports.metrics = ({ path = undefined } = {}) => {
     name: 'companion_version',
     help: 'npm version as an integer',
   })
-  const numberVersion = Number(version.replace(/\D/g, ''))
+  const numberVersion = Number(packageJson.version.replace(/\D/g, ''))
   versionGauge.set(numberVersion)
   return metricsMiddleware
 }
@@ -240,7 +239,7 @@ exports.metrics = ({ path = undefined } = {}) => {
  *
  * @param {object} options
  */
-exports.getCompanionMiddleware = (options) => {
+export const getCompanionMiddleware = (options) => {
   /**
    * @param {object} req
    * @param {object} res

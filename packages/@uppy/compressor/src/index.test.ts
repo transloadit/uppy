@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import Core from '@uppy/core'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
+import { getFileNameAndExtension } from '@uppy/utils'
 import { describe, expect, it } from 'vitest'
 import CompressorPlugin from './index.js'
 
@@ -21,19 +21,19 @@ const sampleImage = fs.readFileSync(
 )
 
 const file1 = {
-  source: 'jest',
+  source: 'test',
   name: 'image-1.jpeg',
   type: 'image/jpeg',
   data: new File([sampleImage], 'image-1.jpeg', { type: 'image/jpeg' }),
 }
 const file2 = {
-  source: 'jest',
+  source: 'test',
   name: 'yolo',
   type: 'image/jpeg',
   data: new File([sampleImage], 'yolo', { type: 'image/jpeg' }),
 }
 const file3 = {
-  source: 'jest',
+  source: 'test',
   name: 'my.file.is.weird.png',
   type: 'image/png',
   data: new File([sampleImage], 'my.file.is.weird.png', { type: 'image/png' }),
