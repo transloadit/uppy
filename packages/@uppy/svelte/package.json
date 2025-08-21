@@ -35,7 +35,7 @@
     "build": "svelte-kit sync && svelte-package",
     "build:css": "cp ../components/dist/styles.css dist/styles.css",
     "prepublishOnly": "yarn run package",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
