@@ -2,7 +2,6 @@
 "@uppy/utils": major
 "@uppy/angular": patch
 "@uppy/google-photos-picker": patch
-"example-companion-custom-provider": patch
 "@uppy/google-drive-picker": patch
 "@uppy/thumbnail-generator": patch
 "@uppy/companion-client": patch
@@ -41,7 +40,6 @@
 "@uppy/url": patch
 "@uppy/vue": patch
 "uppy": patch
-"example-vue": patch
 ---
 
 Updated export maps for @uppy/utils: removed nested subpath exports; all utilities are now exported from the root index.js.
