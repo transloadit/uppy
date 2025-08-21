@@ -2,6 +2,7 @@
   "extends": "./tsconfig.shared",
   "compilerOptions": {
     "outDir": "./lib",
+    "rootDir": "./src",
     "noEmitOnError": true
   },
   "include": ["src/**/*"]
