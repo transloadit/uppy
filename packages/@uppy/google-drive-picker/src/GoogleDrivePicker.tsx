@@ -12,7 +12,6 @@ import {
 } from '@uppy/provider-views'
 import type { LocaleStrings } from '@uppy/utils'
 
-
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

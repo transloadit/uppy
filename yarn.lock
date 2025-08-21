@@ -9441,7 +9441,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/locales@workspace:packages/@uppy/locales":
+"@uppy/locales@workspace:^, @uppy/locales@workspace:packages/@uppy/locales":
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
@@ -23857,6 +23857,7 @@ __metadata:
     "@uppy/google-photos-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/instagram": "workspace:^"
+    "@uppy/locales": "workspace:^"
     "@uppy/onedrive": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/remote-sources": "workspace:^"

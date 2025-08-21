@@ -2,8 +2,7 @@ import type { Body, Meta, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import { emaFilter } from '@uppy/utils'
 import type { ComponentChild } from 'preact'
-import { Component, } from 'preact'
-import type { StatusBarOptions } from './StatusBarOptions.js'
+import { Component } from 'preact'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 
@@ -62,16 +61,6 @@ function getUploadingState(
   }
   return state
 }
-
-const defaultOptions = {
-  hideUploadButton: false,
-  hideRetryButton: false,
-  hidePauseResumeButton: false,
-  hideCancelButton: false,
-  hideProgressDetails: false,
-  hideAfterFinish: true,
-  doneButtonHandler: null,
-} satisfies StatusBarOptions
 
 export default class StatusBar<
   M extends Meta,

@@ -25,7 +25,7 @@ import throttle from 'lodash/throttle.js'
 // @ts-ignore untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
-import { h } from 'preact'
+import type { h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import type BasePlugin from './BasePlugin.js'
 import getFileName from './getFileName.js'

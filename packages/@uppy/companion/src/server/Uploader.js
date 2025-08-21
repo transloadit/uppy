@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { once } from 'node:events'
-import fs, { createReadStream, createWriteStream, ReadStream } from 'node:fs'
+import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import { pipeline } from 'node:stream/promises'

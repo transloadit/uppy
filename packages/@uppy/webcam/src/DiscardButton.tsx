@@ -1,6 +1,5 @@
 import type { I18n } from '@uppy/utils'
 
-
 interface DiscardButtonProps {
   onDiscard: () => void
   i18n: I18n

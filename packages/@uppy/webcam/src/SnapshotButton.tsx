@@ -1,5 +1,4 @@
 import type { I18n } from '@uppy/utils'
-import { h } from 'preact'
 import CameraIcon from './CameraIcon.js'
 
 interface SnapshotButtonProps {

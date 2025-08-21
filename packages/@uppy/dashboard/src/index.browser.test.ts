@@ -40,7 +40,7 @@ test('Upload, pause, and resume functionality', async () => {
   render('<div id="uppy"></div>')
 
   let uploadResolve: (() => void) | null = null
-  let uploadPromise = new Promise<void>((resolve) => {
+  const uploadPromise = new Promise<void>((resolve) => {
     uploadResolve = resolve
   })
 

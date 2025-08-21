@@ -39,12 +39,10 @@ en_US.strings = {
   authenticateWithTitle:
     'Please authenticate with %{pluginName} to select files',
   back: 'Back',
-  browse: 'Browse',
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
-  chooseFiles: 'Choose files',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -65,7 +63,6 @@ en_US.strings = {
   discardMediaFile: 'Discard Media',
   discardRecordedFile: 'Discard recorded file',
   done: 'Done',
-  dropHereOr: 'Drop here or %{browse}',
   dropHint: 'Drop your files here',
   dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
   dropPasteFiles: 'Drop files here or %{browseFiles}',
