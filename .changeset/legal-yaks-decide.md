@@ -23,7 +23,6 @@
 "@uppy/facebook": patch
 "@uppy/onedrive": patch
 "@uppy/unsplash": patch
-"angular": patch
 "@uppy/dropbox": patch
 "@uppy/locales": patch
 "@uppy/aws-s3": patch
