@@ -25,7 +25,6 @@ tr_TR.strings = {
   browseFiles: 'gözat',
   cancel: 'İptal',
   cancelUpload: 'Yüklemeyi İptal Et',
-  chooseFiles: 'Dosyaları seç',
   closeModal: 'Kapat',
   companionError: 'Bağlantı başarısız',
   complete: 'Yüklendi',

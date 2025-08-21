@@ -43,7 +43,6 @@ sv_SE.strings = {
   browseFolders: 'bläddra mappar',
   cancel: 'Avbryt',
   cancelUpload: 'Avbryt uppladdning',
-  chooseFiles: 'Välj filer',
   closeModal: 'Stäng fönster',
   companionError: 'Anslutning till Companion misslyckades',
   companionUnauthorizeHint:

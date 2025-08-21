@@ -25,7 +25,6 @@ ja_JP.strings = {
   browseFiles: '参照',
   cancel: 'キャンセル',
   cancelUpload: 'アップロードをキャンセル',
-  chooseFiles: 'ファイルを選択',
   closeModal: 'モーダルを閉じる',
   companionError: 'Companionとの接続に失敗しました',
   complete: '完了しました',

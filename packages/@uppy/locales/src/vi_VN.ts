@@ -39,7 +39,6 @@ vi_VN.strings = {
   browseFolders: 'Duyệt thư mục',
   cancel: 'Hủy',
   cancelUpload: 'Hủy tải lên',
-  chooseFiles: 'Chọn tệp',
   closeModal: 'Đóng cửa sổ',
   companionError: 'Kết nối thất bại',
   companionUnauthorizeHint:

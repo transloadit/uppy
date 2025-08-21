@@ -28,7 +28,6 @@ pl_PL.strings = {
   browseFiles: 'Przeglądaj pliki',
   cancel: 'Anuluj',
   cancelUpload: 'Anuluj przesyłanie',
-  chooseFiles: 'Wybierz pliki',
   closeModal: 'Zamknij',
   companionError: 'Połączenie z serwisem nie powiodło się',
   companionUnauthorizeHint:

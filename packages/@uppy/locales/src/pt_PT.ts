@@ -25,7 +25,6 @@ pt_PT.strings = {
   browseFiles: 'procure',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar envio de ficheiros',
-  chooseFiles: 'Selecionar ficheiros',
   closeModal: 'Fechar Modal',
   companionError: 'Falha na conexão com serviço',
   complete: 'Concluído',

@@ -34,7 +34,6 @@ es_MX.strings = {
   browseFolders: 'explorar carpetas',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
-  chooseFiles: 'Elegir archivos',
   closeModal: 'Cerrar ventana emergente',
   companionError: 'La conexión con Companion falló',
   companionUnauthorizeHint:

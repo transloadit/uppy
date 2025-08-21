@@ -33,7 +33,6 @@ sk_SK.strings = {
   browseFiles: 'vyberte',
   cancel: 'Zrušiť',
   cancelUpload: 'Zrušiť nahrávanie',
-  chooseFiles: 'Vyberte súbory',
   closeModal: 'Zavrieť okno',
   companionError: 'Spojenie s modulom Companion sa nepodarilo',
   companionUnauthorizeHint:

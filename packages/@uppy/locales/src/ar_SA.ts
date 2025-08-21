@@ -23,7 +23,6 @@ ar_SA.strings = {
   browseFiles: 'تصفح',
   cancel: 'الغاء',
   cancelUpload: 'الغاء الدفع',
-  chooseFiles: 'اختار الملفات',
   closeModal: 'اغلاق الشكل',
   companionError: 'الربط مع Companion فشل',
   complete: ' اكتمل ',

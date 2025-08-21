@@ -31,7 +31,6 @@ zh_TW.strings = {
   browseFolders: '瀏覽資料夾',
   cancel: '取消',
   cancelUpload: '取消上傳',
-  chooseFiles: '選擇檔案',
   closeModal: '關閉視窗',
   companionError: '與 Companion 的連接失敗',
   companionUnauthorizeHint: '若要取消 %{provider} 帳號認證，請前往 %{url}',

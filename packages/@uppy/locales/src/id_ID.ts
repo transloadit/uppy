@@ -25,7 +25,6 @@ id_ID.strings = {
   browseFiles: 'Telusuri',
   cancel: 'Batal',
   cancelUpload: 'Batalkan pengungahan',
-  chooseFiles: 'Pilih berkas',
   closeModal: 'Tutup Modal',
   companionError: 'Koneksi ke Companion gagal',
   complete: 'Komplit',

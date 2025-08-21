@@ -44,7 +44,6 @@ uk_UA.strings = {
   browseFolders: 'огляд тек',
   cancel: 'Скасувати',
   cancelUpload: 'Скасувати завантаження',
-  chooseFiles: 'Обрати файли',
   closeModal: 'Закрити вікно',
   companionError: "Не вдалося під'єднатися до Companion",
   companionUnauthorizeHint:

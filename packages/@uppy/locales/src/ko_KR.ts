@@ -22,7 +22,6 @@ ko_KR.strings = {
   browseFolders: '폴더 선택',
   cancel: '취소',
   cancelUpload: '업로드 취소',
-  chooseFiles: '파일 선택',
   closeModal: '창 닫기',
   companionError: '연결 실패',
   companionUnauthorizeHint:

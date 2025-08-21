@@ -38,7 +38,6 @@ uz_UZ.strings = {
   browseFolders: "papkalarni ko'rib chiqish",
   cancel: 'Bekor qilish',
   cancelUpload: 'Yuklashni bekor qilish',
-  chooseFiles: 'Fayllarni tanlang',
   closeModal: 'Modalni yoping',
   companionError: 'Companiya bilan ulanish amalga oshmadi',
   companionUnauthorizeHint:

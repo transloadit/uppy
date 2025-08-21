@@ -43,7 +43,6 @@ fr_FR.strings = {
   browseFolders: 'naviguer dans les dossiers',
   cancel: 'Annuler',
   cancelUpload: 'Annuler le téléversement',
-  chooseFiles: 'Choisir des fichiers',
   closeModal: 'Fermer la fenêtre',
   companionError: 'Connexion à Companion a échoué',
   companionUnauthorizeHint:

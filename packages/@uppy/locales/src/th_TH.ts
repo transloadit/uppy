@@ -32,7 +32,6 @@ th_TH.strings = {
   browseFolders: 'เรียกดูทั้งโฟลเดอร์',
   cancel: 'ยกเลิก',
   cancelUpload: 'ยกเลิกการอัปโหลด',
-  chooseFiles: 'เลือกไฟล์',
   closeModal: 'ปิดหน้าต่างนี้',
   companionError: 'การเชื่อมต่อกับ Companion ล้มเหลว',
   companionUnauthorizeHint: 'หากคุณต้องการลงชื่อออกจาก %{provider}, กรุณาไปที่ %{url}',

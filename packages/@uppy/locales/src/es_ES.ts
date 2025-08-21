@@ -41,7 +41,6 @@ es_ES.strings = {
   browseFolders: 'Navegar por carpetas',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
-  chooseFiles: 'Seleccionar archivos',
   closeModal: 'Cerrar ventana',
   companionError: 'Error en la conexión con Companion',
   companionUnauthorizeHint:

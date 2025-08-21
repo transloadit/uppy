@@ -41,7 +41,6 @@ ms_MY.strings = {
   browseFolders: 'semak imbas folder',
   cancel: 'Batal',
   cancelUpload: 'Batal muat naik',
-  chooseFiles: 'Pilih fail',
   closeModal: 'Tutup Modal',
   companionError: 'Sambungan ke Companion gagal',
   companionUnauthorizeHint:

@@ -24,7 +24,6 @@ he_IL.strings = {
   browseFiles: 'בחר',
   cancel: 'ביטול',
   cancelUpload: 'בטל העלאה',
-  chooseFiles: 'בחר קבצים',
   closeModal: 'חלון',
   companionError: 'הזדהות מול השירות נכשלה',
   companionUnauthorizeHint:

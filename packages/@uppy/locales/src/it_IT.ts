@@ -24,7 +24,6 @@ it_IT.strings = {
   browseFiles: 'sfoglia',
   cancel: 'Annulla',
   cancelUpload: 'Annulla upload',
-  chooseFiles: 'Scegli i file',
   closeModal: 'Chiudi modale',
   companionError: 'Connessione con Companion fallita',
   complete: 'Completato',

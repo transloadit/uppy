@@ -25,7 +25,6 @@ el_GR.strings = {
   browseFiles: 'Περιήγηση',
   cancel: 'Άκυρο',
   cancelUpload: 'Ακύρωση μεταφόρτωσης',
-  chooseFiles: 'Επιλέξτε αρχεία',
   closeModal: 'Κλείσιμο παραθύρου',
   companionError: 'Η σύνδεση με το Companion απέτυχε',
   complete: 'Ολοκληρώθηκε',

@@ -29,7 +29,6 @@ ro_RO.strings = {
   browseFiles: 'rasfoiește',
   cancel: 'Anulare',
   cancelUpload: 'Anulează încărcarea',
-  chooseFiles: 'Selectează fișiere',
   closeModal: 'Închide fereastra',
   companionError: 'Conexiunea către Companion nu a reuși',
   companionUnauthorizeHint:

@@ -23,7 +23,6 @@ hu_HU.strings = {
   browseFolders: 'válasszon mappát',
   cancel: 'Mégse',
   cancelUpload: 'Feltöltés megszakítása',
-  chooseFiles: 'Fájlok kiválasztása',
   closeModal: 'Ablak bezárása',
   companionError: 'A Companion-hoz történő kapcsolódás nem sikerült',
   complete: 'Kész',

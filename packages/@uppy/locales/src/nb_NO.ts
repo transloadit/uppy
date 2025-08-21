@@ -34,7 +34,6 @@ nb_NO.strings = {
   browseFolders: 'velg mapper',
   cancel: 'Avbryt',
   cancelUpload: 'Avbryt opplasting',
-  chooseFiles: 'Velg filer',
   closeModal: 'Lukk vindu',
   companionError: 'Kobling til Companion feilet',
   companionUnauthorizeHint:

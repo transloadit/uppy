@@ -22,7 +22,6 @@ zh_CN.strings = {
   browseFiles: '浏览',
   cancel: '取消',
   cancelUpload: '取消上传',
-  chooseFiles: '选择文件',
   closeModal: '关闭窗口',
   companionError: '和 Companion 连接失败了',
   companionUnauthorizeHint: '请访问 %{url} 以认证您的 %{provider} 账户',

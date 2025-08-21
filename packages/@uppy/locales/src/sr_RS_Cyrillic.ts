@@ -25,7 +25,6 @@ sr_RS_Cyrillic.strings = {
   browseFiles: 'потражи',
   cancel: 'Откажи',
   cancelUpload: 'Откажи отпремање',
-  chooseFiles: 'Изабери датотеке',
   closeModal: 'Затвори',
   companionError: 'Неуспело повезивање са Companion',
   complete: 'Отпремљено',

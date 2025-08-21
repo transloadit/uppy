@@ -25,7 +25,6 @@ da_DK.strings = {
   browseFiles: 'gennemse',
   cancel: 'Annuller',
   cancelUpload: 'Annuller upload',
-  chooseFiles: 'Vælg filer',
   closeModal: 'Luk Modal',
   companionError: 'Forbindelse til Companion fejlede',
   complete: 'Afsluttet',

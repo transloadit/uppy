@@ -25,7 +25,6 @@ gl_ES.strings = {
   browseFiles: 'navegar',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
-  chooseFiles: 'Seleccionar arquivos',
   closeModal: 'Pechar xanela flotante',
   companionError: 'Conexión con Companion fallou',
   complete: 'Completado',

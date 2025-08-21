@@ -25,7 +25,6 @@ hr_HR.strings = {
   browseFiles: 'pretraži',
   cancel: 'Otkaži',
   cancelUpload: 'Otkaži prijenos',
-  chooseFiles: 'Izaberi datoteke',
   closeModal: 'Zatvori',
   companionError: 'Neuspješno povezivanje s Companion-om',
   complete: 'Prijenos uspješan',

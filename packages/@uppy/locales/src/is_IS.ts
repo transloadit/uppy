@@ -25,7 +25,6 @@ is_IS.strings = {
   browseFiles: 'skoða',
   cancel: 'Hætta við',
   cancelUpload: 'Hætta við að hlaða upp',
-  chooseFiles: 'Veldu skrár',
   closeModal: 'Loka glugga',
   companionError: 'Tengin mistókst',
   companionUnauthorizeHint:

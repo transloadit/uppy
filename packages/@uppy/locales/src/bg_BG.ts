@@ -29,7 +29,6 @@ bg_BG.strings = {
   browseFiles: 'преглед',
   cancel: 'Отказ',
   cancelUpload: 'Отказване на качването',
-  chooseFiles: 'Изберете файлове',
   closeModal: 'Затваряне на прозорец',
   companionError: 'Неуспешна връзка с Companion',
   companionUnauthorizeHint:

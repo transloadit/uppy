@@ -39,7 +39,6 @@ fa_IR.strings = {
   browseFolders: 'انتخاب فولدر',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',
-  chooseFiles: 'انتخاب فایل',
   closeModal: 'بستن پنجره',
   companionError: 'اتصال با طرق مقابل با شکست روبرو شد',
   companionUnauthorizeHint:

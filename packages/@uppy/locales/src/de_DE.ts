@@ -35,7 +35,6 @@ de_DE.strings = {
   browseFolders: 'Ordner durchsuchen',
   cancel: 'Abbrechen',
   cancelUpload: 'Hochladen abbrechen',
-  chooseFiles: 'Dateien auswählen',
   closeModal: 'Fenster schließen',
   companionError: 'Verbindung zu Companion fehlgeschlagen',
   companionUnauthorizeHint:

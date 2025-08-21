@@ -53,7 +53,6 @@ ru_RU.strings = {
   browseFiles: 'выберите файлы',
   cancel: 'Отменить',
   cancelUpload: 'Отменить загрузку',
-  chooseFiles: 'Выбрать файлы',
   closeModal: 'Закрыть окно',
   companionError: 'Не удалось подключиться к Companion',
   companionUnauthorizeHint:

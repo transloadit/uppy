@@ -25,7 +25,6 @@ sr_RS_Latin.strings = {
   browseFiles: 'potraži',
   cancel: 'Otkaži',
   cancelUpload: 'Otkaži otpremanje',
-  chooseFiles: 'Izaberi datoteke',
   closeModal: 'Zatvori',
   companionError: 'Neuspelo povezivanje sa Companion',
   complete: 'Otpremljeno',

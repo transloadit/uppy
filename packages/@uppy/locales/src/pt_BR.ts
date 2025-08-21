@@ -44,7 +44,6 @@ pt_BR.strings = {
   browseFolders: 'selecionar pastas',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar envio',
-  chooseFiles: 'Selecionar arquivos',
   closeModal: 'Fechar Janela',
   companionError: 'Conexão com serviço falhou',
   companionUnauthorizeHint:

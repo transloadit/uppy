@@ -25,7 +25,6 @@ fi_FI.strings = {
   browseFiles: 'selaa',
   cancel: 'Peruuta',
   cancelUpload: 'Peruuta lähetys',
-  chooseFiles: 'Valitse tiedostot',
   closeModal: 'Sulje ikkuna',
   companionError: 'Yhdistäminen Companioniin epäonnistui',
   complete: 'Valmis',

@@ -37,7 +37,6 @@ nl_NL.strings = {
   browseFolders: 'blader',
   cancel: 'Annuleer',
   cancelUpload: 'Annuleer upload',
-  chooseFiles: 'Kies bestanden',
   closeModal: 'Sluit Venster',
   companionError: 'Verbinding met Companion mislukt',
   companionUnauthorizeHint:

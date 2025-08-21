@@ -33,7 +33,6 @@ hi_IN.strings = {
   browseFolders: 'फ़ोल्डर ब्राउज़ करें',
   cancel: 'रद्द करें',
   cancelUpload: 'अपलोड रद्द करें',
-  chooseFiles: 'फ़ाइलें चुनें',
   closeModal: 'मोडल बंद करें',
   companionError: 'कंपैनियन के साथ कनेक्शन विफल',
   companionUnauthorizeHint:
