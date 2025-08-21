@@ -57,6 +57,7 @@
     "@uppy/onedrive": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/remote-sources": "workspace:^",
+    "@uppy/locales": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/store-default": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
