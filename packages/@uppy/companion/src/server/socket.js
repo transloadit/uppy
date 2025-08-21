@@ -1,17 +1,17 @@
-const SocketServer = require('ws').WebSocketServer
-const { jsonStringify } = require('./helpers/utils')
-const emitter = require('./emitter')
-const redis = require('./redis')
-const logger = require('./logger')
-const { STORAGE_PREFIX, shortenToken } = require('./Uploader')
+import { WebSocketServer } from 'ws'
+import emitter from './emitter/index.js'
+import { jsonStringify } from './helpers/utils.js'
+import * as logger from './logger.js'
+import * as redis from './redis.js'
+import Uploader from './Uploader.js'
 
 /**
  * the socket is used to send progress events during an upload
  *
  * @param {import('http').Server | import('https').Server} server
  */
-module.exports = (server) => {
-  const wss = new SocketServer({ server })
+export default function setupSocket(server) {
+  const wss = new WebSocketServer({ server })
   const redisClient = redis.client()
 
   // A new connection is usually created when an upload begins,
@@ -30,7 +30,8 @@ module.exports = (server) => {
      */
     function send(data) {
       ws.send(jsonStringify(data), (err) => {
-        if (err) logger.error(err, 'socket.redis.error', shortenToken(token))
+        if (err)
+          logger.error(err, 'socket.redis.error', Uploader.shortenToken(token))
       })
     }
 
@@ -38,7 +39,7 @@ module.exports = (server) => {
     // if we have any already stored state on the upload.
     if (redisClient) {
       redisClient
-        .get(`${STORAGE_PREFIX}:${token}`)
+        .get(`${Uploader.STORAGE_PREFIX}:${token}`)
         .then((data) => {
           if (data) {
             const dataObj = JSON.parse(data.toString())
@@ -46,7 +47,7 @@ module.exports = (server) => {
           }
         })
         .catch((err) =>
-          logger.error(err, 'socket.redis.error', shortenToken(token)),
+          logger.error(err, 'socket.redis.error', Uploader.shortenToken(token)),
         )
     }
 
@@ -64,10 +65,10 @@ module.exports = (server) => {
         logger.error(
           'WebSocket message too large',
           'websocket.error',
-          shortenToken(token),
+          Uploader.shortenToken(token),
         )
       } else {
-        logger.error(err, 'websocket.error', shortenToken(token))
+        logger.error(err, 'websocket.error', Uploader.shortenToken(token))
       }
     })
 

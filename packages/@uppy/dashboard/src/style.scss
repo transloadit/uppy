@@ -1,13 +1,13 @@
 @use "sass:color";
 @use '@uppy/core/src/_utils.scss';
 @use '@uppy/core/src/_variables.scss';
-@use '@uppy/informer/src/style.scss';
-@use '@uppy/status-bar/src/style.scss' as style2;
 @use '@uppy/provider-views/src/style.scss' as style3;
 
 // Component-specific css imports
 @use 'components/FileItem/index.scss';
 @use 'components/FileCard/index.scss' as index2;
+@use 'components/Informer/style.scss';
+@use 'components/StatusBar/style.scss' as style2;
 
 // Transitions //
 

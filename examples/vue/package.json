@@ -12,8 +12,6 @@
   "dependencies": {
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
-    "@uppy/drag-drop": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",
     "@uppy/tus": "workspace:*",

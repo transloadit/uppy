@@ -7,9 +7,8 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import isDragDropSupported from '@uppy/utils/lib/isDragDropSupported'
-import type Translator from '@uppy/utils/lib/Translator'
-import type { I18n } from '@uppy/utils/lib/Translator'
+import type { I18n, Translator } from '@uppy/utils'
+import { isDragDropSupported } from '@uppy/utils'
 import classNames from 'classnames'
 import type { TargetedEvent } from 'preact/compat'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
@@ -18,9 +17,11 @@ import AddFilesPanel from './AddFilesPanel.js'
 import EditorPanel from './EditorPanel.js'
 import FileCard from './FileCard/index.js'
 import FileList from './FileList.js'
+import Informer from './Informer/Informer.js'
 import PickerPanelContent from './PickerPanelContent.js'
 import PanelTopBar from './PickerPanelTopBar.js'
 import Slide from './Slide.js'
+import StatusBar from './StatusBar/StatusBar.js'
 
 // http://dev.edenspiekermann.com/2016/02/11/introducing-accessible-modal-dialog
 // https://github.com/ghosh/micromodal
@@ -118,6 +119,12 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   handleDragOver: (event: DragEvent) => void
   handleDragLeave: (event: DragEvent) => void
   handleDrop: (event: DragEvent) => void
+  disableInformer: boolean
+  disableStatusBar: boolean
+  hideProgressDetails: boolean
+  hideUploadButton: boolean
+  hideProgressAfterFinish: boolean
+  doneButtonHandler: (() => void) | null
 }
 
 export default function Dashboard<M extends Meta, B extends Body>(
@@ -333,6 +340,21 @@ export default function Dashboard<M extends Meta, B extends Body>(
           </Slide>
 
           <div className="uppy-Dashboard-progressindicators">
+            {!props.disableInformer && <Informer uppy={props.uppy} />}
+            {!props.disableStatusBar && (
+              <StatusBar
+                uppy={props.uppy}
+                i18n={props.i18n}
+                hideProgressDetails={props.hideProgressDetails}
+                hideUploadButton={props.hideUploadButton}
+                hideRetryButton={props.hideRetryButton}
+                hidePauseResumeButton={props.hidePauseResumeButton}
+                hideCancelButton={props.hideCancelButton}
+                hideAfterFinish={props.hideProgressAfterFinish}
+                doneButtonHandler={props.doneButtonHandler}
+              />
+            )}
+            {!props.disableInformer && <Informer uppy={props.uppy} />}
             {props.progressindicators.map((target: TargetWithRender) => {
               // TODO
               // Here we're telling typescript all `this.type = 'progressindicator'` plugins inherit from `UIPlugin`

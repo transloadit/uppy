@@ -3,9 +3,30 @@
   "version": "4.6.2",
   "description": "Uppy plugin that helps integrate Uppy into your Svelte project.",
   "type": "module",
-  "svelte": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "main": "./dist/index.js",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "dist",
+    "src",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    },
+    "./css/style.css": "./dist/styles.css",
+    "./dashboard": {
+      "types": "./dist/components/Dashboard.svelte.d.ts",
+      "svelte": "./dist/components/Dashboard.svelte"
+    },
+    "./dashboard-modal": {
+      "types": "./dist/components/DashboardModal.svelte.d.ts",
+      "svelte": "./dist/components/DashboardModal.svelte"
+    },
+    "./package.json": "./package.json"
+  },
   "homepage": "https://uppy.io",
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
@@ -20,17 +41,6 @@
     "uppy-plugin",
     "svelte"
   ],
-  "files": [
-    "src",
-    "dist"
-  ],
-  "exports": {
-    "./dist/styles.css": "./dist/styles.css",
-    ".": {
-      "types": "./dist/index.d.ts",
-      "svelte": "./dist/index.js"
-    }
-  },
   "scripts": {
     "build": "svelte-kit sync && svelte-package",
     "build:css": "cp ../components/dist/styles.css dist/styles.css",
@@ -56,22 +66,10 @@
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
-      "optional": true
-    },
-    "@uppy/drag-drop": {
-      "optional": true
-    },
-    "@uppy/progress-bar": {
-      "optional": true
-    },
-    "@uppy/status-bar": {
       "optional": true
     }
   },

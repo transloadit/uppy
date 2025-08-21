@@ -7,18 +7,16 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { BasePlugin } from '@uppy/core'
-import EventManager from '@uppy/core/lib/EventManager.js'
+import { BasePlugin, EventManager } from '@uppy/core'
 import {
   filterFilesToEmitUploadStarted,
   filterNonFailedFiles,
-} from '@uppy/utils/lib/fileFilters'
-import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import hasProperty from '@uppy/utils/lib/hasProperty'
-import isNetworkError from '@uppy/utils/lib/isNetworkError'
-import NetworkError from '@uppy/utils/lib/NetworkError'
-// @ts-ignore untyped
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+  getAllowedMetaFields,
+  hasProperty,
+  isNetworkError,
+  NetworkError,
+  RateLimitedQueue,
+} from '@uppy/utils'
 import * as tus from 'tus-js-client'
 import packageJson from '../package.json' with { type: 'json' }
 import getFingerprint from './getFingerprint.js'
@@ -98,7 +96,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   keyof typeof defaultOptions
 >
 
-declare module '@uppy/utils/lib/UppyFile' {
+declare module '@uppy/utils' {
   export interface UppyFile<M extends Meta, B extends Body> {
     tus?: TusOpts<M, B>
   }

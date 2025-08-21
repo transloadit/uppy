@@ -1,17 +1,16 @@
-const got = require('../../got')
-
-const { withGoogleErrorHandling } = require('../providerErrors')
+import got from 'got'
+import { withGoogleErrorHandling } from '../providerErrors.js'
 
 /**
  * Reusable google stuff
  */
 
-const getOauthClient = async () =>
-  (await got).extend({
+const getOauthClient = () =>
+  got.extend({
     prefixUrl: 'https://oauth2.googleapis.com',
   })
 
-async function refreshToken({
+export async function refreshToken({
   clientId,
   clientSecret,
   refreshToken: theRefreshToken,
@@ -20,7 +19,7 @@ async function refreshToken({
     'google',
     'provider.google.token.refresh.error',
     async () => {
-      const { access_token: accessToken } = await (await getOauthClient())
+      const { access_token: accessToken } = await getOauthClient()
         .post('token', {
           responseType: 'json',
           form: {
@@ -36,12 +35,12 @@ async function refreshToken({
   )
 }
 
-async function logout({ token }) {
+export async function logout({ providerUserSession: { accessToken: token } }) {
   return withGoogleErrorHandling(
     'google',
     'provider.google.logout.error',
     async () => {
-      await (await got).post('https://accounts.google.com/o/oauth2/revoke', {
+      await got.post('https://accounts.google.com/o/oauth2/revoke', {
         searchParams: { token },
         responseType: 'json',
       })
@@ -49,9 +48,4 @@ async function logout({ token }) {
       return { revoked: true }
     },
   )
-}
-
-module.exports = {
-  refreshToken,
-  logout,
 }

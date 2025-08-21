@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const fr_FR: Locale<0 | 1> = {
   strings: {},
@@ -43,7 +43,6 @@ fr_FR.strings = {
   browseFolders: 'naviguer dans les dossiers',
   cancel: 'Annuler',
   cancelUpload: 'Annuler le téléversement',
-  chooseFiles: 'Choisir des fichiers',
   closeModal: 'Fermer la fenêtre',
   companionError: 'Connexion à Companion a échoué',
   companionUnauthorizeHint:
@@ -63,7 +62,6 @@ fr_FR.strings = {
   dataUploadedOfTotal: '%{complete} sur %{total}',
   discardRecordedFile: 'Supprimer le fichier enregistré',
   done: 'Terminé',
-  dropHereOr: 'Déposer les fichiers ici ou %{browse}',
   dropHint: 'Déposez vos fichiers ici',
   dropPasteBoth: 'Déposer les fichiers ici, coller ou %{browse}',
   dropPasteFiles: 'Déposer les fichiers ici, coller ou %{browse}',

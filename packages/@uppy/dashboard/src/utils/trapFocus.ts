@@ -1,6 +1,5 @@
 // @ts-ignore untyped
-import FOCUSABLE_ELEMENTS from '@uppy/utils/lib/FOCUSABLE_ELEMENTS'
-import toArray from '@uppy/utils/lib/toArray'
+import { FOCUSABLE_ELEMENTS, toArray } from '@uppy/utils'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 type $TSFixMe = any

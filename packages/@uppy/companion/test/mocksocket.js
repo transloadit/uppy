@@ -1,10 +1,10 @@
-const emitter = require('../src/server/emitter')
+import emitter from '../src/server/emitter/index.js'
 
-module.exports.connect = (uploadToken) => {
+export const connect = (uploadToken) => {
   emitter().emit(`connection:${uploadToken}`)
 }
 
-module.exports.onProgress = (uploadToken, cb) => {
+export const onProgress = (uploadToken, cb) => {
   emitter().on(uploadToken, (message) => {
     if (message.action === 'progress') {
       cb(message)
@@ -12,7 +12,7 @@ module.exports.onProgress = (uploadToken, cb) => {
   })
 }
 
-module.exports.onUploadSuccess = (uploadToken, cb) => {
+export const onUploadSuccess = (uploadToken, cb) => {
   emitter().on(uploadToken, (message) => {
     if (message.action === 'success') {
       cb(message)
@@ -20,7 +20,7 @@ module.exports.onUploadSuccess = (uploadToken, cb) => {
   })
 }
 
-module.exports.onUploadError = (uploadToken, cb) => {
+export const onUploadError = (uploadToken, cb) => {
   emitter().on(uploadToken, (message) => {
     if (message.action === 'error') {
       cb(message)

@@ -1,9 +1,7 @@
 import type { ElementRef, SimpleChanges } from "@angular/core";
 import type { UIPlugin, UIPluginOptions, Uppy } from "@uppy/core";
-import type { DragDropOptions } from "@uppy/drag-drop";
-import type { ProgressBarOptions } from "@uppy/progress-bar";
-import type { StatusBarOptions } from "@uppy/status-bar";
-import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
+import type { DashboardOptions } from "@uppy/dashboard";
+import type { Body, Meta } from "@uppy/utils";
 
 export abstract class UppyAngularWrapper<
 	M extends Meta,
@@ -11,7 +9,7 @@ export abstract class UppyAngularWrapper<
 	Opts extends UIPluginOptions,
 	PluginType extends UIPlugin<Opts, M, B> = UIPlugin<Opts, M, B>,
 > {
-	abstract props: DragDropOptions | StatusBarOptions | ProgressBarOptions;
+	abstract props: DashboardOptions<M, B>;
 	abstract el: ElementRef;
 	abstract uppy: Uppy<M, B>;
 	private options: any;

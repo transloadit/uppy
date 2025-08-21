@@ -1,6 +1,6 @@
-const defaults = require('./constants')
+import * as defaults from './constants.js'
 
-module.exports.expects = {
+export const expects = {
   listPath: 'ALBUM-ID',
   itemName: `${defaults.ITEM_ID} 2015-07-17T17:26:50+0000`,
   itemMimeType: 'image/jpeg',

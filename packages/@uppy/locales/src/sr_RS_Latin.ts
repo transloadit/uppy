@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const sr_RS_Latin: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ sr_RS_Latin.strings = {
   browseFiles: 'potraži',
   cancel: 'Otkaži',
   cancelUpload: 'Otkaži otpremanje',
-  chooseFiles: 'Izaberi datoteke',
   closeModal: 'Zatvori',
   companionError: 'Neuspelo povezivanje sa Companion',
   complete: 'Otpremljeno',
@@ -40,7 +39,6 @@ sr_RS_Latin.strings = {
     'Prozor za otpremanje datoteka (pritirnite ESC za izlaz)',
   dataUploadedOfTotal: '%{complete} od %{total}',
   done: 'Završeno',
-  dropHereOr: 'Spusti datoteke ovde ili %{browse}',
   dropHint: 'Spusti datoteke ovde',
   dropPasteBoth: 'Spusti datoteke ovde, umetni ili %{browse}',
   dropPasteFiles: 'Spusti datoteke ovde, umetni ili %{browse}',

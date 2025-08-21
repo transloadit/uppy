@@ -16,6 +16,9 @@
     "mediarecorder"
   ],
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "homepage": "https://uppy.io",
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
@@ -30,6 +33,12 @@
     "dist",
     "CHANGELOG.md"
   ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "preact": "^10.5.13"

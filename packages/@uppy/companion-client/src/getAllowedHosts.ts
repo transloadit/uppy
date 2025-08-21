@@ -5,8 +5,7 @@ function escapeRegex(string: string) {
 
 function wrapInRegex(value?: string | RegExp): RegExp | undefined {
   if (typeof value === 'string') {
-    // TODO in the next major we should change this to `new RegExp(value)` so that the user can control start/end characters
-    return new RegExp(`^${value}$`) // throws if invalid regex
+    return new RegExp(value) // throws if invalid regex
   }
   if (value instanceof RegExp) {
     return value

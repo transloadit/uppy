@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build"
@@ -32,6 +33,10 @@
     "dist",
     "CHANGELOG.md"
   ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/provider-views": "workspace:^",

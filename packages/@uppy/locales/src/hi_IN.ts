@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const hi_IN: Locale<0 | 1> = {
   strings: {},
@@ -33,7 +33,6 @@ hi_IN.strings = {
   browseFolders: 'फ़ोल्डर ब्राउज़ करें',
   cancel: 'रद्द करें',
   cancelUpload: 'अपलोड रद्द करें',
-  chooseFiles: 'फ़ाइलें चुनें',
   closeModal: 'मोडल बंद करें',
   companionError: 'कंपैनियन के साथ कनेक्शन विफल',
   companionUnauthorizeHint:
@@ -50,7 +49,6 @@ hi_IN.strings = {
   dataUploadedOfTotal: '%{complete} का %{total}',
   discardRecordedFile: 'रिकॉर्डेड फ़ाइल को छोड़ें',
   done: 'हो गया',
-  dropHereOr: 'यहाँ फ़ाइलें ड्रॉप करें या %{browse}',
   dropHint: 'यहाँ अपनी फ़ाइलें ड्रॉप करें',
   dropPasteBoth: 'यहाँ फ़ाइलें ड्रॉप करें, %{browseFiles} या %{browseFolders}',
   dropPasteFiles: 'यहाँ फ़ाइलें ड्रॉप करें या %{browseFiles}',

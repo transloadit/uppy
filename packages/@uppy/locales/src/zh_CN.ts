@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const zh_CN: Locale<0> = {
   strings: {},
@@ -22,7 +22,6 @@ zh_CN.strings = {
   browseFiles: '浏览',
   cancel: '取消',
   cancelUpload: '取消上传',
-  chooseFiles: '选择文件',
   closeModal: '关闭窗口',
   companionError: '和 Companion 连接失败了',
   companionUnauthorizeHint: '请访问 %{url} 以认证您的 %{provider} 账户',
@@ -37,7 +36,6 @@ zh_CN.strings = {
   dashboardWindowTitle: '文件上传工具窗口（点击离开以关闭）',
   dataUploadedOfTotal: '%{total} / %{complete}',
   done: '完成',
-  dropHereOr: '拖拽文件到这里，或%{browse}',
   dropHint: '拖拽文件到这里',
   dropPasteBoth: '拖拽文件到这里，或者%{browse}文件',
   dropPasteFiles: '拖拽文件到这里，或者%{browse}文件',

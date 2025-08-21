@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const nb_NO: Locale<0 | 1> = {
   strings: {},
@@ -34,7 +34,6 @@ nb_NO.strings = {
   browseFolders: 'velg mapper',
   cancel: 'Avbryt',
   cancelUpload: 'Avbryt opplasting',
-  chooseFiles: 'Velg filer',
   closeModal: 'Lukk vindu',
   companionError: 'Kobling til Companion feilet',
   companionUnauthorizeHint:
@@ -50,7 +49,6 @@ nb_NO.strings = {
   dashboardWindowTitle: 'Opplastingsvindu (Trykk Esc-knappen for å lukke)',
   dataUploadedOfTotal: '%{complete} av %{total}',
   done: 'Ferdig',
-  dropHereOr: 'Dra filer hit eller %{browse}',
   dropHint: 'Dra filer hit',
   dropPasteBoth: 'Dra filer hit, %{browseFiles} eller %{browseFolders}',
   dropPasteFiles: 'Dra filer hit eller %{browseFiles}',

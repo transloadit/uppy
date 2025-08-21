@@ -5,6 +5,9 @@
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
@@ -36,7 +39,7 @@
     "@uppy/components": "workspace:^",
     "@uppy/utils": "workspace:^",
     "preact": "^10.5.13",
-    "use-sync-external-store": "^1.2.2"
+    "use-sync-external-store": "^1.3.0"
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
@@ -51,14 +54,18 @@
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
   },
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/styles.css",
+    "./dashboard": "./lib/Dashboard.js",
+    "./dashboard-modal": "./lib/DashboardModal.js",
+    "./status-bar": "./lib/StatusBar.js",
+    "./package.json": "./package.json"
+  },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
-    "@uppy/file-input": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
@@ -67,19 +74,7 @@
     "@uppy/dashboard": {
       "optional": true
     },
-    "@uppy/drag-drop": {
-      "optional": true
-    },
-    "@uppy/file-input": {
-      "optional": true
-    },
-    "@uppy/progress-bar": {
-      "optional": true
-    },
     "@uppy/screen-capture": {
-      "optional": true
-    },
-    "@uppy/status-bar": {
       "optional": true
     },
     "@uppy/webcam": {

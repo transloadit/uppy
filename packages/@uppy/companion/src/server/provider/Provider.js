@@ -1,9 +1,9 @@
-const { MAX_AGE_24H } = require('../helpers/jwt')
+import { MAX_AGE_24H } from '../helpers/jwt.js'
 
 /**
  * Provider interface defines the specifications of any provider implementation
  */
-class Provider {
+export default class Provider {
   /**
    *
    * @param {{providerName: string, allowLocalUrls: boolean, providerGrantConfig?: object, secret: string}} options
@@ -74,7 +74,6 @@ class Provider {
    * @returns {Promise}
    */
   async deauthorizationCallback(options) {
-    // @todo consider doing something like throw new NotImplementedError() instead
     throw new Error('method not implemented')
   }
 
@@ -115,7 +114,6 @@ class Provider {
   }
 }
 
-module.exports = Provider
 // OAuth providers are those that have an `oauthProvider` set. It means they require OAuth authentication to work
-module.exports.isOAuthProvider = (oauthProvider) =>
+export const isOAuthProvider = (oauthProvider) =>
   typeof oauthProvider === 'string' && oauthProvider.length > 0

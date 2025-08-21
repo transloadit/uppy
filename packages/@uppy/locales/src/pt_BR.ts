@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const pt_BR: Locale<0 | 1> = {
   strings: {},
@@ -44,7 +44,6 @@ pt_BR.strings = {
   browseFolders: 'selecionar pastas',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar envio',
-  chooseFiles: 'Selecionar arquivos',
   closeModal: 'Fechar Janela',
   companionError: 'Conexão com serviço falhou',
   companionUnauthorizeHint:
@@ -66,7 +65,6 @@ pt_BR.strings = {
   discardMediaFile: 'Descartar mídia',
   discardRecordedFile: 'Descartar gravação',
   done: 'Concluído',
-  dropHereOr: 'Solte ou cole arquivos aqui ou %{browse}',
   dropHint: 'Solte ou cole seus arquivos aqui',
   dropPasteBoth:
     'Solte ou cole arquivos aqui, %{browseFiles} ou %{browseFolders}',

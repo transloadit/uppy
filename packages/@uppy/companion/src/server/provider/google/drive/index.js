@@ -1,19 +1,18 @@
-const got = require('../../../got')
-
-const { logout, refreshToken } = require('../index')
-const logger = require('../../../logger')
-const {
-  VIRTUAL_SHARED_DIR,
+import got from 'got'
+import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
+import { prepareStream } from '../../../helpers/utils.js'
+import logger from '../../../logger.js'
+import { ProviderAuthError } from '../../error.js'
+import Provider from '../../Provider.js'
+import { withGoogleErrorHandling } from '../../providerErrors.js'
+import { logout, refreshToken } from '../index.js'
+import {
   adaptData,
-  isShortcut,
-  isGsuiteFile,
   getGsuiteExportType,
-} = require('./adapter')
-const { prepareStream } = require('../../../helpers/utils')
-const { MAX_AGE_REFRESH_TOKEN } = require('../../../helpers/jwt')
-const { ProviderAuthError } = require('../../error')
-const { withGoogleErrorHandling } = require('../../providerErrors')
-const Provider = require('../../Provider')
+  isGsuiteFile,
+  isShortcut,
+  VIRTUAL_SHARED_DIR,
+} from './adapter.js'
 
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true
@@ -29,8 +28,8 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = async ({ token }) =>
-  (await got).extend({
+const getClient = ({ token }) =>
+  got.extend({
     prefixUrl: 'https://www.googleapis.com/drive/v3',
     headers: {
       authorization: `Bearer ${token}`,
@@ -38,7 +37,7 @@ const getClient = async ({ token }) =>
   })
 
 async function getStats({ id, token }) {
-  const client = await getClient({ token })
+  const client = getClient({ token })
 
   const getStatsInner = async (statsOfId) =>
     client
@@ -56,8 +55,8 @@ async function getStats({ id, token }) {
   return stats
 }
 
-async function streamGoogleFile({ token, id: idIn }) {
-  const client = await getClient({ token })
+export async function streamGoogleFile({ token, id: idIn }) {
+  const client = getClient({ token })
 
   const { mimeType, id, exportLinks } = await getStats({ id: idIn, token })
 
@@ -76,12 +75,10 @@ async function streamGoogleFile({ token, id: idIn }) {
     // Implemented based on the answer from StackOverflow: https://stackoverflow.com/a/59168288
     const mimeTypeExportLink = exportLinks?.[mimeType2]
     if (mimeTypeExportLink) {
-      const gSuiteFilesClient = (await got).extend({
+      stream = got.stream.get(mimeTypeExportLink, {
         headers: {
           authorization: `Bearer ${token}`,
         },
-      })
-      stream = gSuiteFilesClient.stream.get(mimeTypeExportLink, {
         responseType: 'json',
       })
     } else {
@@ -104,7 +101,7 @@ async function streamGoogleFile({ token, id: idIn }) {
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
-class Drive extends Provider {
+export class Drive extends Provider {
   static get oauthProvider() {
     return 'googledrive'
   }
@@ -120,12 +117,14 @@ class Drive extends Provider {
       async () => {
         const directory = options.directory || 'root'
         const query = options.query || {}
-        const { token } = options
+        const {
+          providerUserSession: { accessToken: token },
+        } = options
 
         const isRoot = directory === 'root'
         const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
-        const client = await getClient({ token })
+        const client = getClient({ token })
 
         async function fetchSharedDrives(pageToken = null) {
           const shouldListSharedDrives = isRoot && !query.cursor
@@ -204,7 +203,7 @@ class Drive extends Provider {
     )
   }
 
-  async download({ id, token }) {
+  async download({ id, providerUserSession: { accessToken: token } }) {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 
@@ -226,8 +225,3 @@ class Drive extends Provider {
 
 Drive.prototype.logout = logout
 Drive.prototype.refreshToken = refreshToken
-
-module.exports = {
-  Drive,
-  streamGoogleFile,
-}

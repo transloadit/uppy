@@ -10,7 +10,6 @@
         "@uppy/onedrive#build",
         "@uppy/compressor#build",
         "@uppy/url#build",
-        "@uppy/file-input#build",
         "@uppy/dashboard#build",
         "@uppy/google-photos-picker#build",
         "@uppy/audio#build",
@@ -24,10 +23,8 @@
         "@uppy/dropbox#build",
         "@uppy/webdav#build",
         "@uppy/unsplash#build",
-        "@uppy/status-bar#build",
         "@uppy/webcam#build",
-        "@uppy/instagram#build",
-        "@uppy/drag-drop#build"
+        "@uppy/instagram#build"
       ],
       "inputs": [
         "script/**/*.{js,ts,jsx,tsx}",

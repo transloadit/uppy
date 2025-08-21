@@ -8,9 +8,7 @@ import type {
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
 import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import hasProperty from '@uppy/utils/lib/hasProperty'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
+import { ErrorWithCause, hasProperty, RateLimitedQueue } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
@@ -217,7 +215,7 @@ declare module '@uppy/core' {
   }
 }
 
-declare module '@uppy/utils/lib/UppyFile' {
+declare module '@uppy/utils' {
   export interface UppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
     tus?: TusOpts<M, B>

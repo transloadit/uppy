@@ -2,19 +2,18 @@ import { RequestClient } from '@uppy/companion-client'
 import {
   BasePlugin,
   type DefinePluginOpts,
+  EventManager,
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
-import EventManager from '@uppy/core/lib/EventManager.js'
-import { createAbortError } from '@uppy/utils/lib/AbortController'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
+import type { Body, Meta, RequestOptions, UppyFile } from '@uppy/utils'
 import {
+  createAbortError,
   filterFilesToEmitUploadStarted,
   filterNonFailedFiles,
-} from '@uppy/utils/lib/fileFilters'
-import getAllowedMetaFields from '@uppy/utils/lib/getAllowedMetaFields'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
+  getAllowedMetaFields,
+  RateLimitedQueue,
+} from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import createSignedURL from './createSignedURL.js'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'

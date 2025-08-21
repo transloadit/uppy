@@ -29,9 +29,6 @@
       "path": "../@uppy/dashboard/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/drag-drop/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/drop-target/tsconfig.build.json"
     },
     {
@@ -39,9 +36,6 @@
     },
     {
       "path": "../@uppy/facebook/tsconfig.build.json"
-    },
-    {
-      "path": "../@uppy/file-input/tsconfig.build.json"
     },
     {
       "path": "../@uppy/form/tsconfig.build.json"
@@ -62,16 +56,10 @@
       "path": "../@uppy/image-editor/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/informer/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/instagram/tsconfig.build.json"
     },
     {
       "path": "../@uppy/onedrive/tsconfig.build.json"
-    },
-    {
-      "path": "../@uppy/progress-bar/tsconfig.build.json"
     },
     {
       "path": "../@uppy/provider-views/tsconfig.build.json"
@@ -81,9 +69,6 @@
     },
     {
       "path": "../@uppy/screen-capture/tsconfig.build.json"
-    },
-    {
-      "path": "../@uppy/status-bar/tsconfig.build.json"
     },
     {
       "path": "../@uppy/store-default/tsconfig.build.json"

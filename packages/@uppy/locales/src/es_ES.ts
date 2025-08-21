@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const es_ES: Locale<0 | 1> = {
   strings: {},
@@ -41,7 +41,6 @@ es_ES.strings = {
   browseFolders: 'Navegar por carpetas',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
-  chooseFiles: 'Seleccionar archivos',
   closeModal: 'Cerrar ventana',
   companionError: 'Error en la conexión con Companion',
   companionUnauthorizeHint:
@@ -61,7 +60,6 @@ es_ES.strings = {
   dataUploadedOfTotal: '%{complete} de %{total}',
   discardRecordedFile: 'Descartar archivo grabado',
   done: 'Hecho',
-  dropHereOr: 'Suelta archivos aquí o %{browse}',
   dropHint: 'Suelta tus archivos aquí',
   dropPasteBoth: 'Suelta archivos aquí, %{browseFiles} o %{browseFolders}',
   dropPasteFiles: 'Suelta archivos aquí o %{browseFiles}',

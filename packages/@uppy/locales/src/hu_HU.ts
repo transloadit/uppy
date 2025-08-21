@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const hu_HU: Locale<0> = {
   strings: {},
@@ -23,7 +23,6 @@ hu_HU.strings = {
   browseFolders: 'válasszon mappát',
   cancel: 'Mégse',
   cancelUpload: 'Feltöltés megszakítása',
-  chooseFiles: 'Fájlok kiválasztása',
   closeModal: 'Ablak bezárása',
   companionError: 'A Companion-hoz történő kapcsolódás nem sikerült',
   complete: 'Kész',
@@ -37,7 +36,6 @@ hu_HU.strings = {
   dashboardWindowTitle: 'Fájlfeltöltő ablak (Escape a bezáráshoz)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: 'Kész',
-  dropHereOr: 'Húzza ide vagy %{browse} fájlt',
   dropHint: 'Húzza ide a fájlokat',
   dropPasteBoth: 'Húzza ide a fájlokat vagy %{browse}',
   dropPasteFiles: 'Húzza ide a fájlokat vagy %{browse}',

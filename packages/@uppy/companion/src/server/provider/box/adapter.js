@@ -1,5 +1,5 @@
-const mime = require('mime-types')
-const querystring = require('node:querystring')
+import querystring from 'node:querystring'
+import mime from 'mime-types'
 
 const isFolder = (item) => {
   return item.type === 'folder'
@@ -52,7 +52,7 @@ const getNextPagePath = (data) => {
   return `?${querystring.stringify(query)}`
 }
 
-module.exports = function adaptData(res, username, companion) {
+const adaptData = function adaptData(res, username, companion) {
   const data = { username, items: [] }
   const items = getItemSubList(res)
   items.forEach((item) => {
@@ -73,3 +73,5 @@ module.exports = function adaptData(res, username, companion) {
 
   return data
 }
+
+export default adaptData

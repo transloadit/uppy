@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const sr_RS_Cyrillic: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ sr_RS_Cyrillic.strings = {
   browseFiles: 'потражи',
   cancel: 'Откажи',
   cancelUpload: 'Откажи отпремање',
-  chooseFiles: 'Изабери датотеке',
   closeModal: 'Затвори',
   companionError: 'Неуспело повезивање са Companion',
   complete: 'Отпремљено',
@@ -40,7 +39,6 @@ sr_RS_Cyrillic.strings = {
     'Прозор за отпремање датотека (притирните ESC за излаз)',
   dataUploadedOfTotal: '%{complete} од %{total}',
   done: 'Завршено',
-  dropHereOr: 'Спусти датотеке овде или %{browse}',
   dropHint: 'Спусти датотеке овде',
   dropPasteBoth: 'Спусти датотеке овде, уметни или %{browse}',
   dropPasteFiles: 'Спусти датотеке овде, уметни или %{browse}',
