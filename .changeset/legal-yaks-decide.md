@@ -13,7 +13,6 @@
 "@uppy/store-default": patch
 "@uppy/google-drive": patch
 "@uppy/image-editor": patch
-"@uppy/react-native": patch
 "@uppy/drop-target": patch
 "@uppy/transloadit": patch
 "@uppy/components": patch
@@ -32,22 +31,17 @@
 "@uppy/svelte": patch
 "@uppy/webcam": patch
 "@uppy/webdav": patch
-"example-transloadit": patch
 "@uppy/audio": patch
 "@uppy/react": patch
-"example-xhr-bundle": patch
 "@uppy/core": patch
 "@uppy/form": patch
 "@uppy/zoom": patch
-"example-sveltekit": patch
 "@uppy/box": patch
 "@uppy/tus": patch
 "@uppy/url": patch
 "@uppy/vue": patch
-"example-angular": patch
 "uppy": patch
 "example-vue": patch
-"@uppy-dev/dev": patch
 ---
 
 Updated export maps for @uppy/utils: removed nested subpath exports; all utilities are now exported from the root index.js.

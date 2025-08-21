@@ -10,12 +10,10 @@
 "@uppy/store-default": major
 "@uppy/google-drive": major
 "@uppy/image-editor": major
-"@uppy/react-native": major
 "@uppy/drop-target": major
 "@uppy/transloadit": major
 "@uppy/components": major
 "@uppy/compressor": major
-"@uppy/status-bar": major
 "@uppy/xhr-upload": major
 "@uppy/companion": major
 "@uppy/dashboard": major
