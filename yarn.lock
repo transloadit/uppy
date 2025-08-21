@@ -9282,6 +9282,7 @@ __metadata:
     jsdom: "npm:^26.1.0"
     lodash: "npm:^4.17.21"
     nanoid: "npm:^5.0.9"
+    playwright: "npm:1.54.1"
     postcss: "npm:^8.5.6"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.5.13"
@@ -9680,6 +9681,7 @@ __metadata:
     "@vitest/browser": "npm:^3.2.4"
     cssnano: "npm:^7.0.7"
     nanoid: "npm:^5.0.9"
+    playwright: "npm:1.54.1"
     postcss: "npm:^8.5.6"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.5.13"
@@ -13888,7 +13890,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-react": "npm:^4.6.0"
     "@vitest/browser": "npm:^3.2.4"
-    playwright: "npm:^1.53.2"
+    playwright: "npm:1.54.1"
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4.0.9"
@@ -13914,6 +13916,7 @@ __metadata:
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@vitest/browser": "npm:^3.2.4"
+    playwright: "npm:1.54.1"
     svelte: "npm:^5.0.0"
     svelte-check: "npm:^4.0.0"
     tailwindcss: "npm:^4.0.0"
@@ -13957,6 +13960,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-vue": "npm:^6.0.1"
     "@vitest/browser": "npm:^3.2.4"
+    playwright: "npm:1.54.1"
     tailwindcss: "npm:^4.0.0"
     vite: "npm:^7.0.6"
     vitest: "npm:^3.2.4"
@@ -19993,7 +19997,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright@npm:^1.53.2":
+"playwright@npm:1.54.1":
   version: 1.54.1
   resolution: "playwright@npm:1.54.1"
   dependencies:

@@ -23,6 +23,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@vitejs/plugin-vue": "^6.0.1",
     "@vitest/browser": "^3.2.4",
+    "playwright": "1.54.1",
     "tailwindcss": "^4.0.0",
     "vite": "^7.0.6",
     "vitest": "^3.2.4",

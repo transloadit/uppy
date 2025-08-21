@@ -1,5 +1,11 @@
 # @uppy/core
 
+## 4.5.3
+
+### Patch Changes
+
+- eee05db: Fix retry after setting missed metaFields requiring you to click "retry" and then "upload" again. Now "retry" immediately restarts the upload.
+
 ## 4.5.2
 
 ### Patch Changes
