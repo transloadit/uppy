@@ -73,10 +73,14 @@ export default function setupSocket(server) {
     })
 
     ws.on('message', (jsonData) => {
-      const data = JSON.parse(jsonData.toString())
-      // whitelist triggered actions
-      if (['pause', 'resume', 'cancel'].includes(data.action)) {
-        emitter().emit(`${data.action}:${token}`)
+      try {
+        const data = JSON.parse(jsonData.toString())
+        // whitelist triggered actions
+        if (['pause', 'resume', 'cancel'].includes(data.action)) {
+          emitter().emit(`${data.action}:${token}`)
+        }
+      } catch (err) {
+        logger.error(err, 'websocket.error', Uploader.shortenToken(token))
       }
     })
 
