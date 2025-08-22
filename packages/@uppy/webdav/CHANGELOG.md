@@ -1,5 +1,16 @@
 # @uppy/webdav
 
+## 1.0.0
+
+### Patch Changes
+
+- Updated dependencies [d301c01]
+- Updated dependencies [c5b51f6]
+  - @uppy/utils@7.0.0
+  - @uppy/companion-client@5.0.0
+  - @uppy/provider-views@5.0.0
+  - @uppy/core@5.0.0
+
 ## 0.4.2
 
 ### Patch Changes
