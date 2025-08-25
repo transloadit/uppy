@@ -1,4 +1,4 @@
-import 'uppy/src/style.scss'
+import 'uppy/dist/uppy.css'
 
 import Dashboard from './Dashboard.js'
 import DragDrop from './DragDrop.js'
