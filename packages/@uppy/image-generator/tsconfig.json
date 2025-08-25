@@ -2,30 +2,21 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true,
-    "paths": {
-      "@uppy/utils/lib/*": ["../utils/src/*"],
-      "@uppy/core": ["../core/src/"],
-      "@uppy/core/lib/*": ["../core/src/*"],
-      "@uppy/provider-views": ["../provider-views/src/index.js"],
-      "@uppy/provider-views/lib/*": ["../provider-views/src/*"],
-      "@uppy/transloadit": ["../transloadit/src/index.js"],
-      "@uppy/transloadit/lib/*": ["../transloadit/src/*"],
-    },
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../utils/tsconfig.build.json",
+      "path": "../utils/tsconfig.build.json"
     },
     {
-      "path": "../core/tsconfig.build.json",
+      "path": "../core/tsconfig.build.json"
     },
     {
-      "path": "../provider-views/tsconfig.build.json",
+      "path": "../provider-views/tsconfig.build.json"
     },
     {
-      "path": "../transloadit/tsconfig.build.json",
-    },
-  ],
+      "path": "../transloadit/tsconfig.build.json"
+    }
+  ]
 }

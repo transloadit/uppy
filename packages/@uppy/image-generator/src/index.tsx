@@ -1,11 +1,10 @@
-import { h } from 'preact'
-import { UIPlugin, type UIPluginOptions, type Uppy } from '@uppy/core'
+import type { Body, Meta, UIPluginOptions, Uppy } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
 import { SearchInput } from '@uppy/provider-views'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type Transloadit from '@uppy/transloadit'
-import { type AssemblyResult } from '@uppy/transloadit'
-import locale from './locale.ts'
+import type { AssemblyResult } from '@uppy/transloadit'
+import locale from './locale.js'
 
 export interface ImageGeneratorOptions extends UIPluginOptions {}
 
@@ -68,7 +67,7 @@ export default class ImageGenerator<
 
     try {
       await this.uppy.upload()
-    } catch (err) {
+    } catch {
       // TODO: inform the user
     } finally {
       // Normally uppy.upload() is only used to upload your files
