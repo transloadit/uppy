@@ -1,5 +1,5 @@
-import NetworkError from './NetworkError.ts'
-import ProgressTimeout from './ProgressTimeout.ts'
+import NetworkError from './NetworkError.js'
+import ProgressTimeout from './ProgressTimeout.js'
 
 const noop = (): void => {}
 
@@ -81,9 +81,19 @@ export function fetcher(
   const timer = new ProgressTimeout(timeout, onTimeout)
 
   function requestWithRetry(retryCount = 0): Promise<XMLHttpRequest> {
-    // eslint-disable-next-line no-async-promise-executor
+    // biome-ignore lint/suspicious/noAsyncPromiseExecutor: it's fine
     return new Promise(async (resolve, reject) => {
       const xhr = new XMLHttpRequest()
+      const onError = (error: Error) => {
+        if (shouldRetry(xhr) && retryCount < retries) {
+          setTimeout(() => {
+            requestWithRetry(retryCount + 1).then(resolve, reject)
+          }, delay(retryCount))
+        } else {
+          timer.done()
+          reject(error)
+        }
+      }
 
       xhr.open(method, url, true)
       xhr.withCredentials = withCredentials
@@ -99,7 +109,15 @@ export function fetcher(
       })
 
       xhr.onload = async () => {
-        await onAfterResponse(xhr, retryCount)
+        try {
+          await onAfterResponse(xhr, retryCount)
+        } catch (err) {
+          // This is important as we need to emit the xhr
+          // over the upload-error event.
+          err.request = xhr
+          onError(err)
+          return
+        }
 
         if (xhr.status >= 200 && xhr.status < 300) {
           timer.done()
@@ -114,16 +132,7 @@ export function fetcher(
         }
       }
 
-      xhr.onerror = () => {
-        if (shouldRetry(xhr) && retryCount < retries) {
-          setTimeout(() => {
-            requestWithRetry(retryCount + 1).then(resolve, reject)
-          }, delay(retryCount))
-        } else {
-          timer.done()
-          reject(new NetworkError(xhr.statusText, xhr))
-        }
-      }
+      xhr.onerror = () => onError(new NetworkError(xhr.statusText, xhr))
 
       xhr.upload.onprogress = (event: ProgressEvent) => {
         timer.progress()

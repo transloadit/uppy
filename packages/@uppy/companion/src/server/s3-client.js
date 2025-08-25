@@ -1,4 +1,4 @@
-const { S3Client } = require('@aws-sdk/client-s3')
+import { S3Client } from '@aws-sdk/client-s3'
 
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
@@ -6,30 +6,42 @@ const { S3Client } = require('@aws-sdk/client-s3')
  * @param {object} companionOptions the companion options object
  * @param {boolean} createPresignedPostMode whether this s3 client is for createPresignedPost
  */
-module.exports = (companionOptions, createPresignedPostMode = false) => {
+export default function s3Client(
+  companionOptions,
+  createPresignedPostMode = false,
+) {
   let s3Client = null
   if (companionOptions.s3) {
     const { s3 } = companionOptions
 
     if (s3.accessKeyId || s3.secretAccessKey) {
-      throw new Error('Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.')
+      throw new Error(
+        'Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.',
+      )
     }
 
     const rawClientOptions = s3.awsClientOptions
-    if (rawClientOptions && (rawClientOptions.accessKeyId || rawClientOptions.secretAccessKey)) {
-      throw new Error('Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.')
+    if (
+      rawClientOptions &&
+      (rawClientOptions.accessKeyId || rawClientOptions.secretAccessKey)
+    ) {
+      throw new Error(
+        'Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.',
+      )
     }
 
     let { endpoint } = s3
     if (typeof endpoint === 'string') {
       // TODO: deprecate those replacements in favor of what AWS SDK supports out of the box.
-      endpoint = endpoint.replace(/{service}/, 's3').replace(/{region}/, s3.region)
+      endpoint = endpoint
+        .replace(/{service}/, 's3')
+        .replace(/{region}/, s3.region)
     }
 
     /** @type {import('@aws-sdk/client-s3').S3ClientConfig} */
     let s3ClientOptions = {
       region: s3.region,
-      forcePathStyle: Boolean(s3.forcePathStyle)
+      forcePathStyle: s3.forcePathStyle,
     }
 
     if (s3.useAccelerateEndpoint) {
@@ -44,13 +56,15 @@ module.exports = (companionOptions, createPresignedPostMode = false) => {
             endpoint: `https://${s3.bucket}.s3-accelerate.amazonaws.com/`,
           }
         }
-      } else { // normal useAccelerateEndpoint mode
+      } else {
+        // normal useAccelerateEndpoint mode
         s3ClientOptions = {
           ...s3ClientOptions,
           useAccelerateEndpoint: true,
         }
       }
-    } else { // no accelearate, we allow custom s3 endpoint
+    } else {
+      // no accelearate, we allow custom s3 endpoint
       s3ClientOptions = {
         ...s3ClientOptions,
         endpoint,

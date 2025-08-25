@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const nl_NL: Locale<0 | 1> = {
   strings: {},
@@ -37,7 +37,6 @@ nl_NL.strings = {
   browseFolders: 'blader',
   cancel: 'Annuleer',
   cancelUpload: 'Annuleer upload',
-  chooseFiles: 'Kies bestanden',
   closeModal: 'Sluit Venster',
   companionError: 'Verbinding met Companion mislukt',
   companionUnauthorizeHint:
@@ -56,7 +55,6 @@ nl_NL.strings = {
   dataUploadedOfTotal: '%{complete} van %{total}',
   discardRecordedFile: 'Verwijder opgenomen bestand',
   done: 'Klaar',
-  dropHereOr: 'Sleep hier je bestanden naartoe of %{browse}',
   dropHint: 'Sleep hier je bestanden naartoe',
   dropPasteBoth: 'Sleep hier je bestanden naartoe, plak of %{browse}',
   dropPasteFiles: 'Sleep hier je bestanden naartoe, plak of %{browse}',
@@ -213,6 +211,12 @@ nl_NL.strings = {
   },
   zoomIn: 'Zoom in',
   zoomOut: 'Zoom uit',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.nl_NL = nl_NL
 }
 
 export default nl_NL

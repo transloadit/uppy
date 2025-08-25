@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const fa_IR: Locale<0 | 1> = {
   strings: {},
@@ -39,7 +39,6 @@ fa_IR.strings = {
   browseFolders: 'انتخاب فولدر',
   cancel: 'انصراف',
   cancelUpload: 'لغو بارگذاری',
-  chooseFiles: 'انتخاب فایل',
   closeModal: 'بستن پنجره',
   companionError: 'اتصال با طرق مقابل با شکست روبرو شد',
   companionUnauthorizeHint:
@@ -58,7 +57,6 @@ fa_IR.strings = {
   dataUploadedOfTotal: '%{complete} از %{total}',
   discardRecordedFile: 'دورانداختن فایل ضبط شده',
   done: 'انجام شد',
-  dropHereOr: 'فایل را بکشید و اینجا رها کنید یا  %{browse}',
   dropHint: 'فایل‌ها را بکشید و اینجا رها کنید',
   dropPasteBoth: 'فایل‌ها را اینجا رها کنید، بچسبانید یا  %{browse}',
   dropPasteFiles: 'فایل‌ها را اینجا رها کنید، بچسبانید یا  %{browse}',
@@ -222,6 +220,12 @@ fa_IR.strings = {
   },
   zoomIn: 'بزرگ‌نمایی',
   zoomOut: 'کوچک‌نمایی',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.fa_IR = fa_IR
 }
 
 export default fa_IR

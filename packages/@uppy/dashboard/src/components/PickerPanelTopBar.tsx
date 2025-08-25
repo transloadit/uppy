@@ -1,5 +1,4 @@
-import type { UppyFile } from '@uppy/utils/lib/UppyFile'
-import { h } from 'preact'
+import type { UppyFile } from '@uppy/core'
 
 type $TSFixMe = any
 
@@ -104,15 +103,14 @@ function PanelTopBar(props: $TSFixMe) {
     uppy,
   } = props
   let { allowNewUpload } = props
-  // TODO maybe this should be done in ../Dashboard.jsx, then just pass that down as `allowNewUpload`
+  // TODO maybe this should be done in ../Dashboard.js, then just pass that down as `allowNewUpload`
   if (allowNewUpload && maxNumberOfFiles) {
-    // eslint-disable-next-line react/destructuring-assignment
     allowNewUpload = props.totalFileCount < props.maxNumberOfFiles
   }
 
   return (
     <div className="uppy-DashboardContent-bar">
-      {!isAllComplete && !hideCancelButton ?
+      {!isAllComplete && !hideCancelButton ? (
         <button
           className="uppy-DashboardContent-back"
           type="button"
@@ -120,18 +118,15 @@ function PanelTopBar(props: $TSFixMe) {
         >
           {i18n('cancel')}
         </button>
-      : <div />}
+      ) : (
+        <div />
+      )}
 
-      <div
-        className="uppy-DashboardContent-title"
-        role="heading"
-        aria-level="1"
-      >
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <div className="uppy-DashboardContent-title">
         <UploadStatus {...props} />
       </div>
 
-      {allowNewUpload ?
+      {allowNewUpload ? (
         <button
           className="uppy-DashboardContent-addMore"
           type="button"
@@ -153,7 +148,9 @@ function PanelTopBar(props: $TSFixMe) {
             {i18n('addMore')}
           </span>
         </button>
-      : <div />}
+      ) : (
+        <div />
+      )}
     </div>
   )
 }

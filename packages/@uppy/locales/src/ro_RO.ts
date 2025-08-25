@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const ro_RO: Locale<0 | 1> = {
   strings: {},
@@ -29,7 +29,6 @@ ro_RO.strings = {
   browseFiles: 'rasfoiește',
   cancel: 'Anulare',
   cancelUpload: 'Anulează încărcarea',
-  chooseFiles: 'Selectează fișiere',
   closeModal: 'Închide fereastra',
   companionError: 'Conexiunea către Companion nu a reuși',
   companionUnauthorizeHint:
@@ -46,7 +45,6 @@ ro_RO.strings = {
     'Fereastră încărcare fișier (Apasă tasta escape pentru a închide)',
   dataUploadedOfTotal: '%{complete} din %{total}',
   done: 'Finalizat',
-  dropHereOr: 'Trage fișierele aici sau %{browse}',
   dropHint: 'Trage fișierele tale aici',
   dropPasteBoth: 'Trage fișierele aici, copy/paste sau %{browse}',
   dropPasteFiles: 'Trage fișierele aici, copy/paste sau %{browse}',
@@ -154,6 +152,12 @@ ro_RO.strings = {
     '0': 'Selectează cel puțin %{smart_count} fișier',
     '1': 'Selectează cel puțin %{smart_count} fișiere',
   },
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ro_RO = ro_RO
 }
 
 export default ro_RO

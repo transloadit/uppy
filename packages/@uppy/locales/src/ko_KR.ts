@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const ko_KR: Locale<0> = {
   strings: {},
@@ -22,7 +22,6 @@ ko_KR.strings = {
   browseFolders: '폴더 선택',
   cancel: '취소',
   cancelUpload: '업로드 취소',
-  chooseFiles: '파일 선택',
   closeModal: '창 닫기',
   companionError: '연결 실패',
   companionUnauthorizeHint:
@@ -38,7 +37,6 @@ ko_KR.strings = {
   dashboardWindowTitle: '파일 업로더 창 (ESC를 누르면 닫힙니다.)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: '완료',
-  dropHereOr: '파일을 드래그 앤 드롭 또는 %{browse}',
   dropHint: '여기에 파일을 드래그 앤 드롭 해주세요.',
   dropPasteBoth:
     '여기에 파일을 드래그 앤 드롭 하거나, %{browseFiles}, %{browseFolders}',
@@ -108,6 +106,12 @@ ko_KR.strings = {
   youCanOnlyUploadFileTypes: '업로드 가능 형식: %{types}',
   youCanOnlyUploadX: '%{smart_count}개의 파일만 업로드할 수 있습니다',
   youHaveToAtLeastSelectX: '최소 %{smart_count}개의 파일을 선택해야 합니다',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ko_KR = ko_KR
 }
 
 export default ko_KR

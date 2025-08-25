@@ -1,11 +1,9 @@
-import isDOMElement from './isDOMElement.ts'
+import isDOMElement from './isDOMElement.js'
 
 function findAllDOMElements<T>(
   element: T,
   context?: ParentNode,
-): T extends Element ? [T]
-: T extends Node | string ? Element[] | null
-: null
+): T extends Element ? [T] : T extends Node | string ? Element[] | null : null
 
 /**
  * Find one or more DOM elements.

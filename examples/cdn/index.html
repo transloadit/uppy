@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title></title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      href="https://releases.transloadit.com/uppy/v4.18.0/uppy.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <noscript>You need JavaScript enabled for this example to work.</noscript>
+    <button id="uppyModalOpener">Open Modal</button>
+
+    <script type="module">
+      import {
+        Uppy,
+        Dashboard,
+        Webcam,
+        Tus,
+      } from 'https://releases.transloadit.com/uppy/v4.18.0/uppy.min.mjs'
+
+      const uppy = new Uppy({ debug: true, autoProceed: false })
+        .use(Dashboard, { trigger: '#uppyModalOpener' })
+        .use(Webcam, { target: Dashboard })
+        .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
+
+      uppy.on('success', (fileCount) => {
+        console.log(`${fileCount} files uploaded`)
+      })
+    </script>
+  </body>
+</html>

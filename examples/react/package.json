@@ -1,0 +1,34 @@
+{
+  "name": "example-react",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc && vite build",
+    "test": "vitest run --browser.headless",
+    "dev": "vite",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "@uppy/core": "workspace:*",
+    "@uppy/react": "workspace:*",
+    "@uppy/remote-sources": "workspace:*",
+    "@uppy/screen-capture": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "@uppy/webcam": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwindcss": "^4.0.9"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.6.0",
+    "@vitest/browser": "^3.2.4",
+    "playwright": "1.54.1",
+    "typescript": "^5.7.3",
+    "vite": "^7.0.6",
+    "vitest": "^3.2.4",
+    "vitest-browser-react": "^1.0.0"
+  }
+}

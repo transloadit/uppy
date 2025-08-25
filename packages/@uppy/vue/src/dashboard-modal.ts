@@ -1,8 +1,7 @@
-import { defineComponent, ref, watch, h, type PropType } from 'vue'
+import type { Body, Meta, Uppy } from '@uppy/core'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
-import { Uppy } from '@uppy/core'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
-import useUppy from './useUppy.ts'
+import { defineComponent, h, type PropType, ref, watch } from 'vue'
+import useUppy from './useUppy.js'
 
 type DashboardModalOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: false },
@@ -13,7 +12,7 @@ export default defineComponent({
   name: 'DashboardModal',
   props: {
     uppy: {
-      type: Uppy<any, any>,
+      type: Object as PropType<Uppy<any, any>>,
       required: true,
     },
     props: {

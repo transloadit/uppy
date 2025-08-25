@@ -1,0 +1,21 @@
+{
+  "name": "example-companion-digitalocean-spaces",
+  "version": "0.0.0",
+  "type": "module",
+  "dependencies": {
+    "@uppy/aws-s3": "workspace:*",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "body-parser": "^1.20.3",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.1",
+    "express": "^4.19.2",
+    "vite": "^7.0.6"
+  },
+  "private": true,
+  "scripts": {
+    "start": "node ./server.cjs"
+  }
+}

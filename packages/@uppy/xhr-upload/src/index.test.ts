@@ -1,7 +1,7 @@
-import { vi, describe, it, expect } from 'vitest'
+import Core, { type UppyEventMap } from '@uppy/core'
 import nock from 'nock'
-import Core from '@uppy/core'
-import XHRUpload from './index.ts'
+import { describe, expect, it, vi } from 'vitest'
+import XHRUpload from './index.js'
 
 describe('XHRUpload', () => {
   it('should leverage hooks from fetcher', async () => {
@@ -61,6 +61,66 @@ describe('XHRUpload', () => {
     })
   })
 
+  it('should send response object over upload-error event', async () => {
+    nock('https://fake-endpoint.uppy.io')
+      .defaultReplyHeaders({
+        'access-control-allow-method': 'POST',
+        'access-control-allow-origin': '*',
+      })
+      .options('/')
+      .reply(204, {})
+      .post('/')
+      .reply(400, { status: 400, message: 'Oh no' })
+
+    const core = new Core()
+    const shouldRetry = vi.fn(() => false)
+
+    core.use(XHRUpload, {
+      id: 'XHRUpload',
+      endpoint: 'https://fake-endpoint.uppy.io',
+      shouldRetry,
+      async onAfterResponse(xhr) {
+        if (xhr.status === 400) {
+          // We want to test that we can define our own error message
+          throw new Error(JSON.parse(xhr.responseText).message)
+        }
+      },
+    })
+
+    const id = core.addFile({
+      type: 'image/png',
+      source: 'test',
+      name: 'test.jpg',
+      data: new Blob([new Uint8Array(8192)]),
+    })
+
+    const event = new Promise<
+      Parameters<UppyEventMap<any, any>['upload-error']>
+    >((resolve) => {
+      core.once('upload-error', (...args) => resolve(args))
+    })
+
+    await Promise.all([
+      core.upload(),
+      event.then(([file, error, response]) => {
+        const newFile = core.getFile(id)
+        // error and response are set inside upload-error in core.
+        // When we subscribe to upload-error it is emitted before
+        // these properties are set in core. Ideally we'd have an internal
+        // emitter which calls an external one but it is what it is.
+        delete newFile.error
+        delete newFile.response
+        // This is still useful to test because other properties
+        // might have changed in the meantime
+        expect(file).toEqual(newFile)
+        expect(response).toBeInstanceOf(XMLHttpRequest)
+        expect(error.message).toEqual('Oh no')
+      }),
+    ])
+
+    expect(shouldRetry).toHaveBeenCalledTimes(1)
+  })
+
   describe('headers', () => {
     it('can be a function', async () => {
       const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
@@ -83,6 +143,70 @@ describe('XHRUpload', () => {
         type: 'image/png',
         source: 'test',
         name: 'test.jpg',
+        data: new Blob([new Uint8Array(8192)]),
+      })
+
+      await core.upload()
+
+      expect(scope.isDone()).toBe(true)
+    })
+  })
+
+  describe('endpoint', () => {
+    it('can be a function', async () => {
+      const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
+        'access-control-allow-origin': '*',
+      })
+      scope.options('/upload/test.jpg').reply(200, {})
+      scope.post('/upload/test.jpg').reply(200, {})
+
+      const core = new Core()
+      core.use(XHRUpload, {
+        id: 'XHRUpload',
+        endpoint: (file) =>
+          !Array.isArray(file)
+            ? `https://fake-endpoint.uppy.io/upload/${file.name}`
+            : '',
+        bundle: false,
+      })
+      core.addFile({
+        type: 'image/png',
+        source: 'test',
+        name: 'test.jpg',
+        data: new Blob([new Uint8Array(8192)]),
+      })
+
+      await core.upload()
+
+      expect(scope.isDone()).toBe(true)
+    })
+
+    it('can be a function (bundle)', async () => {
+      const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
+        'access-control-allow-origin': '*',
+      })
+      scope.options('/upload-bundle/test.jpg,test2.jpg').reply(200, {})
+      scope.post('/upload-bundle/test.jpg,test2.jpg').reply(200, {})
+
+      const core = new Core()
+      core.use(XHRUpload, {
+        id: 'XHRUpload',
+        endpoint: (file) =>
+          Array.isArray(file)
+            ? `https://fake-endpoint.uppy.io/upload-bundle/${file.map((f) => f.name).join(',')}`
+            : '',
+        bundle: true,
+      })
+      core.addFile({
+        type: 'image/png',
+        source: 'test',
+        name: 'test.jpg',
+        data: new Blob([new Uint8Array(8192)]),
+      })
+      core.addFile({
+        type: 'image/png',
+        source: 'test',
+        name: 'test2.jpg',
         data: new Blob([new Uint8Array(8192)]),
       })
 

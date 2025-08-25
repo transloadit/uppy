@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const es_MX: Locale<0 | 1> = {
   strings: {},
@@ -34,7 +34,6 @@ es_MX.strings = {
   browseFolders: 'explorar carpetas',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
-  chooseFiles: 'Elegir archivos',
   closeModal: 'Cerrar ventana emergente',
   companionError: 'La conexión con Companion falló',
   companionUnauthorizeHint:
@@ -52,7 +51,6 @@ es_MX.strings = {
   dataUploadedOfTotal: '%{complete} de %{total}',
   discardRecordedFile: 'Descartar archivo grabado',
   done: 'Hecho',
-  dropHereOr: 'Suelte archivos aquí o %{browse}',
   dropHint: 'Suelte sus archivos aquí',
   dropPasteBoth: 'Suelte archivos aquí, %{browseFiles} o %{browseFolders}',
   dropPasteFiles: 'Suelte archivos aquí o %{browseFiles}',
@@ -198,6 +196,12 @@ es_MX.strings = {
   },
   zoomIn: 'Acercar',
   zoomOut: 'Alejar',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.es_MX = es_MX
 }
 
 export default es_MX

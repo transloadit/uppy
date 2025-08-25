@@ -1,5 +1,4 @@
-import type { Uppy, UppyEventMap } from '@uppy/core'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, Uppy, UppyEventMap } from '@uppy/core'
 import { useEffect, useState } from 'react'
 
 type EventResults<
@@ -23,7 +22,6 @@ export default function useUppyEvent<
   useEffect(() => {
     const handler = ((...args: EventResults<M, B, K>) => {
       setResult(args)
-      // eslint-disable-next-line node/no-callback-literal
       callback?.(...args)
     }) as UppyEventMap<M, B>[K]
 

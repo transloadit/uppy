@@ -1,5 +1,5 @@
+import { RateLimitedQueue } from '@uppy/utils'
 import { describe, expect, it, vi } from 'vitest'
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
 import Assembly from './Assembly.ts'
 
 describe('Transloadit/Assembly', () => {

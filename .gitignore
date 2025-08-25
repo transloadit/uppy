@@ -16,9 +16,14 @@ yarn-error.log
 .env
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
+.svelte-kit
+.turbo
+__screenshots__
 
 dist/
 lib/
+# @uppy/svelte needs lib inside src
+!src/lib
 coverage/
 examples/dev/bundle.js
 examples/aws-php/vendor/*

@@ -1,12 +1,11 @@
-/* eslint-disable no-param-reassign */
 import type {
   PartialTree,
   PartialTreeFile,
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
-import shallowClone from './shallowClone.ts'
+} from '@uppy/core'
+import shallowClone from './shallowClone.js'
 
 /*
   FROM        | TO
@@ -31,9 +30,9 @@ const percolateDown = (
   ) as (PartialTreeFolderNode | PartialTreeFile)[]
   children.forEach((item) => {
     item.status =
-      shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError) ?
-        'checked'
-      : 'unchecked'
+      shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError)
+        ? 'checked'
+        : 'unchecked'
     percolateDown(tree, item.id, shouldMarkAsChecked)
   })
 }

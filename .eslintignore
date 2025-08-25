@@ -1,8 +1,0 @@
-node_modules
-lib
-dist
-coverage
-test/lib/**
-test/endtoend/*/build
-examples/svelte-example/public/build/
-bundle-legacy.js

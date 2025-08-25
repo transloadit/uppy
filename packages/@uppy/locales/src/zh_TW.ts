@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const zh_TW: Locale<0> = {
   strings: {},
@@ -31,7 +31,6 @@ zh_TW.strings = {
   browseFolders: '瀏覽資料夾',
   cancel: '取消',
   cancelUpload: '取消上傳',
-  chooseFiles: '選擇檔案',
   closeModal: '關閉視窗',
   companionError: '與 Companion 的連接失敗',
   companionUnauthorizeHint: '若要取消 %{provider} 帳號認證，請前往 %{url}',
@@ -49,7 +48,6 @@ zh_TW.strings = {
   dataUploadedOfTotal: '%{complete}/%{total}',
   discardRecordedFile: '捨棄錄影檔',
   done: '完成',
-  dropHereOr: '拖曳至此處，或%{browse}',
   dropHint: '將檔案拖曳至此處',
   dropPasteBoth: '將檔案拖曳至此處、%{browseFiles}，或%{browseFolders}',
   dropPasteFiles: '將檔案拖曳至此處，或%{browseFiles}',
@@ -167,6 +165,12 @@ zh_TW.strings = {
   youHaveToAtLeastSelectX: '您至少要選擇 %{smart_count} 個檔案',
   zoomIn: '放大',
   zoomOut: '縮小',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.zh_TW = zh_TW
 }
 
 export default zh_TW

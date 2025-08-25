@@ -1,0 +1,60 @@
+{
+  "name": "@uppy/components",
+  "description": "Headless Uppy components, made in Preact",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "keywords": [
+    "uppy",
+    "uppy-plugin",
+    "headless",
+    "components",
+    "preact"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css",
+    "migrate": "node migrate.mjs",
+    "typecheck": "tsc --build"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/styles.css",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@uppy/audio": "workspace:^",
+    "@uppy/core": "workspace:^",
+    "@uppy/image-editor": "workspace:^",
+    "@uppy/remote-sources": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
+    "@uppy/webcam": "workspace:^",
+    "clsx": "^2.1.1",
+    "dequal": "^2.0.3",
+    "preact": "^10.5.13",
+    "pretty-bytes": "^6.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.6",
+    "tailwindcss": "^4.0.6",
+    "typescript": "^5.8.3"
+  }
+}

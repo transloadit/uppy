@@ -1,12 +1,10 @@
-const fs = require('node:fs')
-const merge = require('lodash/merge')
-const stripIndent = require('common-tags/lib/stripIndent')
-const crypto = require('node:crypto')
-
-const utils = require('../server/helpers/utils')
-const logger = require('../server/logger')
-// @ts-ignore
-const { version } = require('../../package.json')
+import crypto from 'node:crypto'
+import fs from 'node:fs'
+import { stripIndent } from 'common-tags'
+import merge from 'lodash/merge.js'
+import packageJson from '../../package.json' with { type: 'json' }
+import * as utils from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
@@ -28,8 +26,11 @@ const getSecret = (baseEnvVar) => {
  *
  * @returns {string}
  */
-exports.generateSecret = (secretName) => {
-  logger.warn(`auto-generating server ${secretName} because none was specified`, 'startup.secret')
+export const generateSecret = (secretName) => {
+  logger.warn(
+    `auto-generating server ${secretName} because none was specified`,
+    'startup.secret',
+  )
   return crypto.randomBytes(64).toString('hex')
 }
 
@@ -43,19 +44,21 @@ const hasProtocol = (url) => {
 
 const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
 
-function getCorsOrigins () {
+function getCorsOrigins() {
   if (process.env.COMPANION_CLIENT_ORIGINS) {
     switch (process.env.COMPANION_CLIENT_ORIGINS) {
-
-      case 'true': return true
-      case 'false': return false
-      case '*': return '*'
+      case 'true':
+        return true
+      case 'false':
+        return false
+      case '*':
+        return '*'
 
       default:
-      return process.env.COMPANION_CLIENT_ORIGINS
-        .split(',')
-        .map((url) => (hasProtocol(url) ? url : `${companionProtocol}://${url}`))
-  }
+        return process.env.COMPANION_CLIENT_ORIGINS.split(',').map((url) =>
+          hasProtocol(url) ? url : `${companionProtocol}://${url}`,
+        )
+    }
   }
   if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
     return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
@@ -70,7 +73,8 @@ const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
  *
  * @returns {string}
  */
-const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(...args)}`
+const defaultStandaloneGetKey = (...args) =>
+  `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
  * Loads the config from environment variables
@@ -79,17 +83,13 @@ const defaultStandaloneGetKey = (...args) => `${s3Prefix}${utils.defaultGetKey(.
  */
 const getConfigFromEnv = () => {
   const uploadUrls = process.env.COMPANION_UPLOAD_URLS
-  const domains = process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
+  const domains =
+    process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
   const validHosts = domains ? domains.split(',') : []
 
   return {
     providerOptions: {
       drive: {
-        key: process.env.COMPANION_GOOGLE_KEY,
-        secret: getSecret('COMPANION_GOOGLE_SECRET'),
-        credentialsURL: process.env.COMPANION_GOOGLE_KEYS_ENDPOINT,
-      },
-      googlephotos: {
         key: process.env.COMPANION_GOOGLE_KEY,
         secret: getSecret('COMPANION_GOOGLE_SECRET'),
         credentialsURL: process.env.COMPANION_GOOGLE_KEYS_ENDPOINT,
@@ -138,7 +138,7 @@ const getConfigFromEnv = () => {
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
       region: process.env.COMPANION_AWS_REGION,
       useAccelerateEndpoint:
-      process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
+        process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
       expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
       forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
@@ -152,13 +152,21 @@ const getConfigFromEnv = () => {
       validHosts,
     },
     enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
-    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS ? process.env.COMPANION_PERIODIC_PING_URLS.split(',') : [],
+    enableGooglePickerEndpoint:
+      process.env.COMPANION_ENABLE_GOOGLE_PICKER_ENDPOINT === 'true',
+    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS
+      ? process.env.COMPANION_PERIODIC_PING_URLS.split(',')
+      : [],
     periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10) : undefined,
-    periodicPingStaticPayload: process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
-      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD) : undefined,
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10)
+      : undefined,
+    periodicPingStaticPayload: process.env
+      .COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
+      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD)
+      : undefined,
     periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10) : undefined,
+      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10)
+      : undefined,
     filePath: process.env.COMPANION_DATADIR,
     redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
     redisUrl: process.env.COMPANION_REDIS_URL,
@@ -181,16 +189,32 @@ const getConfigFromEnv = () => {
     allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
     cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD ? process.env.COMPANION_STREAMING_UPLOAD === 'true' : undefined,
-    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10) : undefined,
-    chunkSize: process.env.COMPANION_CHUNK_SIZE ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10) : undefined,
-    clientSocketConnectTimeout: process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
-      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10) : undefined,
+    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD
+      ? process.env.COMPANION_STREAMING_UPLOAD === 'true'
+      : undefined,
+    tusDeferredUploadLength: process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH
+      ? process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH === 'true'
+      : true,
+    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE
+      ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10)
+      : undefined,
+    maxFilenameLength: process.env.COMPANION_MAX_FILENAME_LENGTH
+      ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10)
+      : 500,
+    chunkSize: process.env.COMPANION_CHUNK_SIZE
+      ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10)
+      : undefined,
+    clientSocketConnectTimeout: process.env
+      .COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
+      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10)
+      : undefined,
     metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
     loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
     corsOrigins: getCorsOrigins(),
-    testDynamicOauthCredentials: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
-    testDynamicOauthCredentialsSecret: process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
+    testDynamicOauthCredentials:
+      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
+    testDynamicOauthCredentialsSecret:
+      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
   }
 }
 
@@ -203,7 +227,8 @@ const getConfigPath = () => {
   let configPath
 
   for (let i = process.argv.length - 1; i >= 0; i--) {
-    const isConfigFlag = process.argv[i] === '-c' || process.argv[i] === '--config'
+    const isConfigFlag =
+      process.argv[i] === '-c' || process.argv[i] === '--config'
     const flagHasValue = i + 1 <= process.argv.length
     if (isConfigFlag && flagHasValue) {
       configPath = process.argv[i + 1]
@@ -234,11 +259,11 @@ const getConfigFromFile = () => {
  *
  * @returns {object}
  */
-exports.getCompanionOptions = (options = {}) => {
+export const getCompanionOptions = (options = {}) => {
   return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
 }
 
-exports.buildHelpfulStartupMessage = (companionOptions) => {
+export const buildHelpfulStartupMessage = (companionOptions) => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
   Object.keys(companionOptions.providerOptions).forEach((providerName) => {
@@ -246,7 +271,7 @@ exports.buildHelpfulStartupMessage = (companionOptions) => {
   })
 
   return stripIndent`
-    Welcome to Companion v${version}
+    Welcome to Companion v${packageJson.version}
     ===================================
 
     Congratulations on setting up Companion! Thanks for joining our cause, you have taken

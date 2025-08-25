@@ -1,56 +1,48 @@
-/* eslint-disable max-classes-per-file */
 /* global AggregateError */
 
-import type { h } from 'preact'
-import Translator from '@uppy/utils/lib/Translator'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import DefaultStore, { type Store } from '@uppy/store-default'
+import type {
+  Body,
+  CompanionClientProvider,
+  CompanionClientSearchProvider,
+  CompanionFile,
+  FileProgressNotStarted,
+  FileProgressStarted,
+  I18n,
+  Locale,
+  Meta,
+  MinimalRequiredUppyFile,
+  OptionalPluralizeLocale,
+  UppyFile,
+} from '@uppy/utils'
+import {
+  getFileNameAndExtension,
+  getFileType,
+  getSafeFileId,
+  Translator,
+} from '@uppy/utils'
+import throttle from 'lodash/throttle.js'
 // @ts-ignore untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
-import throttle from 'lodash/throttle.js'
-import DefaultStore, { type Store } from '@uppy/store-default'
-import getFileType from '@uppy/utils/lib/getFileType'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
-import { getSafeFileId } from '@uppy/utils/lib/generateFileID'
-import type {
-  UppyFile,
-  Meta,
-  Body,
-  MinimalRequiredUppyFile,
-} from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type {
-  CompanionClientProvider,
-  CompanionClientSearchProvider,
-} from '@uppy/utils/lib/CompanionClientProvider'
-import type {
-  FileProgressNotStarted,
-  FileProgressStarted,
-} from '@uppy/utils/lib/FileProgress'
-import type {
-  Locale,
-  I18n,
-  OptionalPluralizeLocale,
-} from '@uppy/utils/lib/Translator'
-import supportsUploadProgress from './supportsUploadProgress.ts'
-import getFileName from './getFileName.ts'
-import { justErrorsLogger, debugLogger } from './loggers.ts'
+import type { h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import type BasePlugin from './BasePlugin.js'
+import getFileName from './getFileName.js'
+import locale from './locale.js'
+import { debugLogger, justErrorsLogger } from './loggers.js'
+import type { Restrictions, ValidateableFile } from './Restricter.js'
 import {
-  Restricter,
   defaultOptions as defaultRestrictionOptions,
+  Restricter,
   RestrictionError,
-} from './Restricter.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
-import locale from './locale.ts'
-
-import type BasePlugin from './BasePlugin.ts'
-import type { Restrictions, ValidateableFile } from './Restricter.ts'
+} from './Restricter.js'
+import supportsUploadProgress from './supportsUploadProgress.js'
 
 type Processor = (
   fileIDs: string[],
   uploadID: string,
+  // biome-ignore lint/suspicious/noConfusingVoidType: ...
 ) => Promise<unknown> | void
 
 type LogLevel = 'info' | 'warning' | 'error' | 'success'
@@ -142,8 +134,25 @@ export type UnknownProviderPluginState = {
   currentFolderId: PartialTreeId
   username: string | null
 }
+
+export interface AsyncStore {
+  getItem: (key: string) => Promise<string | null>
+  setItem: (key: string, value: string) => Promise<void>
+  removeItem: (key: string) => Promise<void>
+}
+
+/**
+ * This is a base for a provider that does not necessarily use the Companion-assisted OAuth2 flow
+ */
+export interface BaseProviderPlugin {
+  title: string
+  icon: () => h.JSX.Element
+  storage: AsyncStore
+}
+
 /*
- * UnknownProviderPlugin can be any Companion plugin (such as Google Drive).
+ * UnknownProviderPlugin can be any Companion plugin (such as Google Drive)
+ * that uses the Companion-assisted OAuth flow.
  * As the plugins are passed around throughout Uppy we need a generic type for this.
  * It may seems like duplication, but this type safe. Changing the type of `storage`
  * will error in the `Provider` class of @uppy/companion-client and vice versa.
@@ -154,18 +163,14 @@ export type UnknownProviderPluginState = {
 export type UnknownProviderPlugin<
   M extends Meta,
   B extends Body,
-> = UnknownPlugin<M, B, UnknownProviderPluginState> & {
-  title: string
-  rootFolderId: string | null
-  files: UppyFile<M, B>[]
-  icon: () => h.JSX.Element
-  provider: CompanionClientProvider
-  storage: {
-    getItem: (key: string) => Promise<string | null>
-    setItem: (key: string, value: string) => Promise<void>
-    removeItem: (key: string) => Promise<void>
+> = UnknownPlugin<M, B, UnknownProviderPluginState> &
+  BaseProviderPlugin & {
+    rootFolderId: string | null
+    files: UppyFile<M, B>[]
+    provider: CompanionClientProvider
+    // Can't be typed unfortunately, we can't depend on `provider-views` in `core`.
+    view: any
   }
-}
 
 /*
  * UnknownSearchProviderPlugin can be any search Companion plugin (such as Unsplash).
@@ -185,11 +190,10 @@ export type UnknownSearchProviderPluginState = {
 export type UnknownSearchProviderPlugin<
   M extends Meta,
   B extends Body,
-> = UnknownPlugin<M, B, UnknownSearchProviderPluginState> & {
-  title: string
-  icon: () => h.JSX.Element
-  provider: CompanionClientSearchProvider
-}
+> = UnknownPlugin<M, B, UnknownSearchProviderPluginState> &
+  BaseProviderPlugin & {
+    provider: CompanionClientSearchProvider
+  }
 
 export interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
@@ -205,7 +209,6 @@ interface CurrentUpload<M extends Meta, B extends Body> {
 }
 
 // TODO: can we use namespaces in other plugins to populate this?
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface Plugins extends Record<string, Record<string, unknown> | undefined> {}
 
 export interface State<M extends Meta, B extends Body>
@@ -391,7 +394,7 @@ export class Uppy<
 
   #postProcessors: Set<Processor> = new Set()
 
-  defaultLocale: Locale
+  defaultLocale: OptionalPluralizeLocale
 
   locale!: Locale
 
@@ -401,6 +404,7 @@ export class Uppy<
 
   store: NonNullableUppyOptions<M, B>['store']
 
+  // Warning: do not use this from a plugin, as it will cause the plugins' translations to be missing
   i18n!: I18n
 
   i18nArray!: Translator['translateArray']
@@ -413,7 +417,7 @@ export class Uppy<
    * Instantiate Uppy
    */
   constructor(opts?: UppyOptionsWithOptionalRestrictions<M, B>) {
-    this.defaultLocale = locale as any as Locale
+    this.defaultLocale = locale
 
     const defaultOptions: UppyOptions<Record<string, unknown>, B> = {
       id: 'uppy',
@@ -439,18 +443,18 @@ export class Uppy<
       ...merged,
       restrictions: {
         ...(defaultOptions.restrictions as Restrictions),
-        ...(opts && opts.restrictions),
+        ...opts?.restrictions,
       },
     }
 
     // Support debug: true for backwards-compatability, unless logger is set in opts
     // opts instead of this.opts to avoid comparing objects — we set logger: justErrorsLogger in defaultOptions
-    if (opts && opts.logger && opts.debug) {
+    if (opts?.logger && opts.debug) {
       this.log(
         'You are using a custom `logger`, but also set `debug: true`, which uses built-in logger to output logs to console. Ignoring `debug: true` and using your custom `logger`.',
         'warning',
       )
-    } else if (opts && opts.debug) {
+    } else if (opts?.debug) {
       this.opts.logger = debugLogger
     }
 
@@ -487,7 +491,6 @@ export class Uppy<
 
     // Exposing uppy object on window for debugging and testing
     if (this.opts.debug && typeof window !== 'undefined') {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore Mutating the global object for debug purposes
       window[this.opts.id] = this
     }
@@ -639,6 +642,11 @@ export class Uppy<
           ...files[fileID].progress,
           ...defaultProgress,
         },
+        // @ts-expect-error these typed are inserted
+        // into the namespace in their respective packages
+        // but core isn't ware of those
+        tus: undefined,
+        transloadit: undefined,
       }
     })
 
@@ -707,8 +715,7 @@ export class Uppy<
     const updatedFiles = { ...this.getState().files }
     if (!updatedFiles[fileID]) {
       this.log(
-        'Was trying to set metadata for a file that has been removed: ',
-        fileID,
+        `Was trying to set metadata for a file that has been removed: ${fileID}`,
       )
       return
     }
@@ -869,6 +876,18 @@ export class Uppy<
     }
   }
 
+  validateRestrictions(
+    file: ValidateableFile<M, B>,
+    files: ValidateableFile<M, B>[] = this.getFiles(),
+  ): RestrictionError<M, B> | null {
+    try {
+      this.#restricter.validate(files, [file])
+    } catch (err) {
+      return err as any
+    }
+    return null
+  }
+
   validateSingleFile(file: ValidateableFile<M, B>): string | null {
     try {
       this.#restricter.validateSingleFile(file)
@@ -895,10 +914,18 @@ export class Uppy<
       this.#restricter.getMissingRequiredMetaFields(file)
 
     if (missingFields.length > 0) {
-      this.setFileState(file.id, { missingRequiredMetaFields: missingFields })
+      this.setFileState(file.id, {
+        missingRequiredMetaFields: missingFields,
+        error: error.message,
+      })
       this.log(error.message)
       this.emit('restriction-failed', file, error)
       return false
+    }
+    if (missingFields.length === 0 && file.missingRequiredMetaFields) {
+      this.setFileState(file.id, {
+        missingRequiredMetaFields: [],
+      })
     }
     return true
   }
@@ -945,14 +972,15 @@ export class Uppy<
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
     const file = (
-      fileDescriptorOrFile instanceof File ?
-        {
-          name: fileDescriptorOrFile.name,
-          type: fileDescriptorOrFile.type,
-          size: fileDescriptorOrFile.size,
-          data: fileDescriptorOrFile,
-        }
-      : fileDescriptorOrFile) as UppyFile<M, B>
+      fileDescriptorOrFile instanceof File
+        ? {
+            name: fileDescriptorOrFile.name,
+            type: fileDescriptorOrFile.type,
+            size: fileDescriptorOrFile.size,
+            data: fileDescriptorOrFile,
+          }
+        : fileDescriptorOrFile
+    ) as UppyFile<M, B>
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
@@ -964,8 +992,9 @@ export class Uppy<
     meta.type = fileType
 
     // `null` means the size is unknown.
-    const size =
-      Number.isFinite(file.data.size) ? file.data.size : (null as never)
+    const size = Number.isFinite(file.data.size)
+      ? file.data.size
+      : (null as never)
 
     return {
       source: file.source || '',
@@ -1012,10 +1041,10 @@ export class Uppy<
     validFilesToAdd: UppyFile<M, B>[]
     errors: RestrictionError<M, B>[]
   } {
-    const { files: existingFiles } = this.getState()
+    let { files: existingFiles } = this.getState()
 
     // create a copy of the files object only once
-    const nextFilesState = { ...existingFiles }
+    let nextFilesState = { ...existingFiles }
     const validFilesToAdd: UppyFile<M, B>[] = []
     const errors: RestrictionError<M, B>[] = []
 
@@ -1044,6 +1073,10 @@ export class Uppy<
           newFile,
           nextFilesState,
         )
+
+        // update state after onBeforeFileAdded
+        existingFiles = this.getState().files
+        nextFilesState = { ...existingFiles, ...nextFilesState }
 
         if (
           !onBeforeFileAddedResult &&
@@ -1265,7 +1298,7 @@ export class Uppy<
     }
 
     this.setState(stateUpdate)
-    this.calculateTotalProgress()
+    this.#updateTotalProgressThrottled()
 
     const removedFileIDs = Object.keys(removedFiles)
     removedFileIDs.forEach((fileID) => {
@@ -1344,38 +1377,55 @@ export class Uppy<
     this.emit('resume-all')
   }
 
-  retryAll(): Promise<UploadResult<M, B> | undefined> {
-    const updatedFiles = { ...this.getState().files }
-    const filesToRetry = Object.keys(updatedFiles).filter((file) => {
-      return updatedFiles[file].error
+  #getFilesToRetry() {
+    const { files } = this.getState()
+    return Object.keys(files).filter((fileId) => {
+      const file = files[fileId]
+      // Only retry files that have errors AND don't have missing required metadata
+      return (
+        file.error &&
+        (!file.missingRequiredMetaFields ||
+          file.missingRequiredMetaFields.length === 0)
+      )
     })
+  }
 
-    filesToRetry.forEach((file) => {
-      const updatedFile = {
-        ...updatedFiles[file],
+  async #doRetryAll(): Promise<UploadResult<M, B> | undefined> {
+    const filesToRetry = this.#getFilesToRetry()
+
+    const updatedFiles = { ...this.getState().files }
+    filesToRetry.forEach((fileID) => {
+      updatedFiles[fileID] = {
+        ...updatedFiles[fileID],
         isPaused: false,
         error: null,
       }
-      updatedFiles[file] = updatedFile
     })
+
     this.setState({
       files: updatedFiles,
       error: null,
     })
 
-    this.emit('retry-all', Object.values(updatedFiles))
+    this.emit('retry-all', this.getFilesByIds(filesToRetry))
 
     if (filesToRetry.length === 0) {
-      return Promise.resolve({
+      return {
         successful: [],
         failed: [],
-      })
+      }
     }
 
     const uploadID = this.#createUpload(filesToRetry, {
       forceAllowNewUpload: true, // create new upload even if allowNewUpload: false
     })
     return this.#runUpload(uploadID)
+  }
+
+  async retryAll(): Promise<UploadResult<M, B> | undefined> {
+    const result = await this.#doRetryAll()
+    this.emit('complete', result!)
+    return result
   }
 
   cancelAll(): void {
@@ -1411,6 +1461,71 @@ export class Uppy<
     })
   }
 
+  #handleUploadProgress = (
+    file: UppyFile<M, B> | undefined,
+    progress: FileProgressStarted,
+  ) => {
+    const fileInState = file ? this.getFile(file.id) : undefined
+    if (file == null || !fileInState) {
+      this.log(
+        `Not setting progress for a file that has been removed: ${file?.id}`,
+      )
+      return
+    }
+
+    if (fileInState.progress.percentage === 100) {
+      this.log(
+        `Not setting progress for a file that has been already uploaded: ${file.id}`,
+      )
+      return
+    }
+
+    const newProgress = {
+      bytesTotal: progress.bytesTotal,
+      // bytesTotal may be null or zero; in that case we can't divide by it
+      percentage:
+        progress.bytesTotal != null &&
+        Number.isFinite(progress.bytesTotal) &&
+        progress.bytesTotal > 0
+          ? Math.round((progress.bytesUploaded / progress.bytesTotal) * 100)
+          : undefined,
+    }
+
+    if (fileInState.progress.uploadStarted != null) {
+      this.setFileState(file.id, {
+        progress: {
+          ...fileInState.progress,
+          ...newProgress,
+          bytesUploaded: progress.bytesUploaded,
+        },
+      })
+    } else {
+      this.setFileState(file.id, {
+        progress: {
+          ...fileInState.progress,
+          ...newProgress,
+        },
+      })
+    }
+
+    this.#updateTotalProgressThrottled()
+  }
+
+  #updateTotalProgress() {
+    const totalProgress = this.#calculateTotalProgress()
+    let totalProgressPercent: number | null = null
+    if (totalProgress != null) {
+      totalProgressPercent = Math.round(totalProgress * 100)
+      if (totalProgressPercent > 100) totalProgressPercent = 100
+      else if (totalProgressPercent < 0) totalProgressPercent = 0
+    }
+
+    this.emit('progress', totalProgressPercent ?? 0)
+    this.setState({
+      totalProgress: totalProgressPercent ?? 0,
+    })
+  }
+
   // ___Why throttle at 500ms?
   //    - We must throttle at >250ms for superfocus in Dashboard to work well
   //    (because animation takes 0.25s, and we want to wait for all animations to be over before refocusing).
@@ -1418,52 +1533,23 @@ export class Uppy<
   //    and click 'ADD MORE FILES', - focus won't activate in Firefox.
   //    - We must throttle at around >500ms to avoid performance lags.
   //    [Practical Check] Firefox, try to upload a big file for a prolonged period of time. Laptop will start to heat up.
-  // todo when uploading multiple files, this will cause problems because they share the same throttle,
-  // meaning some files might never get their progress reported (eaten up by progress events from other files)
-  calculateProgress = throttle(
-    (file, data) => {
-      const fileInState = this.getFile(file?.id)
-      if (file == null || !fileInState) {
-        this.log(
-          `Not setting progress for a file that has been removed: ${file?.id}`,
-        )
-        return
-      }
-
-      if (fileInState.progress.percentage === 100) {
-        this.log(
-          `Not setting progress for a file that has been already uploaded: ${file.id}`,
-        )
-        return
-      }
-
-      // bytesTotal may be null or zero; in that case we can't divide by it
-      const canHavePercentage =
-        Number.isFinite(data.bytesTotal) && data.bytesTotal > 0
-      this.setFileState(file.id, {
-        progress: {
-          ...fileInState.progress,
-          bytesUploaded: data.bytesUploaded,
-          bytesTotal: data.bytesTotal,
-          percentage:
-            canHavePercentage ?
-              Math.round((data.bytesUploaded / data.bytesTotal) * 100)
-            : 0,
-        },
-      })
-
-      this.calculateTotalProgress()
-    },
+  #updateTotalProgressThrottled = throttle(
+    () => this.#updateTotalProgress(),
     500,
     { leading: true, trailing: true },
   )
 
-  calculateTotalProgress(): void {
+  private [Symbol.for('uppy test: updateTotalProgress')]() {
+    return this.#updateTotalProgress()
+  }
+
+  #calculateTotalProgress() {
     // calculate total progress, using the number of files currently uploading,
-    // multiplied by 100 and the summ of individual progress of each file
+    // between 0 and 1 and sum of individual progress of each file
     const files = this.getFiles()
 
-    const inProgress = files.filter((file) => {
+    // note: also includes files that have completed uploading:
+    const filesInProgress = files.filter((file) => {
       return (
         file.progress.uploadStarted ||
         file.progress.preprocess ||
@@ -1471,54 +1557,48 @@ export class Uppy<
       )
     })
 
-    if (inProgress.length === 0) {
-      this.emit('progress', 0)
-      this.setState({ totalProgress: 0 })
-      return
+    if (filesInProgress.length === 0) {
+      return 0
     }
 
-    const sizedFiles = inProgress.filter(
-      (file) => file.progress.bytesTotal != null,
+    if (filesInProgress.every((file) => file.progress.uploadComplete)) {
+      // If every uploading file is complete, and we're still getting progress, it probably means
+      // there's a bug somewhere in some progress reporting code (maybe not even our code)
+      // and we're still getting progress, so let's just assume it means a 100% progress
+      return 1
+    }
+
+    const isSizedFile = (file: UppyFile<M, B>) =>
+      file.progress.bytesTotal != null && file.progress.bytesTotal !== 0
+
+    const sizedFilesInProgress = filesInProgress.filter(isSizedFile)
+    const unsizedFilesInProgress = filesInProgress.filter(
+      (file) => !isSizedFile(file),
     )
-    const unsizedFiles = inProgress.filter(
-      (file) => file.progress.bytesTotal == null,
+
+    if (
+      sizedFilesInProgress.every((file) => file.progress.uploadComplete) &&
+      unsizedFilesInProgress.length > 0 &&
+      !unsizedFilesInProgress.every((file) => file.progress.uploadComplete)
+    ) {
+      // we are done with uploading all files of known size, however
+      // there is at least one file with unknown size still uploading,
+      // and we cannot say anything about their progress
+      // In any case, return null because it doesn't make any sense to show a progress
+      return null
+    }
+
+    const totalFilesSize = sizedFilesInProgress.reduce(
+      (acc, file) => acc + (file.progress.bytesTotal ?? 0),
+      0,
     )
 
-    if (sizedFiles.length === 0) {
-      const progressMax = inProgress.length * 100
-      const currentProgress = unsizedFiles.reduce((acc, file) => {
-        return acc + (file.progress.percentage as number)
-      }, 0)
-      const totalProgress = Math.round((currentProgress / progressMax) * 100)
-      this.setState({ totalProgress })
-      return
-    }
+    const totalUploadedSize = sizedFilesInProgress.reduce(
+      (acc, file) => acc + (file.progress.bytesUploaded || 0),
+      0,
+    )
 
-    let totalSize = sizedFiles.reduce((acc, file) => {
-      return (acc + (file.progress.bytesTotal ?? 0)) as number
-    }, 0)
-    const averageSize = totalSize / sizedFiles.length
-    totalSize += averageSize * unsizedFiles.length
-
-    let uploadedSize = 0
-    sizedFiles.forEach((file) => {
-      uploadedSize += file.progress.bytesUploaded as number
-    })
-    unsizedFiles.forEach((file) => {
-      uploadedSize += (averageSize * (file.progress.percentage || 0)) / 100
-    })
-
-    let totalProgress =
-      totalSize === 0 ? 0 : Math.round((uploadedSize / totalSize) * 100)
-
-    // hot fix, because:
-    // uploadedSize ended up larger than totalSize, resulting in 1325% total
-    if (totalProgress > 100) {
-      totalProgress = 100
-    }
-
-    this.setState({ totalProgress })
-    this.emit('progress', totalProgress)
+    return totalFilesSize === 0 ? 0 : totalUploadedSize / totalFilesSize
   }
 
   /**
@@ -1604,7 +1684,6 @@ export class Uppy<
             progress: {
               uploadStarted: Date.now(),
               uploadComplete: false,
-              percentage: 0,
               bytesUploaded: 0,
               bytesTotal: file.size,
             } as FileProgressStarted,
@@ -1617,7 +1696,7 @@ export class Uppy<
 
     this.on('upload-start', onUploadStarted)
 
-    this.on('upload-progress', this.calculateProgress)
+    this.on('upload-progress', this.#handleUploadProgress)
 
     this.on('upload-success', (file, uploadResp) => {
       if (file == null || !this.getFile(file.id)) {
@@ -1632,11 +1711,11 @@ export class Uppy<
         progress: {
           ...currentProgress,
           postprocess:
-            this.#postProcessors.size > 0 ?
-              {
-                mode: 'indeterminate',
-              }
-            : undefined,
+            this.#postProcessors.size > 0
+              ? {
+                  mode: 'indeterminate',
+                }
+              : undefined,
           uploadComplete: true,
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,
@@ -1654,7 +1733,7 @@ export class Uppy<
         })
       }
 
-      this.calculateTotalProgress()
+      this.#updateTotalProgressThrottled()
     })
 
     this.on('preprocess-progress', (file, progress) => {
@@ -1724,7 +1803,7 @@ export class Uppy<
 
     this.on('restored', () => {
       // Files may have changed--ensure progress is still accurate.
-      this.calculateTotalProgress()
+      this.#updateTotalProgressThrottled()
     })
 
     // @ts-expect-error should fix itself when dashboard it typed (also this doesn't belong here)
@@ -1943,7 +2022,7 @@ export class Uppy<
    * Passes messages to a function, provided in `opts.logger`.
    * If `opts.logger: Uppy.debugLogger` or `opts.debug: true`, logs to the browser console.
    */
-  log(message: string | Record<any, any> | Error, type?: string): void {
+  log(message: unknown, type?: 'error' | 'warning'): void {
     const { logger } = this.opts
     switch (type) {
       case 'error':
@@ -2147,7 +2226,7 @@ export class Uppy<
       // postprocessing completion, we do it instead.
       currentUpload.fileIDs.forEach((fileID) => {
         const file = this.getFile(fileID)
-        if (file && file.progress.postprocess) {
+        if (file?.progress.postprocess) {
           this.emit('postprocess-complete', file)
         }
       })
@@ -2164,17 +2243,20 @@ export class Uppy<
     // This is in a separate function so that the `currentUploads` variable
     // always refers to the latest state. In the handler right above it refers
     // to an outdated object without the `.result` property.
-    let result
+    let result: UploadResult<M, B> | undefined
     if (currentUpload) {
       result = currentUpload.result
-      this.emit('complete', result)
-
       this.#removeUpload(uploadID)
     }
     if (result == null) {
       this.log(
         `Not setting result for an upload that has been removed: ${uploadID}`,
       )
+      result = {
+        successful: [],
+        failed: [],
+        uploadID,
+      }
     }
     return result
   }
@@ -2182,13 +2264,32 @@ export class Uppy<
   /**
    * Start an upload for all the files that are not currently being uploaded.
    */
-  upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
-    if (!this.#plugins['uploader']?.length) {
+  async upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
+    if (!this.#plugins.uploader?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 
     let { files } = this.getState()
 
+    // retry any failed files from a previous upload() call
+    const filesToRetry = this.#getFilesToRetry()
+    if (filesToRetry.length > 0) {
+      const retryResult = await this.#doRetryAll() // we don't want the complete event to fire
+
+      const hasNewFiles =
+        this.getFiles().filter((file) => file.progress.uploadStarted == null)
+          .length > 0
+
+      // if no new files, make it idempotent and return
+      if (!hasNewFiles) {
+        this.emit('complete', retryResult!)
+        return retryResult
+      }
+      // reload files which might have  changed after retry
+      ;({ files } = this.getState())
+    }
+
+    // If no files to retry, proceed with original upload() behavior for new files
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
@@ -2225,7 +2326,7 @@ export class Uppy<
         // missing fields error here.
         throw err
       })
-      .then(() => {
+      .then(async () => {
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
         const currentlyUploadingFiles = Object.values(currentUploads).flatMap(
@@ -2245,7 +2346,9 @@ export class Uppy<
         })
 
         const uploadID = this.#createUpload(waitingFileIDs)
-        return this.#runUpload(uploadID)
+        const result = await this.#runUpload(uploadID)
+        this.emit('complete', result!)
+        return result
       })
       .catch((err) => {
         this.emit('error', err)

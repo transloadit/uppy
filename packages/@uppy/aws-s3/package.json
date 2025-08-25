@@ -1,10 +1,16 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "aws s3",
@@ -22,6 +28,16 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^"
@@ -29,8 +45,11 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.362.0",
     "@aws-sdk/s3-request-presigner": "^3.362.0",
+    "@uppy/core": "workspace:^",
+    "jsdom": "^26.1.0",
     "nock": "^13.1.0",
-    "vitest": "^1.2.1",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
     "whatwg-fetch": "3.6.2"
   },
   "peerDependencies": {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import formatSeconds from './formatSeconds.ts'
+import formatSeconds from './formatSeconds.js'
 
 describe('formatSeconds', () => {
   it("should return a value of '0:43' when an argument of 43 seconds is supplied", () => {

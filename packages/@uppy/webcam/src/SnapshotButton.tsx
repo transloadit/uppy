@@ -1,6 +1,5 @@
-import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
-import CameraIcon from './CameraIcon.tsx'
+import type { I18n } from '@uppy/utils'
+import CameraIcon from './CameraIcon.js'
 
 interface SnapshotButtonProps {
   onSnapshot: () => void

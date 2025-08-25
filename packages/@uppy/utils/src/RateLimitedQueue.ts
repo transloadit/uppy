@@ -194,7 +194,7 @@ export class RateLimitedQueue {
       const outerPromise = new Promise((resolve, reject) => {
         queuedRequest = this.run(() => {
           let cancelError: ReturnType<typeof createCancelError>
-          let innerPromise
+          let innerPromise: Promise<Awaited<ReturnType<T>>>
           try {
             innerPromise = Promise.resolve(fn(...args))
           } catch (err) {

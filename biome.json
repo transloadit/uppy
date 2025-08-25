@@ -1,0 +1,84 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.0.5/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "packages/**",
+      "examples/**",
+      "scripts/**",
+      "bin/**",
+      "e2e/**",
+      "private/**",
+      "!packages/**/{dist,lib}/**",
+      "!node_modules",
+      "!.svelte-kit",
+      "!packages/@uppy/components/src/input.css"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "formatWithErrors": true
+  },
+  "linter": {
+    "enabled": true,
+    "includes": [
+      "packages/**",
+      "examples/**",
+      "scripts/**",
+      "private/**",
+      "!packages/**/{dist,lib}/**",
+      "!node_modules",
+      "!.svelte-kit",
+      "!packages/@uppy/components/src/input.css",
+      "!**/*.vue",
+      "!**/*.svelte"
+    ],
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "off"
+      },
+      "correctness": {
+        "useExhaustiveDependencies": "error",
+        "useHookAtTopLevel": "error",
+        "noUnusedFunctionParameters": "off",
+        "noUnusedVariables": {
+          "level": "error",
+          "options": {
+            "ignoreRestSiblings": true
+          }
+        }
+      },
+      "style": {
+        "noNonNullAssertion": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
+      "nursery": {
+        "noNestedComponentDefinitions": "error",
+        "noReactPropAssign": "error"
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "semicolons": "asNeeded"
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

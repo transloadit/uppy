@@ -1,17 +1,15 @@
-import { DashboardDemoComponent } from './dashboard-demo.component';
-import { moduleMetadata } from '@storybook/angular';
-import { UppyAngularDashboardModule} from './dashboard.module';
+import { moduleMetadata } from "@storybook/angular";
+import { DashboardDemoComponent } from "./dashboard-demo.component";
 
 export default {
-  title: 'Dashboard',
-  decorators: [
-    moduleMetadata({
-      imports: [UppyAngularDashboardModule],
-      declarations: [DashboardDemoComponent]
-    }),
-  ]
+	title: "Dashboard",
+	decorators: [
+		moduleMetadata({
+			declarations: [DashboardDemoComponent],
+		}),
+	],
 };
 
 export const Default = () => ({
-  component: DashboardDemoComponent,
+	component: DashboardDemoComponent,
 });

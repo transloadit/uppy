@@ -1,5 +1,5 @@
-import type { I18n } from '@uppy/utils/lib/Translator'
-import { h } from 'preact'
+import type { I18n } from '@uppy/utils'
+import type { h } from 'preact'
 
 interface PermissionsScreenProps {
   icon: () => h.JSX.Element | null
@@ -16,9 +16,9 @@ export default (props: PermissionsScreenProps) => {
         {hasAudio ? i18n('allowAudioAccessTitle') : i18n('noAudioTitle')}
       </div>
       <p>
-        {hasAudio ?
-          i18n('allowAudioAccessDescription')
-        : i18n('noAudioDescription')}
+        {hasAudio
+          ? i18n('allowAudioAccessDescription')
+          : i18n('noAudioDescription')}
       </p>
     </div>
   )

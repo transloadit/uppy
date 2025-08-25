@@ -1,17 +1,17 @@
-const SocketServer = require('ws').WebSocketServer
-const { jsonStringify } = require('./helpers/utils')
-const emitter = require('./emitter')
-const redis = require('./redis')
-const logger = require('./logger')
-const { STORAGE_PREFIX, shortenToken } = require('./Uploader')
+import { WebSocketServer } from 'ws'
+import emitter from './emitter/index.js'
+import { jsonStringify } from './helpers/utils.js'
+import * as logger from './logger.js'
+import * as redis from './redis.js'
+import Uploader from './Uploader.js'
 
 /**
  * the socket is used to send progress events during an upload
  *
  * @param {import('http').Server | import('https').Server} server
  */
-module.exports = (server) => {
-  const wss = new SocketServer({ server })
+export default function setupSocket(server) {
+  const wss = new WebSocketServer({ server })
   const redisClient = redis.client()
 
   // A new connection is usually created when an upload begins,
@@ -28,33 +28,47 @@ module.exports = (server) => {
      *
      * @param {{action: string, payload: object}} data
      */
-    function send (data) {
+    function send(data) {
       ws.send(jsonStringify(data), (err) => {
-        if (err) logger.error(err, 'socket.redis.error', shortenToken(token))
+        if (err)
+          logger.error(err, 'socket.redis.error', Uploader.shortenToken(token))
       })
     }
 
     // if the redisClient is available, then we attempt to check the storage
     // if we have any already stored state on the upload.
     if (redisClient) {
-      redisClient.get(`${STORAGE_PREFIX}:${token}`).then((data) => {
-        if (data) {
-          const dataObj = JSON.parse(data.toString())
-          if (dataObj.action) send(dataObj)
-        }
-      }).catch((err) => logger.error(err, 'socket.redis.error', shortenToken(token)))
+      redisClient
+        .get(`${Uploader.STORAGE_PREFIX}:${token}`)
+        .then((data) => {
+          if (data) {
+            const dataObj = JSON.parse(data.toString())
+            if (dataObj.action) send(dataObj)
+          }
+        })
+        .catch((err) =>
+          logger.error(err, 'socket.redis.error', Uploader.shortenToken(token)),
+        )
     }
- 
+
     emitter().emit(`connection:${token}`)
     emitter().on(token, send)
 
     ws.on('error', (err) => {
       // https://github.com/websockets/ws/issues/1543
       // https://github.com/websockets/ws/blob/b73b11828d166e9692a9bffe9c01a7e93bab04a8/test/receiver.test.js#L936
-      if (err?.name === 'RangeError' && 'code' in err && err.code === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH') {
-        logger.error('WebSocket message too large', 'websocket.error', shortenToken(token))
+      if (
+        err?.name === 'RangeError' &&
+        'code' in err &&
+        err.code === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH'
+      ) {
+        logger.error(
+          'WebSocket message too large',
+          'websocket.error',
+          Uploader.shortenToken(token),
+        )
       } else {
-        logger.error(err, 'websocket.error', shortenToken(token))
+        logger.error(err, 'websocket.error', Uploader.shortenToken(token))
       }
     })
 

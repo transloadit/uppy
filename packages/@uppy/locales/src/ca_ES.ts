@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const ca_ES: Locale<0 | 1> = {
   strings: {},
@@ -41,7 +41,6 @@ ca_ES.strings = {
   browseFolders: 'Navegar per carpetes',
   cancel: 'Cancel·lar',
   cancelUpload: 'Cancel·lar pujada',
-  chooseFiles: 'Seleccionar arxius',
   closeModal: 'Tanca finestra',
   companionError: 'Error en la connexió amb Companion',
   companionUnauthorizeHint:
@@ -61,7 +60,6 @@ ca_ES.strings = {
   dataUploadedOfTotal: '%{complete} de %{total}',
   discardRecordedFile: "Descarta l'arxiu gravat",
   done: 'Fet',
-  dropHereOr: 'Deixa els arxius aquí o %{browse}',
   dropHint: 'Deixa els teus arxius aquí',
   dropPasteBoth: 'Deixa arxius aquí, %{browseFiles} o %{browseFolders}',
   dropPasteFiles: 'Deixa arxius aquí o %{browseFiles}',
@@ -230,6 +228,12 @@ ca_ES.strings = {
   zoomOut: 'Allunyar',
   selectFileNamed: 'Selecciona arxiu %{name}',
   unselectFileNamed: 'Desselecciona arxiu %{name}',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ca_ES = ca_ES
 }
 
 export default ca_ES

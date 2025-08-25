@@ -1,6 +1,5 @@
-const Redis = require('ioredis').default
-
-const logger = require('./logger')
+import { Redis } from 'ioredis'
+import * as logger from './logger.js'
 
 /** @type {import('ioredis').Redis} */
 let redisClient
@@ -12,20 +11,24 @@ let redisClient
  * @param {string} [redisUrl] ioredis url
  * @param {Record<string, any>} [redisOptions] ioredis client options
  */
-function createClient (redisUrl, redisOptions) {
+function createClient(redisUrl, redisOptions) {
   if (!redisClient) {
     if (redisUrl) {
       redisClient = new Redis(redisUrl, redisOptions)
     } else {
       redisClient = new Redis(redisOptions)
     }
-    redisClient.on('error', err => logger.error('redis error', err.toString()))
+    redisClient.on('error', (err) =>
+      logger.error('redis error', err.toString()),
+    )
   }
 
   return redisClient
 }
 
-module.exports.client = ({ redisUrl, redisOptions } = { redisUrl: undefined, redisOptions: undefined }) => {
+export function client(
+  { redisUrl, redisOptions } = { redisUrl: undefined, redisOptions: undefined },
+) {
   if (!redisUrl && !redisOptions) {
     return redisClient
   }

@@ -2,15 +2,12 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "paths": {
-      "@uppy/utils/lib/*": ["../utils/src/*"],
-    },
-    "noEmit": true,
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../utils/tsconfig.build.json",
-    },
-  ],
+      "path": "../utils/tsconfig.build.json"
+    }
+  ]
 }

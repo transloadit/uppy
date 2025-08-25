@@ -1,7 +1,7 @@
-import afterOpenFolder from './afterOpenFolder.ts'
-import afterScrollFolder from './afterScrollFolder.ts'
-import afterToggleCheckbox from './afterToggleCheckbox.ts'
-import afterFill from './afterFill.ts'
+import afterFill from './afterFill.js'
+import afterOpenFolder from './afterOpenFolder.js'
+import afterScrollFolder from './afterScrollFolder.js'
+import afterToggleCheckbox from './afterToggleCheckbox.js'
 
 export default {
   afterOpenFolder,

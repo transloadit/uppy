@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const ja_JP: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ ja_JP.strings = {
   browseFiles: '参照',
   cancel: 'キャンセル',
   cancelUpload: 'アップロードをキャンセル',
-  chooseFiles: 'ファイルを選択',
   closeModal: 'モーダルを閉じる',
   companionError: 'Companionとの接続に失敗しました',
   complete: '完了しました',
@@ -42,7 +41,6 @@ ja_JP.strings = {
     'ファイルアップローダーウィンドウ（閉じるにはEscapeキーを押してください）',
   dataUploadedOfTotal: '%{total} %{complete}',
   done: '完了しました',
-  dropHereOr: 'ここにファイルをドロップするか%{browse}してください',
   dropHint: 'ここにファイルをドロップしてください',
   dropPasteBoth:
     'ここにファイルをドロップするか、貼り付けるか、%{browse}してください',
@@ -148,6 +146,12 @@ ja_JP.strings = {
   selectFileNamed: 'ファイルを選ぶ %{name}',
   unselectFileNamed: 'ファイルの選択を解除 %{name}',
   openFolderNamed: '開いたフォルダ %{name}',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ja_JP = ja_JP
 }
 
 export default ja_JP

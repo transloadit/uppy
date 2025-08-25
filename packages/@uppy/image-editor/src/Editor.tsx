@@ -1,21 +1,19 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
+import type { Body, Meta, UppyFile } from '@uppy/core'
+import type { I18n } from '@uppy/utils'
 import Cropper from 'cropperjs'
-import { h, Component } from 'preact'
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { I18n } from '@uppy/utils/lib/Translator'
-import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.ts'
-import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.ts'
-import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.ts'
-import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.ts'
-import type ImageEditor from './ImageEditor.ts'
+import { Component } from 'preact'
+import type ImageEditor from './ImageEditor.js'
+import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
+import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
+import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
+import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
 
 type Props<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B>
   storeCropperInstance: (cropper: Cropper) => void
   opts: ImageEditor<M, B>['opts']
   i18n: I18n
-  // eslint-disable-next-line react/no-unused-prop-types
-  save: () => void // eslint confused
+  save: () => void
 }
 
 type State = {
@@ -62,7 +60,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
     this.imgElement.removeEventListener('cropend', this.limitCropboxMovement)
   }
 
-  // eslint-disable-next-line react/sort-comp
   storePrevCropboxData(): void {
     this.setState({ prevCropboxData: this.cropper.getCropBoxData() })
   }
@@ -171,7 +168,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -203,7 +199,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -229,7 +224,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -257,7 +251,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -284,7 +277,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -310,7 +302,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -336,7 +327,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         className="uppy-u-reset uppy-c-btn"
@@ -362,7 +352,6 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 
     return (
       <button
-        role="button tooltip"
         data-microtip-position="top"
         type="button"
         aria-label={i18n('aspectRatioPortrait')}

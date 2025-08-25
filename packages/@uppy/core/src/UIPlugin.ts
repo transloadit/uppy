@@ -1,12 +1,9 @@
-/* eslint-disable class-methods-use-this */
-import { render } from 'preact'
-import findDOMElement from '@uppy/utils/lib/findDOMElement'
-import getTextDirection from '@uppy/utils/lib/getTextDirection'
-
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import BasePlugin from './BasePlugin.ts'
-import type { PluginOpts } from './BasePlugin.ts'
-import type { State } from './Uppy.ts'
+import type { Body, Meta } from '@uppy/utils'
+import { findDOMElement, getTextDirection } from '@uppy/utils'
+import { render } from 'preact/compat'
+import type { PluginOpts } from './BasePlugin.js'
+import BasePlugin from './BasePlugin.js'
+import type { State } from './Uppy.js'
 
 /**
  * Defer a frequent call to the microtask queue.
@@ -39,7 +36,6 @@ function debounce<T extends (...args: any[]) => any>(
  * For plugins without an user interface, see BasePlugin.
  */
 class UIPlugin<
-  // eslint-disable-next-line no-use-before-define
   Opts extends UIPluginOptions,
   M extends Meta,
   B extends Body,
@@ -56,14 +52,13 @@ class UIPlugin<
   title!: string
 
   getTargetPlugin<Me extends Meta, Bo extends Body>(
-    target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
+    target: PluginTarget<Me, Bo>,
   ): UIPlugin<any, Me, Bo> | undefined {
-    let targetPlugin
+    let targetPlugin: any
     if (typeof (target as UIPlugin<any, any, any>)?.addTarget === 'function') {
       // Targeting a plugin *instance*
       targetPlugin = target as UIPlugin<any, any, any>
       if (!(targetPlugin instanceof UIPlugin)) {
-        // eslint-disable-next-line no-console
         console.warn(
           new Error(
             'The provided plugin is not an instance of UIPlugin. This is an indication of a bug with the way Uppy is bundled.',
@@ -91,7 +86,7 @@ class UIPlugin<
    * for a plugin with same name and return its target.
    */
   mount<Me extends Meta, Bo extends Body>(
-    target: PluginTarget<Me, Bo>, // eslint-disable-line no-use-before-define
+    target: PluginTarget<Me, Bo>,
     plugin: UIPlugin<any, Me, Bo>,
   ): HTMLElement {
     const callerPluginName = plugin.id
@@ -179,12 +174,7 @@ class UIPlugin<
    * so this.el and this.parent might not be available in `install`.
    * This is the case with @uppy/react plugins, for example.
    */
-  render(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    state: Record<string, unknown>,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    container: HTMLElement,
-  ): any {
+  render(state: Record<string, unknown>, container?: HTMLElement): any {
     throw new Error(
       'Extend the render method to add your plugin to a DOM element',
     )

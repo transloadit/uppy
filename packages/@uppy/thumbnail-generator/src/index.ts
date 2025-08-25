@@ -1,20 +1,13 @@
-import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
-import dataURItoBlob from '@uppy/utils/lib/dataURItoBlob'
-import isObjectURL from '@uppy/utils/lib/isObjectURL'
-import isPreviewSupported from '@uppy/utils/lib/isPreviewSupported'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import type { DefinePluginOpts, UIPluginOptions, Uppy } from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
+import { dataURItoBlob, isObjectURL, isPreviewSupported } from '@uppy/utils'
 // @ts-ignore untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
-
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import locale from './locale.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
 
 declare module '@uppy/core' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   export interface UppyEventMap<M extends Meta, B extends Body> {
     'thumbnail:all-generated': () => void
     'thumbnail:generated': (file: UppyFile<M, B>, preview: string) => void
@@ -257,23 +250,29 @@ export default class ThumbnailGenerator<
     height: number | null,
     deg: number,
   ): { width: number; height: number } {
-    // eslint-disable-line no-shadow
     let aspect = img.width / img.height
     if (deg === 90 || deg === 270) {
       aspect = img.height / img.width
     }
 
     if (width != null) {
+      let targetWidth = width
+      // Thumbnail shouldn’t be enlarged / upscaled, only reduced.
+      // If img is already smaller than width/height, leave it as is.
+      if (img.width < width) targetWidth = img.width
+
       return {
-        width,
-        height: Math.round(width / aspect),
+        width: targetWidth,
+        height: Math.round(targetWidth / aspect),
       }
     }
 
     if (height != null) {
+      let targetHeight = height
+      if (img.height < height) targetHeight = img.height
       return {
-        width: Math.round(height * aspect),
-        height,
+        width: Math.round(targetHeight * aspect),
+        height: targetHeight,
       }
     }
 
@@ -288,7 +287,6 @@ export default class ThumbnailGenerator<
    *
    * Returns a Canvas with the resized image on it.
    */
-  // eslint-disable-next-line class-methods-use-this
   resizeImage(
     image: HTMLCanvasElement,
     targetWidth: number,
@@ -347,7 +345,7 @@ export default class ThumbnailGenerator<
         return Promise.resolve()
       }
       return this.requestThumbnail(current)
-        .catch(() => {}) // eslint-disable-line node/handle-callback-err
+        .catch(() => {})
         .then(() => this.processQueue())
     }
     this.queueProcessing = false

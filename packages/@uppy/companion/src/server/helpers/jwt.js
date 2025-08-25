@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken')
-const { encrypt, decrypt } = require('./utils')
+import jwt from 'jsonwebtoken'
+import { decrypt, encrypt } from './utils.js'
 
 // The Uppy auth token is an encrypted JWT & JSON encoded container.
 // It used to simply contain an OAuth access_token and refresh_token for a specific provider.
@@ -17,13 +17,8 @@ const { encrypt, decrypt } = require('./utils')
 // even though the provider refresh token would still have been accepted and
 // there's no way for them to retry their failed files.
 // With 400 days, there's still a theoretical possibility but very low.
-const MAX_AGE_REFRESH_TOKEN = 60 * 60 * 24 * 400
-
-const MAX_AGE_24H = 60 * 60 * 24
-
-module.exports.MAX_AGE_24H = MAX_AGE_24H
-module.exports.MAX_AGE_REFRESH_TOKEN = MAX_AGE_REFRESH_TOKEN
-
+export const MAX_AGE_REFRESH_TOKEN = 60 * 60 * 24 * 400
+export const MAX_AGE_24H = 60 * 60 * 24
 /**
  *
  * @param {*} data
@@ -49,7 +44,11 @@ const verifyToken = (token, secret) => {
  * @param {*} payload
  * @param {string} secret
  */
-module.exports.generateEncryptedToken = (payload, secret, maxAge = MAX_AGE_24H) => {
+export const generateEncryptedToken = (
+  payload,
+  secret,
+  maxAge = MAX_AGE_24H,
+) => {
   // return payload // for easier debugging
   return encrypt(generateToken(payload, secret, maxAge), secret)
 }
@@ -58,8 +57,8 @@ module.exports.generateEncryptedToken = (payload, secret, maxAge = MAX_AGE_24H) 
  * @param {*} payload
  * @param {string} secret
  */
-module.exports.generateEncryptedAuthToken = (payload, secret, maxAge) => {
-  return module.exports.generateEncryptedToken(JSON.stringify(payload), secret, maxAge)
+export const generateEncryptedAuthToken = (payload, secret, maxAge) => {
+  return generateEncryptedToken(JSON.stringify(payload), secret, maxAge)
 }
 
 /**
@@ -67,7 +66,7 @@ module.exports.generateEncryptedAuthToken = (payload, secret, maxAge) => {
  * @param {string} token
  * @param {string} secret
  */
-module.exports.verifyEncryptedToken = (token, secret) => {
+export const verifyEncryptedToken = (token, secret) => {
   const ret = verifyToken(decrypt(token, secret), secret)
   if (!ret) throw new Error('No payload')
   return ret
@@ -78,14 +77,15 @@ module.exports.verifyEncryptedToken = (token, secret) => {
  * @param {string} token
  * @param {string} secret
  */
-module.exports.verifyEncryptedAuthToken = (token, secret, providerName) => {
-  const json = module.exports.verifyEncryptedToken(token, secret)
+export const verifyEncryptedAuthToken = (token, secret, providerName) => {
+  const json = verifyEncryptedToken(token, secret)
   const tokens = JSON.parse(json)
-  if (!tokens[providerName]) throw new Error(`Missing token payload for provider ${providerName}`)
+  if (!tokens[providerName])
+    throw new Error(`Missing token payload for provider ${providerName}`)
   return tokens
 }
 
-function getCommonCookieOptions ({ companionOptions }) {
+function getCommonCookieOptions({ companionOptions }) {
   const cookieOptions = {
     httpOnly: true,
   }
@@ -108,17 +108,23 @@ function getCommonCookieOptions ({ companionOptions }) {
 
 const getCookieName = (oauthProvider) => `uppyAuthToken--${oauthProvider}`
 
-const addToCookies = ({ res, token, companionOptions, oauthProvider, maxAge = MAX_AGE_24H * 1000 }) => {
+const addToCookies = ({
+  res,
+  token,
+  companionOptions,
+  oauthProvider,
+  maxAge = MAX_AGE_24H,
+}) => {
   const cookieOptions = {
     ...getCommonCookieOptions({ companionOptions }),
-    maxAge,
+    maxAge: maxAge * 1000,
   }
 
   // send signed token to client.
   res.cookie(getCookieName(oauthProvider), token, cookieOptions)
 }
 
-module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
+export const addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
   // some providers need the token in cookies for thumbnail/image requests
   if (req.companion.provider.needsCookieAuth) {
     addToCookies({
@@ -137,7 +143,7 @@ module.exports.addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
  * @param {object} companionOptions
  * @param {string} oauthProvider
  */
-module.exports.removeFromCookies = (res, companionOptions, oauthProvider) => {
+export const removeFromCookies = (res, companionOptions, oauthProvider) => {
   // options must be identical to those given to res.cookie(), excluding expires and maxAge.
   // https://expressjs.com/en/api.html#res.clearCookie
   const cookieOptions = getCommonCookieOptions({ companionOptions })

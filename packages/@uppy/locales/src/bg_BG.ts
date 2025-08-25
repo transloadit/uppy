@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const bg_BG: Locale<0 | 1> = {
   strings: {},
@@ -29,7 +29,6 @@ bg_BG.strings = {
   browseFiles: 'преглед',
   cancel: 'Отказ',
   cancelUpload: 'Отказване на качването',
-  chooseFiles: 'Изберете файлове',
   closeModal: 'Затваряне на прозорец',
   companionError: 'Неуспешна връзка с Companion',
   companionUnauthorizeHint:
@@ -46,7 +45,6 @@ bg_BG.strings = {
     'Прозорец за качване на файлове (Натиснете ESC за затваряне)',
   dataUploadedOfTotal: '%{complete} от %{total}',
   done: 'Готово',
-  dropHereOr: 'Пуснете файлове тук или %{browse}',
   dropHint: 'Пуснете файловете си тук',
   dropPasteBoth: 'Пуснете файловете си тук, поставете или %{browse}',
   dropPasteFiles: 'Пуснете файловете си тук, поставете или %{browse}',
@@ -164,6 +162,12 @@ bg_BG.strings = {
     '0': 'Трябва да изберете поне %{smart_count} файл',
     '1': 'Трябва да изберете поне %{smart_count} файла',
   },
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.bg_BG = bg_BG
 }
 
 export default bg_BG

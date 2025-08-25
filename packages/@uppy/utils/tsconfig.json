@@ -3,8 +3,8 @@
   "compilerOptions": {
     "allowJs": true,
     "emitDeclarationOnly": false,
-    "noEmit": true,
+    "noEmit": true
   },
-  "include": ["src/*.ts"],
-  "references": [],
+  "include": ["src/**/*.{js,jsx,ts,tsx}"],
+  "references": []
 }

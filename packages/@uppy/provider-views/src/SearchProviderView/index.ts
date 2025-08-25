@@ -1,1 +1,1 @@
-export { default } from './SearchProviderView.tsx'
+export { default } from './SearchProviderView.js'

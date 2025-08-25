@@ -1,6 +1,0 @@
-{
-  "name": "vue-template-compiler",
-  "version": "0.0.1",
-  "private": true,
-  "description": "This package is there only to avoid a version conflict in the Vue2 example."
-}

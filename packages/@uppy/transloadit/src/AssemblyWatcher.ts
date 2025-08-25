@@ -1,7 +1,6 @@
-import type { Uppy } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, Uppy } from '@uppy/core'
 import Emitter from 'component-emitter'
-import type { AssemblyResponse } from './index.ts'
+import type { AssemblyResponse } from './index.js'
 
 /**
  * Track completion of multiple assemblies.

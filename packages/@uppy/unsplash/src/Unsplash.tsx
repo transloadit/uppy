@@ -1,28 +1,34 @@
 import {
-  getAllowedHosts,
-  tokenStorage,
   type CompanionPluginOptions,
+  getAllowedHosts,
   SearchProvider,
+  tokenStorage,
 } from '@uppy/companion-client'
-import { UIPlugin, Uppy } from '@uppy/core'
+import type {
+  AsyncStore,
+  Body,
+  Meta,
+  UnknownSearchProviderPlugin,
+  UnknownSearchProviderPluginState,
+  UppyFile,
+} from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
 import { SearchProviderViews } from '@uppy/provider-views'
-import { h, type ComponentChild } from 'preact'
+import type { LocaleStrings } from '@uppy/utils'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
 
-import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownSearchProviderPluginState } from '@uppy/core/lib/Uppy.js'
-import locale from './locale.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+export type UnsplashOptions = {
+  utmSource?: string
+  locale?: LocaleStrings<typeof locale>
+} & CompanionPluginOptions
 
-export type UnsplashOptions = CompanionPluginOptions
-
-export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
-  UnsplashOptions,
-  M,
-  B,
-  UnknownSearchProviderPluginState
-> {
+export default class Unsplash<M extends Meta, B extends Body>
+  extends UIPlugin<UnsplashOptions, M, B, UnknownSearchProviderPluginState>
+  implements UnknownSearchProviderPlugin<M, B>
+{
   static VERSION = packageJson.version
 
   icon: () => h.JSX.Element
@@ -31,7 +37,7 @@ export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
 
   view!: SearchProviderViews<M, B>
 
-  storage: typeof tokenStorage
+  storage: AsyncStore
 
   files: UppyFile<M, B>[]
 
@@ -89,6 +95,7 @@ export default class Unsplash<M extends Meta, B extends Body> extends UIPlugin<
       provider: this.provider,
       viewType: 'unsplash',
       showFilter: true,
+      utmSource: this.opts.utmSource,
     })
 
     const { target } = this.opts

@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/aws-php",
+  "name": "example-aws-php",
   "version": "0.0.0",
   "dependencies": {
     "@uppy/aws-s3": "workspace:*",
@@ -8,7 +8,7 @@
     "uppy": "workspace:*"
   },
   "devDependencies": {
-    "esbuild": "^0.21.2"
+    "esbuild": "^0.25.0"
   },
   "private": true,
   "type": "module",

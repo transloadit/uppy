@@ -1,15 +1,13 @@
-/* eslint-disable jsx-a11y/media-has-caption */
-import { h } from 'preact'
+import type { I18n } from '@uppy/utils'
 import { useEffect, useRef } from 'preact/hooks'
-import type { I18n } from '@uppy/utils/lib/Translator'
-import RecordButton from './RecordButton.tsx'
-import RecordingLength from './RecordingLength.tsx'
 import AudioSourceSelect, {
   type AudioSourceSelectProps,
-} from './AudioSourceSelect.tsx'
-import AudioOscilloscope from './audio-oscilloscope/index.ts'
-import SubmitButton from './SubmitButton.tsx'
-import DiscardButton from './DiscardButton.tsx'
+} from './AudioSourceSelect.js'
+import AudioOscilloscope from './audio-oscilloscope/index.js'
+import DiscardButton from './DiscardButton.js'
+import RecordButton from './RecordButton.js'
+import RecordingLength from './RecordingLength.js'
+import SubmitButton from './SubmitButton.js'
 
 interface RecordingScreenProps extends AudioSourceSelectProps {
   stream: MediaStream | null | undefined
@@ -89,9 +87,12 @@ export default function RecordingScreen(props: RecordingScreenProps) {
   return (
     <div className="uppy-Audio-container">
       <div className="uppy-Audio-audioContainer">
-        {hasRecordedAudio ?
+        {hasRecordedAudio ? (
+          // biome-ignore lint/a11y/useMediaCaption: ...
           <audio className="uppy-Audio-player" controls src={recordedAudio} />
-        : <canvas ref={canvasEl} className="uppy-Audio-canvas" />}
+        ) : (
+          <canvas ref={canvasEl} className="uppy-Audio-canvas" />
+        )}
       </div>
       <div className="uppy-Audio-footer">
         <div className="uppy-Audio-audioSourceContainer">
@@ -116,10 +117,7 @@ export default function RecordingScreen(props: RecordingScreenProps) {
 
         <div className="uppy-Audio-recordingLength">
           {!hasRecordedAudio && (
-            <RecordingLength
-              recordingLengthSeconds={recordingLengthSeconds}
-              i18n={i18n}
-            />
+            <RecordingLength recordingLengthSeconds={recordingLengthSeconds} />
           )}
         </div>
       </div>

@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const sk_SK: Locale<0 | 1> = {
   strings: {},
@@ -33,7 +33,6 @@ sk_SK.strings = {
   browseFiles: 'vyberte',
   cancel: 'Zrušiť',
   cancelUpload: 'Zrušiť nahrávanie',
-  chooseFiles: 'Vyberte súbory',
   closeModal: 'Zavrieť okno',
   companionError: 'Spojenie s modulom Companion sa nepodarilo',
   companionUnauthorizeHint:
@@ -50,7 +49,6 @@ sk_SK.strings = {
     'Okno na nahrávanie súborov. (Stlačením ESC ho zavriete)',
   dataUploadedOfTotal: '%{complete} z %{total}',
   done: 'Dokončené',
-  dropHereOr: 'Presuňte sem súbory alebo %{browse}',
   dropHint: 'Presuňte sem súbory',
   dropPasteBoth: 'Presuňte sem súbory alebo %{browse}',
   dropPasteFiles: 'Presuňte sem súbory alebo %{browse}',
@@ -177,6 +175,12 @@ sk_SK.strings = {
   },
   zoomIn: 'Priblížiť',
   zoomOut: 'Oddialiť',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.sk_SK = sk_SK
 }
 
 export default sk_SK

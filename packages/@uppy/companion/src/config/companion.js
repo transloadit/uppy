@@ -1,9 +1,9 @@
-const fs = require('node:fs')
-const { isURL } = require('validator')
-const logger = require('../server/logger')
-const { defaultGetKey } = require('../server/helpers/utils')
+import fs from 'node:fs'
+import validator from 'validator'
+import { defaultGetKey } from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
-const defaultOptions = {
+export const defaultOptions = {
   server: {
     protocol: 'http',
     path: '',
@@ -17,6 +17,7 @@ const defaultOptions = {
     expires: 800, // seconds
   },
   enableUrlEndpoint: false,
+  enableGooglePickerEndpoint: false,
   allowLocalUrls: false,
   periodicPingUrls: [],
   streamingUpload: true,
@@ -27,7 +28,7 @@ const defaultOptions = {
 /**
  * @param {object} companionOptions
  */
-function getMaskableSecrets (companionOptions) {
+export function getMaskableSecrets(companionOptions) {
   const secrets = []
   const { providerOptions, customProviders, s3 } = companionOptions
 
@@ -39,7 +40,7 @@ function getMaskableSecrets (companionOptions) {
 
   if (customProviders) {
     Object.keys(customProviders).forEach((provider) => {
-      if (customProviders[provider].config && customProviders[provider].config.secret) {
+      if (customProviders[provider].config?.secret) {
         secrets.push(customProviders[provider].config.secret)
       }
     })
@@ -59,28 +60,34 @@ function getMaskableSecrets (companionOptions) {
  *
  * @param {object} companionOptions
  */
-const validateConfig = (companionOptions) => {
+export const validateConfig = (companionOptions) => {
   const mandatoryOptions = ['secret', 'filePath', 'server.host']
   /** @type {string[]} */
   const unspecified = []
 
   mandatoryOptions.forEach((i) => {
-    const value = i.split('.').reduce((prev, curr) => (prev ? prev[curr] : undefined), companionOptions)
+    const value = i
+      .split('.')
+      .reduce((prev, curr) => (prev ? prev[curr] : undefined), companionOptions)
 
     if (!value) unspecified.push(`"${i}"`)
   })
 
   // vaidate that all required config is specified
   if (unspecified.length) {
-    const messagePrefix = 'Please specify the following options to use companion:'
+    const messagePrefix =
+      'Please specify the following options to use companion:'
     throw new Error(`${messagePrefix}\n${unspecified.join(',\n')}`)
   }
 
   // validate that specified filePath is writeable/readable.
   try {
     // @ts-ignore
-    fs.accessSync(`${companionOptions.filePath}`, fs.R_OK | fs.W_OK) // eslint-disable-line no-bitwise
-  } catch (err) {
+    fs.accessSync(
+      `${companionOptions.filePath}`,
+      fs.constants.R_OK | fs.constants.W_OK,
+    )
+  } catch (_err) {
     throw new Error(
       `No access to "${companionOptions.filePath}". Please ensure the directory exists and with read/write permissions.`,
     )
@@ -88,40 +95,70 @@ const validateConfig = (companionOptions) => {
 
   const { providerOptions, periodicPingUrls, server } = companionOptions
 
-  if (server && server.path) {
+  if (server?.path) {
     // see https://github.com/transloadit/uppy/issues/4271
     // todo fix the code so we can allow `/`
-    if (server.path === '/') throw new Error('If you want to use \'/\' as server.path, leave the \'path\' variable unset')
+    if (server.path === '/')
+      throw new Error(
+        "If you want to use '/' as server.path, leave the 'path' variable unset",
+      )
   }
 
   if (providerOptions) {
-    const deprecatedOptions = { microsoft: 'providerOptions.onedrive', google: 'providerOptions.drive', s3: 's3' }
+    const deprecatedOptions = {
+      microsoft: 'providerOptions.onedrive',
+      google: 'providerOptions.drive',
+      s3: 's3',
+    }
     Object.keys(deprecatedOptions).forEach((deprecated) => {
-      if (Object.prototype.hasOwnProperty.call(providerOptions, deprecated)) {
-        throw new Error(`The Provider option "providerOptions.${deprecated}" is no longer supported. Please use the option "${deprecatedOptions[deprecated]}" instead.`)
+      if (Object.hasOwn(providerOptions, deprecated)) {
+        throw new Error(
+          `The Provider option "providerOptions.${deprecated}" is no longer supported. Please use the option "${deprecatedOptions[deprecated]}" instead.`,
+        )
       }
     })
   }
 
-  if (companionOptions.uploadUrls == null || companionOptions.uploadUrls.length === 0) {
-    if (process.env.NODE_ENV === 'production') throw new Error('uploadUrls is required')
-    logger.error('Running without uploadUrls is a security risk and Companion will refuse to start up when running in production (NODE_ENV=production)', 'startup.uploadUrls')
+  if (
+    companionOptions.uploadUrls == null ||
+    companionOptions.uploadUrls.length === 0
+  ) {
+    if (process.env.NODE_ENV === 'production')
+      throw new Error('uploadUrls is required')
+    logger.error(
+      'Running without uploadUrls is a security risk and Companion will refuse to start up when running in production (NODE_ENV=production)',
+      'startup.uploadUrls',
+    )
   }
 
   if (companionOptions.corsOrigins == null) {
-    throw new TypeError('Option corsOrigins is required. To disable security, pass true')
+    throw new TypeError(
+      'Option corsOrigins is required. To disable security, pass true',
+    )
   }
 
-  if (periodicPingUrls != null && (
-    !Array.isArray(periodicPingUrls)
-    || periodicPingUrls.some((url2) => !isURL(url2, { protocols: ['http', 'https'], require_protocol: true, require_tld: false }))
-  )) {
+  if (companionOptions.corsOrigins === '*') {
+    throw new TypeError(
+      'Option corsOrigins cannot be "*". To disable security, pass true',
+    )
+  }
+
+  if (
+    periodicPingUrls != null &&
+    (!Array.isArray(periodicPingUrls) ||
+      periodicPingUrls.some(
+        (url2) =>
+          !validator.isURL(url2, {
+            protocols: ['http', 'https'],
+            require_protocol: true,
+            require_tld: false,
+          }),
+      ))
+  ) {
     throw new TypeError('Invalid periodicPingUrls')
   }
-}
 
-module.exports = {
-  defaultOptions,
-  getMaskableSecrets,
-  validateConfig,
+  if (companionOptions.maxFilenameLength <= 0) {
+    throw new TypeError('Option maxFilenameLength must be greater than 0')
+  }
 }

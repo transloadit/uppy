@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const pt_PT: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ pt_PT.strings = {
   browseFiles: 'procure',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar envio de ficheiros',
-  chooseFiles: 'Selecionar ficheiros',
   closeModal: 'Fechar Modal',
   companionError: 'Falha na conexão com serviço',
   complete: 'Concluído',
@@ -40,7 +39,6 @@ pt_PT.strings = {
     'Janela para envio de ficheiros (Pressione esc para fechar)',
   dataUploadedOfTotal: '%{complete} de %{total}',
   done: 'Concluir',
-  dropHereOr: 'Arraste ficheiros ou %{browse}',
   dropHint: 'Pode simplesmente arrastar os seus ficheiros para aqui',
   dropPasteBoth: 'Arraste ficheiros, cole ou %{browse}',
   dropPasteFiles: 'Arraste ficheiros, cole ou %{browse}',
@@ -140,6 +138,12 @@ pt_PT.strings = {
   selectFileNamed: 'Selecione o ficheiro %{name}',
   unselectFileNamed: 'Deselecionar ficheiro %{name}',
   openFolderNamed: 'Pasta aberta %{name}',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.pt_PT = pt_PT
 }
 
 export default pt_PT

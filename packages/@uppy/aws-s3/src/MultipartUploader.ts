@@ -1,7 +1,7 @@
 import type { Uppy } from '@uppy/core'
-import { AbortController } from '@uppy/utils/lib/AbortController'
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.ts'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
+import { AbortController } from '@uppy/utils'
+import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
 
 const MB = 1024 * 1024
 
@@ -16,7 +16,7 @@ interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   file: UppyFile<M, B>
   log: Uppy<M, B>['log']
 
-  uploadId: string
+  uploadId?: string
   key: string
 }
 
@@ -123,9 +123,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #initChunks() {
     const fileSize = this.#data.size
     const shouldUseMultipart =
-      typeof this.#shouldUseMultipart === 'function' ?
-        this.#shouldUseMultipart(this.#file)
-      : Boolean(this.#shouldUseMultipart)
+      typeof this.#shouldUseMultipart === 'function'
+        ? this.#shouldUseMultipart(this.#file)
+        : Boolean(this.#shouldUseMultipart)
 
     if (shouldUseMultipart && fileSize > this.#minPartSize) {
       // At least 5MB per request:
@@ -256,7 +256,6 @@ class MultipartUploader<M extends Meta, B extends Body> {
     else this.pause()
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   private [Symbol.for('uppy test: getChunkState')]() {
     return this.#chunkState
   }

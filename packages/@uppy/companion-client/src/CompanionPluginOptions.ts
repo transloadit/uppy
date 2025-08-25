@@ -1,8 +1,7 @@
-import type { UIPluginOptions } from '@uppy/core'
-import type { tokenStorage } from './index.ts'
+import type { AsyncStore, UIPluginOptions } from '@uppy/core'
 
 export interface CompanionPluginOptions extends UIPluginOptions {
-  storage?: typeof tokenStorage
+  storage?: AsyncStore
   companionUrl: string
   companionHeaders?: Record<string, string>
   companionKeysParams?: { key: string; credentialsName: string }

@@ -2,41 +2,18 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true,
-    "paths": {
-      "@uppy/core": ["../core/src/index.js"],
-      "@uppy/core/lib/*": ["../core/src/*"],
-      "@uppy/dashboard": ["../dashboard/src/index.js"],
-      "@uppy/dashboard/lib/*": ["../dashboard/src/*"],
-      "@uppy/drag-drop": ["../drag-drop/src/index.js"],
-      "@uppy/drag-drop/lib/*": ["../drag-drop/src/*"],
-      "@uppy/file-input": ["../file-input/src/index.js"],
-      "@uppy/file-input/lib/*": ["../file-input/src/*"],
-      "@uppy/progress-bar": ["../progress-bar/src/index.js"],
-      "@uppy/progress-bar/lib/*": ["../progress-bar/src/*"],
-      "@uppy/status-bar": ["../status-bar/src/index.js"],
-      "@uppy/status-bar/lib/*": ["../status-bar/src/*"],
-    },
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../core/tsconfig.build.json",
+      "path": "../core/tsconfig.build.json"
     },
     {
-      "path": "../dashboard/tsconfig.build.json",
+      "path": "../components/tsconfig.build.json"
     },
     {
-      "path": "../drag-drop/tsconfig.build.json",
-    },
-    {
-      "path": "../file-input/tsconfig.build.json",
-    },
-    {
-      "path": "../progress-bar/tsconfig.build.json",
-    },
-    {
-      "path": "../status-bar/tsconfig.build.json",
-    },
-  ],
+      "path": "../dashboard/tsconfig.build.json"
+    }
+  ]
 }

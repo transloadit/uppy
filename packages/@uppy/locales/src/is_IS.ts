@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const is_IS: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ is_IS.strings = {
   browseFiles: 'skoða',
   cancel: 'Hætta við',
   cancelUpload: 'Hætta við að hlaða upp',
-  chooseFiles: 'Veldu skrár',
   closeModal: 'Loka glugga',
   companionError: 'Tengin mistókst',
   companionUnauthorizeHint:
@@ -41,7 +40,6 @@ is_IS.strings = {
   dashboardWindowTitle: 'Upphleðslugluggi (Smelltu á ESC til að loka)',
   dataUploadedOfTotal: '%{complete} af %{total}',
   done: 'Búið',
-  dropHereOr: 'Dragðu skrár hingað eða %{browse}',
   dropHint: 'Dragðu skrárnar þínar hingað',
   dropPasteBoth: 'Slepptu skrám hérna, límdu (paste) eða %{browse}',
   dropPasteFiles: 'Slepptu skrám hérna, límdu (paste) eða %{browse}',
@@ -145,6 +143,12 @@ is_IS.strings = {
     '0': 'Þú verður að velja lágmark %{smart_count} skrá',
     '1': 'Þú verður að velja lágmark %{smart_count} skrár',
   },
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.is_IS = is_IS
 }
 
 export default is_IS

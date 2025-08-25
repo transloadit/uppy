@@ -1,2 +1,2 @@
-export { default } from './Dropbox.tsx'
-export type { DropboxOptions } from './Dropbox.tsx'
+export type { DropboxOptions } from './Dropbox.js'
+export { default } from './Dropbox.js'

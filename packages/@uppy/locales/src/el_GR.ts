@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const el_GR: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ el_GR.strings = {
   browseFiles: 'Περιήγηση',
   cancel: 'Άκυρο',
   cancelUpload: 'Ακύρωση μεταφόρτωσης',
-  chooseFiles: 'Επιλέξτε αρχεία',
   closeModal: 'Κλείσιμο παραθύρου',
   companionError: 'Η σύνδεση με το Companion απέτυχε',
   complete: 'Ολοκληρώθηκε',
@@ -40,7 +39,6 @@ el_GR.strings = {
     'Παράθυρο μεταφόρτωσης αρχείων (Πατήστε escape για να κλείσει)',
   dataUploadedOfTotal: '%{complete} από %{total}',
   done: 'Τέλος',
-  dropHereOr: 'Σύρετε τα αρχεία εδώ ή %{browse}',
   dropHint: 'Σύρετε τα αρχεία σας εδώ',
   dropPasteBoth: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
   dropPasteFiles: 'Σύρετε τα αρχεία εδώ, κάντε επικόλληση ή %{browse}',
@@ -145,6 +143,12 @@ el_GR.strings = {
     '0': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχεία',
     '1': 'Πρέπει να επιλέξετε τουλάχιστον %{smart_count} αρχείο',
   },
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.el_GR = el_GR
 }
 
 export default el_GR

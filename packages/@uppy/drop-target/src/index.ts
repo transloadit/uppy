@@ -1,12 +1,7 @@
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core/lib/Uppy.js'
-import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
-import getDroppedFiles from '@uppy/utils/lib/getDroppedFiles'
-import toArray from '@uppy/utils/lib/toArray'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import type { Body, DefinePluginOpts, Meta, PluginOpts, Uppy } from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
+import { getDroppedFiles, toArray } from '@uppy/utils'
+import packageJson from '../package.json' with { type: 'json' }
 
 export interface DropTargetOptions extends PluginOpts {
   target?: HTMLElement | string | null
@@ -123,7 +118,7 @@ export default class DropTarget<
     // Add a small (+) icon on drop
     // (and prevent browsers from interpreting this as files being _moved_ into the browser,
     // https://github.com/transloadit/uppy/issues/1978)
-    event.dataTransfer.dropEffect = 'copy' // eslint-disable-line no-param-reassign
+    event.dataTransfer.dropEffect = 'copy'
     ;(event.currentTarget as HTMLElement).classList.add('uppy-is-drag-over')
     this.setPluginState({ isDraggingOver: true })
     this.opts.onDragOver?.(event)

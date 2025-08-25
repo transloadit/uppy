@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const pl_PL: Locale<0 | 1> = {
   strings: {},
@@ -28,7 +28,6 @@ pl_PL.strings = {
   browseFiles: 'Przeglądaj pliki',
   cancel: 'Anuluj',
   cancelUpload: 'Anuluj przesyłanie',
-  chooseFiles: 'Wybierz pliki',
   closeModal: 'Zamknij',
   companionError: 'Połączenie z serwisem nie powiodło się',
   companionUnauthorizeHint:
@@ -44,7 +43,6 @@ pl_PL.strings = {
   dashboardWindowTitle: 'Okno przesyłania plików (Naciśnij ESC aby zamknąć)',
   dataUploadedOfTotal: 'Przesłano %{complete} z %{total}',
   done: 'Ukończono',
-  dropHereOr: 'Upuść plik tutaj albo %{browse}',
   dropHint: 'Upuść swoje pliki tutaj',
   dropPasteBoth: 'Upuść pliki tutaj, wklej, albo %{browse}',
   dropPasteFiles: 'Upuść pliki tutaj, wklej, albo %{browse}',
@@ -151,6 +149,12 @@ pl_PL.strings = {
     '0': 'Musisz wybrać przynajmniej %{smart_count} plik',
     '1': 'Musisz wybrać przynajmniej %{smart_count} pliki',
   },
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.pl_PL = pl_PL
 }
 
 export default pl_PL

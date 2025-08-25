@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import getFileType from './getFileType.ts'
-import type { UppyFile } from './UppyFile.ts'
+import getFileType from './getFileType.js'
+import type { UppyFile } from './UppyFile.js'
 
 describe('getFileType', () => {
   it('should trust the filetype if the file comes from a remote source', () => {
@@ -44,7 +44,7 @@ describe('getFileType', () => {
     } as any as UppyFile<any, any>
     const toUpper = (file: UppyFile<any, any>) => ({
       ...file,
-      name: file.name.toUpperCase(),
+      name: file.name!.toUpperCase(),
     })
     expect(getFileType(fileMP3)).toEqual('audio/mp3')
     expect(getFileType(toUpper(fileMP3))).toEqual('audio/mp3')

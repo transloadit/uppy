@@ -8,6 +8,7 @@ const mimeToExtensions = {
   'image/heic': 'heic',
   'image/heif': 'heif',
   'image/jpeg': 'jpg',
+  'image/webp': 'webp',
   'image/png': 'png',
   'image/svg+xml': 'svg',
   'video/mp4': 'mp4',
@@ -20,7 +21,6 @@ const mimeToExtensions = {
 
 export default function getFileTypeExtension(mimeType: string): string | null {
   // Remove the ; bit in 'video/x-matroska;codecs=avc1'
-  // eslint-disable-next-line no-param-reassign
   ;[mimeType] = mimeType.split(';', 1)
   return mimeToExtensions[mimeType] || null
 }

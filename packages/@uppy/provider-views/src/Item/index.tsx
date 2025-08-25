@@ -1,15 +1,13 @@
-/* eslint-disable react/jsx-props-no-spreading */
-import { h } from 'preact'
-
-import classNames from 'classnames'
-import type { I18n } from '@uppy/utils/lib/Translator'
 import type {
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
-import GridItem from './components/GridItem.tsx'
-import ListItem from './components/ListItem.tsx'
+} from '@uppy/core'
+import type { I18n } from '@uppy/utils'
+import classNames from 'classnames'
+import type { h } from 'preact'
+import GridItem from './components/GridItem.js'
+import ListItem from './components/ListItem.js'
 
 type ItemProps = {
   file: PartialTreeFile | PartialTreeFolderNode
@@ -18,10 +16,19 @@ type ItemProps = {
   viewType: string
   showTitles: boolean
   i18n: I18n
+  utmSource: string
 }
 
 export default function Item(props: ItemProps): h.JSX.Element {
-  const { viewType, toggleCheckbox, showTitles, i18n, openFolder, file } = props
+  const {
+    viewType,
+    toggleCheckbox,
+    showTitles,
+    i18n,
+    openFolder,
+    file,
+    utmSource,
+  } = props
 
   const restrictionError = file.type === 'folder' ? null : file.restrictionError
   const isDisabled = !!restrictionError && file.status !== 'checked'
@@ -30,6 +37,7 @@ export default function Item(props: ItemProps): h.JSX.Element {
     file,
     openFolder,
     toggleCheckbox,
+    utmSource,
 
     i18n,
     viewType,
@@ -54,7 +62,7 @@ export default function Item(props: ItemProps): h.JSX.Element {
       return (
         <GridItem {...ourProps}>
           <a
-            href={`${file.data.author!.url}?utm_source=Companion&utm_medium=referral`}
+            href={`${file.data.author!.url}?utm_source=${utmSource}&utm_medium=referral`}
             target="_blank"
             rel="noopener noreferrer"
             className="uppy-ProviderBrowserItem-author"

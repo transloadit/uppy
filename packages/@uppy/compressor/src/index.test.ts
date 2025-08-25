@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vitest'
-import Core from '@uppy/core'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import fs from 'node:fs'
 import path from 'node:path'
-import CompressorPlugin from './index.ts'
+import Core from '@uppy/core'
+import { getFileNameAndExtension } from '@uppy/utils'
+import { describe, expect, it } from 'vitest'
+import CompressorPlugin from './index.js'
 
 // Compressor uses browser canvas API, so need to mock compress()
 // @ts-expect-error mocked
@@ -17,24 +17,23 @@ CompressorPlugin.prototype.compress = async (blob: File) => {
 }
 
 const sampleImage = fs.readFileSync(
-  // eslint-disable-next-line no-restricted-globals
-  path.join(__dirname, '../../../../e2e/cypress/fixtures/images/image.jpg'),
+  path.join(__dirname, '../fixtures/image.jpg'),
 )
 
 const file1 = {
-  source: 'jest',
+  source: 'test',
   name: 'image-1.jpeg',
   type: 'image/jpeg',
   data: new File([sampleImage], 'image-1.jpeg', { type: 'image/jpeg' }),
 }
 const file2 = {
-  source: 'jest',
+  source: 'test',
   name: 'yolo',
   type: 'image/jpeg',
   data: new File([sampleImage], 'yolo', { type: 'image/jpeg' }),
 }
 const file3 = {
-  source: 'jest',
+  source: 'test',
   name: 'my.file.is.weird.png',
   type: 'image/png',
   data: new File([sampleImage], 'my.file.is.weird.png', { type: 'image/png' }),

@@ -1,20 +1,34 @@
-export { default } from './Uppy.ts'
-export {
-  default as Uppy,
-  type State,
-  type UnknownPlugin,
-  type UnknownProviderPlugin,
-  type UnknownSearchProviderPlugin,
-  type UploadResult,
-  type UppyEventMap,
-  type UppyOptions,
-} from './Uppy.ts'
-export { default as UIPlugin } from './UIPlugin.ts'
-export { default as BasePlugin } from './BasePlugin.ts'
-export { debugLogger } from './loggers.ts'
-
 export type { Store } from '@uppy/store-default'
-
-export type { UIPluginOptions } from './UIPlugin.ts'
-
-export type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
+export type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+  UppyFile,
+} from '@uppy/utils'
+export type { DefinePluginOpts, PluginOpts } from './BasePlugin.js'
+export { default as BasePlugin } from './BasePlugin.js'
+export { default as EventManager } from './EventManager.js'
+export { debugLogger } from './loggers.js'
+export type { Restrictions, ValidateableFile } from './Restricter.js'
+export type { PluginTarget, UIPluginOptions } from './UIPlugin.js'
+export { default as UIPlugin } from './UIPlugin.js'
+export type {
+  AsyncStore,
+  BaseProviderPlugin,
+  PartialTree,
+  PartialTreeFile,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeFolderRoot,
+  PartialTreeId,
+  State,
+  UnknownPlugin,
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
+  UnknownSearchProviderPlugin,
+  UnknownSearchProviderPluginState,
+  UploadResult,
+  UppyEventMap,
+  UppyOptions,
+} from './Uppy.js'
+export { default, default as Uppy } from './Uppy.js'

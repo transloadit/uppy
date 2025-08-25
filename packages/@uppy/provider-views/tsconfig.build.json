@@ -1,16 +1,9 @@
 {
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
-    "noImplicitAny": false,
     "outDir": "./lib",
-    "paths": {
-      "@uppy/utils/lib/*": ["../utils/src/*"],
-      "@uppy/core": ["../core/src/index.js"],
-      "@uppy/core/lib/*": ["../core/src/*"]
-    },
-    "resolveJsonModule": false,
     "rootDir": "./src",
-    "skipLibCheck": true
+    "types": ["google.accounts", "google.picker", "gapi"]
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],

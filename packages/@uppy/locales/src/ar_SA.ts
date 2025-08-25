@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const ar_SA: Locale<0 | 1> = {
   strings: {},
@@ -23,7 +23,6 @@ ar_SA.strings = {
   browseFiles: 'تصفح',
   cancel: 'الغاء',
   cancelUpload: 'الغاء الدفع',
-  chooseFiles: 'اختار الملفات',
   closeModal: 'اغلاق الشكل',
   companionError: 'الربط مع Companion فشل',
   complete: ' اكتمل ',
@@ -135,6 +134,12 @@ ar_SA.strings = {
   selectFileNamed: '%{name} اختر الملف',
   unselectFileNamed: '%{name} إلغاء تحديد الملف',
   openFolderNamed: '%{name} افتح المجلد',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ar_SA = ar_SA
 }
 
 export default ar_SA

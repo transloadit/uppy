@@ -1,10 +1,9 @@
 {
   "name": "@uppy/compressor",
   "description": "Uppy plugin that compresses images before upload, saving up to 60% in size",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "lib/index.js",
-  "style": "dist/style.min.css",
   "keywords": [
     "file uploader",
     "uppy",
@@ -14,12 +13,23 @@
   ],
   "type": "module",
   "homepage": "https://uppy.io",
+  "sideEffects": false,
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
@@ -35,6 +45,13 @@
     "access": "public"
   },
   "devDependencies": {
-    "vitest": "^1.2.1"
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
   }
 }

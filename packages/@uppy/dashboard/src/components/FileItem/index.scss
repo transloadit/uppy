@@ -1,7 +1,9 @@
-@import './FilePreviewAndLink/index.scss';
-@import './FileProgress/index.scss';
-@import './FileInfo/index.scss';
-@import './Buttons/index.scss';
+@use '@uppy/core/src/_variables.scss' as *;
+@use '@uppy/core/src/_utils.scss' as *;
+@use 'FilePreviewAndLink/index.scss';
+@use 'FileProgress/index.scss' as index2;
+@use 'FileInfo/index.scss' as index3;
+@use 'Buttons/index.scss' as index4;
 
 .uppy-Dashboard-Item {
   display: flex;

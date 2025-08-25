@@ -1,0 +1,7 @@
+{
+  "installDependencies": false,
+  "startCommand": "node -e \"const fs=require('fs'); const p='package.json'; const j=JSON.parse(fs.readFileSync(p,'utf8')); ['dependencies','devDependencies','peerDependencies'].forEach(k=>{ if(j[k]) for(const n in j[k]) if(typeof j[k][n]==='string' && j[k][n].startsWith('workspace:')) j[k][n]='latest'; }); fs.writeFileSync(p, JSON.stringify(j,null,2));\" && npm install && npm run dev",
+  "env": {
+    "NODE_ENV": "development"
+  }
+}

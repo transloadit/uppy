@@ -1,5 +1,3 @@
-/* eslint-disable class-methods-use-this */
-
 /**
  * Core plugin logic that all plugins share.
  *
@@ -9,24 +7,19 @@
  * See `Plugin` for the extended version with Preact rendering for interfaces.
  */
 
-import Translator from '@uppy/utils/lib/Translator'
-import type {
-  I18n,
-  Locale,
-  OptionalPluralizeLocale,
-} from '@uppy/utils/lib/Translator'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { State, UnknownPlugin, Uppy } from './Uppy.ts'
+import type { Body, I18n, Meta, OptionalPluralizeLocale } from '@uppy/utils'
+import { Translator } from '@uppy/utils'
+import type { State, UnknownPlugin, Uppy } from './Uppy.js'
 
 export type PluginOpts = {
-  locale?: Locale
+  locale?: OptionalPluralizeLocale
   id?: string
 }
 
 export type OnlyOptionals<T> = Pick<
   T,
   {
-    // eslint-disable-next-line @typescript-eslint/ban-types
+    // biome-ignore lint/complexity/noBannedTypes: ...
     [K in keyof T]-?: {} extends Pick<T, K> ? K : never
   }[keyof T]
 >
@@ -109,7 +102,6 @@ export default class BasePlugin<
    * making them not conditional in use, such as `if (this.afterUpdate)`.
    */
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   addTarget(plugin: UnknownPlugin<M, B>): HTMLElement | null {
     throw new Error(
       "Extend the addTarget method to add your plugin to another plugin's target",
@@ -120,7 +112,6 @@ export default class BasePlugin<
 
   uninstall(): void {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update(state: Partial<State<M, B>>): void {}
 
   // Called after every state update, after everything's mounted. Debounced.

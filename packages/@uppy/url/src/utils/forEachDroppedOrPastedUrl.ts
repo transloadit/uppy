@@ -1,4 +1,4 @@
-import toArray from '@uppy/utils/lib/toArray'
+import { toArray } from '@uppy/utils'
 
 /*
   SITUATION
@@ -61,7 +61,7 @@ export default function forEachDroppedOrPastedUrl(
 ): void {
   const items = toArray(dataTransfer.items)
 
-  let urlItems
+  let urlItems: DataTransferItem[]
 
   switch (isDropOrPaste) {
     case 'paste': {

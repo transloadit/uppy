@@ -1,16 +1,15 @@
-/* eslint-disable react/destructuring-assignment */
-import { h, Component, type ComponentChild } from 'preact'
-import classNames from 'classnames'
-import { shallowEqualObjects } from 'shallow-equal'
-import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { I18n } from '@uppy/utils/lib/Translator'
 import type Uppy from '@uppy/core'
-import type { State } from '@uppy/core'
-import FilePreviewAndLink from './FilePreviewAndLink/index.tsx'
-import FileProgress from './FileProgress/index.tsx'
-import FileInfo from './FileInfo/index.tsx'
-import Buttons from './Buttons/index.tsx'
-import type { DashboardState } from '../../Dashboard.ts'
+import type { Body, Meta, State, UppyFile } from '@uppy/core'
+import type { I18n } from '@uppy/utils'
+import classNames from 'classnames'
+// biome-ignore lint/style/useImportType: h is not a type
+import { Component, type ComponentChild, h } from 'preact'
+import { shallowEqualObjects } from 'shallow-equal'
+import type { DashboardState } from '../../Dashboard.js'
+import Buttons from './Buttons/index.js'
+import FileInfo from './FileInfo/index.js'
+import FilePreviewAndLink from './FilePreviewAndLink/index.js'
+import FileProgress from './FileProgress/index.js'
 
 type Props<M extends Meta, B extends Body> = {
   file: UppyFile<M, B>
@@ -85,9 +84,8 @@ export default class FileItem<M extends Meta, B extends Body> extends Component<
     // users still need to re-add it, so it’s a ghost
     const { isGhost } = file
 
-    let showRemoveButton =
-      this.props.individualCancellation ?
-        !isUploaded
+    let showRemoveButton = this.props.individualCancellation
+      ? !isUploaded
       : !uploadInProgress && !isUploaded
 
     if (isUploaded && this.props.showRemoveButtonAfterComplete) {
@@ -109,7 +107,7 @@ export default class FileItem<M extends Meta, B extends Body> extends Component<
       <div
         className={dashboardItemClass}
         id={`uppy_${file.id}`}
-        role={this.props.role}
+        role={this.props.role as h.JSX.AriaRole}
       >
         <div className="uppy-Dashboard-Item-preview">
           <FilePreviewAndLink

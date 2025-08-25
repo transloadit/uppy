@@ -1,9 +1,16 @@
 {
   "name": "@uppy/locales",
   "description": "Uppy language packs",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && yarn format",
+    "format": "cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",
+    "test": "yarn node script/test.mjs unused",
+    "typecheck": "tsc --build"
+  },
   "keywords": [
     "uppy",
     "uppy-plugin",
@@ -17,7 +24,19 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "lib",
+    "src",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/utils": "workspace:^"
+  },
+  "devDependencies": {
+    "chalk": "^5.0.0",
+    "dedent": "^1.0.0",
+    "glob": "^8.0.0",
+    "typescript": "^5.8.3"
   }
 }

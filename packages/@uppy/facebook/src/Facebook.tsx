@@ -1,28 +1,34 @@
 import {
-  Provider,
-  getAllowedHosts,
-  tokenStorage,
   type CompanionPluginOptions,
+  getAllowedHosts,
+  Provider,
+  tokenStorage,
 } from '@uppy/companion-client'
-import { UIPlugin, Uppy } from '@uppy/core'
+import type {
+  AsyncStore,
+  Body,
+  Meta,
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
+  UppyFile,
+} from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
-import { h, type ComponentChild } from 'preact'
 
-import type { UppyFile, Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { UnknownProviderPluginState } from '@uppy/core/lib/Uppy.js'
-import locale from './locale.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import type { LocaleStrings } from '@uppy/utils'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
 
-export type FacebookOptions = CompanionPluginOptions
+export type FacebookOptions = CompanionPluginOptions & {
+  locale?: LocaleStrings<typeof locale>
+}
 
-export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
-  FacebookOptions,
-  M,
-  B,
-  UnknownProviderPluginState
-> {
+export default class Facebook<M extends Meta, B extends Body>
+  extends UIPlugin<FacebookOptions, M, B, UnknownProviderPluginState>
+  implements UnknownProviderPlugin<M, B>
+{
   static VERSION = packageJson.version
 
   icon: () => h.JSX.Element
@@ -31,7 +37,7 @@ export default class Facebook<M extends Meta, B extends Body> extends UIPlugin<
 
   view!: ProviderViews<M, B>
 
-  storage: typeof tokenStorage
+  storage: AsyncStore
 
   files: UppyFile<M, B>[]
 

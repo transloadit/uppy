@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const vi_VN: Locale<0 | 1> = {
   strings: {},
@@ -39,7 +39,6 @@ vi_VN.strings = {
   browseFolders: 'Duyệt thư mục',
   cancel: 'Hủy',
   cancelUpload: 'Hủy tải lên',
-  chooseFiles: 'Chọn tệp',
   closeModal: 'Đóng cửa sổ',
   companionError: 'Kết nối thất bại',
   companionUnauthorizeHint:
@@ -58,7 +57,6 @@ vi_VN.strings = {
   dataUploadedOfTotal: '%{complete} trên %{total}',
   discardRecordedFile: 'Hủy tệp đã ghi âm',
   done: 'Hoàn tất',
-  dropHereOr: 'Kéo và thả vào đây hoặc %{browse}',
   dropHint: 'Kéo và thả tệp của bạn vào đây',
   dropPasteBoth: 'Kéo và thả tệp vào đây, %{browseFiles} hoặc %{browseFolders}',
   dropPasteFiles: 'Kéo và thả tệp vào đây hoặc %{browseFiles}',
@@ -225,6 +223,12 @@ vi_VN.strings = {
   },
   zoomIn: 'Phóng to',
   zoomOut: 'Thu nhỏ',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.vi_VN = vi_VN
 }
 
 export default vi_VN

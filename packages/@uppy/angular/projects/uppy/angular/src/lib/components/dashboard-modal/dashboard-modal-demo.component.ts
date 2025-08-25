@@ -1,17 +1,21 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import * as Dashboard from '@uppy/dashboard';
-import { Uppy } from '@uppy/core';
-import { Body, Meta } from '@uppy/utils/lib/UppyFile';
+import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { Uppy } from "@uppy/core";
+import type * as Dashboard from "@uppy/dashboard";
+import type { Body, Meta } from "@uppy/utils";
+import { DashboardModalComponent } from "./dashboard-modal.component";
+
 
 @Component({
-  selector: 'uppy-dashboard-demo',
-  template: `<uppy-dashboard-modal
+	selector: "uppy-dashboard-demo",
+	template: `<uppy-dashboard-modal
     [uppy]="uppy"
     [props]="props"
   ></uppy-dashboard-modal>`,
-  changeDetection: ChangeDetectionStrategy.OnPush,
+	changeDetection: ChangeDetectionStrategy.OnPush,
+	standalone: true,
+	imports: [DashboardModalComponent],
 })
 export class DashboardModalDemoComponent<M extends Meta, B extends Body> {
-  uppy: Uppy<M, B> = new Uppy({ debug: true, autoProceed: true });
-  props?: Dashboard.DashboardOptions<M, B>;
+	uppy: Uppy<M, B> = new Uppy({ debug: true, autoProceed: true });
+	props: Dashboard.DashboardOptions<M, B> = {};
 }

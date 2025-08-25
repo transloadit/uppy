@@ -1,14 +1,12 @@
-import Emitter from 'component-emitter'
-import has from '@uppy/utils/lib/hasProperty'
-import NetworkError from '@uppy/utils/lib/NetworkError'
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore untyped
-import type {
-  RateLimitedQueue,
-  WrapPromiseFunctionType,
-} from '@uppy/utils/lib/RateLimitedQueue'
-import type { AssemblyResponse } from './index.ts'
+import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
+import {
+  fetchWithNetworkError,
+  hasProperty as has,
+  NetworkError,
+} from '@uppy/utils'
+import Emitter from 'component-emitter'
+import type { AssemblyResponse } from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -110,6 +108,7 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
       const [stepName, result] = JSON.parse(e.data)
+      // biome-ignore lint/suspicious/noAssignInExpressions: ...
       ;(this.status.results[stepName] ??= []).push(result)
       this.emit('result', stepName, result)
     })
@@ -248,7 +247,6 @@ class TransloaditAssembly extends Emitter {
     Object.keys(next.uploads)
       .filter((upload) => !has(prev.uploads, upload))
       .forEach((upload) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore either the types are wrong or the tests are wrong.
         // types think next.uploads is an array, but the tests pass an object.
         this.emit('upload', next.uploads[upload])

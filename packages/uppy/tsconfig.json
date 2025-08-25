@@ -1,182 +1,100 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true,
-    "paths": {
-      "@uppy/audio": ["../audio/src/index.js"],
-      "@uppy/audio/lib/*": ["../audio/src/*"],
-      "@uppy/aws-s3": ["../aws-s3/src/index.js"],
-      "@uppy/aws-s3/lib/*": ["../aws-s3/src/*"],
-      "@uppy/box": ["../box/src/index.js"],
-      "@uppy/box/lib/*": ["../box/src/*"],
-      "@uppy/companion-client": ["../companion-client/src/index.js"],
-      "@uppy/companion-client/lib/*": ["../companion-client/src/*"],
-      "@uppy/compressor": ["../compressor/src/index.js"],
-      "@uppy/compressor/lib/*": ["../compressor/src/*"],
-      "@uppy/core": ["../core/src/index.js"],
-      "@uppy/core/lib/*": ["../core/src/*"],
-      "@uppy/dashboard": ["../dashboard/src/index.js"],
-      "@uppy/dashboard/lib/*": ["../dashboard/src/*"],
-      "@uppy/drag-drop": ["../drag-drop/src/index.js"],
-      "@uppy/drag-drop/lib/*": ["../drag-drop/src/*"],
-      "@uppy/drop-target": ["../drop-target/src/index.js"],
-      "@uppy/drop-target/lib/*": ["../drop-target/src/*"],
-      "@uppy/dropbox": ["../dropbox/src/index.js"],
-      "@uppy/dropbox/lib/*": ["../dropbox/src/*"],
-      "@uppy/facebook": ["../facebook/src/index.js"],
-      "@uppy/facebook/lib/*": ["../facebook/src/*"],
-      "@uppy/file-input": ["../file-input/src/index.js"],
-      "@uppy/file-input/lib/*": ["../file-input/src/*"],
-      "@uppy/form": ["../form/src/index.js"],
-      "@uppy/form/lib/*": ["../form/src/*"],
-      "@uppy/golden-retriever": ["../golden-retriever/src/index.js"],
-      "@uppy/golden-retriever/lib/*": ["../golden-retriever/src/*"],
-      "@uppy/google-drive": ["../google-drive/src/index.js"],
-      "@uppy/google-drive/lib/*": ["../google-drive/src/*"],
-      "@uppy/google-photos": ["../google-photos/src/index.js"],
-      "@uppy/google-photos/lib/*": ["../google-photos/src/*"],
-      "@uppy/image-editor": ["../image-editor/src/index.js"],
-      "@uppy/image-editor/lib/*": ["../image-editor/src/*"],
-      "@uppy/informer": ["../informer/src/index.js"],
-      "@uppy/informer/lib/*": ["../informer/src/*"],
-      "@uppy/instagram": ["../instagram/src/index.js"],
-      "@uppy/instagram/lib/*": ["../instagram/src/*"],
-      "@uppy/onedrive": ["../onedrive/src/index.js"],
-      "@uppy/onedrive/lib/*": ["../onedrive/src/*"],
-      "@uppy/progress-bar": ["../progress-bar/src/index.js"],
-      "@uppy/progress-bar/lib/*": ["../progress-bar/src/*"],
-      "@uppy/provider-views": ["../provider-views/src/index.js"],
-      "@uppy/provider-views/lib/*": ["../provider-views/src/*"],
-      "@uppy/remote-sources": ["../remote-sources/src/index.js"],
-      "@uppy/remote-sources/lib/*": ["../remote-sources/src/*"],
-      "@uppy/screen-capture": ["../screen-capture/src/index.js"],
-      "@uppy/screen-capture/lib/*": ["../screen-capture/src/*"],
-      "@uppy/status-bar": ["../status-bar/src/index.js"],
-      "@uppy/status-bar/lib/*": ["../status-bar/src/*"],
-      "@uppy/store-default": ["../store-default/src/index.js"],
-      "@uppy/store-default/lib/*": ["../store-default/src/*"],
-      "@uppy/thumbnail-generator": ["../thumbnail-generator/src/index.js"],
-      "@uppy/thumbnail-generator/lib/*": ["../thumbnail-generator/src/*"],
-      "@uppy/transloadit": ["../transloadit/src/index.js"],
-      "@uppy/transloadit/lib/*": ["../transloadit/src/*"],
-      "@uppy/tus": ["../tus/src/index.js"],
-      "@uppy/tus/lib/*": ["../tus/src/*"],
-      "@uppy/unsplash": ["../unsplash/src/index.js"],
-      "@uppy/unsplash/lib/*": ["../unsplash/src/*"],
-      "@uppy/url": ["../url/src/index.js"],
-      "@uppy/url/lib/*": ["../url/src/*"],
-      "@uppy/webcam": ["../webcam/src/index.js"],
-      "@uppy/webcam/lib/*": ["../webcam/src/*"],
-      "@uppy/xhr-upload": ["../xhr-upload/src/index.js"],
-      "@uppy/xhr-upload/lib/*": ["../xhr-upload/src/*"],
-      "@uppy/zoom": ["../zoom/src/index.js"],
-      "@uppy/zoom/lib/*": ["../zoom/src/*"],
-    },
+    "noEmit": true
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../@uppy/audio/tsconfig.build.json",
+      "path": "../@uppy/audio/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/aws-s3/tsconfig.build.json",
+      "path": "../@uppy/aws-s3/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/box/tsconfig.build.json",
+      "path": "../@uppy/box/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/companion-client/tsconfig.build.json",
+      "path": "../@uppy/companion-client/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/compressor/tsconfig.build.json",
+      "path": "../@uppy/compressor/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/core/tsconfig.build.json",
+      "path": "../@uppy/core/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/dashboard/tsconfig.build.json",
+      "path": "../@uppy/dashboard/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/drag-drop/tsconfig.build.json",
+      "path": "../@uppy/drop-target/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/drop-target/tsconfig.build.json",
+      "path": "../@uppy/dropbox/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/dropbox/tsconfig.build.json",
+      "path": "../@uppy/facebook/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/facebook/tsconfig.build.json",
+      "path": "../@uppy/form/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/file-input/tsconfig.build.json",
+      "path": "../@uppy/golden-retriever/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/form/tsconfig.build.json",
+      "path": "../@uppy/google-drive/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/golden-retriever/tsconfig.build.json",
+      "path": "../@uppy/google-drive-picker/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/google-drive/tsconfig.build.json",
+      "path": "../@uppy/google-photos-picker/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/google-photos/tsconfig.build.json",
+      "path": "../@uppy/image-editor/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/image-editor/tsconfig.build.json",
+      "path": "../@uppy/instagram/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/informer/tsconfig.build.json",
+      "path": "../@uppy/onedrive/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/instagram/tsconfig.build.json",
+      "path": "../@uppy/provider-views/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/onedrive/tsconfig.build.json",
+      "path": "../@uppy/remote-sources/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/progress-bar/tsconfig.build.json",
+      "path": "../@uppy/screen-capture/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/provider-views/tsconfig.build.json",
+      "path": "../@uppy/store-default/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/remote-sources/tsconfig.build.json",
+      "path": "../@uppy/thumbnail-generator/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/screen-capture/tsconfig.build.json",
+      "path": "../@uppy/transloadit/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/status-bar/tsconfig.build.json",
+      "path": "../@uppy/tus/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/store-default/tsconfig.build.json",
+      "path": "../@uppy/unsplash/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/thumbnail-generator/tsconfig.build.json",
+      "path": "../@uppy/url/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/transloadit/tsconfig.build.json",
+      "path": "../@uppy/webcam/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/tus/tsconfig.build.json",
+      "path": "../@uppy/xhr-upload/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/unsplash/tsconfig.build.json",
-    },
-    {
-      "path": "../@uppy/url/tsconfig.build.json",
-    },
-    {
-      "path": "../@uppy/webcam/tsconfig.build.json",
-    },
-    {
-      "path": "../@uppy/xhr-upload/tsconfig.build.json",
-    },
-    {
-      "path": "../@uppy/zoom/tsconfig.build.json",
-    },
-  ],
+      "path": "../@uppy/zoom/tsconfig.build.json"
+    }
+  ]
 }

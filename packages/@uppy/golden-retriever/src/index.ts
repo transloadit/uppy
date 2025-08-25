@@ -1,21 +1,23 @@
+import type {
+  Body,
+  DefinePluginOpts,
+  Meta,
+  PluginOpts,
+  UploadResult,
+  Uppy,
+  UppyFile,
+} from '@uppy/core'
+import { BasePlugin } from '@uppy/core'
 import throttle from 'lodash/throttle.js'
-import BasePlugin from '@uppy/core/lib/BasePlugin.js'
-import type { PluginOpts, DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type Uppy from '@uppy/core'
-import type { UploadResult } from '@uppy/core'
+import packageJson from '../package.json' with { type: 'json' }
+import IndexedDBStore from './IndexedDBStore.js'
+import MetaDataStore from './MetaDataStore.js'
 import ServiceWorkerStore, {
   type ServiceWorkerStoredFile,
-} from './ServiceWorkerStore.ts'
-import IndexedDBStore from './IndexedDBStore.ts'
-import MetaDataStore from './MetaDataStore.ts'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+} from './ServiceWorkerStore.js'
 
 declare module '@uppy/core' {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // TODO: remove this event
     'restore:get-data': (fn: (data: Record<string, unknown>) => void) => void
@@ -108,53 +110,33 @@ export default class GoldenRetriever<
     }
   }
 
-  /**
-   * Get file objects that are currently waiting: they've been selected,
-   * but aren't yet being uploaded.
-   */
-  getWaitingFiles(): Record<string, UppyFile<M, B>> {
-    const waitingFiles: Record<string, UppyFile<M, B>> = {}
-
-    this.uppy.getFiles().forEach((file) => {
-      if (!file.progress || !file.progress.uploadStarted) {
-        waitingFiles[file.id] = file
-      }
-    })
-
-    return waitingFiles
-  }
-
-  /**
-   * Get file objects that are currently being uploaded. If a file has finished
-   * uploading, but the other files in the same batch have not, the finished
-   * file is also returned.
-   */
-  getUploadingFiles(): Record<string, UppyFile<M, B>> {
-    const uploadingFiles: Record<string, UppyFile<M, B>> = {}
-
-    const { currentUploads } = this.uppy.getState()
-    if (currentUploads) {
-      const uploadIDs = Object.keys(currentUploads)
-      uploadIDs.forEach((uploadID) => {
-        const filesInUpload = currentUploads[uploadID].fileIDs
-        filesInUpload.forEach((fileID) => {
-          uploadingFiles[fileID] = this.uppy.getFile(fileID)
-        })
-      })
-    }
-
-    return uploadingFiles
-  }
-
   saveFilesStateToLocalStorage(): void {
-    const filesToSave = {
-      ...this.getWaitingFiles(),
-      ...this.getUploadingFiles(),
-    }
-    const fileToSaveEntries = Object.entries(filesToSave)
+    // File objects that are currently waiting: they've been selected,
+    // but aren't yet being uploaded.
+    const waitingFiles = this.uppy
+      .getFiles()
+      .filter((file) => !file.progress || !file.progress.uploadStarted)
+
+    // File objects that are currently being uploaded. If a file has finished
+    // uploading, but the other files in the same batch have not, the finished
+    // file is also returned.
+    const uploadingFiles = Object.values(this.uppy.getState().currentUploads)
+      .map((currentUpload) =>
+        currentUpload.fileIDs.map((fileID) => {
+          const file = this.uppy.getFile(fileID)
+          return file != null ? [file] : [] // file might have been removed
+        }),
+      )
+      .flat(2)
+
+    const allFiles = [...waitingFiles, ...uploadingFiles]
+    // unique by file.id
+    const fileToSave = Object.values(
+      Object.fromEntries(allFiles.map((file) => [file.id, file])),
+    )
 
     // If all files have been removed by the user, clear recovery state
-    if (fileToSaveEntries.length === 0) {
+    if (fileToSave.length === 0) {
       if (this.uppy.getState().recoveredState !== null) {
         this.uppy.setState({ recoveredState: null })
       }
@@ -166,19 +148,19 @@ export default class GoldenRetriever<
     // and we want to avoid having weird properties in the serialized object.
     // Also adding file.isRestored to all files, since they will be restored from local storage
     const filesToSaveWithoutData = Object.fromEntries(
-      fileToSaveEntries.map(([id, fileInfo]) => [
-        id,
-        fileInfo.isRemote ?
-          {
-            ...fileInfo,
-            isRestored: true,
-          }
-        : {
-            ...fileInfo,
-            isRestored: true,
-            data: null,
-            preview: null,
-          },
+      fileToSave.map((fileInfo) => [
+        fileInfo.id,
+        fileInfo.isRemote
+          ? {
+              ...fileInfo,
+              isRestored: true,
+            }
+          : {
+              ...fileInfo,
+              isRestored: true,
+              data: null,
+              preview: null,
+            },
       ]),
     )
 

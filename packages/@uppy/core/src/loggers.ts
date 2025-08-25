@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import getTimeStamp from '@uppy/utils/lib/getTimeStamp'
+import { getTimeStamp } from '@uppy/utils'
 
 // Swallow all logs, except errors.
 // default if logger is not set or debug: false

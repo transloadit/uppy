@@ -1,35 +1,33 @@
-import { h } from 'preact'
 import type {
-  UnknownProviderPlugin,
+  Body,
+  Meta,
+  PartialTree,
+  PartialTreeFile,
   PartialTreeFolder,
   PartialTreeFolderNode,
-  PartialTreeFile,
-  UnknownProviderPluginState,
   PartialTreeId,
-  PartialTree,
-} from '@uppy/core/lib/Uppy.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type Translator from '@uppy/utils/lib/Translator'
+  UnknownProviderPlugin,
+  UnknownProviderPluginState,
+  ValidateableFile,
+} from '@uppy/core'
+import type { CompanionFile, I18n } from '@uppy/utils'
+import { remoteFileObjToLocal } from '@uppy/utils'
 import classNames from 'classnames'
-import type { ValidateableFile } from '@uppy/core/lib/Restricter.js'
-import remoteFileObjToLocal from '@uppy/utils/lib/remoteFileObjToLocal'
-import AuthView from './AuthView.tsx'
-import Header from './Header.tsx'
-import Browser from '../Browser.tsx'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../../package.json'
-import PartialTreeUtils from '../utils/PartialTreeUtils/index.ts'
-import shouldHandleScroll from '../utils/shouldHandleScroll.ts'
-import handleError from '../utils/handleError.ts'
-import getClickedRange from '../utils/getClickedRange.ts'
-import SearchInput from '../SearchInput.tsx'
-import FooterActions from '../FooterActions.tsx'
-import addFiles from '../utils/addFiles.ts'
-import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.ts'
-import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.ts'
+import type { h } from 'preact'
+import packageJson from '../../package.json' with { type: 'json' }
+import Browser from '../Browser.js'
+import FooterActions from '../FooterActions.js'
+import SearchInput from '../SearchInput.js'
+import addFiles from '../utils/addFiles.js'
+import getClickedRange from '../utils/getClickedRange.js'
+import handleError from '../utils/handleError.js'
+import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
+import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
+import shouldHandleScroll from '../utils/shouldHandleScroll.js'
+import AuthView from './AuthView.js'
+import Header from './Header.js'
 
 export function defaultPickerIcon(): h.JSX.Element {
   return (
@@ -75,7 +73,7 @@ export interface Opts<M extends Meta, B extends Body> {
   loadAllFiles: boolean
   renderAuthForm?: (args: {
     pluginName: string
-    i18n: Translator['translateArray']
+    i18n: I18n
     loading: boolean | string
     onAuth: (authFormData: unknown) => Promise<void>
   }) => h.JSX.Element
@@ -153,7 +151,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
 
-  // eslint-disable-next-line class-methods-use-this
   tearDown(): void {
     // Nothing.
   }
@@ -394,16 +391,26 @@ export default class ProviderView<M extends Meta, B extends Body> {
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
     const filtered =
-      searchString === '' ? inThisFolder : (
-        inThisFolder.filter(
-          (item) =>
-            (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
-              .toLowerCase()
-              .indexOf(searchString.toLowerCase()) !== -1,
-        )
-      )
+      searchString === ''
+        ? inThisFolder
+        : inThisFolder.filter(
+            (item) =>
+              (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+                .toLowerCase()
+                .indexOf(searchString.toLowerCase()) !== -1,
+          )
 
     return filtered
+  }
+
+  getBreadcrumbs = (): PartialTreeFolder[] => {
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    return getBreadcrumbs(partialTree, currentFolderId)
+  }
+
+  getSelectedAmount = (): number => {
+    const { partialTree } = this.plugin.getPluginState()
+    return getNumberOfSelectedFiles(partialTree)
   }
 
   validateAggregateRestrictions = (partialTree: PartialTree) => {
@@ -434,16 +441,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
           pluginName={this.plugin.title}
           pluginIcon={pluginIcon}
           handleAuth={this.handleAuth}
-          i18n={this.plugin.uppy.i18nArray}
+          i18n={this.plugin.uppy.i18n}
           renderForm={opts.renderAuthForm}
           loading={loading}
         />
       )
     }
 
-    const { partialTree, currentFolderId, username, searchString } =
-      this.plugin.getPluginState()
-    const breadcrumbs = getBreadcrumbs(partialTree, currentFolderId)
+    const { partialTree, username, searchString } = this.plugin.getPluginState()
+    const breadcrumbs = this.getBreadcrumbs()
 
     return (
       <div
@@ -488,6 +494,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           showTitles={opts.showTitles}
           i18n={this.plugin.uppy.i18n}
           isLoading={loading}
+          utmSource="Companion"
         />
 
         <FooterActions

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getSpeed from './getSpeed.ts'
+import getSpeed from './getSpeed.js'
 
 describe('getSpeed', () => {
   it('should calculate the speed given a fileProgress object', () => {

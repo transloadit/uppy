@@ -1,5 +1,5 @@
 {
-  "name": "@uppy-example/aws-nodejs",
+  "name": "example-aws-nodejs",
   "version": "1.0.0",
   "description": "Uppy for AWS S3 with a custom Node.js backend for signing URLs",
   "main": "index.js",
@@ -13,7 +13,7 @@
     "@aws-sdk/client-s3": "^3.338.0",
     "@aws-sdk/client-sts": "^3.338.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",
-    "body-parser": "^1.20.0",
+    "body-parser": "^1.20.3",
     "dotenv": "^16.0.0",
     "express": "^4.19.2"
   }

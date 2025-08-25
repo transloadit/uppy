@@ -1,15 +1,12 @@
-/* eslint-disable global-require */
-module.exports = {
-  callback: require('./callback'),
-  deauthorizationCallback: require('./deauth-callback'),
-  sendToken: require('./send-token'),
-  get: require('./get'),
-  thumbnail: require('./thumbnail'),
-  list: require('./list'),
-  simpleAuth: require('./simple-auth'),
-  logout: require('./logout'),
-  connect: require('./connect'),
-  preauth: require('./preauth'),
-  redirect: require('./oauth-redirect'),
-  refreshToken: require('./refresh-token'),
-}
+export { default as callback } from './callback.js'
+export { default as connect } from './connect.js'
+export { default as deauthorizationCallback } from './deauth-callback.js'
+export { default as get } from './get.js'
+export { default as list } from './list.js'
+export { default as logout } from './logout.js'
+export { default as redirect } from './oauth-redirect.js'
+export { default as preauth } from './preauth.js'
+export { default as refreshToken } from './refresh-token.js'
+export { default as sendToken } from './send-token.js'
+export { default as simpleAuth } from './simple-auth.js'
+export { default as thumbnail } from './thumbnail.js'

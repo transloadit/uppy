@@ -6,10 +6,6 @@ on:
     paths-ignore:
       - '**.md'
       - 'assets/**'
-      - 'e2e/**'
-      - 'examples/**'
-      - 'private/**'
-      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
   pull_request:
@@ -17,11 +13,6 @@ on:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
-      - 'assets/**'
-      - 'e2e/**'
-      - 'examples/**'
-      - 'private/**'
-      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
 
@@ -30,14 +21,14 @@ env:
 
 jobs:
   unit_tests:
-    name: Unit tests
+    name: Tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
+        node-version: [lts/*]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -56,21 +47,25 @@ jobs:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
         run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
+          corepack yarn install
+      - name: Install Playwright Browsers
+        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps
+      - name: Build
+        run: corepack yarn run build
       - name: Run tests
-        run: corepack yarn run test:unit
+        run: corepack yarn run test
+        env:
+          COMPANION_DATADIR: ./output
+          COMPANION_DOMAIN: localhost:3020
+          COMPANION_PROTOCOL: http
+          COMPANION_REDIS_URL: redis://localhost:6379
 
   types:
-    name: Type tests
+    name: Types
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -89,11 +84,24 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
-      - name: Attempt building TS packages
-        run: corepack yarn run build:ts
+          corepack yarn install
+      - run: corepack yarn run typecheck
+
+  lint_js:
+    name: Lint
+    runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v5
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run:
+          corepack yarn workspaces focus @uppy-dev/build
+      - name: Run linter
+        run: corepack yarn run check:ci

@@ -1,37 +1,8 @@
 {
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
-    "noImplicitAny": false,
     "outDir": "./lib",
-    "paths": {
-      "@uppy/box": ["../box/src/index.js"],
-      "@uppy/box/lib/*": ["../box/src/*"],
-      "@uppy/dashboard": ["../dashboard/src/index.js"],
-      "@uppy/dashboard/lib/*": ["../dashboard/src/*"],
-      "@uppy/dropbox": ["../dropbox/src/index.js"],
-      "@uppy/dropbox/lib/*": ["../dropbox/src/*"],
-      "@uppy/facebook": ["../facebook/src/index.js"],
-      "@uppy/facebook/lib/*": ["../facebook/src/*"],
-      "@uppy/google-drive": ["../google-drive/src/index.js"],
-      "@uppy/google-drive/lib/*": ["../google-drive/src/*"],
-      "@uppy/google-photos": ["../google-photos/src/index.js"],
-      "@uppy/google-photos/lib/*": ["../google-photos/src/*"],
-      "@uppy/instagram": ["../instagram/src/index.js"],
-      "@uppy/instagram/lib/*": ["../instagram/src/*"],
-      "@uppy/onedrive": ["../onedrive/src/index.js"],
-      "@uppy/onedrive/lib/*": ["../onedrive/src/*"],
-      "@uppy/unsplash": ["../unsplash/src/index.js"],
-      "@uppy/unsplash/lib/*": ["../unsplash/src/*"],
-      "@uppy/url": ["../url/src/index.js"],
-      "@uppy/url/lib/*": ["../url/src/*"],
-      "@uppy/zoom": ["../zoom/src/index.js"],
-      "@uppy/zoom/lib/*": ["../zoom/src/*"],
-      "@uppy/core": ["../core/src/index.js"],
-      "@uppy/core/lib/*": ["../core/src/*"]
-    },
-    "resolveJsonModule": false,
-    "rootDir": "./src",
-    "skipLibCheck": true
+    "rootDir": "./src"
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],
@@ -50,9 +21,6 @@
     },
     {
       "path": "../google-drive/tsconfig.build.json"
-    },
-    {
-      "path": "../google-photos/tsconfig.build.json"
     },
     {
       "path": "../instagram/tsconfig.build.json"

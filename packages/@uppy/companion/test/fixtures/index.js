@@ -1,12 +1,13 @@
-const box = require('./box')
-const drive = require('./drive')
-const dropbox =  require('./dropbox')
-const instagram = require('./instagram')
-const onedrive = require('./onedrive')
-const facebook = require('./facebook')
-const zoom = require('./zoom')
+import * as box from './box.js'
+import * as constants from './constants.js'
+import * as drive from './drive.js'
+import * as dropbox from './dropbox.js'
+import * as facebook from './facebook.js'
+import * as instagram from './instagram.js'
+import * as onedrive from './onedrive.js'
+import * as zoom from './zoom.js'
 
-module.exports.providers = {
+export const providers = {
   box,
   drive,
   dropbox,
@@ -16,4 +17,4 @@ module.exports.providers = {
   zoom,
 }
 
-module.exports.defaults = require('./constants')
+export const defaults = constants

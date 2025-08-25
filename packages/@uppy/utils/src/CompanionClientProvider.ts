@@ -1,4 +1,4 @@
-import type { CompanionFile } from './CompanionFile.ts'
+import type { CompanionFile } from './CompanionFile.js'
 
 export type RequestOptions = {
   method?: string
@@ -26,6 +26,7 @@ export interface CompanionClientProvider {
   login(options?: RequestOptions): Promise<void>
   logout<ResBody>(options?: RequestOptions): Promise<ResBody>
   fetchPreAuthToken(): Promise<void>
+  fileUrl: (a: string) => string
   list(
     directory: string | null,
     options: RequestOptions,
@@ -38,5 +39,6 @@ export interface CompanionClientProvider {
 export interface CompanionClientSearchProvider {
   name: string
   provider: string
+  fileUrl: (a: string) => string
   search<ResBody>(text: string, queries?: string): Promise<ResBody>
 }

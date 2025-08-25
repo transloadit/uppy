@@ -1,7 +1,6 @@
-const { EventEmitter } = require('node:events')
-const { default: safeStringify } = require('fast-safe-stringify')
-
-const logger = require('../logger')
+import { EventEmitter } from 'node:events'
+import safeStringify from 'fast-safe-stringify'
+import * as logger from '../logger.js'
 
 function replacer(key, value) {
   // Remove the circular structure and internal ones
@@ -12,40 +11,50 @@ function replacer(key, value) {
  * This module simulates the builtin events.EventEmitter but with the use of redis.
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
- * 
- * @param {import('ioredis').Redis} redisClient 
- * @param {string} redisPubSubScope 
- * @returns 
+ *
+ * @param {import('ioredis').Redis} redisClient
+ * @param {string} redisPubSubScope
+ * @returns
  */
-module.exports = (redisClient, redisPubSubScope) => {
+export default function redisEmitter(redisClient, redisPubSubScope) {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
   const getPrefixedEventName = (eventName) => `${prefix}${eventName}`
-  const publisher = redisClient.duplicate({ lazyConnect: true })
-  publisher.on('error', err => logger.error('publisher redis error', err.toString()))
-  /** @type {import('ioredis').Redis} */
-  let subscriber
-
-  const connectedPromise = publisher.connect().then(() => {
-    subscriber = publisher.duplicate()
-    subscriber.on('error', err => logger.error('subscriber redis error', err.toString()))
-    return subscriber.connect()
-  })
-
-  const handlersByEvent = new Map()
 
   const errorEmitter = new EventEmitter()
   const handleError = (err) => errorEmitter.emit('error', err)
 
-  connectedPromise.catch((err) => handleError(err))
+  async function makeRedis() {
+    const publisher = redisClient.duplicate({ lazyConnect: true })
+    publisher.on('error', (err) =>
+      logger.error('publisher redis error', err.toString()),
+    )
+    const subscriber = publisher.duplicate()
+    subscriber.on('error', (err) =>
+      logger.error('subscriber redis error', err.toString()),
+    )
+    await publisher.connect()
+    await subscriber.connect()
+    return { subscriber, publisher }
+  }
 
-  async function runWhenConnected (fn) {
+  const redisPromise = makeRedis()
+  redisPromise.catch((err) => handleError(err))
+
+  /**
+   *
+   * @param {(a: Awaited<typeof redisPromise>) => void} fn
+   */
+  async function runWhenConnected(fn) {
     try {
-      await connectedPromise
-      await fn()
+      await fn(await redisPromise)
     } catch (err) {
       handleError(err)
     }
   }
+
+  // because each event can have multiple listeners, we need to keep track of them
+  /** @type {Map<string, Map<() => unknown, () => unknown>>} */
+  const handlersByEventName = new Map()
 
   /**
    * Remove an event listener
@@ -53,32 +62,47 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event to remove
    */
-  function removeListener (eventName, handler) {
-    if (eventName === 'error') return errorEmitter.removeListener('error', handler)
+  async function removeListener(eventName, handler) {
+    if (eventName === 'error') {
+      errorEmitter.removeListener('error', handler)
+      return
+    }
 
-    return runWhenConnected(() => {
-      const handlersByThisEventName = handlersByEvent.get(eventName)
-      if (handlersByThisEventName == null) return undefined
+    const actualHandlerByHandler = handlersByEventName.get(eventName)
+    if (actualHandlerByHandler == null) return
 
-      const actualHandler = handlersByThisEventName.get(handler)
-      if (actualHandler == null) return undefined
+    const actualHandler = actualHandlerByHandler.get(handler)
+    if (actualHandler == null) return
 
-      handlersByThisEventName.delete(handler)
-      if (handlersByThisEventName.size === 0) handlersByEvent.delete(eventName)
+    actualHandlerByHandler.delete(handler)
 
+    const didRemoveLastListener = actualHandlerByHandler.size === 0
+    if (didRemoveLastListener) {
+      handlersByEventName.delete(eventName)
+    }
+
+    await runWhenConnected(async ({ subscriber }) => {
       subscriber.off('pmessage', actualHandler)
-      return subscriber.punsubscribe(getPrefixedEventName(eventName))
+      if (didRemoveLastListener) {
+        await subscriber.punsubscribe(getPrefixedEventName(eventName))
+      }
     })
   }
 
   /**
-   * 
-   * @param {string} eventName 
-   * @param {*} handler 
-   * @param {*} _once 
+   *
+   * @param {string} eventName
+   * @param {*} handler
+   * @param {*} _once
    */
-  function addListener (eventName, handler, _once = false) {
-    function actualHandler (pattern, channel, message) {
+  async function addListener(eventName, handler, _once = false) {
+    if (eventName === 'error') {
+      if (_once) errorEmitter.once('error', handler)
+      else errorEmitter.addListener('error', handler)
+      return
+    }
+
+    function actualHandler(pattern, channel, message) {
       if (pattern !== getPrefixedEventName(eventName)) {
         return
       }
@@ -87,23 +111,28 @@ module.exports = (redisClient, redisPubSubScope) => {
       let args
       try {
         args = JSON.parse(message)
-      } catch (ex) {
-        handleError(new Error(`Invalid JSON received! Channel: ${eventName} Message: ${message}`))
+      } catch (_ex) {
+        handleError(
+          new Error(
+            `Invalid JSON received! Channel: ${eventName} Message: ${message}`,
+          ),
+        )
         return
       }
+
       handler(...args)
     }
 
-    let handlersByThisEventName = handlersByEvent.get(eventName)
-    if (handlersByThisEventName == null) {
-      handlersByThisEventName = new WeakMap()
-      handlersByEvent.set(eventName, handlersByThisEventName)
+    let actualHandlerByHandler = handlersByEventName.get(eventName)
+    if (actualHandlerByHandler == null) {
+      actualHandlerByHandler = new Map()
+      handlersByEventName.set(eventName, actualHandlerByHandler)
     }
-    handlersByThisEventName.set(handler, actualHandler)
+    actualHandlerByHandler.set(handler, actualHandler)
 
-    runWhenConnected(() => {
+    await runWhenConnected(async ({ subscriber }) => {
       subscriber.on('pmessage', actualHandler)
-      return subscriber.psubscribe(getPrefixedEventName(eventName))
+      await subscriber.psubscribe(getPrefixedEventName(eventName))
     })
   }
 
@@ -113,10 +142,8 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event
    */
-  function on (eventName, handler) {
-    if (eventName === 'error') return errorEmitter.on('error', handler)
-
-    return addListener(eventName, handler)
+  async function on(eventName, handler) {
+    await addListener(eventName, handler)
   }
 
   /**
@@ -125,8 +152,8 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event
    */
-  function off (eventName, handler) {
-    return removeListener(eventName, handler)
+  async function off(eventName, handler) {
+    await removeListener(eventName, handler)
   }
 
   /**
@@ -135,10 +162,8 @@ module.exports = (redisClient, redisPubSubScope) => {
    * @param {string} eventName name of the event
    * @param {any} handler the handler of the event
    */
-  function once (eventName, handler) {
-    if (eventName === 'error') return errorEmitter.once('error', handler)
-
-    return addListener(eventName, handler, true)
+  async function once(eventName, handler) {
+    await addListener(eventName, handler, true)
   }
 
   /**
@@ -146,10 +171,12 @@ module.exports = (redisClient, redisPubSubScope) => {
    *
    * @param {string} eventName name of the event
    */
-  function emit (eventName, ...args) {
-    runWhenConnected(
-      () => publisher.publish(getPrefixedEventName(eventName),
-      safeStringify(args, replacer)),
+  async function emit(eventName, ...args) {
+    await runWhenConnected(async ({ publisher }) =>
+      publisher.publish(
+        getPrefixedEventName(eventName),
+        safeStringify.default(args, replacer),
+      ),
     )
   }
 
@@ -158,13 +185,18 @@ module.exports = (redisClient, redisPubSubScope) => {
    *
    * @param {string} eventName name of the event
    */
-  function removeAllListeners (eventName) {
-    if (eventName === 'error') return errorEmitter.removeAllListeners(eventName)
+  async function removeAllListeners(eventName) {
+    if (eventName === 'error') {
+      errorEmitter.removeAllListeners(eventName)
+      return
+    }
 
-    return runWhenConnected(() => {
-      handlersByEvent.delete(eventName)
-      return subscriber.punsubscribe(getPrefixedEventName(eventName))
-    })
+    const actualHandlerByHandler = handlersByEventName.get(eventName)
+    if (actualHandlerByHandler != null) {
+      for (const handler of actualHandlerByHandler.keys()) {
+        await removeListener(eventName, handler)
+      }
+    }
   }
 
   return {

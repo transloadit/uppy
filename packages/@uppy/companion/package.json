@@ -1,15 +1,22 @@
 {
   "name": "@uppy/companion",
-  "version": "5.1.0",
+  "version": "6.0.0",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "main": "lib/companion.js",
   "types": "lib/companion.d.ts",
   "author": "Transloadit.com",
   "license": "MIT",
+  "sideEffects": false,
   "homepage": "https://github.com/transloadit/uppy#readme",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "exports": {
+    ".": "./lib/companion.js",
+    "./standalone": "./lib/standalone/index.js",
+    "./package.json": "./package.json"
   },
   "keywords": [
     "file uploader",
@@ -33,7 +40,7 @@
     "@aws-sdk/lib-storage": "^3.338.0",
     "@aws-sdk/s3-presigned-post": "^3.338.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",
-    "body-parser": "1.20.2",
+    "body-parser": "1.20.3",
     "common-tags": "1.8.2",
     "connect-redis": "7.1.1",
     "content-disposition": "^0.5.4",
@@ -41,13 +48,14 @@
     "cors": "^2.8.5",
     "escape-goat": "3.0.0",
     "escape-string-regexp": "4.0.0",
-    "express": "4.19.2",
+    "express": "4.21.2",
     "express-interceptor": "1.2.0",
-    "express-prom-bundle": "7.0.0",
-    "express-session": "1.18.0",
+    "express-prom-bundle": "7",
+    "express-session": "1.18.1",
     "fast-safe-stringify": "^2.1.1",
+    "formdata-node": "^6.0.3",
     "got": "^13.0.0",
-    "grant": "5.4.22",
+    "grant": "^5.4.24",
     "helmet": "^7.1.0",
     "ioredis": "^5.3.2",
     "ipaddr.js": "^2.0.1",
@@ -59,12 +67,14 @@
     "morgan": "1.10.0",
     "ms": "2.1.3",
     "node-schedule": "2.1.1",
+    "p-map": "^7.0.3",
     "prom-client": "15.1.2",
     "serialize-error": "^11.0.0",
     "serialize-javascript": "^6.0.0",
     "supports-color": "8.x",
     "tus-js-client": "^4.1.0",
     "validator": "^13.0.0",
+    "webdav": "^5.8.0",
     "ws": "8.17.1"
   },
   "devDependencies": {
@@ -73,42 +83,39 @@
     "@types/cors": "2.8.6",
     "@types/eslint": "^8.2.0",
     "@types/express-session": "1.17.3",
+    "@types/http-proxy": "^1",
     "@types/jsonwebtoken": "8.3.7",
     "@types/lodash": "4.14.191",
     "@types/morgan": "1.7.37",
     "@types/ms": "0.7.31",
-    "@types/node": "^20.0.0",
+    "@types/node": "^20.19.0",
     "@types/react": "^18.0.0",
     "@types/request": "2.48.8",
     "@types/webpack": "^5.28.0",
     "@types/ws": "8.5.3",
-    "jest": "^29.0.0",
+    "execa": "^9.6.0",
+    "http-proxy": "^1.18.1",
     "nock": "^13.1.3",
     "supertest": "6.2.4",
-    "typescript": "~5.4"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "files": [
     "bin/",
-    "lib/"
+    "lib/",
+    "src/",
+    "CHANGELOG.md"
   ],
-  "jest": {
-    "testEnvironment": "node",
-    "testTimeout": 10000,
-    "automock": false,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**",
-      "!src/**/*.d.ts"
-    ]
-  },
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsc --build tsconfig.build.json",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "start": "node ./lib/standalone/start-server.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest --runInBand"
+    "start:dev": "bash start-dev",
+    "typecheck": "tsc --build",
+    "test": "vitest run --silent='passed-only'"
   },
   "engines": {
-    "node": "^18.20.0 || ^20.15.0 || >=22.0.0"
+    "node": "^20.19.3 || >=22.0.0"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"

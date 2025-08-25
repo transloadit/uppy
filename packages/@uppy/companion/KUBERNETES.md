@@ -28,6 +28,7 @@ data:
   COMPANION_DOMAINS: 'sub1.domain.com,sub2.domain.com,sub3.domain.com'
   COMPANION_PROTOCOL: 'YOUR SERVER PROTOCOL'
   COMPANION_STREAMING_UPLOAD: true
+  COMPANION_TUS_DEFERRED_UPLOAD_LENGTH: true
   COMPANION_REDIS_URL: redis://:superSecretPassword@uppy-redis.uppy.svc.cluster.local:6379
   COMPANION_SECRET: 'shh!Issa Secret!'
   COMPANION_PREAUTH_SECRET: 'another secret'

@@ -1,0 +1,38 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": {
+      "dependsOn": [
+        "@uppy/image-editor#build",
+        "@uppy/box#build",
+        "@uppy/core#build",
+        "@uppy/google-drive-picker#build",
+        "@uppy/onedrive#build",
+        "@uppy/compressor#build",
+        "@uppy/url#build",
+        "@uppy/dashboard#build",
+        "@uppy/google-photos-picker#build",
+        "@uppy/audio#build",
+        "@uppy/facebook#build",
+        "@uppy/google-drive#build",
+        "@uppy/thumbnail-generator#build",
+        "@uppy/screen-capture#build",
+        "@uppy/xhr-upload#build",
+        "@uppy/transloadit#build",
+        "@uppy/zoom#build",
+        "@uppy/dropbox#build",
+        "@uppy/webdav#build",
+        "@uppy/unsplash#build",
+        "@uppy/webcam#build",
+        "@uppy/instagram#build"
+      ],
+      "inputs": [
+        "script/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.build.json"
+      ],
+      "outputs": ["lib/**"]
+    }
+  }
+}

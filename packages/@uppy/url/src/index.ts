@@ -1,2 +1,2 @@
-export { default } from './Url.tsx'
-export type { UrlOptions } from './Url.tsx'
+export type { UrlOptions } from './Url.js'
+export { default } from './Url.js'

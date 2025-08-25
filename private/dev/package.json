@@ -10,10 +10,7 @@
     "@uppy/companion": "workspace:^"
   },
   "devDependencies": {
-    "autoprefixer": "^10.2.6",
-    "postcss-dir-pseudo-class": "^6.0.0",
-    "postcss-logical": "^5.0.0",
-    "vite": "^5.0.0"
+    "vite": "^7.0.6"
   },
   "private": true,
   "type": "module",

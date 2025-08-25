@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import isNetworkError from './isNetworkError.ts'
+import isNetworkError from './isNetworkError.js'
 
 describe('isNetworkError', () => {
   it('should return true if the specified xhr object contains a network error', () => {

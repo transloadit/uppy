@@ -1,5 +1,3 @@
-/* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
 import classNames from 'classnames'
 
 type $TSFixMe = any
@@ -22,8 +20,9 @@ function EditorPanel(props: $TSFixMe) {
       <div className="uppy-DashboardContent-bar">
         <div
           className="uppy-DashboardContent-title"
+          // biome-ignore lint/a11y/useSemanticElements: ...
           role="heading"
-          aria-level="1"
+          aria-level={1}
         >
           {props.i18nArray('editing', {
             file: (

@@ -1,10 +1,10 @@
 {
-  "name": "@uppy-example/transloadit",
+  "name": "example-transloadit",
   "version": "0.0.0",
   "type": "module",
   "devDependencies": {
     "npm-run-all": "^4.1.5",
-    "vite": "^5.0.0"
+    "vite": "^7.0.6"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",
@@ -12,7 +12,6 @@
     "@uppy/drop-target": "workspace:*",
     "@uppy/form": "workspace:*",
     "@uppy/image-editor": "workspace:*",
-    "@uppy/progress-bar": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/transloadit": "workspace:*",
     "@uppy/webcam": "workspace:*",

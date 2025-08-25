@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const fi_FI: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ fi_FI.strings = {
   browseFiles: 'selaa',
   cancel: 'Peruuta',
   cancelUpload: 'Peruuta lähetys',
-  chooseFiles: 'Valitse tiedostot',
   closeModal: 'Sulje ikkuna',
   companionError: 'Yhdistäminen Companioniin epäonnistui',
   complete: 'Valmis',
@@ -39,7 +38,6 @@ fi_FI.strings = {
   dashboardWindowTitle: 'Tiedoston latausikkuna (Paina Esc sulkeaksesi)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: 'Valmis',
-  dropHereOr: 'Raahaa tiedostot tähän tai %{browse}',
   dropHint: 'Raahaa tiedostot tähän',
   dropPasteBoth: 'Raahaa tiedostot tähän, liitä tai %{browse}',
   dropPasteFiles: 'Raahaa tiedostot tähän, liitä tai %{browse}',
@@ -146,6 +144,12 @@ fi_FI.strings = {
   streamPassive: 'Jako passiivinen',
   micDisabled: 'Käyttäjä on estänyt mikrofonin',
   recording: 'Tallennetaan',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.fi_FI = fi_FI
 }
 
 export default fi_FI

@@ -1,38 +1,48 @@
 {
   "name": "@uppy/vue",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "license": "MIT",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "lib/index.js",
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
+    "typecheck": "tsc --build"
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
+    "@uppy/components": "workspace:^",
+    "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
-    "vue": "^3.4.21"
+    "@uppy/core": "workspace:^",
+    "typescript": "^5.8.3",
+    "vue": "^3.5.14"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/styles.css",
+    "./dashboard": "./lib/dashboard.js",
+    "./dashboard-modal": "./lib/dashboard-modal.js",
+    "./status-bar": "./lib/status-bar.js",
+    "./package.json": "./package.json"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/drag-drop": "workspace:^",
-    "@uppy/file-input": "workspace:^",
-    "@uppy/progress-bar": "workspace:^",
-    "@uppy/status-bar": "workspace:^",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
-      "optional": true
-    },
-    "@uppy/drag-drop": {
-      "optional": true
-    },
-    "@uppy/file-input": {
-      "optional": true
-    },
-    "@uppy/progress-bar": {
-      "optional": true
-    },
-    "@uppy/status-bar": {
       "optional": true
     }
   },

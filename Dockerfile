@@ -1,4 +1,4 @@
-FROM node:18.17.1-alpine as build
+FROM node:22.18.0-alpine AS build
 
 # Create link to node on amd64 so that corepack can find it
 RUN if [ "$(uname -m)" == "aarch64" ]; then mkdir -p /usr/local/sbin/ && ln -s /usr/local/bin/node /usr/local/sbin/node; fi
@@ -17,7 +17,7 @@ RUN cd /app && corepack yarn workspace @uppy/companion build
 # Now remove all non-prod dependencies for a leaner image
 RUN cd /app && corepack yarn workspaces focus @uppy/companion --production
 
-FROM node:18.17.1-alpine
+FROM node:22.18.0-alpine
 
 WORKDIR /app
 

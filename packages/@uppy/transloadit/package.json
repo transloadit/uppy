@@ -1,10 +1,16 @@
 {
   "name": "@uppy/transloadit",
   "description": "The Transloadit plugin can be used to upload files to Transloadit for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, and more",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "transloadit",
@@ -26,6 +32,16 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/provider-views": "workspace:^",
@@ -37,7 +53,11 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "vitest": "^1.2.1",
+    "@uppy/core": "workspace:^",
+    "jsdom": "^26.1.0",
+    "msw": "^2.10.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4",
     "whatwg-fetch": "^3.6.2"
   }
 }

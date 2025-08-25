@@ -1,11 +1,21 @@
 {
   "name": "@uppy/url",
   "description": "The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "typecheck": "tsc --build",
+    "test": "vitest run --silent='passed-only'",
+    "test:e2e": "vitest watch --project browser --browser.headless false"
+  },
   "keywords": [
     "file uploader",
     "url",
@@ -21,13 +31,36 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "nanoid": "^5.0.0",
+    "nanoid": "^5.0.9",
     "preact": "^10.5.13"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@uppy/core": "workspace:^",
+    "@vitest/browser": "^3.2.4",
+    "cssnano": "^7.0.7",
+    "playwright": "1.54.1",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.89.2",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

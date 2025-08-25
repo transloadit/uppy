@@ -1,10 +1,12 @@
 import type { UnknownPlugin } from '@uppy/core'
 import type {
+  Body,
   CompanionClientProvider,
   CompanionClientSearchProvider,
-} from '@uppy/utils/lib/CompanionClientProvider'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
-import type { Meta, Body, TagFile } from '@uppy/utils/lib/UppyFile'
+  CompanionFile,
+  Meta,
+  TagFile,
+} from '@uppy/utils'
 
 // TODO: document what is a "tagFile" or get rid of this concept
 const getTagFile = <M extends Meta, B extends Body>(
@@ -34,7 +36,6 @@ const getTagFile = <M extends Meta, B extends Body>(
     },
     remote: {
       companionUrl: plugin.opts.companionUrl,
-      // @ts-expect-error untyped for now
       url: `${provider.fileUrl(file.requestPath)}`,
       body: {
         fileId: file.id,

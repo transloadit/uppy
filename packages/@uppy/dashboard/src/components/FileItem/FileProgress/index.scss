@@ -1,3 +1,8 @@
+@use "sass:color";
+
+@use '@uppy/core/src/_variables.scss' as *;
+@use '@uppy/core/src/_utils.scss' as *;
+
 .uppy-Dashboard-Item-progress {
   position: absolute;
   top: 50%;
@@ -31,7 +36,7 @@ button.uppy-Dashboard-Item-progressIndicator {
   &:focus {
     .uppy-Dashboard-Item-progressIcon--bg,
     .uppy-Dashboard-Item-progressIcon--retry {
-      fill: lighten($blue, 20%);
+      fill: color.adjust($blue, $lightness: 20%, $space: hsl);
     }
   }
 }

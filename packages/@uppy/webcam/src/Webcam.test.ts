@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { describe, expect, it } from 'vitest'
 import Uppy from '@uppy/core'
-import Webcam from './index.ts'
+import { describe, expect, it } from 'vitest'
+import Webcam from './index.js'
 
 describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {

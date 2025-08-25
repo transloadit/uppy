@@ -1,21 +1,21 @@
 /**
  * @module provider
  */
-const dropbox = require('./dropbox')
-const box = require('./box')
-const drive = require('./google/drive')
-const googlephotos = require('./google/googlephotos')
-const instagram = require('./instagram/graph')
-const facebook = require('./facebook')
-const onedrive = require('./onedrive')
-const unsplash = require('./unsplash')
-const zoom = require('./zoom')
-const { getURLBuilder } = require('../helpers/utils')
-const logger = require('../logger')
-const { getCredentialsResolver } = require('./credentials')
-const Provider = require('./Provider')
 
-const { isOAuthProvider } = Provider
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
+import * as logger from '../logger.js'
+import box from './box/index.js'
+import { getCredentialsResolver } from './credentials.js'
+import dropbox from './dropbox/index.js'
+import facebook from './facebook/index.js'
+import { Drive } from './google/drive/index.js'
+import instagram from './instagram/graph/index.js'
+import onedrive from './onedrive/index.js'
+// biome-ignore lint/correctness/noUnusedImports: It's used as a type
+import Provider, { isOAuthProvider } from './Provider.js'
+import unsplash from './unsplash/index.js'
+import webdav from './webdav/index.js'
+import zoom from './zoom/index.js'
 
 /**
  *
@@ -31,7 +31,7 @@ const validOptions = (options) => {
  *
  * @param {Record<string, typeof Provider>} providers
  */
-module.exports.getProviderMiddleware = (providers, grantConfig) => {
+export function getProviderMiddleware(providers, grantConfig) {
   /**
    *
    * @param {object} req
@@ -47,16 +47,30 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
 
       let providerGrantConfig
       if (isOAuthProvider(oauthProvider)) {
-        req.companion.getProviderCredentials = getCredentialsResolver(providerName, req.companion.options, req)
+        req.companion.getProviderCredentials = getCredentialsResolver(
+          providerName,
+          req.companion.options,
+          req,
+        )
         providerGrantConfig = grantConfig[oauthProvider]
         req.companion.providerGrantConfig = providerGrantConfig
       }
 
       const secret = providerOptions[providerName]?.secret
-      req.companion.provider = new ProviderClass({ secret, providerName, providerGrantConfig, allowLocalUrls })
+      req.companion.provider = new ProviderClass({
+        secret,
+        providerName,
+        providerGrantConfig,
+        allowLocalUrls,
+      })
+      req.companion.providerName = providerName
       req.companion.providerClass = ProviderClass
     } else {
-      logger.warn('invalid provider options detected. Provider will not be loaded', 'provider.middleware.invalid', req.id)
+      logger.warn(
+        'invalid provider options detected. Provider will not be loaded',
+        'provider.middleware.invalid',
+        req.id,
+      )
     }
     next()
   }
@@ -67,8 +81,18 @@ module.exports.getProviderMiddleware = (providers, grantConfig) => {
 /**
  * @returns {Record<string, typeof Provider>}
  */
-module.exports.getDefaultProviders = () => {
-  const providers = { dropbox, box, drive, googlephotos, facebook, onedrive, zoom, instagram, unsplash }
+export function getDefaultProviders() {
+  const providers = {
+    dropbox,
+    box,
+    drive: Drive,
+    facebook,
+    onedrive,
+    zoom,
+    instagram,
+    unsplash,
+    webdav,
+  }
 
   return providers
 }
@@ -81,16 +105,14 @@ module.exports.getDefaultProviders = () => {
  * @param {Record<string, typeof Provider>} providers
  * @param {object} grantConfig
  */
-module.exports.addCustomProviders = (customProviders, providers, grantConfig) => {
+export function addCustomProviders(customProviders, providers, grantConfig) {
   Object.keys(customProviders).forEach((providerName) => {
     const customProvider = customProviders[providerName]
 
-    // eslint-disable-next-line no-param-reassign
     providers[providerName] = customProvider.module
     const { oauthProvider } = customProvider.module
 
     if (isOAuthProvider(oauthProvider)) {
-      // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider] = {
         ...customProvider.config,
         // todo: consider setting these options from a universal point also used
@@ -109,14 +131,20 @@ module.exports.addCustomProviders = (customProviders, providers, grantConfig) =>
  * @param {object} grantConfig
  * @param {(a: string) => string} getOauthProvider
  */
-module.exports.addProviderOptions = (companionOptions, grantConfig, getOauthProvider) => {
+export function addProviderOptions(
+  companionOptions,
+  grantConfig,
+  getOauthProvider,
+) {
   const { server, providerOptions } = companionOptions
   if (!validOptions({ server })) {
-    logger.warn('invalid provider options detected. Providers will not be loaded', 'provider.options.invalid')
+    logger.warn(
+      'invalid provider options detected. Providers will not be loaded',
+      'provider.options.invalid',
+    )
     return
   }
 
-  // eslint-disable-next-line no-param-reassign
   grantConfig.defaults = {
     host: server.host,
     protocol: server.protocol,
@@ -130,36 +158,44 @@ module.exports.addProviderOptions = (companionOptions, grantConfig, getOauthProv
 
     if (isOAuthProvider(oauthProvider) && grantConfig[oauthProvider]) {
       // explicitly add providerOptions so users don't override other providerOptions.
-      // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider].key = providerOptions[providerName].key
-      // eslint-disable-next-line no-param-reassign
       grantConfig[oauthProvider].secret = providerOptions[providerName].secret
       if (providerOptions[providerName].credentialsURL) {
-        // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].dynamic = ['key', 'secret', 'redirect_uri']
+        grantConfig[oauthProvider].dynamic = [
+          'key',
+          'secret',
+          'redirect_uri',
+          'origins',
+        ]
       }
 
-      const provider = exports.getDefaultProviders()[providerName]
+      const provider = getDefaultProviders()[providerName]
       Object.assign(grantConfig[oauthProvider], provider.getExtraGrantConfig())
 
       // override grant.js redirect uri with companion's custom redirect url
       const isExternal = !!server.implicitPath
-      const redirectPath = `/${providerName}/redirect`
-      // eslint-disable-next-line no-param-reassign
-      grantConfig[oauthProvider].redirect_uri = getURLBuilder(companionOptions)(redirectPath, isExternal)
+      const redirectPath = getRedirectPath(providerName)
+      grantConfig[oauthProvider].redirect_uri = getURLBuilder(companionOptions)(
+        redirectPath,
+        isExternal,
+      )
       if (oauthDomain) {
-        const fullRedirectPath = getURLBuilder(companionOptions)(redirectPath, isExternal, true)
-        // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].redirect_uri = `${server.protocol}://${oauthDomain}${fullRedirectPath}`
+        const fullRedirectPath = getURLBuilder(companionOptions)(
+          redirectPath,
+          isExternal,
+          true,
+        )
+        grantConfig[oauthProvider].redirect_uri =
+          `${server.protocol}://${oauthDomain}${fullRedirectPath}`
       }
 
       if (server.implicitPath) {
         // no url builder is used for this because grant internally adds the path
-        // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].callback = `${server.implicitPath}${grantConfig[oauthProvider].callback}`
+        grantConfig[oauthProvider].callback =
+          `${server.implicitPath}${grantConfig[oauthProvider].callback}`
       } else if (server.path) {
-        // eslint-disable-next-line no-param-reassign
-        grantConfig[oauthProvider].callback = `${server.path}${grantConfig[oauthProvider].callback}`
+        grantConfig[oauthProvider].callback =
+          `${server.path}${grantConfig[oauthProvider].callback}`
       }
     }
   })

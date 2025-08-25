@@ -1,6 +1,6 @@
-const querystring = require('node:querystring')
+import querystring from 'node:querystring'
 
-const isFolder = (item) => { // eslint-disable-line no-unused-vars
+const isFolder = (item) => {
   return false
 }
 
@@ -20,7 +20,7 @@ const getItemName = (item) => {
   return undefined
 }
 
-const getMimeType = (item) => { // eslint-disable-line no-unused-vars
+const getMimeType = (item) => {
   return 'image/jpeg'
 }
 
@@ -55,7 +55,7 @@ const getAuthor = (item) => {
   return { name: item.user.name, url: item.user.links.html }
 }
 
-module.exports = (body, currentQuery) => {
+const adaptData = (body, currentQuery) => {
   const { total_pages: pagesCount } = body
   const { cursor, q } = currentQuery
   const currentPage = Number(cursor || 1)
@@ -77,8 +77,8 @@ module.exports = (body, currentQuery) => {
       author: getAuthor(item),
       size: null,
     })),
-    nextPageQuery: hasNextPage
-      ? getNextPageQuery(currentQuery)
-      : null,
+    nextPageQuery: hasNextPage ? getNextPageQuery(currentQuery) : null,
   }
 }
+
+export default adaptData

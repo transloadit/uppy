@@ -1,15 +1,12 @@
-import { BasePlugin, Uppy } from '@uppy/core'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import { RateLimitedQueue } from '@uppy/utils/lib/RateLimitedQueue'
-import getFileNameAndExtension from '@uppy/utils/lib/getFileNameAndExtension'
 import prettierBytes from '@transloadit/prettier-bytes'
+import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
+import { BasePlugin, type Uppy } from '@uppy/core'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
+// @ts-ignore
+import { getFileNameAndExtension, RateLimitedQueue } from '@uppy/utils'
 import CompressorJS from 'compressorjs'
 
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { DefinePluginOpts, PluginOpts } from '@uppy/core/lib/BasePlugin.js'
-
-import locale from './locale.ts'
+import locale from './locale.js'
 
 declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
@@ -55,7 +52,6 @@ export default class Compressor<
 
   compress(blob: Blob): Promise<Blob | File> {
     return new Promise((resolve, reject) => {
-      /* eslint-disable no-new */
       new CompressorJS(blob, {
         ...this.opts,
         success: resolve,

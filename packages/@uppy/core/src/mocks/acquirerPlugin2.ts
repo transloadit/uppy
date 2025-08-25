@@ -1,6 +1,6 @@
-import { vi } from 'vitest' // eslint-disable-line import/no-extraneous-dependencies
-import UIPlugin from '../UIPlugin.ts'
-import type Uppy from '../Uppy.ts'
+import { vi } from 'vitest'
+import UIPlugin from '../UIPlugin.js'
+import type Uppy from '../Uppy.js'
 
 type mock = ReturnType<typeof vi.fn>
 

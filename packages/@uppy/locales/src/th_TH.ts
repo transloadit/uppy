@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const th_TH: Locale<0 | 1> = {
   strings: {},
@@ -32,11 +32,9 @@ th_TH.strings = {
   browseFolders: 'เรียกดูทั้งโฟลเดอร์',
   cancel: 'ยกเลิก',
   cancelUpload: 'ยกเลิกการอัปโหลด',
-  chooseFiles: 'เลือกไฟล์',
   closeModal: 'ปิดหน้าต่างนี้',
   companionError: 'การเชื่อมต่อกับ Companion ล้มเหลว',
-  companionUnauthorizeHint:
-    'หากคุณต้องการลงชื่อออกจาก %{provider}, กรุณาไปที่ %{url}',
+  companionUnauthorizeHint: 'หากคุณต้องการลงชื่อออกจาก %{provider}, กรุณาไปที่ %{url}',
   complete: 'สำเร็จ',
   connectedToInternet: 'เชื่อมต่อกับอินเทอร์เน็ตสำเร็จ',
   copyLink: 'คัดลอกลิงค์',
@@ -48,7 +46,6 @@ th_TH.strings = {
   dashboardWindowTitle: 'หน้าต่างอัพโหลดไฟล์ (กด escape เพื่อปิด)',
   dataUploadedOfTotal: '%{complete} จาก %{total}',
   done: 'เสร็จสิ้น',
-  dropHereOr: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',
   dropHint: 'ลากไฟล์มาวางที่นี่',
   dropPasteBoth: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',
   dropPasteFiles: 'ลากไฟล์มาวางที่นี่ หรือเลือก %{browse}',
@@ -64,8 +61,7 @@ th_TH.strings = {
   enterCorrectUrl: 'URL ไม่ถูกต้อง: โปรดตรวจสอบให้แน่ใจว่าคุณป้อน direct link',
   enterUrlToImport: 'ป้อน URL เพื่อนำเข้าไฟล์',
   exceedsSize: 'ไฟล์นี้มีขนาดเกินขนาดสูงสุดที่อนุญาต %{size}',
-  failedToFetch:
-    'Companion ไม่สามารถเรียก URL นี้ได้, กรุณาตรวจสอบว่า URL ถูกต้อง',
+  failedToFetch: 'Companion ไม่สามารถเรียก URL นี้ได้, กรุณาตรวจสอบว่า URL ถูกต้อง',
   failedToUpload: 'ไม่สามารถอัปโหลด %{file}',
   fileSource: 'ตำแหน่งของไฟล์: %{name}',
   filesUploadedOfTotal: {
@@ -168,6 +164,12 @@ th_TH.strings = {
   },
   zoomIn: 'ซูมเข้า',
   zoomOut: 'ซูมออก',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.th_TH = th_TH
 }
 
 export default th_TH

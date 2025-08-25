@@ -1,11 +1,11 @@
+import classNames from 'classnames'
 import {
+  type ComponentChildren,
   cloneElement,
   toChildArray,
   type VNode,
-  type ComponentChildren,
 } from 'preact'
-import { useEffect, useState, useRef } from 'preact/hooks'
-import classNames from 'classnames'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 const transitionName = 'uppy-transition-slideDownUp'
 const duration = 250
@@ -28,7 +28,7 @@ function Slide({ children }: { children: ComponentChildren }) {
   const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout>>()
   const animationFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>()
 
-  const handleEnterTransition = () => {
+  const handleEnterTransition = useCallback(() => {
     setClassName(`${transitionName}-enter`)
 
     cancelAnimationFrame(animationFrameRef.current!)
@@ -42,9 +42,9 @@ function Slide({ children }: { children: ComponentChildren }) {
         setClassName('')
       }, duration)
     })
-  }
+  }, [])
 
-  const handleLeaveTransition = () => {
+  const handleLeaveTransition = useCallback(() => {
     setClassName(`${transitionName}-leave`)
 
     cancelAnimationFrame(animationFrameRef.current!)
@@ -59,7 +59,7 @@ function Slide({ children }: { children: ComponentChildren }) {
         setClassName('')
       }, duration)
     })
-  }
+  }, [])
 
   useEffect(() => {
     const child = toChildArray(children)[0] as VNode
@@ -72,7 +72,7 @@ function Slide({ children }: { children: ComponentChildren }) {
     }
 
     setCachedChildren(child)
-  }, [children, cachedChildren]) // Dependency array to trigger effect on children change
+  }, [children, cachedChildren, handleEnterTransition, handleLeaveTransition]) // Dependency array to trigger effect on children change
 
   useEffect(() => {
     return () => {

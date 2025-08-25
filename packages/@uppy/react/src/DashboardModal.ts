@@ -1,10 +1,9 @@
-import { createElement as h, Component } from 'react'
-import type React from 'react'
+import type { Body, Meta, Uppy } from '@uppy/core'
 import DashboardPlugin, { type DashboardOptions } from '@uppy/dashboard'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { Uppy } from '@uppy/core'
-import getHTMLProps from './getHTMLProps.ts'
-import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.ts'
+import type React from 'react'
+import { Component, createElement as h } from 'react'
+import getHTMLProps from './getHTMLProps.js'
+import nonHtmlPropsHaveChanged from './nonHtmlPropsHaveChanged.js'
 
 type DashboardInlineOptions<M extends Meta, B extends Body> = Omit<
   DashboardOptions<M, B> & { inline: false },
@@ -46,7 +45,6 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       this.uninstallPlugin(prevProps)
       this.installPlugin()
     } else if (nonHtmlPropsHaveChanged(this.props, prevProps)) {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-shadow
       const { uppy, ...options } = {
         ...this.props,
         inline: false,
@@ -96,7 +94,6 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   render() {
     return h('div', {
       className: 'uppy-Container',

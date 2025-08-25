@@ -1,14 +1,18 @@
 {
-  "extends": [
-    "../../../tsconfig.shared.json",
-    "@tsconfig/svelte/tsconfig.json",
-  ],
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
-    "noEmit": true,
-    "emitDeclarationOnly": false,
-    "rootDir": "./src",
-    "outDir": "./lib",
+    "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "useUnknownInCatchVariables": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext"
   },
-  "include": ["./src/**/*.*", "./typings/index.d.ts"],
-  "exclude": ["node_modules/*"],
+  "include": ["./package.json", "./src/**/*.*"],
+  "exclude": ["node_modules/*", "./src/lib/empty.ts"]
 }

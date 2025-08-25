@@ -2,21 +2,20 @@
 
 const fileCache = Object.create(null)
 
-function getCache (name) {
+function getCache(name) {
   fileCache[name] ??= Object.create(null)
   return fileCache[name]
 }
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(Promise.resolve()
-    .then(() => self.skipWaiting()))
+  event.waitUntil(Promise.resolve().then(() => self.skipWaiting()))
 })
 
 self.addEventListener('activate', (event) => {
   event.waitUntil(self.clients.claim())
 })
 
-function sendMessageToAllClients (msg) {
+function sendMessageToAllClients(msg) {
   clients.matchAll().then((clients) => {
     clients.forEach((client) => {
       client.postMessage(msg)
@@ -24,15 +23,15 @@ function sendMessageToAllClients (msg) {
   })
 }
 
-function addFile (store, file) {
+function addFile(store, file) {
   getCache(store)[file.id] = file.data
 }
 
-function removeFile (store, fileID) {
+function removeFile(store, fileID) {
   delete getCache(store)[fileID]
 }
 
-function getFiles (store) {
+function getFiles(store) {
   sendMessageToAllClients({
     type: 'uppy/ALL_FILES',
     store,
@@ -52,6 +51,8 @@ self.addEventListener('message', (event) => {
       getFiles(event.data.store)
       break
     default:
-      throw new Error(`[ServiceWorker] Unsupported event.data.type. Got: ${event?.data?.type}`)
+      throw new Error(
+        `[ServiceWorker] Unsupported event.data.type. Got: ${event?.data?.type}`,
+      )
   }
 })

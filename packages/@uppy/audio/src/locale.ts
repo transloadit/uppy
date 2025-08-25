@@ -1,5 +1,3 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
-
 export default {
   strings: {
     pluginNameAudio: 'Audio',
@@ -31,5 +29,5 @@ export default {
     // Used as the label for the discard cross button.
     // This is not visibly rendered but is picked up by screen readers.
     discardRecordedFile: 'Discard recorded file',
-  } as Locale<0>['strings'],
-} as any as Locale
+  },
+}

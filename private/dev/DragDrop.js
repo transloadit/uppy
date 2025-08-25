@@ -1,34 +1,29 @@
 // The @uppy/ dependencies are resolved from source
-/* eslint-disable import/no-extraneous-dependencies */
 import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
 import Tus from '@uppy/tus'
-import DragDrop from '@uppy/drag-drop'
-import ProgressBar from '@uppy/progress-bar'
-/* eslint-enable import/no-extraneous-dependencies */
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
-const {
-  VITE_TUS_ENDPOINT : TUS_ENDPOINT,
-} = import.meta.env
+const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
 
 import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
 import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
 console.log(import.meta.env)
 
 export default () => {
-  const uppyDragDrop = new Uppy({
+  const uppyDashboard = new Uppy({
     debug: true,
-    autoProceed: true,
+    autoProceed: false,
   })
-    .use(DragDrop, {
+    .use(Dashboard, {
       target: '#uppyDragDrop',
+      inline: true,
     })
-    .use(ProgressBar, { target: '#uppyDragDrop-progress', hideAfterFinish: false })
     .use(Tus, { endpoint: TUS_ENDPOINT })
 
-  window.uppy = uppyDragDrop
+  window.uppy = uppyDashboard
 
-  uppyDragDrop.on('complete', (result) => {
+  uppyDashboard.on('complete', (result) => {
     if (result.failed.length === 0) {
       console.log('Upload successful 😀')
     } else {

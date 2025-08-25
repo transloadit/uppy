@@ -1,7 +1,6 @@
-import { h } from 'preact'
-import { useEffect, useState, useCallback } from 'preact/hooks'
-import { type ChangeEvent } from 'preact/compat'
 import { nanoid } from 'nanoid/non-secure'
+import type { ChangeEvent } from 'preact/compat'
+import { useCallback, useEffect, useState } from 'preact/hooks'
 
 type Props = {
   searchString: string

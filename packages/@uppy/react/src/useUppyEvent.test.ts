@@ -1,11 +1,8 @@
-/* eslint-disable react/react-in-jsx-scope */
-/* eslint-disable import/no-extraneous-dependencies */
-import { describe, expect, expectTypeOf, it, vi } from 'vitest'
-import { renderHook, act } from '@testing-library/react'
-
+import { act, renderHook } from '@testing-library/react'
 import Uppy from '@uppy/core'
-import type { Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import { useUppyEvent } from './index.ts'
+import type { Meta, UppyFile } from '@uppy/utils'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
+import { useUppyEvent } from './index.js'
 
 describe('useUppyEvent', () => {
   it('should return and update value with the correct type', () => {

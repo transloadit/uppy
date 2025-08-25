@@ -1,5 +1,5 @@
-import type { Meta, Body, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { Uppy, UppyEventMap, _UppyEventMap } from './Uppy.ts'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { _UppyEventMap, Uppy, UppyEventMap } from './Uppy.js'
 
 /**
  * Create a wrapper around an event emitter with a `remove` method to remove

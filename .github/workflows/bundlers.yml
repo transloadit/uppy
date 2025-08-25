@@ -1,4 +1,4 @@
-name: Test different bundlers with Uppy
+name: Bundlers
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -42,14 +42,12 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run:
-          corepack yarn workspaces focus $(corepack yarn workspaces list --json
-          | jq -r .name | awk '/^@uppy-example/{ next } { if ($0!="uppy.io")
-          print $0 }')
+          corepack yarn install
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
-      - name: Build lib
-        run: corepack yarn run build:lib
+      - name: Build
+        run: corepack yarn run build
       - name: Make Uppy bundle use local version
         run: |
           node <<'EOF'
@@ -97,12 +95,13 @@ jobs:
       - name: Add Rollup as a dev dependency
         run: >-
           npm i --save-dev @rollup/plugin-commonjs @rollup/plugin-node-resolve
-          rollup@${{matrix.bundler-version}}
+          @rollup/plugin-json rollup@${{matrix.bundler-version}}
       - run: npx rollup --version
       - name: Create Rollup config file
         run: >-
           echo ' import cjs from "@rollup/plugin-commonjs"; import { nodeResolve
-          } from "@rollup/plugin-node-resolve";
+          } from "@rollup/plugin-node-resolve"; import json from
+          "@rollup/plugin-json";
 
           export default {
             input: "./lib/index.js",
@@ -110,6 +109,7 @@ jobs:
               file: "/dev/null",
             },
             plugins: [
+              json(),
               cjs(),
               nodeResolve({ browser: true, exportConditions: ["browser"] }),
             ],
@@ -136,10 +136,26 @@ jobs:
         run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
       - run: npx webpack --version
       - name: Create Webpack config file
-        run:
-          echo 'export default
-          {mode:"production",target:"web",entry:"./lib/index.js"}' >
-          webpack.config.js
+        run: |
+          echo 'export default {
+            mode: "production",
+            target: "web",
+            entry: "./lib/index.js",
+            resolve: {
+              fallback: {
+                fs: false,
+                path: false,
+                stream: false,
+                util: false,
+                assert: false,
+                constants: false,
+                crypto: false,
+                http: false,
+                https: false,
+                url: false
+              }
+            }
+          }' > webpack.config.js
       - name: Bundle
         run: npx webpack
 

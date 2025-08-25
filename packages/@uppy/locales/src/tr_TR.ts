@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const tr_TR: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ tr_TR.strings = {
   browseFiles: 'gözat',
   cancel: 'İptal',
   cancelUpload: 'Yüklemeyi İptal Et',
-  chooseFiles: 'Dosyaları seç',
   closeModal: 'Kapat',
   companionError: 'Bağlantı başarısız',
   complete: 'Yüklendi',
@@ -39,7 +38,6 @@ tr_TR.strings = {
   dashboardWindowTitle: 'Dosya Yükle (Kapatmak için Esc)',
   dataUploadedOfTotal: '%{complete} / %{total}',
   done: 'Bitti',
-  dropHereOr: 'Sürükleyip bırak veya %{browse}',
   dropHint: 'Buraya sürükleyip bırakın',
   dropPasteBoth: 'Sürükleyip bırak, yapıştır veya %{browse}',
   dropPasteFiles: 'Sürükleyip bırak, yapıştır veya %{browse}',
@@ -141,6 +139,12 @@ tr_TR.strings = {
   selectFileNamed: 'Dosya Seç %{name}',
   unselectFileNamed: 'Dosya seçimini kaldır %{name}',
   openFolderNamed: 'Açık dosya %{name}',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.tr_TR = tr_TR
 }
 
 export default tr_TR

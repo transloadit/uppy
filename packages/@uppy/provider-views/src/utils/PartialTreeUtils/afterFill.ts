@@ -1,23 +1,19 @@
-/* eslint-disable no-param-reassign */
 import type {
   PartialTree,
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+} from '@uppy/core'
+import type { CompanionFile } from '@uppy/utils'
 // p-queue does not have a `"main"` field in its `package.json`, and that makes `import/no-unresolved` freak out.
 // We can safely ignore it because bundlers will happily use the `"exports"` field instead.
-// eslint-disable-next-line import/no-unresolved
 import PQueue from 'p-queue'
-import shallowClone from './shallowClone.ts'
+import shallowClone from './shallowClone.js'
 
-export interface ApiList {
-  (directory: PartialTreeId): Promise<{
-    nextPagePath: PartialTreeId
-    items: CompanionFile[]
-  }>
-}
+export type ApiList = (directory: PartialTreeId) => Promise<{
+  nextPagePath: PartialTreeId
+  items: CompanionFile[]
+}>
 
 const recursivelyFetch = async (
   queue: PQueue,
@@ -27,8 +23,9 @@ const recursivelyFetch = async (
   validateSingleFile: (file: CompanionFile) => string | null,
 ) => {
   let items: CompanionFile[] = []
-  let currentPath: PartialTreeId =
-    poorFolder.cached ? poorFolder.nextPagePath : poorFolder.id
+  let currentPath: PartialTreeId = poorFolder.cached
+    ? poorFolder.nextPagePath
+    : poorFolder.id
   while (currentPath) {
     const response = await apiList(currentPath)
     items = items.concat(response.items)

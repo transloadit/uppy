@@ -1,0 +1,60 @@
+@layer theme, base, components, utilities;
+
+/*
+* Split up tailwind imports to not import the preflight styles
+* as we don't want our components to affect the entire website of the user.
+*/
+@import 'tailwindcss/theme.css' layer(theme) prefix(uppy);
+@import 'tailwindcss/utilities.css' layer(utilities) prefix(uppy);
+
+/*
+* Instead we took the preflight styles from tailwind and apply it under a .uppy-reset class
+* so we can enjoy the benefits of preflight styles without affecting the rest of the website.
+* Put under a @layer to prevent specificity issues.
+*/
+@layer components {
+  .uppy-reset,
+  .uppy-reset * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+
+  .uppy-reset {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: ui-sans-serif, system-ui, sans-serif;
+  }
+
+  .uppy-reset h1,
+  .uppy-reset h2,
+  .uppy-reset h3,
+  .uppy-reset h4,
+  .uppy-reset h5,
+  .uppy-reset h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  .uppy-reset ol,
+  .uppy-reset ul,
+  .uppy-reset menu {
+    list-style: none;
+  }
+
+  .uppy-reset img,
+  .uppy-reset video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .uppy-reset button,
+  .uppy-reset input,
+  .uppy-reset select,
+  .uppy-reset textarea {
+    font: inherit;
+    color: inherit;
+  }
+}

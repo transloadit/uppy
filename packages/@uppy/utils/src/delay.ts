@@ -1,4 +1,4 @@
-import { createAbortError } from './AbortController.ts'
+import { createAbortError } from './AbortController.js'
 
 /**
  * Return a Promise that resolves after `ms` milliseconds.
@@ -13,13 +13,13 @@ export default function delay(
     }
 
     const timeout = setTimeout(() => {
-      cleanup() // eslint-disable-line no-use-before-define
+      cleanup()
       resolve()
     }, ms)
 
     function onabort(): void {
       clearTimeout(timeout)
-      cleanup() // eslint-disable-line no-use-before-define
+      cleanup()
       reject(createAbortError())
     }
     opts?.signal?.addEventListener('abort', onabort)

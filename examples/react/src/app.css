@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* example how to use the data attributes to apply custom styles */
+/* button[data-uppy-element="upload-button"][data-state="uploading"] {
+  background-color: red;
+} */

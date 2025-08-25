@@ -1,18 +1,17 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin, Uppy } from '@uppy/core'
 import {
-  RequestClient,
   type CompanionPluginOptions,
+  RequestClient,
 } from '@uppy/companion-client'
-import toArray from '@uppy/utils/lib/toArray'
-import type { TagFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
-import UrlUI from './UrlUI.tsx'
-import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.ts'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
-import locale from './locale.ts'
+import type { Body, Meta } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
+import type { LocaleStrings, TagFile } from '@uppy/utils'
+import { toArray } from '@uppy/utils'
+// biome-ignore lint/style/useImportType: h is not a type
+import { type ComponentChild, h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
+import UrlUI from './UrlUI.js'
+import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 
 function UrlIcon() {
   return (
@@ -70,7 +69,9 @@ type MetaResponse = {
   statusCode: number
 }
 
-export type UrlOptions = CompanionPluginOptions
+export type UrlOptions = CompanionPluginOptions & {
+  locale?: LocaleStrings<typeof locale>
+}
 
 export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   UrlOptions,
@@ -128,12 +129,18 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     protocollessUrl: string,
     optionalMeta?: M,
   ): Promise<string | undefined> => {
+    // Do not process local files
+    if (protocollessUrl.startsWith('blob')) {
+      return undefined
+    }
     const url = addProtocolToURL(protocollessUrl)
     if (!checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
       this.uppy.info(this.i18n('enterCorrectUrl'), 'error', 4000)
       return undefined
     }
+
+    this.uppy.log(`[URL] Adding file from dropped/pasted url: ${url}`)
 
     try {
       const meta = await this.getMeta(url)
@@ -186,14 +193,12 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
 
   private handleRootDrop = (e: DragEvent) => {
     forEachDroppedOrPastedUrl(e.dataTransfer!, 'drop', (url) => {
-      this.uppy.log(`[URL] Adding file from dropped url: ${url}`)
       this.addFile(url)
     })
   }
 
   private handleRootPaste = (e: ClipboardEvent) => {
     forEachDroppedOrPastedUrl(e.clipboardData!, 'paste', (url) => {
-      this.uppy.log(`[URL] Adding file from pasted url: ${url}`)
       this.addFile(url)
     })
   }

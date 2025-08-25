@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const ru_RU: Locale<0 | 1 | 2> = {
   strings: {},
@@ -53,7 +53,6 @@ ru_RU.strings = {
   browseFiles: 'выберите файлы',
   cancel: 'Отменить',
   cancelUpload: 'Отменить загрузку',
-  chooseFiles: 'Выбрать файлы',
   closeModal: 'Закрыть окно',
   companionError: 'Не удалось подключиться к Companion',
   companionUnauthorizeHint:
@@ -75,7 +74,6 @@ ru_RU.strings = {
   dataUploadedOfTotal: '%{complete} из %{total}',
   discardRecordedFile: 'Удалить записанный файл',
   done: 'Готово',
-  dropHereOr: 'Перетащите файлы или %{browse}',
   dropHint: 'Перетащите файлы сюда',
   dropPasteBoth: 'Перетащите файлы, вставьте или %{browse}',
   dropPasteFiles: 'Перетащите файлы, вставьте или %{browse}',
@@ -253,6 +251,12 @@ ru_RU.strings = {
   },
   zoomIn: 'Приблизить',
   zoomOut: 'Отдалить',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.ru_RU = ru_RU
 }
 
 export default ru_RU

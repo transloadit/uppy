@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
-import Tus from './index.ts'
+import { describe, expect, expectTypeOf, it } from 'vitest'
+import Tus, { type TusBody } from './index.js'
 
 describe('Tus', () => {
   it('Throws errors if autoRetry option is true', () => {
@@ -34,5 +34,14 @@ describe('Tus', () => {
     }).toThrowError(
       /The `autoRetry` option was deprecated and has been removed/,
     )
+  })
+
+  it('propagates the TusBody type', () => {
+    const uppy = new Core<any, TusBody>()
+    const id = uppy.addFile({ name: 'test.jpg', data: { size: 1024 } })
+    const file = uppy.getFile(id)
+    expectTypeOf(file.response?.body).toEqualTypeOf<
+      { xhr: XMLHttpRequest } | undefined
+    >()
   })
 })

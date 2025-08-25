@@ -1,9 +1,16 @@
-import { createServer } from 'node:http'
-import { once } from 'node:events'
-import { describe, expect, it } from 'vitest'
 import Core from '@uppy/core'
+import { HttpResponse, http } from 'msw'
+import { setupServer } from 'msw/node'
+import { describe, expect, it, vi } from 'vitest'
 import Transloadit from './index.ts'
 import 'whatwg-fetch'
+
+// Mock EventSource for testing
+global.EventSource = vi.fn(() => ({
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+  close: vi.fn(),
+}))
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
@@ -16,7 +23,7 @@ describe('Transloadit', () => {
     })
 
     uppy.addFile({
-      source: 'jest',
+      source: 'test',
       name: 'abc',
       data: new Uint8Array(100),
     })
@@ -49,7 +56,7 @@ describe('Transloadit', () => {
       Promise.reject(new Error('VIDEO_ENCODE_VALIDATION'))
 
     uppy.addFile({
-      source: 'jest',
+      source: 'test',
       name: 'abc',
       data: new Uint8Array(100),
     })
@@ -69,56 +76,75 @@ describe('Transloadit', () => {
     )
   })
 
-  // For some reason this test doesn't pass on CI
-  it.skip('Can start an assembly with no files and no fields', async () => {
-    const server = createServer((req, res) => {
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('Access-Control-Allow-Headers', '*')
-      res.setHeader('Content-Type', 'application/json')
-      res.end('{"websocket_url":"about:blank"}')
-    }).listen()
-    await once(server, 'listening')
-    const uppy = new Core({
-      autoProceed: false,
-    })
+  it('should complete when resuming after pause', async () => {
+    let firstUploadCallCount = 0
+
+    const server = setupServer(
+      http.post('*/assemblies', ({ request }) => {
+        return HttpResponse.json({
+          assembly_id: 'test-assembly-id',
+          websocket_url: 'ws://localhost:8080',
+          tus_url: 'https://localhost/resumable/files/',
+          assembly_ssl_url: 'https://localhost/assemblies/test-assembly-id',
+          ok: 'ASSEMBLY_EXECUTING',
+        })
+      }),
+      http.get('*/assemblies/*', () => {
+        return HttpResponse.json({
+          assembly_id: 'test-assembly-id',
+          ok: 'ASSEMBLY_COMPLETED',
+          results: {},
+        })
+      }),
+      http.post('*/resumable/files/', () => {
+        firstUploadCallCount++
+        return HttpResponse.json({
+          tus_enabled: true,
+          resumable_file_id: `test-file-id-${firstUploadCallCount}`,
+        })
+      }),
+      http.patch('*/resumable/files/*', () => {
+        return HttpResponse.json({
+          ok: 'RESUMABLE_FILE_UPLOADED',
+        })
+      }),
+      http.post('https://transloaditstatus.com/client_error', () => {
+        return HttpResponse.json({})
+      }),
+    )
+
+    server.listen({ onUnhandledRequest: 'error' })
+
+    const uppy = new Core()
+    const successSpy = vi.fn()
+    uppy.on('complete', successSpy)
     uppy.use(Transloadit, {
-      service: `http://localhost:${server.address().port}`,
-      alwaysRunAssembly: true,
-      params: {
-        auth: { key: 'some auth key string' },
-        template_id: 'some template id string',
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
       },
     })
 
-    await uppy.upload()
-    server.closeAllConnections()
-    await new Promise((resolve) => server.close(resolve))
-  })
-
-  // For some reason this test doesn't pass on CI
-  it.skip('Can start an assembly with no files and some fields', async () => {
-    const server = createServer((req, res) => {
-      res.setHeader('Access-Control-Allow-Origin', '*')
-      res.setHeader('Access-Control-Allow-Headers', '*')
-      res.setHeader('Content-Type', 'application/json')
-      res.end('{"websocket_url":"about:blank"}')
-    }).listen()
-    await once(server, 'listening')
-    const uppy = new Core({
-      autoProceed: false,
+    uppy.addFile({
+      source: 'test',
+      name: 'cat.jpg',
+      data: Buffer.from('test file content'),
     })
-    uppy.use(Transloadit, {
-      service: `http://localhost:${server.address().port}`,
-      alwaysRunAssembly: true,
-      params: {
-        auth: { key: 'some auth key string' },
-        template_id: 'some template id string',
-      },
-      fields: ['hasOwnProperty'],
+    uppy.addFile({
+      source: 'test',
+      name: 'traffic.jpg',
+      data: Buffer.from('test file content 2'),
     })
 
+    uppy.upload()
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    uppy.pauseAll()
     await uppy.upload()
-    server.closeAllConnections()
-    await new Promise((resolve) => server.close(resolve))
+
+    expect(successSpy).toHaveBeenCalled()
+
+    server.close()
   })
 })

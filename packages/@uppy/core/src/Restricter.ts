@@ -1,11 +1,8 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-/* eslint-disable max-classes-per-file, class-methods-use-this */
 import prettierBytes from '@transloadit/prettier-bytes'
+import type { Body, I18n, Meta, UppyFile } from '@uppy/utils'
 // @ts-ignore untyped
 import match from 'mime-match'
-import type { Body, Meta, UppyFile } from '@uppy/utils/lib/UppyFile'
-import type { I18n } from '@uppy/utils/lib/Translator'
-import type { State, NonNullableUppyOptions } from './Uppy.ts'
+import type { NonNullableUppyOptions, State } from './Uppy.js'
 
 export type Restrictions = {
   maxFileSize: number | null

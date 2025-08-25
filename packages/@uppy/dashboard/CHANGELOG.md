@@ -1,5 +1,181 @@
 # @uppy/dashboard
 
+## 5.0.0
+
+### Major Changes
+
+- e869243: ### Merge @uppy/status-bar into @uppy/dashboard
+
+  The `@uppy/status-bar` package has been merged into `@uppy/dashboard`. The plugin gave a false promise of flexibility as a standalone plugin but was always built tightly coupled for `@uppy/dashboard`. With the new headless components and hooks, we want go all in those components and remove the confusing, inflexible ones.
+
+  StatusBar is now rendered as an integrated component within Dashboard rather than as a separate plugin. The standalone `@uppy/status-bar` package is no longer maintained and should be removed from your dependencies.
+
+  #### Migration from standalone StatusBar to Dashboard
+
+  If you were using StatusBar as a separate plugin, you'll need to migrate to using Dashboard with the equivalent options.
+
+  **Before:**
+
+  ```javascript
+  import StatusBar from "@uppy/status-bar";
+
+  uppy.use(StatusBar, {
+    target: "#status-bar",
+    showProgressDetails: true,
+    hideUploadButton: false,
+    hideAfterFinish: true,
+  });
+  ```
+
+  **Now:**
+
+  ```javascript
+  import Dashboard from "@uppy/dashboard";
+
+  uppy.use(Dashboard, {
+    target: "#dashboard",
+    hideProgressDetails: false,
+    hideUploadButton: false,
+    hideAfterFinish: true,
+  });
+  ```
+
+  All StatusBar configuration options are now available directly as Dashboard options:
+
+  - `hideProgressDetails` - Hide detailed progress information (previously `showProgressDetails` with inverted logic)
+  - `hideUploadButton` - Hide the upload button
+  - `hideAfterFinish` - Hide status bar after upload completion
+  - `hideRetryButton` - Hide the retry button
+  - `hidePauseResumeButton` - Hide pause/resume controls
+  - `hideCancelButton` - Hide the cancel button
+  - `doneButtonHandler` - Custom handler for the done button
+
+- c5b51f6: ### Export maps for all packages
+
+  All packages now have export maps. This is a breaking change in two cases:
+
+  1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
+  2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
+
+  #### Changed imports for `@uppy/react`, `@uppy/vue`, and `@uppy/svelte`
+
+  Some components, like Dashboard, require a peer dependency to work but since all components were exported from a single file you were forced to install all peer dependencies. Even if you never imported, for instance, the status bar component.
+
+  Every component that requires a peer dependency has now been moved to a subpath, such as `@uppy/react/dashboard`, so you only need to install the peer dependencies you need.
+
+  **Example for `@uppy/react`:**
+
+  **Before:**
+
+  ```javascript
+  import { Dashboard, StatusBar } from "@uppy/react";
+  ```
+
+  **Now:**
+
+  ```javascript
+  import Dashboard from "@uppy/react/dashboard";
+  import StatusBar from "@uppy/react/status-bar";
+  ```
+
+### Patch Changes
+
+- Updated dependencies [d301c01]
+- Updated dependencies [c5b51f6]
+  - @uppy/utils@7.0.0
+  - @uppy/thumbnail-generator@5.0.0
+  - @uppy/provider-views@5.0.0
+  - @uppy/core@5.0.0
+
+## 4.4.3
+
+### Patch Changes
+
+- c15c6fd: Make each entry in `strings` in locale type optional
+- Updated dependencies [c15c6fd]
+  - @uppy/status-bar@4.2.3
+
+## 4.4.2
+
+### Patch Changes
+
+- 1b1a9e3: Define "files" in package.json
+- Updated dependencies [1b1a9e3]
+- Updated dependencies [c66fd85]
+  - @uppy/thumbnail-generator@4.2.2
+  - @uppy/provider-views@4.5.2
+  - @uppy/status-bar@4.2.2
+  - @uppy/informer@4.3.2
+  - @uppy/utils@6.2.2
+  - @uppy/core@4.5.2
+
+## 4.4.0
+
+### Minor Changes
+
+- 0c24c5a: Use TypeScript compiler instead of Babel
+
+### Patch Changes
+
+- Updated dependencies [0c24c5a]
+- Updated dependencies [0c24c5a]
+  - @uppy/core@4.5.0
+  - @uppy/informer@4.3.0
+  - @uppy/provider-views@4.5.0
+  - @uppy/status-bar@4.2.0
+  - @uppy/thumbnail-generator@4.2.0
+  - @uppy/utils@6.2.0
+
+## 4.3.4
+
+Released: 2025-05-18
+Included in: Uppy v4.16.0
+
+- @uppy/audio,@uppy/box,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/google-drive-picker,@uppy/google-drive,@uppy/google-photos-picker,@uppy/image-editor,@uppy/instagram,@uppy/onedrive,@uppy/remote-sources,@uppy/screen-capture,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/webcam,@uppy/webdav,@uppy/zoom: ts: make locale strings optional (Merlijn Vos / #5728)
+
+## 4.3.2
+
+Released: 2025-02-25
+Included in: Uppy v4.13.3
+
+- @uppy/dashboard: do not allow drag&drop of file preview (Merlijn Vos / #5650)
+
+## 4.3.0
+
+Released: 2025-01-06
+Included in: Uppy v4.11.0
+
+- @uppy/angular,@uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive-picker,@uppy/google-drive,@uppy/google-photos-picker,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/vue,@uppy/webcam,@uppy/webdav,@uppy/xhr-upload,@uppy/zoom: Remove "paths" from all tsconfig's (Merlijn Vos / #5572)
+
+## 4.2.0
+
+Released: 2025-01-06
+Included in: Uppy v4.10.0
+
+- @uppy/core,@uppy/dashboard,@uppy/provider-views,@uppy/store-redux,@uppy/url: build(deps): bump nanoid from 5.0.7 to 5.0.9 (dependabot[bot] / #5544)
+
+## 4.1.3
+
+Released: 2024-12-05
+Included in: Uppy v4.8.0
+
+- @uppy/audio,@uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/compressor,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/drop-target,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react,@uppy/remote-sources,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: cleanup tsconfig (Mikael Finstad / #5520)
+
+## 4.1.2
+
+Released: 2024-10-31
+Included in: Uppy v4.6.0
+
+- @uppy/aws-s3,@uppy/box,@uppy/companion-client,@uppy/core,@uppy/dashboard,@uppy/drag-drop,@uppy/dropbox,@uppy/facebook,@uppy/file-input,@uppy/form,@uppy/golden-retriever,@uppy/google-drive,@uppy/google-photos,@uppy/image-editor,@uppy/informer,@uppy/instagram,@uppy/locales,@uppy/onedrive,@uppy/progress-bar,@uppy/provider-views,@uppy/react-native,@uppy/react,@uppy/redux-dev-tools,@uppy/screen-capture,@uppy/status-bar,@uppy/store-default,@uppy/store-redux,@uppy/svelte,@uppy/thumbnail-generator,@uppy/transloadit,@uppy/tus,@uppy/unsplash,@uppy/url,@uppy/utils,@uppy/vue,@uppy/webcam,@uppy/xhr-upload,@uppy/zoom: Fix links (Anthony Veaudry / #5492)
+
+## 4.1.1
+
+Released: 2024-10-15
+Included in: Uppy v4.5.0
+
+- @uppy/dashboard: Dashboard - convert some files to typescript (Evgenia Karunus / #5367)
+- @uppy/dashboard,@uppy/drag-drop,@uppy/file-input: `.handleInputChange()` - use `.currentTarget`; clear the input using `''` (Evgenia Karunus / #5381)
+
 ## 4.1.0
 
 Released: 2024-08-29
@@ -165,7 +341,7 @@ Included in: Uppy v3.16.0
 Released: 2023-09-05
 Included in: Uppy v3.15.0
 
-- @uppy/dashboard: when showAddFilesPanel  is true, aria-hidden should be the opposite (Artur Paikin / #4643)
+- @uppy/dashboard: when showAddFilesPanel is true, aria-hidden should be the opposite (Artur Paikin / #4643)
 
 ## 3.4.1
 

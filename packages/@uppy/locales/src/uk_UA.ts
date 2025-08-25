@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const uk_UA: Locale<0 | 1 | 2> = {
   strings: {},
@@ -44,7 +44,6 @@ uk_UA.strings = {
   browseFolders: 'огляд тек',
   cancel: 'Скасувати',
   cancelUpload: 'Скасувати завантаження',
-  chooseFiles: 'Обрати файли',
   closeModal: 'Закрити вікно',
   companionError: "Не вдалося під'єднатися до Companion",
   companionUnauthorizeHint:
@@ -64,7 +63,6 @@ uk_UA.strings = {
   dataUploadedOfTotal: '%{complete} із %{total}',
   discardRecordedFile: 'Відкинути записаний файл',
   done: 'Готово',
-  dropHereOr: 'Перетягніть файли або %{browse}',
   dropHint: 'Перетягніть файли сюди',
   dropPasteBoth: 'Перетягніть файли, вставте або %{browse}',
   dropPasteFiles: 'Перетягніть файли, вставте або %{browse}',
@@ -239,6 +237,12 @@ uk_UA.strings = {
   },
   zoomIn: 'Збільшити',
   zoomOut: 'Зменшити',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.uk_UA = uk_UA
 }
 
 export default uk_UA

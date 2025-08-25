@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const hr_HR: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ hr_HR.strings = {
   browseFiles: 'pretraži',
   cancel: 'Otkaži',
   cancelUpload: 'Otkaži prijenos',
-  chooseFiles: 'Izaberi datoteke',
   closeModal: 'Zatvori',
   companionError: 'Neuspješno povezivanje s Companion-om',
   complete: 'Prijenos uspješan',
@@ -39,7 +38,6 @@ hr_HR.strings = {
   dashboardWindowTitle: 'Prozor za prijenos datoteka (pritisnite ESC za izlaz)',
   dataUploadedOfTotal: '%{complete} od %{total}',
   done: 'Završeno',
-  dropHereOr: 'Ispusti datoteke ovdje ili %{browse}',
   dropHint: 'Ispusti datoteke ovdje',
   dropPasteBoth: 'Ispusti datoteke ovdje, zalijepi ili %{browse}',
   dropPasteFiles: 'Ispusti datoteke ovdje, zalijepi ili %{browse}',
@@ -143,6 +141,12 @@ hr_HR.strings = {
   selectFileNamed: 'Izaberite datoteku %{name}',
   unselectFileNamed: 'Isključite datoteku %{name}',
   openFolderNamed: 'Otvori mapu %{name}',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.hr_HR = hr_HR
 }
 
 export default hr_HR

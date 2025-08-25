@@ -1,0 +1,41 @@
+{
+  "$schema": "https://turborepo.com/schema.json",
+  "tasks": {
+    "build": {
+      "outputLogs": "new-only",
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "tsconfig.json",
+        "tsconfig.build.json"
+      ],
+      "outputs": ["lib/**", "dist/**"]
+    },
+    "uppy#build": {
+      "outputLogs": "new-only",
+      "dependsOn": ["^build"],
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "bundle.mjs",
+        "build-bundle.mjs"
+      ],
+      "outputs": ["lib/**", "dist/**"]
+    },
+    "build:css": {
+      "outputLogs": "new-only",
+      "inputs": ["src/**/*.scss"],
+      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+    },
+    "typecheck": {
+      "outputLogs": "new-only",
+      "dependsOn": ["build"],
+      "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
+    },
+    "test": {
+      "outputLogs": "errors-only",
+      "dependsOn": ["^test"]
+    }
+  }
+}

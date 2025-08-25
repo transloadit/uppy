@@ -1,3 +1,5 @@
+import type { h } from 'preact'
+
 // We're using a generic because languages have different plural rules.
 export interface Locale<T extends number = number> {
   strings: Record<string, string | Record<T, string>>
@@ -8,13 +10,16 @@ export type OptionalPluralizeLocale<T extends number = number> =
   | (Omit<Locale<T>, 'pluralize'> & Partial<Pick<Locale<T>, 'pluralize'>>)
   | undefined
 
-// eslint-disable-next-line no-use-before-define
+export type LocaleStrings<T extends NonNullable<OptionalPluralizeLocale>> = {
+  strings: Partial<T['strings']>
+}
+
 export type I18n = Translator['translate']
 
 type Options = {
   smart_count?: number
 } & {
-  [key: string]: string | number
+  [key: string]: string | number | h.JSX.Element
 }
 
 function insertReplacement(

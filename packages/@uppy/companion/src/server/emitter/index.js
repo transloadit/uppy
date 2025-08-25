@@ -1,5 +1,5 @@
-const nodeEmitter = require('./default-emitter')
-const redisEmitter = require('./redis-emitter')
+import nodeEmitter from './default-emitter.js'
+import redisEmitter from './redis-emitter.js'
 
 let emitter
 
@@ -8,9 +8,11 @@ let emitter
  * Used to transmit events (such as progress, upload completion) from controllers,
  * such as the Google Drive 'get' controller, along to the client.
  */
-module.exports = (redisClient, redisPubSubScope) => {
+export default function getEmitter(redisClient, redisPubSubScope) {
   if (!emitter) {
-    emitter = redisClient ? redisEmitter(redisClient, redisPubSubScope) : nodeEmitter()
+    emitter = redisClient
+      ? redisEmitter(redisClient, redisPubSubScope)
+      : nodeEmitter()
   }
 
   return emitter

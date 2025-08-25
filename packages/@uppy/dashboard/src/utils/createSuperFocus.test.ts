@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest'
-import createSuperFocus from './createSuperFocus.ts'
+import { describe, expect, it } from 'vitest'
+import createSuperFocus from './createSuperFocus.js'
 
 describe('createSuperFocus', () => {
   // superFocus.cancel() is used in dashboard

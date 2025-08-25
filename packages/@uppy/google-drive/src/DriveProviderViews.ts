@@ -1,9 +1,10 @@
 import type {
+  Body,
+  Meta,
   PartialTreeFile,
   PartialTreeFolderNode,
-} from '@uppy/core/lib/Uppy.js'
+} from '@uppy/core'
 import { ProviderViews } from '@uppy/provider-views'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
 
 export default class DriveProviderViews<
   M extends Meta,

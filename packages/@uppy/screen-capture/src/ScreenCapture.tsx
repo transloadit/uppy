@@ -1,31 +1,48 @@
-import { h, type ComponentChild } from 'preact'
-import { UIPlugin, Uppy, type UIPluginOptions } from '@uppy/core'
-import getFileTypeExtension from '@uppy/utils/lib/getFileTypeExtension'
-import type { DefinePluginOpts } from '@uppy/core/lib/BasePlugin.js'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import ScreenRecIcon from './ScreenRecIcon.tsx'
-import RecorderScreen from './RecorderScreen.tsx'
-
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
-import locale from './locale.ts'
+import type {
+  Body,
+  DefinePluginOpts,
+  Meta,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
+import { UIPlugin } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/utils'
+import { getFileTypeExtension } from '@uppy/utils'
+import type { ComponentChild } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import locale from './locale.js'
+import RecorderScreen from './RecorderScreen.js'
+import ScreenRecIcon from './ScreenRecIcon.js'
 
 // Check if screen capturing is supported.
 // mediaDevices is supprted on mobile Safari, getDisplayMedia is not
 function isScreenRecordingSupported() {
-  return window.MediaRecorder && navigator.mediaDevices?.getDisplayMedia // eslint-disable-line compat/compat
+  return window.MediaRecorder && navigator.mediaDevices?.getDisplayMedia
 }
 
 // Adapted from: https://developer.mozilla.org/en-US/docs/Web/API/MediaDevices/getUserMedia
 function getMediaDevices() {
-  return window.MediaRecorder && navigator.mediaDevices // eslint-disable-line compat/compat
+  return window.MediaRecorder && navigator.mediaDevices
 }
+
+// Add supported image types
+const SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
+type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number]
+
+export type ScreenCaptureStatus =
+  | 'init'
+  | 'ready'
+  | 'recording'
+  | 'captured'
+  | 'error'
 
 export interface ScreenCaptureOptions extends UIPluginOptions {
   displayMediaConstraints?: MediaStreamConstraints
   userMediaConstraints?: MediaStreamConstraints
   preferredVideoMimeType?: string
+  preferredImageMimeType?: SupportedImageType
+  locale?: LocaleStrings<typeof locale>
+  enableScreenshots?: boolean
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/API/MediaStreamConstraints
@@ -48,6 +65,8 @@ const defaultOptions = {
     audio: true,
   },
   preferredVideoMimeType: 'video/webm',
+  preferredImageMimeType: 'image/png' as SupportedImageType,
+  enableScreenshots: true,
 }
 
 type Opts = DefinePluginOpts<ScreenCaptureOptions, keyof typeof defaultOptions>
@@ -57,7 +76,9 @@ export type ScreenCaptureState = {
   audioStreamActive: boolean
   recording: boolean
   recordedVideo: string | null
-  screenRecError: string | null
+  screenRecError: Error | null
+  capturedScreenshotUrl: string | null
+  status: ScreenCaptureStatus
 }
 
 export default class ScreenCapture<
@@ -98,7 +119,6 @@ export default class ScreenCapture<
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
-    // eslint-disable-next-line no-restricted-globals
     this.protocol = location.protocol === 'https:' ? 'https' : 'http'
     this.id = this.opts.id || 'ScreenCapture'
     this.type = 'acquirer'
@@ -121,10 +141,21 @@ export default class ScreenCapture<
     this.stopRecording = this.stopRecording.bind(this)
     this.submit = this.submit.bind(this)
     this.streamInterrupted = this.streamInactivated.bind(this)
+    this.captureScreenshot = this.captureScreenshot.bind(this)
+    this.discardRecordedMedia = this.discardRecordedMedia.bind(this)
 
     // initialize
     this.captureActive = false
     this.capturedMediaFile = null
+    this.setPluginState({
+      streamActive: false,
+      audioStreamActive: false,
+      recording: false,
+      recordedVideo: null,
+      screenRecError: null,
+      capturedScreenshotUrl: null,
+      status: 'init',
+    })
   }
 
   install(): null | undefined {
@@ -136,6 +167,7 @@ export default class ScreenCapture<
     this.setPluginState({
       streamActive: false,
       audioStreamActive: false,
+      status: 'init',
     })
 
     const { target } = this.opts
@@ -169,7 +201,7 @@ export default class ScreenCapture<
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
-        if (this.parent && this.parent.hideAllPanels) {
+        if (this.parent?.hideAllPanels) {
           // @ts-expect-error we can't know Dashboard types here
           this.parent.hideAllPanels()
           this.captureActive = false
@@ -185,7 +217,7 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
-    // eslint-disable-next-line compat/compat
+
     return this.mediaDevices
       .getDisplayMedia(this.opts.displayMediaConstraints)
       .then((videoStream) => {
@@ -198,6 +230,8 @@ export default class ScreenCapture<
 
         this.setPluginState({
           streamActive: true,
+          status: 'ready',
+          screenRecError: null,
         })
 
         return videoStream
@@ -205,6 +239,7 @@ export default class ScreenCapture<
       .catch((err) => {
         this.setPluginState({
           screenRecError: err,
+          status: 'error',
         })
 
         this.userDenied = true
@@ -224,7 +259,7 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
-    // eslint-disable-next-line compat/compat
+
     return this.mediaDevices
       .getUserMedia(this.opts.userMediaConstraints)
       .then((audioStream) => {
@@ -275,11 +310,11 @@ export default class ScreenCapture<
         }
 
         // create new stream from video and audio
-        // eslint-disable-next-line compat/compat
+
         this.outputStream = new MediaStream(tracks)
 
         // initialize mediarecorder
-        // eslint-disable-next-line compat/compat
+
         this.recorder = new MediaRecorder(this.outputStream, options)
 
         // push data to buffer when data available
@@ -293,10 +328,12 @@ export default class ScreenCapture<
         // set plugin state to recording
         this.setPluginState({
           recording: true,
+          status: 'recording',
         })
       })
       .catch((err) => {
         this.uppy.log(err, 'error')
+        this.setPluginState({ screenRecError: err, status: 'error' })
       })
   }
 
@@ -308,10 +345,11 @@ export default class ScreenCapture<
       // Close the Dashboard panel if plugin is installed
       // into Dashboard (could be other parent UI plugin)
       // @ts-expect-error we can't know Dashboard types here
-      if (this.parent && this.parent.hideAllPanels) {
+      if (this.parent?.hideAllPanels) {
         // @ts-expect-error we can't know Dashboard types here
         this.parent.hideAllPanels()
       }
+      this.setPluginState({ status: 'init' })
     } else if (recording) {
       // stop recorder if it is active
       this.uppy.log('Capture stream inactive — stop recording')
@@ -351,8 +389,8 @@ export default class ScreenCapture<
 
         // create object url for capture result preview
         this.setPluginState({
-          // eslint-disable-next-line compat/compat
           recordedVideo: URL.createObjectURL(file.data),
+          status: 'captured',
         })
       })
       .then(
@@ -366,6 +404,25 @@ export default class ScreenCapture<
           throw error
         },
       )
+  }
+
+  discardRecordedMedia(): void {
+    const { capturedScreenshotUrl, recordedVideo } = this.getPluginState()
+
+    if (capturedScreenshotUrl) {
+      URL.revokeObjectURL(capturedScreenshotUrl)
+    }
+    if (recordedVideo) {
+      URL.revokeObjectURL(recordedVideo)
+    }
+
+    this.capturedMediaFile = null
+
+    this.setPluginState({
+      recordedVideo: null,
+      capturedScreenshotUrl: null,
+      status: this.getPluginState().streamActive ? 'ready' : 'init',
+    })
   }
 
   submit(): void {
@@ -416,9 +473,23 @@ export default class ScreenCapture<
       this.outputStream = null
     }
 
+    // Clean up screenshot URL
+    const { capturedScreenshotUrl, recordedVideo } = this.getPluginState()
+    if (capturedScreenshotUrl) {
+      URL.revokeObjectURL(capturedScreenshotUrl)
+    }
+
+    if (recordedVideo) {
+      URL.revokeObjectURL(recordedVideo)
+    }
     // remove preview video
     this.setPluginState({
+      recording: false,
+      streamActive: false,
+      audioStreamActive: false,
       recordedVideo: null,
+      capturedScreenshotUrl: null,
+      status: 'init',
     })
 
     this.captureActive = false
@@ -453,6 +524,105 @@ export default class ScreenCapture<
     return Promise.resolve(file)
   }
 
+  async captureScreenshot(): Promise<void> {
+    if (!this.mediaDevices?.getDisplayMedia) {
+      throw new Error('Screen capture is not supported')
+    }
+
+    try {
+      let stream = this.videoStream
+
+      // Only request new stream if we don't have one
+      if (!stream) {
+        const newStream = await this.selectVideoStreamSource()
+        if (!newStream) {
+          throw new Error('Failed to get screen capture stream')
+        }
+        stream = newStream
+      }
+
+      const video = document.createElement('video')
+      video.srcObject = stream
+
+      await new Promise((resolve) => {
+        video.onloadedmetadata = () => {
+          video.play()
+          resolve(null)
+        }
+      })
+
+      const canvas = document.createElement('canvas')
+      canvas.width = video.videoWidth
+      canvas.height = video.videoHeight
+
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        throw new Error('Failed to get canvas context')
+      }
+
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+      // Validate and set fallback for preferred image mime type
+      let mimeType = this.opts.preferredImageMimeType
+      if (!mimeType || !SUPPORTED_IMAGE_TYPES.includes(mimeType)) {
+        this.uppy.log(
+          `Unsupported image type "${mimeType}", falling back to image/png`,
+          'warning',
+        )
+        mimeType = 'image/png'
+      }
+
+      const quality = 1
+
+      return new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Failed to create screenshot blob'))
+              return
+            }
+
+            const fileExtension = getFileTypeExtension(mimeType) || 'png'
+            const file = {
+              source: this.id,
+              name: `Screenshot ${new Date().toISOString()}.${fileExtension}`,
+              type: mimeType,
+              data: blob,
+            }
+
+            try {
+              this.capturedMediaFile = file
+              const screenshotUrl = URL.createObjectURL(blob)
+              this.setPluginState({
+                capturedScreenshotUrl: screenshotUrl,
+                status: 'captured',
+              })
+              resolve()
+            } catch (err) {
+              if (this.getPluginState().capturedScreenshotUrl) {
+                this.setPluginState({ capturedScreenshotUrl: null })
+              }
+              if (!err.isRestriction) {
+                this.uppy.log(err, 'error')
+              }
+              reject(err)
+            } finally {
+              // Cleanup
+              video.srcObject = null
+              canvas.remove()
+              video.remove()
+            }
+          },
+          mimeType,
+          quality,
+        )
+      })
+    } catch (err) {
+      this.uppy.log(err, 'error')
+      throw err
+    }
+  }
+
   render(): ComponentChild {
     // get screen recorder state
     const recorderState = this.getPluginState()
@@ -467,13 +637,16 @@ export default class ScreenCapture<
 
     return (
       <RecorderScreen<M, B>
-        {...recorderState} // eslint-disable-line react/jsx-props-no-spreading
+        {...recorderState}
         onStartRecording={this.startRecording}
         onStopRecording={this.stopRecording}
+        enableScreenshots={this.opts.enableScreenshots}
+        onScreenshot={this.captureScreenshot}
         onStop={this.stop}
         onSubmit={this.submit}
         i18n={this.i18n}
         stream={this.videoStream}
+        onDiscard={this.discardRecordedMedia}
       />
     )
   }

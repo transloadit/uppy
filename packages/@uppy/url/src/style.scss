@@ -1,5 +1,5 @@
-@import '@uppy/core/src/_utils.scss';
-@import '@uppy/core/src/_variables.scss';
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 
 .uppy-Url {
   display: flex;
@@ -11,7 +11,7 @@
   height: 100%;
 
   [data-uppy-theme='dark'] & {
-    background-color: $gray-900;
+    background-color: variables.$gray-900;
   }
 }
 

@@ -1,15 +1,20 @@
 {
   "name": "@uppy/remote-sources",
   "description": "Uppy plugin that includes all remote sources that Uppy+Companion offer, like Instagram, Google Drive, Dropox, Box, Unsplash, Url etc",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --environment=jsdom --silent='passed-only'"
+  },
   "keywords": [
     "file uploader",
     "instagram",
     "google-drive",
-    "google-photos",
     "facebook",
     "dropbox",
     "onedrive",
@@ -26,13 +31,22 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
   "dependencies": {
     "@uppy/box": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/dropbox": "workspace:^",
     "@uppy/facebook": "workspace:^",
     "@uppy/google-drive": "workspace:^",
-    "@uppy/google-photos": "workspace:^",
     "@uppy/instagram": "workspace:^",
     "@uppy/onedrive": "workspace:^",
     "@uppy/unsplash": "workspace:^",
@@ -46,7 +60,10 @@
     "access": "public"
   },
   "devDependencies": {
+    "@uppy/core": "workspace:^",
+    "jsdom": "^26.1.0",
     "resize-observer-polyfill": "^1.5.1",
-    "vitest": "^1.2.1"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

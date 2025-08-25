@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const de_DE: Locale<0 | 1> = {
   strings: {},
@@ -35,7 +35,6 @@ de_DE.strings = {
   browseFolders: 'Ordner durchsuchen',
   cancel: 'Abbrechen',
   cancelUpload: 'Hochladen abbrechen',
-  chooseFiles: 'Dateien auswählen',
   closeModal: 'Fenster schließen',
   companionError: 'Verbindung zu Companion fehlgeschlagen',
   companionUnauthorizeHint:
@@ -52,7 +51,6 @@ de_DE.strings = {
   dataUploadedOfTotal: '%{complete} von %{total}',
   discardRecordedFile: 'Aufgenommene Datei verwerfen',
   done: 'Abgeschlossen',
-  dropHereOr: 'Dateien hier ablegen oder %{browse}',
   dropHint: 'Dateien hier ablegen',
   dropPasteBoth:
     'Dateien hier ablegen/einfügen, %{browseFiles} oder %{browseFolders}',
@@ -211,6 +209,12 @@ de_DE.strings = {
   },
   zoomIn: 'Vergrößern',
   zoomOut: 'Verkleinern',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.de_DE = de_DE
 }
 
 export default de_DE

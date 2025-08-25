@@ -1,19 +1,14 @@
-import UserFacingApiError from '@uppy/utils/lib/UserFacingApiError'
-// eslint-disable-next-line import/no-extraneous-dependencies
-import pRetry, { AbortError } from 'p-retry'
-
-import fetchWithNetworkError from '@uppy/utils/lib/fetchWithNetworkError'
-import ErrorWithCause from '@uppy/utils/lib/ErrorWithCause'
-import emitSocketProgress from '@uppy/utils/lib/emitSocketProgress'
-import getSocketHost from '@uppy/utils/lib/getSocketHost'
-
 import type Uppy from '@uppy/core'
-import type { UppyFile, Meta, Body } from '@uppy/utils/lib/UppyFile'
-import type { RequestOptions } from '@uppy/utils/lib/CompanionClientProvider'
-import AuthError from './AuthError.ts'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore We don't want TS to generate types for the package.json
-import packageJson from '../package.json'
+import type { Body, Meta, RequestOptions, UppyFile } from '@uppy/utils'
+import {
+  ErrorWithCause,
+  fetchWithNetworkError,
+  getSocketHost,
+  UserFacingApiError,
+} from '@uppy/utils'
+import pRetry, { AbortError } from 'p-retry'
+import packageJson from '../package.json' with { type: 'json' }
+import AuthError from './AuthError.js'
 
 type CompanionHeaders = Record<string, string> | undefined
 
@@ -63,7 +58,7 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
-  let errData
+  let errData: any
   try {
     errData = await res.json()
 
@@ -79,6 +74,26 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   throw new HttpError({ statusCode: res.status, message: errMsg })
+}
+
+function emitSocketProgress(
+  uploader: { uppy: Uppy<any, any> },
+  progressData: {
+    progress: string // pre-formatted percentage number as a string
+    bytesTotal: number
+    bytesUploaded: number
+  },
+  file: UppyFile<any, any>,
+): void {
+  const { progress, bytesUploaded, bytesTotal } = progressData
+  if (progress) {
+    uploader.uppy.log(`Upload progress: ${progress}`)
+    uploader.uppy.emit('upload-progress', file, {
+      uploadStarted: file.progress.uploadStarted ?? 0,
+      bytesUploaded,
+      bytesTotal,
+    })
+  }
 }
 
 export default class RequestClient<M extends Meta, B extends Body> {
@@ -108,18 +123,18 @@ export default class RequestClient<M extends Meta, B extends Body> {
   get hostname(): string {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
-    return stripSlash(companion && companion[host] ? companion[host] : host)
+    return stripSlash(companion?.[host] ? companion[host] : host)
   }
 
   async headers(emptyBody = false): Promise<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
-      ...(emptyBody ? undefined : (
-        {
-          // Passing those headers on requests with no data forces browsers to first make a preflight request.
-          'Content-Type': 'application/json',
-        }
-      )),
+      ...(emptyBody
+        ? undefined
+        : {
+            // Passing those headers on requests with no data forces browsers to first make a preflight request.
+            'Content-Type': 'application/json',
+          }),
     }
 
     return {
@@ -424,7 +439,6 @@ export default class RequestClient<M extends Meta, B extends Body> {
             await queue
               .wrapPromiseFunction(async () => {
                 const reconnectWebsocket = async () =>
-                  // eslint-disable-next-line promise/param-names
                   new Promise((_, rejectSocket) => {
                     socket = new WebSocket(`${host}/api/${token}`)
 
@@ -479,8 +493,9 @@ export default class RequestClient<M extends Meta, B extends Body> {
                               {
                                 uploadURL: payload.url,
                                 status: payload.response?.status ?? 200,
-                                body:
-                                  text ? (JSON.parse(text) as B) : undefined,
+                                body: text
+                                  ? (JSON.parse(text) as B)
+                                  : undefined,
                               },
                             )
                             socketAbortController?.abort?.()
@@ -505,7 +520,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
                     })
 
                     const closeSocket = () => {
-                      this.uppy.log(`Closing socket ${file.id}`, 'info')
+                      this.uppy.log(`Closing socket ${file.id}`)
                       clearTimeout(activityTimeout)
                       if (socket) socket.close()
                       socket = undefined
@@ -524,7 +539,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
                   signal: socketAbortController.signal,
                   onFailedAttempt: () => {
                     if (socketAbortController.signal.aborted) return // don't log in this case
-                    this.uppy.log(`Retrying websocket ${file.id}`, 'info')
+                    this.uppy.log(`Retrying websocket ${file.id}`)
                   },
                 })
               })()
@@ -547,14 +562,14 @@ export default class RequestClient<M extends Meta, B extends Body> {
           if (targetFile.id !== file.id) return
           socketSend('cancel')
           socketAbortController?.abort?.()
-          this.uppy.log(`upload ${file.id} was removed`, 'info')
+          this.uppy.log(`upload ${file.id} was removed`)
           resolve()
         }
 
         const onCancelAll = () => {
           socketSend('cancel')
           socketAbortController?.abort?.()
-          this.uppy.log(`upload ${file.id} was canceled`, 'info')
+          this.uppy.log(`upload ${file.id} was canceled`)
           resolve()
         }
 

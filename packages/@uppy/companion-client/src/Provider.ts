@@ -1,13 +1,14 @@
-import type { Uppy } from '@uppy/core'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PluginOpts } from '@uppy/core/lib/BasePlugin.js'
 import type {
-  RequestOptions,
-  CompanionClientProvider,
-} from '@uppy/utils/lib/CompanionClientProvider'
-import type { UnknownProviderPlugin } from '@uppy/core/lib/Uppy.js'
-import RequestClient, { authErrorStatusCode } from './RequestClient.ts'
-import type { CompanionPluginOptions } from './index.ts'
+  Body,
+  Meta,
+  PluginOpts,
+  UnknownProviderPlugin,
+  Uppy,
+} from '@uppy/core'
+import type { CompanionClientProvider, RequestOptions } from '@uppy/utils'
+import { isOriginAllowed } from './getAllowedHosts.js'
+import type { CompanionPluginOptions } from './index.js'
+import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {
   pluginId: string
@@ -24,31 +25,7 @@ const getName = (id: string) => {
 }
 
 function getOrigin() {
-  // eslint-disable-next-line no-restricted-globals
   return location.origin
-}
-
-function getRegex(value?: string | RegExp) {
-  if (typeof value === 'string') {
-    return new RegExp(`^${value}$`)
-  }
-  if (value instanceof RegExp) {
-    return value
-  }
-  return undefined
-}
-
-function isOriginAllowed(
-  origin: string,
-  allowedOrigin: string | RegExp | Array<string | RegExp> | undefined,
-) {
-  const patterns =
-    Array.isArray(allowedOrigin) ?
-      allowedOrigin.map(getRegex)
-    : [getRegex(allowedOrigin)]
-  return patterns.some(
-    (pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`),
-  ) // allowing for trailing '/'
 }
 
 export default class Provider<M extends Meta, B extends Body>
@@ -107,9 +84,8 @@ export default class Provider<M extends Meta, B extends Body>
     super.onReceiveResponse(response)
     const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
-    const authenticated =
-      oldAuthenticated ?
-        response.status !== authErrorStatusCode
+    const authenticated = oldAuthenticated
+      ? response.status !== authErrorStatusCode
       : response.status < 400
     plugin.setPluginState({ authenticated })
     return response
@@ -152,7 +128,6 @@ export default class Provider<M extends Meta, B extends Body>
     }
   }
 
-  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
   authQuery(data: unknown): Record<string, string> {
     return {}
   }
@@ -209,71 +184,83 @@ export default class Provider<M extends Meta, B extends Body>
 
     signal.throwIfAborted()
 
-    return new Promise((resolve, reject) => {
-      const link = this.authUrl({ query: { uppyVersions }, authFormData })
-      const authWindow = window.open(link, '_blank')
+    const link = this.authUrl({ query: { uppyVersions }, authFormData })
+    const authWindow = window.open(link, '_blank')
+    let interval: number | undefined
+    let handleMessage: ((e: MessageEvent<any>) => void) | undefined
 
-      let cleanup: () => void
-
-      const handleToken = (e: MessageEvent<any>) => {
-        if (e.source !== authWindow) {
-          let jsonData = ''
-          try {
-            // TODO improve our uppy logger so that it can take an arbitrary number of arguments,
-            // each either objects, errors or strings,
-            // then we don’t have to manually do these things like json stringify when logging.
-            // the logger should never throw an error.
-            jsonData = JSON.stringify(e.data)
-          } catch (err) {
-            // in case JSON.stringify fails (ignored)
+    try {
+      return await new Promise((resolve, reject) => {
+        handleMessage = (e: MessageEvent<any>) => {
+          if (e.source !== authWindow) {
+            let jsonData = ''
+            try {
+              // TODO improve our uppy logger so that it can take an arbitrary number of arguments,
+              // each either objects, errors or strings,
+              // then we don’t have to manually do these things like json stringify when logging.
+              // the logger should never throw an error.
+              jsonData = JSON.stringify(e.data)
+            } catch (_err) {
+              // in case JSON.stringify fails (ignored)
+            }
+            this.uppy.log(
+              `ignoring event from unknown source ${jsonData}`,
+              'warning',
+            )
+            return
           }
-          this.uppy.log(
-            `ignoring event from unknown source ${jsonData}`,
-            'warning',
-          )
-          return
+
+          const { companionAllowedHosts } = this.#getPlugin().opts
+          if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
+            this.uppy.log(
+              `ignoring event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`,
+              'warning',
+            )
+            // We cannot reject here because the page might send events from other origins
+            // before sending the "real" auth completed event.
+            // for example Box has a "Pendo" tool that sends events to the opener
+            // https://github.com/transloadit/uppy/pull/5719
+            return
+          }
+
+          // Check if it's a string before doing the JSON.parse to maintain support
+          // for older Companion versions that used object references
+          const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
+
+          if (data.error) {
+            const { uppy } = this
+            const message = uppy.i18n('authAborted')
+            uppy.info({ message }, 'warning', 5000)
+            reject(new Error('auth aborted'))
+            return
+          }
+
+          if (!data.token) {
+            reject(new Error('did not receive token from auth window'))
+            return
+          }
+
+          resolve(this.setAuthToken(data.token))
         }
 
-        const { companionAllowedHosts } = this.#getPlugin().opts
-        if (!isOriginAllowed(e.origin, companionAllowedHosts)) {
-          reject(
-            new Error(
-              `rejecting event from ${e.origin} vs allowed pattern ${companionAllowedHosts}`,
-            ),
-          )
-          return
+        // poll for user closure of the window, so we can reject when it happens
+        if (authWindow) {
+          interval = window.setInterval(() => {
+            if (authWindow.closed) {
+              reject(new Error('Auth window was closed by the user'))
+            }
+          }, 500)
         }
 
-        // Check if it's a string before doing the JSON.parse to maintain support
-        // for older Companion versions that used object references
-        const data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data
-
-        if (data.error) {
-          const { uppy } = this
-          const message = uppy.i18n('authAborted')
-          uppy.info({ message }, 'warning', 5000)
-          reject(new Error('auth aborted'))
-          return
-        }
-
-        if (!data.token) {
-          reject(new Error('did not receive token from auth window'))
-          return
-        }
-
-        cleanup()
-        resolve(this.setAuthToken(data.token))
-      }
-
-      cleanup = () => {
-        authWindow?.close()
-        window.removeEventListener('message', handleToken)
-        signal.removeEventListener('abort', cleanup)
-      }
-
-      signal.addEventListener('abort', cleanup)
-      window.addEventListener('message', handleToken)
-    })
+        signal.addEventListener('abort', () => reject(new Error('Aborted')))
+        window.addEventListener('message', handleMessage)
+      })
+    } finally {
+      // cleanup:
+      authWindow?.close()
+      window.clearInterval(interval)
+      if (handleMessage) window.removeEventListener('message', handleMessage)
+    }
   }
 
   async login({
@@ -320,10 +307,7 @@ export default class Provider<M extends Meta, B extends Body>
         // Once a refresh token operation has started, we need all other request to wait for this operation (atomically)
         this.#refreshingTokenPromise = (async () => {
           try {
-            this.uppy.log(
-              `[CompanionClient] Refreshing expired auth token`,
-              'info',
-            )
+            this.uppy.log(`[CompanionClient] Refreshing expired auth token`)
             const response = await super.request<{ uppyAuthToken: string }>({
               path: this.refreshTokenUrl(),
               method: 'POST',

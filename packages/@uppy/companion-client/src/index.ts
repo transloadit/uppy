@@ -2,12 +2,9 @@
  * Manages communications with Companion
  */
 
-export { default as RequestClient } from './RequestClient.ts'
-export { default as Provider } from './Provider.ts'
-export { default as SearchProvider } from './SearchProvider.ts'
-
-export { default as getAllowedHosts } from './getAllowedHosts.ts'
-
-export * as tokenStorage from './tokenStorage.ts'
-
-export type { CompanionPluginOptions } from './CompanionPluginOptions.ts'
+export type { CompanionPluginOptions } from './CompanionPluginOptions.js'
+export { default as getAllowedHosts } from './getAllowedHosts.js'
+export { default as Provider } from './Provider.js'
+export { default as RequestClient } from './RequestClient.js'
+export { default as SearchProvider } from './SearchProvider.js'
+export * as tokenStorage from './tokenStorage.js'

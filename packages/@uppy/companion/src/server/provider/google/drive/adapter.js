@@ -1,11 +1,11 @@
-const querystring = require('node:querystring')
+import querystring from 'node:querystring'
 
 const getUsername = (data) => {
   return data.user.emailAddress
 }
 
-exports.isGsuiteFile = (mimeType) => {
-  return mimeType && mimeType.startsWith('application/vnd.google')
+export const isGsuiteFile = (mimeType) => {
+  return mimeType?.startsWith('application/vnd.google')
 }
 
 const isSharedDrive = (item) => {
@@ -13,10 +13,13 @@ const isSharedDrive = (item) => {
 }
 
 const isFolder = (item) => {
-  return item.mimeType === 'application/vnd.google-apps.folder' || isSharedDrive(item)
+  return (
+    item.mimeType === 'application/vnd.google-apps.folder' ||
+    isSharedDrive(item)
+  )
 }
 
-exports.isShortcut = (mimeType) => {
+export const isShortcut = (mimeType) => {
   return mimeType === 'application/vnd.google-apps.shortcut'
 }
 
@@ -33,7 +36,10 @@ const getItemIcon = (item) => {
       : `${item.backgroundImageLink}${size}`
   }
 
-  if (item.thumbnailLink && !item.mimeType.startsWith('application/vnd.google')) {
+  if (
+    item.thumbnailLink &&
+    !item.mimeType.startsWith('application/vnd.google')
+  ) {
     const smallerThumbnailLink = item.thumbnailLink.replace('s220', 's40')
     return smallerThumbnailLink
   }
@@ -52,7 +58,11 @@ const getItemSubList = (item) => {
   ]
 
   return item.files.filter((i) => {
-    return isFolder(i) || !exports.isGsuiteFile(i.mimeType) || allowedGSuiteTypes.includes(i.mimeType)
+    return (
+      isFolder(i) ||
+      !isGsuiteFile(i.mimeType) ||
+      allowedGSuiteTypes.includes(i.mimeType)
+    )
   })
 }
 
@@ -73,27 +83,31 @@ const getItemName = (item) => {
   return item.name ? item.name : '/'
 }
 
-exports.getGsuiteExportType = (mimeType) => {
+export const getGsuiteExportType = (mimeType) => {
   const typeMaps = {
-    'application/vnd.google-apps.document': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.google-apps.document':
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/vnd.google-apps.drawing': 'image/png',
-    'application/vnd.google-apps.script': 'application/vnd.google-apps.script+json',
-    'application/vnd.google-apps.spreadsheet': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'application/vnd.google-apps.presentation': 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    'application/vnd.google-apps.script':
+      'application/vnd.google-apps.script+json',
+    'application/vnd.google-apps.spreadsheet':
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/vnd.google-apps.presentation':
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
   }
 
   return typeMaps[mimeType] || 'application/pdf'
 }
 
-function getMimeType2 (mimeType) {
-  if (exports.isGsuiteFile(mimeType)) {
-    return exports.getGsuiteExportType(mimeType)
+function getMimeType2(mimeType) {
+  if (isGsuiteFile(mimeType)) {
+    return getGsuiteExportType(mimeType)
   }
   return mimeType
 }
 
 const getMimeType = (item) => {
-  if (exports.isShortcut(item.mimeType)) {
+  if (isShortcut(item.mimeType)) {
     return getMimeType2(item.shortcutDetails.targetMimeType)
   }
   return getMimeType2(item.mimeType)
@@ -123,24 +137,31 @@ const getNextPagePath = (data, currentQuery, currentPath) => {
   return `${currentPath}?${querystring.stringify(query)}`
 }
 
-const getImageHeight = (item) => item.imageMediaMetadata && item.imageMediaMetadata.height
+const getImageHeight = (item) => item.imageMediaMetadata?.height
 
-const getImageWidth = (item) => item.imageMediaMetadata && item.imageMediaMetadata.width
+const getImageWidth = (item) => item.imageMediaMetadata?.width
 
-const getImageRotation = (item) => item.imageMediaMetadata && item.imageMediaMetadata.rotation
+const getImageRotation = (item) => item.imageMediaMetadata?.rotation
 
-const getImageDate = (item) => item.imageMediaMetadata && item.imageMediaMetadata.date
+const getImageDate = (item) => item.imageMediaMetadata?.date
 
-const getVideoHeight = (item) => item.videoMediaMetadata && item.videoMediaMetadata.height
+const getVideoHeight = (item) => item.videoMediaMetadata?.height
 
-const getVideoWidth = (item) => item.videoMediaMetadata && item.videoMediaMetadata.width
+const getVideoWidth = (item) => item.videoMediaMetadata?.width
 
-const getVideoDurationMillis = (item) => item.videoMediaMetadata && item.videoMediaMetadata.durationMillis
+const getVideoDurationMillis = (item) => item.videoMediaMetadata?.durationMillis
 
 // Hopefully this name will not be used by Google
-exports.VIRTUAL_SHARED_DIR = 'shared-with-me'
+export const VIRTUAL_SHARED_DIR = 'shared-with-me'
 
-exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showSharedWithMe, about) => {
+export const adaptData = (
+  listFilesResp,
+  sharedDrivesResp,
+  directory,
+  query,
+  showSharedWithMe,
+  about,
+) => {
   const adaptItem = (item) => ({
     isFolder: isFolder(item),
     icon: getItemIcon(item),
@@ -168,18 +189,18 @@ exports.adaptData = (listFilesResp, sharedDrivesResp, directory, query, showShar
 
   // “Shared with me” is a list of shared documents,
   // not the same as sharedDrives
-  const virtualItem = showSharedWithMe && ({
+  const virtualItem = showSharedWithMe && {
     isFolder: true,
     icon: 'folder',
     name: 'Shared with me',
     mimeType: 'application/vnd.google-apps.folder',
-    id: exports.VIRTUAL_SHARED_DIR,
-    requestPath: exports.VIRTUAL_SHARED_DIR,
-  })
+    id: VIRTUAL_SHARED_DIR,
+    requestPath: VIRTUAL_SHARED_DIR,
+  }
 
   const adaptedItems = [
     ...(virtualItem ? [virtualItem] : []), // shared folder first
-    ...([...sharedDrives, ...items].map(adaptItem)),
+    ...[...sharedDrives, ...items].map(adaptItem),
   ]
 
   return {

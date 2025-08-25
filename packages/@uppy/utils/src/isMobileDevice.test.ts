@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import isMobileDevice from './isMobileDevice.ts'
+import isMobileDevice from './isMobileDevice.js'
 
 let fakeUserAgent: string | null = null
 

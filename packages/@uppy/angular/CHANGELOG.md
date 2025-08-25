@@ -1,5 +1,12 @@
 # @uppy/angular
 
+## 0.8.0
+
+Released: 2025-04-14
+Included in: Uppy v4.15.0
+
+- @uppy/angular: Support Angular 19 (#5709) (Arnaud Flaesch / #5715)
+
 ## 0.7.0-beta.5
 
 Released: 2024-06-04

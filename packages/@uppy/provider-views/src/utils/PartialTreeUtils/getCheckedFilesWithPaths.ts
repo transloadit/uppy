@@ -1,11 +1,10 @@
-/* eslint-disable no-param-reassign */
 import type {
   PartialTree,
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
-} from '@uppy/core/lib/Uppy.js'
-import type { CompanionFile } from '@uppy/utils/lib/CompanionFile'
+} from '@uppy/core'
+import type { CompanionFile } from '@uppy/utils'
 
 export interface Cache {
   [key: string]: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -55,11 +54,11 @@ const getCheckedFilesWithPaths = (
 
     const absDirPath = `/${absFolders.map((i) => i.data.name).join('/')}`
     const relDirPath =
-      relFolders.length === 1 ?
-        // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
-        // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
-        undefined
-      : relFolders.map((i) => i.data.name).join('/')
+      relFolders.length === 1
+        ? // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
+          // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
+          undefined
+        : relFolders.map((i) => i.data.name).join('/')
 
     return {
       ...file.data,

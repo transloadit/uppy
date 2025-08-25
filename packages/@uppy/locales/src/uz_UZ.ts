@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const uz_UZ: Locale<0 | 1> = {
   strings: {},
@@ -38,7 +38,6 @@ uz_UZ.strings = {
   browseFolders: "papkalarni ko'rib chiqish",
   cancel: 'Bekor qilish',
   cancelUpload: 'Yuklashni bekor qilish',
-  chooseFiles: 'Fayllarni tanlang',
   closeModal: 'Modalni yoping',
   companionError: 'Companiya bilan ulanish amalga oshmadi',
   companionUnauthorizeHint:
@@ -58,7 +57,6 @@ uz_UZ.strings = {
   dataUploadedOfTotal: '%{total} dan %{complete}',
   discardRecordedFile: 'Yozib olingan faylni olib tashlang',
   done: 'Bajarildi',
-  dropHereOr: 'Bu yerga tashlang yoki %{browse}',
   dropHint: 'Fayllaringizni shu yerga tashlang',
   dropPasteBoth:
     'Fayllarni bu yerga, %{browseFiles} yoki %{browseFolders} qoldiring.',
@@ -222,6 +220,12 @@ uz_UZ.strings = {
   },
   zoomIn: 'Kattalashtirish',
   zoomOut: 'Kichraytirish',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.uz_UZ = uz_UZ
 }
 
 export default uz_UZ

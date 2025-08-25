@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import isObjectURL from './isObjectURL.ts'
+import isObjectURL from './isObjectURL.js'
 
 describe('isObjectURL', () => {
   it('should return true if the specified url is an object url', () => {

@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const it_IT: Locale<0 | 1> = {
   strings: {},
@@ -24,7 +24,6 @@ it_IT.strings = {
   browseFiles: 'sfoglia',
   cancel: 'Annulla',
   cancelUpload: 'Annulla upload',
-  chooseFiles: 'Scegli i file',
   closeModal: 'Chiudi modale',
   companionError: 'Connessione con Companion fallita',
   complete: 'Completato',
@@ -38,7 +37,6 @@ it_IT.strings = {
   dashboardWindowTitle: 'File Uploader (Premi Esc per chiudere)',
   dataUploadedOfTotal: '%{complete} di %{total}',
   done: 'Fatto',
-  dropHereOr: 'Trascina i file qui o %{browse}',
   dropHint: 'Trascina i file qui',
   dropPasteBoth: 'Trascina i file qui, incolla o %{browse}',
   dropPasteFiles: 'Trascina i file qui, incolla o %{browse}',
@@ -140,6 +138,12 @@ it_IT.strings = {
   selectFileNamed: 'Seleziona il file %{name}',
   unselectFileNamed: 'Deseleziona il file %{name}',
   openFolderNamed: 'Cartella aperta %{name}',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.it_IT = it_IT
 }
 
 export default it_IT

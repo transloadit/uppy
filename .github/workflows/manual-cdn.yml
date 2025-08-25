@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -44,7 +44,7 @@ jobs:
           node-version: lts/*
       - name: Install upload-to-cdn dependencies
         if: ${{ inputs.version }}
-        run: corepack yarn workspaces focus @uppy-dev/upload-to-cdn
+        run: corepack yarn workspaces focus uppy
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
@@ -59,7 +59,7 @@ jobs:
         run: corepack yarn run build
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ !inputs.force }}
-        run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION"
+        run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}
@@ -67,7 +67,7 @@ jobs:
           EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ inputs.force }}
-        run: corepack yarn run uploadcdn "$PACKAGE" "$VERSION" -- --force
+        run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION" --force
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}

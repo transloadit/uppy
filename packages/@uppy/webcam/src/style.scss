@@ -1,5 +1,6 @@
-@import '@uppy/core/src/_utils.scss';
-@import '@uppy/core/src/_variables.scss';
+@use "sass:color";
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 
 .uppy-Webcam-container {
   display: flex;
@@ -17,7 +18,7 @@
   width: 100%;
   overflow: hidden;
   text-align: center;
-  background-color: $gray-800;
+  background-color: variables.$gray-800;
 }
 
 .uppy-Webcam-video {
@@ -32,6 +33,27 @@
 }
 
 .uppy-Webcam-video--mirrored {
+  transform: scaleX(-1);
+}
+
+.uppy-Webcam-imageContainer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.uppy-Webcam-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto;
+}
+
+.uppy-Webcam-image--mirrored {
   transform: scaleX(-1);
 }
 
@@ -74,7 +96,7 @@
   background-size:
     0.65em auto,
     100%;
-  border: 1px solid $gray-600;
+  border: 1px solid variables.$gray-600;
 
   .uppy-size--lg & {
     margin-bottom: 0;
@@ -100,7 +122,7 @@
 .uppy-Webcam-recordingLength {
   flex-grow: 0;
   width: 25%;
-  color: $gray-600;
+  color: variables.$gray-600;
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
     'Courier New', monospace;
   text-align: right;
@@ -111,31 +133,31 @@
 }
 
 .uppy-Webcam-button {
-  @include blue-border-focus;
+  @include utils.blue-border-focus;
 
   width: 45px;
   height: 45px;
-  color: $white;
-  background-color: $red;
+  color: variables.$white;
+  background-color: variables.$red;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.3s;
 
   &:hover {
-    background-color: darken($red, 5%);
+    background-color: color.adjust(variables.$red, $lightness: -5%);
   }
 
   [data-uppy-theme='dark'] & {
-    @include blue-border-focus--dark;
+    @include utils.blue-border-focus--dark;
   }
 }
 
 .uppy-Webcam-button--submit {
   margin: 0 12px;
-  background-color: $blue;
+  background-color: variables.$blue;
 
   &:hover {
-    background-color: darken($blue, 5%);
+    background-color: color.adjust(variables.$blue, $lightness: -5%);
   }
 }
 
@@ -172,7 +194,7 @@
 .uppy-Webcam-permissons p {
   max-width: 450px;
   margin: 0;
-  color: $gray-500;
+  color: variables.$gray-500;
   line-height: 1.3;
   line-height: 1.45;
   text-align: center;
@@ -182,7 +204,7 @@
   width: 100px;
   height: 75px;
   margin-bottom: 30px;
-  color: $gray-400;
+  color: variables.$gray-400;
 }
 
 .uppy-Webcam-title {
@@ -190,13 +212,13 @@
   margin: 0;
   margin-bottom: 5px;
   padding: 0 15px;
-  color: $gray-800;
+  color: variables.$gray-800;
   font-weight: 400;
   font-size: 22px;
   line-height: 1.35;
   text-align: center;
 
   [data-uppy-theme='dark'] & {
-    color: $gray-200;
+    color: variables.$gray-200;
   }
 }

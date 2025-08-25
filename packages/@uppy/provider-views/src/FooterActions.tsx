@@ -1,11 +1,9 @@
-import { h } from 'preact'
-import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Meta, Body } from '@uppy/utils/lib/UppyFile'
+import type { Body, Meta, PartialTree } from '@uppy/core'
+import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'
-import type { PartialTree } from '@uppy/core/lib/Uppy.js'
 import { useMemo } from 'preact/hooks'
-import getNumberOfSelectedFiles from './utils/PartialTreeUtils/getNumberOfSelectedFiles.ts'
-import ProviderView from './ProviderView/ProviderView.tsx'
+import type ProviderView from './ProviderView/ProviderView.js'
+import getNumberOfSelectedFiles from './utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 
 export default function FooterActions<M extends Meta, B extends Body>({
   cancelSelection,

@@ -1,12 +1,10 @@
-/* eslint-disable react/destructuring-assignment */
-import { h } from 'preact'
-import type { I18n } from '@uppy/utils/lib/Translator'
-import type { Body, Meta } from '@uppy/utils/lib/UppyFile'
-import type { PartialTreeFolder } from '@uppy/core/lib/Uppy.js'
+import type { Body, Meta, PartialTreeFolder } from '@uppy/core'
+import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'
-import User from './User.tsx'
-import Breadcrumbs from '../Breadcrumbs.tsx'
-import type ProviderView from './ProviderView.ts'
+import type { h } from 'preact'
+import Breadcrumbs from '../Breadcrumbs.js'
+import type ProviderView from './ProviderView.js'
+import User from './User.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {
   showBreadcrumbs: boolean
@@ -34,7 +32,7 @@ export default function Header<M extends Meta, B extends Body>(
           <Breadcrumbs
             openFolder={props.openFolder}
             breadcrumbs={props.breadcrumbs}
-            breadcrumbsIcon={props.pluginIcon && props.pluginIcon()}
+            breadcrumbsIcon={props.pluginIcon?.()}
             title={props.title}
             i18n={props.i18n}
           />

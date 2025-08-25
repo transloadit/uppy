@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils/lib/Translator'
+import type { Locale } from '@uppy/utils'
 
 const gl_ES: Locale<0 | 1> = {
   strings: {},
@@ -25,7 +25,6 @@ gl_ES.strings = {
   browseFiles: 'navegar',
   cancel: 'Cancelar',
   cancelUpload: 'Cancelar subida',
-  chooseFiles: 'Seleccionar arquivos',
   closeModal: 'Pechar xanela flotante',
   companionError: 'Conexión con Companion fallou',
   complete: 'Completado',
@@ -40,7 +39,6 @@ gl_ES.strings = {
     'Xanela para cargar arquivos (Presiona escape para cerrar)',
   dataUploadedOfTotal: '%{complete} de %{total}',
   done: 'Feito',
-  dropHereOr: 'Soltar arquivos aquí ou %{browse}',
   dropHint: 'Solta os teus arqivos aquí',
   dropPasteBoth: 'Soltar arquivos aquí, pegar ou %{browse}',
   dropPasteFiles: 'Soltar arquivos aquí, pegar ou %{browse}',
@@ -143,6 +141,12 @@ gl_ES.strings = {
   selectFileNamed: 'Seleccione arquivo %{name}',
   unselectFileNamed: 'Deseleccionar arquivo %{name}',
   openFolderNamed: 'Cartafol aberto %{name}',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.gl_ES = gl_ES
 }
 
 export default gl_ES

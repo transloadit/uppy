@@ -1,4 +1,4 @@
-const logger = require('./logger')
+import * as logger from './logger.js'
 
 /**
  * Forbidden header names.
@@ -39,8 +39,9 @@ const forbiddenRegex = [/^proxy-.*$/, /^sec-.*$/]
  */
 const isForbiddenHeader = (header) => {
   const headerLower = header.toLowerCase()
-  const forbidden = forbiddenNames.indexOf(headerLower) >= 0
-    || forbiddenRegex.findIndex((regex) => regex.test(headerLower)) >= 0
+  const forbidden =
+    forbiddenNames.indexOf(headerLower) >= 0 ||
+    forbiddenRegex.findIndex((regex) => regex.test(headerLower)) >= 0
 
   if (forbidden) {
     logger.warn(`Header forbidden: ${header}`, 'header.forbidden')
@@ -48,8 +49,12 @@ const isForbiddenHeader = (header) => {
   return forbidden
 }
 
-module.exports = (headers) => {
-  if (headers == null || typeof headers !== 'object' || Array.isArray(headers)) {
+export default function headerBlacklist(headers) {
+  if (
+    headers == null ||
+    typeof headers !== 'object' ||
+    Array.isArray(headers)
+  ) {
     return {}
   }
 

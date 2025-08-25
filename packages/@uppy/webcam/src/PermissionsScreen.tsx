@@ -1,5 +1,5 @@
-import type { I18n } from '@uppy/utils/lib/Translator'
-import { h, type ComponentChild } from 'preact'
+import type { I18n } from '@uppy/utils'
+import type { ComponentChild } from 'preact'
 
 interface PermissionScreenProps {
   hasCamera: boolean
@@ -19,9 +19,9 @@ export default function PermissionsScreen({
         {hasCamera ? i18n('allowAccessTitle') : i18n('noCameraTitle')}
       </div>
       <p>
-        {hasCamera ?
-          i18n('allowAccessDescription')
-        : i18n('noCameraDescription')}
+        {hasCamera
+          ? i18n('allowAccessDescription')
+          : i18n('noCameraDescription')}
       </p>
     </div>
   )
