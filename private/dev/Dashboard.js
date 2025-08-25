@@ -192,6 +192,15 @@ export default () => {
         shouldUseMultipart: false,
       })
       break
+    case 's3-with-transloadit-companion':
+      uppyDashboard.use(AwsS3, { endpoint: COMPANION_URL })
+      uppyDashboard.use(Transloadit, {
+        service: TRANSLOADIT_SERVICE_URL,
+        waitForEncoding: true,
+        assemblyOptions,
+        onlyRemoteFiles: true,
+      })
+      break
     case 's3-multipart':
       uppyDashboard.use(AwsS3, {
         endpoint: COMPANION_URL,
@@ -218,6 +227,7 @@ export default () => {
         waitForEncoding: true,
         importFromUploadURLs: true,
         assemblyOptions,
+        onlyRemoteFiles: true,
       })
       break
     case 'transloadit-xhr':
