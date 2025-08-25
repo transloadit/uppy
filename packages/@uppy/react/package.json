@@ -59,7 +59,6 @@
     "./css/style.css": "./dist/styles.css",
     "./dashboard": "./lib/Dashboard.js",
     "./dashboard-modal": "./lib/DashboardModal.js",
-    "./status-bar": "./lib/StatusBar.js",
     "./package.json": "./package.json"
   },
   "peerDependencies": {
