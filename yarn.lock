@@ -9296,6 +9296,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/drag-drop@workspace:^, @uppy/drag-drop@workspace:packages/@uppy/drag-drop":
+  version: 0.0.0-use.local
+  resolution: "@uppy/drag-drop@workspace:packages/@uppy/drag-drop"
+  dependencies:
+    "@uppy/utils": "workspace:^"
+    cssnano: "npm:^7.0.7"
+    postcss: "npm:^8.5.6"
+    postcss-cli: "npm:^11.0.1"
+    preact: "npm:^10.5.13"
+    sass: "npm:^1.89.2"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/drop-target@workspace:*, @uppy/drop-target@workspace:^, @uppy/drop-target@workspace:packages/@uppy/drop-target":
   version: 0.0.0-use.local
   resolution: "@uppy/drop-target@workspace:packages/@uppy/drop-target"
@@ -9558,6 +9574,24 @@ __metadata:
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:
     "@uppy/utils": "workspace:^"
+    cssnano: "npm:^7.0.7"
+    postcss: "npm:^8.5.6"
+    postcss-cli: "npm:^11.0.1"
+    preact: "npm:^10.5.13"
+    sass: "npm:^1.89.2"
+    typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@uppy/status-bar@workspace:^, @uppy/status-bar@workspace:packages/@uppy/status-bar":
+  version: 0.0.0-use.local
+  resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
+  dependencies:
+    "@transloadit/prettier-bytes": "npm:^0.3.4"
+    "@uppy/utils": "workspace:^"
+    classnames: "npm:^2.2.6"
     cssnano: "npm:^7.0.7"
     postcss: "npm:^8.5.6"
     postcss-cli: "npm:^11.0.1"
@@ -23851,6 +23885,7 @@ __metadata:
     "@uppy/compressor": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
+    "@uppy/drag-drop": "workspace:^"
     "@uppy/drop-target": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
@@ -23866,6 +23901,7 @@ __metadata:
     "@uppy/provider-views": "workspace:^"
     "@uppy/remote-sources": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
     "@uppy/store-default": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
     "@uppy/transloadit": "workspace:^"
