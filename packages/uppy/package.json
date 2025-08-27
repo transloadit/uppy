@@ -53,6 +53,7 @@
     "@uppy/google-drive-picker": "workspace:^",
     "@uppy/google-photos-picker": "workspace:^",
     "@uppy/image-editor": "workspace:^",
+    "@uppy/image-generator": "workspace:^",
     "@uppy/instagram": "workspace:^",
     "@uppy/locales": "workspace:^",
     "@uppy/onedrive": "workspace:^",

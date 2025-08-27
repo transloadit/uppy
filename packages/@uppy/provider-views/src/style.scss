@@ -135,6 +135,7 @@
     color: variables.$gray-200;
   }
 }
+
 // ...uppy-Provider-breadcrumbs|
 
 .uppy-ProviderBrowser {
@@ -287,6 +288,23 @@
   }
 }
 
+.uppy-SearchInput-spinner {
+  animation: uppy-SearchInput-spin 1s linear infinite;
+  margin-left: 1em;
+}
+
+@keyframes uppy-SearchInput-spin {
+  from {
+    transform: rotate(0deg);
+    stroke-dashoffset: 31.416;
+  }
+
+  to {
+    transform: rotate(360deg);
+    stroke-dashoffset: 0;
+  }
+}
+
 .uppy-ProviderBrowser-userLogout {
   @include utils.highlight-focus;
   // for focus
@@ -376,6 +394,7 @@
     flex-direction: column-reverse;
     align-items: stretch;
   }
+
   .uppy-ProviderBrowser-footer-error {
     padding-bottom: 10px;
   }
@@ -385,6 +404,7 @@
 .picker-dialog-bg {
   z-index: 20000 !important;
 }
+
 .picker-dialog {
   z-index: 20001 !important;
 }

@@ -3,8 +3,7 @@
   "description": "AI-powered image generation for Uppy",
   "version": "0.0.0",
   "license": "MIT",
-  "main": "lib/index.js",
-  "style": "dist/style.min.css",
+  "sideEffects": false,
   "type": "module",
   "keywords": [
     "file uploader",
@@ -22,10 +21,34 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./css/style.css": "./dist/style.css",
+    "./css/style.min.css": "./dist/style.min.css",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "typecheck": "tsc --build"
+  },
   "dependencies": {
     "@uppy/provider-views": "workspace:^",
     "@uppy/utils": "workspace:^",
     "preact": "^10.5.13"
+  },
+  "devDependencies": {
+    "@uppy/core": "workspace:^",
+    "cssnano": "^7.0.7",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.89.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

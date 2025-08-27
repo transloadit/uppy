@@ -9420,9 +9420,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/image-generator@workspace:packages/@uppy/image-generator"
   dependencies:
+    "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/utils": "workspace:^"
+    cssnano: "npm:^7.0.7"
+    postcss: "npm:^8.5.6"
+    postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.5.13"
+    sass: "npm:^1.89.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/transloadit": "workspace:^"

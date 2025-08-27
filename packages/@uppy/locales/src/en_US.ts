@@ -98,6 +98,9 @@ en_US.strings = {
     '1': 'Added %{smart_count} files from %{folder}',
   },
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
+  generateImage: 'Generate image',
+  generateImagePlaceholder:
+    'A serene sunset over a mountain lake, with pine trees reflecting in the water',
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFiles: 'Import files from:',

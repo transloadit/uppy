@@ -16,6 +16,8 @@ type Props = {
   showButton?: boolean
   buttonLabel?: string
   buttonCSSClassName?: string
+
+  loading?: boolean
 }
 
 function SearchInput({
@@ -32,6 +34,8 @@ function SearchInput({
   showButton = false,
   buttonLabel = '',
   buttonCSSClassName = '',
+
+  loading = false,
 }: Props) {
   const onInput = (e: ChangeEvent) => {
     setSearchString((e.target as HTMLInputElement).value)
@@ -73,6 +77,7 @@ function SearchInput({
         value={searchString}
         onInput={onInput}
         form={form.id}
+        disabled={loading}
         data-uppy-super-focusable
       />
       {!showButton && (
@@ -95,6 +100,7 @@ function SearchInput({
           type="button"
           aria-label={clearSearchLabel}
           title={clearSearchLabel}
+          disabled={loading}
           onClick={() => setSearchString('')}
         >
           <svg
@@ -109,11 +115,33 @@ function SearchInput({
       )}
       {showButton && (
         <button
+          disabled={loading}
           className={`uppy-u-reset uppy-c-btn uppy-c-btn-primary ${buttonCSSClassName}`}
           type="submit"
           form={form.id}
         >
           {buttonLabel}
+
+          {loading && (
+            <svg
+              className="uppy-SearchInput-spinner"
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray="31.416"
+                strokeDashoffset="31.416"
+              />
+            </svg>
+          )}
         </button>
       )}
     </section>

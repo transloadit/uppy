@@ -12,7 +12,15 @@ interface PluginState extends Record<string, unknown> {
   prompt: string
   results: AssemblyResult[]
   checkedResultIds: Set<AssemblyResult['id']>
+  loading: boolean
 }
+
+const defaultState = {
+  prompt: '',
+  results: [],
+  checkedResultIds: new Set(),
+  loading: false,
+} satisfies PluginState
 
 export default class ImageGenerator<
   M extends Meta,
@@ -27,11 +35,7 @@ export default class ImageGenerator<
 
     this.defaultLocale = locale
 
-    this.setPluginState({
-      prompt: '',
-      results: [],
-      checkedResultIds: new Set(),
-    })
+    this.setPluginState(defaultState)
 
     this.i18nInit()
   }
@@ -57,15 +61,12 @@ export default class ImageGenerator<
     transloadit.setFields({ prompt: this.getPluginState().prompt })
 
     this.uppy.on('transloadit:result', (stepName, result) => {
-      // TODO: this needs to be deterministic
-      // stepName is set by the implementer of the template
-      if (stepName === 'resized') {
-        const { results } = this.getPluginState()
-        this.setPluginState({ results: [...results, result] })
-      }
+      const { results } = this.getPluginState()
+      this.setPluginState({ results: [...results, result] })
     })
 
     try {
+      this.setPluginState({ loading: true })
       await this.uppy.upload()
     } catch {
       // TODO: inform the user
@@ -75,6 +76,7 @@ export default class ImageGenerator<
       // That means users who set `allowMultipleUploadBatches: false` will not
       // be able to actually upload their files, so we reset the state here.
       this.uppy.setState({ allowNewUpload: true })
+      this.setPluginState({ loading: false })
     }
   }
 
@@ -104,15 +106,30 @@ export default class ImageGenerator<
       }))
 
     this.uppy.addFiles(files)
+    this.setPluginState(defaultState)
   }
 
   render() {
-    const { prompt, results, checkedResultIds } = this.getPluginState()
+    const { prompt, results, checkedResultIds, loading } = this.getPluginState()
     const { i18n } = this.uppy
 
     if (results.length > 0) {
       return (
-        <div className="uppy-ImageGenerator-root">
+        <div className="uppy-ImageGenerator-root uppy-reset">
+          <div className="uppy-ImageGenerator-prompt">
+            <input
+              type="text"
+              id="uppy-image-generator-prompt"
+              value={prompt}
+              onInput={(e) =>
+                this.setPluginState({
+                  prompt: (e.target as HTMLInputElement).value,
+                })
+              }
+            />
+            <label for="uppy-image-generator-prompt">Prompt</label>
+          </div>
+
           <ul className="uppy-ImageGenerator-grid">
             {results.map((result) => (
               <li>
@@ -124,7 +141,6 @@ export default class ImageGenerator<
                   checked={checkedResultIds.has(result.id)}
                   data-uppy-super-focusable
                 />
-                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                 <label htmlFor={result.id} className="uppy-u-reset">
                   <img src={result.url} alt={prompt} />
                 </label>
@@ -162,6 +178,7 @@ export default class ImageGenerator<
 
     return (
       <SearchInput
+        loading={loading}
         searchString={prompt || ''}
         setSearchString={(str) => this.setPluginState({ prompt: str })}
         submitSearchString={this.search}
