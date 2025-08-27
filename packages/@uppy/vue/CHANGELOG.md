@@ -1,5 +1,11 @@
 # @uppy/vue
 
+## 3.0.1
+
+### Patch Changes
+
+- a063bc3: Remove status-bar from export map
+
 ## 3.0.0
 
 ### Major Changes

@@ -1,5 +1,17 @@
 # uppy
 
+## 5.1.0
+
+### Minor Changes
+
+- 3290864: Bring back StatusBar and DragDrop into the CDN bundle
+
+### Patch Changes
+
+- Updated dependencies [3290864]
+  - @uppy/status-bar@5.0.0
+  - @uppy/drag-drop@5.0.0
+
 ## 5.0.0
 
 ### Major Changes
