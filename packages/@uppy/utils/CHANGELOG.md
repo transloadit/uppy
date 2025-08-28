@@ -1,5 +1,11 @@
 # @uppy/utils
 
+## 7.0.1
+
+### Patch Changes
+
+- 49522ec: Remove preact/compat imports in favor of preact, preventing JSX type issues in certain setups.
+
 ## 7.0.0
 
 ### Major Changes

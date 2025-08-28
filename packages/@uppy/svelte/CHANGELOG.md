@@ -1,5 +1,15 @@
 # @uppy/svelte
 
+## 5.0.1
+
+### Patch Changes
+
+- 49522ec: Remove preact/compat imports in favor of preact, preventing JSX type issues in certain setups.
+- Updated dependencies [49522ec]
+  - @uppy/components@1.0.1
+  - @uppy/dashboard@5.0.1
+  - @uppy/core@5.0.1
+
 ## 5.0.0
 
 ### Major Changes

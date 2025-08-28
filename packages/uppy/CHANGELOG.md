@@ -1,5 +1,16 @@
 # uppy
 
+## 5.1.1
+
+### Patch Changes
+
+- 7abd062: Add missing styles for drag-drop and status-bar
+- Updated dependencies [49522ec]
+  - @uppy/provider-views@5.0.1
+  - @uppy/dashboard@5.0.1
+  - @uppy/drag-drop@5.0.1
+  - @uppy/core@5.0.1
+
 ## 5.1.0
 
 ### Minor Changes
