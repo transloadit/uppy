@@ -1,0 +1,67 @@
+@use "sass:color";
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
+
+.uppy-DragDrop-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  font-family: variables.$font-family-base;
+  background-color: variables.$white;
+  border-radius: 7px;
+  cursor: pointer;
+
+  // firefox fix: removes thin dotted outline
+  &::-moz-focus-inner {
+    border: 0;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(variables.$blue, 0.4);
+  }
+}
+
+.uppy-DragDrop-inner {
+  margin: 0;
+  padding: 80px 20px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.uppy-DragDrop-arrow {
+  width: 60px;
+  height: 60px;
+  margin-bottom: 17px;
+  fill: color.adjust(variables.$gray-500, $lightness: 30%);
+}
+
+.uppy-DragDrop--isDragDropSupported {
+  border: 2px dashed color.adjust(variables.$gray-500, $lightness: 10%);
+}
+
+.uppy-DragDrop--isDraggingOver {
+  background: variables.$gray-200;
+  border: 2px dashed variables.$blue;
+
+  .uppy-DragDrop-arrow {
+    fill: variables.$gray-500;
+  }
+}
+
+.uppy-DragDrop-label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 1.15em;
+}
+
+.uppy-DragDrop-browse {
+  color: variables.$blue;
+  cursor: pointer;
+}
+
+.uppy-DragDrop-note {
+  color: color.adjust(variables.$gray-500, $lightness: 10%);
+  font-size: 1em;
+}

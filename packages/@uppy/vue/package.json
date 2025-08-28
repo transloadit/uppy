@@ -1,6 +1,6 @@
 {
   "name": "@uppy/vue",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -33,7 +33,6 @@
     "./css/style.css": "./dist/styles.css",
     "./dashboard": "./lib/dashboard.js",
     "./dashboard-modal": "./lib/dashboard-modal.js",
-    "./status-bar": "./lib/status-bar.js",
     "./package.json": "./package.json"
   },
   "peerDependencies": {

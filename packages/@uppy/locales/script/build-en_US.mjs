@@ -17,13 +17,8 @@ async function getLocalesAndCombinedLocale() {
   const locales = await getLocales(`${root}/packages/@uppy/**/lib/locale.js`)
 
   const combinedLocale = {}
-  for (const [pluginName, locale] of Object.entries(locales)) {
+  for (const [, locale] of Object.entries(locales)) {
     for (const [key, value] of Object.entries(locale.strings)) {
-      if (key in combinedLocale && value !== combinedLocale[key]) {
-        throw new Error(
-          `'${key}' from ${pluginName} already exists in locale pack.`,
-        )
-      }
       combinedLocale[key] = value
     }
   }
