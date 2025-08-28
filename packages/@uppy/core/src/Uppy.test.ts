@@ -1761,11 +1761,11 @@ describe('src/Core', () => {
           maxNumberOfFiles: 2,
         },
       })
-
+      const fileName = 'foo1.png';
       try {
         core.addFile({
           source: 'vi',
-          name: 'foo1.png',
+          name: fileName,
           type: 'image/png',
           // @ts-ignore
           data: new File([sampleImage], { type: 'image/png' }),
@@ -1773,7 +1773,7 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
-        expect(err.message).toEqual('You can only upload: image/jpeg')
+        expect(err.message).toEqual(`Failed to upload ${fileName}: You can only upload: image/jpeg`)
       }
 
       core.setOptions({
@@ -1783,7 +1783,7 @@ describe('src/Core', () => {
       try {
         core.addFile({
           source: 'vi',
-          name: 'foo1.png',
+          name: fileName,
           type: 'image/png',
           // @ts-ignore
           data: new File([sampleImage], { type: 'image/png' }),
@@ -1792,7 +1792,7 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err.message).toEqual(
-          'Vous pouvez seulement téléverser: image/jpeg',
+          `Le téléversement de ${fileName} a échoué: Vous pouvez seulement téléverser: image/jpeg`,
         )
       }
 
@@ -2272,11 +2272,11 @@ describe('src/Core', () => {
           allowedFileTypes: ['image/gif', 'image/png'],
         },
       })
-
+      const fileName = 'foo2.jpg'
       try {
         core.addFile({
           source: 'vi',
-          name: 'foo2.jpg',
+          name: fileName,
           type: 'image/jpeg',
           data: testImage,
         })
@@ -2284,10 +2284,10 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err.message).toStrictEqual(
-          'You can only upload: image/gif, image/png',
+          `Failed to upload ${fileName}: You can only upload: image/gif, image/png`,
         )
         expect(core.getState().info[0].message).toEqual(
-          'You can only upload: image/gif, image/png',
+          `Failed to upload ${fileName}: You can only upload: image/gif, image/png`,
         )
       }
     })
@@ -2298,21 +2298,21 @@ describe('src/Core', () => {
           allowedFileTypes: ['.gif', '.jpg', '.jpeg'],
         },
       })
-
+      const fileName = 'foo2.png'
       try {
         core.addFile({
           source: 'vi',
-          name: 'foo2.png',
+          name: fileName,
           type: '',
           data: testImage,
         })
         throw new Error('should have thrown')
       } catch (err) {
         expect(err.message).toStrictEqual(
-          'You can only upload: .gif, .jpg, .jpeg',
+          `Failed to upload ${fileName}: You can only upload: .gif, .jpg, .jpeg`,
         )
         expect(core.getState().info[0].message).toEqual(
-          'You can only upload: .gif, .jpg, .jpeg',
+          `Failed to upload ${fileName}: You can only upload: .gif, .jpg, .jpeg`,
         )
       }
 
@@ -2435,7 +2435,7 @@ describe('src/Core', () => {
       expect(validateRestrictions1).toEqual(
         'This file is smaller than the allowed size of 293 KB',
       )
-      expect(validateRestrictions2).toEqual('You can only upload: image/png')
+      expect(validateRestrictions2).toEqual(`Failed to upload ${newFile.name}: You can only upload: image/png`)
     })
 
     it('should emit `restriction-failed` event when some rule is violated', () => {

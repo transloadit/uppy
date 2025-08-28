@@ -131,10 +131,13 @@ class Restricter<M extends Meta, B extends Body> {
 
       if (!isCorrectFileType) {
         const allowedFileTypesString = allowedFileTypes.join(', ')
-        throw new RestrictionError(
-          this.getI18n()('youCanOnlyUploadFileTypes', {
-            types: allowedFileTypesString,
-          }),
+        const localizedFailToUploadMsg = this.getI18n()('failedToUpload', {
+          file: `${file.name}`
+        })
+        const localizedUnsupportedFileTypeMsg = this.getI18n()('youCanOnlyUploadFileTypes', {
+          types: allowedFileTypesString,
+        })
+        throw new RestrictionError(`${localizedFailToUploadMsg}: ${localizedUnsupportedFileTypeMsg}`,
           { file } as { file: UppyFile<M, B> },
         )
       }
