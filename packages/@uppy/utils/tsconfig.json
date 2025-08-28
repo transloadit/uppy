@@ -5,6 +5,5 @@
     "emitDeclarationOnly": false,
     "noEmit": true
   },
-  "include": ["src/**/*.{js,jsx,ts,tsx}"],
-  "references": []
+  "include": ["./src"]
 }

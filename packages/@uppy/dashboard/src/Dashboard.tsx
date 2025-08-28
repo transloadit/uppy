@@ -15,8 +15,7 @@ import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import type { LocaleStrings } from '@uppy/utils'
 import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/utils'
 import { nanoid } from 'nanoid/non-secure'
-import type { ComponentChild, VNode } from 'preact'
-import type { TargetedEvent } from 'preact/compat'
+import type { ComponentChild, h, VNode } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
@@ -771,7 +770,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   private handleInputChange = (
-    event: TargetedEvent<HTMLInputElement, Event>,
+    event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
   ) => {
     event.preventDefault()
     const files = toArray(event.currentTarget.files || [])

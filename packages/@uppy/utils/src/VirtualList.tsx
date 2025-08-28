@@ -26,7 +26,7 @@
  * - Tweaked styles for Uppy's Dashboard use case
  */
 
-import type { HTMLAttributes, ReactNode } from 'preact/compat'
+import type { ComponentChild, h } from 'preact'
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 
 const STYLE_INNER = {
@@ -63,9 +63,9 @@ export default function VirtualList<T>({
   data: T[]
   rowHeight: number
   padding?: number // last visible + overscan row index + padding to allow keyboard focus to travel past the visible area
-  renderRow: (item: T) => ReactNode
+  renderRow: (item: T) => ComponentChild
   overscanCount?: number
-} & HTMLAttributes<HTMLDivElement>) {
+} & h.JSX.HTMLAttributes<HTMLDivElement>) {
   const scrollerRef = useRef<HTMLDivElement>(null)
 
   const [offset, setOffset] = useState(0)
