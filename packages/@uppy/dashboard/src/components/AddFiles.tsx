@@ -1,5 +1,5 @@
 import type { I18n, Translator } from '@uppy/utils'
-import { Component, type ComponentChild, type h, Fragment } from 'preact'
+import { Component, type ComponentChild, Fragment, type h } from 'preact'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
 interface AddFilesProps {

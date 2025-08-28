@@ -15,7 +15,7 @@ import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import type { LocaleStrings } from '@uppy/utils'
 import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/utils'
 import { nanoid } from 'nanoid/non-secure'
-import type { ComponentChild, VNode, h } from 'preact'
+import type { ComponentChild, h, VNode } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
