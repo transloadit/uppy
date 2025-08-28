@@ -8,8 +8,7 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils'
 import { getDroppedFiles, isDragDropSupported, toArray } from '@uppy/utils'
-import type { ComponentChild } from 'preact'
-import type { TargetedEvent } from 'preact/compat'
+import type { ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -81,7 +80,9 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  private onInputChange = (event: TargetedEvent<HTMLInputElement, Event>) => {
+  private onInputChange = (
+    event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
+  ) => {
     const files = toArray(event.currentTarget.files || [])
     if (files.length > 0) {
       this.uppy.log('[DragDrop] Files selected through input')

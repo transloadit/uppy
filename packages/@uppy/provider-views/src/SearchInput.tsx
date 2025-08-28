@@ -1,5 +1,4 @@
 import { nanoid } from 'nanoid/non-secure'
-import type { ChangeEvent } from 'preact/compat'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 
 type Props = {
@@ -33,7 +32,7 @@ function SearchInput({
   buttonLabel = '',
   buttonCSSClassName = '',
 }: Props) {
-  const onInput = (e: ChangeEvent) => {
+  const onInput = (e: Event) => {
     setSearchString((e.target as HTMLInputElement).value)
   }
 

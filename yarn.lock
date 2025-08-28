@@ -8717,7 +8717,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.0.0, @types/react@npm:^18.0.8":
+"@types/react@npm:^18.0.8":
   version: 18.3.23
   resolution: "@types/react@npm:18.3.23"
   dependencies:
@@ -9152,7 +9152,6 @@ __metadata:
     "@types/morgan": "npm:1.7.37"
     "@types/ms": "npm:0.7.31"
     "@types/node": "npm:^20.19.0"
-    "@types/react": "npm:^18.0.0"
     "@types/request": "npm:2.48.8"
     "@types/webpack": "npm:^5.28.0"
     "@types/ws": "npm:8.5.3"

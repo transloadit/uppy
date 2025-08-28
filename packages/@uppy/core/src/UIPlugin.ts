@@ -1,6 +1,6 @@
 import type { Body, Meta } from '@uppy/utils'
 import { findDOMElement, getTextDirection } from '@uppy/utils'
-import { render } from 'preact/compat'
+import { render } from 'preact'
 import type { PluginOpts } from './BasePlugin.js'
 import BasePlugin from './BasePlugin.js'
 import type { State } from './Uppy.js'
