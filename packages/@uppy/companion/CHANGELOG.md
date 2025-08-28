@@ -1,5 +1,11 @@
 # @uppy/companion
 
+## 6.0.1
+
+### Patch Changes
+
+- 49522ec: Remove preact/compat imports in favor of preact, preventing JSX type issues in certain setups.
+
 ## 6.0.0
 
 ### Major Changes
