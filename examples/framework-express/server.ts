@@ -4,6 +4,7 @@ import { FileStore } from "@tus/file-store";
 import express from "express";
 import { mkdir } from "fs/promises";
 import path from "path";
+import type { ViteDevServer } from "vite";
 
 // Setup upload directory
 const uploadDir = path.join(process.cwd(), "uploads");
@@ -15,30 +16,20 @@ const tusServer = new TusServer({
   datastore: new FileStore({ directory: uploadDir }),
 });
 
-// Setup Vite dev server or production build
-const viteDevServer =
-  process.env.NODE_ENV === "production"
-    ? undefined
-    : await import("vite").then((vite) =>
-        vite.createServer({ server: { middlewareMode: true } })
-      );
+// Setup Vite dev server
+const viteDevServer: ViteDevServer = await import("vite").then((vite) =>
+  vite.createServer({ server: { middlewareMode: true } })
+);
 
 // React Router request handler
 const reactRouterHandler = createRequestHandler({
-  build: viteDevServer
-    ? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
-    : await import("./build/server/index.js"),
+  build: () => viteDevServer.ssrLoadModule("virtual:react-router/server-build") as Promise<any>,
 });
 
 const app = express();
 
-// Vite dev middleware or static assets
-if (viteDevServer) {
-  app.use(viteDevServer.middlewares);
-} else {
-  app.use("/assets", express.static("build/client/assets"));
-  app.use(express.static("build/client"));
-}
+// Use Vite dev middleware
+app.use(viteDevServer.middlewares);
 
 // TUS upload endpoints (before React Router)
 app.all("/api/upload", (req, res) => tusServer.handle(req, res));

@@ -21,8 +21,8 @@ This example shows the **bare minimum** to integrate Uppy with React Router v7:
 
 ## Key Files
 
-### `server.js` - Express + TUS + React Router
-```javascript
+### `server.ts` - Express + TUS + React Router
+```typescript
 // Handle TUS uploads before React Router
 app.all("/api/upload", (req, res) => tusServer.handle(req, res));
 app.all("/api/upload/*", (req, res) => tusServer.handle(req, res));
@@ -67,9 +67,9 @@ hydrateRoot(document, <HydratedRouter />);
 ## That's It!
 
 Just **4 files** to get Uppy working with React Router v7:
-- Express server with TUS
-- Upload route with Dashboard
-- Basic SSR
-- Basic hydration
+- TypeScript Express server with TUS (`server.ts`)
+- Upload route with Dashboard (`routes/_index.tsx`)
+- Streaming SSR (`entry.server.tsx`)
+- Client hydration (`entry.client.tsx`)
 
 Perfect starting point for adding file uploads to your React Router v7 app! 🚀
