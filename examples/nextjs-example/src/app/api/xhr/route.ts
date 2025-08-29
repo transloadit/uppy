@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { writeFile } from 'node:fs/promises'
+import type { NextRequest } from 'next/server'
+import { NextResponse } from 'next/server'
+import { writeFile, mkdir } from 'node:fs/promises'
 import path from 'node:path'
 
 export const config = {
@@ -18,13 +19,22 @@ export async function POST(request: NextRequest) {
 
   const buffer = Buffer.from(await file.arrayBuffer())
   const filename = file.name.replace(/\s/g, '-')
-  const filepath = path.join(process.cwd(), 'public', 'uploads', filename)
+
+  // Use the same upload directory as TUS server for consistency
+  const uploadDir = path.join(process.cwd(), 'files')
+  const filepath = path.join(uploadDir, filename)
 
   try {
+    // Ensure the upload directory exists
+    await mkdir(uploadDir, { recursive: true }).catch(() => {
+      // Directory might already exist, ignore the error
+    })
+
     await writeFile(filepath, buffer)
     return NextResponse.json({
       message: 'File uploaded successfully',
       filename,
+      filepath: `/files/${filename}`,
     })
   } catch (error) {
     console.error('Error saving file:', error)
