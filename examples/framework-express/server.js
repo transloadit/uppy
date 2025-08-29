@@ -53,6 +53,10 @@ app.use(express.static("build/client", { maxAge: "1h" }));
 app.use(morgan("tiny"));
 
 // Handle TUS uploads before React Router
+app.all("/api/upload", (req, res) => {
+  return tusServer.handle(req, res);
+});
+
 app.all("/api/upload/*", (req, res) => {
   return tusServer.handle(req, res);
 });
