@@ -1,8 +1,8 @@
-import { Server } from '@tus/server'
+import { mkdir } from 'node:fs/promises'
+import path from 'node:path'
 import { FileStore } from '@tus/file-store'
+import { Server } from '@tus/server'
 import type { NextRequest } from 'next/server'
-import { mkdir } from 'fs/promises'
-import path from 'path'
 
 // Ensure the upload directory exists
 const uploadDir = path.join(process.cwd(), 'files')

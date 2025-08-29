@@ -1,6 +1,6 @@
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
-import "@uppy/core/css/style.min.css";
-import "@uppy/dashboard/css/style.min.css";
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router'
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,9 +17,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }
 
 export default function App() {
-  return <Outlet />;
+  return <Outlet />
 }

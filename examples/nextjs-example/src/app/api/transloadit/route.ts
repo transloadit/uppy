@@ -1,6 +1,6 @@
+import crypto from 'node:crypto'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import crypto from 'crypto'
 
 function utcDateString(ms: number): string {
   return new Date(ms)
@@ -19,8 +19,11 @@ export async function POST(request: NextRequest) {
 
     if (!authKey || !authSecret) {
       return NextResponse.json(
-        { error: 'Missing Transloadit credentials. Please set TRANSLOADIT_KEY and TRANSLOADIT_SECRET environment variables.' },
-        { status: 500 }
+        {
+          error:
+            'Missing Transloadit credentials. Please set TRANSLOADIT_KEY and TRANSLOADIT_SECRET environment variables.',
+        },
+        { status: 500 },
       )
     }
 
@@ -44,7 +47,7 @@ export async function POST(request: NextRequest) {
                 width: 800,
                 height: 600,
                 resize_strategy: 'fit',
-                imagemagick_stack: 'v3.0.0'
+                imagemagick_stack: 'v3.0.0',
               },
               // Thumbnail generation
               thumbs: {
@@ -53,11 +56,10 @@ export async function POST(request: NextRequest) {
                 width: 200,
                 height: 200,
                 resize_strategy: 'crop',
-                imagemagick_stack: 'v3.0.0'
-              }
-            }
-          }
-      ),
+                imagemagick_stack: 'v3.0.0',
+              },
+            },
+          }),
       fields: {
         // Dynamic fields you can use inside your Template
         customValue: body?.customValue ?? 'nextjs-example',
@@ -73,13 +75,13 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       expires,
       signature,
-      params: JSON.parse(params)
+      params: JSON.parse(params),
     })
   } catch (error) {
     console.error('Error generating Transloadit signature:', error)
     return NextResponse.json(
       { error: 'Failed to generate Transloadit signature' },
-      { status: 500 }
+      { status: 500 },
     )
   }
 }

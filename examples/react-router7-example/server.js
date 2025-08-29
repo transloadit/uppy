@@ -1,9 +1,9 @@
+import { mkdir } from 'node:fs/promises'
+import path from 'node:path'
 import { createRequestHandler } from '@react-router/express'
-import { Server as TusServer } from '@tus/server'
 import { FileStore } from '@tus/file-store'
+import { Server as TusServer } from '@tus/server'
 import express from 'express'
-import { mkdir } from 'fs/promises'
-import path from 'path'
 
 const app = express()
 
@@ -39,7 +39,7 @@ app.all(
         // You can pass any context here that you want available in your routes
       }
     },
-  })
+  }),
 )
 
 const port = process.env.PORT || 3000
