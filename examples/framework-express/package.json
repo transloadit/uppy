@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@react-router/express": "latest",
-    "@react-router/node": "latest",
     "@tus/file-store": "latest",
     "@tus/server": "latest",
     "@uppy/core": "workspace:*",

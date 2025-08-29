@@ -6949,7 +6949,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-router/node@npm:7.8.2, @react-router/node@npm:latest":
+"@react-router/node@npm:7.8.2":
   version: 7.8.2
   resolution: "@react-router/node@npm:7.8.2"
   dependencies:
@@ -23615,7 +23615,6 @@ __metadata:
   dependencies:
     "@react-router/dev": "npm:latest"
     "@react-router/express": "npm:latest"
-    "@react-router/node": "npm:latest"
     "@tus/file-store": "npm:latest"
     "@tus/server": "npm:latest"
     "@types/express": "npm:^4.17.20"
