@@ -21,10 +21,6 @@
     "strict": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
-    "paths": {
-      "~/*": ["./app/*"]
-    },
     "noEmit": true,
     "rootDirs": [".", "./.react-router/types"]
   }

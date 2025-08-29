@@ -1,34 +1,29 @@
 import { createRequestHandler } from "@react-router/express";
 import { Server as TusServer } from "@tus/server";
 import { FileStore } from "@tus/file-store";
-import compression from "compression";
 import express from "express";
 import { mkdir } from "fs/promises";
-import morgan from "morgan";
 import path from "path";
 
-// Ensure upload directory exists
+// Setup upload directory
 const uploadDir = path.join(process.cwd(), "uploads");
-await mkdir(uploadDir, { recursive: true }).catch(() => {
-  // Directory might already exist, ignore the error
-});
+await mkdir(uploadDir, { recursive: true }).catch(() => {});
 
-// Create TUS server
+// Create TUS server for resumable uploads
 const tusServer = new TusServer({
   path: "/api/upload",
   datastore: new FileStore({ directory: uploadDir }),
-  respectForwardedHeaders: true,
 });
 
+// Setup Vite dev server or production build
 const viteDevServer =
   process.env.NODE_ENV === "production"
     ? undefined
     : await import("vite").then((vite) =>
-        vite.createServer({
-          server: { middlewareMode: true },
-        })
+        vite.createServer({ server: { middlewareMode: true } })
       );
 
+// React Router request handler
 const reactRouterHandler = createRequestHandler({
   build: viteDevServer
     ? () => viteDevServer.ssrLoadModule("virtual:react-router/server-build")
@@ -37,33 +32,23 @@ const reactRouterHandler = createRequestHandler({
 
 const app = express();
 
-app.use(compression());
-app.disable("x-powered-by");
-
+// Vite dev middleware or static assets
 if (viteDevServer) {
   app.use(viteDevServer.middlewares);
 } else {
-  app.use(
-    "/assets",
-    express.static("build/client/assets", { immutable: true, maxAge: "1y" })
-  );
+  app.use("/assets", express.static("build/client/assets"));
+  app.use(express.static("build/client"));
 }
 
-app.use(express.static("build/client", { maxAge: "1h" }));
-app.use(morgan("tiny"));
+// TUS upload endpoints (before React Router)
+app.all("/api/upload", (req, res) => tusServer.handle(req, res));
+app.all("/api/upload/*", (req, res) => tusServer.handle(req, res));
 
-// Handle TUS uploads before React Router
-app.all("/api/upload", (req, res) => {
-  return tusServer.handle(req, res);
-});
-
-app.all("/api/upload/*", (req, res) => {
-  return tusServer.handle(req, res);
-});
-
+// React Router handles all other routes
 app.all("*", reactRouterHandler);
 
 const port = process.env.PORT || 3000;
-app.listen(port, () =>
-  console.log(`Express server listening at http://localhost:${port}`)
-);
+app.listen(port, () => {
+  console.log(`🚀 Server running at http://localhost:${port}`);
+  console.log(`📁 TUS uploads: /api/upload`);
+});
