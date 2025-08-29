@@ -5,8 +5,7 @@ import {
   type UploadButtonProps,
 } from '@uppy/components'
 import { h as preactH, render as preactRender } from 'preact'
-// biome-ignore lint/correctness/noUnusedImports: it's needed
-import { createElement as h, useContext, useEffect, useRef } from 'react'
+import { useContext, useEffect, useRef } from 'react'
 import { UppyContext } from '../UppyContextProvider.js'
 
 export default function UploadButton(props: Omit<UploadButtonProps, 'ctx'>) {
