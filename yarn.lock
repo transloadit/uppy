@@ -6157,6 +6157,49 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mjackson/file-storage@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@mjackson/file-storage@npm:0.7.0"
+  dependencies:
+    "@mjackson/lazy-file": "npm:^3.4.0"
+  checksum: 10/07e415d0324dbad2b4b57dd30d97ab5889e87405283bf73d05384862c91d104f0f042eabbc47f18263546dc771db1923177fa535bb9609806f07837ac0104195
+  languageName: node
+  linkType: hard
+
+"@mjackson/form-data-parser@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "@mjackson/form-data-parser@npm:0.9.1"
+  dependencies:
+    "@mjackson/multipart-parser": "npm:^0.10.1"
+  checksum: 10/0fa3b170f8b1a52d1078a7a212258927b9339166fa3745cd8448c709e270bee8d1fe02d63b20d341ca14959b654c7e4e647d4aad44fafef53a4a7d58ea0504e3
+  languageName: node
+  linkType: hard
+
+"@mjackson/headers@npm:^0.11.1":
+  version: 0.11.1
+  resolution: "@mjackson/headers@npm:0.11.1"
+  checksum: 10/d4b11434a28207b3f13886f18cf09dde98ed477dfa346308e473e46c4bfa437c9b7359ecd065b7c88317101a4f9e8cdf1e3eeb634669330e8be3222d27a635f5
+  languageName: node
+  linkType: hard
+
+"@mjackson/lazy-file@npm:^3.4.0":
+  version: 3.4.0
+  resolution: "@mjackson/lazy-file@npm:3.4.0"
+  dependencies:
+    mrmime: "npm:^2.0.0"
+  checksum: 10/74c805cd0365419014525c1f8936b19ff816209efb8162b4a60a1c82a26b334f75d4bfba27676cb1bf44a0c41cc1a29fb344fa89f3923f9ff56165572548be64
+  languageName: node
+  linkType: hard
+
+"@mjackson/multipart-parser@npm:^0.10.1":
+  version: 0.10.1
+  resolution: "@mjackson/multipart-parser@npm:0.10.1"
+  dependencies:
+    "@mjackson/headers": "npm:^0.11.1"
+  checksum: 10/2be2779d3ea98885f7da5406efe3f1f5c53f042f46dbbc58f839a32f015e0af48c39470721557d53ec9a397f5b2346aeeb1c52a49479ed71e629fe8704836397
+  languageName: node
+  linkType: hard
+
 "@mjackson/node-fetch-server@npm:^0.2.0":
   version: 0.2.0
   resolution: "@mjackson/node-fetch-server@npm:0.2.0"
@@ -23868,10 +23911,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-uppy-tus-example@workspace:examples/framework-express":
+"react-router-uppy-example@workspace:examples/framework-express":
   version: 0.0.0-use.local
-  resolution: "react-router-uppy-tus-example@workspace:examples/framework-express"
+  resolution: "react-router-uppy-example@workspace:examples/framework-express"
   dependencies:
+    "@mjackson/file-storage": "npm:^0.7.0"
+    "@mjackson/form-data-parser": "npm:^0.9.1"
     "@react-router/dev": "npm:latest"
     "@react-router/express": "npm:latest"
     "@tus/file-store": "npm:latest"
@@ -23883,6 +23928,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/react": "workspace:*"
     "@uppy/tus": "workspace:*"
+    "@uppy/xhr-upload": "workspace:*"
     express: "npm:^4.19.2"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
