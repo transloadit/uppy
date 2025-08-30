@@ -1,0 +1,6 @@
+/* You can add global styles to this file, and also import other style files */
+@import "@uppy/core/css/style.css";
+@import "@uppy/dashboard/css/style.css";
+@import "@uppy/webcam/css/style.css";
+@import "@uppy/drag-drop/css/style.css";
+@import "@uppy/status-bar/css/style.css";
