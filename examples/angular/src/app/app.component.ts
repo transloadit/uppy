@@ -5,7 +5,6 @@ import {
   DashboardModalComponent,
 } from '@uppy/angular'
 import { Uppy } from '@uppy/core'
-import GoogleDrive from '@uppy/google-drive'
 import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
 
@@ -21,14 +20,20 @@ import Webcam from '@uppy/webcam'
   ],
 })
 export class AppComponent implements OnInit {
-  title = 'angular-example'
-
-  showInline = false
+  title = 'Uppy Dashboard Angular Example'
 
   showModal = false
 
   dashboardProps = {
     plugins: ['Webcam'],
+    height: 470,
+    showProgressDetails: true,
+    note: 'Images and video only, 2-3 files, up to 1 MB',
+    restrictions: {
+      maxFileSize: 1000000,
+      maxNumberOfFiles: 3,
+      allowedFileTypes: ['image/*', 'video/*'],
+    },
   }
 
   dashboardModalProps = {
@@ -36,14 +41,30 @@ export class AppComponent implements OnInit {
     onRequestCloseModal: (): void => {
       this.showModal = false
     },
+    closeModalOnClickOutside: true,
+    animateOpenClose: true,
   }
 
-  uppy = new Uppy({ debug: true, autoProceed: true })
+  uppy = new Uppy({
+    debug: true,
+    autoProceed: false,
+    restrictions: {
+      maxFileSize: 1000000,
+      maxNumberOfFiles: 3,
+      allowedFileTypes: ['image/*', 'video/*'],
+    },
+  })
 
   ngOnInit(): void {
     this.uppy
       .use(Webcam)
       .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
-      .use(GoogleDrive, { companionUrl: 'https://companion.uppy.io' })
+      .on('complete', (result) => {
+        console.log('Upload complete! We\'ve uploaded these files:', result)
+      })
+  }
+
+  toggleModal(): void {
+    this.showModal = !this.showModal
   }
 }
