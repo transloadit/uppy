@@ -1007,3 +1007,5 @@ export default class Transloadit<
 }
 
 export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
+
+export type { AssemblyError } from './Client.js'

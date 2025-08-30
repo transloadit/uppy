@@ -2,6 +2,7 @@
  * Manages communications with Companion
  */
 
+export { default as AuthError } from './AuthError.js'
 export type { CompanionPluginOptions } from './CompanionPluginOptions.js'
 export { default as getAllowedHosts } from './getAllowedHosts.js'
 export { default as Provider } from './Provider.js'

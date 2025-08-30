@@ -438,3 +438,5 @@ export default class GoldenRetriever<
     this.uppy.off('complete', this.handleComplete)
   }
 }
+
+export { default as MetaDataStore } from './MetaDataStore.js'
