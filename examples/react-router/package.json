@@ -1,5 +1,5 @@
 {
-  "name": "react-router-uppy-example",
+  "name": "react-router",
   "version": "1.0.0",
   "private": true,
   "description": "React Router + Uppy upload example with TUS and XHR support",

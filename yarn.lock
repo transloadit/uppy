@@ -22419,9 +22419,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-uppy-example@workspace:examples/framework-express":
+"react-router@npm:latest":
+  version: 7.8.2
+  resolution: "react-router@npm:7.8.2"
+  dependencies:
+    cookie: "npm:^1.0.1"
+    set-cookie-parser: "npm:^2.6.0"
+  peerDependencies:
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 10/d1af3980cdfe8b915f6a8b219d57f18f9e3c4c062fa33bbb0946d4ff18c4c09fbf2f5c3616f5953f576c1d3be31616e4578773794cbb6eacf7812050997e04a2
+  languageName: node
+  linkType: hard
+
+"react-router@workspace:examples/react-router":
   version: 0.0.0-use.local
-  resolution: "react-router-uppy-example@workspace:examples/framework-express"
+  resolution: "react-router@workspace:examples/react-router"
   dependencies:
     "@mjackson/file-storage": "npm:^0.7.0"
     "@mjackson/form-data-parser": "npm:^0.9.1"
@@ -22447,22 +22463,6 @@ __metadata:
     vite: "npm:^6.0.0"
   languageName: unknown
   linkType: soft
-
-"react-router@npm:latest":
-  version: 7.8.2
-  resolution: "react-router@npm:7.8.2"
-  dependencies:
-    cookie: "npm:^1.0.1"
-    set-cookie-parser: "npm:^2.6.0"
-  peerDependencies:
-    react: ">=18"
-    react-dom: ">=18"
-  peerDependenciesMeta:
-    react-dom:
-      optional: true
-  checksum: 10/d1af3980cdfe8b915f6a8b219d57f18f9e3c4c062fa33bbb0946d4ff18c4c09fbf2f5c3616f5953f576c1d3be31616e4578773794cbb6eacf7812050997e04a2
-  languageName: node
-  linkType: hard
 
 "react@npm:19.1.0, react@npm:^19.0.0":
   version: 19.1.0
