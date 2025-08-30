@@ -50,6 +50,7 @@ async function startServer() {
     const server = app.listen(port, () => {
       console.log(`🚀 Server running at http://localhost:${port}`)
       console.log(`📁 TUS uploads: /api/upload/tus`)
+      console.log(`📁 XHR uploads: /api/upload/xhr`)
       console.log(`Press Ctrl+C to stop the server`)
     })
 
