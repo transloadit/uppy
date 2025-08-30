@@ -20,7 +20,7 @@ function createTusUppy() {
       maxFileSize: 50 * 1024 * 1024, // 50MB
       maxNumberOfFiles: 5,
     },
-  }).use(Tus, { endpoint: '/api/upload' })
+  }).use(Tus, { endpoint: '/api/upload/tus' })
 }
 
 function createXhrUppy() {
@@ -30,7 +30,7 @@ function createXhrUppy() {
       maxNumberOfFiles: 3,
     },
   }).use(Xhr, {
-    endpoint: '/upload',
+    endpoint: '/api/upload/xhr',
     method: 'POST',
     fieldName: 'files',
     allowedMetaFields: [],
@@ -53,7 +53,7 @@ function createTransloaditUppy() {
       const body = JSON.stringify({
         customValue: meta.customValue || 'react-router-uppy-example'
       })
-      const res = await fetch('/transloadit-params', {
+      const res = await fetch('/api/transloadit-params', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body,

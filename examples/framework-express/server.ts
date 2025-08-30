@@ -14,7 +14,7 @@ async function startServer() {
 
     // Create TUS server for resumable uploads
     const tusServer = new TusServer({
-      path: '/api/upload',
+      path: '/api/upload/tus',
       datastore: new FileStore({ directory: uploadDir }),
     })
 
@@ -40,8 +40,8 @@ async function startServer() {
     app.use(viteDevServer.middlewares)
 
     // TUS upload endpoints (before React Router)
-    app.all('/api/upload', (req, res) => tusServer.handle(req, res))
-    app.all('/api/upload/*', (req, res) => tusServer.handle(req, res))
+    app.all('/api/upload/tus', (req, res) => tusServer.handle(req, res))
+    app.all('/api/upload/tus/*', (req, res) => tusServer.handle(req, res))
 
     // React Router handles all other routes
     app.all('*', reactRouterHandler)
@@ -49,7 +49,7 @@ async function startServer() {
     const port = process.env.PORT || 3000
     const server = app.listen(port, () => {
       console.log(`🚀 Server running at http://localhost:${port}`)
-      console.log(`📁 TUS uploads: /api/upload`)
+      console.log(`📁 TUS uploads: /api/upload/tus`)
       console.log(`Press Ctrl+C to stop the server`)
     })
 
