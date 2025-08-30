@@ -1,3 +1,19 @@
-/* You can add global styles to this file, and also import other style files */
-@import "@uppy/core/dist/style.css";
-@import "@uppy/dashboard/dist/style.css";
+/* Global styles for the Angular Uppy example */
+@import "@uppy/core/css/style.css";
+@import "@uppy/dashboard/css/style.css";
+@import "@uppy/webcam/css/style.css";
+@import "@uppy/drag-drop/css/style.css";
+@import "@uppy/status-bar/css/style.css";
+
+/* Global reset and base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
