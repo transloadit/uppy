@@ -1007,7 +1007,6 @@ export type uploadPartBytes = (typeof AwsS3Multipart<
   any
 >)['uploadPartBytes']
 
-// Export types from utils that are used in public API callbacks
 export type {
   MultipartUploadResultWithSignal,
   MultipartUploadResult,

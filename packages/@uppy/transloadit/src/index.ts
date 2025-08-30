@@ -1008,5 +1008,4 @@ export default class Transloadit<
 
 export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
 
-// Export error classes that users might need to catch
 export type { AssemblyError } from './Client.js'

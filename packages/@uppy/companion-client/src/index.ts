@@ -9,5 +9,4 @@ export { default as RequestClient } from './RequestClient.js'
 export { default as SearchProvider } from './SearchProvider.js'
 export * as tokenStorage from './tokenStorage.js'
 
-// Export error classes that users might need to catch
 export { default as AuthError } from './AuthError.js'

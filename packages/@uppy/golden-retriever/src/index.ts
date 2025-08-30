@@ -439,5 +439,4 @@ export default class GoldenRetriever<
   }
 }
 
-// Export MetaDataStore for advanced usage
 export { default as MetaDataStore } from './MetaDataStore.js'
