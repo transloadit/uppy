@@ -3,7 +3,6 @@
   "description": "Client library for communication with Companion. Intended for use in Uppy plugins.",
   "version": "5.0.0",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

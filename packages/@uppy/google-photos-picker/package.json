@@ -3,7 +3,6 @@
   "description": "The Google Photos Picker plugin for Uppy lets users import files from their Google Photos account",
   "version": "1.0.0",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

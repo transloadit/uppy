@@ -3,7 +3,6 @@
   "description": "Uppy plugin that takes photos or records videos using the device's camera.",
   "version": "5.0.0",
   "license": "MIT",
-  "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
   "sideEffects": [

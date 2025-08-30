@@ -3,7 +3,6 @@
   "description": "Headless Uppy components, made in Preact",
   "version": "1.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": [
     "*.css"
