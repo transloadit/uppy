@@ -43,6 +43,11 @@ async function startServer() {
     app.all('/api/upload/tus', (req, res) => tusServer.handle(req, res))
     app.all('/api/upload/tus/*', (req, res) => tusServer.handle(req, res))
 
+    // Handle Chrome DevTools requests silently
+    app.get('/.well-known/appspecific/com.chrome.devtools.json', (req, res) => {
+      res.status(404).end()
+    })
+
     // React Router handles all other routes
     app.all('*', reactRouterHandler)
 
