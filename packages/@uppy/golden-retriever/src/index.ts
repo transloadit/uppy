@@ -438,3 +438,6 @@ export default class GoldenRetriever<
     this.uppy.off('complete', this.handleComplete)
   }
 }
+
+// Export MetaDataStore for advanced usage
+export { default as MetaDataStore } from './MetaDataStore.js'
