@@ -1,6 +1,6 @@
-import { data } from 'react-router'
+import crypto from 'node:crypto'
 import type { ActionFunctionArgs } from 'react-router'
-import crypto from 'crypto'
+import { data } from 'react-router'
 
 function utcDateString(ms: number): string {
   return new Date(ms)
@@ -24,11 +24,15 @@ export async function action({ request }: ActionFunctionArgs) {
     console.error('- TRANSLOADIT_TEMPLATE_ID')
     console.error('See README.md for setup instructions.')
 
-    throw data({
-      error: 'Missing Transloadit credentials',
-      details: 'Please set TRANSLOADIT_KEY, TRANSLOADIT_SECRET, and TRANSLOADIT_TEMPLATE_ID environment variables. See README.md for setup instructions.',
-      setupUrl: 'https://transloadit.com/accounts/'
-    }, { status: 500 })
+    throw data(
+      {
+        error: 'Missing Transloadit credentials',
+        details:
+          'Please set TRANSLOADIT_KEY, TRANSLOADIT_SECRET, and TRANSLOADIT_TEMPLATE_ID environment variables. See README.md for setup instructions.',
+        setupUrl: 'https://transloadit.com/accounts/',
+      },
+      { status: 500 },
+    )
   }
 
   try {

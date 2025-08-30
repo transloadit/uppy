@@ -1,9 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { Component, type OnInit } from '@angular/core'
-import {
-  DashboardComponent,
-  DashboardModalComponent,
-} from '@uppy/angular'
+import { DashboardComponent, DashboardModalComponent } from '@uppy/angular'
 import { Uppy } from '@uppy/core'
 import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
@@ -13,11 +10,7 @@ import Webcam from '@uppy/webcam'
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [
-    CommonModule,
-    DashboardComponent,
-    DashboardModalComponent,
-  ],
+  imports: [CommonModule, DashboardComponent, DashboardModalComponent],
 })
 export class AppComponent implements OnInit {
   title = 'Uppy Dashboard Angular Example'
@@ -60,7 +53,7 @@ export class AppComponent implements OnInit {
       .use(Webcam)
       .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' })
       .on('complete', (result) => {
-        console.log('Upload complete! We\'ve uploaded these files:', result)
+        console.log("Upload complete! We've uploaded these files:", result)
       })
   }
 

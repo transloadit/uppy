@@ -51,7 +51,7 @@ function createTransloaditUppy() {
       // https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions
       const { meta } = uppy.getState()
       const body = JSON.stringify({
-        customValue: meta.customValue || 'react-router-uppy-example'
+        customValue: meta.customValue || 'react-router-uppy-example',
       })
       const res = await fetch('/api/transloadit-params', {
         method: 'POST',
@@ -88,7 +88,8 @@ export default function Index() {
     >
       <h1>React Router + Uppy Upload Examples</h1>
       <p style={{ color: '#666', marginBottom: '3rem' }}>
-        Three upload methods: TUS (resumable), XHR (standard), and Transloadit (with processing).
+        Three upload methods: TUS (resumable), XHR (standard), and Transloadit
+        (with processing).
       </p>
 
       <section style={{ marginBottom: '3rem' }}>
@@ -127,7 +128,8 @@ export default function Index() {
         </h2>
         <p style={{ color: '#666', marginBottom: '1rem', fontSize: '0.9rem' }}>
           Uses Transloadit for uploads with powerful processing capabilities.{' '}
-          <strong>Requires environment variables</strong> - see README for setup.
+          <strong>Requires environment variables</strong> - see README for
+          setup.
         </p>
         <Dashboard
           uppy={transloaditUppy}
