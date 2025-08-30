@@ -12,7 +12,7 @@ import '@uppy/dashboard/css/style.min.css'
 import '@uppy/webcam/css/style.min.css'
 
 const UppyDashboard: React.FC = () => {
-  const [uppy] = useState(() =>
+  const [uppyTus] = useState(() =>
     new Uppy({
       debug: true,
       restrictions: {
@@ -88,7 +88,7 @@ const UppyDashboard: React.FC = () => {
         if connection is lost.
       </p>
       <Dashboard
-        uppy={uppy}
+        uppy={uppyTus}
         height={400}
         hideProgressDetails={false}
         showLinkToFileUploadResult={true}
