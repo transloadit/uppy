@@ -11,7 +11,7 @@ import '@uppy/core/css/style.min.css'
 import '@uppy/dashboard/css/style.min.css'
 import '@uppy/webcam/css/style.min.css'
 
-const UppyDashboard: React.FC = () => {
+const UppyDashboard = () => {
   const [uppyTus] = useState(() =>
     new Uppy({
       debug: true,

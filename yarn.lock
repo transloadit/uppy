@@ -10018,7 +10018,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/drag-drop@workspace:*, @uppy/drag-drop@workspace:^, @uppy/drag-drop@workspace:packages/@uppy/drag-drop":
+"@uppy/drag-drop@workspace:^, @uppy/drag-drop@workspace:packages/@uppy/drag-drop":
   version: 0.0.0-use.local
   resolution: "@uppy/drag-drop@workspace:packages/@uppy/drag-drop"
   dependencies:
@@ -10307,7 +10307,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/status-bar@workspace:*, @uppy/status-bar@workspace:^, @uppy/status-bar@workspace:packages/@uppy/status-bar":
+"@uppy/status-bar@workspace:^, @uppy/status-bar@workspace:packages/@uppy/status-bar":
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
@@ -10449,7 +10449,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/utils@workspace:*, @uppy/utils@workspace:^, @uppy/utils@workspace:packages/@uppy/utils":
+"@uppy/utils@workspace:^, @uppy/utils@workspace:packages/@uppy/utils":
   version: 0.0.0-use.local
   resolution: "@uppy/utils@workspace:packages/@uppy/utils"
   dependencies:
@@ -15067,22 +15067,11 @@ __metadata:
     "@angular/platform-browser": "npm:^19.2.0"
     "@angular/platform-browser-dynamic": "npm:^19.2.0"
     "@angular/router": "npm:^19.2.0"
-    "@types/jasmine": "npm:~5.1.0"
     "@uppy/angular": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
-    "@uppy/drag-drop": "workspace:*"
-    "@uppy/google-drive": "workspace:*"
-    "@uppy/status-bar": "workspace:*"
     "@uppy/tus": "workspace:*"
-    "@uppy/utils": "workspace:*"
     "@uppy/webcam": "workspace:*"
-    jasmine-core: "npm:~5.6.0"
-    karma: "npm:~6.4.0"
-    karma-chrome-launcher: "npm:~3.2.0"
-    karma-coverage: "npm:~2.2.0"
-    karma-jasmine: "npm:~5.1.0"
-    karma-jasmine-html-reporter: "npm:~2.1.0"
     rxjs: "npm:~7.8.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:~5.7.2"
@@ -17976,13 +17965,6 @@ __metadata:
   version: 5.1.2
   resolution: "jasmine-core@npm:5.1.2"
   checksum: 10/b885618b040c1ead7d27d954ca32ad77faddf8e722cffcd0883e39dbc3909a1b85316c7ccfa0a2e5b312f2bed02d8d6bd577e835da88d892bb18c354581bee26
-  languageName: node
-  linkType: hard
-
-"jasmine-core@npm:~5.6.0":
-  version: 5.6.0
-  resolution: "jasmine-core@npm:5.6.0"
-  checksum: 10/0171a28634c6d9667278a628483bc9c6a075512078e74d208ae9172525e108d386621915449b30abe008d1bd86568a7f057cfc170be2286da5e21c4d5f2eba8e
   languageName: node
   linkType: hard
 
