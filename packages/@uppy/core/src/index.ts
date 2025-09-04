@@ -10,7 +10,6 @@ export { default as BasePlugin } from './BasePlugin.js'
 export { default as EventManager } from './EventManager.js'
 export { debugLogger } from './loggers.js'
 export type { Restrictions, ValidateableFile } from './Restricter.js'
-export { RestrictionError } from './Restricter.js'
 export type { PluginTarget, UIPluginOptions } from './UIPlugin.js'
 export { default as UIPlugin } from './UIPlugin.js'
 export type {
