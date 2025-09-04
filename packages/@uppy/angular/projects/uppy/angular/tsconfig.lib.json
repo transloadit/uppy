@@ -3,6 +3,7 @@
   "extends": "../../../tsconfig.json",
   "compilerOptions": {
     "outDir": "../../../out-tsc/lib",
+    "moduleResolution": "bundler",
     "declaration": true,
     "declarationMap": true,
     "inlineSources": true,
