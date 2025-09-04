@@ -1007,4 +1007,3 @@ export default class Transloadit<
 }
 
 export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
-
