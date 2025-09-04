@@ -3,6 +3,7 @@
   "description": "The GoldenRetriever Uppy plugin saves selected files in browser cache to seamlessly resume uploding after browser crash or accidentally closed tab",
   "version": "5.0.0",
   "license": "MIT",
+  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

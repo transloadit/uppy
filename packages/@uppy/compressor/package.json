@@ -3,6 +3,7 @@
   "description": "Uppy plugin that compresses images before upload, saving up to 60% in size",
   "version": "3.0.0",
   "license": "MIT",
+  "main": "lib/index.js",
   "keywords": [
     "file uploader",
     "uppy",
