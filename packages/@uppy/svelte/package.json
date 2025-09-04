@@ -25,6 +25,10 @@
       "types": "./dist/components/DashboardModal.svelte.d.ts",
       "svelte": "./dist/components/DashboardModal.svelte"
     },
+    "./status-bar": {
+      "types": "./dist/components/StatusBar.svelte.d.ts",
+      "svelte": "./dist/components/StatusBar.svelte"
+    },
     "./package.json": "./package.json"
   },
   "homepage": "https://uppy.io",
@@ -70,6 +74,9 @@
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
+      "optional": true
+    },
+    "@uppy/status-bar": {
       "optional": true
     }
   },
