@@ -1008,9 +1008,9 @@ export type uploadPartBytes = (typeof AwsS3Multipart<
 >)['uploadPartBytes']
 
 export type {
-  MultipartUploadResultWithSignal,
   MultipartUploadResult,
+  MultipartUploadResultWithSignal,
+  UploadPartBytesResult,
   UploadResult,
   UploadResultWithSignal,
-  UploadPartBytesResult,
 } from './utils.js'
