@@ -3,6 +3,7 @@
   "description": "The Google Drive plugin for Uppy lets users import files from their Google Drive account",
   "version": "5.0.0",
   "license": "MIT",
+  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

@@ -3,6 +3,7 @@
   "description": "The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!",
   "version": "5.0.0",
   "license": "MIT",
+  "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
   "sideEffects": [

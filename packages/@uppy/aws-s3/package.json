@@ -3,6 +3,7 @@
   "description": "Upload to Amazon S3 with Uppy",
   "version": "5.0.0",
   "license": "MIT",
+  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

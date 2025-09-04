@@ -3,6 +3,7 @@
   "description": "Uppy plugin that generates small previews of images to show on your upload UI.",
   "version": "5.0.0",
   "license": "MIT",
+  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

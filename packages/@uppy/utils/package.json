@@ -4,6 +4,7 @@
   "version": "7.0.1",
   "license": "MIT",
   "type": "module",
+  "main": "./lib/index.js",
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
