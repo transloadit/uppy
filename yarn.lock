@@ -9637,6 +9637,8 @@ __metadata:
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
+    "@uppy/status-bar":
+      optional: true
   languageName: unknown
   linkType: soft
 
