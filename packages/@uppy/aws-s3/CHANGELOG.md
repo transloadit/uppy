@@ -1,5 +1,15 @@
 # @uppy/aws-s3
 
+## 5.0.1
+
+### Patch Changes
+
+- 4b6a76c: added missing exports.
+- Updated dependencies [4b6a76c]
+- Updated dependencies [975317d]
+  - @uppy/core@5.0.2
+  - @uppy/companion-client@5.0.1
+
 ## 5.0.0
 
 ### Major Changes

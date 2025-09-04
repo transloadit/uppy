@@ -1,5 +1,11 @@
 # @uppy/core
 
+## 5.0.2
+
+### Patch Changes
+
+- 4b6a76c: added missing exports.
+
 ## 5.0.1
 
 ### Patch Changes
