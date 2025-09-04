@@ -1,5 +1,14 @@
 # @uppy/golden-retriever
 
+## 5.0.1
+
+### Patch Changes
+
+- 4b6a76c: added missing exports.
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [4b6a76c]
+  - @uppy/core@5.0.2
+
 ## 5.0.0
 
 ### Major Changes

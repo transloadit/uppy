@@ -1,5 +1,16 @@
 # @uppy/google-photos-picker
 
+## 1.0.1
+
+### Patch Changes
+
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [4b6a76c]
+- Updated dependencies [975317d]
+  - @uppy/core@5.0.2
+  - @uppy/companion-client@5.0.1
+  - @uppy/provider-views@5.0.2
+
 ## 1.0.0
 
 ### Major Changes
