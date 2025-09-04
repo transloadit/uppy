@@ -1,6 +1,6 @@
 <script
   lang="ts"
-  generics="M extends import('@uppy/utils/lib/UppyFile').Meta, B extends import('@uppy/utils/lib/UppyFile').Body"
+  generics="M extends import('@uppy/core').Meta, B extends import('@uppy/core').Body"
 >
 import type { Uppy } from "@uppy/core";
 import StatusBarPlugin, { type StatusBarOptions } from "@uppy/status-bar";
