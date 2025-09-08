@@ -32,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DIFF_BUILDER: true
+      SKIP_YARN_COREPACK_CHECK: true
     outputs:
       diff: ${{ steps.diff.outputs.OUTPUT_DIFF }}
     steps:

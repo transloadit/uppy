@@ -11,6 +11,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
     outputs:
       companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
       published: ${{ steps.changesets.outputs.published }}

@@ -23,6 +23,8 @@ env:
 jobs:
   upload:
     runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5

@@ -23,6 +23,8 @@ jobs:
   unit_tests:
     name: Tests
     runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
     strategy:
       matrix:
         node-version: [lts/*]
@@ -63,6 +65,8 @@ jobs:
   types:
     name: Types
     runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
