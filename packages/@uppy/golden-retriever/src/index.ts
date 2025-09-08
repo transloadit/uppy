@@ -371,7 +371,7 @@ export default class GoldenRetriever<
     MetaDataStore.cleanup(this.uppy.opts.id)
   }
 
-    handleComplete = ({ successful, failed }: UploadResult<M, B>): void => {
+  handleComplete = ({ successful, failed }: UploadResult<M, B>): void => {
     // Don't cleanup state if no files were successfully uploaded
     // This preserves state for recovery when uploads are aborted (e.g., page refresh)
     if (!successful || successful.length === 0) {
