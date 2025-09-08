@@ -377,11 +377,11 @@ export default class GoldenRetriever<
     if (!successful || successful.length === 0) {
       // Check if uploads were aborted rather than failed due to other errors
       const wasAborted = failed?.some((file) => {
-        const errorStr = file.error?.toString() || ''
+        const errorStr = file.error?.toString().toLowerCase() || ''
         return (
-          errorStr.includes('Aborted') ||
-          errorStr.includes('AbortError') ||
-          errorStr.includes('DOMException')
+          errorStr.includes('aborted') ||
+          errorStr.includes('aborterror') ||
+          errorStr.includes('domexception')
         )
       })
 
