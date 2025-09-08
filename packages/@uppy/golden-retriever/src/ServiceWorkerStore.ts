@@ -46,34 +46,42 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
     return Promise.resolve(this.#ready)
   }
 
-  async list(): Promise<ServiceWorkerStoredFile<M, B>[]> {
+  async list(): Promise<Record<string, UppyFile<M, B>['data']>> {
     await this.#ready
 
-    return new Promise((resolve, reject) => {
-      const onMessage = (event: MessageEvent) => {
-        if (event.data.store !== this.name) {
-          return
+    return new Promise<Record<string, UppyFile<M, B>['data']>>(
+      (resolve, reject) => {
+        const onMessage = (
+          event: MessageEvent<
+            Exclude<ServiceWorkerStoredFile<M, B>, 'file'> & {
+              files: Record<string, UppyFile<M, B>['data']>
+            }
+          >,
+        ) => {
+          if (event.data.store !== this.name) {
+            return
+          }
+          switch (event.data.type) {
+            case 'uppy/ALL_FILES':
+              resolve(event.data.files)
+              navigator.serviceWorker.removeEventListener('message', onMessage)
+              break
+            default:
+              reject()
+          }
         }
-        switch (event.data.type) {
-          case 'uppy/ALL_FILES':
-            resolve(event.data.files)
-            navigator.serviceWorker.removeEventListener('message', onMessage)
-            break
-          default:
-            reject()
-        }
-      }
 
-      navigator.serviceWorker.addEventListener('message', onMessage)
+        navigator.serviceWorker.addEventListener('message', onMessage)
 
-      navigator.serviceWorker.controller!.postMessage({
-        type: 'uppy/GET_FILES',
-        store: this.name,
-      })
-    })
+        navigator.serviceWorker.controller!.postMessage({
+          type: 'uppy/GET_FILES',
+          store: this.name,
+        })
+      },
+    )
   }
 
-  async put(file: UppyFile<any, any>): Promise<void> {
+  async put(file: UppyFile<M, B>): Promise<void> {
     await this.#ready
     navigator.serviceWorker.controller!.postMessage({
       type: 'uppy/ADD_FILE',
