@@ -14215,6 +14215,30 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"example-nextjs@workspace:examples/nextjs":
+  version: 0.0.0-use.local
+  resolution: "example-nextjs@workspace:examples/nextjs"
+  dependencies:
+    "@tailwindcss/postcss": "npm:^4"
+    "@tus/file-store": "npm:latest"
+    "@tus/server": "npm:latest"
+    "@types/node": "npm:^20"
+    "@types/react": "npm:^19"
+    "@types/react-dom": "npm:^19"
+    "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
+    "@uppy/react": "workspace:*"
+    "@uppy/transloadit": "workspace:*"
+    "@uppy/tus": "workspace:*"
+    "@uppy/xhr-upload": "workspace:*"
+    next: "npm:15.5.2"
+    react: "npm:19.1.0"
+    react-dom: "npm:19.1.0"
+    tailwindcss: "npm:^4"
+    typescript: "npm:^5"
+  languageName: unknown
+  linkType: soft
+
 "example-react@workspace:examples/react":
   version: 0.0.0-use.local
   resolution: "example-react@workspace:examples/react"
@@ -14238,6 +14262,35 @@ __metadata:
     vite: "npm:^7.0.6"
     vitest: "npm:^3.2.4"
     vitest-browser-react: "npm:^1.0.0"
+  languageName: unknown
+  linkType: soft
+
+"example-reactrouter@workspace:examples/reactrouter":
+  version: 0.0.0-use.local
+  resolution: "example-reactrouter@workspace:examples/reactrouter"
+  dependencies:
+    "@mjackson/file-storage": "npm:^0.7.0"
+    "@mjackson/form-data-parser": "npm:^0.9.1"
+    "@react-router/dev": "npm:latest"
+    "@react-router/express": "npm:latest"
+    "@tus/file-store": "npm:latest"
+    "@tus/server": "npm:latest"
+    "@types/express": "npm:^4.17.20"
+    "@types/react": "npm:^18.2.20"
+    "@types/react-dom": "npm:^18.2.7"
+    "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
+    "@uppy/react": "workspace:*"
+    "@uppy/transloadit": "workspace:*"
+    "@uppy/tus": "workspace:*"
+    "@uppy/xhr-upload": "workspace:*"
+    express: "npm:^4.19.2"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    react-router: "npm:latest"
+    tsx: "npm:^4.0.0"
+    typescript: "npm:^5.1.6"
+    vite: "npm:^6.0.0"
   languageName: unknown
   linkType: soft
 
@@ -18759,30 +18812,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nextjs-example@workspace:examples/nextjs-example":
-  version: 0.0.0-use.local
-  resolution: "nextjs-example@workspace:examples/nextjs-example"
-  dependencies:
-    "@tailwindcss/postcss": "npm:^4"
-    "@tus/file-store": "npm:latest"
-    "@tus/server": "npm:latest"
-    "@types/node": "npm:^20"
-    "@types/react": "npm:^19"
-    "@types/react-dom": "npm:^19"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/react": "workspace:*"
-    "@uppy/transloadit": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
-    next: "npm:15.5.2"
-    react: "npm:19.1.0"
-    react-dom: "npm:19.1.0"
-    tailwindcss: "npm:^4"
-    typescript: "npm:^5"
-  languageName: unknown
-  linkType: soft
-
 "ng-packagr@npm:^19.0.0":
   version: 19.2.1
   resolution: "ng-packagr@npm:19.2.1"
@@ -21018,35 +21047,6 @@ __metadata:
   checksum: 10/261137d3f3993eaa2368a83110466fc0e558bc2c7f7ae7ca52d94f03aac945f45146bd85e5f481044db1758a1dbb57879e2fcdd33924e2dde1bdc550ce73f7bf
   languageName: node
   linkType: hard
-
-"reactrouter-example@workspace:examples/reactrouter-example":
-  version: 0.0.0-use.local
-  resolution: "reactrouter-example@workspace:examples/reactrouter-example"
-  dependencies:
-    "@mjackson/file-storage": "npm:^0.7.0"
-    "@mjackson/form-data-parser": "npm:^0.9.1"
-    "@react-router/dev": "npm:latest"
-    "@react-router/express": "npm:latest"
-    "@tus/file-store": "npm:latest"
-    "@tus/server": "npm:latest"
-    "@types/express": "npm:^4.17.20"
-    "@types/react": "npm:^18.2.20"
-    "@types/react-dom": "npm:^18.2.7"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/react": "workspace:*"
-    "@uppy/transloadit": "workspace:*"
-    "@uppy/tus": "workspace:*"
-    "@uppy/xhr-upload": "workspace:*"
-    express: "npm:^4.19.2"
-    react: "npm:^18.2.0"
-    react-dom: "npm:^18.2.0"
-    react-router: "npm:latest"
-    tsx: "npm:^4.0.0"
-    typescript: "npm:^5.1.6"
-    vite: "npm:^6.0.0"
-  languageName: unknown
-  linkType: soft
 
 "read-cache@npm:^1.0.0":
   version: 1.0.0
