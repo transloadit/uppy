@@ -32,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DIFF_BUILDER: true
+      SKIP_YARN_COREPACK_CHECK: true
     outputs:
       diff: ${{ steps.diff.outputs.OUTPUT_DIFF }}
     steps:
@@ -40,6 +41,8 @@ jobs:
         with:
           fetch-depth: 2
           ref: ${{ github.event.pull_request && format('refs/pull/{0}/merge', github.event.pull_request.number) || github.sha }}
+      - name: Remove .npmrc to avoid NPM_TOKEN error
+        run: rm -f .npmrc
       - run: git reset HEAD^ --hard
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path

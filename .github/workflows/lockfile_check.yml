@@ -18,9 +18,13 @@ jobs:
   lint_lockfile:
     name: Lint yarn.lock
     runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
+      - name: Remove .npmrc to avoid NPM_TOKEN error
+        run: rm -f .npmrc
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
