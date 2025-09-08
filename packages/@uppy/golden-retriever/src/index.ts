@@ -371,17 +371,38 @@ export default class GoldenRetriever<
     MetaDataStore.cleanup(this.uppy.opts.id)
   }
 
-  handleComplete = ({ successful }: UploadResult<M, B>): void => {
-    const fileIDs = successful!.map((file) => file.id)
+    handleComplete = ({ successful, failed }: UploadResult<M, B>): void => {
+    // Don't cleanup state if no files were successfully uploaded
+    // This preserves state for recovery when uploads are aborted (e.g., page refresh)
+    if (!successful || successful.length === 0) {
+      // Check if uploads were aborted rather than failed due to other errors
+      const wasAborted = failed?.some((file) => {
+        const errorStr = file.error?.toString() || ''
+        return (
+          errorStr.includes('Aborted') ||
+          errorStr.includes('AbortError') ||
+          errorStr.includes('DOMException')
+        )
+      })
+
+      if (wasAborted) {
+        this.uppy.log(
+          '[GoldenRetriever] Upload was aborted, preserving state for recovery',
+        )
+      }
+      return
+    }
+
+    const fileIDs = successful.map((file) => file.id)
     this.deleteBlobs(fileIDs)
       .then(() => {
         this.uppy.log(
-          `[GoldenRetriever] Removed ${successful!.length} files that finished uploading`,
+          `[GoldenRetriever] Removed ${successful.length} files that finished uploading`,
         )
       })
       .catch((err) => {
         this.uppy.log(
-          `[GoldenRetriever] Could not remove ${successful!.length} files that finished uploading`,
+          `[GoldenRetriever] Could not remove ${successful.length} files that finished uploading`,
           'warning',
         )
         this.uppy.log(err)
