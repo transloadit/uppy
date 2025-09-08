@@ -31,6 +31,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
+      - name: Remove .npmrc to avoid NPM_TOKEN error
+        run: rm -f .npmrc
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -70,6 +72,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
+      - name: Remove .npmrc to avoid NPM_TOKEN error
+        run: rm -f .npmrc
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -99,6 +103,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
+      - name: Remove .npmrc to avoid NPM_TOKEN error
+        run: rm -f .npmrc
 
       - name: Install Node.js
         uses: actions/setup-node@v5
