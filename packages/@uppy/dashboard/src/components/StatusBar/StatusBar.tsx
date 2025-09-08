@@ -1,4 +1,4 @@
-import type { Body, Meta, Uppy, UppyFile } from '@uppy/core'
+import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import { emaFilter } from '@uppy/utils'
 import type { ComponentChild } from 'preact'
@@ -24,7 +24,7 @@ type StatusBarProps<M extends Meta, B extends Body> = {
 function getUploadingState(
   error: unknown,
   isAllComplete: boolean,
-  recoveredState: any,
+  recoveredState: State<any, any>['recoveredState'],
   files: Record<string, UppyFile<any, any>>,
 ): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {

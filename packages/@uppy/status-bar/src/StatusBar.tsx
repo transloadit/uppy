@@ -21,7 +21,7 @@ const ETAFilterHalfLife = 2000
 function getUploadingState(
   error: unknown,
   isAllComplete: boolean,
-  recoveredState: any,
+  recoveredState: unknown,
   files: Record<string, UppyFile<any, any>>,
 ): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {
