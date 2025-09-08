@@ -2,9 +2,18 @@
  * Checks if the browser supports Drag & Drop (not supported on mobile devices, for example).
  */
 export default function isDragDropSupported(): boolean {
-  const div = document.body
+  const body = document.body
 
-  if (!('draggable' in div) || !('ondragstart' in div && 'ondrop' in div)) {
+  // sometimes happens in the wild: https://github.com/transloadit/uppy/issues/5953
+  if (body == null || typeof window === 'undefined' || window == null) {
+    return false
+  }
+
+  if (
+    !('draggable' in body) ||
+    !('ondragstart' in body) ||
+    !('ondrop' in body)
+  ) {
     return false
   }
 
