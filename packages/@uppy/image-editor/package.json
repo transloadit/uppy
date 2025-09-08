@@ -3,7 +3,6 @@
   "description": "Image editor and cropping UI",
   "version": "4.0.0",
   "license": "MIT",
-  "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
   "sideEffects": [

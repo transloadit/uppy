@@ -6,7 +6,6 @@
   "sideEffects": [
     "*.css"
   ],
-  "main": "lib/index.js",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",

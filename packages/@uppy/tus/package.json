@@ -3,7 +3,6 @@
   "description": "Resumable uploads for Uppy using Tus.io",
   "version": "5.0.0",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

@@ -3,7 +3,6 @@
   "description": "Lets your users drag and drop files on a DOM element",
   "version": "4.0.0",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": [
     "*.css"
