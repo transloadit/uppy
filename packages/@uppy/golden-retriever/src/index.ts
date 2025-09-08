@@ -283,12 +283,13 @@ export default class GoldenRetriever<
     }
   }
 
-  async deleteBlobs(fileIDs: string[]): Promise<void> {
+  async #deleteBlobs(fileIDs: string[]) {
     await Promise.all(
-      fileIDs.map(
-        (id) =>
-          this.#serviceWorkerStore?.delete(id) ??
-          this.#indexedDBStore?.delete(id),
+      fileIDs.map((id) =>
+        Promise.all([
+          this.#serviceWorkerStore?.delete(id),
+          this.#indexedDBStore.delete(id),
+        ]),
       ),
     )
   }
