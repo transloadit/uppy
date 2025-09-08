@@ -2072,7 +2072,7 @@ export class Uppy<
   /**
    * Restore an upload by its ID.
    */
-  restore(uploadID: string): Promise<UploadResult<M, B> | undefined> {
+  async restore(uploadID: string): Promise<UploadResult<M, B> | undefined> {
     this.log(`Core: attempting to restore upload "${uploadID}"`)
 
     if (!this.getState().currentUploads[uploadID]) {
@@ -2080,7 +2080,9 @@ export class Uppy<
       return Promise.reject(new Error('Nonexistent upload'))
     }
 
-    return this.#runUpload(uploadID)
+    const result = await this.#runUpload(uploadID)
+    this.emit('complete', result!)
+    return result
   }
 
   /**
