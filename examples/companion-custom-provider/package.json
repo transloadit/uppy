@@ -22,7 +22,7 @@
     "express": "^4.19.2",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2",
-    "vite": "^7.0.6"
+    "vite": "^7.0.7"
   },
   "scripts": {
     "start": "npm-run-all --parallel start:server start:client",
