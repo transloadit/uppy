@@ -12,7 +12,7 @@
   "devDependencies": {
     "dotenv": "^16.0.1",
     "express": "^4.19.2",
-    "vite": "^7.0.6"
+    "vite": "^7.0.7"
   },
   "private": true,
   "scripts": {
