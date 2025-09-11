@@ -1,5 +1,11 @@
 # @uppy/utils
 
+## 7.0.2
+
+### Patch Changes
+
+- 9bac4c8: Fix `TypeError: Cannot use 'in' operator to search for 'draggable' in null`
+
 ## 7.0.1
 
 ### Patch Changes

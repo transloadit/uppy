@@ -1,5 +1,11 @@
 # @uppy/companion
 
+## 6.0.2
+
+### Patch Changes
+
+- 7e5acf1: fix the server crashing due a malformed json in a websocket message
+
 ## 6.0.1
 
 ### Patch Changes
