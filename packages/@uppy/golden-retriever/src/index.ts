@@ -341,26 +341,6 @@ export default class GoldenRetriever<
     this.uppy.setState({ recoveredState: null })
   }
 
-  #abortRestore = async () => {
-    this.uppy.log('[GoldenRetriever] Aborting restore...')
-
-    this.uppy.cancelAll()
-    this.uppy.setState({ recoveredState: null })
-    MetaDataStore.cleanup(this.uppy.opts.id)
-
-    const fileIDs = Object.keys(this.uppy.getState().files)
-    try {
-      await this.#deleteBlobs(fileIDs)
-      this.uppy.log(`[GoldenRetriever] Removed ${fileIDs.length} files`)
-    } catch (err) {
-      this.uppy.log(
-        `[GoldenRetriever] Could not remove ${fileIDs.length} files`,
-        'warning',
-      )
-      this.uppy.log(err)
-    }
-  }
-
   #handleComplete = async ({ successful }: UploadResult<M, B>) => {
     this.uppy.setState({ recoveredState: null })
     MetaDataStore.cleanup(this.uppy.opts.id)
@@ -412,7 +392,6 @@ export default class GoldenRetriever<
     // for the state changes we need, somehow.
     this.uppy.on('state-update', this.#saveFilesStateToLocalStorageThrottled)
     this.uppy.on('restore-confirmed', this.#handleRestoreConfirmed)
-    this.uppy.on('restore-canceled', this.#abortRestore)
     this.uppy.on('complete', this.#handleComplete)
   }
 
@@ -423,7 +402,6 @@ export default class GoldenRetriever<
     this.uppy.off('file-removed', this.#removeBlobFromStores)
     this.uppy.off('state-update', this.#saveFilesStateToLocalStorageThrottled)
     this.uppy.off('restore-confirmed', this.#handleRestoreConfirmed)
-    this.uppy.off('restore-canceled', this.#abortRestore)
     this.uppy.off('complete', this.#handleComplete)
   }
 }
