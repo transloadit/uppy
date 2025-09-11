@@ -1,4 +1,5 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { AllFilesMessage, IncomingMessage } from './ServiceWorker.js'
 
 const isSupported =
   typeof navigator !== 'undefined' && 'serviceWorker' in navigator
@@ -51,13 +52,7 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
 
     return new Promise<Record<string, UppyFile<M, B>['data']>>(
       (resolve, reject) => {
-        const onMessage = (
-          event: MessageEvent<
-            Exclude<ServiceWorkerStoredFile<M, B>, 'file'> & {
-              files: Record<string, UppyFile<M, B>['data']>
-            }
-          >,
-        ) => {
+        const onMessage = (event: MessageEvent<AllFilesMessage>) => {
           if (event.data.store !== this.name) {
             return
           }
@@ -76,7 +71,7 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
         navigator.serviceWorker.controller!.postMessage({
           type: 'uppy/GET_FILES',
           store: this.name,
-        })
+        } satisfies IncomingMessage)
       },
     )
   }
@@ -87,7 +82,7 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
       type: 'uppy/ADD_FILE',
       store: this.name,
       file,
-    })
+    } satisfies IncomingMessage)
   }
 
   async delete(fileID: string): Promise<void> {
@@ -96,7 +91,7 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
       type: 'uppy/REMOVE_FILE',
       store: this.name,
       fileID,
-    })
+    } satisfies IncomingMessage)
   }
 }
 
