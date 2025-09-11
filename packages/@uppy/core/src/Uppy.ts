@@ -2077,7 +2077,7 @@ export class Uppy<
 
     if (!this.getState().currentUploads[uploadID]) {
       this.#removeUpload(uploadID)
-      return Promise.reject(new Error('Nonexistent upload'))
+      throw new Error('Nonexistent upload')
     }
 
     const result = await this.#runUpload(uploadID)
