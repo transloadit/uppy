@@ -1,0 +1,181 @@
+/* Light theme with stealthy button and heading */
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.app-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding: 30px 20px;
+  background: linear-gradient(135deg, #718096 0%, #4a5568 50%, #2d3748 100%);
+  color: #e2e8f0;
+  border-radius: 12px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(113, 128, 150, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border: 1px solid #718096;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #a0aec0, transparent);
+  opacity: 0.8;
+}
+
+.app-header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, #f7fafc 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+}
+
+.app-header p {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+  color: #e2e8f0;
+  font-weight: 400;
+}
+
+.app-main {
+  display: grid;
+  gap: 40px;
+}
+
+.dashboard-section,
+.modal-section {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e5e9;
+}
+
+.dashboard-section h2,
+.modal-section h2 {
+  margin: 0 0 20px 0;
+  color: #2c3e50;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.modal-section p {
+  color: #7f8c8d;
+  margin-bottom: 20px;
+  font-size: 1rem;
+}
+
+.toggle-button {
+  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  color: #e2e8f0;
+  border: 1px solid #4a5568;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.toggle-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(160, 174, 192, 0.3),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.toggle-button:hover::before {
+  left: 100%;
+}
+
+.toggle-button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 25px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(160, 174, 192, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: #a0aec0;
+  color: #f7fafc;
+  background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+}
+
+.toggle-button.active {
+  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  border-color: #fc8181;
+  box-shadow:
+    0 4px 16px rgba(229, 62, 62, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.toggle-button.active::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+}
+
+.toggle-button.active:hover {
+  box-shadow:
+    0 8px 25px rgba(229, 62, 62, 0.4),
+    0 0 0 1px rgba(229, 62, 62, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  border-color: #feb2b2;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .app-container {
+    padding: 15px;
+  }
+
+  .app-header {
+    padding: 20px 15px;
+  }
+
+  .app-header h1 {
+    font-size: 2rem;
+  }
+
+  .dashboard-section,
+  .modal-section {
+    padding: 20px;
+  }
+
+  .toggle-button {
+    width: 100%;
+    padding: 18px;
+  }
+}
