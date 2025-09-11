@@ -1,5 +1,13 @@
 # @uppy/remote-sources
 
+## 3.0.1
+
+### Patch Changes
+
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [4b6a76c]
+  - @uppy/core@5.0.2
+
 ## 3.0.0
 
 ### Major Changes
