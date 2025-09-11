@@ -77,5 +77,3 @@ self.addEventListener('message', (event: ExtendableMessageEvent) => {
       )
   }
 })
-
-
