@@ -75,6 +75,9 @@
     "@uppy/screen-capture": {
       "optional": true
     },
+    "@uppy/status-bar": {
+      "optional": true
+    },
     "@uppy/webcam": {
       "optional": true
     }
