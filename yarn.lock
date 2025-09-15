@@ -14463,6 +14463,7 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
+    "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
