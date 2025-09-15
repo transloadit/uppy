@@ -84,7 +84,7 @@ pl_PL.strings = {
   enterTextToSearch: 'Wpisz tekst, aby wyszukać obrazy',
   enterUrlToImport: 'Wprowadź URL, aby zaimportować plik',
   error: 'Błąd',
-  exceedsSize: 'Plik ma rozmiar większy od dozwolonego %{size}',
+  exceedsSize: '%{file} ma rozmiar większy od dozwolonego %{size}',
   failedToFetch: 
     'Serwis nie mógł przetworzyć podanego linku, zweryfikuj jego poprawność',
   failedToUpload: 'Przesyłanie %{file} nie powiodło się',
