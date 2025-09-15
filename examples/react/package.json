@@ -27,7 +27,7 @@
     "@vitest/browser": "^3.2.4",
     "playwright": "1.54.1",
     "typescript": "^5.7.3",
-    "vite": "^7.0.6",
+    "vite": "^7.0.7",
     "vitest": "^3.2.4",
     "vitest-browser-react": "^1.0.0"
   }
