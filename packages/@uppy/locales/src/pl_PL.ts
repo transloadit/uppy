@@ -216,29 +216,29 @@ pl_PL.strings = {
     'Przesyłanie zatrzymane na %{seconds} sekund. Spróbuj ponownie.',
   uploadXFiles: {
     '0': 'Prześlij %{smart_count} plik',
-    '1': 'Prześlij %{smart_count} pliki',
+    '1': 'Prześlij %{smart_count} plików',
   },
   uploadXNewFiles: {
     '0': 'Prześlij +%{smart_count} plik',
-    '1': 'Prześlij +%{smart_count} pliki',
+    '1': 'Prześlij +%{smart_count} plików',
   },
   xFilesSelected: {
-    '0': 'Zaznaczono %{smart_count} plik',
-    '1': 'Zaznaczono %{smart_count} pliki',
+    '0': '%{smart_count} plik zaznaczony',
+    '1': '%{smart_count} plików zaznaczonych',
   },
   xMoreFilesAdded: {
     '0': 'dodano %{smart_count} plik więcej',
-    '1': 'dodano %{smart_count} pliki więcej',
+    '1': 'dodano %{smart_count} plików więcej',
   },
   xTimeLeft: '%{time} zostało',
   youCanOnlyUploadFileTypes: 'Możesz przesłać tylko: %{types}',
   youCanOnlyUploadX: {
     '0': 'Możesz wgrać tylko %{smart_count} plik',
-    '1': 'Możesz wgrać tylko %{smart_count} pliki',
+    '1': 'Możesz wgrać tylko %{smart_count} plików',
   },
   youHaveToAtLeastSelectX: {
     '0': 'Musisz wybrać przynajmniej %{smart_count} plik',
-    '1': 'Musisz wybrać przynajmniej %{smart_count} pliki',
+    '1': 'Musisz wybrać przynajmniej %{smart_count} plików',
   },
   zoomIn: 'Powiększ',
   zoomOut: 'Pomniejsz',
