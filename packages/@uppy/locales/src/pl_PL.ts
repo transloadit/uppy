@@ -36,8 +36,7 @@ pl_PL.strings = {
   authAborted: 'Uwierzytelnianie przerwane',
   authenticate: 'Połącz',
   authenticateWith: 'Połącz z %{pluginName}',
-  authenticateWithTitle:
-    'Zaloguj się do %{pluginName} aby wybrać pliki',
+  authenticateWithTitle: 'Zaloguj się do %{pluginName} aby wybrać pliki',
   back: 'Wstecz',
   browse: 'Wybierz',
   browseFiles: 'Przeglądaj pliki',
@@ -69,23 +68,23 @@ pl_PL.strings = {
   dropPasteBoth: 'Upuść pliki tutaj, wklej, albo %{browse}',
   dropPasteFiles: 'Upuść pliki tutaj, wklej, albo %{browse}',
   dropPasteFolders: 'Upuść foldery tutaj, wklej, albo %{browse}',
-  dropPasteImportBoth: 
-    'Upuść pliki tutaj, wklej, %{browse} albo zaimportuj z',
+  dropPasteImportBoth: 'Upuść pliki tutaj, wklej, %{browse} albo zaimportuj z',
   dropPasteImportFiles: 'Upuść pliki tutaj, wklej, %{browse} albo zaimportuj z',
-  dropPasteImportFolders: 'Upuść foldery tutaj, wklej, %{browse} albo zaimportuj z',
+  dropPasteImportFolders:
+    'Upuść foldery tutaj, wklej, %{browse} albo zaimportuj z',
   editFile: 'Edytuj plik',
   editFileWithFilename: 'Edytuj plik %{file}',
   editImage: 'Edytuj obraz',
   editing: 'Edycja %{file}',
   emptyFolderAdded: 'Z pustego folderu nie zostały dodane żadne pliki',
   encoding: 'Transkodowanie...',
-  enterCorrectUrl: 
+  enterCorrectUrl:
     'Niepoprawny URL: Upewnij się, że wprowadzasz bezpośredni adres pliku',
   enterTextToSearch: 'Wpisz tekst, aby wyszukać obrazy',
   enterUrlToImport: 'Wprowadź URL, aby zaimportować plik',
   error: 'Błąd',
   exceedsSize: '%{file} ma rozmiar większy od dozwolonego %{size}',
-  failedToFetch: 
+  failedToFetch:
     'Serwis nie mógł przetworzyć podanego linku, zweryfikuj jego poprawność',
   failedToUpload: 'Przesyłanie %{file} nie powiodło się',
   filesUploadedOfTotal: {
@@ -111,19 +110,20 @@ pl_PL.strings = {
   logOut: 'Wyloguj',
   micDisabled: 'Dostęp do mikrofonu odmówiony przez użytkownika',
   missingRequiredMetaField: 'Brak niezbędnych pól metadanych',
-  missingRequiredMetaFieldOnFile: 'Brak wymaganych pól metadanych w %{fileName}',
+  missingRequiredMetaFieldOnFile:
+    'Brak wymaganych pól metadanych w %{fileName}',
   missingRequiredMetaFields: {
     '0': 'Brak wymaganego pola metadanych: %{fields}.',
     '1': 'Brak wymaganych pól metadanych: %{fields}.',
   },
   myDevice: 'Moje urządzenie',
-  noAudioDescription: 
+  noAudioDescription:
     'Aby nagrać dźwięk, podłącz mikrofon lub inne urządzenie wejściowe audio',
   noAudioTitle: 'Mikrofon niedostępny',
-  noCameraDescription: 
+  noCameraDescription:
     'Aby zrobić zdjęcia lub nagrać wideo, podłącz urządzenie kamery',
   noCameraTitle: 'Kamera niedostępna',
-  noDuplicates: 
+  noDuplicates:
     "Nie można dodać i zduplikować pliku '%{fileName}', już istnieje",
   noFilesFound: 'Nie znaleziono plików',
   noInternetConnection: 'Brak połączenia z Internetem',
@@ -151,8 +151,7 @@ pl_PL.strings = {
   pluginNameUrl: 'Link',
   pluginNameWebdav: 'WebDAV',
   pluginNameZoom: 'Zoom',
-  pluginWebdavInputLabel: 
-    'URL WebDAV dla pliku (np. z ownCloud lub Nextcloud)',
+  pluginWebdavInputLabel: 'URL WebDAV dla pliku (np. z ownCloud lub Nextcloud)',
   poweredBy: 'Dostarczane przez %{uppy}',
   processingXFiles: {
     '0': 'Przetwarzanie %{smart_count} pliku',
@@ -163,7 +162,8 @@ pl_PL.strings = {
   recordingStoppedMaxSize:
     'Nagrywanie zatrzymane, ponieważ rozmiar pliku zbliża się do limitu',
   recordVideoBtn: 'Nagrywaj wideo',
-  recoveredAllFiles: 'Przywróciliśmy wszystkie pliki. Możesz teraz wznowić przesyłanie.',
+  recoveredAllFiles:
+    'Przywróciliśmy wszystkie pliki. Możesz teraz wznowić przesyłanie.',
   recoveredXFiles: {
     '0': 'Nie udało się w pełni przywrócić 1 pliku. Proszę wybrać go ponownie i wznowić przesyłanie.',
     '1': 'Nie udało się w pełni przywrócić %{smart_count} plików. Proszę wybrać je ponownie i wznowić przesyłanie.',
@@ -212,7 +212,7 @@ pl_PL.strings = {
     '1': 'Przesyłanie %{smart_count} plików',
   },
   uploadPaused: 'Przesyłanie wstrzymane',
-  uploadStalled: 
+  uploadStalled:
     'Przesyłanie zatrzymane na %{seconds} sekund. Spróbuj ponownie.',
   uploadXFiles: {
     '0': 'Prześlij %{smart_count} plik',
