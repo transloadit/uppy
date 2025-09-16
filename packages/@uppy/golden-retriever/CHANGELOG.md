@@ -1,5 +1,21 @@
 # @uppy/golden-retriever
 
+## 5.1.0
+
+### Minor Changes
+
+- 6c0cbe6: Converted sw.js to sw.ts so that it can be transpiled, in the build.
+
+### Patch Changes
+
+- 4b6a76c: added missing exports.
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [4b6a76c]
+- Updated dependencies [975317d]
+- Updated dependencies [9bac4c8]
+  - @uppy/core@5.0.2
+  - @uppy/utils@7.0.2
+
 ## 5.0.0
 
 ### Major Changes
