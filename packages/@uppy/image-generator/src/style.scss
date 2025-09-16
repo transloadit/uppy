@@ -10,17 +10,37 @@
 
 .uppy-ImageGenerator-prompt {
   width: 100%;
+  display: flex;
+  padding: 12px;
+  gap: 1em;
 
   input {
+    width: 100%;
     color: $gray-800;
-    border-radius: 10px;
-    border: none;
-    font-size: 1em;
-    padding: 0.5em 1em;
+    border-radius: 8px 8px;
+    border: 0;
+    background-color: $gray-200;
+    text-align: left;
   }
 
   label {
     display: none;
+  }
+
+  button {
+    color: $blue;
+    font-size: 14px;
+
+    &:hover svg {
+      transform: rotate(30deg);
+      transition: transform 100ms ease-in-out;
+    }
+
+    svg {
+      transition: transform 100ms ease-in-out;
+      height: 24px;
+      width: 24px;
+    }
   }
 }
 
