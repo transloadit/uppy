@@ -1,5 +1,16 @@
 # @uppy/compressor
 
+## 3.0.1
+
+### Patch Changes
+
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [4b6a76c]
+- Updated dependencies [975317d]
+- Updated dependencies [9bac4c8]
+  - @uppy/core@5.0.2
+  - @uppy/utils@7.0.2
+
 ## 3.0.0
 
 ### Major Changes
