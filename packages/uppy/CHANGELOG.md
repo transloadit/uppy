@@ -1,5 +1,46 @@
 # uppy
 
+## 5.1.2
+
+### Patch Changes
+
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [4b6a76c]
+- Updated dependencies [975317d]
+- Updated dependencies [6c0cbe6]
+  - @uppy/golden-retriever@5.1.0
+  - @uppy/aws-s3@5.0.1
+  - @uppy/core@5.0.2
+  - @uppy/audio@3.0.1
+  - @uppy/box@4.0.1
+  - @uppy/companion-client@5.0.1
+  - @uppy/compressor@3.0.1
+  - @uppy/dashboard@5.0.2
+  - @uppy/drag-drop@5.0.2
+  - @uppy/drop-target@4.0.1
+  - @uppy/dropbox@5.0.1
+  - @uppy/facebook@5.0.1
+  - @uppy/form@5.0.1
+  - @uppy/google-drive-picker@1.0.1
+  - @uppy/google-drive@5.0.1
+  - @uppy/google-photos-picker@1.0.1
+  - @uppy/image-editor@4.0.1
+  - @uppy/instagram@5.0.1
+  - @uppy/onedrive@5.0.1
+  - @uppy/provider-views@5.0.2
+  - @uppy/remote-sources@3.0.1
+  - @uppy/screen-capture@5.0.1
+  - @uppy/status-bar@5.0.1
+  - @uppy/thumbnail-generator@5.0.1
+  - @uppy/transloadit@5.0.1
+  - @uppy/tus@5.0.1
+  - @uppy/unsplash@5.0.1
+  - @uppy/url@5.0.1
+  - @uppy/webcam@5.0.1
+  - @uppy/webdav@1.0.1
+  - @uppy/xhr-upload@5.0.1
+  - @uppy/zoom@4.0.1
+
 ## 5.1.1
 
 ### Patch Changes
