@@ -37,7 +37,7 @@ pl_PL.strings = {
   authenticate: 'Połącz',
   authenticateWith: 'Połącz z %{pluginName}',
   authenticateWithTitle:
-    'Zaloguj się do %{pluginName} aby wybrać pliki',,
+    'Zaloguj się do %{pluginName} aby wybrać pliki',
   back: 'Wstecz',
   browse: 'Wybierz',
   browseFiles: 'Przeglądaj pliki',
