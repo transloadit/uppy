@@ -11,7 +11,7 @@ import {
 import { Uppy } from "@uppy/core";
 import type { StatusBarOptions } from "@uppy/status-bar";
 import StatusBar from "@uppy/status-bar";
-import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
+import type { Body, Meta } from "@uppy/utils";
 import { UppyAngularWrapper } from "../../utils/wrapper";
 
 @Component({

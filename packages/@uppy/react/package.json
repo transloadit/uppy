@@ -57,6 +57,7 @@
     ".": "./lib/index.js",
     "./css/style.css": "./dist/styles.css",
     "./dashboard": "./lib/Dashboard.js",
+    "./status-bar": "./lib/StatusBar.js",
     "./dashboard-modal": "./lib/DashboardModal.js",
     "./package.json": "./package.json"
   },
