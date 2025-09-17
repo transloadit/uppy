@@ -15,6 +15,7 @@
   "dependencies": {
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
+    "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",
     "@uppy/svelte": "workspace:*",
     "@uppy/tus": "workspace:*",

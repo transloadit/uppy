@@ -199,7 +199,7 @@ async function main(packageName, version) {
       console.error(
         `Release files for ${dirName} v${resolvedVersion} already exist, exiting...`,
       )
-      process.exit(1)
+      process.exit(0)
     }
   }
 

@@ -28,6 +28,8 @@
     "example-xhr-bundle",
     "example-xhr-node",
     "example-xhr-php",
-    "example-xhr-python"
+    "example-xhr-python",
+    "example-reactrouter",
+    "example-nextjs"
   ]
 }
