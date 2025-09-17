@@ -1,26 +1,18 @@
-import type { Body, Meta, State as UppyState } from '@uppy/core'
+import type { Body, Meta, UppyFile, State as UppyState } from '@uppy/core'
+
+// we don't want to store blobs in localStorage
+type FileWithoutData<M extends Meta, B extends Body> = Omit<
+  UppyFile<M, B>,
+  'data'
+>
 
 export type StoredState<M extends Meta, B extends Body> = {
   expires: number
   metadata: {
     currentUploads: UppyState<M, B>['currentUploads']
-    files: UppyState<M, B>['files']
+    files: Record<string, FileWithoutData<M, B>>
     pluginData: Record<string, unknown>
   }
-}
-
-/**
- * Get uppy instance IDs for which state is stored.
- */
-function findUppyInstances(): string[] {
-  const instances: string[] = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key?.startsWith('uppyState:')) {
-      instances.push(key.slice('uppyState:'.length))
-    }
-  }
-  return instances
 }
 
 /**
@@ -41,7 +33,31 @@ type MetaDataStoreOptions = {
   expires?: number
 }
 
-let cleanedUp = false
+const prefix = 'uppyState:'
+
+const getItemKey = (name: string) => `${prefix}${name}`
+
+function expireOldState() {
+  const existingKeys: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key?.startsWith(prefix)) {
+      existingKeys.push(key)
+    }
+  }
+
+  const now = Date.now()
+  existingKeys.forEach((key) => {
+    const data = localStorage.getItem(key)
+    if (!data) return
+    const obj = maybeParse(data)
+
+    if (obj?.expires && obj.expires < now) {
+      localStorage.removeItem(key)
+    }
+  })
+}
+
 export default class MetaDataStore<M extends Meta, B extends Body> {
   opts: Required<MetaDataStoreOptions>
 
@@ -52,18 +68,15 @@ export default class MetaDataStore<M extends Meta, B extends Body> {
       expires: 24 * 60 * 60 * 1000, // 24 hours
       ...opts,
     }
-    this.name = `uppyState:${opts.storeName}`
-
-    if (!cleanedUp) {
-      cleanedUp = true
-      MetaDataStore.cleanup()
-    }
+    this.name = getItemKey(opts.storeName)
   }
 
   /**
    *
    */
   load(): StoredState<M, B>['metadata'] | null {
+    expireOldState()
+
     const savedState = localStorage.getItem(this.name)
     if (!savedState) return null
     const data = maybeParse<M, B>(savedState)
@@ -72,7 +85,7 @@ export default class MetaDataStore<M extends Meta, B extends Body> {
     return data.metadata
   }
 
-  save(metadata: Record<string, unknown>): void {
+  save(metadata: StoredState<M, B>['metadata']): void {
     const expires = Date.now() + this.opts.expires
     const state = JSON.stringify({
       metadata,
@@ -82,25 +95,10 @@ export default class MetaDataStore<M extends Meta, B extends Body> {
   }
 
   /**
-   * Remove all expired state.
+   * Remove old state for Uppy instanceId.
    */
-  static cleanup(instanceID?: string): void {
-    if (instanceID) {
-      localStorage.removeItem(`uppyState:${instanceID}`)
-      return
-    }
-
-    const instanceIDs = findUppyInstances()
-    const now = Date.now()
-    instanceIDs.forEach((id) => {
-      const data = localStorage.getItem(`uppyState:${id}`)
-      if (!data) return
-      const obj = maybeParse(data)
-      if (!obj) return
-
-      if (obj.expires && obj.expires < now) {
-        localStorage.removeItem(`uppyState:${id}`)
-      }
-    })
+  static cleanup(name: string): void {
+    localStorage.removeItem(getItemKey(name))
+    expireOldState()
   }
 }
