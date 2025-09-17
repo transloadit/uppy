@@ -25,6 +25,9 @@
     },
     {
       "path": "../webcam/tsconfig.build.json"
+    },
+    {
+      "path": "../status-bar/tsconfig.build.json"
     }
   ]
 }
