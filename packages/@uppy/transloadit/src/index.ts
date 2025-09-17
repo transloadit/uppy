@@ -8,7 +8,12 @@ import type {
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
 import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
-import { ErrorWithCause, hasProperty, RateLimitedQueue } from '@uppy/utils'
+import {
+  ErrorWithCause,
+  hasProperty,
+  RateLimitedQueue,
+  type RemoteUppyFile,
+} from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
@@ -216,7 +221,11 @@ declare module '@uppy/core' {
 }
 
 declare module '@uppy/utils' {
-  export interface UppyFile<M extends Meta, B extends Body> {
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    transloadit?: { assembly: string }
+    tus?: TusOpts<M, B>
+  }
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
     tus?: TusOpts<M, B>
   }
@@ -370,18 +379,22 @@ export default class Transloadit<
     // remote, because this is the criteria to identify remote files.
     // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
-    let { remote } = file
+    let remote: RemoteUppyFile<M, B>['remote'] | undefined
 
-    if (file.remote && TL_COMPANION.test(file.remote.companionUrl)) {
-      const newHost = status.companion_url.replace(/\/$/, '')
-      const path = file.remote.url
-        .replace(file.remote.companionUrl, '')
-        .replace(/^\//, '')
+    if ('remote' in file && file.remote) {
+      ;({ remote } = file)
 
-      remote = {
-        ...file.remote,
-        companionUrl: newHost,
-        url: `${newHost}/${path}`,
+      if (TL_COMPANION.test(file.remote.companionUrl)) {
+        const newHost = status.companion_url.replace(/\/$/, '')
+        const path = file.remote.url
+          .replace(file.remote.companionUrl, '')
+          .replace(/^\//, '')
+
+        remote = {
+          ...file.remote,
+          companionUrl: newHost,
+          url: `${newHost}/${path}`,
+        }
       }
     }
 

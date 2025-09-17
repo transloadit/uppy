@@ -96,9 +96,10 @@ export { default as truncateString } from './truncateString.js'
 export type {
   Body,
   InternalMetadata,
+  LocalUppyFile,
   Meta,
   MinimalRequiredUppyFile,
-  TagFile,
+  RemoteUppyFile,
   UppyFile,
 } from './UppyFile.js'
 export { default as UserFacingApiError } from './UserFacingApiError.js'

@@ -10,9 +10,11 @@ import type {
   FileProgressStarted,
   I18n,
   Locale,
+  LocalUppyFile,
   Meta,
   MinimalRequiredUppyFile,
   OptionalPluralizeLocale,
+  RemoteUppyFile,
   UppyFile,
 } from '@uppy/utils'
 import {
@@ -211,6 +213,10 @@ interface CurrentUpload<M extends Meta, B extends Body> {
 // TODO: can we use namespaces in other plugins to populate this?
 interface Plugins extends Record<string, Record<string, unknown> | undefined> {}
 
+type UppyFilesMap<M extends Meta, B extends Body> = {
+  [key: string]: UppyFile<M, B>
+}
+
 export interface State<M extends Meta, B extends Body>
   extends Record<string, unknown> {
   meta: M
@@ -223,11 +229,14 @@ export interface State<M extends Meta, B extends Body>
   }
   currentUploads: Record<string, CurrentUpload<M, B>>
   allowNewUpload: boolean
-  recoveredState: null | Required<Pick<State<M, B>, 'files' | 'currentUploads'>>
+  /** `recoveredState` is a special version of state in which the files don't have any data (because the data was never stored) */
+  recoveredState:
+    | (Omit<Pick<State<M, B>, 'currentUploads'>, 'files'> & {
+        files: Record<string, Omit<UppyFile<M, B>, 'data'>>
+      })
+    | null
   error: string | null
-  files: {
-    [key: string]: UppyFile<M, B>
-  }
+  files: UppyFilesMap<M, B>
   info: Array<{
     isHidden?: boolean
     type: LogLevel
@@ -570,7 +579,7 @@ export class Uppy<
             },
           ]),
         ),
-      },
+      } as UppyFilesMap<M, B>,
     })
   }
 
@@ -604,7 +613,7 @@ export class Uppy<
       ...(newOpts as UppyOptions<M, B>),
       restrictions: {
         ...this.opts.restrictions,
-        ...(newOpts?.restrictions as Restrictions),
+        ...newOpts?.restrictions,
       },
     }
 
@@ -966,34 +975,46 @@ export class Uppy<
   /**
    * Create a file state object based on user-provided `addFile()` options.
    */
-  #transformFile(fileDescriptorOrFile: File | UppyFile<M, B>): UppyFile<M, B> {
+  #transformFile(
+    fileDescriptorOrFile: File | MinimalRequiredUppyFile<M, B>,
+  ): UppyFile<M, B> {
     // Uppy expects files in { name, type, size, data } format.
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
-    const file = (
+    const file =
       fileDescriptorOrFile instanceof File
-        ? {
+        ? ({
             name: fileDescriptorOrFile.name,
             type: fileDescriptorOrFile.type,
             size: fileDescriptorOrFile.size,
             data: fileDescriptorOrFile,
-          }
-        : fileDescriptorOrFile
-    ) as UppyFile<M, B>
+            meta: {},
+            isRemote: false,
+            source: undefined,
+            preview: undefined,
+          } as const)
+        : (fileDescriptorOrFile as MinimalRequiredUppyFile<M, B> &
+            (
+              | Pick<LocalUppyFile<M, B>, 'isRemote' | 'data'>
+              | Pick<RemoteUppyFile<M, B>, 'isRemote' | 'remote' | 'data'>
+            ))
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const id = getSafeFileId(file, this.getID())
 
-    const meta = file.meta || {}
-    meta.name = fileName
-    meta.type = fileType
+    const meta = {
+      ...file.meta,
+      name: fileName,
+      type: fileType,
+    }
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size)
-      ? file.data.size
-      : (null as never)
+    const size =
+      file.data != null && Number.isFinite(file.data.size)
+        ? file.data.size
+        : null
 
     return {
       source: file.source || '',
@@ -1005,7 +1026,6 @@ export class Uppy<
         ...meta,
       },
       type: fileType,
-      data: file.data,
       progress: {
         percentage: 0,
         bytesUploaded: false,
@@ -1015,8 +1035,16 @@ export class Uppy<
       },
       size,
       isGhost: false,
-      isRemote: file.isRemote || false,
-      remote: file.remote,
+      ...(file.isRemote
+        ? {
+            isRemote: true,
+            remote: file.remote,
+            data: file.data,
+          }
+        : {
+            isRemote: false,
+            data: file.data,
+          }),
       preview: file.preview,
     }
   }
@@ -1035,7 +1063,9 @@ export class Uppy<
     }
   }
 
-  #checkAndUpdateFileState(filesToAdd: UppyFile<M, B>[]): {
+  #checkAndUpdateFileState(
+    filesToAdd: (File | MinimalRequiredUppyFile<M, B>)[],
+  ): {
     nextFilesState: State<M, B>['files']
     validFilesToAdd: UppyFile<M, B>[]
     errors: RestrictionError<M, B>[]
@@ -1051,17 +1081,19 @@ export class Uppy<
       try {
         let newFile = this.#transformFile(fileToAdd)
 
+        this.#assertNewUploadAllowed(newFile)
+
         // If a file has been recovered (Golden Retriever), but we were unable to recover its data (probably too large),
         // users are asked to re-select these half-recovered files and then this method will be called again.
         // In order to keep the progress, meta and everything else, we keep the existing file,
         // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
-        const isGhost = existingFiles[newFile.id]?.isGhost
-        if (isGhost) {
-          const existingFileState = existingFiles[newFile.id]
+        const existingFile = existingFiles[newFile.id]
+        const isGhost = existingFile?.isGhost
+        if (isGhost && !newFile.isRemote) {
           newFile = {
-            ...existingFileState,
+            ...existingFile,
             isGhost: false,
-            data: fileToAdd.data,
+            data: newFile.data,
           }
           this.log(
             `Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`,
@@ -1085,7 +1117,7 @@ export class Uppy<
             this.i18n('noDuplicates', {
               fileName: newFile.name ?? this.i18n('unnamed'),
             }),
-            { file: fileToAdd },
+            { file: newFile },
           )
         }
 
@@ -1094,7 +1126,7 @@ export class Uppy<
           // Don’t show UI info for this error, as it should be done by the developer
           throw new RestrictionError(
             'Cannot add the file because onBeforeFileAdded returned false.',
-            { isUserFacing: false, file: fileToAdd },
+            { isUserFacing: false, file: newFile },
           )
         } else if (
           typeof onBeforeFileAddedResult === 'object' &&
@@ -1144,10 +1176,8 @@ export class Uppy<
    * and start an upload if `autoProceed === true`.
    */
   addFile(file: File | MinimalRequiredUppyFile<M, B>): UppyFile<M, B>['id'] {
-    this.#assertNewUploadAllowed(file as UppyFile<M, B>)
-
     const { nextFilesState, validFilesToAdd, errors } =
-      this.#checkAndUpdateFileState([file as UppyFile<M, B>])
+      this.#checkAndUpdateFileState([file])
 
     const restrictionErrors = errors.filter((error) => error.isRestriction)
     this.#informAndEmit(restrictionErrors)
@@ -1177,10 +1207,8 @@ export class Uppy<
    * Programmatic users should usually still use `addFile()` on individual files.
    */
   addFiles(fileDescriptors: MinimalRequiredUppyFile<M, B>[]): void {
-    this.#assertNewUploadAllowed()
-
     const { nextFilesState, validFilesToAdd, errors } =
-      this.#checkAndUpdateFileState(fileDescriptors as UppyFile<M, B>[])
+      this.#checkAndUpdateFileState(fileDescriptors)
 
     const restrictionErrors = errors.filter((error) => error.isRestriction)
     this.#informAndEmit(restrictionErrors)
@@ -2057,7 +2085,7 @@ export class Uppy<
 
   /** @protected */
   getRequestClientForFile<Client>(file: UppyFile<M, B>): Client {
-    if (!file.remote)
+    if (!('remote' in file && file.remote))
       throw new Error(
         `Tried to get RequestClient for a non-remote file ${file.id}`,
       )
@@ -2301,7 +2329,7 @@ export class Uppy<
 
     if (onBeforeUploadResult === false) {
       throw new Error(
-          'Not starting the upload because onBeforeUpload returned false',
+        'Not starting the upload because onBeforeUpload returned false',
       )
     }
 
@@ -2317,34 +2345,34 @@ export class Uppy<
     try {
       this.#restricter.validateMinNumberOfFiles(files)
 
-        if (!this.#checkRequiredMetaFields(files)) {
-          throw new RestrictionError(this.i18n('missingRequiredMetaField'))
-        }
+      if (!this.#checkRequiredMetaFields(files)) {
+        throw new RestrictionError(this.i18n('missingRequiredMetaField'))
+      }
 
-        const { currentUploads } = this.getState()
-        // get a list of files that are currently assigned to uploads
-        const currentlyUploadingFiles = Object.values(currentUploads).flatMap(
-          (curr) => curr.fileIDs,
-        )
+      const { currentUploads } = this.getState()
+      // get a list of files that are currently assigned to uploads
+      const currentlyUploadingFiles = Object.values(currentUploads).flatMap(
+        (curr) => curr.fileIDs,
+      )
 
       const waitingFileIDs = Object.keys(files).filter((fileID) => {
-          const file = this.getFile(fileID)
-          // if the file hasn't started uploading and hasn't already been assigned to an upload..
+        const file = this.getFile(fileID)
+        // if the file hasn't started uploading and hasn't already been assigned to an upload..
         return (
           file &&
-            !file.progress.uploadStarted &&
+          !file.progress.uploadStarted &&
           !currentlyUploadingFiles.includes(fileID)
         )
-        })
+      })
 
-        const uploadID = this.#createUpload(waitingFileIDs)
-        const result = await this.#runUpload(uploadID)
+      const uploadID = this.#createUpload(waitingFileIDs)
+      const result = await this.#runUpload(uploadID)
 
-        this.emit('complete', result!)
-        return result
+      this.emit('complete', result!)
+      return result
     } catch (err) {
       this.#informAndEmit([err])
-        throw err
+      throw err
     }
   }
 }

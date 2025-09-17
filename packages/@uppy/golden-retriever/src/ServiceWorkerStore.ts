@@ -1,4 +1,4 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/utils'
 import type { AllFilesMessage, IncomingMessage } from './ServiceWorker.js'
 
 const isSupported =
@@ -47,10 +47,10 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
     return Promise.resolve(this.#ready)
   }
 
-  async list(): Promise<Record<string, UppyFile<M, B>['data']>> {
+  async list(): Promise<Record<string, LocalUppyFile<M, B>['data']>> {
     await this.#ready
 
-    return new Promise<Record<string, UppyFile<M, B>['data']>>(
+    return new Promise<Record<string, LocalUppyFile<M, B>['data']>>(
       (resolve, reject) => {
         const onMessage = (event: MessageEvent<AllFilesMessage>) => {
           if (event.data.store !== this.name) {
@@ -76,7 +76,7 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
     )
   }
 
-  async put(file: UppyFile<M, B>): Promise<void> {
+  async put(file: LocalUppyFile<M, B>): Promise<void> {
     await this.#ready
     navigator.serviceWorker.controller!.postMessage({
       type: 'uppy/ADD_FILE',
