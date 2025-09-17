@@ -1688,7 +1688,7 @@ export class Uppy<
               uploadComplete: false,
               bytesUploaded: 0,
               bytesTotal: file.size,
-            } as FileProgressStarted,
+            } satisfies FileProgressStarted,
           },
         ]),
       )
