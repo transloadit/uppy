@@ -14,12 +14,20 @@ export type FileProcessingInfo =
 
 // TODO explore whether all of these properties need to be optional
 interface FileProgressBase {
+  /**
+   * When `uploadComplete` is `true`, the upload has completed successfully (no error).
+   * This is a bit confusing, because elsewhere in the code, we use the term "complete" when we mean an upload has completed either with success or failure.
+   * TODO rename to `completedSuccessfully` or similar
+   */
   uploadComplete?: boolean
-  percentage?: number // undefined if we don't know the percentage (e.g. for files with `bytesTotal` null)
-  // note that Companion will send `bytesTotal` 0 if unknown size (not `null`).
-  // this is not perfect because some files can actually have a size of 0,
-  // and then we might think those files have an unknown size
-  // todo we should change this in companion
+  /** `undefined` if we don't know the percentage (e.g. for files with `bytesTotal` null) */
+  percentage?: number
+  /**
+   * note that Companion will send `bytesTotal` 0 if unknown size (not `null`).
+   * this is not perfect because some files can actually have a size of 0,
+   * and then we might think those files have an unknown size
+   * todo we should change this in companion
+   */
   bytesTotal: number | null
   preprocess?: FileProcessingInfo
   postprocess?: FileProcessingInfo
