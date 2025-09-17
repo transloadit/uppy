@@ -19,13 +19,13 @@ export type FileInputFunctions<EventType> = {
   }
 }
 
-const fileInputId = 'uppy-file-input' as const
-
 // Use a more generic constraint that works with both DOM Events and React/Vue Events
 export function createFileInput<EventType extends Event>(
   ctx: NonNullableUppyContext,
   props: FileInputProps = {},
 ): FileInputFunctions<EventType> {
+  const fileInputId = `uppy-file-input-${ctx.uppy.getID()}`
+
   const handleClick = () => {
     const input = document.getElementById(fileInputId) as HTMLInputElement
     input?.click()
