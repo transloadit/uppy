@@ -1,5 +1,9 @@
-export * from "./components/headless/generated/index.js";
+export { default as Dashboard } from "./components/Dashboard.svelte";
+export { default as DashboardModal } from "./components/DashboardModal.svelte";
+export { default as StatusBar } from "./components/StatusBar.svelte";
+
 // Headless components
+export * from "./components/headless/generated/index.js";
 export { default as UppyContextProvider } from "./components/headless/UppyContextProvider.svelte";
 
 // Hooks
