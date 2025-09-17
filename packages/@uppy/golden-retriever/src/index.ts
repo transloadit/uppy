@@ -292,11 +292,17 @@ export default class GoldenRetriever<
 
     await Promise.all([
       this.#serviceWorkerStore?.put(file).catch((err) => {
-        this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
+        this.uppy.log(
+          '[GoldenRetriever] Could not store file in Service Worker',
+          'warning',
+        )
         this.uppy.log(err)
       }),
       this.#indexedDBStore.put(file).catch((err) => {
-        this.uppy.log('[GoldenRetriever] Could not store file', 'warning')
+        this.uppy.log(
+          '[GoldenRetriever] Could not store file in IndexedDB',
+          'warning',
+        )
         this.uppy.log(err)
       }),
     ])
