@@ -2,4 +2,4 @@
 "uppy": patch
 ---
 
-add main in uppy bundle package
+Put "main" back in package.json
