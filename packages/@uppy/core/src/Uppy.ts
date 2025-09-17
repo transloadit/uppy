@@ -2310,52 +2310,38 @@ export class Uppy<
       })
     }
 
-    return Promise.resolve()
-      .then(() => this.#restricter.validateMinNumberOfFiles(files))
-      .catch((err) => {
-        this.#informAndEmit([err])
-        throw err
-      })
-      .then(() => {
+    try {
+      this.#restricter.validateMinNumberOfFiles(files)
+
         if (!this.#checkRequiredMetaFields(files)) {
           throw new RestrictionError(this.i18n('missingRequiredMetaField'))
         }
-      })
-      .catch((err) => {
-        // Doing this in a separate catch because we already emited and logged
-        // all the errors in `checkRequiredMetaFields` so we only throw a generic
-        // missing fields error here.
-        throw err
-      })
-      .then(async () => {
+
         const { currentUploads } = this.getState()
         // get a list of files that are currently assigned to uploads
         const currentlyUploadingFiles = Object.values(currentUploads).flatMap(
           (curr) => curr.fileIDs,
         )
 
-        const waitingFileIDs: string[] = []
-        Object.keys(files).forEach((fileID) => {
+      const waitingFileIDs = Object.keys(files).filter((fileID) => {
           const file = this.getFile(fileID)
           // if the file hasn't started uploading and hasn't already been assigned to an upload..
-          if (
+        return (
+          file &&
             !file.progress.uploadStarted &&
-            currentlyUploadingFiles.indexOf(fileID) === -1
-          ) {
-            waitingFileIDs.push(file.id)
-          }
+          !currentlyUploadingFiles.includes(fileID)
+        )
         })
 
         const uploadID = this.#createUpload(waitingFileIDs)
         const result = await this.#runUpload(uploadID)
+
         this.emit('complete', result!)
         return result
-      })
-      .catch((err) => {
-        this.emit('error', err)
-        this.log(err, 'error')
+    } catch (err) {
+      this.#informAndEmit([err])
         throw err
-      })
+    }
   }
 }
 
