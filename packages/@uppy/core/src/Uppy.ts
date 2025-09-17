@@ -2199,7 +2199,13 @@ export class Uppy<
           },
         })
 
-        const { fileIDs } = currentUpload
+        // when restoring (e.g. using golden retriever), we don't need to re-upload already successfully uploaded files
+        // so let's exclude them here:
+        // https://github.com/transloadit/uppy/issues/5930
+        const fileIDs = currentUpload.fileIDs.filter((fileID) => {
+          const file = this.getFile(fileID)
+          return !file.progress.uploadComplete
+        })
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
