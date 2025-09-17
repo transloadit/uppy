@@ -1,7 +1,7 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "5.0.1",
+  "version": "5.0.2",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -36,6 +36,7 @@
     ".": "./lib/index.js",
     "./css/style.min.css": "./dist/style.min.css",
     "./css/style.css": "./dist/style.css",
+    "./css/style.scss": "./src/style.scss",
     "./package.json": "./package.json"
   },
   "dependencies": {

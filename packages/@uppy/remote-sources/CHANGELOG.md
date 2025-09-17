@@ -1,5 +1,24 @@
 # @uppy/remote-sources
 
+## 3.0.1
+
+### Patch Changes
+
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [4b6a76c]
+- Updated dependencies [975317d]
+  - @uppy/core@5.0.2
+  - @uppy/box@4.0.1
+  - @uppy/dashboard@5.0.2
+  - @uppy/dropbox@5.0.1
+  - @uppy/facebook@5.0.1
+  - @uppy/google-drive@5.0.1
+  - @uppy/instagram@5.0.1
+  - @uppy/onedrive@5.0.1
+  - @uppy/unsplash@5.0.1
+  - @uppy/url@5.0.1
+  - @uppy/zoom@4.0.1
+
 ## 3.0.0
 
 ### Major Changes
