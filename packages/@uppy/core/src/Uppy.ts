@@ -2294,10 +2294,8 @@ export class Uppy<
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
-      return Promise.reject(
-        new Error(
+      throw new Error(
           'Not starting the upload because onBeforeUpload returned false',
-        ),
       )
     }
 
