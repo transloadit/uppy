@@ -2155,8 +2155,8 @@ export class Uppy<
    *
    */
   #removeUpload(uploadID: string): void {
-    const currentUploads = { ...this.getState().currentUploads }
-    delete currentUploads[uploadID]
+    const { [uploadID]: _deleted, ...currentUploads } =
+      this.getState().currentUploads
 
     this.setState({
       currentUploads,
