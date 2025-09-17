@@ -25,8 +25,6 @@ export type DropzoneReturn<DragEventType, ChangeEventType> = {
   }
 }
 
-const fileInputId = 'uppy-dropzone-file-input' as const
-
 export function createDropzone<
   DragEventType extends DragEvent,
   ChangeEventType extends Event,
@@ -34,6 +32,8 @@ export function createDropzone<
   ctx: NonNullableUppyContext,
   options: DropzoneOptions = {},
 ): DropzoneReturn<DragEventType, ChangeEventType> {
+  const fileInputId = `uppy-dropzone-file-input-${ctx.uppy.getID()}`
+
   const handleDrop = (event: DragEventType) => {
     event.preventDefault()
     event.stopPropagation()

@@ -10001,6 +10001,8 @@ __metadata:
       optional: true
     "@uppy/screen-capture":
       optional: true
+    "@uppy/status-bar":
+      optional: true
     "@uppy/webcam":
       optional: true
   languageName: unknown
@@ -10096,6 +10098,8 @@ __metadata:
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
+      optional: true
+    "@uppy/status-bar":
       optional: true
   languageName: unknown
   linkType: soft
@@ -10217,6 +10221,8 @@ __metadata:
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
+      optional: true
+    "@uppy/status-bar":
       optional: true
   languageName: unknown
   linkType: soft
@@ -14463,6 +14469,7 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
+    "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/svelte": "workspace:*"
     "@uppy/tus": "workspace:*"
