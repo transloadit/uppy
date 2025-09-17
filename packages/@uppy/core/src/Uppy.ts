@@ -1440,6 +1440,9 @@ export class Uppy<
     this.setState(defaultUploadState)
   }
 
+  /**
+   * Retry a specific file that has errored.
+   */
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
     this.setFileState(fileID, {
       error: null,
