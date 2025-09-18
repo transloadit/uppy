@@ -40,9 +40,14 @@ jobs:
       - name: '@uppy/angular prepublish'
         run: corepack yarn workspace @uppy/angular prepublishOnly
 
-      - run: |
+      - name: Add npm token to yarnrc
+        run: |
           echo '' >> .yarnrc.yml
           echo 'npmAuthToken: "${NPM_TOKEN}"' >> .yarnrc.yml
+
+      - name: Add npm token to npmrc
+        run: |
+          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
 
       - name: Create Release Pull Request or Publish
         id: changesets
@@ -59,6 +64,10 @@ jobs:
       - name: Remove npmAuthToken from yarnrc
         run: |
           sed -i '/npmAuthToken:/d' .yarnrc.yml
+
+      - name: Remove npmrc
+        run: |
+          rm .npmrc
 
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
