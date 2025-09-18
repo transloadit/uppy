@@ -1,5 +1,17 @@
 # @uppy/vue
 
+## 3.0.3
+
+### Patch Changes
+
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- 9f18ac7: Export UppyContext and UppyContextSymbol
+- Updated dependencies [4b6a76c]
+- Updated dependencies [975317d]
+  - @uppy/core@5.0.2
+  - @uppy/components@1.0.2
+  - @uppy/dashboard@5.0.2
+
 ## 3.0.2
 
 ### Patch Changes
