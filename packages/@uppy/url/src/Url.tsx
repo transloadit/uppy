@@ -4,7 +4,11 @@ import {
 } from '@uppy/companion-client'
 import type { Body, Meta } from '@uppy/core'
 import { UIPlugin, type Uppy } from '@uppy/core'
-import type { LocaleStrings, TagFile } from '@uppy/utils'
+import type {
+  LocaleStrings,
+  MinimalRequiredUppyFile,
+  RemoteUppyFile,
+} from '@uppy/utils'
 import { toArray } from '@uppy/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
@@ -145,7 +149,8 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     try {
       const meta = await this.getMeta(url)
 
-      const tagFile: TagFile<M> = {
+      const file: Omit<RemoteUppyFile<M, B>, 'name' | 'meta' | 'body'> &
+        Pick<MinimalRequiredUppyFile<M, B>, 'name' | 'meta'> = {
         meta: optionalMeta,
         source: this.id,
         name: meta.name || getFileNameFromUrl(url),
@@ -154,6 +159,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
           size: meta.size,
         },
         isRemote: true,
+        // @ts-expect-error TODO: should this be removed? the types say it's not needed
         body: {
           url,
         },
@@ -170,7 +176,7 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
 
       this.uppy.log('[Url] Adding remote file')
       try {
-        return this.uppy.addFile(tagFile)
+        return this.uppy.addFile(file)
       } catch (err) {
         if (!err.isRestriction) {
           this.uppy.log(err)

@@ -22,7 +22,7 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
   event.waitUntil(self.clients.claim())
 })
 
-type AllFilesMessage = {
+export type AllFilesMessage = {
   type: 'uppy/ALL_FILES'
   store: StoreName
   files: CachedStore
@@ -54,7 +54,7 @@ function getFiles(store: StoreName): void {
   })
 }
 
-type IncomingMessage =
+export type IncomingMessage =
   | { type: 'uppy/ADD_FILE'; store: StoreName; file: AddFilePayload }
   | { type: 'uppy/REMOVE_FILE'; store: StoreName; fileID: FileId }
   | { type: 'uppy/GET_FILES'; store: StoreName }

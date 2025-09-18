@@ -17,7 +17,7 @@ switch (window.location.pathname.toLowerCase()) {
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
-    .register('/sw.js')
+    .register('./sw.js', { type: 'module' })
     .then((registration) => {
       console.log(
         'ServiceWorker registration successful with scope: ',

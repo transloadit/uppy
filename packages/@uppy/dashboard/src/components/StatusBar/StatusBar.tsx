@@ -1,4 +1,4 @@
-import type { Body, Meta, Uppy, UppyFile } from '@uppy/core'
+import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import { emaFilter } from '@uppy/utils'
 import type { ComponentChild } from 'preact'
@@ -24,7 +24,7 @@ type StatusBarProps<M extends Meta, B extends Body> = {
 function getUploadingState(
   error: unknown,
   isAllComplete: boolean,
-  recoveredState: any,
+  recoveredState: State<any, any>['recoveredState'],
   files: Record<string, UppyFile<any, any>>,
 ): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {
@@ -102,7 +102,6 @@ export default class StatusBar<
       )
       // We don't set `#lastUpdateTime` at this point because the upload won't
       // actually resume until the user asks for it.
-      this.props.uppy.emit('restore-confirmed')
       return
     }
 
@@ -187,10 +186,15 @@ export default class StatusBar<
     return Math.round(filteredETA / 100) / 10
   }
 
-  startUpload = (): ReturnType<Uppy<M, B>['upload']> => {
-    return this.props.uppy.upload().catch((() => {
-      // Error logged in Core
-    }) as () => undefined)
+  startUpload = (): void => {
+    const { recoveredState } = this.props.uppy.getState()
+    if (recoveredState) {
+      this.props.uppy.emit('restore-confirmed')
+    } else {
+      this.props.uppy.upload().catch((() => {
+        // Error logged in Core
+      }) as () => undefined)
+    }
   }
 
   render(): ComponentChild {

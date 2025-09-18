@@ -1,6 +1,6 @@
 import type { DefinePluginOpts, UIPluginOptions, Uppy } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/utils'
 import { dataURItoBlob, isObjectURL, isPreviewSupported } from '@uppy/utils'
 // @ts-ignore untyped
 import { rotation } from 'exifr/dist/mini.esm.mjs'
@@ -194,7 +194,7 @@ export default class ThumbnailGenerator<
   }
 
   createThumbnail(
-    file: UppyFile<M, B>,
+    file: LocalUppyFile<M, B>,
     targetWidth: number | null,
     targetHeight: number | null,
   ): Promise<string> {

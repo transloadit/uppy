@@ -1,11 +1,10 @@
 import prettierBytes from '@transloadit/prettier-bytes'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
 import { BasePlugin, type Uppy } from '@uppy/core'
-import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/utils'
 // @ts-ignore
 import { getFileNameAndExtension, RateLimitedQueue } from '@uppy/utils'
 import CompressorJS from 'compressorjs'
-
 import locale from './locale.js'
 
 declare module '@uppy/core' {
@@ -64,7 +63,7 @@ export default class Compressor<
     let totalCompressedSize = 0
     const compressedFiles: UppyFile<M, B>[] = []
     const compressAndApplyResult = this.#RateLimitedQueue.wrapPromiseFunction(
-      async (file: UppyFile<M, B>) => {
+      async (file: LocalUppyFile<M, B>) => {
         try {
           const compressedBlob = await this.compress(file.data)
           const compressedSavingsSize = file.data.size - compressedBlob.size

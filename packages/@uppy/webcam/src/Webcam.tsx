@@ -8,7 +8,7 @@ import type {
   Uppy,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils'
+import type { LocaleStrings, LocalUppyFile } from '@uppy/utils'
 import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/utils'
 import { isMobile } from 'is-mobile'
 // biome-ignore lint/style/useImportType: h is not a type
@@ -581,11 +581,11 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     try {
-      const tagFile = await this.getImage()
-      this.capturedMediaFile = tagFile
+      const file = await this.getImage()
+      this.capturedMediaFile = file
 
       // Create object URL for preview
-      const capturedSnapshotUrl = URL.createObjectURL(tagFile.data as Blob)
+      const capturedSnapshotUrl = URL.createObjectURL(file.data)
       this.setPluginState({ capturedSnapshot: capturedSnapshotUrl })
       this.captureInProgress = false
     } catch (error) {
@@ -597,7 +597,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  getImage(): Promise<MinimalRequiredUppyFile<M, B>> {
+  getImage(): Promise<Pick<LocalUppyFile<M, B>, 'data' | 'name'>> {
     const video = this.getVideoElement()
     if (!video) {
       return Promise.reject(

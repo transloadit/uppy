@@ -1,4 +1,4 @@
-import type { UppyFile } from '@uppy/utils'
+import type { Body, Meta, UppyFile } from '@uppy/utils'
 
 const indexedDB =
   typeof window !== 'undefined' &&
@@ -197,8 +197,10 @@ class IndexedDBStore {
   /**
    * Save a file in the store.
    */
-  async put<T>(file: UppyFile<any, any>): Promise<T> {
-    if (file.data.size > this.opts.maxFileSize) {
+  async put<M extends Meta, B extends Body, T>(
+    file: UppyFile<M, B>,
+  ): Promise<T> {
+    if (file.data.size != null && file.data.size > this.opts.maxFileSize) {
       throw new Error('File is too big to store.')
     }
     const size = await this.getSize()
