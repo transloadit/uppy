@@ -1012,7 +1012,7 @@ export class Uppy<
 
     // `null` means the size is unknown.
     const size =
-      file.data != null && Number.isFinite(file.data.size)
+      Number.isFinite(file.data.size)
         ? file.data.size
         : null
 
