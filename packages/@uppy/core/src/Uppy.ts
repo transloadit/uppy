@@ -1011,10 +1011,7 @@ export class Uppy<
     }
 
     // `null` means the size is unknown.
-    const size =
-      Number.isFinite(file.data.size)
-        ? file.data.size
-        : null
+    const size = Number.isFinite(file.data.size) ? file.data.size : null
 
     return {
       source: file.source || '',
