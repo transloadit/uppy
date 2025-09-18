@@ -6,6 +6,7 @@ import {
   FilesList,
   UploadButton,
   UppyContextProvider,
+  Dashboard,
 } from '@uppy/react'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
@@ -18,7 +19,8 @@ import ScreenCapture from './ScreenCapture'
 import Webcam from './Webcam'
 
 import './app.css'
-import '@uppy/react/css/style.css'
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
 
 function App() {
   const [uppy] = useState(() =>
@@ -28,7 +30,7 @@ function App() {
       })
       .use(UppyWebcam)
       .use(UppyScreenCapture)
-      .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
+      .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020', sources: ['Dropbox'] }),
   )
 
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -86,6 +88,11 @@ function App() {
         <article>
           <h2 className="text-2xl my-4">With custom dropzone</h2>
           <CustomDropzone openModal={(plugin) => openModal(plugin)} />
+        </article>
+
+        <article>
+          <h2 className="text-2xl my-4">Dashboard with Dropbox</h2>
+          <Dashboard uppy={uppy} height={400} note="Browse Dropbox via Companion and pick files"/>
         </article>
       </main>
     </UppyContextProvider>
