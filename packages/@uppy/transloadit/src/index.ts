@@ -184,9 +184,9 @@ declare module '@uppy/core' {
   // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
-    restored: (pluginData: Record<string, TransloaditState>) => void
-    'restore:get-data': (
-      setData: (arg: Record<string, PersistentState>) => void,
+    restored: (pluginData: Record<string, PersistentState>) => void
+    'restore:plugin-data-changed': (
+      pluginData: Record<string, PersistentState | undefined>,
     ) => void
     'transloadit:assembly-created': (
       assembly: AssemblyResponse,
@@ -282,7 +282,7 @@ export default class Transloadit<
 
   client: Client<M, B>
 
-  assembly?: Assembly
+  #assembly?: Assembly
 
   #watcher!: AssemblyWatcher<M, B>
 
@@ -529,6 +529,33 @@ export default class Transloadit<
   }
 
   /**
+   * Allows Golden Retriever plugin to serialize the Assembly status so we can restore it later
+   */
+  #handleAssemblyStatusUpdate = (
+    assemblyResponse: AssemblyResponse | undefined,
+  ) => {
+    this.uppy.emit('restore:plugin-data-changed', {
+      [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
+    })
+  }
+
+  get assembly() {
+    return this.#assembly
+  }
+  set assembly(newAssembly: Assembly | undefined) {
+    if (!newAssembly && this.assembly) {
+      this.assembly.off('status', this.#handleAssemblyStatusUpdate)
+    }
+    this.#assembly = newAssembly
+
+    this.#handleAssemblyStatusUpdate(newAssembly?.status)
+
+    if (newAssembly) {
+      newAssembly.on('status', this.#handleAssemblyStatusUpdate)
+    }
+  }
+
+  /**
    * Used when `importFromUploadURLs` is enabled: adds files to the Assembly
    * once they have been fully uploaded.
    */
@@ -643,22 +670,10 @@ export default class Transloadit<
     }
   }
 
-  /**
-   * Custom state serialization for the Golden Retriever plugin.
-   * It will pass this back to the `_onRestored` function.
-   */
-  #getPersistentData = (
-    setData: (arg: Record<string, PersistentState>) => void,
-  ) => {
-    if (this.assembly) {
-      setData({ [this.id]: { assemblyResponse: this.assembly.status } })
-    }
-  }
-
-  #onRestored = (pluginData: Record<string, unknown>) => {
-    const savedState = (
-      pluginData?.[this.id] ? pluginData[this.id] : {}
-    ) as PersistentState
+  #onRestored = (pluginData: Record<string, PersistentState>) => {
+    const savedState: {
+      assemblyResponse?: PersistentState['assemblyResponse']
+    } = pluginData?.[this.id] ? pluginData[this.id] : {}
     const previousAssembly = savedState.assemblyResponse
 
     if (!previousAssembly) {
@@ -703,8 +718,9 @@ export default class Transloadit<
         }
       })
 
-      this.assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
-      this.assembly.status = previousAssembly
+      const assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
+      assembly.status = previousAssembly
+      this.assembly = assembly
       this.setPluginState({ files, results })
       return files
     }
@@ -736,7 +752,6 @@ export default class Transloadit<
   #connectAssembly(assembly: Assembly, ids: UppyFile<M, B>['id'][]) {
     const { status } = assembly
     const id = status.assembly_id
-    this.assembly = assembly
 
     assembly.on('upload', (file: AssemblyFile) => {
       this.#onFileUploadComplete(id, file)
@@ -828,6 +843,7 @@ export default class Transloadit<
         this.uppy.emit('preprocess-complete', file)
       })
       this.#createAssemblyWatcher(assembly.status.assembly_id)
+      this.assembly = assembly
       this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
       fileIDs.forEach((fileID) => {
@@ -970,7 +986,6 @@ export default class Transloadit<
       })
     }
 
-    this.uppy.on('restore:get-data', this.#getPersistentData)
     this.uppy.on('restored', this.#onRestored)
 
     this.setPluginState({

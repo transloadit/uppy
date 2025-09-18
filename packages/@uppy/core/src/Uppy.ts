@@ -328,7 +328,7 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     progress: NonNullable<FileProgressStarted['preprocess']>,
   ) => void
   progress: (progress: number) => void
-  restored: (pluginData: any) => void
+  restored: (pluginData: unknown) => void
   'restore-confirmed': () => void
   'restriction-failed': (file: UppyFile<M, B> | undefined, error: Error) => void
   'resume-all': () => void

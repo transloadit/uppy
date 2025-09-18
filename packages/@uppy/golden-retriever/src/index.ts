@@ -3,12 +3,12 @@ import type {
   DefinePluginOpts,
   Meta,
   PluginOpts,
+  State,
   UploadResult,
   Uppy,
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import throttle from 'lodash/throttle.js'
 import packageJson from '../package.json' with { type: 'json' }
 import IndexedDBStore from './IndexedDBStore.js'
 import MetaDataStore from './MetaDataStore.js'
@@ -17,8 +17,7 @@ import ServiceWorkerStore from './ServiceWorkerStore.js'
 declare module '@uppy/core' {
   // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
-    // TODO: remove this event
-    'restore:get-data': (fn: (data: Record<string, unknown>) => void) => void
+    'restore:plugin-data-changed': (data: Record<string, unknown>) => void
   }
 }
 
@@ -60,8 +59,6 @@ export default class GoldenRetriever<
 
   #indexedDBStore: IndexedDBStore
 
-  #handleStateUpdateThrottled: () => void
-
   constructor(uppy: Uppy<M, B>, opts?: GoldenRetrieverOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.type = 'debugger'
@@ -82,12 +79,6 @@ export default class GoldenRetriever<
       ...(this.opts.indexedDB || {}),
       storeName: uppy.getID(),
     })
-
-    this.#handleStateUpdateThrottled = throttle(
-      this.#saveFilesStateToLocalStorage,
-      500,
-      { leading: true, trailing: true },
-    )
   }
 
   async #restore() {
@@ -151,7 +142,7 @@ export default class GoldenRetriever<
       files: filesWithBlobs,
     })
 
-    this.uppy.emit('restored', recoveredState.pluginData)
+    this.uppy.emit('restored', recoveredState.pluginData) // must adhere to PersistentState interface in Transloadit
 
     const obsoleteBlobs = Object.keys(blobs).filter((fileID) => !files[fileID])
 
@@ -171,61 +162,22 @@ export default class GoldenRetriever<
     }
   }
 
-  #saveFilesStateToLocalStorage = (): void => {
-    // File objects that are currently waiting: they've been selected,
-    // but aren't yet being uploaded.
-    const waitingFiles = this.uppy
-      .getFiles()
-      .filter((file) => !file.progress || !file.progress.uploadStarted)
-
-    // File objects that are currently being uploaded. If a file has finished
-    // uploading, but the other files in the same batch have not, the finished
-    // file is also returned.
-    const uploadingFiles = Object.values(this.uppy.getState().currentUploads)
-      .map((currentUpload) =>
-        currentUpload.fileIDs.map((fileID) => {
-          const file = this.uppy.getFile(fileID)
-          return file != null ? [file] : [] // file might have been removed
-        }),
-      )
-      .flat(2)
-
-    const allFiles = [...waitingFiles, ...uploadingFiles]
-    // unique by file.id
-    const fileToSave = Object.values(
-      Object.fromEntries(allFiles.map((file) => [file.id, file])),
-    )
-
-    // When all files have been removed by the user, clear recovery state
-    if (fileToSave.length === 0) {
-      this.uppy.setState({ recoveredState: null })
-      MetaDataStore.cleanup(this.uppy.opts.id)
-      return
-    }
-
-    // We dont’t need to store file.data on local files, because the actual blob will be restored later,
-    // and we want to avoid having weird properties in the serialized object (like file.preview).
-    const filesWithoutBlobs = Object.fromEntries(
-      fileToSave.map(({ data, preview, ...fileInfo }) => [
-        fileInfo.id,
-        fileInfo,
-      ]),
-    )
-
-    const pluginData = {}
-    // TODO Remove this,
-    // Other plugins can attach a restore:get-data listener that receives this callback.
-    // Plugins can then use this callback (sync) to provide data to be stored.
-    this.uppy.emit('restore:get-data', (data) => {
-      Object.assign(pluginData, data)
-    })
-
-    const { currentUploads } = this.uppy.getState()
-
+  #patchMetadata = ({
+    pluginData,
+    ...patch
+  }: Partial<NonNullable<ReturnType<MetaDataStore<M, B>['load']>>>): void => {
+    const existing = this.#metaDataStore.load()
     this.#metaDataStore.save({
-      currentUploads,
-      files: filesWithoutBlobs,
-      pluginData,
+      ...(existing ?? {
+        currentUploads: {},
+        files: {},
+      }),
+      ...patch,
+      pluginData: {
+        // pluginData is keyed by plugin id, so we merge instead of replace
+        ...existing?.pluginData,
+        ...pluginData,
+      },
     })
   }
 
@@ -308,6 +260,43 @@ export default class GoldenRetriever<
     ])
   }
 
+  #handleStateUpdate = (
+    prevState: State<M, B>,
+    nextState: State<M, B>,
+    patch: Partial<State<M, B>> | undefined,
+  ) => {
+    if (nextState.currentUploads !== prevState.currentUploads) {
+      const { currentUploads } = this.uppy.getState()
+      this.#patchMetadata({ currentUploads })
+    }
+    if (nextState.files !== prevState.files) {
+      const files = nextState.files
+
+      // We dont’t want to store file.data on local files, because the actual blob will be restored later,
+      // and we want to avoid having weird properties in the serialized object (like file.preview).
+      const filesWithoutBlobs = Object.fromEntries(
+        Object.entries(files).map(
+          ([fileID, { data, preview, ...fileInfo }]) => [fileID, fileInfo],
+        ),
+      )
+
+      this.#patchMetadata({ files: filesWithoutBlobs })
+    }
+    // todo handle also blob changes here. currently we don't handle all blob changes, for example compressed image
+  }
+
+  #handleFileAdded = async (file: UppyFile<M, B>) => {
+    try {
+      await this.#addBlobToStores(file)
+    } catch (err) {
+      this.uppy.log(
+        `[GoldenRetriever] Failed to store file ${file.id}`,
+        'warning',
+      )
+      this.uppy.log(err)
+    }
+  }
+
   #handleFileRemoved = async (file: UppyFile<M, B>) => {
     try {
       await this.#deleteBlobs([file.id])
@@ -369,10 +358,14 @@ export default class GoldenRetriever<
       this.uppy.log(err)
     }
 
-    // Then, only if there were *no* failed files, remove the stored restoration state.
+    // Then, only if there were *no* failed files (meaning only successful), remove the stored restoration state.
     // This makes sure that if the upload was only partially successful, the user can still restore the remaining files.
     // https://github.com/transloadit/uppy/issues/5927
-    if (failed == null || failed.length === 0) {
+    // Note that we cannot just check all files in #saveFilesStateToLocalStorage and clear if all files have progress.uploadComplete
+    // because uploadComplete only means that the upload was completed, but there may be post-processing steps that are not done yet, like Transloadit assembly.
+    // This has the side effect that if 'complete' is never emitted (for example if the user removes all uploads manually), the recovery state is not cleared.
+    // Not sure how to fix this.
+    if (failed != null && failed.length === 0) {
       this.uppy.setState({ recoveredState: null })
       this.uppy.log(
         `[GoldenRetriever] All files have been uploaded successfully, clearing recovery state`,
@@ -381,20 +374,22 @@ export default class GoldenRetriever<
     }
   }
 
+  #handlePluginDataChanged = (data: Record<string, unknown>): void => {
+    this.#patchMetadata({ pluginData: data })
+  }
+
   install(): void {
     this.#restore()
 
-    this.uppy.on('file-added', this.#addBlobToStores)
+    this.uppy.on('file-added', this.#handleFileAdded)
     // @ts-expect-error this is typed in @uppy/image-editor and we can't access those types.
     this.uppy.on('file-editor:complete', this.#replaceBlobInStores)
     this.uppy.on('file-removed', this.#handleFileRemoved)
     this.uppy.on('upload-success', this.#handleFileUploaded)
-    // TODO: the `state-update` is bad practise. It fires on any state change in Uppy
-    // or any state change in any of the plugins. We should to able to only listen
-    // for the state changes we need, somehow.
-    this.uppy.on('state-update', this.#handleStateUpdateThrottled)
+    this.uppy.on('state-update', this.#handleStateUpdate)
     this.uppy.on('restore-confirmed', this.#handleRestoreConfirmed)
     this.uppy.on('complete', this.#handleUploadComplete)
+    this.uppy.on('restore:plugin-data-changed', this.#handlePluginDataChanged)
   }
 
   uninstall(): void {
@@ -403,9 +398,10 @@ export default class GoldenRetriever<
     this.uppy.off('file-editor:complete', this.#replaceBlobInStores)
     this.uppy.off('file-removed', this.#handleFileRemoved)
     this.uppy.off('upload-success', this.#handleFileUploaded)
-    this.uppy.off('state-update', this.#handleStateUpdateThrottled)
+    this.uppy.off('state-update', this.#handleStateUpdate)
     this.uppy.off('restore-confirmed', this.#handleRestoreConfirmed)
     this.uppy.off('complete', this.#handleUploadComplete)
+    this.uppy.off('restore:plugin-data-changed', this.#handlePluginDataChanged)
   }
 }
 
