@@ -21,8 +21,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
-      - name: Remove .npmrc to avoid NPM_TOKEN error
-        run: rm -f .npmrc
       - name: Set SHA commit in version
         run:
           (cd packages/@uppy/companion && node -e 'const
