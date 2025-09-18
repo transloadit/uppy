@@ -47,8 +47,6 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
-      - name: Remove .npmrc to avoid NPM_TOKEN error
-        run: rm -f .npmrc
       - name: Docker meta
         id: docker_meta
         uses: docker/metadata-action@902fa8ec7d6ecbf8d84d538b9b233a880e428804 # v5.7.0
