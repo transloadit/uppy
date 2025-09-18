@@ -102,7 +102,6 @@ export default class StatusBar<
       )
       // We don't set `#lastUpdateTime` at this point because the upload won't
       // actually resume until the user asks for it.
-      this.props.uppy.emit('restore-confirmed')
       return
     }
 
@@ -187,10 +186,15 @@ export default class StatusBar<
     return Math.round(filteredETA / 100) / 10
   }
 
-  startUpload = (): ReturnType<Uppy<M, B>['upload']> => {
-    return this.props.uppy.upload().catch((() => {
-      // Error logged in Core
-    }) as () => undefined)
+  startUpload = (): void => {
+    const { recoveredState } = this.props.uppy.getState()
+    if (recoveredState) {
+      this.props.uppy.emit('restore-confirmed')
+    } else {
+      this.props.uppy.upload().catch((() => {
+        // Error logged in Core
+      }) as () => undefined)
+    }
   }
 
   render(): ComponentChild {
