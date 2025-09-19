@@ -372,7 +372,7 @@ export default class Uploader {
 
     return {
       // Client provided info (must be validated and not blindly trusted):
-      headers: req.body.headers,
+      headers: { ...req.body.headers, ...req.companion.options.uploadHeaders },
       httpMethod: req.body.httpMethod,
       protocol: req.body.protocol,
       endpoint: req.body.endpoint,
