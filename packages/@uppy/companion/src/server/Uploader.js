@@ -682,7 +682,7 @@ export default class Uploader {
     try {
       const httpMethod =
         (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = await got[httpMethod]
+      const runRequest = got[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 
