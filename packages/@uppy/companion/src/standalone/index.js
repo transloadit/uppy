@@ -156,7 +156,7 @@ export default function server(inputCompanionOptions) {
   }
 
   // initialize companion
-  const { app: companionApp } = companion.app(companionOptions)
+  const { app: companionApp, setupSocket } = companion.app(companionOptions)
 
   // add companion to server middleware
   router.use(companionApp)
@@ -212,5 +212,5 @@ export default function server(inputCompanionOptions) {
     }
   })
 
-  return { app, companionOptions }
+  return { app, companionOptions, setupSocket }
 }

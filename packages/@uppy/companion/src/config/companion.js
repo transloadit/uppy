@@ -23,6 +23,7 @@ export const defaultOptions = {
   streamingUpload: true,
   clientSocketConnectTimeout: 60000,
   metrics: true,
+  onConnection: null,
 }
 
 /**

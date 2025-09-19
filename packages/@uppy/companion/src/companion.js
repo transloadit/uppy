@@ -84,7 +84,7 @@ export const errors = {
  * Entry point into initializing the Companion app.
  *
  * @param {object} optionsArg
- * @returns {{ app: import('express').Express, emitter: any }}}
+ * @returns {{ app: import('express').Express, emitter: any, setupSocket: function }}}
  */
 export function app(optionsArg = {}) {
   setLoggerProcessName(optionsArg)
@@ -310,5 +310,10 @@ export function app(optionsArg = {}) {
     processId,
   })
 
-  return { app, emitter }
+  return {
+    app,
+    emitter,
+    setupSocket: (server) =>
+      socket(server, { onConnection: options.onConnection }),
+  }
 }
