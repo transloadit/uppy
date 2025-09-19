@@ -16,7 +16,8 @@ describe('socket onConnection authentication', () => {
     server.listen(0)
     await once(server, 'listening')
     
-    const port = server.address().port
+    const address = server.address()
+    const port = typeof address === 'string' ? 0 : address?.port || 0
     
     try {
       // Create WebSocket connection
@@ -49,7 +50,8 @@ describe('socket onConnection authentication', () => {
     server.listen(0)
     await once(server, 'listening')
     
-    const port = server.address().port
+    const address = server.address()
+    const port = typeof address === 'string' ? 0 : address?.port || 0
     
     try {
       // Create WebSocket connection
@@ -79,7 +81,8 @@ describe('socket onConnection authentication', () => {
     server.listen(0)
     await once(server, 'listening')
     
-    const port = server.address().port
+    const address = server.address()
+    const port = typeof address === 'string' ? 0 : address?.port || 0
     
     try {
       // Create WebSocket connection
@@ -113,7 +116,8 @@ describe('socket onConnection authentication', () => {
     server.listen(0)
     await once(server, 'listening')
     
-    const port = server.address().port
+    const address = server.address()
+    const port = typeof address === 'string' ? 0 : address?.port || 0
     
     try {
       // Create WebSocket connection with specific URL
@@ -125,6 +129,7 @@ describe('socket onConnection authentication', () => {
       // Verify the captured objects
       expect(capturedWs).toBeDefined()
       expect(capturedReq).toBeDefined()
+      // @ts-ignore - capturedReq is checked above
       expect(capturedReq.url).toBe('/api/specific-token')
       
       ws.close()
