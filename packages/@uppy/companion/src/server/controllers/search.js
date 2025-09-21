@@ -19,5 +19,3 @@ export default async function search({ query, companion }, res, next) {
     next(err)
   }
 }
-
-

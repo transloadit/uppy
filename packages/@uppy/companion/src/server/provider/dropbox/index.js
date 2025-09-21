@@ -168,16 +168,19 @@ export default class Dropbox extends Provider {
    * Search entries
    */
   async search(options) {
-    return this.#withErrorHandling('provider.dropbox.search.error', async () => {
-      const { client, userInfo } = await getClient({
-        token: options.providerUserSession.accessToken,
-        namespaced: true,
-      })
+    return this.#withErrorHandling(
+      'provider.dropbox.search.error',
+      async () => {
+        const { client, userInfo } = await getClient({
+          token: options.providerUserSession.accessToken,
+          namespaced: true,
+        })
 
-      const stats = await doSearchEntries({ ...options, client })
-      const { email } = userInfo
-      return adaptData(stats, email, options.companion.buildURL)
-    })
+        const stats = await doSearchEntries({ ...options, client })
+        const { email } = userInfo
+        return adaptData(stats, email, options.companion.buildURL)
+      },
+    )
   }
 
   /**

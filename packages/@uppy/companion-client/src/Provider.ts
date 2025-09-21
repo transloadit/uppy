@@ -357,7 +357,10 @@ export default class Provider<M extends Meta, B extends Body>
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)
   }
 
-  search<ResBody>(text: string, options: RequestOptions = {}): Promise<ResBody> {
+  search<ResBody>(
+    text: string,
+    options: RequestOptions = {},
+  ): Promise<ResBody> {
     const qs = new URLSearchParams({ q: text })
     const base = `${this.id}/search`
     const path = `${base}?${qs.toString()}`

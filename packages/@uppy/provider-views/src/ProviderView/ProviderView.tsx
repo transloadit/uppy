@@ -129,9 +129,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
     this.opts = { ...defaultOptions, ...opts }
 
-  this.openFolder = this.openFolder.bind(this)
-  this.setSearchString = this.setSearchString.bind(this)
-  this.search = this.search.bind(this)
+    this.openFolder = this.openFolder.bind(this)
+    this.setSearchString = this.setSearchString.bind(this)
+    this.search = this.search.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
@@ -241,8 +241,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(`Searching…`)
     await this.#withAbort(async (signal) => {
       // Call dedicated search endpoint
-      const resp = await (this.provider.search?.(q, { signal }) ?? this.provider.list(`?q=${encodeURIComponent(q)}`, { signal }))
-      const { username, nextPagePath, items } = resp as { username: string; nextPagePath: string | null; items: CompanionFile[] }
+      const resp = await (this.provider.search?.(q, { signal }) ??
+        this.provider.list(`?q=${encodeURIComponent(q)}`, { signal }))
+      const { username, nextPagePath, items } = resp as {
+        username: string
+        nextPagePath: string | null
+        items: CompanionFile[]
+      }
 
       // Build a flat result list under a special root indicating search mode.
       // Preserve file vs folder to allow clicking folders to open them.
@@ -278,7 +283,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         currentFolderId: rootId,
       })
     }).catch(handleError(this.plugin.uppy))
-  this.setLoading(false)
+    this.setLoading(false)
   }
 
   #isSearchMode(): boolean {
@@ -292,10 +297,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
     // Returning cached folder
-    const { partialTree, searchString: prevSearchString } = this.plugin.getPluginState()
-    let clickedFolder = partialTree.find(
-      (folder) => folder.id === folderId,
-    ) as PartialTreeFolder | undefined
+    const { partialTree, searchString: prevSearchString } =
+      this.plugin.getPluginState()
+    let clickedFolder = partialTree.find((folder) => folder.id === folderId) as
+      | PartialTreeFolder
+      | undefined
 
     // If we're in search mode and a folder from search results is opened,
     // transition to normal browse mode by constructing the ancestor chain
@@ -310,7 +316,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // to the node id which we set to requestPath in search mode.
       const cf = (clickedFolder as any)?.data as CompanionFile | undefined
       const pathFromData =
-        cf?.requestPath ?? (typeof clickedFolder.id === 'string' ? clickedFolder.id : '')
+        cf?.requestPath ??
+        (typeof clickedFolder.id === 'string' ? clickedFolder.id : '')
       // requestPath might be URL-encoded (e.g. "/arch%2Frolling_release%2Fpatternfly").
       // Decode before splitting so we can construct proper ancestors.
       let pathLower: string = pathFromData || ''
@@ -353,7 +360,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
 
       const updatedClicked: PartialTreeFolderNode = {
-        ...clickedFolder as any,
+        ...(clickedFolder as any),
         parentId,
         cached: false,
         nextPagePath: null,
@@ -383,9 +390,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     if (!clickedFolder) {
       // As a last resort, reset and try again
       this.resetPluginState()
-      clickedFolder = this.plugin.getPluginState().partialTree.find(
-        (i) => i.type === 'root',
-      ) as PartialTreeFolder
+      clickedFolder = this.plugin
+        .getPluginState()
+        .partialTree.find((i) => i.type === 'root') as PartialTreeFolder
     }
     if (clickedFolder.cached) {
       this.plugin.setPluginState({
@@ -430,9 +437,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
         currentFolderId: folderId,
         // In server-search mode, preserve the query; in client mode, clear it so
         // we don't filter the newly opened folder's children away.
-        searchString: (this.opts.useServerSearch ?? false)
-          ? prevSearchString
-          : '',
+        searchString:
+          (this.opts.useServerSearch ?? false) ? prevSearchString : '',
       })
     }).catch(handleError(this.plugin.uppy))
 
@@ -508,8 +514,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async handleScroll(event: Event): Promise<void> {
-    const { partialTree, currentFolderId } =
-      this.plugin.getPluginState()
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
 
     const root = partialTree.find((i) => i.type === 'root') as
       | PartialTreeFolder
@@ -525,10 +530,18 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
         // Parse cursor from nextPagePath (e.g. "?cursor=abc")
-        const params = new URLSearchParams((root.nextPagePath || '').replace(/^\?/, ''))
+        const params = new URLSearchParams(
+          (root.nextPagePath || '').replace(/^\?/, ''),
+        )
         const cursor = params.get('cursor') || ''
-        const resp = await (this.provider.search?.('', { signal, qs: cursor ? { cursor } : undefined }) ?? this.provider.list(root.nextPagePath!, { signal }))
-        const { nextPagePath, items } = resp as { nextPagePath: string | null; items: CompanionFile[] }
+        const resp = await (this.provider.search?.('', {
+          signal,
+          qs: cursor ? { cursor } : undefined,
+        }) ?? this.provider.list(root.nextPagePath!, { signal }))
+        const { nextPagePath, items } = resp as {
+          nextPagePath: string | null
+          items: CompanionFile[]
+        }
 
         const newRoot = { ...(root as any), nextPagePath }
         const oldItems = partialTree.filter((i) => i.type !== 'root')
@@ -679,7 +692,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       | PartialTreeFolder
       | undefined
     const idForBreadcrumbs = this.opts.useServerSearch
-      ? currentFolderId ?? root?.id ?? null
+      ? (currentFolderId ?? root?.id ?? null)
       : currentFolderId
     return getBreadcrumbs(partialTree, idForBreadcrumbs)
   }
@@ -724,11 +737,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-  const { partialTree, username, searchString, currentFolderId } = this.plugin.getPluginState()
-  // Hide breadcrumbs only when we're at the synthetic search root id in server-search mode.
-  const showBreadcrumbs =
-    opts.showBreadcrumbs && (!this.opts.useServerSearch || currentFolderId !== '__search__')
-  const breadcrumbs = showBreadcrumbs ? this.getBreadcrumbs() : []
+    const { partialTree, username, searchString, currentFolderId } =
+      this.plugin.getPluginState()
+    // Hide breadcrumbs only when we're at the synthetic search root id in server-search mode.
+    const showBreadcrumbs =
+      opts.showBreadcrumbs &&
+      (!this.opts.useServerSearch || currentFolderId !== '__search__')
+    const breadcrumbs = showBreadcrumbs ? this.getBreadcrumbs() : []
 
     return (
       <div
@@ -749,8 +764,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
         />
 
         {opts.showFilter && (
-          <div className="uppy-ProviderBrowser-searchModeToggle" style={{ padding: '4px 12px' }}>
-            <label className="uppy-ProviderBrowser-searchModeToggleLabel" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <div
+            className="uppy-ProviderBrowser-searchModeToggle"
+            style={{ padding: '4px 12px' }}
+          >
+            <label
+              className="uppy-ProviderBrowser-searchModeToggleLabel"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+            >
               <input
                 type="checkbox"
                 checked={this.opts.useServerSearch ?? false}

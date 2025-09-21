@@ -1,12 +1,12 @@
 /** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
 import Uppy from '@uppy/core'
 import {
+  Dashboard,
   Dropzone,
   FilesGrid,
   FilesList,
   UploadButton,
   UppyContextProvider,
-  Dashboard,
 } from '@uppy/react'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
@@ -30,7 +30,10 @@ function App() {
       })
       .use(UppyWebcam)
       .use(UppyScreenCapture)
-      .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020', sources: ['Dropbox'] }),
+      .use(UppyRemoteSources, {
+        companionUrl: 'http://localhost:3020',
+        sources: ['Dropbox'],
+      }),
   )
 
   const dialogRef = useRef<HTMLDialogElement>(null)
@@ -92,7 +95,11 @@ function App() {
 
         <article>
           <h2 className="text-2xl my-4">Dashboard with Dropbox</h2>
-          <Dashboard uppy={uppy} height={400} note="Browse Dropbox via Companion and pick files"/>
+          <Dashboard
+            uppy={uppy}
+            height={400}
+            note="Browse Dropbox via Companion and pick files"
+          />
         </article>
       </main>
     </UppyContextProvider>
