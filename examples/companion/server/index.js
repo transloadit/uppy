@@ -37,8 +37,8 @@ const companionOptions = {
       secret: 'your instagram secret',
     },
     dropbox: {
-      key: 'mbn6ivwtq60kemg',
-      secret: 'dhsspmgtq4its7f',
+      key: 'u3k4lzjbbn2k7ab',
+      secret: '5dzff7hmenf7jlb',
     },
     box: {
       key: 'your box key',

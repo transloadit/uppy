@@ -230,16 +230,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     this.setLoading(`Searching…`)
     await this.#withAbort(async (signal) => {
-      // Use list endpoint with query string (?q=...) so Companion can branch to search_v2
-      const { username, nextPagePath, items } = await this.provider.list(
-        `?q=${encodeURIComponent(q)}`,
-        { signal },
-      )
+      // Call dedicated search endpoint
+      const resp = await (this.provider.search?.(q, { signal }) ?? this.provider.list(`?q=${encodeURIComponent(q)}`, { signal }))
+      const { username, nextPagePath, items } = resp as { username: string; nextPagePath: string | null; items: CompanionFile[] }
 
       // Build a flat result list under a special root indicating search mode.
       // Preserve file vs folder to allow clicking folders to open them.
       const rootId = '__search__'
-      const mapped = items.map((item) => {
+      const mapped = items.map((item: CompanionFile) => {
         if (item.isFolder) {
           return {
             type: 'folder',
@@ -488,14 +486,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
     ) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
-        const { nextPagePath, items } = await this.provider.list(
-          root.nextPagePath!,
-          { signal },
-        )
+        // Parse cursor from nextPagePath (e.g. "?cursor=abc")
+        const params = new URLSearchParams((root.nextPagePath || '').replace(/^\?/, ''))
+        const cursor = params.get('cursor') || ''
+        const resp = await (this.provider.search?.('', { signal, qs: cursor ? { cursor } : undefined }) ?? this.provider.list(root.nextPagePath!, { signal }))
+        const { nextPagePath, items } = resp as { nextPagePath: string | null; items: CompanionFile[] }
 
         const newRoot = { ...(root as any), nextPagePath }
         const oldItems = partialTree.filter((i) => i.type !== 'root')
-        const appended = items.map((item) => {
+        const appended = items.map((item: CompanionFile) => {
           if (item.isFolder) {
             return {
               type: 'folder',

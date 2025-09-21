@@ -357,6 +357,13 @@ export default class Provider<M extends Meta, B extends Body>
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)
   }
 
+  search<ResBody>(text: string, options: RequestOptions = {}): Promise<ResBody> {
+    const qs = new URLSearchParams({ q: text })
+    const base = `${this.id}/search`
+    const path = `${base}?${qs.toString()}`
+    return this.get<ResBody>(path, options)
+  }
+
   async logout<ResBody>(options?: RequestOptions): Promise<ResBody> {
     const response = await this.get<ResBody>(`${this.id}/logout`, options)
     await this.removeAuthToken()
