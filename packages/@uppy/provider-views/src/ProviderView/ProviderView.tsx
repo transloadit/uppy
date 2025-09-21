@@ -295,15 +295,22 @@ export default class ProviderView<M extends Meta, B extends Body> {
     if (
       this.#isSearchMode() &&
       clickedFolder &&
-      clickedFolder.type === 'folder' &&
-      // @ts-expect-error data from CompanionFile
-      clickedFolder.data?.path_display
+      clickedFolder.type === 'folder'
     ) {
-      const pathLower: string =
-        // @ts-expect-error data from CompanionFile
-        clickedFolder.data.path_lower ??
-        // @ts-expect-error data from CompanionFile
-        clickedFolder.data.path_display?.toLowerCase()
+      // Derive the real path from available fields. For search results we
+      // always have requestPath; path_lower is preferred if present. Fallback
+      // to the node id which we set to requestPath in search mode.
+      const cf = (clickedFolder as any)?.data as CompanionFile | undefined
+      const pathFromData =
+        cf?.requestPath ?? (typeof clickedFolder.id === 'string' ? clickedFolder.id : '')
+      // requestPath might be URL-encoded (e.g. "/arch%2Frolling_release%2Fpatternfly").
+      // Decode before splitting so we can construct proper ancestors.
+      let pathLower: string = pathFromData || ''
+      try {
+        pathLower = decodeURIComponent(pathLower)
+      } catch {
+        // If it's not encoded, keep as-is.
+      }
       const rootId = this.plugin.rootFolderId
 
       // Build ancestors from the path (excluding the last segment which is the folder itself)
@@ -675,11 +682,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-  const { partialTree, username, searchString } = this.plugin.getPluginState()
-  const inSearchMode = this.#isSearchMode()
-  // Only hide breadcrumbs when we're on the search results root. Once the
-  // user navigates into a real folder (we transition state), breadcrumbs should show.
-  const showBreadcrumbs = opts.showBreadcrumbs && !inSearchMode
+  const { partialTree, username, searchString, currentFolderId } = this.plugin.getPluginState()
+  // Hide breadcrumbs only when we're at the synthetic search root id.
+  const showBreadcrumbs = opts.showBreadcrumbs && currentFolderId !== '__search__'
   const breadcrumbs = showBreadcrumbs ? this.getBreadcrumbs() : []
 
     return (
