@@ -71,6 +71,9 @@ export interface Opts<M extends Meta, B extends Body> {
   showFilter: boolean
   showBreadcrumbs: boolean
   loadAllFiles: boolean
+  // If true, uses Companion server-side search (dedicated endpoint) and flat results mode.
+  // If false, keeps legacy behavior: client-side filtering within the current folder only.
+  useServerSearch?: boolean
   renderAuthForm?: (args: {
     pluginName: string
     i18n: I18n
@@ -120,6 +123,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       showFilter: true,
       showBreadcrumbs: true,
       loadAllFiles: false,
+      // Default to legacy, non-intrusive behavior unless explicitly enabled.
+      useServerSearch: false,
       virtualList: false,
     }
     this.opts = { ...defaultOptions, ...opts }
@@ -135,6 +140,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.render = this.render.bind(this)
     this.cancelSelection = this.cancelSelection.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
+    this.toggleSearchMode = this.toggleSearchMode.bind(this)
 
     // Set default state for the plugin
     this.resetPluginState()
@@ -203,6 +209,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // Update input immediately
     this.plugin.setPluginState({ searchString: s })
 
+    // If server-side search is disabled, do nothing else (client-side filter happens in getDisplayedPartialTree)
+    if (!this.opts.useServerSearch) return
+
     // Clear previous debounce
     if (this.#searchDebounce != null) {
       clearTimeout(this.#searchDebounce)
@@ -224,6 +233,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async search(): Promise<void> {
+    if (!this.opts.useServerSearch) return
     const { searchString } = this.plugin.getPluginState()
     const q = searchString?.trim()
     if (!q) return
@@ -276,7 +286,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const root = partialTree.find((i) => i.type === 'root') as
       | PartialTreeFolder
       | undefined
-    return root?.id === '__search__'
+    return (this.opts.useServerSearch ?? false) && root?.id === '__search__'
   }
 
   async openFolder(folderId: string | null): Promise<void> {
@@ -469,6 +479,31 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(false)
   }
 
+  toggleSearchMode(): void {
+    const prev = this.plugin.getPluginState().searchString || ''
+    const next = !(this.opts.useServerSearch ?? false)
+    this.opts.useServerSearch = next
+    // Visible console log for developers
+    // eslint-disable-next-line no-console
+    console.log(`[ProviderViews] Search mode: ${next ? 'server' : 'client'}`)
+
+    if (!next) {
+      // Leaving server-search mode: reset to normal tree and preserve the text for client filter
+      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+      void this.openFolder(this.plugin.rootFolderId)
+      this.plugin.setPluginState({ searchString: prev })
+      return
+    }
+    // Entering server-search mode: if we already have a query, execute it
+    if (prev.trim() !== '') {
+      void this.search()
+    } else {
+      // Ensure we are at a clean root in server mode
+      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+      void this.openFolder(this.plugin.rootFolderId)
+    }
+  }
+
   async handleScroll(event: Event): Promise<void> {
     const { partialTree, currentFolderId } =
       this.plugin.getPluginState()
@@ -613,31 +648,36 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   getDisplayedPartialTree = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
-    const { partialTree, currentFolderId } =
+    const { partialTree, currentFolderId, searchString } =
       this.plugin.getPluginState()
     const inThisFolder = partialTree.filter(
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
-    // In search mode, partialTree already contains filtered, flat results
-    if (this.#isSearchMode()) {
-      // Show only the children of the synthetic search root (or its subfolders
-      // if we ever add nested results) using the same logic as normal mode.
-      return inThisFolder
+
+    // Server-side search mode: the partialTree already holds flat, filtered results
+    if (this.#isSearchMode()) return inThisFolder
+
+    // Client-side filter mode: filter items in the current folder only
+    if (!this.opts.useServerSearch && searchString?.trim()) {
+      const q = searchString.toLowerCase()
+      return inThisFolder.filter((item) =>
+        (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+          .toLowerCase()
+          .includes(q),
+      )
     }
-    // Default (browse mode): do not apply client-side filter. The search box
-    // is sticky to show the previous query, but it shouldn't filter within the
-    // folder—server-side search is used instead.
     return inThisFolder
   }
 
   getBreadcrumbs = (): PartialTreeFolder[] => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    // In search mode, currentFolderId can be null while the root.id is a synthetic
-    // "__search__". Fallback to the root id so breadcrumbs can still render.
+    // Only alter breadcrumbs in server-search mode with synthetic root
     const root = partialTree.find((i) => i.type === 'root') as
       | PartialTreeFolder
       | undefined
-    const idForBreadcrumbs = currentFolderId ?? root?.id ?? null
+    const idForBreadcrumbs = this.opts.useServerSearch
+      ? currentFolderId ?? root?.id ?? null
+      : currentFolderId
     return getBreadcrumbs(partialTree, idForBreadcrumbs)
   }
 
@@ -682,8 +722,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
 
   const { partialTree, username, searchString, currentFolderId } = this.plugin.getPluginState()
-  // Hide breadcrumbs only when we're at the synthetic search root id.
-  const showBreadcrumbs = opts.showBreadcrumbs && currentFolderId !== '__search__'
+  // Hide breadcrumbs only when we're at the synthetic search root id in server-search mode.
+  const showBreadcrumbs =
+    opts.showBreadcrumbs && (!this.opts.useServerSearch || currentFolderId !== '__search__')
   const breadcrumbs = showBreadcrumbs ? this.getBreadcrumbs() : []
 
     return (
@@ -703,6 +744,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
           username={username}
           i18n={i18n}
         />
+
+        {opts.showFilter && (
+          <div className="uppy-ProviderBrowser-searchModeToggle" style={{ padding: '4px 12px' }}>
+            <label className="uppy-ProviderBrowser-searchModeToggleLabel" style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+              <input
+                type="checkbox"
+                checked={this.opts.useServerSearch ?? false}
+                onChange={this.toggleSearchMode}
+              />
+              <span style={{ fontSize: 12 }}>Server-side search</span>
+            </label>
+          </div>
+        )}
 
         {opts.showFilter && (
           <SearchInput
