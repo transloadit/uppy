@@ -73,10 +73,61 @@ const getOauthClient = () =>
   })
 
 async function list({ client, directory, query }) {
-  if (query.cursor) {
+  const q = query?.q ?? query?.query
+  const cursor = query?.cursor
+  const isSearch = typeof q === 'string' && q.trim() !== ''
+
+  // Handle pagination first for search mode
+  if (isSearch && cursor) {
+    const res = await client
+      .post('files/search/continue_v2', {
+        json: { cursor },
+        responseType: 'json',
+      })
+      .json()
+
+    // Normalize search response to look like list_folder
+    const entries = (res.matches || [])
+      .map((m) => m?.metadata?.metadata)
+      .filter(Boolean)
+    return {
+      entries,
+      has_more: !!res.has_more,
+      cursor: res.cursor ?? null,
+    }
+  }
+
+  if (isSearch) {
+    const res = await client
+      .post('files/search_v2', {
+        json: {
+          query: q.trim(),
+          options: {
+            // path: '', // global search; set to a folder path to scope
+            max_results: 200,
+            file_status: 'active',
+            filename_only: false,
+          },
+        },
+        responseType: 'json',
+      })
+      .json()
+
+    const entries = (res.matches || [])
+      .map((m) => m?.metadata?.metadata)
+      .filter(Boolean)
+    return {
+      entries,
+      has_more: !!res.has_more,
+      cursor: res.cursor ?? null,
+    }
+  }
+
+  // Default: folder listing
+  if (cursor) {
     return client
       .post('files/list_folder/continue', {
-        json: { cursor: query.cursor },
+        json: { cursor },
         responseType: 'json',
       })
       .json()

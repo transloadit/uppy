@@ -7,6 +7,16 @@
 			"command": "yarn workspace example-react dev",
 			"isBackground": true,
 			"group": "build"
+		},
+		{
+			"label": "typecheck packages",
+			"type": "shell",
+			"command": "yarn typecheck",
+			"isBackground": false,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
 		}
 	]
 }

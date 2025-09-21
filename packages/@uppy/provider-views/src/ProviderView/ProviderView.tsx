@@ -124,7 +124,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
     this.opts = { ...defaultOptions, ...opts }
 
-    this.openFolder = this.openFolder.bind(this)
+  this.openFolder = this.openFolder.bind(this)
+  this.setSearchString = this.setSearchString.bind(this)
+  this.search = this.search.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
@@ -195,13 +197,108 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
+  #searchDebounce: number | undefined
+
+  setSearchString(s: string): void {
+    // Update input immediately
+    this.plugin.setPluginState({ searchString: s })
+
+    // Clear previous debounce
+    if (this.#searchDebounce != null) {
+      clearTimeout(this.#searchDebounce)
+      this.#searchDebounce = undefined
+    }
+
+    // Empty string -> exit search mode, restore browsing (re-open current folder)
+    if (s.trim() === '') {
+      const { currentFolderId } = this.plugin.getPluginState()
+      // If we were in search mode, restore the default tree (root) first
+      if (this.#isSearchMode()) {
+        this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+        void this.openFolder(this.plugin.rootFolderId)
+      } else {
+        // Re-open current folder to repopulate items (also clears searchString inside openFolder)
+        void this.openFolder(currentFolderId)
+      }
+      return
+    }
+
+    // Debounce 2s before firing server-side search
+    this.#searchDebounce = window.setTimeout(() => {
+      void this.search()
+    }, 2000)
+  }
+
+  async search(): Promise<void> {
+    const { searchString } = this.plugin.getPluginState()
+    const q = searchString?.trim()
+    if (!q) return
+
+    this.setLoading(`Searching…`)
+    await this.#withAbort(async (signal) => {
+      // Use list endpoint with query string (?q=...) so Companion can branch to search_v2
+      const { username, nextPagePath, items } = await this.provider.list(
+        `?q=${encodeURIComponent(q)}`,
+        { signal },
+      )
+
+      // Switch to a flat tree under a special root indicating search mode
+      const newPartialTree: PartialTree = [
+        {
+          type: 'root',
+          id: '__search__',
+          cached: false,
+          nextPagePath,
+        },
+        ...items.map(
+          (item) =>
+            ({
+              type: 'file',
+              id: item.requestPath,
+              status: 'unchecked',
+              parentId: null,
+              data: item,
+            }) as PartialTreeFile,
+        ),
+      ]
+      this.plugin.setPluginState({
+        username,
+        partialTree: newPartialTree,
+        currentFolderId: null,
+      })
+    }).catch(handleError(this.plugin.uppy))
+  this.setLoading(false)
+  }
+
+  #isSearchMode(): boolean {
+    const { partialTree } = this.plugin.getPluginState()
+    const root = partialTree.find((i) => i.type === 'root') as
+      | PartialTreeFolder
+      | undefined
+    return root?.id === '__search__'
+  }
+
   async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
-    const clickedFolder = partialTree.find(
+    let clickedFolder = partialTree.find(
       (folder) => folder.id === folderId,
-    )! as PartialTreeFolder
+    ) as PartialTreeFolder | undefined
+    // Defensive: if the folder isn't part of the current tree (e.g. just exited search mode),
+    // fall back to the root node so we can rebuild the tree.
+    if (!clickedFolder) {
+      clickedFolder = partialTree.find((i) => i.type === 'root') as
+        | PartialTreeFolder
+        | undefined
+    }
+    if (!clickedFolder) {
+      // As a last resort, reset and try again
+      this.resetPluginState()
+      clickedFolder = this.plugin.getPluginState().partialTree.find(
+        (i) => i.type === 'root',
+      ) as PartialTreeFolder
+    }
     if (clickedFolder.cached) {
       this.plugin.setPluginState({
         currentFolderId: folderId,
@@ -293,14 +390,55 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async handleScroll(event: Event): Promise<void> {
-    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    const { partialTree, currentFolderId } =
+      this.plugin.getPluginState()
+
+    const root = partialTree.find((i) => i.type === 'root') as
+      | PartialTreeFolder
+      | undefined
+
+    // When in search mode, paginate using root.nextPagePath and append flat items
+    if (
+      this.#isSearchMode() &&
+      shouldHandleScroll(event) &&
+      !this.isHandlingScroll &&
+      root?.nextPagePath
+    ) {
+      this.isHandlingScroll = true
+      await this.#withAbort(async (signal) => {
+        const { nextPagePath, items } = await this.provider.list(
+          root.nextPagePath!,
+          { signal },
+        )
+
+        const newRoot = { ...(root as any), nextPagePath }
+        const oldItems = partialTree.filter((i) => i.type !== 'root')
+        const appended = items.map(
+          (item) =>
+            ({
+              type: 'file',
+              id: item.requestPath,
+              status: 'unchecked',
+              parentId: null,
+              data: item,
+            }) as PartialTreeFile,
+        )
+        this.plugin.setPluginState({
+          partialTree: [newRoot as any, ...oldItems, ...appended],
+        })
+      }).catch(handleError(this.plugin.uppy))
+      this.isHandlingScroll = false
+      return
+    }
+
+    // Default: folder-based infinite scroll
     const currentFolder = partialTree.find(
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
     if (
       shouldHandleScroll(event) &&
       !this.isHandlingScroll &&
-      currentFolder.nextPagePath
+      currentFolder?.nextPagePath
     ) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
@@ -315,7 +453,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           nextPagePath,
           this.validateSingleFile,
         )
-
         this.plugin.setPluginState({ partialTree: newPartialTree })
       }).catch(handleError(this.plugin.uppy))
       this.isHandlingScroll = false
@@ -390,22 +527,34 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const inThisFolder = partialTree.filter(
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
-    const filtered =
-      searchString === ''
-        ? inThisFolder
-        : inThisFolder.filter(
-            (item) =>
-              (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
-                .toLowerCase()
-                .indexOf(searchString.toLowerCase()) !== -1,
-          )
+    // In search mode, partialTree already contains filtered, flat results
+    if (this.#isSearchMode()) {
+      return partialTree.filter((i) => i.type !== 'root') as (
+        | PartialTreeFolderNode
+        | PartialTreeFile
+      )[]
+    }
 
-    return filtered
+    // Default: client-side filter within the current folder
+    return searchString === ''
+      ? inThisFolder
+      : inThisFolder.filter(
+          (item) =>
+            (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+              .toLowerCase()
+              .indexOf(searchString.toLowerCase()) !== -1,
+        )
   }
 
   getBreadcrumbs = (): PartialTreeFolder[] => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    return getBreadcrumbs(partialTree, currentFolderId)
+    // In search mode, currentFolderId can be null while the root.id is a synthetic
+    // "__search__". Fallback to the root id so breadcrumbs can still render.
+    const root = partialTree.find((i) => i.type === 'root') as
+      | PartialTreeFolder
+      | undefined
+    const idForBreadcrumbs = currentFolderId ?? root?.id ?? null
+    return getBreadcrumbs(partialTree, idForBreadcrumbs)
   }
 
   getSelectedAmount = (): number => {
@@ -448,8 +597,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString } = this.plugin.getPluginState()
-    const breadcrumbs = this.getBreadcrumbs()
+  const { partialTree, username, searchString } = this.plugin.getPluginState()
+  const inSearchMode = this.#isSearchMode()
+  const showBreadcrumbs = opts.showBreadcrumbs && !inSearchMode
+  const breadcrumbs = showBreadcrumbs ? this.getBreadcrumbs() : []
 
     return (
       <div
@@ -459,7 +610,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         )}
       >
         <Header<M, B>
-          showBreadcrumbs={opts.showBreadcrumbs}
+          showBreadcrumbs={showBreadcrumbs}
           openFolder={this.openFolder}
           breadcrumbs={breadcrumbs}
           pluginIcon={pluginIcon}
@@ -472,10 +623,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {opts.showFilter && (
           <SearchInput
             searchString={searchString}
-            setSearchString={(s: string) => {
-              this.plugin.setPluginState({ searchString: s })
-            }}
-            submitSearchString={() => {}}
+            setSearchString={this.setSearchString}
+            submitSearchString={this.search}
             inputLabel={i18n('filter')}
             clearSearchLabel={i18n('resetFilter')}
             wrapperClassName="uppy-ProviderBrowser-searchFilter"
