@@ -211,15 +211,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     // Empty string -> exit search mode, restore browsing (re-open current folder)
     if (s.trim() === '') {
-      const { currentFolderId } = this.plugin.getPluginState()
-      // If we were in search mode, restore the default tree (root) first
-      if (this.#isSearchMode()) {
-        this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
-        void this.openFolder(this.plugin.rootFolderId)
-      } else {
-        // Re-open current folder to repopulate items (also clears searchString inside openFolder)
-        void this.openFolder(currentFolderId)
-      }
+      // Always return to the provider root when search is cleared
+      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+      void this.openFolder(this.plugin.rootFolderId)
       return
     }
 
@@ -242,29 +236,38 @@ export default class ProviderView<M extends Meta, B extends Body> {
         { signal },
       )
 
-      // Switch to a flat tree under a special root indicating search mode
+      // Build a flat result list under a special root indicating search mode.
+      // Preserve file vs folder to allow clicking folders to open them.
+      const rootId = '__search__'
+      const mapped = items.map((item) => {
+        if (item.isFolder) {
+          return {
+            type: 'folder',
+            id: item.requestPath,
+            cached: false,
+            nextPagePath: null,
+            status: 'unchecked',
+            parentId: rootId,
+            data: item,
+          } as PartialTreeFolderNode
+        }
+        return {
+          type: 'file',
+          id: item.requestPath,
+          status: 'unchecked',
+          parentId: rootId,
+          data: item,
+        } as PartialTreeFile
+      })
+
       const newPartialTree: PartialTree = [
-        {
-          type: 'root',
-          id: '__search__',
-          cached: false,
-          nextPagePath,
-        },
-        ...items.map(
-          (item) =>
-            ({
-              type: 'file',
-              id: item.requestPath,
-              status: 'unchecked',
-              parentId: null,
-              data: item,
-            }) as PartialTreeFile,
-        ),
+        { type: 'root', id: rootId, cached: false, nextPagePath },
+        ...mapped,
       ]
       this.plugin.setPluginState({
         username,
         partialTree: newPartialTree,
-        currentFolderId: null,
+        currentFolderId: rootId,
       })
     }).catch(handleError(this.plugin.uppy))
   this.setLoading(false)
@@ -281,10 +284,80 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
     // Returning cached folder
-    const { partialTree } = this.plugin.getPluginState()
+    const { partialTree, searchString: prevSearchString } = this.plugin.getPluginState()
     let clickedFolder = partialTree.find(
       (folder) => folder.id === folderId,
     ) as PartialTreeFolder | undefined
+
+    // If we're in search mode and a folder from search results is opened,
+    // transition to normal browse mode by constructing the ancestor chain
+    // from the item's path (so breadcrumbs reflect the true location).
+    if (
+      this.#isSearchMode() &&
+      clickedFolder &&
+      clickedFolder.type === 'folder' &&
+      // @ts-expect-error data from CompanionFile
+      clickedFolder.data?.path_display
+    ) {
+      const pathLower: string =
+        // @ts-expect-error data from CompanionFile
+        clickedFolder.data.path_lower ??
+        // @ts-expect-error data from CompanionFile
+        clickedFolder.data.path_display?.toLowerCase()
+      const rootId = this.plugin.rootFolderId
+
+      // Build ancestors from the path (excluding the last segment which is the folder itself)
+      const segments = (pathLower || '')
+        .replace(/^\/+/, '')
+        .split('/')
+        .filter(Boolean)
+      const parentSegments = segments.slice(0, Math.max(segments.length - 1, 0))
+
+      let parentId: string | null = rootId
+      const ancestorNodes: PartialTreeFolderNode[] = []
+      let accum = ''
+      for (const seg of parentSegments) {
+        accum += `/${seg}`
+        const id = encodeURIComponent(accum)
+        // Only create if missing
+        const exists = partialTree.some((n) => n.id === id)
+        if (!exists) {
+          ancestorNodes.push({
+            type: 'folder',
+            id,
+            cached: false,
+            nextPagePath: null,
+            status: 'unchecked',
+            parentId,
+            // minimal data for breadcrumbs
+            // @ts-expect-error minimal CompanionFile-like
+            data: { name: seg, requestPath: id, isFolder: true },
+          })
+        }
+        parentId = id
+      }
+
+      const updatedClicked: PartialTreeFolderNode = {
+        ...clickedFolder as any,
+        parentId,
+        cached: false,
+        nextPagePath: null,
+      }
+
+      const newTree: PartialTree = [
+        { type: 'root', id: rootId, cached: false, nextPagePath: null },
+        ...ancestorNodes,
+        updatedClicked,
+      ]
+
+      this.plugin.setPluginState({
+        partialTree: newTree,
+        currentFolderId: updatedClicked.id,
+        // Keep the user's query visible; clearing the box will return to root
+      })
+      // Repoint our local clickedFolder reference to the updated node
+      clickedFolder = updatedClicked as unknown as PartialTreeFolder
+    }
     // Defensive: if the folder isn't part of the current tree (e.g. just exited search mode),
     // fall back to the root node so we can rebuild the tree.
     if (!clickedFolder) {
@@ -329,7 +402,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       } while (this.opts.loadAllFiles && currentPagePath)
 
       const newPartialTree = PartialTreeUtils.afterOpenFolder(
-        partialTree,
+        // Use the latest tree in case we reconstructed it above
+        this.plugin.getPluginState().partialTree,
         currentItems,
         clickedFolder,
         currentPagePath,
@@ -339,7 +413,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.plugin.setPluginState({
         partialTree: newPartialTree,
         currentFolderId: folderId,
-        searchString: '',
+        // Keep whatever was in the search box; clearing it returns to root.
+        searchString: prevSearchString,
       })
     }).catch(handleError(this.plugin.uppy))
 
@@ -413,16 +488,26 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
         const newRoot = { ...(root as any), nextPagePath }
         const oldItems = partialTree.filter((i) => i.type !== 'root')
-        const appended = items.map(
-          (item) =>
-            ({
-              type: 'file',
+        const appended = items.map((item) => {
+          if (item.isFolder) {
+            return {
+              type: 'folder',
               id: item.requestPath,
+              cached: false,
+              nextPagePath: null,
               status: 'unchecked',
-              parentId: null,
+              parentId: root.id,
               data: item,
-            }) as PartialTreeFile,
-        )
+            } as PartialTreeFolderNode
+          }
+          return {
+            type: 'file',
+            id: item.requestPath,
+            status: 'unchecked',
+            parentId: root.id,
+            data: item,
+          } as PartialTreeFile
+        })
         this.plugin.setPluginState({
           partialTree: [newRoot as any, ...oldItems, ...appended],
         })
@@ -529,10 +614,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
     // In search mode, partialTree already contains filtered, flat results
     if (this.#isSearchMode()) {
-      return partialTree.filter((i) => i.type !== 'root') as (
-        | PartialTreeFolderNode
-        | PartialTreeFile
-      )[]
+      // Show only the children of the synthetic search root (or its subfolders
+      // if we ever add nested results) using the same logic as normal mode.
+      return inThisFolder
     }
 
     // Default: client-side filter within the current folder
@@ -599,6 +683,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   const { partialTree, username, searchString } = this.plugin.getPluginState()
   const inSearchMode = this.#isSearchMode()
+  // Only hide breadcrumbs when we're on the search results root. Once the
+  // user navigates into a real folder (we transition state), breadcrumbs should show.
   const showBreadcrumbs = opts.showBreadcrumbs && !inSearchMode
   const breadcrumbs = showBreadcrumbs ? this.getBreadcrumbs() : []
 
