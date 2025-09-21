@@ -54,12 +54,24 @@ const afterScrollFolder = (
     }
   })
 
-  const newPartialTree: PartialTree = [
-    ...partialTreeWithUpdatedScrolledFolder,
-    ...folders,
-    ...files,
-  ]
-  return newPartialTree
+  // Prevent duplicate children for this folder across pagination by
+  // removing any nodes that share ids with the freshly fetched batch.
+  const idsToInsertArr = folders.map((f) => f.id).concat(files.map((f) => f.id))
+  const idsToInsert = new Set<string>(idsToInsertArr as string[])
+
+  const resultTree: PartialTree = []
+  for (let i = 0; i < partialTreeWithUpdatedScrolledFolder.length; i += 1) {
+    const node = partialTreeWithUpdatedScrolledFolder[i]
+    if (typeof node.id === 'string' && idsToInsert.has(node.id)) continue
+    resultTree.push(node)
+  }
+  for (let i = 0; i < folders.length; i += 1) {
+    resultTree.push(folders[i])
+  }
+  for (let i = 0; i < files.length; i += 1) {
+    resultTree.push(files[i])
+  }
+  return resultTree
 }
 
 export default afterScrollFolder

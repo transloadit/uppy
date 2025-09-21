@@ -52,12 +52,26 @@ const afterOpenFolder = (
     folder.id === updatedClickedFolder.id ? updatedClickedFolder : folder,
   )
 
-  const newPartialTree = [
-    ...partialTreeWithUpdatedClickedFolder,
-    ...folders,
-    ...files,
-  ]
-  return newPartialTree
+  // Avoid duplicates when the user navigates to a child first (e.g. via search)
+  // and then opens its parent. In that flow, the child node may already exist
+  // under the parent before we fetch the parent's listing. Deduplicate by id
+  // and prefer freshly discovered items from the current request.
+  const idsToInsertArr = folders.map((f) => f.id).concat(files.map((f) => f.id))
+  const idsToInsert = new Set(idsToInsertArr)
+
+  const resultTree: PartialTree = []
+  for (let i = 0; i < partialTreeWithUpdatedClickedFolder.length; i += 1) {
+    const node = partialTreeWithUpdatedClickedFolder[i]
+    if (typeof node.id === 'string' && idsToInsert.has(node.id)) continue
+    resultTree.push(node)
+  }
+  for (let i = 0; i < folders.length; i += 1) {
+    resultTree.push(folders[i])
+  }
+  for (let i = 0; i < files.length; i += 1) {
+    resultTree.push(files[i])
+  }
+  return resultTree
 }
 
 export default afterOpenFolder
