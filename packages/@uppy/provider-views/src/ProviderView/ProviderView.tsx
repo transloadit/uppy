@@ -607,7 +607,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   getDisplayedPartialTree = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
-    const { partialTree, currentFolderId, searchString } =
+    const { partialTree, currentFolderId } =
       this.plugin.getPluginState()
     const inThisFolder = partialTree.filter(
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
@@ -618,16 +618,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // if we ever add nested results) using the same logic as normal mode.
       return inThisFolder
     }
-
-    // Default: client-side filter within the current folder
-    return searchString === ''
-      ? inThisFolder
-      : inThisFolder.filter(
-          (item) =>
-            (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
-              .toLowerCase()
-              .indexOf(searchString.toLowerCase()) !== -1,
-        )
+    // Default (browse mode): do not apply client-side filter. The search box
+    // is sticky to show the previous query, but it shouldn't filter within the
+    // folder—server-side search is used instead.
+    return inThisFolder
   }
 
   getBreadcrumbs = (): PartialTreeFolder[] => {
