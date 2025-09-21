@@ -229,7 +229,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // Debounce 2s before firing server-side search
     this.#searchDebounce = window.setTimeout(() => {
       void this.search()
-    }, 2000)
+    }, 500)
   }
 
   async search(): Promise<void> {
