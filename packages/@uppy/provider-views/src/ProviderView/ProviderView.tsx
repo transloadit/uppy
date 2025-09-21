@@ -428,8 +428,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.plugin.setPluginState({
         partialTree: newPartialTree,
         currentFolderId: folderId,
-        // Keep whatever was in the search box; clearing it returns to root.
-        searchString: prevSearchString,
+        // In server-search mode, preserve the query; in client mode, clear it so
+        // we don't filter the newly opened folder's children away.
+        searchString: (this.opts.useServerSearch ?? false)
+          ? prevSearchString
+          : '',
       })
     }).catch(handleError(this.plugin.uppy))
 
