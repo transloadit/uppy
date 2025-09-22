@@ -249,10 +249,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
 
       const rootId = '__search__'
-      const mapped = this.#mapItemsForSearch(items, rootId)
+      const mapped = this.#mapItemsForSearch(
+        items,
+        rootId,
+        this.#getCheckedFileIdSet(),
+      )
+      // Preserve previously checked nodes even if they do not match the new query.
+      const { partialTree: prevTree } = this.plugin.getPluginState()
+      const prevChecked = prevTree.filter(
+        (i) => i.type !== 'root' && i.status === 'checked',
+      ) as (PartialTreeFolderNode | PartialTreeFile)[]
+      const nextIds = new Set(mapped.map((i) => i.id as string))
+      const preserved: (PartialTreeFolderNode | PartialTreeFile)[] = prevChecked
+        .filter((i) => !nextIds.has(i.id as string))
+        .map((i) => ({ ...i, parentId: rootId }))
+
       const newPartialTree: PartialTree = [
         { type: 'root', id: rootId, cached: false, nextPagePath },
         ...mapped,
+        ...preserved,
       ]
       this.plugin.setPluginState({ username, partialTree: newPartialTree, currentFolderId: rootId })
     }).catch(handleError(this.plugin.uppy))
@@ -512,6 +527,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   #mapItemsForSearch(
     items: CompanionFile[],
     parentId: string,
+    preCheckedIds?: Set<string>,
   ): (PartialTreeFolderNode | PartialTreeFile)[] {
     return items.map((item) => {
       if (item.isFolder) {
@@ -525,14 +541,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
           data: item,
         } as PartialTreeFolderNode
       }
+      const restrictionError = this.validateSingleFile(item)
+      const isChecked = preCheckedIds?.has(item.requestPath) && !restrictionError
       return {
         type: 'file',
         id: item.requestPath,
-        status: 'unchecked',
+        status: isChecked ? 'checked' : 'unchecked',
+        restrictionError,
         parentId,
         data: item,
       } as PartialTreeFile
     })
+  }
+
+  #getCheckedFileIdSet(): Set<string> {
+    const { partialTree } = this.plugin.getPluginState()
+    const ids = partialTree
+      .filter((i) => i.type === 'file' && i.status === 'checked')
+      .map((i) => i.id as string)
+    return new Set(ids)
   }
 
   #decodePathMaybeEncoded(path: string): string {
