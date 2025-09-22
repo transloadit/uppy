@@ -55,44 +55,6 @@ function App() {
     <UppyContextProvider uppy={uppy}>
       <main className="p-5 max-w-xl mx-auto">
         <h1 className="text-4xl font-bold my-4">Welcome to React.</h1>
-
-        <UploadButton />
-
-        <dialog
-          ref={dialogRef}
-          className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
-        >
-          {(() => {
-            switch (modalPlugin) {
-              case 'webcam':
-                return <Webcam close={() => closeModal()} />
-              case 'dropbox':
-                return <RemoteSource id="Dropbox" close={() => closeModal()} />
-              case 'screen-capture':
-                return <ScreenCapture close={() => closeModal()} />
-              default:
-                return null
-            }
-          })()}
-        </dialog>
-
-        <article>
-          <h2 className="text-2xl my-4">With list</h2>
-          <Dropzone />
-          <FilesList />
-        </article>
-
-        <article>
-          <h2 className="text-2xl my-4">With grid</h2>
-          <Dropzone />
-          <FilesGrid columns={2} />
-        </article>
-
-        <article>
-          <h2 className="text-2xl my-4">With custom dropzone</h2>
-          <CustomDropzone openModal={(plugin) => openModal(plugin)} />
-        </article>
-
         <article>
           <h2 className="text-2xl my-4">Dashboard with Dropbox</h2>
           <Dashboard
