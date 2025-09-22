@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
-import Uppy from '@uppy/core'
+import Uppy from "@uppy/core";
 import {
   Dashboard,
   Dropzone,
@@ -7,48 +7,48 @@ import {
   FilesList,
   UploadButton,
   UppyContextProvider,
-} from '@uppy/react'
-import UppyRemoteSources from '@uppy/remote-sources'
-import UppyScreenCapture from '@uppy/screen-capture'
-import Tus from '@uppy/tus'
-import UppyWebcam from '@uppy/webcam'
-import { useRef, useState } from 'react'
-import CustomDropzone from './CustomDropzone'
-import { RemoteSource } from './RemoteSource'
-import ScreenCapture from './ScreenCapture'
-import Webcam from './Webcam'
+} from "@uppy/react";
+import UppyRemoteSources from "@uppy/remote-sources";
+import UppyScreenCapture from "@uppy/screen-capture";
+import Tus from "@uppy/tus";
+import UppyWebcam from "@uppy/webcam";
+import { useRef, useState } from "react";
+import CustomDropzone from "./CustomDropzone";
+import { RemoteSource } from "./RemoteSource";
+import ScreenCapture from "./ScreenCapture";
+import Webcam from "./Webcam";
 
-import './app.css'
-import '@uppy/core/css/style.css'
-import '@uppy/dashboard/css/style.css'
+import "./app.css";
+import "@uppy/core/css/style.css";
+import "@uppy/dashboard/css/style.css";
 
 function App() {
   const [uppy] = useState(() =>
     new Uppy()
       .use(Tus, {
-        endpoint: 'https://tusd.tusdemo.net/files/',
+        endpoint: "https://tusd.tusdemo.net/files/",
       })
       .use(UppyWebcam)
       .use(UppyScreenCapture)
       .use(UppyRemoteSources, {
-        companionUrl: 'http://localhost:3020',
-        sources: ['Dropbox'],
-      }),
-  )
+        companionUrl: "http://localhost:3020",
+        sources: ["Dropbox"],
+      })
+  );
 
-  const dialogRef = useRef<HTMLDialogElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null);
   const [modalPlugin, setModalPlugin] = useState<
-    'webcam' | 'dropbox' | 'screen-capture' | null
-  >(null)
+    "webcam" | "dropbox" | "screen-capture" | null
+  >(null);
 
-  function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
-    setModalPlugin(plugin)
-    dialogRef.current?.showModal()
+  function openModal(plugin: "webcam" | "dropbox" | "screen-capture") {
+    setModalPlugin(plugin);
+    dialogRef.current?.showModal();
   }
 
   function closeModal() {
-    setModalPlugin(null)
-    dialogRef.current?.close()
+    setModalPlugin(null);
+    dialogRef.current?.close();
   }
 
   return (
@@ -65,7 +65,7 @@ function App() {
         </article>
       </main>
     </UppyContextProvider>
-  )
+  );
 }
 
-export default App
+export default App;
