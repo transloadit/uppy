@@ -769,34 +769,74 @@ export default class ProviderView<M extends Meta, B extends Body> {
         />
 
         {opts.showFilter && (
-          <div
-            className="uppy-ProviderBrowser-searchModeToggle"
-            style={{ padding: '4px 12px' }}
-          >
-            <label
-              className="uppy-ProviderBrowser-searchModeToggleLabel"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
-            >
-              <input
-                type="checkbox"
-                checked={this.opts.useServerSearch ?? false}
-                onChange={this.toggleSearchMode}
-              />
-              <span style={{ fontSize: 12 }}>Server-side search</span>
-            </label>
+          <div style={{ padding: '0 12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <div style={{ flex: 1 }}>
+                <SearchInput
+                  searchString={searchString}
+                  setSearchString={this.setSearchString}
+                  submitSearchString={this.search}
+                  inputLabel={i18n('filter')}
+                  clearSearchLabel={i18n('resetFilter')}
+                  wrapperClassName="uppy-ProviderBrowser-searchFilter"
+                  inputClassName="uppy-ProviderBrowser-searchFilterInput"
+                />
+              </div>
+              {(() => {
+                const isOn = this.opts.useServerSearch ?? false
+                return (
+                  <div
+                    role="switch"
+                    aria-checked={isOn}
+                    onClick={this.toggleSearchMode}
+                    title={isOn ? 'Server-side search enabled' : 'Client-side filter'}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 6,
+                      cursor: 'pointer',
+                      userSelect: 'none',
+                      whiteSpace: 'nowrap',
+                    }}
+                    tabIndex={0}
+                    onKeyDown={(e: any) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        this.toggleSearchMode()
+                      }
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: 'relative',
+                        width: 38,
+                        height: 20,
+                        borderRadius: 12,
+                        background: isOn ? '#22c55e' : '#cbd5e1',
+                        transition: 'background .2s ease',
+                        boxSizing: 'border-box',
+                      }}
+                    >
+                      <div
+                        style={{
+                          position: 'absolute',
+                          top: 2,
+                          left: isOn ? 20 : 2,
+                          width: 16,
+                          height: 16,
+                          borderRadius: 10,
+                          background: '#fff',
+                          boxShadow: '0 1px 2px rgba(0,0,0,.25)',
+                          transition: 'left .2s ease',
+                        }}
+                      />
+                    </div>
+                    <span style={{ fontSize: 12 }}>Server-side</span>
+                  </div>
+                )
+              })()}
+            </div>
           </div>
-        )}
-
-        {opts.showFilter && (
-          <SearchInput
-            searchString={searchString}
-            setSearchString={this.setSearchString}
-            submitSearchString={this.search}
-            inputLabel={i18n('filter')}
-            clearSearchLabel={i18n('resetFilter')}
-            wrapperClassName="uppy-ProviderBrowser-searchFilter"
-            inputClassName="uppy-ProviderBrowser-searchFilterInput"
-          />
         )}
 
         <Browser<M, B>
