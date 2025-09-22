@@ -220,9 +220,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     // Empty string -> exit search mode, restore browsing (re-open current folder)
     if (s.trim() === '') {
-      // Always return to the provider root when search is cleared
-      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
-      void this.openFolder(this.plugin.rootFolderId)
+      // Preserve currently checked nodes, but re-home them under their TRUE parent folders
+      // so they don't appear at the root.
+      const { partialTree: prevTree } = this.plugin.getPluginState()
+      const prevChecked = prevTree.filter(
+        (i) => i.type !== 'root' && i.status === 'checked',
+      ) as (PartialTreeFolderNode | PartialTreeFile)[]
+
+      const rootId = this.plugin.rootFolderId
+      const base = getDefaultState(rootId)
+      const rootNode = base.partialTree[0]
+      const rehomed = this.#rehomedCheckedNodes(prevChecked)
+
+      this.plugin.setPluginState({ ...base, partialTree: [rootNode, ...rehomed] })
+      void this.openFolder(rootId)
       return
     }
 
@@ -249,11 +260,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
 
       const rootId = '__search__'
-      const mapped = this.#mapItemsForSearch(
-        items,
-        rootId,
-        this.#getCheckedFileIdSet(),
+      const preCheckedIds = this.#getCheckedFileIdSet()
+      // Exclude already-selected items from the current search view
+      const itemsToShow = items.filter(
+        (item) => !preCheckedIds.has(item.requestPath),
       )
+      const mapped = this.#mapItemsForSearch(itemsToShow, rootId, preCheckedIds)
       // Preserve previously checked nodes even if they do not match the new query.
       const { partialTree: prevTree } = this.plugin.getPluginState()
       const prevChecked = prevTree.filter(
@@ -262,7 +274,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
       const nextIds = new Set(mapped.map((i) => i.id as string))
       const preserved: (PartialTreeFolderNode | PartialTreeFile)[] = prevChecked
         .filter((i) => !nextIds.has(i.id as string))
-        .map((i) => ({ ...i, parentId: rootId }))
+        .map((i) => ({
+          ...i,
+          // Hide preserved selections from the current search view
+          parentId: (i as any).parentId === rootId ? null : (i as any).parentId,
+        }))
 
       const newPartialTree: PartialTree = [
         { type: 'root', id: rootId, cached: false, nextPagePath },
@@ -588,7 +604,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     let accum = ''
     for (const seg of parentSegments) {
       accum += `/${seg}`
-      const id = encodeURIComponent(accum)
+      const id = accum
       const exists = partialTree.some((n) => n.id === id)
       if (!exists) {
         ancestorNodes.push({
@@ -612,13 +628,99 @@ export default class ProviderView<M extends Meta, B extends Body> {
       nextPagePath: null,
     }
 
-    const newTree: PartialTree = [
+    // Pre-seed tree with any previously checked descendants of this folder so
+    // afterOpenFolder can preserve their status when listing loads.
+    const precheckedDescendants: (PartialTreeFolderNode | PartialTreeFile)[] = []
+    const clickedPathDecoded = pathLower
+    const ensureFolderInTree = (
+      tree: PartialTree,
+      parentId: string | null,
+      folderPathDecoded: string,
+    ): string => {
+      const encodedId = folderPathDecoded
+      const exists = tree.some((t) => t.id === encodedId)
+      if (!exists) {
+        tree.push({
+          type: 'folder',
+          id: encodedId,
+          cached: false,
+          nextPagePath: null,
+          status: 'partial',
+          parentId,
+          // @ts-expect-error minimal
+          data: { name: folderPathDecoded.split('/').pop(), requestPath: encodedId, isFolder: true },
+        })
+      }
+      return encodedId
+    }
+
+    const seedTree: PartialTree = [
       { type: 'root', id: rootId, cached: false, nextPagePath: null },
       ...ancestorNodes,
       updatedClicked,
     ]
 
+    // Preserve ALL previously checked items (global), not only descendants of the clicked folder
+    for (let i = 0; i < partialTree.length; i += 1) {
+      const n = partialTree[i]
+      if ((n as any).status !== 'checked') continue
+      const cfNode = (n as any).data as CompanionFile | undefined
+      const rawPath = cfNode?.requestPath ?? (typeof n.id === 'string' ? n.id : '')
+      const nodeDecoded = this.#decodePathMaybeEncoded(rawPath || '')
+      const idxSlash = nodeDecoded.lastIndexOf('/')
+      const parentPathDecoded = idxSlash > 0 ? nodeDecoded.slice(0, idxSlash) : ''
+
+      // Build chain from root to the parent folder of the node
+      let parent = rootId as string | null
+      if (parentPathDecoded) {
+        const segs = parentPathDecoded.replace(/^\/+/, '').split('/').filter(Boolean)
+        let accum = ''
+        for (let s = 0; s < segs.length; s += 1) {
+          accum += `/${segs[s]}`
+          parent = ensureFolderInTree(seedTree, parent, accum)
+        }
+      }
+
+      // If the node is a folder and equals the clicked folder, skip duplicating it
+      if (
+        n.type === 'folder' &&
+        typeof n.id === 'string' &&
+        (this.#decodePathMaybeEncoded((n as any).data?.requestPath ?? (n.id as string)) === clickedPathDecoded)
+      ) {
+        continue
+      }
+
+      precheckedDescendants.push({ ...(n as any), parentId: parent })
+    }
+
+    const newTree: PartialTree = [...seedTree, ...precheckedDescendants]
+
     return { newTree, updatedClicked }
+  }
+
+  /**
+   * Re-home previously checked nodes to their actual parent folders when leaving search mode.
+   * Ensures the checked nodes do not appear as direct children of the root.
+   */
+  #rehomedCheckedNodes(
+    nodes: (PartialTreeFolderNode | PartialTreeFile)[],
+  ): (PartialTreeFolderNode | PartialTreeFile)[] {
+    // Nothing to do if none are from search root
+    const out: (PartialTreeFolderNode | PartialTreeFile)[] = []
+    for (let i = 0; i < nodes.length; i += 1) {
+      const node = nodes[i]
+      const cf = (node as any)?.data as CompanionFile | undefined
+      const rawPath = cf?.requestPath ?? (typeof node.id === 'string' ? node.id : '')
+      const decoded = this.#decodePathMaybeEncoded(rawPath || '')
+
+      // Parent path is everything before the last '/'
+      let parentPath: string | null = this.plugin.rootFolderId
+      const idx = decoded.lastIndexOf('/')
+      if (idx > 0) parentPath = decoded.slice(0, idx)
+
+      out.push({ ...node, parentId: parentPath })
+    }
+    return out
   }
 
   #setStateAfterOpen(

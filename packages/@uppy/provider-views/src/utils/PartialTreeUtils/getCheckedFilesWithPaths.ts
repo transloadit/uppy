@@ -18,7 +18,13 @@ const getPath = (
   const sId = id === null ? 'null' : id
   if (cache[sId]) return cache[sId]
 
-  const file = partialTree.find((f) => f.id === id)!
+  const file = partialTree.find((f) => f.id === id)
+  // If we can't resolve the node (e.g. synthetic parent chain mismatch),
+  // bail out gracefully rather than throwing.
+  if (!file) {
+    cache[sId] = []
+    return []
+  }
 
   if (file.type === 'root') return []
 
@@ -50,15 +56,22 @@ const getCheckedFilesWithPaths = (
     const firstCheckedFolderIndex = absFolders.findIndex(
       (i) => i.type === 'folder' && i.status === 'checked',
     )
-    const relFolders = absFolders.slice(firstCheckedFolderIndex)
+    const relFolders =
+      firstCheckedFolderIndex <= 0
+        ? absFolders
+        : absFolders.slice(firstCheckedFolderIndex)
 
-    const absDirPath = `/${absFolders.map((i) => i.data.name).join('/')}`
+    const namesAbs = absFolders.map((i) => (i as any)?.data?.name).filter(Boolean)
+    const absDirPath = namesAbs.length ? `/${namesAbs.join('/')}` : '/'
+    const namesRel = relFolders
+      .map((i) => (i as any)?.data?.name)
+      .filter(Boolean) as string[]
     const relDirPath =
-      relFolders.length === 1
+      namesRel.length <= 1
         ? // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
           // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
           undefined
-        : relFolders.map((i) => i.data.name).join('/')
+        : namesRel.join('/')
 
     return {
       ...file.data,

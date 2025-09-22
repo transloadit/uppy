@@ -13,65 +13,113 @@ const afterOpenFolder = (
   currentPagePath: string | null,
   validateSingleFile: (file: CompanionFile) => string | null,
 ): PartialTree => {
-  const discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
-  const discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
+  const prevByKey = new Map<string, PartialTreeFile | PartialTreeFolderNode>()
+  const safeDecode = (s: string) => {
+    try {
+      return decodeURIComponent(s)
+    } catch {
+      return s
+    }
+  }
+  const safeEncode = (s: string) => {
+    try {
+      return encodeURIComponent(s)
+    } catch {
+      return s
+    }
+  }
+  for (let i = 0; i < oldPartialTree.length; i += 1) {
+    const node = oldPartialTree[i]
+    if (node.type === 'root') continue
+    const anyNode = node as any
+    const keys: string[] = []
+    if (typeof node.id === 'string') keys.push(node.id)
+    const rp = anyNode?.data?.requestPath as string | undefined
+    if (rp) {
+      keys.push(rp)
+      const dec = safeDecode(rp)
+      const enc = safeEncode(dec)
+      if (!keys.includes(dec)) keys.push(dec)
+      if (!keys.includes(enc)) keys.push(enc)
+    }
+    for (let k = 0; k < keys.length; k += 1) {
+      const key = keys[k]
+      if (!prevByKey.has(key)) prevByKey.set(key, node as any)
+    }
+  }
 
-  const isParentFolderChecked =
+  const foldersSrc = discoveredItems.filter((i) => i.isFolder === true)
+  const filesSrc = discoveredItems.filter((i) => i.isFolder === false)
+
+  const parentChecked =
     clickedFolder.type === 'folder' && clickedFolder.status === 'checked'
-  const folders: PartialTreeFolderNode[] = discoveredFolders.map((folder) => ({
-    type: 'folder',
-    id: folder.requestPath,
-    cached: false,
-    nextPagePath: null,
-    status: isParentFolderChecked ? 'checked' : 'unchecked',
-    parentId: clickedFolder.id,
-    data: folder,
-  }))
-  const files: PartialTreeFile[] = discoveredFiles.map((file) => {
+
+  const newFolderNodes: PartialTreeFolderNode[] = foldersSrc.map((folder) => {
+    const prev = (prevByKey.get(folder.requestPath) || prevByKey.get(safeEncode(safeDecode(folder.requestPath)))) as
+      | PartialTreeFolderNode
+      | undefined
+    const status = prev?.status ?? (parentChecked ? 'checked' : 'unchecked')
+    const cached = prev?.cached ?? false
+    return {
+      type: 'folder',
+      id: folder.requestPath,
+      cached,
+      nextPagePath: null,
+      status,
+      parentId: clickedFolder.id,
+      data: folder,
+    }
+  })
+
+  const newFileNodes: PartialTreeFile[] = filesSrc.map((file) => {
     const restrictionError = validateSingleFile(file)
+    const prev = (prevByKey.get(file.requestPath) || prevByKey.get(safeEncode(safeDecode(file.requestPath)))) as
+      | PartialTreeFile
+      | undefined
+    const keepChecked = prev?.status === 'checked' && !restrictionError
     return {
       type: 'file',
       id: file.requestPath,
-
       restrictionError,
-
       status:
-        isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
+        keepChecked || (parentChecked && !restrictionError)
+          ? 'checked'
+          : 'unchecked',
       parentId: clickedFolder.id,
       data: file,
     }
   })
 
-  // just doing `clickedFolder.cached = true` in a non-mutating way
   const updatedClickedFolder: PartialTreeFolder = {
     ...clickedFolder,
     cached: true,
     nextPagePath: currentPagePath,
   }
-  const partialTreeWithUpdatedClickedFolder = oldPartialTree.map((folder) =>
-    folder.id === updatedClickedFolder.id ? updatedClickedFolder : folder,
+  const baseTree: PartialTree = oldPartialTree.map((node) =>
+    node.id === updatedClickedFolder.id ? updatedClickedFolder : node,
   )
 
-  // Avoid duplicates when the user navigates to a child first (e.g. via search)
-  // and then opens its parent. In that flow, the child node may already exist
-  // under the parent before we fetch the parent's listing. Deduplicate by id
-  // and prefer freshly discovered items from the current request.
-  const idsToInsertArr = folders.map((f) => f.id).concat(files.map((f) => f.id))
-  const idsToInsert = new Set(idsToInsertArr)
+  const idsToInsert = new Set<string>([
+    ...newFolderNodes.map((n) => n.id as string),
+    ...newFileNodes.map((n) => n.id as string),
+  ])
 
-  const resultTree: PartialTree = []
-  for (let i = 0; i < partialTreeWithUpdatedClickedFolder.length; i += 1) {
-    const node = partialTreeWithUpdatedClickedFolder[i]
+  const result: PartialTree = []
+  for (let i = 0; i < baseTree.length; i += 1) {
+    const node = baseTree[i]
     if (typeof node.id === 'string' && idsToInsert.has(node.id)) continue
-    resultTree.push(node)
+    result.push(node)
   }
-  for (let i = 0; i < folders.length; i += 1) {
-    resultTree.push(folders[i])
+  for (let i = 0; i < newFolderNodes.length; i += 1) {
+    result.push(newFolderNodes[i])
   }
-  for (let i = 0; i < files.length; i += 1) {
-    resultTree.push(files[i])
+  for (let i = 0; i < newFileNodes.length; i += 1) {
+    result.push(newFileNodes[i])
   }
-  return resultTree
+
+  return result
 }
 
 export default afterOpenFolder
+
+
