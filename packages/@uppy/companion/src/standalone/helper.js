@@ -215,6 +215,9 @@ const getConfigFromEnv = () => {
       process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
     testDynamicOauthCredentialsSecret:
       process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
+    uploadHeaders: process.env.COMPANION_UPLOAD_HEADERS
+      ? JSON.parse(process.env.COMPANION_UPLOAD_HEADERS)
+      : undefined,
   }
 }
 

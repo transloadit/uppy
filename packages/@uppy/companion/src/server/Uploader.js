@@ -372,7 +372,7 @@ export default class Uploader {
 
     return {
       // Client provided info (must be validated and not blindly trusted):
-      headers: req.body.headers,
+      headers: { ...req.body.headers, ...req.companion.options.uploadHeaders },
       httpMethod: req.body.httpMethod,
       protocol: req.body.protocol,
       endpoint: req.body.endpoint,
@@ -682,7 +682,7 @@ export default class Uploader {
     try {
       const httpMethod =
         (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = await got[httpMethod]
+      const runRequest = got[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 
