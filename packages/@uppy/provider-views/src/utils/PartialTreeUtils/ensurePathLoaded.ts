@@ -33,11 +33,8 @@ export async function ensurePathLoaded(
 
   let tree = partialTree
 
-  // If the full target already exists, nothing to do
-  const already = tree.find((n) => n.id === normalizedTargetId)
-  if (already) {
-    return { partialTree: tree, targetId: normalizedTargetId }
-  }
+  // If the full target already exists, we still want to ensure its first page is listed
+  // so avoid returning early here.
 
   // 2) Walk upwards to find deepest existing ancestor folder
   // Path components are encoded with slashes (%2F). We'll progressively trim
