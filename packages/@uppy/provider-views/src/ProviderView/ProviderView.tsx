@@ -71,9 +71,6 @@ export interface Opts<M extends Meta, B extends Body> {
   showFilter: boolean
   showBreadcrumbs: boolean
   loadAllFiles: boolean
-  // If true, uses Companion server-side search (dedicated endpoint) and flat results mode.
-  // If false, keeps legacy behavior: client-side filtering within the current folder only.
-  useServerSearch?: boolean
   renderAuthForm?: (args: {
     pluginName: string
     i18n: I18n
@@ -123,15 +120,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
       showFilter: true,
       showBreadcrumbs: true,
       loadAllFiles: false,
-      // Default to legacy, non-intrusive behavior unless explicitly enabled.
-      useServerSearch: false,
       virtualList: false,
     }
     this.opts = { ...defaultOptions, ...opts }
 
     this.openFolder = this.openFolder.bind(this)
-    this.setSearchString = this.setSearchString.bind(this)
-    this.search = this.search.bind(this)
     this.logout = this.logout.bind(this)
     this.handleAuth = this.handleAuth.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
@@ -140,7 +133,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.render = this.render.bind(this)
     this.cancelSelection = this.cancelSelection.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
-    this.toggleSearchMode = this.toggleSearchMode.bind(this)
 
     // Set default state for the plugin
     this.resetPluginState()
@@ -203,135 +195,110 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  #searchDebounce: number | undefined
-
-  setSearchString(s: string): void {
-    // Update input immediately
-    this.plugin.setPluginState({ searchString: s })
-
-    // If server-side search is disabled, do nothing else (client-side filter happens in getDisplayedPartialTree)
-    if (!this.opts.useServerSearch) return
-
-    // Clear previous debounce
-    if (this.#searchDebounce != null) {
-      clearTimeout(this.#searchDebounce)
-      this.#searchDebounce = undefined
-    }
-
-    // Empty string -> exit search mode, restore browsing (re-open current folder)
-    if (s.trim() === '') {
-      // Preserve currently checked nodes, but re-home them under their TRUE parent folders
-      // so they don't appear at the root.
-      const { partialTree: prevTree } = this.plugin.getPluginState()
-      const prevChecked = prevTree.filter(
-        (i) => i.type !== 'root' && i.status === 'checked',
-      ) as (PartialTreeFolderNode | PartialTreeFile)[]
-
-      const rootId = this.plugin.rootFolderId
-      const base = getDefaultState(rootId)
-      const rootNode = base.partialTree[0]
-      const rehomed = this.#rehomedCheckedNodes(prevChecked)
-
-      this.plugin.setPluginState({ ...base, partialTree: [rootNode, ...rehomed] })
-      void this.openFolder(rootId)
-      return
-    }
-
-    // Debounce 2s before firing server-side search
-    this.#searchDebounce = window.setTimeout(() => {
-      void this.search()
-    }, 500)
+  #isSearchMode(): boolean {
+    const { searchString } = this.plugin.getPluginState()
+    const supportsServerSearch = typeof (this.provider as any).search === 'function'
+    return supportsServerSearch && searchString.trim() !== ''
   }
 
-  async search(): Promise<void> {
-    if (!this.#isServerSearch()) return
-    const { searchString } = this.plugin.getPluginState()
-    const q = searchString?.trim()
-    if (!q) return
+  #extractCursor(nextPagePath: string | null): string | null {
+    if (!nextPagePath) return null
+    // Accept either raw cursor or a query string like "?cursor=..."
+    if (!nextPagePath.startsWith('?')) return nextPagePath
+    const params = new URLSearchParams(nextPagePath.replace(/^\?/, ''))
+    return params.get('cursor')
+  }
 
-    this.setLoading('Searching…')
+  async #performSearch(): Promise<void> {
+    const { partialTree, currentFolderId, searchString } =
+      this.plugin.getPluginState()
+    const currentFolder = partialTree.find(
+      (i) => i.id === currentFolderId,
+    ) as PartialTreeFolder
+
+    if (!this.#isSearchMode()) return
+
+    this.setLoading(true)
     await this.#withAbort(async (signal) => {
-      const resp = await (this.provider.search?.(q, { signal }) ??
-        this.provider.list(`?q=${encodeURIComponent(q)}`, { signal }))
-      const { username, nextPagePath, items } = resp as {
-        username: string
-        nextPagePath: string | null
-        items: CompanionFile[]
-      }
-
-      const rootId = '__search__'
-      const preCheckedIds = this.#getCheckedFileIdSet()
-      // Exclude already-selected items from the current search view
-      const itemsToShow = items.filter(
-        (item) => !preCheckedIds.has(item.requestPath),
+      // Determine scope path (global when at root)
+      const scopePath = currentFolder.type === 'root' ? null : currentFolder.id
+      const { items, nextPagePath } = await (this.provider as any).search(
+        searchString,
+        { signal, path: scopePath ?? undefined },
       )
-      const mapped = this.#mapItemsForSearch(itemsToShow, rootId, preCheckedIds)
-      // Preserve previously checked nodes even if they do not match the new query.
-      const { partialTree: prevTree } = this.plugin.getPluginState()
-      const prevChecked = prevTree.filter(
-        (i) => i.type !== 'root' && i.status === 'checked',
-      ) as (PartialTreeFolderNode | PartialTreeFile)[]
-      const nextIds = new Set(mapped.map((i) => i.id as string))
-      const preserved: (PartialTreeFolderNode | PartialTreeFile)[] = prevChecked
-        .filter((i) => !nextIds.has(i.id as string))
-        .map((i) => ({
-          ...i,
-          // Hide preserved selections from the current search view
-          parentId: (i as any).parentId === rootId ? null : (i as any).parentId,
-        }))
 
-      const newPartialTree: PartialTree = [
-        { type: 'root', id: rootId, cached: false, nextPagePath },
-        ...mapped,
-        ...preserved,
-      ]
-      this.plugin.setPluginState({ username, partialTree: newPartialTree, currentFolderId: rootId })
+      const isParentFolderChecked =
+        currentFolder.type === 'folder' && currentFolder.status === 'checked'
+
+      const discoveredFolders = items.filter((i: CompanionFile) => i.isFolder === true)
+      const discoveredFiles = items.filter((i: CompanionFile) => i.isFolder === false)
+
+      const folders: PartialTreeFolderNode[] = discoveredFolders.map(
+        (folder: CompanionFile) => ({
+          type: 'folder',
+          id: folder.requestPath,
+          cached: false,
+          nextPagePath: null,
+          status: isParentFolderChecked ? 'checked' : 'unchecked',
+          parentId: currentFolder.id,
+          data: folder,
+        }),
+      )
+      const files: PartialTreeFile[] = discoveredFiles.map((file: CompanionFile) => {
+        const restrictionError = this.validateSingleFile(file)
+
+        // Precompute absDirPath/relDirPath for correct relative paths on search
+        const fullPath = decodeURIComponent(file.requestPath)
+        const lastSlash = fullPath.lastIndexOf('/')
+        const absDirPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
+        let relDirPath: string | undefined
+        if (currentFolder.type === 'folder') {
+          const scope = decodeURIComponent(currentFolder.id)
+          if (absDirPath.startsWith(scope)) {
+            const rel = absDirPath.slice(scope.length).replace(/^\//, '')
+            relDirPath = rel === '' ? undefined : rel
+          }
+        }
+
+        return {
+          type: 'file',
+          id: file.requestPath,
+          restrictionError,
+          status: isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
+          parentId: currentFolder.id,
+          data: { ...file, absDirPath, relDirPath },
+        }
+      })
+
+      // Replace current folder children with search results and set cursor
+      const updatedCurrentFolder: PartialTreeFolder = {
+        ...currentFolder,
+        cached: true,
+        nextPagePath: this.#extractCursor(nextPagePath),
+      }
+      const baseTree = partialTree
+        .map((node) => (node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node))
+        .filter((node) => node.type === 'root' || node.parentId !== currentFolder.id)
+
+      const newPartialTree: PartialTree = [...baseTree, ...folders, ...files]
+      this.plugin.setPluginState({ partialTree: newPartialTree })
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
-  }
-
-  #isSearchMode(): boolean {
-    const { partialTree } = this.plugin.getPluginState()
-    const root = partialTree.find((i) => i.type === 'root') as
-      | PartialTreeFolder
-      | undefined
-    return (this.opts.useServerSearch ?? false) && root?.id === '__search__'
   }
 
   async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
     // Returning cached folder
-    const { partialTree, searchString: prevSearchString } =
-      this.plugin.getPluginState()
-    let clickedFolder = partialTree.find((folder) => folder.id === folderId) as
-      | PartialTreeFolder
-      | undefined
+    const { partialTree } = this.plugin.getPluginState()
+    const clickedFolder = partialTree.find(
+      (folder) => folder.id === folderId,
+    )! as PartialTreeFolder
 
-    // If we're in search mode and a folder from search results is opened,
-    // transition to normal browse mode by constructing the ancestor chain
-    // from the item's path (so breadcrumbs reflect the true location).
-    if (
-      this.#isSearchMode() &&
-      clickedFolder &&
-      clickedFolder.type === 'folder'
-    ) {
-      const { newTree, updatedClicked } = this.#reconstructFromSearch(clickedFolder, partialTree)
-      this.plugin.setPluginState({ partialTree: newTree, currentFolderId: updatedClicked.id })
-      clickedFolder = updatedClicked as unknown as PartialTreeFolder
-    }
-    // Defensive: if the folder isn't part of the current tree (e.g. just exited search mode),
-    // fall back to the root node so we can rebuild the tree.
-    if (!clickedFolder) {
-      clickedFolder = partialTree.find((i) => i.type === 'root') as
-        | PartialTreeFolder
-        | undefined
-    }
-    if (!clickedFolder) {
-      // As a last resort, reset and try again
-      this.resetPluginState()
-      clickedFolder = this.plugin
-        .getPluginState()
-        .partialTree.find((i) => i.type === 'root') as PartialTreeFolder
+    // If user is searching, opening a folder should trigger a scoped search
+    if (this.#isSearchMode()) {
+      this.plugin.setPluginState({ currentFolderId: folderId })
+      await this.#performSearch()
+      return
     }
     if (clickedFolder.cached) {
       this.plugin.setPluginState({
@@ -363,14 +330,18 @@ export default class ProviderView<M extends Meta, B extends Body> {
       } while (this.opts.loadAllFiles && currentPagePath)
 
       const newPartialTree = PartialTreeUtils.afterOpenFolder(
-        // Use the latest tree in case we reconstructed it above
-        this.plugin.getPluginState().partialTree,
+        partialTree,
         currentItems,
         clickedFolder,
         currentPagePath,
         this.validateSingleFile,
       )
-      this.#setStateAfterOpen(newPartialTree, folderId, prevSearchString)
+
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        currentFolderId: folderId,
+        searchString: '',
+      })
     }).catch(handleError(this.plugin.uppy))
 
     this.setLoading(false)
@@ -419,353 +390,98 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(false)
   }
 
-  toggleSearchMode(): void {
-    const prev = this.plugin.getPluginState().searchString || ''
-    const next = !(this.opts.useServerSearch ?? false)
-    this.opts.useServerSearch = next
-    // Visible console log for developers
-    // eslint-disable-next-line no-console
-    console.log(`[ProviderViews] Search mode: ${next ? 'server' : 'client'}`)
-
-    if (!next) {
-      // Leaving server-search mode: reset to normal tree and preserve the text for client filter
-      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
-      void this.openFolder(this.plugin.rootFolderId)
-      this.plugin.setPluginState({ searchString: prev })
-      return
-    }
-    // Entering server-search mode: if we already have a query, execute it
-    if (prev.trim() !== '') {
-      void this.search()
-    } else {
-      // Ensure we are at a clean root in server mode
-      this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
-      void this.openFolder(this.plugin.rootFolderId)
-    }
-  }
-
   async handleScroll(event: Event): Promise<void> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-
-    const root = partialTree.find((i) => i.type === 'root') as
-      | PartialTreeFolder
-      | undefined
-
-    // When in search mode, paginate using root.nextPagePath and append flat items
-    if (
-      this.#isSearchMode() &&
-      shouldHandleScroll(event) &&
-      !this.isHandlingScroll &&
-      root?.nextPagePath
-    ) {
-      this.isHandlingScroll = true
-      await this.#withAbort(async (signal) => {
-        const cursor = this.#parseCursorFromNextPagePath(root.nextPagePath)
-        const resp = await (this.provider.search?.('', {
-          signal,
-          qs: cursor ? { cursor } : undefined,
-        }) ?? this.provider.list(root.nextPagePath!, { signal }))
-        const { nextPagePath, items } = resp as {
-          nextPagePath: string | null
-          items: CompanionFile[]
-        }
-
-        const newRoot = { ...(root as any), nextPagePath }
-        const oldItems = partialTree.filter((i) => i.type !== 'root')
-        const appended = items.map((item: CompanionFile) => {
-          if (item.isFolder) {
-            return {
-              type: 'folder',
-              id: item.requestPath,
-              cached: false,
-              nextPagePath: null,
-              status: 'unchecked',
-              parentId: root.id,
-              data: item,
-            } as PartialTreeFolderNode
-          }
-          return {
-            type: 'file',
-            id: item.requestPath,
-            status: 'unchecked',
-            parentId: root.id,
-            data: item,
-          } as PartialTreeFile
-        })
-        this.plugin.setPluginState({
-          partialTree: [newRoot as any, ...oldItems, ...appended],
-        })
-      }).catch(handleError(this.plugin.uppy))
-      this.isHandlingScroll = false
-      return
-    }
-
-    // Default: folder-based infinite scroll
     const currentFolder = partialTree.find(
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
     if (
       shouldHandleScroll(event) &&
       !this.isHandlingScroll &&
-      currentFolder?.nextPagePath
+      currentFolder.nextPagePath
     ) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
-        const { nextPagePath, items } = await this.provider.list(
-          currentFolder.nextPagePath,
-          { signal },
-        )
-        const newPartialTree = PartialTreeUtils.afterScrollFolder(
-          partialTree,
-          currentFolderId,
-          items,
-          nextPagePath,
-          this.validateSingleFile,
-        )
-        this.plugin.setPluginState({ partialTree: newPartialTree })
+        if (this.#isSearchMode()) {
+          // search pagination
+          const { items, nextPagePath } = await (this.provider as any).search(
+            this.plugin.getPluginState().searchString,
+            {
+              signal,
+              path: currentFolder.type === 'root' ? undefined : currentFolder.id,
+              cursor: this.#extractCursor(currentFolder.nextPagePath),
+            },
+          )
+
+          const isParentFolderChecked =
+            currentFolder.type === 'folder' &&
+            currentFolder.status === 'checked'
+          const newFolders = items.filter((i: CompanionFile) => i.isFolder === true)
+          const newFiles = items.filter((i: CompanionFile) => i.isFolder === false)
+
+          const folders: PartialTreeFolderNode[] = newFolders.map((folder: CompanionFile) => ({
+            type: 'folder',
+            id: folder.requestPath,
+            cached: false,
+            nextPagePath: null,
+            status: isParentFolderChecked ? 'checked' : 'unchecked',
+            parentId: currentFolder.id,
+            data: folder,
+          }))
+          const files: PartialTreeFile[] = newFiles.map((file: CompanionFile) => {
+            const restrictionError = this.validateSingleFile(file)
+            const fullPath = decodeURIComponent(file.requestPath)
+            const lastSlash = fullPath.lastIndexOf('/')
+            const absDirPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
+            let relDirPath: string | undefined
+            if (currentFolder.type === 'folder') {
+              const scope = decodeURIComponent(currentFolder.id)
+              if (absDirPath.startsWith(scope)) {
+                const rel = absDirPath.slice(scope.length).replace(/^\//, '')
+                relDirPath = rel === '' ? undefined : rel
+              }
+            }
+
+            return {
+              type: 'file',
+              id: file.requestPath,
+              restrictionError,
+              status:
+                isParentFolderChecked && !restrictionError
+                  ? 'checked'
+                  : 'unchecked',
+              parentId: currentFolder.id,
+              data: { ...file, absDirPath, relDirPath },
+            }
+          })
+
+          const updatedCurrentFolder: PartialTreeFolder = {
+            ...currentFolder,
+            nextPagePath: this.#extractCursor(nextPagePath),
+          }
+          const baseTree = partialTree.map((node) =>
+            node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node,
+          )
+          const newPartialTree: PartialTree = [...baseTree, ...folders, ...files]
+          this.plugin.setPluginState({ partialTree: newPartialTree })
+        } else {
+          const { nextPagePath, items } = await this.provider.list(
+            currentFolder.nextPagePath,
+            { signal },
+          )
+          const newPartialTree = PartialTreeUtils.afterScrollFolder(
+            partialTree,
+            currentFolderId,
+            items,
+            nextPagePath,
+            this.validateSingleFile,
+          )
+
+          this.plugin.setPluginState({ partialTree: newPartialTree })
+        }
       }).catch(handleError(this.plugin.uppy))
       this.isHandlingScroll = false
     }
-  }
-
-  // ----- Small helpers focused on readability -----
-
-  #isServerSearch(): boolean {
-    return this.opts.useServerSearch ?? false
-  }
-
-  #parseCursorFromNextPagePath(nextPagePath: string | null): string {
-    if (!nextPagePath) return ''
-    const params = new URLSearchParams(nextPagePath.replace(/^\?/, ''))
-    return params.get('cursor') || ''
-  }
-
-  #mapItemsForSearch(
-    items: CompanionFile[],
-    parentId: string,
-    preCheckedIds?: Set<string>,
-  ): (PartialTreeFolderNode | PartialTreeFile)[] {
-    return items.map((item) => {
-      if (item.isFolder) {
-        return {
-          type: 'folder',
-          id: item.requestPath,
-          cached: false,
-          nextPagePath: null,
-          status: 'unchecked',
-          parentId,
-          data: item,
-        } as PartialTreeFolderNode
-      }
-      const restrictionError = this.validateSingleFile(item)
-      const isChecked = preCheckedIds?.has(item.requestPath) && !restrictionError
-      return {
-        type: 'file',
-        id: item.requestPath,
-        status: isChecked ? 'checked' : 'unchecked',
-        restrictionError,
-        parentId,
-        data: item,
-      } as PartialTreeFile
-    })
-  }
-
-  #getCheckedFileIdSet(): Set<string> {
-    const { partialTree } = this.plugin.getPluginState()
-    const ids = partialTree
-      .filter((i) => i.type === 'file' && i.status === 'checked')
-      .map((i) => i.id as string)
-    return new Set(ids)
-  }
-
-  #decodePathMaybeEncoded(path: string): string {
-    try {
-      return decodeURIComponent(path)
-    } catch {
-      return path
-    }
-  }
-
-  #reconstructFromSearch(
-    clickedFolder: PartialTreeFolder,
-    partialTree: PartialTree,
-  ): { newTree: PartialTree; updatedClicked: PartialTreeFolderNode } {
-    const cf = (clickedFolder as any)?.data as CompanionFile | undefined
-    const rawPath =
-      cf?.requestPath ?? (typeof clickedFolder.id === 'string' ? clickedFolder.id : '')
-    const pathLower = this.#decodePathMaybeEncoded(rawPath || '')
-    const rootId = this.plugin.rootFolderId
-
-    const segments = (pathLower || '').replace(/^\/+/, '').split('/').filter(Boolean)
-    const parentSegments = segments.slice(0, Math.max(segments.length - 1, 0))
-
-    let parentId: string | null = rootId
-    const ancestorNodes: PartialTreeFolderNode[] = []
-    let accum = ''
-    for (const seg of parentSegments) {
-      accum += `/${seg}`
-      const id = accum
-      const exists = partialTree.some((n) => n.id === id)
-      if (!exists) {
-        ancestorNodes.push({
-          type: 'folder',
-          id,
-          cached: false,
-          nextPagePath: null,
-          status: 'unchecked',
-          parentId,
-          // @ts-expect-error minimal CompanionFile-like
-          data: { name: seg, requestPath: id, isFolder: true },
-        })
-      }
-      parentId = id
-    }
-
-    const updatedClicked: PartialTreeFolderNode = {
-      ...(clickedFolder as any),
-      parentId,
-      cached: false,
-      nextPagePath: null,
-    }
-
-    // Pre-seed tree with any previously checked descendants of this folder so
-    // afterOpenFolder can preserve their status when listing loads.
-    const precheckedDescendants: (PartialTreeFolderNode | PartialTreeFile)[] = []
-    const clickedPathDecoded = pathLower
-    const ensureFolderInTree = (
-      tree: PartialTree,
-      parentId: string | null,
-      folderPathDecoded: string,
-    ): string => {
-      const encodedId = folderPathDecoded
-      const exists = tree.some((t) => t.id === encodedId)
-      if (!exists) {
-        tree.push({
-          type: 'folder',
-          id: encodedId,
-          cached: false,
-          nextPagePath: null,
-          status: 'partial',
-          parentId,
-          // @ts-expect-error minimal
-          data: { name: folderPathDecoded.split('/').pop(), requestPath: encodedId, isFolder: true },
-        })
-      }
-      return encodedId
-    }
-
-    const seedTree: PartialTree = [
-      { type: 'root', id: rootId, cached: false, nextPagePath: null },
-      ...ancestorNodes,
-      updatedClicked,
-    ]
-
-    // Preserve ALL previously checked items (global), not only descendants of the clicked folder
-    for (let i = 0; i < partialTree.length; i += 1) {
-      const n = partialTree[i]
-      if ((n as any).status !== 'checked') continue
-      const cfNode = (n as any).data as CompanionFile | undefined
-      const rawPath = cfNode?.requestPath ?? (typeof n.id === 'string' ? n.id : '')
-      const nodeDecoded = this.#decodePathMaybeEncoded(rawPath || '')
-      const idxSlash = nodeDecoded.lastIndexOf('/')
-      const parentPathDecoded = idxSlash > 0 ? nodeDecoded.slice(0, idxSlash) : ''
-
-      // Build chain from root to the parent folder of the node
-      let parent = rootId as string | null
-      if (parentPathDecoded) {
-        const segs = parentPathDecoded.replace(/^\/+/, '').split('/').filter(Boolean)
-        let accum = ''
-        for (let s = 0; s < segs.length; s += 1) {
-          accum += `/${segs[s]}`
-          parent = ensureFolderInTree(seedTree, parent, accum)
-        }
-      }
-
-      // If the node is a folder and equals the clicked folder, skip duplicating it
-      if (
-        n.type === 'folder' &&
-        typeof n.id === 'string' &&
-        (this.#decodePathMaybeEncoded((n as any).data?.requestPath ?? (n.id as string)) === clickedPathDecoded)
-      ) {
-        continue
-      }
-
-      precheckedDescendants.push({ ...(n as any), parentId: parent })
-    }
-
-    const newTree: PartialTree = [...seedTree, ...precheckedDescendants]
-
-    return { newTree, updatedClicked }
-  }
-
-  /**
-   * Re-home previously checked nodes to their actual parent folders when leaving search mode.
-   * Ensures the checked nodes do not appear as direct children of the root.
-   */
-  #rehomedCheckedNodes(
-    nodes: (PartialTreeFolderNode | PartialTreeFile)[],
-  ): (PartialTreeFolderNode | PartialTreeFile)[] {
-    // Build ancestor folder chain for each checked node so parents keep an
-    // explicit 'partial' status when we exit search mode.
-    const createdFolders = new Map<string, PartialTreeFolderNode>()
-    const out: (PartialTreeFolderNode | PartialTreeFile)[] = []
-
-    const ensureFolder = (
-      folderPathDecoded: string,
-      parentId: string | null,
-    ): PartialTreeFolderNode => {
-      const id = folderPathDecoded
-      const existing = createdFolders.get(id)
-      if (existing) return existing
-      const name = folderPathDecoded.replace(/^\/+/, '').split('/').pop()
-      const folderNode: PartialTreeFolderNode = {
-        type: 'folder',
-        id,
-        cached: false,
-        nextPagePath: null,
-        status: 'partial',
-        parentId,
-        // @ts-expect-error minimal
-        data: { name, requestPath: id, isFolder: true },
-      }
-      createdFolders.set(id, folderNode)
-      return folderNode
-    }
-
-    for (let i = 0; i < nodes.length; i += 1) {
-      const node = nodes[i]
-      const cf = (node as any)?.data as CompanionFile | undefined
-      const rawPath = cf?.requestPath ?? (typeof node.id === 'string' ? node.id : '')
-      const decoded = this.#decodePathMaybeEncoded(rawPath || '')
-
-      let parent: string | null = this.plugin.rootFolderId
-      const idx = decoded.lastIndexOf('/')
-      const parentPath = idx > 0 ? decoded.slice(0, idx) : ''
-      if (parentPath) {
-        const segments = parentPath.replace(/^\/+/, '').split('/').filter(Boolean)
-        let accum = ''
-        for (let s = 0; s < segments.length; s += 1) {
-          accum += `/${segments[s]}`
-          const folderNode = ensureFolder(accum, parent)
-          parent = folderNode.id as string
-        }
-      }
-      out.push({ ...(node as any), parentId: parent })
-    }
-
-    return [...createdFolders.values(), ...out]
-  }
-
-  #setStateAfterOpen(
-    newPartialTree: PartialTree,
-    folderId: string | null,
-    prevSearchString: string,
-  ): void {
-    this.plugin.setPluginState({
-      partialTree: newPartialTree,
-      currentFolderId: folderId,
-      searchString: this.#isServerSearch() ? prevSearchString : '',
-    })
   }
 
   validateSingleFile = (file: CompanionFile): string | null => {
@@ -837,31 +553,22 @@ export default class ProviderView<M extends Meta, B extends Body> {
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
 
-    // Server-side search mode: the partialTree already holds flat, filtered results
+    // In server-side search mode, items are already filtered by the server.
     if (this.#isSearchMode()) return inThisFolder
 
-    // Client-side filter mode: filter items in the current folder only
-    if (!this.opts.useServerSearch && searchString?.trim()) {
-      const q = searchString.toLowerCase()
-      return inThisFolder.filter((item) =>
-        (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
-          .toLowerCase()
-          .includes(q),
-      )
-    }
-    return inThisFolder
+    const lowered = searchString.toLowerCase()
+    return searchString === ''
+      ? inThisFolder
+      : inThisFolder.filter((item) =>
+          (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+            .toLowerCase()
+            .includes(lowered),
+        )
   }
 
   getBreadcrumbs = (): PartialTreeFolder[] => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    // Only alter breadcrumbs in server-search mode with synthetic root
-    const root = partialTree.find((i) => i.type === 'root') as
-      | PartialTreeFolder
-      | undefined
-    const idForBreadcrumbs = this.opts.useServerSearch
-      ? (currentFolderId ?? root?.id ?? null)
-      : currentFolderId
-    return getBreadcrumbs(partialTree, idForBreadcrumbs)
+    return getBreadcrumbs(partialTree, currentFolderId)
   }
 
   getSelectedAmount = (): number => {
@@ -904,13 +611,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString, currentFolderId } =
-      this.plugin.getPluginState()
-    // Hide breadcrumbs only when we're at the synthetic search root id in server-search mode.
-    const showBreadcrumbs =
-      opts.showBreadcrumbs &&
-      (!this.opts.useServerSearch || currentFolderId !== '__search__')
-    const breadcrumbs = showBreadcrumbs ? this.getBreadcrumbs() : []
+    const { partialTree, username, searchString } = this.plugin.getPluginState()
+    const breadcrumbs = this.getBreadcrumbs()
 
     return (
       <div
@@ -920,7 +622,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         )}
       >
         <Header<M, B>
-          showBreadcrumbs={showBreadcrumbs}
+          showBreadcrumbs={opts.showBreadcrumbs}
           openFolder={this.openFolder}
           breadcrumbs={breadcrumbs}
           pluginIcon={pluginIcon}
@@ -931,74 +633,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
         />
 
         {opts.showFilter && (
-          <div style={{ padding: '0 12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ flex: 1 }}>
-                <SearchInput
-                  searchString={searchString}
-                  setSearchString={this.setSearchString}
-                  submitSearchString={this.search}
-                  inputLabel={i18n('filter')}
-                  clearSearchLabel={i18n('resetFilter')}
-                  wrapperClassName="uppy-ProviderBrowser-searchFilter"
-                  inputClassName="uppy-ProviderBrowser-searchFilterInput"
-                />
-              </div>
-              {(() => {
-                const isOn = this.opts.useServerSearch ?? false
-                return (
-                  <div
-                    role="switch"
-                    aria-checked={isOn}
-                    onClick={this.toggleSearchMode}
-                    title={isOn ? 'Server-side search enabled' : 'Client-side filter'}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 6,
-                      cursor: 'pointer',
-                      userSelect: 'none',
-                      whiteSpace: 'nowrap',
-                    }}
-                    tabIndex={0}
-                    onKeyDown={(e: any) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        this.toggleSearchMode()
-                      }
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: 'relative',
-                        width: 38,
-                        height: 20,
-                        borderRadius: 12,
-                        background: isOn ? '#22c55e' : '#cbd5e1',
-                        transition: 'background .2s ease',
-                        boxSizing: 'border-box',
-                      }}
-                    >
-                      <div
-                        style={{
-                          position: 'absolute',
-                          top: 2,
-                          left: isOn ? 20 : 2,
-                          width: 16,
-                          height: 16,
-                          borderRadius: 10,
-                          background: '#fff',
-                          boxShadow: '0 1px 2px rgba(0,0,0,.25)',
-                          transition: 'left .2s ease',
-                        }}
-                      />
-                    </div>
-                    <span style={{ fontSize: 12 }}>Server-side</span>
-                  </div>
-                )
-              })()}
-            </div>
-          </div>
+          <SearchInput
+            searchString={searchString}
+            setSearchString={(s: string) => {
+              this.plugin.setPluginState({ searchString: s })
+              if (s === '') {
+                const { currentFolderId } = this.plugin.getPluginState()
+                this.openFolder(currentFolderId)
+              }
+            }}
+            submitSearchString={() => {
+              if (this.#isSearchMode()) this.#performSearch()
+            }}
+            inputLabel={i18n('filter')}
+            clearSearchLabel={i18n('resetFilter')}
+            wrapperClassName="uppy-ProviderBrowser-searchFilter"
+            inputClassName="uppy-ProviderBrowser-searchFilterInput"
+          />
         )}
 
         <Browser<M, B>

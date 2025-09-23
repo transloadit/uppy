@@ -359,9 +359,12 @@ export default class Provider<M extends Meta, B extends Body>
 
   search<ResBody>(
     text: string,
-    options: RequestOptions = {},
+    options: (RequestOptions & { path?: string | null; cursor?: string | null }) = {},
   ): Promise<ResBody> {
-    const qs = new URLSearchParams({ q: text })
+    const qs = new URLSearchParams()
+    qs.set('q', text)
+    if (options.path) qs.set('path', options.path)
+    if (options.cursor) qs.set('cursor', options.cursor)
     const base = `${this.id}/search`
     const path = `${base}?${qs.toString()}`
     return this.get<ResBody>(path, options)

@@ -69,12 +69,13 @@ const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
     (item) => item.status === 'unchecked',
   )
 
-  let nextStatus: 'checked' | 'unchecked' | 'partial'
-  if (areAllChildrenChecked) nextStatus = 'checked'
-  else if (areAllChildrenUnchecked) nextStatus = 'unchecked'
-  else nextStatus = 'partial'
-
-  folder.status = nextStatus
+  if (areAllChildrenChecked) {
+    folder.status = 'checked'
+  } else if (areAllChildrenUnchecked) {
+    folder.status = 'unchecked'
+  } else {
+    folder.status = 'partial'
+  }
 
   percolateUp(tree, folder.parentId)
 }

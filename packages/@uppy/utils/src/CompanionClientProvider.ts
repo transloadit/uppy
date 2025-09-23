@@ -38,7 +38,7 @@ export interface CompanionClientProvider {
   // Optional: not every provider implements server-side search.
   search?: (
     text: string,
-    options?: RequestOptions,
+    options?: RequestOptions & { path?: string | null; cursor?: string | null },
   ) => Promise<{
     username: string
     nextPagePath: string | null

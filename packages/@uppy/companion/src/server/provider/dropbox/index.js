@@ -110,28 +110,40 @@ async function list({ client, directory, query }) {
 async function doSearchEntries({ client, query }) {
   const q = query?.q ?? query?.query
   const cursor = query?.cursor
+  let scopePath = query?.path
+  try {
+    if (typeof scopePath === 'string' && scopePath.includes('%')) {
+      scopePath = decodeURIComponent(scopePath)
+    }
+  } catch (_) {
+    // ignore decode errors
+  }
 
   // pagination for search
   if (cursor) {
-    const res = await client
+    const continueRes = await client
       .post('files/search/continue_v2', {
         json: { cursor },
         responseType: 'json',
       })
       .json()
 
-    const entries = (res.matches || [])
+    const entries = (continueRes.matches || [])
       .map((m) => m?.metadata?.metadata)
       .filter(Boolean)
-    return { entries, has_more: !!res.has_more, cursor: res.cursor ?? null }
+    return {
+      entries,
+      has_more: !!continueRes.has_more,
+      cursor: continueRes.cursor ?? null,
+    }
   }
 
-  const res = await client
+  const searchRes = await client
     .post('files/search_v2', {
       json: {
         query: String(q ?? '').trim(),
         options: {
-          // path: '', // global search; set to a folder path to scope
+          path: scopePath || '',
           max_results: 200,
           file_status: 'active',
           filename_only: false,
@@ -141,10 +153,14 @@ async function doSearchEntries({ client, query }) {
     })
     .json()
 
-  const entries = (res.matches || [])
+  const entries = (searchRes.matches || [])
     .map((m) => m?.metadata?.metadata)
     .filter(Boolean)
-  return { entries, has_more: !!res.has_more, cursor: res.cursor ?? null }
+  return {
+    entries,
+    has_more: !!searchRes.has_more,
+    cursor: searchRes.cursor ?? null,
+  }
 }
 
 /**
@@ -176,7 +192,7 @@ export default class Dropbox extends Provider {
           namespaced: true,
         })
 
-        const stats = await doSearchEntries({ ...options, client })
+        const stats = await doSearchEntries({ client, query: options.query })
         const { email } = userInfo
         return adaptData(stats, email, options.companion.buildURL)
       },

@@ -18,13 +18,7 @@ const getPath = (
   const sId = id === null ? 'null' : id
   if (cache[sId]) return cache[sId]
 
-  const file = partialTree.find((f) => f.id === id)
-  // If we can't resolve the node (e.g. synthetic parent chain mismatch),
-  // bail out gracefully rather than throwing.
-  if (!file) {
-    cache[sId] = []
-    return []
-  }
+  const file = partialTree.find((f) => f.id === id)!
 
   if (file.type === 'root') return []
 
@@ -47,6 +41,11 @@ const getCheckedFilesWithPaths = (
   ) as PartialTreeFile[]
 
   const companionFilesWithInjectedPaths = checkedFiles.map((file) => {
+    // If server/client already provided explicit paths (e.g. from server-side search), keep them.
+    if (file.data.absDirPath != null || file.data.relDirPath != null) {
+      return { ...file.data }
+    }
+
     const absFolders: (PartialTreeFile | PartialTreeFolderNode)[] = getPath(
       partialTree,
       file.id,
@@ -56,22 +55,15 @@ const getCheckedFilesWithPaths = (
     const firstCheckedFolderIndex = absFolders.findIndex(
       (i) => i.type === 'folder' && i.status === 'checked',
     )
-    const relFolders =
-      firstCheckedFolderIndex <= 0
-        ? absFolders
-        : absFolders.slice(firstCheckedFolderIndex)
+    const relFolders = absFolders.slice(firstCheckedFolderIndex)
 
-    const namesAbs = absFolders.map((i) => (i as any)?.data?.name).filter(Boolean)
-    const absDirPath = namesAbs.length ? `/${namesAbs.join('/')}` : '/'
-    const namesRel = relFolders
-      .map((i) => (i as any)?.data?.name)
-      .filter(Boolean) as string[]
+    const absDirPath = `/${absFolders.map((i) => i.data.name).join('/')}`
     const relDirPath =
-      namesRel.length <= 1
+      relFolders.length === 1
         ? // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
           // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
           undefined
-        : namesRel.join('/')
+        : relFolders.map((i) => i.data.name).join('/')
 
     return {
       ...file.data,

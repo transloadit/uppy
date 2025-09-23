@@ -2,6 +2,8 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const companion = require('@uppy/companion')
+const dotenv = require('dotenv')
+dotenv.config()
 
 const app = express()
 
@@ -37,8 +39,8 @@ const companionOptions = {
       secret: 'your instagram secret',
     },
     dropbox: {
-      key: 'u3k4lzjbbn2k7ab',
-      secret: '5dzff7hmenf7jlb',
+      key: process.env.COMPANION_DROPBOX_KEY,
+      secret: process.env.COMPANION_DROPBOX_SECRET,
     },
     box: {
       key: 'your box key',
