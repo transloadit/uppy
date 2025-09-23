@@ -705,22 +705,55 @@ export default class ProviderView<M extends Meta, B extends Body> {
   #rehomedCheckedNodes(
     nodes: (PartialTreeFolderNode | PartialTreeFile)[],
   ): (PartialTreeFolderNode | PartialTreeFile)[] {
-    // Nothing to do if none are from search root
+    // Build ancestor folder chain for each checked node so parents keep an
+    // explicit 'partial' status when we exit search mode.
+    const createdFolders = new Map<string, PartialTreeFolderNode>()
     const out: (PartialTreeFolderNode | PartialTreeFile)[] = []
+
+    const ensureFolder = (
+      folderPathDecoded: string,
+      parentId: string | null,
+    ): PartialTreeFolderNode => {
+      const id = folderPathDecoded
+      const existing = createdFolders.get(id)
+      if (existing) return existing
+      const name = folderPathDecoded.replace(/^\/+/, '').split('/').pop()
+      const folderNode: PartialTreeFolderNode = {
+        type: 'folder',
+        id,
+        cached: false,
+        nextPagePath: null,
+        status: 'partial',
+        parentId,
+        // @ts-expect-error minimal
+        data: { name, requestPath: id, isFolder: true },
+      }
+      createdFolders.set(id, folderNode)
+      return folderNode
+    }
+
     for (let i = 0; i < nodes.length; i += 1) {
       const node = nodes[i]
       const cf = (node as any)?.data as CompanionFile | undefined
       const rawPath = cf?.requestPath ?? (typeof node.id === 'string' ? node.id : '')
       const decoded = this.#decodePathMaybeEncoded(rawPath || '')
 
-      // Parent path is everything before the last '/'
-      let parentPath: string | null = this.plugin.rootFolderId
+      let parent: string | null = this.plugin.rootFolderId
       const idx = decoded.lastIndexOf('/')
-      if (idx > 0) parentPath = decoded.slice(0, idx)
-
-      out.push({ ...node, parentId: parentPath })
+      const parentPath = idx > 0 ? decoded.slice(0, idx) : ''
+      if (parentPath) {
+        const segments = parentPath.replace(/^\/+/, '').split('/').filter(Boolean)
+        let accum = ''
+        for (let s = 0; s < segments.length; s += 1) {
+          accum += `/${segments[s]}`
+          const folderNode = ensureFolder(accum, parent)
+          parent = folderNode.id as string
+        }
+      }
+      out.push({ ...(node as any), parentId: parent })
     }
-    return out
+
+    return [...createdFolders.values(), ...out]
   }
 
   #setStateAfterOpen(

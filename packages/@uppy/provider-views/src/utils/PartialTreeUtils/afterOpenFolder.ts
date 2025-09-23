@@ -99,10 +99,17 @@ const afterOpenFolder = (
     node.id === updatedClickedFolder.id ? updatedClickedFolder : node,
   )
 
-  const idsToInsert = new Set<string>([
-    ...newFolderNodes.map((n) => n.id as string),
-    ...newFileNodes.map((n) => n.id as string),
-  ])
+  // Build a robust id set that contains both encoded and decoded forms
+  const idsToInsert = new Set<string>()
+  const addIdVariants = (id: string) => {
+    idsToInsert.add(id)
+    const dec = safeDecode(id)
+    const enc = safeEncode(dec)
+    idsToInsert.add(dec)
+    idsToInsert.add(enc)
+  }
+  for (let i = 0; i < newFolderNodes.length; i += 1) addIdVariants(newFolderNodes[i].id as string)
+  for (let i = 0; i < newFileNodes.length; i += 1) addIdVariants(newFileNodes[i].id as string)
 
   const result: PartialTree = []
   for (let i = 0; i < baseTree.length; i += 1) {
@@ -115,6 +122,35 @@ const afterOpenFolder = (
   }
   for (let i = 0; i < newFileNodes.length; i += 1) {
     result.push(newFileNodes[i])
+  }
+
+  // Recompute folder statuses based on currently known children so that
+  // parents reflect 'checked' or 'partial' appropriately after merging in
+  // previously selected descendants (e.g., when leaving search mode).
+  const folderNodes = result.filter((n) => n.type === 'folder') as PartialTreeFolderNode[]
+  const childrenByParentMap = new Map<string | null, (PartialTreeFile | PartialTreeFolderNode)[]>()
+  for (let i = 0; i < result.length; i += 1) {
+    const n = result[i]
+    if (n.type === 'root') continue
+    const arr = childrenByParentMap.get(n.parentId) || []
+    arr.push(n as any)
+    childrenByParentMap.set(n.parentId, arr)
+  }
+  for (let i = 0; i < folderNodes.length; i += 1) {
+    const f = folderNodes[i]
+    const children = (childrenByParentMap.get(f.id) || []) as (
+      | PartialTreeFile
+      | PartialTreeFolderNode
+    )[]
+    const validChildren = children.filter(
+      (c) => !(c.type === 'file' && (c as PartialTreeFile).restrictionError),
+    )
+    if (validChildren.length === 0) continue
+    const allChecked = validChildren.every((c) => c.status === 'checked')
+    const allUnchecked = validChildren.every((c) => c.status === 'unchecked')
+    // If we only know about some children, 'allChecked' still means all known
+    // are checked—which is the expected UX after server-side search.
+    f.status = allChecked ? 'checked' : allUnchecked ? 'unchecked' : 'partial'
   }
 
   return result

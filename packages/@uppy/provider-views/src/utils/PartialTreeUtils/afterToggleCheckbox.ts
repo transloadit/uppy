@@ -74,14 +74,6 @@ const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
   else if (areAllChildrenUnchecked) nextStatus = 'unchecked'
   else nextStatus = 'partial'
 
-  // Guard against falsely marking non-cached (incompletely known) folders as
-  // fully 'checked'. This can happen when navigating into a folder from
-  // server-side search: ancestor folders exist in the tree but their siblings
-  // are not loaded yet. Treat such parents as 'partial' to avoid selecting
-  // their entire (unknown) contents in donePicking.
-  if (folder.type === 'folder' && folder.cached === false && nextStatus === 'checked') {
-    nextStatus = 'partial'
-  }
   folder.status = nextStatus
 
   percolateUp(tree, folder.parentId)
