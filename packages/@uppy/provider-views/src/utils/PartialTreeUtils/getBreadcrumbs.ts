@@ -13,15 +13,28 @@ const getBreadcrumbs = (
     (f) => f.id === currentFolderId,
   ) as PartialTreeFolder
 
+  // If folder is not found, return empty breadcrumbs or find root folder
+  if (!folder) {
+    console.warn(`Folder ${currentFolderId} not found in tree for breadcrumbs`)
+    const rootFolder = partialTree.find((f) => f.type === 'root') as PartialTreeFolder
+    return rootFolder ? [rootFolder] : []
+  }
+
   let breadcrumbs: PartialTreeFolder[] = []
-  while (true) {
+  while (folder) {
     breadcrumbs = [folder, ...breadcrumbs]
 
     if (folder.type === 'root') break
-    const currentParentId = (folder as PartialTreeFolderNode).parentId
+    const parentId = (folder as PartialTreeFolderNode).parentId
     folder = partialTree.find(
-      (f) => f.id === currentParentId,
+      (f) => f.id === parentId,
     ) as PartialTreeFolder
+    
+    // If parent folder is not found, break to avoid infinite loop
+    if (!folder) {
+      console.warn(`Parent folder ${parentId} not found, breaking breadcrumb chain`)
+      break
+    }
   }
 
   return breadcrumbs

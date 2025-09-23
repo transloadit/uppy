@@ -231,8 +231,29 @@ export default class ProviderView<M extends Meta, B extends Body> {
         { signal, path: scopePath ?? undefined },
       )
 
-      const isParentFolderChecked =
-        currentFolder.type === 'folder' && currentFolder.status === 'checked'
+      // Create artificial search container as a sibling node
+      const searchContainerId = `${currentFolder.id}/__search__`
+      const searchContainer: PartialTreeFolderNode = {
+        type: 'folder',
+        id: searchContainerId,
+        cached: true,
+        nextPagePath: this.#extractCursor(nextPagePath),
+        status: 'unchecked',
+        parentId: currentFolder.type === 'root' ? null : (currentFolder as PartialTreeFolderNode).parentId,
+        data: {
+          id: searchContainerId,
+          name: 'Search Results',
+          isFolder: true,
+          icon: 'search',
+          type: 'folder',
+          mimeType: '',
+          requestPath: searchContainerId,
+          modifiedDate: new Date().toISOString(),
+          size: 0,
+          thumbnail: '',
+          extension: '',
+        } as CompanionFile,
+      }
 
       const discoveredFolders = items.filter((i: CompanionFile) => i.isFolder === true)
       const discoveredFiles = items.filter((i: CompanionFile) => i.isFolder === false)
@@ -240,11 +261,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
       const folders: PartialTreeFolderNode[] = discoveredFolders.map(
         (folder: CompanionFile) => ({
           type: 'folder',
-          id: folder.requestPath,
+          id: `${searchContainerId}/${folder.requestPath}`,
           cached: false,
           nextPagePath: null,
-          status: isParentFolderChecked ? 'checked' : 'unchecked',
-          parentId: currentFolder.id,
+          status: 'unchecked',
+          parentId: searchContainerId,
           data: folder,
         }),
       )
@@ -266,26 +287,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
         return {
           type: 'file',
-          id: file.requestPath,
+          id: `${searchContainerId}/${file.requestPath}`,
           restrictionError,
-          status: isParentFolderChecked && !restrictionError ? 'checked' : 'unchecked',
-          parentId: currentFolder.id,
+          status: !restrictionError ? 'unchecked' : 'unchecked',
+          parentId: searchContainerId,
           data: { ...file, absDirPath, relDirPath },
         }
       })
 
-      // Replace current folder children with search results and set cursor
-      const updatedCurrentFolder: PartialTreeFolder = {
-        ...currentFolder,
-        cached: true,
-        nextPagePath: this.#extractCursor(nextPagePath),
-      }
-      const baseTree = partialTree
-        .map((node) => (node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node))
-        .filter((node) => node.type === 'root' || node.parentId !== currentFolder.id)
+      // Remove any existing search containers and add the new one
+      const baseTree = partialTree.filter((node) => !node.id?.includes('/__search__'))
+      const newPartialTree: PartialTree = [...baseTree, searchContainer, ...folders, ...files]
 
-      const newPartialTree: PartialTree = [...baseTree, ...folders, ...files]
-      this.plugin.setPluginState({ partialTree: newPartialTree })
+      // Navigate to the search container
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        currentFolderId: searchContainerId
+      })
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
   }
@@ -295,6 +313,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const currentFolder = partialTree.find(
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
+
+    // If current folder doesn't exist, don't try to reset it
+    if (!currentFolder) {
+      console.warn(`Current folder ${currentFolderId} not found, skipping reset`)
+      return
+    }
 
     // mark folder as not cached and clear its children so openFolder refetches
     const updatedCurrentFolder: PartialTreeFolder = {
@@ -322,9 +346,34 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const trimmed = s.trim()
     if (trimmed === '') {
       // Reset listing for current location
-      const { currentFolderId } = this.plugin.getPluginState()
-      this.#resetCurrentFolderListing()
-      this.openFolder(currentFolderId)
+      const { currentFolderId, partialTree } = this.plugin.getPluginState()
+
+      // If currently in a search container, navigate back to its parent
+      let targetFolderId = currentFolderId
+      if (currentFolderId?.includes('/__search__')) {
+        console.log("does current folder id include search container? ----> ", currentFolderId)
+        // Extract the parent folder ID from the search container ID
+        targetFolderId = currentFolderId.replace('/__search__', '')
+      }
+
+      console.log("target folder id ----> ", targetFolderId)
+      // Remove all nodes that contain '__search__' in their ID (search container and all its children)
+      const cleanedTree = partialTree.filter((node) => !node.id?.includes('/__search__'))
+
+      console.log("cleaned tree ----> ", cleanedTree)
+      // Ensure the target folder exists in the cleaned tree before navigating to it
+      const targetExists = cleanedTree.find((node) => node.id === targetFolderId)
+      if (!targetExists) {
+        console.warn(`Target folder ${targetFolderId} not found in cleaned tree, falling back to root`)
+        targetFolderId = this.plugin.rootFolderId
+      }
+
+      this.plugin.setPluginState({
+        partialTree: cleanedTree,
+        currentFolderId: targetFolderId
+      })
+
+      // Don't call resetCurrentFolderListing or openFolder as we've already set the state
       return
     }
 
@@ -341,11 +390,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async openFolder(folderId: string | null): Promise<void> {
     console.log("open folder called with ----> ", folderId)
     this.lastCheckbox = null
+
+    // If trying to open a search container, just navigate to it without fetching
+    if (folderId?.includes('/__search__')) {
+      this.plugin.setPluginState({ currentFolderId: folderId })
+      return
+    }
+
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
     const clickedFolder = partialTree.find(
       (folder) => folder.id === folderId,
-    )! as PartialTreeFolder
+    ) as PartialTreeFolder
+
+    // If folder doesn't exist in tree, it might have been cleared during search cleanup
+    if (!clickedFolder) {
+      console.warn(`Folder ${folderId} not found in tree, resetting to root`)
+      this.openFolder(this.plugin.rootFolderId)
+      return
+    }
 
     // If user is searching, opening a folder should trigger a scoped search
     if (this.#isSearchMode()) {
@@ -476,7 +539,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
           const folders: PartialTreeFolderNode[] = newFolders.map((folder: CompanionFile) => ({
             type: 'folder',
-            id: folder.requestPath,
+            id: `${currentFolder.id}/${folder.requestPath}`,
             cached: false,
             nextPagePath: null,
             status: isParentFolderChecked ? 'checked' : 'unchecked',
@@ -499,7 +562,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
             return {
               type: 'file',
-              id: file.requestPath,
+              id: `${currentFolder.id}/${file.requestPath}`,
               restrictionError,
               status:
                 isParentFolderChecked && !restrictionError
@@ -668,7 +731,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const { partialTree, username, searchString } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-    // console.log('ProviderView render - partialTree state:', this.plugin.getPluginState().partialTree)
+    console.log('ProviderView render - partialTree state:', this.plugin.getPluginState().partialTree)
 
     return (
       <div
