@@ -63,6 +63,7 @@ const adaptData = (res, email, buildURL) => {
   }))
   items.sort((a, b) => a.name.localeCompare(b.name, 'en-US', { numeric: true }))
 
+  console.log("adapted items ----> ", items)
   return {
     username: email,
     items,

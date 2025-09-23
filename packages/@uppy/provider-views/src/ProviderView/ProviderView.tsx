@@ -214,6 +214,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async #performSearch(): Promise<void> {
     const { partialTree, currentFolderId, searchString } =
       this.plugin.getPluginState()
+      console.log("current folder id ----> ", currentFolderId)
+      console.log("partial tree ----> ", partialTree)
     const currentFolder = partialTree.find(
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
@@ -337,6 +339,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async openFolder(folderId: string | null): Promise<void> {
+    console.log("open folder called with ----> ", folderId)
     this.lastCheckbox = null
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
@@ -378,6 +381,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
           }),
         )
       } while (this.opts.loadAllFiles && currentPagePath)
+
+        console.log("current items inside openFolder ----> ", currentItems)
 
       const newPartialTree = PartialTreeUtils.afterOpenFolder(
         partialTree,
@@ -663,6 +668,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const { partialTree, username, searchString } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
+    // console.log('ProviderView render - partialTree state:', this.plugin.getPluginState().partialTree)
 
     return (
       <div
