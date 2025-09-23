@@ -169,6 +169,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   #abortController: AbortController | undefined
 
+  #searchDebounceId: number | undefined
+
   async #withAbort(op: (signal: AbortSignal) => Promise<void>) {
     // prevent multiple requests in parallel from causing race conditions
     this.#abortController?.abort()
@@ -218,7 +220,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     if (!this.#isSearchMode()) return
 
-    this.setLoading(true)
+    this.setLoading('Searching...')
     await this.#withAbort(async (signal) => {
       // Determine scope path (global when at root)
       const scopePath = currentFolder.type === 'root' ? null : currentFolder.id
@@ -284,6 +286,54 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.plugin.setPluginState({ partialTree: newPartialTree })
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
+  }
+
+  #resetCurrentFolderListing(): void {
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    const currentFolder = partialTree.find(
+      (i) => i.id === currentFolderId,
+    ) as PartialTreeFolder
+
+    // mark folder as not cached and clear its children so openFolder refetches
+    const updatedCurrentFolder: PartialTreeFolder = {
+      ...currentFolder,
+      cached: false,
+      nextPagePath: null,
+    }
+    const baseTree = partialTree
+      .map((node) => (node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node))
+      .filter((node) => node.type === 'root' || node.parentId !== currentFolderId)
+
+    this.plugin.setPluginState({ partialTree: baseTree })
+  }
+
+  onSearchInput(s: string): void {
+    // Update state immediately for controlled input
+    this.plugin.setPluginState({ searchString: s })
+
+    // Clear pending debounce
+    if (this.#searchDebounceId) {
+      window.clearTimeout(this.#searchDebounceId)
+      this.#searchDebounceId = undefined
+    }
+
+    const trimmed = s.trim()
+    if (trimmed === '') {
+      // Reset listing for current location
+      const { currentFolderId } = this.plugin.getPluginState()
+      this.#resetCurrentFolderListing()
+      this.openFolder(currentFolderId)
+      return
+    }
+
+    // Debounce server-side search
+    this.#searchDebounceId = window.setTimeout(() => {
+      // Only run if still in search mode with latest value
+      if (this.#isSearchMode()) {
+        this.#performSearch()
+      }
+      this.#searchDebounceId = undefined
+    }, 500)
   }
 
   async openFolder(folderId: string | null): Promise<void> {
@@ -635,13 +685,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {opts.showFilter && (
           <SearchInput
             searchString={searchString}
-            setSearchString={(s: string) => {
-              this.plugin.setPluginState({ searchString: s })
-              if (s === '') {
-                const { currentFolderId } = this.plugin.getPluginState()
-                this.openFolder(currentFolderId)
-              }
-            }}
+            setSearchString={(s: string) => this.onSearchInput(s)}
             submitSearchString={() => {
               if (this.#isSearchMode()) this.#performSearch()
             }}
