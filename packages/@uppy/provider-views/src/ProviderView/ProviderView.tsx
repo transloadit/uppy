@@ -679,16 +679,48 @@ export default class ProviderView<M extends Meta, B extends Body> {
   ) {
     const { partialTree } = this.plugin.getPluginState()
 
+    // Special handling: if toggling an item surfaced from search results,
+    // ensure its real ancestors exist, toggle the real node, and mirror
+    // status to the search node for visual consistency.
+    if (ourItem.id.includes('/__search__/')) {
+      // Avoid shift-range complexity across search; toggle single item
+      const rawId = ourItem.id
+      this.#withAbort(async (signal) => {
+        const apiList = async (directory: PartialTreeId) => {
+          const { items, nextPagePath } = await this.provider.list(directory, { signal })
+          return { items, nextPagePath }
+        }
+        // 1) Ensure ancestors and target node exist in real tree
+        const { partialTree: withAncestors, targetId } = await PartialTreeUtils.ensureAncestorsLoaded(
+          partialTree,
+          rawId,
+          apiList,
+          this.validateSingleFile,
+        )
+        // 2) Toggle the real node
+        const realId = (targetId ?? '').toString()
+        const toggledTree = PartialTreeUtils.afterToggleCheckbox(withAncestors, [realId])
+
+        // 3) Mirror status back to the clicked search node so UI reflects change
+  const realNode = toggledTree.find((n) => n.id === realId) as PartialTreeFolderNode | PartialTreeFile
+        const mirroredTree = toggledTree.map((n) =>
+          n.id === rawId ? { ...n, status: realNode.status } as typeof n : n,
+        ) as PartialTree
+
+        this.plugin.setPluginState({ partialTree: mirroredTree })
+        this.lastCheckbox = rawId
+      }).catch(handleError(this.plugin.uppy))
+      return
+    }
+
+    // Default behavior (non-search): compute range and toggle
     const clickedRange = getClickedRange(
       ourItem.id,
       this.getDisplayedPartialTree(),
       isShiftKeyPressed,
       this.lastCheckbox,
     )
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
-      partialTree,
-      clickedRange,
-    )
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange)
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id
