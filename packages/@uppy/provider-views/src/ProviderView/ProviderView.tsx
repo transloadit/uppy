@@ -391,9 +391,39 @@ export default class ProviderView<M extends Meta, B extends Body> {
     console.log("open folder called with ----> ", folderId)
     this.lastCheckbox = null
 
-    // If trying to open a search container, just navigate to it without fetching
-    if (folderId?.includes('/__search__')) {
+    // If trying to open the search container itself, just navigate to it without fetching
+    if (folderId?.endsWith('/__search__')) {
       this.plugin.setPluginState({ currentFolderId: folderId })
+      return
+    }
+
+    // If trying to open an item inside a search container, materialize its real path
+    if (folderId?.includes('/__search__/')) {
+      const { partialTree } = this.plugin.getPluginState()
+      this.setLoading(true)
+      await this.#withAbort(async (signal) => {
+        // Build a small apiList wrapper over provider.list to match util signature
+        const apiList = async (directory: PartialTreeId) => {
+          const { items, nextPagePath } = await this.provider.list(directory, { signal })
+          return { items, nextPagePath }
+        }
+
+        const { partialTree: materializedTree, targetId } = await PartialTreeUtils.ensurePathLoaded(
+          partialTree,
+          folderId,
+          apiList,
+          this.validateSingleFile,
+        )
+
+        // Clean search nodes and navigate to the real folder id
+        const cleanedTree = materializedTree.filter((node) => !node.id?.includes('/__search__'))
+        this.plugin.setPluginState({
+          partialTree: cleanedTree,
+          currentFolderId: targetId,
+          searchString: '',
+        })
+      }).catch(handleError(this.plugin.uppy))
+      this.setLoading(false)
       return
     }
 
