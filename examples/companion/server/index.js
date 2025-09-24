@@ -2,9 +2,6 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const companion = require('@uppy/companion')
-const dotenv = require('dotenv')
-dotenv.config()
-
 const app = express()
 
 app.use(bodyParser.json())
