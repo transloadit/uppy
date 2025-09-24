@@ -1,12 +1,12 @@
 import type { PartialTree, PartialTreeFolder, PartialTreeId } from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils'
+import type { ApiList } from './pathLoaderCore.js'
 import {
-  normalizeSearchTarget,
   buildEncodedAncestorCandidates,
   findDeepestExistingAncestor,
+  normalizeSearchTarget,
   walkAndEnsurePath,
 } from './pathLoaderCore.js'
-import type { ApiList } from './pathLoaderCore.js'
 
 /**
  * Ensure that a given target id (possibly prefixed with '/__search__/') has its
@@ -19,8 +19,7 @@ export async function ensureAncestorsLoaded(
   rawId: PartialTreeId,
   apiList: ApiList,
   validateSingleFile: (file: CompanionFile) => string | null,
-): Promise<{ partialTree: PartialTree; targetId: PartialTreeId }>
-{
+): Promise<{ partialTree: PartialTree; targetId: PartialTreeId }> {
   if (!rawId) return { partialTree, targetId: rawId }
 
   const targetId: string = normalizeSearchTarget(rawId)
@@ -37,7 +36,13 @@ export async function ensureAncestorsLoaded(
 
   if (!ancestor || !ancestorId) return { partialTree: tree, targetId }
 
-  tree = await walkAndEnsurePath(tree, ancestor as PartialTreeFolder, targetId, apiList, validateSingleFile)
+  tree = await walkAndEnsurePath(
+    tree,
+    ancestor as PartialTreeFolder,
+    targetId,
+    apiList,
+    validateSingleFile,
+  )
 
   return { partialTree: tree, targetId }
 }

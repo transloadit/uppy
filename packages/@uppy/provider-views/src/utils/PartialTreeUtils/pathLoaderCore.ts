@@ -16,7 +16,12 @@
 //     normalizeSearchTarget → buildEncodedAncestorCandidates → findDeepestExistingAncestor → walkAndEnsurePath
 //   ensurePathLoaded:
 //     normalizeSearchTarget → buildEncodedAncestorCandidates → findDeepestExistingAncestor → walkAndEnsurePath → ensureTargetFirstPageIfNeeded
-import type { PartialTree, PartialTreeFolder, PartialTreeFolderNode, PartialTreeId } from '@uppy/core'
+import type {
+  PartialTree,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils'
 import afterOpenFolder from './afterOpenFolder.js'
 
@@ -45,7 +50,9 @@ export type ApiList = (directory: PartialTreeId) => Promise<{
  */
 export function normalizeSearchTarget(rawId: PartialTreeId): string {
   if (!rawId) return rawId as unknown as string
-  return rawId.includes('/__search__/') ? rawId.split('/__search__/')[1] : (rawId as string)
+  return rawId.includes('/__search__/')
+    ? rawId.split('/__search__/')[1]
+    : (rawId as string)
 }
 
 /**
@@ -57,7 +64,9 @@ export function normalizeSearchTarget(rawId: PartialTreeId): string {
  * Diagram (decoded):
  *   /foo/bar/baz → [/foo/bar/baz, /foo/bar, /foo]
  */
-export function buildEncodedAncestorCandidates(targetId: string): PartialTreeId[] {
+export function buildEncodedAncestorCandidates(
+  targetId: string,
+): PartialTreeId[] {
   const decoded = decodeURIComponent(targetId)
   const clean = decoded.startsWith('/') ? decoded : `/${decoded}`
   const segs = clean.split('/').filter(Boolean)
@@ -81,11 +90,16 @@ export function buildEncodedAncestorCandidates(targetId: string): PartialTreeId[
 export function findDeepestExistingAncestor(
   tree: PartialTree,
   candidates: PartialTreeId[],
-): { ancestorId: PartialTreeId | null; ancestor: PartialTreeFolder | undefined } {
+): {
+  ancestorId: PartialTreeId | null
+  ancestor: PartialTreeFolder | undefined
+} {
   let ancestorId: PartialTreeId | null = null
   let ancestor: PartialTreeFolder | undefined
   for (const cand of candidates) {
-    const node = tree.find((n) => n.id === cand) as PartialTreeFolder | undefined
+    const node = tree.find((n) => n.id === cand) as
+      | PartialTreeFolder
+      | undefined
     if (node) {
       ancestorId = cand
       ancestor = node
@@ -103,7 +117,10 @@ export function findDeepestExistingAncestor(
  * Fetch all pages starting at `start` and flatten the items list.
  * Used when revealing a folder's children may require pagination.
  */
-async function listAllPages(apiList: ApiList, start: PartialTreeId | null): Promise<CompanionFile[]> {
+async function listAllPages(
+  apiList: ApiList,
+  start: PartialTreeId | null,
+): Promise<CompanionFile[]> {
   let items: CompanionFile[] = []
   let page: PartialTreeId | null = start
   while (page) {
@@ -133,7 +150,9 @@ export async function walkAndEnsurePath(
   validateSingleFile: (file: CompanionFile) => string | null,
 ): Promise<PartialTree> {
   const decodedTarget = decodeURIComponent(targetId)
-  const cleanPath = decodedTarget.startsWith('/') ? decodedTarget : `/${decodedTarget}`
+  const cleanPath = decodedTarget.startsWith('/')
+    ? decodedTarget
+    : `/${decodedTarget}`
   const segs = cleanPath.split('/').filter(Boolean)
 
   const ancestorDecoded = decodeURIComponent(ancestor.id as string)
@@ -146,13 +165,25 @@ export async function walkAndEnsurePath(
   for (let idx = 0; idx < remaining.length; idx += 1) {
     const pathSoFarDecoded = `/${segs.slice(0, ancestorSegs.length + idx + 1).join('/')}`
     const childId = encodeURIComponent(pathSoFarDecoded)
-    let child = workingTree.find((n) => n.id === childId) as PartialTreeFolder | undefined
+    let child = workingTree.find((n) => n.id === childId) as
+      | PartialTreeFolder
+      | undefined
     if (!child) {
       // Need to list current to reveal children
-      const toList = (current as PartialTreeFolder).cached ? (current as PartialTreeFolder).nextPagePath : current.id
+      const toList = (current as PartialTreeFolder).cached
+        ? (current as PartialTreeFolder).nextPagePath
+        : current.id
       const items = await listAllPages(apiList, toList)
-      workingTree = afterOpenFolder(workingTree, items, current, null, validateSingleFile)
-      child = workingTree.find((n) => n.id === childId) as PartialTreeFolder | undefined
+      workingTree = afterOpenFolder(
+        workingTree,
+        items,
+        current,
+        null,
+        validateSingleFile,
+      )
+      child = workingTree.find((n) => n.id === childId) as
+        | PartialTreeFolder
+        | undefined
       if (!child) break
     }
     current = child
@@ -173,14 +204,24 @@ export async function ensureTargetFirstPageIfNeeded(
   apiList: ApiList,
   validateSingleFile: (file: CompanionFile) => string | null,
 ): Promise<PartialTree> {
-  const targetFolder = tree.find((n) => n.id === targetId) as PartialTreeFolder | undefined
+  const targetFolder = tree.find((n) => n.id === targetId) as
+    | PartialTreeFolder
+    | undefined
   if (targetFolder && targetFolder.type === 'folder') {
     const hasAnyChildren = tree.some(
-      (n) => n.type !== 'root' && (n as PartialTreeFolderNode).parentId === targetFolder.id,
+      (n) =>
+        n.type !== 'root' &&
+        (n as PartialTreeFolderNode).parentId === targetFolder.id,
     )
     if (!hasAnyChildren || targetFolder.cached === false) {
       const { items, nextPagePath } = await apiList(targetFolder.id)
-      return afterOpenFolder(tree, items, targetFolder, nextPagePath, validateSingleFile)
+      return afterOpenFolder(
+        tree,
+        items,
+        targetFolder,
+        nextPagePath,
+        validateSingleFile,
+      )
     }
   }
   return tree

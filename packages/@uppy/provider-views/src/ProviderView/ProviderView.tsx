@@ -204,7 +204,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   #isSearchMode(): boolean {
     const { searchString } = this.plugin.getPluginState()
-    const supportsServerSearch = typeof (this.provider as any).search === 'function'
+    const supportsServerSearch =
+      typeof (this.provider as any).search === 'function'
     return supportsServerSearch && searchString.trim() !== ''
   }
 
@@ -219,8 +220,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async #performSearch(): Promise<void> {
     const { partialTree, currentFolderId, searchString } =
       this.plugin.getPluginState()
-      console.log("current folder id ----> ", currentFolderId)
-      console.log("partial tree ----> ", partialTree)
+    console.log('current folder id ----> ', currentFolderId)
+    console.log('partial tree ----> ', partialTree)
     const currentFolder = partialTree.find(
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
@@ -238,9 +239,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
       const currentId = currentFolder.id
       const baseContextId = stripSearchSuffix(currentId)
-      const baseContextNode = (partialTree.find((i) => i.id === baseContextId) || currentFolder) as PartialTreeFolder
+      const baseContextNode = (partialTree.find(
+        (i) => i.id === baseContextId,
+      ) || currentFolder) as PartialTreeFolder
       const scopePath = baseContextNode.type === 'root' ? null : baseContextId
-      console.log("scope path inside performSearch ----> ", scopePath)
+      console.log('scope path inside performSearch ----> ', scopePath)
       const { items, nextPagePath } = await (this.provider as any).search(
         searchString,
         { signal, path: scopePath ?? undefined },
@@ -274,8 +277,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
         } as CompanionFile,
       }
 
-      const discoveredFolders = items.filter((i: CompanionFile) => i.isFolder === true)
-      const discoveredFiles = items.filter((i: CompanionFile) => i.isFolder === false)
+      const discoveredFolders = items.filter(
+        (i: CompanionFile) => i.isFolder === true,
+      )
+      const discoveredFiles = items.filter(
+        (i: CompanionFile) => i.isFolder === false,
+      )
 
       const folders: PartialTreeFolderNode[] = discoveredFolders.map(
         (folder: CompanionFile) => ({
@@ -288,41 +295,48 @@ export default class ProviderView<M extends Meta, B extends Body> {
           data: folder,
         }),
       )
-      const files: PartialTreeFile[] = discoveredFiles.map((file: CompanionFile) => {
-        const restrictionError = this.validateSingleFile(file)
+      const files: PartialTreeFile[] = discoveredFiles.map(
+        (file: CompanionFile) => {
+          const restrictionError = this.validateSingleFile(file)
 
-        // Precompute absDirPath/relDirPath for correct relative paths on search
-        const fullPath = decodeURIComponent(file.requestPath)
-        const lastSlash = fullPath.lastIndexOf('/')
-        const absDirPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
-        let relDirPath: string | undefined
-        const scope =
-          baseContextNode.type === 'root'
-            ? ''
-            : decodeURIComponent(baseContextId as string)
-        if (scope && absDirPath.startsWith(scope)) {
-          const rel = absDirPath.slice(scope.length).replace(/^\//, '')
-          relDirPath = rel === '' ? undefined : rel
-        }
+          // Precompute absDirPath/relDirPath for correct relative paths on search
+          const fullPath = decodeURIComponent(file.requestPath)
+          const lastSlash = fullPath.lastIndexOf('/')
+          const absDirPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
+          let relDirPath: string | undefined
+          const scope =
+            baseContextNode.type === 'root'
+              ? ''
+              : decodeURIComponent(baseContextId as string)
+          if (scope && absDirPath.startsWith(scope)) {
+            const rel = absDirPath.slice(scope.length).replace(/^\//, '')
+            relDirPath = rel === '' ? undefined : rel
+          }
 
-        return {
-          type: 'file',
-          id: `${searchContainerId}/${file.requestPath}`,
-          restrictionError,
-          status: !restrictionError ? 'unchecked' : 'unchecked',
-          parentId: searchContainerId,
-          data: { ...file, absDirPath, relDirPath },
-        }
-      })
+          return {
+            type: 'file',
+            id: `${searchContainerId}/${file.requestPath}`,
+            restrictionError,
+            status: !restrictionError ? 'unchecked' : 'unchecked',
+            parentId: searchContainerId,
+            data: { ...file, absDirPath, relDirPath },
+          }
+        },
+      )
 
-  // Remove any existing search containers and add the new one
-  const baseTree = this.#removeSearchNodes(partialTree)
-      const newPartialTree: PartialTree = [...baseTree, searchContainer, ...folders, ...files]
+      // Remove any existing search containers and add the new one
+      const baseTree = this.#removeSearchNodes(partialTree)
+      const newPartialTree: PartialTree = [
+        ...baseTree,
+        searchContainer,
+        ...folders,
+        ...files,
+      ]
 
       // Navigate to the search container
       this.plugin.setPluginState({
         partialTree: newPartialTree,
-        currentFolderId: searchContainerId
+        currentFolderId: searchContainerId,
       })
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
@@ -336,7 +350,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     // If current folder doesn't exist, don't try to reset it
     if (!currentFolder) {
-      console.warn(`Current folder ${currentFolderId} not found, skipping reset`)
+      console.warn(
+        `Current folder ${currentFolderId} not found, skipping reset`,
+      )
       return
     }
 
@@ -347,8 +363,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
       nextPagePath: null,
     }
     const baseTree = partialTree
-      .map((node) => (node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node))
-      .filter((node) => node.type === 'root' || node.parentId !== currentFolderId)
+      .map((node) =>
+        node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node,
+      )
+      .filter(
+        (node) => node.type === 'root' || node.parentId !== currentFolderId,
+      )
 
     this.plugin.setPluginState({ partialTree: baseTree })
   }
@@ -365,33 +385,40 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const trimmed = s.trim()
     if (trimmed === '') {
-      console.log("onsearchinput called with empty string");
+      console.log('onsearchinput called with empty string')
       // Reset listing for current location
       const { currentFolderId, partialTree } = this.plugin.getPluginState()
 
       // If currently in a search container, navigate back to its parent
       let targetFolderId = currentFolderId
       if (currentFolderId?.includes('/__search__')) {
-        console.log("does current folder id include search container? ----> ", currentFolderId)
+        console.log(
+          'does current folder id include search container? ----> ',
+          currentFolderId,
+        )
         // Extract the parent folder ID from the search container ID
         targetFolderId = currentFolderId.replace('/__search__', '')
       }
 
-      console.log("target folder id ----> ", targetFolderId)
-  // Remove all nodes that contain '__search__' in their ID (search container and all its children)
-  const cleanedTree = this.#removeSearchNodes(partialTree)
+      console.log('target folder id ----> ', targetFolderId)
+      // Remove all nodes that contain '__search__' in their ID (search container and all its children)
+      const cleanedTree = this.#removeSearchNodes(partialTree)
 
-      console.log("cleaned tree ----> ", cleanedTree)
+      console.log('cleaned tree ----> ', cleanedTree)
       // Ensure the target folder exists in the cleaned tree before navigating to it
-      const targetExists = cleanedTree.find((node) => node.id === targetFolderId)
+      const targetExists = cleanedTree.find(
+        (node) => node.id === targetFolderId,
+      )
       if (!targetExists) {
-        console.warn(`Target folder ${targetFolderId} not found in cleaned tree, falling back to root`)
+        console.warn(
+          `Target folder ${targetFolderId} not found in cleaned tree, falling back to root`,
+        )
         targetFolderId = this.plugin.rootFolderId
       }
 
       this.plugin.setPluginState({
         partialTree: cleanedTree,
-        currentFolderId: targetFolderId
+        currentFolderId: targetFolderId,
       })
 
       // Don't call resetCurrentFolderListing or openFolder as we've already set the state
@@ -409,7 +436,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async openFolder(folderId: string | null): Promise<void> {
-    console.log("open folder called with ----> ", folderId)
+    console.log('open folder called with ----> ', folderId)
     this.lastCheckbox = null
 
     // If trying to open the search container itself, just navigate to it without fetching
@@ -425,16 +452,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
       await this.#withAbort(async (signal) => {
         // Build a small apiList wrapper over provider.list to match util signature
         const apiList = async (directory: PartialTreeId) => {
-          const { items, nextPagePath } = await this.provider.list(directory, { signal })
+          const { items, nextPagePath } = await this.provider.list(directory, {
+            signal,
+          })
           return { items, nextPagePath }
         }
 
-        const { partialTree: materializedTree, targetId } = await PartialTreeUtils.ensurePathLoaded(
-          partialTree,
-          folderId,
-          apiList,
-          this.validateSingleFile,
-        )
+        const { partialTree: materializedTree, targetId } =
+          await PartialTreeUtils.ensurePathLoaded(
+            partialTree,
+            folderId,
+            apiList,
+            this.validateSingleFile,
+          )
 
         // Clean search nodes and navigate to the real folder id
         const cleanedTree = this.#removeSearchNodes(materializedTree)
@@ -452,13 +482,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // segment outside of the search container, clean up search nodes first so
     // we don't carry them forward.
     {
-      const { partialTree: tree, currentFolderId: currentId } = this.plugin.getPluginState()
-      const inSearchContainer = typeof currentId === 'string' && currentId.endsWith('/__search__')
-      const navigatingAwayFromSearch = inSearchContainer && !(folderId ?? '').toString().includes('/__search__')
+      const { partialTree: tree, currentFolderId: currentId } =
+        this.plugin.getPluginState()
+      const inSearchContainer =
+        typeof currentId === 'string' && currentId.endsWith('/__search__')
+      const navigatingAwayFromSearch =
+        inSearchContainer &&
+        !(folderId ?? '').toString().includes('/__search__')
       if (navigatingAwayFromSearch) {
         const cleanedTree = this.#removeSearchNodes(tree)
         // set cleaned tree and clear search string right away; currentFolderId will be set below
-        this.plugin.setPluginState({ partialTree: cleanedTree, searchString: '' })
+        this.plugin.setPluginState({
+          partialTree: cleanedTree,
+          searchString: '',
+        })
       }
     }
 
@@ -510,7 +547,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         )
       } while (this.opts.loadAllFiles && currentPagePath)
 
-        console.log("current items inside openFolder ----> ", currentItems)
+      console.log('current items inside openFolder ----> ', currentItems)
 
       const newPartialTree = PartialTreeUtils.afterOpenFolder(
         partialTree,
@@ -593,7 +630,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
               signal,
               // Use base scope (strip any '/__search__' suffix)
               path: (() => {
-                const stripSearchSuffix = (id: PartialTreeId): PartialTreeId => {
+                const stripSearchSuffix = (
+                  id: PartialTreeId,
+                ): PartialTreeId => {
                   if (typeof id !== 'string') return id
                   const stripped = id.replace(/\/__search__(?:\/.*)?$/, '')
                   if (stripped === '' || stripped === 'null') return null
@@ -601,7 +640,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
                 }
                 const cid = currentFolder.id as PartialTreeId
                 const baseId = stripSearchSuffix(cid)
-                const baseNode = (partialTree.find((i) => i.id === baseId) || currentFolder) as PartialTreeFolder
+                const baseNode = (partialTree.find((i) => i.id === baseId) ||
+                  currentFolder) as PartialTreeFolder
                 return baseNode.type === 'root' ? undefined : baseId
               })(),
               cursor: this.#extractCursor(currentFolder.nextPagePath),
@@ -611,44 +651,53 @@ export default class ProviderView<M extends Meta, B extends Body> {
           const isParentFolderChecked =
             currentFolder.type === 'folder' &&
             currentFolder.status === 'checked'
-          const newFolders = items.filter((i: CompanionFile) => i.isFolder === true)
-          const newFiles = items.filter((i: CompanionFile) => i.isFolder === false)
+          const newFolders = items.filter(
+            (i: CompanionFile) => i.isFolder === true,
+          )
+          const newFiles = items.filter(
+            (i: CompanionFile) => i.isFolder === false,
+          )
 
-          const folders: PartialTreeFolderNode[] = newFolders.map((folder: CompanionFile) => ({
-            type: 'folder',
-            id: `${currentFolder.id}/${folder.requestPath}`,
-            cached: false,
-            nextPagePath: null,
-            status: isParentFolderChecked ? 'checked' : 'unchecked',
-            parentId: currentFolder.id,
-            data: folder,
-          }))
-          const files: PartialTreeFile[] = newFiles.map((file: CompanionFile) => {
-            const restrictionError = this.validateSingleFile(file)
-            const fullPath = decodeURIComponent(file.requestPath)
-            const lastSlash = fullPath.lastIndexOf('/')
-            const absDirPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
-            let relDirPath: string | undefined
-            if (currentFolder.type === 'folder') {
-              const scope = decodeURIComponent(currentFolder.id)
-              if (absDirPath.startsWith(scope)) {
-                const rel = absDirPath.slice(scope.length).replace(/^\//, '')
-                relDirPath = rel === '' ? undefined : rel
-              }
-            }
-
-            return {
-              type: 'file',
-              id: `${currentFolder.id}/${file.requestPath}`,
-              restrictionError,
-              status:
-                isParentFolderChecked && !restrictionError
-                  ? 'checked'
-                  : 'unchecked',
+          const folders: PartialTreeFolderNode[] = newFolders.map(
+            (folder: CompanionFile) => ({
+              type: 'folder',
+              id: `${currentFolder.id}/${folder.requestPath}`,
+              cached: false,
+              nextPagePath: null,
+              status: isParentFolderChecked ? 'checked' : 'unchecked',
               parentId: currentFolder.id,
-              data: { ...file, absDirPath, relDirPath },
-            }
-          })
+              data: folder,
+            }),
+          )
+          const files: PartialTreeFile[] = newFiles.map(
+            (file: CompanionFile) => {
+              const restrictionError = this.validateSingleFile(file)
+              const fullPath = decodeURIComponent(file.requestPath)
+              const lastSlash = fullPath.lastIndexOf('/')
+              const absDirPath =
+                lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
+              let relDirPath: string | undefined
+              if (currentFolder.type === 'folder') {
+                const scope = decodeURIComponent(currentFolder.id)
+                if (absDirPath.startsWith(scope)) {
+                  const rel = absDirPath.slice(scope.length).replace(/^\//, '')
+                  relDirPath = rel === '' ? undefined : rel
+                }
+              }
+
+              return {
+                type: 'file',
+                id: `${currentFolder.id}/${file.requestPath}`,
+                restrictionError,
+                status:
+                  isParentFolderChecked && !restrictionError
+                    ? 'checked'
+                    : 'unchecked',
+                parentId: currentFolder.id,
+                data: { ...file, absDirPath, relDirPath },
+              }
+            },
+          )
 
           const updatedCurrentFolder: PartialTreeFolder = {
             ...currentFolder,
@@ -657,7 +706,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
           const baseTree = partialTree.map((node) =>
             node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node,
           )
-          const newPartialTree: PartialTree = [...baseTree, ...folders, ...files]
+          const newPartialTree: PartialTree = [
+            ...baseTree,
+            ...folders,
+            ...files,
+          ]
           this.plugin.setPluginState({ partialTree: newPartialTree })
         } else {
           const { nextPagePath, items } = await this.provider.list(
@@ -734,24 +787,32 @@ export default class ProviderView<M extends Meta, B extends Body> {
       const rawId = ourItem.id
       this.#withAbort(async (signal) => {
         const apiList = async (directory: PartialTreeId) => {
-          const { items, nextPagePath } = await this.provider.list(directory, { signal })
+          const { items, nextPagePath } = await this.provider.list(directory, {
+            signal,
+          })
           return { items, nextPagePath }
         }
         // 1) Ensure ancestors and target node exist in real tree
-        const { partialTree: withAncestors, targetId } = await PartialTreeUtils.ensureAncestorsLoaded(
-          partialTree,
-          rawId,
-          apiList,
-          this.validateSingleFile,
-        )
+        const { partialTree: withAncestors, targetId } =
+          await PartialTreeUtils.ensureAncestorsLoaded(
+            partialTree,
+            rawId,
+            apiList,
+            this.validateSingleFile,
+          )
         // 2) Toggle the real node
         const realId = (targetId ?? '').toString()
-        const toggledTree = PartialTreeUtils.afterToggleCheckbox(withAncestors, [realId])
+        const toggledTree = PartialTreeUtils.afterToggleCheckbox(
+          withAncestors,
+          [realId],
+        )
 
         // 3) Mirror status back to the clicked search node so UI reflects change
-  const realNode = toggledTree.find((n) => n.id === realId) as PartialTreeFolderNode | PartialTreeFile
+        const realNode = toggledTree.find((n) => n.id === realId) as
+          | PartialTreeFolderNode
+          | PartialTreeFile
         const mirroredTree = toggledTree.map((n) =>
-          n.id === rawId ? { ...n, status: realNode.status } as typeof n : n,
+          n.id === rawId ? ({ ...n, status: realNode.status } as typeof n) : n,
         ) as PartialTree
 
         this.plugin.setPluginState({ partialTree: mirroredTree })
@@ -767,7 +828,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
       isShiftKeyPressed,
       this.lastCheckbox,
     )
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
+      partialTree,
+      clickedRange,
+    )
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id
@@ -857,10 +921,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString, currentFolderId } = this.plugin.getPluginState()
+    const { partialTree, username, searchString, currentFolderId } =
+      this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-    const dynamicPlaceholder = this.#buildSearchPlaceholder(currentFolderId, partialTree)
-    console.log('ProviderView render - partialTree state:', this.plugin.getPluginState().partialTree)
+    const dynamicPlaceholder = this.#buildSearchPlaceholder(
+      currentFolderId,
+      partialTree,
+    )
+    console.log(
+      'ProviderView render - partialTree state:',
+      this.plugin.getPluginState().partialTree,
+    )
 
     return (
       <div

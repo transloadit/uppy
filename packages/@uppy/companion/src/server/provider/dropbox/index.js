@@ -2,47 +2,47 @@
 //
 // This function is simple and has OK performance compared to more
 // complicated ones: http://jsperf.com/json-escape-unicode/4
-import got from "got";
-import { MAX_AGE_REFRESH_TOKEN } from "../../helpers/jwt.js";
-import { prepareStream } from "../../helpers/utils.js";
-import logger from "../../logger.js";
-import Provider from "../Provider.js";
-import { withProviderErrorHandling } from "../providerErrors.js";
-import adaptData from "./adapter.js";
+import got from 'got'
+import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
+import { prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
-const charsToEncode = /[\u007f-\uffff]/g;
+const charsToEncode = /[\u007f-\uffff]/g
 function httpHeaderSafeJson(v) {
   return JSON.stringify(v).replace(charsToEncode, (c) => {
-    return `\\u${`000${c.charCodeAt(0).toString(16)}`.slice(-4)}`;
-  });
+    return `\\u${`000${c.charCodeAt(0).toString(16)}`.slice(-4)}`
+  })
 }
 
 async function getUserInfo({ client }) {
   return client
-    .post("users/get_current_account", { responseType: "json" })
-    .json();
+    .post('users/get_current_account', { responseType: 'json' })
+    .json()
 }
 
 async function getClient({ token, namespaced }) {
   const makeClient = (namespace) =>
     got.extend({
-      prefixUrl: "https://api.dropboxapi.com/2",
+      prefixUrl: 'https://api.dropboxapi.com/2',
       headers: {
         authorization: `Bearer ${token}`,
         ...(namespace
           ? {
-              "Dropbox-API-Path-Root": JSON.stringify({
-                ".tag": "root",
+              'Dropbox-API-Path-Root': JSON.stringify({
+                '.tag': 'root',
                 root: namespace,
               }),
             }
           : {}),
       },
-    });
+    })
 
-  let client = makeClient();
+  let client = makeClient()
 
-  const userInfo = await getUserInfo({ client });
+  const userInfo = await getUserInfo({ client })
   // console.log('userInfo', userInfo)
 
   // https://www.dropboxforum.com/discussions/101000014/how-to-list-the-contents-of-a-team-folder/258310
@@ -55,55 +55,55 @@ async function getClient({ token, namespaced }) {
       userInfo.root_info.home_namespace_id
   ) {
     logger.debug(
-      "using root_namespace_id",
-      userInfo.root_info.root_namespace_id
-    );
-    client = makeClient(userInfo.root_info.root_namespace_id);
+      'using root_namespace_id',
+      userInfo.root_info.root_namespace_id,
+    )
+    client = makeClient(userInfo.root_info.root_namespace_id)
   }
 
   return {
     client,
     userInfo,
-  };
+  }
 }
 
 const getOauthClient = () =>
   got.extend({
-    prefixUrl: "https://api.dropboxapi.com/oauth2",
-  });
+    prefixUrl: 'https://api.dropboxapi.com/oauth2',
+  })
 
 async function list({ client, directory, query }) {
   if (query.cursor) {
     return client
-      .post("files/list_folder/continue", {
+      .post('files/list_folder/continue', {
         json: { cursor: query.cursor },
-        responseType: "json",
+        responseType: 'json',
       })
-      .json();
+      .json()
   }
-  console.log("list called with directory inside list function: ", directory);
+  console.log('list called with directory inside list function: ', directory)
 
   return client
-    .post("files/list_folder", {
+    .post('files/list_folder', {
       searchParams: query,
       json: {
-        path: `${directory || ""}`,
+        path: `${directory || ''}`,
         include_non_downloadable_files: false,
         // min=1, max=2000 (default: 500): The maximum number of results to return per request.
         limit: 2000,
       },
-      responseType: "json",
+      responseType: 'json',
     })
-    .json();
+    .json()
 }
 
 async function doSearchEntries({ client, query }) {
-  const q = query?.q ?? query?.query;
-  const cursor = query?.cursor;
-  let scopePath = query?.path;
+  const q = query?.q ?? query?.query
+  const cursor = query?.cursor
+  let scopePath = query?.path
   try {
-    if (typeof scopePath === "string" && scopePath.includes("%")) {
-      scopePath = decodeURIComponent(scopePath);
+    if (typeof scopePath === 'string' && scopePath.includes('%')) {
+      scopePath = decodeURIComponent(scopePath)
     }
   } catch (_) {
     // ignore decode errors
@@ -112,45 +112,45 @@ async function doSearchEntries({ client, query }) {
   // pagination for search
   if (cursor) {
     const continueRes = await client
-      .post("files/search/continue_v2", {
+      .post('files/search/continue_v2', {
         json: { cursor },
-        responseType: "json",
+        responseType: 'json',
       })
-      .json();
+      .json()
 
     const entries = (continueRes.matches || [])
       .map((m) => m?.metadata?.metadata)
-      .filter(Boolean);
+      .filter(Boolean)
     return {
       entries,
       has_more: !!continueRes.has_more,
       cursor: continueRes.cursor ?? null,
-    };
+    }
   }
 
   const searchRes = await client
-    .post("files/search_v2", {
+    .post('files/search_v2', {
       json: {
-        query: String(q ?? "").trim(),
+        query: String(q ?? '').trim(),
         options: {
-          path: scopePath || "",
+          path: scopePath || '',
           max_results: 200,
-          file_status: "active",
+          file_status: 'active',
           filename_only: false,
         },
       },
-      responseType: "json",
+      responseType: 'json',
     })
-    .json();
+    .json()
 
   const entries = (searchRes.matches || [])
     .map((m) => m?.metadata?.metadata)
-    .filter(Boolean);
+    .filter(Boolean)
   return {
     entries,
     has_more: !!searchRes.has_more,
     cursor: searchRes.cursor ?? null,
-  };
+  }
 }
 
 /**
@@ -158,16 +158,16 @@ async function doSearchEntries({ client, query }) {
  */
 export default class Dropbox extends Provider {
   constructor(options) {
-    super(options);
-    this.needsCookieAuth = true;
+    super(options)
+    this.needsCookieAuth = true
   }
 
   static get oauthProvider() {
-    return "dropbox";
+    return 'dropbox'
   }
 
   static get authStateExpiry() {
-    return MAX_AGE_REFRESH_TOKEN;
+    return MAX_AGE_REFRESH_TOKEN
   }
 
   /**
@@ -175,126 +175,127 @@ export default class Dropbox extends Provider {
    */
   async search(options) {
     return this.#withErrorHandling(
-      "provider.dropbox.search.error",
+      'provider.dropbox.search.error',
       async () => {
         const { client, userInfo } = await getClient({
           token: options.providerUserSession.accessToken,
           namespaced: true,
-        });
+        })
 
-        const stats = await doSearchEntries({ client, query: options.query });
-        const { email } = userInfo;
-        return adaptData(stats, email, options.companion.buildURL);
-      }
-    );
+        const stats = await doSearchEntries({ client, query: options.query })
+        const { email } = userInfo
+        return adaptData(stats, email, options.companion.buildURL)
+      },
+    )
   }
 
   /**
    * List folder entries
    */
   async list(options) {
-    return this.#withErrorHandling("provider.dropbox.list.error", async () => {
+    return this.#withErrorHandling('provider.dropbox.list.error', async () => {
       const { client, userInfo } = await getClient({
         token: options.providerUserSession.accessToken,
         namespaced: true,
-      });
+      })
 
-      const stats = await list({ ...options, client });
-      const { email } = userInfo;
-      return adaptData(stats, email, options.companion.buildURL);
-    });
+      const stats = await list({ ...options, client })
+      const { email } = userInfo
+      return adaptData(stats, email, options.companion.buildURL)
+    })
   }
 
   async download({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
-      "provider.dropbox.download.error",
+      'provider.dropbox.download.error',
       async () => {
         const stream = (
           await getClient({ token, namespaced: true })
-        ).client.stream.post("files/download", {
-          prefixUrl: "https://content.dropboxapi.com/2",
+        ).client.stream.post('files/download', {
+          prefixUrl: 'https://content.dropboxapi.com/2',
           headers: {
-            "Dropbox-API-Arg": httpHeaderSafeJson({ path: String(id) }),
-            Connection: "keep-alive", // important because https://github.com/transloadit/uppy/issues/4357
+            'Dropbox-API-Arg': httpHeaderSafeJson({ path: String(id) }),
+            Connection: 'keep-alive', // important because https://github.com/transloadit/uppy/issues/4357
           },
           body: Buffer.alloc(0), // if not, it will hang waiting for the writable stream
-          responseType: "json",
-        });
+          responseType: 'json',
+        })
 
-        const { size } = await prepareStream(stream);
-        return { stream, size };
-      }
-    );
+        const { size } = await prepareStream(stream)
+        return { stream, size }
+      },
+    )
   }
 
   async thumbnail({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
-      "provider.dropbox.thumbnail.error",
+      'provider.dropbox.thumbnail.error',
       async () => {
         const stream = (
           await getClient({ token, namespaced: true })
-        ).client.stream.post("files/get_thumbnail_v2", {
-          prefixUrl: "https://content.dropboxapi.com/2",
+        ).client.stream.post('files/get_thumbnail_v2', {
+          prefixUrl: 'https://content.dropboxapi.com/2',
           headers: {
-            "Dropbox-API-Arg": httpHeaderSafeJson({
-              resource: { ".tag": "path", path: `${id}` },
-              size: "w256h256",
-              format: "jpeg",
+            'Dropbox-API-Arg': httpHeaderSafeJson({
+              resource: { '.tag': 'path', path: `${id}` },
+              size: 'w256h256',
+              format: 'jpeg',
             }),
           },
           body: Buffer.alloc(0),
-          responseType: "json",
-        });
+          responseType: 'json',
+        })
 
-        await prepareStream(stream);
-        return { stream, contentType: "image/jpeg" };
-      }
-    );
+        await prepareStream(stream)
+        return { stream, contentType: 'image/jpeg' }
+      },
+    )
   }
 
   async size({ id, providerUserSession: { accessToken: token } }) {
-    return this.#withErrorHandling("provider.dropbox.size.error", async () => {
+    return this.#withErrorHandling('provider.dropbox.size.error', async () => {
       const { size } = await (
         await getClient({ token, namespaced: true })
       ).client
-        .post("files/get_metadata", {
+        .post('files/get_metadata', {
           json: { path: id },
-          responseType: "json",
+          responseType: 'json',
         })
-        .json();
-      return parseInt(size, 10);
-    });
+        .json()
+      return parseInt(size, 10)
+    })
   }
 
   async logout({ providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling(
-      "provider.dropbox.logout.error",
+      'provider.dropbox.logout.error',
       async () => {
-        await (
-          await getClient({ token, namespaced: false })
-        ).client.post("auth/token/revoke", { responseType: "json" });
-        return { revoked: true };
-      }
-    );
+        await (await getClient({ token, namespaced: false })).client.post(
+          'auth/token/revoke',
+          { responseType: 'json' },
+        )
+        return { revoked: true }
+      },
+    )
   }
 
   async refreshToken({ clientId, clientSecret, refreshToken }) {
     return this.#withErrorHandling(
-      "provider.dropbox.token.refresh.error",
+      'provider.dropbox.token.refresh.error',
       async () => {
         const { access_token: accessToken } = await getOauthClient()
-          .post("token", {
+          .post('token', {
             form: {
               refresh_token: refreshToken,
-              grant_type: "refresh_token",
+              grant_type: 'refresh_token',
               client_id: clientId,
               client_secret: clientSecret,
             },
           })
-          .json();
-        return { accessToken };
-      }
-    );
+          .json()
+        return { accessToken }
+      },
+    )
   }
 
   async #withErrorHandling(tag, fn) {
@@ -304,6 +305,6 @@ export default class Dropbox extends Provider {
       providerName: Dropbox.oauthProvider,
       isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => body?.error_summary,
-    });
+    })
   }
 }

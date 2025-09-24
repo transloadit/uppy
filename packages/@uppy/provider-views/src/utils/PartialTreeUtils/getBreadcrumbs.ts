@@ -16,7 +16,9 @@ const getBreadcrumbs = (
   // If folder is not found, return empty breadcrumbs or find root folder
   if (!folder) {
     console.warn(`Folder ${currentFolderId} not found in tree for breadcrumbs`)
-    const rootFolder = partialTree.find((f) => f.type === 'root') as PartialTreeFolder
+    const rootFolder = partialTree.find(
+      (f) => f.type === 'root',
+    ) as PartialTreeFolder
     return rootFolder ? [rootFolder] : []
   }
 
@@ -33,16 +35,21 @@ const getBreadcrumbs = (
     // Derive the base context id by stripping the '/__search__' suffix
     const baseIdRaw = folder.id.replace(/\/__search__$/, '')
     const baseId: PartialTreeId =
-      baseIdRaw === '' || baseIdRaw === 'null' ? null : (baseIdRaw as PartialTreeId)
+      baseIdRaw === '' || baseIdRaw === 'null'
+        ? null
+        : (baseIdRaw as PartialTreeId)
 
     // Find the base context node (or fall back to root)
-    const baseNode = (baseId == null
-      ? (partialTree.find((f) => f.type === 'root') as PartialTreeFolder)
-      : (partialTree.find((f) => f.id === baseId) as PartialTreeFolder))
+    const baseNode =
+      baseId == null
+        ? (partialTree.find((f) => f.type === 'root') as PartialTreeFolder)
+        : (partialTree.find((f) => f.id === baseId) as PartialTreeFolder)
 
     if (!baseNode) {
       // If we somehow can't find the base, fall back to default chain from current node
-      console.warn(`Base context ${String(baseId)} not found for search breadcrumbs; falling back`)
+      console.warn(
+        `Base context ${String(baseId)} not found for search breadcrumbs; falling back`,
+      )
     } else {
       // Build breadcrumbs up to the base node
       const chain: PartialTreeFolder[] = []
@@ -53,7 +60,9 @@ const getBreadcrumbs = (
         const parentId = (cur as PartialTreeFolderNode).parentId
         cur = partialTree.find((f) => f.id === parentId) as PartialTreeFolder
         if (!cur) {
-          console.warn(`Parent folder ${parentId} not found, breaking breadcrumb chain`)
+          console.warn(
+            `Parent folder ${parentId} not found, breaking breadcrumb chain`,
+          )
           break
         }
       }
@@ -68,13 +77,13 @@ const getBreadcrumbs = (
 
     if (folder.type === 'root') break
     const parentId = (folder as PartialTreeFolderNode).parentId
-    folder = partialTree.find(
-      (f) => f.id === parentId,
-    ) as PartialTreeFolder
-    
+    folder = partialTree.find((f) => f.id === parentId) as PartialTreeFolder
+
     // If parent folder is not found, break to avoid infinite loop
     if (!folder) {
-      console.warn(`Parent folder ${parentId} not found, breaking breadcrumb chain`)
+      console.warn(
+        `Parent folder ${parentId} not found, breaking breadcrumb chain`,
+      )
       break
     }
   }
