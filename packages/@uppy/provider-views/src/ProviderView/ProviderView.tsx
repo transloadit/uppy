@@ -197,6 +197,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
+  // Remove all temporary search nodes (the container and its children)
+  #removeSearchNodes(tree: PartialTree): PartialTree {
+    return tree.filter((node) => !node.id?.includes('/__search__'))
+  }
+
   #isSearchMode(): boolean {
     const { searchString } = this.plugin.getPluginState()
     const supportsServerSearch = typeof (this.provider as any).search === 'function'
@@ -440,6 +445,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }).catch(handleError(this.plugin.uppy))
       this.setLoading(false)
       return
+    }
+
+    // If we're currently viewing a search container and user clicked a breadcrumb
+    // segment outside of the search container, clean up search nodes first so
+    // we don't carry them forward.
+    {
+      const { partialTree: tree, currentFolderId: currentId } = this.plugin.getPluginState()
+      const inSearchContainer = typeof currentId === 'string' && currentId.endsWith('/__search__')
+      const navigatingAwayFromSearch = inSearchContainer && !(folderId ?? '').toString().includes('/__search__')
+      if (navigatingAwayFromSearch) {
+        const cleanedTree = this.#removeSearchNodes(tree)
+        // set cleaned tree and clear search string right away; currentFolderId will be set below
+        this.plugin.setPluginState({ partialTree: cleanedTree, searchString: '' })
+      }
     }
 
     // Returning cached folder
