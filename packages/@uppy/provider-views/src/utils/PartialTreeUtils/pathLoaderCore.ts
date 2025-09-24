@@ -12,8 +12,12 @@
 // - afterOpenFolder merges fetched items under a folder and updates cache flags
 //
 
-
-import type { PartialTree, PartialTreeFolder, PartialTreeFolderNode, PartialTreeId } from '@uppy/core'
+import type {
+  PartialTree,
+  PartialTreeFolder,
+  PartialTreeFolderNode,
+  PartialTreeId,
+} from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils'
 import afterOpenFolder from './afterOpenFolder.js'
 
@@ -242,16 +246,30 @@ export async function materializePath(
 
   // 2) Build candidates and locate deepest existing ancestor
   const candidates: PartialTreeId[] = buildEncodedAncestorCandidates(targetId)
-  const { ancestorId, ancestor } = findDeepestExistingAncestor(partialTree, candidates)
+  const { ancestorId, ancestor } = findDeepestExistingAncestor(
+    partialTree,
+    candidates,
+  )
 
   if (!ancestor || !ancestorId) return { partialTree, targetId }
 
   // 4) Walk forward to materialize intermediate segments
-  let tree = await walkAndEnsurePath(partialTree, ancestor as PartialTreeFolder, targetId, apiList, validateSingleFile)
+  let tree = await walkAndEnsurePath(
+    partialTree,
+    ancestor as PartialTreeFolder,
+    targetId,
+    apiList,
+    validateSingleFile,
+  )
 
   // 5) Optionally ensure target's first page is listed
   if (options.includeTargetFirstPage) {
-    tree = await ensureTargetFirstPageIfNeeded(tree, targetId, apiList, validateSingleFile)
+    tree = await ensureTargetFirstPageIfNeeded(
+      tree,
+      targetId,
+      apiList,
+      validateSingleFile,
+    )
   }
 
   return { partialTree: tree, targetId }

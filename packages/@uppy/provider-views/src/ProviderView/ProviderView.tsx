@@ -17,7 +17,7 @@ import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
 import FooterActions from '../FooterActions.js'
-import { SearchInput } from '../SearchInput.js'
+import SearchInput from '../SearchInput.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
@@ -221,8 +221,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async #performSearch(): Promise<void> {
     const { partialTree, currentFolderId, searchString } =
       this.plugin.getPluginState()
-    console.log('current folder id ----> ', currentFolderId)
-    console.log('partial tree ----> ', partialTree)
     const currentFolder = partialTree.find(
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
@@ -244,7 +242,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
         (i) => i.id === baseContextId,
       ) || currentFolder) as PartialTreeFolder
       const scopePath = baseContextNode.type === 'root' ? null : baseContextId
-      console.log('scope path inside performSearch ----> ', scopePath)
       const { items, nextPagePath } = await (this.provider as any).search(
         searchString,
         { signal, path: scopePath ?? undefined },
@@ -343,37 +340,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(false)
   }
 
-  #resetCurrentFolderListing(): void {
-    const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    const currentFolder = partialTree.find(
-      (i) => i.id === currentFolderId,
-    ) as PartialTreeFolder
-
-    // If current folder doesn't exist, don't try to reset it
-    if (!currentFolder) {
-      console.warn(
-        `Current folder ${currentFolderId} not found, skipping reset`,
-      )
-      return
-    }
-
-    // mark folder as not cached and clear its children so openFolder refetches
-    const updatedCurrentFolder: PartialTreeFolder = {
-      ...currentFolder,
-      cached: false,
-      nextPagePath: null,
-    }
-    const baseTree = partialTree
-      .map((node) =>
-        node.id === updatedCurrentFolder.id ? updatedCurrentFolder : node,
-      )
-      .filter(
-        (node) => node.type === 'root' || node.parentId !== currentFolderId,
-      )
-
-    this.plugin.setPluginState({ partialTree: baseTree })
-  }
-
   onSearchInput(s: string): void {
     // Update state immediately for controlled input
     this.plugin.setPluginState({ searchString: s })
@@ -386,26 +352,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const trimmed = s.trim()
     if (trimmed === '') {
-      console.log('onsearchinput called with empty string')
       // Reset listing for current location
       const { currentFolderId, partialTree } = this.plugin.getPluginState()
 
       // If currently in a search container, navigate back to its parent
       let targetFolderId = currentFolderId
       if (currentFolderId?.includes('/__search__')) {
-        console.log(
-          'does current folder id include search container? ----> ',
-          currentFolderId,
-        )
         // Extract the parent folder ID from the search container ID
         targetFolderId = currentFolderId.replace('/__search__', '')
       }
 
-      console.log('target folder id ----> ', targetFolderId)
       // Remove all nodes that contain '__search__' in their ID (search container and all its children)
       const cleanedTree = this.#removeSearchNodes(partialTree)
 
-      console.log('cleaned tree ----> ', cleanedTree)
       // Ensure the target folder exists in the cleaned tree before navigating to it
       const targetExists = cleanedTree.find(
         (node) => node.id === targetFolderId,
@@ -437,7 +396,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async openFolder(folderId: string | null): Promise<void> {
-    console.log('open folder called with ----> ', folderId)
     this.lastCheckbox = null
 
     // If trying to open the search container itself, just navigate to it without fetching
@@ -547,8 +505,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           }),
         )
       } while (this.opts.loadAllFiles && currentPagePath)
-
-      console.log('current items inside openFolder ----> ', currentItems)
 
       const newPartialTree = PartialTreeUtils.afterOpenFolder(
         partialTree,
@@ -928,10 +884,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const dynamicPlaceholder = this.#buildSearchPlaceholder(
       currentFolderId,
       partialTree,
-    )
-    console.log(
-      'ProviderView render - partialTree state:',
-      this.plugin.getPluginState().partialTree,
     )
 
     return (
