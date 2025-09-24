@@ -8,9 +8,6 @@ import type { PartialTree } from '@uppy/core'
  */
 const getNumberOfSelectedFiles = (partialTree: PartialTree): number => {
   const checkedLeaves = partialTree.filter((item) => {
-    // Ignore search container copies to avoid double-counting
-    if (typeof item.id === 'string' && item.id.includes('/__search__'))
-      return false
     if (item.type === 'file' && item.status === 'checked') {
       return true
     }

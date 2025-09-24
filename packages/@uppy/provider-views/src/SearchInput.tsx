@@ -17,7 +17,7 @@ type Props = {
   buttonCSSClassName?: string
 }
 
-export default function SearchInput({
+export function SearchInput({
   searchString,
   setSearchString,
   submitSearchString,

@@ -17,7 +17,7 @@ import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
 import FooterActions from '../FooterActions.js'
-import SearchInput from '../SearchInput.js'
+import { SearchInput } from '../SearchInput.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
