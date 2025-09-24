@@ -246,7 +246,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         { signal, path: scopePath ?? undefined },
       )
 
-      // Create artificial search container as a sibling node
+      // Create temporary artificial search container with id currentId/__search__ as a sibling node
       const searchContainerId =
         baseContextId === null ? '/__search__' : `${baseContextId}/__search__`
       const searchContainer: PartialTreeFolderNode = {
