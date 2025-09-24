@@ -224,22 +224,36 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     this.setLoading('Searching...')
     await this.#withAbort(async (signal) => {
-      // Determine scope path (global when at root)
-      const scopePath = currentFolder.type === 'root' ? null : currentFolder.id
+      // Determine base scope path (strip any existing search container suffix)
+      const stripSearchSuffix = (id: PartialTreeId): PartialTreeId => {
+        if (typeof id !== 'string') return id
+        const stripped = id.replace(/\/__search__(?:\/.*)?$/, '')
+        if (stripped === '' || stripped === 'null') return null
+        return stripped as PartialTreeId
+      }
+      const currentId = currentFolder.id
+      const baseContextId = stripSearchSuffix(currentId)
+      const baseContextNode = (partialTree.find((i) => i.id === baseContextId) || currentFolder) as PartialTreeFolder
+      const scopePath = baseContextNode.type === 'root' ? null : baseContextId
+      console.log("scope path inside performSearch ----> ", scopePath)
       const { items, nextPagePath } = await (this.provider as any).search(
         searchString,
         { signal, path: scopePath ?? undefined },
       )
 
       // Create artificial search container as a sibling node
-      const searchContainerId = `${currentFolder.id}/__search__`
+      const searchContainerId =
+        baseContextId === null ? '/__search__' : `${baseContextId}/__search__`
       const searchContainer: PartialTreeFolderNode = {
         type: 'folder',
         id: searchContainerId,
         cached: true,
         nextPagePath: this.#extractCursor(nextPagePath),
         status: 'unchecked',
-        parentId: currentFolder.type === 'root' ? null : (currentFolder as PartialTreeFolderNode).parentId,
+        parentId:
+          baseContextNode.type === 'root'
+            ? null
+            : (baseContextNode as PartialTreeFolderNode).parentId,
         data: {
           id: searchContainerId,
           name: 'Search Results',
@@ -277,12 +291,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
         const lastSlash = fullPath.lastIndexOf('/')
         const absDirPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
         let relDirPath: string | undefined
-        if (currentFolder.type === 'folder') {
-          const scope = decodeURIComponent(currentFolder.id)
-          if (absDirPath.startsWith(scope)) {
-            const rel = absDirPath.slice(scope.length).replace(/^\//, '')
-            relDirPath = rel === '' ? undefined : rel
-          }
+        const scope =
+          baseContextNode.type === 'root'
+            ? ''
+            : decodeURIComponent(baseContextId as string)
+        if (scope && absDirPath.startsWith(scope)) {
+          const rel = absDirPath.slice(scope.length).replace(/^\//, '')
+          relDirPath = rel === '' ? undefined : rel
         }
 
         return {
@@ -556,7 +571,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
             this.plugin.getPluginState().searchString,
             {
               signal,
-              path: currentFolder.type === 'root' ? undefined : currentFolder.id,
+              // Use base scope (strip any '/__search__' suffix)
+              path: (() => {
+                const stripSearchSuffix = (id: PartialTreeId): PartialTreeId => {
+                  if (typeof id !== 'string') return id
+                  const stripped = id.replace(/\/__search__(?:\/.*)?$/, '')
+                  if (stripped === '' || stripped === 'null') return null
+                  return stripped as PartialTreeId
+                }
+                const cid = currentFolder.id as PartialTreeId
+                const baseId = stripSearchSuffix(cid)
+                const baseNode = (partialTree.find((i) => i.id === baseId) || currentFolder) as PartialTreeFolder
+                return baseNode.type === 'root' ? undefined : baseId
+              })(),
               cursor: this.#extractCursor(currentFolder.nextPagePath),
             },
           )
