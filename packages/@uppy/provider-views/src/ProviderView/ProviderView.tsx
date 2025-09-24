@@ -315,8 +315,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
         }
       })
 
-      // Remove any existing search containers and add the new one
-      const baseTree = partialTree.filter((node) => !node.id?.includes('/__search__'))
+  // Remove any existing search containers and add the new one
+  const baseTree = this.#removeSearchNodes(partialTree)
       const newPartialTree: PartialTree = [...baseTree, searchContainer, ...folders, ...files]
 
       // Navigate to the search container
@@ -365,6 +365,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const trimmed = s.trim()
     if (trimmed === '') {
+      console.log("onsearchinput called with empty string");
       // Reset listing for current location
       const { currentFolderId, partialTree } = this.plugin.getPluginState()
 
@@ -377,8 +378,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
 
       console.log("target folder id ----> ", targetFolderId)
-      // Remove all nodes that contain '__search__' in their ID (search container and all its children)
-      const cleanedTree = partialTree.filter((node) => !node.id?.includes('/__search__'))
+  // Remove all nodes that contain '__search__' in their ID (search container and all its children)
+  const cleanedTree = this.#removeSearchNodes(partialTree)
 
       console.log("cleaned tree ----> ", cleanedTree)
       // Ensure the target folder exists in the cleaned tree before navigating to it
@@ -436,7 +437,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         )
 
         // Clean search nodes and navigate to the real folder id
-        const cleanedTree = materializedTree.filter((node) => !node.id?.includes('/__search__'))
+        const cleanedTree = this.#removeSearchNodes(materializedTree)
         this.plugin.setPluginState({
           partialTree: cleanedTree,
           currentFolderId: targetId,
