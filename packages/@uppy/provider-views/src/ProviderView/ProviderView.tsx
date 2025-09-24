@@ -417,13 +417,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
           return { items, nextPagePath }
         }
 
-        const { partialTree: materializedTree, targetId } = await materializePath(
-          partialTree,
-          folderId,
-          apiList,
-          this.validateSingleFile,
-          { includeTargetFirstPage: true },
-        )
+        const { partialTree: materializedTree, targetId } =
+          await materializePath(
+            partialTree,
+            folderId,
+            apiList,
+            this.validateSingleFile,
+            { includeTargetFirstPage: true },
+          )
 
         // Clean search nodes and navigate to the real folder id
         const cleanedTree = this.#removeSearchNodes(materializedTree)
