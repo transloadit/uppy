@@ -1,18 +1,62 @@
+// Path loading core utilities
+//
+// These helpers centralize the common logic for:
+// - Normalizing ids that may be prefixed by a search container
+// - Finding the deepest ancestor already present in the PartialTree
+// - Walking down the path and revealing missing children (with pagination)
+// - Optionally ensuring the target folder has its first page listed
+//
+// Contract (at a glance):
+// - PartialTree is a flat list of nodes; ids are URL-encoded paths (e.g. "%2Ffoo%2Fbar")
+// - ApiList(directory) returns { items, nextPagePath } and supports pagination
+// - afterOpenFolder merges fetched items under a folder and updates cache flags
+//
+// Composition flow:
+//   ensureAncestorsLoaded:
+//     normalizeSearchTarget → buildEncodedAncestorCandidates → findDeepestExistingAncestor → walkAndEnsurePath
+//   ensurePathLoaded:
+//     normalizeSearchTarget → buildEncodedAncestorCandidates → findDeepestExistingAncestor → walkAndEnsurePath → ensureTargetFirstPageIfNeeded
 import type { PartialTree, PartialTreeFolder, PartialTreeFolderNode, PartialTreeId } from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils'
 import afterOpenFolder from './afterOpenFolder.js'
 
 // Shared ApiList type used by ensurePathLoaded/ensureAncestorsLoaded
+/**
+ * List API contract used by the path loaders.
+ * directory: encoded path id (or a nextPagePath cursor)
+ * returns: a page of items and a nextPagePath cursor (or null)
+ */
 export type ApiList = (directory: PartialTreeId) => Promise<{
   nextPagePath: PartialTreeId
   items: CompanionFile[]
 }>
 
+/**
+ * Remove the artificial search container prefix so we operate on real paths.
+ *
+ * Example:
+ *   "/scope/__search__/%2Fprojects%2FclientA" → "%2Fprojects%2FclientA"
+ *
+ * Diagram:
+ *   /scope/__search__/ %2Fprojects%2FclientA
+ *                        │
+ *                        ▼
+ *                %2Fprojects%2FclientA
+ */
 export function normalizeSearchTarget(rawId: PartialTreeId): string {
   if (!rawId) return rawId as unknown as string
   return rawId.includes('/__search__/') ? rawId.split('/__search__/')[1] : (rawId as string)
 }
 
+/**
+ * Build a deepest→shallowest list of encoded ancestor candidate ids.
+ *
+ * Input: "%2Ffoo%2Fbar%2Fbaz"
+ * Output: ["%2Ffoo%2Fbar%2Fbaz", "%2Ffoo%2Fbar", "%2Ffoo"]
+ *
+ * Diagram (decoded):
+ *   /foo/bar/baz → [/foo/bar/baz, /foo/bar, /foo]
+ */
 export function buildEncodedAncestorCandidates(targetId: string): PartialTreeId[] {
   const decoded = decodeURIComponent(targetId)
   const clean = decoded.startsWith('/') ? decoded : `/${decoded}`
@@ -25,6 +69,15 @@ export function buildEncodedAncestorCandidates(targetId: string): PartialTreeId[
   return candidates
 }
 
+/**
+ * Find the closest existing ancestor in the current PartialTree.
+ * If none of the candidates exist, fall back to the root node.
+ *
+ * Example:
+ *   candidates: [/foo/bar/baz, /foo/bar, /foo]
+ *   tree has:   /foo, /foo/bar
+ *   result:     /foo/bar
+ */
 export function findDeepestExistingAncestor(
   tree: PartialTree,
   candidates: PartialTreeId[],
@@ -46,6 +99,10 @@ export function findDeepestExistingAncestor(
   return { ancestorId, ancestor }
 }
 
+/**
+ * Fetch all pages starting at `start` and flatten the items list.
+ * Used when revealing a folder's children may require pagination.
+ */
 async function listAllPages(apiList: ApiList, start: PartialTreeId | null): Promise<CompanionFile[]> {
   let items: CompanionFile[] = []
   let page: PartialTreeId | null = start
@@ -57,6 +114,17 @@ async function listAllPages(apiList: ApiList, start: PartialTreeId | null): Prom
   return items
 }
 
+/**
+ * Walk from a known ancestor down to the `targetId`, ensuring each missing
+ * intermediate child is revealed (listing the current folder with pagination
+ * when required). Merges results via afterOpenFolder.
+ *
+ * Example (decoded):
+ *   want: /foo/bar/baz
+ *   have: /foo/bar
+ *     - ensure child "baz" exists under "bar"
+ *     - if missing → list "bar" (all pages) → merge → retry → continue
+ */
 export async function walkAndEnsurePath(
   tree: PartialTree,
   ancestor: PartialTreeFolder,
@@ -93,6 +161,12 @@ export async function walkAndEnsurePath(
   return workingTree
 }
 
+/**
+ * Ensure the target folder won't render empty by listing its first page when:
+ * - It has no children in the PartialTree yet, or
+ * - It is explicitly marked as not cached.
+ *
+ */
 export async function ensureTargetFirstPageIfNeeded(
   tree: PartialTree,
   targetId: string,
