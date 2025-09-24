@@ -803,6 +803,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return getNumberOfSelectedFiles(partialTree)
   }
 
+  // Compute dynamic placeholder based on current scope (root vs folder)
+  #buildSearchPlaceholder(
+    currentFolderId: PartialTreeId,
+    partialTree: PartialTree,
+  ): string {
+    const stripSearchSuffix = (id: PartialTreeId): PartialTreeId => {
+      if (typeof id !== 'string') return id
+      const stripped = id.replace(/\/__search__(?:\/.*)?$/, '')
+      return stripped === '' ? null : (stripped as PartialTreeId)
+    }
+    const effectiveId = stripSearchSuffix(currentFolderId)
+    const node = partialTree.find((n) => n.id === effectiveId)
+    const lastPathLabel =
+      node && node.type !== 'root'
+        ? (node as PartialTreeFolderNode).data.name
+        : this.plugin.title
+    return `search in ${lastPathLabel}`
+  }
+
   validateAggregateRestrictions = (partialTree: PartialTree) => {
     const checkedFiles = partialTree.filter(
       (item) => item.type === 'file' && item.status === 'checked',
@@ -840,19 +859,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const { partialTree, username, searchString, currentFolderId } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-    // Build a dynamic placeholder that reflects current scope using currentFolderId
-    const stripSearchSuffix = (id: PartialTreeId): PartialTreeId => {
-      if (typeof id !== 'string') return id
-      const stripped = id.replace(/\/__search__(?:\/.*)?$/, '')
-      return stripped === '' ? null : (stripped as PartialTreeId)
-    }
-    const effectiveId = stripSearchSuffix(currentFolderId)
-    const node = partialTree.find((n) => n.id === effectiveId)
-    const lastPathLabel =
-      node && node.type !== 'root'
-        ? (node as PartialTreeFolderNode).data.name
-        : this.plugin.title
-    const dynamicPlaceholder = `search in ${lastPathLabel}`
+    const dynamicPlaceholder = this.#buildSearchPlaceholder(currentFolderId, partialTree)
     console.log('ProviderView render - partialTree state:', this.plugin.getPluginState().partialTree)
 
     return (
