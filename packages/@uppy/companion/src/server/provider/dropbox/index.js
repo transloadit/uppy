@@ -81,7 +81,6 @@ async function list({ client, directory, query }) {
       })
       .json()
   }
-  console.log('list called with directory inside list function: ', directory)
 
   return client
     .post('files/list_folder', {
