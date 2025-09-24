@@ -11,21 +11,13 @@
 // - ApiList(directory) returns { items, nextPagePath } and supports pagination
 // - afterOpenFolder merges fetched items under a folder and updates cache flags
 //
-// Composition flow:
-//   ensureAncestorsLoaded:
-//     normalizeSearchTarget → buildEncodedAncestorCandidates → findDeepestExistingAncestor → walkAndEnsurePath
-//   ensurePathLoaded:
-//     normalizeSearchTarget → buildEncodedAncestorCandidates → findDeepestExistingAncestor → walkAndEnsurePath → ensureTargetFirstPageIfNeeded
-import type {
-  PartialTree,
-  PartialTreeFolder,
-  PartialTreeFolderNode,
-  PartialTreeId,
-} from '@uppy/core'
+
+
+import type { PartialTree, PartialTreeFolder, PartialTreeFolderNode, PartialTreeId } from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils'
 import afterOpenFolder from './afterOpenFolder.js'
 
-// Shared ApiList type used by ensurePathLoaded/ensureAncestorsLoaded
+// Shared ApiList type
 /**
  * List API contract used by the path loaders.
  * directory: encoded path id (or a nextPagePath cursor)
@@ -225,4 +217,42 @@ export async function ensureTargetFirstPageIfNeeded(
     }
   }
   return tree
+}
+
+/**
+ * Materialize a path into the PartialTree.
+ *
+ * Steps:
+ * 1) normalizeSearchTarget (strip '/__search__/')
+ * 2) buildEncodedAncestorCandidates (deep → shallow)
+ * 3) findDeepestExistingAncestor (falls back to root)
+ * 4) walkAndEnsurePath (list and reveal missing intermediates)
+ * 5) optionally ensureTargetFirstPageIfNeeded (so target isn't empty)
+ */
+export async function materializePath(
+  partialTree: PartialTree,
+  rawId: PartialTreeId,
+  apiList: ApiList,
+  validateSingleFile: (file: CompanionFile) => string | null,
+  options: { includeTargetFirstPage: boolean },
+): Promise<{ partialTree: PartialTree; targetId: PartialTreeId }> {
+  if (!rawId) return { partialTree, targetId: rawId }
+
+  const targetId = normalizeSearchTarget(rawId)
+
+  // 2) Build candidates and locate deepest existing ancestor
+  const candidates: PartialTreeId[] = buildEncodedAncestorCandidates(targetId)
+  const { ancestorId, ancestor } = findDeepestExistingAncestor(partialTree, candidates)
+
+  if (!ancestor || !ancestorId) return { partialTree, targetId }
+
+  // 4) Walk forward to materialize intermediate segments
+  let tree = await walkAndEnsurePath(partialTree, ancestor as PartialTreeFolder, targetId, apiList, validateSingleFile)
+
+  // 5) Optionally ensure target's first page is listed
+  if (options.includeTargetFirstPage) {
+    tree = await ensureTargetFirstPageIfNeeded(tree, targetId, apiList, validateSingleFile)
+  }
+
+  return { partialTree: tree, targetId }
 }
