@@ -14412,7 +14412,6 @@ __metadata:
     "@types/react": "npm:^19.0.10"
     "@types/react-dom": "npm:^19.0.4"
     "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
     "@uppy/react": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
