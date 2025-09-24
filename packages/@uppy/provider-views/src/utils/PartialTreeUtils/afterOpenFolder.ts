@@ -13,12 +13,6 @@ const afterOpenFolder = (
   currentPagePath: string | null,
   validateSingleFile: (file: CompanionFile) => string | null,
 ): PartialTree => {
-  console.log('afterOpenFolder called with:', {
-    oldPartialTree,
-    discoveredItems,
-    clickedFolder,
-    currentPagePath,
-  })
   const discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
   const discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
 
