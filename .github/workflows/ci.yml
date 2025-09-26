@@ -23,8 +23,6 @@ jobs:
   unit_tests:
     name: Tests
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     strategy:
       matrix:
         node-version: [lts/*]
@@ -44,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
@@ -65,8 +63,6 @@ jobs:
   types:
     name: Types
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
@@ -83,7 +79,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -101,7 +97,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Install Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
