@@ -9,12 +9,13 @@ import type { UppyContext } from './types.js'
 export type FilesGridProps = {
   editFile?: (file: UppyFile<Meta, Body>) => void
   columns?: number
+  imageThumbnail?: boolean
   ctx: UppyContext
 }
 
 export default function FilesGrid(props: FilesGridProps) {
   const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(() => [])
-  const { ctx, editFile } = props
+  const { ctx, editFile, imageThumbnail = true } = props
 
   function gridColsClass() {
     return (
@@ -59,7 +60,7 @@ export default function FilesGrid(props: FilesGridProps) {
           key={file.id}
         >
           <Fragment>
-            <Thumbnail images file={file} />
+            <Thumbnail images={imageThumbnail} file={file} />
             <div className="uppy:w-full uppy-reset">
               <p className="uppy:font-medium uppy:truncate" title={file.name}>
                 {file.name}
