@@ -11,6 +11,8 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
     outputs:
       companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
       published: ${{ steps.changesets.outputs.published }}
@@ -21,7 +23,7 @@ jobs:
           fetch-depth: 2
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: lts/*
 
@@ -38,9 +40,14 @@ jobs:
       - name: '@uppy/angular prepublish'
         run: corepack yarn workspace @uppy/angular prepublishOnly
 
-      - run: |
+      - name: Add npm token to yarnrc
+        run: |
           echo '' >> .yarnrc.yml
           echo 'npmAuthToken: "${NPM_TOKEN}"' >> .yarnrc.yml
+
+      - name: Add npm token to npmrc
+        run: |
+          echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > .npmrc
 
       - name: Create Release Pull Request or Publish
         id: changesets
@@ -57,6 +64,10 @@ jobs:
       - name: Remove npmAuthToken from yarnrc
         run: |
           sed -i '/npmAuthToken:/d' .yarnrc.yml
+
+      - name: Remove npmrc
+        run: |
+          rm .npmrc
 
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
