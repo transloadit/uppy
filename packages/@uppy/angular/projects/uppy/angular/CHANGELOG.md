@@ -1,5 +1,11 @@
 # @uppy/angular
 
+## 1.1.0
+
+### Minor Changes
+
+- 2509266: Add back framework wrappers for @uppy/status-bar plugin
+
 ## 1.0.1
 
 ### Patch Changes

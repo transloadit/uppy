@@ -1,5 +1,16 @@
 # @uppy/vue
 
+## 3.1.0
+
+### Minor Changes
+
+- 2509266: Add back framework wrappers for @uppy/status-bar plugin
+
+### Patch Changes
+
+- Updated dependencies [2509266]
+  - @uppy/components@1.0.3
+
 ## 3.0.3
 
 ### Patch Changes

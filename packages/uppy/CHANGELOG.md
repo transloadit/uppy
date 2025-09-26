@@ -1,5 +1,13 @@
 # uppy
 
+## 5.1.3
+
+### Patch Changes
+
+- 2509266: Put "main" back in package.json
+- Updated dependencies [2509266]
+  - @uppy/locales@5.0.1
+
 ## 5.1.2
 
 ### Patch Changes

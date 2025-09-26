@@ -1,5 +1,11 @@
 # @uppy/locales
 
+## 5.0.1
+
+### Patch Changes
+
+- 2509266: Update translations for pl_PL.ts
+
 ## 5.0.0
 
 ### Major Changes
