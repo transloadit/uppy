@@ -1,11 +1,5 @@
 # @uppy/locales
 
-## 5.0.1
-
-### Patch Changes
-
-- 48cfa09: Update translations for pl_PL.ts
-
 ## 5.0.0
 
 ### Major Changes

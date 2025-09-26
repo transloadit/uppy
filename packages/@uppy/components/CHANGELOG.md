@@ -1,11 +1,5 @@
 # @uppy/components
 
-## 1.0.3
-
-### Patch Changes
-
-- d6b3aa5: fix dom ID conflicts in dropzone and file-input
-
 ## 1.0.2
 
 ### Patch Changes
