@@ -25,7 +25,6 @@ import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
-import { materializePath } from '../utils/PartialTreeUtils/pathLoaderCore.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
 import AuthView from './AuthView.js'
 import Header from './Header.js'
@@ -111,19 +110,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   lastCheckbox: string | null = null
 
-  // Ephemeral server-side search overlay state (kept out of partialTree)
-  #search: {
-    active: boolean
-    results: CompanionFile[]
-    cursor: string | null
-    scopeId: PartialTreeId
-  } = {
-    active: false,
-    results: [],
-    cursor: null,
-    scopeId: null,
-  }
-
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
     this.provider = opts.provider
@@ -162,7 +148,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   resetPluginState(): void {
-    this.#clearSearchOverlay()
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
 
@@ -183,8 +168,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   #abortController: AbortController | undefined
-
-  #searchDebounceId: number | undefined
 
   async #withAbort(op: (signal: AbortSignal) => Promise<void>) {
     // prevent multiple requests in parallel from causing race conditions
@@ -212,143 +195,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  #isSearchMode(): boolean {
-    const { searchString } = this.plugin.getPluginState()
-    const supportsServerSearch = typeof (this.provider as any).search === 'function'
-    return supportsServerSearch && searchString.trim() !== ''
-  }
-
-  #extractCursor(nextPagePath: string | null): string | null {
-    if (!nextPagePath) return null
-    // Accept either raw cursor or a query string like "?cursor=..."
-    if (!nextPagePath.startsWith('?')) return nextPagePath
-    const params = new URLSearchParams(nextPagePath.replace(/^\?/, ''))
-    return params.get('cursor')
-  }
-
-  // Identify ephemeral search overlay items by their synthetic id prefix
-  #isSearchEphemeralId(id: PartialTreeId | string | null | undefined): boolean {
-    return typeof id === 'string' && id.includes('/__search__/')
-  }
-
-  // Clear overlay search state to free memory and avoid stale state
-  #clearSearchOverlay(): void {
-    this.#search.active = false
-    this.#search.results = []
-    this.#search.cursor = null
-    this.#search.scopeId = null
-  }
-
-  async #performSearch(): Promise<void> {
-    const { partialTree, currentFolderId, searchString } =
-      this.plugin.getPluginState()
-    const currentFolder = partialTree.find(
-      (i) => i.id === currentFolderId,
-    ) as PartialTreeFolder
-
-    if (!this.#isSearchMode()) return
-
-    this.setLoading('Searching...')
-    await this.#withAbort(async (signal) => {
-      // Determine base scope path from current folder
-      const baseContextId = currentFolder.id
-      const baseContextNode = (partialTree.find((i) => i.id === baseContextId) || currentFolder) as PartialTreeFolder
-      const scopePath = baseContextNode.type === 'root' ? null : baseContextId
-      const { items, nextPagePath } = await (this.provider as any).search(
-        searchString,
-        { signal, path: scopePath ?? undefined },
-      )
-      // Overlay: store results and cursor; don't mutate tree
-      this.#search.active = true
-      this.#search.results = items
-      this.#search.cursor = this.#extractCursor(nextPagePath)
-      this.#search.scopeId = scopePath
-      this.plugin.setPluginState({ partialTree: partialTree.slice() })
-
-    }).catch(handleError(this.plugin.uppy))
-    this.setLoading(false)
-  }
-
-
-  onSearchInput(s: string): void {
-    // Update state immediately for controlled input
-    this.plugin.setPluginState({ searchString: s })
-
-    // Clear pending debounce
-    if (this.#searchDebounceId) {
-      window.clearTimeout(this.#searchDebounceId)
-      this.#searchDebounceId = undefined
-    }
-
-    const trimmed = s.trim()
-    if (trimmed === '') {
-      // Clear overlay state only
-      this.#search.active = false
-      this.#search.results = []
-      this.#search.cursor = null
-      this.#search.scopeId = null
-      return
-    }
-
-    // Debounce server-side search
-    this.#searchDebounceId = window.setTimeout(() => {
-      // Only run if still in search mode with latest value
-      if (this.#isSearchMode()) {
-        this.#performSearch()
-      }
-      this.#searchDebounceId = undefined
-    }, 500)
-  }
-
   async openFolder(folderId: string | null): Promise<void> {
     this.lastCheckbox = null
-
-    // If trying to open an item inside the search overlay, materialize its real path
-    if (this.#isSearchEphemeralId(folderId)) {
-      const { partialTree } = this.plugin.getPluginState()
-      this.setLoading(true)
-      await this.#withAbort(async (signal) => {
-        // Build a small apiList wrapper over provider.list to match util signature
-        const apiList = async (directory: PartialTreeId) => {
-          const { items, nextPagePath } = await this.provider.list(directory, { signal })
-          return { items, nextPagePath }
-        }
-
-        const { partialTree: materializedTree, targetId } = await materializePath(
-          partialTree,
-          folderId,
-          apiList,
-          this.validateSingleFile,
-          { includeTargetFirstPage: true },
-        )
-
-        this.plugin.setPluginState({
-          partialTree: materializedTree,
-          currentFolderId: targetId,
-          searchString: '',
-        })
-        // Exit overlay mode
-        this.#search.active = false
-        this.#search.results = []
-        this.#search.cursor = null
-        this.#search.scopeId = null
-      }).catch(handleError(this.plugin.uppy))
-      this.setLoading(false)
-      return
-    }
-
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
     const clickedFolder = partialTree.find(
       (folder) => folder.id === folderId,
-    ) as PartialTreeFolder
-
-    // If user is searching and navigates to a real folder, clear search and proceed normally
-    if (this.#isSearchMode()) {
-      this.#clearSearchOverlay()
-      this.plugin.setPluginState({ currentFolderId: folderId, searchString: '' })
-    }
-
+    )! as PartialTreeFolder
     if (clickedFolder.cached) {
       this.plugin.setPluginState({
         currentFolderId: folderId,
@@ -418,7 +271,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           this.plugin.uppy.info(message, 'info', 7000)
         }
 
-        this.#clearSearchOverlay()
         this.plugin.setPluginState({
           ...getDefaultState(this.plugin.rootFolderId),
           authenticated: false,
@@ -445,38 +297,26 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const currentFolder = partialTree.find(
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
-    const isSearch = this.#isSearchMode()
-    const hasCursor = isSearch ? !!this.#search.cursor : !!currentFolder.nextPagePath
-    if (shouldHandleScroll(event) && !this.isHandlingScroll && hasCursor) {
+    if (
+      shouldHandleScroll(event) &&
+      !this.isHandlingScroll &&
+      currentFolder.nextPagePath
+    ) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
-        if (isSearch) {
-          const { items, nextPagePath } = await (this.provider as any).search(
-            this.plugin.getPluginState().searchString,
-            {
-              signal,
-              path: this.#search.scopeId ?? undefined,
-              cursor: this.#search.cursor ?? undefined,
-            },
-          )
-          this.#search.results = this.#search.results.concat(items)
-          this.#search.cursor = this.#extractCursor(nextPagePath)
-          this.plugin.setPluginState({ partialTree: partialTree.slice() })
-        } else {
-          const { nextPagePath, items } = await this.provider.list(
-            currentFolder.nextPagePath,
-            { signal },
-          )
-          const newPartialTree = PartialTreeUtils.afterScrollFolder(
-            partialTree,
-            currentFolderId,
-            items,
-            nextPagePath,
-            this.validateSingleFile,
-          )
+        const { nextPagePath, items } = await this.provider.list(
+          currentFolder.nextPagePath,
+          { signal },
+        )
+        const newPartialTree = PartialTreeUtils.afterScrollFolder(
+          partialTree,
+          currentFolderId,
+          items,
+          nextPagePath,
+          this.validateSingleFile,
+        )
 
-          this.plugin.setPluginState({ partialTree: newPartialTree })
-        }
+        this.plugin.setPluginState({ partialTree: newPartialTree })
       }).catch(handleError(this.plugin.uppy))
       this.isHandlingScroll = false
     }
@@ -529,114 +369,38 @@ export default class ProviderView<M extends Meta, B extends Body> {
   ) {
     const { partialTree } = this.plugin.getPluginState()
 
-    // Special handling: if toggling an item surfaced from search results,
-    // ensure its real ancestors exist and toggle the real node only.
-    if (this.#isSearchEphemeralId(ourItem.id)) {
-      const rawId = ourItem.id
-      this.#withAbort(async (signal) => {
-        const apiList = async (directory: PartialTreeId) => {
-          const { items, nextPagePath } = await this.provider.list(directory, { signal })
-          return { items, nextPagePath }
-        }
-        const { partialTree: withAncestors, targetId } = await materializePath(
-          partialTree,
-          rawId,
-          apiList,
-          this.validateSingleFile,
-          { includeTargetFirstPage: false },
-        )
-        const realId = (targetId ?? '').toString()
-        const toggledTree = PartialTreeUtils.afterToggleCheckbox(withAncestors, [realId])
-        this.plugin.setPluginState({ partialTree: toggledTree })
-        this.lastCheckbox = rawId
-      }).catch(handleError(this.plugin.uppy))
-      return
-    }
-
-    // Default behavior (non-search): compute range and toggle
     const clickedRange = getClickedRange(
       ourItem.id,
       this.getDisplayedPartialTree(),
       isShiftKeyPressed,
       this.lastCheckbox,
     )
-    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(partialTree, clickedRange)
+    const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
+      partialTree,
+      clickedRange,
+    )
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.lastCheckbox = ourItem.id
   }
 
-  // Map server-side search results to ephemeral items for overlay rendering
-  #mapSearchResultsToEphemeral(
-    partialTree: PartialTree,
-  ): (PartialTreeFile | PartialTreeFolderNode)[] {
-    const baseContextId = this.#search.scopeId
-    const baseScope =
-      baseContextId && typeof baseContextId === 'string'
-        ? decodeURIComponent(baseContextId)
-        : ''
-
-    return this.#search.results.map((file) => {
-      if (file.isFolder) {
-        const node: PartialTreeFolderNode = {
-          type: 'folder',
-          id: `/__search__/${file.requestPath}`,
-          cached: true,
-          nextPagePath: null,
-          status: (partialTree.find((n) => n.id === file.requestPath) as
-            | PartialTreeFolderNode
-            | undefined)?.status || 'unchecked',
-          parentId: '/__search__',
-          data: file,
-        }
-        return node
-      }
-
-      const restrictionError = this.validateSingleFile(file)
-      const fullPath = decodeURIComponent(file.requestPath)
-      const lastSlash = fullPath.lastIndexOf('/')
-      const absDirPath = lastSlash > 0 ? fullPath.slice(0, lastSlash) : '/'
-      let relDirPath: string | undefined
-      if (baseScope && absDirPath.startsWith(baseScope)) {
-        const rel = absDirPath.slice(baseScope.length).replace(/^\//, '')
-        relDirPath = rel === '' ? undefined : rel
-      }
-      const node: PartialTreeFile = {
-        type: 'file',
-        id: `/__search__/${file.requestPath}`,
-        restrictionError,
-        status:
-          (partialTree.find((n) => n.id === file.requestPath) as
-            | PartialTreeFile
-            | undefined)?.status || 'unchecked',
-        parentId: '/__search__',
-        data: { ...file, absDirPath, relDirPath },
-      }
-      return node
-    })
-  }
-
   getDisplayedPartialTree = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
     const { partialTree, currentFolderId, searchString } =
       this.plugin.getPluginState()
-    // Server-side search overlay: map results to ephemeral items
-    if (this.#isSearchMode() && this.#search.active) {
-      return this.#mapSearchResultsToEphemeral(partialTree)
-    }
-
-    // Default: items under the current folder (client-side filter if any)
     const inThisFolder = partialTree.filter(
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
+    const filtered =
+      searchString === ''
+        ? inThisFolder
+        : inThisFolder.filter(
+            (item) =>
+              (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
+                .toLowerCase()
+                .indexOf(searchString.toLowerCase()) !== -1,
+          )
 
-    const lowered = searchString.toLowerCase()
-    return searchString === ''
-      ? inThisFolder
-      : inThisFolder.filter((item) =>
-          (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
-            .toLowerCase()
-            .includes(lowered),
-        )
+    return filtered
   }
 
   getBreadcrumbs = (): PartialTreeFolder[] => {
@@ -647,20 +411,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   getSelectedAmount = (): number => {
     const { partialTree } = this.plugin.getPluginState()
     return getNumberOfSelectedFiles(partialTree)
-  }
-
-  // Compute dynamic placeholder based on current scope (root vs folder)
-  #buildSearchPlaceholder(
-    currentFolderId: PartialTreeId,
-    partialTree: PartialTree,
-  ): string {
-    const effectiveId = currentFolderId
-    const node = partialTree.find((n) => n.id === effectiveId)
-    const lastPathLabel =
-      node && node.type !== 'root'
-        ? (node as PartialTreeFolderNode).data.name
-        : this.plugin.title
-    return `search in ${lastPathLabel}`
   }
 
   validateAggregateRestrictions = (partialTree: PartialTree) => {
@@ -698,9 +448,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString, currentFolderId } = this.plugin.getPluginState()
+    const { partialTree, username, searchString } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-    const dynamicPlaceholder = this.#buildSearchPlaceholder(currentFolderId, partialTree)
 
     return (
       <div
@@ -723,11 +472,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {opts.showFilter && (
           <SearchInput
             searchString={searchString}
-            setSearchString={(s: string) => this.onSearchInput(s)}
-            submitSearchString={() => {
-              if (this.#isSearchMode()) this.#performSearch()
+            setSearchString={(s: string) => {
+              this.plugin.setPluginState({ searchString: s })
             }}
-            inputLabel={dynamicPlaceholder}
+            submitSearchString={() => {}}
+            inputLabel={i18n('filter')}
             clearSearchLabel={i18n('resetFilter')}
             wrapperClassName="uppy-ProviderBrowser-searchFilter"
             inputClassName="uppy-ProviderBrowser-searchFilterInput"

@@ -41,10 +41,6 @@ const getCheckedFilesWithPaths = (
   ) as PartialTreeFile[]
 
   const companionFilesWithInjectedPaths = checkedFiles.map((file) => {
-    // If server/client already provided explicit paths (e.g. from server-side search), keep them.
-    if (file.data.absDirPath != null || file.data.relDirPath != null) {
-      return { ...file.data }
-    }
 
     const absFolders: (PartialTreeFile | PartialTreeFolderNode)[] = getPath(
       partialTree,
