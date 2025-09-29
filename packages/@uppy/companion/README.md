@@ -62,14 +62,38 @@ app.use(companionApp)
 ```
 
 To enable companion socket for realtime feed to the client while upload is going
-on, you call the `socket` method like so.
+on, you call the `setupSocket` method from the app response like so.
 
 ```javascript
 // ...
-const server = app.listen(PORT)
+const { app: companionApp, setupSocket } = companion.app(options)
+app.use(companionApp)
 
-companion.socket(server)
+const server = app.listen(PORT)
+setupSocket(server)
 ```
+
+#### WebSocket Authentication
+
+To add authentication/authorization to WebSocket connections, you can provide an `onConnection` callback in your options:
+
+```javascript
+const options = {
+  // ... other options
+  onConnection: async (ws, req) => {
+    // Custom authentication logic
+    const token = req.headers.authorization || new URL(req.url, 'http://localhost').searchParams.get('token')
+    
+    if (!isValidToken(token)) {
+      throw new Error('Unauthorized')
+    }
+    
+    // Connection will be allowed if this function doesn't throw
+  }
+}
+```
+
+The `onConnection` callback receives the WebSocket instance and HTTP request object. If the callback throws an error, the connection will be closed with a 1008 (Policy Violation) status code.
 
 ### Run as standalone server
 
