@@ -7,12 +7,13 @@ import { Thumbnail, type UppyContext } from './index.js'
 
 export type FilesListProps = {
   editFile?: (file: UppyFile<Meta, Body>) => void
+  imageThumbnail?: boolean
   ctx: UppyContext
 }
 
 export default function FilesList(props: FilesListProps) {
   const [files, setFiles] = useState<UppyFile<any, any>[]>(() => [])
-  const { ctx, editFile } = props
+  const { ctx, editFile, imageThumbnail } = props
 
   useEffect(() => {
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
@@ -37,7 +38,12 @@ export default function FilesList(props: FilesListProps) {
           <Fragment>
             <div className="uppy:flex uppy:items-center uppy:gap-2">
               <div className="uppy:w-[32px] uppy:h-[32px]">
-                <Thumbnail width="32px" height="32px" file={file} />
+                <Thumbnail
+                  width="32px"
+                  height="32px"
+                  file={file}
+                  images={imageThumbnail}
+                />
               </div>
 
               <p className="uppy:truncate">{file.name}</p>
