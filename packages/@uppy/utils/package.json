@@ -1,10 +1,9 @@
 {
   "name": "@uppy/utils",
   "description": "Shared utility functions for Uppy Core and plugins maintained by the Uppy team.",
-  "version": "7.0.0",
+  "version": "7.0.2",
   "license": "MIT",
   "type": "module",
-  "main": "./lib/index.js",
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",

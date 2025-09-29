@@ -1,9 +1,8 @@
 {
   "name": "@uppy/unsplash",
   "description": "Import files from Unsplash, the free stock photography resource, into Uppy",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

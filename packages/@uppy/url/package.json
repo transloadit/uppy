@@ -1,9 +1,8 @@
 {
   "name": "@uppy/url",
   "description": "The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
   "sideEffects": [
@@ -41,6 +40,7 @@
     ".": "./lib/index.js",
     "./css/style.css": "./dist/style.css",
     "./css/style.min.css": "./dist/style.min.css",
+    "./css/style.scss": "./src/style.scss",
     "./package.json": "./package.json"
   },
   "dependencies": {

@@ -1,0 +1,40 @@
+{
+  "name": "example-reactrouter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "React Router + Uppy upload example with TUS and XHR support",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx ./server.ts",
+    "typecheck": "react-router typegen && tsc"
+  },
+  "dependencies": {
+    "@mjackson/file-storage": "^0.7.0",
+    "@mjackson/form-data-parser": "^0.9.1",
+    "@react-router/express": "latest",
+    "@tus/file-store": "latest",
+    "@tus/server": "latest",
+    "@uppy/core": "workspace:*",
+    "@uppy/dashboard": "workspace:*",
+    "@uppy/react": "workspace:*",
+    "@uppy/transloadit": "workspace:*",
+    "@uppy/tus": "workspace:*",
+    "@uppy/xhr-upload": "workspace:*",
+    "express": "^4.19.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router": "latest"
+  },
+  "devDependencies": {
+    "@react-router/dev": "latest",
+    "@types/express": "^4.17.20",
+    "@types/react": "^18.2.20",
+    "@types/react-dom": "^18.2.7",
+    "tsx": "^4.0.0",
+    "typescript": "^5.1.6",
+    "vite": "^6.3.6"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

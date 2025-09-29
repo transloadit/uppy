@@ -1,12 +1,11 @@
 {
   "name": "@uppy/vue",
-  "version": "3.0.1",
+  "version": "3.0.3",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
     "*.css"
   ],
-  "main": "lib/index.js",
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
@@ -32,6 +31,7 @@
     ".": "./lib/index.js",
     "./css/style.css": "./dist/styles.css",
     "./dashboard": "./lib/dashboard.js",
+    "./status-bar": "./lib/status-bar.js",
     "./dashboard-modal": "./lib/dashboard-modal.js",
     "./package.json": "./package.json"
   },
@@ -42,6 +42,9 @@
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
+      "optional": true
+    },
+    "@uppy/status-bar": {
       "optional": true
     }
   },

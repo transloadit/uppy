@@ -1,9 +1,8 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "5.0.1",
+  "version": "5.0.3",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": [
     "*.css"
@@ -58,6 +57,7 @@
     ".": "./lib/index.js",
     "./css/style.css": "./dist/styles.css",
     "./dashboard": "./lib/Dashboard.js",
+    "./status-bar": "./lib/StatusBar.js",
     "./dashboard-modal": "./lib/DashboardModal.js",
     "./package.json": "./package.json"
   },
@@ -74,6 +74,9 @@
       "optional": true
     },
     "@uppy/screen-capture": {
+      "optional": true
+    },
+    "@uppy/status-bar": {
       "optional": true
     },
     "@uppy/webcam": {

@@ -1,9 +1,8 @@
 {
   "name": "@uppy/google-drive-picker",
   "description": "The Google Drive Picker plugin for Uppy lets users import files from their Google Drive account",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

@@ -1,9 +1,8 @@
 {
   "name": "@uppy/core",
   "description": "Core module for the extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "5.0.0",
+  "version": "5.0.2",
   "license": "MIT",
-  "main": "lib/index.js",
   "style": "dist/style.min.css",
   "type": "module",
   "sideEffects": [
@@ -38,6 +37,7 @@
     ".": "./lib/index.js",
     "./css/style.min.css": "./dist/style.min.css",
     "./css/style.css": "./dist/style.css",
+    "./css/style.scss": "./src/style.scss",
     "./package.json": "./package.json"
   },
   "dependencies": {

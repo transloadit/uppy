@@ -1,9 +1,8 @@
 {
   "name": "@uppy/dropbox",
   "description": "Import files from Dropbox, into Uppy.",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

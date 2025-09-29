@@ -7,8 +7,7 @@
     type DropzoneProps,
     type UppyContext,
   } from '@uppy/components'
-  import { h as preactH } from 'preact'
-  import { render as preactRender } from 'preact/compat'
+  import { h as preactH, render as preactRender } from 'preact'
   import { UppyContextKey } from '../UppyContextProvider.svelte'
 
   const props: Omit<DropzoneProps, 'ctx'> = $props()

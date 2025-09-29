@@ -5,8 +5,7 @@ import {
   type FilesListProps,
   FilesList as PreactFilesList,
 } from '@uppy/components'
-import { h as preactH } from 'preact'
-import { render as preactRender } from 'preact/compat'
+import { h as preactH, render as preactRender } from 'preact'
 import { shallowEqualObjects } from 'shallow-equal'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'

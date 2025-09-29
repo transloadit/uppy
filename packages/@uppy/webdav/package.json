@@ -1,9 +1,8 @@
 {
   "name": "@uppy/webdav",
   "description": "Import files from WebDAV into Uppy.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "types": "types/index.d.ts",
   "type": "module",
   "sideEffects": false,

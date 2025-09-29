@@ -1,9 +1,8 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

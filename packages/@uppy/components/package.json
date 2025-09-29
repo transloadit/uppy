@@ -1,9 +1,8 @@
 {
   "name": "@uppy/components",
   "description": "Headless Uppy components, made in Preact",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": [
     "*.css"

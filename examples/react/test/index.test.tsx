@@ -26,7 +26,7 @@ describe('App', () => {
     const screen = render(<App />)
 
     const fileInput = document.getElementById(
-      'uppy-dropzone-file-input',
+      'uppy-dropzone-file-input-uppy',
     ) as Element
     await userEvent.upload(fileInput, createMockFile('test.txt', 'text/plain'))
 

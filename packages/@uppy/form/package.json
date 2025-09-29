@@ -1,9 +1,8 @@
 {
   "name": "@uppy/form",
   "description": "Connect Uppy to an existing HTML <form>.",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": false,
   "scripts": {

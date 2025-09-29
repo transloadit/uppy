@@ -1,13 +1,14 @@
 import type { I18n, Translator } from '@uppy/utils'
-import { Component, type ComponentChild, Fragment } from 'preact'
-import type { TargetedEvent } from 'preact/compat'
+import { Component, type ComponentChild, Fragment, type h } from 'preact'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
 interface AddFilesProps {
   i18n: I18n
   i18nArray: Translator['translateArray']
   acquirers: TargetWithRender[]
-  handleInputChange: (event: TargetedEvent<HTMLInputElement, Event>) => void
+  handleInputChange: (
+    event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
+  ) => void
   maxNumberOfFiles: number | null
   allowedFileTypes: string[] | null
   showNativePhotoCameraButton: boolean
@@ -47,7 +48,7 @@ class AddFiles extends Component<AddFilesProps> {
   }
 
   private onFileInputChange = (
-    event: TargetedEvent<HTMLInputElement, Event>,
+    event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
   ) => {
     this.props.handleInputChange(event)
 

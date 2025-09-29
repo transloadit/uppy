@@ -1,9 +1,8 @@
 {
   "name": "@uppy/drop-target",
   "description": "Lets your users drag and drop files on a DOM element",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "license": "MIT",
-  "main": "lib/index.js",
   "type": "module",
   "sideEffects": [
     "*.css"
@@ -41,6 +40,7 @@
     ".": "./lib/index.js",
     "./css/style.css": "./dist/style.css",
     "./css/style.min.css": "./dist/style.min.css",
+    "./css/style.scss": "./src/style.scss",
     "./package.json": "./package.json"
   },
   "dependencies": {

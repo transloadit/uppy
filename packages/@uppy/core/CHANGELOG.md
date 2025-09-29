@@ -1,5 +1,23 @@
 # @uppy/core
 
+## 5.0.2
+
+### Patch Changes
+
+- 4b6a76c: added missing exports.
+- 975317d: Removed "main" from package.json, since export maps serve as the contract for the public API.
+- Updated dependencies [975317d]
+- Updated dependencies [9bac4c8]
+  - @uppy/utils@7.0.2
+
+## 5.0.1
+
+### Patch Changes
+
+- 49522ec: Remove preact/compat imports in favor of preact, preventing JSX type issues in certain setups.
+- Updated dependencies [49522ec]
+  - @uppy/utils@7.0.1
+
 ## 5.0.0
 
 ### Major Changes
