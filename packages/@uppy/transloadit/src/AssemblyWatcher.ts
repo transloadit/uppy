@@ -50,7 +50,7 @@ class TransloaditAssemblyWatcher<
 
   #onAssemblyComplete = (assembly: AssemblyResponse) => {
     const assemblyId = assembly.assembly_id
-    if (!assemblyId || !this.#watching(assemblyId)) {
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
@@ -65,7 +65,7 @@ class TransloaditAssemblyWatcher<
 
   #onAssemblyCancel = (assembly: AssemblyResponse) => {
     const assemblyId = assembly.assembly_id
-    if (!assemblyId || !this.#watching(assemblyId)) {
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
@@ -74,7 +74,7 @@ class TransloaditAssemblyWatcher<
 
   #onAssemblyError = (assembly: AssemblyResponse, error: Error) => {
     const assemblyId = assembly.assembly_id
-    if (!assemblyId || !this.#watching(assemblyId)) {
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
@@ -94,7 +94,7 @@ class TransloaditAssemblyWatcher<
     error: Error,
   ) => {
     const assemblyId = assembly.assembly_id
-    if (!assemblyId || !this.#watching(assemblyId)) {
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
