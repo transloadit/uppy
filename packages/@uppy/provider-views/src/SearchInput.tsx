@@ -122,24 +122,7 @@ function SearchInput({
           {buttonLabel}
 
           {loading && (
-            <svg
-              className="uppy-SearchInput-spinner"
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-            >
-              <circle
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeDasharray="31.416"
-                strokeDashoffset="31.416"
-              />
-            </svg>
+            <div className="uppy-SearchInput-spinner" />
           )}
         </button>
       )}

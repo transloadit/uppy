@@ -1,3 +1,5 @@
+@use '@uppy/core/src/_utils.scss';
+@use '@uppy/core/src/_variables.scss';
 @use '@uppy/core/src/_variables.scss' as *;
 @use '@uppy/core/src/_utils.scss' as *;
 
@@ -17,7 +19,7 @@
   input {
     width: 100%;
     color: $gray-800;
-    border-radius: 8px 8px;
+    border-radius: 3px;
     border: 0;
     background-color: $gray-200;
     text-align: left;
@@ -28,18 +30,28 @@
   }
 
   button {
-    color: $blue;
-    font-size: 14px;
+    @include utils.reset-button;
+    @include utils.highlight-focus;
 
-    &:hover svg {
-      transform: rotate(30deg);
-      transition: transform 100ms ease-in-out;
+    padding: 7px 6px;
+    color: variables.$blue;
+    font-weight: 400;
+    font-size: 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-inline-start: -6px;
+
+    &:disabled {
+      color: $gray-600;
+      cursor: progress;
     }
 
-    svg {
-      transition: transform 100ms ease-in-out;
-      height: 24px;
-      width: 24px;
+    .uppy-size--md & {
+      font-size: 14px;
+    }
+
+    [data-uppy-theme='dark'] & {
+      color: variables.$highlight--dark;
     }
   }
 }
@@ -80,5 +92,23 @@
       height: 150px;
       object-fit: cover;
     }
+  }
+}
+
+.uppy-ImageGenerator-empty-state {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  svg {
+    display: block;
+    margin: 0 auto;
+  }
+
+  p {
+    font-size: 14px;
+    color: $gray-600;
   }
 }
