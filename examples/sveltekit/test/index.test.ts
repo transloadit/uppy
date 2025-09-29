@@ -1,8 +1,8 @@
 import { userEvent } from '@vitest/browser/context'
 import { describe, expect, test } from 'vitest'
 import { render } from 'vitest-browser-svelte'
-import App from '../src/routes/+page.svelte'
 import PropsReactivity from '../src/components/test/props-reactivity.svelte'
+import App from '../src/routes/+page.svelte'
 
 const createMockFile = (name: string, type: string, size: number = 1024) => {
   return new File(['test content'], name, { type })
