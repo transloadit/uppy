@@ -44,7 +44,6 @@ en_US.strings = {
   browseFolders: 'browse folders',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
-  chooseFiles: 'Choose files',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -62,6 +61,7 @@ en_US.strings = {
   dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
   dataUploadedOfTotal: '%{complete} of %{total}',
   dataUploadedOfUnknown: '%{complete} of unknown',
+  discardMediaFile: 'Discard Media',
   discardRecordedFile: 'Discard recorded file',
   done: 'Done',
   dropHereOr: 'Drop here or %{browse}',
@@ -100,9 +100,6 @@ en_US.strings = {
     '1': 'Added %{smart_count} files from %{folder}',
   },
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
-  generateImage: 'Generate image',
-  generateImagePlaceholder:
-    'A serene sunset over a mountain lake, with pine trees reflecting in the water',
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFiles: 'Import files from:',
@@ -204,6 +201,7 @@ en_US.strings = {
   submitRecordedFile: 'Submit recorded file',
   takePicture: 'Take a picture',
   takePictureBtn: 'Take Picture',
+  takeScreenshot: 'Take Screenshot',
   unnamed: 'Unnamed',
   upload: 'Upload',
   uploadComplete: 'Upload complete',
