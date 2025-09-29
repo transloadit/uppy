@@ -55,7 +55,7 @@ const getCheckedFilesWithPaths = (
     const absDirPath = `/${absFolders.map((i) => i.data.name).join('/')}`
     const relDirPath =
       relFolders.length === 1
-        ? // Must return `undefined` (which later turns into `null` in `.getTagFile()`)
+        ? // Must return `undefined` (which later turns into `null` in `.companionFileToUppyFile()`)
           // (https://github.com/transloadit/uppy/pull/4537#issuecomment-1629136652)
           undefined
         : relFolders.map((i) => i.data.name).join('/')

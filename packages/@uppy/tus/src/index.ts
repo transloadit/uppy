@@ -14,6 +14,7 @@ import {
   getAllowedMetaFields,
   hasProperty,
   isNetworkError,
+  type LocalUppyFile,
   NetworkError,
   RateLimitedQueue,
 } from '@uppy/utils'
@@ -97,7 +98,10 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
 >
 
 declare module '@uppy/utils' {
-  export interface UppyFile<M extends Meta, B extends Body> {
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    tus?: TusOpts<M, B>
+  }
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
     tus?: TusOpts<M, B>
   }
 }
@@ -204,7 +208,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    *    up a spot in the queue.
    *
    */
-  #uploadLocalFile(file: UppyFile<M, B>): Promise<tus.Upload | string> {
+  async #uploadLocalFile(
+    file: LocalUppyFile<M, B>,
+  ): Promise<tus.Upload | string> {
     this.resetUploaderReferences(file.id)
 
     // Create a new tus upload
@@ -539,7 +545,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     }
 
     return {
-      ...file.remote?.body,
+      ...('remote' in file && file.remote.body),
       endpoint: opts.endpoint,
       uploadUrl: opts.uploadUrl,
       protocol: 'tus',
