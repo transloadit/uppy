@@ -6,7 +6,7 @@ import {
   NetworkError,
 } from '@uppy/utils'
 import Emitter from 'component-emitter'
-import type { AssemblyResponse } from './index.js'
+import type { AssemblyFile, AssemblyResponse, AssemblyResult } from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -101,16 +101,22 @@ class TransloaditAssembly extends Emitter {
     })
 
     this.#sse.addEventListener('assembly_upload_finished', (e) => {
-      const file = JSON.parse(e.data)
-      this.status.uploads.push(file)
+      const file = JSON.parse(e.data) as AssemblyFile
+      const uploads =
+        this.status.uploads ?? (this.status.uploads = [] as NonNullable<AssemblyResponse['uploads']>)
+      uploads.push(file)
       this.emit('upload', file)
     })
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
-      const [stepName, result] = JSON.parse(e.data)
+      const [stepName, rawResult] = JSON.parse(e.data) as [string, AssemblyResult]
+      rawResult.localId ??= null
+      const results =
+        this.status.results ??
+        (this.status.results = {} as NonNullable<AssemblyResponse['results']>)
       // biome-ignore lint/suspicious/noAssignInExpressions: ...
-      ;(this.status.results[stepName] ??= []).push(result)
-      this.emit('result', stepName, result)
+      ;(results[stepName] ??= []).push(rawResult)
+      this.emit('result', stepName, rawResult)
     })
 
     this.#sse.addEventListener('assembly_execution_progress', (e) => {
@@ -165,9 +171,11 @@ class TransloaditAssembly extends Emitter {
 
     try {
       this.#previousFetchStatusStillPending = true
-      const response = await this.#fetchWithNetworkError(
-        this.status.assembly_ssl_url,
-      )
+      const statusUrl = this.status.assembly_ssl_url ?? this.status.assembly_url
+      if (!statusUrl) {
+        throw new Error('Transloadit: Assembly status is missing a status URL')
+      }
+      const response = await this.#fetchWithNetworkError(statusUrl)
       this.#previousFetchStatusStillPending = false
 
       if (this.closed) return
@@ -216,8 +224,8 @@ class TransloaditAssembly extends Emitter {
    * to `next`.
    */
   #diffStatus(prev: AssemblyResponse, next: AssemblyResponse) {
-    const prevStatus = prev.ok
-    const nextStatus = next.ok
+    const prevStatus = (prev.ok ?? '') as string
+    const nextStatus = (next.ok ?? '') as string
 
     if (next.error && !prev.error) {
       return this.#onError(next)
@@ -244,12 +252,12 @@ class TransloaditAssembly extends Emitter {
     }
 
     // Only emit if the upload is new (not in prev.uploads).
-    Object.keys(next.uploads)
-      .filter((upload) => !has(prev.uploads, upload))
+    const prevUploads = (prev.uploads ?? {}) as Record<string, AssemblyFile>
+    const nextUploads = (next.uploads ?? {}) as Record<string, AssemblyFile>
+    Object.keys(nextUploads)
+      .filter((upload) => !has(prevUploads, upload))
       .forEach((upload) => {
-        // @ts-ignore either the types are wrong or the tests are wrong.
-        // types think next.uploads is an array, but the tests pass an object.
-        this.emit('upload', next.uploads[upload])
+        this.emit('upload', nextUploads[upload])
       })
 
     if (nowExecuting) {
@@ -257,12 +265,14 @@ class TransloaditAssembly extends Emitter {
     }
 
     // Find new results.
-    Object.keys(next.results).forEach((stepName) => {
-      const nextResults = next.results[stepName]
-      const prevResults = prev.results[stepName]
+    const nextResultsMap = (next.results ?? {}) as Record<string, AssemblyResult[]>
+    const prevResultsMap = (prev.results ?? {}) as Record<string, AssemblyResult[]>
+    Object.keys(nextResultsMap).forEach((stepName) => {
+      const nextResults = nextResultsMap[stepName] ?? []
+      const prevResults = prevResultsMap[stepName] ?? []
 
       nextResults
-        .filter((n) => !prevResults || !prevResults.some((p) => p.id === n.id))
+        .filter((n) => !prevResults.some((p) => p.id === n.id))
         .forEach((result) => {
           this.emit('result', stepName, result)
         })

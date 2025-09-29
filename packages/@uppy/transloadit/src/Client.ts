@@ -46,6 +46,13 @@ export default class Client<M extends Meta, B extends Body> {
 
   opts: Opts
 
+  #getAssemblySslUrl(assembly: AssemblyResponse): string {
+    if (!assembly.assembly_ssl_url) {
+      throw new Error('Transloadit: Assembly status is missing `assembly_ssl_url`.')
+    }
+    return assembly.assembly_ssl_url
+  }
+
   constructor(opts: Opts) {
     this.opts = opts
 
@@ -139,7 +146,8 @@ export default class Client<M extends Meta, B extends Body> {
     file: UppyFile<M, B>,
   ): Promise<AssemblyResponse> {
     const size = encodeURIComponent(file.size!)
-    const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
+    const assemblyUrl = this.#getAssemblySslUrl(assembly)
+    const url = `${assemblyUrl}/reserve_file?size=${size}`
     return this.#fetchJSON(url, {
       method: 'POST',
       headers: this.#headers,
@@ -164,7 +172,8 @@ export default class Client<M extends Meta, B extends Body> {
     const fieldname = 'file'
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
-    const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
+    const assemblyUrl = this.#getAssemblySslUrl(assembly)
+    const url = `${assemblyUrl}/add_file?${qs}`
     return this.#fetchJSON(url, {
       method: 'POST',
       headers: this.#headers,
@@ -177,7 +186,7 @@ export default class Client<M extends Meta, B extends Body> {
    * Cancel a running Assembly.
    */
   async cancelAssembly(assembly: AssemblyResponse): Promise<void> {
-    const url = assembly.assembly_ssl_url
+    const url = this.#getAssemblySslUrl(assembly)
     await this.#fetchWithNetworkError(url, {
       method: 'DELETE',
       headers: this.#headers,
