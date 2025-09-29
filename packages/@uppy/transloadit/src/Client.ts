@@ -48,7 +48,9 @@ export default class Client<M extends Meta, B extends Body> {
 
   #getAssemblySslUrl(assembly: AssemblyResponse): string {
     if (!assembly.assembly_ssl_url) {
-      throw new Error('Transloadit: Assembly status is missing `assembly_ssl_url`.')
+      throw new Error(
+        'Transloadit: Assembly status is missing `assembly_ssl_url`.',
+      )
     }
     return assembly.assembly_ssl_url
   }

@@ -102,18 +102,26 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_upload_finished', (e) => {
       const file = JSON.parse(e.data) as AssemblyFile
-      const uploads =
-        this.status.uploads ?? (this.status.uploads = [] as NonNullable<AssemblyResponse['uploads']>)
+      let uploads = this.status.uploads
+      if (!uploads) {
+        uploads = [] as NonNullable<AssemblyResponse['uploads']>
+        this.status.uploads = uploads
+      }
       uploads.push(file)
       this.emit('upload', file)
     })
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
-      const [stepName, rawResult] = JSON.parse(e.data) as [string, AssemblyResult]
+      const [stepName, rawResult] = JSON.parse(e.data) as [
+        string,
+        AssemblyResult,
+      ]
       rawResult.localId ??= null
-      const results =
-        this.status.results ??
-        (this.status.results = {} as NonNullable<AssemblyResponse['results']>)
+      let results = this.status.results
+      if (!results) {
+        results = {} as NonNullable<AssemblyResponse['results']>
+        this.status.results = results
+      }
       // biome-ignore lint/suspicious/noAssignInExpressions: ...
       ;(results[stepName] ??= []).push(rawResult)
       this.emit('result', stepName, rawResult)
@@ -265,8 +273,14 @@ class TransloaditAssembly extends Emitter {
     }
 
     // Find new results.
-    const nextResultsMap = (next.results ?? {}) as Record<string, AssemblyResult[]>
-    const prevResultsMap = (prev.results ?? {}) as Record<string, AssemblyResult[]>
+    const nextResultsMap = (next.results ?? {}) as Record<
+      string,
+      AssemblyResult[]
+    >
+    const prevResultsMap = (prev.results ?? {}) as Record<
+      string,
+      AssemblyResult[]
+    >
     Object.keys(nextResultsMap).forEach((stepName) => {
       const nextResults = nextResultsMap[stepName] ?? []
       const prevResults = prevResultsMap[stepName] ?? []

@@ -173,7 +173,6 @@ function validateParams(params?: AssemblyOptions['params']): void {
   }
 }
 
-
 function ensureAssemblyId(status: AssemblyResponse): string {
   if (!status.assembly_id) {
     throw new Error('Transloadit: Assembly status is missing `assembly_id`.')
@@ -181,7 +180,10 @@ function ensureAssemblyId(status: AssemblyResponse): string {
   return status.assembly_id
 }
 
-function ensureUrl(label: string, ...candidates: Array<string | undefined>): string {
+function ensureUrl(
+  label: string,
+  ...candidates: Array<string | undefined>
+): string {
   for (const value of candidates) {
     if (typeof value === 'string' && value.length > 0) {
       return value
@@ -288,7 +290,11 @@ export default class Transloadit<
    */
   #attachAssemblyMetadata(file: UppyFile<M, B>, status: AssemblyResponse) {
     // Add the metadata parameters Transloadit needs.
-    const assemblyUrl = ensureUrl('`assembly_url`', status.assembly_url, status.assembly_ssl_url)
+    const assemblyUrl = ensureUrl(
+      '`assembly_url`',
+      status.assembly_url,
+      status.assembly_ssl_url,
+    )
     const tusEndpoint = ensureUrl('`tus_url`', status.tus_url)
     const assemblyId = ensureAssemblyId(status)
 
@@ -536,7 +542,8 @@ export default class Transloadit<
       localId: file ? file.id : null,
     }
 
-    const resultId = result.id ?? `${assemblyId}:${stepName}:${originalId ?? 'unknown'}`
+    const resultId =
+      result.id ?? `${assemblyId}:${stepName}:${originalId ?? 'unknown'}`
     const entry = {
       result: decoratedResult,
       stepName,
@@ -547,7 +554,12 @@ export default class Transloadit<
     this.setPluginState({
       results: [...state.results, entry],
     })
-    this.uppy.emit('transloadit:result', stepName, decoratedResult, this.getAssembly()!)
+    this.uppy.emit(
+      'transloadit:result',
+      stepName,
+      decoratedResult,
+      this.getAssembly()!,
+    )
   }
 
   /**
@@ -555,7 +567,11 @@ export default class Transloadit<
    * and emit it.
    */
   #onAssemblyFinished(assembly: Assembly) {
-    const url = ensureUrl('`assembly_ssl_url`', assembly.status.assembly_ssl_url, assembly.status.assembly_url)
+    const url = ensureUrl(
+      '`assembly_ssl_url`',
+      assembly.status.assembly_ssl_url,
+      assembly.status.assembly_url,
+    )
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
@@ -628,7 +644,8 @@ export default class Transloadit<
       })
 
       const state = this.getPluginState()
-      const restoredResults = (previousAssembly.results ?? {}) as AssemblyResultsMap
+      const restoredResults = (previousAssembly.results ??
+        {}) as AssemblyResultsMap
       Object.keys(restoredResults).forEach((stepName) => {
         const stepResults = restoredResults[stepName] ?? []
         for (const result of stepResults) {
@@ -640,7 +657,8 @@ export default class Transloadit<
             ...result,
             localId: file ? file.id : null,
           }
-          const resultId = result.id ?? `${id}:${stepName}:${originalId ?? 'unknown'}`
+          const resultId =
+            result.id ?? `${id}:${stepName}:${originalId ?? 'unknown'}`
           results.push({
             id: resultId,
             result: decoratedResult,
@@ -798,7 +816,9 @@ export default class Transloadit<
         // Only use files without errors
         .filter((file) => !file.error)
 
-      const assemblyID = this.assembly ? ensureAssemblyId(this.assembly.status) : undefined
+      const assemblyID = this.assembly
+        ? ensureAssemblyId(this.assembly.status)
+        : undefined
 
       const closeSocketConnections = () => {
         this.assembly?.close()
