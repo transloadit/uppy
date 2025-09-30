@@ -30,7 +30,11 @@ const statusOrder = [ASSEMBLY_UPLOADING, ASSEMBLY_EXECUTING, ASSEMBLY_COMPLETED]
  * fast that we missed it.
  */
 function isStatus(status: unknown, test: string) {
-  return statusOrder.indexOf(status as string) >= statusOrder.indexOf(test)
+  if (typeof status !== 'string') {
+    return false
+  }
+
+  return statusOrder.indexOf(status) >= statusOrder.indexOf(test)
 }
 
 class TransloaditAssembly extends Emitter {
