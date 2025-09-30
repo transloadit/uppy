@@ -107,7 +107,11 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_upload_finished', (e) => {
       const file = JSON.parse(e.data) as AssemblyFile
-      this.status.uploads ??= []
+      let uploads = this.status.uploads
+      if (!uploads) {
+        uploads = []
+        this.status.uploads = uploads
+      }
       uploads.push(file)
       this.emit('upload', file)
     })
