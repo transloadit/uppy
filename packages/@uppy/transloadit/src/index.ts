@@ -173,6 +173,7 @@ function validateParams(params?: AssemblyOptions['params']): void {
 
 function ensureAssemblyId(status: AssemblyResponse): string {
   if (!status.assembly_id) {
+    console.warn('Assembly status is missing `assembly_id`.', status)
     throw new Error('Transloadit: Assembly status is missing `assembly_id`.')
   }
   return status.assembly_id
