@@ -200,32 +200,6 @@ export function getAssemblyUrl(
   )
 }
 
-const convertStepResult = (
-  assemblyId: string,
-  files: TransloaditState['files'],
-  stepName: string,
-  result: NonNullable<AssemblyResponse['results']>[string][number],
-) => {
-  const originalId = Array.isArray(result.original_id)
-    ? result.original_id[0]
-    : result.original_id
-  const file = originalId ? files[originalId] : undefined
-  // The `file` may not exist if an import robot was used instead of a file upload.
-  const decoratedResult: AssemblyResult = {
-    ...result,
-    localId: file ? file.id : null,
-  }
-
-  const resultId =
-    result.id ?? `${assemblyId}:${stepName}:${originalId ?? 'unknown'}`
-  return {
-    result: decoratedResult,
-    stepName,
-    id: resultId,
-    assembly: assemblyId,
-  }
-}
-
 const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
@@ -567,7 +541,21 @@ export default class Transloadit<
   #onResult(assemblyId: string, stepName: string, result: AssemblyResult) {
     const state = this.getPluginState()
 
-    const entry = convertStepResult(assemblyId, state.files, stepName, result)
+    if (!('id' in result)) {
+      console.warn('Result has no id', result)
+      return
+    }
+    if (typeof result.id !== 'string') {
+      console.warn('Result has no id of type string', result)
+      return
+    }
+
+    const entry = {
+      result,
+      stepName,
+      id: result.id,
+      assembly: assemblyId,
+    }
 
     this.setPluginState({
       results: [...state.results, entry],
@@ -663,7 +651,29 @@ export default class Transloadit<
       Object.keys(restoredResults).forEach((stepName) => {
         const stepResults = restoredResults[stepName] ?? []
         for (const result of stepResults) {
-          results.push(convertStepResult(id, state.files, stepName, result))
+          if (!('id' in result)) {
+            console.warn('Result has no id', result)
+            continue
+          }
+          if (typeof result.id !== 'string') {
+            console.warn('Result has no id of type string', result)
+            continue
+          }
+          if (!('original_id' in result)) {
+            console.warn('Result has no original_id', result)
+            continue
+          }
+          if (typeof result.original_id !== 'string') {
+            console.warn('Result has no original_id of type string', result)
+            continue
+          }
+          const file = state.files[result.original_id]
+          results.push({
+            id: result.id,
+            result: {...result, localId: file ? file.id : null},
+            stepName,
+            assembly: id,
+          })
         }
       })
 

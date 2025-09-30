@@ -111,12 +111,8 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_upload_finished', (e) => {
       const file = JSON.parse(e.data) as AssemblyFile
-      let uploads = this.status.uploads
-      if (!uploads) {
-        uploads = []
-        this.status.uploads = uploads
-      }
-      uploads.push(file)
+      this.status.uploads ??= []
+      this.status.uploads.push(file)
       this.emit('upload', file)
     })
 
@@ -125,13 +121,9 @@ class TransloaditAssembly extends Emitter {
         string,
         AssemblyResult,
       ]
-      let results = this.status.results
-      if (!results) {
-        results = {}
-        this.status.results = results
-      }
-      // biome-ignore lint/suspicious/noAssignInExpressions: ...
-      ;(results[stepName] ??= []).push(rawResult)
+
+      this.status.results ??= {}
+      ;(this.status.results[stepName] ??= []).push(rawResult)
       this.emit('result', stepName, rawResult)
     })
 
