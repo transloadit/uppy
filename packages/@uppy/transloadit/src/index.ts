@@ -201,6 +201,16 @@ export function getAssemblyUrl(
   )
 }
 
+export function getAssemblyUrlSsl(
+  assembly: Pick<AssemblyResponse, 'assembly_ssl_url' | 'assembly_url'>,
+): string {
+  return ensureUrl(
+    '`assembly_ssl_url`',
+    assembly.assembly_ssl_url,
+    assembly.assembly_url,
+  )
+}
+
 const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
@@ -299,16 +309,13 @@ export default class Transloadit<
    */
   #attachAssemblyMetadata(file: UppyFile<M, B>, status: AssemblyResponse) {
     // Add the metadata parameters Transloadit needs.
-    const assemblyUrl = ensureUrl(
-      '`assembly_url`',
-      status.assembly_url, // todo why isn't assembly_ssl_url first?
-      status.assembly_ssl_url,
-    )
+    const assemblyUrl = getAssemblyUrl(status)
     const tusEndpoint = ensureUrl('`tus_url`', status.tus_url)
     const assemblyId = ensureAssemblyId(status)
 
     const meta = {
       ...file.meta,
+      // @TODO(tim-kos), can we safely bump this to assembly_ssl_url / getAssemblyUrlSsl?
       assembly_url: assemblyUrl,
       filename: file.name,
       fieldname: 'file',

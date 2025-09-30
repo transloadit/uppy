@@ -10,7 +10,7 @@ import {
   type AssemblyFile,
   type AssemblyResponse,
   type AssemblyResult,
-  getAssemblyUrl,
+  getAssemblyUrlSsl,
 } from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
@@ -179,7 +179,7 @@ class TransloaditAssembly extends Emitter {
 
     try {
       this.#previousFetchStatusStillPending = true
-      const statusUrl = getAssemblyUrl(this.status)
+      const statusUrl = getAssemblyUrlSsl(this.status)
 
       const response = await this.#fetchWithNetworkError(statusUrl)
       this.#previousFetchStatusStillPending = false
