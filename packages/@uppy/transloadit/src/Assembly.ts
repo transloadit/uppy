@@ -6,7 +6,12 @@ import {
   NetworkError,
 } from '@uppy/utils'
 import Emitter from 'component-emitter'
-import type { AssemblyFile, AssemblyResponse, AssemblyResult } from './index.js'
+import {
+  type AssemblyFile,
+  type AssemblyResponse,
+  type AssemblyResult,
+  getAssemblyUrl,
+} from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -24,8 +29,8 @@ const statusOrder = [ASSEMBLY_UPLOADING, ASSEMBLY_EXECUTING, ASSEMBLY_COMPLETED]
  * …so that we can emit the 'executing' event even if the execution step was so
  * fast that we missed it.
  */
-function isStatus(status: string, test: string) {
-  return statusOrder.indexOf(status) >= statusOrder.indexOf(test)
+function isStatus(status: unknown, test: string) {
+  return statusOrder.indexOf(status as string) >= statusOrder.indexOf(test)
 }
 
 class TransloaditAssembly extends Emitter {
@@ -104,7 +109,7 @@ class TransloaditAssembly extends Emitter {
       const file = JSON.parse(e.data) as AssemblyFile
       let uploads = this.status.uploads
       if (!uploads) {
-        uploads = [] as NonNullable<AssemblyResponse['uploads']>
+        uploads = []
         this.status.uploads = uploads
       }
       uploads.push(file)
@@ -116,10 +121,9 @@ class TransloaditAssembly extends Emitter {
         string,
         AssemblyResult,
       ]
-      rawResult.localId ??= null
       let results = this.status.results
       if (!results) {
-        results = {} as NonNullable<AssemblyResponse['results']>
+        results = {}
         this.status.results = results
       }
       // biome-ignore lint/suspicious/noAssignInExpressions: ...
@@ -179,10 +183,8 @@ class TransloaditAssembly extends Emitter {
 
     try {
       this.#previousFetchStatusStillPending = true
-      const statusUrl = this.status.assembly_ssl_url ?? this.status.assembly_url
-      if (!statusUrl) {
-        throw new Error('Transloadit: Assembly status is missing a status URL')
-      }
+      const statusUrl = getAssemblyUrl(this.status)
+
       const response = await this.#fetchWithNetworkError(statusUrl)
       this.#previousFetchStatusStillPending = false
 
@@ -232,8 +234,8 @@ class TransloaditAssembly extends Emitter {
    * to `next`.
    */
   #diffStatus(prev: AssemblyResponse, next: AssemblyResponse) {
-    const prevStatus = (prev.ok ?? '') as string
-    const nextStatus = (next.ok ?? '') as string
+    const prevStatus = prev.ok
+    const nextStatus = next.ok
 
     if (next.error && !prev.error) {
       return this.#onError(next)
@@ -260,37 +262,38 @@ class TransloaditAssembly extends Emitter {
     }
 
     // Only emit if the upload is new (not in prev.uploads).
-    const prevUploads = (prev.uploads ?? {}) as Record<string, AssemblyFile>
-    const nextUploads = (next.uploads ?? {}) as Record<string, AssemblyFile>
-    Object.keys(nextUploads)
-      .filter((upload) => !has(prevUploads, upload))
-      .forEach((upload) => {
-        this.emit('upload', nextUploads[upload])
-      })
+    const prevUploads = prev.uploads
+    const nextUploads = next.uploads
+    if (nextUploads != null && prevUploads != null) {
+      Object.keys(nextUploads)
+        .filter((upload) => !has(prevUploads, upload))
+        .forEach((upload) => {
+          // This is a bit confusing. Not sure why Object.keys was chosen here, because nextUploads is an Array. Object.keys returns strings for array keys ("0", "1", etc.). Typescript expects arrays to be indexed with a number, not a string nextUploads[0], even though JavaScript is fine with it, so we need to type assert here:
+          this.emit('upload', nextUploads[upload as unknown as number])
+        })
+    }
 
     if (nowExecuting) {
       this.emit('metadata')
     }
 
     // Find new results.
-    const nextResultsMap = (next.results ?? {}) as Record<
-      string,
-      AssemblyResult[]
-    >
-    const prevResultsMap = (prev.results ?? {}) as Record<
-      string,
-      AssemblyResult[]
-    >
-    Object.keys(nextResultsMap).forEach((stepName) => {
-      const nextResults = nextResultsMap[stepName] ?? []
-      const prevResults = prevResultsMap[stepName] ?? []
+    const nextResultsMap = next.results
+    const prevResultsMap = prev.results
+    if (nextResultsMap != null && prevResultsMap != null) {
+      Object.keys(nextResultsMap).forEach((stepName) => {
+        const nextResults = nextResultsMap[stepName] ?? []
+        const prevResults = prevResultsMap[stepName] ?? []
 
-      nextResults
-        .filter((n) => !prevResults.some((p) => p.id === n.id))
-        .forEach((result) => {
-          this.emit('result', stepName, result)
-        })
-    })
+        nextResults
+          .filter(
+            (n) => !prevResults || !prevResults.some((p) => p.id === n.id),
+          )
+          .forEach((result) => {
+            this.emit('result', stepName, result)
+          })
+      })
+    }
 
     if (
       isStatus(nextStatus, ASSEMBLY_COMPLETED) &&

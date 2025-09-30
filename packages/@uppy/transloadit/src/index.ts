@@ -12,7 +12,6 @@ import { ErrorWithCause, hasProperty, RateLimitedQueue } from '@uppy/utils'
 import type {
   AssemblyStatus,
   AssemblyStatusResult,
-  AssemblyStatusResults,
   AssemblyStatusUpload,
   CreateAssemblyParams,
 } from 'transloadit'
@@ -24,7 +23,6 @@ import locale from './locale.js'
 
 export type AssemblyResponse = AssemblyStatus
 export type AssemblyFile = AssemblyStatusUpload
-type AssemblyResultsMap = AssemblyStatusResults
 export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
 export type AssemblyParameters = CreateAssemblyParams
 
@@ -192,6 +190,42 @@ function ensureUrl(
   throw new Error(`Transloadit: Assembly status is missing ${label}.`)
 }
 
+export function getAssemblyUrl(
+  assembly: Pick<AssemblyResponse, 'assembly_ssl_url' | 'assembly_url'>,
+): string {
+  return ensureUrl(
+    '`assembly_url`',
+    assembly.assembly_url,
+    assembly.assembly_ssl_url,
+  )
+}
+
+const convertStepResult = (
+  assemblyId: string,
+  files: TransloaditState['files'],
+  stepName: string,
+  result: NonNullable<AssemblyResponse['results']>[string][number],
+) => {
+  const originalId = Array.isArray(result.original_id)
+    ? result.original_id[0]
+    : result.original_id
+  const file = originalId ? files[originalId] : undefined
+  // The `file` may not exist if an import robot was used instead of a file upload.
+  const decoratedResult: AssemblyResult = {
+    ...result,
+    localId: file ? file.id : null,
+  }
+
+  const resultId =
+    result.id ?? `${assemblyId}:${stepName}:${originalId ?? 'unknown'}`
+  return {
+    result: decoratedResult,
+    stepName,
+    id: resultId,
+    assembly: assemblyId,
+  }
+}
+
 const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
@@ -292,7 +326,7 @@ export default class Transloadit<
     // Add the metadata parameters Transloadit needs.
     const assemblyUrl = ensureUrl(
       '`assembly_url`',
-      status.assembly_url,
+      status.assembly_url, // todo why isn't assembly_ssl_url first?
       status.assembly_ssl_url,
     )
     const tusEndpoint = ensureUrl('`tus_url`', status.tus_url)
@@ -532,24 +566,8 @@ export default class Transloadit<
 
   #onResult(assemblyId: string, stepName: string, result: AssemblyResult) {
     const state = this.getPluginState()
-    const originalId = Array.isArray(result.original_id)
-      ? result.original_id[0]
-      : result.original_id
-    const file = originalId ? state.files[originalId] : undefined
-    // The `file` may not exist if an import robot was used instead of a file upload.
-    const decoratedResult: AssemblyResult = {
-      ...result,
-      localId: file ? file.id : null,
-    }
 
-    const resultId =
-      result.id ?? `${assemblyId}:${stepName}:${originalId ?? 'unknown'}`
-    const entry = {
-      result: decoratedResult,
-      stepName,
-      id: resultId,
-      assembly: assemblyId,
-    }
+    const entry = convertStepResult(assemblyId, state.files, stepName, result)
 
     this.setPluginState({
       results: [...state.results, entry],
@@ -557,7 +575,7 @@ export default class Transloadit<
     this.uppy.emit(
       'transloadit:result',
       stepName,
-      decoratedResult,
+      entry.result,
       this.getAssembly()!,
     )
   }
@@ -567,11 +585,7 @@ export default class Transloadit<
    * and emit it.
    */
   #onAssemblyFinished(assembly: Assembly) {
-    const url = ensureUrl(
-      '`assembly_ssl_url`',
-      assembly.status.assembly_ssl_url,
-      assembly.status.assembly_url,
-    )
+    const url = getAssemblyUrl(assembly.status)
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
@@ -644,27 +658,12 @@ export default class Transloadit<
       })
 
       const state = this.getPluginState()
-      const restoredResults = (previousAssembly.results ??
-        {}) as AssemblyResultsMap
+      const restoredResults = previousAssembly.results ?? {}
+
       Object.keys(restoredResults).forEach((stepName) => {
         const stepResults = restoredResults[stepName] ?? []
         for (const result of stepResults) {
-          const originalId = Array.isArray(result.original_id)
-            ? result.original_id[0]
-            : result.original_id
-          const file = originalId ? state.files[originalId] : undefined
-          const decoratedResult: AssemblyResult = {
-            ...result,
-            localId: file ? file.id : null,
-          }
-          const resultId =
-            result.id ?? `${id}:${stepName}:${originalId ?? 'unknown'}`
-          results.push({
-            id: resultId,
-            result: decoratedResult,
-            stepName,
-            assembly: id,
-          })
+          results.push(convertStepResult(id, state.files, stepName, result))
         }
       })
 
