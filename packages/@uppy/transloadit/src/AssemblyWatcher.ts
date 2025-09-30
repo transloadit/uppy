@@ -49,21 +49,23 @@ class TransloaditAssemblyWatcher<
   }
 
   #onAssemblyComplete = (assembly: AssemblyResponse) => {
-    if (!this.#watching(assembly.assembly_id)) {
+    const assemblyId = assembly.assembly_id
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
     this.#uppy.log(
-      `[Transloadit] AssemblyWatcher: Got Assembly finish ${assembly.assembly_id}`,
+      `[Transloadit] AssemblyWatcher: Got Assembly finish ${assemblyId}`,
     )
 
-    this.emit('assembly-complete', assembly.assembly_id)
+    this.emit('assembly-complete', assemblyId)
 
     this.#checkAllComplete()
   }
 
   #onAssemblyCancel = (assembly: AssemblyResponse) => {
-    if (!this.#watching(assembly.assembly_id)) {
+    const assemblyId = assembly.assembly_id
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
@@ -71,16 +73,17 @@ class TransloaditAssemblyWatcher<
   }
 
   #onAssemblyError = (assembly: AssemblyResponse, error: Error) => {
-    if (!this.#watching(assembly.assembly_id)) {
+    const assemblyId = assembly.assembly_id
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
     this.#uppy.log(
-      `[Transloadit] AssemblyWatcher: Got Assembly error ${assembly.assembly_id}`,
+      `[Transloadit] AssemblyWatcher: Got Assembly error ${assemblyId}`,
     )
     this.#uppy.log(error)
 
-    this.emit('assembly-error', assembly.assembly_id, error)
+    this.emit('assembly-error', assemblyId, error)
 
     this.#checkAllComplete()
   }
@@ -90,7 +93,8 @@ class TransloaditAssemblyWatcher<
     fileID: string,
     error: Error,
   ) => {
-    if (!this.#watching(assembly.assembly_id)) {
+    const assemblyId = assembly.assembly_id
+    if (assemblyId == null || !this.#watching(assemblyId)) {
       return
     }
 
