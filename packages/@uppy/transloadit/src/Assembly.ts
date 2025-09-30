@@ -123,7 +123,8 @@ class TransloaditAssembly extends Emitter {
       ]
 
       this.status.results ??= {}
-      ;(this.status.results[stepName] ??= []).push(rawResult)
+      this.status.results[stepName] ??= []
+      this.status.results[stepName].push(rawResult)
       this.emit('result', stepName, rawResult)
     })
 

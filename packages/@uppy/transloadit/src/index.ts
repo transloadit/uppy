@@ -678,7 +678,7 @@ export default class Transloadit<
           const file = state.files[result.original_id]
           results.push({
             id: result.id,
-            result: {...result, localId: file ? file.id : null},
+            result: { ...result, localId: file ? file.id : null },
             stepName,
             assembly: id,
           })
