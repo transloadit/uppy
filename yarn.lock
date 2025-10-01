@@ -10702,7 +10702,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/audio@workspace:^, @uppy/audio@workspace:packages/@uppy/audio":
+"@uppy/audio@workspace:*, @uppy/audio@workspace:^, @uppy/audio@workspace:packages/@uppy/audio":
   version: 0.0.0-use.local
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
@@ -10720,7 +10720,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/aws-s3@workspace:*, @uppy/aws-s3@workspace:^, @uppy/aws-s3@workspace:packages/@uppy/aws-s3":
+"@uppy/aws-s3@workspace:*, @uppy/aws-s3@workspace:packages/@uppy/aws-s3":
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
@@ -10739,7 +10739,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/box@workspace:^, @uppy/box@workspace:packages/@uppy/box":
+"@uppy/box@workspace:*, @uppy/box@workspace:^, @uppy/box@workspace:packages/@uppy/box":
   version: 0.0.0-use.local
   resolution: "@uppy/box@workspace:packages/@uppy/box"
   dependencies:
@@ -10859,7 +10859,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/compressor@workspace:^, @uppy/compressor@workspace:packages/@uppy/compressor":
+"@uppy/compressor@workspace:*, @uppy/compressor@workspace:packages/@uppy/compressor":
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
@@ -10932,7 +10932,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/drag-drop@workspace:^, @uppy/drag-drop@workspace:packages/@uppy/drag-drop":
+"@uppy/drag-drop@workspace:*, @uppy/drag-drop@workspace:packages/@uppy/drag-drop":
   version: 0.0.0-use.local
   resolution: "@uppy/drag-drop@workspace:packages/@uppy/drag-drop"
   dependencies:
@@ -10948,7 +10948,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/drop-target@workspace:*, @uppy/drop-target@workspace:^, @uppy/drop-target@workspace:packages/@uppy/drop-target":
+"@uppy/drop-target@workspace:*, @uppy/drop-target@workspace:packages/@uppy/drop-target":
   version: 0.0.0-use.local
   resolution: "@uppy/drop-target@workspace:packages/@uppy/drop-target"
   dependencies:
@@ -10963,7 +10963,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/dropbox@workspace:^, @uppy/dropbox@workspace:packages/@uppy/dropbox":
+"@uppy/dropbox@workspace:*, @uppy/dropbox@workspace:^, @uppy/dropbox@workspace:packages/@uppy/dropbox":
   version: 0.0.0-use.local
   resolution: "@uppy/dropbox@workspace:packages/@uppy/dropbox"
   dependencies:
@@ -10978,7 +10978,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/facebook@workspace:^, @uppy/facebook@workspace:packages/@uppy/facebook":
+"@uppy/facebook@workspace:*, @uppy/facebook@workspace:^, @uppy/facebook@workspace:packages/@uppy/facebook":
   version: 0.0.0-use.local
   resolution: "@uppy/facebook@workspace:packages/@uppy/facebook"
   dependencies:
@@ -10993,7 +10993,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/form@workspace:*, @uppy/form@workspace:^, @uppy/form@workspace:packages/@uppy/form":
+"@uppy/form@workspace:*, @uppy/form@workspace:packages/@uppy/form":
   version: 0.0.0-use.local
   resolution: "@uppy/form@workspace:packages/@uppy/form"
   dependencies:
@@ -11005,7 +11005,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/golden-retriever@workspace:^, @uppy/golden-retriever@workspace:packages/@uppy/golden-retriever":
+"@uppy/golden-retriever@workspace:*, @uppy/golden-retriever@workspace:packages/@uppy/golden-retriever":
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
@@ -11017,7 +11017,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/google-drive-picker@workspace:^, @uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker":
+"@uppy/google-drive-picker@workspace:*, @uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker":
   version: 0.0.0-use.local
   resolution: "@uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker"
   dependencies:
@@ -11047,7 +11047,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/google-photos-picker@workspace:^, @uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker":
+"@uppy/google-photos-picker@workspace:*, @uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker":
   version: 0.0.0-use.local
   resolution: "@uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker"
   dependencies:
@@ -11079,7 +11079,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/instagram@workspace:^, @uppy/instagram@workspace:packages/@uppy/instagram":
+"@uppy/instagram@workspace:*, @uppy/instagram@workspace:^, @uppy/instagram@workspace:packages/@uppy/instagram":
   version: 0.0.0-use.local
   resolution: "@uppy/instagram@workspace:packages/@uppy/instagram"
   dependencies:
@@ -11094,7 +11094,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/locales@workspace:^, @uppy/locales@workspace:packages/@uppy/locales":
+"@uppy/locales@workspace:*, @uppy/locales@workspace:packages/@uppy/locales":
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
@@ -11106,7 +11106,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/onedrive@workspace:^, @uppy/onedrive@workspace:packages/@uppy/onedrive":
+"@uppy/onedrive@workspace:*, @uppy/onedrive@workspace:^, @uppy/onedrive@workspace:packages/@uppy/onedrive":
   version: 0.0.0-use.local
   resolution: "@uppy/onedrive@workspace:packages/@uppy/onedrive"
   dependencies:
@@ -11223,7 +11223,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/status-bar@workspace:^, @uppy/status-bar@workspace:packages/@uppy/status-bar":
+"@uppy/status-bar@workspace:*, @uppy/status-bar@workspace:packages/@uppy/status-bar":
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
@@ -11241,7 +11241,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/store-default@workspace:^, @uppy/store-default@workspace:packages/@uppy/store-default":
+"@uppy/store-default@workspace:*, @uppy/store-default@workspace:^, @uppy/store-default@workspace:packages/@uppy/store-default":
   version: 0.0.0-use.local
   resolution: "@uppy/store-default@workspace:packages/@uppy/store-default"
   dependencies:
@@ -11279,7 +11279,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/thumbnail-generator@workspace:^, @uppy/thumbnail-generator@workspace:packages/@uppy/thumbnail-generator":
+"@uppy/thumbnail-generator@workspace:*, @uppy/thumbnail-generator@workspace:^, @uppy/thumbnail-generator@workspace:packages/@uppy/thumbnail-generator":
   version: 0.0.0-use.local
   resolution: "@uppy/thumbnail-generator@workspace:packages/@uppy/thumbnail-generator"
   dependencies:
@@ -11294,7 +11294,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/transloadit@workspace:*, @uppy/transloadit@workspace:^, @uppy/transloadit@workspace:packages/@uppy/transloadit":
+"@uppy/transloadit@workspace:*, @uppy/transloadit@workspace:packages/@uppy/transloadit":
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
@@ -11331,7 +11331,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/unsplash@workspace:^, @uppy/unsplash@workspace:packages/@uppy/unsplash":
+"@uppy/unsplash@workspace:*, @uppy/unsplash@workspace:^, @uppy/unsplash@workspace:packages/@uppy/unsplash":
   version: 0.0.0-use.local
   resolution: "@uppy/unsplash@workspace:packages/@uppy/unsplash"
   dependencies:
@@ -11346,7 +11346,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/url@workspace:^, @uppy/url@workspace:packages/@uppy/url":
+"@uppy/url@workspace:*, @uppy/url@workspace:^, @uppy/url@workspace:packages/@uppy/url":
   version: 0.0.0-use.local
   resolution: "@uppy/url@workspace:packages/@uppy/url"
   dependencies:
@@ -11422,7 +11422,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/webdav@workspace:^, @uppy/webdav@workspace:packages/@uppy/webdav":
+"@uppy/webdav@workspace:*, @uppy/webdav@workspace:packages/@uppy/webdav":
   version: 0.0.0-use.local
   resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
   dependencies:
@@ -11437,7 +11437,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:^, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
+"@uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
@@ -11453,7 +11453,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/zoom@workspace:^, @uppy/zoom@workspace:packages/@uppy/zoom":
+"@uppy/zoom@workspace:*, @uppy/zoom@workspace:^, @uppy/zoom@workspace:packages/@uppy/zoom":
   version: 0.0.0-use.local
   resolution: "@uppy/zoom@workspace:packages/@uppy/zoom"
   dependencies:
@@ -25651,40 +25651,40 @@ __metadata:
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
     "@aws-sdk/client-s3": "npm:^3.338.0"
-    "@uppy/audio": "workspace:^"
-    "@uppy/aws-s3": "workspace:^"
-    "@uppy/box": "workspace:^"
-    "@uppy/companion-client": "workspace:^"
-    "@uppy/compressor": "workspace:^"
-    "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
-    "@uppy/drag-drop": "workspace:^"
-    "@uppy/drop-target": "workspace:^"
-    "@uppy/dropbox": "workspace:^"
-    "@uppy/facebook": "workspace:^"
-    "@uppy/form": "workspace:^"
-    "@uppy/golden-retriever": "workspace:^"
-    "@uppy/google-drive": "workspace:^"
-    "@uppy/google-drive-picker": "workspace:^"
-    "@uppy/google-photos-picker": "workspace:^"
-    "@uppy/image-editor": "workspace:^"
-    "@uppy/instagram": "workspace:^"
-    "@uppy/locales": "workspace:^"
-    "@uppy/onedrive": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
-    "@uppy/remote-sources": "workspace:^"
-    "@uppy/screen-capture": "workspace:^"
-    "@uppy/status-bar": "workspace:^"
-    "@uppy/store-default": "workspace:^"
-    "@uppy/thumbnail-generator": "workspace:^"
-    "@uppy/transloadit": "workspace:^"
-    "@uppy/tus": "workspace:^"
-    "@uppy/unsplash": "workspace:^"
-    "@uppy/url": "workspace:^"
-    "@uppy/webcam": "workspace:^"
-    "@uppy/webdav": "workspace:^"
-    "@uppy/xhr-upload": "workspace:^"
-    "@uppy/zoom": "workspace:^"
+    "@uppy/audio": "workspace:*"
+    "@uppy/aws-s3": "workspace:*"
+    "@uppy/box": "workspace:*"
+    "@uppy/companion-client": "workspace:*"
+    "@uppy/compressor": "workspace:*"
+    "@uppy/core": "workspace:*"
+    "@uppy/dashboard": "workspace:*"
+    "@uppy/drag-drop": "workspace:*"
+    "@uppy/drop-target": "workspace:*"
+    "@uppy/dropbox": "workspace:*"
+    "@uppy/facebook": "workspace:*"
+    "@uppy/form": "workspace:*"
+    "@uppy/golden-retriever": "workspace:*"
+    "@uppy/google-drive": "workspace:*"
+    "@uppy/google-drive-picker": "workspace:*"
+    "@uppy/google-photos-picker": "workspace:*"
+    "@uppy/image-editor": "workspace:*"
+    "@uppy/instagram": "workspace:*"
+    "@uppy/locales": "workspace:*"
+    "@uppy/onedrive": "workspace:*"
+    "@uppy/provider-views": "workspace:*"
+    "@uppy/remote-sources": "workspace:*"
+    "@uppy/screen-capture": "workspace:*"
+    "@uppy/status-bar": "workspace:*"
+    "@uppy/store-default": "workspace:*"
+    "@uppy/thumbnail-generator": "workspace:*"
+    "@uppy/transloadit": "workspace:*"
+    "@uppy/tus": "workspace:*"
+    "@uppy/unsplash": "workspace:*"
+    "@uppy/url": "workspace:*"
+    "@uppy/webcam": "workspace:*"
+    "@uppy/webdav": "workspace:*"
+    "@uppy/xhr-upload": "workspace:*"
+    "@uppy/zoom": "workspace:*"
     adm-zip: "npm:^0.5.5"
     chalk: "npm:^5.0.0"
     concat-stream: "npm:^2.0.0"
