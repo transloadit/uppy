@@ -35,7 +35,7 @@ $: {
 		...props,
 		target: container,
 	} satisfies StatusBarOptions;
-	uppy.setOptions(options);
+	plugin?.setOptions(options);
 }
 </script>
 

@@ -1,6 +1,7 @@
 import { userEvent } from '@vitest/browser/context'
 import { describe, expect, test } from 'vitest'
 import { render } from 'vitest-browser-svelte'
+import PropsReactivity from '../src/components/test/props-reactivity.svelte'
 import App from '../src/routes/+page.svelte'
 
 const createMockFile = (name: string, type: string, size: number = 1024) => {
@@ -123,4 +124,28 @@ describe('RemoteSource Component', () => {
     await loginButton.click()
     await expect.element(loginButton).toBeInTheDocument()
   })
+})
+
+test('Dashboard reacts to prop changes', async () => {
+  const screen = render(PropsReactivity)
+  const toggleButton = screen.getByText('Toggle dashboard')
+  const dashboard = screen.container.querySelector('.uppy-Dashboard')
+
+  expect(dashboard).toBeTruthy()
+  expect(dashboard?.ariaDisabled).toEqual('false')
+  await userEvent.click(toggleButton)
+  expect(dashboard?.ariaDisabled).toEqual('true')
+})
+
+test('StatusBar reacts to prop changes', async () => {
+  const screen = render(PropsReactivity)
+  const toggleButton = screen.getByText('Toggle statusbar')
+
+  expect(
+    screen.container.querySelector('#statusbar-container .uppy-c-btn-primary'),
+  ).toBeVisible()
+  await userEvent.click(toggleButton)
+  expect(
+    screen.container.querySelector('#statusbar-container .uppy-c-btn-primary'),
+  ).toEqual(null)
 })
