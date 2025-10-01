@@ -1,5 +1,11 @@
 # @uppy/components
 
+## 1.0.3
+
+### Patch Changes
+
+- 34639ba: add imageThumbnail prop to FilesList/FilesGrid
+
 ## 1.0.2
 
 ### Patch Changes
