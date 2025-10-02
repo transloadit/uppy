@@ -46,7 +46,8 @@
     "@uppy/provider-views": "workspace:^",
     "@uppy/tus": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "component-emitter": "^2.0.0"
+    "component-emitter": "^2.0.0",
+    "transloadit": "^4.0.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
@@ -55,7 +56,6 @@
     "@uppy/core": "workspace:^",
     "jsdom": "^26.1.0",
     "msw": "^2.10.4",
-    "transloadit": "^4.0.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
     "whatwg-fetch": "^3.6.2"
