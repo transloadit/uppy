@@ -1,5 +1,11 @@
 # @uppy/transloadit
 
+## 5.1.1
+
+### Patch Changes
+
+- bc2d0ed: Ensure final assembly status fetch uses `assembly_ssl_url` so Transloadit requests stay on HTTPS.
+
 ## 5.1.0
 
 ### Minor Changes
