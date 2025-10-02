@@ -1,8 +1,11 @@
-import Uppy from '@uppy/core'
 import type { Body, Meta, UIPluginOptions } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
+import Uppy, { UIPlugin } from '@uppy/core'
+import type {
+  AssemblyParameters,
+  AssemblyResult,
+  TransloaditOptions,
+} from '@uppy/transloadit'
 import Transloadit from '@uppy/transloadit'
-import type { AssemblyResult } from '@uppy/transloadit'
 import { EmptyStateIcon } from './icons.js'
 import locale from './locale.js'
 
@@ -57,15 +60,10 @@ export default class ImageGenerator<
     if (!transloadit) {
       throw new Error('ImageGenerator requires the Transloadit plugin')
     }
-    // TODO: override the template_id
-    const localUppy = new Uppy<M, B>().use(Transloadit, transloadit.opts)
-    const localTransloadit =
-      localUppy.getPlugin<Transloadit<M, B>>('Transloadit')!
+    const transloaditOptions = await this.#getTransloaditOptions(transloadit)
+    const localUppy = new Uppy<M, B>().use(Transloadit, transloaditOptions)
 
-    localTransloadit.setFields({ prompt: this.getPluginState().prompt })
-
-    localUppy.on('transloadit:result', (step, result) => {
-      console.log('transloadit:result', step, result)
+    localUppy.on('transloadit:result', (_, result) => {
       const { results } = this.getPluginState()
       // For some reason this event can be called twice with the same result
       // so we check if we already have it before adding it to state.
@@ -106,11 +104,11 @@ export default class ImageGenerator<
       .filter((result) => checkedResultIds.has(result.id))
       .map((result) => ({
         name: `ai-image-${new Date().toISOString()}`,
-        type: result.mime,
+        type: result.mime ?? undefined,
         isRemote: true,
         source: 'Transloadit',
-        preview: result.url,
-        data: { size: result.size },
+        preview: result.url ?? undefined,
+        data: { size: result.size ?? null },
       }))
 
     this.uppy.addFiles(files)
@@ -172,7 +170,7 @@ export default class ImageGenerator<
                   data-uppy-super-focusable
                 />
                 <label htmlFor={result.id} className="uppy-u-reset">
-                  <img src={result.url} alt={prompt} />
+                  <img src={result.url!} alt={prompt} />
                 </label>
               </li>
             ))}
@@ -216,5 +214,29 @@ export default class ImageGenerator<
         )}
       </div>
     )
+  }
+
+  #getTransloaditOptions = async (
+    client: Transloadit<M, B>,
+  ): Promise<TransloaditOptions<M, B>> => {
+    const assemblyOptions =
+      typeof client.opts.assemblyOptions === 'function'
+        ? await client.opts.assemblyOptions()
+        : client.opts.assemblyOptions!
+
+    let params = assemblyOptions.params ?? {}
+    if (typeof params === 'string') {
+      params = JSON.parse(params) as AssemblyParameters
+    }
+    return {
+      waitForEncoding: true,
+      assemblyOptions: {
+        params: {
+          auth: params.auth,
+          template_id: '6c49832304764643b99be20e3ce8ffd8',
+        },
+        fields: { prompt: this.getPluginState().prompt },
+      },
+    }
   }
 }
