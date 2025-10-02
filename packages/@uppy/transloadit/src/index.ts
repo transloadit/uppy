@@ -581,7 +581,7 @@ export default class Transloadit<
    * and emit it.
    */
   #onAssemblyFinished(assembly: Assembly) {
-    const url = getAssemblyUrl(assembly.status)
+    const url = getAssemblyUrlSsl(assembly.status)
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
