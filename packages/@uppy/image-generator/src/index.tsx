@@ -1,4 +1,9 @@
-import type { Body, Meta, UIPluginOptions } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  MinimalRequiredUppyFile,
+  UIPluginOptions,
+} from '@uppy/core'
 import Uppy, { UIPlugin } from '@uppy/core'
 import type {
   AssemblyParameters,
@@ -56,7 +61,6 @@ export default class ImageGenerator<
 
   search = async () => {
     const transloadit = this.uppy.getPlugin<Transloadit<M, B>>('Transloadit')
-
     if (!transloadit) {
       throw new Error('ImageGenerator requires the Transloadit plugin')
     }
@@ -79,8 +83,6 @@ export default class ImageGenerator<
         checkedResultIds: new Set(),
       })
       await localUppy.upload()
-    } catch {
-      // TODO: inform the user?
     } finally {
       this.setPluginState({ loading: false })
     }
@@ -98,18 +100,22 @@ export default class ImageGenerator<
     this.setPluginState({ checkedResultIds })
   }
 
-  private donePicking = () => {
+  private donePicking = async () => {
     const { checkedResultIds, results } = this.getPluginState()
-    const files = results
+    const proms: Promise<MinimalRequiredUppyFile<M, B>>[] = results
       .filter((result) => checkedResultIds.has(result.id))
-      .map((result) => ({
-        name: `ai-image-${new Date().toISOString()}`,
-        type: result.mime ?? undefined,
-        isRemote: true,
-        source: 'Transloadit',
-        preview: result.url ?? undefined,
-        data: { size: result.size ?? null },
-      }))
+      .map(async (result) => {
+        const res = await fetch(result.ssl_url!)
+        const blob = await res.blob()
+
+        return {
+          name: `ai-image-${new Date().toISOString()}`,
+          type: result.mime ?? undefined,
+          source: 'Transloadit',
+          data: blob,
+        }
+      })
+    const files = await Promise.all(proms)
 
     this.uppy.addFiles(files)
     this.setPluginState(defaultState)
