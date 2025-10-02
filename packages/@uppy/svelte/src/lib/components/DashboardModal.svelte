@@ -42,7 +42,7 @@ $: {
 		...props,
 		target: container,
 	} satisfies DashboardOptions<M, B>;
-	uppy.setOptions(options);
+	plugin?.setOptions(options);
 }
 $: {
 	if (open && !lastOpen) {

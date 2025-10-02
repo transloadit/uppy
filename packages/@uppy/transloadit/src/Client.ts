@@ -6,9 +6,10 @@ import type {
   WrapPromiseFunctionType,
 } from '@uppy/utils'
 import { fetchWithNetworkError } from '@uppy/utils'
-import type {
-  AssemblyResponse,
-  OptionsWithRestructuredFields,
+import {
+  type AssemblyResponse,
+  getAssemblyUrlSsl,
+  type OptionsWithRestructuredFields,
 } from './index.js'
 
 const ASSEMBLIES_ENDPOINT = '/assemblies'
@@ -139,7 +140,8 @@ export default class Client<M extends Meta, B extends Body> {
     file: UppyFile<M, B>,
   ): Promise<AssemblyResponse> {
     const size = encodeURIComponent(file.size!)
-    const url = `${assembly.assembly_ssl_url}/reserve_file?size=${size}`
+    const assemblyUrl = getAssemblyUrlSsl(assembly)
+    const url = `${assemblyUrl}/reserve_file?size=${size}`
     return this.#fetchJSON(url, {
       method: 'POST',
       headers: this.#headers,
@@ -164,7 +166,8 @@ export default class Client<M extends Meta, B extends Body> {
     const fieldname = 'file'
 
     const qs = `size=${size}&filename=${filename}&fieldname=${fieldname}&s3Url=${uploadUrl}`
-    const url = `${assembly.assembly_ssl_url}/add_file?${qs}`
+    const assemblyUrl = getAssemblyUrlSsl(assembly)
+    const url = `${assemblyUrl}/add_file?${qs}`
     return this.#fetchJSON(url, {
       method: 'POST',
       headers: this.#headers,
@@ -177,7 +180,7 @@ export default class Client<M extends Meta, B extends Body> {
    * Cancel a running Assembly.
    */
   async cancelAssembly(assembly: AssemblyResponse): Promise<void> {
-    const url = assembly.assembly_ssl_url
+    const url = getAssemblyUrlSsl(assembly)
     await this.#fetchWithNetworkError(url, {
       method: 'DELETE',
       headers: this.#headers,
