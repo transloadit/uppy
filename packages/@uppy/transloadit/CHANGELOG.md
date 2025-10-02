@@ -1,5 +1,11 @@
 # @uppy/transloadit
 
+## 5.1.2
+
+### Patch Changes
+
+- 201c422: Move `transloadit` into `dependencies` so types are resolved without users having to install it manually.
+
 ## 5.1.1
 
 ### Patch Changes

@@ -1,5 +1,12 @@
 # uppy
 
+## 5.1.5
+
+### Patch Changes
+
+- Updated dependencies [201c422]
+  - @uppy/transloadit@5.1.2
+
 ## 5.1.4
 
 ### Patch Changes
