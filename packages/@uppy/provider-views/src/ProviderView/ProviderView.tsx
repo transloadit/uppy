@@ -320,48 +320,46 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   #buildTree(file: CompanionFile): PartialTree {
     const { partialTree } = this.plugin.getPluginState()
-
-    // requestPath is URL-encoded with a leading %2F for root, e.g.
-    // "%2Famazing_folder%2Fnested_folder"
-    const encodedSegments = file.requestPath
-      .split('%2F')
-      .filter((s) => s.length > 0)
-
-    let parentId: PartialTreeId = this.plugin.rootFolderId
-    let currentPath = ''
-
-    // Work on a copy so we can push while iterating safely
     const newPartialTree: PartialTree = [...partialTree]
 
-    for (let i = 0; i < encodedSegments.length; i += 1) {
-      const segment = encodedSegments[i]
-      currentPath = `${currentPath}%2F${segment}`
+    // Decode URI and split into path segments
+    const decodedPath = decodeURIComponent(file.requestPath)
+    const segments = decodedPath.split('/').filter((s) => s.length > 0)
 
-      const existing = newPartialTree.find((n) => n.id === currentPath)
-      if (existing) {
-        // Move parent pointer down the chain
-        parentId = currentPath
-        continue
+    let parentId: PartialTreeId = this.plugin.rootFolderId
+
+    segments.forEach((segment, index) => {
+      // Build encoded path incrementally
+      const pathSegments = segments.slice(0, index + 1)
+      const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
+
+      // Skip if node already exists
+      const existingNode = newPartialTree.find((n) => n.id === encodedPath)
+      if (existingNode) {
+        parentId = encodedPath
+        return
       }
 
-      const isTarget = currentPath === file.requestPath
-      const companionData: CompanionFile = isTarget
+      // Determine if this is the target folder or an intermediate ancestor
+      const isTargetFolder = encodedPath === file.requestPath
+      const folderData = isTargetFolder
         ? file
-        : this.#createSyntheticFolderCompanionFile(segment, currentPath)
+        : this.#createSyntheticFolderCompanionFile(segment, encodedPath)
 
+      // Create and add the folder node
       const node: PartialTreeFolderNode = {
         type: 'folder',
-        id: currentPath,
+        id: encodedPath,
         cached: false,
         nextPagePath: null,
         status: 'unchecked',
         parentId,
-        data: companionData,
+        data: folderData,
       }
 
       newPartialTree.push(node)
-      parentId = currentPath
-    }
+      parentId = encodedPath
+    })
 
     return newPartialTree
   }
