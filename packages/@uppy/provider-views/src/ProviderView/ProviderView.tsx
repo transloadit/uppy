@@ -94,6 +94,13 @@ type RenderOpts<M extends Meta, B extends Body> = Omit<
   'provider'
 >
 
+type SearchState = {
+  isSearchAvailable: boolean
+  isSearchActive: boolean
+  searchResult: CompanionFile[]
+  scopeId: string | null
+}
+
 /**
  * Class to easily generate generic views for Provider plugins
  */
@@ -109,6 +116,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
   isHandlingScroll: boolean = false
 
   lastCheckbox: string | null = null
+
+  #searchState: SearchState = {
+    isSearchAvailable: false,
+    isSearchActive: false,
+    searchResult: [],
+    scopeId: null,
+  }
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
@@ -167,6 +181,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ partialTree: newPartialTree })
   }
 
+  #searchDebounceId: number | undefined
+
   #abortController: AbortController | undefined
 
   async #withAbort(op: (signal: AbortSignal) => Promise<void>) {
@@ -193,6 +209,79 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.plugin.uppy.off('cancel-all', cancelRequest)
       this.#abortController = undefined
     }
+  }
+
+  //! this would be checked at the very beginning and set the isSupportedSearch flag to true
+  #isSearchMode(): boolean {
+    const supportsServerSearch =
+      typeof (this.provider as any).search === 'function'
+
+    console.log(
+      'this.provider ----> {this.provider.search}',
+      this.provider.search,
+    )
+    return supportsServerSearch
+  }
+
+  async #performSearch(): Promise<void> {
+    const { partialTree, currentFolderId, searchString } =
+      this.plugin.getPluginState()
+    const currentFolder = partialTree.find(
+      (i) => i.id === currentFolderId,
+    ) as PartialTreeFolder
+
+    if (!this.#isSearchMode()) return
+
+    this.setLoading('Searching...')
+    await this.#withAbort(async (signal) => {
+      // Determine base scope path from current folder
+      const baseContextId = currentFolder.id
+      const baseContextNode = (partialTree.find(
+        (i) => i.id === baseContextId,
+      ) || currentFolder) as PartialTreeFolder
+      const scopePath = baseContextNode.type === 'root' ? null : baseContextId
+      const { items } = await (this.provider as any).search(searchString, {
+        signal,
+        path: scopePath ?? undefined,
+      })
+
+      console.log(
+        'logging items companionFile[] returned from performSearch ---> ',
+        items,
+      )
+      // Overlay: store results and cursor; don't mutate tree
+      this.#searchState.isSearchActive = true
+      this.#searchState.searchResult = items
+      this.#searchState.scopeId = scopePath
+    }).catch(handleError(this.plugin.uppy))
+    this.setLoading(false)
+  }
+
+  onSearchInput = (s: string): void => {
+    this.plugin.setPluginState({ searchString: s })
+
+    if (this.#searchDebounceId) {
+      window.clearTimeout(this.#searchDebounceId)
+      this.#searchDebounceId = undefined
+    }
+
+    const trimmed = s.trim()
+
+    if (trimmed === '') {
+      this.#searchState.isSearchActive = false
+      this.#searchState.searchResult = []
+      this.#searchState.scopeId = null
+      return
+    }
+
+    // Debounce server-side search
+    this.#searchDebounceId = window.setTimeout(() => {
+      // Only run if still in search mode with latest value
+      if (this.#isSearchMode()) {
+        this.#performSearch()
+      }
+      this.#searchDebounceId = undefined
+    }, 500)
   }
 
   async openFolder(folderId: string | null): Promise<void> {
@@ -472,9 +561,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {opts.showFilter && (
           <SearchInput
             searchString={searchString}
-            setSearchString={(s: string) => {
-              this.plugin.setPluginState({ searchString: s })
-            }}
+            setSearchString={(s: string) => this.onSearchInput(s)}
             submitSearchString={() => {}}
             inputLabel={i18n('filter')}
             clearSearchLabel={i18n('resetFilter')}
