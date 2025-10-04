@@ -27,6 +27,7 @@ import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelec
 import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
 import AuthView from './AuthView.js'
+import GlobalSearchView from './GlobalSearchView.js'
 import Header from './Header.js'
 
 export function defaultPickerIcon(): h.JSX.Element {
@@ -123,6 +124,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     searchResult: [],
     scopeId: null,
   }
+
+  #checkedSearchResults: Set<string> = new Set()
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
@@ -419,6 +422,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return result
   }
 
+  toggleSearchResultCheckbox = (file: CompanionFile): void => {
+    const fileId = file.requestPath
+    if (this.#checkedSearchResults.has(fileId)) {
+      this.#checkedSearchResults.delete(fileId)
+    } else {
+      this.#checkedSearchResults.add(fileId)
+    }
+    // Trigger re-render
+    this.plugin.setPluginState({})
+  }
+
   async donePicking(): Promise<void> {
     const { partialTree } = this.plugin.getPluginState()
 
@@ -572,19 +586,29 @@ export default class ProviderView<M extends Meta, B extends Body> {
           />
         )}
 
-        <Browser<M, B>
-          toggleCheckbox={this.toggleCheckbox}
-          displayedPartialTree={this.getDisplayedPartialTree()}
-          openFolder={this.openFolder}
-          virtualList={opts.virtualList}
-          noResultsLabel={i18n('noFilesFound')}
-          handleScroll={this.handleScroll}
-          viewType={opts.viewType}
-          showTitles={opts.showTitles}
-          i18n={this.plugin.uppy.i18n}
-          isLoading={loading}
-          utmSource="Companion"
-        />
+        {this.#searchState.isSearchActive ? (
+          <GlobalSearchView
+            searchResults={this.#searchState.searchResult}
+            checkedSearchResults={this.#checkedSearchResults}
+            toggleSearchResultCheckbox={this.toggleSearchResultCheckbox}
+            validateSingleFile={this.validateSingleFile}
+            i18n={i18n}
+          />
+        ) : (
+          <Browser<M, B>
+            toggleCheckbox={this.toggleCheckbox}
+            displayedPartialTree={this.getDisplayedPartialTree()}
+            openFolder={this.openFolder}
+            virtualList={opts.virtualList}
+            noResultsLabel={i18n('noFilesFound')}
+            handleScroll={this.handleScroll}
+            viewType={opts.viewType}
+            showTitles={opts.showTitles}
+            i18n={this.plugin.uppy.i18n}
+            isLoading={loading}
+            utmSource="Companion"
+          />
+        )}
 
         <FooterActions
           partialTree={partialTree}
