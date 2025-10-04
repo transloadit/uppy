@@ -150,6 +150,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.render = this.render.bind(this)
     this.cancelSelection = this.cancelSelection.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
+    this.openSearchResultFolder = this.openSearchResultFolder.bind(this)
 
     // Set default state for the plugin
     this.resetPluginState()
@@ -289,8 +290,97 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }, 500)
   }
 
+  #createSyntheticFolderCompanionFile(
+    name: string,
+    requestPath: string,
+  ): CompanionFile {
+    return {
+      id: `synthetic:${requestPath}`,
+      name: decodeURIComponent(name),
+      icon: 'folder',
+      type: 'folder',
+      mimeType: '',
+      extension: '',
+      size: 0,
+      isFolder: true,
+      modifiedDate: '',
+      thumbnail: '',
+      requestPath,
+    }
+  }
+
+  /**
+   * Ensure that each ancestor segment of the encoded requestPath exists
+   * as a folder node in the partialTree, from root to target folder.
+   * If an ancestor is missing, we create a synthetic folder node with
+   * minimal data so breadcrumbs can render correctly. For the final
+   * (clicked) folder we use the real CompanionFile data.
+   */
+  #buildTree(file: CompanionFile): PartialTree {
+    const { partialTree } = this.plugin.getPluginState()
+
+    // requestPath is URL-encoded with a leading %2F for root, e.g.
+    // "%2Famazing_folder%2Fnested_folder"
+    const encodedSegments = file.requestPath
+      .split('%2F')
+      .filter((s) => s.length > 0)
+
+    let parentId: PartialTreeId = this.plugin.rootFolderId
+    let currentPath = ''
+
+    // Work on a copy so we can push while iterating safely
+    const newPartialTree: PartialTree = [...partialTree]
+
+    for (let i = 0; i < encodedSegments.length; i += 1) {
+      const segment = encodedSegments[i]
+      currentPath = `${currentPath}%2F${segment}`
+
+      const existing = newPartialTree.find((n) => n.id === currentPath)
+      if (existing) {
+        // Move parent pointer down the chain
+        parentId = currentPath
+        continue
+      }
+
+      const isTarget = currentPath === file.requestPath
+      const companionData: CompanionFile = isTarget
+        ? file
+        : this.#createSyntheticFolderCompanionFile(segment, currentPath)
+
+      const node: PartialTreeFolderNode = {
+        type: 'folder',
+        id: currentPath,
+        cached: false,
+        nextPagePath: null,
+        status: 'unchecked',
+        parentId,
+        data: companionData,
+      }
+
+      newPartialTree.push(node)
+      parentId = currentPath
+    }
+
+    return newPartialTree
+  }
+
   async openSearchResultFolder(file: CompanionFile): Promise<void> {
-    console.log('openSearchResultFolder called with file ---> ', file )
+    // 1) Ensure ancestor chain and the folder itself exist in the tree
+    const builtTree = this.#buildTree(file)
+
+    // 2) Clear search state and switch back to normal view
+    this.#searchState.isSearchActive = false
+    this.#searchState.searchResult = []
+    this.#searchState.scopeId = null
+
+
+    this.plugin.setPluginState({
+      partialTree: builtTree,
+      currentFolderId: file.requestPath,
+      searchString: '',
+    })
+
+    await this.openFolder(file.requestPath)
   }
 
   async openFolder(folderId: string | null): Promise<void> {
@@ -533,7 +623,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-
+    console.log("logging partialTree in render ---> ", this.plugin.getPluginState().partialTree)
     if (!didFirstRender) {
       this.plugin.setPluginState({ didFirstRender: true })
       this.provider.fetchPreAuthToken()

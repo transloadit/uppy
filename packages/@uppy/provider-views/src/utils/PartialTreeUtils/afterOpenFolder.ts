@@ -13,7 +13,13 @@ const afterOpenFolder = (
   currentPagePath: string | null,
   validateSingleFile: (file: CompanionFile) => string | null,
 ): PartialTree => {
-  const discoveredFolders = discoveredItems.filter((i) => i.isFolder === true)
+  console.log("inside afterOpenFolder called with partialTree ---> ", oldPartialTree)
+  console.log("inside afterOpenFolder called with discoveredItems ---> ", discoveredItems)
+  console.log("inside afterOpenFolder called with clickedFolder ---> ", clickedFolder)
+
+  const discoveredFolders = discoveredItems.filter((i) => i.isFolder === true && !oldPartialTree.find((f) => f.id === i.requestPath))
+
+  console.log("logging discoveredFolders inside afterOpenFolder ---> ", discoveredFolders)
   const discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
 
   const isParentFolderChecked =
