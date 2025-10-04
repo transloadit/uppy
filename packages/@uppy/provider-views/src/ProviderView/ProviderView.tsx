@@ -540,53 +540,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const updatedPartialTree = this.#buildTree(file)
 
-    const encodedSegments = file.requestPath
-      .split('%2F')
-      .filter((segment) => segment.length > 0)
-    const parentSegments =
-      encodedSegments.length > 0
-        ? encodedSegments.slice(0, encodedSegments.length - 1)
-        : []
+    // Extract parent folder IDs from the file's path for status updates
+    const decodedPath = decodeURIComponent(file.requestPath)
+    const segments = decodedPath.split('/').filter((s) => s.length > 0)
+    const parentSegments = segments.slice(0, segments.length - 1)
 
     const parentNodeIds: PartialTreeId[] = []
-    let currentPath = ''
-    parentSegments.forEach((segment) => {
-      currentPath = `${currentPath}%2F${segment}`
-      parentNodeIds.push(currentPath)
+    parentSegments.forEach((_, index) => {
+      const pathSegments = segments.slice(0, index + 1)
+      const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
+      parentNodeIds.push(encodedPath)
     })
 
-    const parentId: PartialTreeId =
-      parentNodeIds.length > 0
-        ? parentNodeIds[parentNodeIds.length - 1]
-        : this.plugin.rootFolderId
-
-    let targetItem = updatedPartialTree.find((item) => item.id === fileId) as
+    const targetItem = updatedPartialTree.find((item) => item.id === fileId) as
       | PartialTreeFile
       | PartialTreeFolderNode
-      | undefined
 
-    if (!targetItem) {
-      const restrictionError = this.validateSingleFile(file)
-      const newFile: PartialTreeFile = {
-        type: 'file',
-        id: fileId,
-        restrictionError,
-        status: 'unchecked',
-        parentId,
-        data: file,
-      }
-      updatedPartialTree.push(newFile)
-      targetItem = newFile
-    } else {
-      targetItem.data = file
-      if (targetItem.type === 'file') {
-        targetItem.restrictionError = this.validateSingleFile(file)
-        targetItem.parentId = parentId
-      }
-    }
-
-    if (!targetItem) {
-      return
+    // #buildTree guarantees the target node exists; refresh validation if it's a file
+    if (targetItem.type === 'file') {
+      targetItem.restrictionError = this.validateSingleFile(file)
     }
 
     const appliedCheckedState =
