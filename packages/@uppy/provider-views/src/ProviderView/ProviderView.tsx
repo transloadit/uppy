@@ -125,8 +125,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     scopeId: null,
   }
 
-  #checkedSearchResults: Set<string> = new Set()
-
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
     this.provider = opts.provider
@@ -167,7 +165,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   resetPluginState(): void {
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
-    this.#checkedSearchResults.clear()
   }
 
   tearDown(): void {
@@ -184,7 +181,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       item.type === 'root' ? item : { ...item, status: 'unchecked' },
     )
     this.plugin.setPluginState({ partialTree: newPartialTree })
-    this.#checkedSearchResults.clear()
   }
 
   #searchDebounceId: number | undefined
@@ -535,7 +531,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
-    const isCurrentlyChecked = this.#checkedSearchResults.has(fileId)
+    const { partialTree } = this.plugin.getPluginState()
+
+    const existingItem = partialTree.find((item) => item.id === fileId)
+    const isCurrentlyChecked =
+      existingItem?.type !== 'root' && existingItem?.status === 'checked'
     const nextIsChecked = !isCurrentlyChecked
 
     const updatedPartialTree = this.#buildTree(file)
@@ -567,10 +567,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     if (appliedCheckedState) {
       targetItem.status = 'checked'
-      this.#checkedSearchResults.add(fileId)
     } else if (!nextIsChecked) {
       targetItem.status = 'unchecked'
-      this.#checkedSearchResults.delete(fileId)
     }
 
     parentNodeIds.forEach((parentNodeId) => {
@@ -723,6 +721,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, username, searchString } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
 
+    // Derive checked search results from partialTree
+    const checkedSearchResults = new Set<string>(
+      partialTree
+        .filter((item) => item.type !== 'root' && item.status === 'checked')
+        .map((item) => item.id as string),
+    )
+
     return (
       <div
         className={classNames(
@@ -756,7 +761,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {this.#searchState.isSearchActive ? (
           <GlobalSearchView
             searchResults={this.#searchState.searchResult}
-            checkedSearchResults={this.#checkedSearchResults}
+            checkedSearchResults={checkedSearchResults}
             openSearchResultFolder={this.openSearchResultFolder}
             toggleSearchResultCheckbox={this.toggleSearchResultCheckbox}
             validateSingleFile={this.validateSingleFile}
