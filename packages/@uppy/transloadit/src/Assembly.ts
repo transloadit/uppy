@@ -6,7 +6,7 @@ import {
   NetworkError,
 } from '@uppy/utils'
 import Emitter from 'component-emitter'
-import type { AssemblyResponse } from './index.js'
+import { type AssemblyResponse, getAssemblyUrlSsl } from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -24,7 +24,11 @@ const statusOrder = [ASSEMBLY_UPLOADING, ASSEMBLY_EXECUTING, ASSEMBLY_COMPLETED]
  * …so that we can emit the 'executing' event even if the execution step was so
  * fast that we missed it.
  */
-function isStatus(status: string, test: string) {
+function isStatus(status: unknown, test: string) {
+  if (typeof status !== 'string') {
+    return false
+  }
+
   return statusOrder.indexOf(status) >= statusOrder.indexOf(test)
 }
 
@@ -112,7 +116,7 @@ class TransloaditAssembly extends Emitter {
       const file = JSON.parse(e.data)
       this.status = {
         ...this.status,
-        uploads: [...this.status.uploads, file],
+        uploads: [...(this.status.uploads ?? []), file],
       }
       this.emit('upload', file)
     })
@@ -123,7 +127,7 @@ class TransloaditAssembly extends Emitter {
         ...this.status,
         results: {
           ...this.status.results,
-          [stepName]: [...(this.status.results[stepName] ?? []), result],
+          [stepName]: [...(this.status.results?.[stepName] ?? []), result],
         },
       }
       this.emit('result', stepName, result)
@@ -181,9 +185,9 @@ class TransloaditAssembly extends Emitter {
 
     try {
       this.#previousFetchStatusStillPending = true
-      const response = await this.#fetchWithNetworkError(
-        this.status.assembly_ssl_url,
-      )
+      const statusUrl = getAssemblyUrlSsl(this.status)
+
+      const response = await this.#fetchWithNetworkError(statusUrl)
       this.#previousFetchStatusStillPending = false
 
       if (this.closed) return
@@ -259,29 +263,38 @@ class TransloaditAssembly extends Emitter {
     }
 
     // Only emit if the upload is new (not in prev.uploads).
-    Object.keys(next.uploads)
-      .filter((upload) => !has(prev.uploads, upload))
-      .forEach((upload) => {
-        // @ts-ignore either the types are wrong or the tests are wrong.
-        // types think next.uploads is an array, but the tests pass an object.
-        this.emit('upload', next.uploads[upload])
-      })
+    const prevUploads = prev.uploads
+    const nextUploads = next.uploads
+    if (nextUploads != null && prevUploads != null) {
+      Object.keys(nextUploads)
+        .filter((upload) => !has(prevUploads, upload))
+        .forEach((upload) => {
+          // This is a bit confusing. Not sure why Object.keys was chosen here, because nextUploads is an Array. Object.keys returns strings for array keys ("0", "1", etc.). Typescript expects arrays to be indexed with a number, not a string nextUploads[0], even though JavaScript is fine with it, so we need to type assert here:
+          this.emit('upload', nextUploads[upload as unknown as number])
+        })
+    }
 
     if (nowExecuting) {
       this.emit('metadata')
     }
 
     // Find new results.
-    Object.keys(next.results).forEach((stepName) => {
-      const nextResults = next.results[stepName]
-      const prevResults = prev.results[stepName]
+    const nextResultsMap = next.results
+    const prevResultsMap = prev.results
+    if (nextResultsMap != null && prevResultsMap != null) {
+      Object.keys(nextResultsMap).forEach((stepName) => {
+        const nextResults = nextResultsMap[stepName] ?? []
+        const prevResults = prevResultsMap[stepName] ?? []
 
-      nextResults
-        .filter((n) => !prevResults || !prevResults.some((p) => p.id === n.id))
-        .forEach((result) => {
-          this.emit('result', stepName, result)
-        })
-    })
+        nextResults
+          .filter(
+            (n) => !prevResults || !prevResults.some((p) => p.id === n.id),
+          )
+          .forEach((result) => {
+            this.emit('result', stepName, result)
+          })
+      })
+    }
 
     if (
       isStatus(nextStatus, ASSEMBLY_COMPLETED) &&
