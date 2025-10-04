@@ -328,7 +328,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     let parentId: PartialTreeId = this.plugin.rootFolderId
 
-    segments.forEach((segment, index) => {
+    segments.forEach((segment, index, arr) => {
       // Build encoded path incrementally
       const pathSegments = segments.slice(0, index + 1)
       const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
@@ -340,21 +340,39 @@ export default class ProviderView<M extends Meta, B extends Body> {
         return
       }
 
-      // Determine if this is the target folder or an intermediate ancestor
-      const isTargetFolder = encodedPath === file.requestPath
-      const folderData = isTargetFolder
-        ? file
-        : this.#createSyntheticFolderCompanionFile(segment, encodedPath)
+      // Check if this is the last segment and the file is not a folder
+      const isLastSegment = index === arr.length - 1
+      const isFile = !file.isFolder && isLastSegment
 
-      // Create and add the folder node
-      const node: PartialTreeFolderNode = {
-        type: 'folder',
-        id: encodedPath,
-        cached: false,
-        nextPagePath: null,
-        status: 'unchecked',
-        parentId,
-        data: folderData,
+      let node: PartialTreeFolderNode | PartialTreeFile
+
+      if (isFile) {
+        // Create a file node for the last segment
+        const restrictionError = this.validateSingleFile(file)
+        node = {
+          type: 'file',
+          id: encodedPath,
+          restrictionError,
+          status: 'unchecked',
+          parentId,
+          data: file,
+        }
+      } else {
+        // Create a folder node (either intermediate ancestor or target folder)
+        const isTargetFolder = encodedPath === file.requestPath
+        const folderData = isTargetFolder
+          ? file
+          : this.#createSyntheticFolderCompanionFile(segment, encodedPath)
+
+        node = {
+          type: 'folder',
+          id: encodedPath,
+          cached: false,
+          nextPagePath: null,
+          status: 'unchecked',
+          parentId,
+          data: folderData,
+        }
       }
 
       newPartialTree.push(node)
