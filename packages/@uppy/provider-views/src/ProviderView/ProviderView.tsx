@@ -167,6 +167,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   resetPluginState(): void {
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+    this.#checkedSearchResults.clear()
   }
 
   tearDown(): void {
@@ -183,6 +184,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       item.type === 'root' ? item : { ...item, status: 'unchecked' },
     )
     this.plugin.setPluginState({ partialTree: newPartialTree })
+    this.#checkedSearchResults.clear()
   }
 
   #searchDebounceId: number | undefined
@@ -373,7 +375,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#searchState.searchResult = []
     this.#searchState.scopeId = null
 
-
     this.plugin.setPluginState({
       partialTree: builtTree,
       currentFolderId: file.requestPath,
@@ -518,13 +519,94 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
-    if (this.#checkedSearchResults.has(fileId)) {
-      this.#checkedSearchResults.delete(fileId)
+    const isCurrentlyChecked = this.#checkedSearchResults.has(fileId)
+    const nextIsChecked = !isCurrentlyChecked
+
+    const updatedPartialTree = this.#buildTree(file)
+
+    const encodedSegments = file.requestPath
+      .split('%2F')
+      .filter((segment) => segment.length > 0)
+    const parentSegments =
+      encodedSegments.length > 0
+        ? encodedSegments.slice(0, encodedSegments.length - 1)
+        : []
+
+    const parentNodeIds: PartialTreeId[] = []
+    let currentPath = ''
+    parentSegments.forEach((segment) => {
+      currentPath = `${currentPath}%2F${segment}`
+      parentNodeIds.push(currentPath)
+    })
+
+    const parentId: PartialTreeId =
+      parentNodeIds.length > 0
+        ? parentNodeIds[parentNodeIds.length - 1]
+        : this.plugin.rootFolderId
+
+    let targetItem = updatedPartialTree.find((item) => item.id === fileId) as
+      | PartialTreeFile
+      | PartialTreeFolderNode
+      | undefined
+
+    if (!targetItem) {
+      const restrictionError = this.validateSingleFile(file)
+      const newFile: PartialTreeFile = {
+        type: 'file',
+        id: fileId,
+        restrictionError,
+        status: 'unchecked',
+        parentId,
+        data: file,
+      }
+      updatedPartialTree.push(newFile)
+      targetItem = newFile
     } else {
-      this.#checkedSearchResults.add(fileId)
+      targetItem.data = file
+      if (targetItem.type === 'file') {
+        targetItem.restrictionError = this.validateSingleFile(file)
+        targetItem.parentId = parentId
+      }
     }
-    // Trigger re-render
-    this.plugin.setPluginState({})
+
+    if (!targetItem) {
+      return
+    }
+
+    const appliedCheckedState =
+      nextIsChecked &&
+      (targetItem.type !== 'file' || !targetItem.restrictionError)
+
+    if (appliedCheckedState) {
+      targetItem.status = 'checked'
+      this.#checkedSearchResults.add(fileId)
+    } else if (!nextIsChecked) {
+      targetItem.status = 'unchecked'
+      this.#checkedSearchResults.delete(fileId)
+    }
+
+    parentNodeIds.forEach((parentNodeId) => {
+      const parentNode = updatedPartialTree.find(
+        (item) => item.id === parentNodeId,
+      ) as PartialTreeFolderNode | undefined
+      if (!parentNode) return
+
+      if (appliedCheckedState) {
+        if (parentNode.status !== 'checked') {
+          parentNode.status = 'partial'
+        }
+      } else if (!nextIsChecked) {
+        const hasCheckedChildren = updatedPartialTree.some(
+          (item) =>
+            item.type !== 'root' &&
+            item.parentId === parentNodeId &&
+            item.status === 'checked',
+        )
+        parentNode.status = hasCheckedChildren ? 'partial' : 'unchecked'
+      }
+    })
+
+    this.plugin.setPluginState({ partialTree: updatedPartialTree })
   }
 
   async donePicking(): Promise<void> {
@@ -623,7 +705,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
   render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-    console.log("logging partialTree in render ---> ", this.plugin.getPluginState().partialTree)
+    console.log(
+      'logging partialTree in render ---> ',
+      this.plugin.getPluginState().partialTree,
+    )
     if (!didFirstRender) {
       this.plugin.setPluginState({ didFirstRender: true })
       this.provider.fetchPreAuthToken()

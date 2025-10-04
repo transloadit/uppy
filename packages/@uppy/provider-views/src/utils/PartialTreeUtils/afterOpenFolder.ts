@@ -20,7 +20,7 @@ const afterOpenFolder = (
   const discoveredFolders = discoveredItems.filter((i) => i.isFolder === true && !oldPartialTree.find((f) => f.id === i.requestPath))
 
   console.log("logging discoveredFolders inside afterOpenFolder ---> ", discoveredFolders)
-  const discoveredFiles = discoveredItems.filter((i) => i.isFolder === false)
+  const discoveredFiles = discoveredItems.filter((i) => i.isFolder === false && !oldPartialTree.find((f) => f.id === i.requestPath))
 
   const isParentFolderChecked =
     clickedFolder.type === 'folder' && clickedFolder.status === 'checked'
