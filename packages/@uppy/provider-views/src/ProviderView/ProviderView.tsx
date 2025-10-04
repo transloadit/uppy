@@ -411,6 +411,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       return
     }
 
+    console.log("clickedFolder ---> ", clickedFolder)
     this.setLoading(true)
     await this.#withAbort(async (signal) => {
       let currentPagePath = folderId
@@ -592,6 +593,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
     })
 
+    console.log("updatedPartialTree after toggleSearchResultCheckbox ---> ", updatedPartialTree)
     this.plugin.setPluginState({ partialTree: updatedPartialTree })
   }
 

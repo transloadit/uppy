@@ -69,9 +69,9 @@ const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
     (item) => item.status === 'unchecked',
   )
 
-  if (areAllChildrenChecked) {
+  if (areAllChildrenChecked && folder.cached) {
     folder.status = 'checked'
-  } else if (areAllChildrenUnchecked) {
+  } else if (areAllChildrenUnchecked && folder.cached) {
     folder.status = 'unchecked'
   } else {
     folder.status = 'partial'
@@ -114,7 +114,7 @@ const afterToggleCheckbox = (
     percolateDown(tree, clickedItem.id, clickedItem.status === 'checked')
     percolateUp(tree, clickedItem.parentId)
   }
-
+  console.log("updated tree after toggle checkbox ---> ", tree)
   return tree
 }
 
