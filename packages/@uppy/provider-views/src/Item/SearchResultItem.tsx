@@ -5,6 +5,7 @@ import ItemIcon from './components/ItemIcon.js'
 interface SearchResultItemProps {
   file: CompanionFile
   isChecked: boolean
+  isPartial: boolean
   toggleCheckbox: (file: CompanionFile) => void
   openFolder?: (file: CompanionFile) => void
   isDisabled: boolean
@@ -14,6 +15,7 @@ interface SearchResultItemProps {
 const SearchResultItem = ({
   file,
   isChecked,
+  isPartial,
   toggleCheckbox,
   openFolder,
   isDisabled,
@@ -29,6 +31,7 @@ const SearchResultItem = ({
         { 'uppy-ProviderBrowserItem--disabled': isDisabled },
         { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
         { 'uppy-ProviderBrowserItem--is-checked': isChecked },
+        { 'uppy-ProviderBrowserItem--is-partial': isPartial },
       )}
       title={isDisabled ? restrictionReason ?? undefined : undefined}
     >

@@ -3,7 +3,7 @@ import SearchResultItem from '../Item/SearchResultItem.js'
 
 interface GlobalSearchViewProps {
   searchResults: CompanionFile[]
-  checkedSearchResults: Set<string>
+  searchResultStatuses: Map<string, 'checked' | 'partial'>
   toggleSearchResultCheckbox: (file: CompanionFile) => void
   openSearchResultFolder: (file: CompanionFile) => void
   validateSingleFile: (file: CompanionFile) => string | null
@@ -12,7 +12,7 @@ interface GlobalSearchViewProps {
 
 const GlobalSearchView = ({
   searchResults,
-  checkedSearchResults,
+  searchResultStatuses,
   toggleSearchResultCheckbox,
   openSearchResultFolder,
   validateSingleFile,
@@ -32,13 +32,16 @@ const GlobalSearchView = ({
         {searchResults.map((file) => {
           const restrictionReason = validateSingleFile(file)
           const isDisabled = restrictionReason != null
-          const isChecked = checkedSearchResults.has(file.requestPath)
+          const status = searchResultStatuses.get(file.requestPath)
+          const isChecked = status === 'checked'
+          const isPartial = status === 'partial'
 
           return (
             <SearchResultItem
               key={file.requestPath}
               file={file}
               isChecked={isChecked}
+              isPartial={isPartial}
               toggleCheckbox={toggleSearchResultCheckbox}
               openFolder={openSearchResultFolder}
               isDisabled={isDisabled}

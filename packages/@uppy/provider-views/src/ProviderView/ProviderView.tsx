@@ -721,11 +721,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, username, searchString } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
 
-    // Derive checked search results from partialTree
-    const checkedSearchResults = new Set<string>(
+    // Derive checked and partial search results from partialTree
+    const searchResultStatuses = new Map<string, 'checked' | 'partial'>(
       partialTree
-        .filter((item) => item.type !== 'root' && item.status === 'checked')
-        .map((item) => item.id as string),
+        .filter((item) => item.type !== 'root' && (item.status === 'checked' || item.status === 'partial'))
+        .map((item) => {
+          const status = item.type === 'root' ? 'unchecked' : item.status
+          return [item.id as string, status as 'checked' | 'partial']
+        }),
     )
 
     return (
@@ -761,7 +764,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {this.#searchState.isSearchActive ? (
           <GlobalSearchView
             searchResults={this.#searchState.searchResult}
-            checkedSearchResults={checkedSearchResults}
+            searchResultStatuses={searchResultStatuses}
             openSearchResultFolder={this.openSearchResultFolder}
             toggleSearchResultCheckbox={this.toggleSearchResultCheckbox}
             validateSingleFile={this.validateSingleFile}
