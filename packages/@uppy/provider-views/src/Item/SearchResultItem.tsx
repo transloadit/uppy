@@ -6,6 +6,7 @@ interface SearchResultItemProps {
   file: CompanionFile
   isChecked: boolean
   toggleCheckbox: (file: CompanionFile) => void
+  openFolder?: (file: CompanionFile) => void
   isDisabled: boolean
   restrictionReason?: string | null
 }
@@ -14,6 +15,7 @@ const SearchResultItem = ({
   file,
   isChecked,
   toggleCheckbox,
+  openFolder,
   isDisabled,
   restrictionReason,
 }: SearchResultItemProps) => {
@@ -26,6 +28,7 @@ const SearchResultItem = ({
         'uppy-ProviderBrowserItem',
         { 'uppy-ProviderBrowserItem--disabled': isDisabled },
         { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
+        { 'uppy-ProviderBrowserItem--is-checked': isChecked },
       )}
       title={isDisabled ? restrictionReason ?? undefined : undefined}
     >
@@ -47,6 +50,11 @@ const SearchResultItem = ({
         className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
         disabled={isDisabled}
         aria-label={file.name}
+        onClick={() => {
+          if (file.isFolder && openFolder) {
+            openFolder(file)
+          }
+        }}
       >
         <div className="uppy-ProviderBrowserItem-iconWrap">
           <ItemIcon itemIconString={itemIconString} />

@@ -5,6 +5,7 @@ interface GlobalSearchViewProps {
   searchResults: CompanionFile[]
   checkedSearchResults: Set<string>
   toggleSearchResultCheckbox: (file: CompanionFile) => void
+  openSearchResultFolder: (file: CompanionFile) => void
   validateSingleFile: (file: CompanionFile) => string | null
   i18n: (key: string) => string
 }
@@ -13,6 +14,7 @@ const GlobalSearchView = ({
   searchResults,
   checkedSearchResults,
   toggleSearchResultCheckbox,
+  openSearchResultFolder,
   validateSingleFile,
   i18n,
 }: GlobalSearchViewProps) => {
@@ -38,6 +40,7 @@ const GlobalSearchView = ({
               file={file}
               isChecked={isChecked}
               toggleCheckbox={toggleSearchResultCheckbox}
+              openFolder={openSearchResultFolder}
               isDisabled={isDisabled}
               restrictionReason={restrictionReason}
             />

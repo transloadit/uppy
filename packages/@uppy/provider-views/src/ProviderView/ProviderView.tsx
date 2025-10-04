@@ -257,7 +257,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.#searchState.searchResult = items
       this.#searchState.scopeId = scopePath
 
-      console.log("search state after perform search --> ", this.#searchState)
+      console.log('search state after perform search --> ', this.#searchState)
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
   }
@@ -287,6 +287,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
       this.#searchDebounceId = undefined
     }, 500)
+  }
+
+  async openSearchResultFolder(file: CompanionFile): Promise<void> {
+    console.log('openSearchResultFolder called with file ---> ', file )
   }
 
   async openFolder(folderId: string | null): Promise<void> {
@@ -590,6 +594,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           <GlobalSearchView
             searchResults={this.#searchState.searchResult}
             checkedSearchResults={this.#checkedSearchResults}
+            openSearchResultFolder={this.openSearchResultFolder}
             toggleSearchResultCheckbox={this.toggleSearchResultCheckbox}
             validateSingleFile={this.validateSingleFile}
             i18n={i18n}
