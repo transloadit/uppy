@@ -532,13 +532,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
-    const { partialTree } = this.plugin.getPluginState()
-
-    const existingItem = partialTree.find((item) => item.id === fileId)
-    const isCurrentlyChecked =
-      existingItem?.type !== 'root' && existingItem?.status === 'checked'
-    const nextIsChecked = !isCurrentlyChecked
-
     const updatedPartialTree = this.#buildTree(file)
 
     // Extract parent folder IDs from the file's path for status updates
@@ -562,13 +555,24 @@ export default class ProviderView<M extends Meta, B extends Body> {
       targetItem.restrictionError = this.validateSingleFile(file)
     }
 
+    const currentStatus = targetItem.status ?? 'unchecked'
+    const desiredStatus =
+      currentStatus === 'partial'
+        ? 'checked'
+        : currentStatus === 'checked'
+          ? 'unchecked'
+          : 'checked'
+
+    const shouldCheck = desiredStatus === 'checked'
     const appliedCheckedState =
-      nextIsChecked &&
+      shouldCheck &&
       (targetItem.type !== 'file' || !targetItem.restrictionError)
 
     if (appliedCheckedState) {
       targetItem.status = 'checked'
-    } else if (!nextIsChecked) {
+    } else if (!shouldCheck) {
+      targetItem.status = 'unchecked'
+    } else {
       targetItem.status = 'unchecked'
     }
 
@@ -582,7 +586,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         if (parentNode.status !== 'checked') {
           parentNode.status = 'partial'
         }
-      } else if (!nextIsChecked) {
+      } else {
         const hasCheckedChildren = updatedPartialTree.some(
           (item) =>
             item.type !== 'root' &&
@@ -593,7 +597,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
     })
 
-    console.log("updatedPartialTree after toggleSearchResultCheckbox ---> ", updatedPartialTree)
     this.plugin.setPluginState({ partialTree: updatedPartialTree })
   }
 
