@@ -247,12 +247,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     this.setLoading('Searching...')
     await this.#withAbort(async (signal) => {
-      // Determine base scope path from current folder
-      const baseContextId = currentFolder.id
-      const baseContextNode = (partialTree.find(
-        (i) => i.id === baseContextId,
-      ) || currentFolder) as PartialTreeFolder
-      const scopePath = baseContextNode.type === 'root' ? null : baseContextId
+      const scopePath = currentFolder.type === 'root' ? null : currentFolderId
       const { items } = await (this.provider as any).search(searchString, {
         signal,
         path: scopePath ?? undefined,
@@ -274,9 +269,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   onSearchInput = (s: string): void => {
     this.plugin.setPluginState({ searchString: s })
-
     this.#clearSearchDebounce()
-
     const trimmed = s.trim()
 
     if (trimmed === '') {
@@ -284,9 +277,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       return
     }
 
-    // Debounce server-side search
     this.#searchState.debounceId = window.setTimeout(() => {
-      // Only run if still in search mode with latest value
       if (this.#isSearchMode()) {
         this.#performSearch()
       }
@@ -314,13 +305,40 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  /**
-   * Ensure that each ancestor segment of the encoded requestPath exists
-   * as a folder node in the partialTree, from root to target folder / file.
-   * If an ancestor is missing, we create a synthetic folder node with
-   * minimal data so breadcrumbs can render correctly. For the final
-   * (clicked) folder we use the real CompanionFile data.
-   */
+  #buildLastNode(
+    file: CompanionFile,
+    encodedPath: string,
+    parentId: PartialTreeId,
+  ): PartialTreeFolderNode | PartialTreeFile {
+    const isFile = !file.isFolder
+    let node: PartialTreeFolderNode | PartialTreeFile
+
+    if (isFile) {
+      node = {
+        type: 'file',
+        id: encodedPath,
+        restrictionError: this.validateSingleFile(file),
+        status: 'unchecked',
+        parentId,
+        data: file,
+      }
+    } else {
+      node = {
+        type: 'folder',
+        id: encodedPath,
+        cached: false,
+        nextPagePath: null,
+        status: 'unchecked',
+        parentId,
+        data: file,
+      }
+    }
+
+    return node
+  }
+
+  // Build Path from root to the leaf node (file or folder) , if any ancestor already exists in the tree, skip it
+  // this would make sure all ancestor are present in the partial Tree , before opening the folder or checking the file
   #buildPath(file: CompanionFile): PartialTree {
     const { partialTree } = this.plugin.getPluginState()
     const newPartialTree: PartialTree = [...partialTree]
@@ -331,7 +349,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     let parentId: PartialTreeId = this.plugin.rootFolderId
 
-    segments.forEach((segment, index) => {
+    segments.forEach((segment, index, arr) => {
       // Build encoded path incrementally
       const pathSegments = segments.slice(0, index + 1)
       const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
@@ -343,13 +361,22 @@ export default class ProviderView<M extends Meta, B extends Body> {
         return
       }
 
-      const isTerminalSegment = index === segments.length - 1
-      const representsFile = this.#representsFileNode(file, isTerminalSegment)
+      const isLastNode = index === arr.length - 1
+      let node: PartialTreeFolderNode | PartialTreeFile
 
-      const node = representsFile
-        ? this.#createFileNode(encodedPath, parentId, file)
-        : this.#createFolderNode(encodedPath, parentId, segment, file)
-
+      if (isLastNode) {
+        node = this.#buildLastNode(file, encodedPath, parentId)
+      } else {
+        node = {
+          type: 'folder',
+          id: encodedPath,
+          cached: false,
+          nextPagePath: null,
+          status: 'unchecked',
+          parentId,
+          data: this.#createSyntheticFolderCompanionFile(segment, encodedPath),
+        }
+      }
       newPartialTree.push(node)
       parentId = encodedPath
     })
@@ -357,48 +384,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return newPartialTree
   }
 
-  #representsFileNode(
-    file: CompanionFile,
-    isTerminalSegment: boolean,
-  ): boolean {
-    return isTerminalSegment && !file.isFolder
-  }
-
-  #createFileNode(
-    encodedPath: string,
-    parentId: PartialTreeId,
-    file: CompanionFile,
-  ): PartialTreeFile {
-    return {
-      type: 'file',
-      id: encodedPath,
-      restrictionError: this.validateSingleFile(file),
-      status: 'unchecked',
-      parentId,
-      data: file,
-    }
-  }
-
-  #createFolderNode(
-    encodedPath: string,
-    parentId: PartialTreeId,
-    segment: string,
-    file: CompanionFile,
-  ): PartialTreeFolderNode {
-    const isTargetFolder = encodedPath === file.requestPath
-    const folderData = isTargetFolder
-      ? file
-      : this.#createSyntheticFolderCompanionFile(segment, encodedPath)
-
-    return {
-      type: 'folder',
-      id: encodedPath,
-      cached: false,
-      nextPagePath: null,
-      status: 'unchecked',
-      parentId,
-      data: folderData,
-    }
+  #returnCheckedState(tree: PartialTree): Map<string, 'checked' | 'partial'> {
+    const checkedState = new Map<string, 'checked' | 'partial'>()
+    tree.forEach((item) => {
+      if (item.type !== 'root' && item.status !== 'unchecked') {
+        checkedState.set(item.id as string, item.status as 'checked' | 'partial')
+      }
+    })
+    return checkedState
   }
 
   async openSearchResultFolder(file: CompanionFile): Promise<void> {
@@ -697,18 +690,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const breadcrumbs = this.getBreadcrumbs()
 
     // Derive checked and partial search results from partialTree
-    const searchResultStatuses = new Map<string, 'checked' | 'partial'>(
-      partialTree
-        .filter(
-          (item) =>
-            item.type !== 'root' &&
-            (item.status === 'checked' || item.status === 'partial'),
-        )
-        .map((item) => {
-          const status = item.type === 'root' ? 'unchecked' : item.status
-          return [item.id as string, status as 'checked' | 'partial']
-        }),
-    )
+    const searchResultStatusMap = this.#returnCheckedState(partialTree)
 
     return (
       <div
@@ -742,7 +724,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {isSearchActive ? (
           <GlobalSearchView
             searchResults={this.#searchState.searchResult}
-            searchResultStatuses={searchResultStatuses}
+            searchResultStatuses={searchResultStatusMap}
             openSearchResultFolder={this.openSearchResultFolder}
             toggleSearchResultCheckbox={this.toggleSearchResultCheckbox}
             validateSingleFile={this.validateSingleFile}
