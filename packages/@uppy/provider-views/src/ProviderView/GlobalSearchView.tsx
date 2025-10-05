@@ -19,11 +19,7 @@ const GlobalSearchView = ({
   i18n,
 }: GlobalSearchViewProps) => {
   if (searchResults.length === 0) {
-    return (
-      <div className="uppy-Provider-empty">
-        {i18n('noFilesFound')}
-      </div>
-    )
+    return <div className="uppy-Provider-empty">{i18n('noFilesFound')}</div>
   }
 
   return (

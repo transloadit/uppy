@@ -41,7 +41,6 @@ const getCheckedFilesWithPaths = (
   ) as PartialTreeFile[]
 
   const companionFilesWithInjectedPaths = checkedFiles.map((file) => {
-
     const absFolders: (PartialTreeFile | PartialTreeFolderNode)[] = getPath(
       partialTree,
       file.id,

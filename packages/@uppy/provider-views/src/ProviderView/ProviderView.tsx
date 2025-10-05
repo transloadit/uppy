@@ -21,14 +21,14 @@ import SearchInput from '../SearchInput.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
-import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
-import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
-import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
-import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import {
   percolateDown,
   percolateUp,
 } from '../utils/PartialTreeUtils/afterToggleCheckbox.js'
+import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
+import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
+import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
+import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
 import AuthView from './AuthView.js'
 import GlobalSearchView from './GlobalSearchView.js'
@@ -233,11 +233,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   #isSearchMode(): boolean {
     const supportsServerSearch =
       typeof (this.provider as any).search === 'function'
-
-    console.log(
-      'this.provider ----> {this.provider.search}',
-      this.provider.search,
-    )
     return supportsServerSearch
   }
 
@@ -270,17 +265,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
         return
       }
 
-      console.log(
-        'logging items companionFile[] returned from performSearch ---> ',
-        items,
-      )
-
       this.#searchState.searchResult = items
-
       this.#searchState.scopeId = scopePath
-
-      console.log('search state after perform search --> ', this.#searchState)
-
       this.plugin.setPluginState({ isSearchActive: true })
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
@@ -371,7 +357,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return newPartialTree
   }
 
-  #representsFileNode(file: CompanionFile, isTerminalSegment: boolean): boolean {
+  #representsFileNode(
+    file: CompanionFile,
+    isTerminalSegment: boolean,
+  ): boolean {
     return isTerminalSegment && !file.isFolder
   }
 
@@ -443,7 +432,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       return
     }
 
-    console.log('clickedFolder ---> ', clickedFolder)
     this.setLoading(true)
     await this.#withAbort(async (signal) => {
       let currentPagePath = folderId
@@ -680,10 +668,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
-    console.log(
-      'logging partialTree in render ---> ',
-      this.plugin.getPluginState().partialTree,
-    )
+
     if (!didFirstRender) {
       this.plugin.setPluginState({ didFirstRender: true })
       this.provider.fetchPreAuthToken()

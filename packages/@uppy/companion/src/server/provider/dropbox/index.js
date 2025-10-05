@@ -115,7 +115,7 @@ async function fetchSearchEntries({ client, query }) {
     })
     .json()
 
-  const entries = (searchRes.matches)
+  const entries = searchRes.matches
     .map((m) => m.metadata.metadata)
     .filter(Boolean)
   return {

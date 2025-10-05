@@ -1,5 +1,5 @@
-import classNames from 'classnames'
 import type { CompanionFile } from '@uppy/utils'
+import classNames from 'classnames'
 import ItemIcon from './components/ItemIcon.js'
 
 interface SearchResultItemProps {
@@ -23,7 +23,12 @@ const SearchResultItem = ({
 }: SearchResultItemProps) => {
   const itemIconString = file.icon
 
-  console.log("SearchResultItem isChecked ---> ", isChecked, isDisabled, restrictionReason)
+  console.log(
+    'SearchResultItem isChecked ---> ',
+    isChecked,
+    isDisabled,
+    restrictionReason,
+  )
   return (
     <li
       className={classNames(
@@ -33,7 +38,7 @@ const SearchResultItem = ({
         { 'uppy-ProviderBrowserItem--is-checked': isChecked },
         { 'uppy-ProviderBrowserItem--is-partial': isPartial },
       )}
-      title={isDisabled ? restrictionReason ?? undefined : undefined}
+      title={isDisabled ? (restrictionReason ?? undefined) : undefined}
     >
       <input
         type="checkbox"

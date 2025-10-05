@@ -114,7 +114,7 @@ const afterToggleCheckbox = (
     percolateDown(tree, clickedItem.id, clickedItem.status === 'checked')
     percolateUp(tree, clickedItem.parentId)
   }
-  console.log("updated tree after toggle checkbox ---> ", tree)
+  console.log('updated tree after toggle checkbox ---> ', tree)
   return tree
 }
 
