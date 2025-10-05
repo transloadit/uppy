@@ -97,43 +97,16 @@ async function list({ client, directory, query }) {
 }
 
 async function doSearchEntries({ client, query }) {
-  const q = query?.q ?? query?.query
-  const cursor = query?.cursor
-  let scopePath = query?.path
-  try {
-    if (typeof scopePath === 'string' && scopePath.includes('%')) {
-      scopePath = decodeURIComponent(scopePath)
-    }
-  } catch (_) {
-    // ignore decode errors
-  }
-
-  // pagination for search
-  if (cursor) {
-    const continueRes = await client
-      .post('files/search/continue_v2', {
-        json: { cursor },
-        responseType: 'json',
-      })
-      .json()
-
-    const entries = (continueRes.matches || [])
-      .map((m) => m?.metadata?.metadata)
-      .filter(Boolean)
-    return {
-      entries,
-      has_more: !!continueRes.has_more,
-      cursor: continueRes.cursor ?? null,
-    }
-  }
+  const scopePath =
+    typeof query.path === 'string' ? decodeURIComponent(query.path) : undefined
 
   const searchRes = await client
     .post('files/search_v2', {
       json: {
-        query: String(q ?? '').trim(),
+        query: query.q.trim(),
         options: {
           path: scopePath || '',
-          max_results: 200,
+          max_results: 1000,
           file_status: 'active',
           filename_only: false,
         },
@@ -142,12 +115,12 @@ async function doSearchEntries({ client, query }) {
     })
     .json()
 
-  const entries = (searchRes.matches || [])
-    .map((m) => m?.metadata?.metadata)
+  const entries = (searchRes.matches)
+    .map((m) => m.metadata.metadata)
     .filter(Boolean)
   return {
     entries,
-    has_more: !!searchRes.has_more,
+    has_more: searchRes.has_more,
     cursor: searchRes.cursor ?? null,
   }
 }
