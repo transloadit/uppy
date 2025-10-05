@@ -65,6 +65,7 @@ const getDefaultState = (
   didFirstRender: false,
   username: null,
   loading: false,
+  isSearchActive: false,
 })
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
@@ -100,7 +101,6 @@ type RenderOpts<M extends Meta, B extends Body> = Omit<
 >
 
 type SearchState = {
-  isSearchActive: boolean
   searchResult: CompanionFile[]
   scopeId: string | null
   debounceId?: number
@@ -123,7 +123,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   lastCheckbox: string | null = null
 
   #searchState: SearchState = {
-    isSearchActive: false,
     searchResult: [],
     scopeId: null,
     debounceId: undefined,
@@ -190,9 +189,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   clearSearchState(): void {
     this.#clearSearchDebounce()
-    this.#searchState.isSearchActive = false
     this.#searchState.searchResult = []
     this.#searchState.scopeId = null
+    this.plugin.setPluginState({ isSearchActive: false })
   }
 
   #clearSearchDebounce(): void {
@@ -271,18 +270,18 @@ export default class ProviderView<M extends Meta, B extends Body> {
         return
       }
 
-
       console.log(
         'logging items companionFile[] returned from performSearch ---> ',
         items,
       )
-      // Overlay: store results and cursor; don't mutate tree
-      this.#searchState.isSearchActive = true
+
       this.#searchState.searchResult = items
 
       this.#searchState.scopeId = scopePath
 
       console.log('search state after perform search --> ', this.#searchState)
+
+      this.plugin.setPluginState({ isSearchActive: true })
     }).catch(handleError(this.plugin.uppy))
     this.setLoading(false)
   }
@@ -409,6 +408,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       partialTree: builtTree,
       currentFolderId: file.requestPath,
       searchString: '',
+      isSearchActive: false,
     })
 
     await this.openFolder(file.requestPath)
@@ -429,7 +429,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       return
     }
 
-    console.log("clickedFolder ---> ", clickedFolder)
+    console.log('clickedFolder ---> ', clickedFolder)
     this.setLoading(true)
     await this.#withAbort(async (signal) => {
       let currentPagePath = folderId
@@ -693,13 +693,18 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString } = this.plugin.getPluginState()
+    const { partialTree, username, searchString, isSearchActive } =
+      this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
 
     // Derive checked and partial search results from partialTree
     const searchResultStatuses = new Map<string, 'checked' | 'partial'>(
       partialTree
-        .filter((item) => item.type !== 'root' && (item.status === 'checked' || item.status === 'partial'))
+        .filter(
+          (item) =>
+            item.type !== 'root' &&
+            (item.status === 'checked' || item.status === 'partial'),
+        )
         .map((item) => {
           const status = item.type === 'root' ? 'unchecked' : item.status
           return [item.id as string, status as 'checked' | 'partial']
@@ -723,7 +728,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           username={username}
           i18n={i18n}
         />
-       {console.log("logging search state isSearchActive in render ----> ", this.#searchState.isSearchActive)}
         {opts.showFilter && (
           <SearchInput
             searchString={searchString}
@@ -736,7 +740,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           />
         )}
 
-        {this.#searchState.isSearchActive ? (
+        {isSearchActive ? (
           <GlobalSearchView
             searchResults={this.#searchState.searchResult}
             searchResultStatuses={searchResultStatuses}

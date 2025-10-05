@@ -133,6 +133,7 @@ export type UnknownProviderPluginState = {
   partialTree: PartialTree
   currentFolderId: PartialTreeId
   username: string | null
+  isSearchActive?: boolean
 }
 
 export interface AsyncStore {
