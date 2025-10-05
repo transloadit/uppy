@@ -22,13 +22,6 @@ const SearchResultItem = ({
   restrictionReason,
 }: SearchResultItemProps) => {
   const itemIconString = file.icon
-
-  console.log(
-    'SearchResultItem isChecked ---> ',
-    isChecked,
-    isDisabled,
-    restrictionReason,
-  )
   return (
     <li
       className={classNames(
