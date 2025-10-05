@@ -103,6 +103,7 @@ type SearchState = {
   isSearchActive: boolean
   searchResult: CompanionFile[]
   scopeId: string | null
+  debounceId?: number
 }
 
 /**
@@ -125,6 +126,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     isSearchActive: false,
     searchResult: [],
     scopeId: null,
+    debounceId: undefined,
   }
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
@@ -187,12 +189,18 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   clearSearchState(): void {
+    this.#clearSearchDebounce()
     this.#searchState.isSearchActive = false
     this.#searchState.searchResult = []
     this.#searchState.scopeId = null
   }
 
-  #searchDebounceId: number | undefined
+  #clearSearchDebounce(): void {
+    if (this.#searchState.debounceId != null) {
+      window.clearTimeout(this.#searchState.debounceId)
+      this.#searchState.debounceId = undefined
+    }
+  }
 
   #abortController: AbortController | undefined
 
@@ -256,6 +264,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
         path: scopePath ?? undefined,
       })
 
+      // ! any alternatives ?
+      // return if user clears search before results arrive
+      const currentSearchString = this.plugin.getPluginState().searchString
+      if (currentSearchString.trim() === '') {
+        return
+      }
+
+
       console.log(
         'logging items companionFile[] returned from performSearch ---> ',
         items,
@@ -263,6 +279,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // Overlay: store results and cursor; don't mutate tree
       this.#searchState.isSearchActive = true
       this.#searchState.searchResult = items
+
       this.#searchState.scopeId = scopePath
 
       console.log('search state after perform search --> ', this.#searchState)
@@ -273,10 +290,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   onSearchInput = (s: string): void => {
     this.plugin.setPluginState({ searchString: s })
 
-    if (this.#searchDebounceId) {
-      window.clearTimeout(this.#searchDebounceId)
-      this.#searchDebounceId = undefined
-    }
+    this.#clearSearchDebounce()
 
     const trimmed = s.trim()
 
@@ -286,12 +300,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
 
     // Debounce server-side search
-    this.#searchDebounceId = window.setTimeout(() => {
+    this.#searchState.debounceId = window.setTimeout(() => {
       // Only run if still in search mode with latest value
       if (this.#isSearchMode()) {
         this.#performSearch()
       }
-      this.#searchDebounceId = undefined
+      this.#searchState.debounceId = undefined
     }, 500)
   }
 
@@ -389,10 +403,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // 1) Ensure ancestor chain and the folder itself exist in the tree
     const builtTree = this.#buildPath(file)
 
-    // 2) Clear search state and switch back to normal view
-    this.#searchState.isSearchActive = false
-    this.#searchState.searchResult = []
-    this.#searchState.scopeId = null
+    this.clearSearchState()
 
     this.plugin.setPluginState({
       partialTree: builtTree,
@@ -712,7 +723,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           username={username}
           i18n={i18n}
         />
-
+       {console.log("logging search state isSearchActive in render ----> ", this.#searchState.isSearchActive)}
         {opts.showFilter && (
           <SearchInput
             searchString={searchString}
