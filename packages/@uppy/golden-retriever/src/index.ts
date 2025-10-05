@@ -333,11 +333,14 @@ export default class GoldenRetriever<
     this.uppy.log('[GoldenRetriever] Restore confirmed, proceeding...')
     // start all uploads again when file blobs are restored
     const { currentUploads } = this.uppy.getState()
-    if (currentUploads) {
+    if (Object.keys(currentUploads).length > 0) {
       this.uppy.resumeAll()
       Object.keys(currentUploads).forEach((uploadId) => {
         this.uppy.restore(uploadId)
       })
+    } else {
+      // if there are no current uploads, but there were files added just start a new upload with the current files
+      this.uppy.upload()
     }
     this.uppy.setState({ recoveredState: null })
   }
