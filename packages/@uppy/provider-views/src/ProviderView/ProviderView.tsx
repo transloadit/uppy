@@ -388,7 +388,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const checkedState = new Map<string, 'checked' | 'partial'>()
     tree.forEach((item) => {
       if (item.type !== 'root' && item.status !== 'unchecked') {
-        checkedState.set(item.id as string, item.status as 'checked' | 'partial')
+        checkedState.set(
+          item.id as string,
+          item.status as 'checked' | 'partial',
+        )
       }
     })
     return checkedState
