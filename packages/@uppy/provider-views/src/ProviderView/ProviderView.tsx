@@ -308,6 +308,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }, 500)
   }
 
+  // ! this just for prototyping , we can easily swap this with actual companionFile using files/get_metadata API in dropbox
   #createSyntheticFolderCompanionFile(
     name: string,
     requestPath: string,
@@ -344,7 +345,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     let parentId: PartialTreeId = this.plugin.rootFolderId
 
-    segments.forEach((segment, index, arr) => {
+    segments.forEach((segment, index) => {
       // Build encoded path incrementally
       const pathSegments = segments.slice(0, index + 1)
       const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
@@ -356,46 +357,59 @@ export default class ProviderView<M extends Meta, B extends Body> {
         return
       }
 
-      // Check if this is the last segment and the file is not a folder
-      const isLastSegment = index === arr.length - 1
-      const isFile = !file.isFolder && isLastSegment
+      const isTerminalSegment = index === segments.length - 1
+      const representsFile = this.#representsFileNode(file, isTerminalSegment)
 
-      let node: PartialTreeFolderNode | PartialTreeFile
-
-      if (isFile) {
-        // Create a file node for the last segment
-        const restrictionError = this.validateSingleFile(file)
-        node = {
-          type: 'file',
-          id: encodedPath,
-          restrictionError,
-          status: 'unchecked',
-          parentId,
-          data: file,
-        }
-      } else {
-        // Create a folder node (either intermediate ancestor or target folder)
-        const isTargetFolder = encodedPath === file.requestPath
-        const folderData = isTargetFolder
-          ? file
-          : this.#createSyntheticFolderCompanionFile(segment, encodedPath)
-
-        node = {
-          type: 'folder',
-          id: encodedPath,
-          cached: false,
-          nextPagePath: null,
-          status: 'unchecked',
-          parentId,
-          data: folderData,
-        }
-      }
+      const node = representsFile
+        ? this.#createFileNode(encodedPath, parentId, file)
+        : this.#createFolderNode(encodedPath, parentId, segment, file)
 
       newPartialTree.push(node)
       parentId = encodedPath
     })
 
     return newPartialTree
+  }
+
+  #representsFileNode(file: CompanionFile, isTerminalSegment: boolean): boolean {
+    return isTerminalSegment && !file.isFolder
+  }
+
+  #createFileNode(
+    encodedPath: string,
+    parentId: PartialTreeId,
+    file: CompanionFile,
+  ): PartialTreeFile {
+    return {
+      type: 'file',
+      id: encodedPath,
+      restrictionError: this.validateSingleFile(file),
+      status: 'unchecked',
+      parentId,
+      data: file,
+    }
+  }
+
+  #createFolderNode(
+    encodedPath: string,
+    parentId: PartialTreeId,
+    segment: string,
+    file: CompanionFile,
+  ): PartialTreeFolderNode {
+    const isTargetFolder = encodedPath === file.requestPath
+    const folderData = isTargetFolder
+      ? file
+      : this.#createSyntheticFolderCompanionFile(segment, encodedPath)
+
+    return {
+      type: 'folder',
+      id: encodedPath,
+      cached: false,
+      nextPagePath: null,
+      status: 'unchecked',
+      parentId,
+      data: folderData,
+    }
   }
 
   async openSearchResultFolder(file: CompanionFile): Promise<void> {
