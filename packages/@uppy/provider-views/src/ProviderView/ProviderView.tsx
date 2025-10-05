@@ -25,6 +25,10 @@ import getBreadcrumbs from '../utils/PartialTreeUtils/getBreadcrumbs.js'
 import getCheckedFilesWithPaths from '../utils/PartialTreeUtils/getCheckedFilesWithPaths.js'
 import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
+import {
+  percolateDown,
+  percolateUp,
+} from '../utils/PartialTreeUtils/afterToggleCheckbox.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
 import AuthView from './AuthView.js'
 import GlobalSearchView from './GlobalSearchView.js'
@@ -532,72 +536,32 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
-    const updatedPartialTree = this.#buildTree(file)
+    const tree = this.#buildTree(file)
 
-    // Extract parent folder IDs from the file's path for status updates
-    const decodedPath = decodeURIComponent(file.requestPath)
-    const segments = decodedPath.split('/').filter((s) => s.length > 0)
-    const parentSegments = segments.slice(0, segments.length - 1)
-
-    const parentNodeIds: PartialTreeId[] = []
-    parentSegments.forEach((_, index) => {
-      const pathSegments = segments.slice(0, index + 1)
-      const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
-      parentNodeIds.push(encodedPath)
-    })
-
-    const targetItem = updatedPartialTree.find((item) => item.id === fileId) as
+    const targetItem = tree.find((item) => item.id === fileId) as
       | PartialTreeFile
       | PartialTreeFolderNode
+      | undefined
+
+    if (!targetItem) {
+      this.plugin.setPluginState({ partialTree: tree })
+      return
+    }
 
     // #buildTree guarantees the target node exists; refresh validation if it's a file
     if (targetItem.type === 'file') {
       targetItem.restrictionError = this.validateSingleFile(file)
     }
 
-    const currentStatus = targetItem.status ?? 'unchecked'
-    const desiredStatus =
-      currentStatus === 'partial'
-        ? 'checked'
-        : currentStatus === 'checked'
-          ? 'unchecked'
-          : 'checked'
+    // Toggle the status: partial/unchecked → checked, checked → unchecked
+    targetItem.status =
+      targetItem.status === 'checked' ? 'unchecked' : 'checked'
 
-    const shouldCheck = desiredStatus === 'checked'
-    const appliedCheckedState =
-      shouldCheck &&
-      (targetItem.type !== 'file' || !targetItem.restrictionError)
+    // Percolate down to children and up to parents
+    percolateDown(tree, targetItem.id, targetItem.status === 'checked')
+    percolateUp(tree, targetItem.parentId)
 
-    if (appliedCheckedState) {
-      targetItem.status = 'checked'
-    } else if (!shouldCheck) {
-      targetItem.status = 'unchecked'
-    } else {
-      targetItem.status = 'unchecked'
-    }
-
-    parentNodeIds.forEach((parentNodeId) => {
-      const parentNode = updatedPartialTree.find(
-        (item) => item.id === parentNodeId,
-      ) as PartialTreeFolderNode | undefined
-      if (!parentNode) return
-
-      if (appliedCheckedState) {
-        if (parentNode.status !== 'checked') {
-          parentNode.status = 'partial'
-        }
-      } else {
-        const hasCheckedChildren = updatedPartialTree.some(
-          (item) =>
-            item.type !== 'root' &&
-            item.parentId === parentNodeId &&
-            item.status === 'checked',
-        )
-        parentNode.status = hasCheckedChildren ? 'partial' : 'unchecked'
-      }
-    })
-
-    this.plugin.setPluginState({ partialTree: updatedPartialTree })
+    this.plugin.setPluginState({ partialTree: tree })
   }
 
   async donePicking(): Promise<void> {

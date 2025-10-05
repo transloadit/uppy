@@ -20,7 +20,7 @@ import shallowClone from './shallowClone.js'
     file      |    file
     file      |    file
 */
-const percolateDown = (
+export const percolateDown = (
   tree: PartialTree,
   id: PartialTreeId,
   shouldMarkAsChecked: boolean,
@@ -49,7 +49,7 @@ const percolateDown = (
     file       |    file
     file       |    file
 */
-const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
+export const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
   const folder = tree.find((item) => item.id === id) as PartialTreeFolder
   if (folder.type === 'root') return
 
