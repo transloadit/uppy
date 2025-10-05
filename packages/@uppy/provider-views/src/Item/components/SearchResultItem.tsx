@@ -1,6 +1,6 @@
 import type { CompanionFile } from '@uppy/utils'
 import classNames from 'classnames'
-import ItemIcon from './components/ItemIcon.js'
+import ItemIcon from './ItemIcon.js'
 
 interface SearchResultItemProps {
   file: CompanionFile

@@ -18,11 +18,6 @@ const afterOpenFolder = (
       i.isFolder === true &&
       !oldPartialTree.find((f) => f.id === i.requestPath),
   )
-
-  console.log(
-    'logging discoveredFolders inside afterOpenFolder ---> ',
-    discoveredFolders,
-  )
   const discoveredFiles = discoveredItems.filter(
     (i) =>
       i.isFolder === false &&

@@ -1,5 +1,5 @@
 import type { CompanionFile } from '@uppy/utils'
-import SearchResultItem from '../Item/SearchResultItem.js'
+import SearchResultItem from '../Item/components/SearchResultItem.js'
 
 interface GlobalSearchViewProps {
   searchResults: CompanionFile[]
