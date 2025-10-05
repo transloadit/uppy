@@ -96,7 +96,7 @@ async function list({ client, directory, query }) {
     .json()
 }
 
-async function doSearchEntries({ client, query }) {
+async function fetchSearchEntries({ client, query }) {
   const scopePath =
     typeof query.path === 'string' ? decodeURIComponent(query.path) : undefined
 
@@ -154,7 +154,7 @@ export default class Dropbox extends Provider {
           namespaced: true,
         })
 
-        const stats = await doSearchEntries({ client, query: options.query })
+        const stats = await fetchSearchEntries({ client, query: options.query })
         const { email } = userInfo
         return adaptData(stats, email, options.companion.buildURL)
       },
