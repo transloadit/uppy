@@ -313,12 +313,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   /**
    * Ensure that each ancestor segment of the encoded requestPath exists
-   * as a folder node in the partialTree, from root to target folder.
+   * as a folder node in the partialTree, from root to target folder / file.
    * If an ancestor is missing, we create a synthetic folder node with
    * minimal data so breadcrumbs can render correctly. For the final
    * (clicked) folder we use the real CompanionFile data.
    */
-  #buildTree(file: CompanionFile): PartialTree {
+  #buildPath(file: CompanionFile): PartialTree {
     const { partialTree } = this.plugin.getPluginState()
     const newPartialTree: PartialTree = [...partialTree]
 
@@ -384,7 +384,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   async openSearchResultFolder(file: CompanionFile): Promise<void> {
     // 1) Ensure ancestor chain and the folder itself exist in the tree
-    const builtTree = this.#buildTree(file)
+    const builtTree = this.#buildPath(file)
 
     // 2) Clear search state and switch back to normal view
     this.#searchState.isSearchActive = false
@@ -536,19 +536,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
-    const tree = this.#buildTree(file)
+    const tree = this.#buildPath(file)
 
     const targetItem = tree.find((item) => item.id === fileId) as
       | PartialTreeFile
       | PartialTreeFolderNode
-      | undefined
 
-    if (!targetItem) {
-      this.plugin.setPluginState({ partialTree: tree })
-      return
-    }
-
-    // #buildTree guarantees the target node exists; refresh validation if it's a file
     if (targetItem.type === 'file') {
       targetItem.restrictionError = this.validateSingleFile(file)
     }
@@ -557,7 +550,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     targetItem.status =
       targetItem.status === 'checked' ? 'unchecked' : 'checked'
 
-    // Percolate down to children and up to parents
     percolateDown(tree, targetItem.id, targetItem.status === 'checked')
     percolateUp(tree, targetItem.parentId)
 
