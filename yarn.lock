@@ -11010,8 +11010,10 @@ __metadata:
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
     "@uppy/utils": "workspace:^"
+    "@vitest/browser": "npm:^3.2.4"
     lodash: "npm:^4.17.21"
     typescript: "npm:^5.8.3"
+    vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown

@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test:e2e": "vitest watch --project browser --browser.headless false"
   },
   "keywords": [
     "file uploader",
@@ -47,6 +48,8 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "@vitest/browser": "^3.2.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   }
 }

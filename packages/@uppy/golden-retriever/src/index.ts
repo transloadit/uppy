@@ -239,6 +239,10 @@ export default class GoldenRetriever<
     this.uppy.log(`[GoldenRetriever] Removed ${fileIDs.length} blobs`)
   }
 
+  async [Symbol.for('uppy test: deleteBlobs')](fileIDs: string[]) {
+    return this.#deleteBlobs(fileIDs)
+  }
+
   #addBlobToStores = async (file: UppyFile<M, B>) => {
     if (file.isRemote) return
 
