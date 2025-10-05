@@ -100,7 +100,6 @@ type RenderOpts<M extends Meta, B extends Body> = Omit<
 >
 
 type SearchState = {
-  isSearchAvailable: boolean
   isSearchActive: boolean
   searchResult: CompanionFile[]
   scopeId: string | null
@@ -123,7 +122,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
   lastCheckbox: string | null = null
 
   #searchState: SearchState = {
-    isSearchAvailable: false,
     isSearchActive: false,
     searchResult: [],
     scopeId: null,
@@ -153,6 +151,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.cancelSelection = this.cancelSelection.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
     this.openSearchResultFolder = this.openSearchResultFolder.bind(this)
+    this.clearSearchState = this.clearSearchState.bind(this)
 
     // Set default state for the plugin
     this.resetPluginState()
@@ -185,6 +184,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
       item.type === 'root' ? item : { ...item, status: 'unchecked' },
     )
     this.plugin.setPluginState({ partialTree: newPartialTree })
+  }
+
+  clearSearchState(): void {
+    this.#searchState.isSearchActive = false
+    this.#searchState.searchResult = []
+    this.#searchState.scopeId = null
   }
 
   #searchDebounceId: number | undefined
@@ -276,9 +281,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const trimmed = s.trim()
 
     if (trimmed === '') {
-      this.#searchState.isSearchActive = false
-      this.#searchState.searchResult = []
-      this.#searchState.scopeId = null
+      this.clearSearchState()
       return
     }
 
