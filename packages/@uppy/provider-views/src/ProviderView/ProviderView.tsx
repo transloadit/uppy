@@ -285,10 +285,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   // ! just for prototyping , we can easily swap this with actual companionFile using files/get_metadata API in dropbox
-  #createMinimalFolderData(
-    name: string,
-    requestPath: string,
-  ): CompanionFile {
+  #createMinimalFolderData(name: string, requestPath: string): CompanionFile {
     return {
       id: `synthetic:${requestPath}`,
       name: decodeURIComponent(name),
@@ -378,7 +375,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         }
       }
       newPartialTree.push(node)
-      parentId = encodedPath  // This node becomes parent for next iteration
+      parentId = encodedPath // This node becomes parent for next iteration
     })
 
     return newPartialTree
