@@ -10,7 +10,7 @@ import type {
   UnknownProviderPluginState,
   ValidateableFile,
 } from '@uppy/core'
-import type { CompanionClientProvider, CompanionFile, I18n } from '@uppy/utils'
+import type { CompanionFile, I18n } from '@uppy/utils'
 import { remoteFileObjToLocal } from '@uppy/utils'
 import classNames from 'classnames'
 import type { h } from 'preact'
@@ -230,8 +230,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   #hasServerSideSearch(): boolean {
-    const supportsServerSearch =
-      typeof (this.provider).search === 'function'
+    const supportsServerSearch = typeof this.provider.search === 'function'
     return supportsServerSearch
   }
 
