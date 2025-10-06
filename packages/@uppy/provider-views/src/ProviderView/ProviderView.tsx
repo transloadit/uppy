@@ -284,8 +284,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }, 500)
   }
 
-  // ! this just for prototyping , we can easily swap this with actual companionFile using files/get_metadata API in dropbox
-  #createSyntheticFolderCompanionFile(
+  // ! just for prototyping , we can easily swap this with actual companionFile using files/get_metadata API in dropbox
+  #createMinimalFolderData(
     name: string,
     requestPath: string,
   ): CompanionFile {
@@ -336,7 +336,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return node
   }
 
-  // Build Path from root to the leaf node (file or folder) , if any ancestor already exists in the tree, skip it
+  // Build Path from root to the leaf node (can be file or folder) , if any ancestor already exists in the tree, skip it
   // this would make sure all ancestor are present in the partial Tree , before opening the folder or checking the file
   #buildPath(file: CompanionFile): PartialTree {
     const { partialTree } = this.plugin.getPluginState()
@@ -346,10 +346,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const decodedPath = decodeURIComponent(file.requestPath)
     const segments = decodedPath.split('/').filter((s) => s.length > 0)
 
+    // Start from root
     let parentId: PartialTreeId = this.plugin.rootFolderId
 
+    // Walk through each segment and build ancestor nodes if they don't exist
     segments.forEach((segment, index, arr) => {
-      // Build encoded path incrementally
       const pathSegments = segments.slice(0, index + 1)
       const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
 
@@ -360,10 +361,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
         return
       }
 
-      const isLastNode = index === arr.length - 1
+      const isLeafNode = index === arr.length - 1
       let node: PartialTreeFolderNode | PartialTreeFile
 
-      if (isLastNode) {
+      if (isLeafNode) {
         node = this.#buildLastNode(file, encodedPath, parentId)
       } else {
         node = {
@@ -373,11 +374,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
           nextPagePath: null,
           status: 'unchecked',
           parentId,
-          data: this.#createSyntheticFolderCompanionFile(segment, encodedPath),
+          data: this.#createMinimalFolderData(segment, encodedPath),
         }
       }
       newPartialTree.push(node)
-      parentId = encodedPath
+      parentId = encodedPath  // This node becomes parent for next iteration
     })
 
     return newPartialTree
