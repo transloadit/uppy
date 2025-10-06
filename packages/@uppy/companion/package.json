@@ -43,7 +43,7 @@
     "common-tags": "1.8.2",
     "connect-redis": "7.1.1",
     "content-disposition": "^0.5.4",
-    "cookie-parser": "1.4.6",
+    "cookie-parser": "1.4.7",
     "cors": "^2.8.5",
     "escape-goat": "3.0.0",
     "escape-string-regexp": "4.0.0",

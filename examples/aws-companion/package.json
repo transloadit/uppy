@@ -12,7 +12,7 @@
   "devDependencies": {
     "@uppy/companion": "workspace:*",
     "body-parser": "^1.20.3",
-    "cookie-parser": "^1.4.6",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.19.2",
