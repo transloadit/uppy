@@ -10,7 +10,7 @@ import type {
   UnknownProviderPluginState,
   ValidateableFile,
 } from '@uppy/core'
-import type { CompanionFile, I18n } from '@uppy/utils'
+import type { CompanionClientProvider, CompanionFile, I18n } from '@uppy/utils'
 import { remoteFileObjToLocal } from '@uppy/utils'
 import classNames from 'classnames'
 import type { h } from 'preact'
@@ -229,9 +229,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  #isSearchMode(): boolean {
+  #hasServerSideSearch(): boolean {
     const supportsServerSearch =
-      typeof (this.provider as any).search === 'function'
+      typeof (this.provider).search === 'function'
     return supportsServerSearch
   }
 
@@ -242,7 +242,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
 
-    if (!this.#isSearchMode()) return
+    if (!this.#hasServerSideSearch()) return
 
     this.setLoading('Searching...')
     await this.#withAbort(async (signal) => {
@@ -277,7 +277,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
 
     this.#searchState.debounceId = window.setTimeout(() => {
-      if (this.#isSearchMode()) {
+      if (this.#hasServerSideSearch()) {
         this.#performSearch()
       }
       this.#searchState.debounceId = undefined

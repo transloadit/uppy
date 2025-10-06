@@ -7,6 +7,4 @@
 ---
 
 
-Server-side search: Implemented search API for Dropbox provider in companion server.
-Search view now uses minimal standalone components — <GlobalSearchView /> and <SearchResultItem /> — decoupled from PartialTree.
-All search state is managed in <ProviderView /> and passed down to the search view.
+Introduce the concept of server-side search and add support for it for the Dropbox provider. Previously, only client-side filtering in the currently viewed folder was possible, which was limiting. Now users using Companion with Dropbox can perform a search across their entire account.
