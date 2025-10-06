@@ -1,5 +1,13 @@
 # @uppy/svelte
 
+## 5.0.2
+
+### Patch Changes
+
+- da754b7: Fix props reactivity. Now when the value of a prop you pass to a component changes, it is actually picked up.
+- Updated dependencies [34639ba]
+  - @uppy/components@1.0.3
+
 ## 5.0.1
 
 ### Patch Changes

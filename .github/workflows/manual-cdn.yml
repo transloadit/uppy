@@ -23,8 +23,6 @@ env:
 jobs:
   upload:
     runs-on: ubuntu-latest
-    env:
-      SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
         uses: actions/checkout@v5
@@ -41,7 +39,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install upload-to-cdn dependencies
