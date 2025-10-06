@@ -229,7 +229,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  //! this would be checked at the very beginning and set the isSupportedSearch flag to true / false and if this is true only then perform search would be called
   #isSearchMode(): boolean {
     const supportsServerSearch =
       typeof (this.provider as any).search === 'function'
@@ -691,8 +690,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, username, searchString, isSearchActive } =
       this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-
-    // Derive checked and partial search results from partialTree
     const searchResultStatusMap = this.#returnCheckedState(partialTree)
 
     return (
