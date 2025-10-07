@@ -288,10 +288,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
       return
     }
 
+    if (!this.#hasServerSideSearch()) {
+      return
+    }
+
     this.#searchState.debounceId = window.setTimeout(() => {
-      if (this.#hasServerSideSearch()) {
-        this.#performSearch()
-      }
+      this.#performSearch()
       this.#searchState.debounceId = undefined
     }, 500)
   }
