@@ -265,7 +265,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
         path: scopePath ?? undefined,
       })
 
-      // ! any alternatives ?
       // return if user clears search before results arrive
       const currentSearchString = this.plugin.getPluginState().searchString
       if (currentSearchString.trim() === '') {
