@@ -206,6 +206,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#clearSearchDebounce()
     this.#searchState.searchResult = []
     this.#searchState.scopeId = null
+    this.#abortController?.abort()
     this.plugin.setPluginState({ isSearchActive: false })
   }
 
