@@ -119,8 +119,7 @@ type SearchState = {
  * store it in #searchState and switch the view to Search View.
  * when the user enters a folder in search results or clears the search input query we switch back to Normal View.
  * Switching between Search View and Normal View happens by setting PluginState({ isSearchActive: true/false })
-*/
-
+ */
 
 /**
  * Class to easily generate generic views for Provider plugins
@@ -316,8 +315,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
- // build the Leaf Node , it can be a file ( PartialTreeFile ) or a folder ( PartialTreeFolderNode )
- // Since we Already have the leaf node's data ( file : CompanionFile) from the searchResults: CompanionFile[]  , we just use that.
+  // build the Leaf Node , it can be a file ( PartialTreeFile ) or a folder ( PartialTreeFolderNode )
+  // Since we Already have the leaf node's data ( file : CompanionFile) from the searchResults: CompanionFile[]  , we just use that.
   #buildLastNode(
     file: CompanionFile,
     encodedPath: string,
@@ -349,7 +348,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     return node
   }
-
 
   /**
    * This is function is used to build the Entire Path ( ancestor + Leaf Node ) for the clicked Item in Search Result displayed in Search View ( Refer to the comment Explaining Search View at the top of the file )
@@ -567,15 +565,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return result
   }
 
-/**
- * We still build the ancestor path when the user checks or unchecks a search result.
- * Building ancestor nodes isn’t expensive anymore since it doesn’t involve network calls.
- * Even if a checked item is later unchecked without being uploaded, it still gets added to the partialTree.
- *
- * While it might seem intuitive to build the ancestor path only when opening a folder and,
- * when checking and uploading a file/folder from search view, that approach would require patching edge cases
- * related to checked state across the two views ( Search View and Normal View) in openFolder and afterOpenFolder.
- */
+  /**
+   * We still build the ancestor path when the user checks or unchecks a search result.
+   * Building ancestor nodes isn’t expensive anymore since it doesn’t involve network calls.
+   * Even if a checked item is later unchecked without being uploaded, it still gets added to the partialTree.
+   *
+   * While it might seem intuitive to build the ancestor path only when opening a folder and,
+   * when checking and uploading a file/folder from search view, that approach would require patching edge cases
+   * related to checked state across the two views ( Search View and Normal View) in openFolder and afterOpenFolder.
+   */
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
     const builtTree = this.#buildPath(file)
