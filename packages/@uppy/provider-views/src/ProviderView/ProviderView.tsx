@@ -107,6 +107,22 @@ type SearchState = {
 }
 
 /**
+ * SEARCH VIEW vs NORMAL VIEW
+ * --------------------------------
+ * Explanation:
+ * We have Two Views Search View and Normal View
+ * SearchView is only used when the Provider supports server side search i.e. provider.search is implemented for the provider
+ * Search View is implemented through Components GlobalSearchView and SearchResultItem
+ * we conditionally switch between Search View and Normal in the render method
+ * Search View is used to display Server Side Search Results , which is stored in #searchState : SearchState
+ * When users type their search query in search input box (SearchInput component) , we debounce the input and call provider.search api to fetch results
+ * store it in #searchState and switch the view to Search View.
+ * when the user enters a folder in search results or clears the search input query we switch back to Normal View.
+ * Switching between Search View and Normal View happens by setting PluginState({ isSearchActive: true/false })
+*/
+
+
+/**
  * Class to easily generate generic views for Provider plugins
  */
 export default class ProviderView<M extends Meta, B extends Body> {
@@ -283,7 +299,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }, 500)
   }
 
-  // ! just for prototyping , we can easily swap this with actual companionFile using files/get_metadata API in dropbox
+  // Create a minimal CompanionFile object for ancestor folders when building the path
   #createMinimalFolderData(name: string, requestPath: string): CompanionFile {
     return {
       id: `synthetic:${requestPath}`,
@@ -300,6 +316,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
+ // build the Leaf Node , it can be a file ( PartialTreeFile ) or a folder ( PartialTreeFolderNode )
+ // Since we Already have the leaf node's data ( file : CompanionFile) from the searchResults: CompanionFile[]  , we just use that.
   #buildLastNode(
     file: CompanionFile,
     encodedPath: string,
@@ -332,8 +350,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return node
   }
 
-  // Build Path from root to the leaf node (can be file or folder) , if any ancestor already exists in the tree, skip it
-  // this would make sure all ancestor are present in the partial Tree , before opening the folder or checking the file
+
+  /**
+   * This is function is used to build the Entire Path ( ancestor + Leaf Node ) for the clicked Item in Search Result displayed in Search View ( Refer to the comment Explaining Search View at the top of the file )
+   * We use this when User Checks / opens a folder in search results
+   * We need to make sure all ancestor folders are present in the partialTree before we open the folder or check the file
+   * Why do we need to build ancestor path ? , Because when we open a folder we need to have all it's parent folders in the partialTree to be able to render the breadcrumbs correctly
+   * Similarly when we check a file, we need to have all it's ancestor folders in the partialTree to be able to percolateUp the checked state correctly.
+   */
   #buildPath(file: CompanionFile): PartialTree {
     const { partialTree } = this.plugin.getPluginState()
     const newPartialTree: PartialTree = [...partialTree]
@@ -380,6 +404,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return newPartialTree
   }
 
+  // Derive Checked State from PartialTree
   #returnCheckedState(tree: PartialTree): Map<string, 'checked' | 'partial'> {
     const checkedState = new Map<string, 'checked' | 'partial'>()
     tree.forEach((item) => {
@@ -394,7 +419,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async openSearchResultFolder(file: CompanionFile): Promise<void> {
-    // 1) Ensure ancestor chain and the folder itself exist in the tree
+    // Ensure the entire path to the folder is built
     const builtTree = this.#buildPath(file)
 
     this.clearSearchState()
@@ -403,10 +428,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
       partialTree: builtTree,
       currentFolderId: file.requestPath,
       searchString: '',
-      isSearchActive: false,
+      isSearchActive: false, // Switch back to Normal View
     })
 
-    await this.openFolder(file.requestPath)
+    await this.openFolder(file.requestPath) // Open Folder using normal flow
   }
 
   async openFolder(folderId: string | null): Promise<void> {
@@ -542,11 +567,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return result
   }
 
+/**
+ * We still build the ancestor path when the user checks or unchecks a search result.
+ * Building ancestor nodes isn’t expensive anymore since it doesn’t involve network calls.
+ * Even if a checked item is later unchecked without being uploaded, it still gets added to the partialTree.
+ *
+ * While it might seem intuitive to build the ancestor path only when opening a folder and,
+ * when checking and uploading a file/folder from search view, that approach would require patching edge cases
+ * related to checked state across the two views ( Search View and Normal View) in openFolder and afterOpenFolder.
+ */
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
-    const tree = this.#buildPath(file)
+    const builtTree = this.#buildPath(file)
 
-    const targetItem = tree.find((item) => item.id === fileId) as
+    const targetItem = builtTree.find((item) => item.id === fileId) as
       | PartialTreeFile
       | PartialTreeFolderNode
 
@@ -558,10 +592,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
     targetItem.status =
       targetItem.status === 'checked' ? 'unchecked' : 'checked'
 
-    percolateDown(tree, targetItem.id, targetItem.status === 'checked')
-    percolateUp(tree, targetItem.parentId)
+    percolateDown(builtTree, targetItem.id, targetItem.status === 'checked')
+    percolateUp(builtTree, targetItem.parentId)
 
-    this.plugin.setPluginState({ partialTree: tree })
+    this.plugin.setPluginState({ partialTree: builtTree })
   }
 
   async donePicking(): Promise<void> {

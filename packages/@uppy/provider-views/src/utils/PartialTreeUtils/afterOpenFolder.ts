@@ -13,6 +13,11 @@ const afterOpenFolder = (
   currentPagePath: string | null,
   validateSingleFile: (file: CompanionFile) => string | null,
 ): PartialTree => {
+
+  // filter out already existing items in the partial tree , ( we don't want duplicates )
+  // This edge would arrive when the item is already added to the partial Tree in Search View
+  // and when user Enters it's parent from Normal View i.e. i.e. Either through Breadcrumbs or manually Navigating to it.
+  // since that item was already added to the Partial Tree in Search View, we don't want to add it again.
   const discoveredFolders = discoveredItems.filter(
     (i) =>
       i.isFolder === true &&

@@ -69,6 +69,24 @@ export const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
     (item) => item.status === 'unchecked',
   )
 
+/**
+ * We should not set a parent folder to checked/unchecked if it’s not cached yet.
+ * Otherwise, it could cause a bug where checking a nested folder from the Search View
+ * also marks its parent as checked.
+ */
+
+/**
+ * BUG: → /foo/bar/new/myfolder
+ * If we search for "myfolder", we only build the minimal path (using ProviderView.#buildPath)
+ * up to that folder adding nodes for "bar", "new", and "myfolder" (assuming "foo" is already
+ * present in the partialTree as part of the root folder).
+ * Since "foo", "bar", and "new" aren’t fully fetched yet, we don’t know if they have other children.
+ * If the user checks "myfolder" from the search results and we propagate the checked state
+ * upward without verifying parent.cached, it would incorrectly mark all its parents as checked.
+ * Later, when the user navigates to any of "foo" , "bar" , "new" through the Normal View (via breadcrumbs or manually),
+ * PartialTreeUtils.afterOpenFolder would mark and display all its children as checked.
+ */
+
   if (areAllChildrenChecked && folder.cached) {
     folder.status = 'checked'
   } else if (areAllChildrenUnchecked && folder.cached) {
