@@ -256,8 +256,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       (i) => i.id === currentFolderId,
     ) as PartialTreeFolder
 
-    if (!this.#hasServerSideSearch()) return
-
     this.setLoading('Searching...')
     await this.#withAbort(async (signal) => {
       const scopePath = currentFolder.type === 'root' ? null : currentFolderId
