@@ -253,6 +253,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
         // Start from root
         let parentId: PartialTreeId = this.plugin.rootFolderId
+        let isParentFolderChecked: boolean
 
         // Walk through each segment starting from the root and build child nodes if they don't exist
         segments.forEach((segment, index, arr) => {
@@ -260,36 +261,47 @@ export default class ProviderView<M extends Meta, B extends Body> {
           const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
 
           // Skip if node already exists
-          const existingNode = newPartialTree.find((n) => n.id === encodedPath)
+          const existingNode = newPartialTree.find(
+            (n) => n.id === encodedPath && n.type !== 'root',
+          ) as PartialTreeFolderNode | PartialTreeFile | undefined
           if (existingNode) {
             parentId = encodedPath
+            isParentFolderChecked = existingNode.status === 'checked'
             return
           }
 
           const isLeafNode = index === arr.length - 1
           let node: PartialTreeFolderNode | PartialTreeFile
 
+          // propagate checked state from parent to children, if the user has checked the parent folder before searching
+          // and the parent folder is an ancestor of the searched file
+          // see also afterOpenFolder which contains similar logic, we should probably refactor and reuse some
+          const status = isParentFolderChecked ? 'checked' : 'unchecked'
+
           // Build the Leaf Node, it can be a file (`PartialTreeFile`) or a folder (`PartialTreeFolderNode`).
           // Since we Already have the leaf node's data (`file`, `CompanionFile`) from the searchResults: CompanionFile[], we just use that.
           if (isLeafNode) {
-            node = file.isFolder
-              ? {
+            if (file.isFolder) {
+              node = {
                   type: 'folder',
                   id: encodedPath,
                   cached: false,
                   nextPagePath: null,
-                  status: 'unchecked',
+                status,
                   parentId,
                   data: file,
                 }
-              : {
+            } else {
+              const restrictionError = this.validateSingleFile(file)
+              node = {
                   type: 'file',
                   id: encodedPath,
-                  restrictionError: this.validateSingleFile(file),
-                  status: 'unchecked',
+                restrictionError,
+                status: !restrictionError ? status : 'unchecked',
                   parentId,
                   data: file,
                 }
+            }
           } else {
             // not leaf node, so by definition it is a folder leading up to the leaf node
             node = {
@@ -297,7 +309,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
               id: encodedPath,
               cached: false,
               nextPagePath: null,
-              status: 'unchecked',
+              status,
               parentId,
               data: {
                 // we don't have any data, so fill only the necessary fields
@@ -309,6 +321,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           }
           newPartialTree.push(node)
           parentId = encodedPath // This node becomes parent for the next iteration
+          isParentFolderChecked = status === 'checked'
         })
       }
 
