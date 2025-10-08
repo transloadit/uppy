@@ -571,8 +571,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
    * Even if a checked item is later unchecked without being uploaded, it still gets added to the partialTree.
    *
    * While it might seem intuitive to build the ancestor path only when opening a folder and,
-   * when checking and uploading a file/folder from search view, that approach would require patching edge cases
-   * related to checked state across the two views ( Search View and Normal View) in openFolder and afterOpenFolder.
+   * when checking and uploading a file/folder from search view, that approach would require patching several edge cases
+   * across the two views ( Search View and Normal View) in openFolder and afterOpenFolder.
    *
    * BUG EXAMPLE:
    *
