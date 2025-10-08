@@ -1,5 +1,14 @@
 # uppy
 
+## 5.1.6
+
+### Patch Changes
+
+- Updated dependencies [5ba2c1c]
+  - @uppy/companion-client@5.1.0
+  - @uppy/provider-views@5.1.0
+  - @uppy/core@5.1.0
+
 ## 5.1.5
 
 ### Patch Changes
