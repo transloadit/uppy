@@ -115,13 +115,11 @@ async function fetchSearchEntries({ client, query }) {
     })
     .json()
 
-  const entries = searchRes.matches
-    .map((m) => m.metadata.metadata)
-    .filter(Boolean)
+  const entries = searchRes.matches.map((m) => m.metadata.metadata)
   return {
     entries,
     has_more: searchRes.has_more,
-    cursor: searchRes.cursor ?? null,
+    cursor: searchRes.cursor,
   }
 }
 
@@ -155,7 +153,9 @@ export default class Dropbox extends Provider {
         })
 
         const stats = await fetchSearchEntries({ client, query: options.query })
+        console.log(stats)
         const { email } = userInfo
+        // we don't really need email, but let's mimic `list` response shape for consistency
         return adaptData(stats, email, options.companion.buildURL)
       },
     )

@@ -20,7 +20,7 @@ import shallowClone from './shallowClone.js'
     file      |    file
     file      |    file
 */
-export const percolateDown = (
+const percolateDown = (
   tree: PartialTree,
   id: PartialTreeId,
   shouldMarkAsChecked: boolean,
@@ -28,6 +28,7 @@ export const percolateDown = (
   const children = tree.filter(
     (item) => item.type !== 'root' && item.parentId === id,
   ) as (PartialTreeFolderNode | PartialTreeFile)[]
+
   children.forEach((item) => {
     item.status =
       shouldMarkAsChecked && !(item.type === 'file' && item.restrictionError)
@@ -49,7 +50,7 @@ export const percolateDown = (
     file       |    file
     file       |    file
 */
-export const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
+const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
   const folder = tree.find((item) => item.id === id) as PartialTreeFolder
   if (folder.type === 'root') return
 
@@ -70,26 +71,23 @@ export const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
   )
 
   /**
-   * We should not set a parent folder to checked/unchecked if it’s not cached yet.
-   * Otherwise, it could cause a bug where checking a nested folder from the Search View
-   * also marks its parent as checked.
-   */
-
-  /**
-   * BUG: → /foo/bar/new/myfolder
-   * If we search for "myfolder", we only build the minimal path (using ProviderView.#buildPath)
+   * We should *only* set parent folder to checked/unchecked if it has been fully read (`cached`).
+   * Otherwise, checking a nested folder from the search view also marks its parent as checked,
+   * which could be incorrect because there might be more unselected (unloaded) files.
+   *
+   * Example: /foo/bar/new/myfolder
+   * If we search for "myfolder", we only build the minimal path (using ProviderView.#buildSearchResultPath)
    * up to that folder adding nodes for "bar", "new", and "myfolder" (assuming "foo" is already
    * present in the partialTree as part of the root folder).
    * Since "foo", "bar", and "new" aren’t fully fetched yet, we don’t know if they have other children.
    * If the user checks "myfolder" from the search results and we propagate the checked state
    * upward without verifying parent.cached, it would incorrectly mark all its parents as checked.
-   * Later, when the user navigates to any of "foo" , "bar" , "new" through the Normal View (via breadcrumbs or manually),
-   * PartialTreeUtils.afterOpenFolder would mark and display all its children as checked.
+   * Later, when the user navigates to any of "foo", "bar", "new" through the Normal View (via breadcrumbs or manually),
+   * PartialTreeUtils.afterOpenFolder would then incorrectly mark and display all its children as checked.
    */
-
   if (areAllChildrenChecked && folder.cached) {
     folder.status = 'checked'
-  } else if (areAllChildrenUnchecked && folder.cached) {
+  } else if (areAllChildrenUnchecked) {
     folder.status = 'unchecked'
   } else {
     folder.status = 'partial'
@@ -100,38 +98,29 @@ export const percolateUp = (tree: PartialTree, id: PartialTreeId) => {
 
 const afterToggleCheckbox = (
   oldTree: PartialTree,
-  clickedRange: string[],
+  checkedIds: string[],
 ): PartialTree => {
   const tree: PartialTree = shallowClone(oldTree)
 
-  if (clickedRange.length >= 2) {
-    // We checked two or more items
-    const newlyCheckedItems = tree.filter(
-      (item) => item.type !== 'root' && clickedRange.includes(item.id),
-    ) as (PartialTreeFile | PartialTreeFolderNode)[]
+  const newlyCheckedItems = tree.filter(
+    (item) => item.type !== 'root' && checkedIds.includes(item.id),
+  ) as (PartialTreeFile | PartialTreeFolderNode)[]
 
-    newlyCheckedItems.forEach((item) => {
-      if (item.type === 'file') {
-        item.status = item.restrictionError ? 'unchecked' : 'checked'
-      } else {
-        item.status = 'checked'
-      }
-    })
+  newlyCheckedItems.forEach((item) => {
+    // allow toggling:
+    const newStatus = item.status === 'checked' ? 'unchecked' : 'checked'
+    // and if it's a file, we need to respect restrictions
+    if (item.type === 'file') {
+      item.status = item.restrictionError ? 'unchecked' : newStatus
+    } else {
+      item.status = newStatus
+    }
 
-    newlyCheckedItems.forEach((item) => {
-      percolateDown(tree, item.id, true)
-    })
-    percolateUp(tree, newlyCheckedItems[0].parentId)
-  } else {
-    // We checked exactly one item
-    const clickedItem = tree.find((item) => item.id === clickedRange[0]) as
-      | PartialTreeFile
-      | PartialTreeFolderNode
-    clickedItem.status =
-      clickedItem.status === 'checked' ? 'unchecked' : 'checked'
-    percolateDown(tree, clickedItem.id, clickedItem.status === 'checked')
-    percolateUp(tree, clickedItem.parentId)
-  }
+    percolateDown(tree, item.id, item.status === 'checked')
+  })
+
+  // all checked items have the same parent so we only need to perlocate the first item
+  percolateUp(tree, newlyCheckedItems[0].parentId)
   return tree
 }
 

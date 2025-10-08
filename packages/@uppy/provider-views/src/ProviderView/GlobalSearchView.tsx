@@ -1,21 +1,19 @@
-import type { CompanionFile } from '@uppy/utils'
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
+import type { I18n } from '@uppy/utils'
 import SearchResultItem from '../Item/components/SearchResultItem.js'
+import type ProviderView from './ProviderView.js'
 
 interface GlobalSearchViewProps {
-  searchResults: CompanionFile[]
-  searchResultStatuses: Map<string, 'checked' | 'partial'>
-  toggleSearchResultCheckbox: (file: CompanionFile) => void
-  openSearchResultFolder: (file: CompanionFile) => void
-  validateSingleFile: (file: CompanionFile) => string | null
-  i18n: (key: string) => string
+  searchResults: (PartialTreeFile | PartialTreeFolderNode)[]
+  openFolder: ProviderView<any, any>['openSearchResultFolder']
+  toggleCheckbox: ProviderView<any, any>['toggleCheckbox']
+  i18n: I18n
 }
 
 const GlobalSearchView = ({
   searchResults,
-  searchResultStatuses,
-  toggleSearchResultCheckbox,
-  openSearchResultFolder,
-  validateSingleFile,
+  toggleCheckbox,
+  openFolder,
   i18n,
 }: GlobalSearchViewProps) => {
   if (searchResults.length === 0) {
@@ -25,26 +23,15 @@ const GlobalSearchView = ({
   return (
     <div className="uppy-ProviderBrowser-body">
       <ul className="uppy-ProviderBrowser-list">
-        {searchResults.map((file) => {
-          const restrictionReason = validateSingleFile(file)
-          const isDisabled = restrictionReason != null
-          const status = searchResultStatuses.get(file.requestPath)
-          const isChecked = status === 'checked'
-          const isPartial = status === 'partial'
-
-          return (
-            <SearchResultItem
-              key={file.requestPath}
-              file={file}
-              isChecked={isChecked}
-              isPartial={isPartial}
-              toggleCheckbox={toggleSearchResultCheckbox}
-              openFolder={openSearchResultFolder}
-              isDisabled={isDisabled}
-              restrictionReason={restrictionReason}
-            />
-          )
-        })}
+        {searchResults.map((item) => (
+          <SearchResultItem
+            i18n={i18n}
+            key={item.id}
+            item={item}
+            toggleCheckbox={toggleCheckbox}
+            openFolder={openFolder}
+          />
+        ))}
       </ul>
     </div>
   )

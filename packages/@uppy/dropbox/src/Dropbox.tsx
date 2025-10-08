@@ -93,6 +93,7 @@ export default class Dropbox<M extends Meta, B extends Body>
       provider: this.provider,
       loadAllFiles: true,
       virtualList: true,
+      supportsSearch: true,
     })
 
     const { target } = this.opts

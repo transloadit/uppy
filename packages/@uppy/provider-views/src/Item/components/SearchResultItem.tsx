@@ -1,48 +1,47 @@
-import type { CompanionFile } from '@uppy/utils'
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
+import type { I18n } from '@uppy/utils'
 import classNames from 'classnames'
+import type ProviderView from '../../ProviderView/ProviderView.js'
 import ItemIcon from './ItemIcon.js'
 
 interface SearchResultItemProps {
-  file: CompanionFile
-  isChecked: boolean
-  isPartial: boolean
-  toggleCheckbox: (file: CompanionFile) => void
-  openFolder?: (file: CompanionFile) => void
-  isDisabled: boolean
-  restrictionReason?: string | null
+  item: PartialTreeFile | PartialTreeFolderNode
+  i18n: I18n
+  openFolder: ProviderView<any, any>['openSearchResultFolder']
+  toggleCheckbox: ProviderView<any, any>['toggleCheckbox']
 }
 
 const SearchResultItem = ({
-  file,
-  isChecked,
-  isPartial,
+  i18n,
+  item,
   toggleCheckbox,
   openFolder,
-  isDisabled,
-  restrictionReason,
 }: SearchResultItemProps) => {
-  const itemIconString = file.icon
+  const isDisabled =
+    'restrictionError' in item &&
+    item.restrictionError != null &&
+    item.status !== 'checked'
+
   return (
     <li
       className={classNames(
         'uppy-ProviderBrowserItem',
         { 'uppy-ProviderBrowserItem--disabled': isDisabled },
-        { 'uppy-ProviderBrowserItem--noPreview': itemIconString === 'video' },
-        { 'uppy-ProviderBrowserItem--is-checked': isChecked },
-        { 'uppy-ProviderBrowserItem--is-partial': isPartial },
+        { 'uppy-ProviderBrowserItem--noPreview': item.data.icon === 'video' },
+        { 'uppy-ProviderBrowserItem--is-checked': item.status === 'checked' },
+        { 'uppy-ProviderBrowserItem--is-partial': item.status === 'partial' },
       )}
-      title={isDisabled ? (restrictionReason ?? undefined) : undefined}
+      title={
+        ('restrictionError' in item ? item.restrictionError : undefined) ??
+        undefined
+      }
     >
       <input
         type="checkbox"
-        className={classNames(
-          'uppy-u-reset',
-          'uppy-ProviderBrowserItem-checkbox',
-          'uppy-ProviderBrowserItem-checkbox--is-root',
-        )}
-        onChange={() => toggleCheckbox(file)}
-        checked={isChecked}
-        aria-label={file.name}
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
+        onChange={() => toggleCheckbox(item, false)}
+        checked={item.status === 'checked'}
+        aria-label={item.data.name ?? i18n('unnamed')}
         disabled={isDisabled}
         data-uppy-super-focusable
       />
@@ -50,19 +49,17 @@ const SearchResultItem = ({
         type="button"
         className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
         disabled={isDisabled}
-        aria-label={file.name}
+        aria-label={item.data.name}
         onClick={() => {
-          if (file.isFolder && openFolder) {
-            openFolder(file)
+          if (item.data.isFolder) {
+            openFolder(item.id)
           }
         }}
       >
         <div className="uppy-ProviderBrowserItem-iconWrap">
-          <ItemIcon itemIconString={itemIconString} />
+          <ItemIcon itemIconString={item.data.icon} />
         </div>
-        <span className="uppy-ProviderBrowserItem-name">
-          {file.name || 'Unnamed'}
-        </span>
+        {item.data.name ?? i18n('unnamed')}
       </button>
     </li>
   )

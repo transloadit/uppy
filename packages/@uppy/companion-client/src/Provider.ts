@@ -360,8 +360,8 @@ export default class Provider<M extends Meta, B extends Body>
   search<ResBody>(
     text: string,
     options: RequestOptions & {
-      path?: string | null
-      cursor?: string | null
+      path?: string | null | undefined
+      cursor?: string | undefined
     } = {},
   ): Promise<ResBody> {
     const qs = new URLSearchParams()
