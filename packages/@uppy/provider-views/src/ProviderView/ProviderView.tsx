@@ -283,24 +283,24 @@ export default class ProviderView<M extends Meta, B extends Body> {
           if (isLeafNode) {
             if (file.isFolder) {
               node = {
-                  type: 'folder',
-                  id: encodedPath,
-                  cached: false,
-                  nextPagePath: null,
+                type: 'folder',
+                id: encodedPath,
+                cached: false,
+                nextPagePath: null,
                 status,
-                  parentId,
-                  data: file,
-                }
+                parentId,
+                data: file,
+              }
             } else {
               const restrictionError = this.validateSingleFile(file)
               node = {
-                  type: 'file',
-                  id: encodedPath,
+                type: 'file',
+                id: encodedPath,
                 restrictionError,
                 status: !restrictionError ? status : 'unchecked',
-                  parentId,
-                  data: file,
-                }
+                parentId,
+                data: file,
+              }
             }
           } else {
             // not leaf node, so by definition it is a folder leading up to the leaf node
