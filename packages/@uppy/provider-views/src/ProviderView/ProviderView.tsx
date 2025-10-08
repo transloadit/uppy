@@ -350,11 +350,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   /**
-   * This is function is used to build the Entire Path ( ancestor + Leaf Node ) for the clicked Item in Search Result displayed in Search View ( Refer to the comment Explaining Search View at the top of the file )
-   * We use this when User Checks / opens a folder in search results
-   * We need to make sure all ancestor folders are present in the partialTree before we open the folder or check the file
-   * Why do we need to build ancestor path ? , Because when we open a folder we need to have all it's parent folders in the partialTree to be able to render the breadcrumbs correctly
-   * Similarly when we check a file, we need to have all it's ancestor folders in the partialTree to be able to percolateUp the checked state correctly.
+   * The search view has its own data structure of search results to keep things simple.
+   * When you click on a folder from the search view, we need to go back to the normal view based on `partialTree`. 
+   * Because the searched folder we're about to enter from might be multiple folders deep,
+   * the folders in between might not exist yet in the tree.
+   * This function makes sure we create this intermediate ancestors
+   * up until the clicked folder so the normal view and breadcrumps work as expected.
    */
   #buildPath(file: CompanionFile): PartialTree {
     const { partialTree } = this.plugin.getPluginState()
