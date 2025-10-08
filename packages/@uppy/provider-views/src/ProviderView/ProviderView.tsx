@@ -298,7 +298,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }, 500)
   }
 
-  // Create a minimal CompanionFile object for ancestor folders when building the path
   #createMinimalFolderData(name: string, requestPath: string): CompanionFile {
     return {
       id: `synthetic:${requestPath}`,
@@ -315,8 +314,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  // build the Leaf Node , it can be a file ( PartialTreeFile ) or a folder ( PartialTreeFolderNode )
-  // Since we Already have the leaf node's data ( file : CompanionFile) from the searchResults: CompanionFile[]  , we just use that.
   #buildLastNode(
     file: CompanionFile,
     encodedPath: string,
@@ -351,11 +348,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   /**
    * The search view has its own data structure of search results to keep things simple.
-   * When you click on a folder from the search view, we need to go back to the normal view based on `partialTree`. 
+   * When you click on a folder from the search view, we need to go back to the normal view based on `partialTree`.
    * Because the searched folder we're about to enter from might be multiple folders deep,
    * the folders in between might not exist yet in the tree.
    * This function makes sure we create this intermediate ancestors
-   * up until the clicked folder so the normal view and breadcrumps work as expected.
+   * up until the clicked folder so the normal view and breadcrumbs work as expected.
+   * It uses #createMinimalFolderData to create minimal CompanionFile objects for ancestor folders (synthetic data with just name/path)
+   * And #buildLastNode to build the leaf node (file or folder) using the CompanionFile data from searchResults
    */
   #buildPath(file: CompanionFile): PartialTree {
     const { partialTree } = this.plugin.getPluginState()
@@ -574,6 +573,21 @@ export default class ProviderView<M extends Meta, B extends Body> {
    * While it might seem intuitive to build the ancestor path only when opening a folder and,
    * when checking and uploading a file/folder from search view, that approach would require patching edge cases
    * related to checked state across the two views ( Search View and Normal View) in openFolder and afterOpenFolder.
+   *
+   * BUG EXAMPLE:
+   *
+   * File Path : foo/bar/new/file1.txt
+   *
+   * When a searched file (e.g., file1.txt) is checked, it updates the checkedStateMap.
+   * On manual navigation (foo -> bar -> new), afterOpenFolder should inherit the checked state from checkedStateMap, this works fine initially.
+   *
+   * Now if The user :
+   *
+   * - Go back to root,
+   * - Search the same file again and uncheck it,
+   * - Then navigate manually to foo -> bar -> new again,
+   *
+   * the folder new, being cached before, returns early from openFolder, skipping the checked state update hence we'll also have to patch this.
    */
   toggleSearchResultCheckbox = (file: CompanionFile): void => {
     const fileId = file.requestPath
