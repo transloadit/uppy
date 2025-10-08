@@ -96,7 +96,10 @@ export type PartialTreeFolderNode = {
 
   status: PartialTreeStatus
   parentId: PartialTreeId
-  data: CompanionFile
+  data: Pick<
+    CompanionFile,
+    'name' | 'icon' | 'thumbnail' | 'isFolder' | 'author' | 'custom'
+  >
 }
 
 export type PartialTreeFolderRoot = {
@@ -133,6 +136,7 @@ export type UnknownProviderPluginState = {
   partialTree: PartialTree
   currentFolderId: PartialTreeId
   username: string | null
+  searchResults?: string[] | undefined
 }
 
 export interface AsyncStore {

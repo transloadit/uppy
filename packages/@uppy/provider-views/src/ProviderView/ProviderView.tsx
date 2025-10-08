@@ -13,6 +13,7 @@ import type {
 import type { CompanionFile, I18n } from '@uppy/utils'
 import { remoteFileObjToLocal } from '@uppy/utils'
 import classNames from 'classnames'
+import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
@@ -27,6 +28,7 @@ import getNumberOfSelectedFiles from '../utils/PartialTreeUtils/getNumberOfSelec
 import PartialTreeUtils from '../utils/PartialTreeUtils/index.js'
 import shouldHandleScroll from '../utils/shouldHandleScroll.js'
 import AuthView from './AuthView.js'
+import GlobalSearchView from './GlobalSearchView.js'
 import Header from './Header.js'
 
 export function defaultPickerIcon(): h.JSX.Element {
@@ -78,6 +80,7 @@ export interface Opts<M extends Meta, B extends Body> {
     onAuth: (authFormData: unknown) => Promise<void>
   }) => h.JSX.Element
   virtualList: boolean
+  supportsSearch?: boolean
 }
 type PassedOpts<M extends Meta, B extends Body> = Optional<
   Opts<M, B>,
@@ -93,9 +96,16 @@ type RenderOpts<M extends Meta, B extends Body> = Omit<
   PassedOpts<M, B>,
   'provider'
 >
-
 /**
  * Class to easily generate generic views for Provider plugins
+ *
+ * We have a *search view* and a *normal view*.
+ * Search view is only used when the Provider supports server side search i.e. provider.search method is implemented for the provider.
+ * The state is stored in searchResults.
+ * Search view is implemented in components GlobalSearchView and SearchResultItem.
+ * We conditionally switch between search view and normal in the render method when a server side search is initiated.
+ * When users type their search query in search input box (SearchInput component), we debounce the input and call provider.search method to fetch results from the server.
+ * when the user enters a folder in search results or clears the search input query we switch back to Normal View.
  */
 export default class ProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
@@ -108,7 +118,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   isHandlingScroll: boolean = false
 
-  lastCheckbox: string | null = null
+  previousCheckbox: string | null = null
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
@@ -133,6 +143,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.render = this.render.bind(this)
     this.cancelSelection = this.cancelSelection.bind(this)
     this.toggleCheckbox = this.toggleCheckbox.bind(this)
+    this.openSearchResultFolder = this.openSearchResultFolder.bind(this)
+    this.clearSearchState = this.clearSearchState.bind(this)
 
     // Set default state for the plugin
     this.resetPluginState()
@@ -159,12 +171,22 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ loading })
   }
 
+  get isLoading() {
+    return this.plugin.getPluginState().loading
+  }
+
   cancelSelection(): void {
     const { partialTree } = this.plugin.getPluginState()
     const newPartialTree: PartialTree = partialTree.map((item) =>
       item.type === 'root' ? item : { ...item, status: 'unchecked' },
     )
     this.plugin.setPluginState({ partialTree: newPartialTree })
+  }
+
+  clearSearchState(): void {
+    this.plugin.setPluginState({
+      searchResults: undefined,
+    })
   }
 
   #abortController: AbortController | undefined
@@ -195,13 +217,148 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  async openFolder(folderId: string | null): Promise<void> {
-    this.lastCheckbox = null
+  async #search(): Promise<void> {
+    const { partialTree, currentFolderId, searchString } =
+      this.plugin.getPluginState()
+
+    const currentFolder = partialTree.find((i) => i.id === currentFolderId)!
+
+    if (searchString.trim() === '') {
+      this.#abortController?.abort()
+      this.clearSearchState()
+      return
+    }
+
+    this.setLoading(true)
+    await this.#withAbort(async (signal) => {
+      const scopePath =
+        currentFolder.type === 'root' ? undefined : currentFolderId
+      const { items } = await this.provider.search!(searchString, {
+        signal,
+        path: scopePath,
+      })
+
+      // For each searched file, build the entire path (from the root all the way to the leaf node)
+      // This is because we need to make sure all ancestor folders are present in the partialTree before we open the folder or check the file.
+      // This is needed because when the user opens a folder we need to have all its parent folders in the partialTree to be able to render the breadcrumbs correctly.
+      // Similarly when the user checks a file, we need to have all it's ancestor folders in the partialTree to be able to percolateUp the checked state correctly to its ancestors.
+
+      const { partialTree } = this.plugin.getPluginState()
+      const newPartialTree: PartialTree = [...partialTree]
+
+      for (const file of items) {
+        // Decode URI and split into path segments
+        const decodedPath = decodeURIComponent(file.requestPath)
+        const segments = decodedPath.split('/').filter((s) => s.length > 0)
+
+        // Start from root
+        let parentId: PartialTreeId = this.plugin.rootFolderId
+        let isParentFolderChecked: boolean
+
+        // Walk through each segment starting from the root and build child nodes if they don't exist
+        segments.forEach((segment, index, arr) => {
+          const pathSegments = segments.slice(0, index + 1)
+          const encodedPath = encodeURIComponent(`/${pathSegments.join('/')}`)
+
+          // Skip if node already exists
+          const existingNode = newPartialTree.find(
+            (n) => n.id === encodedPath && n.type !== 'root',
+          ) as PartialTreeFolderNode | PartialTreeFile | undefined
+          if (existingNode) {
+            parentId = encodedPath
+            isParentFolderChecked = existingNode.status === 'checked'
+            return
+          }
+
+          const isLeafNode = index === arr.length - 1
+          let node: PartialTreeFolderNode | PartialTreeFile
+
+          // propagate checked state from parent to children, if the user has checked the parent folder before searching
+          // and the parent folder is an ancestor of the searched file
+          // see also afterOpenFolder which contains similar logic, we should probably refactor and reuse some
+          const status = isParentFolderChecked ? 'checked' : 'unchecked'
+
+          // Build the Leaf Node, it can be a file (`PartialTreeFile`) or a folder (`PartialTreeFolderNode`).
+          // Since we Already have the leaf node's data (`file`, `CompanionFile`) from the searchResults: CompanionFile[], we just use that.
+          if (isLeafNode) {
+            if (file.isFolder) {
+              node = {
+                type: 'folder',
+                id: encodedPath,
+                cached: false,
+                nextPagePath: null,
+                status,
+                parentId,
+                data: file,
+              }
+            } else {
+              const restrictionError = this.validateSingleFile(file)
+              node = {
+                type: 'file',
+                id: encodedPath,
+                restrictionError,
+                status: !restrictionError ? status : 'unchecked',
+                parentId,
+                data: file,
+              }
+            }
+          } else {
+            // not leaf node, so by definition it is a folder leading up to the leaf node
+            node = {
+              type: 'folder',
+              id: encodedPath,
+              cached: false,
+              nextPagePath: null,
+              status,
+              parentId,
+              data: {
+                // we don't have any data, so fill only the necessary fields
+                name: decodeURIComponent(segment),
+                icon: 'folder',
+                isFolder: true,
+              },
+            }
+          }
+          newPartialTree.push(node)
+          parentId = encodedPath // This node becomes parent for the next iteration
+          isParentFolderChecked = status === 'checked'
+        })
+      }
+
+      this.plugin.setPluginState({
+        partialTree: newPartialTree,
+        searchResults: items.map((item) => item.requestPath),
+      })
+    }).catch(handleError(this.plugin.uppy))
+    this.setLoading(false)
+  }
+
+  #searchDebounced = debounce(this.#search, 500)
+
+  onSearchInput = (s: string): void => {
+    this.plugin.setPluginState({ searchString: s })
+    if (this.opts.supportsSearch) this.#searchDebounced()
+  }
+
+  async openSearchResultFolder(folderId: PartialTreeId): Promise<void> {
+    // stop searching
+    this.plugin.setPluginState({ searchString: '' })
+
+    // now open folder using the normal view
+    await this.openFolder(folderId)
+  }
+
+  async openFolder(folderId: PartialTreeId): Promise<void> {
+    // always switch away from the search view when opening a folder, whether it happens from the search view or by clicking breadcrumbs
+    this.clearSearchState()
+
+    this.previousCheckbox = null
     // Returning cached folder
     const { partialTree } = this.plugin.getPluginState()
     const clickedFolder = partialTree.find(
       (folder) => folder.id === folderId,
     )! as PartialTreeFolder
+
     if (clickedFolder.cached) {
       this.plugin.setPluginState({
         currentFolderId: folderId,
@@ -331,6 +488,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   async donePicking(): Promise<void> {
     const { partialTree } = this.plugin.getPluginState()
 
+    if (this.isLoading) return
     this.setLoading(true)
     await this.#withAbort(async (signal) => {
       // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
@@ -373,15 +531,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
       ourItem.id,
       this.getDisplayedPartialTree(),
       isShiftKeyPressed,
-      this.lastCheckbox,
+      this.previousCheckbox,
     )
+
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
       partialTree,
       clickedRange,
     )
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
-    this.lastCheckbox = ourItem.id
+    this.previousCheckbox = ourItem.id
   }
 
   getDisplayedPartialTree = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
@@ -390,14 +549,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const inThisFolder = partialTree.filter(
       (item) => item.type !== 'root' && item.parentId === currentFolderId,
     ) as (PartialTreeFile | PartialTreeFolderNode)[]
+
+    // If provider supports server side search, we don't filter the items client side
     const filtered =
-      searchString === ''
+      this.opts.supportsSearch || searchString.trim() === ''
         ? inThisFolder
         : inThisFolder.filter(
             (item) =>
               (item.data.name ?? this.plugin.uppy.i18n('unnamed'))
                 .toLowerCase()
-                .indexOf(searchString.toLowerCase()) !== -1,
+                .indexOf(searchString.trim().toLowerCase()) !== -1,
           )
 
     return filtered
@@ -419,6 +580,36 @@ export default class ProviderView<M extends Meta, B extends Body> {
     ) as PartialTreeFile[]
     const uppyFiles = checkedFiles.map((file) => file.data)
     return this.plugin.uppy.validateAggregateRestrictions(uppyFiles)
+  }
+
+  #renderSearchResults() {
+    const { i18n } = this.plugin.uppy
+
+    const { searchResults: ids, partialTree } = this.plugin.getPluginState()
+
+    // todo memoize this so we don't have to do it on every render
+    const itemsById = new Map<string, PartialTreeFile | PartialTreeFolderNode>()
+    partialTree.forEach((item) => {
+      if (item.type !== 'root') {
+        itemsById.set(item.id, item)
+      }
+    })
+
+    // the search results view needs data from the partial tree,
+    const searchResults = ids!.map((id) => {
+      const partialTreeItem = itemsById.get(id)
+      if (partialTreeItem == null) throw new Error('Partial tree not complete')
+      return partialTreeItem
+    })
+
+    return (
+      <GlobalSearchView
+        searchResults={searchResults}
+        openFolder={this.openSearchResultFolder}
+        toggleCheckbox={this.toggleCheckbox}
+        i18n={i18n}
+      />
+    )
   }
 
   render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
@@ -448,7 +639,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString } = this.plugin.getPluginState()
+    const { partialTree, username, searchString, searchResults } =
+      this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
 
     return (
@@ -468,13 +660,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
           username={username}
           i18n={i18n}
         />
-
         {opts.showFilter && (
           <SearchInput
             searchString={searchString}
-            setSearchString={(s: string) => {
-              this.plugin.setPluginState({ searchString: s })
-            }}
+            setSearchString={(s: string) => this.onSearchInput(s)}
             submitSearchString={() => {}}
             inputLabel={i18n('filter')}
             clearSearchLabel={i18n('resetFilter')}
@@ -483,19 +672,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
           />
         )}
 
-        <Browser<M, B>
-          toggleCheckbox={this.toggleCheckbox}
-          displayedPartialTree={this.getDisplayedPartialTree()}
-          openFolder={this.openFolder}
-          virtualList={opts.virtualList}
-          noResultsLabel={i18n('noFilesFound')}
-          handleScroll={this.handleScroll}
-          viewType={opts.viewType}
-          showTitles={opts.showTitles}
-          i18n={this.plugin.uppy.i18n}
-          isLoading={loading}
-          utmSource="Companion"
-        />
+        {searchResults ? (
+          this.#renderSearchResults()
+        ) : (
+          <Browser<M, B>
+            toggleCheckbox={this.toggleCheckbox}
+            displayedPartialTree={this.getDisplayedPartialTree()}
+            openFolder={this.openFolder}
+            virtualList={opts.virtualList}
+            noResultsLabel={i18n('noFilesFound')}
+            handleScroll={this.handleScroll}
+            viewType={opts.viewType}
+            showTitles={opts.showTitles}
+            i18n={this.plugin.uppy.i18n}
+            isLoading={loading}
+            utmSource="Companion"
+          />
+        )}
 
         <FooterActions
           partialTree={partialTree}
