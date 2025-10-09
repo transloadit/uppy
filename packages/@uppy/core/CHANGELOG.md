@@ -1,5 +1,16 @@
 # @uppy/core
 
+## 5.1.0
+
+### Minor Changes
+
+- 5ba2c1c: Introduce the concept of server-side search and add support for it for the Dropbox provider. Previously, only client-side filtering in the currently viewed folder was possible, which was limiting. Now users using Companion with Dropbox can perform a search across their entire account.
+
+### Patch Changes
+
+- Updated dependencies [5ba2c1c]
+  - @uppy/utils@7.1.0
+
 ## 5.0.2
 
 ### Patch Changes

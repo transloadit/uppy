@@ -10796,7 +10796,7 @@ __metadata:
     common-tags: "npm:1.8.2"
     connect-redis: "npm:7.1.1"
     content-disposition: "npm:^0.5.4"
-    cookie-parser: "npm:1.4.6"
+    cookie-parser: "npm:1.4.7"
     cors: "npm:^2.8.5"
     escape-goat: "npm:3.0.0"
     escape-string-regexp: "npm:4.0.0"
@@ -13583,13 +13583,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-parser@npm:1.4.6, cookie-parser@npm:^1.4.6":
-  version: 1.4.6
-  resolution: "cookie-parser@npm:1.4.6"
+"cookie-parser@npm:1.4.7, cookie-parser@npm:^1.4.7":
+  version: 1.4.7
+  resolution: "cookie-parser@npm:1.4.7"
   dependencies:
-    cookie: "npm:0.4.1"
+    cookie: "npm:0.7.2"
     cookie-signature: "npm:1.0.6"
-  checksum: 10/1e5a63aa82e8eb4e02d2977c6902983dee87b02e87ec5ec43ac3cb1e72da354003716570cd5190c0ad9e8a454c9d3237f4ad6e2f16d0902205a96a1c72b77ba5
+  checksum: 10/243fa13f217e793d20a57675e6552beea08c5989fcc68495d543997a31646875335e0e82d687b42dcfd466df57891d22bae7f5ba6ab33b7705ed2dd6eb989105
   languageName: node
   linkType: hard
 
@@ -13611,13 +13611,6 @@ __metadata:
   version: 1.2.2
   resolution: "cookie-signature@npm:1.2.2"
   checksum: 10/be44a3c9a56f3771aea3a8bd8ad8f0a8e2679bcb967478267f41a510b4eb5ec55085386ba79c706c4ac21605ca76f4251973444b90283e0eb3eeafe8a92c7708
-  languageName: node
-  linkType: hard
-
-"cookie@npm:0.4.1":
-  version: 0.4.1
-  resolution: "cookie@npm:0.4.1"
-  checksum: 10/0f2defd60ac93645ee31e82d11da695080435eb4fe5bed9b14d2fc4e0621a66f4c5c60f3eb05761df08a9d6279366e8646edfd1654f359d0b5afc25304fc4ddc
   languageName: node
   linkType: hard
 
@@ -15498,7 +15491,7 @@ __metadata:
     "@uppy/google-drive": "workspace:*"
     "@uppy/webcam": "workspace:*"
     body-parser: "npm:^1.20.3"
-    cookie-parser: "npm:^1.4.6"
+    cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.5"
     dotenv: "npm:^16.0.1"
     express: "npm:^4.19.2"

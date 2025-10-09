@@ -357,6 +357,22 @@ export default class Provider<M extends Meta, B extends Body>
     return this.get<ResBody>(`${this.id}/list/${directory || ''}`, options)
   }
 
+  search<ResBody>(
+    text: string,
+    options: RequestOptions & {
+      path?: string | null | undefined
+      cursor?: string | undefined
+    } = {},
+  ): Promise<ResBody> {
+    const qs = new URLSearchParams()
+    qs.set('q', text)
+    if (options.path) qs.set('path', options.path)
+    if (options.cursor) qs.set('cursor', options.cursor)
+    const base = `${this.id}/search`
+    const path = `${base}?${qs.toString()}`
+    return this.get<ResBody>(path, options)
+  }
+
   async logout<ResBody>(options?: RequestOptions): Promise<ResBody> {
     const response = await this.get<ResBody>(`${this.id}/logout`, options)
     await this.removeAuthToken()

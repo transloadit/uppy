@@ -36,6 +36,16 @@ export default class Provider {
   }
 
   /**
+   * search for files/folders in the provider account
+   *
+   * @param {object} options
+   * @returns {Promise}
+   */
+  async search(options) {
+    throw new Error('method not implemented')
+  }
+
+  /**
    * download a certain file from the provider account
    *
    * @param {object} options
