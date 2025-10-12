@@ -304,6 +304,11 @@ export default class GoldenRetriever<
   #handleFileRemoved = async (file: UppyFile<M, B>) => {
     try {
       await this.#deleteBlobs([file.id])
+      const remainingFiles = Object.keys(this.uppy.getState().files)
+      if (remainingFiles.length === 0) {
+        this.uppy.setState({ recoveredState: null })
+        MetaDataStore.cleanup(this.uppy.opts.id)
+      }
     } catch (err) {
       this.uppy.log(
         `[GoldenRetriever] Failed to remove file ${file.id}`,
