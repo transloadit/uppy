@@ -304,6 +304,7 @@ export default class GoldenRetriever<
   #handleFileRemoved = async (file: UppyFile<M, B>): Promise<void> => {
     try {
       await this.#deleteBlobs([file.id])
+      // If there are no files left, clear the recovery state
       const remainingFiles = Object.keys(this.uppy.getState().files)
       if (remainingFiles.length === 0) {
         this.uppy.setState({ recoveredState: null })
