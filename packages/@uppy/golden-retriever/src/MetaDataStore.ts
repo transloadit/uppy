@@ -35,9 +35,9 @@ type MetaDataStoreOptions = {
 
 const prefix = 'uppyState:'
 
-const getItemKey = (name: string) => `${prefix}${name}`
+const getItemKey = (name: string): string => `${prefix}${name}`
 
-function expireOldState() {
+function expireOldState(): void {
   const existingKeys: string[] = []
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i)

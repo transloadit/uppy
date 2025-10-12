@@ -23,7 +23,7 @@ const MiB = 0x10_00_00
 /**
  * Set default `expires` dates on existing stored blobs.
  */
-function migrateExpiration(store: IDBObjectStore) {
+function migrateExpiration(store: IDBObjectStore): void {
   const request = store.openCursor()
   request.onsuccess = (event) => {
     const cursor = (event.target as IDBRequest).result

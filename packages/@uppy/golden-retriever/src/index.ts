@@ -81,7 +81,7 @@ export default class GoldenRetriever<
     })
   }
 
-  async #restore() {
+  async #restore(): Promise<void> {
     const recoveredState = this.#metaDataStore.load()
     if (!recoveredState) {
       return
@@ -227,7 +227,7 @@ export default class GoldenRetriever<
     }
   }
 
-  async #deleteBlobs(fileIDs: string[]) {
+  async #deleteBlobs(fileIDs: string[]): Promise<void> {
     await Promise.all(
       fileIDs.map((id) =>
         Promise.all([
@@ -243,7 +243,7 @@ export default class GoldenRetriever<
     return this.#deleteBlobs(fileIDs)
   }
 
-  #addBlobToStores = async (file: UppyFile<M, B>) => {
+  #addBlobToStores = async (file: UppyFile<M, B>): Promise<void> => {
     if (file.isRemote) return
 
     await Promise.all([
@@ -268,7 +268,7 @@ export default class GoldenRetriever<
     prevState: State<M, B>,
     nextState: State<M, B>,
     patch: Partial<State<M, B>> | undefined,
-  ) => {
+  ): void => {
     if (nextState.currentUploads !== prevState.currentUploads) {
       const { currentUploads } = this.uppy.getState()
       this.#patchMetadata({ currentUploads })
@@ -301,7 +301,7 @@ export default class GoldenRetriever<
     }
   }
 
-  #handleFileRemoved = async (file: UppyFile<M, B>) => {
+  #handleFileRemoved = async (file: UppyFile<M, B>): Promise<void> => {
     try {
       await this.#deleteBlobs([file.id])
       const remainingFiles = Object.keys(this.uppy.getState().files)
@@ -318,7 +318,9 @@ export default class GoldenRetriever<
     }
   }
 
-  #handleFileUploaded = async (file: UppyFile<M, B> | undefined) => {
+  #handleFileUploaded = async (
+    file: UppyFile<M, B> | undefined,
+  ): Promise<void> => {
     if (file == null) {
       return
     }
@@ -333,7 +335,7 @@ export default class GoldenRetriever<
     }
   }
 
-  #replaceBlobInStores = async (file: UppyFile<M, B>) => {
+  #replaceBlobInStores = async (file: UppyFile<M, B>): Promise<void> => {
     await this.#deleteBlobs([file.id])
     await this.#addBlobToStores(file)
   }
