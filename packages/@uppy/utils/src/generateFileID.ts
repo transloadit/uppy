@@ -48,7 +48,7 @@ export default function generateFileID<M extends Meta, B extends Body>(
     id += `-${encodeFilename(file.meta.relativePath.toLowerCase())}`
   }
 
-  if (file.data.size !== undefined) {
+  if (file.data?.size !== undefined) {
     id += `-${file.data.size}`
   }
   if ((file.data as File).lastModified !== undefined) {

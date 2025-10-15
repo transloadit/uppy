@@ -198,6 +198,7 @@ export default class ThumbnailGenerator<
     targetWidth: number | null,
     targetHeight: number | null,
   ): Promise<string> {
+    if (file.data == null) throw new Error('File data is empty')
     const originalUrl = URL.createObjectURL(file.data)
 
     const onload = new Promise<HTMLImageElement>((resolve, reject) => {

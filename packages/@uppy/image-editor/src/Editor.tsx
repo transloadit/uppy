@@ -375,6 +375,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
   render() {
     const { currentImage, opts } = this.props
     const { actions } = opts
+    if (currentImage.data == null) throw new Error('File data is empty')
     const imageURL = URL.createObjectURL(currentImage.data)
 
     return (

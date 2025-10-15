@@ -1095,6 +1095,7 @@ export class Uppy<
         const existingFile = existingFiles[newFile.id]
         const isGhost = existingFile?.isGhost
         if (isGhost && !newFile.isRemote) {
+          if (newFile.data == null) throw new Error('File data is missing')
           newFile = {
             ...existingFile,
             isGhost: false,

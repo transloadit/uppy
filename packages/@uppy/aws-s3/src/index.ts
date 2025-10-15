@@ -858,6 +858,8 @@ export default class AwsS3Multipart<
         resolve(undefined)
       }
 
+      if (file.data == null) throw new Error('File data is empty')
+
       const upload = new MultipartUploader<M, B>(file.data, {
         // .bind to pass the file object to each handler.
         companionComm: this.#companionCommunicationQueue,
@@ -924,7 +926,7 @@ export default class AwsS3Multipart<
     return {
       ...('remote' in file && file.remote?.body),
       protocol: 's3-multipart',
-      size: file.data.size,
+      size: file.data!.size,
       metadata: file.meta,
     }
   }

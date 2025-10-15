@@ -445,6 +445,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
       uploadOptions.metadata = meta
 
+      if (file.data == null) throw new Error('File data is empty')
       upload = new tus.Upload(file.data, uploadOptions)
       this.uploaders[file.id] = upload
       const eventManager = new EventManager(this.uppy)
@@ -549,7 +550,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       endpoint: opts.endpoint,
       uploadUrl: opts.uploadUrl,
       protocol: 'tus',
-      size: file.data.size,
+      size: file.data!.size,
       headers: opts.headers,
       metadata: file.meta,
     }

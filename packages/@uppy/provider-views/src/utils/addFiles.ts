@@ -5,7 +5,7 @@ import type {
   CompanionClientSearchProvider,
   CompanionFile,
   Meta,
-  UppyFile,
+  UppyFileNonGhost,
 } from '@uppy/utils'
 import { getSafeFileId } from '@uppy/utils'
 import companionFileToUppyFile from './companionFileToUppyFile.js'
@@ -15,12 +15,12 @@ const addFiles = <M extends Meta, B extends Body>(
   plugin: UnknownPlugin<M, B>,
   provider: CompanionClientProvider | CompanionClientSearchProvider,
 ): void => {
-  const uppyFiles: UppyFile<M, B>[] = companionFiles.map((f) =>
+  const uppyFiles = companionFiles.map((f) =>
     companionFileToUppyFile<M, B>(f, plugin, provider),
   )
 
-  const filesToAdd: UppyFile<M, B>[] = []
-  const filesAlreadyAdded: UppyFile<M, B>[] = []
+  const filesToAdd: UppyFileNonGhost<M, B>[] = []
+  const filesAlreadyAdded: UppyFileNonGhost<M, B>[] = []
   uppyFiles.forEach((file) => {
     if (
       plugin.uppy.checkIfFileAlreadyExists(

@@ -65,6 +65,7 @@ export default class Compressor<
     const compressAndApplyResult = this.#RateLimitedQueue.wrapPromiseFunction(
       async (file: LocalUppyFile<M, B>) => {
         try {
+          if (file.data == null) throw new Error('File data is empty')
           const compressedBlob = await this.compress(file.data)
           const compressedSavingsSize = file.data.size - compressedBlob.size
           this.uppy.log(
@@ -118,8 +119,8 @@ export default class Compressor<
       // Some browsers (Firefox) add blobs with empty file type, when files are
       // added from a folder. Uppy auto-detects type from extension, but leaves the original blob intact.
       // However, Compressor.js failes when file has no type, so we set it here
-      if (!file.data.type) {
-        file.data = file.data.slice(0, file.data.size, file.type)
+      if (!file.data!.type) {
+        file.data = file.data!.slice(0, file.data!.size, file.type)
       }
 
       if (!file.type?.startsWith('image/')) {

@@ -119,7 +119,11 @@ function buildResponseError(
 function setTypeInBlob<M extends Meta, B extends Body>(
   file: LocalUppyFile<M, B>,
 ) {
-  const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type)
+  const dataWithUpdatedType = file.data!.slice(
+    0,
+    file.data!.size,
+    file.meta.type,
+  )
   return dataWithUpdatedType
 }
 

@@ -97,11 +97,13 @@ export type {
   Body,
   InternalMetadata,
   LocalUppyFile,
+  LocalUppyFileNonGhost,
   Meta,
   MinimalRequiredUppyFile,
   RemoteUppyFile,
   UppyFile,
   UppyFileId,
+  UppyFileNonGhost,
 } from './UppyFile.js'
 export { default as UserFacingApiError } from './UserFacingApiError.js'
 

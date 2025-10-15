@@ -36,8 +36,15 @@ interface UppyFileBase<M extends Meta, B extends Body> {
 
 export interface LocalUppyFile<M extends Meta, B extends Body>
   extends UppyFileBase<M, B> {
-  data: Blob | File
   isRemote: false
+  data: Blob | File | undefined
+}
+
+export interface LocalUppyFileNonGhost<M extends Meta, B extends Body>
+  extends UppyFileBase<M, B> {
+  isRemote: false
+  isGhost: false
+  data: Blob | File
 }
 
 export interface RemoteUppyFile<M extends Meta, B extends Body>
@@ -59,14 +66,21 @@ export type UppyFile<M extends Meta, B extends Body> =
   | LocalUppyFile<M, B>
   | RemoteUppyFile<M, B>
 
+// TODO use this type in more places, so we don't have to check for data not being null/undefined everywhere
+/**
+ * For when you know the file is not a ghost, and data is definitely present.
+ */
+export type UppyFileNonGhost<M extends Meta, B extends Body> =
+  | LocalUppyFileNonGhost<M, B>
+  | RemoteUppyFile<M, B>
+
 /*
  * The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
  */
 export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
-  Pick<UppyFile<M, B>, 'name' | 'data'>
-> &
-  Partial<
-    Omit<UppyFile<M, B>, 'name' | 'meta'>
+  Pick<UppyFile<M, B>, 'name'>
+> & { data: NonNullable<UppyFile<M, B>['data']> } & Partial<
+    Omit<UppyFile<M, B>, 'name' | 'meta' | 'data'>
     // We want to omit the 'meta' from UppyFile because of internal metadata
     // (see InternalMetadata in `UppyFile.js`), as when adding a new file
     // that is not required.

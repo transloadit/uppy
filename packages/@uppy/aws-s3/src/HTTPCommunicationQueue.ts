@@ -186,6 +186,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     // where we just miss a new result so we loop here until we get nothing back,
     // at which point it's out turn to create a new cache entry.
     for (;;) {
+      if (file.data == null) throw new Error('File data is empty')
       cachedResult = this.#cache.get(file.data)
       if (cachedResult == null) break
       try {
@@ -199,6 +200,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     const promise = this.#createMultipartUpload(this.#getFile(file), signal)
 
     const abortPromise = () => {
+      if (file.data == null) throw new Error('File data is empty')
       promise.abort(signal.reason)
       this.#cache.delete(file.data)
     }
@@ -208,10 +210,12 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
       async (result) => {
         signal.removeEventListener('abort', abortPromise)
         this.#setS3MultipartState(file, result)
+        if (file.data == null) throw new Error('File data is empty')
         this.#cache.set(file.data, result)
       },
       () => {
         signal.removeEventListener('abort', abortPromise)
+        if (file.data == null) throw new Error('File data is empty')
         this.#cache.delete(file.data)
       },
     )
@@ -220,6 +224,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   }
 
   async abortFileUpload(file: UppyFile<M, B>): Promise<void> {
+    if (file.data == null) throw new Error('File data is empty')
     const result = this.#cache.get(file.data)
     if (result == null) {
       // If the createMultipartUpload request never was made, we don't
@@ -325,6 +330,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   }
 
   restoreUploadFile(file: UppyFile<M, B>, uploadIdAndKey: UploadResult): void {
+    if (file.data == null) throw new Error('File data is empty')
     this.#cache.set(file.data, uploadIdAndKey)
   }
 
