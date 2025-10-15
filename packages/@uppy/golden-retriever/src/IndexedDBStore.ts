@@ -1,4 +1,5 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { UppyFileId } from '@uppy/utils'
 
 const indexedDB =
   typeof window !== 'undefined' &&
@@ -137,14 +138,14 @@ class IndexedDBStore {
     return Promise.resolve(this.#ready)
   }
 
-  key(fileID: string): string {
+  key(fileID: UppyFileId): string {
     return `${this.name}!${fileID}`
   }
 
   /**
    * List all file blobs currently in the store.
    */
-  async list(): Promise<Record<string, IndexedDBStoredFile['data']>> {
+  async list(): Promise<Record<UppyFileId, IndexedDBStoredFile['data']>> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
@@ -222,7 +223,7 @@ class IndexedDBStore {
   /**
    * Delete a file blob from the store.
    */
-  async delete(fileID: string): Promise<unknown> {
+  async delete(fileID: UppyFileId): Promise<unknown> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readwrite')
     const request = transaction.objectStore(STORE_NAME).delete(this.key(fileID))

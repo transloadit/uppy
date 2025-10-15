@@ -9,6 +9,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
+import type { UppyFileId } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import IndexedDBStore from './IndexedDBStore.js'
 import MetaDataStore from './MetaDataStore.js'
@@ -181,7 +182,7 @@ export default class GoldenRetriever<
     })
   }
 
-  async #loadFileBlobsFromServiceWorker(): Promise<Record<string, Blob>> {
+  async #loadFileBlobsFromServiceWorker(): Promise<Record<UppyFileId, Blob>> {
     if (!this.#serviceWorkerStore) {
       return {}
     }
@@ -227,7 +228,7 @@ export default class GoldenRetriever<
     }
   }
 
-  async #deleteBlobs(fileIDs: string[]): Promise<void> {
+  async #deleteBlobs(fileIDs: UppyFileId[]): Promise<void> {
     await Promise.all(
       fileIDs.map((id) =>
         Promise.all([
@@ -239,7 +240,7 @@ export default class GoldenRetriever<
     this.uppy.log(`[GoldenRetriever] Removed ${fileIDs.length} blobs`)
   }
 
-  async [Symbol.for('uppy test: deleteBlobs')](fileIDs: string[]) {
+  async [Symbol.for('uppy test: deleteBlobs')](fileIDs: UppyFileId[]) {
     return this.#deleteBlobs(fileIDs)
   }
 

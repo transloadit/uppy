@@ -101,6 +101,7 @@ export type {
   MinimalRequiredUppyFile,
   RemoteUppyFile,
   UppyFile,
+  UppyFileId,
 } from './UppyFile.js'
 export { default as UserFacingApiError } from './UserFacingApiError.js'
 

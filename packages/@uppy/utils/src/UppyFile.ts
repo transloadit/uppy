@@ -6,10 +6,13 @@ export type Body = Record<string, unknown>
 
 export type InternalMetadata = { name: string; type?: string }
 
+// for better readability instead of using Record<string, something>
+export type UppyFileId = string
+
 interface UppyFileBase<M extends Meta, B extends Body> {
   error?: string | null
   extension: string
-  id: string
+  id: UppyFileId
   isPaused?: boolean
   isRestored?: boolean
   isGhost: boolean

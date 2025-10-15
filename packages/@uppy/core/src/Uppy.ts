@@ -16,6 +16,7 @@ import type {
   OptionalPluralizeLocale,
   RemoteUppyFile,
   UppyFile,
+  UppyFileId,
 } from '@uppy/utils'
 import {
   getFileNameAndExtension,
@@ -201,15 +202,18 @@ export type UnknownSearchProviderPlugin<
     provider: CompanionClientSearchProvider
   }
 
+// for better readability
+export type UploadId = string
+
 export interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
   failed?: UppyFile<M, B>[]
-  uploadID?: string
+  uploadID?: UploadId
   [key: string]: unknown
 }
 
 interface CurrentUpload<M extends Meta, B extends Body> {
-  fileIDs: string[]
+  fileIDs: UppyFileId[]
   step: number
   result: UploadResult<M, B>
 }
@@ -218,7 +222,7 @@ interface CurrentUpload<M extends Meta, B extends Body> {
 interface Plugins extends Record<string, Record<string, unknown> | undefined> {}
 
 type UppyFilesMap<M extends Meta, B extends Body> = {
-  [key: string]: UppyFile<M, B>
+  [key: UppyFileId]: UppyFile<M, B>
 }
 
 export interface State<M extends Meta, B extends Body>
@@ -231,12 +235,12 @@ export interface State<M extends Meta, B extends Body>
     isMobileDevice?: boolean
     darkMode?: boolean
   }
-  currentUploads: Record<string, CurrentUpload<M, B>>
+  currentUploads: Record<UploadId, CurrentUpload<M, B>>
   allowNewUpload: boolean
   /** `recoveredState` is a special version of state in which the files don't have any data (because the data was never stored) */
   recoveredState:
     | (Omit<Pick<State<M, B>, 'currentUploads'>, 'files'> & {
-        files: Record<string, Omit<UppyFile<M, B>, 'data'>>
+        files: Record<UppyFileId, Omit<UppyFile<M, B>, 'data'>>
       })
     | null
   error: string | null
