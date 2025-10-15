@@ -6,7 +6,12 @@ import {
   NetworkError,
 } from '@uppy/utils'
 import Emitter from 'component-emitter'
-import { type AssemblyResponse, getAssemblyUrlSsl } from './index.js'
+import {
+  type AssemblyFile,
+  type AssemblyResponse,
+  type AssemblyResult,
+  getAssemblyUrlSsl,
+} from './index.js'
 
 const ASSEMBLY_UPLOADING = 'ASSEMBLY_UPLOADING'
 const ASSEMBLY_EXECUTING = 'ASSEMBLY_EXECUTING'
@@ -113,7 +118,7 @@ class TransloaditAssembly extends Emitter {
     })
 
     this.#sse.addEventListener('assembly_upload_finished', (e) => {
-      const file = JSON.parse(e.data)
+      const file: AssemblyFile = JSON.parse(e.data)
       this.status = {
         ...this.status,
         uploads: [...(this.status.uploads ?? []), file],
@@ -122,7 +127,7 @@ class TransloaditAssembly extends Emitter {
     })
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
-      const [stepName, result] = JSON.parse(e.data)
+      const [stepName, result]: [string, AssemblyResult] = JSON.parse(e.data)
       this.status = {
         ...this.status,
         results: {
