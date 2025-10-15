@@ -813,6 +813,7 @@ describe('src/Core', () => {
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
         bytesUploaded: false,
+        complete: true,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,

@@ -1,5 +1,9 @@
-import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/utils'
-import type { AllFilesMessage, IncomingMessage } from './ServiceWorker.js'
+import type { Body, Meta, UppyFile, UppyFileId } from '@uppy/utils'
+import type {
+  AddFilePayload,
+  AllFilesMessage,
+  IncomingMessage,
+} from './ServiceWorker.js'
 
 const isSupported =
   typeof navigator !== 'undefined' && 'serviceWorker' in navigator
@@ -29,7 +33,7 @@ type ServiceWorkerStoreOptions = {
   storeName: string
 }
 
-class ServiceWorkerStore<M extends Meta, B extends Body> {
+class ServiceWorkerStore {
   #ready: void | Promise<void>
 
   name: string
@@ -47,36 +51,34 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
     return Promise.resolve(this.#ready)
   }
 
-  async list(): Promise<Record<string, LocalUppyFile<M, B>['data']>> {
+  async list(): Promise<Record<UppyFileId, Blob>> {
     await this.#ready
 
-    return new Promise<Record<string, LocalUppyFile<M, B>['data']>>(
-      (resolve, reject) => {
-        const onMessage = (event: MessageEvent<AllFilesMessage>) => {
-          if (event.data.store !== this.name) {
-            return
-          }
-          switch (event.data.type) {
-            case 'uppy/ALL_FILES':
-              resolve(event.data.files)
-              navigator.serviceWorker.removeEventListener('message', onMessage)
-              break
-            default:
-              reject()
-          }
+    return new Promise<Record<UppyFileId, Blob>>((resolve, reject) => {
+      const onMessage = (event: MessageEvent<AllFilesMessage>) => {
+        if (event.data.store !== this.name) {
+          return
         }
+        switch (event.data.type) {
+          case 'uppy/ALL_FILES':
+            resolve(event.data.files)
+            navigator.serviceWorker.removeEventListener('message', onMessage)
+            break
+          default:
+            reject()
+        }
+      }
 
-        navigator.serviceWorker.addEventListener('message', onMessage)
+      navigator.serviceWorker.addEventListener('message', onMessage)
 
-        navigator.serviceWorker.controller!.postMessage({
-          type: 'uppy/GET_FILES',
-          store: this.name,
-        } satisfies IncomingMessage)
-      },
-    )
+      navigator.serviceWorker.controller!.postMessage({
+        type: 'uppy/GET_FILES',
+        store: this.name,
+      } satisfies IncomingMessage)
+    })
   }
 
-  async put(file: LocalUppyFile<M, B>): Promise<void> {
+  async put(file: AddFilePayload): Promise<void> {
     await this.#ready
     navigator.serviceWorker.controller!.postMessage({
       type: 'uppy/ADD_FILE',
@@ -85,7 +87,7 @@ class ServiceWorkerStore<M extends Meta, B extends Body> {
     } satisfies IncomingMessage)
   }
 
-  async delete(fileID: string): Promise<void> {
+  async delete(fileID: UppyFileId): Promise<void> {
     await this.#ready
     navigator.serviceWorker.controller!.postMessage({
       type: 'uppy/REMOVE_FILE',

@@ -1,4 +1,3 @@
-import type { Body, Meta, UppyFile } from '@uppy/utils'
 import type { UppyFileId } from '@uppy/utils'
 
 const indexedDB =
@@ -78,6 +77,8 @@ function waitForRequest<T>(request: IDBRequest): Promise<T> {
     request.onerror = reject
   })
 }
+
+type AddFilePayload = { id: UppyFileId; data: Blob }
 
 type IndexedDBStoredFile = {
   id: string
@@ -198,9 +199,7 @@ class IndexedDBStore {
   /**
    * Save a file in the store.
    */
-  async put<M extends Meta, B extends Body, T>(
-    file: UppyFile<M, B>,
-  ): Promise<T> {
+  async put<T>(file: AddFilePayload): Promise<T> {
     if (file.data.size != null && file.data.size > this.opts.maxFileSize) {
       throw new Error('File is too big to store.')
     }

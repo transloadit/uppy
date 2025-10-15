@@ -29,7 +29,7 @@ function createUppy(
 
 beforeEach(async () => {
   // clear any previously restored files so they don't interfere with tests
-  new Uppy().use(GoldenRetriever).clear()
+  new Uppy().use(GoldenRetriever, { throttleTime: 0 }).clear()
   document.body.innerHTML = ''
 })
 
@@ -49,7 +49,7 @@ describe('Golden retriever', () => {
       http.post('http://localhost/upload', () => HttpResponse.json({})),
     )
 
-    let uppy = createUppy().use(GoldenRetriever)
+    let uppy = createUppy().use(GoldenRetriever, { throttleTime: 0 })
 
     const fileInput = document.querySelector('.uppy-Dashboard-input')!
 
@@ -58,7 +58,7 @@ describe('Golden retriever', () => {
 
     // reload page and recreate Uppy instance
     uppy = createUppy({ withPageReload: true })
-      .use(GoldenRetriever)
+      .use(GoldenRetriever, { throttleTime: 0 })
       .use(XHRUpload, {
         endpoint: 'http://localhost/upload',
       })
@@ -81,7 +81,7 @@ describe('Golden retriever', () => {
         if (plugin.id === 'GoldenRetriever') resolve()
       }),
     )
-    uppy.use(GoldenRetriever)
+    uppy.use(GoldenRetriever, { throttleTime: 0 })
     await promise
 
     // make sure that the restored file is cleared after successful upload
@@ -100,9 +100,11 @@ describe('Golden retriever', () => {
       }),
     )
 
-    let uppy = createUppy().use(GoldenRetriever).use(XHRUpload, {
-      endpoint: 'http://localhost/upload',
-    })
+    let uppy = createUppy()
+      .use(GoldenRetriever, { throttleTime: 0 })
+      .use(XHRUpload, {
+        endpoint: 'http://localhost/upload',
+      })
 
     const fileInput = document.querySelector('.uppy-Dashboard-input')!
     await userEvent.upload(fileInput, [
@@ -121,7 +123,7 @@ describe('Golden retriever', () => {
 
     // reload page and recreate Uppy instance
     uppy = createUppy({ withPageReload: true })
-      .use(GoldenRetriever)
+      .use(GoldenRetriever, { throttleTime: 0 })
       .use(XHRUpload, {
         endpoint: 'http://localhost/upload',
       })
@@ -169,9 +171,11 @@ describe('Golden retriever', () => {
       }),
     )
 
-    let uppy = createUppy().use(GoldenRetriever).use(XHRUpload, {
-      endpoint: 'http://localhost/upload',
-    })
+    let uppy = createUppy()
+      .use(GoldenRetriever, { throttleTime: 0 })
+      .use(XHRUpload, {
+        endpoint: 'http://localhost/upload',
+      })
 
     const fileInput = document.querySelector('.uppy-Dashboard-input')!
     await userEvent.upload(fileInput, [
@@ -209,7 +213,9 @@ describe('Golden retriever', () => {
     ](fileIds)
 
     // reload page and recreate Uppy instance
-    uppy = createUppy({ withPageReload: true }).use(GoldenRetriever)
+    uppy = createUppy({ withPageReload: true }).use(GoldenRetriever, {
+      throttleTime: 0,
+    })
     await new Promise((resolve) => uppy.once('restored', resolve))
 
     // make sure that the failed files are still there

@@ -1743,16 +1743,18 @@ export class Uppy<
       }
 
       const currentProgress = this.getFile(file.id).progress
+      const needsPostProcessing = this.#postProcessors.size > 0
+
       this.setFileState(file.id, {
         progress: {
           ...currentProgress,
-          postprocess:
-            this.#postProcessors.size > 0
-              ? {
-                  mode: 'indeterminate',
-                }
-              : undefined,
+          postprocess: needsPostProcessing
+            ? {
+                mode: 'indeterminate',
+              }
+            : undefined,
           uploadComplete: true,
+          ...(!needsPostProcessing && { complete: true }),
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,
         } as FileProgressStarted,
@@ -1816,25 +1818,25 @@ export class Uppy<
       })
     })
 
-    this.on('postprocess-complete', (file) => {
-      if (file == null || !this.getFile(file.id)) {
+    this.on('postprocess-complete', (fileIn) => {
+      const file = fileIn && this.getFile(fileIn.id)
+      if (file == null) {
         this.log(
-          `Not setting progress for a file that has been removed: ${file?.id}`,
+          `Not setting progress for a file that has been removed: ${fileIn?.id}`,
         )
         return
       }
-      const files = {
-        ...this.getState().files,
-      }
-      files[file.id] = {
-        ...files[file.id],
-        progress: {
-          ...files[file.id].progress,
-        },
-      }
-      delete files[file.id].progress.postprocess
 
-      this.setState({ files })
+      const { postprocess: _deleted, ...newProgress } = file.progress
+
+      this.patchFilesState({
+        [file.id]: {
+          progress: {
+            ...newProgress,
+            complete: true as const,
+          },
+        },
+      })
     })
 
     this.on('restored', () => {

@@ -4,7 +4,6 @@ import type {
   Meta,
   PluginOpts,
   State,
-  UploadResult,
   Uppy,
   UppyFile,
 } from '@uppy/core'
@@ -29,6 +28,7 @@ export interface GoldenRetrieverOptions extends PluginOpts {
     name?: string
     version?: number
   }
+  throttleTime?: number
 }
 
 const defaultOptions = {
@@ -56,7 +56,7 @@ export default class GoldenRetriever<
 
   #metaDataStore: MetaDataStore<M, B>
 
-  #serviceWorkerStore: ServiceWorkerStore<M, B> | null
+  #serviceWorkerStore: ServiceWorkerStore | undefined
 
   #indexedDBStore: IndexedDBStore
 
@@ -68,8 +68,8 @@ export default class GoldenRetriever<
     this.#metaDataStore = new MetaDataStore({
       expires: this.opts.expires,
       storeName: uppy.getID(),
+      throttleTime: this.opts.throttleTime,
     })
-    this.#serviceWorkerStore = null
     if (this.opts.serviceWorker) {
       this.#serviceWorkerStore = new ServiceWorkerStore({
         storeName: uppy.getID(),
@@ -111,30 +111,43 @@ export default class GoldenRetriever<
     }
 
     // Loop through blobs that we can restore, add blobs to file objects
-    const filesWithBlobs = Object.fromEntries(
-      Object.entries(files).map(([fileID, file]) => {
-        if (file.isRemote) {
+    const filesWithBlobs: Record<
+      UppyFileId,
+      UppyFile<M, B>
+    > = Object.fromEntries(
+      Object.entries(files).map(
+        ([fileID, file]): [UppyFileId, UppyFile<M, B>] => {
+          if (file.isRemote) {
+            return [
+              fileID,
+              {
+                ...file,
+                isRestored: true,
+                data: { size: null }, // todo shouldn't we save/restore the size too?
+              },
+            ]
+          }
+
+          const blob: Blob | undefined = blobs[fileID]
           return [
             fileID,
-            {
-              ...file,
-              isRestored: true,
-              data: { size: null }, // todo shouldn't we save/restore the size too?
-            },
+            !file.progress.uploadComplete && blob == null
+              ? // if we don’t have the blob (and the file is not completed uploading), mark the file as a ghost
+                {
+                  ...file,
+                  isRestored: true,
+                  isGhost: true,
+                  data: undefined,
+                }
+              : {
+                  ...file,
+                  isRestored: true,
+                  isGhost: false,
+                  data: blob,
+                },
           ]
-        }
-
-        const blob = blobs[fileID]
-        return [
-          fileID,
-          {
-            ...file,
-            isRestored: true,
-            data: blob,
-            isGhost: !file.progress.uploadComplete && blob == null, // if we don’t have the blob (and the file is not completed uploading), mark the file as a ghost
-          },
-        ]
-      }),
+        },
+      ),
     )
 
     this.uppy.setState({
@@ -167,8 +180,8 @@ export default class GoldenRetriever<
     pluginData,
     ...patch
   }: Partial<NonNullable<ReturnType<MetaDataStore<M, B>['load']>>>): void => {
-    const existing = this.#metaDataStore.load()
-    this.#metaDataStore.save({
+    const existing = this.#metaDataStore.get()
+    this.#metaDataStore.set({
       ...(existing ?? {
         currentUploads: {},
         files: {},
@@ -230,14 +243,24 @@ export default class GoldenRetriever<
 
   async #deleteBlobs(fileIDs: UppyFileId[]): Promise<void> {
     await Promise.all(
-      fileIDs.map((id) =>
-        Promise.all([
-          this.#serviceWorkerStore?.delete(id),
-          this.#indexedDBStore.delete(id),
-        ]),
-      ),
+      fileIDs.map(async (id) => {
+        try {
+          await Promise.all([
+            this.#serviceWorkerStore?.delete(id),
+            this.#indexedDBStore.delete(id),
+          ])
+        } catch (err) {
+          this.uppy.log(
+            `[GoldenRetriever] Could not remove file ${id} from all stores`,
+            'warning',
+          )
+          this.uppy.log(err)
+        }
+      }),
     )
-    this.uppy.log(`[GoldenRetriever] Removed ${fileIDs.length} blobs`)
+    if (fileIDs.length > 0) {
+      this.uppy.log(`[GoldenRetriever] Removed ${fileIDs.length} blobs`)
+    }
   }
 
   async [Symbol.for('uppy test: deleteBlobs')](fileIDs: UppyFileId[]) {
@@ -245,17 +268,26 @@ export default class GoldenRetriever<
   }
 
   #addBlobToStores = async (file: UppyFile<M, B>): Promise<void> => {
-    if (file.isRemote) return
+    const { id, data, isRemote } = file
+    if (isRemote || data == null) return
 
     await Promise.all([
-      this.#serviceWorkerStore?.put(file).catch((err) => {
+      this.#serviceWorkerStore?.put({ id, data }).catch((err) => {
         this.uppy.log(
           '[GoldenRetriever] Could not store file in Service Worker',
           'warning',
         )
         this.uppy.log(err)
       }),
-      this.#indexedDBStore.put(file).catch((err) => {
+      this.#indexedDBStore.put({ id, data }).catch((err) => {
+        // idempotent; assume "Key already exists in the object store"
+        if (
+          err instanceof Event &&
+          err.target instanceof IDBRequest &&
+          err.target.error?.name === 'ConstraintError'
+        ) {
+          return
+        }
         this.uppy.log(
           '[GoldenRetriever] Could not store file in IndexedDB',
           'warning',
@@ -274,72 +306,76 @@ export default class GoldenRetriever<
       const { currentUploads } = this.uppy.getState()
       this.#patchMetadata({ currentUploads })
     }
+
     if (nextState.files !== prevState.files) {
-      const files = nextState.files
-
-      // We dont’t want to store file.data on local files, because the actual blob will be restored later,
-      // and we want to avoid having weird properties in the serialized object (like file.preview).
-      const filesWithoutBlobs = Object.fromEntries(
-        Object.entries(files).map(
-          ([fileID, { data, preview, ...fileInfo }]) => [fileID, fileInfo],
-        ),
-      )
-
-      this.#patchMetadata({ files: filesWithoutBlobs })
-    }
-    // todo handle also blob changes here. currently we don't handle all blob changes, for example compressed image
-  }
-
-  #handleFileAdded = async (file: UppyFile<M, B>) => {
-    try {
-      await this.#addBlobToStores(file)
-    } catch (err) {
-      this.uppy.log(
-        `[GoldenRetriever] Failed to store file ${file.id}`,
-        'warning',
-      )
-      this.uppy.log(err)
-    }
-  }
-
-  #handleFileRemoved = async (file: UppyFile<M, B>): Promise<void> => {
-    try {
-      await this.#deleteBlobs([file.id])
-      // If there are no files left, clear the recovery state
-      const remainingFiles = Object.keys(this.uppy.getState().files)
-      if (remainingFiles.length === 0) {
+      // If all files have completed *successfully*, remove the whole stored restoration state.
+      // This makes sure that if the upload was only partially successful, the user can still restore and upload the remaining files.
+      // Here are some scenarios we have to take into account:
+      // todo (make unit/e2e tests for these scenarios)
+      // - the user removes all uploads one by one (once all are removed, we should not restore anything after reloading page)
+      // - the user uploads files with Transloadit plugin enabled, uploads complete successfully, and the user refreshes the page while the assembly is still running. golden retriever should then restore the files, and the ongoing assembly should progress
+      // - once a file finishes uploading successfully, it should have it its blob removed (even if a post processing step remains). if not successful upload it should not be removed
+      if (
+        Object.values(prevState.files).some((f) => !f.progress.complete) &&
+        (Object.values(nextState.files).length === 0 ||
+          Object.values(nextState.files).every(
+            (f) => f.progress.complete && !f.error,
+          ))
+      ) {
+        this.uppy.log(
+          `[GoldenRetriever] All files have been uploaded and processed successfully, clearing recovery state`,
+        )
         this.uppy.setState({ recoveredState: null })
-        MetaDataStore.cleanup(this.uppy.opts.id)
+        this.#metaDataStore.set(null)
+      } else {
+        // We don’t want to store file.data on local files, because the actual blob is too large and should therefore stored separately,
+        // and we want to avoid having weird properties in the serialized object (like file.preview).
+        const filesWithoutBlobs = Object.fromEntries(
+          Object.entries(nextState.files).map(
+            ([fileID, { data, preview, ...fileInfo }]) => [fileID, fileInfo],
+          ),
+        )
+        this.#patchMetadata({ files: filesWithoutBlobs })
       }
-    } catch (err) {
-      this.uppy.log(
-        `[GoldenRetriever] Failed to remove file ${file.id}`,
-        'warning',
-      )
-      this.uppy.log(err)
-    }
-  }
 
-  #handleFileUploaded = async (
-    file: UppyFile<M, B> | undefined,
-  ): Promise<void> => {
-    if (file == null) {
-      return
-    }
-    try {
-      await this.#deleteBlobs([file.id])
-    } catch (err) {
-      this.uppy.log(
-        `[GoldenRetriever] Failed to remove file ${file.id}`,
-        'warning',
+      const addedFiles = Object.values(nextState.files).filter(
+        (nextFile) => prevState.files[nextFile.id] == null,
       )
-      this.uppy.log(err)
-    }
-  }
 
-  #replaceBlobInStores = async (file: UppyFile<M, B>): Promise<void> => {
-    await this.#deleteBlobs([file.id])
-    await this.#addBlobToStores(file)
+      const editedFileBlobs = Object.values(nextState.files).flatMap(
+        (nextFile) => {
+          const prevFile = prevState.files[nextFile.id]
+          if (prevFile != null && nextFile.data !== prevFile.data)
+            return [nextFile]
+          return []
+        },
+      )
+
+      const deletedFiles = Object.values(prevState.files).filter((prevFile) => {
+        const nextFile = nextState.files[prevFile.id]
+        // also treat successfully uploaded files as deleted (when it comes to deleting their blob)
+        return (
+          nextFile == null ||
+          (nextFile.progress.uploadComplete &&
+            !prevFile.progress.uploadComplete)
+        )
+      })
+
+      const blobsToDelete = [...deletedFiles, ...editedFileBlobs]
+      const blobsToAdd = [...addedFiles, ...editedFileBlobs]
+
+      ;(async () => {
+        // delete old blobs that have been removed, or edited
+        await this.#deleteBlobs(blobsToDelete.map((f) => f.id))
+        // add new blobs for new files and edited files
+        for (const blob of blobsToAdd) {
+          await this.#addBlobToStores(blob)
+        }
+        if (blobsToAdd.length > 0) {
+          this.uppy.log(`[GoldenRetriever] Added ${blobsToAdd.length} blobs`)
+        }
+      })()
+    }
   }
 
   #handleRestoreConfirmed = (): void => {
@@ -358,38 +394,6 @@ export default class GoldenRetriever<
     this.uppy.setState({ recoveredState: null })
   }
 
-  #handleUploadComplete = async ({
-    successful,
-    failed,
-  }: UploadResult<M, B>) => {
-    // In all cases, remove the blobs of the *successfully* uploaded because we don't need them anymore.
-    const fileIDs = successful!.map((file) => file.id)
-    try {
-      await this.#deleteBlobs(fileIDs)
-    } catch (err) {
-      this.uppy.log(
-        `[GoldenRetriever] Could not remove ${successful!.length} files that finished uploading`,
-        'warning',
-      )
-      this.uppy.log(err)
-    }
-
-    // Then, only if there were *no* failed files (meaning only successful), remove the stored restoration state.
-    // This makes sure that if the upload was only partially successful, the user can still restore the remaining files.
-    // https://github.com/transloadit/uppy/issues/5927
-    // Note that we cannot just check all files in #saveFilesStateToLocalStorage and clear if all files have progress.uploadComplete
-    // because uploadComplete only means that the upload was completed, but there may be post-processing steps that are not done yet, like Transloadit assembly.
-    // This has the side effect that if 'complete' is never emitted (for example if the user removes all uploads manually), the recovery state is not cleared.
-    // Not sure how to fix this.
-    if (failed != null && failed.length === 0) {
-      this.uppy.setState({ recoveredState: null })
-      this.uppy.log(
-        `[GoldenRetriever] All files have been uploaded successfully, clearing recovery state`,
-      )
-      MetaDataStore.cleanup(this.uppy.opts.id)
-    }
-  }
-
   #handlePluginDataChanged = (data: Record<string, unknown>): void => {
     this.#patchMetadata({ pluginData: data })
   }
@@ -397,26 +401,14 @@ export default class GoldenRetriever<
   install(): void {
     this.#restore()
 
-    this.uppy.on('file-added', this.#handleFileAdded)
-    // @ts-expect-error this is typed in @uppy/image-editor and we can't access those types.
-    this.uppy.on('file-editor:complete', this.#replaceBlobInStores)
-    this.uppy.on('file-removed', this.#handleFileRemoved)
-    this.uppy.on('upload-success', this.#handleFileUploaded)
     this.uppy.on('state-update', this.#handleStateUpdate)
     this.uppy.on('restore-confirmed', this.#handleRestoreConfirmed)
-    this.uppy.on('complete', this.#handleUploadComplete)
     this.uppy.on('restore:plugin-data-changed', this.#handlePluginDataChanged)
   }
 
   uninstall(): void {
-    this.uppy.off('file-added', this.#addBlobToStores)
-    // @ts-expect-error this is typed in @uppy/image-editor and we can't access those types.
-    this.uppy.off('file-editor:complete', this.#replaceBlobInStores)
-    this.uppy.off('file-removed', this.#handleFileRemoved)
-    this.uppy.off('upload-success', this.#handleFileUploaded)
     this.uppy.off('state-update', this.#handleStateUpdate)
     this.uppy.off('restore-confirmed', this.#handleRestoreConfirmed)
-    this.uppy.off('complete', this.#handleUploadComplete)
     this.uppy.off('restore:plugin-data-changed', this.#handlePluginDataChanged)
   }
 }
