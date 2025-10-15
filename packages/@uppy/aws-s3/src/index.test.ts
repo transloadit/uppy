@@ -139,6 +139,34 @@ describe('AwsS3Multipart', () => {
     })
   })
 
+  describe('skips already uploaded files', () => {
+    it('does not attempt upload when progress.uploadComplete is true', async () => {
+      const core = new Core().use(AwsS3Multipart)
+
+      const fileSize = 1
+      const addedId = core.addFile({
+        source: 'vi',
+        name: 'already-sent.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(fileSize)], '', {
+          type: 'application/octet-stream',
+        }),
+      })
+
+      // Mark the file as already uploaded
+      const file = core.getFile(addedId!)
+      core.setFileState(file.id, {
+        progress: {
+          ...file.progress,
+          uploadComplete: true,
+        },
+      })
+
+      // Should resolve without throwing or performing any network calls
+      await expect(core.upload()).resolves.toBeDefined()
+    })
+  })
+
   describe('non-multipart upload', () => {
     it('should handle POST uploads', async () => {
       const core = new Core().use(AwsS3Multipart, {

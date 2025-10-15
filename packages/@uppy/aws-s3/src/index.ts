@@ -959,6 +959,9 @@ export default class AwsS3Multipart<
 
         return uploadPromise
       }
+      if (file.progress.uploadComplete) {
+        return Promise.resolve(`File ${file.id} was already uploaded`)
+      }
 
       return this.#uploadLocalFile(file)
     })
