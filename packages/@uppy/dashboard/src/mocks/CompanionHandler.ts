@@ -2,7 +2,6 @@ import { HttpResponse, http } from 'msw'
 
 const COMPANION_URL = 'http://companion.test'
 
-
 /**
  * Folder structure :
  *
@@ -23,7 +22,6 @@ root/ (Dropbox)
 └── readme.md
 
  */
-
 
 export const handlers = [
   // Mock pre-auth token
