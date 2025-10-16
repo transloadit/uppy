@@ -3,7 +3,7 @@ import { HttpResponse, http } from 'msw'
 const COMPANION_URL = 'http://companion.test'
 
 /**
- * Folder structure :
+ * Mocked Folder structure :
  *
 
 root/ (Dropbox)
