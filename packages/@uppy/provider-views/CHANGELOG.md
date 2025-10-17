@@ -1,5 +1,14 @@
 # @uppy/provider-views
 
+## 5.1.1
+
+### Patch Changes
+
+- 0c16fe4: - Rename `getTagFile` to `companionFileToUppyFile`
+- Updated dependencies [0c16fe4]
+  - @uppy/core@5.1.1
+  - @uppy/utils@7.1.1
+
 ## 5.1.0
 
 ### Minor Changes
