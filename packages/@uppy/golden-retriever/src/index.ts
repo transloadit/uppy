@@ -28,7 +28,6 @@ export interface GoldenRetrieverOptions extends PluginOpts {
     name?: string
     version?: number
   }
-  throttleTime?: number
 }
 
 const defaultOptions = {
@@ -60,6 +59,9 @@ export default class GoldenRetriever<
 
   #indexedDBStore: IndexedDBStore
 
+  // @ts-expect-error for tests
+  static [Symbol.for('uppy test: throttleTime')]: number | undefined
+
   constructor(uppy: Uppy<M, B>, opts?: GoldenRetrieverOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.type = 'debugger'
@@ -68,7 +70,9 @@ export default class GoldenRetriever<
     this.#metaDataStore = new MetaDataStore({
       expires: this.opts.expires,
       storeName: uppy.getID(),
-      throttleTime: this.opts.throttleTime,
+      // @ts-expect-error for tests
+      throttleTime:
+        GoldenRetriever[Symbol.for('uppy test: throttleTime')] ?? undefined,
     })
     if (this.opts.serviceWorker) {
       this.#serviceWorkerStore = new ServiceWorkerStore({
