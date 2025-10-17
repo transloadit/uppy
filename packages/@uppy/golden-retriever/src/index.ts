@@ -70,8 +70,8 @@ export default class GoldenRetriever<
     this.#metaDataStore = new MetaDataStore({
       expires: this.opts.expires,
       storeName: uppy.getID(),
-      // @ts-expect-error for tests
       throttleTime:
+        // @ts-expect-error for tests
         GoldenRetriever[Symbol.for('uppy test: throttleTime')] ?? undefined,
     })
     if (this.opts.serviceWorker) {
