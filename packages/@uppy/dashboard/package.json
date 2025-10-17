@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
