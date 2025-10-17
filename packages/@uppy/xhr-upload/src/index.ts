@@ -17,8 +17,10 @@ import {
   getAllowedMetaFields,
   internalRateLimitedQueue,
   isNetworkError,
+  type LocalUppyFile,
   NetworkError,
   RateLimitedQueue,
+  type RemoteUppyFile,
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
@@ -70,7 +72,10 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
 export type { XhrUploadOpts as XHRUploadOptions }
 
 declare module '@uppy/utils' {
-  export interface UppyFile<M extends Meta, B extends Body> {
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    xhrUpload?: XhrUploadOpts<M, B>
+  }
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
     xhrUpload?: XhrUploadOpts<M, B>
   }
 }
@@ -111,8 +116,14 @@ function buildResponseError(
  * because we might have detected a more accurate file type in Uppy
  * https://stackoverflow.com/a/50875615
  */
-function setTypeInBlob<M extends Meta, B extends Body>(file: UppyFile<M, B>) {
-  const dataWithUpdatedType = file.data.slice(0, file.data.size, file.meta.type)
+function setTypeInBlob<M extends Meta, B extends Body>(
+  file: LocalUppyFile<M, B>,
+) {
+  const dataWithUpdatedType = file.data!.slice(
+    0,
+    file.data!.size,
+    file.meta.type,
+  )
   return dataWithUpdatedType
 }
 
@@ -326,7 +337,7 @@ export default class XHRUpload<
     })
   }
 
-  createFormDataUpload(file: UppyFile<M, B>, opts: Opts<M, B>): FormData {
+  createFormDataUpload(file: LocalUppyFile<M, B>, opts: Opts<M, B>): FormData {
     const formPost = new FormData()
 
     this.addMetadata(formPost, file.meta, opts)
@@ -342,7 +353,10 @@ export default class XHRUpload<
     return formPost
   }
 
-  createBundledUpload(files: UppyFile<M, B>[], opts: Opts<M, B>): FormData {
+  createBundledUpload(
+    files: LocalUppyFile<M, B>[],
+    opts: Opts<M, B>,
+  ): FormData {
     const formPost = new FormData()
 
     const { meta } = this.uppy.getState()
@@ -363,7 +377,7 @@ export default class XHRUpload<
     return formPost
   }
 
-  async #uploadLocalFile(file: UppyFile<M, B>) {
+  async #uploadLocalFile(file: LocalUppyFile<M, B>) {
     const events = new EventManager(this.uppy)
     const controller = new AbortController()
     const uppyFetch = this.requests.wrapPromiseFunction(async () => {
@@ -400,7 +414,7 @@ export default class XHRUpload<
     }
   }
 
-  async #uploadBundle(files: UppyFile<M, B>[]) {
+  async #uploadBundle(files: LocalUppyFile<M, B>[]) {
     const controller = new AbortController()
     const uppyFetch = this.requests.wrapPromiseFunction(async () => {
       const optsFromState = this.uppy.getState().xhrUpload ?? {}
@@ -441,7 +455,7 @@ export default class XHRUpload<
     }
   }
 
-  #getCompanionClientArgs(file: UppyFile<M, B>) {
+  #getCompanionClientArgs(file: RemoteUppyFile<M, B>) {
     const opts = this.getOptions(file)
     const allowedMetaFields = getAllowedMetaFields(
       opts.allowedMetaFields,
@@ -534,7 +548,7 @@ export default class XHRUpload<
         )
       }
 
-      await this.#uploadBundle(filesFiltered)
+      await this.#uploadBundle(filesFiltered as LocalUppyFile<M, B>[])
     } else {
       await this.#uploadFiles(filesFiltered)
     }

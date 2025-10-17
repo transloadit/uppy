@@ -1,26 +1,19 @@
 import type { Body, Meta, State as UppyState } from '@uppy/core'
+import type { LocalUppyFile, RemoteUppyFile, UppyFileId } from '@uppy/utils'
+import throttle from 'lodash/throttle.js'
+
+// we don't want to store blobs in localStorage
+type FileWithoutData<M extends Meta, B extends Body> =
+  | Omit<LocalUppyFile<M, B>, 'data'>
+  | Omit<RemoteUppyFile<M, B>, 'data'>
 
 export type StoredState<M extends Meta, B extends Body> = {
   expires: number
   metadata: {
     currentUploads: UppyState<M, B>['currentUploads']
-    files: UppyState<M, B>['files']
+    files: Record<UppyFileId, FileWithoutData<M, B>>
     pluginData: Record<string, unknown>
   }
-}
-
-/**
- * Get uppy instance IDs for which state is stored.
- */
-function findUppyInstances(): string[] {
-  const instances: string[] = []
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i)
-    if (key?.startsWith('uppyState:')) {
-      instances.push(key.slice('uppyState:'.length))
-    }
-  }
-  return instances
 }
 
 /**
@@ -39,68 +32,104 @@ function maybeParse<M extends Meta, B extends Body>(
 type MetaDataStoreOptions = {
   storeName: string
   expires?: number
+  throttleTime?: number
 }
 
-let cleanedUp = false
+const prefix = 'uppyState:'
+
+const getItemKey = (name: string): string => `${prefix}${name}`
+
+function expireOldState(): void {
+  const existingKeys: string[] = []
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i)
+    if (key?.startsWith(prefix)) {
+      existingKeys.push(key)
+    }
+  }
+
+  const now = Date.now()
+  existingKeys.forEach((key) => {
+    const data = localStorage.getItem(key)
+    if (!data) return
+    const obj = maybeParse(data)
+
+    if (obj?.expires && obj.expires < now) {
+      localStorage.removeItem(key)
+    }
+  })
+}
+
 export default class MetaDataStore<M extends Meta, B extends Body> {
   opts: Required<MetaDataStoreOptions>
 
   name: string
 
+  // biome doesn't seem to support #fields
+  #saveThrottled!: typeof this.save
+
   constructor(opts: MetaDataStoreOptions) {
     this.opts = {
       expires: 24 * 60 * 60 * 1000, // 24 hours
+      throttleTime: 500,
       ...opts,
     }
-    this.name = `uppyState:${opts.storeName}`
+    this.name = getItemKey(opts.storeName)
 
-    if (!cleanedUp) {
-      cleanedUp = true
-      MetaDataStore.cleanup()
-    }
+    this.#saveThrottled =
+      this.opts.throttleTime === 0
+        ? this.save
+        : throttle(this.save, this.opts.throttleTime, {
+            leading: true,
+            trailing: true,
+          })
   }
+
+  #state: StoredState<M, B> | null | undefined
 
   /**
    *
    */
-  load(): StoredState<M, B>['metadata'] | null {
-    const savedState = localStorage.getItem(this.name)
-    if (!savedState) return null
-    const data = maybeParse<M, B>(savedState)
-    if (!data) return null
+  load = (): StoredState<M, B>['metadata'] | undefined => {
+    expireOldState()
 
+    const savedState = localStorage.getItem(this.name)
+    if (!savedState) return undefined
+    const data = maybeParse<M, B>(savedState)
+    if (!data) return undefined
+
+    this.#state = data
     return data.metadata
   }
 
-  save(metadata: Record<string, unknown>): void {
-    const expires = Date.now() + this.opts.expires
-    const state = JSON.stringify({
-      metadata,
-      expires,
-    })
+  get = (): StoredState<M, B>['metadata'] | undefined => {
+    return this.#state?.metadata
+  }
+
+  private save = (): void => {
+    if (this.#state === null) {
+      localStorage.removeItem(this.name)
+      return
+    }
+    const state = JSON.stringify(this.#state)
     localStorage.setItem(this.name, state)
   }
 
   /**
-   * Remove all expired state.
+   * Save the given metadata to localStorage, along with an expiry timestamp.
+   * If metadata is null, remove any existing stored state.
+   *
+   * @param metadata - The metadata to store, or null to clear the stored state.
    */
-  static cleanup(instanceID?: string): void {
-    if (instanceID) {
-      localStorage.removeItem(`uppyState:${instanceID}`)
-      return
-    }
+  set = (metadata: StoredState<M, B>['metadata'] | null): void => {
+    this.#state =
+      metadata === null
+        ? null
+        : {
+            metadata,
+            expires: Date.now() + this.opts.expires,
+          }
 
-    const instanceIDs = findUppyInstances()
-    const now = Date.now()
-    instanceIDs.forEach((id) => {
-      const data = localStorage.getItem(`uppyState:${id}`)
-      if (!data) return
-      const obj = maybeParse(data)
-      if (!obj) return
-
-      if (obj.expires && obj.expires < now) {
-        localStorage.removeItem(`uppyState:${id}`)
-      }
-    })
+    this.#saveThrottled()
   }
 }

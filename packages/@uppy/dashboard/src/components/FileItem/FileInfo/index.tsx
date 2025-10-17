@@ -38,7 +38,8 @@ const renderFileName = (props: {
 
 const renderAuthor = (props: { file: UppyFile<any, any> }) => {
   const { author } = props.file.meta
-  const providerName = props.file.remote?.providerName
+  const providerName =
+    'remote' in props.file ? props.file.remote?.providerName : undefined
   const dot = `\u00B7`
 
   if (!author) {

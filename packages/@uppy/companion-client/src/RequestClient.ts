@@ -1,5 +1,11 @@
 import type Uppy from '@uppy/core'
-import type { Body, Meta, RequestOptions, UppyFile } from '@uppy/utils'
+import type {
+  Body,
+  Meta,
+  RemoteUppyFile,
+  RequestOptions,
+  UppyFile,
+} from '@uppy/utils'
 import {
   ErrorWithCause,
   fetchWithNetworkError,
@@ -76,14 +82,14 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   throw new HttpError({ statusCode: res.status, message: errMsg })
 }
 
-function emitSocketProgress(
-  uploader: { uppy: Uppy<any, any> },
+function emitSocketProgress<M extends Meta, B extends Body>(
+  uploader: { uppy: Uppy<M, B> },
   progressData: {
     progress: string // pre-formatted percentage number as a string
     bytesTotal: number
     bytesUploaded: number
   },
-  file: UppyFile<any, any>,
+  file: UppyFile<M, B>,
 ): void {
   const { progress, bytesUploaded, bytesTotal } = progressData
   if (progress) {
@@ -236,7 +242,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
    * uploading or is otherwise done (failed, canceled)
    */
   async uploadRemoteFile(
-    file: UppyFile<M, B>,
+    file: RemoteUppyFile<M, B>,
     reqBody: Record<string, unknown>,
     options: { signal: AbortSignal; getQueue: () => any },
   ): Promise<void> {
@@ -262,7 +268,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
             async (
               ...args: [
                 {
-                  file: UppyFile<M, B>
+                  file: RemoteUppyFile<M, B>
                   postBody: Record<string, unknown>
                   signal: AbortSignal
                 },
@@ -304,7 +310,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
           this.uppy.setFileState(file.id, { serverToken })
 
           return this.#awaitRemoteFileUpload({
-            file: this.uppy.getFile(file.id), // re-fetching file because it might have changed in the meantime
+            file: this.uppy.getFile(file.id) as RemoteUppyFile<M, B>, // re-fetching file because it might have changed in the meantime
             queue: getQueue(),
             signal,
           })
@@ -334,7 +340,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     postBody,
     signal,
   }: {
-    file: UppyFile<M, B>
+    file: RemoteUppyFile<M, B>
     postBody: Record<string, unknown>
     signal: AbortSignal
   }): Promise<string> => {
@@ -364,7 +370,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     queue,
     signal,
   }: {
-    file: UppyFile<M, B>
+    file: RemoteUppyFile<M, B>
     queue: any
     signal: AbortSignal
   }): Promise<void> {
