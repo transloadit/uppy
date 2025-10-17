@@ -11,7 +11,7 @@
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build",
     "test": "vitest run --silent='passed-only'",
-    "test:e2e": "vitest watch --project browser --browser.headless false"
+    "test:e2e": "vitest run --project browser"
   },
   "keywords": [
     "file uploader",
