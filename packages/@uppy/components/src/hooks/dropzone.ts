@@ -21,6 +21,7 @@ export type DropzoneReturn<DragEventType, ChangeEventType> = {
     id: string
     type: 'file'
     multiple: boolean
+    accept?: string
     onChange: (event: ChangeEventType) => void
   }
 }
@@ -117,11 +118,19 @@ export function createDropzone<
       onClick: handleClick,
       onKeyPress: handleKeyPress,
     }),
-    getInputProps: () => ({
-      id: fileInputId,
-      type: 'file',
-      multiple: true,
-      onChange: handleFileInputChange,
-    }),
+    getInputProps: () => {
+      const { restrictions } = ctx.uppy.opts
+      const { allowedFileTypes } = restrictions
+      return {
+        id: fileInputId,
+        type: 'file' as const,
+        multiple: restrictions.maxNumberOfFiles !== 1,
+        accept:
+          Array.isArray(allowedFileTypes) && allowedFileTypes.length > 0
+            ? allowedFileTypes.join(', ')
+            : undefined,
+        onChange: handleFileInputChange,
+      }
+    },
   }
 }
