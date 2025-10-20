@@ -10684,7 +10684,7 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@uppy/companion": "workspace:^"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15497,7 +15497,7 @@ __metadata:
     express: "npm:^4.19.2"
     express-session: "npm:^1.17.3"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15549,7 +15549,7 @@ __metadata:
     express-session: "npm:^1.15.6"
     npm-run-all: "npm:^4.1.2"
     preact: "npm:^10.5.13"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15564,7 +15564,7 @@ __metadata:
     cors: "npm:^2.8.5"
     dotenv: "npm:^16.0.1"
     express: "npm:^4.19.2"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15624,7 +15624,7 @@ __metadata:
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4.0.9"
     typescript: "npm:^5.7.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
     vitest: "npm:^3.2.4"
     vitest-browser-react: "npm:^1.0.0"
   languageName: unknown
@@ -15701,7 +15701,7 @@ __metadata:
     express: "npm:^4.19.2"
     he: "npm:^1.2.0"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15721,7 +15721,7 @@ __metadata:
     "@vitest/browser": "npm:^3.2.4"
     playwright: "npm:1.54.1"
     tailwindcss: "npm:^4.0.0"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
     vitest: "npm:^3.2.4"
     vitest-browser-vue: "npm:^1.0.0"
     vue: "npm:^3.5.14"
@@ -15739,7 +15739,7 @@ __metadata:
     express: "npm:^4.19.2"
     multer: "npm:^2.0.2"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15753,7 +15753,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.2.4"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15766,7 +15766,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15779,7 +15779,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -26115,9 +26115,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^7.0.7":
-  version: 7.1.5
-  resolution: "vite@npm:7.1.5"
+"vite@npm:^7.1.11":
+  version: 7.1.11
+  resolution: "vite@npm:7.1.11"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.5.0"
@@ -26166,7 +26166,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10/59edeef7e98757a668b2ad8a1731a5657fa83e22a165a36b7359225ea98a9be39b2f486710c0cf5085edb85daee7c8b6b6b0bd85d0ef32a1aa84aef71aabd0f0
+  checksum: 10/b75ce7a38beeba7800751938df4fe2638cfb77509647329ac824332af51831eaed52ab0a0bae1d9162ac41ef59fff1c754e0acf7e1470dfa7d3da51fc3bf0985
   languageName: node
   linkType: hard
 
