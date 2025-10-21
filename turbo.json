@@ -34,8 +34,12 @@
       "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
     },
     "test": {
-      "outputLogs": "errors-only",
-      "dependsOn": ["^test"]
+      "dependsOn": ["^test"],
+      "cache": false
+    },
+    "test:e2e": {
+      "dependsOn": ["^test:e2e"],
+      "cache": false
     }
   }
 }

@@ -42,7 +42,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{matrix.node-version}}
       - name: Install dependencies
@@ -79,7 +79,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-yarn-
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -97,7 +97,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: lts/*
       - name: Install dependencies

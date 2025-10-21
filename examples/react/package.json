@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "test": "vitest run --browser.headless",
+    "test": "vitest run",
     "dev": "vite",
     "serve": "vite preview"
   },

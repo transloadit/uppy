@@ -46,7 +46,7 @@ class TransloaditAssembly extends Emitter {
 
   #sse: EventSource | null = null
 
-  status: AssemblyResponse
+  #status: AssemblyResponse
 
   pollInterval: ReturnType<typeof setInterval> | null
 
@@ -56,7 +56,7 @@ class TransloaditAssembly extends Emitter {
     super()
 
     // The current assembly status.
-    this.status = assembly
+    this.#status = assembly
     // The interval timer for full status updates.
     this.pollInterval = null
     // Whether this assembly has been closed (finished or errored)
@@ -76,6 +76,14 @@ class TransloaditAssembly extends Emitter {
   #onFinished() {
     this.emit('finished')
     this.close()
+  }
+
+  get status(): AssemblyResponse {
+    return this.#status
+  }
+  set status(status: AssemblyResponse) {
+    this.#status = status
+    this.emit('status', status)
   }
 
   #connectServerSentEvents() {
@@ -110,22 +118,24 @@ class TransloaditAssembly extends Emitter {
     })
 
     this.#sse.addEventListener('assembly_upload_finished', (e) => {
-      const file = JSON.parse(e.data) as AssemblyFile
-      this.status.uploads ??= []
-      this.status.uploads.push(file)
+      const file: AssemblyFile = JSON.parse(e.data)
+      this.status = {
+        ...this.status,
+        uploads: [...(this.status.uploads ?? []), file],
+      }
       this.emit('upload', file)
     })
 
     this.#sse.addEventListener('assembly_result_finished', (e) => {
-      const [stepName, rawResult] = JSON.parse(e.data) as [
-        string,
-        AssemblyResult,
-      ]
-
-      this.status.results ??= {}
-      this.status.results[stepName] ??= []
-      this.status.results[stepName].push(rawResult)
-      this.emit('result', stepName, rawResult)
+      const [stepName, result]: [string, AssemblyResult] = JSON.parse(e.data)
+      this.status = {
+        ...this.status,
+        results: {
+          ...this.status.results,
+          [stepName]: [...(this.status.results?.[stepName] ?? []), result],
+        },
+      }
+      this.emit('result', stepName, result)
     })
 
     this.#sse.addEventListener('assembly_execution_progress', (e) => {
@@ -201,7 +211,6 @@ class TransloaditAssembly extends Emitter {
 
       // Avoid updating if we closed during this request's lifetime.
       if (this.closed) return
-      this.emit('status', status)
 
       if (diff) {
         this.updateStatus(status)

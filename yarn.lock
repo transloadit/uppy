@@ -11010,9 +11010,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
+    "@uppy/dashboard": "workspace:^"
     "@uppy/utils": "workspace:^"
+    "@uppy/xhr-upload": "workspace:^"
+    "@vitest/browser": "npm:^3.2.4"
     lodash: "npm:^4.17.21"
     typescript: "npm:^5.8.3"
+    vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -11438,7 +11442,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
+"@uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:^, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:

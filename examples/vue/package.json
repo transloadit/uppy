@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "test": "vitest run --browser.headless",
+    "test": "vitest run",
     "preview": "vite preview --port 5050"
   },
   "dependencies": {
