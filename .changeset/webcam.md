@@ -1,5 +1,5 @@
 ---
-"@uppy/xhr-upload": patch
+"@uppy/webcam": patch
 ---
 
 - Remove TagFile type - Use UppyFile instead.
