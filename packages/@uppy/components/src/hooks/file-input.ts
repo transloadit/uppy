@@ -54,11 +54,12 @@ export function createFileInput<EventType extends Event>(
       const { allowedFileTypes, maxNumberOfFiles } = restrictions
       const accept =
         props.accept ??
-        (Array.isArray(allowedFileTypes) && allowedFileTypes.length > 0
+        allowedFileTypes != null && allowedFileTypes.length > 0
           ? allowedFileTypes.join(', ')
           : undefined)
       const multiple =
-        typeof props.multiple === 'boolean'
+       props.multiple != null
+          ? props.multiple
           ? props.multiple
           : maxNumberOfFiles !== 1
       return {

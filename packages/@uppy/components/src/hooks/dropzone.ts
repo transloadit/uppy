@@ -126,7 +126,7 @@ export function createDropzone<
         type: 'file' as const,
         multiple: restrictions.maxNumberOfFiles !== 1,
         accept:
-          Array.isArray(allowedFileTypes) && allowedFileTypes.length > 0
+          allowedFileTypes != null && allowedFileTypes.length > 0
             ? allowedFileTypes.join(', ')
             : undefined,
         onChange: handleFileInputChange,
