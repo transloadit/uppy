@@ -120,15 +120,13 @@ export function createDropzone<
     }),
     getInputProps: () => {
       const { restrictions } = ctx.uppy.opts
-      const { allowedFileTypes } = restrictions
+      const accept = restrictions.allowedFileTypes?.join(', ')
+
       return {
         id: fileInputId,
         type: 'file' as const,
         multiple: restrictions.maxNumberOfFiles !== 1,
-        accept:
-          allowedFileTypes != null && allowedFileTypes.length > 0
-            ? allowedFileTypes.join(', ')
-            : undefined,
+        accept,
         onChange: handleFileInputChange,
       }
     },
