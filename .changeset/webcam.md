@@ -3,6 +3,6 @@
 ---
 
 - Remove TagFile type - Use UppyFile instead.
-- Split UppyFile into two intefaces distinguished by the `isRemote` boolean:
+- Split UppyFile into two interfaces distinguished by the `isRemote` boolean:
   - LocalUppyFile
   - RemoteUppyFile
