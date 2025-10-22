@@ -1,5 +1,16 @@
 # uppy
 
+## 5.1.8
+
+### Patch Changes
+
+- Updated dependencies [8ac1654]
+- Updated dependencies [8ac1654]
+- Updated dependencies [8ac1654]
+  - @uppy/status-bar@5.0.2
+  - @uppy/webcam@5.0.2
+  - @uppy/xhr-upload@5.0.2
+
 ## 5.1.7
 
 ### Patch Changes
