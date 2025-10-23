@@ -10698,6 +10698,12 @@ __metadata:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+  peerDependenciesMeta:
+    "@uppy/dashboard":
+      optional: true
+    "@uppy/status-bar":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -11189,12 +11195,11 @@ __metadata:
     "@uppy/dashboard": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
-    "@uppy/audio":
-      optional: true
     "@uppy/dashboard":
       optional: true
     "@uppy/image-editor":
@@ -11294,16 +11299,14 @@ __metadata:
     typescript: "npm:^5.8.3"
     vite: "npm:^6.3.6"
   peerDependencies:
-    "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
-    "@uppy/audio":
-      optional: true
     "@uppy/dashboard":
       optional: true
     "@uppy/image-editor":
@@ -11429,16 +11432,14 @@ __metadata:
     typescript: "npm:^5.8.3"
     vue: "npm:^3.5.14"
   peerDependencies:
-    "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
-    "@uppy/audio":
-      optional: true
     "@uppy/dashboard":
       optional: true
     "@uppy/image-editor":

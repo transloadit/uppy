@@ -69,18 +69,15 @@
     "vite": "^6.3.6"
   },
   "peerDependencies": {
-    "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {
-    "@uppy/audio": {
-      "optional": true
-    },
     "@uppy/dashboard": {
       "optional": true
     },

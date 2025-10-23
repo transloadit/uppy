@@ -28,7 +28,16 @@
     "@angular/common": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0",
     "@angular/core": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0",
     "@uppy/core": "workspace:^",
-    "@uppy/dashboard": "workspace:^"
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/status-bar": "workspace:^"
+  },
+  "peerDependenciesMeta": {
+    "@uppy/dashboard": {
+      "optional": true
+    },
+    "@uppy/status-bar": {
+      "optional": true
+    }
   },
   "sideEffects": false
 }
