@@ -23,13 +23,8 @@
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
-    "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/image-editor": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
-    "@uppy/screen-capture": "workspace:^",
-    "@uppy/webcam": "workspace:^",
     "typescript": "^5.8.3",
     "vue": "^3.5.14"
   },
@@ -46,7 +41,6 @@
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/image-editor": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "vue": ">=3.0.0"
@@ -59,9 +53,6 @@
       "optional": true
     },
     "@uppy/image-editor": {
-      "optional": true
-    },
-    "@uppy/remote-sources": {
       "optional": true
     },
     "@uppy/screen-capture": {

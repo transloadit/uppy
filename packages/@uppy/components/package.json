@@ -50,7 +50,6 @@
     "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/image-editor": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "tailwindcss": "^4.0.6",
@@ -60,8 +59,24 @@
     "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/image-editor": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^"
+  },
+  "peerDependenciesMeta": {
+    "@uppy/audio": {
+      "optional": true
+    },
+    "@uppy/image-editor": {
+      "optional": true
+    },
+    "@uppy/screen-capture": {
+      "optional": true
+    },
+    "@uppy/status-bar": {
+      "optional": true
+    },
+    "@uppy/webcam": {
+      "optional": true
+    }
   }
 }

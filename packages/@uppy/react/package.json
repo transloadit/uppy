@@ -45,13 +45,8 @@
     "@testing-library/react": "^16.0.0",
     "@types/react": "^18.0.8",
     "@types/use-sync-external-store": "^0.0.6",
-    "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/image-editor": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
-    "@uppy/screen-capture": "workspace:^",
-    "@uppy/webcam": "workspace:^",
     "jsdom": "^26.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -67,11 +62,9 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
-    "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/image-editor": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^",
     "react": "^18.0.0 || ^19.0.0",
@@ -85,9 +78,6 @@
       "optional": true
     },
     "@uppy/image-editor": {
-      "optional": true
-    },
-    "@uppy/remote-sources": {
       "optional": true
     },
     "@uppy/screen-capture": {

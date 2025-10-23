@@ -6,11 +6,19 @@ import type {
   UppyEventMap,
 } from '@uppy/core'
 import type { ProviderViews } from '@uppy/provider-views'
-import type { AvailablePluginsKeys } from '@uppy/remote-sources'
 import { dequal } from 'dequal/lite'
 import { Subscribers } from './utils.js'
 
-export type { AvailablePluginsKeys as RemoteSourceKeys }
+export type RemoteSourceKeys =
+  | 'Box'
+  | 'Dropbox'
+  | 'Facebook'
+  | 'GoogleDrive'
+  | 'Instagram'
+  | 'OneDrive'
+  | 'Unsplash'
+  | 'Url'
+  | 'Zoom'
 
 export type RemoteSourceSnapshot = {
   state: UnknownProviderPluginState & {
@@ -35,7 +43,7 @@ export type RemoteSourceStore = {
 
 export function createRemoteSourceController(
   uppy: Uppy,
-  sourceId: AvailablePluginsKeys,
+  sourceId: RemoteSourceKeys,
 ): RemoteSourceStore {
   const plugin = uppy.getPlugin<UnknownProviderPlugin<any, any>>(sourceId)
   if (!plugin) {
