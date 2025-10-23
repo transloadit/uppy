@@ -81,7 +81,7 @@ function getCompanionKeysParams(name) {
 
 // Rest is implementation! Obviously edit as necessary...
 
-export default () => {
+export default (options) => {
   const restrictions = undefined
   // const restrictions = {
   //   maxFileSize:      1 * 1000000, // 1mb
@@ -104,9 +104,9 @@ export default () => {
     restrictions,
   })
     .use(Dashboard, {
-      trigger: '#pick-files',
+      trigger: options.trigger,
       // inline: true,
-      target: '.foo',
+      target: options.target,
       metaFields: [
         { id: 'license', name: 'License', placeholder: 'specify license' },
         { id: 'caption', name: 'Caption', placeholder: 'add caption' },
