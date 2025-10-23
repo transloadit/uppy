@@ -44,8 +44,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^",
+    "@uppy/companion-client": "workspace:*",
+    "@uppy/utils": "workspace:*",
     "nanoid": "^5.0.9",
     "preact": "^10.5.13"
   },

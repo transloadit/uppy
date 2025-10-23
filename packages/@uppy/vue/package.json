@@ -18,12 +18,18 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@uppy/components": "workspace:^",
+    "@uppy/components": "workspace:*",
     "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
+    "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/image-editor": "workspace:^",
+    "@uppy/remote-sources": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
+    "@uppy/webcam": "workspace:^",
     "typescript": "^5.8.3",
     "vue": "^3.5.14"
   },
@@ -36,15 +42,35 @@
     "./package.json": "./package.json"
   },
   "peerDependencies": {
+    "@uppy/audio": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
+    "@uppy/image-editor": "workspace:^",
+    "@uppy/remote-sources": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
+    "@uppy/webcam": "workspace:^",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
+    "@uppy/audio": {
+      "optional": true
+    },
     "@uppy/dashboard": {
       "optional": true
     },
+    "@uppy/image-editor": {
+      "optional": true
+    },
+    "@uppy/remote-sources": {
+      "optional": true
+    },
+    "@uppy/screen-capture": {
+      "optional": true
+    },
     "@uppy/status-bar": {
+      "optional": true
+    },
+    "@uppy/webcam": {
       "optional": true
     }
   },

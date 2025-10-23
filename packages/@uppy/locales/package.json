@@ -31,7 +31,7 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@uppy/utils": "workspace:^"
+    "@uppy/utils": "workspace:*"
   },
   "devDependencies": {
     "chalk": "^5.0.0",

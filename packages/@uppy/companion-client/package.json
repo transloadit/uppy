@@ -36,7 +36,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
+    "@uppy/utils": "workspace:*",
     "namespace-emitter": "^2.0.1",
     "p-retry": "^6.1.0"
   },

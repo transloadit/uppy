@@ -22,14 +22,14 @@
     "prepublishOnly": "rm -fr * && cp -r ../../../dist/uppy/angular .."
   },
   "dependencies": {
+    "@uppy/utils": "workspace:*",
     "tslib": "^2.0.0"
   },
   "peerDependencies": {
     "@angular/common": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0",
     "@angular/core": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0",
     "@uppy/core": "workspace:^",
-    "@uppy/dashboard": "workspace:^",
-    "@uppy/utils": "workspace:^"
+    "@uppy/dashboard": "workspace:^"
   },
   "sideEffects": false
 }

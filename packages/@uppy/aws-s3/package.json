@@ -38,8 +38,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^"
+    "@uppy/companion-client": "workspace:*",
+    "@uppy/utils": "workspace:*"
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.362.0",
