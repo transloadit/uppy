@@ -10873,8 +10873,6 @@ __metadata:
       optional: true
     "@uppy/screen-capture":
       optional: true
-    "@uppy/status-bar":
-      optional: true
     "@uppy/webcam":
       optional: true
   languageName: unknown
