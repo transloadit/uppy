@@ -61,7 +61,6 @@
     "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@uppy/core": "workspace:^",
-    "@uppy/dashboard": "workspace:^",
     "svelte": "^5.27.0",
     "svelte-check": "^4.1.6",
     "tslib": "^2.8.1",

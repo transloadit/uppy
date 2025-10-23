@@ -10707,7 +10707,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/audio@workspace:*, @uppy/audio@workspace:^, @uppy/audio@workspace:packages/@uppy/audio":
+"@uppy/audio@workspace:*, @uppy/audio@workspace:packages/@uppy/audio":
   version: 0.0.0-use.local
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
@@ -10849,11 +10849,7 @@ __metadata:
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
     "@tailwindcss/cli": "npm:^4.0.6"
-    "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/image-editor": "workspace:^"
-    "@uppy/screen-capture": "workspace:^"
-    "@uppy/webcam": "workspace:^"
     clsx: "npm:^2.1.1"
     dequal: "npm:^2.0.3"
     preact: "npm:^10.5.13"
@@ -10861,14 +10857,11 @@ __metadata:
     tailwindcss: "npm:^4.0.6"
     typescript: "npm:^5.8.3"
   peerDependencies:
-    "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/webcam": "workspace:^"
   peerDependenciesMeta:
-    "@uppy/audio":
-      optional: true
     "@uppy/image-editor":
       optional: true
     "@uppy/screen-capture":
@@ -11086,7 +11079,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:^, @uppy/image-editor@workspace:packages/@uppy/image-editor":
+"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:packages/@uppy/image-editor":
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
@@ -11180,7 +11173,6 @@ __metadata:
     "@types/use-sync-external-store": "npm:^0.0.6"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
     jsdom: "npm:^26.1.0"
     preact: "npm:^10.5.13"
     react: "npm:^18.2.0"
@@ -11235,7 +11227,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:^, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
+"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:
@@ -11289,7 +11281,6 @@ __metadata:
     "@sveltejs/vite-plugin-svelte": "npm:^5.0.3"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
     preact: "npm:^10.26.5"
     svelte: "npm:^5.27.0"
     svelte-check: "npm:^4.1.6"
@@ -11424,7 +11415,6 @@ __metadata:
   dependencies:
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/dashboard": "workspace:^"
     preact: "npm:^10.5.13"
     shallow-equal: "npm:^3.0.0"
     typescript: "npm:^5.8.3"

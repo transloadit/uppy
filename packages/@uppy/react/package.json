@@ -46,7 +46,6 @@
     "@types/react": "^18.0.8",
     "@types/use-sync-external-store": "^0.0.6",
     "@uppy/core": "workspace:^",
-    "@uppy/dashboard": "workspace:^",
     "jsdom": "^26.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
