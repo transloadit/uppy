@@ -10692,7 +10692,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular"
   dependencies:
-    "@uppy/utils": "workspace:*"
     tslib: "npm:^2.0.0"
   peerDependencies:
     "@angular/common": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0
@@ -10844,6 +10843,12 @@ __metadata:
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
     "@tailwindcss/cli": "npm:^4.0.6"
+    "@uppy/audio": "workspace:^"
+    "@uppy/core": "workspace:^"
+    "@uppy/image-editor": "workspace:^"
+    "@uppy/remote-sources": "workspace:^"
+    "@uppy/screen-capture": "workspace:^"
+    "@uppy/webcam": "workspace:^"
     clsx: "npm:^2.1.1"
     dequal: "npm:^2.0.3"
     preact: "npm:^10.5.13"

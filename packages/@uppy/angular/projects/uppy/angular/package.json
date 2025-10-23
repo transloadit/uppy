@@ -22,7 +22,6 @@
     "prepublishOnly": "rm -fr * && cp -r ../../../dist/uppy/angular .."
   },
   "dependencies": {
-    "@uppy/utils": "workspace:*",
     "tslib": "^2.0.0"
   },
   "peerDependencies": {

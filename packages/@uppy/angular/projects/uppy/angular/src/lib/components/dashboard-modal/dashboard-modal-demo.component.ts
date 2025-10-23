@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { Uppy } from "@uppy/core";
 import type * as Dashboard from "@uppy/dashboard";
-import type { Body, Meta } from "@uppy/utils";
+import type { Body, Meta } from "@uppy/core";
 import { DashboardModalComponent } from "./dashboard-modal.component";
 
 
