@@ -45,9 +45,9 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
-    "@uppy/provider-views": "workspace:*",
-    "@uppy/thumbnail-generator": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/provider-views": "workspace:^",
+    "@uppy/thumbnail-generator": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
     "nanoid": "^5.0.9",

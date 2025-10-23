@@ -42,8 +42,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/tus": "workspace:*",
-    "@uppy/utils": "workspace:*",
+    "@uppy/tus": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "component-emitter": "^2.0.0",
     "transloadit": "^4.0.2"
   },

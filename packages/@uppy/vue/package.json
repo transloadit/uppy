@@ -18,7 +18,7 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@uppy/components": "workspace:*",
+    "@uppy/components": "workspace:^",
     "preact": "^10.5.13",
     "shallow-equal": "^3.0.0"
   },

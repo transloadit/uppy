@@ -47,7 +47,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:*",
+    "@uppy/utils": "workspace:^",
     "is-mobile": "^4.0.0",
     "preact": "^10.5.13"
   },

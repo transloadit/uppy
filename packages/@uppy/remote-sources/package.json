@@ -41,16 +41,16 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/box": "workspace:*",
-    "@uppy/dashboard": "workspace:*",
-    "@uppy/dropbox": "workspace:*",
-    "@uppy/facebook": "workspace:*",
-    "@uppy/google-drive": "workspace:*",
-    "@uppy/instagram": "workspace:*",
-    "@uppy/onedrive": "workspace:*",
-    "@uppy/unsplash": "workspace:*",
-    "@uppy/url": "workspace:*",
-    "@uppy/zoom": "workspace:*"
+    "@uppy/box": "workspace:^",
+    "@uppy/dashboard": "workspace:^",
+    "@uppy/dropbox": "workspace:^",
+    "@uppy/facebook": "workspace:^",
+    "@uppy/google-drive": "workspace:^",
+    "@uppy/instagram": "workspace:^",
+    "@uppy/onedrive": "workspace:^",
+    "@uppy/unsplash": "workspace:^",
+    "@uppy/url": "workspace:^",
+    "@uppy/zoom": "workspace:^"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
