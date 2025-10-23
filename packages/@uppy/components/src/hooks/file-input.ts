@@ -49,13 +49,23 @@ export function createFileInput<EventType extends Event>(
   }
 
   return {
-    getInputProps: () => ({
-      id: fileInputId,
-      type: 'file',
-      multiple: props.multiple ?? true,
-      accept: props.accept,
-      onChange: handleFileInputChange,
-    }),
+    getInputProps: () => {
+      const { restrictions } = ctx.uppy.opts
+      const { allowedFileTypes, maxNumberOfFiles } = restrictions
+
+      let accept = props.accept
+      accept ??= allowedFileTypes?.join(', ')
+      let multiple = props.multiple
+      multiple ??= maxNumberOfFiles !== 1
+
+      return {
+        id: fileInputId,
+        type: 'file' as const,
+        multiple,
+        accept,
+        onChange: handleFileInputChange,
+      }
+    },
     getButtonProps: () => ({
       type: 'button',
       onClick: handleClick,
