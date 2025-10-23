@@ -11183,7 +11183,6 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -11191,8 +11190,6 @@ __metadata:
     react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/image-editor":
       optional: true
     "@uppy/screen-capture":
       optional: true
@@ -11290,15 +11287,12 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/image-editor":
       optional: true
     "@uppy/screen-capture":
       optional: true
@@ -11422,15 +11416,12 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
-      optional: true
-    "@uppy/image-editor":
       optional: true
     "@uppy/screen-capture":
       optional: true
