@@ -83,7 +83,7 @@ export function getSafeFileId<M extends Meta, B extends Body>(
     (
       | Pick<RemoteUppyFile<M, B>, 'isRemote' | 'remote'>
       | Pick<LocalUppyFile<M, B>, 'isRemote'>
-    ) & { meta?: { relativePath?: unknown } },
+    ) & { meta?: { relativePath?: unknown } | undefined },
   instanceId: string,
 ): string {
   if (hasFileStableId(file)) return file.id!
