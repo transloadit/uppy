@@ -111,7 +111,9 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  #start = (options?: { deviceId?: string }): Promise<never> | undefined => {
+  #start = (options?: {
+    deviceId?: string | undefined
+  }): Promise<never> | undefined => {
     if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
     }

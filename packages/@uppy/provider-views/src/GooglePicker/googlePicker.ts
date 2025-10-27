@@ -84,7 +84,7 @@ export interface PickedDriveItem extends PickedItemBase {
 export interface PickedPhotosItem extends PickedItemBase {
   platform: 'photos'
   url: string
-  metadata?: Record<string, string | number> // I think string and number is OK in Companion
+  metadata?: Record<string, string | number | undefined> // I think string and number is OK in Companion
 }
 
 export type PickedItem = PickedPhotosItem | PickedDriveItem

@@ -28,7 +28,7 @@ function encodeFilename(name: string): string {
 export default function generateFileID<M extends Meta, B extends Body>(
   file: Partial<Pick<UppyFile<M, B>, 'id' | 'type' | 'name'>> &
     Pick<UppyFile<M, B>, 'data'> & {
-      meta?: { relativePath?: unknown }
+      meta?: { relativePath?: unknown } | undefined
     },
   instanceId: string,
 ): string {

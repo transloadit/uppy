@@ -249,7 +249,7 @@ export interface State<M extends Meta, B extends Body>
     isHidden?: boolean
     type: LogLevel
     message: string
-    details?: string | Record<string, string> | null
+    details?: string | Record<string, string> | null | undefined
   }>
   plugins: Plugins
   totalProgress: number

@@ -1305,7 +1305,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     } = this.opts
     return {
       thumbnailWidth,
-      thumbnailHeight,
+      ...(thumbnailHeight !== undefined && { thumbnailHeight }),
       thumbnailType,
       waitForThumbnailsBeforeUpload,
       // If we don't block on thumbnails, we can lazily generate them

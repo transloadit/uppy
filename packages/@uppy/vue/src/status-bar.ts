@@ -23,7 +23,7 @@ export default defineComponent({
       const options = {
         id: 'StatusBar',
         ...props.props,
-        target: containerRef.value,
+        ...(containerRef.value !== undefined && { target: containerRef.value }),
       }
       uppy.use(StatusBarPlugin, options)
       pluginRef.value = uppy.getPlugin(options.id) as StatusBarPlugin<any, any>

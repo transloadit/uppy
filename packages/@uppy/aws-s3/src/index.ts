@@ -142,7 +142,7 @@ export type AwsS3UploadParameters =
 export interface AwsS3Part {
   PartNumber?: number
   Size?: number
-  ETag?: string
+  ETag?: string | undefined
 }
 
 type AWSS3WithCompanion = {
@@ -865,9 +865,9 @@ export default class AwsS3Multipart<
         companionComm: this.#companionCommunicationQueue,
 
         log: (...args: Parameters<Uppy<M, B>['log']>) => this.uppy.log(...args),
-        getChunkSize: this.opts.getChunkSize
-          ? this.opts.getChunkSize.bind(this)
-          : undefined,
+        ...(this.opts.getChunkSize !== undefined && {
+          getChunkSize: this.opts.getChunkSize.bind(this),
+        }),
 
         onProgress,
         onError,

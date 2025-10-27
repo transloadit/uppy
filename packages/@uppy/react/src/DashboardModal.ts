@@ -48,7 +48,9 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       const { uppy, ...options } = {
         ...this.props,
         inline: false,
-        onRequestCloseModal: onRequestClose,
+        ...(onRequestClose !== undefined && {
+          onRequestCloseModal: onRequestClose,
+        }),
       }
       this.plugin.setOptions(options)
     }
@@ -77,7 +79,9 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
       inline: false,
       target,
       open,
-      onRequestCloseModal: onRequestClose,
+      ...(onRequestClose !== undefined && {
+        onRequestCloseModal: onRequestClose,
+      }),
     }
 
     uppy.use(DashboardPlugin<M, B>, options)
