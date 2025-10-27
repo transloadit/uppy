@@ -86,7 +86,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: /tmp/
       - name: Extract tarball
@@ -126,7 +126,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: /tmp/
       - name: Extract tarball
@@ -168,7 +168,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: /tmp/
       - name: Extract tarball
@@ -198,7 +198,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: /tmp/
       - name: Extract tarball
@@ -223,7 +223,7 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           path: /tmp/
       - name: Extract tarball
