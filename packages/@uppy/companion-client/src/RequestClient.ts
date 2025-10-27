@@ -175,13 +175,13 @@ export default class RequestClient<M extends Meta, B extends Body> {
     method = 'GET',
     data,
     skipPostResponse,
-    signal,
+    signal = null,
   }: {
     path: string
     method?: string
     data?: Record<string, unknown>
     skipPostResponse?: boolean
-    signal?: AbortSignal
+    signal?: AbortSignal | null
   }): Promise<ResBody> {
     try {
       const headers = await this.headers(!data)

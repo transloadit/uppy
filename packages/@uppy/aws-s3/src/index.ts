@@ -120,7 +120,7 @@ type SignPartOptions = {
   key: string
   partNumber: number
   body: Blob
-  signal?: AbortSignal
+  signal?: AbortSignal | null
 }
 
 export type AwsS3UploadParameters =
@@ -159,7 +159,7 @@ type AWSS3WithCompanion = {
 }
 type AWSS3WithoutCompanion = {
   getTemporarySecurityCredentials?: (options?: {
-    signal?: AbortSignal
+    signal?: AbortSignal | null
   }) => MaybePromise<AwsS3STSResponse>
   uploadPartBytes?: (options: {
     signature: AwsS3UploadParameters
@@ -473,7 +473,7 @@ export default class AwsS3Multipart<
 
   createMultipartUpload(
     file: UppyFile<M, B>,
-    signal?: AbortSignal,
+    signal: AbortSignal | null = null,
   ): Promise<UploadResult> {
     this.#assertHost('createMultipartUpload')
     throwIfAborted(signal)
@@ -500,7 +500,7 @@ export default class AwsS3Multipart<
   listParts(
     file: UppyFile<M, B>,
     { key, uploadId, signal }: UploadResultWithSignal,
-    oldSignal?: AbortSignal,
+    oldSignal: AbortSignal | null = null,
   ): Promise<AwsS3Part[]> {
     signal ??= oldSignal
     this.#assertHost('listParts')
@@ -518,7 +518,7 @@ export default class AwsS3Multipart<
   completeMultipartUpload(
     file: UppyFile<M, B>,
     { key, uploadId, parts, signal }: MultipartUploadResultWithSignal,
-    oldSignal?: AbortSignal,
+    oldSignal: AbortSignal | null = null,
   ): Promise<B> {
     signal ??= oldSignal
     this.#assertHost('completeMultipartUpload')
@@ -607,7 +607,7 @@ export default class AwsS3Multipart<
 
   signPart(
     file: UppyFile<M, B>,
-    { uploadId, key, partNumber, signal }: SignPartOptions,
+    { uploadId, key, partNumber, signal = null }: SignPartOptions,
   ): Promise<AwsS3UploadParameters> {
     this.#assertHost('signPart')
     throwIfAborted(signal)
@@ -629,7 +629,7 @@ export default class AwsS3Multipart<
 
   abortMultipartUpload(
     file: UppyFile<M, B>,
-    { key, uploadId, signal }: UploadResultWithSignal,
+    { key, uploadId, signal = null }: UploadResultWithSignal,
   ): Promise<void> {
     this.#assertHost('abortMultipartUpload')
 
@@ -680,7 +680,7 @@ export default class AwsS3Multipart<
     size?: number
     onProgress: any
     onComplete: any
-    signal?: AbortSignal
+    signal?: AbortSignal | null
   }): Promise<UploadPartBytesResult> {
     throwIfAborted(signal)
 

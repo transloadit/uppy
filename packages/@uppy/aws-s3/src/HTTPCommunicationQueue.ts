@@ -248,7 +248,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   async #nonMultipartUpload(
     file: UppyFile<M, B>,
     chunk: Chunk,
-    signal?: AbortSignal,
+    signal: AbortSignal | null = null,
   ) {
     const {
       method = 'POST',
