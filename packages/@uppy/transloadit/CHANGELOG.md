@@ -1,5 +1,16 @@
 # @uppy/transloadit
 
+## 5.2.0
+
+### Minor Changes
+
+- 72d2d68: Remove unused @uppy/{companion-client,provider-views} dependencies
+
+### Patch Changes
+
+- Updated dependencies [08b64f9]
+  - @uppy/utils@7.1.2
+
 ## 5.1.3
 
 ### Patch Changes

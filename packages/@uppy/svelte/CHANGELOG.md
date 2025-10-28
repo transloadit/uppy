@@ -1,5 +1,17 @@
 # @uppy/svelte
 
+## 5.1.0
+
+### Minor Changes
+
+- 72d2d68: Add @uppy/{screen-capture,status-bar,webcam} as optional peer dependencies
+
+### Patch Changes
+
+- Updated dependencies [72d2d68]
+- Updated dependencies [26bf726]
+  - @uppy/components@1.1.0
+
 ## 5.0.2
 
 ### Patch Changes
