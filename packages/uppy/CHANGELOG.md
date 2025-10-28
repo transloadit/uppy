@@ -1,5 +1,14 @@
 # uppy
 
+## 5.1.9
+
+### Patch Changes
+
+- Updated dependencies [72d2d68]
+- Updated dependencies [5edcb2e]
+  - @uppy/transloadit@5.2.0
+  - @uppy/onedrive@5.0.2
+
 ## 5.1.8
 
 ### Patch Changes
