@@ -42,8 +42,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/provider-views": "workspace:^",
     "@uppy/tus": "workspace:^",
     "@uppy/utils": "workspace:^",
     "component-emitter": "^2.0.0",

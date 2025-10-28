@@ -10698,11 +10698,16 @@ __metadata:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/utils": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+  peerDependenciesMeta:
+    "@uppy/dashboard":
+      optional: true
+    "@uppy/status-bar":
+      optional: true
   languageName: unknown
   linkType: soft
 
-"@uppy/audio@workspace:*, @uppy/audio@workspace:^, @uppy/audio@workspace:packages/@uppy/audio":
+"@uppy/audio@workspace:*, @uppy/audio@workspace:packages/@uppy/audio":
   version: 0.0.0-use.local
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
@@ -10844,18 +10849,25 @@ __metadata:
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
     "@tailwindcss/cli": "npm:^4.0.6"
-    "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/image-editor": "workspace:^"
-    "@uppy/remote-sources": "workspace:^"
-    "@uppy/screen-capture": "workspace:^"
-    "@uppy/webcam": "workspace:^"
     clsx: "npm:^2.1.1"
     dequal: "npm:^2.0.3"
     preact: "npm:^10.5.13"
     pretty-bytes: "npm:^6.1.1"
     tailwindcss: "npm:^4.0.6"
     typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+    "@uppy/image-editor": "workspace:^"
+    "@uppy/screen-capture": "workspace:^"
+    "@uppy/webcam": "workspace:^"
+  peerDependenciesMeta:
+    "@uppy/image-editor":
+      optional: true
+    "@uppy/screen-capture":
+      optional: true
+    "@uppy/webcam":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -11009,6 +11021,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
+    "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/utils": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
@@ -11066,7 +11079,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:^, @uppy/image-editor@workspace:packages/@uppy/image-editor":
+"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:packages/@uppy/image-editor":
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
@@ -11160,7 +11173,6 @@ __metadata:
     "@types/use-sync-external-store": "npm:^0.0.6"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/utils": "workspace:^"
     jsdom: "npm:^26.1.0"
     preact: "npm:^10.5.13"
     react: "npm:^18.2.0"
@@ -11172,6 +11184,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
@@ -11187,7 +11200,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/remote-sources@workspace:*, @uppy/remote-sources@workspace:^, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
+"@uppy/remote-sources@workspace:*, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
   version: 0.0.0-use.local
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
@@ -11211,7 +11224,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:^, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
+"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:
@@ -11274,11 +11287,18 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
+    "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+    "@uppy/webcam": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
+    "@uppy/screen-capture":
+      optional: true
     "@uppy/status-bar":
+      optional: true
+    "@uppy/webcam":
       optional: true
   languageName: unknown
   linkType: soft
@@ -11302,9 +11322,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     "@uppy/tus": "workspace:^"
     "@uppy/utils": "workspace:^"
     component-emitter: "npm:^2.0.0"
@@ -11398,11 +11416,18 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
+    "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+    "@uppy/webcam": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
+    "@uppy/screen-capture":
+      optional: true
     "@uppy/status-bar":
+      optional: true
+    "@uppy/webcam":
       optional: true
   languageName: unknown
   linkType: soft
