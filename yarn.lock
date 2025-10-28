@@ -10830,7 +10830,7 @@ __metadata:
     supports-color: "npm:8.x"
     tus-js-client: "npm:^4.1.0"
     typescript: "npm:^5.8.3"
-    validator: "npm:^13.0.0"
+    validator: "npm:^13.15.20"
     vitest: "npm:^3.2.4"
     webdav: "npm:^5.8.0"
     ws: "npm:8.17.1"
@@ -25817,10 +25817,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"validator@npm:^13.0.0":
-  version: 13.12.0
-  resolution: "validator@npm:13.12.0"
-  checksum: 10/db6eb0725e2b67d60d30073ae8573982713b5903195d031dc3c7db7e82df8b74e8c13baef8e2106d146d979599fd61a06cde1fec5c148e4abd53d52817ff0fd9
+"validator@npm:^13.15.20":
+  version: 13.15.20
+  resolution: "validator@npm:13.15.20"
+  checksum: 10/498f9b201dda7b09207bbc13606e6f90595987eab9e3a60fc5b8d8d96141c9351192aea56d392c78640e2462770eedccf545cf13b2ef43e87d73a755ba485c5d
   languageName: node
   linkType: hard
 
