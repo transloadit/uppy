@@ -1,6 +1,10 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import RemoteSources, { type AvailablePluginsKeys } from '@uppy/remote-sources'
+
+
+
+import { ProviderViews } from '@uppy/provider-views'
 import { page, userEvent } from '@vitest/browser/context'
 import {
   afterAll,
@@ -18,6 +22,9 @@ import '@uppy/dashboard/css/style.css'
 let uppy: Uppy
 
 beforeAll(async () => {
+  // Disable search debounce inside ProviderView during tests to avoid long sleeps
+  // @ts-expect-error test-only hook
+  ProviderViews[Symbol.for('uppy test: searchDebounceMs')] = 0
   await worker.start({
     onUnhandledRequest: 'bypass',
   })
@@ -67,9 +74,10 @@ describe('ProviderView Search E2E', () => {
     expect(searchInput).toBeDefined()
 
     await userEvent.type(searchInput, 'target')
-
-    // Wait for debounce (500ms) + network response
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    // Auto-wait for a specific search result to appear instead of sleeping
+    await expect
+      .element(page.getByRole('button', { name: 'target.pdf', exact: true }))
+      .toBeVisible()
 
     const searchResults = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -95,7 +103,9 @@ describe('ProviderView Search E2E', () => {
     ) as HTMLInputElement
     await userEvent.clear(searchInput)
     await userEvent.type(searchInput, 'second')
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    await expect
+      .element(page.getByText('second', { exact: true }))
+      .toBeVisible()
 
     const secondFolder = page.getByText('second', { exact: true })
     await secondFolder.click()
@@ -138,7 +148,9 @@ describe('ProviderView Search E2E', () => {
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'second')
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    await expect
+      .element(page.getByText('second', { exact: true }))
+      .toBeVisible()
 
     await expect
       .element(page.getByText('second', { exact: true }))
@@ -172,7 +184,9 @@ describe('ProviderView Search E2E', () => {
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'second')
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    await expect
+      .element(page.getByText('second', { exact: true }))
+      .toBeVisible()
 
     await expect
       .element(page.getByText('second', { exact: true }))
@@ -315,7 +329,14 @@ describe('ProviderView Search E2E', () => {
     ) as HTMLInputElement
     expect(searchInput).toBeDefined()
     await userEvent.type(searchInput, 'target')
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    await expect
+      .element(page.getByRole('button', { name: 'target.pdf', exact: true }))
+      .toBeVisible()
+    await expect
+      .element(
+        page.getByRole('button', { name: 'nested-target.pdf', exact: true }),
+      )
+      .toBeVisible()
 
     const searchResults = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -350,7 +371,9 @@ describe('ProviderView Search E2E', () => {
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'readme')
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    await expect
+      .element(page.getByText('readme.md'))
+      .toBeVisible()
 
     const searchResults = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -387,7 +410,9 @@ describe('ProviderView Search E2E', () => {
     // Verify checked state persists after searching again (same node in partialTree)
     await userEvent.clear(searchInput)
     await userEvent.type(searchInput, 'readme')
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    await expect
+      .element(page.getByText('readme.md'))
+      .toBeVisible()
 
     const searchResultsAgain = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -411,8 +436,6 @@ describe('ProviderView Search E2E', () => {
     const driveTab = page.getByRole('tab', { name: /google drive/i })
     await driveTab.click()
 
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
     await expect.element(page.getByText('first')).toBeVisible()
     await expect.element(page.getByText('workspace')).toBeVisible()
     await expect.element(page.getByText('readme.md')).toBeVisible()
@@ -423,7 +446,7 @@ describe('ProviderView Search E2E', () => {
     expect(searchInput).toBeDefined()
 
     await userEvent.type(searchInput, 'workspace')
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await expect.element(page.getByText('workspace')).toBeVisible()
 
     const visibleItems = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -446,7 +469,7 @@ describe('ProviderView Search E2E', () => {
     expect(readmeItem).toBeUndefined()
 
     await userEvent.clear(searchInput)
-    await new Promise((resolve) => setTimeout(resolve, 200))
+    await expect.element(page.getByText('first')).toBeVisible()
 
     const allItems = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -454,7 +477,7 @@ describe('ProviderView Search E2E', () => {
     expect(allItems.length).toBe(3)
 
     await userEvent.type(searchInput, 'readme')
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await expect.element(page.getByText('readme.md')).toBeVisible()
 
     const filteredItems = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),

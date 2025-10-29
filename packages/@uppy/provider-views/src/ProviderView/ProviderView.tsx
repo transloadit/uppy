@@ -337,7 +337,18 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   onSearchInput = (s: string): void => {
     this.plugin.setPluginState({ searchString: s })
-    if (this.opts.supportsSearch) this.#searchDebounced()
+    if (this.opts.supportsSearch) {
+      // Test hook: allow tests to disable debounce by setting a special Symbol on the class
+      const ctor = this.constructor as unknown as Record<symbol, unknown>
+      const testDebounceMs = ctor[Symbol.for('uppy test: searchDebounceMs')] as
+        | number
+        | undefined
+      if (testDebounceMs === 0) {
+        void this.#search()
+      } else {
+        this.#searchDebounced()
+      }
+    }
   }
 
   async openSearchResultFolder(folderId: PartialTreeId): Promise<void> {
