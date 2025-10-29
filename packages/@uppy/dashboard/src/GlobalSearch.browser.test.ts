@@ -6,7 +6,6 @@ import {
   afterAll,
   afterEach,
   beforeAll,
-  beforeEach,
   describe,
   expect,
   test,
@@ -21,7 +20,6 @@ let uppy: Uppy
 beforeAll(async () => {
   await worker.start({
     onUnhandledRequest: 'bypass',
-    quiet: false,
   })
 })
 
@@ -44,9 +42,7 @@ function initializeUppy(sources: AvailablePluginsKeys[] = ['Dropbox']) {
     })
 }
 
-beforeEach(() => {
-  uppy = initializeUppy(['Dropbox'])
-})
+// Removed shared beforeEach initialization. Each test initializes its own Uppy instance.
 
 afterEach(async () => {
   if (uppy) {
@@ -58,6 +54,7 @@ afterEach(async () => {
 
 describe('ProviderView Search E2E', () => {
   test('Search for nested file in Dropbox and verify results', async () => {
+    uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
     await page.getByRole('tab', { name: /dropbox/i }).click()
     await expect.element(page.getByText('Import from Dropbox')).toBeVisible()
@@ -85,6 +82,7 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
+    uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
 
     const dropboxTab = page.getByRole('tab', { name: /dropbox/i })
@@ -117,6 +115,7 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
+    uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
     await page.getByRole('tab', { name: /dropbox/i }).click()
     await expect.element(page.getByText('first')).toBeVisible()
@@ -164,6 +163,7 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search for nested item, check it, go back to normal view -> parent should be partial', async () => {
+    uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
     await page.getByRole('tab', { name: /dropbox/i }).click()
     await expect.element(page.getByText('first')).toBeVisible()
@@ -222,6 +222,7 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search for nested item, check then uncheck it, go back to normal view -> parent should be unchecked', async () => {
+    uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
     await page.getByRole('tab', { name: /dropbox/i }).click()
     await expect.element(page.getByText('first')).toBeVisible()
@@ -288,6 +289,7 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Navigate into folder and perform scoped search -> should find nested files at multiple levels', async () => {
+    uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
     await page.getByRole('tab', { name: /dropbox/i }).click()
     await expect.element(page.getByText('first')).toBeVisible()
@@ -338,6 +340,7 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('No duplicate items when searching and then browsing to the same file', async () => {
+    uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
     await page.getByRole('tab', { name: /dropbox/i }).click()
     await expect.element(page.getByText('first')).toBeVisible()
@@ -401,10 +404,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Client-side filtering works for providers without server-side search (Google Drive)', async () => {
-    if (uppy) {
-      await new Promise((resolve) => setTimeout(resolve, 50))
-      uppy.destroy()
-    }
     uppy = initializeUppy(['GoogleDrive'])
 
     await expect.element(page.getByText('My Device')).toBeVisible()
