@@ -2,7 +2,7 @@
 
 Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can
 use this from a CDN
-(`<script src="https://releases.transloadit.com/uppy/v5.1.6/uppy.min.js"></script>`)
+(`<script src="https://releases.transloadit.com/uppy/v5.1.9/uppy.min.js"></script>`)
 or bundle it with your webapp.
 
 Note that the recommended way to use Uppy is to install it with yarn/npm and use

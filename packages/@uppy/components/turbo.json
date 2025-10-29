@@ -2,7 +2,13 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "@uppy/core#build"],
+      "dependsOn": [
+        "^build",
+        "@uppy/core#build",
+        "@uppy/image-editor#build",
+        "@uppy/screen-capture#build",
+        "@uppy/webcam#build"
+      ],
       "outputs": ["lib/**"]
     },
     "build:css": {

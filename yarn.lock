@@ -10684,7 +10684,7 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@uppy/companion": "workspace:^"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -10698,11 +10698,16 @@ __metadata:
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
-    "@uppy/utils": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+  peerDependenciesMeta:
+    "@uppy/dashboard":
+      optional: true
+    "@uppy/status-bar":
+      optional: true
   languageName: unknown
   linkType: soft
 
-"@uppy/audio@workspace:*, @uppy/audio@workspace:^, @uppy/audio@workspace:packages/@uppy/audio":
+"@uppy/audio@workspace:*, @uppy/audio@workspace:packages/@uppy/audio":
   version: 0.0.0-use.local
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
@@ -10844,18 +10849,25 @@ __metadata:
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
     "@tailwindcss/cli": "npm:^4.0.6"
-    "@uppy/audio": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/image-editor": "workspace:^"
-    "@uppy/remote-sources": "workspace:^"
-    "@uppy/screen-capture": "workspace:^"
-    "@uppy/webcam": "workspace:^"
     clsx: "npm:^2.1.1"
     dequal: "npm:^2.0.3"
     preact: "npm:^10.5.13"
     pretty-bytes: "npm:^6.1.1"
     tailwindcss: "npm:^4.0.6"
     typescript: "npm:^5.8.3"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+    "@uppy/image-editor": "workspace:^"
+    "@uppy/screen-capture": "workspace:^"
+    "@uppy/webcam": "workspace:^"
+  peerDependenciesMeta:
+    "@uppy/image-editor":
+      optional: true
+    "@uppy/screen-capture":
+      optional: true
+    "@uppy/webcam":
+      optional: true
   languageName: unknown
   linkType: soft
 
@@ -11010,9 +11022,14 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
+    "@uppy/core": "workspace:^"
+    "@uppy/dashboard": "workspace:^"
     "@uppy/utils": "workspace:^"
+    "@uppy/xhr-upload": "workspace:^"
+    "@vitest/browser": "npm:^3.2.4"
     lodash: "npm:^4.17.21"
     typescript: "npm:^5.8.3"
+    vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -11063,7 +11080,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:^, @uppy/image-editor@workspace:packages/@uppy/image-editor":
+"@uppy/image-editor@workspace:*, @uppy/image-editor@workspace:packages/@uppy/image-editor":
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
@@ -11157,7 +11174,6 @@ __metadata:
     "@types/use-sync-external-store": "npm:^0.0.6"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/utils": "workspace:^"
     jsdom: "npm:^26.1.0"
     preact: "npm:^10.5.13"
     react: "npm:^18.2.0"
@@ -11169,6 +11185,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
@@ -11184,7 +11201,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/remote-sources@workspace:*, @uppy/remote-sources@workspace:^, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
+"@uppy/remote-sources@workspace:*, @uppy/remote-sources@workspace:packages/@uppy/remote-sources":
   version: 0.0.0-use.local
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
@@ -11208,7 +11225,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:^, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
+"@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:
@@ -11271,11 +11288,18 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
+    "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+    "@uppy/webcam": "workspace:^"
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
+    "@uppy/screen-capture":
+      optional: true
     "@uppy/status-bar":
+      optional: true
+    "@uppy/webcam":
       optional: true
   languageName: unknown
   linkType: soft
@@ -11299,9 +11323,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     "@uppy/tus": "workspace:^"
     "@uppy/utils": "workspace:^"
     component-emitter: "npm:^2.0.0"
@@ -11395,11 +11417,18 @@ __metadata:
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
+    "@uppy/screen-capture": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+    "@uppy/webcam": "workspace:^"
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
       optional: true
+    "@uppy/screen-capture":
+      optional: true
     "@uppy/status-bar":
+      optional: true
+    "@uppy/webcam":
       optional: true
   languageName: unknown
   linkType: soft
@@ -11438,7 +11467,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
+"@uppy/xhr-upload@workspace:*, @uppy/xhr-upload@workspace:^, @uppy/xhr-upload@workspace:packages/@uppy/xhr-upload":
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
@@ -15494,7 +15523,7 @@ __metadata:
     express: "npm:^4.19.2"
     express-session: "npm:^1.17.3"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15546,7 +15575,7 @@ __metadata:
     express-session: "npm:^1.15.6"
     npm-run-all: "npm:^4.1.2"
     preact: "npm:^10.5.13"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15561,7 +15590,7 @@ __metadata:
     cors: "npm:^2.8.5"
     dotenv: "npm:^16.0.1"
     express: "npm:^4.19.2"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15621,7 +15650,7 @@ __metadata:
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4.0.9"
     typescript: "npm:^5.7.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
     vitest: "npm:^3.2.4"
     vitest-browser-react: "npm:^1.0.0"
   languageName: unknown
@@ -15698,7 +15727,7 @@ __metadata:
     express: "npm:^4.19.2"
     he: "npm:^1.2.0"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15718,7 +15747,7 @@ __metadata:
     "@vitest/browser": "npm:^3.2.4"
     playwright: "npm:1.54.1"
     tailwindcss: "npm:^4.0.0"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
     vitest: "npm:^3.2.4"
     vitest-browser-vue: "npm:^1.0.0"
     vue: "npm:^3.5.14"
@@ -15736,7 +15765,7 @@ __metadata:
     express: "npm:^4.19.2"
     multer: "npm:^2.0.2"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15750,7 +15779,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.2.4"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15763,7 +15792,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -15776,7 +15805,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.0.7"
+    vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
 
@@ -26112,9 +26141,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^7.0.7":
-  version: 7.1.5
-  resolution: "vite@npm:7.1.5"
+"vite@npm:^7.1.11":
+  version: 7.1.11
+  resolution: "vite@npm:7.1.11"
   dependencies:
     esbuild: "npm:^0.25.0"
     fdir: "npm:^6.5.0"
@@ -26163,7 +26192,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10/59edeef7e98757a668b2ad8a1731a5657fa83e22a165a36b7359225ea98a9be39b2f486710c0cf5085edb85daee7c8b6b6b0bd85d0ef32a1aa84aef71aabd0f0
+  checksum: 10/b75ce7a38beeba7800751938df4fe2638cfb77509647329ac824332af51831eaed52ab0a0bae1d9162ac41ef59fff1c754e0acf7e1470dfa7d3da51fc3bf0985
   languageName: node
   linkType: hard
 

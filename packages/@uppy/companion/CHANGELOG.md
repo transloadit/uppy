@@ -1,5 +1,11 @@
 # @uppy/companion
 
+## 6.1.1
+
+### Patch Changes
+
+- 6a60ee5: Reject request early instead of crashing on missing `filename` for /s3/multipart and /s3/params endpoints
+
 ## 6.1.0
 
 ### Minor Changes

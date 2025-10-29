@@ -65,6 +65,7 @@ describe('AwsS3Multipart', () => {
       })
 
       const createFile = (size: number): UppyFile<any, any> => ({
+        name: '',
         size,
         data: new Blob(),
         extension: '',

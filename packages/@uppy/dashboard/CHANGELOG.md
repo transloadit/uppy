@@ -1,5 +1,18 @@
 # @uppy/dashboard
 
+## 5.0.3
+
+### Patch Changes
+
+- 0c16fe4: - Remove `restore-canceled` event as it was not being used.
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+  - @uppy/core@5.1.1
+  - @uppy/utils@7.1.1
+  - @uppy/provider-views@5.1.1
+  - @uppy/thumbnail-generator@5.0.2
+
 ## 5.0.2
 
 ### Patch Changes

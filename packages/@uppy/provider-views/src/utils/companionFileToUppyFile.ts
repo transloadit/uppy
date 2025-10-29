@@ -5,24 +5,27 @@ import type {
   CompanionClientSearchProvider,
   CompanionFile,
   Meta,
-  TagFile,
+  RemoteUppyFile,
 } from '@uppy/utils'
 
-// TODO: document what is a "tagFile" or get rid of this concept
-const getTagFile = <M extends Meta, B extends Body>(
+const companionFileToUppyFile = <M extends Meta, B extends Body>(
   file: CompanionFile,
   plugin: UnknownPlugin<M, B>,
   provider: CompanionClientProvider | CompanionClientSearchProvider,
-): TagFile<M> => {
-  const tagFile: TagFile<any> = {
+): RemoteUppyFile<M, B> => {
+  const name = file.name || file.id
+
+  return {
     id: file.id,
     source: plugin.id,
-    name: file.name || file.id,
+    name,
     type: file.mimeType,
     isRemote: true,
     data: file,
     preview: file.thumbnail || undefined,
+    // @ts-expect-error TODO: fixme
     meta: {
+      // name, // todo shouldn't this be here?
       authorName: file.author?.name,
       authorUrl: file.author?.url,
       // We need to do this `|| null` check, because null value
@@ -45,8 +48,6 @@ const getTagFile = <M extends Meta, B extends Body>(
       requestClientId: provider.provider,
     },
   }
-
-  return tagFile
 }
 
-export default getTagFile
+export default companionFileToUppyFile

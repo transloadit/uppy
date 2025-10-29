@@ -1,5 +1,35 @@
 # @uppy/transloadit
 
+## 5.2.0
+
+### Minor Changes
+
+- 72d2d68: Remove unused @uppy/{companion-client,provider-views} dependencies
+
+### Patch Changes
+
+- Updated dependencies [08b64f9]
+  - @uppy/utils@7.1.2
+
+## 5.1.3
+
+### Patch Changes
+
+- 0c16fe4: - **Internal inter-package breaking change:** Remove hacky internal event `restore:get-data` that would send a function as its event data (to golden retriever for it to call the function to receive data from it). Add instead `restore:plugin-data-changed` that publishes data when it changes. This means that **old versions of `@uppy/transloadit` are not compatible with newest version of `@uppy/golden-retriever` (and vice versa)**.
+  - Minor internal refactoring in order to make sure that we will always emit `restore:plugin-data-changed` whenever assembly state changes
+  - Split UppyFile into two intefaces distinguished by the `isRemote` boolean:
+    - LocalUppyFile
+    - RemoteUppyFile
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+  - @uppy/companion-client@5.1.1
+  - @uppy/core@5.1.1
+  - @uppy/utils@7.1.1
+  - @uppy/provider-views@5.1.1
+  - @uppy/tus@5.0.2
+
 ## 5.1.2
 
 ### Patch Changes
