@@ -1,8 +1,9 @@
-export * from './headless/generated/index.js'
 // Headless components
+export * from './headless/generated/index.js'
 export {
   UppyContext,
   UppyContextProvider,
+  useUppyContext,
 } from './headless/UppyContextProvider.js'
 export { useDropzone } from './useDropzone.js'
 export { useFileInput } from './useFileInput.js'
