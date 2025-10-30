@@ -1,5 +1,4 @@
 import 'uppy/dist/uppy.css'
-import uppyStyles from 'uppy/dist/uppy.css?inline'
 
 import Dashboard from './Dashboard.js'
 import DragDrop from './DragDrop.js'
