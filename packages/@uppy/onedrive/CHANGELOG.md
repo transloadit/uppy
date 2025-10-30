@@ -1,5 +1,13 @@
 # @uppy/onedrive
 
+## 5.0.2
+
+### Patch Changes
+
+- 5edcb2e: Fix: Enable `supportsRefreshToken` for OneDrive
+- Updated dependencies [08b64f9]
+  - @uppy/utils@7.1.2
+
 ## 5.0.1
 
 ### Patch Changes

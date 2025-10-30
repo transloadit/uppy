@@ -33,7 +33,7 @@ jobs:
           /tmp/companion-${{ github.sha }}.tar.gz
       - name: Upload artifact
         if: success()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: companion-${{ github.sha }}.tar.gz
           path: /tmp/companion-${{ github.sha }}.tar.gz

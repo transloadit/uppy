@@ -1,5 +1,15 @@
 # @uppy/components
 
+## 1.1.0
+
+### Minor Changes
+
+- 72d2d68: Add @uppy/{screen-capture,status-bar,webcam} as optional peer dependencies
+
+### Patch Changes
+
+- 26bf726: Dropzone and FileInput inherit restrictions from @uppy/core
+
 ## 1.0.4
 
 ### Patch Changes

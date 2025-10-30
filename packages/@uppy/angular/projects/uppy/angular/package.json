@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
   "description": "Angular component wrappers around Uppy's official UI plugins.",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "license": "MIT",
   "homepage": "https://uppy.io",
   "keywords": [
@@ -29,7 +29,15 @@
     "@angular/core": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@uppy/utils": "workspace:^"
+    "@uppy/status-bar": "workspace:^"
+  },
+  "peerDependenciesMeta": {
+    "@uppy/dashboard": {
+      "optional": true
+    },
+    "@uppy/status-bar": {
+      "optional": true
+    }
   },
   "sideEffects": false
 }

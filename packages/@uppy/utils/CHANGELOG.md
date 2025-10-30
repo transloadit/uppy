@@ -1,5 +1,11 @@
 # @uppy/utils
 
+## 7.1.2
+
+### Patch Changes
+
+- 08b64f9: fix ts issue with generateFileID and `exactOptionalPropertyTypes`
+
 ## 7.1.1
 
 ### Patch Changes
