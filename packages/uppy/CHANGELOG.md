@@ -1,5 +1,12 @@
 # uppy
 
+## 5.1.10
+
+### Patch Changes
+
+- Updated dependencies [46e339a]
+  - @uppy/provider-views@5.1.2
+
 ## 5.1.9
 
 ### Patch Changes
