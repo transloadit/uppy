@@ -11149,6 +11149,7 @@ __metadata:
     classnames: "npm:^2.2.6"
     cssnano: "npm:^7.0.7"
     jsdom: "npm:^26.1.0"
+    lodash: "npm:^4.17.21"
     nanoid: "npm:^5.0.9"
     p-queue: "npm:^8.0.0"
     postcss: "npm:^8.5.6"
