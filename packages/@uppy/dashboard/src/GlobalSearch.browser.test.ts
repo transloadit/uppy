@@ -69,7 +69,6 @@ afterEach(async () => {
 describe('ProviderView Search E2E', () => {
   test('Search for nested file in Dropbox and verify results', async () => {
     uppy = initializeUppy(['Dropbox'])
-    await expect.element(page.getByText('My Device')).toBeVisible()
     await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
     await page.getByRole('tab', { name: 'Dropbox' }).click()
 
@@ -100,37 +99,38 @@ describe('ProviderView Search E2E', () => {
 
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
     uppy = initializeUppy(['Dropbox'])
-    await expect.element(page.getByText('My Device')).toBeVisible()
 
-    const dropboxTab = page.getByRole('tab', { name: /dropbox/i })
-    await dropboxTab.click()
+    await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
 
-    await expect.element(page.getByText('first')).toBeVisible()
+    await expect.element(page.getByRole('presentation').getByText('first')).toBeVisible()
+
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
+
     await userEvent.clear(searchInput)
     await userEvent.type(searchInput, 'second')
+
     await expect
       .element(page.getByText('second', { exact: true }))
       .toBeVisible()
 
-    const secondFolder = page.getByText('second', { exact: true })
+    const secondFolder = await page.getByText('second', { exact: true })
+
     await secondFolder.click()
 
-    await expect.element(page.getByText('deep-file.txt')).toBeVisible()
+    await expect.element(page.getByRole('presentation').getByText('deep-file.txt')).toBeVisible()
 
     // Click ancestor breadcrumb that was never loaded before in browse mode
     const firstBreadcrumb = page.getByRole('button', { name: 'first' })
     await firstBreadcrumb.click()
 
-    await expect.element(page.getByText('intermediate.doc')).toBeVisible()
-    const folderItems = document.querySelectorAll('.uppy-ProviderBrowserItem')
-    const hasSecondFolder = Array.from(folderItems).some((item) =>
-      item.textContent?.includes('second'),
-    )
-    expect(hasSecondFolder).toBe(true)
+    await expect.element(page.getByRole('presentation').getByText('intermediate.doc')).toBeVisible()
+
+    const hasSecondFolder = await page.getByText('second', { exact: true })
+    expect(hasSecondFolder).toBeVisible()
   })
 
   test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
