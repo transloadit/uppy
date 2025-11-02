@@ -1,5 +1,11 @@
 # @uppy/provider-views
 
+## 5.1.2
+
+### Patch Changes
+
+- 46e339a: Add missing lodash dependency
+
 ## 5.1.1
 
 ### Patch Changes
