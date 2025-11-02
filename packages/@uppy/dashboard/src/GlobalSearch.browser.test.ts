@@ -131,63 +131,64 @@ describe('ProviderView Search E2E', () => {
     expect(hasSecondFolder).toBe(true)
   })
 
-  // test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
-  //   uppy = initializeUppy(['Dropbox'])
-  //   await expect.element(page.getByText('My Device')).toBeVisible()
-  //   const dropboxTab = page.getByRole('tab', { name: /dropbox/i })
-  //   await dropboxTab.click()
-  //   await expect
-  //     .element(page.getByText('Import from Dropbox'))
-  //     .toBeVisible()
-  //   await expect
-  //     .element(page.getByText('test-user@example.com'))
-  //     .toBeVisible()
-  //   const list = page.getByRole('list')
-  //   await expect.element(list.getByText('first', { exact: true })).toBeVisible()
+  test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
+    uppy = initializeUppy(['Dropbox'])
+    await expect.element(page.getByText('My Device')).toBeVisible()
+    const dropboxTab = page.getByRole('tab', { name: /dropbox/i })
+    await dropboxTab.click()
+    await expect
+      .element(page.getByText('Import from Dropbox'))
+      .toBeVisible()
+    await expect
+      .element(page.getByText('test-user@example.com'))
+      .toBeVisible()
+    await expect
+      .element(page.getByText('first', { exact: true }))
+      .toBeVisible()
 
-  //   const firstFolderItem = Array.from(
-  //     document.querySelectorAll('.uppy-ProviderBrowserItem'),
-  //   ).find(
-  //     (item) =>
-  //       item.textContent?.includes('first') && item.querySelector('button'),
-  //   )
-  //   const firstFolderCheckbox =
-  //     firstFolderItem?.querySelector<HTMLInputElement>('input[type="checkbox"]')
-  //   expect(firstFolderCheckbox).toBeTruthy()
-  //   await firstFolderCheckbox!.click()
+    const firstFolderItem = Array.from(
+      document.querySelectorAll('.uppy-ProviderBrowserItem'),
+    ).find(
+      (item) =>
+        item.textContent?.includes('first') && item.querySelector('button'),
+    )
+    const firstFolderCheckbox =
+      firstFolderItem?.querySelector<HTMLInputElement>('input[type="checkbox"]')
+    expect(firstFolderCheckbox).toBeTruthy()
+    await firstFolderCheckbox!.click()
 
-  //   await new Promise((resolve) => setTimeout(resolve, 100))
-  //   expect(firstFolderCheckbox!.checked).toBe(true)
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    expect(firstFolderCheckbox!.checked).toBe(true)
 
-  //   const searchInput = document.querySelector(
-  //     '.uppy-ProviderBrowser-searchFilterInput',
-  //   ) as HTMLInputElement
-  //   await userEvent.type(searchInput, 'second')
-  //   await expect
-  //     .element(page.getByText('second', { exact: true }))
-  //     .toBeVisible()
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+    await userEvent.type(searchInput, 'second')
+    await expect
+      .element(page.getByText('second', { exact: true }))
+      .toBeVisible()
 
-  //   await expect
-  //     .element(page.getByText('second', { exact: true }))
-  //     .toBeVisible()
+    await expect
+      .element(page.getByText('second', { exact: true }))
+      .toBeVisible()
 
-  //   const secondFolderItem = Array.from(
-  //     document.querySelectorAll('.uppy-ProviderBrowserItem'),
-  //   ).find((item) => item.textContent?.includes('second'))
-  //   const secondFolderCheckbox =
-  //     secondFolderItem?.querySelector<HTMLInputElement>(
-  //       'input[type="checkbox"]',
-  //     )
-  //   expect(secondFolderCheckbox).toBeTruthy()
+    const secondFolderItem = Array.from(
+      document.querySelectorAll('.uppy-ProviderBrowserItem'),
+    ).find((item) => item.textContent?.includes('second'))
+    const secondFolderCheckbox =
+      secondFolderItem?.querySelector<HTMLInputElement>(
+        'input[type="checkbox"]',
+      )
+    expect(secondFolderCheckbox).toBeTruthy()
 
-  //   // Children inherit checked state from parent
-  //   expect(secondFolderCheckbox!.checked).toBe(true)
-  //   expect(
-  //     secondFolderItem?.classList.contains(
-  //       'uppy-ProviderBrowserItem--is-checked',
-  //     ),
-  //   ).toBe(true)
-  // })
+    // Children inherit checked state from parent
+    expect(secondFolderCheckbox!.checked).toBe(true)
+    expect(
+      secondFolderItem?.classList.contains(
+        'uppy-ProviderBrowserItem--is-checked',
+      ),
+    ).toBe(true)
+  })
 
   // test('Search for nested item, check it, go back to normal view -> parent should be partial', async () => {
   //   uppy = initializeUppy(['Dropbox'])
