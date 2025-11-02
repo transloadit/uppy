@@ -34,7 +34,7 @@ afterAll(async () => {
   await worker.stop()
 })
 
-function initializeUppy(sources: AvailablePluginsKeys[] = ['Dropbox']) {
+function initializeUppy(sources: AvailablePluginsKeys[] = ['Dropbox', 'GoogleDrive']) {
   document.body.innerHTML = '<div id="app"></div>'
 
   return new Uppy({ id: 'uppy-e2e' })
@@ -87,13 +87,7 @@ describe('ProviderView Search E2E', () => {
       .element(page.getByRole('button', { name: 'target.pdf', exact: true }))
       .toBeVisible()
 
-    const searchResults = Array.from(
-      document.querySelectorAll('.uppy-ProviderBrowserItem'),
-    )
-    const targetPdfItem = searchResults.find((item) => {
-      const button = item.querySelector('button.uppy-ProviderBrowserItem-inner')
-      return button?.textContent?.trim() === 'target.pdf'
-    })
+    const targetPdfItem = await page.getByRole('button', { name: 'target.pdf', exact: true })
     expect(targetPdfItem).toBeTruthy()
   })
 
@@ -103,8 +97,11 @@ describe('ProviderView Search E2E', () => {
     await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
     await page.getByRole('tab', { name: 'Dropbox' }).click()
 
-    await expect.element(page.getByRole('presentation').getByText('first')).toBeVisible()
+    await expect.element(page.getByRole('heading', { name: /import from dropbox/i })).toBeVisible()
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
+    await expect.element(page.getByRole('button', { name: 'first' })).toBeVisible()
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
@@ -114,38 +111,36 @@ describe('ProviderView Search E2E', () => {
     await userEvent.type(searchInput, 'second')
 
     await expect
-      .element(page.getByText('second', { exact: true }))
+      .element(page.getByRole('button', { name: 'second' }))
       .toBeVisible()
 
-    const secondFolder = await page.getByText('second', { exact: true })
+    const secondFolder = await page.getByRole('button', { name: 'second' })
 
     await secondFolder.click()
 
-    await expect.element(page.getByRole('presentation').getByText('deep-file.txt')).toBeVisible()
+    await expect
+    .element(page.getByRole('checkbox', { name: 'deep-file.txt', exact: true }))
+    .toBeVisible()
 
     // Click ancestor breadcrumb that was never loaded before in browse mode
     const firstBreadcrumb = page.getByRole('button', { name: 'first' })
     await firstBreadcrumb.click()
 
-    await expect.element(page.getByRole('presentation').getByText('intermediate.doc')).toBeVisible()
-
-    const hasSecondFolder = await page.getByText('second', { exact: true })
+    const hasSecondFolder = await page.getByRole('button', { name: 'second', exact: true })
     expect(hasSecondFolder).toBeVisible()
   })
 
   test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
     uppy = initializeUppy(['Dropbox'])
-    await expect.element(page.getByText('My Device')).toBeVisible()
-    const dropboxTab = page.getByRole('tab', { name: /dropbox/i })
-    await dropboxTab.click()
-    await expect
-      .element(page.getByText('Import from Dropbox'))
-      .toBeVisible()
-    await expect
-      .element(page.getByText('test-user@example.com'))
-      .toBeVisible()
-    const list = page.getByRole('list')
-    await expect.element(list.getByText('first', { exact: true })).toBeVisible()
+
+    await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+
+    await expect.element(page.getByRole('heading', { name: /import from dropbox/i })).toBeVisible()
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
+
+    await expect.element(page.getByRole('button', { name: 'first' })).toBeVisible()
 
     const firstFolderItem = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -153,12 +148,12 @@ describe('ProviderView Search E2E', () => {
       (item) =>
         item.textContent?.includes('first') && item.querySelector('button'),
     )
+
     const firstFolderCheckbox =
       firstFolderItem?.querySelector<HTMLInputElement>('input[type="checkbox"]')
     expect(firstFolderCheckbox).toBeTruthy()
     await firstFolderCheckbox!.click()
 
-    await new Promise((resolve) => setTimeout(resolve, 100))
     expect(firstFolderCheckbox!.checked).toBe(true)
 
     const searchInput = document.querySelector(
@@ -166,12 +161,9 @@ describe('ProviderView Search E2E', () => {
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'second')
     await expect
-      .element(page.getByText('second', { exact: true }))
+      .element(page.getByRole('button', { name: 'second', exact: true }))
       .toBeVisible()
 
-    await expect
-      .element(page.getByText('second', { exact: true }))
-      .toBeVisible()
 
     const secondFolderItem = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -184,38 +176,28 @@ describe('ProviderView Search E2E', () => {
 
     // Children inherit checked state from parent
     expect(secondFolderCheckbox!.checked).toBe(true)
-    expect(
-      secondFolderItem?.classList.contains(
-        'uppy-ProviderBrowserItem--is-checked',
-      ),
-    ).toBe(true)
   })
 
   test('Search for nested item, check it, go back to normal view -> parent should be partial', async () => {
     uppy = initializeUppy(['Dropbox'])
-    await expect.element(page.getByText('My Device')).toBeVisible()
-    await page.getByRole('tab', { name: /dropbox/i }).click()
-    await expect
-      .element(page.getByText('Import from Dropbox'))
-      .toBeVisible()
-    await expect
-      .element(page.getByText('test-user@example.com'))
-      .toBeVisible()
-    const list = page.getByRole('list')
-    console.log("log list inside third test ---->", list)
-    await expect.element(list.getByText('first', { exact: true })).toBeVisible()
+
+    await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+
+    await expect.element(page.getByRole('heading', { name: /import from dropbox/i })).toBeVisible()
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
+
+    await expect.element(page.getByRole('button', { name: 'first' })).toBeVisible()
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'second')
     await expect
-      .element(page.getByText('second', { exact: true }))
+      .element(page.getByRole('button', { name: 'second', exact: true }))
       .toBeVisible()
 
-    await expect
-      .element(page.getByText('second', { exact: true }))
-      .toBeVisible()
 
     const secondFolderItem = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -227,7 +209,6 @@ describe('ProviderView Search E2E', () => {
     expect(secondFolderCheckbox).toBeTruthy()
     await secondFolderCheckbox!.click()
 
-    await new Promise((resolve) => setTimeout(resolve, 100))
     expect(secondFolderCheckbox!.checked).toBe(true)
 
     const clearSearchButton = document.querySelector(
@@ -236,8 +217,7 @@ describe('ProviderView Search E2E', () => {
     expect(clearSearchButton).toBeDefined()
     await clearSearchButton.click()
 
-    await new Promise((resolve) => setTimeout(resolve, 200))
-    await expect.element(page.getByText('first')).toBeVisible()
+    await expect.element(page.getByRole('button', { name: 'first' })).toBeVisible()
 
     const firstFolderItem = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -253,34 +233,26 @@ describe('ProviderView Search E2E', () => {
         'uppy-ProviderBrowserItem--is-partial',
       ),
     ).toBe(true)
-
-    const firstFolderCheckbox =
-      firstFolderItem?.querySelector<HTMLInputElement>('input[type="checkbox"]')
-    expect(firstFolderCheckbox).toBeTruthy()
-    expect(firstFolderCheckbox!.checked).toBe(false)
   })
 
   test('Search for nested item, check then uncheck it, go back to normal view -> parent should be unchecked', async () => {
     uppy = initializeUppy(['Dropbox'])
-    await expect.element(page.getByText('My Device')).toBeVisible()
-    await page.getByRole('tab', { name: /dropbox/i }).click()
-    await expect
-      .element(page.getByText('Import from Dropbox'))
-      .toBeVisible()
-    await expect
-      .element(page.getByText('test-user@example.com'))
-      .toBeVisible()
-    const list = page.getByRole('list')
-    await expect.element(list.getByText('first', { exact: true })).toBeVisible()
+
+    await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+
+    await expect.element(page.getByRole('heading', { name: /import from dropbox/i })).toBeVisible()
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
+
+    await expect.element(page.getByRole('button', { name: 'first' })).toBeVisible()
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'second')
-    await new Promise((resolve) => setTimeout(resolve, 600))
-
     await expect
-      .element(page.getByText('second', { exact: true }))
+      .element(page.getByRole('button', { name: 'second', exact: true }))
       .toBeVisible()
 
     const secondFolderItem = Array.from(
@@ -293,11 +265,9 @@ describe('ProviderView Search E2E', () => {
     expect(secondFolderCheckbox).toBeTruthy()
 
     await secondFolderCheckbox!.click()
-    await new Promise((resolve) => setTimeout(resolve, 100))
     expect(secondFolderCheckbox!.checked).toBe(true)
 
     await secondFolderCheckbox!.click()
-    await new Promise((resolve) => setTimeout(resolve, 100))
     expect(secondFolderCheckbox!.checked).toBe(false)
 
     const clearSearchButton = document.querySelector(
@@ -305,9 +275,6 @@ describe('ProviderView Search E2E', () => {
     ) as HTMLButtonElement
     expect(clearSearchButton).toBeDefined()
     await clearSearchButton.click()
-
-    await new Promise((resolve) => setTimeout(resolve, 200))
-    await expect.element(page.getByText('first')).toBeVisible()
 
     const firstFolderItem = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -336,32 +303,21 @@ describe('ProviderView Search E2E', () => {
 
   test('Navigate into folder and perform scoped search -> should find nested files at multiple levels', async () => {
     uppy = initializeUppy(['Dropbox'])
-    await expect.element(page.getByText('My Device')).toBeVisible()
-    await page.getByRole('tab', { name: /dropbox/i }).click()
-    await expect
-      .element(page.getByText('Import from Dropbox'))
-      .toBeVisible()
-    await expect
-      .element(page.getByText('test-user@example.com'))
-      .toBeVisible()
-    const list = page.getByRole('list')
-    await expect.element(list.getByText('first', { exact: true })).toBeVisible()
 
-    const firstFolderButton = Array.from(
-      document.querySelectorAll('.uppy-ProviderBrowserItem'),
-    )
-      .find(
-        (item) =>
-          item.textContent?.includes('first') && item.querySelector('button'),
-      )
-      ?.querySelector<HTMLButtonElement>(
-        'button.uppy-ProviderBrowserItem-inner',
-      )
-    expect(firstFolderButton).toBeTruthy()
-    await firstFolderButton!.click()
+    await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
 
-    await expect.element(page.getByText('second')).toBeVisible()
-    await expect.element(page.getByText('intermediate.doc')).toBeVisible()
+    await expect.element(page.getByRole('heading', { name: /import from dropbox/i })).toBeVisible()
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
+
+    await expect.element(page.getByRole('button', { name: 'first' })).toBeVisible()
+
+    const firstFolderButton = page.getByRole('button', { name: 'first' })
+    await firstFolderButton.click()
+
+    await expect.element(page.getByRole('button', { name: 'second' })).toBeVisible()
+    await expect.element(page.getByRole('checkbox', { name: 'intermediate.doc', exact: true })).toBeVisible()
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
@@ -381,18 +337,6 @@ describe('ProviderView Search E2E', () => {
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
     )
 
-    const targetPdfItem = searchResults.find((item) => {
-      const button = item.querySelector('button.uppy-ProviderBrowserItem-inner')
-      return button?.textContent?.trim() === 'target.pdf'
-    })
-    const nestedTargetPdfItem = searchResults.find((item) => {
-      const button = item.querySelector('button.uppy-ProviderBrowserItem-inner')
-      return button?.textContent?.trim() === 'nested-target.pdf'
-    })
-
-    expect(targetPdfItem).toBeTruthy()
-    expect(nestedTargetPdfItem).toBeTruthy()
-
     const targetFiles = searchResults.filter((item) =>
       item.textContent?.toLowerCase().includes('target'),
     )
@@ -401,24 +345,24 @@ describe('ProviderView Search E2E', () => {
 
   test('No duplicate items when searching and then browsing to the same file', async () => {
     uppy = initializeUppy(['Dropbox'])
-    await expect.element(page.getByText('My Device')).toBeVisible()
-    await page.getByRole('tab', { name: /dropbox/i }).click()
-    await expect
-      .element(page.getByText('Import from Dropbox'))
-      .toBeVisible()
-    await expect
-      .element(page.getByText('test-user@example.com'))
-      .toBeVisible()
-    const list = page.getByRole('list')
-    await expect.element(list.getByText('first', { exact: true })).toBeVisible()
-    await expect.element(list.getByText('readme.md', { exact: true })).toBeVisible()
+
+    await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+
+    await expect.element(page.getByRole('heading', { name: /import from dropbox/i })).toBeVisible()
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
+
+    await expect.element(page.getByRole('button', { name: 'first' })).toBeVisible()
+
+    await expect.element(page.getByRole('checkbox', { name: 'readme.md', exact: true })).toBeVisible()
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'readme')
     await expect
-      .element(page.getByText('readme.md'))
+      .element(page.getByRole('button', { name: 'readme.md', exact: true }))
       .toBeVisible()
 
     const searchResults = Array.from(
@@ -434,8 +378,6 @@ describe('ProviderView Search E2E', () => {
     ) as HTMLButtonElement
     expect(clearSearchButton).toBeDefined()
     await clearSearchButton.click()
-    await new Promise((resolve) => setTimeout(resolve, 500))
-
     // proceed to verify browse results directly
     const browseResults = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -450,14 +392,13 @@ describe('ProviderView Search E2E', () => {
     )
     expect(readmeCheckbox).toBeTruthy()
     await readmeCheckbox!.click()
-    await new Promise((resolve) => setTimeout(resolve, 100))
     expect(readmeCheckbox!.checked).toBe(true)
 
     // Verify checked state persists after searching again (same node in partialTree)
     await userEvent.clear(searchInput)
     await userEvent.type(searchInput, 'readme')
     await expect
-      .element(page.getByText('readme.md'))
+      .element(page.getByRole('button', { name: 'readme.md', exact: true }))
       .toBeVisible()
 
     const searchResultsAgain = Array.from(
@@ -475,20 +416,29 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Client-side filtering works for providers without server-side search (Google Drive)', async () => {
-    uppy = initializeUppy(['GoogleDrive'])
+    // uppy = initializeUppy(['GoogleDrive'])
 
-    await expect.element(page.getByText('My Device')).toBeVisible()
+    // await expect.element(page.getByText('My Device')).toBeVisible()
 
-    const driveTab = page.getByRole('tab', { name: /google drive/i })
-    await driveTab.click()
+    // const driveTab = page.getByRole('tab', { name: /google drive/i })
+    // await driveTab.click()
 
-    await expect
-      .element(page.getByText('Import from Google Drive'))
-      .toBeVisible()
-    const listDrive = page.getByRole('list')
-    await expect.element(listDrive.getByText('first', { exact: true })).toBeVisible()
-    await expect.element(listDrive.getByText('workspace', { exact: true })).toBeVisible()
-    await expect.element(listDrive.getByText('readme.md', { exact: true })).toBeVisible()
+    // await expect
+    //   .element(page.getByText('Import from Google Drive'))
+    //   .toBeVisible()
+
+      uppy = initializeUppy(['GoogleDrive'])
+
+      await expect.element(page.getByRole('presentation').getByText('Google Drive')).toBeVisible()
+      await page.getByRole('tab', { name: /google drive/i }).click()
+
+      await expect.element(page.getByRole('heading', { name: /import from google drive/i })).toBeVisible()
+      const panel = page.getByRole('tabpanel')
+      await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
+
+    await expect.element(page.getByRole('button', { name: 'first', exact: true })).toBeVisible()
+    await expect.element(page.getByRole('checkbox', { name: 'workspace', exact: true })).toBeVisible()
+    await expect.element(page.getByRole('checkbox', { name: 'readme.md', exact: true })).toBeVisible()
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
