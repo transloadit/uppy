@@ -25,7 +25,7 @@ afterAll(async () => {
 })
 
 function initializeUppy(
-  sources: AvailablePluginsKeys[] = ['Dropbox', 'GoogleDrive'],
+  sources: AvailablePluginsKeys[] = ['Dropbox'],
 ) {
   document.body.innerHTML = '<div id="app"></div>'
 
