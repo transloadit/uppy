@@ -24,9 +24,7 @@ afterAll(async () => {
   await worker.stop()
 })
 
-function initializeUppy(
-  sources: AvailablePluginsKeys[] = ['Dropbox'],
-) {
+function initializeUppy(sources: AvailablePluginsKeys[] = ['Dropbox']) {
   document.body.innerHTML = '<div id="app"></div>'
 
   return new Uppy({ id: 'uppy-e2e' })
