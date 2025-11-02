@@ -44,9 +44,10 @@ function initializeUppy(sources: AvailablePluginsKeys[] = ['Dropbox']) {
 afterEach(async () => {
   if (!uppy) return
 
+  // this is done to prevent the edgecase when all plugins are removed before dashboard is unmounted from UI
+  // causing PickerPanelContent to crash
   const dashboard = uppy.getPlugin('Dashboard') as Dashboard<any, any>
   dashboard?.hideAllPanels()
-
   const panelSelector = '[data-uppy-panelType="PickerPanel"]'
   if (document.querySelector(panelSelector)) {
     await expect.poll(() => document.querySelector(panelSelector)).toBeNull()
@@ -76,7 +77,6 @@ describe('ProviderView Search E2E', () => {
     expect(searchInput).toBeDefined()
 
     await userEvent.type(searchInput, 'target')
-    // Auto-wait for a specific search result to appear instead of sleeping
     await expect
       .element(page.getByRole('button', { name: 'target.pdf', exact: true }))
       .toBeVisible()
