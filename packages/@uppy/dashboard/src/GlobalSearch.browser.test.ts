@@ -70,10 +70,12 @@ describe('ProviderView Search E2E', () => {
   test('Search for nested file in Dropbox and verify results', async () => {
     uppy = initializeUppy(['Dropbox'])
     await expect.element(page.getByText('My Device')).toBeVisible()
-    await page.getByRole('tab', { name: /dropbox/i }).click()
-    await expect.element(page.getByText('Import from Dropbox')).toBeVisible()
-    await expect.element(page.getByText('test-user@example.com')).toBeVisible()
-    await expect.element(page.getByText('first')).toBeVisible()
+    await expect.element(page.getByRole('presentation').getByText('Dropbox')).toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+
+    await expect.element(page.getByRole('heading', { name: /import from dropbox/i })).toBeVisible()
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     const searchInput = document.querySelector(
       '.uppy-ProviderBrowser-searchFilterInput',
