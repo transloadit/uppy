@@ -244,8 +244,8 @@ describe('uploader', () => {
       .matchHeader('header-b', '2')
       .reply(200, () => '')
 
-    // @ts-ignore
     const ret = await runMultipartTest({
+      // @ts-ignore
       extraCompanionOpts: {
         uploadHeaders: { 'header-a': '1', 'header-b': '2' },
       },
