@@ -1,5 +1,13 @@
 # @uppy/dashboard
 
+## 5.0.4
+
+### Patch Changes
+
+- 5e166a1: Fix form appending for shadow dom
+- Updated dependencies [ad50314]
+  - @uppy/utils@7.1.3
+
 ## 5.0.3
 
 ### Patch Changes
