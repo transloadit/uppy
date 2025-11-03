@@ -148,10 +148,18 @@ export default class Uploader {
    * @property {number} [chunkSize]
    * @property {string} [providerName]
    *
-   * @param {UploaderOptions} options
+   * @param {UploaderOptions} optionsIn
    */
-  constructor(options) {
-    validateOptions(options)
+  constructor(optionsIn) {
+    validateOptions(optionsIn)
+
+    const options = {
+      ...optionsIn,
+      headers: {
+        ...optionsIn.headers,
+        ...optionsIn.companionOptions.uploadHeaders,
+      },
+    }
 
     this.providerName = options.providerName
     this.options = options
@@ -372,7 +380,7 @@ export default class Uploader {
 
     return {
       // Client provided info (must be validated and not blindly trusted):
-      headers: { ...req.body.headers, ...req.companion.options.uploadHeaders },
+      headers: req.body.headers,
       httpMethod: req.body.httpMethod,
       protocol: req.body.protocol,
       endpoint: req.body.endpoint,

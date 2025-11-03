@@ -207,12 +207,14 @@ describe('uploader', () => {
     useFormData,
     includeSize = true,
     address = 'localhost',
+    // @ts-ignore
+    extraCompanionOpts,
   } = {}) {
     const fileContent = Buffer.from('Some file content')
     const stream = Readable.from([fileContent])
 
     const opts = {
-      companionOptions,
+      companionOptions: { ...companionOptions, ...extraCompanionOpts },
       endpoint: `http://${address}`,
       protocol: 'multipart',
       size: includeSize ? fileContent.length : undefined,
@@ -233,6 +235,27 @@ describe('uploader', () => {
       url: null,
       extraData: { response: expect.anything(), bytesUploaded: 17 },
     })
+  })
+
+  test('header companion option gets passed along to destination endpoint', async () => {
+    nock('http://localhost')
+      .post('/')
+      .matchHeader('header-a', '1')
+      .matchHeader('header-b', '2')
+      .reply(200, () => '')
+
+    // @ts-ignore
+    const ret = await runMultipartTest({
+      extraCompanionOpts: {
+        uploadHeaders: { 'header-a': '1', 'header-b': '2' },
+      },
+    })
+    expect(ret).toMatchObject({
+      url: null,
+      extraData: { response: expect.anything(), bytesUploaded: 17 },
+    })
+
+    expect(ret.extraData.response?.headers?.['header-a']).toBeUndefined() // headers sent to destination, not received back
   })
 
   const formDataNoMetaMatch =
