@@ -148,10 +148,18 @@ export default class Uploader {
    * @property {number} [chunkSize]
    * @property {string} [providerName]
    *
-   * @param {UploaderOptions} options
+   * @param {UploaderOptions} optionsIn
    */
-  constructor(options) {
-    validateOptions(options)
+  constructor(optionsIn) {
+    validateOptions(optionsIn)
+
+    const options = {
+      ...optionsIn,
+      headers: {
+        ...optionsIn.headers,
+        ...optionsIn.companionOptions.uploadHeaders,
+      },
+    }
 
     this.providerName = options.providerName
     this.options = options
@@ -682,7 +690,7 @@ export default class Uploader {
     try {
       const httpMethod =
         (this.options.httpMethod || '').toUpperCase() === 'PUT' ? 'put' : 'post'
-      const runRequest = await got[httpMethod]
+      const runRequest = got[httpMethod]
 
       const response = await runRequest(url, reqOptions)
 
