@@ -77,13 +77,16 @@ function hasFileStableId<M extends Meta, B extends Body>(
   return stableIdProviders.has(file.remote.provider!)
 }
 
+export type SafeFileIdBasis<M extends Meta, B extends Body> = Partial<
+  Pick<UppyFile<M, B>, 'id' | 'type'>
+> &
+  (
+    | Pick<RemoteUppyFile<M, B>, 'isRemote' | 'remote' | 'data'>
+    | Pick<LocalUppyFile<M, B>, 'isRemote' | 'data'>
+  ) & { meta?: { relativePath?: unknown } | undefined }
+
 export function getSafeFileId<M extends Meta, B extends Body>(
-  file: Partial<Pick<UppyFile<M, B>, 'id' | 'type'>> &
-    Pick<UppyFile<M, B>, 'data'> &
-    (
-      | Pick<RemoteUppyFile<M, B>, 'isRemote' | 'remote'>
-      | Pick<LocalUppyFile<M, B>, 'isRemote'>
-    ) & { meta?: { relativePath?: unknown } | undefined },
+  file: SafeFileIdBasis<M, B>,
   instanceId: string,
 ): string {
   if (hasFileStableId(file)) return file.id!
