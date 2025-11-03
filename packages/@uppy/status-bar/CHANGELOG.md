@@ -1,5 +1,11 @@
 # @uppy/status-bar
 
+## 5.0.2
+
+### Patch Changes
+
+- 8ac1654: Change internal type from `any` to `unknown`.
+
 ## 5.0.1
 
 ### Patch Changes

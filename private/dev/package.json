@@ -10,7 +10,7 @@
     "@uppy/companion": "workspace:^"
   },
   "devDependencies": {
-    "vite": "^7.0.7"
+    "vite": "^7.1.11"
   },
   "private": true,
   "type": "module",

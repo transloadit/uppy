@@ -1,5 +1,17 @@
 # @uppy/companion
 
+## 6.1.1
+
+### Patch Changes
+
+- 6a60ee5: Reject request early instead of crashing on missing `filename` for /s3/multipart and /s3/params endpoints
+
+## 6.1.0
+
+### Minor Changes
+
+- 5ba2c1c: Introduce the concept of server-side search and add support for it for the Dropbox provider. Previously, only client-side filtering in the currently viewed folder was possible, which was limiting. Now users using Companion with Dropbox can perform a search across their entire account.
+
 ## 6.0.2
 
 ### Patch Changes

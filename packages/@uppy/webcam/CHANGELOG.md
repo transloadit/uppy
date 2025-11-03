@@ -1,5 +1,14 @@
 # @uppy/webcam
 
+## 5.0.2
+
+### Patch Changes
+
+- 8ac1654: - Remove TagFile type - Use UppyFile instead.
+  - Split UppyFile into two interfaces distinguished by the `isRemote` boolean:
+    - LocalUppyFile
+    - RemoteUppyFile
+
 ## 5.0.1
 
 ### Patch Changes

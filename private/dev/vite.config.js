@@ -12,6 +12,20 @@ const config = {
     jsx: 'automatic',
     jsxImportSource: 'preact',
   },
+  build: {
+    rollupOptions: {
+      input: {
+        main: './index.html',
+        sw: './sw.js',
+      },
+      output: {
+        entryFileNames: (chunk) => {
+          if (chunk.name === 'sw') return 'sw.js' // force predictable filename
+          return 'assets/[name].[hash].js'
+        },
+      },
+    },
+  },
   resolve: {
     alias: [
       {

@@ -304,3 +304,118 @@ describe('respects allowLocalUrls, valid hostname that resolves to localhost', (
     expect(res.body).toEqual({ message: 'failed to fetch URL' })
   })
 })
+
+describe('S3 controller', () => {
+  test('createMultipartUpload rejects missing filename', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+    return request(server)
+      .post('/s3/multipart')
+      .send({
+        type: 'image/png',
+        metadata: {},
+        // filename is intentionally missing
+      })
+      .expect(400)
+      .then((res) =>
+        expect(res.body.error).toBe(
+          's3: the "filename" field is required and must be a non-empty string',
+        ),
+      )
+  })
+
+  test('createMultipartUpload rejects empty filename', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+    return request(server)
+      .post('/s3/multipart')
+      .send({
+        type: 'image/png',
+        metadata: {},
+        filename: '',
+      })
+      .expect(400)
+      .then((res) =>
+        expect(res.body.error).toBe(
+          's3: the "filename" field is required and must be a non-empty string',
+        ),
+      )
+  })
+
+  test('createMultipartUpload rejects non-string filename', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+    return request(server)
+      .post('/s3/multipart')
+      .send({
+        type: 'image/png',
+        metadata: {},
+        filename: 12345,
+      })
+      .expect(400)
+      .then((res) =>
+        expect(res.body.error).toBe(
+          's3: the "filename" field is required and must be a non-empty string',
+        ),
+      )
+  })
+
+  test('getUploadParameters rejects missing filename', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+    return request(server)
+      .get('/s3/params')
+      .query({
+        type: 'image/png',
+        // filename is intentionally missing
+      })
+      .expect(400)
+      .then((res) =>
+        expect(res.body.error).toBe(
+          's3: the "filename" query parameter is required and must be a non-empty string',
+        ),
+      )
+  })
+
+  test('getUploadParameters rejects empty filename', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+    return request(server)
+      .get('/s3/params')
+      .query({
+        type: 'image/png',
+        filename: '',
+      })
+      .expect(400)
+      .then((res) =>
+        expect(res.body.error).toBe(
+          's3: the "filename" query parameter is required and must be a non-empty string',
+        ),
+      )
+  })
+})

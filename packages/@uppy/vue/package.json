@@ -1,6 +1,6 @@
 {
   "name": "@uppy/vue",
-  "version": "3.0.3",
+  "version": "3.1.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -38,13 +38,22 @@
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/webcam": "workspace:^",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
       "optional": true
     },
+    "@uppy/screen-capture": {
+      "optional": true
+    },
     "@uppy/status-bar": {
+      "optional": true
+    },
+    "@uppy/webcam": {
       "optional": true
     }
   },

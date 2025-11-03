@@ -35,6 +35,18 @@ export interface CompanionClientProvider {
     nextPagePath: string | null
     items: CompanionFile[]
   }>
+  // Optional: not every provider implements server-side search.
+  search?: (
+    text: string,
+    options?: RequestOptions & {
+      path?: string | null | undefined
+      cursor?: string | undefined
+    },
+  ) => Promise<{
+    username: string
+    nextPagePath: string | null
+    items: CompanionFile[]
+  }>
 }
 export interface CompanionClientSearchProvider {
   name: string

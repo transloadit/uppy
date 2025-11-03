@@ -1,5 +1,5 @@
-import type { Body, Meta, UppyFile } from '@uppy/core'
-import type { I18n } from '@uppy/utils'
+import type { Body, Meta } from '@uppy/core'
+import type { I18n, LocalUppyFile } from '@uppy/utils'
 import Cropper from 'cropperjs'
 import { Component } from 'preact'
 import type ImageEditor from './ImageEditor.js'
@@ -9,7 +9,7 @@ import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
 import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
 
 type Props<M extends Meta, B extends Body> = {
-  currentImage: UppyFile<M, B>
+  currentImage: LocalUppyFile<M, B>
   storeCropperInstance: (cropper: Cropper) => void
   opts: ImageEditor<M, B>['opts']
   i18n: I18n
@@ -375,6 +375,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
   render() {
     const { currentImage, opts } = this.props
     const { actions } = opts
+    if (currentImage.data == null) throw new Error('File data is empty')
     const imageURL = URL.createObjectURL(currentImage.data)
 
     return (

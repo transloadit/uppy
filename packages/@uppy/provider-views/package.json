@@ -1,7 +1,7 @@
 {
   "name": "@uppy/provider-views",
   "description": "View library for Uppy remote provider plugins.",
-  "version": "5.0.2",
+  "version": "5.1.2",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -42,6 +42,7 @@
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
+    "lodash": "^4.17.21",
     "nanoid": "^5.0.9",
     "p-queue": "^8.0.0",
     "preact": "^10.5.13"

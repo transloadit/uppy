@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, type OnInit } from "@angular/core";
 import { Uppy } from "@uppy/core";
 import type * as StatusBar from "@uppy/status-bar";
 import Tus from "@uppy/tus";
-import type { Body, Meta } from "@uppy/utils/lib/UppyFile";
+import type { Body, Meta } from "@uppy/core";
 import { StatusBarComponent } from "./status-bar.component";
 
 @Component({

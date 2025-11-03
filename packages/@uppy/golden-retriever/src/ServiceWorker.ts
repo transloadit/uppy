@@ -1,10 +1,11 @@
 /// <reference lib="webworker" />
 
+import type { UppyFileId } from '@uppy/utils'
+
 declare const self: ServiceWorkerGlobalScope
 
 type StoreName = string
-type FileId = string
-type CachedStore = Record<FileId, Blob>
+type CachedStore = Record<UppyFileId, Blob>
 type FileCache = Record<StoreName, CachedStore>
 
 const fileCache: FileCache = Object.create(null)
@@ -22,7 +23,7 @@ self.addEventListener('activate', (event: ExtendableEvent) => {
   event.waitUntil(self.clients.claim())
 })
 
-type AllFilesMessage = {
+export type AllFilesMessage = {
   type: 'uppy/ALL_FILES'
   store: StoreName
   files: CachedStore
@@ -36,13 +37,13 @@ function sendMessageToAllClients(msg: AllFilesMessage): void {
   })
 }
 
-type AddFilePayload = { id: FileId; data: Blob }
+export type AddFilePayload = { id: UppyFileId; data: Blob }
 
 function addFile(store: StoreName, file: AddFilePayload): void {
   getCache(store)[file.id] = file.data
 }
 
-function removeFile(store: StoreName, fileID: FileId): void {
+function removeFile(store: StoreName, fileID: UppyFileId): void {
   delete getCache(store)[fileID]
 }
 
@@ -54,9 +55,9 @@ function getFiles(store: StoreName): void {
   })
 }
 
-type IncomingMessage =
+export type IncomingMessage =
   | { type: 'uppy/ADD_FILE'; store: StoreName; file: AddFilePayload }
-  | { type: 'uppy/REMOVE_FILE'; store: StoreName; fileID: FileId }
+  | { type: 'uppy/REMOVE_FILE'; store: StoreName; fileID: UppyFileId }
   | { type: 'uppy/GET_FILES'; store: StoreName }
 
 self.addEventListener('message', (event: ExtendableMessageEvent) => {

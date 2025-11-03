@@ -1,5 +1,11 @@
 # @uppy/angular
 
+## 1.1.0
+
+### Minor Changes
+
+- 72d2d68: Remove @uppy/utils and add @uppy/status-bar to peerDependencies
+
 ## 1.0.1
 
 ### Patch Changes

@@ -10,10 +10,13 @@ import type {
   FileProgressStarted,
   I18n,
   Locale,
+  LocalUppyFile,
   Meta,
   MinimalRequiredUppyFile,
   OptionalPluralizeLocale,
+  RemoteUppyFile,
   UppyFile,
+  UppyFileId,
 } from '@uppy/utils'
 import {
   getFileNameAndExtension,
@@ -96,7 +99,10 @@ export type PartialTreeFolderNode = {
 
   status: PartialTreeStatus
   parentId: PartialTreeId
-  data: CompanionFile
+  data: Pick<
+    CompanionFile,
+    'name' | 'icon' | 'thumbnail' | 'isFolder' | 'author' | 'custom'
+  >
 }
 
 export type PartialTreeFolderRoot = {
@@ -133,6 +139,7 @@ export type UnknownProviderPluginState = {
   partialTree: PartialTree
   currentFolderId: PartialTreeId
   username: string | null
+  searchResults?: string[] | undefined
 }
 
 export interface AsyncStore {
@@ -195,21 +202,28 @@ export type UnknownSearchProviderPlugin<
     provider: CompanionClientSearchProvider
   }
 
+// for better readability
+export type UploadId = string
+
 export interface UploadResult<M extends Meta, B extends Body> {
   successful?: UppyFile<M, B>[]
   failed?: UppyFile<M, B>[]
-  uploadID?: string
+  uploadID?: UploadId
   [key: string]: unknown
 }
 
 interface CurrentUpload<M extends Meta, B extends Body> {
-  fileIDs: string[]
+  fileIDs: UppyFileId[]
   step: number
   result: UploadResult<M, B>
 }
 
 // TODO: can we use namespaces in other plugins to populate this?
 interface Plugins extends Record<string, Record<string, unknown> | undefined> {}
+
+type UppyFilesMap<M extends Meta, B extends Body> = {
+  [key: UppyFileId]: UppyFile<M, B>
+}
 
 export interface State<M extends Meta, B extends Body>
   extends Record<string, unknown> {
@@ -221,13 +235,16 @@ export interface State<M extends Meta, B extends Body>
     isMobileDevice?: boolean
     darkMode?: boolean
   }
-  currentUploads: Record<string, CurrentUpload<M, B>>
+  currentUploads: Record<UploadId, CurrentUpload<M, B>>
   allowNewUpload: boolean
-  recoveredState: null | Required<Pick<State<M, B>, 'files' | 'currentUploads'>>
+  /** `recoveredState` is a special version of state in which the files don't have any data (because the data was never stored) */
+  recoveredState:
+    | (Omit<Pick<State<M, B>, 'currentUploads'>, 'files'> & {
+        files: Record<UppyFileId, Omit<UppyFile<M, B>, 'data'>>
+      })
+    | null
   error: string | null
-  files: {
-    [key: string]: UppyFile<M, B>
-  }
+  files: UppyFilesMap<M, B>
   info: Array<{
     isHidden?: boolean
     type: LogLevel
@@ -319,9 +336,8 @@ export interface _UppyEventMap<M extends Meta, B extends Body> {
     progress: NonNullable<FileProgressStarted['preprocess']>,
   ) => void
   progress: (progress: number) => void
-  restored: (pluginData: any) => void
+  restored: (pluginData: unknown) => void
   'restore-confirmed': () => void
-  'restore-canceled': () => void
   'restriction-failed': (file: UppyFile<M, B> | undefined, error: Error) => void
   'resume-all': () => void
   'retry-all': (files: UppyFile<M, B>[]) => void
@@ -571,7 +587,7 @@ export class Uppy<
             },
           ]),
         ),
-      },
+      } as UppyFilesMap<M, B>,
     })
   }
 
@@ -605,7 +621,7 @@ export class Uppy<
       ...(newOpts as UppyOptions<M, B>),
       restrictions: {
         ...this.opts.restrictions,
-        ...(newOpts?.restrictions as Restrictions),
+        ...newOpts?.restrictions,
       },
     }
 
@@ -967,34 +983,43 @@ export class Uppy<
   /**
    * Create a file state object based on user-provided `addFile()` options.
    */
-  #transformFile(fileDescriptorOrFile: File | UppyFile<M, B>): UppyFile<M, B> {
+  #transformFile(
+    fileDescriptorOrFile: File | MinimalRequiredUppyFile<M, B>,
+  ): UppyFile<M, B> {
     // Uppy expects files in { name, type, size, data } format.
     // If the actual File object is passed from input[type=file] or drag-drop,
     // we normalize it to match Uppy file object
-    const file = (
+    const file =
       fileDescriptorOrFile instanceof File
-        ? {
+        ? ({
             name: fileDescriptorOrFile.name,
             type: fileDescriptorOrFile.type,
             size: fileDescriptorOrFile.size,
             data: fileDescriptorOrFile,
-          }
-        : fileDescriptorOrFile
-    ) as UppyFile<M, B>
+            meta: {},
+            isRemote: false,
+            source: undefined,
+            preview: undefined,
+          } as const)
+        : (fileDescriptorOrFile as MinimalRequiredUppyFile<M, B> &
+            (
+              | Pick<LocalUppyFile<M, B>, 'isRemote' | 'data'>
+              | Pick<RemoteUppyFile<M, B>, 'isRemote' | 'remote' | 'data'>
+            ))
 
     const fileType = getFileType(file)
     const fileName = getFileName(fileType, file)
     const fileExtension = getFileNameAndExtension(fileName).extension
     const id = getSafeFileId(file, this.getID())
 
-    const meta = file.meta || {}
-    meta.name = fileName
-    meta.type = fileType
+    const meta = {
+      ...file.meta,
+      name: fileName,
+      type: fileType,
+    }
 
     // `null` means the size is unknown.
-    const size = Number.isFinite(file.data.size)
-      ? file.data.size
-      : (null as never)
+    const size = Number.isFinite(file.data.size) ? file.data.size : null
 
     return {
       source: file.source || '',
@@ -1006,7 +1031,6 @@ export class Uppy<
         ...meta,
       },
       type: fileType,
-      data: file.data,
       progress: {
         percentage: 0,
         bytesUploaded: false,
@@ -1016,8 +1040,16 @@ export class Uppy<
       },
       size,
       isGhost: false,
-      isRemote: file.isRemote || false,
-      remote: file.remote,
+      ...(file.isRemote
+        ? {
+            isRemote: true,
+            remote: file.remote,
+            data: file.data,
+          }
+        : {
+            isRemote: false,
+            data: file.data,
+          }),
       preview: file.preview,
     }
   }
@@ -1036,7 +1068,9 @@ export class Uppy<
     }
   }
 
-  #checkAndUpdateFileState(filesToAdd: UppyFile<M, B>[]): {
+  #checkAndUpdateFileState(
+    filesToAdd: (File | MinimalRequiredUppyFile<M, B>)[],
+  ): {
     nextFilesState: State<M, B>['files']
     validFilesToAdd: UppyFile<M, B>[]
     errors: RestrictionError<M, B>[]
@@ -1052,17 +1086,20 @@ export class Uppy<
       try {
         let newFile = this.#transformFile(fileToAdd)
 
+        this.#assertNewUploadAllowed(newFile)
+
         // If a file has been recovered (Golden Retriever), but we were unable to recover its data (probably too large),
         // users are asked to re-select these half-recovered files and then this method will be called again.
         // In order to keep the progress, meta and everything else, we keep the existing file,
         // but we replace `data`, and we remove `isGhost`, because the file is no longer a ghost now
-        const isGhost = existingFiles[newFile.id]?.isGhost
-        if (isGhost) {
-          const existingFileState = existingFiles[newFile.id]
+        const existingFile = existingFiles[newFile.id]
+        const isGhost = existingFile?.isGhost
+        if (isGhost && !newFile.isRemote) {
+          if (newFile.data == null) throw new Error('File data is missing')
           newFile = {
-            ...existingFileState,
+            ...existingFile,
             isGhost: false,
-            data: fileToAdd.data,
+            data: newFile.data,
           }
           this.log(
             `Replaced the blob in the restored ghost file: ${newFile.name}, ${newFile.id}`,
@@ -1086,7 +1123,7 @@ export class Uppy<
             this.i18n('noDuplicates', {
               fileName: newFile.name ?? this.i18n('unnamed'),
             }),
-            { file: fileToAdd },
+            { file: newFile },
           )
         }
 
@@ -1095,7 +1132,7 @@ export class Uppy<
           // Don’t show UI info for this error, as it should be done by the developer
           throw new RestrictionError(
             'Cannot add the file because onBeforeFileAdded returned false.',
-            { isUserFacing: false, file: fileToAdd },
+            { isUserFacing: false, file: newFile },
           )
         } else if (
           typeof onBeforeFileAddedResult === 'object' &&
@@ -1145,10 +1182,8 @@ export class Uppy<
    * and start an upload if `autoProceed === true`.
    */
   addFile(file: File | MinimalRequiredUppyFile<M, B>): UppyFile<M, B>['id'] {
-    this.#assertNewUploadAllowed(file as UppyFile<M, B>)
-
     const { nextFilesState, validFilesToAdd, errors } =
-      this.#checkAndUpdateFileState([file as UppyFile<M, B>])
+      this.#checkAndUpdateFileState([file])
 
     const restrictionErrors = errors.filter((error) => error.isRestriction)
     this.#informAndEmit(restrictionErrors)
@@ -1178,10 +1213,8 @@ export class Uppy<
    * Programmatic users should usually still use `addFile()` on individual files.
    */
   addFiles(fileDescriptors: MinimalRequiredUppyFile<M, B>[]): void {
-    this.#assertNewUploadAllowed()
-
     const { nextFilesState, validFilesToAdd, errors } =
-      this.#checkAndUpdateFileState(fileDescriptors as UppyFile<M, B>[])
+      this.#checkAndUpdateFileState(fileDescriptors)
 
     const restrictionErrors = errors.filter((error) => error.isRestriction)
     this.#informAndEmit(restrictionErrors)
@@ -1441,6 +1474,9 @@ export class Uppy<
     this.setState(defaultUploadState)
   }
 
+  /**
+   * Retry a specific file that has errored.
+   */
   retryUpload(fileID: string): Promise<UploadResult<M, B> | undefined> {
     this.setFileState(fileID, {
       error: null,
@@ -1686,7 +1722,7 @@ export class Uppy<
               uploadComplete: false,
               bytesUploaded: 0,
               bytesTotal: file.size,
-            } as FileProgressStarted,
+            } satisfies FileProgressStarted,
           },
         ]),
       )
@@ -1707,16 +1743,18 @@ export class Uppy<
       }
 
       const currentProgress = this.getFile(file.id).progress
+      const needsPostProcessing = this.#postProcessors.size > 0
+
       this.setFileState(file.id, {
         progress: {
           ...currentProgress,
-          postprocess:
-            this.#postProcessors.size > 0
-              ? {
-                  mode: 'indeterminate',
-                }
-              : undefined,
+          postprocess: needsPostProcessing
+            ? {
+                mode: 'indeterminate',
+              }
+            : undefined,
           uploadComplete: true,
+          ...(!needsPostProcessing && { complete: true }),
           percentage: 100,
           bytesUploaded: currentProgress.bytesTotal,
         } as FileProgressStarted,
@@ -1780,25 +1818,25 @@ export class Uppy<
       })
     })
 
-    this.on('postprocess-complete', (file) => {
-      if (file == null || !this.getFile(file.id)) {
+    this.on('postprocess-complete', (fileIn) => {
+      const file = fileIn && this.getFile(fileIn.id)
+      if (file == null) {
         this.log(
-          `Not setting progress for a file that has been removed: ${file?.id}`,
+          `Not setting progress for a file that has been removed: ${fileIn?.id}`,
         )
         return
       }
-      const files = {
-        ...this.getState().files,
-      }
-      files[file.id] = {
-        ...files[file.id],
-        progress: {
-          ...files[file.id].progress,
-        },
-      }
-      delete files[file.id].progress.postprocess
 
-      this.setState({ files })
+      const { postprocess: _deleted, ...newProgress } = file.progress
+
+      this.patchFilesState({
+        [file.id]: {
+          progress: {
+            ...newProgress,
+            complete: true as const,
+          },
+        },
+      })
     })
 
     this.on('restored', () => {
@@ -2055,7 +2093,7 @@ export class Uppy<
 
   /** @protected */
   getRequestClientForFile<Client>(file: UppyFile<M, B>): Client {
-    if (!file.remote)
+    if (!('remote' in file && file.remote))
       throw new Error(
         `Tried to get RequestClient for a non-remote file ${file.id}`,
       )
@@ -2073,13 +2111,7 @@ export class Uppy<
    * Restore an upload by its ID.
    */
   async restore(uploadID: string): Promise<UploadResult<M, B> | undefined> {
-    this.log(`Core: attempting to restore upload "${uploadID}"`)
-
-    if (!this.getState().currentUploads[uploadID]) {
-      this.#removeUpload(uploadID)
-      throw new Error('Nonexistent upload')
-    }
-
+    this.log(`Core: Running restored upload "${uploadID}"`)
     const result = await this.#runUpload(uploadID)
     this.emit('complete', result!)
     return result
@@ -2159,8 +2191,8 @@ export class Uppy<
    *
    */
   #removeUpload(uploadID: string): void {
-    const currentUploads = { ...this.getState().currentUploads }
-    delete currentUploads[uploadID]
+    const { [uploadID]: _deleted, ...currentUploads } =
+      this.getState().currentUploads
 
     this.setState({
       currentUploads,
@@ -2177,6 +2209,9 @@ export class Uppy<
     }
 
     let currentUpload = getCurrentUpload()
+    if (!currentUpload) {
+      throw new Error('Nonexistent upload')
+    }
 
     const steps = [
       ...this.#preProcessors,
@@ -2200,7 +2235,13 @@ export class Uppy<
           },
         })
 
-        const { fileIDs } = currentUpload
+        // when restoring (e.g. using golden retriever), we don't need to re-upload already successfully uploaded files
+        // so let's exclude them here:
+        // https://github.com/transloadit/uppy/issues/5930
+        const fileIDs = currentUpload.fileIDs.filter((fileID) => {
+          const file = this.getFile(fileID)
+          return !file.progress.uploadComplete
+        })
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
@@ -2295,10 +2336,8 @@ export class Uppy<
     const onBeforeUploadResult = this.opts.onBeforeUpload(files)
 
     if (onBeforeUploadResult === false) {
-      return Promise.reject(
-        new Error(
-          'Not starting the upload because onBeforeUpload returned false',
-        ),
+      throw new Error(
+        'Not starting the upload because onBeforeUpload returned false',
       )
     }
 
@@ -2311,52 +2350,38 @@ export class Uppy<
       })
     }
 
-    return Promise.resolve()
-      .then(() => this.#restricter.validateMinNumberOfFiles(files))
-      .catch((err) => {
-        this.#informAndEmit([err])
-        throw err
-      })
-      .then(() => {
-        if (!this.#checkRequiredMetaFields(files)) {
-          throw new RestrictionError(this.i18n('missingRequiredMetaField'))
-        }
-      })
-      .catch((err) => {
-        // Doing this in a separate catch because we already emited and logged
-        // all the errors in `checkRequiredMetaFields` so we only throw a generic
-        // missing fields error here.
-        throw err
-      })
-      .then(async () => {
-        const { currentUploads } = this.getState()
-        // get a list of files that are currently assigned to uploads
-        const currentlyUploadingFiles = Object.values(currentUploads).flatMap(
-          (curr) => curr.fileIDs,
+    try {
+      this.#restricter.validateMinNumberOfFiles(files)
+
+      if (!this.#checkRequiredMetaFields(files)) {
+        throw new RestrictionError(this.i18n('missingRequiredMetaField'))
+      }
+
+      const { currentUploads } = this.getState()
+      // get a list of files that are currently assigned to uploads
+      const currentlyUploadingFiles = Object.values(currentUploads).flatMap(
+        (curr) => curr.fileIDs,
+      )
+
+      const waitingFileIDs = Object.keys(files).filter((fileID) => {
+        const file = this.getFile(fileID)
+        // if the file hasn't started uploading and hasn't already been assigned to an upload..
+        return (
+          file &&
+          !file.progress.uploadStarted &&
+          !currentlyUploadingFiles.includes(fileID)
         )
-
-        const waitingFileIDs: string[] = []
-        Object.keys(files).forEach((fileID) => {
-          const file = this.getFile(fileID)
-          // if the file hasn't started uploading and hasn't already been assigned to an upload..
-          if (
-            !file.progress.uploadStarted &&
-            currentlyUploadingFiles.indexOf(fileID) === -1
-          ) {
-            waitingFileIDs.push(file.id)
-          }
-        })
-
-        const uploadID = this.#createUpload(waitingFileIDs)
-        const result = await this.#runUpload(uploadID)
-        this.emit('complete', result!)
-        return result
       })
-      .catch((err) => {
-        this.emit('error', err)
-        this.log(err, 'error')
-        throw err
-      })
+
+      const uploadID = this.#createUpload(waitingFileIDs)
+      const result = await this.#runUpload(uploadID)
+
+      this.emit('complete', result!)
+      return result
+    } catch (err) {
+      this.#informAndEmit([err])
+      throw err
+    }
   }
 }
 
