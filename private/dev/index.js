@@ -6,10 +6,7 @@ import DragDrop from './DragDrop.js'
 switch (window.location.pathname.toLowerCase()) {
   case '/':
   case '/dashboard.html':
-    Dashboard({
-      trigger: '#pick-files',
-      target: '.foo',
-    })
+    Dashboard()
     break
   case '/dragdrop.html':
     DragDrop()
