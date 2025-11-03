@@ -1,6 +1,6 @@
 import nock from 'nock'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
+import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
 
 import { getServer } from './mockserver.js'
 
@@ -18,14 +18,15 @@ vi.mock('../src/server/helpers/request.js', async () => {
 const getMockServer = async () =>
   getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
-beforeAll(() => {
+const nockUrl = () =>
   nock('http://url.myendpoint.com')
     .get('/files')
     .reply(200, () => '')
-})
 
-afterAll(() => {
+afterEach(() => {
   nock.cleanAll()
+})
+afterAll(() => {
   nock.restore()
 })
 
@@ -52,6 +53,8 @@ describe('url meta', () => {
   })
 
   test.each(invalids)('return 400 for invalid url', async (urlCase) => {
+    nockUrl()
+
     return request(await getMockServer())
       .post('/url/meta')
       .set('Content-Type', 'application/json')
@@ -65,6 +68,8 @@ describe('url meta', () => {
 
 describe('url get', () => {
   test('url download gets instanitated', async () => {
+    nockUrl()
+
     return request(await getMockServer())
       .post('/url/get')
       .set('Content-Type', 'application/json')
@@ -80,6 +85,8 @@ describe('url get', () => {
   test.each(invalids)(
     'downloads are not instantiated for invalid urls',
     async (urlCase) => {
+      nockUrl()
+
       return request(await getMockServer())
         .post('/url/get')
         .set('Content-Type', 'application/json')

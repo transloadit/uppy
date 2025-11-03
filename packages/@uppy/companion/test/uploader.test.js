@@ -1,9 +1,7 @@
-import { once } from 'node:events'
 import fs from 'node:fs'
-import { createServer } from 'node:http'
 import { Readable } from 'node:stream'
 import nock from 'nock'
-import { afterAll, describe, expect, test, vi } from 'vitest'
+import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
 import Emitter from '../src/server/emitter/index.js'
 import Uploader, { ValidationError } from '../src/server/Uploader.js'
 import standalone from '../src/standalone/index.js'
@@ -12,8 +10,10 @@ import * as socketClient from './mocksocket.js'
 vi.mock('tus-js-client')
 vi.mock('express-prom-bundle')
 
-afterAll(() => {
+afterEach(() => {
   nock.cleanAll()
+})
+afterAll(() => {
   nock.restore()
 })
 
@@ -24,7 +24,7 @@ const { companionOptions } = standalone()
 
 const mockReq = {}
 
-describe('uploader with tus protocol', () => {
+describe('uploader', () => {
   test('uploader respects uploadUrls', async () => {
     const opts = {
       endpoint: 'http://localhost/files',
@@ -227,32 +227,12 @@ describe('uploader with tus protocol', () => {
   }
 
   test('upload functions with xhr protocol', async () => {
-    let alreadyCalled = false
-    // We are creating our own test server for this test
-    // instead of using nock because of a bug when passing a Node.js stream to got.
-    // Ref: https://github.com/nock/nock/issues/2595
-    const server = createServer((req, res) => {
-      if (alreadyCalled) throw new Error('already called')
-      alreadyCalled = true
-      if (req.url === '/' && req.method === 'POST') {
-        res.writeHead(200)
-        res.end('OK')
-      }
-    }).listen()
-    try {
-      await once(server, 'listening')
-
-      const ret = await runMultipartTest({
-        // @ts-ignore
-        address: `localhost:${server.address().port}`,
-      })
-      expect(ret).toMatchObject({
-        url: null,
-        extraData: { response: expect.anything(), bytesUploaded: 17 },
-      })
-    } finally {
-      server.close()
-    }
+    nock('http://localhost').post('/').reply(200, 'OK')
+    const ret = await runMultipartTest()
+    expect(ret).toMatchObject({
+      url: null,
+      extraData: { response: expect.anything(), bytesUploaded: 17 },
+    })
   })
 
   const formDataNoMetaMatch =
