@@ -110,6 +110,10 @@ type RenderOpts<M extends Meta, B extends Body> = Omit<
 export default class ProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
+  // Test hook (mirrors GoldenRetriever pattern): allow tests to override debounce time
+  // @ts-expect-error test-only hook key
+  static [Symbol.for('uppy test: searchDebounceMs')]: number | undefined
+
   plugin: UnknownProviderPlugin<M, B>
 
   provider: UnknownProviderPlugin<M, B>['provider']
@@ -333,21 +337,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(false)
   }
 
-  #searchDebounced = debounce(this.#search, 500)
+  #searchDebounced = debounce(
+    this.#search,
+    (ProviderView as unknown as Record<symbol, number | undefined>)[
+      Symbol.for('uppy test: searchDebounceMs')
+    ] ?? 500,
+  )
 
   onSearchInput = (s: string): void => {
     this.plugin.setPluginState({ searchString: s })
     if (this.opts.supportsSearch) {
-      // Test hook: allow tests to disable debounce by setting a special Symbol on the class
-      const ctor = this.constructor as unknown as Record<symbol, unknown>
-      const testDebounceMs = ctor[Symbol.for('uppy test: searchDebounceMs')] as
-        | number
-        | undefined
-      if (testDebounceMs === 0) {
-        void this.#search()
-      } else {
-        this.#searchDebounced()
-      }
+      this.#searchDebounced()
     }
   }
 
