@@ -11,6 +11,14 @@ import '@uppy/dashboard/css/style.css'
 
 let uppy: Uppy | undefined
 
+/**
+ * In Normal mode (ListItem.tsx), folders are rendered as buttons, whereas files are rendered as checkboxes with a corresponding <label>.
+ * In Search mode (SearchListItem.tsx), both files and folders are rendered as buttons.
+ * Because of this, in Normal mode, when checking whether a file exists, we need to use:
+ * await expect.element(page.getByRole('button', { name:'nested-target.pdf', exact: true }))
+ * whereas, in Search mode, we need to scope the query to the checkbox role instead when searching for a file
+ */
+
 beforeAll(async () => {
   // Disable search debounce inside ProviderView during tests to avoid long sleeps
   // @ts-expect-error test-only hook
@@ -76,6 +84,8 @@ describe('ProviderView Search E2E', () => {
     ) as HTMLInputElement
     expect(searchInput).toBeDefined()
 
+    // Search mode (SearchResultItem.tsx): files and folders render as buttons;
+    // use role=button for file assertions in search results.
     await userEvent.type(searchInput, 'target')
     await expect
       .element(page.getByRole('button', { name: 'target.pdf', exact: true }))
@@ -121,6 +131,8 @@ describe('ProviderView Search E2E', () => {
 
     await secondFolder.click()
 
+    // Normal mode (ListItem.tsx): files render as checkboxes with a corresponding <label>.
+    // Use role=checkbox for file assertions in browse view.
     await expect
       .element(
         page.getByRole('checkbox', { name: 'deep-file.txt', exact: true }),
@@ -351,6 +363,7 @@ describe('ProviderView Search E2E', () => {
     await expect
       .element(page.getByRole('button', { name: 'second' }))
       .toBeVisible()
+    // Normal mode (ListItem.tsx): files render as checkboxes with corresponding <label>; scope by role=checkbox. refer to a commment at the top of the file for more detailed explanation.
     await expect
       .element(
         page.getByRole('checkbox', { name: 'intermediate.doc', exact: true }),
@@ -362,6 +375,7 @@ describe('ProviderView Search E2E', () => {
     ) as HTMLInputElement
     expect(searchInput).toBeDefined()
     await userEvent.type(searchInput, 'target')
+    // Search mode (SearchResultItem.tsx): files render as buttons; scope by role=button.
     await expect
       .element(page.getByRole('button', { name: 'target.pdf', exact: true }))
       .toBeVisible()
@@ -399,6 +413,7 @@ describe('ProviderView Search E2E', () => {
       .element(page.getByRole('button', { name: 'first' }))
       .toBeVisible()
 
+    // Normal mode (ListItem.tsx): file is a checkbox; assert by role=checkbox. refer to a commment at the top of the file for more detailed explanation.
     await expect
       .element(page.getByRole('checkbox', { name: 'readme.md', exact: true }))
       .toBeVisible()
@@ -407,6 +422,7 @@ describe('ProviderView Search E2E', () => {
       '.uppy-ProviderBrowser-searchFilterInput',
     ) as HTMLInputElement
     await userEvent.type(searchInput, 'readme')
+    // Search mode (SearchResultItem.tsx): file is a button; assert by role=button.
     await expect
       .element(page.getByRole('button', { name: 'readme.md', exact: true }))
       .toBeVisible()
