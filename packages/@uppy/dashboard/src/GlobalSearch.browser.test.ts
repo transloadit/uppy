@@ -315,8 +315,8 @@ describe('ProviderView Search E2E', () => {
     await clearSearchButton.click()
 
     await expect
-    .element(page.getByRole('button', { name: 'first' }))
-    .toBeVisible()
+      .element(page.getByRole('button', { name: 'first' }))
+      .toBeVisible()
 
     const firstFolderItem = Array.from(
       document.querySelectorAll('.uppy-ProviderBrowserItem'),
@@ -324,7 +324,7 @@ describe('ProviderView Search E2E', () => {
       (item) =>
         item.textContent?.includes('first') && item.querySelector('button'),
     )
-    console.log("logging first folder item inside test -->", firstFolderItem);
+    console.log('logging first folder item inside test -->', firstFolderItem)
     expect(firstFolderItem).toBeTruthy()
 
     expect(
