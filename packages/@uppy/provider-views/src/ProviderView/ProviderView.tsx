@@ -123,6 +123,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   isHandlingScroll: boolean = false
 
   previousCheckbox: string | null = null
+  #searchDebounced;
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
@@ -161,6 +162,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.provider.provider,
       this.provider,
     )
+
+    // Configure debounced search with test override
+    const testWait = (
+      ProviderView as unknown as Record<symbol, number | undefined>
+    )[Symbol.for('uppy test: searchDebounceMs')]
+    const wait = testWait ?? 500
+    const optsDebounce =
+      testWait === 0 ? { leading: true, trailing: false as const } : undefined
+    this.#searchDebounced = debounce(this.#search, wait, optsDebounce)
   }
 
   resetPluginState(): void {
@@ -337,12 +347,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(false)
   }
 
-  #searchDebounced = debounce(
-    this.#search,
-    (ProviderView as unknown as Record<symbol, number | undefined>)[
-      Symbol.for('uppy test: searchDebounceMs')
-    ] ?? 500,
-  )
+  // debounced search function is initialized in the constructor
 
   onSearchInput = (s: string): void => {
     this.plugin.setPluginState({ searchString: s })

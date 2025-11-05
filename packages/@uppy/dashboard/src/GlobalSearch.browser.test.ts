@@ -324,7 +324,6 @@ describe('ProviderView Search E2E', () => {
       (item) =>
         item.textContent?.includes('first') && item.querySelector('button'),
     )
-    console.log('logging first folder item inside test -->', firstFolderItem)
     expect(firstFolderItem).toBeTruthy()
 
     expect(
