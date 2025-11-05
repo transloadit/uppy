@@ -168,14 +168,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const testWait = (
       ProviderView as unknown as Record<symbol, number | undefined>
     )[testHookSymbol]
-    if (testWait === 0) {
-      this.#searchDebounced = () => {
-        void this.#search()
-      }
-    } else {
-      const wait = testWait ?? 500
-      this.#searchDebounced = debounce(this.#search, wait)
-    }
+    const wait = testWait ?? 500
+    const debounceOpts =
+      testWait === 0 ? { leading: true, trailing: true } : undefined
+    this.#searchDebounced = debounce(this.#search, wait, debounceOpts)
   }
 
   resetPluginState(): void {
