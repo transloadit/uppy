@@ -123,7 +123,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   isHandlingScroll: boolean = false
 
   previousCheckbox: string | null = null
-  #searchDebounced;
+  #searchDebounced
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
