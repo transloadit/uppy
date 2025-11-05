@@ -1,5 +1,11 @@
 # @uppy/companion
 
+## 6.2.0
+
+### Minor Changes
+
+- 0c8dd19: New Companion option `uploadHeaders` which can be used to include a static set of headers with every request sent to all upload destinations.
+
 ## 6.1.1
 
 ### Patch Changes
