@@ -1,7 +1,8 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { ProviderViews } from '@uppy/provider-views'
-import RemoteSources, { type AvailablePluginsKeys } from '@uppy/remote-sources'
+import Dropbox from '@uppy/dropbox'
+import GoogleDrive from '@uppy/google-drive'
 import { page, userEvent } from '@vitest/browser/context'
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { worker } from './setup.js'
@@ -32,19 +33,27 @@ afterAll(async () => {
   await worker.stop()
 })
 
-function initializeUppy(sources: AvailablePluginsKeys[] = ['Dropbox']) {
+type SourceName = 'Dropbox' | 'GoogleDrive'
+
+function initializeUppy(sources: SourceName[] = ['Dropbox']) {
   document.body.innerHTML = '<div id="app"></div>'
 
-  return new Uppy({ id: 'uppy-e2e' })
+  const instance = new Uppy({ id: 'uppy-e2e' })
     .use(Dashboard, {
       target: '#app',
       inline: true,
       height: 500,
     })
-    .use(RemoteSources, {
-      companionUrl: 'http://companion.test',
-      sources,
-    })
+
+  for (const source of sources) {
+    if (source === 'Dropbox') {
+      instance.use(Dropbox, { companionUrl: 'http://companion.test' })
+    } else if (source === 'GoogleDrive') {
+      instance.use(GoogleDrive, { companionUrl: 'http://companion.test' })
+    }
+  }
+
+  return instance
 }
 
 // Removed shared beforeEach initialization. Each test initializes its own Uppy instance.
