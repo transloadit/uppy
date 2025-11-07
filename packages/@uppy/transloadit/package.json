@@ -1,7 +1,7 @@
 {
   "name": "@uppy/transloadit",
   "description": "The Transloadit plugin can be used to upload files to Transloadit for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, and more",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -42,11 +42,10 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/provider-views": "workspace:^",
     "@uppy/tus": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "component-emitter": "^2.0.0"
+    "component-emitter": "^2.0.0",
+    "transloadit": "^4.0.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
@@ -55,7 +54,6 @@
     "@uppy/core": "workspace:^",
     "jsdom": "^26.1.0",
     "msw": "^2.10.4",
-    "transloadit": "^4.0.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4",
     "whatwg-fetch": "^3.6.2"

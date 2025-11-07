@@ -1,5 +1,26 @@
 # @uppy/components
 
+## 1.1.0
+
+### Minor Changes
+
+- 72d2d68: Add @uppy/{screen-capture,status-bar,webcam} as optional peer dependencies
+
+### Patch Changes
+
+- 26bf726: Dropzone and FileInput inherit restrictions from @uppy/core
+
+## 1.0.4
+
+### Patch Changes
+
+- 0c16fe4: - Make `file.data` nullable - Because for ghosts it will be `undefined` and we don't have any type to distinguish ghosts from other (local) files. This caused a crash, because we didn't check for `undefined` everywhere (when trying to store a blob that was `undefined`). This means we have to add null checks in some packages
+  - Move `restore-confirmed` from `onUploadStart` event listener to `startUpload`, else it would cause `restore-confirmed` to be triggered even if there is no `recoveredState` to recover
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+  - @uppy/core@5.1.1
+  - @uppy/image-editor@4.0.2
+
 ## 1.0.3
 
 ### Patch Changes

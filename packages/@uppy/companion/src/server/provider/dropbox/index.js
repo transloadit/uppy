@@ -13,7 +13,7 @@ import adaptData from './adapter.js'
 const charsToEncode = /[\u007f-\uffff]/g
 function httpHeaderSafeJson(v) {
   return JSON.stringify(v).replace(charsToEncode, (c) => {
-    return `\\u${(`000${c.charCodeAt(0).toString(16)}`).slice(-4)}`
+    return `\\u${`000${c.charCodeAt(0).toString(16)}`.slice(-4)}`
   })
 }
 
@@ -96,6 +96,33 @@ async function list({ client, directory, query }) {
     .json()
 }
 
+async function fetchSearchEntries({ client, query }) {
+  const scopePath =
+    typeof query.path === 'string' ? decodeURIComponent(query.path) : undefined
+
+  const searchRes = await client
+    .post('files/search_v2', {
+      json: {
+        query: query.q.trim(),
+        options: {
+          path: scopePath || '',
+          max_results: 1000,
+          file_status: 'active',
+          filename_only: false,
+        },
+      },
+      responseType: 'json',
+    })
+    .json()
+
+  const entries = searchRes.matches.map((m) => m.metadata.metadata)
+  return {
+    entries,
+    has_more: searchRes.has_more,
+    cursor: searchRes.cursor,
+  }
+}
+
 /**
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
  */
@@ -114,8 +141,28 @@ export default class Dropbox extends Provider {
   }
 
   /**
-   *
-   * @param {object} options
+   * Search entries
+   */
+  async search(options) {
+    return this.#withErrorHandling(
+      'provider.dropbox.search.error',
+      async () => {
+        const { client, userInfo } = await getClient({
+          token: options.providerUserSession.accessToken,
+          namespaced: true,
+        })
+
+        const stats = await fetchSearchEntries({ client, query: options.query })
+        console.log(stats)
+        const { email } = userInfo
+        // we don't really need email, but let's mimic `list` response shape for consistency
+        return adaptData(stats, email, options.companion.buildURL)
+      },
+    )
+  }
+
+  /**
+   * List folder entries
    */
   async list(options) {
     return this.#withErrorHandling('provider.dropbox.list.error', async () => {

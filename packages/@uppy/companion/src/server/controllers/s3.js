@@ -58,6 +58,15 @@ export default function s3(config) {
 
     const { metadata = {}, filename } = req.query
 
+    // Validate filename is provided and non-empty
+    if (typeof filename !== 'string' || filename === '') {
+      res.status(400).json({
+        error:
+          's3: the "filename" query parameter is required and must be a non-empty string',
+      })
+      return
+    }
+
     const truncatedFilename = truncateFilename(
       filename,
       req.companion.options.maxFilenameLength,
@@ -125,6 +134,15 @@ export default function s3(config) {
     if (!client) return
 
     const { type, metadata = {}, filename } = req.body
+
+    // Validate filename is provided and non-empty
+    if (typeof filename !== 'string' || filename === '') {
+      res.status(400).json({
+        error:
+          's3: the "filename" field is required and must be a non-empty string',
+      })
+      return
+    }
 
     const truncatedFilename = truncateFilename(
       filename,

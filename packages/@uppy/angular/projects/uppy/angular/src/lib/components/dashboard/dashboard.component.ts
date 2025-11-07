@@ -11,7 +11,7 @@ import {
 import { Uppy } from "@uppy/core";
 import type { DashboardOptions } from "@uppy/dashboard";
 import Dashboard from "@uppy/dashboard";
-import type { Body, Meta } from "@uppy/utils";
+import type { Body, Meta } from "@uppy/core";
 import { UppyAngularWrapper } from "../../utils/wrapper";
 
 @Component({

@@ -813,6 +813,7 @@ describe('src/Core', () => {
       expect(core.getFile(fileId).progress).toEqual({
         percentage: 0,
         bytesUploaded: false,
+        complete: true,
         bytesTotal: 17175,
         uploadComplete: false,
         uploadStarted: null,
@@ -1941,7 +1942,7 @@ describe('src/Core', () => {
       const core = new Core()
       let proceedUpload: (value?: unknown) => void
       let finishUpload: (value?: unknown) => void
-      const promise = new Promise((resolve) => {
+      const progressPromise = new Promise((resolve) => {
         proceedUpload = resolve
       })
       const finishPromise = new Promise((resolve) => {
@@ -1949,7 +1950,7 @@ describe('src/Core', () => {
       })
       core.addUploader(async ([id]) => {
         core.emit('upload-start', [core.getFile(id)])
-        await promise
+        await progressPromise
         // @ts-ignore deprecated
         core.emit('upload-progress', core.getFile(id), {
           bytesTotal: 3456,
@@ -1971,10 +1972,11 @@ describe('src/Core', () => {
       // @ts-ignore
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
+      const uploadStartedPromise = new Promise((resolve) =>
+        core.once('upload-start', resolve),
+      )
       const uploadPromise = core.upload()
-      await Promise.all([
-        new Promise((resolve) => core.once('upload-start', resolve)),
-      ])
+      await uploadStartedPromise
 
       expect(core.getFiles()[0].size).toBeNull()
       expect(core.getFiles()[0].progress).toMatchObject({
@@ -1986,7 +1988,7 @@ describe('src/Core', () => {
       // @ts-ignore
       proceedUpload()
       // wait for progress event
-      await promise
+      await progressPromise
 
       expect(core.getFiles()[0].size).toBeNull()
       expect(core.getFiles()[0].progress).toMatchObject({

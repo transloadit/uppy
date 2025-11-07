@@ -1,6 +1,6 @@
 {
   "name": "@uppy/svelte",
-  "version": "5.0.2",
+  "version": "5.1.0",
   "description": "Uppy plugin that helps integrate Uppy into your Svelte project.",
   "type": "module",
   "sideEffects": [
@@ -70,13 +70,22 @@
   "peerDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
+    "@uppy/status-bar": "workspace:^",
+    "@uppy/webcam": "workspace:^",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {
     "@uppy/dashboard": {
       "optional": true
     },
+    "@uppy/screen-capture": {
+      "optional": true
+    },
     "@uppy/status-bar": {
+      "optional": true
+    },
+    "@uppy/webcam": {
       "optional": true
     }
   },

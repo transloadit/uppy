@@ -1,5 +1,84 @@
 # uppy
 
+## 5.1.11
+
+### Patch Changes
+
+- Updated dependencies [5e166a1]
+  - @uppy/dashboard@5.0.4
+
+## 5.1.10
+
+### Patch Changes
+
+- Updated dependencies [46e339a]
+  - @uppy/provider-views@5.1.2
+
+## 5.1.9
+
+### Patch Changes
+
+- Updated dependencies [72d2d68]
+- Updated dependencies [5edcb2e]
+  - @uppy/transloadit@5.2.0
+  - @uppy/onedrive@5.0.2
+
+## 5.1.8
+
+### Patch Changes
+
+- Updated dependencies [8ac1654]
+- Updated dependencies [8ac1654]
+- Updated dependencies [8ac1654]
+  - @uppy/status-bar@5.0.2
+  - @uppy/webcam@5.0.2
+  - @uppy/xhr-upload@5.0.2
+
+## 5.1.7
+
+### Patch Changes
+
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+  - @uppy/aws-s3@5.0.2
+  - @uppy/companion-client@5.1.1
+  - @uppy/compressor@3.0.2
+  - @uppy/core@5.1.1
+  - @uppy/dashboard@5.0.3
+  - @uppy/golden-retriever@5.1.1
+  - @uppy/image-editor@4.0.2
+  - @uppy/provider-views@5.1.1
+  - @uppy/thumbnail-generator@5.0.2
+  - @uppy/transloadit@5.1.3
+  - @uppy/tus@5.0.2
+  - @uppy/url@5.0.2
+
+## 5.1.6
+
+### Patch Changes
+
+- Updated dependencies [5ba2c1c]
+  - @uppy/companion-client@5.1.0
+  - @uppy/provider-views@5.1.0
+  - @uppy/core@5.1.0
+
+## 5.1.5
+
+### Patch Changes
+
+- Updated dependencies [201c422]
+  - @uppy/transloadit@5.1.2
+
 ## 5.1.4
 
 ### Patch Changes

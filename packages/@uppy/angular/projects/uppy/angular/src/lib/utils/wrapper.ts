@@ -1,7 +1,6 @@
 import type { ElementRef, SimpleChanges } from "@angular/core";
-import type { UIPlugin, UIPluginOptions, Uppy } from "@uppy/core";
+import type { UIPlugin, UIPluginOptions, Uppy, Body, Meta } from "@uppy/core";
 import type { DashboardOptions } from "@uppy/dashboard";
-import type { Body, Meta } from "@uppy/utils";
 
 export abstract class UppyAngularWrapper<
 	M extends Meta,

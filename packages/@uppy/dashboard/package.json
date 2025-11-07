@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "5.0.2",
+  "version": "5.0.4",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -13,7 +13,7 @@
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
     "typecheck": "tsc --build",
     "test": "vitest run --silent='passed-only'",
-    "test:e2e": "vitest watch --project browser --browser.headless false"
+    "test:e2e": "vitest run --project browser"
   },
   "keywords": [
     "file uploader",

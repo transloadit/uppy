@@ -1,17 +1,21 @@
 import nock from 'nock'
 import request from 'supertest'
-import { afterAll, describe, test, vi } from 'vitest'
+import { afterAll, afterEach, beforeEach, describe, test, vi } from 'vitest'
 import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 
-afterAll(() => {
+afterEach(() => {
   nock.cleanAll()
+})
+afterAll(() => {
   nock.restore()
 })
 
 describe('handle deauthorization callback', () => {
-  nock('https://api.zoom.us').post('/oauth/data/compliance').reply(200)
+  beforeEach(() => {
+    nock('https://api.zoom.us').post('/oauth/data/compliance').reply(200)
+  })
 
   test('providers without support for callback endpoint', async () => {
     return request(await getServer())

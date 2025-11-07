@@ -19,10 +19,11 @@ export type Restrictions = {
  */
 export type ValidateableFile<M extends Meta, B extends Body> = Pick<
   UppyFile<M, B>,
-  'type' | 'extension' | 'size' | 'name'
+  'type' | 'extension' | 'size'
   // Both UppyFile and CompanionFile need to be passable as a ValidateableFile
   // CompanionFile's do not have `isGhost`, so we mark it optional.
-> & { isGhost?: boolean }
+> &
+  Partial<Pick<UppyFile<M, B>, 'name' | 'isGhost'>>
 
 const defaultOptions = {
   maxFileSize: null,
