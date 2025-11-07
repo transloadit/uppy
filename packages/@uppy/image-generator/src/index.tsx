@@ -6,15 +6,16 @@ import type {
 } from '@uppy/core'
 import Uppy, { UIPlugin } from '@uppy/core'
 import type {
-  AssemblyParameters,
+  AssemblyOptions,
   AssemblyResult,
-  TransloaditOptions,
 } from '@uppy/transloadit'
 import Transloadit from '@uppy/transloadit'
 import { EmptyStateIcon } from './icons.js'
 import locale from './locale.js'
 
-export interface ImageGeneratorOptions extends UIPluginOptions {}
+export interface ImageGeneratorOptions extends UIPluginOptions {
+  assemblyOptions: (prompt: string) => Promise<AssemblyOptions>
+}
 
 interface PluginState extends Record<string, unknown> {
   prompt: string
@@ -64,8 +65,11 @@ export default class ImageGenerator<
     if (!transloadit) {
       throw new Error('ImageGenerator requires the Transloadit plugin')
     }
-    const transloaditOptions = await this.#getTransloaditOptions(transloadit)
-    const localUppy = new Uppy<M, B>().use(Transloadit, transloaditOptions)
+    const assemblyOptions = await this.opts.assemblyOptions(this.getPluginState().prompt)
+    const localUppy = new Uppy<M, B>().use(Transloadit, {
+      waitForEncoding: true,
+      assemblyOptions,
+    })
 
     localUppy.on('transloadit:result', (_, result) => {
       const { results } = this.getPluginState()
@@ -220,29 +224,5 @@ export default class ImageGenerator<
         )}
       </div>
     )
-  }
-
-  #getTransloaditOptions = async (
-    client: Transloadit<M, B>,
-  ): Promise<TransloaditOptions<M, B>> => {
-    const assemblyOptions =
-      typeof client.opts.assemblyOptions === 'function'
-        ? await client.opts.assemblyOptions()
-        : client.opts.assemblyOptions!
-
-    let params = assemblyOptions.params ?? {}
-    if (typeof params === 'string') {
-      params = JSON.parse(params) as AssemblyParameters
-    }
-    return {
-      waitForEncoding: true,
-      assemblyOptions: {
-        params: {
-          auth: params.auth,
-          template_id: '6c49832304764643b99be20e3ce8ffd8',
-        },
-        fields: { prompt: this.getPluginState().prompt },
-      },
-    }
   }
 }

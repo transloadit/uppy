@@ -4,6 +4,7 @@
     "build": {
       "dependsOn": [
         "@uppy/image-editor#build",
+        "@uppy/image-generator#build",
         "@uppy/box#build",
         "@uppy/core#build",
         "@uppy/google-drive-picker#build",
