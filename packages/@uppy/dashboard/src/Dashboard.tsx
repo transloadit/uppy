@@ -40,6 +40,11 @@ declare module '@uppy/core' {
     'dashboard:file-edit-complete': DashboardFileEditCompleteCallback<M, B>
     'dashboard:close-panel': (id: string | undefined) => void
   }
+
+  // Register Dashboard in the plugin type registry
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Dashboard: Dashboard<M, B>
+  }
 }
 
 interface PromiseWithResolvers<T> {
