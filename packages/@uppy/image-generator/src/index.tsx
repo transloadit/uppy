@@ -3,6 +3,7 @@ import type {
   Meta,
   MinimalRequiredUppyFile,
   UIPluginOptions,
+  UppyEventMap,
 } from '@uppy/core'
 import Uppy, { UIPlugin } from '@uppy/core'
 import { FilterInput, SearchView } from '@uppy/provider-views'
@@ -97,14 +98,20 @@ export default class ImageGenerator<
       waitForEncoding: true,
       assemblyOptions,
     })
-
-    localUppy.on('transloadit:result', (_, result) => {
+    const onResult: UppyEventMap<M, B>['transloadit:result'] = (
+      stepName,
+      result,
+    ) => {
       const { results } = this.getPluginState()
-      // For some reason this event can be called twice with the same result
-      // so we check if we already have it before adding it to state.
-      if (!results.some((r) => r.id === result.id)) {
-        this.setPluginState({ results: [...results, result] })
-      }
+      this.setPluginState({ results: [...results, result], firstRun: false })
+    }
+    localUppy.on('transloadit:result', onResult)
+
+    // @ts-expect-error not typed because we do not depend on @uppy/dashboard
+    this.uppy.once('dashboard:close-panel', () => {
+      localUppy.cancelAll()
+      localUppy.off('transloadit:result', onResult)
+      this.setPluginState(defaultState)
     })
 
     try {
@@ -118,7 +125,8 @@ export default class ImageGenerator<
       await localUppy.upload()
     } finally {
       this.clearLoadingInterval()
-      this.setPluginState({ loading: false, firstRun: false })
+      localUppy.off('transloadit:result', onResult)
+      this.setPluginState({ loading: false })
     }
   }
 
