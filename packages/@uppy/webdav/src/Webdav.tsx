@@ -14,7 +14,7 @@ import type {
 } from '@uppy/core'
 
 import { UIPlugin } from '@uppy/core'
-import { ProviderViews, SearchInput } from '@uppy/provider-views'
+import { ProviderViews, SearchView } from '@uppy/provider-views'
 import type { I18n, LocaleStrings } from '@uppy/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
@@ -61,17 +61,14 @@ const AuthForm = ({
   }, [onAuth, webdavUrl])
 
   return (
-    <SearchInput
-      searchString={webdavUrl}
-      setSearchString={setWebdavUrl}
-      submitSearchString={onSubmit}
+    <SearchView
+      value={webdavUrl}
+      onChange={setWebdavUrl}
+      onSubmit={onSubmit}
       inputLabel={i18n('pluginWebdavInputLabel')}
-      buttonLabel={i18n('authenticate')}
-      wrapperClassName="uppy-SearchProvider"
-      inputClassName="uppy-c-textInput uppy-SearchProvider-input"
-      showButton
-      buttonCSSClassName="uppy-SearchProvider-searchButton"
-    />
+    >
+      {i18n('authenticate')}
+    </SearchView>
   )
 }
 

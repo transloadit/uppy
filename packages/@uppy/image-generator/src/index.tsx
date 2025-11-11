@@ -5,7 +5,7 @@ import type {
   UIPluginOptions,
 } from '@uppy/core'
 import Uppy, { UIPlugin } from '@uppy/core'
-import { SearchInput } from '@uppy/provider-views'
+import { FilterInput, SearchView } from '@uppy/provider-views'
 import type { AssemblyOptions, AssemblyResult } from '@uppy/transloadit'
 import Transloadit from '@uppy/transloadit'
 import classNames from 'classnames'
@@ -183,20 +183,21 @@ export default class ImageGenerator<
 
     if (firstRun) {
       return (
-        <SearchInput
-          searchString={prompt}
-          setSearchString={(prompt) => this.setPluginState({ prompt })}
-          submitSearchString={this.search}
+        <SearchView
+          value={prompt}
+          onChange={(prompt) => this.setPluginState({ prompt })}
+          onSubmit={this.search}
           inputLabel={i18n('generateImagePlaceholder')}
-          buttonLabel={i18n('generateImage')}
-          wrapperClassName="uppy-SearchProvider"
-          inputClassName="uppy-c-textInput uppy-SearchProvider-input"
-          showButton
-          buttonCSSClassName="uppy-SearchProvider-searchButton"
           loading={loading}
-          loadingText={currentLoadingMessage}
-          loadingTextClassName="uppy-ImageGenerator-generating"
-        />
+        >
+          {loading ? (
+            <span className="uppy-ImageGenerator-generating">
+              {currentLoadingMessage}
+            </span>
+          ) : (
+            i18n('generateImage')
+          )}
+        </SearchView>
       )
     }
 
@@ -207,15 +208,12 @@ export default class ImageGenerator<
           'uppy-ProviderBrowser-viewType--grid',
         )}
       >
-        <SearchInput
-          searchString={prompt}
-          setSearchString={(prompt) => this.setPluginState({ prompt })}
-          submitSearchString={this.search}
+        <FilterInput
+          value={prompt}
+          onChange={(prompt) => this.setPluginState({ prompt })}
+          onSubmit={this.search}
           inputLabel={i18n('search')}
-          clearSearchLabel={i18n('resetSearch')}
-          wrapperClassName="uppy-ProviderBrowser-searchFilter"
-          inputClassName="uppy-ProviderBrowser-searchFilterInput"
-          loading={loading}
+          i18n={i18n}
         />
 
         {loading ? (
