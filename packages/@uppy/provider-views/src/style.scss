@@ -136,7 +136,6 @@
     color: variables.$gray-200;
   }
 }
-
 // ...uppy-Provider-breadcrumbs|
 
 .uppy-ProviderBrowser {
@@ -289,27 +288,6 @@
   }
 }
 
-.uppy-SearchInput-spinner {
-  width: 16px;
-  height: 16px;
-  margin-left: 1em;
-  aspect-ratio: 1;
-  color: white;
-  border-radius: 50%;
-  background: currentColor;
-  mask:
-    conic-gradient(transparent 30%, currentColor),
-    linear-gradient(currentColor 0 0) content-box;
-  mask-composite: subtract;
-  animation: uppy-SearchInput-spin 1s linear infinite;
-}
-
-@keyframes uppy-SearchInput-spin {
-  to {
-    transform: rotate(1turn);
-  }
-}
-
 .uppy-ProviderBrowser-userLogout {
   @include utils.highlight-focus;
   // for focus
@@ -399,7 +377,6 @@
     flex-direction: column-reverse;
     align-items: stretch;
   }
-
   .uppy-ProviderBrowser-footer-error {
     padding-bottom: 10px;
   }
@@ -409,9 +386,6 @@
 .picker-dialog-bg {
   z-index: 20000 !important;
 }
-
 .picker-dialog {
   z-index: 20001 !important;
 }
-
-/* test change */
