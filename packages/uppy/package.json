@@ -63,6 +63,7 @@
     "@uppy/status-bar": "workspace:*",
     "@uppy/store-default": "workspace:*",
     "@uppy/thumbnail-generator": "workspace:*",
+    "@uppy/image-generator": "workspace:*",
     "@uppy/transloadit": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/unsplash": "workspace:*",

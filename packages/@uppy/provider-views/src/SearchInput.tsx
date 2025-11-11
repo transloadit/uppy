@@ -17,6 +17,8 @@ type Props = {
   buttonCSSClassName?: string
 
   loading?: boolean
+  loadingText?: string
+  loadingTextClassName?: string
 }
 
 function SearchInput({
@@ -35,6 +37,8 @@ function SearchInput({
   buttonCSSClassName = '',
 
   loading = false,
+  loadingText,
+  loadingTextClassName = '',
 }: Props) {
   const onInput = (e: Event) => {
     setSearchString((e.target as HTMLInputElement).value)
@@ -119,10 +123,10 @@ function SearchInput({
           type="submit"
           form={form.id}
         >
-          {buttonLabel}
-
-          {loading && (
-            <div className="uppy-SearchInput-spinner" />
+          {loading && loadingText ? (
+            <span className={loadingTextClassName}>{loadingText}</span>
+          ) : (
+            buttonLabel
           )}
         </button>
       )}

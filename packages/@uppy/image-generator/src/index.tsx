@@ -20,6 +20,8 @@ interface PluginState extends Record<string, unknown> {
   results: AssemblyResult[]
   checkedResultIds: Set<AssemblyResult['id']>
   loading: boolean
+  loadingMessageIndex: number
+  firstRun: boolean
 }
 
 const defaultState = {
@@ -27,12 +29,24 @@ const defaultState = {
   results: [],
   checkedResultIds: new Set(),
   loading: false,
+  loadingMessageIndex: 0,
+  firstRun: true,
 } satisfies PluginState
+
+const LOADING_MESSAGES = [
+  'generating1',
+  'generating2',
+  'generating3',
+  'generating4',
+  'generating5',
+] as const
 
 export default class ImageGenerator<
   M extends Meta,
   B extends Body,
 > extends UIPlugin<ImageGeneratorOptions, M, B, PluginState> {
+  private loadingInterval: ReturnType<typeof setInterval> | null = null
+
   constructor(uppy: Uppy<M, B>, opts: ImageGeneratorOptions) {
     super(uppy, opts)
 
@@ -55,7 +69,24 @@ export default class ImageGenerator<
   }
 
   uninstall(): void {
+    this.clearLoadingInterval()
     this.unmount()
+  }
+
+  private clearLoadingInterval(): void {
+    if (this.loadingInterval) {
+      clearInterval(this.loadingInterval)
+      this.loadingInterval = null
+    }
+  }
+
+  private startLoadingAnimation(): void {
+    this.clearLoadingInterval()
+    this.loadingInterval = setInterval(() => {
+      const { loadingMessageIndex } = this.getPluginState()
+      const nextIndex = (loadingMessageIndex + 1) % LOADING_MESSAGES.length
+      this.setPluginState({ loadingMessageIndex: nextIndex })
+    }, 4000)
   }
 
   search = async () => {
@@ -81,10 +112,13 @@ export default class ImageGenerator<
         loading: true,
         results: [],
         checkedResultIds: new Set(),
+        loadingMessageIndex: 0,
       })
+      this.startLoadingAnimation()
       await localUppy.upload()
     } finally {
-      this.setPluginState({ loading: false })
+      this.clearLoadingInterval()
+      this.setPluginState({ loading: false, firstRun: false })
     }
   }
 
@@ -133,21 +167,35 @@ export default class ImageGenerator<
   }
 
   render() {
-    const { prompt, results, checkedResultIds, loading } = this.getPluginState()
+    const {
+      prompt,
+      results,
+      checkedResultIds,
+      loading,
+      loadingMessageIndex,
+      firstRun,
+    } = this.getPluginState()
     const { i18n } = this.uppy
 
-    if (!results || results.length === 0) {
+    const currentLoadingMessage = loading
+      ? i18n(LOADING_MESSAGES[loadingMessageIndex])
+      : undefined
+
+    if (firstRun) {
       return (
         <SearchInput
           searchString={prompt}
           setSearchString={(prompt) => this.setPluginState({ prompt })}
           submitSearchString={this.search}
           inputLabel={i18n('generateImagePlaceholder')}
-          buttonLabel={i18n('generate')}
+          buttonLabel={i18n('generateImage')}
           wrapperClassName="uppy-SearchProvider"
           inputClassName="uppy-c-textInput uppy-SearchProvider-input"
           showButton
           buttonCSSClassName="uppy-SearchProvider-searchButton"
+          loading={loading}
+          loadingText={currentLoadingMessage}
+          loadingTextClassName="uppy-ImageGenerator-generating"
         />
       )
     }
@@ -171,7 +219,9 @@ export default class ImageGenerator<
         />
 
         {loading ? (
-          <div className="uppy-Provider-loading">{i18n('loading')}</div>
+          <div className="uppy-Provider-loading uppy-ImageGenerator-generating--darker">
+            {currentLoadingMessage}
+          </div>
         ) : results.length > 0 ? (
           <div className="uppy-ProviderBrowser-body">
             <ul className="uppy-ProviderBrowser-list" tabIndex={-1}>
