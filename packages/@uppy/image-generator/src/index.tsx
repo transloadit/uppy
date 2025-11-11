@@ -9,7 +9,6 @@ import Uppy, { UIPlugin } from '@uppy/core'
 import { FilterInput, SearchView } from '@uppy/provider-views'
 import type { AssemblyOptions, AssemblyResult } from '@uppy/transloadit'
 import Transloadit from '@uppy/transloadit'
-import classNames from 'classnames'
 import locale from './locale.js'
 
 export interface ImageGeneratorOptions extends UIPluginOptions {
@@ -210,12 +209,7 @@ export default class ImageGenerator<
     }
 
     return (
-      <div
-        className={classNames(
-          'uppy-ProviderBrowser',
-          'uppy-ProviderBrowser-viewType--grid',
-        )}
-      >
+      <div className="uppy-ProviderBrowser uppy-ProviderBrowser-viewType--grid">
         <FilterInput
           value={prompt}
           onChange={(prompt) => this.setPluginState({ prompt })}
@@ -234,10 +228,7 @@ export default class ImageGenerator<
               {results.map((result) => (
                 <li
                   key={result.id}
-                  className={classNames('uppy-ProviderBrowserItem', {
-                    'uppy-ProviderBrowserItem--is-checked':
-                      checkedResultIds.has(result.id),
-                  })}
+                  className={`uppy-ProviderBrowserItem ${checkedResultIds.has(result.id) ? 'uppy-ProviderBrowserItem--is-checked' : ''}`}
                 >
                   <input
                     type="checkbox"
