@@ -1,7 +1,7 @@
 import Audio from '@uppy/audio'
 import AwsS3 from '@uppy/aws-s3'
 import Compressor from '@uppy/compressor'
-import Uppy, { debugLogger } from '@uppy/core'
+import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import DropTarget from '@uppy/drop-target'
 import Form from '@uppy/form'
