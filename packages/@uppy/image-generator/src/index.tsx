@@ -5,12 +5,10 @@ import type {
   UIPluginOptions,
 } from '@uppy/core'
 import Uppy, { UIPlugin } from '@uppy/core'
-import type {
-  AssemblyOptions,
-  AssemblyResult,
-} from '@uppy/transloadit'
+import { SearchInput } from '@uppy/provider-views'
+import type { AssemblyOptions, AssemblyResult } from '@uppy/transloadit'
 import Transloadit from '@uppy/transloadit'
-import { EmptyStateIcon } from './icons.js'
+import classNames from 'classnames'
 import locale from './locale.js'
 
 export interface ImageGeneratorOptions extends UIPluginOptions {
@@ -61,11 +59,9 @@ export default class ImageGenerator<
   }
 
   search = async () => {
-    const transloadit = this.uppy.getPlugin<Transloadit<M, B>>('Transloadit')
-    if (!transloadit) {
-      throw new Error('ImageGenerator requires the Transloadit plugin')
-    }
-    const assemblyOptions = await this.opts.assemblyOptions(this.getPluginState().prompt)
+    const assemblyOptions = await this.opts.assemblyOptions(
+      this.getPluginState().prompt,
+    )
     const localUppy = new Uppy<M, B>().use(Transloadit, {
       waitForEncoding: true,
       assemblyOptions,
@@ -92,7 +88,14 @@ export default class ImageGenerator<
     }
   }
 
-  private onCheckboxChange = (result: AssemblyResult) => {
+  private onCheckboxChange = (result: AssemblyResult, event?: Event) => {
+    if (event) {
+      event.stopPropagation()
+      event.preventDefault()
+      // Prevent shift-clicking from highlighting file names
+      document.getSelection()?.removeAllRanges()
+    }
+
     const { checkedResultIds } = this.getPluginState()
 
     if (checkedResultIds.has(result.id)) {
@@ -102,6 +105,10 @@ export default class ImageGenerator<
     }
 
     this.setPluginState({ checkedResultIds })
+  }
+
+  private cancelSelection = () => {
+    this.setPluginState({ checkedResultIds: new Set() })
   }
 
   private donePicking = async () => {
@@ -129,73 +136,80 @@ export default class ImageGenerator<
     const { prompt, results, checkedResultIds, loading } = this.getPluginState()
     const { i18n } = this.uppy
 
-    return (
-      <div className="uppy-ImageGenerator-root uppy-reset">
-        <div className="uppy-ImageGenerator-prompt">
-          <input
-            type="text"
-            id="uppy-image-generator-prompt"
-            className="uppy-c-textInput"
-            value={prompt}
-            disabled={loading}
-            placeholder={i18n('generateImagePlaceholder')}
-            data-uppy-super-focusable
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                this.search()
-              }
-            }}
-            onInput={(e) =>
-              this.setPluginState({
-                prompt: (e.target as HTMLInputElement).value,
-              })
-            }
-          />
-          <label for="uppy-image-generator-prompt">Prompt</label>
-          <button
-            type="button"
-            className=""
-            onClick={this.search}
-            disabled={loading}
-            data-uppy-super-focusable
-          >
-            <span className="">Generate</span>
-          </button>
-        </div>
+    if (!results || results.length === 0) {
+      return (
+        <SearchInput
+          searchString={prompt}
+          setSearchString={(prompt) => this.setPluginState({ prompt })}
+          submitSearchString={this.search}
+          inputLabel={i18n('generateImagePlaceholder')}
+          buttonLabel={i18n('generate')}
+          wrapperClassName="uppy-SearchProvider"
+          inputClassName="uppy-c-textInput uppy-SearchProvider-input"
+          showButton
+          buttonCSSClassName="uppy-SearchProvider-searchButton"
+        />
+      )
+    }
 
-        {results.length > 0 ? (
-          <ul
-            className={`uppy-ImageGenerator-grid ${
-              results.length === 1 ? 'uppy-ImageGenerator-grid--single' : ''
-            }`}
-          >
-            {results.map((result) => (
-              <li key={result.id}>
-                <input
-                  type="checkbox"
-                  onChange={() => this.onCheckboxChange(result)}
-                  name="image-generator-results"
-                  id={result.id}
-                  checked={checkedResultIds.has(result.id)}
-                  data-uppy-super-focusable
-                />
-                <label htmlFor={result.id} className="uppy-u-reset">
-                  <img src={result.url!} alt={prompt} />
-                </label>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="uppy-ImageGenerator-empty-state">
-            <div>
-              <EmptyStateIcon />
-              {loading ? (
-                <p className="uppy-ImageGenerator-generating">Generating</p>
-              ) : (
-                <p>Generate a new image using Transloadit AI</p>
-              )}
-            </div>
+    return (
+      <div
+        className={classNames(
+          'uppy-ProviderBrowser',
+          'uppy-ProviderBrowser-viewType--grid',
+        )}
+      >
+        <SearchInput
+          searchString={prompt}
+          setSearchString={(prompt) => this.setPluginState({ prompt })}
+          submitSearchString={this.search}
+          inputLabel={i18n('search')}
+          clearSearchLabel={i18n('resetSearch')}
+          wrapperClassName="uppy-ProviderBrowser-searchFilter"
+          inputClassName="uppy-ProviderBrowser-searchFilterInput"
+          loading={loading}
+        />
+
+        {loading ? (
+          <div className="uppy-Provider-loading">{i18n('loading')}</div>
+        ) : results.length > 0 ? (
+          <div className="uppy-ProviderBrowser-body">
+            <ul className="uppy-ProviderBrowser-list" tabIndex={-1}>
+              {results.map((result) => (
+                <li
+                  key={result.id}
+                  className={classNames('uppy-ProviderBrowserItem', {
+                    'uppy-ProviderBrowserItem--is-checked':
+                      checkedResultIds.has(result.id),
+                  })}
+                >
+                  <input
+                    type="checkbox"
+                    className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
+                    onChange={(e) => this.onCheckboxChange(result, e)}
+                    name="listitem"
+                    id={result.id}
+                    checked={checkedResultIds.has(result.id)}
+                    data-uppy-super-focusable
+                  />
+                  <label
+                    htmlFor={result.id}
+                    aria-label={prompt}
+                    className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+                  >
+                    <img
+                      src={result.url!}
+                      alt={prompt}
+                      referrerPolicy="no-referrer"
+                      loading="lazy"
+                    />
+                  </label>
+                </li>
+              ))}
+            </ul>
           </div>
+        ) : (
+          <div className="uppy-Provider-empty">{i18n('noSearchResults')}</div>
         )}
 
         {checkedResultIds.size > 0 && (
@@ -212,9 +226,7 @@ export default class ImageGenerator<
               </button>
               <button
                 className="uppy-u-reset uppy-c-btn uppy-c-btn-link"
-                onClick={() =>
-                  this.setPluginState({ checkedResultIds: new Set() })
-                }
+                onClick={this.cancelSelection}
                 type="button"
               >
                 {i18n('cancel')}
