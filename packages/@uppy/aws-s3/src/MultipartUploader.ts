@@ -236,7 +236,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
       this.#resumeUpload()
     } else if (this.#isRestoring) {
       this.options.companionComm.restoreUploadFile(this.#file, {
-        uploadId: this.options.uploadId,
+        ...(this.options.uploadId !== undefined && {
+          uploadId: this.options.uploadId,
+        }),
         key: this.options.key,
       })
       this.#resumeUpload()

@@ -33,7 +33,7 @@ export default defineComponent({
         id: 'DashboardModal',
         inline: false,
         ...props.props,
-        target: containerRef.value,
+        ...(containerRef.value !== undefined && { target: containerRef.value }),
       }
       uppy.use(DashboardPlugin, options)
       pluginRef.value = uppy.getPlugin(options.id) as DashboardPlugin<any, any>

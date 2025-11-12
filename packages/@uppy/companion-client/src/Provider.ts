@@ -44,7 +44,7 @@ export default class Provider<M extends Meta, B extends Body>
 
   tokenKey: string
 
-  companionKeysParams?: Record<string, string>
+  companionKeysParams?: Record<string, string> | undefined
 
   preAuthToken: string | null
 

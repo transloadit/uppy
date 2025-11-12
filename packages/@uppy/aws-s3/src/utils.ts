@@ -12,10 +12,12 @@ export function throwIfAborted(signal?: AbortSignal | null): void {
 }
 
 export type UploadResult = { key: string; uploadId?: string; bucket?: string }
-export type UploadResultWithSignal = UploadResult & { signal?: AbortSignal }
+export type UploadResultWithSignal = UploadResult & {
+  signal?: AbortSignal | null
+}
 export type MultipartUploadResult = UploadResult & { parts: AwsS3Part[] }
 export type MultipartUploadResultWithSignal = MultipartUploadResult & {
-  signal?: AbortSignal
+  signal?: AbortSignal | null
 }
 
 export type UploadPartBytesResult = {

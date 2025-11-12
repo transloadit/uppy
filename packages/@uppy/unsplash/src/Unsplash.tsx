@@ -95,7 +95,9 @@ export default class Unsplash<M extends Meta, B extends Body>
       provider: this.provider,
       viewType: 'unsplash',
       showFilter: true,
-      utmSource: this.opts.utmSource,
+      ...(this.opts.utmSource !== undefined && {
+        utmSource: this.opts.utmSource,
+      }),
     })
 
     const { target } = this.opts

@@ -53,13 +53,13 @@ class StatusBar<M extends Meta, B extends Body> extends Component<
     } = this.props
     const options = {
       id: id || 'StatusBar',
-      hideUploadButton,
-      hideRetryButton,
-      hidePauseResumeButton,
-      hideCancelButton,
-      showProgressDetails,
-      hideAfterFinish,
-      doneButtonHandler,
+      ...(hideUploadButton !== undefined && { hideUploadButton }),
+      ...(hideRetryButton !== undefined && { hideRetryButton }),
+      ...(hidePauseResumeButton !== undefined && { hidePauseResumeButton }),
+      ...(hideCancelButton !== undefined && { hideCancelButton }),
+      ...(showProgressDetails !== undefined && { showProgressDetails }),
+      ...(hideAfterFinish !== undefined && { hideAfterFinish }),
+      ...(doneButtonHandler !== undefined && { doneButtonHandler }),
       target: this.container,
     }
 

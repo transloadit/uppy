@@ -93,9 +93,15 @@ export default class GoogleDrive<M extends Meta, B extends Body>
     )
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders,
-      companionKeysParams: this.opts.companionKeysParams,
-      companionCookiesRule: this.opts.companionCookiesRule,
+      ...(this.opts.companionHeaders !== undefined && {
+        companionHeaders: this.opts.companionHeaders,
+      }),
+      ...(this.opts.companionKeysParams !== undefined && {
+        companionKeysParams: this.opts.companionKeysParams,
+      }),
+      ...(this.opts.companionCookiesRule !== undefined && {
+        companionCookiesRule: this.opts.companionCookiesRule,
+      }),
       provider: 'drive',
       pluginId: this.id,
       supportsRefreshToken: true,
