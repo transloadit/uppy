@@ -72,7 +72,7 @@
     "serialize-javascript": "^6.0.0",
     "supports-color": "8.x",
     "tus-js-client": "^4.1.0",
-    "validator": "^13.0.0",
+    "validator": "^13.15.20",
     "webdav": "^5.8.0",
     "ws": "8.17.1"
   },
