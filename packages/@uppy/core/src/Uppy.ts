@@ -142,6 +142,9 @@ export type UnknownProviderPluginState = {
   searchResults?: string[] | undefined
 }
 
+
+// biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation
+// biome-ignore lint/correctness/noUnusedVariables: Type parameters are used in module augmentation
 export interface PluginTypeRegistry<M extends Meta, B extends Body> {}
 
 export interface AsyncStore {
