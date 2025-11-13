@@ -1,7 +1,7 @@
 import type { Body, Meta } from '@uppy/utils'
 import { expectTypeOf, test } from 'vitest'
 import BasePlugin from './BasePlugin.js'
-import Uppy, {type UnknownPlugin } from './Uppy.js'
+import Uppy, { type UnknownPlugin } from './Uppy.js'
 
 // Create a test plugin that registers itself in the Type Registry
 class TestRegistryPlugin<M extends Meta, B extends Body> extends BasePlugin<
