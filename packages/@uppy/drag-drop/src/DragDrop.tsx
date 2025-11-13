@@ -12,6 +12,13 @@ import type { ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
+declare module '@uppy/core' {
+  // Register DragDrop in the plugin type registry
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    DragDrop: DragDrop<M, B>
+  }
+}
+
 export interface DragDropOptions extends UIPluginOptions {
   inputName?: string
   allowMultipleFiles?: boolean
