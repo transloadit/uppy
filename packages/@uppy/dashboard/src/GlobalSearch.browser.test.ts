@@ -1,4 +1,4 @@
-import Uppy from '@uppy/core'
+import Uppy, { type Meta } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
@@ -62,7 +62,7 @@ afterEach(async () => {
 
   // this is done to prevent the edgecase when all plugins are removed before dashboard is unmounted from UI
   // causing PickerPanelContent to crash
-  const dashboard = uppy.getPlugin('Dashboard') as Dashboard<any, any>
+  const dashboard = uppy.getPlugin('Dashboard') as Dashboard<Meta, Record<string, never>> | undefined
   dashboard?.hideAllPanels()
   const panelSelector = '[data-uppy-panelType="PickerPanel"]'
   if (document.querySelector(panelSelector)) {
