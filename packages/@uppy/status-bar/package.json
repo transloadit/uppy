@@ -30,6 +30,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
     "@uppy/utils": "workspace:^",

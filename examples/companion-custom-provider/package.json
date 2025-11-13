@@ -1,6 +1,7 @@
 {
   "name": "example-companion-custom-provider",
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "dependencies": {
     "@uppy/companion-client": "workspace:*",
@@ -23,7 +24,6 @@
     "npm-run-all": "^4.1.2",
     "vite": "^5.4.17"
   },
-  "private": true,
   "scripts": {
     "start": "npm-run-all --parallel start:server start:client",
     "start:client": "vite",

@@ -26,6 +26,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "exifr": "^7.0.0"

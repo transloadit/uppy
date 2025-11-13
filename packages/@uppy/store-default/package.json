@@ -27,5 +27,11 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
-  }
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ]
 }

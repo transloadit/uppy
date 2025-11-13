@@ -23,6 +23,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "get-form-data": "^3.0.0"

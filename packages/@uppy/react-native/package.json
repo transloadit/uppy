@@ -20,6 +20,10 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "file-picker",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/core": "workspace:*",
     "@uppy/instagram": "workspace:^",

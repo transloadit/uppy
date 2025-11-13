@@ -30,6 +30,12 @@
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
   },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "cropperjs": "^1.6.2",
