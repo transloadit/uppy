@@ -86,6 +86,13 @@ declare module '@uppy/core' {
   }
 }
 
+declare module '@uppy/core' {
+  // Register XHRUpload in the plugin type registry
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    XHRUpload: XHRUpload<M, B>
+  }
+}
+
 function buildResponseError(
   xhr?: XMLHttpRequest,
   err?: string | Error | NetworkError,

@@ -125,8 +125,8 @@ describe('AwsS3Multipart', () => {
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
 
       const err = 'Expected a `endpoint` option'
-      const file = {}
-      const opts = {}
+      const file = {} as any
+      const opts = {} as any
 
       expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(err)
       expect(() => awsS3Multipart.opts.listParts(file, opts)).toThrow(err)
@@ -380,7 +380,7 @@ describe('AwsS3Multipart', () => {
 
       await core.upload()
 
-      expect(awsS3Multipart.opts.uploadPartBytes.mock.calls.length).toEqual(3)
+      expect(uploadPartBytes.mock.calls.length).toEqual(3)
     })
 
     it('calls `upload-error` when uploadPartBytes fails after all retries', async () => {
@@ -438,7 +438,7 @@ describe('AwsS3Multipart', () => {
         // Catch Promise.all reject
       }
 
-      expect(awsS3Multipart.opts.uploadPartBytes.mock.calls.length).toEqual(5)
+      expect(uploadPartBytes.mock.calls.length).toEqual(5)
       expect(uploadErrorMock.mock.calls.length).toEqual(1)
       expect(uploadSuccessMock.mock.calls.length).toEqual(1) // This fails for me becuase upload returned early.
     })

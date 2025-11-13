@@ -45,6 +45,10 @@ declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
     's3-multipart:part-uploaded': PartUploadedCallback<M, B>
   }
+  // Register AwsS3Multipart in the plugin type registry
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    AwsS3Multipart: AwsS3Multipart<M, B>
+  }
 }
 
 function assertServerError<T>(res: T): T {
