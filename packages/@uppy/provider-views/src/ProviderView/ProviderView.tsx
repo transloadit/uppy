@@ -110,6 +110,10 @@ type RenderOpts<M extends Meta, B extends Body> = Omit<
 export default class ProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version
 
+  // Test hook (mirrors GoldenRetriever pattern): allow tests to override debounce time
+  // @ts-expect-error test-only hook key
+  static [Symbol.for('uppy test: searchDebounceMs')]: number | undefined
+
   plugin: UnknownProviderPlugin<M, B>
 
   provider: UnknownProviderPlugin<M, B>['provider']
@@ -119,6 +123,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   isHandlingScroll: boolean = false
 
   previousCheckbox: string | null = null
+  #searchDebounced: () => void
 
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
@@ -157,6 +162,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.provider.provider,
       this.provider,
     )
+
+    // Configure debounced search with test override
+    const testHookSymbol = Symbol.for('uppy test: searchDebounceMs')
+    const testWait = (
+      ProviderView as unknown as Record<symbol, number | undefined>
+    )[testHookSymbol]
+    const wait = testWait ?? 500
+    const debounceOpts =
+      testWait === 0 ? { leading: true, trailing: true } : undefined
+    this.#searchDebounced = debounce(this.#search, wait, debounceOpts)
   }
 
   resetPluginState(): void {
@@ -333,11 +348,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.setLoading(false)
   }
 
-  #searchDebounced = debounce(this.#search, 500)
+  // debounced search function is initialized in the constructor
 
   onSearchInput = (s: string): void => {
     this.plugin.setPluginState({ searchString: s })
-    if (this.opts.supportsSearch) this.#searchDebounced()
+    if (this.opts.supportsSearch) {
+      this.#searchDebounced()
+    }
   }
 
   async openSearchResultFolder(folderId: PartialTreeId): Promise<void> {
