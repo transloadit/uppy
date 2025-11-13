@@ -142,7 +142,6 @@ export type UnknownProviderPluginState = {
   searchResults?: string[] | undefined
 }
 
-
 // biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation
 // biome-ignore lint/correctness/noUnusedVariables: Type parameters are used in module augmentation
 export interface PluginTypeRegistry<M extends Meta, B extends Body> {}
@@ -1947,10 +1946,13 @@ export class Uppy<
    * Find one Plugin by name.
    */
 
-  getPlugin<K extends keyof PluginTypeRegistry<M, B>>(id: K): PluginTypeRegistry<M, B>[K] | undefined
+  getPlugin<K extends keyof PluginTypeRegistry<M, B>>(
+    id: K,
+  ): PluginTypeRegistry<M, B>[K] | undefined
 
-  getPlugin<T extends UnknownPlugin<M, B> = UnknownPlugin<M, B>>(id: string): T | undefined
-
+  getPlugin<T extends UnknownPlugin<M, B> = UnknownPlugin<M, B>>(
+    id: string,
+  ): T | undefined
 
   getPlugin(id: string): UnknownPlugin<M, B> | undefined {
     for (const plugins of Object.values(this.#plugins)) {
