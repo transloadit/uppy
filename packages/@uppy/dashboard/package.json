@@ -45,9 +45,9 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^0.3.4",
-    "@uppy/provider-views": "^5.1.2",
-    "@uppy/thumbnail-generator": "^5.0.2",
-    "@uppy/utils": "^7.1.3",
+    "@uppy/provider-views": "workspace:^",
+    "@uppy/thumbnail-generator": "workspace:^",
+    "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
     "nanoid": "^5.0.9",
@@ -55,10 +55,10 @@
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
-    "@uppy/core": "^5.1.1",
-    "@uppy/google-drive": "^5.0.0",
-    "@uppy/url": "^5.0.0",
-    "@uppy/webcam": "^5.0.0",
+    "@uppy/core": "workspace:^",
+    "@uppy/google-drive": "workspace:^",
+    "@uppy/url": "workspace:^",
+    "@uppy/webcam": "workspace:^",
     "@vitest/browser": "^3.2.4",
     "cssnano": "^7.0.7",
     "jsdom": "^26.1.0",
