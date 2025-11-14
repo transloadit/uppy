@@ -37,7 +37,7 @@ export { default as fetchWithNetworkError } from './fetchWithNetworkError.js'
 
 export {
   filterFilesToEmitUploadStarted,
-  filterNonFailedFiles,
+  filterFilesToUpload,
 } from './fileFilters.js'
 
 export { default as findAllDOMElements } from './findAllDOMElements.js'

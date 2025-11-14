@@ -2220,9 +2220,6 @@ export class Uppy<
     ]
     try {
       for (let step = currentUpload.step || 0; step < steps.length; step++) {
-        if (!currentUpload) {
-          break
-        }
         const fn = steps[step]
 
         this.setState({
@@ -2235,13 +2232,7 @@ export class Uppy<
           },
         })
 
-        // when restoring (e.g. using golden retriever), we don't need to re-upload already successfully uploaded files
-        // so let's exclude them here:
-        // https://github.com/transloadit/uppy/issues/5930
-        const fileIDs = currentUpload.fileIDs.filter((fileID) => {
-          const file = this.getFile(fileID)
-          return !file.progress.uploadComplete
-        })
+        const { fileIDs } = currentUpload
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
@@ -2249,6 +2240,9 @@ export class Uppy<
 
         // Update currentUpload value in case it was modified asynchronously.
         currentUpload = getCurrentUpload()
+        if (!currentUpload) {
+          break
+        }
       }
     } catch (err) {
       this.#removeUpload(uploadID)

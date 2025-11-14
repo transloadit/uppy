@@ -2609,7 +2609,7 @@ describe('src/Core', () => {
       expect(infoVisibleEvent.mock.calls.length).toEqual(1)
     })
 
-    it('should set an info message to be displayed for a period of time before hiding', (done) => {
+    it('should set an info message to be displayed for a period of time before hiding', async () => {
       const infoVisibleEvent = vi.fn()
       const infoHiddenEvent = vi.fn()
       const core = new Core()
@@ -2618,12 +2618,10 @@ describe('src/Core', () => {
 
       core.info('This is the message', 'info', 100)
       expect(infoHiddenEvent.mock.calls.length).toEqual(0)
-      setTimeout(() => {
-        expect(infoHiddenEvent.mock.calls.length).toEqual(1)
-        expect(core.getState().info).toEqual([])
-        // @ts-ignore
-        done()
-      }, 110)
+
+      await new Promise((resolve) => setTimeout(resolve, 110))
+      expect(infoHiddenEvent.mock.calls.length).toEqual(1)
+      expect(core.getState().info).toEqual([])
     })
 
     it('should hide an info message', () => {
