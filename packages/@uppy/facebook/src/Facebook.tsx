@@ -21,6 +21,13 @@ import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
+declare module '@uppy/core' {
+  // Register Facebook in the plugin type registry
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Facebook: Facebook<M, B>
+  }
+}
+
 export type FacebookOptions = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>
 }
