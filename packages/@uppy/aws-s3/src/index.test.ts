@@ -369,7 +369,6 @@ describe('AwsS3Multipart', () => {
         ),
         listParts: undefined as any,
       })
-      const _awsS3Multipart = core.getPlugin('AwsS3Multipart')!
       const fileSize = 5 * MB + 1 * MB
 
       core.addFile({
@@ -409,7 +408,6 @@ describe('AwsS3Multipart', () => {
         listParts: undefined as any,
       })
       const fileSize = 5 * MB + 1 * MB
-      const _awsS3Multipart = core.getPlugin('AwsS3Multipart')!
       const uploadErrorMock = vi.fn()
       const uploadSuccessMock = vi.fn()
       core.on('upload-error', uploadErrorMock)
