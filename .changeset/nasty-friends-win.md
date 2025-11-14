@@ -33,4 +33,4 @@
 ---
 
 - Add PluginTypeRegistry and typed getPlugin overload in @uppy/core
-minoregister plugin ids across packages so uppy.getPlugin('Dashboard' | 'Webcam' | …) returns the concrete plugin type and removes the need to pass generics in getPlugin()
+- Register plugin ids across packages so uppy.getPlugin('Dashboard' | 'Webcam') returns the concrete plugin type and removes the need to pass generics in getPlugin()
