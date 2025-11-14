@@ -10,7 +10,7 @@ describe('Webcam', () => {
         isTypeSupported: () => true,
       }
 
-      const uppy = new Uppy<Meta, Body>().use(Webcam)
+      const uppy = new Uppy().use(Webcam)
       expect(
         uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).not.toBeDefined()
