@@ -108,8 +108,8 @@ export default class ImageGenerator<
 
     // @ts-expect-error not typed because we do not depend on @uppy/dashboard
     this.uppy.once('dashboard:close-panel', () => {
-      localUppy.cancelAll()
       localUppy.off('transloadit:result', onResult)
+      localUppy.destroy()
       this.setPluginState(defaultState)
     })
 
@@ -125,6 +125,7 @@ export default class ImageGenerator<
     } finally {
       this.clearLoadingInterval()
       localUppy.off('transloadit:result', onResult)
+      localUppy.destroy()
       this.setPluginState({ loading: false })
     }
   }
