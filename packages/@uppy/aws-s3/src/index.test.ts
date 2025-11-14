@@ -9,7 +9,7 @@ import {
 } from 'vitest'
 
 import 'whatwg-fetch'
-import Core, { type UppyFile } from '@uppy/core'
+import Core, { type Meta, type UppyFile } from '@uppy/core'
 import nock from 'nock'
 import AwsS3Multipart, {
   type AwsBody,
@@ -36,9 +36,9 @@ describe('AwsS3Multipart', () => {
     let opts: Partial<AwsS3MultipartOptions<any, any>>
 
     beforeEach(() => {
-      const core = new Core<any, AwsBody>().use(AwsS3Multipart)
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
-      opts = awsS3Multipart.opts
+      const core = new Core<Meta, AwsBody>().use(AwsS3Multipart)
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
+      opts = awsS3Multipart?.opts ?? {}
     })
 
     it('allowedMetaFields is true', () => {
@@ -202,11 +202,11 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('without companionUrl (custom main functions)', () => {
-    let core: Core<any, AwsBody>
-    let awsS3Multipart: AwsS3Multipart<any, AwsBody>
+    let core: Core<Meta, AwsBody>
+    let awsS3Multipart: AwsS3Multipart<Meta, AwsBody>
 
     beforeEach(() => {
-      core = new Core<any, AwsBody>()
+      core = new Core<Meta, AwsBody>()
       core.use(AwsS3Multipart, {
         shouldUseMultipart: true,
         limit: 0,
@@ -226,7 +226,7 @@ describe('AwsS3Multipart', () => {
         }),
         listParts: undefined as any,
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart') as any
+      awsS3Multipart = core.getPlugin('AwsS3Multipart') as AwsS3Multipart<Meta, AwsBody>
     })
 
     it('Keeps chunks marked as busy through retries until they complete', async () => {
@@ -526,8 +526,8 @@ describe('AwsS3Multipart', () => {
   })
 
   describe('dynamic companionHeader using setOption', () => {
-    let core: Core<any, AwsBody>
-    let awsS3Multipart: AwsS3Multipart<any, AwsBody>
+    let core: Core<Meta, AwsBody>
+    let awsS3Multipart: AwsS3Multipart<Meta, AwsBody>
     const newToken = 'new token'
 
     it('companionHeader is updated before uploading file', async () => {
@@ -536,7 +536,7 @@ describe('AwsS3Multipart', () => {
       /* Set up preprocessor */
       core.addPreProcessor(() => {
         awsS3Multipart =
-          core.getPlugin<AwsS3Multipart<any, AwsBody>>('AwsS3Multipart')!
+          core.getPlugin<AwsS3Multipart<Meta, AwsBody>>('AwsS3Multipart')!
         awsS3Multipart.setOptions({
           endpoint: 'http://localhost',
           headers: {
