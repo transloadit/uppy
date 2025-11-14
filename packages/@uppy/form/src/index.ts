@@ -14,6 +14,12 @@ import getFormData from 'get-form-data'
 
 import packageJson from '../package.json' with { type: 'json' }
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Form: Form<M, B>
+  }
+}
+
 type Result<M extends Meta, B extends Body> = Parameters<
   UppyEventMap<M, B>['complete']
 >[0]

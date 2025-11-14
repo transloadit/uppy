@@ -3,6 +3,12 @@ import { BasePlugin } from '@uppy/core'
 import { getDroppedFiles, toArray } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    DropTarget: DropTarget<M, B>
+  }
+}
+
 export interface DropTargetOptions extends PluginOpts {
   target?: HTMLElement | string | null
   onDrop?: (event: DragEvent) => void

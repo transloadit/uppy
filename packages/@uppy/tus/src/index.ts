@@ -106,6 +106,12 @@ declare module '@uppy/utils' {
   }
 }
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Tus: Tus<M, B>
+  }
+}
+
 /**
  * Tus resumable file uploader
  */

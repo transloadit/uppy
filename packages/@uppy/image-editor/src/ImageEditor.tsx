@@ -13,6 +13,12 @@ import packageJson from '../package.json' with { type: 'json' }
 import Editor from './Editor.js'
 import locale from './locale.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    ImageEditor: ImageEditor<M, B>
+  }
+}
+
 declare global {
   namespace preact {
     interface Component {

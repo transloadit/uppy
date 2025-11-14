@@ -15,6 +15,9 @@ declare module '@uppy/core' {
     'thumbnail:request': (file: UppyFile<M, B>) => void
     'thumbnail:cancel': (file: UppyFile<M, B>) => void
   }
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    ThumbnailGenerator: ThumbnailGenerator<M, B>
+  }
 }
 
 interface Rotation {
@@ -498,5 +501,11 @@ export default class ThumbnailGenerator<
     if (this.opts.waitForThumbnailsBeforeUpload) {
       this.uppy.removePreProcessor(this.waitUntilAllProcessed)
     }
+  }
+}
+
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    ThumbnailGenerator: ThumbnailGenerator<M, B>
   }
 }

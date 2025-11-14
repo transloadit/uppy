@@ -15,6 +15,12 @@ import PermissionsScreen from './PermissionsScreen.js'
 import RecordingScreen from './RecordingScreen.js'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Audio: Audio<M, B>
+  }
+}
+
 export interface AudioOptions extends UIPluginOptions {
   showAudioSourceDropdown?: boolean
   locale?: LocaleStrings<typeof locale>

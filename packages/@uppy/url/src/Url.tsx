@@ -17,6 +17,12 @@ import locale from './locale.js'
 import UrlUI from './UrlUI.js'
 import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Url: Url<M, B>
+  }
+}
+
 function UrlIcon() {
   return (
     <svg

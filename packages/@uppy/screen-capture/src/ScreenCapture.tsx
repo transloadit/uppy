@@ -14,6 +14,12 @@ import locale from './locale.js'
 import RecorderScreen from './RecorderScreen.js'
 import ScreenRecIcon from './ScreenRecIcon.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    ScreenCapture: ScreenCapture<M, B>
+  }
+}
+
 // Check if screen capturing is supported.
 // mediaDevices is supprted on mobile Safari, getDisplayMedia is not
 function isScreenRecordingSupported() {

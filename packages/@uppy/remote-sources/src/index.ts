@@ -122,3 +122,9 @@ export default class RemoteSources<
     this.#installedPlugins.clear()
   }
 }
+
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    RemoteSources: RemoteSources<M, B>
+  }
+}

@@ -22,6 +22,12 @@ import packageJson from '../package.json' with { type: 'json' }
 import DriveProviderViews from './DriveProviderViews.js'
 import locale from './locale.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    GoogleDrive: GoogleDrive<M, B>
+  }
+}
+
 export type GoogleDriveOptions = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>
 }
