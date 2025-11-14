@@ -21,7 +21,6 @@ import PermissionsScreen from './PermissionsScreen.js'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 declare module '@uppy/core' {
-  // Register Webcam in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     Webcam: Webcam<M, B>
   }

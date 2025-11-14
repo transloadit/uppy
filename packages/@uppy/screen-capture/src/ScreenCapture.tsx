@@ -15,7 +15,6 @@ import RecorderScreen from './RecorderScreen.js'
 import ScreenRecIcon from './ScreenRecIcon.js'
 
 declare module '@uppy/core' {
-  // Register ScreenCapture in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     ScreenCapture: ScreenCapture<M, B>
   }

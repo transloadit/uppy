@@ -16,7 +16,6 @@ import statusBarStates from './StatusBarStates.js'
 import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 
 declare module '@uppy/core' {
-  // Register StatusBar in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     StatusBar: StatusBar<M, B>
   }

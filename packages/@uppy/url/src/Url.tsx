@@ -18,7 +18,6 @@ import UrlUI from './UrlUI.js'
 import forEachDroppedOrPastedUrl from './utils/forEachDroppedOrPastedUrl.js'
 
 declare module '@uppy/core' {
-  // Register Url in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     Url: Url<M, B>
   }

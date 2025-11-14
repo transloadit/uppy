@@ -16,7 +16,6 @@ import RecordingScreen from './RecordingScreen.js'
 import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 declare module '@uppy/core' {
-  // Register Audio in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     Audio: Audio<M, B>
   }

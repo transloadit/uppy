@@ -41,7 +41,6 @@ declare module '@uppy/core' {
     'dashboard:close-panel': (id: string | undefined) => void
   }
 
-  // Register Dashboard in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     Dashboard: Dashboard<M, B>
   }

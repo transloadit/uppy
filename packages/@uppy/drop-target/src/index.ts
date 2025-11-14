@@ -4,7 +4,6 @@ import { getDroppedFiles, toArray } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 
 declare module '@uppy/core' {
-  // Register DropTarget in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     DropTarget: DropTarget<M, B>
   }

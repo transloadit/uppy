@@ -14,7 +14,6 @@ import Editor from './Editor.js'
 import locale from './locale.js'
 
 declare module '@uppy/core' {
-  // Register ImageEditor in the plugin type registry
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     ImageEditor: ImageEditor<M, B>
   }
