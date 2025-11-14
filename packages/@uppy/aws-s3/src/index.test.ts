@@ -226,7 +226,7 @@ describe('AwsS3Multipart', () => {
         }),
         listParts: undefined as any,
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart
+      awsS3Multipart = core.getPlugin('AwsS3Multipart')!
     })
 
     it('Keeps chunks marked as busy through retries until they complete', async () => {
