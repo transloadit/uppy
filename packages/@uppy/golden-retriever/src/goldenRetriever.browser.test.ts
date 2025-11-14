@@ -207,9 +207,9 @@ describe('Golden retriever', () => {
 
     // Simulate ghosting of the files by deleting it from store(s)
     // @ts-expect-error
-    ;(uppy.getPlugin('GoldenRetriever'))[
-      Symbol.for('uppy test: deleteBlobs')
-    ](fileIds)
+    uppy
+      .getPlugin('GoldenRetriever')
+      [Symbol.for('uppy test: deleteBlobs')](fileIds)
 
     // reload page and recreate Uppy instance
     uppy = createUppy({ withPageReload: true }).use(GoldenRetriever)
