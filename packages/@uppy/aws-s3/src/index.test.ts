@@ -38,7 +38,7 @@ describe('AwsS3Multipart', () => {
     beforeEach(() => {
       const core = new Core<Meta, AwsBody>().use(AwsS3Multipart)
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
-      opts = awsS3Multipart?.opts
+      opts = awsS3Multipart.opts
     })
 
     it('allowedMetaFields is true', () => {
