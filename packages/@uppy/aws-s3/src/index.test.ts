@@ -37,8 +37,8 @@ describe('AwsS3Multipart', () => {
 
     beforeEach(() => {
       const core = new Core<Meta, AwsBody>().use(AwsS3Multipart)
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart')
-      opts = awsS3Multipart?.opts ?? {}
+      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
+      opts = awsS3Multipart?.opts
     })
 
     it('allowedMetaFields is true', () => {
@@ -226,7 +226,7 @@ describe('AwsS3Multipart', () => {
         }),
         listParts: undefined as any,
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart')!
+      awsS3Multipart = core.getPlugin('AwsS3Multipart
     })
 
     it('Keeps chunks marked as busy through retries until they complete', async () => {
