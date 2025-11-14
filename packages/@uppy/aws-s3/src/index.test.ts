@@ -226,7 +226,10 @@ describe('AwsS3Multipart', () => {
         }),
         listParts: undefined as any,
       })
-      awsS3Multipart = core.getPlugin('AwsS3Multipart') as AwsS3Multipart<Meta, AwsBody>
+      awsS3Multipart = core.getPlugin('AwsS3Multipart') as AwsS3Multipart<
+        Meta,
+        AwsBody
+      >
     })
 
     it('Keeps chunks marked as busy through retries until they complete', async () => {
@@ -366,7 +369,7 @@ describe('AwsS3Multipart', () => {
         ),
         listParts: undefined as any,
       })
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
+      const _awsS3Multipart = core.getPlugin('AwsS3Multipart')!
       const fileSize = 5 * MB + 1 * MB
 
       core.addFile({
@@ -406,7 +409,7 @@ describe('AwsS3Multipart', () => {
         listParts: undefined as any,
       })
       const fileSize = 5 * MB + 1 * MB
-      const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
+      const _awsS3Multipart = core.getPlugin('AwsS3Multipart')!
       const uploadErrorMock = vi.fn()
       const uploadSuccessMock = vi.fn()
       core.on('upload-error', uploadErrorMock)

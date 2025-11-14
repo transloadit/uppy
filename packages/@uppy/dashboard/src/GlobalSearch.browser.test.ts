@@ -1,4 +1,4 @@
-import Uppy, { type Meta } from '@uppy/core'
+import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'

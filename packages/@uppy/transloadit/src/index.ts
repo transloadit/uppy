@@ -133,14 +133,10 @@ declare module '@uppy/core' {
     }) => void
   }
 
-
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     Transloadit: Transloadit<M, B>
   }
-
 }
-
-
 
 declare module '@uppy/utils' {
   export interface LocalUppyFile<M extends Meta, B extends Body> {
@@ -1036,4 +1032,3 @@ export default class Transloadit<
 }
 
 export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
-

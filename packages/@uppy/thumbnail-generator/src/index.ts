@@ -18,7 +18,6 @@ declare module '@uppy/core' {
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     ThumbnailGenerator: ThumbnailGenerator<M, B>
   }
-
 }
 
 interface Rotation {
