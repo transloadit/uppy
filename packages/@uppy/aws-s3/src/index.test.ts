@@ -125,7 +125,7 @@ describe('AwsS3Multipart', () => {
       const awsS3Multipart = core.getPlugin('AwsS3Multipart')!
 
       const err = 'Expected a `endpoint` option'
-      const file = {} as any
+      const file = {} as unknown as UppyFile<Meta, Record<string, never>>
       const opts = {} as any
 
       expect(() => awsS3Multipart.opts.createMultipartUpload(file)).toThrow(err)
