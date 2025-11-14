@@ -1,4 +1,4 @@
-import Uppy, { type Body, type Meta } from '@uppy/core'
+import { Uppy } from '@uppy/core'
 import { describe, expect, it } from 'vitest'
 import Webcam from './index.js'
 

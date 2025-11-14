@@ -138,4 +138,3 @@ test('Type Registry: works with custom Meta and Body types', () => {
     TestRegistryPlugin<CustomMeta, CustomBody> | undefined
   >()
 })
-
