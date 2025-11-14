@@ -16,8 +16,9 @@ import classNames from 'classnames'
 import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
+import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
-import SearchInput from '../SearchInput.js'
+import SearchView from '../SearchView.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
@@ -278,17 +279,14 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
     if (isInputMode) {
       return (
-        <SearchInput
-          searchString={searchString}
-          setSearchString={this.setSearchString}
-          submitSearchString={this.search}
+        <SearchView
+          value={searchString}
+          onChange={this.setSearchString}
+          onSubmit={this.search}
           inputLabel={i18n('enterTextToSearch')}
-          buttonLabel={i18n('searchImages')}
-          wrapperClassName="uppy-SearchProvider"
-          inputClassName="uppy-c-textInput uppy-SearchProvider-input"
-          showButton
-          buttonCSSClassName="uppy-SearchProvider-searchButton"
-        />
+        >
+          {i18n('searchImages')}
+        </SearchView>
       )
     }
 
@@ -300,14 +298,12 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
         )}
       >
         {opts.showFilter && (
-          <SearchInput
-            searchString={searchString}
-            setSearchString={this.setSearchString}
-            submitSearchString={this.search}
+          <FilterInput
+            value={searchString}
+            onChange={this.setSearchString}
+            onSubmit={this.search}
             inputLabel={i18n('search')}
-            clearSearchLabel={i18n('resetSearch')}
-            wrapperClassName="uppy-ProviderBrowser-searchFilter"
-            inputClassName="uppy-ProviderBrowser-searchFilterInput"
+            i18n={i18n}
           />
         )}
 

@@ -1,7 +1,7 @@
 import Audio from '@uppy/audio'
 import AwsS3 from '@uppy/aws-s3'
 import Compressor from '@uppy/compressor'
-import Uppy, { debugLogger } from '@uppy/core'
+import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import DropTarget from '@uppy/drop-target'
 import Form from '@uppy/form'
@@ -10,6 +10,7 @@ import GoogleDrive from '@uppy/google-drive'
 import GoogleDrivePicker from '@uppy/google-drive-picker'
 import GooglePhotosPicker from '@uppy/google-photos-picker'
 import ImageEditor from '@uppy/image-editor'
+import ImageGenerator from '@uppy/image-generator'
 import english from '@uppy/locales/lib/en_US.js'
 import RemoteSources from '@uppy/remote-sources'
 import ScreenCapture from '@uppy/screen-capture'
@@ -95,7 +96,7 @@ export default () => {
 
   const uppyDashboard = new Uppy({
     locale: english,
-    logger: debugLogger,
+    // logger: debugLogger,
     meta: {
       username: 'John',
       license: 'Creative Commons',
@@ -174,6 +175,24 @@ export default () => {
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
+    .use(ImageGenerator, {
+      target: Dashboard,
+      assemblyOptions: async (prompt) =>
+        // never create a signature on the client in production
+        generateSignatureIfSecret(TRANSLOADIT_SECRET, {
+          auth: { key: TRANSLOADIT_KEY },
+          steps: {
+            generated_image: {
+              robot: '/image/generate',
+              result: true,
+              aspect_ratio: '2:3',
+              model: 'flux-1.1-pro-ultra',
+              prompt,
+              num_outputs: 2,
+            },
+          },
+        }),
+    })
     .use(DropTarget, {
       target: document.body,
     })

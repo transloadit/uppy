@@ -17,8 +17,8 @@ import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
+import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
-import SearchInput from '../SearchInput.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
@@ -678,14 +678,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
         />
         {opts.showFilter && (
-          <SearchInput
-            searchString={searchString}
-            setSearchString={(s: string) => this.onSearchInput(s)}
-            submitSearchString={() => {}}
+          <FilterInput
+            value={searchString}
+            onChange={(s: string) => this.onSearchInput(s)}
+            onSubmit={() => {}}
             inputLabel={i18n('filter')}
-            clearSearchLabel={i18n('resetFilter')}
-            wrapperClassName="uppy-ProviderBrowser-searchFilter"
-            inputClassName="uppy-ProviderBrowser-searchFilterInput"
+            i18n={i18n}
           />
         )}
 
