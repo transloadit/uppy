@@ -1,5 +1,11 @@
 import getFileType from './getFileType.js'
-import type { MinimalRequiredUppyFile, UppyFile } from './UppyFile.js'
+import type {
+  Body,
+  LocalUppyFile,
+  Meta,
+  RemoteUppyFile,
+  UppyFile,
+} from './UppyFile.js'
 
 function encodeCharacter(character: string): string {
   return character.charCodeAt(0).toString(32)
@@ -19,9 +25,11 @@ function encodeFilename(name: string): string {
  * Takes a file object and turns it into fileID, by converting file.name to lowercase,
  * removing extra characters and adding type, size and lastModified
  */
-export default function generateFileID(
-  file: Omit<MinimalRequiredUppyFile<any, any>, 'name'> &
-    Pick<UppyFile<any, any>, 'name'>,
+export default function generateFileID<M extends Meta, B extends Body>(
+  file: Partial<Pick<UppyFile<M, B>, 'id' | 'type' | 'name'>> &
+    Pick<UppyFile<M, B>, 'data'> & {
+      meta?: { relativePath?: unknown }
+    },
   instanceId: string,
 ): string {
   // It's tempting to do `[items].filter(Boolean).join('-')` here, but that
@@ -40,7 +48,7 @@ export default function generateFileID(
     id += `-${encodeFilename(file.meta.relativePath.toLowerCase())}`
   }
 
-  if (file.data.size !== undefined) {
+  if (file.data?.size !== undefined) {
     id += `-${file.data.size}`
   }
   if ((file.data as File).lastModified !== undefined) {
@@ -52,9 +60,10 @@ export default function generateFileID(
 
 // If the provider has a stable, unique ID, then we can use that to identify the file.
 // Then we don't have to generate our own ID, and we can add the same file many times if needed (different path)
-function hasFileStableId(
-  file: Omit<MinimalRequiredUppyFile<any, any>, 'name'> &
-    Pick<UppyFile<any, any>, 'name'>,
+function hasFileStableId<M extends Meta, B extends Body>(
+  file:
+    | Pick<LocalUppyFile<M, B>, 'isRemote'>
+    | Pick<RemoteUppyFile<M, B>, 'isRemote' | 'remote'>,
 ): boolean {
   if (!file.isRemote || !file.remote) return false
   // These are the providers that it seems like have stable IDs for their files. The other's I haven't checked yet.
@@ -65,12 +74,19 @@ function hasFileStableId(
     'facebook',
     'unsplash',
   ])
-  return stableIdProviders.has(file.remote.provider as any)
+  return stableIdProviders.has(file.remote.provider!)
 }
 
-export function getSafeFileId(
-  file: Omit<MinimalRequiredUppyFile<any, any>, 'name'> &
-    Pick<UppyFile<any, any>, 'name'>,
+export type SafeFileIdBasis<M extends Meta, B extends Body> = Partial<
+  Pick<UppyFile<M, B>, 'id' | 'type'>
+> &
+  (
+    | Pick<RemoteUppyFile<M, B>, 'isRemote' | 'remote' | 'data'>
+    | Pick<LocalUppyFile<M, B>, 'isRemote' | 'data'>
+  ) & { meta?: { relativePath?: unknown } | undefined }
+
+export function getSafeFileId<M extends Meta, B extends Body>(
+  file: SafeFileIdBasis<M, B>,
   instanceId: string,
 ): string {
   if (hasFileStableId(file)) return file.id!

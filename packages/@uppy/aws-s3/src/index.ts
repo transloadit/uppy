@@ -6,7 +6,13 @@ import {
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
-import type { Body, Meta, RequestOptions, UppyFile } from '@uppy/utils'
+import type {
+  Body,
+  LocalUppyFile,
+  Meta,
+  RequestOptions,
+  UppyFile,
+} from '@uppy/utils'
 import {
   createAbortError,
   filterFilesToEmitUploadStarted,
@@ -26,7 +32,7 @@ import type {
 } from './utils.js'
 import { throwIfAborted } from './utils.js'
 
-interface MultipartFile<M extends Meta, B extends Body> extends UppyFile<M, B> {
+type MultipartFile<M extends Meta, B extends Body> = UppyFile<M, B> & {
   s3Multipart: UploadResult
 }
 
@@ -38,6 +44,9 @@ type PartUploadedCallback<M extends Meta, B extends Body> = (
 declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
     's3-multipart:part-uploaded': PartUploadedCallback<M, B>
+  }
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    AwsS3Multipart: AwsS3Multipart<M, B>
   }
 }
 
@@ -813,7 +822,7 @@ export default class AwsS3Multipart<
     return this.uppy.getFile(file.id) || file
   }
 
-  #uploadLocalFile(file: UppyFile<M, B>) {
+  #uploadLocalFile(file: LocalUppyFile<M, B>) {
     return new Promise<undefined | string>((resolve, reject) => {
       const onProgress = (bytesUploaded: number, bytesTotal: number) => {
         const latestFile = this.uppy.getFile(file.id)
@@ -851,6 +860,8 @@ export default class AwsS3Multipart<
 
         resolve(undefined)
       }
+
+      if (file.data == null) throw new Error('File data is empty')
 
       const upload = new MultipartUploader<M, B>(file.data, {
         // .bind to pass the file object to each handler.
@@ -916,9 +927,9 @@ export default class AwsS3Multipart<
 
   #getCompanionClientArgs(file: UppyFile<M, B>) {
     return {
-      ...file.remote?.body,
+      ...('remote' in file && file.remote?.body),
       protocol: 's3-multipart',
-      size: file.data.size,
+      size: file.data!.size,
       metadata: file.meta,
     }
   }

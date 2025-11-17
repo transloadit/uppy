@@ -25,7 +25,7 @@ const installPlugin = () => {
 	} satisfies DashboardOptions<M, B>;
 
 	uppy.use(DashboardPlugin<M, B>, options);
-	plugin = uppy.getPlugin(options.id) as DashboardPlugin<M, B>;
+	plugin = uppy.getPlugin(options.id)!;
 	if (open) plugin.openModal();
 };
 const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
@@ -42,7 +42,7 @@ $: {
 		...props,
 		target: container,
 	} satisfies DashboardOptions<M, B>;
-	uppy.setOptions(options);
+	plugin?.setOptions(options);
 }
 $: {
 	if (open && !lastOpen) {

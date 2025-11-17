@@ -1,5 +1,24 @@
 # @uppy/react
 
+## 5.1.1
+
+### Patch Changes
+
+- 16aa6fe: Add missing useUppyContext export
+
+## 5.1.0
+
+### Minor Changes
+
+- 72d2d68: Add @uppy/{screen-capture,status-bar,webcam} as optional peer dependencies
+
+### Patch Changes
+
+- 86f353d: Remove dashboard export from index.ts
+- Updated dependencies [72d2d68]
+- Updated dependencies [26bf726]
+  - @uppy/components@1.1.0
+
 ## 5.0.3
 
 ### Patch Changes

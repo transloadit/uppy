@@ -1,4 +1,4 @@
-import type { UppyFile } from '@uppy/utils'
+import type { UppyFileId } from '@uppy/utils'
 
 const indexedDB =
   typeof window !== 'undefined' &&
@@ -23,7 +23,7 @@ const MiB = 0x10_00_00
 /**
  * Set default `expires` dates on existing stored blobs.
  */
-function migrateExpiration(store: IDBObjectStore) {
+function migrateExpiration(store: IDBObjectStore): void {
   const request = store.openCursor()
   request.onsuccess = (event) => {
     const cursor = (event.target as IDBRequest).result
@@ -77,6 +77,8 @@ function waitForRequest<T>(request: IDBRequest): Promise<T> {
     request.onerror = reject
   })
 }
+
+type AddFilePayload = { id: UppyFileId; data: Blob }
 
 type IndexedDBStoredFile = {
   id: string
@@ -137,14 +139,14 @@ class IndexedDBStore {
     return Promise.resolve(this.#ready)
   }
 
-  key(fileID: string): string {
+  key(fileID: UppyFileId): string {
     return `${this.name}!${fileID}`
   }
 
   /**
    * List all file blobs currently in the store.
    */
-  async list(): Promise<Record<string, IndexedDBStoredFile['data']>> {
+  async list(): Promise<Record<UppyFileId, IndexedDBStoredFile['data']>> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
@@ -197,8 +199,8 @@ class IndexedDBStore {
   /**
    * Save a file in the store.
    */
-  async put<T>(file: UppyFile<any, any>): Promise<T> {
-    if (file.data.size > this.opts.maxFileSize) {
+  async put<T>(file: AddFilePayload): Promise<T> {
+    if (file.data.size != null && file.data.size > this.opts.maxFileSize) {
       throw new Error('File is too big to store.')
     }
     const size = await this.getSize()
@@ -220,7 +222,7 @@ class IndexedDBStore {
   /**
    * Delete a file blob from the store.
    */
-  async delete(fileID: string): Promise<unknown> {
+  async delete(fileID: UppyFileId): Promise<unknown> {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readwrite')
     const request = transaction.objectStore(STORE_NAME).delete(this.key(fileID))

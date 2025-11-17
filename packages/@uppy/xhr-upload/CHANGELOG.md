@@ -1,5 +1,14 @@
 # @uppy/xhr-upload
 
+## 5.0.2
+
+### Patch Changes
+
+- 8ac1654: - Make `file.data` nullable - Because for ghosts it will be `undefined` and we don't have any type to distinguish ghosts from other (local) files. This caused a crash, because we didn't check for `undefined` everywhere (when trying to store a blob that was `undefined`). This means we have to add null checks in some packages
+  - Split UppyFile into two interfaces distinguished by the `isRemote` boolean:
+    - LocalUppyFile
+    - RemoteUppyFile
+
 ## 5.0.1
 
 ### Patch Changes

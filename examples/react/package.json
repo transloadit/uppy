@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && vite build",
-    "test": "vitest run --browser.headless",
+    "test": "vitest run",
     "dev": "vite",
     "serve": "vite preview"
   },
@@ -27,7 +27,7 @@
     "@vitest/browser": "^3.2.4",
     "playwright": "1.54.1",
     "typescript": "^5.7.3",
-    "vite": "^7.0.7",
+    "vite": "^7.1.11",
     "vitest": "^3.2.4",
     "vitest-browser-react": "^1.0.0"
   }

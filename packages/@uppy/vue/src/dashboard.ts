@@ -32,7 +32,7 @@ export default defineComponent({
         target: containerRef.value,
       }
       uppy.use(DashboardPlugin, options)
-      pluginRef.value = uppy.getPlugin(options.id) as DashboardPlugin<any, any>
+      pluginRef.value = uppy.getPlugin(options.id)!
     }
 
     useUppy(onMount, pluginRef, props.uppy, propsRef)

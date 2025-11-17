@@ -9,12 +9,6 @@ describe('isNetworkError', () => {
       status: 0,
     } as any as XMLHttpRequest
 
-    const xhrNetworkError2Mock = {
-      readyState: 2,
-      responseText: '',
-      status: 300,
-    } as any as XMLHttpRequest
-
     const xhrRegularErrorMock = {
       readyState: 4,
       responseText: 'Failed',
@@ -27,9 +21,15 @@ describe('isNetworkError', () => {
       status: 200,
     } as any as XMLHttpRequest
 
+    const xhrIncompleteRequestMock = {
+      readyState: 2,
+      responseText: '',
+      status: 0,
+    } as any as XMLHttpRequest
+
     expect(isNetworkError(xhrNetworkErrorMock)).toEqual(true)
-    expect(isNetworkError(xhrNetworkError2Mock)).toEqual(true)
     expect(isNetworkError(xhrRegularErrorMock)).toEqual(false)
     expect(isNetworkError(xhrNetworkSuccessMock)).toEqual(false)
+    expect(isNetworkError(xhrIncompleteRequestMock)).toEqual(false)
   })
 })

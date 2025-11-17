@@ -20,7 +20,7 @@ const installPlugin = () => {
 	} satisfies StatusBarOptions;
 
 	uppy.use(StatusBarPlugin<M, B>, options);
-	plugin = uppy.getPlugin(options.id) as StatusBarPlugin<M, B>;
+	plugin = uppy.getPlugin(options.id)!;
 };
 const uninstallPlugin = (uppyInstance: Uppy<M, B> = uppy) => {
 	if (plugin != null) uppyInstance.removePlugin(plugin);
@@ -35,7 +35,7 @@ $: {
 		...props,
 		target: container,
 	} satisfies StatusBarOptions;
-	uppy.setOptions(options);
+	plugin?.setOptions(options);
 }
 </script>
 

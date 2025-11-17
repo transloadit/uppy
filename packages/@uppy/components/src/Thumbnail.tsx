@@ -36,6 +36,7 @@ export default function Thumbnail(props: ThumbnailProps) {
     if (props.file.isRemote) {
       return props.file.preview
     }
+    if (props.file.data == null) throw new Error('File data is empty')
     return URL.createObjectURL(props.file.data)
   }, [props.file.data, props.images, props.file.isRemote, props.file.preview])
 

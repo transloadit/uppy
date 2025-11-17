@@ -22,6 +22,7 @@ export type {
   PartialTreeFolderNode,
   PartialTreeFolderRoot,
   PartialTreeId,
+  PluginTypeRegistry,
   State,
   UnknownPlugin,
   UnknownProviderPlugin,

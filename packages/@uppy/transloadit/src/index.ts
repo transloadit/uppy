@@ -8,112 +8,31 @@ import type {
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
 import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
-import { ErrorWithCause, hasProperty, RateLimitedQueue } from '@uppy/utils'
+import {
+  ErrorWithCause,
+  hasProperty,
+  RateLimitedQueue,
+  type RemoteUppyFile,
+} from '@uppy/utils'
+import type {
+  AssemblyStatus,
+  AssemblyStatusResult,
+  AssemblyStatusUpload,
+  CreateAssemblyParams,
+} from 'transloadit'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
 import Client, { type AssemblyError } from './Client.js'
 import locale from './locale.js'
 
-export interface AssemblyFile {
-  id: string
-  name: string
-  basename: string
-  ext: string
-  size: number
-  mime: string
-  type: string
-  field: string
-  md5hash: string
-  is_tus_file: boolean
-  original_md5hash: string
-  original_id: string
-  original_name: string
-  original_basename: string
-  original_path: string
-  url: string
-  ssl_url: string
-  tus_upload_url: string
-  meta: Record<string, any>
-}
-
-export interface AssemblyResult extends AssemblyFile {
-  cost: number
-  execTime: number
-  queue: string
-  queueTime: number
-  localId: string | null
-  user_meta?: Record<string, string>
-}
-
-export interface AssemblyResponse {
-  ok: string
-  message?: string
-  assembly_id: string
-  parent_id?: string
-  account_id: string
-  template_id?: string
-  instance: string
-  assembly_url: string
-  assembly_ssl_url: string
-  uppyserver_url: string
-  companion_url: string
-  websocket_url: string
-  tus_url: string
-  bytes_received: number
-  bytes_expected: number
-  upload_duration: number
-  client_agent?: string
-  client_ip?: string
-  client_referer?: string
-  transloadit_client: string
-  start_date: string
-  upload_meta_data_extracted: boolean
-  warnings: any[]
-  is_infinite: boolean
-  has_dupe_jobs: boolean
-  execution_start: string
-  execution_duration: number
-  execution_progress?: number
-  queue_duration: number
-  jobs_queue_duration: number
-  notify_start?: any
-  notify_url?: string
-  notify_status?: any
-  notify_response_code?: any
-  notify_duration?: any
-  last_job_completed?: string
-  fields: Record<string, any>
-  running_jobs: any[]
-  bytes_usage: number
-  executing_jobs: any[]
-  started_jobs: string[]
-  parent_assembly_status: any
-  params: string
-  template?: any
-  merged_params: string
-  uploads: AssemblyFile[]
-  results: Record<string, AssemblyResult[]>
-  build_id: string
-  error?: string
-  stderr?: string
-  stdout?: string
-  reason?: string
-}
-
-export interface AssemblyParameters {
-  auth: {
-    key: string
-    expires?: string
-  }
-  template_id?: string
-  steps?: { [step: string]: Record<string, unknown> }
-  fields?: { [name: string]: number | string }
-  notify_url?: string
-}
+export type AssemblyResponse = AssemblyStatus
+export type AssemblyFile = AssemblyStatusUpload
+export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
+export type AssemblyParameters = CreateAssemblyParams
 
 export interface AssemblyOptions {
-  params?: AssemblyParameters | null
+  params?: AssemblyParameters | string | null
   fields?: Record<string, string | number> | string[] | null
   signature?: string | null
 }
@@ -179,9 +98,9 @@ declare module '@uppy/core' {
   // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
-    restored: (pluginData: Record<string, TransloaditState>) => void
-    'restore:get-data': (
-      setData: (arg: Record<string, PersistentState>) => void,
+    restored: (pluginData: Record<string, PersistentState>) => void
+    'restore:plugin-data-changed': (
+      pluginData: Record<string, PersistentState | undefined>,
     ) => void
     'transloadit:assembly-created': (
       assembly: AssemblyResponse,
@@ -213,10 +132,18 @@ declare module '@uppy/core' {
       progress_combined?: number
     }) => void
   }
+
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Transloadit: Transloadit<M, B>
+  }
 }
 
 declare module '@uppy/utils' {
-  export interface UppyFile<M extends Meta, B extends Body> {
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    transloadit?: { assembly: string }
+    tus?: TusOpts<M, B>
+  }
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
     tus?: TusOpts<M, B>
   }
@@ -229,14 +156,15 @@ const sendErrorToConsole = (originalErr: Error) => (err: Error) => {
   console.error(error, originalErr)
 }
 
-function validateParams(params?: AssemblyParameters | null): void {
+function validateParams(params?: AssemblyOptions['params']): void {
   if (params == null) {
     throw new Error('Transloadit: The `params` option is required.')
   }
 
+  let parsed: AssemblyParameters
   if (typeof params === 'string') {
     try {
-      params = JSON.parse(params)
+      parsed = JSON.parse(params) as AssemblyParameters
     } catch (err) {
       // Tell the user that this is not an Uppy bug!
       throw new ErrorWithCause(
@@ -244,14 +172,56 @@ function validateParams(params?: AssemblyParameters | null): void {
         { cause: err },
       )
     }
+  } else {
+    parsed = params
   }
 
-  if (!params!.auth || !params!.auth.key) {
+  if (!parsed.auth || !parsed.auth.key) {
     throw new Error(
       'Transloadit: The `params.auth.key` option is required. ' +
         'You can find your Transloadit API key at https://transloadit.com/c/template-credentials',
     )
   }
+}
+
+function ensureAssemblyId(status: AssemblyResponse): string {
+  if (!status.assembly_id) {
+    console.warn('Assembly status is missing `assembly_id`.', status)
+    throw new Error('Transloadit: Assembly status is missing `assembly_id`.')
+  }
+  return status.assembly_id
+}
+
+function ensureUrl(
+  label: string,
+  ...candidates: Array<string | undefined>
+): string {
+  for (const value of candidates) {
+    if (typeof value === 'string' && value.length > 0) {
+      return value
+    }
+  }
+  throw new Error(`Transloadit: Assembly status is missing ${label}.`)
+}
+
+export function getAssemblyUrl(
+  assembly: Pick<AssemblyResponse, 'assembly_ssl_url' | 'assembly_url'>,
+): string {
+  return ensureUrl(
+    '`assembly_url`',
+    assembly.assembly_url,
+    assembly.assembly_ssl_url,
+  )
+}
+
+export function getAssemblyUrlSsl(
+  assembly: Pick<AssemblyResponse, 'assembly_ssl_url' | 'assembly_url'>,
+): string {
+  return ensureUrl(
+    '`assembly_ssl_url`',
+    assembly.assembly_ssl_url,
+    assembly.assembly_url,
+  )
 }
 
 const COMPANION_URL = 'https://api2.transloadit.com/companion'
@@ -273,7 +243,7 @@ export default class Transloadit<
 
   client: Client<M, B>
 
-  assembly?: Assembly
+  #assembly?: Assembly
 
   #watcher!: AssemblyWatcher<M, B>
 
@@ -352,16 +322,21 @@ export default class Transloadit<
    */
   #attachAssemblyMetadata(file: UppyFile<M, B>, status: AssemblyResponse) {
     // Add the metadata parameters Transloadit needs.
+    const assemblyUrl = getAssemblyUrl(status)
+    const tusEndpoint = ensureUrl('`tus_url`', status.tus_url)
+    const assemblyId = ensureAssemblyId(status)
+
     const meta = {
       ...file.meta,
-      assembly_url: status.assembly_url,
+      // @TODO(tim-kos), can we safely bump this to assembly_ssl_url / getAssemblyUrlSsl?
+      assembly_url: assemblyUrl,
       filename: file.name,
       fieldname: 'file',
     }
     // Add Assembly-specific Tus endpoint.
     const tus = {
       ...file.tus,
-      endpoint: status.tus_url,
+      endpoint: tusEndpoint,
       // Include X-Request-ID headers for better debugging.
       addRequestId: true,
     }
@@ -370,18 +345,22 @@ export default class Transloadit<
     // remote, because this is the criteria to identify remote files.
     // We only replace the hostname for Transloadit's companions, so that
     // people can also self-host them while still using Transloadit for encoding.
-    let { remote } = file
+    let remote: RemoteUppyFile<M, B>['remote'] | undefined
 
-    if (file.remote && TL_COMPANION.test(file.remote.companionUrl)) {
-      const newHost = status.companion_url.replace(/\/$/, '')
-      const path = file.remote.url
-        .replace(file.remote.companionUrl, '')
-        .replace(/^\//, '')
+    if ('remote' in file && file.remote) {
+      ;({ remote } = file)
 
-      remote = {
-        ...file.remote,
-        companionUrl: newHost,
-        url: `${newHost}/${path}`,
+      if (status.companion_url && TL_COMPANION.test(file.remote.companionUrl)) {
+        const newHost = status.companion_url.replace(/\/$/, '')
+        const path = file.remote.url
+          .replace(file.remote.companionUrl, '')
+          .replace(/^\//, '')
+
+        remote = {
+          ...file.remote,
+          companionUrl: newHost,
+          url: `${newHost}/${path}`,
+        }
       }
     }
 
@@ -389,7 +368,7 @@ export default class Transloadit<
     const newFile = {
       ...file,
       transloadit: {
-        assembly: status.assembly_id,
+        assembly: assemblyId,
       },
     }
     // Only configure the Tus plugin if we are uploading straight to Transloadit (the default).
@@ -423,7 +402,7 @@ export default class Transloadit<
 
       const assembly = new Assembly(newAssembly, this.#rateLimitedQueue)
       const { status } = assembly
-      const assemblyID = status.assembly_id
+      const assemblyID = ensureAssemblyId(status)
 
       const updatedFiles: Record<string, UppyFile<M, B>> = {}
       files.forEach((file) => {
@@ -516,6 +495,33 @@ export default class Transloadit<
   }
 
   /**
+   * Allows Golden Retriever plugin to serialize the Assembly status so we can restore it later
+   */
+  #handleAssemblyStatusUpdate = (
+    assemblyResponse: AssemblyResponse | undefined,
+  ) => {
+    this.uppy.emit('restore:plugin-data-changed', {
+      [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
+    })
+  }
+
+  get assembly() {
+    return this.#assembly
+  }
+  set assembly(newAssembly: Assembly | undefined) {
+    if (!newAssembly && this.assembly) {
+      this.assembly.off('status', this.#handleAssemblyStatusUpdate)
+    }
+    this.#assembly = newAssembly
+
+    this.#handleAssemblyStatusUpdate(newAssembly?.status)
+
+    if (newAssembly) {
+      newAssembly.on('status', this.#handleAssemblyStatusUpdate)
+    }
+  }
+
+  /**
    * Used when `importFromUploadURLs` is enabled: adds files to the Assembly
    * once they have been fully uploaded.
    */
@@ -582,9 +588,15 @@ export default class Transloadit<
 
   #onResult(assemblyId: string, stepName: string, result: AssemblyResult) {
     const state = this.getPluginState()
-    const file = state.files[result.original_id]
-    // The `file` may not exist if an import robot was used instead of a file upload.
-    result.localId = file ? file.id : null
+
+    if (!('id' in result)) {
+      console.warn('Result has no id', result)
+      return
+    }
+    if (typeof result.id !== 'string') {
+      console.warn('Result has no id of type string', result)
+      return
+    }
 
     const entry = {
       result,
@@ -596,7 +608,12 @@ export default class Transloadit<
     this.setPluginState({
       results: [...state.results, entry],
     })
-    this.uppy.emit('transloadit:result', stepName, result, this.getAssembly()!)
+    this.uppy.emit(
+      'transloadit:result',
+      stepName,
+      entry.result,
+      this.getAssembly()!,
+    )
   }
 
   /**
@@ -604,7 +621,7 @@ export default class Transloadit<
    * and emit it.
    */
   #onAssemblyFinished(assembly: Assembly) {
-    const url = assembly.status.assembly_ssl_url
+    const url = getAssemblyUrlSsl(assembly.status)
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       assembly.status = finalStatus
       this.uppy.emit('transloadit:complete', finalStatus)
@@ -630,22 +647,10 @@ export default class Transloadit<
     }
   }
 
-  /**
-   * Custom state serialization for the Golden Retriever plugin.
-   * It will pass this back to the `_onRestored` function.
-   */
-  #getPersistentData = (
-    setData: (arg: Record<string, PersistentState>) => void,
-  ) => {
-    if (this.assembly) {
-      setData({ [this.id]: { assemblyResponse: this.assembly.status } })
-    }
-  }
-
-  #onRestored = (pluginData: Record<string, unknown>) => {
-    const savedState = (
-      pluginData?.[this.id] ? pluginData[this.id] : {}
-    ) as PersistentState
+  #onRestored = (pluginData: Record<string, PersistentState>) => {
+    const savedState: {
+      assemblyResponse?: PersistentState['assemblyResponse']
+    } = pluginData?.[this.id] ? pluginData[this.id] : {}
     const previousAssembly = savedState.assemblyResponse
 
     if (!previousAssembly) {
@@ -665,9 +670,9 @@ export default class Transloadit<
         id: string
         assembly: string
       }[] = []
-      const { assembly_id: id } = previousAssembly
+      const id = ensureAssemblyId(previousAssembly)
 
-      previousAssembly.uploads.forEach((uploadedFile) => {
+      previousAssembly.uploads?.forEach((uploadedFile) => {
         const file = this.#findFile(uploadedFile)
         files[uploadedFile.id] = {
           id: file!.id,
@@ -677,28 +682,47 @@ export default class Transloadit<
       })
 
       const state = this.getPluginState()
-      Object.keys(previousAssembly.results).forEach((stepName) => {
-        for (const result of previousAssembly.results[stepName]) {
+      const restoredResults = previousAssembly.results ?? {}
+
+      Object.keys(restoredResults).forEach((stepName) => {
+        const stepResults = restoredResults[stepName] ?? []
+        for (const result of stepResults) {
+          if (!('id' in result)) {
+            console.warn('Result has no id', result)
+            continue
+          }
+          if (typeof result.id !== 'string') {
+            console.warn('Result has no id of type string', result)
+            continue
+          }
+          if (!('original_id' in result)) {
+            console.warn('Result has no original_id', result)
+            continue
+          }
+          if (typeof result.original_id !== 'string') {
+            console.warn('Result has no original_id of type string', result)
+            continue
+          }
           const file = state.files[result.original_id]
-          result.localId = file ? file.id : null
           results.push({
             id: result.id,
-            result,
+            result: { ...result, localId: file ? file.id : null },
             stepName,
             assembly: id,
           })
         }
       })
 
-      this.assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
-      this.assembly.status = previousAssembly
+      const assembly = new Assembly(previousAssembly, this.#rateLimitedQueue)
+      assembly.status = previousAssembly
+      this.assembly = assembly
       this.setPluginState({ files, results })
       return files
     }
 
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = (ids: string[]) => {
-      this.#createAssemblyWatcher(previousAssembly.assembly_id)
+      this.#createAssemblyWatcher(ensureAssemblyId(previousAssembly))
       this.#connectAssembly(this.assembly!, ids)
     }
 
@@ -722,8 +746,7 @@ export default class Transloadit<
 
   #connectAssembly(assembly: Assembly, ids: UppyFile<M, B>['id'][]) {
     const { status } = assembly
-    const id = status.assembly_id
-    this.assembly = assembly
+    const id = ensureAssemblyId(status)
 
     assembly.on('upload', (file: AssemblyFile) => {
       this.#onFileUploadComplete(id, file)
@@ -814,7 +837,8 @@ export default class Transloadit<
         const file = this.uppy.getFile(fileID)
         this.uppy.emit('preprocess-complete', file)
       })
-      this.#createAssemblyWatcher(assembly.status.assembly_id)
+      this.#createAssemblyWatcher(ensureAssemblyId(assembly.status))
+      this.assembly = assembly
       this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
       fileIDs.forEach((fileID) => {
@@ -838,7 +862,9 @@ export default class Transloadit<
         // Only use files without errors
         .filter((file) => !file.error)
 
-      const assemblyID = this.assembly?.status.assembly_id
+      const assemblyID = this.assembly
+        ? ensureAssemblyId(this.assembly.status)
+        : undefined
 
       const closeSocketConnections = () => {
         this.assembly?.close()
@@ -957,7 +983,6 @@ export default class Transloadit<
       })
     }
 
-    this.uppy.on('restore:get-data', this.#getPersistentData)
     this.uppy.on('restored', this.#onRestored)
 
     this.setPluginState({

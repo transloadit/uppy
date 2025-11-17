@@ -15,13 +15,19 @@ import type { StatusBarOptions } from './StatusBarOptions.js'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    StatusBar: StatusBar<M, B>
+  }
+}
+
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
 
 function getUploadingState(
   error: unknown,
   isAllComplete: boolean,
-  recoveredState: any,
+  recoveredState: unknown,
   files: Record<string, UppyFile<any, any>>,
 ): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {

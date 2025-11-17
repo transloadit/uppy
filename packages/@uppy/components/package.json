@@ -1,7 +1,7 @@
 {
   "name": "@uppy/components",
   "description": "Headless Uppy components, made in Preact",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -40,12 +40,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/audio": "workspace:^",
-    "@uppy/core": "workspace:^",
-    "@uppy/image-editor": "workspace:^",
-    "@uppy/remote-sources": "workspace:^",
-    "@uppy/screen-capture": "workspace:^",
-    "@uppy/webcam": "workspace:^",
     "clsx": "^2.1.1",
     "dequal": "^2.0.3",
     "preact": "^10.5.13",
@@ -53,7 +47,25 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.6",
+    "@uppy/core": "workspace:^",
     "tailwindcss": "^4.0.6",
     "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "@uppy/core": "workspace:^",
+    "@uppy/image-editor": "workspace:^",
+    "@uppy/screen-capture": "workspace:^",
+    "@uppy/webcam": "workspace:^"
+  },
+  "peerDependenciesMeta": {
+    "@uppy/image-editor": {
+      "optional": true
+    },
+    "@uppy/screen-capture": {
+      "optional": true
+    },
+    "@uppy/webcam": {
+      "optional": true
+    }
   }
 }

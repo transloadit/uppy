@@ -1,5 +1,19 @@
 # @uppy/tus
 
+## 5.0.2
+
+### Patch Changes
+
+- 0c16fe4: - Make `file.data` nullable - Because for ghosts it will be `undefined` and we don't have any type to distinguish ghosts from other (local) files. This caused a crash, because we didn't check for `undefined` everywhere (when trying to store a blob that was `undefined`). This means we have to add null checks in some packages
+  - Split UppyFile into two intefaces distinguished by the `isRemote` boolean:
+    - LocalUppyFile
+    - RemoteUppyFile
+- Updated dependencies [0c16fe4]
+- Updated dependencies [0c16fe4]
+  - @uppy/companion-client@5.1.1
+  - @uppy/core@5.1.1
+  - @uppy/utils@7.1.1
+
 ## 5.0.1
 
 ### Patch Changes

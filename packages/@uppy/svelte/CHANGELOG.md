@@ -1,5 +1,25 @@
 # @uppy/svelte
 
+## 5.1.0
+
+### Minor Changes
+
+- 72d2d68: Add @uppy/{screen-capture,status-bar,webcam} as optional peer dependencies
+
+### Patch Changes
+
+- Updated dependencies [72d2d68]
+- Updated dependencies [26bf726]
+  - @uppy/components@1.1.0
+
+## 5.0.2
+
+### Patch Changes
+
+- da754b7: Fix props reactivity. Now when the value of a prop you pass to a component changes, it is actually picked up.
+- Updated dependencies [34639ba]
+  - @uppy/components@1.0.3
+
 ## 5.0.1
 
 ### Patch Changes

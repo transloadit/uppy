@@ -14,6 +14,7 @@ import grantConfigFn from './config/grant.js'
 import googlePicker from './server/controllers/googlePicker.js'
 import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
+import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
 import createEmitter from './server/emitter/index.js'
 import { getURLBuilder } from './server/helpers/utils.js'
@@ -220,6 +221,12 @@ export function app(optionsArg = {}) {
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.list,
+  )
+  app.get(
+    '/:providerName/search',
+    middlewares.hasSessionAndProvider,
+    middlewares.verifyToken,
+    searchController,
   )
   // backwards compat:
   app.get(

@@ -1,5 +1,23 @@
 # @uppy/companion
 
+## 6.2.0
+
+### Minor Changes
+
+- 0c8dd19: New Companion option `uploadHeaders` which can be used to include a static set of headers with every request sent to all upload destinations.
+
+## 6.1.1
+
+### Patch Changes
+
+- 6a60ee5: Reject request early instead of crashing on missing `filename` for /s3/multipart and /s3/params endpoints
+
+## 6.1.0
+
+### Minor Changes
+
+- 5ba2c1c: Introduce the concept of server-side search and add support for it for the Dropbox provider. Previously, only client-side filtering in the currently viewed folder was possible, which was limiting. Now users using Companion with Dropbox can perform a search across their entire account.
+
 ## 6.0.2
 
 ### Patch Changes
