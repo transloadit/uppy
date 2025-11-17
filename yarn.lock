@@ -5217,7 +5217,7 @@ __metadata:
 
 "@changesets/cli@patch:@changesets/cli@npm%3A2.29.5#~/.yarn/patches/@changesets-cli-npm-2.29.5-68d8030bf3.patch":
   version: 2.29.5
-  resolution: "@changesets/cli@patch:@changesets/cli@npm%3A2.29.5#~/.yarn/patches/@changesets-cli-npm-2.29.5-68d8030bf3.patch::version=2.29.5&hash=300b58"
+  resolution: "@changesets/cli@patch:@changesets/cli@npm%3A2.29.5#~/.yarn/patches/@changesets-cli-npm-2.29.5-68d8030bf3.patch::version=2.29.5&hash=de4c77"
   dependencies:
     "@changesets/apply-release-plan": "npm:^7.0.12"
     "@changesets/assemble-release-plan": "npm:^6.0.9"
@@ -5249,7 +5249,7 @@ __metadata:
     term-size: "npm:^2.1.0"
   bin:
     changeset: bin.js
-  checksum: 10/fd25f13200e1da892fa03199d2924e008acb9bfd3b530f7ccf0c5862a5b0d5da862db3583944fdb9c660e49490fc95afa3f9d14d93ca49ef8db04a9cd88f0adf
+  checksum: 10/e9421e4d23270d6a4628d57a2114016ba592bdcc75045e106ae6022e13b924e8a18214da8250324917c45f605a3c696464d483263acb3f9f7f9e740cb0996ba9
   languageName: node
   linkType: hard
 
