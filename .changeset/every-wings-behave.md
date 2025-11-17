@@ -1,5 +1,5 @@
 ---
-"@uppy/locales": minor
+"@uppy/locales": patch
 ---
 
-Fixed bug where fileManagerSelectionType would no longer work in Dutch + Updated translations
+Improve Dutch locale
