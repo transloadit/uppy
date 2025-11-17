@@ -1,5 +1,12 @@
 # uppy
 
+## 5.1.11
+
+### Patch Changes
+
+- Updated dependencies [5e166a1]
+  - @uppy/dashboard@5.0.4
+
 ## 5.1.10
 
 ### Patch Changes

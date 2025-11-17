@@ -4,7 +4,11 @@ export type Meta = Record<string, unknown>
 
 export type Body = Record<string, unknown>
 
-export type InternalMetadata = { name: string; type?: string }
+export interface InternalMetadata {
+  name: string
+  type?: string
+  relativePath?: string
+}
 
 // for better readability instead of using Record<string, something>
 export type UppyFileId = string

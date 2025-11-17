@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.js'
 import ignoreEvent from '../../utils/ignoreEvent.js'
 import FilePreview from '../FilePreview.js'
@@ -66,14 +66,37 @@ export default function FileCard(props: $TSFixMe) {
     return formEl
   })
 
+  // We need to know where Uppy is being rendered
+  const domRef = useRef<HTMLDivElement>(null)
+
   useEffect(() => {
-    document.body.appendChild(form)
+    /**
+     * Use the "rootNode" of whereever Uppy is rendered, falling back
+     * to `window.document` if domRef isn't initialized for some reason
+     */
+    const rootNode = domRef.current?.getRootNode() ?? (document as Node)
+    /**
+     * This is the case for the Light DOM and <iframes>.
+     * In these scenarios, we don't want to append a child to an
+     * <html> element, but to the <body>
+     */
+    if (rootNode instanceof Document) {
+      rootNode.body.appendChild(form)
+    }
+    // This is the case for the Shadow DOM
+    else if (rootNode instanceof ShadowRoot) {
+      rootNode.appendChild(form)
+    }
+    // Everything else (realistically there isn't)
+    else {
+      rootNode.appendChild(form)
+    }
     form.addEventListener('submit', handleSave)
     return () => {
       form.removeEventListener('submit', handleSave)
       // check if form is still in the DOM before removing
       if (form.parentNode) {
-        document.body.removeChild(form)
+        form.parentNode.removeChild(form)
       }
     }
   }, [form, handleSave])
@@ -87,6 +110,7 @@ export default function FileCard(props: $TSFixMe) {
       onDragLeave={ignoreEvent}
       onDrop={ignoreEvent}
       onPaste={ignoreEvent}
+      ref={domRef}
     >
       <div className="uppy-DashboardContent-bar">
         <div
