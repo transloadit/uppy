@@ -15,6 +15,12 @@ import type { StatusBarOptions } from './StatusBarOptions.js'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    StatusBar: StatusBar<M, B>
+  }
+}
+
 const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
 

@@ -82,7 +82,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
 
     uppy.use(DashboardPlugin<M, B>, options)
 
-    this.plugin = uppy.getPlugin(options.id) as DashboardPlugin<M, B>
+    this.plugin = uppy.getPlugin(options.id)!
     if (open) {
       this.plugin.openModal()
     }

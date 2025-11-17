@@ -21,6 +21,12 @@ import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Dropbox: Dropbox<M, B>
+  }
+}
+
 export type DropboxOptions = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>
 }

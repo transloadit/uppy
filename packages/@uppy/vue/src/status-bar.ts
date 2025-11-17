@@ -26,7 +26,7 @@ export default defineComponent({
         target: containerRef.value,
       }
       uppy.use(StatusBarPlugin, options)
-      pluginRef.value = uppy.getPlugin(options.id) as StatusBarPlugin<any, any>
+      pluginRef.value = uppy.getPlugin(options.id)!
     }
 
     useUppy(onMount, pluginRef, props.uppy, propsRef)

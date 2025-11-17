@@ -109,3 +109,9 @@ export default class Box<M extends Meta, B extends Body>
     return this.view.render(state)
   }
 }
+
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Box: Box<M, B>
+  }
+}
