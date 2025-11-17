@@ -25,7 +25,7 @@ nl_NL.strings = {
     'Je selecteerde %{size} aan bestanden, maar maximaal %{sizeAllowed} is toegestaan',
   allFilesFromFolderNamed: 'Alle bestanden uit de map %{name}',
   allowAccessDescription:
-    'Geef deze site toegang tot je camera om foto\'s of videobeelden te kunnen maken.',
+    "Geef deze site toegang tot je camera om foto's of videobeelden te kunnen maken.",
   allowAccessTitle: 'Geef toegang tot je camera',
   allowAudioAccessDescription:
     'Geef deze site toegang tot je microfoon om geluidsopnames te maken.',
@@ -65,13 +65,16 @@ nl_NL.strings = {
   done: 'Klaar',
   dropHereOr: 'Sleep bestanden hier heen of %{browse}',
   dropHint: 'Sleep bestanden hier heen',
-  dropPasteBoth: 'Sleep bestanden hier heen, %{browseFiles} of %{browseFolders}',
+  dropPasteBoth:
+    'Sleep bestanden hier heen, %{browseFiles} of %{browseFolders}',
   dropPasteFiles: 'Sleep bestanden hier heen of %{browseFiles}',
   dropPasteFolders: 'Sleep bestanden hier heen of %{browseFolders}',
   dropPasteImportBoth:
     'Sleep bestanden hier heen, %{browseFiles}, %{browseFolders} of importeer vanuit:',
-  dropPasteImportFiles: 'Sleep bestanden hier heen, %{browseFiles} of importeer vanuit:',
-  dropPasteImportFolders: 'Sleep bestanden hier heen, %{browseFolders} of importeer vanuit:',
+  dropPasteImportFiles:
+    'Sleep bestanden hier heen, %{browseFiles} of importeer vanuit:',
+  dropPasteImportFolders:
+    'Sleep bestanden hier heen, %{browseFolders} of importeer vanuit:',
   editFile: 'Bestand wijzigen',
   editFileWithFilename: 'Wijzig bestand %{file}',
   editImage: 'Afbeelding wijzigen',
@@ -83,7 +86,8 @@ nl_NL.strings = {
   enterTextToSearch: 'Type hier om te zoeken naar afbeeldingen',
   enterUrlToImport: 'Voer een URL in om een bestand te importeren',
   error: 'Fout',
-  exceedsSize: '%{file} overschrijdt de maximaal toegelaten bestandsgrootte van %{size}',
+  exceedsSize:
+    '%{file} overschrijdt de maximaal toegelaten bestandsgrootte van %{size}',
   failedToFetch:
     'Companion kan deze URL niet laden, controleer of de URL correct is',
   failedToUpload: 'Kon %{file} niet uploaden',
@@ -120,7 +124,7 @@ nl_NL.strings = {
     'Sluit een microfoon of andere geluidsinput aan om een geluidsopname te maken',
   noAudioTitle: 'Microfoon niet beschikbaar',
   noCameraDescription:
-    'Sluit een camera aan om foto\'s of videobeelden te maken',
+    "Sluit een camera aan om foto's of videobeelden te maken",
   noCameraTitle: 'Camera niet beschikbaar',
   noDuplicates:
     "Kan het dubbele bestand '%{fileName}' niet toevoegen, het bestaat al",
@@ -133,7 +137,7 @@ nl_NL.strings = {
   paused: 'Gepauzeerd',
   pauseUpload: 'Upload pauzeren',
   pickFiles: 'Selecteer bestanden',
-  pickPhotos: 'Selecteer foto\'s',
+  pickPhotos: "Selecteer foto's",
   pleaseWait: 'Gelieve te wachten',
   pluginNameAudio: 'Audio',
   pluginNameBox: 'Box',
@@ -162,7 +166,8 @@ nl_NL.strings = {
   recordingStoppedMaxSize:
     'Opname gestopt omdat de bestandsgrootte de limiet bijna overschrijdt',
   recordVideoBtn: 'Video opnemen',
-  recoveredAllFiles: 'We hebben alle bestanden hersteld. Je kan de upload nu hervatten.',
+  recoveredAllFiles:
+    'We hebben alle bestanden hersteld. Je kan de upload nu hervatten.',
   recoveredXFiles: {
     '0': 'We konden 1 bestand niet herstellen. Kies het bestand opnieuw en hervat de upload.',
     '1': 'We konden %{smart_count} bestanden niet herstellen. Kies de bestanden opnieuw en hervat de upload.',
@@ -180,7 +185,7 @@ nl_NL.strings = {
   save: 'Opslaan',
   saveChanges: 'Wijzigingen opslaan',
   search: 'Zoeken',
-  searchImages: 'Foto\'s zoeken',
+  searchImages: "Foto's zoeken",
   selectX: {
     '0': 'Selecteer %{smart_count}',
     '1': 'Selecteer %{smart_count}',
