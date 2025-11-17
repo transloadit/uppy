@@ -35,12 +35,13 @@ export default class WebdavProvider extends Provider {
     if (/\/s\/([^/]+)/.test(webdavUrl)) {
       const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
 
-      return this.getClientHelper({
-        url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
-        authType: AuthType.Password,
-        username: publicLinkToken,
-        password: 'null',
+      const { client, config } = await this.resolveClientFromPublicURL({
+        baseURL,
+        publicLinkToken,
       })
+
+      providerUserSession.resolvedWebdavConfig = config
+      return client
     }
 
     // normal public WebDAV urls
@@ -70,6 +71,39 @@ export default class WebdavProvider extends Provider {
       }
       throw err
     }
+  }
+
+  async resolveClientFromPublicURL({ baseURL, publicLinkToken }) {
+    const basewebdavURL = baseURL.replace('/index.php', '')
+    const authOptions = {
+      authType: AuthType.Password,
+      username: publicLinkToken,
+      password: 'null',
+    }
+    // possible webdav configs to try
+    const webDavConfigs = [
+      { url: `${basewebdavURL}/public.php/webdav/`, ...authOptions },
+      {
+        url: `${basewebdavURL}/remote.php/dav/public-files/${publicLinkToken}`,
+        ...authOptions,
+      },
+      {
+        url: `${basewebdavURL}/dav/public-files/${publicLinkToken}`,
+        ...authOptions,
+      },
+    ]
+
+    let error
+    for (const config of webDavConfigs) {
+      try {
+        const client = await this.getClientHelper(config)
+        await client.exists(defaultDirectory)
+        return { client, config }
+      } catch (err) {
+        error = err
+      }
+    }
+    throw error
   }
 
   async getClientHelper({ url, ...options }) {
