@@ -1,7 +1,7 @@
 import Audio from '@uppy/audio'
 import AwsS3 from '@uppy/aws-s3'
 import Compressor from '@uppy/compressor'
-import Uppy from '@uppy/core'
+import Uppy, { debugLogger } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import DropTarget from '@uppy/drop-target'
 import Form from '@uppy/form'
@@ -96,7 +96,7 @@ export default () => {
 
   const uppyDashboard = new Uppy({
     locale: english,
-    // logger: debugLogger,
+    logger: debugLogger,
     meta: {
       username: 'John',
       license: 'Creative Commons',
@@ -178,7 +178,8 @@ export default () => {
     .use(ImageGenerator, {
       target: Dashboard,
       assemblyOptions: async (prompt) =>
-        // never create a signature on the client in production
+        // never create a signature on the client in production!
+        // it will expose the secret on the client
         generateSignatureIfSecret(TRANSLOADIT_SECRET, {
           auth: { key: TRANSLOADIT_KEY },
           steps: {

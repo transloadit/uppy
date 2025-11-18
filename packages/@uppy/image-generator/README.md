@@ -39,7 +39,7 @@ Transloadit’s CDN: Edgly. In that case `Uppy` will attach itself to the global
 ## Documentation
 
 Documentation for this plugin can be found on the
-[Uppy website](https://uppy.io/docs/image-editor).
+[Uppy website](https://uppy.io/docs/image-generator).
 
 ## License
 

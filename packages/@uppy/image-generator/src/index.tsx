@@ -46,12 +46,13 @@ export default class ImageGenerator<
   B extends Body,
 > extends UIPlugin<ImageGeneratorOptions, M, B, PluginState> {
   private loadingInterval: ReturnType<typeof setInterval> | null = null
+  private localUppy?: Uppy<M, B>
 
   constructor(uppy: Uppy<M, B>, opts: ImageGeneratorOptions) {
     super(uppy, opts)
 
     this.id = this.opts.id || 'ImageGenerator'
-    this.title = 'Image Generator'
+    this.title = 'AI image'
     this.type = 'acquirer'
 
     this.defaultLocale = locale
@@ -70,6 +71,8 @@ export default class ImageGenerator<
 
   uninstall(): void {
     this.clearLoadingInterval()
+    this?.localUppy?.destroy()
+    this.localUppy = undefined
     this.unmount()
   }
 
@@ -97,6 +100,8 @@ export default class ImageGenerator<
       waitForEncoding: true,
       assemblyOptions,
     })
+    this.localUppy = localUppy
+
     const onResult: UppyEventMap<M, B>['transloadit:result'] = (
       stepName,
       result,
@@ -108,6 +113,7 @@ export default class ImageGenerator<
 
     // @ts-expect-error not typed because we do not depend on @uppy/dashboard
     this.uppy.once('dashboard:close-panel', () => {
+      this.clearLoadingInterval()
       localUppy.off('transloadit:result', onResult)
       localUppy.destroy()
       this.setPluginState(defaultState)
@@ -126,6 +132,7 @@ export default class ImageGenerator<
       this.clearLoadingInterval()
       localUppy.off('transloadit:result', onResult)
       localUppy.destroy()
+      this.localUppy = undefined
       this.setPluginState({ loading: false })
     }
   }
@@ -162,7 +169,7 @@ export default class ImageGenerator<
         const blob = await res.blob()
 
         return {
-          name: `ai-image-${new Date().toISOString()}`,
+          name: `ai-image-${result.id!}`,
           type: result.mime ?? undefined,
           source: 'Transloadit',
           data: blob,

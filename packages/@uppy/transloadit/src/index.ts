@@ -816,7 +816,7 @@ export default class Transloadit<
     ) as OptionsWithRestructuredFields
 
     assemblyOptions.fields = {
-      ...(assemblyOptions.fields || {}),
+      ...(assemblyOptions.fields ?? {}),
     }
     validateParams(assemblyOptions.params)
 
