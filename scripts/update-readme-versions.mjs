@@ -21,7 +21,7 @@ const version = versionMatch[1]
 const readme = readFileSync('README.md', 'utf8')
 const updatedReadme = readme.replace(
   /https:\/\/releases\.transloadit\.com\/uppy\/v[0-9]+\.[0-9]+\.[0-9]+\//g,
-  `https://releases.transloadit.com/uppy/v${version}/`,
+  `https://releases.transloadit.com/uppy/${version}/`,
 )
 
 if (readme !== updatedReadme) {
@@ -35,7 +35,7 @@ if (readme !== updatedReadme) {
 const bundleReadme = readFileSync('BUNDLE-README.md', 'utf8')
 const updatedBundleReadme = bundleReadme.replace(
   /https:\/\/releases\.transloadit\.com\/uppy\/v[0-9]+\.[0-9]+\.[0-9]+\//g,
-  `https://releases.transloadit.com/uppy/v${version}/`,
+  `https://releases.transloadit.com/uppy/${version}/`,
 )
 
 if (bundleReadme !== updatedBundleReadme) {
