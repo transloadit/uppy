@@ -1,5 +1,11 @@
 # @uppy/utils
 
+## 7.1.3
+
+### Patch Changes
+
+- ad50314: Allow `getSafeFileId` to accept `UppyFile`
+
 ## 7.1.2
 
 ### Patch Changes

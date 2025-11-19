@@ -10918,6 +10918,7 @@ __metadata:
   dependencies:
     "@transloadit/prettier-bytes": "npm:^0.3.4"
     "@uppy/core": "workspace:^"
+    "@uppy/dropbox": "workspace:^"
     "@uppy/google-drive": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"

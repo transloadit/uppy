@@ -1,6 +1,6 @@
 import nock from 'nock'
 import request from 'supertest'
-import { afterAll, describe, expect, it, test, vi } from 'vitest'
+import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
 import packageJson from '../package.json' with { type: 'json' }
 import * as tokenService from '../src/server/helpers/jwt.js'
 import * as defaults from './fixtures/constants.js'
@@ -37,8 +37,10 @@ const authData = {
 const token = tokenService.generateEncryptedAuthToken(authData, secret)
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
 
-afterAll(() => {
+afterEach(() => {
   nock.cleanAll()
+})
+afterAll(() => {
   nock.restore()
 })
 

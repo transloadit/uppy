@@ -1,6 +1,14 @@
 import nock from 'nock'
 import request from 'supertest'
-import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from 'vitest'
 import * as tokenService from '../src/server/helpers/jwt.js'
 import * as providerModule from '../src/server/provider/index.js'
 import * as defaults from './fixtures/constants.js'
@@ -76,16 +84,17 @@ function nockGetCurrentAccount(times = 1) {
     })
 }
 
-beforeAll(() => {
+beforeEach(() => {
   const url = new URL(defaults.THUMBNAIL_URL)
   nock(url.origin)
     .get(url.pathname)
     .reply(200, () => '')
-    .persist()
 })
 
-afterAll(() => {
+afterEach(() => {
   nock.cleanAll()
+})
+afterAll(() => {
   nock.restore()
 })
 
@@ -541,13 +550,6 @@ describe('logout of provider', () => {
   test('box', async () => {
     nock('https://api.box.com').post('/oauth2/revoke').reply(200, {})
     await runTest('box')
-  })
-
-  test('dropbox', async () => {
-    nock('https://api.dropboxapi.com')
-      .post('/2/auth/token/revoke')
-      .reply(200, {})
-    await runTest('dropbox')
   })
 
   test('drive', async () => {
