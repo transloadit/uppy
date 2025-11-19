@@ -19,6 +19,9 @@ declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
     'restore:plugin-data-changed': (data: Record<string, unknown>) => void
   }
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    GoldenRetriever: GoldenRetriever<M, B>
+  }
 }
 
 export interface GoldenRetrieverOptions extends PluginOpts {

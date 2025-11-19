@@ -15,6 +15,12 @@ import type { LocaleStrings } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    GooglePhotosPicker: GooglePhotosPicker<M, B>
+  }
+}
+
 export type GooglePhotosPickerOptions = CompanionPluginOptions & {
   clientId: string
   locale?: LocaleStrings<typeof locale>
