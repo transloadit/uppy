@@ -23,6 +23,9 @@ export default class WebdavProvider extends Provider {
   }
 
   async getClient({ providerUserSession }) {
+    if (providerUserSession?.resolvedWebdavConfig) {
+      return this.getClientHelper(providerUserSession.resolvedWebdavConfig)
+    }
     const webdavUrl = providerUserSession?.webdavUrl
     const { allowLocalUrls } = this
     if (!validateURL(webdavUrl, allowLocalUrls)) {
