@@ -14,7 +14,8 @@ zh_TW.strings = {
   additionalRestrictionsFailed: '尚未滿足 %{count} 個額外限制',
   addMore: '新增更多',
   addMoreFiles: '新增更多檔案',
-  aggregateExceedsSize: '您選擇了 %{size} 的檔案，但最大允許大小為 %{sizeAllowed}',
+  aggregateExceedsSize:
+    '您選擇了 %{size} 的檔案，但最大允許大小為 %{sizeAllowed}',
   allFilesFromFolderNamed: '資料夾 %{name} 中的所有檔案',
   allowAccessDescription: '請允許本網站存取相機以拍照或錄影。',
   allowAccessTitle: '請允許對相機的存取權限',

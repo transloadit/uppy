@@ -14,9 +14,11 @@ zh_CN.strings = {
   additionalRestrictionsFailed: '有 %{count} 个附加限制未满足',
   addMore: '添加更多文件',
   addMoreFiles: '添加更多文件',
-  aggregateExceedsSize: '您选择了 %{size} 的文件，但最大允许大小为 %{sizeAllowed}',
+  aggregateExceedsSize:
+    '您选择了 %{size} 的文件，但最大允许大小为 %{sizeAllowed}',
   allFilesFromFolderNamed: '来自文件夹 %{name} 的所有文件',
-  allowAccessDescription: '为了通过您的相机进行拍照或录像，请给网站相机的访问权限',
+  allowAccessDescription:
+    '为了通过您的相机进行拍照或录像，请给网站相机的访问权限',
   allowAccessTitle: '请允许对相机的访问权限',
   allowAudioAccessDescription: '为了录制音频，请允许网站访问麦克风',
   allowAudioAccessTitle: '请允许访问麦克风',
@@ -57,9 +59,11 @@ zh_CN.strings = {
   dropPasteBoth: '将文件拖拽到这里，%{browseFiles}或%{browseFolders}',
   dropPasteFiles: '将文件拖拽到这里或%{browseFiles}',
   dropPasteFolders: '将文件拖拽到这里或%{browseFolders}',
-  dropPasteImportBoth: '将文件拖拽到这里，%{browseFiles}、%{browseFolders}或从以下位置导入：',
+  dropPasteImportBoth:
+    '将文件拖拽到这里，%{browseFiles}、%{browseFolders}或从以下位置导入：',
   dropPasteImportFiles: '将文件拖拽到这里，%{browseFiles}或从以下位置导入：',
-  dropPasteImportFolders: '将文件拖拽到这里，%{browseFolders}或从以下位置导入：',
+  dropPasteImportFolders:
+    '将文件拖拽到这里，%{browseFolders}或从以下位置导入：',
   editFile: '编辑文件',
   editFileWithFilename: '编辑文件 %{file}',
   editImage: '编辑图片',
@@ -121,7 +125,8 @@ zh_CN.strings = {
   recordingStoppedMaxSize: '录制已停止，文件大小即将超过限制',
   recordVideoBtn: '录制视频',
   recoveredAllFiles: '我们已恢复所有文件。您现在可以继续上传。',
-  recoveredXFiles: '我们无法完全恢复 %{smart_count} 个文件。请重新选择它们并继续上传。',
+  recoveredXFiles:
+    '我们无法完全恢复 %{smart_count} 个文件。请重新选择它们并继续上传。',
   removeFile: '删除文件',
   reSelect: '重新选择',
   resetFilter: '重置筛选器',
