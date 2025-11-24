@@ -115,8 +115,17 @@ export default class WebdavProvider extends Provider {
           // ignore invalid date from server
         }
 
+        // Determine icon based on type and MIME type
+        let icon = 'file'
+        if (isFolder) {
+          icon = 'folder'
+        } else if (item.mime?.startsWith('video/')) {
+          icon = 'video'
+        }
+
         data.items.push({
           isFolder,
+          icon,
           id: requestPath,
           name: item.basename,
           modifiedDate,
