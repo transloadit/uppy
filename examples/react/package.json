@@ -25,7 +25,7 @@
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitest/browser": "^3.2.4",
-    "playwright": "1.54.1",
+    "playwright": "1.55.1",
     "typescript": "^5.7.3",
     "vite": "^7.1.11",
     "vitest": "^3.2.4",
