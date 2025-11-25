@@ -18,7 +18,7 @@ mn_MN.strings = {
   addedNumFiles: '%{numFiles} файл нэмэгдсэн',
   addingMoreFiles: 'Файл нэмж байна',
   additionalRestrictionsFailed:
-    '%{count} шаардлагад нийцээгүй байна',
+    '%{count} шаардлага хангагдаагүй байна',
   addMore: 'Нэмэх',
   addMoreFiles: 'Файл нэмэх',
   aggregateExceedsSize:
