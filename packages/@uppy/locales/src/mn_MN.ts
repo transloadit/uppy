@@ -18,7 +18,7 @@ mn_MN.strings = {
   addedNumFiles: '%{numFiles} файл нэмэгдсэн',
   addingMoreFiles: 'Файл нэмж байна',
   additionalRestrictionsFailed:
-    '%{count} additional restrictions were not fulfilled',
+    '%{count} шаардлагад нийцээгүй байна',
   addMore: 'Нэмэх',
   addMoreFiles: 'Файл нэмэх',
   aggregateExceedsSize:
@@ -190,7 +190,7 @@ mn_MN.strings = {
   showErrorDetails: 'Алдааны мэдээллийг харуулах',
   signInWithGoogle: 'Google-ээр нэвтрэх',
   smile: 'Инээгээрэй!',
-  startAudioRecording: 'Аудиа бичлэгийг эхлүүлэх',
+  startAudioRecording: 'Аудио бичлэгийг эхлүүлэх',
   startCapturing: 'Дэлгэцийн бичлэгийг эхлүүлэх',
   startRecording: 'Видео бичлэгийг эхлүүлэх',
   stopAudioRecording: 'Аудио бичлэгийг зогсоох',
