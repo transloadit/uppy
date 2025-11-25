@@ -16,7 +16,7 @@ import type {
 import {
   createAbortError,
   filterFilesToEmitUploadStarted,
-  filterNonFailedFiles,
+  filterFilesToUpload,
   getAllowedMetaFields,
   RateLimitedQueue,
 } from '@uppy/utils'
@@ -938,7 +938,7 @@ export default class AwsS3Multipart<
     if (fileIDs.length === 0) return undefined
 
     const files = this.uppy.getFilesByIds(fileIDs)
-    const filesFiltered = filterNonFailedFiles(files)
+    const filesFiltered = filterFilesToUpload(files)
     const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
 
     this.uppy.emit('upload-start', filesToEmit)

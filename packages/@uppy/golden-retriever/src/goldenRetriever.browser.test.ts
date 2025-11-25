@@ -20,7 +20,9 @@ function createUppy(
 
   const root = document.createElement('div')
   document.body.appendChild(root)
-  return new Uppy().use(Dashboard, {
+  return new Uppy({
+    debug: true,
+  }).use(Dashboard, {
     target: root,
     inline: true,
     ...opts,
@@ -36,9 +38,11 @@ beforeEach(async () => {
   document.body.innerHTML = ''
 })
 
+let fileIndex = 0
+
 const createMockFile = ({
   size,
-  name = `${Date.now()}.txt`,
+  name = `${fileIndex++}.txt`,
   type = 'text/plain',
 }: {
   name?: string
@@ -99,7 +103,9 @@ describe('Golden retriever', () => {
           requestAt += 1
           return HttpResponse.json({})
         }
-        // never reply to subsequent requests (leave them hanging)
+        // fail subsequent requests
+        requestAt += 1
+        return HttpResponse.json({}, { status: 400 })
       }),
     )
 
@@ -117,10 +123,15 @@ describe('Golden retriever', () => {
       uppy.once('upload-success', () => resolve()),
     )
 
+    const uploadCompletePromise = new Promise<void>((resolve) =>
+      uppy.once('complete', () => resolve()),
+    )
+
     // Start the upload
     await page.getByRole('button', { name: 'Upload 2 files' }).click()
 
     await uploadFirstFileCompletePromise
+    await uploadCompletePromise
 
     // reload page and recreate Uppy instance
     uppy = createUppy({ withPageReload: true })
@@ -140,7 +151,8 @@ describe('Golden retriever', () => {
           return HttpResponse.json({})
         }
         // don't allow more than 1 request
-        return new HttpResponse({ status: 400 })
+        requestAt += 1
+        return HttpResponse.json({}, { status: 400 })
       }),
     )
 
@@ -152,6 +164,7 @@ describe('Golden retriever', () => {
       .toBeVisible()
 
     expect(uppy.getFiles().length).toBe(2)
+    expect(requestAt).toBe(1) // only the first file upload should have happened so far
   })
 
   test('Should not clean up files upon completion if there were failed uploads and it should only make the failed file a ghost', async ({
