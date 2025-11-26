@@ -49,6 +49,12 @@
   text-align: right;
 }
 
+.uppy-truncate-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 // Inputs
 
 .uppy-c-textInput {
