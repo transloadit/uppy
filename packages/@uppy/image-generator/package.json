@@ -39,6 +39,7 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
+    "@uppy/transloadit": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "@uppy/utils": "workspace:^",
     "preact": "^10.5.13"
@@ -51,8 +52,7 @@
     "sass": "^1.89.2"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^",
-    "@uppy/transloadit": "workspace:^"
+    "@uppy/core": "workspace:^"
   },
   "publishConfig": {
     "access": "public"

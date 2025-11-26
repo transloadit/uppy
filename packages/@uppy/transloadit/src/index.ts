@@ -1030,3 +1030,7 @@ export default class Transloadit<
 }
 
 export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
+
+// Low-level classes for advanced usage (e.g., creating assemblies without file uploads)
+export { default as Assembly } from './Assembly.js'
+export { AssemblyError, default as Client } from './Client.js'

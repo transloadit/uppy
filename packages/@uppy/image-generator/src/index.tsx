@@ -1,18 +1,20 @@
-import type {
-  Body,
-  Meta,
-  MinimalRequiredUppyFile,
-  UIPluginOptions,
-  UppyEventMap,
-} from '@uppy/core'
-import Uppy, { UIPlugin } from '@uppy/core'
+import type { Body, Meta, MinimalRequiredUppyFile, Uppy } from '@uppy/core'
+import { UIPlugin, type UIPluginOptions } from '@uppy/core'
 import { FilterInput, SearchView } from '@uppy/provider-views'
-import type { AssemblyOptions, AssemblyResult } from '@uppy/transloadit'
-import Transloadit from '@uppy/transloadit'
+import {
+  Assembly,
+  type AssemblyResult,
+  Client,
+  type OptionsWithRestructuredFields,
+} from '@uppy/transloadit'
+import { RateLimitedQueue } from '@uppy/utils'
 import locale from './locale.js'
 
 export interface ImageGeneratorOptions extends UIPluginOptions {
-  assemblyOptions: (prompt: string) => Promise<AssemblyOptions>
+  // OptionsWithRestructuredFields does not allow string[] for `fields`.
+  // in @uppy/transloadit we do accept that but then immediately use a type assertion to this type
+  // so that's why we just don't allow string[] from the start here
+  assemblyOptions: (prompt: string) => Promise<OptionsWithRestructuredFields>
 }
 
 interface PluginState extends Record<string, unknown> {
@@ -46,7 +48,9 @@ export default class ImageGenerator<
   B extends Body,
 > extends UIPlugin<ImageGeneratorOptions, M, B, PluginState> {
   private loadingInterval: ReturnType<typeof setInterval> | null = null
-  private localUppy?: Uppy<M, B>
+  private rateLimitedQueue: RateLimitedQueue
+  private client: Client<M, B>
+  private assembly: Assembly | null = null
 
   constructor(uppy: Uppy<M, B>, opts: ImageGeneratorOptions) {
     super(uppy, opts)
@@ -56,6 +60,13 @@ export default class ImageGenerator<
     this.type = 'acquirer'
 
     this.defaultLocale = locale
+
+    this.rateLimitedQueue = new RateLimitedQueue(10)
+    this.client = new Client({
+      service: 'https://api2.transloadit.com',
+      rateLimitedQueue: this.rateLimitedQueue,
+      errorReporting: true,
+    })
 
     this.setPluginState(defaultState)
 
@@ -71,9 +82,23 @@ export default class ImageGenerator<
 
   uninstall(): void {
     this.clearLoadingInterval()
-    this?.localUppy?.destroy()
-    this.localUppy = undefined
+    this.closeAssembly(true) // Cancel any in-progress assembly
     this.unmount()
+  }
+
+  private closeAssembly(cancel = false): void {
+    if (this.assembly) {
+      const { status } = this.assembly
+      this.assembly.close()
+      this.assembly = null
+
+      // Cancel the assembly on the server to stop processing
+      if (cancel && status) {
+        this.client.cancelAssembly(status).catch(() => {
+          // If we can't cancel, there's not much we can do
+        })
+      }
+    }
   }
 
   private clearLoadingInterval(): void {
@@ -92,32 +117,26 @@ export default class ImageGenerator<
     }, 4000)
   }
 
-  search = async () => {
-    const assemblyOptions = await this.opts.assemblyOptions(
-      this.getPluginState().prompt,
-    )
-    const localUppy = new Uppy<M, B>().use(Transloadit, {
-      waitForEncoding: true,
-      assemblyOptions,
-    })
-    this.localUppy = localUppy
+  /**
+   * Creates a Transloadit assembly to generate AI images.
+   *
+   * Completion scenarios:
+   * - Success: assembly emits 'finished' → resolve() → finally cleans up, keeps results
+   * - Error: assembly emits 'error' → reject() → catch reports error, finally cleans up
+   * - Dashboard close: onDashboardClose sets cancelled=true, resolve() → finally resets state
+   * - Uninstall: closeAssembly(true) called directly, cancels server-side assembly
+   */
+  generate = async () => {
+    const { promise, resolve, reject } = Promise.withResolvers<void>()
+    let cancelled = false
 
-    const onResult: UppyEventMap<M, B>['transloadit:result'] = (
-      stepName,
-      result,
-    ) => {
-      const { results } = this.getPluginState()
-      this.setPluginState({ results: [...results, result], firstRun: false })
+    const onDashboardClose = () => {
+      cancelled = true
+      resolve()
     }
-    localUppy.on('transloadit:result', onResult)
 
     // @ts-expect-error not typed because we do not depend on @uppy/dashboard
-    this.uppy.once('dashboard:close-panel', () => {
-      this.clearLoadingInterval()
-      localUppy.off('transloadit:result', onResult)
-      localUppy.destroy()
-      this.setPluginState(defaultState)
-    })
+    this.uppy.once('dashboard:close-panel', onDashboardClose)
 
     try {
       this.setPluginState({
@@ -127,13 +146,43 @@ export default class ImageGenerator<
         loadingMessageIndex: 0,
       })
       this.startLoadingAnimation()
-      await localUppy.upload()
+
+      const assemblyOptions = await this.opts.assemblyOptions(
+        this.getPluginState().prompt,
+      )
+
+      const assemblyResponse = await this.client.createAssembly({
+        params: assemblyOptions.params,
+        fields: assemblyOptions.fields ?? {},
+        signature: assemblyOptions.signature,
+        expectedFiles: 0,
+      })
+
+      const assembly = new Assembly(assemblyResponse, this.rateLimitedQueue)
+      this.assembly = assembly
+
+      assembly.on('result', (stepName: string, result: AssemblyResult) => {
+        const { results } = this.getPluginState()
+        this.setPluginState({
+          results: [...results, result],
+          firstRun: false,
+        })
+      })
+
+      assembly.on('error', reject)
+      assembly.on('finished', resolve)
+      assembly.connect()
+
+      await promise
+    } catch (error) {
+      this.client.submitError(error as Error).catch(() => {})
+      throw error
     } finally {
+      // @ts-expect-error not typed because we do not depend on @uppy/dashboard
+      this.uppy.off('dashboard:close-panel', onDashboardClose)
       this.clearLoadingInterval()
-      localUppy.off('transloadit:result', onResult)
-      localUppy.destroy()
-      this.localUppy = undefined
-      this.setPluginState({ loading: false })
+      this.closeAssembly(true)
+      this.setPluginState(cancelled ? defaultState : { loading: false })
     }
   }
 
@@ -201,7 +250,7 @@ export default class ImageGenerator<
         <SearchView
           value={prompt}
           onChange={(prompt) => this.setPluginState({ prompt })}
-          onSubmit={this.search}
+          onSubmit={this.generate}
           inputLabel={i18n('generateImagePlaceholder')}
           loading={loading}
         >
@@ -221,7 +270,7 @@ export default class ImageGenerator<
         <FilterInput
           value={prompt}
           onChange={(prompt) => this.setPluginState({ prompt })}
-          onSubmit={this.search}
+          onSubmit={this.generate}
           inputLabel={i18n('search')}
           i18n={i18n}
         />
