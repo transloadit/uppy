@@ -132,6 +132,10 @@ declare module '@uppy/core' {
       progress_combined?: number
     }) => void
   }
+
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Transloadit: Transloadit<M, B>
+  }
 }
 
 declare module '@uppy/utils' {

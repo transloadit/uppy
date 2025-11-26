@@ -1,4 +1,4 @@
-import Uppy from '@uppy/core'
+import { Uppy } from '@uppy/core'
 import { describe, expect, it } from 'vitest'
 import Webcam from './index.js'
 
@@ -10,10 +10,9 @@ describe('Webcam', () => {
         isTypeSupported: () => true,
       }
 
-      const uppy = new Uppy<any, any>().use(Webcam)
+      const uppy = new Uppy().use(Webcam)
       expect(
-        (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
-          .mimeType,
+        uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).not.toBeDefined()
     })
 
@@ -27,8 +26,7 @@ describe('Webcam', () => {
         preferredVideoMimeType: 'video/webm',
       })
       expect(
-        (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
-          .mimeType,
+        uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).toEqual('video/webm')
     })
 
@@ -42,8 +40,7 @@ describe('Webcam', () => {
         preferredVideoMimeType: 'video/mp4',
       })
       expect(
-        (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
-          .mimeType,
+        uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).not.toBeDefined()
     })
 
@@ -57,8 +54,7 @@ describe('Webcam', () => {
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
-        (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
-          .mimeType,
+        uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).toEqual('video/mp4')
     })
 
@@ -72,8 +68,7 @@ describe('Webcam', () => {
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
-        (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
-          .mimeType,
+        uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).toEqual('video/webm')
     })
 
@@ -89,8 +84,7 @@ describe('Webcam', () => {
         preferredVideoMimeType: 'video/webm',
       })
       expect(
-        (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
-          .mimeType,
+        uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).toEqual('video/webm')
     })
 
@@ -104,8 +98,7 @@ describe('Webcam', () => {
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
-        (uppy.getPlugin('Webcam') as Webcam<any, any>).getMediaRecorderOptions()
-          .mimeType,
+        uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).toEqual(undefined)
     })
   })

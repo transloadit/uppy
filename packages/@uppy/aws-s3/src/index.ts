@@ -16,7 +16,7 @@ import type {
 import {
   createAbortError,
   filterFilesToEmitUploadStarted,
-  filterNonFailedFiles,
+  filterFilesToUpload,
   getAllowedMetaFields,
   RateLimitedQueue,
 } from '@uppy/utils'
@@ -44,6 +44,9 @@ type PartUploadedCallback<M extends Meta, B extends Body> = (
 declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
     's3-multipart:part-uploaded': PartUploadedCallback<M, B>
+  }
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    AwsS3Multipart: AwsS3Multipart<M, B>
   }
 }
 
@@ -935,7 +938,7 @@ export default class AwsS3Multipart<
     if (fileIDs.length === 0) return undefined
 
     const files = this.uppy.getFilesByIds(fileIDs)
-    const filesFiltered = filterNonFailedFiles(files)
+    const filesFiltered = filterFilesToUpload(files)
     const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
 
     this.uppy.emit('upload-start', filesToEmit)

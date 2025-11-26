@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Set SHA commit in version
         run:
           (cd packages/@uppy/companion && node -e 'const
@@ -46,16 +46,16 @@ jobs:
       COMPOSE_DOCKER_CLI_BUILD: 0
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Docker meta
         id: docker_meta
-        uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f # v5.8.0
+        uses: docker/metadata-action@318604b99e75e41977312d83839a89be02ca4893 # v5.9.0
         with:
           images: transloadit/companion
           tags: |
             type=edge
             type=raw,value=latest,enable=false
-      - uses: docker/setup-qemu-action@29109295f81e9208d7d86ff1c6c12d2833863392 # v3.6.0
+      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
       - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
         uses: docker/login-action@5e57cd118135c172c3672efd75eb46360885c0ef # v3.6.0
@@ -77,7 +77,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Alter dockerfile
         run: |
           sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile

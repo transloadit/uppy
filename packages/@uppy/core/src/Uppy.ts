@@ -142,6 +142,10 @@ export type UnknownProviderPluginState = {
   searchResults?: string[] | undefined
 }
 
+// biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation
+// biome-ignore lint/correctness/noUnusedVariables: Type parameters are used in module augmentation
+export interface PluginTypeRegistry<M extends Meta, B extends Body> {}
+
 export interface AsyncStore {
   getItem: (key: string) => Promise<string | null>
   setItem: (key: string, value: string) => Promise<void>
@@ -1941,12 +1945,21 @@ export class Uppy<
   /**
    * Find one Plugin by name.
    */
+
+  getPlugin<K extends keyof PluginTypeRegistry<M, B>>(
+    id: K,
+  ): PluginTypeRegistry<M, B>[K] | undefined
+
   getPlugin<T extends UnknownPlugin<M, B> = UnknownPlugin<M, B>>(
     id: string,
-  ): T | undefined {
+  ): T | undefined
+
+  getPlugin(id: string): UnknownPlugin<M, B> | undefined {
     for (const plugins of Object.values(this.#plugins)) {
       const foundPlugin = plugins.find((plugin) => plugin.id === id)
-      if (foundPlugin != null) return foundPlugin as T
+      if (foundPlugin != null) {
+        return foundPlugin as UnknownPlugin<M, B>
+      }
     }
     return undefined
   }
@@ -2220,9 +2233,6 @@ export class Uppy<
     ]
     try {
       for (let step = currentUpload.step || 0; step < steps.length; step++) {
-        if (!currentUpload) {
-          break
-        }
         const fn = steps[step]
 
         this.setState({
@@ -2235,13 +2245,7 @@ export class Uppy<
           },
         })
 
-        // when restoring (e.g. using golden retriever), we don't need to re-upload already successfully uploaded files
-        // so let's exclude them here:
-        // https://github.com/transloadit/uppy/issues/5930
-        const fileIDs = currentUpload.fileIDs.filter((fileID) => {
-          const file = this.getFile(fileID)
-          return !file.progress.uploadComplete
-        })
+        const { fileIDs } = currentUpload
 
         // TODO give this the `updatedUpload` object as its only parameter maybe?
         // Otherwise when more metadata may be added to the upload this would keep getting more parameters
@@ -2249,6 +2253,9 @@ export class Uppy<
 
         // Update currentUpload value in case it was modified asynchronously.
         currentUpload = getCurrentUpload()
+        if (!currentUpload) {
+          break
+        }
       }
     } catch (err) {
       this.#removeUpload(uploadID)

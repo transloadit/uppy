@@ -10,7 +10,7 @@ import type {
 import { BasePlugin, EventManager } from '@uppy/core'
 import {
   filterFilesToEmitUploadStarted,
-  filterNonFailedFiles,
+  filterFilesToUpload,
   getAllowedMetaFields,
   hasProperty,
   isNetworkError,
@@ -103,6 +103,12 @@ declare module '@uppy/utils' {
   }
   export interface RemoteUppyFile<M extends Meta, B extends Body> {
     tus?: TusOpts<M, B>
+  }
+}
+
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Tus: Tus<M, B>
   }
 }
 
@@ -557,7 +563,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   async #uploadFiles(files: UppyFile<M, B>[]) {
-    const filesFiltered = filterNonFailedFiles(files)
+    const filesFiltered = filterFilesToUpload(files)
     const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
     this.uppy.emit('upload-start', filesToEmit)
 

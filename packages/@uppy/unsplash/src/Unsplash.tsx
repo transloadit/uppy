@@ -112,3 +112,9 @@ export default class Unsplash<M extends Meta, B extends Body>
     this.unmount()
   }
 }
+
+declare module '@uppy/core' {
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Unsplash: Unsplash<M, B>
+  }
+}

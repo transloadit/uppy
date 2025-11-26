@@ -11,6 +11,9 @@ declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
     'compressor:complete': (file: UppyFile<M, B>[]) => void
   }
+  export interface PluginTypeRegistry<M extends Meta, B extends Body> {
+    Compressor: Compressor<M, B>
+  }
 }
 
 export interface CompressorOpts extends PluginOpts, CompressorJS.Options {
