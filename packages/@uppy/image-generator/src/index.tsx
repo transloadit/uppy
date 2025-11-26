@@ -8,6 +8,7 @@ import {
   type OptionsWithRestructuredFields,
 } from '@uppy/transloadit'
 import { RateLimitedQueue } from '@uppy/utils'
+import type { h } from 'preact'
 import locale from './locale.js'
 
 export interface ImageGeneratorOptions extends UIPluginOptions {
@@ -51,6 +52,7 @@ export default class ImageGenerator<
   private rateLimitedQueue: RateLimitedQueue
   private client: Client<M, B>
   private assembly: Assembly | null = null
+  icon: () => h.JSX.Element
 
   constructor(uppy: Uppy<M, B>, opts: ImageGeneratorOptions) {
     super(uppy, opts)
@@ -71,6 +73,37 @@ export default class ImageGenerator<
     this.setPluginState(defaultState)
 
     this.i18nInit()
+
+    this.icon = () => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        xmlnsXlink="http://www.w3.org/1999/xlink"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+      >
+        <title>ai-image-generator</title>
+        <defs>
+          <circle id="uppyImageGeneratorCircle" cx="12" cy="12" r="12" />
+        </defs>
+        <g fill="none" fillRule="evenodd">
+          <mask id="uppyImageGeneratorMask" fill="#fff">
+            <use xlinkHref="#uppyImageGeneratorCircle" />
+          </mask>
+          <use xlinkHref="#uppyImageGeneratorCircle" fill="#004b9d" />
+          <path
+            fill="#fff"
+            d="m21.98 15.453 2.793.254a.295.295 0 0 1 0 .586l-2.794.254a6 6 0 0 0-5.432 5.432l-.254 2.794a.295.295 0 0 1-.586 0l-.254-2.794a6 6 0 0 0-5.432-5.432l-2.794-.254a.295.295 0 0 1 0-.586l2.794-.254a6 6 0 0 0 5.432-5.432l.254-2.794a.295.295 0 0 1 .586 0l.254 2.794a6 6 0 0 0 5.432 5.432"
+            mask="url(#uppyImageGeneratorMask)"
+          />
+          <path
+            fill="#fff"
+            d="m10.74 7.75 1.434.13a.121.121 0 0 1 0 .24l-1.433.13a2.75 2.75 0 0 0-2.49 2.49l-.13 1.434a.121.121 0 0 1-.242 0l-.13-1.433a2.75 2.75 0 0 0-2.49-2.49l-1.433-.13a.121.121 0 0 1 0-.242l1.433-.13a2.75 2.75 0 0 0 2.49-2.49l.13-1.433a.121.121 0 0 1 .242 0l.13 1.433a2.75 2.75 0 0 0 2.49 2.49"
+            mask="url(#uppyImageGeneratorMask)"
+          />
+        </g>
+      </svg>
+    )
   }
 
   install(): void {
