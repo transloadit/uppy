@@ -28,7 +28,7 @@ jobs:
         node-version: [lts/*]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -65,7 +65,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -94,7 +94,7 @@ jobs:
       SKIP_YARN_COREPACK_CHECK: true
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Install Node.js
         uses: actions/setup-node@v6
