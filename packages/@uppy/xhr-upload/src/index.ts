@@ -13,7 +13,7 @@ import {
   type FetcherOptions,
   fetcher,
   filterFilesToEmitUploadStarted,
-  filterNonFailedFiles,
+  filterFilesToUpload,
   getAllowedMetaFields,
   internalRateLimitedQueue,
   isNetworkError,
@@ -535,7 +535,7 @@ export default class XHRUpload<
     this.uppy.log('[XHRUpload] Uploading...')
     const files = this.uppy.getFilesByIds(fileIDs)
 
-    const filesFiltered = filterNonFailedFiles(files)
+    const filesFiltered = filterFilesToUpload(files)
     const filesToEmit = filterFilesToEmitUploadStarted(filesFiltered)
     this.uppy.emit('upload-start', filesToEmit)
 
