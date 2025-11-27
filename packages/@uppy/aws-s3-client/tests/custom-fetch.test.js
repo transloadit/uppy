@@ -1,6 +1,6 @@
 'use strict';
-import { it, jest, expect } from '@jest/globals';
-import { S3mini } from '../dist/s3mini.js';
+import { it, expect } from 'vitest';
+import { S3mini } from '../src/index.js';
 import { beforeRun } from './_shared.test.js';
 
 import * as dotenv from 'dotenv';
@@ -12,7 +12,7 @@ const bucketName = `BUCKET_ENV_${name.toUpperCase()}`;
 const raw = process.env[bucketName] ? process.env[bucketName].split(',') : null;
 
 const customFetchTests = bucket => {
-  jest.setTimeout(120_000);
+  vi.setConfig({testTimeout: 120_000});
 
   it('uses custom fetch implementation', async () => {
     // Track fetch calls

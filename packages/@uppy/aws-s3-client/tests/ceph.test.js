@@ -1,6 +1,6 @@
 'use strict';
-import { it, jest } from '@jest/globals';
-import { S3mini } from '../dist/s3mini.js';
+import { it, vi } from 'vitest';
+import { S3mini } from '../src/index.js';
 import { beforeRun, resetBucketBeforeAll } from './_shared.test.js';
 
 import * as dotenv from 'dotenv';
@@ -12,7 +12,7 @@ const bucketName = `BUCKET_ENV_${name.toUpperCase()}`;
 const raw = process.env[bucketName] ? process.env[bucketName].split(',') : null;
 
 const cephSpecific = bucket => {
-  jest.setTimeout(120_000);
+  vi.setConfig({testTimeout: 120_000});
 
   const s3client = new S3mini({
     accessKeyId: bucket.accessKeyId,

@@ -1,7 +1,7 @@
 'use strict';
 
-import { S3mini } from '../../dist/s3mini.js';
 import * as dotenv from 'dotenv';
+import { S3mini } from '../../src/index.js';
 dotenv.config({ debug: false });
 
 // get all process.env variable that starts with "BUCKET_ENV_"

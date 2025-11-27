@@ -7,5 +7,6 @@ export default defineConfig({
         include: [
         'tests/**/*.test.js',
         ],
+        exclude: ['tests/_shared.test.js']
     }
 })

@@ -1,6 +1,6 @@
 'use strict';
-import { jest, it, expect, describe } from '@jest/globals';
-import { S3mini, sanitizeETag, runInBatches } from '../dist/s3mini.js';
+import { vi, it, expect, describe } from 'vitest';
+import { S3mini, sanitizeETag, runInBatches } from '../src/index.js';
 import { randomBytes } from 'node:crypto';
 
 export const beforeRun = (raw, name, providerSpecific) => {
@@ -74,7 +74,7 @@ export const resetBucketBeforeAll = s3client => {
 
 // --- 2 ■ A separate describe makes test output nicer -----------------------
 export const testRunner = bucket => {
-  jest.setTimeout(120_000);
+  vi.setConfig({testTimeout: 120_000});
 
   const s3client = new S3mini({
     accessKeyId: bucket.accessKeyId,

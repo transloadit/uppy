@@ -1,6 +1,6 @@
 'use strict';
 
-import { S3mini, sanitizeETag } from '../dist/s3mini.js';
+import { S3mini, sanitizeETag } from '../src/index.js';
 import * as dotenv from 'dotenv';
 dotenv.config({ debug: false });
 const configs = process.env['BUCKET_ENV_CLOUDFLARE'].split(',');
