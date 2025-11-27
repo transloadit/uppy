@@ -220,11 +220,11 @@ class S3mini {
   }
 
   private _validateData(data: unknown): BodyInit {
-    if (!((globalThis.Buffer && data instanceof globalThis.Buffer) || typeof data === 'string')) {
-      this._log('error', C.ERROR_DATA_BUFFER_REQUIRED);
-      throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED);
+    if (typeof data === 'string' || data instanceof ArrayBuffer) {
+      return data as BodyInit;
     }
-    return data;
+    this._log('error', C.ERROR_DATA_BUFFER_REQUIRED);
+    throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED);
   }
 
   private _validateUploadPartParams(
@@ -268,7 +268,9 @@ class S3mini {
     const day = String(d.getUTCDate()).padStart(2, '0');
 
     const shortDatetime = `${year}${month}${day}`;
-    const fullDatetime = `${shortDatetime}T${String(d.getUTCHours()).padStart(2, '0')}${String(d.getUTCMinutes()).padStart(2, '0')}${String(d.getUTCSeconds()).padStart(2, '0')}Z`;
+    const fullDatetime = `${shortDatetime}T${String(d.getUTCHours()).padStart(2, '0')}${String(
+      d.getUTCMinutes(),
+    ).padStart(2, '0')}${String(d.getUTCSeconds()).padStart(2, '0')}Z`;
     const credentialScope = `${shortDatetime}/${this.region}/${C.S3_SERVICE}/${C.AWS_REQUEST_TYPE}`;
 
     headers[C.HEADER_AMZ_CONTENT_SHA256] = C.UNSIGNED_PAYLOAD;
@@ -291,15 +293,20 @@ class S3mini {
         signedHeaders += lowerKey;
       }
     }
-    const canonicalRequest = `${method}\n${url.pathname}\n${this._buildCanonicalQueryString(query)}\n${canonicalHeaders}\n\n${signedHeaders}\n${C.UNSIGNED_PAYLOAD}`;
-    const stringToSign = `${C.AWS_ALGORITHM}\n${fullDatetime}\n${credentialScope}\n${U.hexFromBuffer(await U.sha256(canonicalRequest))}`;
+    const canonicalRequest = `${method}\n${url.pathname}\n${this._buildCanonicalQueryString(
+      query,
+    )}\n${canonicalHeaders}\n\n${signedHeaders}\n${C.UNSIGNED_PAYLOAD}`;
+    const stringToSign = `${C.AWS_ALGORITHM}\n${fullDatetime}\n${credentialScope}\n${U.hexFromBuffer(
+      await U.sha256(canonicalRequest),
+    )}`;
     if (shortDatetime !== this.signingKeyDate || !this.signingKey) {
       this.signingKeyDate = shortDatetime;
       this.signingKey = await this._getSignatureKey(shortDatetime);
     }
     const signature = U.hexFromBuffer(await U.hmac(this.signingKey, stringToSign));
-    headers[C.HEADER_AUTHORIZATION] =
-      `${C.AWS_ALGORITHM} Credential=${this.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+    headers[
+      C.HEADER_AUTHORIZATION
+    ] = `${C.AWS_ALGORITHM} Credential=${this.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
     return { url: url.toString(), headers };
   }
 
