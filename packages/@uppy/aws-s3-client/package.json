@@ -18,17 +18,8 @@
   ],
   "type": "module",
   "scripts": {
-    "tsc": "tsc",
     "typecheck": "tsc --noEmit",
-    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --verbose",
-    "test:perf": "node ./tests/perf/performance.test.js",
-    "lint": "eslint src --ext .ts",
-    "format": "prettier -w src",
-    "formatcheck": "prettier --list-different src",
-    "prepublishOnly": "npm run build",
-    "clean": "rimraf dist",
-    "build": "tsc --build tsconfig.build.json",
-    "dev": "npm run clean && npm run typecheck -w && rollup -c -w"
+    "build": "tsc --build tsconfig.build.json"
   },
   "main": "dist/s3mini.min.js",
   "module": "dist/s3mini.js",
