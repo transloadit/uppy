@@ -1,18 +1,14 @@
 {
   "name": "@uppy/aws-s3-client",
-  "version": "0.7.0",
-  "description": "👶 Tiny & fast S3 client for node and edge computing platforms",
-  "homepage": "https://github.com/good-lly/s3mini",
+  "version": "0.0.1",
+  "description": "Lightweight S3 client for uppy",
   "bugs": {
-    "url": "https://github.com/good-lly/s3mini/issues"
+    "url": "https://github.com/transloadit/uppy/issues"
   },
-  "author": "good-lly",
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/good-lly/s3mini.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "registry": "https://github.com/transloadit/uppy"
   },
   "files": [
     "./dist/",
