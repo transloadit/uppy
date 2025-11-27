@@ -5,8 +5,7 @@
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
   },
-  "repository": {
-  },
+  "repository": {},
   "publishConfig": {
     "registry": "https://github.com/transloadit/uppy"
   },
@@ -18,7 +17,8 @@
   ],
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit",
+    "tsc": "tsc",
+    "test": "vitest run",
     "build": "tsc --build tsconfig.build.json"
   },
   "main": "dist/s3mini.min.js",
@@ -51,31 +51,16 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@aws-lite/client": "^0.23.2",
-    "@aws-lite/s3": "0.2.6",
-    "@aws-sdk/client-s3": "3.933.0",
-    "@eslint/eslintrc": "3.3.1",
-    "@eslint/js": "9.39.1",
-    "@rollup/plugin-node-resolve": "16.0.3",
-    "@rollup/plugin-terser": "0.4.4",
-    "@rollup/plugin-typescript": "12.3.0",
     "@types/node": "24.10.1",
     "@typescript-eslint/eslint-plugin": "8.47.0",
     "@typescript-eslint/parser": "8.47.0",
-    "console-table-printer": "2.15.0",
     "dotenv": "17.2.3",
-    "eslint": "9.39.1",
-    "eslint-config-prettier": "10.1.8",
-    "jest": "^30.2.0",
     "minio": "8.0.6",
-    "prettier": "3.6.2",
-    "rimraf": "6.1.0",
-    "rollup": "4.53.2",
-    "rollup-plugin-dts": "6.2.3",
     "s3mini": "0.6.0",
     "tinybench": "5.1.0",
     "tsx": "^4.20.6",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^3.2.4"
   },
   "overrides": {
     "glob": "12.0.0"
