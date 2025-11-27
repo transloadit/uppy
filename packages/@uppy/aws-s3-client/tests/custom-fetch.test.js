@@ -1,5 +1,5 @@
 'use strict';
-import { it, expect } from 'vitest';
+import { vi, it, expect } from 'vitest';
 import { S3mini } from '../src/index.js';
 import { beforeRun } from './_shared.test.js';
 

@@ -2,6 +2,7 @@
 import { vi, it, expect, describe } from 'vitest';
 import { S3mini, sanitizeETag, runInBatches } from '../src/index.js';
 import { randomBytes } from 'node:crypto';
+import { beforeAll } from 'vitest'
 
 export const beforeRun = (raw, name, providerSpecific) => {
   if (!raw || raw === null) {
