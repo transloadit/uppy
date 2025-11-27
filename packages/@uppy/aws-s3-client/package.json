@@ -1,0 +1,128 @@
+{
+  "name": "@uppy/aws-s3-client",
+  "version": "0.7.0",
+  "description": "👶 Tiny & fast S3 client for node and edge computing platforms",
+  "homepage": "https://github.com/good-lly/s3mini",
+  "bugs": {
+    "url": "https://github.com/good-lly/s3mini/issues"
+  },
+  "author": "good-lly",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/good-lly/s3mini.git"
+  },
+  "publishConfig": {
+    "registry": "https://registry.npmjs.org/"
+  },
+  "files": [
+    "./dist/",
+    "./src/",
+    "./package.json",
+    "./README.md"
+  ],
+  "type": "module",
+  "scripts": {
+    "tsc": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js --verbose",
+    "test:perf": "node ./tests/perf/performance.test.js",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier -w src",
+    "formatcheck": "prettier --list-different src",
+    "prepublishOnly": "npm run build",
+    "clean": "rimraf dist",
+    "build": "tsc --build tsconfig.build.json",
+    "dev": "npm run clean && npm run typecheck -w && rollup -c -w"
+  },
+  "main": "dist/s3mini.min.js",
+  "module": "dist/s3mini.js",
+  "types": "dist/s3mini.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/s3mini.d.ts",
+        "development": "./dist/s3mini.js",
+        "default": "./dist/s3mini.min.js"
+      },
+      "require": {
+        "types": "./dist/s3mini.d.ts",
+        "default": "./dist/s3mini.min.js"
+      }
+    }
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=20"
+  },
+  "engineStrict": true,
+  "targets": {
+    "node": 20,
+    "edge": true,
+    "worker": true,
+    "bun": true,
+    "browser": false
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@aws-lite/client": "^0.23.2",
+    "@aws-lite/s3": "0.2.6",
+    "@aws-sdk/client-s3": "3.933.0",
+    "@eslint/eslintrc": "3.3.1",
+    "@eslint/js": "9.39.1",
+    "@rollup/plugin-node-resolve": "16.0.3",
+    "@rollup/plugin-terser": "0.4.4",
+    "@rollup/plugin-typescript": "12.3.0",
+    "@types/node": "24.10.1",
+    "@typescript-eslint/eslint-plugin": "8.47.0",
+    "@typescript-eslint/parser": "8.47.0",
+    "console-table-printer": "2.15.0",
+    "dotenv": "17.2.3",
+    "eslint": "9.39.1",
+    "eslint-config-prettier": "10.1.8",
+    "jest": "^30.2.0",
+    "minio": "8.0.6",
+    "prettier": "3.6.2",
+    "rimraf": "6.1.0",
+    "rollup": "4.53.2",
+    "rollup-plugin-dts": "6.2.3",
+    "s3mini": "0.6.0",
+    "tinybench": "5.1.0",
+    "tsx": "^4.20.6",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "glob": "12.0.0"
+  },
+  "prettier": {
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "singleQuote": true,
+    "semi": true,
+    "endOfLine": "lf",
+    "tabWidth": 2,
+    "trailingComma": "all",
+    "arrowParens": "avoid",
+    "printWidth": 120
+  },
+  "keywords": [
+    "s3",
+    "s3 client",
+    "s3 sdk",
+    "b2",
+    "b2 client",
+    "r2",
+    "r2 client",
+    "cloudflare",
+    "cloudflare r2",
+    "AWS S3",
+    "Oracle Cloud Infrastructure",
+    "OCI Object Storage",
+    "Azure Blob Storage",
+    "Google Cloud Storage",
+    "Ceph",
+    "backblaze",
+    "scaleway",
+    "digitalocean",
+    "minio"
+  ]
+}
