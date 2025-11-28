@@ -11,9 +11,6 @@
       "path": "../@uppy/audio/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/aws-s3/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/box/tsconfig.build.json"
     },
     {
