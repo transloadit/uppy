@@ -10737,25 +10737,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/aws-s3@workspace:*, @uppy/aws-s3@workspace:packages/@uppy/aws-s3":
-  version: 0.0.0-use.local
-  resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
-  dependencies:
-    "@aws-sdk/client-s3": "npm:^3.362.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.362.0"
-    "@uppy/companion-client": "workspace:^"
-    "@uppy/core": "workspace:^"
-    "@uppy/utils": "workspace:^"
-    jsdom: "npm:^26.1.0"
-    nock: "npm:^13.1.0"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^3.2.4"
-    whatwg-fetch: "npm:3.6.2"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/box@workspace:*, @uppy/box@workspace:^, @uppy/box@workspace:packages/@uppy/box":
   version: 0.0.0-use.local
   resolution: "@uppy/box@workspace:packages/@uppy/box"
@@ -14547,7 +14528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0, dotenv@npm:^16.0.1":
+"dotenv@npm:^16.0.1":
   version: 16.4.5
   resolution: "dotenv@npm:16.4.5"
   checksum: 10/55a3134601115194ae0f924e54473459ed0d9fc340ae610b676e248cca45aa7c680d86365318ea964e6da4e2ea80c4514c1adab5adb43d6867fb57ff068f95c8
