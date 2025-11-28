@@ -45,8 +45,6 @@
   "license": "MIT",
   "devDependencies": {
     "dotenv": "17.2.3",
-    "minio": "8.0.6",
-    "tsx": "^4.20.6",
     "typescript": "5.9.3",
     "vitest": "^3.2.4"
   },
