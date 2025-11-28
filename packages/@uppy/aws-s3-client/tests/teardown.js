@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
-import { join } from 'path'
+import { join } from 'node:path'
 import { composeDown } from './docker.js'
 
 const composeFiles = {

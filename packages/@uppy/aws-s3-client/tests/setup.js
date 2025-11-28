@@ -4,10 +4,10 @@ import * as dotenv from 'dotenv'
 
 dotenv.config()
 
+import { exec } from 'node:child_process'
 import { dirname, join } from 'node:path'
-import { exec } from 'child_process'
 
-import { promisify } from 'util'
+import { promisify } from 'node:util'
 import { composeUp, composeUpWait, execDockerCommand } from './docker.js'
 
 const execAsync = promisify(exec)
@@ -36,60 +36,6 @@ const composeFiles = {
   minio: join(process.cwd(), 'tests', 'compose.minio.yaml'),
   garage: join(process.cwd(), 'tests', 'compose.garage.yaml'),
   // ceph: join(process.cwd(), 'tests', 'compose.ceph.yaml'),
-}
-
-async function cephInit(containerName = 'ceph') {
-  console.log('🔧 Initializing Ceph demo container...')
-
-  // The demo container takes time to initialize all services
-  console.log('⏳ Waiting 20 seconds for initial startup...')
-  await new Promise((resolve) => setTimeout(resolve, 20000))
-
-  // For the demo container, we just need to verify S3 is accessible
-  let retries = 20
-  while (retries > 0) {
-    try {
-      // Check if the S3 port responds to HTTP requests
-      const response = await execAsync(
-        'curl -s -o /dev/null -w "%{http_code}" --max-time 5 http://localhost:7480/ || echo "000"',
-      )
-      const httpCode = response.stdout.trim()
-
-      console.log(`S3 endpoint returned HTTP ${httpCode}`)
-
-      // Any HTTP response (even 403/404) means the service is up
-      if ((httpCode !== '000000' && httpCode !== '') || httpCode !== '000') {
-        console.log('✅ Ceph S3 service is ready')
-
-        // Optional: Test with a basic S3 operation
-        try {
-          // This might fail with auth errors, but that's OK - it means S3 is working
-          const testCmd = `curl -s -X GET http://localhost:7480/ -H "Host: test-bucket.localhost"`
-          await execAsync(testCmd)
-        } catch (e) {
-          // Expected to fail with auth error
-        }
-
-        return
-      }
-    } catch (e) {
-      console.log('Check failed:', e.message)
-    }
-
-    retries--
-    if (retries > 0) {
-      console.log(`⏳ Waiting for S3 endpoint... (${retries} retries left)`)
-      await new Promise((resolve) => setTimeout(resolve, 3000))
-    }
-  }
-
-  // If we get here, something is wrong
-  try {
-    const logs = await execAsync(`docker logs ${containerName} --tail 100 2>&1`)
-    console.error('Container logs:', logs.stdout + logs.stderr)
-  } catch (e) {}
-
-  throw new Error('Ceph S3 service failed to become ready')
 }
 
 async function garageInit(containerName = 'garage') {

@@ -62,7 +62,7 @@ const minioSpecific = (bucket) => {
 
     expect.assertions(2)
     try {
-      const wrongResponse = await s3client.putObject(
+      const _wrongResponse = await s3client.putObject(
         'validated-file-two.txt',
         fileContents,
         'text/plain',

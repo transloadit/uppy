@@ -50,7 +50,7 @@ const contentString = 'Hello, world!'
 
 const specialCharContentString = 'Hello, world! \uD83D\uDE00'
 const specialCharContentBufferExtra = Buffer.from(
-  specialCharContentString + ' extra',
+  `${specialCharContentString}extra`,
   'utf-8',
 )
 const specialCharKey = 'special-char key with spaces.txt'
@@ -182,7 +182,7 @@ export const testRunner = (bucket) => {
         'x-amz-server-side-encryption-customer-key-md5': 'wrong-md5',
       }
       try {
-        const wrongResponse = await s3client.getObject(
+        const _wrongResponse = await s3client.getObject(
           key,
           {},
           wrongSsecHeaders,
@@ -193,7 +193,7 @@ export const testRunner = (bucket) => {
       }
 
       try {
-        const wrongResponse = await s3client.getObject(key)
+        const _wrongResponse = await s3client.getObject(key)
       } catch (err) {
         expect(err).toBeDefined()
         expect(err.message).toContain('400 – InvalidRequest')
@@ -232,12 +232,12 @@ export const testRunner = (bucket) => {
 
     // Put object image/png
     await s3client.putObject(
-      specialCharKey + '.png',
+      `${specialCharKey}.png`,
       specialCharContentBufferExtra,
       'image/png',
     )
     // get object with image/png content type
-    const imageData = await s3client.getObjectResponse(specialCharKey + '.png')
+    const imageData = await s3client.getObjectResponse(`${specialCharKey}.png`)
     expect(imageData).toBeDefined()
     expect(imageData.headers.get('content-type')).toBe('image/png')
 
@@ -758,7 +758,6 @@ export const testRunner = (bucket) => {
     const pageSmall = 2
     const pageLarge = 900
     let counter = 0
-    let attempts = 0
     const errors = []
 
     // Bucket must start empty for this prefix
@@ -772,7 +771,6 @@ export const testRunner = (bucket) => {
               `${prefix}object${i}.txt`,
               contentString,
             )
-            attempts++
             if (response.status === 200) {
               counter++
             } else {

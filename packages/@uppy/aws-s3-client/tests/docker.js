@@ -1,6 +1,6 @@
+import { exec, spawn } from 'node:child_process'
 import { resolve } from 'node:path'
-import { exec, spawn } from 'child_process'
-import { promisify } from 'util'
+import { promisify } from 'node:util'
 
 const CWD = resolve('.')
 
@@ -37,7 +37,7 @@ export async function execDockerCommand(
       console.log(
         `Found container: ${actualContainerName} for service: ${containerName}`,
       )
-    } catch (error) {
+    } catch (_error) {
       console.log(`Using container name as-is: ${containerName}`)
     }
   }

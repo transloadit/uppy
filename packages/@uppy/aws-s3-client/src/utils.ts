@@ -142,6 +142,7 @@ export const parseXml = (input: string): XmlValue => {
   const result: XmlMap = {} // strong type, no `any`
   let match: RegExpExecArray | null
 
+  // biome-ignore lint/suspicious/noAssignInExpressions: supress
   while ((match = RE_TAG.exec(xmlContent)) !== null) {
     const tagName = match[1]
     const innerContent = match[2]
