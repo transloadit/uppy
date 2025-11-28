@@ -179,12 +179,6 @@ class S3mini {
     }
   }
 
-  // private _checkMaxKeys(maxKeys: number): void {
-  //   if (typeof maxKeys !== 'number' || maxKeys <= 0) {
-  //     this._log('error', C.ERROR_MAX_KEYS_TYPE);
-  //     throw new TypeError(C.ERROR_MAX_KEYS_TYPE);
-  //   }
-  // }
 
   private _checkOpts(opts: object): void {
     if (typeof opts !== 'object') {
@@ -257,21 +251,6 @@ class S3mini {
     } = {},
   ): Promise<Response> {
 
-
-    // Basic validation
-    // if (!['GET', 'HEAD', 'PUT', 'POST', 'DELETE'].includes(method)) {
-    //   throw new Error(`${C.ERROR_PREFIX}Unsupported HTTP method ${method as string}`);
-    // }
-
-
-    /**
-     * build the URL
-     * build query string
-     * build base headers
-     * convert all header values to strings and merge
-     * call the signRequest callback to get signed headers
-     */
-
     const { filteredOpts, conditionalHeaders } = ['GET', 'HEAD'].includes(method)
       ? this._filterIfHeaders(query)
       : { filteredOpts: query, conditionalHeaders: {} };
@@ -320,27 +299,6 @@ class S3mini {
     })
 
   return this._sendRequest(finalUrl.toString(), method, signedHeaders, body, tolerated);
-
-
-    // const encodedKey = key ? U.uriResourceEscape(key) : '';
-    // use the callback
-    // const { url, headers: signedHeaders } = await this._sign(method, encodedKey, filteredOpts, baseHeaders);
-    // if (Object.keys(query).length > 0) {
-    //   withQuery = true; // append query string to signed URL
-    // }
-
-    // filter options
-    // const filteredOptsStrings = Object.fromEntries(
-    //   Object.entries(filteredOpts).map(([k, v]) => [k, String(v)]),
-    // ) as Record<string, string>;
-
-
-    // const finalUrl =
-    //   withQuery && Object.keys(filteredOpts).length ? `${url}?${new URLSearchParams(filteredOptsStrings)}` : url;
-    // const signedHeadersString = Object.fromEntries(
-    //   Object.entries(signedHeaders).map(([k, v]) => [k, String(v)]),
-    // ) as Record<string, string>;
-    // return this._sendRequest(finalUrl, method, signedHeadersString, body, tolerated);
   }
 
   /**
