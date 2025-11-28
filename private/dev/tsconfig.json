@@ -35,9 +35,6 @@
       "path": "../../packages/@uppy/tus/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/aws-s3/tsconfig.build.json"
-    },
-    {
       "path": "../../packages/@uppy/xhr-upload/tsconfig.build.json"
     },
     {

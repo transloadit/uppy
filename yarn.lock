@@ -933,7 +933,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:3.600.0, @aws-sdk/client-s3@npm:^3.338.0, @aws-sdk/client-s3@npm:^3.362.0":
+"@aws-sdk/client-s3@npm:3.600.0, @aws-sdk/client-s3@npm:^3.338.0":
   version: 3.600.0
   resolution: "@aws-sdk/client-s3@npm:3.600.0"
   dependencies:
@@ -1913,7 +1913,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-request-presigner@npm:^3.338.0, @aws-sdk/s3-request-presigner@npm:^3.362.0":
+"@aws-sdk/s3-request-presigner@npm:^3.338.0":
   version: 3.600.0
   resolution: "@aws-sdk/s3-request-presigner@npm:3.600.0"
   dependencies:
@@ -13671,7 +13671,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-parser@npm:1.4.7, cookie-parser@npm:^1.4.7":
+"cookie-parser@npm:1.4.7":
   version: 1.4.7
   resolution: "cookie-parser@npm:1.4.7"
   dependencies:
@@ -15582,52 +15582,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"example-aws-companion@workspace:examples/aws-companion":
-  version: 0.0.0-use.local
-  resolution: "example-aws-companion@workspace:examples/aws-companion"
-  dependencies:
-    "@uppy/aws-s3": "workspace:*"
-    "@uppy/companion": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    "@uppy/google-drive": "workspace:*"
-    "@uppy/webcam": "workspace:*"
-    body-parser: "npm:^1.20.3"
-    cookie-parser: "npm:^1.4.7"
-    cors: "npm:^2.8.5"
-    dotenv: "npm:^16.0.1"
-    express: "npm:^4.19.2"
-    express-session: "npm:^1.17.3"
-    npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
-  languageName: unknown
-  linkType: soft
-
-"example-aws-nodejs@workspace:examples/aws-nodejs":
-  version: 0.0.0-use.local
-  resolution: "example-aws-nodejs@workspace:examples/aws-nodejs"
-  dependencies:
-    "@aws-sdk/client-s3": "npm:^3.338.0"
-    "@aws-sdk/client-sts": "npm:^3.338.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.338.0"
-    body-parser: "npm:^1.20.3"
-    dotenv: "npm:^16.0.0"
-    express: "npm:^4.19.2"
-  languageName: unknown
-  linkType: soft
-
-"example-aws-php@workspace:examples/aws-php":
-  version: 0.0.0-use.local
-  resolution: "example-aws-php@workspace:examples/aws-php"
-  dependencies:
-    "@uppy/aws-s3": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    esbuild: "npm:^0.25.0"
-    uppy: "workspace:*"
-  languageName: unknown
-  linkType: soft
-
 "example-cdn@workspace:examples/cdn":
   version: 0.0.0-use.local
   resolution: "example-cdn@workspace:examples/cdn"
@@ -15651,21 +15605,6 @@ __metadata:
     express-session: "npm:^1.15.6"
     npm-run-all: "npm:^4.1.2"
     preact: "npm:^10.5.13"
-    vite: "npm:^7.1.11"
-  languageName: unknown
-  linkType: soft
-
-"example-companion-digitalocean-spaces@workspace:examples/companion-digitalocean-spaces":
-  version: 0.0.0-use.local
-  resolution: "example-companion-digitalocean-spaces@workspace:examples/companion-digitalocean-spaces"
-  dependencies:
-    "@uppy/aws-s3": "workspace:*"
-    "@uppy/core": "workspace:*"
-    "@uppy/dashboard": "workspace:*"
-    body-parser: "npm:^1.20.3"
-    cors: "npm:^2.8.5"
-    dotenv: "npm:^16.0.1"
-    express: "npm:^4.19.2"
     vite: "npm:^7.1.11"
   languageName: unknown
   linkType: soft
@@ -15972,7 +15911,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"express-session@npm:^1.15.6, express-session@npm:^1.17.3":
+"express-session@npm:^1.15.6":
   version: 1.18.0
   resolution: "express-session@npm:1.18.0"
   dependencies:
@@ -25939,13 +25878,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uppy@workspace:*, uppy@workspace:packages/uppy":
+"uppy@workspace:packages/uppy":
   version: 0.0.0-use.local
   resolution: "uppy@workspace:packages/uppy"
   dependencies:
     "@aws-sdk/client-s3": "npm:^3.338.0"
     "@uppy/audio": "workspace:*"
-    "@uppy/aws-s3": "workspace:*"
     "@uppy/box": "workspace:*"
     "@uppy/companion-client": "workspace:*"
     "@uppy/compressor": "workspace:*"
@@ -26972,13 +26910,6 @@ __metadata:
   dependencies:
     iconv-lite: "npm:0.6.3"
   checksum: 10/bbef815eb67f91487c7f2ef96329743f5fd8357d7d62b1119237d25d41c7e452dff8197235b2d3c031365a17f61d3bb73ca49d0ed1582475aa4a670815e79534
-  languageName: node
-  linkType: hard
-
-"whatwg-fetch@npm:3.6.2":
-  version: 3.6.2
-  resolution: "whatwg-fetch@npm:3.6.2"
-  checksum: 10/f05ceff9e9098db228fee84b9f9258a434283c0eb3cd8183c8b22e25e32698a2f80ee8a9c1c634d5b1441fe7692a031812d8a1f21079da76892a5119be2ac945
   languageName: node
   linkType: hard
 
