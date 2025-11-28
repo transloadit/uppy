@@ -75,7 +75,7 @@ export default function ListItem({
             <ItemIcon itemIconString={file.data.icon} />
           </div>
           {showTitles && file.data.name ? (
-            <span>{file.data.name}</span>
+            <span className="uppy-truncate-text">{file.data.name}</span>
           ) : (
             i18n('unnamed')
           )}
@@ -89,7 +89,11 @@ export default function ListItem({
           <div className="uppy-ProviderBrowserItem-iconWrap">
             <ItemIcon itemIconString={file.data.icon} />
           </div>
-          {showTitles && (file.data.name ?? i18n('unnamed'))}
+          {showTitles && (
+            <span className="uppy-truncate-text">
+              {file.data.name ?? i18n('unnamed')}
+            </span>
+          )}
         </label>
       )}
     </li>
