@@ -1,4 +1,4 @@
-import { S3mini }  from '../src/S3.js'
+import { S3mini } from '../src/S3.js'
 import { createSigV4Signer } from '../src/test-utils/sigv4-signer.js'
 
 const accessKeyId = ''
@@ -11,7 +11,6 @@ const endpoint = `https://${bucket}.s3.${region}.amazonaws.com`
 // ! WIP need to add signer and test with aws
 ;('https://testbucketnewfix.s3.eu-north-1.amazonaws.com')
 async function main() {
-
   const signer = createSigV4Signer({
     accessKeyId: accessKeyId,
     secretAccessKey: secretAccessKey,
@@ -20,7 +19,7 @@ async function main() {
   const s3 = new S3mini({
     endpoint,
     region,
-    signRequest: signer
+    signRequest: signer,
   })
 
   const testKey = `s3mini-test-${Date.now()}.txt`
