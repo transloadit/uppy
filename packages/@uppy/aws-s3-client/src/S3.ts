@@ -212,7 +212,7 @@ class S3mini {
   }
 
   private _validateData(data: unknown): BodyInit {
-    if (typeof data === 'string' || data instanceof ArrayBuffer) {
+    if (typeof data === 'string' || data instanceof ArrayBuffer || ArrayBuffer.isView(data)) {
       return data as BodyInit;
     }
     this._log('error', C.ERROR_DATA_BUFFER_REQUIRED);
