@@ -1,22 +1,26 @@
-'use strict';
-import type { XmlValue, XmlMap, ListBucketResponse, ErrorWithCode } from './types.js';
+import type {
+  ErrorWithCode,
+  ListBucketResponse,
+  XmlMap,
+  XmlValue,
+} from './types.js'
 
-const ENCODR = new TextEncoder();
-const chunkSize = 0x8000; // 32KB chunks
-const HEXS = '0123456789abcdef';
+const ENCODR = new TextEncoder()
+const chunkSize = 0x8000 // 32KB chunks
+const HEXS = '0123456789abcdef'
 
 export const getByteSize = (data: unknown): number => {
   if (typeof data === 'string') {
-    return ENCODR.encode(data).byteLength;
+    return ENCODR.encode(data).byteLength
   }
   if (data instanceof ArrayBuffer || data instanceof Uint8Array) {
-    return data.byteLength;
+    return data.byteLength
   }
   if (data instanceof Blob) {
-    return data.size;
+    return data.size
   }
-  throw new Error('Unsupported data type');
-};
+  throw new Error('Unsupported data type')
+}
 
 /**
  * Turn a raw ArrayBuffer into its hexadecimal representation.
@@ -24,13 +28,13 @@ export const getByteSize = (data: unknown): number => {
  * @returns {string} Hexadecimal string
  */
 export const hexFromBuffer = (buffer: ArrayBuffer): string => {
-  const bytes = new Uint8Array(buffer);
-  let hex = '';
+  const bytes = new Uint8Array(buffer)
+  let hex = ''
   for (const byte of bytes) {
-    hex += HEXS[byte >> 4]! + HEXS[byte & 0x0f]!;
+    hex += HEXS[byte >> 4]! + HEXS[byte & 0x0f]!
   }
-  return hex;
-};
+  return hex
+}
 
 /**
  * Turn a raw ArrayBuffer into its base64 representation.
@@ -38,14 +42,14 @@ export const hexFromBuffer = (buffer: ArrayBuffer): string => {
  * @returns {string} Base64 string
  */
 export const base64FromBuffer = (buffer: ArrayBuffer): string => {
-  const bytes = new Uint8Array(buffer);
-  let result = '';
+  const bytes = new Uint8Array(buffer)
+  let result = ''
   for (let i = 0; i < bytes.length; i += chunkSize) {
-    const chunk = bytes.subarray(i, i + chunkSize);
-    result += btoa(String.fromCodePoint(...chunk));
+    const chunk = bytes.subarray(i, i + chunkSize)
+    result += btoa(String.fromCodePoint(...chunk))
   }
-  return result;
-};
+  return result
+}
 
 /**
  * Compute SHA-256 hash of arbitrary string data.
@@ -53,10 +57,10 @@ export const base64FromBuffer = (buffer: ArrayBuffer): string => {
  * @returns {ArrayBuffer} The raw hash
  */
 export const sha256 = async (content: string): Promise<ArrayBuffer> => {
-  const data = ENCODR.encode(content);
+  const data = ENCODR.encode(content)
 
-  return await globalThis.crypto.subtle.digest('SHA-256', data);
-};
+  return await globalThis.crypto.subtle.digest('SHA-256', data)
+}
 
 /**
  * Compute HMAC-SHA-256 of arbitrary data.
@@ -64,18 +68,21 @@ export const sha256 = async (content: string): Promise<ArrayBuffer> => {
  * @param {string} content The content to be signed.
  * @returns {ArrayBuffer} The raw signature
  */
-export const hmac = async (key: string | ArrayBuffer, content: string): Promise<ArrayBuffer> => {
+export const hmac = async (
+  key: string | ArrayBuffer,
+  content: string,
+): Promise<ArrayBuffer> => {
   const secret = await globalThis.crypto.subtle.importKey(
     'raw',
     typeof key === 'string' ? ENCODR.encode(key) : key,
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign'],
-  );
-  const data = ENCODR.encode(content);
+  )
+  const data = ENCODR.encode(content)
 
-  return await globalThis.crypto.subtle.sign('HMAC', secret, data);
-};
+  return await globalThis.crypto.subtle.sign('HMAC', secret, data)
+}
 
 /**
  * Sanitize ETag value by removing quotes and XML entities
@@ -87,9 +94,12 @@ export const sanitizeETag = (etag: string): string => {
     '"': '',
     '&quot;': '',
     '&#34;': '',
-  };
-  return etag.replaceAll(/(^("|&quot;|&#34;))|(("|&quot;|&#34;)$)/g, m => replaceChars[m] || '');
-};
+  }
+  return etag.replaceAll(
+    /(^("|&quot;|&#34;))|(("|&quot;|&#34;)$)/g,
+    (m) => replaceChars[m] || '',
+  )
+}
 
 const entityMap = {
   '&quot;': '"',
@@ -97,7 +107,7 @@ const entityMap = {
   '&lt;': '<',
   '&gt;': '>',
   '&amp;': '&',
-} as const;
+} as const
 
 /**
  * Escape special characters for XML
@@ -110,11 +120,14 @@ export const escapeXml = (value: string): string => {
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;')
-    .replaceAll("'", '&apos;');
-};
+    .replaceAll("'", '&apos;')
+}
 
 const unescapeXml = (value: string): string =>
-  value.replaceAll(/&(quot|apos|lt|gt|amp);/g, m => entityMap[m as keyof typeof entityMap] ?? m);
+  value.replaceAll(
+    /&(quot|apos|lt|gt|amp);/g,
+    (m) => entityMap[m as keyof typeof entityMap] ?? m,
+  )
 
 /**
  * Parse a very small subset of XML into a JS structure.
@@ -124,41 +137,46 @@ const unescapeXml = (value: string): string =>
  */
 
 export const parseXml = (input: string): XmlValue => {
-  const xmlContent = input.replace(/<\?xml[^?]*\?>\s*/, '');
-  const RE_TAG = /<([A-Za-z_][\w\-.]*)[^>]*>([\s\S]*?)<\/\1>/gm;
-  const result: XmlMap = {}; // strong type, no `any`
-  let match: RegExpExecArray | null;
+  const xmlContent = input.replace(/<\?xml[^?]*\?>\s*/, '')
+  const RE_TAG = /<([A-Za-z_][\w\-.]*)[^>]*>([\s\S]*?)<\/\1>/gm
+  const result: XmlMap = {} // strong type, no `any`
+  let match: RegExpExecArray | null
 
   while ((match = RE_TAG.exec(xmlContent)) !== null) {
-    const tagName = match[1];
-    const innerContent = match[2];
-    const node: XmlValue = innerContent ? parseXml(innerContent) : unescapeXml(innerContent?.trim() || '');
+    const tagName = match[1]
+    const innerContent = match[2]
+    const node: XmlValue = innerContent
+      ? parseXml(innerContent)
+      : unescapeXml(innerContent?.trim() || '')
     if (!tagName) {
-      continue;
+      continue
     }
-    const current = result[tagName];
+    const current = result[tagName]
     if (current === undefined) {
       // First occurrence
-      result[tagName] = node;
+      result[tagName] = node
     } else if (Array.isArray(current)) {
       // Already an array
-      current.push(node);
+      current.push(node)
     } else {
       // Promote to array on the second occurrence
-      result[tagName] = [current, node];
+      result[tagName] = [current, node]
     }
   }
 
   // No child tags? — return the text, after entity decode
-  return Object.keys(result).length > 0 ? result : unescapeXml(xmlContent.trim());
-};
+  return Object.keys(result).length > 0
+    ? result
+    : unescapeXml(xmlContent.trim())
+}
 
 /**
  * Encode a character as a URI percent-encoded hex value
  * @param c Character to encode
  * @returns Percent-encoded character
  */
-const encodeAsHex = (c: string): string => `%${c.charCodeAt(0).toString(16).toUpperCase()}`;
+const encodeAsHex = (c: string): string =>
+  `%${c.charCodeAt(0).toString(16).toUpperCase()}`
 
 /**
  * Escape a URI string using percent encoding
@@ -166,8 +184,8 @@ const encodeAsHex = (c: string): string => `%${c.charCodeAt(0).toString(16).toUp
  * @returns Escaped URI string
  */
 export const uriEscape = (uriStr: string): string => {
-  return encodeURIComponent(uriStr).replace(/[!'()*]/g, encodeAsHex);
-};
+  return encodeURIComponent(uriStr).replace(/[!'()*]/g, encodeAsHex)
+}
 
 /**
  * Escape a URI resource path while preserving forward slashes
@@ -175,44 +193,55 @@ export const uriEscape = (uriStr: string): string => {
  * @returns Escaped URI path
  */
 export const uriResourceEscape = (string: string): string => {
-  return uriEscape(string).replaceAll('%2F', '/');
-};
+  return uriEscape(string).replaceAll('%2F', '/')
+}
 
-export const isListBucketResponse = (value: unknown): value is ListBucketResponse => {
-  return typeof value === 'object' && value !== null && ('listBucketResult' in value || 'error' in value);
-};
+export const isListBucketResponse = (
+  value: unknown,
+): value is ListBucketResponse => {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    ('listBucketResult' in value || 'error' in value)
+  )
+}
 
 export const extractErrCode = (e: unknown): string | undefined => {
   if (typeof e !== 'object' || e === null) {
-    return undefined;
+    return undefined
   }
-  const err = e as ErrorWithCode;
+  const err = e as ErrorWithCode
   if (typeof err.code === 'string') {
-    return err.code;
+    return err.code
   }
-  return typeof err.cause?.code === 'string' ? err.cause.code : undefined;
-};
+  return typeof err.cause?.code === 'string' ? err.cause.code : undefined
+}
 
 export class S3Error extends Error {
-  readonly code?: string;
+  readonly code?: string
   constructor(msg: string, code?: string, cause?: unknown) {
-    super(msg);
-    this.name = new.target.name; // keeps instanceof usable
-    this.code = code;
-    this.cause = cause;
+    super(msg)
+    this.name = new.target.name // keeps instanceof usable
+    this.code = code
+    this.cause = cause
   }
 }
 
 export class S3NetworkError extends S3Error {}
 export class S3ServiceError extends S3Error {
-  readonly status: number;
-  readonly serviceCode?: string;
-  body: string | undefined;
-  constructor(msg: string, status: number, serviceCode?: string, body?: string) {
-    super(msg, serviceCode);
-    this.status = status;
-    this.serviceCode = serviceCode;
-    this.body = body;
+  readonly status: number
+  readonly serviceCode?: string
+  body: string | undefined
+  constructor(
+    msg: string,
+    status: number,
+    serviceCode?: string,
+    body?: string,
+  ) {
+    super(msg, serviceCode)
+    this.status = status
+    this.serviceCode = serviceCode
+    this.body = body
   }
 }
 
@@ -230,35 +259,39 @@ export const runInBatches = async <T = unknown>(
   batchSize: number = 30,
   minIntervalMs: number = 0,
 ): Promise<Array<PromiseSettledResult<T>>> => {
-  const allResults: PromiseSettledResult<T>[] = [];
-  let batch: Array<() => Promise<T>> = [];
+  const allResults: PromiseSettledResult<T>[] = []
+  let batch: Array<() => Promise<T>> = []
 
   for (const task of tasks) {
-    batch.push(task);
+    batch.push(task)
     if (batch.length === batchSize) {
-      await executeBatch(batch);
-      batch = [];
+      await executeBatch(batch)
+      batch = []
     }
   }
   if (batch.length) {
-    await executeBatch(batch);
+    await executeBatch(batch)
   }
-  return allResults;
+  return allResults
 
   // ───────── helpers ──────────
-  async function executeBatch(batchFns: ReadonlyArray<() => Promise<T>>): Promise<void> {
-    const start: number = Date.now();
+  async function executeBatch(
+    batchFns: ReadonlyArray<() => Promise<T>>,
+  ): Promise<void> {
+    const start: number = Date.now()
 
     const settled: Array<PromiseSettledResult<T>> = await Promise.allSettled(
       batchFns.map((fn: () => Promise<T>) => fn()),
-    );
-    allResults.push(...settled);
+    )
+    allResults.push(...settled)
 
     if (minIntervalMs > 0) {
-      const wait: number = minIntervalMs - (Date.now() - start);
+      const wait: number = minIntervalMs - (Date.now() - start)
       if (wait > 0) {
-        await new Promise<void>((resolve: () => void) => setTimeout(resolve, wait));
+        await new Promise<void>((resolve: () => void) =>
+          setTimeout(resolve, wait),
+        )
       }
     }
   }
-};
+}

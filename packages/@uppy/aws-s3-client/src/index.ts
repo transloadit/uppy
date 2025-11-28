@@ -1,17 +1,14 @@
-'use strict';
-
 // Export the S3 class as default export and named export
-export { S3mini } from './S3.js';
-export { sanitizeETag, runInBatches } from './utils.js';
-
+export { S3mini } from './S3.js'
 // Re-export types
 export type {
-  S3Config,
-  Logger,
-  UploadPart,
   CompleteMultipartUploadResult,
+  ErrorWithCode,
   ExistResponseCode,
   ListBucketResponse,
   ListMultipartUploadResponse,
-  ErrorWithCode,
-} from './types.js';
+  Logger,
+  S3Config,
+  UploadPart,
+} from './types.js'
+export { runInBatches, sanitizeETag } from './utils.js'

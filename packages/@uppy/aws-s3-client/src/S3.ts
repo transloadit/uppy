@@ -1,8 +1,6 @@
-'use strict';
-
-import * as C from './consts.js';
-import type * as IT from './types.js';
-import * as U from './utils.js';
+import * as C from './consts.js'
+import type * as IT from './types.js'
+import * as U from './utils.js'
 
 /**
  * S3 class for interacting with S3-compatible object storage services.
@@ -43,14 +41,14 @@ class S3mini {
    * @param {typeof fetch} [config.fetch=globalThis.fetch] - Custom fetch implementation to use for HTTP requests.
    * @throws {TypeError} Will throw an error if required parameters are missing or of incorrect type.
    */
-  readonly endpoint: URL;
-  readonly region: string;
-  readonly bucketName: string;
-  readonly requestSizeInBytes: number;
-  readonly requestAbortTimeout?: number;
-  readonly logger?: IT.Logger;
-  readonly fetch: typeof fetch;
-  readonly signRequest: IT.signRequestFn;
+  readonly endpoint: URL
+  readonly region: string
+  readonly bucketName: string
+  readonly requestSizeInBytes: number
+  readonly requestAbortTimeout?: number
+  readonly logger?: IT.Logger
+  readonly fetch: typeof fetch
+  readonly signRequest: IT.signRequestFn
 
   constructor({
     endpoint,
@@ -61,37 +59,37 @@ class S3mini {
     logger = undefined,
     fetch = globalThis.fetch,
   }: IT.S3Config) {
-    this._validateConstructorParams(endpoint, signRequest);
-    this.endpoint = new URL(this._ensureValidUrl(endpoint));
-    this.signRequest = signRequest;
-    this.region = region;
-    this.bucketName = this._extractBucketName();
-    this.requestSizeInBytes = requestSizeInBytes;
-    this.requestAbortTimeout = requestAbortTimeout;
-    this.logger = logger;
-    this.fetch = fetch;
+    this._validateConstructorParams(endpoint, signRequest)
+    this.endpoint = new URL(this._ensureValidUrl(endpoint))
+    this.signRequest = signRequest
+    this.region = region
+    this.bucketName = this._extractBucketName()
+    this.requestSizeInBytes = requestSizeInBytes
+    this.requestAbortTimeout = requestAbortTimeout
+    this.logger = logger
+    this.fetch = fetch
   }
 
   private _sanitize(obj: unknown): unknown {
     if (typeof obj !== 'object' || obj === null) {
-      return obj;
+      return obj
     }
     return Object.keys(obj).reduce(
       (acc: Record<string, unknown>, key) => {
         if (C.SENSITIVE_KEYS_REDACTED.has(key.toLowerCase())) {
-          acc[key] = '[REDACTED]';
+          acc[key] = '[REDACTED]'
         } else if (
           typeof (obj as Record<string, unknown>)[key] === 'object' &&
           (obj as Record<string, unknown>)[key] !== null
         ) {
-          acc[key] = this._sanitize((obj as Record<string, unknown>)[key]);
+          acc[key] = this._sanitize((obj as Record<string, unknown>)[key])
         } else {
-          acc[key] = (obj as Record<string, unknown>)[key];
+          acc[key] = (obj as Record<string, unknown>)[key]
         }
-        return acc;
+        return acc
       },
       Array.isArray(obj) ? [] : {},
-    );
+    )
   }
 
   private _log(
@@ -103,7 +101,7 @@ class S3mini {
       // Function to recursively sanitize an object
 
       // Sanitize the additional data
-      const sanitizedData = this._sanitize(additionalData);
+      const sanitizedData = this._sanitize(additionalData)
       // Prepare the log entry
       const logEntry = {
         timestamp: new Date().toISOString(),
@@ -116,101 +114,109 @@ class S3mini {
           endpoint: this.endpoint.toString(),
           // Only include the first few characters of the access key, if it exists
         }),
-      };
+      }
 
       // Log the sanitized entry
-      this.logger[level](JSON.stringify(logEntry));
+      this.logger[level](JSON.stringify(logEntry))
     }
   }
 
-  private _validateConstructorParams(endpoint: string, signRequest: IT.signRequestFn): void {
+  private _validateConstructorParams(
+    endpoint: string,
+    signRequest: IT.signRequestFn,
+  ): void {
     if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
-      throw new TypeError(C.ERROR_ENDPOINT_REQUIRED);
+      throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
     }
 
-    if (typeof signRequest !== 'function'){
-      throw new TypeError("signRequest is not passed")
+    if (typeof signRequest !== 'function') {
+      throw new TypeError('signRequest is not passed')
     }
   }
 
   private _ensureValidUrl(raw: string): string {
-    const candidate = /^(https?:)?\/\//i.test(raw) ? raw : `https://${raw}`;
+    const candidate = /^(https?:)?\/\//i.test(raw) ? raw : `https://${raw}`
     try {
-      new URL(candidate);
+      new URL(candidate)
 
       // Find the last non-slash character
-      let endIndex = candidate.length;
+      let endIndex = candidate.length
       while (endIndex > 0 && candidate[endIndex - 1] === '/') {
-        endIndex--;
+        endIndex--
       }
-      return endIndex === candidate.length ? candidate : candidate.substring(0, endIndex);
+      return endIndex === candidate.length
+        ? candidate
+        : candidate.substring(0, endIndex)
     } catch {
-      const msg = `${C.ERROR_ENDPOINT_FORMAT} But provided: "${raw}"`;
-      this._log('error', msg);
-      throw new TypeError(msg);
+      const msg = `${C.ERROR_ENDPOINT_FORMAT} But provided: "${raw}"`
+      this._log('error', msg)
+      throw new TypeError(msg)
     }
   }
 
   private _validateMethodIsGetOrHead(method: string): void {
     if (method !== 'GET' && method !== 'HEAD') {
-      this._log('error', `${C.ERROR_PREFIX}method must be either GET or HEAD`);
-      throw new Error(`${C.ERROR_PREFIX}method must be either GET or HEAD`);
+      this._log('error', `${C.ERROR_PREFIX}method must be either GET or HEAD`)
+      throw new Error(`${C.ERROR_PREFIX}method must be either GET or HEAD`)
     }
   }
 
   private _checkKey(key: string): void {
     if (typeof key !== 'string' || key.trim().length === 0) {
-      this._log('error', C.ERROR_KEY_REQUIRED);
-      throw new TypeError(C.ERROR_KEY_REQUIRED);
+      this._log('error', C.ERROR_KEY_REQUIRED)
+      throw new TypeError(C.ERROR_KEY_REQUIRED)
     }
   }
 
   private _checkDelimiter(delimiter: string): void {
     if (typeof delimiter !== 'string' || delimiter.trim().length === 0) {
-      this._log('error', C.ERROR_DELIMITER_REQUIRED);
-      throw new TypeError(C.ERROR_DELIMITER_REQUIRED);
+      this._log('error', C.ERROR_DELIMITER_REQUIRED)
+      throw new TypeError(C.ERROR_DELIMITER_REQUIRED)
     }
   }
 
   private _checkPrefix(prefix: string): void {
     if (typeof prefix !== 'string') {
-      this._log('error', C.ERROR_PREFIX_TYPE);
-      throw new TypeError(C.ERROR_PREFIX_TYPE);
+      this._log('error', C.ERROR_PREFIX_TYPE)
+      throw new TypeError(C.ERROR_PREFIX_TYPE)
     }
   }
 
-
   private _checkOpts(opts: object): void {
     if (typeof opts !== 'object') {
-      this._log('error', `${C.ERROR_PREFIX}opts must be an object`);
-      throw new TypeError(`${C.ERROR_PREFIX}opts must be an object`);
+      this._log('error', `${C.ERROR_PREFIX}opts must be an object`)
+      throw new TypeError(`${C.ERROR_PREFIX}opts must be an object`)
     }
   }
 
   private _filterIfHeaders(opts: Record<string, unknown>): {
-    filteredOpts: Record<string, string>;
-    conditionalHeaders: Record<string, unknown>;
+    filteredOpts: Record<string, string>
+    conditionalHeaders: Record<string, unknown>
   } {
-    const filteredOpts: Record<string, string> = {};
-    const conditionalHeaders: Record<string, unknown> = {};
+    const filteredOpts: Record<string, string> = {}
+    const conditionalHeaders: Record<string, unknown> = {}
 
     for (const [key, value] of Object.entries(opts)) {
       if (C.IFHEADERS.has(key.toLowerCase())) {
-        conditionalHeaders[key] = value;
+        conditionalHeaders[key] = value
       } else {
-        filteredOpts[key] = value as string;
+        filteredOpts[key] = value as string
       }
     }
 
-    return { filteredOpts, conditionalHeaders };
+    return { filteredOpts, conditionalHeaders }
   }
 
   private _validateData(data: unknown): BodyInit {
-    if (typeof data === 'string' || data instanceof ArrayBuffer || ArrayBuffer.isView(data)) {
-      return data as BodyInit;
+    if (
+      typeof data === 'string' ||
+      data instanceof ArrayBuffer ||
+      ArrayBuffer.isView(data)
+    ) {
+      return data as BodyInit
     }
-    this._log('error', C.ERROR_DATA_BUFFER_REQUIRED);
-    throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED);
+    this._log('error', C.ERROR_DATA_BUFFER_REQUIRED)
+    throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED)
   }
 
   private _validateUploadPartParams(
@@ -220,17 +226,22 @@ class S3mini {
     partNumber: number,
     opts: object,
   ): BodyInit {
-    this._checkKey(key);
+    this._checkKey(key)
     if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
-      this._log('error', C.ERROR_UPLOAD_ID_REQUIRED);
-      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED);
+      this._log('error', C.ERROR_UPLOAD_ID_REQUIRED)
+      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
     if (!Number.isInteger(partNumber) || partNumber <= 0) {
-      this._log('error', `${C.ERROR_PREFIX}partNumber must be a positive integer`);
-      throw new TypeError(`${C.ERROR_PREFIX}partNumber must be a positive integer`);
+      this._log(
+        'error',
+        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
+      )
+      throw new TypeError(
+        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
+      )
     }
-    this._checkOpts(opts);
-    return this._validateData(data);
+    this._checkOpts(opts)
+    return this._validateData(data)
   }
 
   private async _signedRequest(
@@ -243,62 +254,75 @@ class S3mini {
       tolerated = [], // [200, 404] etc.
       withQuery = false, // append query string to signed URL
     }: {
-      query?: Record<string, unknown>;
-      body?: BodyInit;
-      headers?: Record<string, string | number | undefined> | IT.SSECHeaders | IT.AWSHeaders;
-      tolerated?: number[];
-      withQuery?: boolean;
+      query?: Record<string, unknown>
+      body?: BodyInit
+      headers?:
+        | Record<string, string | number | undefined>
+        | IT.SSECHeaders
+        | IT.AWSHeaders
+      tolerated?: number[]
+      withQuery?: boolean
     } = {},
   ): Promise<Response> {
-
-    const { filteredOpts, conditionalHeaders } = ['GET', 'HEAD'].includes(method)
+    const { filteredOpts, conditionalHeaders } = ['GET', 'HEAD'].includes(
+      method,
+    )
       ? this._filterIfHeaders(query)
-      : { filteredOpts: query, conditionalHeaders: {} };
-
+      : { filteredOpts: query, conditionalHeaders: {} }
 
     const url = new URL(this.endpoint)
 
-    const encodedKey = key ? U.uriResourceEscape(key) : '';
+    const encodedKey = key ? U.uriResourceEscape(key) : ''
 
-    if (encodedKey && encodedKey.length > 0){
-        url.pathname = url.pathname === '/' ? `/${encodedKey.replace(/^\/+/, '')}` : `${url.pathname}/${encodedKey.replace(/^\/+/, '')}`;
+    if (encodedKey && encodedKey.length > 0) {
+      url.pathname =
+        url.pathname === '/'
+          ? `/${encodedKey.replace(/^\/+/, '')}`
+          : `${url.pathname}/${encodedKey.replace(/^\/+/, '')}`
     }
 
     // build query string
     if (Object.keys(query).length > 0) {
-      withQuery = true;
+      withQuery = true
     }
 
-      const filteredOptsStrings = Object.fromEntries(
+    const filteredOptsStrings = Object.fromEntries(
       Object.entries(filteredOpts).map(([k, v]) => [k, String(v)]),
-    ) as Record<string, string>;
-
+    ) as Record<string, string>
 
     const finalUrl =
-      withQuery && Object.keys(filteredOpts).length ? `${url}?${new URLSearchParams(filteredOptsStrings)}` : url;
-
+      withQuery && Object.keys(filteredOpts).length
+        ? `${url}?${new URLSearchParams(filteredOptsStrings)}`
+        : url
 
     const baseHeaders: Record<string, string> = {
       [C.HEADER_AMZ_CONTENT_SHA256]: C.UNSIGNED_PAYLOAD,
-    };
-
-
-    // convert all header values to strings and merge
-    for (const [k, v] of Object.entries({...headers, ...conditionalHeaders})){
-      if (v!== undefined){
-        baseHeaders[k] = String(v);
-      }
     }
 
+    // convert all header values to strings and merge
+    for (const [k, v] of Object.entries({
+      ...headers,
+      ...conditionalHeaders,
+    })) {
+      if (v !== undefined) {
+        baseHeaders[k] = String(v)
+      }
+    }
 
     // call the singedRequest callback
     const signedHeaders = await this.signRequest({
       method,
       url: finalUrl.toString(),
-      headers: baseHeaders
+      headers: baseHeaders,
     })
 
-  return this._sendRequest(finalUrl.toString(), method, signedHeaders, body, tolerated);
+    return this._sendRequest(
+      finalUrl.toString(),
+      method,
+      signedHeaders,
+      body,
+      tolerated,
+    )
   }
 
   /**
@@ -310,7 +334,7 @@ class S3mini {
    * const cleanEtag = s3.sanitizeETag('"abc123"'); // Returns: 'abc123'
    */
   public sanitizeETag(etag: string): string {
-    return U.sanitizeETag(etag);
+    return U.sanitizeETag(etag)
   }
 
   /**
@@ -323,32 +347,32 @@ class S3mini {
       <CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
         <LocationConstraint>${this.region}</LocationConstraint>
       </CreateBucketConfiguration>
-    `;
+    `
     const headers = {
       [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
       [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
-    };
+    }
     const res = await this._signedRequest('PUT', '', {
       body: xmlBody,
       headers,
       tolerated: [200, 404, 403, 409], // don’t throw on 404/403 // 409 = bucket already exists
-    });
-    return res.status === 200;
+    })
+    return res.status === 200
   }
 
   private _extractBucketName(): string {
-    const url = this.endpoint;
+    const url = this.endpoint
 
     // First check if bucket is in the pathname (path-style URLs)
-    const pathSegments = url.pathname.split('/').filter(Boolean);
+    const pathSegments = url.pathname.split('/').filter(Boolean)
     if (pathSegments.length > 0) {
       if (typeof pathSegments[0] === 'string') {
-        return pathSegments[0];
+        return pathSegments[0]
       }
     }
 
     // Otherwise extract from subdomain (virtual-hosted-style URLs)
-    const hostParts = url.hostname.split('.');
+    const hostParts = url.hostname.split('.')
 
     // Common patterns:
     // bucket-name.s3.amazonaws.com
@@ -358,18 +382,22 @@ class S3mini {
 
     if (hostParts.length >= 3) {
       // Check if it's a known S3-compatible service
-      const domain = hostParts.slice(-2).join('.');
-      const knownDomains = ['amazonaws.com', 'digitaloceanspaces.com', 'cloudflare.com'];
+      const domain = hostParts.slice(-2).join('.')
+      const knownDomains = [
+        'amazonaws.com',
+        'digitaloceanspaces.com',
+        'cloudflare.com',
+      ]
 
-      if (knownDomains.some(d => domain.includes(d))) {
+      if (knownDomains.some((d) => domain.includes(d))) {
         if (typeof hostParts[0] === 'string') {
-          return hostParts[0];
+          return hostParts[0]
         }
       }
     }
 
     // Fallback: use the first subdomain
-    return hostParts[0] || '';
+    return hostParts[0] || ''
   }
 
   /**
@@ -378,8 +406,10 @@ class S3mini {
    * @returns A promise that resolves to true if the bucket exists, false otherwise.
    */
   public async bucketExists(): Promise<boolean> {
-    const res = await this._signedRequest('HEAD', '', { tolerated: [200, 404, 403] });
-    return res.status === 200;
+    const res = await this._signedRequest('HEAD', '', {
+      tolerated: [200, 404, 403],
+    })
+    return res.status === 200
   }
 
   /**
@@ -403,33 +433,39 @@ class S3mini {
     maxKeys?: number,
     opts: Record<string, unknown> = {},
   ): Promise<IT.ListObject[] | null> {
-    this._checkDelimiter(delimiter);
-    this._checkPrefix(prefix);
-    this._checkOpts(opts);
+    this._checkDelimiter(delimiter)
+    this._checkPrefix(prefix)
+    this._checkOpts(opts)
 
-    const keyPath = delimiter === '/' ? delimiter : U.uriEscape(delimiter);
-    const unlimited = !(maxKeys && maxKeys > 0);
-    let remaining = unlimited ? Infinity : maxKeys;
-    let token: string | undefined;
-    const all: IT.ListObject[] = [];
+    const keyPath = delimiter === '/' ? delimiter : U.uriEscape(delimiter)
+    const unlimited = !(maxKeys && maxKeys > 0)
+    let remaining = unlimited ? Infinity : maxKeys
+    let token: string | undefined
+    const all: IT.ListObject[] = []
 
     do {
-      const batchResult = await this._fetchObjectBatch(keyPath, prefix, remaining, token, opts);
+      const batchResult = await this._fetchObjectBatch(
+        keyPath,
+        prefix,
+        remaining,
+        token,
+        opts,
+      )
 
       if (batchResult === null) {
-        return null; // 404 - bucket not found
+        return null // 404 - bucket not found
       }
 
-      all.push(...batchResult.objects);
+      all.push(...batchResult.objects)
 
       if (!unlimited) {
-        remaining -= batchResult.objects.length;
+        remaining -= batchResult.objects.length
       }
 
-      token = batchResult.continuationToken;
-    } while (token && remaining > 0);
+      token = batchResult.continuationToken
+    } while (token && remaining > 0)
 
-    return all;
+    return all
   }
 
   private async _fetchObjectBatch(
@@ -439,24 +475,24 @@ class S3mini {
     token: string | undefined,
     opts: Record<string, unknown>,
   ): Promise<{ objects: IT.ListObject[]; continuationToken?: string } | null> {
-    const query = this._buildListObjectsQuery(prefix, remaining, token, opts);
+    const query = this._buildListObjectsQuery(prefix, remaining, token, opts)
 
     const res = await this._signedRequest('GET', keyPath, {
       query,
       withQuery: true,
       tolerated: [200, 404],
-    });
+    })
 
     if (res.status === 404) {
-      return null;
+      return null
     }
 
     if (res.status !== 200) {
-      await this._handleListObjectsError(res);
+      await this._handleListObjectsError(res)
     }
 
-    const xmlText = await res.text();
-    return this._parseListObjectsResponse(xmlText);
+    const xmlText = await res.text()
+    return this._parseListObjectsResponse(xmlText)
   }
 
   private _buildListObjectsQuery(
@@ -465,7 +501,7 @@ class S3mini {
     token: string | undefined,
     opts: Record<string, unknown>,
   ): Record<string, unknown> {
-    const batchSize = Math.min(remaining, 1000); // S3 ceiling
+    const batchSize = Math.min(remaining, 1000) // S3 ceiling
 
     return {
       'list-type': C.LIST_TYPE, // =2 for V2
@@ -473,64 +509,85 @@ class S3mini {
       ...(prefix ? { prefix } : {}),
       ...(token ? { 'continuation-token': token } : {}),
       ...opts,
-    };
+    }
   }
 
   private async _handleListObjectsError(res: Response): Promise<never> {
-    const errorBody = await res.text();
-    const parsedErrorBody = this._parseErrorXml(res.headers, errorBody);
-    const errorCode = res.headers.get('x-amz-error-code') ?? parsedErrorBody.svcCode ?? 'Unknown';
-    const errorMessage = res.headers.get('x-amz-error-message') ?? parsedErrorBody.errorMessage ?? res.statusText;
+    const errorBody = await res.text()
+    const parsedErrorBody = this._parseErrorXml(res.headers, errorBody)
+    const errorCode =
+      res.headers.get('x-amz-error-code') ??
+      parsedErrorBody.svcCode ??
+      'Unknown'
+    const errorMessage =
+      res.headers.get('x-amz-error-message') ??
+      parsedErrorBody.errorMessage ??
+      res.statusText
 
     this._log(
       'error',
       `${C.ERROR_PREFIX}Request failed with status ${res.status}: ${errorCode} - ${errorMessage}, err body: ${errorBody}`,
-    );
+    )
 
     throw new Error(
       `${C.ERROR_PREFIX}Request failed with status ${res.status}: ${errorCode} - ${errorMessage}, err body: ${errorBody}`,
-    );
+    )
   }
 
   private _parseListObjectsResponse(xmlText: string): {
-    objects: IT.ListObject[];
-    continuationToken?: string;
+    objects: IT.ListObject[]
+    continuationToken?: string
   } {
-    const raw = U.parseXml(xmlText) as Record<string, unknown>;
+    const raw = U.parseXml(xmlText) as Record<string, unknown>
 
     if (typeof raw !== 'object' || !raw || 'error' in raw) {
-      this._log('error', `${C.ERROR_PREFIX}Unexpected listObjects response shape: ${JSON.stringify(raw)}`);
-      throw new Error(`${C.ERROR_PREFIX}Unexpected listObjects response shape`);
+      this._log(
+        'error',
+        `${C.ERROR_PREFIX}Unexpected listObjects response shape: ${JSON.stringify(raw)}`,
+      )
+      throw new Error(`${C.ERROR_PREFIX}Unexpected listObjects response shape`)
     }
 
-    const out = (raw.ListBucketResult || raw.listBucketResult || raw) as Record<string, unknown>;
-    const objects = this._extractObjectsFromResponse(out);
-    const continuationToken = this._extractContinuationToken(out);
+    const out = (raw.ListBucketResult || raw.listBucketResult || raw) as Record<
+      string,
+      unknown
+    >
+    const objects = this._extractObjectsFromResponse(out)
+    const continuationToken = this._extractContinuationToken(out)
 
-    return { objects, continuationToken };
+    return { objects, continuationToken }
   }
 
-  private _extractObjectsFromResponse(response: Record<string, unknown>): IT.ListObject[] {
-    const contents = response.Contents || response.contents; // S3 v2 vs v1
+  private _extractObjectsFromResponse(
+    response: Record<string, unknown>,
+  ): IT.ListObject[] {
+    const contents = response.Contents || response.contents // S3 v2 vs v1
 
     if (!contents) {
-      return [];
+      return []
     }
 
-    return Array.isArray(contents) ? (contents as IT.ListObject[]) : [contents as IT.ListObject];
+    return Array.isArray(contents)
+      ? (contents as IT.ListObject[])
+      : [contents as IT.ListObject]
   }
 
-  private _extractContinuationToken(response: Record<string, unknown>): string | undefined {
-    const truncated = response.IsTruncated === 'true' || response.isTruncated === 'true' || false;
+  private _extractContinuationToken(
+    response: Record<string, unknown>,
+  ): string | undefined {
+    const truncated =
+      response.IsTruncated === 'true' ||
+      response.isTruncated === 'true' ||
+      false
 
     if (!truncated) {
-      return undefined;
+      return undefined
     }
 
     return (response.NextContinuationToken ||
       response.nextContinuationToken ||
       response.NextMarker ||
-      response.nextMarker) as string | undefined;
+      response.nextMarker) as string | undefined
   }
 
   /**
@@ -548,18 +605,18 @@ class S3mini {
     method: IT.HttpMethod = 'GET',
     opts: Record<string, string | number | boolean | undefined> = {},
   ): Promise<IT.ListMultipartUploadSuccess | IT.MultipartUploadError> {
-    this._checkDelimiter(delimiter);
-    this._checkPrefix(prefix);
-    this._validateMethodIsGetOrHead(method);
-    this._checkOpts(opts);
+    this._checkDelimiter(delimiter)
+    this._checkPrefix(prefix)
+    this._validateMethodIsGetOrHead(method)
+    this._checkOpts(opts)
 
-    const query = { uploads: '', ...opts };
-    const keyPath = delimiter === '/' ? delimiter : U.uriEscape(delimiter);
+    const query = { uploads: '', ...opts }
+    const keyPath = delimiter === '/' ? delimiter : U.uriEscape(delimiter)
 
     const res = await this._signedRequest(method, keyPath, {
       query,
       withQuery: true,
-    });
+    })
     // doublecheck if this is needed
     // if (method === 'HEAD') {
     //   return {
@@ -568,14 +625,16 @@ class S3mini {
     //     etag: res.headers.get(C.HEADER_ETAG) ?? '',
     //   };
     // }
-    const raw = U.parseXml(await res.text()) as unknown;
+    const raw = U.parseXml(await res.text()) as unknown
     if (typeof raw !== 'object' || raw === null) {
-      throw new Error(`${C.ERROR_PREFIX}Unexpected listMultipartUploads response shape`);
+      throw new Error(
+        `${C.ERROR_PREFIX}Unexpected listMultipartUploads response shape`,
+      )
     }
     if ('listMultipartUploadsResult' in raw) {
-      return raw.listMultipartUploadsResult as IT.ListMultipartUploadSuccess;
+      return raw.listMultipartUploadsResult as IT.ListMultipartUploadSuccess
     }
-    return raw as IT.MultipartUploadError;
+    return raw as IT.MultipartUploadError
   }
 
   /**
@@ -596,11 +655,11 @@ class S3mini {
       query: opts, // use opts.query if it exists, otherwise use an empty object
       tolerated: [200, 404, 412, 304],
       headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    });
+    })
     if ([404, 412, 304].includes(res.status)) {
-      return null;
+      return null
     }
-    return res.text();
+    return res.text()
   }
 
   /**
@@ -620,11 +679,11 @@ class S3mini {
       query: opts,
       tolerated: [200, 404, 412, 304],
       headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    });
+    })
     if ([404, 412, 304].includes(res.status)) {
-      return null;
+      return null
     }
-    return res;
+    return res
   }
 
   /**
@@ -644,11 +703,11 @@ class S3mini {
       query: opts,
       tolerated: [200, 404, 412, 304],
       headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    });
+    })
     if ([404, 412, 304].includes(res.status)) {
-      return null;
+      return null
     }
-    return res.arrayBuffer();
+    return res.arrayBuffer()
   }
 
   /**
@@ -668,11 +727,11 @@ class S3mini {
       query: opts,
       tolerated: [200, 404, 412, 304],
       headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    });
+    })
     if ([404, 412, 304].includes(res.status)) {
-      return null;
+      return null
     }
-    return res.json() as Promise<T>;
+    return res.json() as Promise<T>
   }
 
   /**
@@ -693,20 +752,23 @@ class S3mini {
         query: opts,
         tolerated: [200, 404, 412, 304],
         headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-      });
+      })
 
       if ([404, 412, 304].includes(res.status)) {
-        return { etag: null, data: null };
+        return { etag: null, data: null }
       }
 
-      const etag = res.headers.get(C.HEADER_ETAG);
+      const etag = res.headers.get(C.HEADER_ETAG)
       if (!etag) {
-        throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`);
+        throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`)
       }
-      return { etag: U.sanitizeETag(etag), data: await res.arrayBuffer() };
+      return { etag: U.sanitizeETag(etag), data: await res.arrayBuffer() }
     } catch (err) {
-      this._log('error', `Error getting object ${key} with ETag: ${String(err)}`);
-      throw err;
+      this._log(
+        'error',
+        `Error getting object ${key} with ETag: ${String(err)}`,
+      )
+      throw err
     }
   }
 
@@ -729,13 +791,15 @@ class S3mini {
     opts: Record<string, unknown> = {},
     ssecHeaders?: IT.SSECHeaders,
   ): Promise<Response> {
-    const rangeHdr: Record<string, string | number> = wholeFile ? {} : { range: `bytes=${rangeFrom}-${rangeTo - 1}` };
+    const rangeHdr: Record<string, string | number> = wholeFile
+      ? {}
+      : { range: `bytes=${rangeFrom}-${rangeTo - 1}` }
 
     return this._signedRequest('GET', key, {
       query: { ...opts },
       headers: { ...rangeHdr, ...ssecHeaders },
       withQuery: true, // keep ?query=string behaviour
-    });
+    })
   }
 
   /**
@@ -745,16 +809,24 @@ class S3mini {
    * @returns A promise that resolves to the content length of the object in bytes, or 0 if not found.
    * @throws {Error} If the content length header is not found in the response.
    */
-  public async getContentLength(key: string, ssecHeaders?: IT.SSECHeaders): Promise<number> {
+  public async getContentLength(
+    key: string,
+    ssecHeaders?: IT.SSECHeaders,
+  ): Promise<number> {
     try {
       const res = await this._signedRequest('HEAD', key, {
         headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-      });
-      const len = res.headers.get(C.HEADER_CONTENT_LENGTH);
-      return len ? +len : 0;
+      })
+      const len = res.headers.get(C.HEADER_CONTENT_LENGTH)
+      return len ? +len : 0
     } catch (err) {
-      this._log('error', `Error getting content length for object ${key}: ${String(err)}`);
-      throw new Error(`${C.ERROR_PREFIX}Error getting content length for object ${key}: ${String(err)}`);
+      this._log(
+        'error',
+        `Error getting content length for object ${key}: ${String(err)}`,
+      )
+      throw new Error(
+        `${C.ERROR_PREFIX}Error getting content length for object ${key}: ${String(err)}`,
+      )
     }
   }
 
@@ -765,19 +837,22 @@ class S3mini {
    * @param {Record<string, unknown>} [opts={}] - Additional options for the request.
    * @returns A promise that resolves to true if the object exists, false if not found, or null if ETag mismatch.
    */
-  public async objectExists(key: string, opts: Record<string, unknown> = {}): Promise<IT.ExistResponseCode> {
+  public async objectExists(
+    key: string,
+    opts: Record<string, unknown> = {},
+  ): Promise<IT.ExistResponseCode> {
     const res = await this._signedRequest('HEAD', key, {
       query: opts,
       tolerated: [200, 404, 412, 304],
-    });
+    })
 
     if (res.status === 404) {
-      return false; // not found
+      return false // not found
     }
     if (res.status === 412 || res.status === 304) {
-      return null; // ETag mismatch
+      return null // ETag mismatch
     }
-    return true; // found (200)
+    return true // found (200)
   }
 
   /**
@@ -802,22 +877,22 @@ class S3mini {
       query: opts,
       tolerated: [200, 304, 404, 412],
       headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    });
+    })
 
     if (res.status === 404) {
-      return null;
+      return null
     }
 
     if (res.status === 412 || res.status === 304) {
-      return null; // ETag mismatch
+      return null // ETag mismatch
     }
 
-    const etag = res.headers.get(C.HEADER_ETAG);
+    const etag = res.headers.get(C.HEADER_ETAG)
     if (!etag) {
-      throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`);
+      throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`)
     }
 
-    return U.sanitizeETag(etag);
+    return U.sanitizeETag(etag)
   }
 
   /**
@@ -853,7 +928,7 @@ class S3mini {
         ...ssecHeaders,
       },
       tolerated: [200],
-    });
+    })
   }
 
   /**
@@ -873,37 +948,39 @@ class S3mini {
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     ssecHeaders?: IT.SSECHeaders,
   ): Promise<string> {
-    this._checkKey(key);
+    this._checkKey(key)
     if (typeof fileType !== 'string') {
-      throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`);
+      throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const query = { uploads: '' };
-    const headers = { [C.HEADER_CONTENT_TYPE]: fileType, ...ssecHeaders };
+    const query = { uploads: '' }
+    const headers = { [C.HEADER_CONTENT_TYPE]: fileType, ...ssecHeaders }
 
     const res = await this._signedRequest('POST', key, {
       query,
       headers,
       withQuery: true,
-    });
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
+    })
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
 
     if (parsed && typeof parsed === 'object') {
       // Check for both cases of InitiateMultipartUploadResult
       const uploadResult =
         (parsed.initiateMultipartUploadResult as Record<string, unknown>) ||
-        (parsed.InitiateMultipartUploadResult as Record<string, unknown>);
+        (parsed.InitiateMultipartUploadResult as Record<string, unknown>)
 
       if (uploadResult && typeof uploadResult === 'object') {
         // Check for both cases of uploadId
-        const uploadId = uploadResult.uploadId || uploadResult.UploadId;
+        const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return uploadId;
+          return uploadId
         }
       }
     }
 
-    throw new Error(`${C.ERROR_PREFIX}Failed to create multipart upload: ${JSON.stringify(parsed)}`);
+    throw new Error(
+      `${C.ERROR_PREFIX}Failed to create multipart upload: ${JSON.stringify(parsed)}`,
+    )
   }
 
   /**
@@ -933,9 +1010,15 @@ class S3mini {
     opts: Record<string, unknown> = {},
     ssecHeaders?: IT.SSECHeaders,
   ): Promise<IT.UploadPart> {
-    const body = this._validateUploadPartParams(key, uploadId, data, partNumber, opts);
+    const body = this._validateUploadPartParams(
+      key,
+      uploadId,
+      data,
+      partNumber,
+      opts,
+    )
 
-    const query = { uploadId, partNumber, ...opts };
+    const query = { uploadId, partNumber, ...opts }
     const res = await this._signedRequest('PUT', key, {
       query,
       body,
@@ -943,9 +1026,9 @@ class S3mini {
         [C.HEADER_CONTENT_LENGTH]: U.getByteSize(data),
         ...ssecHeaders,
       },
-    });
+    })
 
-    return { partNumber, etag: U.sanitizeETag(res.headers.get('etag') || '') };
+    return { partNumber, etag: U.sanitizeETag(res.headers.get('etag') || '') }
   }
 
   /**
@@ -971,42 +1054,47 @@ class S3mini {
     uploadId: string,
     parts: Array<IT.UploadPart>,
   ): Promise<IT.CompleteMultipartUploadResult> {
-    const query = { uploadId };
-    const xmlBody = this._buildCompleteMultipartUploadXml(parts);
+    const query = { uploadId }
+    const xmlBody = this._buildCompleteMultipartUploadXml(parts)
     const headers = {
       [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
       [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
-    };
+    }
 
     const res = await this._signedRequest('POST', key, {
       query,
       body: xmlBody,
       headers,
       withQuery: true,
-    });
+    })
 
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (parsed && typeof parsed === 'object') {
       // Check for both cases
-      const result = parsed.completeMultipartUploadResult || parsed.CompleteMultipartUploadResult || parsed;
+      const result =
+        parsed.completeMultipartUploadResult ||
+        parsed.CompleteMultipartUploadResult ||
+        parsed
 
       if (result && typeof result === 'object') {
-        const resultObj = result as Record<string, unknown>;
+        const resultObj = result as Record<string, unknown>
 
         // Handle ETag in all its variations
-        const etag = resultObj.ETag || resultObj.eTag || resultObj.etag;
+        const etag = resultObj.ETag || resultObj.eTag || resultObj.etag
         if (etag && typeof etag === 'string') {
           return {
             ...resultObj,
             etag: U.sanitizeETag(etag),
-          } as IT.CompleteMultipartUploadResult;
+          } as IT.CompleteMultipartUploadResult
         }
 
-        return result as IT.CompleteMultipartUploadResult;
+        return result as IT.CompleteMultipartUploadResult
       }
     }
 
-    throw new Error(`${C.ERROR_PREFIX}Failed to complete multipart upload: ${JSON.stringify(parsed)}`);
+    throw new Error(
+      `${C.ERROR_PREFIX}Failed to complete multipart upload: ${JSON.stringify(parsed)}`,
+    )
   }
 
   /**
@@ -1025,21 +1113,28 @@ class S3mini {
    *   console.error('Failed to abort upload:', error);
    * }
    */
-  public async abortMultipartUpload(key: string, uploadId: string, ssecHeaders?: IT.SSECHeaders): Promise<object> {
-    this._checkKey(key);
+  public async abortMultipartUpload(
+    key: string,
+    uploadId: string,
+    ssecHeaders?: IT.SSECHeaders,
+  ): Promise<object> {
+    this._checkKey(key)
     if (!uploadId) {
-      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED);
+      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const query = { uploadId };
-    const headers = { [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE, ...(ssecHeaders ? { ...ssecHeaders } : {}) };
+    const query = { uploadId }
+    const headers = {
+      [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
+      ...(ssecHeaders ? { ...ssecHeaders } : {}),
+    }
 
     const res = await this._signedRequest('DELETE', key, {
       query,
       headers,
       withQuery: true,
-    });
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
+    })
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (
       parsed &&
       'error' in parsed &&
@@ -1047,19 +1142,26 @@ class S3mini {
       parsed.error !== null &&
       'message' in parsed.error
     ) {
-      this._log('error', `${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(parsed.error.message)}`);
-      throw new Error(`${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(parsed.error.message)}`);
+      this._log(
+        'error',
+        `${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(parsed.error.message)}`,
+      )
+      throw new Error(
+        `${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(parsed.error.message)}`,
+      )
     }
-    return { status: 'Aborted', key, uploadId, response: parsed };
+    return { status: 'Aborted', key, uploadId, response: parsed }
   }
 
-  private _buildCompleteMultipartUploadXml(parts: Array<IT.UploadPart>): string {
-    let xml = '<CompleteMultipartUpload>';
+  private _buildCompleteMultipartUploadXml(
+    parts: Array<IT.UploadPart>,
+  ): string {
+    let xml = '<CompleteMultipartUpload>'
     for (const part of parts) {
-      xml += `<Part><PartNumber>${part.partNumber}</PartNumber><ETag>${part.etag}</ETag></Part>`;
+      xml += `<Part><PartNumber>${part.partNumber}</PartNumber><ETag>${part.etag}</ETag></Part>`
     }
-    xml += '</CompleteMultipartUpload>';
-    return xml;
+    xml += '</CompleteMultipartUpload>'
+    return xml
   }
 
   /**
@@ -1081,7 +1183,7 @@ class S3mini {
       sourceSSECHeaders = {},
       destinationSSECHeaders = {},
       additionalHeaders = {},
-    } = options;
+    } = options
 
     const headers: Record<string, string | number> = {
       'x-amz-copy-source': copySource,
@@ -1090,22 +1192,26 @@ class S3mini {
       ...(contentType && { [C.HEADER_CONTENT_TYPE]: contentType }),
       ...(storageClass && { 'x-amz-storage-class': storageClass }),
       ...(taggingDirective && { 'x-amz-tagging-directive': taggingDirective }),
-      ...(websiteRedirectLocation && { 'x-amz-website-redirect-location': websiteRedirectLocation }),
+      ...(websiteRedirectLocation && {
+        'x-amz-website-redirect-location': websiteRedirectLocation,
+      }),
       ...this._buildSSECHeaders(sourceSSECHeaders, destinationSSECHeaders),
-      ...(metadataDirective === 'REPLACE' ? this._buildMetadataHeaders(metadata) : {}),
-    };
+      ...(metadataDirective === 'REPLACE'
+        ? this._buildMetadataHeaders(metadata)
+        : {}),
+    }
 
     try {
       const res = await this._signedRequest('PUT', destinationKey, {
         headers,
         tolerated: [200],
-      });
-      return this._parseCopyObjectResponse(await res.text());
+      })
+      return this._parseCopyObjectResponse(await res.text())
     } catch (err) {
       this._log('error', `Error in copy operation to ${destinationKey}`, {
         error: String(err),
-      });
-      throw err;
+      })
+      throw err
     }
   }
 
@@ -1167,25 +1273,25 @@ class S3mini {
     options: IT.CopyObjectOptions = {},
   ): Promise<IT.CopyObjectResult> {
     // Validate parameters
-    this._checkKey(sourceKey);
-    this._checkKey(destinationKey);
+    this._checkKey(sourceKey)
+    this._checkKey(destinationKey)
 
-    const copySource = `/${this.bucketName}/${U.uriEscape(sourceKey)}`;
+    const copySource = `/${this.bucketName}/${U.uriEscape(sourceKey)}`
 
-    return this._executeCopyOperation(destinationKey, copySource, options);
+    return this._executeCopyOperation(destinationKey, copySource, options)
   }
 
   private _buildSSECHeaders(
     sourceHeaders: Record<string, string | number>,
     destHeaders: Record<string, string | number>,
   ): Record<string, string | number> {
-    const headers: Record<string, string | number> = {};
+    const headers: Record<string, string | number> = {}
     for (const [k, v] of Object.entries({ ...sourceHeaders, ...destHeaders })) {
       if (v !== undefined) {
-        headers[k] = v;
+        headers[k] = v
       }
     }
-    return headers;
+    return headers
   }
 
   /**
@@ -1236,46 +1342,60 @@ class S3mini {
   ): Promise<IT.CopyObjectResult> {
     try {
       // First copy the object
-      const copyResult = await this.copyObject(sourceKey, destinationKey, options);
+      const copyResult = await this.copyObject(
+        sourceKey,
+        destinationKey,
+        options,
+      )
 
       // Then delete the source
-      const deleteSuccess = await this.deleteObject(sourceKey);
+      const deleteSuccess = await this.deleteObject(sourceKey)
       if (!deleteSuccess) {
-        throw new Error(`${C.ERROR_PREFIX}Failed to delete source object after successful copy`);
+        throw new Error(
+          `${C.ERROR_PREFIX}Failed to delete source object after successful copy`,
+        )
       }
 
-      return copyResult;
+      return copyResult
     } catch (err) {
-      this._log('error', `Error moving object from ${sourceKey} to ${destinationKey}`, {
-        error: String(err),
-      });
-      throw err;
+      this._log(
+        'error',
+        `Error moving object from ${sourceKey} to ${destinationKey}`,
+        {
+          error: String(err),
+        },
+      )
+      throw err
     }
   }
 
-  private _buildMetadataHeaders(metadata: Record<string, string>): Record<string, string> {
-    const headers: Record<string, string> = {};
+  private _buildMetadataHeaders(
+    metadata: Record<string, string>,
+  ): Record<string, string> {
+    const headers: Record<string, string> = {}
     for (const [k, v] of Object.entries(metadata)) {
-      headers[k.startsWith('x-amz-meta-') ? k : `x-amz-meta-${k}`] = v;
+      headers[k.startsWith('x-amz-meta-') ? k : `x-amz-meta-${k}`] = v
     }
-    return headers;
+    return headers
   }
 
   private _parseCopyObjectResponse(xmlText: string): IT.CopyObjectResult {
-    const parsed = U.parseXml(xmlText) as Record<string, unknown>;
+    const parsed = U.parseXml(xmlText) as Record<string, unknown>
     if (!parsed || typeof parsed !== 'object') {
-      throw new Error(`${C.ERROR_PREFIX}Unexpected copyObject response format`);
+      throw new Error(`${C.ERROR_PREFIX}Unexpected copyObject response format`)
     }
-    const result = (parsed.CopyObjectResult || parsed.copyObjectResult || parsed) as Record<string, unknown>;
-    const etag = result.ETag || result.eTag || result.etag;
-    const lastModified = result.LastModified || result.lastModified;
+    const result = (parsed.CopyObjectResult ||
+      parsed.copyObjectResult ||
+      parsed) as Record<string, unknown>
+    const etag = result.ETag || result.eTag || result.etag
+    const lastModified = result.LastModified || result.lastModified
     if (!etag || typeof etag !== 'string') {
-      throw new Error(`${C.ERROR_PREFIX}ETag not found in copyObject response`);
+      throw new Error(`${C.ERROR_PREFIX}ETag not found in copyObject response`)
     }
     return {
       etag: U.sanitizeETag(etag),
       lastModified: lastModified ? new Date(lastModified as string) : undefined,
-    };
+    }
   }
 
   /**
@@ -1285,77 +1405,85 @@ class S3mini {
    * @returns A promise that resolves to true if the object was deleted successfully, false otherwise.
    */
   public async deleteObject(key: string): Promise<boolean> {
-    const res = await this._signedRequest('DELETE', key, { tolerated: [200, 204] });
-    return res.status === 200 || res.status === 204;
+    const res = await this._signedRequest('DELETE', key, {
+      tolerated: [200, 204],
+    })
+    return res.status === 200 || res.status === 204
   }
 
   private async _deleteObjectsProcess(keys: string[]): Promise<boolean[]> {
-    const objectsXml = keys.map(key => `<Object><Key>${U.escapeXml(key)}</Key></Object>`).join('');
-    const xmlBody = `<Delete>${objectsXml}</Delete>`;
-    const query = { delete: '' };
-    const sha256base64 = U.base64FromBuffer(await U.sha256(xmlBody));
+    const objectsXml = keys
+      .map((key) => `<Object><Key>${U.escapeXml(key)}</Key></Object>`)
+      .join('')
+    const xmlBody = `<Delete>${objectsXml}</Delete>`
+    const query = { delete: '' }
+    const sha256base64 = U.base64FromBuffer(await U.sha256(xmlBody))
     const headers = {
       [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
       [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
       [C.HEADER_AMZ_CHECKSUM_SHA256]: sha256base64,
-    };
+    }
 
     const res = await this._signedRequest('POST', '', {
       query,
       body: xmlBody,
       headers,
       withQuery: true,
-    });
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
+    })
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (!parsed || typeof parsed !== 'object') {
-      throw new Error(`${C.ERROR_PREFIX}Failed to delete objects: ${JSON.stringify(parsed)}`);
+      throw new Error(
+        `${C.ERROR_PREFIX}Failed to delete objects: ${JSON.stringify(parsed)}`,
+      )
     }
-    const out = (parsed.DeleteResult || parsed.deleteResult || parsed) as Record<string, unknown>;
-    const resultMap = new Map<string, boolean>();
+    const out = (parsed.DeleteResult ||
+      parsed.deleteResult ||
+      parsed) as Record<string, unknown>
+    const resultMap = new Map<string, boolean>()
     for (const key of keys) {
-      resultMap.set(key, false);
+      resultMap.set(key, false)
     }
-    const deleted = out.deleted || out.Deleted;
+    const deleted = out.deleted || out.Deleted
     if (deleted) {
-      const deletedArray = Array.isArray(deleted) ? deleted : [deleted];
+      const deletedArray = Array.isArray(deleted) ? deleted : [deleted]
       for (const item of deletedArray) {
         if (item && typeof item === 'object') {
-          const obj = item as Record<string, unknown>;
+          const obj = item as Record<string, unknown>
           // Check both key and Key
-          const key = obj.key || obj.Key;
+          const key = obj.key || obj.Key
           if (key && typeof key === 'string') {
-            resultMap.set(key, true);
+            resultMap.set(key, true)
           }
         }
       }
     }
 
     // Handle errors (check both cases)
-    const errors = out.error || out.Error;
+    const errors = out.error || out.Error
     if (errors) {
-      const errorsArray = Array.isArray(errors) ? errors : [errors];
+      const errorsArray = Array.isArray(errors) ? errors : [errors]
       for (const item of errorsArray) {
         if (item && typeof item === 'object') {
-          const obj = item as Record<string, unknown>;
+          const obj = item as Record<string, unknown>
           // Check both cases for all properties
-          const key = obj.key || obj.Key;
-          const code = obj.code || obj.Code;
-          const message = obj.message || obj.Message;
+          const key = obj.key || obj.Key
+          const code = obj.code || obj.Code
+          const message = obj.message || obj.Message
 
           if (key && typeof key === 'string') {
-            resultMap.set(key, false);
+            resultMap.set(key, false)
             // Optionally log the error for debugging
             this._log('warn', `Failed to delete object: ${key}`, {
               code: code || 'Unknown',
               message: message || 'Unknown error',
-            });
+            })
           }
         }
       }
     }
 
     // Return boolean array in the same order as input keys
-    return keys.map(key => resultMap.get(key) || false);
+    return keys.map((key) => resultMap.get(key) || false)
   }
 
   /**
@@ -1365,20 +1493,20 @@ class S3mini {
    */
   public async deleteObjects(keys: string[]): Promise<boolean[]> {
     if (!Array.isArray(keys) || keys.length === 0) {
-      return [];
+      return []
     }
-    const maxBatchSize = 1000; // S3 limit for delete batch size
+    const maxBatchSize = 1000 // S3 limit for delete batch size
     if (keys.length > maxBatchSize) {
-      const allPromises = [];
+      const allPromises = []
       for (let i = 0; i < keys.length; i += maxBatchSize) {
-        const batch = keys.slice(i, i + maxBatchSize);
-        allPromises.push(this._deleteObjectsProcess(batch));
+        const batch = keys.slice(i, i + maxBatchSize)
+        allPromises.push(this._deleteObjectsProcess(batch))
       }
-      const results = await Promise.all(allPromises);
+      const results = await Promise.all(allPromises)
       // Flatten the results array
-      return results.flat();
+      return results.flat()
     } else {
-      return await this._deleteObjectsProcess(keys);
+      return await this._deleteObjectsProcess(keys)
     }
   }
 
@@ -1389,34 +1517,49 @@ class S3mini {
     body?: BodyInit,
     toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
-    this._log('info', `Sending ${method} request to ${url}`, `headers: ${JSON.stringify(headers)}`);
+    this._log(
+      'info',
+      `Sending ${method} request to ${url}`,
+      `headers: ${JSON.stringify(headers)}`,
+    )
     try {
       const res = await this.fetch(url, {
         method,
         headers,
         body: ['GET', 'HEAD'].includes(method) ? undefined : body,
-        signal: this.requestAbortTimeout ? AbortSignal.timeout(this.requestAbortTimeout) : undefined,
-      });
-      this._log('info', `Response status: ${res.status}, tolerated: ${toleratedStatusCodes.join(',')}`);
+        signal: this.requestAbortTimeout
+          ? AbortSignal.timeout(this.requestAbortTimeout)
+          : undefined,
+      })
+      this._log(
+        'info',
+        `Response status: ${res.status}, tolerated: ${toleratedStatusCodes.join(',')}`,
+      )
       if (res.ok || toleratedStatusCodes.includes(res.status)) {
-        return res;
+        return res
       }
-      await this._handleErrorResponse(res);
-      return res;
+      await this._handleErrorResponse(res)
+      return res
     } catch (err: unknown) {
-      const code = U.extractErrCode(err);
-      if (code && ['ENOTFOUND', 'EAI_AGAIN', 'ETIMEDOUT', 'ECONNREFUSED'].includes(code)) {
-        throw new U.S3NetworkError(`S3 network error: ${code}`, code, err);
+      const code = U.extractErrCode(err)
+      if (
+        code &&
+        ['ENOTFOUND', 'EAI_AGAIN', 'ETIMEDOUT', 'ECONNREFUSED'].includes(code)
+      ) {
+        throw new U.S3NetworkError(`S3 network error: ${code}`, code, err)
       }
-      throw err;
+      throw err
     }
   }
 
-  private _parseErrorXml(headers: Headers, body: string): { svcCode?: string; errorMessage?: string } {
+  private _parseErrorXml(
+    headers: Headers,
+    body: string,
+  ): { svcCode?: string; errorMessage?: string } {
     if (headers.get('content-type') !== 'application/xml') {
-      return {};
+      return {}
     }
-    const parsedBody = U.parseXml(body);
+    const parsedBody = U.parseXml(body)
     if (
       !parsedBody ||
       typeof parsedBody !== 'object' ||
@@ -1424,37 +1567,59 @@ class S3mini {
       !parsedBody.Error ||
       typeof parsedBody.Error !== 'object'
     ) {
-      return {};
+      return {}
     }
-    const error = parsedBody.Error;
+    const error = parsedBody.Error
     return {
-      svcCode: 'Code' in error && typeof error.Code === 'string' ? error.Code : undefined,
-      errorMessage: 'Message' in error && typeof error.Message === 'string' ? error.Message : undefined,
-    };
+      svcCode:
+        'Code' in error && typeof error.Code === 'string'
+          ? error.Code
+          : undefined,
+      errorMessage:
+        'Message' in error && typeof error.Message === 'string'
+          ? error.Message
+          : undefined,
+    }
   }
 
   private async _handleErrorResponse(res: Response): Promise<void> {
-    const errorBody = await res.text();
-    const parsedErrorBody = this._parseErrorXml(res.headers, errorBody);
-    const svcCode = res.headers.get('x-amz-error-code') ?? parsedErrorBody.svcCode ?? 'Unknown';
-    const errorMessage = res.headers.get('x-amz-error-message') ?? parsedErrorBody.errorMessage ?? res.statusText;
+    const errorBody = await res.text()
+    const parsedErrorBody = this._parseErrorXml(res.headers, errorBody)
+    const svcCode =
+      res.headers.get('x-amz-error-code') ??
+      parsedErrorBody.svcCode ??
+      'Unknown'
+    const errorMessage =
+      res.headers.get('x-amz-error-message') ??
+      parsedErrorBody.errorMessage ??
+      res.statusText
     this._log(
       'error',
       `${C.ERROR_PREFIX}Request failed with status ${res.status}: ${svcCode} - ${errorMessage},err body: ${errorBody}`,
-    );
-    throw new U.S3ServiceError(`S3 returned ${res.status} – ${svcCode}`, res.status, svcCode, errorBody);
+    )
+    throw new U.S3ServiceError(
+      `S3 returned ${res.status} – ${svcCode}`,
+      res.status,
+      svcCode,
+      errorBody,
+    )
   }
 
-  private _buildCanonicalQueryString(queryParams: Record<string, unknown>): string {
+  private _buildCanonicalQueryString(
+    queryParams: Record<string, unknown>,
+  ): string {
     if (!queryParams || Object.keys(queryParams).length === 0) {
-      return '';
+      return ''
     }
     return Object.keys(queryParams)
-      .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key] as string)}`)
+      .map(
+        (key) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key] as string)}`,
+      )
       .sort((a, b) => a.localeCompare(b))
-      .join('&');
+      .join('&')
   }
 }
 
-export { S3mini };
-export default S3mini;
+export { S3mini }
+export default S3mini
