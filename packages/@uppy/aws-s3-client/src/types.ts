@@ -1,10 +1,20 @@
+export type singableRequest = {
+  method: string;
+  url: string;
+  headers: Record<string, string>;
+  body?: BodyInit | null;
+};
+
+export type singedHeaders = Record<string, string>;
+
+export type signRequestFn = (request: singableRequest) => Promise<singedHeaders>;
+
 export interface S3Config {
-  accessKeyId: string;
-  secretAccessKey: string;
   endpoint: string;
   region?: string;
   requestSizeInBytes?: number;
   requestAbortTimeout?: number;
+  signRequest: signRequestFn;
   logger?: Logger;
   fetch?: typeof fetch;
 }

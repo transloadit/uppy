@@ -43,8 +43,6 @@ class S3mini {
    * @param {typeof fetch} [config.fetch=globalThis.fetch] - Custom fetch implementation to use for HTTP requests.
    * @throws {TypeError} Will throw an error if required parameters are missing or of incorrect type.
    */
-  readonly accessKeyId: string;
-  readonly secretAccessKey: string;
   readonly endpoint: URL;
   readonly region: string;
   readonly bucketName: string;
@@ -52,23 +50,20 @@ class S3mini {
   readonly requestAbortTimeout?: number;
   readonly logger?: IT.Logger;
   readonly fetch: typeof fetch;
-  private signingKeyDate?: string;
-  private signingKey?: ArrayBuffer;
+  readonly signRequest: IT.signRequestFn;
 
   constructor({
-    accessKeyId,
-    secretAccessKey,
     endpoint,
+    signRequest,
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
     logger = undefined,
     fetch = globalThis.fetch,
   }: IT.S3Config) {
-    this._validateConstructorParams(accessKeyId, secretAccessKey, endpoint);
-    this.accessKeyId = accessKeyId;
-    this.secretAccessKey = secretAccessKey;
+    this._validateConstructorParams(endpoint, signRequest);
     this.endpoint = new URL(this._ensureValidUrl(endpoint));
+    this.signRequest = signRequest;
     this.region = region;
     this.bucketName = this._extractBucketName();
     this.requestSizeInBytes = requestSizeInBytes;
@@ -120,7 +115,6 @@ class S3mini {
           region: this.region,
           endpoint: this.endpoint.toString(),
           // Only include the first few characters of the access key, if it exists
-          accessKeyId: this.accessKeyId ? `${this.accessKeyId.substring(0, 4)}...` : undefined,
         }),
       };
 
@@ -129,15 +123,13 @@ class S3mini {
     }
   }
 
-  private _validateConstructorParams(accessKeyId: string, secretAccessKey: string, endpoint: string): void {
-    if (typeof accessKeyId !== 'string' || accessKeyId.trim().length === 0) {
-      throw new TypeError(C.ERROR_ACCESS_KEY_REQUIRED);
-    }
-    if (typeof secretAccessKey !== 'string' || secretAccessKey.trim().length === 0) {
-      throw new TypeError(C.ERROR_SECRET_KEY_REQUIRED);
-    }
+  private _validateConstructorParams(endpoint: string, signRequest: IT.signRequestFn): void {
     if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
       throw new TypeError(C.ERROR_ENDPOINT_REQUIRED);
+    }
+
+    if (typeof signRequest !== 'function'){
+      throw new TypeError("signRequest is not passed")
     }
   }
 
@@ -247,69 +239,6 @@ class S3mini {
     return this._validateData(data);
   }
 
-  private async _sign(
-    method: IT.HttpMethod,
-    keyPath: string,
-    query: Record<string, unknown> = {},
-    headers: Record<string, string | number> = {},
-  ): Promise<{ url: string; headers: Record<string, string | number> }> {
-    // Create URL without appending keyPath first
-    const url = new URL(this.endpoint);
-
-    // Properly format the pathname to avoid double slashes
-    if (keyPath && keyPath.length > 0) {
-      url.pathname =
-        url.pathname === '/' ? `/${keyPath.replace(/^\/+/, '')}` : `${url.pathname}/${keyPath.replace(/^\/+/, '')}`;
-    }
-
-    const d = new Date();
-    const year = d.getUTCFullYear();
-    const month = String(d.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(d.getUTCDate()).padStart(2, '0');
-
-    const shortDatetime = `${year}${month}${day}`;
-    const fullDatetime = `${shortDatetime}T${String(d.getUTCHours()).padStart(2, '0')}${String(
-      d.getUTCMinutes(),
-    ).padStart(2, '0')}${String(d.getUTCSeconds()).padStart(2, '0')}Z`;
-    const credentialScope = `${shortDatetime}/${this.region}/${C.S3_SERVICE}/${C.AWS_REQUEST_TYPE}`;
-
-    headers[C.HEADER_AMZ_CONTENT_SHA256] = C.UNSIGNED_PAYLOAD;
-    headers[C.HEADER_AMZ_DATE] = fullDatetime;
-    headers[C.HEADER_HOST] = url.host;
-
-    const ignoredHeaders = new Set(['authorization', 'content-length', 'content-type', 'user-agent']);
-
-    let canonicalHeaders = '';
-    let signedHeaders = '';
-
-    for (const [key, value] of Object.entries(headers).sort(([a], [b]) => a.localeCompare(b))) {
-      const lowerKey = key.toLowerCase();
-      if (!ignoredHeaders.has(lowerKey)) {
-        if (canonicalHeaders) {
-          canonicalHeaders += '\n';
-          signedHeaders += ';';
-        }
-        canonicalHeaders += `${lowerKey}:${String(value).trim()}`;
-        signedHeaders += lowerKey;
-      }
-    }
-    const canonicalRequest = `${method}\n${url.pathname}\n${this._buildCanonicalQueryString(
-      query,
-    )}\n${canonicalHeaders}\n\n${signedHeaders}\n${C.UNSIGNED_PAYLOAD}`;
-    const stringToSign = `${C.AWS_ALGORITHM}\n${fullDatetime}\n${credentialScope}\n${U.hexFromBuffer(
-      await U.sha256(canonicalRequest),
-    )}`;
-    if (shortDatetime !== this.signingKeyDate || !this.signingKey) {
-      this.signingKeyDate = shortDatetime;
-      this.signingKey = await this._getSignatureKey(shortDatetime);
-    }
-    const signature = U.hexFromBuffer(await U.hmac(this.signingKey, stringToSign));
-    headers[
-      C.HEADER_AUTHORIZATION
-    ] = `${C.AWS_ALGORITHM} Credential=${this.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
-    return { url: url.toString(), headers };
-  }
-
   private async _signedRequest(
     method: IT.HttpMethod, // 'GET' | 'HEAD' | 'PUT' | 'POST' | 'DELETE'
     key: string, // ‘’ allowed for bucket‑level ops
@@ -327,35 +256,91 @@ class S3mini {
       withQuery?: boolean;
     } = {},
   ): Promise<Response> {
+
+
     // Basic validation
     // if (!['GET', 'HEAD', 'PUT', 'POST', 'DELETE'].includes(method)) {
     //   throw new Error(`${C.ERROR_PREFIX}Unsupported HTTP method ${method as string}`);
     // }
 
+
+    /**
+     * build the URL
+     * build query string
+     * build base headers
+     * convert all header values to strings and merge
+     * call the signRequest callback to get signed headers
+     */
+
     const { filteredOpts, conditionalHeaders } = ['GET', 'HEAD'].includes(method)
       ? this._filterIfHeaders(query)
       : { filteredOpts: query, conditionalHeaders: {} };
-    const baseHeaders: Record<string, string | number> = {
-      [C.HEADER_AMZ_CONTENT_SHA256]: C.UNSIGNED_PAYLOAD,
-      // ...(['GET', 'HEAD'].includes(method) ? { [C.HEADER_CONTENT_TYPE]: C.JSON_CONTENT_TYPE } : {}),
-      ...headers,
-      ...conditionalHeaders,
-    };
+
+
+    const url = new URL(this.endpoint)
 
     const encodedKey = key ? U.uriResourceEscape(key) : '';
-    const { url, headers: signedHeaders } = await this._sign(method, encodedKey, filteredOpts, baseHeaders);
-    if (Object.keys(query).length > 0) {
-      withQuery = true; // append query string to signed URL
+
+    if (encodedKey && encodedKey.length > 0){
+        url.pathname === '/' ? `/${encodedKey.replace(/^\/+/, '')}` : `${url.pathname}/${encodedKey.replace(/^\/+/, '')}`;
     }
-    const filteredOptsStrings = Object.fromEntries(
+
+    // build query string
+    if (Object.keys(query).length > 0) {
+      withQuery = true;
+    }
+
+      const filteredOptsStrings = Object.fromEntries(
       Object.entries(filteredOpts).map(([k, v]) => [k, String(v)]),
     ) as Record<string, string>;
+
+
     const finalUrl =
       withQuery && Object.keys(filteredOpts).length ? `${url}?${new URLSearchParams(filteredOptsStrings)}` : url;
-    const signedHeadersString = Object.fromEntries(
-      Object.entries(signedHeaders).map(([k, v]) => [k, String(v)]),
-    ) as Record<string, string>;
-    return this._sendRequest(finalUrl, method, signedHeadersString, body, tolerated);
+
+
+    const baseHeaders: Record<string, string> = {
+      [C.HEADER_AMZ_CONTENT_SHA256]: C.UNSIGNED_PAYLOAD,
+    };
+
+
+    // convert all header values to strings and merge
+    for (const [k, v] of Object.entries({...headers, ...conditionalHeaders})){
+      if (v!== undefined){
+        baseHeaders[k] = String(v);
+      }
+    }
+
+
+    // call the singedRequest callback
+    const signedHeaders = await this.signRequest({
+      method,
+      url: finalUrl.toString(),
+      headers: baseHeaders
+    })
+
+  return this._sendRequest(finalUrl.toString(), method, signedHeaders, body, tolerated);
+
+
+    // const encodedKey = key ? U.uriResourceEscape(key) : '';
+    // use the callback
+    // const { url, headers: signedHeaders } = await this._sign(method, encodedKey, filteredOpts, baseHeaders);
+    // if (Object.keys(query).length > 0) {
+    //   withQuery = true; // append query string to signed URL
+    // }
+
+    // filter options
+    // const filteredOptsStrings = Object.fromEntries(
+    //   Object.entries(filteredOpts).map(([k, v]) => [k, String(v)]),
+    // ) as Record<string, string>;
+
+
+    // const finalUrl =
+    //   withQuery && Object.keys(filteredOpts).length ? `${url}?${new URLSearchParams(filteredOptsStrings)}` : url;
+    // const signedHeadersString = Object.fromEntries(
+    //   Object.entries(signedHeaders).map(([k, v]) => [k, String(v)]),
+    // ) as Record<string, string>;
+    // return this._sendRequest(finalUrl, method, signedHeadersString, body, tolerated);
   }
 
   /**
@@ -1510,12 +1495,6 @@ class S3mini {
       .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key] as string)}`)
       .sort((a, b) => a.localeCompare(b))
       .join('&');
-  }
-  private async _getSignatureKey(dateStamp: string): Promise<ArrayBuffer> {
-    const kDate = await U.hmac(`AWS4${this.secretAccessKey}`, dateStamp);
-    const kRegion = await U.hmac(kDate, this.region);
-    const kService = await U.hmac(kRegion, C.S3_SERVICE);
-    return await U.hmac(kService, C.AWS_REQUEST_TYPE);
   }
 }
 

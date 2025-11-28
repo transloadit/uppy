@@ -3,6 +3,7 @@ import { it, vi, expect } from 'vitest';
 import { createHash } from 'node:crypto';
 import { S3mini } from '../src/index.js';
 import { beforeRun, resetBucketBeforeAll } from './_shared.test.js';
+import { createSigV4Signer } from '../src/sigv4-signer.js';
 
 import * as dotenv from 'dotenv';
 dotenv.config();
@@ -15,11 +16,17 @@ const raw = process.env[bucketName] ? process.env[bucketName].split(',') : null;
 const minioSpecific = bucket => {
   vi.setConfig({testTimeout: 120_000});
 
-  const s3client = new S3mini({
+
+  const signer = createSigV4Signer({
     accessKeyId: bucket.accessKeyId,
     secretAccessKey: bucket.secretAccessKey,
+    region: bucket.region
+  })
+
+  const s3client = new S3mini({
     endpoint: bucket.endpoint,
     region: bucket.region,
+    signRequest: signer
   });
 
   resetBucketBeforeAll(s3client);

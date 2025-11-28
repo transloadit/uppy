@@ -3,6 +3,7 @@ import { vi, it, expect, describe } from 'vitest';
 import { S3mini, sanitizeETag, runInBatches } from '../src/index.js';
 import { randomBytes } from 'node:crypto';
 import { beforeAll } from 'vitest'
+import { createSigV4Signer } from '../src/sigv4-signer.js';
 
 export const beforeRun = (raw, name, providerSpecific) => {
   if (!raw || raw === null) {
@@ -77,12 +78,19 @@ export const resetBucketBeforeAll = s3client => {
 export const testRunner = bucket => {
   vi.setConfig({testTimeout: 120_000});
 
-  const s3client = new S3mini({
+
+  const signer = createSigV4Signer({
     accessKeyId: bucket.accessKeyId,
     secretAccessKey: bucket.secretAccessKey,
+    region: bucket.region
+  })
+
+  const s3client = new S3mini({
     endpoint: bucket.endpoint,
     region: bucket.region,
+    signRequest: signer
   });
+
 
   resetBucketBeforeAll(s3client);
 
