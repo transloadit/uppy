@@ -10,7 +10,7 @@
     "registry": "https://github.com/transloadit/uppy"
   },
   "files": [
-    "./dist/",
+    "./lib/",
     "./src/",
     "./package.json",
     "./README.md"
@@ -21,19 +21,19 @@
     "typecheck": "tsc --build",
     "build": "tsc --build tsconfig.build.json"
   },
-  "main": "dist/s3mini.min.js",
-  "module": "dist/s3mini.js",
-  "types": "dist/s3mini.d.ts",
+  "main": "lib/s3mini.min.js",
+  "module": "lib/s3mini.js",
+  "types": "lib/s3mini.d.ts",
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/s3mini.d.ts",
-        "development": "./dist/s3mini.js",
-        "default": "./dist/s3mini.min.js"
+        "types": "./lib/s3mini.d.ts",
+        "development": "./lib/s3mini.js",
+        "default": "./lib/s3mini.min.js"
       },
       "require": {
-        "types": "./dist/s3mini.d.ts",
-        "default": "./dist/s3mini.min.js"
+        "types": "./lib/s3mini.d.ts",
+        "default": "./lib/s3mini.min.js"
       }
     }
   },
@@ -42,56 +42,15 @@
     "node": ">=20"
   },
   "engineStrict": true,
-  "targets": {
-    "node": 20,
-    "edge": true,
-    "worker": true,
-    "bun": true,
-    "browser": false
-  },
   "license": "MIT",
   "devDependencies": {
     "dotenv": "17.2.3",
     "minio": "8.0.6",
-    "s3mini": "0.6.0",
-    "tinybench": "5.1.0",
     "tsx": "^4.20.6",
     "typescript": "5.9.3",
     "vitest": "^3.2.4"
   },
   "overrides": {
     "glob": "12.0.0"
-  },
-  "prettier": {
-    "bracketSpacing": true,
-    "bracketSameLine": false,
-    "singleQuote": true,
-    "semi": true,
-    "endOfLine": "lf",
-    "tabWidth": 2,
-    "trailingComma": "all",
-    "arrowParens": "avoid",
-    "printWidth": 120
-  },
-  "keywords": [
-    "s3",
-    "s3 client",
-    "s3 sdk",
-    "b2",
-    "b2 client",
-    "r2",
-    "r2 client",
-    "cloudflare",
-    "cloudflare r2",
-    "AWS S3",
-    "Oracle Cloud Infrastructure",
-    "OCI Object Storage",
-    "Azure Blob Storage",
-    "Google Cloud Storage",
-    "Ceph",
-    "backblaze",
-    "scaleway",
-    "digitalocean",
-    "minio"
-  ]
+  }
 }

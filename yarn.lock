@@ -10731,8 +10731,6 @@ __metadata:
   dependencies:
     dotenv: "npm:17.2.3"
     minio: "npm:8.0.6"
-    s3mini: "npm:0.6.0"
-    tinybench: "npm:5.1.0"
     tsx: "npm:^4.20.6"
     typescript: "npm:5.9.3"
     vitest: "npm:^3.2.4"
@@ -23531,13 +23529,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"s3mini@npm:0.6.0":
-  version: 0.6.0
-  resolution: "s3mini@npm:0.6.0"
-  checksum: 10/1a4305f60afd0bf52d48ae6d5cc77f275914d16fad6b0d26a3f1ca1554f77543029e7837cbd9d4eb8fb89f00dd1579c8663b3771c9b1a902dd84859f5acff891
-  languageName: node
-  linkType: hard
-
 "sade@npm:^1.7.4, sade@npm:^1.8.1":
   version: 1.8.1
   resolution: "sade@npm:1.8.1"
@@ -25152,13 +25143,6 @@ __metadata:
   version: 1.1.0
   resolution: "thunky@npm:1.1.0"
   checksum: 10/825e3bd07ab3c9fd6f753c457a60957c628cacba5dd0656fd93b037c445e2828b43cf0805a9f2b16b0c5f5a10fd561206271acddb568df4f867f0aea0eb2772f
-  languageName: node
-  linkType: hard
-
-"tinybench@npm:5.1.0":
-  version: 5.1.0
-  resolution: "tinybench@npm:5.1.0"
-  checksum: 10/3499e7d295345dcfc4aaed7779af5d03d806ec2299f7ce0007989579b633b184e397a7b3e07025282af16a2a4fb323183ad0efd826d3fae8b3026cdc1a147515
   languageName: node
   linkType: hard
 
