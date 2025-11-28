@@ -7,6 +7,7 @@ const bucket = ''
 
 const endpoint = `https://${bucket}.s3.${region}.amazonaws.com`
 
+// ! WIP need to add signer and test with aws
 ;('https://testbucketnewfix.s3.eu-north-1.amazonaws.com')
 async function main() {
   const s3 = new s3mini({

@@ -6,8 +6,8 @@ import {
   HEADER_HOST,
   S3_SERVICE,
   UNSIGNED_PAYLOAD,
-} from './consts'
-import { hexFromBuffer, hmac, sha256 } from './utils'
+} from '../consts'
+import { hexFromBuffer, hmac, sha256 } from '../utils'
 /**
  * get the url
  * create the headers object which we need to sign
@@ -18,8 +18,7 @@ import { hexFromBuffer, hmac, sha256 } from './utils'
  * build string to sign
  */
 
-// get the url
-
+// ! WIP
 export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
   //
   let signingKeyDate

@@ -121,6 +121,7 @@ class S3mini {
     }
   }
 
+  // ! MODIFIED
   private _validateConstructorParams(
     endpoint: string,
     signRequest: IT.signRequestFn,
@@ -207,6 +208,7 @@ class S3mini {
     return { filteredOpts, conditionalHeaders }
   }
 
+  // ! MODIFIED
   private _validateData(data: unknown): BodyInit {
     if (
       typeof data === 'string' ||
@@ -244,6 +246,7 @@ class S3mini {
     return this._validateData(data)
   }
 
+  // ! MODIFIED
   private async _signedRequest(
     method: IT.HttpMethod, // 'GET' | 'HEAD' | 'PUT' | 'POST' | 'DELETE'
     key: string, // ‘’ allowed for bucket‑level ops
