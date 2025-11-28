@@ -107,11 +107,18 @@ export const testRunner = bucket => {
     }
     expect(exists).toBe(true);
 
+
+
+  const nonExistentSigner = createSigV4Signer({
+    accessKeyId: bucket.accessKeyId,
+    secretAccessKey: bucket.secretAccessKey,
+    region: bucket.region
+  })
+
     const nonExistentBucket = new S3mini({
-      accessKeyId: bucket.accessKeyId,
-      secretAccessKey: bucket.secretAccessKey,
-      endpoint: bucket.endpoint + '/non-existent-bucket',
+      endpoint: `${bucket.endpoint}/non-existent-bucket`,
       region: bucket.region,
+      signRequest: nonExistentSigner
     });
     const nonExistent = await nonExistentBucket.bucketExists();
     expect(nonExistent).toBe(false);

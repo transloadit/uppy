@@ -1,5 +1,5 @@
 import { hexFromBuffer, hmac, sha256 } from './utils';
-import { HEADER_AMZ_CONTENT_SHA256, HEADER_AMZ_DATE, HEADER_HOST, UNSIGNED_PAYLOAD, AWS_ALGORITHM } from './consts';
+import { HEADER_AMZ_CONTENT_SHA256, HEADER_AMZ_DATE, HEADER_HOST, UNSIGNED_PAYLOAD, AWS_ALGORITHM, S3_SERVICE, AWS_REQUEST_TYPE } from './consts';
 /**
  * get the url
  * create the headers object which we need to sign
@@ -15,13 +15,13 @@ import { HEADER_AMZ_CONTENT_SHA256, HEADER_AMZ_DATE, HEADER_HOST, UNSIGNED_PAYLO
 export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
   //
   let signingKeyDate;
-  let singingKey;
+  let signingKey;
 
   const getSignatureKey = async dateStamp => {
-    const kDate = await U.hmac(`AWS4${this.secretAccessKey}`, dateStamp);
-    const kRegion = await U.hmac(kDate, this.region);
-    const kService = await U.hmac(kRegion, C.S3_SERVICE);
-    return await hmac(kService, C.AWS_REQUEST_TYPE);
+    const kDate = await hmac(`AWS4${secretAccessKey}`, dateStamp);
+    const kRegion = await hmac(kDate, region);
+    const kService = await hmac(kRegion, S3_SERVICE);
+    return await hmac(kService, AWS_REQUEST_TYPE);
   };
 
   return async function signRequest({ method, url, headers }) {
@@ -36,15 +36,15 @@ export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
     const fullDatetime = `${shortDatetime}T${String(d.getUTCHours()).padStart(2, '0')}${String(
       d.getUTCMinutes(),
     ).padStart(2, '0')}${String(d.getUTCSeconds()).padStart(2, '0')}Z`;
-    const credentialScope = `${shortDatetime}/${this.region}/${C.S3_SERVICE}/${C.AWS_REQUEST_TYPE}`;
+    const credentialScope = `${shortDatetime}/${region}/${S3_SERVICE}/${AWS_REQUEST_TYPE}`;
 
     // Headers to sign
 
-    const singedHeadersObj = {
+    const signedHeadersObj = {
       ...headers,
-      HEADER_AMZ_CONTENT_SHA256: UNSIGNED_PAYLOAD,
-      HEADER_AMZ_DATE: fullDatetime,
-      HEADER_HOST: parsedUrl.host,
+      [HEADER_AMZ_CONTENT_SHA256]: UNSIGNED_PAYLOAD,
+      [HEADER_AMZ_DATE]: fullDatetime,
+      [HEADER_HOST]: parsedUrl.host,
     };
 
     const ignoredHeaders = new Set(['authorization', 'content-length', 'content-type', 'user-agent']);
@@ -52,7 +52,7 @@ export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
     let canonicalHeaders = '';
     let signedHeaders = '';
 
-    const sortedHeaders = Object.entries(singedHeadersObj)
+    const sortedHeaders = Object.entries(signedHeadersObj)
       .filter(([key]) => !ignoredHeaders.has(key.toLocaleLowerCase()))
       .sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()));
 
@@ -96,20 +96,20 @@ export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
 
     // get key
 
-    if (shortDatetime !== signingKeyDate || !singingKey) {
+    if (shortDatetime !== signingKeyDate || !signingKey) {
       signingKeyDate = shortDatetime;
-      singingKey = await getSignatureKey(shortDatetime);
+      signingKey = await getSignatureKey(shortDatetime);
     }
 
     // get signature
-    const signature = hexFromBuffer(await hmac(singingKey, stringToSign));
+    const signature = hexFromBuffer(await hmac(signingKey, stringToSign));
 
     // auth header
 
-    const authorization = `${C.AWS_ALGORITHM} Credential=${this.accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
+    const authorization = `${AWS_ALGORITHM} Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`;
 
     return {
-      ...singedHeadersObj,
+      ...signedHeadersObj,
       authorization: authorization,
     };
   };

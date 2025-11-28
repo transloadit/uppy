@@ -282,7 +282,7 @@ class S3mini {
     const encodedKey = key ? U.uriResourceEscape(key) : '';
 
     if (encodedKey && encodedKey.length > 0){
-        url.pathname === '/' ? `/${encodedKey.replace(/^\/+/, '')}` : `${url.pathname}/${encodedKey.replace(/^\/+/, '')}`;
+        url.pathname = url.pathname === '/' ? `/${encodedKey.replace(/^\/+/, '')}` : `${url.pathname}/${encodedKey.replace(/^\/+/, '')}`;
     }
 
     // build query string
@@ -1333,7 +1333,7 @@ class S3mini {
 
   private async _deleteObjectsProcess(keys: string[]): Promise<boolean[]> {
     const objectsXml = keys.map(key => `<Object><Key>${U.escapeXml(key)}</Key></Object>`).join('');
-    const xmlBody = '<Delete>' + objectsXml + '</Delete>';
+    const xmlBody = `<Delete>${objectsXml}</Delete>`;
     const query = { delete: '' };
     const sha256base64 = U.base64FromBuffer(await U.sha256(xmlBody));
     const headers = {
