@@ -10,7 +10,6 @@ const composeFiles = {
   minio: join(process.cwd(), 'tests', 'compose.minio.yaml'),
 }
 
-
 const bucketConfigs = Object.keys(process.env)
   .filter((k) => k.startsWith('BUCKET_ENV_'))
   .map((k) => {
@@ -33,6 +32,5 @@ export default async () => {
       default:
         await composeUp(composeFile)
     }
-
   }
 }
