@@ -2,7 +2,7 @@
 
  A Minimal aws-s3 client inspired by [good-lly/s3mini](https://github.com/good-lly/s3mini)
 
-## Running Tests
+## Running Tests (Only minio is suported)
 
 ### prerequisites
 
