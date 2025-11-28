@@ -17,8 +17,8 @@
   ],
   "type": "module",
   "scripts": {
-    "tsc": "tsc",
     "test": "vitest run",
+    "typecheck": "tsc --build",
     "build": "tsc --build tsconfig.build.json"
   },
   "main": "dist/s3mini.min.js",
