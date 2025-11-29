@@ -105,6 +105,7 @@ export default function GooglePickerView({
             appId,
             onFilesPicked,
             signal,
+            onLoadingChange: (isLoading: boolean) => setLoading(isLoading),
           })
         } else {
           // photos
