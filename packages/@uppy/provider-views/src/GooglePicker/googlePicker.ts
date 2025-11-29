@@ -250,7 +250,7 @@ export async function showDrivePicker({
 
     do {
       const params = new URLSearchParams({
-        q: `'${doc.id}' in parents and trashed = false`,
+        q: `'${doc.id.replace(/'/g, "\\'")}' in parents and trashed = false`,
         fields: 'nextPageToken, files(id, name, mimeType)',
         pageSize: '1000',
         ...(pageToken && { pageToken }),
@@ -260,13 +260,17 @@ export async function showDrivePicker({
         { headers, signal },
       )
 
-      if (!res.ok) throw new Error('Failed to list folder contents')
+      if (!res.ok) {
+        throw new Error(
+          `Failed to list folder contents for '${doc.name}' (${doc.id}): ${res.status} ${res.statusText}`
+        )
+      }
       const json: { nextPageToken?: string; files: PickedItemBase[] } =
         await res.json()
       pageToken = json.nextPageToken
 
-      for (const doc of json.files) {
-        items.push(...(await listFilesInDriveFolder({ doc, token, signal })))
+      for (const file of json.files) {
+        items.push(...(await listFilesInDriveFolder({ doc: file, token, signal })))
       }
     } while (pageToken)
 
@@ -280,10 +284,10 @@ export async function showDrivePicker({
       onLoadingChange(true)
 
       // console.log('Picker response', JSON.stringify(picked, null, 2));
-      let results: PickedDriveItem[] = []
+      const results: PickedDriveItem[] = []
       for (const doc of picked.docs) {
         if (doc.mimeType === 'application/vnd.google-apps.folder') {
-          results = await listFilesInDriveFolder({ doc, token, signal })
+          results.push(...(await listFilesInDriveFolder({ doc, token, signal })))
         } else {
           results.push({
             platform: 'drive',
