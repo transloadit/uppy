@@ -262,7 +262,7 @@ export async function showDrivePicker({
 
       if (!res.ok) {
         throw new Error(
-          `Failed to list folder contents for '${doc.name}' (${doc.id}): ${res.status} ${res.statusText}`
+          `Failed to list folder contents for '${doc.name}' (${doc.id}): ${res.status} ${res.statusText}`,
         )
       }
       const json: { nextPageToken?: string; files: PickedItemBase[] } =
@@ -270,7 +270,9 @@ export async function showDrivePicker({
       pageToken = json.nextPageToken
 
       for (const file of json.files) {
-        items.push(...(await listFilesInDriveFolder({ doc: file, token, signal })))
+        items.push(
+          ...(await listFilesInDriveFolder({ doc: file, token, signal })),
+        )
       }
     } while (pageToken)
 
@@ -287,7 +289,9 @@ export async function showDrivePicker({
       const results: PickedDriveItem[] = []
       for (const doc of picked.docs) {
         if (doc.mimeType === 'application/vnd.google-apps.folder') {
-          results.push(...(await listFilesInDriveFolder({ doc, token, signal })))
+          results.push(
+            ...(await listFilesInDriveFolder({ doc, token, signal })),
+          )
         } else {
           results.push({
             platform: 'drive',
