@@ -111,13 +111,15 @@ export default class GoldenRetriever<
         : recoveredFiles,
     )
 
-    this.uppy.log(
-      `[GoldenRetriever] Recovered ${Object.keys(currentUploads).length} current uploads and ${Object.keys(files).length} files from Local Storage`,
-    )
-
     const filesEntries = Object.entries(files)
 
-    if (filesEntries.length <= 0) {
+    this.uppy.log(
+      `[GoldenRetriever] Recovered ${Object.keys(currentUploads).length} current uploads and ${filesEntries.length} files from Local Storage`,
+    )
+
+    const hasFiles = filesEntries.length > 0
+
+    if (!hasFiles) {
       this.uppy.log(
         '[GoldenRetriever] No files need to be loaded, restored only processing state...',
       )
@@ -171,7 +173,7 @@ export default class GoldenRetriever<
     )
 
     this.uppy.setState({
-      recoveredState,
+      recoveredState: hasFiles ? recoveredState : null, // recoveredState is used to control the UI (to show the "recovered" state), only set it if we actually have files
       currentUploads,
       files: filesWithBlobs,
     })
