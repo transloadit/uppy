@@ -210,6 +210,7 @@ export async function showDrivePicker({
   onFilesPicked,
   signal,
   onLoadingChange,
+  onError,
 }: {
   token: string
   apiKey: string
@@ -217,6 +218,7 @@ export async function showDrivePicker({
   onFilesPicked: (files: PickedItem[], accessToken: string) => void
   signal: AbortSignal | undefined
   onLoadingChange: (loading: boolean) => void
+  onError: (err: unknown) => void
 }): Promise<void> {
   // google drive picker will crash hard if given an invalid token, so we need to check it first
   // https://github.com/transloadit/uppy/pull/5443#pullrequestreview-2452439265
@@ -302,6 +304,8 @@ export async function showDrivePicker({
         }
       }
       onFilesPicked(results, token)
+    } catch (err) {
+      onError(err)
     } finally {
       onLoadingChange(false)
     }
