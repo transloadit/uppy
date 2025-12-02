@@ -610,27 +610,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/common@npm:^19.0.0":
-  version: 19.2.5
-  resolution: "@angular/common@npm:19.2.5"
+"@angular/common@npm:^19.2.16":
+  version: 19.2.17
+  resolution: "@angular/common@npm:19.2.17"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 19.2.5
+    "@angular/core": 19.2.17
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/f7788e90d438b8a9222de950e3e8ac72ffbf8c0650bd3561c21c7d19e48e0eeb85be3edb7243ff6fff3c0051612dbad292c3c0d544fb6ab6267d0f7ce3b0837b
-  languageName: node
-  linkType: hard
-
-"@angular/common@npm:^19.2.0":
-  version: 19.2.14
-  resolution: "@angular/common@npm:19.2.14"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/core": 19.2.14
-    rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/53a7c50e799190df0805cc188496cc9ca3fcd03497deabaaa477da9cb08391ef3a55151abed24bb6bc19ee044f03a623fb53b33efa590000912ad944691e3f88
+  checksum: 10/3794a790fcff5d8cec17b9a51c6563966bc80667957660515c1eaebd6e384bf7a2d50a8c131a1a85f1c36ed2d88a9695612d6d6fc2356f92294d2da3fadf85ba
   languageName: node
   linkType: hard
 
@@ -12168,7 +12156,7 @@ __metadata:
     "@angular-eslint/eslint-plugin-template": "npm:^18.0.1"
     "@angular/animations": "npm:^19.0.0"
     "@angular/cli": "npm:^19.0.0"
-    "@angular/common": "npm:^19.0.0"
+    "@angular/common": "npm:^19.2.16"
     "@angular/compiler": "npm:^19.0.0"
     "@angular/compiler-cli": "npm:^19.0.0"
     "@angular/core": "npm:^19.0.0"
@@ -15487,7 +15475,7 @@ __metadata:
   dependencies:
     "@angular-devkit/build-angular": "npm:^19.2.6"
     "@angular/cli": "npm:^19.2.6"
-    "@angular/common": "npm:^19.2.0"
+    "@angular/common": "npm:^19.2.16"
     "@angular/compiler": "npm:^19.2.17"
     "@angular/compiler-cli": "npm:^19.2.0"
     "@angular/core": "npm:^19.2.0"
