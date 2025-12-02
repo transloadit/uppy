@@ -160,7 +160,8 @@ export default class ImageGenerator<
    * - Uninstall: closeAssembly(true) called directly, cancels server-side assembly
    */
   generate = async () => {
-    if (this.getPluginState().prompt.trim() === '') return
+    const { loading, prompt } = this.getPluginState()
+    if (loading || prompt.trim() === '') return
 
     const { promise, resolve, reject } = Promise.withResolvers<void>()
     let cancelled = false
