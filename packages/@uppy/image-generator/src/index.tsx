@@ -160,6 +160,8 @@ export default class ImageGenerator<
    * - Uninstall: closeAssembly(true) called directly, cancels server-side assembly
    */
   generate = async () => {
+    if (this.getPluginState().prompt.trim() === '') return
+
     const { promise, resolve, reject } = Promise.withResolvers<void>()
     let cancelled = false
 
@@ -209,6 +211,7 @@ export default class ImageGenerator<
       await promise
     } catch (error) {
       this.client.submitError(error as Error).catch(() => {})
+      this.uppy.info('Image could not be generated', 'error')
       throw error
     } finally {
       // @ts-expect-error not typed because we do not depend on @uppy/dashboard

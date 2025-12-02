@@ -48,7 +48,7 @@ function FilterInput({
         <button
           className="uppy-u-reset uppy-ProviderBrowser-searchFilterReset"
           type="button"
-          aria-label="Clear search"
+          aria-label={i18n('resetFilter')}
           onClick={() => onChange('')}
         >
           <svg

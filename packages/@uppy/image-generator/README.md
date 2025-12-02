@@ -7,12 +7,8 @@
 ![CI status for Companion tests](https://github.com/transloadit/uppy/workflows/Companion/badge.svg)
 ![CI status for browser tests](https://github.com/transloadit/uppy/workflows/End-to-end%20tests/badge.svg)
 
-TODO: Description
-
-⚠ In beta.
-
 **[Read the docs](https://uppy.io/docs/image-generator)** |
-**[Try it](https://uppy.io/examples/dashboard/)**
+**[Try it](https://uppy.io/examples/)**
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile file encoding service.
@@ -21,8 +17,15 @@ a versatile file encoding service.
 
 ```js
 import Uppy from '@uppy/core'
+import ImageGenerator from '@uppy/image-generator'
 
 const uppy = new Uppy()
+  .use(ImageGenerator, {
+    assemblyOptions: async (prompt) => {
+      const res = await fetch(`/assembly-options?prompt=${encodeURIComponent(prompt)}`)
+      return res.json()
+    }
+  })
 ```
 
 ## Installation
