@@ -17,7 +17,7 @@
   },
   "devDependencies": {
     "@uppy/companion": "workspace:*",
-    "body-parser": "^1.20.3",
+    "body-parser": "^1.20.4",
     "dotenv": "^16.0.1",
     "express": "^4.22.0",
     "express-session": "^1.15.6",

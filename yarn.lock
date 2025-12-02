@@ -10785,7 +10785,7 @@ __metadata:
     "@types/request": "npm:2.48.8"
     "@types/webpack": "npm:^5.28.0"
     "@types/ws": "npm:8.5.3"
-    body-parser: "npm:1.20.3"
+    body-parser: "npm:1.20.4"
     common-tags: "npm:1.8.2"
     connect-redis: "npm:7.1.1"
     content-disposition: "npm:^0.5.4"
@@ -12656,7 +12656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:1.20.3, body-parser@npm:^1.19.0, body-parser@npm:^1.20.3":
+"body-parser@npm:1.20.3, body-parser@npm:^1.19.0":
   version: 1.20.3
   resolution: "body-parser@npm:1.20.3"
   dependencies:
@@ -12676,7 +12676,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:~1.20.3":
+"body-parser@npm:1.20.4, body-parser@npm:^1.20.4, body-parser@npm:~1.20.3":
   version: 1.20.4
   resolution: "body-parser@npm:1.20.4"
   dependencies:
@@ -15525,7 +15525,7 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     "@uppy/google-drive": "workspace:*"
     "@uppy/webcam": "workspace:*"
-    body-parser: "npm:^1.20.3"
+    body-parser: "npm:^1.20.4"
     cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.5"
     dotenv: "npm:^16.0.1"
@@ -15543,7 +15543,7 @@ __metadata:
     "@aws-sdk/client-s3": "npm:^3.338.0"
     "@aws-sdk/client-sts": "npm:^3.338.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.338.0"
-    body-parser: "npm:^1.20.3"
+    body-parser: "npm:^1.20.4"
     dotenv: "npm:^16.0.0"
     express: "npm:^4.22.0"
   languageName: unknown
@@ -15578,7 +15578,7 @@ __metadata:
     "@uppy/google-drive": "workspace:*"
     "@uppy/provider-views": "workspace:*"
     "@uppy/tus": "workspace:*"
-    body-parser: "npm:^1.20.3"
+    body-parser: "npm:^1.20.4"
     dotenv: "npm:^16.0.1"
     express: "npm:^4.22.0"
     express-session: "npm:^1.15.6"
@@ -15595,7 +15595,7 @@ __metadata:
     "@uppy/aws-s3": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
-    body-parser: "npm:^1.20.3"
+    body-parser: "npm:^1.20.4"
     cors: "npm:^2.8.5"
     dotenv: "npm:^16.0.1"
     express: "npm:^4.22.0"
@@ -15608,7 +15608,7 @@ __metadata:
   resolution: "example-companion@workspace:examples/companion"
   dependencies:
     "@uppy/companion": "workspace:*"
-    body-parser: "npm:^1.20.3"
+    body-parser: "npm:^1.20.4"
     express: "npm:^4.22.0"
     express-session: "npm:^1.15.6"
     light-server: "npm:^2.4.0"
