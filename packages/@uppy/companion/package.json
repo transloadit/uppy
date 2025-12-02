@@ -39,7 +39,7 @@
     "@aws-sdk/lib-storage": "^3.338.0",
     "@aws-sdk/s3-presigned-post": "^3.338.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",
-    "body-parser": "1.20.3",
+    "body-parser": "1.20.4",
     "common-tags": "1.8.2",
     "connect-redis": "7.1.1",
     "content-disposition": "^0.5.4",
