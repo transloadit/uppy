@@ -96,16 +96,33 @@ export default class GoldenRetriever<
     }
 
     const currentUploads = recoveredState.currentUploads || {}
-    const files = recoveredState.files || {}
-    this.uppy.log(
-      `[GoldenRetriever] Recovered ${Object.keys(currentUploads).length} current uploads and ${Object.keys(files).length} files from Local Storage`,
+    const recoveredFiles = Object.entries(recoveredState.files || {})
+
+    // If *all* files have completed *successfully*, ignore the whole stored restoration state.
+    // This makes sure that if the upload was only partially successful, the user can still restore and upload the remaining files.
+    // Here are some scenarios we have to take into account:
+    // todo (make unit/e2e tests for these scenarios)
+    // - the user removes all uploads one by one (once all are removed, we should not restore anything after reloading page)
+    // - the user uploads files with Transloadit plugin enabled, uploads complete successfully, and the user refreshes the page while the assembly is still running. golden retriever should then restore the files, and the ongoing assembly should progress
+    // - once a file finishes uploading successfully, it should have it its blob removed (even if a post processing step remains). if not successful upload it should not be removed
+    const files = Object.fromEntries(
+      recoveredFiles.every(([, f]) => f.progress.complete && !f.error)
+        ? []
+        : recoveredFiles,
     )
 
-    if (Object.keys(recoveredState.files).length <= 0) {
+    const filesEntries = Object.entries(files)
+
+    this.uppy.log(
+      `[GoldenRetriever] Recovered ${Object.keys(currentUploads).length} current uploads and ${filesEntries.length} files from Local Storage`,
+    )
+
+    const hasFiles = filesEntries.length > 0
+
+    if (!hasFiles) {
       this.uppy.log(
         '[GoldenRetriever] No files need to be loaded, restored only processing state...',
       )
-      return
     }
 
     const [serviceWorkerBlobs, indexedDbBlobs] = await Promise.all([
@@ -122,43 +139,41 @@ export default class GoldenRetriever<
       UppyFileId,
       UppyFile<M, B>
     > = Object.fromEntries(
-      Object.entries(files).map(
-        ([fileID, file]): [UppyFileId, UppyFile<M, B>] => {
-          if (file.isRemote) {
-            return [
-              fileID,
+      filesEntries.map(([fileID, file]): [UppyFileId, UppyFile<M, B>] => {
+        if (file.isRemote) {
+          return [
+            fileID,
+            {
+              ...file,
+              isRestored: true,
+              data: { size: null }, // todo shouldn't we save/restore the size too?
+            },
+          ]
+        }
+
+        const blob: Blob | undefined = blobs[fileID]
+        return [
+          fileID,
+          !file.progress.uploadComplete && blob == null
+            ? // if we don’t have the blob (and the file is not completed uploading), mark the file as a ghost
               {
                 ...file,
                 isRestored: true,
-                data: { size: null }, // todo shouldn't we save/restore the size too?
+                isGhost: true,
+                data: undefined,
+              }
+            : {
+                ...file,
+                isRestored: true,
+                isGhost: false,
+                data: blob,
               },
-            ]
-          }
-
-          const blob: Blob | undefined = blobs[fileID]
-          return [
-            fileID,
-            !file.progress.uploadComplete && blob == null
-              ? // if we don’t have the blob (and the file is not completed uploading), mark the file as a ghost
-                {
-                  ...file,
-                  isRestored: true,
-                  isGhost: true,
-                  data: undefined,
-                }
-              : {
-                  ...file,
-                  isRestored: true,
-                  isGhost: false,
-                  data: blob,
-                },
-          ]
-        },
-      ),
+        ]
+      }),
     )
 
     this.uppy.setState({
-      recoveredState,
+      recoveredState: hasFiles ? recoveredState : null, // recoveredState is used to control the UI (to show the "recovered" state), only set it if we actually have files
       currentUploads,
       files: filesWithBlobs,
     })
@@ -315,13 +330,6 @@ export default class GoldenRetriever<
     }
 
     if (nextState.files !== prevState.files) {
-      // If all files have completed *successfully*, remove the whole stored restoration state.
-      // This makes sure that if the upload was only partially successful, the user can still restore and upload the remaining files.
-      // Here are some scenarios we have to take into account:
-      // todo (make unit/e2e tests for these scenarios)
-      // - the user removes all uploads one by one (once all are removed, we should not restore anything after reloading page)
-      // - the user uploads files with Transloadit plugin enabled, uploads complete successfully, and the user refreshes the page while the assembly is still running. golden retriever should then restore the files, and the ongoing assembly should progress
-      // - once a file finishes uploading successfully, it should have it its blob removed (even if a post processing step remains). if not successful upload it should not be removed
       if (
         Object.values(prevState.files).some((f) => !f.progress.complete) &&
         (Object.values(nextState.files).length === 0 ||
@@ -333,17 +341,16 @@ export default class GoldenRetriever<
           `[GoldenRetriever] All files have been uploaded and processed successfully, clearing recovery state`,
         )
         this.uppy.setState({ recoveredState: null })
-        this.#metaDataStore.set(null)
-      } else {
-        // We don’t want to store file.data on local files, because the actual blob is too large and should therefore stored separately,
-        // and we want to avoid having weird properties in the serialized object (like file.preview).
-        const filesWithoutBlobs = Object.fromEntries(
-          Object.entries(nextState.files).map(
-            ([fileID, { data, preview, ...fileInfo }]) => [fileID, fileInfo],
-          ),
-        )
-        this.#patchMetadata({ files: filesWithoutBlobs })
       }
+
+      // We don’t want to store file.data on local files, because the actual blob is too large and should therefore stored separately,
+      // and we want to avoid having weird properties in the serialized object (like file.preview).
+      const filesWithoutBlobs = Object.fromEntries(
+        Object.entries(nextState.files).map(
+          ([fileID, { data, preview, ...fileInfo }]) => [fileID, fileInfo],
+        ),
+      )
+      this.#patchMetadata({ files: filesWithoutBlobs })
 
       const addedFiles = Object.values(nextState.files).filter(
         (nextFile) => prevState.files[nextFile.id] == null,
