@@ -1,5 +1,11 @@
 # @uppy/companion
 
+## 6.2.1
+
+### Patch Changes
+
+- 4817585: added icon to webdav provider, add css to truncate large file names
+
 ## 6.2.0
 
 ### Minor Changes
