@@ -13,8 +13,8 @@
     "@aws-sdk/client-s3": "^3.338.0",
     "@aws-sdk/client-sts": "^3.338.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",
-    "body-parser": "^1.20.3",
+    "body-parser": "^1.20.4",
     "dotenv": "^16.0.0",
-    "express": "^4.19.2"
+    "express": "^4.22.0"
   }
 }

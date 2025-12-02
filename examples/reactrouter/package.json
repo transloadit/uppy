@@ -20,7 +20,7 @@
     "@uppy/transloadit": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
-    "express": "^4.19.2",
+    "express": "^4.22.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router": "latest"
