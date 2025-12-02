@@ -1,7 +1,7 @@
 {
   "name": "@uppy/image-editor",
   "description": "Image editor and cropping UI",
-  "version": "4.0.2",
+  "version": "4.1.0",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",

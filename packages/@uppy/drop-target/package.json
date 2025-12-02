@@ -1,7 +1,7 @@
 {
   "name": "@uppy/drop-target",
   "description": "Lets your users drag and drop files on a DOM element",
-  "version": "4.0.1",
+  "version": "4.1.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [

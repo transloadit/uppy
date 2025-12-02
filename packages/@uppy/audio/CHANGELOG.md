@@ -1,5 +1,20 @@
 # @uppy/audio
 
+## 3.1.0
+
+### Minor Changes
+
+- 79e6460: - Add PluginTypeRegistry and typed getPlugin overload in @uppy/core
+  - Register plugin ids across packages so uppy.getPlugin('Dashboard' | 'Webcam') returns the concrete plugin type and removes the need to pass generics in getPlugin()
+
+### Patch Changes
+
+- Updated dependencies [79e6460]
+- Updated dependencies [ac12f35]
+- Updated dependencies [4817585]
+  - @uppy/core@5.2.0
+  - @uppy/utils@7.1.4
+
 ## 3.0.1
 
 ### Patch Changes

@@ -1,5 +1,24 @@
 # @uppy/dashboard
 
+## 5.1.0
+
+### Minor Changes
+
+- 79e6460: - Add PluginTypeRegistry and typed getPlugin overload in @uppy/core
+  - Register plugin ids across packages so uppy.getPlugin('Dashboard' | 'Webcam') returns the concrete plugin type and removes the need to pass generics in getPlugin()
+
+### Patch Changes
+
+- cc3ff31: Move golden retriever clear files logic to the restore function. This prevents race condition bugs when storing state.
+- Updated dependencies [e661348]
+- Updated dependencies [79e6460]
+- Updated dependencies [ac12f35]
+- Updated dependencies [4817585]
+  - @uppy/provider-views@5.2.0
+  - @uppy/thumbnail-generator@5.1.0
+  - @uppy/core@5.2.0
+  - @uppy/utils@7.1.4
+
 ## 5.0.4
 
 ### Patch Changes

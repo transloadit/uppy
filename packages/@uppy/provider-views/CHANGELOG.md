@@ -1,5 +1,22 @@
 # @uppy/provider-views
 
+## 5.2.0
+
+### Minor Changes
+
+- e661348: Allow selecting folders with Google Drive Picker. They will be recursively resolved.
+- 79e6460: - Add PluginTypeRegistry and typed getPlugin overload in @uppy/core
+  - Register plugin ids across packages so uppy.getPlugin('Dashboard' | 'Webcam') returns the concrete plugin type and removes the need to pass generics in getPlugin()
+
+### Patch Changes
+
+- 4817585: added icon to webdav provider, add css to truncate large file names
+- Updated dependencies [79e6460]
+- Updated dependencies [ac12f35]
+- Updated dependencies [4817585]
+  - @uppy/core@5.2.0
+  - @uppy/utils@7.1.4
+
 ## 5.1.2
 
 ### Patch Changes
