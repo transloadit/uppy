@@ -12,6 +12,7 @@
     "jsxImportSource": "preact",
     "types": ["preact"],
     "strict": true,
+    "exactOptionalPropertyTypes": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true
   }

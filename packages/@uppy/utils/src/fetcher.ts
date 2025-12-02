@@ -35,13 +35,12 @@ export type FetcherOptions = {
   onUploadProgress?: (event: ProgressEvent) => void
 
   /** A function to determine whether to retry the request. */
-  shouldRetry?: (xhr: XMLHttpRequest) => boolean
+  shouldRetry?: ((xhr: XMLHttpRequest) => boolean) | undefined
 
   /** Called after the response has succeeded or failed but before the promise is resolved. */
-  onAfterResponse?: (
-    xhr: XMLHttpRequest,
-    retryCount: number,
-  ) => void | Promise<void>
+  onAfterResponse?:
+    | ((xhr: XMLHttpRequest, retryCount: number) => void | Promise<void>)
+    | undefined
 
   /** Called when no XMLHttpRequest upload progress events have been received for `timeout` ms. */
   onTimeout?: (timeout: number) => void
