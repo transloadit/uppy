@@ -16,6 +16,9 @@ const s3ClientOptions = {
     secretAccessKey: 'bar',
     sessionToken: 'foobar',
   },
+  // AWS SDK v3 started enabling request checksums by default, which changes
+  // the presigned URL shape/signature. Keep tests aligned with our signer.
+  requestChecksumCalculation: 'WHEN_REQUIRED',
 }
 const { Date: OriginalDate } = globalThis
 
