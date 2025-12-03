@@ -41,7 +41,7 @@ export default class AudioOscilloscope {
 
   private bufferLength: number
 
-  private dataArray?: Uint8Array
+  private dataArray?: Uint8Array<ArrayBuffer>
 
   private onDrawFrame: (oscilloscope: AudioOscilloscope) => void
 
