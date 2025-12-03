@@ -4,6 +4,7 @@ import {
   S3Client,
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
+import { RequestChecksumCalculation } from '@aws-sdk/middleware-flexible-checksums'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { afterEach, beforeEach, describe, it } from 'vitest'
 import createSignedURL from './createSignedURL.js'
@@ -18,7 +19,7 @@ const s3ClientOptions = {
   },
   // AWS SDK v3 started enabling request checksums by default, which changes
   // the presigned URL shape/signature. Keep tests aligned with our signer.
-  requestChecksumCalculation: 'WHEN_REQUIRED',
+  requestChecksumCalculation: RequestChecksumCalculation.WHEN_REQUIRED,
 }
 const { Date: OriginalDate } = globalThis
 
