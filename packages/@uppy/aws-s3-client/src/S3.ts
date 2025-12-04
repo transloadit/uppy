@@ -697,25 +697,21 @@ class S3mini {
     opts: Record<string, unknown> = {},
     ssecHeaders?: IT.SSECHeaders,
   ): Promise<{ etag: string | null; data: ArrayBuffer | null }> {
-    try {
-      const res = await this._signedRequest('GET', key, {
-        query: opts,
-        tolerated: [200, 404, 412, 304],
-        headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-      })
+    const res = await this._signedRequest('GET', key, {
+      query: opts,
+      tolerated: [200, 404, 412, 304],
+      headers: ssecHeaders ? { ...ssecHeaders } : undefined,
+    })
 
-      if ([404, 412, 304].includes(res.status)) {
-        return { etag: null, data: null }
-      }
-
-      const etag = res.headers.get(C.HEADER_ETAG)
-      if (!etag) {
-        throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`)
-      }
-      return { etag: U.sanitizeETag(etag), data: await res.arrayBuffer() }
-    } catch (err) {
-      throw err
+    if ([404, 412, 304].includes(res.status)) {
+      return { etag: null, data: null }
     }
+
+    const etag = res.headers.get(C.HEADER_ETAG)
+    if (!etag) {
+      throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`)
+    }
+    return { etag: U.sanitizeETag(etag), data: await res.arrayBuffer() }
   }
 
   /**
@@ -1138,16 +1134,11 @@ class S3mini {
         ? this._buildMetadataHeaders(metadata)
         : {}),
     }
-
-    try {
-      const res = await this._signedRequest('PUT', destinationKey, {
-        headers,
-        tolerated: [200],
-      })
-      return this._parseCopyObjectResponse(await res.text())
-    } catch (err) {
-      throw err
-    }
+    const res = await this._signedRequest('PUT', destinationKey, {
+      headers,
+      tolerated: [200],
+    })
+    return this._parseCopyObjectResponse(await res.text())
   }
 
   /**
@@ -1275,26 +1266,18 @@ class S3mini {
     destinationKey: string,
     options: IT.CopyObjectOptions = {},
   ): Promise<IT.CopyObjectResult> {
-    try {
-      // First copy the object
-      const copyResult = await this.copyObject(
-        sourceKey,
-        destinationKey,
-        options,
+    // First copy the object
+    const copyResult = await this.copyObject(sourceKey, destinationKey, options)
+
+    // Then delete the source
+    const deleteSuccess = await this.deleteObject(sourceKey)
+    if (!deleteSuccess) {
+      throw new Error(
+        `${C.ERROR_PREFIX}Failed to delete source object after successful copy`,
       )
-
-      // Then delete the source
-      const deleteSuccess = await this.deleteObject(sourceKey)
-      if (!deleteSuccess) {
-        throw new Error(
-          `${C.ERROR_PREFIX}Failed to delete source object after successful copy`,
-        )
-      }
-
-      return copyResult
-    } catch (err) {
-      throw err
     }
+
+    return copyResult
   }
 
   private _buildMetadataHeaders(
