@@ -1,5 +1,22 @@
 # uppy
 
+## 5.2.0
+
+### Minor Changes
+
+- 5684efa: Introduce @uppy/image-generator to generate images based on a prompt using Transloadit
+
+### Patch Changes
+
+- Updated dependencies [5684efa]
+- Updated dependencies [5684efa]
+- Updated dependencies [5684efa]
+  - @uppy/provider-views@5.2.1
+  - @uppy/webdav@1.1.1
+  - @uppy/transloadit@5.4.0
+  - @uppy/image-generator@1.0.0
+  - @uppy/locales@5.1.0
+
 ## 5.1.12
 
 ### Patch Changes

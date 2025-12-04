@@ -1,5 +1,13 @@
 # @uppy/webdav
 
+## 1.1.1
+
+### Patch Changes
+
+- 5684efa: Refactor internal components
+- Updated dependencies [5684efa]
+  - @uppy/provider-views@5.2.1
+
 ## 1.1.0
 
 ### Minor Changes

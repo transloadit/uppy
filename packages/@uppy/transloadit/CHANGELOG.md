@@ -1,5 +1,11 @@
 # @uppy/transloadit
 
+## 5.4.0
+
+### Minor Changes
+
+- 5684efa: Export Assembly, AssemblyError, Client
+
 ## 5.3.0
 
 ### Minor Changes
