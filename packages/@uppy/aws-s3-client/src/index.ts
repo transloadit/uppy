@@ -7,7 +7,6 @@ export type {
   ExistResponseCode,
   ListBucketResponse,
   ListMultipartUploadResponse,
-  Logger,
   S3Config,
   UploadPart,
 } from './types.js'

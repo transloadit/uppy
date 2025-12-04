@@ -15,7 +15,6 @@ export interface S3Config {
   requestSizeInBytes?: number
   requestAbortTimeout?: number
   signRequest: signRequestFn
-  logger?: Logger
   fetch?: typeof fetch
 }
 
@@ -27,12 +26,6 @@ export interface SSECHeaders {
 
 export interface AWSHeaders {
   [k: `x-amz-${string}`]: string
-}
-
-export interface Logger {
-  info: (message: string, ...args: unknown[]) => void
-  warn: (message: string, ...args: unknown[]) => void
-  error: (message: string, ...args: unknown[]) => void
 }
 
 export interface UploadPart {

@@ -1,6 +1,6 @@
 # @uppy/aws-s3-client
 
- A Minimal aws-s3 client inspired by [good-lly/s3mini](https://github.com/good-lly/s3mini)
+A Minimal aws-s3 client inspired by [good-lly/s3mini](https://github.com/good-lly/s3mini)
 
 ## Running Tests (Only minio is suported)
 
@@ -31,8 +31,3 @@ this would start minio API server on port `9002` and WEBUI console on port `9003
 ```bash
 yarn test
 ```
-
-
-
-
-

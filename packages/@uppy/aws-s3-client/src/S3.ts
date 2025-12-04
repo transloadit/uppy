@@ -46,7 +46,6 @@ class S3mini {
   readonly bucketName: string
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
-  readonly logger?: IT.Logger
   readonly fetch: typeof fetch
   readonly signRequest: IT.signRequestFn
 
@@ -56,7 +55,6 @@ class S3mini {
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
-    logger = undefined,
     fetch = globalThis.fetch,
   }: IT.S3Config) {
     this._validateConstructorParams(endpoint, signRequest)
@@ -66,7 +64,6 @@ class S3mini {
     this.bucketName = this._extractBucketName()
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
-    this.logger = logger
     this.fetch = fetch
   }
 
@@ -90,35 +87,6 @@ class S3mini {
       },
       Array.isArray(obj) ? [] : {},
     )
-  }
-
-  private _log(
-    level: 'info' | 'warn' | 'error',
-    message: string,
-    additionalData: Record<string, unknown> | string = {},
-  ): void {
-    if (this.logger && typeof this.logger[level] === 'function') {
-      // Function to recursively sanitize an object
-
-      // Sanitize the additional data
-      const sanitizedData = this._sanitize(additionalData)
-      // Prepare the log entry
-      const logEntry = {
-        timestamp: new Date().toISOString(),
-        level,
-        message,
-        details: sanitizedData,
-        // Include some general context, but sanitize sensitive parts
-        context: this._sanitize({
-          region: this.region,
-          endpoint: this.endpoint.toString(),
-          // Only include the first few characters of the access key, if it exists
-        }),
-      }
-
-      // Log the sanitized entry
-      this.logger[level](JSON.stringify(logEntry))
-    }
   }
 
   // ! MODIFIED
@@ -150,42 +118,36 @@ class S3mini {
         : candidate.substring(0, endIndex)
     } catch {
       const msg = `${C.ERROR_ENDPOINT_FORMAT} But provided: "${raw}"`
-      this._log('error', msg)
       throw new TypeError(msg)
     }
   }
 
   private _validateMethodIsGetOrHead(method: string): void {
     if (method !== 'GET' && method !== 'HEAD') {
-      this._log('error', `${C.ERROR_PREFIX}method must be either GET or HEAD`)
       throw new Error(`${C.ERROR_PREFIX}method must be either GET or HEAD`)
     }
   }
 
   private _checkKey(key: string): void {
     if (typeof key !== 'string' || key.trim().length === 0) {
-      this._log('error', C.ERROR_KEY_REQUIRED)
       throw new TypeError(C.ERROR_KEY_REQUIRED)
     }
   }
 
   private _checkDelimiter(delimiter: string): void {
     if (typeof delimiter !== 'string' || delimiter.trim().length === 0) {
-      this._log('error', C.ERROR_DELIMITER_REQUIRED)
       throw new TypeError(C.ERROR_DELIMITER_REQUIRED)
     }
   }
 
   private _checkPrefix(prefix: string): void {
     if (typeof prefix !== 'string') {
-      this._log('error', C.ERROR_PREFIX_TYPE)
       throw new TypeError(C.ERROR_PREFIX_TYPE)
     }
   }
 
   private _checkOpts(opts: object): void {
     if (typeof opts !== 'object') {
-      this._log('error', `${C.ERROR_PREFIX}opts must be an object`)
       throw new TypeError(`${C.ERROR_PREFIX}opts must be an object`)
     }
   }
@@ -217,7 +179,6 @@ class S3mini {
     ) {
       return data as BodyInit
     }
-    this._log('error', C.ERROR_DATA_BUFFER_REQUIRED)
     throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED)
   }
 
@@ -230,14 +191,9 @@ class S3mini {
   ): BodyInit {
     this._checkKey(key)
     if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
-      this._log('error', C.ERROR_UPLOAD_ID_REQUIRED)
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
     if (!Number.isInteger(partNumber) || partNumber <= 0) {
-      this._log(
-        'error',
-        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
-      )
       throw new TypeError(
         `${C.ERROR_PREFIX}partNumber must be a positive integer`,
       )
@@ -527,11 +483,6 @@ class S3mini {
       parsedErrorBody.errorMessage ??
       res.statusText
 
-    this._log(
-      'error',
-      `${C.ERROR_PREFIX}Request failed with status ${res.status}: ${errorCode} - ${errorMessage}, err body: ${errorBody}`,
-    )
-
     throw new Error(
       `${C.ERROR_PREFIX}Request failed with status ${res.status}: ${errorCode} - ${errorMessage}, err body: ${errorBody}`,
     )
@@ -544,10 +495,6 @@ class S3mini {
     const raw = U.parseXml(xmlText) as Record<string, unknown>
 
     if (typeof raw !== 'object' || !raw || 'error' in raw) {
-      this._log(
-        'error',
-        `${C.ERROR_PREFIX}Unexpected listObjects response shape: ${JSON.stringify(raw)}`,
-      )
       throw new Error(`${C.ERROR_PREFIX}Unexpected listObjects response shape`)
     }
 
@@ -767,10 +714,6 @@ class S3mini {
       }
       return { etag: U.sanitizeETag(etag), data: await res.arrayBuffer() }
     } catch (err) {
-      this._log(
-        'error',
-        `Error getting object ${key} with ETag: ${String(err)}`,
-      )
       throw err
     }
   }
@@ -823,10 +766,6 @@ class S3mini {
       const len = res.headers.get(C.HEADER_CONTENT_LENGTH)
       return len ? +len : 0
     } catch (err) {
-      this._log(
-        'error',
-        `Error getting content length for object ${key}: ${String(err)}`,
-      )
       throw new Error(
         `${C.ERROR_PREFIX}Error getting content length for object ${key}: ${String(err)}`,
       )
@@ -1145,10 +1084,6 @@ class S3mini {
       parsed.error !== null &&
       'message' in parsed.error
     ) {
-      this._log(
-        'error',
-        `${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(parsed.error.message)}`,
-      )
       throw new Error(
         `${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(parsed.error.message)}`,
       )
@@ -1211,9 +1146,6 @@ class S3mini {
       })
       return this._parseCopyObjectResponse(await res.text())
     } catch (err) {
-      this._log('error', `Error in copy operation to ${destinationKey}`, {
-        error: String(err),
-      })
       throw err
     }
   }
@@ -1361,13 +1293,6 @@ class S3mini {
 
       return copyResult
     } catch (err) {
-      this._log(
-        'error',
-        `Error moving object from ${sourceKey} to ${destinationKey}`,
-        {
-          error: String(err),
-        },
-      )
       throw err
     }
   }
@@ -1470,16 +1395,9 @@ class S3mini {
           const obj = item as Record<string, unknown>
           // Check both cases for all properties
           const key = obj.key || obj.Key
-          const code = obj.code || obj.Code
-          const message = obj.message || obj.Message
 
           if (key && typeof key === 'string') {
             resultMap.set(key, false)
-            // Optionally log the error for debugging
-            this._log('warn', `Failed to delete object: ${key}`, {
-              code: code || 'Unknown',
-              message: message || 'Unknown error',
-            })
           }
         }
       }
@@ -1520,11 +1438,6 @@ class S3mini {
     body?: BodyInit,
     toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
-    this._log(
-      'info',
-      `Sending ${method} request to ${url}`,
-      `headers: ${JSON.stringify(headers)}`,
-    )
     try {
       const res = await this.fetch(url, {
         method,
@@ -1534,10 +1447,6 @@ class S3mini {
           ? AbortSignal.timeout(this.requestAbortTimeout)
           : undefined,
       })
-      this._log(
-        'info',
-        `Response status: ${res.status}, tolerated: ${toleratedStatusCodes.join(',')}`,
-      )
       if (res.ok || toleratedStatusCodes.includes(res.status)) {
         return res
       }
@@ -1592,14 +1501,6 @@ class S3mini {
       res.headers.get('x-amz-error-code') ??
       parsedErrorBody.svcCode ??
       'Unknown'
-    const errorMessage =
-      res.headers.get('x-amz-error-message') ??
-      parsedErrorBody.errorMessage ??
-      res.statusText
-    this._log(
-      'error',
-      `${C.ERROR_PREFIX}Request failed with status ${res.status}: ${svcCode} - ${errorMessage},err body: ${errorBody}`,
-    )
     throw new U.S3ServiceError(
       `S3 returned ${res.status} – ${svcCode}`,
       res.status,

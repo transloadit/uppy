@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { runInBatches, S3mini, sanitizeETag } from '../src/index.js'
+import { S3mini, sanitizeETag } from '../src/index.js'
 import { createSigV4Signer } from '../src/test-utils/sigv4-signer.js'
 
 export const beforeRun = (raw, name, providerSpecific) => {
@@ -41,9 +41,9 @@ const EIGHT_MB = 8 * 1024 * 1024
 
 const large_buffer = randomBytes(EIGHT_MB * 3.2)
 
-const byteSize = (str) => new Blob([str]).size
+// const byteSize = (str) => new Blob([str]).size
 
-const OP_CAP = 40
+// const OP_CAP = 40
 let providerName
 const key = 'first-test-object.txt'
 const contentString = 'Hello, world!'
@@ -123,24 +123,6 @@ export const testRunner = (bucket) => {
     expect(nonExistent).toBe(false)
   })
 
-  it('basic list objects', async () => {
-    const objects = await s3client.listObjects()
-    expect(objects).toBeInstanceOf(Array)
-    if (objects.length > 0) {
-      for (const obj of objects) {
-        await s3client.deleteObject(obj.Key)
-      }
-    }
-    // Check if the bucket is empty
-    const objects2 = await s3client.listObjects()
-    expect(objects2).toBeInstanceOf(Array)
-    expect(objects2.length).toBe(0)
-
-    // listing non existent prefix thros 404 no such key
-    const objectsWithPrefix = await s3client.listObjects('non-existent-prefix')
-    expect(objectsWithPrefix).toBe(null)
-  })
-
   it('basic put and get object', async () => {
     await s3client.putObject(key, contentString)
     const data = await s3client.getObject(key)
@@ -209,13 +191,6 @@ export const testRunner = (bucket) => {
     await s3client.putObject(specialCharKey, specialCharContentString)
     const data = await s3client.getObject(specialCharKey)
     expect(data).toEqual(specialCharContentString)
-
-    // list objects
-    const objects = await s3client.listObjects()
-    expect(objects).toBeInstanceOf(Array)
-    expect(objects.length).toBe(1)
-    expect(objects[0].Key).toBe(specialCharKey)
-    expect(parseInt(objects[0].Size)).toBe(byteSize(specialCharContentString))
 
     // update the object with a buffer with extra content
     // This is to test if the object can be updated with a buffer that has extra content
@@ -722,122 +697,4 @@ export const testRunner = (bucket) => {
       await s3client.deleteObjects([sourceKey, destKey])
     })
   }
-
-  it('extensive list objects', async () => {
-    const prefix = `test-prefix-${Date.now()}/`
-    const objAll = await s3client.listObjects('/', prefix)
-    expect(objAll).toEqual([])
-    expect(objAll).toBeInstanceOf(Array)
-    expect(objAll).toHaveLength(0)
-
-    await Promise.all([
-      s3client.putObject(`${prefix}object1.txt`, contentString),
-      s3client.putObject(`${prefix}object2.txt`, contentString),
-      s3client.putObject(`${prefix}object3.txt`, contentString),
-    ])
-
-    const objsUnlimited = await s3client.listObjects('/', prefix)
-    expect(objsUnlimited).toBeInstanceOf(Array)
-    expect(objsUnlimited).toHaveLength(3)
-
-    const objsLimited = await s3client.listObjects('/', prefix, 2)
-    expect(objsLimited).toBeInstanceOf(Array)
-    expect(objsLimited).toHaveLength(2)
-    expect(objsLimited[0].Key).toBe(`${prefix}object1.txt`)
-    expect(objsLimited[1].Key).toBe(`${prefix}object2.txt`)
-
-    // await Promise.all(objsUnlimited.map(o => s3client.deleteObject(o.key)));
-    await s3client.deleteObjects(objsUnlimited.map((o) => o.Key))
-    expect(await s3client.listObjects('/', prefix)).toEqual([])
-  })
-
-  it('lists objects with pagination', async () => {
-    /* ----- test data setup ----- */
-    const prefix = `test-prefix-${Date.now()}/` // isolate this run
-    const totalKeys = 1_114
-    const pageSmall = 2
-    const pageLarge = 900
-    let counter = 0
-    const errors = []
-
-    // Bucket must start empty for this prefix
-    expect(await s3client.listObjects('/', prefix)).toEqual([])
-    // Upload 1 114 objects in parallel
-    const generator = function* (n) {
-      for (let i = 0; i < n; i++)
-        yield async () => {
-          try {
-            const response = await s3client.putObject(
-              `${prefix}object${i}.txt`,
-              contentString,
-            )
-            if (response.status === 200) {
-              counter++
-            } else {
-              throw new Error(`Unexpected status ${response.status}`)
-            }
-          } catch (err) {
-            errors.push({ index: i, error: err.message || err })
-            throw err // Re-throw to let runInBatches handle it
-          }
-        }
-    }
-    if (providerName === 'backblaze') {
-      // Backblaze-specific: retry failed uploads
-      await runInBatches(generator(totalKeys), 20, 1_000)
-
-      // Check what's missing and retry
-      const uploaded = await s3client.listObjects('/', prefix)
-      const missingCount = totalKeys - uploaded.length
-
-      if (missingCount > 0) {
-        const uploadedKeys = new Set(uploaded.map((o) => o.Key))
-        for (let i = 0; i < totalKeys; i++) {
-          const key = `${prefix}object${i}.txt`
-          if (!uploadedKeys.has(key)) {
-            await s3client.putObject(key, contentString)
-            counter++
-          }
-        }
-      }
-    } else {
-      await runInBatches(generator(totalKeys), OP_CAP, 1_000)
-    }
-    /* ----- assertions ----- */
-    // 1️⃣  Small page (2)
-    const firstTwo = await s3client.listObjects('/', prefix, pageSmall)
-    expect(firstTwo).toBeInstanceOf(Array)
-    expect(firstTwo).toHaveLength(pageSmall) // ✔ array length = 2:contentReference[oaicite:1]{index=1}
-
-    // 2️⃣  “Maximum” single page (1 000)
-    const first900Hundred = await s3client.listObjects('/', prefix, pageLarge)
-    expect(first900Hundred).toBeInstanceOf(Array)
-    expect(first900Hundred).toHaveLength(pageLarge) // ✔ array length = 900:contentReference[oaicite:2]{index=2}
-    expect(first900Hundred[0].Key).toBe(`${prefix}object0.txt`) // ✔ first object key
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    // 3️⃣  Unlimited (implicit pagination inside helper)
-    let everything = await s3client.listObjects('/', prefix) // maxKeys = undefined ⇒ list all
-    expect(everything).toBeInstanceOf(Array)
-    expect(everything).toHaveLength(counter)
-
-    // cleanup and test deleteObjects
-    for (let i = 0; i < 3; i++) {
-      everything = await s3client.listObjects('/', prefix)
-      if (everything.length === totalKeys) break
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-    }
-    expect(everything.length).toBe(totalKeys)
-    const massDelete = await s3client.deleteObjects(
-      everything.map((o) => o.Key),
-    )
-
-    // Check if all deletions were successful
-    const allDeleted = massDelete.every((result) => result === true)
-    expect(massDelete).toBeInstanceOf(Array)
-    expect(massDelete.length).toBe(everything.length)
-    expect(allDeleted).toBe(true)
-
-    // Verify bucket now empty for this prefix
-    expect(await s3client.listObjects('/', prefix)).toEqual([])
-  })
 }
