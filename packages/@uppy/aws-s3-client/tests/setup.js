@@ -4,7 +4,7 @@ dotenv.config()
 
 import { join } from 'node:path'
 
-import { composeUp, composeUpWait } from './docker.js'
+import { composeUp, composeUpWait, execDockerCommand } from './docker.js'
 
 const composeFiles = {
   minio: join(process.cwd(), 'tests', 'compose.minio.yaml'),
@@ -28,6 +28,15 @@ export default async () => {
         process.env.MINIO_ROOT_USER = cfg.accessKeyId
         process.env.MINIO_ROOT_PASSWORD = cfg.secretAccessKey
         await composeUpWait(composeFile)
+        // biome-ignore lint/correctness/noSwitchDeclarations: no other switch blocks
+        const bucketName = new URL(cfg.endpoint).pathname.split('/')[1]
+        if (bucketName) {
+          await execDockerCommand(
+            'minio',
+            `mc mb local/${bucketName} --ignore-existing`,
+            30000,
+          )
+        }
         break
       default:
         await composeUp(composeFile)
