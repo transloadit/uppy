@@ -17,7 +17,7 @@
   ],
   "type": "module",
   "scripts": {
-    "test:e2e": "vitest run",
+    "test": "vitest run",
     "typecheck": "tsc --build",
     "build": "tsc --build tsconfig.build.json"
   },
