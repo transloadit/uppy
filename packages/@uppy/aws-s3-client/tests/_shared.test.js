@@ -99,7 +99,6 @@ export const testRunner = (bucket) => {
     expect(s3client).toBeInstanceOf(S3mini) // ← updated expectation
   })
 
-
   it('basic put and get object', async () => {
     await s3client.putObject(key, contentString)
     const data = await s3client.getObject(key)
