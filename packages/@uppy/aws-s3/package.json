@@ -32,9 +32,6 @@
     "./package.json": "./package.json"
   },
   "sideEffects": false,
-  "engines": {
-    "node": ">=20"
-  },
   "engineStrict": true,
   "license": "MIT",
   "devDependencies": {
