@@ -399,10 +399,10 @@ export default class XHRUpload<
           ? opts.endpoint
           : await opts.endpoint(file)
       return fetch(endpoint, {
-          ...opts,
-          body,
-          signal: controller.signal,
-        })
+        ...opts,
+        body,
+        signal: controller.signal,
+      })
     })
 
     events.onFileRemove(file.id, () => controller.abort())
