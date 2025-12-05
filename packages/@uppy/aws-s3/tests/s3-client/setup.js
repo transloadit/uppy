@@ -7,7 +7,7 @@ import { join } from 'node:path'
 import { composeUp, composeUpWait, execDockerCommand } from './docker.js'
 
 const composeFiles = {
-  minio: join(process.cwd(), 'tests', 'compose.minio.yaml'),
+  minio: join(process.cwd(), 'tests', 's3-client', 'compose.minio.yaml'),
 }
 
 const bucketConfigs = Object.keys(process.env)

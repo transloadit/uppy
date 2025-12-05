@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto'
 import * as dotenv from 'dotenv'
 import { expect, it, vi } from 'vitest'
-import { S3mini } from '../src/index.js'
-import { createSigV4Signer } from '../src/test-utils/sigv4-signer.js'
+import { S3mini } from '../../src/s3-client/S3.js'
+import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
 import { beforeRun, resetBucketBeforeAll } from './_shared.test.js'
 
 dotenv.config()

@@ -1,7 +1,7 @@
 import { randomBytes } from 'node:crypto'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { S3mini, sanitizeETag } from '../src/index.js'
-import { createSigV4Signer } from '../src/test-utils/sigv4-signer.js'
+import { S3mini, sanitizeETag } from '../../src/s3-client/index.js'
+import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
 
 export const beforeRun = (raw, name, providerSpecific) => {
   if (!raw || raw === null) {

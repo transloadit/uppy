@@ -1,0 +1,8 @@
+{
+  "extends": "../../../tsconfig.shared",
+  "compilerOptions": {
+    "emitDeclarationOnly": false,
+    "noEmit": true
+  },
+  "include": ["./package.json", "./src/**/*.*", "src/s3-client/S3.ts", "src/s3-client/index.ts", "src/s3-client/consts.ts", "src/s3-client/types.ts"]
+}

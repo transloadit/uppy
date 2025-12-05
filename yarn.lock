@@ -10725,9 +10725,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/aws-s3-client@workspace:packages/@uppy/aws-s3-client":
+"@uppy/aws-s3@workspace:packages/@uppy/aws-s3":
   version: 0.0.0-use.local
-  resolution: "@uppy/aws-s3-client@workspace:packages/@uppy/aws-s3-client"
+  resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
     dotenv: "npm:17.2.3"
     typescript: "npm:5.9.3"

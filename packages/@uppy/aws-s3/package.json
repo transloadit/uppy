@@ -1,7 +1,7 @@
 {
-  "name": "@uppy/aws-s3-client",
-  "version": "0.0.1",
-  "description": "Lightweight S3 client for uppy",
+  "name": "@uppy/aws-s3",
+  "version": "5.1.0",
+  "description": "Upload to Amazon S3 with Uppy",
   "bugs": {
     "url": "https://github.com/transloadit/uppy/issues"
   },
@@ -26,16 +26,10 @@
   "types": "lib/s3mini.d.ts",
   "exports": {
     ".": {
-      "import": {
-        "types": "./lib/s3mini.d.ts",
-        "development": "./lib/s3mini.js",
-        "default": "./lib/s3mini.min.js"
-      },
-      "require": {
-        "types": "./lib/s3mini.d.ts",
-        "default": "./lib/s3mini.min.js"
-      }
-    }
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "sideEffects": false,
   "engines": {

@@ -6,8 +6,8 @@ import {
   HEADER_HOST,
   S3_SERVICE,
   UNSIGNED_PAYLOAD,
-} from '../s3-client/consts'
-import { hexFromBuffer, hmac, sha256 } from '../utils'
+} from '../../src/s3-client/consts'
+import { hexFromBuffer, hmac, sha256 } from '../../src/s3-client/utils'
 /**
  * get the url
  * create the headers object which we need to sign
