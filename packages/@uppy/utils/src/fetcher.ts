@@ -101,13 +101,6 @@ export function fetcher(
         xhr.responseType = responseType
       }
 
-      signal?.addEventListener('abort', () => {
-        xhr.abort()
-        // Using DOMException for abort errors aligns with
-        // the convention established by the Fetch API.
-        reject(new DOMException('Aborted', 'AbortError'))
-      })
-
       xhr.onload = async () => {
         try {
           await onAfterResponse(xhr, retryCount)
@@ -145,8 +138,22 @@ export function fetcher(
         })
       }
 
+      function abort() {
+        xhr.abort()
+        // Using DOMException for abort errors aligns with
+        // the convention established by the Fetch API.
+        reject(new DOMException('Aborted', 'AbortError'))
+      }
+
+      signal?.addEventListener('abort', abort)
+
       await onBeforeRequest(xhr, retryCount)
       xhr.send(body)
+
+      if (signal?.aborted) {
+        // in case the signal was already aborted
+        abort()
+      }
     })
   }
 

@@ -235,11 +235,13 @@ export default class XHRUpload<
               if (event.lengthComputable) {
                 for (const { id } of files) {
                   const file = this.uppy.getFile(id)
-                  this.uppy.emit('upload-progress', file, {
-                    uploadStarted: file.progress.uploadStarted ?? 0,
-                    bytesUploaded: (event.loaded / event.total) * file.size!,
-                    bytesTotal: file.size,
-                  })
+                  if (file != null) {
+                    this.uppy.emit('upload-progress', file, {
+                      uploadStarted: file.progress.uploadStarted ?? 0,
+                      bytesUploaded: (event.loaded / event.total) * file.size!,
+                      bytesTotal: file.size,
+                    })
+                  }
                 }
               }
             },
@@ -397,10 +399,10 @@ export default class XHRUpload<
           ? opts.endpoint
           : await opts.endpoint(file)
       return fetch(endpoint, {
-        ...opts,
-        body,
-        signal: controller.signal,
-      })
+          ...opts,
+          body,
+          signal: controller.signal,
+        })
     })
 
     events.onFileRemove(file.id, () => controller.abort())
@@ -409,7 +411,7 @@ export default class XHRUpload<
     })
 
     try {
-      await uppyFetch().abortOn(controller.signal)
+      await uppyFetch()
     } catch (error) {
       // TODO: create formal error with name 'AbortError' (this comes from RateLimitedQueue)
       if (error.message !== 'Cancelled') {
@@ -450,7 +452,7 @@ export default class XHRUpload<
     this.uppy.once('cancel-all', abort)
 
     try {
-      await uppyFetch().abortOn(controller.signal)
+      await uppyFetch()
     } catch (error) {
       // TODO: create formal error with name 'AbortError' (this comes from RateLimitedQueue)
       if (error.message !== 'Cancelled') {
