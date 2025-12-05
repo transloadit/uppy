@@ -1,0 +1,45 @@
+{
+  "name": "@uppy/aws-s3",
+  "version": "5.1.0",
+  "description": "Upload to Amazon S3 with Uppy",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {},
+  "publishConfig": {
+    "registry": "https://github.com/transloadit/uppy"
+  },
+  "files": [
+    "./lib/",
+    "./src/",
+    "./package.json",
+    "./README.md"
+  ],
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --build",
+    "build": "tsc --build tsconfig.build.json"
+  },
+  "main": "lib/s3mini.min.js",
+  "module": "lib/s3mini.js",
+  "types": "lib/s3mini.d.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/index.d.ts",
+      "default": "./lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "engineStrict": true,
+  "license": "MIT",
+  "devDependencies": {
+    "dotenv": "17.2.3",
+    "typescript": "5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "overrides": {
+    "glob": "12.0.0"
+  }
+}

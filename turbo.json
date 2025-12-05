@@ -35,7 +35,8 @@
     },
     "test": {
       "dependsOn": ["^test"],
-      "cache": false
+      "cache": false,
+      "passThroughEnv": ["BUCKET_ENV_MINIO"]
     },
     "test:e2e": {
       "dependsOn": ["^test:e2e"],
