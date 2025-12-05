@@ -179,8 +179,8 @@ export const testRunner = (bucket) => {
     )
     expect(bufferData.length).toBe(specialCharContentBufferExtra.length)
 
-    // const getObjectLength = await s3client.getContentLength(specialCharKey)
-    // expect(getObjectLength).toBe(specialCharContentBufferExtra.length)
+    const getObjectLength = await s3client.getContentLength(specialCharKey)
+    expect(getObjectLength).toBe(specialCharContentBufferExtra.length)
 
     // Put object image/png
     await s3client.putObject(
