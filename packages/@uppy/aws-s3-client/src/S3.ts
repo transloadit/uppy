@@ -301,23 +301,23 @@ class S3mini {
    * This method sends a request to create a new bucket in the specified in endpoint.
    * @returns A promise that resolves to true if the bucket was created successfully, false otherwise.
    */
-  public async createBucket(): Promise<boolean> {
-    const xmlBody = `
-      <CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-        <LocationConstraint>${this.region}</LocationConstraint>
-      </CreateBucketConfiguration>
-    `
-    const headers = {
-      [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
-      [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
-    }
-    const res = await this._signedRequest('PUT', '', {
-      body: xmlBody,
-      headers,
-      tolerated: [200, 404, 403, 409], // don’t throw on 404/403 // 409 = bucket already exists
-    })
-    return res.status === 200
-  }
+  // public async createBucket(): Promise<boolean> {
+  //   const xmlBody = `
+  //     <CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
+  //       <LocationConstraint>${this.region}</LocationConstraint>
+  //     </CreateBucketConfiguration>
+  //   `
+  //   const headers = {
+  //     [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
+  //     [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
+  //   }
+  //   const res = await this._signedRequest('PUT', '', {
+  //     body: xmlBody,
+  //     headers,
+  //     tolerated: [200, 404, 403, 409], // don’t throw on 404/403 // 409 = bucket already exists
+  //   })
+  //   return res.status === 200
+  // }
 
   private _extractBucketName(): string {
     const url = this.endpoint
@@ -1098,48 +1098,48 @@ class S3mini {
     return xml
   }
 
-  /**
-   * Executes the copy operation for local copying (same bucket/endpoint).
-   * @private
-   */
-  private async _executeCopyOperation(
-    destinationKey: string,
-    copySource: string,
-    options: IT.CopyObjectOptions,
-  ): Promise<IT.CopyObjectResult> {
-    const {
-      metadataDirective = 'COPY',
-      metadata = {},
-      contentType,
-      storageClass,
-      taggingDirective,
-      websiteRedirectLocation,
-      sourceSSECHeaders = {},
-      destinationSSECHeaders = {},
-      additionalHeaders = {},
-    } = options
+  // /**
+  //  * Executes the copy operation for local copying (same bucket/endpoint).
+  //  * @private
+  //  */
+  // private async _executeCopyOperation(
+  //   destinationKey: string,
+  //   copySource: string,
+  //   options: IT.CopyObjectOptions,
+  // ): Promise<IT.CopyObjectResult> {
+  //   const {
+  //     metadataDirective = 'COPY',
+  //     metadata = {},
+  //     contentType,
+  //     storageClass,
+  //     taggingDirective,
+  //     websiteRedirectLocation,
+  //     sourceSSECHeaders = {},
+  //     destinationSSECHeaders = {},
+  //     additionalHeaders = {},
+  //   } = options
 
-    const headers: Record<string, string | number> = {
-      'x-amz-copy-source': copySource,
-      'x-amz-metadata-directive': metadataDirective,
-      ...additionalHeaders,
-      ...(contentType && { [C.HEADER_CONTENT_TYPE]: contentType }),
-      ...(storageClass && { 'x-amz-storage-class': storageClass }),
-      ...(taggingDirective && { 'x-amz-tagging-directive': taggingDirective }),
-      ...(websiteRedirectLocation && {
-        'x-amz-website-redirect-location': websiteRedirectLocation,
-      }),
-      ...this._buildSSECHeaders(sourceSSECHeaders, destinationSSECHeaders),
-      ...(metadataDirective === 'REPLACE'
-        ? this._buildMetadataHeaders(metadata)
-        : {}),
-    }
-    const res = await this._signedRequest('PUT', destinationKey, {
-      headers,
-      tolerated: [200],
-    })
-    return this._parseCopyObjectResponse(await res.text())
-  }
+  //   const headers: Record<string, string | number> = {
+  //     'x-amz-copy-source': copySource,
+  //     'x-amz-metadata-directive': metadataDirective,
+  //     ...additionalHeaders,
+  //     ...(contentType && { [C.HEADER_CONTENT_TYPE]: contentType }),
+  //     ...(storageClass && { 'x-amz-storage-class': storageClass }),
+  //     ...(taggingDirective && { 'x-amz-tagging-directive': taggingDirective }),
+  //     ...(websiteRedirectLocation && {
+  //       'x-amz-website-redirect-location': websiteRedirectLocation,
+  //     }),
+  //     ...this._buildSSECHeaders(sourceSSECHeaders, destinationSSECHeaders),
+  //     ...(metadataDirective === 'REPLACE'
+  //       ? this._buildMetadataHeaders(metadata)
+  //       : {}),
+  //   }
+  //   const res = await this._signedRequest('PUT', destinationKey, {
+  //     headers,
+  //     tolerated: [200],
+  //   })
+  //   return this._parseCopyObjectResponse(await res.text())
+  // }
 
   /**
    * Copies an object within the same bucket.
@@ -1193,19 +1193,19 @@ class S3mini {
    *   }
    * });
    */
-  public copyObject(
-    sourceKey: string,
-    destinationKey: string,
-    options: IT.CopyObjectOptions = {},
-  ): Promise<IT.CopyObjectResult> {
-    // Validate parameters
-    this._checkKey(sourceKey)
-    this._checkKey(destinationKey)
+  // public copyObject(
+  //   sourceKey: string,
+  //   destinationKey: string,
+  //   options: IT.CopyObjectOptions = {},
+  // ): Promise<IT.CopyObjectResult> {
+  //   // Validate parameters
+  //   this._checkKey(sourceKey)
+  //   this._checkKey(destinationKey)
 
-    const copySource = `/${this.bucketName}/${U.uriEscape(sourceKey)}`
+  //   const copySource = `/${this.bucketName}/${U.uriEscape(sourceKey)}`
 
-    return this._executeCopyOperation(destinationKey, copySource, options)
-  }
+  //   return this._executeCopyOperation(destinationKey, copySource, options)
+  // }
 
   private _buildSSECHeaders(
     sourceHeaders: Record<string, string | number>,
@@ -1261,24 +1261,24 @@ class S3mini {
    *   }
    * }
    */
-  public async moveObject(
-    sourceKey: string,
-    destinationKey: string,
-    options: IT.CopyObjectOptions = {},
-  ): Promise<IT.CopyObjectResult> {
-    // First copy the object
-    const copyResult = await this.copyObject(sourceKey, destinationKey, options)
+  // public async moveObject(
+  //   sourceKey: string,
+  //   destinationKey: string,
+  //   options: IT.CopyObjectOptions = {},
+  // ): Promise<IT.CopyObjectResult> {
+  //   // First copy the object
+  //   const copyResult = await this.copyObject(sourceKey, destinationKey, options)
 
-    // Then delete the source
-    const deleteSuccess = await this.deleteObject(sourceKey)
-    if (!deleteSuccess) {
-      throw new Error(
-        `${C.ERROR_PREFIX}Failed to delete source object after successful copy`,
-      )
-    }
+  //   // Then delete the source
+  //   const deleteSuccess = await this.deleteObject(sourceKey)
+  //   if (!deleteSuccess) {
+  //     throw new Error(
+  //       `${C.ERROR_PREFIX}Failed to delete source object after successful copy`,
+  //     )
+  //   }
 
-    return copyResult
-  }
+  //   return copyResult
+  // }
 
   private _buildMetadataHeaders(
     metadata: Record<string, string>,
