@@ -1,5 +1,13 @@
 # uppy
 
+## 5.2.1
+
+### Patch Changes
+
+- Updated dependencies [50e2420]
+  - @uppy/google-drive-picker@1.1.1
+  - @uppy/provider-views@5.2.2
+
 ## 5.2.0
 
 ### Minor Changes
