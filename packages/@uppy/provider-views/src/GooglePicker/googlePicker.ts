@@ -226,15 +226,39 @@ export async function showDrivePicker({
     throw new InvalidTokenError()
   }
 
-  async function listFilesInDriveFolder({
+  async function handleDocObjectRecursively({
     doc,
     token,
     signal,
   }: {
-    doc: PickedItemBase
+    doc: {
+      id: string
+      name: string
+      mimeType: string
+      shortcutDetails?: { targetMimeType: string }
+    }
     token: string
     signal?: AbortSignal
   }): Promise<PickedDriveItem[]> {
+    if (doc.mimeType === 'application/vnd.google-apps.shortcut') {
+      if (
+        doc.shortcutDetails?.targetMimeType ===
+        'application/vnd.google-apps.folder'
+      ) {
+        // If we were to recurse into shortcuts to folders, it could get a bit crazy. We could end up picking things outside of the user's intended scope as well as infinite loops
+        // If we were to just pass it through as-is, Companion would not be able to download it, so we just ignore it entirely
+        return []
+      }
+      // for other shortcut types, we just treat them as normal files and pass them to Companion to resolve
+      return [
+        {
+          platform: 'drive',
+          id: doc.id,
+          name: doc.name,
+          mimeType: doc.mimeType,
+        },
+      ]
+    }
     if (doc.mimeType !== 'application/vnd.google-apps.folder') {
       return [
         {
@@ -253,7 +277,10 @@ export async function showDrivePicker({
     do {
       const params = new URLSearchParams({
         q: `'${doc.id.replace(/'/g, "\\'")}' in parents and trashed = false`,
-        fields: 'nextPageToken, files(id, name, mimeType)',
+        fields:
+          'nextPageToken, files(id, name, mimeType, shortcutDetails(targetMimeType))',
+        includeItemsFromAllDrives: 'true',
+        supportsAllDrives: 'true',
         pageSize: '1000',
         ...(pageToken && { pageToken }),
       })
@@ -272,8 +299,9 @@ export async function showDrivePicker({
       pageToken = json.nextPageToken
 
       for (const file of json.files) {
+        console.log({ file })
         items.push(
-          ...(await listFilesInDriveFolder({ doc: file, token, signal })),
+          ...(await handleDocObjectRecursively({ doc: file, token, signal })),
         )
       }
     } while (pageToken)
@@ -287,21 +315,12 @@ export async function showDrivePicker({
     try {
       onLoadingChange(true)
 
-      // console.log('Picker response', JSON.stringify(picked, null, 2));
+      console.log('Picker response', JSON.stringify(picked, null, 2))
       const results: PickedDriveItem[] = []
       for (const doc of picked.docs) {
-        if (doc.mimeType === 'application/vnd.google-apps.folder') {
-          results.push(
-            ...(await listFilesInDriveFolder({ doc, token, signal })),
-          )
-        } else {
-          results.push({
-            platform: 'drive',
-            id: doc.id,
-            name: doc.name,
-            mimeType: doc.mimeType,
-          })
-        }
+        results.push(
+          ...(await handleDocObjectRecursively({ doc, token, signal })),
+        )
       }
       onFilesPicked(results, token)
     } catch (err) {
