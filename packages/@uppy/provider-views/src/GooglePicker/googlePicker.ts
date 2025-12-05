@@ -299,7 +299,6 @@ export async function showDrivePicker({
       pageToken = json.nextPageToken
 
       for (const file of json.files) {
-        console.log({ file })
         items.push(
           ...(await handleDocObjectRecursively({ doc: file, token, signal })),
         )
