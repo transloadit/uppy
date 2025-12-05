@@ -44,6 +44,7 @@ en_US.strings = {
   browseFolders: 'browse folders',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
+  chooseFiles: 'Choose files',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -100,6 +101,14 @@ en_US.strings = {
     '1': 'Added %{smart_count} files from %{folder}',
   },
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
+  generateImage: 'Generate image',
+  generateImagePlaceholder:
+    'A serene sunset over a mountain lake, with pine trees reflecting in the water',
+  generating1: 'AI is thinking...',
+  generating2: 'Crunching pixels...',
+  generating3: 'Summoning images...',
+  generating4: 'AI is working...',
+  generating5: 'Creating magic...',
   generatingThumbnails: 'Generating thumbnails...',
   import: 'Import',
   importFiles: 'Import files from:',
