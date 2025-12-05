@@ -1,5 +1,11 @@
 # @uppy/locales
 
+## 5.1.0
+
+### Minor Changes
+
+- 5684efa: Introduce @uppy/image-generator to generate images based on a prompt using Transloadit
+
 ## 5.0.1
 
 ### Patch Changes

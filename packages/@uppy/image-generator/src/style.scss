@@ -1,0 +1,29 @@
+@use '@uppy/core/src/_variables.scss' as *;
+
+.uppy-ImageGenerator-generating {
+  background: linear-gradient(90deg, $gray-50, $gray-300, $gray-50);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: uppy-gradient-slide 3s ease-in-out infinite;
+}
+
+.uppy-ImageGenerator-generating--darker {
+  background: linear-gradient(90deg, $gray-500, $gray-800, $gray-500);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: uppy-gradient-slide 3s ease-in-out infinite;
+}
+
+@keyframes uppy-gradient-slide {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}

@@ -1,5 +1,11 @@
 # @uppy/provider-views
 
+## 5.2.1
+
+### Patch Changes
+
+- 5684efa: Refactor internal components
+
 ## 5.2.0
 
 ### Minor Changes
