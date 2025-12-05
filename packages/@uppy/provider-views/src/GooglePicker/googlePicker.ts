@@ -314,7 +314,6 @@ export async function showDrivePicker({
     try {
       onLoadingChange(true)
 
-      // console.log('Picker response', JSON.stringify(picked, null, 2))
       const results: PickedDriveItem[] = []
       for (const doc of picked.docs) {
         results.push(
