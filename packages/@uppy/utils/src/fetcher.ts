@@ -147,13 +147,14 @@ export function fetcher(
 
       signal?.addEventListener('abort', abort)
 
-      await onBeforeRequest(xhr, retryCount)
-      xhr.send(body)
-
       if (signal?.aborted) {
         // in case the signal was already aborted
         abort()
+        return
       }
+
+      await onBeforeRequest(xhr, retryCount)
+      xhr.send(body)
     })
   }
 
