@@ -1,0 +1,253 @@
+import type { Locale } from '@uppy/utils'
+
+const mn_MN: Locale<0 | 1> = {
+  strings: {},
+  pluralize(n) {
+    if (n === 1) {
+      return 0
+    }
+    return 1
+  },
+}
+
+mn_MN.strings = {
+  addBulkFilesFailed: {
+    '0': 'Алдаа гарсны улмаас %{smart_count} файл нэмж чадсангүй',
+    '1': 'Алдаа гарсны улмаас %{smart_count} файл нэмж чадсангүй',
+  },
+  addedNumFiles: '%{numFiles} файл нэмэгдсэн',
+  addingMoreFiles: 'Файл нэмж байна',
+  additionalRestrictionsFailed:
+    '%{count} шаардлага хангагдаагүй байна',
+  addMore: 'Нэмэх',
+  addMoreFiles: 'Файл нэмэх',
+  aggregateExceedsSize:
+    'Оруулж болох файлын дээд хэмжээ %{sizeAllowed} ба таны сонгосон файлын хэмжээ %{size} буюу дээд хэмжээнээс хэтэрсэн байна.',
+  allFilesFromFolderNamed: '%{name} хавтасны бүх файлууд',
+  allowAccessDescription:
+    'Камераар зураг авах эсвэл бичлэг хийхийн тулд таны төхөөрөмжийн камерт хандах эрхийг зөвшөөрнө үү.',
+  allowAccessTitle: 'Камерт хандах эрхийг зөвшөөрнө үү',
+  allowAudioAccessDescription:
+    'Аудио бичлэг хийхийн тулд микрофонд хандах эрхийг зөвшөөрнө үү.',
+  allowAudioAccessTitle: 'Микрофонд хандах эрхийг зөвшөөрнө үү',
+  aspectRatioLandscape: 'Өргөн тайралт (16:9)',
+  aspectRatioPortrait: 'Босоо тайралт (9:16)',
+  aspectRatioSquare: 'Дөрвөлжин тайралт',
+  authAborted: 'Нэвтрэлт цуцлагдсан',
+  authenticate: 'Холбогдох',
+  authenticateWith: 'Connect to %{pluginName}',
+  authenticateWithTitle:
+    '%{pluginName} үйлчилгээрүү нэвтрэн оруулах файлаа сонгоно уу',
+  back: 'Буцах',
+  browse: 'сонгох',
+  browseFiles: 'файл сонгох',
+  browseFolders: 'хавтас сонгох',
+  cancel: 'Цуцлах',
+  cancelUpload: 'Хуулахыг болиулах',
+  closeModal: 'Модал хаах',
+  companionError: 'Холболт амжилтгүй боллоо',
+  companionUnauthorizeHint:
+    '%{url} хаягруу орон %{provider} аккаунтаа салгаарай',
+  complete: 'Дууссан',
+  compressedX: 'Зургийг шахаад %{size} хэмнэсэн',
+  compressingImages: 'Зургийг шахаж байна...',
+  connectedToInternet: 'Интернэтэд холбогдсон',
+  copyLink: 'Холбоос хуулах',
+  copyLinkToClipboardFallback: 'Доор байгаа URL-ийг хуулах',
+  copyLinkToClipboardSuccess: 'Холбоос буферт хуулагдсан.',
+  creatingAssembly: 'Хуулахад бэлдэж байна...',
+  creatingAssemblyFailed: 'Транслоадит: Хуулах зааварчилгаа үүсгэж чадсангүй',
+  dashboardTitle: 'Аппи Самбар',
+  dashboardWindowTitle: 'Аппи Цонх (escape товчоор хаана)',
+  dataUploadedOfTotal: '%{total}-н %{complete} ',
+  dataUploadedOfUnknown: '%{complete}',
+  discardMediaFile: 'Медиаг хаях',
+  discardRecordedFile: 'Бичсэн файлыг хаях',
+  done: 'Гүйцсэн',
+  dropHereOr: '%{browse} эсвэл энд наах',
+  dropHint: 'Файлуудаа энд буулгана уу',
+  dropPasteBoth: '%{browseFiles}, %{browseFolders} эсвэл энд наах',
+  dropPasteFiles: '%{browseFiles} эсвэл энд наах',
+  dropPasteFolders: '%{browseFolders} эсвэл энд наах',
+  dropPasteImportBoth:
+    '%{browseFiles}, %{browseFolders}, энд наах эсвэл:',
+  dropPasteImportFiles: '%{browseFiles}, энд наах эсвэл:',
+  dropPasteImportFolders: '%{browseFolders}, энд наах эсвэл:',
+  editFile: 'Файл засварлах',
+  editFileWithFilename: 'Файл засварлах %{file}',
+  editImage: 'Зураг засварлах',
+  editing: '%{file}-г засварлаж байна',
+  emptyFolderAdded: 'Хоосон хавтас байна',
+  encoding: 'Энкод хийгдэж байна...',
+  enterCorrectUrl:
+    'Алдаатай URL: Файлыг заасан шууд холбоос оруулна',
+  enterTextToSearch: 'Хайлт хийх текстээ оруулна уу',
+  enterUrlToImport: 'Файл импортлох URL',
+  error: 'Алдаа',
+  exceedsSize: 'Зөвшөөрөгдсөн дээд хэмжээ %{size} ба %{file} хэтэрсэн байна',
+  failedToFetch:
+    'URL хаягийг боловсруулж чадсангүй, оруулсан хаяг зөв эсэхийг шалгана уу',
+  failedToUpload: '%{file}-г хуулж чадсангүй',
+  filesUploadedOfTotal: {
+    '0': '%{smart_count} файлаас %{complete} хуулагдсан',
+    '1': '%{smart_count} файлаас %{complete} хуулагдсан',
+  },
+  filter: 'Шүүлтүүр',
+  finishEditingFile: 'Дуусгах',
+  flipHorizontal: 'Хөндлөнгөөр эргүүлэх',
+  folderAdded: {
+    '0': '%{folder} хавтаснаас %{smart_count} файл нэмэгдсэн',
+    '1': '%{folder} хавтаснаас %{smart_count} файл нэмэгдсэн',
+  },
+  folderAlreadyAdded: '"%{folder}" хавтсыг аль хэдий нь оруулсан байна',
+  generatingThumbnails: 'thumbnails үүсгэж байна...',
+  import: 'Импорт',
+  importFiles: 'Файл импортлох:',
+  importFrom: '%{name}-с импортлох',
+  inferiorSize: 'Энэ файл зөвшөөрөгдсөн хэмжээнээс(%{size}) жижиг байна',
+  loadedXFiles: '%{numFiles} файл ачаалсан',
+  loading: 'Ачаалж байна...',
+  logIn: 'Нэвтрэх',
+  logOut: 'Гарах',
+  micDisabled: 'Микрофонд хандах эрхийг хэрэглэгч түдгэлзүүлсэн',
+  missingRequiredMetaField: 'Шаардлагатай мета мэдээлэл байхгүй байна',
+  missingRequiredMetaFieldOnFile: 'Шаардлагатай мета мэдээлэл %{fileName} файлд алга',
+  missingRequiredMetaFields: {
+    '0': 'Дутуу мета мэдээлэл: %{fields}.',
+    '1': 'Дутуу мета мэдээлэл: %{fields}.',
+  },
+  myDevice: 'Миний төхөөрөмж',
+  noAudioDescription:
+    'Аудио бичлэг хийхийн тулд микрофон эсвэл ямар нэг аудио оролтын төхөөрөмж холбоно уу',
+  noAudioTitle: 'Микрофон ашиглах боломжгүй',
+  noCameraDescription:
+    'Зураг авах эсвэл видео бичлэг хийхийн тулд камер холбоно уу',
+  noCameraTitle: 'Камер ашиглах боломжгүй',
+  noDuplicates:
+    "'%{fileName}' файлыг давхардуулах боломжгүй",
+  noFilesFound: 'Энд ямар ч файл эсвэл хавтас алга',
+  noInternetConnection: 'Интернэтэд холбогдоогүй байна',
+  noMoreFilesAllowed: 'Файл нэмэх боломжгүй',
+  noSearchResults: 'Харамсалтай нь хайлтын үр дүн 0',
+  openFolderNamed: '%{name} хавтсыг нээх',
+  pause: 'Зогсоох',
+  paused: 'Зогсоосон',
+  pauseUpload: 'Зогсоон',
+  pickFiles: 'Файл сонгох',
+  pickPhotos: 'Фото сонгох',
+  pleaseWait: 'Түр хүлээнэ үү',
+  pluginNameAudio: 'Аудио',
+  pluginNameBox: 'Хайрцаг',
+  pluginNameCamera: 'Камер',
+  pluginNameDropbox: 'Dropbox',
+  pluginNameFacebook: 'Facebook',
+  pluginNameGoogleDrive: 'Google Drive',
+  pluginNameGoogleDrivePicker: 'Google Drive',
+  pluginNameGooglePhotosPicker: 'Google Photos',
+  pluginNameInstagram: 'Instagram',
+  pluginNameOneDrive: 'OneDrive',
+  pluginNameScreenCapture: 'Дэлгэцийн бичлэг',
+  pluginNameUnsplash: 'Unsplash',
+  pluginNameUrl: 'Холбоос',
+  pluginNameWebdav: 'WebDAV',
+  pluginNameZoom: 'Zoom',
+  pluginWebdavInputLabel:
+    'Файлын WebDAV URL (жишээлбэл ownCloud эсвэл Nextcloud)',
+  poweredBy: '%{uppy} ашиглан бүтээв',
+  processingXFiles: {
+    '0': '%{smart_count} файл боловсруулж байна',
+    '1': '%{smart_count} файл боловсруулж байна',
+  },
+  recording: 'Бичиж байна',
+  recordingLength: 'Бичлэгийн урт %{recording_length}',
+  recordingStoppedMaxSize:
+    'Файлын хэмжээ зөвшөөрөгдсөн дээд хязгаарт хүрсэн тул бичлэгийг зогсоосон',
+  recordVideoBtn: 'Видео Бичлэг',
+  recoveredAllFiles: 'Бүх файлыг сэргээсэн. Хуулах процессыг үргэлжлүүлж болно.',
+  recoveredXFiles: {
+    '0': '1 файлыг сэргээж чадсангүй. Дахин сонгоод хуулах процессыг үргэлжлүүлнэ үү.',
+    '1': '%{smart_count} файлыг сэргээж чадсангүй. Дахин сонгоод хуулах процессыг үргэлжлүүлнэ үү.',
+  },
+  removeFile: 'Файл устгах',
+  reSelect: 'Дахин сонгох',
+  resetFilter: 'Шүүлтүүр цэвэрлэх',
+  resetSearch: 'Хайлт цэвэрлэх',
+  resume: 'Үргэлжлүүлэх',
+  resumeUpload: 'Үргэлжлүүлэн хуулах',
+  retry: 'Дахин оролдох',
+  retryUpload: 'Дахин оролдох',
+  revert: 'Reset',
+  rotate: '90° эргүүлэх',
+  save: 'Хадгалах',
+  saveChanges: 'Хадгалах',
+  search: 'Хайлт',
+  searchImages: 'Зураг хайх',
+  selectX: {
+    '0': 'Сонгосон %{smart_count}',
+    '1': 'Сонгосон %{smart_count}',
+  },
+  sessionRestored: 'Session сэргээгдсэн',
+  showErrorDetails: 'Алдааны мэдээллийг харуулах',
+  signInWithGoogle: 'Google-ээр нэвтрэх',
+  smile: 'Инээгээрэй!',
+  startAudioRecording: 'Аудио бичлэгийг эхлүүлэх',
+  startCapturing: 'Дэлгэцийн бичлэгийг эхлүүлэх',
+  startRecording: 'Видео бичлэгийг эхлүүлэх',
+  stopAudioRecording: 'Аудио бичлэгийг зогсоох',
+  stopCapturing: 'Дэлгэцийн бичлэгийг зогсоох',
+  stopRecording: 'Видео бичлэгийг зогсоох',
+  streamActive: 'Актив урсгал',
+  streamPassive: 'Пассив урсгал',
+  submitRecordedFile: 'Бичсэн файлыг оруулах',
+  takePicture: 'Зураг авах',
+  takePictureBtn: 'Зураг авах',
+  takeScreenshot: 'Дэлгэцийн зураг авах',
+  unnamed: 'Нэргүй',
+  upload: 'Хуулах',
+  uploadComplete: 'Хуулж дууссан',
+  uploadFailed: 'Хуулалт амжилтгүй',
+  uploading: 'Хуулж байна',
+  uploadingXFiles: {
+    '0': '%{smart_count} файл хуулж байна',
+    '1': '%{smart_count} файл хуулж байна',
+  },
+  uploadPaused: 'Зогсоосон',
+  uploadStalled:
+    'Хуулах процесс %{seconds} секундын турш ямар ахицгүй байна. Дахин хуулсан нь дээр байх.',
+  uploadXFiles: {
+    '0': '%{smart_count} файл хуулах',
+    '1': '%{smart_count} файл хуулах',
+  },
+  uploadXNewFiles: {
+    '0': '+%{smart_count} файл хуулах',
+    '1': '+%{smart_count} файл хуулах',
+  },
+  xFilesSelected: {
+    '0': '%{smart_count} файл сонгосон байна',
+    '1': '%{smart_count} файл сонгосон байна',
+  },
+  xMoreFilesAdded: {
+    '0': '%{smart_count} файл нэмэгдсэн',
+    '1': '%{smart_count} файл нэмэгдсэн',
+  },
+  xTimeLeft: '%{time} үлдсэн',
+  youCanOnlyUploadFileTypes: 'Зөвшөөрөгдсөн файлын төрөл: %{types}',
+  youCanOnlyUploadX: {
+    '0': 'Та %{smart_count} файл хуулах боломжтой',
+    '1': 'Та %{smart_count} файл хуулах боломжтой',
+  },
+  youHaveToAtLeastSelectX: {
+    '0': 'Багадаа %{smart_count} файл сонгох ёстой',
+    '1': 'Багадаа %{smart_count} файл сонгох ёстой',
+  },
+  zoomIn: 'Ойртуулах',
+  zoomOut: 'Холдуулах',
+}
+
+// @ts-ignore untyped
+if (typeof Uppy !== 'undefined') {
+  // @ts-ignore untyped
+  globalThis.Uppy.locales.mn_MN = mn_MN
+}
+
+export default mn_MN
