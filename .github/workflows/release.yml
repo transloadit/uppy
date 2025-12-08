@@ -11,6 +11,10 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: auto
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
     outputs:
       companionWasReleased: ${{ steps.checkIfCompanionWasReleased.outputs.version }}
       published: ${{ steps.changesets.outputs.published }}
@@ -68,15 +72,15 @@ jobs:
         if: steps.changesets.outputs.published == 'true'
         run: node packages/uppy/upload-to-cdn.js uppy
         env:
-          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
-          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Upload `@uppy/locales` to CDN if it was released
         if: steps.changesets.outputs.published == 'true'
         run: node packages/uppy/upload-to-cdn.js @uppy/locales
         env:
-          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
-          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 
   # See also companion-deploy.yml

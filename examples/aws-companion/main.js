@@ -4,9 +4,9 @@ import Dashboard from '@uppy/dashboard'
 import GoogleDrive from '@uppy/google-drive'
 import Webcam from '@uppy/webcam'
 
-import '@uppy/core/dist/style.css'
-import '@uppy/dashboard/dist/style.css'
-import '@uppy/webcam/dist/style.css'
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy/webcam/css/style.css'
 
 const uppy = new Uppy({
   debug: true,

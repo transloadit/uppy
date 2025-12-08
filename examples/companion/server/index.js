@@ -44,7 +44,12 @@ const companionOptions = {
       key: 'your box key',
       secret: 'your box secret',
     },
-    // you can also add options for additional providers here
+    s3: {
+      key: 'your s3 key',
+      secret: 'your s3 secret',
+      bucket: 'your s3 bucket',
+      region: 'your s3 region',
+    },
   },
   corsOrigins: ['*'], // Note: this is not safe for production
   server: {
