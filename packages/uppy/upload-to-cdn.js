@@ -137,7 +137,9 @@ async function main(packageName, version) {
     'S3_ENDPOINT',
     'S3_BUCKET',
   ]
-  const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar])
+  const missingEnvVars = requiredEnvVars.filter(
+    (envVar) => !process.env[envVar],
+  )
 
   if (missingEnvVars.length > 0) {
     console.error(
