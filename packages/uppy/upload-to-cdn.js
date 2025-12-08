@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
-// Upload Uppy releases to tlcdn.com (CDN). Copyright (c) 2018, Transloadit Ltd.
+// Upload Uppy releases to releases.transloadit.com via Cloudflare R2/BunnyCDN.
 //
 // This file:
 //
-//  - Assumes EDGLY_KEY and EDGLY_SECRET are available (e.g. set via Travis secrets)
+//  - Assumes the following env vars are available: AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY,
+//    AWS_REGION=auto, S3_ENDPOINT, S3_BUCKET (see the CDN migration docs for the exact values).
 //  - Assumes a fully built uppy is in root dir (unless a specific tag was specified, then it's fetched from npm)
 //  - Collects dist/ files that would be in an npm package release, and uploads to
 //    eg. https://releases.transloadit.com/uppy/v1.0.1/uppy.css
@@ -45,8 +46,8 @@ function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-const AWS_REGION = 'us-east-1'
-const AWS_BUCKET = 'releases.transloadit.com'
+const AWS_REGION = process.env.AWS_REGION ?? 'auto'
+const AWS_BUCKET = process.env.S3_BUCKET
 
 /**
  * Get remote dist/ files by fetching the tarball for the given version
@@ -130,8 +131,20 @@ async function main(packageName, version) {
     process.exit(1)
   }
 
-  if (!process.env.EDGLY_KEY || !process.env.EDGLY_SECRET) {
-    console.error('Missing EDGLY_KEY or EDGLY_SECRET env variables, bailing')
+  const requiredEnvVars = [
+    'AWS_ACCESS_KEY_ID',
+    'AWS_SECRET_ACCESS_KEY',
+    'S3_ENDPOINT',
+    'S3_BUCKET',
+  ]
+  const missingEnvVars = requiredEnvVars.filter(
+    (envVar) => !process.env[envVar],
+  )
+
+  if (missingEnvVars.length > 0) {
+    console.error(
+      `Missing required env variables (${missingEnvVars.join(', ')}), bailing`,
+    )
     process.exit(1)
   }
 
@@ -142,10 +155,13 @@ async function main(packageName, version) {
 
   const s3Client = new S3Client({
     credentials: {
-      accessKeyId: process.env.EDGLY_KEY,
-      secretAccessKey: process.env.EDGLY_SECRET,
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
     },
     region: AWS_REGION,
+    endpoint: process.env.S3_ENDPOINT,
+    // Cloudflare R2 requires path-style addressing when using the account endpoint.
+    forcePathStyle: true,
   })
 
   const remote = !!resolvedVersion
