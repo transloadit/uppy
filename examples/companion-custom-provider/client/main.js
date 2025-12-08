@@ -4,8 +4,8 @@ import GoogleDrive from '@uppy/google-drive'
 import Tus from '@uppy/tus'
 import MyCustomProvider from './MyCustomProvider.jsx'
 
-import '@uppy/core/dist/style.css'
-import '@uppy/dashboard/dist/style.css'
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
 
 const uppy = new Uppy({
   debug: true,
