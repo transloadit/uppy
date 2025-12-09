@@ -1,5 +1,13 @@
 # @uppy/provider-views
 
+## 5.2.2
+
+### Patch Changes
+
+- 50e2420: Improve Google Drive Picker folder picking: Resolve also folders inside shared drives (but not symlinks to folders)
+- Updated dependencies [648f245]
+  - @uppy/utils@7.1.5
+
 ## 5.2.1
 
 ### Patch Changes
