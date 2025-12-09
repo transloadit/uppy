@@ -1,5 +1,13 @@
 # @uppy/golden-retriever
 
+## 5.2.1
+
+### Patch Changes
+
+- d766c30: Fix: Don't restore `currentUploads` if no files are being restored.
+- Updated dependencies [648f245]
+  - @uppy/utils@7.1.5
+
 ## 5.2.0
 
 ### Minor Changes

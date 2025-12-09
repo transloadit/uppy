@@ -1,5 +1,11 @@
 # @uppy/utils
 
+## 7.1.5
+
+### Patch Changes
+
+- 648f245: Fix `complete` event never firing for XHR and make sure the fetch aborts immediately if Uppy is cancelled before the fetch starts.
+
 ## 7.1.4
 
 ### Patch Changes

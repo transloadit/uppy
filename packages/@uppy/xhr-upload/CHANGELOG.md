@@ -1,5 +1,13 @@
 # @uppy/xhr-upload
 
+## 5.1.1
+
+### Patch Changes
+
+- 648f245: Fix `complete` event never firing for XHR and make sure the fetch aborts immediately if Uppy is cancelled before the fetch starts.
+- Updated dependencies [648f245]
+  - @uppy/utils@7.1.5
+
 ## 5.1.0
 
 ### Minor Changes

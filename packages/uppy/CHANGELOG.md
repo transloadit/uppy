@@ -1,5 +1,17 @@
 # uppy
 
+## 5.2.1
+
+### Patch Changes
+
+- Updated dependencies [648f245]
+- Updated dependencies [50e2420]
+- Updated dependencies [d766c30]
+  - @uppy/xhr-upload@5.1.1
+  - @uppy/google-drive-picker@1.1.1
+  - @uppy/provider-views@5.2.2
+  - @uppy/golden-retriever@5.2.1
+
 ## 5.2.0
 
 ### Minor Changes
