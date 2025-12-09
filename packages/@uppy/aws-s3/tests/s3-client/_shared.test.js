@@ -64,24 +64,6 @@ const FILE_KEYS = [
 
 export const resetBucketBeforeAll = (s3client) => {
   beforeAll(async () => {
-    // let exists
-    // try {
-    //   exists = await s3client.bucketExists()
-    // } catch (err) {
-    //   // Backblaze accounts are locked to a region and may throw on HEAD
-    //   console.warn(`Skipping bucketExists() pre-check: ${err}`)
-    //   return
-    // }
-    // if (exists) {
-    //   const list = await s3client.listObjects()
-    //   expect(list).toBeInstanceOf(Array)
-    //   if (list.length > 0) {
-    //     expect(list.length).toBeGreaterThan(0)
-
-    //     await s3client.deleteObjects(list.map((obj) => obj.Key))
-    //   }
-    // }
-
     for (const key of FILE_KEYS) {
       try {
         await s3client.deleteObject(key)
