@@ -4,7 +4,7 @@ function createCancelError(cause?: string) {
 
 function abortOn(
   this: { abort: (cause: string) => void; then?: Promise<any>['then'] },
-  signal?: AbortSignal,
+  signal: AbortSignal | null = null,
 ) {
   if (signal != null) {
     const abortPromise = () => this.abort(signal.reason)

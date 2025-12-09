@@ -197,15 +197,15 @@ export default class Client<M extends Meta, B extends Body> {
   }
 
   async submitError(
-    err: { message?: string; details?: string },
+    err: { message?: string; details?: string | undefined },
     {
       endpoint,
       instance,
       assembly,
     }: {
       endpoint?: string | URL
-      instance?: string
-      assembly?: string
+      instance?: string | undefined
+      assembly?: string | undefined
     } = {},
   ): Promise<AssemblyResponse> {
     const message = err.details
@@ -240,8 +240,8 @@ export default class Client<M extends Meta, B extends Body> {
 
     const opts: {
       type: string
-      assembly?: string
-      instance?: string
+      assembly?: string | undefined
+      instance?: string | undefined
       endpoint?: URL | string
     } = {
       type: params.type,

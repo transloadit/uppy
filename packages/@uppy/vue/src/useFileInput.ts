@@ -6,7 +6,7 @@ export type VueFileInputFunctions = {
     id: string
     type: 'file'
     multiple: boolean
-    accept?: string
+    accept?: string | undefined
     onchange: (event: Event) => void
   }
   getButtonProps: () => {
