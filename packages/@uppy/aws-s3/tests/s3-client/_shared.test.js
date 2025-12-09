@@ -55,23 +55,38 @@ const specialCharContentBufferExtra = Buffer.from(
 )
 const specialCharKey = 'special-char key with spaces.txt'
 
+const FILE_KEYS = [
+  key,
+  specialCharKey,
+  'multipart-object.txt',
+  'multipart-object-ssec.txt',
+]
+
 export const resetBucketBeforeAll = (s3client) => {
   beforeAll(async () => {
-    let exists
-    try {
-      exists = await s3client.bucketExists()
-    } catch (err) {
-      // Backblaze accounts are locked to a region and may throw on HEAD
-      console.warn(`Skipping bucketExists() pre-check: ${err}`)
-      return
-    }
-    if (exists) {
-      const list = await s3client.listObjects()
-      expect(list).toBeInstanceOf(Array)
-      if (list.length > 0) {
-        expect(list.length).toBeGreaterThan(0)
+    // let exists
+    // try {
+    //   exists = await s3client.bucketExists()
+    // } catch (err) {
+    //   // Backblaze accounts are locked to a region and may throw on HEAD
+    //   console.warn(`Skipping bucketExists() pre-check: ${err}`)
+    //   return
+    // }
+    // if (exists) {
+    //   const list = await s3client.listObjects()
+    //   expect(list).toBeInstanceOf(Array)
+    //   if (list.length > 0) {
+    //     expect(list.length).toBeGreaterThan(0)
 
-        await s3client.deleteObjects(list.map((obj) => obj.Key))
+    //     await s3client.deleteObjects(list.map((obj) => obj.Key))
+    //   }
+    // }
+
+    for (const key of FILE_KEYS) {
+      try {
+        await s3client.deleteObject(key)
+      } catch {
+        // intentionally ignore the errors
       }
     }
   })

@@ -296,29 +296,7 @@ class S3mini {
     return U.sanitizeETag(etag)
   }
 
-  /**
-   * Creates a new bucket.
-   * This method sends a request to create a new bucket in the specified in endpoint.
-   * @returns A promise that resolves to true if the bucket was created successfully, false otherwise.
-   */
-  // public async createBucket(): Promise<boolean> {
-  //   const xmlBody = `
-  //     <CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/">
-  //       <LocationConstraint>${this.region}</LocationConstraint>
-  //     </CreateBucketConfiguration>
-  //   `
-  //   const headers = {
-  //     [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
-  //     [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
-  //   }
-  //   const res = await this._signedRequest('PUT', '', {
-  //     body: xmlBody,
-  //     headers,
-  //     tolerated: [200, 404, 403, 409], // don’t throw on 404/403 // 409 = bucket already exists
-  //   })
-  //   return res.status === 200
-  // }
-
+  // ! BUCKET METHOD
   private _extractBucketName(): string {
     const url = this.endpoint
 
@@ -364,6 +342,7 @@ class S3mini {
    * This method sends a request to check if the specified bucket exists in the S3-compatible service.
    * @returns A promise that resolves to true if the bucket exists, false otherwise.
    */
+  // ! BUCKET METHOD
   public async bucketExists(): Promise<boolean> {
     const res = await this._signedRequest('HEAD', '', {
       tolerated: [200, 404, 403],
@@ -386,6 +365,7 @@ class S3mini {
    * // List objects with prefix
    * const photos = await s3.listObjects('/', 'photos/', 100);
    */
+  // ! BUCKET METHOD
   public async listObjects(
     delimiter: string = '/',
     prefix: string = '',
