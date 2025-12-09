@@ -174,7 +174,7 @@ export default class GoldenRetriever<
 
     this.uppy.setState({
       recoveredState: hasFiles ? recoveredState : null, // recoveredState is used to control the UI (to show the "recovered" state), only set it if we actually have files
-      currentUploads,
+      currentUploads: hasFiles ? currentUploads : {}, // if there are no files, no need to restore currentUploads. if we do, and the upload completes (but without completing all files) and the user re-adds some of the *same* files as before, the upload would use a subset of the files the user selected
       files: filesWithBlobs,
     })
 
