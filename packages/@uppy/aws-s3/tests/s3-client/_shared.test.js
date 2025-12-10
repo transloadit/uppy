@@ -62,7 +62,7 @@ const FILE_KEYS = [
   'multipart-object-ssec.txt',
 ]
 
-export const resetBucketBeforeAll = (s3client) => {
+export const cleanupTestBeforeAll = (s3client) => {
   beforeAll(async () => {
     for (const key of FILE_KEYS) {
       try {
@@ -90,7 +90,7 @@ export const testRunner = (bucket) => {
     signRequest: signer,
   })
 
-  resetBucketBeforeAll(s3client)
+  cleanupTestBeforeAll(s3client)
 
   it('instantiates s3client', () => {
     expect(s3client).toBeInstanceOf(S3mini) // ← updated expectation

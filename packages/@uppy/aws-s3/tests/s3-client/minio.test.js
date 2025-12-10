@@ -3,7 +3,7 @@ import * as dotenv from 'dotenv'
 import { expect, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.js'
 import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
-import { beforeRun, resetBucketBeforeAll } from './_shared.test.js'
+import { beforeRun, cleanupTestBeforeAll } from './_shared.test.js'
 
 dotenv.config()
 
@@ -27,7 +27,7 @@ const minioSpecific = (bucket) => {
     signRequest: signer,
   })
 
-  resetBucketBeforeAll(s3client)
+  cleanupTestBeforeAll(s3client)
 
   it('put object with valid x-amz-checksum-sha1 header', async () => {
     const fileContents = Buffer.from('Some file contents.', 'utf-8')
