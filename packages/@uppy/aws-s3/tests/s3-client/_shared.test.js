@@ -38,6 +38,7 @@ export const beforeRun = (raw, name, providerSpecific) => {
 }
 
 const EIGHT_MB = 8 * 1024 * 1024
+const key_bin = 'test-multipart.bin'
 
 const large_buffer = randomBytes(EIGHT_MB * 3.2)
 const content = "some content"
@@ -105,6 +106,57 @@ export const testRunner = (bucket) => {
   })
 
 
+  it('putObject handles binary data', async () => {
+    const binaryData = Buffer.alloc(6, 0xff)
+
+    const response = await s3client.putObject(
+      key,
+      binaryData,
+      'application/octet-stream'
+    )
+
+    expect(response).toBeDefined()
+    expect(response.status).toBe(200)
+    expect(response.headers.get('etag')).toBeDefined()
+
+    // cleanup
+
+    await s3client.deleteObject(key)
+
+  })
+
+  // test getMultipartUploadId
+
+  it('getMultipartUploadId returns a valid uploadId', async () => {
+    const uploadId = await s3client.getMultipartUploadId(key_bin, 'application/octet-stream')
+    expect(uploadId).toBeDefined()
+    expect(typeof uploadId).toBe('string')
+    expect(uploadId.length).toBeGreaterThan(0)
+
+    // cleanup
+    await s3client.abortMultipartUpload(key, uploadId)
+  })
+
+
+// test uploadPart
+
+it('uploadPart returns partNumber and Etag', async () => {
+  const partData = randomBytes(EIGHT_MB)
+
+  const uploadId = await s3client.getMultipartUploadId(key_bin,'application/octet-stream')
+
+  // upload part
+  const partResult = await s3client.uploadPart(key_bin, uploadId, partData, 1)
+
+  expect(partResult).toBeDefined()
+  expect(partResult.partNumber).toBe(1)
+  expect(partResult.etag).toBeDefined()
+  expect(typeof partResult.etag).toBe('string')
+  expect(partResult.etag.length).toBe(32)
+
+  // cleanup
+  await s3client.abortMultipartUpload(key, uploadId)
+})
 
   // // multipart upload and download
   // it('multipart upload and download', async () => {
