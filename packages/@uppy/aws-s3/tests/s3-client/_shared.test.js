@@ -1,7 +1,10 @@
 import { randomBytes } from 'node:crypto'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { S3mini, sanitizeETag } from '../../src/s3-client/index.js'
+import { S3mini } from '../../src/s3-client/index.js'
 import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
+
+
+let providerName;
 
 export const beforeRun = (raw, name, providerSpecific) => {
   if (!raw || raw === null) {
@@ -42,25 +45,13 @@ const key_bin = 'test-multipart.bin'
 
 const large_buffer = randomBytes(EIGHT_MB * 3.2)
 const content = "some content"
-// const byteSize = (str) => new Blob([str]).size
-
-// const OP_CAP = 40
-let providerName
 const key = 'first-test-object.txt'
-const contentString = 'Hello, world!'
-
-const specialCharContentString = 'Hello, world! \uD83D\uDE00'
-const specialCharContentBufferExtra = Buffer.from(
-  `${specialCharContentString}extra`,
-  'utf-8',
-)
-const specialCharKey = 'special-char key with spaces.txt'
-
 const FILE_KEYS = [
   key,
-  specialCharKey,
+  key_bin,
   'multipart-object.txt',
   'multipart-object-ssec.txt',
+
 ]
 
 export const cleanupTestBeforeAll = (s3client) => {
@@ -158,148 +149,60 @@ it('uploadPart returns partNumber and Etag', async () => {
   await s3client.abortMultipartUpload(key, uploadId)
 })
 
-  // // multipart upload and download
-  // it('multipart upload and download', async () => {
-  //   const multipartKey = 'multipart-object.txt'
-  //   const partSize = EIGHT_MB // 8 MB
-  //   const totalParts = Math.ceil(large_buffer.length / partSize)
-  //   const uploadId = await s3client.getMultipartUploadId(multipartKey)
 
-  //   const uploadPromises = []
-  //   for (let i = 0; i < totalParts; i++) {
-  //     const partBuffer = large_buffer.subarray(i * partSize, (i + 1) * partSize)
-  //     uploadPromises.push(
-  //       s3client.uploadPart(multipartKey, uploadId, partBuffer, i + 1),
-  //     )
-  //   }
-  //   const uploadResponses = await Promise.all(uploadPromises)
+// end to end multipart flow
 
-  //   const parts = uploadResponses.map((response, index) => ({
-  //     partNumber: index + 1,
-  //     etag: response.etag,
-  //   }))
+it('completeMultipartUpload assembles parts correctly', async () => {
+  // key - key_bin
+  const partSize = EIGHT_MB
+  const totalParts = Math.ceil(large_buffer.length / partSize)
 
-  //   const completeResponse = await s3client.completeMultipartUpload(
-  //     multipartKey,
-  //     uploadId,
-  //     parts,
-  //   )
-  //   expect(completeResponse).toBeDefined()
-  //   expect(typeof completeResponse).toBe('object')
-  //   const etag = completeResponse.etag
-  //   expect(etag).toBeDefined()
-  //   expect(typeof etag).toBe('string')
-  //   if (etag.length !== 34) {
-  //     console.warn(
-  //       `Warning: ETag length is unexpected: ${etag.length} (ETag: ${etag})`,
-  //     )
-  //   }
-  //   expect(etag.length).toBe(32 + 2) // 32 chars + 2 number of parts flag
+  const uploadId = await s3client.getMultipartUploadId(key_bin, 'application/octet-stream')
+  expect(uploadId).toBeDefined()
 
-  //   const dataArrayBuffer = await s3client.getObjectArrayBuffer(multipartKey)
-  //   const dataBuffer = Buffer.from(dataArrayBuffer)
-  //   expect(dataBuffer).toBeInstanceOf(Buffer)
-  //   expect(dataBuffer.toString('utf-8')).toBe(large_buffer.toString('utf-8'))
+  // upload all parts
 
-  //   const multipartUpload = await s3client.listMultipartUploads()
-  //   expect(multipartUpload).toBeDefined()
-  //   expect(typeof multipartUpload).toBe('object')
-  //   expect(multipartUpload).not.toHaveProperty('key')
-  //   expect(multipartUpload).not.toHaveProperty('uploadId')
+  const uploadPromises = []
+  for (let i = 0; i < totalParts; i++){
+    const partBuffer = large_buffer.subarray(i*partSize, (i + 1) * partSize)
+    uploadPromises.push(s3client.uploadPart(key_bin, uploadId, partBuffer, i+1))
+  }
+  const uploadResponses = await Promise.all(uploadPromises)
 
-  //   if (providerName === 'cloudflare') {
-  //     // Cloudflare SSE-C multipart upload
-  //     const ssecHeaders = {
-  //       'x-amz-server-side-encryption-customer-algorithm': 'AES256',
-  //       'x-amz-server-side-encryption-customer-key':
-  //         'n1TKiTaVHlYLMX9n0zHXyooMr026vOiTEFfT+719Hho=',
-  //       'x-amz-server-side-encryption-customer-key-md5':
-  //         'gepZmzgR7Be/1+K1Aw+6ow==',
-  //     }
-  //     const multipartKeySsec = 'multipart-object-ssec.txt'
-  //     const uploadIdSsec = await s3client.getMultipartUploadId(
-  //       multipartKeySsec,
-  //       'text/plain',
-  //       ssecHeaders,
-  //     )
-  //     const uploadPromises = []
-  //     for (let i = 0; i < totalParts; i++) {
-  //       const partBuffer = large_buffer.subarray(
-  //         i * partSize,
-  //         (i + 1) * partSize,
-  //       )
-  //       uploadPromises.push(
-  //         s3client.uploadPart(
-  //           multipartKeySsec,
-  //           uploadIdSsec,
-  //           partBuffer,
-  //           i + 1,
-  //           undefined,
-  //           ssecHeaders,
-  //         ),
-  //       )
-  //     }
-  //     const uploadResponses = await Promise.all(uploadPromises)
+  // verify all parts uploaded succesfully
 
-  //     const parts = uploadResponses.map((response, index) => ({
-  //       partNumber: index + 1,
-  //       etag: response.etag,
-  //     }))
+  expect(uploadResponses.length).toBe(totalParts)
 
-  //     const completeResponse = await s3client.completeMultipartUpload(
-  //       multipartKeySsec,
-  //       uploadIdSsec,
-  //       parts,
-  //     )
-  //     expect(completeResponse).toBeDefined()
-  //     expect(typeof completeResponse).toBe('object')
-  //     const etagSsec = completeResponse.etag
-  //     expect(etagSsec).toBeDefined()
-  //     expect(typeof etagSsec).toBe('string')
-  //   }
+  uploadResponses.forEach((response, index) => {
+    expect(response.partNumber).toBe(index + 1)
+    expect(response.etag).toBeDefined()
+  })
 
-  //   // lets test getObjectRaw with range
-  //   const rangeStart = 2048 * 1024 // 2 MB
-  //   const rangeEnd = 8 * 1024 * 1024 * 2 // 16 MB
-  //   const rangeResponse = await s3client.getObjectRaw(
-  //     multipartKey,
-  //     false,
-  //     rangeStart,
-  //     rangeEnd,
-  //   )
-  //   const rangeData = await rangeResponse.arrayBuffer()
-  //   expect(rangeResponse).toBeDefined()
 
-  //   expect(rangeData).toBeInstanceOf(ArrayBuffer)
-  //   const rangeBuffer = Buffer.from(rangeData)
-  //   expect(rangeBuffer.toString('utf-8')).toBe(
-  //     large_buffer.subarray(rangeStart, rangeEnd).toString('utf-8'),
-  //   )
+  // create multipart upload
 
-  //   const objectExists = await s3client.objectExists(multipartKey)
-  //   expect(objectExists).toBe(true)
-  //   const objectSize = await s3client.getContentLength(multipartKey)
-  //   expect(objectSize).toBe(large_buffer.length)
-  //   const objectEtag = await s3client.getEtag(multipartKey)
-  //   expect(objectEtag).toBe(etag)
-  //   expect(objectEtag.length).toBe(32 + 2) // 32 chars + 2 number of parts flag
+  const parts = uploadResponses.map((response) => ({
+    partNumber: response.partNumber,
+    etag: response.etag
+  }))
 
-  //   // test getEtag with opts mis/match
-  //   const etagMatch = await s3client.getEtag(multipartKey, { 'if-match': etag })
-  //   expect(etagMatch).toBe(etag)
+  const completeResponse = await s3client.completeMultipartUpload(
+    key_bin,
+    uploadId,
+    parts,
+  )
 
-  //   const etagMismatch = await s3client.getEtag(multipartKey, {
-  //     'if-match': 'wrong-etag',
-  //   })
-  //   expect(etagMismatch).toBe(null)
+  expect(completeResponse).toBeDefined()
+  expect(typeof completeResponse).toBe('object')
+  expect(completeResponse.etag).toBeDefined()
+  expect(typeof completeResponse.etag).toBe('string')
+  expect(completeResponse.etag.length).toBe(32 + 2)
 
-  //   const delResp = await s3client.deleteObject(multipartKey)
-  //   expect(delResp).toBe(true)
 
-  //   const objectExists2 = await s3client.objectExists(multipartKey)
-  //   expect(objectExists2).toBe(false)
+  // cleanup
 
-  //   const deletedData = await s3client.getObject(multipartKey)
-  //   expect(deletedData).toBe(null)
-  // })
+  await s3client.deleteObject(key_bin)
+})
+
 }
+
