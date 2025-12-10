@@ -1,9 +1,4 @@
-import type {
-  ErrorWithCode,
-
-  XmlMap,
-  XmlValue,
-} from './types.js'
+import type { ErrorWithCode, XmlMap, XmlValue } from './types.js'
 
 const ENCODR = new TextEncoder()
 const chunkSize = 0x8000 // 32KB chunks
@@ -196,7 +191,6 @@ export const uriEscape = (uriStr: string): string => {
 export const uriResourceEscape = (string: string): string => {
   return uriEscape(string).replaceAll('%2F', '/')
 }
-
 
 export const extractErrCode = (e: unknown): string | undefined => {
   if (typeof e !== 'object' || e === null) {

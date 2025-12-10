@@ -50,7 +50,6 @@ export interface CompleteMultipartUploadResult {
   ETag: string // for backward compatibility
 }
 
-
 export interface ListMultipartUploadSuccess {
   listMultipartUploadsResult: {
     bucket: string
@@ -83,7 +82,6 @@ export type ListMultipartUploadResponse =
   | MultipartUploadError
 
 export type HttpMethod = 'POST' | 'GET' | 'HEAD' | 'PUT' | 'DELETE'
-
 
 export type XmlValue = string | XmlMap | boolean | number | null
 export interface XmlMap {
