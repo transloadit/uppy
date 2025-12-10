@@ -43,7 +43,6 @@ class S3mini {
    */
   readonly endpoint: URL
   readonly region: string
-  readonly bucketName: string
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
   readonly fetch: typeof fetch
@@ -61,7 +60,6 @@ class S3mini {
     this.endpoint = new URL(this._ensureValidUrl(endpoint))
     this.signRequest = signRequest
     this.region = region
-    this.bucketName = this._extractBucketName()
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
     this.fetch = fetch
@@ -276,46 +274,6 @@ class S3mini {
     return U.sanitizeETag(etag)
   }
 
-  // ! BUCKET METHOD
-  private _extractBucketName(): string {
-    const url = this.endpoint
-
-    // First check if bucket is in the pathname (path-style URLs)
-    const pathSegments = url.pathname.split('/').filter(Boolean)
-    if (pathSegments.length > 0) {
-      if (typeof pathSegments[0] === 'string') {
-        return pathSegments[0]
-      }
-    }
-
-    // Otherwise extract from subdomain (virtual-hosted-style URLs)
-    const hostParts = url.hostname.split('.')
-
-    // Common patterns:
-    // bucket-name.s3.amazonaws.com
-    // bucket-name.s3.region.amazonaws.com
-    // bucket-name.region.digitaloceanspaces.com
-    // bucket-name.region.cdn.digitaloceanspaces.com
-
-    if (hostParts.length >= 3) {
-      // Check if it's a known S3-compatible service
-      const domain = hostParts.slice(-2).join('.')
-      const knownDomains = [
-        'amazonaws.com',
-        'digitaloceanspaces.com',
-        'cloudflare.com',
-      ]
-
-      if (knownDomains.some((d) => domain.includes(d))) {
-        if (typeof hostParts[0] === 'string') {
-          return hostParts[0]
-        }
-      }
-    }
-
-    // Fallback: use the first subdomain
-    return hostParts[0] || ''
-  }
 
   /**
    * Checks if a bucket exists.
