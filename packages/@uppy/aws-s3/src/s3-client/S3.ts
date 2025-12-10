@@ -65,8 +65,6 @@ class S3mini {
     this.fetch = fetch
   }
 
-
-
   // ! MODIFIED
   private _validateConstructorParams(
     endpoint: string,
@@ -273,7 +271,6 @@ class S3mini {
   public sanitizeETag(etag: string): string {
     return U.sanitizeETag(etag)
   }
-
 
   /**
    * Checks if a bucket exists.
@@ -505,7 +502,6 @@ class S3mini {
     return raw as IT.MultipartUploadError
   }
 
-
   /**
    * Get an object as an ArrayBuffer from the S3-compatible service.
    * This method sends a request to retrieve the specified object and returns it as an ArrayBuffer.
@@ -583,7 +579,6 @@ class S3mini {
       withQuery: true, // keep ?query=string behaviour
     })
   }
-
 
   /**
    * Retrieves the ETag of an object without downloading its content.
