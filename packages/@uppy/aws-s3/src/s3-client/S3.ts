@@ -98,27 +98,9 @@ class S3mini {
     }
   }
 
-  private _validateMethodIsGetOrHead(method: string): void {
-    if (method !== 'GET' && method !== 'HEAD') {
-      throw new Error(`${C.ERROR_PREFIX}method must be either GET or HEAD`)
-    }
-  }
-
   private _checkKey(key: string): void {
     if (typeof key !== 'string' || key.trim().length === 0) {
       throw new TypeError(C.ERROR_KEY_REQUIRED)
-    }
-  }
-
-  private _checkDelimiter(delimiter: string): void {
-    if (typeof delimiter !== 'string' || delimiter.trim().length === 0) {
-      throw new TypeError(C.ERROR_DELIMITER_REQUIRED)
-    }
-  }
-
-  private _checkPrefix(prefix: string): void {
-    if (typeof prefix !== 'string') {
-      throw new TypeError(C.ERROR_PREFIX_TYPE)
     }
   }
 
