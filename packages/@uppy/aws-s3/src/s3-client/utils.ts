@@ -1,6 +1,6 @@
 import type {
   ErrorWithCode,
-  ListBucketResponse,
+
   XmlMap,
   XmlValue,
 } from './types.js'
@@ -197,15 +197,6 @@ export const uriResourceEscape = (string: string): string => {
   return uriEscape(string).replaceAll('%2F', '/')
 }
 
-export const isListBucketResponse = (
-  value: unknown,
-): value is ListBucketResponse => {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    ('listBucketResult' in value || 'error' in value)
-  )
-}
 
 export const extractErrCode = (e: unknown): string | undefined => {
   if (typeof e !== 'object' || e === null) {

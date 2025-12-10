@@ -50,17 +50,6 @@ export interface CompleteMultipartUploadResult {
   ETag: string // for backward compatibility
 }
 
-interface ListBucketResult {
-  keyCount: string
-  contents?: Array<Record<string, unknown>>
-}
-interface ListBucketError {
-  error: { code: string; message: string }
-}
-
-export type ListBucketResponse =
-  | { listBucketResult: ListBucketResult }
-  | { error: ListBucketError }
 
 export interface ListMultipartUploadSuccess {
   listMultipartUploadsResult: {
@@ -95,10 +84,6 @@ export type ListMultipartUploadResponse =
 
 export type HttpMethod = 'POST' | 'GET' | 'HEAD' | 'PUT' | 'DELETE'
 
-// false - Not found (404)
-// true - Found (200)
-// null - ETag mismatch (412)
-export type ExistResponseCode = false | true | null
 
 export type XmlValue = string | XmlMap | boolean | number | null
 export interface XmlMap {
