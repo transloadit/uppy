@@ -382,11 +382,6 @@ class S3mini {
     uploadId: string,
     key: string,
   ): Promise<IT.UploadPart[]> {
-    // check key
-    // build query
-    // sign request
-    // parse result
-
     this._checkKey(key)
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
@@ -399,7 +394,6 @@ class S3mini {
     })
 
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
-
     const result = (parsed.listPartsResult ||
       parsed.ListPartsResult ||
       parsed) as Record<string, unknown>
