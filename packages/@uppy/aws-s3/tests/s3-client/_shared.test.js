@@ -45,11 +45,14 @@ const key_bin = 'test-multipart.bin'
 const large_buffer = randomBytes(EIGHT_MB * 3.2)
 const content = 'some content'
 const key = 'first-test-object.txt'
+const key_list_parts = 'test-list-parts.bin'
+const key_abort_multipart = 'test-abort-multipart.bin'
+
 const FILE_KEYS = [
   key,
   key_bin,
-  'multipart-object.txt',
-  'multipart-object-ssec.txt',
+  key_list_parts,
+  key_abort_multipart,
 ]
 
 export const cleanupTestBeforeAll = (s3client) => {
@@ -164,7 +167,6 @@ export const testRunner = (bucket) => {
     expect(uploadId).toBeDefined()
 
     // upload all parts
-
     const uploadPromises = []
     for (let i = 0; i < totalParts; i++) {
       const partBuffer = large_buffer.subarray(i * partSize, (i + 1) * partSize)
@@ -208,35 +210,31 @@ export const testRunner = (bucket) => {
   })
 
   it('abortMultipartUpload cancels upload successfully', async () => {
-    const key = 'test-abort-multipart.bin'
-
     // start upload
-
     const uploadId = await s3client.getMultipartUploadId(
-      key,
+      key_abort_multipart,
       'application/octet-stream',
     )
 
     expect(uploadId).toBeDefined()
 
     const partData = randomBytes(EIGHT_MB)
-    await s3client.uploadPart(key, uploadId, partData, 1)
+    await s3client.uploadPart(key_abort_multipart, uploadId, partData, 1)
 
     // abort
-    const abortResult = await s3client.abortMultipartUpload(key, uploadId)
+    const abortResult = await s3client.abortMultipartUpload(key_abort_multipart, uploadId)
 
     expect(abortResult).toBeDefined()
     expect(abortResult.status).toBe('Aborted')
-    expect(abortResult.key).toBe(key)
+    expect(abortResult.key).toBe(key_abort_multipart)
     expect(abortResult.uploadId).toBe(uploadId)
   })
 
   it('listParts returns uploaded parts correctly', async () => {
-    const key = 'test-list-parts.bin'
     const partSize = EIGHT_MB
 
     const uploadId = await s3client.getMultipartUploadId(
-      key,
+      key_list_parts,
       'application/octet-stream',
     )
     expect(uploadId).toBeDefined()
@@ -244,10 +242,10 @@ export const testRunner = (bucket) => {
     const part1Data = randomBytes(partSize)
     const part2Data = randomBytes(partSize)
 
-    const part1Result = await s3client.uploadPart(key, uploadId, part1Data, 1)
-    const part2Result = await s3client.uploadPart(key, uploadId, part2Data, 2)
+    const part1Result = await s3client.uploadPart(key_list_parts, uploadId, part1Data, 1)
+    const part2Result = await s3client.uploadPart(key_list_parts, uploadId, part2Data, 2)
 
-    const parts = await s3client.listParts(uploadId, key)
+    const parts = await s3client.listParts(uploadId, key_list_parts)
 
     expect(parts).toBeInstanceOf(Array)
     expect(parts.length).toBe(2)
