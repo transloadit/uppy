@@ -408,7 +408,6 @@ class S3mini {
    * @returns A promise that resolves to a list of multipart uploads or an error.
    */
 
-
   /**
    * Uploads an object to the S3-compatible service.
    * @param {string} key - The key/path where the object will be stored.
