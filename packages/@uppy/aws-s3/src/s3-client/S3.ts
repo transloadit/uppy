@@ -67,27 +67,7 @@ class S3mini {
     this.fetch = fetch
   }
 
-  private _sanitize(obj: unknown): unknown {
-    if (typeof obj !== 'object' || obj === null) {
-      return obj
-    }
-    return Object.keys(obj).reduce(
-      (acc: Record<string, unknown>, key) => {
-        if (C.SENSITIVE_KEYS_REDACTED.has(key.toLowerCase())) {
-          acc[key] = '[REDACTED]'
-        } else if (
-          typeof (obj as Record<string, unknown>)[key] === 'object' &&
-          (obj as Record<string, unknown>)[key] !== null
-        ) {
-          acc[key] = this._sanitize((obj as Record<string, unknown>)[key])
-        } else {
-          acc[key] = (obj as Record<string, unknown>)[key]
-        }
-        return acc
-      },
-      Array.isArray(obj) ? [] : {},
-    )
-  }
+
 
   // ! MODIFIED
   private _validateConstructorParams(
@@ -567,54 +547,6 @@ class S3mini {
     return raw as IT.MultipartUploadError
   }
 
-  /**
-   * Get an object from the S3-compatible service.
-   * This method sends a request to retrieve the specified object from the S3-compatible service.
-   * @param {string} key - The key of the object to retrieve.
-   * @param {Record<string, unknown>} [opts] - Additional options for the request.
-   * @param {IT.SSECHeaders} [ssecHeaders] - Server-Side Encryption headers, if any.
-   * @returns A promise that resolves to the object data (string) or null if not found.
-   */
-  public async getObject(
-    key: string,
-    opts: Record<string, unknown> = {},
-    ssecHeaders?: IT.SSECHeaders,
-  ): Promise<string | null> {
-    // if ssecHeaders is set, add it to headers
-    const res = await this._signedRequest('GET', key, {
-      query: opts, // use opts.query if it exists, otherwise use an empty object
-      tolerated: [200, 404, 412, 304],
-      headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    })
-    if ([404, 412, 304].includes(res.status)) {
-      return null
-    }
-    return res.text()
-  }
-
-  /**
-   * Get an object response from the S3-compatible service.
-   * This method sends a request to retrieve the specified object and returns the full response.
-   * @param {string} key - The key of the object to retrieve.
-   * @param {Record<string, unknown>} [opts={}] - Additional options for the request.
-   * @param {IT.SSECHeaders} [ssecHeaders] - Server-Side Encryption headers, if any.
-   * @returns A promise that resolves to the Response object or null if not found.
-   */
-  public async getObjectResponse(
-    key: string,
-    opts: Record<string, unknown> = {},
-    ssecHeaders?: IT.SSECHeaders,
-  ): Promise<Response | null> {
-    const res = await this._signedRequest('GET', key, {
-      query: opts,
-      tolerated: [200, 404, 412, 304],
-      headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    })
-    if ([404, 412, 304].includes(res.status)) {
-      return null
-    }
-    return res
-  }
 
   /**
    * Get an object as an ArrayBuffer from the S3-compatible service.
@@ -665,36 +597,6 @@ class S3mini {
   }
 
   /**
-   * Get an object with its ETag from the S3-compatible service.
-   * This method sends a request to retrieve the specified object and its ETag.
-   * @param {string} key - The key of the object to retrieve.
-   * @param {Record<string, unknown>} [opts={}] - Additional options for the request.
-   * @param {IT.SSECHeaders} [ssecHeaders] - Server-Side Encryption headers, if any.
-   * @returns A promise that resolves to an object containing the ETag and the object data as an ArrayBuffer or null if not found.
-   */
-  public async getObjectWithETag(
-    key: string,
-    opts: Record<string, unknown> = {},
-    ssecHeaders?: IT.SSECHeaders,
-  ): Promise<{ etag: string | null; data: ArrayBuffer | null }> {
-    const res = await this._signedRequest('GET', key, {
-      query: opts,
-      tolerated: [200, 404, 412, 304],
-      headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    })
-
-    if ([404, 412, 304].includes(res.status)) {
-      return { etag: null, data: null }
-    }
-
-    const etag = res.headers.get(C.HEADER_ETAG)
-    if (!etag) {
-      throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`)
-    }
-    return { etag: U.sanitizeETag(etag), data: await res.arrayBuffer() }
-  }
-
-  /**
    * Get an object as a raw response from the S3-compatible service.
    * This method sends a request to retrieve the specified object and returns the raw response.
    * @param {string} key - The key of the object to retrieve.
@@ -724,54 +626,6 @@ class S3mini {
     })
   }
 
-  /**
-   * Get the content length of an object.
-   * This method sends a HEAD request to retrieve the content length of the specified object.
-   * @param {string} key - The key of the object to retrieve the content length for.
-   * @returns A promise that resolves to the content length of the object in bytes, or 0 if not found.
-   * @throws {Error} If the content length header is not found in the response.
-   */
-  public async getContentLength(
-    key: string,
-    ssecHeaders?: IT.SSECHeaders,
-  ): Promise<number> {
-    try {
-      const res = await this._signedRequest('HEAD', key, {
-        headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-      })
-      const len = res.headers.get(C.HEADER_CONTENT_LENGTH)
-      return len ? +len : 0
-    } catch (err) {
-      throw new Error(
-        `${C.ERROR_PREFIX}Error getting content length for object ${key}: ${String(err)}`,
-      )
-    }
-  }
-
-  /**
-   * Checks if an object exists in the S3-compatible service.
-   * This method sends a HEAD request to check if the specified object exists.
-   * @param {string} key - The key of the object to check.
-   * @param {Record<string, unknown>} [opts={}] - Additional options for the request.
-   * @returns A promise that resolves to true if the object exists, false if not found, or null if ETag mismatch.
-   */
-  public async objectExists(
-    key: string,
-    opts: Record<string, unknown> = {},
-  ): Promise<IT.ExistResponseCode> {
-    const res = await this._signedRequest('HEAD', key, {
-      query: opts,
-      tolerated: [200, 404, 412, 304],
-    })
-
-    if (res.status === 404) {
-      return false // not found
-    }
-    if (res.status === 412 || res.status === 304) {
-      return null // ETag mismatch
-    }
-    return true // found (200)
-  }
 
   /**
    * Retrieves the ETag of an object without downloading its content.
