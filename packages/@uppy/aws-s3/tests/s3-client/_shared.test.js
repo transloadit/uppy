@@ -230,4 +230,34 @@ export const testRunner = (bucket) => {
     expect(abortResult.key).toBe(key)
     expect(abortResult.uploadId).toBe(uploadId)
   })
+
+  it('listParts returns uploaded parts correctly', async () => {
+    const key = 'test-list-parts.bin'
+    const partSize = EIGHT_MB
+
+    const uploadId = await s3client.getMultipartUploadId(key, 'application/octet-stream')
+    expect(uploadId).toBeDefined()
+
+    const part1Data = randomBytes(partSize)
+    const part2Data = randomBytes(partSize)
+
+    const part1Result = await s3client.uploadPart(key, uploadId, part1Data, 1)
+    const part2Result = await s3client.uploadPart(key, uploadId, part2Data, 2)
+
+    const parts = await s3client.listParts(uploadId, key)
+
+    expect(parts).toBeInstanceOf(Array)
+    expect(parts.length).toBe(2)
+
+    // verify part 1
+    expect(parts[0].partNumber).toBe(1)
+    expect(parts[0].etag).toBe(part1Result.etag)
+
+    // verify part 2
+    expect(parts[1].partNumber).toBe(2)
+    expect(parts[1].etag).toBe(part2Result.etag)
+
+    // cleanup abort upload
+    await s3client.abortMultipartUpload(key, uploadId)
+  })
 }

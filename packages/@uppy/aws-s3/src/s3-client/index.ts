@@ -10,4 +10,4 @@ export type {
   S3Config,
   UploadPart,
 } from './types.js'
-export { runInBatches, sanitizeETag } from './utils.js'
+export { sanitizeETag } from './utils.js'
