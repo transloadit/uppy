@@ -242,7 +242,6 @@ class S3mini {
     )
   }
 
-
   /**
    * Uploads an object to the S3-compatible service.
    * @param {string} key - The key/path where the object will be stored.
