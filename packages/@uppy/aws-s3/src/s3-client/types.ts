@@ -81,8 +81,6 @@ export interface XmlMap {
   [key: number]: XmlValue | XmlValue[] // allow numeric keys
 }
 
-
-
 /**
  * Where Buffer is available, e.g. when @types/node is loaded, we want to use it.
  * But it should be excluded in other environments (e.g. Cloudflare).
