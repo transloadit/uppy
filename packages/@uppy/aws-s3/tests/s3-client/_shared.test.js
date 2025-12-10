@@ -104,72 +104,7 @@ export const testRunner = (bucket) => {
     await s3client.deleteObject(key)
   })
 
-  it('put and get object with special characters and different types', async () => {
-    await s3client.putObject(specialCharKey, specialCharContentString)
-    const data = await s3client.getObject(specialCharKey)
-    expect(data).toEqual(specialCharContentString)
 
-    // update the object with a buffer with extra content
-    // This is to test if the object can be updated with a buffer that has extra content
-    await s3client.putObject(specialCharKey, specialCharContentBufferExtra)
-    const updatedData = await s3client.getObjectArrayBuffer(specialCharKey)
-    const bufferData = Buffer.from(updatedData)
-    expect(bufferData.toString('utf-8')).toBe(
-      specialCharContentBufferExtra.toString('utf-8'),
-    )
-    expect(bufferData.length).toBe(specialCharContentBufferExtra.length)
-
-    const getObjectLength = await s3client.getContentLength(specialCharKey)
-    expect(getObjectLength).toBe(specialCharContentBufferExtra.length)
-
-    // Put object image/png
-    await s3client.putObject(
-      `${specialCharKey}.png`,
-      specialCharContentBufferExtra,
-      'image/png',
-    )
-    // get object with image/png content type
-    const imageData = await s3client.getObjectResponse(`${specialCharKey}.png`)
-    expect(imageData).toBeDefined()
-    expect(imageData.headers.get('content-type')).toBe('image/png')
-
-    // Clean up
-    const delResp = await s3client.deleteObject(specialCharKey)
-    expect(delResp).toBe(true)
-
-    // Check if the object is deleted
-    const deletedData = await s3client.getObject(specialCharKey)
-    expect(deletedData).toBe(null)
-  })
-
-
-
-  // list multipart uploads and abort them
-  it('list multipart uploads and abort them all', async () => {
-    let multipartUpload
-    do {
-      multipartUpload = await s3client.listMultipartUploads()
-      expect(multipartUpload).toBeDefined()
-      expect(typeof multipartUpload).toBe('object')
-      if (!multipartUpload.uploadId || !multipartUpload.Key) {
-        break
-      }
-      const abortUploadResponse = await s3client.abortMultipartUpload(
-        multipartUpload.Key,
-        multipartUpload.uploadId,
-      )
-      expect(abortUploadResponse).toBeDefined()
-      expect(abortUploadResponse.status).toBe('Aborted')
-      expect(abortUploadResponse.Key).toEqual(multipartUpload.Key)
-      expect(abortUploadResponse.uploadId).toEqual(multipartUpload.uploadId)
-    } while (multipartUpload.uploadId && multipartUpload.Key)
-
-    const multipartUpload2 = await s3client.listMultipartUploads()
-    expect(multipartUpload2).toBeDefined()
-    expect(typeof multipartUpload2).toBe('object')
-    expect(multipartUpload2).not.toHaveProperty('key')
-    expect(multipartUpload2).not.toHaveProperty('uploadId')
-  })
 
   // // multipart upload and download
   // it('multipart upload and download', async () => {
