@@ -268,22 +268,6 @@ class S3mini {
    * @example
    * const cleanEtag = s3.sanitizeETag('"abc123"'); // Returns: 'abc123'
    */
-  public sanitizeETag(etag: string): string {
-    return U.sanitizeETag(etag)
-  }
-
-  /**
-   * Checks if a bucket exists.
-   * This method sends a request to check if the specified bucket exists in the S3-compatible service.
-   * @returns A promise that resolves to true if the bucket exists, false otherwise.
-   */
-  // ! BUCKET METHOD
-  public async bucketExists(): Promise<boolean> {
-    const res = await this._signedRequest('HEAD', '', {
-      tolerated: [200, 404, 403],
-    })
-    return res.status === 200
-  }
 
   /**
    * Lists objects in the bucket with optional filtering and no pagination.
@@ -300,47 +284,6 @@ class S3mini {
    * // List objects with prefix
    * const photos = await s3.listObjects('/', 'photos/', 100);
    */
-  // ! BUCKET METHOD
-  public async listObjects(
-    delimiter: string = '/',
-    prefix: string = '',
-    maxKeys?: number,
-    opts: Record<string, unknown> = {},
-  ): Promise<IT.ListObject[] | null> {
-    this._checkDelimiter(delimiter)
-    this._checkPrefix(prefix)
-    this._checkOpts(opts)
-
-    const keyPath = delimiter === '/' ? delimiter : U.uriEscape(delimiter)
-    const unlimited = !(maxKeys && maxKeys > 0)
-    let remaining = unlimited ? Infinity : maxKeys
-    let token: string | undefined
-    const all: IT.ListObject[] = []
-
-    do {
-      const batchResult = await this._fetchObjectBatch(
-        keyPath,
-        prefix,
-        remaining,
-        token,
-        opts,
-      )
-
-      if (batchResult === null) {
-        return null // 404 - bucket not found
-      }
-
-      all.push(...batchResult.objects)
-
-      if (!unlimited) {
-        remaining -= batchResult.objects.length
-      }
-
-      token = batchResult.continuationToken
-    } while (token && remaining > 0)
-
-    return all
-  }
 
   private async _fetchObjectBatch(
     keyPath: string,
