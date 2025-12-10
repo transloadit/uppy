@@ -786,32 +786,6 @@ class S3mini {
    *   console.log(`File ETag: ${etag}`);
    * }
    */
-  public async getEtag(
-    key: string,
-    opts: Record<string, unknown> = {},
-    ssecHeaders?: IT.SSECHeaders,
-  ): Promise<string | null> {
-    const res = await this._signedRequest('HEAD', key, {
-      query: opts,
-      tolerated: [200, 304, 404, 412],
-      headers: ssecHeaders ? { ...ssecHeaders } : undefined,
-    })
-
-    if (res.status === 404) {
-      return null
-    }
-
-    if (res.status === 412 || res.status === 304) {
-      return null // ETag mismatch
-    }
-
-    const etag = res.headers.get(C.HEADER_ETAG)
-    if (!etag) {
-      throw new Error(`${C.ERROR_PREFIX}ETag not found in response headers`)
-    }
-
-    return U.sanitizeETag(etag)
-  }
 
   /**
    * Uploads an object to the S3-compatible service.
