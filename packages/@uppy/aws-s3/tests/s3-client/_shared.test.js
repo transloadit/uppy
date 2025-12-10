@@ -212,7 +212,10 @@ export const testRunner = (bucket) => {
 
     // start upload
 
-    const uploadId = await s3client.getMultipartUploadId(key, 'application/octet-stream')
+    const uploadId = await s3client.getMultipartUploadId(
+      key,
+      'application/octet-stream',
+    )
 
     expect(uploadId).toBeDefined()
 
@@ -227,6 +230,4 @@ export const testRunner = (bucket) => {
     expect(abortResult.key).toBe(key)
     expect(abortResult.uploadId).toBe(uploadId)
   })
-
-
 }
