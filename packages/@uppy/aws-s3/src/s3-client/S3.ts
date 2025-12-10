@@ -1,6 +1,6 @@
-import * as C from "./consts.js";
-import type * as IT from "./types.js";
-import * as U from "./utils.js";
+import * as C from './consts.js'
+import type * as IT from './types.js'
+import * as U from './utils.js'
 
 /**
  * S3 class for interacting with S3-compatible object storage services.
@@ -41,101 +41,101 @@ class S3mini {
    * @param {typeof fetch} [config.fetch=globalThis.fetch] - Custom fetch implementation to use for HTTP requests.
    * @throws {TypeError} Will throw an error if required parameters are missing or of incorrect type.
    */
-  readonly endpoint: URL;
-  readonly region: string;
-  readonly requestSizeInBytes: number;
-  readonly requestAbortTimeout?: number;
-  readonly fetch: typeof fetch;
-  readonly signRequest: IT.signRequestFn;
+  readonly endpoint: URL
+  readonly region: string
+  readonly requestSizeInBytes: number
+  readonly requestAbortTimeout?: number
+  readonly fetch: typeof fetch
+  readonly signRequest: IT.signRequestFn
 
   constructor({
     endpoint,
     signRequest,
-    region = "auto",
+    region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
     fetch = globalThis.fetch,
   }: IT.S3Config) {
-    this._validateConstructorParams(endpoint, signRequest);
-    this.endpoint = new URL(this._ensureValidUrl(endpoint));
-    this.signRequest = signRequest;
-    this.region = region;
-    this.requestSizeInBytes = requestSizeInBytes;
-    this.requestAbortTimeout = requestAbortTimeout;
-    this.fetch = fetch;
+    this._validateConstructorParams(endpoint, signRequest)
+    this.endpoint = new URL(this._ensureValidUrl(endpoint))
+    this.signRequest = signRequest
+    this.region = region
+    this.requestSizeInBytes = requestSizeInBytes
+    this.requestAbortTimeout = requestAbortTimeout
+    this.fetch = fetch
   }
 
   private _validateConstructorParams(
     endpoint: string,
-    signRequest: IT.signRequestFn
+    signRequest: IT.signRequestFn,
   ): void {
-    if (typeof endpoint !== "string" || endpoint.trim().length === 0) {
-      throw new TypeError(C.ERROR_ENDPOINT_REQUIRED);
+    if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
+      throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
     }
 
-    if (typeof signRequest !== "function") {
-      throw new TypeError("signRequest is not passed");
+    if (typeof signRequest !== 'function') {
+      throw new TypeError('signRequest is not passed')
     }
   }
 
   private _ensureValidUrl(raw: string): string {
-    const candidate = /^(https?:)?\/\//i.test(raw) ? raw : `https://${raw}`;
+    const candidate = /^(https?:)?\/\//i.test(raw) ? raw : `https://${raw}`
     try {
-      new URL(candidate);
+      new URL(candidate)
 
       // Find the last non-slash character
-      let endIndex = candidate.length;
-      while (endIndex > 0 && candidate[endIndex - 1] === "/") {
-        endIndex--;
+      let endIndex = candidate.length
+      while (endIndex > 0 && candidate[endIndex - 1] === '/') {
+        endIndex--
       }
       return endIndex === candidate.length
         ? candidate
-        : candidate.substring(0, endIndex);
+        : candidate.substring(0, endIndex)
     } catch {
-      const msg = `${C.ERROR_ENDPOINT_FORMAT} But provided: "${raw}"`;
-      throw new TypeError(msg);
+      const msg = `${C.ERROR_ENDPOINT_FORMAT} But provided: "${raw}"`
+      throw new TypeError(msg)
     }
   }
 
   private _checkKey(key: string): void {
-    if (typeof key !== "string" || key.trim().length === 0) {
-      throw new TypeError(C.ERROR_KEY_REQUIRED);
+    if (typeof key !== 'string' || key.trim().length === 0) {
+      throw new TypeError(C.ERROR_KEY_REQUIRED)
     }
   }
 
   private _checkOpts(opts: object): void {
-    if (typeof opts !== "object") {
-      throw new TypeError(`${C.ERROR_PREFIX}opts must be an object`);
+    if (typeof opts !== 'object') {
+      throw new TypeError(`${C.ERROR_PREFIX}opts must be an object`)
     }
   }
 
   private _filterIfHeaders(opts: Record<string, unknown>): {
-    filteredOpts: Record<string, string>;
-    conditionalHeaders: Record<string, unknown>;
+    filteredOpts: Record<string, string>
+    conditionalHeaders: Record<string, unknown>
   } {
-    const filteredOpts: Record<string, string> = {};
-    const conditionalHeaders: Record<string, unknown> = {};
+    const filteredOpts: Record<string, string> = {}
+    const conditionalHeaders: Record<string, unknown> = {}
 
     for (const [key, value] of Object.entries(opts)) {
       if (C.IFHEADERS.has(key.toLowerCase())) {
-        conditionalHeaders[key] = value;
+        conditionalHeaders[key] = value
       } else {
-        filteredOpts[key] = value as string;
+        filteredOpts[key] = value as string
       }
     }
 
-    return { filteredOpts, conditionalHeaders };
+    return { filteredOpts, conditionalHeaders }
   }
 
   private _validateData(data: unknown): BodyInit {
     if (
-      typeof data === "string" ||
+      typeof data === 'string' ||
       data instanceof ArrayBuffer ||
       ArrayBuffer.isView(data)
     ) {
-      return data as BodyInit;
+      return data as BodyInit
     }
-    throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED);
+    throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED)
   }
 
   private _validateUploadPartParams(
@@ -143,19 +143,19 @@ class S3mini {
     uploadId: string,
     data: IT.MaybeBuffer | string,
     partNumber: number,
-    opts: object
+    opts: object,
   ): BodyInit {
-    this._checkKey(key);
-    if (typeof uploadId !== "string" || uploadId.trim().length === 0) {
-      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED);
+    this._checkKey(key)
+    if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
+      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
     if (!Number.isInteger(partNumber) || partNumber <= 0) {
       throw new TypeError(
-        `${C.ERROR_PREFIX}partNumber must be a positive integer`
-      );
+        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
+      )
     }
-    this._checkOpts(opts);
-    return this._validateData(data);
+    this._checkOpts(opts)
+    return this._validateData(data)
   }
 
   private async _signedRequest(
@@ -163,55 +163,55 @@ class S3mini {
     key: string, // ‘’ allowed for bucket‑level ops
     {
       query = {}, // ?query=string
-      body = "", // BodyInit | undefined
+      body = '', // BodyInit | undefined
       headers = {}, // extra/override headers
       tolerated = [], // [200, 404] etc.
       withQuery = false, // append query string to signed URL
     }: {
-      query?: Record<string, unknown>;
-      body?: BodyInit;
+      query?: Record<string, unknown>
+      body?: BodyInit
       headers?:
         | Record<string, string | number | undefined>
         | IT.SSECHeaders
-        | IT.AWSHeaders;
-      tolerated?: number[];
-      withQuery?: boolean;
-    } = {}
+        | IT.AWSHeaders
+      tolerated?: number[]
+      withQuery?: boolean
+    } = {},
   ): Promise<Response> {
-    const { filteredOpts, conditionalHeaders } = ["GET", "HEAD"].includes(
-      method
+    const { filteredOpts, conditionalHeaders } = ['GET', 'HEAD'].includes(
+      method,
     )
       ? this._filterIfHeaders(query)
-      : { filteredOpts: query, conditionalHeaders: {} };
+      : { filteredOpts: query, conditionalHeaders: {} }
 
-    const url = new URL(this.endpoint);
+    const url = new URL(this.endpoint)
 
-    const encodedKey = key ? U.uriResourceEscape(key) : "";
+    const encodedKey = key ? U.uriResourceEscape(key) : ''
 
     if (encodedKey && encodedKey.length > 0) {
       url.pathname =
-        url.pathname === "/"
-          ? `/${encodedKey.replace(/^\/+/, "")}`
-          : `${url.pathname}/${encodedKey.replace(/^\/+/, "")}`;
+        url.pathname === '/'
+          ? `/${encodedKey.replace(/^\/+/, '')}`
+          : `${url.pathname}/${encodedKey.replace(/^\/+/, '')}`
     }
 
     // build query string
     if (Object.keys(query).length > 0) {
-      withQuery = true;
+      withQuery = true
     }
 
     const filteredOptsStrings = Object.fromEntries(
-      Object.entries(filteredOpts).map(([k, v]) => [k, String(v)])
-    ) as Record<string, string>;
+      Object.entries(filteredOpts).map(([k, v]) => [k, String(v)]),
+    ) as Record<string, string>
 
     const finalUrl =
       withQuery && Object.keys(filteredOpts).length
         ? `${url}?${new URLSearchParams(filteredOptsStrings)}`
-        : url;
+        : url
 
     const baseHeaders: Record<string, string> = {
       [C.HEADER_AMZ_CONTENT_SHA256]: C.UNSIGNED_PAYLOAD,
-    };
+    }
 
     // convert all header values to strings and merge
     for (const [k, v] of Object.entries({
@@ -219,7 +219,7 @@ class S3mini {
       ...conditionalHeaders,
     })) {
       if (v !== undefined) {
-        baseHeaders[k] = String(v);
+        baseHeaders[k] = String(v)
       }
     }
 
@@ -228,15 +228,15 @@ class S3mini {
       method,
       url: finalUrl.toString(),
       headers: baseHeaders,
-    });
+    })
 
     return this._sendRequest(
       finalUrl.toString(),
       method,
       signedHeaders,
       body,
-      tolerated
-    );
+      tolerated,
+    )
   }
 
   /**
@@ -261,9 +261,9 @@ class S3mini {
     data: string | IT.MaybeBuffer,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     ssecHeaders?: IT.SSECHeaders,
-    additionalHeaders?: IT.AWSHeaders
+    additionalHeaders?: IT.AWSHeaders,
   ): Promise<Response> {
-    return this._signedRequest("PUT", key, {
+    return this._signedRequest('PUT', key, {
       body: this._validateData(data),
       headers: {
         [C.HEADER_CONTENT_LENGTH]: U.getByteSize(data),
@@ -272,7 +272,7 @@ class S3mini {
         ...ssecHeaders,
       },
       tolerated: [200],
-    });
+    })
   }
 
   /**
@@ -290,43 +290,43 @@ class S3mini {
   public async getMultipartUploadId(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-    ssecHeaders?: IT.SSECHeaders
+    ssecHeaders?: IT.SSECHeaders,
   ): Promise<string> {
-    this._checkKey(key);
-    if (typeof fileType !== "string") {
-      throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`);
+    this._checkKey(key)
+    if (typeof fileType !== 'string') {
+      throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const query = { uploads: "" };
-    const headers = { [C.HEADER_CONTENT_TYPE]: fileType, ...ssecHeaders };
+    const query = { uploads: '' }
+    const headers = { [C.HEADER_CONTENT_TYPE]: fileType, ...ssecHeaders }
 
-    const res = await this._signedRequest("POST", key, {
+    const res = await this._signedRequest('POST', key, {
       query,
       headers,
       withQuery: true,
-    });
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
+    })
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
 
-    if (parsed && typeof parsed === "object") {
+    if (parsed && typeof parsed === 'object') {
       // Check for both cases of InitiateMultipartUploadResult
       const uploadResult =
         (parsed.initiateMultipartUploadResult as Record<string, unknown>) ||
-        (parsed.InitiateMultipartUploadResult as Record<string, unknown>);
+        (parsed.InitiateMultipartUploadResult as Record<string, unknown>)
 
-      if (uploadResult && typeof uploadResult === "object") {
+      if (uploadResult && typeof uploadResult === 'object') {
         // Check for both cases of uploadId
-        const uploadId = uploadResult.uploadId || uploadResult.UploadId;
+        const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
-        if (uploadId && typeof uploadId === "string") {
-          return uploadId;
+        if (uploadId && typeof uploadId === 'string') {
+          return uploadId
         }
       }
     }
 
     throw new Error(
       `${C.ERROR_PREFIX}Failed to create multipart upload: ${JSON.stringify(
-        parsed
-      )}`
-    );
+        parsed,
+      )}`,
+    )
   }
 
   /**
@@ -354,74 +354,74 @@ class S3mini {
     data: IT.MaybeBuffer | string,
     partNumber: number,
     opts: Record<string, unknown> = {},
-    ssecHeaders?: IT.SSECHeaders
+    ssecHeaders?: IT.SSECHeaders,
   ): Promise<IT.UploadPart> {
     const body = this._validateUploadPartParams(
       key,
       uploadId,
       data,
       partNumber,
-      opts
-    );
+      opts,
+    )
 
-    const query = { uploadId, partNumber, ...opts };
-    const res = await this._signedRequest("PUT", key, {
+    const query = { uploadId, partNumber, ...opts }
+    const res = await this._signedRequest('PUT', key, {
       query,
       body,
       headers: {
         [C.HEADER_CONTENT_LENGTH]: U.getByteSize(data),
         ...ssecHeaders,
       },
-    });
+    })
 
-    return { partNumber, etag: U.sanitizeETag(res.headers.get("etag") || "") };
+    return { partNumber, etag: U.sanitizeETag(res.headers.get('etag') || '') }
   }
 
   // takes in uploadID and returns the parts which were uploaded
   public async listParts(
     uploadId: string,
-    key: string
+    key: string,
   ): Promise<IT.UploadPart[]> {
     // check key
     // build query
     // sign request
     // parse result
 
-    this._checkKey(key);
+    this._checkKey(key)
     if (!uploadId) {
-      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED);
+      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const query = { uploadId };
+    const query = { uploadId }
 
-    const res = await this._signedRequest("GET", key, {
+    const res = await this._signedRequest('GET', key, {
       query,
       withQuery: true,
-    });
+    })
 
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
 
     const result = (parsed.listPartsResult ||
       parsed.ListPartsResult ||
-      parsed) as Record<string, unknown>;
+      parsed) as Record<string, unknown>
 
-    if (result && typeof result === "object") {
-      const parts = result.Part || result.part || [];
-      const partsArray = Array.isArray(parts) ? parts : [parts];
+    if (result && typeof result === 'object') {
+      const parts = result.Part || result.part || []
+      const partsArray = Array.isArray(parts) ? parts : [parts]
 
       return partsArray
         .filter(
           (p): p is Record<string, unknown> =>
             p != null &&
-            typeof p === "object" &&
-            "PartNumber" in p &&
-            "ETag" in p
+            typeof p === 'object' &&
+            'PartNumber' in p &&
+            'ETag' in p,
         )
         .map((p) => ({
           partNumber: parseInt(String(p.PartNumber), 10),
           etag: U.sanitizeETag(String(p.ETag)),
-        }));
+        }))
     }
-    return [];
+    return []
   }
 
   /**
@@ -445,51 +445,51 @@ class S3mini {
   public async completeMultipartUpload(
     key: string,
     uploadId: string,
-    parts: Array<IT.UploadPart>
+    parts: Array<IT.UploadPart>,
   ): Promise<IT.CompleteMultipartUploadResult> {
-    const query = { uploadId };
-    const xmlBody = this._buildCompleteMultipartUploadXml(parts);
+    const query = { uploadId }
+    const xmlBody = this._buildCompleteMultipartUploadXml(parts)
     const headers = {
       [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
       [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
-    };
+    }
 
-    const res = await this._signedRequest("POST", key, {
+    const res = await this._signedRequest('POST', key, {
       query,
       body: xmlBody,
       headers,
       withQuery: true,
-    });
+    })
 
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
-    if (parsed && typeof parsed === "object") {
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+    if (parsed && typeof parsed === 'object') {
       // Check for both cases
       const result =
         parsed.completeMultipartUploadResult ||
         parsed.CompleteMultipartUploadResult ||
-        parsed;
+        parsed
 
-      if (result && typeof result === "object") {
-        const resultObj = result as Record<string, unknown>;
+      if (result && typeof result === 'object') {
+        const resultObj = result as Record<string, unknown>
 
         // Handle ETag in all its variations
-        const etag = resultObj.ETag || resultObj.eTag || resultObj.etag;
-        if (etag && typeof etag === "string") {
+        const etag = resultObj.ETag || resultObj.eTag || resultObj.etag
+        if (etag && typeof etag === 'string') {
           return {
             ...resultObj,
             etag: U.sanitizeETag(etag),
-          } as IT.CompleteMultipartUploadResult;
+          } as IT.CompleteMultipartUploadResult
         }
 
-        return result as IT.CompleteMultipartUploadResult;
+        return result as IT.CompleteMultipartUploadResult
       }
     }
 
     throw new Error(
       `${C.ERROR_PREFIX}Failed to complete multipart upload: ${JSON.stringify(
-        parsed
-      )}`
-    );
+        parsed,
+      )}`,
+    )
   }
 
   /**
@@ -511,50 +511,50 @@ class S3mini {
   public async abortMultipartUpload(
     key: string,
     uploadId: string,
-    ssecHeaders?: IT.SSECHeaders
+    ssecHeaders?: IT.SSECHeaders,
   ): Promise<object> {
-    this._checkKey(key);
+    this._checkKey(key)
     if (!uploadId) {
-      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED);
+      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const query = { uploadId };
+    const query = { uploadId }
     const headers = {
       [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
       ...(ssecHeaders ? { ...ssecHeaders } : {}),
-    };
+    }
 
-    const res = await this._signedRequest("DELETE", key, {
+    const res = await this._signedRequest('DELETE', key, {
       query,
       headers,
       withQuery: true,
-    });
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>;
+    })
+    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (
       parsed &&
-      "error" in parsed &&
-      typeof parsed.error === "object" &&
+      'error' in parsed &&
+      typeof parsed.error === 'object' &&
       parsed.error !== null &&
-      "message" in parsed.error
+      'message' in parsed.error
     ) {
       throw new Error(
         `${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(
-          parsed.error.message
-        )}`
-      );
+          parsed.error.message,
+        )}`,
+      )
     }
-    return { status: "Aborted", key, uploadId, response: parsed };
+    return { status: 'Aborted', key, uploadId, response: parsed }
   }
 
   private _buildCompleteMultipartUploadXml(
-    parts: Array<IT.UploadPart>
+    parts: Array<IT.UploadPart>,
   ): string {
-    let xml = "<CompleteMultipartUpload>";
+    let xml = '<CompleteMultipartUpload>'
     for (const part of parts) {
-      xml += `<Part><PartNumber>${part.partNumber}</PartNumber><ETag>${part.etag}</ETag></Part>`;
+      xml += `<Part><PartNumber>${part.partNumber}</PartNumber><ETag>${part.etag}</ETag></Part>`
     }
-    xml += "</CompleteMultipartUpload>";
-    return xml;
+    xml += '</CompleteMultipartUpload>'
+    return xml
   }
 
   /**
@@ -564,10 +564,10 @@ class S3mini {
    * @returns A promise that resolves to true if the object was deleted successfully, false otherwise.
    */
   public async deleteObject(key: string): Promise<boolean> {
-    const res = await this._signedRequest("DELETE", key, {
+    const res = await this._signedRequest('DELETE', key, {
       tolerated: [200, 204],
-    });
-    return res.status === 200 || res.status === 204;
+    })
+    return res.status === 200 || res.status === 204
   }
 
   private async _sendRequest(
@@ -575,79 +575,79 @@ class S3mini {
     method: IT.HttpMethod,
     headers: Record<string, string>,
     body?: BodyInit,
-    toleratedStatusCodes: number[] = []
+    toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
     try {
       const res = await this.fetch(url, {
         method,
         headers,
-        body: ["GET", "HEAD"].includes(method) ? undefined : body,
+        body: ['GET', 'HEAD'].includes(method) ? undefined : body,
         signal: this.requestAbortTimeout
           ? AbortSignal.timeout(this.requestAbortTimeout)
           : undefined,
-      });
+      })
       if (res.ok || toleratedStatusCodes.includes(res.status)) {
-        return res;
+        return res
       }
-      await this._handleErrorResponse(res);
-      return res;
+      await this._handleErrorResponse(res)
+      return res
     } catch (err: unknown) {
-      const code = U.extractErrCode(err);
+      const code = U.extractErrCode(err)
       if (
         code &&
-        ["ENOTFOUND", "EAI_AGAIN", "ETIMEDOUT", "ECONNREFUSED"].includes(code)
+        ['ENOTFOUND', 'EAI_AGAIN', 'ETIMEDOUT', 'ECONNREFUSED'].includes(code)
       ) {
-        throw new U.S3NetworkError(`S3 network error: ${code}`, code, err);
+        throw new U.S3NetworkError(`S3 network error: ${code}`, code, err)
       }
-      throw err;
+      throw err
     }
   }
 
   private _parseErrorXml(
     headers: Headers,
-    body: string
+    body: string,
   ): { svcCode?: string; errorMessage?: string } {
-    if (headers.get("content-type") !== "application/xml") {
-      return {};
+    if (headers.get('content-type') !== 'application/xml') {
+      return {}
     }
-    const parsedBody = U.parseXml(body);
+    const parsedBody = U.parseXml(body)
     if (
       !parsedBody ||
-      typeof parsedBody !== "object" ||
-      !("Error" in parsedBody) ||
+      typeof parsedBody !== 'object' ||
+      !('Error' in parsedBody) ||
       !parsedBody.Error ||
-      typeof parsedBody.Error !== "object"
+      typeof parsedBody.Error !== 'object'
     ) {
-      return {};
+      return {}
     }
-    const error = parsedBody.Error;
+    const error = parsedBody.Error
     return {
       svcCode:
-        "Code" in error && typeof error.Code === "string"
+        'Code' in error && typeof error.Code === 'string'
           ? error.Code
           : undefined,
       errorMessage:
-        "Message" in error && typeof error.Message === "string"
+        'Message' in error && typeof error.Message === 'string'
           ? error.Message
           : undefined,
-    };
+    }
   }
 
   private async _handleErrorResponse(res: Response): Promise<void> {
-    const errorBody = await res.text();
-    const parsedErrorBody = this._parseErrorXml(res.headers, errorBody);
+    const errorBody = await res.text()
+    const parsedErrorBody = this._parseErrorXml(res.headers, errorBody)
     const svcCode =
-      res.headers.get("x-amz-error-code") ??
+      res.headers.get('x-amz-error-code') ??
       parsedErrorBody.svcCode ??
-      "Unknown";
+      'Unknown'
     throw new U.S3ServiceError(
       `S3 returned ${res.status} – ${svcCode}`,
       res.status,
       svcCode,
-      errorBody
-    );
+      errorBody,
+    )
   }
 }
 
-export { S3mini };
-export default S3mini;
+export { S3mini }
+export default S3mini

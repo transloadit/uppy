@@ -235,7 +235,10 @@ export const testRunner = (bucket) => {
     const key = 'test-list-parts.bin'
     const partSize = EIGHT_MB
 
-    const uploadId = await s3client.getMultipartUploadId(key, 'application/octet-stream')
+    const uploadId = await s3client.getMultipartUploadId(
+      key,
+      'application/octet-stream',
+    )
     expect(uploadId).toBeDefined()
 
     const part1Data = randomBytes(partSize)
