@@ -206,4 +206,27 @@ export const testRunner = (bucket) => {
 
     await s3client.deleteObject(key_bin)
   })
+
+  it('abortMultipartUpload cancels upload successfully', async () => {
+    const key = 'test-abort-multipart.bin'
+
+    // start upload
+
+    const uploadId = await s3client.getMultipartUploadId(key, 'application/octet-stream')
+
+    expect(uploadId).toBeDefined()
+
+    const partData = randomBytes(EIGHT_MB)
+    await s3client.uploadPart(key, uploadId, partData, 1)
+
+    // abort
+    const abortResult = await s3client.abortMultipartUpload(key, uploadId)
+
+    expect(abortResult).toBeDefined()
+    expect(abortResult.status).toBe('Aborted')
+    expect(abortResult.key).toBe(key)
+    expect(abortResult.uploadId).toBe(uploadId)
+  })
+
+
 }
