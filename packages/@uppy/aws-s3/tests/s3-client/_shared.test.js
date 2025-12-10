@@ -48,12 +48,7 @@ const key = 'first-test-object.txt'
 const key_list_parts = 'test-list-parts.bin'
 const key_abort_multipart = 'test-abort-multipart.bin'
 
-const FILE_KEYS = [
-  key,
-  key_bin,
-  key_list_parts,
-  key_abort_multipart,
-]
+const FILE_KEYS = [key, key_bin, key_list_parts, key_abort_multipart]
 
 export const cleanupTestBeforeAll = (s3client) => {
   beforeAll(async () => {
@@ -222,7 +217,10 @@ export const testRunner = (bucket) => {
     await s3client.uploadPart(key_abort_multipart, uploadId, partData, 1)
 
     // abort
-    const abortResult = await s3client.abortMultipartUpload(key_abort_multipart, uploadId)
+    const abortResult = await s3client.abortMultipartUpload(
+      key_abort_multipart,
+      uploadId,
+    )
 
     expect(abortResult).toBeDefined()
     expect(abortResult.status).toBe('Aborted')
@@ -242,8 +240,18 @@ export const testRunner = (bucket) => {
     const part1Data = randomBytes(partSize)
     const part2Data = randomBytes(partSize)
 
-    const part1Result = await s3client.uploadPart(key_list_parts, uploadId, part1Data, 1)
-    const part2Result = await s3client.uploadPart(key_list_parts, uploadId, part2Data, 2)
+    const part1Result = await s3client.uploadPart(
+      key_list_parts,
+      uploadId,
+      part1Data,
+      1,
+    )
+    const part2Result = await s3client.uploadPart(
+      key_list_parts,
+      uploadId,
+      part2Data,
+      2,
+    )
 
     const parts = await s3client.listParts(uploadId, key_list_parts)
 
