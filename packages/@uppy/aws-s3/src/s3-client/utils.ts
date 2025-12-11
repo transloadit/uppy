@@ -11,7 +11,7 @@ export const getByteSize = (data: unknown): number => {
   if (data instanceof ArrayBuffer) {
     return data.byteLength
   }
-  if (ArrayBuffer.isView(data)){
+  if (ArrayBuffer.isView(data)) {
     return data.byteLength
   }
   if (data instanceof Blob) {
