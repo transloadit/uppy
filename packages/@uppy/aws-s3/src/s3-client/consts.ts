@@ -36,15 +36,8 @@ export const HEADER_LAST_MODIFIED = 'last-modified'
 
 // Error messages
 export const ERROR_PREFIX = '[s3mini] '
-export const ERROR_ACCESS_KEY_REQUIRED = `${ERROR_PREFIX}accessKeyId must be a non-empty string`
-export const ERROR_SECRET_KEY_REQUIRED = `${ERROR_PREFIX}secretAccessKey must be a non-empty string`
 export const ERROR_ENDPOINT_REQUIRED = `${ERROR_PREFIX}endpoint must be a non-empty string`
 export const ERROR_ENDPOINT_FORMAT = `${ERROR_PREFIX}endpoint must be a valid URL. Expected format: https://<host>[:port][/base-path]`
 export const ERROR_KEY_REQUIRED = `${ERROR_PREFIX}key must be a non-empty string`
 export const ERROR_UPLOAD_ID_REQUIRED = `${ERROR_PREFIX}uploadId must be a non-empty string`
-export const ERROR_PARTS_REQUIRED = `${ERROR_PREFIX}parts must be a non-empty array`
-export const ERROR_INVALID_PART = `${ERROR_PREFIX}Each part must have a partNumber (number) and ETag (string)`
 export const ERROR_DATA_BUFFER_REQUIRED = `${ERROR_PREFIX}data must be a Buffer or string`
-export const ERROR_PREFIX_TYPE = `${ERROR_PREFIX}prefix must be a string`
-export const ERROR_MAX_KEYS_TYPE = `${ERROR_PREFIX}maxKeys must be a positive integer`
-export const ERROR_DELIMITER_REQUIRED = `${ERROR_PREFIX}delimiter must be a string`

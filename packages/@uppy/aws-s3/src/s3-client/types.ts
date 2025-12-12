@@ -1,13 +1,13 @@
-export type singableRequest = {
+export type signableRequest = {
   method: string
   url: string
   headers: Record<string, string>
   body?: BodyInit | null
 }
 
-export type singedHeaders = Record<string, string>
+export type signedHeaders = Record<string, string>
 
-export type signRequestFn = (request: singableRequest) => Promise<singedHeaders>
+export type signRequestFn = (request: signableRequest) => Promise<signedHeaders>
 
 export interface S3Config {
   endpoint: string
@@ -82,13 +82,7 @@ export interface XmlMap {
 }
 
 /**
- * Where Buffer is available, e.g. when @types/node is loaded, we want to use it.
- * But it should be excluded in other environments (e.g. Cloudflare).
+ * Binary data types supported in browser environments.
+ * Use ArrayBuffer or Uint8Array - Buffer is not available in browsers.
  */
-export type MaybeBuffer = typeof globalThis extends { Buffer?: infer B }
-  ? B extends new (
-      ...a: unknown[]
-    ) => unknown
-    ? InstanceType<B>
-    : ArrayBuffer | Uint8Array
-  : ArrayBuffer | Uint8Array
+export type BinaryData = ArrayBuffer | Uint8Array

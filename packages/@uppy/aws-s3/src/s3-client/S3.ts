@@ -143,7 +143,7 @@ class S3mini {
   private _validateUploadPartParams(
     key: string,
     uploadId: string,
-    data: IT.MaybeBuffer | string,
+    data: IT.BinaryData | string,
     partNumber: number,
     opts: object,
   ): BodyInit {
@@ -225,7 +225,7 @@ class S3mini {
       }
     }
 
-    // call the singedRequest callback
+    // call the signedRequest callback
     const signedHeaders = await this.signRequest({
       method,
       url: finalUrl.toString(),
@@ -260,7 +260,7 @@ class S3mini {
    */
   public async putObject(
     key: string,
-    data: string | IT.MaybeBuffer,
+    data: string | IT.BinaryData,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     ssecHeaders?: IT.SSECHeaders,
     additionalHeaders?: IT.AWSHeaders,
@@ -353,7 +353,7 @@ class S3mini {
   public async uploadPart(
     key: string,
     uploadId: string,
-    data: IT.MaybeBuffer | string,
+    data: IT.BinaryData | string,
     partNumber: number,
     opts: Record<string, unknown> = {},
     ssecHeaders?: IT.SSECHeaders,
