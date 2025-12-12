@@ -196,7 +196,10 @@ export class TaskQueue {
       'abort',
       () => {
         if (this.#heap.remove(queuedTask as QueuedTask<unknown>)) {
-          reject(controller.signal.reason ?? new DOMException('Aborted', 'AbortError'))
+          reject(
+            controller.signal.reason ??
+              new DOMException('Aborted', 'AbortError'),
+          )
         }
       },
       { once: true },
@@ -322,7 +325,8 @@ export class TaskQueue {
   }
 
   set concurrency(value: number) {
-    this.#concurrency = typeof value !== 'number' || value === 0 ? Infinity : value
+    this.#concurrency =
+      typeof value !== 'number' || value === 0 ? Infinity : value
     // If concurrency increased, try to start more tasks
     if (!this.#paused) {
       const available = this.#concurrency - this.#running
@@ -362,4 +366,3 @@ export class TaskQueue {
     }
   }
 }
-
