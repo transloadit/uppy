@@ -3,44 +3,20 @@ import type * as IT from './types.js'
 import * as U from './utils.js'
 
 /**
- * S3 class for interacting with S3-compatible object storage services.
- * This class provides methods for common S3 operations such as uploading, downloading,
- * and deleting objects, as well as multipart uploads.
+ * S3 client for browser-compatible interaction with S3-compatible storage.
+ * Supports simple uploads, multipart uploads, and object deletion.
  *
- * @class
  * @example
- * const s3 = new CoreS3({
- *   accessKeyId: 'your-access-key',
- *   secretAccessKey: 'your-secret-key',
- *   endpoint: 'https://your-s3-endpoint.com/bucket-name',
- *   region: 'auto' // by default is auto
+ * const s3 = new S3mini({
+ *   endpoint: 'https://s3.amazonaws.com/my-bucket',
+ *   signRequest: async ({ method, url, headers }) => {
+ *     return await fetchSignedHeaders(method, url, headers);
+ *   },
  * });
  *
- * // Upload a file
- * await s3.putObject('example.txt', 'Hello, World!');
- *
- * // Download a file
- * const content = await s3.getObject('example.txt');
- *
- * // Delete a file
- * await s3.deleteObject('example.txt');
+ * await s3.putObject('file.txt', 'Hello, World!');
  */
 class S3mini {
-  /**
-   * Creates an instance of the S3 class.
-   *
-   * @constructor
-   * @param {Object} config - Configuration options for the S3 instance.
-   * @param {string} config.accessKeyId - The access key ID for authentication.
-   * @param {string} config.secretAccessKey - The secret access key for authentication.
-   * @param {string} config.endpoint - The endpoint URL of the S3-compatible service.
-   * @param {string} [config.region='auto'] - The region of the S3 service.
-   * @param {number} [config.requestSizeInBytes=8388608] - The request size of a single request in bytes (AWS S3 is 8MB).
-   * @param {number} [config.requestAbortTimeout=undefined] - The timeout in milliseconds after which a request should be aborted (careful on streamed requests).
-   * @param {Object} [config.logger=null] - A logger object with methods like info, warn, error.
-   * @param {typeof fetch} [config.fetch=globalThis.fetch] - Custom fetch implementation to use for HTTP requests.
-   * @throws {TypeError} Will throw an error if required parameters are missing or of incorrect type.
-   */
   readonly endpoint: URL
   readonly region: string
   readonly requestSizeInBytes: number
@@ -241,23 +217,7 @@ class S3mini {
     )
   }
 
-  /**
-   * Uploads an object to the S3-compatible service.
-   * @param {string} key - The key/path where the object will be stored.
-   * @param {string | Buffer} data - The data to upload (string or Buffer).
-   * @param {string} [fileType='application/octet-stream'] - The MIME type of the file.
-   * @param {IT.SSECHeaders} [ssecHeaders] - Server-Side Encryption headers, if any.
-   * @param {IT.AWSHeaders} [additionalHeaders] - Additional x-amz-* headers specific to this request, if any.
-   * @returns {Promise<Response>} A promise that resolves to the Response object from the upload request.
-   * @throws {TypeError} If data is not a string or Buffer.
-   * @example
-   * // Upload text file
-   * await s3.putObject('hello.txt', 'Hello, World!', 'text/plain');
-   *
-   * // Upload binary data
-   * const buffer = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
-   * await s3.putObject('image.png', buffer, 'image/png');
-   */
+  /** Uploads an object to the S3-compatible service. */
   public async putObject(
     key: string,
     data: string | IT.BinaryData,
@@ -277,18 +237,7 @@ class S3mini {
     })
   }
 
-  /**
-   * Initiates a multipart upload and returns the upload ID.
-   * @param {string} key - The key/path where the object will be stored.
-   * @param {string} [fileType='application/octet-stream'] - The MIME type of the file.
-   * @param {IT.SSECHeaders?} [ssecHeaders] - Server-Side Encryption headers, if any.
-   * @returns {Promise<string>} A promise that resolves to the upload ID for the multipart upload.
-   * @throws {TypeError} If key is invalid or fileType is not a string.
-   * @throws {Error} If the multipart upload fails to initialize.
-   * @example
-   * const uploadId = await s3.getMultipartUploadId('large-file.zip', 'application/zip');
-   * console.log(`Started multipart upload: ${uploadId}`);
-   */
+  /** Initiates a multipart upload and returns the upload ID. */
   public async getMultipartUploadId(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
@@ -331,25 +280,7 @@ class S3mini {
     )
   }
 
-  /**
-   * Uploads a part in a multipart upload.
-   * @param {string} key - The key of the object being uploaded.
-   * @param {string} uploadId - The upload ID from getMultipartUploadId.
-   * @param {Buffer | string} data - The data for this part.
-   * @param {number} partNumber - The part number (must be between 1 and 10,000).
-   * @param {Record<string, unknown>} [opts={}] - Additional options for the request.
-   * @param {IT.SSECHeaders} [ssecHeaders] - Server-Side Encryption headers, if any.
-   * @returns {Promise<IT.UploadPart>} A promise that resolves to an object containing the partNumber and etag.
-   * @throws {TypeError} If any parameter is invalid.
-   * @example
-   * const part = await s3.uploadPart(
-   *   'large-file.zip',
-   *   uploadId,
-   *   partData,
-   *   1
-   * );
-   * console.log(`Part ${part.partNumber} uploaded with ETag: ${part.etag}`);
-   */
+  /** Uploads a part in a multipart upload. Returns the part number and ETag. */
   public async uploadPart(
     key: string,
     uploadId: string,
@@ -379,7 +310,7 @@ class S3mini {
     return { partNumber, etag: U.sanitizeETag(res.headers.get('etag') || '') }
   }
 
-  // takes in uploadID and returns the parts which were uploaded
+  /** Lists uploaded parts for a multipart upload. */
   public async listParts(
     uploadId: string,
     key: string,
@@ -420,24 +351,7 @@ class S3mini {
     return []
   }
 
-  /**
-   * Completes a multipart upload by combining all uploaded parts.
-   * @param {string} key - The key of the object being uploaded.
-   * @param {string} uploadId - The upload ID from getMultipartUploadId.
-   * @param {Array<IT.UploadPart>} parts - Array of uploaded parts with partNumber and etag.
-   * @returns {Promise<IT.CompleteMultipartUploadResult>} A promise that resolves to the completion result containing the final ETag.
-   * @throws {Error} If the multipart upload fails to complete.
-   * @example
-   * const result = await s3.completeMultipartUpload(
-   *   'large-file.zip',
-   *   uploadId,
-   *   [
-   *     { partNumber: 1, etag: 'abc123' },
-   *     { partNumber: 2, etag: 'def456' }
-   *   ]
-   * );
-   * console.log(`Upload completed with ETag: ${result.etag}`);
-   */
+  /** Completes a multipart upload by combining all uploaded parts. */
   public async completeMultipartUpload(
     key: string,
     uploadId: string,
@@ -488,22 +402,7 @@ class S3mini {
     )
   }
 
-  /**
-   * Aborts a multipart upload and removes all uploaded parts.
-   * @param {string} key - The key of the object being uploaded.
-   * @param {string} uploadId - The upload ID to abort.
-   * @param {IT.SSECHeaders} [ssecHeaders] - Server-Side Encryption headers, if any.
-   * @returns {Promise<object>} A promise that resolves to an object containing the abort status and details.
-   * @throws {TypeError} If key or uploadId is invalid.
-   * @throws {Error} If the abort operation fails.
-   * @example
-   * try {
-   *   const result = await s3.abortMultipartUpload('large-file.zip', uploadId);
-   *   console.log('Upload aborted:', result.status);
-   * } catch (error) {
-   *   console.error('Failed to abort upload:', error);
-   * }
-   */
+  /** Aborts a multipart upload and removes all uploaded parts. */
   public async abortMultipartUpload(
     key: string,
     uploadId: string,
@@ -553,12 +452,7 @@ class S3mini {
     return xml
   }
 
-  /**
-   * Deletes an object from the bucket.
-   * This method sends a request to delete the specified object from the bucket.
-   * @param {string} key - The key of the object to delete.
-   * @returns A promise that resolves to true if the object was deleted successfully, false otherwise.
-   */
+  /** Deletes an object from the bucket. Returns true on success. */
   public async deleteObject(key: string): Promise<boolean> {
     const res = await this._signedRequest('DELETE', key, {
       tolerated: [200, 204],
