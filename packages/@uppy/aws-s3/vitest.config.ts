@@ -9,7 +9,8 @@ export default defineConfig({
       {
         test: {
           name: 's3-client-browser',
-          include: ['tests/**/*.test.{js,ts}'],          exclude: ['tests/s3-client/_shared.test.js'],
+          include: ['tests/**/*.test.{js,ts}'],
+          exclude: ['tests/s3-client/_shared.test.js'],
           browser: {
             enabled: true,
             provider: 'playwright',

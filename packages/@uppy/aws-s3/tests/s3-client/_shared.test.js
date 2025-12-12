@@ -1,6 +1,6 @@
-import { randomBytes } from '../test-utils/browser-crypto.js'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/index.js'
+import { randomBytes } from '../test-utils/browser-crypto.js'
 import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
 
 let _providerName
