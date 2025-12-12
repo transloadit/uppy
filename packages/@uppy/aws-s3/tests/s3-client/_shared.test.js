@@ -6,7 +6,7 @@ import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
 let _providerName
 
 export const beforeRun = (raw, name, providerSpecific) => {
-  if (!raw || raw === null) {
+  if (!raw) {
     console.error(
       'No credentials found. Please set the BUCKET_ENV_ environment variables.',
     )
