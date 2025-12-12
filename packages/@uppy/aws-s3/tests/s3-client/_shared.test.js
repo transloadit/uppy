@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto'
+import { randomBytes } from '../test-utils/browser-crypto.js'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/index.js'
 import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
@@ -93,7 +93,7 @@ export const testRunner = (bucket) => {
   })
 
   it('putObject handles binary data', async () => {
-    const binaryData = Buffer.alloc(6, 0xff)
+    const binaryData = new Uint8Array(6).fill(0xff)
 
     const response = await s3client.putObject(
       key,

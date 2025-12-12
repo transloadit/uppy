@@ -62,7 +62,9 @@ class S3mini {
     this.region = region
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
-    this.fetch = fetch
+    // Bind fetch to globalThis to preserve correct 'this' context in browsers
+    // Without this, calling this.fetch() throws "Illegal invocation"
+    this.fetch = fetch.bind(globalThis)
   }
 
   private _validateConstructorParams(

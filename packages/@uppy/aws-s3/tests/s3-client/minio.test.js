@@ -1,16 +1,22 @@
-import { createHash } from 'node:crypto'
-import * as dotenv from 'dotenv'
-import { expect, it, vi } from 'vitest'
+import { sha1Base64 } from '../test-utils/browser-crypto.js'
+import { expect, inject, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.js'
 import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
 import { beforeRun, cleanupTestBeforeAll } from './_shared.test.js'
 
-dotenv.config()
-
 const name = 'minio'
-const bucketName = `BUCKET_ENV_${name.toUpperCase()}`
 
-const raw = process.env[bucketName] ? process.env[bucketName].split(',') : null
+// Get bucket configs from globalSetup via Vitest inject
+const bucketConfigs = inject('bucketConfigs') || []
+const raw = bucketConfigs.find((c) => c.provider === name)
+  ? [
+      bucketConfigs.find((c) => c.provider === name).provider,
+      bucketConfigs.find((c) => c.provider === name).accessKeyId,
+      bucketConfigs.find((c) => c.provider === name).secretAccessKey,
+      bucketConfigs.find((c) => c.provider === name).endpoint,
+      bucketConfigs.find((c) => c.provider === name).region,
+    ]
+  : null
 
 const minioSpecific = (bucket) => {
   vi.setConfig({ testTimeout: 120_000 })
@@ -30,12 +36,8 @@ const minioSpecific = (bucket) => {
   cleanupTestBeforeAll(s3client)
 
   it('put object with valid x-amz-checksum-sha1 header', async () => {
-    const fileContents = Buffer.from('Some file contents.', 'utf-8')
-    const hasher = createHash('sha1')
-    hasher.setEncoding('base64')
-    hasher.write(fileContents)
-    hasher.end()
-    const fileHash = hasher.read()
+    const fileContents = new TextEncoder().encode('Some file contents.')
+    const fileHash = await sha1Base64(fileContents)
 
     const result = await s3client.putObject(
       'validated-file-one.txt',
@@ -52,13 +54,12 @@ const minioSpecific = (bucket) => {
   })
 
   it('put object with invalid x-amz-checksum-sha1', async () => {
-    const fileContents = Buffer.from('Some file contents.', 'utf-8')
-    const hasher = createHash('sha1')
-    hasher.setEncoding('base64')
-    hasher.write(fileContents)
-    hasher.write('Make the hash faulty.')
-    hasher.end()
-    const fileHash = hasher.read()
+    const fileContents = new TextEncoder().encode('Some file contents.')
+    // Hash different content to create mismatch
+    const wrongContents = new TextEncoder().encode(
+      'Some file contents.Make the hash faulty.',
+    )
+    const fileHash = await sha1Base64(wrongContents)
 
     expect.assertions(2)
     try {

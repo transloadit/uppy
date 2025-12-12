@@ -18,7 +18,10 @@ const bucketConfigs = Object.keys(process.env)
     return { provider, accessKeyId, secretAccessKey, endpoint, region }
   })
 
-export default async () => {
+export default async function setup({ provide }) {
+  // Provide bucket configs to browser tests via Vitest's inject mechanism
+  provide('bucketConfigs', bucketConfigs)
+
   for (const cfg of bucketConfigs) {
     const composeFile = composeFiles[cfg.provider]
     if (!composeFile) continue
