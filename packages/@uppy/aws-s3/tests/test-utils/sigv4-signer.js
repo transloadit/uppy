@@ -11,7 +11,7 @@ import { hexFromBuffer, hmac, sha256 } from '../../src/s3-client/utils'
 /**
  * get the url
  * create the headers object which we need to sign
- * create the sortedHeared and ignored headers
+ * create the sortedHeaders and ignored headers
  * build canonicalHeaders
  * build query string
  * build cannonical request
