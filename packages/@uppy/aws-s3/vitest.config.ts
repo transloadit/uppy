@@ -4,12 +4,12 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     globalSetup: ['./tests/s3-client/setup.js'],
+    setupFiles: ['./test-setup.mjs'],
     projects: [
       {
         test: {
           name: 's3-client-browser',
-          include: ['tests/s3-client/*.test.js'],
-          exclude: ['tests/s3-client/_shared.test.js'],
+          include: ['tests/**/*.test.{js,ts}'],          exclude: ['tests/s3-client/_shared.test.js'],
           browser: {
             enabled: true,
             provider: 'playwright',
