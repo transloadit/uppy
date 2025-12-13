@@ -95,7 +95,13 @@ class S3mini {
     const conditionalHeaders: Record<string, unknown> = {}
 
     for (const [key, value] of Object.entries(opts)) {
-      if (C.IFHEADERS.has(key.toLowerCase() as typeof C.IFHEADERS extends Set<infer T> ? T : never)) {
+      if (
+        C.IFHEADERS.has(
+          key.toLowerCase() as typeof C.IFHEADERS extends Set<infer T>
+            ? T
+            : never,
+        )
+      ) {
         conditionalHeaders[key] = value
       } else {
         filteredOpts[key] = value as string
