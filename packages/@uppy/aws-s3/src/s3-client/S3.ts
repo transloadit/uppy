@@ -1,3 +1,8 @@
+/**
+ * Taken from https://github.com/good-lly/s3mini.git, by Jølly Good, under MIT license.
+ * Modified to make it work with Uppy.
+ */
+
 import * as C from './consts.js'
 import type * as IT from './types.js'
 import * as U from './utils.js'
