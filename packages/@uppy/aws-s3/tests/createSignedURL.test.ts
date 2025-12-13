@@ -7,7 +7,7 @@ import {
 import { RequestChecksumCalculation } from '@aws-sdk/middleware-flexible-checksums'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { afterEach, beforeEach, describe, it } from 'vitest'
-import createSignedURL from './createSignedURL.js'
+import createSignedURL from '../src/createSignedURL.js'
 
 const bucketName = 'some-bucket.with.dots'
 const s3ClientOptions = {
