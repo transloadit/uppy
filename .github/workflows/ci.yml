@@ -59,6 +59,7 @@ jobs:
           COMPANION_DOMAIN: localhost:3020
           COMPANION_PROTOCOL: http
           COMPANION_REDIS_URL: redis://localhost:6379
+          BUCKET_ENV_MINIO: "minio,test_user,test_password,http://localhost:9002/test-bucket,us-east-1"
 
   types:
     name: Types

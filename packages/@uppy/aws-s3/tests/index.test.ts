@@ -14,7 +14,7 @@ import nock from 'nock'
 import AwsS3Multipart, {
   type AwsBody,
   type AwsS3MultipartOptions,
-} from './index.js'
+} from '../src/index.js'
 
 const KB = 1024
 const MB = KB * KB
