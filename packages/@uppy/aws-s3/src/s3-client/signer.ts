@@ -41,7 +41,7 @@ export function createSigV4Signer(config: SignerConfig) {
   return async function signRequest(
     request: signableRequest,
   ): Promise<signedHeaders> {
-    const { method, url, headers, body } = request
+    const { method, url, headers } = request
     const parsedUrl = new URL(url)
 
     const now = new Date()
@@ -49,10 +49,14 @@ export function createSigV4Signer(config: SignerConfig) {
     const fullDatetime = `${shortDate}T${now.toISOString().slice(11, 19).replace(/:/g, '')}Z`
     const scope = `${shortDate}/${region}/${service}/${C.AWS_REQUEST_TYPE}`
 
-    const payloadHash =
-      body && typeof body === 'string'
-        ? U.hexFromBuffer(await U.sha256(body))
-        : C.UNSIGNED_PAYLOAD
+    // const payloadHash =
+    //   body && typeof body === 'string'
+    //     ? U.hexFromBuffer(await U.sha256(body))
+    //     : C.UNSIGNED_PAYLOAD
+
+    // S3 supports both hashed / unhashed payload no need for hashed payload now as
+    // we're not talking to sts, also it takes up CPU
+    const payloadHash = C.UNSIGNED_PAYLOAD
 
     const headersToSign: Record<string, string> = {
       ...headers,
