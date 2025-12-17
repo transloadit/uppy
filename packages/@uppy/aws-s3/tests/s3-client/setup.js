@@ -13,9 +13,19 @@ const composeFiles = {
 const bucketConfigs = Object.keys(process.env)
   .filter((k) => k.startsWith('BUCKET_ENV_'))
   .map((k) => {
-    const [provider, accessKeyId, secretAccessKey, endpoint, region] =
+    const [provider, rootAccessKeyId, rootSecretAccessKey, endpoint, region] =
       process.env[k].split(',')
-    return { provider, accessKeyId, secretAccessKey, endpoint, region }
+    // Use stsuser credentials for all tests (readwrite policy is sufficient)
+    // Root credentials are kept for Docker container startup
+    return {
+      provider,
+      accessKeyId: 'stsuser',
+      secretAccessKey: 'stspassword123',
+      rootAccessKeyId,
+      rootSecretAccessKey,
+      endpoint,
+      region,
+    }
   })
 
 export default async function setup({ provide }) {
@@ -28,8 +38,8 @@ export default async function setup({ provide }) {
     console.log(`⏫  starting ${cfg.provider} image …`)
     switch (cfg.provider) {
       case 'minio':
-        process.env.MINIO_ROOT_USER = cfg.accessKeyId
-        process.env.MINIO_ROOT_PASSWORD = cfg.secretAccessKey
+        process.env.MINIO_ROOT_USER = cfg.rootAccessKeyId
+        process.env.MINIO_ROOT_PASSWORD = cfg.rootSecretAccessKey
         await composeUpWait(composeFile)
         // biome-ignore lint/correctness/noSwitchDeclarations: no other switch blocks
         const bucketName = new URL(cfg.endpoint).pathname.split('/')[1]

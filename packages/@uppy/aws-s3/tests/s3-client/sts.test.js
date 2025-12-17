@@ -10,7 +10,12 @@ vi.setConfig({ testTimeout: 120_000 })
  * Helper function to create an STS client using @aws-sdk/client-sts
  * This replaces the custom sts-client.js implementation
  */
-function createAWSStsClient({ endpoint, accessKeyId, secretAccessKey, region }) {
+function createAWSStsClient({
+  endpoint,
+  accessKeyId,
+  secretAccessKey,
+  region,
+}) {
   return new STSClient({
     region,
     endpoint,
@@ -59,13 +64,14 @@ describe('STS Temporary Credentials', () => {
     return
   }
 
-  const { endpoint, region } = minioBucket
+  const {
+    endpoint,
+    region,
+    accessKeyId: stsAccessKeyId,
+    secretAccessKey: stsSecretAccessKey,
+  } = minioBucket
   const bucketEndpoint = endpoint // includes bucket name
   const stsEndpoint = new URL(endpoint).origin // just host:port for STS
-
-  // Use dedicated STS user (not root user - root cannot AssumeRole for itself)
-  const stsAccessKeyId = 'stsuser'
-  const stsSecretAccessKey = 'stspassword123'
 
   describe('assumeRole', () => {
     it('should get temporary credentials from MinIO STS using @aws-sdk/client-sts', async () => {
@@ -233,7 +239,9 @@ describe('STS Temporary Credentials', () => {
             region,
           })
 
-          const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
+          const tempCreds = await assumeRole(stsClient, {
+            durationSeconds: 900,
+          })
 
           return {
             credentials: {
@@ -277,7 +285,9 @@ describe('STS Temporary Credentials', () => {
             region,
           })
 
-          const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
+          const tempCreds = await assumeRole(stsClient, {
+            durationSeconds: 900,
+          })
 
           return {
             credentials: {
