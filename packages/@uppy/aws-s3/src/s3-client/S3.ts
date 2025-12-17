@@ -78,8 +78,7 @@ class S3mini {
   }
 
   /**
-   * Creates a signer that fetches credentials and signs requests internally.
-   * Handles credential caching and refresh.
+   * Creates a signer that fetches credentials and signs requests.
    */
   private _createCredentialBasedSigner(): IT.signRequestFn {
     return async (request: IT.signableRequest): Promise<IT.signedHeaders> => {
@@ -89,34 +88,19 @@ class S3mini {
   }
 
   /**
-   * Gets the cached signer or creates a new one if credentials expired.
-   * Refreshes credentials at 50% of their lifetime.
+   * Gets cached signer or creates new one if credentials expired.
+   * Refreshes at 50% of credential lifetime.
    */
   private async _getOrRefreshSigner(): Promise<IT.signRequestFn> {
     if (this.cachedSigner && this.cachedCredentials) {
-      const expiration = this.cachedCredentials.credentials.expiration
-      if (expiration) {
-        const expiryTime = new Date(expiration).getTime()
-        const now = Date.now()
-        // Refresh at 50% of remaining lifetime
-        const halfLifeRemaining = (expiryTime - now) / 2
-        if (halfLifeRemaining > 0) {
-          return this.cachedSigner
-        }
-      } else {
-        // No expiration, use cached signer
-        return this.cachedSigner
-      }
+      const { expiration } = this.cachedCredentials.credentials
+      if (!expiration) return this.cachedSigner
+
+      const remaining = new Date(expiration).getTime() - Date.now()
+      if (remaining > 0 && remaining / 2 > 0) return this.cachedSigner
     }
 
-    // Fetch new credentials
-    if (!this.getCredentials) {
-      throw new Error('getCredentials not configured')
-    }
-
-    this.cachedCredentials = await this.getCredentials()
-
-    // Create new signer with fresh credentials
+    this.cachedCredentials = await this.getCredentials!()
     this.cachedSigner = createSigV4Signer({
       accessKeyId: this.cachedCredentials.credentials.accessKeyId,
       secretAccessKey: this.cachedCredentials.credentials.secretAccessKey,
