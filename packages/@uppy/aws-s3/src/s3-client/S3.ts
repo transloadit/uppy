@@ -41,7 +41,6 @@ class S3mini {
 
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
-  private cachedSigner?: IT.signRequestFn
   private signRequest: IT.signRequestFn
 
   constructor({
@@ -58,17 +57,12 @@ class S3mini {
     this.region = region
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
-    // Bind fetch to globalThis to preserve correct 'this' context in browsers
-    // Without this, calling this.fetch() throws "Illegal invocation"
     this.fetch = fetch.bind(globalThis)
 
     if (signRequest) {
-      // Direct signing - user provides signRequest callback
       this.signRequest = signRequest
     } else if (getCredentials) {
-      // Credential-based signing - we handle signing internally
       this.getCredentials = getCredentials
-      // Create a wrapper that fetches/caches credentials and signs
       this.signRequest = this._createCredentialBasedSigner()
     } else {
       throw new TypeError(
@@ -77,38 +71,37 @@ class S3mini {
     }
   }
 
-  /**
-   * Creates a signer that fetches credentials and signs requests.
-   */
+  /** Creates a signer that fetches/caches credentials and signs requests. */
   private _createCredentialBasedSigner(): IT.signRequestFn {
     return async (request: IT.signableRequest): Promise<IT.signedHeaders> => {
-      const signer = await this._getOrRefreshSigner()
+      const creds = await this._getCachedCredentials()
+      const signer = createSigV4Signer({
+        accessKeyId: creds.credentials.accessKeyId,
+        secretAccessKey: creds.credentials.secretAccessKey,
+        sessionToken: creds.credentials.sessionToken,
+        region: creds.region || this.region,
+      })
       return signer(request)
     }
   }
 
-  /**
-   * Gets cached signer or creates new one if credentials expired.
-   * Refreshes at 50% of credential lifetime.
-   */
-  private async _getOrRefreshSigner(): Promise<IT.signRequestFn> {
-    if (this.cachedSigner && this.cachedCredentials) {
-      const { expiration } = this.cachedCredentials.credentials
-      if (!expiration) return this.cachedSigner
+  /** Gets cached credentials or fetches new ones. Clears cache at 50% of expiry. */
+  private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
+    if (this.cachedCredentials == null) {
+      this.cachedCredentials = await this.getCredentials!()
 
-      const remaining = new Date(expiration).getTime() - Date.now()
-      if (remaining > 0 && remaining / 2 > 0) return this.cachedSigner
+      // Clear cache at 50% of credential lifetime
+      const expiration = this.cachedCredentials.credentials.expiration
+      if (expiration) {
+        const expiresInMs = new Date(expiration).getTime() - Date.now()
+        if (expiresInMs > 0) {
+          setTimeout(() => {
+            this.cachedCredentials = undefined
+          }, expiresInMs / 2)
+        }
+      }
     }
-
-    this.cachedCredentials = await this.getCredentials!()
-    this.cachedSigner = createSigV4Signer({
-      accessKeyId: this.cachedCredentials.credentials.accessKeyId,
-      secretAccessKey: this.cachedCredentials.credentials.secretAccessKey,
-      sessionToken: this.cachedCredentials.credentials.sessionToken,
-      region: this.cachedCredentials.region || this.region,
-    })
-
-    return this.cachedSigner
+    return this.cachedCredentials
   }
 
   private _validateConstructorParams(
