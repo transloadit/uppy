@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, inject } from 'vitest'
 import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts'
-import { createSigV4Signer as createTestSigner } from '../test-utils/sigv4-signer.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.ts'
 import { S3mini } from '../../src/s3-client/S3.ts'
 
@@ -110,7 +109,7 @@ describe('STS Temporary Credentials', () => {
       const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
 
       // Step 2: Create signer with temporary credentials (using test signer)
-      const signer = createTestSigner({
+      const signer = createSigV4Signer({
         accessKeyId: tempCreds.AccessKeyId,
         secretAccessKey: tempCreds.SecretAccessKey,
         sessionToken: tempCreds.SessionToken,
@@ -145,7 +144,7 @@ describe('STS Temporary Credentials', () => {
       const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
 
       // Step 2: Create signer with temporary credentials (using test signer)
-      const signer = createTestSigner({
+      const signer = createSigV4Signer({
         accessKeyId: tempCreds.AccessKeyId,
         secretAccessKey: tempCreds.SecretAccessKey,
         sessionToken: tempCreds.SessionToken,

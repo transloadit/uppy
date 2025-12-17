@@ -1,7 +1,7 @@
 import { expect, inject, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.js'
 import { sha1Base64 } from '../test-utils/browser-crypto.js'
-import { createSigV4Signer } from '../test-utils/sigv4-signer.js'
+import { createSigV4Signer } from '../../src/s3-client/signer.js'
 import { beforeRun, cleanupTestBeforeAll } from './_shared.test.js'
 
 const name = 'minio'
