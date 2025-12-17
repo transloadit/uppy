@@ -4,9 +4,9 @@
  */
 
 import * as C from './consts.js'
+import { createSigV4Signer } from './signer.js'
 import type * as IT from './types.js'
 import * as U from './utils.js'
-import { createSigV4Signer } from './signer.js'
 
 /**
  * S3 client for browser-compatible interaction with S3-compatible storage.

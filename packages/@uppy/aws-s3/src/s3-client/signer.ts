@@ -4,8 +4,8 @@
  */
 
 import * as C from './consts.js'
-import * as U from './utils.js'
 import type { signableRequest, signedHeaders } from './types.js'
+import * as U from './utils.js'
 
 export interface SignerConfig {
   accessKeyId: string
@@ -62,12 +62,19 @@ export function createSigV4Signer(config: SignerConfig) {
       ...(sessionToken ? { 'x-amz-security-token': sessionToken } : {}),
     }
 
-    const ignored = new Set(['authorization', 'content-length', 'content-type', 'user-agent'])
+    const ignored = new Set([
+      'authorization',
+      'content-length',
+      'content-type',
+      'user-agent',
+    ])
     const sorted = Object.entries(headersToSign)
       .filter(([k]) => !ignored.has(k.toLowerCase()))
       .sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
 
-    const canonicalHeaders = sorted.map(([k, v]) => `${k.toLowerCase()}:${v.trim()}`).join('\n')
+    const canonicalHeaders = sorted
+      .map(([k, v]) => `${k.toLowerCase()}:${v.trim()}`)
+      .join('\n')
     const signedHeaderNames = sorted.map(([k]) => k.toLowerCase()).join(';')
 
     const queryString = [...parsedUrl.searchParams.entries()]
@@ -103,4 +110,3 @@ export function createSigV4Signer(config: SignerConfig) {
     return { ...headersToSign, authorization }
   }
 }
-

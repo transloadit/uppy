@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, inject } from 'vitest'
-import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts'
-import { createSigV4Signer } from '../../src/s3-client/signer.ts'
+import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts'
+import { describe, expect, inject, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.ts'
+import { createSigV4Signer } from '../../src/s3-client/signer.ts'
 
 vi.setConfig({ testTimeout: 120_000 })
 
