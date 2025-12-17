@@ -105,6 +105,11 @@ export default function GooglePickerView({
             appId,
             onFilesPicked,
             signal,
+            onLoadingChange: (isLoading: boolean) => setLoading(isLoading),
+            onError: (err: unknown) => {
+              uppy.log(err)
+              uppy.info(i18n('failedToAddFiles'), 'error')
+            },
           })
         } else {
           // photos
@@ -175,6 +180,7 @@ export default function GooglePickerView({
       pickerType,
       setAccessToken,
       uppy,
+      i18n,
     ],
   )
 

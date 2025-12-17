@@ -1,5 +1,20 @@
 # @uppy/locales
 
+## 5.1.0
+
+### Minor Changes
+
+- 5684efa: Introduce @uppy/image-generator to generate images based on a prompt using Transloadit
+
+## 5.0.1
+
+### Patch Changes
+
+- c3c16ae: Improve zh-CN and zh-TW locale
+- 8744c4d: Improve Dutch locale
+- Updated dependencies [ac12f35]
+  - @uppy/utils@7.1.4
+
 ## 5.0.0
 
 ### Major Changes

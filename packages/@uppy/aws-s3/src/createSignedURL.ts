@@ -64,7 +64,7 @@ async function digest(data: string): ReturnType<SubtleCrypto['digest']> {
   return subtle.digest(algorithm.hash, ec.encode(data))
 }
 
-async function generateHmacKey(secret: string | Uint8Array | ArrayBuffer) {
+async function generateHmacKey(secret: string | ArrayBuffer) {
   const { subtle } = globalThis.crypto
   return subtle.importKey(
     'raw',

@@ -1,5 +1,36 @@
 # @uppy/provider-views
 
+## 5.2.2
+
+### Patch Changes
+
+- 50e2420: Improve Google Drive Picker folder picking: Resolve also folders inside shared drives (but not symlinks to folders)
+- Updated dependencies [648f245]
+  - @uppy/utils@7.1.5
+
+## 5.2.1
+
+### Patch Changes
+
+- 5684efa: Refactor internal components
+
+## 5.2.0
+
+### Minor Changes
+
+- e661348: Allow selecting folders with Google Drive Picker. They will be recursively resolved.
+- 79e6460: - Add PluginTypeRegistry and typed getPlugin overload in @uppy/core
+  - Register plugin ids across packages so uppy.getPlugin('Dashboard' | 'Webcam') returns the concrete plugin type and removes the need to pass generics in getPlugin()
+
+### Patch Changes
+
+- 4817585: added icon to webdav provider, add css to truncate large file names
+- Updated dependencies [79e6460]
+- Updated dependencies [ac12f35]
+- Updated dependencies [4817585]
+  - @uppy/core@5.2.0
+  - @uppy/utils@7.1.4
+
 ## 5.1.2
 
 ### Patch Changes

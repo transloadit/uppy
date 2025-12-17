@@ -242,7 +242,7 @@ export default function Dashboard<M extends Meta, B extends Body>(
 
           {showFileList && <PanelTopBar {...props} />}
 
-          {numberOfFilesForRecovery && (
+          {numberOfFilesForRecovery != null && numberOfFilesForRecovery > 0 && (
             <div className="uppy-Dashboard-serviceMsg">
               <svg
                 className="uppy-Dashboard-serviceMsg-icon"

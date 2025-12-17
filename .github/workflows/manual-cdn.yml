@@ -23,6 +23,10 @@ env:
 jobs:
   upload:
     runs-on: ubuntu-latest
+    env:
+      AWS_REGION: auto
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
+      S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
@@ -31,7 +35,7 @@ jobs:
         run:
           echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v5
         id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -63,13 +67,13 @@ jobs:
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}
-          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
-          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ inputs.force }}
         run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION" --force
         env:
           PACKAGE: ${{inputs.package}}
           VERSION: ${{inputs.version}}
-          EDGLY_KEY: ${{secrets.EDGLY_KEY}}
-          EDGLY_SECRET: ${{secrets.EDGLY_SECRET}}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

@@ -23,6 +23,12 @@
       ],
       "outputs": ["lib/**", "dist/**"]
     },
+    "uppy#build:css": {
+      "outputLogs": "new-only",
+      "dependsOn": ["^build:css"],
+      "inputs": ["src/**/*.scss"],
+      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+    },
     "build:css": {
       "outputLogs": "new-only",
       "inputs": ["src/**/*.scss"],

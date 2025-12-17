@@ -1,5 +1,29 @@
 # @uppy/xhr-upload
 
+## 5.1.1
+
+### Patch Changes
+
+- 648f245: Fix `complete` event never firing for XHR and make sure the fetch aborts immediately if Uppy is cancelled before the fetch starts.
+- Updated dependencies [648f245]
+  - @uppy/utils@7.1.5
+
+## 5.1.0
+
+### Minor Changes
+
+- 79e6460: - Add PluginTypeRegistry and typed getPlugin overload in @uppy/core
+  - Register plugin ids across packages so uppy.getPlugin('Dashboard' | 'Webcam') returns the concrete plugin type and removes the need to pass generics in getPlugin()
+
+### Patch Changes
+
+- ac12f35: Fix: Move completed uploads exclusion logic into uploaders. This fixes the problem where postprocessors would not run for already uploaded files.
+- Updated dependencies [79e6460]
+- Updated dependencies [ac12f35]
+- Updated dependencies [4817585]
+  - @uppy/core@5.2.0
+  - @uppy/utils@7.1.4
+
 ## 5.0.2
 
 ### Patch Changes

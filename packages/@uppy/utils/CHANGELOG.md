@@ -1,5 +1,17 @@
 # @uppy/utils
 
+## 7.1.5
+
+### Patch Changes
+
+- 648f245: Fix `complete` event never firing for XHR and make sure the fetch aborts immediately if Uppy is cancelled before the fetch starts.
+
+## 7.1.4
+
+### Patch Changes
+
+- ac12f35: Fix: Move completed uploads exclusion logic into uploaders. This fixes the problem where postprocessors would not run for already uploaded files.
+
 ## 7.1.3
 
 ### Patch Changes

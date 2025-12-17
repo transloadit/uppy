@@ -209,12 +209,16 @@ export async function showDrivePicker({
   appId,
   onFilesPicked,
   signal,
+  onLoadingChange,
+  onError,
 }: {
   token: string
   apiKey: string
   appId: string
   onFilesPicked: (files: PickedItem[], accessToken: string) => void
   signal: AbortSignal | undefined
+  onLoadingChange: (loading: boolean) => void
+  onError: (err: unknown) => void
 }): Promise<void> {
   // google drive picker will crash hard if given an invalid token, so we need to check it first
   // https://github.com/transloadit/uppy/pull/5443#pullrequestreview-2452439265
@@ -222,18 +226,105 @@ export async function showDrivePicker({
     throw new InvalidTokenError()
   }
 
-  const onPicked = (picked: google.picker.ResponseObject) => {
-    if (picked.action === google.picker.Action.PICKED) {
-      // console.log('Picker response', JSON.stringify(picked, null, 2));
-      onFilesPicked(
-        picked.docs.map((doc) => ({
+  async function handleDocObjectRecursively({
+    doc,
+    token,
+    signal,
+  }: {
+    doc: {
+      id: string
+      name: string
+      mimeType: string
+      shortcutDetails?: { targetMimeType: string }
+    }
+    token: string
+    signal?: AbortSignal
+  }): Promise<PickedDriveItem[]> {
+    if (doc.mimeType === 'application/vnd.google-apps.shortcut') {
+      if (
+        doc.shortcutDetails?.targetMimeType ===
+        'application/vnd.google-apps.folder'
+      ) {
+        // If we were to recurse into shortcuts to folders, it could get a bit crazy. We could end up picking things outside of the user's intended scope as well as infinite loops
+        // If we were to just pass it through as-is, Companion would not be able to download it, so we just ignore it entirely
+        return []
+      }
+      // for other shortcut types, we just treat them as normal files and pass them to Companion to resolve
+      return [
+        {
           platform: 'drive',
           id: doc.id,
           name: doc.name,
           mimeType: doc.mimeType,
-        })),
-        token,
+        },
+      ]
+    }
+    if (doc.mimeType !== 'application/vnd.google-apps.folder') {
+      return [
+        {
+          platform: 'drive',
+          id: doc.id,
+          name: doc.name,
+          mimeType: doc.mimeType,
+        },
+      ]
+    }
+
+    const headers = getAuthHeader(token)
+    const items: PickedDriveItem[] = []
+    let pageToken: string | undefined
+
+    do {
+      const params = new URLSearchParams({
+        q: `'${doc.id.replace(/'/g, "\\'")}' in parents and trashed = false`,
+        fields:
+          'nextPageToken, files(id, name, mimeType, shortcutDetails(targetMimeType))',
+        includeItemsFromAllDrives: 'true',
+        supportsAllDrives: 'true',
+        pageSize: '1000',
+        ...(pageToken && { pageToken }),
+      })
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files?${params.toString()}`,
+        { headers, signal },
       )
+
+      if (!res.ok) {
+        throw new Error(
+          `Failed to list folder contents for '${doc.name}' (${doc.id}): ${res.status} ${res.statusText}`,
+        )
+      }
+      const json: { nextPageToken?: string; files: PickedItemBase[] } =
+        await res.json()
+      pageToken = json.nextPageToken
+
+      for (const file of json.files) {
+        items.push(
+          ...(await handleDocObjectRecursively({ doc: file, token, signal })),
+        )
+      }
+    } while (pageToken)
+
+    return items
+  }
+
+  const onPicked = async (picked: google.picker.ResponseObject) => {
+    if (picked.action !== google.picker.Action.PICKED) return
+
+    try {
+      onLoadingChange(true)
+
+      const results: PickedDriveItem[] = []
+      for (const doc of picked.docs) {
+        results.push(
+          ...(await handleDocObjectRecursively({ doc, token, signal })),
+        )
+      }
+      onFilesPicked(results, token)
+    } catch (err) {
+      onError(err)
+    } finally {
+      onLoadingChange(false)
     }
   }
 
@@ -248,7 +339,7 @@ export async function showDrivePicker({
         .setIncludeFolders(true)
         // Note: setEnableDrives doesn't seem to work
         // .setEnableDrives(true)
-        .setSelectFolderEnabled(false)
+        .setSelectFolderEnabled(true)
         .setMode(google.picker.DocsViewMode.LIST),
     )
     // NOTE: photos is broken and results in an error being returned from Google

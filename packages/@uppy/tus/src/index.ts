@@ -342,9 +342,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         queuedRequest.done()
 
         if (upload.url) {
-          // @ts-expect-error not typed in tus-js-client
-          const { name } = upload.file
-          this.uppy.log(`Download ${name} from ${upload.url}`)
+          this.uppy.log(`Download ${upload.url}`)
         }
         if (typeof opts.onSuccess === 'function') {
           opts.onSuccess(payload)
