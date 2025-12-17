@@ -39,6 +39,23 @@ export default async function setup({ provide }) {
             `mc mb local/${bucketName} --ignore-existing`,
             30000,
           )
+          // Create a user with readwrite policy for STS testing
+          // The root user cannot AssumeRole for itself - needs a regular user
+          try {
+            await execDockerCommand(
+              'minio',
+              `mc admin user add local stsuser stspassword123`,
+              15000,
+            )
+            await execDockerCommand(
+              'minio',
+              `mc admin policy attach local readwrite --user stsuser`,
+              15000,
+            )
+          } catch (err) {
+            // User may already exist, that's fine
+            console.log('STS user setup:', err.message || 'completed')
+          }
         }
         break
       default:

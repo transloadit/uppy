@@ -12,13 +12,49 @@ export type signedHeaders = Record<string, string>
 /** Function that signs a request and returns the signed headers */
 export type signRequestFn = (request: signableRequest) => Promise<signedHeaders>
 
+/**
+ * Temporary security credentials from STS or similar service.
+ * These are used with getCredentials callback for client-side signing.
+ */
+export interface TemporaryCredentials {
+  accessKeyId: string
+  secretAccessKey: string
+  sessionToken: string
+  /** ISO 8601 date string when credentials expire */
+  expiration?: string
+}
+
+/**
+ * Response from getCredentials callback.
+ * Includes temporary credentials plus bucket/region info.
+ */
+export interface CredentialsResponse {
+  credentials: TemporaryCredentials
+  bucket: string
+  region: string
+}
+
+/** Function that retrieves temporary credentials */
+export type getCredentialsFn = (options?: {
+  signal?: AbortSignal
+}) => Promise<CredentialsResponse>
+
 /** Configuration options for S3mini client */
 export interface S3Config {
   /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
   endpoint: string
-  /** Function to sign requests. Called for each S3 API request. */
-  signRequest: signRequestFn
-  /** AWS region. Defaults to 'auto'. */
+  /**
+   * Function to sign requests. Called for each S3 API request.
+   * Either signRequest OR getCredentials must be provided.
+   */
+  signRequest?: signRequestFn
+  /**
+   * Function to retrieve temporary credentials for client-side signing.
+   * When provided, S3mini handles signing internally using these credentials.
+   * Either signRequest OR getCredentials must be provided.
+   */
+  getCredentials?: getCredentialsFn
+  /** AWS region. Defaults to 'auto'. Required if using getCredentials. */
   region?: string
   /** Request size in bytes for multipart uploads. Defaults to 8MB. */
   requestSizeInBytes?: number

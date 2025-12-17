@@ -18,20 +18,34 @@ import { hexFromBuffer, hmac, sha256 } from '../../src/s3-client/utils'
  * build string to sign
  */
 
-// ! WIP
-export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
-  //
+/**
+ * Create a SigV4 signer for AWS/S3-compatible requests.
+ *
+ * @param {object} options
+ * @param {string} options.accessKeyId - AWS access key ID
+ * @param {string} options.secretAccessKey - AWS secret access key
+ * @param {string} options.region - AWS region
+ * @param {string} [options.sessionToken] - Optional session token for temp credentials
+ * @param {string} [options.service='s3'] - AWS service (s3 or sts)
+ */
+export function createSigV4Signer({
+  accessKeyId,
+  secretAccessKey,
+  region,
+  sessionToken,
+  service = S3_SERVICE,
+}) {
   let signingKeyDate
   let signingKey
 
   const getSignatureKey = async (dateStamp) => {
     const kDate = await hmac(`AWS4${secretAccessKey}`, dateStamp)
     const kRegion = await hmac(kDate, region)
-    const kService = await hmac(kRegion, S3_SERVICE)
+    const kService = await hmac(kRegion, service)
     return await hmac(kService, AWS_REQUEST_TYPE)
   }
 
-  return async function signRequest({ method, url, headers }) {
+  return async function signRequest({ method, url, headers, body }) {
     const parsedUrl = new URL(url)
 
     const d = new Date()
@@ -43,15 +57,22 @@ export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
     const fullDatetime = `${shortDatetime}T${String(d.getUTCHours()).padStart(2, '0')}${String(
       d.getUTCMinutes(),
     ).padStart(2, '0')}${String(d.getUTCSeconds()).padStart(2, '0')}Z`
-    const credentialScope = `${shortDatetime}/${region}/${S3_SERVICE}/${AWS_REQUEST_TYPE}`
+    const credentialScope = `${shortDatetime}/${region}/${service}/${AWS_REQUEST_TYPE}`
+
+    // Compute payload hash (UNSIGNED_PAYLOAD for S3, SHA256 hash for STS)
+    const payloadHash = body
+      ? hexFromBuffer(await sha256(body))
+      : UNSIGNED_PAYLOAD
 
     // Headers to sign
 
     const signedHeadersObj = {
       ...headers,
-      [HEADER_AMZ_CONTENT_SHA256]: UNSIGNED_PAYLOAD,
+      [HEADER_AMZ_CONTENT_SHA256]: payloadHash,
       [HEADER_AMZ_DATE]: fullDatetime,
       [HEADER_HOST]: parsedUrl.host,
+      // Include session token if using temporary credentials
+      ...(sessionToken ? { 'x-amz-security-token': sessionToken } : {}),
     }
 
     const ignoredHeaders = new Set([
@@ -100,7 +121,7 @@ export function createSigV4Signer({ accessKeyId, secretAccessKey, region }) {
       canonicalHeaders,
       '',
       signedHeaders,
-      UNSIGNED_PAYLOAD,
+      payloadHash,
     ].join('\n')
 
     // build string to sign

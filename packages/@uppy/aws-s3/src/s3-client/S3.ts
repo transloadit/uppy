@@ -6,16 +6,27 @@
 import * as C from './consts.js'
 import type * as IT from './types.js'
 import * as U from './utils.js'
+import { createSigV4Signer } from './signer.js'
 
 /**
  * S3 client for browser-compatible interaction with S3-compatible storage.
  * Supports simple uploads, multipart uploads, and object deletion.
  *
  * @example
+ * // Option 1: With signRequest callback
  * const s3 = new S3mini({
  *   endpoint: 'https://s3.amazonaws.com/my-bucket',
  *   signRequest: async ({ method, url, headers }) => {
  *     return await fetchSignedHeaders(method, url, headers);
+ *   },
+ * });
+ *
+ * // Option 2: With getCredentials callback (client-side signing)
+ * const s3 = new S3mini({
+ *   endpoint: 'https://s3.amazonaws.com/my-bucket',
+ *   getCredentials: async () => {
+ *     const resp = await fetch('/api/s3/credentials');
+ *     return resp.json(); // { credentials, bucket, region }
  *   },
  * });
  *
@@ -27,37 +38,116 @@ class S3mini {
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
   readonly fetch: typeof fetch
-  readonly signRequest: IT.signRequestFn
+
+  private readonly getCredentials?: IT.getCredentialsFn
+  private cachedCredentials?: IT.CredentialsResponse
+  private cachedSigner?: IT.signRequestFn
+  private signRequest: IT.signRequestFn
 
   constructor({
     endpoint,
     signRequest,
+    getCredentials,
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
     fetch = globalThis.fetch,
   }: IT.S3Config) {
-    this._validateConstructorParams(endpoint, signRequest)
+    this._validateConstructorParams(endpoint, signRequest, getCredentials)
     this.endpoint = new URL(this._ensureValidUrl(endpoint))
-    this.signRequest = signRequest
     this.region = region
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
     // Bind fetch to globalThis to preserve correct 'this' context in browsers
     // Without this, calling this.fetch() throws "Illegal invocation"
     this.fetch = fetch.bind(globalThis)
+
+    if (signRequest) {
+      // Direct signing - user provides signRequest callback
+      this.signRequest = signRequest
+    } else if (getCredentials) {
+      // Credential-based signing - we handle signing internally
+      this.getCredentials = getCredentials
+      // Create a wrapper that fetches/caches credentials and signs
+      this.signRequest = this._createCredentialBasedSigner()
+    } else {
+      throw new TypeError(
+        'Either signRequest or getCredentials must be provided',
+      )
+    }
+  }
+
+  /**
+   * Creates a signer that fetches credentials and signs requests internally.
+   * Handles credential caching and refresh.
+   */
+  private _createCredentialBasedSigner(): IT.signRequestFn {
+    return async (request: IT.signableRequest): Promise<IT.signedHeaders> => {
+      const signer = await this._getOrRefreshSigner()
+      return signer(request)
+    }
+  }
+
+  /**
+   * Gets the cached signer or creates a new one if credentials expired.
+   * Refreshes credentials at 50% of their lifetime.
+   */
+  private async _getOrRefreshSigner(): Promise<IT.signRequestFn> {
+    if (this.cachedSigner && this.cachedCredentials) {
+      const expiration = this.cachedCredentials.credentials.expiration
+      if (expiration) {
+        const expiryTime = new Date(expiration).getTime()
+        const now = Date.now()
+        // Refresh at 50% of remaining lifetime
+        const halfLifeRemaining = (expiryTime - now) / 2
+        if (halfLifeRemaining > 0) {
+          return this.cachedSigner
+        }
+      } else {
+        // No expiration, use cached signer
+        return this.cachedSigner
+      }
+    }
+
+    // Fetch new credentials
+    if (!this.getCredentials) {
+      throw new Error('getCredentials not configured')
+    }
+
+    this.cachedCredentials = await this.getCredentials()
+
+    // Create new signer with fresh credentials
+    this.cachedSigner = createSigV4Signer({
+      accessKeyId: this.cachedCredentials.credentials.accessKeyId,
+      secretAccessKey: this.cachedCredentials.credentials.secretAccessKey,
+      sessionToken: this.cachedCredentials.credentials.sessionToken,
+      region: this.cachedCredentials.region || this.region,
+    })
+
+    return this.cachedSigner
   }
 
   private _validateConstructorParams(
     endpoint: string,
-    signRequest: IT.signRequestFn,
+    signRequest?: IT.signRequestFn,
+    getCredentials?: IT.getCredentialsFn,
   ): void {
     if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
       throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
     }
 
-    if (typeof signRequest !== 'function') {
-      throw new TypeError('signRequest is not passed')
+    if (!signRequest && !getCredentials) {
+      throw new TypeError(
+        'Either signRequest or getCredentials must be provided',
+      )
+    }
+
+    if (signRequest && typeof signRequest !== 'function') {
+      throw new TypeError('signRequest must be a function')
+    }
+
+    if (getCredentials && typeof getCredentials !== 'function') {
+      throw new TypeError('getCredentials must be a function')
     }
   }
 
