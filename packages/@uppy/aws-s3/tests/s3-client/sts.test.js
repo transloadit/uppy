@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, inject } from 'vitest'
-import { createSTSClient } from '../test-utils/sts-client.js'
+import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts'
 import { createSigV4Signer as createTestSigner } from '../test-utils/sigv4-signer.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.ts'
 import { S3mini } from '../../src/s3-client/S3.ts'
@@ -7,10 +7,46 @@ import { S3mini } from '../../src/s3-client/S3.ts'
 vi.setConfig({ testTimeout: 120_000 })
 
 /**
+ * Helper function to create an STS client using @aws-sdk/client-sts
+ * This replaces the custom sts-client.js implementation
+ */
+function createAWSStsClient({ endpoint, accessKeyId, secretAccessKey, region }) {
+  return new STSClient({
+    region,
+    endpoint,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
+  })
+}
+
+/**
+ * Helper function to assume role and get temporary credentials
+ */
+async function assumeRole(stsClient, { durationSeconds = 3600 } = {}) {
+  const command = new AssumeRoleCommand({
+    RoleArn: 'arn:xxx:xxx:xxx:xxxx', // MinIO doesn't validate ARN format
+    RoleSessionName: 'uppy-test',
+    DurationSeconds: durationSeconds,
+  })
+
+  const response = await stsClient.send(command)
+  const creds = response.Credentials
+
+  return {
+    AccessKeyId: creds.AccessKeyId,
+    SecretAccessKey: creds.SecretAccessKey,
+    SessionToken: creds.SessionToken,
+    Expiration: creds.Expiration?.toISOString() || creds.Expiration,
+  }
+}
+
+/**
  * STS Temporary Credentials Tests
  *
  * These tests verify:
- * 1. Getting temporary credentials from MinIO STS
+ * 1. Getting temporary credentials from MinIO STS using @aws-sdk/client-sts
  * 2. Using temporary credentials to sign S3 requests
  * 3. Uploading files with temporary credentials
  */
@@ -32,15 +68,15 @@ describe('STS Temporary Credentials', () => {
   const stsSecretAccessKey = 'stspassword123'
 
   describe('assumeRole', () => {
-    it('should get temporary credentials from MinIO STS', async () => {
-      const sts = createSTSClient({
+    it('should get temporary credentials from MinIO STS using @aws-sdk/client-sts', async () => {
+      const stsClient = createAWSStsClient({
         endpoint: stsEndpoint,
         accessKeyId: stsAccessKeyId,
         secretAccessKey: stsSecretAccessKey,
         region,
       })
 
-      const credentials = await sts.assumeRole({ durationSeconds: 900 })
+      const credentials = await assumeRole(stsClient, { durationSeconds: 900 })
 
       expect(credentials.AccessKeyId).toBeDefined()
       expect(credentials.SecretAccessKey).toBeDefined()
@@ -57,15 +93,15 @@ describe('STS Temporary Credentials', () => {
     const testContent = 'Hello from temporary credentials!'
 
     it('should upload file using temporary credentials', async () => {
-      // Step 1: Get temporary credentials
-      const sts = createSTSClient({
+      // Step 1: Get temporary credentials using @aws-sdk/client-sts
+      const stsClient = createAWSStsClient({
         endpoint: stsEndpoint,
         accessKeyId: stsAccessKeyId,
         secretAccessKey: stsSecretAccessKey,
         region,
       })
 
-      const tempCreds = await sts.assumeRole({ durationSeconds: 900 })
+      const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
 
       // Step 2: Create signer with temporary credentials (using test signer)
       const signer = createTestSigner({
@@ -92,15 +128,15 @@ describe('STS Temporary Credentials', () => {
     })
 
     it('should perform multipart upload with temporary credentials', async () => {
-      // Step 1: Get temporary credentials
-      const sts = createSTSClient({
+      // Step 1: Get temporary credentials using @aws-sdk/client-sts
+      const stsClient = createAWSStsClient({
         endpoint: stsEndpoint,
         accessKeyId: stsAccessKeyId,
         secretAccessKey: stsSecretAccessKey,
         region,
       })
 
-      const tempCreds = await sts.assumeRole({ durationSeconds: 900 })
+      const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
 
       // Step 2: Create signer with temporary credentials (using test signer)
       const signer = createTestSigner({
@@ -184,21 +220,21 @@ describe('STS Temporary Credentials', () => {
       const testKey = `sts-getcreds-${Date.now()}.txt`
       const testContent = 'Hello from getCredentials callback!'
 
-      // The STS client simulates what a server endpoint would return
-      const sts = createSTSClient({
-        endpoint: stsEndpoint,
-        accessKeyId: stsAccessKeyId,
-        secretAccessKey: stsSecretAccessKey,
-        region,
-      })
-
-      // Create S3 client with getCredentials callback
+      // Create S3 client with getCredentials callback using @aws-sdk/client-sts
       // In real usage, this would call your backend endpoint
       const s3 = new S3mini({
         endpoint: bucketEndpoint,
         region,
         getCredentials: async () => {
-          const tempCreds = await sts.assumeRole({ durationSeconds: 900 })
+          const stsClient = createAWSStsClient({
+            endpoint: stsEndpoint,
+            accessKeyId: stsAccessKeyId,
+            secretAccessKey: stsSecretAccessKey,
+            region,
+          })
+
+          const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
+
           return {
             credentials: {
               accessKeyId: tempCreds.AccessKeyId,
@@ -228,19 +264,21 @@ describe('STS Temporary Credentials', () => {
 
       let credentialsFetchCount = 0
 
-      const sts = createSTSClient({
-        endpoint: stsEndpoint,
-        accessKeyId: stsAccessKeyId,
-        secretAccessKey: stsSecretAccessKey,
-        region,
-      })
-
       const s3 = new S3mini({
         endpoint: bucketEndpoint,
         region,
         getCredentials: async () => {
           credentialsFetchCount++
-          const tempCreds = await sts.assumeRole({ durationSeconds: 900 })
+
+          const stsClient = createAWSStsClient({
+            endpoint: stsEndpoint,
+            accessKeyId: stsAccessKeyId,
+            secretAccessKey: stsSecretAccessKey,
+            region,
+          })
+
+          const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
+
           return {
             credentials: {
               accessKeyId: tempCreds.AccessKeyId,
@@ -278,7 +316,7 @@ describe('STS Temporary Credentials', () => {
      * 1. getTemporarySecurityCredentials() -> fetch('/s3/sts') -> { credentials, bucket, region }
      * 2. createSignedURL() uses credentials with internal signer to sign in browser
      *
-     * Here we simulate the server endpoint with our STS client and use
+     * Here we simulate the server endpoint with @aws-sdk/client-sts and use
      * the internal signer (src/s3-client/signer.ts) for client-side signing.
      */
     it('should upload using internal signer (simulates createSignedURL flow)', async () => {
@@ -286,14 +324,14 @@ describe('STS Temporary Credentials', () => {
       const testContent = 'Hello from client-side signing!'
 
       // Simulate: getTemporarySecurityCredentials() fetches from server
-      const sts = createSTSClient({
+      const stsClient = createAWSStsClient({
         endpoint: stsEndpoint,
         accessKeyId: stsAccessKeyId,
         secretAccessKey: stsSecretAccessKey,
         region,
       })
 
-      const tempCreds = await sts.assumeRole({ durationSeconds: 900 })
+      const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
 
       // Use the INTERNAL signer from src/s3-client/signer.ts
       // This is what the aws-s3 plugin would use with createSignedURL()
@@ -322,14 +360,14 @@ describe('STS Temporary Credentials', () => {
     })
 
     it('should perform multipart upload with internal signer', async () => {
-      const sts = createSTSClient({
+      const stsClient = createAWSStsClient({
         endpoint: stsEndpoint,
         accessKeyId: stsAccessKeyId,
         secretAccessKey: stsSecretAccessKey,
         region,
       })
 
-      const tempCreds = await sts.assumeRole({ durationSeconds: 900 })
+      const tempCreds = await assumeRole(stsClient, { durationSeconds: 900 })
 
       // Use internal signer for all multipart operations
       const internalSigner = createSigV4Signer({
