@@ -37,7 +37,6 @@ class S3mini {
   readonly region: string
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
-  readonly fetch: typeof fetch
 
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
@@ -50,14 +49,12 @@ class S3mini {
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
-    fetch = globalThis.fetch,
   }: IT.S3Config) {
     this._validateConstructorParams(endpoint, signRequest, getCredentials)
     this.endpoint = new URL(this._ensureValidUrl(endpoint))
     this.region = region
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
-    this.fetch = fetch.bind(globalThis)
 
     if (signRequest) {
       this.signRequest = signRequest
@@ -546,7 +543,7 @@ class S3mini {
     toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
     try {
-      const res = await this.fetch(url, {
+      const res = await fetch(url, {
         method,
         headers,
         body: ['GET', 'HEAD'].includes(method) ? undefined : body,

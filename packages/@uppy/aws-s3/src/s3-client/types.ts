@@ -60,8 +60,6 @@ export interface S3Config {
   requestSizeInBytes?: number
   /** Timeout in ms after which a request should be aborted. */
   requestAbortTimeout?: number
-  /** Custom fetch implementation. Defaults to globalThis.fetch. */
-  fetch?: typeof fetch
 }
 
 export interface SSECHeaders {
