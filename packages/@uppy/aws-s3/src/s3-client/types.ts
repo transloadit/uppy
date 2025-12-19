@@ -39,28 +39,36 @@ export type getCredentialsFn = (options?: {
   signal?: AbortSignal
 }) => Promise<CredentialsResponse>
 
-/** Configuration options for S3mini client */
-export interface S3Config {
+/** Base configuration shared by both signing approaches */
+type S3ConfigBase = {
   /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
   endpoint: string
-  /**
-   * Function to sign requests. Called for each S3 API request.
-   * Either signRequest OR getCredentials must be provided.
-   */
-  signRequest?: signRequestFn
-  /**
-   * Function to retrieve temporary credentials for client-side signing.
-   * When provided, S3mini handles signing internally using these credentials.
-   * Either signRequest OR getCredentials must be provided.
-   */
-  getCredentials?: getCredentialsFn
-  /** AWS region. Defaults to 'auto'. Required if using getCredentials. */
+  /** AWS region. Defaults to 'auto'. */
   region?: string
   /** Request size in bytes for multipart uploads. Defaults to 8MB. */
   requestSizeInBytes?: number
   /** Timeout in ms after which a request should be aborted. */
   requestAbortTimeout?: number
 }
+
+/** Config when using signRequest callback (region optional) */
+type S3ConfigWithSignRequest = S3ConfigBase & {
+  /** Function to sign requests. Called for each S3 API request. */
+  signRequest: signRequestFn
+  getCredentials?: never
+}
+
+/** Config when using getCredentials callback (region required for signing) */
+type S3ConfigWithGetCredentials = Omit<S3ConfigBase, 'region'> & {
+  signRequest?: never
+  /** Function to retrieve temporary credentials for client-side signing. */
+  getCredentials: getCredentialsFn
+  /** AWS region. Required for signing with getCredentials. */
+  region: string
+}
+
+/** Configuration options for S3mini client */
+export type S3Config = S3ConfigWithSignRequest | S3ConfigWithGetCredentials
 
 export interface SSECHeaders {
   'x-amz-server-side-encryption-customer-algorithm': string

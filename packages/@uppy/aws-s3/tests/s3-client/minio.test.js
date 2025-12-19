@@ -32,7 +32,7 @@ function createSTSClient({ endpoint, accessKeyId, secretAccessKey, region }) {
 async function assumeRole(stsClient, { durationSeconds = 900 } = {}) {
   const response = await stsClient.send(
     new AssumeRoleCommand({
-      RoleArn: 'arn:xxx:xxx:xxx:xxxx', // MinIO doesn't validate ARN
+      RoleArn: 'aws:iam::000000000000:role/test-role', // MinIO doesn't validate ARN
       RoleSessionName: 'uppy-test',
       DurationSeconds: durationSeconds,
     }),

@@ -40,7 +40,7 @@ class S3mini {
 
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
-  private signRequest: IT.signRequestFn
+  private signRequest?: IT.signRequestFn
 
   constructor({
     endpoint,
@@ -61,10 +61,6 @@ class S3mini {
     } else if (getCredentials) {
       this.getCredentials = getCredentials
       this.signRequest = this._createCredentialBasedSigner()
-    } else {
-      throw new TypeError(
-        'Either signRequest or getCredentials must be provided',
-      )
     }
   }
 
