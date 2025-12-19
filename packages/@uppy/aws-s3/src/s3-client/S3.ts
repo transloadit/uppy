@@ -40,7 +40,7 @@ class S3mini {
 
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
-  private signRequest?: IT.signRequestFn
+  private signRequest!: IT.signRequestFn
 
   constructor({
     endpoint,
