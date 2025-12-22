@@ -235,6 +235,52 @@ const minioSpecific = (bucket) => {
 
       await s3.deleteObject(key)
     })
+
+    it('should refetch credentials when they are expired', async () => {
+      let fetchCount = 0
+      let returnExpired = true
+
+      const s3 = new S3mini({
+        endpoint: bucket.endpoint,
+        region: bucket.region,
+        getCredentials: async () => {
+          fetchCount++
+          const stsClient = createSTSClient({
+            endpoint: stsEndpoint,
+            accessKeyId: bucket.accessKeyId,
+            secretAccessKey: bucket.secretAccessKey,
+            region: bucket.region,
+          })
+          const creds = await assumeRole(stsClient)
+          return {
+            credentials: {
+              accessKeyId: creds.AccessKeyId,
+              secretAccessKey: creds.SecretAccessKey,
+              sessionToken: creds.SessionToken,
+              // First call returns expired, second returns valid
+              expiration: returnExpired
+                ? new Date(Date.now() - 1000).toISOString() // Expired
+                : new Date(Date.now() + 600000).toISOString(), // Valid 10 min
+            },
+            bucket: new URL(bucket.endpoint).pathname.slice(1),
+            region: bucket.region,
+          }
+        },
+      })
+
+      // First request - credentials fetched (expired)
+      await s3.putObject(`expiry-1-${Date.now()}.txt`, 'test1', 'text/plain')
+      expect(fetchCount).toBe(1)
+
+      // Second request - should refetch because cached are expired
+      returnExpired = false // Now return valid credentials
+      await s3.putObject(`expiry-2-${Date.now()}.txt`, 'test2', 'text/plain')
+      expect(fetchCount).toBe(2) // Refetched!
+
+      // Third request - should use cache (not expired anymore)
+      await s3.putObject(`expiry-3-${Date.now()}.txt`, 'test3', 'text/plain')
+      expect(fetchCount).toBe(2) // Cached!
+    })
   })
 }
 
