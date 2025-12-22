@@ -41,6 +41,7 @@ class S3mini {
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
   private signRequest!: IT.signRequestFn
+  private credentialTimeoutId?: ReturnType<typeof setTimeout>
 
   constructor({
     endpoint,
@@ -80,16 +81,35 @@ class S3mini {
 
   /** Gets cached credentials or fetches new ones. Clears cache at 50% of expiry. */
   private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
+    // Check if cached credentials are expired
+    if (this.cachedCredentials != null) {
+      const expiration = this.cachedCredentials.credentials.expiration
+      if (expiration) {
+        const expiresInMs = new Date(expiration).getTime() - Date.now()
+        if (expiresInMs <= 0) {
+          // Credentials expired - clear cache to trigger refetch
+          this.cachedCredentials = undefined
+        }
+      }
+    }
+
     if (this.cachedCredentials == null) {
       this.cachedCredentials = await this.getCredentials!()
+
+      // Clear any existing timeout before setting a new one
+      if (this.credentialTimeoutId) {
+        clearTimeout(this.credentialTimeoutId)
+        this.credentialTimeoutId = undefined
+      }
 
       // Clear cache at 50% of credential lifetime
       const expiration = this.cachedCredentials.credentials.expiration
       if (expiration) {
         const expiresInMs = new Date(expiration).getTime() - Date.now()
         if (expiresInMs > 0) {
-          setTimeout(() => {
+          this.credentialTimeoutId = setTimeout(() => {
             this.cachedCredentials = undefined
+            this.credentialTimeoutId = undefined
           }, expiresInMs / 2)
         }
       }
