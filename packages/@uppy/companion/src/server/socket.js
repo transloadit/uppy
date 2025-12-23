@@ -9,15 +9,28 @@ import Uploader from './Uploader.js'
  * the socket is used to send progress events during an upload
  *
  * @param {import('http').Server | import('https').Server} server
+ * @param {object} [options] - Options object
+ * @param {function} [options.onConnection] - Optional callback to authenticate/authorize WebSocket connections
  */
-export default function setupSocket(server) {
+export default function setupSocket(server, options = {}) {
   const wss = new WebSocketServer({ server })
   const redisClient = redis.client()
 
   // A new connection is usually created when an upload begins,
   // or when connection fails while an upload is on-going and,
   // client attempts to reconnect.
-  wss.on('connection', (ws, req) => {
+  wss.on('connection', async (ws, req) => {
+    // Call the onConnection callback if provided for authentication/authorization
+    if (options.onConnection) {
+      try {
+        await options.onConnection(ws, req)
+      } catch (error) {
+        logger.error(error, 'socket.auth.error')
+        ws.close(1008, 'Authentication failed')
+        return
+      }
+    }
+
     const fullPath = req.url
     // the token identifies which ongoing upload's progress, the socket
     // connection wishes to listen to.
