@@ -349,6 +349,10 @@ export class TaskQueue {
   /**
    * @deprecated Legacy compatibility wrapper for RateLimitedQueue API.
    * Wraps a function so that when called, it's queued and returns an AbortablePromise.
+   * Note: for legacy compatibility with RateLimitedQueue, the wrapped function
+   * does not receive this queue's AbortSignal. Aborting the returned promise
+   * will reject it, but it will not automatically cancel work inside the wrapped
+   * function unless that function is wired to an external AbortSignal.
    */
   wrapPromiseFunction<T extends (...args: any[]) => Promise<any>>(
     fn: T,
