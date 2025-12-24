@@ -83,4 +83,160 @@ describe('TaskQueue', () => {
     await expect(running).resolves.toBe('ok')
     expect(queue.pending).toBe(0)
   })
+
+  it('wrapPromiseFunction queues work and preserves arguments', async () => {
+    const queue = new TaskQueue({ concurrency: 1 })
+    queue.pause()
+
+    const order: string[] = []
+    const makeTask = (label: string) => async () => {
+      order.push(label)
+      return label
+    }
+
+    const wrapped = queue.wrapPromiseFunction(
+      async (value: string) => {
+        order.push(`wrapped:${value}`)
+        return value.toUpperCase()
+      },
+      { priority: 5 },
+    )
+
+    const high = queue.add(makeTask('high'), { priority: 10 })
+    const wrappedPromise = wrapped('hello')
+
+    expect(typeof wrappedPromise.abort).toBe('function')
+
+    queue.resume()
+
+    await expect(high).resolves.toBe('high')
+    await expect(wrappedPromise).resolves.toBe('HELLO')
+    expect(order).toEqual(['high', 'wrapped:hello'])
+  })
+
+  it('updates concurrency via setter and starts additional tasks', async () => {
+    const queue = new TaskQueue({ concurrency: 1 })
+    const started1 = Promise.withResolvers<void>()
+    const started2 = Promise.withResolvers<void>()
+    const blocker1 = Promise.withResolvers<void>()
+    const blocker2 = Promise.withResolvers<void>()
+
+    const first = queue.add(async () => {
+      started1.resolve()
+      await blocker1.promise
+      return 'first'
+    })
+
+    const second = queue.add(async () => {
+      started2.resolve()
+      await blocker2.promise
+      return 'second'
+    })
+
+    await started1.promise
+    expect(queue.running).toBe(1)
+    expect(queue.pending).toBe(1)
+
+    queue.concurrency = 2
+    await started2.promise
+
+    expect(queue.running).toBe(2)
+    expect(queue.pending).toBe(0)
+
+    blocker1.resolve()
+    blocker2.resolve()
+    await expect(first).resolves.toBe('first')
+    await expect(second).resolves.toBe('second')
+  })
+
+  it('aborts when abortOn signal fires while queued', async () => {
+    const queue = new TaskQueue({ concurrency: 1 })
+    queue.pause()
+
+    const controller = new AbortController()
+    const promise = queue.add(async () => 'ok')
+    const returned = promise.abortOn(controller.signal)
+
+    expect(returned).toBe(promise)
+
+    const reason = new Error('signal abort')
+    controller.abort(reason)
+
+    await expect(promise).rejects.toBe(reason)
+    expect(queue.pending).toBe(0)
+  })
+
+  it('runs tasks concurrently up to the concurrency limit', async () => {
+    const queue = new TaskQueue({ concurrency: 2 })
+    const started1 = Promise.withResolvers<void>()
+    const started2 = Promise.withResolvers<void>()
+    const started3 = Promise.withResolvers<void>()
+    const blocker1 = Promise.withResolvers<void>()
+    const blocker2 = Promise.withResolvers<void>()
+    const blocker3 = Promise.withResolvers<void>()
+
+    const first = queue.add(async () => {
+      started1.resolve()
+      await blocker1.promise
+      return 'first'
+    })
+    const second = queue.add(async () => {
+      started2.resolve()
+      await blocker2.promise
+      return 'second'
+    })
+    const third = queue.add(async () => {
+      started3.resolve()
+      await blocker3.promise
+      return 'third'
+    })
+
+    await Promise.all([started1.promise, started2.promise])
+
+    let thirdStarted = false
+    started3.promise.then(() => {
+      thirdStarted = true
+    })
+
+    await delay(1)
+    expect(thirdStarted).toBe(false)
+    expect(queue.running).toBe(2)
+    expect(queue.pending).toBe(1)
+
+    blocker1.resolve()
+    await started3.promise
+
+    blocker2.resolve()
+    blocker3.resolve()
+    await expect(first).resolves.toBe('first')
+    await expect(second).resolves.toBe('second')
+    await expect(third).resolves.toBe('third')
+  })
+
+  it('continues processing after aborting a running task', async () => {
+    const queue = new TaskQueue({ concurrency: 1 })
+    const started1 = Promise.withResolvers<void>()
+    const started2 = Promise.withResolvers<void>()
+    const blocker1 = Promise.withResolvers<void>()
+
+    const first = queue.add(async () => {
+      started1.resolve()
+      await blocker1.promise
+      return 'first'
+    })
+
+    const second = queue.add(async () => {
+      started2.resolve()
+      return 'second'
+    })
+
+    await started1.promise
+    const reason = new Error('abort running')
+    first.abort(reason)
+    blocker1.resolve()
+
+    await expect(first).rejects.toBe(reason)
+    await started2.promise
+    await expect(second).resolves.toBe('second')
+  })
 })
