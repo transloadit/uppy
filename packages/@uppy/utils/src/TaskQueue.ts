@@ -274,14 +274,12 @@ export class TaskQueue {
     queueMicrotask(() => {
       if (this.#paused || this.#running >= this.#concurrency) return
 
-      const next = this.#heap.pop()
-      if (next) {
-        if (next.controller.signal.aborted) {
-          // Skip aborted tasks, try next
-          this.#advance()
-        } else {
-          this.#execute(next)
-        }
+      while (true) {
+        const next = this.#heap.pop()
+        if (!next) return
+        if (next.controller.signal.aborted) continue
+        this.#execute(next)
+        return
       }
     })
   }
