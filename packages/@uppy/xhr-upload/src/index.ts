@@ -393,7 +393,7 @@ export default class XHRUpload<
       const fetch = this.#getFetcher([file])
       const body = opts.formData
         ? this.createFormDataUpload(file, opts)
-        : file.data
+        : (file.data ?? null)
       const endpoint =
         typeof opts.endpoint === 'string'
           ? opts.endpoint

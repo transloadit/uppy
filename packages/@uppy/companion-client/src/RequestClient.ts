@@ -23,7 +23,7 @@ export type Opts = {
   provider: string
   pluginId: string
   companionUrl: string
-  companionCookiesRule?: 'same-origin' | 'include' | 'omit'
+  companionCookiesRule?: 'same-origin' | 'include' | 'omit' | undefined
   companionHeaders?: CompanionHeaders
   companionKeysParams?: Record<string, string>
 }
@@ -175,13 +175,13 @@ export default class RequestClient<M extends Meta, B extends Body> {
     method = 'GET',
     data,
     skipPostResponse,
-    signal,
+    signal = null,
   }: {
     path: string
     method?: string
-    data?: Record<string, unknown>
+    data?: Record<string, unknown> | undefined
     skipPostResponse?: boolean
-    signal?: AbortSignal
+    signal?: AbortSignal | null
   }): Promise<ResBody> {
     try {
       const headers = await this.headers(!data)

@@ -5,7 +5,7 @@
  * Call `timer.done()` when the upload has completed.
  */
 class ProgressTimeout {
-  #aliveTimer?: ReturnType<typeof setTimeout>
+  #aliveTimer?: ReturnType<typeof setTimeout> | undefined
 
   #isDone = false
 

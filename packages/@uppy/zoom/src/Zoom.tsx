@@ -22,7 +22,7 @@ import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
 export type ZoomOptions = CompanionPluginOptions & {
-  locale?: LocaleStrings<typeof locale>
+  locale?: LocaleStrings<typeof locale> | undefined
 }
 
 export default class Zoom<M extends Meta, B extends Body>
@@ -71,9 +71,15 @@ export default class Zoom<M extends Meta, B extends Body>
     )
     this.provider = new Provider(uppy, {
       companionUrl: this.opts.companionUrl,
-      companionHeaders: this.opts.companionHeaders,
-      companionKeysParams: this.opts.companionKeysParams,
-      companionCookiesRule: this.opts.companionCookiesRule,
+      ...(this.opts.companionHeaders !== undefined && {
+        companionHeaders: this.opts.companionHeaders,
+      }),
+      ...(this.opts.companionKeysParams !== undefined && {
+        companionKeysParams: this.opts.companionKeysParams,
+      }),
+      ...(this.opts.companionCookiesRule !== undefined && {
+        companionCookiesRule: this.opts.companionCookiesRule,
+      }),
       provider: 'zoom',
       pluginId: this.id,
       supportsRefreshToken: false,

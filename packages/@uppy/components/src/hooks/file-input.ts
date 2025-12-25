@@ -10,7 +10,7 @@ export type FileInputFunctions<EventType> = {
     id: string
     type: 'file'
     multiple: boolean
-    accept?: string
+    accept?: string | undefined
     onChange: (event: EventType) => void
   }
   getButtonProps: () => {

@@ -85,7 +85,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   metaFields: DashboardState<M, B>['metaFields']
   resumableUploads: boolean
   individualCancellation: boolean
-  isMobileDevice?: boolean
+  isMobileDevice?: boolean | undefined
   fileCardFor: string | null
   toggleFileCard: (show: boolean, fileID: string) => void
   toggleAddFilesPanel: (show: boolean) => void

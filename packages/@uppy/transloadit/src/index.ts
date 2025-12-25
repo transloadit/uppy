@@ -243,7 +243,7 @@ export default class Transloadit<
 
   client: Client<M, B>
 
-  #assembly?: Assembly
+  #assembly?: Assembly | undefined
 
   #watcher!: AssemblyWatcher<M, B>
 

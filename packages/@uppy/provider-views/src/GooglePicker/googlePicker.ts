@@ -84,7 +84,7 @@ export interface PickedDriveItem extends PickedItemBase {
 export interface PickedPhotosItem extends PickedItemBase {
   platform: 'photos'
   url: string
-  metadata?: Record<string, string | number> // I think string and number is OK in Companion
+  metadata?: Record<string, string | number | undefined> // I think string and number is OK in Companion
 }
 
 export type PickedItem = PickedPhotosItem | PickedDriveItem
@@ -135,7 +135,7 @@ export async function ensureScriptsInjected(
 
 async function isTokenValid(
   accessToken: string,
-  signal: AbortSignal | undefined,
+  signal: AbortSignal | null = null,
 ) {
   const response = await fetch(
     `https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${encodeURIComponent(accessToken)}`,
@@ -356,12 +356,12 @@ export async function showPhotosPicker({
   token,
   pickingSession,
   onPickingSessionChange,
-  signal,
+  signal = null,
 }: {
   token: string
   pickingSession: PickingSession | undefined
   onPickingSessionChange: (ps: PickingSession) => void
-  signal: AbortSignal | undefined
+  signal?: AbortSignal | null | undefined
 }): Promise<void> {
   // https://developers.google.com/photos/picker/guides/get-started-picker
   const headers = getAuthHeader(token)

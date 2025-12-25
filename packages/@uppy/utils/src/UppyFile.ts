@@ -22,20 +22,22 @@ interface UppyFileBase<M extends Meta, B extends Body> {
   isGhost: boolean
   meta: InternalMetadata & M
   name: string
-  preview?: string
+  preview?: string | undefined
   progress: FileProgress
   missingRequiredMetaFields?: string[]
   serverToken?: string | null
   size: number | null
   source?: string
   type: string
-  uploadURL?: string
-  response?: {
-    body?: B
-    status: number
-    bytesUploaded?: number
-    uploadURL?: string
-  }
+  uploadURL?: string | undefined
+  response?:
+    | {
+        body?: B | undefined
+        status: number
+        bytesUploaded?: number
+        uploadURL?: string | undefined
+      }
+    | undefined
 }
 
 export interface LocalUppyFile<M extends Meta, B extends Body>

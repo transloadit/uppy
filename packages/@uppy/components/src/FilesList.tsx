@@ -13,7 +13,7 @@ export type FilesListProps = {
 
 export default function FilesList(props: FilesListProps) {
   const [files, setFiles] = useState<UppyFile<any, any>[]>(() => [])
-  const { ctx, editFile, imageThumbnail } = props
+  const { ctx, editFile, imageThumbnail = false } = props
 
   useEffect(() => {
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
