@@ -140,9 +140,12 @@ const minioSpecific = (bucket) => {
         },
       })
 
-      const result = await s3.putObject(testKey, 'Hello STS!', 'text/plain')
-      expect(result.ok).toBe(true)
-      await s3.deleteObject(testKey)
+      try {
+        const result = await s3.putObject(testKey, 'Hello STS!', 'text/plain')
+        expect(result.ok).toBe(true)
+      } finally {
+        await s3.deleteObject(testKey)
+      }
     })
 
     it('should cache credentials across multiple requests', async () => {
