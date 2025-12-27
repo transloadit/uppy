@@ -26,11 +26,10 @@ export interface TemporaryCredentials {
 
 /**
  * Response from getCredentials callback.
- * Includes temporary credentials plus bucket/region info.
+ * Includes temporary credentials plus region info.
  */
 export interface CredentialsResponse {
   credentials: TemporaryCredentials
-  bucket: string
   region: string
 }
 
