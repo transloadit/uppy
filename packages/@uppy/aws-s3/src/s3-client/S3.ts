@@ -83,13 +83,13 @@ class S3mini {
   private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
     // Return Cached Credentials if available
     if (this.cachedCredentials != null) {
-       return this.cachedCredentials
+      return this.cachedCredentials
     }
 
     // we're caching the promise so that all the concurrent calls
     // can wait for the same promise to resolve
-    if (this.cachedCredentialsPromise == null){
-      this.cachedCredentialsPromise = this.getCredentials!().then(creds => {
+    if (this.cachedCredentialsPromise == null) {
+      this.cachedCredentialsPromise = this.getCredentials!().then((creds) => {
         this.cachedCredentials = creds
         return creds
       })
@@ -294,7 +294,7 @@ class S3mini {
         this.getCredentials &&
         err instanceof U.S3ServiceError &&
         err.code &&
-        ['ExpiredToken','InvalidAccessKeyId'].includes(err.code)
+        ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
       ) {
         this.cachedCredentials = undefined
         this.cachedCredentialsPromise = undefined
@@ -303,7 +303,13 @@ class S3mini {
           url: finalUrl.toString(),
           headers: baseHeaders,
         })
-        return this._sendRequest(finalUrl.toString(), method, freshSignedHeaders, body, tolerated)
+        return this._sendRequest(
+          finalUrl.toString(),
+          method,
+          freshSignedHeaders,
+          body,
+          tolerated,
+        )
       }
       throw err
     }
