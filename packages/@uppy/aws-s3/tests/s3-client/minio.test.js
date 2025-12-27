@@ -363,6 +363,108 @@ const minioSpecific = (bucket) => {
       expect(result.ok).toBe(true)
       expect(fetchCount).toBe(2) // Invalid + valid after error
     })
+
+    // Skip by default - this test takes 15+ minutes!
+    // Run manually with: it.only('should retry...') instead of it.skip
+    it.skip(
+      'should retry with fresh credentials on expired credentials from MinIO',
+      { timeout: 1200000 },
+      async () => {
+        let fetchCount = 0
+        let expiredCredsUsed = false
+
+        const stsClient = createSTSClient({
+          endpoint: stsEndpoint,
+          accessKeyId: bucket.accessKeyId,
+          secretAccessKey: bucket.secretAccessKey,
+          region: bucket.region,
+        })
+
+        // Get initial credentials with minimum duration (900 seconds = 15 min)
+        const initialCreds = await assumeRole(stsClient, {
+          durationSeconds: 900,
+        })
+        console.log(
+          '✓ Got initial credentials, expires at:',
+          initialCreds.Expiration,
+        )
+
+        const s3 = new S3mini({
+          endpoint: bucket.endpoint,
+          region: bucket.region,
+          getCredentials: async () => {
+            fetchCount++
+            if (!expiredCredsUsed) {
+              expiredCredsUsed = true
+              console.log(
+                `[getCredentials #${fetchCount}] Returning EXPIRED credentials`,
+              )
+              return {
+                credentials: {
+                  accessKeyId: initialCreds.AccessKeyId,
+                  secretAccessKey: initialCreds.SecretAccessKey,
+                  sessionToken: initialCreds.SessionToken,
+                  expiration: initialCreds.Expiration,
+                },
+                bucket: new URL(bucket.endpoint).pathname.slice(1),
+                region: bucket.region,
+              }
+            } else {
+              // Fetch fresh credentials for retry
+              const freshCreds = await assumeRole(stsClient, {
+                durationSeconds: 900,
+              })
+              console.log(
+                `[getCredentials #${fetchCount}] Returning FRESH credentials`,
+              )
+              return {
+                credentials: {
+                  accessKeyId: freshCreds.AccessKeyId,
+                  secretAccessKey: freshCreds.SecretAccessKey,
+                  sessionToken: freshCreds.SessionToken,
+                  expiration: freshCreds.Expiration,
+                },
+                bucket: new URL(bucket.endpoint).pathname.slice(1),
+                region: bucket.region,
+              }
+            }
+          },
+        })
+
+        // Wait for credentials to expire (15 min + 30 sec buffer)
+        const waitMs = 15 * 60 * 1000 + 30 * 1000
+        console.log(
+          `⏳ Waiting ${waitMs / 1000 / 60} minutes for credentials to expire...`,
+        )
+        await new Promise((resolve) => setTimeout(resolve, waitMs))
+        console.log('✓ Wait complete, credentials should now be expired')
+
+        // Intercept to log the error
+        const originalSendRequest = s3._sendRequest.bind(s3)
+        s3._sendRequest = async (...args) => {
+          try {
+            return await originalSendRequest(...args)
+          } catch (err) {
+            console.log('🔴 Got error from MinIO:', err.code, err.message)
+            throw err
+          }
+        }
+
+        // This should fail with InvalidAccessKeyId (expired STS), then retry with fresh creds
+        const result = await s3.putObject(
+          `real-expiry-test-${Date.now()}.txt`,
+          'Testing real credential expiry',
+          'text/plain',
+        )
+
+        console.log('✓ Upload succeeded after retry!')
+        expect(result.ok).toBe(true)
+        expect(fetchCount).toBe(2) // Initial expired + fresh after error
+
+        // Cleanup
+        s3.destroy()
+      },
+    )
   })
 }
 
