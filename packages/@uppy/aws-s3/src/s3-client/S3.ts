@@ -40,6 +40,7 @@ class S3mini {
 
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
+  private cachedCredentialsPromise?: Promise<IT.CredentialsResponse>
   private signRequest!: IT.signRequestFn
 
   constructor({
@@ -80,10 +81,17 @@ class S3mini {
 
   /** Gets cached credentials or fetches new ones. */
   private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
-    if (this.cachedCredentials == null) {
-      this.cachedCredentials = await this.getCredentials!()
+    if (this.cachedCredentials != null) {
+       return this.cachedCredentials
     }
-    return this.cachedCredentials
+
+    if (this.cachedCredentialsPromise == null){
+      this.cachedCredentialsPromise = this.getCredentials!().then(creds => {
+        this.cachedCredentials = creds
+        return creds
+      })
+    }
+    return this.cachedCredentialsPromise
   }
 
   private _validateConstructorParams(
@@ -282,9 +290,10 @@ class S3mini {
         this.getCredentials &&
         err instanceof U.S3ServiceError &&
         err.code &&
-        ['ExpiredToken', 'ExpiredTokenException', 'TokenRefreshRequired'].includes(err.code)
+        ['ExpiredToken','InvalidAccessKeyId'].includes(err.code)
       ) {
         this.cachedCredentials = undefined
+        this.cachedCredentialsPromise = undefined
         const freshSignedHeaders = await this.signRequest({
           method,
           url: finalUrl.toString(),
