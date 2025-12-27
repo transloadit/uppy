@@ -286,6 +286,83 @@ const minioSpecific = (bucket) => {
       expect(result.ok).toBe(true)
       expect(fetchCount).toBe(2) // Initial + retry after ExpiredToken
     })
+
+    // Tests that retry logic works when first credentials are invalid
+    it('should retry with fresh credentials when first credentials are invalid', async () => {
+      let fetchCount = 0
+      let returnInvalidCreds = true
+
+      const stsClient = createSTSClient({
+        endpoint: stsEndpoint,
+        accessKeyId: bucket.accessKeyId,
+        secretAccessKey: bucket.secretAccessKey,
+        region: bucket.region,
+      })
+
+      const s3 = new S3mini({
+        endpoint: bucket.endpoint,
+        region: bucket.region,
+        getCredentials: async () => {
+          fetchCount++
+          if (returnInvalidCreds) {
+            returnInvalidCreds = false
+            console.log(
+              `[getCredentials #${fetchCount}] Returning INVALID credentials`,
+            )
+            return {
+              credentials: {
+                accessKeyId: 'wrong_access_key',
+                secretAccessKey: 'wrong_secret_key',
+                sessionToken: 'wrong_token',
+                expiration: new Date(Date.now() + 600000).toISOString(),
+              },
+              bucket: new URL(bucket.endpoint).pathname.slice(1),
+              region: bucket.region,
+            }
+          } else {
+            // Fetch valid credentials for retry
+            const freshCreds = await assumeRole(stsClient, {
+              durationSeconds: 900,
+            })
+            console.log(
+              `[getCredentials #${fetchCount}] Returning VALID credentials`,
+            )
+            return {
+              credentials: {
+                accessKeyId: freshCreds.AccessKeyId,
+                secretAccessKey: freshCreds.SecretAccessKey,
+                sessionToken: freshCreds.SessionToken,
+                expiration: freshCreds.Expiration,
+              },
+              bucket: new URL(bucket.endpoint).pathname.slice(1),
+              region: bucket.region,
+            }
+          }
+        },
+      })
+
+      // Intercept to log the error
+      const originalSendRequest = s3._sendRequest.bind(s3)
+      s3._sendRequest = async (...args) => {
+        try {
+          return await originalSendRequest(...args)
+        } catch (err) {
+          console.log('🔴 Got error from MinIO:', err.code, err.message)
+          throw err
+        }
+      }
+
+      // First attempt fails with InvalidAccessKeyId, retry succeeds
+      const result = await s3.putObject(
+        `invalid-creds-test-${Date.now()}.txt`,
+        'Testing invalid credentials retry',
+        'text/plain',
+      )
+
+      console.log('✓ Upload succeeded after retry!')
+      expect(result.ok).toBe(true)
+      expect(fetchCount).toBe(2) // Invalid + valid after error
+    })
   })
 }
 
