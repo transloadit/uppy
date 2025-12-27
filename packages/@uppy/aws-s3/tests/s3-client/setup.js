@@ -64,7 +64,7 @@ export default async function setup({ provide }) {
             )
           } catch (err) {
             // User may already exist, that's fine
-            console.log('STS user setup:', err.message || 'completed')
+            console.log('STS user setup:', err.message || 'error occurred')
           }
         }
         break
