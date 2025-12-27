@@ -236,9 +236,9 @@ const minioSpecific = (bucket) => {
       await s3.deleteObject(key)
     })
 
-    it('should refetch credentials when they are expired', async () => {
+    it('should retry with fresh credentials on ExpiredToken error', async () => {
       let fetchCount = 0
-      let returnExpired = true
+      let firstRequest = true
 
       const s3 = new S3mini({
         endpoint: bucket.endpoint,
@@ -257,10 +257,7 @@ const minioSpecific = (bucket) => {
               accessKeyId: creds.AccessKeyId,
               secretAccessKey: creds.SecretAccessKey,
               sessionToken: creds.SessionToken,
-              // First call returns expired, second returns valid
-              expiration: returnExpired
-                ? new Date(Date.now() - 1000).toISOString() // Expired
-                : new Date(Date.now() + 600000).toISOString(), // Valid 10 min
+              expiration: new Date(Date.now() + 600000).toISOString(),
             },
             bucket: new URL(bucket.endpoint).pathname.slice(1),
             region: bucket.region,
@@ -268,18 +265,26 @@ const minioSpecific = (bucket) => {
         },
       })
 
-      // First request - credentials fetched (expired)
-      await s3.putObject(`expiry-1-${Date.now()}.txt`, 'test1', 'text/plain')
-      expect(fetchCount).toBe(1)
+      // Monkey-patch _sendRequest to throw ExpiredToken on first call
+      const originalSendRequest = s3._sendRequest.bind(s3)
+      s3._sendRequest = async (...args) => {
+        if (firstRequest) {
+          firstRequest = false
+          const { S3ServiceError } = await import(
+            '../../src/s3-client/utils.js'
+          )
+          throw new S3ServiceError('Token expired', 403, 'ExpiredToken', '')
+        }
+        return originalSendRequest(...args)
+      }
 
-      // Second request - should refetch because cached are expired
-      returnExpired = false // Now return valid credentials
-      await s3.putObject(`expiry-2-${Date.now()}.txt`, 'test2', 'text/plain')
-      expect(fetchCount).toBe(2) // Refetched!
-
-      // Third request - should use cache (not expired anymore)
-      await s3.putObject(`expiry-3-${Date.now()}.txt`, 'test3', 'text/plain')
-      expect(fetchCount).toBe(2) // Cached!
+      const result = await s3.putObject(
+        `retry-${Date.now()}.txt`,
+        'test',
+        'text/plain',
+      )
+      expect(result.ok).toBe(true)
+      expect(fetchCount).toBe(2) // Initial + retry after ExpiredToken
     })
   })
 }

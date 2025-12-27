@@ -41,7 +41,6 @@ class S3mini {
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
   private signRequest!: IT.signRequestFn
-  private credentialTimeoutId?: ReturnType<typeof setTimeout>
 
   constructor({
     endpoint,
@@ -79,40 +78,10 @@ class S3mini {
     }
   }
 
-  /** Gets cached credentials or fetches new ones. Clears cache at 50% of expiry. */
+  /** Gets cached credentials or fetches new ones. */
   private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
-    // Check if cached credentials are expired
-    if (this.cachedCredentials != null) {
-      const expiration = this.cachedCredentials.credentials.expiration
-      if (expiration) {
-        const expiresInMs = new Date(expiration).getTime() - Date.now()
-        if (expiresInMs <= 0) {
-          // Credentials expired - clear cache to trigger refetch
-          this.cachedCredentials = undefined
-        }
-      }
-    }
-
     if (this.cachedCredentials == null) {
       this.cachedCredentials = await this.getCredentials!()
-
-      // Clear any existing timeout before setting a new one
-      if (this.credentialTimeoutId) {
-        clearTimeout(this.credentialTimeoutId)
-        this.credentialTimeoutId = undefined
-      }
-
-      // Clear cache at 50% of credential lifetime
-      const expiration = this.cachedCredentials.credentials.expiration
-      if (expiration) {
-        const expiresInMs = new Date(expiration).getTime() - Date.now()
-        if (expiresInMs > 0) {
-          this.credentialTimeoutId = setTimeout(() => {
-            this.cachedCredentials = undefined
-            this.credentialTimeoutId = undefined
-          }, expiresInMs / 2)
-        }
-      }
     }
     return this.cachedCredentials
   }
@@ -299,13 +268,32 @@ class S3mini {
       headers: baseHeaders,
     })
 
-    return this._sendRequest(
-      finalUrl.toString(),
-      method,
-      signedHeaders,
-      body,
-      tolerated,
-    )
+    try {
+      return await this._sendRequest(
+        finalUrl.toString(),
+        method,
+        signedHeaders,
+        body,
+        tolerated,
+      )
+    } catch (err) {
+      // If expired token error and using getCredentials, clear cache and retry once
+      if (
+        this.getCredentials &&
+        err instanceof U.S3ServiceError &&
+        err.code &&
+        ['ExpiredToken', 'ExpiredTokenException', 'TokenRefreshRequired'].includes(err.code)
+      ) {
+        this.cachedCredentials = undefined
+        const freshSignedHeaders = await this.signRequest({
+          method,
+          url: finalUrl.toString(),
+          headers: baseHeaders,
+        })
+        return this._sendRequest(finalUrl.toString(), method, freshSignedHeaders, body, tolerated)
+      }
+      throw err
+    }
   }
 
   /** Uploads an object to the S3-compatible service. */
