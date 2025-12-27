@@ -41,6 +41,7 @@ class S3mini {
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
   private cachedCredentialsPromise?: Promise<IT.CredentialsResponse>
+  private credentialsRefreshTimer?: ReturnType<typeof setTimeout>
   private signRequest!: IT.signRequestFn
 
   constructor({
@@ -86,16 +87,57 @@ class S3mini {
       return this.cachedCredentials
     }
 
-    // we're caching the promise so that all the concurrent calls
-    // can wait for the same promise to resolve
+    // Cache the promise so concurrent calls wait for the same fetch
     if (this.cachedCredentialsPromise == null) {
-      this.cachedCredentialsPromise = this.getCredentials!().then((creds) => {
-        this.cachedCredentials = creds
-        return creds
-      })
+      this.cachedCredentialsPromise = this.getCredentials!()
+        .then((creds) => {
+          this.cachedCredentials = creds
+          this._scheduleCredentialRefresh(creds)
+          return creds
+        })
+        .finally(() => {
+          // Clear promise cache after resolution to allow future retries
+          this.cachedCredentialsPromise = undefined
+        })
     }
 
     return this.cachedCredentialsPromise
+  }
+
+  /**
+   *
+   * At half the time left before expiration, we clear the cache. That's
+   * an arbitrary tradeoff to limit the number of requests made to the
+   * remote while limiting the risk of using an expired token in case the
+   * clocks are not exactly synced.
+   * The HTTP cache should be configured to ensure a client doesn't request
+   * more tokens than it needs, but this timeout provides a second layer of
+   * security in case the HTTP cache is disabled or misconfigured.
+   *
+   */
+  private _scheduleCredentialRefresh(creds: IT.CredentialsResponse): void {
+    // Clear any existing timer
+    if (this.credentialsRefreshTimer != null) {
+      clearTimeout(this.credentialsRefreshTimer)
+      this.credentialsRefreshTimer = undefined
+    }
+
+    const expiresAt = new Date(creds.credentials.expiration!).getTime()
+    const now = Date.now()
+    const ttl = expiresAt - now
+
+    if (ttl <= 0) {
+      return // Already expired, don't set timer
+    }
+
+    // Refresh at 50% of TTL
+    const refreshIn = ttl * 0.5
+
+    this.credentialsRefreshTimer = setTimeout(() => {
+      this.cachedCredentials = undefined
+      this.cachedCredentialsPromise = undefined
+      this.credentialsRefreshTimer = undefined
+    }, refreshIn)
   }
 
   private _validateConstructorParams(
@@ -296,8 +338,15 @@ class S3mini {
         err.code &&
         ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
       ) {
+        // Clear timer and cache
+        if (this.credentialsRefreshTimer != null) {
+          clearTimeout(this.credentialsRefreshTimer)
+          this.credentialsRefreshTimer = undefined
+        }
         this.cachedCredentials = undefined
         this.cachedCredentialsPromise = undefined
+
+        // Retry with fresh credentials
         const freshSignedHeaders = await this.signRequest({
           method,
           url: finalUrl.toString(),
@@ -556,6 +605,19 @@ class S3mini {
       tolerated: [200, 204],
     })
     return res.status === 200 || res.status === 204
+  }
+
+  /**
+   * Cleans up resources used by this S3 client instance.
+   * Call this method when the client is no longer needed to prevent memory leaks.
+   */
+  public destroy(): void {
+    if (this.credentialsRefreshTimer != null) {
+      clearTimeout(this.credentialsRefreshTimer)
+      this.credentialsRefreshTimer = undefined
+    }
+    this.cachedCredentials = undefined
+    this.cachedCredentialsPromise = undefined
   }
 
   private async _sendRequest(
