@@ -339,12 +339,7 @@ class S3mini {
         ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
       ) {
         // Clear timer and cache
-        if (this.credentialsRefreshTimer != null) {
-          clearTimeout(this.credentialsRefreshTimer)
-          this.credentialsRefreshTimer = undefined
-        }
-        this.cachedCredentials = undefined
-        this.cachedCredentialsPromise = undefined
+        this.clearCachedCredentials()
 
         // Retry with fresh credentials
         const freshSignedHeaders = await this.signRequest({
@@ -608,10 +603,11 @@ class S3mini {
   }
 
   /**
-   * Cleans up resources used by this S3 client instance.
-   * Call this method when the client is no longer needed to prevent memory leaks.
+   * Clears cached credentials and cancels any scheduled credential refresh.
+   * Call this method when the client is no longer needed to prevent memory leaks,
+   * or when you need to force a credential refresh on the next request.
    */
-  public destroy(): void {
+  public clearCachedCredentials(): void {
     if (this.credentialsRefreshTimer != null) {
       clearTimeout(this.credentialsRefreshTimer)
       this.credentialsRefreshTimer = undefined
