@@ -1028,8 +1028,8 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.uppy.off('files-added', this.#generateLargeThumbnailIfSingleFile)
     this.uppy.off('file-removed', this.#generateLargeThumbnailIfSingleFile)
 
-    document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
-    document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
+    document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently, true)
+    document.removeEventListener('click', this.recordIfFocusedOnUppyRecently, true)
 
     if (this.opts.inline) {
       this.el!.removeEventListener('keydown', this.handleKeyDownInInline)
