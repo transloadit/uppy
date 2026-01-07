@@ -37,7 +37,10 @@ export function ImageEditor({ file, close }: ImageEditorProps) {
 
       <div className="mb-4">
         {/* biome-ignore lint/a11y/useAltText: alt is provided by getImageProps() */}
-        <img className="w-full rounded-lg border-2" {...getImageProps()} />
+        <img
+          className="w-full max-h-[400px] rounded-lg border-2"
+          {...getImageProps()}
+        />
       </div>
 
       <div className="mb-4">

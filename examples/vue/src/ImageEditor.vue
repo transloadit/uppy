@@ -13,7 +13,7 @@
 
     <div class="mb-4">
       <img
-        class="w-full rounded-lg border-2"
+        class="w-full max-h-[400px] rounded-lg border-2"
         v-bind="editor.value.getImageProps()"
       />
     </div>
