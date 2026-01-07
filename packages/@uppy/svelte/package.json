@@ -53,7 +53,7 @@
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.26.5"
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.0",
