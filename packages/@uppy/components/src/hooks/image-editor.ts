@@ -83,9 +83,7 @@ export function createImageEditorController<
     )
   }
 
-  // Get fresh file from Uppy state to ensure we have the latest data including blob
-  const file = uppy.getFile(options.file.id) ?? options.file
-
+  const { file } = options
   const subscribers = new Subscribers()
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
