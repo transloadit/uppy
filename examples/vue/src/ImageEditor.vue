@@ -91,13 +91,13 @@
     <div class="flex gap-4 justify-end">
       <button
         class="bg-gray-500 text-white px-4 py-2 rounded-md"
-        v-bind="editor.value.getCancelButtonProps()"
+        v-bind="editor.value.getCancelButtonProps({ onClick: close })"
       >
         Cancel
       </button>
       <button
         class="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
-        v-bind="editor.value.getSaveButtonProps()"
+        v-bind="editor.value.getSaveButtonProps({ onClick: close })"
       >
         Save
       </button>

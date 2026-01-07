@@ -18,6 +18,10 @@ type ButtonProps = {
   'aria-label': string
 }
 
+type ButtonClickOptions = {
+  onClick?: () => void
+}
+
 type SliderProps<EventType extends Event = Event> = {
   type: 'range'
   min: number
@@ -40,8 +44,8 @@ export type ImageEditorSnapshot<
 > = {
   state: ImageEditorState
   getImageProps: () => ImageProps<ImageEventType>
-  getSaveButtonProps: () => ButtonProps
-  getCancelButtonProps: () => ButtonProps
+  getSaveButtonProps: (options?: ButtonClickOptions) => ButtonProps
+  getCancelButtonProps: (options?: ButtonClickOptions) => ButtonProps
   getRotateButtonProps: (degrees: number) => ButtonProps
   getFlipHorizontalButtonProps: () => ButtonProps
   getZoomButtonProps: (ratio: number) => ButtonProps
@@ -69,7 +73,7 @@ export function createImageEditorController<
   SliderEventType extends Event = Event,
 >(
   uppy: Uppy<any, any>,
-  options: { file: UppyFile<any, any>; onSubmit?: () => void },
+  options: { file: UppyFile<any, any> },
 ): ImageEditorStore<ImageEventType, SliderEventType> {
   const plugin = uppy.getPlugin<ImageEditor<any, any>>('ImageEditor')
 
@@ -79,7 +83,6 @@ export function createImageEditorController<
     )
   }
 
-  const { onSubmit } = options
   // Get fresh file from Uppy state to ensure we have the latest data including blob
   const file = uppy.getFile(options.file.id) ?? options.file
 
@@ -126,7 +129,6 @@ export function createImageEditorController<
   const save = (): void => {
     if (!plugin.cropper) return
     plugin.save()
-    onSubmit?.()
   }
 
   const cancel = (): void => {
@@ -175,16 +177,26 @@ export function createImageEditorController<
 
   const isCropperReady = () => plugin.getPluginState().cropperReady
 
-  const getSaveButtonProps = (): ButtonProps => ({
+  const getSaveButtonProps = (
+    options: ButtonClickOptions = {},
+  ): ButtonProps => ({
     type: 'button',
-    onClick: save,
+    onClick: () => {
+      save()
+      options.onClick?.()
+    },
     disabled: !isCropperReady(),
     'aria-label': 'Save changes',
   })
 
-  const getCancelButtonProps = (): ButtonProps => ({
+  const getCancelButtonProps = (
+    options: ButtonClickOptions = {},
+  ): ButtonProps => ({
     type: 'button',
-    onClick: cancel,
+    onClick: () => {
+      cancel()
+      options.onClick?.()
+    },
     disabled: false,
     'aria-label': 'Cancel editing',
   })

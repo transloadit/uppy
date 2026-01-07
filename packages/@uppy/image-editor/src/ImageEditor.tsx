@@ -190,29 +190,33 @@ export default class ImageEditor<
   }
 
   save = (): void => {
-    const saveBlobCallback: BlobCallback = (blob) => {
-      const { currentImage } = this.getPluginState()
+    const { currentImage } = this.getPluginState()
+    if (!currentImage) return
+    if (!this.cropper) return
 
-      this.uppy.setFileState(currentImage!.id, {
+    const saveBlobCallback: BlobCallback = (blob) => {
+      if (!blob) return
+      const fileId = currentImage.id
+
+      if (!this.uppy.getFile(fileId)) return
+
+      this.uppy.setFileState(fileId, {
         // Reinserting image's name and type, because .toBlob loses both.
-        data: new File([blob!], currentImage!.name ?? this.i18n('unnamed'), {
-          type: blob!.type,
+        data: new File([blob], currentImage.name ?? this.i18n('unnamed'), {
+          type: blob.type,
         }),
-        size: blob!.size,
+        size: blob.size,
         preview: undefined,
       })
 
-      const updatedFile = this.uppy.getFile(currentImage!.id)
+      const updatedFile = this.uppy.getFile(fileId)
+      if (!updatedFile) return
       this.uppy.emit('thumbnail:request', updatedFile)
       this.setPluginState({
         currentImage: updatedFile,
       })
       this.uppy.emit('file-editor:complete', updatedFile)
     }
-
-    const { currentImage } = this.getPluginState()
-
-    if (!this.cropper) return
 
     // Fixes black 1px lines on odd-width images.
     // This should be removed when cropperjs fixes this issue.

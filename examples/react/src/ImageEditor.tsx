@@ -110,13 +110,13 @@ export function ImageEditor({ file, close }: ImageEditorProps) {
       <div className="flex gap-4 justify-end">
         <button
           className="bg-gray-500 text-white px-4 py-2 rounded-md"
-          {...getCancelButtonProps()}
+          {...getCancelButtonProps({ onClick: close })}
         >
           Cancel
         </button>
         <button
           className="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
-          {...getSaveButtonProps()}
+          {...getSaveButtonProps({ onClick: close })}
         >
           Save
         </button>

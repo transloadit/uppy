@@ -18,6 +18,10 @@ type ButtonProps = {
   'aria-label': string
 }
 
+type ButtonClickOptions = {
+  onClick?: () => void
+}
+
 type ImageProps = ReturnType<ImageEditorSnapshot['getImageProps']>
 type SvelteImageProps = Omit<ImageProps, 'onLoad'> & {
   onload: ImageProps['onLoad']
@@ -35,8 +39,8 @@ type SliderProps = {
 type SvelteImageEditorSnapshot = {
   state: ImageEditorSnapshot['state']
   getImageProps: () => SvelteImageProps
-  getSaveButtonProps: () => ButtonProps
-  getCancelButtonProps: () => ButtonProps
+  getSaveButtonProps: (options?: ButtonClickOptions) => ButtonProps
+  getCancelButtonProps: (options?: ButtonClickOptions) => ButtonProps
   getRotateButtonProps: (degrees: number) => ButtonProps
   getFlipHorizontalButtonProps: () => ButtonProps
   getZoomButtonProps: (ratio: number) => ButtonProps
@@ -71,12 +75,12 @@ export function useImageEditor(
         return { ...rest, onload: onLoad }
       }
     },
-    getSaveButtonProps: () => {
-      const { onClick, ...rest } = store.value.getSaveButtonProps()
+    getSaveButtonProps: (options?: ButtonClickOptions) => {
+      const { onClick, ...rest } = store.value.getSaveButtonProps(options)
       return { ...rest, onclick: onClick }
     },
-    getCancelButtonProps: () => {
-      const { onClick, ...rest } = store.value.getCancelButtonProps()
+    getCancelButtonProps: (options?: ButtonClickOptions) => {
+      const { onClick, ...rest } = store.value.getCancelButtonProps(options)
       return { ...rest, onclick: onClick }
     },
     getRotateButtonProps: (degrees: number) => {
