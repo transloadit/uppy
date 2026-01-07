@@ -103,3 +103,4 @@ const uppy = computed(() =>
 </script>
 
 <style src="@uppy/vue/css/style.css"></style>
+<style src="@uppy/vue/css/image-editor.css"></style>

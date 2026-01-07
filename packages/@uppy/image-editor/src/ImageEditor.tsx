@@ -75,6 +75,7 @@ type PluginState<M extends Meta, B extends Body> = {
   angleGranular: number
   isFlippedHorizontally: boolean
   aspectRatio: AspectRatio
+  cropperReady: boolean
 }
 
 export type AspectRatio = 'free' | '1:1' | '16:9' | '9:16'
@@ -84,6 +85,7 @@ const defaultEditorState = {
   angleGranular: 0,
   isFlippedHorizontally: false,
   aspectRatio: 'free',
+  cropperReady: false,
 } satisfies Omit<PluginState<any, any>, 'currentImage'>
 
 const defaultCropperOptions = {
@@ -148,6 +150,8 @@ export default class ImageEditor<
   private cropstartHandler: (() => void) | null = null
 
   private cropendHandler: EventListener | null = null
+
+  private cropperReadyHandler: (() => void) | null = null
 
   constructor(uppy: Uppy<M, B>, opts?: Opts) {
     super(uppy, {
@@ -424,8 +428,15 @@ export default class ImageEditor<
       }
     }) as EventListener
 
+    this.cropperReadyHandler = () => {
+      this.setPluginState({ cropperReady: true })
+    }
+
     imgElement.addEventListener('cropstart', this.cropstartHandler)
     imgElement.addEventListener('cropend', this.cropendHandler)
+    imgElement.addEventListener('ready', this.cropperReadyHandler, {
+      once: true,
+    })
   }
 
   /**
@@ -434,11 +445,16 @@ export default class ImageEditor<
   destroyCropper = (): void => {
     if (!this.cropper) return
 
+    this.setPluginState({ cropperReady: false })
+
     if (this.cropstartHandler && this.imgElement) {
       this.imgElement.removeEventListener('cropstart', this.cropstartHandler)
     }
     if (this.cropendHandler && this.imgElement) {
       this.imgElement.removeEventListener('cropend', this.cropendHandler)
+    }
+    if (this.cropperReadyHandler && this.imgElement) {
+      this.imgElement.removeEventListener('ready', this.cropperReadyHandler)
     }
 
     this.cropper.destroy()
@@ -446,6 +462,7 @@ export default class ImageEditor<
     this.imgElement = null
     this.cropstartHandler = null
     this.cropendHandler = null
+    this.cropperReadyHandler = null
     this.prevCropboxData = null
   }
 

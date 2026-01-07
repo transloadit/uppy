@@ -1,4 +1,4 @@
-import type { Body, Meta, Uppy, UppyEventMap, UppyFile } from '@uppy/core'
+import type { Uppy, UppyEventMap, UppyFile } from '@uppy/core'
 import type ImageEditor from '@uppy/image-editor'
 import type { AspectRatio } from '@uppy/image-editor'
 import { Subscribers } from './utils.js'
@@ -18,22 +18,28 @@ type ButtonProps = {
   'aria-label': string
 }
 
-type SliderProps = {
+type SliderProps<EventType extends Event = Event> = {
   type: 'range'
   min: number
   max: number
   value: number
-  onChange: (e: Event) => void
+  onChange: (e: EventType) => void
   'aria-label': string
 }
 
-export type ImageEditorSnapshot = {
+type ImageProps<EventType extends Event = Event> = {
+  id: string
+  src: string
+  alt: string
+  onLoad: (e: EventType) => void
+}
+
+export type ImageEditorSnapshot<
+  ImageEventType extends Event = Event,
+  SliderEventType extends Event = Event,
+> = {
   state: ImageEditorState
-  getImageProps: () => {
-    id: string
-    src: string
-    alt: string
-  }
+  getImageProps: () => ImageProps<ImageEventType>
   getSaveButtonProps: () => ButtonProps
   getCancelButtonProps: () => ButtonProps
   getRotateButtonProps: (degrees: number) => ButtonProps
@@ -43,23 +49,29 @@ export type ImageEditorSnapshot = {
   getCropLandscapeButtonProps: () => ButtonProps
   getCropPortraitButtonProps: () => ButtonProps
   getResetButtonProps: () => ButtonProps
-  getRotationSliderProps: () => SliderProps
+  getRotationSliderProps: () => SliderProps<SliderEventType>
 }
 
-export type ImageEditorStore = {
+export type ImageEditorStore<
+  ImageEventType extends Event = Event,
+  SliderEventType extends Event = Event,
+> = {
   subscribe: (listener: () => void) => () => void
-  getSnapshot: () => ImageEditorSnapshot
+  getSnapshot: () => ImageEditorSnapshot<ImageEventType, SliderEventType>
   start: () => void
   stop: () => void
 }
 
 const imgElementId = 'uppy-image-editor-image'
 
-export function createImageEditorController<M extends Meta, B extends Body>(
-  uppy: Uppy<M, B>,
-  options: { file: UppyFile<M, B>; onSubmit?: () => void },
-): ImageEditorStore {
-  const plugin = uppy.getPlugin<ImageEditor<M, B>>('ImageEditor')
+export function createImageEditorController<
+  ImageEventType extends Event = Event,
+  SliderEventType extends Event = Event,
+>(
+  uppy: Uppy<any, any>,
+  options: { file: UppyFile<any, any>; onSubmit?: () => void },
+): ImageEditorStore<ImageEventType, SliderEventType> {
+  const plugin = uppy.getPlugin<ImageEditor<any, any>>('ImageEditor')
 
   if (!plugin) {
     throw new Error(
@@ -73,7 +85,7 @@ export function createImageEditorController<M extends Meta, B extends Body>(
 
   const subscribers = new Subscribers()
 
-  const onStateUpdate: UppyEventMap<M, B>['state-update'] = (
+  const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     _prev,
     _next,
     patch,
@@ -94,20 +106,20 @@ export function createImageEditorController<M extends Meta, B extends Body>(
     plugin.stop()
   }
 
-  const ensureCropper = (): boolean => {
-    if (plugin.cropper) return true
+  const ensureCropper = (imgElement?: HTMLImageElement | null): boolean => {
+    if (plugin.cropper) return plugin.getPluginState().cropperReady
 
-    const imgElement = document.getElementById(
-      imgElementId,
-    ) as HTMLImageElement | null
-    if (!imgElement) {
+    const element =
+      imgElement ??
+      (document.getElementById(imgElementId) as HTMLImageElement | null)
+    if (!element) {
       throw new Error(
         'Could not find image element. This likely means you are not using `getImageProps` correctly.',
       )
     }
 
-    plugin.initCropper(imgElement)
-    return true
+    plugin.initCropper(element)
+    return plugin.getPluginState().cropperReady
   }
 
   // Actions
@@ -152,13 +164,16 @@ export function createImageEditorController<M extends Meta, B extends Body>(
   }
 
   // Props getters
-  const getImageProps = () => ({
+  const getImageProps = (): ImageProps<ImageEventType> => ({
     id: imgElementId,
     src: plugin.getObjectUrl() ?? '',
     alt: file.name ?? '',
+    onLoad: (e: ImageEventType) => {
+      ensureCropper(e.currentTarget as HTMLImageElement)
+    },
   })
 
-  const isCropperReady = () => plugin.cropper != null
+  const isCropperReady = () => plugin.getPluginState().cropperReady
 
   const getSaveButtonProps = (): ButtonProps => ({
     type: 'button',
@@ -223,12 +238,12 @@ export function createImageEditorController<M extends Meta, B extends Body>(
     'aria-label': 'Reset all changes',
   })
 
-  const getRotationSliderProps = (): SliderProps => ({
+  const getRotationSliderProps = (): SliderProps<SliderEventType> => ({
     type: 'range',
     min: -45,
     max: 45,
     value: plugin.getPluginState().angleGranular,
-    onChange: (e: Event) => {
+    onChange: (e: SliderEventType) => {
       const granularAngle = Number((e.target as HTMLInputElement).value)
       rotateGranular(granularAngle)
     },
@@ -237,7 +252,7 @@ export function createImageEditorController<M extends Meta, B extends Body>(
 
   const getSnapshot = (
     pluginState = plugin.getPluginState(),
-  ): ImageEditorSnapshot => ({
+  ): ImageEditorSnapshot<ImageEventType, SliderEventType> => ({
     state: {
       angle: pluginState.angle,
       isFlippedHorizontally: pluginState.isFlippedHorizontally,
@@ -257,9 +272,13 @@ export function createImageEditorController<M extends Meta, B extends Body>(
   })
 
   let cachedPluginState = plugin.getPluginState()
-  let cachedSnapshot = getSnapshot(cachedPluginState)
+  let cachedSnapshot: ImageEditorSnapshot<ImageEventType, SliderEventType> =
+    getSnapshot(cachedPluginState)
 
-  const getCachedSnapshot = (): ImageEditorSnapshot => {
+  const getCachedSnapshot = (): ImageEditorSnapshot<
+    ImageEventType,
+    SliderEventType
+  > => {
     const pluginState = plugin.getPluginState()
     if (pluginState === cachedPluginState) return cachedSnapshot
 

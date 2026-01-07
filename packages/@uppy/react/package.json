@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
     "typecheck": "tsc --build",
     "test": "vitest run --environment=jsdom --silent='passed-only'"
   },
@@ -55,6 +55,7 @@
   "exports": {
     ".": "./lib/index.js",
     "./css/style.css": "./dist/styles.css",
+    "./css/image-editor.css": "./dist/image-editor.css",
     "./dashboard": "./lib/Dashboard.js",
     "./status-bar": "./lib/StatusBar.js",
     "./dashboard-modal": "./lib/DashboardModal.js",

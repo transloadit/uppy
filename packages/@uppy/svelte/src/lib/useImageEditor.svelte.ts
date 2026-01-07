@@ -18,6 +18,11 @@ type ButtonProps = {
   'aria-label': string
 }
 
+type ImageProps = ReturnType<ImageEditorSnapshot['getImageProps']>
+type SvelteImageProps = Omit<ImageProps, 'onLoad'> & {
+  onload: ImageProps['onLoad']
+}
+
 type SliderProps = {
   type: 'range'
   min: number
@@ -29,7 +34,7 @@ type SliderProps = {
 
 type SvelteImageEditorSnapshot = {
   state: ImageEditorSnapshot['state']
-  getImageProps: () => ReturnType<ImageEditorSnapshot['getImageProps']>
+  getImageProps: () => SvelteImageProps
   getSaveButtonProps: () => ButtonProps
   getCancelButtonProps: () => ButtonProps
   getRotateButtonProps: (degrees: number) => ButtonProps
@@ -56,72 +61,55 @@ export function useImageEditor(
   onMount(() => controller.start())
   onDestroy(() => controller.stop())
 
-  // Helper to convert onClick to onclick for Svelte
-  const adaptButtonProps = (
-    getProps: () => ReturnType<ImageEditorSnapshot['getSaveButtonProps']>,
-  ) => {
-    return () => {
-      const { onClick, ...rest } = getProps()
-      return { ...rest, onclick: onClick }
-    }
-  }
-
-  // Helper for button props that take a parameter
-  const adaptButtonPropsWithParam = <T,>(
-    getProps: (param: T) => ReturnType<ImageEditorSnapshot['getSaveButtonProps']>,
-  ) => {
-    return (param: T) => {
-      const { onClick, ...rest } = getProps(param)
-      return { ...rest, onclick: onClick }
-    }
-  }
-
-  // Helper to convert onChange to onchange for Svelte
-  const adaptSliderProps = (
-    getProps: () => ReturnType<ImageEditorSnapshot['getRotationSliderProps']>,
-  ) => {
-    return () => {
-      const { onChange, ...rest } = getProps()
-      return { ...rest, onchange: onChange }
-    }
-  }
-
   return {
     get state() {
       return store.value.state
     },
     get getImageProps() {
-      return store.value.getImageProps
+      return () => {
+        const { onLoad, ...rest } = store.value.getImageProps()
+        return { ...rest, onload: onLoad }
+      }
     },
-    getSaveButtonProps: adaptButtonProps(() =>
-      store.value.getSaveButtonProps(),
-    ),
-    getCancelButtonProps: adaptButtonProps(() =>
-      store.value.getCancelButtonProps(),
-    ),
-    getRotateButtonProps: adaptButtonPropsWithParam((degrees: number) =>
-      store.value.getRotateButtonProps(degrees),
-    ),
-    getFlipHorizontalButtonProps: adaptButtonProps(() =>
-      store.value.getFlipHorizontalButtonProps(),
-    ),
-    getZoomButtonProps: adaptButtonPropsWithParam((ratio: number) =>
-      store.value.getZoomButtonProps(ratio),
-    ),
-    getCropSquareButtonProps: adaptButtonProps(() =>
-      store.value.getCropSquareButtonProps(),
-    ),
-    getCropLandscapeButtonProps: adaptButtonProps(() =>
-      store.value.getCropLandscapeButtonProps(),
-    ),
-    getCropPortraitButtonProps: adaptButtonProps(() =>
-      store.value.getCropPortraitButtonProps(),
-    ),
-    getResetButtonProps: adaptButtonProps(() =>
-      store.value.getResetButtonProps(),
-    ),
-    getRotationSliderProps: adaptSliderProps(() =>
-      store.value.getRotationSliderProps(),
-    ),
+    getSaveButtonProps: () => {
+      const { onClick, ...rest } = store.value.getSaveButtonProps()
+      return { ...rest, onclick: onClick }
+    },
+    getCancelButtonProps: () => {
+      const { onClick, ...rest } = store.value.getCancelButtonProps()
+      return { ...rest, onclick: onClick }
+    },
+    getRotateButtonProps: (degrees: number) => {
+      const { onClick, ...rest } = store.value.getRotateButtonProps(degrees)
+      return { ...rest, onclick: onClick }
+    },
+    getFlipHorizontalButtonProps: () => {
+      const { onClick, ...rest } = store.value.getFlipHorizontalButtonProps()
+      return { ...rest, onclick: onClick }
+    },
+    getZoomButtonProps: (ratio: number) => {
+      const { onClick, ...rest } = store.value.getZoomButtonProps(ratio)
+      return { ...rest, onclick: onClick }
+    },
+    getCropSquareButtonProps: () => {
+      const { onClick, ...rest } = store.value.getCropSquareButtonProps()
+      return { ...rest, onclick: onClick }
+    },
+    getCropLandscapeButtonProps: () => {
+      const { onClick, ...rest } = store.value.getCropLandscapeButtonProps()
+      return { ...rest, onclick: onClick }
+    },
+    getCropPortraitButtonProps: () => {
+      const { onClick, ...rest } = store.value.getCropPortraitButtonProps()
+      return { ...rest, onclick: onClick }
+    },
+    getResetButtonProps: () => {
+      const { onClick, ...rest } = store.value.getResetButtonProps()
+      return { ...rest, onclick: onClick }
+    },
+    getRotationSliderProps: () => {
+      const { onChange, ...rest } = store.value.getRotationSliderProps()
+      return { ...rest, onchange: onChange }
+    },
   }
 }

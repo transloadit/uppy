@@ -21,6 +21,7 @@ import Webcam from './Webcam'
 
 import './app.css'
 import '@uppy/react/css/style.css'
+import '@uppy/react/css/image-editor.css'
 
 function App() {
   const [uppy] = useState(() =>
