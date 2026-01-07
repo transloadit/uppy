@@ -134,6 +134,7 @@ export interface XmlMap {
 
 /**
  * Binary data types supported in browser environments.
- * Use ArrayBuffer or Uint8Array - Buffer is not available in browsers.
+ * Includes Blob for browser file uploads.
  */
-export type BinaryData = ArrayBuffer | Uint8Array
+export type BinaryData = ArrayBuffer | Uint8Array | Blob
+
