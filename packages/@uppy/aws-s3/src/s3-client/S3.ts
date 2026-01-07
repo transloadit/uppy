@@ -41,7 +41,6 @@ class S3mini {
   private readonly getCredentials?: IT.getCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
   private cachedCredentialsPromise?: Promise<IT.CredentialsResponse>
-  private credentialsRefreshTimer?: ReturnType<typeof setTimeout>
   private signRequest!: IT.signRequestFn
 
   constructor({
@@ -92,7 +91,6 @@ class S3mini {
       this.cachedCredentialsPromise = this.getCredentials!()
         .then((creds) => {
           this.cachedCredentials = creds
-          this._scheduleCredentialRefresh(creds)
           return creds
         })
         .finally(() => {
@@ -104,41 +102,7 @@ class S3mini {
     return this.cachedCredentialsPromise
   }
 
-  /**
-   *
-   * At half the time left before expiration, we clear the cache. That's
-   * an arbitrary tradeoff to limit the number of requests made to the
-   * remote while limiting the risk of using an expired token in case the
-   * clocks are not exactly synced.
-   * The HTTP cache should be configured to ensure a client doesn't request
-   * more tokens than it needs, but this timeout provides a second layer of
-   * security in case the HTTP cache is disabled or misconfigured.
-   *
-   */
-  private _scheduleCredentialRefresh(creds: IT.CredentialsResponse): void {
-    // Clear any existing timer
-    if (this.credentialsRefreshTimer != null) {
-      clearTimeout(this.credentialsRefreshTimer)
-      this.credentialsRefreshTimer = undefined
-    }
 
-    const expiresAt = new Date(creds.credentials.expiration!).getTime()
-    const now = Date.now()
-    const ttl = expiresAt - now
-
-    if (ttl <= 0) {
-      return // Already expired, don't set timer
-    }
-
-    // Refresh at 50% of TTL
-    const refreshIn = ttl * 0.5
-
-    this.credentialsRefreshTimer = setTimeout(() => {
-      this.cachedCredentials = undefined
-      this.cachedCredentialsPromise = undefined
-      this.credentialsRefreshTimer = undefined
-    }, refreshIn)
-  }
 
   private _validateConstructorParams(
     endpoint: string,
@@ -603,15 +567,10 @@ class S3mini {
   }
 
   /**
-   * Clears cached credentials and cancels any scheduled credential refresh.
-   * Call this method when the client is no longer needed to prevent memory leaks,
-   * or when you need to force a credential refresh on the next request.
+   * Clears cached credentials.
+   * Call this method when you need to force a credential refresh on the next request.
    */
   public clearCachedCredentials(): void {
-    if (this.credentialsRefreshTimer != null) {
-      clearTimeout(this.credentialsRefreshTimer)
-      this.credentialsRefreshTimer = undefined
-    }
     this.cachedCredentials = undefined
     this.cachedCredentialsPromise = undefined
   }
