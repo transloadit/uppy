@@ -102,8 +102,6 @@ class S3mini {
     return this.cachedCredentialsPromise
   }
 
-
-
   private _validateConstructorParams(
     endpoint: string,
     signRequest?: IT.signRequestFn,
