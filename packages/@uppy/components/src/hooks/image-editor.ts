@@ -109,25 +109,10 @@ export function createImageEditorController<
     plugin.stop()
   }
 
-  const ensureCropper = (imgElement?: HTMLImageElement | null): boolean => {
-    if (plugin.cropper) return plugin.getPluginState().cropperReady
-
-    const element =
-      imgElement ??
-      (document.getElementById(imgElementId) as HTMLImageElement | null)
-    if (!element) {
-      throw new Error(
-        'Could not find image element. This likely means you are not using `getImageProps` correctly.',
-      )
-    }
-
-    plugin.initCropper(element)
-    return plugin.getPluginState().cropperReady
-  }
+  const isCropperReady = () => plugin.getPluginState().cropperReady
 
   // Actions
   const save = (): void => {
-    if (!plugin.cropper) return
     plugin.save()
   }
 
@@ -136,32 +121,26 @@ export function createImageEditorController<
   }
 
   const rotateBy = (degrees: number): void => {
-    if (!ensureCropper()) return
     plugin.rotateBy(degrees)
   }
 
   const rotateGranular = (degrees: number): void => {
-    if (!ensureCropper()) return
     plugin.rotateGranular(degrees)
   }
 
   const flipHorizontal = (): void => {
-    if (!ensureCropper()) return
     plugin.flipHorizontal()
   }
 
   const zoom = (ratio: number): void => {
-    if (!ensureCropper()) return
     plugin.zoom(ratio)
   }
 
   const setAspectRatio = (newRatio: AspectRatio): void => {
-    if (!ensureCropper()) return
     plugin.setAspectRatio(newRatio)
   }
 
   const reset = (): void => {
-    if (!ensureCropper()) return
     plugin.reset()
   }
 
@@ -171,11 +150,9 @@ export function createImageEditorController<
     src: plugin.getObjectUrl() ?? '',
     alt: file.name ?? '',
     onLoad: (e: ImageEventType) => {
-      ensureCropper(e.currentTarget as HTMLImageElement)
+      plugin.initCropper(e.currentTarget as HTMLImageElement)
     },
   })
-
-  const isCropperReady = () => plugin.getPluginState().cropperReady
 
   const getSaveButtonProps = (
     options: ButtonClickOptions = {},
