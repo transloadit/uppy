@@ -4,6 +4,7 @@
  */
 
 import * as C from './consts.js'
+import { createSigV4Signer } from './signer.js'
 import type * as IT from './types.js'
 import * as U from './utils.js'
 
@@ -12,10 +13,20 @@ import * as U from './utils.js'
  * Supports simple uploads, multipart uploads, and object deletion.
  *
  * @example
+ * // Option 1: With signRequest callback
  * const s3 = new S3mini({
  *   endpoint: 'https://s3.amazonaws.com/my-bucket',
  *   signRequest: async ({ method, url, headers }) => {
  *     return await fetchSignedHeaders(method, url, headers);
+ *   },
+ * });
+ *
+ * // Option 2: With getCredentials callback (client-side signing)
+ * const s3 = new S3mini({
+ *   endpoint: 'https://s3.amazonaws.com/my-bucket',
+ *   getCredentials: async () => {
+ *     const resp = await fetch('/api/s3/credentials');
+ *     return resp.json(); // { credentials, bucket, region }
  *   },
  * });
  *
@@ -26,38 +37,92 @@ class S3mini {
   readonly region: string
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
-  readonly fetch: typeof fetch
-  readonly signRequest: IT.signRequestFn
+
+  private readonly getCredentials?: IT.getCredentialsFn
+  private cachedCredentials?: IT.CredentialsResponse
+  private cachedCredentialsPromise?: Promise<IT.CredentialsResponse>
+  private signRequest!: IT.signRequestFn
 
   constructor({
     endpoint,
     signRequest,
+    getCredentials,
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
-    fetch = globalThis.fetch,
   }: IT.S3Config) {
-    this._validateConstructorParams(endpoint, signRequest)
+    this._validateConstructorParams(endpoint, signRequest, getCredentials)
     this.endpoint = new URL(this._ensureValidUrl(endpoint))
-    this.signRequest = signRequest
     this.region = region
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
-    // Bind fetch to globalThis to preserve correct 'this' context in browsers
-    // Without this, calling this.fetch() throws "Illegal invocation"
-    this.fetch = fetch.bind(globalThis)
+
+    if (signRequest) {
+      this.signRequest = signRequest
+    } else if (getCredentials) {
+      this.getCredentials = getCredentials
+      this.signRequest = this._createCredentialBasedSigner()
+    }
+  }
+
+  /** Creates a signer that fetches/caches credentials and signs requests. */
+  private _createCredentialBasedSigner(): IT.signRequestFn {
+    return async (request: IT.signableRequest): Promise<IT.signedHeaders> => {
+      const creds = await this._getCachedCredentials()
+      const signer = createSigV4Signer({
+        accessKeyId: creds.credentials.accessKeyId,
+        secretAccessKey: creds.credentials.secretAccessKey,
+        sessionToken: creds.credentials.sessionToken,
+        region: creds.region || this.region,
+      })
+      return signer(request)
+    }
+  }
+
+  /** Gets cached credentials or fetches new ones. */
+  private async _getCachedCredentials(): Promise<IT.CredentialsResponse> {
+    // Return Cached Credentials if available
+    if (this.cachedCredentials != null) {
+      return this.cachedCredentials
+    }
+
+    // Cache the promise so concurrent calls wait for the same fetch
+    if (this.cachedCredentialsPromise == null) {
+      this.cachedCredentialsPromise = this.getCredentials!()
+        .then((creds) => {
+          this.cachedCredentials = creds
+          return creds
+        })
+        .finally(() => {
+          // Clear promise cache after resolution to allow future retries
+          this.cachedCredentialsPromise = undefined
+        })
+    }
+
+    return this.cachedCredentialsPromise
   }
 
   private _validateConstructorParams(
     endpoint: string,
-    signRequest: IT.signRequestFn,
+    signRequest?: IT.signRequestFn,
+    getCredentials?: IT.getCredentialsFn,
   ): void {
     if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
       throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
     }
 
-    if (typeof signRequest !== 'function') {
-      throw new TypeError('signRequest is not passed')
+    if (!signRequest && !getCredentials) {
+      throw new TypeError(
+        'Either signRequest or getCredentials must be provided',
+      )
+    }
+
+    if (signRequest && typeof signRequest !== 'function') {
+      throw new TypeError('signRequest must be a function')
+    }
+
+    if (getCredentials && typeof getCredentials !== 'function') {
+      throw new TypeError('getCredentials must be a function')
     }
   }
 
@@ -219,13 +284,41 @@ class S3mini {
       headers: baseHeaders,
     })
 
-    return this._sendRequest(
-      finalUrl.toString(),
-      method,
-      signedHeaders,
-      body,
-      tolerated,
-    )
+    try {
+      return await this._sendRequest(
+        finalUrl.toString(),
+        method,
+        signedHeaders,
+        body,
+        tolerated,
+      )
+    } catch (err) {
+      // If expired token error and using getCredentials, clear cache and retry once
+      if (
+        this.getCredentials &&
+        err instanceof U.S3ServiceError &&
+        err.code &&
+        ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
+      ) {
+        // Clear timer and cache
+        this.clearCachedCredentials()
+
+        // Retry with fresh credentials
+        const freshSignedHeaders = await this.signRequest({
+          method,
+          url: finalUrl.toString(),
+          headers: baseHeaders,
+        })
+        return this._sendRequest(
+          finalUrl.toString(),
+          method,
+          freshSignedHeaders,
+          body,
+          tolerated,
+        )
+      }
+      throw err
+    }
   }
 
   /** Uploads an object to the S3-compatible service. */
@@ -471,6 +564,15 @@ class S3mini {
     return res.status === 200 || res.status === 204
   }
 
+  /**
+   * Clears cached credentials.
+   * Call this method when you need to force a credential refresh on the next request.
+   */
+  public clearCachedCredentials(): void {
+    this.cachedCredentials = undefined
+    this.cachedCredentialsPromise = undefined
+  }
+
   private async _sendRequest(
     url: string,
     method: IT.HttpMethod,
@@ -479,7 +581,7 @@ class S3mini {
     toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
     try {
-      const res = await this.fetch(url, {
+      const res = await fetch(url, {
         method,
         headers,
         body: ['GET', 'HEAD'].includes(method) ? undefined : body,
