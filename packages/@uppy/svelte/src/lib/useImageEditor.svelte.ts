@@ -3,6 +3,7 @@ import {
   type ImageEditorSnapshot,
 } from '@uppy/components'
 import type { UppyFile } from '@uppy/core'
+import { onDestroy, onMount } from 'svelte'
 import { getUppyContext } from './components/headless/uppyContext.js'
 import { useExternalStore } from './useSyncExternalStore.svelte.js'
 
@@ -51,6 +52,9 @@ export function useImageEditor(
     controller.getSnapshot,
     controller.subscribe,
   )
+
+  onMount(() => controller.start())
+  onDestroy(() => controller.stop())
 
   // Helper to convert onClick to onclick for Svelte
   const adaptButtonProps = (

@@ -3,7 +3,7 @@ import {
   type ImageEditorSnapshot,
 } from '@uppy/components'
 import type { UppyFile } from '@uppy/core'
-import type { ShallowRef } from 'vue'
+import { onMounted, onUnmounted, type ShallowRef } from 'vue'
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 
@@ -21,6 +21,9 @@ export function useImageEditor(
     controller.getSnapshot,
     controller.subscribe,
   )
+
+  onMounted(() => controller.start())
+  onUnmounted(() => controller.stop())
 
   return store
 }

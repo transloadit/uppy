@@ -1,4 +1,4 @@
-export type { Opts as ImageEditorOptions } from './ImageEditor.js'
+export type { AspectRatio, Opts as ImageEditorOptions } from './ImageEditor.js'
 export { default } from './ImageEditor.js'
 
 // Utility functions for headless image editor hook

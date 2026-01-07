@@ -3,7 +3,7 @@ import {
   type ImageEditorSnapshot,
 } from '@uppy/components'
 import type { UppyFile } from '@uppy/core'
-import { useMemo, useSyncExternalStore } from 'react'
+import { useEffect, useMemo, useSyncExternalStore } from 'react'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 type ImageEditorProps = {
@@ -17,6 +17,11 @@ export function useImageEditor(props: ImageEditorProps): ImageEditorSnapshot {
     () => createImageEditorController(uppy, { file: props.file }),
     [uppy, props.file],
   )
+
+  useEffect(() => {
+    controller.start()
+    return () => controller.stop()
+  }, [controller])
 
   const store = useSyncExternalStore(
     controller.subscribe,

@@ -1,15 +1,9 @@
-import type { Body, Meta, Uppy, UppyFile } from '@uppy/core'
+import type { Body, Meta, Uppy, UppyEventMap, UppyFile } from '@uppy/core'
 import type ImageEditor from '@uppy/image-editor'
-import {
-  getCanvasDataThatFitsPerfectlyIntoContainer,
-  getScaleFactorThatRemovesDarkCorners,
-  limitCropboxMovementOnMove,
-  limitCropboxMovementOnResize,
-} from '@uppy/image-editor'
-import type Cropper from 'cropperjs'
+import type { AspectRatio } from '@uppy/image-editor'
 import { Subscribers } from './utils.js'
 
-export type AspectRatio = 'free' | '1:1' | '16:9' | '9:16'
+export type { AspectRatio } from '@uppy/image-editor'
 
 export type ImageEditorState = {
   angle: number
@@ -55,13 +49,15 @@ export type ImageEditorSnapshot = {
 export type ImageEditorStore = {
   subscribe: (listener: () => void) => () => void
   getSnapshot: () => ImageEditorSnapshot
+  start: () => void
+  stop: () => void
 }
 
 const imgElementId = 'uppy-image-editor-image'
 
 export function createImageEditorController<M extends Meta, B extends Body>(
   uppy: Uppy<M, B>,
-  options: { file: UppyFile<M, B> },
+  options: { file: UppyFile<M, B>; onSubmit?: () => void },
 ): ImageEditorStore {
   const plugin = uppy.getPlugin<ImageEditor<M, B>>('ImageEditor')
 
@@ -71,206 +67,98 @@ export function createImageEditorController<M extends Meta, B extends Body>(
     )
   }
 
-  const { file } = options
+  const { onSubmit } = options
+  // Get fresh file from Uppy state to ensure we have the latest data including blob
+  const file = uppy.getFile(options.file.id) ?? options.file
+
   const subscribers = new Subscribers()
 
-  // Internal state
-  let angle = 0
-  let isFlippedHorizontally = false
-  let aspectRatio: AspectRatio = 'free'
-  let prevCropboxData: Cropper.CropBoxData | null = null
-  let objectUrl: string | null = null
-
-  // Select file in plugin
-  plugin.selectFile(file)
-
-  // Create object URL for the image
-  if (file.data && file.data instanceof Blob) {
-    objectUrl = URL.createObjectURL(file.data)
-  }
-
-  // Cropper event handlers
-  const storePrevCropboxData = (): void => {
-    if (plugin.cropper) {
-      prevCropboxData = plugin.cropper.getCropBoxData()
+  const onStateUpdate: UppyEventMap<M, B>['state-update'] = (
+    _prev,
+    _next,
+    patch,
+  ) => {
+    const editorPatch = patch?.plugins?.ImageEditor
+    if (editorPatch) {
+      subscribers.emit()
     }
   }
 
-  const limitCropboxMovement = (event: {
-    detail: { action: string }
-  }): void => {
-    if (!plugin.cropper || !prevCropboxData) return
-
-    const canvasData = plugin.cropper.getCanvasData()
-    const cropboxData = plugin.cropper.getCropBoxData()
-
-    if (event.detail.action === 'all') {
-      const newCropboxData = limitCropboxMovementOnMove(
-        canvasData,
-        cropboxData,
-        prevCropboxData,
-      )
-      if (newCropboxData) plugin.cropper.setCropBoxData(newCropboxData)
-    } else {
-      const newCropboxData = limitCropboxMovementOnResize(
-        canvasData,
-        cropboxData,
-        prevCropboxData,
-      )
-      if (newCropboxData) plugin.cropper.setCropBoxData(newCropboxData)
-    }
+  const start = () => {
+    uppy.on('state-update', onStateUpdate)
+    plugin.start(file)
   }
 
-  // Lazy initialization of cropper - called when first action is triggered
+  const stop = () => {
+    uppy.off('state-update', onStateUpdate)
+    plugin.stop()
+  }
+
   const ensureCropper = (): boolean => {
-    // Already initialized
     if (plugin.cropper) return true
 
     const imgElement = document.getElementById(
       imgElementId,
     ) as HTMLImageElement | null
-    if (!imgElement) return false
-
-    // Dynamic import and initialize
-    // Note: This is synchronous after first load since cropperjs will be cached
-    const CropperClass = (window as any).Cropper
-    if (!CropperClass) {
-      // Fallback: try to import dynamically (this won't work synchronously)
-      console.warn(
-        'Cropper.js not found. Make sure to import cropperjs before using the image editor.',
+    if (!imgElement) {
+      throw new Error(
+        'Could not find image element. This likely means you are not using `getImageProps` correctly.',
       )
-      return false
     }
 
-    const cropper = new CropperClass(imgElement, plugin.opts.cropperOptions)
-    plugin.storeCropperInstance(cropper)
-
-    // Add event listeners
-    imgElement.addEventListener('cropstart', storePrevCropboxData)
-    // @ts-expect-error custom cropper event but DOM API does not understand
-    imgElement.addEventListener('cropend', limitCropboxMovement)
-
+    plugin.initCropper(imgElement)
     return true
   }
 
-  // Cleanup function
-  const cleanup = (): void => {
-    if (plugin.cropper) {
-      const imgElement = document.getElementById(
-        imgElementId,
-      ) as HTMLImageElement | null
-      if (imgElement) {
-        imgElement.removeEventListener('cropstart', storePrevCropboxData)
-        // @ts-expect-error custom cropper event but DOM API does not understand
-        imgElement.removeEventListener('cropend', limitCropboxMovement)
-      }
-    }
-
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl)
-      objectUrl = null
-    }
-  }
-
-  // Actions (internal, called by button props)
+  // Actions
   const save = (): void => {
     if (!plugin.cropper) return
     plugin.save()
-    cleanup()
+    onSubmit?.()
   }
 
   const cancel = (): void => {
     uppy.emit('file-editor:cancel', file)
-    plugin.setPluginState({ currentImage: null })
-    cleanup()
   }
 
-  const rotate = (degrees: number): void => {
-    if (!ensureCropper() || !plugin.cropper) return
+  const rotateBy = (degrees: number): void => {
+    if (!ensureCropper()) return
+    plugin.rotateBy(degrees)
+  }
 
-    angle = degrees
-
-    // Reset scale before rotation
-    plugin.cropper.scale(isFlippedHorizontally ? -1 : 1)
-    plugin.cropper.rotateTo(degrees)
-
-    // For 90-degree rotations, fit image into container
-    if (degrees % 90 === 0) {
-      const canvasData = plugin.cropper.getCanvasData()
-      const containerData = plugin.cropper.getContainerData()
-      const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(
-        containerData,
-        canvasData,
-      )
-      plugin.cropper.setCanvasData(newCanvasData)
-      plugin.cropper.setCropBoxData(newCanvasData)
-    } else {
-      // For granular rotation, scale to remove dark corners
-      const image = plugin.cropper.getImageData()
-      const granularAngle = degrees % 90
-      const scaleFactor = getScaleFactorThatRemovesDarkCorners(
-        image.naturalWidth,
-        image.naturalHeight,
-        granularAngle,
-      )
-      const scaleFactorX = isFlippedHorizontally ? -scaleFactor : scaleFactor
-      plugin.cropper.scale(scaleFactorX, scaleFactor)
-    }
-
-    subscribers.emit()
+  const rotateGranular = (degrees: number): void => {
+    if (!ensureCropper()) return
+    plugin.rotateGranular(degrees)
   }
 
   const flipHorizontal = (): void => {
-    if (!ensureCropper() || !plugin.cropper) return
-
-    isFlippedHorizontally = !isFlippedHorizontally
-    plugin.cropper.scaleX(-plugin.cropper.getData().scaleX || -1)
-
-    subscribers.emit()
+    if (!ensureCropper()) return
+    plugin.flipHorizontal()
   }
 
   const zoom = (ratio: number): void => {
-    if (!ensureCropper() || !plugin.cropper) return
-    plugin.cropper.zoom(ratio)
+    if (!ensureCropper()) return
+    plugin.zoom(ratio)
   }
 
   const setAspectRatio = (newRatio: AspectRatio): void => {
-    if (!ensureCropper() || !plugin.cropper) return
-
-    aspectRatio = newRatio
-    const ratioMap: Record<AspectRatio, number> = {
-      free: 0,
-      '1:1': 1,
-      '16:9': 16 / 9,
-      '9:16': 9 / 16,
-    }
-    plugin.cropper.setAspectRatio(ratioMap[newRatio])
-
-    subscribers.emit()
+    if (!ensureCropper()) return
+    plugin.setAspectRatio(newRatio)
   }
 
   const reset = (): void => {
-    if (!ensureCropper() || !plugin.cropper) return
-
-    plugin.cropper.reset()
-    plugin.cropper.setAspectRatio(
-      plugin.opts.cropperOptions.initialAspectRatio || 0,
-    )
-    angle = 0
-    isFlippedHorizontally = false
-    aspectRatio = 'free'
-
-    subscribers.emit()
+    if (!ensureCropper()) return
+    plugin.reset()
   }
 
   // Props getters
   const getImageProps = () => ({
     id: imgElementId,
-    src: objectUrl ?? '',
+    src: plugin.getObjectUrl() ?? '',
     alt: file.name ?? '',
   })
 
-  const isCropperReady = () => plugin.cropper !== null
+  const isCropperReady = () => plugin.cropper != null
 
   const getSaveButtonProps = (): ButtonProps => ({
     type: 'button',
@@ -288,7 +176,7 @@ export function createImageEditorController<M extends Meta, B extends Body>(
 
   const getRotateButtonProps = (degrees: number): ButtonProps => ({
     type: 'button',
-    onClick: () => rotate(angle + degrees),
+    onClick: () => rotateBy(degrees),
     disabled: !isCropperReady(),
     'aria-label': `Rotate ${degrees} degrees`,
   })
@@ -339,20 +227,21 @@ export function createImageEditorController<M extends Meta, B extends Body>(
     type: 'range',
     min: -45,
     max: 45,
-    value: angle % 90,
+    value: plugin.getPluginState().angleGranular,
     onChange: (e: Event) => {
       const granularAngle = Number((e.target as HTMLInputElement).value)
-      const base90 = Math.floor(angle / 90) * 90
-      rotate(base90 + granularAngle)
+      rotateGranular(granularAngle)
     },
     'aria-label': 'Fine rotation adjustment',
   })
 
-  const getSnapshot = (): ImageEditorSnapshot => ({
+  const getSnapshot = (
+    pluginState = plugin.getPluginState(),
+  ): ImageEditorSnapshot => ({
     state: {
-      angle,
-      isFlippedHorizontally,
-      aspectRatio,
+      angle: pluginState.angle,
+      isFlippedHorizontally: pluginState.isFlippedHorizontally,
+      aspectRatio: pluginState.aspectRatio,
     },
     getImageProps,
     getSaveButtonProps,
@@ -367,28 +256,22 @@ export function createImageEditorController<M extends Meta, B extends Body>(
     getRotationSliderProps,
   })
 
-  // Cached snapshot for reference stability
-  let cachedSnapshot = getSnapshot()
+  let cachedPluginState = plugin.getPluginState()
+  let cachedSnapshot = getSnapshot(cachedPluginState)
 
   const getCachedSnapshot = (): ImageEditorSnapshot => {
-    const nextSnapshot = getSnapshot()
+    const pluginState = plugin.getPluginState()
+    if (pluginState === cachedPluginState) return cachedSnapshot
 
-    // Compare state values for cache invalidation
-    if (
-      nextSnapshot.state.angle === cachedSnapshot.state.angle &&
-      nextSnapshot.state.isFlippedHorizontally ===
-        cachedSnapshot.state.isFlippedHorizontally &&
-      nextSnapshot.state.aspectRatio === cachedSnapshot.state.aspectRatio
-    ) {
-      return cachedSnapshot
-    }
-
-    cachedSnapshot = nextSnapshot
+    cachedPluginState = pluginState
+    cachedSnapshot = getSnapshot(pluginState)
     return cachedSnapshot
   }
 
   return {
     subscribe: subscribers.add,
     getSnapshot: getCachedSnapshot,
+    start,
+    stop,
   }
 }

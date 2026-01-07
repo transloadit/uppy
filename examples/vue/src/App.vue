@@ -19,18 +19,23 @@
           v-if="modalPlugin === 'screen-capture'"
           :close="closeModal"
         />
+        <ImageEditor
+          v-if="modalPlugin === 'image-editor' && selectedFile"
+          :file="selectedFile"
+          :close="closeModal"
+        />
       </dialog>
 
       <article>
         <h2 class="text-2xl my-4">With list</h2>
         <Dropzone />
-        <FilesList />
+        <FilesList :edit-file="openImageEditorModal" />
       </article>
 
       <article>
         <h2 class="text-2xl my-4">With grid</h2>
         <Dropzone />
-        <FilesGrid :columns="2" />
+        <FilesGrid :columns="2" :edit-file="openImageEditorModal" />
       </article>
 
       <article>
@@ -42,7 +47,8 @@
 </template>
 
 <script setup lang="ts">
-import Uppy from '@uppy/core'
+import Uppy, { type UppyFile } from '@uppy/core'
+import UppyImageEditor from '@uppy/image-editor'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
 import Tus from '@uppy/tus'
@@ -56,20 +62,31 @@ import {
 import UppyWebcam from '@uppy/webcam'
 import { computed, ref } from 'vue'
 import CustomDropzone from './Dropzone.vue'
+import ImageEditor from './ImageEditor.vue'
 import RemoteSource from './RemoteSource.vue'
 import ScreenCapture from './ScreenCapture.vue'
 import Webcam from './Webcam.vue'
 
 const dialogRef = ref<HTMLDialogElement | null>(null)
-const modalPlugin = ref<'webcam' | 'dropbox' | 'screen-capture' | null>(null)
+const modalPlugin = ref<
+  'webcam' | 'dropbox' | 'screen-capture' | 'image-editor' | null
+>(null)
+const selectedFile = ref<UppyFile<any, any> | null>(null)
 
 function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
   modalPlugin.value = plugin
   dialogRef.value?.showModal()
 }
 
+function openImageEditorModal(file: UppyFile<any, any>) {
+  selectedFile.value = file
+  modalPlugin.value = 'image-editor'
+  dialogRef.value?.showModal()
+}
+
 function closeModal() {
   modalPlugin.value = null
+  selectedFile.value = null
   dialogRef.value?.close()
 }
 
@@ -80,6 +97,7 @@ const uppy = computed(() =>
     })
     .use(UppyWebcam)
     .use(UppyScreenCapture)
+    .use(UppyImageEditor)
     .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
 )
 </script>

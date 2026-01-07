@@ -8,10 +8,14 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/utils'
-import type Cropper from 'cropperjs'
+import Cropper from 'cropperjs'
 import packageJson from '../package.json' with { type: 'json' }
 import Editor from './Editor.js'
 import locale from './locale.js'
+import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
+import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
+import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
+import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
 
 declare module '@uppy/core' {
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
@@ -67,7 +71,20 @@ export type { Opts as ImageEditorOptions }
 
 type PluginState<M extends Meta, B extends Body> = {
   currentImage: UppyFile<M, B> | null
+  angle: number
+  angleGranular: number
+  isFlippedHorizontally: boolean
+  aspectRatio: AspectRatio
 }
+
+export type AspectRatio = 'free' | '1:1' | '16:9' | '9:16'
+
+const defaultEditorState = {
+  angle: 0,
+  angleGranular: 0,
+  isFlippedHorizontally: false,
+  aspectRatio: 'free',
+} satisfies Omit<PluginState<any, any>, 'currentImage'>
 
 const defaultCropperOptions = {
   viewMode: 0 as const,
@@ -120,7 +137,17 @@ export default class ImageEditor<
 > extends UIPlugin<InternalImageEditorOpts, M, B, PluginState<M, B>> {
   static VERSION = packageJson.version
 
-  cropper!: Cropper
+  cropper: Cropper | null = null
+
+  objectUrl: string | null = null
+
+  prevCropboxData: Cropper.CropBoxData | null = null
+
+  private imgElement: HTMLImageElement | null = null
+
+  private cropstartHandler: (() => void) | null = null
+
+  private cropendHandler: EventListener | null = null
 
   constructor(uppy: Uppy<M, B>, opts?: Opts) {
     super(uppy, {
@@ -181,6 +208,8 @@ export default class ImageEditor<
 
     const { currentImage } = this.getPluginState()
 
+    if (!this.cropper) return
+
     // Fixes black 1px lines on odd-width images.
     // This should be removed when cropperjs fixes this issue.
     // (See https://github.com/transloadit/uppy/issues/4305 and https://github.com/fengyuanchen/cropperjs/issues/551).
@@ -203,15 +232,232 @@ export default class ImageEditor<
 
   selectFile = (file: UppyFile<M, B>): void => {
     this.uppy.emit('file-editor:start', file)
+    this.resetEditorState(file)
+  }
+
+  resetEditorState = (
+    currentImage: UppyFile<M, B> | null = this.getPluginState().currentImage,
+  ): void => {
     this.setPluginState({
-      currentImage: file,
+      currentImage,
+      ...defaultEditorState,
     })
   }
 
-  install(): void {
+  rotateBy = (degrees: number): void => {
+    if (!this.cropper) return
+
+    const { angle, angleGranular, isFlippedHorizontally } =
+      this.getPluginState()
+    const base90 = angle - angleGranular
+    const newAngle = base90 + degrees
+
+    this.cropper.scale(isFlippedHorizontally ? -1 : 1)
+    this.cropper.rotateTo(newAngle)
+
+    const canvasData = this.cropper.getCanvasData()
+    const containerData = this.cropper.getContainerData()
+    const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(
+      containerData,
+      canvasData,
+    )
+    this.cropper.setCanvasData(newCanvasData)
+    this.cropper.setCropBoxData(newCanvasData)
+
     this.setPluginState({
-      currentImage: null,
+      angle: newAngle,
+      angleGranular: 0,
     })
+  }
+
+  rotateGranular = (granularAngle: number): void => {
+    if (!this.cropper) return
+
+    const { angle, angleGranular, isFlippedHorizontally } =
+      this.getPluginState()
+    const base90 = angle - angleGranular
+    const newAngle = base90 + granularAngle
+
+    this.cropper.rotateTo(newAngle)
+
+    const image = this.cropper.getImageData()
+    const scaleFactor = getScaleFactorThatRemovesDarkCorners(
+      image.naturalWidth,
+      image.naturalHeight,
+      granularAngle,
+    )
+    const scaleFactorX = isFlippedHorizontally ? -scaleFactor : scaleFactor
+    this.cropper.scale(scaleFactorX, scaleFactor)
+
+    this.setPluginState({
+      angle: newAngle,
+      angleGranular: granularAngle,
+    })
+  }
+
+  flipHorizontal = (): void => {
+    if (!this.cropper) return
+
+    const { isFlippedHorizontally } = this.getPluginState()
+    this.cropper.scaleX(-this.cropper.getData().scaleX || -1)
+    this.setPluginState({
+      isFlippedHorizontally: !isFlippedHorizontally,
+    })
+  }
+
+  zoom = (ratio: number): void => {
+    if (!this.cropper) return
+    this.cropper.zoom(ratio)
+  }
+
+  setAspectRatio = (newRatio: AspectRatio): void => {
+    if (!this.cropper) return
+
+    const ratioMap: Record<AspectRatio, number> = {
+      free: 0,
+      '1:1': 1,
+      '16:9': 16 / 9,
+      '9:16': 9 / 16,
+    }
+    this.cropper.setAspectRatio(ratioMap[newRatio])
+    this.setPluginState({
+      aspectRatio: newRatio,
+    })
+  }
+
+  reset = (): void => {
+    if (!this.cropper) return
+
+    this.cropper.reset()
+    this.cropper.setAspectRatio(
+      this.opts.cropperOptions.initialAspectRatio || 0,
+    )
+    this.resetEditorState()
+  }
+
+  /**
+   * Start editing a file - creates object URL and prepares state.
+   * Called by hook's start() or when user opens editor.
+   */
+  start = (file: UppyFile<M, B>): void => {
+    // Clean up any previous editing session
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl)
+    }
+
+    this.selectFile(file)
+
+    // Get file data - first try the passed file, then try fetching from Uppy state
+    let fileData = file.data
+    if (!(fileData instanceof Blob)) {
+      const uppyFile = this.uppy.getFile(file.id)
+      fileData = uppyFile?.data
+    }
+
+    if (fileData instanceof Blob) {
+      this.objectUrl = URL.createObjectURL(fileData)
+    } else {
+      // eslint-disable-next-line no-console
+      console.warn(
+        '[Uppy ImageEditor] Cannot edit file: file.data is not a Blob.',
+        'File:',
+        file,
+        'file.data:',
+        file.data,
+        'typeof file.data:',
+        typeof file.data,
+      )
+    }
+  }
+
+  /**
+   * Stop editing - destroys cropper, revokes object URL, cleans up listeners.
+   */
+  stop = (): void => {
+    this.destroyCropper()
+
+    if (this.objectUrl) {
+      URL.revokeObjectURL(this.objectUrl)
+      this.objectUrl = null
+    }
+
+    this.resetEditorState(null)
+  }
+
+  /**
+   * Initialize cropper on the image element. Called lazily when first edit action is triggered.
+   * For headless use, the hook provides the image element.
+   */
+  initCropper = (imgElement: HTMLImageElement): void => {
+    if (this.cropper) return // Already initialized
+
+    this.imgElement = imgElement
+    this.cropper = new Cropper(imgElement, this.opts.cropperOptions)
+
+    // Store handlers so we can remove them later
+    this.cropstartHandler = () => {
+      if (this.cropper) {
+        this.prevCropboxData = this.cropper.getCropBoxData()
+      }
+    }
+
+    this.cropendHandler = ((event: CustomEvent<{ action: string }>) => {
+      if (!this.cropper || !this.prevCropboxData) return
+
+      const canvasData = this.cropper.getCanvasData()
+      const cropboxData = this.cropper.getCropBoxData()
+
+      if (event.detail.action === 'all') {
+        const newCropboxData = limitCropboxMovementOnMove(
+          canvasData,
+          cropboxData,
+          this.prevCropboxData,
+        )
+        if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
+      } else {
+        const newCropboxData = limitCropboxMovementOnResize(
+          canvasData,
+          cropboxData,
+          this.prevCropboxData,
+        )
+        if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
+      }
+    }) as EventListener
+
+    imgElement.addEventListener('cropstart', this.cropstartHandler)
+    imgElement.addEventListener('cropend', this.cropendHandler)
+  }
+
+  /**
+   * Destroy cropper and clean up event listeners.
+   */
+  destroyCropper = (): void => {
+    if (!this.cropper) return
+
+    if (this.cropstartHandler && this.imgElement) {
+      this.imgElement.removeEventListener('cropstart', this.cropstartHandler)
+    }
+    if (this.cropendHandler && this.imgElement) {
+      this.imgElement.removeEventListener('cropend', this.cropendHandler)
+    }
+
+    this.cropper.destroy()
+    this.cropper = null
+    this.imgElement = null
+    this.cropstartHandler = null
+    this.cropendHandler = null
+    this.prevCropboxData = null
+  }
+
+  /**
+   * Get object URL for the current image (used by headless hook).
+   */
+  getObjectUrl = (): string | null => {
+    return this.objectUrl
+  }
+
+  install(): void {
+    this.resetEditorState(null)
 
     const { target } = this.opts
     if (target) {
@@ -226,23 +472,37 @@ export default class ImageEditor<
       const file = this.uppy.getFile(currentImage.id)
       this.uppy.emit('file-editor:cancel', file)
     }
+    this.stop()
     this.unmount()
   }
 
   render() {
-    const { currentImage } = this.getPluginState()
+    const { currentImage, angleGranular } = this.getPluginState()
 
     if (currentImage === null || currentImage.isRemote) {
       return null
     }
 
+    // Create object URL if not already created (backwards compatibility)
+    if (!this.objectUrl && currentImage.data instanceof Blob) {
+      this.objectUrl = URL.createObjectURL(currentImage.data)
+    }
+
     return (
       <Editor<M, B>
         currentImage={currentImage}
-        storeCropperInstance={this.storeCropperInstance}
+        objectUrl={this.objectUrl ?? ''}
+        initCropper={this.initCropper}
         save={this.save}
         opts={this.opts}
         i18n={this.i18n}
+        angleGranular={angleGranular}
+        rotateBy={this.rotateBy}
+        rotateGranular={this.rotateGranular}
+        flipHorizontal={this.flipHorizontal}
+        zoom={this.zoom}
+        setAspectRatio={this.setAspectRatio}
+        reset={this.reset}
       />
     )
   }
