@@ -14,48 +14,48 @@
     <div class="mb-4">
       <img
         class="w-full max-h-[400px] rounded-lg border-2"
-        v-bind="editor.value.getImageProps()"
+        v-bind="editor.getImageProps()"
       />
     </div>
 
     <div class="mb-4">
       <label class="block text-sm font-medium mb-2">
-        Fine Rotation: {{ editor.value.state.angle }}°
+        Fine Rotation: {{ editor.state.angle }}°
       </label>
       <input
         class="w-full"
-        v-bind="editor.value.getRotationSliderProps()"
+        v-bind="editor.getRotationSliderProps()"
       />
     </div>
 
     <div class="flex gap-2 flex-wrap mb-4">
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getRotateButtonProps(-90)"
+        v-bind="editor.getRotateButtonProps(-90)"
       >
         ↶ -90°
       </button>
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getRotateButtonProps(90)"
+        v-bind="editor.getRotateButtonProps(90)"
       >
         ↷ +90°
       </button>
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getFlipHorizontalButtonProps()"
+        v-bind="editor.getFlipHorizontalButtonProps()"
       >
         ⇆ Flip
       </button>
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getZoomButtonProps(0.1)"
+        v-bind="editor.getZoomButtonProps(0.1)"
       >
         + Zoom
       </button>
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getZoomButtonProps(-0.1)"
+        v-bind="editor.getZoomButtonProps(-0.1)"
       >
         - Zoom
       </button>
@@ -64,25 +64,25 @@
     <div class="flex gap-2 flex-wrap mb-4">
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getCropSquareButtonProps()"
+        v-bind="editor.getCropSquareButtonProps()"
       >
         1:1
       </button>
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getCropLandscapeButtonProps()"
+        v-bind="editor.getCropLandscapeButtonProps()"
       >
         16:9
       </button>
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getCropPortraitButtonProps()"
+        v-bind="editor.getCropPortraitButtonProps()"
       >
         9:16
       </button>
       <button
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
-        v-bind="editor.value.getResetButtonProps()"
+        v-bind="editor.getResetButtonProps()"
       >
         Reset
       </button>
@@ -91,13 +91,13 @@
     <div class="flex gap-4 justify-end">
       <button
         class="bg-gray-500 text-white px-4 py-2 rounded-md"
-        v-bind="editor.value.getCancelButtonProps({ onClick: close })"
+        v-bind="editor.getCancelButtonProps({ onClick: close })"
       >
         Cancel
       </button>
       <button
         class="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
-        v-bind="editor.value.getSaveButtonProps({ onClick: close })"
+        v-bind="editor.getSaveButtonProps({ onClick: close })"
       >
         Save
       </button>
