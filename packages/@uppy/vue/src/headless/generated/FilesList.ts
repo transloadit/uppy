@@ -6,13 +6,13 @@ import {
   FilesList as PreactFilesList,
 } from '@uppy/components'
 import { h as preactH, render as preactRender } from 'preact'
-import { shallowEqualObjects } from 'shallow-equal'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'
 
-export default defineComponent<Omit<FilesListProps, 'ctx'>>({
+export default defineComponent({
   name: 'FilesList',
-  setup(props, { attrs }) {
+  props: ['editFile', 'imageThumbnail'],
+  setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -20,7 +20,7 @@ export default defineComponent<Omit<FilesListProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactFilesList, {
-            ...(attrs as FilesListProps),
+            ...props,
             ctx,
           } satisfies FilesListProps),
           containerRef.value,
@@ -38,11 +38,10 @@ export default defineComponent<Omit<FilesListProps, 'ctx'>>({
 
     watch(
       () => props,
-      (current, old) => {
-        if (!shallowEqualObjects(current, old)) {
-          renderFilesList()
-        }
+      () => {
+        renderFilesList()
       },
+      { deep: true },
     )
 
     return () => h('div', { ref: containerRef })
