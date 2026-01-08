@@ -10,7 +10,7 @@
     "@uppy/google-drive": "workspace:*",
     "@uppy/provider-views": "workspace:*",
     "@uppy/tus": "workspace:*",
-    "preact": "^10.26.10"
+    "preact": "^10.28.2"
   },
   "engines": {
     "node": ">=18.0.0"

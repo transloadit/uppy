@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.21",
-    "preact": "^10.26.10"
+    "preact": "^10.28.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.199",

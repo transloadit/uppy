@@ -49,7 +49,7 @@
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "is-mobile": "^4.0.0",
-    "preact": "^10.26.10"
+    "preact": "^10.28.2"
   },
   "devDependencies": {
     "cssnano": "^7.0.7",

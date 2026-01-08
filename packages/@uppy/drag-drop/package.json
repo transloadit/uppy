@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "preact": "^10.28.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

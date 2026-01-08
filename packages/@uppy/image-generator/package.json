@@ -42,7 +42,7 @@
     "@uppy/provider-views": "workspace:^",
     "@uppy/transloadit": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "preact": "^10.28.2"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",

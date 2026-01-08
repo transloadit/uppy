@@ -51,7 +51,7 @@
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
     "nanoid": "^5.0.9",
-    "preact": "^10.26.10",
+    "preact": "^10.28.2",
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {
