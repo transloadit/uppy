@@ -1,16 +1,22 @@
-/** Request data to be signed */
-export type signableRequest = {
+/** Request data to be pre-signed */
+export type presignableRequest = {
   method: string
-  url: string
-  headers: Record<string, string>
-  body?: BodyInit | null
+  key: string
+  uploadId?: string
+  partNumber?: number
+  contentType?: string
+  expiresIn?: number
 }
 
-/** Headers returned after signing */
-export type signedHeaders = Record<string, string>
+/** Response with the pre-signed URL */
+export type presignedResponse = {
+  url: string
+  /** Optional extra headers to include with the request (e.g., Content-Type) */
+  headers?: Record<string, string>
+}
 
-/** Function that signs a request and returns the signed headers */
-export type signRequestFn = (request: signableRequest) => Promise<signedHeaders>
+/** Function that generates a pre-signed URL for a request */
+export type signRequestFn = (request: presignableRequest) => Promise<presignedResponse>
 
 /**
  * Temporary security credentials from STS or similar service.
