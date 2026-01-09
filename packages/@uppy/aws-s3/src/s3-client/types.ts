@@ -137,4 +137,3 @@ export interface XmlMap {
  * Includes Blob for browser file uploads.
  */
 export type BinaryData = ArrayBuffer | Uint8Array | Blob
-

@@ -15,9 +15,9 @@ describe('AwsS3', () => {
     })
 
     // @ts-expect-error private property
-    const pluginNames = core[Symbol.for('uppy test: getPlugins')]('uploader').map(
-      (plugin: AwsS3<Meta, AwsBody>) => plugin.constructor.name,
-    )
+    const pluginNames = core[Symbol.for('uppy test: getPlugins')](
+      'uploader',
+    ).map((plugin: AwsS3<Meta, AwsBody>) => plugin.constructor.name)
     expect(pluginNames).toContain('AwsS3')
   })
 
@@ -88,7 +88,9 @@ describe('AwsS3', () => {
 
       expect(shouldUseMultipart(createFile(MULTIPART_THRESHOLD + 1))).toBe(true)
       expect(shouldUseMultipart(createFile(MULTIPART_THRESHOLD))).toBe(false)
-      expect(shouldUseMultipart(createFile(MULTIPART_THRESHOLD - 1))).toBe(false)
+      expect(shouldUseMultipart(createFile(MULTIPART_THRESHOLD - 1))).toBe(
+        false,
+      )
       expect(shouldUseMultipart(createFile(0))).toBe(false)
     })
 
@@ -167,9 +169,11 @@ describe('AwsS3', () => {
 
   describe('abort', () => {
     it('aborts when file is removed', async () => {
-      const signRequest = vi.fn().mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
-      )
+      const signRequest = vi
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => setTimeout(resolve, 100)),
+        )
 
       const core = new Core().use(AwsS3, {
         bucket: 'test-bucket',
@@ -192,9 +196,11 @@ describe('AwsS3', () => {
     })
 
     it('aborts when cancelAll is called', async () => {
-      const signRequest = vi.fn().mockImplementation(
-        () => new Promise((resolve) => setTimeout(resolve, 100)),
-      )
+      const signRequest = vi
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => setTimeout(resolve, 100)),
+        )
 
       const core = new Core().use(AwsS3, {
         bucket: 'test-bucket',

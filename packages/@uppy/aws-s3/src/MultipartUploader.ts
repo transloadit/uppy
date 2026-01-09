@@ -8,7 +8,6 @@
 import type { Body, Meta, UppyFile } from '@uppy/utils'
 import { AbortController } from '@uppy/utils'
 import type S3mini from './s3-client/S3.js'
-import type * as IT from './s3-client/types.js'
 
 // ============================================================================
 // Constants
@@ -415,9 +414,11 @@ export class MultipartUploader<M extends Meta, B extends Body> {
 
     // Abort multipart upload on error
     if (this.#uploadId) {
-      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch(() => {
-        // Ignore abort errors
-      })
+      this.#s3Client
+        .abortMultipartUpload(this.#key, this.#uploadId)
+        .catch(() => {
+          // Ignore abort errors
+        })
     }
 
     if (this.#options.onError) {
