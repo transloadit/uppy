@@ -352,7 +352,6 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
 })
 
 // === </S3 MULTIPART> ===
-
 // === <S3 SignatureV4 for Plugin Rewrite> ===
 // This endpoint signs arbitrary requests using AWS SignatureV4
 // Used by the rewritten @uppy/aws-s3 plugin with signRequest option
@@ -366,6 +365,12 @@ app.post('/s3/sign-v4', async (req, res, next) => {
     }
 
     const parsedUrl = new URL(requestUrl)
+
+    // Parse query string into object for SignatureV4
+    const query = {}
+    parsedUrl.searchParams.forEach((value, key) => {
+      query[key] = value
+    })
 
     const signer = new SignatureV4({
       credentials: {
@@ -384,7 +389,8 @@ app.post('/s3/sign-v4', async (req, res, next) => {
         ...headers,
       },
       hostname: parsedUrl.hostname,
-      path: parsedUrl.pathname + parsedUrl.search,
+      path: parsedUrl.pathname, // Path WITHOUT query string
+      query, // Query string as separate object
       protocol: parsedUrl.protocol,
     })
 
