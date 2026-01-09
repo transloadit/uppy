@@ -355,10 +355,9 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     if (this.opts.getKey) {
       return this.opts.getKey(file)
     }
-    // Default: uploads/{timestamp}-{randomId}/{filename}
-    const timestamp = Date.now()
-    const randomId = Math.random().toString(36).substring(2, 15)
-    return `uploads/${timestamp}-${randomId}/${file.name}`
+    // Default: {randomId}-{filename} (matches Companion's DEFAULT behaviour)
+    const randomId = crypto.randomUUID()
+    return `${randomId}-${file.name}`
   }
 
   #cleanup(fileId: string): void {
