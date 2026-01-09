@@ -44,6 +44,7 @@ en_US.strings = {
   browseFolders: 'browse folders',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
+  chooseFiles: 'Choose files',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -85,7 +86,6 @@ en_US.strings = {
   enterUrlToImport: 'Enter URL to import a file',
   error: 'Error',
   exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
-  failedToAddFiles: 'Failed to add files',
   failedToFetch:
     'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
