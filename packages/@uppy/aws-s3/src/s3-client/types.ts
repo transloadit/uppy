@@ -16,7 +16,9 @@ export type presignedResponse = {
 }
 
 /** Function that generates a pre-signed URL for a request */
-export type signRequestFn = (request: presignableRequest) => Promise<presignedResponse>
+export type signRequestFn = (
+  request: presignableRequest,
+) => Promise<presignedResponse>
 
 /**
  * Temporary security credentials from STS or similar service.

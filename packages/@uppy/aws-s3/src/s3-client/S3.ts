@@ -67,7 +67,9 @@ class S3mini {
 
   /** Creates a presigner that fetches/caches credentials and generates pre-signed URLs. */
   private _createCredentialBasedSigner(): IT.signRequestFn {
-    return async (request: IT.presignableRequest): Promise<IT.presignedResponse> => {
+    return async (
+      request: IT.presignableRequest,
+    ): Promise<IT.presignedResponse> => {
       const creds = await this._getCachedCredentials()
       const presigner = createSigV4Signer({
         accessKeyId: creds.credentials.accessKeyId,
@@ -275,7 +277,10 @@ class S3mini {
         return this._sendRequest(
           fresh.url,
           method,
-          { ...fresh.headers, ...(contentType ? { 'Content-Type': contentType } : {}) },
+          {
+            ...fresh.headers,
+            ...(contentType ? { 'Content-Type': contentType } : {}),
+          },
           body,
           tolerated,
         )

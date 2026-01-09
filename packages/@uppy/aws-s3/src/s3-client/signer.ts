@@ -46,7 +46,14 @@ export function createSigV4Presigner(config: SignerConfig) {
   return async function presign(
     request: presignableRequest,
   ): Promise<presignedResponse> {
-    const { method, key, uploadId, partNumber, contentType, expiresIn = DEFAULT_EXPIRES_IN } = request
+    const {
+      method,
+      key,
+      uploadId,
+      partNumber,
+      contentType,
+      expiresIn = DEFAULT_EXPIRES_IN,
+    } = request
 
     // Build the URL - need to track encoded path separately because URL object decodes it
     const url = new URL(endpoint)
@@ -87,21 +94,23 @@ export function createSigV4Presigner(config: SignerConfig) {
 
     // Add multipart-specific params
     if (uploadId) {
-      queryParams['uploadId'] = uploadId
+      queryParams.uploadId = uploadId
     }
     if (partNumber !== undefined) {
-      queryParams['partNumber'] = String(partNumber)
+      queryParams.partNumber = String(partNumber)
     }
 
     // For CreateMultipartUpload, add uploads param
     if (method === 'POST' && !uploadId) {
-      queryParams['uploads'] = ''
+      queryParams.uploads = ''
     }
 
     // Sort query params and build canonical query string
     // AWS SDK uses 'key=' format even for empty values.
     // AWS requires strict ASCII byte ordering for keys.
-    const sortedEntries = Object.entries(queryParams).sort(([a], [b]) => (a < b ? -1 : 1))
+    const sortedEntries = Object.entries(queryParams).sort(([a], [b]) =>
+      a < b ? -1 : 1,
+    )
 
     const sortedParams = sortedEntries
       .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
@@ -113,7 +122,7 @@ export function createSigV4Presigner(config: SignerConfig) {
 
     const canonicalRequest = [
       method,
-      canonicalPath,  // Use the encoded path, not url.pathname which gets decoded
+      canonicalPath, // Use the encoded path, not url.pathname which gets decoded
       sortedParams,
       canonicalHeaders,
       '',
