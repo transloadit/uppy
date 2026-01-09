@@ -185,6 +185,7 @@ class S3mini {
     if (
       typeof data === 'string' ||
       data instanceof ArrayBuffer ||
+      data instanceof Blob ||
       ArrayBuffer.isView(data)
     ) {
       return data as BodyInit
