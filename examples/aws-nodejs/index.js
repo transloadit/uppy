@@ -22,6 +22,8 @@ const {
 } = require('@aws-sdk/client-s3')
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 const { STSClient, GetFederationTokenCommand } = require('@aws-sdk/client-sts')
+const { SignatureV4 } = require('@smithy/signature-v4')
+const { Sha256 } = require('@aws-crypto/sha256-js')
 
 const policy = {
   Version: '2012-10-17',
@@ -351,6 +353,50 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
 
 // === </S3 MULTIPART> ===
 
+// === <S3 SignatureV4 for Plugin Rewrite> ===
+// This endpoint signs arbitrary requests using AWS SignatureV4
+// Used by the rewritten @uppy/aws-s3 plugin with signRequest option
+
+app.post('/s3/sign-v4', async (req, res, next) => {
+  try {
+    const { method, url: requestUrl, headers = {} } = req.body
+
+    if (!method || !requestUrl) {
+      return res.status(400).json({ error: 'method and url are required' })
+    }
+
+    const parsedUrl = new URL(requestUrl)
+
+    const signer = new SignatureV4({
+      credentials: {
+        accessKeyId: process.env.COMPANION_AWS_KEY,
+        secretAccessKey: process.env.COMPANION_AWS_SECRET,
+      },
+      region: process.env.COMPANION_AWS_REGION,
+      service: 's3',
+      sha256: Sha256,
+    })
+
+    const signedRequest = await signer.sign({
+      method,
+      headers: {
+        host: parsedUrl.host,
+        ...headers,
+      },
+      hostname: parsedUrl.hostname,
+      path: parsedUrl.pathname + parsedUrl.search,
+      protocol: parsedUrl.protocol,
+    })
+
+    res.setHeader('Access-Control-Allow-Origin', accessControlAllowOrigin)
+    res.json(signedRequest.headers)
+  } catch (err) {
+    next(err)
+  }
+})
+
+// === </S3 SignatureV4 for Plugin Rewrite> ===
+
 // === <some plumbing to make the example work> ===
 
 app.get('/', (req, res) => {
@@ -365,6 +411,21 @@ app.get('/withCustomEndpoints.html', (req, res) => {
   res.setHeader('Content-Type', 'text/html')
   const htmlPath = path.join(__dirname, 'public', 'withCustomEndpoints.html')
   res.sendFile(htmlPath)
+})
+app.get('/rewrite-test.html', (req, res) => {
+  res.setHeader('Content-Type', 'text/html')
+  // Inject bucket config as JS variables
+  const config = `<script>
+    window.UPPY_S3_BUCKET = "${process.env.COMPANION_AWS_BUCKET}";
+    window.UPPY_S3_REGION = "${process.env.COMPANION_AWS_REGION}";
+  </script>`
+  const htmlPath = path.join(__dirname, 'public', 'rewrite-test.html')
+  require('fs').readFile(htmlPath, 'utf8', (err, html) => {
+    if (err) return res.status(500).send('Error loading page')
+    // Inject config before </head>
+    const modifiedHtml = html.replace('</head>', `${config}</head>`)
+    res.send(modifiedHtml)
+  })
 })
 
 app.get('/uppy.min.mjs', (req, res) => {
