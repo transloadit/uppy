@@ -426,7 +426,7 @@ app.get('/rewrite-test.html', (req, res) => {
     window.UPPY_S3_REGION = "${process.env.COMPANION_AWS_REGION}";
   </script>`
   const htmlPath = path.join(__dirname, 'public', 'rewrite-test.html')
-  require('fs').readFile(htmlPath, 'utf8', (err, html) => {
+  require('node:fs').readFile(htmlPath, 'utf8', (err, html) => {
     if (err) return res.status(500).send('Error loading page')
     // Inject config before </head>
     const modifiedHtml = html.replace('</head>', `${config}</head>`)
