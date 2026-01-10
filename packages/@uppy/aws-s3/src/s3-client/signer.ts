@@ -51,7 +51,6 @@ export function createSigV4Presigner(config: SignerConfig) {
       key,
       uploadId,
       partNumber,
-      contentType,
       expiresIn = DEFAULT_EXPIRES_IN,
     } = request
 
@@ -153,7 +152,6 @@ export function createSigV4Presigner(config: SignerConfig) {
 
     return {
       url: presignedUrl,
-      headers: contentType ? { 'Content-Type': contentType } : undefined,
     }
   }
 }

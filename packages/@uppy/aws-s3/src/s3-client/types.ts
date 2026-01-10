@@ -11,8 +11,6 @@ export type presignableRequest = {
 /** Response with the pre-signed URL */
 export type presignedResponse = {
   url: string
-  /** Optional extra headers to include with the request (e.g., Content-Type) */
-  headers?: Record<string, string>
 }
 
 /** Function that generates a pre-signed URL for a request */

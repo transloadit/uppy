@@ -233,7 +233,7 @@ class S3mini {
     } = {},
   ): Promise<Response> {
     // Get pre-signed URL from callback
-    const { url, headers = {} } = await this.signRequest({
+    const { url } = await this.signRequest({
       method,
       key,
       uploadId,
@@ -241,11 +241,10 @@ class S3mini {
       contentType,
     })
 
-    // Add Content-Type if provided
-    const requestHeaders: Record<string, string> = { ...headers }
-    if (contentType) {
-      requestHeaders['Content-Type'] = contentType
-    }
+    // Build request headers
+    const requestHeaders: Record<string, string> = contentType
+      ? { 'Content-Type': contentType }
+      : {}
 
     try {
       return await this._sendRequest(
@@ -277,10 +276,7 @@ class S3mini {
         return this._sendRequest(
           fresh.url,
           method,
-          {
-            ...fresh.headers,
-            ...(contentType ? { 'Content-Type': contentType } : {}),
-          },
+          contentType ? { 'Content-Type': contentType } : {},
           body,
           tolerated,
         )
