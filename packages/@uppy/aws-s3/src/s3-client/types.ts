@@ -75,16 +75,6 @@ type S3ConfigWithGetCredentials = Omit<S3ConfigBase, 'region'> & {
 /** Configuration options for S3mini client */
 export type S3Config = S3ConfigWithSignRequest | S3ConfigWithGetCredentials
 
-export interface SSECHeaders {
-  'x-amz-server-side-encryption-customer-algorithm': string
-  'x-amz-server-side-encryption-customer-key': string
-  'x-amz-server-side-encryption-customer-key-md5': string
-}
-
-export interface AWSHeaders {
-  [k: `x-amz-${string}`]: string
-}
-
 export interface UploadPart {
   partNumber: number
   etag: string

@@ -290,8 +290,6 @@ class S3mini {
     key: string,
     data: string | IT.BinaryData,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-    ssecHeaders?: IT.SSECHeaders,
-    additionalHeaders?: IT.AWSHeaders,
   ): Promise<Response> {
     return this._presignedRequest('PUT', key, {
       body: this._validateData(data),
@@ -304,7 +302,6 @@ class S3mini {
   public async getMultipartUploadId(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-    ssecHeaders?: IT.SSECHeaders,
   ): Promise<string> {
     this._checkKey(key)
     if (typeof fileType !== 'string') {
@@ -345,7 +342,6 @@ class S3mini {
     data: IT.BinaryData | string,
     partNumber: number,
     opts: Record<string, unknown> = {},
-    ssecHeaders?: IT.SSECHeaders,
   ): Promise<IT.UploadPart> {
     const body = this._validateUploadPartParams(
       key,
@@ -451,7 +447,6 @@ class S3mini {
   public async abortMultipartUpload(
     key: string,
     uploadId: string,
-    ssecHeaders?: IT.SSECHeaders,
   ): Promise<object> {
     this._checkKey(key)
     if (!uploadId) {
