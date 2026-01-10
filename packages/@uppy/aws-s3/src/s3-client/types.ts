@@ -4,7 +4,6 @@ export type presignableRequest = {
   key: string
   uploadId?: string
   partNumber?: number
-  contentType?: string
   expiresIn?: number
 }
 

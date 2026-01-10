@@ -238,7 +238,6 @@ class S3mini {
       key,
       uploadId,
       partNumber,
-      contentType,
     })
 
     // Build request headers
@@ -271,7 +270,6 @@ class S3mini {
           key,
           uploadId,
           partNumber,
-          contentType,
         })
         return this._sendRequest(
           fresh.url,
