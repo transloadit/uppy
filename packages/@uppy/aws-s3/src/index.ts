@@ -145,28 +145,38 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   install(): void {
-    this.uppy.setState({
-      capabilities: {
-        ...this.uppy.getState().capabilities,
-        resumableUploads: true,
-      },
-    })
+    this.#setResumableUploadsCapability(true)
     this.#initS3Client()
     this.uppy.addUploader(this.#upload)
+    this.uppy.on('cancel-all', this.#resetResumableCapability)
   }
 
   uninstall(): void {
-    this.uppy.setState({
-      capabilities: {
-        ...this.uppy.getState().capabilities,
-        resumableUploads: false,
-      },
-    })
+    this.#setResumableUploadsCapability(false)
     this.uppy.removeUploader(this.#upload)
+    this.uppy.off('cancel-all', this.#resetResumableCapability)
     // Clean up any pending uploads
     for (const fileId of Object.keys(this.#uploaders)) {
       this.#cleanup(fileId)
     }
+  }
+
+  // --------------------------------------------------------------------------
+  // Resumable Uploads Capability
+  // --------------------------------------------------------------------------
+
+  #setResumableUploadsCapability = (value: boolean): void => {
+    const { capabilities } = this.uppy.getState()
+    this.uppy.setState({
+      capabilities: {
+        ...capabilities,
+        resumableUploads: value,
+      },
+    })
+  }
+
+  #resetResumableCapability = (): void => {
+    this.#setResumableUploadsCapability(true)
   }
 
   // --------------------------------------------------------------------------
