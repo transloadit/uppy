@@ -1,10 +1,3 @@
-/**
- * @uppy/aws-s3 - S3 upload plugin using S3mini client
- *
- * Supports both simple (putObject) and multipart uploads.
- * Uses S3mini for direct S3 operations, with signing via callback.
- */
-
 import {
   BasePlugin,
   type DefinePluginOpts,
@@ -357,10 +350,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     })
   }
 
-  // --------------------------------------------------------------------------
-  // Helper Methods
-  // --------------------------------------------------------------------------
-
   #shouldUseMultipart(file: UppyFile<M, B>): boolean {
     const { shouldUseMultipart } = this.opts
     if (typeof shouldUseMultipart === 'function') {
@@ -396,7 +385,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   }
 }
 
-// Re-export types
 export type { AwsS3Options as AwsS3MultipartOptions }
 
 /** Body type for AWS S3 upload responses */
