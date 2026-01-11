@@ -65,17 +65,20 @@ class S3mini {
     }
   }
 
-  /** Creates a signer that fetches/caches credentials and signs requests. */
+  /** Creates a presigner that fetches/caches credentials and generates pre-signed URLs. */
   private _createCredentialBasedSigner(): IT.signRequestFn {
-    return async (request: IT.signableRequest): Promise<IT.signedHeaders> => {
+    return async (
+      request: IT.presignableRequest,
+    ): Promise<IT.presignedResponse> => {
       const creds = await this._getCachedCredentials()
-      const signer = createSigV4Signer({
+      const presigner = createSigV4Signer({
         accessKeyId: creds.credentials.accessKeyId,
         secretAccessKey: creds.credentials.secretAccessKey,
         sessionToken: creds.credentials.sessionToken,
         region: creds.region || this.region,
+        endpoint: this.endpoint.toString(),
       })
-      return signer(request)
+      return presigner(request)
     }
   }
 
@@ -198,7 +201,6 @@ class S3mini {
     uploadId: string,
     data: IT.BinaryData | string,
     partNumber: number,
-    opts: object,
   ): BodyInit {
     this._checkKey(key)
     if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
@@ -209,87 +211,44 @@ class S3mini {
         `${C.ERROR_PREFIX}partNumber must be a positive integer`,
       )
     }
-    this._checkOpts(opts)
     return this._validateData(data)
   }
 
-  private async _signedRequest(
+  private async _presignedRequest(
     method: IT.HttpMethod, // 'GET' | 'HEAD' | 'PUT' | 'POST' | 'DELETE'
-    key: string, // ‘’ allowed for bucket‑level ops
+    key: string, // '' allowed for bucket‑level ops
     {
-      query = {}, // ?query=string
-      body = '', // BodyInit | undefined
-      headers = {}, // extra/override headers
-      tolerated = [], // [200, 404] etc.
-      withQuery = false, // append query string to signed URL
+      uploadId,
+      partNumber,
+      body = '',
+      contentType,
+      tolerated = [],
     }: {
-      query?: Record<string, unknown>
+      uploadId?: string
+      partNumber?: number
       body?: BodyInit
-      headers?:
-        | Record<string, string | number | undefined>
-        | IT.SSECHeaders
-        | IT.AWSHeaders
+      contentType?: string
       tolerated?: number[]
-      withQuery?: boolean
     } = {},
   ): Promise<Response> {
-    const { filteredOpts, conditionalHeaders } = ['GET', 'HEAD'].includes(
+    // Get pre-signed URL from callback
+    const { url } = await this.signRequest({
       method,
-    )
-      ? this._filterIfHeaders(query)
-      : { filteredOpts: query, conditionalHeaders: {} }
-
-    const url = new URL(this.endpoint)
-
-    const encodedKey = key ? U.uriResourceEscape(key) : ''
-
-    if (encodedKey && encodedKey.length > 0) {
-      url.pathname =
-        url.pathname === '/'
-          ? `/${encodedKey.replace(/^\/+/, '')}`
-          : `${url.pathname}/${encodedKey.replace(/^\/+/, '')}`
-    }
-
-    // build query string
-    if (Object.keys(query).length > 0) {
-      withQuery = true
-    }
-
-    const filteredOptsStrings = Object.fromEntries(
-      Object.entries(filteredOpts).map(([k, v]) => [k, String(v)]),
-    ) as Record<string, string>
-
-    const finalUrl =
-      withQuery && Object.keys(filteredOpts).length
-        ? `${url}?${new URLSearchParams(filteredOptsStrings)}`
-        : url
-
-    const baseHeaders: Record<string, string> = {
-      [C.HEADER_AMZ_CONTENT_SHA256]: C.UNSIGNED_PAYLOAD,
-    }
-
-    // convert all header values to strings and merge
-    for (const [k, v] of Object.entries({
-      ...headers,
-      ...conditionalHeaders,
-    })) {
-      if (v !== undefined) {
-        baseHeaders[k] = String(v)
-      }
-    }
-
-    // call the signedRequest callback
-    const signedHeaders = await this.signRequest({
-      method,
-      url: finalUrl.toString(),
-      headers: baseHeaders,
+      key,
+      uploadId,
+      partNumber,
     })
+
+    // Build request headers
+    const requestHeaders: Record<string, string> = contentType
+      ? { 'Content-Type': contentType }
+      : {}
 
     try {
       return await this._sendRequest(
-        finalUrl.toString(),
+        url,
         method,
-        signedHeaders,
+        requestHeaders,
         body,
         tolerated,
       )
@@ -301,19 +260,20 @@ class S3mini {
         err.code &&
         ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
       ) {
-        // Clear timer and cache
+        // Clear cache
         this.clearCachedCredentials()
 
         // Retry with fresh credentials
-        const freshSignedHeaders = await this.signRequest({
+        const fresh = await this.signRequest({
           method,
-          url: finalUrl.toString(),
-          headers: baseHeaders,
+          key,
+          uploadId,
+          partNumber,
         })
         return this._sendRequest(
-          finalUrl.toString(),
+          fresh.url,
           method,
-          freshSignedHeaders,
+          contentType ? { 'Content-Type': contentType } : {},
           body,
           tolerated,
         )
@@ -327,17 +287,10 @@ class S3mini {
     key: string,
     data: string | IT.BinaryData,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-    ssecHeaders?: IT.SSECHeaders,
-    additionalHeaders?: IT.AWSHeaders,
   ): Promise<Response> {
-    return this._signedRequest('PUT', key, {
+    return this._presignedRequest('PUT', key, {
       body: this._validateData(data),
-      headers: {
-        [C.HEADER_CONTENT_LENGTH]: U.getByteSize(data),
-        [C.HEADER_CONTENT_TYPE]: fileType,
-        ...additionalHeaders,
-        ...ssecHeaders,
-      },
+      contentType: fileType,
       tolerated: [200],
     })
   }
@@ -346,19 +299,13 @@ class S3mini {
   public async getMultipartUploadId(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-    ssecHeaders?: IT.SSECHeaders,
   ): Promise<string> {
     this._checkKey(key)
     if (typeof fileType !== 'string') {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const query = { uploads: '' }
-    const headers = { [C.HEADER_CONTENT_TYPE]: fileType, ...ssecHeaders }
-
-    const res = await this._signedRequest('POST', key, {
-      query,
-      headers,
-      withQuery: true,
+    const res = await this._presignedRequest('POST', key, {
+      contentType: fileType,
     })
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
 
@@ -391,25 +338,18 @@ class S3mini {
     uploadId: string,
     data: IT.BinaryData | string,
     partNumber: number,
-    opts: Record<string, unknown> = {},
-    ssecHeaders?: IT.SSECHeaders,
   ): Promise<IT.UploadPart> {
     const body = this._validateUploadPartParams(
       key,
       uploadId,
       data,
       partNumber,
-      opts,
     )
 
-    const query = { uploadId, partNumber, ...opts }
-    const res = await this._signedRequest('PUT', key, {
-      query,
+    const res = await this._presignedRequest('PUT', key, {
+      uploadId,
+      partNumber,
       body,
-      headers: {
-        [C.HEADER_CONTENT_LENGTH]: U.getByteSize(data),
-        ...ssecHeaders,
-      },
     })
 
     return { partNumber, etag: U.sanitizeETag(res.headers.get('etag') || '') }
@@ -424,11 +364,8 @@ class S3mini {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const query = { uploadId }
-
-    const res = await this._signedRequest('GET', key, {
-      query,
-      withQuery: true,
+    const res = await this._presignedRequest('GET', key, {
+      uploadId,
     })
 
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
@@ -462,18 +399,12 @@ class S3mini {
     uploadId: string,
     parts: Array<IT.UploadPart>,
   ): Promise<IT.CompleteMultipartUploadResult> {
-    const query = { uploadId }
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
-    const headers = {
-      [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
-      [C.HEADER_CONTENT_LENGTH]: U.getByteSize(xmlBody),
-    }
 
-    const res = await this._signedRequest('POST', key, {
-      query,
+    const res = await this._presignedRequest('POST', key, {
+      uploadId,
       body: xmlBody,
-      headers,
-      withQuery: true,
+      contentType: C.XML_CONTENT_TYPE,
     })
 
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
@@ -511,23 +442,14 @@ class S3mini {
   public async abortMultipartUpload(
     key: string,
     uploadId: string,
-    ssecHeaders?: IT.SSECHeaders,
   ): Promise<object> {
     this._checkKey(key)
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const query = { uploadId }
-    const headers = {
-      [C.HEADER_CONTENT_TYPE]: C.XML_CONTENT_TYPE,
-      ...(ssecHeaders ? { ...ssecHeaders } : {}),
-    }
-
-    const res = await this._signedRequest('DELETE', key, {
-      query,
-      headers,
-      withQuery: true,
+    const res = await this._presignedRequest('DELETE', key, {
+      uploadId,
     })
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (
@@ -559,7 +481,7 @@ class S3mini {
 
   /** Deletes an object from the bucket. Returns true on success. */
   public async deleteObject(key: string): Promise<boolean> {
-    const res = await this._signedRequest('DELETE', key, {
+    const res = await this._presignedRequest('DELETE', key, {
       tolerated: [200, 204],
     })
     return res.status === 200 || res.status === 204
