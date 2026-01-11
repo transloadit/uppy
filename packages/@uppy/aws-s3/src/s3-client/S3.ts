@@ -200,7 +200,6 @@ class S3mini {
     uploadId: string,
     data: IT.BinaryData | string,
     partNumber: number,
-    opts: object,
   ): BodyInit {
     this._checkKey(key)
     if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
@@ -211,7 +210,6 @@ class S3mini {
         `${C.ERROR_PREFIX}partNumber must be a positive integer`,
       )
     }
-    this._checkOpts(opts)
     return this._validateData(data)
   }
 
@@ -339,14 +337,12 @@ class S3mini {
     uploadId: string,
     data: IT.BinaryData | string,
     partNumber: number,
-    opts: Record<string, unknown> = {},
   ): Promise<IT.UploadPart> {
     const body = this._validateUploadPartParams(
       key,
       uploadId,
       data,
       partNumber,
-      opts,
     )
 
     const res = await this._presignedRequest('PUT', key, {
