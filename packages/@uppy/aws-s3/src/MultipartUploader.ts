@@ -270,7 +270,7 @@ export class MultipartUploader<M extends Meta, B extends Body> {
     const signal = this.#abortController.signal
 
     if (signal.aborted) {
-      throw new Error('Upload aborted')
+      throw new Error('Upload aborted', { cause: signal.reason })
     }
 
     await this.#s3Client.putObject(
@@ -298,7 +298,7 @@ export class MultipartUploader<M extends Meta, B extends Body> {
     const signal = this.#abortController.signal
 
     if (signal.aborted) {
-      throw new Error('Upload aborted')
+      throw new Error('Upload aborted', { cause: signal.reason })
     }
 
     // Step 1: Create multipart upload
@@ -328,7 +328,7 @@ export class MultipartUploader<M extends Meta, B extends Body> {
     // Upload remaining parts sequentially
     for (let i = 0; i < this.#chunks.length; i++) {
       if (signal.aborted) {
-        throw new Error('Upload aborted')
+        throw new Error('Upload aborted', { cause: signal.reason })
       }
 
       // Skip already uploaded chunks
@@ -366,7 +366,7 @@ export class MultipartUploader<M extends Meta, B extends Body> {
 
     // Step 3: Complete multipart upload
     if (signal.aborted) {
-      throw new Error('Upload aborted')
+      throw new Error('Upload aborted', { cause: signal.reason })
     }
 
     const result = await this.#s3Client.completeMultipartUpload(

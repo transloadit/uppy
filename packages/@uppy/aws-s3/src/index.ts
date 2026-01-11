@@ -145,11 +145,23 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   install(): void {
+    this.uppy.setState({
+      capabilities: {
+        ...this.uppy.getState().capabilities,
+        resumableUploads: true,
+      },
+    })
     this.#initS3Client()
     this.uppy.addUploader(this.#upload)
   }
 
   uninstall(): void {
+    this.uppy.setState({
+      capabilities: {
+        ...this.uppy.getState().capabilities,
+        resumableUploads: false,
+      },
+    })
     this.uppy.removeUploader(this.#upload)
     // Clean up any pending uploads
     for (const fileId of Object.keys(this.#uploaders)) {
