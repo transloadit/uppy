@@ -339,12 +339,7 @@ class S3mini {
     data: IT.BinaryData | string,
     partNumber: number,
   ): Promise<IT.UploadPart> {
-    const body = this._validateUploadPartParams(
-      key,
-      uploadId,
-      data,
-      partNumber,
-    )
+    const body = this._validateUploadPartParams(key, uploadId, data, partNumber)
 
     const res = await this._presignedRequest('PUT', key, {
       uploadId,
