@@ -403,6 +403,80 @@ app.post('/s3/sign-v4', async (req, res, next) => {
 
 // === </S3 SignatureV4 for Plugin Rewrite> ===
 
+// === <S3 Pre-signed URL Endpoint for Plugin Rewrite v3> ===
+// This endpoint returns pre-signed URLs for S3 operations
+// Used by the rewritten @uppy/aws-s3 plugin with signRequest option
+
+app.post('/s3/presign', async (req, res, next) => {
+  try {
+    const { method, key, uploadId, partNumber } = req.body
+    getS3Client() // Ensure client is initialized
+
+    if (!method || !key) {
+      return res.status(400).json({ error: 'method and key are required' })
+    }
+
+    const bucket = process.env.COMPANION_AWS_BUCKET
+    let command
+
+    // Determine which command to use based on method and params
+    if (method === 'PUT' && uploadId && partNumber) {
+      // UploadPart
+      command = new UploadPartCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+        PartNumber: parseInt(partNumber, 10),
+      })
+    } else if (method === 'PUT') {
+      // PutObject (simple upload)
+      command = new PutObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      })
+    } else if (method === 'POST' && !uploadId) {
+      // CreateMultipartUpload
+      command = new CreateMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+      })
+    } else if (method === 'POST' && uploadId) {
+      // CompleteMultipartUpload
+      command = new CompleteMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+        // Note: parts are sent in the request body, not in the presigned URL
+      })
+    } else if (method === 'DELETE' && uploadId) {
+      // AbortMultipartUpload
+      command = new AbortMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else if (method === 'GET' && uploadId) {
+      // ListParts
+      command = new ListPartsCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else {
+      return res.status(400).json({ error: 'Unsupported operation' })
+    }
+
+    const url = await getSignedUrl(s3Client, command, { expiresIn: 900 })
+
+    res.setHeader('Access-Control-Allow-Origin', accessControlAllowOrigin)
+    res.json({ url })
+  } catch (err) {
+    next(err)
+  }
+})
+
+// === </S3 Pre-signed URL Endpoint for Plugin Rewrite v3> ===
+
 // === <some plumbing to make the example work> ===
 
 app.get('/', (req, res) => {

@@ -101,22 +101,19 @@
             bucket: window.UPPY_S3_BUCKET,
             region: window.UPPY_S3_REGION || 'us-east-1',
 
-            // Sign requests via /s3/sign endpoint
+            // Sign requests via /s3/presign endpoint (returns presigned URLs)
             signRequest: async (request) => {
-              const response = await fetch('/s3/sign-v4', {
+              const response = await fetch('/s3/presign', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                   method: request.method,
-                  url: request.url,
-                  headers: Object.fromEntries(
-                    Object.entries(request.headers).filter(([k]) =>
-                      !['host', 'content-length'].includes(k.toLowerCase())
-                    )
-                  ),
+                  key: request.key,
+                  uploadId: request.uploadId,
+                  partNumber: request.partNumber,
                 }),
               })
-              if (!response.ok) throw new Error('Failed to sign request')
+              if (!response.ok) throw new Error('Failed to get presigned URL')
               return response.json()
             },
           })
