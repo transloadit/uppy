@@ -30,7 +30,7 @@ function createStore<T>(initialState: T) {
     return state
   }
 
-  function setState(updater: (prevState: T) => T) {
+  function setState(updater: T | ((prevState: T) => T)) {
     state = typeof updater === 'function' ? updater(state) : updater
 
     listeners.forEach((listener) => listener(state))
