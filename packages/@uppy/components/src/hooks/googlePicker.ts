@@ -1,3 +1,4 @@
+import type { RequestClientOptions } from '@uppy/companion-client'
 import {
   type CompanionPluginOptions,
   RequestClient,
@@ -16,7 +17,6 @@ import {
   showDrivePicker,
   showPhotosPicker,
 } from '@uppy/provider-views'
-import type { RequestClientOptions } from '@uppy/companion-client'
 
 export type GooglePickerType = 'drive' | 'photos'
 
