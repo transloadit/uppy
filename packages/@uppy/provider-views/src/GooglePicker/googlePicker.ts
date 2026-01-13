@@ -521,7 +521,7 @@ export async function pollPickingSession({
           signal.removeEventListener('abort', reject)
           resolve()
         }, interval * 1000)
-        signal.addEventListener('abort', reject)
+        signal.addEventListener('abort', reject, { once: true })
       })
 
       const accessToken = getAccessToken()
