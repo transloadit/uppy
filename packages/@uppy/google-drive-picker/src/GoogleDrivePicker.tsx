@@ -79,7 +79,16 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
     accessToken: string,
   ) => {
     this.uppy.addFiles(
-      files.map((file) => mapPickerFile({ requestClientId: GoogleDrivePicker.requestClientId, accessToken, companionUrl: this.opts.companionUrl }, file)),
+      files.map((file) =>
+        mapPickerFile(
+          {
+            requestClientId: GoogleDrivePicker.requestClientId,
+            accessToken,
+            companionUrl: this.opts.companionUrl,
+          },
+          file,
+        ),
+      ),
     )
   }
 

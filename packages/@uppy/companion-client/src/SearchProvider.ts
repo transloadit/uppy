@@ -1,6 +1,8 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
 import type { CompanionClientSearchProvider } from '@uppy/utils'
-import RequestClient, { type Opts as RequestClientOpts } from './RequestClient.js'
+import RequestClient, {
+  type Opts as RequestClientOpts,
+} from './RequestClient.js'
 
 export interface Opts extends RequestClientOpts {
   name?: string

@@ -15,12 +15,12 @@ export type {
 export {
   authorize,
   ensureScriptsInjected,
+  InvalidTokenError,
   logout,
+  mapPickerFile,
   pollPickingSession,
   showDrivePicker,
   showPhotosPicker,
-  InvalidTokenError,
-  mapPickerFile,
 } from './GooglePicker/googlePicker.js'
 export { GoogleDriveIcon, GooglePhotosIcon } from './GooglePicker/icons.js'
 export {

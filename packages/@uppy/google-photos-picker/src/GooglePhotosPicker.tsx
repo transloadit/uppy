@@ -77,7 +77,16 @@ export default class GooglePhotosPicker<M extends Meta, B extends Body>
     accessToken: string,
   ) => {
     this.uppy.addFiles(
-      files.map((file) => mapPickerFile({ requestClientId: GooglePhotosPicker.requestClientId, accessToken, companionUrl: this.opts.companionUrl }, file)),
+      files.map((file) =>
+        mapPickerFile(
+          {
+            requestClientId: GooglePhotosPicker.requestClientId,
+            accessToken,
+            companionUrl: this.opts.companionUrl,
+          },
+          file,
+        ),
+      ),
     )
   }
 
