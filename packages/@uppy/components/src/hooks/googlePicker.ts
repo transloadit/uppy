@@ -16,13 +16,14 @@ import {
   showDrivePicker,
   showPhotosPicker,
 } from '@uppy/provider-views'
+import type { RequestClientOptions } from '@uppy/companion-client'
 
 export type GooglePickerType = 'drive' | 'photos'
 
 /**
  * A simple react-like immutable store that can be used with useSyncExternalStore and the like
  */
-function createStore<T>(initialState: T) {
+function createStore<T extends object>(initialState: T) {
   let state = initialState
   const listeners = new Set<(state: T) => void>()
 
@@ -48,7 +49,9 @@ function createStore<T>(initialState: T) {
   }
 }
 
-export interface GooglePickerOptions extends CompanionPluginOptions {
+export interface GooglePickerOptions
+  extends RequestClientOptions,
+    Pick<CompanionPluginOptions, 'storage'> {
   pickerType: GooglePickerType
   clientId: string
   requestClientId?: string
