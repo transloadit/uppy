@@ -74,7 +74,7 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
     this.unmount()
   }
 
-  public handleFilesPicked = async (
+  private handleFilesPicked = async (
     files: PickedItem[],
     accessToken: string,
   ) => {
