@@ -113,7 +113,7 @@ export function createGooglePickerController({
 
     abortController.signal.throwIfAborted()
 
-    // For google photos we need to continouisly poll the current picking session
+    // For google photos we need to continuously poll the current picking session
     if (pickerType === 'photos') {
       pollPickingSession({
         getPickingSession: () => pickingSession,
@@ -175,7 +175,7 @@ export function createGooglePickerController({
           companionCookiesRule,
         })
 
-        uppy.registerRequestClient('GooglePhotosPicker', client)
+        uppy.registerRequestClient(requestClientId, client)
 
         await ensureScriptsInjected(pickerType)
 
