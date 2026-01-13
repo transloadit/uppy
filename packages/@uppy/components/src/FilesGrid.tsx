@@ -67,7 +67,7 @@ export default function FilesGrid(props: FilesGridProps) {
               </p>
               <div className="uppy:flex uppy:items-center uppy:gap-2">
                 <p className=" uppy:text-gray-500 uppy:tabular-nums ">
-                  {prettyBytes(file.size || 0)}
+                  {file.size != null && prettyBytes(file.size)}
                 </p>
 
                 {editFile && (
