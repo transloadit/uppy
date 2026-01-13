@@ -59,6 +59,7 @@ export type GooglePickerViewProps = {
     }
 )
 
+// todo rewrite to use useGooglePicker hook internally
 export default function GooglePickerView({
   uppy,
   i18n,
