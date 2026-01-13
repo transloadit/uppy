@@ -15,6 +15,11 @@ export {
   type FileInputProps,
 } from './hooks/file-input.js'
 export {
+  createGooglePickerController,
+  type GooglePickerOptions,
+  type GooglePickerType,
+} from './hooks/googlePicker.js'
+export {
   createRemoteSourceController,
   type RemoteSourceKeys,
   type RemoteSourceSnapshot,

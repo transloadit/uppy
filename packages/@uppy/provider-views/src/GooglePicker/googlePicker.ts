@@ -1,4 +1,4 @@
-import type { MutableRef } from 'preact/hooks'
+import type { Meta } from '@uppy/utils'
 
 // https://developers.google.com/photos/picker/reference/rest/v1/mediaItems
 // Note that the google api doc is not correct, hence some things are optional here but not in their docs
@@ -203,6 +203,88 @@ export class InvalidTokenError extends Error {
   }
 }
 
+async function handleDocObjectRecursively({
+  doc,
+  token,
+  signal,
+}: {
+  doc: {
+    id: string
+    name: string
+    mimeType: string
+    shortcutDetails?: { targetMimeType: string }
+  }
+  token: string
+  signal?: AbortSignal
+}): Promise<PickedDriveItem[]> {
+  if (doc.mimeType === 'application/vnd.google-apps.shortcut') {
+    if (
+      doc.shortcutDetails?.targetMimeType ===
+      'application/vnd.google-apps.folder'
+    ) {
+      // If we were to recurse into shortcuts to folders, it could get a bit crazy. We could end up picking things outside of the user's intended scope as well as infinite loops
+      // If we were to just pass it through as-is, Companion would not be able to download it, so we just ignore it entirely
+      return []
+    }
+    // for other shortcut types, we just treat them as normal files and pass them to Companion to resolve
+    return [
+      {
+        platform: 'drive',
+        id: doc.id,
+        name: doc.name,
+        mimeType: doc.mimeType,
+      },
+    ]
+  }
+  if (doc.mimeType !== 'application/vnd.google-apps.folder') {
+    return [
+      {
+        platform: 'drive',
+        id: doc.id,
+        name: doc.name,
+        mimeType: doc.mimeType,
+      },
+    ]
+  }
+
+  const headers = getAuthHeader(token)
+  const items: PickedDriveItem[] = []
+  let pageToken: string | undefined
+
+  do {
+    const params = new URLSearchParams({
+      q: `'${doc.id.replace(/'/g, "\\'")}' in parents and trashed = false`,
+      fields:
+        'nextPageToken, files(id, name, mimeType, shortcutDetails(targetMimeType))',
+      includeItemsFromAllDrives: 'true',
+      supportsAllDrives: 'true',
+      pageSize: '1000',
+      ...(pageToken && { pageToken }),
+    })
+    const res = await fetch(
+      `https://www.googleapis.com/drive/v3/files?${params.toString()}`,
+      { headers, signal },
+    )
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to list folder contents for '${doc.name}' (${doc.id}): ${res.status} ${res.statusText}`,
+      )
+    }
+    const json: { nextPageToken?: string; files: PickedItemBase[] } =
+      await res.json()
+    pageToken = json.nextPageToken
+
+    for (const file of json.files) {
+      items.push(
+        ...(await handleDocObjectRecursively({ doc: file, token, signal })),
+      )
+    }
+  } while (pageToken)
+
+  return items
+}
+
 export async function showDrivePicker({
   token,
   apiKey,
@@ -224,88 +306,6 @@ export async function showDrivePicker({
   // https://github.com/transloadit/uppy/pull/5443#pullrequestreview-2452439265
   if (!(await isTokenValid(token, signal))) {
     throw new InvalidTokenError()
-  }
-
-  async function handleDocObjectRecursively({
-    doc,
-    token,
-    signal,
-  }: {
-    doc: {
-      id: string
-      name: string
-      mimeType: string
-      shortcutDetails?: { targetMimeType: string }
-    }
-    token: string
-    signal?: AbortSignal
-  }): Promise<PickedDriveItem[]> {
-    if (doc.mimeType === 'application/vnd.google-apps.shortcut') {
-      if (
-        doc.shortcutDetails?.targetMimeType ===
-        'application/vnd.google-apps.folder'
-      ) {
-        // If we were to recurse into shortcuts to folders, it could get a bit crazy. We could end up picking things outside of the user's intended scope as well as infinite loops
-        // If we were to just pass it through as-is, Companion would not be able to download it, so we just ignore it entirely
-        return []
-      }
-      // for other shortcut types, we just treat them as normal files and pass them to Companion to resolve
-      return [
-        {
-          platform: 'drive',
-          id: doc.id,
-          name: doc.name,
-          mimeType: doc.mimeType,
-        },
-      ]
-    }
-    if (doc.mimeType !== 'application/vnd.google-apps.folder') {
-      return [
-        {
-          platform: 'drive',
-          id: doc.id,
-          name: doc.name,
-          mimeType: doc.mimeType,
-        },
-      ]
-    }
-
-    const headers = getAuthHeader(token)
-    const items: PickedDriveItem[] = []
-    let pageToken: string | undefined
-
-    do {
-      const params = new URLSearchParams({
-        q: `'${doc.id.replace(/'/g, "\\'")}' in parents and trashed = false`,
-        fields:
-          'nextPageToken, files(id, name, mimeType, shortcutDetails(targetMimeType))',
-        includeItemsFromAllDrives: 'true',
-        supportsAllDrives: 'true',
-        pageSize: '1000',
-        ...(pageToken && { pageToken }),
-      })
-      const res = await fetch(
-        `https://www.googleapis.com/drive/v3/files?${params.toString()}`,
-        { headers, signal },
-      )
-
-      if (!res.ok) {
-        throw new Error(
-          `Failed to list folder contents for '${doc.name}' (${doc.id}): ${res.status} ${res.statusText}`,
-        )
-      }
-      const json: { nextPageToken?: string; files: PickedItemBase[] } =
-        await res.json()
-      pageToken = json.nextPageToken
-
-      for (const file of json.files) {
-        items.push(
-          ...(await handleDocObjectRecursively({ doc: file, token, signal })),
-        )
-      }
-    } while (pageToken)
-
-    return items
   }
 
   const onPicked = async (picked: google.picker.ResponseObject) => {
@@ -487,14 +487,16 @@ async function resolvePickedPhotos({
 }
 
 export async function pollPickingSession({
-  pickingSessionRef,
-  accessTokenRef,
+  getPickingSession,
+  getAccessToken,
+  onPickingSessionClear,
   signal,
   onFilesPicked,
   onError,
 }: {
-  pickingSessionRef: MutableRef<PickingSession | undefined>
-  accessTokenRef: MutableRef<string | null | undefined>
+  getPickingSession: () => PickingSession | undefined
+  getAccessToken: () => string | null | undefined
+  onPickingSessionClear: () => void
   signal: AbortSignal
   onFilesPicked: (files: PickedItem[], accessToken: string) => void
   onError: (err: unknown) => void
@@ -505,25 +507,25 @@ export async function pollPickingSession({
   // in case the user opens the photo selector again. Hence the infinite for loop
   for (let interval = 1; ; ) {
     try {
-      if (pickingSessionRef.current != null) {
-        interval = parseFloat(
-          pickingSessionRef.current.pollingConfig.pollInterval,
-        )
+      signal.throwIfAborted()
+
+      let pickingSession = getPickingSession()
+      if (pickingSession != null) {
+        interval = parseFloat(pickingSession.pollingConfig.pollInterval)
       } else {
         interval = 1
       }
 
-      await Promise.race([
-        new Promise((resolve) => setTimeout(resolve, interval * 1000)),
-        new Promise((_resolve, reject) => {
-          signal.addEventListener('abort', reject)
-        }),
-      ])
+      await new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+          signal.removeEventListener('abort', reject)
+          resolve()
+        }, interval * 1000)
+        signal.addEventListener('abort', reject)
+      })
 
-      signal.throwIfAborted()
-
-      const accessToken = accessTokenRef.current
-      const pickingSession = pickingSessionRef.current
+      const accessToken = getAccessToken()
+      pickingSession = getPickingSession()
 
       if (pickingSession != null && accessToken != null) {
         const headers = getAuthHeader(accessToken)
@@ -542,11 +544,11 @@ export async function pollPickingSession({
             pickingSession,
             signal,
           })
-          pickingSessionRef.current = undefined
+          onPickingSessionClear()
           onFilesPicked(resolvedPhotos, accessToken)
         }
         if (pickingSession.pollingConfig.timeoutIn === '0s') {
-          pickingSessionRef.current = undefined
+          onPickingSessionClear()
         }
       }
     } catch (err) {
@@ -558,3 +560,37 @@ export async function pollPickingSession({
     }
   }
 }
+
+export const mapPickerFile = (
+  {
+    requestClientId,
+    accessToken,
+    companionUrl,
+  }: {
+    requestClientId: string
+    accessToken: string
+    companionUrl: string
+  },
+  { id, mimeType, name, platform, ...rest }: PickedItem,
+) => ({
+  name,
+  type: mimeType,
+  data: {
+    size: null, // defer to companion to determine size
+  },
+  isRemote: true,
+  remote: {
+    companionUrl,
+    url: `${companionUrl}/google-picker/get`,
+    body: {
+      fileId: id,
+      accessToken,
+      platform,
+      ...('url' in rest && { url: rest.url }),
+    },
+    requestClientId,
+  },
+  ...(('metadata' in rest && {
+    meta: rest.metadata,
+  }) as Meta), // dunno how to type this
+})

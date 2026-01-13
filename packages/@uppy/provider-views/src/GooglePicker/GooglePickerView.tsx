@@ -188,8 +188,11 @@ export default function GooglePickerView({
     const abortController = new AbortController()
 
     pollPickingSession({
-      pickingSessionRef,
-      accessTokenRef,
+      getPickingSession: () => pickingSessionRef.current,
+      getAccessToken: () => accessTokenRef.current,
+      onPickingSessionClear: () => {
+        pickingSessionRef.current = undefined
+      },
       signal: abortController.signal,
       onFilesPicked,
       onError: (err) => uppy.log(err),

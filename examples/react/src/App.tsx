@@ -12,7 +12,7 @@ import UppyScreenCapture from '@uppy/screen-capture'
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
 import { useRef, useState } from 'react'
-import CustomDropzone from './CustomDropzone'
+import CustomDropzone, { type CustomDropzonePlugin } from './CustomDropzone'
 import { RemoteSource } from './RemoteSource'
 import ScreenCapture from './ScreenCapture'
 import Webcam from './Webcam'
@@ -32,11 +32,11 @@ function App() {
   )
 
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const [modalPlugin, setModalPlugin] = useState<
-    'webcam' | 'dropbox' | 'screen-capture' | null
-  >(null)
+  const [modalPlugin, setModalPlugin] = useState<CustomDropzonePlugin | null>(
+    null,
+  )
 
-  function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
+  function openModal(plugin: CustomDropzonePlugin) {
     setModalPlugin(plugin)
     dialogRef.current?.showModal()
   }
