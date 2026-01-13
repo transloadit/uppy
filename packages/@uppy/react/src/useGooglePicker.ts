@@ -14,6 +14,10 @@ export function useGooglePicker({
   clientId,
   apiKey,
   appId,
+  companionCookiesRule,
+  companionHeaders,
+  companionKeysParams,
+  storage,
 }: GooglePickerOptions) {
   const { uppy } = useUppyContext()
 
@@ -31,8 +35,24 @@ export function useGooglePicker({
         clientId,
         apiKey,
         appId,
+        companionCookiesRule,
+        companionHeaders,
+        companionKeysParams,
+        storage,
       }),
-    [uppy, requestClientId, clientId, companionUrl, pickerType, apiKey, appId],
+    [
+      uppy,
+      requestClientId,
+      clientId,
+      companionUrl,
+      pickerType,
+      apiKey,
+      appId,
+      companionCookiesRule,
+      companionHeaders,
+      companionKeysParams,
+      storage,
+    ],
   )
 
   const store = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
