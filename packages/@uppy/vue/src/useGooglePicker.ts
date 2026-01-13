@@ -23,7 +23,6 @@ export function useGooglePicker({
   clientId,
   apiKey,
   appId,
-  ...restOptions
 }: GooglePickerOptions): ShallowRef<
   GooglePickerSnapshot & GooglePickerController
 > {
@@ -42,7 +41,6 @@ export function useGooglePicker({
     clientId,
     apiKey,
     appId,
-    ...restOptions,
   })
 
   const state = useExternalStore<GooglePickerSnapshot>(getSnapshot, subscribe)
