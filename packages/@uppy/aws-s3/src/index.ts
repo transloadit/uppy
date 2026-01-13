@@ -426,8 +426,6 @@ export default class AwsS3Multipart<
     }
     if ('endpoint' in opts) {
       this.#client = new RequestClient(this.uppy, {
-        pluginId: this.id,
-        provider: 'AWS',
         companionUrl: this.opts.endpoint!,
         companionHeaders: this.opts.headers,
         companionCookiesRule: this.opts.cookiesRule,

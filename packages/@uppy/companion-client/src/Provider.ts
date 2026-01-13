@@ -54,8 +54,8 @@ export default class Provider<M extends Meta, B extends Body>
     super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
-    this.name = this.opts.name || getName(this.id)
-    this.pluginId = this.opts.pluginId
+    this.name = opts.name || getName(this.id)
+    this.pluginId = opts.pluginId
     this.tokenKey = `companion-${this.pluginId}-auth-token`
     this.companionKeysParams = this.opts.companionKeysParams
     this.preAuthToken = null

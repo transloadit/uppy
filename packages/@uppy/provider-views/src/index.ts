@@ -19,6 +19,8 @@ export {
   pollPickingSession,
   showDrivePicker,
   showPhotosPicker,
+  InvalidTokenError,
+  mapPickerFile,
 } from './GooglePicker/googlePicker.js'
 export { GoogleDriveIcon, GooglePhotosIcon } from './GooglePicker/icons.js'
 export {
