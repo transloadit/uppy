@@ -239,8 +239,7 @@ export default class ImageEditor<
   }
 
   selectFile = (file: UppyFile<M, B>): void => {
-    this.uppy.emit('file-editor:start', file)
-    this.resetEditorState(file)
+    this.start(file)
   }
 
   resetEditorState = (
@@ -351,9 +350,8 @@ export default class ImageEditor<
     // Clean up any previous editing session
     if (this.objectUrl) {
       URL.revokeObjectURL(this.objectUrl)
+      this.objectUrl = null
     }
-
-    this.selectFile(file)
 
     // Get file data - first try the passed file, then try fetching from Uppy state
     let fileData = file.data
@@ -376,6 +374,9 @@ export default class ImageEditor<
         typeof file.data,
       )
     }
+
+    this.uppy.emit('file-editor:start', file)
+    this.resetEditorState(file)
   }
 
   /**
@@ -502,11 +503,6 @@ export default class ImageEditor<
 
     if (currentImage === null || currentImage.isRemote) {
       return null
-    }
-
-    // Create object URL if not already created (backwards compatibility)
-    if (!this.objectUrl && currentImage.data instanceof Blob) {
-      this.objectUrl = URL.createObjectURL(currentImage.data)
     }
 
     return (
