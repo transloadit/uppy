@@ -19,12 +19,11 @@ type SvelteGooglePickerSnapshot = GooglePickerSnapshot & {
 export function useGooglePicker({
 	requestClientId,
 	companionUrl,
-	companionHeaders,
-	companionCookiesRule,
 	pickerType,
 	clientId,
 	apiKey,
 	appId,
+	...restOptions
 }: GooglePickerOptions): SvelteGooglePickerSnapshot {
 	const ctx = getUppyContext();
 
@@ -37,12 +36,11 @@ export function useGooglePicker({
 		uppy: ctx.uppy,
 		requestClientId,
 		companionUrl,
-		companionHeaders,
-		companionCookiesRule,
 		pickerType,
 		clientId,
 		apiKey,
 		appId,
+		...restOptions,
 	});
 
 	const state = useExternalStore<GooglePickerSnapshot>(getSnapshot, subscribe);
