@@ -2,7 +2,7 @@ import {
   createGooglePickerController,
   type GooglePickerOptions,
 } from '@uppy/components'
-import { onUnmounted, type ShallowRef } from 'vue'
+import { computed, onUnmounted, type ShallowRef } from 'vue'
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 
@@ -53,14 +53,10 @@ export function useGooglePicker({
     reset()
   })
 
-  // Create a computed-like object that merges state with controller methods
-  return {
-    get value() {
-      return {
-        ...state.value,
-        show,
-        logout,
-      }
-    },
-  } as ShallowRef<GooglePickerSnapshot & GooglePickerController>
+  // Merge state with controller methods using computed for better type safety
+  return computed(() => ({
+    ...state.value,
+    show,
+    logout,
+  })) as ShallowRef<GooglePickerSnapshot & GooglePickerController>
 }
