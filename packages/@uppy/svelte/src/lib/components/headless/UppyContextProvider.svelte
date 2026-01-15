@@ -14,12 +14,18 @@ export type { UppyContext } from "@uppy/components";
 
   let { uppy, children } = $props()
 
-  // Create a single reactive context object
-  const contextValue: UppyContext = $state({
-    uppy: (() => uppy)(),
-    status: 'init' as UploadStatus,
-    progress: 0,
-  })
+  // Create reactive state for properties of the context
+  let status = $state('init' as UploadStatus)
+  let progress = $state(0)
+
+  // Create a single context object, with some reactive properties
+  const contextValue: UppyContext = {
+    get uppy() { return uppy },
+    get status() { return status },
+    set status(value) { status = value },
+    get progress() { return progress },
+    set progress(value) { progress = value },
+  }
 
   onMount(() => {
     if (!uppy) {
@@ -29,10 +35,10 @@ export type { UppyContext } from "@uppy/components";
     const uppyEventAdapter = createUppyEventAdapter({
       uppy,
       onStatusChange: (newStatus: UploadStatus) => {
-        contextValue.status = newStatus
+        status = newStatus
       },
       onProgressChange: (newProgress: number) => {
-        contextValue.progress = newProgress
+        progress = newProgress
       },
     })
 
