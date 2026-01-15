@@ -15,8 +15,8 @@ export type { UppyContext } from "@uppy/components";
   let { uppy, children } = $props()
 
   // Create a single reactive context object
-  const contextValue: UppyContext = $derived({
-    uppy,
+  const contextValue: UppyContext = $state({
+    uppy: (() => uppy)(),
     status: 'init' as UploadStatus,
     progress: 0,
   })
