@@ -19,7 +19,6 @@ export const views = { ProviderView }
 // Acquirers
 export { default as Audio } from '@uppy/audio'
 // Uploaders
-export { default as AwsS3 } from '@uppy/aws-s3'
 export { default as Box } from '@uppy/box'
 // Miscellaneous
 export { default as Compressor } from '@uppy/compressor'

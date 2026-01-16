@@ -1,7 +1,6 @@
 // Acquirers
 export type { AudioOptions } from '@uppy/audio'
 // Uploaders
-export type { AwsS3Options } from '@uppy/aws-s3'
 export type { BoxOptions } from '@uppy/box'
 // Miscellaneous
 export type { CompressorOptions } from '@uppy/compressor'
