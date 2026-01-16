@@ -65,10 +65,9 @@ export function createSigV4Presigner(config: SignerConfig) {
     // Build the canonical path (must be encoded for signing)
     let canonicalPath = url.pathname
     if (encodedKey) {
-      canonicalPath =
-        canonicalPath.endsWith('/')
-          ? `${canonicalPath}${encodedKey}`
-          : `${canonicalPath}/${encodedKey}`
+      canonicalPath = canonicalPath.endsWith('/')
+        ? `${canonicalPath}${encodedKey}`
+        : `${canonicalPath}/${encodedKey}`
     }
 
     // Set URL pathname (will be decoded by URL object, but we use canonicalPath for signing)
