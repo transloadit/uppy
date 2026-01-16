@@ -7,15 +7,11 @@ import {
 } from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/utils'
 import {
+  AbortController,
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
-import {
-  MultipartUploader,
-  pausingUploadReason,
-  type UploadResult,
-} from './MultipartUploader.js'
 import S3mini from './s3-client/S3.js'
 import type * as IT from './s3-client/types.js'
 
@@ -109,12 +105,284 @@ export interface AwsS3Options<M extends Meta, B extends Body>
 
 const MB = 1024 * 1024
 
+/** Minimum chunk size required by S3 (5MB) */
+const MIN_CHUNK_SIZE = 5 * MB
+
+/** Maximum number of parts allowed by S3 */
+const MAX_PARTS = 10000
+
 const defaultOptions = {
   region: 'us-east-1',
   shouldUseMultipart: ((file: UppyFile<any, any>) =>
     (file.size || 0) > 100 * MB) as any as true,
   allowedMetaFields: true,
 } satisfies Partial<AwsS3Options<any, any>>
+
+// ============================================================================
+// MultipartUploader Types
+// ============================================================================
+
+interface MultipartUploaderOptions<M extends Meta, B extends Body> {
+  s3Client: S3mini
+  file: UppyFile<M, B>
+  key: string
+  shouldUseMultipart?: boolean
+  getChunkSize?: (file: { size: number }) => number
+  onProgress?: (bytesUploaded: number, bytesTotal: number) => void
+  onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
+  onSuccess?: (result: UploadResult) => void
+  onError?: (err: Error) => void
+}
+
+interface UploadResult {
+  location: string
+  key: string
+  bucket?: string
+  uploadId?: string
+}
+
+interface Chunk {
+  index: number
+  start: number
+  end: number
+  size: number
+}
+
+interface ChunkState {
+  uploaded: number
+  etag?: string
+}
+
+/** Reason for pausing (not a real error) */
+const pausingUploadReason = Symbol('pausing upload, not an actual error')
+
+// ============================================================================
+// MultipartUploader Class
+// ============================================================================
+
+class MultipartUploader<M extends Meta, B extends Body> {
+  readonly #s3Client: S3mini
+  readonly #file: UppyFile<M, B>
+  readonly #data: Blob
+  readonly #key: string
+  readonly #options: MultipartUploaderOptions<M, B>
+
+  #chunks: Chunk[] = []
+  #chunkState: ChunkState[] = []
+  #shouldUseMultipart: boolean = false
+  #uploadId?: string
+  #uploadHasStarted: boolean = false
+  #abortController: AbortController = new AbortController()
+
+  constructor(data: Blob, options: MultipartUploaderOptions<M, B>) {
+    this.#s3Client = options.s3Client
+    this.#file = options.file
+    this.#data = data
+    this.#key = options.key
+    this.#options = options
+    this.#initChunks()
+  }
+
+  #initChunks(): void {
+    const fileSize = this.#data.size
+
+    if (typeof this.#options.shouldUseMultipart === 'boolean') {
+      this.#shouldUseMultipart = this.#options.shouldUseMultipart
+    } else {
+      const chunkSize = this.#getChunkSize(fileSize)
+      this.#shouldUseMultipart = fileSize > chunkSize
+    }
+
+    if (this.#shouldUseMultipart && fileSize > MIN_CHUNK_SIZE) {
+      let chunkSize = this.#getChunkSize(fileSize)
+      chunkSize = Math.max(chunkSize, MIN_CHUNK_SIZE)
+      if (Math.ceil(fileSize / chunkSize) > MAX_PARTS) {
+        chunkSize = Math.ceil(fileSize / MAX_PARTS)
+      }
+
+      let offset = 0
+      let index = 0
+      while (offset < fileSize) {
+        const end = Math.min(offset + chunkSize, fileSize)
+        this.#chunks.push({ index, start: offset, end, size: end - offset })
+        offset = end
+        index++
+      }
+    } else {
+      this.#chunks = [{ index: 0, start: 0, end: fileSize, size: fileSize }]
+      this.#shouldUseMultipart = false
+    }
+
+    this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
+  }
+
+  #getChunkSize(fileSize: number): number {
+    if (this.#options.getChunkSize) {
+      return this.#options.getChunkSize({ size: fileSize })
+    }
+    return Math.max(MIN_CHUNK_SIZE, Math.ceil(fileSize / MAX_PARTS))
+  }
+
+  start(): void {
+    if (this.#uploadHasStarted) {
+      this.#abortController.abort(pausingUploadReason)
+      this.#abortController = new AbortController()
+      this.#resumeUpload()
+    } else {
+      this.#createUpload()
+    }
+  }
+
+  pause(): void {
+    this.#abortController.abort(pausingUploadReason)
+  }
+
+  abort(opts?: { really?: boolean }): void {
+    this.#abortController.abort()
+    if (opts?.really !== false && this.#uploadId) {
+      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch(() => {})
+    }
+  }
+
+  async #createUpload(): Promise<void> {
+    this.#uploadHasStarted = true
+    try {
+      if (this.#shouldUseMultipart) {
+        await this.#multipartUpload()
+      } else {
+        await this.#simpleUpload()
+      }
+    } catch (err) {
+      this.#onError(err as Error)
+    }
+  }
+
+  async #resumeUpload(): Promise<void> {
+    if (!this.#uploadId) {
+      await this.#createUpload()
+      return
+    }
+    try {
+      const existingParts = await this.#s3Client.listParts(this.#uploadId, this.#key)
+      for (const part of existingParts) {
+        const chunkIndex = part.partNumber - 1
+        if (chunkIndex >= 0 && chunkIndex < this.#chunkState.length) {
+          this.#chunkState[chunkIndex].uploaded = this.#chunks[chunkIndex].size
+          this.#chunkState[chunkIndex].etag = part.etag
+        }
+      }
+      await this.#uploadRemainingParts()
+    } catch (err) {
+      this.#onError(err as Error)
+    }
+  }
+
+  async #simpleUpload(): Promise<void> {
+    const signal = this.#abortController.signal
+    if (signal.aborted) {
+      throw new Error('Upload aborted', { cause: signal.reason })
+    }
+
+    await this.#s3Client.putObject(
+      this.#key,
+      this.#data,
+      this.#file.type || 'application/octet-stream',
+    )
+
+    this.#chunkState[0].uploaded = this.#data.size
+    this.#onProgress()
+    this.#onSuccess({
+      location: `${this.#s3Client.endpoint}/${this.#key}`,
+      key: this.#key,
+    })
+  }
+
+  async #multipartUpload(): Promise<void> {
+    const signal = this.#abortController.signal
+    if (signal.aborted) {
+      throw new Error('Upload aborted', { cause: signal.reason })
+    }
+
+    this.#uploadId = await this.#s3Client.getMultipartUploadId(
+      this.#key,
+      this.#file.type || 'application/octet-stream',
+    )
+    await this.#uploadRemainingParts()
+  }
+
+  async #uploadRemainingParts(): Promise<void> {
+    const signal = this.#abortController.signal
+    const parts: Array<{ partNumber: number; etag: string }> = []
+
+    for (let i = 0; i < this.#chunkState.length; i++) {
+      if (this.#chunkState[i].etag) {
+        parts.push({ partNumber: i + 1, etag: this.#chunkState[i].etag! })
+      }
+    }
+
+    for (let i = 0; i < this.#chunks.length; i++) {
+      if (signal.aborted) {
+        throw new Error('Upload aborted', { cause: signal.reason })
+      }
+      if (this.#chunkState[i].etag) continue
+
+      const chunk = this.#chunks[i]
+      const partNumber = i + 1
+      const chunkData = this.#data.slice(chunk.start, chunk.end)
+
+      const part = await this.#s3Client.uploadPart(
+        this.#key,
+        this.#uploadId!,
+        chunkData,
+        partNumber,
+      )
+
+      this.#chunkState[i].uploaded = chunk.size
+      this.#chunkState[i].etag = part.etag
+      parts.push({ partNumber: part.partNumber, etag: part.etag })
+      this.#onProgress()
+
+      if (this.#options.onPartComplete) {
+        this.#options.onPartComplete({ PartNumber: part.partNumber, ETag: part.etag })
+      }
+    }
+
+    if (signal.aborted) {
+      throw new Error('Upload aborted', { cause: signal.reason })
+    }
+
+    const result = await this.#s3Client.completeMultipartUpload(
+      this.#key,
+      this.#uploadId!,
+      parts,
+    )
+
+    this.#onSuccess({
+      location: result.location,
+      key: result.key,
+      bucket: result.bucket,
+      uploadId: this.#uploadId,
+    })
+  }
+
+  #onProgress(): void {
+    if (!this.#options.onProgress) return
+    const bytesUploaded = this.#chunkState.reduce((sum, state) => sum + state.uploaded, 0)
+    this.#options.onProgress(bytesUploaded, this.#data.size)
+  }
+
+  #onSuccess(result: UploadResult): void {
+    this.#options.onSuccess?.(result)
+  }
+
+  #onError(err: Error): void {
+    if ((err as any).cause === pausingUploadReason) return
+    if (this.#uploadId) {
+      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch(() => {})
+    }
+    this.#options.onError?.(err)
+  }
+}
 
 // ============================================================================
 // Plugin Class
