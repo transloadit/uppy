@@ -56,15 +56,19 @@ export function createSigV4Presigner(config: SignerConfig) {
 
     // Build the URL - need to track encoded path separately because URL object decodes it
     const url = new URL(endpoint)
-    const encodedKey = key ? U.uriResourceEscape(key) : ''
+
+    // Normalize key: strip leading slashes to prevent double slashes when building path
+    // e.g., endpoint "/" + key "/file.txt" should become "/file.txt", not "//file.txt"
+    const normalizedKey = key ? key.replace(/^\/+/, '') : ''
+    const encodedKey = normalizedKey ? U.uriResourceEscape(normalizedKey) : ''
 
     // Build the canonical path (must be encoded for signing)
     let canonicalPath = url.pathname
-    if (encodedKey && encodedKey.length > 0) {
+    if (encodedKey) {
       canonicalPath =
-        canonicalPath === '/'
-          ? `/${encodedKey.replace(/^\/+/, '')}`
-          : `${canonicalPath}/${encodedKey.replace(/^\/+/, '')}`
+        canonicalPath.endsWith('/')
+          ? `${canonicalPath}${encodedKey}`
+          : `${canonicalPath}/${encodedKey}`
     }
 
     // Set URL pathname (will be decoded by URL object, but we use canonicalPath for signing)
@@ -105,7 +109,7 @@ export function createSigV4Presigner(config: SignerConfig) {
     // Sort query params (AWS SigV4 requires ASCII byte ordering)
     url.searchParams.sort()
 
-    // Build canonical query string (replace + with %20 for AWS compatibility)
+    // Build canonical query string (replace + with %20 as required for AWS)
     const sortedParams = url.searchParams.toString().replace(/\+/g, '%20')
 
     // Build canonical request
