@@ -80,8 +80,9 @@ export function createSigV4Presigner(config: SignerConfig) {
     const credential = `${accessKeyId}/${shortDate}/${region}/${service}/${C.AWS_REQUEST_TYPE}`
 
     // Build query parameters for pre-signed URL
-    // Must include X-Amz-Content-Sha256 for pre-signed URLs (AWS SDK does this)
     url.searchParams.set('X-Amz-Algorithm', C.AWS_ALGORITHM)
+    // UNSIGNED_PAYLOAD tells AWS not to verify the body content.
+    // Required for pre-signed URLs since the body doesn't exist at signing time.
     url.searchParams.set('X-Amz-Content-Sha256', C.UNSIGNED_PAYLOAD)
     url.searchParams.set('X-Amz-Credential', credential)
     url.searchParams.set('X-Amz-Date', fullDatetime)
