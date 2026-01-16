@@ -71,9 +71,6 @@ export function createSigV4Presigner(config: SignerConfig) {
         : `${canonicalPath}/${encodedKey}`
     }
 
-    // Set URL pathname (will be decoded by URL object, but we use canonicalPath for signing)
-    url.pathname = canonicalPath
-
     const now = new Date()
     const shortDate = now.toISOString().slice(0, 10).replace(/-/g, '')
     const fullDatetime = `${shortDate}T${now.toISOString().slice(11, 19).replace(/:/g, '')}Z`
