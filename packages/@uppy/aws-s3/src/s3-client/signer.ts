@@ -17,7 +17,8 @@ export interface SignerConfig {
   service?: string
 }
 
-const DEFAULT_EXPIRES_IN = 900 // 15 minutes
+// Default expiry: 1 hour. This is how long the URL is valid before the request starts.
+const DEFAULT_EXPIRES_IN = 3600
 
 /**
  * Creates a SigV4 pre-signed URL generator for S3 requests.
@@ -56,19 +57,19 @@ export function createSigV4Presigner(config: SignerConfig) {
 
     // Build the URL - need to track encoded path separately because URL object decodes it
     const url = new URL(endpoint)
-    const encodedKey = key ? U.uriResourceEscape(key) : ''
+
+    // Normalize key: strip leading slashes to prevent double slashes when building path
+    // e.g., endpoint "/" + key "/file.txt" should become "/file.txt", not "//file.txt"
+    const normalizedKey = key ? key.replace(/^\/+/, '') : ''
+    const encodedKey = normalizedKey ? U.uriResourceEscape(normalizedKey) : ''
 
     // Build the canonical path (must be encoded for signing)
     let canonicalPath = url.pathname
-    if (encodedKey && encodedKey.length > 0) {
-      canonicalPath =
-        canonicalPath === '/'
-          ? `/${encodedKey.replace(/^\/+/, '')}`
-          : `${canonicalPath}/${encodedKey.replace(/^\/+/, '')}`
+    if (encodedKey) {
+      canonicalPath = canonicalPath.endsWith('/')
+        ? `${canonicalPath}${encodedKey}`
+        : `${canonicalPath}/${encodedKey}`
     }
-
-    // Set URL pathname (will be decoded by URL object, but we use canonicalPath for signing)
-    url.pathname = canonicalPath
 
     const now = new Date()
     const shortDate = now.toISOString().slice(0, 10).replace(/-/g, '')
@@ -76,44 +77,38 @@ export function createSigV4Presigner(config: SignerConfig) {
     const credential = `${accessKeyId}/${shortDate}/${region}/${service}/${C.AWS_REQUEST_TYPE}`
 
     // Build query parameters for pre-signed URL
-    // Must include X-Amz-Content-Sha256 for pre-signed URLs (AWS SDK does this)
-    const queryParams: Record<string, string> = {
-      'X-Amz-Algorithm': C.AWS_ALGORITHM,
-      'X-Amz-Content-Sha256': C.UNSIGNED_PAYLOAD,
-      'X-Amz-Credential': credential,
-      'X-Amz-Date': fullDatetime,
-      'X-Amz-Expires': String(expiresIn),
-      'X-Amz-SignedHeaders': 'host',
-    }
+    url.searchParams.set('X-Amz-Algorithm', C.AWS_ALGORITHM)
+    // UNSIGNED_PAYLOAD tells AWS not to verify the body content.
+    // Required for pre-signed URLs since the body doesn't exist at signing time.
+    url.searchParams.set('X-Amz-Content-Sha256', C.UNSIGNED_PAYLOAD)
+    url.searchParams.set('X-Amz-Credential', credential)
+    url.searchParams.set('X-Amz-Date', fullDatetime)
+    url.searchParams.set('X-Amz-Expires', String(expiresIn))
+    url.searchParams.set('X-Amz-SignedHeaders', 'host')
 
     // Add session token if present
     if (sessionToken) {
-      queryParams['X-Amz-Security-Token'] = sessionToken
+      url.searchParams.set('X-Amz-Security-Token', sessionToken)
     }
 
     // Add multipart-specific params
     if (uploadId) {
-      queryParams.uploadId = uploadId
+      url.searchParams.set('uploadId', uploadId)
     }
     if (partNumber !== undefined) {
-      queryParams.partNumber = String(partNumber)
+      url.searchParams.set('partNumber', String(partNumber))
     }
 
     // For CreateMultipartUpload, add uploads param
     if (method === 'POST' && !uploadId) {
-      queryParams.uploads = ''
+      url.searchParams.set('uploads', '')
     }
 
-    // Sort query params and build canonical query string
-    // AWS SDK uses 'key=' format even for empty values.
-    // AWS requires strict ASCII byte ordering for keys.
-    const sortedEntries = Object.entries(queryParams).sort(([a], [b]) =>
-      a < b ? -1 : 1,
-    )
+    // Sort query params (AWS SigV4 requires ASCII byte ordering)
+    url.searchParams.sort()
 
-    const sortedParams = sortedEntries
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-      .join('&')
+    // Build canonical query string (replace + with %20 as required for AWS)
+    const sortedParams = url.searchParams.toString().replace(/\+/g, '%20')
 
     // Build canonical request
     const canonicalHeaders = `host:${url.host}`
