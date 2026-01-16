@@ -2,7 +2,6 @@ import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts'
 import { describe, expect, inject, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.js'
-import { sha1Base64 } from '../test-utils/browser-crypto.js'
 import { beforeRun, cleanupTestBeforeAll } from './_shared.test.js'
 
 const name = 'minio'
@@ -49,63 +48,63 @@ async function assumeRole(stsClient, { durationSeconds = 900 } = {}) {
 const minioSpecific = (bucket) => {
   vi.setConfig({ testTimeout: 120_000 })
 
-  const signer = createSigV4Signer({
+  const presigner = createSigV4Signer({
     accessKeyId: bucket.accessKeyId,
     secretAccessKey: bucket.secretAccessKey,
     region: bucket.region,
+    endpoint: bucket.endpoint,
   })
 
   const s3client = new S3mini({
     endpoint: bucket.endpoint,
     region: bucket.region,
-    signRequest: signer,
+    signRequest: presigner,
   })
 
   cleanupTestBeforeAll(s3client)
 
   // ===== signRequest tests =====
 
-  it('put object with valid x-amz-checksum-sha1 header', async () => {
-    const fileContents = new TextEncoder().encode('Some file contents.')
-    const fileHash = await sha1Base64(fileContents)
+  it('simple putObject upload', async () => {
+    const fileContents = new TextEncoder().encode(
+      'Hello from pre-signed URL test.',
+    )
 
     const result = await s3client.putObject(
-      'validated-file-one.txt',
+      'presigned-test-file.txt',
       fileContents,
       'text/plain',
-      undefined,
-      {
-        'x-amz-checksum-sha1': fileHash,
-      },
     )
 
     expect(result.ok).toBe(true)
-    expect(result.headers.get('x-amz-checksum-sha1')).toBe(fileHash)
   })
 
-  it('put object with invalid x-amz-checksum-sha1', async () => {
-    const fileContents = new TextEncoder().encode('Some file contents.')
-    // Hash different content to create mismatch
-    const wrongContents = new TextEncoder().encode(
-      'Some file contents.Make the hash faulty.',
-    )
-    const fileHash = await sha1Base64(wrongContents)
+  it('multipart upload with signRequest', async () => {
+    const key = `presigned-multipart-${Date.now()}.bin`
+    const partSize = 5 * 1024 * 1024 // 5MB
 
-    expect.assertions(2)
-    try {
-      const _wrongResponse = await s3client.putObject(
-        'validated-file-two.txt',
-        fileContents,
-        'text/plain',
-        undefined,
-        {
-          'x-amz-checksum-sha1': fileHash,
-        },
+    const part = new Uint8Array(partSize)
+    for (let i = 0; i < part.length; i += 65536) {
+      crypto.getRandomValues(
+        new Uint8Array(part.buffer, i, Math.min(65536, part.length - i)),
       )
-    } catch (err) {
-      expect(err).toBeDefined()
-      expect(err.code).toBe('XAmzContentChecksumMismatch')
     }
+
+    const uploadId = await s3client.getMultipartUploadId(
+      key,
+      'application/octet-stream',
+    )
+    expect(uploadId).toBeDefined()
+
+    const uploaded = await s3client.uploadPart(key, uploadId, part, 1)
+    expect(uploaded.etag).toBeDefined()
+
+    const result = await s3client.completeMultipartUpload(key, uploadId, [
+      uploaded,
+    ])
+    expect(result.etag).toBeDefined()
+
+    await s3client.deleteObject(key)
   })
 
   // ===== getCredentials tests (STS) =====
