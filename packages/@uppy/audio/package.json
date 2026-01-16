@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "preact": "^10.5.13"
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "cssnano": "^7.0.7",

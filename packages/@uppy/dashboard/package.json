@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -51,7 +51,7 @@
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
     "nanoid": "^5.0.9",
-    "preact": "^10.5.13",
+    "preact": "^10.26.10",
     "shallow-equal": "^3.0.0"
   },
   "devDependencies": {

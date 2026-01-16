@@ -45,7 +45,7 @@
     "lodash": "^4.17.21",
     "nanoid": "^5.0.9",
     "p-queue": "^8.0.0",
-    "preact": "^10.5.13"
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "@types/gapi": "^0.0.47",
