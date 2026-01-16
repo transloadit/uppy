@@ -88,7 +88,8 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -128,7 +129,8 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -170,7 +172,8 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -200,7 +203,8 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -225,7 +229,8 @@ jobs:
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
