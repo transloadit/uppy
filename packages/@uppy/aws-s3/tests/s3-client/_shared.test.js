@@ -66,16 +66,17 @@ export const cleanupTestBeforeAll = (s3client) => {
 export const testRunner = (bucket) => {
   vi.setConfig({ testTimeout: 120_000 })
 
-  const signer = createSigV4Signer({
+  const presigner = createSigV4Signer({
     accessKeyId: bucket.accessKeyId,
     secretAccessKey: bucket.secretAccessKey,
     region: bucket.region,
+    endpoint: bucket.endpoint,
   })
 
   const s3client = new S3mini({
     endpoint: bucket.endpoint,
     region: bucket.region,
-    signRequest: signer,
+    signRequest: presigner,
   })
 
   cleanupTestBeforeAll(s3client)
