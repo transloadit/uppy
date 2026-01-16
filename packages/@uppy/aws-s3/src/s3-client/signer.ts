@@ -1,10 +1,11 @@
 /**
- * AWS Signature Version 4 Signer for S3-compatible services.
- * @see https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_aws-signing.html
+ * AWS Signature Version 4 Pre-signed URL Generator for S3-compatible services.
+ * Generates pre-signed URLs with signature in the query string.
+ * @see https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-query-string-auth.html
  */
 
 import * as C from './consts.js'
-import type { signableRequest, signedHeaders } from './types.js'
+import type { presignableRequest, presignedResponse } from './types.js'
 import * as U from './utils.js'
 
 export interface SignerConfig {
@@ -12,19 +13,24 @@ export interface SignerConfig {
   secretAccessKey: string
   sessionToken?: string
   region: string
+  endpoint: string
   service?: string
 }
 
+// Default expiry: 1 hour. This is how long the URL is valid before the request starts.
+const DEFAULT_EXPIRES_IN = 3600
+
 /**
- * Creates a SigV4 signer for S3 requests.
- * Returns a function that can sign requests with Authorization headers.
+ * Creates a SigV4 pre-signed URL generator for S3 requests.
+ * Returns a function that generates pre-signed URLs.
  */
-export function createSigV4Signer(config: SignerConfig) {
+export function createSigV4Presigner(config: SignerConfig) {
   const {
     accessKeyId,
     secretAccessKey,
     sessionToken,
     region,
+    endpoint,
     service = C.S3_SERVICE,
   } = config
 
@@ -38,59 +44,88 @@ export function createSigV4Signer(config: SignerConfig) {
     return U.hmac(kService, C.AWS_REQUEST_TYPE)
   }
 
-  return async function signRequest(
-    request: signableRequest,
-  ): Promise<signedHeaders> {
-    const { method, url, headers } = request
-    const parsedUrl = new URL(url)
+  return async function presign(
+    request: presignableRequest,
+  ): Promise<presignedResponse> {
+    const {
+      method,
+      key,
+      uploadId,
+      partNumber,
+      expiresIn = DEFAULT_EXPIRES_IN,
+    } = request
+
+    // Build the URL - need to track encoded path separately because URL object decodes it
+    const url = new URL(endpoint)
+
+    // Normalize key: strip leading slashes to prevent double slashes when building path
+    // e.g., endpoint "/" + key "/file.txt" should become "/file.txt", not "//file.txt"
+    const normalizedKey = key ? key.replace(/^\/+/, '') : ''
+    const encodedKey = normalizedKey ? U.uriResourceEscape(normalizedKey) : ''
+
+    // Build the canonical path (must be encoded for signing)
+    let canonicalPath = url.pathname
+    if (encodedKey) {
+      canonicalPath = canonicalPath.endsWith('/')
+        ? `${canonicalPath}${encodedKey}`
+        : `${canonicalPath}/${encodedKey}`
+    }
 
     const now = new Date()
     const shortDate = now.toISOString().slice(0, 10).replace(/-/g, '')
     const fullDatetime = `${shortDate}T${now.toISOString().slice(11, 19).replace(/:/g, '')}Z`
-    const scope = `${shortDate}/${region}/${service}/${C.AWS_REQUEST_TYPE}`
+    const credential = `${accessKeyId}/${shortDate}/${region}/${service}/${C.AWS_REQUEST_TYPE}`
 
-    // S3 supports both hashed / unhashed payload no need for hashed payload now as
-    // we're not talking to sts, also it takes up CPU
-    const payloadHash = C.UNSIGNED_PAYLOAD
+    // Build query parameters for pre-signed URL
+    url.searchParams.set('X-Amz-Algorithm', C.AWS_ALGORITHM)
+    // UNSIGNED_PAYLOAD tells AWS not to verify the body content.
+    // Required for pre-signed URLs since the body doesn't exist at signing time.
+    url.searchParams.set('X-Amz-Content-Sha256', C.UNSIGNED_PAYLOAD)
+    url.searchParams.set('X-Amz-Credential', credential)
+    url.searchParams.set('X-Amz-Date', fullDatetime)
+    url.searchParams.set('X-Amz-Expires', String(expiresIn))
+    url.searchParams.set('X-Amz-SignedHeaders', 'host')
 
-    const headersToSign: Record<string, string> = {
-      ...headers,
-      [C.HEADER_AMZ_CONTENT_SHA256]: payloadHash,
-      [C.HEADER_AMZ_DATE]: fullDatetime,
-      [C.HEADER_HOST]: parsedUrl.host,
-      ...(sessionToken ? { 'x-amz-security-token': sessionToken } : {}),
+    // Add session token if present
+    if (sessionToken) {
+      url.searchParams.set('X-Amz-Security-Token', sessionToken)
     }
 
-    const ignored = new Set([
-      'authorization',
-      'content-length',
-      'content-type',
-      'user-agent',
-    ])
-    const sorted = Object.entries(headersToSign)
-      .filter(([k]) => !ignored.has(k.toLowerCase()))
-      .sort(([a], [b]) => a.toLowerCase().localeCompare(b.toLowerCase()))
+    // Add multipart-specific params
+    if (uploadId) {
+      url.searchParams.set('uploadId', uploadId)
+    }
+    if (partNumber !== undefined) {
+      url.searchParams.set('partNumber', String(partNumber))
+    }
 
-    const canonicalHeaders = sorted
-      .map(([k, v]) => `${k.toLowerCase()}:${v.trim()}`)
-      .join('\n')
-    const signedHeaderNames = sorted.map(([k]) => k.toLowerCase()).join(';')
+    // For CreateMultipartUpload, add uploads param
+    if (method === 'POST' && !uploadId) {
+      url.searchParams.set('uploads', '')
+    }
 
-    const queryString = [...parsedUrl.searchParams.entries()]
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-      .sort()
-      .join('&')
+    // Sort query params (AWS SigV4 requires ASCII byte ordering)
+    url.searchParams.sort()
+
+    // Build canonical query string (replace + with %20 as required for AWS)
+    const sortedParams = url.searchParams.toString().replace(/\+/g, '%20')
+
+    // Build canonical request
+    const canonicalHeaders = `host:${url.host}`
+    const signedHeaderNames = 'host'
 
     const canonicalRequest = [
       method,
-      parsedUrl.pathname,
-      queryString,
+      canonicalPath, // Use the encoded path, not url.pathname which gets decoded
+      sortedParams,
       canonicalHeaders,
       '',
       signedHeaderNames,
-      payloadHash,
+      C.UNSIGNED_PAYLOAD,
     ].join('\n')
 
+    // Build string to sign
+    const scope = `${shortDate}/${region}/${service}/${C.AWS_REQUEST_TYPE}`
     const stringToSign = [
       C.AWS_ALGORITHM,
       fullDatetime,
@@ -98,14 +133,23 @@ export function createSigV4Signer(config: SignerConfig) {
       U.hexFromBuffer(await U.sha256(canonicalRequest)),
     ].join('\n')
 
+    // Get/cache signing key
     if (shortDate !== signingKeyDate || !signingKey) {
       signingKeyDate = shortDate
       signingKey = await getSignatureKey(shortDate)
     }
 
+    // Generate signature
     const signature = U.hexFromBuffer(await U.hmac(signingKey, stringToSign))
-    const authorization = `${C.AWS_ALGORITHM} Credential=${accessKeyId}/${scope}, SignedHeaders=${signedHeaderNames}, Signature=${signature}`
 
-    return { ...headersToSign, authorization }
+    // Build final URL with signature (use canonicalPath to preserve encoding)
+    const presignedUrl = `${url.origin}${canonicalPath}?${sortedParams}&X-Amz-Signature=${signature}`
+
+    return {
+      url: presignedUrl,
+    }
   }
 }
+
+// Keep the old name as an alias for backward compatibility during migration
+export const createSigV4Signer = createSigV4Presigner
