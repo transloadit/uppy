@@ -77,43 +77,36 @@ export function createSigV4Presigner(config: SignerConfig) {
 
     // Build query parameters for pre-signed URL
     // Must include X-Amz-Content-Sha256 for pre-signed URLs (AWS SDK does this)
-    const queryParams: Record<string, string> = {
-      'X-Amz-Algorithm': C.AWS_ALGORITHM,
-      'X-Amz-Content-Sha256': C.UNSIGNED_PAYLOAD,
-      'X-Amz-Credential': credential,
-      'X-Amz-Date': fullDatetime,
-      'X-Amz-Expires': String(expiresIn),
-      'X-Amz-SignedHeaders': 'host',
-    }
+    url.searchParams.set('X-Amz-Algorithm', C.AWS_ALGORITHM)
+    url.searchParams.set('X-Amz-Content-Sha256', C.UNSIGNED_PAYLOAD)
+    url.searchParams.set('X-Amz-Credential', credential)
+    url.searchParams.set('X-Amz-Date', fullDatetime)
+    url.searchParams.set('X-Amz-Expires', String(expiresIn))
+    url.searchParams.set('X-Amz-SignedHeaders', 'host')
 
     // Add session token if present
     if (sessionToken) {
-      queryParams['X-Amz-Security-Token'] = sessionToken
+      url.searchParams.set('X-Amz-Security-Token', sessionToken)
     }
 
     // Add multipart-specific params
     if (uploadId) {
-      queryParams.uploadId = uploadId
+      url.searchParams.set('uploadId', uploadId)
     }
     if (partNumber !== undefined) {
-      queryParams.partNumber = String(partNumber)
+      url.searchParams.set('partNumber', String(partNumber))
     }
 
     // For CreateMultipartUpload, add uploads param
     if (method === 'POST' && !uploadId) {
-      queryParams.uploads = ''
+      url.searchParams.set('uploads', '')
     }
 
-    // Sort query params and build canonical query string
-    // AWS SDK uses 'key=' format even for empty values.
-    // AWS requires strict ASCII byte ordering for keys.
-    const sortedEntries = Object.entries(queryParams).sort(([a], [b]) =>
-      a < b ? -1 : 1,
-    )
+    // Sort query params (AWS SigV4 requires ASCII byte ordering)
+    url.searchParams.sort()
 
-    const sortedParams = sortedEntries
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-      .join('&')
+    // Build canonical query string (replace + with %20 for AWS compatibility)
+    const sortedParams = url.searchParams.toString().replace(/\+/g, '%20')
 
     // Build canonical request
     const canonicalHeaders = `host:${url.host}`
