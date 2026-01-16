@@ -17,7 +17,8 @@ export interface SignerConfig {
   service?: string
 }
 
-const DEFAULT_EXPIRES_IN = 900 // 15 minutes
+// Default expiry: 1 hour. This is how long the URL is valid before the request starts.
+const DEFAULT_EXPIRES_IN = 3600
 
 /**
  * Creates a SigV4 pre-signed URL generator for S3 requests.
