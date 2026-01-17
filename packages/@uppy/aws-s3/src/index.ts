@@ -113,8 +113,7 @@ const MAX_PARTS = 10000
 
 const defaultOptions = {
   region: 'us-east-1',
-  shouldUseMultipart: ((file: UppyFile<any, any>) =>
-    (file.size || 0) > 100 * MB) as any as true,
+  shouldUseMultipart: (file: UppyFile<any, any>) => (file.size || 0) > 100 * MB,
   allowedMetaFields: true,
 } satisfies Partial<AwsS3Options<any, any>>
 
