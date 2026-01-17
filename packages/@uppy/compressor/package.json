@@ -34,7 +34,7 @@
     "@transloadit/prettier-bytes": "^0.3.4",
     "@uppy/utils": "workspace:^",
     "compressorjs": "^1.2.1",
-    "preact": "^10.5.13",
+    "preact": "^10.26.10",
     "promise-queue": "^2.2.5"
   },
   "peerDependencies": {

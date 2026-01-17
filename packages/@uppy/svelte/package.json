@@ -53,11 +53,11 @@
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.26.5"
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.0",
-    "@sveltejs/kit": "^2.20.7",
+    "@sveltejs/kit": "^2.49.5",
     "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@uppy/core": "workspace:^",

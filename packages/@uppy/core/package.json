@@ -48,7 +48,7 @@
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
     "nanoid": "^5.0.9",
-    "preact": "^10.5.13"
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "@types/deep-freeze": "^0",

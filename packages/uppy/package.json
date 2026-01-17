@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
-  "version": "5.2.1",
+  "version": "5.2.2",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -92,7 +92,7 @@
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
-    "tar": "^6.1.0",
+    "tar": "^7.5.3",
     "typescript": "^5.8.3"
   }
 }
