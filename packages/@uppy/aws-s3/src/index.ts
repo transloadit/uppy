@@ -450,6 +450,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       throw new Error('AwsS3: `bucket` option is required and must be a non-empty string')
     }
 
+    if (!signRequest && !getCredentials && !endpoint) {
+      throw new Error(
+        'AwsS3: One of `endpoint`, `signRequest`, or `getCredentials` is required',
+      )
+    }
+
     const s3Endpoint = `https://${bucket}.s3.${region || 'us-east-1'}.amazonaws.com`
 
     if (getCredentials) {
@@ -466,17 +472,13 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         signRequest,
         region: region || 'us-east-1',
       })
-    } else if (endpoint) {
-      // Mode: Companion signing
+    } else {
+      // Mode: Companion signing (endpoint is guaranteed to be set here)
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
-        signRequest: this.#createCompanionSigner(endpoint),
+        signRequest: this.#createCompanionSigner(endpoint!),
         region: region || 'us-east-1',
       })
-    } else {
-      throw new Error(
-        'AwsS3: One of `endpoint`, `signRequest`, or `getCredentials` is required',
-      )
     }
   }
 
