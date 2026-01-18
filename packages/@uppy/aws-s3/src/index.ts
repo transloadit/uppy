@@ -94,7 +94,7 @@ export interface AwsS3Options<M extends Meta, B extends Body>
 
   /**
    * Custom function to generate the S3 object key.
-   * Default: `uploads/{timestamp}-{randomId}/{filename}`
+   * Default: `{randomId}-{filename}`
    */
   getKey?: (file: UppyFile<M, B>) => string
 }
@@ -635,7 +635,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     if (this.opts.getKey) {
       return this.opts.getKey(file)
     }
-    // Default: {randomId}-{filename} (matches Companion's DEFAULT behaviour)
+    // Default: {randomId}-{filename}
     const randomId = crypto.randomUUID()
     return `${randomId}-${file.name}`
   }
