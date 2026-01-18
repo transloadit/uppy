@@ -446,8 +446,8 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #initS3Client(): void {
     const { endpoint, signRequest, getCredentials, bucket, region } = this.opts
 
-    if (!bucket) {
-      throw new Error('AwsS3: `bucket` option is required')
+    if (!bucket || typeof bucket !== 'string') {
+      throw new Error('AwsS3: `bucket` option is required and must be a non-empty string')
     }
 
     const s3Endpoint = `https://${bucket}.s3.${region || 'us-east-1'}.amazonaws.com`
