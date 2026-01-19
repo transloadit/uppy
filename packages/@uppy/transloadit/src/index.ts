@@ -1,4 +1,10 @@
 import type {
+  AssemblyInstructionsInput,
+  AssemblyStatus,
+  AssemblyStatusResult,
+  AssemblyStatusUpload,
+} from '@transloadit/types'
+import type {
   Body,
   DefinePluginOpts,
   Meta,
@@ -14,12 +20,6 @@ import {
   RateLimitedQueue,
   type RemoteUppyFile,
 } from '@uppy/utils'
-import type {
-  AssemblyInstructionsInput,
-  AssemblyStatus,
-  AssemblyStatusResult,
-  AssemblyStatusUpload,
-} from '@transloadit/types'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
