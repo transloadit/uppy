@@ -248,6 +248,8 @@ export default class ImageEditor<
     this.setPluginState({
       currentImage,
       ...defaultEditorState,
+      // Preserve cropperReady if cropper instance exists
+      cropperReady: !!this.cropper,
     })
   }
 

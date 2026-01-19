@@ -33,7 +33,7 @@ type SliderProps<EventType extends Event = Event> = {
 
 type ImageProps<EventType extends Event = Event> = {
   id: string
-  src: string
+  src: string | undefined
   alt: string
   onLoad: (e: EventType) => void
 }
@@ -145,7 +145,7 @@ export function createImageEditorController<
   // Props getters
   const getImageProps = (): ImageProps<ImageEventType> => ({
     id: imgElementId,
-    src: plugin.getObjectUrl() ?? '',
+    src: plugin.getObjectUrl() ?? undefined,
     alt: file.name ?? '',
     onLoad: (e: ImageEventType) => {
       plugin.initCropper(e.currentTarget as HTMLImageElement)

@@ -42,6 +42,8 @@ function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
 }
 
 function openImageEditorModal(file: UppyFile<any, any>) {
+  // https://github.com/transloadit/uppy/issues/6148
+  if (!file.type.startsWith('image/')) return
   selectedFile = file
   modalPlugin = 'image-editor'
   dialogRef?.showModal()

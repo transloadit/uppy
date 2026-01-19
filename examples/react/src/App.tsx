@@ -49,6 +49,8 @@ function App() {
   }
 
   function openImageEditorModal(file: UppyFile<any, any>) {
+    // https://github.com/transloadit/uppy/issues/6148
+    if (!file.type.startsWith('image/')) return
     setSelectedFile(file)
     setModalPlugin('image-editor')
     dialogRef.current?.showModal()
