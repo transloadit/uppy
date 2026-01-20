@@ -131,6 +131,7 @@ interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
   onSuccess?: (result: UploadResult) => void
   onError?: (err: Error) => void
+  log?: (message: string | Error, type?: 'error' | 'warning') => void
 }
 
 interface UploadResult {
@@ -239,7 +240,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
   abort(opts?: { really?: boolean }): void {
     this.#abortController.abort()
     if (opts?.really !== false && this.#uploadId) {
-      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch(() => {})
+      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch((abortErr) => {
+        this.#options.log?.(abortErr, 'warning')
+      })
     }
   }
 
@@ -377,7 +380,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #onError(err: Error): void {
     if ((err as any).cause === pausingUploadReason) return
     if (this.#uploadId) {
-      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch(() => {})
+      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch((abortErr) => {
+        this.#options.log?.(abortErr, 'warning')
+      })
     }
     this.#options.onError?.(err)
   }
@@ -542,6 +547,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         key,
         shouldUseMultipart: shouldMultipart,
         getChunkSize: this.opts.getChunkSize,
+        log: (...args) => this.uppy.log(...args),
 
         onProgress: (bytesUploaded, bytesTotal) => {
           this.uppy.emit('upload-progress', file, {
