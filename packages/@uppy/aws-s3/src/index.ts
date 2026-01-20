@@ -240,9 +240,11 @@ class MultipartUploader<M extends Meta, B extends Body> {
   abort(opts?: { really?: boolean }): void {
     this.#abortController.abort()
     if (opts?.really !== false && this.#uploadId) {
-      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch((abortErr) => {
-        this.#options.log?.(abortErr, 'warning')
-      })
+      this.#s3Client
+        .abortMultipartUpload(this.#key, this.#uploadId)
+        .catch((abortErr) => {
+          this.#options.log?.(abortErr, 'warning')
+        })
     }
   }
 
@@ -265,7 +267,10 @@ class MultipartUploader<M extends Meta, B extends Body> {
       return
     }
     try {
-      const existingParts = await this.#s3Client.listParts(this.#uploadId, this.#key)
+      const existingParts = await this.#s3Client.listParts(
+        this.#uploadId,
+        this.#key,
+      )
       for (const part of existingParts) {
         const chunkIndex = part.partNumber - 1
         if (chunkIndex >= 0 && chunkIndex < this.#chunkState.length) {
@@ -345,7 +350,10 @@ class MultipartUploader<M extends Meta, B extends Body> {
       this.#onProgress()
 
       if (this.#options.onPartComplete) {
-        this.#options.onPartComplete({ PartNumber: part.partNumber, ETag: part.etag })
+        this.#options.onPartComplete({
+          PartNumber: part.partNumber,
+          ETag: part.etag,
+        })
       }
     }
 
@@ -369,7 +377,10 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #onProgress(): void {
     if (!this.#options.onProgress) return
-    const bytesUploaded = this.#chunkState.reduce((sum, state) => sum + state.uploaded, 0)
+    const bytesUploaded = this.#chunkState.reduce(
+      (sum, state) => sum + state.uploaded,
+      0,
+    )
     this.#options.onProgress(bytesUploaded, this.#data.size)
   }
 
@@ -380,9 +391,11 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #onError(err: Error): void {
     if ((err as any).cause === pausingUploadReason) return
     if (this.#uploadId) {
-      this.#s3Client.abortMultipartUpload(this.#key, this.#uploadId).catch((abortErr) => {
-        this.#options.log?.(abortErr, 'warning')
-      })
+      this.#s3Client
+        .abortMultipartUpload(this.#key, this.#uploadId)
+        .catch((abortErr) => {
+          this.#options.log?.(abortErr, 'warning')
+        })
     }
     this.#options.onError?.(err)
   }
@@ -452,7 +465,9 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     const { endpoint, signRequest, getCredentials, bucket, region } = this.opts
 
     if (!bucket || typeof bucket !== 'string') {
-      throw new Error('AwsS3: `bucket` option is required and must be a non-empty string')
+      throw new Error(
+        'AwsS3: `bucket` option is required and must be a non-empty string',
+      )
     }
 
     if (!signRequest && !getCredentials && !endpoint) {
