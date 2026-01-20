@@ -6,13 +6,13 @@ import {
   FilesGrid as PreactFilesGrid,
 } from '@uppy/components'
 import { h as preactH, render as preactRender } from 'preact'
-import { shallowEqualObjects } from 'shallow-equal'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'
 
-export default defineComponent<Omit<FilesGridProps, 'ctx'>>({
+export default defineComponent({
   name: 'FilesGrid',
-  setup(props, { attrs }) {
+  props: ['editFile', 'columns', 'imageThumbnail'],
+  setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -20,7 +20,7 @@ export default defineComponent<Omit<FilesGridProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactFilesGrid, {
-            ...(attrs as FilesGridProps),
+            ...props,
             ctx,
           } satisfies FilesGridProps),
           containerRef.value,
@@ -38,11 +38,10 @@ export default defineComponent<Omit<FilesGridProps, 'ctx'>>({
 
     watch(
       () => props,
-      (current, old) => {
-        if (!shallowEqualObjects(current, old)) {
-          renderFilesGrid()
-        }
+      () => {
+        renderFilesGrid()
       },
+      { deep: true },
     )
 
     return () => h('div', { ref: containerRef })

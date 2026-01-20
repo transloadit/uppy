@@ -6,13 +6,13 @@ import {
   type ProviderIconProps,
 } from '@uppy/components'
 import { h as preactH, render as preactRender } from 'preact'
-import { shallowEqualObjects } from 'shallow-equal'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'
 
-export default defineComponent<Omit<ProviderIconProps, 'ctx'>>({
+export default defineComponent({
   name: 'ProviderIcon',
-  setup(props, { attrs }) {
+  props: ['provider', 'fill'],
+  setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -20,7 +20,7 @@ export default defineComponent<Omit<ProviderIconProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactProviderIcon, {
-            ...(attrs as ProviderIconProps),
+            ...props,
             ctx,
           } satisfies ProviderIconProps),
           containerRef.value,
@@ -38,11 +38,10 @@ export default defineComponent<Omit<ProviderIconProps, 'ctx'>>({
 
     watch(
       () => props,
-      (current, old) => {
-        if (!shallowEqualObjects(current, old)) {
-          renderProviderIcon()
-        }
+      () => {
+        renderProviderIcon()
       },
+      { deep: true },
     )
 
     return () => h('div', { ref: containerRef })

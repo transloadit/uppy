@@ -7,7 +7,6 @@ on:
   push:
     branches: ['main']
     paths:
-      - yarn.lock
       - 'packages/@uppy/companion/**'
       - '.github/workflows/companion-deploy.yml'
 
