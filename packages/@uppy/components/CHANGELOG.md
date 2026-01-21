@@ -1,5 +1,11 @@
 # @uppy/components
 
+## 1.1.1
+
+### Patch Changes
+
+- fa23832: - Fix Vue components to work with kebab-case props (`:edit-file` instead of `:editFile`)
+
 ## 1.1.0
 
 ### Minor Changes

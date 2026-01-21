@@ -1,5 +1,16 @@
 # @uppy/transloadit
 
+## 5.5.0
+
+### Minor Changes
+
+- efda84c: Migrate from 'transloadit' to '@transloadit/types' to get the types. No need to drag in the entire SDK.
+
+### Patch Changes
+
+- Updated dependencies [54a46db]
+  - @uppy/tus@5.1.1
+
 ## 5.4.0
 
 ### Minor Changes

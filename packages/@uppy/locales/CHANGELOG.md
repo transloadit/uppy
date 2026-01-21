@@ -1,5 +1,11 @@
 # @uppy/locales
 
+## 5.1.1
+
+### Patch Changes
+
+- 642c75d: Update cs_CZ dropPaste keys to use the correct variables.
+
 ## 5.1.0
 
 ### Minor Changes
