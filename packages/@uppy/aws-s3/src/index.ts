@@ -241,9 +241,9 @@ class MultipartUploader<M extends Meta, B extends Body> {
     this.#abortController = new AbortController()
   }
 
-  abort(opts?: { really?: boolean }): void {
+  abort(opts?: { abortOnS3?: boolean }): void {
     this.#abortController.abort()
-    if (opts?.really !== false && this.#uploadId) {
+    if (opts?.abortOnS3 !== false && this.#uploadId) {
       this.#s3Client
         .abortMultipartUpload(this.#key, this.#uploadId)
         .catch((abortErr) => {
