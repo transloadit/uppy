@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Uppy – AWS S3 Plugin Rewrite Test</title>
+    <link href="./uppy.min.css" rel="stylesheet" />
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 1200px; margin: 0 auto; padding: 20px; }
+      h1 { color: #1269cf; }
+      .test-section { margin: 20px 0; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; }
+      .test-section h2 { margin-top: 0; color: #333; }
+      footer { margin-top: 40px; color: #666; font-size: 14px; }
+      details { margin: 20px 0; }
+      summary { cursor: pointer; font-weight: bold; padding: 10px; background: #f5f5f5; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>AWS S3 Plugin Rewrite Test</h1>
+    <p>Testing the rewritten <code>@uppy/aws-s3</code> plugin using S3mini.</p>
+
+    <details open name="test">
+      <summary>Test 1: Using getCredentials (STS)</summary>
+      <div class="test-section">
+        <p>Uses the <code>/s3/sts</code> endpoint to get temporary credentials. S3mini handles signing internally.</p>
+        <div id="uppy-sts"></div>
+      </div>
+    </details>
+
+    <details name="test">
+      <summary>Test 2: Using signRequest (Server Signing)</summary>
+      <div class="test-section">
+        <p>Uses the <code>/s3/sign</code> endpoint to sign each request on the server.</p>
+        <div id="uppy-sign"></div>
+      </div>
+    </details>
+
+    <footer>
+      <a href="./index.html">← Back to original example</a>
+    </footer>
+
+    <noscript>You need JavaScript to run this example.</noscript>
+    <script type="module">
+      import { Uppy, Dashboard, AwsS3 } from './uppy.min.mjs'
+
+      // Common event handlers
+      function onUploadComplete(result) {
+        console.log('Upload complete!', result.successful)
+      }
+      function onUploadSuccess(file, data) {
+        console.log('Upload success:', file.meta.name, data)
+      }
+      function onUploadError(file, error) {
+        console.error('Upload error:', file?.meta?.name, error)
+      }
+
+      // Test 1: Using getCredentials (STS)
+      {
+        const uppy = new Uppy({ debug: true })
+          .use(Dashboard, {
+            inline: true,
+            target: '#uppy-sts',
+            height: 400,
+          })
+          .use(AwsS3, {
+            id: 'AwsS3-STS',
+            bucket: window.UPPY_S3_BUCKET, // Set by server
+            region: window.UPPY_S3_REGION || 'us-east-1',
+
+            // Get temporary credentials from /s3/sts
+            getCredentials: async ({ signal }) => {
+              const response = await fetch('/s3/sts', { signal })
+              if (!response.ok) throw new Error('Failed to get credentials')
+              const data = await response.json()
+              return {
+                credentials: {
+                  accessKeyId: data.credentials.AccessKeyId,
+                  secretAccessKey: data.credentials.SecretAccessKey,
+                  sessionToken: data.credentials.SessionToken,
+                },
+                bucket: data.bucket,
+                region: data.region,
+              }
+            },
+          })
+
+        uppy.on('complete', onUploadComplete)
+        uppy.on('upload-success', onUploadSuccess)
+        uppy.on('upload-error', onUploadError)
+      }
+
+      // Test 2: Using signRequest (Server Signing)
+      {
+        const uppy = new Uppy({ debug: true })
+          .use(Dashboard, {
+            inline: true,
+            target: '#uppy-sign',
+            height: 400,
+          })
+          .use(AwsS3, {
+            id: 'AwsS3-Sign',
+            bucket: window.UPPY_S3_BUCKET,
+            region: window.UPPY_S3_REGION || 'us-east-1',
+
+            // Sign requests via /s3/presign endpoint (returns presigned URLs)
+            signRequest: async (request) => {
+              const response = await fetch('/s3/presign', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  method: request.method,
+                  key: request.key,
+                  uploadId: request.uploadId,
+                  partNumber: request.partNumber,
+                }),
+              })
+              if (!response.ok) throw new Error('Failed to get presigned URL')
+              return response.json()
+            },
+          })
+
+        uppy.on('complete', onUploadComplete)
+        uppy.on('upload-success', onUploadSuccess)
+        uppy.on('upload-error', onUploadError)
+      }
+    </script>
+  </body>
+</html>
