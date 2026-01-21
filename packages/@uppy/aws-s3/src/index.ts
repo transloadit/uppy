@@ -312,13 +312,12 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   async #uploadRemainingParts(): Promise<void> {
     const signal = this.#abortController.signal
-    const parts: Array<{ partNumber: number; etag: string }> = []
-
-    for (let i = 0; i < this.#chunkState.length; i++) {
-      if (this.#chunkState[i].etag) {
-        parts.push({ partNumber: i + 1, etag: this.#chunkState[i].etag! })
-      }
-    }
+    // Collect already-uploaded parts (from resume)
+    const parts = this.#chunkState
+      .map((state, i) =>
+        state.etag ? { partNumber: i + 1, etag: state.etag } : null,
+      )
+      .filter((p): p is NonNullable<typeof p> => p !== null)
 
     for (let i = 0; i < this.#chunks.length; i++) {
       if (signal.aborted) {
