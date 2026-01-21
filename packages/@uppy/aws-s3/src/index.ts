@@ -413,9 +413,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.#setResumableUploadsCapability(false)
     this.uppy.removeUploader(this.#upload)
     this.uppy.off('cancel-all', this.#resetResumableCapability)
-    // Clean up any pending uploads
+    // Abort and clean up any in-flight uploads
     for (const fileId of Object.keys(this.#uploaders)) {
-      this.#cleanup(fileId)
+      const uploader = this.#uploaders[fileId]
+      if (uploader) {
+        uploader.abort()
+      }
     }
   }
 
