@@ -559,88 +559,98 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       const key = this.#generateKey(file)
       const shouldMultipart = this.#shouldUseMultipart(file)
 
-      // Create uploader
-      const uploader = new MultipartUploader<M, B>(data, {
-        s3Client: this.#s3Client,
-        file,
-        key,
-        shouldUseMultipart: shouldMultipart,
-        getChunkSize: this.opts.getChunkSize,
-        log: (...args) => this.uppy.log(...args),
+      let uploader: MultipartUploader<M, B> | null = null
+      let eventManager: EventManager<M, B> | null = null
 
-        onProgress: (bytesUploaded, bytesTotal) => {
-          this.uppy.emit('upload-progress', file, {
-            uploadStarted: file.progress.uploadStarted ?? Date.now(),
-            bytesUploaded,
-            bytesTotal,
-          })
-        },
+      try {
+        // Create uploader
+        uploader = new MultipartUploader<M, B>(data, {
+          s3Client: this.#s3Client,
+          file,
+          key,
+          shouldUseMultipart: shouldMultipart,
+          getChunkSize: this.opts.getChunkSize,
+          log: (...args) => this.uppy.log(...args),
 
-        onPartComplete: (part) => {
-          this.uppy.emit('s3-multipart:part-uploaded', file, part)
-        },
+          onProgress: (bytesUploaded, bytesTotal) => {
+            this.uppy.emit('upload-progress', file, {
+              uploadStarted: file.progress.uploadStarted ?? Date.now(),
+              bytesUploaded,
+              bytesTotal,
+            })
+          },
 
-        onSuccess: (result: UploadResult) => {
-          this.uppy.emit('upload-success', file, {
-            status: 200,
-            body: {
-              location: result.location,
-              key: result.key,
-              bucket: result.bucket,
-            } as unknown as B,
-            uploadURL: result.location,
-          })
+          onPartComplete: (part) => {
+            this.uppy.emit('s3-multipart:part-uploaded', file, part)
+          },
+
+          onSuccess: (result: UploadResult) => {
+            this.uppy.emit('upload-success', file, {
+              status: 200,
+              body: {
+                location: result.location,
+                key: result.key,
+                bucket: result.bucket,
+              } as unknown as B,
+              uploadURL: result.location,
+            })
+            this.#cleanup(file.id)
+            resolve()
+          },
+
+          onError: (err) => {
+            // Don't report pausing as an error
+            if ((err as any).cause === pausingUploadReason) {
+              return
+            }
+            this.uppy.emit('upload-error', file, err)
+            this.#cleanup(file.id)
+            reject(err)
+          },
+        })
+
+        // Store uploader for pause/resume/cancel
+        this.#uploaders[file.id] = uploader
+
+        // Wire up pause/cancel events
+        eventManager = new EventManager(this.uppy)
+        this.#uploaderEvents[file.id] = eventManager
+
+        eventManager.onFileRemove(file.id, () => {
+          uploader!.abort()
           this.#cleanup(file.id)
-          resolve()
-        },
+          reject(new Error('File removed'))
+        })
 
-        onError: (err) => {
-          // Don't report pausing as an error
-          if ((err as any).cause === pausingUploadReason) {
-            return
+        eventManager.onCancelAll(file.id, () => {
+          uploader!.abort()
+          this.#cleanup(file.id)
+          reject(new Error('Upload cancelled'))
+        })
+
+        eventManager.onFilePause(file.id, (isPaused) => {
+          if (isPaused) {
+            uploader!.pause()
+          } else {
+            uploader!.start()
           }
-          this.uppy.emit('upload-error', file, err)
-          this.#cleanup(file.id)
-          reject(err)
-        },
-      })
+        })
 
-      this.#uploaders[file.id] = uploader
+        eventManager.onPauseAll(file.id, () => {
+          uploader!.pause()
+        })
 
-      // Wire up pause/cancel events
-      const eventManager = new EventManager(this.uppy)
-      this.#uploaderEvents[file.id] = eventManager
+        eventManager.onResumeAll(file.id, () => {
+          uploader!.start()
+        })
 
-      eventManager.onFileRemove(file.id, () => {
-        uploader.abort()
-        this.#cleanup(file.id)
-        reject(new Error('File removed'))
-      })
-
-      eventManager.onCancelAll(file.id, () => {
-        uploader.abort()
-        this.#cleanup(file.id)
-        reject(new Error('Upload cancelled'))
-      })
-
-      eventManager.onFilePause(file.id, (isPaused) => {
-        if (isPaused) {
-          uploader.pause()
-        } else {
-          uploader.start()
-        }
-      })
-
-      eventManager.onPauseAll(file.id, () => {
-        uploader.pause()
-      })
-
-      eventManager.onResumeAll(file.id, () => {
+        // Start the upload
         uploader.start()
-      })
-
-      // Start the upload
-      uploader.start()
+      } catch (err) {
+        // Cleanup on synchronous failure during setup
+        this.#cleanup(file.id)
+        reject(err)
+      }
     })
   }
 
