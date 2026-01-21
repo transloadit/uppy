@@ -1,5 +1,16 @@
 # uppy
 
+## 5.2.3
+
+### Patch Changes
+
+- Updated dependencies [642c75d]
+- Updated dependencies [54a46db]
+- Updated dependencies [efda84c]
+  - @uppy/locales@5.1.1
+  - @uppy/tus@5.1.1
+  - @uppy/transloadit@5.5.0
+
 ## 5.2.2
 
 ### Patch Changes
