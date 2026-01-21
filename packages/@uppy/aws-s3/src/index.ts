@@ -162,31 +162,44 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #initChunks(): void {
     const fileSize = this.#data.size
 
+    // Step 1: Determine if we should use multipart
+    // - If explicitly set to boolean, use that
+    // - Otherwise, use multipart for files larger than MIN_CHUNK_SIZE (5MB)
     if (typeof this.#options.shouldUseMultipart === 'boolean') {
       this.#shouldUseMultipart = this.#options.shouldUseMultipart
     } else {
-      const chunkSize = this.#getChunkSize(fileSize)
-      this.#shouldUseMultipart = fileSize > chunkSize
+      this.#shouldUseMultipart = fileSize > MIN_CHUNK_SIZE
     }
 
-    if (this.#shouldUseMultipart && fileSize > MIN_CHUNK_SIZE) {
+    // Step 2: Force simple upload if file is too small for multipart
+    // (S3 requires minimum 5MB parts, except for the last part)
+    if (fileSize <= MIN_CHUNK_SIZE) {
+      this.#shouldUseMultipart = false
+    }
+
+    // Step 3: Create chunks based on upload strategy
+    if (this.#shouldUseMultipart) {
+      // Calculate chunk size: at least MIN_CHUNK_SIZE, but may be larger for huge files
       let chunkSize = this.#getChunkSize(fileSize)
       chunkSize = Math.max(chunkSize, MIN_CHUNK_SIZE)
+
+      // Ensure we don't exceed MAX_PARTS (S3 limit: 10,000 parts)
       if (Math.ceil(fileSize / chunkSize) > MAX_PARTS) {
         chunkSize = Math.ceil(fileSize / MAX_PARTS)
       }
 
-      let offset = 0
-      let index = 0
-      while (offset < fileSize) {
+      // Create chunk definitions
+      for (
+        let offset = 0, index = 0;
+        offset < fileSize;
+        offset += chunkSize, index++
+      ) {
         const end = Math.min(offset + chunkSize, fileSize)
         this.#chunks.push({ index, start: offset, end, size: end - offset })
-        offset = end
-        index++
       }
     } else {
+      // Simple upload: single chunk for the entire file
       this.#chunks = [{ index: 0, start: 0, end: fileSize, size: fileSize }]
-      this.#shouldUseMultipart = false
     }
 
     this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
