@@ -459,11 +459,13 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #initS3Client(): void {
     const { endpoint, signRequest, getCredentials, bucket, region } = this.opts
 
-    if (!bucket || typeof bucket !== 'string') {
+    if (typeof bucket !== 'string' || bucket.trim() === '') {
       throw new Error(
         'AwsS3: `bucket` option is required and must be a non-empty string',
       )
     }
+
+    const bucketName = bucket.trim()
 
     if (!signRequest && !getCredentials && !endpoint) {
       throw new Error(
@@ -471,7 +473,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       )
     }
 
-    const s3Endpoint = `https://${bucket}.s3.${region || 'us-east-1'}.amazonaws.com`
+    const s3Endpoint = `https://${bucketName}.s3.${region || 'us-east-1'}.amazonaws.com`
 
     if (getCredentials) {
       // Mode: Temporary credentials (client-side signing)
