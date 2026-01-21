@@ -42,7 +42,7 @@
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "nanoid": "^5.0.9",
     "p-queue": "^8.0.0",
     "preact": "^10.26.10"
