@@ -39,20 +39,8 @@ declare module '@uppy/core' {
 
 export interface AwsS3Options<M extends Meta, B extends Body>
   extends PluginOpts {
-  /**
-   * S3 bucket name (required).
-   */
   bucket: string
-
-  /**
-   * AWS region. Defaults to 'us-east-1'.
-   */
   region?: string
-
-  /**
-   * Companion URL for signing requests.
-   * If provided, requests will be signed via Companion's /s3/sign endpoint.
-   */
   endpoint?: string
 
   /**
@@ -77,19 +65,7 @@ export interface AwsS3Options<M extends Meta, B extends Body>
    * Default: Use multipart for files > 100MB
    */
   shouldUseMultipart?: boolean | ((file: UppyFile<M, B>) => boolean)
-
-  /**
-   * Custom function to determine chunk size for multipart uploads.
-   * Default: 5MB minimum, scaled up for very large files.
-   */
   getChunkSize?: (file: { size: number }) => number
-
-  /**
-   * Metadata fields to include in upload.
-   * - `true`: Include all metadata
-   * - `false` or `[]`: Include no metadata
-   * - `string[]`: Include only specified fields
-   */
   allowedMetaFields?: string[] | boolean
 
   /**
