@@ -225,8 +225,11 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   start(): void {
     if (this.#uploadHasStarted) {
-      this.#abortController.abort(pausingUploadReason)
-      this.#abortController = new AbortController()
+      // Only abort if not already aborted (pause may have already done it)
+      if (!this.#abortController.signal.aborted) {
+        this.#abortController.abort(pausingUploadReason)
+        this.#abortController = new AbortController()
+      }
       this.#resumeUpload()
     } else {
       this.#createUpload()
@@ -235,6 +238,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   pause(): void {
     this.#abortController.abort(pausingUploadReason)
+    this.#abortController = new AbortController()
   }
 
   abort(opts?: { really?: boolean }): void {
