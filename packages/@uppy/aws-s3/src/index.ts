@@ -382,6 +382,11 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   #onError(err: Error): void {
     if ((err as any).cause === pausingUploadReason) return
+    // Also ignore abort signals from intentional cancellation
+    if (err.name === 'AbortError') return
+    // If we intentionally aborted, don't report any subsequent errors
+    // (e.g., S3 returning 404 NoSuchUpload after we aborted the upload)
+    if (this.#abortController.signal.aborted) return
     if (this.#uploadId) {
       this.#s3Client
         .abortMultipartUpload(this.#key, this.#uploadId)
@@ -612,13 +617,13 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         eventManager.onFileRemove(file.id, () => {
           uploader!.abort()
           this.#cleanup(file.id)
-          reject(new Error('File removed'))
+          resolve()  // Normal completion, not an error
         })
 
         eventManager.onCancelAll(file.id, () => {
           uploader!.abort()
           this.#cleanup(file.id)
-          reject(new Error('Upload cancelled'))
+          resolve()  // Normal completion, not an error
         })
 
         eventManager.onFilePause(file.id, (isPaused) => {
@@ -634,6 +639,14 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         })
 
         eventManager.onResumeAll(file.id, () => {
+          uploader!.start()
+        })
+
+        eventManager.onRetry(file.id, () => {
+          uploader!.start()
+        })
+
+        eventManager.onRetryAll(file.id, () => {
           uploader!.start()
         })
 
