@@ -17,7 +17,7 @@ export type WebcamSnapshot = {
   start: () => void
   getVideoProps: () => {
     playsInline: boolean
-    autoPlay?: boolean
+    autoPlay?: boolean | undefined
     muted: boolean
     controls?: boolean | undefined
     src?: string

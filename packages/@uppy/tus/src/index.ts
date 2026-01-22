@@ -247,7 +247,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       // now also includes `relativePath` for files added from folders.
       // This means you can add 2 identical files, if one is in folder a,
       // the other in folder b.
-      uploadOptions.fingerprint = getFingerprint(file)
+      const fingerprint = getFingerprint(file)
+      if (fingerprint !== undefined) uploadOptions.fingerprint = fingerprint
 
       uploadOptions.onBeforeRequest = async (req) => {
         const xhr = req.getUnderlyingObject()

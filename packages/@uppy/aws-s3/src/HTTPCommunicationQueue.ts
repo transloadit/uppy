@@ -248,7 +248,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
   async #nonMultipartUpload(
     file: UppyFile<M, B>,
     chunk: Chunk,
-    signal?: AbortSignal,
+    signal: AbortSignal | null = null,
   ) {
     const {
       method = 'POST',
@@ -315,7 +315,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
       throwIfAborted(signal)
       return await this.#sendCompletionRequest(
         this.#getFile(file),
-        { key, uploadId, parts, signal },
+        { key, ...(uploadId !== undefined && { uploadId }), parts, signal },
         signal,
       ).abortOn(signal)
     } catch (err) {
@@ -351,7 +351,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     throwIfAborted(signal)
     const alreadyUploadedParts = await this.#listParts(
       this.#getFile(file),
-      { uploadId, key, signal },
+      { ...(uploadId !== undefined && { uploadId }), key, signal },
       signal,
     ).abortOn(signal)
     throwIfAborted(signal)
@@ -372,7 +372,7 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     throwIfAborted(signal)
     return this.#sendCompletionRequest(
       this.#getFile(file),
-      { key, uploadId, parts, signal },
+      { key, ...(uploadId !== undefined && { uploadId }), parts, signal },
       signal,
     ).abortOn(signal)
   }

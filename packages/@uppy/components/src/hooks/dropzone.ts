@@ -1,7 +1,7 @@
 import type { NonNullableUppyContext } from '../types.js'
 
 export type DropzoneOptions = {
-  noClick?: boolean
+  noClick?: boolean | undefined
   onDragOver?: (event: Event) => void
   onDragEnter?: (event: Event) => void
   onDragLeave?: (event: Event) => void
@@ -21,7 +21,7 @@ export type DropzoneReturn<DragEventType, ChangeEventType> = {
     id: string
     type: 'file'
     multiple: boolean
-    accept?: string
+    accept?: string | undefined
     onChange: (event: ChangeEventType) => void
   }
 }

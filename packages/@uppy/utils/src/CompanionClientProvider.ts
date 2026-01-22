@@ -4,7 +4,7 @@ export type RequestOptions = {
   method?: string
   data?: Record<string, unknown>
   skipPostResponse?: boolean
-  signal?: AbortSignal
+  signal?: AbortSignal | null
   authFormData?: unknown
   qs?: Record<string, string>
 }

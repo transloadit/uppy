@@ -42,7 +42,7 @@ class RestrictionError<M extends Meta, B extends Body> extends Error {
 
   constructor(
     message: string,
-    opts?: { isUserFacing?: boolean; file?: UppyFile<M, B> },
+    opts?: { isUserFacing?: boolean; file?: UppyFile<M, B> | undefined },
   ) {
     super(message)
     this.isUserFacing = opts?.isUserFacing ?? true

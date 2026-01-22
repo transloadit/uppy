@@ -42,15 +42,15 @@ function toMimeType(fileType: string): string | undefined {
 /**
  * Is this MIME type a video?
  */
-function isVideoMimeType(mimeType?: string): boolean {
-  return /^video\/[^*]+$/.test(mimeType!)
+function isVideoMimeType(mimeType: string): boolean {
+  return /^video\/[^*]+$/.test(mimeType)
 }
 
 /**
  * Is this MIME type an image?
  */
-function isImageMimeType(mimeType?: string): boolean {
-  return /^image\/[^*]+$/.test(mimeType!)
+function isImageMimeType(mimeType: string): boolean {
+  return /^image\/[^*]+$/.test(mimeType)
 }
 
 function getMediaDevices() {
@@ -347,12 +347,13 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     // Safari doesn't have the `isTypeSupported` API.
     if (MediaRecorder.isTypeSupported) {
       const { restrictions } = this.uppy.opts
-      let preferredVideoMimeTypes: Array<string | undefined> = []
+      let preferredVideoMimeTypes: Array<string> = []
       if (this.opts.preferredVideoMimeType) {
         preferredVideoMimeTypes = [this.opts.preferredVideoMimeType]
       } else if (restrictions.allowedFileTypes) {
         preferredVideoMimeTypes = restrictions.allowedFileTypes
           .map(toMimeType)
+          .filter((type) => type !== undefined)
           .filter(isVideoMimeType)
       }
 
@@ -632,7 +633,8 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     } else if (restrictions.allowedFileTypes) {
       preferredImageMimeTypes = restrictions.allowedFileTypes
         .map(toMimeType)
-        .filter(isImageMimeType) as string[]
+        .filter((type) => type !== undefined)
+        .filter(isImageMimeType)
     }
 
     const mimeType = preferredImageMimeTypes[0] || 'image/jpeg'

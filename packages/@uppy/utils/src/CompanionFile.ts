@@ -16,7 +16,7 @@ export type CompanionFile = {
   modifiedDate: string
   thumbnail?: string
   requestPath: string
-  relDirPath?: string
+  relDirPath?: string | undefined
   absDirPath?: string
   author?: {
     name?: string

@@ -90,10 +90,12 @@ export default class RemoteSources<
 
   install(): void {
     this.opts.sources.forEach((pluginId) => {
-      const { sources, ...rest } = this.opts
+      const { sources, companionKeysParams, ...rest } = this.opts
       const optsForRemoteSourcePlugin: CompanionPluginOptions = {
         ...rest,
-        companionKeysParams: this.opts.companionKeysParams?.[pluginId],
+        ...(this.opts.companionKeysParams?.[pluginId] !== undefined && {
+          companionKeysParams: this.opts.companionKeysParams?.[pluginId],
+        }),
       }
       const plugin = availablePlugins[pluginId]
       if (plugin == null) {

@@ -26,7 +26,7 @@ interface FileProgressBase {
    */
   complete?: true
   /** `undefined` if we don't know the percentage (e.g. for files with `bytesTotal` null) */
-  percentage?: number
+  percentage?: number | undefined
   /**
    * note that Companion will send `bytesTotal` 0 if unknown size (not `null`).
    * this is not perfect because some files can actually have a size of 0,
