@@ -375,7 +375,9 @@ class S3mini {
 
     return this._xhrUpload(url, data, onProgress, signal).then((result) => ({
       partNumber,
-      etag: result.headers.get('etag') ? U.sanitizeETag(result.headers.get('etag')!) : '',
+      etag: result.headers.get('etag')
+        ? U.sanitizeETag(result.headers.get('etag')!)
+        : '',
     }))
   }
 
