@@ -133,6 +133,11 @@ interface ChunkState {
 /** Reason for pausing (not a real error) */
 const pausingUploadReason = Symbol('pausing upload, not an actual error')
 
+/** Type guard to check if an error is from pausing (not a real failure) */
+const isPauseError = (err: unknown): boolean =>
+  err instanceof Error &&
+  (err as { cause?: unknown }).cause === pausingUploadReason
+
 // ============================================================================
 // S3Uploader Class
 // ============================================================================
@@ -440,7 +445,7 @@ class S3Uploader<M extends Meta, B extends Body> {
   }
 
   #onError(err: Error): void {
-    if ((err as any).cause === pausingUploadReason) return
+    if (isPauseError(err)) return
     // Also ignore abort signals from intentional cancellation
     if (err.name === 'AbortError') return
     // If we intentionally aborted, don't report any subsequent errors

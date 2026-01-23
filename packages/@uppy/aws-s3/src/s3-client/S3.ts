@@ -415,6 +415,11 @@ class S3mini {
         signal: signal ?? undefined,
         timeout: this.requestAbortTimeout || 30_000,
         retries: 3,
+        /**
+         * Retry logic:
+         * - Retries: 5xx server errors, 429 rate limiting
+         * - Skips: 4xx client errors (except 429), offline (handled separately)
+         */
         shouldRetry: (xhr) => {
           // If offline, don't retry via fetcher - our handler will resume
           if (this._isOffline()) return false
