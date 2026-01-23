@@ -197,24 +197,6 @@ class S3mini {
     throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED)
   }
 
-  private _validateUploadPartParams(
-    key: string,
-    uploadId: string,
-    data: IT.BinaryData | string,
-    partNumber: number,
-  ): BodyInit {
-    this._checkKey(key)
-    if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
-      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
-    }
-    if (!Number.isInteger(partNumber) || partNumber <= 0) {
-      throw new TypeError(
-        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
-      )
-    }
-    return this._validateData(data)
-  }
-
   private async _presignedRequest(
     method: IT.HttpMethod, // 'GET' | 'HEAD' | 'PUT' | 'POST' | 'DELETE'
     key: string, // '' allowed for bucket‑level ops
@@ -286,27 +268,35 @@ class S3mini {
   /**
    * Uploads an object to S3 using XHR for progress tracking.
    * @param key - Object key
-   * @param data - Data to upload
+   * @param data - Data to upload (Blob, ArrayBuffer, Uint8Array, or string)
    * @param fileType - Content type
    * @param onProgress - Optional progress callback
    * @param signal - Optional abort signal
    */
   public async putObject(
     key: string,
-    data: Blob,
+    data: IT.BinaryData | string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
   ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
+    const blob = data instanceof Blob ? data : new Blob([data as BlobPart])
 
-    // Get pre-signed URL for simple PUT
-    const { url } = await this.signRequest({
-      method: 'PUT',
-      key,
-    })
+    const attemptUpload = async (): Promise<IT.PutObjectResult> => {
+      const { url } = await this.signRequest({ method: 'PUT', key })
+      return this._xhrUpload(url, blob, onProgress, signal, fileType)
+    }
 
-    return this._xhrUpload(url, data, onProgress, signal, fileType)
+    try {
+      return await attemptUpload()
+    } catch (err) {
+      if (this._isExpiredTokenError(err)) {
+        this.clearCachedCredentials()
+        return attemptUpload()
+      }
+      throw err
+    }
   }
 
   /** Initiates a multipart upload and returns the upload ID. */
@@ -346,39 +336,41 @@ class S3mini {
     )
   }
 
-  /**
-   * Uploads a part in a multipart upload using XHR for progress tracking.
-   * @param key - Object key
-   * @param uploadId - Multipart upload ID
-   * @param data - Part data
-   * @param partNumber - Part number (1-indexed)
-   * @param onProgress - Optional progress callback
-   * @param signal - Optional abort signal
-   */
   public async uploadPart(
     key: string,
     uploadId: string,
-    data: Blob,
+    data: IT.BinaryData | string,
     partNumber: number,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
   ): Promise<IT.UploadPart> {
-    this._validateUploadPartParams(key, uploadId, data, partNumber)
+    this._checkKey(key)
+    if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
+      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
+    }
+    if (!Number.isInteger(partNumber) || partNumber <= 0) {
+      throw new TypeError(`${C.ERROR_PREFIX}partNumber must be a positive integer`)
+    }
+    const blob = data instanceof Blob ? data : new Blob([data as BlobPart])
 
-    // Get pre-signed URL
-    const { url } = await this.signRequest({
-      method: 'PUT',
-      key,
-      uploadId,
-      partNumber,
-    })
+    const attemptUpload = async (): Promise<IT.UploadPart> => {
+      const { url } = await this.signRequest({ method: 'PUT', key, uploadId, partNumber })
+      const result = await this._xhrUpload(url, blob, onProgress, signal)
+      return {
+        partNumber,
+        etag: result.headers.get('etag') ? U.sanitizeETag(result.headers.get('etag')!) : '',
+      }
+    }
 
-    return this._xhrUpload(url, data, onProgress, signal).then((result) => ({
-      partNumber,
-      etag: result.headers.get('etag')
-        ? U.sanitizeETag(result.headers.get('etag')!)
-        : '',
-    }))
+    try {
+      return await attemptUpload()
+    } catch (err) {
+      if (this._isExpiredTokenError(err)) {
+        this.clearCachedCredentials()
+        return attemptUpload()
+      }
+      throw err
+    }
   }
 
   /**
@@ -388,9 +380,18 @@ class S3mini {
     return typeof navigator !== 'undefined' && navigator.onLine === false
   }
 
+  /** Checks if error is an expired/invalid token that can be retried with fresh credentials */
+  private _isExpiredTokenError(err: unknown): boolean {
+    return (
+      this.getCredentials != null &&
+      err instanceof U.S3ServiceError &&
+      err.code != null &&
+      ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
+    )
+  }
+
   /**
    * Core XHR upload implementation using @uppy/utils/fetcher.
-   * Returns the ETag from the response headers.
    *
    * Features:
    * - Automatic retry with exponential backoff (3 attempts)
@@ -414,7 +415,7 @@ class S3mini {
         method: 'PUT',
         body: data,
         headers: contentType ? { 'Content-Type': contentType } : {},
-        signal: signal ?? undefined,
+        signal,
         timeout: this.requestAbortTimeout || 30_000,
         retries: 3,
         /**
