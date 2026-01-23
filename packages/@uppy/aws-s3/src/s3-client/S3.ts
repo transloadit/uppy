@@ -381,6 +381,7 @@ class S3mini {
   /**
    * Core XHR upload implementation with progress tracking.
    * Returns the ETag from the response headers.
+   * Automatically waits for network to come back online if offline.
    */
   private _xhrUpload(
     url: string,
@@ -390,69 +391,137 @@ class S3mini {
     contentType?: string,
   ): Promise<string> {
     return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest()
-      xhr.open('PUT', url, true)
+      // Helper to perform the actual upload
+      const performUpload = () => {
+        const xhr = new XMLHttpRequest()
+        xhr.open('PUT', url, true)
 
-      if (contentType) {
-        xhr.setRequestHeader('Content-Type', contentType)
-      }
-
-      // Progress tracking
-      xhr.upload.onprogress = (event) => {
-        if (event.lengthComputable && onProgress) {
-          onProgress(event.loaded, event.total)
+        if (contentType) {
+          xhr.setRequestHeader('Content-Type', contentType)
         }
+
+        // Progress tracking
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable && onProgress) {
+            onProgress(event.loaded, event.total)
+          }
+        }
+
+        // Success handler
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            const etag = xhr.getResponseHeader('etag') || ''
+            resolve(U.sanitizeETag(etag))
+          } else {
+            reject(
+              new U.S3ServiceError(
+                `S3 returned ${xhr.status}`,
+                xhr.status,
+                undefined,
+                xhr.responseText,
+              ),
+            )
+          }
+        }
+
+        // Error handler with offline detection
+        xhr.onerror = () => {
+          // Check if we're offline
+          if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+            // Wait for network to come back online, then retry
+            const onOnline = () => {
+              // Check if we were aborted while waiting
+              if (signal?.aborted) {
+                const error = new Error('Upload aborted')
+                error.name = 'AbortError'
+                reject(error)
+                return
+              }
+              // Retry the upload
+              performUpload()
+            }
+            window.addEventListener('online', onOnline, { once: true })
+
+            // Also listen for abort while waiting
+            if (signal) {
+              signal.addEventListener(
+                'abort',
+                () => {
+                  window.removeEventListener('online', onOnline)
+                  const error = new Error('Upload aborted')
+                  error.name = 'AbortError'
+                  reject(error)
+                },
+                { once: true },
+              )
+            }
+          } else {
+            // We're online but still got an error - actual network issue
+            reject(
+              new U.S3NetworkError('Network error during upload', 'NETWORK'),
+            )
+          }
+        }
+
+        xhr.onabort = () => {
+          const error = new Error('Upload aborted')
+          error.name = 'AbortError'
+          reject(error)
+        }
+
+        xhr.ontimeout = () => {
+          reject(new U.S3NetworkError('Upload timed out', 'ETIMEDOUT'))
+        }
+
+        // Wire abort signal to XHR
+        if (signal) {
+          if (signal.aborted) {
+            xhr.abort()
+            return
+          }
+          signal.addEventListener('abort', () => xhr.abort(), { once: true })
+        }
+
+        // Set timeout if configured
+        if (this.requestAbortTimeout) {
+          xhr.timeout = this.requestAbortTimeout
+        }
+
+        xhr.send(data)
       }
 
-      // Success handler
-      xhr.onload = () => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          const etag = xhr.getResponseHeader('etag') || ''
-          resolve(U.sanitizeETag(etag))
-        } else {
-          reject(
-            new U.S3ServiceError(
-              `S3 returned ${xhr.status}`,
-              xhr.status,
-              undefined,
-              xhr.responseText,
-            ),
+      // Start the upload (or wait if offline)
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        // Already offline - wait for online before starting
+        const onOnline = () => {
+          if (signal?.aborted) {
+            const error = new Error('Upload aborted')
+            error.name = 'AbortError'
+            reject(error)
+            return
+          }
+          performUpload()
+        }
+        window.addEventListener('online', onOnline, { once: true })
+
+        if (signal) {
+          signal.addEventListener(
+            'abort',
+            () => {
+              window.removeEventListener('online', onOnline)
+              const error = new Error('Upload aborted')
+              error.name = 'AbortError'
+              reject(error)
+            },
+            { once: true },
           )
         }
+      } else {
+        performUpload()
       }
-
-      // Error handlers
-      xhr.onerror = () => {
-        reject(new U.S3NetworkError('Network error during upload', 'NETWORK'))
-      }
-
-      xhr.onabort = () => {
-        const error = new Error('Upload aborted')
-        error.name = 'AbortError'
-        reject(error)
-      }
-
-      xhr.ontimeout = () => {
-        reject(new U.S3NetworkError('Upload timed out', 'ETIMEDOUT'))
-      }
-
-      // Wire abort signal to XHR
-      if (signal) {
-        if (signal.aborted) {
-          xhr.abort()
-          return
-        }
-        signal.addEventListener('abort', () => xhr.abort(), { once: true })
-      }
-
-      // Set timeout if configured
-      if (this.requestAbortTimeout) {
-        xhr.timeout = this.requestAbortTimeout
-      }
-
-      xhr.send(data)
     })
   }
+
 
   /** Lists uploaded parts for a multipart upload. */
   public async listParts(
@@ -595,6 +664,24 @@ class S3mini {
     this.cachedCredentialsPromise = undefined
   }
 
+  /**
+   * Waits for the browser to come back online.
+   * Returns a promise that resolves when the 'online' event fires.
+   */
+  private _waitForOnline(): Promise<void> {
+    return new Promise((resolve) => {
+      if (
+        typeof navigator === 'undefined' ||
+        navigator.onLine === true ||
+        navigator.onLine === undefined
+      ) {
+        resolve()
+        return
+      }
+      window.addEventListener('online', () => resolve(), { once: true })
+    })
+  }
+
   private async _sendRequest(
     url: string,
     method: IT.HttpMethod,
@@ -602,6 +689,11 @@ class S3mini {
     body?: BodyInit,
     toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
+    // Wait for online if currently offline
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      await this._waitForOnline()
+    }
+
     try {
       const res = await fetch(url, {
         method,
@@ -617,6 +709,13 @@ class S3mini {
       await this._handleErrorResponse(res)
       return res
     } catch (err: unknown) {
+      // Check if we're offline - if so, wait and retry
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        await this._waitForOnline()
+        // Retry the request
+        return this._sendRequest(url, method, headers, body, toleratedStatusCodes)
+      }
+
       const code = U.extractErrCode(err)
       if (
         code &&

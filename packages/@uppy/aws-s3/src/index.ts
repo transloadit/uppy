@@ -309,6 +309,7 @@ class S3Uploader<M extends Meta, B extends Body> {
         this.#uploadId,
         this.#key,
       )
+      // Sync local state with S3 - mark already-uploaded parts
       for (const part of existingParts) {
         const chunkIndex = part.partNumber - 1
         if (chunkIndex >= 0 && chunkIndex < this.#chunkState.length) {
@@ -316,6 +317,8 @@ class S3Uploader<M extends Meta, B extends Body> {
           this.#chunkState[chunkIndex].etag = part.etag
         }
       }
+      // Emit progress update to reflect already-uploaded parts
+      this.#onProgress()
       await this.#uploadRemainingParts()
     } catch (err) {
       this.#onError(err as Error)
@@ -443,13 +446,12 @@ class S3Uploader<M extends Meta, B extends Body> {
     // If we intentionally aborted, don't report any subsequent errors
     // (e.g., S3 returning 404 NoSuchUpload after we aborted the upload)
     if (this.#abortController.signal.aborted) return
-    if (this.#uploadId) {
-      this.#s3Client
-        .abortMultipartUpload(this.#key, this.#uploadId)
-        .catch((abortErr) => {
-          this.#options.log?.(abortErr, 'warning')
-        })
-    }
+
+    // NOTE: We intentionally do NOT abort the multipart upload on S3 here.
+    // This allows the user to retry and resume from where they left off.
+    // The multipart upload is only aborted when the user explicitly cancels
+    // (via the abort() method with abortOnS3: true).
+
     this.#options.onError?.(err)
   }
 }
