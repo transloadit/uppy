@@ -358,7 +358,7 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
 app.post('/s3/presign', async (req, res, next) => {
   try {
     const { method, key, uploadId, partNumber } = req.body
-    getS3Client() // Ensure client is initialized
+    const client = getS3Client()
 
     if (!method || !key) {
       return res.status(400).json({ error: 'method and key are required' })
@@ -414,7 +414,7 @@ app.post('/s3/presign', async (req, res, next) => {
       return res.status(400).json({ error: 'Unsupported operation' })
     }
 
-    const url = await getSignedUrl(s3Client, command, { expiresIn: 900 })
+    const url = await getSignedUrl(client, command, { expiresIn: 900 })
 
     res.setHeader('Access-Control-Allow-Origin', accessControlAllowOrigin)
     res.json({ url })
