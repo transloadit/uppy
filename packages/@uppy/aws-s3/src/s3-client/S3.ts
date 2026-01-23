@@ -91,7 +91,7 @@ class S3mini {
 
     // Cache the promise so concurrent calls wait for the same fetch
     if (this.cachedCredentialsPromise == null) {
-      this.cachedCredentialsPromise = this.getCredentials!()
+      this.cachedCredentialsPromise = this.getCredentials!({})
         .then((creds) => {
           this.cachedCredentials = creds
           return creds
@@ -188,7 +188,8 @@ class S3mini {
     if (
       typeof data === 'string' ||
       data instanceof ArrayBuffer ||
-      ArrayBuffer.isView(data)
+      ArrayBuffer.isView(data) ||
+      data instanceof Blob
     ) {
       return data as BodyInit
     }
