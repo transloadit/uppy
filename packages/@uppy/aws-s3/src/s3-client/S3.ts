@@ -349,16 +349,25 @@ class S3mini {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
     if (!Number.isInteger(partNumber) || partNumber <= 0) {
-      throw new TypeError(`${C.ERROR_PREFIX}partNumber must be a positive integer`)
+      throw new TypeError(
+        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
+      )
     }
     const blob = data instanceof Blob ? data : new Blob([data as BlobPart])
 
     const attemptUpload = async (): Promise<IT.UploadPart> => {
-      const { url } = await this.signRequest({ method: 'PUT', key, uploadId, partNumber })
+      const { url } = await this.signRequest({
+        method: 'PUT',
+        key,
+        uploadId,
+        partNumber,
+      })
       const result = await this._xhrUpload(url, blob, onProgress, signal)
       return {
         partNumber,
-        etag: result.headers.get('etag') ? U.sanitizeETag(result.headers.get('etag')!) : '',
+        etag: result.headers.get('etag')
+          ? U.sanitizeETag(result.headers.get('etag')!)
+          : '',
       }
     }
 
