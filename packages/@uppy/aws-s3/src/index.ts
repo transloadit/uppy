@@ -332,15 +332,13 @@ class S3Uploader<M extends Meta, B extends Body> {
       this.#key,
       this.#data,
       this.#file.type || 'application/octet-stream',
-      (bytesUploaded: number, bytesTotal: number) => {
+      (bytesUploaded: number) => {
         this.#chunkState[0].uploaded = bytesUploaded
         this.#onProgress()
       },
       signal,
     )
 
-    this.#chunkState[0].uploaded = this.#data.size
-    this.#onProgress()
     this.#onSuccess({
       location: `${this.#s3Client.endpoint}/${this.#key}`,
       key: this.#key,
@@ -433,6 +431,8 @@ class S3Uploader<M extends Meta, B extends Body> {
   }
 
   #onSuccess(result: UploadResult): void {
+    // Clean up event listeners to prevent memory leaks
+    this.#eventManager.remove()
     this.#options.onSuccess?.(result)
   }
 
