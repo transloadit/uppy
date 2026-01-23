@@ -2,6 +2,7 @@ import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts'
 import { describe, expect, inject, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.js'
+import { randomBytes } from '../test-utils/browser-crypto.js'
 import { beforeRun, cleanupTestBeforeAll } from './_shared.test.js'
 
 const name = 'minio'
@@ -82,13 +83,7 @@ const minioSpecific = (bucket) => {
   it('multipart upload with signRequest', async () => {
     const key = `presigned-multipart-${Date.now()}.bin`
     const partSize = 5 * 1024 * 1024 // 5MB
-
-    const part = new Uint8Array(partSize)
-    for (let i = 0; i < part.length; i += 65536) {
-      crypto.getRandomValues(
-        new Uint8Array(part.buffer, i, Math.min(65536, part.length - i)),
-      )
-    }
+    const part = randomBytes(partSize)
 
     const uploadId = await s3client.getMultipartUploadId(
       key,
@@ -215,13 +210,7 @@ const minioSpecific = (bucket) => {
 
       const key = `sts-multipart-${Date.now()}.bin`
       const partSize = 5 * 1024 * 1024 // 5MB
-
-      const part = new Uint8Array(partSize)
-      for (let i = 0; i < part.length; i += 65536) {
-        crypto.getRandomValues(
-          new Uint8Array(part.buffer, i, Math.min(65536, part.length - i)),
-        )
-      }
+      const part = randomBytes(partSize)
 
       const uploadId = await s3.getMultipartUploadId(
         key,

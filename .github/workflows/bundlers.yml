@@ -70,6 +70,12 @@ jobs:
           mkdir /tmp/artifacts && corepack yarn workspaces foreach --all
           --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{
           github.sha }}.tgz
+      - name: Debug packaged uppy dependencies
+        run: |
+          rm -rf /tmp/uppy-debug
+          mkdir -p /tmp/uppy-debug
+          tar -xzf /tmp/artifacts/uppy-${{ github.sha }}.tgz --strip-components 1 -C /tmp/uppy-debug
+          node -e 'const pkg=require("/tmp/uppy-debug/package.json");const fields=["dependencies","peerDependencies","optionalDependencies","devDependencies"];let found=false;for(const f of fields){if(!pkg[f])continue;for(const [k,v] of Object.entries(pkg[f])){if(String(v).startsWith("workspace:")){console.log(`${f}: ${k}=${v}`);found=true;}}}if(!found)console.log("No workspace:* entries in packaged uppy package.json");'
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v6
