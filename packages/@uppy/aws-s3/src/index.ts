@@ -328,11 +328,11 @@ class S3Uploader<M extends Meta, B extends Body> {
       throw new Error('Upload aborted', { cause: signal.reason })
     }
 
-    await this.#s3Client.putObjectWithProgress(
+    await this.#s3Client.putObject(
       this.#key,
       this.#data,
       this.#file.type || 'application/octet-stream',
-      (bytesUploaded, bytesTotal) => {
+      (bytesUploaded: number, bytesTotal: number) => {
         this.#chunkState[0].uploaded = bytesUploaded
         this.#onProgress()
       },
@@ -380,12 +380,12 @@ class S3Uploader<M extends Meta, B extends Body> {
       const chunkData = this.#data.slice(chunk.start, chunk.end)
       const chunkIndex = i // Capture for closure
 
-      const part = await this.#s3Client.uploadPartWithProgress(
+      const part = await this.#s3Client.uploadPart(
         this.#key,
         this.#uploadId!,
         chunkData,
         partNumber,
-        (bytesUploaded) => {
+        (bytesUploaded: number) => {
           this.#chunkState[chunkIndex].uploaded = bytesUploaded
           this.#onProgress()
         },

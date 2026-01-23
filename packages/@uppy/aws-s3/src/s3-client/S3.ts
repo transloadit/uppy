@@ -282,17 +282,30 @@ class S3mini {
     }
   }
 
-  /** Uploads an object to the S3-compatible service. */
+  /**
+   * Uploads an object to S3 using XHR for progress tracking.
+   * @param key - Object key
+   * @param data - Data to upload
+   * @param fileType - Content type
+   * @param onProgress - Optional progress callback
+   * @param signal - Optional abort signal
+   */
   public async putObject(
     key: string,
-    data: string | IT.BinaryData,
+    data: Blob,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-  ): Promise<Response> {
-    return this._presignedRequest('PUT', key, {
-      body: this._validateData(data),
-      contentType: fileType,
-      tolerated: [200],
+    onProgress?: IT.OnProgressFn,
+    signal?: AbortSignal,
+  ): Promise<string> {
+    this._checkKey(key)
+
+    // Get pre-signed URL for simple PUT
+    const { url } = await this.signRequest({
+      method: 'PUT',
+      key,
     })
+
+    return this._xhrUpload(url, data, onProgress, signal, fileType)
   }
 
   /** Initiates a multipart upload and returns the upload ID. */
@@ -332,29 +345,16 @@ class S3mini {
     )
   }
 
-  /** Uploads a part in a multipart upload. Returns the part number and ETag. */
-  public async uploadPart(
-    key: string,
-    uploadId: string,
-    data: IT.BinaryData | string,
-    partNumber: number,
-  ): Promise<IT.UploadPart> {
-    const body = this._validateUploadPartParams(key, uploadId, data, partNumber)
-
-    const res = await this._presignedRequest('PUT', key, {
-      uploadId,
-      partNumber,
-      body,
-    })
-
-    return { partNumber, etag: U.sanitizeETag(res.headers.get('etag') || '') }
-  }
-
   /**
-   * Uploads a part with real-time progress tracking using XHR.
-   * Use this instead of uploadPart when you need progress callbacks.
+   * Uploads a part in a multipart upload using XHR for progress tracking.
+   * @param key - Object key
+   * @param uploadId - Multipart upload ID
+   * @param data - Part data
+   * @param partNumber - Part number (1-indexed)
+   * @param onProgress - Optional progress callback
+   * @param signal - Optional abort signal
    */
-  public async uploadPartWithProgress(
+  public async uploadPart(
     key: string,
     uploadId: string,
     data: Blob,
@@ -376,28 +376,6 @@ class S3mini {
       partNumber,
       etag,
     }))
-  }
-
-  /**
-   * Uploads an object with real-time progress tracking using XHR.
-   * Use this instead of putObject when you need progress callbacks.
-   */
-  public async putObjectWithProgress(
-    key: string,
-    data: Blob,
-    fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-    onProgress?: IT.OnProgressFn,
-    signal?: AbortSignal,
-  ): Promise<string> {
-    this._checkKey(key)
-
-    // Get pre-signed URL for simple PUT
-    const { url } = await this.signRequest({
-      method: 'PUT',
-      key,
-    })
-
-    return this._xhrUpload(url, data, onProgress, signal, fileType)
   }
 
   /**
