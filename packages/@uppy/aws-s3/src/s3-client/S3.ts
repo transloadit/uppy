@@ -297,7 +297,7 @@ class S3mini {
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
-  ): Promise<string> {
+  ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
 
     // Get pre-signed URL for simple PUT
@@ -373,9 +373,9 @@ class S3mini {
       partNumber,
     })
 
-    return this._xhrUpload(url, data, onProgress, signal).then((etag) => ({
+    return this._xhrUpload(url, data, onProgress, signal).then((result) => ({
       partNumber,
-      etag,
+      etag: result.headers.get('etag') ? U.sanitizeETag(result.headers.get('etag')!) : '',
     }))
   }
 
@@ -401,7 +401,7 @@ class S3mini {
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
     contentType?: string,
-  ): Promise<string> {
+  ): Promise<IT.PutObjectResult> {
     // Wait for online before starting
     if (this._isOffline()) {
       await this._waitForOnline(signal)
@@ -442,8 +442,14 @@ class S3mini {
         },
       })
 
-      const etag = xhr.getResponseHeader('etag') || ''
-      return U.sanitizeETag(etag)
+      // Return Response-like object for test compatibility
+      return {
+        status: xhr.status,
+        ok: xhr.status >= 200 && xhr.status < 300,
+        headers: {
+          get: (name: string) => xhr.getResponseHeader(name),
+        },
+      }
     } catch (err: unknown) {
       return this._handleUploadError(
         err,
@@ -466,7 +472,7 @@ class S3mini {
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
     contentType?: string,
-  ): Promise<string> {
+  ): Promise<IT.PutObjectResult> {
     // Offline during request - wait and retry
     if (this._isOffline()) {
       await this._waitForOnline(signal)
