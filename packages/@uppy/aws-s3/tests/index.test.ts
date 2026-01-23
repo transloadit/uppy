@@ -11,6 +11,7 @@ describe('AwsS3', () => {
   it('Registers AwsS3 upload plugin', () => {
     const core = new Core().use(AwsS3, {
       bucket: 'test-bucket',
+      region: 'us-east-1',
       endpoint: 'https://companion.example.com',
     })
 
@@ -30,10 +31,17 @@ describe('AwsS3', () => {
       }).toThrow('`bucket` option is required')
     })
 
-    it('throws if no signing method is provided', () => {
+    it('throws if region is not provided', () => {
       expect(() => {
         const core = new Core()
         core.use(AwsS3, { bucket: 'test-bucket' })
+      }).toThrow('`region` option is required')
+    })
+
+    it('throws if no signing method is provided', () => {
+      expect(() => {
+        const core = new Core()
+        core.use(AwsS3, { bucket: 'test-bucket', region: 'us-east-1' })
       }).toThrow('`endpoint`, `signRequest`, or `getCredentials` is required')
     })
 
@@ -41,6 +49,7 @@ describe('AwsS3', () => {
       const core = new Core()
       core.use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         endpoint: 'https://companion.example.com',
       })
       expect(core.getPlugin('AwsS3')).toBeDefined()
@@ -50,6 +59,7 @@ describe('AwsS3', () => {
       const core = new Core()
       core.use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         signRequest: vi.fn(),
       })
       expect(core.getPlugin('AwsS3')).toBeDefined()
@@ -59,6 +69,7 @@ describe('AwsS3', () => {
       const core = new Core()
       core.use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         getCredentials: vi.fn(),
       })
       expect(core.getPlugin('AwsS3')).toBeDefined()
@@ -79,6 +90,7 @@ describe('AwsS3', () => {
     it('defaults to multipart for files > 100MB', () => {
       const core = new Core<Meta, AwsBody>().use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         endpoint: 'https://companion.example.com',
       })
       const opts = core.getPlugin('AwsS3')!.opts as AwsS3Options<Meta, AwsBody>
@@ -97,6 +109,7 @@ describe('AwsS3', () => {
     it('handles very large files', () => {
       const core = new Core<Meta, AwsBody>().use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         endpoint: 'https://companion.example.com',
       })
       const opts = core.getPlugin('AwsS3')!.opts as AwsS3Options<Meta, AwsBody>
@@ -115,6 +128,7 @@ describe('AwsS3', () => {
 
       const core = new Core().use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
       })
@@ -143,6 +157,7 @@ describe('AwsS3', () => {
 
       const core = new Core().use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
       })
@@ -177,6 +192,7 @@ describe('AwsS3', () => {
 
       const core = new Core().use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
       })
@@ -192,7 +208,10 @@ describe('AwsS3', () => {
       const uploadPromise = core.upload()
       setTimeout(() => core.removeFile(fileId), 10)
 
-      await expect(uploadPromise).resolves.toBeDefined()
+      const result = await uploadPromise
+      // When a file is removed mid-upload, it should not appear in successful uploads
+      expect(result).toBeDefined()
+      expect(result?.successful).toHaveLength(0)
     })
 
     it('aborts when cancelAll is called', async () => {
@@ -204,6 +223,7 @@ describe('AwsS3', () => {
 
       const core = new Core().use(AwsS3, {
         bucket: 'test-bucket',
+        region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
       })
@@ -218,7 +238,11 @@ describe('AwsS3', () => {
       const uploadPromise = core.upload()
       setTimeout(() => core.cancelAll(), 10)
 
-      await expect(uploadPromise).resolves.toBeDefined()
+      const result = await uploadPromise
+      // When cancelAll is called, no files should complete successfully
+      expect(result).toBeDefined()
+      expect(result?.successful).toHaveLength(0)
     })
   })
 })
+
