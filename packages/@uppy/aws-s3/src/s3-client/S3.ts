@@ -404,7 +404,7 @@ class S3mini {
   ): Promise<string> {
     // Wait for online before starting
     if (this._isOffline()) {
-      await this._waitForOnline()
+      await this._waitForOnline(signal)
     }
 
     try {
@@ -464,7 +464,11 @@ class S3mini {
   ): Promise<string> {
     // Offline during request - wait and retry
     if (this._isOffline()) {
-      await this._waitForOnline()
+      await this._waitForOnline(signal)
+      // Check if aborted while waiting for online
+      if (signal?.aborted) {
+        throw new DOMException('Upload aborted', 'AbortError')
+      }
       return this._xhrUpload(url, data, onProgress, signal, contentType)
     }
 
@@ -641,10 +645,12 @@ class S3mini {
 
   /**
    * Waits for the browser to come back online.
-   * Returns a promise that resolves when the 'online' event fires.
+   * Returns a promise that resolves when the 'online' event fires,
+   * or rejects if the abort signal is triggered.
    */
-  private _waitForOnline(): Promise<void> {
-    return new Promise((resolve) => {
+  private _waitForOnline(signal?: AbortSignal): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // Already online or not in browser
       if (
         typeof navigator === 'undefined' ||
         navigator.onLine === true ||
@@ -653,7 +659,25 @@ class S3mini {
         resolve()
         return
       }
-      window.addEventListener('online', () => resolve(), { once: true })
+
+      // Already aborted
+      if (signal?.aborted) {
+        reject(new DOMException('Upload aborted', 'AbortError'))
+        return
+      }
+
+      const onOnline = () => {
+        signal?.removeEventListener('abort', onAbort)
+        resolve()
+      }
+
+      const onAbort = () => {
+        window.removeEventListener('online', onOnline)
+        reject(new DOMException('Upload aborted', 'AbortError'))
+      }
+
+      window.addEventListener('online', onOnline, { once: true })
+      signal?.addEventListener('abort', onAbort, { once: true })
     })
   }
 
