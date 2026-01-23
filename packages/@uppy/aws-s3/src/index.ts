@@ -88,7 +88,6 @@ const MIN_CHUNK_SIZE = 5 * MB
 const MAX_PARTS = 10000
 
 const defaultOptions = {
-  region: 'us-east-1',
   shouldUseMultipart: (file: UppyFile<any, any>) => (file.size || 0) > 100 * MB,
   allowedMetaFields: true,
 } satisfies Partial<AwsS3Options<any, any>>
@@ -515,6 +514,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       )
     }
 
+    if (typeof region !== 'string' || region.trim() === '') {
+      throw new Error(
+        'AwsS3: `region` option is required and must be a non-empty string',
+      )
+    }
+
     const bucketName = bucket.trim()
 
     if (!signRequest && !getCredentials && !endpoint) {
@@ -523,28 +528,28 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       )
     }
 
-    const s3Endpoint = `https://${bucketName}.s3.${region || 'us-east-1'}.amazonaws.com`
+    const s3Endpoint = `https://${bucketName}.s3.${region}.amazonaws.com`
 
     if (getCredentials) {
       // Mode: Temporary credentials (client-side signing)
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
         getCredentials,
-        region: region || 'us-east-1',
+        region,
       })
     } else if (signRequest) {
       // Mode: Custom signing function
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
         signRequest,
-        region: region || 'us-east-1',
+        region,
       })
     } else {
       // Mode: Companion signing (endpoint is guaranteed to be set here)
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
         signRequest: this.#createCompanionSigner(endpoint!),
-        region: region || 'us-east-1',
+        region,
       })
     }
   }
