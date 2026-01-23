@@ -98,6 +98,7 @@ const defaultOptions = {
 // ============================================================================
 
 interface MultipartUploaderOptions<M extends Meta, B extends Body> {
+  uppy: Uppy<M, B>
   s3Client: S3mini
   file: UppyFile<M, B>
   key: string
@@ -107,6 +108,7 @@ interface MultipartUploaderOptions<M extends Meta, B extends Body> {
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
   onSuccess?: (result: UploadResult) => void
   onError?: (err: Error) => void
+  onAbort?: () => void
   log?: (message: string | Error, type?: 'error' | 'warning') => void
 }
 
@@ -142,6 +144,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
   readonly #data: Blob
   readonly #key: string
   readonly #options: MultipartUploaderOptions<M, B>
+  readonly #eventManager: EventManager<M, B>
 
   #chunks: Chunk[] = []
   #chunkState: ChunkState[] = []
@@ -156,7 +159,47 @@ class MultipartUploader<M extends Meta, B extends Body> {
     this.#data = data
     this.#key = options.key
     this.#options = options
+    this.#eventManager = new EventManager(options.uppy)
     this.#initChunks()
+    this.#setupEvents()
+  }
+
+  #setupEvents(): void {
+    const fileId = this.#file.id
+
+    this.#eventManager.onFileRemove(fileId, () => {
+      this.abort()
+      this.#options.onAbort?.()
+    })
+
+    this.#eventManager.onCancelAll(fileId, () => {
+      this.abort()
+      this.#options.onAbort?.()
+    })
+
+    this.#eventManager.onFilePause(fileId, (isPaused) => {
+      if (isPaused) {
+        this.pause()
+      } else {
+        this.start()
+      }
+    })
+
+    this.#eventManager.onPauseAll(fileId, () => {
+      this.pause()
+    })
+
+    this.#eventManager.onResumeAll(fileId, () => {
+      this.start()
+    })
+
+    this.#eventManager.onRetry(fileId, () => {
+      this.start()
+    })
+
+    this.#eventManager.onRetryAll(fileId, () => {
+      this.start()
+    })
   }
 
   #initChunks(): void {
@@ -232,6 +275,8 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   abort(opts?: { abortOnS3?: boolean }): void {
     this.#abortController.abort()
+    // Clean up event listeners
+    this.#eventManager.remove()
     if (opts?.abortOnS3 !== false && this.#uploadId) {
       this.#s3Client
         .abortMultipartUpload(this.#key, this.#uploadId)
@@ -410,7 +455,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3mini
-  #uploaderEvents: Record<string, EventManager<M, B> | null> = {}
   #uploaders: Record<string, MultipartUploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -557,12 +601,10 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       const key = this.#generateKey(file)
       const shouldMultipart = this.#shouldUseMultipart(file)
 
-      let uploader: MultipartUploader<M, B> | null = null
-      let eventManager: EventManager<M, B> | null = null
-
       try {
-        // Create uploader
-        uploader = new MultipartUploader<M, B>(data, {
+        // Create uploader (events are wired internally)
+        const uploader = new MultipartUploader<M, B>(data, {
+          uppy: this.uppy,
           s3Client: this.#s3Client,
           file,
           key,
@@ -605,50 +647,15 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
             this.#cleanup(file.id)
             reject(err)
           },
+
+          onAbort: () => {
+            this.#cleanup(file.id)
+            resolve() // Normal completion, not an error
+          },
         })
 
-        // Store uploader for pause/resume/cancel
+        // Store uploader for external abort if needed
         this.#uploaders[file.id] = uploader
-
-        // Wire up pause/cancel events
-        eventManager = new EventManager(this.uppy)
-        this.#uploaderEvents[file.id] = eventManager
-
-        eventManager.onFileRemove(file.id, () => {
-          uploader!.abort()
-          this.#cleanup(file.id)
-          resolve()  // Normal completion, not an error
-        })
-
-        eventManager.onCancelAll(file.id, () => {
-          uploader!.abort()
-          this.#cleanup(file.id)
-          resolve()  // Normal completion, not an error
-        })
-
-        eventManager.onFilePause(file.id, (isPaused) => {
-          if (isPaused) {
-            uploader!.pause()
-          } else {
-            uploader!.start()
-          }
-        })
-
-        eventManager.onPauseAll(file.id, () => {
-          uploader!.pause()
-        })
-
-        eventManager.onResumeAll(file.id, () => {
-          uploader!.start()
-        })
-
-        eventManager.onRetry(file.id, () => {
-          uploader!.start()
-        })
-
-        eventManager.onRetryAll(file.id, () => {
-          uploader!.start()
-        })
 
         // Start the upload
         uploader.start()
@@ -682,15 +689,8 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   #cleanup(fileId: string): void {
-    const uploader = this.#uploaders[fileId]
-    if (uploader) {
+    if (this.#uploaders[fileId]) {
       delete this.#uploaders[fileId]
-    }
-
-    const eventManager = this.#uploaderEvents[fileId]
-    if (eventManager) {
-      eventManager.remove()
-      delete this.#uploaderEvents[fileId]
     }
   }
 }
