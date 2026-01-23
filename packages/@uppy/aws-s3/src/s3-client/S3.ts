@@ -380,10 +380,20 @@ class S3mini {
   }
 
   /**
+   * Helper to check if we're currently offline in a browser context.
+   */
+  private _isOffline(): boolean {
+    return typeof navigator !== 'undefined' && navigator.onLine === false
+  }
+
+  /**
    * Core XHR upload implementation using @uppy/utils/fetcher.
    * Returns the ETag from the response headers.
-   * Automatically waits for network to come back online if offline.
-   * Includes built-in retry with exponential backoff.
+   *
+   * Features:
+   * - Automatic retry with exponential backoff (3 attempts)
+   * - Offline detection with automatic resume on reconnect
+   * - Stall detection via ProgressTimeout
    */
   private async _xhrUpload(
     url: string,
@@ -392,8 +402,8 @@ class S3mini {
     signal?: AbortSignal,
     contentType?: string,
   ): Promise<string> {
-    // Wait for online if currently offline
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    // Wait for online before starting
+    if (this._isOffline()) {
       await this._waitForOnline()
     }
 
@@ -406,15 +416,12 @@ class S3mini {
         timeout: this.requestAbortTimeout || 30_000,
         retries: 3,
         shouldRetry: (xhr) => {
-          // If offline, don't let fetcher retry - our offline handler will take care of it
-          if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-            return false
-          }
-          // Don't retry 4xx client errors (except 429 rate limit)
+          // If offline, don't retry via fetcher - our handler will resume
+          if (this._isOffline()) return false
+          // Don't retry client errors (except 429 rate limit)
           if (xhr.status >= 400 && xhr.status < 500 && xhr.status !== 429) {
             return false
           }
-          // Retry 5xx, 429, and network errors
           return true
         },
         onUploadProgress: (event) => {
@@ -422,50 +429,63 @@ class S3mini {
             onProgress(event.loaded, event.total)
           }
         },
+        onTimeout: (timeout) => {
+          // Log stall detection - upload will continue but may be slow
+          console.warn(
+            `[S3mini] Upload stalled - no progress for ${Math.ceil(timeout / 1000)}s`,
+          )
+        },
       })
 
-      // Extract and return ETag
       const etag = xhr.getResponseHeader('etag') || ''
       return U.sanitizeETag(etag)
     } catch (err: unknown) {
-      // Check if we went offline during the request
-      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
-        await this._waitForOnline()
-        // Retry the upload after coming back online
-        return this._xhrUpload(url, data, onProgress, signal, contentType)
-      }
+      return this._handleUploadError(err, url, data, onProgress, signal, contentType)
+    }
+  }
 
-      // Handle abort errors
-      if (err instanceof DOMException && err.name === 'AbortError') {
-        throw err
-      }
+  /**
+   * Handles errors from _xhrUpload, including offline recovery and error mapping.
+   */
+  private async _handleUploadError(
+    err: unknown,
+    url: string,
+    data: Blob,
+    onProgress?: IT.OnProgressFn,
+    signal?: AbortSignal,
+    contentType?: string,
+  ): Promise<string> {
+    // Offline during request - wait and retry
+    if (this._isOffline()) {
+      await this._waitForOnline()
+      return this._xhrUpload(url, data, onProgress, signal, contentType)
+    }
 
-      // Map network errors to S3NetworkError
-      const errAny = err as Record<string, unknown>
-      if (
-        (err instanceof Error && err.name === 'NetworkError') ||
-        errAny?.request
-      ) {
-        throw new U.S3NetworkError(
-          'Network error during upload',
-          'NETWORK',
-          err,
-        )
-      }
-
-      // For non-2xx responses from fetcher, extract status and throw S3ServiceError
-      if (errAny?.request instanceof XMLHttpRequest) {
-        const xhr = errAny.request as XMLHttpRequest
-        throw new U.S3ServiceError(
-          `S3 returned ${xhr.status}`,
-          xhr.status,
-          undefined,
-          xhr.responseText,
-        )
-      }
-
+    // Abort errors pass through
+    if (err instanceof DOMException && err.name === 'AbortError') {
       throw err
     }
+
+    // Extract XHR from error if present (fetcher attaches it)
+    const errObj = err as { request?: XMLHttpRequest; name?: string }
+
+    // Network errors
+    if (errObj.name === 'NetworkError' || (errObj.request && !errObj.request.status)) {
+      throw new U.S3NetworkError('Network error during upload', 'NETWORK', err)
+    }
+
+    // HTTP errors (non-2xx responses)
+    if (errObj.request instanceof XMLHttpRequest && errObj.request.status) {
+      const xhr = errObj.request
+      throw new U.S3ServiceError(
+        `S3 returned ${xhr.status}`,
+        xhr.status,
+        undefined,
+        xhr.responseText,
+      )
+    }
+
+    throw err
   }
 
 
