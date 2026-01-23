@@ -257,11 +257,12 @@ class MultipartUploader<M extends Meta, B extends Body> {
 
   start(): void {
     if (this.#uploadHasStarted) {
-      // Only abort if not already aborted (pause may have already done it)
+      // Abort any pending operations (if not already aborted)
       if (!this.#abortController.signal.aborted) {
         this.#abortController.abort(pausingUploadReason)
-        this.#abortController = new AbortController()
       }
+      // Always create a fresh AbortController for resume
+      this.#abortController = new AbortController()
       this.#resumeUpload()
     } else {
       this.#createUpload()
