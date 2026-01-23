@@ -72,7 +72,7 @@ export interface AwsS3Options<M extends Meta, B extends Body>
    * Custom function to generate the S3 object key.
    * Default: `{randomId}-{filename}`
    */
-  getKey?: (file: UppyFile<M, B>) => string
+  generateObjectKey?: (file: UppyFile<M, B>) => string
 }
 
 // ============================================================================
@@ -93,10 +93,10 @@ const defaultOptions = {
 } satisfies Partial<AwsS3Options<any, any>>
 
 // ============================================================================
-// MultipartUploader Types
+// S3Uploader Types
 // ============================================================================
 
-interface MultipartUploaderOptions<M extends Meta, B extends Body> {
+interface S3UploaderOptions<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
   s3Client: S3mini
   file: UppyFile<M, B>
@@ -134,15 +134,15 @@ interface ChunkState {
 const pausingUploadReason = Symbol('pausing upload, not an actual error')
 
 // ============================================================================
-// MultipartUploader Class
+// S3Uploader Class
 // ============================================================================
 
-class MultipartUploader<M extends Meta, B extends Body> {
+class S3Uploader<M extends Meta, B extends Body> {
   readonly #s3Client: S3mini
   readonly #file: UppyFile<M, B>
   readonly #data: Blob
   readonly #key: string
-  readonly #options: MultipartUploaderOptions<M, B>
+  readonly #options: S3UploaderOptions<M, B>
   readonly #eventManager: EventManager<M, B>
 
   #chunks: Chunk[] = []
@@ -152,7 +152,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #uploadHasStarted: boolean = false
   #abortController: AbortController = new AbortController()
 
-  constructor(data: Blob, options: MultipartUploaderOptions<M, B>) {
+  constructor(data: Blob, options: S3UploaderOptions<M, B>) {
     this.#s3Client = options.s3Client
     this.#file = options.file
     this.#data = data
@@ -455,7 +455,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3mini
-  #uploaders: Record<string, MultipartUploader<M, B> | null> = {}
+  #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -609,7 +609,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
       try {
         // Create uploader (events are wired internally)
-        const uploader = new MultipartUploader<M, B>(data, {
+        const uploader = new S3Uploader<M, B>(data, {
           uppy: this.uppy,
           s3Client: this.#s3Client,
           file,
@@ -682,8 +682,8 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   #generateKey(file: UppyFile<M, B>): string {
-    if (this.opts.getKey) {
-      return this.opts.getKey(file)
+    if (this.opts.generateObjectKey) {
+      return this.opts.generateObjectKey(file)
     }
     // Default: {randomId}-{filename}
     const randomId = crypto.randomUUID()
