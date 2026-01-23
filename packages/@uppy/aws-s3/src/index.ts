@@ -518,7 +518,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
     if (!signRequest && !getCredentials && !endpoint) {
       throw new Error(
-        'AwsS3: One of `endpoint`, `signRequest`, or `getCredentials` is required',
+        'AwsS3: `endpoint`, `signRequest`, or `getCredentials` is required',
       )
     }
 
