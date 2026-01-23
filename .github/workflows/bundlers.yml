@@ -93,9 +93,13 @@ jobs:
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
       - name: Add Rollup as a dev dependency
         run: >-
-          npm i --save-dev @rollup/plugin-commonjs @rollup/plugin-node-resolve
+          corepack yarn add --dev @rollup/plugin-commonjs @rollup/plugin-node-resolve
           @rollup/plugin-json rollup@${{matrix.bundler-version}}
       - run: npx rollup --version
       - name: Create Rollup config file
@@ -134,8 +138,12 @@ jobs:
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
       - name: Add Webpack as a dev dependency
-        run: npm i --save-dev webpack-cli webpack@${{matrix.bundler-version}}
+        run: corepack yarn add --dev webpack-cli webpack@${{matrix.bundler-version}}
       - run: npx webpack --version
       - name: Create Webpack config file
         run: |
@@ -177,6 +185,10 @@ jobs:
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
       - name: Fix package.json to work with Parcel
         run: |
           node <<'EOF'
@@ -187,7 +199,7 @@ jobs:
             require('node:fs').writeFileSync('./package.json', JSON.stringify(pkg));
           EOF
       - name: Add Parcel as a dev dependency
-        run: npm i --save-dev parcel@${{matrix.bundler-version}}
+        run: corepack yarn add --dev parcel@${{matrix.bundler-version}}
       - run: npx parcel --version
       - name: Bundle
         run: npx parcel build lib/index.js
@@ -208,8 +220,12 @@ jobs:
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
       - name: Add Vite as a dev dependency
-        run: npm i --save-dev vite@${{matrix.bundler-version}}
+        run: corepack yarn add --dev vite@${{matrix.bundler-version}}
       - run: npx vite --version
       - name: Create index.html
         run:
@@ -234,8 +250,12 @@ jobs:
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
       - name: Add ESBuild as a dev dependency
-        run: npm i --save-dev esbuild@${{matrix.bundler-version}}
+        run: corepack yarn add --dev esbuild@${{matrix.bundler-version}}
       - run: npx esbuild --version
       - name: Bundle
         run: npx esbuild lib/index.js --bundle --outfile=/dev/null
