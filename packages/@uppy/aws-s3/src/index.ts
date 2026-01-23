@@ -378,7 +378,7 @@ class S3Uploader<M extends Meta, B extends Body> {
       const chunk = this.#chunks[i]
       const partNumber = i + 1
       const chunkData = this.#data.slice(chunk.start, chunk.end)
-      const chunkIndex = i  // Capture for closure
+      const chunkIndex = i // Capture for closure
 
       const part = await this.#s3Client.uploadPartWithProgress(
         this.#key,
