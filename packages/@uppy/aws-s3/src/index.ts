@@ -205,7 +205,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
   #initChunks(): void {
     const fileSize = this.#data.size
 
-    //  Step 1: Determine if we should use multipart
+    // Step 1: Determine if we should use multipart
     // - If explicitly set to boolean, use that
     // - Otherwise, use multipart for files larger than MIN_CHUNK_SIZE (5MB)
     if (typeof this.#options.shouldUseMultipart === 'boolean') {
