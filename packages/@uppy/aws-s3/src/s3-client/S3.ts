@@ -350,6 +350,132 @@ class S3mini {
     return { partNumber, etag: U.sanitizeETag(res.headers.get('etag') || '') }
   }
 
+  /**
+   * Uploads a part with real-time progress tracking using XHR.
+   * Use this instead of uploadPart when you need progress callbacks.
+   */
+  public async uploadPartWithProgress(
+    key: string,
+    uploadId: string,
+    data: Blob,
+    partNumber: number,
+    onProgress?: IT.OnProgressFn,
+    signal?: AbortSignal,
+  ): Promise<IT.UploadPart> {
+    this._validateUploadPartParams(key, uploadId, data, partNumber)
+
+    // Get pre-signed URL
+    const { url } = await this.signRequest({
+      method: 'PUT',
+      key,
+      uploadId,
+      partNumber,
+    })
+
+    return this._xhrUpload(url, data, onProgress, signal).then((etag) => ({
+      partNumber,
+      etag,
+    }))
+  }
+
+  /**
+   * Uploads an object with real-time progress tracking using XHR.
+   * Use this instead of putObject when you need progress callbacks.
+   */
+  public async putObjectWithProgress(
+    key: string,
+    data: Blob,
+    fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
+    onProgress?: IT.OnProgressFn,
+    signal?: AbortSignal,
+  ): Promise<string> {
+    this._checkKey(key)
+
+    // Get pre-signed URL for simple PUT
+    const { url } = await this.signRequest({
+      method: 'PUT',
+      key,
+    })
+
+    return this._xhrUpload(url, data, onProgress, signal, fileType)
+  }
+
+  /**
+   * Core XHR upload implementation with progress tracking.
+   * Returns the ETag from the response headers.
+   */
+  private _xhrUpload(
+    url: string,
+    data: Blob,
+    onProgress?: IT.OnProgressFn,
+    signal?: AbortSignal,
+    contentType?: string,
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest()
+      xhr.open('PUT', url, true)
+
+      if (contentType) {
+        xhr.setRequestHeader('Content-Type', contentType)
+      }
+
+      // Progress tracking
+      xhr.upload.onprogress = (event) => {
+        if (event.lengthComputable && onProgress) {
+          onProgress(event.loaded, event.total)
+        }
+      }
+
+      // Success handler
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          const etag = xhr.getResponseHeader('etag') || ''
+          resolve(U.sanitizeETag(etag))
+        } else {
+          reject(
+            new U.S3ServiceError(
+              `S3 returned ${xhr.status}`,
+              xhr.status,
+              undefined,
+              xhr.responseText,
+            ),
+          )
+        }
+      }
+
+      // Error handlers
+      xhr.onerror = () => {
+        reject(new U.S3NetworkError('Network error during upload', 'NETWORK'))
+      }
+
+      xhr.onabort = () => {
+        const error = new Error('Upload aborted')
+        error.name = 'AbortError'
+        reject(error)
+      }
+
+      xhr.ontimeout = () => {
+        reject(new U.S3NetworkError('Upload timed out', 'ETIMEDOUT'))
+      }
+
+      // Wire abort signal to XHR
+      if (signal) {
+        if (signal.aborted) {
+          xhr.abort()
+          return
+        }
+        signal.addEventListener('abort', () => xhr.abort(), { once: true })
+      }
+
+      // Set timeout if configured
+      if (this.requestAbortTimeout) {
+        xhr.timeout = this.requestAbortTimeout
+      }
+
+      xhr.send(data)
+    })
+  }
+
   /** Lists uploaded parts for a multipart upload. */
   public async listParts(
     uploadId: string,
