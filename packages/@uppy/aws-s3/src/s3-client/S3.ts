@@ -440,7 +440,14 @@ class S3mini {
       const etag = xhr.getResponseHeader('etag') || ''
       return U.sanitizeETag(etag)
     } catch (err: unknown) {
-      return this._handleUploadError(err, url, data, onProgress, signal, contentType)
+      return this._handleUploadError(
+        err,
+        url,
+        data,
+        onProgress,
+        signal,
+        contentType,
+      )
     }
   }
 
@@ -470,7 +477,10 @@ class S3mini {
     const errObj = err as { request?: XMLHttpRequest; name?: string }
 
     // Network errors
-    if (errObj.name === 'NetworkError' || (errObj.request && !errObj.request.status)) {
+    if (
+      errObj.name === 'NetworkError' ||
+      (errObj.request && !errObj.request.status)
+    ) {
       throw new U.S3NetworkError('Network error during upload', 'NETWORK', err)
     }
 
@@ -487,7 +497,6 @@ class S3mini {
 
     throw err
   }
-
 
   /** Lists uploaded parts for a multipart upload. */
   public async listParts(
@@ -679,7 +688,13 @@ class S3mini {
       if (typeof navigator !== 'undefined' && navigator.onLine === false) {
         await this._waitForOnline()
         // Retry the request
-        return this._sendRequest(url, method, headers, body, toleratedStatusCodes)
+        return this._sendRequest(
+          url,
+          method,
+          headers,
+          body,
+          toleratedStatusCodes,
+        )
       }
 
       const code = U.extractErrCode(err)
