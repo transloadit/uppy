@@ -640,10 +640,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           },
 
           onError: (err) => {
-            // Don't report pausing as an error
-            if ((err as any).cause === pausingUploadReason) {
-              return
-            }
             this.uppy.emit('upload-error', file, err)
             this.#cleanup(file.id)
             reject(err)
