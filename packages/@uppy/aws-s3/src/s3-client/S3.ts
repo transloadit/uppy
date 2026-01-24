@@ -197,6 +197,22 @@ class S3mini {
     throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED)
   }
 
+  private _validateUploadPartParams(
+    key: string,
+    uploadId: string,
+    partNumber: number,
+  ): void {
+    this._checkKey(key)
+    if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
+      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
+    }
+    if (!Number.isInteger(partNumber) || partNumber <= 0) {
+      throw new TypeError(
+        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
+      )
+    }
+  }
+
   private async _presignedRequest(
     method: IT.HttpMethod, // 'GET' | 'HEAD' | 'PUT' | 'POST' | 'DELETE'
     key: string, // '' allowed for bucket‑level ops
@@ -343,15 +359,7 @@ class S3mini {
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
   ): Promise<IT.UploadPart> {
-    this._checkKey(key)
-    if (typeof uploadId !== 'string' || uploadId.trim().length === 0) {
-      throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
-    }
-    if (!Number.isInteger(partNumber) || partNumber <= 0) {
-      throw new TypeError(
-        `${C.ERROR_PREFIX}partNumber must be a positive integer`,
-      )
-    }
+    this._validateUploadPartParams(key, uploadId, partNumber)
 
     const attemptUpload = async (): Promise<IT.UploadPart> => {
       const { url } = await this.signRequest({
