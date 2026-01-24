@@ -806,7 +806,10 @@ class S3mini {
 
   private async _handleErrorResponse(res: Response): Promise<void> {
     const errorBody = await res.text()
-    const parsedErrorBody = this._parseErrorXml((n) => res.headers.get(n), errorBody)
+    const parsedErrorBody = this._parseErrorXml(
+      (n) => res.headers.get(n),
+      errorBody,
+    )
     const svcCode =
       res.headers.get('x-amz-error-code') ??
       parsedErrorBody.svcCode ??
