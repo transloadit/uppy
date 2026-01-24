@@ -521,10 +521,17 @@ class S3mini {
     // HTTP errors (non-2xx responses)
     if (errObj.request instanceof XMLHttpRequest && errObj.request.status) {
       const xhr = errObj.request
+      // Parse error code from header or XML body for expired token retry
+      const headerCode = xhr.getResponseHeader('x-amz-error-code')
+      const parsedBody = this._parseErrorXml(
+        (name: string) => xhr.getResponseHeader(name),
+        xhr.responseText,
+      )
+      const serviceCode = headerCode ?? parsedBody.svcCode
       throw new U.S3ServiceError(
-        `S3 returned ${xhr.status}`,
+        `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
         xhr.status,
-        undefined,
+        serviceCode,
         xhr.responseText,
       )
     }
@@ -768,10 +775,10 @@ class S3mini {
   }
 
   private _parseErrorXml(
-    headers: Headers,
+    getHeader: (name: string) => string | null,
     body: string,
   ): { svcCode?: string; errorMessage?: string } {
-    if (headers.get('content-type') !== 'application/xml') {
+    if (getHeader('content-type') !== 'application/xml') {
       return {}
     }
     const parsedBody = U.parseXml(body)
@@ -799,7 +806,7 @@ class S3mini {
 
   private async _handleErrorResponse(res: Response): Promise<void> {
     const errorBody = await res.text()
-    const parsedErrorBody = this._parseErrorXml(res.headers, errorBody)
+    const parsedErrorBody = this._parseErrorXml((n) => res.headers.get(n), errorBody)
     const svcCode =
       res.headers.get('x-amz-error-code') ??
       parsedErrorBody.svcCode ??
