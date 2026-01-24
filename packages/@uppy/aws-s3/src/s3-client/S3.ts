@@ -281,11 +281,10 @@ class S3mini {
     signal?: AbortSignal,
   ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
-    const blob = data instanceof Blob ? data : new Blob([data as BlobPart])
 
     const attemptUpload = async (): Promise<IT.PutObjectResult> => {
       const { url } = await this.signRequest({ method: 'PUT', key })
-      return this._xhrUpload(url, blob, onProgress, signal, fileType)
+      return this._xhrUpload(url, data, onProgress, signal, fileType)
     }
 
     try {
@@ -353,7 +352,6 @@ class S3mini {
         `${C.ERROR_PREFIX}partNumber must be a positive integer`,
       )
     }
-    const blob = data instanceof Blob ? data : new Blob([data as BlobPart])
 
     const attemptUpload = async (): Promise<IT.UploadPart> => {
       const { url } = await this.signRequest({
@@ -362,7 +360,7 @@ class S3mini {
         uploadId,
         partNumber,
       })
-      const result = await this._xhrUpload(url, blob, onProgress, signal)
+      const result = await this._xhrUpload(url, data, onProgress, signal)
       return {
         partNumber,
         etag: result.headers.get('etag')
@@ -409,7 +407,7 @@ class S3mini {
    */
   private async _xhrUpload(
     url: string,
-    data: Blob,
+    data: IT.BinaryData | string,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
     contentType?: string,
@@ -422,7 +420,8 @@ class S3mini {
     try {
       const xhr = await fetcher(url, {
         method: 'PUT',
-        body: data,
+        // XHR natively supports ArrayBuffer, Uint8Array, Blob, and string
+        body: data as XMLHttpRequestBodyInit,
         headers: contentType ? { 'Content-Type': contentType } : {},
         signal,
         timeout: this.requestAbortTimeout || 30_000,
@@ -480,7 +479,7 @@ class S3mini {
   private async _handleUploadError(
     err: unknown,
     url: string,
-    data: Blob,
+    data: IT.BinaryData | string,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
     contentType?: string,
