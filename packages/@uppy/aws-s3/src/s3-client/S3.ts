@@ -696,18 +696,23 @@ class S3mini {
         return
       }
 
-      const onOnline = () => {
+      const cleanup = () => {
+        window.removeEventListener('online', onOnline)
         signal?.removeEventListener('abort', onAbort)
+      }
+
+      const onOnline = () => {
+        cleanup()
         resolve()
       }
 
       const onAbort = () => {
-        window.removeEventListener('online', onOnline)
+        cleanup()
         reject(new DOMException('Upload aborted', 'AbortError'))
       }
 
-      window.addEventListener('online', onOnline, { once: true })
-      signal?.addEventListener('abort', onAbort, { once: true })
+      window.addEventListener('online', onOnline)
+      signal?.addEventListener('abort', onAbort)
     })
   }
 
