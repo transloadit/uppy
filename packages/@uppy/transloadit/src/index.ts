@@ -637,9 +637,12 @@ export default class Transloadit<
 
   /**
    * Prevent adding/dropping files while an upload is in progress.
+   * Uses setTimeout to ensure this runs after #createUpload sets allowNewUpload.
    */
   #onUploadStart = () => {
-    this.uppy.setState({ allowNewUpload: false })
+    setTimeout(() => {
+      this.uppy.setState({ allowNewUpload: false })
+    }, 0)
   }
 
   /**
