@@ -636,23 +636,6 @@ export default class Transloadit<
   }
 
   /**
-   * Prevent adding/dropping files while an upload is in progress.
-   * Uses setTimeout to ensure this runs after #createUpload sets allowNewUpload.
-   */
-  #onUploadStart = () => {
-    setTimeout(() => {
-      this.uppy.setState({ allowNewUpload: false })
-    }, 0)
-  }
-
-  /**
-   * Allow adding/dropping files again when upload completes.
-   */
-  #onComplete = () => {
-    this.uppy.setState({ allowNewUpload: true })
-  }
-
-  /**
    * When all files are removed, cancel in-progress Assemblies.
    */
   #onCancelAll = async () => {
@@ -833,6 +816,9 @@ export default class Transloadit<
   }
 
   #prepareUpload = async (fileIDs: string[]) => {
+    // Prevent adding/dropping files during upload to avoid creating multiple assemblies
+    this.uppy.setState({ allowNewUpload: false })
+
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function'
         ? await this.opts.assemblyOptions()
@@ -870,6 +856,8 @@ export default class Transloadit<
         this.uppy.emit('preprocess-complete', file)
         this.uppy.emit('upload-error', file, err)
       })
+      // Reset allowNewUpload on error
+      this.uppy.setState({ allowNewUpload: true })
       throw err
     }
   }
@@ -936,6 +924,8 @@ export default class Transloadit<
       // we need to allow a new assembly to be created.
       // see https://github.com/transloadit/uppy/issues/5397
       this.assembly = undefined
+      // Allow new uploads now that this upload is complete
+      this.uppy.setState({ allowNewUpload: true })
     }
   }
 
@@ -978,10 +968,6 @@ export default class Transloadit<
 
     // Handle cancellation.
     this.uppy.on('cancel-all', this.#onCancelAll)
-
-    // Control allowNewUpload state during upload lifecycle
-    this.uppy.on('upload', this.#onUploadStart)
-    this.uppy.on('complete', this.#onComplete)
 
     this.uppy.on('upload-error', this.#onTusError)
 
@@ -1036,8 +1022,6 @@ export default class Transloadit<
     this.uppy.removePostProcessor(this.#afterUpload)
     this.uppy.off('error', this.#onError)
     this.uppy.off('cancel-all', this.#onCancelAll)
-    this.uppy.off('upload', this.#onUploadStart)
-    this.uppy.off('complete', this.#onComplete)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.#onFileUploadURLAvailable)
