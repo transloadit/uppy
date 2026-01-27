@@ -948,7 +948,7 @@ export default class Transloadit<
       .submitError(err)
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
-    
+
     // Reset allowNewUpload when upload encounters an error
     this.uppy.setState({ allowNewUpload: true })
   }
