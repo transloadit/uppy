@@ -3,7 +3,7 @@
  * Modified to make it work with Uppy.
  */
 
-import { fetcher } from '@uppy/utils'
+import { fetcher, NetworkError } from '@uppy/utils'
 import * as C from './consts.js'
 import { createSigV4Signer } from './signer.js'
 import type * as IT from './types.js'
@@ -298,17 +298,14 @@ class S3mini {
   ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
 
-    const attemptUpload = async (): Promise<IT.PutObjectResult> => {
-      const { url } = await this.signRequest({ method: 'PUT', key })
-      return this._xhrUpload(url, data, onProgress, signal, fileType)
-    }
-
     try {
-      return await attemptUpload()
+      const { url } = await this.signRequest({ method: 'PUT', key })
+      return await this._xhrUpload(url, data, onProgress, signal, fileType)
     } catch (err) {
       if (this._isExpiredTokenError(err)) {
         this.clearCachedCredentials()
-        return attemptUpload()
+        const { url } = await this.signRequest({ method: 'PUT', key })
+        return this._xhrUpload(url, data, onProgress, signal, fileType)
       }
       throw err
     }
@@ -361,7 +358,7 @@ class S3mini {
   ): Promise<IT.UploadPart> {
     this._validateUploadPartParams(key, uploadId, partNumber)
 
-    const attemptUpload = async (): Promise<IT.UploadPart> => {
+    try {
       const { url } = await this.signRequest({
         method: 'PUT',
         key,
@@ -375,14 +372,22 @@ class S3mini {
           ? U.sanitizeETag(result.headers.get('etag')!)
           : '',
       }
-    }
-
-    try {
-      return await attemptUpload()
     } catch (err) {
       if (this._isExpiredTokenError(err)) {
         this.clearCachedCredentials()
-        return attemptUpload()
+        const { url } = await this.signRequest({
+          method: 'PUT',
+          key,
+          uploadId,
+          partNumber,
+        })
+        const result = await this._xhrUpload(url, data, onProgress, signal)
+        return {
+          partNumber,
+          etag: result.headers.get('etag')
+            ? U.sanitizeETag(result.headers.get('etag')!)
+            : '',
+        }
       }
       throw err
     }
@@ -507,21 +512,40 @@ class S3mini {
       throw err
     }
 
-    // Extract XHR from error if present (fetcher attaches it)
-    const errObj = err as { request?: XMLHttpRequest; name?: string }
-
-    // Network errors
+    // Network errors (from fetcher's NetworkError)
     if (
-      errObj.name === 'NetworkError' ||
-      (errObj.request && !errObj.request.status)
+      err instanceof NetworkError ||
+      (err instanceof Error && 'isNetworkError' in err && err.isNetworkError)
     ) {
-      throw new U.S3NetworkError('Network error during upload', 'NETWORK', err)
+      const xhr = 'request' in err ? (err as NetworkError).request : null
+      if (!xhr?.status) {
+        throw new U.S3NetworkError('Network error during upload', 'NETWORK', err)
+      }
+      // HTTP errors (non-2xx responses from NetworkError)
+      const headerCode = xhr.getResponseHeader('x-amz-error-code')
+      const parsedBody = this._parseErrorXml(
+        (name: string) => xhr.getResponseHeader(name),
+        xhr.responseText,
+      )
+      const serviceCode = headerCode ?? parsedBody.svcCode
+      throw new U.S3ServiceError(
+        `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
+        xhr.status,
+        serviceCode,
+        xhr.responseText,
+      )
     }
 
-    // HTTP errors (non-2xx responses)
-    if (errObj.request instanceof XMLHttpRequest && errObj.request.status) {
-      const xhr = errObj.request
-      // Parse error code from header or XML body for expired token retry
+    // Handle errors with attached XHR (from onAfterResponse throws)
+    if (
+      err instanceof Error &&
+      'request' in err &&
+      err.request instanceof XMLHttpRequest
+    ) {
+      const xhr = err.request
+      if (!xhr.status) {
+        throw new U.S3NetworkError('Network error during upload', 'NETWORK', err)
+      }
       const headerCode = xhr.getResponseHeader('x-amz-error-code')
       const parsedBody = this._parseErrorXml(
         (name: string) => xhr.getResponseHeader(name),
@@ -731,7 +755,7 @@ class S3mini {
     toleratedStatusCodes: number[] = [],
   ): Promise<Response> {
     // Wait for online if currently offline
-    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+    if (this._isOffline()) {
       await this._waitForOnline()
     }
 
@@ -751,7 +775,7 @@ class S3mini {
       return res
     } catch (err: unknown) {
       // Check if we're offline - if so, wait and retry
-      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      if (this._isOffline()) {
         await this._waitForOnline()
         // Retry the request
         return this._sendRequest(
