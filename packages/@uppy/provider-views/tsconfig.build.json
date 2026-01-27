@@ -12,6 +12,9 @@
     },
     {
       "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../companion-client/tsconfig.build.json"
     }
   ]
 }

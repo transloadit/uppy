@@ -9191,6 +9191,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
   dependencies:
+    "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     classnames: "npm:^2.2.6"
     cssnano: "npm:^7.0.7"

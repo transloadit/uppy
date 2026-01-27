@@ -40,6 +40,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.2.6",
     "lodash": "^4.17.21",
