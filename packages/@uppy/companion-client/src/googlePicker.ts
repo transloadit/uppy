@@ -1,4 +1,14 @@
+import type Uppy from '@uppy/core'
+
+export type GooglePickerType = 'drive' | 'photos'
+
+import type { UppyEventMap } from '@uppy/core'
 import type { Meta } from '@uppy/utils'
+import {
+  type CompanionPluginOptions,
+  type RequestClientOptions,
+  tokenStorage,
+} from './index.js'
 
 // https://developers.google.com/photos/picker/reference/rest/v1/mediaItems
 // Note that the google api doc is not correct, hence some things are optional here but not in their docs
@@ -112,9 +122,7 @@ async function injectScript(src: string) {
   injectedScripts.add(src)
 }
 
-export async function ensureScriptsInjected(
-  pickerType: PickerType,
-): Promise<void> {
+async function ensureScriptsInjected(pickerType: PickerType): Promise<void> {
   await Promise.all([
     injectScript('https://accounts.google.com/gsi/client'), // Google Identity Services
     (async () => {
@@ -149,7 +157,7 @@ async function isTokenValid(
   return false
 }
 
-export async function authorize({
+async function authorize({
   pickerType,
   clientId,
   accessToken,
@@ -190,7 +198,7 @@ export async function authorize({
   return response.access_token
 }
 
-export async function logout(accessToken: string): Promise<void> {
+async function doLogout(accessToken: string): Promise<void> {
   await new Promise<void>((resolve) =>
     google.accounts.oauth2.revoke(accessToken, resolve),
   )
@@ -285,7 +293,7 @@ async function handleDocObjectRecursively({
   return items
 }
 
-export async function showDrivePicker({
+async function showDrivePicker({
   token,
   apiKey,
   appId,
@@ -352,7 +360,7 @@ export async function showDrivePicker({
   signal?.addEventListener('abort', () => picker.dispose())
 }
 
-export async function showPhotosPicker({
+async function showPhotosPicker({
   token,
   pickingSession,
   onPickingSessionChange,
@@ -486,7 +494,7 @@ async function resolvePickedPhotos({
   })
 }
 
-export async function pollPickingSession({
+async function pollPickingSession({
   getPickingSession,
   getAccessToken,
   onPickingSessionClear,
@@ -594,3 +602,238 @@ export const mapPickerFile = (
     meta: rest.metadata,
   }) as Meta), // dunno how to type this
 })
+
+export function createGooglePickerStoreAdapter({
+  uppy,
+  getPluginState,
+  setPluginState,
+}: {
+  uppy: Uppy<any, any>
+  getPluginState: () => GooglePickerState
+  setPluginState: (state: Partial<GooglePickerState>) => void
+}) {
+  return {
+    getSnapshot: () => getPluginState(),
+    setState: (
+      updater:
+        | GooglePickerState
+        | ((prevState: GooglePickerState) => GooglePickerState),
+    ) => {
+      const newState =
+        typeof updater === 'function' ? updater(getPluginState()) : updater
+
+      setPluginState(newState)
+    },
+    subscribe: (listener: (state: GooglePickerState) => void) => {
+      const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
+        _prev,
+        _next,
+        patch,
+      ): void => {
+        const screenCapturePatch = (patch?.plugins?.GoogleDrivePicker ??
+          patch?.plugins?.GooglePhotosPicker) as GooglePickerState | undefined
+
+        if (screenCapturePatch) listener(screenCapturePatch)
+      }
+
+      uppy.on('state-update', onStateUpdate)
+      return () => uppy.off('state-update', onStateUpdate)
+    },
+  }
+}
+
+export type GooglePickerState = {
+  loading: boolean
+  accessToken: string | null | undefined
+}
+
+export type GooglePickerStore = ReturnType<
+  typeof createGooglePickerStoreAdapter
+>
+
+export interface GooglePickerOptions
+  extends Pick<RequestClientOptions, 'companionUrl'>,
+    Pick<CompanionPluginOptions, 'storage'> {
+  pickerType: GooglePickerType
+  clientId: string
+  requestClientId: string
+  apiKey?: string
+  appId?: string
+  store: GooglePickerStore
+}
+
+export function createGooglePickerController({
+  uppy,
+  store,
+  storage: persistentStore = tokenStorage,
+  pickerType,
+  companionUrl,
+  requestClientId = pickerType === 'drive'
+    ? 'GoogleDrivePicker'
+    : 'GooglePhotosPicker',
+  clientId,
+  apiKey,
+  appId,
+}: {
+  uppy: Uppy
+} & GooglePickerOptions) {
+  const storageKey = `uppy:google-${pickerType}-picker:accessToken`
+
+  let abortController = new AbortController()
+  let initPromise: Promise<void> | undefined
+  let pickingSession: PickingSession | undefined
+
+  const handleFilesPicked = async (
+    files: PickedItem[],
+    accessToken: string,
+  ) => {
+    uppy.addFiles(
+      files.map((file) =>
+        mapPickerFile({ requestClientId, accessToken, companionUrl }, file),
+      ),
+    )
+  }
+
+  function setAccessToken(newAccessToken: string | null) {
+    store.setState((s) => ({ ...s, accessToken: newAccessToken }))
+    if (newAccessToken == null) {
+      return persistentStore.removeItem(storageKey)
+    }
+    return persistentStore.setItem(storageKey, newAccessToken)
+  }
+
+  function setLoading(v: boolean) {
+    store.setState((s) => ({ ...s, loading: v }))
+  }
+
+  async function init() {
+    if (initPromise == null) {
+      initPromise = (async () => {
+        abortController = new AbortController()
+
+        setAccessToken(await persistentStore.getItem(storageKey))
+
+        abortController.signal.throwIfAborted()
+
+        // For google photos we need to continuously poll the current picking session
+        if (pickerType === 'photos') {
+          pollPickingSession({
+            getPickingSession: () => pickingSession,
+            getAccessToken: () => store.getSnapshot().accessToken,
+            onPickingSessionClear: () => {
+              pickingSession = undefined
+            },
+            signal: abortController.signal,
+            onFilesPicked: handleFilesPicked,
+            onError: (err) => uppy.log(err),
+          })
+        }
+      })()
+    }
+    await initPromise
+  }
+
+  async function showPicker() {
+    await init()
+
+    let newAccessToken = store.getSnapshot().accessToken
+
+    const doShowPicker = async (token: string) => {
+      if (pickerType === 'drive') {
+        if (apiKey == null || appId == null)
+          throw new TypeError(
+            'apiKey and appId are required for Google Drive picker',
+          )
+        await showDrivePicker({
+          token,
+          apiKey,
+          appId,
+          onFilesPicked: handleFilesPicked,
+          signal: abortController.signal,
+          onLoadingChange: (isLoading: boolean) => setLoading(isLoading),
+          onError: (err: unknown) => {
+            uppy.log(err)
+            uppy.info(uppy.i18n('failedToAddFiles'), 'error')
+          },
+        })
+      } else {
+        // photos
+        const onPickingSessionChange = (newPickingSession: PickingSession) => {
+          pickingSession = newPickingSession
+        }
+        await showPhotosPicker({
+          token,
+          pickingSession,
+          onPickingSessionChange,
+          signal: abortController.signal,
+        })
+      }
+    }
+
+    setLoading(true)
+    try {
+      try {
+        await ensureScriptsInjected(pickerType)
+
+        if (newAccessToken == null) {
+          newAccessToken = await authorize({ clientId, pickerType })
+        }
+        if (newAccessToken == null) throw new Error()
+
+        await doShowPicker(newAccessToken)
+        setAccessToken(newAccessToken)
+      } catch (err) {
+        if (err instanceof InvalidTokenError) {
+          uppy.log('Token is invalid or expired, reauthenticating')
+          newAccessToken = await authorize({
+            pickerType,
+            accessToken: newAccessToken,
+            clientId,
+          })
+          // now try again:
+          await doShowPicker(newAccessToken)
+          setAccessToken(newAccessToken)
+        } else {
+          throw err
+        }
+      }
+    } catch (err) {
+      if (
+        err instanceof Error &&
+        'type' in err &&
+        err.type === 'popup_closed'
+      ) {
+        // user closed the auth popup, ignore
+      } else {
+        setAccessToken(null)
+        uppy.log(err)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function logout() {
+    const { accessToken } = store.getSnapshot()
+    if (accessToken) {
+      await doLogout(accessToken)
+      setAccessToken(null)
+      pickingSession = undefined
+    }
+  }
+
+  function reset() {
+    abortController.abort()
+
+    pickingSession = undefined
+    initPromise = undefined
+    store.setState((s) => ({ ...s, accessToken: undefined, loading: false }))
+  }
+
+  return {
+    init,
+    show: showPicker,
+    reset,
+    logout,
+  }
+}

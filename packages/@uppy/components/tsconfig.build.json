@@ -17,6 +17,12 @@
       "path": "../google-drive-picker/tsconfig.build.json"
     },
     {
+      "path": "../google-photos-picker/tsconfig.build.json"
+    },
+    {
+      "path": "../companion-client/tsconfig.build.json"
+    },
+    {
       "path": "../image-editor/tsconfig.build.json"
     },
     {

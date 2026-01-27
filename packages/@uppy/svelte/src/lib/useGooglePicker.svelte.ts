@@ -1,8 +1,9 @@
 import {
-	createGooglePickerController,
-	type GooglePickerOptions,
-} from "@uppy/components";
-import { onDestroy } from "svelte";
+  createGooglePickerController,
+  createGooglePickerPluginAdapter,
+  type GooglePickerOptions,
+} from '@uppy/components';
+import { onDestroy, onMount } from "svelte";
 import { getUppyContext } from "./components/headless/uppyContext.js";
 import { useExternalStore } from "./useSyncExternalStore.svelte.js";
 
@@ -17,33 +18,33 @@ type SvelteGooglePickerSnapshot = GooglePickerSnapshot & {
 };
 
 export function useGooglePicker({
-	requestClientId,
-	companionUrl,
 	pickerType,
-	clientId,
-	apiKey,
-	appId,
-	...restOptions
-}: GooglePickerOptions): SvelteGooglePickerSnapshot {
+	storage,
+}: Pick<GooglePickerOptions, 'pickerType' | 'storage'>): SvelteGooglePickerSnapshot {
 	const ctx = getUppyContext();
 
+	const { store, opts } = createGooglePickerPluginAdapter(ctx.uppy, pickerType)
+
+	const { subscribe, getSnapshot } = store;
+
 	const {
-		store: { subscribe, getSnapshot },
 		reset,
+		init,
 		show,
 		logout,
 	} = createGooglePickerController({
 		uppy: ctx.uppy,
-		requestClientId,
-		companionUrl,
 		pickerType,
-		clientId,
-		apiKey,
-		appId,
-		...restOptions,
+		store,
+		storage,
+		...opts,
 	});
 
 	const state = useExternalStore<GooglePickerSnapshot>(getSnapshot, subscribe);
+
+	onMount(() => {
+		init()
+	});
 
 	onDestroy(() => {
 		reset();

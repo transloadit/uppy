@@ -1,8 +1,15 @@
 // Headless components
 
+export {
+  createGooglePickerController,
+  type GooglePickerOptions,
+  type GooglePickerType,
+} from '@uppy/companion-client'
+
 export { type DropzoneProps, default as Dropzone } from './Dropzone.js'
 export { default as FilesGrid, type FilesGridProps } from './FilesGrid.js'
 export { default as FilesList, type FilesListProps } from './FilesList.js'
+export { createGooglePickerPluginAdapter } from './googlePicker.js'
 // Headless hooks
 export {
   createDropzone,
@@ -14,11 +21,6 @@ export {
   type FileInputFunctions,
   type FileInputProps,
 } from './hooks/file-input.js'
-export {
-  createGooglePickerController,
-  type GooglePickerOptions,
-  type GooglePickerType,
-} from './hooks/googlePicker.js'
 export {
   createRemoteSourceController,
   type RemoteSourceKeys,

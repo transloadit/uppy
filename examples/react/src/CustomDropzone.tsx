@@ -11,26 +11,15 @@ export interface CustomDropzoneProps {
   openModal: (plugin: CustomDropzonePlugin) => void
 }
 
-const companionUrl = 'http://localhost:3020'
-const googlePickerClientId = '' // see GOOGLE_PICKER_CLIENT_ID in dev Dashboard
-const googlePickerApiKey = '' // see GOOGLE_PICKER_API_KEY in dev Dashboard
-const googlePickerAppId = '' // see GOOGLE_PICKER_APP_ID in dev Dashboard
-
 export function CustomDropzone({ openModal }: CustomDropzoneProps) {
   const { getRootProps, getInputProps } = useDropzone({ noClick: true })
   const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
 
   const googleDrivePicker = useGooglePicker({
-    clientId: googlePickerClientId,
-    companionUrl: companionUrl,
-    apiKey: googlePickerApiKey,
-    appId: googlePickerAppId,
     pickerType: 'drive',
   })
 
   const googlePhotosPicker = useGooglePicker({
-    clientId: googlePickerClientId,
-    companionUrl: companionUrl,
     pickerType: 'photos',
   })
 

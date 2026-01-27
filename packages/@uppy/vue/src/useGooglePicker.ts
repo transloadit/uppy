@@ -1,8 +1,9 @@
 import {
   createGooglePickerController,
+  createGooglePickerPluginAdapter,
   type GooglePickerOptions,
 } from '@uppy/components'
-import { computed, onUnmounted, type ShallowRef } from 'vue'
+import { computed, onMounted, onUnmounted, type ShallowRef } from 'vue'
 import { injectUppyContext } from './headless/context-provider.js'
 import { useExternalStore } from './useSyncExternalStore.js'
 
@@ -17,35 +18,30 @@ type GooglePickerController = {
 }
 
 export function useGooglePicker({
-  requestClientId,
-  companionUrl,
   pickerType,
-  clientId,
-  apiKey,
-  appId,
-  ...restOptions
-}: GooglePickerOptions): ShallowRef<
+  storage,
+}: Pick<GooglePickerOptions, 'pickerType' | 'storage'>): ShallowRef<
   GooglePickerSnapshot & GooglePickerController
 > {
   const ctx = injectUppyContext()
 
-  const {
-    store: { subscribe, getSnapshot },
-    reset,
-    show,
-    logout,
-  } = createGooglePickerController({
+  const { store, opts } = createGooglePickerPluginAdapter(ctx.uppy, pickerType)
+
+  const { subscribe, getSnapshot } = store
+
+  const { reset, init, show, logout } = createGooglePickerController({
     uppy: ctx.uppy,
-    requestClientId,
-    companionUrl,
     pickerType,
-    clientId,
-    apiKey,
-    appId,
-    ...restOptions,
+    store,
+    storage,
+    ...opts,
   })
 
   const state = useExternalStore<GooglePickerSnapshot>(getSnapshot, subscribe)
+
+  onMounted(() => {
+    init()
+  })
 
   onUnmounted(() => {
     reset()

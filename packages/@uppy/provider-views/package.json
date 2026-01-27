@@ -48,9 +48,6 @@
     "preact": "^10.26.10"
   },
   "devDependencies": {
-    "@types/gapi": "^0.0.47",
-    "@types/google.accounts": "^0.0.14",
-    "@types/google.picker": "^0.0.42",
     "cssnano": "^7.0.7",
     "jsdom": "^26.1.0",
     "postcss": "^8.5.6",

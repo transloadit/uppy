@@ -1,5 +1,6 @@
 import {
   createGooglePickerController,
+  createGooglePickerPluginAdapter,
   type GooglePickerOptions,
 } from '@uppy/components'
 
@@ -8,56 +9,40 @@ import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 export function useGooglePicker({
-  requestClientId,
-  companionUrl,
   pickerType,
-  clientId,
-  apiKey,
-  appId,
-  companionCookiesRule,
-  companionHeaders,
-  companionKeysParams,
   storage,
-}: GooglePickerOptions) {
+}: Pick<GooglePickerOptions, 'pickerType' | 'storage'>) {
   const { uppy } = useUppyContext()
 
-  const {
-    store: { subscribe, getSnapshot },
-    reset,
-    ...rest
-  } = useMemo(
+  const { store, opts } = useMemo(
+    () => createGooglePickerPluginAdapter(uppy, pickerType),
+    [uppy, pickerType],
+  )
+
+  const { subscribe, getSnapshot } = store
+
+  const { reset, init, ...rest } = useMemo(
     () =>
       createGooglePickerController({
         uppy,
-        requestClientId,
-        companionUrl,
         pickerType,
-        clientId,
-        apiKey,
-        appId,
-        companionCookiesRule,
-        companionHeaders,
-        companionKeysParams,
         storage,
+        store,
+        ...opts,
       }),
-    [
-      uppy,
-      requestClientId,
-      clientId,
-      companionUrl,
-      pickerType,
-      apiKey,
-      appId,
-      companionCookiesRule,
-      companionHeaders,
-      companionKeysParams,
-      storage,
-    ],
+    [uppy, pickerType, storage, store, opts],
   )
 
-  const store = useSyncExternalStore(subscribe, getSnapshot, getSnapshot)
+  useEffect(() => {
+    init()
 
-  useEffect(() => () => reset(), [reset])
+    return () => {
+      reset()
+    }
+  }, [reset, init])
 
-  return { ...store, ...rest }
+  return {
+    ...useSyncExternalStore(subscribe, getSnapshot, getSnapshot),
+    ...rest,
+  }
 }

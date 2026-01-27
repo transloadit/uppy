@@ -52,7 +52,10 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
+    "@uppy/companion-client": "workspace:^",
     "@uppy/core": "workspace:^",
+    "@uppy/google-drive-picker": "workspace:^",
+    "@uppy/google-photos-picker": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^"
