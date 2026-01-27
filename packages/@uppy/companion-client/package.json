@@ -41,6 +41,9 @@
     "p-retry": "^6.1.0"
   },
   "devDependencies": {
+    "@types/gapi": "^0.0.47",
+    "@types/google.accounts": "^0.0.14",
+    "@types/google.picker": "^0.0.42",
     "jsdom": "^26.1.0",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"

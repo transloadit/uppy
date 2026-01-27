@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
 import Uppy from '@uppy/core'
+import GoogleDrivePicker from '@uppy/google-drive-picker'
 import {
   Dropzone,
   FilesGrid,
@@ -12,31 +13,51 @@ import UppyScreenCapture from '@uppy/screen-capture'
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
 import { useRef, useState } from 'react'
-import CustomDropzone from './CustomDropzone'
+import CustomDropzone, { type CustomDropzonePlugin } from './CustomDropzone'
 import { RemoteSource } from './RemoteSource'
 import ScreenCapture from './ScreenCapture'
 import Webcam from './Webcam'
 
 import './app.css'
 import '@uppy/react/css/style.css'
+import GooglePhotosPicker from '@uppy/google-photos-picker'
+
+const companionUrl = 'http://localhost:3020'
+const googlePickerClientId = '' // see GOOGLE_PICKER_CLIENT_ID in dev Dashboard
+const googlePickerApiKey = '' // see GOOGLE_PICKER_API_KEY in dev Dashboard
+const googlePickerAppId = '' // see GOOGLE_PICKER_APP_ID in dev Dashboard
 
 function App() {
   const [uppy] = useState(() =>
-    new Uppy()
+    new Uppy({
+      restrictions: {
+        maxNumberOfFiles: 1,
+      },
+    })
       .use(Tus, {
         endpoint: 'https://tusd.tusdemo.net/files/',
       })
+      .use(GoogleDrivePicker, {
+        clientId: googlePickerClientId,
+        companionUrl,
+        apiKey: googlePickerApiKey,
+        appId: googlePickerAppId,
+      })
+      .use(GooglePhotosPicker, {
+        clientId: googlePickerClientId,
+        companionUrl,
+      })
       .use(UppyWebcam)
       .use(UppyScreenCapture)
-      .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
+      .use(UppyRemoteSources, { companionUrl }),
   )
 
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const [modalPlugin, setModalPlugin] = useState<
-    'webcam' | 'dropbox' | 'screen-capture' | null
-  >(null)
+  const [modalPlugin, setModalPlugin] = useState<CustomDropzonePlugin | null>(
+    null,
+  )
 
-  function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
+  function openModal(plugin: CustomDropzonePlugin) {
     setModalPlugin(plugin)
     dialogRef.current?.showModal()
   }

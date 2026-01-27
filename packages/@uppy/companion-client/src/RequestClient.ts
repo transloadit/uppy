@@ -19,9 +19,6 @@ import AuthError from './AuthError.js'
 type CompanionHeaders = Record<string, string> | undefined
 
 export type Opts = {
-  name?: string
-  provider: string
-  pluginId: string
   companionUrl: string
   companionCookiesRule?: 'same-origin' | 'include' | 'omit'
   companionHeaders?: CompanionHeaders

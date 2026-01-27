@@ -11,6 +11,8 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "@uppy/core": "workspace:*",
+    "@uppy/google-drive-picker": "workspace:*",
+    "@uppy/google-photos-picker": "workspace:*",
     "@uppy/react": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",

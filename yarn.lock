@@ -8787,6 +8787,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/companion-client@workspace:packages/@uppy/companion-client"
   dependencies:
+    "@types/gapi": "npm:^0.0.47"
+    "@types/google.accounts": "npm:^0.0.14"
+    "@types/google.picker": "npm:^0.0.42"
     "@uppy/utils": "workspace:^"
     jsdom: "npm:^26.1.0"
     namespace-emitter: "npm:^2.0.1"
@@ -8881,7 +8884,10 @@ __metadata:
     tailwindcss: "npm:^4.0.6"
     typescript: "npm:^5.8.3"
   peerDependencies:
+    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@uppy/google-drive-picker": "workspace:^"
+    "@uppy/google-photos-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -9185,9 +9191,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
   dependencies:
-    "@types/gapi": "npm:^0.0.47"
-    "@types/google.accounts": "npm:^0.0.14"
-    "@types/google.picker": "npm:^0.0.42"
+    "@uppy/companion-client": "workspace:^"
     "@uppy/utils": "workspace:^"
     classnames: "npm:^2.2.6"
     cssnano: "npm:^7.0.7"
@@ -13257,6 +13261,8 @@ __metadata:
     "@types/react": "npm:^19.0.10"
     "@types/react-dom": "npm:^19.0.4"
     "@uppy/core": "workspace:*"
+    "@uppy/google-drive-picker": "workspace:*"
+    "@uppy/google-photos-picker": "workspace:*"
     "@uppy/react": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
