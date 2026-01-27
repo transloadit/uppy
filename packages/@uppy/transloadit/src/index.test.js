@@ -147,4 +147,120 @@ describe('Transloadit', () => {
 
     server.close()
   })
+
+  describe('allowNewUpload state management', () => {
+    it('sets allowNewUpload to false when upload starts', () => {
+      const uppy = new Core()
+      uppy.use(Transloadit, {
+        assemblyOptions: {
+          params: {
+            auth: { key: 'test-auth-key' },
+            template_id: 'test-template-id',
+          },
+        },
+      })
+
+      // Initially should be true
+      expect(uppy.getState().allowNewUpload).toBe(true)
+
+      // Trigger upload event
+      uppy.emit('upload')
+
+      // Should be set to false after upload starts
+      expect(uppy.getState().allowNewUpload).toBe(false)
+    })
+
+    it('resets allowNewUpload to true when upload completes', () => {
+      const uppy = new Core()
+      uppy.use(Transloadit, {
+        assemblyOptions: {
+          params: {
+            auth: { key: 'test-auth-key' },
+            template_id: 'test-template-id',
+          },
+        },
+      })
+
+      // Simulate upload start
+      uppy.emit('upload')
+      expect(uppy.getState().allowNewUpload).toBe(false)
+
+      // Simulate upload complete
+      uppy.emit('complete', {})
+
+      // Should be reset to true
+      expect(uppy.getState().allowNewUpload).toBe(true)
+    })
+
+    it('resets allowNewUpload to true on error', () => {
+      const uppy = new Core()
+      uppy.use(Transloadit, {
+        assemblyOptions: {
+          params: {
+            auth: { key: 'test-auth-key' },
+            template_id: 'test-template-id',
+          },
+        },
+      })
+
+      // Simulate upload start
+      uppy.emit('upload')
+      expect(uppy.getState().allowNewUpload).toBe(false)
+
+      // Simulate error
+      uppy.emit('error', {
+        name: 'TestError',
+        message: 'Test error message',
+      })
+
+      // Should be reset to true
+      expect(uppy.getState().allowNewUpload).toBe(true)
+    })
+
+    it('resets allowNewUpload to true on cancel-all', async () => {
+      const uppy = new Core()
+      uppy.use(Transloadit, {
+        assemblyOptions: {
+          params: {
+            auth: { key: 'test-auth-key' },
+            template_id: 'test-template-id',
+          },
+        },
+      })
+
+      // Simulate upload start
+      uppy.emit('upload')
+      expect(uppy.getState().allowNewUpload).toBe(false)
+
+      // Simulate cancel-all (it's async, so we need to await)
+      await uppy.cancelAll()
+
+      // Should be reset to true
+      expect(uppy.getState().allowNewUpload).toBe(true)
+    })
+
+    it('cleans up event listeners on uninstall', () => {
+      const uppy = new Core()
+      uppy.use(Transloadit, {
+        assemblyOptions: {
+          params: {
+            auth: { key: 'test-auth-key' },
+            template_id: 'test-template-id',
+          },
+        },
+      })
+
+      // Trigger upload event to set allowNewUpload to false
+      uppy.emit('upload')
+      expect(uppy.getState().allowNewUpload).toBe(false)
+
+      // Uninstall the plugin
+      uppy.removePlugin(uppy.getPlugin('Transloadit'))
+
+      // Trigger upload event again - since listeners are removed, state should not change
+      const stateBefore = uppy.getState().allowNewUpload
+      uppy.emit('upload')
+      expect(uppy.getState().allowNewUpload).toBe(stateBefore)
+    })
+  })
 })

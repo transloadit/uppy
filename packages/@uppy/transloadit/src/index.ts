@@ -636,15 +636,32 @@ export default class Transloadit<
   }
 
   /**
+   * Prevent adding/dropping files while an upload is in progress.
+   */
+  #onUploadStart = () => {
+    this.uppy.setState({ allowNewUpload: false })
+  }
+
+  /**
+   * Allow adding/dropping files again when upload completes.
+   */
+  #onComplete = () => {
+    this.uppy.setState({ allowNewUpload: true })
+  }
+
+  /**
    * When all files are removed, cancel in-progress Assemblies.
    */
   #onCancelAll = async () => {
-    if (!this.assembly) return
-    try {
-      await this.#cancelAssembly(this.assembly.status)
-    } catch (err) {
-      this.uppy.log(err)
+    if (this.assembly) {
+      try {
+        await this.#cancelAssembly(this.assembly.status)
+      } catch (err) {
+        this.uppy.log(err)
+      }
     }
+    // Reset allowNewUpload when upload is cancelled
+    this.uppy.setState({ allowNewUpload: true })
   }
 
   #onRestored = (pluginData: Record<string, PersistentState>) => {
@@ -931,6 +948,9 @@ export default class Transloadit<
       .submitError(err)
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
+    
+    // Reset allowNewUpload when upload encounters an error
+    this.uppy.setState({ allowNewUpload: true })
   }
 
   #onTusError = (_: UppyFile<M, B> | undefined, err: Error) => {
@@ -955,6 +975,10 @@ export default class Transloadit<
 
     // Handle cancellation.
     this.uppy.on('cancel-all', this.#onCancelAll)
+
+    // Control allowNewUpload state during upload lifecycle
+    this.uppy.on('upload', this.#onUploadStart)
+    this.uppy.on('complete', this.#onComplete)
 
     this.uppy.on('upload-error', this.#onTusError)
 
@@ -1008,6 +1032,9 @@ export default class Transloadit<
     this.uppy.removePreProcessor(this.#prepareUpload)
     this.uppy.removePostProcessor(this.#afterUpload)
     this.uppy.off('error', this.#onError)
+    this.uppy.off('cancel-all', this.#onCancelAll)
+    this.uppy.off('upload', this.#onUploadStart)
+    this.uppy.off('complete', this.#onComplete)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.#onFileUploadURLAvailable)
