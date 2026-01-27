@@ -519,7 +519,11 @@ class S3mini {
     ) {
       const xhr = 'request' in err ? (err as NetworkError).request : null
       if (!xhr?.status) {
-        throw new U.S3NetworkError('Network error during upload', 'NETWORK', err)
+        throw new U.S3NetworkError(
+          'Network error during upload',
+          'NETWORK',
+          err,
+        )
       }
       // HTTP errors (non-2xx responses from NetworkError)
       const headerCode = xhr.getResponseHeader('x-amz-error-code')
@@ -544,7 +548,11 @@ class S3mini {
     ) {
       const xhr = err.request
       if (!xhr.status) {
-        throw new U.S3NetworkError('Network error during upload', 'NETWORK', err)
+        throw new U.S3NetworkError(
+          'Network error during upload',
+          'NETWORK',
+          err,
+        )
       }
       const headerCode = xhr.getResponseHeader('x-amz-error-code')
       const parsedBody = this._parseErrorXml(
