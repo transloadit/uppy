@@ -32,7 +32,7 @@
     "@typescript-eslint/parser": "^7.2.0",
     "@typescript-eslint/types": "^7.2.0",
     "@typescript-eslint/utils": "^7.2.0",
-    "eslint": "^8.57.0",
+    "eslint": "^9.26.0",
     "jasmine-core": "~5.1.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
