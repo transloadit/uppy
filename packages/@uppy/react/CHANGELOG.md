@@ -1,5 +1,17 @@
 # @uppy/react
 
+## 5.2.0
+
+### Minor Changes
+
+- 850c1cb: Introduce `useImageEditor` to build your own UI for using our image editor in React, Vue, and Svelte.
+
+### Patch Changes
+
+- Updated dependencies [680052b]
+- Updated dependencies [850c1cb]
+  - @uppy/components@1.2.0
+
 ## 5.1.1
 
 ### Patch Changes
