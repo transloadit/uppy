@@ -1,5 +1,18 @@
 # @uppy/vue
 
+## 3.2.0
+
+### Minor Changes
+
+- 850c1cb: Introduce `useImageEditor` to build your own UI for using our image editor in React, Vue, and Svelte.
+
+### Patch Changes
+
+- 680052b: - Fix Vue components to work with kebab-case props (`:edit-file` instead of `:editFile`)
+- Updated dependencies [680052b]
+- Updated dependencies [850c1cb]
+  - @uppy/components@1.2.0
+
 ## 3.1.0
 
 ### Minor Changes
