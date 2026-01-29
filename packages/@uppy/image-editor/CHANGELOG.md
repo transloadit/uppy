@@ -1,5 +1,11 @@
 # @uppy/image-editor
 
+## 4.2.0
+
+### Minor Changes
+
+- c0a8776: Introduce `useImageEditor` to build your own UI for using our image editor in React, Vue, and Svelte.
+
 ## 4.1.0
 
 ### Minor Changes
