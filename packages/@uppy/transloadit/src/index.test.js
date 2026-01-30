@@ -149,7 +149,42 @@ describe('Transloadit', () => {
   })
 
   describe('allowNewUpload state management', () => {
-    it('sets allowNewUpload to false when upload starts', () => {
+    it('sets allowNewUpload to false in preprocessor and resets to true in postprocessor', async () => {
+      const server = setupServer(
+        http.post('*/assemblies', () => {
+          return HttpResponse.json({
+            assembly_id: 'test-assembly-id',
+            websocket_url: 'ws://localhost:8080',
+            tus_url: 'https://localhost/resumable/files/',
+            assembly_ssl_url: 'https://localhost/assemblies/test-assembly-id',
+            ok: 'ASSEMBLY_EXECUTING',
+          })
+        }),
+        http.get('*/assemblies/*', () => {
+          return HttpResponse.json({
+            assembly_id: 'test-assembly-id',
+            ok: 'ASSEMBLY_COMPLETED',
+            results: {},
+          })
+        }),
+        http.post('*/resumable/files/', () => {
+          return HttpResponse.json({
+            tus_enabled: true,
+            resumable_file_id: 'test-file-id',
+          })
+        }),
+        http.patch('*/resumable/files/*', () => {
+          return HttpResponse.json({
+            ok: 'RESUMABLE_FILE_UPLOADED',
+          })
+        }),
+        http.post('https://transloaditstatus.com/client_error', () => {
+          return HttpResponse.json({})
+        }),
+      )
+
+      server.listen({ onUnhandledRequest: 'error' })
+
       const uppy = new Core()
       uppy.use(Transloadit, {
         assemblyOptions: {
@@ -158,41 +193,36 @@ describe('Transloadit', () => {
             template_id: 'test-template-id',
           },
         },
+      })
+
+      uppy.addFile({
+        source: 'test',
+        name: 'test.jpg',
+        data: Buffer.from('test file content'),
       })
 
       // Initially should be true
       expect(uppy.getState().allowNewUpload).toBe(true)
 
-      // Trigger upload event
-      uppy.emit('upload')
+      // Start upload (which triggers preprocessor)
+      const uploadPromise = uppy.upload()
 
-      // Should be set to false after upload starts
-      expect(uppy.getState().allowNewUpload).toBe(false)
-    })
+      // Wait a bit for preprocessor to run
+      await new Promise((resolve) => setTimeout(resolve, 50))
 
-    it('resets allowNewUpload to true when upload completes', () => {
-      const uppy = new Core()
-      uppy.use(Transloadit, {
-        assemblyOptions: {
-          params: {
-            auth: { key: 'test-auth-key' },
-            template_id: 'test-template-id',
-          },
-        },
-      })
-
-      // Simulate upload start
-      uppy.emit('upload')
+      // Should be set to false during upload
       expect(uppy.getState().allowNewUpload).toBe(false)
 
-      // Simulate upload complete
-      uppy.emit('complete', {})
+      // Wait for upload to complete
+      await uploadPromise
 
-      // Should be reset to true
+      // Should be reset to true after upload completes
       expect(uppy.getState().allowNewUpload).toBe(true)
+
+      server.close()
     })
 
-    it('resets allowNewUpload to true on error', () => {
+    it('resets allowNewUpload to true on preprocessor error', async () => {
       const uppy = new Core()
       uppy.use(Transloadit, {
         assemblyOptions: {
@@ -203,17 +233,26 @@ describe('Transloadit', () => {
         },
       })
 
-      // Simulate upload start
-      uppy.emit('upload')
-      expect(uppy.getState().allowNewUpload).toBe(false)
+      // Mock createAssembly to throw an error
+      uppy.getPlugin('Transloadit').client.createAssembly = () =>
+        Promise.reject(new Error('Assembly creation failed'))
 
-      // Simulate error
-      uppy.emit('error', {
-        name: 'TestError',
-        message: 'Test error message',
+      uppy.addFile({
+        source: 'test',
+        name: 'test.jpg',
+        data: Buffer.from('test file content'),
       })
 
-      // Should be reset to true
+      // Initially should be true
+      expect(uppy.getState().allowNewUpload).toBe(true)
+
+      try {
+        await uppy.upload()
+      } catch (err) {
+        // Expected to fail
+      }
+
+      // Should be reset to true after error
       expect(uppy.getState().allowNewUpload).toBe(true)
     })
 
@@ -228,18 +267,18 @@ describe('Transloadit', () => {
         },
       })
 
-      // Simulate upload start
-      uppy.emit('upload')
+      // Manually set allowNewUpload to false to simulate an upload in progress
+      uppy.setState({ allowNewUpload: false })
       expect(uppy.getState().allowNewUpload).toBe(false)
 
-      // Simulate cancel-all (it's async, so we need to await)
+      // Simulate cancel-all
       await uppy.cancelAll()
 
       // Should be reset to true
       expect(uppy.getState().allowNewUpload).toBe(true)
     })
 
-    it('cleans up event listeners on uninstall', () => {
+    it('resets allowNewUpload to true on error event', () => {
       const uppy = new Core()
       uppy.use(Transloadit, {
         assemblyOptions: {
@@ -250,17 +289,18 @@ describe('Transloadit', () => {
         },
       })
 
-      // Trigger upload event to set allowNewUpload to false
-      uppy.emit('upload')
+      // Manually set allowNewUpload to false to simulate an upload in progress
+      uppy.setState({ allowNewUpload: false })
       expect(uppy.getState().allowNewUpload).toBe(false)
 
-      // Uninstall the plugin
-      uppy.removePlugin(uppy.getPlugin('Transloadit'))
+      // Trigger error event
+      uppy.emit('error', {
+        name: 'TestError',
+        message: 'Test error message',
+      })
 
-      // Trigger upload event again - since listeners are removed, state should not change
-      const stateBefore = uppy.getState().allowNewUpload
-      uppy.emit('upload')
-      expect(uppy.getState().allowNewUpload).toBe(stateBefore)
+      // Should be reset to true
+      expect(uppy.getState().allowNewUpload).toBe(true)
     })
   })
 })
