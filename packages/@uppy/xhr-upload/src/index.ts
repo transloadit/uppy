@@ -15,12 +15,11 @@ import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
-  internalRateLimitedQueue,
   isNetworkError,
   type LocalUppyFile,
   NetworkError,
-  RateLimitedQueue,
   type RemoteUppyFile,
+  TaskQueue,
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
@@ -163,7 +162,7 @@ export default class XHRUpload<
 
   #getFetcher
 
-  requests: RateLimitedQueue
+  #queue: TaskQueue
 
   uploaderEvents: Record<string, EventManager<M, B> | null>
 
@@ -180,13 +179,7 @@ export default class XHRUpload<
 
     this.i18nInit()
 
-    // Simultaneous upload limiting is shared across all uploads with this plugin.
-    if (internalRateLimitedQueue in this.opts) {
-      // @ts-ignore untyped internal
-      this.requests = this.opts[internalRateLimitedQueue]
-    } else {
-      this.requests = new RateLimitedQueue(this.opts.limit)
-    }
+    this.#queue = new TaskQueue({ concurrency: this.opts.limit })
 
     if (this.opts.bundle && !this.opts.formData) {
       throw new Error(
@@ -388,35 +381,32 @@ export default class XHRUpload<
   async #uploadLocalFile(file: LocalUppyFile<M, B>) {
     const events = new EventManager(this.uppy)
     const controller = new AbortController()
-    const uppyFetch = this.requests.wrapPromiseFunction(async () => {
-      const opts = this.getOptions(file)
-      const fetch = this.#getFetcher([file])
-      const body = opts.formData
-        ? this.createFormDataUpload(file, opts)
-        : file.data
-      const endpoint =
-        typeof opts.endpoint === 'string'
-          ? opts.endpoint
-          : await opts.endpoint(file)
-      return fetch(endpoint, {
-        ...opts,
-        body,
-        signal: controller.signal,
-      })
-    })
 
     events.onFileRemove(file.id, () => controller.abort())
-    events.onCancelAll(file.id, () => {
-      controller.abort()
-    })
+    events.onCancelAll(file.id, () => controller.abort())
 
     try {
-      await uppyFetch()
+      await this.#queue.add(async (signal) => {
+        const opts = this.getOptions(file)
+        const fetch = this.#getFetcher([file])
+        const body = opts.formData
+          ? this.createFormDataUpload(file, opts)
+          : file.data
+        const endpoint =
+          typeof opts.endpoint === 'string'
+            ? opts.endpoint
+            : await opts.endpoint(file)
+        return fetch(endpoint, {
+          ...opts,
+          body,
+          signal: AbortSignal.any([signal, controller.signal]),
+        })
+      })
     } catch (error) {
-      // TODO: create formal error with name 'AbortError' (this comes from RateLimitedQueue)
-      if (error.message !== 'Cancelled') {
-        throw error
+      if (error.name === 'AbortError') {
+        return
       }
+      throw error
     } finally {
       events.remove()
     }
@@ -424,24 +414,6 @@ export default class XHRUpload<
 
   async #uploadBundle(files: LocalUppyFile<M, B>[]) {
     const controller = new AbortController()
-    const uppyFetch = this.requests.wrapPromiseFunction(async () => {
-      const optsFromState = this.uppy.getState().xhrUpload ?? {}
-      const fetch = this.#getFetcher(files)
-      const body = this.createBundledUpload(files, {
-        ...this.opts,
-        ...optsFromState,
-      })
-      const endpoint =
-        typeof this.opts.endpoint === 'string'
-          ? this.opts.endpoint
-          : await this.opts.endpoint(files)
-      return fetch(endpoint, {
-        // headers can't be a function with bundle: true
-        ...(this.opts as OptsWithHeaders<M, B>),
-        body,
-        signal: controller.signal,
-      })
-    })
 
     function abort() {
       controller.abort()
@@ -452,12 +424,29 @@ export default class XHRUpload<
     this.uppy.once('cancel-all', abort)
 
     try {
-      await uppyFetch()
+      await this.#queue.add(async (signal) => {
+        const optsFromState = this.uppy.getState().xhrUpload ?? {}
+        const fetch = this.#getFetcher(files)
+        const body = this.createBundledUpload(files, {
+          ...this.opts,
+          ...optsFromState,
+        })
+        const endpoint =
+          typeof this.opts.endpoint === 'string'
+            ? this.opts.endpoint
+            : await this.opts.endpoint(files)
+        return fetch(endpoint, {
+          // headers can't be a function with bundle: true
+          ...(this.opts as OptsWithHeaders<M, B>),
+          body,
+          signal: AbortSignal.any([signal, controller.signal]),
+        })
+      })
     } catch (error) {
-      // TODO: create formal error with name 'AbortError' (this comes from RateLimitedQueue)
-      if (error.message !== 'Cancelled') {
-        throw error
+      if (error.name === 'AbortError') {
+        return
       }
+      throw error
     } finally {
       this.uppy.off('cancel-all', abort)
     }
@@ -488,7 +477,7 @@ export default class XHRUpload<
     await Promise.allSettled(
       files.map((file) => {
         if (file.isRemote) {
-          const getQueue = () => this.requests
+          const getQueue = () => this.#queue
           const controller = new AbortController()
 
           const removedHandler = (removedFile: UppyFile<M, B>) => {
@@ -496,21 +485,15 @@ export default class XHRUpload<
           }
           this.uppy.on('file-removed', removedHandler)
 
-          const uploadPromise = this.uppy
+          return this.uppy
             .getRequestClientForFile<RequestClient<M, B>>(file)
             .uploadRemoteFile(file, this.#getCompanionClientArgs(file), {
               signal: controller.signal,
               getQueue,
             })
-
-          this.requests.wrapSyncFunction(
-            () => {
+            .finally(() => {
               this.uppy.off('file-removed', removedHandler)
-            },
-            { priority: -1 },
-          )()
-
-          return uploadPromise
+            })
         }
 
         return this.#uploadLocalFile(file)
@@ -524,10 +507,8 @@ export default class XHRUpload<
       return
     }
 
-    // No limit configured by the user, and no RateLimitedQueue passed in by a "parent" plugin
-    // (basically just AwsS3) using the internal symbol
-    // @ts-ignore untyped internal
-    if (this.opts.limit === 0 && !this.opts[internalRateLimitedQueue]) {
+    // No limit configured by the user
+    if (this.opts.limit === 0) {
       this.uppy.log(
         '[XHRUpload] When uploading multiple files at once, consider setting the `limit` option (to `10` for example), to limit the number of concurrent uploads, which helps prevent memory and network issues: https://uppy.io/docs/xhr-upload/#limit-0',
         'warning',
