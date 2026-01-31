@@ -133,6 +133,11 @@ interface ChunkState {
 /** Reason for pausing (not a real error) */
 const pausingUploadReason = Symbol('pausing upload, not an actual error')
 
+/** Type guard to check if an error is from pausing (not a real failure) */
+const isPauseError = (err: unknown): boolean =>
+  err instanceof Error &&
+  (err as { cause?: unknown }).cause === pausingUploadReason
+
 // ============================================================================
 // S3Uploader Class
 // ============================================================================
@@ -309,6 +314,7 @@ class S3Uploader<M extends Meta, B extends Body> {
         this.#uploadId,
         this.#key,
       )
+      // Sync local state with S3 - mark already-uploaded parts
       for (const part of existingParts) {
         const chunkIndex = part.partNumber - 1
         if (chunkIndex >= 0 && chunkIndex < this.#chunkState.length) {
@@ -316,6 +322,8 @@ class S3Uploader<M extends Meta, B extends Body> {
           this.#chunkState[chunkIndex].etag = part.etag
         }
       }
+      // Emit progress update to reflect already-uploaded parts
+      this.#onProgress()
       await this.#uploadRemainingParts()
     } catch (err) {
       this.#onError(err as Error)
@@ -332,10 +340,13 @@ class S3Uploader<M extends Meta, B extends Body> {
       this.#key,
       this.#data,
       this.#file.type || 'application/octet-stream',
+      (bytesUploaded: number) => {
+        this.#chunkState[0].uploaded = bytesUploaded
+        this.#onProgress()
+      },
+      signal,
     )
 
-    this.#chunkState[0].uploaded = this.#data.size
-    this.#onProgress()
     this.#onSuccess({
       location: `${this.#s3Client.endpoint}/${this.#key}`,
       key: this.#key,
@@ -373,12 +384,18 @@ class S3Uploader<M extends Meta, B extends Body> {
       const chunk = this.#chunks[i]
       const partNumber = i + 1
       const chunkData = this.#data.slice(chunk.start, chunk.end)
+      const chunkIndex = i // Capture for closure
 
       const part = await this.#s3Client.uploadPart(
         this.#key,
         this.#uploadId!,
         chunkData,
         partNumber,
+        (bytesUploaded: number) => {
+          this.#chunkState[chunkIndex].uploaded = bytesUploaded
+          this.#onProgress()
+        },
+        signal,
       )
 
       this.#chunkState[i].uploaded = chunk.size
@@ -422,23 +439,24 @@ class S3Uploader<M extends Meta, B extends Body> {
   }
 
   #onSuccess(result: UploadResult): void {
+    // Clean up event listeners to prevent memory leaks
+    this.#eventManager.remove()
     this.#options.onSuccess?.(result)
   }
 
   #onError(err: Error): void {
-    if ((err as any).cause === pausingUploadReason) return
+    if (isPauseError(err)) return
     // Also ignore abort signals from intentional cancellation
     if (err.name === 'AbortError') return
     // If we intentionally aborted, don't report any subsequent errors
     // (e.g., S3 returning 404 NoSuchUpload after we aborted the upload)
     if (this.#abortController.signal.aborted) return
-    if (this.#uploadId) {
-      this.#s3Client
-        .abortMultipartUpload(this.#key, this.#uploadId)
-        .catch((abortErr) => {
-          this.#options.log?.(abortErr, 'warning')
-        })
-    }
+
+    // NOTE: We intentionally do NOT abort the multipart upload on S3 here.
+    // This allows the user to retry and resume from where they left off.
+    // The multipart upload is only aborted when the user explicitly cancels
+    // (via the abort() method with abortOnS3: true).
+
     this.#options.onError?.(err)
   }
 }

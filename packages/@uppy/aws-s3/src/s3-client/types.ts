@@ -132,3 +132,14 @@ export interface XmlMap {
  * Use ArrayBuffer, Uint8Array, or Blob - Buffer is not available in browsers.
  */
 export type BinaryData = ArrayBuffer | Uint8Array | Blob
+
+/** Progress callback for upload operations */
+export type OnProgressFn = (bytesUploaded: number, bytesTotal: number) => void
+
+export interface PutObjectResult {
+  status: number
+  ok: boolean
+  headers: {
+    get(name: string): string | null
+  }
+}
