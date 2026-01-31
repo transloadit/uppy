@@ -298,14 +298,17 @@ class S3mini {
   ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
 
-    try {
+    const attemptUpload = async (): Promise<IT.PutObjectResult> => {
       const { url } = await this.signRequest({ method: 'PUT', key })
-      return await this._xhrUpload(url, data, onProgress, signal, fileType)
+      return this._xhrUpload(url, data, onProgress, signal, fileType)
+    }
+
+    try {
+      return await attemptUpload()
     } catch (err) {
       if (this._isExpiredTokenError(err)) {
         this.clearCachedCredentials()
-        const { url } = await this.signRequest({ method: 'PUT', key })
-        return this._xhrUpload(url, data, onProgress, signal, fileType)
+        return attemptUpload()
       }
       throw err
     }
@@ -358,7 +361,7 @@ class S3mini {
   ): Promise<IT.UploadPart> {
     this._validateUploadPartParams(key, uploadId, partNumber)
 
-    try {
+    const attemptUpload = async (): Promise<IT.UploadPart> => {
       const { url } = await this.signRequest({
         method: 'PUT',
         key,
@@ -372,22 +375,14 @@ class S3mini {
           ? U.sanitizeETag(result.headers.get('etag')!)
           : '',
       }
+    }
+
+    try {
+      return await attemptUpload()
     } catch (err) {
       if (this._isExpiredTokenError(err)) {
         this.clearCachedCredentials()
-        const { url } = await this.signRequest({
-          method: 'PUT',
-          key,
-          uploadId,
-          partNumber,
-        })
-        const result = await this._xhrUpload(url, data, onProgress, signal)
-        return {
-          partNumber,
-          etag: result.headers.get('etag')
-            ? U.sanitizeETag(result.headers.get('etag')!)
-            : '',
-        }
+        return attemptUpload()
       }
       throw err
     }
