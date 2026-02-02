@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write # Required for OIDC
+  contents: read
+
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
@@ -28,6 +32,7 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: lts/*
+          registry-url: "https://registry.npmjs.org"
 
       # Allow yarn to make changes during release
       - run: corepack yarn config set enableHardenedMode false
@@ -39,7 +44,7 @@ jobs:
       - name: Build
         run: corepack yarn build
 
-      - name: '@uppy/angular prepublish'
+      - name: "@uppy/angular prepublish"
         run: corepack yarn workspace @uppy/angular prepublishOnly
 
       - run: |
@@ -52,8 +57,8 @@ jobs:
         with:
           version: corepack yarn run version
           publish: corepack yarn run release
-          commit: '[ci] release'
-          title: '[ci] release'
+          commit: "[ci] release"
+          title: "[ci] release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -81,7 +86,6 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 
   # See also companion-deploy.yml
   docker:
