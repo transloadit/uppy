@@ -357,7 +357,7 @@ app.delete('/s3/multipart/:uploadId', (req, res, next) => {
 
 app.post('/s3/presign', async (req, res, next) => {
   try {
-    const { method, key, uploadId, partNumber } = req.body
+    const { method, key, uploadId, partNumber, contentType } = req.body
     const client = getS3Client()
 
     if (!method || !key) {
@@ -381,12 +381,14 @@ app.post('/s3/presign', async (req, res, next) => {
       command = new PutObjectCommand({
         Bucket: bucket,
         Key: key,
+        ContentType: contentType || 'application/octet-stream',
       })
     } else if (method === 'POST' && !uploadId) {
       // CreateMultipartUpload
       command = new CreateMultipartUploadCommand({
         Bucket: bucket,
         Key: key,
+        ContentType: contentType || 'application/octet-stream',
       })
     } else if (method === 'POST' && uploadId) {
       // CompleteMultipartUpload

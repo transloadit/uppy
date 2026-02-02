@@ -5,6 +5,7 @@ export type presignableRequest = {
   uploadId?: string
   partNumber?: number
   expiresIn?: number
+  contentType?: string
 }
 
 /** Response with the pre-signed URL */

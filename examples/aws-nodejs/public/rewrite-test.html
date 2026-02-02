@@ -100,7 +100,7 @@
             id: 'AwsS3-Sign',
             bucket: window.UPPY_S3_BUCKET,
             region: window.UPPY_S3_REGION || 'us-east-1',
-
+            shouldUseMultipart: true,
             // Sign requests via /s3/presign endpoint (returns presigned URLs)
             signRequest: async (request) => {
               const response = await fetch('/s3/presign', {
@@ -111,6 +111,7 @@
                   key: request.key,
                   uploadId: request.uploadId,
                   partNumber: request.partNumber,
+                  contentType: request.contentType,
                 }),
               })
               if (!response.ok) throw new Error('Failed to get presigned URL')
