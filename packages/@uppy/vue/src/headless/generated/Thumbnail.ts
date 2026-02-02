@@ -6,13 +6,13 @@ import {
   type ThumbnailProps,
 } from '@uppy/components'
 import { h as preactH, render as preactRender } from 'preact'
-import { shallowEqualObjects } from 'shallow-equal'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'
 
-export default defineComponent<Omit<ThumbnailProps, 'ctx'>>({
+export default defineComponent({
   name: 'Thumbnail',
-  setup(props, { attrs }) {
+  props: ['file', 'width', 'height', 'images'],
+  setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -20,7 +20,7 @@ export default defineComponent<Omit<ThumbnailProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactThumbnail, {
-            ...(attrs as ThumbnailProps),
+            ...props,
             ctx,
           } satisfies ThumbnailProps),
           containerRef.value,
@@ -38,11 +38,10 @@ export default defineComponent<Omit<ThumbnailProps, 'ctx'>>({
 
     watch(
       () => props,
-      (current, old) => {
-        if (!shallowEqualObjects(current, old)) {
-          renderThumbnail()
-        }
+      () => {
+        renderThumbnail()
       },
+      { deep: true },
     )
 
     return () => h('div', { ref: containerRef })

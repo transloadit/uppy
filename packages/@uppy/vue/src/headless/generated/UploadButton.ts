@@ -6,13 +6,13 @@ import {
   type UploadButtonProps,
 } from '@uppy/components'
 import { h as preactH, render as preactRender } from 'preact'
-import { shallowEqualObjects } from 'shallow-equal'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'
 
-export default defineComponent<Omit<UploadButtonProps, 'ctx'>>({
+export default defineComponent({
   name: 'UploadButton',
-  setup(props, { attrs }) {
+  props: [],
+  setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -20,7 +20,7 @@ export default defineComponent<Omit<UploadButtonProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactUploadButton, {
-            ...(attrs as UploadButtonProps),
+            ...props,
             ctx,
           } satisfies UploadButtonProps),
           containerRef.value,
@@ -38,11 +38,10 @@ export default defineComponent<Omit<UploadButtonProps, 'ctx'>>({
 
     watch(
       () => props,
-      (current, old) => {
-        if (!shallowEqualObjects(current, old)) {
-          renderUploadButton()
-        }
+      () => {
+        renderUploadButton()
       },
+      { deep: true },
     )
 
     return () => h('div', { ref: containerRef })

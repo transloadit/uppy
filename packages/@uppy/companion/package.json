@@ -59,7 +59,7 @@
     "ioredis": "^5.3.2",
     "ipaddr.js": "^2.0.1",
     "jsonwebtoken": "9.0.2",
-    "lodash": "^4.17.21",
+    "lodash": "^4.17.23",
     "mime-types": "2.1.35",
     "moment": "^2.29.2",
     "moment-timezone": "^0.5.31",

@@ -7,7 +7,6 @@ on:
   push:
     branches: ['main']
     paths:
-      - yarn.lock
       - 'packages/@uppy/companion/**'
       - '.github/workflows/companion-deploy.yml'
 
@@ -33,7 +32,7 @@ jobs:
           /tmp/companion-${{ github.sha }}.tar.gz
       - name: Upload artifact
         if: success()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: companion-${{ github.sha }}.tar.gz
           path: /tmp/companion-${{ github.sha }}.tar.gz

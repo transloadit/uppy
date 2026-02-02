@@ -42,10 +42,10 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@transloadit/types": "^4.1.3",
     "@uppy/tus": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "component-emitter": "^2.0.0",
-    "transloadit": "^4.0.2"
+    "component-emitter": "^2.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

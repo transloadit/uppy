@@ -14,10 +14,11 @@
     "build:css": {
       "inputs": [
         "src/input.css",
+        "src/image-editor.css",
         "src/**/*.{js,ts,jsx,tsx}",
         "tailwind.config.js"
       ],
-      "outputs": ["dist/styles.css"]
+      "outputs": ["dist/styles.css", "dist/image-editor.css"]
     }
   }
 }

@@ -17,6 +17,7 @@
       "svelte": "./dist/index.js"
     },
     "./css/style.css": "./dist/styles.css",
+    "./css/image-editor.css": "./dist/image-editor.css",
     "./dashboard": {
       "types": "./dist/components/Dashboard.svelte.d.ts",
       "svelte": "./dist/components/Dashboard.svelte"
@@ -47,17 +48,17 @@
   ],
   "scripts": {
     "build": "svelte-kit sync && svelte-package",
-    "build:css": "cp ../components/dist/styles.css dist/styles.css",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
     "prepublishOnly": "yarn run package",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.26.5"
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.0",
-    "@sveltejs/kit": "^2.20.7",
+    "@sveltejs/kit": "^2.49.5",
     "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@uppy/core": "workspace:^",

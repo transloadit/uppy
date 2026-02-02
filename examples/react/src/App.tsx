@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
-import Uppy from '@uppy/core'
+import Uppy, { type UppyFile } from '@uppy/core'
+import UppyImageEditor from '@uppy/image-editor'
 import {
   Dropzone,
   FilesGrid,
@@ -13,12 +14,14 @@ import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
 import { useRef, useState } from 'react'
 import CustomDropzone from './CustomDropzone'
+import ImageEditor from './ImageEditor'
 import { RemoteSource } from './RemoteSource'
 import ScreenCapture from './ScreenCapture'
 import Webcam from './Webcam'
 
 import './app.css'
 import '@uppy/react/css/style.css'
+import '@uppy/react/css/image-editor.css'
 
 function App() {
   const [uppy] = useState(() =>
@@ -28,21 +31,34 @@ function App() {
       })
       .use(UppyWebcam)
       .use(UppyScreenCapture)
+      .use(UppyImageEditor)
       .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' }),
   )
 
   const dialogRef = useRef<HTMLDialogElement>(null)
   const [modalPlugin, setModalPlugin] = useState<
-    'webcam' | 'dropbox' | 'screen-capture' | null
+    'webcam' | 'dropbox' | 'screen-capture' | 'image-editor' | null
   >(null)
+  const [selectedFile, setSelectedFile] = useState<UppyFile<any, any> | null>(
+    null,
+  )
 
   function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
     setModalPlugin(plugin)
     dialogRef.current?.showModal()
   }
 
+  function openImageEditorModal(file: UppyFile<any, any>) {
+    // https://github.com/transloadit/uppy/issues/6148
+    if (!file.type.startsWith('image/')) return
+    setSelectedFile(file)
+    setModalPlugin('image-editor')
+    dialogRef.current?.showModal()
+  }
+
   function closeModal() {
     setModalPlugin(null)
+    setSelectedFile(null)
     dialogRef.current?.close()
   }
 
@@ -65,6 +81,10 @@ function App() {
                 return <RemoteSource id="Dropbox" close={() => closeModal()} />
               case 'screen-capture':
                 return <ScreenCapture close={() => closeModal()} />
+              case 'image-editor':
+                return selectedFile ? (
+                  <ImageEditor file={selectedFile} close={() => closeModal()} />
+                ) : null
               default:
                 return null
             }
@@ -74,13 +94,13 @@ function App() {
         <article>
           <h2 className="text-2xl my-4">With list</h2>
           <Dropzone />
-          <FilesList />
+          <FilesList editFile={openImageEditorModal} />
         </article>
 
         <article>
           <h2 className="text-2xl my-4">With grid</h2>
           <Dropzone />
-          <FilesGrid columns={2} />
+          <FilesGrid columns={2} editFile={openImageEditorModal} />
         </article>
 
         <article>

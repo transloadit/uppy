@@ -6,13 +6,13 @@ import {
   Dropzone as PreactDropzone,
 } from '@uppy/components'
 import { h as preactH, render as preactRender } from 'preact'
-import { shallowEqualObjects } from 'shallow-equal'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'
 
-export default defineComponent<Omit<DropzoneProps, 'ctx'>>({
+export default defineComponent({
   name: 'Dropzone',
-  setup(props, { attrs }) {
+  props: ['width', 'height', 'note', 'noClick'],
+  setup(props) {
     const containerRef = ref<HTMLElement | null>(null)
     const ctx = useUppyContext()
 
@@ -20,7 +20,7 @@ export default defineComponent<Omit<DropzoneProps, 'ctx'>>({
       if (containerRef.value) {
         preactRender(
           preactH(PreactDropzone, {
-            ...(attrs as DropzoneProps),
+            ...props,
             ctx,
           } satisfies DropzoneProps),
           containerRef.value,
@@ -38,11 +38,10 @@ export default defineComponent<Omit<DropzoneProps, 'ctx'>>({
 
     watch(
       () => props,
-      (current, old) => {
-        if (!shallowEqualObjects(current, old)) {
-          renderDropzone()
-        }
+      () => {
+        renderDropzone()
       },
+      { deep: true },
     )
 
     return () => h('div', { ref: containerRef })

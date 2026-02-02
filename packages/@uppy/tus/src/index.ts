@@ -251,7 +251,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
       uploadOptions.onBeforeRequest = async (req) => {
         const xhr = req.getUnderlyingObject()
-        xhr.withCredentials = !!opts.withCredentials
+        if (xhr) {
+          xhr.withCredentials = !!opts.withCredentials
+        }
 
         let userProvidedPromise: Promise<void> | void
         if (typeof onBeforeRequest === 'function') {
