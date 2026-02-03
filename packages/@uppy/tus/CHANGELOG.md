@@ -1,11 +1,5 @@
 # @uppy/tus
 
-## 5.1.1
-
-### Patch Changes
-
-- c0a8776: Fix Node.js support by conditionally setting a property which does not exist in Node.js instead of crashing.
-
 ## 5.1.0
 
 ### Minor Changes

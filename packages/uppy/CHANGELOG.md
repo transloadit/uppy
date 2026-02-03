@@ -1,18 +1,5 @@
 # uppy
 
-## 5.2.3
-
-### Patch Changes
-
-- Updated dependencies [c0a8776]
-- Updated dependencies [c0a8776]
-- Updated dependencies [c0a8776]
-- Updated dependencies [c0a8776]
-  - @uppy/locales@5.1.1
-  - @uppy/tus@5.1.1
-  - @uppy/transloadit@5.5.0
-  - @uppy/image-editor@4.2.0
-
 ## 5.2.2
 
 ### Patch Changes
