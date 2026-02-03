@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css && postcss ./src/image-editor.css -u cssnano -o ./dist/image-editor.css",
+    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css && postcss ../image-editor/src/cropper.scss -u cssnano -o ./dist/image-editor.css",
     "migrate": "node migrate.mjs",
     "typecheck": "tsc --build"
   },
