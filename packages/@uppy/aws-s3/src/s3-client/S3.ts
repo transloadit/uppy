@@ -236,6 +236,7 @@ class S3mini {
       key,
       uploadId,
       partNumber,
+      contentType,
     })
 
     // Build request headers
