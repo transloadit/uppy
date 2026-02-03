@@ -8,6 +8,7 @@ on:
 permissions:
   id-token: write # Required for OIDC
   contents: write
+  pull-requests: write
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -47,10 +48,6 @@ jobs:
       - name: "@uppy/angular prepublish"
         run: corepack yarn workspace @uppy/angular prepublishOnly
 
-      - run: |
-          echo '' >> .yarnrc.yml
-          echo 'npmAuthToken: "${NPM_TOKEN}"' >> .yarnrc.yml
-
       - name: Create Release Pull Request or Publish
         id: changesets
         uses: changesets/action@v1
@@ -61,10 +58,6 @@ jobs:
           title: "[ci] release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Remove npmAuthToken from yarnrc
-        run: |
-          sed -i '/npmAuthToken:/d' .yarnrc.yml
 
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
