@@ -33,8 +33,8 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
-    "preact": "^10.5.13"
+    "lodash": "^4.17.23",
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.199",

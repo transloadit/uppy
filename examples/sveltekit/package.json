@@ -23,7 +23,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^4.0.0",
-    "@sveltejs/kit": "^2.16.0",
+    "@sveltejs/kit": "^2.49.5",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@tailwindcss/vite": "^4.0.0",
     "@vitest/browser": "^3.2.4",
