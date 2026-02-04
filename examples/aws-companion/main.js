@@ -3,6 +3,7 @@ import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import GoogleDrive from '@uppy/google-drive'
 import Webcam from '@uppy/webcam'
+import Dropbox from '@uppy/dropbox'
 
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
@@ -23,5 +24,5 @@ uppy.use(Dashboard, {
   plugins: ['GoogleDrive', 'Webcam'],
 })
 uppy.use(AwsS3, {
-  companionUrl: 'http://localhost:3020',
+  endpoint: 'http://localhost:3020',
 })
