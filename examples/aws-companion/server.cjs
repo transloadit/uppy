@@ -10,7 +10,7 @@ const DATA_DIR = path.join(__dirname, 'tmp')
 
 app.use(
   require('cors')({
-    origin: "http://localhost:5173",
+    origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
   }),
