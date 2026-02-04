@@ -83,7 +83,6 @@ export { default as remoteFileObjToLocal } from './remoteFileObjToLocal.js'
 export { default as secondsToTime } from './secondsToTime.js'
 export {
   type AbortablePromise as TaskQueueAbortablePromise,
-  type AddOptions as TaskQueueAddOptions,
   TaskQueue,
   type TaskQueueOptions,
 } from './TaskQueue.js'

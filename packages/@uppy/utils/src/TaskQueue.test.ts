@@ -3,7 +3,7 @@ import delay from './delay.js'
 import { TaskQueue } from './TaskQueue.js'
 
 describe('TaskQueue', () => {
-  it('runs queued tasks by priority after resume', async () => {
+  it('runs queued tasks in FIFO order after resume', async () => {
     const queue = new TaskQueue({ concurrency: 1 })
     queue.pause()
 
@@ -14,16 +14,16 @@ describe('TaskQueue', () => {
       return label
     }
 
-    const low = queue.add(makeTask('low'), { priority: 1 })
-    const high = queue.add(makeTask('high'), { priority: 10 })
-    const mid = queue.add(makeTask('mid'), { priority: 5 })
+    const first = queue.add(makeTask('first'))
+    const second = queue.add(makeTask('second'))
+    const third = queue.add(makeTask('third'))
 
     expect(queue.pending).toBe(3)
 
     queue.resume()
-    await Promise.all([low, high, mid])
+    await Promise.all([first, second, third])
 
-    expect(order).toEqual(['high', 'mid', 'low'])
+    expect(order).toEqual(['first', 'second', 'third'])
   })
 
   it('aborts a queued task without executing it', async () => {
@@ -94,24 +94,21 @@ describe('TaskQueue', () => {
       return label
     }
 
-    const wrapped = queue.wrapPromiseFunction(
-      async (value: string) => {
-        order.push(`wrapped:${value}`)
-        return value.toUpperCase()
-      },
-      { priority: 5 },
-    )
+    const wrapped = queue.wrapPromiseFunction(async (value: string) => {
+      order.push(`wrapped:${value}`)
+      return value.toUpperCase()
+    })
 
-    const high = queue.add(makeTask('high'), { priority: 10 })
+    const first = queue.add(makeTask('first'))
     const wrappedPromise = wrapped('hello')
 
     expect(typeof wrappedPromise.abort).toBe('function')
 
     queue.resume()
 
-    await expect(high).resolves.toBe('high')
+    await expect(first).resolves.toBe('first')
     await expect(wrappedPromise).resolves.toBe('HELLO')
-    expect(order).toEqual(['high', 'wrapped:hello'])
+    expect(order).toEqual(['first', 'wrapped:hello'])
   })
 
   it('updates concurrency via setter and starts additional tasks', async () => {

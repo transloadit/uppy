@@ -16,126 +16,15 @@ interface QueuedTask<T> {
   controller: AbortController
 }
 
-interface HeapItem<T> {
-  task: QueuedTask<T>
-  priority: number
-}
-
-/**
- * Binary max-heap for priority queue ordering.
- * Higher priority values are dequeued first.
- */
-class MaxHeap<T> {
-  #items: HeapItem<T>[] = []
-
-  get size(): number {
-    return this.#items.length
-  }
-
-  push(task: QueuedTask<T>, priority: number): void {
-    this.#items.push({ task, priority })
-    this.#bubbleUp(this.#items.length - 1)
-  }
-
-  pop(): QueuedTask<T> | undefined {
-    if (this.#items.length === 0) return undefined
-
-    const max = this.#items[0]
-    const last = this.#items.pop()!
-
-    if (this.#items.length > 0) {
-      this.#items[0] = last
-      this.#bubbleDown(0)
-    }
-
-    return max.task
-  }
-
-  /**
-   * Remove a specific task from the heap.
-   * O(n) but necessary for abort support.
-   */
-  remove(task: QueuedTask<T>): boolean {
-    const index = this.#items.findIndex((item) => item.task === task)
-    if (index === -1) return false
-
-    const last = this.#items.pop()!
-    if (index < this.#items.length) {
-      this.#items[index] = last
-      // Re-heapify: could go up or down depending on priority
-      this.#bubbleUp(index)
-      this.#bubbleDown(index)
-    }
-
-    return true
-  }
-
-  clear(): QueuedTask<T>[] {
-    const tasks = this.#items.map((item) => item.task)
-    this.#items = []
-    return tasks
-  }
-
-  #bubbleUp(index: number): void {
-    while (index > 0) {
-      const parentIndex = Math.floor((index - 1) / 2)
-      if (this.#items[parentIndex].priority >= this.#items[index].priority) {
-        break
-      }
-      this.#swap(index, parentIndex)
-      index = parentIndex
-    }
-  }
-
-  #bubbleDown(index: number): void {
-    const length = this.#items.length
-
-    while (true) {
-      const leftChild = 2 * index + 1
-      const rightChild = 2 * index + 2
-      let largest = index
-
-      if (
-        leftChild < length &&
-        this.#items[leftChild].priority > this.#items[largest].priority
-      ) {
-        largest = leftChild
-      }
-
-      if (
-        rightChild < length &&
-        this.#items[rightChild].priority > this.#items[largest].priority
-      ) {
-        largest = rightChild
-      }
-
-      if (largest === index) break
-
-      this.#swap(index, largest)
-      index = largest
-    }
-  }
-
-  #swap(i: number, j: number): void {
-    const temp = this.#items[i]
-    this.#items[i] = this.#items[j]
-    this.#items[j] = temp
-  }
-}
-
 export interface TaskQueueOptions {
   concurrency?: number
 }
 
-export interface AddOptions {
-  priority?: number
-}
-
 /**
- * A concurrent task queue with priority ordering.
+ * A concurrent task queue with FIFO ordering.
  *
  * Tasks are functions that receive an AbortSignal and return a Promise.
- * The queue manages concurrency and priority (higher priority runs first).
+ * The queue manages concurrency and processes tasks in insertion order.
  *
  * @example
  * ```ts
@@ -151,7 +40,7 @@ export interface AddOptions {
  * ```
  */
 export class TaskQueue {
-  #heap = new MaxHeap<unknown>()
+  #queue: QueuedTask<unknown>[] = []
   #running = 0
   #concurrency: number
   #paused = false
@@ -166,15 +55,10 @@ export class TaskQueue {
    * Add a task to the queue.
    *
    * @param task - Function receiving AbortSignal, returns Promise
-   * @param options - Optional priority (higher = more urgent, default 0)
    * @returns AbortablePromise that resolves with task result
    */
-  add<T>(
-    task: (signal: AbortSignal) => Promise<T>,
-    options?: AddOptions,
-  ): AbortablePromise<T> {
+  add<T>(task: (signal: AbortSignal) => Promise<T>): AbortablePromise<T> {
     const controller = new AbortController()
-    const priority = options?.priority ?? 0
 
     let resolve!: (value: T) => void
     let reject!: (reason: unknown) => void
@@ -195,7 +79,9 @@ export class TaskQueue {
     controller.signal.addEventListener(
       'abort',
       () => {
-        if (this.#heap.remove(queuedTask as QueuedTask<unknown>)) {
+        const index = this.#queue.indexOf(queuedTask as QueuedTask<unknown>)
+        if (index !== -1) {
+          this.#queue.splice(index, 1)
           reject(
             controller.signal.reason ??
               new DOMException('Aborted', 'AbortError'),
@@ -226,7 +112,7 @@ export class TaskQueue {
     if (!this.#paused && this.#running < this.#concurrency) {
       this.#execute(queuedTask)
     } else {
-      this.#heap.push(queuedTask as QueuedTask<unknown>, priority)
+      this.#queue.push(queuedTask as QueuedTask<unknown>)
     }
 
     return promise
@@ -274,9 +160,8 @@ export class TaskQueue {
     queueMicrotask(() => {
       if (this.#paused || this.#running >= this.#concurrency) return
 
-      while (true) {
-        const next = this.#heap.pop()
-        if (!next) return
+      while (this.#queue.length > 0) {
+        const next = this.#queue.shift()!
         if (next.controller.signal.aborted) continue
         this.#execute(next)
         return
@@ -310,7 +195,7 @@ export class TaskQueue {
    * @param reason - Optional reason for rejection (defaults to AbortError)
    */
   clear(reason?: unknown): void {
-    const tasks = this.#heap.clear()
+    const tasks = this.#queue.splice(0)
     const error = reason ?? new DOMException('Cleared', 'AbortError')
     for (const task of tasks) {
       task.controller.abort(error)
@@ -335,7 +220,7 @@ export class TaskQueue {
   }
 
   get pending(): number {
-    return this.#heap.size
+    return this.#queue.length
   }
 
   get running(): number {
@@ -356,7 +241,6 @@ export class TaskQueue {
    */
   wrapPromiseFunction<T extends (...args: any[]) => Promise<any>>(
     fn: T,
-    options?: AddOptions,
   ): (...args: Parameters<T>) => AbortablePromise<Awaited<ReturnType<T>>> {
     return (...args: Parameters<T>) => {
       return this.add((signal) => {
@@ -364,7 +248,7 @@ export class TaskQueue {
         // caller is responsible for using signal if needed
         void signal
         return fn(...args)
-      }, options)
+      })
     }
   }
 }
