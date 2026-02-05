@@ -9519,9 +9519,13 @@ __metadata:
   dependencies:
     "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@uppy/dashboard": "workspace:^"
     "@uppy/utils": "workspace:^"
+    "@vitest/browser": "npm:^3.2.4"
     jsdom: "npm:^26.1.0"
+    msw: "npm:^2.10.4"
     nock: "npm:^13.1.0"
+    playwright: "npm:1.57.0"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.2.4"
   peerDependencies:
