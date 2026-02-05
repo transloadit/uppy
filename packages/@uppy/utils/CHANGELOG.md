@@ -1,5 +1,11 @@
 # @uppy/utils
 
+## 7.2.0
+
+### Minor Changes
+
+- 6b1abaa: Introduce modern, minimal TaskQueue to replace RateLimitedQueue
+
 ## 7.1.5
 
 ### Patch Changes
