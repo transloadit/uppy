@@ -236,4 +236,19 @@ describe('TaskQueue', () => {
     await started2.promise
     await expect(second).resolves.toBe('second')
   })
+
+  it('continues processing after a task throws synchronously', async () => {
+    const queue = new TaskQueue({ concurrency: 1 })
+    const reason = new Error('sync throw')
+
+    const first = queue.add(() => {
+      throw reason
+    })
+    const second = queue.add(async () => 'second')
+
+    await expect(first).rejects.toBe(reason)
+    await expect(second).resolves.toBe('second')
+    expect(queue.running).toBe(0)
+    expect(queue.pending).toBe(0)
+  })
 })

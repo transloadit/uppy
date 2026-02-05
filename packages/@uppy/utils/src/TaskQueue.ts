@@ -132,8 +132,14 @@ export class TaskQueue {
       return
     }
 
-    task
-      .run()
+    let runPromise: Promise<T>
+    try {
+      runPromise = task.run()
+    } catch (error) {
+      runPromise = Promise.reject(error)
+    }
+
+    runPromise
       .then(
         (result) => {
           if (task.controller.signal.aborted) {
