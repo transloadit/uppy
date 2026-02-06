@@ -71,7 +71,10 @@ export interface AwsS3Options<M extends Meta, B extends Body>
   /**
    * Maximum number of files uploading concurrently.
    * Each file uploads its parts sequentially.
-   * Default: 6
+   *
+   * Default: 6 — chosen to match the browser's HTTP/1.1 per-origin connection
+   * limit. Most browsers allow 6 concurrent connections per host, so this
+   * prevents queueing at the browser level while maximizing throughput.
    */
   limit?: number
 
@@ -97,6 +100,7 @@ const MAX_PARTS = 10000
 const defaultOptions = {
   shouldUseMultipart: (file: UppyFile<any, any>) => (file.size || 0) > 100 * MB,
   allowedMetaFields: true,
+  // 6 matches browser HTTP/1.1 per-origin connection limit
   limit: 6,
 } satisfies Partial<AwsS3Options<any, any>>
 
