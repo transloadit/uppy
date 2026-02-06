@@ -447,7 +447,13 @@ class S3Uploader<M extends Meta, B extends Body> {
   }
 
   #onSuccess(result: UploadResult): void {
-    // Clean up event listeners to prevent memory leaks
+    // If the upload was aborted (file removed mid-upload), the network request
+    // may still complete successfully. Don't emit success in this case since
+    // the file no longer exists in Uppy's state.
+    if (this.#abortController.signal.aborted) {
+      this.#eventManager.remove()
+      return
+    }
     this.#eventManager.remove()
     this.#options.onSuccess?.(result)
   }
@@ -621,7 +627,17 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           new Error('Remote file uploads not yet supported'),
         )
       }
-      return this.#queue.add(async () => this.#uploadLocalFile(file))
+      return this.#queue.add(async () => {
+        // File may have been removed while waiting in the queue.
+        // Unlike actively uploading files, queued files don't have an S3Uploader
+        // instance yet, so there's no event listener to catch the removal.
+        // Re-fetch the file to ensure it still exists before starting upload.
+        const currentFile = this.uppy.getFile(file.id)
+        if (!currentFile) {
+          return
+        }
+        return this.#uploadLocalFile(currentFile)
+      })
     })
 
     await Promise.allSettled(promises)
