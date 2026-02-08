@@ -7,9 +7,9 @@ import {
 } from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/utils'
 import {
-  AbortController,
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
+  TaskQueue,
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import S3mini from './s3-client/S3.js'
@@ -69,6 +69,16 @@ export interface AwsS3Options<M extends Meta, B extends Body>
   allowedMetaFields?: string[] | boolean
 
   /**
+   * Maximum number of files uploading concurrently.
+   * Each file uploads its parts sequentially.
+   *
+   * Default: 6 — chosen to match the browser's HTTP/1.1 per-origin connection
+   * limit. Most browsers allow 6 concurrent connections per host, so this
+   * prevents queueing at the browser level while maximizing throughput.
+   */
+  limit?: number
+
+  /**
    * Custom function to generate the S3 object key.
    * Default: `{randomId}-{filename}`
    */
@@ -90,6 +100,8 @@ const MAX_PARTS = 10000
 const defaultOptions = {
   shouldUseMultipart: (file: UppyFile<any, any>) => (file.size || 0) > 100 * MB,
   allowedMetaFields: true,
+  // 6 matches browser HTTP/1.1 per-origin connection limit
+  limit: 6,
 } satisfies Partial<AwsS3Options<any, any>>
 
 // ============================================================================
@@ -439,7 +451,13 @@ class S3Uploader<M extends Meta, B extends Body> {
   }
 
   #onSuccess(result: UploadResult): void {
-    // Clean up event listeners to prevent memory leaks
+    // If the upload was aborted (file removed mid-upload), the network request
+    // may still complete successfully. Don't emit success in this case since
+    // the file no longer exists in Uppy's state.
+    if (this.#abortController.signal.aborted) {
+      this.#eventManager.remove()
+      return
+    }
     this.#eventManager.remove()
     this.#options.onSuccess?.(result)
   }
@@ -473,6 +491,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3mini
+  #queue!: TaskQueue
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -484,14 +503,16 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   install(): void {
     this.#setResumableUploadsCapability(true)
     this.#initS3Client()
+    this.#queue = new TaskQueue({ concurrency: this.opts.limit })
     this.uppy.addUploader(this.#upload)
-    this.uppy.on('cancel-all', this.#resetResumableCapability)
+    this.uppy.on('cancel-all', this.#handleCancelAll)
   }
 
   uninstall(): void {
     this.#setResumableUploadsCapability(false)
     this.uppy.removeUploader(this.#upload)
-    this.uppy.off('cancel-all', this.#resetResumableCapability)
+    this.uppy.off('cancel-all', this.#handleCancelAll)
+    this.#queue.clear()
     // Abort and clean up any in-flight uploads
     for (const fileId of Object.keys(this.#uploaders)) {
       const uploader = this.#uploaders[fileId]
@@ -515,8 +536,9 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     })
   }
 
-  #resetResumableCapability = (): void => {
+  #handleCancelAll = (): void => {
     this.#setResumableUploadsCapability(true)
+    this.#queue.clear()
   }
 
   // --------------------------------------------------------------------------
@@ -609,7 +631,17 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           new Error('Remote file uploads not yet supported'),
         )
       }
-      return this.#uploadLocalFile(file)
+      return this.#queue.add(async () => {
+        // File may have been removed while waiting in the queue.
+        // Unlike actively uploading files, queued files don't have an S3Uploader
+        // instance yet, so there's no event listener to catch the removal.
+        // Re-fetch the file to ensure it still exists before starting upload.
+        const currentFile = this.uppy.getFile(file.id)
+        if (!currentFile) {
+          return
+        }
+        return this.#uploadLocalFile(currentFile)
+      })
     })
 
     await Promise.allSettled(promises)
