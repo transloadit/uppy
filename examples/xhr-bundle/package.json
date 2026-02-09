@@ -6,7 +6,7 @@
     "@uppy/dashboard": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
     "cors": "^2.8.5",
-    "express": "^4.22.0",
+    "express": "^5.2.1",
     "multer": "^2.0.2"
   },
   "devDependencies": {

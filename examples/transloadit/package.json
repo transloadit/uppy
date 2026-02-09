@@ -15,7 +15,7 @@
     "@uppy/remote-sources": "workspace:*",
     "@uppy/transloadit": "workspace:*",
     "@uppy/webcam": "workspace:*",
-    "express": "^4.22.0",
+    "express": "^5.2.1",
     "he": "^1.2.0"
   },
   "private": true,
