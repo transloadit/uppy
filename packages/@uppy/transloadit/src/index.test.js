@@ -5,58 +5,6 @@ import { describe, expect, it, vi } from 'vitest'
 import Transloadit from './index.ts'
 import 'whatwg-fetch'
 
-vi.mock('@uppy/tus', async () => {
-  const { BasePlugin } = await import('@uppy/core')
-
-  class Tus extends BasePlugin {
-    static VERSION = '0.0.0-test'
-
-    constructor(uppy, opts) {
-      super(uppy, opts)
-      this.type = 'uploader'
-      this.id = this.opts.id || 'Tus'
-      this.#handleUpload = this.#handleUpload.bind(this)
-    }
-
-    #handleUpload = async (fileIDs) => {
-      const files = this.uppy.getFilesByIds(fileIDs)
-      this.uppy.emit('upload-start', files)
-
-      await new Promise((resolve) => setTimeout(resolve, 150))
-
-      files.forEach((file) => {
-        this.uppy.emit('upload-success', this.uppy.getFile(file.id), {
-          uploadURL: `https://localhost/resumable/files/${file.id}`,
-          status: 200,
-          body: {},
-        })
-      })
-    }
-
-    install() {
-      this.uppy.setState({
-        capabilities: {
-          ...this.uppy.getState().capabilities,
-          resumableUploads: true,
-        },
-      })
-      this.uppy.addUploader(this.#handleUpload)
-    }
-
-    uninstall() {
-      this.uppy.setState({
-        capabilities: {
-          ...this.uppy.getState().capabilities,
-          resumableUploads: false,
-        },
-      })
-      this.uppy.removeUploader(this.#handleUpload)
-    }
-  }
-
-  return { default: Tus }
-})
-
 // Mock EventSource for testing
 global.EventSource = vi.fn(() => ({
   addEventListener: vi.fn(),
@@ -137,7 +85,78 @@ describe('Transloadit', () => {
         'https://api2.transloadit.com/assemblies/test-assembly-id',
     }
 
+    const tusUploads = new Map()
+    let uploadIndex = 0
+    const tusBaseUrl = 'http://localhost/resumable/files/'
+
     const server = setupServer(
+      http.options('http://localhost/resumable/files*', () => {
+        return new HttpResponse(null, {
+          status: 204,
+          headers: {
+            'Tus-Resumable': '1.0.0',
+            'Tus-Version': '1.0.0',
+            'Tus-Extension': 'creation,creation-defer-length',
+          },
+        })
+      }),
+      http.post('http://localhost/resumable/files*', ({ request }) => {
+        const uploadLengthHeader = request.headers.get('upload-length')
+        const uploadLength = uploadLengthHeader ? Number(uploadLengthHeader) : 0
+        const uploadId = `test-upload-${uploadIndex++}`
+        tusUploads.set(uploadId, {
+          length: Number.isNaN(uploadLength) ? 0 : uploadLength,
+          offset: 0,
+        })
+
+        return new HttpResponse(null, {
+          status: 201,
+          headers: {
+            Location: `${tusBaseUrl}${uploadId}`,
+            'Upload-Offset': '0',
+            'Tus-Resumable': '1.0.0',
+          },
+        })
+      }),
+      http.head('http://localhost/resumable/files/:uploadId', ({ params }) => {
+        const upload = tusUploads.get(params.uploadId)
+        if (!upload) {
+          return new HttpResponse(null, { status: 404 })
+        }
+        return new HttpResponse(null, {
+          status: 200,
+          headers: {
+            'Upload-Offset': String(upload.offset),
+            'Upload-Length': String(upload.length),
+            'Tus-Resumable': '1.0.0',
+          },
+        })
+      }),
+      http.patch(
+        'http://localhost/resumable/files/:uploadId',
+        async ({ request, params }) => {
+          const upload = tusUploads.get(params.uploadId)
+          if (!upload) {
+            return new HttpResponse(null, { status: 404 })
+          }
+          if (upload.offset === 0) {
+            await new Promise((resolve) => setTimeout(resolve, 200))
+          }
+          const body = await request.arrayBuffer()
+          const offsetHeader = request.headers.get('upload-offset')
+          const baseOffset = offsetHeader ? Number(offsetHeader) : upload.offset
+          const nextOffset = baseOffset + body.byteLength
+          upload.offset = nextOffset
+
+          return new HttpResponse(null, {
+            status: 204,
+            headers: {
+              'Upload-Offset': String(nextOffset),
+              'Tus-Resumable': '1.0.0',
+            },
+          })
+        },
+      ),
       http.post('https://api2.transloadit.com/assemblies', ({ request }) => {
         return HttpResponse.json({
           ...assemblyStatusBase,
@@ -173,12 +192,16 @@ describe('Transloadit', () => {
     uppy.addFile({
       source: 'test',
       name: 'cat.jpg',
-      data: Buffer.from('test file content'),
+      data: new File([new Uint8Array([1, 2, 3, 4, 5])], 'cat.jpg', {
+        type: 'image/jpeg',
+      }),
     })
     uppy.addFile({
       source: 'test',
       name: 'traffic.jpg',
-      data: Buffer.from('test file content 2'),
+      data: new File([new Uint8Array([6, 7, 8, 9, 10, 11])], 'traffic.jpg', {
+        type: 'image/jpeg',
+      }),
     })
 
     // Initially should be true
