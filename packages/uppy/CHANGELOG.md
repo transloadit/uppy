@@ -1,5 +1,18 @@
 # uppy
 
+## 5.2.3
+
+### Patch Changes
+
+- Updated dependencies [37f69d0]
+- Updated dependencies [37f69d0]
+- Updated dependencies [37f69d0]
+- Updated dependencies [37f69d0]
+  - @uppy/locales@5.1.1
+  - @uppy/tus@5.1.1
+  - @uppy/transloadit@5.5.0
+  - @uppy/image-editor@4.2.0
+
 ## 5.2.2
 
 ### Patch Changes

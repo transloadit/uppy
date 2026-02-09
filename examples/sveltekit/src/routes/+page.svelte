@@ -1,5 +1,6 @@
 <script lang="ts">
-import Uppy from '@uppy/core'
+import Uppy, { type UppyFile } from '@uppy/core'
+import UppyImageEditor from '@uppy/image-editor'
 import UppyRemoteSources from '@uppy/remote-sources'
 import UppyScreenCapture from '@uppy/screen-capture'
 import {
@@ -12,8 +13,10 @@ import {
 import Tus from '@uppy/tus'
 import UppyWebcam from '@uppy/webcam'
 import '@uppy/svelte/css/style.css'
+import '@uppy/svelte/css/image-editor.css'
 
 import CustomDropzone from '../components/CustomDropzone.svelte'
+import ImageEditor from '../components/ImageEditor.svelte'
 import RemoteSource from '../components/RemoteSource.svelte'
 import ScreenCapture from '../components/ScreenCapture.svelte'
 import Webcam from '../components/Webcam.svelte'
@@ -24,18 +27,31 @@ const uppy = new Uppy()
   })
   .use(UppyWebcam)
   .use(UppyScreenCapture)
+  .use(UppyImageEditor)
   .use(UppyRemoteSources, { companionUrl: 'http://localhost:3020' })
 
 let dialogRef: HTMLDialogElement
-let modalPlugin = $state<'webcam' | 'dropbox' | 'screen-capture' | null>(null)
+let modalPlugin = $state<
+  'webcam' | 'dropbox' | 'screen-capture' | 'image-editor' | null
+>(null)
+let selectedFile = $state<UppyFile<any, any> | null>(null)
 
 function openModal(plugin: 'webcam' | 'dropbox' | 'screen-capture') {
   modalPlugin = plugin
   dialogRef?.showModal()
 }
 
+function openImageEditorModal(file: UppyFile<any, any>) {
+  // https://github.com/transloadit/uppy/issues/6148
+  if (!file.type.startsWith('image/')) return
+  selectedFile = file
+  modalPlugin = 'image-editor'
+  dialogRef?.showModal()
+}
+
 function closeModal() {
   modalPlugin = null
+  selectedFile = null
   dialogRef?.close()
 }
 </script>
@@ -59,18 +75,21 @@ function closeModal() {
       {#if modalPlugin === 'screen-capture'}
         <ScreenCapture close={closeModal} />
       {/if}
+      {#if modalPlugin === 'image-editor' && selectedFile}
+        <ImageEditor file={selectedFile} close={closeModal} />
+      {/if}
     </dialog>
 
     <article>
       <h2 class="text-2xl my-4">With list</h2>
       <Dropzone />
-      <FilesList />
+      <FilesList editFile={openImageEditorModal} />
     </article>
 
     <article>
       <h2 class="text-2xl my-4">With grid</h2>
       <Dropzone />
-      <FilesGrid columns={2} />
+      <FilesGrid columns={2} editFile={openImageEditorModal} />
     </article>
 
     <article>

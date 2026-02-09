@@ -15,6 +15,13 @@ export {
   type FileInputProps,
 } from './hooks/file-input.js'
 export {
+  type AspectRatio,
+  createImageEditorController,
+  type ImageEditorSnapshot,
+  type ImageEditorState,
+  type ImageEditorStore,
+} from './hooks/image-editor.js'
+export {
   createRemoteSourceController,
   type RemoteSourceKeys,
   type RemoteSourceSnapshot,
