@@ -817,6 +817,7 @@ export default class Transloadit<
 
   #prepareUpload = async (fileIDs: string[]) => {
     // Prevent adding/dropping files during upload to avoid creating multiple assemblies
+    // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
 
     const assemblyOptions = (
