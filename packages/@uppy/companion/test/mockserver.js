@@ -88,20 +88,23 @@ export const getServer = async (extraEnv) => {
   authServer.use(
     session({ secret: 'grant', resave: true, saveUninitialized: true }),
   )
-  authServer.all('*/callback', (req, res, next) => {
+  authServer.all('{*splat}/callback', (req, res, next) => {
     // @ts-ignore
     req.session.grant = {
       response: { access_token: grantToken },
     }
     next()
   })
-  authServer.all(['*/send-token', '*/redirect'], (req, res, next) => {
-    // @ts-ignore
-    req.session.grant = {
-      dynamic: { state: req.query.state || 'non-empty-value' },
-    }
-    next()
-  })
+  authServer.all(
+    ['{*splat}/send-token', '{*splat}/redirect'],
+    (req, res, next) => {
+      // @ts-ignore
+      req.session.grant = {
+        dynamic: { state: req.query.state || 'non-empty-value' },
+      }
+      next()
+    },
+  )
 
   const { app } = standalone()
   authServer.use(app)

@@ -8,7 +8,14 @@ const port = process.env.COMPANION_PORT || process.env.PORT || 3020
 
 const { app } = standalone()
 
-companion.socket(app.listen(port))
+const server = app.listen(port, (error) => {
+  if (error) {
+    logger.error(`Failed to start Companion server: ${error.message}`)
+    process.exitCode = 1
+  } else {
+    logger.info(`Welcome to Companion! v${packageJson.version}`)
+    logger.info(`Listening on http://localhost:${port}`)
 
-logger.info(`Welcome to Companion! v${packageJson.version}`)
-logger.info(`Listening on http://localhost:${port}`)
+    companion.socket(server)
+  }
+})
