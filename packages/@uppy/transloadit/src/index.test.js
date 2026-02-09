@@ -212,6 +212,17 @@ describe('Transloadit', () => {
     // Should be set to false during upload
     expect(uppy.getState().allowNewUpload).toBe(false)
 
+    // Trying to add a new file during upload with Transloadit should not be possible
+    expect(() =>
+      uppy.addFile({
+        source: 'test',
+        name: 'additionalFile.jpg',
+        data: new File([new Uint8Array([0])], 'additionalFile.jpg', {
+          type: 'image/jpeg',
+        }),
+      }),
+    ).toThrowError('Cannot add more files')
+
     await new Promise((resolve) => setTimeout(resolve, 100))
     uppy.pauseAll()
     uppy.resumeAll()
