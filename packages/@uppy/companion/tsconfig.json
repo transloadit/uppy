@@ -1,6 +1,7 @@
 {
   "extends": "./tsconfig.shared",
   "compilerOptions": {
+    "allowImportingTsExtensions": true,
     "noEmit": true
   },
   "include": ["src/**/*"]
