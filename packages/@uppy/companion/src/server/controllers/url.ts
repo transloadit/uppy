@@ -1,3 +1,4 @@
+import type { Request, Response } from 'express'
 import express from 'express'
 import { downloadURL } from '../download.js'
 import { getURLMeta, validateURL } from '../helpers/request.js'
@@ -6,18 +7,9 @@ import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
 
 /**
- * @callback downloadCallback
- * @param {Error} err
- * @param {string | Buffer | Buffer[]} chunk
+ * Fetch the size and content type of a URL.
  */
-
-/**
- * Fetches the size and content type of a URL
- *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
- */
-const meta = async (req, res) => {
+const meta = async (req: Request, res: Response): Promise<void> => {
   try {
     logger.debug('URL file import handler running', null, req.id)
     const { allowLocalUrls } = req.companion.options
@@ -41,13 +33,9 @@ const meta = async (req, res) => {
 }
 
 /**
- * Handles the reques of import a file from a remote URL, and then
- * subsequently uploading it to the specified destination.
- *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
+ * Import a file from a remote URL, then upload it to the specified destination.
  */
-const get = async (req, res) => {
+const get = async (req: Request, res: Response): Promise<void> => {
   logger.debug('URL file import handler running', null, req.id)
   const { allowLocalUrls } = req.companion.options
   if (!validateURL(req.body.url, allowLocalUrls)) {
