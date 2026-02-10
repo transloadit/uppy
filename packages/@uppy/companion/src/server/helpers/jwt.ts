@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken'
+import type { Request, Response } from 'express'
 import { decrypt, encrypt } from './utils.js'
+import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+import { isRecord } from './type-guards.js'
 
 // The Uppy auth token is an encrypted JWT & JSON encoded container.
 // It used to simply contain an OAuth access_token and refresh_token for a specific provider.
@@ -19,22 +22,18 @@ import { decrypt, encrypt } from './utils.js'
 // With 400 days, there's still a theoretical possibility but very low.
 export const MAX_AGE_REFRESH_TOKEN = 60 * 60 * 24 * 400
 export const MAX_AGE_24H = 60 * 60 * 24
-/**
- *
- * @param data
- * @param secret
- * @param maxAge
- */
-const generateToken = (data, secret, maxAge) => {
+
+type EncryptionSecret = string | Buffer
+
+const generateToken = (
+  data: unknown,
+  secret: EncryptionSecret,
+  maxAge: number,
+): string => {
   return jwt.sign({ data }, secret, { expiresIn: maxAge })
 }
 
-/**
- *
- * @param token
- * @param secret
- */
-const verifyToken = (token, secret) => {
+const verifyToken = (token: string, secret: EncryptionSecret): unknown => {
   const decoded = jwt.verify(token, secret, {})
   if (!decoded || typeof decoded !== 'object' || !('data' in decoded)) {
     throw new Error('Invalid token payload')
@@ -42,54 +41,50 @@ const verifyToken = (token, secret) => {
   return Reflect.get(decoded, 'data')
 }
 
-/**
- *
- * @param payload
- * @param secret
- */
 export const generateEncryptedToken = (
-  payload,
-  secret,
+  payload: unknown,
+  secret: EncryptionSecret,
   maxAge = MAX_AGE_24H,
-) => {
+): string => {
   // return payload // for easier debugging
   return encrypt(generateToken(payload, secret, maxAge), secret)
 }
 
-/**
- * @param payload
- * @param secret
- */
-export const generateEncryptedAuthToken = (payload, secret, maxAge) => {
+export const generateEncryptedAuthToken = (
+  payload: unknown,
+  secret: EncryptionSecret,
+  maxAge?: number,
+): string => {
   return generateEncryptedToken(JSON.stringify(payload), secret, maxAge)
 }
 
-/**
- *
- * @param token
- * @param secret
- */
-export const verifyEncryptedToken = (token, secret) => {
+export const verifyEncryptedToken = (
+  token: string,
+  secret: EncryptionSecret,
+): string => {
   const ret = verifyToken(decrypt(token, secret), secret)
   if (!ret) throw new Error('No payload')
   if (typeof ret !== 'string') throw new Error('Invalid token payload type')
   return ret
 }
 
-/**
- *
- * @param token
- * @param secret
- */
-export const verifyEncryptedAuthToken = (token, secret, providerName) => {
+export const verifyEncryptedAuthToken = (
+  token: string,
+  secret: EncryptionSecret,
+  providerName: string,
+): Record<string, unknown> => {
   const json = verifyEncryptedToken(token, secret)
-  const tokens = JSON.parse(json)
-  if (!tokens[providerName])
+  const tokens: unknown = JSON.parse(json)
+  if (!isRecord(tokens) || !Object.hasOwn(tokens, providerName))
     throw new Error(`Missing token payload for provider ${providerName}`)
   return tokens
 }
 
-function getCommonCookieOptions({ companionOptions }) {
+function getCommonCookieOptions({
+  companionOptions,
+}: {
+  companionOptions: CompanionRuntimeOptions
+}): Record<string, unknown> {
   const cookieOptions: Record<string, unknown> = {
     httpOnly: true,
   }
@@ -110,7 +105,8 @@ function getCommonCookieOptions({ companionOptions }) {
   return cookieOptions
 }
 
-const getCookieName = (oauthProvider) => `uppyAuthToken--${oauthProvider}`
+const getCookieName = (oauthProvider: string): string =>
+  `uppyAuthToken--${oauthProvider}`
 
 const addToCookies = ({
   res,
@@ -118,7 +114,13 @@ const addToCookies = ({
   companionOptions,
   oauthProvider,
   maxAge = MAX_AGE_24H,
-}) => {
+}: {
+  res: Response
+  token: string
+  companionOptions: CompanionRuntimeOptions
+  oauthProvider: string
+  maxAge?: number
+}): void => {
   const cookieOptions = {
     ...getCommonCookieOptions({ companionOptions }),
     maxAge: maxAge * 1000,
@@ -128,26 +130,31 @@ const addToCookies = ({
   res.cookie(getCookieName(oauthProvider), token, cookieOptions)
 }
 
-export const addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
+export const addToCookiesIfNeeded = (
+  req: Request,
+  res: Response,
+  uppyAuthToken: string,
+  maxAge?: number,
+): void => {
   // some providers need the token in cookies for thumbnail/image requests
-  if (req.companion.provider.needsCookieAuth) {
+  if (req.companion.provider?.needsCookieAuth) {
+    const oauthProvider = req.companion.providerClass?.oauthProvider
+    if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) return
     addToCookies({
       res,
       token: uppyAuthToken,
       companionOptions: req.companion.options,
-      oauthProvider: req.companion.providerClass.oauthProvider,
+      oauthProvider,
       maxAge,
     })
   }
 }
 
-/**
- *
- * @param res
- * @param companionOptions
- * @param oauthProvider
- */
-export const removeFromCookies = (res, companionOptions, oauthProvider) => {
+export const removeFromCookies = (
+  res: Response,
+  companionOptions: CompanionRuntimeOptions,
+  oauthProvider: string,
+): void => {
   // options must be identical to those given to res.cookie(), excluding expires and maxAge.
   // https://expressjs.com/en/api.html#res.clearCookie
   const cookieOptions = getCommonCookieOptions({ companionOptions })

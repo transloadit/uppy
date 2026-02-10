@@ -33,7 +33,7 @@ export default class Provider {
   /**
    * config to extend the grant config
    */
-  static getExtraGrantConfig() {
+  static getExtraGrantConfig(): Record<string, unknown> {
     return {}
   }
 
@@ -98,6 +98,15 @@ export default class Provider {
     throw new Error('method not implemented')
   }
 
+  /**
+   * Revoke/logout for a provider session (if supported).
+   *
+   * This method should be overridden by provider implementations.
+   */
+  async logout(options: unknown): Promise<unknown> {
+    throw new Error('method not implemented')
+  }
+
   async simpleAuth({
     requestBody,
   }: {
@@ -109,19 +118,23 @@ export default class Provider {
   /**
    * Name of the OAuth provider (passed to Grant). Return empty string if no OAuth provider is needed.
    */
-  static get oauthProvider() {
+  static get oauthProvider(): string | undefined {
     return undefined
   }
 
-  static grantDynamicToUserSession({ grantDynamic }) {
+  static grantDynamicToUserSession({
+    grantDynamic,
+  }: {
+    grantDynamic: Record<string, unknown>
+  }): Record<string, unknown> {
     return {}
   }
 
-  static get hasSimpleAuth() {
+  static get hasSimpleAuth(): boolean {
     return false
   }
 
-  static get authStateExpiry() {
+  static get authStateExpiry(): number {
     return MAX_AGE_24H
   }
 }

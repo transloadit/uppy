@@ -2,14 +2,16 @@
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
 import serialize from 'serialize-javascript'
+import type { NextFunction, Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
+import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'
 
-const closePageHtml = (origin) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
+const closePageHtml = (origin: string | undefined) => `
+	  <!DOCTYPE html>
+	  <html>
+	  <head>
       <meta charset="utf-8" />
       <script>
       // if window.opener is nullish, we want the following line to throw to avoid
@@ -18,19 +20,29 @@ const closePageHtml = (origin) => `
       window.close()
       </script>
   </head>
-  <body>Authentication failed.</body>
-  </html>`
+	  <body>Authentication failed.</body>
+	  </html>`
 
-/**
- *
- * @param req
- * @param res
- * @param next
- */
-export default function callback(req, res, next) {
+export default function callback(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const { providerName } = req.params
+  const secret = req.companion.options.secret
+  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+    res.sendStatus(500)
+    return
+  }
 
-  const grant = req.session.grant || {}
+  const emptyRecord: Record<string, unknown> = {}
+  const session: Record<string, unknown> = isRecord(req.session)
+    ? req.session
+    : emptyRecord
+  const grant: Record<string, unknown> = isRecord(session.grant)
+    ? session.grant
+    : emptyRecord
+  const grantResponse = isRecord(grant.response) ? grant.response : null
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
   const origin =
@@ -38,26 +50,40 @@ export default function callback(req, res, next) {
     oAuthState.getFromState(
       grantDynamic.state,
       'origin',
-      req.companion.options.secret,
+      secret,
     )
+  const originString = typeof origin === 'string' ? origin : undefined
 
-  if (!grant.response?.access_token) {
+  const accessToken =
+    grantResponse && typeof grantResponse.access_token === 'string'
+      ? grantResponse.access_token
+      : undefined
+  const refreshToken =
+    grantResponse && typeof grantResponse.refresh_token === 'string'
+      ? grantResponse.refresh_token
+      : undefined
+
+  const { providerClass } = req.companion
+  if (!providerClass) {
+    res.sendStatus(400)
+    return
+  }
+
+  if (!accessToken) {
     logger.debug(
       `Did not receive access token for provider ${providerName}`,
       null,
       req.id,
     )
-    logger.debug(grant.response, 'callback.oauth.resp', req.id)
-    return res.status(400).send(closePageHtml(origin))
+    logger.debug(grantResponse, 'callback.oauth.resp', req.id)
+    res.status(400).send(closePageHtml(originString))
+    return
   }
-
-  const { access_token: accessToken, refresh_token: refreshToken } =
-    grant.response
 
   req.companion.providerUserSession = {
     accessToken,
     refreshToken, // might be undefined for some providers
-    ...req.companion.providerClass.grantDynamicToUserSession({ grantDynamic }),
+    ...providerClass.grantDynamicToUserSession({ grantDynamic }),
   }
 
   logger.debug(
@@ -67,18 +93,22 @@ export default function callback(req, res, next) {
   )
   const uppyAuthToken = tokenService.generateEncryptedAuthToken(
     { [providerName]: req.companion.providerUserSession },
-    req.companion.options.secret,
-    req.companion.providerClass.authStateExpiry,
+    secret,
+    providerClass.authStateExpiry,
   )
 
   tokenService.addToCookiesIfNeeded(
     req,
     res,
     uppyAuthToken,
-    req.companion.providerClass.authStateExpiry,
+    providerClass.authStateExpiry,
   )
 
-  return res.redirect(
+  if (!req.companion.buildURL) {
+    res.sendStatus(500)
+    return
+  }
+  res.redirect(
     req.companion.buildURL(
       `/${providerName}/send-token?uppyAuthToken=${uppyAuthToken}`,
       true,

@@ -1,11 +1,16 @@
 import { startDownUpload } from '../helpers/upload.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
+import type { Request, Response } from 'express'
 
-export default async function get(req, res) {
+export default async function get(req: Request, res: Response): Promise<void> {
   const { id } = req.params
   const { providerUserSession } = req.companion
   const { provider } = req.companion
+  if (!provider) {
+    res.sendStatus(400)
+    return
+  }
 
   async function getSize() {
     return provider.size({ id, providerUserSession, query: req.query })

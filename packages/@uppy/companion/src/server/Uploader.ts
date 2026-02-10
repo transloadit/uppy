@@ -178,7 +178,7 @@ function validateOptions(options: UploaderOptions): void {
   // validate protocol
   if (
     options.protocol &&
-    !Object.keys(PROTOCOLS).some((key) => PROTOCOLS[key] === options.protocol)
+    !Object.values(PROTOCOLS).includes(options.protocol)
   ) {
     throw new ValidationError('unsupported protocol specified')
   }
@@ -191,14 +191,16 @@ function validateOptions(options: UploaderOptions): void {
       throw new ValidationError('no destination specified')
     }
 
-    const validateUrl = (url) => {
+    const validateUrl = (url: unknown): void => {
+      if (url == null) return
+      if (typeof url !== 'string') throw new ValidationError('invalid destination url')
       const validatorOpts = { require_protocol: true, require_tld: false }
-      if (url && !validator.isURL(url, validatorOpts)) {
+      if (!validator.isURL(url, validatorOpts)) {
         throw new ValidationError('invalid destination url')
       }
 
       const allowedUrls = options.companionOptions.uploadUrls
-      if (allowedUrls && url && !hasMatch(url, allowedUrls)) {
+      if (allowedUrls && !hasMatch(url, allowedUrls)) {
         throw new ValidationError(
           'upload destination does not match any allowed destinations',
         )
@@ -393,8 +395,9 @@ export default class Uploader {
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
     const writeStream = createWriteStream(this.tmpPath)
 
-    const onData = (chunk) => {
-      this.downloadedBytes += chunk.length
+    const onData = (chunk: Buffer | string) => {
+      const len = typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length
+      this.downloadedBytes += len
       if (
         exceedsMaxFileSize(
           this.options.companionOptions.maxFileSize,
@@ -755,26 +758,30 @@ export default class Uploader {
       throw new Error('No multipart endpoint set')
     }
 
-    function getRespObj(response) {
+    function getRespObj(response: unknown): Record<string, unknown> {
+      const isRecord = (value: unknown): value is Record<string, unknown> =>
+        !!value && typeof value === 'object' && !Array.isArray(value)
+      const resp = isRecord(response) ? response : {}
+      const headers = isRecord(resp.headers) ? resp.headers : {}
       // remove browser forbidden headers
       const {
         'set-cookie': deleted,
         'set-cookie2': deleted2,
         ...responseHeaders
-      } = response.headers
+      } = headers
 
       return {
-        responseText: response.body,
-        status: response.statusCode,
-        statusText: response.statusMessage,
+        responseText: resp.body,
+        status: resp.statusCode,
+        statusText: resp.statusMessage,
         headers: responseHeaders,
       }
     }
 
     // upload progress
     let bytesUploaded = 0
-    stream.on('data', (data) => {
-      bytesUploaded += data.length
+    stream.on('data', (data: Buffer | string) => {
+      bytesUploaded += typeof data === 'string' ? Buffer.byteLength(data) : data.length
       this.onProgress(bytesUploaded, undefined)
     })
 

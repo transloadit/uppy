@@ -78,7 +78,9 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@types/common-tags": "^1.8.4",
     "@types/compression": "1.7.0",
+    "@types/content-disposition": "^0.5.9",
     "@types/cookie-parser": "1.4.2",
     "@types/cors": "2.8.6",
     "@types/eslint": "^8.2.0",
@@ -90,6 +92,8 @@
     "@types/ms": "0.7.31",
     "@types/node": "^20.19.0",
     "@types/request": "2.48.8",
+    "@types/serialize-javascript": "^5.0.4",
+    "@types/validator": "^13.15.10",
     "@types/webpack": "^5.28.0",
     "@types/ws": "8.5.3",
     "execa": "^9.6.0",
@@ -108,6 +112,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
+    "lint:ts": "tsc --project tsconfig.lint.json",
     "start": "node ./dist/standalone/start-server.js",
     "start:dev": "bash start-dev",
     "typecheck": "tsc --build",

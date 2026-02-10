@@ -9,6 +9,7 @@ import { getURLBuilder } from './helpers/utils.js'
 import * as logger from './logger.js'
 import { isOAuthProvider } from './provider/Provider.js'
 import getS3Client from './s3-client.js'
+import type { CompanionRuntimeOptions } from '../types/companion-options.js'
 
 export const hasSessionAndProvider: RequestHandler = (req, res, next) => {
   if (!req.session) {
@@ -72,7 +73,7 @@ export const hasBody: RequestHandler = (req, res, next) => {
   return next()
 }
 
-export const hasSearchQuery = (req, res, next) => {
+export const hasSearchQuery: RequestHandler = (req, res, next) => {
   if (typeof req.query.q !== 'string') {
     logger.debug(
       'search request has no search query',
@@ -256,18 +257,9 @@ export const metrics = ({
   return metricsMiddleware
 }
 
-/**
- *
- * @param options
- */
 export const getCompanionMiddleware = (
-  options: Record<string, unknown>,
+  options: CompanionRuntimeOptions,
 ): RequestHandler => {
-  /**
-   * @param req
-   * @param res
-   * @param next
-   */
   const middleware = (req: Request, _res: Response, next: NextFunction) => {
     req.companion = {
       options,

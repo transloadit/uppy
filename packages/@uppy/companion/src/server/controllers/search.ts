@@ -1,10 +1,20 @@
 import { respondWithError } from '../provider/error.js'
+import type { NextFunction, Request, Response } from 'express'
 
-export default async function search({ query, companion }, res, next) {
-  const { providerUserSession } = companion
+export default async function search(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const { query, companion } = req
+  const { providerUserSession, provider } = companion
+  if (!provider) {
+    res.sendStatus(400)
+    return
+  }
 
   try {
-    const data = await companion.provider.search({
+    const data = await provider.search({
       companion,
       providerUserSession,
       query,

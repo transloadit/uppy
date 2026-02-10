@@ -14,7 +14,20 @@ export async function refreshToken({
   clientId,
   clientSecret,
   refreshToken: theRefreshToken,
-}) {
+}: {
+  clientId: unknown
+  clientSecret: unknown
+  refreshToken: unknown
+}): Promise<{ accessToken: string }> {
+  if (typeof clientId !== 'string' || clientId.length === 0) {
+    throw new Error('Missing clientId')
+  }
+  if (typeof clientSecret !== 'string' || clientSecret.length === 0) {
+    throw new Error('Missing clientSecret')
+  }
+  if (typeof theRefreshToken !== 'string' || theRefreshToken.length === 0) {
+    throw new Error('Missing refreshToken')
+  }
   return withGoogleErrorHandling(
     'google',
     'provider.google.token.refresh.error',
@@ -39,7 +52,19 @@ export async function refreshToken({
   )
 }
 
-export async function logout({ providerUserSession: { accessToken: token } }) {
+export async function logout({
+  providerUserSession,
+}: {
+  providerUserSession: unknown
+}): Promise<{ revoked: true }> {
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    !!value && typeof value === 'object' && !Array.isArray(value)
+  const token =
+    isRecord(providerUserSession) && typeof providerUserSession.accessToken === 'string'
+      ? providerUserSession.accessToken
+      : undefined
+  if (!token) throw new Error('Missing accessToken')
+
   return withGoogleErrorHandling(
     'google',
     'provider.google.logout.error',

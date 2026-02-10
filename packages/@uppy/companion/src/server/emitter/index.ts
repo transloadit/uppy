@@ -1,5 +1,6 @@
 import nodeEmitter from './default-emitter.js'
 import redisEmitter from './redis-emitter.js'
+import type { Redis } from 'ioredis'
 
 type Listener = (...args: unknown[]) => void
 export type EmitterLike = {
@@ -23,7 +24,13 @@ export default function getEmitter(
   redisPubSubScope?: string,
 ): EmitterLike {
   if (!emitter) {
-    emitter = redisClient
+    const isRedisClient = (value: unknown): value is Redis => {
+      if (!value || (typeof value !== 'object' && typeof value !== 'function'))
+        return false
+      return typeof Reflect.get(value, 'duplicate') === 'function'
+    }
+
+    emitter = redisClient && isRedisClient(redisClient)
       ? redisEmitter(redisClient, redisPubSubScope)
       : nodeEmitter()
   }

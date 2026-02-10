@@ -1,15 +1,13 @@
 import type { S3Client } from '@aws-sdk/client-s3'
 import type { createPresignedPost } from '@aws-sdk/s3-presigned-post'
+import type { CompanionRuntimeOptions } from './companion-options.js'
+import type Provider from '../server/provider/Provider.js'
 
 export type CompanionContext = {
-  options: Record<string, unknown>
-  provider?: unknown
+  options: CompanionRuntimeOptions
+  provider?: Provider
   providerName?: string
-  providerClass?: {
-    oauthProvider?: unknown
-    hasSimpleAuth?: unknown
-    authStateExpiry?: number
-  }
+  providerClass?: typeof Provider
   providerGrantConfig?: Record<string, unknown>
   providerUserSession?: unknown
   authToken?: unknown

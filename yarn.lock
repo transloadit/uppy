@@ -8088,6 +8088,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/common-tags@npm:^1.8.4":
+  version: 1.8.4
+  resolution: "@types/common-tags@npm:1.8.4"
+  checksum: 10/40c95a2f6388beb1cdeed3c9986ac0d6a3a551fce706e3e364a00ded48ab624b06b1ac8b94679bb2da9653e5eb3e450bad26873f5189993a5d8e8bdace74cbb2
+  languageName: node
+  linkType: hard
+
 "@types/compression@npm:1.7.0":
   version: 1.7.0
   resolution: "@types/compression@npm:1.7.0"
@@ -8113,6 +8120,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10/7eb1bc5342a9604facd57598a6c62621e244822442976c443efb84ff745246b10d06e8b309b6e80130026a396f19bf6793b7cecd7380169f369dac3bfc46fb99
+  languageName: node
+  linkType: hard
+
+"@types/content-disposition@npm:^0.5.9":
+  version: 0.5.9
+  resolution: "@types/content-disposition@npm:0.5.9"
+  checksum: 10/d895703c0027ca6c4c0c1ede363909dbb590deec3b206a84b88a49c8b2840bcbd31b4ddeb2e1e6caa1af00801cc79c5b69a5c75a8152f2959810b10fe75a4e1f
   languageName: node
   linkType: hard
 
@@ -8461,6 +8475,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/serialize-javascript@npm:^5.0.4":
+  version: 5.0.4
+  resolution: "@types/serialize-javascript@npm:5.0.4"
+  checksum: 10/c342a4d151736c1ba4913e6d9b00537bcf62401a06e3489dcf96b7d51a4ab147efcf3fe20ca9491b1349ee7e55c6d69606682e1630f2e076e2828eaee3764f94
+  languageName: node
+  linkType: hard
+
 "@types/serve-index@npm:^1.9.4":
   version: 1.9.4
   resolution: "@types/serve-index@npm:1.9.4"
@@ -8508,6 +8529,13 @@ __metadata:
   version: 0.0.6
   resolution: "@types/use-sync-external-store@npm:0.0.6"
   checksum: 10/a95ce330668501ad9b1c5b7f2b14872ad201e552a0e567787b8f1588b22c7040c7c3d80f142cbb9f92d13c4ea41c46af57a20f2af4edf27f224d352abcfe4049
+  languageName: node
+  linkType: hard
+
+"@types/validator@npm:^13.15.10":
+  version: 13.15.10
+  resolution: "@types/validator@npm:13.15.10"
+  checksum: 10/63117a776ced4d066d7fb63130d90ba487d38209dd45c25641ca1a6f5040e8394cc9a855750b919b72a923c5ffb51f8474f213b10b5aaa27d9db108bef07ad10
   languageName: node
   linkType: hard
 
@@ -8842,7 +8870,9 @@ __metadata:
     "@aws-sdk/lib-storage": "npm:^3.338.0"
     "@aws-sdk/s3-presigned-post": "npm:^3.338.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.338.0"
+    "@types/common-tags": "npm:^1.8.4"
     "@types/compression": "npm:1.7.0"
+    "@types/content-disposition": "npm:^0.5.9"
     "@types/cookie-parser": "npm:1.4.2"
     "@types/cors": "npm:2.8.6"
     "@types/eslint": "npm:^8.2.0"
@@ -8854,6 +8884,8 @@ __metadata:
     "@types/ms": "npm:0.7.31"
     "@types/node": "npm:^20.19.0"
     "@types/request": "npm:2.48.8"
+    "@types/serialize-javascript": "npm:^5.0.4"
+    "@types/validator": "npm:^13.15.10"
     "@types/webpack": "npm:^5.28.0"
     "@types/ws": "npm:8.5.3"
     body-parser: "npm:1.20.4"

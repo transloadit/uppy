@@ -13,8 +13,8 @@ type ProviderHttpError = {
   body: unknown
 }
 
-type ProviderErrorHandlingOptions = {
-  fn: () => Promise<unknown>
+type ProviderErrorHandlingOptions<T> = {
+  fn: () => Promise<T>
   tag: string
   providerName: string
   isAuthError?: (a: ProviderHttpError) => boolean
@@ -25,15 +25,15 @@ type ProviderErrorHandlingOptions = {
 /**
  * Wrap a provider call and normalize errors to Provider*Error instances.
  */
-export async function withProviderErrorHandling({
+export async function withProviderErrorHandling<T>({
   fn,
   tag,
   providerName,
   isAuthError = (_: ProviderHttpError) => false,
   isUserFacingError = (_: ProviderHttpError) => false,
   getJsonErrorMessage,
-}: ProviderErrorHandlingOptions): Promise<unknown> {
-  function getErrorMessage({ statusCode, body }) {
+}: ProviderErrorHandlingOptions<T>): Promise<T> {
+  function getErrorMessage({ statusCode, body }: ProviderHttpError): string {
     if (typeof body === 'object') {
       const message = getJsonErrorMessage(body)
       if (message != null) return message
@@ -47,7 +47,7 @@ export async function withProviderErrorHandling({
   }
 
   try {
-    return await fn()
+      return await fn()
   } catch (err) {
     const httpError = parseHttpError(err)
 
@@ -78,11 +78,15 @@ export async function withProviderErrorHandling({
   }
 }
 
-export async function withGoogleErrorHandling(providerName, tag, fn) {
+export async function withGoogleErrorHandling<T>(
+  providerName: string,
+  tag: string,
+  fn: () => Promise<T>,
+): Promise<T> {
   const isRecord = (value: unknown): value is Record<string, unknown> =>
     !!value && typeof value === 'object' && !Array.isArray(value)
 
-  return withProviderErrorHandling({
+  return withProviderErrorHandling<T>({
     fn,
     tag,
     providerName,

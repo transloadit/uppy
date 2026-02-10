@@ -1,40 +1,76 @@
 import * as tokenService from '../helpers/jwt.js'
+import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
+import type { NextFunction, Request, Response } from 'express'
 
 // https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/Get-refresh-token-from-access-token/td-p/596739
 // https://developers.dropbox.com/oauth-guide
 // https://github.com/simov/grant/issues/149
-export default async function refreshToken(req, res, next) {
+export default async function refreshToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   const { providerName } = req.params
+  const secret = req.companion.options.secret
+  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+    res.sendStatus(500)
+    return
+  }
 
-  const { key: clientId, secret: clientSecret } = req.companion.options
-    .providerOptions[providerName] ?? { __proto__: null }
-  const { redirect_uri: redirectUri } = req.companion.providerGrantConfig
+  const providerConfig = req.companion.options.providerOptions?.[providerName]
+  const clientId =
+    isRecord(providerConfig) && typeof providerConfig.key === 'string'
+      ? providerConfig.key
+      : undefined
+  const clientSecret =
+    isRecord(providerConfig) && typeof providerConfig.secret === 'string'
+      ? providerConfig.secret
+      : undefined
 
-  const { providerUserSession } = req.companion
+  const redirectUri =
+    isRecord(req.companion.providerGrantConfig) &&
+    typeof req.companion.providerGrantConfig.redirect_uri === 'string'
+      ? req.companion.providerGrantConfig.redirect_uri
+      : undefined
+
+  const { provider, providerClass } = req.companion
+  const providerUserSession = isRecord(req.companion.providerUserSession)
+    ? req.companion.providerUserSession
+    : null
 
   // not all providers have refresh tokens
-  if (
-    providerUserSession.refreshToken == null ||
-    providerUserSession.refreshToken === ''
-  ) {
+  const refreshToken =
+    providerUserSession && typeof providerUserSession.refreshToken === 'string'
+      ? providerUserSession.refreshToken
+      : undefined
+  if (!refreshToken) {
     logger.warn('Tried to refresh token without having a token')
     res.sendStatus(401)
     return
   }
+  if (!provider || !providerClass) {
+    res.sendStatus(400)
+    return
+  }
 
   try {
-    const data = await req.companion.provider.refreshToken({
+    const out: unknown = await provider.refreshToken({
       redirectUri,
       clientId,
       clientSecret,
-      refreshToken: providerUserSession.refreshToken,
+      refreshToken,
     })
+    const accessToken =
+      isRecord(out) && typeof out.accessToken === 'string' ? out.accessToken : undefined
+    if (!accessToken) {
+      throw new Error('Provider did not return an accessToken')
+    }
 
     req.companion.providerUserSession = {
-      ...providerUserSession,
-      accessToken: data.accessToken,
+      ...(providerUserSession ?? {}),
+      accessToken,
     }
 
     logger.debug(
@@ -44,15 +80,15 @@ export default async function refreshToken(req, res, next) {
     )
     const uppyAuthToken = tokenService.generateEncryptedAuthToken(
       { [providerName]: req.companion.providerUserSession },
-      req.companion.options.secret,
-      req.companion.providerClass.authStateExpiry,
+      secret,
+      providerClass.authStateExpiry,
     )
 
     tokenService.addToCookiesIfNeeded(
       req,
       res,
       uppyAuthToken,
-      req.companion.providerClass.authStateExpiry,
+      providerClass.authStateExpiry,
     )
 
     res.send({ uppyAuthToken })

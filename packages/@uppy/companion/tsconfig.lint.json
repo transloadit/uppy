@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.shared",
+  "compilerOptions": {
+    "noEmit": true,
+    "noImplicitAny": true
+  },
+  "include": [
+    "src/config/**/*.ts",
+    "src/server/controllers/**/*.ts",
+    "src/server/Uploader.ts",
+    "src/server/middlewares.ts",
+    "src/server/download.ts",
+    "src/types/**/*.d.ts"
+  ]
+}

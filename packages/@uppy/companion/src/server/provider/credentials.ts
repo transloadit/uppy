@@ -120,7 +120,7 @@ export const getCredentialsOverrideMiddleware = (
         'preAuthToken',
         companionOptions.secret,
       )
-      if (!preAuthToken) {
+      if (typeof preAuthToken !== 'string' || preAuthToken.length === 0) {
         next()
         return
       }

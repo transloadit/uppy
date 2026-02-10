@@ -5,33 +5,121 @@ import {
   ListPartsCommand,
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
+import type { S3Client } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import express from 'express'
+import type { NextFunction, Request, Response, Router } from 'express'
 import {
   getBucket,
   rfc2047EncodeMetadata,
   truncateFilename,
 } from '../helpers/utils.js'
+import { isRecord } from '../helpers/type-guards.js'
 
-export default function s3(config) {
+type S3ControllerConfig = {
+  acl?: string | null
+  bucket?: unknown
+  conditions?: unknown[]
+  expires?: number
+  getKey?: unknown
+  key?: unknown
+  region?: unknown
+  secret?: unknown
+} & Record<string, unknown>
+
+function isS3ControllerConfig(value: unknown): value is S3ControllerConfig {
+  return isRecord(value)
+}
+
+export default function s3(configIn: unknown): Router {
+  if (!isS3ControllerConfig(configIn)) {
+    return express.Router()
+  }
+  const config = configIn
+
   if (typeof config.acl !== 'string' && config.acl != null) {
     throw new TypeError('s3: The `acl` option must be a string or null')
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
   }
+  if (typeof config.expires !== 'number') {
+    throw new TypeError('s3: The `expires` option must be a number')
+  }
+  type GetKeyFn = (args: {
+    req: Request
+    filename: string
+    metadata: Record<string, unknown>
+  }) => unknown
+  const isGetKeyFn = (value: unknown): value is GetKeyFn =>
+    typeof value === 'function'
+  const getKeyCandidate = config.getKey
+  if (!isGetKeyFn(getKeyCandidate)) {
+    throw new TypeError('s3: The `getKey` option must be a function')
+  }
+  const getKeyFn = getKeyCandidate
 
-  function getS3Client(req, res, createPresignedPostMode = false) {
-    const client = createPresignedPostMode
+  type PresignedPostCondition =
+    | ['eq', string, string]
+    | Record<string, string>
+    | ['starts-with', string, string]
+    | ['content-length-range', number, number]
+
+  const isCondition = (value: unknown): value is PresignedPostCondition => {
+    if (Array.isArray(value)) {
+      if (
+        value.length === 3 &&
+        value[0] === 'eq' &&
+        typeof value[1] === 'string' &&
+        typeof value[2] === 'string'
+      )
+        return true
+      if (
+        value.length === 3 &&
+        value[0] === 'starts-with' &&
+        typeof value[1] === 'string' &&
+        typeof value[2] === 'string'
+      )
+        return true
+      if (
+        value.length === 3 &&
+        value[0] === 'content-length-range' &&
+        typeof value[1] === 'number' &&
+        typeof value[2] === 'number'
+      )
+        return true
+      return false
+    }
+    return (
+      isRecord(value) &&
+      Object.values(value).every((v) => typeof v === 'string')
+    )
+  }
+  const conditions: PresignedPostCondition[] = Array.isArray(config.conditions)
+    ? config.conditions.filter(isCondition)
+    : []
+
+  function isS3Client(value: unknown): value is S3Client {
+    if (!value || (typeof value !== 'object' && typeof value !== 'function'))
+      return false
+    return typeof Reflect.get(value, 'send') === 'function'
+  }
+
+  function getS3Client(
+    req: Request,
+    res: Response,
+    createPresignedPostMode = false,
+  ): S3Client | undefined {
+    const clientCandidate = createPresignedPostMode
       ? req.companion.s3ClientCreatePresignedPost
       : req.companion.s3Client
-    if (!client)
+    if (!isS3Client(clientCandidate))
       res.status(400).json({
         error: 'This Companion server does not support uploading to S3',
       })
-    return client
+    return isS3Client(clientCandidate) ? clientCandidate : undefined
   }
 
   /**
@@ -49,11 +137,12 @@ export default function s3(config) {
    *  - url - The URL to upload to.
    *  - fields - Form fields to send along.
    */
-  function getUploadParameters(req, res, next) {
+	  function getUploadParameters(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
 
-    const { metadata = {}, filename } = req.query
+	    const filename = req.query.filename
+	    const metadata = isRecord(req.query.metadata) ? req.query.metadata : {}
 
     // Validate filename is provided and non-empty
     if (typeof filename !== 'string' || filename === '') {
@@ -64,10 +153,11 @@ export default function s3(config) {
       return
     }
 
-    const truncatedFilename = truncateFilename(
-      filename,
-      req.companion.options.maxFilenameLength,
-    )
+	    const maxFilenameLength =
+	      typeof req.companion.options.maxFilenameLength === 'number'
+	        ? req.companion.options.maxFilenameLength
+	        : filename.length
+	    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
 
     const bucket = getBucket({
       bucketOrFn: config.bucket,
@@ -76,8 +166,8 @@ export default function s3(config) {
       metadata,
     })
 
-    const key = config.getKey({ req, filename: truncatedFilename, metadata })
-    if (typeof key !== 'string') {
+	    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
+	    if (typeof key !== 'string') {
       res.status(500).json({
         error:
           'S3 uploads are misconfigured: filename returned from `getKey` must be a string',
@@ -92,17 +182,17 @@ export default function s3(config) {
 
     if (config.acl != null) fields.acl = config.acl
 
-    Object.keys(metadata).forEach((metadataKey) => {
-      const value = metadata[metadataKey]
-      if (typeof value !== 'string') return
-      fields[`x-amz-meta-${metadataKey}`] = value
-    })
+	    Object.keys(metadata).forEach((metadataKey) => {
+	      const value = metadata[metadataKey]
+	      if (typeof value !== 'string') return
+	      fields[`x-amz-meta-${metadataKey}`] = value
+	    })
 
     createPresignedPost(client, {
       Bucket: bucket,
       Expires: config.expires,
       Fields: fields,
-      Conditions: config.conditions,
+      Conditions: conditions,
       Key: key,
     }).then((data) => {
       res.json({
@@ -128,11 +218,12 @@ export default function s3(config) {
    *  - key - The object key in the S3 bucket.
    *  - uploadId - The ID of this multipart upload, to be used in later requests.
    */
-  function createMultipartUpload(req, res, next) {
-    const client = getS3Client(req, res)
-    if (!client) return
+	  function createMultipartUpload(req: Request, res: Response, next: NextFunction) {
+	    const client = getS3Client(req, res)
+	    if (!client) return
 
-    const { type, metadata = {}, filename } = req.body
+	    const { type, filename } = req.body
+	    const metadata = isRecord(req.body?.metadata) ? req.body.metadata : {}
 
     // Validate filename is provided and non-empty
     if (typeof filename !== 'string' || filename === '') {
@@ -143,12 +234,13 @@ export default function s3(config) {
       return
     }
 
-    const truncatedFilename = truncateFilename(
-      filename,
-      req.companion.options.maxFilenameLength,
-    )
+	    const maxFilenameLength =
+	      typeof req.companion.options.maxFilenameLength === 'number'
+	        ? req.companion.options.maxFilenameLength
+	        : filename.length
+	    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
 
-    const key = config.getKey({ req, filename: truncatedFilename, metadata })
+	    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
 
     const bucket = getBucket({
       bucketOrFn: config.bucket,
@@ -199,50 +291,47 @@ export default function s3(config) {
    *     - ETag - a hash of this part's contents, used to refer to it.
    *     - Size - size of this part.
    */
-  function getUploadedParts(req, res, next) {
+	  function getUploadedParts(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
 
     const { uploadId } = req.params
     const { key } = req.query
 
-    if (typeof key !== 'string') {
+	    if (typeof key !== 'string') {
       res.status(400).json({
         error:
           's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
       })
-      return
-    }
+	      return
+	    }
+      const keyStr = key
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
-    const parts = []
+    const parts: unknown[] = []
 
-    function listPartsPage(startAt?: string) {
-      client
-        .send(
-          new ListPartsCommand({
-            Bucket: bucket,
-            Key: key,
-            UploadId: uploadId,
-            PartNumberMarker: startAt,
-          }),
-        )
-        .then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
+	    function listPartsPage(startAt?: string) {
+	      client
+	        .send(
+		          new ListPartsCommand({
+	            Bucket: bucket,
+	            Key: keyStr,
+	            UploadId: uploadId,
+		            PartNumberMarker: startAt,
+		          }),
+	        )
+	        .then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
           if (Parts) parts.push(...Parts)
 
-          if (IsTruncated) {
-            // Get the next page.
-            listPartsPage(
-              NextPartNumberMarker != null
-                ? `${NextPartNumberMarker}`
-                : undefined,
-            )
-          } else {
-            res.json(parts)
-          }
-        }, next)
-    }
+	          if (IsTruncated) {
+	            // Get the next page.
+	            listPartsPage(NextPartNumberMarker)
+	          } else {
+	            res.json(parts)
+	          }
+	        }, next)
+	    }
     listPartsPage()
   }
 
@@ -257,7 +346,7 @@ export default function s3(config) {
    * Response JSON:
    *  - url - The URL to upload to, including signed query parameters.
    */
-  function signPartUpload(req, res, next) {
+  function signPartUpload(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
 
@@ -286,7 +375,7 @@ export default function s3(config) {
         Bucket: bucket,
         Key: key,
         UploadId: uploadId,
-        PartNumber: partNumber,
+        PartNumber: Number(partNumber),
         Body: '',
       }),
       { expiresIn: config.expires },
@@ -308,7 +397,7 @@ export default function s3(config) {
    *  - presignedUrls - The URLs to upload to, including signed query parameters,
    *                    in an object mapped to part numbers.
    */
-  function batchSignPartsUpload(req, res, next) {
+  function batchSignPartsUpload(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
 
@@ -376,7 +465,7 @@ export default function s3(config) {
    * Response JSON:
    *   Empty.
    */
-  function abortMultipartUpload(req, res, next) {
+  function abortMultipartUpload(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
 
@@ -416,7 +505,7 @@ export default function s3(config) {
    * Response JSON:
    *  - location - The full URL to the object in the S3 bucket.
    */
-  function completeMultipartUpload(req, res, next) {
+  function completeMultipartUpload(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
 
@@ -468,6 +557,7 @@ export default function s3(config) {
       }, next)
   }
 
+  const policyBucket = typeof config.bucket === 'string' ? config.bucket : ''
   const policy = {
     Version: '2012-10-17', // latest at the time of writing
     Statement: [
@@ -475,15 +565,22 @@ export default function s3(config) {
         Effect: 'Allow',
         Action: ['s3:PutObject'],
         Resource: [
-          `arn:aws:s3:::${config.bucket}/*`,
-          `arn:aws:s3:::${config.bucket}`,
+          `arn:aws:s3:::${policyBucket}/*`,
+          `arn:aws:s3:::${policyBucket}`,
         ],
       },
     ],
   }
 
   let stsClient: STSClient | undefined
-  function getSTSClient() {
+  function getSTSClient(): STSClient | null {
+    if (
+      typeof config.region !== 'string' ||
+      typeof config.key !== 'string' ||
+      typeof config.secret !== 'string'
+    ) {
+      return null
+    }
     if (stsClient == null) {
       stsClient = new STSClient({
         region: config.region,
@@ -509,9 +606,16 @@ export default function s3(config) {
    * - bucket: the S3 bucket name.
    * - region: the region where that bucket is stored.
    */
-  function getTemporarySecurityCredentials(req, res, next) {
-    getSTSClient()
-      .send(
+  function getTemporarySecurityCredentials(req: Request, res: Response, next: NextFunction) {
+    const sts = getSTSClient()
+    if (!sts || typeof config.bucket !== 'string') {
+      res.status(400).json({
+        error: 'This Companion server does not support STS credentials',
+      })
+      return
+    }
+
+    sts.send(
         new GetFederationTokenCommand({
           // Name of the federated user. The name is used as an identifier for the
           // temporary security credentials (such as Bob). For example, you can
@@ -527,8 +631,7 @@ export default function s3(config) {
           DurationSeconds: config.expires,
           Policy: JSON.stringify(policy),
         }),
-      )
-      .then((response) => {
+      ).then((response) => {
         // This is a public unprotected endpoint.
         // If you implement your own custom endpoint with user authentication you
         // should probably use `private` instead of `public`.

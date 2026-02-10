@@ -9,7 +9,6 @@
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "types": []
+    "resolveJsonModule": true
   }
 }

@@ -1,5 +1,6 @@
-import assert from 'node:assert'
 import express from 'express'
+import type { Request, Response, Router } from 'express'
+import { z } from 'zod'
 import { downloadURL } from '../download.js'
 import { validateURL } from '../helpers/request.js'
 import { startDownUpload } from '../helpers/upload.js'
@@ -7,33 +8,46 @@ import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
 import { streamGoogleFile } from '../provider/google/drive/index.js'
 
-const getAuthHeader = (token) => ({ authorization: `Bearer ${token}` })
+const getAuthHeader = (token: string): { authorization: string } => ({
+  authorization: `Bearer ${token}`,
+})
 
-/**
- *
- * @param req expressJS request object
- * @param res expressJS response object
- */
-const get = async (req, res) => {
+const googlePickerBodySchema = z.discriminatedUnion('platform', [
+  z.object({
+    platform: z.literal('drive'),
+    accessToken: z.string().min(1),
+    fileId: z.string().min(1),
+  }),
+  z.object({
+    platform: z.literal('photos'),
+    accessToken: z.string().min(1),
+    url: z.string().min(1),
+  }),
+])
+
+const get = async (req: Request, res: Response): Promise<void> => {
   try {
     logger.debug('Google Picker file import handler running', null, req.id)
 
     const allowLocalUrls = false
 
-    const { accessToken, platform, fileId } = req.body
+    const parsedBody = googlePickerBodySchema.safeParse(req.body)
+    if (!parsedBody.success) {
+      res.status(400).json({ error: 'Invalid request body' })
+      return
+    }
+    const { accessToken, platform } = parsedBody.data
 
-    assert(platform === 'drive' || platform === 'photos')
-
-    if (platform === 'photos' && !validateURL(req.body.url, allowLocalUrls)) {
+    if (platform === 'photos' && !validateURL(parsedBody.data.url, allowLocalUrls)) {
       res.status(400).json({ error: 'Invalid URL' })
       return
     }
 
     const download = () => {
       if (platform === 'drive') {
-        return streamGoogleFile({ token: accessToken, id: fileId })
+        return streamGoogleFile({ token: accessToken, id: parsedBody.data.fileId })
       }
-      return downloadURL(req.body.url, allowLocalUrls, req.id, {
+      return downloadURL(parsedBody.data.url, allowLocalUrls, req.id, {
         headers: getAuthHeader(accessToken),
       })
     }
@@ -46,4 +60,4 @@ const get = async (req, res) => {
   }
 }
 
-export default () => express.Router().post('/get', express.json(), get)
+export default (): Router => express.Router().post('/get', express.json(), get)

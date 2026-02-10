@@ -94,14 +94,14 @@ function log(params: {
 /**
  * INFO level log.
  */
-export function info(msg: string, tag?: string, traceId?: string): void {
+export function info(msg: unknown, tag?: string, traceId?: string): void {
   log({ arg: msg, tag, level: 'info', traceId })
 }
 
 /**
  * WARN level log.
  */
-export function warn(msg: string, tag?: string, traceId?: string): void {
+export function warn(msg: unknown, tag?: string, traceId?: string): void {
   log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
 }
 
@@ -109,7 +109,7 @@ export function warn(msg: string, tag?: string, traceId?: string): void {
  * ERROR level log.
  */
 export function error(
-  msg: string | Error,
+  msg: unknown,
   tag?: string,
   traceId?: string,
 ): void {
@@ -119,7 +119,7 @@ export function error(
 /**
  * DEBUG level log.
  */
-export function debug(msg: string, tag?: string, traceId?: string): void {
+export function debug(msg: unknown, tag?: string, traceId?: string): void {
   if (process.env.NODE_ENV !== 'production') {
     log({ arg: msg, tag, level: 'debug', traceId, color: ['bold', 'blue'] })
   }

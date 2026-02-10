@@ -15,7 +15,7 @@ export const FORBIDDEN_IP_ADDRESS = 'Forbidden IP address'
 // Example scary IPs that should return false (ipv6-to-ipv4 mapped):
 // ::FFFF:127.0.0.1
 // ::ffff:7f00:1
-const isDisallowedIP = (ipAddress) =>
+const isDisallowedIP = (ipAddress: string): boolean =>
   ipaddr.parse(ipAddress).range() !== 'unicast'
 
 /**
@@ -24,7 +24,10 @@ const isDisallowedIP = (ipAddress) =>
  * @param url - The URL to validate.
  * @param allowLocalUrls - Whether to allow local addresses.
  */
-const validateURL = (url, allowLocalUrls) => {
+const validateURL = (
+  url: string | null | undefined,
+  allowLocalUrls: boolean,
+): boolean => {
   if (!url) {
     return false
   }
@@ -80,7 +83,7 @@ function getProtectedHttpAgent({
 
       const wantAll =
         typeof options === 'object' && options != null && options.all === true
-      const errorAddressFallback = wantAll ? [] : ''
+      const errorAddressFallback: string | dns.LookupAddress[] = wantAll ? [] : ''
 
       if (err) {
         callback(err, errorAddressFallback, family)
@@ -168,7 +171,7 @@ function getProtectedHttpAgent({
 
 export { getProtectedHttpAgent }
 
-function getProtectedGot({ allowLocalIPs }) {
+function getProtectedGot({ allowLocalIPs }: { allowLocalIPs: boolean }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', allowLocalIPs })
   const HttpsAgent = getProtectedHttpAgent({
     protocol: 'https',

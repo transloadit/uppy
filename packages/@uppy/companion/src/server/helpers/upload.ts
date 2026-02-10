@@ -1,9 +1,39 @@
 import logger from '../logger.js'
 import Uploader from '../Uploader.js'
+import type { Request, Response } from 'express'
+import type { Readable as NodeReadableStream } from 'node:stream'
+import { isRecord } from './type-guards.js'
 
-export async function startDownUpload({ req, res, getSize, download }) {
+export async function startDownUpload({
+  req,
+  res,
+  getSize,
+  download,
+}: {
+  req: Request
+  res: Response
+  getSize?: (() => Promise<unknown>) | undefined
+  download: () => Promise<unknown>
+}): Promise<void> {
   logger.debug('Starting download stream.', null, req.id)
-  const { stream, size: maybeSize } = await download()
+  const downloadResult: unknown = await download()
+  if (!isRecord(downloadResult)) {
+    throw new TypeError('Invalid download result')
+  }
+  const stream = downloadResult.stream
+  const maybeSize = downloadResult.size
+
+  const isNodeReadableStream = (value: unknown): value is NodeReadableStream => {
+    if (!value || (typeof value !== 'object' && typeof value !== 'function'))
+      return false
+    return (
+      typeof Reflect.get(value, 'on') === 'function' &&
+      typeof Reflect.get(value, 'pipe') === 'function'
+    )
+  }
+  if (!isNodeReadableStream(stream)) {
+    throw new TypeError('Invalid download stream')
+  }
 
   let size: number | null | undefined
   // if we already know the size from the GET response content-length header, we can use that
@@ -18,7 +48,14 @@ export async function startDownUpload({ req, res, getSize, download }) {
   // note that getSize might also return undefined/null, which is usually fine, it just means that
   // the size is unknown and we cannot send the size to the Uploader
   if (size == null && getSize != null) {
-    size = await getSize()
+    const maybeExplicitSize = await getSize()
+    if (
+      typeof maybeExplicitSize === 'number' &&
+      !Number.isNaN(maybeExplicitSize) &&
+      maybeExplicitSize > 0
+    ) {
+      size = maybeExplicitSize
+    }
   }
   const { clientSocketConnectTimeout } = req.companion.options
 

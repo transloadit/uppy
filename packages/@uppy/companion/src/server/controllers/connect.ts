@@ -1,11 +1,12 @@
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord } from '../helpers/type-guards.js'
+import type { NextFunction, Request, Response } from 'express'
 
 /**
  * Derived from `cors` npm package.
  * @see https://github.com/expressjs/cors/blob/791983ebc0407115bc8ae8e64830d440da995938/lib/index.js#L19-L34
  */
-function isOriginAllowed(origin, allowedOrigins) {
+function isOriginAllowed(origin: string, allowedOrigins: unknown): boolean {
   if (Array.isArray(allowedOrigins)) {
     return allowedOrigins.some((allowedOrigin) =>
       isOriginAllowed(origin, allowedOrigin),
@@ -14,33 +15,61 @@ function isOriginAllowed(origin, allowedOrigins) {
   if (typeof allowedOrigins === 'string') {
     return origin === allowedOrigins
   }
-  return allowedOrigins.test?.(origin) ?? !!allowedOrigins
+  if (allowedOrigins instanceof RegExp) {
+    return allowedOrigins.test(origin)
+  }
+  return !!allowedOrigins
 }
 
-const queryString = (params, prefix = '?') => {
+const queryString = (params: Record<string, string>, prefix = '?'): string => {
   const str = new URLSearchParams(params).toString()
   return str ? `${prefix}${str}` : ''
 }
 
-function encodeStateAndRedirect(req, res, stateObj) {
+function encodeStateAndRedirect(
+  req: Request,
+  res: Response,
+  stateObj: oAuthState.OAuthState,
+): void {
   const { secret } = req.companion.options
+  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+    res.sendStatus(500)
+    return
+  }
   const state = oAuthState.encodeState(stateObj, secret)
   const { providerClass, providerGrantConfig } = req.companion
+  if (!providerClass || !req.companion.buildURL) {
+    res.sendStatus(400)
+    return
+  }
 
   // pass along grant's dynamic config (if specified for the provider in its grant config `dynamic` section)
   // this is needed for things like custom oauth domain (e.g. webdav)
+  const dynamicKeys: string[] = Array.isArray(providerGrantConfig?.dynamic)
+    ? providerGrantConfig.dynamic.filter((i): i is string => typeof i === 'string')
+    : []
   const grantDynamicConfig = Object.fromEntries(
-    providerGrantConfig.dynamic?.flatMap((dynamicKey) => {
+    dynamicKeys.flatMap((dynamicKey) => {
       const queryValue = req.query[dynamicKey]
+      const queryValueString =
+        typeof queryValue === 'string'
+          ? queryValue
+          : Array.isArray(queryValue) && typeof queryValue[0] === 'string'
+            ? queryValue[0]
+            : undefined
 
       // note: when using credentialsURL (dynamic oauth credentials), dynamic has ['key', 'secret', 'redirect_uri']
       // but in that case, query string is empty, so we need to only fetch these parameters from QS if they exist.
-      if (!queryValue) return []
-      return [[dynamicKey, queryValue]]
-    }) || [],
+      if (!queryValueString) return []
+      return [[dynamicKey, queryValueString]]
+    }),
   )
 
   const { oauthProvider } = providerClass
+  if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
+    res.sendStatus(400)
+    return
+  }
   const qs = queryString({
     ...grantDynamicConfig,
     state,
@@ -79,7 +108,11 @@ function getClientOrigin(base64EncodedState: unknown): string | undefined {
  * matches origin(s) allowed in `corsOrigins` Companion option, and use that as
  * our `targetOrigin` for the `window.postMessage()` call (see `send-token.js`).
  */
-export default function connect(req, res, next) {
+export default function connect(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
   const stateObj = oAuthState.generateState()
 
   if (req.companion.options.server.oauthDomain) {
@@ -100,8 +133,11 @@ export default function connect(req, res, next) {
     const { corsOrigins } = req.companion.options
 
     if (typeof corsOrigins === 'function') {
-      corsOrigins(clientOrigin, (err, finalOrigin) => {
-        if (err) next(err)
+      corsOrigins(clientOrigin, (err: unknown, finalOrigin: unknown) => {
+        if (err) {
+          next(err)
+          return
+        }
         stateObj.origin = finalOrigin
         encodeStateAndRedirect(req, res, stateObj)
       })

@@ -8,6 +8,9 @@ import { withGoogleErrorHandling } from '../../providerErrors.js'
 import { logout, refreshToken } from '../index.js'
 import {
   adaptData,
+  type DriveAbout,
+  type DriveListResponse,
+  type DriveSharedDrivesResponse,
   getGsuiteExportType,
   isGsuiteFile,
   isShortcut,
@@ -18,7 +21,7 @@ import {
 // first run a download with mockAccessTokenExpiredError = true
 // then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
 // This will trigger companion/nodemon to restart, and it will respond with a simulated invalid token response
-const mockAccessTokenExpiredError = undefined
+const mockAccessTokenExpiredError: string | true | undefined = undefined
 // const mockAccessTokenExpiredError = true
 // const mockAccessTokenExpiredError = ''
 
@@ -28,7 +31,7 @@ const DRIVE_FILES_FIELDS = `kind,nextPageToken,incompleteSearch,files(${DRIVE_FI
 // using wildcard to get all 'drive' fields because specifying fields seems no to work for the /drives endpoint
 const SHARED_DRIVE_FIELDS = '*'
 
-const getClient = ({ token }) =>
+const getClient = ({ token }: { token: string }) =>
   got.extend({
     prefixUrl: 'https://www.googleapis.com/drive/v3',
     headers: {
@@ -47,10 +50,10 @@ type DriveFileStats = {
   shortcutDetails?: unknown
 } & Record<string, unknown>
 
-async function getStats({ id, token }) {
+async function getStats({ id, token }: { id: string; token: string }) {
   const client = getClient({ token })
 
-  const getStatsInner = async (statsOfId) =>
+  const getStatsInner = async (statsOfId: string) =>
     client
       .get(`files/${encodeURIComponent(statsOfId)}`, {
         searchParams: { fields: DRIVE_FILE_FIELDS, supportsAllDrives: true },
@@ -75,7 +78,13 @@ async function getStats({ id, token }) {
   return stats
 }
 
-export async function streamGoogleFile({ token, id: idIn }) {
+export async function streamGoogleFile({
+  token,
+  id: idIn,
+}: {
+  token: string
+  id: string
+}) {
   const client = getClient({ token })
 
   const stats = await getStats({ id: idIn, token })
@@ -148,31 +157,33 @@ export class Drive extends Provider {
     return refreshToken(args)
   }
 
-  async list(options) {
+  async list(options: unknown) {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.list.error',
       async () => {
-        const directory = options.directory || 'root'
-        const query = options.query || {}
-        const {
-          providerUserSession: { accessToken: token },
-        } = options
+        if (!isRecord(options)) throw new Error('Invalid options')
+        const directory = typeof options.directory === 'string' ? options.directory : 'root'
+        const query = isRecord(options.query) ? options.query : {}
+        const cursor = typeof query.cursor === 'string' ? query.cursor : undefined
+        const providerUserSession = isRecord(options.providerUserSession)
+          ? options.providerUserSession
+          : null
+        const token =
+          providerUserSession && typeof providerUserSession.accessToken === 'string'
+            ? providerUserSession.accessToken
+            : undefined
+        if (!token) throw new ProviderAuthError()
 
         const isRoot = directory === 'root'
         const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
 
         const client = getClient({ token })
 
-        type SharedDrivesResponse = {
-          nextPageToken?: unknown
-          drives?: unknown
-        } & Record<string, unknown>
-
         async function fetchSharedDrives(
           pageToken: string | null = null,
-        ): Promise<SharedDrivesResponse | undefined> {
-          const shouldListSharedDrives = isRoot && !query.cursor
+        ): Promise<DriveSharedDrivesResponse | undefined> {
+          const shouldListSharedDrives = isRoot && !cursor
           if (!shouldListSharedDrives) return undefined
 
           const response = await client
@@ -184,7 +195,7 @@ export class Drive extends Provider {
               },
               responseType: 'json',
             })
-            .json<SharedDrivesResponse>()
+            .json<DriveSharedDrivesResponse>()
 
           const nextPageToken =
             typeof response.nextPageToken === 'string'
@@ -215,7 +226,7 @@ export class Drive extends Provider {
 
           const searchParams = {
             fields: DRIVE_FILES_FIELDS,
-            pageToken: query.cursor,
+            pageToken: cursor,
             q,
             // We can only do a page size of 1000 because we do not request permissions in DRIVE_FILES_FIELDS.
             // Otherwise we are limited to 100. Instead we get the user info from `this.user()`
@@ -227,7 +238,7 @@ export class Drive extends Provider {
 
           return client
             .get('files', { searchParams, responseType: 'json' })
-            .json()
+            .json<DriveListResponse>()
         }
 
         async function fetchAbout() {
@@ -235,7 +246,7 @@ export class Drive extends Provider {
 
           return client
             .get('about', { searchParams, responseType: 'json' })
-            .json()
+            .json<DriveAbout>()
         }
 
         const [sharedDrives, filesResponse, about] = await Promise.all([
@@ -249,14 +260,27 @@ export class Drive extends Provider {
           sharedDrives,
           directory,
           query,
-          isRoot && !query.cursor, // we can only show it on the first page request, or else we will have duplicates of it
+          isRoot && !cursor, // we can only show it on the first page request, or else we will have duplicates of it
           about,
         )
       },
     )
   }
 
-  async download({ id, providerUserSession: { accessToken: token } }) {
+  async download(options: unknown) {
+    if (!isRecord(options) || typeof options.id !== 'string') {
+      throw new Error('Invalid options')
+    }
+    const providerUserSession = isRecord(options.providerUserSession)
+      ? options.providerUserSession
+      : null
+    const token =
+      providerUserSession && typeof providerUserSession.accessToken === 'string'
+        ? providerUserSession.accessToken
+        : undefined
+    if (!token) throw new ProviderAuthError()
+    const { id } = options
+
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 

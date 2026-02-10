@@ -1,38 +1,46 @@
 import * as tokenService from '../helpers/jwt.js'
+import { isRecord } from '../helpers/type-guards.js'
 import { respondWithError } from '../provider/error.js'
+import type { NextFunction, Request, Response } from 'express'
 
-/**
- *
- * @param req
- * @param res
- */
-export default async function logout(req, res, next) {
-  const cleanSession = () => {
-    if (req.session.grant) {
-      req.session.grant.state = null
-      req.session.grant.dynamic = null
+export default async function logout(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const cleanSession = (): void => {
+    const session = isRecord(req.session) ? req.session : null
+    const grant = session && isRecord(session.grant) ? session.grant : null
+    if (grant) {
+      grant.state = null
+      grant.dynamic = null
     }
   }
   const { companion } = req
-  const { providerUserSession } = companion
+  const { providerUserSession, provider, providerClass } = companion
 
   if (!providerUserSession) {
     cleanSession()
     res.json({ ok: true, revoked: false })
     return
   }
+  if (!provider) {
+    cleanSession()
+    res.sendStatus(400)
+    return
+  }
 
   try {
-    const data = await companion.provider.logout({
+    const out: unknown = await provider.logout({
       providerUserSession,
       companion,
     })
+    const data = isRecord(out) ? out : {}
     delete companion.providerUserSession
-    tokenService.removeFromCookies(
-      res,
-      companion.options,
-      companion.providerClass.oauthProvider,
-    )
+    const oauthProvider = providerClass?.oauthProvider
+    if (typeof oauthProvider === 'string' && oauthProvider.length > 0) {
+      tokenService.removeFromCookies(res, companion.options, oauthProvider)
+    }
     cleanSession()
     res.json({ ok: true, ...data })
   } catch (err) {

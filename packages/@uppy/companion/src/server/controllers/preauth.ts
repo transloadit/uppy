@@ -1,21 +1,36 @@
 import * as tokenService from '../helpers/jwt.js'
+import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'
+import type { Request, Response } from 'express'
 
-export default function preauth(req, res) {
-  if (!req.body || !req.body.params) {
+export default function preauth(req: Request, res: Response): void {
+  const body = isRecord(req.body) ? req.body : null
+  const params = body && Object.hasOwn(body, 'params') ? body.params : undefined
+  if (!params) {
     logger.info('invalid request data received', 'preauth.bad')
-    return res.sendStatus(400)
+    res.sendStatus(400)
+    return
   }
 
   const providerConfig =
     req.companion.options.providerOptions[req.params.providerName]
-  if (!providerConfig?.credentialsURL) {
-    return res.sendStatus(501)
+  const credentialsURL =
+    isRecord(providerConfig) && typeof providerConfig.credentialsURL === 'string'
+      ? providerConfig.credentialsURL
+      : undefined
+  if (!credentialsURL) {
+    res.sendStatus(501)
+    return
   }
 
+  const { preAuthSecret } = req.companion.options
+  if (typeof preAuthSecret !== 'string' && !Buffer.isBuffer(preAuthSecret)) {
+    res.sendStatus(500)
+    return
+  }
   const preAuthToken = tokenService.generateEncryptedToken(
-    req.body.params,
-    req.companion.options.preAuthSecret,
+    params,
+    preAuthSecret,
   )
-  return res.json({ token: preAuthToken })
+  res.json({ token: preAuthToken })
 }

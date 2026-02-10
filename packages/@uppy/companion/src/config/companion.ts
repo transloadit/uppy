@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import validator from 'validator'
 import { defaultGetKey } from '../server/helpers/utils.js'
+import { isRecord } from '../server/helpers/type-guards.js'
 import logger from '../server/logger.js'
 
 type ProviderOption = {
@@ -32,6 +33,9 @@ export type CompanionOptions = {
   maxFilenameLength?: number
 } & Record<string, unknown>
 
+const defaultS3Conditions: unknown[] = []
+const defaultPeriodicPingUrls: string[] = []
+
 export const defaultOptions = {
   server: {
     protocol: 'http',
@@ -40,7 +44,7 @@ export const defaultOptions = {
   providerOptions: {},
   s3: {
     endpoint: 'https://{service}.{region}.amazonaws.com',
-    conditions: [],
+    conditions: defaultS3Conditions,
     useAccelerateEndpoint: false,
     getKey: defaultGetKey,
     expires: 800, // seconds
@@ -48,15 +52,15 @@ export const defaultOptions = {
   enableUrlEndpoint: false,
   enableGooglePickerEndpoint: false,
   allowLocalUrls: false,
-  periodicPingUrls: [],
+  periodicPingUrls: defaultPeriodicPingUrls,
   streamingUpload: true,
   clientSocketConnectTimeout: 60000,
   metrics: true,
 } satisfies CompanionOptions
 
 function asRecord(value: unknown): Record<string, unknown> | null {
-  if (!value || typeof value !== 'object') return null
-  return value as Record<string, unknown>
+  if (!isRecord(value)) return null
+  return value
 }
 
 /**
@@ -104,12 +108,9 @@ export function validateConfig(companionOptions: unknown): void {
   function getNested(obj: unknown, parts: string[]): unknown {
     let cur: unknown = obj
     for (const part of parts) {
-      if (cur && typeof cur === 'object') {
-        const record = cur as Record<string, unknown>
-        if (Object.hasOwn(record, part)) {
-          cur = record[part]
-          continue
-        }
+      if (isRecord(cur) && Object.hasOwn(cur, part)) {
+        cur = cur[part]
+        continue
       }
       return undefined
     }
