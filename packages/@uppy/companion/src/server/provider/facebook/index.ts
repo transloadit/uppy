@@ -71,7 +71,7 @@ async function getMediaUrl({
   token: string
   id: string
 }): Promise<string> {
-  const [{ body }] = await runRequestBatch({
+  const batch = await runRequestBatch({
     secret,
     token,
     requests: [
@@ -82,14 +82,18 @@ async function getMediaUrl({
     ],
   })
 
-  const imagesValue = isRecord(body) ? body.images : undefined
+  const first = batch[0]
+  if (!first) throw new Error('Unexpected Facebook response: missing body')
+  const body = first.body
+
+  const imagesValue = isRecord(body) ? body['images'] : undefined
 
   const isFbImage = (
     value: unknown,
   ): value is { width: number; source: string } =>
     isRecord(value) &&
-    typeof value.width === 'number' &&
-    typeof value.source === 'string'
+    typeof value['width'] === 'number' &&
+    typeof value['source'] === 'string'
 
   const images = Array.isArray(imagesValue) ? imagesValue.filter(isFbImage) : []
   const sortedImages = sortImages(images)
@@ -104,11 +108,11 @@ async function getMediaUrl({
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
 export default class Facebook extends Provider {
-  static get oauthProvider() {
+  static override get oauthProvider() {
     return 'facebook'
   }
 
-  async list({
+  override async list({
     directory,
     providerUserSession: { accessToken: token },
     query = { cursor: null },
@@ -123,16 +127,16 @@ export default class Facebook extends Provider {
       }
 
       if (typeof query.cursor === 'string' && query.cursor.length > 0) {
-        qs.after = query.cursor
+        qs['after'] = query.cursor
       }
 
       let path = 'me/albums'
       if (directory) {
         path = `${directory}/photos`
-        qs.fields = 'icon,images,name,width,height,created_time'
+        qs['fields'] = 'icon,images,name,width,height,created_time'
       }
 
-      const [response1, response2] = await runRequestBatch({
+      const responses = await runRequestBatch({
         secret: this.secret,
         token,
         requests: [
@@ -143,28 +147,33 @@ export default class Facebook extends Provider {
           { method: 'GET', relative_url: `${path}?${new URLSearchParams(qs)}` },
         ],
       })
+      const response1 = responses[0]
+      const response2 = responses[1]
+      if (!response1 || !response2) {
+        throw new Error('Unexpected Facebook response: missing batch result')
+      }
 
       const email =
-        isRecord(response1.body) && typeof response1.body.email === 'string'
-          ? response1.body.email
+        isRecord(response1.body) && typeof response1.body['email'] === 'string'
+          ? response1.body['email']
           : null
 
       const list = response2.body
       const isFacebookListResponse = (
         value: unknown,
       ): value is Parameters<typeof adaptData>[0] =>
-        isRecord(value) && Array.isArray(value.data)
+        isRecord(value) && Array.isArray(value['data'])
       if (!isFacebookListResponse(list)) {
         throw new Error('Unexpected Facebook response: missing data')
       }
 
       const currentQuery: Record<string, string> = {}
-      if (typeof query.cursor === 'string') currentQuery.cursor = query.cursor
+      if (typeof query.cursor === 'string') currentQuery['cursor'] = query.cursor
       return adaptData(list, email, directory, currentQuery)
     })
   }
 
-  async download({
+  override async download({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -182,7 +191,7 @@ export default class Facebook extends Provider {
     )
   }
 
-  async thumbnail() {
+  override async thumbnail() {
     // not implementing this because a public thumbnail from facebook will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -191,7 +200,7 @@ export default class Facebook extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async logout({
+  override async logout({
     providerUserSession: { accessToken: token },
   }: {
     providerUserSession: { accessToken: string }
@@ -217,13 +226,13 @@ export default class Facebook extends Provider {
       providerName: Facebook.oauthProvider,
       isAuthError: (response) =>
         isRecord(response.body) &&
-        isRecord(response.body.error) &&
-        response.body.error.code === 190, // Invalid OAuth 2.0 Access Token
+        isRecord(response.body['error']) &&
+        response.body['error']['code'] === 190, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
-        const error = body.error
+        const error = body['error']
         if (!isRecord(error)) return undefined
-        const message = error.message
+        const message = error['message']
         return typeof message === 'string' ? message : undefined
       },
     })

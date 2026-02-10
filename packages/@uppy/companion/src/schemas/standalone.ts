@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { RedisOptions } from 'ioredis'
 import { ProviderOptionsSchema, ServerConfigSchema } from './common.ts'
 
 // Keep these schemas tolerant initially: they are for inference + narrowing,
@@ -15,7 +16,12 @@ export const StandaloneCompanionOptionsSchema = z
     uploadUrls: z.array(z.string()).nullable().optional(),
     corsOrigins: z.unknown().optional(),
     redisUrl: z.string().optional(),
-    redisOptions: z.unknown().optional(),
+    redisOptions: z
+      .custom<RedisOptions>(
+        (value): value is RedisOptions =>
+          typeof value === 'object' && value != null && !Array.isArray(value),
+      )
+      .optional(),
     redisPubSubScope: z.string().optional(),
     periodicPingUrls: z.array(z.string()).optional(),
     metrics: z.boolean().optional(),

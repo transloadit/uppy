@@ -43,7 +43,10 @@ const getUsername = (data: DriveAbout): string => {
 }
 
 export const isGsuiteFile = (mimeType: string | undefined): boolean => {
-  return mimeType?.startsWith('application/vnd.google')
+  return (
+    typeof mimeType === 'string' &&
+    mimeType.startsWith('application/vnd.google')
+  )
 }
 
 const isSharedDrive = (item: DriveItem): boolean => {

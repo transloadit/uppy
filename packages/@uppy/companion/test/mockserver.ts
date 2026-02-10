@@ -111,16 +111,17 @@ export const getServer = async (
   )
   authServer.all('*/callback', (req, res, next) => {
     if (isRecord(req.session)) {
-      req.session.grant = {
+      req.session['grant'] = {
         response: { access_token: grantToken },
       }
     }
     next()
   })
   authServer.all(['*/send-token', '*/redirect'], (req, res, next) => {
-    const state = typeof req.query.state === 'string' ? req.query.state : null
+    const state =
+      typeof req.query['state'] === 'string' ? req.query['state'] : null
     if (isRecord(req.session)) {
-      req.session.grant = {
+      req.session['grant'] = {
         dynamic: { state: state ?? 'non-empty-value' },
       }
     }

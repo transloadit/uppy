@@ -4,7 +4,7 @@ import { isRecord } from '../src/server/helpers/type-guards.ts'
 type UploadMessage = Record<string, unknown> & { action: string }
 
 function isUploadMessage(value: unknown): value is UploadMessage {
-  return isRecord(value) && typeof value.action === 'string'
+  return isRecord(value) && typeof value['action'] === 'string'
 }
 
 export const connect = (uploadToken: string): void => {
@@ -16,7 +16,7 @@ export const onProgress = (
   cb: (message: UploadMessage) => void,
 ): void => {
   emitter().on(uploadToken, (message: unknown) => {
-    if (isUploadMessage(message) && message.action === 'progress') {
+    if (isUploadMessage(message) && message['action'] === 'progress') {
       cb(message)
     }
   })
@@ -27,7 +27,7 @@ export const onUploadSuccess = (
   cb: (message: UploadMessage) => void,
 ): void => {
   emitter().on(uploadToken, (message: unknown) => {
-    if (isUploadMessage(message) && message.action === 'success') {
+    if (isUploadMessage(message) && message['action'] === 'success') {
       cb(message)
     }
   })
@@ -38,7 +38,7 @@ export const onUploadError = (
   cb: (message: UploadMessage) => void,
 ): void => {
   emitter().on(uploadToken, (message: unknown) => {
-    if (isUploadMessage(message) && message.action === 'error') {
+    if (isUploadMessage(message) && message['action'] === 'error') {
       cb(message)
     }
   })

@@ -11,12 +11,12 @@ import { respondWithError } from '../provider/error.ts'
  */
 const meta = async (req: Request, res: Response): Promise<void> => {
   try {
-    logger.debug('URL file import handler running', null, req.id)
+    logger.debug('URL file import handler running', undefined, req.id)
     const { allowLocalUrls } = req.companion.options
     if (!validateURL(req.body.url, allowLocalUrls)) {
       logger.debug(
         'Invalid request body detected. Exiting url meta handler.',
-        null,
+        undefined,
         req.id,
       )
       res.status(400).json({ error: 'Invalid request body' })
@@ -36,12 +36,12 @@ const meta = async (req: Request, res: Response): Promise<void> => {
  * Import a file from a remote URL, then upload it to the specified destination.
  */
 const get = async (req: Request, res: Response): Promise<void> => {
-  logger.debug('URL file import handler running', null, req.id)
+  logger.debug('URL file import handler running', undefined, req.id)
   const { allowLocalUrls } = req.companion.options
   if (!validateURL(req.body.url, allowLocalUrls)) {
     logger.debug(
       'Invalid request body detected. Exiting url import handler.',
-      null,
+      undefined,
       req.id,
     )
     res.status(400).json({ error: 'Invalid request body' })

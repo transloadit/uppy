@@ -9,7 +9,11 @@ export default async function simpleAuth(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { providerName } = req.params
+  const providerName = req.params['providerName']
+  if (typeof providerName !== 'string' || providerName.length === 0) {
+    res.sendStatus(400)
+    return
+  }
   const secret = req.companion.options.secret
   if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
     res.sendStatus(500)
@@ -36,7 +40,7 @@ export default async function simpleAuth(
 
     logger.debug(
       `Generating simple auth token for provider ${providerName}`,
-      null,
+      undefined,
       req.id,
     )
     const uppyAuthToken = tokenService.generateEncryptedAuthToken(

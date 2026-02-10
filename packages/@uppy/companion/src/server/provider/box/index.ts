@@ -73,7 +73,7 @@ export default class Box extends Provider {
     this.needsCookieAuth = true
   }
 
-  static get oauthProvider() {
+  static override get oauthProvider() {
     return 'box'
   }
 
@@ -86,7 +86,7 @@ export default class Box extends Provider {
    * @param options.providerUserSession
    * @param options.companion
    */
-  async list({
+  override async list({
     directory,
     providerUserSession: { accessToken: token },
     query,
@@ -107,7 +107,7 @@ export default class Box extends Provider {
     })
   }
 
-  async download({
+  override async download({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -124,7 +124,7 @@ export default class Box extends Provider {
     })
   }
 
-  async thumbnail({
+  override async thumbnail({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -159,7 +159,7 @@ export default class Box extends Provider {
     })
   }
 
-  async size({
+  override async size({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -170,7 +170,7 @@ export default class Box extends Provider {
       const file = await getClient({ token })
         .get(`files/${id}`, { responseType: 'json' })
         .json<Record<string, unknown>>()
-      const sizeValue = file.size
+      const sizeValue = file['size']
       const sizeStr =
         typeof sizeValue === 'string'
           ? sizeValue
@@ -181,7 +181,7 @@ export default class Box extends Provider {
     })
   }
 
-  async logout({
+  override async logout({
     companion,
     providerUserSession: { accessToken: token },
   }: {
@@ -209,11 +209,10 @@ export default class Box extends Provider {
       fn,
       tag,
       providerName: Box.oauthProvider,
-      isAuthError: (response: { statusCode?: number }) =>
-        response.statusCode === 401,
+      isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
-        const msg = body.message
+        const msg = body['message']
         return typeof msg === 'string' ? msg : undefined
       },
     })

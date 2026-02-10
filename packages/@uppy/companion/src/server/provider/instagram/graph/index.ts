@@ -31,7 +31,9 @@ async function getMediaUrl({
     .json()
 
   const url =
-    isRecord(body) && typeof body.media_url === 'string' ? body.media_url : null
+    isRecord(body) && typeof body['media_url'] === 'string'
+      ? body['media_url']
+      : null
   if (!url) {
     throw new Error('Unexpected Instagram response: missing media_url')
   }
@@ -43,18 +45,18 @@ async function getMediaUrl({
  */
 export default class Instagram extends Provider {
   // for "grant"
-  static getExtraGrantConfig() {
+  static override getExtraGrantConfig() {
     return {
       protocol: 'https',
       scope: ['user_profile', 'user_media'],
     }
   }
 
-  static get oauthProvider() {
+  static override get oauthProvider() {
     return 'instagram'
   }
 
-  async list({
+  override async list({
     directory,
     providerUserSession: { accessToken: token },
     query = { cursor: null },
@@ -72,7 +74,7 @@ export default class Instagram extends Provider {
         }
 
         if (typeof query.cursor === 'string' && query.cursor.length > 0) {
-          qs.after = query.cursor
+          qs['after'] = query.cursor
         }
 
         const client = getClient({ token })
@@ -91,13 +93,13 @@ export default class Instagram extends Provider {
 
         const username = typeof me.username === 'string' ? me.username : null
         const currentQuery: Record<string, string> = {}
-        if (typeof query.cursor === 'string') currentQuery.cursor = query.cursor
+        if (typeof query.cursor === 'string') currentQuery['cursor'] = query.cursor
         return adaptData(list, username, directory, currentQuery)
       },
     )
   }
 
-  async download({
+  override async download({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -115,7 +117,7 @@ export default class Instagram extends Provider {
     )
   }
 
-  async thumbnail() {
+  override async thumbnail() {
     // not implementing this because a public thumbnail from instagram will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -124,7 +126,7 @@ export default class Instagram extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async logout() {
+  override async logout() {
     // access revoke is not supported by Instagram's API
     return {
       revoked: false,
@@ -137,17 +139,17 @@ export default class Instagram extends Provider {
       fn,
       tag,
       providerName: Instagram.oauthProvider,
-      isAuthError: (response: { body: unknown }) => {
+      isAuthError: (response) => {
         const body = response.body
         if (!isRecord(body)) return false
-        const err = body.error
-        return isRecord(err) && err.code === 190
+        const err = body['error']
+        return isRecord(err) && err['code'] === 190
       }, // Invalid OAuth 2.0 Access Token
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
-        const err = body.error
+        const err = body['error']
         if (!isRecord(err)) return undefined
-        return typeof err.message === 'string' ? err.message : undefined
+        return typeof err['message'] === 'string' ? err['message'] : undefined
       },
     })
   }

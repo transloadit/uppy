@@ -9,7 +9,7 @@ async function run({
   origin = 'https://localhost:1234',
   existingHeaders = {},
 }: {
-  corsOptions?: Record<string, unknown>
+  corsOptions?: Parameters<typeof cors>[0]
   origin?: string
   existingHeaders?: Record<string, string>
 }): Promise<Record<string, string | string[] | undefined>> {
@@ -31,7 +31,7 @@ describe('cors', () => {
   test('should properly merge with existing headers', () => {
     return run({
       corsOptions: {
-        sendSelfEndpoint: true,
+        sendSelfEndpoint: 'localhost:3020',
         corsOrigins: /^https:\/\/localhost:.*$/,
       },
       existingHeaders: {
@@ -43,7 +43,7 @@ describe('cors', () => {
       expect(headers['access-control-allow-origin']).toBe(
         'https://localhost:1234',
       )
-      expect(headers.vary).toBe('Origin')
+      expect(headers['vary']).toBe('Origin')
       expect(headers['access-control-allow-credentials']).toBe('true')
       expect(headers['access-control-allow-methods']).toBe(
         'PATCH,OPTIONS,POST,GET,DELETE',
@@ -61,7 +61,7 @@ describe('cors', () => {
       expect(headers['access-control-allow-origin']).toBe(
         'https://localhost:1234',
       )
-      expect(headers.vary).toBe('Origin')
+      expect(headers['vary']).toBe('Origin')
       expect(headers['access-control-allow-credentials']).toBe('true')
       expect(headers['access-control-allow-methods']).toBe(
         'GET,POST,OPTIONS,DELETE',
@@ -83,7 +83,7 @@ describe('cors', () => {
     return run({ corsOptions: { corsOrigins: /^incorrect$/ } }).then(
       (headers) => {
         expect(headers['access-control-allow-origin']).toBeUndefined()
-        expect(headers.vary).toBe('Origin')
+        expect(headers['vary']).toBe('Origin')
         expect(headers['access-control-allow-credentials']).toBe('true')
         expect(headers['access-control-allow-methods']).toBe(
           'GET,POST,OPTIONS,DELETE',
@@ -105,7 +105,7 @@ describe('cors', () => {
       expect(headers['access-control-allow-origin']).toBe(
         'https://localhost:1234',
       )
-      expect(headers.vary).toBe('Origin')
+      expect(headers['vary']).toBe('Origin')
       expect(headers['access-control-allow-credentials']).toBe('true')
       expect(headers['access-control-allow-methods']).toBe(
         'GET,POST,OPTIONS,DELETE',

@@ -45,9 +45,13 @@ export default function s3(configIn: unknown): Router {
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
   }
-  if (typeof config.expires !== 'number') {
-    throw new TypeError('s3: The `expires` option must be a number')
-  }
+  const expires = (() => {
+    const value = config.expires
+    if (typeof value !== 'number') {
+      throw new TypeError('s3: The `expires` option must be a number')
+    }
+    return value
+  })()
   type GetKeyFn = (args: {
     req: Request
     filename: string
@@ -137,16 +141,12 @@ export default function s3(configIn: unknown): Router {
    *  - url - The URL to upload to.
    *  - fields - Form fields to send along.
    */
-  function getUploadParameters(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
-    const client = getS3Client(req, res)
+  function getUploadParameters(req: Request, res: Response, next: NextFunction) {
+    const client = getS3Client(req, res, true)
     if (!client) return
 
-    const filename = req.query.filename
-    const metadata = isRecord(req.query.metadata) ? req.query.metadata : {}
+    const filename = req.query['filename']
+    const metadata = isRecord(req.query['metadata']) ? req.query['metadata'] : {}
 
     // Validate filename is provided and non-empty
     if (typeof filename !== 'string' || filename === '') {
@@ -158,8 +158,8 @@ export default function s3(configIn: unknown): Router {
     }
 
     const maxFilenameLength =
-      typeof req.companion.options.maxFilenameLength === 'number'
-        ? req.companion.options.maxFilenameLength
+      typeof req.companion.options['maxFilenameLength'] === 'number'
+        ? req.companion.options['maxFilenameLength']
         : filename.length
     const truncatedFilename = truncateFilename(filename, maxFilenameLength)
 
@@ -181,10 +181,10 @@ export default function s3(configIn: unknown): Router {
 
     const fields: Record<string, string> = {
       success_action_status: '201',
-      'content-type': typeof req.query.type === 'string' ? req.query.type : '',
+      'content-type': typeof req.query['type'] === 'string' ? req.query['type'] : '',
     }
 
-    if (config.acl != null) fields.acl = config.acl
+    if (config.acl != null) fields['acl'] = config.acl
 
     Object.keys(metadata).forEach((metadataKey) => {
       const value = metadata[metadataKey]
@@ -192,18 +192,24 @@ export default function s3(configIn: unknown): Router {
       fields[`x-amz-meta-${metadataKey}`] = value
     })
 
-    createPresignedPost(client, {
-      Bucket: bucket,
-      Expires: config.expires,
-      Fields: fields,
-      Conditions: conditions,
-      Key: key,
-    }).then((data) => {
+    // `createPresignedPost` sometimes pulls in a nested copy of `@aws-sdk/client-s3`,
+    // which makes the `S3Client` type nominally incompatible. The instance is still
+    // compatible at runtime.
+    createPresignedPost(
+      client as unknown as Parameters<typeof createPresignedPost>[0],
+      {
+        Bucket: bucket,
+        Expires: expires,
+        Fields: fields,
+        Conditions: conditions,
+        Key: key,
+      },
+    ).then((data) => {
       res.json({
         method: 'POST',
         url: data.url,
         fields: data.fields,
-        expires: config.expires,
+        expires,
       })
     }, next)
   }
@@ -243,8 +249,8 @@ export default function s3(configIn: unknown): Router {
     }
 
     const maxFilenameLength =
-      typeof req.companion.options.maxFilenameLength === 'number'
-        ? req.companion.options.maxFilenameLength
+      typeof req.companion.options['maxFilenameLength'] === 'number'
+        ? req.companion.options['maxFilenameLength']
         : filename.length
     const truncatedFilename = truncateFilename(filename, maxFilenameLength)
 
@@ -302,6 +308,7 @@ export default function s3(configIn: unknown): Router {
   function getUploadedParts(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
+    const s3Client = client
 
     const { uploadId } = req.params
     const { key } = req.query
@@ -320,7 +327,7 @@ export default function s3(configIn: unknown): Router {
     const parts: unknown[] = []
 
     function listPartsPage(startAt?: string) {
-      client
+      s3Client
         .send(
           new ListPartsCommand({
             Bucket: bucket,
@@ -358,9 +365,14 @@ export default function s3(configIn: unknown): Router {
     const client = getS3Client(req, res)
     if (!client) return
 
-    const { uploadId, partNumber } = req.params
-    const { key } = req.query
+    const uploadId = req.params['uploadId']
+    const partNumber = req.params['partNumber']
+    const key = req.query['key']
 
+    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+      res.status(400).json({ error: 's3: uploadId must be provided.' })
+      return
+    }
     if (typeof key !== 'string') {
       res.status(400).json({
         error:
@@ -368,7 +380,7 @@ export default function s3(configIn: unknown): Router {
       })
       return
     }
-    if (!parseInt(partNumber, 10)) {
+    if (typeof partNumber !== 'string' || !parseInt(partNumber, 10)) {
       res.status(400).json({
         error: 's3: the part number must be a number between 1 and 10000.',
       })
@@ -386,9 +398,9 @@ export default function s3(configIn: unknown): Router {
         PartNumber: Number(partNumber),
         Body: '',
       }),
-      { expiresIn: config.expires },
+      { expiresIn: expires },
     ).then((url) => {
-      res.json({ url, expires: config.expires })
+      res.json({ url, expires })
     }, next)
   }
 
@@ -405,32 +417,38 @@ export default function s3(configIn: unknown): Router {
    *  - presignedUrls - The URLs to upload to, including signed query parameters,
    *                    in an object mapped to part numbers.
    */
-  function batchSignPartsUpload(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) {
-    const client = getS3Client(req, res)
-    if (!client) return
+	  function batchSignPartsUpload(
+	    req: Request,
+	    res: Response,
+	    next: NextFunction,
+	  ) {
+	    const client = getS3Client(req, res)
+	    if (!client) return
+	
+	    const uploadId = req.params['uploadId']
+	    const key = req.query['key']
+	    const partNumbers = req.query['partNumbers']
 
-    const { uploadId } = req.params
-    const { key, partNumbers } = req.query
-
-    if (typeof key !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
-      return
-    }
-
-    if (typeof partNumbers !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"',
-      })
-      return
-    }
+	    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+	      res.status(400).json({ error: 's3: uploadId must be provided.' })
+	      return
+	    }
+	
+	    if (typeof key !== 'string') {
+	      res.status(400).json({
+	        error:
+	          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+	      })
+	      return
+	    }
+	
+	    if (typeof partNumbers !== 'string') {
+	      res.status(400).json({
+	        error:
+	          's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"',
+	      })
+	      return
+	    }
 
     const partNumbersArray = partNumbers.split(',')
     if (!partNumbersArray.every((partNumber) => parseInt(partNumber, 10))) {
@@ -442,30 +460,33 @@ export default function s3(configIn: unknown): Router {
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
-    Promise.all(
-      partNumbersArray.map((partNumber) => {
-        return getSignedUrl(
-          client,
-          new UploadPartCommand({
-            Bucket: bucket,
-            Key: key,
-            UploadId: uploadId,
-            PartNumber: Number(partNumber),
-            Body: '',
-          }),
-          { expiresIn: config.expires },
-        )
-      }),
-    )
-      .then((urls) => {
-        const presignedUrls = Object.create(null)
-        for (let index = 0; index < partNumbersArray.length; index++) {
-          presignedUrls[partNumbersArray[index]] = urls[index]
-        }
-        res.json({ presignedUrls })
-      })
-      .catch(next)
-  }
+	    Promise.all(
+	      partNumbersArray.map((partNumber) => {
+	        return getSignedUrl(
+	          client,
+	          new UploadPartCommand({
+	            Bucket: bucket,
+	            Key: key,
+	            UploadId: uploadId,
+	            PartNumber: Number(partNumber),
+	            Body: '',
+	          }),
+	          { expiresIn: expires },
+	        )
+	      }),
+	    )
+	      .then((urls) => {
+	        const presignedUrls: Record<string, string> = Object.create(null)
+	        for (let index = 0; index < partNumbersArray.length; index++) {
+	          const partNumber = partNumbersArray[index]
+	          const url = urls[index]
+	          if (!partNumber || !url) continue
+	          presignedUrls[partNumber] = url
+	        }
+	        res.json({ presignedUrls })
+	      })
+	      .catch(next)
+	  }
 
   /**
    * Abort a multipart upload, deleting already uploaded parts.
@@ -639,33 +660,33 @@ export default function s3(configIn: unknown): Router {
       return
     }
 
-    sts
-      .send(
-        new GetFederationTokenCommand({
+	    sts
+	      .send(
+	        new GetFederationTokenCommand({
           // Name of the federated user. The name is used as an identifier for the
           // temporary security credentials (such as Bob). For example, you can
           // reference the federated user name in a resource-based policy, such as
           // in an Amazon S3 bucket policy.
-          // Companion is configured by default as an unprotected public endpoint,
-          // if you implement your own custom endpoint with user authentication you
-          // should probably use different names for each of your users.
-          Name: 'companion',
+	          // Companion is configured by default as an unprotected public endpoint,
+	          // if you implement your own custom endpoint with user authentication you
+	          // should probably use different names for each of your users.
+	          Name: 'companion',
           // The duration, in seconds, of the role session. The value specified
           // can range from 900 seconds (15 minutes) up to the maximum session
-          // duration set for the role.
-          DurationSeconds: config.expires,
-          Policy: JSON.stringify(policy),
-        }),
-      )
-      .then((response) => {
+	          // duration set for the role.
+	          DurationSeconds: expires,
+	          Policy: JSON.stringify(policy),
+	        }),
+	      )
+	      .then((response) => {
         // This is a public unprotected endpoint.
         // If you implement your own custom endpoint with user authentication you
         // should probably use `private` instead of `public`.
-        res.setHeader('Cache-Control', `public,max-age=${config.expires - 300}`) // 300s is 5min.
-        res.json({
-          credentials: response.Credentials,
-          bucket: config.bucket,
-          region: config.region,
+	        res.setHeader('Cache-Control', `public,max-age=${expires - 300}`) // 300s is 5min.
+	        res.json({
+	          credentials: response.Credentials,
+	          bucket: config.bucket,
+	          region: config.region,
         })
       }, next)
   }

@@ -31,7 +31,7 @@ type WebdavListItem = {
  * Adapter for WebDAV servers that support simple auth (non-OAuth).
  */
 export default class WebdavProvider extends Provider {
-  static get hasSimpleAuth() {
+  static override get hasSimpleAuth() {
     return true
   }
 
@@ -50,6 +50,9 @@ export default class WebdavProvider extends Provider {
   }): Promise<WebdavClient> {
     const webdavUrl = providerUserSession?.webdavUrl
     const { allowLocalUrls } = this
+    if (typeof webdavUrl !== 'string' || webdavUrl.length === 0) {
+      throw new Error('invalid public link url')
+    }
     if (!validateURL(webdavUrl, allowLocalUrls)) {
       throw new Error('invalid public link url')
     }
@@ -58,7 +61,12 @@ export default class WebdavProvider extends Provider {
     // they have specific urls that we can identify
     // todo not sure if this is the right way to support nextcloud and other webdavs
     if (/\/s\/([^/]+)/.test(webdavUrl)) {
-      const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
+      const split = webdavUrl.split('/s/')
+      const baseURL = split[0]
+      const publicLinkToken = split[1]
+      if (!baseURL || !publicLinkToken) {
+        throw new Error('invalid public link url')
+      }
 
       return this.getClientHelper({
         url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
@@ -75,20 +83,20 @@ export default class WebdavProvider extends Provider {
     })
   }
 
-  async logout(): Promise<{ revoked: true }> {
+  override async logout(): Promise<{ revoked: true }> {
     return { revoked: true }
   }
 
-  async simpleAuth({
+  override async simpleAuth({
     requestBody,
   }: {
     requestBody: unknown
   }): Promise<WebdavUserSession> {
     try {
-      if (!isRecord(requestBody) || !isRecord(requestBody.form)) {
+      if (!isRecord(requestBody) || !isRecord(requestBody['form'])) {
         throw new ProviderUserError({ message: 'Invalid request body' })
       }
-      const webdavUrl = requestBody.form.webdavUrl
+      const webdavUrl = requestBody['form']['webdavUrl']
       if (typeof webdavUrl !== 'string' || webdavUrl.length === 0) {
         throw new ProviderUserError({ message: 'Missing webdavUrl' })
       }
@@ -103,7 +111,7 @@ export default class WebdavProvider extends Provider {
     } catch (err: unknown) {
       const errForLog = err instanceof Error ? err : new Error(String(err))
       logger.error(errForLog, 'provider.webdav.error')
-      const code = isRecord(err) ? err.code : undefined
+      const code = isRecord(err) ? err['code'] : undefined
       if (
         typeof code === 'string' &&
         ['ECONNREFUSED', 'ENOTFOUND'].includes(code)
@@ -134,7 +142,7 @@ export default class WebdavProvider extends Provider {
     })
   }
 
-  async list({
+  override async list({
     directory,
     providerUserSession,
   }: {
@@ -174,26 +182,29 @@ export default class WebdavProvider extends Provider {
           icon = 'video'
         }
 
-        data.items.push({
+        const listItem: WebdavListItem = {
           isFolder,
           icon,
           id: requestPath,
           name: item.basename,
-          modifiedDate,
           requestPath,
-          ...(!isFolder && {
-            mimeType: item.mime,
-            size: item.size,
-            thumbnail: null,
-          }),
-        })
+          ...(modifiedDate ? { modifiedDate } : {}),
+          ...(!isFolder
+            ? {
+                ...(typeof item.mime === 'string' ? { mimeType: item.mime } : {}),
+                ...(typeof item.size === 'number' ? { size: item.size } : {}),
+                thumbnail: null,
+              }
+            : {}),
+        }
+        data.items.push(listItem)
       })
 
       return data
     })
   }
 
-  async download({
+  override async download({
     id,
     providerUserSession,
   }: {
@@ -213,7 +224,7 @@ export default class WebdavProvider extends Provider {
     )
   }
 
-  async thumbnail({
+  override async thumbnail({
     id,
     providerUserSession,
   }: {
@@ -233,9 +244,9 @@ export default class WebdavProvider extends Provider {
       return await fn()
     } catch (err: unknown) {
       let err2: unknown = err
-      const status = isRecord(err) ? err.status : undefined
+      const status = isRecord(err) ? err['status'] : undefined
       if (status === 401) err2 = new ProviderAuthError()
-      const response = isRecord(err) ? err.response : undefined
+      const response = isRecord(err) ? err['response'] : undefined
       if (response != null) {
         err2 = new ProviderApiError(
           'WebDAV API error',

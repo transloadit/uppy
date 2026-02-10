@@ -3,7 +3,7 @@ import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { Readable as NodeReadableStream } from 'node:stream'
-import { Readable as NodeReadable } from 'node:stream'
+import { Readable as NodeReadable, Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
@@ -20,7 +20,7 @@ import tus from 'tus-js-client'
 import validator from 'validator'
 import emitter, { type EmitterLike } from './emitter/index.ts'
 import headerSanitize from './header-blacklist.ts'
-import { toError } from './helpers/type-guards.ts'
+import { isRecord, toError } from './helpers/type-guards.ts'
 import {
   getBucket,
   hasMatch,
@@ -43,16 +43,16 @@ const PROTOCOLS = Object.freeze({
 type UploadProtocol = (typeof PROTOCOLS)[keyof typeof PROTOCOLS]
 
 type CompanionOptionsLike = {
-  uploadUrls?: string[]
-  uploadHeaders?: Record<string, unknown>
-  maxFileSize?: number
-  maxFilenameLength?: number
-  streamingUpload?: boolean
-  tusDeferredUploadLength?: boolean
-  filePath?: string
-  s3?: Record<string, unknown>
-  chunkSize?: number
-} & Record<string, unknown>
+  uploadUrls?: Array<string | RegExp> | null | undefined
+  uploadHeaders?: Record<string, unknown> | undefined
+  maxFileSize?: number | undefined
+  maxFilenameLength?: number | undefined
+  streamingUpload?: boolean | undefined
+  tusDeferredUploadLength?: boolean | undefined
+  filePath?: string | undefined
+  s3?: Record<string, unknown> | undefined
+  chunkSize?: number | undefined
+}
 
 type UploaderOptions = {
   endpoint?: string
@@ -137,11 +137,11 @@ function exceedsMaxFileSize(
   maxFileSize: number | undefined,
   size: number | undefined,
 ): boolean {
-  return maxFileSize && size && size > maxFileSize
+  return maxFileSize !== undefined && size !== undefined && size > maxFileSize
 }
 
 export class ValidationError extends Error {
-  name = 'ValidationError'
+  override name = 'ValidationError'
 }
 
 function validateOptions(options: UploaderOptions): void {
@@ -337,16 +337,19 @@ export default class Uploader {
     this.throttledEmitProgress = throttle(
       (dataToEmit: { action: string; payload: Record<string, unknown> }) => {
         const { payload } = dataToEmit
+        const bytesUploadedValue = payload['bytesUploaded']
         const bytesUploaded =
-          typeof payload.bytesUploaded === 'number'
-            ? payload.bytesUploaded
+          typeof bytesUploadedValue === 'number'
+            ? bytesUploadedValue
             : undefined
+        const bytesTotalValue = payload['bytesTotal']
         const bytesTotal =
-          typeof payload.bytesTotal === 'number'
-            ? payload.bytesTotal
+          typeof bytesTotalValue === 'number'
+            ? bytesTotalValue
             : undefined
+        const progressValue = payload['progress']
         const progress =
-          typeof payload.progress === 'string' ? payload.progress : undefined
+          typeof progressValue === 'string' ? progressValue : undefined
         logger.debug(
           `${bytesUploaded} ${bytesTotal} ${progress}%`,
           'uploader.total.progress',
@@ -430,7 +433,7 @@ export default class Uploader {
   }
 
   _canStream(): boolean {
-    return this.options.companionOptions.streamingUpload
+    return this.options.companionOptions.streamingUpload !== false
   }
 
   async uploadStream(
@@ -469,6 +472,7 @@ export default class Uploader {
           activeStream.on('error', reject),
         ),
       ])
+      if (extraData === undefined) return { url }
       return { url, extraData }
     } finally {
       this.#uploadState = states.done
@@ -518,37 +522,101 @@ export default class Uploader {
   }
 
   static reqToOptions(req: Request, size: number | undefined): UploaderOptions {
-    const useFormDataIsSet = Object.hasOwn(req.body, 'useFormData')
-    const useFormData = useFormDataIsSet ? req.body.useFormData : true
+    const body: Record<string, unknown> = isRecord(req.body) ? req.body : {}
+
+    const useFormDataValue = body['useFormData']
+    const useFormData =
+      typeof useFormDataValue === 'boolean' ? useFormDataValue : true
+
+    const headersValue = body['headers']
+    if (headersValue != null && !isRecord(headersValue)) {
+      throw new ValidationError('headers must be an object')
+    }
+    const headers = isRecord(headersValue) ? headersValue : undefined
+
+    const metadataValue = body['metadata']
+    if (metadataValue != null && !isRecord(metadataValue)) {
+      throw new ValidationError('metadata must be an object')
+    }
+    const metadata = isRecord(metadataValue) ? metadataValue : {}
+
+    const httpMethodValue = body['httpMethod']
+    if (httpMethodValue != null && typeof httpMethodValue !== 'string') {
+      throw new ValidationError('unsupported HTTP METHOD specified')
+    }
+    const httpMethod =
+      typeof httpMethodValue === 'string' ? httpMethodValue : undefined
+
+    const protocolValue = body['protocol']
+    let protocol: UploadProtocol | undefined
+    if (protocolValue != null) {
+      if (typeof protocolValue !== 'string')
+        throw new ValidationError('unsupported protocol specified')
+      if (
+        protocolValue === PROTOCOLS.multipart ||
+        protocolValue === PROTOCOLS.s3Multipart ||
+        protocolValue === PROTOCOLS.tus
+      ) {
+        protocol = protocolValue
+      } else {
+        throw new ValidationError('unsupported protocol specified')
+      }
+    }
+
+    const endpointValue = body['endpoint']
+    if (endpointValue != null && typeof endpointValue !== 'string') {
+      throw new ValidationError('invalid destination url')
+    }
+    const endpoint = typeof endpointValue === 'string' ? endpointValue : undefined
+
+    const uploadUrlValue = body['uploadUrl']
+    if (uploadUrlValue != null && typeof uploadUrlValue !== 'string') {
+      throw new ValidationError('invalid destination url')
+    }
+    const uploadUrl =
+      typeof uploadUrlValue === 'string' ? uploadUrlValue : undefined
+
+    const fieldnameValue = body['fieldname']
+    if (fieldnameValue != null && typeof fieldnameValue !== 'string') {
+      throw new ValidationError('fieldname must be a string')
+    }
+    const fieldname =
+      typeof fieldnameValue === 'string' ? fieldnameValue : undefined
+
+    const companionOptions = req.companion.options
+    const filePath = companionOptions.filePath
+    const chunkSizeValue = companionOptions['chunkSize']
+    const chunkSize = typeof chunkSizeValue === 'number' ? chunkSizeValue : undefined
+
+    const storage = redis.client()
 
     return {
       // Client provided info (must be validated and not blindly trusted):
-      headers: req.body.headers,
-      httpMethod: req.body.httpMethod,
-      protocol: req.body.protocol,
-      endpoint: req.body.endpoint,
-      uploadUrl: req.body.uploadUrl,
-      metadata: req.body.metadata,
-      fieldname: req.body.fieldname,
+      ...(headers && { headers }),
+      ...(httpMethod !== undefined && { httpMethod }),
+      ...(protocol !== undefined && { protocol }),
+      ...(endpoint !== undefined && { endpoint }),
+      ...(uploadUrl !== undefined && { uploadUrl }),
+      ...(fieldname !== undefined && { fieldname }),
       useFormData,
+      metadata,
 
-      providerName: req.companion.providerName,
+      ...(req.companion.providerName !== undefined && {
+        providerName: req.companion.providerName,
+      }),
 
       // Info coming from companion server configuration:
-      size,
-      companionOptions: req.companion.options,
-      pathPrefix: `${req.companion.options.filePath}`,
-      storage: redis.client(),
+      ...(size !== undefined && { size }),
+      companionOptions,
+      pathPrefix: `${filePath ?? ''}`,
+      ...(storage !== undefined && { storage }),
       s3: req.companion.s3Client
         ? {
             client: req.companion.s3Client,
-            options: req.companion.options.s3,
+            options: companionOptions.s3,
           }
         : null,
-      chunkSize:
-        typeof req.companion.options.chunkSize === 'number'
-          ? req.companion.options.chunkSize
-          : undefined,
+      ...(chunkSize !== undefined && { chunkSize }),
     }
   }
 
@@ -674,8 +742,12 @@ export default class Uploader {
 
     const tusRet = await new Promise<UploadResult>((resolve, reject) => {
       const tusOptions: TusUploadOptions = {
-        endpoint: this.options.endpoint,
-        uploadUrl: this.options.uploadUrl,
+        ...(this.options.endpoint !== undefined && {
+          endpoint: this.options.endpoint,
+        }),
+        ...(this.options.uploadUrl !== undefined && {
+          uploadUrl: this.options.uploadUrl,
+        }),
         retryDelays: [0, 1000, 3000, 5000],
         chunkSize,
         headers: headerSanitize(this.options.headers),
@@ -716,12 +788,13 @@ export default class Uploader {
       ) {
         tusOptions.uploadLengthDeferred = true
       } else {
-        if (!this.size) {
+        if (this.size == null) {
           reject(
             new Error(
               'tusDeferredUploadLength needs to be enabled if no file size is provided by the provider',
             ),
           )
+          return
         }
         tusOptions.uploadLengthDeferred = false
         tusOptions.uploadSize = this.size
@@ -744,8 +817,9 @@ export default class Uploader {
       this.tus.start()
     })
 
-    if (this.size != null) {
-      const tusSize = Reflect.get(this.tus, '_size')
+    const tusUpload = this.tus
+    if (tusUpload && this.size != null) {
+      const tusSize = Reflect.get(tusUpload, '_size')
       if (typeof tusSize === 'number' && tusSize !== this.size) {
         logger.warn(
           `Tus uploaded size ${tusSize} different from reported URL size ${this.size}`,
@@ -766,7 +840,7 @@ export default class Uploader {
       const isRecord = (value: unknown): value is Record<string, unknown> =>
         !!value && typeof value === 'object' && !Array.isArray(value)
       const resp = isRecord(response) ? response : {}
-      const headers = isRecord(resp.headers) ? resp.headers : {}
+      const headers = isRecord(resp['headers']) ? resp['headers'] : {}
       // remove browser forbidden headers
       const {
         'set-cookie': deleted,
@@ -775,52 +849,63 @@ export default class Uploader {
       } = headers
 
       return {
-        responseText: resp.body,
-        status: resp.statusCode,
-        statusText: resp.statusMessage,
+        responseText: resp['body'],
+        status: resp['statusCode'],
+        statusText: resp['statusMessage'],
         headers: responseHeaders,
       }
-    }
+	    }
 
-    // upload progress
-    let bytesUploaded = 0
-    stream.on('data', (data: Buffer | string) => {
-      bytesUploaded +=
-        typeof data === 'string' ? Buffer.byteLength(data) : data.length
-      this.onProgress(bytesUploaded, undefined)
-    })
+	    // upload progress
+	    let bytesUploaded = 0
+	    const uploader = this
+	    const createProgressStream = () =>
+	      new Transform({
+	        transform(chunk, _encoding, callback) {
+	          const len =
+	            typeof chunk === 'string'
+	              ? Buffer.byteLength(chunk)
+	              : Buffer.isBuffer(chunk)
+	                ? chunk.length
+	                : 0
+	          bytesUploaded += len
+	          uploader.onProgress(bytesUploaded, undefined)
+	          callback(null, chunk)
+	        },
+	      })
 
-    const url = this.options.endpoint
-    const reqOptions: OptionsInit = {
-      headers: headerSanitize(this.options.headers),
-    }
+	    const url = this.options.endpoint
+	    const reqOptions: OptionsInit = {
+	      headers: headerSanitize(this.options.headers),
+	    }
 
-    if (this.options.useFormData) {
-      const formData = new FormData()
+	    if (this.options.useFormData) {
+	      const formData = new FormData()
 
-      Object.entries(this.options.metadata).forEach(([key, value]) =>
-        formData.append(key, value),
-      )
+	      Object.entries(this.options.metadata).forEach(([key, value]) =>
+	        formData.append(key, value),
+	      )
 
-      // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
-      formData.set(this.options.fieldname, {
-        name: this.uploadFileName,
-        [Symbol.toStringTag]: 'File',
-        stream() {
-          return stream
-        },
-      })
+	      // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
+	      const fieldName = this.options.fieldname ?? DEFAULT_FIELD_NAME
+	      formData.set(fieldName, {
+	        name: this.uploadFileName,
+	        [Symbol.toStringTag]: 'File',
+	        stream() {
+	          return stream.pipe(createProgressStream())
+	        },
+	      })
 
-      reqOptions.body = toFormDataLike(formData)
-    } else {
-      if (this.size != null) {
-        reqOptions.headers = {
-          ...(typeof reqOptions.headers === 'object' ? reqOptions.headers : {}),
-          'content-length': `${this.size}`,
-        }
-      }
-      reqOptions.body = stream
-    }
+	      reqOptions.body = toFormDataLike(formData)
+	    } else {
+	      if (this.size != null) {
+	        reqOptions.headers = {
+	          ...(typeof reqOptions.headers === 'object' ? reqOptions.headers : {}),
+	          'content-length': `${this.size}`,
+	        }
+	      }
+	      reqOptions.body = stream.pipe(createProgressStream())
+	    }
 
     try {
       const httpMethod =
@@ -860,16 +945,16 @@ export default class Uploader {
         !!value && typeof value === 'object' && !Array.isArray(value)
       const errObj = isRecord(err) ? err : null
       const response =
-        errObj && isRecord(errObj.response) ? errObj.response : null
+        errObj && isRecord(errObj['response']) ? errObj['response'] : null
       const statusCode =
-        response && typeof response.statusCode === 'number'
-          ? response.statusCode
+        response && typeof response['statusCode'] === 'number'
+          ? response['statusCode']
           : undefined
 
       if (statusCode != null) {
         const statusMessage =
-          typeof errObj?.statusMessage === 'string'
-            ? errObj.statusMessage
+          typeof errObj?.['statusMessage'] === 'string'
+            ? errObj['statusMessage']
             : 'Request failed'
         throw Object.assign(new Error(statusMessage), {
           extraData: getRespObj(response),
@@ -905,8 +990,8 @@ export default class Uploader {
       throw new TypeError('Invalid S3 options')
     }
 
-    const bucketOrFn = options.bucket
-    const getKey = options.getKey
+    const bucketOrFn = options['bucket']
+    const getKey = options['getKey']
 
     if (typeof getKey !== 'function') {
       throw new TypeError('s3.getKey must be a function')
@@ -925,13 +1010,16 @@ export default class Uploader {
       Body: stream,
     }
 
-    if (typeof options.acl === 'string') Reflect.set(params, 'ACL', options.acl)
+    if (typeof options['acl'] === 'string')
+      Reflect.set(params, 'ACL', options['acl'])
 
     const upload = new Upload({
       client,
       params,
       // using chunkSize as partSize too, see https://github.com/transloadit/uppy/pull/3511
-      partSize: this.options.chunkSize,
+      ...(this.options.chunkSize !== undefined && {
+        partSize: this.options.chunkSize,
+      }),
       leavePartsOnError: true, // https://github.com/aws/aws-sdk-js-v3/issues/2311
     })
 

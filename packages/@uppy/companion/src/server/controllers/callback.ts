@@ -29,7 +29,11 @@ export default function callback(
   res: Response,
   next: NextFunction,
 ): void {
-  const { providerName } = req.params
+  const providerName = req.params['providerName']
+  if (typeof providerName !== 'string' || providerName.length === 0) {
+    res.sendStatus(400)
+    return
+  }
   const secret = req.companion.options.secret
   if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
     res.sendStatus(500)
@@ -40,24 +44,26 @@ export default function callback(
   const session: Record<string, unknown> = isRecord(req.session)
     ? req.session
     : emptyRecord
-  const grant: Record<string, unknown> = isRecord(session.grant)
-    ? session.grant
+  const grant: Record<string, unknown> = isRecord(session['grant'])
+    ? session['grant']
     : emptyRecord
-  const grantResponse = isRecord(grant.response) ? grant.response : null
+  const grantResponse = isRecord(grant['response']) ? grant['response'] : null
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
+  const state = isRecord(grantDynamic) ? grantDynamic['state'] : undefined
   const origin =
-    grantDynamic.state &&
-    oAuthState.getFromState(grantDynamic.state, 'origin', secret)
+    typeof state === 'string' && state.length > 0
+      ? oAuthState.getFromState(state, 'origin', secret)
+      : undefined
   const originString = typeof origin === 'string' ? origin : undefined
 
   const accessToken =
-    grantResponse && typeof grantResponse.access_token === 'string'
-      ? grantResponse.access_token
+    grantResponse && typeof grantResponse['access_token'] === 'string'
+      ? grantResponse['access_token']
       : undefined
   const refreshToken =
-    grantResponse && typeof grantResponse.refresh_token === 'string'
-      ? grantResponse.refresh_token
+    grantResponse && typeof grantResponse['refresh_token'] === 'string'
+      ? grantResponse['refresh_token']
       : undefined
 
   const { providerClass } = req.companion
@@ -69,7 +75,7 @@ export default function callback(
   if (!accessToken) {
     logger.debug(
       `Did not receive access token for provider ${providerName}`,
-      null,
+      undefined,
       req.id,
     )
     logger.debug(grantResponse, 'callback.oauth.resp', req.id)
@@ -85,7 +91,7 @@ export default function callback(
 
   logger.debug(
     `Generating auth token for provider ${providerName}. refreshToken: ${refreshToken ? 'yes' : 'no'}`,
-    null,
+    undefined,
     req.id,
   )
   const uppyAuthToken = tokenService.generateEncryptedAuthToken(

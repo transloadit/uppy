@@ -117,7 +117,9 @@ export function app(optionsArg: CompanionInitOptionsInput = {}): {
 
   const getOauthProvider = (providerName: string): string | undefined => {
     if (!isProviderName(providerName)) return undefined
-    return providers[providerName].oauthProvider
+    const ProviderClass = providers[providerName]
+    if (!ProviderClass) return undefined
+    return ProviderClass.oauthProvider
   }
 
   providerManager.addProviderOptions(options, grantConfig, getOauthProvider)
@@ -280,8 +282,13 @@ export function app(optionsArg: CompanionInitOptionsInput = {}): {
   // Used for testing dynamic credentials only, normally this would run on a separate server.
   if (options.testDynamicOauthCredentials) {
     app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
-      if (req.query.secret !== options.testDynamicOauthCredentialsSecret)
+      const providedSecret = req.query['secret']
+      if (
+        typeof providedSecret !== 'string' ||
+        providedSecret !== options.testDynamicOauthCredentialsSecret
+      ) {
         throw new Error('Invalid secret')
+      }
       const { providerName } = req.params
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
@@ -326,9 +333,15 @@ export function app(optionsArg: CompanionInitOptionsInput = {}): {
 
   jobs.startPeriodicPingJob({
     urls: options.periodicPingUrls ?? [],
-    interval: options.periodicPingInterval,
-    count: options.periodicPingCount,
-    staticPayload: options.periodicPingStaticPayload,
+    ...(options.periodicPingInterval !== undefined && {
+      interval: options.periodicPingInterval,
+    }),
+    ...(options.periodicPingCount !== undefined && {
+      count: options.periodicPingCount,
+    }),
+    ...(options.periodicPingStaticPayload !== undefined && {
+      staticPayload: options.periodicPingStaticPayload,
+    }),
     version: packageJson.version,
     processId,
   })

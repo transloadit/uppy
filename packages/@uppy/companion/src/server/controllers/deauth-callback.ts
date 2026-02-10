@@ -24,8 +24,8 @@ export default async function deauthCallback(
       headers,
     })
     if (isRecord(out)) {
-      const status = typeof out.status === 'number' ? out.status : 200
-      res.status(status).json(out.data)
+      const status = typeof out['status'] === 'number' ? out['status'] : 200
+      res.status(status).json(out['data'])
       return
     }
     res.json(out)

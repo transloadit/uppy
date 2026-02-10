@@ -70,9 +70,9 @@ async function getStats({ id, token }: { id: string; token: string }) {
     const shortcutDetails = stats.shortcutDetails
     if (
       isRecord(shortcutDetails) &&
-      typeof shortcutDetails.targetId === 'string'
+      typeof shortcutDetails['targetId'] === 'string'
     ) {
-      return getStatsInner(shortcutDetails.targetId)
+      return getStatsInner(shortcutDetails['targetId'])
     }
   }
   return stats
@@ -139,42 +139,42 @@ export async function streamGoogleFile({
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
 export class Drive extends Provider {
-  static get oauthProvider() {
+  static override get oauthProvider() {
     return 'googledrive'
   }
 
-  static get authStateExpiry() {
+  static override get authStateExpiry() {
     return MAX_AGE_REFRESH_TOKEN
   }
 
   // Define these as real methods (not prototype assignment), so we don't risk
   // instance fields shadowing the prototype in downlevel transpiles.
-  logout(args: Parameters<typeof logout>[0]) {
+  override logout(args: Parameters<typeof logout>[0]) {
     return logout(args)
   }
 
-  refreshToken(args: Parameters<typeof refreshToken>[0]) {
+  override refreshToken(args: Parameters<typeof refreshToken>[0]) {
     return refreshToken(args)
   }
 
-  async list(options: unknown) {
+  override async list(options: unknown) {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.list.error',
       async () => {
         if (!isRecord(options)) throw new Error('Invalid options')
         const directory =
-          typeof options.directory === 'string' ? options.directory : 'root'
-        const query = isRecord(options.query) ? options.query : {}
+          typeof options['directory'] === 'string' ? options['directory'] : 'root'
+        const query = isRecord(options['query']) ? options['query'] : {}
         const cursor =
-          typeof query.cursor === 'string' ? query.cursor : undefined
-        const providerUserSession = isRecord(options.providerUserSession)
-          ? options.providerUserSession
+          typeof query['cursor'] === 'string' ? query['cursor'] : undefined
+        const providerUserSession = isRecord(options['providerUserSession'])
+          ? options['providerUserSession']
           : null
         const token =
           providerUserSession &&
-          typeof providerUserSession.accessToken === 'string'
-            ? providerUserSession.accessToken
+          typeof providerUserSession['accessToken'] === 'string'
+            ? providerUserSession['accessToken']
             : undefined
         if (!token) throw new ProviderAuthError()
 
@@ -201,8 +201,8 @@ export class Drive extends Provider {
             .json<DriveSharedDrivesResponse>()
 
           const nextPageToken =
-            typeof response.nextPageToken === 'string'
-              ? response.nextPageToken
+            typeof response['nextPageToken'] === 'string'
+              ? response['nextPageToken']
               : undefined
           if (nextPageToken) {
             const nextResponse = await fetchSharedDrives(nextPageToken)
@@ -270,19 +270,20 @@ export class Drive extends Provider {
     )
   }
 
-  async download(options: unknown) {
-    if (!isRecord(options) || typeof options.id !== 'string') {
+  override async download(options: unknown) {
+    if (!isRecord(options) || typeof options['id'] !== 'string') {
       throw new Error('Invalid options')
     }
-    const providerUserSession = isRecord(options.providerUserSession)
-      ? options.providerUserSession
+    const providerUserSession = isRecord(options['providerUserSession'])
+      ? options['providerUserSession']
       : null
     const token =
-      providerUserSession && typeof providerUserSession.accessToken === 'string'
-        ? providerUserSession.accessToken
+      providerUserSession &&
+      typeof providerUserSession['accessToken'] === 'string'
+        ? providerUserSession['accessToken']
         : undefined
     if (!token) throw new ProviderAuthError()
-    const { id } = options
+    const id = options['id']
 
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)

@@ -35,8 +35,9 @@ export default function server(
 
   const router = express.Router()
 
-  if (companionOptions.server.path) {
-    app.use(companionOptions.server.path, router)
+  const serverPath = companionOptions.server?.path
+  if (typeof serverPath === 'string' && serverPath.length > 0) {
+    app.use(serverPath, router)
   } else {
     app.use(router)
   }
@@ -79,11 +80,11 @@ export default function server(
     const { query, censored } = censorQuery(req.query)
     return censored
       ? `${req.path}?${qs.stringify(query)}`
-      : req.originalUrl || req.url
+      : req.originalUrl || req.url || '-'
   })
 
   morgan.token('referrer', (req) => {
-    const ref = req.headers.referer || req.headers.referrer
+    const ref = req.headers['referer'] || req.headers['referrer']
     if (typeof ref === 'string') {
       let parsed: URL
       try {
@@ -97,7 +98,7 @@ export default function server(
         ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}`
         : parsed.href
     }
-    return undefined
+    return '-'
   })
 
   // Use helmet to secure Express headers
@@ -114,19 +115,22 @@ export default function server(
     saveUninitialized: true,
   }
 
-  const redisClient = redis.client(companionOptions)
+  const redisClient = redis.client({
+    redisUrl: companionOptions.redisUrl,
+    redisOptions: companionOptions.redisOptions,
+  })
   if (redisClient) {
     sessionOptions.store = new RedisStore({
       client: redisClient,
       prefix:
-        process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX ||
+        process.env['COMPANION_REDIS_EXPRESS_SESSION_PREFIX'] ||
         'companion-session:',
     })
   }
 
-  if (process.env.COMPANION_COOKIE_DOMAIN) {
+  if (process.env['COMPANION_COOKIE_DOMAIN']) {
     sessionOptions.cookie = {
-      domain: process.env.COMPANION_COOKIE_DOMAIN,
+      domain: process.env['COMPANION_COOKIE_DOMAIN'],
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     }
   }
@@ -138,7 +142,7 @@ export default function server(
   router.use(session(sessionOptions))
 
   // Routes
-  if (process.env.COMPANION_HIDE_WELCOME !== 'true') {
+  if (process.env['COMPANION_HIDE_WELCOME'] !== 'true') {
     router.get('/', (req, res) => {
       res.setHeader('Content-Type', 'text/plain')
       res.send(buildHelpfulStartupMessage(companionOptions))
@@ -157,15 +161,15 @@ export default function server(
   // that you might have mixed the values for COMPANION_ONEDRIVE_KEY and COMPANION_ONEDRIVE_SECRET,
   // please DO NOT set any value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
   if (
-    process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' &&
-    process.env.COMPANION_ONEDRIVE_KEY
+    process.env['COMPANION_ONEDRIVE_DOMAIN_VALIDATION'] === 'true' &&
+    process.env['COMPANION_ONEDRIVE_KEY']
   ) {
     router.get(
       '/.well-known/microsoft-identity-association.json',
       (req, res) => {
         const content = JSON.stringify({
           associatedApplications: [
-            { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
+            { applicationId: process.env['COMPANION_ONEDRIVE_KEY'] },
           ],
         })
         res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
@@ -184,7 +188,7 @@ export default function server(
 
   app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
     const error = toError(err)
-    const status = isRecord(err) ? err.status : undefined
+    const status = isRecord(err) ? err['status'] : undefined
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts

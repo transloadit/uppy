@@ -13,14 +13,14 @@ type SocketOutgoing = { action: string; payload: Record<string, unknown> }
 function isSocketOutgoing(value: unknown): value is SocketOutgoing {
   return (
     isRecord(value) &&
-    typeof value.action === 'string' &&
-    isRecord(value.payload)
+    typeof value['action'] === 'string' &&
+    isRecord(value['payload'])
   )
 }
 
 function getErrorCode(err: unknown): string | undefined {
   if (!isRecord(err)) return undefined
-  const code = err.code
+  const code = err['code']
   return typeof code === 'string' ? code : undefined
 }
 
@@ -59,8 +59,13 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
         )
     }
 
-    emitter().emit(`connection:${token}`)
-    emitter().on(token, send)
+	    emitter().emit(`connection:${token}`)
+	    const onTokenMessage = (...args: unknown[]) => {
+	      const data = args[0]
+	      if (!isSocketOutgoing(data)) return
+	      send(data)
+	    }
+	    emitter().on(token, onTokenMessage)
 
     ws.on('error', (err) => {
       if (
@@ -77,14 +82,14 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
       }
     })
 
-    ws.on('message', (jsonData) => {
-      try {
-        const data: unknown = JSON.parse(jsonData.toString())
-        const action = isRecord(data) ? data.action : undefined
-        if (action === 'pause' || action === 'resume' || action === 'cancel') {
-          emitter().emit(`${action}:${token}`)
-        }
-      } catch (err) {
+	    ws.on('message', (jsonData) => {
+	      try {
+	        const data: unknown = JSON.parse(jsonData.toString())
+	        const action = isRecord(data) ? data['action'] : undefined
+	        if (action === 'pause' || action === 'resume' || action === 'cancel') {
+	          emitter().emit(`${action}:${token}`)
+	        }
+	      } catch (err) {
         logger.error(
           err instanceof Error ? err : String(err),
           'websocket.error',
@@ -93,8 +98,8 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
       }
     })
 
-    ws.on('close', () => {
-      emitter().removeListener(token, send)
-    })
-  })
+	    ws.on('close', () => {
+	      emitter().removeListener(token, onTokenMessage)
+	    })
+	  })
 }

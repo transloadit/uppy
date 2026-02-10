@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, test } from 'vitest'
 
 // We don't care about colors in our tests, so force `supports-color` to disable colors.
-process.env.FORCE_COLOR = 'false'
+process.env['FORCE_COLOR'] = 'false'
 
 import logger from '../src/server/logger.ts'
 

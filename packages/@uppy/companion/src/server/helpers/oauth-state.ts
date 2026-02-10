@@ -39,7 +39,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isOAuthState(value: unknown): value is OAuthState {
-  return isRecord(value) && typeof value.id === 'string' && value.id.length > 0
+  return (
+    isRecord(value) &&
+    typeof value['id'] === 'string' &&
+    value['id'].length > 0
+  )
 }
 
 export const getFromState = (
@@ -58,9 +62,9 @@ export const getGrantDynamicFromRequest = (req: {
 }): Record<string, unknown> => {
   const { session } = req
   if (!isRecord(session)) return {}
-  const grant = session.grant
+  const grant = session['grant']
   if (!isRecord(grant)) return {}
-  const dynamic = grant.dynamic
+  const dynamic = grant['dynamic']
   if (!isRecord(dynamic)) return {}
   return dynamic
 }

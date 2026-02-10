@@ -5,19 +5,26 @@ import logger from '../logger.ts'
 
 export default function preauth(req: Request, res: Response): void {
   const body = isRecord(req.body) ? req.body : null
-  const params = body && Object.hasOwn(body, 'params') ? body.params : undefined
+  const params =
+    body && Object.hasOwn(body, 'params') ? body['params'] : undefined
   if (!params) {
     logger.info('invalid request data received', 'preauth.bad')
     res.sendStatus(400)
     return
   }
 
+  const providerName = req.params['providerName']
+  if (typeof providerName !== 'string' || providerName.length === 0) {
+    res.sendStatus(400)
+    return
+  }
+
   const providerConfig =
-    req.companion.options.providerOptions[req.params.providerName]
+    req.companion.options.providerOptions[providerName]
   const credentialsURL =
     isRecord(providerConfig) &&
-    typeof providerConfig.credentialsURL === 'string'
-      ? providerConfig.credentialsURL
+    typeof providerConfig['credentialsURL'] === 'string'
+      ? providerConfig['credentialsURL']
       : undefined
   if (!credentialsURL) {
     res.sendStatus(501)

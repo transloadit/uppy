@@ -53,7 +53,8 @@ const getItemName = (item: OneDriveItem): string => {
 }
 
 const getMimeType = (item: OneDriveItem): string | null => {
-  return item.file ? item.file.mimeType : null
+  const mimeType = item.file?.mimeType
+  return typeof mimeType === 'string' ? mimeType : null
 }
 
 const getItemId = (item: OneDriveItem): string => {

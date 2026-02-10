@@ -2,7 +2,13 @@
   "extends": "./tsconfig.shared",
   "compilerOptions": {
     "noEmit": true,
+    "strict": true,
     "noImplicitAny": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noPropertyAccessFromIndexSignature": true,
     "allowImportingTsExtensions": true,
     "useUnknownInCatchVariables": true,
     "noImplicitReturns": true,

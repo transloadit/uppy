@@ -54,20 +54,22 @@ export class ProviderAuthError extends ProviderApiError {
 export function parseHttpError(err: unknown): HttpErrorLike | undefined {
   if (!isRecord(err)) return undefined
 
-  if (err.name === 'HTTPError') {
-    const response = isRecord(err.response) ? err.response : undefined
+  const name = err['name']
+  if (name === 'HTTPError') {
+    const responseCandidate = err['response']
+    const response = isRecord(responseCandidate) ? responseCandidate : undefined
     const statusCode =
-      response && typeof response.statusCode === 'number'
-        ? response.statusCode
+      response && typeof response['statusCode'] === 'number'
+        ? response['statusCode']
         : undefined
-    const body = response ? response.body : undefined
+    const body = response ? response['body'] : undefined
     return { statusCode, body }
   }
 
-  if (err.name === 'HttpError') {
+  if (name === 'HttpError') {
     const statusCode =
-      typeof err.statusCode === 'number' ? err.statusCode : undefined
-    const body = err.responseJson
+      typeof err['statusCode'] === 'number' ? err['statusCode'] : undefined
+    const body = err['responseJson']
     return { statusCode, body }
   }
 
@@ -82,32 +84,35 @@ function errorToResponse(
 ): { code: number; json: Record<string, unknown> } | undefined {
   if (!isRecord(err)) return undefined
 
-  if (err.isAuthError === true) {
-    return { code: 401, json: { message: `${err.message ?? ''}` } }
+  if (err['isAuthError'] === true) {
+    return { code: 401, json: { message: `${err['message'] ?? ''}` } }
   }
 
-  if (err.name === 'ValidationError') {
-    return { code: 400, json: { message: `${err.message ?? ''}` } }
+  const name = err['name']
+
+  if (name === 'ValidationError') {
+    return { code: 400, json: { message: `${err['message'] ?? ''}` } }
   }
 
-  if (err.name === 'ProviderUserError') {
+  if (name === 'ProviderUserError') {
+    const json = err['json']
     return {
       code: 400,
-      json: isRecord(err.json) ? err.json : { data: err.json },
+      json: isRecord(json) ? json : { data: json },
     }
   }
 
-  if (err.name === 'ProviderApiError') {
+  if (name === 'ProviderApiError') {
     const statusCode =
-      typeof err.statusCode === 'number' ? err.statusCode : undefined
+      typeof err['statusCode'] === 'number' ? err['statusCode'] : undefined
     if (statusCode != null && statusCode >= 500) {
-      return { code: 502, json: { message: `${err.message ?? ''}` } }
+      return { code: 502, json: { message: `${err['message'] ?? ''}` } }
     }
     if (statusCode === 429) {
-      return { code: 429, json: { message: `${err.message ?? ''}` } }
+      return { code: 429, json: { message: `${err['message'] ?? ''}` } }
     }
     if (statusCode != null && statusCode >= 400) {
-      return { code: 424, json: { message: `${err.message ?? ''}` } }
+      return { code: 424, json: { message: `${err['message'] ?? ''}` } }
     }
   }
 

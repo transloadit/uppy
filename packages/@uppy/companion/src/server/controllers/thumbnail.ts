@@ -7,7 +7,11 @@ async function thumbnail(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { id } = req.params
+  const id = req.params['id']
+  if (typeof id !== 'string' || id.length === 0) {
+    res.sendStatus(400)
+    return
+  }
   const { provider, providerUserSession } = req.companion
   if (!provider) {
     res.sendStatus(400)
@@ -22,8 +26,8 @@ async function thumbnail(
     if (!isRecord(out)) {
       throw new Error('Invalid thumbnail response')
     }
-    const stream = out.stream
-    const contentType = out.contentType
+    const stream = out['stream']
+    const contentType = out['contentType']
     const pipe =
       stream != null &&
       (typeof stream === 'object' || typeof stream === 'function')

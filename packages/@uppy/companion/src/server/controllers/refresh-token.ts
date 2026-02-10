@@ -12,7 +12,11 @@ export default async function refreshToken(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { providerName } = req.params
+  const providerName = req.params['providerName']
+  if (typeof providerName !== 'string' || providerName.length === 0) {
+    res.sendStatus(400)
+    return
+  }
   const secret = req.companion.options.secret
   if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
     res.sendStatus(500)
@@ -21,18 +25,18 @@ export default async function refreshToken(
 
   const providerConfig = req.companion.options.providerOptions?.[providerName]
   const clientId =
-    isRecord(providerConfig) && typeof providerConfig.key === 'string'
-      ? providerConfig.key
+    isRecord(providerConfig) && typeof providerConfig['key'] === 'string'
+      ? providerConfig['key']
       : undefined
   const clientSecret =
-    isRecord(providerConfig) && typeof providerConfig.secret === 'string'
-      ? providerConfig.secret
+    isRecord(providerConfig) && typeof providerConfig['secret'] === 'string'
+      ? providerConfig['secret']
       : undefined
 
   const redirectUri =
     isRecord(req.companion.providerGrantConfig) &&
-    typeof req.companion.providerGrantConfig.redirect_uri === 'string'
-      ? req.companion.providerGrantConfig.redirect_uri
+    typeof req.companion.providerGrantConfig['redirect_uri'] === 'string'
+      ? req.companion.providerGrantConfig['redirect_uri']
       : undefined
 
   const { provider, providerClass } = req.companion
@@ -42,8 +46,9 @@ export default async function refreshToken(
 
   // not all providers have refresh tokens
   const refreshToken =
-    providerUserSession && typeof providerUserSession.refreshToken === 'string'
-      ? providerUserSession.refreshToken
+    providerUserSession &&
+    typeof providerUserSession['refreshToken'] === 'string'
+      ? providerUserSession['refreshToken']
       : undefined
   if (!refreshToken) {
     logger.warn('Tried to refresh token without having a token')
@@ -63,8 +68,8 @@ export default async function refreshToken(
       refreshToken,
     })
     const accessToken =
-      isRecord(out) && typeof out.accessToken === 'string'
-        ? out.accessToken
+      isRecord(out) && typeof out['accessToken'] === 'string'
+        ? out['accessToken']
         : undefined
     if (!accessToken) {
       throw new Error('Provider did not return an accessToken')
@@ -77,7 +82,7 @@ export default async function refreshToken(
 
     logger.debug(
       `Generating refreshed auth token for provider ${providerName}`,
-      null,
+      undefined,
       req.id,
     )
     const uppyAuthToken = tokenService.generateEncryptedAuthToken(

@@ -15,7 +15,7 @@ describe('test authentication callback', () => {
       .get('/drive/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header.location).toContain(
+        expect(res.header['location']).toContain(
           'http://localhost:3020/drive/send-token?uppyAuthToken=',
         )
       })
@@ -26,11 +26,15 @@ describe('test authentication callback', () => {
       .get('/dropbox/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header.location).toContain(
+        expect(res.header['location']).toContain(
           'http://localhost:3020/dropbox/send-token?uppyAuthToken=',
         )
+        const setCookie = res.header['set-cookie']
+        if (!Array.isArray(setCookie) || !setCookie[0]) {
+          throw new Error('Missing set-cookie header')
+        }
         const authToken = decodeURIComponent(
-          res.header['set-cookie'][0]
+          setCookie[0]
             .split(';')[0]
             .split('uppyAuthToken--dropbox=')[1],
         )

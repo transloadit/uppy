@@ -131,7 +131,7 @@ function getProtectedHttpAgent({
 
   if (protocol.startsWith('https')) {
     return class HttpsAgent extends https.Agent {
-      createConnection(
+      override createConnection(
         options: http.ClientRequestArgs,
         callback?: (err: Error | null, stream: Duplex) => void,
       ): Duplex {
@@ -153,7 +153,7 @@ function getProtectedHttpAgent({
   }
 
   return class HttpAgent extends http.Agent {
-    createConnection(
+    override createConnection(
       options: http.ClientRequestArgs,
       callback?: (err: Error | null, stream: Duplex) => void,
     ): Duplex {
@@ -230,11 +230,15 @@ export async function getURLMeta(
           // we add random string to avoid duplicate files
           const contentDispositionHeader =
             response.headers['content-disposition']
-          const filename =
-            typeof contentDispositionHeader === 'string'
-              ? contentDisposition.parse(contentDispositionHeader).parameters
-                  .filename
-              : path.basename(`${response.request.requestUrl}`)
+          let filename: string | undefined
+          if (typeof contentDispositionHeader === 'string') {
+            const parsed = contentDisposition.parse(contentDispositionHeader)
+            const maybeFilename = parsed.parameters['filename']
+            if (typeof maybeFilename === 'string' && maybeFilename.length > 0) {
+              filename = maybeFilename
+            }
+          }
+          if (!filename) filename = path.basename(`${response.request.requestUrl}`)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()

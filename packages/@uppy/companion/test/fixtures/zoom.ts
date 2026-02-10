@@ -62,7 +62,7 @@ export const nockZoomRevoke = ({
     .reply(function () {
       const { headers } = this.req
       const expected = getBasicAuthHeader(key, secret)
-      const success = headers.authorization === expected
+      const success = headers['authorization'] === expected
       return success ? [200, { status: 'success' }] : [400]
     })
 }

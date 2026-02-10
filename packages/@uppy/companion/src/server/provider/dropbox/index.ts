@@ -166,7 +166,9 @@ async function fetchSearchEntries({
   return {
     entries,
     has_more: searchRes.has_more,
-    cursor: searchRes.cursor,
+    ...(typeof searchRes.cursor === 'string' && searchRes.cursor.length > 0
+      ? { cursor: searchRes.cursor }
+      : {}),
   }
 }
 
@@ -179,18 +181,18 @@ export default class Dropbox extends Provider {
     this.needsCookieAuth = true
   }
 
-  static get oauthProvider() {
+  static override get oauthProvider() {
     return 'dropbox'
   }
 
-  static get authStateExpiry() {
+  static override get authStateExpiry() {
     return MAX_AGE_REFRESH_TOKEN
   }
 
   /**
    * Search entries
    */
-  async search(options: {
+  override async search(options: {
     providerUserSession: { accessToken: string }
     query: { q: string; path?: string; [k: string]: unknown }
     companion: { buildURL: Parameters<typeof adaptData>[2] }
@@ -214,7 +216,7 @@ export default class Dropbox extends Provider {
   /**
    * List folder entries
    */
-  async list(options: {
+  override async list(options: {
     providerUserSession: { accessToken: string }
     directory?: string
     query: { cursor?: string; [k: string]: unknown }
@@ -232,7 +234,7 @@ export default class Dropbox extends Provider {
     })
   }
 
-  async download({
+  override async download({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -260,7 +262,7 @@ export default class Dropbox extends Provider {
     )
   }
 
-  async thumbnail({
+  override async thumbnail({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -291,7 +293,7 @@ export default class Dropbox extends Provider {
     )
   }
 
-  async size({
+  override async size({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -316,7 +318,7 @@ export default class Dropbox extends Provider {
     })
   }
 
-  async logout({
+  override async logout({
     providerUserSession: { accessToken: token },
   }: {
     providerUserSession: { accessToken: string }
@@ -333,7 +335,7 @@ export default class Dropbox extends Provider {
     )
   }
 
-  async refreshToken({
+  override async refreshToken({
     clientId,
     clientSecret,
     refreshToken,
@@ -369,11 +371,10 @@ export default class Dropbox extends Provider {
       fn,
       tag,
       providerName: Dropbox.oauthProvider,
-      isAuthError: (response: { statusCode?: number }) =>
-        response.statusCode === 401,
+      isAuthError: (response) => response.statusCode === 401,
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
-        const summary = body.error_summary
+        const summary = body['error_summary']
         return typeof summary === 'string' ? summary : undefined
       },
     })

@@ -41,7 +41,7 @@ const getItemIcon = (item: UnsplashPhoto): string => {
 }
 
 const getItemSubList = (item: UnsplashSearchResponse): UnsplashPhoto[] => {
-  return item.results
+  return Array.isArray(item.results) ? item.results : []
 }
 
 const getItemName = (item: UnsplashPhoto): string | undefined => {

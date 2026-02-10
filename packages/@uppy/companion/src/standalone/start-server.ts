@@ -5,7 +5,7 @@ import logger from '../server/logger.ts'
 import standalone from './index.ts'
 
 const port: string | number =
-  process.env.COMPANION_PORT || process.env.PORT || 3020
+  process.env['COMPANION_PORT'] || process.env['PORT'] || 3020
 
 const { app } = standalone()
 

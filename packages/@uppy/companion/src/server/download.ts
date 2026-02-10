@@ -12,7 +12,7 @@ import logger from './logger.ts'
 export const downloadURL = async (
   url: string,
   allowLocalIPs: boolean,
-  traceId: string,
+  traceId?: string,
   options: Record<string, unknown> = {},
 ): Promise<{ stream: unknown; size: number | undefined }> => {
   try {

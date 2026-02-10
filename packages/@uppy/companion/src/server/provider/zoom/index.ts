@@ -46,37 +46,39 @@ async function findFile({
     })
     .json()
 
-  const filesValue = isRecord(body) ? body.recording_files : undefined
+  const filesValue = isRecord(body) ? body['recording_files'] : undefined
   const files = Array.isArray(filesValue) ? filesValue : []
 
   for (const file of files) {
     if (!isRecord(file)) continue
-    const id = typeof file.id === 'string' ? file.id : undefined
+    const id = typeof file['id'] === 'string' ? file['id'] : undefined
     const fileType =
-      typeof file.file_type === 'string' ? file.file_type : undefined
+      typeof file['file_type'] === 'string' ? file['file_type'] : undefined
     const recStart =
-      typeof file.recording_start === 'string'
-        ? file.recording_start
+      typeof file['recording_start'] === 'string'
+        ? file['recording_start']
         : undefined
 
     const matches =
       (id != null && fileId === id) ||
       (fileType != null &&
-        file.file_type === fileId &&
+        file['file_type'] === fileId &&
         recStart != null &&
         recStart === recordingStart)
 
     if (!matches) continue
 
-    return {
-      download_url:
-        typeof file.download_url === 'string' ? file.download_url : undefined,
-      file_size:
-        typeof file.file_size === 'number' ? file.file_size : undefined,
-      id,
-      file_type: fileType,
-      recording_start: recStart,
-    }
+    const found: ZoomFoundFile = {}
+    const downloadUrl =
+      typeof file['download_url'] === 'string' ? file['download_url'] : undefined
+    const fileSize =
+      typeof file['file_size'] === 'number' ? file['file_size'] : undefined
+    if (downloadUrl) found.download_url = downloadUrl
+    if (typeof fileSize === 'number') found.file_size = fileSize
+    if (id) found.id = id
+    if (fileType) found.file_type = fileType
+    if (recStart) found.recording_start = recStart
+    return found
   }
 
   return undefined
@@ -86,11 +88,11 @@ async function findFile({
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
  */
 export default class Zoom extends Provider {
-  static get oauthProvider() {
+  static override get oauthProvider() {
     return 'zoom'
   }
 
-  async list(options: {
+  override async list(options: {
     providerUserSession: { accessToken: string }
     query?: unknown
     directory?: string
@@ -102,17 +104,20 @@ export default class Zoom extends Provider {
       const query = isRecord(options.query) ? options.query : {}
       const meetingId = options.directory || ''
       const requestedYear =
-        typeof query.year === 'string' ? parseInt(query.year, 10) : null
+        typeof query['year'] === 'string' ? parseInt(query['year'], 10) : null
 
       const client = getClient({ token })
       const userRaw: unknown = await client
         .get('users/me', { responseType: 'json' })
         .json()
       const userObj: Record<string, unknown> = isRecord(userRaw) ? userRaw : {}
+      const email =
+        typeof userObj['email'] === 'string' ? userObj['email'] : undefined
+      const timezoneValue =
+        typeof userObj['timezone'] === 'string' ? userObj['timezone'] : undefined
       const user: Parameters<typeof adaptData>[0] = {
-        email: typeof userObj.email === 'string' ? userObj.email : undefined,
-        timezone:
-          typeof userObj.timezone === 'string' ? userObj.timezone : undefined,
+        ...(email ? { email } : {}),
+        ...(timezoneValue ? { timezone: timezoneValue } : {}),
       }
       const timezone = user.timezone ?? null
       const userTz = timezone || 'UTC'
@@ -159,12 +164,12 @@ export default class Zoom extends Provider {
                   .json()
                 paginatedMeetings.push(
                   ...(isRecord(currentChunkMeetingsInfo) &&
-                  Array.isArray(currentChunkMeetingsInfo.meetings)
-                    ? currentChunkMeetingsInfo.meetings
+                  Array.isArray(currentChunkMeetingsInfo['meetings'])
+                    ? currentChunkMeetingsInfo['meetings']
                     : []),
                 )
                 const tokenValue = isRecord(currentChunkMeetingsInfo)
-                  ? currentChunkMeetingsInfo.next_page_token
+                  ? currentChunkMeetingsInfo['next_page_token']
                   : undefined
                 nextPageToken =
                   typeof tokenValue === 'string' && tokenValue.length > 0
@@ -189,7 +194,9 @@ export default class Zoom extends Provider {
       }
 
       const accountCreationDate = moment.utc(
-        typeof userObj.created_at === 'string' ? userObj.created_at : undefined,
+        typeof userObj['created_at'] === 'string'
+          ? userObj['created_at']
+          : undefined,
       )
       const startYear = accountCreationDate.year()
       const currentYear = moment.tz(userTz).year()
@@ -233,7 +240,7 @@ export default class Zoom extends Provider {
     })
   }
 
-  async download({
+  override async download({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -246,23 +253,24 @@ export default class Zoom extends Provider {
       // meeting id + file id required
       // cc files don't have an ID or size
       const recordingStart =
-        isRecord(query) && typeof query.recordingStart === 'string'
-          ? query.recordingStart
+        isRecord(query) && typeof query['recordingStart'] === 'string'
+          ? query['recordingStart']
           : undefined
       const fileId =
-        isRecord(query) && typeof query.recordingId === 'string'
-          ? query.recordingId
+        isRecord(query) && typeof query['recordingId'] === 'string'
+          ? query['recordingId']
           : ''
       if (!fileId) throw new Error('Missing recordingId')
 
       const client = getClient({ token })
 
-      const foundFile = await findFile({
+      const findFileArgs = {
         client,
         meetingId,
         fileId,
-        recordingStart,
-      })
+        ...(recordingStart ? { recordingStart } : {}),
+      }
+      const foundFile = await findFile(findFileArgs)
       const url = foundFile?.download_url
       if (!url) throw new Error('Download URL not found')
 
@@ -275,7 +283,7 @@ export default class Zoom extends Provider {
     })
   }
 
-  async size({
+  override async size({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -287,27 +295,28 @@ export default class Zoom extends Provider {
     return this.#withErrorHandling('provider.zoom.size.error', async () => {
       const client = getClient({ token })
       const recordingStart =
-        isRecord(query) && typeof query.recordingStart === 'string'
-          ? query.recordingStart
+        isRecord(query) && typeof query['recordingStart'] === 'string'
+          ? query['recordingStart']
           : undefined
       const fileId =
-        isRecord(query) && typeof query.recordingId === 'string'
-          ? query.recordingId
+        isRecord(query) && typeof query['recordingId'] === 'string'
+          ? query['recordingId']
           : ''
       if (!fileId) throw new Error('Missing recordingId')
 
-      const foundFile = await findFile({
+      const findFileArgs = {
         client,
         meetingId,
         fileId,
-        recordingStart,
-      })
+        ...(recordingStart ? { recordingStart } : {}),
+      }
+      const foundFile = await findFile(findFileArgs)
       if (!foundFile) throw new Error('File not found')
       return foundFile.file_size // Note: May be undefined.
     })
   }
 
-  async logout({
+  override async logout({
     companion,
     providerUserSession: { accessToken: token },
   }: {
@@ -331,12 +340,14 @@ export default class Zoom extends Provider {
         .json()
 
       const status =
-        isRecord(body) && typeof body.status === 'string' ? body.status : null
+        isRecord(body) && typeof body['status'] === 'string'
+          ? body['status']
+          : null
       return { revoked: status === 'success' }
     })
   }
 
-  async deauthorizationCallback({
+  override async deauthorizationCallback({
     companion,
     body,
     headers,
@@ -348,7 +359,7 @@ export default class Zoom extends Provider {
     headers: Record<string, string | undefined>
   }): Promise<Record<string, unknown>> {
     return this.#withErrorHandling('provider.zoom.deauth.error', async () => {
-      if (!isRecord(body) || body.event !== DEAUTH_EVENT_NAME) {
+      if (!isRecord(body) || body['event'] !== DEAUTH_EVENT_NAME) {
         return { data: {}, status: 400 }
       }
 
@@ -362,15 +373,15 @@ export default class Zoom extends Provider {
         return { data: {}, status: 400 }
       }
 
-      const tokenSupplied = headers.authorization
+      const tokenSupplied = headers['authorization']
       if (!tokenSupplied || verificationToken !== tokenSupplied) {
         return { data: {}, status: 400 }
       }
 
-      const payload = body.payload
+      const payload = body['payload']
       if (!isRecord(payload)) return { data: {}, status: 400 }
-      const userId = payload.user_id
-      const accountId = payload.account_id
+      const userId = payload['user_id']
+      const accountId = payload['account_id']
       if (typeof userId !== 'string' || typeof accountId !== 'string') {
         return { data: {}, status: 400 }
       }
@@ -401,12 +412,12 @@ export default class Zoom extends Provider {
       fn,
       tag,
       providerName: Zoom.oauthProvider,
-      isAuthError: (response: { statusCode?: number }) =>
+      isAuthError: (response) =>
         typeof response.statusCode === 'number' &&
         authErrorCodes.includes(response.statusCode),
       getJsonErrorMessage: (body) =>
-        isRecord(body) && typeof body.message === 'string'
-          ? body.message
+        isRecord(body) && typeof body['message'] === 'string'
+          ? body['message']
           : undefined,
     })
   }

@@ -198,40 +198,41 @@ const getItemTopic = (item: ZoomItem): string => {
 
 function isZoomRecordingFile(value: unknown): value is ZoomRecordingFile {
   if (!isRecord(value)) return false
-  const fileType = value.file_type
+  const fileType = value['file_type']
   if (typeof fileType !== 'string') return false
   if (!Object.hasOwn(MIMETYPES, fileType)) return false
   return (
-    typeof value.id === 'string' &&
-    typeof value.meeting_id === 'string' &&
-    typeof value.recording_start === 'string'
+    typeof value['id'] === 'string' &&
+    typeof value['meeting_id'] === 'string' &&
+    typeof value['recording_start'] === 'string'
   )
 }
 
 function toZoomMeeting(value: unknown): ZoomMeeting | null {
   if (!isRecord(value)) return null
-  const uuid = value.uuid
-  const meetingId = value.meeting_id
-  const topic = value.topic
+  const uuid = value['uuid']
+  const meetingId = value['meeting_id']
+  const topic = value['topic']
   if (typeof uuid !== 'string') return null
   if (typeof meetingId !== 'string') return null
   if (typeof topic !== 'string') return null
 
-  const startTime = value.start_time
-  const totalSize = value.total_size
-  const recordingFilesValue = value.recording_files
+  const startTime = value['start_time']
+  const totalSize = value['total_size']
+  const recordingFilesValue = value['recording_files']
   const recordingFiles: ZoomRecordingFile[] = Array.isArray(recordingFilesValue)
     ? recordingFilesValue.filter(isZoomRecordingFile)
     : []
 
-  return {
+  const out: ZoomMeeting = {
     uuid,
     meeting_id: meetingId,
     topic,
-    start_time: typeof startTime === 'string' ? startTime : undefined,
-    total_size: typeof totalSize === 'number' ? totalSize : undefined,
     recording_files: recordingFiles,
   }
+  if (typeof startTime === 'string') out.start_time = startTime
+  if (typeof totalSize === 'number') out.total_size = totalSize
+  return out
 }
 
 const adaptData = (
@@ -259,8 +260,8 @@ const adaptData = (
   }
 
   let itemsToProcess: ZoomItem[] = []
-  const meetingsValue = results.meetings
-  const recordingFilesValue = results.recording_files
+  const meetingsValue = results['meetings']
+  const recordingFilesValue = results['recording_files']
 
   if (Array.isArray(meetingsValue)) {
     itemsToProcess = meetingsValue
@@ -277,9 +278,9 @@ const adaptData = (
       )
   } else if (
     Array.isArray(recordingFilesValue) &&
-    typeof results.topic === 'string'
+    typeof results['topic'] === 'string'
   ) {
-    const topic = results.topic
+    const topic = results['topic']
     itemsToProcess = recordingFilesValue
       .filter(isZoomRecordingFile)
       .map((item) => ({ ...item, topic }))

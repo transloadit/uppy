@@ -28,22 +28,20 @@ const getPhotoMeta = async (
  * Adapter for API https://api.unsplash.com
  */
 export default class Unsplash extends Provider {
-  async list({
+  override async list({
     providerUserSession: { accessToken: token },
-    query = { cursor: null, q: null },
+    query = {},
   }: {
     providerUserSession: { accessToken: string }
-    query?: Parameters<typeof adaptData>[1] & {
-      cursor?: string | null
-      q?: string | null
-    }
+    query?: Parameters<typeof adaptData>[1]
   }): Promise<unknown> {
-    if (typeof query.q !== 'string') {
+    const q = typeof query.q === 'string' ? query.q : undefined
+    if (!q) {
       throw new ProviderApiError('Search query missing', 400)
     }
 
     return this.#withErrorHandling('provider.unsplash.list.error', async () => {
-      const qs = new URLSearchParams({ per_page: '40', query: query.q })
+      const qs = new URLSearchParams({ per_page: '40', query: q })
       if (typeof query.cursor === 'string' && query.cursor.length > 0) {
         qs.set('page', query.cursor)
       }
@@ -55,7 +53,7 @@ export default class Unsplash extends Provider {
     })
   }
 
-  async download({
+  override async download({
     id,
     providerUserSession: { accessToken: token },
   }: {
@@ -68,14 +66,15 @@ export default class Unsplash extends Provider {
         const client = getClient({ token })
 
         const meta: unknown = await getPhotoMeta(client, id)
-        const links = isRecord(meta) ? meta.links : null
+        const links = isRecord(meta) ? meta['links'] : null
         if (!isRecord(links)) {
           throw new Error('Unexpected Unsplash response: missing links')
         }
-        const url = typeof links.download === 'string' ? links.download : null
+        const url =
+          typeof links['download'] === 'string' ? links['download'] : null
         const attributionUrl =
-          typeof links.download_location === 'string'
-            ? links.download_location
+          typeof links['download_location'] === 'string'
+            ? links['download_location']
             : null
         if (!url || !attributionUrl) {
           throw new Error(
@@ -107,7 +106,7 @@ export default class Unsplash extends Provider {
       providerName: 'Unsplash',
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
-        const errors = body.errors
+        const errors = body['errors']
         if (typeof errors === 'string') return errors
         if (Array.isArray(errors)) return errors.map(String).join(', ')
         return undefined

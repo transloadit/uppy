@@ -15,13 +15,13 @@ export async function startDownUpload({
   getSize?: (() => Promise<unknown>) | undefined
   download: () => Promise<unknown>
 }): Promise<void> {
-  logger.debug('Starting download stream.', null, req.id)
+  logger.debug('Starting download stream.', undefined, req.id)
   const downloadResult: unknown = await download()
   if (!isRecord(downloadResult)) {
     throw new TypeError('Invalid download result')
   }
-  const stream = downloadResult.stream
-  const maybeSize = downloadResult.size
+  const stream = downloadResult['stream']
+  const maybeSize = downloadResult['size']
 
   const isNodeReadableStream = (
     value: unknown,
@@ -61,8 +61,8 @@ export async function startDownUpload({
   }
   const { clientSocketConnectTimeout } = req.companion.options
 
-  logger.debug('Instantiating uploader.', null, req.id)
-  const uploader = new Uploader(Uploader.reqToOptions(req, size))
+  logger.debug('Instantiating uploader.', undefined, req.id)
+  const uploader = new Uploader(Uploader.reqToOptions(req, size ?? undefined))
 
   // "Forking" off the upload operation to background, so we can return the http request:
   ;(async () => {
@@ -70,13 +70,13 @@ export async function startDownUpload({
     // the download, so that the client can receive all download/upload progress.
     logger.debug(
       'Waiting for socket connection before beginning remote download/upload.',
-      null,
+      undefined,
       req.id,
     )
     await uploader.awaitReady(clientSocketConnectTimeout)
     logger.debug(
       'Socket connection received. Starting remote download/upload.',
-      null,
+      undefined,
       req.id,
     )
 

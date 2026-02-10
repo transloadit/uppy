@@ -69,26 +69,26 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 export function getMaskableSecrets(companionOptions: unknown): string[] {
   const secrets: string[] = []
   const root = asRecord(companionOptions) ?? {}
-  const providerOptions = asRecord(root.providerOptions) ?? {}
-  const customProviders = asRecord(root.customProviders)
-  const s3 = asRecord(root.s3)
+  const providerOptions = asRecord(root['providerOptions']) ?? {}
+  const customProviders = asRecord(root['customProviders'])
+  const s3 = asRecord(root['s3'])
 
   Object.keys(providerOptions).forEach((provider) => {
     const entry = asRecord(providerOptions[provider])
-    const secret = entry?.secret
+    const secret = entry?.['secret']
     if (typeof secret === 'string' && secret.length > 0) secrets.push(secret)
   })
 
   if (customProviders) {
     Object.keys(customProviders).forEach((provider) => {
       const entry = asRecord(customProviders[provider])
-      const config = asRecord(entry?.config)
-      const secret = config?.secret
+      const config = asRecord(entry?.['config'])
+      const secret = config?.['secret']
       if (typeof secret === 'string' && secret.length > 0) secrets.push(secret)
     })
   }
 
-  const s3Secret = s3?.secret
+  const s3Secret = s3?.['secret']
   if (typeof s3Secret === 'string' && s3Secret.length > 0) {
     secrets.push(s3Secret)
   }
@@ -175,7 +175,7 @@ export function validateConfig(companionOptions: unknown): void {
     | undefined
 
   if (uploadUrls == null || uploadUrls.length === 0) {
-    if (process.env.NODE_ENV === 'production') {
+    if (process.env['NODE_ENV'] === 'production') {
       throw new Error('uploadUrls is required')
     }
     logger.error(

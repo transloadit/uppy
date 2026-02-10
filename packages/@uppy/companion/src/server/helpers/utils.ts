@@ -6,8 +6,14 @@ const nonceLength = 16
 const encryptionKeyLength = 32
 const ivLength = 12
 
-export const hasMatch = (value: string, criteria: string[]): boolean => {
-  return criteria.some((i) => value === i || new RegExp(i).test(value))
+export const hasMatch = (
+  value: string,
+  criteria: ReadonlyArray<string | RegExp>,
+): boolean => {
+  return criteria.some((i) => {
+    if (i instanceof RegExp) return i.test(value)
+    return value === i || new RegExp(i).test(value)
+  })
 }
 
 export const jsonStringify = (data: unknown): string => {
@@ -24,10 +30,10 @@ export const jsonStringify = (data: unknown): string => {
 // all paths are assumed to be '/' prepended
 export type UrlBuilderOptions = {
   server?: {
-    protocol?: string
-    host?: string
-    path?: string
-    implicitPath?: string
+    protocol?: string | undefined
+    host?: string | undefined
+    path?: string | undefined
+    implicitPath?: string | undefined
   }
 }
 
@@ -71,7 +77,7 @@ function createSecrets(
     'sha256',
     secret,
     new Uint8Array(32),
-    nonce,
+    nonce ?? new Uint8Array(0),
     encryptionKeyLength + ivLength,
   )
   const buf = Buffer.from(key)
@@ -264,5 +270,15 @@ export const getBucket = ({
 
 export const truncateFilename = (
   filename: string,
-  maxFilenameLength: number,
-): string => filename.slice(maxFilenameLength * -1)
+  maxFilenameLength?: number,
+): string => {
+  if (
+    typeof maxFilenameLength !== 'number' ||
+    !Number.isFinite(maxFilenameLength) ||
+    maxFilenameLength <= 0
+  ) {
+    // Historically, passing `undefined` resulted in no truncation (slice(0)).
+    return filename
+  }
+  return filename.slice(maxFilenameLength * -1)
+}

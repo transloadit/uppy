@@ -27,7 +27,7 @@ const googlePickerBodySchema = z.discriminatedUnion('platform', [
 
 const get = async (req: Request, res: Response): Promise<void> => {
   try {
-    logger.debug('Google Picker file import handler running', null, req.id)
+    logger.debug('Google Picker file import handler running', undefined, req.id)
 
     const allowLocalUrls = false
 

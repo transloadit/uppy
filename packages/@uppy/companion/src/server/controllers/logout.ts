@@ -7,13 +7,13 @@ export default async function logout(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+  ): Promise<void> {
   const cleanSession = (): void => {
     const session = isRecord(req.session) ? req.session : null
-    const grant = session && isRecord(session.grant) ? session.grant : null
+    const grant = session && isRecord(session['grant']) ? session['grant'] : null
     if (grant) {
-      grant.state = null
-      grant.dynamic = null
+      grant['state'] = null
+      grant['dynamic'] = null
     }
   }
   const { companion } = req

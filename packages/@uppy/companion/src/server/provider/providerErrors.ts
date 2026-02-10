@@ -94,12 +94,12 @@ export async function withGoogleErrorHandling<T>(
       response.statusCode === 401 ||
       (response.statusCode === 400 &&
         isRecord(response.body) &&
-        response.body.error === 'invalid_grant'), // Refresh token has expired or been revoked
+        response.body['error'] === 'invalid_grant'), // Refresh token has expired or been revoked
     getJsonErrorMessage: (body) => {
       if (!isRecord(body)) return undefined
-      const error = body.error
+      const error = body['error']
       if (!isRecord(error)) return undefined
-      const message = error.message
+      const message = error['message']
       return typeof message === 'string' ? message : undefined
     },
   })

@@ -94,12 +94,13 @@ function getCommonCookieOptions({
   // Note that sameSite cookies also require secure (which needs https), so thumbnails don't work from localhost
   // to test locally, you can manually find the URL of the image and open it in a separate browser tab
   if (companionOptions.server && companionOptions.server.protocol === 'https') {
-    cookieOptions.sameSite = 'none'
-    cookieOptions.secure = true
+    cookieOptions['sameSite'] = 'none'
+    cookieOptions['secure'] = true
   }
 
-  if (companionOptions.cookieDomain) {
-    cookieOptions.domain = companionOptions.cookieDomain
+  const cookieDomain = companionOptions['cookieDomain']
+  if (typeof cookieDomain === 'string' && cookieDomain.length > 0) {
+    cookieOptions['domain'] = cookieDomain
   }
 
   return cookieOptions
@@ -140,13 +141,14 @@ export const addToCookiesIfNeeded = (
   if (req.companion.provider?.needsCookieAuth) {
     const oauthProvider = req.companion.providerClass?.oauthProvider
     if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) return
-    addToCookies({
+    const args = {
       res,
       token: uppyAuthToken,
       companionOptions: req.companion.options,
       oauthProvider,
-      maxAge,
-    })
+      ...(maxAge === undefined ? {} : { maxAge }),
+    }
+    addToCookies(args)
   }
 }
 

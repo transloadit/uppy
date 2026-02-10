@@ -17,7 +17,7 @@ export default async function list(
     const data = await provider.list({
       companion,
       providerUserSession,
-      directory: params.id,
+      directory: params['id'],
       query,
     })
     res.json(data)

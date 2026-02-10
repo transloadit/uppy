@@ -6,6 +6,7 @@ import promBundle from 'express-prom-bundle'
 import packageJson from '../../package.json' with { type: 'json' }
 import type { CompanionRuntimeOptions } from '../types/companion-options.ts'
 import * as tokenService from './helpers/jwt.ts'
+import { isRecord } from './helpers/type-guards.ts'
 import { getURLBuilder } from './helpers/utils.ts'
 import * as logger from './logger.ts'
 import { isOAuthProvider } from './provider/Provider.ts'
@@ -15,7 +16,7 @@ export const hasSessionAndProvider: RequestHandler = (req, res, next) => {
   if (!req.session) {
     logger.debug(
       'No session attached to req object. Exiting dispatcher.',
-      null,
+      undefined,
       req.id,
     )
     return res.sendStatus(400)
@@ -24,7 +25,7 @@ export const hasSessionAndProvider: RequestHandler = (req, res, next) => {
   if (!req.companion.provider) {
     logger.debug(
       'No provider/provider-handler found. Exiting dispatcher.',
-      null,
+      undefined,
       req.id,
     )
     return res.sendStatus(400)
@@ -34,9 +35,9 @@ export const hasSessionAndProvider: RequestHandler = (req, res, next) => {
 }
 
 const isOAuthProviderReq = (req: Request) =>
-  isOAuthProvider(req.companion.providerClass.oauthProvider)
+  isOAuthProvider(req.companion.providerClass?.oauthProvider)
 const isSimpleAuthProviderReq = (req: Request) =>
-  !!req.companion.providerClass.hasSimpleAuth
+  !!req.companion.providerClass?.hasSimpleAuth
 
 /**
  * Middleware can be used to verify that the current request is to an OAuth provider
@@ -44,7 +45,7 @@ const isSimpleAuthProviderReq = (req: Request) =>
  */
 export const hasOAuthProvider: RequestHandler = (req, res, next) => {
   if (!isOAuthProviderReq(req)) {
-    logger.debug('Provider does not support OAuth.', null, req.id)
+    logger.debug('Provider does not support OAuth.', undefined, req.id)
     return res.sendStatus(400)
   }
 
@@ -53,7 +54,7 @@ export const hasOAuthProvider: RequestHandler = (req, res, next) => {
 
 export const hasSimpleAuthProvider: RequestHandler = (req, res, next) => {
   if (!isSimpleAuthProviderReq(req)) {
-    logger.debug('Provider does not support simple auth.', null, req.id)
+    logger.debug('Provider does not support simple auth.', undefined, req.id)
     return res.sendStatus(400)
   }
 
@@ -64,7 +65,7 @@ export const hasBody: RequestHandler = (req, res, next) => {
   if (!req.body) {
     logger.debug(
       'No body attached to req object. Exiting dispatcher.',
-      null,
+      undefined,
       req.id,
     )
     return res.sendStatus(400)
@@ -74,7 +75,7 @@ export const hasBody: RequestHandler = (req, res, next) => {
 }
 
 export const hasSearchQuery: RequestHandler = (req, res, next) => {
-  if (typeof req.query.q !== 'string') {
+  if (typeof req.query['q'] !== 'string') {
     logger.debug(
       'search request has no search query',
       'search.query.check',
@@ -95,7 +96,11 @@ export const verifyToken: RequestHandler = (req, res, next) => {
       res.sendStatus(401)
       return
     }
-    const { providerName } = req.params
+    const providerName = req.params['providerName']
+    if (typeof providerName !== 'string' || providerName.length === 0) {
+      res.sendStatus(400)
+      return
+    }
     try {
       const payload = tokenService.verifyEncryptedAuthToken(
         `${token}`,
@@ -104,7 +109,11 @@ export const verifyToken: RequestHandler = (req, res, next) => {
       )
       req.companion.providerUserSession = payload[providerName]
     } catch (err) {
-      logger.error((err as Error).message, 'token.verify.error', req.id)
+      logger.error(
+        err instanceof Error ? err.message : String(err),
+        'token.verify.error',
+        req.id,
+      )
       res.sendStatus(401)
       return
     }
@@ -115,8 +124,16 @@ export const verifyToken: RequestHandler = (req, res, next) => {
   // for non auth providers, we just load the static key from options
   if (!isOAuthProviderReq(req)) {
     const { providerOptions } = req.companion.options
-    const { providerName } = req.params
-    const key = providerOptions[providerName]?.key
+    const providerName = req.params['providerName']
+    if (typeof providerName !== 'string' || providerName.length === 0) {
+      res.sendStatus(400)
+      return
+    }
+    const providerOption = providerOptions?.[providerName]
+    const key =
+      isRecord(providerOption) && typeof providerOption['key'] === 'string'
+        ? providerOption['key']
+        : undefined
     if (!key) {
       logger.info(
         `unconfigured credentials for ${providerName}`,
@@ -136,7 +153,11 @@ export const verifyToken: RequestHandler = (req, res, next) => {
 
 // does not fail if token is invalid
 export const gentleVerifyToken: RequestHandler = (req, res, next) => {
-  const { providerName } = req.params
+  const providerName = req.params['providerName']
+  if (typeof providerName !== 'string' || providerName.length === 0) {
+    next()
+    return
+  }
   if (req.companion.authToken) {
     try {
       const payload = tokenService.verifyEncryptedAuthToken(
@@ -146,25 +167,43 @@ export const gentleVerifyToken: RequestHandler = (req, res, next) => {
       )
       req.companion.providerUserSession = payload[providerName]
     } catch (err) {
-      logger.error((err as Error).message, 'token.gentle.verify.error', req.id)
+      logger.error(
+        err instanceof Error ? err.message : String(err),
+        'token.gentle.verify.error',
+        req.id,
+      )
     }
   }
   next()
 }
 
 export const cookieAuthToken: RequestHandler = (req, res, next) => {
-  req.companion.authToken =
-    req.cookies[`uppyAuthToken--${req.companion.providerClass.oauthProvider}`]
+  const oauthProvider = req.companion.providerClass?.oauthProvider
+  if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
+    return next()
+  }
+  req.companion.authToken = req.cookies[`uppyAuthToken--${oauthProvider}`]
   return next()
 }
 
-type CorsOptionsLike = {
-  corsOrigins?: unknown
-  sendSelfEndpoint?: unknown
-} & Record<string, unknown>
+function isCorsOrigin(value: unknown): value is CorsOptions['origin'] {
+  if (typeof value === 'boolean') return true
+  if (typeof value === 'string') return true
+  if (value instanceof RegExp) return true
+  if (typeof value === 'function') return true
+  if (Array.isArray(value)) {
+    return value.every((v) => typeof v === 'string' || v instanceof RegExp)
+  }
+  return false
+}
 
 export const cors =
-  (options: CorsOptionsLike = {}): RequestHandler =>
+  (
+    options: {
+      corsOrigins?: CompanionRuntimeOptions['corsOrigins']
+      sendSelfEndpoint?: CompanionRuntimeOptions['sendSelfEndpoint']
+    },
+  ): RequestHandler =>
   (req, res, next) => {
     // HTTP headers are not case sensitive, and express always handles them in lower case, so that's why we lower case them.
     // I believe that HTTP verbs are case sensitive, and should be uppercase.
@@ -176,7 +215,10 @@ export const cors =
         ?.map((method) => method.trim().toLowerCase()),
     )
 
-    if (options.sendSelfEndpoint) exposeHeadersSet.add('i-am')
+    const sendSelfEndpoint = options['sendSelfEndpoint']
+    if (typeof sendSelfEndpoint === 'string' && sendSelfEndpoint.length > 0) {
+      exposeHeadersSet.add('i-am')
+    }
 
     // Needed for basic operation: https://github.com/transloadit/uppy/issues/3021
     const allowedHeaders = [
@@ -211,16 +253,18 @@ export const cors =
     // Must be set to at least true (origin "*" with "credentials: true" will cause error in many browsers)
     // https://github.com/expressjs/cors/issues/119
     // allowedOrigins can also be any type supported by https://github.com/expressjs/cors#configuration-options
-    const { corsOrigins: origin = true } = options
+    const originCandidate = options['corsOrigins']
+    const origin = isCorsOrigin(originCandidate) ? originCandidate : true
 
     // Because we need to merge with existing headers, we need to call cors inside our own middleware
-    return corsImport({
+    const corsOptions = {
       credentials: true,
-      origin: origin as CorsOptions['origin'],
       methods: Array.from(allowMethodsSet),
       allowedHeaders: Array.from(allowHeadersSet).join(','),
       exposedHeaders: Array.from(exposeHeadersSet).join(','),
-    })(req, res, next)
+      ...(origin === undefined ? {} : { origin }),
+    } satisfies CorsOptions
+    return corsImport(corsOptions)(req, res, next)
   }
 
 function hasPromClient(mw: unknown): mw is RequestHandler & {
@@ -240,7 +284,7 @@ export const metrics = ({
 } = {}): RequestHandler => {
   const metricsMiddleware = promBundle({
     includeMethod: true,
-    metricsPath: path ? `${path}/metrics` : undefined,
+    ...(path ? { metricsPath: `${path}/metrics` } : {}),
   })
   if (!hasPromClient(metricsMiddleware)) return metricsMiddleware
   const { promClient } = metricsMiddleware
@@ -261,12 +305,18 @@ export const getCompanionMiddleware = (
   options: CompanionRuntimeOptions,
 ): RequestHandler => {
   const middleware = (req: Request, _res: Response, next: NextFunction) => {
+    const s3Client = getS3Client(options, false)
+    const s3ClientCreatePresignedPost = getS3Client(options, true)
+    const authToken = req.header('uppy-auth-token') || req.query['uppyAuthToken']
+
     req.companion = {
       options,
-      s3Client: getS3Client(options, false),
-      s3ClientCreatePresignedPost: getS3Client(options, true),
-      authToken: req.header('uppy-auth-token') || req.query.uppyAuthToken,
       buildURL: getURLBuilder(options),
+      ...(s3Client ? { s3Client } : {}),
+      ...(s3ClientCreatePresignedPost
+        ? { s3ClientCreatePresignedPost }
+        : {}),
+      ...(authToken === undefined ? {} : { authToken }),
     }
     next()
   }

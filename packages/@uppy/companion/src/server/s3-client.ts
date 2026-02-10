@@ -33,18 +33,18 @@ export default function s3Client(
       return typeof v === 'boolean' ? v : undefined
     }
 
-    if (s3.accessKeyId || s3.secretAccessKey) {
+    if (s3['accessKeyId'] || s3['secretAccessKey']) {
       throw new Error(
         'Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.',
       )
     }
 
-    const rawClientOptions = isRecord(s3.awsClientOptions)
-      ? s3.awsClientOptions
+    const rawClientOptions = isRecord(s3['awsClientOptions'])
+      ? s3['awsClientOptions']
       : undefined
     if (
       rawClientOptions &&
-      (rawClientOptions.accessKeyId || rawClientOptions.secretAccessKey)
+      (rawClientOptions['accessKeyId'] || rawClientOptions['secretAccessKey'])
     ) {
       throw new Error(
         'Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.',
@@ -53,8 +53,8 @@ export default function s3Client(
 
     const region =
       getString(s3, 'region') ??
-      (rawClientOptions && typeof rawClientOptions.region === 'string'
-        ? rawClientOptions.region
+      (rawClientOptions && typeof rawClientOptions['region'] === 'string'
+        ? rawClientOptions['region']
         : undefined)
     if (!region) {
       // No region means this Companion instance isn't configured for S3 uploads.
@@ -67,9 +67,10 @@ export default function s3Client(
       endpoint = endpoint.replace(/{service}/, 's3').replace(/{region}/, region)
     }
 
+    const forcePathStyle = getBool(s3, 'forcePathStyle')
     let s3ClientOptions: S3ClientConfig = {
       region,
-      forcePathStyle: getBool(s3, 'forcePathStyle'),
+      ...(forcePathStyle === undefined ? {} : { forcePathStyle }),
     }
 
     const useAccelerateEndpoint = getBool(s3, 'useAccelerateEndpoint') === true
@@ -95,9 +96,11 @@ export default function s3Client(
       }
     } else {
       // no accelearate, we allow custom s3 endpoint
-      s3ClientOptions = {
-        ...s3ClientOptions,
-        endpoint: typeof endpoint === 'string' ? endpoint : undefined,
+      if (typeof endpoint === 'string') {
+        s3ClientOptions = {
+          ...s3ClientOptions,
+          endpoint,
+        }
       }
     }
 
@@ -118,7 +121,7 @@ export default function s3Client(
       s3ClientOptions.credentials = {
         accessKeyId: key,
         secretAccessKey: secret,
-        sessionToken,
+        ...(sessionToken ? { sessionToken } : {}),
       }
     }
     s3Client = new S3Client(s3ClientOptions)

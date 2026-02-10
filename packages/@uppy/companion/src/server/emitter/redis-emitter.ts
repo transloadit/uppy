@@ -115,7 +115,24 @@ export default function redisEmitter(
       return
     }
 
-    function actualHandler(pattern: string, _channel: string, message: string) {
+    function actualHandler(...rawArgs: unknown[]) {
+      const pattern = rawArgs[0]
+      const _channel = rawArgs[1]
+      const message = rawArgs[2]
+      if (
+        typeof pattern !== 'string' ||
+        typeof _channel !== 'string' ||
+        typeof message !== 'string'
+      ) {
+        handleError(
+          new Error(
+            `Invalid redis message received! Channel: ${eventName} Args: ${JSON.stringify(
+              rawArgs,
+            )}`,
+          ),
+        )
+        return
+      }
       if (pattern !== getPrefixedEventName(eventName)) {
         return
       }

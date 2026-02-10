@@ -14,16 +14,23 @@ function createClient(
 ): Redis {
   if (redisClient) return redisClient
 
-  redisClient = redisUrl
-    ? new Redis(redisUrl, redisOptions)
-    : new Redis(redisOptions)
+  if (redisUrl) {
+    redisClient = redisOptions ? new Redis(redisUrl, redisOptions) : new Redis(redisUrl)
+  } else if (redisOptions) {
+    redisClient = new Redis(redisOptions)
+  } else {
+    redisClient = new Redis()
+  }
   redisClient.on('error', (err) => logger.error('redis error', err.toString()))
 
   return redisClient
 }
 
 export function client(
-  options: { redisUrl?: string; redisOptions?: RedisOptions } = {},
+  options: {
+    redisUrl?: string | undefined
+    redisOptions?: RedisOptions | undefined
+  } = {},
 ): Redis | undefined {
   const { redisUrl, redisOptions } = options
   if (!redisUrl && !redisOptions) return redisClient

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import type { RedisOptions } from 'ioredis'
 import type Provider from '../server/provider/Provider.ts'
 import { ProviderOptionsSchema, ServerConfigSchema } from './common.ts'
 
@@ -27,7 +28,14 @@ export const CompanionInitOptionsSchema = z
     customProviders: z.record(CustomProviderSchema).optional(),
     s3: z.record(z.unknown()).optional(),
     redisUrl: z.string().optional(),
-    redisOptions: z.unknown().optional(),
+    redisOptions: z
+      .custom<RedisOptions>(
+        (value) =>
+          !!value &&
+          typeof value === 'object' &&
+          !Array.isArray(value),
+      )
+      .optional(),
     redisPubSubScope: z.string().optional(),
     sendSelfEndpoint: z.string().optional(),
     enableUrlEndpoint: z.boolean().optional(),

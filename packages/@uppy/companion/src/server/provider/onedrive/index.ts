@@ -24,21 +24,22 @@ const getOauthClient = () =>
 function getQueryRecord(query: unknown): Record<string, string> {
   if (!isRecord(query)) return {}
   const out: Record<string, string> = {}
-  const driveId = query.driveId
-  if (typeof driveId === 'string' && driveId.length > 0) out.driveId = driveId
-  const cursor = query.cursor
-  if (typeof cursor === 'string' && cursor.length > 0) out.cursor = cursor
+  const driveId = query['driveId']
+  if (typeof driveId === 'string' && driveId.length > 0)
+    out['driveId'] = driveId
+  const cursor = query['cursor']
+  if (typeof cursor === 'string' && cursor.length > 0) out['cursor'] = cursor
   return out
 }
 
 const getRootPath = (query: Record<string, string>): string =>
-  query.driveId ? `drives/${query.driveId}` : 'me/drive'
+  query['driveId'] ? `drives/${query['driveId']}` : 'me/drive'
 
 /**
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
 export default class OneDrive extends Provider {
-  static get oauthProvider() {
+  static override get oauthProvider() {
     return 'microsoft'
   }
 
@@ -51,7 +52,7 @@ export default class OneDrive extends Provider {
    * @param options.query
    * @param options.providerUserSession
    */
-  async list({
+  override async list({
     directory,
     query,
     providerUserSession: { accessToken: token },
@@ -70,11 +71,9 @@ export default class OneDrive extends Provider {
         $expand: 'thumbnails',
         $top: String(pageSize),
       })
-      if (
-        typeof queryRecord.cursor === 'string' &&
-        queryRecord.cursor.length > 0
-      ) {
-        qs.set('$skiptoken', queryRecord.cursor)
+      const cursor = queryRecord['cursor']
+      if (typeof cursor === 'string' && cursor.length > 0) {
+        qs.set('$skiptoken', cursor)
       }
 
       const client = getClient({ token })
@@ -99,7 +98,7 @@ export default class OneDrive extends Provider {
     })
   }
 
-  async download({
+  override async download({
     id,
     providerUserSession: { accessToken: token },
     query,
@@ -122,7 +121,7 @@ export default class OneDrive extends Provider {
     )
   }
 
-  async thumbnail() {
+  override async thumbnail() {
     // not implementing this because a public thumbnail from onedrive will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -131,7 +130,7 @@ export default class OneDrive extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async size({
+  override async size({
     id,
     query,
     providerUserSession: { accessToken: token },
@@ -147,12 +146,12 @@ export default class OneDrive extends Provider {
           responseType: 'json',
         })
         .json<Record<string, unknown>>()
-      const size = body.size
+      const size = body['size']
       return typeof size === 'number' ? size : undefined
     })
   }
 
-  async logout() {
+  override async logout() {
     // apparently M$ doesn't support programmatic oauth2 revoke
     return {
       revoked: false,
@@ -160,7 +159,7 @@ export default class OneDrive extends Provider {
     }
   }
 
-  async refreshToken({
+  override async refreshToken({
     clientId,
     clientSecret,
     refreshToken,
@@ -188,7 +187,7 @@ export default class OneDrive extends Provider {
           .json<Record<string, unknown>>()
 
         const accessToken =
-          typeof body.access_token === 'string' ? body.access_token : null
+          typeof body['access_token'] === 'string' ? body['access_token'] : null
         if (!accessToken) {
           throw new Error('Unexpected OneDrive token refresh response')
         }
@@ -202,9 +201,8 @@ export default class OneDrive extends Provider {
       fn,
       tag,
       providerName: OneDrive.oauthProvider,
-      isAuthError: (response: { statusCode?: number }) =>
-        response.statusCode === 401,
-      isUserFacingError: (response: { statusCode?: number }) =>
+      isAuthError: (response) => response.statusCode === 401,
+      isUserFacingError: (response) =>
         typeof response.statusCode === 'number' &&
         [400, 403].includes(response.statusCode),
       // onedrive gives some errors here that the user might want to know about
@@ -214,9 +212,9 @@ export default class OneDrive extends Provider {
       // 403: You do not have access to create this personal site or you do not have a valid license
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
-        const err = body.error
+        const err = body['error']
         if (!isRecord(err)) return undefined
-        return typeof err.message === 'string' ? err.message : undefined
+        return typeof err['message'] === 'string' ? err['message'] : undefined
       },
     })
   }

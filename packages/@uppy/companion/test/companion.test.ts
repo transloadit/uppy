@@ -261,9 +261,9 @@ it('periodically pings', async () => {
           '/ping',
           (body: unknown) =>
             isRecord(body) &&
-            body.some === 'value' &&
-            body.version === packageJson.version &&
-            typeof body.processId === 'string',
+            body['some'] === 'value' &&
+            body['version'] === packageJson.version &&
+            typeof body['processId'] === 'string',
         )
         .reply(200, () => resolve())
     }),

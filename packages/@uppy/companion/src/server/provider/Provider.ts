@@ -140,5 +140,5 @@ export default class Provider {
 }
 
 // OAuth providers are those that have an `oauthProvider` set. It means they require OAuth authentication to work
-export const isOAuthProvider = (oauthProvider: unknown): boolean =>
+export const isOAuthProvider = (oauthProvider: unknown): oauthProvider is string =>
   typeof oauthProvider === 'string' && oauthProvider.length > 0

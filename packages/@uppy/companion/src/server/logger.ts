@@ -95,29 +95,52 @@ function log(params: {
  * INFO level log.
  */
 export function info(msg: unknown, tag?: string, traceId?: string): void {
-  log({ arg: msg, tag, level: 'info', traceId })
+  log({
+    arg: msg,
+    level: 'info',
+    ...(tag === undefined ? {} : { tag }),
+    ...(traceId === undefined ? {} : { traceId }),
+  })
 }
 
 /**
  * WARN level log.
  */
 export function warn(msg: unknown, tag?: string, traceId?: string): void {
-  log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
+  log({
+    arg: msg,
+    level: 'warn',
+    color: ['bold', 'yellow'],
+    ...(tag === undefined ? {} : { tag }),
+    ...(traceId === undefined ? {} : { traceId }),
+  })
 }
 
 /**
  * ERROR level log.
  */
 export function error(msg: unknown, tag?: string, traceId?: string): void {
-  log({ arg: msg, tag, level: 'error', traceId, color: ['bold', 'red'] })
+  log({
+    arg: msg,
+    level: 'error',
+    color: ['bold', 'red'],
+    ...(tag === undefined ? {} : { tag }),
+    ...(traceId === undefined ? {} : { traceId }),
+  })
 }
 
 /**
  * DEBUG level log.
  */
 export function debug(msg: unknown, tag?: string, traceId?: string): void {
-  if (process.env.NODE_ENV !== 'production') {
-    log({ arg: msg, tag, level: 'debug', traceId, color: ['bold', 'blue'] })
+  if (process.env['NODE_ENV'] !== 'production') {
+    log({
+      arg: msg,
+      level: 'debug',
+      color: ['bold', 'blue'],
+      ...(tag === undefined ? {} : { tag }),
+      ...(traceId === undefined ? {} : { traceId }),
+    })
   }
 }
 
