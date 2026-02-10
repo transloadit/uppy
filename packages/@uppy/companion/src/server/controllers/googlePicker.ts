@@ -1,12 +1,12 @@
 import type { Request, Response, Router } from 'express'
 import express from 'express'
 import { z } from 'zod'
-import { downloadURL } from '../download.js'
-import { validateURL } from '../helpers/request.js'
-import { startDownUpload } from '../helpers/upload.js'
-import logger from '../logger.js'
-import { respondWithError } from '../provider/error.js'
-import { streamGoogleFile } from '../provider/google/drive/index.js'
+import { downloadURL } from '../download.ts'
+import { validateURL } from '../helpers/request.ts'
+import { startDownUpload } from '../helpers/upload.ts'
+import logger from '../logger.ts'
+import { respondWithError } from '../provider/error.ts'
+import { streamGoogleFile } from '../provider/google/drive/index.ts'
 
 const getAuthHeader = (token: string): { authorization: string } => ({
   authorization: `Bearer ${token}`,

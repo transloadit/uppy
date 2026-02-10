@@ -1,7 +1,7 @@
 import type { S3Client } from '@aws-sdk/client-s3'
 import type { createPresignedPost } from '@aws-sdk/s3-presigned-post'
-import type { CompanionRuntimeOptions } from './companion-options.js'
-import type Provider from '../server/provider/Provider.js'
+import type { CompanionRuntimeOptions } from './companion-options.ts'
+import type Provider from '../server/provider/Provider.ts'
 
 export type CompanionContext = {
   options: CompanionRuntimeOptions

@@ -7,9 +7,9 @@ import {
   type StandaloneCompanionOptions,
   type StandaloneCompanionOptionsInput,
   StandaloneCompanionOptionsSchema,
-} from '../schemas/index.js'
-import * as utils from '../server/helpers/utils.js'
-import logger from '../server/logger.js'
+} from '../schemas/index.ts'
+import * as utils from '../server/helpers/utils.ts'
+import logger from '../server/logger.ts'
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
@@ -170,7 +170,7 @@ const getConfigFromEnv = (): Record<string, unknown> => {
         }
         return JSON.parse(process.env.COMPANION_REDIS_OPTIONS)
       } catch (e) {
-        logger.warn('COMPANION_REDIS_OPTIONS parse error', e)
+        logger.warn(e, 'COMPANION_REDIS_OPTIONS parse error')
       }
       return undefined
     })(),
@@ -249,7 +249,7 @@ export const buildHelpfulStartupMessage = (
   companionOptions: StandaloneCompanionOptions,
 ): string => {
   const buildURL = utils.getURLBuilder(companionOptions)
-  const callbackURLs = []
+  const callbackURLs: string[] = []
   Object.keys(companionOptions.providerOptions ?? {}).forEach(
     (providerName) => {
       callbackURLs.push(buildURL(`/${providerName}/redirect`, true))

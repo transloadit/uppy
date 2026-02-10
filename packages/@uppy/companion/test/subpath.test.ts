@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { it, test, vi } from 'vitest'
-import { getServer } from './mockserver.js'
+import { getServer } from './mockserver.ts'
 
 vi.mock('express-prom-bundle')
 

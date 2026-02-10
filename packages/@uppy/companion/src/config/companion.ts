@@ -1,8 +1,8 @@
 import fs from 'node:fs'
 import validator from 'validator'
-import { isRecord } from '../server/helpers/type-guards.js'
-import { defaultGetKey } from '../server/helpers/utils.js'
-import logger from '../server/logger.js'
+import { isRecord } from '../server/helpers/type-guards.ts'
+import { defaultGetKey } from '../server/helpers/utils.ts'
+import logger from '../server/logger.ts'
 
 type ProviderOption = {
   key?: string

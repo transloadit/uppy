@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { decrypt, encrypt } from './utils.js'
+import { decrypt, encrypt } from './utils.ts'
 
 export type OAuthState = {
   id: string

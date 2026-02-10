@@ -1,6 +1,6 @@
-import { getProtectedGot } from './helpers/request.js'
-import { prepareStream } from './helpers/utils.js'
-import logger from './logger.js'
+import { getProtectedGot } from './helpers/request.ts'
+import { prepareStream } from './helpers/utils.ts'
+import logger from './logger.ts'
 
 /**
  * Downloads the content at the given URL.

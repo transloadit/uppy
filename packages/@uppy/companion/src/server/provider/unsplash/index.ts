@@ -1,14 +1,16 @@
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
-import { ProviderApiError } from '../error.js'
-import Provider from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
-import adaptData from './adapter.js'
+import { isRecord } from '../../helpers/type-guards.ts'
+import { prepareStream } from '../../helpers/utils.ts'
+import { ProviderApiError } from '../error.ts'
+import Provider from '../Provider.ts'
+import { withProviderErrorHandling } from '../providerErrors.ts'
+import adaptData from './adapter.ts'
 
 const BASE_URL = 'https://api.unsplash.com'
 
-const getClient = ({ token }) =>
+type UnsplashClient = ReturnType<typeof got.extend>
+
+const getClient = ({ token }: { token: string }): UnsplashClient =>
   got.extend({
     prefixUrl: BASE_URL,
     headers: {
@@ -16,7 +18,7 @@ const getClient = ({ token }) =>
     },
   })
 
-const getPhotoMeta = async (client, id): Promise<unknown> =>
+const getPhotoMeta = async (client: UnsplashClient, id: string): Promise<unknown> =>
   client.get(`photos/${id}`, { responseType: 'json' }).json()
 
 /**
@@ -26,7 +28,10 @@ export default class Unsplash extends Provider {
   async list({
     providerUserSession: { accessToken: token },
     query = { cursor: null, q: null },
-  }) {
+  }: {
+    providerUserSession: { accessToken: string }
+    query?: Parameters<typeof adaptData>[1] & { cursor?: string | null; q?: string | null }
+  }): Promise<unknown> {
     if (typeof query.q !== 'string') {
       throw new ProviderApiError('Search query missing', 400)
     }
@@ -39,12 +44,18 @@ export default class Unsplash extends Provider {
 
       const response = await getClient({ token })
         .get('search/photos', { searchParams: qs, responseType: 'json' })
-        .json()
+        .json<Parameters<typeof adaptData>[0]>()
       return adaptData(response, query)
     })
   }
 
-  async download({ id, providerUserSession: { accessToken: token } }) {
+  async download({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: { accessToken: string }
+  }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.unsplash.download.error',
       async () => {
@@ -83,7 +94,7 @@ export default class Unsplash extends Provider {
     )
   }
 
-  async #withErrorHandling(tag, fn) {
+  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

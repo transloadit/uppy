@@ -1,4 +1,4 @@
-import type { CompanionInitOptions } from '../schemas/companion.js'
+import type { CompanionInitOptions } from '../schemas/companion.ts'
 
 type WidenLiteral<T> = T extends string
   ? string
@@ -14,7 +14,7 @@ type DeepWiden<T> = T extends readonly (infer U)[]
     ? { [K in keyof T]: DeepWiden<WidenLiteral<T[K]>> }
     : WidenLiteral<T>
 
-type DefaultOptions = typeof import('../config/companion.js').defaultOptions
+type DefaultOptions = typeof import('../config/companion.ts').defaultOptions
 
 // Runtime Companion options are the merged default options + init options.
 // This type is intentionally tolerant, but gives known defaulted keys concrete types.

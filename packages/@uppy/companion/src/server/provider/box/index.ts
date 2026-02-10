@@ -1,13 +1,25 @@
 import got from 'got'
-import { prepareStream } from '../../helpers/utils.js'
-import Provider from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
-import adaptData from './adapter.js'
+import { prepareStream } from '../../helpers/utils.ts'
+import { isRecord } from '../../helpers/type-guards.ts'
+import Provider from '../Provider.ts'
+import { withProviderErrorHandling } from '../providerErrors.ts'
+import adaptData from './adapter.ts'
 
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
-const getClient = ({ token }) =>
+type BoxUserSession = { accessToken: string }
+type BoxQuery = { cursor?: string }
+type CompanionLike = {
+  buildURL: (subPath: string, isExternal: boolean, excludeHost?: boolean) => string
+  options: {
+    providerOptions: {
+      box: { key?: string; secret?: string }
+    }
+  }
+}
+
+const getClient = ({ token }: { token: string }) =>
   got.extend({
     prefixUrl: 'https://api.box.com/2.0',
     headers: {
@@ -15,13 +27,25 @@ const getClient = ({ token }) =>
     },
   })
 
-async function getUserInfo({ token }) {
+async function getUserInfo({
+  token,
+}: {
+  token: string
+}): Promise<{ login?: string }> {
   return getClient({ token })
     .get('users/me', { responseType: 'json' })
-    .json<Record<string, unknown>>()
+    .json<{ login?: string }>()
 }
 
-async function list({ directory, query, token }) {
+async function list({
+  directory,
+  query,
+  token,
+}: {
+  directory: string | undefined
+  query: BoxQuery
+  token: string
+}): Promise<Parameters<typeof adaptData>[0]> {
   const rootFolderID = '0'
   return getClient({ token })
     .get(`folders/${directory || rootFolderID}/items`, {
@@ -32,14 +56,14 @@ async function list({ directory, query, token }) {
       },
       responseType: 'json',
     })
-    .json<Record<string, unknown>>()
+    .json<Parameters<typeof adaptData>[0]>()
 }
 
 /**
  * Adapter for API https://developer.box.com/reference/
  */
 export default class Box extends Provider {
-  constructor(options) {
+  constructor(options: ConstructorParameters<typeof Provider>[0]) {
     super(options)
     // needed for the thumbnails fetched via companion
     this.needsCookieAuth = true
@@ -63,7 +87,12 @@ export default class Box extends Provider {
     providerUserSession: { accessToken: token },
     query,
     companion,
-  }) {
+  }: {
+    directory?: string
+    providerUserSession: BoxUserSession
+    query: BoxQuery
+    companion: CompanionLike
+  }): Promise<unknown> {
     return this.#withErrorHandling('provider.box.list.error', async () => {
       const [userInfo, files] = await Promise.all([
         getUserInfo({ token }),
@@ -74,7 +103,13 @@ export default class Box extends Provider {
     })
   }
 
-  async download({ id, providerUserSession: { accessToken: token } }) {
+  async download({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: BoxUserSession
+  }): Promise<unknown> {
     return this.#withErrorHandling('provider.box.download.error', async () => {
       const stream = getClient({ token }).stream.get(`files/${id}/content`, {
         responseType: 'json',
@@ -85,7 +120,13 @@ export default class Box extends Provider {
     })
   }
 
-  async thumbnail({ id, providerUserSession: { accessToken: token } }) {
+  async thumbnail({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: BoxUserSession
+  }): Promise<unknown> {
     return this.#withErrorHandling('provider.box.thumbnail.error', async () => {
       const extension = 'jpg' // you can set this to png to more easily reproduce http 202 retry-after
 
@@ -114,7 +155,13 @@ export default class Box extends Provider {
     })
   }
 
-  async size({ id, providerUserSession: { accessToken: token } }) {
+  async size({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: BoxUserSession
+  }): Promise<number> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
         .get(`files/${id}`, { responseType: 'json' })
@@ -130,7 +177,13 @@ export default class Box extends Provider {
     })
   }
 
-  logout({ companion, providerUserSession: { accessToken: token } }) {
+  async logout({
+    companion,
+    providerUserSession: { accessToken: token },
+  }: {
+    companion: CompanionLike
+    providerUserSession: BoxUserSession
+  }): Promise<{ revoked: true }> {
     return this.#withErrorHandling('provider.box.logout.error', async () => {
       const { key, secret } = companion.options.providerOptions.box
       await getClient({ token }).post('oauth2/revoke', {
@@ -147,19 +200,17 @@ export default class Box extends Provider {
     })
   }
 
-  async #withErrorHandling(tag, fn) {
-    const isRecord = (value: unknown): value is Record<string, unknown> =>
-      !!value && typeof value === 'object' && !Array.isArray(value)
-
+  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,
       providerName: Box.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      isAuthError: (response: { statusCode?: number }) =>
+        response.statusCode === 401,
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
-        const message = body.message
-        return typeof message === 'string' ? message : undefined
+        const msg = body.message
+        return typeof msg === 'string' ? msg : undefined
       },
     })
   }

@@ -4,10 +4,10 @@
 
 import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
-import * as tokenService from '../helpers/jwt.js'
-import * as oAuthState from '../helpers/oauth-state.js'
-import { isRecord } from '../helpers/type-guards.js'
-import logger from '../logger.js'
+import * as tokenService from '../helpers/jwt.ts'
+import * as oAuthState from '../helpers/oauth-state.ts'
+import { isRecord } from '../helpers/type-guards.ts'
+import logger from '../logger.ts'
 
 const closePageHtml = (origin: string | undefined) => `
 	  <!DOCTYPE html>

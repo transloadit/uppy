@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express'
-import * as tokenService from '../helpers/jwt.js'
-import { isRecord } from '../helpers/type-guards.js'
-import logger from '../logger.js'
-import { respondWithError } from '../provider/error.js'
+import * as tokenService from '../helpers/jwt.ts'
+import { isRecord } from '../helpers/type-guards.ts'
+import logger from '../logger.ts'
+import { respondWithError } from '../provider/error.ts'
 
 export default async function simpleAuth(
   req: Request,

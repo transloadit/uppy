@@ -1,4 +1,4 @@
-import * as logger from './logger.js'
+import * as logger from './logger.ts'
 
 /**
  * Forbidden header names.

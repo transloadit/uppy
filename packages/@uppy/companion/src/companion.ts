@@ -10,30 +10,30 @@ import {
   defaultOptions,
   getMaskableSecrets,
   validateConfig,
-} from './config/companion.js'
-import grantConfigFn from './config/grant.js'
-import type { CompanionInitOptionsInput } from './schemas/index.js'
-import googlePicker from './server/controllers/googlePicker.js'
-import * as controllers from './server/controllers/index.js'
-import s3 from './server/controllers/s3.js'
-import searchController from './server/controllers/search.js'
-import url from './server/controllers/url.js'
-import createEmitter from './server/emitter/index.js'
-import { getURLBuilder } from './server/helpers/utils.js'
-import * as jobs from './server/jobs.js'
-import logger from './server/logger.js'
-import * as middlewares from './server/middlewares.js'
-import { getCredentialsOverrideMiddleware } from './server/provider/credentials.js'
+} from './config/companion.ts'
+import grantConfigFn from './config/grant.ts'
+import type { CompanionInitOptionsInput } from './schemas/index.ts'
+import googlePicker from './server/controllers/googlePicker.ts'
+import * as controllers from './server/controllers/index.ts'
+import s3 from './server/controllers/s3.ts'
+import searchController from './server/controllers/search.ts'
+import url from './server/controllers/url.ts'
+import createEmitter from './server/emitter/index.ts'
+import { getURLBuilder } from './server/helpers/utils.ts'
+import * as jobs from './server/jobs.ts'
+import logger from './server/logger.ts'
+import * as middlewares from './server/middlewares.ts'
+import { getCredentialsOverrideMiddleware } from './server/provider/credentials.ts'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
-} from './server/provider/error.js'
-import * as providerManager from './server/provider/index.js'
-import { isOAuthProvider } from './server/provider/Provider.js'
-import * as redis from './server/redis.js'
+} from './server/provider/error.ts'
+import * as providerManager from './server/provider/index.ts'
+import { isOAuthProvider } from './server/provider/Provider.ts'
+import * as redis from './server/redis.ts'
 
-import socket from './server/socket.js'
+import socket from './server/socket.ts'
 
 export { socket }
 
@@ -111,8 +111,14 @@ export function app(optionsArg: CompanionInitOptionsInput = {}): {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
 
-  const getOauthProvider = (providerName) =>
-    providers[providerName]?.oauthProvider
+  type ProviderName = keyof typeof providers
+  const isProviderName = (providerName: string): providerName is ProviderName =>
+    Object.hasOwn(providers, providerName)
+
+  const getOauthProvider = (providerName: string): string | undefined => {
+    if (!isProviderName(providerName)) return undefined
+    return providers[providerName].oauthProvider
+  }
 
   providerManager.addProviderOptions(options, grantConfig, getOauthProvider)
 

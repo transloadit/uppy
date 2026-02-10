@@ -1,6 +1,6 @@
 import type { Redis } from 'ioredis'
-import nodeEmitter from './default-emitter.js'
-import redisEmitter from './redis-emitter.js'
+import nodeEmitter from './default-emitter.ts'
+import redisEmitter from './redis-emitter.ts'
 
 type Listener = (...args: unknown[]) => void
 export type EmitterLike = {

@@ -1,12 +1,14 @@
 import got from 'got'
-import { isRecord } from '../../../helpers/type-guards.js'
-import { prepareStream } from '../../../helpers/utils.js'
-import logger from '../../../logger.js'
-import Provider from '../../Provider.js'
-import { withProviderErrorHandling } from '../../providerErrors.js'
-import adaptData from './adapter.js'
+import { isRecord } from '../../../helpers/type-guards.ts'
+import { prepareStream } from '../../../helpers/utils.ts'
+import logger from '../../../logger.ts'
+import Provider from '../../Provider.ts'
+import { withProviderErrorHandling } from '../../providerErrors.ts'
+import adaptData from './adapter.ts'
 
-const getClient = ({ token }) =>
+type InstagramClient = ReturnType<typeof got.extend>
+
+const getClient = ({ token }: { token: string }): InstagramClient =>
   got.extend({
     prefixUrl: 'https://graph.instagram.com',
     headers: {
@@ -14,7 +16,13 @@ const getClient = ({ token }) =>
     },
   })
 
-async function getMediaUrl({ token, id }) {
+async function getMediaUrl({
+  token,
+  id,
+}: {
+  token: string
+  id: string
+}): Promise<string> {
   const body: unknown = await getClient({ token })
     .get(String(id), {
       searchParams: { fields: 'media_url' },
@@ -50,7 +58,11 @@ export default class Instagram extends Provider {
     directory,
     providerUserSession: { accessToken: token },
     query = { cursor: null },
-  }) {
+  }: {
+    directory?: string
+    providerUserSession: { accessToken: string }
+    query?: { cursor?: string | null }
+  }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.instagram.list.error',
       async () => {
@@ -71,19 +83,27 @@ export default class Instagram extends Provider {
               searchParams: { fields: 'username' },
               responseType: 'json',
             })
-            .json<Record<string, unknown>>(),
+            .json<{ username?: string }>(),
           client
             .get('me/media', { searchParams: qs, responseType: 'json' })
-            .json(),
+            .json<Parameters<typeof adaptData>[0]>(),
         ])
 
         const username = typeof me.username === 'string' ? me.username : null
-        return adaptData(list, username, directory, query)
+        const currentQuery: Record<string, string> = {}
+        if (typeof query.cursor === 'string') currentQuery.cursor = query.cursor
+        return adaptData(list, username, directory, currentQuery)
       },
     )
   }
 
-  async download({ id, providerUserSession: { accessToken: token } }) {
+  async download({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: { accessToken: string }
+  }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.instagram.download.error',
       async () => {
@@ -112,12 +132,12 @@ export default class Instagram extends Provider {
     }
   }
 
-  async #withErrorHandling(tag, fn) {
+  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,
       providerName: Instagram.oauthProvider,
-      isAuthError: (response) => {
+      isAuthError: (response: { body: unknown }) => {
         const body = response.body
         if (!isRecord(body)) return false
         const err = body.error

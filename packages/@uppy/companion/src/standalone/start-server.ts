@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 import packageJson from '../../package.json' with { type: 'json' }
-import * as companion from '../companion.js'
-import logger from '../server/logger.js'
-import standalone from './index.js'
+import * as companion from '../companion.ts'
+import logger from '../server/logger.ts'
+import standalone from './index.ts'
 
 const port: string | number =
   process.env.COMPANION_PORT || process.env.PORT || 3020

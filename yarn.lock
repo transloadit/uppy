@@ -8153,6 +8153,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/cookiejar@npm:^2.1.5":
+  version: 2.1.5
+  resolution: "@types/cookiejar@npm:2.1.5"
+  checksum: 10/04d5990e87b6387532d15a87d9ec9b2eb783039291193863751dcfd7fc723a3b3aa30ce4c06b03975cba58632e933772f1ff031af23eaa3ac7f94e71afa6e073
+  languageName: node
+  linkType: hard
+
 "@types/cors@npm:2.8.6":
   version: 2.8.6
   resolution: "@types/cors@npm:2.8.6"
@@ -8340,6 +8347,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/methods@npm:^1.1.4":
+  version: 1.1.4
+  resolution: "@types/methods@npm:1.1.4"
+  checksum: 10/ad2a7178486f2fd167750f3eb920ab032a947ff2e26f55c86670a6038632d790b46f52e5b6ead5823f1e53fc68028f1e9ddd15cfead7903e04517c88debd72b1
+  languageName: node
+  linkType: hard
+
+"@types/mime-types@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "@types/mime-types@npm:2.1.4"
+  checksum: 10/f8c521c54ee0c0b9f90a65356a80b1413ed27ccdc94f5c7ebb3de5d63cedb559cd2610ea55b4100805c7349606a920d96e54f2d16b2f0afa6b7cd5253967ccc9
+  languageName: node
+  linkType: hard
+
 "@types/mime@npm:^1":
   version: 1.3.5
   resolution: "@types/mime@npm:1.3.5"
@@ -8369,6 +8390,15 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10/670c9b377c48189186ec415e3c8ed371f141ecc1a79ab71b213b20816adeffecba44dae4f8406cc0d09e6349a4db14eb8c5893f643d8e00fa19fc035cf49dee0
+  languageName: node
+  linkType: hard
+
+"@types/node-schedule@npm:^2.1.8":
+  version: 2.1.8
+  resolution: "@types/node-schedule@npm:2.1.8"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/8da986d3b3d529d8d203126e9c89b477d39d8ca6a45d122637fc3b05402da0965bda6410da77af5efa3cbf5ac3f2955d2b9dcf5f90a191271c1096d162c96dd2
   languageName: node
   linkType: hard
 
@@ -8515,6 +8545,28 @@ __metadata:
   version: 2.0.6
   resolution: "@types/statuses@npm:2.0.6"
   checksum: 10/dadfbb4f32a16d3106a8e2a957dab17b1ae99fc4788e1fd96aeaf82355e3b2b069d5ea0f5fb887efa830def033828955a5bbdfd35454ba2088822537aed9e5db
+  languageName: node
+  linkType: hard
+
+"@types/superagent@npm:^8.1.0":
+  version: 8.1.9
+  resolution: "@types/superagent@npm:8.1.9"
+  dependencies:
+    "@types/cookiejar": "npm:^2.1.5"
+    "@types/methods": "npm:^1.1.4"
+    "@types/node": "npm:*"
+    form-data: "npm:^4.0.0"
+  checksum: 10/6d9687b0bc3d693b900ef76000b02437a70879c3219b28606879c086d786bb1e48429813e72e32dd0aafc94c053a78a2aa8be67c45bc8e6b968ca62d6d5cc554
+  languageName: node
+  linkType: hard
+
+"@types/supertest@npm:^6.0.3":
+  version: 6.0.3
+  resolution: "@types/supertest@npm:6.0.3"
+  dependencies:
+    "@types/methods": "npm:^1.1.4"
+    "@types/superagent": "npm:^8.1.0"
+  checksum: 10/6ec05eb591c97bc856b0e78c12f5bec10545f3a749688f34232d189797a506d971bc95931718eb57b378d8513f6d2d12462383e6d68455fa72df35c19de6e89e
   languageName: node
   linkType: hard
 
@@ -8880,11 +8932,14 @@ __metadata:
     "@types/http-proxy": "npm:^1"
     "@types/jsonwebtoken": "npm:8.3.7"
     "@types/lodash": "npm:4.14.191"
+    "@types/mime-types": "npm:^2.1.4"
     "@types/morgan": "npm:1.7.37"
     "@types/ms": "npm:0.7.31"
     "@types/node": "npm:^20.19.0"
+    "@types/node-schedule": "npm:^2.1.8"
     "@types/request": "npm:2.48.8"
     "@types/serialize-javascript": "npm:^5.0.4"
+    "@types/supertest": "npm:^6.0.3"
     "@types/validator": "npm:^13.15.10"
     "@types/webpack": "npm:^5.28.0"
     "@types/ws": "npm:8.5.3"
@@ -8932,7 +8987,7 @@ __metadata:
     ws: "npm:8.17.1"
     zod: "npm:^3.24.0"
   bin:
-    companion: ./bin/companion
+    companion: ./dist/bin/companion.js
   languageName: unknown
   linkType: soft
 

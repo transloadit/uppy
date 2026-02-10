@@ -1,13 +1,28 @@
 import crypto from 'node:crypto'
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { HttpError, prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
-import Provider from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
-import { adaptData, sortImages } from './adapter.js'
+import { isRecord } from '../../helpers/type-guards.ts'
+import { HttpError, prepareStream } from '../../helpers/utils.ts'
+import logger from '../../logger.ts'
+import Provider from '../Provider.ts'
+import { withProviderErrorHandling } from '../providerErrors.ts'
+import { adaptData, sortImages } from './adapter.ts'
 
-async function runRequestBatch({ secret, token, requests }) {
+type FacebookBatchRequest = {
+  method: string
+  relative_url: string
+}
+
+type FacebookBatchResponse = { code: number; body: unknown }
+
+async function runRequestBatch({
+  secret,
+  token,
+  requests,
+}: {
+  secret: string
+  token: string
+  requests: FacebookBatchRequest[]
+}): Promise<FacebookBatchResponse[]> {
   // https://developers.facebook.com/docs/facebook-login/security/#appsecret
   // couldn't get `appsecret_time` working, but it seems to be working without it
   // const time = Math.floor(Date.now() / 1000)
@@ -47,7 +62,15 @@ async function runRequestBatch({ secret, token, requests }) {
   return responses
 }
 
-async function getMediaUrl({ secret, token, id }) {
+async function getMediaUrl({
+  secret,
+  token,
+  id,
+}: {
+  secret: string
+  token: string
+  id: string
+}): Promise<string> {
   const [{ body }] = await runRequestBatch({
     secret,
     token,
@@ -89,7 +112,11 @@ export default class Facebook extends Provider {
     directory,
     providerUserSession: { accessToken: token },
     query = { cursor: null },
-  }) {
+  }: {
+    directory?: string
+    providerUserSession: { accessToken: string }
+    query?: { cursor?: string | null }
+  }): Promise<unknown> {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
       const qs: Record<string, string> = {
         fields: 'name,cover_photo,created_time,type',
@@ -121,12 +148,29 @@ export default class Facebook extends Provider {
         isRecord(response1.body) && typeof response1.body.email === 'string'
           ? response1.body.email
           : null
+
       const list = response2.body
-      return adaptData(list, email, directory, query)
+      const isFacebookListResponse = (
+        value: unknown,
+      ): value is Parameters<typeof adaptData>[0] =>
+        isRecord(value) && Array.isArray(value.data)
+      if (!isFacebookListResponse(list)) {
+        throw new Error('Unexpected Facebook response: missing data')
+      }
+
+      const currentQuery: Record<string, string> = {}
+      if (typeof query.cursor === 'string') currentQuery.cursor = query.cursor
+      return adaptData(list, email, directory, currentQuery)
     })
   }
 
-  async download({ id, providerUserSession: { accessToken: token } }) {
+  async download({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: { accessToken: string }
+  }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.facebook.download.error',
       async () => {
@@ -147,7 +191,11 @@ export default class Facebook extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async logout({ providerUserSession: { accessToken: token } }) {
+  async logout({
+    providerUserSession: { accessToken: token },
+  }: {
+    providerUserSession: { accessToken: string }
+  }): Promise<{ revoked: true }> {
     return this.#withErrorHandling(
       'provider.facebook.logout.error',
       async () => {
@@ -162,10 +210,7 @@ export default class Facebook extends Provider {
     )
   }
 
-  async #withErrorHandling(tag, fn) {
-    const isRecord = (value: unknown): value is Record<string, unknown> =>
-      !!value && typeof value === 'object' && !Array.isArray(value)
-
+  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

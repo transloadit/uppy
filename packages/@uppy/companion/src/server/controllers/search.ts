@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-import { respondWithError } from '../provider/error.js'
+import { respondWithError } from '../provider/error.ts'
 
 export default async function search(
   req: Request,

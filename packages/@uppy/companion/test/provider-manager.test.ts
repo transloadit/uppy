@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import GrantConfig from '../src/config/grant.js'
-import * as providerManager from '../src/server/provider/index.js'
-import { getCompanionOptions } from '../src/standalone/helper.js'
-import { setDefaultEnv } from './mockserver.js'
+import GrantConfig from '../src/config/grant.ts'
+import * as providerManager from '../src/server/provider/index.ts'
+import { getCompanionOptions } from '../src/standalone/helper.ts'
+import { setDefaultEnv } from './mockserver.ts'
 
 let grantConfig: ReturnType<typeof GrantConfig>
 let companionOptions: ReturnType<typeof getCompanionOptions>

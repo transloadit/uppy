@@ -1,8 +1,8 @@
 import type { Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
-import { isRecord } from './type-guards.js'
-import { decrypt, encrypt } from './utils.js'
+import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
+import { isRecord } from './type-guards.ts'
+import { decrypt, encrypt } from './utils.ts'
 
 // The Uppy auth token is an encrypted JWT & JSON encoded container.
 // It used to simply contain an OAuth access_token and refresh_token for a specific provider.

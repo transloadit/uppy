@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
-import * as tokenService from '../helpers/jwt.js'
-import { isRecord } from '../helpers/type-guards.js'
-import logger from '../logger.js'
+import * as tokenService from '../helpers/jwt.ts'
+import { isRecord } from '../helpers/type-guards.ts'
+import logger from '../logger.ts'
 
 export default function preauth(req: Request, res: Response): void {
   const body = isRecord(req.body) ? req.body : null

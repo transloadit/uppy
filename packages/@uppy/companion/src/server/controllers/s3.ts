@@ -11,12 +11,12 @@ import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
-import { isRecord } from '../helpers/type-guards.js'
+import { isRecord } from '../helpers/type-guards.ts'
 import {
   getBucket,
   rfc2047EncodeMetadata,
   truncateFilename,
-} from '../helpers/utils.js'
+} from '../helpers/utils.ts'
 
 type S3ControllerConfig = {
   acl?: string | null

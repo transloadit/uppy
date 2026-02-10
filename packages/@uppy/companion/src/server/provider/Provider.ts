@@ -1,4 +1,4 @@
-import { MAX_AGE_24H } from '../helpers/jwt.js'
+import { MAX_AGE_24H } from '../helpers/jwt.ts'
 
 /**
  * Provider interface defines the specifications of any provider implementation
@@ -20,7 +20,7 @@ export default class Provider {
     allowLocalUrls: boolean
     providerGrantConfig?: Record<string, unknown>
     secret: string
-  }) {
+  } & Record<string, unknown>) {
     // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
     this.allowLocalUrls = allowLocalUrls

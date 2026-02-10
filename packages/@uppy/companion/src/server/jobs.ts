@@ -3,10 +3,11 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import got from 'got'
 import schedule from 'node-schedule'
-import * as logger from './logger.js'
-import Uploader from './Uploader.js'
+import * as logger from './logger.ts'
+import Uploader from './Uploader.ts'
+import { isRecord } from './helpers/type-guards.ts'
 
-const cleanUpFinishedUploads = (dirPath) => {
+const cleanUpFinishedUploads = (dirPath: string): void => {
   logger.info(
     `running clean up job for path: ${dirPath}`,
     'jobs.cleanup.progress.read',
@@ -53,13 +54,21 @@ const cleanUpFinishedUploads = (dirPath) => {
  *
  * @param dirPath path to the directory which you want to clean
  */
-export function startCleanUpJob(dirPath) {
+export function startCleanUpJob(dirPath: string): void {
   logger.info('starting clean up job', 'jobs.cleanup.start')
   // run once a day
   schedule.scheduleJob('0 23 * * *', () => cleanUpFinishedUploads(dirPath))
 }
 
-async function runPeriodicPing({ urls, payload, requestTimeout }) {
+async function runPeriodicPing({
+  urls,
+  payload,
+  requestTimeout,
+}: {
+  urls: string[]
+  payload: Record<string, unknown>
+  requestTimeout: number
+}): Promise<void> {
   // Run requests in parallel
   await Promise.all(
     urls.map(async (url) => {
@@ -84,7 +93,14 @@ export async function startPeriodicPingJob({
   staticPayload = {},
   version,
   processId,
-}) {
+}: {
+  urls: string[]
+  interval?: number
+  count?: number
+  staticPayload?: unknown
+  version: string
+  processId: string
+}): Promise<void> {
   if (urls.length === 0) return
 
   logger.info('Starting periodic ping job', 'jobs.periodic.ping.start')
@@ -121,11 +137,12 @@ export async function startPeriodicPingJob({
 
     try {
       requesting = true
+      const safeStaticPayload = isRecord(staticPayload) ? staticPayload : {}
       const payload = {
         version,
         processId,
         service: 'companion',
-        ...staticPayload,
+        ...safeStaticPayload,
       }
       await runPeriodicPing({ urls, payload, requestTimeout })
     } finally {

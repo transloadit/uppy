@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
-import * as oAuthState from '../helpers/oauth-state.js'
-import { isOriginAllowed } from './connect.js'
+import * as oAuthState from '../helpers/oauth-state.ts'
+import { isOriginAllowed } from './connect.ts'
 
 const htmlContent = (token: string, origin: string): string => {
   return `

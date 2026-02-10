@@ -1,16 +1,31 @@
 import type { FileStat, ResponseDataDetailed } from 'webdav'
 import { AuthType, createClient } from 'webdav'
-import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
-import { isRecord } from '../../helpers/type-guards.js'
-import logger from '../../logger.js'
+import { getProtectedHttpAgent, validateURL } from '../../helpers/request.ts'
+import { isRecord } from '../../helpers/type-guards.ts'
+import logger from '../../logger.ts'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
-} from '../error.js'
-import Provider from '../Provider.js'
+} from '../error.ts'
+import Provider from '../Provider.ts'
 
 const defaultDirectory = '/'
+
+type WebdavUserSession = { webdavUrl?: string }
+type WebdavClient = ReturnType<typeof createClient>
+
+type WebdavListItem = {
+  isFolder: boolean
+  icon: string
+  id: string
+  name: string
+  modifiedDate?: string
+  requestPath: string
+  mimeType?: string
+  size?: number
+  thumbnail?: null
+}
 
 /**
  * Adapter for WebDAV servers that support simple auth (non-OAuth).
@@ -20,11 +35,19 @@ export default class WebdavProvider extends Provider {
     return true
   }
 
-  isAuthenticated({ providerUserSession }) {
+  isAuthenticated({
+    providerUserSession,
+  }: {
+    providerUserSession: WebdavUserSession
+  }): boolean {
     return providerUserSession.webdavUrl != null
   }
 
-  async getClient({ providerUserSession }) {
+  async getClient({
+    providerUserSession,
+  }: {
+    providerUserSession: WebdavUserSession
+  }): Promise<WebdavClient> {
     const webdavUrl = providerUserSession?.webdavUrl
     const { allowLocalUrls } = this
     if (!validateURL(webdavUrl, allowLocalUrls)) {
@@ -52,13 +75,25 @@ export default class WebdavProvider extends Provider {
     })
   }
 
-  async logout() {
+  async logout(): Promise<{ revoked: true }> {
     return { revoked: true }
   }
 
-  async simpleAuth({ requestBody }) {
+  async simpleAuth({
+    requestBody,
+  }: {
+    requestBody: unknown
+  }): Promise<WebdavUserSession> {
     try {
-      const providerUserSession = { webdavUrl: requestBody.form.webdavUrl }
+      if (!isRecord(requestBody) || !isRecord(requestBody.form)) {
+        throw new ProviderUserError({ message: 'Invalid request body' })
+      }
+      const webdavUrl = requestBody.form.webdavUrl
+      if (typeof webdavUrl !== 'string' || webdavUrl.length === 0) {
+        throw new ProviderUserError({ message: 'Missing webdavUrl' })
+      }
+
+      const providerUserSession: WebdavUserSession = { webdavUrl }
 
       const client = await this.getClient({ providerUserSession })
       // call the list operation as a way to validate the url
@@ -79,7 +114,10 @@ export default class WebdavProvider extends Provider {
     }
   }
 
-  async getClientHelper({ url, ...options }) {
+  async getClientHelper({
+    url,
+    ...options
+  }: { url: string } & Record<string, unknown>): Promise<WebdavClient> {
     const { allowLocalUrls } = this
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
@@ -96,13 +134,19 @@ export default class WebdavProvider extends Provider {
     })
   }
 
-  async list({ directory, providerUserSession }) {
+  async list({
+    directory,
+    providerUserSession,
+  }: {
+    directory?: string
+    providerUserSession: WebdavUserSession
+  }): Promise<{ items: WebdavListItem[] }> {
     return this.withErrorHandling('provider.webdav.list.error', async () => {
       if (!this.isAuthenticated({ providerUserSession })) {
         throw new ProviderAuthError()
       }
 
-      const data = { items: [] }
+      const data: { items: WebdavListItem[] } = { items: [] }
       const client = await this.getClient({ providerUserSession })
 
       const dirResult: FileStat[] | ResponseDataDetailed<FileStat[]> =
@@ -149,7 +193,13 @@ export default class WebdavProvider extends Provider {
     })
   }
 
-  async download({ id, providerUserSession }) {
+  async download({
+    id,
+    providerUserSession,
+  }: {
+    id: string
+    providerUserSession: WebdavUserSession
+  }): Promise<unknown> {
     return this.withErrorHandling(
       'provider.webdav.download.error',
       async () => {
@@ -163,7 +213,13 @@ export default class WebdavProvider extends Provider {
     )
   }
 
-  async thumbnail({ id, providerUserSession }) {
+  async thumbnail({
+    id,
+    providerUserSession,
+  }: {
+    id: string
+    providerUserSession: WebdavUserSession
+  }): Promise<never> {
     // not implementing this because a public thumbnail from webdav will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -172,7 +228,7 @@ export default class WebdavProvider extends Provider {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async withErrorHandling(tag, fn) {
+  async withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     try {
       return await fn()
     } catch (err: unknown) {

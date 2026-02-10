@@ -2,10 +2,11 @@ import fs from 'node:fs'
 import { Readable } from 'node:stream'
 import nock from 'nock'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
-import Emitter from '../src/server/emitter/index.js'
-import Uploader, { ValidationError } from '../src/server/Uploader.js'
-import standalone from '../src/standalone/index.js'
-import * as socketClient from './mocksocket.js'
+import Emitter from '../src/server/emitter/index.ts'
+import Uploader, { ValidationError } from '../src/server/Uploader.ts'
+import { isRecord } from '../src/server/helpers/type-guards.ts'
+import standalone from '../src/standalone/index.ts'
+import * as socketClient from './mocksocket.ts'
 
 vi.mock('tus-js-client')
 vi.mock('express-prom-bundle')
@@ -22,7 +23,7 @@ process.env.COMPANION_DOMAIN = 'localhost:3020'
 process.env.COMPANION_CLIENT_ORIGINS = 'true'
 const { companionOptions } = standalone()
 
-const mockReq = {}
+const mockReq: unknown = {}
 
 describe('uploader', () => {
   test('uploader respects uploadUrls', async () => {
@@ -71,12 +72,13 @@ describe('uploader', () => {
   test('upload functions with tus protocol', async () => {
     const fileContent = Buffer.from('Some file content')
     const stream = Readable.from([fileContent])
-    const opts = {
+    const opts: ConstructorParameters<typeof Uploader>[0] = {
       companionOptions,
       endpoint: 'http://url.myendpoint.com/files',
       protocol: 'tus',
       size: fileContent.length,
       pathPrefix: companionOptions.filePath,
+      metadata: { name: 'file.txt', type: 'text/plain' },
     }
 
     // @ts-ignore
@@ -100,8 +102,12 @@ describe('uploader', () => {
     // emulate socket connection
     socketClient.connect(uploadToken)
     socketClient.onProgress(uploadToken, (message) => {
-      if (firstReceivedProgress == null)
-        firstReceivedProgress = message.payload.bytesUploaded
+      const payload = isRecord(message.payload) ? message.payload : {}
+      const bytesUploaded =
+        typeof payload.bytesUploaded === 'number' ? payload.bytesUploaded : null
+      if (firstReceivedProgress == null && bytesUploaded != null) {
+        firstReceivedProgress = bytesUploaded
+      }
       onProgress(message)
     })
     socketClient.onUploadError(uploadToken, onUploadError)
@@ -141,12 +147,14 @@ describe('uploader', () => {
   test('upload functions with tus protocol without size', async () => {
     const fileContent = Buffer.alloc(1e6)
     const stream = Readable.from([fileContent])
-    const opts = {
+    const size: null = null
+    const opts: ConstructorParameters<typeof Uploader>[0] = {
       companionOptions,
       endpoint: 'http://url.myendpoint.com/files',
       protocol: 'tus',
-      size: null,
+      size,
       pathPrefix: companionOptions.filePath,
+      metadata: { name: 'file.bin' },
     }
 
     // @ts-ignore
@@ -164,7 +172,7 @@ describe('uploader', () => {
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
 
-    return new Promise((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       // validate that the test is resolved on socket connection
       uploader.awaitReady(60000).then(() => {
         // @ts-ignore
@@ -179,20 +187,25 @@ describe('uploader', () => {
         })
       })
 
-      let firstReceivedProgress: { bytesUploaded: number } | undefined
+      let firstReceivedProgress: number | undefined
 
       // emulate socket connection
       socketClient.connect(uploadToken)
       socketClient.onProgress(uploadToken, (message) => {
-        if (firstReceivedProgress == null)
-          firstReceivedProgress = message.payload
+        const payload = isRecord(message.payload) ? message.payload : {}
+        const bytesUploaded =
+          typeof payload.bytesUploaded === 'number' ? payload.bytesUploaded : null
+        if (firstReceivedProgress == null && bytesUploaded != null) {
+          firstReceivedProgress = bytesUploaded
+        }
       })
       socketClient.onUploadSuccess(uploadToken, (message) => {
         try {
-          expect(firstReceivedProgress.bytesUploaded).toBe(500_000)
+          expect(firstReceivedProgress).toBe(500_000)
 
           // see __mocks__/tus-js-client.ts
-          expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
+          const payload = isRecord(message.payload) ? message.payload : {}
+          expect(payload.url).toBe('https://tus.endpoint/files/foo-bar')
         } catch (err) {
           reject(err)
         }
@@ -201,24 +214,27 @@ describe('uploader', () => {
   })
 
   async function runMultipartTest({
-    // @ts-ignore
     metadata,
-    // @ts-ignore
     useFormData,
     includeSize = true,
     address = 'localhost',
-    // @ts-ignore
     extraCompanionOpts,
+  }: {
+    metadata?: Record<string, unknown>
+    useFormData?: boolean
+    includeSize?: boolean
+    address?: string
+    extraCompanionOpts?: Record<string, unknown>
   } = {}) {
     const fileContent = Buffer.from('Some file content')
     const stream = Readable.from([fileContent])
 
-    const opts = {
+    const opts: ConstructorParameters<typeof Uploader>[0] = {
       companionOptions: { ...companionOptions, ...extraCompanionOpts },
       endpoint: `http://${address}`,
       protocol: 'multipart',
       size: includeSize ? fileContent.length : undefined,
-      metadata,
+      metadata: metadata ?? {},
       pathPrefix: companionOptions.filePath,
       useFormData,
     }
@@ -245,7 +261,6 @@ describe('uploader', () => {
       .reply(200, () => '')
 
     const ret = await runMultipartTest({
-      // @ts-ignore
       extraCompanionOpts: {
         uploadHeaders: { 'header-a': '1', 'header-b': '2' },
       },
@@ -255,7 +270,14 @@ describe('uploader', () => {
       extraData: { response: expect.anything(), bytesUploaded: 17 },
     })
 
-    expect(ret.extraData.response?.headers?.['header-a']).toBeUndefined() // headers sent to destination, not received back
+    const responseHeaders =
+      isRecord(ret) &&
+      isRecord(ret.extraData) &&
+      isRecord(ret.extraData.response) &&
+      isRecord(ret.extraData.response.headers)
+        ? ret.extraData.response.headers
+        : null
+    expect(responseHeaders?.['header-a']).toBeUndefined() // headers sent to destination, not received back
   })
 
   const formDataNoMetaMatch =
@@ -276,7 +298,6 @@ describe('uploader', () => {
     nock('http://localhost').post('/', formDataNoMetaMatch).reply(200)
 
     const ret = await runMultipartTest({
-      // @ts-ignore
       useFormData: true,
       includeSize: false,
     })
@@ -296,14 +317,14 @@ describe('uploader', () => {
       .times(10)
       .reply(200)
 
+    const key1: null = null
     const metadata = {
-      key1: null,
+      key1,
       key2: true,
       key3: 1234,
       key4: {},
       key5: () => {},
     }
-    // @ts-ignore
     const ret = await runMultipartTest({ useFormData: true, metadata })
     expect(ret).toMatchObject({
       url: null,
@@ -352,14 +373,15 @@ describe('uploader', () => {
 
   test('uploader respects maxFileSize with unknown size', async () => {
     const fileContent = Buffer.alloc(10000)
-    const stream = Readable.from([fileContent])
-    const opts = {
-      companionOptions: { ...companionOptions, maxFileSize: 1000 },
-      endpoint: 'http://url.myendpoint.com/files',
-      protocol: 'tus',
-      size: null,
-      pathPrefix: companionOptions.filePath,
-    }
+	    const stream = Readable.from([fileContent])
+	    const size: null = null
+	    const opts = {
+	      companionOptions: { ...companionOptions, maxFileSize: 1000 },
+	      endpoint: 'http://url.myendpoint.com/files',
+	      protocol: 'tus',
+	      size,
+	      pathPrefix: companionOptions.filePath,
+	    }
 
     // @ts-ignore
     const uploader = new Uploader(opts)
@@ -372,17 +394,17 @@ describe('uploader', () => {
       .then(() => uploader.tryUploadStream(stream, mockReq))
     socketClient.connect(uploadToken)
 
-    return new Promise((resolve, reject) => {
-      socketClient.onUploadError(uploadToken, (message) => {
-        try {
-          expect(message).toMatchObject({
-            payload: { error: { message: 'maxFileSize exceeded' } },
-          })
-          resolve()
-        } catch (err) {
-          reject(err)
-        }
-      })
-    })
-  })
+	    return new Promise<void>((resolve, reject) => {
+	      socketClient.onUploadError(uploadToken, (message) => {
+	        try {
+	          expect(message).toMatchObject({
+	            payload: { error: { message: 'maxFileSize exceeded' } },
+	          })
+	          resolve()
+	        } catch (err) {
+	          reject(err)
+	        }
+	      })
+	    })
+	  })
 })

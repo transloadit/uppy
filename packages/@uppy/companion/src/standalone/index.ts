@@ -3,19 +3,21 @@ import qs from 'node:querystring'
 import { URL } from 'node:url'
 import RedisStore from 'connect-redis'
 import express from 'express'
+import type { NextFunction, Request, Response } from 'express'
 import type { SessionOptions } from 'express-session'
 import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import * as companion from '../companion.js'
-import type { StandaloneCompanionOptionsInput } from '../schemas/index.js'
-import logger from '../server/logger.js'
-import * as redis from '../server/redis.js'
+import * as companion from '../companion.ts'
+import type { StandaloneCompanionOptionsInput } from '../schemas/index.ts'
+import { isRecord, toError } from '../server/helpers/type-guards.ts'
+import logger from '../server/logger.ts'
+import * as redis from '../server/redis.ts'
 import {
   buildHelpfulStartupMessage,
   generateSecret,
   getCompanionOptions,
-} from './helper.js'
+} from './helper.ts'
 
 export default function server(
   inputCompanionOptions?: StandaloneCompanionOptionsInput,
@@ -180,12 +182,14 @@ export default function server(
     return res.status(404).json({ message: 'Not Found' })
   })
 
-  app.use((err, req, res, next) => {
+  app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+    const error = toError(err)
+    const status = isRecord(err) ? err.status : undefined
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts
-      if (err.status === 400 && err.name === 'URIError') {
-        logger.error(err.message, 'root.error', req.id)
+      if (status === 400 && error.name === 'URIError') {
+        logger.error(error.message, 'root.error', req.id)
       } else {
         logger.error(err, 'root.error', req.id)
       }
@@ -196,7 +200,7 @@ export default function server(
       logger.error(err, 'root.error', req.id)
       res
         .status(500)
-        .json({ message: err.message, error: err, requestId: req.id })
+        .json({ message: error.message, error: err, requestId: req.id })
     }
   })
 

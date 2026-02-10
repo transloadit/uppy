@@ -1,7 +1,7 @@
 import type { Request, Response } from 'express'
-import { startDownUpload } from '../helpers/upload.js'
-import logger from '../logger.js'
-import { respondWithError } from '../provider/error.js'
+import { startDownUpload } from '../helpers/upload.ts'
+import logger from '../logger.ts'
+import { respondWithError } from '../provider/error.ts'
 
 export default async function get(req: Request, res: Response): Promise<void> {
   const { id } = req.params

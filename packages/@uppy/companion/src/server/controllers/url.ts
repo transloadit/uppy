@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express'
 import express from 'express'
-import { downloadURL } from '../download.js'
-import { getURLMeta, validateURL } from '../helpers/request.js'
-import { startDownUpload } from '../helpers/upload.js'
-import logger from '../logger.js'
-import { respondWithError } from '../provider/error.js'
+import { downloadURL } from '../download.ts'
+import { getURLMeta, validateURL } from '../helpers/request.ts'
+import { startDownUpload } from '../helpers/upload.ts'
+import logger from '../logger.ts'
+import { respondWithError } from '../provider/error.ts'
 
 /**
  * Fetch the size and content type of a URL.

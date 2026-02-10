@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
-import { isRecord } from '../helpers/type-guards.js'
-import { respondWithError } from '../provider/error.js'
+import { isRecord } from '../helpers/type-guards.ts'
+import { respondWithError } from '../provider/error.ts'
 
 async function thumbnail(
   req: Request,

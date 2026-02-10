@@ -1,8 +1,8 @@
 import request from 'supertest'
 import { describe, expect, test, vi } from 'vitest'
-import * as tokenService from '../src/server/helpers/jwt.js'
-import mockOauthState from './mockoauthstate.js'
-import { getServer, grantToken } from './mockserver.js'
+import * as tokenService from '../src/server/helpers/jwt.ts'
+import mockOauthState from './mockoauthstate.ts'
+import { getServer, grantToken } from './mockserver.ts'
 
 vi.mock('express-prom-bundle')
 mockOauthState()

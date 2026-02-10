@@ -1,27 +1,28 @@
 import { htmlEscape } from 'escape-goat'
 import got from 'got'
-import * as tokenService from '../helpers/jwt.js'
-import * as oAuthState from '../helpers/oauth-state.js'
-import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
-import logger from '../logger.js'
-// biome-ignore lint/correctness/noUnusedImports: It is used as a type
-import Provider from './Provider.js'
+import type { NextFunction, Request, Response } from 'express'
+import * as tokenService from '../helpers/jwt.ts'
+import * as oAuthState from '../helpers/oauth-state.ts'
+import { isRecord, toError } from '../helpers/type-guards.ts'
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
+import logger from '../logger.ts'
+import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
+import type Provider from './Provider.ts'
 
 /**
  * @param url
  * @param providerName
  * @param credentialRequestParams - null asks for default credentials.
  */
-async function fetchKeys(url, providerName, credentialRequestParams) {
+async function fetchKeys(
+  url: string,
+  providerName: string,
+  credentialRequestParams: unknown | null,
+): Promise<Record<string, unknown>> {
   try {
-    const isRecord = (value) =>
-      !!value && typeof value === 'object' && !Array.isArray(value)
-
-    const resp = await got
-      .post(url, {
-        json: { provider: providerName, parameters: credentialRequestParams },
-      })
-      .json<Record<string, unknown>>()
+    const resp = await got.post(url, {
+      json: { provider: providerName, parameters: credentialRequestParams },
+    }).json<{ credentials?: unknown }>()
 
     const credentials = isRecord(resp) ? resp.credentials : undefined
     if (!isRecord(credentials))
@@ -45,10 +46,10 @@ async function fetchKeys(url, providerName, credentialRequestParams) {
  * @param credentialRequestParams the params that should be sent if an http request is required.
  */
 async function fetchProviderKeys(
-  providerName,
-  companionOptions,
-  credentialRequestParams,
-) {
+  providerName: string,
+  companionOptions: CompanionRuntimeOptions,
+  credentialRequestParams: unknown,
+): Promise<Record<string, unknown> | null> {
   let providerConfig = companionOptions.providerOptions[providerName]
   if (!providerConfig) {
     providerConfig = companionOptions.customProviders[providerName]?.config
@@ -84,14 +85,11 @@ async function fetchProviderKeys(
  * @param companionOptions companion options object
  */
 export const getCredentialsOverrideMiddleware = (
-  providers,
-  companionOptions,
+  providers: Record<string, typeof Provider>,
+  companionOptions: CompanionRuntimeOptions,
 ) => {
-  return async (req, res, next) => {
+  return async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const isRecord = (value) =>
-        !!value && typeof value === 'object' && !Array.isArray(value)
-
       const { oauthProvider, override } = req.params
       const [providerName] = Object.keys(providers).filter(
         (name) => providers[name].oauthProvider === oauthProvider,
@@ -109,8 +107,24 @@ export const getCredentialsOverrideMiddleware = (
       const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
       // only use state via session object if user isn't making intial "connect" request.
       // override param indicates subsequent requests from the oauth flow
-      const state = override ? grantDynamic.state : req.query.state
-      if (!state) {
+      const state = override
+        ? isRecord(grantDynamic) && typeof grantDynamic.state === 'string'
+          ? grantDynamic.state
+          : undefined
+        : typeof req.query.state === 'string'
+          ? req.query.state
+          : undefined
+      if (state == null || state.length === 0) {
+        next()
+        return
+      }
+
+      const { secret, preAuthSecret } = companionOptions
+      if (typeof secret !== 'string' || secret.length === 0) {
+        next()
+        return
+      }
+      if (typeof preAuthSecret !== 'string' || preAuthSecret.length === 0) {
         next()
         return
       }
@@ -118,7 +132,7 @@ export const getCredentialsOverrideMiddleware = (
       const preAuthToken = oAuthState.getFromState(
         state,
         'preAuthToken',
-        companionOptions.secret,
+        secret,
       )
       if (typeof preAuthToken !== 'string' || preAuthToken.length === 0) {
         next()
@@ -129,7 +143,7 @@ export const getCredentialsOverrideMiddleware = (
       try {
         payload = tokenService.verifyEncryptedToken(
           preAuthToken,
-          companionOptions.preAuthSecret,
+          preAuthSecret,
         )
       } catch (_err) {
         next()
@@ -157,12 +171,12 @@ export const getCredentialsOverrideMiddleware = (
       ) {
         const decodedState = oAuthState.decodeState(
           state,
-          companionOptions.secret,
+          secret,
         )
         decodedState.customerDefinedAllowedOrigins = credentials.origins
         const newState = oAuthState.encodeState(
           decodedState,
-          companionOptions.secret,
+          secret,
         )
         if (isRecord(req.session)) {
           const prevGrant = isRecord(req.session.grant) ? req.session.grant : {}
@@ -187,23 +201,22 @@ export const getCredentialsOverrideMiddleware = (
         },
       }
 
-      if (credentials.transloadit_gateway) {
+      const gateway = credentials.transloadit_gateway
+      if (typeof gateway === 'string' && gateway.length > 0) {
         const redirectPath = getRedirectPath(providerName)
         const fullRedirectPath = getURLBuilder(companionOptions)(
           redirectPath,
           true,
           true,
         )
-        const redirectUri = new URL(
-          fullRedirectPath,
-          credentials.transloadit_gateway,
-        ).toString()
+        const redirectUri = new URL(fullRedirectPath, gateway).toString()
         logger.info('Using redirect URI from transloadit_gateway', redirectUri)
         res.locals.grant.dynamic.redirect_uri = redirectUri
       }
 
       next()
     } catch (keyErr) {
+      const error = toError(keyErr)
       res.send(`
         <!DOCTYPE html>
         <html>
@@ -215,7 +228,7 @@ export const getCredentialsOverrideMiddleware = (
           <p>
             This is probably an Uppy configuration issue. Check that your Transloadit key is correct, and that the configured <code>credentialsName</code> for this remote provider matches the name you gave it in the Template Credentials setup on the Transloadit side.
           </p>
-          <p>Internal error message: ${htmlEscape(keyErr.message)}</p>
+          <p>Internal error message: ${htmlEscape(error.message)}</p>
         </body>
         </html>
       `)
@@ -231,7 +244,11 @@ export const getCredentialsOverrideMiddleware = (
  * @param companionOptions the companion options object
  * @param req the express request object for the said request
  */
-export const getCredentialsResolver = (providerName, companionOptions, req) => {
+export const getCredentialsResolver = (
+  providerName: string,
+  companionOptions: CompanionRuntimeOptions,
+  req: Request,
+): (() => Promise<Record<string, unknown> | null>) => {
   const credentialsResolver = () => {
     const encodedCredentialsParams = req.header('uppy-credentials-params')
     let credentialRequestParams = null

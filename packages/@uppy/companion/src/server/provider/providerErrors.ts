@@ -1,10 +1,10 @@
-import * as logger from '../logger.js'
+import * as logger from '../logger.ts'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
   parseHttpError,
-} from './error.js'
+} from './error.ts'
 
 export { parseHttpError }
 

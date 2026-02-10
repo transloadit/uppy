@@ -1,11 +1,11 @@
 import got from 'got'
-import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
-import { prepareStream } from '../../../helpers/utils.js'
-import logger from '../../../logger.js'
-import { ProviderAuthError } from '../../error.js'
-import Provider from '../../Provider.js'
-import { withGoogleErrorHandling } from '../../providerErrors.js'
-import { logout, refreshToken } from '../index.js'
+import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.ts'
+import { prepareStream } from '../../../helpers/utils.ts'
+import logger from '../../../logger.ts'
+import { ProviderAuthError } from '../../error.ts'
+import Provider from '../../Provider.ts'
+import { withGoogleErrorHandling } from '../../providerErrors.ts'
+import { logout, refreshToken } from '../index.ts'
 import {
   adaptData,
   type DriveAbout,
@@ -15,7 +15,7 @@ import {
   isGsuiteFile,
   isShortcut,
   VIRTUAL_SHARED_DIR,
-} from './adapter.js'
+} from './adapter.ts'
 
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true

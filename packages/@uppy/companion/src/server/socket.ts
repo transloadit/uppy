@@ -1,12 +1,12 @@
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
 import { WebSocketServer } from 'ws'
-import emitter from './emitter/index.js'
-import { isRecord } from './helpers/type-guards.js'
-import { jsonStringify } from './helpers/utils.js'
-import * as logger from './logger.js'
-import * as redis from './redis.js'
-import Uploader from './Uploader.js'
+import emitter from './emitter/index.ts'
+import { isRecord } from './helpers/type-guards.ts'
+import { jsonStringify } from './helpers/utils.ts'
+import * as logger from './logger.ts'
+import * as redis from './redis.ts'
+import Uploader from './Uploader.ts'
 
 type SocketOutgoing = { action: string; payload: Record<string, unknown> }
 

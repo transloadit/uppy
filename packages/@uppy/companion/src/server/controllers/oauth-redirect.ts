@@ -1,8 +1,8 @@
 import qs from 'node:querystring'
 import { URL } from 'node:url'
 import type { Request, Response } from 'express'
-import * as oAuthState from '../helpers/oauth-state.js'
-import { hasMatch } from '../helpers/utils.js'
+import * as oAuthState from '../helpers/oauth-state.ts'
+import { hasMatch } from '../helpers/utils.ts'
 
 export default function oauthRedirect(req: Request, res: Response): void {
   const secret = req.companion.options.secret

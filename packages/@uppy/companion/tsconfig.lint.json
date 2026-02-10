@@ -2,14 +2,11 @@
   "extends": "./tsconfig.shared",
   "compilerOptions": {
     "noEmit": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "allowImportingTsExtensions": true,
+    "useUnknownInCatchVariables": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src/config/**/*.ts",
-    "src/server/controllers/**/*.ts",
-    "src/server/Uploader.ts",
-    "src/server/middlewares.ts",
-    "src/server/download.ts",
-    "src/types/**/*.d.ts"
-  ]
+  "include": ["src/**/*.ts", "src/types/**/*.d.ts", "test/**/*.ts", "__mocks__/**/*.ts"]
 }

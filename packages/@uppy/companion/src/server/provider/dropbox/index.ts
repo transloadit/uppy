@@ -3,27 +3,48 @@
 // This function is simple and has OK performance compared to more
 // complicated ones: http://jsperf.com/json-escape-unicode/4
 import got from 'got'
-import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
-import { prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
-import Provider from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
-import adaptData from './adapter.js'
+import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.ts'
+import { isRecord } from '../../helpers/type-guards.ts'
+import { prepareStream } from '../../helpers/utils.ts'
+import logger from '../../logger.ts'
+import Provider from '../Provider.ts'
+import { withProviderErrorHandling } from '../providerErrors.ts'
+import adaptData from './adapter.ts'
 
 const charsToEncode = /[\u007f-\uffff]/g
-function httpHeaderSafeJson(v) {
+function httpHeaderSafeJson(v: unknown): string {
   return JSON.stringify(v).replace(charsToEncode, (c) => {
     return `\\u${`000${c.charCodeAt(0).toString(16)}`.slice(-4)}`
   })
 }
 
-async function getUserInfo({ client }) {
-  return client
-    .post('users/get_current_account', { responseType: 'json' })
-    .json()
+type DropboxClient = ReturnType<typeof got.extend>
+
+type DropboxUserInfo = {
+  email?: string
+  root_info?: {
+    root_namespace_id?: string
+    home_namespace_id?: string
+  }
 }
 
-async function getClient({ token, namespaced }) {
+async function getUserInfo({
+  client,
+}: {
+  client: DropboxClient
+}): Promise<DropboxUserInfo> {
+  return client
+    .post('users/get_current_account', { responseType: 'json' })
+    .json<DropboxUserInfo>()
+}
+
+async function getClient({
+  token,
+  namespaced,
+}: {
+  token: string
+  namespaced: boolean
+}): Promise<{ client: DropboxClient; userInfo: DropboxUserInfo }> {
   const makeClient = (namespace?: string) =>
     got.extend({
       prefixUrl: 'https://api.dropboxapi.com/2',
@@ -48,17 +69,16 @@ async function getClient({ token, namespaced }) {
   // https://www.dropboxforum.com/discussions/101000014/how-to-list-the-contents-of-a-team-folder/258310
   // https://developers.dropbox.com/dbx-team-files-guide#namespaces
   // https://www.dropbox.com/developers/reference/path-root-header-modes
+  const rootInfo = userInfo.root_info
   if (
     namespaced &&
-    userInfo.root_info != null &&
-    userInfo.root_info.root_namespace_id !==
-      userInfo.root_info.home_namespace_id
+    rootInfo != null &&
+    rootInfo.root_namespace_id != null &&
+    rootInfo.home_namespace_id != null &&
+    rootInfo.root_namespace_id !== rootInfo.home_namespace_id
   ) {
-    logger.debug(
-      'using root_namespace_id',
-      userInfo.root_info.root_namespace_id,
-    )
-    client = makeClient(userInfo.root_info.root_namespace_id)
+    logger.debug('using root_namespace_id', rootInfo.root_namespace_id)
+    client = makeClient(rootInfo.root_namespace_id)
   }
 
   return {
@@ -72,19 +92,32 @@ const getOauthClient = () =>
     prefixUrl: 'https://api.dropboxapi.com/oauth2',
   })
 
-async function list({ client, directory, query }) {
+async function list({
+  client,
+  directory,
+  query,
+}: {
+  client: DropboxClient
+  directory?: string
+  query: { cursor?: string; [k: string]: unknown }
+}): Promise<Parameters<typeof adaptData>[0]> {
   if (query.cursor) {
     return client
       .post('files/list_folder/continue', {
         json: { cursor: query.cursor },
         responseType: 'json',
       })
-      .json()
+      .json<Parameters<typeof adaptData>[0]>()
+  }
+
+  const searchParams: Record<string, string> = {}
+  for (const [k, v] of Object.entries(query)) {
+    if (typeof v === 'string') searchParams[k] = v
   }
 
   return client
     .post('files/list_folder', {
-      searchParams: query,
+      searchParams,
       json: {
         path: `${directory || ''}`,
         include_non_downloadable_files: false,
@@ -93,12 +126,24 @@ async function list({ client, directory, query }) {
       },
       responseType: 'json',
     })
-    .json()
+    .json<Parameters<typeof adaptData>[0]>()
 }
 
-async function fetchSearchEntries({ client, query }) {
+async function fetchSearchEntries({
+  client,
+  query,
+}: {
+  client: DropboxClient
+  query: { q: string; path?: string; [k: string]: unknown }
+}): Promise<Parameters<typeof adaptData>[0]> {
   const scopePath =
     typeof query.path === 'string' ? decodeURIComponent(query.path) : undefined
+
+  type DropboxSearchResponse = {
+    matches: Array<{ metadata: { metadata: Parameters<typeof adaptData>[0]['entries'][number] } }>
+    has_more: boolean
+    cursor?: string
+  }
 
   const searchRes = await client
     .post('files/search_v2', {
@@ -113,7 +158,7 @@ async function fetchSearchEntries({ client, query }) {
       },
       responseType: 'json',
     })
-    .json()
+    .json<DropboxSearchResponse>()
 
   const entries = searchRes.matches.map((m) => m.metadata.metadata)
   return {
@@ -127,7 +172,7 @@ async function fetchSearchEntries({ client, query }) {
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
  */
 export default class Dropbox extends Provider {
-  constructor(options) {
+  constructor(options: ConstructorParameters<typeof Provider>[0]) {
     super(options)
     this.needsCookieAuth = true
   }
@@ -143,7 +188,11 @@ export default class Dropbox extends Provider {
   /**
    * Search entries
    */
-  async search(options) {
+  async search(options: {
+    providerUserSession: { accessToken: string }
+    query: { q: string; path?: string; [k: string]: unknown }
+    companion: { buildURL: Parameters<typeof adaptData>[2] }
+  }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.dropbox.search.error',
       async () => {
@@ -153,7 +202,6 @@ export default class Dropbox extends Provider {
         })
 
         const stats = await fetchSearchEntries({ client, query: options.query })
-        console.log(stats)
         const { email } = userInfo
         // we don't really need email, but let's mimic `list` response shape for consistency
         return adaptData(stats, email, options.companion.buildURL)
@@ -164,7 +212,12 @@ export default class Dropbox extends Provider {
   /**
    * List folder entries
    */
-  async list(options) {
+  async list(options: {
+    providerUserSession: { accessToken: string }
+    directory?: string
+    query: { cursor?: string; [k: string]: unknown }
+    companion: { buildURL: Parameters<typeof adaptData>[2] }
+  }): Promise<unknown> {
     return this.#withErrorHandling('provider.dropbox.list.error', async () => {
       const { client, userInfo } = await getClient({
         token: options.providerUserSession.accessToken,
@@ -177,7 +230,13 @@ export default class Dropbox extends Provider {
     })
   }
 
-  async download({ id, providerUserSession: { accessToken: token } }) {
+  async download({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: { accessToken: string }
+  }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.dropbox.download.error',
       async () => {
@@ -199,7 +258,13 @@ export default class Dropbox extends Provider {
     )
   }
 
-  async thumbnail({ id, providerUserSession: { accessToken: token } }) {
+  async thumbnail({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: { accessToken: string }
+  }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.dropbox.thumbnail.error',
       async () => {
@@ -224,7 +289,13 @@ export default class Dropbox extends Provider {
     )
   }
 
-  async size({ id, providerUserSession: { accessToken: token } }) {
+  async size({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: { accessToken: string }
+  }): Promise<number> {
     return this.#withErrorHandling('provider.dropbox.size.error', async () => {
       const meta = await (await getClient({ token, namespaced: true })).client
         .post('files/get_metadata', {
@@ -243,7 +314,11 @@ export default class Dropbox extends Provider {
     })
   }
 
-  async logout({ providerUserSession: { accessToken: token } }) {
+  async logout({
+    providerUserSession: { accessToken: token },
+  }: {
+    providerUserSession: { accessToken: string }
+  }): Promise<{ revoked: true }> {
     return this.#withErrorHandling(
       'provider.dropbox.logout.error',
       async () => {
@@ -256,7 +331,15 @@ export default class Dropbox extends Provider {
     )
   }
 
-  async refreshToken({ clientId, clientSecret, refreshToken }) {
+  async refreshToken({
+    clientId,
+    clientSecret,
+    refreshToken,
+  }: {
+    clientId: string
+    clientSecret: string
+    refreshToken: string
+  }): Promise<{ accessToken: string }> {
     return this.#withErrorHandling(
       'provider.dropbox.token.refresh.error',
       async () => {
@@ -279,15 +362,13 @@ export default class Dropbox extends Provider {
     )
   }
 
-  async #withErrorHandling(tag, fn) {
-    const isRecord = (value: unknown): value is Record<string, unknown> =>
-      !!value && typeof value === 'object' && !Array.isArray(value)
-
+  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,
       providerName: Dropbox.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      isAuthError: (response: { statusCode?: number }) =>
+        response.statusCode === 401,
       getJsonErrorMessage: (body) => {
         if (!isRecord(body)) return undefined
         const summary = body.error_summary

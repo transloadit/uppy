@@ -1,120 +1,119 @@
-import { describe, expect, test, vi } from 'vitest'
+import express from 'express'
+import request from 'supertest'
+import { describe, expect, test } from 'vitest'
 
-import { cors } from '../src/server/middlewares.js'
+import { cors } from '../src/server/middlewares.ts'
 
-function testWithMock({
-  // @ts-ignore
-  corsOptions,
-  get = () => {},
+async function run({
+  corsOptions = {},
   origin = 'https://localhost:1234',
-} = {}) {
-  const res = {
-    get,
-    getHeader: get,
-    setHeader: vi.fn(),
-    end: vi.fn(),
-  }
-  const req = {
-    method: 'OPTIONS',
-    headers: {
-      origin,
-    },
-  }
-  const next = vi.fn()
-  cors(corsOptions)(req, res, next)
-  return { res }
+  existingHeaders = {},
+}: {
+  corsOptions?: Record<string, unknown>
+  origin?: string
+  existingHeaders?: Record<string, string>
+}): Promise<Record<string, string | string[] | undefined>> {
+  const app = express()
+  app.use((_req, res, next) => {
+    for (const [k, v] of Object.entries(existingHeaders)) res.setHeader(k, v)
+    next()
+  })
+  app.use(cors(corsOptions))
+  app.options('*', (_req, res) => {
+    res.status(204).end()
+  })
+
+  const res = await request(app).options('/').set('Origin', origin)
+  return res.headers
 }
 
 describe('cors', () => {
   test('should properly merge with existing headers', () => {
-    const get = (header) => {
-      if (header.toLowerCase() === 'access-control-allow-methods')
-        return 'PATCH,OPTIONS, post'
-      if (header.toLowerCase() === 'access-control-allow-headers')
-        return 'test-allow-header'
-      if (header.toLowerCase() === 'access-control-expose-headers')
-        return 'test'
-      return undefined
-    }
-
-    const { res } = testWithMock({
-      // @ts-ignore
+    return run({
       corsOptions: {
         sendSelfEndpoint: true,
-        corsOrigins: /^https:\/\/localhost:.*$/,
+        corsOrigins: new RegExp('^https://localhost:.*$'),
       },
-      get,
-    })
-    expect(res.setHeader.mock.calls).toEqual([
-      ['Access-Control-Allow-Origin', 'https://localhost:1234'],
-      ['Vary', 'Origin'],
-      ['Access-Control-Allow-Credentials', 'true'],
-      ['Access-Control-Allow-Methods', 'PATCH,OPTIONS,POST,GET,DELETE'],
-      [
-        'Access-Control-Allow-Headers',
+      existingHeaders: {
+        'Access-Control-Allow-Methods': 'PATCH,OPTIONS, post',
+        'Access-Control-Allow-Headers': 'test-allow-header',
+        'Access-Control-Expose-Headers': 'test',
+      },
+    }).then((headers) => {
+      expect(headers['access-control-allow-origin']).toBe(
+        'https://localhost:1234',
+      )
+      expect(headers.vary).toBe('Origin')
+      expect(headers['access-control-allow-credentials']).toBe('true')
+      expect(headers['access-control-allow-methods']).toBe(
+        'PATCH,OPTIONS,POST,GET,DELETE',
+      )
+      expect(headers['access-control-allow-headers']).toBe(
         'test-allow-header,uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-      ],
-      ['Access-Control-Expose-Headers', 'test,i-am'],
-      ['Content-Length', '0'],
-    ])
-    // expect(next).toHaveBeenCalled()
+      )
+      expect(headers['access-control-expose-headers']).toBe('test,i-am')
+      expect(headers['content-length']).toBe('0')
+    })
   })
 
   test('should also work when nothing added', () => {
-    const { res } = testWithMock()
-    expect(res.setHeader.mock.calls).toEqual([
-      ['Access-Control-Allow-Origin', 'https://localhost:1234'],
-      ['Vary', 'Origin'],
-      ['Access-Control-Allow-Credentials', 'true'],
-      ['Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE'],
-      [
-        'Access-Control-Allow-Headers',
+    return run({}).then((headers) => {
+      expect(headers['access-control-allow-origin']).toBe(
+        'https://localhost:1234',
+      )
+      expect(headers.vary).toBe('Origin')
+      expect(headers['access-control-allow-credentials']).toBe('true')
+      expect(headers['access-control-allow-methods']).toBe(
+        'GET,POST,OPTIONS,DELETE',
+      )
+      expect(headers['access-control-allow-headers']).toBe(
         'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-      ],
-      ['Content-Length', '0'],
-    ])
+      )
+      expect(headers['content-length']).toBe('0')
+    })
   })
 
   test('should support disabling cors', () => {
-    // @ts-ignore
-    const { res } = testWithMock({ corsOptions: { corsOrigins: false } })
-    expect(res.setHeader.mock.calls).toEqual([])
+    return run({ corsOptions: { corsOrigins: false } }).then((headers) => {
+      expect(headers['access-control-allow-origin']).toBeUndefined()
+    })
   })
 
   test('should support incorrect url', () => {
-    const { res } = testWithMock({
-      // @ts-ignore
-      corsOptions: { corsOrigins: /^incorrect$/ },
-    })
-    expect(res.setHeader.mock.calls).toEqual([
-      ['Vary', 'Origin'],
-      ['Access-Control-Allow-Credentials', 'true'],
-      ['Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE'],
-      [
-        'Access-Control-Allow-Headers',
-        'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-      ],
-      ['Content-Length', '0'],
-    ])
+    return run({ corsOptions: { corsOrigins: /^incorrect$/ } }).then(
+      (headers) => {
+        expect(headers['access-control-allow-origin']).toBeUndefined()
+        expect(headers.vary).toBe('Origin')
+        expect(headers['access-control-allow-credentials']).toBe('true')
+        expect(headers['access-control-allow-methods']).toBe(
+          'GET,POST,OPTIONS,DELETE',
+        )
+        expect(headers['access-control-allow-headers']).toBe(
+          'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
+        )
+        expect(headers['content-length']).toBe('0')
+      },
+    )
   })
 
   test('should support array origin', () => {
-    const { res } = testWithMock({
-      // @ts-ignore
+    return run({
       corsOptions: {
         corsOrigins: ['http://google.com', 'https://localhost:1234'],
       },
-    })
-    expect(res.setHeader.mock.calls).toEqual([
-      ['Access-Control-Allow-Origin', 'https://localhost:1234'],
-      ['Vary', 'Origin'],
-      ['Access-Control-Allow-Credentials', 'true'],
-      ['Access-Control-Allow-Methods', 'GET,POST,OPTIONS,DELETE'],
-      [
-        'Access-Control-Allow-Headers',
+    }).then((headers) => {
+      expect(headers['access-control-allow-origin']).toBe(
+        'https://localhost:1234',
+      )
+      expect(headers.vary).toBe('Origin')
+      expect(headers['access-control-allow-credentials']).toBe('true')
+      expect(headers['access-control-allow-methods']).toBe(
+        'GET,POST,OPTIONS,DELETE',
+      )
+      expect(headers['access-control-allow-headers']).toBe(
         'uppy-auth-token,uppy-credentials-params,authorization,origin,content-type,accept',
-      ],
-      ['Content-Length', '0'],
-    ])
+      )
+      expect(headers['content-length']).toBe('0')
+    })
   })
 })

@@ -1,55 +1,66 @@
-/**
- * @module provider
- */
+import type { NextFunction, Request, Response } from 'express'
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
+import * as logger from '../logger.ts'
+import box from './box/index.ts'
+import { getCredentialsResolver } from './credentials.ts'
+import dropbox from './dropbox/index.ts'
+import facebook from './facebook/index.ts'
+import { Drive } from './google/drive/index.ts'
+import instagram from './instagram/graph/index.ts'
+import onedrive from './onedrive/index.ts'
+import Provider, { isOAuthProvider } from './Provider.ts'
+import unsplash from './unsplash/index.ts'
+import webdav from './webdav/index.ts'
+import zoom from './zoom/index.ts'
 
-import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
-import * as logger from '../logger.js'
-import box from './box/index.js'
-import { getCredentialsResolver } from './credentials.js'
-import dropbox from './dropbox/index.js'
-import facebook from './facebook/index.js'
-import { Drive } from './google/drive/index.js'
-import instagram from './instagram/graph/index.js'
-import onedrive from './onedrive/index.js'
-import { isOAuthProvider } from './Provider.js'
-import unsplash from './unsplash/index.js'
-import webdav from './webdav/index.js'
-import zoom from './zoom/index.js'
+type ProviderRegistry = Record<string, typeof Provider>
 
-/**
- *
- * @param options
- */
-const validOptions = (options) => {
-  return options.server.host && options.server.protocol
+type GrantConfig = Record<string, Record<string, unknown> | undefined> & {
+  defaults?: {
+    host?: string
+    protocol?: string
+    path?: string
+  }
+}
+
+const validOptions = (options: {
+  server?: { host?: unknown; protocol?: unknown }
+}): boolean => {
+  return (
+    typeof options.server?.host === 'string' &&
+    options.server.host.length > 0 &&
+    typeof options.server.protocol === 'string' &&
+    options.server.protocol.length > 0
+  )
 }
 
 /**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
  */
-export function getProviderMiddleware(providers, grantConfig) {
-  /**
-   *
-   * @param req
-   * @param res
-   * @param next
-   * @param providerName
-   */
-  const middleware = (req, res, next, providerName) => {
+export function getProviderMiddleware(
+  providers: ProviderRegistry,
+  grantConfig: GrantConfig,
+): (req: Request, res: Response, next: NextFunction, providerName: string) => void {
+  const middleware = (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+    providerName: string,
+  ): void => {
     const ProviderClass = providers[providerName]
     if (ProviderClass && validOptions(req.companion.options)) {
       const { allowLocalUrls, providerOptions } = req.companion.options
       const { oauthProvider } = ProviderClass
 
-      let providerGrantConfig: unknown
+      let providerGrantConfig: Record<string, unknown> | undefined
       if (isOAuthProvider(oauthProvider)) {
         req.companion.getProviderCredentials = getCredentialsResolver(
           providerName,
           req.companion.options,
           req,
         )
-        providerGrantConfig = grantConfig[oauthProvider]
+        providerGrantConfig = grantConfig[oauthProvider] ?? {}
         req.companion.providerGrantConfig = providerGrantConfig
       }
 
@@ -58,7 +69,7 @@ export function getProviderMiddleware(providers, grantConfig) {
         secret,
         providerName,
         providerGrantConfig,
-        allowLocalUrls,
+        allowLocalUrls: !!allowLocalUrls,
       })
       req.companion.providerName = providerName
       req.companion.providerClass = ProviderClass
@@ -78,7 +89,7 @@ export function getProviderMiddleware(providers, grantConfig) {
 /**
  * Return the default provider implementations.
  */
-export function getDefaultProviders() {
+export function getDefaultProviders(): ProviderRegistry {
   const providers = {
     dropbox,
     box,
@@ -89,9 +100,9 @@ export function getDefaultProviders() {
     instagram,
     unsplash,
     webdav,
-  }
+  } satisfies ProviderRegistry
 
-  return providers
+  return { ...providers }
 }
 
 /**
@@ -101,7 +112,14 @@ export function getDefaultProviders() {
  * @param providers - Provider registry to mutate.
  * @param grantConfig - Grant config object to mutate.
  */
-export function addCustomProviders(customProviders, providers, grantConfig) {
+export function addCustomProviders(
+  customProviders: Record<
+    string,
+    { module: typeof Provider; config: Record<string, unknown> }
+  >,
+  providers: ProviderRegistry,
+  grantConfig: GrantConfig,
+): void {
   Object.keys(customProviders).forEach((providerName) => {
     const customProvider = customProviders[providerName]
 
@@ -128,12 +146,28 @@ export function addCustomProviders(customProviders, providers, grantConfig) {
  * @param getOauthProvider
  */
 export function addProviderOptions(
-  companionOptions,
-  grantConfig,
-  getOauthProvider,
-) {
-  const { server, providerOptions } = companionOptions
-  if (!validOptions({ server })) {
+  companionOptions: {
+    server?: {
+      host?: string
+      protocol?: string
+      path?: string
+      implicitPath?: string
+      oauthDomain?: string
+    }
+    providerOptions?: Record<
+      string,
+      { key?: string; secret?: string; credentialsURL?: string } & Record<
+        string,
+        unknown
+      >
+    >
+  },
+  grantConfig: GrantConfig,
+  getOauthProvider?: (providerName: string) => string | undefined,
+): void {
+  const server = companionOptions.server ?? {}
+  const providerOptions = companionOptions.providerOptions ?? {}
+  if (!validOptions(companionOptions)) {
     logger.warn(
       'invalid provider options detected. Providers will not be loaded',
       'provider.options.invalid',
@@ -153,11 +187,12 @@ export function addProviderOptions(
     const oauthProvider = getOauthProvider?.(providerName)
 
     if (isOAuthProvider(oauthProvider) && grantConfig[oauthProvider]) {
+      const grantProviderConfig = grantConfig[oauthProvider]
       // explicitly add providerOptions so users don't override other providerOptions.
-      grantConfig[oauthProvider].key = providerOptions[providerName].key
-      grantConfig[oauthProvider].secret = providerOptions[providerName].secret
+      grantProviderConfig.key = providerOptions[providerName].key
+      grantProviderConfig.secret = providerOptions[providerName].secret
       if (providerOptions[providerName].credentialsURL) {
-        grantConfig[oauthProvider].dynamic = [
+        grantProviderConfig.dynamic = [
           'key',
           'secret',
           'redirect_uri',
@@ -166,12 +201,14 @@ export function addProviderOptions(
       }
 
       const provider = getDefaultProviders()[providerName]
-      Object.assign(grantConfig[oauthProvider], provider.getExtraGrantConfig())
+      if (provider) {
+        Object.assign(grantProviderConfig, provider.getExtraGrantConfig())
+      }
 
       // override grant.js redirect uri with companion's custom redirect url
       const isExternal = !!server.implicitPath
       const redirectPath = getRedirectPath(providerName)
-      grantConfig[oauthProvider].redirect_uri = getURLBuilder(companionOptions)(
+      grantProviderConfig.redirect_uri = getURLBuilder(companionOptions)(
         redirectPath,
         isExternal,
       )
@@ -181,17 +218,15 @@ export function addProviderOptions(
           isExternal,
           true,
         )
-        grantConfig[oauthProvider].redirect_uri =
+        grantProviderConfig.redirect_uri =
           `${server.protocol}://${oauthDomain}${fullRedirectPath}`
       }
 
       if (server.implicitPath) {
         // no url builder is used for this because grant internally adds the path
-        grantConfig[oauthProvider].callback =
-          `${server.implicitPath}${grantConfig[oauthProvider].callback}`
+        grantProviderConfig.callback = `${server.implicitPath}${grantProviderConfig.callback}`
       } else if (server.path) {
-        grantConfig[oauthProvider].callback =
-          `${server.path}${grantConfig[oauthProvider].callback}`
+        grantProviderConfig.callback = `${server.path}${grantProviderConfig.callback}`
       }
     }
   })

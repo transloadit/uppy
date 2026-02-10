@@ -1,5 +1,5 @@
 import got from 'got'
-import { withGoogleErrorHandling } from '../providerErrors.js'
+import { withGoogleErrorHandling } from '../providerErrors.ts'
 
 /**
  * Reusable google stuff
