@@ -8,5 +8,10 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*.ts", "src/types/**/*.d.ts", "test/**/*.ts", "__mocks__/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "src/types/**/*.d.ts",
+    "test/**/*.ts",
+    "__mocks__/**/*.ts"
+  ]
 }

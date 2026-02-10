@@ -52,9 +52,12 @@ async function findFile({
   for (const file of files) {
     if (!isRecord(file)) continue
     const id = typeof file.id === 'string' ? file.id : undefined
-    const fileType = typeof file.file_type === 'string' ? file.file_type : undefined
+    const fileType =
+      typeof file.file_type === 'string' ? file.file_type : undefined
     const recStart =
-      typeof file.recording_start === 'string' ? file.recording_start : undefined
+      typeof file.recording_start === 'string'
+        ? file.recording_start
+        : undefined
 
     const matches =
       (id != null && fileId === id) ||
@@ -68,7 +71,8 @@ async function findFile({
     return {
       download_url:
         typeof file.download_url === 'string' ? file.download_url : undefined,
-      file_size: typeof file.file_size === 'number' ? file.file_size : undefined,
+      file_size:
+        typeof file.file_size === 'number' ? file.file_size : undefined,
       id,
       file_type: fileType,
       recording_start: recStart,
@@ -307,7 +311,9 @@ export default class Zoom extends Provider {
     companion,
     providerUserSession: { accessToken: token },
   }: {
-    companion: { getProviderCredentials: () => Promise<Record<string, unknown>> }
+    companion: {
+      getProviderCredentials: () => Promise<Record<string, unknown>>
+    }
     providerUserSession: { accessToken: string }
   }): Promise<{ revoked: boolean }> {
     return this.#withErrorHandling('provider.zoom.logout.error', async () => {
@@ -335,7 +341,9 @@ export default class Zoom extends Provider {
     body,
     headers,
   }: {
-    companion: { getProviderCredentials: () => Promise<Record<string, unknown>> }
+    companion: {
+      getProviderCredentials: () => Promise<Record<string, unknown>>
+    }
     body: unknown
     headers: Record<string, string | undefined>
   }): Promise<Record<string, unknown>> {

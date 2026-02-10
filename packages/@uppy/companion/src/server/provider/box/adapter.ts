@@ -18,7 +18,11 @@ type BoxListResponse = {
 }
 
 type CompanionLike = {
-  buildURL: (subPath: string, isExternal: boolean, excludeHost?: boolean) => string
+  buildURL: (
+    subPath: string,
+    isExternal: boolean,
+    excludeHost?: boolean,
+  ) => string
 }
 
 const isFolder = (item: BoxItem): boolean => {

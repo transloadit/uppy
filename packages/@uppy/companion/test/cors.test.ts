@@ -32,7 +32,7 @@ describe('cors', () => {
     return run({
       corsOptions: {
         sendSelfEndpoint: true,
-        corsOrigins: new RegExp('^https://localhost:.*$'),
+        corsOrigins: /^https:\/\/localhost:.*$/,
       },
       existingHeaders: {
         'Access-Control-Allow-Methods': 'PATCH,OPTIONS, post',

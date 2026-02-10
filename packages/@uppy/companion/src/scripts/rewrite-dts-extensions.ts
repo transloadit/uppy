@@ -39,4 +39,3 @@ for (const file of files) {
 
 // eslint-disable-next-line no-console
 console.log(`rewrite-dts-extensions: updated ${changed} .d.ts file(s)`)
-

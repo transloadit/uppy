@@ -18,7 +18,10 @@ const getClient = ({ token }: { token: string }): UnsplashClient =>
     },
   })
 
-const getPhotoMeta = async (client: UnsplashClient, id: string): Promise<unknown> =>
+const getPhotoMeta = async (
+  client: UnsplashClient,
+  id: string,
+): Promise<unknown> =>
   client.get(`photos/${id}`, { responseType: 'json' }).json()
 
 /**
@@ -30,7 +33,10 @@ export default class Unsplash extends Provider {
     query = { cursor: null, q: null },
   }: {
     providerUserSession: { accessToken: string }
-    query?: Parameters<typeof adaptData>[1] & { cursor?: string | null; q?: string | null }
+    query?: Parameters<typeof adaptData>[1] & {
+      cursor?: string | null
+      q?: string | null
+    }
   }): Promise<unknown> {
     if (typeof query.q !== 'string') {
       throw new ProviderApiError('Search query missing', 400)

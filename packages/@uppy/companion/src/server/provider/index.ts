@@ -8,12 +8,14 @@ import facebook from './facebook/index.ts'
 import { Drive } from './google/drive/index.ts'
 import instagram from './instagram/graph/index.ts'
 import onedrive from './onedrive/index.ts'
-import Provider, { isOAuthProvider } from './Provider.ts'
+import { isOAuthProvider } from './Provider.ts'
 import unsplash from './unsplash/index.ts'
 import webdav from './webdav/index.ts'
 import zoom from './zoom/index.ts'
 
-type ProviderRegistry = Record<string, typeof Provider>
+type ProviderCtor = typeof import('./Provider.ts').default
+
+type ProviderRegistry = Record<string, ProviderCtor>
 
 type GrantConfig = Record<string, Record<string, unknown> | undefined> & {
   defaults?: {
@@ -41,7 +43,12 @@ const validOptions = (options: {
 export function getProviderMiddleware(
   providers: ProviderRegistry,
   grantConfig: GrantConfig,
-): (req: Request, res: Response, next: NextFunction, providerName: string) => void {
+): (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+  providerName: string,
+) => void {
   const middleware = (
     req: Request,
     _res: Response,
@@ -115,7 +122,7 @@ export function getDefaultProviders(): ProviderRegistry {
 export function addCustomProviders(
   customProviders: Record<
     string,
-    { module: typeof Provider; config: Record<string, unknown> }
+    { module: ProviderCtor; config: Record<string, unknown> }
   >,
   providers: ProviderRegistry,
   grantConfig: GrantConfig,
@@ -218,8 +225,7 @@ export function addProviderOptions(
           isExternal,
           true,
         )
-        grantProviderConfig.redirect_uri =
-          `${server.protocol}://${oauthDomain}${fullRedirectPath}`
+        grantProviderConfig.redirect_uri = `${server.protocol}://${oauthDomain}${fullRedirectPath}`
       }
 
       if (server.implicitPath) {

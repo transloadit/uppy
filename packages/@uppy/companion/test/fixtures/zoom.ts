@@ -50,7 +50,13 @@ export const nockZoomRecordings = ({ times = 1 }: { times?: number } = {}) => {
     })
 }
 
-export const nockZoomRevoke = ({ key, secret }: { key: string; secret: string }) => {
+export const nockZoomRevoke = ({
+  key,
+  secret,
+}: {
+  key: string
+  secret: string
+}) => {
   nock('https://zoom.us')
     .post('/oauth/revoke?token=token+value')
     .reply(function () {

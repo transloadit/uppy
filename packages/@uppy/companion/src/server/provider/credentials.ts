@@ -1,12 +1,12 @@
 import { htmlEscape } from 'escape-goat'
-import got from 'got'
 import type { NextFunction, Request, Response } from 'express'
+import got from 'got'
+import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
 import * as tokenService from '../helpers/jwt.ts'
 import * as oAuthState from '../helpers/oauth-state.ts'
 import { isRecord, toError } from '../helpers/type-guards.ts'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import logger from '../logger.ts'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
 import type Provider from './Provider.ts'
 
 /**
@@ -20,9 +20,11 @@ async function fetchKeys(
   credentialRequestParams: unknown | null,
 ): Promise<Record<string, unknown>> {
   try {
-    const resp = await got.post(url, {
-      json: { provider: providerName, parameters: credentialRequestParams },
-    }).json<{ credentials?: unknown }>()
+    const resp = await got
+      .post(url, {
+        json: { provider: providerName, parameters: credentialRequestParams },
+      })
+      .json<{ credentials?: unknown }>()
 
     const credentials = isRecord(resp) ? resp.credentials : undefined
     if (!isRecord(credentials))
@@ -141,10 +143,7 @@ export const getCredentialsOverrideMiddleware = (
 
       let payload: unknown
       try {
-        payload = tokenService.verifyEncryptedToken(
-          preAuthToken,
-          preAuthSecret,
-        )
+        payload = tokenService.verifyEncryptedToken(preAuthToken, preAuthSecret)
       } catch (_err) {
         next()
         return
@@ -169,15 +168,9 @@ export const getCredentialsOverrideMiddleware = (
         Array.isArray(credentials.origins) &&
         credentials.origins.length > 0
       ) {
-        const decodedState = oAuthState.decodeState(
-          state,
-          secret,
-        )
+        const decodedState = oAuthState.decodeState(state, secret)
         decodedState.customerDefinedAllowedOrigins = credentials.origins
-        const newState = oAuthState.encodeState(
-          decodedState,
-          secret,
-        )
+        const newState = oAuthState.encodeState(decodedState, secret)
         if (isRecord(req.session)) {
           const prevGrant = isRecord(req.session.grant) ? req.session.grant : {}
           const prevDynamic = isRecord(prevGrant.dynamic)

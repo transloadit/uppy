@@ -110,18 +110,20 @@ const adaptData = (
   return {
     searchedFor: q,
     username: null,
-    items: subList.map((item): UnsplashAdaptedItem => ({
-      isFolder: isFolder(item),
-      icon: getItemIcon(item),
-      name: getItemName(item),
-      mimeType: getMimeType(item),
-      id: getItemId(item),
-      thumbnail: getItemThumbnailUrl(item),
-      requestPath: getItemRequestPath(item),
-      modifiedDate: getItemModifiedDate(item),
-      author: getAuthor(item),
-      size: null,
-    })),
+    items: subList.map(
+      (item): UnsplashAdaptedItem => ({
+        isFolder: isFolder(item),
+        icon: getItemIcon(item),
+        name: getItemName(item),
+        mimeType: getMimeType(item),
+        id: getItemId(item),
+        thumbnail: getItemThumbnailUrl(item),
+        requestPath: getItemRequestPath(item),
+        modifiedDate: getItemModifiedDate(item),
+        author: getAuthor(item),
+        size: null,
+      }),
+    ),
     nextPageQuery: hasNextPage ? getNextPageQuery(currentQuery) : null,
   }
 }

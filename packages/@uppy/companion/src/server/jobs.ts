@@ -3,9 +3,9 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import got from 'got'
 import schedule from 'node-schedule'
+import { isRecord } from './helpers/type-guards.ts'
 import * as logger from './logger.ts'
 import Uploader from './Uploader.ts'
-import { isRecord } from './helpers/type-guards.ts'
 
 const cleanUpFinishedUploads = (dirPath: string): void => {
   logger.info(

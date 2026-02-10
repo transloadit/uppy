@@ -140,7 +140,9 @@ async function fetchSearchEntries({
     typeof query.path === 'string' ? decodeURIComponent(query.path) : undefined
 
   type DropboxSearchResponse = {
-    matches: Array<{ metadata: { metadata: Parameters<typeof adaptData>[0]['entries'][number] } }>
+    matches: Array<{
+      metadata: { metadata: Parameters<typeof adaptData>[0]['entries'][number] }
+    }>
     has_more: boolean
     cursor?: string
   }

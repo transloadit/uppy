@@ -1,6 +1,6 @@
 import got from 'got'
-import { prepareStream } from '../../helpers/utils.ts'
 import { isRecord } from '../../helpers/type-guards.ts'
+import { prepareStream } from '../../helpers/utils.ts'
 import Provider from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
@@ -11,7 +11,11 @@ const BOX_THUMBNAIL_SIZE = 256
 type BoxUserSession = { accessToken: string }
 type BoxQuery = { cursor?: string }
 type CompanionLike = {
-  buildURL: (subPath: string, isExternal: boolean, excludeHost?: boolean) => string
+  buildURL: (
+    subPath: string,
+    isExternal: boolean,
+    excludeHost?: boolean,
+  ) => string
   options: {
     providerOptions: {
       box: { key?: string; secret?: string }

@@ -20,6 +20,7 @@ import tus from 'tus-js-client'
 import validator from 'validator'
 import emitter, { type EmitterLike } from './emitter/index.ts'
 import headerSanitize from './header-blacklist.ts'
+import { toError } from './helpers/type-guards.ts'
 import {
   getBucket,
   hasMatch,
@@ -27,7 +28,6 @@ import {
   rfc2047EncodeMetadata,
   truncateFilename,
 } from './helpers/utils.ts'
-import { toError } from './helpers/type-guards.ts'
 import * as logger from './logger.ts'
 import * as redis from './redis.ts'
 

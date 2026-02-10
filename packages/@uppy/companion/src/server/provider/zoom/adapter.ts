@@ -86,7 +86,10 @@ const getIsFolder = (item: ZoomItem): boolean => {
   return !item.file_type
 }
 
-const getItemName = (item: ZoomItem, userResponse: ZoomUserResponse): string => {
+const getItemName = (
+  item: ZoomItem,
+  userResponse: ZoomUserResponse,
+): string => {
   const timestamp =
     item.start_time || item.recording_start || new Date().toISOString()
   const start = moment
@@ -97,9 +100,10 @@ const getItemName = (item: ZoomItem, userResponse: ZoomUserResponse): string => 
     const ext = Object.hasOwn(EXT, item.file_type)
       ? `.${EXT[item.file_type]}`
       : ''
-    const itemType = 'recording_type' in item && item.recording_type
-      ? ` - ${item.recording_type.split('_').join(' ')}`
-      : ''
+    const itemType =
+      'recording_type' in item && item.recording_type
+        ? ` - ${item.recording_type.split('_').join(' ')}`
+        : ''
     return `${item.topic}${itemType} (${start})${ext}`
   }
 
@@ -126,7 +130,9 @@ const getId = (item: ZoomItem): string => {
       typeof item.meeting_id !== 'string' ||
       typeof item.recording_start !== 'string'
     ) {
-      throw new Error('Unexpected Zoom item: missing meeting_id/recording_start')
+      throw new Error(
+        'Unexpected Zoom item: missing meeting_id/recording_start',
+      )
     }
     return `${encodeURIComponent(item.meeting_id)}__CC__${encodeURIComponent(item.recording_start)}`
   }
@@ -148,7 +154,9 @@ const getRequestPath = (item: ZoomItem): string => {
       typeof item.meeting_id !== 'string' ||
       typeof item.recording_start !== 'string'
     ) {
-      throw new Error('Unexpected Zoom item: missing meeting_id/recording_start')
+      throw new Error(
+        'Unexpected Zoom item: missing meeting_id/recording_start',
+      )
     }
     return `${encodeURIComponent(item.meeting_id)}?recordingId=CC&recordingStart=${encodeURIComponent(item.recording_start)}`
   }
@@ -229,11 +237,13 @@ function toZoomMeeting(value: unknown): ZoomMeeting | null {
 const adaptData = (
   userResponse: ZoomUserResponse,
   results: unknown,
-): {
-  nextPagePath: null
-  items: ZoomAdaptedItem[]
-  username: string | undefined
-} | { items: [] } => {
+):
+  | {
+      nextPagePath: null
+      items: ZoomAdaptedItem[]
+      username: string | undefined
+    }
+  | { items: [] } => {
   if (!results || !isRecord(results)) {
     return { items: [] }
   }

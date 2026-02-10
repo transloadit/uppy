@@ -68,7 +68,7 @@ const getItemModifiedDate = (item: FacebookItem): string | undefined => {
 }
 
 const getItemThumbnailUrl = (item: FacebookItem): string | null => {
-  return isFolder(item) ? null : sortImages(item.images)[0]?.source ?? null
+  return isFolder(item) ? null : (sortImages(item.images)[0]?.source ?? null)
 }
 
 const getNextPagePath = (

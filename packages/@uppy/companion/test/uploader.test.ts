@@ -3,8 +3,8 @@ import { Readable } from 'node:stream'
 import nock from 'nock'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
 import Emitter from '../src/server/emitter/index.ts'
-import Uploader, { ValidationError } from '../src/server/Uploader.ts'
 import { isRecord } from '../src/server/helpers/type-guards.ts'
+import Uploader, { ValidationError } from '../src/server/Uploader.ts'
 import standalone from '../src/standalone/index.ts'
 import * as socketClient from './mocksocket.ts'
 
@@ -194,7 +194,9 @@ describe('uploader', () => {
       socketClient.onProgress(uploadToken, (message) => {
         const payload = isRecord(message.payload) ? message.payload : {}
         const bytesUploaded =
-          typeof payload.bytesUploaded === 'number' ? payload.bytesUploaded : null
+          typeof payload.bytesUploaded === 'number'
+            ? payload.bytesUploaded
+            : null
         if (firstReceivedProgress == null && bytesUploaded != null) {
           firstReceivedProgress = bytesUploaded
         }
@@ -373,15 +375,15 @@ describe('uploader', () => {
 
   test('uploader respects maxFileSize with unknown size', async () => {
     const fileContent = Buffer.alloc(10000)
-	    const stream = Readable.from([fileContent])
-	    const size: null = null
-	    const opts = {
-	      companionOptions: { ...companionOptions, maxFileSize: 1000 },
-	      endpoint: 'http://url.myendpoint.com/files',
-	      protocol: 'tus',
-	      size,
-	      pathPrefix: companionOptions.filePath,
-	    }
+    const stream = Readable.from([fileContent])
+    const size: null = null
+    const opts = {
+      companionOptions: { ...companionOptions, maxFileSize: 1000 },
+      endpoint: 'http://url.myendpoint.com/files',
+      protocol: 'tus',
+      size,
+      pathPrefix: companionOptions.filePath,
+    }
 
     // @ts-ignore
     const uploader = new Uploader(opts)
@@ -394,17 +396,17 @@ describe('uploader', () => {
       .then(() => uploader.tryUploadStream(stream, mockReq))
     socketClient.connect(uploadToken)
 
-	    return new Promise<void>((resolve, reject) => {
-	      socketClient.onUploadError(uploadToken, (message) => {
-	        try {
-	          expect(message).toMatchObject({
-	            payload: { error: { message: 'maxFileSize exceeded' } },
-	          })
-	          resolve()
-	        } catch (err) {
-	          reject(err)
-	        }
-	      })
-	    })
-	  })
+    return new Promise<void>((resolve, reject) => {
+      socketClient.onUploadError(uploadToken, (message) => {
+        try {
+          expect(message).toMatchObject({
+            payload: { error: { message: 'maxFileSize exceeded' } },
+          })
+          resolve()
+        } catch (err) {
+          reject(err)
+        }
+      })
+    })
+  })
 })
