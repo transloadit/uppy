@@ -11,8 +11,8 @@ const getAuthHeader = (token) => ({ authorization: `Bearer ${token}` })
 
 /**
  *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
+ * @param req expressJS request object
+ * @param res expressJS response object
  */
 const get = async (req, res) => {
   try {

@@ -4,9 +4,6 @@ import { isRecord } from '../helpers/type-guards.js'
 /**
  * Derived from `cors` npm package.
  * @see https://github.com/expressjs/cors/blob/791983ebc0407115bc8ae8e64830d440da995938/lib/index.js#L19-L34
- * @param {string} origin
- * @param {*} allowedOrigins
- * @returns {boolean}
  */
 function isOriginAllowed(origin, allowedOrigins) {
   if (Array.isArray(allowedOrigins)) {
@@ -81,9 +78,6 @@ function getClientOrigin(base64EncodedState: unknown): string | undefined {
  * That's why we use the client-provided base64-encoded parameter, check if it
  * matches origin(s) allowed in `corsOrigins` Companion option, and use that as
  * our `targetOrigin` for the `window.postMessage()` call (see `send-token.js`).
- *
- * @param {object} req
- * @param {object} res
  */
 export default function connect(req, res, next) {
   const stateObj = oAuthState.generateState()

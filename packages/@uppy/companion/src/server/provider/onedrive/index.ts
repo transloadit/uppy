@@ -34,10 +34,10 @@ export default class OneDrive extends Provider {
    * Makes 2 requests in parallel - 1. to get files, 2. to get user email
    * it then waits till both requests are done before proceeding with the callback
    *
-   * @param {object} options
-   * @param {string} options.directory
-   * @param {any} options.query
-   * @param {{ accessToken: string }} options.providerUserSession
+   * @param options
+   * @param options.directory
+   * @param options.query
+   * @param options.providerUserSession
    */
   async list({
     directory,

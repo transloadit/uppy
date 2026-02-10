@@ -3,8 +3,8 @@ import { respondWithError } from '../provider/error.js'
 
 /**
  *
- * @param {object} req
- * @param {object} res
+ * @param req
+ * @param res
  */
 export default async function logout(req, res, next) {
   const cleanSession = () => {

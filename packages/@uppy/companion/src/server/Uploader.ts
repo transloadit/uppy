@@ -427,11 +427,6 @@ export default class Uploader {
     return this.options.companionOptions.streamingUpload
   }
 
-  /**
-   *
-   * @param {import('stream').Readable} stream
-   * @param {import('express').Request} req
-   */
   async uploadStream(
     stream: NodeReadableStream,
     req: Request,
@@ -482,11 +477,6 @@ export default class Uploader {
     if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
   }
 
-  /**
-   *
-   * @param {import('stream').Readable} stream
-   * @param {import('express').Request} req
-   */
   async tryUploadStream(
     stream: NodeReadableStream,
     req: Request,
@@ -516,9 +506,6 @@ export default class Uploader {
    * returns a substring of the token. Used as traceId for logging
    * we avoid using the entire token because this is meant to be a short term
    * access token between uppy client and companion websocket
-   *
-   * @param {string} token the token to Shorten
-   * @returns {string}
    */
   static shortenToken(token: string): string {
     return token.substring(0, 8)
@@ -586,8 +573,7 @@ export default class Uploader {
   }
 
   /**
-   * @typedef {{action: string, payload: object}} State
-   * @param {State} state
+   * Persist the latest upload state to Redis so a reconnecting client can resume.
    */
   saveState(state: { action: string; payload: Record<string, unknown> }): void {
     if (!this.storage) return
@@ -598,11 +584,6 @@ export default class Uploader {
     this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }
 
-  /**
-   *
-   * @param {number} [bytesUploaded]
-   * @param {number | null} [bytesTotalIn]
-   */
   onProgress(
     bytesUploaded = 0,
     bytesTotalIn: number | null | undefined = 0,
@@ -647,11 +628,6 @@ export default class Uploader {
     this.throttledEmitProgress(dataToEmit)
   }
 
-  /**
-   *
-   * @param {string} url
-   * @param {object} extraData
-   */
   #emitSuccess(
     url: string | null,
     extraData: Record<string, unknown> | undefined,
@@ -664,10 +640,6 @@ export default class Uploader {
     emitter().emit(this.token, emitData)
   }
 
-  /**
-   *
-   * @param {Error} err
-   */
   async #emitError(err: Error): Promise<void> {
     // delete stack to avoid sending server info to client
     // see PR discussion https://github.com/transloadit/uppy/pull/3832
@@ -682,8 +654,6 @@ export default class Uploader {
 
   /**
    * start the tus upload
-   *
-   * @param {any} stream
    */
   async #uploadTus(stream: NodeReadableStream): Promise<UploadResult> {
     const uploader = this
@@ -715,10 +685,6 @@ export default class Uploader {
             Object.entries(this.options.metadata).map(([k, v]) => [k, `${v}`]),
           ),
         },
-        /**
-         *
-         * @param {Error} error
-         */
         onError(error) {
           logger.error(error, 'uploader.tus.error')
           // deleting tus originalRequest field because it uses the same http-agent
@@ -729,11 +695,6 @@ export default class Uploader {
           Reflect.deleteProperty(error, 'originalResponse')
           reject(error)
         },
-        /**
-         *
-         * @param {number} [bytesUploaded]
-         * @param {number} [bytesTotal]
-         */
         onProgress(bytesUploaded, bytesTotal) {
           uploader.onProgress(bytesUploaded, bytesTotal)
         },

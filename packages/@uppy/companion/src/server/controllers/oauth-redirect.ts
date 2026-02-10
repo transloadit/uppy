@@ -5,8 +5,8 @@ import { hasMatch } from '../helpers/utils.js'
 
 /**
  *
- * @param {object} req
- * @param {object} res
+ * @param req
+ * @param res
  */
 export default function oauthRedirect(req, res) {
   const params = qs.stringify(req.query)

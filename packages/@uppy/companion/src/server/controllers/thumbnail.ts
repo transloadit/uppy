@@ -2,8 +2,8 @@ import { respondWithError } from '../provider/error.js'
 
 /**
  *
- * @param {object} req
- * @param {object} res
+ * @param req
+ * @param res
  */
 async function thumbnail(req, res, next) {
   const { id } = req.params

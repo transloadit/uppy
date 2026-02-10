@@ -51,7 +51,7 @@ const cleanUpFinishedUploads = (dirPath) => {
 /**
  * Runs a function every 24 hours, to clean up stale, upload related files.
  *
- * @param {string} dirPath path to the directory which you want to clean
+ * @param dirPath path to the directory which you want to clean
  */
 export function startCleanUpJob(dirPath) {
   logger.info('starting clean up job', 'jobs.cleanup.start')

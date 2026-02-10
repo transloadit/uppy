@@ -258,15 +258,15 @@ export const metrics = ({
 
 /**
  *
- * @param {object} options
+ * @param options
  */
 export const getCompanionMiddleware = (
   options: Record<string, unknown>,
 ): RequestHandler => {
   /**
-   * @param {object} req
-   * @param {object} res
-   * @param {Function} next
+   * @param req
+   * @param res
+   * @param next
    */
   const middleware = (req: Request, _res: Response, next: NextFunction) => {
     req.companion = {

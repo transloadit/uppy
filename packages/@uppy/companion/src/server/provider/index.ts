@@ -18,7 +18,7 @@ import zoom from './zoom/index.js'
 
 /**
  *
- * @param {{server: object}} options
+ * @param options
  */
 const validOptions = (options) => {
   return options.server.host && options.server.protocol
@@ -31,10 +31,10 @@ const validOptions = (options) => {
 export function getProviderMiddleware(providers, grantConfig) {
   /**
    *
-   * @param {object} req
-   * @param {object} res
-   * @param {Function} next
-   * @param {string} providerName
+   * @param req
+   * @param res
+   * @param next
+   * @param providerName
    */
   const middleware = (req, res, next, providerName) => {
     const ProviderClass = providers[providerName]
@@ -76,7 +76,7 @@ export function getProviderMiddleware(providers, grantConfig) {
 }
 
 /**
- * @returns {Record<string, typeof Provider>}
+ * Return the default provider implementations.
  */
 export function getDefaultProviders() {
   const providers = {
@@ -95,12 +95,11 @@ export function getDefaultProviders() {
 }
 
 /**
+ * Register custom providers and extend Grant config for OAuth-based providers.
  *
- * @typedef {{'module': typeof Provider, config: Record<string,unknown>}} CustomProvider
- *
- * @param {Record<string, CustomProvider>} customProviders
- * @param {Record<string, typeof Provider>} providers
- * @param {object} grantConfig
+ * @param customProviders - Map of provider name -> provider module + Grant config.
+ * @param providers - Provider registry to mutate.
+ * @param grantConfig - Grant config object to mutate.
  */
 export function addCustomProviders(customProviders, providers, grantConfig) {
   Object.keys(customProviders).forEach((providerName) => {
@@ -124,9 +123,9 @@ export function addCustomProviders(customProviders, providers, grantConfig) {
 
 /**
  *
- * @param {{server: object, providerOptions: object}} companionOptions
- * @param {object} grantConfig
- * @param {(a: string) => string} getOauthProvider
+ * @param companionOptions
+ * @param grantConfig
+ * @param getOauthProvider
  */
 export function addProviderOptions(
   companionOptions,

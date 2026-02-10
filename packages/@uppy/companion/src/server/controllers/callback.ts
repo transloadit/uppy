@@ -23,9 +23,9 @@ const closePageHtml = (origin) => `
 
 /**
  *
- * @param {object} req
- * @param {object} res
- * @param {Function} next
+ * @param req
+ * @param res
+ * @param next
  */
 export default function callback(req, res, next) {
   const { providerName } = req.params

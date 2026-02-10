@@ -23,16 +23,7 @@ type ProviderErrorHandlingOptions = {
 }
 
 /**
- *
- * @param {{
- *   fn: () => any,
- *   tag: string,
- * providerName: string,
- *   isAuthError?: (a: { statusCode: number, body?: object }) => boolean,
- * isUserFacingError?: (a: { statusCode: number, body?: object }) => boolean,
- *   getJsonErrorMessage: (a: object) => string
- * }} param0
- * @returns
+ * Wrap a provider call and normalize errors to Provider*Error instances.
  */
 export async function withProviderErrorHandling({
   fn,

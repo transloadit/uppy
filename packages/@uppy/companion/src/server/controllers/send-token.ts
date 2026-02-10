@@ -4,8 +4,8 @@ import { isOriginAllowed } from './connect.js'
 
 /**
  *
- * @param {string} token uppy auth token
- * @param {string} origin url string
+ * @param token uppy auth token
+ * @param origin url string
  */
 const htmlContent = (token, origin) => {
   return `
@@ -46,9 +46,9 @@ const htmlContent = (token, origin) => {
 
 /**
  *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
+ * @param req
+ * @param res
+ * @param next
  */
 export default function sendToken(req, res, next) {
   const companion = req.companion

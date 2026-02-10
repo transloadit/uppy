@@ -52,11 +52,11 @@ export default class Box extends Provider {
   /**
    * Lists files and folders from Box API
    *
-   * @param {object} options
-   * @param {string} options.directory
-   * @param {any} options.query
-   * @param {{ accessToken: string }} options.providerUserSession
-   * @param {unknown} options.companion
+   * @param options
+   * @param options.directory
+   * @param options.query
+   * @param options.providerUserSession
+   * @param options.companion
    */
   async list({
     directory,

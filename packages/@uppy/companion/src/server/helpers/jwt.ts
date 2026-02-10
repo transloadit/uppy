@@ -21,9 +21,9 @@ export const MAX_AGE_REFRESH_TOKEN = 60 * 60 * 24 * 400
 export const MAX_AGE_24H = 60 * 60 * 24
 /**
  *
- * @param {*} data
- * @param {string} secret
- * @param {number} maxAge
+ * @param data
+ * @param secret
+ * @param maxAge
  */
 const generateToken = (data, secret, maxAge) => {
   return jwt.sign({ data }, secret, { expiresIn: maxAge })
@@ -31,8 +31,8 @@ const generateToken = (data, secret, maxAge) => {
 
 /**
  *
- * @param {string} token
- * @param {string} secret
+ * @param token
+ * @param secret
  */
 const verifyToken = (token, secret) => {
   const decoded = jwt.verify(token, secret, {})
@@ -44,8 +44,8 @@ const verifyToken = (token, secret) => {
 
 /**
  *
- * @param {*} payload
- * @param {string} secret
+ * @param payload
+ * @param secret
  */
 export const generateEncryptedToken = (
   payload,
@@ -57,8 +57,8 @@ export const generateEncryptedToken = (
 }
 
 /**
- * @param {*} payload
- * @param {string} secret
+ * @param payload
+ * @param secret
  */
 export const generateEncryptedAuthToken = (payload, secret, maxAge) => {
   return generateEncryptedToken(JSON.stringify(payload), secret, maxAge)
@@ -66,8 +66,8 @@ export const generateEncryptedAuthToken = (payload, secret, maxAge) => {
 
 /**
  *
- * @param {string} token
- * @param {string} secret
+ * @param token
+ * @param secret
  */
 export const verifyEncryptedToken = (token, secret) => {
   const ret = verifyToken(decrypt(token, secret), secret)
@@ -78,8 +78,8 @@ export const verifyEncryptedToken = (token, secret) => {
 
 /**
  *
- * @param {string} token
- * @param {string} secret
+ * @param token
+ * @param secret
  */
 export const verifyEncryptedAuthToken = (token, secret, providerName) => {
   const json = verifyEncryptedToken(token, secret)
@@ -143,9 +143,9 @@ export const addToCookiesIfNeeded = (req, res, uppyAuthToken, maxAge) => {
 
 /**
  *
- * @param {object} res
- * @param {object} companionOptions
- * @param {string} oauthProvider
+ * @param res
+ * @param companionOptions
+ * @param oauthProvider
  */
 export const removeFromCookies = (res, companionOptions, oauthProvider) => {
   // options must be identical to those given to res.cookie(), excluding expires and maxAge.

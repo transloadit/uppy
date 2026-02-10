@@ -4,8 +4,8 @@ import { S3Client } from '@aws-sdk/client-s3'
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
  *
- * @param {object} companionOptions the companion options object
- * @param {boolean} createPresignedPostMode whether this s3 client is for createPresignedPost
+ * @param companionOptions the companion options object
+ * @param createPresignedPostMode whether this s3 client is for createPresignedPost
  */
 export default function s3Client(
   companionOptions,

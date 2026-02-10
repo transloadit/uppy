@@ -34,7 +34,7 @@ const forbiddenRegex = [/^proxy-.*$/, /^sec-.*$/]
 /**
  * Check if the header in parameter is a forbidden header.
  *
- * @param {string} header Header to check
+ * @param header Header to check
  * @returns True if header is forbidden, false otherwise.
  */
 const isForbiddenHeader = (header: string): boolean => {

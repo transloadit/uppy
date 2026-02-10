@@ -8,9 +8,9 @@ import logger from '../logger.js'
 import Provider from './Provider.js'
 
 /**
- * @param {string} url
- * @param {string} providerName
- * @param {object|null} credentialRequestParams - null asks for default credentials.
+ * @param url
+ * @param providerName
+ * @param credentialRequestParams - null asks for default credentials.
  */
 async function fetchKeys(url, providerName, credentialRequestParams) {
   try {
@@ -40,9 +40,9 @@ async function fetchKeys(url, providerName, credentialRequestParams) {
  * credentials will be fetched via http. Otherwise, the credentials provided via companion options
  * will be used instead.
  *
- * @param {string} providerName the name of the provider whose oauth keys we want to fetch (e.g onedrive)
- * @param {object} companionOptions the companion options object
- * @param {object} credentialRequestParams the params that should be sent if an http request is required.
+ * @param providerName the name of the provider whose oauth keys we want to fetch (e.g onedrive)
+ * @param companionOptions the companion options object
+ * @param credentialRequestParams the params that should be sent if an http request is required.
  */
 async function fetchProviderKeys(
   providerName,
@@ -80,9 +80,8 @@ async function fetchProviderKeys(
  * Returns a request middleware function that can be used to pre-fetch a provider's
  * Oauth credentials before the request is passed to the Oauth handler (https://github.com/simov/grant in this case).
  *
- * @param {Record<string, typeof Provider>} providers provider classes enabled for this server
- * @param {object} companionOptions companion options object
- * @returns {import('express').RequestHandler}
+ * @param providers provider classes enabled for this server
+ * @param companionOptions companion options object
  */
 export const getCredentialsOverrideMiddleware = (
   providers,
@@ -228,10 +227,9 @@ export const getCredentialsOverrideMiddleware = (
  * Returns a request scoped function that can be used to get a provider's oauth credentials
  * through out the lifetime of the request.
  *
- * @param {string} providerName the name of the provider attached to the scope of the request
- * @param {object} companionOptions the companion options object
- * @param {object} req the express request object for the said request
- * @returns {(providerName: string, companionOptions: object, credentialRequestParams?: object) => Promise}
+ * @param providerName the name of the provider attached to the scope of the request
+ * @param companionOptions the companion options object
+ * @param req the express request object for the said request
  */
 export const getCredentialsResolver = (providerName, companionOptions, req) => {
   const credentialsResolver = () => {

@@ -12,10 +12,6 @@ export default class Provider {
 
   secret: string
 
-  /**
-   *
-   * @param {{providerName: string, allowLocalUrls: boolean, providerGrantConfig?: object, secret: string}} options
-   */
   constructor({
     allowLocalUrls,
     providerGrantConfig,
@@ -42,40 +38,36 @@ export default class Provider {
   }
 
   /**
-   * list the files and folders in the provider account
+   * List the files and folders in the provider account.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
   async list(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
-   * search for files/folders in the provider account
+   * Search for files and folders in the provider account.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
   async search(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
-   * download a certain file from the provider account
+   * Download a certain file from the provider account.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
   async download(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
-   * return a thumbnail for a provider file
+   * Return a thumbnail for a provider file.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
   async thumbnail(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
@@ -85,19 +77,15 @@ export default class Provider {
    * first Companion will try to get the size from the content-length response header,
    * if that fails, it will call this method to get the size.
    * So if your provider has a different method for getting the size, you can return the size here
-   *
-   * @param {object} options
-   * @returns {Promise}
    */
   async size(options: unknown): Promise<unknown> {
     return undefined
   }
 
   /**
-   * handle deauthorization notification from oauth providers
+   * Handle deauthorization notification from OAuth providers.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
   async deauthorizationCallback(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
@@ -110,10 +98,6 @@ export default class Provider {
     throw new Error('method not implemented')
   }
 
-  /**
-   * @param {any} param0
-   * @returns {Promise<any>}
-   */
   async simpleAuth({
     requestBody,
   }: {
@@ -124,8 +108,6 @@ export default class Provider {
 
   /**
    * Name of the OAuth provider (passed to Grant). Return empty string if no OAuth provider is needed.
-   *
-   * @returns {string}
    */
   static get oauthProvider() {
     return undefined

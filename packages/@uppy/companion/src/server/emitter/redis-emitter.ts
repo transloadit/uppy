@@ -12,9 +12,8 @@ function replacer(key, value) {
  * This is useful for when companion is running on multiple instances and events need
  * to be distributed across.
  *
- * @param {import('ioredis').Redis} redisClient
- * @param {string} redisPubSubScope
- * @returns
+ * @param redisClient
+ * @param redisPubSubScope
  */
 export default function redisEmitter(redisClient, redisPubSubScope) {
   const prefix = redisPubSubScope ? `${redisPubSubScope}:` : ''
@@ -42,7 +41,7 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
 
   /**
    *
-   * @param {(a: Awaited<typeof redisPromise>) => void} fn
+   * @param fn
    */
   async function runWhenConnected(fn) {
     try {
@@ -53,14 +52,16 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
   }
 
   // because each event can have multiple listeners, we need to keep track of them
-  /** @type {Map<string, Map<() => unknown, () => unknown>>} */
-  const handlersByEventName = new Map()
+  const handlersByEventName: Map<
+    string,
+    Map<(...args: unknown[]) => unknown, (...args: unknown[]) => unknown>
+  > = new Map()
 
   /**
    * Remove an event listener
    *
-   * @param {string} eventName name of the event
-   * @param {any} handler the handler of the event to remove
+   * @param eventName name of the event
+   * @param handler the handler of the event to remove
    */
   async function removeListener(eventName, handler) {
     if (eventName === 'error') {
@@ -91,9 +92,9 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
 
   /**
    *
-   * @param {string} eventName
-   * @param {*} handler
-   * @param {*} _once
+   * @param eventName
+   * @param handler
+   * @param _once
    */
   async function addListener(eventName, handler, _once = false) {
     if (eventName === 'error') {
@@ -143,8 +144,8 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
   /**
    * Add an event listener
    *
-   * @param {string} eventName name of the event
-   * @param {any} handler the handler of the event
+   * @param eventName name of the event
+   * @param handler the handler of the event
    */
   async function on(eventName, handler) {
     await addListener(eventName, handler)
@@ -153,8 +154,8 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
   /**
    * Remove an event listener
    *
-   * @param {string} eventName name of the event
-   * @param {any} handler the handler of the event
+   * @param eventName name of the event
+   * @param handler the handler of the event
    */
   async function off(eventName, handler) {
     await removeListener(eventName, handler)
@@ -163,8 +164,8 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
   /**
    * Add an event listener (will be triggered at most once)
    *
-   * @param {string} eventName name of the event
-   * @param {any} handler the handler of the event
+   * @param eventName name of the event
+   * @param handler the handler of the event
    */
   async function once(eventName, handler) {
     await addListener(eventName, handler, true)
@@ -173,7 +174,7 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
   /**
    * Announce the occurrence of an event
    *
-   * @param {string} eventName name of the event
+   * @param eventName name of the event
    */
   async function emit(eventName, ...args) {
     await runWhenConnected(async ({ publisher }) =>
@@ -187,7 +188,7 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
   /**
    * Remove all listeners of an event
    *
-   * @param {string} eventName name of the event
+   * @param eventName name of the event
    */
   async function removeAllListeners(eventName) {
     if (eventName === 'error') {

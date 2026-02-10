@@ -24,9 +24,6 @@ export default function s3(config) {
   }
 
   function getS3Client(req, res, createPresignedPostMode = false) {
-    /**
-     * @type {import('@aws-sdk/client-s3').S3Client}
-     */
     const client = createPresignedPostMode
       ? req.companion.s3ClientCreatePresignedPost
       : req.companion.s3Client

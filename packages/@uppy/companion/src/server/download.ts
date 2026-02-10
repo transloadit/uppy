@@ -3,13 +3,11 @@ import { prepareStream } from './helpers/utils.js'
 import logger from './logger.js'
 
 /**
- * Downloads the content in the specified url, and passes the data
- * to the callback chunk by chunk.
+ * Downloads the content at the given URL.
  *
- * @param {string} url
- * @param {boolean} allowLocalIPs
- * @param {string} traceId
- * @returns {Promise}
+ * @param url - URL to download.
+ * @param allowLocalIPs - Whether to allow local/private IPs (disables SSRF protection).
+ * @param traceId - Request trace id for logging.
  */
 export const downloadURL = async (
   url: string,
