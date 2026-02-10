@@ -104,31 +104,32 @@ export const getCredentialsOverrideMiddleware = (
   providers: Record<string, typeof Provider>,
   companionOptions: CompanionRuntimeOptions,
 ) => {
-	return async (req: Request, res: Response, next: NextFunction) => {
-	  try {
-	    const { oauthProvider, override } = req.params
-	    if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
-	      next()
-	      return
-	    }
-	    const [providerName] = Object.keys(providers).filter(
-	      (name) => providers[name]?.oauthProvider === oauthProvider,
-	    )
-	    if (!providerName) {
-	      next()
-	      return
-	    }
+  return async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { oauthProvider, override } = req.params
+      if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
+        next()
+        return
+      }
+      const [providerName] = Object.keys(providers).filter(
+        (name) => providers[name]?.oauthProvider === oauthProvider,
+      )
+      if (!providerName) {
+        next()
+        return
+      }
 
-	    const providerOptions = companionOptions['providerOptions']
-	    const providerOption = isRecord(providerOptions)
-	      ? providerOptions[providerName]
-	      : undefined
-	    const credentialsURL =
-	      isRecord(providerOption) ? providerOption['credentialsURL'] : undefined
-	    if (typeof credentialsURL !== 'string' || credentialsURL.length === 0) {
-	      next()
-	      return
-	    }
+      const providerOptions = companionOptions['providerOptions']
+      const providerOption = isRecord(providerOptions)
+        ? providerOptions[providerName]
+        : undefined
+      const credentialsURL = isRecord(providerOption)
+        ? providerOption['credentialsURL']
+        : undefined
+      if (typeof credentialsURL !== 'string' || credentialsURL.length === 0) {
+        next()
+        return
+      }
 
       const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
       // only use state via session object if user isn't making intial "connect" request.
@@ -189,12 +190,18 @@ export const getCredentialsOverrideMiddleware = (
       // postMessage happens in send-token.js, which is a different request, so we need to put the allowed origins
       // on the encrypted session state to access it later there.
       const origins = credentials['origins']
-      if (Array.isArray(origins) && origins.every((o) => typeof o === 'string') && origins.length > 0) {
+      if (
+        Array.isArray(origins) &&
+        origins.every((o) => typeof o === 'string') &&
+        origins.length > 0
+      ) {
         const decodedState = oAuthState.decodeState(state, secret)
         decodedState['customerDefinedAllowedOrigins'] = origins
         const newState = oAuthState.encodeState(decodedState, secret)
         if (isRecord(req.session)) {
-          const prevGrant = isRecord(req.session['grant']) ? req.session['grant'] : {}
+          const prevGrant = isRecord(req.session['grant'])
+            ? req.session['grant']
+            : {}
           const prevDynamic = isRecord(prevGrant['dynamic'])
             ? prevGrant['dynamic']
             : {}
@@ -270,20 +277,20 @@ export const getCredentialsResolver = (
   companionOptions: CompanionRuntimeOptions,
   req: Request,
 ): (() => Promise<Record<string, unknown> | null>) => {
-	  const credentialsResolver = () => {
-	    const encodedCredentialsParams = req.header('uppy-credentials-params')
-	    let credentialRequestParams = null
-	    if (encodedCredentialsParams) {
-	      try {
-	        const parsed: unknown = JSON.parse(atob(encodedCredentialsParams))
-	        credentialRequestParams =
-	          isRecord(parsed) && Object.hasOwn(parsed, 'params')
-	            ? parsed['params']
-	            : null
-	      } catch (error) {
-	        logger.error(error, 'credentials.resolve.fail', req.id)
-	      }
-	    }
+  const credentialsResolver = () => {
+    const encodedCredentialsParams = req.header('uppy-credentials-params')
+    let credentialRequestParams = null
+    if (encodedCredentialsParams) {
+      try {
+        const parsed: unknown = JSON.parse(atob(encodedCredentialsParams))
+        credentialRequestParams =
+          isRecord(parsed) && Object.hasOwn(parsed, 'params')
+            ? parsed['params']
+            : null
+      } catch (error) {
+        logger.error(error, 'credentials.resolve.fail', req.id)
+      }
+    }
 
     return fetchProviderKeys(
       providerName,

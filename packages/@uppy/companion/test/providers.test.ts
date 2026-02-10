@@ -433,9 +433,7 @@ describe('provider file gets downloaded from', () => {
         ? providerFixture['itemRequestPath']
         : defaults.ITEM_ID
     const res = await request(await getServerWithEnv())
-      .post(
-        `/${providerName}/get/${requestPath}`,
-      )
+      .post(`/${providerName}/get/${requestPath}`)
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({

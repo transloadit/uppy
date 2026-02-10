@@ -93,7 +93,8 @@ export default class Instagram extends Provider {
 
         const username = typeof me.username === 'string' ? me.username : null
         const currentQuery: Record<string, string> = {}
-        if (typeof query.cursor === 'string') currentQuery['cursor'] = query.cursor
+        if (typeof query.cursor === 'string')
+          currentQuery['cursor'] = query.cursor
         return adaptData(list, username, directory, currentQuery)
       },
     )

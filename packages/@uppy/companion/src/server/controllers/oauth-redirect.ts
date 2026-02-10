@@ -54,7 +54,9 @@ export default function oauthRedirect(req: Request, res: Response): void {
     return
   }
 
-  if (hasMatch(handlerHostName, req.companion.options.server.validHosts ?? [])) {
+  if (
+    hasMatch(handlerHostName, req.companion.options.server.validHosts ?? [])
+  ) {
     const url = `${handler}/connect/${oauthProvider}/callback?${params}`
     res.redirect(url)
     return

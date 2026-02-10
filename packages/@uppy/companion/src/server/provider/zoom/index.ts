@@ -70,7 +70,9 @@ async function findFile({
 
     const found: ZoomFoundFile = {}
     const downloadUrl =
-      typeof file['download_url'] === 'string' ? file['download_url'] : undefined
+      typeof file['download_url'] === 'string'
+        ? file['download_url']
+        : undefined
     const fileSize =
       typeof file['file_size'] === 'number' ? file['file_size'] : undefined
     if (downloadUrl) found.download_url = downloadUrl
@@ -114,7 +116,9 @@ export default class Zoom extends Provider {
       const email =
         typeof userObj['email'] === 'string' ? userObj['email'] : undefined
       const timezoneValue =
-        typeof userObj['timezone'] === 'string' ? userObj['timezone'] : undefined
+        typeof userObj['timezone'] === 'string'
+          ? userObj['timezone']
+          : undefined
       const user: Parameters<typeof adaptData>[0] = {
         ...(email ? { email } : {}),
         ...(timezoneValue ? { timezone: timezoneValue } : {}),

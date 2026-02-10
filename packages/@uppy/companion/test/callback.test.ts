@@ -34,9 +34,7 @@ describe('test authentication callback', () => {
           throw new Error('Missing set-cookie header')
         }
         const authToken = decodeURIComponent(
-          setCookie[0]
-            .split(';')[0]
-            .split('uppyAuthToken--dropbox=')[1],
+          setCookie[0].split(';')[0].split('uppyAuthToken--dropbox=')[1],
         )
         const payload = tokenService.verifyEncryptedAuthToken(
           authToken,

@@ -1,5 +1,5 @@
-import { z } from 'zod'
 import type { RedisOptions } from 'ioredis'
+import { z } from 'zod'
 import { ProviderOptionsSchema, ServerConfigSchema } from './common.ts'
 
 // Keep these schemas tolerant initially: they are for inference + narrowing,

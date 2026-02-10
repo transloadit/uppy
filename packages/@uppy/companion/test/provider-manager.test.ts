@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, test } from 'vitest'
 import createGrantConfig, {
   type GrantConfig as GrantConfigType,
 } from '../src/config/grant.ts'
+import { isRecord } from '../src/server/helpers/type-guards.ts'
 import * as providerManager from '../src/server/provider/index.ts'
 import Provider from '../src/server/provider/Provider.ts'
-import { isRecord } from '../src/server/helpers/type-guards.ts'
 import { getCompanionOptions } from '../src/standalone/helper.ts'
 import { setDefaultEnv } from './mockserver.ts'
 
@@ -194,9 +194,13 @@ describe('Test Provider options', () => {
 
     const providerOptions = companionOptions.providerOptions
     const zoomProviderOptions =
-      providerOptions && isRecord(providerOptions) ? providerOptions['zoom'] : null
+      providerOptions && isRecord(providerOptions)
+        ? providerOptions['zoom']
+        : null
     if (!isRecord(zoomProviderOptions)) {
-      throw new Error('Expected companionOptions.providerOptions["zoom"] to exist')
+      throw new Error(
+        'Expected companionOptions.providerOptions["zoom"] to exist',
+      )
     }
     expect(zoomProviderOptions['verificationToken']).toBe('o0u8Z5c')
   })
@@ -227,7 +231,9 @@ describe('Test Provider options', () => {
       getGrantProviderField(grantConfig, 'googledrive', 'secret'),
     ).toBeUndefined()
 
-    expect(getGrantProviderField(grantConfig, 'instagram', 'key')).toBeUndefined()
+    expect(
+      getGrantProviderField(grantConfig, 'instagram', 'key'),
+    ).toBeUndefined()
     expect(
       getGrantProviderField(grantConfig, 'instagram', 'secret'),
     ).toBeUndefined()
@@ -246,25 +252,21 @@ describe('Test Provider options', () => {
       getOauthProvider,
     )
 
-    expect(requireGrantProviderConfig(grantConfig, 'dropbox')['redirect_uri']).toBe(
-      'http://domain.com/dropbox/redirect',
-    )
+    expect(
+      requireGrantProviderConfig(grantConfig, 'dropbox')['redirect_uri'],
+    ).toBe('http://domain.com/dropbox/redirect')
     expect(requireGrantProviderConfig(grantConfig, 'box')['redirect_uri']).toBe(
       'http://domain.com/box/redirect',
     )
     expect(
       requireGrantProviderConfig(grantConfig, 'googledrive')['redirect_uri'],
-    ).toBe(
-      'http://domain.com/drive/redirect',
-    )
+    ).toBe('http://domain.com/drive/redirect')
     expect(
       requireGrantProviderConfig(grantConfig, 'instagram')['redirect_uri'],
-    ).toBe(
-      'http://domain.com/instagram/redirect',
-    )
-    expect(requireGrantProviderConfig(grantConfig, 'zoom')['redirect_uri']).toBe(
-      'http://domain.com/zoom/redirect',
-    )
+    ).toBe('http://domain.com/instagram/redirect')
+    expect(
+      requireGrantProviderConfig(grantConfig, 'zoom')['redirect_uri'],
+    ).toBe('http://domain.com/zoom/redirect')
   })
 })
 
@@ -292,7 +294,10 @@ describe('Test Custom Provider options', () => {
       grantConfig,
     )
 
-    const someProvider = requireGrantProviderConfig(grantConfig, 'some_provider')
+    const someProvider = requireGrantProviderConfig(
+      grantConfig,
+      'some_provider',
+    )
     expect(someProvider['key']).toBe('foo_key')
     expect(someProvider['secret']).toBe('foo_secret')
     expect(providers['foo']).toBeTruthy()

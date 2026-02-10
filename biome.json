@@ -67,6 +67,18 @@
       }
     }
   },
+  "overrides": [
+    {
+      "includes": ["packages/@uppy/companion/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "useLiteralKeys": "off"
+          }
+        }
+      }
+    }
+  ],
   "javascript": {
     "formatter": {
       "quoteStyle": "single",

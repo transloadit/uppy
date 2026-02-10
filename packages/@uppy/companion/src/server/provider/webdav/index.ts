@@ -191,7 +191,9 @@ export default class WebdavProvider extends Provider {
           ...(modifiedDate ? { modifiedDate } : {}),
           ...(!isFolder
             ? {
-                ...(typeof item.mime === 'string' ? { mimeType: item.mime } : {}),
+                ...(typeof item.mime === 'string'
+                  ? { mimeType: item.mime }
+                  : {}),
                 ...(typeof item.size === 'number' ? { size: item.size } : {}),
                 thumbnail: null,
               }

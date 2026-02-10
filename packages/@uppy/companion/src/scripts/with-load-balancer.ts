@@ -112,4 +112,3 @@ try {
   loadBalancer?.close()
   companions.forEach((companion) => companion.kill())
 }
-

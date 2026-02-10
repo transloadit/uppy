@@ -59,13 +59,13 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
         )
     }
 
-	    emitter().emit(`connection:${token}`)
-	    const onTokenMessage = (...args: unknown[]) => {
-	      const data = args[0]
-	      if (!isSocketOutgoing(data)) return
-	      send(data)
-	    }
-	    emitter().on(token, onTokenMessage)
+    emitter().emit(`connection:${token}`)
+    const onTokenMessage = (...args: unknown[]) => {
+      const data = args[0]
+      if (!isSocketOutgoing(data)) return
+      send(data)
+    }
+    emitter().on(token, onTokenMessage)
 
     ws.on('error', (err) => {
       if (
@@ -82,14 +82,14 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
       }
     })
 
-	    ws.on('message', (jsonData) => {
-	      try {
-	        const data: unknown = JSON.parse(jsonData.toString())
-	        const action = isRecord(data) ? data['action'] : undefined
-	        if (action === 'pause' || action === 'resume' || action === 'cancel') {
-	          emitter().emit(`${action}:${token}`)
-	        }
-	      } catch (err) {
+    ws.on('message', (jsonData) => {
+      try {
+        const data: unknown = JSON.parse(jsonData.toString())
+        const action = isRecord(data) ? data['action'] : undefined
+        if (action === 'pause' || action === 'resume' || action === 'cancel') {
+          emitter().emit(`${action}:${token}`)
+        }
+      } catch (err) {
         logger.error(
           err instanceof Error ? err : String(err),
           'websocket.error',
@@ -98,8 +98,8 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
       }
     })
 
-	    ws.on('close', () => {
-	      emitter().removeListener(token, onTokenMessage)
-	    })
-	  })
+    ws.on('close', () => {
+      emitter().removeListener(token, onTokenMessage)
+    })
+  })
 }

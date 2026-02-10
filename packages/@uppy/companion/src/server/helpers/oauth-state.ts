@@ -40,9 +40,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function isOAuthState(value: unknown): value is OAuthState {
   return (
-    isRecord(value) &&
-    typeof value['id'] === 'string' &&
-    value['id'].length > 0
+    isRecord(value) && typeof value['id'] === 'string' && value['id'].length > 0
   )
 }
 

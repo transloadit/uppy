@@ -168,7 +168,8 @@ export default class Facebook extends Provider {
       }
 
       const currentQuery: Record<string, string> = {}
-      if (typeof query.cursor === 'string') currentQuery['cursor'] = query.cursor
+      if (typeof query.cursor === 'string')
+        currentQuery['cursor'] = query.cursor
       return adaptData(list, email, directory, currentQuery)
     })
   }

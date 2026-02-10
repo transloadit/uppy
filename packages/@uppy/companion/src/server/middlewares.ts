@@ -198,12 +198,10 @@ function isCorsOrigin(value: unknown): value is CorsOptions['origin'] {
 }
 
 export const cors =
-  (
-    options: {
-      corsOrigins?: CompanionRuntimeOptions['corsOrigins']
-      sendSelfEndpoint?: CompanionRuntimeOptions['sendSelfEndpoint']
-    },
-  ): RequestHandler =>
+  (options: {
+    corsOrigins?: CompanionRuntimeOptions['corsOrigins']
+    sendSelfEndpoint?: CompanionRuntimeOptions['sendSelfEndpoint']
+  }): RequestHandler =>
   (req, res, next) => {
     // HTTP headers are not case sensitive, and express always handles them in lower case, so that's why we lower case them.
     // I believe that HTTP verbs are case sensitive, and should be uppercase.
@@ -307,15 +305,14 @@ export const getCompanionMiddleware = (
   const middleware = (req: Request, _res: Response, next: NextFunction) => {
     const s3Client = getS3Client(options, false)
     const s3ClientCreatePresignedPost = getS3Client(options, true)
-    const authToken = req.header('uppy-auth-token') || req.query['uppyAuthToken']
+    const authToken =
+      req.header('uppy-auth-token') || req.query['uppyAuthToken']
 
     req.companion = {
       options,
       buildURL: getURLBuilder(options),
       ...(s3Client ? { s3Client } : {}),
-      ...(s3ClientCreatePresignedPost
-        ? { s3ClientCreatePresignedPost }
-        : {}),
+      ...(s3ClientCreatePresignedPost ? { s3ClientCreatePresignedPost } : {}),
       ...(authToken === undefined ? {} : { authToken }),
     }
     next()

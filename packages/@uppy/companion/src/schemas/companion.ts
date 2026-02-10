@@ -1,5 +1,5 @@
-import { z } from 'zod'
 import type { RedisOptions } from 'ioredis'
+import { z } from 'zod'
 import type Provider from '../server/provider/Provider.ts'
 import { ProviderOptionsSchema, ServerConfigSchema } from './common.ts'
 
@@ -31,9 +31,7 @@ export const CompanionInitOptionsSchema = z
     redisOptions: z
       .custom<RedisOptions>(
         (value) =>
-          !!value &&
-          typeof value === 'object' &&
-          !Array.isArray(value),
+          !!value && typeof value === 'object' && !Array.isArray(value),
       )
       .optional(),
     redisPubSubScope: z.string().optional(),

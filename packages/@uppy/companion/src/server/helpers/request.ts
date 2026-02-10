@@ -238,7 +238,8 @@ export async function getURLMeta(
               filename = maybeFilename
             }
           }
-          if (!filename) filename = path.basename(`${response.request.requestUrl}`)
+          if (!filename)
+            filename = path.basename(`${response.request.requestUrl}`)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()

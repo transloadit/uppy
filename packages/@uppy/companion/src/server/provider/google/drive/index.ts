@@ -164,7 +164,9 @@ export class Drive extends Provider {
       async () => {
         if (!isRecord(options)) throw new Error('Invalid options')
         const directory =
-          typeof options['directory'] === 'string' ? options['directory'] : 'root'
+          typeof options['directory'] === 'string'
+            ? options['directory']
+            : 'root'
         const query = isRecord(options['query']) ? options['query'] : {}
         const cursor =
           typeof query['cursor'] === 'string' ? query['cursor'] : undefined

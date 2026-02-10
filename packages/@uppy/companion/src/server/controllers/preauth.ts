@@ -19,8 +19,7 @@ export default function preauth(req: Request, res: Response): void {
     return
   }
 
-  const providerConfig =
-    req.companion.options.providerOptions[providerName]
+  const providerConfig = req.companion.options.providerOptions[providerName]
   const credentialsURL =
     isRecord(providerConfig) &&
     typeof providerConfig['credentialsURL'] === 'string'

@@ -15,7 +15,9 @@ function createClient(
   if (redisClient) return redisClient
 
   if (redisUrl) {
-    redisClient = redisOptions ? new Redis(redisUrl, redisOptions) : new Redis(redisUrl)
+    redisClient = redisOptions
+      ? new Redis(redisUrl, redisOptions)
+      : new Redis(redisUrl)
   } else if (redisOptions) {
     redisClient = new Redis(redisOptions)
   } else {

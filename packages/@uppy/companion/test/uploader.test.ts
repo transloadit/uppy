@@ -4,7 +4,15 @@ import type { Request } from 'express'
 import express from 'express'
 import nock from 'nock'
 import request from 'supertest'
-import { afterAll, afterEach, beforeAll, describe, expect, test, vi } from 'vitest'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  test,
+  vi,
+} from 'vitest'
 import { defaultOptions } from '../src/config/companion.ts'
 import Emitter from '../src/server/emitter/index.ts'
 import { isRecord } from '../src/server/helpers/type-guards.ts'
@@ -138,8 +146,14 @@ describe('uploader', () => {
     socketClient.onProgress(uploadToken, (message) => {
       const payload = isRecord(message['payload']) ? message['payload'] : {}
       const bytesUploaded =
-        typeof payload['bytesUploaded'] === 'number' ? payload['bytesUploaded'] : null
-      if (firstReceivedProgress == null && bytesUploaded != null && bytesUploaded > 0) {
+        typeof payload['bytesUploaded'] === 'number'
+          ? payload['bytesUploaded']
+          : null
+      if (
+        firstReceivedProgress == null &&
+        bytesUploaded != null &&
+        bytesUploaded > 0
+      ) {
         firstReceivedProgress = bytesUploaded
       }
       onProgress(message)

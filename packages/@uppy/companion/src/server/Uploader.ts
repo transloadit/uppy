@@ -344,9 +344,7 @@ export default class Uploader {
             : undefined
         const bytesTotalValue = payload['bytesTotal']
         const bytesTotal =
-          typeof bytesTotalValue === 'number'
-            ? bytesTotalValue
-            : undefined
+          typeof bytesTotalValue === 'number' ? bytesTotalValue : undefined
         const progressValue = payload['progress']
         const progress =
           typeof progressValue === 'string' ? progressValue : undefined
@@ -567,7 +565,8 @@ export default class Uploader {
     if (endpointValue != null && typeof endpointValue !== 'string') {
       throw new ValidationError('invalid destination url')
     }
-    const endpoint = typeof endpointValue === 'string' ? endpointValue : undefined
+    const endpoint =
+      typeof endpointValue === 'string' ? endpointValue : undefined
 
     const uploadUrlValue = body['uploadUrl']
     if (uploadUrlValue != null && typeof uploadUrlValue !== 'string') {
@@ -586,7 +585,8 @@ export default class Uploader {
     const companionOptions = req.companion.options
     const filePath = companionOptions.filePath
     const chunkSizeValue = companionOptions['chunkSize']
-    const chunkSize = typeof chunkSizeValue === 'number' ? chunkSizeValue : undefined
+    const chunkSize =
+      typeof chunkSizeValue === 'number' ? chunkSizeValue : undefined
 
     const storage = redis.client()
 
@@ -854,58 +854,58 @@ export default class Uploader {
         statusText: resp['statusMessage'],
         headers: responseHeaders,
       }
-	    }
+    }
 
-	    // upload progress
-	    let bytesUploaded = 0
-	    const uploader = this
-	    const createProgressStream = () =>
-	      new Transform({
-	        transform(chunk, _encoding, callback) {
-	          const len =
-	            typeof chunk === 'string'
-	              ? Buffer.byteLength(chunk)
-	              : Buffer.isBuffer(chunk)
-	                ? chunk.length
-	                : 0
-	          bytesUploaded += len
-	          uploader.onProgress(bytesUploaded, undefined)
-	          callback(null, chunk)
-	        },
-	      })
+    // upload progress
+    let bytesUploaded = 0
+    const uploader = this
+    const createProgressStream = () =>
+      new Transform({
+        transform(chunk, _encoding, callback) {
+          const len =
+            typeof chunk === 'string'
+              ? Buffer.byteLength(chunk)
+              : Buffer.isBuffer(chunk)
+                ? chunk.length
+                : 0
+          bytesUploaded += len
+          uploader.onProgress(bytesUploaded, undefined)
+          callback(null, chunk)
+        },
+      })
 
-	    const url = this.options.endpoint
-	    const reqOptions: OptionsInit = {
-	      headers: headerSanitize(this.options.headers),
-	    }
+    const url = this.options.endpoint
+    const reqOptions: OptionsInit = {
+      headers: headerSanitize(this.options.headers),
+    }
 
-	    if (this.options.useFormData) {
-	      const formData = new FormData()
+    if (this.options.useFormData) {
+      const formData = new FormData()
 
-	      Object.entries(this.options.metadata).forEach(([key, value]) =>
-	        formData.append(key, value),
-	      )
+      Object.entries(this.options.metadata).forEach(([key, value]) =>
+        formData.append(key, value),
+      )
 
-	      // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
-	      const fieldName = this.options.fieldname ?? DEFAULT_FIELD_NAME
-	      formData.set(fieldName, {
-	        name: this.uploadFileName,
-	        [Symbol.toStringTag]: 'File',
-	        stream() {
-	          return stream.pipe(createProgressStream())
-	        },
-	      })
+      // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
+      const fieldName = this.options.fieldname ?? DEFAULT_FIELD_NAME
+      formData.set(fieldName, {
+        name: this.uploadFileName,
+        [Symbol.toStringTag]: 'File',
+        stream() {
+          return stream.pipe(createProgressStream())
+        },
+      })
 
-	      reqOptions.body = toFormDataLike(formData)
-	    } else {
-	      if (this.size != null) {
-	        reqOptions.headers = {
-	          ...(typeof reqOptions.headers === 'object' ? reqOptions.headers : {}),
-	          'content-length': `${this.size}`,
-	        }
-	      }
-	      reqOptions.body = stream.pipe(createProgressStream())
-	    }
+      reqOptions.body = toFormDataLike(formData)
+    } else {
+      if (this.size != null) {
+        reqOptions.headers = {
+          ...(typeof reqOptions.headers === 'object' ? reqOptions.headers : {}),
+          'content-length': `${this.size}`,
+        }
+      }
+      reqOptions.body = stream.pipe(createProgressStream())
+    }
 
     try {
       const httpMethod =

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
-import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import { isRecord } from '../helpers/type-guards.ts'
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import * as logger from '../logger.ts'
 import box from './box/index.ts'
 import { getCredentialsResolver } from './credentials.ts'
@@ -49,53 +49,56 @@ export function getProviderMiddleware(
   next: NextFunction,
   providerName: string,
 ) => void {
-	const middleware = (
-	  req: Request,
-	  _res: Response,
-	  next: NextFunction,
-	  providerName: string,
-	): void => {
-	  const ProviderClass = providers[providerName]
-	  const server = getServerHostAndProtocol(req.companion.options)
-	  if (ProviderClass && server) {
-		  const { allowLocalUrls, providerOptions } = req.companion.options
-		  const { oauthProvider } = ProviderClass
-		  const providerOption = providerOptions?.[providerName]
-		  const secretCandidate =
-		    isRecord(providerOption) && typeof providerOption['secret'] === 'string'
-		      ? providerOption['secret']
-		      : undefined
-		  if (isOAuthProvider(oauthProvider) && typeof secretCandidate !== 'string') {
-		    logger.warn(
-		      `missing OAuth client secret for provider ${providerName}`,
-		      'provider.middleware.missing.secret',
-		      req.id,
-		    )
-		  }
-		  const secret = secretCandidate ?? ''
+  const middleware = (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+    providerName: string,
+  ): void => {
+    const ProviderClass = providers[providerName]
+    const server = getServerHostAndProtocol(req.companion.options)
+    if (ProviderClass && server) {
+      const { allowLocalUrls, providerOptions } = req.companion.options
+      const { oauthProvider } = ProviderClass
+      const providerOption = providerOptions?.[providerName]
+      const secretCandidate =
+        isRecord(providerOption) && typeof providerOption['secret'] === 'string'
+          ? providerOption['secret']
+          : undefined
+      if (
+        isOAuthProvider(oauthProvider) &&
+        typeof secretCandidate !== 'string'
+      ) {
+        logger.warn(
+          `missing OAuth client secret for provider ${providerName}`,
+          'provider.middleware.missing.secret',
+          req.id,
+        )
+      }
+      const secret = secretCandidate ?? ''
 
-		    let providerGrantConfig: Record<string, unknown> | undefined
-		    if (isOAuthProvider(oauthProvider)) {
-		      req.companion.getProviderCredentials = getCredentialsResolver(
-		        providerName,
-		        req.companion.options,
-		        req,
-		      )
-		      const resolvedGrantConfig = grantConfig[oauthProvider] ?? {}
-		      providerGrantConfig = resolvedGrantConfig
-		      req.companion.providerGrantConfig = resolvedGrantConfig
-		    }
+      let providerGrantConfig: Record<string, unknown> | undefined
+      if (isOAuthProvider(oauthProvider)) {
+        req.companion.getProviderCredentials = getCredentialsResolver(
+          providerName,
+          req.companion.options,
+          req,
+        )
+        const resolvedGrantConfig = grantConfig[oauthProvider] ?? {}
+        providerGrantConfig = resolvedGrantConfig
+        req.companion.providerGrantConfig = resolvedGrantConfig
+      }
 
-		    const providerArgs = {
-		      secret,
-		      providerName,
-		      allowLocalUrls: !!allowLocalUrls,
-		      ...(providerGrantConfig ? { providerGrantConfig } : {}),
-		    }
-		    req.companion.provider = new ProviderClass(providerArgs)
-	      req.companion.providerName = providerName
-	      req.companion.providerClass = ProviderClass
-	    } else {
+      const providerArgs = {
+        secret,
+        providerName,
+        allowLocalUrls: !!allowLocalUrls,
+        ...(providerGrantConfig ? { providerGrantConfig } : {}),
+      }
+      req.companion.provider = new ProviderClass(providerArgs)
+      req.companion.providerName = providerName
+      req.companion.providerClass = ProviderClass
+    } else {
       logger.warn(
         'invalid provider options detected. Provider will not be loaded',
         'provider.middleware.invalid',
@@ -193,7 +196,12 @@ export function addProviderOptions(
   const providerOptions = companionOptions.providerOptions ?? {}
   const host = server.host
   const protocol = server.protocol
-  if (typeof host !== 'string' || host.length === 0 || typeof protocol !== 'string' || protocol.length === 0) {
+  if (
+    typeof host !== 'string' ||
+    host.length === 0 ||
+    typeof protocol !== 'string' ||
+    protocol.length === 0
+  ) {
     logger.warn(
       'invalid provider options detected. Providers will not be loaded',
       'provider.options.invalid',
@@ -244,7 +252,8 @@ export function addProviderOptions(
           isExternal,
           true,
         )
-        grantProviderConfig['redirect_uri'] = `${protocol}://${oauthDomain}${fullRedirectPath}`
+        grantProviderConfig['redirect_uri'] =
+          `${protocol}://${oauthDomain}${fullRedirectPath}`
       }
 
       if (server.implicitPath) {
