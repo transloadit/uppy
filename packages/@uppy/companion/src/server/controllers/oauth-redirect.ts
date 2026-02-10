@@ -1,7 +1,7 @@
 import qs from 'node:querystring'
 import { URL } from 'node:url'
-import { hasMatch } from '../helpers/utils.ts'
-import * as oAuthState from '../helpers/oauth-state.ts'
+import * as oAuthState from '../helpers/oauth-state.js'
+import { hasMatch } from '../helpers/utils.js'
 
 /**
  *

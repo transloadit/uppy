@@ -1,4 +1,4 @@
-import * as logger from './logger.ts'
+import * as logger from './logger.js'
 
 /**
  * Forbidden header names.
@@ -49,7 +49,9 @@ const isForbiddenHeader = (header: string): boolean => {
   return forbidden
 }
 
-export default function headerBlacklist(headers: unknown): Record<string, string> {
+export default function headerBlacklist(
+  headers: unknown,
+): Record<string, string> {
   if (
     headers == null ||
     typeof headers !== 'object' ||

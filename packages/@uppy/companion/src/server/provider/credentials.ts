@@ -1,11 +1,11 @@
 import { htmlEscape } from 'escape-goat'
 import got from 'got'
-import logger from '../logger.ts'
-import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
-import * as oAuthState from '../helpers/oauth-state.ts'
-import * as tokenService from '../helpers/jwt.ts'
+import * as tokenService from '../helpers/jwt.js'
+import * as oAuthState from '../helpers/oauth-state.js'
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
+import logger from '../logger.js'
 // biome-ignore lint/correctness/noUnusedImports: It is used as a type
-import Provider from './Provider.ts'
+import Provider from './Provider.js'
 
 /**
  * @param {string} url
@@ -24,7 +24,8 @@ async function fetchKeys(url, providerName, credentialRequestParams) {
       .json<Record<string, unknown>>()
 
     const credentials = isRecord(resp) ? resp.credentials : undefined
-    if (!isRecord(credentials)) throw new Error('Received no remote credentials')
+    if (!isRecord(credentials))
+      throw new Error('Received no remote credentials')
 
     return credentials
   } catch (err) {
@@ -125,7 +126,7 @@ export const getCredentialsOverrideMiddleware = (
         return
       }
 
-      let payload
+      let payload: unknown
       try {
         payload = tokenService.verifyEncryptedToken(
           preAuthToken,
@@ -155,7 +156,10 @@ export const getCredentialsOverrideMiddleware = (
         Array.isArray(credentials.origins) &&
         credentials.origins.length > 0
       ) {
-        const decodedState = oAuthState.decodeState(state, companionOptions.secret)
+        const decodedState = oAuthState.decodeState(
+          state,
+          companionOptions.secret,
+        )
         decodedState.customerDefinedAllowedOrigins = credentials.origins
         const newState = oAuthState.encodeState(
           decodedState,
@@ -163,7 +167,9 @@ export const getCredentialsOverrideMiddleware = (
         )
         if (isRecord(req.session)) {
           const prevGrant = isRecord(req.session.grant) ? req.session.grant : {}
-          const prevDynamic = isRecord(prevGrant.dynamic) ? prevGrant.dynamic : {}
+          const prevDynamic = isRecord(prevGrant.dynamic)
+            ? prevGrant.dynamic
+            : {}
           req.session.grant = {
             ...prevGrant,
             dynamic: {

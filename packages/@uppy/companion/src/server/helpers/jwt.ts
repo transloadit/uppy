@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import { decrypt, encrypt } from './utils.ts'
+import { decrypt, encrypt } from './utils.js'
 
 // The Uppy auth token is an encrypted JWT & JSON encoded container.
 // It used to simply contain an OAuth access_token and refresh_token for a specific provider.

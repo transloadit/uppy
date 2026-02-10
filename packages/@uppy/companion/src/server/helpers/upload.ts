@@ -1,11 +1,11 @@
-import Uploader from '../Uploader.ts'
-import logger from '../logger.ts'
+import logger from '../logger.js'
+import Uploader from '../Uploader.js'
 
 export async function startDownUpload({ req, res, getSize, download }) {
   logger.debug('Starting download stream.', null, req.id)
   const { stream, size: maybeSize } = await download()
 
-  let size
+  let size: number | null | undefined
   // if we already know the size from the GET response content-length header, we can use that
   if (
     typeof maybeSize === 'number' &&

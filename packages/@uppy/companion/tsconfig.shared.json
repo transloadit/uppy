@@ -8,8 +8,6 @@
     "sourceMap": false,
     "allowJs": true,
     "checkJs": true,
-    "allowImportingTsExtensions": true,
-    "rewriteRelativeImportExtensions": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "types": []

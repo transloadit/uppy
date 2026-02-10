@@ -1,10 +1,10 @@
 import got from 'got'
-import adaptData from './adapter.ts'
-import { withProviderErrorHandling } from '../../providerErrors.ts'
-import Provider from '../../Provider.ts'
-import logger from '../../../logger.ts'
-import { prepareStream } from '../../../helpers/utils.ts'
-import { isRecord } from '../../../helpers/type-guards.ts'
+import { isRecord } from '../../../helpers/type-guards.js'
+import { prepareStream } from '../../../helpers/utils.js'
+import logger from '../../../logger.js'
+import Provider from '../../Provider.js'
+import { withProviderErrorHandling } from '../../providerErrors.js'
+import adaptData from './adapter.js'
 
 const getClient = ({ token }) =>
   got.extend({

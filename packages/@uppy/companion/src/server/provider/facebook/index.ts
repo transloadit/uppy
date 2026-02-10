@@ -1,11 +1,11 @@
 import crypto from 'node:crypto'
 import got from 'got'
-import { adaptData, sortImages } from './adapter.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import Provider from '../Provider.ts'
-import logger from '../../logger.ts'
-import { HttpError, prepareStream } from '../../helpers/utils.ts'
-import { isRecord } from '../../helpers/type-guards.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { HttpError, prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import { adaptData, sortImages } from './adapter.js'
 
 async function runRequestBatch({ secret, token, requests }) {
   // https://developers.facebook.com/docs/facebook-login/security/#appsecret
@@ -61,8 +61,12 @@ async function getMediaUrl({ secret, token, id }) {
 
   const imagesValue = isRecord(body) ? body.images : undefined
 
-  const isFbImage = (value: unknown): value is { width: number; source: string } =>
-    isRecord(value) && typeof value.width === 'number' && typeof value.source === 'string'
+  const isFbImage = (
+    value: unknown,
+  ): value is { width: number; source: string } =>
+    isRecord(value) &&
+    typeof value.width === 'number' &&
+    typeof value.source === 'string'
 
   const images = Array.isArray(imagesValue) ? imagesValue.filter(isFbImage) : []
   const sortedImages = sortImages(images)

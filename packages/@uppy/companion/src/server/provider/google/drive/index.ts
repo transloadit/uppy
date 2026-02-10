@@ -1,18 +1,18 @@
 import got from 'got'
-import { logout, refreshToken } from '../index.ts'
-import { withGoogleErrorHandling } from '../../providerErrors.ts'
-import Provider from '../../Provider.ts'
-import { ProviderAuthError } from '../../error.ts'
-import logger from '../../../logger.ts'
-import { prepareStream } from '../../../helpers/utils.ts'
-import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.ts'
+import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
+import { prepareStream } from '../../../helpers/utils.js'
+import logger from '../../../logger.js'
+import { ProviderAuthError } from '../../error.js'
+import Provider from '../../Provider.js'
+import { withGoogleErrorHandling } from '../../providerErrors.js'
+import { logout, refreshToken } from '../index.js'
 import {
   adaptData,
   getGsuiteExportType,
   isGsuiteFile,
   isShortcut,
   VIRTUAL_SHARED_DIR,
-} from './adapter.ts'
+} from './adapter.js'
 
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true
@@ -61,10 +61,14 @@ async function getStats({ id, token }) {
   const stats = await getStatsInner(id)
 
   // If it is a shortcut, we need to get stats again on the target
-  const mimeType = typeof stats.mimeType === 'string' ? stats.mimeType : undefined
+  const mimeType =
+    typeof stats.mimeType === 'string' ? stats.mimeType : undefined
   if (mimeType && isShortcut(mimeType)) {
     const shortcutDetails = stats.shortcutDetails
-    if (isRecord(shortcutDetails) && typeof shortcutDetails.targetId === 'string') {
+    if (
+      isRecord(shortcutDetails) &&
+      typeof shortcutDetails.targetId === 'string'
+    ) {
       return getStatsInner(shortcutDetails.targetId)
     }
   }
@@ -77,10 +81,11 @@ export async function streamGoogleFile({ token, id: idIn }) {
   const stats = await getStats({ id: idIn, token })
   const mimeType = typeof stats.mimeType === 'string' ? stats.mimeType : ''
   const id = typeof stats.id === 'string' ? stats.id : `${idIn}`
-  const exportLinks =
-    isRecord(stats.exportLinks) ? stats.exportLinks : undefined
+  const exportLinks = isRecord(stats.exportLinks)
+    ? stats.exportLinks
+    : undefined
 
-  let stream
+  let stream: NodeJS.ReadableStream
 
   if (isGsuiteFile(mimeType)) {
     const mimeType2 = getGsuiteExportType(mimeType)
@@ -164,7 +169,9 @@ export class Drive extends Provider {
           drives?: unknown
         } & Record<string, unknown>
 
-        async function fetchSharedDrives(pageToken: string | null = null): Promise<SharedDrivesResponse | undefined> {
+        async function fetchSharedDrives(
+          pageToken: string | null = null,
+        ): Promise<SharedDrivesResponse | undefined> {
           const shouldListSharedDrives = isRoot && !query.cursor
           if (!shouldListSharedDrives) return undefined
 
@@ -180,7 +187,9 @@ export class Drive extends Provider {
             .json<SharedDrivesResponse>()
 
           const nextPageToken =
-            typeof response.nextPageToken === 'string' ? response.nextPageToken : undefined
+            typeof response.nextPageToken === 'string'
+              ? response.nextPageToken
+              : undefined
           if (nextPageToken) {
             const nextResponse = await fetchSharedDrives(nextPageToken)
             if (!nextResponse) return response
@@ -188,7 +197,9 @@ export class Drive extends Provider {
               ...nextResponse,
               drives: [
                 ...(Array.isArray(response.drives) ? response.drives : []),
-                ...(Array.isArray(nextResponse.drives) ? nextResponse.drives : []),
+                ...(Array.isArray(nextResponse.drives)
+                  ? nextResponse.drives
+                  : []),
               ],
             }
           }

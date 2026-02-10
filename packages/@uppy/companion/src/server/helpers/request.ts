@@ -1,10 +1,10 @@
 import dns from 'node:dns'
 import http from 'node:http'
 import https from 'node:https'
+import type { LookupFunction } from 'node:net'
 import net from 'node:net'
 import path from 'node:path'
 import type { Duplex } from 'node:stream'
-import type { LookupFunction } from 'node:net'
 import contentDisposition from 'content-disposition'
 import got from 'got'
 import ipaddr from 'ipaddr.js'
@@ -19,10 +19,10 @@ const isDisallowedIP = (ipAddress) =>
   ipaddr.parse(ipAddress).range() !== 'unicast'
 
 /**
- * Validates that the download URL is secure
+ * Validates that the download URL is secure.
  *
- * @param {string} url the url to validate
- * @param {boolean} allowLocalUrls whether to allow local addresses
+ * @param url - The URL to validate.
+ * @param allowLocalUrls - Whether to allow local addresses.
  */
 const validateURL = (url, allowLocalUrls) => {
   if (!url) {
@@ -78,7 +78,8 @@ function getProtectedHttpAgent({
     dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
       const family = typeof maybeFamily === 'number' ? maybeFamily : 0
 
-      const wantAll = typeof options === 'object' && options != null && options.all === true
+      const wantAll =
+        typeof options === 'object' && options != null && options.all === true
       const errorAddressFallback = wantAll ? [] : ''
 
       if (err) {
@@ -138,7 +139,10 @@ function getProtectedHttpAgent({
           callback?.(err, socket)
           return socket
         }
-        return super.createConnection({ ...options, lookup: dnsLookup }, callback)
+        return super.createConnection(
+          { ...options, lookup: dnsLookup },
+          callback,
+        )
       }
     }
   }
@@ -181,9 +185,9 @@ export { getProtectedGot }
 /**
  * Gets the size and content type of a url's content
  *
- * @param {string} url
- * @param {boolean} allowLocalIPs
- * @returns {Promise<{name: string, type: string, size: number}>}
+ * @param url - The URL to inspect.
+ * @param allowLocalIPs - Whether to allow local addresses (disables SSRF protection).
+ * @param options - Extra request options passed to got.
  */
 export async function getURLMeta(
   url: string,
@@ -197,7 +201,9 @@ export async function getURLMeta(
     statusCode: number
   }
 
-  async function requestWithMethod(method: 'HEAD' | 'GET'): Promise<UrlMetaWithStatus> {
+  async function requestWithMethod(
+    method: 'HEAD' | 'GET',
+  ): Promise<UrlMetaWithStatus> {
     const protectedGot = getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream(url, {
       method,
@@ -217,11 +223,13 @@ export async function getURLMeta(
           // If Content-Disposition with file name is missing, fallback to the URL path for the name,
           // but if multiple files are served via query params like foo.com?file=file-1, foo.com?file=file-2,
           // we add random string to avoid duplicate files
-          const contentDispositionHeader = response.headers['content-disposition']
+          const contentDispositionHeader =
+            response.headers['content-disposition']
           const filename =
             typeof contentDispositionHeader === 'string'
-              ? contentDisposition.parse(contentDispositionHeader).parameters.filename
-            : path.basename(`${response.request.requestUrl}`)
+              ? contentDisposition.parse(contentDispositionHeader).parameters
+                  .filename
+              : path.basename(`${response.request.requestUrl}`)
 
           // No need to get the rest of the response, as we only want header (not really relevant for HEAD, but why not)
           stream.destroy()

@@ -3,7 +3,14 @@ class Gauge {
 }
 
 export default function () {
-  const middleware = (req, res, next) => {
+  type Req = { url?: string }
+  type Res = {
+    setHeader: (key: string, value: string) => void
+    end: (s?: string) => void
+  }
+  type Next = () => void
+
+  const middleware = (req: Req, res: Res, next: Next) => {
     // simulate prometheus metrics endpoint:
     if (req.url === '/metrics') {
       res.setHeader('Content-Type', 'text/plain')

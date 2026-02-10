@@ -2,9 +2,9 @@
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
 import serialize from 'serialize-javascript'
-import logger from '../logger.ts'
-import * as oAuthState from '../helpers/oauth-state.ts'
-import * as tokenService from '../helpers/jwt.ts'
+import * as tokenService from '../helpers/jwt.js'
+import * as oAuthState from '../helpers/oauth-state.js'
+import logger from '../logger.js'
 
 const closePageHtml = (origin) => `
   <!DOCTYPE html>

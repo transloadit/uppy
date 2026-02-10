@@ -13,7 +13,7 @@ import {
   getBucket,
   rfc2047EncodeMetadata,
   truncateFilename,
-} from '../helpers/utils.ts'
+} from '../helpers/utils.js'
 
 export default function s3(config) {
   if (typeof config.acl !== 'string' && config.acl != null) {
@@ -237,7 +237,9 @@ export default function s3(config) {
           if (IsTruncated) {
             // Get the next page.
             listPartsPage(
-              NextPartNumberMarker != null ? `${NextPartNumberMarker}` : undefined,
+              NextPartNumberMarker != null
+                ? `${NextPartNumberMarker}`
+                : undefined,
             )
           } else {
             res.json(parts)
@@ -483,7 +485,7 @@ export default function s3(config) {
     ],
   }
 
-  let stsClient
+  let stsClient: STSClient | undefined
   function getSTSClient() {
     if (stsClient == null) {
       stsClient = new STSClient({

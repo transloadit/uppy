@@ -1,4 +1,4 @@
-import { MAX_AGE_24H } from '../helpers/jwt.ts'
+import { MAX_AGE_24H } from '../helpers/jwt.js'
 
 /**
  * Provider interface defines the specifications of any provider implementation
@@ -114,7 +114,11 @@ export default class Provider {
    * @param {any} param0
    * @returns {Promise<any>}
    */
-  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<unknown> {
+  async simpleAuth({
+    requestBody,
+  }: {
+    requestBody: unknown
+  }): Promise<unknown> {
     throw new Error('method not implemented')
   }
 

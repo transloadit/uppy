@@ -3,12 +3,12 @@
 // This function is simple and has OK performance compared to more
 // complicated ones: http://jsperf.com/json-escape-unicode/4
 import got from 'got'
-import adaptData from './adapter.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import Provider from '../Provider.ts'
-import logger from '../../logger.ts'
-import { prepareStream } from '../../helpers/utils.ts'
-import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.ts'
+import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
+import { prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const charsToEncode = /[\u007f-\uffff]/g
 function httpHeaderSafeJson(v) {
@@ -226,9 +226,7 @@ export default class Dropbox extends Provider {
 
   async size({ id, providerUserSession: { accessToken: token } }) {
     return this.#withErrorHandling('provider.dropbox.size.error', async () => {
-      const meta = await (
-        await getClient({ token, namespaced: true })
-      ).client
+      const meta = await (await getClient({ token, namespaced: true })).client
         .post('files/get_metadata', {
           json: { path: id },
           responseType: 'json',

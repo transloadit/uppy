@@ -1,12 +1,12 @@
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
 import { WebSocketServer } from 'ws'
-import emitter from './emitter/index.ts'
-import { jsonStringify } from './helpers/utils.ts'
-import * as logger from './logger.ts'
-import * as redis from './redis.ts'
-import Uploader from './Uploader.ts'
-import { isRecord } from './helpers/type-guards.ts'
+import emitter from './emitter/index.js'
+import { isRecord } from './helpers/type-guards.js'
+import { jsonStringify } from './helpers/utils.js'
+import * as logger from './logger.js'
+import * as redis from './redis.js'
+import Uploader from './Uploader.js'
 
 type SocketOutgoing = { action: string; payload: Record<string, unknown> }
 
@@ -24,6 +24,9 @@ function getErrorCode(err: unknown): string | undefined {
   return typeof code === 'string' ? code : undefined
 }
 
+/**
+ * The socket is used to send progress events during an upload.
+ */
 export default function setupSocket(server: HttpServer | HttpsServer): void {
   const wss = new WebSocketServer({ server })
   const redisClient = redis.client()
@@ -60,7 +63,10 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
     emitter().on(token, send)
 
     ws.on('error', (err) => {
-      if (err instanceof RangeError && getErrorCode(err) === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH') {
+      if (
+        err instanceof RangeError &&
+        getErrorCode(err) === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH'
+      ) {
         logger.error(
           'WebSocket message too large',
           'websocket.error',

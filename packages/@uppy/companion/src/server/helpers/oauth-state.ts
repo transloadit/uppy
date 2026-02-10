@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { decrypt, encrypt } from './utils.ts'
+import { decrypt, encrypt } from './utils.js'
 
 export type OAuthState = {
   id: string
@@ -8,12 +8,18 @@ export type OAuthState = {
   companionInstance?: unknown
 } & Record<string, unknown>
 
-export const encodeState = (state: OAuthState, secret: string | Buffer): string => {
+export const encodeState = (
+  state: OAuthState,
+  secret: string | Buffer,
+): string => {
   const encodedState = Buffer.from(JSON.stringify(state)).toString('base64')
   return encrypt(encodedState, secret)
 }
 
-export const decodeState = (state: string, secret: string | Buffer): OAuthState => {
+export const decodeState = (
+  state: string,
+  secret: string | Buffer,
+): OAuthState => {
   const encodedState = decrypt(state, secret)
   const parsed: unknown = JSON.parse(atob(encodedState))
   if (!isOAuthState(parsed)) {
@@ -47,7 +53,9 @@ export const getFromState = (
   return decoded[name]
 }
 
-export const getGrantDynamicFromRequest = (req: { session?: unknown }): Record<string, unknown> => {
+export const getGrantDynamicFromRequest = (req: {
+  session?: unknown
+}): Record<string, unknown> => {
   const { session } = req
   if (!isRecord(session)) return {}
   const grant = session.grant

@@ -11,10 +11,17 @@ type LogLevel = 'error' | 'info' | 'warn' | 'debug'
 
 let valuesToMask: string[] = []
 
+/**
+ * Adds a list of strings that should be masked by the logger.
+ * This is expected to be set during startup and not updated continuously.
+ */
 export function setMaskables(maskables: readonly string[]): void {
   valuesToMask = maskables.map((i) => escapeStringRegexp(i))
 }
 
+/**
+ * Mask secret values in a log message.
+ */
 function maskMessage(msg: string): string {
   let out = msg
   for (const toBeMasked of valuesToMask) {
@@ -35,6 +42,15 @@ const styleText: StyleTextFn =
     ? (style, text) => util.styleText!(style, text)
     : (_style, text) => text
 
+/**
+ * Logs a message.
+ *
+ * @param params.arg - The message or error to log.
+ * @param params.tag - A tag to easily search for this message.
+ * @param params.level - Log level.
+ * @param params.traceId - A unique id to correlate logs tied to a request.
+ * @param params.color - Format(s) that can be passed to `util.styleText`.
+ */
 function log(params: {
   arg: unknown
   tag?: string
@@ -75,18 +91,34 @@ function log(params: {
   )
 }
 
+/**
+ * INFO level log.
+ */
 export function info(msg: string, tag?: string, traceId?: string): void {
   log({ arg: msg, tag, level: 'info', traceId })
 }
 
+/**
+ * WARN level log.
+ */
 export function warn(msg: string, tag?: string, traceId?: string): void {
   log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
 }
 
-export function error(msg: string | Error, tag?: string, traceId?: string): void {
+/**
+ * ERROR level log.
+ */
+export function error(
+  msg: string | Error,
+  tag?: string,
+  traceId?: string,
+): void {
   log({ arg: msg, tag, level: 'error', traceId, color: ['bold', 'red'] })
 }
 
+/**
+ * DEBUG level log.
+ */
 export function debug(msg: string, tag?: string, traceId?: string): void {
   if (process.env.NODE_ENV !== 'production') {
     log({ arg: msg, tag, level: 'debug', traceId, color: ['bold', 'blue'] })

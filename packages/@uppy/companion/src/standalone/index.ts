@@ -3,21 +3,23 @@ import qs from 'node:querystring'
 import { URL } from 'node:url'
 import RedisStore from 'connect-redis'
 import express from 'express'
-import session from 'express-session'
 import type { SessionOptions } from 'express-session'
+import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import type { StandaloneCompanionOptionsInput } from '../schemas/index.ts'
-import * as companion from '../companion.ts'
-import logger from '../server/logger.ts'
-import * as redis from '../server/redis.ts'
+import * as companion from '../companion.js'
+import type { StandaloneCompanionOptionsInput } from '../schemas/index.js'
+import logger from '../server/logger.js'
+import * as redis from '../server/redis.js'
 import {
   buildHelpfulStartupMessage,
   generateSecret,
   getCompanionOptions,
-} from './helper.ts'
+} from './helper.js'
 
-export default function server(inputCompanionOptions?: StandaloneCompanionOptionsInput) {
+export default function server(
+  inputCompanionOptions?: StandaloneCompanionOptionsInput,
+) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -40,9 +42,10 @@ export default function server(inputCompanionOptions?: StandaloneCompanionOption
   // Query string keys whose values should not end up in logging output.
   const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
 
-  function censorQuery(
-    rawQuery: Record<string, unknown>,
-  ): { query: Record<string, string>; censored: boolean } {
+  function censorQuery(rawQuery: Record<string, unknown>): {
+    query: Record<string, string>
+    censored: boolean
+  } {
     const query: Record<string, string> = {}
     let censored = false
     Object.keys(rawQuery).forEach((key) => {
@@ -80,10 +83,10 @@ export default function server(inputCompanionOptions?: StandaloneCompanionOption
   morgan.token('referrer', (req) => {
     const ref = req.headers.referer || req.headers.referrer
     if (typeof ref === 'string') {
-      let parsed
+      let parsed: URL
       try {
         parsed = new URL(ref)
-      } catch (_) {
+      } catch {
         return ref
       }
       const rawQuery = qs.parse(parsed.search.replace('?', ''))

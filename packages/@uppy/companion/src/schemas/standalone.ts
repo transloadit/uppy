@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ProviderOptionsSchema, ServerConfigSchema } from './common.ts'
+import { ProviderOptionsSchema, ServerConfigSchema } from './common.js'
 
 // Keep these schemas tolerant initially: they are for inference + narrowing,
 // not for changing runtime behavior.

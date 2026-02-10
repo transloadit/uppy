@@ -2,20 +2,19 @@
  * @module provider
  */
 
-import onedrive from './onedrive/index.ts'
-import instagram from './instagram/graph/index.ts'
-import { Drive } from './google/drive/index.ts'
-import facebook from './facebook/index.ts'
-import dropbox from './dropbox/index.ts'
-import { getCredentialsResolver } from './credentials.ts'
-import box from './box/index.ts'
-import * as logger from '../logger.ts'
-import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
-// biome-ignore lint/correctness/noUnusedImports: It's used as a type
-import zoom from './zoom/index.ts'
-import webdav from './webdav/index.ts'
-import unsplash from './unsplash/index.ts'
-import Provider, { isOAuthProvider } from './Provider.ts'
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
+import * as logger from '../logger.js'
+import box from './box/index.js'
+import { getCredentialsResolver } from './credentials.js'
+import dropbox from './dropbox/index.js'
+import facebook from './facebook/index.js'
+import { Drive } from './google/drive/index.js'
+import instagram from './instagram/graph/index.js'
+import onedrive from './onedrive/index.js'
+import { isOAuthProvider } from './Provider.js'
+import unsplash from './unsplash/index.js'
+import webdav from './webdav/index.js'
+import zoom from './zoom/index.js'
 
 /**
  *
@@ -28,8 +27,6 @@ const validOptions = (options) => {
 /**
  * adds the desired provider module to the request object,
  * based on the providerName parameter specified
- *
- * @param {Record<string, typeof Provider>} providers
  */
 export function getProviderMiddleware(providers, grantConfig) {
   /**
@@ -45,7 +42,7 @@ export function getProviderMiddleware(providers, grantConfig) {
       const { allowLocalUrls, providerOptions } = req.companion.options
       const { oauthProvider } = ProviderClass
 
-      let providerGrantConfig
+      let providerGrantConfig: unknown
       if (isOAuthProvider(oauthProvider)) {
         req.companion.getProviderCredentials = getCredentialsResolver(
           providerName,

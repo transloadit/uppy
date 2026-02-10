@@ -24,4 +24,3 @@ export const ProviderOptionsSchema = z.record(ProviderOptionSchema)
 export type ServerConfig = z.output<typeof ServerConfigSchema>
 export type ProviderOption = z.output<typeof ProviderOptionSchema>
 export type ProviderOptions = z.output<typeof ProviderOptionsSchema>
-

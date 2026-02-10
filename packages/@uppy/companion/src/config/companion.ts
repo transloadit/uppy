@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import validator from 'validator'
-import { defaultGetKey } from '../server/helpers/utils.ts'
-import logger from '../server/logger.ts'
+import { defaultGetKey } from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
 type ProviderOption = {
   key?: string
@@ -59,6 +59,9 @@ function asRecord(value: unknown): Record<string, unknown> | null {
   return value as Record<string, unknown>
 }
 
+/**
+ * Returns secrets that should be masked in log messages.
+ */
 export function getMaskableSecrets(companionOptions: unknown): string[] {
   const secrets: string[] = []
   const root = asRecord(companionOptions) ?? {}
@@ -89,6 +92,11 @@ export function getMaskableSecrets(companionOptions: unknown): string[] {
   return secrets
 }
 
+/**
+ * Validates that the mandatory Companion options are set.
+ *
+ * If invalid, throws with an error explaining what needs to be fixed.
+ */
 export function validateConfig(companionOptions: unknown): void {
   const mandatoryOptions = ['secret', 'filePath', 'server.host']
   const unspecified: string[] = []
@@ -203,8 +211,9 @@ export function validateConfig(companionOptions: unknown): void {
     throw new TypeError('Invalid periodicPingUrls')
   }
 
-  const maxFilenameLengthRaw =
-    getNested(companionOptions, ['maxFilenameLength'])
+  const maxFilenameLengthRaw = getNested(companionOptions, [
+    'maxFilenameLength',
+  ])
   if (maxFilenameLengthRaw !== undefined && Number(maxFilenameLengthRaw) <= 0) {
     throw new TypeError('Option maxFilenameLength must be greater than 0')
   }

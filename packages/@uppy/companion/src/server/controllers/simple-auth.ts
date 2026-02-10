@@ -1,6 +1,6 @@
-import { respondWithError } from '../provider/error.ts'
-import logger from '../logger.ts'
-import * as tokenService from '../helpers/jwt.ts'
+import * as tokenService from '../helpers/jwt.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
 
 export default async function simpleAuth(req, res, next) {
   const { providerName } = req.params

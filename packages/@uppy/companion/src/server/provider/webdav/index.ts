@@ -1,14 +1,14 @@
-import { AuthType, createClient } from 'webdav'
 import type { FileStat, ResponseDataDetailed } from 'webdav'
-import logger from '../../logger.ts'
-import { getProtectedHttpAgent, validateURL } from '../../helpers/request.ts'
+import { AuthType, createClient } from 'webdav'
+import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
+import { isRecord } from '../../helpers/type-guards.js'
+import logger from '../../logger.js'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
-} from '../error.ts'
-import Provider from '../Provider.ts'
-import { isRecord } from '../../helpers/type-guards.ts'
+} from '../error.js'
+import Provider from '../Provider.js'
 
 const defaultDirectory = '/'
 
@@ -105,11 +105,8 @@ export default class WebdavProvider extends Provider {
       const data = { items: [] }
       const client = await this.getClient({ providerUserSession })
 
-      const dirResult:
-        | FileStat[]
-        | ResponseDataDetailed<FileStat[]> = await client.getDirectoryContents(
-        directory || '/',
-      )
+      const dirResult: FileStat[] | ResponseDataDetailed<FileStat[]> =
+        await client.getDirectoryContents(directory || '/')
       const dir = Array.isArray(dirResult) ? dirResult : dirResult.data
 
       dir.forEach((item) => {
@@ -118,7 +115,7 @@ export default class WebdavProvider extends Provider {
           `${directory || ''}/${item.basename}`,
         )
 
-        let modifiedDate
+        let modifiedDate: string | undefined
         try {
           modifiedDate = new Date(item.lastmod).toISOString()
         } catch (_e) {
@@ -157,9 +154,8 @@ export default class WebdavProvider extends Provider {
       'provider.webdav.download.error',
       async () => {
         const client = await this.getClient({ providerUserSession })
-        const statResult:
-          | FileStat
-          | ResponseDataDetailed<FileStat> = await client.stat(id)
+        const statResult: FileStat | ResponseDataDetailed<FileStat> =
+          await client.stat(id)
         const stat = 'data' in statResult ? statResult.data : statResult
         const stream = client.createReadStream(`/${id}`)
         return { stream, size: stat.size }

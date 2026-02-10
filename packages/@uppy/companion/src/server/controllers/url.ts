@@ -1,9 +1,9 @@
 import express from 'express'
-import { respondWithError } from '../provider/error.ts'
-import logger from '../logger.ts'
-import { startDownUpload } from '../helpers/upload.ts'
-import { getURLMeta, validateURL } from '../helpers/request.ts'
-import { downloadURL } from '../download.ts'
+import { downloadURL } from '../download.js'
+import { getURLMeta, validateURL } from '../helpers/request.js'
+import { startDownUpload } from '../helpers/upload.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
 
 /**
  * @callback downloadCallback

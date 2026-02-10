@@ -1,10 +1,10 @@
 import got from 'got'
-import adaptData from './adapter.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import Provider from '../Provider.ts'
-import logger from '../../logger.ts'
-import { prepareStream } from '../../helpers/utils.ts'
-import { isRecord } from '../../helpers/type-guards.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const getClient = ({ token }) =>
   got.extend({
@@ -54,14 +54,19 @@ export default class OneDrive extends Provider {
         $expand: 'thumbnails',
         $top: String(pageSize),
       })
-      if (typeof queryRecord.cursor === 'string' && queryRecord.cursor.length > 0) {
+      if (
+        typeof queryRecord.cursor === 'string' &&
+        queryRecord.cursor.length > 0
+      ) {
         qs.set('$skiptoken', queryRecord.cursor)
       }
 
       const client = getClient({ token })
 
       const [me, list] = await Promise.all([
-        client.get('me', { responseType: 'json' }).json<Record<string, unknown>>(),
+        client
+          .get('me', { responseType: 'json' })
+          .json<Record<string, unknown>>(),
         client
           .get(`${getRootPath(queryRecord)}/${path}/children`, {
             searchParams: qs,
@@ -106,7 +111,9 @@ export default class OneDrive extends Provider {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
       const queryRecord = isRecord(query) ? query : {}
       const body = await getClient({ token })
-        .get(`${getRootPath(queryRecord)}/items/${id}`, { responseType: 'json' })
+        .get(`${getRootPath(queryRecord)}/items/${id}`, {
+          responseType: 'json',
+        })
         .json<Record<string, unknown>>()
       const size = body.size
       return typeof size === 'number' ? size : undefined

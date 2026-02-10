@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { ProviderOptionsSchema, ServerConfigSchema } from './common.ts'
-import Provider from '../server/provider/Provider.ts'
+import type Provider from '../server/provider/Provider.js'
+import { ProviderOptionsSchema, ServerConfigSchema } from './common.js'
 
 // Tolerant schema for Companion's initialization options. This is primarily for
 // type inference and safe narrowing, not for rejecting config at runtime.
@@ -43,5 +43,7 @@ export const CompanionInitOptionsSchema = z
   })
   .passthrough()
 
-export type CompanionInitOptionsInput = z.input<typeof CompanionInitOptionsSchema>
+export type CompanionInitOptionsInput = z.input<
+  typeof CompanionInitOptionsSchema
+>
 export type CompanionInitOptions = z.output<typeof CompanionInitOptionsSchema>

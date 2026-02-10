@@ -1,10 +1,10 @@
-import * as logger from '../logger.ts'
+import * as logger from '../logger.js'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
   parseHttpError,
-} from './error.ts'
+} from './error.js'
 
 export { parseHttpError }
 
@@ -63,7 +63,7 @@ export async function withProviderErrorHandling({
     // Wrap all HTTP errors according to the provider's desired error handling
     if (httpError) {
       const { statusCode, body } = httpError
-      let knownErr
+      let knownErr: Error
       if (isAuthError({ statusCode, body })) {
         knownErr = new ProviderAuthError()
       } else if (isUserFacingError({ statusCode, body })) {

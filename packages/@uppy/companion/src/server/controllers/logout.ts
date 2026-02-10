@@ -1,5 +1,5 @@
-import { respondWithError } from '../provider/error.ts'
-import * as tokenService from '../helpers/jwt.ts'
+import * as tokenService from '../helpers/jwt.js'
+import { respondWithError } from '../provider/error.js'
 
 /**
  *

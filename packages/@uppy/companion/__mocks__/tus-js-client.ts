@@ -1,5 +1,15 @@
+type UploadOptions = {
+  uploadSize: number
+  onProgress: (bytesUploaded: number, bytesTotal: number) => void
+  onSuccess: () => void
+} & Record<string, unknown>
+
 export class Upload {
-  constructor(file, options) {
+  url: string
+
+  options: UploadOptions
+
+  constructor(_file: unknown, options: UploadOptions) {
     this.url = 'https://tus.endpoint/files/foo-bar'
     this.options = options
   }

@@ -31,8 +31,18 @@ export type UrlBuilderOptions = {
   }
 }
 
+/**
+ * Returns a URL builder.
+ *
+ * The returned function builds Companion-targeted URLs, optionally including the
+ * server protocol/host for external use.
+ */
 export function getURLBuilder(options: UrlBuilderOptions) {
-  return (subPath: string, isExternal: boolean, excludeHost?: boolean): string => {
+  return (
+    subPath: string,
+    isExternal: boolean,
+    excludeHost?: boolean,
+  ): string => {
     const server = options.server ?? {}
     let path = ''
 
@@ -49,6 +59,10 @@ export function getURLBuilder(options: UrlBuilderOptions) {
 export const getRedirectPath = (providerName: string): string =>
   `/${providerName}/redirect`
 
+/**
+ * Create an AES-CCM encryption key and initialization vector from the provided
+ * secret and a random nonce.
+ */
 function createSecrets(
   secret: string | Buffer,
   nonce: Buffer | undefined,
@@ -67,6 +81,12 @@ function createSecrets(
   }
 }
 
+/**
+ * Encrypt a string with AES-256-CCM and a random nonce.
+ *
+ * The returned ciphertext is prefixed with the nonce (hex), followed by the
+ * encrypted data (base64url).
+ */
 export const encrypt = (input: string, secret: string | Buffer): string => {
   const nonce = crypto.randomBytes(nonceLength)
   const { key, iv } = createSecrets(secret, nonce)
@@ -81,6 +101,9 @@ export const encrypt = (input: string, secret: string | Buffer): string => {
   return `${nonce.toString('hex')}${encrypted.toString('base64url')}`
 }
 
+/**
+ * Decrypt a nonce-prefixed ciphertext produced by {@link encrypt}.
+ */
 export const decrypt = (encrypted: string, secret: string | Buffer): string => {
   const nonceHexLength = nonceLength * 2
   const nonce = Buffer.from(encrypted.slice(0, nonceHexLength), 'hex')
@@ -118,12 +141,18 @@ export const defaultGetKey = ({ filename }: { filename: string }): string => {
   return `${crypto.randomUUID()}-${filename}`
 }
 
+/**
+ * Our own HttpError in cases where we can't use `got`'s `HTTPError`.
+ */
 export class HttpError extends Error {
   statusCode: number
 
   responseJson: unknown
 
-  constructor({ statusCode, responseJson }: { statusCode: number; responseJson: unknown }) {
+  constructor({
+    statusCode,
+    responseJson,
+  }: { statusCode: number; responseJson: unknown }) {
     super(`Request failed with status ${statusCode}`)
     this.statusCode = statusCode
     this.responseJson = responseJson
@@ -148,7 +177,9 @@ export const prepareStream = async (
       .on('response', (response) => {
         const contentLengthStr = response.headers['content-length']
         const contentLength =
-          typeof contentLengthStr === 'string' ? parseInt(contentLengthStr, 10) : NaN
+          typeof contentLengthStr === 'string'
+            ? parseInt(contentLengthStr, 10)
+            : NaN
         const size =
           !Number.isNaN(contentLength) && contentLength >= 0
             ? contentLength

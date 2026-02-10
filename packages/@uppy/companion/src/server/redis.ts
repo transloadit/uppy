@@ -1,16 +1,22 @@
-import { Redis } from 'ioredis'
 import type { RedisOptions } from 'ioredis'
-import * as logger from './logger.ts'
+import { Redis } from 'ioredis'
+import * as logger from './logger.js'
 
 let redisClient: Redis | undefined
 
+/**
+ * A singleton module that provides a single Redis client throughout the
+ * lifetime of the server.
+ */
 function createClient(
   redisUrl: string | undefined,
   redisOptions: RedisOptions | undefined,
 ): Redis {
   if (redisClient) return redisClient
 
-  redisClient = redisUrl ? new Redis(redisUrl, redisOptions) : new Redis(redisOptions)
+  redisClient = redisUrl
+    ? new Redis(redisUrl, redisOptions)
+    : new Redis(redisOptions)
   redisClient.on('error', (err) => logger.error('redis error', err.toString()))
 
   return redisClient

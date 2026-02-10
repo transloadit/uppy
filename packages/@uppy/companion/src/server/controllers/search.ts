@@ -1,4 +1,4 @@
-import { respondWithError } from '../provider/error.ts'
+import { respondWithError } from '../provider/error.js'
 
 export default async function search({ query, companion }, res, next) {
   const { providerUserSession } = companion

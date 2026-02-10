@@ -1,6 +1,6 @@
-import { respondWithError } from '../provider/error.ts'
-import logger from '../logger.ts'
-import * as tokenService from '../helpers/jwt.ts'
+import * as tokenService from '../helpers/jwt.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
 
 // https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/Get-refresh-token-from-access-token/td-p/596739
 // https://developers.dropbox.com/oauth-guide

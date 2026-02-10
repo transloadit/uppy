@@ -1,5 +1,5 @@
-import logger from '../logger.ts'
-import * as tokenService from '../helpers/jwt.ts'
+import * as tokenService from '../helpers/jwt.js'
+import logger from '../logger.js'
 
 export default function preauth(req, res) {
   if (!req.body || !req.body.params) {

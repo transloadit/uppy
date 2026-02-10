@@ -1,6 +1,6 @@
-import { respondWithError } from '../provider/error.ts'
-import logger from '../logger.ts'
-import { startDownUpload } from '../helpers/upload.ts'
+import { startDownUpload } from '../helpers/upload.js'
+import logger from '../logger.js'
+import { respondWithError } from '../provider/error.js'
 
 export default async function get(req, res) {
   const { id } = req.params

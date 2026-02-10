@@ -1,6 +1,6 @@
 import { describe, expect, test, vi } from 'vitest'
 
-import { cors } from '../src/server/middlewares.ts'
+import { cors } from '../src/server/middlewares.js'
 
 function testWithMock({
   // @ts-ignore

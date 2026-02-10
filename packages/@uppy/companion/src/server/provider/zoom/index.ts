@@ -1,11 +1,11 @@
 import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
-import adaptData from './adapter.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import Provider from '../Provider.ts'
-import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.ts'
-import { isRecord } from '../../helpers/type-guards.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BASE_URL = 'https://zoom.us/v2'
 const PAGE_SIZE = 300
@@ -272,7 +272,9 @@ export default class Zoom extends Provider {
       providerName: Zoom.oauthProvider,
       isAuthError: (response) => authErrorCodes.includes(response.statusCode),
       getJsonErrorMessage: (body) =>
-        isRecord(body) && typeof body.message === 'string' ? body.message : undefined,
+        isRecord(body) && typeof body.message === 'string'
+          ? body.message
+          : undefined,
     })
   }
 }

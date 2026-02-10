@@ -3,14 +3,18 @@ import fs from 'node:fs'
 import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
 import packageJson from '../../package.json' with { type: 'json' }
-import * as utils from '../server/helpers/utils.ts'
-import logger from '../server/logger.ts'
 import {
-  StandaloneCompanionOptionsSchema,
   type StandaloneCompanionOptions,
   type StandaloneCompanionOptionsInput,
-} from '../schemas/index.ts'
+  StandaloneCompanionOptionsSchema,
+} from '../schemas/index.js'
+import * as utils from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
+/**
+ * Tries to read the secret from a file if the according environment variable is set.
+ * Otherwise it falls back to the standard secret environment variable.
+ */
 const getSecret = (baseEnvVar: string): string | undefined => {
   const secretFile = process.env[`${baseEnvVar}_FILE`]
   return secretFile
@@ -18,6 +22,9 @@ const getSecret = (baseEnvVar: string): string | undefined => {
     : process.env[baseEnvVar]
 }
 
+/**
+ * Auto-generates server secret.
+ */
 export const generateSecret = (secretName: string): string => {
   logger.warn(
     `auto-generating server ${secretName} because none was specified`,
@@ -56,9 +63,16 @@ function getCorsOrigins(): unknown {
 
 const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
 
-const defaultStandaloneGetKey = (...args: Parameters<typeof utils.defaultGetKey>): string =>
-  `${s3Prefix}${utils.defaultGetKey(...args)}`
+/**
+ * Default `getKey` for Companion standalone variant.
+ */
+const defaultStandaloneGetKey = (
+  ...args: Parameters<typeof utils.defaultGetKey>
+): string => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
+/**
+ * Loads the config from environment variables.
+ */
 const getConfigFromEnv = (): Record<string, unknown> => {
   const uploadUrls = process.env.COMPANION_UPLOAD_URLS
   const domains =
@@ -200,7 +214,7 @@ const getConfigFromEnv = (): Record<string, unknown> => {
 }
 
 const getConfigPath = (): string | undefined => {
-  let configPath
+  let configPath: string | undefined
 
   for (let i = process.argv.length - 1; i >= 0; i--) {
     const isConfigFlag =
@@ -236,9 +250,11 @@ export const buildHelpfulStartupMessage = (
 ): string => {
   const buildURL = utils.getURLBuilder(companionOptions)
   const callbackURLs = []
-  Object.keys(companionOptions.providerOptions ?? {}).forEach((providerName) => {
-    callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
-  })
+  Object.keys(companionOptions.providerOptions ?? {}).forEach(
+    (providerName) => {
+      callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
+    },
+  )
 
   return stripIndent`
     Welcome to Companion v${packageJson.version}

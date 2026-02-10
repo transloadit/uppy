@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events'
 import safeStringify from 'fast-safe-stringify'
-import * as logger from '../logger.ts'
+import * as logger from '../logger.js'
 
 function replacer(key, value) {
   // Remove the circular structure and internal ones
@@ -108,9 +108,13 @@ export default function redisEmitter(redisClient, redisPubSubScope) {
       }
 
       if (_once) removeListener(eventName, handler)
-      let args
+      let args: unknown[]
       try {
-        args = JSON.parse(message)
+        const parsed: unknown = JSON.parse(message)
+        if (!Array.isArray(parsed)) {
+          throw new Error('Expected JSON array')
+        }
+        args = parsed
       } catch (_ex) {
         handleError(
           new Error(

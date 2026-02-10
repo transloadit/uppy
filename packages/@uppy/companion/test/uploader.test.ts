@@ -4,7 +4,7 @@ import nock from 'nock'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
 import Emitter from '../src/server/emitter/index.js'
 import Uploader, { ValidationError } from '../src/server/Uploader.js'
-import standalone from '../src/standalone/index.ts'
+import standalone from '../src/standalone/index.js'
 import * as socketClient from './mocksocket.js'
 
 vi.mock('tus-js-client')
@@ -84,7 +84,7 @@ describe('uploader', () => {
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()
 
-    let firstReceivedProgress
+    let firstReceivedProgress: number | undefined
 
     const onProgress = vi.fn()
     const onUploadSuccess = vi.fn()
@@ -122,7 +122,7 @@ describe('uploader', () => {
       }),
     )
     const expectedPayload = expect.objectContaining({
-      // see __mocks__/tus-js-client.js
+      // see __mocks__/tus-js-client.ts
       url: 'https://tus.endpoint/files/foo-bar',
     })
     expect(onUploadSuccess).toHaveBeenCalledWith(
@@ -179,7 +179,7 @@ describe('uploader', () => {
         })
       })
 
-      let firstReceivedProgress
+      let firstReceivedProgress: { bytesUploaded: number } | undefined
 
       // emulate socket connection
       socketClient.connect(uploadToken)
@@ -191,7 +191,7 @@ describe('uploader', () => {
         try {
           expect(firstReceivedProgress.bytesUploaded).toBe(500_000)
 
-          // see __mocks__/tus-js-client.js
+          // see __mocks__/tus-js-client.ts
           expect(message.payload.url).toBe('https://tus.endpoint/files/foo-bar')
         } catch (err) {
           reject(err)
@@ -291,7 +291,7 @@ describe('uploader', () => {
     nock('http://localhost')
       .post(
         '/',
-        /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => \{\}\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/,
+        /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key1"\r\n\r\nnull\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key2"\r\n\r\ntrue\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key3"\r\n\r\n\d+\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key4"\r\n\r\n\[object Object\]\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="key5"\r\n\r\n\(\) => \{\s*\}\r\n--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/,
       )
       .times(10)
       .reply(200)

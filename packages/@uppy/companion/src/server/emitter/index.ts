@@ -1,5 +1,5 @@
-import redisEmitter from './redis-emitter.ts'
-import nodeEmitter from './default-emitter.ts'
+import nodeEmitter from './default-emitter.js'
+import redisEmitter from './redis-emitter.js'
 
 type Listener = (...args: unknown[]) => void
 export type EmitterLike = {

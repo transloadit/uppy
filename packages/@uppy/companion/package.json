@@ -106,7 +106,7 @@
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsc --build tsconfig.build.json && node ./scripts/rewrite-dts-extensions.mjs",
+    "build": "tsc --build tsconfig.build.json",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "start": "node ./dist/standalone/start-server.js",
     "start:dev": "bash start-dev",

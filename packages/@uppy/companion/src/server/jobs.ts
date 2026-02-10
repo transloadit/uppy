@@ -3,8 +3,8 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import got from 'got'
 import schedule from 'node-schedule'
-import Uploader from './Uploader.ts'
-import * as logger from './logger.ts'
+import * as logger from './logger.js'
+import Uploader from './Uploader.js'
 
 const cleanUpFinishedUploads = (dirPath) => {
   logger.info(

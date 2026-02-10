@@ -1,10 +1,10 @@
 import got from 'got'
-import adaptData from './adapter.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import Provider from '../Provider.ts'
-import { ProviderApiError } from '../error.ts'
-import { prepareStream } from '../../helpers/utils.ts'
-import { isRecord } from '../../helpers/type-guards.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { prepareStream } from '../../helpers/utils.js'
+import { ProviderApiError } from '../error.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BASE_URL = 'https://api.unsplash.com'
 
@@ -61,7 +61,9 @@ export default class Unsplash extends Provider {
             ? links.download_location
             : null
         if (!url || !attributionUrl) {
-          throw new Error('Unexpected Unsplash response: missing download links')
+          throw new Error(
+            'Unexpected Unsplash response: missing download links',
+          )
         }
 
         const stream = got.stream.get(url, { responseType: 'json' })

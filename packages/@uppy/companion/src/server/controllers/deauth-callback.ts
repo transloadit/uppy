@@ -1,4 +1,4 @@
-import { respondWithError } from '../provider/error.ts'
+import { respondWithError } from '../provider/error.js'
 
 export default async function deauthCallback(
   { body, companion, headers },

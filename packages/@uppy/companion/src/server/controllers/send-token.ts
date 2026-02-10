@@ -1,6 +1,6 @@
 import serialize from 'serialize-javascript'
-import { isOriginAllowed } from './connect.ts'
-import * as oAuthState from '../helpers/oauth-state.ts'
+import * as oAuthState from '../helpers/oauth-state.js'
+import { isOriginAllowed } from './connect.js'
 
 /**
  *

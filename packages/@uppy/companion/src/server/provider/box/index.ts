@@ -1,8 +1,8 @@
 import got from 'got'
-import adaptData from './adapter.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import Provider from '../Provider.ts'
-import { prepareStream } from '../../helpers/utils.ts'
+import { prepareStream } from '../../helpers/utils.js'
+import Provider from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256

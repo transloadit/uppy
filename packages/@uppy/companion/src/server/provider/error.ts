@@ -7,6 +7,10 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return !!value && typeof value === 'object' && !Array.isArray(value)
 }
 
+/**
+ * Error thrown when an adapter encounters an HTTP error while communicating
+ * with its corresponding provider.
+ */
 export class ProviderApiError extends Error {
   statusCode: number | undefined
 
@@ -20,6 +24,10 @@ export class ProviderApiError extends Error {
   }
 }
 
+/**
+ * Error thrown when the provider response should be forwarded to the client
+ * as-is (e.g. user-facing validation errors).
+ */
 export class ProviderUserError extends ProviderApiError {
   json: unknown
 
@@ -30,6 +38,11 @@ export class ProviderUserError extends ProviderApiError {
   }
 }
 
+/**
+ * Error thrown when an adapter encounters an authorization error while
+ * communicating with its provider. This signals to the client that the access
+ * token is invalid and needs to be refreshed or the user needs to re-authenticate.
+ */
 export class ProviderAuthError extends ProviderApiError {
   constructor() {
     super('invalid access token detected by Provider', 401)
@@ -61,9 +74,12 @@ export function parseHttpError(err: unknown): HttpErrorLike | undefined {
   return undefined
 }
 
-function errorToResponse(err: unknown):
-  | { code: number; json: Record<string, unknown> }
-  | undefined {
+/**
+ * Convert an error instance to an HTTP response if possible.
+ */
+function errorToResponse(
+  err: unknown,
+): { code: number; json: Record<string, unknown> } | undefined {
   if (!isRecord(err)) return undefined
 
   if (err.isAuthError === true) {
@@ -75,7 +91,10 @@ function errorToResponse(err: unknown):
   }
 
   if (err.name === 'ProviderUserError') {
-    return { code: 400, json: isRecord(err.json) ? err.json : { data: err.json } }
+    return {
+      code: 400,
+      json: isRecord(err.json) ? err.json : { data: err.json },
+    }
   }
 
   if (err.name === 'ProviderApiError') {
@@ -103,7 +122,10 @@ function errorToResponse(err: unknown):
   return undefined
 }
 
-export function respondWithError(err: unknown, res: { status: (n: number) => { json: (v: unknown) => void } }): boolean {
+export function respondWithError(
+  err: unknown,
+  res: { status: (n: number) => { json: (v: unknown) => void } },
+): boolean {
   const errResp = errorToResponse(err)
   if (errResp) {
     res.status(errResp.code).json(errResp.json)
@@ -111,4 +133,3 @@ export function respondWithError(err: unknown, res: { status: (n: number) => { j
   }
   return false
 }
-

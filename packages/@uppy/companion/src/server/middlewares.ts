@@ -1,14 +1,14 @@
-import corsImport from 'cors'
-import promBundle from 'express-prom-bundle'
-import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import type { CorsOptions } from 'cors'
+import corsImport from 'cors'
+import type { NextFunction, Request, RequestHandler, Response } from 'express'
+import promBundle from 'express-prom-bundle'
 
 import packageJson from '../../package.json' with { type: 'json' }
-import * as tokenService from './helpers/jwt.ts'
-import { getURLBuilder } from './helpers/utils.ts'
-import * as logger from './logger.ts'
-import { isOAuthProvider } from './provider/Provider.ts'
-import getS3Client from './s3-client.ts'
+import * as tokenService from './helpers/jwt.js'
+import { getURLBuilder } from './helpers/utils.js'
+import * as logger from './logger.js'
+import { isOAuthProvider } from './provider/Provider.js'
+import getS3Client from './s3-client.js'
 
 export const hasSessionAndProvider: RequestHandler = (req, res, next) => {
   if (!req.session) {
@@ -157,10 +157,10 @@ export const cookieAuthToken: RequestHandler = (req, res, next) => {
   return next()
 }
 
-type CorsOptionsLike = { corsOrigins?: unknown; sendSelfEndpoint?: unknown } & Record<
-  string,
-  unknown
->
+type CorsOptionsLike = {
+  corsOrigins?: unknown
+  sendSelfEndpoint?: unknown
+} & Record<string, unknown>
 
 export const cors =
   (options: CorsOptionsLike = {}): RequestHandler =>
@@ -222,13 +222,21 @@ export const cors =
     })(req, res, next)
   }
 
-function hasPromClient(
-  mw: unknown,
-): mw is RequestHandler & { promClient: { collectDefaultMetrics: (opts: unknown) => void; Gauge: new (opts: unknown) => { set: (n: number) => void }; register: unknown } } {
+function hasPromClient(mw: unknown): mw is RequestHandler & {
+  promClient: {
+    collectDefaultMetrics: (opts: unknown) => void
+    Gauge: new (opts: unknown) => { set: (n: number) => void }
+    register: unknown
+  }
+} {
   return !!mw && typeof mw === 'function' && 'promClient' in mw
 }
 
-export const metrics = ({ path = undefined }: { path?: string } = {}): RequestHandler => {
+export const metrics = ({
+  path = undefined,
+}: {
+  path?: string
+} = {}): RequestHandler => {
   const metricsMiddleware = promBundle({
     includeMethod: true,
     metricsPath: path ? `${path}/metrics` : undefined,

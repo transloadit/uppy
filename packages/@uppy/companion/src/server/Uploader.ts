@@ -2,34 +2,33 @@ import { randomUUID } from 'node:crypto'
 import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
+import type { Readable as NodeReadableStream } from 'node:stream'
 import { Readable as NodeReadable } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
-import { Upload } from '@aws-sdk/lib-storage'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
+import { Upload } from '@aws-sdk/lib-storage'
+import type { Request } from 'express'
+import type { FormDataLike } from 'form-data-encoder'
+import type { FormDataEntryValue as NodeFormDataEntryValue } from 'formdata-node'
 import { FormData } from 'formdata-node'
+import type { OptionsInit, OptionsOfTextResponseBody } from 'got'
 import got from 'got'
-import type { OptionsInit } from 'got'
-import type { OptionsOfTextResponseBody } from 'got'
+import type { Redis } from 'ioredis'
 import throttle from 'lodash/throttle.js'
 import { serializeError } from 'serialize-error'
 import tus from 'tus-js-client'
 import validator from 'validator'
-import type { Request } from 'express'
-import type { Redis } from 'ioredis'
-import type { Readable as NodeReadableStream } from 'node:stream'
-import type { FormDataLike } from 'form-data-encoder'
-import type { FormDataEntryValue as NodeFormDataEntryValue } from 'formdata-node'
-import headerSanitize from './header-blacklist.ts'
-import emitter, { type EmitterLike } from './emitter/index.ts'
+import emitter, { type EmitterLike } from './emitter/index.js'
+import headerSanitize from './header-blacklist.js'
 import {
   getBucket,
   hasMatch,
   jsonStringify,
   rfc2047EncodeMetadata,
   truncateFilename,
-} from './helpers/utils.ts'
-import * as redis from './redis.ts'
-import * as logger from './logger.ts'
+} from './helpers/utils.js'
+import * as logger from './logger.js'
+import * as redis from './redis.js'
 
 // Need to limit length or we can get
 // "MetadataTooLarge: Your metadata headers exceed the maximum allowed metadata size" in tus / S3
@@ -248,7 +247,10 @@ export default class Uploader {
 
   tus: tus.Upload | null
 
-  throttledEmitProgress: (dataToEmit: { action: string; payload: Record<string, unknown> }) => void
+  throttledEmitProgress: (dataToEmit: {
+    action: string
+    payload: Record<string, unknown>
+  }) => void
 
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
@@ -332,9 +334,13 @@ export default class Uploader {
       (dataToEmit: { action: string; payload: Record<string, unknown> }) => {
         const { payload } = dataToEmit
         const bytesUploaded =
-          typeof payload.bytesUploaded === 'number' ? payload.bytesUploaded : undefined
+          typeof payload.bytesUploaded === 'number'
+            ? payload.bytesUploaded
+            : undefined
         const bytesTotal =
-          typeof payload.bytesTotal === 'number' ? payload.bytesTotal : undefined
+          typeof payload.bytesTotal === 'number'
+            ? payload.bytesTotal
+            : undefined
         const progress =
           typeof payload.progress === 'string' ? payload.progress : undefined
         logger.debug(
@@ -363,7 +369,10 @@ export default class Uploader {
     return this.options.protocol || PROTOCOLS.multipart
   }
 
-  async _uploadByProtocol(req: Request, stream: NodeReadableStream): Promise<UploadResult> {
+  async _uploadByProtocol(
+    req: Request,
+    stream: NodeReadableStream,
+  ): Promise<UploadResult> {
     const protocol = this._getUploadProtocol()
 
     switch (protocol) {
@@ -478,7 +487,10 @@ export default class Uploader {
    * @param {import('stream').Readable} stream
    * @param {import('express').Request} req
    */
-  async tryUploadStream(stream: NodeReadableStream, req: Request): Promise<void> {
+  async tryUploadStream(
+    stream: NodeReadableStream,
+    req: Request,
+  ): Promise<void> {
     try {
       emitter().emit('upload-start', { token: this.token })
 
@@ -591,7 +603,10 @@ export default class Uploader {
    * @param {number} [bytesUploaded]
    * @param {number | null} [bytesTotalIn]
    */
-  onProgress(bytesUploaded = 0, bytesTotalIn: number | null | undefined = 0): void {
+  onProgress(
+    bytesUploaded = 0,
+    bytesTotalIn: number | null | undefined = 0,
+  ): void {
     const bytesTotal = bytesTotalIn || this.size || 0
 
     // If fully downloading before uploading, combine downloaded and uploaded bytes
@@ -637,7 +652,10 @@ export default class Uploader {
    * @param {string} url
    * @param {object} extraData
    */
-  #emitSuccess(url: string | null, extraData: Record<string, unknown> | undefined): void {
+  #emitSuccess(
+    url: string | null,
+    extraData: Record<string, unknown> | undefined,
+  ): void {
     const emitData = {
       action: 'success',
       payload: { ...extraData, complete: true, url },
@@ -871,7 +889,9 @@ export default class Uploader {
       const response =
         errObj && isRecord(errObj.response) ? errObj.response : null
       const statusCode =
-        response && typeof response.statusCode === 'number' ? response.statusCode : undefined
+        response && typeof response.statusCode === 'number'
+          ? response.statusCode
+          : undefined
 
       if (statusCode != null) {
         const statusMessage =
@@ -926,7 +946,8 @@ export default class Uploader {
     const params: PutObjectCommandInput = {
       Bucket: getBucket({ bucketOrFn, req, metadata, filename }),
       Key: keyCandidate,
-      ContentType: typeof metadata.type === 'string' ? metadata.type : undefined,
+      ContentType:
+        typeof metadata.type === 'string' ? metadata.type : undefined,
       Metadata: rfc2047EncodeMetadata(metadata),
       Body: stream,
     }
