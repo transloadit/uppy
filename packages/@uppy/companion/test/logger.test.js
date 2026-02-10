@@ -3,7 +3,7 @@ import { beforeAll, describe, expect, test } from 'vitest'
 // We don't care about colors in our tests, so force `supports-color` to disable colors.
 process.env.FORCE_COLOR = 'false'
 
-import logger from '../src/server/logger.js'
+import logger from '../src/server/logger.ts'
 
 const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
 

@@ -4,7 +4,7 @@ import nock from 'nock'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
 import Emitter from '../src/server/emitter/index.js'
 import Uploader, { ValidationError } from '../src/server/Uploader.js'
-import standalone from '../src/standalone/index.js'
+import standalone from '../src/standalone/index.ts'
 import * as socketClient from './mocksocket.js'
 
 vi.mock('tus-js-client')

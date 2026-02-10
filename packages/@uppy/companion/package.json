@@ -2,7 +2,7 @@
   "name": "@uppy/companion",
   "version": "6.2.1",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
-  "types": "lib/companion.d.ts",
+  "types": "dist/companion.d.ts",
   "author": "Transloadit.com",
   "license": "MIT",
   "sideEffects": false,
@@ -13,8 +13,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "exports": {
-    ".": "./lib/companion.js",
-    "./standalone": "./lib/standalone/index.js",
+    ".": "./dist/companion.js",
+    "./standalone": "./dist/standalone/index.js",
     "./package.json": "./package.json"
   },
   "keywords": [
@@ -74,7 +74,8 @@
     "tus-js-client": "^4.1.0",
     "validator": "^13.15.22",
     "webdav": "^5.8.0",
-    "ws": "8.17.1"
+    "ws": "8.17.1",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
     "@types/compression": "1.7.0",
@@ -100,14 +101,14 @@
   },
   "files": [
     "bin/",
-    "lib/",
+    "dist/",
     "src/",
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsc --build tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json && node ./scripts/rewrite-dts-extensions.mjs",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
-    "start": "node ./lib/standalone/start-server.js",
+    "start": "node ./dist/standalone/start-server.js",
     "start:dev": "bash start-dev",
     "typecheck": "tsc --build",
     "test": "vitest run --silent='passed-only'"

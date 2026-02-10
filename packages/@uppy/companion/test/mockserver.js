@@ -74,7 +74,7 @@ export const grantToken = 'fake token'
 // todo rewrite companion to not use global state
 // https://github.com/transloadit/uppy/issues/3284
 export const getServer = async (extraEnv) => {
-  const { default: standalone } = await import('../src/standalone/index.js')
+  const { default: standalone } = await import('../src/standalone/index.ts')
 
   const env = {
     ...defaultEnv,

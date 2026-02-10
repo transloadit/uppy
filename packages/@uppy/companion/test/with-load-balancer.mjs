@@ -2,7 +2,7 @@
 
 import http from 'node:http'
 import process from 'node:process'
-import { execaNode } from 'execa'
+import { execa, execaNode } from 'execa'
 import httpProxy from 'http-proxy'
 
 const numInstances = 3
@@ -49,14 +49,21 @@ function createLoadBalancer(baseUrls) {
 const isWindows = process.platform === 'win32'
 const isOSX = process.platform === 'darwin'
 
+// Ensure we run the compiled JS output. This script spawns plain `node`, so it
+// cannot rely on TypeScript loaders.
+await execa('yarn', ['workspace', '@uppy/companion', 'build'], {
+  cwd: new URL('../../../../', import.meta.url),
+  stdio: 'inherit',
+})
+
 const startCompanion = ({ name, port }) =>
-  execaNode('packages/@uppy/companion/src/standalone/start-server.js', {
+  execaNode('packages/@uppy/companion/dist/standalone/start-server.js', {
     nodeOptions: [
       '-r',
       'dotenv/config',
       // Watch mode support is limited to Windows and macOS at the time of writing.
       ...(isWindows || isOSX
-        ? ['--watch-path', 'packages/@uppy/companion/src', '--watch']
+        ? ['--watch-path', 'packages/@uppy/companion/dist', '--watch']
         : []),
     ],
     cwd: new URL('../../../../', import.meta.url),

@@ -1,0 +1,198 @@
+import { AuthType, createClient } from 'webdav'
+import type { FileStat, ResponseDataDetailed } from 'webdav'
+import logger from '../../logger.ts'
+import { getProtectedHttpAgent, validateURL } from '../../helpers/request.ts'
+import {
+  ProviderApiError,
+  ProviderAuthError,
+  ProviderUserError,
+} from '../error.ts'
+import Provider from '../Provider.ts'
+import { isRecord } from '../../helpers/type-guards.ts'
+
+const defaultDirectory = '/'
+
+/**
+ * Adapter for WebDAV servers that support simple auth (non-OAuth).
+ */
+export default class WebdavProvider extends Provider {
+  static get hasSimpleAuth() {
+    return true
+  }
+
+  isAuthenticated({ providerUserSession }) {
+    return providerUserSession.webdavUrl != null
+  }
+
+  async getClient({ providerUserSession }) {
+    const webdavUrl = providerUserSession?.webdavUrl
+    const { allowLocalUrls } = this
+    if (!validateURL(webdavUrl, allowLocalUrls)) {
+      throw new Error('invalid public link url')
+    }
+
+    // Is this an ownCloud or Nextcloud public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
+    // they have specific urls that we can identify
+    // todo not sure if this is the right way to support nextcloud and other webdavs
+    if (/\/s\/([^/]+)/.test(webdavUrl)) {
+      const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
+
+      return this.getClientHelper({
+        url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
+        authType: AuthType.Password,
+        username: publicLinkToken,
+        password: 'null',
+      })
+    }
+
+    // normal public WebDAV urls
+    return this.getClientHelper({
+      url: webdavUrl,
+      authType: AuthType.None,
+    })
+  }
+
+  async logout() {
+    return { revoked: true }
+  }
+
+  async simpleAuth({ requestBody }) {
+    try {
+      const providerUserSession = { webdavUrl: requestBody.form.webdavUrl }
+
+      const client = await this.getClient({ providerUserSession })
+      // call the list operation as a way to validate the url
+      await client.getDirectoryContents(defaultDirectory)
+
+      return providerUserSession
+    } catch (err: unknown) {
+      const errForLog = err instanceof Error ? err : new Error(String(err))
+      logger.error(errForLog, 'provider.webdav.error')
+      const code = isRecord(err) ? err.code : undefined
+      if (
+        typeof code === 'string' &&
+        ['ECONNREFUSED', 'ENOTFOUND'].includes(code)
+      ) {
+        throw new ProviderUserError({ message: 'Cannot connect to server' })
+      }
+      throw err
+    }
+  }
+
+  async getClientHelper({ url, ...options }) {
+    const { allowLocalUrls } = this
+    if (!validateURL(url, allowLocalUrls)) {
+      throw new Error('invalid webdav url')
+    }
+    const { protocol } = new URL(url)
+    const HttpAgentClass = getProtectedHttpAgent({
+      protocol,
+      allowLocalIPs: !allowLocalUrls,
+    })
+
+    return createClient(url, {
+      ...options,
+      [`${protocol}Agent`]: new HttpAgentClass(),
+    })
+  }
+
+  async list({ directory, providerUserSession }) {
+    return this.withErrorHandling('provider.webdav.list.error', async () => {
+      if (!this.isAuthenticated({ providerUserSession })) {
+        throw new ProviderAuthError()
+      }
+
+      const data = { items: [] }
+      const client = await this.getClient({ providerUserSession })
+
+      const dirResult:
+        | FileStat[]
+        | ResponseDataDetailed<FileStat[]> = await client.getDirectoryContents(
+        directory || '/',
+      )
+      const dir = Array.isArray(dirResult) ? dirResult : dirResult.data
+
+      dir.forEach((item) => {
+        const isFolder = item.type === 'directory'
+        const requestPath = encodeURIComponent(
+          `${directory || ''}/${item.basename}`,
+        )
+
+        let modifiedDate
+        try {
+          modifiedDate = new Date(item.lastmod).toISOString()
+        } catch (_e) {
+          // ignore invalid date from server
+        }
+
+        // Determine icon based on type and MIME type
+        let icon = 'file'
+        if (isFolder) {
+          icon = 'folder'
+        } else if (item.mime?.startsWith('video/')) {
+          icon = 'video'
+        }
+
+        data.items.push({
+          isFolder,
+          icon,
+          id: requestPath,
+          name: item.basename,
+          modifiedDate,
+          requestPath,
+          ...(!isFolder && {
+            mimeType: item.mime,
+            size: item.size,
+            thumbnail: null,
+          }),
+        })
+      })
+
+      return data
+    })
+  }
+
+  async download({ id, providerUserSession }) {
+    return this.withErrorHandling(
+      'provider.webdav.download.error',
+      async () => {
+        const client = await this.getClient({ providerUserSession })
+        const statResult:
+          | FileStat
+          | ResponseDataDetailed<FileStat> = await client.stat(id)
+        const stat = 'data' in statResult ? statResult.data : statResult
+        const stream = client.createReadStream(`/${id}`)
+        return { stream, size: stat.size }
+      },
+    )
+  }
+
+  async thumbnail({ id, providerUserSession }) {
+    // not implementing this because a public thumbnail from webdav will be used instead
+    logger.error(
+      'call to thumbnail is not implemented',
+      'provider.webdav.thumbnail.error',
+    )
+    throw new Error('call to thumbnail is not implemented')
+  }
+
+  async withErrorHandling(tag, fn) {
+    try {
+      return await fn()
+    } catch (err: unknown) {
+      let err2: unknown = err
+      const status = isRecord(err) ? err.status : undefined
+      if (status === 401) err2 = new ProviderAuthError()
+      const response = isRecord(err) ? err.response : undefined
+      if (response != null) {
+        err2 = new ProviderApiError(
+          'WebDAV API error',
+          typeof status === 'number' ? status : undefined,
+        )
+      }
+      const errForLog = err2 instanceof Error ? err2 : new Error(String(err2))
+      logger.error(errForLog, tag)
+      throw err2
+    }
+  }
+}
