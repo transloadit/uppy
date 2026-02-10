@@ -83,7 +83,9 @@ function getProtectedHttpAgent({
 
       const wantAll =
         typeof options === 'object' && options != null && options.all === true
-      const errorAddressFallback: string | dns.LookupAddress[] = wantAll ? [] : ''
+      const errorAddressFallback: string | dns.LookupAddress[] = wantAll
+        ? []
+        : ''
 
       if (err) {
         callback(err, errorAddressFallback, family)

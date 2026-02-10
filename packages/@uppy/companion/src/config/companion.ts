@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import validator from 'validator'
-import { defaultGetKey } from '../server/helpers/utils.js'
 import { isRecord } from '../server/helpers/type-guards.js'
+import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 
 type ProviderOption = {

@@ -20,4 +20,3 @@ type DefaultOptions = typeof import('../config/companion.js').defaultOptions
 // This type is intentionally tolerant, but gives known defaulted keys concrete types.
 export type CompanionRuntimeOptions = DeepWiden<DefaultOptions> &
   CompanionInitOptions
-

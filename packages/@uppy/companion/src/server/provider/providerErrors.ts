@@ -47,7 +47,7 @@ export async function withProviderErrorHandling<T>({
   }
 
   try {
-      return await fn()
+    return await fn()
   } catch (err) {
     const httpError = parseHttpError(err)
 

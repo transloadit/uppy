@@ -1,5 +1,5 @@
-import serialize from 'serialize-javascript'
 import type { NextFunction, Request, Response } from 'express'
+import serialize from 'serialize-javascript'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isOriginAllowed } from './connect.js'
 
@@ -60,11 +60,7 @@ export default function sendToken(
     return
   }
 
-  const clientOrigin = oAuthState.getFromState(
-    state,
-    'origin',
-    secret,
-  )
+  const clientOrigin = oAuthState.getFromState(state, 'origin', secret)
   if (typeof clientOrigin !== 'string' || clientOrigin.length === 0) {
     next()
     return

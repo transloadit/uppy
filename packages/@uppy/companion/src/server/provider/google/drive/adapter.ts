@@ -25,10 +25,10 @@ export type DriveItem = {
   }
 } & Record<string, unknown>
 
-export type DriveListResponse = { files?: DriveItem[]; nextPageToken?: string } & Record<
-  string,
-  unknown
->
+export type DriveListResponse = {
+  files?: DriveItem[]
+  nextPageToken?: string
+} & Record<string, unknown>
 export type DriveSharedDrivesResponse = { drives?: DriveItem[] } & Record<
   string,
   unknown
@@ -104,7 +104,8 @@ const getItemSubList = (item: DriveListResponse): DriveItem[] => {
     return (
       isFolder(i) ||
       !isGsuiteFile(i.mimeType) ||
-      (typeof i.mimeType === 'string' && allowedGSuiteTypes.includes(i.mimeType))
+      (typeof i.mimeType === 'string' &&
+        allowedGSuiteTypes.includes(i.mimeType))
     )
   })
 }

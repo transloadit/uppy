@@ -1,6 +1,6 @@
+import type { NextFunction, Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord } from '../helpers/type-guards.js'
-import type { NextFunction, Request, Response } from 'express'
 
 /**
  * Derived from `cors` npm package.
@@ -46,7 +46,9 @@ function encodeStateAndRedirect(
   // pass along grant's dynamic config (if specified for the provider in its grant config `dynamic` section)
   // this is needed for things like custom oauth domain (e.g. webdav)
   const dynamicKeys: string[] = Array.isArray(providerGrantConfig?.dynamic)
-    ? providerGrantConfig.dynamic.filter((i): i is string => typeof i === 'string')
+    ? providerGrantConfig.dynamic.filter(
+        (i): i is string => typeof i === 'string',
+      )
     : []
   const grantDynamicConfig = Object.fromEntries(
     dynamicKeys.flatMap((dynamicKey) => {

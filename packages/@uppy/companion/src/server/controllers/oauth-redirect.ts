@@ -32,9 +32,7 @@ export default function oauthRedirect(req: Request, res: Response): void {
     return
   }
   if (!req.companion.options.server.oauthDomain) {
-    res.redirect(
-      buildURL(`/connect/${oauthProvider}/callback?${params}`, true),
-    )
+    res.redirect(buildURL(`/connect/${oauthProvider}/callback?${params}`, true))
     return
   }
 
@@ -43,11 +41,7 @@ export default function oauthRedirect(req: Request, res: Response): void {
     res.status(400).send('Cannot find state in session')
     return
   }
-  const handler = oAuthState.getFromState(
-    state,
-    'companionInstance',
-    secret,
-  )
+  const handler = oAuthState.getFromState(state, 'companionInstance', secret)
   if (typeof handler !== 'string' || handler.length === 0) {
     res.status(400).send('Invalid Host in state')
     return

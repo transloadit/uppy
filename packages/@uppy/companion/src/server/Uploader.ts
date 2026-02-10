@@ -193,7 +193,8 @@ function validateOptions(options: UploaderOptions): void {
 
     const validateUrl = (url: unknown): void => {
       if (url == null) return
-      if (typeof url !== 'string') throw new ValidationError('invalid destination url')
+      if (typeof url !== 'string')
+        throw new ValidationError('invalid destination url')
       const validatorOpts = { require_protocol: true, require_tld: false }
       if (!validator.isURL(url, validatorOpts)) {
         throw new ValidationError('invalid destination url')
@@ -396,7 +397,8 @@ export default class Uploader {
     const writeStream = createWriteStream(this.tmpPath)
 
     const onData = (chunk: Buffer | string) => {
-      const len = typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length
+      const len =
+        typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length
       this.downloadedBytes += len
       if (
         exceedsMaxFileSize(
@@ -781,7 +783,8 @@ export default class Uploader {
     // upload progress
     let bytesUploaded = 0
     stream.on('data', (data: Buffer | string) => {
-      bytesUploaded += typeof data === 'string' ? Buffer.byteLength(data) : data.length
+      bytesUploaded +=
+        typeof data === 'string' ? Buffer.byteLength(data) : data.length
       this.onProgress(bytesUploaded, undefined)
     })
 

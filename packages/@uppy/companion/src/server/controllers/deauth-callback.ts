@@ -1,6 +1,6 @@
-import { respondWithError } from '../provider/error.js'
-import { isRecord } from '../helpers/type-guards.js'
 import type { NextFunction, Request, Response } from 'express'
+import { isRecord } from '../helpers/type-guards.js'
+import { respondWithError } from '../provider/error.js'
 
 export default async function deauthCallback(
   req: Request,

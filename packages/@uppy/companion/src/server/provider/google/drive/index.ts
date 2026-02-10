@@ -163,14 +163,17 @@ export class Drive extends Provider {
       'provider.drive.list.error',
       async () => {
         if (!isRecord(options)) throw new Error('Invalid options')
-        const directory = typeof options.directory === 'string' ? options.directory : 'root'
+        const directory =
+          typeof options.directory === 'string' ? options.directory : 'root'
         const query = isRecord(options.query) ? options.query : {}
-        const cursor = typeof query.cursor === 'string' ? query.cursor : undefined
+        const cursor =
+          typeof query.cursor === 'string' ? query.cursor : undefined
         const providerUserSession = isRecord(options.providerUserSession)
           ? options.providerUserSession
           : null
         const token =
-          providerUserSession && typeof providerUserSession.accessToken === 'string'
+          providerUserSession &&
+          typeof providerUserSession.accessToken === 'string'
             ? providerUserSession.accessToken
             : undefined
         if (!token) throw new ProviderAuthError()

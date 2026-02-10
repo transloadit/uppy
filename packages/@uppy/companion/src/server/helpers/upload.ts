@@ -1,7 +1,7 @@
+import type { Readable as NodeReadableStream } from 'node:stream'
+import type { Request, Response } from 'express'
 import logger from '../logger.js'
 import Uploader from '../Uploader.js'
-import type { Request, Response } from 'express'
-import type { Readable as NodeReadableStream } from 'node:stream'
 import { isRecord } from './type-guards.js'
 
 export async function startDownUpload({
@@ -23,7 +23,9 @@ export async function startDownUpload({
   const stream = downloadResult.stream
   const maybeSize = downloadResult.size
 
-  const isNodeReadableStream = (value: unknown): value is NodeReadableStream => {
+  const isNodeReadableStream = (
+    value: unknown,
+  ): value is NodeReadableStream => {
     if (!value || (typeof value !== 'object' && typeof value !== 'function'))
       return false
     return (

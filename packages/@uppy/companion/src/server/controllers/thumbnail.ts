@@ -1,6 +1,6 @@
-import { respondWithError } from '../provider/error.js'
-import { isRecord } from '../helpers/type-guards.js'
 import type { NextFunction, Request, Response } from 'express'
+import { isRecord } from '../helpers/type-guards.js'
+import { respondWithError } from '../provider/error.js'
 
 async function thumbnail(
   req: Request,
@@ -25,7 +25,8 @@ async function thumbnail(
     const stream = out.stream
     const contentType = out.contentType
     const pipe =
-      stream != null && (typeof stream === 'object' || typeof stream === 'function')
+      stream != null &&
+      (typeof stream === 'object' || typeof stream === 'function')
         ? Reflect.get(stream, 'pipe')
         : undefined
     if (typeof pipe !== 'function') {

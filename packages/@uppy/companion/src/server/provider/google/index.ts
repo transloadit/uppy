@@ -60,7 +60,8 @@ export async function logout({
   const isRecord = (value: unknown): value is Record<string, unknown> =>
     !!value && typeof value === 'object' && !Array.isArray(value)
   const token =
-    isRecord(providerUserSession) && typeof providerUserSession.accessToken === 'string'
+    isRecord(providerUserSession) &&
+    typeof providerUserSession.accessToken === 'string'
       ? providerUserSession.accessToken
       : undefined
   if (!token) throw new Error('Missing accessToken')

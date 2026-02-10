@@ -1,8 +1,9 @@
 /**
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
-import serialize from 'serialize-javascript'
+
 import type { NextFunction, Request, Response } from 'express'
+import serialize from 'serialize-javascript'
 import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord } from '../helpers/type-guards.js'
@@ -47,11 +48,7 @@ export default function callback(
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
   const origin =
     grantDynamic.state &&
-    oAuthState.getFromState(
-      grantDynamic.state,
-      'origin',
-      secret,
-    )
+    oAuthState.getFromState(grantDynamic.state, 'origin', secret)
   const originString = typeof origin === 'string' ? origin : undefined
 
   const accessToken =

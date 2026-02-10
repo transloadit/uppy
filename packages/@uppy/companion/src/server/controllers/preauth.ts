@@ -1,7 +1,7 @@
+import type { Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.js'
 import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'
-import type { Request, Response } from 'express'
 
 export default function preauth(req: Request, res: Response): void {
   const body = isRecord(req.body) ? req.body : null
@@ -15,7 +15,8 @@ export default function preauth(req: Request, res: Response): void {
   const providerConfig =
     req.companion.options.providerOptions[req.params.providerName]
   const credentialsURL =
-    isRecord(providerConfig) && typeof providerConfig.credentialsURL === 'string'
+    isRecord(providerConfig) &&
+    typeof providerConfig.credentialsURL === 'string'
       ? providerConfig.credentialsURL
       : undefined
   if (!credentialsURL) {

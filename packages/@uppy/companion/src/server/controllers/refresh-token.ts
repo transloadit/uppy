@@ -1,8 +1,8 @@
+import type { NextFunction, Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.js'
 import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
-import type { NextFunction, Request, Response } from 'express'
 
 // https://www.dropboxforum.com/t5/Dropbox-API-Support-Feedback/Get-refresh-token-from-access-token/td-p/596739
 // https://developers.dropbox.com/oauth-guide
@@ -63,7 +63,9 @@ export default async function refreshToken(
       refreshToken,
     })
     const accessToken =
-      isRecord(out) && typeof out.accessToken === 'string' ? out.accessToken : undefined
+      isRecord(out) && typeof out.accessToken === 'string'
+        ? out.accessToken
+        : undefined
     if (!accessToken) {
       throw new Error('Provider did not return an accessToken')
     }

@@ -108,11 +108,7 @@ export function warn(msg: unknown, tag?: string, traceId?: string): void {
 /**
  * ERROR level log.
  */
-export function error(
-  msg: unknown,
-  tag?: string,
-  traceId?: string,
-): void {
+export function error(msg: unknown, tag?: string, traceId?: string): void {
   log({ arg: msg, tag, level: 'error', traceId, color: ['bold', 'red'] })
 }
 

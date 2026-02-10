@@ -18,11 +18,17 @@ export default function s3Client(
   if (s3Value && isRecord(s3Value)) {
     const s3 = s3Value
 
-    const getString = (obj: Record<string, unknown>, key: string): string | undefined => {
+    const getString = (
+      obj: Record<string, unknown>,
+      key: string,
+    ): string | undefined => {
       const v = obj[key]
       return typeof v === 'string' ? v : undefined
     }
-    const getBool = (obj: Record<string, unknown>, key: string): boolean | undefined => {
+    const getBool = (
+      obj: Record<string, unknown>,
+      key: string,
+    ): boolean | undefined => {
       const v = obj[key]
       return typeof v === 'boolean' ? v : undefined
     }
@@ -33,8 +39,9 @@ export default function s3Client(
       )
     }
 
-    const rawClientOptions =
-      isRecord(s3.awsClientOptions) ? s3.awsClientOptions : undefined
+    const rawClientOptions = isRecord(s3.awsClientOptions)
+      ? s3.awsClientOptions
+      : undefined
     if (
       rawClientOptions &&
       (rawClientOptions.accessKeyId || rawClientOptions.secretAccessKey)
@@ -57,9 +64,7 @@ export default function s3Client(
     let endpoint: unknown = s3.endpoint
     if (typeof endpoint === 'string') {
       // TODO: deprecate those replacements in favor of what AWS SDK supports out of the box.
-      endpoint = endpoint
-        .replace(/{service}/, 's3')
-        .replace(/{region}/, region)
+      endpoint = endpoint.replace(/{service}/, 's3').replace(/{region}/, region)
     }
 
     let s3ClientOptions: S3ClientConfig = {

@@ -4,12 +4,12 @@ import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import promBundle from 'express-prom-bundle'
 
 import packageJson from '../../package.json' with { type: 'json' }
+import type { CompanionRuntimeOptions } from '../types/companion-options.js'
 import * as tokenService from './helpers/jwt.js'
 import { getURLBuilder } from './helpers/utils.js'
 import * as logger from './logger.js'
 import { isOAuthProvider } from './provider/Provider.js'
 import getS3Client from './s3-client.js'
-import type { CompanionRuntimeOptions } from '../types/companion-options.js'
 
 export const hasSessionAndProvider: RequestHandler = (req, res, next) => {
   if (!req.session) {

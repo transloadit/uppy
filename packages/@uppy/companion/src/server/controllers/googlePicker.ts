@@ -1,5 +1,5 @@
-import express from 'express'
 import type { Request, Response, Router } from 'express'
+import express from 'express'
 import { z } from 'zod'
 import { downloadURL } from '../download.js'
 import { validateURL } from '../helpers/request.js'
@@ -38,14 +38,20 @@ const get = async (req: Request, res: Response): Promise<void> => {
     }
     const { accessToken, platform } = parsedBody.data
 
-    if (platform === 'photos' && !validateURL(parsedBody.data.url, allowLocalUrls)) {
+    if (
+      platform === 'photos' &&
+      !validateURL(parsedBody.data.url, allowLocalUrls)
+    ) {
       res.status(400).json({ error: 'Invalid URL' })
       return
     }
 
     const download = () => {
       if (platform === 'drive') {
-        return streamGoogleFile({ token: accessToken, id: parsedBody.data.fileId })
+        return streamGoogleFile({
+          token: accessToken,
+          id: parsedBody.data.fileId,
+        })
       }
       return downloadURL(parsedBody.data.url, allowLocalUrls, req.id, {
         headers: getAuthHeader(accessToken),

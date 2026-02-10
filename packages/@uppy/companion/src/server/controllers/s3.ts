@@ -1,3 +1,4 @@
+import type { S3Client } from '@aws-sdk/client-s3'
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -5,18 +6,17 @@ import {
   ListPartsCommand,
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
-import type { S3Client } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import express from 'express'
 import type { NextFunction, Request, Response, Router } from 'express'
+import express from 'express'
+import { isRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
   rfc2047EncodeMetadata,
   truncateFilename,
 } from '../helpers/utils.js'
-import { isRecord } from '../helpers/type-guards.js'
 
 type S3ControllerConfig = {
   acl?: string | null
@@ -137,12 +137,16 @@ export default function s3(configIn: unknown): Router {
    *  - url - The URL to upload to.
    *  - fields - Form fields to send along.
    */
-	  function getUploadParameters(req: Request, res: Response, next: NextFunction) {
+  function getUploadParameters(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     const client = getS3Client(req, res)
     if (!client) return
 
-	    const filename = req.query.filename
-	    const metadata = isRecord(req.query.metadata) ? req.query.metadata : {}
+    const filename = req.query.filename
+    const metadata = isRecord(req.query.metadata) ? req.query.metadata : {}
 
     // Validate filename is provided and non-empty
     if (typeof filename !== 'string' || filename === '') {
@@ -153,11 +157,11 @@ export default function s3(configIn: unknown): Router {
       return
     }
 
-	    const maxFilenameLength =
-	      typeof req.companion.options.maxFilenameLength === 'number'
-	        ? req.companion.options.maxFilenameLength
-	        : filename.length
-	    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
+    const maxFilenameLength =
+      typeof req.companion.options.maxFilenameLength === 'number'
+        ? req.companion.options.maxFilenameLength
+        : filename.length
+    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
 
     const bucket = getBucket({
       bucketOrFn: config.bucket,
@@ -166,8 +170,8 @@ export default function s3(configIn: unknown): Router {
       metadata,
     })
 
-	    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
-	    if (typeof key !== 'string') {
+    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
+    if (typeof key !== 'string') {
       res.status(500).json({
         error:
           'S3 uploads are misconfigured: filename returned from `getKey` must be a string',
@@ -182,11 +186,11 @@ export default function s3(configIn: unknown): Router {
 
     if (config.acl != null) fields.acl = config.acl
 
-	    Object.keys(metadata).forEach((metadataKey) => {
-	      const value = metadata[metadataKey]
-	      if (typeof value !== 'string') return
-	      fields[`x-amz-meta-${metadataKey}`] = value
-	    })
+    Object.keys(metadata).forEach((metadataKey) => {
+      const value = metadata[metadataKey]
+      if (typeof value !== 'string') return
+      fields[`x-amz-meta-${metadataKey}`] = value
+    })
 
     createPresignedPost(client, {
       Bucket: bucket,
@@ -218,12 +222,16 @@ export default function s3(configIn: unknown): Router {
    *  - key - The object key in the S3 bucket.
    *  - uploadId - The ID of this multipart upload, to be used in later requests.
    */
-	  function createMultipartUpload(req: Request, res: Response, next: NextFunction) {
-	    const client = getS3Client(req, res)
-	    if (!client) return
+  function createMultipartUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const client = getS3Client(req, res)
+    if (!client) return
 
-	    const { type, filename } = req.body
-	    const metadata = isRecord(req.body?.metadata) ? req.body.metadata : {}
+    const { type, filename } = req.body
+    const metadata = isRecord(req.body?.metadata) ? req.body.metadata : {}
 
     // Validate filename is provided and non-empty
     if (typeof filename !== 'string' || filename === '') {
@@ -234,13 +242,13 @@ export default function s3(configIn: unknown): Router {
       return
     }
 
-	    const maxFilenameLength =
-	      typeof req.companion.options.maxFilenameLength === 'number'
-	        ? req.companion.options.maxFilenameLength
-	        : filename.length
-	    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
+    const maxFilenameLength =
+      typeof req.companion.options.maxFilenameLength === 'number'
+        ? req.companion.options.maxFilenameLength
+        : filename.length
+    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
 
-	    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
+    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
 
     const bucket = getBucket({
       bucketOrFn: config.bucket,
@@ -291,47 +299,47 @@ export default function s3(configIn: unknown): Router {
    *     - ETag - a hash of this part's contents, used to refer to it.
    *     - Size - size of this part.
    */
-	  function getUploadedParts(req: Request, res: Response, next: NextFunction) {
+  function getUploadedParts(req: Request, res: Response, next: NextFunction) {
     const client = getS3Client(req, res)
     if (!client) return
 
     const { uploadId } = req.params
     const { key } = req.query
 
-	    if (typeof key !== 'string') {
+    if (typeof key !== 'string') {
       res.status(400).json({
         error:
           's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
       })
-	      return
-	    }
-      const keyStr = key
+      return
+    }
+    const keyStr = key
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     const parts: unknown[] = []
 
-	    function listPartsPage(startAt?: string) {
-	      client
-	        .send(
-		          new ListPartsCommand({
-	            Bucket: bucket,
-	            Key: keyStr,
-	            UploadId: uploadId,
-		            PartNumberMarker: startAt,
-		          }),
-	        )
-	        .then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
+    function listPartsPage(startAt?: string) {
+      client
+        .send(
+          new ListPartsCommand({
+            Bucket: bucket,
+            Key: keyStr,
+            UploadId: uploadId,
+            PartNumberMarker: startAt,
+          }),
+        )
+        .then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
           if (Parts) parts.push(...Parts)
 
-	          if (IsTruncated) {
-	            // Get the next page.
-	            listPartsPage(NextPartNumberMarker)
-	          } else {
-	            res.json(parts)
-	          }
-	        }, next)
-	    }
+          if (IsTruncated) {
+            // Get the next page.
+            listPartsPage(NextPartNumberMarker)
+          } else {
+            res.json(parts)
+          }
+        }, next)
+    }
     listPartsPage()
   }
 
@@ -397,7 +405,11 @@ export default function s3(configIn: unknown): Router {
    *  - presignedUrls - The URLs to upload to, including signed query parameters,
    *                    in an object mapped to part numbers.
    */
-  function batchSignPartsUpload(req: Request, res: Response, next: NextFunction) {
+  function batchSignPartsUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     const client = getS3Client(req, res)
     if (!client) return
 
@@ -465,7 +477,11 @@ export default function s3(configIn: unknown): Router {
    * Response JSON:
    *   Empty.
    */
-  function abortMultipartUpload(req: Request, res: Response, next: NextFunction) {
+  function abortMultipartUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     const client = getS3Client(req, res)
     if (!client) return
 
@@ -505,7 +521,11 @@ export default function s3(configIn: unknown): Router {
    * Response JSON:
    *  - location - The full URL to the object in the S3 bucket.
    */
-  function completeMultipartUpload(req: Request, res: Response, next: NextFunction) {
+  function completeMultipartUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     const client = getS3Client(req, res)
     if (!client) return
 
@@ -606,7 +626,11 @@ export default function s3(configIn: unknown): Router {
    * - bucket: the S3 bucket name.
    * - region: the region where that bucket is stored.
    */
-  function getTemporarySecurityCredentials(req: Request, res: Response, next: NextFunction) {
+  function getTemporarySecurityCredentials(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
     const sts = getSTSClient()
     if (!sts || typeof config.bucket !== 'string') {
       res.status(400).json({
@@ -615,7 +639,8 @@ export default function s3(configIn: unknown): Router {
       return
     }
 
-    sts.send(
+    sts
+      .send(
         new GetFederationTokenCommand({
           // Name of the federated user. The name is used as an identifier for the
           // temporary security credentials (such as Bob). For example, you can
@@ -631,7 +656,8 @@ export default function s3(configIn: unknown): Router {
           DurationSeconds: config.expires,
           Policy: JSON.stringify(policy),
         }),
-      ).then((response) => {
+      )
+      .then((response) => {
         // This is a public unprotected endpoint.
         // If you implement your own custom endpoint with user authentication you
         // should probably use `private` instead of `public`.
