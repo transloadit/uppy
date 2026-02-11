@@ -204,7 +204,7 @@ describe('uploader', () => {
 
     const uploader = new Uploader(opts)
     const originalTryDeleteTmpPath = uploader.tryDeleteTmpPath.bind(uploader)
-    uploader.tryDeleteTmpPath = () => {
+    uploader.tryDeleteTmpPath = async () => {
       // validate that the tmp file has been downloaded and saved into the file path
       // must do it before it gets deleted
       const tmpPath = uploader.tmpPath
@@ -215,7 +215,7 @@ describe('uploader', () => {
       expect(fileInfo.isFile()).toBe(true)
       expect(fileInfo.size).toBe(fileContent.length)
 
-      originalTryDeleteTmpPath()
+      await originalTryDeleteTmpPath()
     }
     const uploadToken = uploader.token
     expect(uploadToken).toBeTruthy()

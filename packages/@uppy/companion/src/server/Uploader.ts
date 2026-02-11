@@ -481,8 +481,11 @@ export default class Uploader {
     }
   }
 
-  tryDeleteTmpPath(): void {
-    if (this.tmpPath) unlink(this.tmpPath).catch(() => {})
+  async tryDeleteTmpPath(): Promise<void> {
+    if (!this.tmpPath) return
+    try {
+      await unlink(this.tmpPath)
+    } catch {}
   }
 
   async tryUploadStream(
