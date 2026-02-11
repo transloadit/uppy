@@ -1,0 +1,157 @@
+import type { NextFunction, Request, Response } from 'express'
+import * as oAuthState from '../helpers/oauth-state.ts'
+import { isRecord } from '../helpers/type-guards.ts'
+
+/**
+ * Derived from `cors` npm package.
+ * @see https://github.com/expressjs/cors/blob/791983ebc0407115bc8ae8e64830d440da995938/lib/index.js#L19-L34
+ */
+function isOriginAllowed(origin: string, allowedOrigins: unknown): boolean {
+  if (Array.isArray(allowedOrigins)) {
+    return allowedOrigins.some((allowedOrigin) =>
+      isOriginAllowed(origin, allowedOrigin),
+    )
+  }
+  if (typeof allowedOrigins === 'string') {
+    return origin === allowedOrigins
+  }
+  if (allowedOrigins instanceof RegExp) {
+    return allowedOrigins.test(origin)
+  }
+  return !!allowedOrigins
+}
+
+const queryString = (params: Record<string, string>, prefix = '?'): string => {
+  const str = new URLSearchParams(params).toString()
+  return str ? `${prefix}${str}` : ''
+}
+
+function encodeStateAndRedirect(
+  req: Request,
+  res: Response,
+  stateObj: oAuthState.OAuthState,
+): void {
+  const { secret } = req.companion.options
+  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+    res.sendStatus(500)
+    return
+  }
+  const state = oAuthState.encodeState(stateObj, secret)
+  const { providerClass, providerGrantConfig } = req.companion
+  if (!providerClass || !req.companion.buildURL) {
+    res.sendStatus(400)
+    return
+  }
+
+  // pass along grant's dynamic config (if specified for the provider in its grant config `dynamic` section)
+  // this is needed for things like custom oauth domain (e.g. webdav)
+  const dynamicKeys: string[] = Array.isArray(providerGrantConfig?.['dynamic'])
+    ? providerGrantConfig['dynamic'].filter(
+        (i): i is string => typeof i === 'string',
+      )
+    : []
+  const grantDynamicConfig = Object.fromEntries(
+    dynamicKeys.flatMap((dynamicKey) => {
+      const queryValue = req.query[dynamicKey]
+      const queryValueString =
+        typeof queryValue === 'string'
+          ? queryValue
+          : Array.isArray(queryValue) && typeof queryValue[0] === 'string'
+            ? queryValue[0]
+            : undefined
+
+      // note: when using credentialsURL (dynamic oauth credentials), dynamic has ['key', 'secret', 'redirect_uri']
+      // but in that case, query string is empty, so we need to only fetch these parameters from QS if they exist.
+      if (!queryValueString) return []
+      return [[dynamicKey, queryValueString]]
+    }),
+  )
+
+  const { oauthProvider } = providerClass
+  if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
+    res.sendStatus(400)
+    return
+  }
+  const qs = queryString({
+    ...grantDynamicConfig,
+    state,
+  })
+
+  // Now we redirect to grant's /connect endpoint, see `app.use(Grant(grantConfig))`
+  res.redirect(req.companion.buildURL(`/connect/${oauthProvider}${qs}`, true))
+}
+
+function getClientOrigin(base64EncodedState: unknown): string | undefined {
+  if (typeof base64EncodedState !== 'string') return undefined
+  try {
+    const parsed: unknown = JSON.parse(atob(base64EncodedState))
+    if (!isRecord(parsed)) return undefined
+    const origin = parsed['origin']
+    return typeof origin === 'string' ? origin : undefined
+  } catch {
+    return undefined
+  }
+}
+
+/**
+ * Initializes the oAuth flow for a provider.
+ *
+ * The client has open a new tab and is about to be redirected to the auth
+ * provider. When the user will return to companion, we'll have to send the auth
+ * token back to Uppy with `window.postMessage()`.
+ * To prevent other tabs and unauthorized origins from accessing that token, we
+ * reuse origin(s) from `corsOrigins` to limit the scope of `postMessage()`, which
+ * has `targetOrigin` parameter, required for cross-origin messages (i.e. if Uppy
+ * and Companion are served from different origins).
+ * We support multiple origins in `corsOrigins`, we have to figure out which
+ * origin the current connect request is coming from. Because the OAuth window
+ * was opened with `window.open()`, starting a new browsing context, the request
+ * is not cross origin and we don't have a `Origin` header to work with.
+ * That's why we use the client-provided base64-encoded parameter, check if it
+ * matches origin(s) allowed in `corsOrigins` Companion option, and use that as
+ * our `targetOrigin` for the `window.postMessage()` call (see `send-token.js`).
+ */
+export default function connect(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const stateObj = oAuthState.generateState()
+
+  if (req.companion.options.server.oauthDomain && req.companion.buildURL) {
+    stateObj.companionInstance = req.companion.buildURL('', true)
+  }
+
+  const preAuthTokenValue = req.query['uppyPreAuthToken']
+  if (typeof preAuthTokenValue === 'string' && preAuthTokenValue.length > 0) {
+    stateObj.preAuthToken = preAuthTokenValue
+  }
+
+  // Get the computed header generated by `cors` in a previous middleware.
+  stateObj.origin = res.getHeader('Access-Control-Allow-Origin')
+  let clientOrigin: string | undefined
+  if (!stateObj.origin) {
+    clientOrigin = getClientOrigin(req.query['state'])
+  }
+  if (!stateObj.origin && clientOrigin) {
+    const { corsOrigins } = req.companion.options
+
+    if (typeof corsOrigins === 'function') {
+      corsOrigins(clientOrigin, (err: unknown, finalOrigin: unknown) => {
+        if (err) {
+          next(err)
+          return
+        }
+        stateObj.origin = finalOrigin
+        encodeStateAndRedirect(req, res, stateObj)
+      })
+      return
+    }
+    if (isOriginAllowed(clientOrigin, req.companion.options['corsOrigins'])) {
+      stateObj.origin = clientOrigin
+    }
+  }
+  encodeStateAndRedirect(req, res, stateObj)
+}
+
+export { isOriginAllowed }

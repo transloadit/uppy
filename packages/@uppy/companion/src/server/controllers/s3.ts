@@ -1,0 +1,734 @@
+import type { S3Client } from '@aws-sdk/client-s3'
+import {
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
+  CreateMultipartUploadCommand,
+  ListPartsCommand,
+  UploadPartCommand,
+} from '@aws-sdk/client-s3'
+import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
+import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import type { NextFunction, Request, Response, Router } from 'express'
+import express from 'express'
+import { isRecord } from '../helpers/type-guards.ts'
+import {
+  getBucket,
+  rfc2047EncodeMetadata,
+  truncateFilename,
+} from '../helpers/utils.ts'
+
+type S3ControllerConfig = {
+  acl?: string | null
+  bucket?: unknown
+  conditions?: unknown[]
+  expires?: number
+  getKey?: unknown
+  key?: unknown
+  region?: unknown
+  secret?: unknown
+} & Record<string, unknown>
+
+function isS3ControllerConfig(value: unknown): value is S3ControllerConfig {
+  return isRecord(value)
+}
+
+export default function s3(configIn: unknown): Router {
+  if (!isS3ControllerConfig(configIn)) {
+    return express.Router()
+  }
+  const config = configIn
+
+  if (typeof config.acl !== 'string' && config.acl != null) {
+    throw new TypeError('s3: The `acl` option must be a string or null')
+  }
+  if (typeof config.getKey !== 'function') {
+    throw new TypeError('s3: The `getKey` option must be a function')
+  }
+  const expires = (() => {
+    const value = config.expires
+    if (typeof value !== 'number') {
+      throw new TypeError('s3: The `expires` option must be a number')
+    }
+    return value
+  })()
+  type GetKeyFn = (args: {
+    req: Request
+    filename: string
+    metadata: Record<string, unknown>
+  }) => unknown
+  const isGetKeyFn = (value: unknown): value is GetKeyFn =>
+    typeof value === 'function'
+  const getKeyCandidate = config.getKey
+  if (!isGetKeyFn(getKeyCandidate)) {
+    throw new TypeError('s3: The `getKey` option must be a function')
+  }
+  const getKeyFn = getKeyCandidate
+
+  type PresignedPostCondition =
+    | ['eq', string, string]
+    | Record<string, string>
+    | ['starts-with', string, string]
+    | ['content-length-range', number, number]
+
+  const isCondition = (value: unknown): value is PresignedPostCondition => {
+    if (Array.isArray(value)) {
+      if (
+        value.length === 3 &&
+        value[0] === 'eq' &&
+        typeof value[1] === 'string' &&
+        typeof value[2] === 'string'
+      )
+        return true
+      if (
+        value.length === 3 &&
+        value[0] === 'starts-with' &&
+        typeof value[1] === 'string' &&
+        typeof value[2] === 'string'
+      )
+        return true
+      if (
+        value.length === 3 &&
+        value[0] === 'content-length-range' &&
+        typeof value[1] === 'number' &&
+        typeof value[2] === 'number'
+      )
+        return true
+      return false
+    }
+    return (
+      isRecord(value) &&
+      Object.values(value).every((v) => typeof v === 'string')
+    )
+  }
+  const conditions: PresignedPostCondition[] = []
+  const configuredConditions = config.conditions
+  if (configuredConditions != null) {
+    if (!Array.isArray(configuredConditions)) {
+      throw new TypeError('s3: The `conditions` option must be an array')
+    }
+    configuredConditions.forEach((condition) => {
+      if (!isCondition(condition)) {
+        throw new TypeError(
+          's3: The `conditions` option contains an invalid condition',
+        )
+      }
+      conditions.push(condition)
+    })
+  }
+
+  function isS3Client(value: unknown): value is S3Client {
+    if (!value || (typeof value !== 'object' && typeof value !== 'function'))
+      return false
+    return typeof Reflect.get(value, 'send') === 'function'
+  }
+
+  function getS3Client(
+    req: Request,
+    res: Response,
+    createPresignedPostMode = false,
+  ): S3Client | undefined {
+    const clientCandidate = createPresignedPostMode
+      ? req.companion.s3ClientCreatePresignedPost
+      : req.companion.s3Client
+    if (!isS3Client(clientCandidate))
+      res.status(400).json({
+        error: 'This Companion server does not support uploading to S3',
+      })
+    return isS3Client(clientCandidate) ? clientCandidate : undefined
+  }
+
+  /**
+   * Get upload paramaters for a simple direct upload.
+   *
+   * Expected query parameters:
+   *  - filename - The name of the file, given to the `config.getKey`
+   *    option to determine the object key name in the S3 bucket.
+   *  - type - The MIME type of the file.
+   *  - metadata - Key/value pairs configuring S3 metadata. Both must be ASCII-safe.
+   *    Query parameters are formatted like `metadata[name]=value`.
+   *
+   * Response JSON:
+   *  - method - The HTTP method to use to upload.
+   *  - url - The URL to upload to.
+   *  - fields - Form fields to send along.
+   */
+  function getUploadParameters(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const client = getS3Client(req, res, true)
+    if (!client) return
+
+    const filename = req.query['filename']
+    const metadata = isRecord(req.query['metadata'])
+      ? req.query['metadata']
+      : {}
+
+    // Validate filename is provided and non-empty
+    if (typeof filename !== 'string' || filename === '') {
+      res.status(400).json({
+        error:
+          's3: the "filename" query parameter is required and must be a non-empty string',
+      })
+      return
+    }
+
+    const maxFilenameLength =
+      typeof req.companion.options['maxFilenameLength'] === 'number'
+        ? req.companion.options['maxFilenameLength']
+        : filename.length
+    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
+
+    const bucket = getBucket({
+      bucketOrFn: config.bucket,
+      req,
+      filename: truncatedFilename,
+      metadata,
+    })
+
+    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
+    if (typeof key !== 'string') {
+      res.status(500).json({
+        error:
+          'S3 uploads are misconfigured: filename returned from `getKey` must be a string',
+      })
+      return
+    }
+
+    const fields: Record<string, string> = {
+      success_action_status: '201',
+      'content-type':
+        typeof req.query['type'] === 'string' ? req.query['type'] : '',
+    }
+
+    if (config.acl != null) fields['acl'] = config.acl
+
+    Object.keys(metadata).forEach((metadataKey) => {
+      const value = metadata[metadataKey]
+      if (typeof value !== 'string') return
+      fields[`x-amz-meta-${metadataKey}`] = value
+    })
+
+    // `createPresignedPost` sometimes pulls in a nested copy of `@aws-sdk/client-s3`,
+    // which makes the `S3Client` type nominally incompatible. The instance is still
+    // compatible at runtime.
+    createPresignedPost(
+      client as unknown as Parameters<typeof createPresignedPost>[0],
+      {
+        Bucket: bucket,
+        Expires: expires,
+        Fields: fields,
+        Conditions: conditions,
+        Key: key,
+      },
+    ).then((data) => {
+      res.json({
+        method: 'POST',
+        url: data.url,
+        fields: data.fields,
+        expires,
+      })
+    }, next)
+  }
+
+  /**
+   * Create an S3 multipart upload. With this, files can be uploaded in chunks of 5MB+ each.
+   *
+   * Expected JSON body:
+   *  - filename - The name of the file, given to the `config.getKey`
+   *    option to determine the object key name in the S3 bucket.
+   *  - type - The MIME type of the file.
+   *  - metadata - An object with the key/value pairs to set as metadata.
+   *    Keys and values must be ASCII-safe for S3.
+   *
+   * Response JSON:
+   *  - key - The object key in the S3 bucket.
+   *  - uploadId - The ID of this multipart upload, to be used in later requests.
+   */
+  function createMultipartUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const client = getS3Client(req, res)
+    if (!client) return
+
+    const { type, filename } = req.body
+    const metadata = isRecord(req.body?.metadata) ? req.body.metadata : {}
+
+    // Validate filename is provided and non-empty
+    if (typeof filename !== 'string' || filename === '') {
+      res.status(400).json({
+        error:
+          's3: the "filename" field is required and must be a non-empty string',
+      })
+      return
+    }
+
+    const maxFilenameLength =
+      typeof req.companion.options['maxFilenameLength'] === 'number'
+        ? req.companion.options['maxFilenameLength']
+        : filename.length
+    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
+
+    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
+
+    const bucket = getBucket({
+      bucketOrFn: config.bucket,
+      req,
+      filename: truncatedFilename,
+      metadata,
+    })
+
+    if (typeof key !== 'string') {
+      res.status(500).json({
+        error: 's3: filename returned from `getKey` must be a string',
+      })
+      return
+    }
+    if (typeof type !== 'string') {
+      res.status(400).json({ error: 's3: content type must be a string' })
+      return
+    }
+
+    const params = {
+      Bucket: bucket,
+      Key: key,
+      ContentType: type,
+      Metadata: rfc2047EncodeMetadata(metadata),
+    }
+
+    if (config.acl != null) Reflect.set(params, 'ACL', config.acl)
+
+    client.send(new CreateMultipartUploadCommand(params)).then((data) => {
+      res.json({
+        key: data.Key,
+        uploadId: data.UploadId,
+        bucket: data.Bucket,
+      })
+    }, next)
+  }
+
+  /**
+   * List parts that have been fully uploaded so far.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   * Response JSON:
+   *  - An array of objects representing parts:
+   *     - PartNumber - the index of this part.
+   *     - ETag - a hash of this part's contents, used to refer to it.
+   *     - Size - size of this part.
+   */
+  function getUploadedParts(req: Request, res: Response, next: NextFunction) {
+    const client = getS3Client(req, res)
+    if (!client) return
+    const s3Client = client
+
+    const { uploadId } = req.params
+    const { key } = req.query
+
+    if (typeof key !== 'string') {
+      res.status(400).json({
+        error:
+          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+      })
+      return
+    }
+    const keyStr = key
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
+
+    const parts: unknown[] = []
+
+    function listPartsPage(startAt?: string) {
+      s3Client
+        .send(
+          new ListPartsCommand({
+            Bucket: bucket,
+            Key: keyStr,
+            UploadId: uploadId,
+            PartNumberMarker: startAt,
+          }),
+        )
+        .then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
+          if (Parts) parts.push(...Parts)
+
+          if (IsTruncated) {
+            // Get the next page.
+            listPartsPage(NextPartNumberMarker)
+          } else {
+            res.json(parts)
+          }
+        }, next)
+    }
+    listPartsPage()
+  }
+
+  /**
+   * Get parameters for uploading one part.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   *  - partNumber - This part's index in the file (1-10000).
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   * Response JSON:
+   *  - url - The URL to upload to, including signed query parameters.
+   */
+  function signPartUpload(req: Request, res: Response, next: NextFunction) {
+    const client = getS3Client(req, res)
+    if (!client) return
+
+    const uploadId = req.params['uploadId']
+    const partNumber = req.params['partNumber']
+    const key = req.query['key']
+
+    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+      res.status(400).json({ error: 's3: uploadId must be provided.' })
+      return
+    }
+    if (typeof key !== 'string') {
+      res.status(400).json({
+        error:
+          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+      })
+      return
+    }
+    if (typeof partNumber !== 'string' || !parseInt(partNumber, 10)) {
+      res.status(400).json({
+        error: 's3: the part number must be a number between 1 and 10000.',
+      })
+      return
+    }
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
+
+    getSignedUrl(
+      client,
+      new UploadPartCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+        PartNumber: Number(partNumber),
+        Body: '',
+      }),
+      { expiresIn: expires },
+    ).then((url) => {
+      res.json({ url, expires })
+    }, next)
+  }
+
+  /**
+   * Get parameters for uploading a batch of parts.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   *  - partNumbers - A comma separated list of part numbers representing
+   *                  indecies in the file (1-10000).
+   * Response JSON:
+   *  - presignedUrls - The URLs to upload to, including signed query parameters,
+   *                    in an object mapped to part numbers.
+   */
+  function batchSignPartsUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const client = getS3Client(req, res)
+    if (!client) return
+
+    const uploadId = req.params['uploadId']
+    const key = req.query['key']
+    const partNumbers = req.query['partNumbers']
+
+    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+      res.status(400).json({ error: 's3: uploadId must be provided.' })
+      return
+    }
+
+    if (typeof key !== 'string') {
+      res.status(400).json({
+        error:
+          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+      })
+      return
+    }
+
+    if (typeof partNumbers !== 'string') {
+      res.status(400).json({
+        error:
+          's3: the part numbers must be passed as a comma separated query parameter. For example: "?partNumbers=4,6,7,21"',
+      })
+      return
+    }
+
+    const partNumbersArray = partNumbers.split(',')
+    if (!partNumbersArray.every((partNumber) => parseInt(partNumber, 10))) {
+      res.status(400).json({
+        error: 's3: the part numbers must be a number between 1 and 10000.',
+      })
+      return
+    }
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
+
+    Promise.all(
+      partNumbersArray.map((partNumber) => {
+        return getSignedUrl(
+          client,
+          new UploadPartCommand({
+            Bucket: bucket,
+            Key: key,
+            UploadId: uploadId,
+            PartNumber: Number(partNumber),
+            Body: '',
+          }),
+          { expiresIn: expires },
+        )
+      }),
+    )
+      .then((urls) => {
+        const presignedUrls: Record<string, string> = Object.create(null)
+        for (let index = 0; index < partNumbersArray.length; index++) {
+          const partNumber = partNumbersArray[index]
+          const url = urls[index]
+          if (!partNumber || !url) continue
+          presignedUrls[partNumber] = url
+        }
+        res.json({ presignedUrls })
+      })
+      .catch(next)
+  }
+
+  /**
+   * Abort a multipart upload, deleting already uploaded parts.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   * Response JSON:
+   *   Empty.
+   */
+  function abortMultipartUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const client = getS3Client(req, res)
+    if (!client) return
+
+    const { uploadId } = req.params
+    const { key } = req.query
+
+    if (typeof key !== 'string') {
+      res.status(400).json({
+        error:
+          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+      })
+      return
+    }
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
+
+    client
+      .send(
+        new AbortMultipartUploadCommand({
+          Bucket: bucket,
+          Key: key,
+          UploadId: uploadId,
+        }),
+      )
+      .then(() => res.json({}), next)
+  }
+
+  /**
+   * Complete a multipart upload, combining all the parts into a single object in the S3 bucket.
+   *
+   * Expected URL parameters:
+   *  - uploadId - The uploadId returned from `createMultipartUpload`.
+   * Expected query parameters:
+   *  - key - The object key in the S3 bucket.
+   * Expected JSON body:
+   *  - parts - An array of parts, see the `getUploadedParts` response JSON.
+   * Response JSON:
+   *  - location - The full URL to the object in the S3 bucket.
+   */
+  function completeMultipartUpload(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const client = getS3Client(req, res)
+    if (!client) return
+
+    const { uploadId } = req.params
+    const { key } = req.query
+    const { parts } = req.body
+
+    if (typeof key !== 'string') {
+      res.status(400).json({
+        error:
+          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+      })
+      return
+    }
+    if (
+      !Array.isArray(parts) ||
+      !parts.every(
+        (part) =>
+          typeof part === 'object' &&
+          typeof part?.PartNumber === 'number' &&
+          typeof part.ETag === 'string',
+      )
+    ) {
+      res.status(400).json({
+        error: 's3: `parts` must be an array of {ETag, PartNumber} objects.',
+      })
+      return
+    }
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
+
+    client
+      .send(
+        new CompleteMultipartUploadCommand({
+          Bucket: bucket,
+          Key: key,
+          UploadId: uploadId,
+          MultipartUpload: {
+            Parts: parts,
+          },
+        }),
+      )
+      .then((data) => {
+        res.json({
+          location: data.Location,
+          key: data.Key,
+          bucket: data.Bucket,
+        })
+      }, next)
+  }
+
+  const policyBucket = typeof config.bucket === 'string' ? config.bucket : ''
+  const policy = {
+    Version: '2012-10-17', // latest at the time of writing
+    Statement: [
+      {
+        Effect: 'Allow',
+        Action: ['s3:PutObject'],
+        Resource: [
+          `arn:aws:s3:::${policyBucket}/*`,
+          `arn:aws:s3:::${policyBucket}`,
+        ],
+      },
+    ],
+  }
+
+  let stsClient: STSClient | undefined
+  function getSTSClient(): STSClient | null {
+    if (
+      typeof config.region !== 'string' ||
+      typeof config.key !== 'string' ||
+      typeof config.secret !== 'string'
+    ) {
+      return null
+    }
+    if (stsClient == null) {
+      stsClient = new STSClient({
+        region: config.region,
+        credentials: {
+          accessKeyId: config.key,
+          secretAccessKey: config.secret,
+        },
+      })
+    }
+    return stsClient
+  }
+
+  /**
+   * Create STS credentials with the permission for sending PutObject/UploadPart to the bucket.
+   *
+   * Clients should cache the response and re-use it until they can reasonably
+   * expect uploads to complete before the token expires. To this effect, the
+   * Cache-Control header is set to invalidate the cache 5 minutes before the
+   * token expires.
+   *
+   * Response JSON:
+   * - credentials: the credentials including the SessionToken.
+   * - bucket: the S3 bucket name.
+   * - region: the region where that bucket is stored.
+   */
+  function getTemporarySecurityCredentials(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) {
+    const sts = getSTSClient()
+    if (!sts || typeof config.bucket !== 'string') {
+      res.status(400).json({
+        error: 'This Companion server does not support STS credentials',
+      })
+      return
+    }
+
+    sts
+      .send(
+        new GetFederationTokenCommand({
+          // Name of the federated user. The name is used as an identifier for the
+          // temporary security credentials (such as Bob). For example, you can
+          // reference the federated user name in a resource-based policy, such as
+          // in an Amazon S3 bucket policy.
+          // Companion is configured by default as an unprotected public endpoint,
+          // if you implement your own custom endpoint with user authentication you
+          // should probably use different names for each of your users.
+          Name: 'companion',
+          // The duration, in seconds, of the role session. The value specified
+          // can range from 900 seconds (15 minutes) up to the maximum session
+          // duration set for the role.
+          DurationSeconds: expires,
+          Policy: JSON.stringify(policy),
+        }),
+      )
+      .then((response) => {
+        // This is a public unprotected endpoint.
+        // If you implement your own custom endpoint with user authentication you
+        // should probably use `private` instead of `public`.
+        res.setHeader('Cache-Control', `public,max-age=${expires - 300}`) // 300s is 5min.
+        res.json({
+          credentials: response.Credentials,
+          bucket: config.bucket,
+          region: config.region,
+        })
+      }, next)
+  }
+
+  if (config.bucket == null) {
+    return express.Router() // empty router because s3 is not enabled
+  }
+
+  return (
+    express
+      .Router()
+      .get('/sts', getTemporarySecurityCredentials)
+      .get('/params', getUploadParameters)
+      .post('/multipart', express.json(), createMultipartUpload)
+      .get('/multipart/:uploadId', getUploadedParts)
+      .get('/multipart/:uploadId/batch', batchSignPartsUpload)
+      .get('/multipart/:uploadId/:partNumber', signPartUpload)
+      // limit 1mb because maybe large upload with a lot of parts, see https://github.com/transloadit/uppy/issues/1945
+      .post(
+        '/multipart/:uploadId/complete',
+        express.json({ limit: '1mb' }),
+        completeMultipartUpload,
+      )
+      .delete('/multipart/:uploadId', abortMultipartUpload)
+  )
+}

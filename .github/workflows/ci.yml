@@ -86,6 +86,7 @@ jobs:
         run:
           corepack yarn install
       - run: corepack yarn run typecheck
+      - run: corepack yarn workspace @uppy/companion lint:ts
 
   lint_js:
     name: Lint

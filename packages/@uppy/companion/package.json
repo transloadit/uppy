@@ -2,7 +2,7 @@
   "name": "@uppy/companion",
   "version": "6.2.1",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
-  "types": "lib/companion.d.ts",
+  "types": "dist/companion.d.ts",
   "author": "Transloadit.com",
   "license": "MIT",
   "sideEffects": false,
@@ -13,8 +13,8 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "exports": {
-    ".": "./lib/companion.js",
-    "./standalone": "./lib/standalone/index.js",
+    ".": "./dist/companion.js",
+    "./standalone": "./dist/standalone/index.js",
     "./package.json": "./package.json"
   },
   "keywords": [
@@ -32,7 +32,7 @@
     "express",
     "realtime"
   ],
-  "bin": "./bin/companion",
+  "bin": "./dist/bin/companion.js",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
     "@aws-sdk/client-sts": "^3.338.0",
@@ -74,10 +74,13 @@
     "tus-js-client": "^4.1.0",
     "validator": "^13.15.22",
     "webdav": "^5.8.0",
-    "ws": "8.17.1"
+    "ws": "8.17.1",
+    "zod": "^3.24.0"
   },
   "devDependencies": {
+    "@types/common-tags": "^1.8.4",
     "@types/compression": "1.7.0",
+    "@types/content-disposition": "^0.5.9",
     "@types/cookie-parser": "1.4.2",
     "@types/cors": "2.8.6",
     "@types/eslint": "^8.2.0",
@@ -85,10 +88,15 @@
     "@types/http-proxy": "^1",
     "@types/jsonwebtoken": "8.3.7",
     "@types/lodash": "4.14.191",
+    "@types/mime-types": "^2.1.4",
     "@types/morgan": "1.7.37",
     "@types/ms": "0.7.31",
     "@types/node": "^20.19.0",
+    "@types/node-schedule": "^2.1.8",
     "@types/request": "2.48.8",
+    "@types/serialize-javascript": "^5.0.4",
+    "@types/supertest": "^6.0.3",
+    "@types/validator": "^13.15.10",
     "@types/webpack": "^5.28.0",
     "@types/ws": "8.5.3",
     "execa": "^9.6.0",
@@ -99,15 +107,15 @@
     "vitest": "^3.2.4"
   },
   "files": [
-    "bin/",
-    "lib/",
+    "dist/",
     "src/",
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "tsc --build tsconfig.build.json",
+    "build": "tsc --build tsconfig.build.json && node ./dist/scripts/rewrite-dts-extensions.js",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
-    "start": "node ./lib/standalone/start-server.js",
+    "lint:ts": "tsc --project tsconfig.lint.json",
+    "start": "node ./dist/standalone/start-server.js",
     "start:dev": "bash start-dev",
     "typecheck": "tsc --build",
     "test": "vitest run --silent='passed-only'"
