@@ -1,30 +1,22 @@
+import type { Request, Response } from 'express'
 import express from 'express'
-import { downloadURL } from '../download.js'
-import { getURLMeta, validateURL } from '../helpers/request.js'
-import { startDownUpload } from '../helpers/upload.js'
-import logger from '../logger.js'
-import { respondWithError } from '../provider/error.js'
+import { downloadURL } from '../download.ts'
+import { getURLMeta, validateURL } from '../helpers/request.ts'
+import { startDownUpload } from '../helpers/upload.ts'
+import logger from '../logger.ts'
+import { respondWithError } from '../provider/error.ts'
 
 /**
- * @callback downloadCallback
- * @param {Error} err
- * @param {string | Buffer | Buffer[]} chunk
+ * Fetch the size and content type of a URL.
  */
-
-/**
- * Fetches the size and content type of a URL
- *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
- */
-const meta = async (req, res) => {
+const meta = async (req: Request, res: Response): Promise<void> => {
   try {
-    logger.debug('URL file import handler running', null, req.id)
+    logger.debug('URL file import handler running', undefined, req.id)
     const { allowLocalUrls } = req.companion.options
     if (!validateURL(req.body.url, allowLocalUrls)) {
       logger.debug(
         'Invalid request body detected. Exiting url meta handler.',
-        null,
+        undefined,
         req.id,
       )
       res.status(400).json({ error: 'Invalid request body' })
@@ -41,19 +33,15 @@ const meta = async (req, res) => {
 }
 
 /**
- * Handles the reques of import a file from a remote URL, and then
- * subsequently uploading it to the specified destination.
- *
- * @param {object} req expressJS request object
- * @param {object} res expressJS response object
+ * Import a file from a remote URL, then upload it to the specified destination.
  */
-const get = async (req, res) => {
-  logger.debug('URL file import handler running', null, req.id)
+const get = async (req: Request, res: Response): Promise<void> => {
+  logger.debug('URL file import handler running', undefined, req.id)
   const { allowLocalUrls } = req.companion.options
   if (!validateURL(req.body.url, allowLocalUrls)) {
     logger.debug(
       'Invalid request body detected. Exiting url import handler.',
-      null,
+      undefined,
       req.id,
     )
     res.status(400).json({ error: 'Invalid request body' })

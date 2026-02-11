@@ -1,25 +1,37 @@
+type HttpErrorLike = {
+  statusCode: number | undefined
+  body: unknown
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value)
+}
+
 /**
- * ProviderApiError is error returned when an adapter encounters
- * an http error while communication with its corresponding provider
+ * Error thrown when an adapter encounters an HTTP error while communicating
+ * with its corresponding provider.
  */
 export class ProviderApiError extends Error {
-  /**
-   * @param {string} message error message
-   * @param {number} statusCode the http status code from the provider api
-   */
-  constructor(message, statusCode) {
-    super(`HTTP ${statusCode}: ${message}`) // Include statusCode to make it easier to debug
+  statusCode: number | undefined
+
+  isAuthError: boolean
+
+  constructor(message: string, statusCode: number | undefined) {
+    super(`HTTP ${statusCode}: ${message}`)
     this.name = 'ProviderApiError'
     this.statusCode = statusCode
     this.isAuthError = false
   }
 }
 
+/**
+ * Error thrown when the provider response should be forwarded to the client
+ * as-is (e.g. user-facing validation errors).
+ */
 export class ProviderUserError extends ProviderApiError {
-  /**
-   * @param {object} json arbitrary JSON.stringify-able object that will be passed to the client
-   */
-  constructor(json) {
+  json: unknown
+
+  constructor(json: unknown) {
     super('User error', undefined)
     this.name = 'ProviderUserError'
     this.json = json
@@ -27,10 +39,9 @@ export class ProviderUserError extends ProviderApiError {
 }
 
 /**
- * AuthError is error returned when an adapter encounters
- * an authorization error while communication with its corresponding provider
- * this signals to the client that the access token is invalid and needs to be
- * refreshed or the user needs to re-authenticate
+ * Error thrown when an adapter encounters an authorization error while
+ * communicating with its provider. This signals to the client that the access
+ * token is invalid and needs to be refreshed or the user needs to re-authenticate.
  */
 export class ProviderAuthError extends ProviderApiError {
   constructor() {
@@ -40,65 +51,73 @@ export class ProviderAuthError extends ProviderApiError {
   }
 }
 
-export function parseHttpError(err) {
-  if (err?.name === 'HTTPError') {
-    return {
-      statusCode: err.response?.statusCode,
-      body: err.response?.body,
-    }
+export function parseHttpError(err: unknown): HttpErrorLike | undefined {
+  if (!isRecord(err)) return undefined
+
+  const name = err['name']
+  if (name === 'HTTPError') {
+    const responseCandidate = err['response']
+    const response = isRecord(responseCandidate) ? responseCandidate : undefined
+    const statusCode =
+      response && typeof response['statusCode'] === 'number'
+        ? response['statusCode']
+        : undefined
+    const body = response ? response['body'] : undefined
+    return { statusCode, body }
   }
-  if (err?.name === 'HttpError') {
-    return {
-      statusCode: err.statusCode,
-      body: err.responseJson,
-    }
+
+  if (name === 'HttpError') {
+    const statusCode =
+      typeof err['statusCode'] === 'number' ? err['statusCode'] : undefined
+    const body = err['responseJson']
+    return { statusCode, body }
   }
+
   return undefined
 }
 
 /**
- * Convert an error instance to an http response if possible
- *
- * @param {Error | ProviderApiError} err the error instance to convert to an http json response
- * @returns {object | undefined} an object with a code and json field if the error can be converted to a response
+ * Convert an error instance to an HTTP response if possible.
  */
-function errorToResponse(err) {
-  // @ts-ignore
-  if (err?.isAuthError) {
-    return { code: 401, json: { message: err.message } }
+function errorToResponse(
+  err: unknown,
+): { code: number; json: Record<string, unknown> } | undefined {
+  if (!isRecord(err)) return undefined
+
+  if (err['isAuthError'] === true) {
+    return { code: 401, json: { message: `${err['message'] ?? ''}` } }
   }
 
-  if (err?.name === 'ValidationError') {
-    return { code: 400, json: { message: err.message } }
+  const name = err['name']
+
+  if (name === 'ValidationError') {
+    return { code: 400, json: { message: `${err['message'] ?? ''}` } }
   }
 
-  if (err?.name === 'ProviderUserError') {
-    // @ts-ignore
-    return { code: 400, json: err.json }
-  }
-
-  if (err?.name === 'ProviderApiError') {
-    // @ts-ignore
-    if (err.statusCode >= 500) {
-      // bad gateway i.e the provider APIs gateway
-      return { code: 502, json: { message: err.message } }
+  if (name === 'ProviderUserError') {
+    const json = err['json']
+    return {
+      code: 400,
+      json: isRecord(json) ? json : { data: json },
     }
+  }
 
-    // @ts-ignore
-    if (err.statusCode === 429) {
-      return { code: 429, json: { message: err.message } }
+  if (name === 'ProviderApiError') {
+    const statusCode =
+      typeof err['statusCode'] === 'number' ? err['statusCode'] : undefined
+    if (statusCode != null && statusCode >= 500) {
+      return { code: 502, json: { message: `${err['message'] ?? ''}` } }
     }
-
-    // @ts-ignore
-    if (err.statusCode >= 400) {
-      // 424 Failed Dependency
-      return { code: 424, json: { message: err.message } }
+    if (statusCode === 429) {
+      return { code: 429, json: { message: `${err['message'] ?? ''}` } }
+    }
+    if (statusCode != null && statusCode >= 400) {
+      return { code: 424, json: { message: `${err['message'] ?? ''}` } }
     }
   }
 
   const httpError = parseHttpError(err)
   if (httpError) {
-    // We proxy the response purely for ease of debugging
     return {
       code: 500,
       json: { statusCode: httpError.statusCode, body: httpError.body },
@@ -108,7 +127,10 @@ function errorToResponse(err) {
   return undefined
 }
 
-export function respondWithError(err, res) {
+export function respondWithError(
+  err: unknown,
+  res: { status: (n: number) => { json: (v: unknown) => void } },
+): boolean {
   const errResp = errorToResponse(err)
   if (errResp) {
     res.status(errResp.code).json(errResp.json)

@@ -2,7 +2,12 @@
 
 # Load local env vars. In CI, these are injected.
 if [ -f ../../../.env ]; then
-  DOTENV_CONFIG_PATH=../../../.env node --watch -r dotenv/config src/standalone/start-server.js
+  ./node_modules/.bin/tsc --build tsconfig.build.json
+  ./node_modules/.bin/tsc --build tsconfig.build.json --watch --preserveWatchOutput &
+  TSC_WATCH_PID=$!
+  trap 'kill $TSC_WATCH_PID 2>/dev/null || true' EXIT
+
+  DOTENV_CONFIG_PATH=../../../.env node --watch -r dotenv/config dist/standalone/start-server.js
 else
   env \
     COMPANION_DATADIR="./output" \
@@ -13,5 +18,20 @@ else
     COMPANION_SECRET="development" \
     COMPANION_PREAUTH_SECRET="development2" \
     COMPANION_ALLOW_LOCAL_URLS="true" \
-    node --watch src/standalone/start-server.js
-fi 
+    ./node_modules/.bin/tsc --build tsconfig.build.json
+
+  ./node_modules/.bin/tsc --build tsconfig.build.json --watch --preserveWatchOutput &
+  TSC_WATCH_PID=$!
+  trap 'kill $TSC_WATCH_PID 2>/dev/null || true' EXIT
+
+  env \
+    COMPANION_DATADIR="./output" \
+    COMPANION_DOMAIN="localhost:3020" \
+    COMPANION_PROTOCOL="http" \
+    COMPANION_PORT=3020 \
+    COMPANION_CLIENT_ORIGINS="" \
+    COMPANION_SECRET="development" \
+    COMPANION_PREAUTH_SECRET="development2" \
+    COMPANION_ALLOW_LOCAL_URLS="true" \
+    node --watch dist/standalone/start-server.js
+fi

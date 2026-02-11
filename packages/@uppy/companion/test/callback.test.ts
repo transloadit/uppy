@@ -1,8 +1,8 @@
 import request from 'supertest'
 import { describe, expect, test, vi } from 'vitest'
-import * as tokenService from '../src/server/helpers/jwt.js'
-import mockOauthState from './mockoauthstate.js'
-import { getServer, grantToken } from './mockserver.js'
+import * as tokenService from '../src/server/helpers/jwt.ts'
+import mockOauthState from './mockoauthstate.ts'
+import { getServer, grantToken } from './mockserver.ts'
 
 vi.mock('express-prom-bundle')
 mockOauthState()
@@ -15,7 +15,7 @@ describe('test authentication callback', () => {
       .get('/drive/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header.location).toContain(
+        expect(res.header['location']).toContain(
           'http://localhost:3020/drive/send-token?uppyAuthToken=',
         )
       })
@@ -26,13 +26,15 @@ describe('test authentication callback', () => {
       .get('/dropbox/callback')
       .expect(302)
       .expect((res) => {
-        expect(res.header.location).toContain(
+        expect(res.header['location']).toContain(
           'http://localhost:3020/dropbox/send-token?uppyAuthToken=',
         )
+        const setCookie = res.header['set-cookie']
+        if (!Array.isArray(setCookie) || !setCookie[0]) {
+          throw new Error('Missing set-cookie header')
+        }
         const authToken = decodeURIComponent(
-          res.header['set-cookie'][0]
-            .split(';')[0]
-            .split('uppyAuthToken--dropbox=')[1],
+          setCookie[0].split(';')[0].split('uppyAuthToken--dropbox=')[1],
         )
         const payload = tokenService.verifyEncryptedAuthToken(
           authToken,

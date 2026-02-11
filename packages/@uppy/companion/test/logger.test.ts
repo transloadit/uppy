@@ -1,27 +1,30 @@
 import { beforeAll, describe, expect, test } from 'vitest'
 
 // We don't care about colors in our tests, so force `supports-color` to disable colors.
-process.env.FORCE_COLOR = 'false'
+process.env['FORCE_COLOR'] = 'false'
 
-import logger from '../src/server/logger.js'
+import logger from '../src/server/logger.ts'
 
 const maskables = ['ToBeMasked1', 'toBeMasked2', 'toBeMasked(And)?Escaped']
 
-function captureConsoleLog(log) {
-  let loggedMessage = null
+function captureConsoleLog(log: () => void): string {
+  let loggedMessage: string | null = null
 
   // override the default console.log to capture the logged message
   const defaultConsoleLog = console.log
 
   try {
-    console.log = (logPrefix, message) => {
-      loggedMessage = message
+    console.log = (logPrefix: unknown, message: unknown) => {
+      loggedMessage = String(message)
       defaultConsoleLog(logPrefix, message)
     }
   } finally {
     log()
     // restore the default console.log before using "expect" to avoid weird log behaviors
     console.log = defaultConsoleLog
+  }
+  if (loggedMessage == null) {
+    throw new Error('Expected logger to write a console message')
   }
   return loggedMessage
 }
@@ -107,7 +110,6 @@ describe('Test Logger secret mask', () => {
 
   test('masks inside object', () => {
     const loggedMessage = captureConsoleLog(() => {
-      // @ts-ignore
       logger.warn({
         a: 1,
         deep: { secret: 'there is a ToBeMasked1 hiding here' },

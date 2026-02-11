@@ -1,14 +1,26 @@
-import { MAX_AGE_24H } from '../helpers/jwt.js'
+import { MAX_AGE_24H } from '../helpers/jwt.ts'
 
 /**
  * Provider interface defines the specifications of any provider implementation
  */
 export default class Provider {
-  /**
-   *
-   * @param {{providerName: string, allowLocalUrls: boolean, providerGrantConfig?: object, secret: string}} options
-   */
-  constructor({ allowLocalUrls, providerGrantConfig, secret }) {
+  needsCookieAuth: boolean
+
+  allowLocalUrls: boolean
+
+  providerGrantConfig: Record<string, unknown> | undefined
+
+  secret: string
+
+  constructor({
+    allowLocalUrls,
+    providerGrantConfig,
+    secret,
+  }: {
+    allowLocalUrls: boolean
+    providerGrantConfig?: Record<string, unknown>
+    secret: string
+  } & Record<string, unknown>) {
     // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
     this.allowLocalUrls = allowLocalUrls
@@ -21,47 +33,43 @@ export default class Provider {
   /**
    * config to extend the grant config
    */
-  static getExtraGrantConfig() {
+  static getExtraGrantConfig(): Record<string, unknown> {
     return {}
   }
 
   /**
-   * list the files and folders in the provider account
+   * List the files and folders in the provider account.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
-  async list(options) {
+  async list(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
-   * search for files/folders in the provider account
+   * Search for files and folders in the provider account.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
-  async search(options) {
+  async search(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
-   * download a certain file from the provider account
+   * Download a certain file from the provider account.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
-  async download(options) {
+  async download(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
-   * return a thumbnail for a provider file
+   * Return a thumbnail for a provider file.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
-  async thumbnail(options) {
+  async thumbnail(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
@@ -69,61 +77,70 @@ export default class Provider {
    * first Companion will try to get the size from the content-length response header,
    * if that fails, it will call this method to get the size.
    * So if your provider has a different method for getting the size, you can return the size here
-   *
-   * @param {object} options
-   * @returns {Promise}
    */
-  async size(options) {
+  async size(options: unknown): Promise<unknown> {
     return undefined
   }
 
   /**
-   * handle deauthorization notification from oauth providers
+   * Handle deauthorization notification from OAuth providers.
    *
-   * @param {object} options
-   * @returns {Promise}
+   * This method should be overridden by provider implementations.
    */
-  async deauthorizationCallback(options) {
+  async deauthorizationCallback(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
    * Generate a new access token based on the refresh token
    */
-  async refreshToken(options) {
+  async refreshToken(options: unknown): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
-   * @param {any} param0
-   * @returns {Promise<any>}
+   * Revoke/logout for a provider session (if supported).
+   *
+   * This method should be overridden by provider implementations.
    */
-  async simpleAuth({ requestBody }) {
+  async logout(options: unknown): Promise<unknown> {
+    throw new Error('method not implemented')
+  }
+
+  async simpleAuth({
+    requestBody,
+  }: {
+    requestBody: unknown
+  }): Promise<unknown> {
     throw new Error('method not implemented')
   }
 
   /**
    * Name of the OAuth provider (passed to Grant). Return empty string if no OAuth provider is needed.
-   *
-   * @returns {string}
    */
-  static get oauthProvider() {
+  static get oauthProvider(): string | undefined {
     return undefined
   }
 
-  static grantDynamicToUserSession({ grantDynamic }) {
+  static grantDynamicToUserSession({
+    grantDynamic,
+  }: {
+    grantDynamic: Record<string, unknown>
+  }): Record<string, unknown> {
     return {}
   }
 
-  static get hasSimpleAuth() {
+  static get hasSimpleAuth(): boolean {
     return false
   }
 
-  static get authStateExpiry() {
+  static get authStateExpiry(): number {
     return MAX_AGE_24H
   }
 }
 
 // OAuth providers are those that have an `oauthProvider` set. It means they require OAuth authentication to work
-export const isOAuthProvider = (oauthProvider) =>
+export const isOAuthProvider = (
+  oauthProvider: unknown,
+): oauthProvider is string =>
   typeof oauthProvider === 'string' && oauthProvider.length > 0

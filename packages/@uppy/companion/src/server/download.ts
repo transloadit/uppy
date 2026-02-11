@@ -1,17 +1,20 @@
-import { getProtectedGot } from './helpers/request.js'
-import { prepareStream } from './helpers/utils.js'
-import logger from './logger.js'
+import { getProtectedGot } from './helpers/request.ts'
+import { prepareStream } from './helpers/utils.ts'
+import logger from './logger.ts'
 
 /**
- * Downloads the content in the specified url, and passes the data
- * to the callback chunk by chunk.
+ * Downloads the content at the given URL.
  *
- * @param {string} url
- * @param {boolean} allowLocalIPs
- * @param {string} traceId
- * @returns {Promise}
+ * @param url - URL to download.
+ * @param allowLocalIPs - Whether to allow local/private IPs (disables SSRF protection).
+ * @param traceId - Request trace id for logging.
  */
-export const downloadURL = async (url, allowLocalIPs, traceId, options) => {
+export const downloadURL = async (
+  url: string,
+  allowLocalIPs: boolean,
+  traceId?: string,
+  options: Record<string, unknown> = {},
+): Promise<{ stream: unknown; size: number | undefined }> => {
   try {
     const protectedGot = getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream.get(url, {

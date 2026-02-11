@@ -2,25 +2,26 @@ import { randomUUID } from 'node:crypto'
 import qs from 'node:querystring'
 import { URL } from 'node:url'
 import RedisStore from 'connect-redis'
+import type { NextFunction, Request, Response } from 'express'
 import express from 'express'
+import type { SessionOptions } from 'express-session'
 import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import * as companion from '../companion.js'
-import logger from '../server/logger.js'
-import * as redis from '../server/redis.js'
+import * as companion from '../companion.ts'
+import type { StandaloneCompanionOptionsInput } from '../schemas/index.ts'
+import { isRecord, toError } from '../server/helpers/type-guards.ts'
+import logger from '../server/logger.ts'
+import * as redis from '../server/redis.ts'
 import {
   buildHelpfulStartupMessage,
   generateSecret,
   getCompanionOptions,
-} from './helper.js'
+} from './helper.ts'
 
-/**
- * Configures an Express app for running Companion standalone
- *
- * @returns {object}
- */
-export default function server(inputCompanionOptions) {
+export default function server(
+  inputCompanionOptions?: StandaloneCompanionOptionsInput,
+) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -34,8 +35,9 @@ export default function server(inputCompanionOptions) {
 
   const router = express.Router()
 
-  if (companionOptions.server.path) {
-    app.use(companionOptions.server.path, router)
+  const serverPath = companionOptions.server?.path
+  if (typeof serverPath === 'string' && serverPath.length > 0) {
+    app.use(serverPath, router)
   } else {
     app.use(router)
   }
@@ -43,26 +45,15 @@ export default function server(inputCompanionOptions) {
   // Query string keys whose values should not end up in logging output.
   const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
 
-  /**
-   * Obscure the contents of query string keys listed in `sensitiveKeys`.
-   *
-   * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
-   *
-   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
-   * possible inputs :)
-   *
-   * @param {Record<string, any>} rawQuery
-   * @returns {{
-   *   query: Record<string, any>,
-   *   censored: boolean
-   * }}
-   */
-  function censorQuery(rawQuery) {
-    /** @type {Record<string, any>} */
-    const query = {}
+  function censorQuery(rawQuery: Record<string, unknown>): {
+    query: Record<string, string>
+    censored: boolean
+  } {
+    const query: Record<string, string> = {}
     let censored = false
     Object.keys(rawQuery).forEach((key) => {
-      if (typeof rawQuery[key] !== 'string') {
+      const value = rawQuery[key]
+      if (typeof value !== 'string') {
         return
       }
       if (sensitiveKeys.has(key)) {
@@ -70,7 +61,7 @@ export default function server(inputCompanionOptions) {
         query[key] = '********'
         censored = true
       } else {
-        query[key] = rawQuery[key]
+        query[key] = value
       }
     })
     return { query, censored }
@@ -89,16 +80,16 @@ export default function server(inputCompanionOptions) {
     const { query, censored } = censorQuery(req.query)
     return censored
       ? `${req.path}?${qs.stringify(query)}`
-      : req.originalUrl || req.url
+      : req.originalUrl || req.url || '-'
   })
 
   morgan.token('referrer', (req) => {
-    const ref = req.headers.referer || req.headers.referrer
+    const ref = req.headers['referer'] || req.headers['referrer']
     if (typeof ref === 'string') {
-      let parsed
+      let parsed: URL
       try {
         parsed = new URL(ref)
-      } catch (_) {
+      } catch {
         return ref
       }
       const rawQuery = qs.parse(parsed.search.replace('?', ''))
@@ -107,7 +98,7 @@ export default function server(inputCompanionOptions) {
         ? `${parsed.href.split('?')[0]}?${qs.stringify(query)}`
         : parsed.href
     }
-    return undefined
+    return '-'
   })
 
   // Use helmet to secure Express headers
@@ -118,25 +109,28 @@ export default function server(inputCompanionOptions) {
 
   app.disable('x-powered-by')
 
-  const sessionOptions = {
+  const sessionOptions: SessionOptions = {
     secret: companionOptions.secret,
     resave: true,
     saveUninitialized: true,
   }
 
-  const redisClient = redis.client(companionOptions)
+  const redisClient = redis.client({
+    redisUrl: companionOptions.redisUrl,
+    redisOptions: companionOptions.redisOptions,
+  })
   if (redisClient) {
     sessionOptions.store = new RedisStore({
       client: redisClient,
       prefix:
-        process.env.COMPANION_REDIS_EXPRESS_SESSION_PREFIX ||
+        process.env['COMPANION_REDIS_EXPRESS_SESSION_PREFIX'] ||
         'companion-session:',
     })
   }
 
-  if (process.env.COMPANION_COOKIE_DOMAIN) {
+  if (process.env['COMPANION_COOKIE_DOMAIN']) {
     sessionOptions.cookie = {
-      domain: process.env.COMPANION_COOKIE_DOMAIN,
+      domain: process.env['COMPANION_COOKIE_DOMAIN'],
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     }
   }
@@ -148,7 +142,7 @@ export default function server(inputCompanionOptions) {
   router.use(session(sessionOptions))
 
   // Routes
-  if (process.env.COMPANION_HIDE_WELCOME !== 'true') {
+  if (process.env['COMPANION_HIDE_WELCOME'] !== 'true') {
     router.get('/', (req, res) => {
       res.setHeader('Content-Type', 'text/plain')
       res.send(buildHelpfulStartupMessage(companionOptions))
@@ -167,15 +161,15 @@ export default function server(inputCompanionOptions) {
   // that you might have mixed the values for COMPANION_ONEDRIVE_KEY and COMPANION_ONEDRIVE_SECRET,
   // please DO NOT set any value for COMPANION_ONEDRIVE_DOMAIN_VALIDATION
   if (
-    process.env.COMPANION_ONEDRIVE_DOMAIN_VALIDATION === 'true' &&
-    process.env.COMPANION_ONEDRIVE_KEY
+    process.env['COMPANION_ONEDRIVE_DOMAIN_VALIDATION'] === 'true' &&
+    process.env['COMPANION_ONEDRIVE_KEY']
   ) {
     router.get(
       '/.well-known/microsoft-identity-association.json',
       (req, res) => {
         const content = JSON.stringify({
           associatedApplications: [
-            { applicationId: process.env.COMPANION_ONEDRIVE_KEY },
+            { applicationId: process.env['COMPANION_ONEDRIVE_KEY'] },
           ],
         })
         res.header('Content-Length', `${Buffer.byteLength(content, 'utf8')}`)
@@ -192,12 +186,14 @@ export default function server(inputCompanionOptions) {
     return res.status(404).json({ message: 'Not Found' })
   })
 
-  app.use((err, req, res, next) => {
+  app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
+    const error = toError(err)
+    const status = isRecord(err) ? err['status'] : undefined
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts
-      if (err.status === 400 && err.name === 'URIError') {
-        logger.error(err.message, 'root.error', req.id)
+      if (status === 400 && error.name === 'URIError') {
+        logger.error(error.message, 'root.error', req.id)
       } else {
         logger.error(err, 'root.error', req.id)
       }
@@ -208,7 +204,7 @@ export default function server(inputCompanionOptions) {
       logger.error(err, 'root.error', req.id)
       res
         .status(500)
-        .json({ message: err.message, error: err, requestId: req.id })
+        .json({ message: error.message, error: err, requestId: req.id })
     }
   })
 

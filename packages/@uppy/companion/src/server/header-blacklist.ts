@@ -1,4 +1,4 @@
-import * as logger from './logger.js'
+import * as logger from './logger.ts'
 
 /**
  * Forbidden header names.
@@ -34,10 +34,10 @@ const forbiddenRegex = [/^proxy-.*$/, /^sec-.*$/]
 /**
  * Check if the header in parameter is a forbidden header.
  *
- * @param {string} header Header to check
+ * @param header Header to check
  * @returns True if header is forbidden, false otherwise.
  */
-const isForbiddenHeader = (header) => {
+const isForbiddenHeader = (header: string): boolean => {
   const headerLower = header.toLowerCase()
   const forbidden =
     forbiddenNames.indexOf(headerLower) >= 0 ||
@@ -49,7 +49,9 @@ const isForbiddenHeader = (header) => {
   return forbidden
 }
 
-export default function headerBlacklist(headers) {
+export default function headerBlacklist(
+  headers: unknown,
+): Record<string, string> {
   if (
     headers == null ||
     typeof headers !== 'object' ||
@@ -58,11 +60,11 @@ export default function headerBlacklist(headers) {
     return {}
   }
 
-  const headersCloned = { ...headers }
-  Object.keys(headersCloned).forEach((header) => {
-    if (isForbiddenHeader(header)) {
-      delete headersCloned[header]
-    }
-  })
-  return headersCloned
+  const out: Record<string, string> = {}
+  for (const [header, value] of Object.entries(headers)) {
+    if (isForbiddenHeader(header)) continue
+    if (typeof value !== 'string') continue
+    out[header] = value
+  }
+  return out
 }

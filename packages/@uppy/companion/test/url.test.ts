@@ -2,13 +2,13 @@ import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, test, vi } from 'vitest'
 
-import { getServer } from './mockserver.js'
+import { getServer } from './mockserver.ts'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
-vi.mock('../src/server/helpers/request.js', async () => {
+vi.mock('../src/server/helpers/request.ts', async () => {
   return {
-    ...(await vi.importActual('../src/server/helpers/request.js')),
+    ...(await vi.importActual('../src/server/helpers/request.ts')),
     getURLMeta: () => {
       return Promise.resolve({ size: 7580, type: 'image/jpg' })
     },

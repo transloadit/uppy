@@ -1,5 +1,5 @@
 import nock from 'nock'
-import * as defaults from './constants.js'
+import * as defaults from './constants.ts'
 
 export const expects = {}
 

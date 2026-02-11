@@ -35,5 +35,6 @@ test/output/*
 
 # Transpiled
 ./lib/
+./dist/
 infra/kube/companion/uppy-env.yaml
 scripts/.tl-deploy-hosts-danger.txt

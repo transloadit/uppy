@@ -9,18 +9,19 @@ import {
   test,
   vi,
 } from 'vitest'
-import * as tokenService from '../src/server/helpers/jwt.js'
-import * as providerModule from '../src/server/provider/index.js'
-import * as defaults from './fixtures/constants.js'
-import { nockGoogleDownloadFile } from './fixtures/drive.js'
-import * as fixtures from './fixtures/index.js'
+import * as tokenService from '../src/server/helpers/jwt.ts'
+import { isRecord } from '../src/server/helpers/type-guards.ts'
+import * as providerModule from '../src/server/provider/index.ts'
+import * as defaults from './fixtures/constants.ts'
+import { nockGoogleDownloadFile } from './fixtures/drive.ts'
+import * as fixtures from './fixtures/index.ts'
 import {
   nockZoomRecordings,
   nockZoomRevoke,
   expects as zoomExpects,
-} from './fixtures/zoom.js'
-import mockOauthState from './mockoauthstate.js'
-import { getServer } from './mockserver.js'
+} from './fixtures/zoom.ts'
+import mockOauthState from './mockoauthstate.ts'
+import { getServer } from './mockserver.ts'
 
 const { localZoomKey, localZoomSecret } = zoomExpects
 
@@ -29,7 +30,7 @@ vi.mock('tus-js-client')
 
 mockOauthState()
 
-vi.mock('../../src/server/helpers/request.js', () => {
+vi.mock('../../src/server/helpers/request.ts', () => {
   return {
     getURLMeta: () => Promise.resolve({ size: 758051 }),
   }
@@ -42,20 +43,22 @@ const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const secret = 'secret'
 
 const providers = providerModule.getDefaultProviders()
+const fixtureProviders: Record<string, { expects?: Record<string, unknown> }> =
+  fixtures.providers
 
 const providerNames = Object.keys(providers)
-const oauthProviders = Object.fromEntries(
+const oauthProviders: Record<string, string> = Object.fromEntries(
   Object.entries(providers).flatMap(([name, provider]) =>
     provider.oauthProvider != null ? [[name, provider.oauthProvider]] : [],
   ),
 )
-const authData = {}
+const authData: Record<string, { accessToken: string }> = {}
 providerNames.forEach((provider) => {
   authData[provider] = { accessToken: 'token value' }
 })
 const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
-const thisOrThat = (value1, value2) => {
+const thisOrThat = <T>(value1: T | undefined, value2: T): T => {
   if (value1 !== undefined) {
     return value1
   }
@@ -99,10 +102,14 @@ afterAll(() => {
 })
 
 describe('list provider files', () => {
-  async function runTest(providerName) {
-    const providerFixture = fixtures.providers[providerName]?.expects ?? {}
+  async function runTest(providerName: string) {
+    const providerFixture = fixtureProviders[providerName]?.expects ?? {}
+    const listPath =
+      typeof providerFixture['listPath'] === 'string'
+        ? providerFixture['listPath']
+        : ''
     return request(await getServerWithEnv())
-      .get(`/${providerName}/list/${providerFixture.listPath || ''}`)
+      .get(`/${providerName}/list/${listPath}`)
       .set('uppy-auth-token', token)
       .expect(200)
       .then((res) => {
@@ -110,29 +117,61 @@ describe('list provider files', () => {
 
         return {
           username: res.body.username,
-          items: res.body.items,
+          items: Array.isArray(res.body.items)
+            ? res.body.items.filter(isRecord)
+            : [],
           providerFixture,
         }
       })
   }
 
-  function expect1({ username, items, providerFixture }) {
+  function expect1({
+    username,
+    items,
+    providerFixture,
+  }: {
+    username: unknown
+    items: Array<Record<string, unknown>>
+    providerFixture: Record<string, unknown>
+  }) {
     expect(username).toBe(defaults.USERNAME)
 
     const item = items[0]
-    expect(item.isFolder).toBe(false)
-    expect(item.name).toBe(providerFixture.itemName || defaults.ITEM_NAME)
-    expect(item.mimeType).toBe(
-      providerFixture.itemMimeType || defaults.MIME_TYPE,
-    )
-    expect(item.id).toBe(providerFixture.itemId || defaults.ITEM_ID)
-    expect(item.size).toBe(
-      thisOrThat(providerFixture.itemSize, defaults.FILE_SIZE),
-    )
-    expect(item.requestPath).toBe(
-      providerFixture.itemRequestPath || defaults.ITEM_ID,
-    )
-    expect(item.icon).toBe(providerFixture.itemIcon || defaults.THUMBNAIL_URL)
+    if (!item) throw new Error('Expected at least one item')
+
+    const fixtureItemName =
+      typeof providerFixture['itemName'] === 'string'
+        ? providerFixture['itemName']
+        : undefined
+    const fixtureItemMimeType =
+      typeof providerFixture['itemMimeType'] === 'string'
+        ? providerFixture['itemMimeType']
+        : undefined
+    const fixtureItemId =
+      typeof providerFixture['itemId'] === 'string'
+        ? providerFixture['itemId']
+        : undefined
+    const fixtureItemSizeRaw = providerFixture['itemSize']
+    const fixtureItemSize =
+      typeof fixtureItemSizeRaw === 'number' || fixtureItemSizeRaw === null
+        ? fixtureItemSizeRaw
+        : undefined
+    const fixtureItemRequestPath =
+      typeof providerFixture['itemRequestPath'] === 'string'
+        ? providerFixture['itemRequestPath']
+        : undefined
+    const fixtureItemIcon =
+      typeof providerFixture['itemIcon'] === 'string'
+        ? providerFixture['itemIcon']
+        : undefined
+
+    expect(item['isFolder']).toBe(false)
+    expect(item['name']).toBe(fixtureItemName ?? defaults.ITEM_NAME)
+    expect(item['mimeType']).toBe(fixtureItemMimeType ?? defaults.MIME_TYPE)
+    expect(item['id']).toBe(fixtureItemId ?? defaults.ITEM_ID)
+    expect(item['size']).toBe(thisOrThat(fixtureItemSize, defaults.FILE_SIZE))
+    expect(item['requestPath']).toBe(fixtureItemRequestPath ?? defaults.ITEM_ID)
+    expect(item['icon']).toBe(fixtureItemIcon ?? defaults.THUMBNAIL_URL)
   }
 
   test('dropbox', async () => {
@@ -387,12 +426,14 @@ describe('list provider files', () => {
 })
 
 describe('provider file gets downloaded from', () => {
-  async function runTest(providerName) {
-    const providerFixture = fixtures.providers[providerName]?.expects ?? {}
+  async function runTest(providerName: string) {
+    const providerFixture = fixtureProviders[providerName]?.expects ?? {}
+    const requestPath =
+      typeof providerFixture['itemRequestPath'] === 'string'
+        ? providerFixture['itemRequestPath']
+        : defaults.ITEM_ID
     const res = await request(await getServerWithEnv())
-      .post(
-        `/${providerName}/get/${providerFixture.itemRequestPath || defaults.ITEM_ID}`,
-      )
+      .post(`/${providerName}/get/${requestPath}`)
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
       .send({
@@ -500,7 +541,7 @@ describe('provider file gets downloaded from', () => {
 describe('connect to provider', () => {
   test.each(providerNames)(
     'connect to %s via grant.js endpoint',
-    async (providerName) => {
+    async (providerName: string) => {
       const oauthProvider = oauthProviders[providerName]
 
       if (oauthProvider == null) return
@@ -518,7 +559,7 @@ describe('connect to provider', () => {
 })
 
 describe('logout of provider', () => {
-  async function runTest(providerName) {
+  async function runTest(providerName: string) {
     const res = await request(await getServerWithEnv())
       .get(`/${providerName}/logout/`)
       .set('uppy-auth-token', token)

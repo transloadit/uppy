@@ -2,24 +2,27 @@ import util from 'node:util'
 import escapeStringRegexp from 'escape-string-regexp'
 import supportsColors from 'supports-color'
 
-let valuesToMask = []
+type StyleTextFn = (
+  style: Parameters<NonNullable<typeof util.styleText>>[0],
+  text: string,
+) => string
+type Colors = Parameters<StyleTextFn>[0]
+type LogLevel = 'error' | 'info' | 'warn' | 'debug'
+
+let valuesToMask: string[] = []
+
 /**
  * Adds a list of strings that should be masked by the logger.
- * This function can only be called once through out the life of the server.
- *
- * @param {Array} maskables a list of strings to be masked
+ * This is expected to be set during startup and not updated continuously.
  */
-export function setMaskables(maskables) {
+export function setMaskables(maskables: readonly string[]): void {
   valuesToMask = maskables.map((i) => escapeStringRegexp(i))
 }
 
 /**
- * Mask the secret content of a message
- *
- * @param {string} msg the message whose content should be masked
- * @returns {string}
+ * Mask secret values in a log message.
  */
-function maskMessage(msg) {
+function maskMessage(msg: string): string {
   let out = msg
   for (const toBeMasked of valuesToMask) {
     const toBeReplaced = new RegExp(toBeMasked, 'gi')
@@ -30,36 +33,42 @@ function maskMessage(msg) {
 
 let processName = 'companion'
 
-export function setProcessName(newProcessName) {
+export function setProcessName(newProcessName: string): void {
   processName = newProcessName
 }
 
-const styleText =
+const styleText: StyleTextFn =
   typeof util.styleText === 'function' && supportsColors.stderr
-    ? util.styleText
-    : (style, text) => text
+    ? (style, text) => util.styleText!(style, text)
+    : (_style, text) => text
 
 /**
- * message log
+ * Logs a message.
  *
- * @typedef {import('node:util').styleText} styleText
- * @typedef {Parameters<styleText>[0]} Colors
- *
- * @param {object} params
- * @param {string | Error} params.arg the message or error to log
- * @param {string} params.tag a unique tag to easily search for this message
- * @param {string} params.level error | info | debug
- * @param {string} [params.traceId] a unique id to easily trace logs tied to a request
- * @param {Colors} [params.color] Format(s) that can be passed to `util.styleText`.
+ * @param params.arg - The message or error to log.
+ * @param params.tag - A tag to easily search for this message.
+ * @param params.level - Log level.
+ * @param params.traceId - A unique id to correlate logs tied to a request.
+ * @param params.color - Format(s) that can be passed to `util.styleText`.
  */
-const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
+function log(params: {
+  arg: unknown
+  tag?: string
+  level: LogLevel
+  traceId?: string
+  color?: Colors
+}): void {
+  const { arg, level } = params
+  const tag = params.tag ?? ''
+  const traceId = params.traceId ?? ''
+  const color = params.color ?? []
+
   const time = new Date().toISOString()
   const whitespace = tag && traceId ? ' ' : ''
 
-  function msgToString() {
+  function msgToString(): string {
     // We don't need to log stack trace on special errors that we ourselves have produced
-    // (to reduce log noise)
-    // @ts-ignore
+    // (to reduce log noise).
     if (
       arg instanceof Error &&
       arg.name === 'ProviderApiError' &&
@@ -83,48 +92,55 @@ const log = ({ arg, tag = '', level, traceId = '', color = [] }) => {
 }
 
 /**
- * INFO level log
- *
- * @param {string} msg the message to log
- * @param {string} [tag] a unique tag to easily search for this message
- * @param {string} [traceId] a unique id to easily trace logs tied to a request
+ * INFO level log.
  */
-export function info(msg, tag, traceId) {
-  log({ arg: msg, tag, level: 'info', traceId })
+export function info(msg: unknown, tag?: string, traceId?: string): void {
+  log({
+    arg: msg,
+    level: 'info',
+    ...(tag === undefined ? {} : { tag }),
+    ...(traceId === undefined ? {} : { traceId }),
+  })
 }
 
 /**
- * WARN level log
- *
- * @param {string} msg the message to log
- * @param {string} [tag] a unique tag to easily search for this message
- * @param {string} [traceId] a unique id to easily trace logs tied to a request
+ * WARN level log.
  */
-export function warn(msg, tag, traceId) {
-  log({ arg: msg, tag, level: 'warn', traceId, color: ['bold', 'yellow'] })
+export function warn(msg: unknown, tag?: string, traceId?: string): void {
+  log({
+    arg: msg,
+    level: 'warn',
+    color: ['bold', 'yellow'],
+    ...(tag === undefined ? {} : { tag }),
+    ...(traceId === undefined ? {} : { traceId }),
+  })
 }
 
 /**
- * ERROR level log
- *
- * @param {string | Error} msg the message to log
- * @param {string} [tag] a unique tag to easily search for this message
- * @param {string} [traceId] a unique id to easily trace logs tied to a request
+ * ERROR level log.
  */
-export function error(msg, tag, traceId) {
-  log({ arg: msg, tag, level: 'error', traceId, color: ['bold', 'red'] })
+export function error(msg: unknown, tag?: string, traceId?: string): void {
+  log({
+    arg: msg,
+    level: 'error',
+    color: ['bold', 'red'],
+    ...(tag === undefined ? {} : { tag }),
+    ...(traceId === undefined ? {} : { traceId }),
+  })
 }
 
 /**
- * DEBUG level log
- *
- * @param {string} msg the message to log
- * @param {string} [tag] a unique tag to easily search for this message
- * @param {string} [traceId] a unique id to easily trace logs tied to a request
+ * DEBUG level log.
  */
-export function debug(msg, tag, traceId) {
-  if (process.env.NODE_ENV !== 'production') {
-    log({ arg: msg, tag, level: 'debug', traceId, color: ['bold', 'blue'] })
+export function debug(msg: unknown, tag?: string, traceId?: string): void {
+  if (process.env['NODE_ENV'] !== 'production') {
+    log({
+      arg: msg,
+      level: 'debug',
+      color: ['bold', 'blue'],
+      ...(tag === undefined ? {} : { tag }),
+      ...(traceId === undefined ? {} : { traceId }),
+    })
   }
 }
 

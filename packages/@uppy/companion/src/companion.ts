@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import cookieParser from 'cookie-parser'
+import type { Express } from 'express'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
@@ -9,36 +10,42 @@ import {
   defaultOptions,
   getMaskableSecrets,
   validateConfig,
-} from './config/companion.js'
-import grantConfigFn from './config/grant.js'
-import googlePicker from './server/controllers/googlePicker.js'
-import * as controllers from './server/controllers/index.js'
-import s3 from './server/controllers/s3.js'
-import searchController from './server/controllers/search.js'
-import url from './server/controllers/url.js'
-import createEmitter from './server/emitter/index.js'
-import { getURLBuilder } from './server/helpers/utils.js'
-import * as jobs from './server/jobs.js'
-import logger from './server/logger.js'
-import * as middlewares from './server/middlewares.js'
-import { getCredentialsOverrideMiddleware } from './server/provider/credentials.js'
+} from './config/companion.ts'
+import grantConfigFn from './config/grant.ts'
+import type { CompanionInitOptionsInput } from './schemas/index.ts'
+import googlePicker from './server/controllers/googlePicker.ts'
+import * as controllers from './server/controllers/index.ts'
+import s3 from './server/controllers/s3.ts'
+import searchController from './server/controllers/search.ts'
+import url from './server/controllers/url.ts'
+import createEmitter from './server/emitter/index.ts'
+import { getURLBuilder } from './server/helpers/utils.ts'
+import * as jobs from './server/jobs.ts'
+import logger from './server/logger.ts'
+import * as middlewares from './server/middlewares.ts'
+import { getCredentialsOverrideMiddleware } from './server/provider/credentials.ts'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
-} from './server/provider/error.js'
-import * as providerManager from './server/provider/index.js'
-import { isOAuthProvider } from './server/provider/Provider.js'
-import * as redis from './server/redis.js'
+} from './server/provider/error.ts'
+import * as providerManager from './server/provider/index.ts'
+import { isOAuthProvider } from './server/provider/Provider.ts'
+import * as redis from './server/redis.ts'
 
-import socket from './server/socket.js'
+import socket from './server/socket.ts'
 
 export { socket }
 
 const grantConfig = grantConfigFn()
 
-export function setLoggerProcessName({ loggerProcessName }) {
-  if (loggerProcessName != null) logger.setProcessName(loggerProcessName)
+export function setLoggerProcessName(
+  options: { loggerProcessName?: unknown } = {},
+) {
+  const { loggerProcessName } = options
+  if (typeof loggerProcessName === 'string' && loggerProcessName.length > 0) {
+    logger.setProcessName(loggerProcessName)
+  }
 }
 
 // intercepts grantJS' default response error when something goes
@@ -83,11 +90,11 @@ export const errors = {
 
 /**
  * Entry point into initializing the Companion app.
- *
- * @param {object} optionsArg
- * @returns {{ app: import('express').Express, emitter: any }}}
  */
-export function app(optionsArg = {}) {
+export function app(optionsArg: CompanionInitOptionsInput = {}): {
+  app: Express
+  emitter: unknown
+} {
   setLoggerProcessName(optionsArg)
 
   validateConfig(optionsArg)
@@ -96,13 +103,24 @@ export function app(optionsArg = {}) {
 
   const providers = providerManager.getDefaultProviders()
 
-  const { customProviders } = options
+  type CustomProviders = Parameters<
+    typeof providerManager.addCustomProviders
+  >[0]
+  const customProviders = options.customProviders as CustomProviders | undefined
   if (customProviders) {
     providerManager.addCustomProviders(customProviders, providers, grantConfig)
   }
 
-  const getOauthProvider = (providerName) =>
-    providers[providerName]?.oauthProvider
+  type ProviderName = keyof typeof providers
+  const isProviderName = (providerName: string): providerName is ProviderName =>
+    Object.hasOwn(providers, providerName)
+
+  const getOauthProvider = (providerName: string): string | undefined => {
+    if (!isProviderName(providerName)) return undefined
+    const ProviderClass = providers[providerName]
+    if (!ProviderClass) return undefined
+    return ProviderClass.oauthProvider
+  }
 
   providerManager.addProviderOptions(options, grantConfig, getOauthProvider)
 
@@ -264,8 +282,13 @@ export function app(optionsArg = {}) {
   // Used for testing dynamic credentials only, normally this would run on a separate server.
   if (options.testDynamicOauthCredentials) {
     app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
-      if (req.query.secret !== options.testDynamicOauthCredentialsSecret)
+      const providedSecret = req.query['secret']
+      if (
+        typeof providedSecret !== 'string' ||
+        providedSecret !== options.testDynamicOauthCredentialsSecret
+      ) {
         throw new Error('Invalid secret')
+      }
       const { providerName } = req.params
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
@@ -303,16 +326,22 @@ export function app(optionsArg = {}) {
   )
 
   if (app.get('env') !== 'test') {
-    jobs.startCleanUpJob(options.filePath)
+    jobs.startCleanUpJob(`${options.filePath}`)
   }
 
   const processId = randomUUID()
 
   jobs.startPeriodicPingJob({
-    urls: options.periodicPingUrls,
-    interval: options.periodicPingInterval,
-    count: options.periodicPingCount,
-    staticPayload: options.periodicPingStaticPayload,
+    urls: options.periodicPingUrls ?? [],
+    ...(options.periodicPingInterval !== undefined && {
+      interval: options.periodicPingInterval,
+    }),
+    ...(options.periodicPingCount !== undefined && {
+      count: options.periodicPingCount,
+    }),
+    ...(options.periodicPingStaticPayload !== undefined && {
+      staticPayload: options.periodicPingStaticPayload,
+    }),
     version: packageJson.version,
     processId,
   })

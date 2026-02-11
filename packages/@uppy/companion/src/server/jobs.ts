@@ -3,10 +3,11 @@ import path from 'node:path'
 import { setTimeout as sleep } from 'node:timers/promises'
 import got from 'got'
 import schedule from 'node-schedule'
-import * as logger from './logger.js'
-import Uploader from './Uploader.js'
+import { isRecord } from './helpers/type-guards.ts'
+import * as logger from './logger.ts'
+import Uploader from './Uploader.ts'
 
-const cleanUpFinishedUploads = (dirPath) => {
+const cleanUpFinishedUploads = (dirPath: string): void => {
   logger.info(
     `running clean up job for path: ${dirPath}`,
     'jobs.cleanup.progress.read',
@@ -34,8 +35,7 @@ const cleanUpFinishedUploads = (dirPath) => {
           // we still delete the file if we can't get the stats
           // but we also log the error
           logger.error(err2, 'jobs.cleanup.stat.error')
-          // @ts-ignore
-        } else if (Date.now() - stats.mtime < twelveHoursAgo) {
+        } else if (Date.now() - stats.mtime.getTime() < twelveHoursAgo) {
           logger.info(`skipping file ${file}`, 'jobs.cleanup.skip')
           return
         }
@@ -52,15 +52,23 @@ const cleanUpFinishedUploads = (dirPath) => {
 /**
  * Runs a function every 24 hours, to clean up stale, upload related files.
  *
- * @param {string} dirPath path to the directory which you want to clean
+ * @param dirPath path to the directory which you want to clean
  */
-export function startCleanUpJob(dirPath) {
+export function startCleanUpJob(dirPath: string): void {
   logger.info('starting clean up job', 'jobs.cleanup.start')
   // run once a day
   schedule.scheduleJob('0 23 * * *', () => cleanUpFinishedUploads(dirPath))
 }
 
-async function runPeriodicPing({ urls, payload, requestTimeout }) {
+async function runPeriodicPing({
+  urls,
+  payload,
+  requestTimeout,
+}: {
+  urls: string[]
+  payload: Record<string, unknown>
+  requestTimeout: number
+}): Promise<void> {
   // Run requests in parallel
   await Promise.all(
     urls.map(async (url) => {
@@ -85,7 +93,14 @@ export async function startPeriodicPingJob({
   staticPayload = {},
   version,
   processId,
-}) {
+}: {
+  urls: string[]
+  interval?: number
+  count?: number
+  staticPayload?: unknown
+  version: string
+  processId: string
+}): Promise<void> {
   if (urls.length === 0) return
 
   logger.info('Starting periodic ping job', 'jobs.periodic.ping.start')
@@ -122,11 +137,12 @@ export async function startPeriodicPingJob({
 
     try {
       requesting = true
+      const safeStaticPayload = isRecord(staticPayload) ? staticPayload : {}
       const payload = {
         version,
         processId,
         service: 'companion',
-        ...staticPayload,
+        ...safeStaticPayload,
       }
       await runPeriodicPing({ urls, payload, requestTimeout })
     } finally {

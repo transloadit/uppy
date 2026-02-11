@@ -4,11 +4,11 @@
     "declaration": true,
     "target": "es2022",
     "noImplicitAny": false,
+    "erasableSyntaxOnly": true,
     "sourceMap": false,
-    "allowJs": true,
-    "checkJs": true,
+    "allowJs": false,
+    "checkJs": false,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "types": []
+    "resolveJsonModule": true
   }
 }

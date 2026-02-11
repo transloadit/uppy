@@ -1,34 +1,39 @@
-import * as logger from '../logger.js'
+import * as logger from '../logger.ts'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
   parseHttpError,
-} from './error.js'
+} from './error.ts'
 
 export { parseHttpError }
 
+type ProviderHttpError = {
+  statusCode: number | undefined
+  body: unknown
+}
+
+type ProviderErrorHandlingOptions<T> = {
+  fn: () => Promise<T>
+  tag: string
+  providerName: string
+  isAuthError?: (a: ProviderHttpError) => boolean
+  isUserFacingError?: (a: ProviderHttpError) => boolean
+  getJsonErrorMessage: (a: unknown) => string | undefined
+}
+
 /**
- *
- * @param {{
- *   fn: () => any,
- *   tag: string,
- * providerName: string,
- *   isAuthError?: (a: { statusCode: number, body?: object }) => boolean,
- * isUserFacingError?: (a: { statusCode: number, body?: object }) => boolean,
- *   getJsonErrorMessage: (a: object) => string
- * }} param0
- * @returns
+ * Wrap a provider call and normalize errors to Provider*Error instances.
  */
-export async function withProviderErrorHandling({
+export async function withProviderErrorHandling<T>({
   fn,
   tag,
   providerName,
-  isAuthError = () => false,
-  isUserFacingError = () => false,
+  isAuthError = (_: ProviderHttpError) => false,
+  isUserFacingError = (_: ProviderHttpError) => false,
   getJsonErrorMessage,
-}) {
-  function getErrorMessage({ statusCode, body }) {
+}: ProviderErrorHandlingOptions<T>): Promise<T> {
+  function getErrorMessage({ statusCode, body }: ProviderHttpError): string {
     if (typeof body === 'object') {
       const message = getJsonErrorMessage(body)
       if (message != null) return message
@@ -49,7 +54,7 @@ export async function withProviderErrorHandling({
     // Wrap all HTTP errors according to the provider's desired error handling
     if (httpError) {
       const { statusCode, body } = httpError
-      let knownErr
+      let knownErr: Error
       if (isAuthError({ statusCode, body })) {
         knownErr = new ProviderAuthError()
       } else if (isUserFacingError({ statusCode, body })) {
@@ -73,14 +78,29 @@ export async function withProviderErrorHandling({
   }
 }
 
-export async function withGoogleErrorHandling(providerName, tag, fn) {
-  return withProviderErrorHandling({
+export async function withGoogleErrorHandling<T>(
+  providerName: string,
+  tag: string,
+  fn: () => Promise<T>,
+): Promise<T> {
+  const isRecord = (value: unknown): value is Record<string, unknown> =>
+    !!value && typeof value === 'object' && !Array.isArray(value)
+
+  return withProviderErrorHandling<T>({
     fn,
     tag,
     providerName,
     isAuthError: (response) =>
       response.statusCode === 401 ||
-      (response.statusCode === 400 && response.body?.error === 'invalid_grant'), // Refresh token has expired or been revoked
-    getJsonErrorMessage: (body) => body?.error?.message,
+      (response.statusCode === 400 &&
+        isRecord(response.body) &&
+        response.body['error'] === 'invalid_grant'), // Refresh token has expired or been revoked
+    getJsonErrorMessage: (body) => {
+      if (!isRecord(body)) return undefined
+      const error = body['error']
+      if (!isRecord(error)) return undefined
+      const message = error['message']
+      return typeof message === 'string' ? message : undefined
+    },
   })
 }

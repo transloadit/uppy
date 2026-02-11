@@ -3,18 +3,19 @@ import fs from 'node:fs'
 import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
 import packageJson from '../../package.json' with { type: 'json' }
-import * as utils from '../server/helpers/utils.js'
-import logger from '../server/logger.js'
+import {
+  type StandaloneCompanionOptions,
+  type StandaloneCompanionOptionsInput,
+  StandaloneCompanionOptionsSchema,
+} from '../schemas/index.ts'
+import * as utils from '../server/helpers/utils.ts'
+import logger from '../server/logger.ts'
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
  * Otherwise it falls back to the standard secret environment variable.
- *
- * @param {string} baseEnvVar
- *
- * @returns {string}
  */
-const getSecret = (baseEnvVar) => {
+const getSecret = (baseEnvVar: string): string | undefined => {
   const secretFile = process.env[`${baseEnvVar}_FILE`]
   return secretFile
     ? fs.readFileSync(secretFile).toString()
@@ -22,11 +23,9 @@ const getSecret = (baseEnvVar) => {
 }
 
 /**
- * Auto-generates server secret
- *
- * @returns {string}
+ * Auto-generates server secret.
  */
-export const generateSecret = (secretName) => {
+export const generateSecret = (secretName: string): string => {
   logger.warn(
     `auto-generating server ${secretName} because none was specified`,
     'startup.secret',
@@ -34,19 +33,15 @@ export const generateSecret = (secretName) => {
   return crypto.randomBytes(64).toString('hex')
 }
 
-/**
- *
- * @param {string} url
- */
-const hasProtocol = (url) => {
+const hasProtocol = (url: string): boolean => {
   return url.startsWith('https://') || url.startsWith('http://')
 }
 
-const companionProtocol = process.env.COMPANION_PROTOCOL || 'http'
+const companionProtocol = process.env['COMPANION_PROTOCOL'] || 'http'
 
-function getCorsOrigins() {
-  if (process.env.COMPANION_CLIENT_ORIGINS) {
-    switch (process.env.COMPANION_CLIENT_ORIGINS) {
+function getCorsOrigins(): unknown {
+  if (process.env['COMPANION_CLIENT_ORIGINS']) {
+    switch (process.env['COMPANION_CLIENT_ORIGINS']) {
       case 'true':
         return true
       case 'false':
@@ -55,179 +50,175 @@ function getCorsOrigins() {
         return '*'
 
       default:
-        return process.env.COMPANION_CLIENT_ORIGINS.split(',').map((url) =>
-          hasProtocol(url) ? url : `${companionProtocol}://${url}`,
-        )
+        return process.env['COMPANION_CLIENT_ORIGINS']
+          .split(',')
+          .map((url) =>
+            hasProtocol(url) ? url : `${companionProtocol}://${url}`,
+          )
     }
   }
-  if (process.env.COMPANION_CLIENT_ORIGINS_REGEX) {
-    return new RegExp(process.env.COMPANION_CLIENT_ORIGINS_REGEX)
+  if (process.env['COMPANION_CLIENT_ORIGINS_REGEX']) {
+    return new RegExp(process.env['COMPANION_CLIENT_ORIGINS_REGEX'])
   }
   return undefined
 }
 
-const s3Prefix = process.env.COMPANION_AWS_PREFIX || ''
+const s3Prefix = process.env['COMPANION_AWS_PREFIX'] || ''
 
 /**
- * Default getKey for Companion standalone variant
- *
- * @returns {string}
+ * Default `getKey` for Companion standalone variant.
  */
-const defaultStandaloneGetKey = (...args) =>
-  `${s3Prefix}${utils.defaultGetKey(...args)}`
+const defaultStandaloneGetKey = (
+  ...args: Parameters<typeof utils.defaultGetKey>
+): string => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
- * Loads the config from environment variables
- *
- * @returns {object}
+ * Loads the config from environment variables.
  */
-const getConfigFromEnv = () => {
-  const uploadUrls = process.env.COMPANION_UPLOAD_URLS
+const getConfigFromEnv = (): Record<string, unknown> => {
+  const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
-    process.env.COMPANION_DOMAINS || process.env.COMPANION_DOMAIN || null
+    process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
   const validHosts = domains ? domains.split(',') : []
 
   return {
     providerOptions: {
       drive: {
-        key: process.env.COMPANION_GOOGLE_KEY,
+        key: process.env['COMPANION_GOOGLE_KEY'],
         secret: getSecret('COMPANION_GOOGLE_SECRET'),
-        credentialsURL: process.env.COMPANION_GOOGLE_KEYS_ENDPOINT,
+        credentialsURL: process.env['COMPANION_GOOGLE_KEYS_ENDPOINT'],
       },
       dropbox: {
-        key: process.env.COMPANION_DROPBOX_KEY,
+        key: process.env['COMPANION_DROPBOX_KEY'],
         secret: getSecret('COMPANION_DROPBOX_SECRET'),
-        credentialsURL: process.env.COMPANION_DROPBOX_KEYS_ENDPOINT,
+        credentialsURL: process.env['COMPANION_DROPBOX_KEYS_ENDPOINT'],
       },
       box: {
-        key: process.env.COMPANION_BOX_KEY,
+        key: process.env['COMPANION_BOX_KEY'],
         secret: getSecret('COMPANION_BOX_SECRET'),
-        credentialsURL: process.env.COMPANION_BOX_KEYS_ENDPOINT,
+        credentialsURL: process.env['COMPANION_BOX_KEYS_ENDPOINT'],
       },
       instagram: {
-        key: process.env.COMPANION_INSTAGRAM_KEY,
+        key: process.env['COMPANION_INSTAGRAM_KEY'],
         secret: getSecret('COMPANION_INSTAGRAM_SECRET'),
-        credentialsURL: process.env.COMPANION_INSTAGRAM_KEYS_ENDPOINT,
+        credentialsURL: process.env['COMPANION_INSTAGRAM_KEYS_ENDPOINT'],
       },
       facebook: {
-        key: process.env.COMPANION_FACEBOOK_KEY,
+        key: process.env['COMPANION_FACEBOOK_KEY'],
         secret: getSecret('COMPANION_FACEBOOK_SECRET'),
-        credentialsURL: process.env.COMPANION_FACEBOOK_KEYS_ENDPOINT,
+        credentialsURL: process.env['COMPANION_FACEBOOK_KEYS_ENDPOINT'],
       },
       onedrive: {
-        key: process.env.COMPANION_ONEDRIVE_KEY,
+        key: process.env['COMPANION_ONEDRIVE_KEY'],
         secret: getSecret('COMPANION_ONEDRIVE_SECRET'),
-        credentialsURL: process.env.COMPANION_ONEDRIVE_KEYS_ENDPOINT,
+        credentialsURL: process.env['COMPANION_ONEDRIVE_KEYS_ENDPOINT'],
       },
       zoom: {
-        key: process.env.COMPANION_ZOOM_KEY,
+        key: process.env['COMPANION_ZOOM_KEY'],
         secret: getSecret('COMPANION_ZOOM_SECRET'),
         verificationToken: getSecret('COMPANION_ZOOM_VERIFICATION_TOKEN'),
-        credentialsURL: process.env.COMPANION_ZOOM_KEYS_ENDPOINT,
+        credentialsURL: process.env['COMPANION_ZOOM_KEYS_ENDPOINT'],
       },
       unsplash: {
-        key: process.env.COMPANION_UNSPLASH_KEY,
-        secret: process.env.COMPANION_UNSPLASH_SECRET,
+        key: process.env['COMPANION_UNSPLASH_KEY'],
+        secret: process.env['COMPANION_UNSPLASH_SECRET'],
       },
     },
     s3: {
-      key: process.env.COMPANION_AWS_KEY,
+      key: process.env['COMPANION_AWS_KEY'],
       getKey: defaultStandaloneGetKey,
       secret: getSecret('COMPANION_AWS_SECRET'),
-      bucket: process.env.COMPANION_AWS_BUCKET,
-      endpoint: process.env.COMPANION_AWS_ENDPOINT,
-      region: process.env.COMPANION_AWS_REGION,
+      bucket: process.env['COMPANION_AWS_BUCKET'],
+      endpoint: process.env['COMPANION_AWS_ENDPOINT'],
+      region: process.env['COMPANION_AWS_REGION'],
       useAccelerateEndpoint:
-        process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
-      expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
-      acl: process.env.COMPANION_AWS_ACL,
-      forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
+        process.env['COMPANION_AWS_USE_ACCELERATE_ENDPOINT'] === 'true',
+      expires: parseInt(process.env['COMPANION_AWS_EXPIRES'] || '800', 10),
+      acl: process.env['COMPANION_AWS_ACL'],
+      forcePathStyle: process.env['COMPANION_AWS_FORCE_PATH_STYLE'] === 'true',
     },
     server: {
-      host: process.env.COMPANION_DOMAIN,
+      host: process.env['COMPANION_DOMAIN'],
       protocol: companionProtocol,
-      path: process.env.COMPANION_PATH,
-      implicitPath: process.env.COMPANION_IMPLICIT_PATH,
-      oauthDomain: process.env.COMPANION_OAUTH_DOMAIN,
+      path: process.env['COMPANION_PATH'],
+      implicitPath: process.env['COMPANION_IMPLICIT_PATH'],
+      oauthDomain: process.env['COMPANION_OAUTH_DOMAIN'],
       validHosts,
     },
-    enableUrlEndpoint: process.env.COMPANION_ENABLE_URL_ENDPOINT === 'true',
+    enableUrlEndpoint: process.env['COMPANION_ENABLE_URL_ENDPOINT'] === 'true',
     enableGooglePickerEndpoint:
-      process.env.COMPANION_ENABLE_GOOGLE_PICKER_ENDPOINT === 'true',
-    periodicPingUrls: process.env.COMPANION_PERIODIC_PING_URLS
-      ? process.env.COMPANION_PERIODIC_PING_URLS.split(',')
+      process.env['COMPANION_ENABLE_GOOGLE_PICKER_ENDPOINT'] === 'true',
+    periodicPingUrls: process.env['COMPANION_PERIODIC_PING_URLS']
+      ? process.env['COMPANION_PERIODIC_PING_URLS'].split(',')
       : [],
-    periodicPingInterval: process.env.COMPANION_PERIODIC_PING_INTERVAL
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_INTERVAL, 10)
+    periodicPingInterval: process.env['COMPANION_PERIODIC_PING_INTERVAL']
+      ? parseInt(process.env['COMPANION_PERIODIC_PING_INTERVAL'], 10)
       : undefined,
-    periodicPingStaticPayload: process.env
-      .COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD
-      ? JSON.parse(process.env.COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD)
+    periodicPingStaticPayload: process.env[
+      'COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD'
+    ]
+      ? JSON.parse(process.env['COMPANION_PERIODIC_PING_STATIC_JSON_PAYLOAD'])
       : undefined,
-    periodicPingCount: process.env.COMPANION_PERIODIC_PING_COUNT
-      ? parseInt(process.env.COMPANION_PERIODIC_PING_COUNT, 10)
+    periodicPingCount: process.env['COMPANION_PERIODIC_PING_COUNT']
+      ? parseInt(process.env['COMPANION_PERIODIC_PING_COUNT'], 10)
       : undefined,
-    filePath: process.env.COMPANION_DATADIR,
-    redisPubSubScope: process.env.COMPANION_REDIS_PUBSUB_SCOPE,
-    redisUrl: process.env.COMPANION_REDIS_URL,
+    filePath: process.env['COMPANION_DATADIR'],
+    redisPubSubScope: process.env['COMPANION_REDIS_PUBSUB_SCOPE'],
+    redisUrl: process.env['COMPANION_REDIS_URL'],
     //  redisOptions refers to https://redis.github.io/ioredis/index.html#RedisOptions
     redisOptions: (() => {
       try {
-        if (!process.env.COMPANION_REDIS_OPTIONS) {
+        if (!process.env['COMPANION_REDIS_OPTIONS']) {
           return undefined
         }
-        return JSON.parse(process.env.COMPANION_REDIS_OPTIONS)
+        return JSON.parse(process.env['COMPANION_REDIS_OPTIONS'])
       } catch (e) {
-        logger.warn('COMPANION_REDIS_OPTIONS parse error', e)
+        logger.warn(e, 'COMPANION_REDIS_OPTIONS parse error')
       }
       return undefined
     })(),
-    sendSelfEndpoint: process.env.COMPANION_SELF_ENDPOINT,
+    sendSelfEndpoint: process.env['COMPANION_SELF_ENDPOINT'],
     uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
     secret: getSecret('COMPANION_SECRET'),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
-    allowLocalUrls: process.env.COMPANION_ALLOW_LOCAL_URLS === 'true',
+    allowLocalUrls: process.env['COMPANION_ALLOW_LOCAL_URLS'] === 'true',
     // cookieDomain is kind of a hack to support distributed systems. This should be improved but we never got so far.
-    cookieDomain: process.env.COMPANION_COOKIE_DOMAIN,
-    streamingUpload: process.env.COMPANION_STREAMING_UPLOAD
-      ? process.env.COMPANION_STREAMING_UPLOAD === 'true'
+    cookieDomain: process.env['COMPANION_COOKIE_DOMAIN'],
+    streamingUpload: process.env['COMPANION_STREAMING_UPLOAD']
+      ? process.env['COMPANION_STREAMING_UPLOAD'] === 'true'
       : undefined,
-    tusDeferredUploadLength: process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH
-      ? process.env.COMPANION_TUS_DEFERRED_UPLOAD_LENGTH === 'true'
+    tusDeferredUploadLength: process.env['COMPANION_TUS_DEFERRED_UPLOAD_LENGTH']
+      ? process.env['COMPANION_TUS_DEFERRED_UPLOAD_LENGTH'] === 'true'
       : true,
-    maxFileSize: process.env.COMPANION_MAX_FILE_SIZE
-      ? parseInt(process.env.COMPANION_MAX_FILE_SIZE, 10)
+    maxFileSize: process.env['COMPANION_MAX_FILE_SIZE']
+      ? parseInt(process.env['COMPANION_MAX_FILE_SIZE'], 10)
       : undefined,
-    maxFilenameLength: process.env.COMPANION_MAX_FILENAME_LENGTH
-      ? parseInt(process.env.COMPANION_MAX_FILENAME_LENGTH, 10)
+    maxFilenameLength: process.env['COMPANION_MAX_FILENAME_LENGTH']
+      ? parseInt(process.env['COMPANION_MAX_FILENAME_LENGTH'], 10)
       : 500,
-    chunkSize: process.env.COMPANION_CHUNK_SIZE
-      ? parseInt(process.env.COMPANION_CHUNK_SIZE, 10)
+    chunkSize: process.env['COMPANION_CHUNK_SIZE']
+      ? parseInt(process.env['COMPANION_CHUNK_SIZE'], 10)
       : undefined,
-    clientSocketConnectTimeout: process.env
-      .COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT
-      ? parseInt(process.env.COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT, 10)
+    clientSocketConnectTimeout: process.env[
+      'COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT'
+    ]
+      ? parseInt(process.env['COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT'], 10)
       : undefined,
-    metrics: process.env.COMPANION_HIDE_METRICS !== 'true',
-    loggerProcessName: process.env.COMPANION_LOGGER_PROCESS_NAME,
+    metrics: process.env['COMPANION_HIDE_METRICS'] !== 'true',
+    loggerProcessName: process.env['COMPANION_LOGGER_PROCESS_NAME'],
     corsOrigins: getCorsOrigins(),
     testDynamicOauthCredentials:
-      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS === 'true',
+      process.env['COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS'] === 'true',
     testDynamicOauthCredentialsSecret:
-      process.env.COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET,
-    uploadHeaders: process.env.COMPANION_UPLOAD_HEADERS
-      ? JSON.parse(process.env.COMPANION_UPLOAD_HEADERS)
+      process.env['COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET'],
+    uploadHeaders: process.env['COMPANION_UPLOAD_HEADERS']
+      ? JSON.parse(process.env['COMPANION_UPLOAD_HEADERS'])
       : undefined,
   }
 }
 
-/**
- * Returns the config path specified via cli arguments
- *
- * @returns {string}
- */
-const getConfigPath = () => {
-  let configPath
+const getConfigPath = (): string | undefined => {
+  let configPath: string | undefined
 
   for (let i = process.argv.length - 1; i >= 0; i--) {
     const isConfigFlag =
@@ -242,36 +233,34 @@ const getConfigPath = () => {
   return configPath
 }
 
-/**
- * Loads the config from a file and returns it as an object
- *
- * @returns {object}
- */
-const getConfigFromFile = () => {
+const getConfigFromFile = (): Record<string, unknown> => {
   const path = getConfigPath()
   if (!path) return {}
 
-  const rawdata = fs.readFileSync(getConfigPath())
-  // @ts-ignore
-  return JSON.parse(rawdata)
+  const rawdata = fs.readFileSync(path)
+  return JSON.parse(rawdata.toString('utf8'))
 }
 
-/**
- * Reads all companion configuration set via environment variables
- * and via the config file path
- *
- * @returns {object}
- */
-export const getCompanionOptions = (options = {}) => {
-  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
+export const getCompanionOptions = (
+  options: StandaloneCompanionOptionsInput = {},
+): StandaloneCompanionOptions => {
+  const merged = merge({}, getConfigFromEnv(), getConfigFromFile(), options)
+  // This schema is intentionally tolerant and should not change runtime behavior.
+  return StandaloneCompanionOptionsSchema.parse(merged)
 }
 
-export const buildHelpfulStartupMessage = (companionOptions) => {
-  const buildURL = utils.getURLBuilder(companionOptions)
-  const callbackURLs = []
-  Object.keys(companionOptions.providerOptions).forEach((providerName) => {
-    callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
+export const buildHelpfulStartupMessage = (
+  companionOptions: StandaloneCompanionOptions,
+): string => {
+  const buildURL = utils.getURLBuilder({
+    server: companionOptions.server ?? {},
   })
+  const callbackURLs: string[] = []
+  Object.keys(companionOptions.providerOptions ?? {}).forEach(
+    (providerName) => {
+      callbackURLs.push(buildURL(`/${providerName}/redirect`, true))
+    },
+  )
 
   return stripIndent`
     Welcome to Companion v${packageJson.version}

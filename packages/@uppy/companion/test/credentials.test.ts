@@ -9,9 +9,9 @@ import {
   test,
   vi,
 } from 'vitest'
-import * as tokenService from '../src/server/helpers/jwt.js'
-import { nockZoomRevoke, expects as zoomExpects } from './fixtures/zoom.js'
-import { getServer } from './mockserver.js'
+import * as tokenService from '../src/server/helpers/jwt.ts'
+import { nockZoomRevoke, expects as zoomExpects } from './fixtures/zoom.ts'
+import { getServer } from './mockserver.ts'
 
 const { remoteZoomKey, remoteZoomSecret, remoteZoomVerificationToken } =
   zoomExpects

@@ -1,13 +1,9 @@
+import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
-import * as oAuthState from '../helpers/oauth-state.js'
-import { isOriginAllowed } from './connect.js'
+import * as oAuthState from '../helpers/oauth-state.ts'
+import { isOriginAllowed } from './connect.ts'
 
-/**
- *
- * @param {string} token uppy auth token
- * @param {string} origin url string
- */
-const htmlContent = (token, origin) => {
+const htmlContent = (token: string, origin: string): string => {
   return `
     <!DOCTYPE html>
     <html>
@@ -44,40 +40,44 @@ const htmlContent = (token, origin) => {
     </html>`
 }
 
-/**
- *
- * @param {import('express').Request} req
- * @param {import('express').Response} res
- * @param {import('express').NextFunction} next
- */
-export default function sendToken(req, res, next) {
-  // @ts-expect-error untyped
-  const { companion } = req
+export default function sendToken(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const companion = req.companion
   const uppyAuthToken = companion.authToken
+  const secret = companion.options.secret
+  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+    next()
+    return
+  }
 
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
 
   if (!state) {
-    return next()
+    next()
+    return
   }
 
-  const clientOrigin = oAuthState.getFromState(
-    state,
-    'origin',
-    companion.options.secret,
-  )
+  const clientOrigin = oAuthState.getFromState(state, 'origin', secret)
+  if (typeof clientOrigin !== 'string' || clientOrigin.length === 0) {
+    next()
+    return
+  }
   const customerDefinedAllowedOrigins = oAuthState.getFromState(
     state,
     'customerDefinedAllowedOrigins',
-    companion.options.secret,
+    secret,
   )
 
   if (
     customerDefinedAllowedOrigins &&
     !isOriginAllowed(clientOrigin, customerDefinedAllowedOrigins)
   ) {
-    return next()
+    next()
+    return
   }
 
-  return res.send(htmlContent(uppyAuthToken, clientOrigin))
+  res.send(htmlContent(`${uppyAuthToken}`, clientOrigin))
 }

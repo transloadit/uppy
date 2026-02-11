@@ -2,11 +2,12 @@ import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
 import packageJson from '../package.json' with { type: 'json' }
-import * as tokenService from '../src/server/helpers/jwt.js'
-import * as defaults from './fixtures/constants.js'
-import { nockGoogleDownloadFile } from './fixtures/drive.js'
-import mockOauthState from './mockoauthstate.js'
-import { getServer } from './mockserver.js'
+import * as tokenService from '../src/server/helpers/jwt.ts'
+import { isRecord } from '../src/server/helpers/type-guards.ts'
+import * as defaults from './fixtures/constants.ts'
+import { nockGoogleDownloadFile } from './fixtures/drive.ts'
+import mockOauthState from './mockoauthstate.ts'
+import { getServer } from './mockserver.ts'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
@@ -16,7 +17,11 @@ const fakeLocalhost = 'localhost.com'
 
 vi.mock('node:dns', () => ({
   default: {
-    lookup: (hostname, options, callback) => {
+    lookup: (
+      hostname: string,
+      _options: unknown,
+      callback: (err: Error | null, address?: string, family?: number) => void,
+    ) => {
       if (fakeLocalhost === hostname || hostname === 'localhost') {
         return callback(null, '127.0.0.1', 4)
       }
@@ -46,7 +51,7 @@ afterAll(() => {
 
 describe('validate upload data', () => {
   test('access token expired or invalid when starting provider download', async () => {
-    const meta = {
+    const meta: { size: null; mimeType: string; id: string } = {
       size: null,
       mimeType: 'video/mp4',
       id: defaults.ITEM_ID,
@@ -250,35 +255,37 @@ it('periodically pings', async () => {
       COMPANION_PERIODIC_PING_INTERVAL: '10',
       COMPANION_PERIODIC_PING_COUNT: '1',
     }),
-    new Promise((resolve) => {
+    new Promise<void>((resolve) => {
       nock('http://localhost')
         .post(
           '/ping',
-          (body) =>
-            body.some === 'value' &&
-            body.version === packageJson.version &&
-            typeof body.processId === 'string',
+          (body: unknown) =>
+            isRecord(body) &&
+            body['some'] === 'value' &&
+            body['version'] === packageJson.version &&
+            typeof body['processId'] === 'string',
         )
         .reply(200, () => resolve())
     }),
   ])
 }, 3000)
 
-async function runUrlMetaTest(url) {
+async function runUrlMetaTest(url: string) {
   const server = await getServer()
 
   return request(server).post('/url/meta').send({ url })
 }
 
-async function runUrlGetTest(url) {
+async function runUrlGetTest(url: string) {
   const server = await getServer()
+  const size: null = null
 
   return request(server).post('/url/get').send({
     fileId: url,
     metadata: {},
     endpoint: 'http://url.myendpoint.com/files',
     protocol: 'tus',
-    size: null,
+    size,
     url,
   })
 }

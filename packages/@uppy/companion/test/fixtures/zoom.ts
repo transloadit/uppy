@@ -1,5 +1,5 @@
 import nock from 'nock'
-import { getBasicAuthHeader } from '../../src/server/helpers/utils.js'
+import { getBasicAuthHeader } from '../../src/server/helpers/utils.ts'
 
 export const expects = {
   listPath: 'DUMMY-UUID%3D%3D',
@@ -16,7 +16,7 @@ export const expects = {
   remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN',
 }
 
-export const nockZoomRecordings = ({ times = 1 } = {}) => {
+export const nockZoomRecordings = ({ times = 1 }: { times?: number } = {}) => {
   nock('https://zoom.us')
     .get('/v2/meetings/DUMMY-UUID%3D%3D/recordings')
     .times(times)
@@ -50,13 +50,19 @@ export const nockZoomRecordings = ({ times = 1 } = {}) => {
     })
 }
 
-export const nockZoomRevoke = ({ key, secret }) => {
+export const nockZoomRevoke = ({
+  key,
+  secret,
+}: {
+  key: string
+  secret: string
+}) => {
   nock('https://zoom.us')
     .post('/oauth/revoke?token=token+value')
     .reply(function () {
       const { headers } = this.req
       const expected = getBasicAuthHeader(key, secret)
-      const success = headers.authorization === expected
+      const success = headers['authorization'] === expected
       return success ? [200, { status: 'success' }] : [400]
     })
 }
