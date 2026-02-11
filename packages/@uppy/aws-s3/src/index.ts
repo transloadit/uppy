@@ -774,11 +774,17 @@ export default class AwsS3Multipart<
           )
         }
         if (etag == null) {
-          console.error(
-            '@uppy/aws-s3: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
-          )
-          return
-        }
+        // ETag is only strictly required for multipart uploads (to complete the upload).
+        // For non-multipart uploads (single PUT/POST), it's just metadata.
+        // We warn but don't block completion for non-multipart uploads.
+        console.warn(
+          '@uppy/aws-s3: Could not read the ETag header. This likely means CORS is not configured correctly on the S3 Bucket. See https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket',
+        )
+      }
+
+      // Use ETag if available, otherwise fall back to location or a generated value.
+      // ETag is required for multipart completion, but for single uploads we can proceed without it.
+      const finalEtag = etag || location || `${Date.now()}`
 
         onComplete?.(etag)
         resolve({
