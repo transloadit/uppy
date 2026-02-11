@@ -38,6 +38,8 @@ const isOAuthProviderReq = (req: Request) =>
   isOAuthProvider(req.companion.providerClass?.oauthProvider)
 const isSimpleAuthProviderReq = (req: Request) =>
   !!req.companion.providerClass?.hasSimpleAuth
+const isEncryptionSecret = (value: unknown): value is string | Buffer =>
+  typeof value === 'string' || Buffer.isBuffer(value)
 
 /**
  * Middleware can be used to verify that the current request is to an OAuth provider
@@ -91,9 +93,15 @@ export const verifyToken: RequestHandler = (req, res, next) => {
   if (isOAuthProviderReq(req) || isSimpleAuthProviderReq(req)) {
     // For OAuth / simple auth provider, we find the encrypted auth token from the header:
     const token = req.companion.authToken
-    if (token == null) {
+    if (typeof token !== 'string') {
       logger.info('cannot auth token', 'token.verify.unset', req.id)
       res.sendStatus(401)
+      return
+    }
+    const secret = req.companion.options.secret
+    if (!isEncryptionSecret(secret)) {
+      logger.info('cannot auth token', 'token.verify.secret.unset', req.id)
+      res.sendStatus(500)
       return
     }
     const providerName = req.params['providerName']
@@ -103,8 +111,8 @@ export const verifyToken: RequestHandler = (req, res, next) => {
     }
     try {
       const payload = tokenService.verifyEncryptedAuthToken(
-        `${token}`,
-        `${req.companion.options.secret}`,
+        token,
+        secret,
         providerName,
       )
       req.companion.providerUserSession = payload[providerName]
@@ -158,11 +166,16 @@ export const gentleVerifyToken: RequestHandler = (req, res, next) => {
     next()
     return
   }
-  if (req.companion.authToken) {
+  const secret = req.companion.options.secret
+  if (!isEncryptionSecret(secret)) {
+    next()
+    return
+  }
+  if (typeof req.companion.authToken === 'string') {
     try {
       const payload = tokenService.verifyEncryptedAuthToken(
-        `${req.companion.authToken}`,
-        `${req.companion.options.secret}`,
+        req.companion.authToken,
+        secret,
         providerName,
       )
       req.companion.providerUserSession = payload[providerName]

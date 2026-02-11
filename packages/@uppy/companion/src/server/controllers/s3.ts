@@ -101,9 +101,21 @@ export default function s3(configIn: unknown): Router {
       Object.values(value).every((v) => typeof v === 'string')
     )
   }
-  const conditions: PresignedPostCondition[] = Array.isArray(config.conditions)
-    ? config.conditions.filter(isCondition)
-    : []
+  const conditions: PresignedPostCondition[] = []
+  const configuredConditions = config.conditions
+  if (configuredConditions != null) {
+    if (!Array.isArray(configuredConditions)) {
+      throw new TypeError('s3: The `conditions` option must be an array')
+    }
+    configuredConditions.forEach((condition) => {
+      if (!isCondition(condition)) {
+        throw new TypeError(
+          's3: The `conditions` option contains an invalid condition',
+        )
+      }
+      conditions.push(condition)
+    })
+  }
 
   function isS3Client(value: unknown): value is S3Client {
     if (!value || (typeof value !== 'object' && typeof value !== 'function'))

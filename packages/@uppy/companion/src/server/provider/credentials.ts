@@ -9,6 +9,9 @@ import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import logger from '../logger.ts'
 import type Provider from './Provider.ts'
 
+const isEncryptionSecret = (value: unknown): value is string | Buffer =>
+  typeof value === 'string' || Buffer.isBuffer(value)
+
 /**
  * @param url
  * @param providerName
@@ -147,11 +150,17 @@ export const getCredentialsOverrideMiddleware = (
       }
 
       const { secret, preAuthSecret } = companionOptions
-      if (typeof secret !== 'string' || secret.length === 0) {
+      if (
+        !isEncryptionSecret(secret) ||
+        (typeof secret === 'string' && secret.length === 0)
+      ) {
         next()
         return
       }
-      if (typeof preAuthSecret !== 'string' || preAuthSecret.length === 0) {
+      if (
+        !isEncryptionSecret(preAuthSecret) ||
+        (typeof preAuthSecret === 'string' && preAuthSecret.length === 0)
+      ) {
         next()
         return
       }

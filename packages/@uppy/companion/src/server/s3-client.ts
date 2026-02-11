@@ -57,7 +57,9 @@ export default function s3Client(
 
     const explicitRegion = getString(s3, 'region')
     const rawClientRegion = rawClientOptions?.['region']
-    const region = explicitRegion ?? (isRegion(rawClientRegion) ? rawClientRegion : undefined)
+    const region =
+      explicitRegion ??
+      (isRegion(rawClientRegion) ? rawClientRegion : undefined)
 
     let endpoint: string | undefined =
       typeof s3.endpoint === 'string' ? s3.endpoint : undefined
