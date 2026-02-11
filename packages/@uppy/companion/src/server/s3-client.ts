@@ -32,6 +32,10 @@ export default function s3Client(
       const v = obj[key]
       return typeof v === 'boolean' ? v : undefined
     }
+    const isRegion = (
+      value: unknown,
+    ): value is NonNullable<S3ClientConfig['region']> =>
+      typeof value === 'string' || typeof value === 'function'
 
     if (s3['accessKeyId'] || s3['secretAccessKey']) {
       throw new Error(
@@ -51,25 +55,23 @@ export default function s3Client(
       )
     }
 
-    const region =
-      getString(s3, 'region') ??
-      (rawClientOptions && typeof rawClientOptions['region'] === 'string'
-        ? rawClientOptions['region']
-        : undefined)
-    if (!region) {
-      // No region means this Companion instance isn't configured for S3 uploads.
-      return null
-    }
+    const explicitRegion = getString(s3, 'region')
+    const rawClientRegion = rawClientOptions?.['region']
+    const region = explicitRegion ?? (isRegion(rawClientRegion) ? rawClientRegion : undefined)
 
-    let endpoint: unknown = s3.endpoint
-    if (typeof endpoint === 'string') {
+    let endpoint: string | undefined =
+      typeof s3.endpoint === 'string' ? s3.endpoint : undefined
+    if (endpoint) {
       // TODO: deprecate those replacements in favor of what AWS SDK supports out of the box.
-      endpoint = endpoint.replace(/{service}/, 's3').replace(/{region}/, region)
+      endpoint = endpoint.replace(/{service}/, 's3')
+      if (explicitRegion) {
+        endpoint = endpoint.replace(/{region}/, explicitRegion)
+      }
     }
 
     const forcePathStyle = getBool(s3, 'forcePathStyle')
     let s3ClientOptions: S3ClientConfig = {
-      region,
+      ...(region === undefined ? {} : { region }),
       ...(forcePathStyle === undefined ? {} : { forcePathStyle }),
     }
 
@@ -96,7 +98,7 @@ export default function s3Client(
       }
     } else {
       // no accelearate, we allow custom s3 endpoint
-      if (typeof endpoint === 'string') {
+      if (endpoint !== undefined) {
         s3ClientOptions = {
           ...s3ClientOptions,
           endpoint,
@@ -124,7 +126,15 @@ export default function s3Client(
         ...(sessionToken ? { sessionToken } : {}),
       }
     }
-    s3Client = new S3Client(s3ClientOptions)
+    try {
+      s3Client = new S3Client(s3ClientOptions)
+    } catch (err) {
+      // Keep S3 optional when no region can be resolved at all.
+      if (err instanceof Error && err.message === 'Region is missing') {
+        return null
+      }
+      throw err
+    }
   }
 
   return s3Client

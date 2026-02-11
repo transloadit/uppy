@@ -4,12 +4,23 @@ type UploadOptions = {
   onSuccess: () => void
 } & Record<string, unknown>
 
+let lastUploadFile: unknown
+
+export function __getLastUploadFile(): unknown {
+  return lastUploadFile
+}
+
+export function __resetTusMockState(): void {
+  lastUploadFile = undefined
+}
+
 export class Upload {
   url: string
 
   options: UploadOptions
 
-  constructor(_file: unknown, options: UploadOptions) {
+  constructor(file: unknown, options: UploadOptions) {
+    lastUploadFile = file
     this.url = 'https://tus.endpoint/files/foo-bar'
     this.options = options
   }

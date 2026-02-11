@@ -4,6 +4,7 @@ import type { Request } from 'express'
 import express from 'express'
 import nock from 'nock'
 import request from 'supertest'
+import * as tusClient from 'tus-js-client'
 import {
   afterAll,
   afterEach,
@@ -24,8 +25,25 @@ import * as socketClient from './mocksocket.ts'
 vi.mock('tus-js-client')
 vi.mock('express-prom-bundle')
 
+function getTusMockLastUploadFile(): unknown {
+  const getter = Reflect.get(tusClient, '__getLastUploadFile')
+  if (typeof getter !== 'function') {
+    throw new Error('Expected tus mock to expose __getLastUploadFile()')
+  }
+  return getter()
+}
+
+function resetTusMockState(): void {
+  const reset = Reflect.get(tusClient, '__resetTusMockState')
+  if (typeof reset !== 'function') {
+    throw new Error('Expected tus mock to expose __resetTusMockState()')
+  }
+  reset()
+}
+
 afterEach(() => {
   nock.cleanAll()
+  resetTusMockState()
 })
 afterAll(() => {
   nock.restore()
@@ -162,6 +180,7 @@ describe('uploader', () => {
     socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
     await promise
     await uploader.tryUploadStream(stream, requireMockReq())
+    expect(getTusMockLastUploadFile()).toBeInstanceOf(Readable)
 
     expect(onUploadError).not.toHaveBeenCalled()
 

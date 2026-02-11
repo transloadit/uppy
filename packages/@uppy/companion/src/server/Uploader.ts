@@ -3,7 +3,7 @@ import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { Readable as NodeReadableStream } from 'node:stream'
-import { Readable as NodeReadable, Transform } from 'node:stream'
+import { Transform } from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
@@ -803,19 +803,7 @@ export default class Uploader {
         tusOptions.uploadSize = this.size
       }
 
-      const nodeReader = NodeReadable.toWeb(stream).getReader()
-      const reader: Pick<ReadableStreamDefaultReader<unknown>, 'read'> = {
-        async read() {
-          const { done, value } = await nodeReader.read()
-          // Ensure we always provide `value`, since some ReadableStream lib variants
-          // type it differently when `done: true`.
-          return done
-            ? { done: true, value: undefined }
-            : { done: false, value }
-        },
-      }
-
-      this.tus = new tus.Upload(reader, tusOptions)
+      this.tus = new tus.Upload(stream, tusOptions)
 
       this.tus.start()
     })
