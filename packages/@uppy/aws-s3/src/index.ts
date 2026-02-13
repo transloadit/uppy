@@ -1,3 +1,4 @@
+import type { RequestClient } from '@uppy/companion-client'
 import {
   BasePlugin,
   type DefinePluginOpts,
@@ -5,7 +6,7 @@ import {
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
-import type { Body, Meta, UppyFile } from '@uppy/utils'
+import type { Body, Meta, RemoteUppyFile, UppyFile } from '@uppy/utils'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
@@ -492,6 +493,17 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
   #s3Client!: S3mini
   #queue!: TaskQueue
+  /** Controls how many remote uploads run concurrently (concurrency = limit). */
+  #remoteQueue!: TaskQueue
+  /**
+   * Unlimited queue passed into RequestClient.uploadRemoteFile().
+   * Inside that method, wrapPromiseFunction() is called for both the token
+   * request and the WebSocket lifecycle. With a bounded queue those two
+   * operations compete for slots, causing Companion timeouts when > limit
+   * files upload at once. An unlimited queue lets them run back-to-back
+   * without blocking; actual concurrency is gated by #remoteQueue.
+   */
+  #remoteInnerQueue!: TaskQueue
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -504,6 +516,8 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.#setResumableUploadsCapability(true)
     this.#initS3Client()
     this.#queue = new TaskQueue({ concurrency: this.opts.limit })
+    this.#remoteQueue = new TaskQueue({ concurrency: this.opts.limit })
+    this.#remoteInnerQueue = new TaskQueue()
     this.uppy.addUploader(this.#upload)
     this.uppy.on('cancel-all', this.#handleCancelAll)
   }
@@ -513,6 +527,8 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.removeUploader(this.#upload)
     this.uppy.off('cancel-all', this.#handleCancelAll)
     this.#queue.clear()
+    this.#remoteQueue.clear()
+    this.#remoteInnerQueue.clear()
     // Abort and clean up any in-flight uploads
     for (const fileId of Object.keys(this.#uploaders)) {
       const uploader = this.#uploaders[fileId]
@@ -539,6 +555,8 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #handleCancelAll = (): void => {
     this.#setResumableUploadsCapability(true)
     this.#queue.clear()
+    this.#remoteQueue.clear()
+    this.#remoteInnerQueue.clear()
   }
 
   // --------------------------------------------------------------------------
@@ -626,10 +644,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
     const promises = filesToUpload.map((file) => {
       if (file.isRemote) {
-        // Remote files not yet supported in this minimal implementation
-        return Promise.reject(
-          new Error('Remote file uploads not yet supported'),
-        )
+        return this.#remoteQueue.add(() => this.#uploadRemoteFile(file))
       }
       return this.#queue.add(async () => {
         // File may have been removed while waiting in the queue.
@@ -645,6 +660,9 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     })
 
     await Promise.allSettled(promises)
+    // After the upload batch is done, restore resumable uploads capability.
+    // It may have been set to false if there were remote files in this batch.
+    this.#setResumableUploadsCapability(true)
   }
 
   // --------------------------------------------------------------------------
@@ -743,6 +761,58 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #cleanup(fileId: string): void {
     if (this.#uploaders[fileId]) {
       delete this.#uploaders[fileId]
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Remote File Upload
+  // --------------------------------------------------------------------------
+
+  /**
+   * Builds the request body sent to Companion's provider get endpoint.
+   * Tells Companion to use its server-side S3 upload path.
+   */
+  #getCompanionClientArgs(file: RemoteUppyFile<M, B>): Record<string, unknown> {
+    return {
+      ...file.remote?.body,
+      protocol: 's3-multipart',
+      size: file.data?.size,
+      metadata: file.meta,
+    }
+  }
+
+  /**
+   * Uploads a remote file (from a provider like Google Drive) via Companion.
+   *
+   * The flow is:
+   * 1. POST to Companion with protocol: 's3-multipart' and file metadata
+   * 2. Companion downloads the file from the provider and uploads it to S3
+   *    server-side using @aws-sdk/lib-storage
+   * 3. Progress/success/error are communicated back via WebSocket
+   *
+   * The browser never touches the file data — Companion handles everything.
+   */
+  async #uploadRemoteFile(file: RemoteUppyFile<M, B>): Promise<void> {
+    // Companion's S3 path doesn't support pause/resume (unlike tus),
+    // so disable resumable uploads while remote files are uploading.
+    this.#setResumableUploadsCapability(false)
+
+    const controller = new AbortController()
+
+    const removedHandler = (removedFile: UppyFile<M, B>) => {
+      if (removedFile.id === file.id) controller.abort()
+    }
+    this.uppy.on('file-removed', removedHandler)
+
+    try {
+      await this.uppy
+        .getRequestClientForFile<RequestClient<M, B>>(file)
+        .uploadRemoteFile(file, this.#getCompanionClientArgs(file), {
+          signal: controller.signal,
+          getQueue: () => this.#remoteInnerQueue,
+        })
+    } finally {
+      this.uppy.off('file-removed', removedHandler)
     }
   }
 }
