@@ -116,7 +116,9 @@ export function app(optionsArg = {}) {
   const app = express()
 
   if (options.metrics) {
-    app.use(middlewares.metrics({ path: options.server.path }))
+    app.use(
+      /** @type {any} */ (middlewares.metrics({ path: options.server.path })),
+    )
   }
 
   app.use(cookieParser()) // server tokens are added to cookies
@@ -124,10 +126,10 @@ export function app(optionsArg = {}) {
   app.use(interceptGrantErrorResponse)
 
   // override provider credentials at request time
-  // Making `POST` request to the `/connect/:provider/:override?` route requires a form body parser middleware:
+  // Making `POST` request to the `/connect/:provider{/:override}` route requires a form body parser middleware:
   // See https://github.com/simov/grant#dynamic-http
   app.use(
-    '/connect/:oauthProvider/:override?',
+    '/connect/:oauthProvider{/:override}',
     express.urlencoded({ extended: false }),
     getCredentialsOverrideMiddleware(providers, options),
   )
@@ -144,7 +146,7 @@ export function app(optionsArg = {}) {
   app.use(middlewares.cors(options))
 
   // add uppy options to the request object so it can be accessed by subsequent handlers.
-  app.use('*', middlewares.getCompanionMiddleware(options))
+  app.use(middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
   if (options.enableUrlEndpoint) app.use('/url', url())
   if (options.enableGooglePickerEndpoint)
@@ -217,7 +219,7 @@ export function app(optionsArg = {}) {
   )
 
   app.get(
-    '/:providerName/list/:id?',
+    '/:providerName/list{/:id}',
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.list,

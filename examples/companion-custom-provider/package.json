@@ -19,7 +19,7 @@
     "@uppy/companion": "workspace:*",
     "body-parser": "^1.20.4",
     "dotenv": "^16.0.1",
-    "express": "^4.22.0",
+    "express": "^5.2.1",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2",
     "vite": "^7.1.11"
