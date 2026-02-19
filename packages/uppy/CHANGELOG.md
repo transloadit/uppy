@@ -1,5 +1,12 @@
 # uppy
 
+## 5.2.4
+
+### Patch Changes
+
+- Updated dependencies [6b1abaa]
+  - @uppy/xhr-upload@5.2.0
+
 ## 5.2.3
 
 ### Patch Changes
