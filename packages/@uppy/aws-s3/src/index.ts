@@ -809,20 +809,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     }
   }
 
-  /**
-   * Uploads a remote file (from a provider like Google Drive) via Companion.
-   *
-   * The flow is:
-   * 1. POST to Companion with protocol: 's3-multipart' and file metadata
-   * 2. Companion downloads the file from the provider and uploads it to S3
-   *    server-side using @aws-sdk/lib-storage
-   * 3. Progress/success/error are communicated back via WebSocket
-   *
-   * The browser never touches the file data — Companion handles everything.
-   */
   async #uploadRemoteFile(file: RemoteUppyFile<M, B>): Promise<void> {
-    // Companion's S3 path doesn't support pause/resume (unlike tus),
-    // so disable resumable uploads while remote files are uploading.
     this.#setResumableUploadsCapability(false)
 
     const controller = new AbortController()
