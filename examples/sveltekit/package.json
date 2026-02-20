@@ -28,7 +28,7 @@
     "@tailwindcss/vite": "^4.0.0",
     "@vitest/browser": "^3.2.4",
     "playwright": "1.57.0",
-    "svelte": "^5.0.0",
+    "svelte": "^5.51.5",
     "svelte-check": "^4.0.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.0.0",
