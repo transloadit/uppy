@@ -40,7 +40,8 @@
 
     <noscript>You need JavaScript to run this example.</noscript>
     <script type="module">
-      import { Uppy, Dashboard, AwsS3 } from './uppy.min.mjs'
+      import { Uppy, Dashboard, AwsS3, GoldenRetriever } from './uppy.min.mjs'
+
 
       // Common event handlers
       function onUploadComplete(result) {
@@ -81,7 +82,7 @@
               }
             },
           })
-
+          .use(GoldenRetriever)
         uppy.on('complete', onUploadComplete)
         uppy.on('upload-success', onUploadSuccess)
         uppy.on('upload-error', onUploadError)
@@ -116,7 +117,7 @@
               return response.json()
             },
           })
-
+          .use(GoldenRetriever)
         uppy.on('complete', onUploadComplete)
         uppy.on('upload-success', onUploadSuccess)
         uppy.on('upload-error', onUploadError)
