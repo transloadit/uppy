@@ -26,12 +26,15 @@ function createXHRMock(options?: {
   responseText?: string
   /** Delay before responding (ms). Default: 0 (microtask) */
   delay?: number
+  /** Simulate a network error (fires onerror instead of onload). Default: false */
+  simulateNetworkError?: boolean
 }) {
   const {
     responseHeaders = {},
     status = 200,
     responseText = '',
     delay = 0,
+    simulateNetworkError = false,
   } = options ?? {}
 
   const OriginalXHR = globalThis.XMLHttpRequest
@@ -90,6 +93,17 @@ function createXHRMock(options?: {
 
       const respond = () => {
         if (this._aborted) return
+
+        // Simulate network error — fires onerror instead of onload
+        if (simulateNetworkError) {
+          this.status = 0
+          this.readyState = 4
+          if (this.onerror) {
+            this.onerror(new Event('error'))
+          }
+          return
+        }
+
         const bodySize =
           body instanceof Blob
             ? body.size
@@ -910,6 +924,274 @@ describe('AwsS3', () => {
     })
   })
 
+  // ==========================================================================
+  // Golden Retriever resume-after-page-refresh support
+  // ==========================================================================
+
+  describe('Golden Retriever resume support', () => {
+    it('persists s3Multipart state after multipart upload creation', async () => {
+      const xhrMock = createXHRMock({
+        responseHeaders: { etag: '"part-etag"' },
+      })
+      const fetchMock = createMultipartFetchMock({
+        uploadId: 'persisted-upload-id',
+        key: 'test-key.dat',
+      })
+
+      try {
+        const signRequest = vi.fn().mockResolvedValue({
+          url: 'https://test-bucket.s3.us-east-1.amazonaws.com/test-key.dat?X-Amz-Signature=abc',
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: true,
+        })
+
+        core.addFile({
+          source: 'test',
+          name: 'test.dat',
+          type: 'application/octet-stream',
+          data: new File([new Uint8Array(10 * MB)], 'test.dat'),
+        })
+
+        const fileId = Object.keys(core.getState().files)[0]
+
+        await core.upload()
+
+        // After upload, s3Multipart state should have been persisted on the file
+        const file = core.getFile(fileId)
+        expect(file.s3Multipart).toBeDefined()
+        expect(file.s3Multipart!.uploadId).toBe('persisted-upload-id')
+        expect(file.s3Multipart!.key).toBeTruthy()
+      } finally {
+        xhrMock.restore()
+        fetchMock.restore()
+      }
+    })
+
+    it('resumes multipart upload using persisted s3Multipart state (skips createMultipartUpload)', async () => {
+      const xhrMock = createXHRMock({
+        responseHeaders: { etag: '"resumed-etag"' },
+      })
+
+      let createMultipartCalled = false
+      let listPartsCalled = false
+      const origFetch = globalThis.fetch
+      globalThis.fetch = (async (
+        _input: string | URL | Request,
+        init?: RequestInit,
+      ) => {
+        const method = init?.method ?? 'GET'
+        const body = init?.body
+
+        if (method === 'POST' && (!body || body === '')) {
+          // CreateMultipartUpload — should NOT be called during resume
+          createMultipartCalled = true
+          return new Response(
+            `<InitiateMultipartUploadResult>
+              <UploadId>should-not-be-used</UploadId>
+            </InitiateMultipartUploadResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        if (method === 'GET') {
+          // ListParts — should be called during resume to discover already-uploaded parts
+          listPartsCalled = true
+          return new Response(
+            `<ListPartsResult>
+              <Bucket>test-bucket</Bucket>
+              <Key>resumed-key.dat</Key>
+              <UploadId>resumed-upload-id</UploadId>
+            </ListPartsResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        if (
+          method === 'POST' &&
+          typeof body === 'string' &&
+          body.includes('CompleteMultipartUpload')
+        ) {
+          return new Response(
+            `<CompleteMultipartUploadResult>
+              <Location>https://test-bucket.s3.us-east-1.amazonaws.com/resumed-key.dat</Location>
+              <Bucket>test-bucket</Bucket>
+              <Key>resumed-key.dat</Key>
+              <ETag>"final"</ETag>
+            </CompleteMultipartUploadResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        return new Response('', { status: 200 })
+      }) as typeof fetch
+
+      try {
+        const signRequest = vi.fn().mockResolvedValue({
+          url: 'https://test-bucket.s3.us-east-1.amazonaws.com/resumed-key.dat?X-Amz-Signature=abc',
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: true,
+        })
+
+        // Add file with persisted s3Multipart state (simulating Golden Retriever restore)
+        const fileId = core.addFile({
+          source: 'test',
+          name: 'test.dat',
+          type: 'application/octet-stream',
+          data: new File([new Uint8Array(10 * MB)], 'test.dat'),
+        })
+
+        // Simulate Golden Retriever restoration: set persisted s3Multipart state
+        core.setFileState(fileId, {
+          s3Multipart: {
+            uploadId: 'resumed-upload-id',
+            key: 'resumed-key.dat',
+          },
+        })
+
+        await core.upload()
+
+        // CreateMultipartUpload should NOT have been called — we resumed!
+        expect(createMultipartCalled).toBe(false)
+        // ListParts SHOULD have been called to discover already-uploaded parts
+        expect(listPartsCalled).toBe(true)
+      } finally {
+        xhrMock.restore()
+        globalThis.fetch = origFetch
+      }
+    })
+
+    it('does not persist s3Multipart state for simple PUT uploads', async () => {
+      const xhrMock = createXHRMock()
+
+      try {
+        const signRequest = vi.fn().mockResolvedValue({
+          url: 'https://test-bucket.s3.us-east-1.amazonaws.com/test.txt?X-Amz-Signature=abc',
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: false,
+        })
+
+        core.addFile({
+          source: 'test',
+          name: 'test.txt',
+          type: 'text/plain',
+          data: new File([new Uint8Array(1024)], 'test.txt'),
+        })
+
+        const fileId = Object.keys(core.getState().files)[0]
+        await core.upload()
+
+        // Simple PUT uploads are not resumable — no s3Multipart state
+        const file = core.getFile(fileId)
+        expect(file.s3Multipart).toBeUndefined()
+      } finally {
+        xhrMock.restore()
+      }
+    })
+
+    it('uses persisted key instead of generating a new one on resume', async () => {
+      const xhrMock = createXHRMock({
+        responseHeaders: { etag: '"resumed-etag"' },
+      })
+
+      const signedKeys: string[] = []
+      const origFetch = globalThis.fetch
+      globalThis.fetch = (async (
+        _input: string | URL | Request,
+        init?: RequestInit,
+      ) => {
+        const method = init?.method ?? 'GET'
+        const body = init?.body
+
+        if (method === 'GET') {
+          return new Response(
+            `<ListPartsResult>
+              <UploadId>resume-key-test</UploadId>
+            </ListPartsResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        if (
+          method === 'POST' &&
+          typeof body === 'string' &&
+          body.includes('CompleteMultipartUpload')
+        ) {
+          return new Response(
+            `<CompleteMultipartUploadResult>
+              <Location>https://test-bucket.s3.us-east-1.amazonaws.com/my-persisted-key.dat</Location>
+              <Bucket>test-bucket</Bucket>
+              <Key>my-persisted-key.dat</Key>
+              <ETag>"final"</ETag>
+            </CompleteMultipartUploadResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        return new Response('', { status: 200 })
+      }) as typeof fetch
+
+      try {
+        const signRequest = vi.fn().mockImplementation((request: any) => {
+          signedKeys.push(request.key)
+          return Promise.resolve({
+            url: `https://test-bucket.s3.us-east-1.amazonaws.com/${request.key}?X-Amz-Signature=abc`,
+          })
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: true,
+          // Custom key generator — should NOT be called during resume
+          generateObjectKey: () => 'WRONG-fresh-key.dat',
+        })
+
+        const fileId = core.addFile({
+          source: 'test',
+          name: 'test.dat',
+          type: 'application/octet-stream',
+          data: new File([new Uint8Array(10 * MB)], 'test.dat'),
+        })
+
+        // Simulate Golden Retriever: persisted key takes precedence
+        core.setFileState(fileId, {
+          s3Multipart: {
+            uploadId: 'resume-key-test',
+            key: 'my-persisted-key.dat',
+          },
+        })
+
+        await core.upload()
+
+        // All sign requests should use the persisted key, NOT the generateObjectKey result
+        for (const key of signedKeys) {
+          expect(key).toBe('my-persisted-key.dat')
+        }
+        // Verify the key was NOT the fresh-generated one
+        expect(signedKeys).not.toContain('WRONG-fresh-key.dat')
+      } finally {
+        xhrMock.restore()
+        globalThis.fetch = origFetch
+      }
+    })
+  })
+
   describe('regression: #5429 — pause/resume works with prefixed keys', () => {
     // https://github.com/transloadit/uppy/issues/5429
     // Old plugin parsed key from URL using pathname.split("/").pop(),
@@ -967,6 +1249,414 @@ describe('AwsS3', () => {
       } finally {
         xhrMock.restore()
         fetchMock.restore()
+      }
+    })
+  })
+
+  describe('regression: #5961 — GR + S3: resume with partial parts completes', () => {
+    // https://github.com/transloadit/uppy/issues/5961
+    // Old plugin used a WeakMap cache on file.data for multipart state.
+    // After page refresh, WeakMap entries were lost, causing listParts to
+    // return stale data that couldn't be reconciled, hanging the upload.
+    // The rewrite gives each file its own S3Uploader with explicit
+    // resumeUploadId, and listParts cleanly marks already-uploaded parts.
+
+    it('skips already-uploaded parts and only uploads remaining ones', async () => {
+      let xhrUploadCount = 0
+      const xhrMock = createXHRMock({
+        responseHeaders: { etag: '"new-part-etag"' },
+      })
+
+      // Override to count XHR uploads
+      const OrigXHR = globalThis.XMLHttpRequest
+      const CountingXHR = class extends OrigXHR {
+        send(body?: Document | XMLHttpRequestBodyInit | null) {
+          xhrUploadCount++
+          super.send(body)
+        }
+      }
+      globalThis.XMLHttpRequest =
+        CountingXHR as unknown as typeof XMLHttpRequest
+
+      let completionBody = ''
+      const origFetch = globalThis.fetch
+      globalThis.fetch = (async (
+        _input: string | URL | Request,
+        init?: RequestInit,
+      ) => {
+        const method = init?.method ?? 'GET'
+        const body = init?.body
+
+        if (method === 'GET') {
+          // ListParts — return part 1 as already uploaded
+          return new Response(
+            `<ListPartsResult>
+              <Bucket>test-bucket</Bucket>
+              <Key>partial-resume.dat</Key>
+              <UploadId>partial-resume-id</UploadId>
+              <Part>
+                <PartNumber>1</PartNumber>
+                <ETag>"already-uploaded-etag"</ETag>
+                <Size>5242880</Size>
+              </Part>
+            </ListPartsResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        if (
+          method === 'POST' &&
+          typeof body === 'string' &&
+          body.includes('CompleteMultipartUpload')
+        ) {
+          completionBody = body
+          return new Response(
+            `<CompleteMultipartUploadResult>
+              <Location>https://test-bucket.s3.us-east-1.amazonaws.com/partial-resume.dat</Location>
+              <Bucket>test-bucket</Bucket>
+              <Key>partial-resume.dat</Key>
+              <ETag>"final"</ETag>
+            </CompleteMultipartUploadResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        return new Response('', { status: 200 })
+      }) as typeof fetch
+
+      try {
+        const signRequest = vi.fn().mockResolvedValue({
+          url: 'https://test-bucket.s3.us-east-1.amazonaws.com/partial-resume.dat?X-Amz-Signature=abc',
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: true,
+        })
+
+        // 10MB file → 2 parts of 5MB each
+        const fileId = core.addFile({
+          source: 'test',
+          name: 'partial-resume.dat',
+          type: 'application/octet-stream',
+          data: new File([new Uint8Array(10 * MB)], 'partial-resume.dat'),
+        })
+
+        // Simulate Golden Retriever restore: part 1 was already uploaded
+        core.setFileState(fileId, {
+          s3Multipart: {
+            uploadId: 'partial-resume-id',
+            key: 'partial-resume.dat',
+          },
+        })
+
+        const successHandler = vi.fn()
+        core.on('upload-success', successHandler)
+
+        await core.upload()
+
+        // Only 1 XHR upload should have been made (part 2 only — part 1 skipped)
+        expect(xhrUploadCount).toBe(1)
+
+        // upload-success should have been emitted
+        expect(successHandler).toHaveBeenCalledTimes(1)
+
+        // CompleteMultipartUpload should include BOTH parts
+        expect(completionBody).toContain('<PartNumber>1</PartNumber>')
+        expect(completionBody).toContain('<PartNumber>2</PartNumber>')
+        // Part 1 should use the ETag from ListParts
+        // (quotes are sanitized by S3mini's sanitizeETag)
+        expect(completionBody).toContain('<ETag>already-uploaded-etag</ETag>')
+        // Part 2 should use the ETag from the new upload
+        expect(completionBody).toContain('<ETag>new-part-etag</ETag>')
+      } finally {
+        globalThis.XMLHttpRequest = OrigXHR
+        globalThis.fetch = origFetch
+        xhrMock.restore()
+      }
+    })
+  })
+
+  describe('regression: #5230 — error during upload does not abort multipart on S3', () => {
+    // https://github.com/transloadit/uppy/issues/5230
+    // Old plugin called abortMultipartUpload in cleanup/error paths, which
+    // invalidated the uploadId and prevented resume on retry.
+    // The rewrite's #onError() intentionally does NOT abort on S3 — only
+    // explicit user cancellation (removeFile, cancelAll) triggers abort.
+
+    it('does not send DELETE (AbortMultipartUpload) when uploadPart fails', async () => {
+      // XHR mock that simulates a network error during part upload
+      const xhrMock = createXHRMock({ simulateNetworkError: true })
+
+      let deleteRequestMade = false
+      let createMultipartCalled = false
+      const origFetch = globalThis.fetch
+      globalThis.fetch = (async (
+        _input: string | URL | Request,
+        init?: RequestInit,
+      ) => {
+        const method = init?.method ?? 'GET'
+        const body = init?.body
+
+        if (method === 'POST' && (!body || body === '')) {
+          createMultipartCalled = true
+          return new Response(
+            `<InitiateMultipartUploadResult>
+              <UploadId>preserve-me-upload-id</UploadId>
+            </InitiateMultipartUploadResult>`,
+            { status: 200, headers: { 'Content-Type': 'application/xml' } },
+          )
+        }
+
+        if (method === 'DELETE') {
+          deleteRequestMade = true
+          return new Response('', { status: 204 })
+        }
+
+        return new Response('', { status: 200 })
+      }) as typeof fetch
+
+      try {
+        const signRequest = vi.fn().mockResolvedValue({
+          url: 'https://test-bucket.s3.us-east-1.amazonaws.com/test.dat?X-Amz-Signature=abc',
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: true,
+        })
+
+        core.addFile({
+          source: 'test',
+          name: 'test.dat',
+          type: 'application/octet-stream',
+          data: new File([new Uint8Array(10 * MB)], 'test.dat'),
+        })
+
+        const errorHandler = vi.fn()
+        core.on('upload-error', errorHandler)
+
+        try {
+          await core.upload()
+        } catch {
+          // Expected — upload fails due to network error
+        }
+
+        // The multipart upload should have been created
+        expect(createMultipartCalled).toBe(true)
+
+        // upload-error should have been emitted
+        expect(errorHandler).toHaveBeenCalledTimes(1)
+
+        // CRITICAL: No DELETE request should have been made.
+        // The multipart upload must be preserved on S3 for later retry.
+        expect(deleteRequestMade).toBe(false)
+      } finally {
+        xhrMock.restore()
+        globalThis.fetch = origFetch
+      }
+    })
+  })
+
+  describe('regression: #4908 — upload-error always emitted on network failure', () => {
+    // https://github.com/transloadit/uppy/issues/4908
+    // Old plugin's HTTPCommunicationQueue.#shouldRetry() hung forever when
+    // navigator.onLine === false, waiting for an 'online' event. The
+    // upload-error event was never emitted, leaving the UI in a stuck state.
+    // The rewrite has no RateLimitedQueue or shouldRetry — errors propagate
+    // directly to the upload-error event handler.
+
+    it('emits upload-error with error object when XHR network error occurs', async () => {
+      const xhrMock = createXHRMock({ simulateNetworkError: true })
+
+      try {
+        const signRequest = vi.fn().mockResolvedValue({
+          url: 'https://test-bucket.s3.us-east-1.amazonaws.com/test.txt?X-Amz-Signature=abc',
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: false, // simple PUT — faster test
+        })
+
+        core.addFile({
+          source: 'test',
+          name: 'test.txt',
+          type: 'text/plain',
+          data: new File([new Uint8Array(1024)], 'test.txt'),
+        })
+
+        const errorHandler = vi.fn()
+        core.on('upload-error', errorHandler)
+
+        // The upload should settle (not hang forever)
+        try {
+          await core.upload()
+        } catch {
+          // Expected
+        }
+
+        // upload-error MUST be emitted — not swallowed or hung
+        expect(errorHandler).toHaveBeenCalledTimes(1)
+
+        const [file, error] = errorHandler.mock.calls[0] as [
+          UppyFile<Meta, AwsBody>,
+          Error,
+        ]
+        expect(file).toBeDefined()
+        expect(file.name).toBe('test.txt')
+        expect(error).toBeDefined()
+        expect(error).toBeInstanceOf(Error)
+      } finally {
+        xhrMock.restore()
+      }
+    })
+  })
+
+  describe('regression: #4601 — signRequest is not called for remote files', () => {
+    // https://github.com/transloadit/uppy/issues/4601
+    // Old plugin called getUploadParameters (S3 signing) for ALL files
+    // including remote ones, before checking file.isRemote. This caused a
+    // spurious GET /s3/params request for remote files that don't need it.
+    // The rewrite branches on file.isRemote immediately in #upload() —
+    // remote files go directly to #uploadRemoteFile() via Companion.
+
+    it('does not call signRequest for remote files, uses uploadRemoteFile instead', async () => {
+      const signRequest = vi.fn().mockResolvedValue({
+        url: 'https://test-bucket.s3.us-east-1.amazonaws.com/test.dat?X-Amz-Signature=abc',
+      })
+
+      const core = new Core<Meta, AwsBody>().use(AwsS3, {
+        bucket: 'test-bucket',
+        region: 'us-east-1',
+        signRequest,
+      })
+
+      // Create a mock RequestClient that simulates Companion
+      const mockUploadRemoteFile = vi
+        .fn()
+        .mockImplementation(
+          async (
+            file: UppyFile<Meta, AwsBody>,
+            _reqBody: Record<string, unknown>,
+          ) => {
+            // Simulate Companion completing the upload via WebSocket
+            core.emit('upload-success', core.getFile(file.id), {
+              uploadURL:
+                'https://test-bucket.s3.us-east-1.amazonaws.com/remote-file.jpg',
+              status: 200,
+              body: {
+                location:
+                  'https://test-bucket.s3.us-east-1.amazonaws.com/remote-file.jpg',
+                key: 'remote-file.jpg',
+              } as AwsBody,
+            })
+          },
+        )
+
+      // Register the mock client with the ID that the remote file will reference
+      core.registerRequestClient('TestProvider', {
+        uploadRemoteFile: mockUploadRemoteFile,
+      })
+
+      // Add a remote file (e.g., from Google Drive via Companion)
+      core.addFile({
+        name: 'remote-file.jpg',
+        type: 'image/jpeg',
+        data: { size: 5000 } as unknown as Blob,
+        isRemote: true,
+        source: 'TestProvider',
+        remote: {
+          companionUrl: 'https://companion.example.com',
+          url: '/drive/get/file-abc123',
+          body: { fileId: 'file-abc123' },
+          provider: 'TestProvider',
+          requestClientId: 'TestProvider',
+        },
+      } as any)
+
+      await core.upload()
+
+      // signRequest should NEVER be called for remote files
+      expect(signRequest).not.toHaveBeenCalled()
+
+      // uploadRemoteFile SHOULD have been called
+      expect(mockUploadRemoteFile).toHaveBeenCalledTimes(1)
+
+      // Verify the request body contains the S3 protocol
+      const [, reqBody] = mockUploadRemoteFile.mock.calls[0] as [
+        unknown,
+        Record<string, unknown>,
+      ]
+      expect(reqBody.protocol).toBe('s3-multipart')
+    })
+  })
+
+  describe('regression: #3447 — upload-success is emitted exactly once per file', () => {
+    // https://github.com/transloadit/uppy/issues/3447
+    // Old plugin internally delegated to XHRUpload for the actual PUT request.
+    // If both AwsS3 and XHRUpload were installed, each would process the file
+    // and emit upload-success, causing double events.
+    // The rewrite uses its own self-contained S3Uploader with S3mini — no
+    // dependency on XHRUpload, so no double-emission is possible.
+
+    it('emits upload-success exactly once per file when uploading multiple files', async () => {
+      const xhrMock = createXHRMock()
+
+      try {
+        const signRequest = vi.fn().mockResolvedValue({
+          url: 'https://test-bucket.s3.us-east-1.amazonaws.com/test.dat?X-Amz-Signature=abc',
+        })
+
+        const core = new Core().use(AwsS3, {
+          bucket: 'test-bucket',
+          region: 'us-east-1',
+          signRequest,
+          shouldUseMultipart: false,
+        })
+
+        // Add two files
+        core.addFile({
+          source: 'test',
+          name: 'file1.txt',
+          type: 'text/plain',
+          data: new File([new Uint8Array(1024)], 'file1.txt'),
+        })
+        core.addFile({
+          source: 'test',
+          name: 'file2.txt',
+          type: 'text/plain',
+          data: new File([new Uint8Array(2048)], 'file2.txt'),
+        })
+
+        // Track upload-success per file
+        const successCountByFile: Record<string, number> = {}
+        core.on('upload-success', (file) => {
+          if (!file) return
+          successCountByFile[file.name] =
+            (successCountByFile[file.name] || 0) + 1
+        })
+
+        await core.upload()
+
+        // Each file must have exactly 1 upload-success event
+        expect(successCountByFile['file1.txt']).toBe(1)
+        expect(successCountByFile['file2.txt']).toBe(1)
+
+        // Total events must equal number of files
+        const totalEvents = Object.values(successCountByFile).reduce(
+          (a, b) => a + b,
+          0,
+        )
+        expect(totalEvents).toBe(2)
+      } finally {
+        xhrMock.restore()
       }
     })
   })
