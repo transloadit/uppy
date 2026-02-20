@@ -1,7 +1,13 @@
 # Uppy + AWS S3 with Node.JS
 
-A simple and fully working example of Uppy and AWS S3 storage with Node.js (and
-Express.js). It uses presigned URL at the backend level.
+A simple and fully working example of Uppy and AWS S3 storage with a Node.js
+(Express.js) backend. It demonstrates two signing modes:
+
+- **Client-side signing (STS)** — The server issues temporary credentials via
+  `GET /s3/sts`. The browser signs S3 requests locally using SigV4.
+- **Server-side signing (presigned URLs)** — The browser sends each S3 operation
+  to `POST /s3/presign`. The server generates a presigned URL; the browser uses
+  it directly.
 
 ## AWS Configuration
 
@@ -13,8 +19,8 @@ out of the scope here.
 
 ### S3 Setup
 
-Assuming you’re trying to setup the user `MY-UPPY-USER` to put the uploaded
-files to the bucket `MY-UPPY-BUCKET`, here’s how you can allow `MY-UPPY-USER` to
+Assuming you're trying to setup the user `MY-UPPY-USER` to put the uploaded
+files to the bucket `MY-UPPY-BUCKET`, here's how you can allow `MY-UPPY-USER` to
 get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
 
 1. Set CORS settings on `MY-UPPY-BUCKET` bucket:
@@ -54,8 +60,8 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
    }
    ```
 
-3. Add the following Policy to `MY-UPPY-USER`: (if you don’t want to enable
-   signing on the client, you can skip this step)
+3. Add the following Policy to `MY-UPPY-USER`: (required for client-side signing
+   via the STS endpoint)
    ```json
    {
      "Version": "2012-10-17",
@@ -100,9 +106,9 @@ COMPANION_AWS_SECRET=…
 PORT=8080
 ```
 
-N.B.: This example uses `COMPANION_AWS_` environnement variables to facilitate
+N.B.: This example uses `COMPANION_AWS_` environment variables to facilitate
 integrations with other examples in this repository, but this example does _not_
-uses Companion at all.
+use Companion at all.
 
 ## Enjoy it
 
