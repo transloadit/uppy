@@ -32,6 +32,23 @@ type PartUploadedCallback<M extends Meta, B extends Body> = (
   part: { PartNumber: number; ETag: string },
 ) => void
 
+/** Persisted S3 multipart state for Golden Retriever resume support */
+interface S3MultipartState {
+  uploadId: string
+  key: string
+}
+
+declare module '@uppy/utils' {
+  // biome-ignore lint/correctness/noUnusedVariables: must match existing interface signature
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
+  // biome-ignore lint/correctness/noUnusedVariables: must match existing interface signature
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
+}
+
 declare module '@uppy/core' {
   export interface UppyEventMap<M extends Meta, B extends Body> {
     's3-multipart:part-uploaded': PartUploadedCallback<M, B>
@@ -116,6 +133,10 @@ interface S3UploaderOptions<M extends Meta, B extends Body> {
   key: string
   shouldUseMultipart?: boolean
   getChunkSize?: (file: { size: number }) => number
+  /** Called when a multipart upload is created, for persisting resume state */
+  onMultipartCreated?: (uploadId: string, key: string) => void
+  /** If provided, resume this multipart upload instead of creating a new one */
+  resumeUploadId?: string
   onProgress?: (bytesUploaded: number, bytesTotal: number) => void
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
   onSuccess?: (result: UploadResult) => void
@@ -179,6 +200,12 @@ class S3Uploader<M extends Meta, B extends Body> {
     this.#eventManager = new EventManager(options.uppy)
     this.#initChunks()
     this.#setupEvents()
+
+    // Seed resume state from Golden Retriever (persisted across page refreshes)
+    if (options.resumeUploadId) {
+      this.#uploadId = options.resumeUploadId
+      this.#uploadHasStarted = true
+    }
   }
 
   #setupEvents(): void {
@@ -376,6 +403,10 @@ class S3Uploader<M extends Meta, B extends Body> {
       this.#key,
       this.#file.type || 'application/octet-stream',
     )
+
+    // Persist resume state so Golden Retriever can restore it after page refresh
+    this.#options.onMultipartCreated?.(this.#uploadId, this.#key)
+
     await this.#uploadRemainingParts()
   }
 
@@ -672,8 +703,13 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   async #uploadLocalFile(file: UppyFile<M, B>): Promise<void> {
     return new Promise((resolve, reject) => {
       const data = file.data as Blob
-      const key = this.#generateKey(file)
-      const shouldMultipart = this.#shouldUseMultipart(file)
+
+      // Check for persisted resume state (from Golden Retriever)
+      const resumeState = file.s3Multipart
+      const key = resumeState?.key ?? this.#generateKey(file)
+      const shouldMultipart = resumeState
+        ? true // persisted state means it was a multipart upload
+        : this.#shouldUseMultipart(file)
 
       try {
         // Create uploader (events are wired internally)
@@ -683,8 +719,15 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           file,
           key,
           shouldUseMultipart: shouldMultipart,
+          resumeUploadId: resumeState?.uploadId,
           getChunkSize: this.opts.getChunkSize,
           log: (...args) => this.uppy.log(...args),
+
+          onMultipartCreated: (uploadId, objectKey) => {
+            this.uppy.setFileState(file.id, {
+              s3Multipart: { uploadId, key: objectKey },
+            })
+          },
 
           onProgress: (bytesUploaded, bytesTotal) => {
             this.uppy.emit('upload-progress', file, {
