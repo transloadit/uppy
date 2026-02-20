@@ -524,17 +524,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
   #s3Client!: S3mini
   #queue!: TaskQueue
-  /** Controls how many remote uploads run concurrently (concurrency = limit). */
-  #remoteQueue!: TaskQueue
-  /**
-   * Unlimited queue passed into RequestClient.uploadRemoteFile().
-   * Inside that method, wrapPromiseFunction() is called for both the token
-   * request and the WebSocket lifecycle. With a bounded queue those two
-   * operations compete for slots, causing Companion timeouts when > limit
-   * files upload at once. An unlimited queue lets them run back-to-back
-   * without blocking; actual concurrency is gated by #remoteQueue.
-   */
-  #remoteInnerQueue!: TaskQueue
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -547,8 +536,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.#setResumableUploadsCapability(true)
     this.#initS3Client()
     this.#queue = new TaskQueue({ concurrency: this.opts.limit })
-    this.#remoteQueue = new TaskQueue({ concurrency: this.opts.limit })
-    this.#remoteInnerQueue = new TaskQueue()
     this.uppy.addUploader(this.#upload)
     this.uppy.on('cancel-all', this.#handleCancelAll)
   }
@@ -558,8 +545,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.removeUploader(this.#upload)
     this.uppy.off('cancel-all', this.#handleCancelAll)
     this.#queue.clear()
-    this.#remoteQueue.clear()
-    this.#remoteInnerQueue.clear()
     // Abort and clean up any in-flight uploads
     for (const fileId of Object.keys(this.#uploaders)) {
       const uploader = this.#uploaders[fileId]
@@ -586,8 +571,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #handleCancelAll = (): void => {
     this.#setResumableUploadsCapability(true)
     this.#queue.clear()
-    this.#remoteQueue.clear()
-    this.#remoteInnerQueue.clear()
   }
 
   // --------------------------------------------------------------------------
@@ -675,7 +658,9 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
     const promises = filesToUpload.map((file) => {
       if (file.isRemote) {
-        return this.#remoteQueue.add(() => this.#uploadRemoteFile(file))
+        // Remote uploads are queued internally by RequestClient.uploadRemoteFile()
+        // via getQueue(), so no outer queue wrapping is needed here.
+        return this.#uploadRemoteFile(file)
       }
       return this.#queue.add(async () => {
         // File may have been removed while waiting in the queue.
@@ -852,7 +837,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         .getRequestClientForFile<RequestClient<M, B>>(file)
         .uploadRemoteFile(file, this.#getCompanionClientArgs(file), {
           signal: controller.signal,
-          getQueue: () => this.#remoteInnerQueue,
+          getQueue: () => this.#queue,
         })
     } finally {
       this.uppy.off('file-removed', removedHandler)
