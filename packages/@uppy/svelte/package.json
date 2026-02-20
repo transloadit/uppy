@@ -62,7 +62,7 @@
     "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@uppy/core": "workspace:^",
-    "svelte": "^5.27.0",
+    "svelte": "^5.51.5",
     "svelte-check": "^4.1.6",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
