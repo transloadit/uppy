@@ -1461,7 +1461,9 @@ export class Uppy<
 
   async retryAll(): Promise<UploadResult<M, B> | undefined> {
     const result = await this.#doRetryAll()
-    this.emit('complete', result!)
+    if (Object.keys(this.getState().currentUploads).length === 0) {
+      this.emit('complete', result!)
+    }
     return result
   }
 
@@ -2126,7 +2128,9 @@ export class Uppy<
   async restore(uploadID: string): Promise<UploadResult<M, B> | undefined> {
     this.log(`Core: Running restored upload "${uploadID}"`)
     const result = await this.#runUpload(uploadID)
-    this.emit('complete', result!)
+    if (Object.keys(this.getState().currentUploads).length === 0) {
+      this.emit('complete', result!)
+    }
     return result
   }
 
@@ -2332,7 +2336,9 @@ export class Uppy<
 
       // if no new files, make it idempotent and return
       if (!hasNewFiles) {
-        this.emit('complete', retryResult!)
+        if (Object.keys(this.getState().currentUploads).length === 0) {
+          this.emit('complete', retryResult!)
+        }
         return retryResult
       }
       // reload files which might have  changed after retry
@@ -2383,7 +2389,12 @@ export class Uppy<
       const uploadID = this.#createUpload(waitingFileIDs)
       const result = await this.#runUpload(uploadID)
 
-      this.emit('complete', result!)
+      // Only emit 'complete' when all concurrent uploads have finished.
+      // If another upload() call is still in progress, it will emit 'complete'
+      // once it finishes and currentUploads becomes empty.
+      if (Object.keys(this.getState().currentUploads).length === 0) {
+        this.emit('complete', result!)
+      }
       return result
     } catch (err) {
       this.#informAndEmit([err])
