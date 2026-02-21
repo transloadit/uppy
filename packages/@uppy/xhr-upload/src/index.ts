@@ -94,6 +94,7 @@ declare module '@uppy/core' {
 function buildResponseError(
   xhr?: XMLHttpRequest,
   err?: string | Error | NetworkError,
+  networkErrorMessage?: string,
 ) {
   let error = err
   // No error message
@@ -106,7 +107,7 @@ function buildResponseError(
   }
 
   if (isNetworkError(xhr)) {
-    error = new NetworkError(error, xhr)
+    error = new NetworkError(error, xhr, networkErrorMessage)
     return error
   }
 
@@ -276,7 +277,7 @@ export default class XHRUpload<
             this.uppy.emit(
               'upload-error',
               this.uppy.getFile(file.id),
-              buildResponseError(request, error),
+              buildResponseError(request, error, this.i18n('networkError')),
               request,
             )
           }

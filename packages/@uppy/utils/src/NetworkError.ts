@@ -5,9 +5,14 @@ class NetworkError extends Error {
 
   public request: null | XMLHttpRequest
 
-  constructor(error: unknown, xhr: null | XMLHttpRequest = null) {
+  constructor(
+    error: unknown,
+    xhr: null | XMLHttpRequest = null,
+    message?: string,
+  ) {
     super(
-      `This looks like a network error, the endpoint might be blocked by an internet provider or a firewall.`,
+      message ??
+        `This looks like a network error, the endpoint might be blocked by an internet provider or a firewall.`,
     )
 
     this.cause = error
