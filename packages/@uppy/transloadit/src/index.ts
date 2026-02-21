@@ -451,6 +451,10 @@ export default class Transloadit<
         this.completedFiles[file.id] = true
         this.uppy.emit('postprocess-complete', file)
       })
+      // Allow new uploads now that this assembly is complete.
+      // This is especially important when restoring an assembly after a page
+      // refresh, where allowNewUpload is set to false to prevent re-uploading.
+      this.uppy.setState({ allowNewUpload: true })
     })
 
     watcher.on('assembly-error', (id: string, error: Error) => {
@@ -738,6 +742,23 @@ export default class Transloadit<
     this.restored = (async () => {
       const files = restoreState()
       restoreAssemblies(Object.keys(files))
+
+      // If the assembly is still in progress, update the UI to reflect that.
+      // This prevents the Upload button from being shown and shows the
+      // processing indicator for each file.
+      if (previousAssembly.ok !== 'ASSEMBLY_COMPLETED') {
+        this.uppy.setState({ allowNewUpload: false })
+        Object.values(files).forEach(({ id: fileId }) => {
+          const file = this.uppy.getFile(fileId)
+          if (file) {
+            this.uppy.emit('postprocess-progress', file, {
+              mode: 'indeterminate',
+              message: this.i18n('encoding'),
+            })
+          }
+        })
+      }
+
       await updateAssembly()
       this.restored = null
     })()
