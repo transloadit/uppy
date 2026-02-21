@@ -15,7 +15,7 @@ const getClient = ({ token }) =>
 
 const getOauthClient = () =>
   got.extend({
-    prefixUrl: 'https://login.live.com',
+    prefixUrl: 'https://login.microsoftonline.com',
   })
 
 const getRootPath = (query) =>
@@ -114,7 +114,7 @@ export default class OneDrive extends Provider {
       'provider.onedrive.token.refresh.error',
       async () => {
         const { access_token: accessToken } = await getOauthClient()
-          .post('oauth20_token.srf', {
+          .post('common/oauth2/v2.0/token', {
             responseType: 'json',
             form: {
               refresh_token: refreshToken,

@@ -51,6 +51,14 @@ export default () => {
     // for onedrive
     microsoft: {
       ...defaults,
+      // Use Microsoft identity platform v2.0 endpoints to support both personal
+      // accounts and work/school accounts (Microsoft 365 / OneDrive Business).
+      // The login.live.com endpoints only work for personal Microsoft accounts.
+      authorize_url:
+        'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
+      access_url: 'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+      oauth: 2,
+      scope_delimiter: ' ',
       scope: ['files.read.all', 'offline_access', 'User.Read'],
       callback: '/onedrive/callback',
     },
