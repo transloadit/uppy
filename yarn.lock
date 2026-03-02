@@ -9707,6 +9707,7 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -9741,6 +9742,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -9849,6 +9851,7 @@ __metadata:
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/webcam": "workspace:^"
+    preact: ^10.26.10
   peerDependenciesMeta:
     "@uppy/image-editor":
       optional: true
@@ -9873,6 +9876,7 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -9897,6 +9901,8 @@ __metadata:
     sass: "npm:^1.89.2"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.2.4"
+  peerDependencies:
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -9930,6 +9936,7 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -9946,6 +9953,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -9976,6 +9984,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -9991,6 +10000,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10035,6 +10045,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10050,6 +10061,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10065,6 +10077,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10082,6 +10095,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10100,6 +10114,7 @@ __metadata:
     sass: "npm:^1.89.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10115,6 +10130,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10142,6 +10158,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10167,6 +10184,7 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10194,6 +10212,7 @@ __metadata:
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
+    preact: ^10.26.10
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
   peerDependenciesMeta:
@@ -10245,6 +10264,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10263,6 +10283,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10298,6 +10319,7 @@ __metadata:
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
+    preact: ^10.26.10
     svelte: ^4.0.0 || ^5.0.0
   peerDependenciesMeta:
     "@uppy/dashboard":
@@ -10373,6 +10395,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10395,6 +10418,7 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10408,6 +10432,8 @@ __metadata:
     preact: "npm:^10.26.10"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.2.4"
+  peerDependencies:
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10427,6 +10453,7 @@ __metadata:
     "@uppy/screen-capture": "workspace:^"
     "@uppy/status-bar": "workspace:^"
     "@uppy/webcam": "workspace:^"
+    preact: ^10.26.10
     vue: ">=3.0.0"
   peerDependenciesMeta:
     "@uppy/dashboard":
@@ -10456,6 +10483,7 @@ __metadata:
     vitest: "npm:^3.2.4"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10471,6 +10499,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
@@ -10506,6 +10535,7 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    preact: ^10.26.10
   languageName: unknown
   linkType: soft
 
