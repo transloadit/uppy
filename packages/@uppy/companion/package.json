@@ -69,7 +69,7 @@
     "p-map": "^7.0.3",
     "prom-client": "15.1.2",
     "serialize-error": "^11.0.0",
-    "serialize-javascript": "^6.0.0",
+    "serialize-javascript": "^7.0.3",
     "supports-color": "8.x",
     "tus-js-client": "^4.1.0",
     "validator": "^13.15.22",
