@@ -1,11 +1,16 @@
-import classNames from 'classnames'
 import {
   type ComponentChildren,
   cloneElement,
   toChildArray,
   type VNode,
 } from '@uppy/utils/preact'
-import { useCallback, useEffect, useRef, useState } from '@uppy/utils/preact/hooks'
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from '@uppy/utils/preact/hooks'
+import classNames from 'classnames'
 
 const transitionName = 'uppy-transition-slideDownUp'
 const duration = 250

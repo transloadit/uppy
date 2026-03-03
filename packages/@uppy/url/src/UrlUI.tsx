@@ -1,6 +1,6 @@
 import type { I18n } from '@uppy/utils'
-import { nanoid } from 'nanoid/non-secure'
 import { Component, type ComponentChild } from '@uppy/utils/preact'
+import { nanoid } from 'nanoid/non-secure'
 
 type UrlUIProps = {
   i18n: I18n

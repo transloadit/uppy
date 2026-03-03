@@ -12,9 +12,9 @@ import type {
 } from '@uppy/core'
 import type { CompanionFile, I18n } from '@uppy/utils'
 import { remoteFileObjToLocal } from '@uppy/utils'
+import type { h } from '@uppy/utils/preact'
 import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
-import type { h } from '@uppy/utils/preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'

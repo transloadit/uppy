@@ -1,5 +1,5 @@
-import { clsx } from 'clsx'
 import { useMemo } from '@uppy/utils/preact/hooks'
+import { clsx } from 'clsx'
 import { createDropzone } from './hooks/dropzone.js'
 import type { NonNullableUppyContext, UppyContext } from './types.js'
 

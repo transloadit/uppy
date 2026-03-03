@@ -4,8 +4,8 @@ import type {
   PartialTreeId,
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
-import classNames from 'classnames'
 import type { h } from '@uppy/utils/preact'
+import classNames from 'classnames'
 import GridItem from './components/GridItem.js'
 import ListItem from './components/ListItem.js'
 
