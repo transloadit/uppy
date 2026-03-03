@@ -4,8 +4,8 @@ import {
   cloneElement,
   toChildArray,
   type VNode,
-} from 'preact'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+} from '@uppy/utils/preact'
+import { useCallback, useEffect, useRef, useState } from '@uppy/utils/preact/hooks'
 
 const transitionName = 'uppy-transition-slideDownUp'
 const duration = 250

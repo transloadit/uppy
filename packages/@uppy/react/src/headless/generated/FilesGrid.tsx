@@ -4,7 +4,7 @@ import {
   type FilesGridProps,
   FilesGrid as PreactFilesGrid,
 } from '@uppy/components'
-import { h as preactH, render as preactRender } from 'preact'
+import { h as preactH, render as preactRender } from '@uppy/utils/preact'
 import { useContext, useEffect, useRef } from 'react'
 import { UppyContext } from '../UppyContextProvider.js'
 

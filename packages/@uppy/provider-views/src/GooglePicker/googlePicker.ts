@@ -1,4 +1,4 @@
-import type { MutableRef } from 'preact/hooks'
+import type { MutableRef } from '@uppy/utils/preact/hooks'
 
 // https://developers.google.com/photos/picker/reference/rest/v1/mediaItems
 // Note that the google api doc is not correct, hence some things are optional here but not in their docs

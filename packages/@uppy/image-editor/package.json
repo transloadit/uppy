@@ -47,8 +47,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "cropperjs": "^1.6.2",
-    "preact": "^10.26.10"
+    "cropperjs": "^1.6.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

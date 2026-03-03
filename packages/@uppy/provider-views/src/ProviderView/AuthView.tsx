@@ -1,7 +1,7 @@
 import type { Body, Meta } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
-import type { h } from 'preact'
-import { useCallback } from 'preact/hooks'
+import type { h } from '@uppy/utils/preact'
+import { useCallback } from '@uppy/utils/preact/hooks'
 import type ProviderViews from './ProviderView.js'
 import type { Opts } from './ProviderView.js'
 

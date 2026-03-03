@@ -41,9 +41,9 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@uppy/utils": "workspace:^",
     "clsx": "^2.1.1",
     "dequal": "^2.0.3",
-    "preact": "^10.26.10",
     "pretty-bytes": "^6.1.1"
   },
   "devDependencies": {

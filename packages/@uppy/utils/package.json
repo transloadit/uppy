@@ -30,6 +30,8 @@
   ],
   "exports": {
     ".": "./lib/index.js",
+    "./preact": "./lib/preact/index.js",
+    "./preact/hooks": "./lib/preact/hooks.js",
     "./package.json": "./package.json"
   },
   "dependencies": {

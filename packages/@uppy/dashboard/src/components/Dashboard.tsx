@@ -10,7 +10,7 @@ import type {
 import type { I18n, Translator } from '@uppy/utils'
 import { isDragDropSupported } from '@uppy/utils'
 import classNames from 'classnames'
-import type { h } from 'preact'
+import type { h } from '@uppy/utils/preact'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 import AddFiles from './AddFiles.js'
 import AddFilesPanel from './AddFilesPanel.js'

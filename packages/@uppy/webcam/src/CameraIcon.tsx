@@ -1,4 +1,4 @@
-import type { ComponentChild } from 'preact'
+import type { ComponentChild } from '@uppy/utils/preact'
 
 export default function CameraIcon(): ComponentChild {
   return (

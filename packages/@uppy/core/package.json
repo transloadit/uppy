@@ -47,8 +47,7 @@
     "lodash": "^4.17.23",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
-    "nanoid": "^5.0.9",
-    "preact": "^10.26.10"
+    "nanoid": "^5.0.9"
   },
   "devDependencies": {
     "@types/deep-freeze": "^0",

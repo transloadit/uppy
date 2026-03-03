@@ -1,6 +1,6 @@
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef, useState } from '@uppy/utils/preact/hooks'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.js'
 import ignoreEvent from '../../utils/ignoreEvent.js'
 import FilePreview from '../FilePreview.js'

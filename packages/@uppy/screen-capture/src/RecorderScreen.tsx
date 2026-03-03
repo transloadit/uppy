@@ -1,5 +1,5 @@
 import type { Body, Meta } from '@uppy/core'
-import { Component, type ComponentChild, Fragment } from 'preact'
+import { Component, type ComponentChild, Fragment } from '@uppy/utils/preact'
 import DiscardButton from './DiscardButton.js'
 import RecordButton from './RecordButton.js'
 import type ScreenCapture from './ScreenCapture.js'

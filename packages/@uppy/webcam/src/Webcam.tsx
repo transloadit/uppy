@@ -12,7 +12,7 @@ import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/utils'
 import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/utils'
 import { isMobile } from 'is-mobile'
 // biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from 'preact'
+import { type ComponentChild, h } from '@uppy/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import CameraIcon from './CameraIcon.js'
 import CameraScreen from './CameraScreen.js'
