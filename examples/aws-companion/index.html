@@ -3,9 +3,15 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Companion + AWS Example</title>
+    <title>Companion + AWS S3 Example</title>
   </head>
   <body>
+    <h1>Companion + AWS S3</h1>
+    <p>
+      Local files are signed by Companion (<code>POST /s3/sign</code>) and
+      uploaded directly to S3 from the browser. Remote files (Google Drive)
+      are downloaded and uploaded by Companion server-side.
+    </p>
     <script src="./main.js" type="module"></script>
   </body>
 </html>

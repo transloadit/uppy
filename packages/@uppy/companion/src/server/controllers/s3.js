@@ -2,7 +2,9 @@ import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
+  DeleteObjectCommand,
   ListPartsCommand,
+  PutObjectCommand,
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
@@ -465,6 +467,107 @@ export default function s3(config) {
       }, next)
   }
 
+  /**
+   * Generate a presigned URL for any S3 operation.
+   *
+   * This is used by @uppy/aws-s3's rewrite, which performs all S3 operations
+   * (CreateMultipartUpload, UploadPart, CompleteMultipartUpload, etc.)
+   * directly from the browser using presigned URLs. The client sends the
+   * operation details and this endpoint returns a presigned URL.
+   *
+   * Expected JSON body:
+   *  - method - The HTTP method: 'PUT', 'POST', 'GET', or 'DELETE'.
+   *  - key - The S3 object key.
+   *  - uploadId - (Optional) The multipart upload ID.
+   *  - partNumber - (Optional) The part number (1-10000).
+   *  - contentType - (Optional) The Content-Type for the request.
+   *
+   * Response JSON:
+   *  - url - The presigned URL.
+   */
+  function signRequest(req, res, next) {
+    const client = getS3Client(req, res)
+    if (!client) return
+
+    const { method, key, uploadId, partNumber, contentType } = req.body
+
+    if (
+      typeof method !== 'string' ||
+      !['PUT', 'POST', 'GET', 'DELETE'].includes(method)
+    ) {
+      res.status(400).json({
+        error:
+          's3: the "method" field must be one of PUT, POST, GET, or DELETE',
+      })
+      return
+    }
+
+    if (typeof key !== 'string') {
+      res.status(400).json({
+        error: 's3: the "key" field is required and must be a string',
+      })
+      return
+    }
+
+    const bucket = getBucket({ bucketOrFn: config.bucket, req })
+
+    let command
+
+    if (method === 'PUT' && uploadId && partNumber) {
+      // UploadPart: upload one chunk of a multipart upload
+      command = new UploadPartCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+        PartNumber: Number(partNumber),
+        Body: '',
+      })
+    } else if (method === 'PUT') {
+      // PutObject: simple single-part upload
+      const params = { Bucket: bucket, Key: key }
+      if (contentType) params.ContentType = contentType
+      command = new PutObjectCommand(params)
+    } else if (method === 'POST' && uploadId) {
+      // CompleteMultipartUpload: finalize a multipart upload.
+      // The actual XML body with parts is sent by the client directly to S3
+      // using this presigned URL — Companion only signs it.
+      command = new CompleteMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else if (method === 'POST') {
+      // CreateMultipartUpload: initiate a new multipart upload
+      const params = { Bucket: bucket, Key: key }
+      if (contentType) params.ContentType = contentType
+      command = new CreateMultipartUploadCommand(params)
+    } else if (method === 'GET') {
+      // ListParts: list already-uploaded parts (used for resume)
+      command = new ListPartsCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else if (method === 'DELETE' && uploadId) {
+      // AbortMultipartUpload: cancel an in-progress multipart upload
+      command = new AbortMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else if (method === 'DELETE') {
+      // DeleteObject
+      command = new DeleteObjectCommand({
+        Bucket: bucket,
+        Key: key,
+      })
+    }
+
+    getSignedUrl(client, command, { expiresIn: config.expires }).then((url) => {
+      res.json({ url })
+    }, next)
+  }
+
   const policy = {
     Version: '2012-10-17', // latest at the time of writing
     Statement: [
@@ -546,6 +649,7 @@ export default function s3(config) {
     express
       .Router()
       .get('/sts', getTemporarySecurityCredentials)
+      .post('/sign', express.json(), signRequest)
       .get('/params', getUploadParameters)
       .post('/multipart', express.json(), createMultipartUpload)
       .get('/multipart/:uploadId', getUploadedParts)

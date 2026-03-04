@@ -420,4 +420,82 @@ describe('S3 controller', () => {
         ),
       )
   })
+
+  describe('signRequest', () => {
+    test('rejects missing method', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "method" field must be one of PUT, POST, GET, or DELETE',
+          ),
+        )
+    })
+
+    test('rejects invalid method', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PATCH', key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "method" field must be one of PUT, POST, GET, or DELETE',
+          ),
+        )
+    })
+
+    test('rejects missing key', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PUT' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "key" field is required and must be a string',
+          ),
+        )
+    })
+
+    test('rejects non-string key', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PUT', key: 12345 })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "key" field is required and must be a string',
+          ),
+        )
+    })
+  })
 })

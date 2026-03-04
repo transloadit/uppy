@@ -139,6 +139,7 @@ export function fetcher(
       }
 
       function abort() {
+        timer.done()
         xhr.abort()
         // Using DOMException for abort errors aligns with
         // the convention established by the Fetch API.
