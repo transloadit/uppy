@@ -526,6 +526,7 @@ export default function s3(config) {
       // PutObject: simple single-part upload
       const params = { Bucket: bucket, Key: key }
       if (contentType) params.ContentType = contentType
+      if (config.acl != null) params.ACL = config.acl
       command = new PutObjectCommand(params)
     } else if (method === 'POST' && uploadId) {
       // CompleteMultipartUpload: finalize a multipart upload.
@@ -540,6 +541,7 @@ export default function s3(config) {
       // CreateMultipartUpload: initiate a new multipart upload
       const params = { Bucket: bucket, Key: key }
       if (contentType) params.ContentType = contentType
+      if (config.acl != null) params.ACL = config.acl
       command = new CreateMultipartUploadCommand(params)
     } else if (method === 'GET') {
       // ListParts: list already-uploaded parts (used for resume)
