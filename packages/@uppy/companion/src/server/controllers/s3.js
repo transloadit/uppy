@@ -2,7 +2,6 @@ import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
-  DeleteObjectCommand,
   ListPartsCommand,
   PutObjectCommand,
   UploadPartCommand,
@@ -468,15 +467,13 @@ export default function s3(config) {
   }
 
   /**
-   * Generate a presigned URL for any S3 operation.
+   * Generate a presigned URL for a supported S3 operation.
    *
-   * This is used by @uppy/aws-s3's rewrite, which performs all S3 operations
-   * (CreateMultipartUpload, UploadPart, CompleteMultipartUpload, etc.)
-   * directly from the browser using presigned URLs. The client sends the
-   * operation details and this endpoint returns a presigned URL.
+   * Supported operations: PutObject, UploadPart, CreateMultipartUpload,
+   * CompleteMultipartUpload, ListParts, and AbortMultipartUpload.
    *
    * Expected JSON body:
-   *  - method - The HTTP method: 'PUT', 'POST', 'GET', or 'DELETE'.
+   *  - method - 'PUT', 'POST', 'GET', or 'DELETE'.
    *  - key - The S3 object key.
    *  - uploadId - (Optional) The multipart upload ID.
    *  - partNumber - (Optional) The part number (1-10000).
@@ -522,7 +519,7 @@ export default function s3(config) {
         PartNumber: Number(partNumber),
         Body: '',
       })
-    } else if (method === 'PUT') {
+    } else if (method === 'PUT' && !uploadId && !partNumber) {
       // PutObject: simple single-part upload
       const params = { Bucket: bucket, Key: key }
       if (contentType) params.ContentType = contentType
@@ -537,13 +534,13 @@ export default function s3(config) {
         Key: key,
         UploadId: uploadId,
       })
-    } else if (method === 'POST') {
+    } else if (method === 'POST' && !uploadId) {
       // CreateMultipartUpload: initiate a new multipart upload
       const params = { Bucket: bucket, Key: key }
       if (contentType) params.ContentType = contentType
       if (config.acl != null) params.ACL = config.acl
       command = new CreateMultipartUploadCommand(params)
-    } else if (method === 'GET') {
+    } else if (method === 'GET' && uploadId) {
       // ListParts: list already-uploaded parts (used for resume)
       command = new ListPartsCommand({
         Bucket: bucket,
@@ -557,12 +554,14 @@ export default function s3(config) {
         Key: key,
         UploadId: uploadId,
       })
-    } else if (method === 'DELETE') {
-      // DeleteObject
-      command = new DeleteObjectCommand({
-        Bucket: bucket,
-        Key: key,
+    }
+
+    if (!command) {
+      res.status(400).json({
+        error:
+          's3: unsupported or invalid combination of "method" and parameters',
       })
+      return
     }
 
     getSignedUrl(client, command, { expiresIn: config.expires }).then((url) => {

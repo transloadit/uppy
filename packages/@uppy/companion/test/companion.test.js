@@ -497,5 +497,129 @@ describe('S3 controller', () => {
           ),
         )
     })
+
+    test('rejects PUT with uploadId but no partNumber', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PUT', key: 'test.jpg', uploadId: 'abc123' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('rejects PUT with partNumber but no uploadId', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PUT', key: 'test.jpg', partNumber: 1 })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('rejects GET without uploadId', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'GET', key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('rejects DELETE without uploadId', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'DELETE', key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('signs a valid PUT request for simple upload', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'PUT',
+          key: 'uploads/test.jpg',
+          contentType: 'image/jpeg',
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.body.url).toBeDefined()
+          expect(typeof res.body.url).toBe('string')
+          expect(res.body.url).toContain('test-bucket')
+          expect(res.body.url).toContain('uploads/test.jpg')
+        })
+    })
+
+    test('signs a valid POST request for CreateMultipartUpload', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'POST',
+          key: 'uploads/large.bin',
+          contentType: 'application/octet-stream',
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.body.url).toBeDefined()
+          expect(typeof res.body.url).toBe('string')
+          expect(res.body.url).toContain('test-bucket')
+          expect(res.body.url).toContain('uploads')
+        })
+    })
   })
 })
