@@ -300,7 +300,11 @@ class S3mini {
     this._checkKey(key)
 
     const attemptUpload = async (): Promise<IT.PutObjectResult> => {
-      const { url } = await this.signRequest({ method: 'PUT', key })
+      const { url } = await this.signRequest({
+        method: 'PUT',
+        key,
+        contentType: fileType,
+      })
       return this._xhrUpload(url, data, onProgress, signal, fileType)
     }
 
