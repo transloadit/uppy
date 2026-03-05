@@ -133,10 +133,6 @@ interface S3UploaderOptions<M extends Meta, B extends Body> {
   key: string
   shouldUseMultipart?: boolean
   getChunkSize?: (file: { size: number }) => number
-  /** Called when a multipart upload is created, for persisting resume state */
-  onMultipartCreated?: (uploadId: string, key: string) => void
-  /** If provided, resume this multipart upload instead of creating a new one */
-  resumeUploadId?: string
   onProgress?: (bytesUploaded: number, bytesTotal: number) => void
   onPartComplete?: (part: { PartNumber: number; ETag: string }) => void
   onSuccess?: (result: UploadResult) => void
@@ -195,17 +191,20 @@ class S3Uploader<M extends Meta, B extends Body> {
     this.#s3Client = options.s3Client
     this.#file = options.file
     this.#data = data
-    this.#key = options.key
     this.#options = options
     this.#eventManager = new EventManager(options.uppy)
-    this.#initChunks()
-    this.#setupEvents()
 
-    // Seed resume state from Golden Retriever (persisted across page refreshes)
-    if (options.resumeUploadId) {
-      this.#uploadId = options.resumeUploadId
+    // Detect resume state from file (persisted by Golden Retriever across page refreshes).
+    // Must run before #initChunks so it can force multipart mode for resumed uploads.
+    const resumeState = options.file.s3Multipart
+    this.#key = resumeState?.key ?? options.key
+    if (resumeState?.uploadId) {
+      this.#uploadId = resumeState.uploadId
       this.#uploadHasStarted = true
     }
+
+    this.#initChunks()
+    this.#setupEvents()
   }
 
   #setupEvents(): void {
@@ -250,9 +249,11 @@ class S3Uploader<M extends Meta, B extends Body> {
     const fileSize = this.#data.size
 
     // Step 1: Determine if we should use multipart
-    // - If explicitly set to boolean, use that
-    // - Otherwise, use multipart for files larger than MIN_CHUNK_SIZE (5MB)
-    if (typeof this.#options.shouldUseMultipart === 'boolean') {
+    if (this.#uploadId) {
+      // Resuming a multipart upload — persisted state is only created for
+      // multipart uploads, so we must continue in multipart mode.
+      this.#shouldUseMultipart = true
+    } else if (typeof this.#options.shouldUseMultipart === 'boolean') {
       this.#shouldUseMultipart = this.#options.shouldUseMultipart
     } else {
       this.#shouldUseMultipart = fileSize > MIN_CHUNK_SIZE
@@ -260,7 +261,8 @@ class S3Uploader<M extends Meta, B extends Body> {
 
     // Step 2: Force simple upload if file is too small for multipart
     // (S3 requires minimum 5MB parts, except for the last part)
-    if (fileSize <= MIN_CHUNK_SIZE) {
+    // Skip this check when resuming — we know the upload was multipart.
+    if (!this.#uploadId && fileSize <= MIN_CHUNK_SIZE) {
       this.#shouldUseMultipart = false
     }
 
@@ -405,7 +407,9 @@ class S3Uploader<M extends Meta, B extends Body> {
     )
 
     // Persist resume state so Golden Retriever can restore it after page refresh
-    this.#options.onMultipartCreated?.(this.#uploadId, this.#key)
+    this.#options.uppy.setFileState(this.#file.id, {
+      s3Multipart: { uploadId: this.#uploadId, key: this.#key },
+    })
 
     await this.#uploadRemainingParts()
   }
@@ -689,30 +693,17 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     return new Promise((resolve, reject) => {
       const data = file.data as Blob
 
-      // Check for persisted resume state (from Golden Retriever)
-      const resumeState = file.s3Multipart
-      const key = resumeState?.key ?? this.#generateKey(file)
-      const shouldMultipart = resumeState
-        ? true // persisted state means it was a multipart upload
-        : this.#shouldUseMultipart(file)
-
       try {
-        // Create uploader (events are wired internally)
+        // Create uploader (events are wired internally).
+        // S3Uploader detects resume state from file.s3Multipart internally.
         const uploader = new S3Uploader<M, B>(data, {
           uppy: this.uppy,
           s3Client: this.#s3Client,
           file,
-          key,
-          shouldUseMultipart: shouldMultipart,
-          resumeUploadId: resumeState?.uploadId,
+          key: this.#generateKey(file),
+          shouldUseMultipart: this.#shouldUseMultipart(file),
           getChunkSize: this.opts.getChunkSize,
           log: (...args) => this.uppy.log(...args),
-
-          onMultipartCreated: (uploadId, objectKey) => {
-            this.uppy.setFileState(file.id, {
-              s3Multipart: { uploadId, key: objectKey },
-            })
-          },
 
           onProgress: (bytesUploaded, bytesTotal) => {
             this.uppy.emit('upload-progress', file, {
