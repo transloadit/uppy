@@ -10,6 +10,7 @@ import type { Body, Meta, RemoteUppyFile, UppyFile } from '@uppy/utils'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
+  getAllowedMetaFields,
   TaskQueue,
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
@@ -801,11 +802,17 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
    * Tells Companion to use its server-side S3 upload path.
    */
   #getCompanionClientArgs(file: RemoteUppyFile<M, B>): Record<string, unknown> {
+    const allowedMetaFields = getAllowedMetaFields(
+      this.opts.allowedMetaFields,
+      file.meta,
+    )
     return {
       ...file.remote?.body,
       protocol: 's3-multipart',
       size: file.data?.size,
-      metadata: file.meta,
+      metadata: Object.fromEntries(
+        allowedMetaFields.map((key) => [key, file.meta[key]]),
+      ),
     }
   }
 
