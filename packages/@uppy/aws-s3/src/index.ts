@@ -325,6 +325,11 @@ class S3Uploader<M extends Meta, B extends Body> {
     // Clean up event listeners
     this.#eventManager.remove()
     if (opts?.abortOnS3 !== false && this.#uploadId) {
+      // Clear persisted resume state — the upload no longer exists on S3,
+      // so retries must start fresh instead of attempting to resume.
+      this.#options.uppy.setFileState(this.#file.id, {
+        s3Multipart: undefined,
+      })
       this.#s3Client
         .abortMultipartUpload(this.#key, this.#uploadId)
         .catch((abortErr) => {
@@ -495,6 +500,10 @@ class S3Uploader<M extends Meta, B extends Body> {
       return
     }
     this.#eventManager.remove()
+    // Clear persisted resume state — upload completed successfully.
+    this.#options.uppy.setFileState(this.#file.id, {
+      s3Multipart: undefined,
+    })
     this.#options.onSuccess?.(result)
   }
 
