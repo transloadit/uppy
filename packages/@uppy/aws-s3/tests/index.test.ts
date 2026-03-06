@@ -60,46 +60,51 @@ function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
 
   const operations: string[] = []
 
-  const fetchMock = vi.fn().mockImplementation(async (url: string | Request, init?: any) => {
-    const urlStr = typeof url === 'string' ? url : url.url
-    const method = init?.method || 'GET'
-    const params = new URL(urlStr).searchParams
-    const hasUploadId = params.has('uploadId')
+  const fetchMock = vi
+    .fn()
+    .mockImplementation(async (url: string | Request, init?: any) => {
+      const urlStr = typeof url === 'string' ? url : url.url
+      const method = init?.method || 'GET'
+      const params = new URL(urlStr).searchParams
+      const hasUploadId = params.has('uploadId')
 
-    if (method === 'POST' && !hasUploadId) {
-      operations.push('createMultipart')
-      return new Response(s3Responses.createMultipart(uploadId, key), {
-        status: 200,
-        headers: { 'Content-Type': 'application/xml' },
-      })
-    }
-    if (method === 'PUT') {
-      operations.push('uploadPart')
-      return new Response('', {
-        status: 200,
-        headers: { ETag: '"etag-1"' },
-      })
-    }
-    if (method === 'POST' && hasUploadId) {
-      operations.push('completeMultipart')
-      return new Response(
-        s3Responses.completeMultipart(`https://test-bucket.s3.amazonaws.com/${key}`, key),
-        { status: 200, headers: { 'Content-Type': 'application/xml' } },
-      )
-    }
-    if (method === 'GET' && hasUploadId) {
-      operations.push('listParts')
-      return new Response(s3Responses.listParts([]), {
-        status: 200,
-        headers: { 'Content-Type': 'application/xml' },
-      })
-    }
-    if (method === 'DELETE') {
-      operations.push('abortMultipart')
-      return new Response('', { status: 204 })
-    }
-    return new Response('Not Found', { status: 404 })
-  })
+      if (method === 'POST' && !hasUploadId) {
+        operations.push('createMultipart')
+        return new Response(s3Responses.createMultipart(uploadId, key), {
+          status: 200,
+          headers: { 'Content-Type': 'application/xml' },
+        })
+      }
+      if (method === 'PUT') {
+        operations.push('uploadPart')
+        return new Response('', {
+          status: 200,
+          headers: { ETag: '"etag-1"' },
+        })
+      }
+      if (method === 'POST' && hasUploadId) {
+        operations.push('completeMultipart')
+        return new Response(
+          s3Responses.completeMultipart(
+            `https://test-bucket.s3.amazonaws.com/${key}`,
+            key,
+          ),
+          { status: 200, headers: { 'Content-Type': 'application/xml' } },
+        )
+      }
+      if (method === 'GET' && hasUploadId) {
+        operations.push('listParts')
+        return new Response(s3Responses.listParts([]), {
+          status: 200,
+          headers: { 'Content-Type': 'application/xml' },
+        })
+      }
+      if (method === 'DELETE') {
+        operations.push('abortMultipart')
+        return new Response('', { status: 204 })
+      }
+      return new Response('Not Found', { status: 404 })
+    })
 
   return { signRequest, fetchMock, operations, uploadId, key }
 }
@@ -352,20 +357,22 @@ describe('AwsS3', () => {
     it('persists s3Multipart on file state after creating multipart upload', async () => {
       const { signRequest, fetchMock, uploadId } = createMultipartMocks()
       // After createMultipart succeeds, hang on uploadPart so we can inspect state
-      fetchMock.mockImplementation(async (url: string | Request, init?: any) => {
-        const urlStr = typeof url === 'string' ? url : url.url
-        const method = init?.method || 'GET'
-        const hasUploadId = new URL(urlStr).searchParams.has('uploadId')
+      fetchMock.mockImplementation(
+        async (url: string | Request, init?: any) => {
+          const urlStr = typeof url === 'string' ? url : url.url
+          const method = init?.method || 'GET'
+          const hasUploadId = new URL(urlStr).searchParams.has('uploadId')
 
-        if (method === 'POST' && !hasUploadId) {
-          return new Response(
-            s3Responses.createMultipart(uploadId, 'test-key'),
-            { status: 200, headers: { 'Content-Type': 'application/xml' } },
-          )
-        }
-        // Hang on everything else — we only need createMultipart to complete
-        return new Promise(() => {})
-      })
+          if (method === 'POST' && !hasUploadId) {
+            return new Response(
+              s3Responses.createMultipart(uploadId, 'test-key'),
+              { status: 200, headers: { 'Content-Type': 'application/xml' } },
+            )
+          }
+          // Hang on everything else — we only need createMultipart to complete
+          return new Promise(() => {})
+        },
+      )
       globalThis.fetch = fetchMock
 
       const core = new Core().use(AwsS3, {
@@ -398,23 +405,25 @@ describe('AwsS3', () => {
 
     it('clears s3Multipart when upload is aborted via cancelAll', async () => {
       const { signRequest, fetchMock } = createMultipartMocks()
-      fetchMock.mockImplementation(async (url: string | Request, init?: any) => {
-        const urlStr = typeof url === 'string' ? url : url.url
-        const method = init?.method || 'GET'
-        const hasUploadId = new URL(urlStr).searchParams.has('uploadId')
+      fetchMock.mockImplementation(
+        async (url: string | Request, init?: any) => {
+          const urlStr = typeof url === 'string' ? url : url.url
+          const method = init?.method || 'GET'
+          const hasUploadId = new URL(urlStr).searchParams.has('uploadId')
 
-        if (method === 'POST' && !hasUploadId) {
-          return new Response(
-            s3Responses.createMultipart('cancel-test-id', 'cancel-key'),
-            { status: 200, headers: { 'Content-Type': 'application/xml' } },
-          )
-        }
-        if (method === 'DELETE') {
-          return new Response('', { status: 204 })
-        }
-        // Hang on everything else
-        return new Promise(() => {})
-      })
+          if (method === 'POST' && !hasUploadId) {
+            return new Response(
+              s3Responses.createMultipart('cancel-test-id', 'cancel-key'),
+              { status: 200, headers: { 'Content-Type': 'application/xml' } },
+            )
+          }
+          if (method === 'DELETE') {
+            return new Response('', { status: 204 })
+          }
+          // Hang on everything else
+          return new Promise(() => {})
+        },
+      )
       globalThis.fetch = fetchMock
 
       const core = new Core().use(AwsS3, {
