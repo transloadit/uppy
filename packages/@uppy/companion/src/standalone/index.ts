@@ -9,7 +9,7 @@ import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import * as companion from '../companion.ts'
-import type { StandaloneCompanionOptionsInput } from '../schemas/index.ts'
+import type { StandaloneCompanionOptions } from '../schemas/index.ts'
 import { isRecord, toError } from '../server/helpers/type-guards.ts'
 import logger from '../server/logger.ts'
 import * as redis from '../server/redis.ts'
@@ -20,7 +20,7 @@ import {
 } from './helper.ts'
 
 export default function server(
-  inputCompanionOptions?: StandaloneCompanionOptionsInput,
+  inputCompanionOptions?: StandaloneCompanionOptions,
 ) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
@@ -36,7 +36,7 @@ export default function server(
   const router = express.Router()
 
   const serverPath = companionOptions.server?.path
-  if (typeof serverPath === 'string' && serverPath.length > 0) {
+  if (serverPath != null) {
     app.use(serverPath, router)
   } else {
     app.use(router)
@@ -45,6 +45,16 @@ export default function server(
   // Query string keys whose values should not end up in logging output.
   const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
 
+  /**
+   * Obscure the contents of query string keys listed in `sensitiveKeys`.
+   *
+   * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
+   *
+   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
+   * possible inputs :)
+   *
+   * @param rawQuery
+   */
   function censorQuery(rawQuery: Record<string, unknown>): {
     query: Record<string, string>
     censored: boolean

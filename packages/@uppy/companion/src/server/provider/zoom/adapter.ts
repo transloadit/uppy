@@ -90,8 +90,7 @@ const getItemName = (
   item: ZoomItem,
   userResponse: ZoomUserResponse,
 ): string => {
-  const timestamp =
-    item.start_time || item.recording_start || new Date().toISOString()
+  const timestamp = item.start_time || item.recording_start
   const start = moment
     .tz(timestamp, userResponse.timezone || 'UTC')
     .format('YYYY-MM-DD, HH:mm')
@@ -110,68 +109,40 @@ const getItemName = (
   return `${item.topic} (${start})`
 }
 
-const getIcon = (item: ZoomItem): string => {
+const getIcon = (item: ZoomItem) => {
   if (item.file_type) {
-    return ICONS[item.file_type] ?? ICONS.FOLDER
+    return ICONS[item.file_type]
   }
   return ICONS.FOLDER
 }
 
-const getMimeType = (item: ZoomItem): string | null => {
+const getMimeType = (item: ZoomItem) => {
   if (item.file_type) {
-    return MIMETYPES[item.file_type] ?? null
+    return MIMETYPES[item.file_type]
   }
   return null
 }
 
 const getId = (item: ZoomItem): string => {
   if (item.file_type && item.file_type === 'CC') {
-    if (
-      typeof item.meeting_id !== 'string' ||
-      typeof item.recording_start !== 'string'
-    ) {
-      throw new Error(
-        'Unexpected Zoom item: missing meeting_id/recording_start',
-      )
-    }
-    return `${encodeURIComponent(item.meeting_id)}__CC__${encodeURIComponent(item.recording_start)}`
+    return `${encodeURIComponent(String(item.meeting_id))}__CC__${encodeURIComponent(String(item.recording_start))}`
   }
   if (item.file_type) {
-    if (typeof item.meeting_id !== 'string' || typeof item.id !== 'string') {
-      throw new Error('Unexpected Zoom item: missing meeting_id/id')
-    }
-    return `${encodeURIComponent(item.meeting_id)}__${encodeURIComponent(item.id)}`
+    return `${encodeURIComponent(String(item.meeting_id))}__${encodeURIComponent(String(item.id))}`
   }
-  if (typeof item.uuid !== 'string') {
-    throw new Error('Unexpected Zoom item: missing uuid')
-  }
-  return `${encodeURIComponent(item.uuid)}`
+  return `${encodeURIComponent(String(item.uuid))}`
 }
 
 const getRequestPath = (item: ZoomItem): string => {
   if (item.file_type && item.file_type === 'CC') {
-    if (
-      typeof item.meeting_id !== 'string' ||
-      typeof item.recording_start !== 'string'
-    ) {
-      throw new Error(
-        'Unexpected Zoom item: missing meeting_id/recording_start',
-      )
-    }
-    return `${encodeURIComponent(item.meeting_id)}?recordingId=CC&recordingStart=${encodeURIComponent(item.recording_start)}`
+    return `${encodeURIComponent(String(item.meeting_id))}?recordingId=CC&recordingStart=${encodeURIComponent(String(item.recording_start))}`
   }
   if (item.file_type) {
-    if (typeof item.meeting_id !== 'string' || typeof item.id !== 'string') {
-      throw new Error('Unexpected Zoom item: missing meeting_id/id')
-    }
-    return `${encodeURIComponent(item.meeting_id)}?recordingId=${encodeURIComponent(item.id)}`
+    return `${encodeURIComponent(String(item.meeting_id))}?recordingId=${encodeURIComponent(String(item.id))}`
   }
   // Zoom meeting ids are reused so we need to use the UUID. Also, these UUIDs can contain `/` characters which require
   // double encoding (see https://devforum.zoom.us/t/double-encode-meeting-uuids/23729).
-  if (typeof item.uuid !== 'string') {
-    throw new Error('Unexpected Zoom item: missing uuid')
-  }
-  return `${encodeURIComponent(encodeURIComponent(item.uuid))}`
+  return `${encodeURIComponent(encodeURIComponent(String(item.uuid)))}`
 }
 
 const getStartDate = (item: ZoomItem): string | undefined => {
@@ -289,7 +260,7 @@ const adaptData = (
           file.file_type !== 'TIMELINE' &&
           !file.deleted_time &&
           file.status === 'completed' &&
-          typeof file.download_url === 'string' &&
+          file.download_url != null &&
           file.download_url.length > 0,
       )
   }

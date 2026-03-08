@@ -1,3 +1,4 @@
+import assert from 'node:assert'
 import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
 import { WebSocketServer } from 'ws'
@@ -8,20 +9,14 @@ import * as logger from './logger.ts'
 import * as redis from './redis.ts'
 import Uploader from './Uploader.ts'
 
-type SocketOutgoing = { action: string; payload: Record<string, unknown> }
+type SocketMessage = { action: string; payload: Record<string, unknown> }
 
-function isSocketOutgoing(value: unknown): value is SocketOutgoing {
+function isSocketMessage(value: unknown): value is SocketMessage {
   return (
     isRecord(value) &&
     typeof value['action'] === 'string' &&
     isRecord(value['payload'])
   )
-}
-
-function getErrorCode(err: unknown): string | undefined {
-  if (!isRecord(err)) return undefined
-  const code = err['code']
-  return typeof code === 'string' ? code : undefined
 }
 
 /**
@@ -31,12 +26,18 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
   const wss = new WebSocketServer({ server })
   const redisClient = redis.client()
 
+  // A new connection is usually created when an upload begins,
+  // or when connection fails while an upload is on-going and,
+  // client attempts to reconnect.
   wss.on('connection', (ws, req) => {
-    const fullPath = req.url ?? ''
+    const fullPath = req.url
+    assert(fullPath != null, 'WebSocket connection URL is missing')
+    // the token identifies which ongoing upload's progress, the socket
+    // connection wishes to listen to.
     const token = fullPath.replace(/^.*\/api\//, '')
     logger.info(`connection received from ${token}`, 'socket.connect')
 
-    function send(data: SocketOutgoing): void {
+    function send(data: SocketMessage): void {
       ws.send(jsonStringify(data), (err) => {
         if (err) {
           logger.error(err, 'socket.redis.error', Uploader.shortenToken(token))
@@ -44,13 +45,16 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
       })
     }
 
+    // if the redisClient is available, then we attempt to check the storage
+    // if we have any already stored state on the upload, and send it to the client immediately after connection,
+    // so that the client can update the UI accordingly without the user having to wait for another event
     if (redisClient) {
       redisClient
         .get(`${Uploader.STORAGE_PREFIX}:${token}`)
         .then((data) => {
           if (!data) return
-          const dataObj: unknown = JSON.parse(data.toString())
-          if (isSocketOutgoing(dataObj)) {
+          const dataObj: unknown = JSON.parse(data)
+          if (isSocketMessage(dataObj)) {
             send(dataObj)
           }
         })
@@ -62,15 +66,18 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
     emitter().emit(`connection:${token}`)
     const onTokenMessage = (...args: unknown[]) => {
       const data = args[0]
-      if (!isSocketOutgoing(data)) return
+      if (!isSocketMessage(data)) return
       send(data)
     }
     emitter().on(token, onTokenMessage)
 
     ws.on('error', (err) => {
+      // https://github.com/websockets/ws/issues/1543
+      // https://github.com/websockets/ws/blob/b73b11828d166e9692a9bffe9c01a7e93bab04a8/test/receiver.test.js#L936
       if (
-        err instanceof RangeError &&
-        getErrorCode(err) === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH'
+        err.name === 'RangeError' &&
+        'code' in err &&
+        err.code === 'WS_ERR_UNSUPPORTED_MESSAGE_LENGTH'
       ) {
         logger.error(
           'WebSocket message too large',
@@ -85,6 +92,7 @@ export default function setupSocket(server: HttpServer | HttpsServer): void {
     ws.on('message', (jsonData) => {
       try {
         const data: unknown = JSON.parse(jsonData.toString())
+        // whitelist triggered actions
         const action = isRecord(data) ? data['action'] : undefined
         if (action === 'pause' || action === 'resume' || action === 'cancel') {
           emitter().emit(`${action}:${token}`)

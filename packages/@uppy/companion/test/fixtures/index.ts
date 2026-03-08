@@ -15,6 +15,6 @@ export const providers = {
   onedrive,
   facebook,
   zoom,
-}
+} as const
 
 export const defaults = constants

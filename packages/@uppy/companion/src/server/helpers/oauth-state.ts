@@ -1,12 +1,14 @@
 import crypto from 'node:crypto'
+import { isRecord } from './type-guards.ts'
 import { decrypt, encrypt } from './utils.ts'
 
 export type OAuthState = {
   id: string
   origin?: unknown
-  preAuthToken?: unknown
-  companionInstance?: unknown
-} & Record<string, unknown>
+  preAuthToken?: string
+  companionInstance?: string
+  customerDefinedAllowedOrigins?: string[]
+}
 
 export const encodeState = (
   state: OAuthState,
@@ -34,24 +36,17 @@ export const generateState = (): OAuthState => {
   }
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === 'object' && !Array.isArray(value)
-}
-
 function isOAuthState(value: unknown): value is OAuthState {
-  return (
-    isRecord(value) && typeof value['id'] === 'string' && value['id'].length > 0
-  )
+  return isRecord(value) && typeof value['id'] === 'string'
 }
 
-export const getFromState = (
+export const getFromState = <T extends keyof OAuthState>(
   state: unknown,
-  name: string,
+  name: T,
   secret: string | Buffer,
-): unknown => {
+): OAuthState[T] | undefined => {
   if (typeof state !== 'string' || state.length === 0) return undefined
   const decoded = decodeState(state, secret)
-  if (!isRecord(decoded)) return undefined
   return decoded[name]
 }
 

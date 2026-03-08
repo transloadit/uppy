@@ -1,6 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+// We want to be future-proof and allow our code to be run with Node.js directly (erasableSyntaxOnly, rewriteRelativeImportExtensions and allowImportingTsExtensions are all set). However, even though rewriteRelativeImportExtensions is set, it doesn't rewrite import extensions in outputted declaration (d.ts) files. But it's recommended that d.ts files have .js extensions. This is why we need this script.
+
 function walk(dir: string, out: string[]): void {
   for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
     const p = path.join(dir, ent.name)

@@ -18,7 +18,7 @@ type FacebookPhoto = {
 
 type FacebookItem = FacebookAlbum | FacebookPhoto
 
-type FacebookListResponse = {
+export type FacebookListResponse = {
   data: FacebookItem[]
   paging?: {
     cursors?: {
@@ -28,7 +28,7 @@ type FacebookListResponse = {
 }
 
 const isFolder = (item: FacebookItem): item is FacebookAlbum => {
-  return 'type' in item && typeof item.type === 'string' && item.type.length > 0
+  return 'type' in item && typeof item.type === 'string'
 }
 
 export const sortImages = (images: FacebookImage[]): FacebookImage[] => {
@@ -81,7 +81,7 @@ const getNextPagePath = (
   }
 
   const after = data.paging.cursors.after
-  if (typeof after !== 'string' || after.length === 0) return null
+  if (after == null || after.length === 0) return null
 
   const query = { ...currentQuery, cursor: after }
   return `${currentPath || ''}?${querystring.stringify(query)}`

@@ -4,13 +4,14 @@ import got from 'got'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
 import * as tokenService from '../helpers/jwt.ts'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import { isRecord, toError } from '../helpers/type-guards.ts'
+import {
+  isEncryptionSecret,
+  isRecord,
+  toError,
+} from '../helpers/type-guards.ts'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import logger from '../logger.ts'
 import type Provider from './Provider.ts'
-
-const isEncryptionSecret = (value: unknown): value is string | Buffer =>
-  typeof value === 'string' || Buffer.isBuffer(value)
 
 /**
  * @param url
@@ -23,13 +24,12 @@ async function fetchKeys(
   credentialRequestParams: unknown | null,
 ): Promise<Record<string, unknown>> {
   try {
-    const resp = await got
+    const { credentials } = await got
       .post(url, {
         json: { provider: providerName, parameters: credentialRequestParams },
       })
       .json<{ credentials?: unknown }>()
 
-    const credentials = isRecord(resp) ? resp.credentials : undefined
     if (!isRecord(credentials))
       throw new Error('Received no remote credentials')
 
@@ -55,21 +55,15 @@ async function fetchProviderKeys(
   companionOptions: CompanionRuntimeOptions,
   credentialRequestParams: unknown,
 ): Promise<Record<string, unknown> | null> {
-  const providerOptions = companionOptions['providerOptions']
-  const customProviders = companionOptions['customProviders']
+  const { providerOptions, customProviders } = companionOptions
 
   let providerConfig: Record<string, unknown> | undefined
-  if (isRecord(providerOptions) && isRecord(providerOptions[providerName])) {
+  if (isRecord(providerOptions?.[providerName])) {
     providerConfig = providerOptions[providerName]
   }
-  if (
-    !providerConfig &&
-    isRecord(customProviders) &&
-    isRecord(customProviders[providerName])
-  ) {
-    const candidate = customProviders[providerName]
-    const config = isRecord(candidate) ? candidate['config'] : undefined
-    if (isRecord(config)) providerConfig = config
+
+  if (!providerConfig && isRecord(customProviders?.[providerName]?.config)) {
+    providerConfig = customProviders?.[providerName]?.config
   }
 
   if (!providerConfig) {
@@ -85,7 +79,7 @@ async function fetchProviderKeys(
   // In a future version we could make this an XOR thing, providing either an endpoint or global keys,
   // but not both.
   const key = providerConfig['key']
-  if (!credentialRequestParams && typeof key === 'string' && key.length > 0) {
+  if (!credentialRequestParams && typeof key === 'string') {
     return providerConfig
   }
 
@@ -110,26 +104,17 @@ export const getCredentialsOverrideMiddleware = (
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { oauthProvider, override } = req.params
-      if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
+      if (oauthProvider == null || oauthProvider.length === 0) {
         next()
         return
       }
       const [providerName] = Object.keys(providers).filter(
         (name) => providers[name]?.oauthProvider === oauthProvider,
       )
-      if (!providerName) {
-        next()
-        return
-      }
-
-      const providerOptions = companionOptions['providerOptions']
-      const providerOption = isRecord(providerOptions)
-        ? providerOptions[providerName]
-        : undefined
-      const credentialsURL = isRecord(providerOption)
-        ? providerOption['credentialsURL']
-        : undefined
-      if (typeof credentialsURL !== 'string' || credentialsURL.length === 0) {
+      if (
+        !providerName ||
+        !companionOptions.providerOptions[providerName]?.credentialsURL
+      ) {
         next()
         return
       }
@@ -137,30 +122,15 @@ export const getCredentialsOverrideMiddleware = (
       const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
       // only use state via session object if user isn't making intial "connect" request.
       // override param indicates subsequent requests from the oauth flow
-      const state = override
-        ? isRecord(grantDynamic) && typeof grantDynamic['state'] === 'string'
-          ? grantDynamic['state']
-          : undefined
-        : typeof req.query['state'] === 'string'
-          ? req.query['state']
-          : undefined
-      if (state == null || state.length === 0) {
+
+      const state = override ? grantDynamic['state'] : req.query['state']
+      if (!state || typeof state !== 'string') {
         next()
         return
       }
 
       const { secret, preAuthSecret } = companionOptions
-      if (
-        !isEncryptionSecret(secret) ||
-        (typeof secret === 'string' && secret.length === 0)
-      ) {
-        next()
-        return
-      }
-      if (
-        !isEncryptionSecret(preAuthSecret) ||
-        (typeof preAuthSecret === 'string' && preAuthSecret.length === 0)
-      ) {
+      if (!isEncryptionSecret(secret) || !isEncryptionSecret(preAuthSecret)) {
         next()
         return
       }
@@ -170,7 +140,7 @@ export const getCredentialsOverrideMiddleware = (
         'preAuthToken',
         secret,
       )
-      if (typeof preAuthToken !== 'string' || preAuthToken.length === 0) {
+      if (preAuthToken == null) {
         next()
         return
       }
@@ -227,16 +197,14 @@ export const getCredentialsOverrideMiddleware = (
       const dynamic: Record<string, unknown> = {}
       const fetchedKey = credentials['key']
       const fetchedSecret = credentials['secret']
-      if (typeof fetchedKey === 'string' && fetchedKey.length > 0)
-        dynamic['key'] = fetchedKey
-      if (typeof fetchedSecret === 'string' && fetchedSecret.length > 0)
-        dynamic['secret'] = fetchedSecret
+      if (typeof fetchedKey === 'string') dynamic['key'] = fetchedKey
+      if (typeof fetchedSecret === 'string') dynamic['secret'] = fetchedSecret
       if (origins) dynamic['origins'] = origins
 
       res.locals['grant'] = { dynamic }
 
       const gateway = credentials['transloadit_gateway']
-      if (typeof gateway === 'string' && gateway.length > 0) {
+      if (typeof gateway === 'string') {
         const redirectPath = getRedirectPath(providerName)
         const fullRedirectPath = getURLBuilder(companionOptions)(
           redirectPath,
@@ -245,7 +213,7 @@ export const getCredentialsOverrideMiddleware = (
         )
         const redirectUri = new URL(fullRedirectPath, gateway).toString()
         logger.info('Using redirect URI from transloadit_gateway', redirectUri)
-        const grant = res.locals['grant']
+        const grant: unknown = res.locals['grant']
         if (isRecord(grant) && isRecord(grant['dynamic'])) {
           grant['dynamic']['redirect_uri'] = redirectUri
         }

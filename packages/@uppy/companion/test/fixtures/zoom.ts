@@ -14,7 +14,7 @@ export const expects = {
   remoteZoomKey: 'REMOTE-ZOOM-KEY',
   remoteZoomSecret: 'REMOTE-ZOOM-SECRET',
   remoteZoomVerificationToken: 'REMOTE-ZOOM-VERIFICATION-TOKEN',
-}
+} as const
 
 export const nockZoomRecordings = ({ times = 1 }: { times?: number } = {}) => {
   nock('https://zoom.us')

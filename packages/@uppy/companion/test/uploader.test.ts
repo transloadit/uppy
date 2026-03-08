@@ -55,7 +55,7 @@ process.env['COMPANION_CLIENT_ORIGINS'] = 'true'
 const { companionOptions } = standalone()
 const runtimeOptions = { ...defaultOptions } satisfies CompanionRuntimeOptions
 const pathPrefix =
-  typeof companionOptions.filePath === 'string'
+  companionOptions.filePath != null
     ? companionOptions.filePath
     : './test/output'
 
@@ -227,7 +227,7 @@ describe('uploader', () => {
       // validate that the tmp file has been downloaded and saved into the file path
       // must do it before it gets deleted
       const tmpPath = uploader.tmpPath
-      if (typeof tmpPath !== 'string') {
+      if (tmpPath == null) {
         throw new Error('Expected uploader.tmpPath to be a string')
       }
       const fileInfo = fs.statSync(tmpPath)
@@ -245,7 +245,7 @@ describe('uploader', () => {
         uploader.tryUploadStream(stream, requireMockReq()).then(() => {
           try {
             const tmpPath = uploader.tmpPath
-            if (typeof tmpPath !== 'string') {
+            if (tmpPath == null) {
               throw new Error('Expected uploader.tmpPath to be a string')
             }
             expect(fs.existsSync(tmpPath)).toBe(false)
@@ -305,14 +305,20 @@ describe('uploader', () => {
     const stream = Readable.from([fileContent])
 
     const opts: ConstructorParameters<typeof Uploader>[0] = {
-      companionOptions: { ...companionOptions, ...extraCompanionOpts },
+      companionOptions: {
+        ...companionOptions,
+        streamingUpload: true,
+        ...extraCompanionOpts,
+      },
       endpoint: `http://${address}`,
       protocol: 'multipart',
-      ...(includeSize ? { size: fileContent.length } : {}),
+      ...(includeSize && { size: fileContent.length }),
       metadata: metadata ?? {},
       pathPrefix,
-      ...(useFormData === undefined ? {} : { useFormData }),
+      ...(useFormData != null && { useFormData }),
     }
+
+    stream.pause()
 
     const uploader = new Uploader(opts)
     return uploader.uploadStream(stream, requireMockReq())
@@ -356,7 +362,6 @@ describe('uploader', () => {
 
   const formDataNoMetaMatch =
     /^--form-data-boundary-[a-z0-9]+\r\nContent-Disposition: form-data; name="files\[\]"; filename="uppy-file-[^"]+"\r\nContent-Type: application\/octet-stream\r\n\r\nSome file content\r\n--form-data-boundary-[a-z0-9]+--\r\n\r\n$/
-
   test('upload functions with xhr formdata', async () => {
     nock('http://localhost').post('/', formDataNoMetaMatch).reply(200)
 

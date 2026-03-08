@@ -1,5 +1,6 @@
 import querystring from 'node:querystring'
 import mime from 'mime-types'
+import type { BuildUrl } from '../../../types/express.js'
 
 type BoxItem = {
   type?: string
@@ -18,11 +19,7 @@ type BoxListResponse = {
 }
 
 type CompanionLike = {
-  buildURL: (
-    subPath: string,
-    isExternal: boolean,
-    excludeHost?: boolean,
-  ) => string
+  buildURL?: BuildUrl
 }
 
 const isFolder = (item: BoxItem): boolean => {
@@ -99,7 +96,7 @@ const adaptData = function adaptData(
       name: getItemName(item),
       mimeType: getMimeType(item),
       id: getItemId(item),
-      thumbnail: companion.buildURL(getItemThumbnailUrl(item), true),
+      thumbnail: companion.buildURL?.(getItemThumbnailUrl(item), true),
       requestPath: getItemRequestPath(item),
       modifiedDate: getItemModifiedDate(item),
       size: getItemSize(item),

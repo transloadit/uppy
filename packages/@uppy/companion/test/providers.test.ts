@@ -43,8 +43,7 @@ const OAUTH_STATE = 'some-cool-nice-encrytpion'
 const secret = 'secret'
 
 const providers = providerModule.getDefaultProviders()
-const fixtureProviders: Record<string, { expects?: Record<string, unknown> }> =
-  fixtures.providers
+const fixtureProviders = fixtures.providers
 
 const providerNames = Object.keys(providers)
 const oauthProviders: Record<string, string> = Object.fromEntries(
@@ -102,12 +101,10 @@ afterAll(() => {
 })
 
 describe('list provider files', () => {
-  async function runTest(providerName: string) {
+  async function runTest(providerName: keyof typeof fixtureProviders) {
     const providerFixture = fixtureProviders[providerName]?.expects ?? {}
     const listPath =
-      typeof providerFixture['listPath'] === 'string'
-        ? providerFixture['listPath']
-        : ''
+      'listPath' in providerFixture ? providerFixture.listPath : ''
     return request(await getServerWithEnv())
       .get(`/${providerName}/list/${listPath}`)
       .set('uppy-auth-token', token)
@@ -132,7 +129,7 @@ describe('list provider files', () => {
   }: {
     username: unknown
     items: Array<Record<string, unknown>>
-    providerFixture: Record<string, unknown>
+    providerFixture: (typeof fixtureProviders)[keyof typeof fixtureProviders]['expects']
   }) {
     expect(username).toBe(defaults.USERNAME)
 
@@ -140,30 +137,21 @@ describe('list provider files', () => {
     if (!item) throw new Error('Expected at least one item')
 
     const fixtureItemName =
-      typeof providerFixture['itemName'] === 'string'
-        ? providerFixture['itemName']
-        : undefined
+      'itemName' in providerFixture ? providerFixture.itemName : undefined
     const fixtureItemMimeType =
-      typeof providerFixture['itemMimeType'] === 'string'
+      'itemMimeType' in providerFixture
         ? providerFixture['itemMimeType']
         : undefined
     const fixtureItemId =
-      typeof providerFixture['itemId'] === 'string'
-        ? providerFixture['itemId']
-        : undefined
-    const fixtureItemSizeRaw = providerFixture['itemSize']
+      'itemId' in providerFixture ? providerFixture['itemId'] : undefined
     const fixtureItemSize =
-      typeof fixtureItemSizeRaw === 'number' || fixtureItemSizeRaw === null
-        ? fixtureItemSizeRaw
-        : undefined
+      'itemSize' in providerFixture ? providerFixture.itemSize : undefined
     const fixtureItemRequestPath =
-      typeof providerFixture['itemRequestPath'] === 'string'
+      'itemRequestPath' in providerFixture
         ? providerFixture['itemRequestPath']
         : undefined
     const fixtureItemIcon =
-      typeof providerFixture['itemIcon'] === 'string'
-        ? providerFixture['itemIcon']
-        : undefined
+      'itemIcon' in providerFixture ? providerFixture['itemIcon'] : undefined
 
     expect(item['isFolder']).toBe(false)
     expect(item['name']).toBe(fixtureItemName ?? defaults.ITEM_NAME)
@@ -426,11 +414,11 @@ describe('list provider files', () => {
 })
 
 describe('provider file gets downloaded from', () => {
-  async function runTest(providerName: string) {
+  async function runTest(providerName: keyof typeof fixtureProviders) {
     const providerFixture = fixtureProviders[providerName]?.expects ?? {}
     const requestPath =
-      typeof providerFixture['itemRequestPath'] === 'string'
-        ? providerFixture['itemRequestPath']
+      'itemRequestPath' in providerFixture
+        ? providerFixture.itemRequestPath
         : defaults.ITEM_ID
     const res = await request(await getServerWithEnv())
       .post(`/${providerName}/get/${requestPath}`)

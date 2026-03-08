@@ -1,9 +1,11 @@
+import type { Readable } from 'node:stream'
 import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.ts'
+import { isRecord } from '../../../helpers/type-guards.ts'
 import { prepareStream } from '../../../helpers/utils.ts'
 import logger from '../../../logger.ts'
 import { ProviderAuthError } from '../../error.ts'
-import Provider from '../../Provider.ts'
+import Provider, { type Query } from '../../Provider.ts'
 import { withGoogleErrorHandling } from '../../providerErrors.ts'
 import { logout, refreshToken } from '../index.ts'
 import {
@@ -38,10 +40,6 @@ const getClient = ({ token }: { token: string }) =>
       authorization: `Bearer ${token}`,
     },
   })
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === 'object' && !Array.isArray(value)
-}
 
 type DriveFileStats = {
   mimeType?: unknown
@@ -94,7 +92,7 @@ export async function streamGoogleFile({
     ? stats.exportLinks
     : undefined
 
-  let stream: NodeJS.ReadableStream
+  let stream: Readable
 
   if (isGsuiteFile(mimeType)) {
     const mimeType2 = getGsuiteExportType(mimeType)
@@ -135,10 +133,14 @@ export async function streamGoogleFile({
   return { stream, size }
 }
 
+interface DriveUserSession {
+  accessToken: string
+}
+
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
-export class Drive extends Provider {
+export class Drive extends Provider<DriveUserSession> {
   static override get oauthProvider() {
     return 'googledrive'
   }
@@ -153,32 +155,32 @@ export class Drive extends Provider {
     return logout(args)
   }
 
-  override refreshToken(args: Parameters<typeof refreshToken>[0]) {
+  override refreshToken(args: {
+    redirectUri: string | undefined
+    clientId: string | undefined
+    clientSecret: string | undefined
+    refreshToken: string
+  }) {
     return refreshToken(args)
   }
 
-  override async list(options: unknown) {
+  override async list({
+    directory: directoryIn,
+    providerUserSession: { accessToken: token },
+    query,
+  }: {
+    directory?: string | undefined
+    providerUserSession: DriveUserSession
+    query?: Query | undefined
+  }) {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.list.error',
       async () => {
-        if (!isRecord(options)) throw new Error('Invalid options')
-        const directory =
-          typeof options['directory'] === 'string'
-            ? options['directory']
-            : 'root'
-        const query = isRecord(options['query']) ? options['query'] : {}
         const cursor =
-          typeof query['cursor'] === 'string' ? query['cursor'] : undefined
-        const providerUserSession = isRecord(options['providerUserSession'])
-          ? options['providerUserSession']
-          : null
-        const token =
-          providerUserSession &&
-          typeof providerUserSession['accessToken'] === 'string'
-            ? providerUserSession['accessToken']
-            : undefined
-        if (!token) throw new ProviderAuthError()
+          typeof query?.['cursor'] === 'string' ? query['cursor'] : undefined
+
+        const directory = directoryIn || 'root'
 
         const isRoot = directory === 'root'
         const isVirtualSharedDirRoot = directory === VIRTUAL_SHARED_DIR
@@ -212,10 +214,8 @@ export class Drive extends Provider {
             return {
               ...nextResponse,
               drives: [
-                ...(Array.isArray(response.drives) ? response.drives : []),
-                ...(Array.isArray(nextResponse.drives)
-                  ? nextResponse.drives
-                  : []),
+                ...(response.drives ?? []),
+                ...(nextResponse.drives ?? []),
               ],
             }
           }
@@ -272,21 +272,13 @@ export class Drive extends Provider {
     )
   }
 
-  override async download(options: unknown) {
-    if (!isRecord(options) || typeof options['id'] !== 'string') {
-      throw new Error('Invalid options')
-    }
-    const providerUserSession = isRecord(options['providerUserSession'])
-      ? options['providerUserSession']
-      : null
-    const token =
-      providerUserSession &&
-      typeof providerUserSession['accessToken'] === 'string'
-        ? providerUserSession['accessToken']
-        : undefined
-    if (!token) throw new ProviderAuthError()
-    const id = options['id']
-
+  override async download({
+    id,
+    providerUserSession: { accessToken: token },
+  }: {
+    id: string
+    providerUserSession: DriveUserSession
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 

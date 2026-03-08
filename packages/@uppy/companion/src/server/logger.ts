@@ -39,7 +39,7 @@ export function setProcessName(newProcessName: string): void {
 
 const styleText: StyleTextFn =
   typeof util.styleText === 'function' && supportsColors.stderr
-    ? (style, text) => util.styleText!(style, text)
+    ? (style, text) => util.styleText(style, text)
     : (_style, text) => text
 
 /**
@@ -98,8 +98,8 @@ export function info(msg: unknown, tag?: string, traceId?: string): void {
   log({
     arg: msg,
     level: 'info',
-    ...(tag === undefined ? {} : { tag }),
-    ...(traceId === undefined ? {} : { traceId }),
+    ...(tag != null && { tag }),
+    ...(traceId != null && { traceId }),
   })
 }
 
@@ -111,8 +111,8 @@ export function warn(msg: unknown, tag?: string, traceId?: string): void {
     arg: msg,
     level: 'warn',
     color: ['bold', 'yellow'],
-    ...(tag === undefined ? {} : { tag }),
-    ...(traceId === undefined ? {} : { traceId }),
+    ...(tag != null && { tag }),
+    ...(traceId != null && { traceId }),
   })
 }
 
@@ -124,8 +124,8 @@ export function error(msg: unknown, tag?: string, traceId?: string): void {
     arg: msg,
     level: 'error',
     color: ['bold', 'red'],
-    ...(tag === undefined ? {} : { tag }),
-    ...(traceId === undefined ? {} : { traceId }),
+    ...(tag != null && { tag }),
+    ...(traceId != null && { traceId }),
   })
 }
 
@@ -138,8 +138,8 @@ export function debug(msg: unknown, tag?: string, traceId?: string): void {
       arg: msg,
       level: 'debug',
       color: ['bold', 'blue'],
-      ...(tag === undefined ? {} : { tag }),
-      ...(traceId === undefined ? {} : { traceId }),
+      ...(tag != null && { tag }),
+      ...(traceId != null && { traceId }),
     })
   }
 }

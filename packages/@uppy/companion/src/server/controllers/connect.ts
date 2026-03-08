@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import { isRecord } from '../helpers/type-guards.ts'
+import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
 
 /**
  * Derived from `cors` npm package.
@@ -32,7 +32,7 @@ function encodeStateAndRedirect(
   stateObj: oAuthState.OAuthState,
 ): void {
   const { secret } = req.companion.options
-  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+  if (!isEncryptionSecret(secret)) {
     res.sendStatus(500)
     return
   }
@@ -45,11 +45,7 @@ function encodeStateAndRedirect(
 
   // pass along grant's dynamic config (if specified for the provider in its grant config `dynamic` section)
   // this is needed for things like custom oauth domain (e.g. webdav)
-  const dynamicKeys: string[] = Array.isArray(providerGrantConfig?.['dynamic'])
-    ? providerGrantConfig['dynamic'].filter(
-        (i): i is string => typeof i === 'string',
-      )
-    : []
+  const dynamicKeys = providerGrantConfig?.dynamic ?? []
   const grantDynamicConfig = Object.fromEntries(
     dynamicKeys.flatMap((dynamicKey) => {
       const queryValue = req.query[dynamicKey]
@@ -68,7 +64,7 @@ function encodeStateAndRedirect(
   )
 
   const { oauthProvider } = providerClass
-  if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
+  if (oauthProvider == null || oauthProvider.length === 0) {
     res.sendStatus(400)
     return
   }
@@ -123,7 +119,7 @@ export default function connect(
   }
 
   const preAuthTokenValue = req.query['uppyPreAuthToken']
-  if (typeof preAuthTokenValue === 'string' && preAuthTokenValue.length > 0) {
+  if (typeof preAuthTokenValue === 'string') {
     stateObj.preAuthToken = preAuthTokenValue
   }
 

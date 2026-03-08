@@ -6,13 +6,13 @@ import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
 import * as tokenService from '../helpers/jwt.ts'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import { isRecord } from '../helpers/type-guards.ts'
+import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
 import logger from '../logger.ts'
 
 const closePageHtml = (origin: string | undefined) => `
-	  <!DOCTYPE html>
-	  <html>
-	  <head>
+  <!DOCTYPE html>
+  <html>
+  <head>
       <meta charset="utf-8" />
       <script>
       // if window.opener is nullish, we want the following line to throw to avoid
@@ -21,8 +21,8 @@ const closePageHtml = (origin: string | undefined) => `
       window.close()
       </script>
   </head>
-	  <body>Authentication failed.</body>
-	  </html>`
+  <body>Authentication failed.</body>
+  </html>`
 
 export default function callback(
   req: Request,
@@ -30,27 +30,26 @@ export default function callback(
   next: NextFunction,
 ): void {
   const providerName = req.params['providerName']
-  if (typeof providerName !== 'string' || providerName.length === 0) {
+  if (providerName == null || providerName.length === 0) {
     res.sendStatus(400)
     return
   }
   const secret = req.companion.options.secret
-  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+  if (!isEncryptionSecret(secret)) {
     res.sendStatus(500)
     return
   }
 
-  const emptyRecord: Record<string, unknown> = {}
   const session: Record<string, unknown> = isRecord(req.session)
     ? req.session
-    : emptyRecord
+    : {}
   const grant: Record<string, unknown> = isRecord(session['grant'])
     ? session['grant']
-    : emptyRecord
+    : {}
   const grantResponse = isRecord(grant['response']) ? grant['response'] : null
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
-  const state = isRecord(grantDynamic) ? grantDynamic['state'] : undefined
+  const state = grantDynamic['state']
   const origin =
     typeof state === 'string' && state.length > 0
       ? oAuthState.getFromState(state, 'origin', secret)

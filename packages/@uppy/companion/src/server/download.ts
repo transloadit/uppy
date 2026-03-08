@@ -1,3 +1,4 @@
+import type { Readable } from 'node:stream'
 import { getProtectedGot } from './helpers/request.ts'
 import { prepareStream } from './helpers/utils.ts'
 import logger from './logger.ts'
@@ -14,7 +15,7 @@ export const downloadURL = async (
   allowLocalIPs: boolean,
   traceId?: string,
   options: Record<string, unknown> = {},
-): Promise<{ stream: unknown; size: number | undefined }> => {
+): Promise<{ stream: Readable; size: number | undefined }> => {
   try {
     const protectedGot = getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream.get(url, {

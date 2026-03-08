@@ -1,8 +1,7 @@
-import type { Readable as NodeReadableStream } from 'node:stream'
+import type { Readable } from 'node:stream'
 import type { Request, Response } from 'express'
 import logger from '../logger.ts'
 import Uploader from '../Uploader.ts'
-import { isRecord } from './type-guards.ts'
 
 export async function startDownUpload({
   req,
@@ -12,52 +11,23 @@ export async function startDownUpload({
 }: {
   req: Request
   res: Response
-  getSize?: (() => Promise<unknown>) | undefined
-  download: () => Promise<unknown>
+  getSize?: (() => Promise<number | null | undefined>) | undefined
+  download: () => Promise<{ stream: Readable; size: number | undefined }>
 }): Promise<void> {
   logger.debug('Starting download stream.', undefined, req.id)
-  const downloadResult: unknown = await download()
-  if (!isRecord(downloadResult)) {
-    throw new TypeError('Invalid download result')
-  }
-  const stream = downloadResult['stream']
-  const maybeSize = downloadResult['size']
+  const { stream, size: maybeSize } = await download()
 
-  const isNodeReadableStream = (
-    value: unknown,
-  ): value is NodeReadableStream => {
-    if (!value || (typeof value !== 'object' && typeof value !== 'function'))
-      return false
-    return (
-      typeof Reflect.get(value, 'on') === 'function' &&
-      typeof Reflect.get(value, 'pipe') === 'function'
-    )
-  }
-  if (!isNodeReadableStream(stream)) {
-    throw new TypeError('Invalid download stream')
-  }
-
-  let size: number | null | undefined
   // if we already know the size from the GET response content-length header, we can use that
-  if (
-    typeof maybeSize === 'number' &&
-    !Number.isNaN(maybeSize) &&
-    maybeSize > 0
-  ) {
-    size = maybeSize
-  }
+  let size: number | null | undefined =
+    maybeSize != null && !Number.isNaN(maybeSize) && maybeSize > 0
+      ? maybeSize
+      : undefined
+
   // if not, we may need to explicitly get the size
   // note that getSize might also return undefined/null, which is usually fine, it just means that
   // the size is unknown and we cannot send the size to the Uploader
   if (size == null && getSize != null) {
-    const maybeExplicitSize = await getSize()
-    if (
-      typeof maybeExplicitSize === 'number' &&
-      !Number.isNaN(maybeExplicitSize) &&
-      maybeExplicitSize > 0
-    ) {
-      size = maybeExplicitSize
-    }
+    size = await getSize()
   }
   const { clientSocketConnectTimeout } = req.companion.options
 

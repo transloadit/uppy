@@ -114,10 +114,10 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json && node ./dist/scripts/rewrite-dts-extensions.js",
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
-    "lint:ts": "tsc --project tsconfig.lint.json",
     "start": "node ./dist/standalone/start-server.js",
     "start:dev": "bash start-dev",
-    "typecheck": "tsc --build",
+    "typecheck": "tsc",
+    "check": "yarn typecheck && yarn test",
     "test": "vitest run --silent='passed-only'"
   },
   "engines": {

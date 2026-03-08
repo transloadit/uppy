@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.ts'
-import { isRecord } from '../helpers/type-guards.ts'
+import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
 import logger from '../logger.ts'
 import { respondWithError } from '../provider/error.ts'
 
@@ -10,12 +10,12 @@ export default async function simpleAuth(
   next: NextFunction,
 ): Promise<void> {
   const providerName = req.params['providerName']
-  if (typeof providerName !== 'string' || providerName.length === 0) {
+  if (providerName == null || providerName.length === 0) {
     res.sendStatus(400)
     return
   }
   const secret = req.companion.options.secret
-  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+  if (!isEncryptionSecret(secret)) {
     res.sendStatus(500)
     return
   }
@@ -26,7 +26,7 @@ export default async function simpleAuth(
   }
 
   try {
-    const out: unknown = await provider.simpleAuth({
+    const out = await provider.simpleAuth({
       requestBody: req.body,
     })
     const simpleAuthResponse = isRecord(out) ? out : {}

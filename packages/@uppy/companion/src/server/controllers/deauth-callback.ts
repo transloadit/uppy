@@ -1,5 +1,4 @@
 import type { NextFunction, Request, Response } from 'express'
-import { isRecord } from '../helpers/type-guards.ts'
 import { respondWithError } from '../provider/error.ts'
 
 export default async function deauthCallback(
@@ -18,17 +17,12 @@ export default async function deauthCallback(
   // It doesn't respond to Uppy client like other endpoints.
   // Instead it responds to the providers themselves.
   try {
-    const out: unknown = await provider.deauthorizationCallback({
+    const { data, status } = await provider.deauthorizationCallback({
       companion,
       body,
       headers,
     })
-    if (isRecord(out)) {
-      const status = typeof out['status'] === 'number' ? out['status'] : 200
-      res.status(status).json(out['data'])
-      return
-    }
-    res.json(out)
+    res.status(status ?? 200).json(data)
   } catch (err) {
     if (respondWithError(err, res)) return
     next(err)

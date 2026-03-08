@@ -32,18 +32,17 @@ export default async function logout(
   }
 
   try {
-    const out: unknown = await provider.logout({
+    const out = await provider.logout({
       providerUserSession,
       companion,
     })
-    const data = isRecord(out) ? out : {}
     delete companion.providerUserSession
     const oauthProvider = providerClass?.oauthProvider
-    if (typeof oauthProvider === 'string' && oauthProvider.length > 0) {
+    if (oauthProvider != null) {
       tokenService.removeFromCookies(res, companion.options, oauthProvider)
     }
     cleanSession()
-    res.json({ ok: true, ...data })
+    res.json({ ok: true, ...out })
   } catch (err) {
     if (respondWithError(err, res)) return
     next(err)

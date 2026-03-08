@@ -2,11 +2,12 @@ import qs from 'node:querystring'
 import { URL } from 'node:url'
 import type { Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.ts'
+import { isEncryptionSecret } from '../helpers/type-guards.ts'
 import { hasMatch } from '../helpers/utils.ts'
 
 export default function oauthRedirect(req: Request, res: Response): void {
   const secret = req.companion.options.secret
-  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+  if (!isEncryptionSecret(secret)) {
     res.sendStatus(500)
     return
   }
@@ -23,10 +24,6 @@ export default function oauthRedirect(req: Request, res: Response): void {
   const params = qs.stringify(queryParams)
   const { providerClass, buildURL } = req.companion
   const oauthProvider = providerClass?.oauthProvider
-  if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) {
-    res.sendStatus(400)
-    return
-  }
   if (!buildURL) {
     res.sendStatus(500)
     return

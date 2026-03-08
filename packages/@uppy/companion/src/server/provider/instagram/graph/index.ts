@@ -1,12 +1,17 @@
+import type { Readable } from 'node:stream'
 import got from 'got'
 import { isRecord } from '../../../helpers/type-guards.ts'
 import { prepareStream } from '../../../helpers/utils.ts'
 import logger from '../../../logger.ts'
-import Provider from '../../Provider.ts'
+import Provider, { type Query } from '../../Provider.ts'
 import { withProviderErrorHandling } from '../../providerErrors.ts'
 import adaptData from './adapter.ts'
 
 type InstagramClient = ReturnType<typeof got.extend>
+
+interface InstagramUserSession {
+  accessToken: string
+}
 
 const getClient = ({ token }: { token: string }): InstagramClient =>
   got.extend({
@@ -23,27 +28,20 @@ async function getMediaUrl({
   token: string
   id: string
 }): Promise<string> {
-  const body: unknown = await getClient({ token })
+  const body = await getClient({ token })
     .get(String(id), {
       searchParams: { fields: 'media_url' },
       responseType: 'json',
     })
-    .json()
+    .json<{ media_url: string }>()
 
-  const url =
-    isRecord(body) && typeof body['media_url'] === 'string'
-      ? body['media_url']
-      : null
-  if (!url) {
-    throw new Error('Unexpected Instagram response: missing media_url')
-  }
-  return url
+  return body.media_url
 }
 
 /**
  * Adapter for API https://developers.facebook.com/docs/instagram-api/overview
  */
-export default class Instagram extends Provider {
+export default class Instagram extends Provider<InstagramUserSession> {
   // for "grant"
   static override getExtraGrantConfig() {
     return {
@@ -59,11 +57,11 @@ export default class Instagram extends Provider {
   override async list({
     directory,
     providerUserSession: { accessToken: token },
-    query = { cursor: null },
+    query,
   }: {
-    directory?: string
-    providerUserSession: { accessToken: string }
-    query?: { cursor?: string | null }
+    directory?: string | undefined
+    providerUserSession: InstagramUserSession
+    query?: Query | undefined
   }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.instagram.list.error',
@@ -73,8 +71,8 @@ export default class Instagram extends Provider {
             'id,media_type,thumbnail_url,media_url,timestamp,children{media_type,media_url,thumbnail_url,timestamp}',
         }
 
-        if (typeof query.cursor === 'string' && query.cursor.length > 0) {
-          qs['after'] = query.cursor
+        if (typeof query?.['cursor'] === 'string') {
+          qs['after'] = query['cursor']
         }
 
         const client = getClient({ token })
@@ -91,10 +89,10 @@ export default class Instagram extends Provider {
             .json<Parameters<typeof adaptData>[0]>(),
         ])
 
-        const username = typeof me.username === 'string' ? me.username : null
+        const username = me.username != null ? me.username : null
         const currentQuery: Record<string, string> = {}
-        if (typeof query.cursor === 'string')
-          currentQuery['cursor'] = query.cursor
+        if (typeof query?.['cursor'] === 'string')
+          currentQuery['cursor'] = query['cursor']
         return adaptData(list, username, directory, currentQuery)
       },
     )
@@ -105,8 +103,8 @@ export default class Instagram extends Provider {
     providerUserSession: { accessToken: token },
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-  }): Promise<unknown> {
+    providerUserSession: InstagramUserSession
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling(
       'provider.instagram.download.error',
       async () => {
@@ -118,7 +116,10 @@ export default class Instagram extends Provider {
     )
   }
 
-  override async thumbnail() {
+  override async thumbnail(): Promise<{
+    stream: Readable
+    contentType: string
+  }> {
     // not implementing this because a public thumbnail from instagram will be used instead
     logger.error(
       'call to thumbnail is not implemented',

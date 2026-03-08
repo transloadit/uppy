@@ -1,7 +1,9 @@
+import type { Readable } from 'node:stream'
 import got from 'got'
+import type { BuildUrl } from '../../../types/express.js'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { prepareStream } from '../../helpers/utils.ts'
-import Provider from '../Provider.ts'
+import Provider, { type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -9,17 +11,13 @@ const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
 type BoxUserSession = { accessToken: string }
-type BoxQuery = { cursor?: string }
 type CompanionLike = {
-  buildURL: (
-    subPath: string,
-    isExternal: boolean,
-    excludeHost?: boolean,
-  ) => string
+  buildURL?: BuildUrl
   options: {
-    providerOptions: {
-      box: { key?: string; secret?: string }
-    }
+    providerOptions: Record<
+      string,
+      { key?: string | undefined; secret?: string | undefined }
+    >
   }
 }
 
@@ -47,15 +45,17 @@ async function list({
   token,
 }: {
   directory: string | undefined
-  query: BoxQuery
+  query?: Query | undefined
   token: string
 }): Promise<Parameters<typeof adaptData>[0]> {
   const rootFolderID = '0'
+  const cursor =
+    typeof query?.['cursor'] === 'string' ? query?.['cursor'] : undefined
   return getClient({ token })
     .get(`folders/${directory || rootFolderID}/items`, {
       searchParams: {
         fields: BOX_FILES_FIELDS,
-        offset: query.cursor,
+        offset: cursor,
         limit: 1000,
       },
       responseType: 'json',
@@ -66,7 +66,7 @@ async function list({
 /**
  * Adapter for API https://developer.box.com/reference/
  */
-export default class Box extends Provider {
+export default class Box extends Provider<BoxUserSession> {
   constructor(options: ConstructorParameters<typeof Provider>[0]) {
     super(options)
     // needed for the thumbnails fetched via companion
@@ -92,9 +92,9 @@ export default class Box extends Provider {
     query,
     companion,
   }: {
-    directory?: string
+    directory?: string | undefined
     providerUserSession: BoxUserSession
-    query: BoxQuery
+    query?: Query
     companion: CompanionLike
   }): Promise<unknown> {
     return this.#withErrorHandling('provider.box.list.error', async () => {
@@ -113,7 +113,7 @@ export default class Box extends Provider {
   }: {
     id: string
     providerUserSession: BoxUserSession
-  }): Promise<unknown> {
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling('provider.box.download.error', async () => {
       const stream = getClient({ token }).stream.get(`files/${id}/content`, {
         responseType: 'json',
@@ -130,7 +130,7 @@ export default class Box extends Provider {
   }: {
     id: string
     providerUserSession: BoxUserSession
-  }): Promise<unknown> {
+  }): Promise<{ stream: Readable; contentType: string }> {
     return this.#withErrorHandling('provider.box.thumbnail.error', async () => {
       const extension = 'jpg' // you can set this to png to more easily reproduce http 202 retry-after
 
@@ -189,7 +189,7 @@ export default class Box extends Provider {
     providerUserSession: BoxUserSession
   }): Promise<{ revoked: true }> {
     return this.#withErrorHandling('provider.box.logout.error', async () => {
-      const { key, secret } = companion.options.providerOptions.box
+      const { key, secret } = companion.options.providerOptions['box']!
       await getClient({ token }).post('oauth2/revoke', {
         prefixUrl: 'https://api.box.com',
         form: {

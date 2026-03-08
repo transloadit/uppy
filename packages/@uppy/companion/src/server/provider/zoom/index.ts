@@ -1,9 +1,10 @@
+import type { Readable } from 'node:stream'
 import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.ts'
-import Provider from '../Provider.ts'
+import Provider, { type CompanionLike, type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -54,7 +55,7 @@ async function findFile({
     const id = typeof file['id'] === 'string' ? file['id'] : undefined
     const fileType =
       typeof file['file_type'] === 'string' ? file['file_type'] : undefined
-    const recStart =
+    const fileRecStart =
       typeof file['recording_start'] === 'string'
         ? file['recording_start']
         : undefined
@@ -63,8 +64,8 @@ async function findFile({
       (id != null && fileId === id) ||
       (fileType != null &&
         file['file_type'] === fileId &&
-        recStart != null &&
-        recStart === recordingStart)
+        fileRecStart != null &&
+        fileRecStart === recordingStart)
 
     if (!matches) continue
 
@@ -79,37 +80,41 @@ async function findFile({
     if (typeof fileSize === 'number') found.file_size = fileSize
     if (id) found.id = id
     if (fileType) found.file_type = fileType
-    if (recStart) found.recording_start = recStart
+    if (fileRecStart) found.recording_start = fileRecStart
     return found
   }
 
   return undefined
 }
 
+interface ZoomUserSession {
+  accessToken: string
+}
+
 /**
  * Adapter for API https://marketplace.zoom.us/docs/api-reference/zoom-api
  */
-export default class Zoom extends Provider {
+export default class Zoom extends Provider<ZoomUserSession> {
   static override get oauthProvider() {
     return 'zoom'
   }
 
   override async list(options: {
-    providerUserSession: { accessToken: string }
-    query?: unknown
-    directory?: string
+    providerUserSession: ZoomUserSession
+    query?: { cursor?: string | null } & Record<string, unknown>
+    directory?: string | undefined
   }): Promise<unknown> {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
       const {
         providerUserSession: { accessToken: token },
       } = options
-      const query = isRecord(options.query) ? options.query : {}
-      const meetingId = options.directory || ''
+      const query = options.query ?? {}
+      const meetingId = options.directory ?? ''
       const requestedYear =
         typeof query['year'] === 'string' ? parseInt(query['year'], 10) : null
 
       const client = getClient({ token })
-      const userRaw: unknown = await client
+      const userRaw = await client
         .get('users/me', { responseType: 'json' })
         .json()
       const userObj: Record<string, unknown> = isRecord(userRaw) ? userRaw : {}
@@ -127,7 +132,7 @@ export default class Zoom extends Provider {
       const userTz = timezone || 'UTC'
 
       if (meetingId) {
-        const recordingInfo: unknown = await client
+        const recordingInfo = await client
           .get(`meetings/${encodeURIComponent(meetingId)}/recordings`, {
             responseType: 'json',
           })
@@ -160,7 +165,7 @@ export default class Zoom extends Provider {
               const paginatedMeetings: unknown[] = []
               let nextPageToken: string | null = null
               do {
-                const currentChunkMeetingsInfo: unknown = await client
+                const currentChunkMeetingsInfo = await client
                   .get('users/me/recordings', {
                     searchParams,
                     responseType: 'json',
@@ -176,9 +181,7 @@ export default class Zoom extends Provider {
                   ? currentChunkMeetingsInfo['next_page_token']
                   : undefined
                 nextPageToken =
-                  typeof tokenValue === 'string' && tokenValue.length > 0
-                    ? tokenValue
-                    : null
+                  typeof tokenValue === 'string' ? tokenValue : null
                 if (nextPageToken) {
                   searchParams.set('next_page_token', nextPageToken)
                 } else {
@@ -250,20 +253,20 @@ export default class Zoom extends Provider {
     query,
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-    query: unknown
-  }): Promise<unknown> {
+    providerUserSession: ZoomUserSession
+    query: Query
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling('provider.zoom.download.error', async () => {
       // meeting id + file id required
       // cc files don't have an ID or size
       const recordingStart =
-        isRecord(query) && typeof query['recordingStart'] === 'string'
+        typeof query['recordingStart'] === 'string'
           ? query['recordingStart']
           : undefined
       const fileId =
-        isRecord(query) && typeof query['recordingId'] === 'string'
+        typeof query['recordingId'] === 'string'
           ? query['recordingId']
-          : ''
+          : undefined
       if (!fileId) throw new Error('Missing recordingId')
 
       const client = getClient({ token })
@@ -272,7 +275,7 @@ export default class Zoom extends Provider {
         client,
         meetingId,
         fileId,
-        ...(recordingStart ? { recordingStart } : {}),
+        ...(recordingStart && { recordingStart }),
       }
       const foundFile = await findFile(findFileArgs)
       const url = foundFile?.download_url
@@ -293,20 +296,20 @@ export default class Zoom extends Provider {
     query,
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-    query: unknown
+    providerUserSession: ZoomUserSession
+    query: Query
   }): Promise<number | undefined> {
     return this.#withErrorHandling('provider.zoom.size.error', async () => {
       const client = getClient({ token })
       const recordingStart =
-        isRecord(query) && typeof query['recordingStart'] === 'string'
+        typeof query['recordingStart'] === 'string'
           ? query['recordingStart']
           : undefined
       const fileId =
-        isRecord(query) && typeof query['recordingId'] === 'string'
+        typeof query['recordingId'] === 'string'
           ? query['recordingId']
-          : ''
-      if (!fileId) throw new Error('Missing recordingId')
+          : undefined
+      if (fileId == null) throw new Error('Missing recordingId')
 
       const findFileArgs = {
         client,
@@ -324,29 +327,25 @@ export default class Zoom extends Provider {
     companion,
     providerUserSession: { accessToken: token },
   }: {
-    companion: {
-      getProviderCredentials: () => Promise<Record<string, unknown>>
-    }
-    providerUserSession: { accessToken: string }
+    companion: CompanionLike
+    providerUserSession: ZoomUserSession
   }): Promise<{ revoked: boolean }> {
     return this.#withErrorHandling('provider.zoom.logout.error', async () => {
-      const { key, secret } = await companion.getProviderCredentials()
+      const providerCredentials = await companion.getProviderCredentials?.()
+      const key = providerCredentials?.['key']
+      const secret = providerCredentials?.['secret']
       if (typeof key !== 'string' || typeof secret !== 'string') {
         throw new Error('Missing Zoom credentials')
       }
 
-      const body: unknown = await got
+      const { status } = await got
         .post('https://zoom.us/oauth/revoke', {
           searchParams: { token },
           headers: { Authorization: getBasicAuthHeader(key, secret) },
           responseType: 'json',
         })
-        .json()
+        .json<{ status: unknown }>()
 
-      const status =
-        isRecord(body) && typeof body['status'] === 'string'
-          ? body['status']
-          : null
       return { revoked: status === 'success' }
     })
   }
@@ -356,19 +355,25 @@ export default class Zoom extends Provider {
     body,
     headers,
   }: {
-    companion: {
-      getProviderCredentials: () => Promise<Record<string, unknown>>
-    }
+    companion: CompanionLike
     body: unknown
     headers: Record<string, string | undefined>
-  }): Promise<Record<string, unknown>> {
+  }): Promise<{ data?: unknown; status?: number }> {
     return this.#withErrorHandling('provider.zoom.deauth.error', async () => {
       if (!isRecord(body) || body['event'] !== DEAUTH_EVENT_NAME) {
         return { data: {}, status: 400 }
       }
 
-      const { verificationToken, key, secret } =
-        await companion.getProviderCredentials()
+      const providerCredentials = await companion.getProviderCredentials?.()
+
+      if (providerCredentials == null) {
+        return { data: {}, status: 500 }
+      }
+
+      const key = providerCredentials['key']
+      const secret = providerCredentials['secret']
+      const verificationToken = providerCredentials['verificationToken']
+
       if (
         typeof verificationToken !== 'string' ||
         typeof key !== 'string' ||
@@ -386,9 +391,6 @@ export default class Zoom extends Provider {
       if (!isRecord(payload)) return { data: {}, status: 400 }
       const userId = payload['user_id']
       const accountId = payload['account_id']
-      if (typeof userId !== 'string' || typeof accountId !== 'string') {
-        return { data: {}, status: 400 }
-      }
 
       await got.post('https://api.zoom.us/oauth/data/compliance', {
         headers: { Authorization: getBasicAuthHeader(key, secret) },

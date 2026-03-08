@@ -1,4 +1,4 @@
-import type { Request, Response, Router } from 'express'
+import type { Request, Response } from 'express'
 import express from 'express'
 import { z } from 'zod'
 import { downloadURL } from '../download.ts'
@@ -66,4 +66,4 @@ const get = async (req: Request, res: Response): Promise<void> => {
   }
 }
 
-export default (): Router => express.Router().post('/get', express.json(), get)
+export default () => express.Router().post('/get', express.json(), get)

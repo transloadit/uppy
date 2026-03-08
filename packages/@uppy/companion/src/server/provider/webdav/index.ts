@@ -1,4 +1,5 @@
-import type { FileStat, ResponseDataDetailed } from 'webdav'
+import type { Readable } from 'node:stream'
+import type { WebDAVClientOptions } from 'webdav'
 import { AuthType, createClient } from 'webdav'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.ts'
 import { isRecord } from '../../helpers/type-guards.ts'
@@ -8,7 +9,7 @@ import {
   ProviderAuthError,
   ProviderUserError,
 } from '../error.ts'
-import Provider from '../Provider.ts'
+import Provider, { type Query } from '../Provider.ts'
 
 const defaultDirectory = '/'
 
@@ -30,7 +31,7 @@ type WebdavListItem = {
 /**
  * Adapter for WebDAV servers that support simple auth (non-OAuth).
  */
-export default class WebdavProvider extends Provider {
+export default class WebdavProvider extends Provider<WebdavUserSession> {
   static override get hasSimpleAuth() {
     return true
   }
@@ -50,10 +51,11 @@ export default class WebdavProvider extends Provider {
   }): Promise<WebdavClient> {
     const webdavUrl = providerUserSession?.webdavUrl
     const { allowLocalUrls } = this
-    if (typeof webdavUrl !== 'string' || webdavUrl.length === 0) {
-      throw new Error('invalid public link url')
-    }
-    if (!validateURL(webdavUrl, allowLocalUrls)) {
+    if (
+      webdavUrl == null ||
+      webdavUrl.length === 0 ||
+      !validateURL(webdavUrl, allowLocalUrls)
+    ) {
       throw new Error('invalid public link url')
     }
 
@@ -61,17 +63,15 @@ export default class WebdavProvider extends Provider {
     // they have specific urls that we can identify
     // todo not sure if this is the right way to support nextcloud and other webdavs
     if (/\/s\/([^/]+)/.test(webdavUrl)) {
-      const split = webdavUrl.split('/s/')
-      const baseURL = split[0]
-      const publicLinkToken = split[1]
-      if (!baseURL || !publicLinkToken) {
+      const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
+      if (!baseURL) {
         throw new Error('invalid public link url')
       }
 
       return this.getClientHelper({
         url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
         authType: AuthType.Password,
-        username: publicLinkToken,
+        username: publicLinkToken!,
         password: 'null',
       })
     }
@@ -94,11 +94,11 @@ export default class WebdavProvider extends Provider {
   }): Promise<WebdavUserSession> {
     try {
       if (!isRecord(requestBody) || !isRecord(requestBody['form'])) {
-        throw new ProviderUserError({ message: 'Invalid request body' })
+        throw new Error('Invalid request body')
       }
       const webdavUrl = requestBody['form']['webdavUrl']
       if (typeof webdavUrl !== 'string' || webdavUrl.length === 0) {
-        throw new ProviderUserError({ message: 'Missing webdavUrl' })
+        throw new Error('Missing webdavUrl')
       }
 
       const providerUserSession: WebdavUserSession = { webdavUrl }
@@ -108,7 +108,7 @@ export default class WebdavProvider extends Provider {
       await client.getDirectoryContents(defaultDirectory)
 
       return providerUserSession
-    } catch (err: unknown) {
+    } catch (err) {
       const errForLog = err instanceof Error ? err : new Error(String(err))
       logger.error(errForLog, 'provider.webdav.error')
       const code = isRecord(err) ? err['code'] : undefined
@@ -125,7 +125,7 @@ export default class WebdavProvider extends Provider {
   async getClientHelper({
     url,
     ...options
-  }: { url: string } & Record<string, unknown>): Promise<WebdavClient> {
+  }: { url: string } & WebDAVClientOptions): Promise<WebdavClient> {
     const { allowLocalUrls } = this
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
@@ -143,11 +143,13 @@ export default class WebdavProvider extends Provider {
   }
 
   override async list({
-    directory,
     providerUserSession,
+    query,
+    directory,
   }: {
-    directory?: string
     providerUserSession: WebdavUserSession
+    query?: Query | undefined
+    directory?: string | undefined
   }): Promise<{ items: WebdavListItem[] }> {
     return this.withErrorHandling('provider.webdav.list.error', async () => {
       if (!this.isAuthenticated({ providerUserSession })) {
@@ -157,8 +159,11 @@ export default class WebdavProvider extends Provider {
       const data: { items: WebdavListItem[] } = { items: [] }
       const client = await this.getClient({ providerUserSession })
 
-      const dirResult: FileStat[] | ResponseDataDetailed<FileStat[]> =
-        await client.getDirectoryContents(directory || '/')
+      const dirResult = await client.getDirectoryContents(
+        (typeof query?.['directory'] === 'string'
+          ? query?.['directory']
+          : undefined) || '/',
+      )
       const dir = Array.isArray(dirResult) ? dirResult : dirResult.data
 
       dir.forEach((item) => {
@@ -188,16 +193,12 @@ export default class WebdavProvider extends Provider {
           id: requestPath,
           name: item.basename,
           requestPath,
-          ...(modifiedDate ? { modifiedDate } : {}),
-          ...(!isFolder
-            ? {
-                ...(typeof item.mime === 'string'
-                  ? { mimeType: item.mime }
-                  : {}),
-                ...(typeof item.size === 'number' ? { size: item.size } : {}),
-                thumbnail: null,
-              }
-            : {}),
+          ...(modifiedDate && { modifiedDate }),
+          ...(!isFolder && {
+            ...(item.mime != null && { mimeType: item.mime }),
+            ...(item.size != null && { size: item.size }),
+            thumbnail: null,
+          }),
         }
         data.items.push(listItem)
       })
@@ -212,13 +213,12 @@ export default class WebdavProvider extends Provider {
   }: {
     id: string
     providerUserSession: WebdavUserSession
-  }): Promise<unknown> {
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.withErrorHandling(
       'provider.webdav.download.error',
       async () => {
         const client = await this.getClient({ providerUserSession })
-        const statResult: FileStat | ResponseDataDetailed<FileStat> =
-          await client.stat(id)
+        const statResult = await client.stat(id)
         const stat = 'data' in statResult ? statResult.data : statResult
         const stream = client.createReadStream(`/${id}`)
         return { stream, size: stat.size }

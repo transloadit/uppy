@@ -1,4 +1,5 @@
 import querystring from 'node:querystring'
+import type { Query } from '../Provider.ts'
 
 type UnsplashPhoto = {
   id: string
@@ -12,11 +13,6 @@ type UnsplashPhoto = {
 type UnsplashSearchResponse = {
   total_pages: number
   results?: UnsplashPhoto[]
-}
-
-type UnsplashQuery = Record<string, string | undefined> & {
-  cursor?: string
-  q?: string
 }
 
 type UnsplashAdaptedItem = {
@@ -41,7 +37,7 @@ const getItemIcon = (item: UnsplashPhoto): string => {
 }
 
 const getItemSubList = (item: UnsplashSearchResponse): UnsplashPhoto[] => {
-  return Array.isArray(item.results) ? item.results : []
+  return item.results ?? []
 }
 
 const getItemName = (item: UnsplashPhoto): string | undefined => {
@@ -72,15 +68,21 @@ const getItemThumbnailUrl = (item: UnsplashPhoto): string => {
   return item.urls.thumb
 }
 
-const getNextPageQuery = (currentQuery: UnsplashQuery): string => {
-  const newCursor = Number.parseInt(currentQuery.cursor ?? '1', 10) + 1
-  const query = {
+const getNextPageQuery = (currentQuery: Query | undefined): string => {
+  const newCursor =
+    parseInt(
+      typeof currentQuery?.['cursor'] === 'string'
+        ? currentQuery['cursor']
+        : '1',
+      10,
+    ) + 1
+  const query: Query & { q?: string } = {
     ...currentQuery,
     cursor: String(newCursor),
   }
 
-  delete query.q
-  return querystring.stringify(query)
+  delete query['q']
+  return querystring.stringify(query as Record<string, string>)
 }
 
 const getAuthor = (
@@ -94,15 +96,10 @@ const getAuthor = (
 
 const adaptData = (
   body: UnsplashSearchResponse,
-  currentQuery: UnsplashQuery,
-): {
-  searchedFor: string | undefined
-  username: null
-  items: UnsplashAdaptedItem[]
-  nextPageQuery: string | null
-} => {
+  currentQuery: Query | undefined,
+) => {
   const { total_pages: pagesCount } = body
-  const { cursor, q } = currentQuery
+  const { cursor, q } = currentQuery!
   const currentPage = Number(cursor || 1)
   const hasNextPage = currentPage < pagesCount
   const subList = getItemSubList(body) || []

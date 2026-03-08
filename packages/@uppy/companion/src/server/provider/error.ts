@@ -1,10 +1,8 @@
+import { isRecord } from '../helpers/type-guards.ts'
+
 type HttpErrorLike = {
   statusCode: number | undefined
   body: unknown
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return !!value && typeof value === 'object' && !Array.isArray(value)
 }
 
 /**
@@ -17,7 +15,7 @@ export class ProviderApiError extends Error {
   isAuthError: boolean
 
   constructor(message: string, statusCode: number | undefined) {
-    super(`HTTP ${statusCode}: ${message}`)
+    super(`HTTP ${statusCode}: ${message}`) // Include statusCode to make it easier to debug
     this.name = 'ProviderApiError'
     this.statusCode = statusCode
     this.isAuthError = false
@@ -29,7 +27,7 @@ export class ProviderApiError extends Error {
  * as-is (e.g. user-facing validation errors).
  */
 export class ProviderUserError extends ProviderApiError {
-  json: unknown
+  json: unknown // arbitrary JSON.stringify-able object that will be passed to the client
 
   constructor(json: unknown) {
     super('User error', undefined)
@@ -85,20 +83,20 @@ function errorToResponse(
   if (!isRecord(err)) return undefined
 
   if (err['isAuthError'] === true) {
-    return { code: 401, json: { message: `${err['message'] ?? ''}` } }
+    return { code: 401, json: { message: err['message'] } }
   }
 
   const name = err['name']
 
   if (name === 'ValidationError') {
-    return { code: 400, json: { message: `${err['message'] ?? ''}` } }
+    return { code: 400, json: { message: err['message'] } }
   }
 
   if (name === 'ProviderUserError') {
-    const json = err['json']
+    const json = err['json'] as Record<string, unknown>
     return {
       code: 400,
-      json: isRecord(json) ? json : { data: json },
+      json,
     }
   }
 
@@ -106,18 +104,21 @@ function errorToResponse(
     const statusCode =
       typeof err['statusCode'] === 'number' ? err['statusCode'] : undefined
     if (statusCode != null && statusCode >= 500) {
-      return { code: 502, json: { message: `${err['message'] ?? ''}` } }
+      // bad gateway i.e the provider APIs gateway
+      return { code: 502, json: { message: err['message'] } }
     }
     if (statusCode === 429) {
-      return { code: 429, json: { message: `${err['message'] ?? ''}` } }
+      return { code: 429, json: { message: err['message'] } }
     }
     if (statusCode != null && statusCode >= 400) {
-      return { code: 424, json: { message: `${err['message'] ?? ''}` } }
+      // 424 Failed Dependency
+      return { code: 424, json: { message: err['message'] } }
     }
   }
 
   const httpError = parseHttpError(err)
   if (httpError) {
+    // We proxy the response purely for ease of debugging
     return {
       code: 500,
       json: { statusCode: httpError.statusCode, body: httpError.body },

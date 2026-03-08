@@ -1,11 +1,12 @@
 import crypto from 'node:crypto'
+import type { Readable } from 'node:stream'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { HttpError, prepareStream } from '../../helpers/utils.ts'
 import logger from '../../logger.ts'
-import Provider from '../Provider.ts'
+import Provider, { type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
-import { adaptData, sortImages } from './adapter.ts'
+import { adaptData, type FacebookListResponse, sortImages } from './adapter.ts'
 
 type FacebookBatchRequest = {
   method: string
@@ -13,6 +14,10 @@ type FacebookBatchRequest = {
 }
 
 type FacebookBatchResponse = { code: number; body: unknown }
+
+interface FacebookUserSession {
+  accessToken: string
+}
 
 async function runRequestBatch({
   secret,
@@ -41,7 +46,7 @@ async function runRequestBatch({
 
   const responsesRaw = await got
     .post('https://graph.facebook.com', { form })
-    .json<Array<{ code: number; body: string }>>()
+    .json<{ code: number; body: string }[]>()
 
   const responses = responsesRaw.map((response) => ({
     ...response,
@@ -107,7 +112,7 @@ async function getMediaUrl({
 /**
  * Adapter for API https://developers.facebook.com/docs/graph-api/using-graph-api/
  */
-export default class Facebook extends Provider {
+export default class Facebook extends Provider<FacebookUserSession> {
   static override get oauthProvider() {
     return 'facebook'
   }
@@ -115,25 +120,31 @@ export default class Facebook extends Provider {
   override async list({
     directory,
     providerUserSession: { accessToken: token },
-    query = { cursor: null },
+    query,
   }: {
-    directory?: string
-    providerUserSession: { accessToken: string }
-    query?: { cursor?: string | null }
+    directory?: string | undefined
+    providerUserSession: FacebookUserSession
+    query?: Query | undefined
   }): Promise<unknown> {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
       const qs: Record<string, string> = {
         fields: 'name,cover_photo,created_time,type',
       }
 
-      if (typeof query.cursor === 'string' && query.cursor.length > 0) {
-        qs['after'] = query.cursor
+      const cursor = query?.['cursor'] ?? null
+
+      if (typeof cursor === 'string') {
+        qs['after'] = cursor
       }
 
       let path = 'me/albums'
       if (directory) {
         path = `${directory}/photos`
         qs['fields'] = 'icon,images,name,width,height,created_time'
+      }
+
+      if (this.secret == null) {
+        throw new Error('Facebook provider secret is not configured')
       }
 
       const responses = await runRequestBatch({
@@ -153,23 +164,12 @@ export default class Facebook extends Provider {
         throw new Error('Unexpected Facebook response: missing batch result')
       }
 
-      const email =
-        isRecord(response1.body) && typeof response1.body['email'] === 'string'
-          ? response1.body['email']
-          : null
+      const { email } = response1.body as { email: unknown }
 
-      const list = response2.body
-      const isFacebookListResponse = (
-        value: unknown,
-      ): value is Parameters<typeof adaptData>[0] =>
-        isRecord(value) && Array.isArray(value['data'])
-      if (!isFacebookListResponse(list)) {
-        throw new Error('Unexpected Facebook response: missing data')
-      }
+      const list = response2.body as FacebookListResponse
 
       const currentQuery: Record<string, string> = {}
-      if (typeof query.cursor === 'string')
-        currentQuery['cursor'] = query.cursor
+      if (typeof cursor === 'string') currentQuery['cursor'] = cursor
       return adaptData(list, email, directory, currentQuery)
     })
   }
@@ -179,11 +179,14 @@ export default class Facebook extends Provider {
     providerUserSession: { accessToken: token },
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-  }): Promise<unknown> {
+    providerUserSession: FacebookUserSession
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling(
       'provider.facebook.download.error',
       async () => {
+        if (this.secret == null) {
+          throw new Error('Facebook provider secret is not configured')
+        }
         const url = await getMediaUrl({ secret: this.secret, token, id })
         const stream = got.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
@@ -192,7 +195,10 @@ export default class Facebook extends Provider {
     )
   }
 
-  override async thumbnail() {
+  override async thumbnail(): Promise<{
+    stream: Readable
+    contentType: string
+  }> {
     // not implementing this because a public thumbnail from facebook will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -204,11 +210,15 @@ export default class Facebook extends Provider {
   override async logout({
     providerUserSession: { accessToken: token },
   }: {
-    providerUserSession: { accessToken: string }
+    providerUserSession: FacebookUserSession
   }): Promise<{ revoked: true }> {
     return this.#withErrorHandling(
       'provider.facebook.logout.error',
       async () => {
+        if (this.secret == null) {
+          throw new Error('Facebook provider secret is not configured')
+        }
+
         await runRequestBatch({
           secret: this.secret,
           token,

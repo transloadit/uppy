@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
 import type { Request } from 'express'
+import type { GetBucketFn } from '../../schemas/companion.ts'
 
 const authTagLength = 16
 const nonceLength = 16
@@ -20,7 +21,10 @@ export const jsonStringify = (data: unknown): string => {
   const cache: unknown[] = []
   return JSON.stringify(data, (_key, value) => {
     if (typeof value === 'object' && value !== null) {
-      if (cache.indexOf(value) !== -1) return undefined
+      if (cache.indexOf(value) !== -1) {
+        // Circular reference found, discard key
+        return undefined
+      }
       cache.push(value)
     }
     return value
@@ -28,14 +32,6 @@ export const jsonStringify = (data: unknown): string => {
 }
 
 // all paths are assumed to be '/' prepended
-export type UrlBuilderOptions = {
-  server?: {
-    protocol?: string | undefined
-    host?: string | undefined
-    path?: string | undefined
-    implicitPath?: string | undefined
-  }
-}
 
 /**
  * Returns a URL builder.
@@ -43,7 +39,14 @@ export type UrlBuilderOptions = {
  * The returned function builds Companion-targeted URLs, optionally including the
  * server protocol/host for external use.
  */
-export function getURLBuilder(options: UrlBuilderOptions) {
+export function getURLBuilder(options: {
+  server?: {
+    protocol?: string | undefined
+    host?: string | undefined
+    path?: string | undefined
+    implicitPath?: string | undefined
+  }
+}) {
   return (
     subPath: string,
     isExternal: boolean,
@@ -89,6 +92,7 @@ function createSecrets(
 
 /**
  * Encrypt a string with AES-256-CCM and a random nonce.
+ * Ciphertext as a hex string, prefixed with 32 hex characters containing the iv.
  *
  * The returned ciphertext is prefixed with the nonce (hex), followed by the
  * encrypted data (base64url).
@@ -109,15 +113,20 @@ export const encrypt = (input: string, secret: string | Buffer): string => {
 
 /**
  * Decrypt a nonce-prefixed ciphertext produced by {@link encrypt}.
+ * The iv should be in the first 32 hex characters.
  */
 export const decrypt = (encrypted: string, secret: string | Buffer): string => {
-  const nonceHexLength = nonceLength * 2
+  const nonceHexLength = nonceLength * 2 // because hex encoding uses 2 bytes per byte
+  // NOTE: The first 32 characters are the nonce, in hex format.
   const nonce = Buffer.from(encrypted.slice(0, nonceHexLength), 'hex')
+  // The rest is the encrypted string, in base64url format.
   const encryptionWithoutNonce = Buffer.from(
     encrypted.slice(nonceHexLength),
     'base64url',
   )
+  // The last 16 bytes of the rest is the authentication tag
   const authTag = encryptionWithoutNonce.subarray(-authTagLength)
+  // and the rest (from beginning) is the encrypted data
   const encryptionWithoutNonceAndTag = encryptionWithoutNonce.subarray(
     0,
     -authTagLength,
@@ -190,6 +199,7 @@ export const prepareStream = async (
           !Number.isNaN(contentLength) && contentLength >= 0
             ? contentLength
             : undefined
+        // Don't allow any more data to flow yet.
         stream.pause()
         resolve({ size })
       })
@@ -199,7 +209,7 @@ export const prepareStream = async (
           return
         }
 
-        const response = (err as { response?: unknown }).response
+        const response = err.response
         if (!response || typeof response !== 'object') {
           reject(err)
           return
@@ -208,8 +218,10 @@ export const prepareStream = async (
         const body = (response as { body?: unknown }).body
         const statusCode = (response as { statusCode?: unknown }).statusCode
         if (typeof body === 'string' && typeof statusCode === 'number') {
+          // In this case the error object is not a normal GOT HTTPError where json is already parsed,
+          // we use our own HttpError error for this scenario.
           try {
-            const responseJson = JSON.parse(body) as unknown
+            const responseJson: unknown = JSON.parse(body)
             reject(new HttpError({ statusCode, responseJson }))
             return
           } catch {
@@ -230,8 +242,8 @@ export const getBasicAuthHeader = (key: string, secret: string): string => {
 const rfc2047Encode = (dataIn: unknown): string => {
   const data = `${dataIn}`
   // biome-ignore lint/suspicious/noControlCharactersInRegex: leave it for now
-  if (/^[\x00-\x7F]*$/.test(data)) return data
-  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=`
+  if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
+  return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings
 }
 
 export const rfc2047EncodeMetadata = (
@@ -250,7 +262,7 @@ export const getBucket = ({
   metadata,
   filename,
 }: {
-  bucketOrFn: unknown
+  bucketOrFn: string | GetBucketFn | undefined
   req: Request
   metadata?: Record<string, unknown>
   filename?: string
@@ -261,6 +273,7 @@ export const getBucket = ({
       : bucketOrFn
 
   if (typeof bucket !== 'string' || bucket === '') {
+    // This means a misconfiguration or bug
     throw new TypeError(
       's3: bucket key must be a string or a function resolving the bucket string',
     )
@@ -273,7 +286,7 @@ export const truncateFilename = (
   maxFilenameLength?: number,
 ): string => {
   if (
-    typeof maxFilenameLength !== 'number' ||
+    maxFilenameLength == null ||
     !Number.isFinite(maxFilenameLength) ||
     maxFilenameLength <= 0
   ) {

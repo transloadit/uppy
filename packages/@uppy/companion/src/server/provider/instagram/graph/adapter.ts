@@ -72,7 +72,7 @@ const getNextPagePath = (
   }
 
   const after = data.paging.cursors.after
-  if (typeof after !== 'string' || after.length === 0) return null
+  if (after == null || after.length === 0) return null
 
   const query = { ...currentQuery, cursor: after }
   return `${currentPath || ''}?${querystring.stringify(query)}`

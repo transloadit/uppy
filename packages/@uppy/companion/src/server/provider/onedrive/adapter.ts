@@ -91,7 +91,7 @@ const getNextPagePath = ({
   }
 
   const skipToken = new URL(nextLink).searchParams.get('$skiptoken')
-  if (typeof skipToken !== 'string' || skipToken.length === 0) return null
+  if (skipToken == null || skipToken.length === 0) return null
 
   const query = { ...currentQuery, cursor: skipToken }
   return `${directory ?? ''}?${new URLSearchParams(query).toString()}`

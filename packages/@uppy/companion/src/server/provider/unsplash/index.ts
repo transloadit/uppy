@@ -1,8 +1,9 @@
+import type { Readable } from 'node:stream'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { prepareStream } from '../../helpers/utils.ts'
 import { ProviderApiError } from '../error.ts'
-import Provider from '../Provider.ts'
+import Provider, { type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -18,32 +19,35 @@ const getClient = ({ token }: { token: string }): UnsplashClient =>
     },
   })
 
-const getPhotoMeta = async (
-  client: UnsplashClient,
-  id: string,
-): Promise<unknown> =>
-  client.get(`photos/${id}`, { responseType: 'json' }).json()
+const getPhotoMeta = async (client: UnsplashClient, id: string) =>
+  client
+    .get(`photos/${id}`, { responseType: 'json' })
+    .json<{ links: { download?: string; download_location?: string } }>()
+
+interface UnsplashUserSession {
+  accessToken: string
+}
 
 /**
  * Adapter for API https://api.unsplash.com
  */
-export default class Unsplash extends Provider {
+export default class Unsplash extends Provider<UnsplashUserSession> {
   override async list({
     providerUserSession: { accessToken: token },
-    query = {},
+    query,
   }: {
-    providerUserSession: { accessToken: string }
-    query?: Parameters<typeof adaptData>[1]
+    providerUserSession: UnsplashUserSession
+    query?: Query | undefined
   }): Promise<unknown> {
-    const q = typeof query.q === 'string' ? query.q : undefined
+    const q = typeof query?.['q'] === 'string' ? query['q'] : undefined
     if (!q) {
       throw new ProviderApiError('Search query missing', 400)
     }
 
     return this.#withErrorHandling('provider.unsplash.list.error', async () => {
       const qs = new URLSearchParams({ per_page: '40', query: q })
-      if (typeof query.cursor === 'string' && query.cursor.length > 0) {
-        qs.set('page', query.cursor)
+      if (typeof query?.['cursor'] === 'string') {
+        qs.set('page', query['cursor'])
       }
 
       const response = await getClient({ token })
@@ -58,24 +62,17 @@ export default class Unsplash extends Provider {
     providerUserSession: { accessToken: token },
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-  }): Promise<unknown> {
+    providerUserSession: UnsplashUserSession
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling(
       'provider.unsplash.download.error',
       async () => {
         const client = getClient({ token })
 
-        const meta: unknown = await getPhotoMeta(client, id)
-        const links = isRecord(meta) ? meta['links'] : null
-        if (!isRecord(links)) {
-          throw new Error('Unexpected Unsplash response: missing links')
-        }
-        const url =
-          typeof links['download'] === 'string' ? links['download'] : null
-        const attributionUrl =
-          typeof links['download_location'] === 'string'
-            ? links['download_location']
-            : null
+        const {
+          links: { download: url, download_location: attributionUrl },
+        } = await getPhotoMeta(client, id)
+
         if (!url || !attributionUrl) {
           throw new Error(
             'Unexpected Unsplash response: missing download links',

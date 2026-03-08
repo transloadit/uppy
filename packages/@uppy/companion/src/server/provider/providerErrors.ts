@@ -1,3 +1,4 @@
+import { isRecord } from '../helpers/type-guards.ts'
 import * as logger from '../logger.ts'
 import {
   ProviderApiError,
@@ -83,9 +84,6 @@ export async function withGoogleErrorHandling<T>(
   tag: string,
   fn: () => Promise<T>,
 ): Promise<T> {
-  const isRecord = (value: unknown): value is Record<string, unknown> =>
-    !!value && typeof value === 'object' && !Array.isArray(value)
-
   return withProviderErrorHandling<T>({
     fn,
     tag,

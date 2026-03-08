@@ -4,7 +4,7 @@ import createGrantConfig, {
 } from '../src/config/grant.ts'
 import { isRecord } from '../src/server/helpers/type-guards.ts'
 import * as providerManager from '../src/server/provider/index.ts'
-import Provider from '../src/server/provider/Provider.ts'
+import Provider, { type ProviderCtor } from '../src/server/provider/Provider.ts'
 import { getCompanionOptions } from '../src/standalone/helper.ts'
 import { setDefaultEnv } from './mockserver.ts'
 
@@ -12,7 +12,11 @@ let grantConfig: GrantConfigType
 let companionOptions: ReturnType<typeof getCompanionOptions>
 
 const getOauthProvider = (providerName: string) =>
-  providerManager.getDefaultProviders()[providerName]?.oauthProvider
+  providerManager.getDefaultProviders()[
+    providerName as keyof ReturnType<
+      (typeof providerManager)['getDefaultProviders']
+    >
+  ]?.oauthProvider
 
 function getAddProviderOptionsArgs(
   options: ReturnType<typeof getCompanionOptions>,
@@ -290,7 +294,7 @@ describe('Test Custom Provider options', () => {
           module: SomeProvider,
         },
       },
-      providers,
+      providers as Record<string, ProviderCtor>,
       grantConfig,
     )
 
@@ -300,6 +304,6 @@ describe('Test Custom Provider options', () => {
     )
     expect(someProvider['key']).toBe('foo_key')
     expect(someProvider['secret']).toBe('foo_secret')
-    expect(providers['foo']).toBeTruthy()
+    expect(providers['foo' as keyof typeof providers]).toBeTruthy()
   })
 })

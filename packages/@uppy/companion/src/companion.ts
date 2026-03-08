@@ -1,6 +1,5 @@
 import { randomUUID } from 'node:crypto'
 import cookieParser from 'cookie-parser'
-import type { Express } from 'express'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
@@ -12,7 +11,7 @@ import {
   validateConfig,
 } from './config/companion.ts'
 import grantConfigFn from './config/grant.ts'
-import type { CompanionInitOptionsInput } from './schemas/index.ts'
+import type { CompanionInitOptions } from './schemas/index.ts'
 import googlePicker from './server/controllers/googlePicker.ts'
 import * as controllers from './server/controllers/index.ts'
 import s3 from './server/controllers/s3.ts'
@@ -30,20 +29,20 @@ import {
   ProviderUserError,
 } from './server/provider/error.ts'
 import * as providerManager from './server/provider/index.ts'
+import type Provider from './server/provider/Provider.ts'
 import { isOAuthProvider } from './server/provider/Provider.ts'
 import * as redis from './server/redis.ts'
-
 import socket from './server/socket.ts'
+import type { CompanionRuntimeOptions } from './types/companion-options.ts'
 
 export { socket }
 
 const grantConfig = grantConfigFn()
 
-export function setLoggerProcessName(
-  options: { loggerProcessName?: unknown } = {},
-) {
-  const { loggerProcessName } = options
-  if (typeof loggerProcessName === 'string' && loggerProcessName.length > 0) {
+export function setLoggerProcessName({
+  loggerProcessName,
+}: Pick<CompanionRuntimeOptions, 'loggerProcessName'>) {
+  if (loggerProcessName != null) {
     logger.setProcessName(loggerProcessName)
   }
 }
@@ -91,10 +90,7 @@ export const errors = {
 /**
  * Entry point into initializing the Companion app.
  */
-export function app(optionsArg: CompanionInitOptionsInput = {}): {
-  app: Express
-  emitter: unknown
-} {
+export function app(optionsArg: CompanionInitOptions = {}) {
   setLoggerProcessName(optionsArg)
 
   validateConfig(optionsArg)
@@ -108,19 +104,15 @@ export function app(optionsArg: CompanionInitOptionsInput = {}): {
   >[0]
   const customProviders = options.customProviders as CustomProviders | undefined
   if (customProviders) {
-    providerManager.addCustomProviders(customProviders, providers, grantConfig)
+    providerManager.addCustomProviders(
+      customProviders,
+      providers as Record<string, typeof Provider>,
+      grantConfig,
+    )
   }
 
-  type ProviderName = keyof typeof providers
-  const isProviderName = (providerName: string): providerName is ProviderName =>
-    Object.hasOwn(providers, providerName)
-
-  const getOauthProvider = (providerName: string): string | undefined => {
-    if (!isProviderName(providerName)) return undefined
-    const ProviderClass = providers[providerName]
-    if (!ProviderClass) return undefined
-    return ProviderClass.oauthProvider
-  }
+  const getOauthProvider = (providerName: string) =>
+    providers[providerName as keyof typeof providers]?.oauthProvider
 
   providerManager.addProviderOptions(options, grantConfig, getOauthProvider)
 
@@ -147,7 +139,10 @@ export function app(optionsArg: CompanionInitOptionsInput = {}): {
   app.use(
     '/connect/:oauthProvider/:override?',
     express.urlencoded({ extended: false }),
-    getCredentialsOverrideMiddleware(providers, options),
+    getCredentialsOverrideMiddleware(
+      providers as Record<string, typeof Provider>,
+      options,
+    ),
   )
   app.use(grant.default.express(grantConfig))
 
@@ -322,26 +317,23 @@ export function app(optionsArg: CompanionInitOptionsInput = {}): {
 
   app.param(
     'providerName',
-    providerManager.getProviderMiddleware(providers, grantConfig),
+    providerManager.getProviderMiddleware(
+      providers as Record<string, typeof Provider>,
+      grantConfig,
+    ),
   )
 
-  if (app.get('env') !== 'test') {
-    jobs.startCleanUpJob(`${options.filePath}`)
+  if (app.get('env') !== 'test' && options.filePath != null) {
+    jobs.startCleanUpJob(options.filePath)
   }
 
   const processId = randomUUID()
 
   jobs.startPeriodicPingJob({
-    urls: options.periodicPingUrls ?? [],
-    ...(options.periodicPingInterval !== undefined && {
-      interval: options.periodicPingInterval,
-    }),
-    ...(options.periodicPingCount !== undefined && {
-      count: options.periodicPingCount,
-    }),
-    ...(options.periodicPingStaticPayload !== undefined && {
-      staticPayload: options.periodicPingStaticPayload,
-    }),
+    urls: options.periodicPingUrls,
+    interval: options.periodicPingInterval,
+    count: options.periodicPingCount,
+    staticPayload: options.periodicPingStaticPayload,
     version: packageJson.version,
     processId,
   })

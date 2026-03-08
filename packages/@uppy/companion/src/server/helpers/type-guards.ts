@@ -7,3 +7,6 @@ export function toError(err: unknown): Error {
   if (typeof err === 'string') return new Error(err)
   return new Error('Unknown error')
 }
+
+export const isEncryptionSecret = (value: unknown): value is string | Buffer =>
+  (typeof value === 'string' && value.length > 0) || Buffer.isBuffer(value)

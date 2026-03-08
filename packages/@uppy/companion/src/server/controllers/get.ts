@@ -16,10 +16,8 @@ export default async function get(req: Request, res: Response): Promise<void> {
     return
   }
 
-  const getSize =
-    typeof provider.size === 'function'
-      ? async () => provider.size({ id, providerUserSession, query: req.query })
-      : undefined
+  const getSize = async () =>
+    provider.size({ id, providerUserSession, query: req.query })
 
   const download = () =>
     provider.download({ id, providerUserSession, query: req.query })

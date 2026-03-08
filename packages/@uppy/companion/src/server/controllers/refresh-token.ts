@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.ts'
-import { isRecord } from '../helpers/type-guards.ts'
+import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
 import logger from '../logger.ts'
 import { respondWithError } from '../provider/error.ts'
 
@@ -13,31 +13,20 @@ export default async function refreshToken(
   next: NextFunction,
 ): Promise<void> {
   const providerName = req.params['providerName']
-  if (typeof providerName !== 'string' || providerName.length === 0) {
+  if (providerName == null) {
     res.sendStatus(400)
     return
   }
   const secret = req.companion.options.secret
-  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+  if (!isEncryptionSecret(secret)) {
     res.sendStatus(500)
     return
   }
 
   const providerConfig = req.companion.options.providerOptions?.[providerName]
-  const clientId =
-    isRecord(providerConfig) && typeof providerConfig['key'] === 'string'
-      ? providerConfig['key']
-      : undefined
-  const clientSecret =
-    isRecord(providerConfig) && typeof providerConfig['secret'] === 'string'
-      ? providerConfig['secret']
-      : undefined
-
-  const redirectUri =
-    isRecord(req.companion.providerGrantConfig) &&
-    typeof req.companion.providerGrantConfig['redirect_uri'] === 'string'
-      ? req.companion.providerGrantConfig['redirect_uri']
-      : undefined
+  const clientId = providerConfig?.key
+  const clientSecret = providerConfig?.secret
+  const redirectUri = req.companion.providerGrantConfig?.redirect_uri
 
   const { provider, providerClass } = req.companion
   const providerUserSession = isRecord(req.companion.providerUserSession)
@@ -61,22 +50,15 @@ export default async function refreshToken(
   }
 
   try {
-    const out: unknown = await provider.refreshToken({
+    const { accessToken } = await provider.refreshToken({
       redirectUri,
       clientId,
       clientSecret,
       refreshToken,
     })
-    const accessToken =
-      isRecord(out) && typeof out['accessToken'] === 'string'
-        ? out['accessToken']
-        : undefined
-    if (!accessToken) {
-      throw new Error('Provider did not return an accessToken')
-    }
 
     req.companion.providerUserSession = {
-      ...(providerUserSession ?? {}),
+      ...providerUserSession,
       accessToken,
     }
 

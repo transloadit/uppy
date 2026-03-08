@@ -1,8 +1,9 @@
+import type { Readable } from 'node:stream'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { prepareStream } from '../../helpers/utils.ts'
 import logger from '../../logger.ts'
-import Provider from '../Provider.ts'
+import Provider, { type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -21,24 +22,26 @@ const getOauthClient = () =>
     prefixUrl: 'https://login.live.com',
   })
 
-function getQueryRecord(query: unknown): Record<string, string> {
-  if (!isRecord(query)) return {}
-  const out: Record<string, string> = {}
-  const driveId = query['driveId']
-  if (typeof driveId === 'string' && driveId.length > 0)
-    out['driveId'] = driveId
-  const cursor = query['cursor']
-  if (typeof cursor === 'string' && cursor.length > 0) out['cursor'] = cursor
+function getQueryRecord(query: Query | undefined) {
+  const out: { driveId?: string; cursor?: string } = {}
+  const driveId = query?.['driveId']
+  if (typeof driveId === 'string') out['driveId'] = driveId
+  const cursor = query?.['cursor']
+  if (typeof cursor === 'string') out['cursor'] = cursor
   return out
 }
 
-const getRootPath = (query: Record<string, string>): string =>
+const getRootPath = (query: Query): string =>
   query['driveId'] ? `drives/${query['driveId']}` : 'me/drive'
+
+interface OneDriveUserSession {
+  accessToken: string
+}
 
 /**
  * Adapter for API https://docs.microsoft.com/en-us/onedrive/developer/rest-api/
  */
-export default class OneDrive extends Provider {
+export default class OneDrive extends Provider<OneDriveUserSession> {
   static override get oauthProvider() {
     return 'microsoft'
   }
@@ -54,12 +57,12 @@ export default class OneDrive extends Provider {
    */
   override async list({
     directory,
-    query,
     providerUserSession: { accessToken: token },
+    query,
   }: {
-    directory?: string
-    query: unknown
-    providerUserSession: { accessToken: string }
+    directory?: string | undefined
+    providerUserSession: OneDriveUserSession
+    query?: Query | undefined
   }): Promise<unknown> {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const queryRecord = getQueryRecord(query)
@@ -72,13 +75,13 @@ export default class OneDrive extends Provider {
         $top: String(pageSize),
       })
       const cursor = queryRecord['cursor']
-      if (typeof cursor === 'string' && cursor.length > 0) {
+      if (cursor != null) {
         qs.set('$skiptoken', cursor)
       }
 
       const client = getClient({ token })
 
-      const [me, list] = await Promise.all([
+      const [{ mail, userPrincipalName }, list] = await Promise.all([
         client
           .get('me', { responseType: 'json' })
           .json<{ mail?: string; userPrincipalName?: string }>(),
@@ -90,10 +93,6 @@ export default class OneDrive extends Provider {
           .json<Parameters<typeof adaptData>[0]>(),
       ])
 
-      const mail = typeof me.mail === 'string' ? me.mail : null
-      const userPrincipalName =
-        typeof me.userPrincipalName === 'string' ? me.userPrincipalName : null
-
       return adaptData(list, mail || userPrincipalName, queryRecord, directory)
     })
   }
@@ -104,9 +103,9 @@ export default class OneDrive extends Provider {
     query,
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-    query: unknown
-  }): Promise<unknown> {
+    providerUserSession: OneDriveUserSession
+    query: Query
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling(
       'provider.onedrive.download.error',
       async () => {
@@ -121,7 +120,10 @@ export default class OneDrive extends Provider {
     )
   }
 
-  override async thumbnail() {
+  override async thumbnail(): Promise<{
+    stream: Readable
+    contentType: string
+  }> {
     // not implementing this because a public thumbnail from onedrive will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -136,8 +138,8 @@ export default class OneDrive extends Provider {
     providerUserSession: { accessToken: token },
   }: {
     id: string
-    query: unknown
-    providerUserSession: { accessToken: string }
+    query: Query
+    providerUserSession: OneDriveUserSession
   }): Promise<number | undefined> {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
       const queryRecord = getQueryRecord(query)
@@ -165,8 +167,8 @@ export default class OneDrive extends Provider {
     refreshToken,
     redirectUri,
   }: {
-    clientId: string
-    clientSecret: string
+    clientId: string | undefined
+    clientSecret: string | undefined
     refreshToken: string
     redirectUri: string
   }): Promise<{ accessToken: string }> {

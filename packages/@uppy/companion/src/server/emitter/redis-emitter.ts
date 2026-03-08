@@ -60,7 +60,10 @@ export default function redisEmitter(
   // because each event can have multiple listeners, we need to keep track of them
   const handlersByEventName: Map<
     string,
-    Map<(...args: unknown[]) => unknown, (...args: unknown[]) => unknown>
+    Map<
+      (...args: unknown[]) => unknown,
+      (pattern: string, _channel: string, message: string) => unknown
+    >
   > = new Map()
 
   /**
@@ -115,24 +118,7 @@ export default function redisEmitter(
       return
     }
 
-    function actualHandler(...rawArgs: unknown[]) {
-      const pattern = rawArgs[0]
-      const _channel = rawArgs[1]
-      const message = rawArgs[2]
-      if (
-        typeof pattern !== 'string' ||
-        typeof _channel !== 'string' ||
-        typeof message !== 'string'
-      ) {
-        handleError(
-          new Error(
-            `Invalid redis message received! Channel: ${eventName} Args: ${JSON.stringify(
-              rawArgs,
-            )}`,
-          ),
-        )
-        return
-      }
+    function actualHandler(pattern: string, _channel: string, message: string) {
       if (pattern !== getPrefixedEventName(eventName)) {
         return
       }

@@ -2,11 +2,10 @@ import dns from 'node:dns'
 import http from 'node:http'
 import https from 'node:https'
 import type { LookupFunction } from 'node:net'
-import net from 'node:net'
 import path from 'node:path'
 import type { Duplex } from 'node:stream'
 import contentDisposition from 'content-disposition'
-import got from 'got'
+import got, { type Response } from 'got'
 import ipaddr from 'ipaddr.js'
 import validator from 'validator'
 
@@ -79,55 +78,44 @@ function getProtectedHttpAgent({
 }): typeof http.Agent | typeof https.Agent {
   const dnsLookup: LookupFunction = (hostname, options, callback) => {
     dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
-      const family = typeof maybeFamily === 'number' ? maybeFamily : 0
-
-      const wantAll =
-        typeof options === 'object' && options != null && options.all === true
-      const errorAddressFallback: string | dns.LookupAddress[] = wantAll
-        ? []
-        : ''
-
       if (err) {
-        callback(err, errorAddressFallback, family)
+        callback(err, addresses, maybeFamily)
         return
       }
 
-      if (Array.isArray(addresses)) {
-        const valid = allowLocalIPs
-          ? addresses
-          : addresses.filter(({ address }) => !isDisallowedIP(address))
+      const toValidate = Array.isArray(addresses)
+        ? addresses
+        : [{ address: addresses, family: maybeFamily }]
 
-        if (valid.length === 0) {
-          callback(
-            new Error(
-              `Forbidden resolved IP address ${hostname} -> ${addresses.map(({ address }) => address).join(', ')}`,
-            ),
-            [],
-            family,
-          )
-          return
-        }
+      // because dns.lookup seems to be called with option `all: true`, if we are on an ipv6 system,
+      // `addresses` could contain a list of ipv4 addresses as well as ipv6 mapped addresses (rfc6052) which we cannot allow
+      // however we should still allow any valid ipv4 addresses, so we filter out the invalid addresses
+      const validAddresses = allowLocalIPs
+        ? toValidate
+        : toValidate.filter(({ address }) => !isDisallowedIP(address))
 
-        callback(null, valid, family)
-        return
-      }
-
-      // `addresses` is a single string when `options.all !== true`.
-      const address = addresses
-      if (!allowLocalIPs && isDisallowedIP(address)) {
+      const [firstValidAddress] = validAddresses
+      // and check if there's anything left after we filtered:
+      if (firstValidAddress == null) {
         callback(
-          new Error(`Forbidden resolved IP address ${hostname} -> ${address}`),
-          '',
-          family,
+          new Error(
+            `Forbidden resolved IP address ${hostname} -> ${toValidate.map(({ address }) => address).join(', ')}`,
+          ),
+          addresses,
+          maybeFamily,
         )
         return
       }
-      callback(null, address, family)
+
+      const ret = Array.isArray(addresses)
+        ? validAddresses
+        : firstValidAddress.address
+      callback(err, ret, maybeFamily)
     })
   }
 
-  const shouldBlockHost = (host: unknown): host is string =>
-    typeof host === 'string' && ipaddr.isValid(host) && isDisallowedIP(host)
+  const shouldBlockHost = (host: string | null | undefined): host is string =>
+    host != null && ipaddr.isValid(host) && isDisallowedIP(host)
 
   if (protocol.startsWith('https')) {
     return class HttpsAgent extends https.Agent {
@@ -136,12 +124,8 @@ function getProtectedHttpAgent({
         callback?: (err: Error | null, stream: Duplex) => void,
       ): Duplex {
         if (!allowLocalIPs && shouldBlockHost(options.host)) {
-          const err = new Error(FORBIDDEN_IP_ADDRESS)
-          const socket = new net.Socket()
-          // Avoid emitting an unhandled 'error' event on the socket; the request
-          // should fail via the callback error.
-          socket.destroy()
-          callback?.(err, socket)
+          const socket = undefined as unknown as Duplex // not sure about this but it's how it always worked
+          callback?.(new Error(FORBIDDEN_IP_ADDRESS), socket)
           return socket
         }
         return super.createConnection(
@@ -158,12 +142,8 @@ function getProtectedHttpAgent({
       callback?: (err: Error | null, stream: Duplex) => void,
     ): Duplex {
       if (!allowLocalIPs && shouldBlockHost(options.host)) {
-        const err = new Error(FORBIDDEN_IP_ADDRESS)
-        const socket = new net.Socket()
-        // Avoid emitting an unhandled 'error' event on the socket; the request
-        // should fail via the callback error.
-        socket.destroy()
-        callback?.(err, socket)
+        const socket = undefined as unknown as Duplex // not sure about this but it's how it always worked
+        callback?.(new Error(FORBIDDEN_IP_ADDRESS), socket)
         return socket
       }
       return super.createConnection({ ...options, lookup: dnsLookup }, callback)
@@ -206,9 +186,7 @@ export async function getURLMeta(
     statusCode: number
   }
 
-  async function requestWithMethod(
-    method: 'HEAD' | 'GET',
-  ): Promise<UrlMetaWithStatus> {
+  async function requestWithMethod(method: 'HEAD' | 'GET') {
     const protectedGot = getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream(url, {
       method,
@@ -218,11 +196,11 @@ export async function getURLMeta(
 
     return new Promise<UrlMetaWithStatus>((resolve, reject) =>
       stream
-        .on('response', (response) => {
+        .on('response', (response: Response) => {
           // Can be undefined for unknown length URLs, e.g. transfer-encoding: chunked
           const contentLengthHeader = response.headers['content-length']
           const contentLength =
-            typeof contentLengthHeader === 'string'
+            contentLengthHeader != null
               ? parseInt(contentLengthHeader, 10)
               : NaN
           // If Content-Disposition with file name is missing, fallback to the URL path for the name,
@@ -231,10 +209,10 @@ export async function getURLMeta(
           const contentDispositionHeader =
             response.headers['content-disposition']
           let filename: string | undefined
-          if (typeof contentDispositionHeader === 'string') {
+          if (contentDispositionHeader != null) {
             const parsed = contentDisposition.parse(contentDispositionHeader)
             const maybeFilename = parsed.parameters['filename']
-            if (typeof maybeFilename === 'string' && maybeFilename.length > 0) {
+            if (maybeFilename != null) {
               filename = maybeFilename
             }
           }
@@ -246,10 +224,7 @@ export async function getURLMeta(
 
           resolve({
             name: filename,
-            type:
-              typeof response.headers['content-type'] === 'string'
-                ? response.headers['content-type']
-                : undefined,
+            type: response.headers['content-type'],
             size: Number.isNaN(contentLength) ? null : contentLength,
             statusCode: response.statusCode,
           })

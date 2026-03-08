@@ -95,9 +95,9 @@ export async function startPeriodicPingJob({
   processId,
 }: {
   urls: string[]
-  interval?: number
-  count?: number
-  staticPayload?: unknown
+  interval?: number | undefined
+  count?: number | undefined
+  staticPayload?: unknown | undefined
   version: string
   processId: string
 }): Promise<void> {

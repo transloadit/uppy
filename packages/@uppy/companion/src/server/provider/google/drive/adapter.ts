@@ -1,4 +1,5 @@
 import querystring from 'node:querystring'
+import type { Query } from '../../Provider.ts'
 
 export type DriveItem = {
   kind?: string
@@ -23,12 +24,12 @@ export type DriveItem = {
     width?: number
     durationMillis?: number
   }
-} & Record<string, unknown>
+}
 
 export type DriveListResponse = {
   files?: DriveItem[]
   nextPageToken?: string
-} & Record<string, unknown>
+}
 export type DriveSharedDrivesResponse = { drives?: DriveItem[] } & Record<
   string,
   unknown
@@ -38,16 +39,12 @@ export type DriveAbout = { user?: { emailAddress?: string } } & Record<
   unknown
 >
 
-const getUsername = (data: DriveAbout): string => {
-  return data.user?.emailAddress ?? ''
+const getUsername = (data: DriveAbout) => {
+  return data.user?.emailAddress
 }
 
-export const isGsuiteFile = (mimeType: string | undefined): boolean => {
-  return (
-    typeof mimeType === 'string' &&
-    mimeType.startsWith('application/vnd.google')
-  )
-}
+export const isGsuiteFile = (mimeType: string | undefined) =>
+  mimeType?.startsWith('application/vnd.google')
 
 const isSharedDrive = (item: DriveItem): boolean => {
   return item.kind === 'drive#drive'
@@ -65,7 +62,7 @@ export const isShortcut = (mimeType: string | undefined): boolean => {
 }
 
 const getItemSize = (item: DriveItem): number => {
-  const size = typeof item.size === 'string' ? parseInt(item.size, 10) : NaN
+  const size = item.size != null ? parseInt(item.size, 10) : NaN
   return Number.isFinite(size) ? size : 0
 }
 
@@ -74,7 +71,7 @@ const getItemIcon = (item: DriveItem): string | undefined => {
     const size = '=w16-h16-n'
     const sizeParamRegex = /=[-whncsp0-9]*$/
     const background = item.backgroundImageLink
-    if (typeof background !== 'string') return undefined
+    if (background == null) return undefined
     return background.match(sizeParamRegex)
       ? background.replace(sizeParamRegex, size)
       : `${background}${size}`
@@ -82,7 +79,7 @@ const getItemIcon = (item: DriveItem): string | undefined => {
 
   if (
     item.thumbnailLink &&
-    typeof item.mimeType === 'string' &&
+    item.mimeType != null &&
     !item.mimeType.startsWith('application/vnd.google')
   ) {
     const smallerThumbnailLink = item.thumbnailLink.replace('s220', 's40')
@@ -102,13 +99,12 @@ const getItemSubList = (item: DriveListResponse): DriveItem[] => {
     'application/vnd.google-apps.shortcut',
   ]
 
-  const files = Array.isArray(item.files) ? item.files : []
+  const files = item.files ?? []
   return files.filter((i) => {
     return (
       isFolder(i) ||
       !isGsuiteFile(i.mimeType) ||
-      (typeof i.mimeType === 'string' &&
-        allowedGSuiteTypes.includes(i.mimeType))
+      (i.mimeType != null && allowedGSuiteTypes.includes(i.mimeType))
     )
   })
 }
@@ -178,8 +174,8 @@ const getItemThumbnailUrl = (item: DriveItem): string | undefined => {
 
 const getNextPagePath = (
   data: DriveListResponse,
-  currentQuery: Record<string, unknown>,
-  currentPath: string,
+  currentQuery: Query | undefined,
+  currentPath: string | undefined,
 ): string | null => {
   if (!data.nextPageToken) {
     return null
@@ -209,8 +205,8 @@ export const VIRTUAL_SHARED_DIR = 'shared-with-me'
 export const adaptData = (
   listFilesResp: DriveListResponse,
   sharedDrivesResp: DriveSharedDrivesResponse | null | undefined,
-  directory: string,
-  query: Record<string, unknown>,
+  directory: string | undefined,
+  query: Query | undefined,
   showSharedWithMe: boolean,
   about: DriveAbout,
 ) => {

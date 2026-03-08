@@ -35,7 +35,7 @@ function createOAuthApp(options: OAuthReqOptions) {
   const app = express()
   const companionOptions = {
     ...defaultOptions,
-  } satisfies CompanionRuntimeOptions
+  }
   Reflect.set(companionOptions, 'secret', options.secret)
   app.use((req, _res, next) => {
     req.companion = {

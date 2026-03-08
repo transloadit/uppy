@@ -1,5 +1,6 @@
 import querystring from 'node:querystring'
 import mime from 'mime-types'
+import type { BuildUrl } from '../../../types/express.js'
 
 type DropboxItem = {
   '.tag'?: string
@@ -15,12 +16,6 @@ type DropboxListResponse = {
   has_more: boolean
   cursor?: string
 }
-
-type BuildURL = (
-  subPath: string,
-  isExternal: boolean,
-  excludeHost?: boolean,
-) => string
 
 const isFolder = (item: DropboxItem): boolean => {
   return item['.tag'] === 'folder'
@@ -74,7 +69,7 @@ const getNextPagePath = (data: DropboxListResponse): string | null => {
 const adaptData = (
   res: DropboxListResponse,
   email: string | undefined,
-  buildURL: BuildURL,
+  buildURL: BuildUrl,
 ): {
   username: string | undefined
   items: Array<{

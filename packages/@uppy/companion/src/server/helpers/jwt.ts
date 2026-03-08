@@ -99,7 +99,7 @@ function getCommonCookieOptions({
   }
 
   const cookieDomain = companionOptions['cookieDomain']
-  if (typeof cookieDomain === 'string' && cookieDomain.length > 0) {
+  if (typeof cookieDomain === 'string') {
     cookieOptions['domain'] = cookieDomain
   }
 
@@ -140,13 +140,13 @@ export const addToCookiesIfNeeded = (
   // some providers need the token in cookies for thumbnail/image requests
   if (req.companion.provider?.needsCookieAuth) {
     const oauthProvider = req.companion.providerClass?.oauthProvider
-    if (typeof oauthProvider !== 'string' || oauthProvider.length === 0) return
+    if (oauthProvider == null) return
     const args = {
       res,
       token: uppyAuthToken,
       companionOptions: req.companion.options,
       oauthProvider,
-      ...(maxAge === undefined ? {} : { maxAge }),
+      ...(maxAge != null && { maxAge }),
     }
     addToCookies(args)
   }

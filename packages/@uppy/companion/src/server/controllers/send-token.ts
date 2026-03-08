@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
 import * as oAuthState from '../helpers/oauth-state.ts'
+import { isEncryptionSecret } from '../helpers/type-guards.ts'
 import { isOriginAllowed } from './connect.ts'
 
 const htmlContent = (token: string, origin: string): string => {
@@ -48,7 +49,7 @@ export default function sendToken(
   const companion = req.companion
   const uppyAuthToken = companion.authToken
   const secret = companion.options.secret
-  if (typeof secret !== 'string' && !Buffer.isBuffer(secret)) {
+  if (!isEncryptionSecret(secret)) {
     next()
     return
   }

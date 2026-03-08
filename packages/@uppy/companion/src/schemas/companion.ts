@@ -1,57 +1,89 @@
+import type { ObjectCannedACL, S3ClientConfig } from '@aws-sdk/client-s3'
+import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
+import type { CorsOptions } from 'cors'
+import type { Request } from 'express'
 import type { RedisOptions } from 'ioredis'
-import { z } from 'zod'
 import type Provider from '../server/provider/Provider.ts'
-import { ProviderOptionsSchema, ServerConfigSchema } from './common.ts'
+import type { ProviderOptions, ServerConfig } from './common.ts'
 
-// Tolerant schema for Companion's initialization options. This is primarily for
-// type inference and safe narrowing, not for rejecting config at runtime.
-
+// todo implement zod schema validation and remove manual typeof validation around in the code, also in providers/adapters
 type ProviderConstructor = typeof Provider
 
-const ProviderConstructorSchema = z.custom<ProviderConstructor>(
-  (value) => typeof value === 'function',
-)
+interface CustomProvider {
+  module: ProviderConstructor
+  config: unknown
+}
 
-const CustomProviderSchema = z.object({
-  // Runtime shape is validated elsewhere; this is primarily for type inference.
-  module: ProviderConstructorSchema,
-  config: z.record(z.unknown()),
-})
+export type CompanionInitOptions = {
+  secret?: string | undefined
+  preAuthSecret?: string | Buffer | undefined
+  loggerProcessName?: string | undefined
+  server?: ServerConfig | undefined
+  providerOptions?: ProviderOptions | undefined
+  customProviders?: Record<string, CustomProvider> | undefined
+  redisUrl?: string | undefined
+  redisOptions?: RedisOptions | undefined
+  redisPubSubScope?: string | undefined
+  sendSelfEndpoint?: string | undefined
+  enableUrlEndpoint?: boolean | undefined
+  enableGooglePickerEndpoint?: boolean | undefined
+  metrics?: boolean | undefined
 
-export const CompanionInitOptionsSchema = z
-  .object({
-    secret: z.string().optional(),
-    preAuthSecret: z.string().optional(),
-    loggerProcessName: z.string().optional(),
-    server: ServerConfigSchema.optional(),
-    providerOptions: ProviderOptionsSchema.optional(),
-    customProviders: z.record(CustomProviderSchema).optional(),
-    s3: z.record(z.unknown()).optional(),
-    redisUrl: z.string().optional(),
-    redisOptions: z
-      .custom<RedisOptions>(
-        (value) =>
-          !!value && typeof value === 'object' && !Array.isArray(value),
-      )
-      .optional(),
-    redisPubSubScope: z.string().optional(),
-    sendSelfEndpoint: z.string().optional(),
-    enableUrlEndpoint: z.boolean().optional(),
-    enableGooglePickerEndpoint: z.boolean().optional(),
-    metrics: z.boolean().optional(),
+  // Used internally by Companion:
+  filePath?: string | undefined
+  periodicPingUrls?: string[] | undefined
+  periodicPingInterval?: number | undefined
+  periodicPingCount?: number | undefined
+  testDynamicOauthCredentials?: boolean | undefined
+  testDynamicOauthCredentialsSecret?: string | undefined
+  allowLocalUrls?: boolean | undefined
+  clientSocketConnectTimeout?: number | undefined
 
-    // Used internally by Companion:
-    filePath: z.string().optional(),
-    periodicPingUrls: z.array(z.string()).optional(),
-    periodicPingInterval: z.number().optional(),
-    periodicPingCount: z.number().optional(),
-    periodicPingStaticPayload: z.unknown().optional(),
-    testDynamicOauthCredentials: z.boolean().optional(),
-    testDynamicOauthCredentialsSecret: z.string().optional(),
-  })
-  .passthrough()
+  corsOrigins?: CorsOptions['origin'] | undefined
+  periodicPingStaticPayload?: unknown
+  s3?: {
+    /** @deprecated */
+    accessKeyId?: unknown
+    /** @deprecated */
+    secretAccessKey?: unknown
 
-export type CompanionInitOptionsInput = z.input<
-  typeof CompanionInitOptionsSchema
->
-export type CompanionInitOptions = z.output<typeof CompanionInitOptionsSchema>
+    region?: string | undefined
+    endpoint?: string | undefined
+    bucket?: string | GetBucketFn | undefined
+    key?: string | undefined
+    getKey?: GetKeyFn | undefined
+    secret?: string | undefined
+    sessionToken?: string | undefined
+    conditions?: PresignedPostOptions['Conditions'] | undefined
+    forcePathStyle?: boolean
+    acl?: ObjectCannedACL | undefined
+    useAccelerateEndpoint?: boolean
+    expires: number
+    awsClientOptions?: S3ClientConfig & {
+      /** @deprecated */
+      accessKeyId?: unknown
+      /** @deprecated */
+      secretAccessKey?: unknown
+    }
+  }
+  maxFilenameLength?: number | undefined
+  uploadUrls?: RegExp[] | string[] | undefined | null
+  cookieDomain?: string | undefined
+  streamingUpload?: boolean | undefined
+  tusDeferredUploadLength?: boolean | undefined
+  maxFileSize?: number | undefined
+  chunkSize?: number | undefined
+  uploadHeaders?: Record<string, string> | undefined
+}
+
+export type GetKeyFn = (args: {
+  req: Request
+  filename: string
+  metadata: Record<string, unknown>
+}) => string
+
+export type GetBucketFn = (args: {
+  req: Request
+  filename?: string | undefined
+  metadata: Record<string, unknown>
+}) => string

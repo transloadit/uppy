@@ -278,14 +278,13 @@ async function runUrlMetaTest(url: string) {
 
 async function runUrlGetTest(url: string) {
   const server = await getServer()
-  const size: null = null
 
   return request(server).post('/url/get').send({
     fileId: url,
     metadata: {},
     endpoint: 'http://url.myendpoint.com/files',
     protocol: 'tus',
-    size,
+    size: null,
     url,
   })
 }

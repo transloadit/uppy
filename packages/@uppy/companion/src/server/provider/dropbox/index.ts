@@ -2,12 +2,15 @@
 //
 // This function is simple and has OK performance compared to more
 // complicated ones: http://jsperf.com/json-escape-unicode/4
+
+import type { Readable } from 'node:stream'
 import got from 'got'
+import type { BuildUrl } from '../../../types/express.js'
 import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.ts'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { prepareStream } from '../../helpers/utils.ts'
 import logger from '../../logger.ts'
-import Provider from '../Provider.ts'
+import Provider, { type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -73,8 +76,6 @@ async function getClient({
   if (
     namespaced &&
     rootInfo != null &&
-    rootInfo.root_namespace_id != null &&
-    rootInfo.home_namespace_id != null &&
     rootInfo.root_namespace_id !== rootInfo.home_namespace_id
   ) {
     logger.debug('using root_namespace_id', rootInfo.root_namespace_id)
@@ -98,21 +99,23 @@ async function list({
   query,
 }: {
   client: DropboxClient
-  directory?: string
-  query: { cursor?: string; [k: string]: unknown }
+  directory?: string | undefined
+  query?: Query | undefined
 }): Promise<Parameters<typeof adaptData>[0]> {
-  if (query.cursor) {
+  if (query?.['cursor']) {
     return client
       .post('files/list_folder/continue', {
-        json: { cursor: query.cursor },
+        json: { cursor: query['cursor'] },
         responseType: 'json',
       })
       .json<Parameters<typeof adaptData>[0]>()
   }
 
   const searchParams: Record<string, string> = {}
-  for (const [k, v] of Object.entries(query)) {
-    if (typeof v === 'string') searchParams[k] = v
+  if (query != null) {
+    for (const [k, v] of Object.entries(query)) {
+      if (typeof v === 'string') searchParams[k] = v
+    }
   }
 
   return client
@@ -166,16 +169,18 @@ async function fetchSearchEntries({
   return {
     entries,
     has_more: searchRes.has_more,
-    ...(typeof searchRes.cursor === 'string' && searchRes.cursor.length > 0
-      ? { cursor: searchRes.cursor }
-      : {}),
+    ...(searchRes.cursor != null && { cursor: searchRes.cursor }),
   }
+}
+
+interface DropboxUserSession {
+  accessToken: string
 }
 
 /**
  * Adapter for API https://www.dropbox.com/developers/documentation/http/documentation
  */
-export default class Dropbox extends Provider {
+export default class Dropbox extends Provider<DropboxUserSession> {
   constructor(options: ConstructorParameters<typeof Provider>[0]) {
     super(options)
     this.needsCookieAuth = true
@@ -193,9 +198,9 @@ export default class Dropbox extends Provider {
    * Search entries
    */
   override async search(options: {
-    providerUserSession: { accessToken: string }
+    providerUserSession: DropboxUserSession
     query: { q: string; path?: string; [k: string]: unknown }
-    companion: { buildURL: Parameters<typeof adaptData>[2] }
+    companion: { buildURL: BuildUrl }
   }): Promise<unknown> {
     return this.#withErrorHandling(
       'provider.dropbox.search.error',
@@ -217,16 +222,20 @@ export default class Dropbox extends Provider {
    * List folder entries
    */
   override async list(options: {
-    providerUserSession: { accessToken: string }
-    directory?: string
-    query: { cursor?: string; [k: string]: unknown }
-    companion: { buildURL: Parameters<typeof adaptData>[2] }
+    directory?: string | undefined
+    providerUserSession: DropboxUserSession
+    query?: Query
+    companion: { buildURL?: BuildUrl }
   }): Promise<unknown> {
     return this.#withErrorHandling('provider.dropbox.list.error', async () => {
       const { client, userInfo } = await getClient({
         token: options.providerUserSession.accessToken,
         namespaced: true,
       })
+
+      if (options.companion.buildURL == null) {
+        throw new Error('companion.buildURL is required for Dropbox provider')
+      }
 
       const stats = await list({ ...options, client })
       const { email } = userInfo
@@ -239,8 +248,8 @@ export default class Dropbox extends Provider {
     providerUserSession: { accessToken: token },
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-  }): Promise<unknown> {
+    providerUserSession: DropboxUserSession
+  }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling(
       'provider.dropbox.download.error',
       async () => {
@@ -267,8 +276,8 @@ export default class Dropbox extends Provider {
     providerUserSession: { accessToken: token },
   }: {
     id: string
-    providerUserSession: { accessToken: string }
-  }): Promise<unknown> {
+    providerUserSession: DropboxUserSession
+  }): Promise<{ stream: Readable; contentType: string }> {
     return this.#withErrorHandling(
       'provider.dropbox.thumbnail.error',
       async () => {
@@ -298,7 +307,7 @@ export default class Dropbox extends Provider {
     providerUserSession: { accessToken: token },
   }: {
     id: string
-    providerUserSession: { accessToken: string }
+    providerUserSession: DropboxUserSession
   }): Promise<number> {
     return this.#withErrorHandling('provider.dropbox.size.error', async () => {
       const meta = await (await getClient({ token, namespaced: true })).client
@@ -312,7 +321,7 @@ export default class Dropbox extends Provider {
         typeof sizeValue === 'string'
           ? sizeValue
           : typeof sizeValue === 'number'
-            ? `${sizeValue}`
+            ? String(sizeValue)
             : ''
       return parseInt(sizeStr, 10)
     })
@@ -321,7 +330,7 @@ export default class Dropbox extends Provider {
   override async logout({
     providerUserSession: { accessToken: token },
   }: {
-    providerUserSession: { accessToken: string }
+    providerUserSession: DropboxUserSession
   }): Promise<{ revoked: true }> {
     return this.#withErrorHandling(
       'provider.dropbox.logout.error',
@@ -340,8 +349,8 @@ export default class Dropbox extends Provider {
     clientSecret,
     refreshToken,
   }: {
-    clientId: string
-    clientSecret: string
+    clientId: string | undefined
+    clientSecret: string | undefined
     refreshToken: string
   }): Promise<{ accessToken: string }> {
     return this.#withErrorHandling(

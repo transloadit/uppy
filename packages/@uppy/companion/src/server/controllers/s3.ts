@@ -1,4 +1,4 @@
-import type { S3Client } from '@aws-sdk/client-s3'
+import type { Part, S3Client } from '@aws-sdk/client-s3'
 import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
@@ -11,6 +11,7 @@ import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
+import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
 import { isRecord } from '../helpers/type-guards.ts'
 import {
   getBucket,
@@ -18,109 +19,24 @@ import {
   truncateFilename,
 } from '../helpers/utils.ts'
 
-type S3ControllerConfig = {
-  acl?: string | null
-  bucket?: unknown
-  conditions?: unknown[]
-  expires?: number
-  getKey?: unknown
-  key?: unknown
-  region?: unknown
-  secret?: unknown
-} & Record<string, unknown>
-
-function isS3ControllerConfig(value: unknown): value is S3ControllerConfig {
-  return isRecord(value)
-}
-
-export default function s3(configIn: unknown): Router {
-  if (!isS3ControllerConfig(configIn)) {
-    return express.Router()
-  }
-  const config = configIn
-
+export default function s3(
+  config: Pick<
+    CompanionRuntimeOptions['s3'],
+    | 'acl'
+    | 'getKey'
+    | 'expires'
+    | 'conditions'
+    | 'bucket'
+    | 'region'
+    | 'key'
+    | 'secret'
+  >,
+): Router {
   if (typeof config.acl !== 'string' && config.acl != null) {
     throw new TypeError('s3: The `acl` option must be a string or null')
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
-  }
-  const expires = (() => {
-    const value = config.expires
-    if (typeof value !== 'number') {
-      throw new TypeError('s3: The `expires` option must be a number')
-    }
-    return value
-  })()
-  type GetKeyFn = (args: {
-    req: Request
-    filename: string
-    metadata: Record<string, unknown>
-  }) => unknown
-  const isGetKeyFn = (value: unknown): value is GetKeyFn =>
-    typeof value === 'function'
-  const getKeyCandidate = config.getKey
-  if (!isGetKeyFn(getKeyCandidate)) {
-    throw new TypeError('s3: The `getKey` option must be a function')
-  }
-  const getKeyFn = getKeyCandidate
-
-  type PresignedPostCondition =
-    | ['eq', string, string]
-    | Record<string, string>
-    | ['starts-with', string, string]
-    | ['content-length-range', number, number]
-
-  const isCondition = (value: unknown): value is PresignedPostCondition => {
-    if (Array.isArray(value)) {
-      if (
-        value.length === 3 &&
-        value[0] === 'eq' &&
-        typeof value[1] === 'string' &&
-        typeof value[2] === 'string'
-      )
-        return true
-      if (
-        value.length === 3 &&
-        value[0] === 'starts-with' &&
-        typeof value[1] === 'string' &&
-        typeof value[2] === 'string'
-      )
-        return true
-      if (
-        value.length === 3 &&
-        value[0] === 'content-length-range' &&
-        typeof value[1] === 'number' &&
-        typeof value[2] === 'number'
-      )
-        return true
-      return false
-    }
-    return (
-      isRecord(value) &&
-      Object.values(value).every((v) => typeof v === 'string')
-    )
-  }
-  const conditions: PresignedPostCondition[] = []
-  const configuredConditions = config.conditions
-  if (configuredConditions != null) {
-    if (!Array.isArray(configuredConditions)) {
-      throw new TypeError('s3: The `conditions` option must be an array')
-    }
-    configuredConditions.forEach((condition) => {
-      if (!isCondition(condition)) {
-        throw new TypeError(
-          's3: The `conditions` option contains an invalid condition',
-        )
-      }
-      conditions.push(condition)
-    })
-  }
-
-  function isS3Client(value: unknown): value is S3Client {
-    if (!value || (typeof value !== 'object' && typeof value !== 'function'))
-      return false
-    return typeof Reflect.get(value, 'send') === 'function'
   }
 
   function getS3Client(
@@ -128,14 +44,14 @@ export default function s3(configIn: unknown): Router {
     res: Response,
     createPresignedPostMode = false,
   ): S3Client | undefined {
-    const clientCandidate = createPresignedPostMode
+    const client = createPresignedPostMode
       ? req.companion.s3ClientCreatePresignedPost
       : req.companion.s3Client
-    if (!isS3Client(clientCandidate))
+    if (!client)
       res.status(400).json({
         error: 'This Companion server does not support uploading to S3',
       })
-    return isS3Client(clientCandidate) ? clientCandidate : undefined
+    return client
   }
 
   /**
@@ -175,11 +91,10 @@ export default function s3(configIn: unknown): Router {
       return
     }
 
-    const maxFilenameLength =
-      typeof req.companion.options['maxFilenameLength'] === 'number'
-        ? req.companion.options['maxFilenameLength']
-        : filename.length
-    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
+    const truncatedFilename = truncateFilename(
+      filename,
+      req.companion.options.maxFilenameLength,
+    )
 
     const bucket = getBucket({
       bucketOrFn: config.bucket,
@@ -188,7 +103,7 @@ export default function s3(configIn: unknown): Router {
       metadata,
     })
 
-    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
+    const key = config.getKey({ req, filename: truncatedFilename, metadata })
     if (typeof key !== 'string') {
       res.status(500).json({
         error:
@@ -199,14 +114,14 @@ export default function s3(configIn: unknown): Router {
 
     const fields: Record<string, string> = {
       success_action_status: '201',
-      'content-type':
-        typeof req.query['type'] === 'string' ? req.query['type'] : '',
+      ...(typeof req.query['type'] === 'string' && {
+        'content-type': req.query['type'],
+      }),
     }
 
     if (config.acl != null) fields['acl'] = config.acl
 
-    Object.keys(metadata).forEach((metadataKey) => {
-      const value = metadata[metadataKey]
+    Object.entries(metadata).forEach(([metadataKey, value]) => {
       if (typeof value !== 'string') return
       fields[`x-amz-meta-${metadataKey}`] = value
     })
@@ -214,21 +129,18 @@ export default function s3(configIn: unknown): Router {
     // `createPresignedPost` sometimes pulls in a nested copy of `@aws-sdk/client-s3`,
     // which makes the `S3Client` type nominally incompatible. The instance is still
     // compatible at runtime.
-    createPresignedPost(
-      client as unknown as Parameters<typeof createPresignedPost>[0],
-      {
-        Bucket: bucket,
-        Expires: expires,
-        Fields: fields,
-        Conditions: conditions,
-        Key: key,
-      },
-    ).then((data) => {
+    createPresignedPost(client, {
+      Bucket: bucket,
+      Expires: config.expires,
+      Fields: fields,
+      Conditions: config.conditions,
+      Key: key,
+    }).then((data) => {
       res.json({
         method: 'POST',
         url: data.url,
         fields: data.fields,
-        expires,
+        expires: config.expires,
       })
     }, next)
   }
@@ -255,8 +167,13 @@ export default function s3(configIn: unknown): Router {
     const client = getS3Client(req, res)
     if (!client) return
 
-    const { type, filename } = req.body
-    const metadata = isRecord(req.body?.metadata) ? req.body.metadata : {}
+    const {
+      type,
+      filename,
+      metadata: maybeMetadata,
+    }: { type: unknown; filename: unknown; metadata: unknown } = req.body
+
+    const metadata = isRecord(maybeMetadata) ? maybeMetadata : {}
 
     // Validate filename is provided and non-empty
     if (typeof filename !== 'string' || filename === '') {
@@ -267,13 +184,10 @@ export default function s3(configIn: unknown): Router {
       return
     }
 
-    const maxFilenameLength =
-      typeof req.companion.options['maxFilenameLength'] === 'number'
-        ? req.companion.options['maxFilenameLength']
-        : filename.length
-    const truncatedFilename = truncateFilename(filename, maxFilenameLength)
-
-    const key = getKeyFn({ req, filename: truncatedFilename, metadata })
+    const truncatedFilename = truncateFilename(
+      filename,
+      req.companion.options.maxFilenameLength,
+    )
 
     const bucket = getBucket({
       bucketOrFn: config.bucket,
@@ -281,6 +195,8 @@ export default function s3(configIn: unknown): Router {
       filename: truncatedFilename,
       metadata,
     })
+
+    const key = config.getKey({ req, filename: truncatedFilename, metadata })
 
     if (typeof key !== 'string') {
       res.status(500).json({
@@ -343,7 +259,7 @@ export default function s3(configIn: unknown): Router {
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
-    const parts: unknown[] = []
+    const parts: Part[] = []
 
     function listPartsPage(startAt?: string) {
       s3Client
@@ -388,7 +304,7 @@ export default function s3(configIn: unknown): Router {
     const partNumber = req.params['partNumber']
     const key = req.query['key']
 
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+    if (uploadId == null || uploadId.length === 0) {
       res.status(400).json({ error: 's3: uploadId must be provided.' })
       return
     }
@@ -399,7 +315,7 @@ export default function s3(configIn: unknown): Router {
       })
       return
     }
-    if (typeof partNumber !== 'string' || !parseInt(partNumber, 10)) {
+    if (partNumber == null || !parseInt(partNumber, 10)) {
       res.status(400).json({
         error: 's3: the part number must be a number between 1 and 10000.',
       })
@@ -417,9 +333,9 @@ export default function s3(configIn: unknown): Router {
         PartNumber: Number(partNumber),
         Body: '',
       }),
-      { expiresIn: expires },
+      { expiresIn: config.expires },
     ).then((url) => {
-      res.json({ url, expires })
+      res.json({ url, expires: config.expires })
     }, next)
   }
 
@@ -448,7 +364,7 @@ export default function s3(configIn: unknown): Router {
     const key = req.query['key']
     const partNumbers = req.query['partNumbers']
 
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+    if (uploadId == null || uploadId.length === 0) {
       res.status(400).json({ error: 's3: uploadId must be provided.' })
       return
     }
@@ -490,7 +406,7 @@ export default function s3(configIn: unknown): Router {
             PartNumber: Number(partNumber),
             Body: '',
           }),
-          { expiresIn: expires },
+          { expiresIn: config.expires },
         )
       }),
     )
@@ -571,7 +487,7 @@ export default function s3(configIn: unknown): Router {
 
     const { uploadId } = req.params
     const { key } = req.query
-    const { parts } = req.body
+    const { parts } = req.body as { parts: unknown }
 
     if (typeof key !== 'string') {
       res.status(400).json({
@@ -617,7 +533,6 @@ export default function s3(configIn: unknown): Router {
       }, next)
   }
 
-  const policyBucket = typeof config.bucket === 'string' ? config.bucket : ''
   const policy = {
     Version: '2012-10-17', // latest at the time of writing
     Statement: [
@@ -625,8 +540,8 @@ export default function s3(configIn: unknown): Router {
         Effect: 'Allow',
         Action: ['s3:PutObject'],
         Resource: [
-          `arn:aws:s3:::${policyBucket}/*`,
-          `arn:aws:s3:::${policyBucket}`,
+          `arn:aws:s3:::${config.bucket}/*`,
+          `arn:aws:s3:::${config.bucket}`,
         ],
       },
     ],
@@ -634,11 +549,7 @@ export default function s3(configIn: unknown): Router {
 
   let stsClient: STSClient | undefined
   function getSTSClient(): STSClient | null {
-    if (
-      typeof config.region !== 'string' ||
-      typeof config.key !== 'string' ||
-      typeof config.secret !== 'string'
-    ) {
+    if (config.region == null || config.key == null || config.secret == null) {
       return null
     }
     if (stsClient == null) {
@@ -693,7 +604,7 @@ export default function s3(configIn: unknown): Router {
           // The duration, in seconds, of the role session. The value specified
           // can range from 900 seconds (15 minutes) up to the maximum session
           // duration set for the role.
-          DurationSeconds: expires,
+          DurationSeconds: config.expires,
           Policy: JSON.stringify(policy),
         }),
       )
@@ -701,7 +612,7 @@ export default function s3(configIn: unknown): Router {
         // This is a public unprotected endpoint.
         // If you implement your own custom endpoint with user authentication you
         // should probably use `private` instead of `public`.
-        res.setHeader('Cache-Control', `public,max-age=${expires - 300}`) // 300s is 5min.
+        res.setHeader('Cache-Control', `public,max-age=${config.expires - 300}`) // 300s is 5min.
         res.json({
           credentials: response.Credentials,
           bucket: config.bucket,

@@ -2,11 +2,11 @@ import crypto from 'node:crypto'
 import fs from 'node:fs'
 import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
+import z from 'zod'
 import packageJson from '../../package.json' with { type: 'json' }
-import {
-  type StandaloneCompanionOptions,
-  type StandaloneCompanionOptionsInput,
-  StandaloneCompanionOptionsSchema,
+import type {
+  CompanionInitOptions,
+  StandaloneCompanionOptions,
 } from '../schemas/index.ts'
 import * as utils from '../server/helpers/utils.ts'
 import logger from '../server/logger.ts'
@@ -39,7 +39,7 @@ const hasProtocol = (url: string): boolean => {
 
 const companionProtocol = process.env['COMPANION_PROTOCOL'] || 'http'
 
-function getCorsOrigins(): unknown {
+function getCorsOrigins() {
   if (process.env['COMPANION_CLIENT_ORIGINS']) {
     switch (process.env['COMPANION_CLIENT_ORIGINS']) {
       case 'true':
@@ -72,10 +72,22 @@ const defaultStandaloneGetKey = (
   ...args: Parameters<typeof utils.defaultGetKey>
 ): string => `${s3Prefix}${utils.defaultGetKey(...args)}`
 
+const aclSchema = z
+  .enum([
+    'authenticated-read',
+    'aws-exec-read',
+    'bucket-owner-full-control',
+    'bucket-owner-read',
+    'private',
+    'public-read',
+    'public-read-write',
+  ])
+  .optional()
+
 /**
  * Loads the config from environment variables.
  */
-const getConfigFromEnv = (): Record<string, unknown> => {
+const getConfigFromEnv = (): CompanionInitOptions => {
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
     process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
@@ -134,7 +146,7 @@ const getConfigFromEnv = (): Record<string, unknown> => {
       useAccelerateEndpoint:
         process.env['COMPANION_AWS_USE_ACCELERATE_ENDPOINT'] === 'true',
       expires: parseInt(process.env['COMPANION_AWS_EXPIRES'] || '800', 10),
-      acl: process.env['COMPANION_AWS_ACL'],
+      acl: aclSchema.parse(process.env['COMPANION_AWS_ACL']),
       forcePathStyle: process.env['COMPANION_AWS_FORCE_PATH_STYLE'] === 'true',
     },
     server: {
@@ -233,7 +245,8 @@ const getConfigPath = (): string | undefined => {
   return configPath
 }
 
-const getConfigFromFile = (): Record<string, unknown> => {
+// todo use zod schema
+const getConfigFromFile = (): CompanionInitOptions => {
   const path = getConfigPath()
   if (!path) return {}
 
@@ -242,11 +255,10 @@ const getConfigFromFile = (): Record<string, unknown> => {
 }
 
 export const getCompanionOptions = (
-  options: StandaloneCompanionOptionsInput = {},
+  options: StandaloneCompanionOptions = {},
 ): StandaloneCompanionOptions => {
-  const merged = merge({}, getConfigFromEnv(), getConfigFromFile(), options)
+  return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
   // This schema is intentionally tolerant and should not change runtime behavior.
-  return StandaloneCompanionOptionsSchema.parse(merged)
 }
 
 export const buildHelpfulStartupMessage = (

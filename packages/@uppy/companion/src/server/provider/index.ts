@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-import { isRecord } from '../helpers/type-guards.ts'
+import type { ProviderGrantConfig } from '../../types/express.js'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import * as logger from '../logger.ts'
 import box from './box/index.ts'
@@ -9,31 +9,18 @@ import facebook from './facebook/index.ts'
 import { Drive } from './google/drive/index.ts'
 import instagram from './instagram/graph/index.ts'
 import onedrive from './onedrive/index.ts'
-import { isOAuthProvider } from './Provider.ts'
+import { isOAuthProvider, type ProviderCtor } from './Provider.ts'
 import unsplash from './unsplash/index.ts'
 import webdav from './webdav/index.ts'
 import zoom from './zoom/index.ts'
 
-type ProviderCtor = typeof import('./Provider.ts').default
-
-type ProviderRegistry = Record<string, ProviderCtor>
-
-type GrantConfig = Record<string, Record<string, unknown> | undefined> & {
+type GrantConfig = {
   defaults?: {
     host?: string
     protocol?: string
     path?: string
   }
-}
-
-function getServerHostAndProtocol(options: {
-  server?: { host?: unknown; protocol?: unknown }
-}): { host: string; protocol: string } | null {
-  const host = options.server?.host
-  const protocol = options.server?.protocol
-  if (typeof host !== 'string' || host.length === 0) return null
-  if (typeof protocol !== 'string' || protocol.length === 0) return null
-  return { host, protocol }
+  [key: string]: Record<string, unknown> | undefined
 }
 
 /**
@@ -41,7 +28,7 @@ function getServerHostAndProtocol(options: {
  * based on the providerName parameter specified
  */
 export function getProviderMiddleware(
-  providers: ProviderRegistry,
+  providers: Record<string, ProviderCtor>,
   grantConfig: GrantConfig,
 ): (
   req: Request,
@@ -56,55 +43,47 @@ export function getProviderMiddleware(
     providerName: string,
   ): void => {
     const ProviderClass = providers[providerName]
-    const server = getServerHostAndProtocol(req.companion.options)
-    if (ProviderClass && server) {
-      const { allowLocalUrls, providerOptions } = req.companion.options
-      const { oauthProvider } = ProviderClass
-      const providerOption = providerOptions?.[providerName]
-      const secretCandidate =
-        isRecord(providerOption) && typeof providerOption['secret'] === 'string'
-          ? providerOption['secret']
-          : undefined
-      if (
-        isOAuthProvider(oauthProvider) &&
-        typeof secretCandidate !== 'string'
-      ) {
-        logger.warn(
-          `missing OAuth client secret for provider ${providerName}`,
-          'provider.middleware.missing.secret',
-          req.id,
-        )
-      }
-      const secret = secretCandidate ?? ''
-
-      let providerGrantConfig: Record<string, unknown> | undefined
-      if (isOAuthProvider(oauthProvider)) {
-        req.companion.getProviderCredentials = getCredentialsResolver(
-          providerName,
-          req.companion.options,
-          req,
-        )
-        const resolvedGrantConfig = grantConfig[oauthProvider] ?? {}
-        providerGrantConfig = resolvedGrantConfig
-        req.companion.providerGrantConfig = resolvedGrantConfig
-      }
-
-      const providerArgs = {
-        secret,
-        providerName,
-        allowLocalUrls: !!allowLocalUrls,
-        ...(providerGrantConfig ? { providerGrantConfig } : {}),
-      }
-      req.companion.provider = new ProviderClass(providerArgs)
-      req.companion.providerName = providerName
-      req.companion.providerClass = ProviderClass
-    } else {
+    if (
+      !ProviderClass ||
+      !(
+        req.companion.options.server.host &&
+        req.companion.options.server.protocol
+      )
+    ) {
       logger.warn(
         'invalid provider options detected. Provider will not be loaded',
         'provider.middleware.invalid',
         req.id,
       )
+      return
     }
+
+    const { allowLocalUrls, providerOptions } = req.companion.options
+    const { oauthProvider } = ProviderClass
+
+    let providerGrantConfig: ProviderGrantConfig | undefined
+    if (isOAuthProvider(oauthProvider)) {
+      req.companion.getProviderCredentials = getCredentialsResolver(
+        providerName,
+        req.companion.options,
+        req,
+      )
+
+      providerGrantConfig = grantConfig[oauthProvider]
+      req.companion.providerGrantConfig = providerGrantConfig ?? {}
+    }
+
+    const secret = providerOptions[providerName]?.secret
+
+    const providerArgs = {
+      secret,
+      providerName,
+      allowLocalUrls,
+      ...(providerGrantConfig && { providerGrantConfig }),
+    }
+    req.companion.provider = new ProviderClass(providerArgs)
+    req.companion.providerName = providerName
+    req.companion.providerClass = ProviderClass
     next()
   }
 
@@ -114,8 +93,8 @@ export function getProviderMiddleware(
 /**
  * Return the default provider implementations.
  */
-export function getDefaultProviders(): ProviderRegistry {
-  const providers = {
+export function getDefaultProviders() {
+  return {
     dropbox,
     box,
     drive: Drive,
@@ -125,9 +104,7 @@ export function getDefaultProviders(): ProviderRegistry {
     instagram,
     unsplash,
     webdav,
-  } satisfies ProviderRegistry
-
-  return { ...providers }
+  }
 }
 
 /**
@@ -142,13 +119,10 @@ export function addCustomProviders(
     string,
     { module: ProviderCtor; config: Record<string, unknown> }
   >,
-  providers: ProviderRegistry,
+  providers: Record<string, ProviderCtor>,
   grantConfig: GrantConfig,
 ): void {
-  Object.keys(customProviders).forEach((providerName) => {
-    const customProvider = customProviders[providerName]
-    if (!customProvider) return
-
+  Object.entries(customProviders).forEach(([providerName, customProvider]) => {
     providers[providerName] = customProvider.module
     const { oauthProvider } = customProvider.module
 
@@ -165,12 +139,6 @@ export function addCustomProviders(
   })
 }
 
-/**
- *
- * @param companionOptions
- * @param grantConfig
- * @param getOauthProvider
- */
 export function addProviderOptions(
   companionOptions: {
     server?: {
@@ -186,7 +154,7 @@ export function addProviderOptions(
         key?: string | undefined
         secret?: string | undefined
         credentialsURL?: string | undefined
-      } & Record<string, unknown>
+      }
     >
   },
   grantConfig: GrantConfig,
@@ -196,22 +164,19 @@ export function addProviderOptions(
   const providerOptions = companionOptions.providerOptions ?? {}
   const host = server.host
   const protocol = server.protocol
-  if (
-    typeof host !== 'string' ||
-    host.length === 0 ||
-    typeof protocol !== 'string' ||
-    protocol.length === 0
-  ) {
+  if (!(host && protocol)) {
     logger.warn(
-      'invalid provider options detected. Providers will not be loaded',
+      'invalid provider options detected. Provider will not be loaded',
       'provider.options.invalid',
     )
     return
   }
 
-  const defaults: NonNullable<GrantConfig['defaults']> = { host, protocol }
-  if (typeof server.path === 'string') defaults.path = server.path
-  grantConfig.defaults = defaults
+  grantConfig.defaults = {
+    host,
+    protocol,
+    ...(server.path != null && { path: server.path }),
+  }
 
   const { oauthDomain } = server
   const keys = Object.keys(providerOptions).filter((key) => key !== 'server')
@@ -234,7 +199,10 @@ export function addProviderOptions(
         ]
       }
 
-      const provider = getDefaultProviders()[providerName]
+      const provider =
+        getDefaultProviders()[
+          providerName as keyof ReturnType<typeof getDefaultProviders>
+        ]
       if (provider) {
         Object.assign(grantProviderConfig, provider.getExtraGrantConfig())
       }

@@ -2,22 +2,29 @@ import type { S3Client } from '@aws-sdk/client-s3'
 import type { CompanionRuntimeOptions } from './companion-options.ts'
 import type Provider from '../server/provider/Provider.ts'
 
+export type BuildUrl = (
+  subPath: string,
+  isExternal: boolean,
+  excludeHost?: boolean,
+) => string
+
+export interface ProviderGrantConfig {
+  dynamic?: string[]
+  redirect_uri?: string
+}
+
 export type CompanionContext = {
   options: CompanionRuntimeOptions
   provider?: Provider
   providerName?: string
   providerClass?: typeof Provider
-  providerGrantConfig?: Record<string, unknown>
+  providerGrantConfig?: ProviderGrantConfig
   providerUserSession?: unknown
-  authToken?: unknown
-  buildURL?: (
-    subPath: string,
-    isExternal: boolean,
-    excludeHost?: boolean,
-  ) => string
+  authToken?: string | undefined
+  buildURL?: BuildUrl
   s3Client?: S3Client
   s3ClientCreatePresignedPost?: S3Client
-  getProviderCredentials?: unknown
+  getProviderCredentials?: () => Promise<Record<string, unknown> | null> // todo type
 }
 
 declare global {
@@ -27,7 +34,7 @@ declare global {
       companion: CompanionContext
       id?: string
       cookies?: Record<string, string>
-      session?: unknown
+      session?: unknown // todo type
     }
   }
 }
