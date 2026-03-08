@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw'
+import { HttpResponse, http } from 'msw'
 
 /**
  * MSW handlers that mock the tus resumable upload protocol.
