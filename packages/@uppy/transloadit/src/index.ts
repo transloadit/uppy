@@ -239,6 +239,10 @@ export default class Transloadit<
 > extends BasePlugin<Opts<M, B>, M, B, TransloaditState> {
   static VERSION = packageJson.version
 
+  static COMPANION_URL = COMPANION_URL
+
+  static COMPANION_ALLOWED_HOSTS = COMPANION_ALLOWED_HOSTS
+
   #rateLimitedQueue: RateLimitedQueue
 
   client: Client<M, B>
