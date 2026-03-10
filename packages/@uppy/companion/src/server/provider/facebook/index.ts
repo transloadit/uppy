@@ -4,7 +4,11 @@ import got from 'got'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { HttpError, prepareStream } from '../../helpers/utils.ts'
 import logger from '../../logger.ts'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
+import Provider, {
+  type CompanionLike,
+  type ProviderListResponse,
+  type Query,
+} from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import { adaptData, type FacebookListResponse, sortImages } from './adapter.ts'
 
@@ -121,10 +125,12 @@ export default class Facebook extends Provider<FacebookUserSession> {
     directory,
     providerUserSession: { accessToken: token },
     query,
+    companion,
   }: {
     directory?: string | undefined
     providerUserSession: FacebookUserSession
     query?: Query | undefined
+    companion: CompanionLike
   }): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
       const qs: Record<string, string> = {
@@ -143,12 +149,13 @@ export default class Facebook extends Provider<FacebookUserSession> {
         qs['fields'] = 'icon,images,name,width,height,created_time'
       }
 
-      if (this.secret == null) {
+      const { secret } = (await companion.getProviderCredentials?.())!
+      if (secret == null) {
         throw new Error('Facebook provider secret is not configured')
       }
 
       const responses = await runRequestBatch({
-        secret: this.secret,
+        secret,
         token,
         requests: [
           {
@@ -175,19 +182,23 @@ export default class Facebook extends Provider<FacebookUserSession> {
   }
 
   override async download({
+    companion,
     id,
     providerUserSession: { accessToken: token },
   }: {
+    companion: CompanionLike
     id: string
     providerUserSession: FacebookUserSession
   }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.#withErrorHandling(
       'provider.facebook.download.error',
       async () => {
-        if (this.secret == null) {
+        const { secret } = (await companion.getProviderCredentials?.())!
+
+        if (secret == null) {
           throw new Error('Facebook provider secret is not configured')
         }
-        const url = await getMediaUrl({ secret: this.secret, token, id })
+        const url = await getMediaUrl({ secret, token, id })
         const stream = got.stream.get(url, { responseType: 'json' })
         const { size } = await prepareStream(stream)
         return { stream, size }
@@ -208,19 +219,22 @@ export default class Facebook extends Provider<FacebookUserSession> {
   }
 
   override async logout({
+    companion,
     providerUserSession: { accessToken: token },
   }: {
+    companion: CompanionLike
     providerUserSession: FacebookUserSession
   }): Promise<{ revoked: true }> {
     return this.#withErrorHandling(
       'provider.facebook.logout.error',
       async () => {
-        if (this.secret == null) {
+        const { secret } = (await companion.getProviderCredentials?.())!
+        if (secret == null) {
           throw new Error('Facebook provider secret is not configured')
         }
 
         await runRequestBatch({
-          secret: this.secret,
+          secret,
           token,
           requests: [{ method: 'DELETE', relative_url: 'me/permissions' }],
         })

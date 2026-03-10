@@ -47,22 +47,17 @@ export default class Provider<US = unknown> {
 
   providerGrantConfig: ProviderGrantConfig | undefined
 
-  secret: string | undefined
-
   constructor({
     allowLocalUrls,
     providerGrantConfig,
-    secret,
   }: {
     allowLocalUrls: boolean
     providerGrantConfig?: ProviderGrantConfig
-    secret: string | undefined
   }) {
     // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
     this.allowLocalUrls = allowLocalUrls
     this.providerGrantConfig = providerGrantConfig
-    this.secret = secret
     // biome-ignore lint/correctness/noConstructorReturn: ...
     return this
   }
@@ -108,6 +103,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async download(options: {
+    companion: CompanionLike
     id: string
     providerUserSession: US
     query: Query

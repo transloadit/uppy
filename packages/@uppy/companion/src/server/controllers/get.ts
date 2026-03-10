@@ -20,7 +20,12 @@ export default async function get(req: Request, res: Response): Promise<void> {
     provider.size({ id, providerUserSession, query: req.query })
 
   const download = () =>
-    provider.download({ id, providerUserSession, query: req.query })
+    provider.download({
+      id,
+      providerUserSession,
+      query: req.query,
+      companion: req.companion,
+    })
 
   try {
     await startDownUpload({ req, res, getSize, download })
