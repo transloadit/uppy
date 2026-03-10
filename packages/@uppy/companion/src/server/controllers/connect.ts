@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
+import { isRecord } from '../helpers/type-guards.ts'
 
 /**
  * Derived from `cors` npm package.
@@ -32,10 +32,6 @@ function encodeStateAndRedirect(
   stateObj: oAuthState.OAuthState,
 ): void {
   const { secret } = req.companion.options
-  if (!isEncryptionSecret(secret)) {
-    res.sendStatus(500)
-    return
-  }
   const state = oAuthState.encodeState(stateObj, secret)
   const { providerClass, providerGrantConfig } = req.companion
   if (!providerClass || !req.companion.buildURL) {

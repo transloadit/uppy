@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.ts'
-import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
 import logger from '../logger.ts'
 import { respondWithError } from '../provider/error.ts'
 
@@ -17,11 +16,7 @@ export default async function refreshToken(
     res.sendStatus(400)
     return
   }
-  const secret = req.companion.options.secret
-  if (!isEncryptionSecret(secret)) {
-    res.sendStatus(500)
-    return
-  }
+  const { secret } = req.companion.options
 
   const providerConfig = req.companion.options.providerOptions?.[providerName]
   const clientId = providerConfig?.key
@@ -29,17 +24,10 @@ export default async function refreshToken(
   const redirectUri = req.companion.providerGrantConfig?.redirect_uri
 
   const { provider, providerClass } = req.companion
-  const providerUserSession = isRecord(req.companion.providerUserSession)
-    ? req.companion.providerUserSession
-    : null
+  const { providerUserSession } = req.companion
 
   // not all providers have refresh tokens
-  const refreshToken =
-    providerUserSession &&
-    typeof providerUserSession['refreshToken'] === 'string'
-      ? providerUserSession['refreshToken']
-      : undefined
-  if (!refreshToken) {
+  if (!providerUserSession?.refreshToken) {
     logger.warn('Tried to refresh token without having a token')
     res.sendStatus(401)
     return
@@ -54,7 +42,7 @@ export default async function refreshToken(
       redirectUri,
       clientId,
       clientSecret,
-      refreshToken,
+      refreshToken: providerUserSession.refreshToken,
     })
 
     req.companion.providerUserSession = {

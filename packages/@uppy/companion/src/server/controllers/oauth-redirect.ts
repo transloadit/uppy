@@ -2,15 +2,10 @@ import qs from 'node:querystring'
 import { URL } from 'node:url'
 import type { Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import { isEncryptionSecret } from '../helpers/type-guards.ts'
 import { hasMatch } from '../helpers/utils.ts'
 
 export default function oauthRedirect(req: Request, res: Response): void {
   const secret = req.companion.options.secret
-  if (!isEncryptionSecret(secret)) {
-    res.sendStatus(500)
-    return
-  }
   const queryParams: Record<string, string | readonly string[]> = {}
   for (const [key, value] of Object.entries(req.query)) {
     if (typeof value === 'string') {

@@ -9,7 +9,7 @@ import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import * as companion from '../companion.ts'
-import type { StandaloneCompanionOptions } from '../schemas/index.ts'
+import type { CompanionInitOptions } from '../schemas/index.ts'
 import { isRecord, toError } from '../server/helpers/type-guards.ts'
 import logger from '../server/logger.ts'
 import * as redis from '../server/redis.ts'
@@ -19,9 +19,7 @@ import {
   getCompanionOptions,
 } from './helper.ts'
 
-export default function server(
-  inputCompanionOptions?: StandaloneCompanionOptions,
-) {
+export default function server(inputCompanionOptions?: CompanionInitOptions) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -35,7 +33,7 @@ export default function server(
 
   const router = express.Router()
 
-  const serverPath = companionOptions.server?.path
+  const serverPath = companionOptions.server.path
   if (serverPath != null) {
     app.use(serverPath, router)
   } else {

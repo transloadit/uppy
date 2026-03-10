@@ -1,6 +1,5 @@
 import express from 'express'
 import session from 'express-session'
-import { isRecord } from '../src/server/helpers/type-guards.ts'
 import { expects as zoomExpects } from './fixtures/zoom.ts'
 
 const { localZoomKey, localZoomSecret, localZoomVerificationToken } =
@@ -108,7 +107,7 @@ export const getServer = async (
     session({ secret: 'grant', resave: true, saveUninitialized: true }),
   )
   authServer.all('*/callback', (req, res, next) => {
-    if (isRecord(req.session)) {
+    if (req.session) {
       req.session['grant'] = {
         response: { access_token: grantToken },
       }
@@ -118,7 +117,7 @@ export const getServer = async (
   authServer.all(['*/send-token', '*/redirect'], (req, res, next) => {
     const state =
       typeof req.query['state'] === 'string' ? req.query['state'] : null
-    if (isRecord(req.session)) {
+    if (req.session) {
       req.session['grant'] = {
         dynamic: { state: state ?? 'non-empty-value' },
       }

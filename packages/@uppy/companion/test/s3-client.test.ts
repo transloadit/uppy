@@ -1,7 +1,6 @@
 import { afterEach, describe, expect, test } from 'vitest'
 import { defaultOptions } from '../src/config/companion.ts'
 import s3Client from '../src/server/s3-client.ts'
-import type { CompanionRuntimeOptions } from '../src/types/companion-options.ts'
 
 const originalAwsRegion = process.env['AWS_REGION']
 
@@ -26,7 +25,7 @@ describe('s3-client', () => {
         key: 'test-key',
         secret: 'test-secret',
       },
-    } satisfies CompanionRuntimeOptions
+    }
 
     expect(s3Client(options)).not.toBeNull()
   })
@@ -44,7 +43,7 @@ describe('s3-client', () => {
           region: async () => 'us-east-1',
         },
       },
-    } satisfies CompanionRuntimeOptions
+    }
 
     expect(s3Client(options)).not.toBeNull()
   })

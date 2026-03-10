@@ -1,9 +1,8 @@
-import assert from 'node:assert'
 import fs from 'node:fs'
 import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
+import z from 'zod'
 import type { CompanionInitOptions } from '../schemas/companion.ts'
-import { isRecord } from '../server/helpers/type-guards.ts'
 import { defaultGetKey } from '../server/helpers/utils.ts'
 import logger from '../server/logger.ts'
 
@@ -32,11 +31,6 @@ export const defaultOptions = {
   metrics: true,
 }
 
-function asRecord(value: unknown): Record<string, unknown> | null {
-  if (!isRecord(value)) return null
-  return value
-}
-
 /**
  * Returns secrets that should be masked in log messages.
  */
@@ -44,33 +38,51 @@ export function getMaskableSecrets(
   companionOptions: CompanionInitOptions,
 ): string[] {
   const secrets: string[] = []
-  const root = asRecord(companionOptions) ?? {}
-  const providerOptions = asRecord(root['providerOptions']) ?? {}
-  const customProviders = asRecord(root['customProviders'])
-  const s3 = asRecord(root['s3'])
+  const { customProviders, providerOptions = {}, s3 } = companionOptions ?? {}
 
   Object.keys(providerOptions).forEach((provider) => {
-    const entry = asRecord(providerOptions[provider])
-    const secret = entry?.['secret']
-    if (typeof secret === 'string') secrets.push(secret)
+    const secret = providerOptions[provider]?.secret
+    if (secret != null) secrets.push(secret)
   })
 
   if (customProviders) {
     Object.keys(customProviders).forEach((provider) => {
-      const entry = asRecord(customProviders[provider])
-      const config = asRecord(entry?.['config'])
-      const secret = config?.['secret']
-      if (typeof secret === 'string') secrets.push(secret)
+      const secret = customProviders[provider]?.config?.secret
+      if (secret != null) secrets.push(secret)
     })
   }
 
   const s3Secret = s3?.['secret']
-  if (typeof s3Secret === 'string') {
+  if (s3Secret != null) {
     secrets.push(s3Secret)
   }
 
   return secrets
 }
+
+const validateConfigSchema = z.object({
+  filePath: z.string().nonempty(),
+  secret: z.string().nonempty(),
+  server: z.object({
+    host: z.string().nonempty(),
+  }),
+  periodicPingUrls: z
+    .string()
+    .refine(
+      (url) =>
+        validator.isURL(url, {
+          protocols: ['http', 'https'],
+          require_protocol: true,
+          require_tld: false,
+        }),
+      {
+        message: 'periodicPingUrls',
+      },
+    )
+    .array()
+    .optional(),
+  maxFilenameLength: z.number().positive().optional(),
+})
 
 /**
  * Validates that the mandatory Companion options are set.
@@ -78,35 +90,8 @@ export function getMaskableSecrets(
  * If invalid, throws with an error explaining what needs to be fixed.
  */
 export function validateConfig(companionOptions: CompanionInitOptions): void {
-  const mandatoryOptions = ['secret', 'filePath', 'server.host']
-  const unspecified: string[] = []
-
-  function getNested(obj: unknown, parts: string[]): unknown {
-    let cur: unknown = obj
-    for (const part of parts) {
-      if (isRecord(cur) && Object.hasOwn(cur, part)) {
-        cur = cur[part]
-        continue
-      }
-      return undefined
-    }
-    return cur
-  }
-
-  mandatoryOptions.forEach((i) => {
-    const value = getNested(companionOptions, i.split('.'))
-
-    if (!value) unspecified.push(`"${i}"`)
-  })
-
-  if (unspecified.length) {
-    const messagePrefix =
-      'Please specify the following options to use companion:'
-    throw new Error(`${messagePrefix}\n${unspecified.join(',\n')}`)
-  }
-
-  const filePath = getNested(companionOptions, ['filePath'])
-  assert(typeof filePath === 'string', 'filePath must be a string')
+  const parsedConfig = validateConfigSchema.parse(companionOptions)
+  const { filePath } = parsedConfig
 
   // validate that specified filePath is writeable/readable.
   try {
@@ -117,21 +102,17 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
     )
   }
 
-  const providerOptions = getNested(companionOptions, ['providerOptions'])
-  const periodicPingUrls = getNested(companionOptions, ['periodicPingUrls'])
-  const server = getNested(companionOptions, ['server'])
+  const { providerOptions, server, uploadUrls } = companionOptions
 
-  if (server && typeof server === 'object' && 'path' in server) {
-    // see https://github.com/transloadit/uppy/issues/4271
-    // todo fix the code so we can allow `/`
-    if (server.path === '/') {
-      throw new Error(
-        "If you want to use '/' as server.path, leave the 'path' variable unset",
-      )
-    }
+  // see https://github.com/transloadit/uppy/issues/4271
+  // todo fix the code so we can allow `/`
+  if (server.path === '/') {
+    throw new Error(
+      "If you want to use '/' as server.path, leave the 'path' variable unset",
+    )
   }
 
-  if (providerOptions && typeof providerOptions === 'object') {
+  if (providerOptions) {
     const deprecatedOptions: Record<string, string> = {
       microsoft: 'providerOptions.onedrive',
       google: 'providerOptions.drive',
@@ -146,12 +127,7 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
     })
   }
 
-  const uploadUrls = getNested(companionOptions, ['uploadUrls'])
-
-  if (
-    uploadUrls == null ||
-    (Array.isArray(uploadUrls) && uploadUrls.length === 0)
-  ) {
+  if (uploadUrls == null || uploadUrls.length === 0) {
     if (process.env['NODE_ENV'] === 'production') {
       throw new Error('uploadUrls is required')
     }
@@ -161,7 +137,7 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
     )
   }
 
-  const corsOrigins = getNested(companionOptions, ['corsOrigins'])
+  const { corsOrigins } = companionOptions
   if (corsOrigins == null) {
     throw new TypeError(
       'Option corsOrigins is required. To disable security, pass true',
@@ -172,27 +148,5 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
     throw new TypeError(
       'Option corsOrigins cannot be "*". To disable security, pass true',
     )
-  }
-
-  if (
-    periodicPingUrls != null &&
-    (!Array.isArray(periodicPingUrls) ||
-      periodicPingUrls.some(
-        (url2) =>
-          !validator.isURL(url2, {
-            protocols: ['http', 'https'],
-            require_protocol: true,
-            require_tld: false,
-          }),
-      ))
-  ) {
-    throw new TypeError('Invalid periodicPingUrls')
-  }
-
-  const maxFilenameLengthRaw = getNested(companionOptions, [
-    'maxFilenameLength',
-  ])
-  if (maxFilenameLengthRaw !== undefined && Number(maxFilenameLengthRaw) <= 0) {
-    throw new TypeError('Option maxFilenameLength must be greater than 0')
   }
 }

@@ -4,8 +4,8 @@ import promBundle from 'express-prom-bundle'
 
 import packageJson from '../../package.json' with { type: 'json' }
 import type { CompanionRuntimeOptions } from '../types/companion-options.ts'
+import type { ProviderUserSession } from '../types/express.js'
 import * as tokenService from './helpers/jwt.ts'
-import { isEncryptionSecret } from './helpers/type-guards.ts'
 import { getURLBuilder } from './helpers/utils.ts'
 import * as logger from './logger.ts'
 import { isOAuthProvider } from './provider/Provider.ts'
@@ -95,23 +95,16 @@ export const verifyToken: RequestHandler = (req, res, next) => {
       res.sendStatus(401)
       return
     }
-    const secret = req.companion.options.secret
-    if (!isEncryptionSecret(secret)) {
-      logger.info('cannot auth token', 'token.verify.secret.unset', req.id)
-      res.sendStatus(500)
-      return
-    }
+    const { secret } = req.companion.options
     const providerName = req.params['providerName']
     if (providerName == null || providerName.length === 0) {
       res.sendStatus(400)
       return
     }
     try {
-      const payload = tokenService.verifyEncryptedAuthToken(
-        token,
-        secret,
-        providerName,
-      )
+      const payload = tokenService.verifyEncryptedAuthToken<
+        Record<string, ProviderUserSession>
+      >(token, secret, providerName)
       req.companion.providerUserSession = payload[providerName]
     } catch (err) {
       logger.error(
@@ -157,18 +150,12 @@ export const gentleVerifyToken: RequestHandler = (req, res, next) => {
     next()
     return
   }
-  const secret = req.companion.options.secret
-  if (!isEncryptionSecret(secret)) {
-    next()
-    return
-  }
+  const { secret } = req.companion.options
   if (req.companion.authToken != null) {
     try {
-      const payload = tokenService.verifyEncryptedAuthToken(
-        req.companion.authToken,
-        secret,
-        providerName,
-      )
+      const payload = tokenService.verifyEncryptedAuthToken<
+        Record<string, ProviderUserSession>
+      >(req.companion.authToken, secret, providerName)
       req.companion.providerUserSession = payload[providerName]
     } catch (err) {
       logger.error(

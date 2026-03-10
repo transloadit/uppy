@@ -8,7 +8,6 @@ import * as oAuthState from '../src/server/helpers/oauth-state.ts'
 import { gentleVerifyToken, verifyToken } from '../src/server/middlewares.ts'
 import { getCredentialsOverrideMiddleware } from '../src/server/provider/credentials.ts'
 import Provider from '../src/server/provider/Provider.ts'
-import type { CompanionRuntimeOptions } from '../src/types/companion-options.ts'
 
 vi.mock('express-prom-bundle')
 
@@ -35,6 +34,9 @@ function createOAuthApp(options: OAuthReqOptions) {
   const app = express()
   const companionOptions = {
     ...defaultOptions,
+    secret: '',
+    filePath: '',
+    server: { ...defaultOptions.server, host: '' },
   }
   Reflect.set(companionOptions, 'secret', options.secret)
   app.use((req, _res, next) => {
@@ -138,12 +140,15 @@ describe('buffer secret compatibility', () => {
       const app = express()
       const companionOptions = {
         ...defaultOptions,
+        secret: '',
+        filePath: '',
+        server: { ...defaultOptions.server, host: '' },
         providerOptions: {
           drive: {
             credentialsURL,
           },
         },
-      } satisfies CompanionRuntimeOptions
+      }
       Reflect.set(companionOptions, 'secret', secret)
       Reflect.set(companionOptions, 'preAuthSecret', preAuthSecret)
 

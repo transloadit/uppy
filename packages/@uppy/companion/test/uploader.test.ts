@@ -19,7 +19,6 @@ import Emitter from '../src/server/emitter/index.ts'
 import { isRecord } from '../src/server/helpers/type-guards.ts'
 import Uploader, { ValidationError } from '../src/server/Uploader.ts'
 import standalone from '../src/standalone/index.ts'
-import type { CompanionRuntimeOptions } from '../src/types/companion-options.ts'
 import * as socketClient from './mocksocket.ts'
 
 vi.mock('tus-js-client')
@@ -53,7 +52,12 @@ process.env['COMPANION_DATADIR'] = './test/output'
 process.env['COMPANION_DOMAIN'] = 'localhost:3020'
 process.env['COMPANION_CLIENT_ORIGINS'] = 'true'
 const { companionOptions } = standalone()
-const runtimeOptions = { ...defaultOptions } satisfies CompanionRuntimeOptions
+const runtimeOptions = {
+  ...defaultOptions,
+  secret: '',
+  filePath: '',
+  server: { ...defaultOptions.server, host: '' },
+}
 const pathPrefix =
   companionOptions.filePath != null
     ? companionOptions.filePath
@@ -351,11 +355,10 @@ describe('uploader', () => {
     })
 
     const responseHeaders =
-      isRecord(ret) &&
-      isRecord(ret['extraData']) &&
-      isRecord(ret['extraData']['response']) &&
-      isRecord(ret['extraData']['response']['headers'])
-        ? ret['extraData']['response']['headers']
+      ret?.extraData &&
+      isRecord(ret.extraData['response']) &&
+      isRecord(ret.extraData['response']['headers'])
+        ? ret.extraData['response']['headers']
         : null
     expect(responseHeaders?.['header-a']).toBeUndefined() // headers sent to destination, not received back
   })

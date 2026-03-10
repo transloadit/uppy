@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import type { CompanionSession } from '../../types/express.js'
 import { isRecord } from './type-guards.ts'
 import { decrypt, encrypt } from './utils.ts'
 
@@ -51,13 +52,7 @@ export const getFromState = <T extends keyof OAuthState>(
 }
 
 export const getGrantDynamicFromRequest = (req: {
-  session?: unknown
+  session?: CompanionSession
 }): Record<string, unknown> => {
-  const { session } = req
-  if (!isRecord(session)) return {}
-  const grant = session['grant']
-  if (!isRecord(grant)) return {}
-  const dynamic = grant['dynamic']
-  if (!isRecord(dynamic)) return {}
-  return dynamic
+  return req.session?.grant?.dynamic ?? {}
 }

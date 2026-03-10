@@ -14,18 +14,46 @@ export interface ProviderGrantConfig {
   redirect_uri?: string | undefined
 }
 
+export interface ProviderUserSession {
+  accessToken?: string
+  refreshToken?: string | undefined
+  [key: string]: unknown
+}
+
 export type CompanionContext = {
   options: CompanionRuntimeOptions
   provider?: Provider
   providerName?: string
   providerClass?: typeof Provider
   providerGrantConfig?: ProviderGrantConfig
-  providerUserSession?: unknown
+  providerUserSession?: ProviderUserSession | undefined
   authToken?: string | undefined
   buildURL?: BuildUrl
   s3Client?: S3Client
   s3ClientCreatePresignedPost?: S3Client
   getProviderCredentials?: () => Promise<CredentialsFetchResponse | null>
+}
+
+export interface CompanionSession {
+  grant?: {
+    state?: string | null
+    dynamic?: { state?: string } | null
+    response?: {
+      access_token?: string
+      refresh_token?: string
+    }
+  }
+}
+
+export interface CompanionExpressLocals {
+  grant?: {
+    dynamic?: {
+      key?: string
+      secret?: string
+      origins?: string[]
+      redirect_uri?: string
+    } | null
+  }
 }
 
 declare global {
@@ -35,7 +63,7 @@ declare global {
       companion: CompanionContext
       id?: string
       cookies?: Record<string, string>
-      session?: unknown // todo type
+      session?: CompanionSession
     }
   }
 }

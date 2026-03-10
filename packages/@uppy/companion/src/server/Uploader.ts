@@ -525,7 +525,7 @@ export default class Uploader {
     }
 
     const companionOptions = req.companion.options
-    const filePath = companionOptions.filePath
+    const { filePath } = companionOptions
     const chunkSizeValue = companionOptions['chunkSize']
     const chunkSize =
       typeof chunkSizeValue === 'number' ? chunkSizeValue : undefined
@@ -550,7 +550,7 @@ export default class Uploader {
       // Info coming from companion server configuration:
       ...(size != null && { size }),
       companionOptions,
-      pathPrefix: `${filePath ?? ''}`,
+      pathPrefix: filePath,
       ...(storage != null && { storage }),
       s3: req.companion.s3Client
         ? {

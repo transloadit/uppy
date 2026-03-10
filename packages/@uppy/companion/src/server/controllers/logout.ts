@@ -1,6 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.ts'
-import { isRecord } from '../helpers/type-guards.ts'
 import { respondWithError } from '../provider/error.ts'
 
 export default async function logout(
@@ -9,9 +8,7 @@ export default async function logout(
   next: NextFunction,
 ): Promise<void> {
   const cleanSession = (): void => {
-    const session = isRecord(req.session) ? req.session : null
-    const grant =
-      session && isRecord(session['grant']) ? session['grant'] : null
+    const grant = req.session?.grant
     if (grant) {
       grant['state'] = null
       grant['dynamic'] = null

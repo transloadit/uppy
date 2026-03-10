@@ -4,10 +4,7 @@ import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
 import z from 'zod'
 import packageJson from '../../package.json' with { type: 'json' }
-import type {
-  CompanionInitOptions,
-  StandaloneCompanionOptions,
-} from '../schemas/index.ts'
+import type { CompanionInitOptions } from '../schemas/index.ts'
 import * as utils from '../server/helpers/utils.ts'
 import logger from '../server/logger.ts'
 
@@ -84,10 +81,48 @@ const aclSchema = z
   ])
   .optional()
 
+type StandaloneCompanionOptions = Pick<
+  CompanionInitOptions,
+  | 'providerOptions'
+  | 'preAuthSecret'
+  | 'redisUrl'
+  | 'redisOptions'
+  | 'redisPubSubScope'
+  | 'metrics'
+  | 'loggerProcessName'
+  | 'uploadUrls'
+  | 's3'
+  | 'enableUrlEndpoint'
+  | 'enableGooglePickerEndpoint'
+  | 'periodicPingUrls'
+  | 'periodicPingInterval'
+  | 'periodicPingStaticPayload'
+  | 'periodicPingCount'
+  | 'sendSelfEndpoint'
+  | 'allowLocalUrls'
+  | 'cookieDomain'
+  | 'streamingUpload'
+  | 'tusDeferredUploadLength'
+  | 'maxFileSize'
+  | 'maxFilenameLength'
+  | 'chunkSize'
+  | 'clientSocketConnectTimeout'
+  | 'corsOrigins'
+  | 'testDynamicOauthCredentials'
+  | 'testDynamicOauthCredentialsSecret'
+  | 'uploadHeaders'
+> & {
+  server: Omit<CompanionInitOptions['server'], 'host'> & {
+    host: CompanionInitOptions['server']['host'] | undefined
+  }
+  secret: CompanionInitOptions['secret'] | undefined
+  filePath: CompanionInitOptions['filePath'] | undefined
+}
+
 /**
  * Loads the config from environment variables.
  */
-const getConfigFromEnv = (): CompanionInitOptions => {
+const getConfigFromEnv = (): StandaloneCompanionOptions => {
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
     process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
@@ -246,7 +281,7 @@ const getConfigPath = (): string | undefined => {
 }
 
 // todo use zod schema
-const getConfigFromFile = (): CompanionInitOptions => {
+const getConfigFromFile = () => {
   const path = getConfigPath()
   if (!path) return {}
 
@@ -255,8 +290,8 @@ const getConfigFromFile = (): CompanionInitOptions => {
 }
 
 export const getCompanionOptions = (
-  options: StandaloneCompanionOptions = {},
-): StandaloneCompanionOptions => {
+  options?: CompanionInitOptions | undefined,
+): CompanionInitOptions => {
   return merge({}, getConfigFromEnv(), getConfigFromFile(), options)
   // This schema is intentionally tolerant and should not change runtime behavior.
 }

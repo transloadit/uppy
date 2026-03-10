@@ -6,15 +6,7 @@ import type { RedisOptions } from 'ioredis'
 import type Provider from '../server/provider/Provider.ts'
 
 // todo implement zod schema validation and remove manual typeof validation around in the code, also in providers/adapters
-
-export interface ServerConfig {
-  protocol?: string | undefined
-  host?: string | undefined
-  path?: string | undefined
-  implicitPath?: string | undefined
-  oauthDomain?: string | undefined
-  validHosts?: string[] | undefined
-}
+// see `validateConfig`
 
 export interface ProviderOptions {
   key?: string | undefined
@@ -38,11 +30,22 @@ export type CredentialsFetchResponse = Pick<
   origins?: string[]
 }
 
-export type CompanionInitOptions = {
-  secret?: string | undefined
+export interface CompanionInitOptions {
+  // required:
+  secret: string
+  filePath: string
+  server: {
+    host: string
+    protocol?: string | undefined
+    path?: string | undefined
+    implicitPath?: string | undefined
+    oauthDomain?: string | undefined
+    validHosts?: string[] | undefined
+  }
+
+  // optional:
   preAuthSecret?: string | Buffer | undefined
   loggerProcessName?: string | undefined
-  server?: ServerConfig | undefined
   providerOptions?: Record<string, ProviderOptions> | undefined
   customProviders?: Record<string, CustomProvider> | undefined
   redisUrl?: string | undefined
@@ -52,9 +55,6 @@ export type CompanionInitOptions = {
   enableUrlEndpoint?: boolean | undefined
   enableGooglePickerEndpoint?: boolean | undefined
   metrics?: boolean | undefined
-
-  // Used internally by Companion:
-  filePath?: string | undefined
   periodicPingUrls?: string[] | undefined
   periodicPingInterval?: number | undefined
   periodicPingCount?: number | undefined

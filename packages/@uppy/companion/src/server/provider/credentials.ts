@@ -3,13 +3,10 @@ import type { NextFunction, Request, Response } from 'express'
 import got from 'got'
 import type { CredentialsFetchResponse } from '../../schemas/companion.ts'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
+import type { CompanionExpressLocals } from '../../types/express.js'
 import * as tokenService from '../helpers/jwt.ts'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import {
-  isEncryptionSecret,
-  isRecord,
-  toError,
-} from '../helpers/type-guards.ts'
+import { isRecord, toError } from '../helpers/type-guards.ts'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import logger from '../logger.ts'
 import type Provider from './Provider.ts'
@@ -96,7 +93,11 @@ export const getCredentialsOverrideMiddleware = (
   providers: Record<string, typeof Provider>,
   companionOptions: CompanionRuntimeOptions,
 ) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: Request,
+    res: Response<unknown, CompanionExpressLocals>,
+    next: NextFunction,
+  ) => {
     try {
       const { oauthProvider, override } = req.params
       if (oauthProvider == null || oauthProvider.length === 0) {
@@ -125,7 +126,7 @@ export const getCredentialsOverrideMiddleware = (
       }
 
       const { secret, preAuthSecret } = companionOptions
-      if (!isEncryptionSecret(secret) || !isEncryptionSecret(preAuthSecret)) {
+      if (preAuthSecret == null) {
         next()
         return
       }
@@ -168,17 +169,11 @@ export const getCredentialsOverrideMiddleware = (
         const decodedState = oAuthState.decodeState(state, secret)
         decodedState['customerDefinedAllowedOrigins'] = origins
         const newState = oAuthState.encodeState(decodedState, secret)
-        if (isRecord(req.session)) {
-          const prevGrant = isRecord(req.session['grant'])
-            ? req.session['grant']
-            : {}
-          const prevDynamic = isRecord(prevGrant['dynamic'])
-            ? prevGrant['dynamic']
-            : {}
-          req.session['grant'] = {
-            ...prevGrant,
+        if (req.session != null) {
+          req.session.grant = {
+            ...req.session.grant,
             dynamic: {
-              ...prevDynamic,
+              ...req.session.grant?.dynamic,
               state: newState,
             },
           }
@@ -204,7 +199,7 @@ export const getCredentialsOverrideMiddleware = (
         )
         const redirectUri = new URL(fullRedirectPath, gateway).toString()
         logger.info('Using redirect URI from transloadit_gateway', redirectUri)
-        const grant: unknown = res.locals['grant']
+        const grant = res.locals['grant']
         if (isRecord(grant) && isRecord(grant['dynamic'])) {
           grant['dynamic']['redirect_uri'] = redirectUri
         }

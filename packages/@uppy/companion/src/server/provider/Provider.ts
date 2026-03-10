@@ -80,7 +80,6 @@ export default class Provider<US = unknown> {
     providerUserSession: US
     query?: Query
   }): Promise<ProviderListResponse> {
-    // todo type return values and use them in the Uppy client
     throw new Error('method not implemented')
   }
 
@@ -173,11 +172,7 @@ export default class Provider<US = unknown> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth({
-    requestBody,
-  }: {
-    requestBody: unknown
-  }): Promise<unknown> {
+  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<object> {
     throw new Error('method not implemented')
   }
 

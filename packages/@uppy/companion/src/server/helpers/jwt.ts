@@ -68,13 +68,13 @@ export const verifyEncryptedToken = (
   return ret
 }
 
-export const verifyEncryptedAuthToken = (
+export const verifyEncryptedAuthToken = <T extends Record<string, unknown>>(
   token: string,
   secret: EncryptionSecret,
   providerName: string,
-): Record<string, unknown> => {
+): T => {
   const json = verifyEncryptedToken(token, secret)
-  const tokens: unknown = JSON.parse(json)
+  const tokens: T = JSON.parse(json)
   if (!isRecord(tokens) || !Object.hasOwn(tokens, providerName))
     throw new Error(`Missing token payload for provider ${providerName}`)
   return tokens

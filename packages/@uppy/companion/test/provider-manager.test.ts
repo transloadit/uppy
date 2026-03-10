@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import createGrantConfig from '../src/config/grant.ts'
-import { isRecord } from '../src/server/helpers/type-guards.ts'
 import * as providerManager from '../src/server/provider/index.ts'
 import Provider, { type ProviderCtor } from '../src/server/provider/Provider.ts'
 import { getCompanionOptions } from '../src/standalone/helper.ts'
@@ -31,9 +30,9 @@ function getAddProviderOptionsArgs(
 function requireGrantProviderConfig(
   config: GrantConfigType,
   providerName: string,
-): Record<string, unknown> {
+) {
   const providerConfig = config[providerName]
-  if (!isRecord(providerConfig)) {
+  if (!providerConfig) {
     throw new Error(`Expected grantConfig['${providerName}'] to be an object`)
   }
   return providerConfig
@@ -42,10 +41,10 @@ function requireGrantProviderConfig(
 function getGrantProviderField(
   config: GrantConfigType,
   providerName: string,
-  fieldName: string,
+  fieldName: keyof providerManager.GrantProviderConfig,
 ): unknown {
   const providerConfig = config[providerName]
-  return isRecord(providerConfig) ? providerConfig[fieldName] : undefined
+  return providerConfig?.[fieldName]
 }
 
 describe('Test Provider options', () => {
@@ -197,11 +196,8 @@ describe('Test Provider options', () => {
     )
 
     const providerOptions = companionOptions.providerOptions
-    const zoomProviderOptions =
-      providerOptions && isRecord(providerOptions)
-        ? providerOptions['zoom']
-        : null
-    if (!isRecord(zoomProviderOptions)) {
+    const zoomProviderOptions = providerOptions?.['zoom']
+    if (zoomProviderOptions == null) {
       throw new Error(
         'Expected companionOptions.providerOptions["zoom"] to exist',
       )
@@ -211,7 +207,8 @@ describe('Test Provider options', () => {
 
   test('does not add provider options if protocol and host are not set', () => {
     const server = companionOptions.server
-    if (!isRecord(server)) throw new Error('Expected companionOptions.server')
+
+    // @ts-expect-error we are intentionally deleting these fields to test the behavior when they are missing
     delete server['host']
     delete server['protocol']
 
@@ -248,7 +245,7 @@ describe('Test Provider options', () => {
 
   test('sets a main redirect uri, if oauthDomain is set', () => {
     const server = companionOptions.server
-    if (!isRecord(server)) throw new Error('Expected companionOptions.server')
+    if (server == null) throw new Error('Expected companionOptions.server')
     server['oauthDomain'] = 'domain.com'
     providerManager.addProviderOptions(
       getAddProviderOptionsArgs(companionOptions),

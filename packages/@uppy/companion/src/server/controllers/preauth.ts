@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express'
 import * as tokenService from '../helpers/jwt.ts'
-import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
+import { isRecord } from '../helpers/type-guards.ts'
 import logger from '../logger.ts'
 
 export default function preauth(req: Request, res: Response): void {
@@ -27,7 +27,7 @@ export default function preauth(req: Request, res: Response): void {
   }
 
   const { preAuthSecret } = req.companion.options
-  if (!isEncryptionSecret(preAuthSecret)) {
+  if (preAuthSecret == null) {
     res.sendStatus(500)
     return
   }

@@ -1,7 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import { isEncryptionSecret } from '../helpers/type-guards.ts'
 import { isOriginAllowed } from './connect.ts'
 
 const htmlContent = (token: string, origin: string): string => {
@@ -48,11 +47,7 @@ export default function sendToken(
 ): void {
   const companion = req.companion
   const uppyAuthToken = companion.authToken
-  const secret = companion.options.secret
-  if (!isEncryptionSecret(secret)) {
-    next()
-    return
-  }
+  const { secret } = companion.options
 
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
 

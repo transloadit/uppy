@@ -6,7 +6,6 @@ import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
 import * as tokenService from '../helpers/jwt.ts'
 import * as oAuthState from '../helpers/oauth-state.ts'
-import { isEncryptionSecret, isRecord } from '../helpers/type-guards.ts'
 import logger from '../logger.ts'
 
 const closePageHtml = (origin: string | undefined) => `
@@ -35,18 +34,6 @@ export default function callback(
     return
   }
   const secret = req.companion.options.secret
-  if (!isEncryptionSecret(secret)) {
-    res.sendStatus(500)
-    return
-  }
-
-  const session: Record<string, unknown> = isRecord(req.session)
-    ? req.session
-    : {}
-  const grant: Record<string, unknown> = isRecord(session['grant'])
-    ? session['grant']
-    : {}
-  const grantResponse = isRecord(grant['response']) ? grant['response'] : null
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
   const state = grantDynamic['state']
@@ -56,20 +43,8 @@ export default function callback(
       : undefined
   const originString = typeof origin === 'string' ? origin : undefined
 
-  const accessToken =
-    grantResponse && typeof grantResponse['access_token'] === 'string'
-      ? grantResponse['access_token']
-      : undefined
-  const refreshToken =
-    grantResponse && typeof grantResponse['refresh_token'] === 'string'
-      ? grantResponse['refresh_token']
-      : undefined
-
-  const { providerClass } = req.companion
-  if (!providerClass) {
-    res.sendStatus(400)
-    return
-  }
+  const accessToken = req.session?.grant?.response?.access_token
+  const refreshToken = req.session?.grant?.response?.refresh_token
 
   if (!accessToken) {
     logger.debug(
@@ -77,8 +52,14 @@ export default function callback(
       undefined,
       req.id,
     )
-    logger.debug(grantResponse, 'callback.oauth.resp', req.id)
+    logger.debug(req.session?.grant?.response, 'callback.oauth.resp', req.id)
     res.status(400).send(closePageHtml(originString))
+    return
+  }
+
+  const { providerClass } = req.companion
+  if (!providerClass) {
+    res.sendStatus(400)
     return
   }
 

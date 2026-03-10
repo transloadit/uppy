@@ -93,7 +93,7 @@ export const errors = {
 /**
  * Entry point into initializing the Companion app.
  */
-export function app(optionsArg: CompanionInitOptions = {}) {
+export function app(optionsArg: CompanionInitOptions) {
   setLoggerProcessName(optionsArg)
 
   validateConfig(optionsArg)
@@ -322,7 +322,7 @@ export function app(optionsArg: CompanionInitOptions = {}) {
     ),
   )
 
-  if (app.get('env') !== 'test' && options.filePath != null) {
+  if (app.get('env') !== 'test') {
     jobs.startCleanUpJob(options.filePath)
   }
 
