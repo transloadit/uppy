@@ -49,9 +49,12 @@ describe('Header black-list testing', () => {
 
   test('Return empty object when headers is not an object', () => {
     expect(headerSanitize({})).toEqual({})
+    // @ts-expect-error testing invalid input
     expect(headerSanitize(null)).toEqual({})
     expect(headerSanitize(undefined)).toEqual({})
+    // @ts-expect-error testing invalid input
     expect(headerSanitize('Authorization: Basic 1234')).toEqual({})
+    // @ts-expect-error testing invalid input
     expect(headerSanitize(['Authorization', 'Basic 1234'])).toEqual({})
   })
 })

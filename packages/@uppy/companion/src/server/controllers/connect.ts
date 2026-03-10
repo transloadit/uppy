@@ -1,12 +1,16 @@
 import type { NextFunction, Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.ts'
 import { isRecord } from '../helpers/type-guards.ts'
+import type { CorsOptions } from 'cors'
 
 /**
  * Derived from `cors` npm package.
  * @see https://github.com/expressjs/cors/blob/791983ebc0407115bc8ae8e64830d440da995938/lib/index.js#L19-L34
  */
-function isOriginAllowed(origin: string, allowedOrigins: unknown): boolean {
+function isOriginAllowed(
+  origin: string,
+  allowedOrigins: CorsOptions['origin'],
+): boolean {
   if (Array.isArray(allowedOrigins)) {
     return allowedOrigins.some((allowedOrigin) =>
       isOriginAllowed(origin, allowedOrigin),
@@ -129,7 +133,7 @@ export default function connect(
     const { corsOrigins } = req.companion.options
 
     if (typeof corsOrigins === 'function') {
-      corsOrigins(clientOrigin, (err: unknown, finalOrigin: unknown) => {
+      corsOrigins(clientOrigin, (err, finalOrigin) => {
         if (err) {
           next(err)
           return

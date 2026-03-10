@@ -50,7 +50,7 @@ const isForbiddenHeader = (header: string): boolean => {
 }
 
 export default function headerBlacklist(
-  headers: unknown,
+  headers: Record<string, unknown> | undefined,
 ): Record<string, string> {
   if (
     headers == null ||

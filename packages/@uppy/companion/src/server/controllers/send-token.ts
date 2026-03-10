@@ -50,7 +50,6 @@ export default function sendToken(
   const { secret } = companion.options
 
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
-
   if (!state) {
     next()
     return

@@ -214,9 +214,8 @@ export default function s3(
       Key: key,
       ContentType: type,
       Metadata: rfc2047EncodeMetadata(metadata),
+      ...(config.acl != null && { ACL: config.acl }),
     }
-
-    if (config.acl != null) Reflect.set(params, 'ACL', config.acl)
 
     client.send(new CreateMultipartUploadCommand(params)).then((data) => {
       res.json({
@@ -487,7 +486,7 @@ export default function s3(
 
     const { uploadId } = req.params
     const { key } = req.query
-    const { parts } = req.body as { parts: unknown }
+    const { parts }: { parts: unknown } = req.body
 
     if (typeof key !== 'string') {
       res.status(400).json({

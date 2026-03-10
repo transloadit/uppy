@@ -119,7 +119,7 @@ export const getCredentialsOverrideMiddleware = (
       // only use state via session object if user isn't making intial "connect" request.
       // override param indicates subsequent requests from the oauth flow
 
-      const state = override ? grantDynamic['state'] : req.query['state']
+      const state = override ? grantDynamic.state : req.query['state']
       if (!state || typeof state !== 'string') {
         next()
         return

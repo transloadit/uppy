@@ -10,7 +10,7 @@ import { Upload } from '@aws-sdk/lib-storage'
 import type { Request } from 'express'
 import type { FormDataLike } from 'form-data-encoder'
 import { FormData } from 'formdata-node'
-import type { OptionsOfTextResponseBody } from 'got'
+import type { OptionsOfTextResponseBody, Response } from 'got'
 import got from 'got'
 import type { Redis } from 'ioredis'
 import throttle from 'lodash/throttle.js'
@@ -71,9 +71,27 @@ type UploaderOptions = {
   providerName?: string
 }
 
-type UploadResult = {
+export interface ProgressPayload {
+  progress: string
+  bytesUploaded: number
+  bytesTotal: number
+}
+
+export interface UploadExtraDataResponse {
+  status?: number | undefined
+  statusText?: string | undefined
+  responseText?: string
+  headers?: Record<string, unknown>
+}
+
+export interface UploadExtraData {
+  response: UploadExtraDataResponse
+  bytesUploaded?: number
+}
+
+export interface UploadResult {
   url: string | null
-  extraData?: Record<string, unknown>
+  extraData?: UploadExtraData | undefined
 }
 
 function exceedsMaxFileSize(
@@ -88,7 +106,7 @@ export class ValidationError extends Error {
 }
 
 function validateOptions(options: UploaderOptions): void {
-  // validate HTTP Method
+  // validate HTTP Method (optional)
   if (options.httpMethod) {
     if (typeof options.httpMethod !== 'string') {
       throw new ValidationError('unsupported HTTP METHOD specified')
@@ -104,22 +122,22 @@ function validateOptions(options: UploaderOptions): void {
     throw new ValidationError('maxFileSize exceeded')
   }
 
-  // validate fieldname
+  // validate fieldname (optional)
   if (options.fieldname != null && typeof options.fieldname !== 'string') {
     throw new ValidationError('fieldname must be a string')
   }
 
-  // validate metadata
+  // validate metadata (optional)
   if (options.metadata != null && typeof options.metadata !== 'object') {
     throw new ValidationError('metadata must be an object')
   }
 
-  // validate headers
+  // validate headers (optional)
   if (options.headers != null && typeof options.headers !== 'object') {
     throw new ValidationError('headers must be an object')
   }
 
-  // validate protocol
+  // validate protocol (optional)
   if (
     options.protocol &&
     !Object.values(PROTOCOLS).includes(options.protocol)
@@ -135,10 +153,8 @@ function validateOptions(options: UploaderOptions): void {
       throw new ValidationError('no destination specified')
     }
 
-    const validateUrl = (url: unknown): void => {
+    const validateUrl = (url: string | undefined): void => {
       if (url == null) return
-      if (typeof url !== 'string')
-        throw new ValidationError('invalid destination url')
       const validatorOpts = { require_protocol: true, require_tld: false }
       if (!validator.isURL(url, validatorOpts)) {
         throw new ValidationError('invalid destination url')
@@ -200,7 +216,7 @@ export default class Uploader {
 
   throttledEmitProgress: (dataToEmit: {
     action: string
-    payload: Record<string, unknown>
+    payload: ProgressPayload
   }) => void
 
   /**
@@ -283,19 +299,10 @@ export default class Uploader {
     })
 
     this.throttledEmitProgress = throttle(
-      (dataToEmit: { action: string; payload: Record<string, unknown> }) => {
-        const { payload } = dataToEmit
-        const bytesUploadedValue = payload['bytesUploaded']
-        const bytesUploaded =
-          typeof bytesUploadedValue === 'number'
-            ? bytesUploadedValue
-            : undefined
-        const bytesTotalValue = payload['bytesTotal']
-        const bytesTotal =
-          typeof bytesTotalValue === 'number' ? bytesTotalValue : undefined
-        const progressValue = payload['progress']
-        const progress =
-          typeof progressValue === 'string' ? progressValue : undefined
+      (dataToEmit: { action: string; payload: ProgressPayload }) => {
+        const {
+          payload: { bytesUploaded, bytesTotal, progress },
+        } = dataToEmit
         logger.debug(
           `${bytesUploaded} ${bytesTotal} ${progress}%`,
           'uploader.total.progress',
@@ -418,7 +425,6 @@ export default class Uploader {
           activeStream.on('error', reject),
         ),
       ])
-      if (extraData === undefined) return { url }
       return { url, extraData }
     } finally {
       this.#uploadState = states.done
@@ -593,7 +599,7 @@ export default class Uploader {
   /**
    * Persist the latest upload state to Redis so a reconnecting client can resume.
    */
-  saveState(state: { action: string; payload: Record<string, unknown> }): void {
+  saveState(state: { action: string; payload: unknown }): void {
     if (!this.storage) return
     // make sure the keys get cleaned up.
     // https://github.com/transloadit/uppy/issues/3748
@@ -648,7 +654,7 @@ export default class Uploader {
 
   #emitSuccess(
     url: string | null,
-    extraData: Record<string, unknown> | undefined,
+    extraData: UploadExtraData | undefined,
   ): void {
     const emitData = {
       action: 'success',
@@ -766,21 +772,19 @@ export default class Uploader {
       throw new Error('No multipart endpoint set')
     }
 
-    function getRespObj(response: unknown): Record<string, unknown> {
-      const resp = isRecord(response) ? response : {}
-      const headers = isRecord(resp['headers']) ? resp['headers'] : {}
+    function getRespObj(response: Response<string>): UploadExtraDataResponse {
       // remove browser forbidden headers
       const {
         'set-cookie': deleted,
         'set-cookie2': deleted2,
-        ...responseHeaders
-      } = headers
+        ...headers
+      } = response.headers
 
       return {
-        responseText: resp['body'],
-        status: resp['statusCode'],
-        statusText: resp['statusMessage'],
-        headers: responseHeaders,
+        responseText: response.body,
+        status: response.statusCode,
+        statusText: response.statusMessage,
+        headers,
       }
     }
 
@@ -866,7 +870,7 @@ export default class Uploader {
             ? errObj['statusMessage']
             : 'Request failed'
         throw Object.assign(new Error(statusMessage), {
-          extraData: getRespObj(response),
+          extraData: getRespObj(response as unknown as Response<string>),
         })
       }
 
@@ -927,6 +931,8 @@ export default class Uploader {
       url: data?.Location || null,
       extraData: {
         response: {
+          status: data.$metadata.httpStatusCode,
+
           responseText: JSON.stringify(data),
           headers: {
             'content-type': 'application/json',

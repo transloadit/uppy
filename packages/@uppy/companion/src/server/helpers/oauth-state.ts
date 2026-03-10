@@ -5,7 +5,7 @@ import { decrypt, encrypt } from './utils.ts'
 
 export type OAuthState = {
   id: string
-  origin?: unknown
+  origin?: string | string[] | number | boolean | undefined // weird type because this is what express's res.getHeader and cors callback combined can possibly return
   preAuthToken?: string
   companionInstance?: string
   customerDefinedAllowedOrigins?: string[]
@@ -42,17 +42,15 @@ function isOAuthState(value: unknown): value is OAuthState {
 }
 
 export const getFromState = <T extends keyof OAuthState>(
-  state: unknown,
+  state: string,
   name: T,
   secret: string | Buffer,
 ): OAuthState[T] | undefined => {
-  if (typeof state !== 'string' || state.length === 0) return undefined
-  const decoded = decodeState(state, secret)
-  return decoded[name]
+  return decodeState(state, secret)[name]
 }
 
 export const getGrantDynamicFromRequest = (req: {
   session?: CompanionSession
-}): Record<string, unknown> => {
+}) => {
   return req.session?.grant?.dynamic ?? {}
 }

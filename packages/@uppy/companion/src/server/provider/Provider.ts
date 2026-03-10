@@ -2,6 +2,7 @@ import type { Readable } from 'node:stream'
 import type {
   BuildUrl,
   CompanionContext,
+  GrantDynamic,
   ProviderGrantConfig,
 } from '../../types/express.js'
 import { MAX_AGE_24H } from '../helpers/jwt.ts'
@@ -186,7 +187,7 @@ export default class Provider<US = unknown> {
   static grantDynamicToUserSession({
     grantDynamic,
   }: {
-    grantDynamic: Record<string, unknown>
+    grantDynamic: GrantDynamic
   }): Record<string, unknown> {
     return {}
   }

@@ -36,11 +36,9 @@ export default function callback(
   const secret = req.companion.options.secret
 
   const grantDynamic = oAuthState.getGrantDynamicFromRequest(req)
-  const state = grantDynamic['state']
   const origin =
-    typeof state === 'string' && state.length > 0
-      ? oAuthState.getFromState(state, 'origin', secret)
-      : undefined
+    grantDynamic.state &&
+    oAuthState.getFromState(grantDynamic.state, 'origin', secret)
   const originString = typeof origin === 'string' ? origin : undefined
 
   const accessToken = req.session?.grant?.response?.access_token

@@ -243,7 +243,7 @@ export const getBasicAuthHeader = (
 }
 
 const rfc2047Encode = (dataIn: unknown): string => {
-  const data = `${dataIn}`
+  const data = String(dataIn)
   // biome-ignore lint/suspicious/noControlCharactersInRegex: leave it for now
   if (/^[\x00-\x7F]*$/.test(data)) return data // we return ASCII as is
   return `=?UTF-8?B?${Buffer.from(data).toString('base64')}?=` // We encode non-ASCII strings

@@ -33,12 +33,12 @@ const generateToken = (
   return jwt.sign({ data }, secret, { expiresIn: maxAge })
 }
 
-const verifyToken = (token: string, secret: EncryptionSecret): unknown => {
+const verifyJwtToken = (token: string, secret: EncryptionSecret) => {
   const decoded = jwt.verify(token, secret, {})
   if (!decoded || typeof decoded !== 'object' || !('data' in decoded)) {
     throw new Error('Invalid token payload')
   }
-  return Reflect.get(decoded, 'data')
+  return decoded.data
 }
 
 export const generateEncryptedToken = (
@@ -62,7 +62,7 @@ export const verifyEncryptedToken = (
   token: string,
   secret: EncryptionSecret,
 ) => {
-  const ret = verifyToken(decrypt(token, secret), secret)
+  const ret = verifyJwtToken(decrypt(token, secret), secret)
   if (!ret) throw new Error('No payload')
   return ret
 }
@@ -73,6 +73,9 @@ export const verifyEncryptedAuthToken = <T extends Record<string, unknown>>(
   providerName: string,
 ): T => {
   const json = verifyEncryptedToken(token, secret)
+  if (typeof json !== 'string') {
+    throw new Error('Invalid token payload: expected string')
+  }
   const tokens: T = JSON.parse(json)
   if (!isRecord(tokens) || !Object.hasOwn(tokens, providerName))
     throw new Error(`Missing token payload for provider ${providerName}`)
@@ -98,7 +101,7 @@ function getCommonCookieOptions({
   }
 
   const cookieDomain = companionOptions['cookieDomain']
-  if (typeof cookieDomain === 'string') {
+  if (cookieDomain != null) {
     cookieOptions['domain'] = cookieDomain
   }
 

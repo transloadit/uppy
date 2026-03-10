@@ -4,7 +4,7 @@ const mockOauthState = () => {
   vi.mock('../src/server/helpers/oauth-state.ts', async () => ({
     ...(await vi.importActual('../src/server/helpers/oauth-state.ts')),
     generateState: () => ({}),
-    getFromState: (state: unknown) => {
+    getFromState: (state: string) => {
       if (state === 'state-with-invalid-instance-url') {
         return 'http://localhost:3452'
       }

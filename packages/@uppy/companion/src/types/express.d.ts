@@ -34,10 +34,14 @@ export type CompanionContext = {
   getProviderCredentials?: () => Promise<CredentialsFetchResponse | null>
 }
 
+export interface GrantDynamic {
+  state?: string
+}
+
 export interface CompanionSession {
   grant?: {
     state?: string | null
-    dynamic?: { state?: string } | null
+    dynamic?: GrantDynamic | null
     response?: {
       access_token?: string
       refresh_token?: string
