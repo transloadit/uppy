@@ -276,8 +276,13 @@ export function app(optionsArg: CompanionInitOptions) {
 
   // Used for testing dynamic credentials only, normally this would run on a separate server.
   if (options.testDynamicOauthCredentials) {
+    logger.info('Dynamic credentials test endpoint enabled')
     app.post('/:providerName/test-dynamic-oauth-credentials', (req, res) => {
       const providedSecret = req.query['secret']
+      console.log('Received request for dynamic credentials test endpoint', {
+        providedSecret,
+      })
+
       if (
         typeof providedSecret !== 'string' ||
         providedSecret !== options.testDynamicOauthCredentialsSecret
