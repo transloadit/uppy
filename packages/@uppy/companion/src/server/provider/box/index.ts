@@ -3,7 +3,7 @@ import got from 'got'
 import type { BuildUrl } from '../../../types/express.js'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { prepareStream } from '../../helpers/utils.ts'
-import Provider, { type Query } from '../Provider.ts'
+import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -96,7 +96,7 @@ export default class Box extends Provider<BoxUserSession> {
     providerUserSession: BoxUserSession
     query?: Query
     companion: CompanionLike
-  }): Promise<unknown> {
+  }): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.box.list.error', async () => {
       const [userInfo, files] = await Promise.all([
         getUserInfo({ token }),

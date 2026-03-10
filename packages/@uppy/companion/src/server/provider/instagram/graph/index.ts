@@ -3,7 +3,10 @@ import got from 'got'
 import { isRecord } from '../../../helpers/type-guards.ts'
 import { prepareStream } from '../../../helpers/utils.ts'
 import logger from '../../../logger.ts'
-import Provider, { type Query } from '../../Provider.ts'
+import Provider, {
+  type ProviderListResponse,
+  type Query,
+} from '../../Provider.ts'
 import { withProviderErrorHandling } from '../../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -62,7 +65,7 @@ export default class Instagram extends Provider<InstagramUserSession> {
     directory?: string | undefined
     providerUserSession: InstagramUserSession
     query?: Query | undefined
-  }): Promise<unknown> {
+  }): Promise<ProviderListResponse> {
     return this.#withErrorHandling(
       'provider.instagram.list.error',
       async () => {

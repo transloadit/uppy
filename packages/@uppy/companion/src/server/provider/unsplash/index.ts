@@ -3,7 +3,7 @@ import got from 'got'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { prepareStream } from '../../helpers/utils.ts'
 import { ProviderApiError } from '../error.ts'
-import Provider, { type Query } from '../Provider.ts'
+import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -38,7 +38,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
   }: {
     providerUserSession: UnsplashUserSession
     query?: Query | undefined
-  }): Promise<unknown> {
+  }): Promise<ProviderListResponse> {
     const q = typeof query?.['q'] === 'string' ? query['q'] : undefined
     if (!q) {
       throw new ProviderApiError('Search query missing', 400)

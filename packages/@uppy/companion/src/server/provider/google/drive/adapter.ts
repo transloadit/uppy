@@ -5,7 +5,7 @@ export type DriveItem = {
   kind?: string
   mimeType?: string
   files?: DriveItem[]
-  id?: string
+  id: string
   name?: string
   size?: string
   thumbnailLink?: string
@@ -30,14 +30,11 @@ export type DriveListResponse = {
   files?: DriveItem[]
   nextPageToken?: string
 }
-export type DriveSharedDrivesResponse = { drives?: DriveItem[] } & Record<
-  string,
-  unknown
->
-export type DriveAbout = { user?: { emailAddress?: string } } & Record<
-  string,
-  unknown
->
+export type DriveSharedDrivesResponse = {
+  drives?: DriveItem[]
+  nextPageToken?: unknown
+}
+export type DriveAbout = { user?: { emailAddress?: string } }
 
 const getUsername = (data: DriveAbout) => {
   return data.user?.emailAddress
@@ -142,33 +139,33 @@ export const getGsuiteExportType = (mimeType: string): string => {
   return typeMaps[mimeType] || 'application/pdf'
 }
 
-function getMimeType2(mimeType: string | undefined): string | undefined {
+function getMimeType2(mimeType: string | undefined) {
   if (isGsuiteFile(mimeType)) {
     return getGsuiteExportType(mimeType ?? '')
   }
   return mimeType
 }
 
-const getMimeType = (item: DriveItem): string | undefined => {
+const getMimeType = (item: DriveItem) => {
   if (isShortcut(item.mimeType)) {
     return getMimeType2(item.shortcutDetails?.targetMimeType)
   }
   return getMimeType2(item.mimeType)
 }
 
-const getItemId = (item: DriveItem): string | undefined => {
+const getItemId = (item: DriveItem) => {
   return item.id
 }
 
-const getItemRequestPath = (item: DriveItem): string | undefined => {
+const getItemRequestPath = (item: DriveItem) => {
   return item.id
 }
 
-const getItemModifiedDate = (item: DriveItem): string | undefined => {
+const getItemModifiedDate = (item: DriveItem) => {
   return item.modifiedTime
 }
 
-const getItemThumbnailUrl = (item: DriveItem): string | undefined => {
+const getItemThumbnailUrl = (item: DriveItem) => {
   return item.thumbnailLink
 }
 

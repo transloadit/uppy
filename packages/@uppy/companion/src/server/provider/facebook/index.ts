@@ -4,7 +4,7 @@ import got from 'got'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { HttpError, prepareStream } from '../../helpers/utils.ts'
 import logger from '../../logger.ts'
-import Provider, { type Query } from '../Provider.ts'
+import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import { adaptData, type FacebookListResponse, sortImages } from './adapter.ts'
 
@@ -125,7 +125,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     directory?: string | undefined
     providerUserSession: FacebookUserSession
     query?: Query | undefined
-  }): Promise<unknown> {
+  }): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
       const qs: Record<string, string> = {
         fields: 'name,cover_photo,created_time,type',
@@ -164,7 +164,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
         throw new Error('Unexpected Facebook response: missing batch result')
       }
 
-      const { email } = response1.body as { email: unknown }
+      const { email } = response1.body as { email?: string }
 
       const list = response2.body as FacebookListResponse
 

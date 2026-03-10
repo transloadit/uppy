@@ -5,7 +5,10 @@ import { isRecord } from '../../../helpers/type-guards.ts'
 import { prepareStream } from '../../../helpers/utils.ts'
 import logger from '../../../logger.ts'
 import { ProviderAuthError } from '../../error.ts'
-import Provider, { type Query } from '../../Provider.ts'
+import Provider, {
+  type ProviderListResponse,
+  type Query,
+} from '../../Provider.ts'
 import { withGoogleErrorHandling } from '../../providerErrors.ts'
 import { logout, refreshToken } from '../index.ts'
 import {
@@ -172,7 +175,7 @@ export class Drive extends Provider<DriveUserSession> {
     directory?: string | undefined
     providerUserSession: DriveUserSession
     query?: Query | undefined
-  }) {
+  }): Promise<ProviderListResponse> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.list.error',
@@ -205,8 +208,8 @@ export class Drive extends Provider<DriveUserSession> {
             .json<DriveSharedDrivesResponse>()
 
           const nextPageToken =
-            typeof response['nextPageToken'] === 'string'
-              ? response['nextPageToken']
+            typeof response.nextPageToken === 'string'
+              ? response.nextPageToken
               : undefined
           if (nextPageToken) {
             const nextResponse = await fetchSharedDrives(nextPageToken)

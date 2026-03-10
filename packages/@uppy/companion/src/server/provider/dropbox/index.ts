@@ -10,7 +10,11 @@ import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.ts'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { prepareStream } from '../../helpers/utils.ts'
 import logger from '../../logger.ts'
-import Provider, { type Query } from '../Provider.ts'
+import Provider, {
+  type ProviderListResponse,
+  type ProviderSearchResponse,
+  type Query,
+} from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -201,7 +205,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     providerUserSession: DropboxUserSession
     query: { q: string; path?: string; [k: string]: unknown }
     companion: { buildURL: BuildUrl }
-  }): Promise<unknown> {
+  }): Promise<ProviderSearchResponse> {
     return this.#withErrorHandling(
       'provider.dropbox.search.error',
       async () => {
@@ -226,7 +230,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     providerUserSession: DropboxUserSession
     query?: Query
     companion: { buildURL?: BuildUrl }
-  }): Promise<unknown> {
+  }): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.dropbox.list.error', async () => {
       const { client, userInfo } = await getClient({
         token: options.providerUserSession.accessToken,

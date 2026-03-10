@@ -99,37 +99,25 @@ const getNextPagePath = ({
 
 const adaptData = (
   res: OneDriveListResponse,
-  username: unknown,
+  username: string | undefined,
   query: Record<string, string>,
   directory: string | undefined,
-): {
-  username: unknown
-  items: unknown[]
-  nextPagePath: string | null
-} => {
-  const data: {
-    username: unknown
-    items: unknown[]
-    nextPagePath: string | null
-  } = { username, items: [], nextPagePath: null }
-  const items = getItemSubList(res)
-  items.forEach((item) => {
-    data.items.push({
-      isFolder: isFolder(item),
-      icon: getItemIcon(item),
-      name: getItemName(item),
-      mimeType: getMimeType(item),
-      id: getItemId(item),
-      thumbnail: getItemThumbnailUrl(item),
-      requestPath: getItemRequestPath(item),
-      modifiedDate: getItemModifiedDate(item),
-      size: getItemSize(item),
-    })
-  })
+) => {
+  const items = getItemSubList(res).map((item) => ({
+    isFolder: isFolder(item),
+    icon: getItemIcon(item),
+    name: getItemName(item),
+    mimeType: getMimeType(item),
+    id: getItemId(item),
+    thumbnail: getItemThumbnailUrl(item),
+    requestPath: getItemRequestPath(item),
+    modifiedDate: getItemModifiedDate(item),
+    size: getItemSize(item),
+  }))
 
-  data.nextPagePath = getNextPagePath({ res, query, directory })
+  const nextPagePath = getNextPagePath({ res, query, directory })
 
-  return data
+  return { username, items, nextPagePath }
 }
 
 export default adaptData

@@ -17,6 +17,27 @@ export interface CompanionLike {
   options: CompanionRuntimeOptions
 }
 
+export interface ProviderListItem {
+  isFolder: boolean
+  icon: string | null | undefined
+  id: string
+  name?: string | undefined
+  requestPath: string
+  modifiedDate?: string | undefined
+  mimeType?: string | null | undefined
+  size?: number | null | undefined
+  thumbnail?: string | null | undefined
+}
+
+// todo use these types in the Uppy client
+export interface ProviderListResponse {
+  items: ProviderListItem[]
+  nextPagePath?: string | null | undefined
+  username?: string | null | undefined
+}
+
+export type ProviderSearchResponse = ProviderListResponse
+
 /**
  * Provider interface defines the specifications of any provider implementation
  */
@@ -37,7 +58,7 @@ export default class Provider<US = unknown> {
     allowLocalUrls: boolean
     providerGrantConfig?: ProviderGrantConfig
     secret: string | undefined
-  } & Record<string, unknown>) {
+  }) {
     // Some providers might need cookie auth for the thumbnails fetched via companion
     this.needsCookieAuth = false
     this.allowLocalUrls = allowLocalUrls
@@ -64,7 +85,7 @@ export default class Provider<US = unknown> {
     directory?: string | undefined
     providerUserSession: US
     query?: Query
-  }): Promise<unknown> {
+  }): Promise<ProviderListResponse> {
     // todo type return values and use them in the Uppy client
     throw new Error('method not implemented')
   }
@@ -78,7 +99,7 @@ export default class Provider<US = unknown> {
     providerUserSession: US
     query: { q: string; path?: string; [k: string]: unknown }
     companion: { buildURL: BuildUrl }
-  }): Promise<unknown> {
+  }): Promise<ProviderSearchResponse> {
     throw new Error('method not implemented')
   }
 

@@ -89,34 +89,22 @@ const getNextPagePath = (
 
 export const adaptData = (
   res: FacebookListResponse,
-  username: unknown,
+  username: string | undefined,
   directory: string | undefined,
   currentQuery: Record<string, string>,
-): {
-  username: unknown
-  items: unknown[]
-  nextPagePath: string | null
-} => {
-  const data: {
-    username: unknown
-    items: unknown[]
-    nextPagePath: string | null
-  } = { username, items: [], nextPagePath: null }
-  const items = getItemSubList(res)
-  items.forEach((item) => {
-    data.items.push({
-      isFolder: isFolder(item),
-      icon: getItemIcon(item),
-      name: getItemName(item),
-      mimeType: getMimeType(item),
-      size: null,
-      id: getItemId(item),
-      thumbnail: getItemThumbnailUrl(item),
-      requestPath: getItemRequestPath(item),
-      modifiedDate: getItemModifiedDate(item),
-    })
-  })
+) => {
+  const items = getItemSubList(res).map((item) => ({
+    isFolder: isFolder(item),
+    icon: getItemIcon(item),
+    name: getItemName(item),
+    mimeType: getMimeType(item),
+    size: null,
+    id: getItemId(item),
+    thumbnail: getItemThumbnailUrl(item),
+    requestPath: getItemRequestPath(item),
+    modifiedDate: getItemModifiedDate(item),
+  }))
 
-  data.nextPagePath = getNextPagePath(res, currentQuery, directory)
-  return data
+  const nextPagePath = getNextPagePath(res, currentQuery, directory)
+  return { username, items, nextPagePath }
 }

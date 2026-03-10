@@ -80,36 +80,24 @@ const getNextPagePath = (
 
 const adaptData = (
   res: InstagramListResponse,
-  username: unknown,
+  username: string | null,
   directory: string | undefined,
   currentQuery: Record<string, string>,
-): {
-  username: unknown
-  items: unknown[]
-  nextPagePath: string | null
-} => {
-  const data: {
-    username: unknown
-    items: unknown[]
-    nextPagePath: string | null
-  } = { username, items: [], nextPagePath: null }
-  const items = getItemSubList(res)
-  items.forEach((item, i) => {
-    data.items.push({
-      isFolder: isFolder(item),
-      icon: getItemIcon(item),
-      name: getItemName(item, i),
-      mimeType: getMimeType(item),
-      id: getItemId(item),
-      size: null,
-      thumbnail: getItemThumbnailUrl(item),
-      requestPath: getItemRequestPath(item),
-      modifiedDate: getItemModifiedDate(item),
-    })
-  })
+) => {
+  const items = getItemSubList(res).map((item, i) => ({
+    isFolder: isFolder(item),
+    icon: getItemIcon(item),
+    name: getItemName(item, i),
+    mimeType: getMimeType(item),
+    id: getItemId(item),
+    size: null,
+    thumbnail: getItemThumbnailUrl(item),
+    requestPath: getItemRequestPath(item),
+    modifiedDate: getItemModifiedDate(item),
+  }))
 
-  data.nextPagePath = getNextPagePath(res, currentQuery, directory)
-  return data
+  const nextPagePath = getNextPagePath(res, currentQuery, directory)
+  return { username, items, nextPagePath }
 }
 
 export default adaptData

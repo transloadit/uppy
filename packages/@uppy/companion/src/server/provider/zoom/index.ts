@@ -4,7 +4,11 @@ import moment from 'moment-timezone'
 import pMap from 'p-map'
 import { isRecord } from '../../helpers/type-guards.ts'
 import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.ts'
-import Provider, { type CompanionLike, type Query } from '../Provider.ts'
+import Provider, {
+  type CompanionLike,
+  type ProviderListResponse,
+  type Query,
+} from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
 
@@ -103,7 +107,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     providerUserSession: ZoomUserSession
     query?: { cursor?: string | null } & Record<string, unknown>
     directory?: string | undefined
-  }): Promise<unknown> {
+  }): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
       const {
         providerUserSession: { accessToken: token },
