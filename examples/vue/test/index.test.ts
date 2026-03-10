@@ -7,7 +7,7 @@ import App from '../src/App.vue'
 
 const worker = setupWorker(...tusHandlers)
 beforeAll(async () => {
-  await worker.start({ onUnhandledRequest: 'bypass' })
+  await worker.start({ onUnhandledRequest: 'error' })
 })
 afterAll(() => {
   worker.stop()
