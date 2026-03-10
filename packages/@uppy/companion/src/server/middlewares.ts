@@ -132,7 +132,7 @@ export const verifyToken: RequestHandler = (req, res, next) => {
     const providerName = req.params['providerName']
     const providerOption =
       providerName != null ? providerOptions?.[providerName] : undefined
-    const key = providerOption?.['key']
+    const key = providerOption?.key
     if (!key) {
       logger.info(
         `unconfigured credentials for ${providerName}`,

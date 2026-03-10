@@ -1,5 +1,4 @@
 import type { Readable } from 'node:stream'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
 import type {
   BuildUrl,
   CompanionContext,
@@ -12,10 +11,10 @@ export interface Query {
   [key: string]: undefined | string | string[] | Query | Query[]
 }
 
-export interface CompanionLike {
-  getProviderCredentials?: () => Promise<Record<string, unknown> | null>
-  options: CompanionRuntimeOptions
-}
+export type CompanionLike = Pick<
+  CompanionContext,
+  'getProviderCredentials' | 'options'
+>
 
 export interface ProviderListItem {
   isFolder: boolean

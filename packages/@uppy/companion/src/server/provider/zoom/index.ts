@@ -335,12 +335,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     providerUserSession: ZoomUserSession
   }): Promise<{ revoked: boolean }> {
     return this.#withErrorHandling('provider.zoom.logout.error', async () => {
-      const providerCredentials = await companion.getProviderCredentials?.()
-      const key = providerCredentials?.['key']
-      const secret = providerCredentials?.['secret']
-      if (typeof key !== 'string' || typeof secret !== 'string') {
-        throw new Error('Missing Zoom credentials')
-      }
+      const { key, secret } = (await companion.getProviderCredentials?.())!
 
       const { status } = await got
         .post('https://zoom.us/oauth/revoke', {
@@ -368,26 +363,15 @@ export default class Zoom extends Provider<ZoomUserSession> {
         return { data: {}, status: 400 }
       }
 
-      const providerCredentials = await companion.getProviderCredentials?.()
-
-      if (providerCredentials == null) {
-        return { data: {}, status: 500 }
-      }
-
-      const key = providerCredentials['key']
-      const secret = providerCredentials['secret']
-      const verificationToken = providerCredentials['verificationToken']
-
-      if (
-        typeof verificationToken !== 'string' ||
-        typeof key !== 'string' ||
-        typeof secret !== 'string'
-      ) {
-        return { data: {}, status: 400 }
-      }
+      const { key, secret, verificationToken } =
+        (await companion.getProviderCredentials?.())!
 
       const tokenSupplied = headers['authorization']
-      if (!tokenSupplied || verificationToken !== tokenSupplied) {
+      if (
+        !tokenSupplied ||
+        !verificationToken ||
+        verificationToken !== tokenSupplied
+      ) {
         return { data: {}, status: 400 }
       }
 

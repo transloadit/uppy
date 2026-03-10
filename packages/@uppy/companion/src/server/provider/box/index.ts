@@ -6,6 +6,7 @@ import { prepareStream } from '../../helpers/utils.ts'
 import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
 import { withProviderErrorHandling } from '../providerErrors.ts'
 import adaptData from './adapter.ts'
+import type { ProviderOptions } from '../../../schemas/companion.ts'
 
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
@@ -14,10 +15,7 @@ type BoxUserSession = { accessToken: string }
 type CompanionLike = {
   buildURL?: BuildUrl
   options: {
-    providerOptions: Record<
-      string,
-      { key?: string | undefined; secret?: string | undefined }
-    >
+    providerOptions: Record<string, Pick<ProviderOptions, 'key' | 'secret'>>
   }
 }
 

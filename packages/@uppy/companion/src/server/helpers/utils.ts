@@ -234,7 +234,10 @@ export const prepareStream = async (
       })
   })
 
-export const getBasicAuthHeader = (key: string, secret: string): string => {
+export const getBasicAuthHeader = (
+  key: string | undefined,
+  secret: string | undefined,
+): string => {
   const base64 = Buffer.from(`${key}:${secret}`, 'binary').toString('base64')
   return `Basic ${base64}`
 }

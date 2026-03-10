@@ -19,11 +19,8 @@ export default function preauth(req: Request, res: Response): void {
     return
   }
 
-  const providerConfig = req.companion.options.providerOptions[providerName]
   const credentialsURL =
-    providerConfig?.credentialsURL != null
-      ? providerConfig.credentialsURL
-      : undefined
+    req.companion.options.providerOptions[providerName]?.credentialsURL
   if (!credentialsURL) {
     res.sendStatus(501)
     return

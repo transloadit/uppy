@@ -1,6 +1,7 @@
 import type { S3Client } from '@aws-sdk/client-s3'
 import type { CompanionRuntimeOptions } from './companion-options.ts'
 import type Provider from '../server/provider/Provider.ts'
+import { CredentialsFetchResponse } from '../schemas/companion.ts'
 
 export type BuildUrl = (
   subPath: string,
@@ -24,7 +25,7 @@ export type CompanionContext = {
   buildURL?: BuildUrl
   s3Client?: S3Client
   s3ClientCreatePresignedPost?: S3Client
-  getProviderCredentials?: () => Promise<Record<string, unknown> | null> // todo type
+  getProviderCredentials?: () => Promise<CredentialsFetchResponse | null>
 }
 
 declare global {

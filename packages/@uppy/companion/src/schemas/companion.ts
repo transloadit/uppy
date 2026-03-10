@@ -4,15 +4,38 @@ import type { CorsOptions } from 'cors'
 import type { Request } from 'express'
 import type { RedisOptions } from 'ioredis'
 import type Provider from '../server/provider/Provider.ts'
-import type { ProviderGrantConfig } from '../types/express.js'
-import type { ProviderOptions, ServerConfig } from './common.ts'
 
 // todo implement zod schema validation and remove manual typeof validation around in the code, also in providers/adapters
+
+export interface ServerConfig {
+  protocol?: string | undefined
+  host?: string | undefined
+  path?: string | undefined
+  implicitPath?: string | undefined
+  oauthDomain?: string | undefined
+  validHosts?: string[] | undefined
+}
+
+export interface ProviderOptions {
+  key?: string | undefined
+  secret?: string | undefined
+  credentialsURL?: string | undefined
+  verificationToken?: string | undefined
+}
+
 type ProviderConstructor = typeof Provider
 
 export interface CustomProvider {
   module: ProviderConstructor
-  config: ProviderGrantConfig
+  config: ProviderOptions
+}
+
+export type CredentialsFetchResponse = Pick<
+  ProviderOptions,
+  'key' | 'secret' | 'verificationToken'
+> & {
+  transloadit_gateway?: string
+  origins?: string[]
 }
 
 export type CompanionInitOptions = {
@@ -20,7 +43,7 @@ export type CompanionInitOptions = {
   preAuthSecret?: string | Buffer | undefined
   loggerProcessName?: string | undefined
   server?: ServerConfig | undefined
-  providerOptions?: ProviderOptions | undefined
+  providerOptions?: Record<string, ProviderOptions> | undefined
   customProviders?: Record<string, CustomProvider> | undefined
   redisUrl?: string | undefined
   redisOptions?: RedisOptions | undefined

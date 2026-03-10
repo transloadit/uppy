@@ -1,6 +1,7 @@
 import { htmlEscape } from 'escape-goat'
 import type { NextFunction, Request, Response } from 'express'
 import got from 'got'
+import type { CredentialsFetchResponse } from '../../schemas/companion.ts'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
 import * as tokenService from '../helpers/jwt.ts'
 import * as oAuthState from '../helpers/oauth-state.ts'
@@ -22,13 +23,13 @@ async function fetchKeys(
   url: string,
   providerName: string,
   credentialRequestParams: unknown | null,
-): Promise<Record<string, unknown>> {
+) {
   try {
     const { credentials } = await got
       .post(url, {
         json: { provider: providerName, parameters: credentialRequestParams },
       })
-      .json<{ credentials?: unknown }>()
+      .json<{ credentials?: CredentialsFetchResponse }>()
 
     if (!isRecord(credentials))
       throw new Error('Received no remote credentials')
@@ -54,32 +55,26 @@ async function fetchProviderKeys(
   providerName: string,
   companionOptions: CompanionRuntimeOptions,
   credentialRequestParams: unknown,
-): Promise<Record<string, unknown> | null> {
-  const { providerOptions, customProviders } = companionOptions
-
-  let providerConfig: Record<string, unknown> | undefined
-  if (isRecord(providerOptions?.[providerName])) {
-    providerConfig = providerOptions[providerName]
-  }
-
-  if (!providerConfig && isRecord(customProviders?.[providerName]?.config)) {
-    providerConfig = customProviders?.[providerName]?.config
+): Promise<CredentialsFetchResponse | null> {
+  let providerConfig = companionOptions.providerOptions[providerName]
+  if (!providerConfig) {
+    providerConfig = companionOptions.customProviders?.[providerName]?.config
   }
 
   if (!providerConfig) {
     return null
   }
 
-  const credentialsURL = providerConfig['credentialsURL']
-  if (typeof credentialsURL !== 'string' || credentialsURL.length === 0) {
-    return providerConfig
-  }
-
   // If a default key is configured, do not ask the credentials endpoint for it.
   // In a future version we could make this an XOR thing, providing either an endpoint or global keys,
   // but not both.
-  const key = providerConfig['key']
-  if (!credentialRequestParams && typeof key === 'string') {
+  const key = providerConfig.key
+  if (!credentialRequestParams && key != null) {
+    return providerConfig
+  }
+
+  const credentialsURL = providerConfig.credentialsURL
+  if (credentialsURL == null) {
     return providerConfig
   }
 
@@ -168,12 +163,8 @@ export const getCredentialsOverrideMiddleware = (
       // token through window.postMessage (see comment in connect.js).
       // postMessage happens in send-token.js, which is a different request, so we need to put the allowed origins
       // on the encrypted session state to access it later there.
-      const origins = credentials['origins']
-      if (
-        Array.isArray(origins) &&
-        origins.every((o) => typeof o === 'string') &&
-        origins.length > 0
-      ) {
+      const { origins } = credentials
+      if (Array.isArray(origins) && origins.length > 0) {
         const decodedState = oAuthState.decodeState(state, secret)
         decodedState['customerDefinedAllowedOrigins'] = origins
         const newState = oAuthState.encodeState(decodedState, secret)
@@ -195,15 +186,15 @@ export const getCredentialsOverrideMiddleware = (
       }
 
       const dynamic: Record<string, unknown> = {}
-      const fetchedKey = credentials['key']
-      const fetchedSecret = credentials['secret']
-      if (typeof fetchedKey === 'string') dynamic['key'] = fetchedKey
-      if (typeof fetchedSecret === 'string') dynamic['secret'] = fetchedSecret
-      if (origins) dynamic['origins'] = origins
+      const fetchedKey = credentials.key
+      const fetchedSecret = credentials.secret
+      if (fetchedKey != null) dynamic['key'] = fetchedKey
+      if (fetchedSecret != null) dynamic['secret'] = fetchedSecret
+      if (origins != null) dynamic['origins'] = origins
 
       res.locals['grant'] = { dynamic }
 
-      const gateway = credentials['transloadit_gateway']
+      const gateway = credentials.transloadit_gateway
       if (typeof gateway === 'string') {
         const redirectPath = getRedirectPath(providerName)
         const fullRedirectPath = getURLBuilder(companionOptions)(
@@ -253,10 +244,10 @@ export const getCredentialsResolver = (
   providerName: string,
   companionOptions: CompanionRuntimeOptions,
   req: Request,
-): (() => Promise<Record<string, unknown> | null>) => {
+): (() => Promise<CredentialsFetchResponse | null>) => {
   const credentialsResolver = () => {
     const encodedCredentialsParams = req.header('uppy-credentials-params')
-    let credentialRequestParams = null
+    let credentialRequestParams: unknown = null
     if (encodedCredentialsParams) {
       try {
         const parsed: unknown = JSON.parse(atob(encodedCredentialsParams))

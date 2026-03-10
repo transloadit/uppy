@@ -11,7 +11,10 @@ import {
   validateConfig,
 } from './config/companion.ts'
 import grantConfigFn from './config/grant.ts'
-import type { CompanionInitOptions } from './schemas/index.ts'
+import type {
+  CompanionInitOptions,
+  CredentialsFetchResponse,
+} from './schemas/index.ts'
 import googlePicker from './server/controllers/googlePicker.ts'
 import * as controllers from './server/controllers/index.ts'
 import s3 from './server/controllers/s3.ts'
@@ -284,13 +287,12 @@ export function app(optionsArg: CompanionInitOptions = {}) {
       const { providerName } = req.params
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
-      const { key, secret } = options.providerOptions[providerName] ?? {
-        __proto__: null,
-      }
+      const { key, secret } = options.providerOptions[providerName]!
 
       function getTransloaditGateway() {
         const oauthProvider = getOauthProvider(providerName)
-        if (!isOAuthProvider(oauthProvider)) return undefined
+        if (!isOAuthProvider(oauthProvider))
+          throw new Error('Not an OAuth provider')
         return getURLBuilder(options)('', true)
       }
 
@@ -300,7 +302,7 @@ export function app(optionsArg: CompanionInitOptions = {}) {
           secret,
           transloadit_gateway: getTransloaditGateway(),
           origins: ['http://localhost:5173'],
-        },
+        } satisfies CredentialsFetchResponse,
       }
 
       logger.info(
