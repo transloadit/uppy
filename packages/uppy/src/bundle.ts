@@ -51,15 +51,4 @@ export { default as Webcam } from '@uppy/webcam'
 export { default as XHRUpload } from '@uppy/xhr-upload'
 export { default as Zoom } from '@uppy/zoom'
 
-// Special hack for Transloadit static exports
-import Transloadit, {
-  COMPANION_ALLOWED_HOSTS,
-  COMPANION_URL,
-} from '@uppy/transloadit'
-
-// @ts-expect-error monkey patching
-Transloadit.COMPANION_URL = COMPANION_URL
-// @ts-expect-error monkey patching
-Transloadit.COMPANION_ALLOWED_HOSTS = COMPANION_ALLOWED_HOSTS
-
 export const locales = {}
