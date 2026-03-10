@@ -61,10 +61,9 @@ export const generateEncryptedAuthToken = (
 export const verifyEncryptedToken = (
   token: string,
   secret: EncryptionSecret,
-): string => {
+) => {
   const ret = verifyToken(decrypt(token, secret), secret)
   if (!ret) throw new Error('No payload')
-  if (typeof ret !== 'string') throw new Error('Invalid token payload type')
   return ret
 }
 
