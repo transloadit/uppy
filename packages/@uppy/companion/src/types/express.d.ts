@@ -10,7 +10,7 @@ export type BuildUrl = (
 
 export interface ProviderGrantConfig {
   dynamic?: string[]
-  redirect_uri?: string
+  redirect_uri?: string | undefined
 }
 
 export type CompanionContext = {

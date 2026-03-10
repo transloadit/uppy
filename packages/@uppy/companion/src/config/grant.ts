@@ -1,12 +1,22 @@
-type GrantProviderConfig = Record<string, unknown>
-export type GrantConfig = Record<string, GrantProviderConfig>
+export interface GrantProviderStaticConfig {
+  transport?: 'session' | 'state' | undefined
+  state?: boolean | undefined
+  authorize_url?: string | undefined
+  access_url?: string | undefined
+  oauth?: number | undefined
+  scope_delimiter?: string | undefined
+  callback?: string | undefined
+  scope?: string[] | undefined
+  custom_params?: Record<string, string> | undefined
+}
+export type GrantStaticConfig = Record<string, GrantProviderStaticConfig>
 
 const defaults = {
   transport: 'session',
   state: true, // Enable CSRF check
-} satisfies GrantProviderConfig
+} satisfies GrantProviderStaticConfig
 
-export default function grantConfig(): GrantConfig {
+export default function grantConfig(): GrantStaticConfig {
   return {
     // we need separate auth providers because scopes are different,
     // and because it would be a too big rewrite to allow reuse of the same provider.

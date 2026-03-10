@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-import type { ProviderGrantConfig } from '../../types/express.js'
+import type { GrantProviderStaticConfig } from '../../config/grant.ts'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
 import * as logger from '../logger.ts'
 import box from './box/index.ts'
@@ -14,13 +14,25 @@ import unsplash from './unsplash/index.ts'
 import webdav from './webdav/index.ts'
 import zoom from './zoom/index.ts'
 
-type GrantConfig = {
-  defaults?: {
-    host?: string
-    protocol?: string
-    path?: string
-  }
-  [key: string]: Record<string, unknown> | undefined
+export interface GrantConfigDefaults {
+  host?: string
+  protocol?: string
+  path?: string
+}
+
+export interface GrantProviderConfig
+  extends GrantProviderStaticConfig,
+    GrantConfigDefaults {
+  key?: string | undefined
+  secret?: string | undefined
+  dynamic?: string[]
+  redirect_uri?: string | undefined
+}
+
+export interface GrantConfig {
+  defaults?: GrantConfigDefaults
+  // keyed per provider:
+  [key: string]: GrantProviderConfig | undefined
 }
 
 /**
@@ -61,7 +73,7 @@ export function getProviderMiddleware(
     const { allowLocalUrls, providerOptions } = req.companion.options
     const { oauthProvider } = ProviderClass
 
-    let providerGrantConfig: ProviderGrantConfig | undefined
+    let providerGrantConfig: GrantProviderConfig | undefined
     if (isOAuthProvider(oauthProvider)) {
       req.companion.getProviderCredentials = getCredentialsResolver(
         providerName,
@@ -117,7 +129,7 @@ export function getDefaultProviders() {
 export function addCustomProviders(
   customProviders: Record<
     string,
-    { module: ProviderCtor; config: Record<string, unknown> }
+    { module: ProviderCtor; config: GrantProviderConfig }
   >,
   providers: Record<string, ProviderCtor>,
   grantConfig: GrantConfig,

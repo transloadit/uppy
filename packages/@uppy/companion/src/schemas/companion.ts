@@ -4,14 +4,15 @@ import type { CorsOptions } from 'cors'
 import type { Request } from 'express'
 import type { RedisOptions } from 'ioredis'
 import type Provider from '../server/provider/Provider.ts'
+import type { ProviderGrantConfig } from '../types/express.js'
 import type { ProviderOptions, ServerConfig } from './common.ts'
 
 // todo implement zod schema validation and remove manual typeof validation around in the code, also in providers/adapters
 type ProviderConstructor = typeof Provider
 
-interface CustomProvider {
+export interface CustomProvider {
   module: ProviderConstructor
-  config: unknown
+  config: ProviderGrantConfig
 }
 
 export type CompanionInitOptions = {

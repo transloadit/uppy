@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import createGrantConfig, {
-  type GrantConfig as GrantConfigType,
-} from '../src/config/grant.ts'
+import createGrantConfig from '../src/config/grant.ts'
 import { isRecord } from '../src/server/helpers/type-guards.ts'
 import * as providerManager from '../src/server/provider/index.ts'
 import Provider, { type ProviderCtor } from '../src/server/provider/Provider.ts'
 import { getCompanionOptions } from '../src/standalone/helper.ts'
 import { setDefaultEnv } from './mockserver.ts'
+
+type GrantConfigType = providerManager.GrantConfig
 
 let grantConfig: GrantConfigType
 let companionOptions: ReturnType<typeof getCompanionOptions>

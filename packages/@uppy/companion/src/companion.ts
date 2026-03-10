@@ -99,10 +99,7 @@ export function app(optionsArg: CompanionInitOptions = {}) {
 
   const providers = providerManager.getDefaultProviders()
 
-  type CustomProviders = Parameters<
-    typeof providerManager.addCustomProviders
-  >[0]
-  const customProviders = options.customProviders as CustomProviders | undefined
+  const customProviders = options.customProviders
   if (customProviders) {
     providerManager.addCustomProviders(
       customProviders,
