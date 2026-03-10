@@ -554,9 +554,7 @@ export default function s3(config) {
         Key: key,
         UploadId: uploadId,
       })
-    }
-
-    if (!command) {
+    } else {
       res.status(400).json({
         error:
           's3: unsupported or invalid combination of "method" and parameters',
