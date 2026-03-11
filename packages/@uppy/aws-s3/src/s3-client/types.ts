@@ -42,18 +42,18 @@ export interface CredentialsResponse {
 /** Function that retrieves temporary credentials */
 export type getCredentialsFn = (options?: {
   signal?: AbortSignal
-}) => Promise<CredentialsResponse>
+}) => CredentialsResponse | Promise<CredentialsResponse>
 
 /** Base configuration shared by both signing approaches */
 type S3ConfigBase = {
   /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
   endpoint: string
   /** AWS region. Defaults to 'auto'. */
-  region?: string
+  region?: string | undefined
   /** Request size in bytes for multipart uploads. Defaults to 8MB. */
-  requestSizeInBytes?: number
+  requestSizeInBytes?: number | undefined
   /** Timeout in ms after which a request should be aborted. */
-  requestAbortTimeout?: number
+  requestAbortTimeout?: number | undefined
 }
 
 /** Config when using signRequest callback (region optional) */

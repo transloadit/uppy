@@ -127,7 +127,17 @@ describe('AwsS3', () => {
     it('throws if region is not provided', () => {
       expect(() => {
         const core = new Core()
-        core.use(AwsS3, { bucket: 'test-bucket' })
+        core.use(AwsS3, {
+          bucket: 'test-bucket',
+          getCredentials: () => ({
+            credentials: {
+              accessKeyId: '',
+              secretAccessKey: '',
+              sessionToken: '',
+            },
+            region: 'us-east-1',
+          }),
+        })
       }).toThrow('`region` option is required')
     })
 

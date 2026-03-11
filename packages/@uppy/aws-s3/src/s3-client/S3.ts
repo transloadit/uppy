@@ -92,15 +92,14 @@ class S3mini {
 
     // Cache the promise so concurrent calls wait for the same fetch
     if (this.cachedCredentialsPromise == null) {
-      this.cachedCredentialsPromise = this.getCredentials!({})
-        .then((creds) => {
-          this.cachedCredentials = creds
-          return creds
-        })
-        .finally(() => {
-          // Clear promise cache after resolution to allow future retries
-          this.cachedCredentialsPromise = undefined
-        })
+      try {
+        const creds = await this.getCredentials!({})
+        this.cachedCredentials = creds
+        return creds
+      } finally {
+        // Clear promise cache after resolution to allow future retries
+        this.cachedCredentialsPromise = undefined
+      }
     }
 
     return this.cachedCredentialsPromise

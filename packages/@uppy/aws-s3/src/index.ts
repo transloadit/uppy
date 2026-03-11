@@ -179,13 +179,15 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #initS3Client(): void {
     const { endpoint, signRequest, getCredentials, bucket, region } = this.opts
 
-    if (region == null) {
-      throw new TypeError('AwsS3: `region` option is required')
-    }
-
     const s3Endpoint = `https://${bucket}.s3.${region}.amazonaws.com`
 
     if (getCredentials != null) {
+      if (region == null) {
+        throw new TypeError(
+          'AwsS3: `region` option is required when `getCredentials` is provided',
+        )
+      }
+
       // Mode: Temporary credentials (client-side signing)
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
