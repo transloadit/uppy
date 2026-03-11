@@ -9430,6 +9430,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/trusted-types@npm:^2.0.7":
+  version: 2.0.7
+  resolution: "@types/trusted-types@npm:2.0.7"
+  checksum: 10/8e4202766a65877efcf5d5a41b7dd458480b36195e580a3b1085ad21e948bc417d55d6f8af1fd2a7ad008015d4117d5fdfe432731157da3c68678487174e4ba3
+  languageName: node
+  linkType: hard
+
 "@types/use-sync-external-store@npm:^0.0.6":
   version: 0.0.6
   resolution: "@types/use-sync-external-store@npm:0.0.6"
@@ -10287,7 +10294,7 @@ __metadata:
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.26.10"
-    svelte: "npm:^5.27.0"
+    svelte: "npm:^5.53.5"
     svelte-check: "npm:^4.1.6"
     tslib: "npm:^2.8.1"
     typescript: "npm:^5.8.3"
@@ -11285,7 +11292,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aria-query@npm:5.3.2, aria-query@npm:^5.0.0, aria-query@npm:^5.3.1":
+"aria-query@npm:5.3.1":
+  version: 5.3.1
+  resolution: "aria-query@npm:5.3.1"
+  checksum: 10/4b39d2e466992121886ae436d67085537af895b7e545e6092b89950a1f2c372e4a91b0b1daa16a5164564fdefbc6415a1d04d0fe2db8b1326f9ca6728f8384d0
+  languageName: node
+  linkType: hard
+
+"aria-query@npm:5.3.2, aria-query@npm:^5.0.0":
   version: 5.3.2
   resolution: "aria-query@npm:5.3.2"
   checksum: 10/b2fe9bc98bd401bc322ccb99717c1ae2aaf53ea0d468d6e7aebdc02fac736e4a99b46971ee05b783b08ade23c675b2d8b60e4a1222a95f6e27bc4d2a0bfdcc03
@@ -13190,6 +13204,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"devalue@npm:^5.6.3":
+  version: 5.6.3
+  resolution: "devalue@npm:5.6.3"
+  checksum: 10/fba14656bdbd3c23bd850906a504ca2dc94e3dc199c84e6e51c327a425b19d4f431dd7e2a4d9ee51ff49458ef6d10f59f781166bc2d9d8ce1182e863e58d9449
+  languageName: node
+  linkType: hard
+
 "dezalgo@npm:^1.0.4":
   version: 1.0.4
   resolution: "dezalgo@npm:1.0.4"
@@ -13980,12 +14001,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esrap@npm:^1.4.6":
-  version: 1.4.6
-  resolution: "esrap@npm:1.4.6"
+"esrap@npm:^2.2.2":
+  version: 2.2.3
+  resolution: "esrap@npm:2.2.3"
   dependencies:
     "@jridgewell/sourcemap-codec": "npm:^1.4.15"
-  checksum: 10/0fc113a930512af470cf9ed2d49950f3b4b3456ab1f3cce56f69322a9815fbe1fbe33713dd5bafff6ed957767afce49d427043d680768727c6ca1e2c11692e5f
+  checksum: 10/a6cb7613ef6303daff29ee30e36e725f0b50d6ded4e64e1f80d0048228c85c708bd136cc97c8b358096c1c77cdd0f2651aab87dc70eab588bb8fc5217221a426
   languageName: node
   linkType: hard
 
@@ -14287,7 +14308,7 @@ __metadata:
     "@vitest/browser": "npm:^3.2.4"
     msw: "npm:^2.10.4"
     playwright: "npm:1.57.0"
-    svelte: "npm:^5.0.0"
+    svelte: "npm:^5.53.5"
     svelte-check: "npm:^4.0.0"
     tailwindcss: "npm:^4.0.0"
     typescript: "npm:^5.0.0"
@@ -22641,25 +22662,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte@npm:^5.0.0, svelte@npm:^5.27.0":
-  version: 5.27.0
-  resolution: "svelte@npm:5.27.0"
+"svelte@npm:^5.53.5":
+  version: 5.53.10
+  resolution: "svelte@npm:5.53.10"
   dependencies:
-    "@ampproject/remapping": "npm:^2.3.0"
+    "@jridgewell/remapping": "npm:^2.3.4"
     "@jridgewell/sourcemap-codec": "npm:^1.5.0"
     "@sveltejs/acorn-typescript": "npm:^1.0.5"
     "@types/estree": "npm:^1.0.5"
+    "@types/trusted-types": "npm:^2.0.7"
     acorn: "npm:^8.12.1"
-    aria-query: "npm:^5.3.1"
+    aria-query: "npm:5.3.1"
     axobject-query: "npm:^4.1.0"
     clsx: "npm:^2.1.1"
+    devalue: "npm:^5.6.3"
     esm-env: "npm:^1.2.1"
-    esrap: "npm:^1.4.6"
+    esrap: "npm:^2.2.2"
     is-reference: "npm:^3.0.3"
     locate-character: "npm:^3.0.0"
     magic-string: "npm:^0.30.11"
     zimmerframe: "npm:^1.1.2"
-  checksum: 10/5f2b4825e45fa70e6dd38e8c29c937cbd02b4bc89b307f8a39425df15b4c36ce6503750c016afa18f691c54ac0d39b390561dbfeac0fbcff2a0a01229ee4abe5
+  checksum: 10/c055d109c4a3abd02d688105708a774244776da7ef9e3a005296c7428a7f45a2960cfd6e04222acaa5da7d41faeb84d642fdc002ccf2fd1dddce0aa5144944cc
   languageName: node
   linkType: hard
 
