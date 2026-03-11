@@ -1,6 +1,6 @@
 /** Request data to be pre-signed */
 export type presignableRequest = {
-  method: string
+  method: HttpMethod
   key: string
   uploadId?: string
   partNumber?: number

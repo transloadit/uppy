@@ -111,10 +111,10 @@ export const testRunner = (bucket) => {
     await s3client.deleteObject(key)
   })
 
-  // test getMultipartUploadId
+  // test createMultipartUpload
 
-  it('getMultipartUploadId returns a valid uploadId', async () => {
-    const uploadId = await s3client.getMultipartUploadId(
+  it('createMultipartUpload returns a valid uploadId', async () => {
+    const uploadId = await s3client.createMultipartUpload(
       key_bin,
       'application/octet-stream',
     )
@@ -131,7 +131,7 @@ export const testRunner = (bucket) => {
   it('uploadPart returns partNumber and Etag', async () => {
     const partData = randomBytes(EIGHT_MB)
 
-    const uploadId = await s3client.getMultipartUploadId(
+    const uploadId = await s3client.createMultipartUpload(
       key_bin,
       'application/octet-stream',
     )
@@ -156,7 +156,7 @@ export const testRunner = (bucket) => {
     const partSize = EIGHT_MB
     const totalParts = Math.ceil(large_buffer.length / partSize)
 
-    const uploadId = await s3client.getMultipartUploadId(
+    const uploadId = await s3client.createMultipartUpload(
       key_bin,
       'application/octet-stream',
     )
@@ -207,7 +207,7 @@ export const testRunner = (bucket) => {
 
   it('abortMultipartUpload cancels upload successfully', async () => {
     // start upload
-    const uploadId = await s3client.getMultipartUploadId(
+    const uploadId = await s3client.createMultipartUpload(
       key_abort_multipart,
       'application/octet-stream',
     )
@@ -232,7 +232,7 @@ export const testRunner = (bucket) => {
   it('listParts returns uploaded parts correctly', async () => {
     const partSize = EIGHT_MB
 
-    const uploadId = await s3client.getMultipartUploadId(
+    const uploadId = await s3client.createMultipartUpload(
       key_list_parts,
       'application/octet-stream',
     )

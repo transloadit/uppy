@@ -316,7 +316,7 @@ class S3mini {
   }
 
   /** Initiates a multipart upload and returns the upload ID. */
-  public async getMultipartUploadId(
+  public async createMultipartUpload(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
   ): Promise<string> {

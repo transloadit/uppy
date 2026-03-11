@@ -6,7 +6,13 @@ import {
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
-import type { Body, Meta, RemoteUppyFile, UppyFile } from '@uppy/utils'
+import type {
+  Body,
+  LocalUppyFile,
+  Meta,
+  RemoteUppyFile,
+  UppyFile,
+} from '@uppy/utils'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
@@ -130,7 +136,7 @@ const defaultOptions = {
 interface S3UploaderOptions<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
   s3Client: S3mini
-  file: UppyFile<M, B>
+  file: LocalUppyFile<M, B>
   key: string
   shouldUseMultipart?: boolean
   getChunkSize?: (file: { size: number }) => number
@@ -139,13 +145,14 @@ interface S3UploaderOptions<M extends Meta, B extends Body> {
   onSuccess?: (result: UploadResult) => void
   onError?: (err: Error) => void
   onAbort?: () => void
-  log?: (message: string | Error, type?: 'error' | 'warning') => void
+  log?: Uppy['log']
 }
 
 interface UploadResult {
   location: string
   key: string
   bucket?: string
+  /** Only returned for multipart uploads */
   uploadId?: string
 }
 
@@ -161,22 +168,12 @@ interface ChunkState {
   etag?: string
 }
 
-/** Reason for pausing (not a real error) */
-const pausingUploadReason = Symbol('pausing upload, not an actual error')
-
-/** Type guard to check if an error is from pausing (not a real failure) */
-const isPauseError = (err: unknown): boolean =>
-  err instanceof Error &&
-  (err as { cause?: unknown }).cause === pausingUploadReason
-
 // ============================================================================
 // S3Uploader Class
 // ============================================================================
 
 class S3Uploader<M extends Meta, B extends Body> {
-  readonly #s3Client: S3mini
-  readonly #file: UppyFile<M, B>
-  readonly #data: Blob
+  readonly #data: NonNullable<LocalUppyFile<M, B>['data']>
   readonly #key: string
   readonly #options: S3UploaderOptions<M, B>
   readonly #eventManager: EventManager<M, B>
@@ -186,30 +183,65 @@ class S3Uploader<M extends Meta, B extends Body> {
   #shouldUseMultipart: boolean = false
   #uploadId?: string
   #uploadHasStarted: boolean = false
-  #abortController: AbortController = new AbortController()
+  #abortController: AbortController | undefined
 
-  constructor(data: Blob, options: S3UploaderOptions<M, B>) {
-    this.#s3Client = options.s3Client
-    this.#file = options.file
-    this.#data = data
+  constructor(options: S3UploaderOptions<M, B>) {
+    if (options.file.data == null) {
+      throw new Error(`File data is missing for file ${options.file.id}`)
+    }
     this.#options = options
+    this.#data = options.file.data
+    this.#key = options.key
     this.#eventManager = new EventManager(options.uppy)
 
     // Detect resume state from file (persisted by Golden Retriever across page refreshes).
     // Must run before #initChunks so it can force multipart mode for resumed uploads.
     const resumeState = options.file.s3Multipart
-    this.#key = resumeState?.key ?? options.key
-    if (resumeState?.uploadId) {
+    if (resumeState) {
+      this.#key = resumeState.key
       this.#uploadId = resumeState.uploadId
       this.#uploadHasStarted = true
     }
 
-    this.#initChunks()
-    this.#setupEvents()
-  }
+    const fileSize = options.file.data.size
 
-  #setupEvents(): void {
-    const fileId = this.#file.id
+    // Determine if we should use multipart
+    // If we're resuming a multipart upload, force multipart. Otherwise use
+    // the boolean option (true/false) and ensure the file is larger than
+    // S3's minimum chunk size when enabling multipart.
+    this.#shouldUseMultipart =
+      Boolean(resumeState) ||
+      (this.#options.shouldUseMultipart === true && fileSize > MIN_CHUNK_SIZE)
+
+    // Create chunks based on upload strategy
+    if (this.#shouldUseMultipart) {
+      // Calculate chunk size: at least MIN_CHUNK_SIZE, but may be larger for huge files
+      let chunkSize = this.#getChunkSize(fileSize)
+      chunkSize = Math.max(chunkSize, MIN_CHUNK_SIZE)
+
+      // Ensure we don't exceed MAX_PARTS (S3 limit: 10,000 parts)
+      if (Math.ceil(fileSize / chunkSize) > MAX_PARTS) {
+        chunkSize = Math.ceil(fileSize / MAX_PARTS)
+      }
+
+      // Create chunk definitions
+      for (
+        let offset = 0, index = 0;
+        offset < fileSize;
+        offset += chunkSize, index++
+      ) {
+        const end = Math.min(offset + chunkSize, fileSize)
+        this.#chunks.push({ index, start: offset, end, size: end - offset })
+      }
+    } else {
+      // Simple upload: single chunk for the entire file
+      this.#chunks = [{ index: 0, start: 0, end: fileSize, size: fileSize }]
+    }
+
+    this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
+
+    // Setup events:
+    const fileId = this.#options.file.id
 
     this.#eventManager.onFileRemove(fileId, () => {
       this.abort()
@@ -246,70 +278,20 @@ class S3Uploader<M extends Meta, B extends Body> {
     })
   }
 
-  #initChunks(): void {
-    const fileSize = this.#data.size
-
-    // Step 1: Determine if we should use multipart
-    if (this.#uploadId) {
-      // Resuming a multipart upload — persisted state is only created for
-      // multipart uploads, so we must continue in multipart mode.
-      this.#shouldUseMultipart = true
-    } else if (typeof this.#options.shouldUseMultipart === 'boolean') {
-      this.#shouldUseMultipart = this.#options.shouldUseMultipart
-    } else {
-      this.#shouldUseMultipart = fileSize > MIN_CHUNK_SIZE
-    }
-
-    // Step 2: Force simple upload if file is too small for multipart
-    // (S3 requires minimum 5MB parts, except for the last part)
-    // Skip this check when resuming — we know the upload was multipart.
-    if (!this.#uploadId && fileSize <= MIN_CHUNK_SIZE) {
-      this.#shouldUseMultipart = false
-    }
-
-    // Step 3: Create chunks based on upload strategy
-    if (this.#shouldUseMultipart) {
-      // Calculate chunk size: at least MIN_CHUNK_SIZE, but may be larger for huge files
-      let chunkSize = this.#getChunkSize(fileSize)
-      chunkSize = Math.max(chunkSize, MIN_CHUNK_SIZE)
-
-      // Ensure we don't exceed MAX_PARTS (S3 limit: 10,000 parts)
-      if (Math.ceil(fileSize / chunkSize) > MAX_PARTS) {
-        chunkSize = Math.ceil(fileSize / MAX_PARTS)
-      }
-
-      // Create chunk definitions
-      for (
-        let offset = 0, index = 0;
-        offset < fileSize;
-        offset += chunkSize, index++
-      ) {
-        const end = Math.min(offset + chunkSize, fileSize)
-        this.#chunks.push({ index, start: offset, end, size: end - offset })
-      }
-    } else {
-      // Simple upload: single chunk for the entire file
-      this.#chunks = [{ index: 0, start: 0, end: fileSize, size: fileSize }]
-    }
-
-    this.#chunkState = this.#chunks.map(() => ({ uploaded: 0 }))
-  }
-
   #getChunkSize(fileSize: number): number {
     if (this.#options.getChunkSize) {
       return this.#options.getChunkSize({ size: fileSize })
     }
-    return Math.max(MIN_CHUNK_SIZE, Math.ceil(fileSize / MAX_PARTS))
+    return Math.ceil(fileSize / MAX_PARTS)
   }
 
   start(): void {
+    // Abort any pending operations (if not already aborted)
+    this.#abortController?.abort()
+    // Always create a fresh AbortController (also for resume)
+    this.#abortController = new AbortController()
+
     if (this.#uploadHasStarted) {
-      // Abort any pending operations (if not already aborted)
-      if (!this.#abortController.signal.aborted) {
-        this.#abortController.abort(pausingUploadReason)
-      }
-      // Always create a fresh AbortController for resume
-      this.#abortController = new AbortController()
       this.#resumeUpload()
     } else {
       this.#createUpload()
@@ -317,21 +299,24 @@ class S3Uploader<M extends Meta, B extends Body> {
   }
 
   pause(): void {
-    this.#abortController.abort(pausingUploadReason)
-    this.#abortController = new AbortController()
+    this.#abortController?.abort()
   }
 
-  abort(opts?: { abortOnS3?: boolean }): void {
-    this.#abortController.abort()
+  /**
+   *
+   * @param opts - `abortInS3`: Whether to also abort the multipart upload in S3. Default: true. Set to false to keep the multipart upload in S3 active, allowing for manual cleanup later and preventing accidental data loss if the user later tries to resume the upload.
+   */
+  abort(opts?: { abortInS3?: boolean }): void {
+    this.#abortController?.abort()
     // Clean up event listeners
     this.#eventManager.remove()
-    if (opts?.abortOnS3 !== false && this.#uploadId) {
-      // Clear persisted resume state — the upload no longer exists on S3,
+    if (opts?.abortInS3 !== false && this.#uploadId) {
+      // Clear persisted resume state — the upload no longer exists in S3,
       // so retries must start fresh instead of attempting to resume.
-      this.#options.uppy.setFileState(this.#file.id, {
+      this.#options.uppy.setFileState(this.#options.file.id, {
         s3Multipart: undefined,
       })
-      this.#s3Client
+      this.#options.s3Client
         .abortMultipartUpload(this.#key, this.#uploadId)
         .catch((abortErr) => {
           this.#options.log?.(abortErr, 'warning')
@@ -343,9 +328,9 @@ class S3Uploader<M extends Meta, B extends Body> {
     this.#uploadHasStarted = true
     try {
       if (this.#shouldUseMultipart) {
-        await this.#multipartUpload()
+        await this.#uploadMultipart()
       } else {
-        await this.#simpleUpload()
+        await this.#uploadNonMultipart()
       }
     } catch (err) {
       this.#onError(err as Error)
@@ -358,7 +343,7 @@ class S3Uploader<M extends Meta, B extends Body> {
       return
     }
     try {
-      const existingParts = await this.#s3Client.listParts(
+      const existingParts = await this.#options.s3Client.listParts(
         this.#uploadId,
         this.#key,
       )
@@ -378,16 +363,14 @@ class S3Uploader<M extends Meta, B extends Body> {
     }
   }
 
-  async #simpleUpload(): Promise<void> {
-    const signal = this.#abortController.signal
-    if (signal.aborted) {
-      throw new Error('Upload aborted', { cause: signal.reason })
-    }
+  async #uploadNonMultipart(): Promise<void> {
+    const signal = this.#abortController?.signal
+    signal?.throwIfAborted()
 
-    await this.#s3Client.putObject(
+    await this.#options.s3Client.putObject(
       this.#key,
       this.#data,
-      this.#file.type || 'application/octet-stream',
+      this.#options.file.type || 'application/octet-stream',
       (bytesUploaded: number) => {
         this.#chunkState[0].uploaded = bytesUploaded
         this.#onProgress()
@@ -396,24 +379,22 @@ class S3Uploader<M extends Meta, B extends Body> {
     )
 
     this.#onSuccess({
-      location: `${this.#s3Client.endpoint}/${this.#key}`,
+      location: `${this.#options.s3Client.endpoint}/${this.#key}`,
       key: this.#key,
     })
   }
 
-  async #multipartUpload(): Promise<void> {
-    const signal = this.#abortController.signal
-    if (signal.aborted) {
-      throw new Error('Upload aborted', { cause: signal.reason })
-    }
+  async #uploadMultipart(): Promise<void> {
+    const signal = this.#abortController?.signal
+    signal?.throwIfAborted()
 
-    this.#uploadId = await this.#s3Client.getMultipartUploadId(
+    this.#uploadId = await this.#options.s3Client.createMultipartUpload(
       this.#key,
-      this.#file.type || 'application/octet-stream',
+      this.#options.file.type || 'application/octet-stream',
     )
 
     // Persist resume state so Golden Retriever can restore it after page refresh
-    this.#options.uppy.setFileState(this.#file.id, {
+    this.#options.uppy.setFileState(this.#options.file.id, {
       s3Multipart: { uploadId: this.#uploadId, key: this.#key },
     })
 
@@ -421,26 +402,18 @@ class S3Uploader<M extends Meta, B extends Body> {
   }
 
   async #uploadRemainingParts(): Promise<void> {
-    const signal = this.#abortController.signal
-    // Collect already-uploaded parts (from resume)
-    const parts = this.#chunkState
-      .map((state, i) =>
-        state.etag ? { partNumber: i + 1, etag: state.etag } : null,
-      )
-      .filter((p): p is NonNullable<typeof p> => p !== null)
+    const signal = this.#abortController?.signal
 
     for (let i = 0; i < this.#chunks.length; i++) {
-      if (signal.aborted) {
-        throw new Error('Upload aborted', { cause: signal.reason })
-      }
-      if (this.#chunkState[i].etag) continue
+      signal?.throwIfAborted()
+      if (this.#chunkState[i].etag) continue // already uploaded
 
       const chunk = this.#chunks[i]
       const partNumber = i + 1
       const chunkData = this.#data.slice(chunk.start, chunk.end)
-      const chunkIndex = i // Capture for closure
+      const chunkIndex = i // Capture for closure (cannot use for-loop variable i directly in a closure)
 
-      const part = await this.#s3Client.uploadPart(
+      const part = await this.#options.s3Client.uploadPart(
         this.#key,
         this.#uploadId!,
         chunkData,
@@ -452,9 +425,9 @@ class S3Uploader<M extends Meta, B extends Body> {
         signal,
       )
 
+      // after part finished uploading, update chunk state
       this.#chunkState[i].uploaded = chunk.size
       this.#chunkState[i].etag = part.etag
-      parts.push({ partNumber: part.partNumber, etag: part.etag })
       this.#onProgress()
 
       if (this.#options.onPartComplete) {
@@ -465,11 +438,13 @@ class S3Uploader<M extends Meta, B extends Body> {
       }
     }
 
-    if (signal.aborted) {
-      throw new Error('Upload aborted', { cause: signal.reason })
-    }
+    signal?.throwIfAborted()
 
-    const result = await this.#s3Client.completeMultipartUpload(
+    const parts = this.#chunkState.flatMap((state, i) =>
+      state.etag ? [{ partNumber: i + 1, etag: state.etag }] : [],
+    )
+
+    const result = await this.#options.s3Client.completeMultipartUpload(
       this.#key,
       this.#uploadId!,
       parts,
@@ -496,30 +471,30 @@ class S3Uploader<M extends Meta, B extends Body> {
     // If the upload was aborted (file removed mid-upload), the network request
     // may still complete successfully. Don't emit success in this case since
     // the file no longer exists in Uppy's state.
-    if (this.#abortController.signal.aborted) {
-      this.#eventManager.remove()
+    this.#eventManager.remove()
+    if (this.#abortController?.signal.aborted) {
       return
     }
-    this.#eventManager.remove()
     // Clear persisted resume state — upload completed successfully.
-    this.#options.uppy.setFileState(this.#file.id, {
+    this.#options.uppy.setFileState(this.#options.file.id, {
       s3Multipart: undefined,
     })
     this.#options.onSuccess?.(result)
   }
 
   #onError(err: Error): void {
-    if (isPauseError(err)) return
-    // Also ignore abort signals from intentional cancellation
+    // ignore abort signals from intentional cancellation
     if (err.name === 'AbortError') return
     // If we intentionally aborted, don't report any subsequent errors
     // (e.g., S3 returning 404 NoSuchUpload after we aborted the upload)
-    if (this.#abortController.signal.aborted) return
+    if (this.#abortController?.signal.aborted) return
 
-    // NOTE: We intentionally do NOT abort the multipart upload on S3 here.
+    // NOTE: We intentionally do NOT abort the multipart upload in S3 here.
     // This allows the user to retry and resume from where they left off.
-    // The multipart upload is only aborted when the user explicitly cancels
-    // (via the abort() method with abortOnS3: true).
+    // The multipart upload is only aborted when the user cancels via the
+    // `abort()` method. By default `abort()` will also abort the multipart
+    // upload in S3 (abortInS3 = true). Pass { abortInS3: false } to keep the
+    // multipart upload in S3 so it can be cleaned up manually or resumed later.
 
     this.#options.onError?.(err)
   }
@@ -568,10 +543,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     }
   }
 
-  // --------------------------------------------------------------------------
-  // Resumable Uploads Capability
-  // --------------------------------------------------------------------------
-
   #setResumableUploadsCapability = (value: boolean): void => {
     const { capabilities } = this.uppy.getState()
     this.uppy.setState({
@@ -594,49 +565,37 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #initS3Client(): void {
     const { endpoint, signRequest, getCredentials, bucket, region } = this.opts
 
-    if (typeof bucket !== 'string' || bucket.trim() === '') {
-      throw new Error(
-        'AwsS3: `bucket` option is required and must be a non-empty string',
-      )
+    if (region == null) {
+      throw new TypeError('AwsS3: `region` option is required')
     }
 
-    if (typeof region !== 'string' || region.trim() === '') {
-      throw new Error(
-        'AwsS3: `region` option is required and must be a non-empty string',
-      )
-    }
+    const s3Endpoint = `https://${bucket}.s3.${region}.amazonaws.com`
 
-    const bucketName = bucket.trim()
-
-    if (!signRequest && !getCredentials && !endpoint) {
-      throw new Error(
-        'AwsS3: `endpoint`, `signRequest`, or `getCredentials` is required',
-      )
-    }
-
-    const s3Endpoint = `https://${bucketName}.s3.${region}.amazonaws.com`
-
-    if (getCredentials) {
+    if (getCredentials != null) {
       // Mode: Temporary credentials (client-side signing)
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
         getCredentials,
         region,
       })
-    } else if (signRequest) {
+    } else if (signRequest != null) {
       // Mode: Custom signing function
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
         signRequest,
         region,
       })
-    } else {
-      // Mode: Companion signing (endpoint is guaranteed to be set here)
+    } else if (endpoint != null) {
+      // Mode: Companion signing
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
-        signRequest: this.#createCompanionSigner(endpoint!),
+        signRequest: this.#createCompanionSigner(endpoint),
         region,
       })
+    } else {
+      throw new TypeError(
+        'AwsS3: One of options `endpoint`, `signRequest`, or `getCredentials` is required',
+      )
     }
   }
 
@@ -685,7 +644,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         if (!currentFile) {
           return
         }
-        return this.#uploadLocalFile(currentFile)
+        return this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
       })
     })
 
@@ -699,14 +658,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   // Local File Upload
   // --------------------------------------------------------------------------
 
-  async #uploadLocalFile(file: UppyFile<M, B>): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const data = file.data as Blob
-
-      try {
+  async #uploadLocalFile(file: LocalUppyFile<M, B>): Promise<void> {
+    try {
+      return await new Promise((resolve, reject) => {
         // Create uploader (events are wired internally).
         // S3Uploader detects resume state from file.s3Multipart internally.
-        const uploader = new S3Uploader<M, B>(data, {
+        const uploader = new S3Uploader<M, B>({
           uppy: this.uppy,
           s3Client: this.#s3Client,
           file,
@@ -737,18 +694,15 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
               } as unknown as B,
               uploadURL: result.location,
             })
-            this.#cleanup(file.id)
             resolve()
           },
 
           onError: (err) => {
             this.uppy.emit('upload-error', file, err)
-            this.#cleanup(file.id)
             reject(err)
           },
 
           onAbort: () => {
-            this.#cleanup(file.id)
             resolve() // Normal completion, not an error
           },
         })
@@ -758,12 +712,11 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
         // Start the upload
         uploader.start()
-      } catch (err) {
-        // Cleanup on synchronous failure during setup
-        this.#cleanup(file.id)
-        reject(err)
-      }
-    })
+      })
+    } finally {
+      // Clean up uploader instance after upload completes or fails
+      delete this.#uploaders[file.id]
+    }
   }
 
   #shouldUseMultipart(file: UppyFile<M, B>): boolean {
@@ -775,22 +728,14 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       return shouldUseMultipart
     }
     // Default: multipart for files > 100MB
-    return (file.size || 0) > 100 * MB
+    return (file.size ?? 0) > 100 * MB
   }
 
   #generateKey(file: UppyFile<M, B>): string {
-    if (this.opts.generateObjectKey) {
-      return this.opts.generateObjectKey(file)
-    }
-    // Default: {randomId}-{filename}
-    const randomId = crypto.randomUUID()
-    return `${randomId}-${file.name}`
-  }
-
-  #cleanup(fileId: string): void {
-    if (this.#uploaders[fileId]) {
-      delete this.#uploaders[fileId]
-    }
+    return (
+      this.opts.generateObjectKey?.(file) ??
+      `${crypto.randomUUID()}-${file.name}`
+    )
   }
 
   // --------------------------------------------------------------------------
@@ -807,9 +752,9 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       file.meta,
     )
     return {
-      ...file.remote?.body,
+      ...file.remote.body,
       protocol: 's3-multipart',
-      size: file.data?.size,
+      size: file.data.size,
       metadata: Object.fromEntries(
         allowedMetaFields.map((key) => [key, file.meta[key]]),
       ),

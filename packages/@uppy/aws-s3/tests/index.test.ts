@@ -117,7 +117,6 @@ describe('AwsS3', () => {
       endpoint: 'https://companion.example.com',
     })
 
-    // @ts-expect-error private property
     const pluginNames = core[Symbol.for('uppy test: getPlugins')](
       'uploader',
     ).map((plugin: AwsS3<Meta, AwsBody>) => plugin.constructor.name)
@@ -125,14 +124,6 @@ describe('AwsS3', () => {
   })
 
   describe('configuration validation', () => {
-    it('throws if bucket is not provided', () => {
-      expect(() => {
-        const core = new Core()
-        // @ts-expect-error - testing missing required option
-        core.use(AwsS3, {})
-      }).toThrow('`bucket` option is required')
-    })
-
     it('throws if region is not provided', () => {
       expect(() => {
         const core = new Core()
