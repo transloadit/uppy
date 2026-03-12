@@ -50,10 +50,9 @@ interface S3UploaderOptions<M extends Meta, B extends Body> {
   log?: Uppy['log']
 }
 
-interface UploadResult {
+export interface UploadResult {
   location: string
   key: string
-  bucket?: string
   /** Only returned for multipart uploads */
   uploadId?: string
 }
@@ -351,7 +350,6 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     this.#onSuccess({
       location: result.location,
       key: result.key,
-      bucket: result.bucket,
       uploadId: this.#uploadId,
     })
   }

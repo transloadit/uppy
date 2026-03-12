@@ -13,9 +13,11 @@ const bucketConfigs = Object.keys(process.env)
   .filter((k) => k.startsWith('BUCKET_ENV_'))
   .map((k) => {
     const [provider, accessKeyId, secretAccessKey, endpoint, region] =
-      process.env[k].split(',')
+      process.env[k]!.split(',')
     return { provider, accessKeyId, secretAccessKey, endpoint, region }
   })
+
+export type BucketConfigs = typeof bucketConfigs
 
 export default async () => {
   for (const cfg of bucketConfigs) {

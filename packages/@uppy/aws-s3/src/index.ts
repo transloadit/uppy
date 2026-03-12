@@ -19,7 +19,7 @@ import {
   TaskQueue,
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
-import S3Uploader from './S3Uploader.js'
+import S3Uploader, { type UploadResult } from './S3Uploader.js'
 import S3mini from './s3-client/S3.js'
 import type * as IT from './s3-client/types.js'
 
@@ -47,9 +47,14 @@ declare module '@uppy/core' {
 
 export interface AwsS3Options<M extends Meta, B extends Body>
   extends PluginOpts {
-  bucket: string
-  region?: string
-  endpoint?: string
+  /** AWS region, required for signing */
+  region: string
+
+  /** Companion URL if you want to use Companion for signing */
+  companionEndpoint?: string
+
+  /** S3 upload endpoint */
+  s3Endpoint: string
 
   /**
    * Custom function to sign requests.
@@ -110,14 +115,6 @@ const defaultOptions = {
 // S3Uploader Types
 // ============================================================================
 
-interface UploadResult {
-  location: string
-  key: string
-  bucket?: string
-  /** Only returned for multipart uploads */
-  uploadId?: string
-}
-
 export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   DefinePluginOpts<AwsS3Options<M, B>, keyof typeof defaultOptions>,
   M,
@@ -177,17 +174,15 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   // --------------------------------------------------------------------------
 
   #initS3Client(): void {
-    const { endpoint, signRequest, getCredentials, bucket, region } = this.opts
-
-    const s3Endpoint = `https://${bucket}.s3.${region}.amazonaws.com`
+    const {
+      companionEndpoint,
+      signRequest,
+      getCredentials,
+      s3Endpoint,
+      region,
+    } = this.opts
 
     if (getCredentials != null) {
-      if (region == null) {
-        throw new TypeError(
-          'AwsS3: `region` option is required when `getCredentials` is provided',
-        )
-      }
-
       // Mode: Temporary credentials (client-side signing)
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
@@ -201,16 +196,16 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         signRequest,
         region,
       })
-    } else if (endpoint != null) {
+    } else if (companionEndpoint != null) {
       // Mode: Companion signing
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
-        signRequest: this.#createCompanionSigner(endpoint),
+        signRequest: this.#createCompanionSigner(companionEndpoint),
         region,
       })
     } else {
       throw new TypeError(
-        'AwsS3: One of options `endpoint`, `signRequest`, or `getCredentials` is required',
+        'One of options `companionEndpoint`, `signRequest`, or `getCredentials` is required',
       )
     }
   }
@@ -306,8 +301,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
               body: {
                 location: result.location,
                 key: result.key,
-                bucket: result.bucket,
-              } as unknown as B,
+              } satisfies AwsBody as unknown as B,
               uploadURL: result.location,
             })
             resolve()
@@ -406,5 +400,4 @@ export type { AwsS3Options as AwsS3MultipartOptions }
 export interface AwsBody extends Body {
   location: string
   key: string
-  bucket?: string
 }

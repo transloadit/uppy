@@ -4,18 +4,19 @@ import { S3mini } from '../../src/s3-client/S3.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.js'
 import { randomBytes } from '../test-utils/browser-crypto.js'
 import { beforeRun, cleanupTestBeforeAll } from './_shared.test.js'
+import type { BucketConfigs } from './teardown.js'
 
 const name = 'minio'
 
 // Get bucket configs from globalSetup via Vitest inject
-const bucketConfigs = inject('bucketConfigs') || []
+const bucketConfigs: BucketConfigs = inject('bucketConfigs' as never) || []
 const raw = bucketConfigs.find((c) => c.provider === name)
   ? [
-      bucketConfigs.find((c) => c.provider === name).provider,
-      bucketConfigs.find((c) => c.provider === name).accessKeyId,
-      bucketConfigs.find((c) => c.provider === name).secretAccessKey,
-      bucketConfigs.find((c) => c.provider === name).endpoint,
-      bucketConfigs.find((c) => c.provider === name).region,
+      bucketConfigs.find((c) => c.provider === name)!.provider,
+      bucketConfigs.find((c) => c.provider === name)!.accessKeyId,
+      bucketConfigs.find((c) => c.provider === name)!.secretAccessKey,
+      bucketConfigs.find((c) => c.provider === name)!.endpoint,
+      bucketConfigs.find((c) => c.provider === name)!.region,
     ]
   : null
 

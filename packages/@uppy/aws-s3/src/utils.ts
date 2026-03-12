@@ -22,9 +22,3 @@ export type UploadPartBytesResult = {
   ETag: string
   location?: string
 }
-
-export interface AwsBody extends Body {
-  location: string
-  key: string
-  bucket: string
-}

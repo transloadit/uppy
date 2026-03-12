@@ -112,9 +112,9 @@ function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
 describe('AwsS3', () => {
   it('Registers AwsS3 upload plugin', () => {
     const core = new Core().use(AwsS3, {
-      bucket: 'test-bucket',
       region: 'us-east-1',
-      endpoint: 'https://companion.example.com',
+      s3Endpoint: 'https://companion.example.com',
+      companionEndpoint: 'https://companion.example.com',
     })
 
     const pluginNames = core[Symbol.for('uppy test: getPlugins')](
@@ -124,36 +124,24 @@ describe('AwsS3', () => {
   })
 
   describe('configuration validation', () => {
-    it('throws if region is not provided', () => {
-      expect(() => {
-        const core = new Core()
-        core.use(AwsS3, {
-          bucket: 'test-bucket',
-          getCredentials: () => ({
-            credentials: {
-              accessKeyId: '',
-              secretAccessKey: '',
-              sessionToken: '',
-            },
-            region: 'us-east-1',
-          }),
-        })
-      }).toThrow('`region` option is required')
-    })
-
     it('throws if no signing method is provided', () => {
       expect(() => {
         const core = new Core()
-        core.use(AwsS3, { bucket: 'test-bucket', region: 'us-east-1' })
-      }).toThrow('`endpoint`, `signRequest`, or `getCredentials` is required')
+        core.use(AwsS3, {
+          s3Endpoint: 'https://companion.example.com',
+          region: 'us-east-1',
+        })
+      }).toThrow(
+        'One of options `companionEndpoint`, `signRequest`, or `getCredentials` is required',
+      )
     })
 
     it('accepts endpoint option', () => {
       const core = new Core()
       core.use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
-        endpoint: 'https://companion.example.com',
+        companionEndpoint: 'https://companion.example.com',
       })
       expect(core.getPlugin('AwsS3')).toBeDefined()
     })
@@ -161,7 +149,7 @@ describe('AwsS3', () => {
     it('accepts signRequest option', () => {
       const core = new Core()
       core.use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest: vi.fn(),
       })
@@ -171,7 +159,7 @@ describe('AwsS3', () => {
     it('accepts getCredentials option', () => {
       const core = new Core()
       core.use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         getCredentials: vi.fn(),
       })
@@ -192,9 +180,9 @@ describe('AwsS3', () => {
 
     it('defaults to multipart for files > 100MB', () => {
       const core = new Core<Meta, AwsBody>().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
-        endpoint: 'https://companion.example.com',
+        companionEndpoint: 'https://companion.example.com',
       })
       const opts = core.getPlugin('AwsS3')!.opts as AwsS3Options<Meta, AwsBody>
       const shouldUseMultipart = opts.shouldUseMultipart as (
@@ -211,9 +199,9 @@ describe('AwsS3', () => {
 
     it('handles very large files', () => {
       const core = new Core<Meta, AwsBody>().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
-        endpoint: 'https://companion.example.com',
+        companionEndpoint: 'https://companion.example.com',
       })
       const opts = core.getPlugin('AwsS3')!.opts as AwsS3Options<Meta, AwsBody>
       const shouldUseMultipart = opts.shouldUseMultipart as (
@@ -230,7 +218,7 @@ describe('AwsS3', () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Test stop'))
 
       const core = new Core().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
@@ -259,7 +247,7 @@ describe('AwsS3', () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Sign failed'))
 
       const core = new Core().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
@@ -294,7 +282,7 @@ describe('AwsS3', () => {
         )
 
       const core = new Core().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
@@ -325,7 +313,7 @@ describe('AwsS3', () => {
         )
 
       const core = new Core().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false,
@@ -377,7 +365,7 @@ describe('AwsS3', () => {
       globalThis.fetch = fetchMock
 
       const core = new Core().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
         shouldUseMultipart: true,
@@ -428,7 +416,7 @@ describe('AwsS3', () => {
       globalThis.fetch = fetchMock
 
       const core = new Core().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
         shouldUseMultipart: true,
@@ -464,7 +452,7 @@ describe('AwsS3', () => {
       globalThis.fetch = fetchMock
 
       const core = new Core().use(AwsS3, {
-        bucket: 'test-bucket',
+        s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
         shouldUseMultipart: false, // Would normally be simple upload
