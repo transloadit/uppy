@@ -44,6 +44,16 @@ export interface AwsS3Options<M extends Meta, B extends Body>
   endpoint?: string
 
   /**
+   * Enable S3 Transfer Acceleration for faster uploads over long distances.
+   * Uses CloudFront edge locations to route data over AWS's optimized backbone.
+   * Only supported with `getCredentials` mode (client-side signing).
+   * For `signRequest`, return accelerated URLs from your signer instead.
+   * For Companion, set COMPANION_AWS_USE_ACCELERATE_ENDPOINT on the server.
+   * Requires Transfer Acceleration to be enabled on the S3 bucket.
+   */
+  useAccelerateEndpoint?: boolean
+
+  /**
    * Custom function to sign requests.
    * Called with request details, should return signed headers.
    * Alternative to using Companion endpoint.
@@ -546,7 +556,14 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   // --------------------------------------------------------------------------
 
   #initS3Client(): void {
-    const { endpoint, signRequest, getCredentials, bucket, region } = this.opts
+    const {
+      endpoint,
+      signRequest,
+      getCredentials,
+      bucket,
+      region,
+      useAccelerateEndpoint,
+    } = this.opts
 
     if (typeof bucket !== 'string' || bucket.trim() === '') {
       throw new Error(
@@ -568,7 +585,14 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       )
     }
 
-    const s3Endpoint = `https://${bucketName}.s3.${region}.amazonaws.com`
+    // Transfer Acceleration uses a special hostname without a region component:
+    //   Standard:    https://{bucket}.s3.{region}.amazonaws.com
+    //   Accelerated: https://{bucket}.s3-accelerate.amazonaws.com
+    // The SigV4 signer still needs the region for the credential scope, but the
+    // HTTP requests go through the accelerated hostname.
+    const s3Endpoint = useAccelerateEndpoint
+      ? `https://${bucketName}.s3-accelerate.amazonaws.com`
+      : `https://${bucketName}.s3.${region}.amazonaws.com`
 
     if (getCredentials) {
       // Mode: Temporary credentials (client-side signing)
@@ -578,6 +602,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         region,
       })
     } else if (signRequest) {
+      if (useAccelerateEndpoint) {
+        throw new TypeError(
+          'AwsS3: `useAccelerateEndpoint` is only supported with `getCredentials` mode. ' +
+            'For `signRequest` mode, return accelerated URLs from your signing function instead.',
+        )
+      }
       // Mode: Custom signing function
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,
@@ -585,6 +615,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         region,
       })
     } else {
+      if (useAccelerateEndpoint) {
+        throw new TypeError(
+          'AwsS3: `useAccelerateEndpoint` is only supported with `getCredentials` mode. ' +
+            'For Companion mode, set COMPANION_AWS_USE_ACCELERATE_ENDPOINT on the server instead.',
+        )
+      }
       // Mode: Companion signing (endpoint is guaranteed to be set here)
       this.#s3Client = new S3mini({
         endpoint: s3Endpoint,

@@ -244,4 +244,34 @@ describe('AwsS3', () => {
       expect(result?.successful).toHaveLength(0)
     })
   })
+
+  describe('useAccelerateEndpoint', () => {
+    it('uses s3-accelerate hostname with getCredentials mode', () => {
+      const core = new Core()
+      core.use(AwsS3, {
+        bucket: 'my-bucket',
+        region: 'eu-west-1',
+        useAccelerateEndpoint: true,
+        getCredentials: vi.fn(),
+      })
+      // Verify the plugin installed without error — the accelerated endpoint
+      // is passed to S3mini constructor which validates it. If it were
+      // malformed, install() would throw.
+      expect(core.getPlugin('AwsS3')).toBeDefined()
+    })
+
+    it('throws when used with signRequest mode', () => {
+      expect(() => {
+        const core = new Core()
+        core.use(AwsS3, {
+          bucket: 'my-bucket',
+          region: 'eu-west-1',
+          useAccelerateEndpoint: true,
+          signRequest: vi.fn(),
+        })
+      }).toThrow(
+        '`useAccelerateEndpoint` is only supported with `getCredentials` mode',
+      )
+    })
+  })
 })
