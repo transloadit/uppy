@@ -129,6 +129,8 @@ export function app(optionsArg: CompanionInitOptions) {
     app.use(middlewares.metrics({ path: options.server.path }))
   }
 
+  app.get('/health', (_req, res) => res.end())
+
   app.use(cookieParser()) // server tokens are added to cookies
 
   app.use(interceptGrantErrorResponse)
