@@ -86,7 +86,7 @@ function errorToResponse(err) {
 
     // @ts-ignore
     if (err.statusCode === 429) {
-      return { code: 429, message: err.message }
+      return { code: 429, json: { message: err.message } }
     }
 
     // @ts-ignore
