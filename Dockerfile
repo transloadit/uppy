@@ -1,4 +1,4 @@
-FROM node:22.18.0-alpine AS build
+FROM node:22-alpine AS build
 
 # Create link to node on amd64 so that corepack can find it
 RUN if [ "$(uname -m)" == "aarch64" ]; then mkdir -p /usr/local/sbin/ && ln -s /usr/local/bin/node /usr/local/sbin/node; fi
@@ -7,17 +7,19 @@ WORKDIR /app
 
 COPY . /app/
 
-RUN apk --update add  --virtual native-dep \
-  make gcc g++ python3 libgcc libstdc++ git && \
+# Ensure corepack is enabled (available in official Node images) and
+# install only build-time dependencies using a named virtual package.
+RUN corepack enable && \
+  apk add --no-cache --virtual .build-deps build-base python3 libgcc libstdc++ git && \
   (cd /app && corepack yarn workspaces focus @uppy/companion) && \
-  apk del native-dep
+  apk del .build-deps
 
 RUN cd /app && corepack yarn workspace @uppy/companion build
 
 # Now remove all non-prod dependencies for a leaner image
 RUN cd /app && corepack yarn workspaces focus @uppy/companion --production
 
-FROM node:22.18.0-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
