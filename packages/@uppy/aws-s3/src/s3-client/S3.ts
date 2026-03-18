@@ -621,25 +621,38 @@ class S3mini {
 
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (parsed && typeof parsed === 'object') {
-      // Check for both cases
+      // Check for both cases (camelCase from our parser, PascalCase from S3)
       const result =
         parsed.completeMultipartUploadResult ||
         parsed.CompleteMultipartUploadResult ||
         parsed
 
       if (result && typeof result === 'object') {
-        const resultObj = result as Record<string, unknown>
+        const r = result as Record<string, unknown>
 
-        // Handle ETag in all its variations
-        const etag = resultObj.ETag || resultObj.eTag || resultObj.etag
-        if (etag && typeof etag === 'string') {
-          return {
-            ...resultObj,
-            etag: U.sanitizeETag(etag),
-          } as IT.CompleteMultipartUploadResult
+        // S3 returns PascalCase (Location, Bucket, Key, ETag).
+        // Normalize to lowercase for our type interface.
+        const location = (r.Location || r.location) as string | undefined
+        const bucket = (r.Bucket || r.bucket) as string | undefined
+        const key = (r.Key || r.key) as string | undefined
+        const rawEtag = (r.ETag || r.eTag || r.etag) as string | undefined
+
+        if (!location || !key) {
+          throw new Error(
+            `${C.ERROR_PREFIX}CompleteMultipartUpload response missing Location or Key: ${JSON.stringify(r)}`,
+          )
         }
 
-        return result as IT.CompleteMultipartUploadResult
+        const etag = rawEtag ? U.sanitizeETag(rawEtag) : ''
+
+        return {
+          location,
+          bucket: bucket ?? '',
+          key,
+          etag,
+          eTag: etag,
+          ETag: etag,
+        } satisfies IT.CompleteMultipartUploadResult
       }
     }
 
