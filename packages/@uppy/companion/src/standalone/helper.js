@@ -77,9 +77,10 @@ const defaultStandaloneGetKey = (...args) =>
   `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
- * When COMPANION_AWS_DYNAMIC_BUCKET=true, resolve bucket from file
- * metadata.bucketName instead of using the static COMPANION_AWS_BUCKET.
- * Falls back to COMPANION_AWS_BUCKET when metadata doesn't specify one.
+ * When COMPANION_AWS_DYNAMIC_BUCKET=true, resolve bucket and key from file
+ * metadata instead of using static COMPANION_AWS_BUCKET and random UUID keys.
+ *   - bucket comes from metadata.bucketName (falls back to COMPANION_AWS_BUCKET)
+ *   - key comes from metadata.objectName (falls back to default UUID + filename)
  */
 const getDynamicBucket =
   process.env.COMPANION_AWS_DYNAMIC_BUCKET === 'true'
@@ -88,12 +89,8 @@ const getDynamicBucket =
       }
     : process.env.COMPANION_AWS_BUCKET
 
-/**
- * When COMPANION_AWS_METADATA_KEY=true, use metadata.objectName as the S3 key
- * instead of generating a random UUID. Falls back to default key generation.
- */
-const getMetadataKey =
-  process.env.COMPANION_AWS_METADATA_KEY === 'true'
+const getDynamicKey =
+  process.env.COMPANION_AWS_DYNAMIC_BUCKET === 'true'
     ? ({ metadata, filename }) => {
         if (metadata?.objectName) {
           return `${s3Prefix}${metadata.objectName}`
@@ -158,7 +155,7 @@ const getConfigFromEnv = () => {
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,
-      getKey: getMetadataKey,
+      getKey: getDynamicKey,
       secret: getSecret('COMPANION_AWS_SECRET'),
       bucket: getDynamicBucket,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
