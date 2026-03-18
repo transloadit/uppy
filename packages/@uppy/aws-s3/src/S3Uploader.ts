@@ -385,6 +385,13 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     // (e.g., S3 returning 404 NoSuchUpload after we aborted the upload)
     if (this.#abortController?.signal.aborted) return
 
+    // Clean up event listeners so this uploader doesn't become a "zombie"
+    // that reacts to future retry/pause/resume events after the error.
+    // Without this, each failed retry leaves an orphaned uploader that
+    // still listens for retry-all, causing duplicate uploads on the next
+    // successful retry.
+    this.#eventManager.remove()
+
     // NOTE: We intentionally do NOT abort the multipart upload in S3 here.
     // This allows the user to retry and resume from where they left off.
     // The multipart upload is only aborted when the user cancels via the
