@@ -621,8 +621,7 @@ class S3mini {
 
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (parsed && typeof parsed === 'object') {
-      // S3 returns PascalCase tags. Check lowercase variant as a defensive
-      // fallback for non-standard S3-compatible services.
+      // Check for both camelCase and PascalCase result keys (different responses/providers may use different casing)
       const result =
         parsed.completeMultipartUploadResult ||
         parsed.CompleteMultipartUploadResult ||
