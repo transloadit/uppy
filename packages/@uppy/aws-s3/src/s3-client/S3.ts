@@ -621,7 +621,7 @@ class S3mini {
 
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
     if (parsed && typeof parsed === 'object') {
-      // Check for both camelCase and PascalCase result keys (different responses/providers may use different casing)
+      // Check for both cases (camelCase from our parser, PascalCase from S3)
       const result =
         parsed.completeMultipartUploadResult ||
         parsed.CompleteMultipartUploadResult ||
@@ -650,8 +650,6 @@ class S3mini {
           bucket: resultBucket ?? '',
           key: resultKey,
           etag,
-          eTag: etag,
-          ETag: etag,
         } satisfies IT.CompleteMultipartUploadResult
       }
     }
