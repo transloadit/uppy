@@ -85,40 +85,12 @@ export interface CompleteMultipartUploadResult {
   bucket: string
   key: string
   etag: string
-  eTag: string // for backward compatibility
-  ETag: string // for backward compatibility
-}
-
-export interface ListMultipartUploadSuccess {
-  listMultipartUploadsResult: {
-    bucket: string
-    key: string
-    uploadId: string
-    size?: number
-    mtime?: Date
-    etag?: string
-    eTag?: string // for backward compatibility
-    parts: UploadPart[]
-    isTruncated: boolean
-    uploads: UploadPart[]
-  }
-}
-
-export interface MultipartUploadError {
-  error: {
-    code: string
-    message: string
-  }
 }
 
 export interface ErrorWithCode {
   code?: string
   cause?: { code?: string }
 }
-
-export type ListMultipartUploadResponse =
-  | ListMultipartUploadSuccess
-  | MultipartUploadError
 
 export type HttpMethod = 'POST' | 'GET' | 'HEAD' | 'PUT' | 'DELETE'
 

@@ -98,6 +98,9 @@ const minioSpecific = (bucket) => {
       uploaded,
     ])
     expect(result.etag).toBeDefined()
+    expect(result.location).toBeDefined()
+    expect(result.location).toContain(key)
+    expect(result.key).toBe(key)
 
     await s3client.deleteObject(key)
   })
@@ -223,6 +226,9 @@ const minioSpecific = (bucket) => {
 
       const result = await s3.completeMultipartUpload(key, uploadId, [uploaded])
       expect(result.etag).toBeDefined()
+      expect(result.location).toBeDefined()
+      expect(result.location).toContain(key)
+      expect(result.key).toBe(key)
 
       await s3.deleteObject(key)
     })
