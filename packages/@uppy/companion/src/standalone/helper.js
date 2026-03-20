@@ -77,13 +77,19 @@ const defaultStandaloneGetKey = (...args) =>
   `${s3Prefix}${utils.defaultGetKey(...args)}`
 
 /**
- * Resolve bucket and key from file metadata when provided by the client.
- * Falls back to COMPANION_AWS_BUCKET and default UUID key generation.
+ * When COMPANION_AWS_DYNAMIC_BUCKET=true, resolve bucket and key from file
+ * metadata provided by the client. Falls back to COMPANION_AWS_BUCKET and
+ * default UUID key generation when metadata fields are absent.
+ *
+ * When the flag is unset or false, bucket is the static COMPANION_AWS_BUCKET
+ * string and getKey uses the default UUID-based key generation. This keeps
+ * init-time code paths (IAM policy, STS response, accelerate endpoint) safe
+ * since they expect bucket to be a string.
  */
-const getStandaloneBucket = ({ metadata }) =>
+const getDynamicBucket = ({ metadata }) =>
   metadata?.bucketName || process.env.COMPANION_AWS_BUCKET
 
-const getStandaloneKey = ({ metadata, filename }) => {
+const getDynamicKey = ({ metadata, filename }) => {
   if (metadata?.objectName) {
     return `${s3Prefix}${metadata.objectName}`
   }
@@ -146,9 +152,15 @@ const getConfigFromEnv = () => {
     },
     s3: {
       key: process.env.COMPANION_AWS_KEY,
-      getKey: getStandaloneKey,
+      getKey:
+        process.env.COMPANION_AWS_DYNAMIC_BUCKET === 'true'
+          ? getDynamicKey
+          : defaultStandaloneGetKey,
       secret: getSecret('COMPANION_AWS_SECRET'),
-      bucket: getStandaloneBucket,
+      bucket:
+        process.env.COMPANION_AWS_DYNAMIC_BUCKET === 'true'
+          ? getDynamicBucket
+          : process.env.COMPANION_AWS_BUCKET,
       endpoint: process.env.COMPANION_AWS_ENDPOINT,
       region: process.env.COMPANION_AWS_REGION,
       useAccelerateEndpoint:
