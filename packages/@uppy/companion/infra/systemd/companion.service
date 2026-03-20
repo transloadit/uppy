@@ -1,0 +1,27 @@
+[Unit]
+Description=Uppy Companion - OAuth helper and remote file fetcher
+Documentation=https://uppy.io/docs/companion/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=companion
+Group=companion
+EnvironmentFile=/etc/companion/companion.env
+ExecStart=/usr/bin/node /opt/companion/bin/companion
+Restart=on-failure
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/mnt/uppy-server-data
+
+# Resource limits
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
