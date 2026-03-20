@@ -311,6 +311,25 @@ if [[ ${#env_vars[@]} -eq 0 ]]; then
   exit 1
 fi
 
+# --- Ensure required AWS/S3 credentials are set ---
+
+REQUIRED_AWS_KEYS=(COMPANION_AWS_KEY COMPANION_AWS_SECRET COMPANION_AWS_ENDPOINT)
+for key in "${REQUIRED_AWS_KEYS[@]}"; do
+  if [[ -z "${env_vars[$key]:-}" ]]; then
+    if $AUTO; then
+      echo "Error: Required variable ${key} is not set." >&2
+      echo "Export it before running with --auto, or run interactively." >&2
+      exit 1
+    fi
+    read -rp "${key} is required but not set. Enter value: " val
+    if [[ -z "$val" ]]; then
+      echo "Error: ${key} cannot be empty." >&2
+      exit 1
+    fi
+    env_vars[$key]="$val"
+  fi
+done
+
 # =============================================================================
 # Write env file
 # =============================================================================
