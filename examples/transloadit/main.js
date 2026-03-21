@@ -50,9 +50,11 @@ const formUppy = new Uppy({
   })
   .use(Transloadit, {
     waitForEncoding: true,
-    params: {
-      auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
+    assemblyOptions: {
+      params: {
+        auth: { key: TRANSLOADIT_KEY },
+        template_id: TEMPLATE_ID,
+      },
     },
   })
 
@@ -100,9 +102,11 @@ const formUppyWithDashboard = new Uppy({
   })
   .use(Transloadit, {
     waitForEncoding: true,
-    params: {
-      auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
+    assemblyOptions: {
+      params: {
+        auth: { key: TRANSLOADIT_KEY },
+        template_id: TEMPLATE_ID,
+      },
     },
   })
 
@@ -129,9 +133,11 @@ const dashboard = new Uppy({
   .use(ImageEditor, { target: Dashboard })
   .use(Transloadit, {
     waitForEncoding: true,
-    params: {
-      auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
+    assemblyOptions: {
+      params: {
+        auth: { key: TRANSLOADIT_KEY },
+        template_id: TEMPLATE_ID,
+      },
     },
   })
 
@@ -151,9 +157,11 @@ const dashboardModal = new Uppy({
   .use(ImageEditor, { target: Dashboard })
   .use(Transloadit, {
     waitForEncoding: true,
-    params: {
-      auth: { key: TRANSLOADIT_KEY },
-      template_id: TEMPLATE_ID,
+    assemblyOptions: {
+      params: {
+        auth: { key: TRANSLOADIT_KEY },
+        template_id: TEMPLATE_ID,
+      },
     },
   })
 
@@ -182,9 +190,11 @@ const uppyWithoutUI = new Uppy({
   },
 }).use(Transloadit, {
   waitForEncoding: true,
-  params: {
-    auth: { key: TRANSLOADIT_KEY },
-    template_id: TEMPLATE_ID,
+  assemblyOptions: {
+    params: {
+      auth: { key: TRANSLOADIT_KEY },
+      template_id: TEMPLATE_ID,
+    },
   },
 })
 
