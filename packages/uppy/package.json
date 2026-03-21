@@ -85,14 +85,14 @@
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
     "cssnano": "^7.0.7",
-    "esbuild": "^0.25.0",
+    "esbuild": "^0.27.0",
     "mime-types": "^2.1.26",
     "npm-packlist": "^5.0.0",
     "pacote": "^13.0.0",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
-    "tar": "^7.5.8",
+    "tar": "^7.5.7",
     "typescript": "^5.8.3"
   }
 }
