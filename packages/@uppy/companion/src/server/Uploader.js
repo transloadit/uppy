@@ -751,11 +751,11 @@ export default class Uploader {
     }
 
     // PATCH: Support S3 SSE-KMS for strict Service Control Policies
-    if (process.env.COMPANION_ENABLE_S3_SSE_KMS === 'true') {
+    if (process.env.COMPANION_ENABLE_AWS_SSE_KMS === 'true') {
       params.ServerSideEncryption = 'aws:kms'
     }
 
-    if (process.env.COMPANION_S3_SSE_KMS_KEY_ID) {
+    if (process.env.COMPANION_AWS_SSE_KMS_KEY_ID) {
       params.SSEKMSKeyId = process.env.COMPANION_AWS_S3_SSE_KEY_ID
     }
 
