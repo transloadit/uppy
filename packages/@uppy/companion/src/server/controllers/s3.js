@@ -93,6 +93,15 @@ export default function s3(config) {
       'content-type': req.query.type,
     }
 
+    if (process.env.COMPANION_AWS_USE_SSE_KMS === 'true') {
+      fields['x-amz-server-side-encryption'] = 'aws:kms'
+    }
+
+    if (process.env.COMPANION_AWS_KMS_KEY_ID) {
+      fields['x-amz-server-side-encryption-aws-kms-key-id'] =
+        process.env.COMPANION_AWS_KMS_KEY_ID
+    }
+
     if (config.acl != null) fields.acl = config.acl
 
     Object.keys(metadata).forEach((metadataKey) => {
@@ -174,6 +183,14 @@ export default function s3(config) {
       Key: key,
       ContentType: type,
       Metadata: rfc2047EncodeMetadata(metadata),
+    }
+
+    if (process.env.COMPANION_AWS_USE_SSE_KMS === 'true') {
+      params.ServerSideEncryption = 'aws:kms'
+    }
+
+    if (process.env.COMPANION_AWS_KMS_KEY_ID) {
+      params.SSEKMSKeyId = process.env.COMPANION_AWS_KMS_KEY_ID
     }
 
     if (config.acl != null) params.ACL = config.acl
