@@ -95,6 +95,14 @@ export default function s3(config) {
 
     if (config.acl != null) fields.acl = config.acl
 
+    if (config.enableAwsSseKms === true) {
+      fields['x-amz-server-side-encryption'] = 'aws:kms'
+    }
+
+    if (config.awsSseKmsKeyId) {
+      fields['x-amz-server-side-encryption-aws-kms-key-id'] = config.awsSseKmsKeyId
+    }
+
     Object.keys(metadata).forEach((metadataKey) => {
       fields[`x-amz-meta-${metadataKey}`] = metadata[metadataKey]
     })
@@ -177,6 +185,14 @@ export default function s3(config) {
     }
 
     if (config.acl != null) params.ACL = config.acl
+
+    if (config.enableAwsSseKms === true) {
+      params.ServerSideEncryption = 'aws:kms'
+    }
+
+    if (config.awsSseKmsKeyId) {
+      params.SSEKMSKeyId = config.awsSseKmsKeyId
+    }
 
     client.send(new CreateMultipartUploadCommand(params)).then((data) => {
       res.json({

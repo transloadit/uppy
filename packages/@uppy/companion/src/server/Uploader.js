@@ -750,16 +750,15 @@ export default class Uploader {
       Body: stream,
     }
 
-    // PATCH: Support S3 SSE-KMS for strict Service Control Policies
-    if (process.env.COMPANION_ENABLE_AWS_SSE_KMS === 'true') {
+    if (options.acl != null) params.ACL = options.acl
+
+    if (options.enableAwsSseKms === true) {
       params.ServerSideEncryption = 'aws:kms'
     }
 
-    if (process.env.COMPANION_AWS_SSE_KMS_KEY_ID) {
-      params.SSEKMSKeyId = process.env.COMPANION_AWS_SSE_KMS_KEY_ID
+    if (options.awsSseKmsKeyId) {
+      params.SSEKMSKeyId = options.awsSseKmsKeyId
     }
-
-    if (options.acl != null) params.ACL = options.acl
 
     const upload = new Upload({
       client,
