@@ -742,6 +742,9 @@ export default class Uploader {
     const { metadata } = this.options
     const { client, options } = s3Options
 
+    // Temp debug logging
+    console.log('COMPANION_UPLOAD_METADATA', metadata)
+
     const params = {
       Bucket: getBucket({ bucketOrFn: options.bucket, req, metadata }),
       Key: options.getKey({ req, filename, metadata }),
