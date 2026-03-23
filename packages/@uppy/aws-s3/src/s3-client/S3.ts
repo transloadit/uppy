@@ -34,7 +34,7 @@ import * as U from './utils.js'
  * await s3.putObject('file.txt', 'Hello, World!');
  */
 class S3mini {
-  readonly endpoint: URL
+  readonly endpoint?: URL
   readonly region: string
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
@@ -45,25 +45,41 @@ class S3mini {
   private signRequest!: IT.signRequestFn
 
   constructor({
-    endpoint,
-    signRequest,
-    getCredentials,
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
+    ...rest
   }: IT.S3Config) {
-    this._validateConstructorParams(endpoint, signRequest, getCredentials)
-    this.endpoint = new URL(this._ensureValidUrl(endpoint))
-    this.region = region
-    this.requestSizeInBytes = requestSizeInBytes
-    this.requestAbortTimeout = requestAbortTimeout
+    if ('signRequest' in rest) {
+      const { signRequest } = rest
+      if (!signRequest) {
+        throw new TypeError(
+          'Either signRequest or getCredentials must be provided',
+        )
+      }
 
-    if (signRequest) {
+      if (signRequest && typeof signRequest !== 'function') {
+        throw new TypeError('signRequest must be a function')
+      }
+
       this.signRequest = signRequest
-    } else if (getCredentials) {
+    } else if ('getCredentials' in rest) {
+      const { getCredentials, endpoint } = rest
+      if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
+        throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
+      }
+      if (getCredentials && typeof getCredentials !== 'function') {
+        throw new TypeError('getCredentials must be a function')
+      }
+      this.endpoint = new URL(this._ensureValidUrl(endpoint))
+
       this.getCredentials = getCredentials
       this.signRequest = this._createCredentialBasedSigner()
     }
+
+    this.region = region
+    this.requestSizeInBytes = requestSizeInBytes
+    this.requestAbortTimeout = requestAbortTimeout
   }
 
   /** Creates a presigner that fetches/caches credentials and generates pre-signed URLs. */
@@ -72,6 +88,9 @@ class S3mini {
       request: IT.presignableRequest,
     ): Promise<IT.presignedResponse> => {
       const creds = await this._getCachedCredentials()
+      if (this.endpoint == null) {
+        throw new Error('Endpoint is required for credential-based signing')
+      }
       const presigner = createSigV4Signer({
         accessKeyId: creds.credentials.accessKeyId,
         secretAccessKey: creds.credentials.secretAccessKey,
@@ -103,30 +122,6 @@ class S3mini {
     }
 
     return this.cachedCredentialsPromise
-  }
-
-  private _validateConstructorParams(
-    endpoint: string,
-    signRequest?: IT.signRequestFn,
-    getCredentials?: IT.getCredentialsFn,
-  ): void {
-    if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
-      throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
-    }
-
-    if (!signRequest && !getCredentials) {
-      throw new TypeError(
-        'Either signRequest or getCredentials must be provided',
-      )
-    }
-
-    if (signRequest && typeof signRequest !== 'function') {
-      throw new TypeError('signRequest must be a function')
-    }
-
-    if (getCredentials && typeof getCredentials !== 'function') {
-      throw new TypeError('getCredentials must be a function')
-    }
   }
 
   private _ensureValidUrl(raw: string): string {

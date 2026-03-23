@@ -46,8 +46,6 @@ export type getCredentialsFn = (options?: {
 
 /** Base configuration shared by both signing approaches */
 type S3ConfigBase = {
-  /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
-  endpoint: string
   /** AWS region. Defaults to 'auto'. */
   region?: string | undefined
   /** Request size in bytes for multipart uploads. Defaults to 8MB. */
@@ -60,16 +58,16 @@ type S3ConfigBase = {
 type S3ConfigWithSignRequest = S3ConfigBase & {
   /** Function to sign requests. Called for each S3 API request. */
   signRequest: signRequestFn
-  getCredentials?: never
 }
 
 /** Config when using getCredentials callback (region required for signing) */
 type S3ConfigWithGetCredentials = Omit<S3ConfigBase, 'region'> & {
-  signRequest?: never
   /** Function to retrieve temporary credentials for client-side signing. */
   getCredentials: getCredentialsFn
   /** AWS region. Required for signing with getCredentials. */
-  region: string
+  region?: string
+  /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
+  endpoint: string
 }
 
 /** Configuration options for S3mini client */

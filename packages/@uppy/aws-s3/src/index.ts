@@ -45,31 +45,7 @@ declare module '@uppy/core' {
   }
 }
 
-export interface AwsS3Options<M extends Meta, B extends Body>
-  extends PluginOpts {
-  /** AWS region, required for signing */
-  region: string
-
-  /** Companion URL if you want to use Companion for signing */
-  companionEndpoint?: string
-
-  /** S3 upload endpoint */
-  s3Endpoint: string
-
-  /**
-   * Custom function to sign requests.
-   * Called with request details, should return signed headers.
-   * Alternative to using Companion endpoint.
-   */
-  signRequest?: IT.signRequestFn
-
-  /**
-   * Function to retrieve temporary credentials for client-side signing.
-   * When provided, S3mini handles signing internally using SigV4.
-   * Alternative to signRequest or endpoint.
-   */
-  getCredentials?: IT.getCredentialsFn
-
+export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
   /**
    * Whether to use multipart uploads.
    * - `true`: Always use multipart
@@ -96,7 +72,34 @@ export interface AwsS3Options<M extends Meta, B extends Body>
    * Default: `{randomId}-{filename}`
    */
   generateObjectKey?: (file: UppyFile<M, B>) => string
-}
+} & (
+    | {
+        /** S3 upload endpoint */
+        s3Endpoint: string
+
+        /** AWS region, required for signing */
+        region?: string
+
+        /**
+         * Function to retrieve temporary credentials for client-side signing.
+         * When provided, S3mini handles signing internally using SigV4.
+         * Alternative to signRequest or endpoint.
+         */
+        getCredentials: IT.getCredentialsFn
+      }
+    | {
+        /**
+         * Custom function to sign requests.
+         * Called with request details, should return signed headers.
+         * Alternative to using Companion endpoint.
+         */
+        signRequest: IT.signRequestFn
+      }
+    | {
+        /** Companion URL if you want to use Companion for signing */
+        companionEndpoint: string
+      }
+  )
 
 // ============================================================================
 // Constants
@@ -174,34 +177,38 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   // --------------------------------------------------------------------------
 
   #initS3Client(): void {
-    const {
-      companionEndpoint,
-      signRequest,
-      getCredentials,
-      s3Endpoint,
-      region,
-    } = this.opts
-
-    if (getCredentials != null) {
-      // Mode: Temporary credentials (client-side signing)
-      this.#s3Client = new S3mini({
-        endpoint: s3Endpoint,
-        getCredentials,
-        region,
-      })
-    } else if (signRequest != null) {
-      // Mode: Custom signing function
-      this.#s3Client = new S3mini({
-        endpoint: s3Endpoint,
-        signRequest,
-        region,
-      })
-    } else if (companionEndpoint != null) {
+    if ('companionEndpoint' in this.opts) {
+      if (typeof this.opts.companionEndpoint !== 'string') {
+        throw new TypeError('companionEndpoint must be a function')
+      }
       // Mode: Companion signing
       this.#s3Client = new S3mini({
-        endpoint: s3Endpoint,
-        signRequest: this.#createCompanionSigner(companionEndpoint),
-        region,
+        signRequest: this.#createCompanionSigner(this.opts.companionEndpoint),
+      })
+    } else if ('getCredentials' in this.opts) {
+      if (typeof this.opts.s3Endpoint !== 'string') {
+        throw new TypeError('s3Endpoint must be a string')
+      }
+      if (typeof this.opts.getCredentials !== 'function') {
+        throw new TypeError('getCredentials must be a function')
+      }
+      if (this.opts.region != null && typeof this.opts.region !== 'string') {
+        throw new TypeError('region must be a string')
+      }
+
+      // Mode: Temporary credentials (client-side signing)
+      this.#s3Client = new S3mini({
+        endpoint: this.opts.s3Endpoint,
+        getCredentials: this.opts.getCredentials,
+        region: this.opts.region,
+      })
+    } else if ('signRequest' in this.opts) {
+      if (typeof this.opts.signRequest !== 'function') {
+        throw new TypeError('signRequest must be a function')
+      }
+      // Mode: Custom signing function
+      this.#s3Client = new S3mini({
+        signRequest: this.opts.signRequest,
       })
     } else {
       throw new TypeError(
