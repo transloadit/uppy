@@ -208,13 +208,13 @@ export default () => {
       break
     case 's3':
       uppyDashboard.use(AwsS3, {
-        endpoint: COMPANION_URL,
+        companionEndpoint: COMPANION_URL,
         shouldUseMultipart: false,
       })
       break
     case 's3-multipart':
       uppyDashboard.use(AwsS3, {
-        endpoint: COMPANION_URL,
+        companionEndpoint: COMPANION_URL,
         shouldUseMultipart: true,
       })
       break
