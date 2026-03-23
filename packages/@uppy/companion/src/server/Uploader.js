@@ -742,9 +742,6 @@ export default class Uploader {
     const { metadata } = this.options
     const { client, options } = s3Options
 
-    // Temp debug logging
-    console.log('COMPANION_UPLOAD_METADATA', metadata)
-
     const params = {
       Bucket: getBucket({ bucketOrFn: options.bucket, req, metadata }),
       Key: options.getKey({ req, filename, metadata }),
@@ -759,7 +756,7 @@ export default class Uploader {
     }
 
     if (process.env.COMPANION_AWS_SSE_KMS_KEY_ID) {
-      params.SSEKMSKeyId = process.env.COMPANION_AWS_S3_SSE_KEY_ID
+      params.SSEKMSKeyId = process.env.COMPANION_AWS_SSE_KMS_KEY_ID
     }
 
     if (options.acl != null) params.ACL = options.acl
