@@ -4,7 +4,6 @@ export { S3mini } from './S3.js'
 export type {
   CompleteMultipartUploadResult,
   ErrorWithCode,
-  ListMultipartUploadResponse,
   S3Config,
   UploadPart,
 } from './types.js'
