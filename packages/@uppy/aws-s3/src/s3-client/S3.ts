@@ -302,7 +302,13 @@ class S3mini {
 
     const attemptUpload = async (): Promise<IT.PutObjectResult> => {
       const { url } = await this.signRequest({ method: 'PUT', key })
-      const result = await this._xhrUpload(url, data, onProgress, signal, fileType)
+      const result = await this._xhrUpload(
+        url,
+        data,
+        onProgress,
+        signal,
+        fileType,
+      )
       return {
         ...result,
         location: U.removeQueryString(url),
