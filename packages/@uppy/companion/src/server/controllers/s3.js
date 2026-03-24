@@ -516,13 +516,6 @@ export default function s3(config) {
       return
     }
 
-    const bucket = getBucket({
-      bucketOrFn: config.bucket,
-      req,
-      filename,
-      metadata,
-    })
-
     let command
     // Server-generated key for key-establishing operations, returned to client.
     let serverKey
@@ -536,6 +529,7 @@ export default function s3(config) {
         })
         return
       }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
       command = new UploadPartCommand({
         Bucket: bucket,
         Key: key,
@@ -565,7 +559,8 @@ export default function s3(config) {
         })
         return
       }
-      const params = { Bucket: bucket, Key: serverKey }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
+      const params = { Bucket: bucket, Key: serverKey, Metadata: rfc2047EncodeMetadata(metadata) }
       if (contentType) params.ContentType = contentType
       if (config.acl != null) params.ACL = config.acl
       command = new PutObjectCommand(params)
@@ -577,6 +572,7 @@ export default function s3(config) {
         })
         return
       }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
       command = new CompleteMultipartUploadCommand({
         Bucket: bucket,
         Key: key,
@@ -604,7 +600,8 @@ export default function s3(config) {
         })
         return
       }
-      const params = { Bucket: bucket, Key: serverKey }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
+      const params = { Bucket: bucket, Key: serverKey, Metadata: rfc2047EncodeMetadata(metadata) }
       if (contentType) params.ContentType = contentType
       if (config.acl != null) params.ACL = config.acl
       command = new CreateMultipartUploadCommand(params)
@@ -616,6 +613,7 @@ export default function s3(config) {
         })
         return
       }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
       command = new ListPartsCommand({
         Bucket: bucket,
         Key: key,
@@ -629,6 +627,7 @@ export default function s3(config) {
         })
         return
       }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
       command = new AbortMultipartUploadCommand({
         Bucket: bucket,
         Key: key,
