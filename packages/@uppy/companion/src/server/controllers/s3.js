@@ -559,8 +559,17 @@ export default function s3(config) {
         })
         return
       }
-      const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
-      const params = { Bucket: bucket, Key: serverKey, Metadata: rfc2047EncodeMetadata(metadata) }
+      const bucket = getBucket({
+        bucketOrFn: config.bucket,
+        req,
+        filename: truncatedFilename,
+        metadata,
+      })
+      const params = {
+        Bucket: bucket,
+        Key: serverKey,
+        Metadata: rfc2047EncodeMetadata(metadata),
+      }
       if (contentType) params.ContentType = contentType
       if (config.acl != null) params.ACL = config.acl
       command = new PutObjectCommand(params)
@@ -600,8 +609,17 @@ export default function s3(config) {
         })
         return
       }
-      const bucket = getBucket({ bucketOrFn: config.bucket, req, filename: truncatedFilename, metadata })
-      const params = { Bucket: bucket, Key: serverKey, Metadata: rfc2047EncodeMetadata(metadata) }
+      const bucket = getBucket({
+        bucketOrFn: config.bucket,
+        req,
+        filename: truncatedFilename,
+        metadata,
+      })
+      const params = {
+        Bucket: bucket,
+        Key: serverKey,
+        Metadata: rfc2047EncodeMetadata(metadata),
+      }
       if (contentType) params.ContentType = contentType
       if (config.acl != null) params.ACL = config.acl
       command = new CreateMultipartUploadCommand(params)
