@@ -336,11 +336,11 @@ class S3mini {
     if (typeof fileType !== 'string') {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const { response: res, serverKey } = await this._presignedRequest('POST', key, {
+    const { response, serverKey } = await this._presignedRequest('POST', key, {
       contentType: fileType,
       filename,
     })
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+    const parsed = U.parseXml(await response.text()) as Record<string, unknown>
 
     if (parsed && typeof parsed === 'object') {
       // Check for both cases of InitiateMultipartUploadResult
@@ -589,11 +589,11 @@ class S3mini {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const { response: res } = await this._presignedRequest('GET', key, {
+    const { response } = await this._presignedRequest('GET', key, {
       uploadId,
     })
 
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+    const parsed = U.parseXml(await response.text()) as Record<string, unknown>
     const result = (parsed.listPartsResult ||
       parsed.ListPartsResult ||
       parsed) as Record<string, unknown>
@@ -626,13 +626,13 @@ class S3mini {
   ): Promise<IT.CompleteMultipartUploadResult> {
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
 
-    const { response: res } = await this._presignedRequest('POST', key, {
+    const { response } = await this._presignedRequest('POST', key, {
       uploadId,
       body: xmlBody,
       contentType: C.XML_CONTENT_TYPE,
     })
 
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+    const parsed = U.parseXml(await response.text()) as Record<string, unknown>
     if (parsed && typeof parsed === 'object') {
       // Check for both cases
       const result =
@@ -673,10 +673,10 @@ class S3mini {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const { response: res } = await this._presignedRequest('DELETE', key, {
+    const { response } = await this._presignedRequest('DELETE', key, {
       uploadId,
     })
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+    const parsed = U.parseXml(await response.text()) as Record<string, unknown>
     if (
       parsed &&
       'error' in parsed &&
@@ -706,10 +706,10 @@ class S3mini {
 
   /** Deletes an object from the bucket. Returns true on success. */
   public async deleteObject(key: string): Promise<boolean> {
-    const { response: res } = await this._presignedRequest('DELETE', key, {
+    const { response } = await this._presignedRequest('DELETE', key, {
       tolerated: [200, 204],
     })
-    return res.status === 200 || res.status === 204
+    return response.status === 200 || response.status === 204
   }
 
   /**
