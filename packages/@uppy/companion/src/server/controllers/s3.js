@@ -466,22 +466,7 @@ export default function s3(config) {
       }, next)
   }
 
-  /**
-   * Generate a presigned URL for a supported S3 operation.
-   *
-   * Supported operations: PutObject, UploadPart, CreateMultipartUpload,
-   * CompleteMultipartUpload, ListParts, and AbortMultipartUpload.
-   *
-   * Expected JSON body:
-   *  - method - 'PUT', 'POST', 'GET', or 'DELETE'.
-   *  - key - The S3 object key.
-   *  - uploadId - (Optional) The multipart upload ID.
-   *  - partNumber - (Optional) The part number (1-10000).
-   *  - contentType - (Optional) The Content-Type for the request.
-   *
-   * Response JSON:
-   *  - url - The presigned URL.
-   */
+
   /**
    * Presign an S3 request for browser-executed operations.
    *
