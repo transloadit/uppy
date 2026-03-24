@@ -360,7 +360,10 @@ class S3Uploader<M extends Meta, B extends Body> {
       this.#file.name,
     )
 
-    // Use server-generated key if returned (Companion's getKey)
+    // In companion mode, the server generates the key via getKey() and returns
+    // it in the response. In signRequest/getCredentials mode, no server key is
+    // returned, so result.key falls back to the original client-generated key
+    // (a no-op assignment). This avoids needing a conditional per signing mode.
     this.#key = result.key
 
     this.#onSuccess({
@@ -381,7 +384,7 @@ class S3Uploader<M extends Meta, B extends Body> {
       this.#file.name,
     )
     this.#uploadId = uploadId
-    // Use server-generated key if returned (Companion's getKey)
+    // refer the comment about key in #simpleUpload above
     this.#key = key
 
     await this.#uploadRemainingParts()
