@@ -24,6 +24,4 @@ uppy.use(Dashboard, {
 })
 uppy.use(AwsS3, {
   companionEndpoint: 'http://localhost:3020',
-  bucket: 'uppy-test',
-  region: 'us-east-1',
 })
