@@ -85,7 +85,7 @@ const minioSpecific = (bucket) => {
     const partSize = 5 * 1024 * 1024 // 5MB
     const part = randomBytes(partSize)
 
-    const uploadId = await s3client.getMultipartUploadId(
+    const { uploadId } = await s3client.getMultipartUploadId(
       key,
       'application/octet-stream',
     )
@@ -212,7 +212,7 @@ const minioSpecific = (bucket) => {
       const partSize = 5 * 1024 * 1024 // 5MB
       const part = randomBytes(partSize)
 
-      const uploadId = await s3.getMultipartUploadId(
+      const { uploadId } = await s3.getMultipartUploadId(
         key,
         'application/octet-stream',
       )
