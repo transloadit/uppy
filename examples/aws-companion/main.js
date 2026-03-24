@@ -8,13 +8,15 @@ import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy/webcam/css/style.css'
 
+const COMPANION_URL = 'http://localhost:3020'
+
 const uppy = new Uppy({
   debug: true,
   autoProceed: false,
 })
 
 uppy.use(GoogleDrive, {
-  companionUrl: 'http://localhost:3020',
+  companionUrl: COMPANION_URL,
 })
 uppy.use(Webcam)
 uppy.use(Dashboard, {
@@ -22,6 +24,9 @@ uppy.use(Dashboard, {
   target: 'body',
   plugins: ['GoogleDrive', 'Webcam'],
 })
+
 uppy.use(AwsS3, {
-  endpoint: 'http://localhost:3020',
+  endpoint: COMPANION_URL,
+  bucket: 'uppy-test',
+  region: 'us-east-1',
 })

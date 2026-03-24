@@ -3,6 +3,7 @@ import {
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
   ListPartsCommand,
+  PutObjectCommand,
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
@@ -465,6 +466,208 @@ export default function s3(config) {
       }, next)
   }
 
+  /**
+   * Presign an S3 request for browser-executed operations.
+   *
+   * For operations (PutObject, CreateMultipartUpload) where we need to generate the key server-side the
+   * server generates the key via `config.getKey` using the client-provided
+   * `filename`. This ensures the server controls object key generation
+   * while the client only supplies the original filename.
+   *
+   * For subsequent operations (UploadPart, ListParts, CompleteMultipartUpload,
+   * AbortMultipartUpload), the client-provided `key` is trusted because these
+   * all require an `uploadId` — an unguessable token returned by S3.
+   *
+   * Expected JSON body:
+   *  - method    - One of PUT, POST, GET, DELETE
+   *  - key       - S3 object key (required for uploadId-bearing operations)
+   *  - filename  - Original filename (required for PutObject, CreateMultipartUpload)
+   *  - uploadId  - Multipart upload ID (optional)
+   *  - partNumber - Part number 1-10000 (optional, for UploadPart)
+   *  - contentType - MIME type (optional, for PutObject/CreateMultipartUpload)
+   *  - metadata  - Key/value pairs for S3 metadata (optional)
+   *
+   * Response JSON:
+   *  - url - The presigned URL
+   *  - key - The server-generated key (only for PutObject/CreateMultipartUpload)
+   */
+  function signRequest(req, res, next) {
+    const client = getS3Client(req, res)
+    if (!client) return
+
+    const {
+      method,
+      key,
+      filename,
+      uploadId,
+      partNumber,
+      contentType,
+      metadata = {},
+    } = req.body
+
+    if (
+      typeof method !== 'string' ||
+      !['PUT', 'POST', 'GET', 'DELETE'].includes(method)
+    ) {
+      res.status(400).json({
+        error:
+          's3: the "method" field must be one of PUT, POST, GET, or DELETE',
+      })
+      return
+    }
+
+    let command
+    // Server-generated key for key-establishing operations, returned to client.
+    let serverKey
+
+    if (method === 'PUT' && uploadId && partNumber) {
+      // UploadPart: upload one chunk of a multipart upload.
+      // key is trusted here — requires unguessable uploadId.
+      if (typeof key !== 'string') {
+        res.status(400).json({
+          error: 's3: the "key" field is required and must be a string',
+        })
+        return
+      }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
+      command = new UploadPartCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+        PartNumber: Number(partNumber),
+        Body: '',
+      })
+    } else if (method === 'PUT' && !uploadId && !partNumber) {
+      // PutObject: simple single-part upload
+      // generating key server-side via getKey
+      if (typeof filename !== 'string' || filename === '') {
+        res.status(400).json({
+          error:
+            's3: the "filename" field is required for PutObject and must be a non-empty string',
+        })
+        return
+      }
+      const truncatedFilename = truncateFilename(
+        filename,
+        req.companion.options.maxFilenameLength,
+      )
+      serverKey = config.getKey({ req, filename: truncatedFilename, metadata })
+      if (typeof serverKey !== 'string') {
+        res.status(500).json({
+          error:
+            'S3 uploads are misconfigured: filename returned from `getKey` must be a string',
+        })
+        return
+      }
+      const bucket = getBucket({
+        bucketOrFn: config.bucket,
+        req,
+        filename: truncatedFilename,
+        metadata,
+      })
+      const params = {
+        Bucket: bucket,
+        Key: serverKey,
+        Metadata: rfc2047EncodeMetadata(metadata),
+      }
+      if (contentType) params.ContentType = contentType
+      if (config.acl != null) params.ACL = config.acl
+      command = new PutObjectCommand(params)
+    } else if (method === 'POST' && uploadId) {
+      // CompleteMultipartUpload: finalize a multipart upload.
+      if (typeof key !== 'string') {
+        res.status(400).json({
+          error: 's3: the "key" field is required and must be a string',
+        })
+        return
+      }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
+      command = new CompleteMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else if (method === 'POST' && !uploadId) {
+      // CreateMultipartUpload: initiate a new multipart upload
+      // Server generates key via getKey
+      if (typeof filename !== 'string' || filename === '') {
+        res.status(400).json({
+          error:
+            's3: the "filename" field is required for CreateMultipartUpload and must be a non-empty string',
+        })
+        return
+      }
+      const truncatedFilename = truncateFilename(
+        filename,
+        req.companion.options.maxFilenameLength,
+      )
+      serverKey = config.getKey({ req, filename: truncatedFilename, metadata })
+      if (typeof serverKey !== 'string') {
+        res.status(500).json({
+          error:
+            'S3 uploads are misconfigured: filename returned from `getKey` must be a string',
+        })
+        return
+      }
+      const bucket = getBucket({
+        bucketOrFn: config.bucket,
+        req,
+        filename: truncatedFilename,
+        metadata,
+      })
+      const params = {
+        Bucket: bucket,
+        Key: serverKey,
+        Metadata: rfc2047EncodeMetadata(metadata),
+      }
+      if (contentType) params.ContentType = contentType
+      if (config.acl != null) params.ACL = config.acl
+      command = new CreateMultipartUploadCommand(params)
+    } else if (method === 'GET' && uploadId) {
+      // ListParts: list already-uploaded parts (used for resume)
+      if (typeof key !== 'string') {
+        res.status(400).json({
+          error: 's3: the "key" field is required and must be a string',
+        })
+        return
+      }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
+      command = new ListPartsCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else if (method === 'DELETE' && uploadId) {
+      // AbortMultipartUpload: cancel an in-progress multipart upload
+      if (typeof key !== 'string') {
+        res.status(400).json({
+          error: 's3: the "key" field is required and must be a string',
+        })
+        return
+      }
+      const bucket = getBucket({ bucketOrFn: config.bucket, req })
+      command = new AbortMultipartUploadCommand({
+        Bucket: bucket,
+        Key: key,
+        UploadId: uploadId,
+      })
+    } else {
+      res.status(400).json({
+        error:
+          's3: unsupported or invalid combination of "method" and parameters',
+      })
+      return
+    }
+
+    getSignedUrl(client, command, { expiresIn: config.expires }).then((url) => {
+      const response = { url }
+      // Return server-generated key so the client knows which key S3 is using.
+      // Only set for operations where we're generating key server side (PutObject, CreateMultipartUpload).
+      if (serverKey) response.key = serverKey
+      res.json(response)
+    }, next)
+  }
+
   const policy = {
     Version: '2012-10-17', // latest at the time of writing
     Statement: [
@@ -546,6 +749,7 @@ export default function s3(config) {
     express
       .Router()
       .get('/sts', getTemporarySecurityCredentials)
+      .post('/sign', express.json(), signRequest)
       .get('/params', getUploadParameters)
       .post('/multipart', express.json(), createMultipartUpload)
       .get('/multipart/:uploadId', getUploadedParts)

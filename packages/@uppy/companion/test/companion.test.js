@@ -420,4 +420,258 @@ describe('S3 controller', () => {
         ),
       )
   })
+
+  describe('signRequest', () => {
+    test('rejects missing method', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "method" field must be one of PUT, POST, GET, or DELETE',
+          ),
+        )
+    })
+
+    test('rejects invalid method', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PATCH', key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "method" field must be one of PUT, POST, GET, or DELETE',
+          ),
+        )
+    })
+
+    test('rejects missing key for uploadId-bearing operations', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PUT', uploadId: 'abc123', partNumber: 1 })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "key" field is required and must be a string',
+          ),
+        )
+    })
+
+    test('rejects non-string key for uploadId-bearing operations', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'POST', key: 12345, uploadId: 'abc123' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "key" field is required and must be a string',
+          ),
+        )
+    })
+
+    test('rejects PUT with uploadId but no partNumber', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PUT', key: 'test.jpg', uploadId: 'abc123' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('rejects PUT with partNumber but no uploadId', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'PUT', key: 'test.jpg', partNumber: 1 })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('rejects GET without uploadId', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'GET', key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('rejects DELETE without uploadId', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({ method: 'DELETE', key: 'test.jpg' })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: unsupported or invalid combination of "method" and parameters',
+          ),
+        )
+    })
+
+    test('signs a valid PUT request for simple upload (server-generated key)', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'PUT',
+          filename: 'test.jpg',
+          contentType: 'image/jpeg',
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.body.url).toBeDefined()
+          expect(typeof res.body.url).toBe('string')
+          expect(res.body.url).toContain('test-bucket')
+          // Server generates key via getKey (defaultGetKey: {uuid}-{filename})
+          expect(res.body.key).toBeDefined()
+          expect(typeof res.body.key).toBe('string')
+          expect(res.body.key).toContain('test.jpg')
+          // The presigned URL should contain the server-generated key
+          expect(res.body.url).toContain('test.jpg')
+        })
+    })
+
+    test('signs a valid POST request for CreateMultipartUpload (server-generated key)', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'POST',
+          filename: 'large.bin',
+          contentType: 'application/octet-stream',
+        })
+        .expect(200)
+        .then((res) => {
+          expect(res.body.url).toBeDefined()
+          expect(typeof res.body.url).toBe('string')
+          expect(res.body.url).toContain('test-bucket')
+          // Server generates key via getKey
+          expect(res.body.key).toBeDefined()
+          expect(typeof res.body.key).toBe('string')
+          expect(res.body.key).toContain('large.bin')
+        })
+    })
+
+    test('rejects PutObject without filename', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'PUT',
+          contentType: 'image/jpeg',
+        })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "filename" field is required for PutObject and must be a non-empty string',
+          ),
+        )
+    })
+
+    test('rejects CreateMultipartUpload without filename', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'POST',
+          contentType: 'application/octet-stream',
+        })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "filename" field is required for CreateMultipartUpload and must be a non-empty string',
+          ),
+        )
+    })
+  })
 })
