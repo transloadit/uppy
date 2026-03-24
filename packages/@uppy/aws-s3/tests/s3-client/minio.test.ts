@@ -68,17 +68,19 @@ const minioSpecific = (bucket) => {
   // ===== signRequest tests =====
 
   it('simple putObject upload', async () => {
+    const key = 'presigned-test-file.txt'
     const fileContents = new TextEncoder().encode(
       'Hello from pre-signed URL test.',
     )
 
-    const result = await s3client.putObject(
-      'presigned-test-file.txt',
-      fileContents,
-      'text/plain',
-    )
+    const result = await s3client.putObject(key, fileContents, 'text/plain')
 
     expect(result.ok).toBe(true)
+    expect(result.location).toBeDefined()
+    expect(result.location).toContain(key)
+    // location should be a clean URL without query string (no signing params)
+    expect(result.location).not.toContain('X-Amz-Signature')
+    expect(result.location).not.toContain('?')
   })
 
   it('multipart upload with signRequest', async () => {
@@ -141,6 +143,10 @@ const minioSpecific = (bucket) => {
       try {
         const result = await s3.putObject(testKey, 'Hello STS!', 'text/plain')
         expect(result.ok).toBe(true)
+        expect(result.location).toBeDefined()
+        expect(result.location).toContain(testKey)
+        expect(result.location).not.toContain('X-Amz-Signature')
+        expect(result.location).not.toContain('?')
       } finally {
         await s3.deleteObject(testKey)
       }
