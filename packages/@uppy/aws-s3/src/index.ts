@@ -179,7 +179,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   #initS3Client(): void {
     if ('companionEndpoint' in this.opts) {
       if (typeof this.opts.companionEndpoint !== 'string') {
-        throw new TypeError('companionEndpoint must be a function')
+        throw new TypeError('companionEndpoint must be a string')
       }
       // Mode: Companion signing
       this.#s3Client = new S3mini({
