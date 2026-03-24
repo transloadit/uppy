@@ -466,7 +466,6 @@ export default function s3(config) {
       }, next)
   }
 
-
   /**
    * Presign an S3 request for browser-executed operations.
    *
@@ -496,7 +495,15 @@ export default function s3(config) {
     const client = getS3Client(req, res)
     if (!client) return
 
-    const { method, key, filename, uploadId, partNumber, contentType, metadata = {} } = req.body
+    const {
+      method,
+      key,
+      filename,
+      uploadId,
+      partNumber,
+      contentType,
+      metadata = {},
+    } = req.body
 
     if (
       typeof method !== 'string' ||
@@ -509,7 +516,12 @@ export default function s3(config) {
       return
     }
 
-    const bucket = getBucket({ bucketOrFn: config.bucket, req, filename, metadata })
+    const bucket = getBucket({
+      bucketOrFn: config.bucket,
+      req,
+      filename,
+      metadata,
+    })
 
     let command
     // Server-generated key for key-establishing operations, returned to client.
