@@ -14,20 +14,23 @@ import * as U from './utils.js'
  * Supports simple uploads, multipart uploads, and object deletion.
  *
  * @example
- * // Option 1: With signRequest callback
+ * // Option 1: With signRequest callback (no endpoint needed)
  * const s3 = new S3mini({
- *   endpoint: 'https://s3.amazonaws.com/my-bucket',
- *   signRequest: async ({ method, url, headers }) => {
- *     return await fetchSignedHeaders(method, url, headers);
+ *   signRequest: async ({ method, key, uploadId, partNumber }) => {
+ *     const resp = await fetch('/api/s3/sign', {
+ *       method: 'POST',
+ *       body: JSON.stringify({ method, key, uploadId, partNumber }),
+ *     });
+ *     return resp.json(); // { url }
  *   },
  * });
  *
- * // Option 2: With getCredentials callback (client-side signing)
+ * // Option 2: With getCredentials callback (endpoint required for client-side signing)
  * const s3 = new S3mini({
- *   endpoint: 'https://s3.amazonaws.com/my-bucket',
+ *   endpoint: 'https://s3.us-east-1.amazonaws.com/my-bucket',
  *   getCredentials: async () => {
  *     const resp = await fetch('/api/s3/credentials');
- *     return resp.json(); // { credentials, bucket, region }
+ *     return resp.json(); // { credentials, region }
  *   },
  * });
  *
@@ -75,6 +78,10 @@ class S3mini {
 
       this.getCredentials = getCredentials
       this.signRequest = this._createCredentialBasedSigner()
+    } else {
+      throw new TypeError(
+        'Either signRequest or getCredentials must be provided',
+      )
     }
 
     this.region = region
