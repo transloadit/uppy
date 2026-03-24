@@ -460,7 +460,7 @@ describe('S3 controller', () => {
         )
     })
 
-    test('rejects missing key', async () => {
+    test('rejects missing key for uploadId-bearing operations', async () => {
       const server = await getServer({
         COMPANION_AWS_KEY: 'test_key',
         COMPANION_AWS_SECRET: 'test_secret',
@@ -470,7 +470,7 @@ describe('S3 controller', () => {
 
       return request(server)
         .post('/s3/sign')
-        .send({ method: 'PUT' })
+        .send({ method: 'PUT', uploadId: 'abc123', partNumber: 1 })
         .expect(400)
         .then((res) =>
           expect(res.body.error).toBe(
@@ -479,7 +479,7 @@ describe('S3 controller', () => {
         )
     })
 
-    test('rejects non-string key', async () => {
+    test('rejects non-string key for uploadId-bearing operations', async () => {
       const server = await getServer({
         COMPANION_AWS_KEY: 'test_key',
         COMPANION_AWS_SECRET: 'test_secret',
@@ -489,7 +489,7 @@ describe('S3 controller', () => {
 
       return request(server)
         .post('/s3/sign')
-        .send({ method: 'PUT', key: 12345 })
+        .send({ method: 'POST', key: 12345, uploadId: 'abc123' })
         .expect(400)
         .then((res) =>
           expect(res.body.error).toBe(
@@ -574,7 +574,7 @@ describe('S3 controller', () => {
         )
     })
 
-    test('signs a valid PUT request for simple upload', async () => {
+    test('signs a valid PUT request for simple upload (server-generated key)', async () => {
       const server = await getServer({
         COMPANION_AWS_KEY: 'test_key',
         COMPANION_AWS_SECRET: 'test_secret',
@@ -586,7 +586,7 @@ describe('S3 controller', () => {
         .post('/s3/sign')
         .send({
           method: 'PUT',
-          key: 'uploads/test.jpg',
+          filename: 'test.jpg',
           contentType: 'image/jpeg',
         })
         .expect(200)
@@ -594,11 +594,16 @@ describe('S3 controller', () => {
           expect(res.body.url).toBeDefined()
           expect(typeof res.body.url).toBe('string')
           expect(res.body.url).toContain('test-bucket')
-          expect(res.body.url).toContain('uploads/test.jpg')
+          // Server generates key via getKey (defaultGetKey: {uuid}-{filename})
+          expect(res.body.key).toBeDefined()
+          expect(typeof res.body.key).toBe('string')
+          expect(res.body.key).toContain('test.jpg')
+          // The presigned URL should contain the server-generated key
+          expect(res.body.url).toContain('test.jpg')
         })
     })
 
-    test('signs a valid POST request for CreateMultipartUpload', async () => {
+    test('signs a valid POST request for CreateMultipartUpload (server-generated key)', async () => {
       const server = await getServer({
         COMPANION_AWS_KEY: 'test_key',
         COMPANION_AWS_SECRET: 'test_secret',
@@ -610,7 +615,7 @@ describe('S3 controller', () => {
         .post('/s3/sign')
         .send({
           method: 'POST',
-          key: 'uploads/large.bin',
+          filename: 'large.bin',
           contentType: 'application/octet-stream',
         })
         .expect(200)
@@ -618,8 +623,55 @@ describe('S3 controller', () => {
           expect(res.body.url).toBeDefined()
           expect(typeof res.body.url).toBe('string')
           expect(res.body.url).toContain('test-bucket')
-          expect(res.body.url).toContain('uploads')
+          // Server generates key via getKey
+          expect(res.body.key).toBeDefined()
+          expect(typeof res.body.key).toBe('string')
+          expect(res.body.key).toContain('large.bin')
         })
+    })
+
+    test('rejects PutObject without filename', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'PUT',
+          contentType: 'image/jpeg',
+        })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "filename" field is required for PutObject and must be a non-empty string',
+          ),
+        )
+    })
+
+    test('rejects CreateMultipartUpload without filename', async () => {
+      const server = await getServer({
+        COMPANION_AWS_KEY: 'test_key',
+        COMPANION_AWS_SECRET: 'test_secret',
+        COMPANION_AWS_BUCKET: 'test-bucket',
+        COMPANION_AWS_REGION: 'us-east-1',
+      })
+
+      return request(server)
+        .post('/s3/sign')
+        .send({
+          method: 'POST',
+          contentType: 'application/octet-stream',
+        })
+        .expect(400)
+        .then((res) =>
+          expect(res.body.error).toBe(
+            's3: the "filename" field is required for CreateMultipartUpload and must be a non-empty string',
+          ),
+        )
     })
   })
 })
