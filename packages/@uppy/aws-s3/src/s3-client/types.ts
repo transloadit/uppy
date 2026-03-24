@@ -6,11 +6,16 @@ export type presignableRequest = {
   partNumber?: number
   expiresIn?: number
   contentType?: string
+  /** Original filename, sent to the server for key-establishing operations
+   *  (PutObject, CreateMultipartUpload) so the server can generate the key. */
+  filename?: string
 }
 
 /** Response with the pre-signed URL */
 export type presignedResponse = {
   url: string
+  /** Server-generated object key (returned by Companion for PutObject/CreateMultipartUpload) */
+  key?: string
 }
 
 /** Function that generates a pre-signed URL for a request */
