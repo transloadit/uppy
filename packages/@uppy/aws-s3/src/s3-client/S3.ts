@@ -221,22 +221,26 @@ class S3mini {
       partNumber,
       body = '',
       contentType,
+      filename,
       tolerated = [],
     }: {
       uploadId?: string
       partNumber?: number
       body?: BodyInit
       contentType?: string
+      filename?: string
       tolerated?: number[]
     } = {},
-  ): Promise<Response> {
-    // Get pre-signed URL from callback
-    const { url } = await this.signRequest({
+  ): Promise<{ response: Response; serverKey?: string }> {
+    // Get pre-signed URL from callback.
+    // In companionEndpoint mode, signer will return a server-generated key.
+    const signed = await this.signRequest({
       method,
       key,
       uploadId,
       partNumber,
       contentType,
+      filename,
     })
 
     // Build request headers
@@ -245,13 +249,14 @@ class S3mini {
       : {}
 
     try {
-      return await this._sendRequest(
-        url,
+      const response = await this._sendRequest(
+        signed.url,
         method,
         requestHeaders,
         body,
         tolerated,
       )
+      return { response, serverKey: signed.key }
     } catch (err) {
       // If expired token error and using getCredentials, clear cache and retry once
       if (
@@ -270,13 +275,14 @@ class S3mini {
           uploadId,
           partNumber,
         })
-        return this._sendRequest(
+        const response = await this._sendRequest(
           fresh.url,
           method,
           contentType ? { 'Content-Type': contentType } : {},
           body,
           tolerated,
         )
+        return { response, serverKey: fresh.key }
       }
       throw err
     }
@@ -296,12 +302,14 @@ class S3mini {
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
-  ): Promise<IT.PutObjectResult> {
+    filename?: string,
+  ): Promise<IT.PutObjectResult & { key: string }> {
     this._checkKey(key)
 
-    const attemptUpload = async (): Promise<IT.PutObjectResult> => {
-      const { url } = await this.signRequest({ method: 'PUT', key })
-      return this._xhrUpload(url, data, onProgress, signal, fileType)
+    const attemptUpload = async (): Promise<IT.PutObjectResult & { key: string }> => {
+      const signed = await this.signRequest({ method: 'PUT', key, filename })
+      const result = await this._xhrUpload(signed.url, data, onProgress, signal, fileType)
+      return { ...result, key: signed.key || key }
     }
 
     try {
@@ -315,17 +323,22 @@ class S3mini {
     }
   }
 
-  /** Initiates a multipart upload and returns the upload ID. */
+  /**
+   * Initiates a multipart upload and returns the upload ID and the key.
+   * The key may differ from the input if the server generated it (e.g. Companion's getKey).
+   */
   public async getMultipartUploadId(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-  ): Promise<string> {
+    filename?: string,
+  ): Promise<{ uploadId: string; key: string }> {
     this._checkKey(key)
     if (typeof fileType !== 'string') {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const res = await this._presignedRequest('POST', key, {
+    const { response: res, serverKey } = await this._presignedRequest('POST', key, {
       contentType: fileType,
+      filename,
     })
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
 
@@ -340,7 +353,7 @@ class S3mini {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return uploadId
+          return { uploadId, key: serverKey || key }
         }
       }
     }
@@ -576,7 +589,7 @@ class S3mini {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const res = await this._presignedRequest('GET', key, {
+    const { response: res } = await this._presignedRequest('GET', key, {
       uploadId,
     })
 
@@ -613,7 +626,7 @@ class S3mini {
   ): Promise<IT.CompleteMultipartUploadResult> {
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
 
-    const res = await this._presignedRequest('POST', key, {
+    const { response: res } = await this._presignedRequest('POST', key, {
       uploadId,
       body: xmlBody,
       contentType: C.XML_CONTENT_TYPE,
@@ -660,7 +673,7 @@ class S3mini {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const res = await this._presignedRequest('DELETE', key, {
+    const { response: res } = await this._presignedRequest('DELETE', key, {
       uploadId,
     })
     const parsed = U.parseXml(await res.text()) as Record<string, unknown>
@@ -693,7 +706,7 @@ class S3mini {
 
   /** Deletes an object from the bucket. Returns true on success. */
   public async deleteObject(key: string): Promise<boolean> {
-    const res = await this._presignedRequest('DELETE', key, {
+    const { response: res } = await this._presignedRequest('DELETE', key, {
       tolerated: [200, 204],
     })
     return res.status === 200 || res.status === 204

@@ -6,8 +6,8 @@ export type presignableRequest = {
   partNumber?: number
   expiresIn?: number
   contentType?: string
-  /** Original filename, sent to the server for key-establishing operations
-   *  (PutObject, CreateMultipartUpload) so the server can generate the key. */
+  /** Original filename, sent to the server for generating key server side for
+   *  (PutObject, CreateMultipartUpload) */
   filename?: string
 }
 

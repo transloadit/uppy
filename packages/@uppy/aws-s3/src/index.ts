@@ -158,7 +158,7 @@ class S3Uploader<M extends Meta, B extends Body> {
   readonly #s3Client: S3mini
   readonly #file: UppyFile<M, B>
   readonly #data: Blob
-  readonly #key: string
+  #key: string
   readonly #options: S3UploaderOptions<M, B>
   readonly #eventManager: EventManager<M, B>
 
@@ -348,7 +348,7 @@ class S3Uploader<M extends Meta, B extends Body> {
       throw new Error('Upload aborted', { cause: signal.reason })
     }
 
-    await this.#s3Client.putObject(
+    const result = await this.#s3Client.putObject(
       this.#key,
       this.#data,
       this.#file.type || 'application/octet-stream',
@@ -357,7 +357,11 @@ class S3Uploader<M extends Meta, B extends Body> {
         this.#onProgress()
       },
       signal,
+      this.#file.name,
     )
+
+    // Use server-generated key if returned (Companion's getKey)
+    this.#key = result.key
 
     this.#onSuccess({
       location: `${this.#s3Client.endpoint}/${this.#key}`,
@@ -371,10 +375,15 @@ class S3Uploader<M extends Meta, B extends Body> {
       throw new Error('Upload aborted', { cause: signal.reason })
     }
 
-    this.#uploadId = await this.#s3Client.getMultipartUploadId(
+    const { uploadId, key } = await this.#s3Client.getMultipartUploadId(
       this.#key,
       this.#file.type || 'application/octet-stream',
+      this.#file.name,
     )
+    this.#uploadId = uploadId
+    // Use server-generated key if returned (Companion's getKey)
+    this.#key = key
+
     await this.#uploadRemainingParts()
   }
 
