@@ -302,7 +302,11 @@ class S3mini {
 
     const attemptUpload = async (): Promise<IT.PutObjectResult> => {
       const { url } = await this.signRequest({ method: 'PUT', key })
-      return this._xhrUpload(url, data, onProgress, signal, fileType)
+      const result = await this._xhrUpload(url, data, onProgress, signal, fileType)
+      return {
+        ...result,
+        location: U.removeQueryString(url),
+      }
     }
 
     try {
@@ -421,7 +425,7 @@ class S3mini {
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
     contentType?: string,
-  ): Promise<IT.PutObjectResult> {
+  ): Promise<IT.XhrUploadResult> {
     // Wait for online before starting
     if (this._isOffline()) {
       await this._waitForOnline(signal)
@@ -493,7 +497,7 @@ class S3mini {
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
     contentType?: string,
-  ): Promise<IT.PutObjectResult> {
+  ): Promise<IT.XhrUploadResult> {
     // Offline during request - wait and retry
     if (this._isOffline()) {
       await this._waitForOnline(signal)

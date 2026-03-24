@@ -264,7 +264,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const signal = this.#abortController?.signal
     signal?.throwIfAborted()
 
-    await this.#options.s3Client.putObject(
+    const result = await this.#options.s3Client.putObject(
       this.#key,
       this.#data,
       this.#options.file.type || 'application/octet-stream',
@@ -276,7 +276,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     )
 
     this.#onSuccess({
-      location: `${this.#options.s3Client.endpoint}/${this.#key}`,
+      location: result.location,
       key: this.#key,
     })
   }
