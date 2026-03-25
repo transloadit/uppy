@@ -29,7 +29,7 @@
     "@vitest/browser": "^3.2.4",
     "msw": "^2.10.4",
     "playwright": "1.57.0",
-    "svelte": "^5.0.0",
+    "svelte": "^5.53.5",
     "svelte-check": "^4.0.0",
     "tailwindcss": "^4.0.0",
     "typescript": "^5.0.0",
