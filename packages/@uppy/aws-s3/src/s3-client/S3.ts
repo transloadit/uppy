@@ -42,10 +42,10 @@ class S3mini {
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
 
-  private readonly getCredentials?: IT.getCredentialsFn
+  private readonly getCredentials?: IT.GetCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
   private cachedCredentialsPromise?: Promise<IT.CredentialsResponse>
-  private signRequest!: IT.signRequestFn
+  private signRequest!: IT.SignRequestFn
 
   constructor({
     region = 'auto',
@@ -90,7 +90,7 @@ class S3mini {
   }
 
   /** Creates a presigner that fetches/caches credentials and generates pre-signed URLs. */
-  private _createCredentialBasedSigner(): IT.signRequestFn {
+  private _createCredentialBasedSigner(): IT.SignRequestFn {
     return async (
       request: IT.presignableRequest,
     ): Promise<IT.presignedResponse> => {
@@ -154,48 +154,6 @@ class S3mini {
     if (typeof key !== 'string' || key.trim().length === 0) {
       throw new TypeError(C.ERROR_KEY_REQUIRED)
     }
-  }
-
-  private _checkOpts(opts: object): void {
-    if (typeof opts !== 'object') {
-      throw new TypeError(`${C.ERROR_PREFIX}opts must be an object`)
-    }
-  }
-
-  private _filterIfHeaders(opts: Record<string, unknown>): {
-    filteredOpts: Record<string, string>
-    conditionalHeaders: Record<string, unknown>
-  } {
-    const filteredOpts: Record<string, string> = {}
-    const conditionalHeaders: Record<string, unknown> = {}
-
-    for (const [key, value] of Object.entries(opts)) {
-      if (
-        C.IFHEADERS.has(
-          key.toLowerCase() as typeof C.IFHEADERS extends Set<infer T>
-            ? T
-            : never,
-        )
-      ) {
-        conditionalHeaders[key] = value
-      } else {
-        filteredOpts[key] = value as string
-      }
-    }
-
-    return { filteredOpts, conditionalHeaders }
-  }
-
-  private _validateData(data: unknown): BodyInit {
-    if (
-      typeof data === 'string' ||
-      data instanceof ArrayBuffer ||
-      ArrayBuffer.isView(data) ||
-      data instanceof Blob
-    ) {
-      return data as BodyInit
-    }
-    throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED)
   }
 
   private _validateUploadPartParams(

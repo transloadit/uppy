@@ -127,6 +127,7 @@ describe('AwsS3', () => {
     it('throws if no signing method is provided', () => {
       expect(() => {
         const core = new Core()
+        // @ts-expect-error - testing runtime validation, so omit required options
         core.use(AwsS3, {
           s3Endpoint: 'https://companion.example.com',
           region: 'us-east-1',

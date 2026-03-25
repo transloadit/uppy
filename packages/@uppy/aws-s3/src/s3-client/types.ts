@@ -14,7 +14,7 @@ export type presignedResponse = {
 }
 
 /** Function that generates a pre-signed URL for a request */
-export type signRequestFn = (
+export type SignRequestFn = (
   request: presignableRequest,
 ) => Promise<presignedResponse>
 
@@ -40,7 +40,7 @@ export interface CredentialsResponse {
 }
 
 /** Function that retrieves temporary credentials */
-export type getCredentialsFn = (options?: {
+export type GetCredentialsFn = (options?: {
   signal?: AbortSignal
 }) => CredentialsResponse | Promise<CredentialsResponse>
 
@@ -57,13 +57,13 @@ type S3ConfigBase = {
 /** Config when using signRequest callback (region optional) */
 type S3ConfigWithSignRequest = S3ConfigBase & {
   /** Function to sign requests. Called for each S3 API request. */
-  signRequest: signRequestFn
+  signRequest: SignRequestFn
 }
 
 /** Config when using getCredentials callback (region required for signing) */
 type S3ConfigWithGetCredentials = Omit<S3ConfigBase, 'region'> & {
   /** Function to retrieve temporary credentials for client-side signing. */
-  getCredentials: getCredentialsFn
+  getCredentials: GetCredentialsFn
   /** AWS region. Required for signing with getCredentials. */
   region?: string
   /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */

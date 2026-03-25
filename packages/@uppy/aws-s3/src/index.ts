@@ -85,7 +85,7 @@ export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
          * When provided, S3mini handles signing internally using SigV4.
          * Alternative to signRequest or endpoint.
          */
-        getCredentials: IT.getCredentialsFn
+        getCredentials: IT.GetCredentialsFn
       }
     | {
         /**
@@ -93,7 +93,7 @@ export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
          * Called with request details, should return signed headers.
          * Alternative to using Companion endpoint.
          */
-        signRequest: IT.signRequestFn
+        signRequest: IT.SignRequestFn
       }
     | {
         /** Companion URL if you want to use Companion for signing */
@@ -220,7 +220,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   /**
    * Creates a signing function that calls Companion's /s3/sign endpoint.
    */
-  #createCompanionSigner(companionUrl: string): IT.signRequestFn {
+  #createCompanionSigner(companionUrl: string): IT.SignRequestFn {
     return async (request) => {
       const response = await fetch(`${companionUrl}/s3/sign`, {
         method: 'POST',
