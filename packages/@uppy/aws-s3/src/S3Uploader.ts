@@ -182,16 +182,20 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     return Math.ceil(fileSize / MAX_PARTS)
   }
 
-  start(): void {
+  async start(): Promise<void> {
     // Abort any pending operations (if not already aborted)
     this.#abortController?.abort()
     // Always create a fresh AbortController (also for resume)
     this.#abortController = new AbortController()
 
-    if (this.#uploadHasStarted) {
-      this.#resumeUpload()
-    } else {
-      this.#createUpload()
+    try {
+      if (this.#uploadHasStarted) {
+        await this.#resumeUpload()
+      } else {
+        await this.#createUpload()
+      }
+    } catch (err) {
+      this.#onError(err as Error)
     }
   }
 
@@ -223,14 +227,10 @@ export default class S3Uploader<M extends Meta, B extends Body> {
 
   async #createUpload(): Promise<void> {
     this.#uploadHasStarted = true
-    try {
-      if (this.#shouldUseMultipart) {
-        await this.#uploadMultipart()
-      } else {
-        await this.#uploadNonMultipart()
-      }
-    } catch (err) {
-      this.#onError(err as Error)
+    if (this.#shouldUseMultipart) {
+      await this.#uploadMultipart()
+    } else {
+      await this.#uploadNonMultipart()
     }
   }
 
@@ -239,25 +239,21 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       await this.#createUpload()
       return
     }
-    try {
-      const existingParts = await this.#options.s3Client.listParts(
-        this.#uploadId,
-        this.#key,
-      )
-      // Sync local state with S3 - mark already-uploaded parts
-      for (const part of existingParts) {
-        const chunkIndex = part.partNumber - 1
-        if (chunkIndex >= 0 && chunkIndex < this.#chunkState.length) {
-          this.#chunkState[chunkIndex].uploaded = this.#chunks[chunkIndex].size
-          this.#chunkState[chunkIndex].etag = part.etag
-        }
+    const existingParts = await this.#options.s3Client.listParts(
+      this.#uploadId,
+      this.#key,
+    )
+    // Sync local state with S3 - mark already-uploaded parts
+    for (const part of existingParts) {
+      const chunkIndex = part.partNumber - 1
+      if (chunkIndex >= 0 && chunkIndex < this.#chunkState.length) {
+        this.#chunkState[chunkIndex].uploaded = this.#chunks[chunkIndex].size
+        this.#chunkState[chunkIndex].etag = part.etag
       }
-      // Emit progress update to reflect already-uploaded parts
-      this.#onProgress()
-      await this.#uploadRemainingParts()
-    } catch (err) {
-      this.#onError(err as Error)
     }
+    // Emit progress update to reflect already-uploaded parts
+    this.#onProgress()
+    await this.#uploadRemainingParts()
   }
 
   async #uploadNonMultipart(): Promise<void> {

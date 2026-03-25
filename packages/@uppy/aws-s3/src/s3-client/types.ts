@@ -114,6 +114,7 @@ export interface XhrUploadResult {
   headers: {
     get(name: string): string | null
   }
+  response: string
 }
 
 /** Public result from putObject — includes object location derived from presigned URL */
