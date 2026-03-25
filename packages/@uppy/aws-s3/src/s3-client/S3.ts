@@ -258,16 +258,13 @@ class S3mini {
   ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
 
-    const { result, url } = await this.xhrWithRetry({
-      request: {
-        method: 'PUT',
-        key,
-      },
+    const { url, ...result } = await this._xhrUpload(
+      { method: 'PUT', key },
       data,
       onProgress,
       signal,
       fileType,
-    })
+    )
 
     return {
       ...result,
@@ -312,45 +309,6 @@ class S3mini {
     )
   }
 
-  private async xhrWithRetry({
-    data,
-    request,
-    onProgress,
-    signal,
-    fileType,
-  }: {
-    request: IT.presignableRequest
-    data: IT.BinaryData | string
-    onProgress?: IT.OnProgressFn
-    signal?: AbortSignal
-    fileType?: string
-  }) {
-    const attemptUpload = async () => {
-      const { url } = await this.signRequest(request)
-      const result = await this._xhrUpload(
-        url,
-        data,
-        onProgress,
-        signal,
-        fileType,
-      )
-      return {
-        url,
-        result,
-      }
-    }
-
-    try {
-      return await attemptUpload()
-    } catch (err) {
-      if (this._isExpiredTokenError(err)) {
-        this.clearCachedCredentials()
-        return attemptUpload()
-      }
-      throw err
-    }
-  }
-
   public async uploadPart(
     key: string,
     uploadId: string,
@@ -360,9 +318,8 @@ class S3mini {
     signal?: AbortSignal,
   ): Promise<IT.UploadPart> {
     this._validateUploadPartParams(key, uploadId, partNumber)
-
-    const { result } = await this.xhrWithRetry({
-      request: {
+    const result = await this._xhrUpload(
+      {
         method: 'PUT',
         key,
         uploadId,
@@ -370,7 +327,7 @@ class S3mini {
       data,
       onProgress,
       signal,
-    })
+    )
 
     return {
       etag: result.headers.get('etag')
@@ -406,18 +363,20 @@ class S3mini {
    * - Stall detection via ProgressTimeout
    */
   private async _xhrUpload(
-    url: string,
+    request: IT.presignableRequest,
     data: IT.BinaryData | string,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
     contentType?: string,
-  ): Promise<IT.XhrUploadResult> {
+  ): Promise<IT.XhrUploadResult & { url: string }> {
     // Wait for online before starting
     if (this._isOffline()) {
       await this._waitForOnline(signal)
     }
 
     try {
+      const { url } = await this.signRequest(request)
+
       const xhr = await fetcher(url, {
         method: 'PUT',
         // XHR natively supports ArrayBuffer, Uint8Array, Blob, and string
@@ -455,6 +414,7 @@ class S3mini {
 
       // Return Response-like object for test compatibility
       return {
+        url,
         status: xhr.status,
         ok: xhr.status >= 200 && xhr.status < 300,
         headers: {
@@ -462,100 +422,74 @@ class S3mini {
         },
       }
     } catch (err: unknown) {
-      return this._handleUploadError(
-        err,
-        url,
-        data,
-        onProgress,
-        signal,
-        contentType,
-      )
-    }
-  }
-
-  /**
-   * Handles errors from _xhrUpload, including offline recovery and error mapping.
-   */
-  private async _handleUploadError(
-    err: unknown,
-    url: string,
-    data: IT.BinaryData | string,
-    onProgress?: IT.OnProgressFn,
-    signal?: AbortSignal,
-    contentType?: string,
-  ): Promise<IT.XhrUploadResult> {
-    // Offline during request - wait and retry
-    if (this._isOffline()) {
-      await this._waitForOnline(signal)
-      // Check if aborted while waiting for online
-      if (signal?.aborted) {
-        throw new DOMException('Upload aborted', 'AbortError')
+      if (this._isExpiredTokenError(err)) {
+        this.clearCachedCredentials()
+        return this._xhrUpload(request, data, onProgress, signal, contentType)
       }
-      return this._xhrUpload(url, data, onProgress, signal, contentType)
-    }
 
-    // Abort errors pass through
-    if (err instanceof DOMException && err.name === 'AbortError') {
+      // Offline during request - wait and retry
+      if (this._isOffline()) {
+        await this._waitForOnline(signal)
+        // Check if aborted while waiting for online
+        if (signal?.aborted) {
+          throw new DOMException('Upload aborted', 'AbortError')
+        }
+        return this._xhrUpload(request, data, onProgress, signal, contentType)
+      }
+
+      // Abort errors pass through
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw err
+      }
+
+      const getXhrError = (e: unknown): XMLHttpRequest | null => {
+        // Network errors (from fetcher's NetworkError)
+        if (
+          err instanceof NetworkError ||
+          (err instanceof Error &&
+            'isNetworkError' in err &&
+            err.isNetworkError)
+        ) {
+          return 'request' in err ? (err as NetworkError).request : null
+        }
+        // Handle errors with attached XHR (from onAfterResponse throws)
+        if (
+          err instanceof Error &&
+          'request' in err &&
+          err.request instanceof XMLHttpRequest
+        ) {
+          return err.request
+        }
+        return null
+      }
+
+      const xhr = getXhrError(err)
+
+      if (xhr) {
+        if (!xhr.status) {
+          throw new U.S3NetworkError(
+            'Network error during upload',
+            'NETWORK',
+            err,
+          )
+        }
+        // HTTP errors (non-2xx responses from NetworkError)
+        const parsedBody = this._parseErrorXml(
+          (name: string) => xhr.getResponseHeader(name),
+          xhr.responseText,
+        )
+        const serviceCode =
+          xhr.getResponseHeader('x-amz-error-code') ?? parsedBody.svcCode
+        throw new U.S3ServiceError(
+          `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
+          xhr.status,
+          serviceCode,
+          xhr.responseText,
+        )
+      }
+
       throw err
     }
-
-    // Network errors (from fetcher's NetworkError)
-    if (
-      err instanceof NetworkError ||
-      (err instanceof Error && 'isNetworkError' in err && err.isNetworkError)
-    ) {
-      const xhr = 'request' in err ? (err as NetworkError).request : null
-      if (!xhr?.status) {
-        throw new U.S3NetworkError(
-          'Network error during upload',
-          'NETWORK',
-          err,
-        )
-      }
-      // HTTP errors (non-2xx responses from NetworkError)
-      const headerCode = xhr.getResponseHeader('x-amz-error-code')
-      const parsedBody = this._parseErrorXml(
-        (name: string) => xhr.getResponseHeader(name),
-        xhr.responseText,
-      )
-      const serviceCode = headerCode ?? parsedBody.svcCode
-      throw new U.S3ServiceError(
-        `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
-        xhr.status,
-        serviceCode,
-        xhr.responseText,
-      )
-    }
-
-    // Handle errors with attached XHR (from onAfterResponse throws)
-    if (
-      err instanceof Error &&
-      'request' in err &&
-      err.request instanceof XMLHttpRequest
-    ) {
-      const xhr = err.request
-      if (!xhr.status) {
-        throw new U.S3NetworkError(
-          'Network error during upload',
-          'NETWORK',
-          err,
-        )
-      }
-      const headerCode = xhr.getResponseHeader('x-amz-error-code')
-      const parsedBody = this._parseErrorXml(
-        (name: string) => xhr.getResponseHeader(name),
-        xhr.responseText,
-      )
-      const serviceCode = headerCode ?? parsedBody.svcCode
-      throw new U.S3ServiceError(
-        `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
-        xhr.status,
-        serviceCode,
-        xhr.responseText,
-      )
-    }
-
-    throw err
   }
 
   /** Lists uploaded parts for a multipart upload. */
