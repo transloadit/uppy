@@ -258,29 +258,20 @@ class S3mini {
   ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
 
-    const attemptUpload = async (): Promise<IT.PutObjectResult> => {
-      const { url } = await this.signRequest({ method: 'PUT', key })
-      const result = await this._xhrUpload(
-        url,
-        data,
-        onProgress,
-        signal,
-        fileType,
-      )
-      return {
-        ...result,
-        location: U.removeQueryString(url),
-      }
-    }
+    const { result, url } = await this.xhrWithRetry({
+      request: {
+        method: 'PUT',
+        key,
+      },
+      data,
+      onProgress,
+      signal,
+      fileType,
+    })
 
-    try {
-      return await attemptUpload()
-    } catch (err) {
-      if (this._isExpiredTokenError(err)) {
-        this.clearCachedCredentials()
-        return attemptUpload()
-      }
-      throw err
+    return {
+      ...result,
+      location: U.removeQueryString(url),
     }
   }
 
@@ -321,29 +312,31 @@ class S3mini {
     )
   }
 
-  public async uploadPart(
-    key: string,
-    uploadId: string,
-    data: IT.BinaryData | string,
-    partNumber: number,
-    onProgress?: IT.OnProgressFn,
-    signal?: AbortSignal,
-  ): Promise<IT.UploadPart> {
-    this._validateUploadPartParams(key, uploadId, partNumber)
-
-    const attemptUpload = async (): Promise<IT.UploadPart> => {
-      const { url } = await this.signRequest({
-        method: 'PUT',
-        key,
-        uploadId,
-        partNumber,
-      })
-      const result = await this._xhrUpload(url, data, onProgress, signal)
+  private async xhrWithRetry({
+    data,
+    request,
+    onProgress,
+    signal,
+    fileType,
+  }: {
+    request: IT.presignableRequest
+    data: IT.BinaryData | string
+    onProgress?: IT.OnProgressFn
+    signal?: AbortSignal
+    fileType?: string
+  }) {
+    const attemptUpload = async () => {
+      const { url } = await this.signRequest(request)
+      const result = await this._xhrUpload(
+        url,
+        data,
+        onProgress,
+        signal,
+        fileType,
+      )
       return {
-        partNumber,
-        etag: result.headers.get('etag')
-          ? U.sanitizeETag(result.headers.get('etag')!)
-          : '',
+        url,
+        result,
       }
     }
 
@@ -355,6 +348,35 @@ class S3mini {
         return attemptUpload()
       }
       throw err
+    }
+  }
+
+  public async uploadPart(
+    key: string,
+    uploadId: string,
+    data: IT.BinaryData | string,
+    partNumber: number,
+    onProgress?: IT.OnProgressFn,
+    signal?: AbortSignal,
+  ): Promise<IT.UploadPart> {
+    this._validateUploadPartParams(key, uploadId, partNumber)
+
+    const { result } = await this.xhrWithRetry({
+      request: {
+        method: 'PUT',
+        key,
+        uploadId,
+      },
+      data,
+      onProgress,
+      signal,
+    })
+
+    return {
+      etag: result.headers.get('etag')
+        ? U.sanitizeETag(result.headers.get('etag')!)
+        : '',
+      partNumber,
     }
   }
 
