@@ -3,7 +3,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core'
-import type { h } from 'preact'
+import type { h } from '@uppy/utils/preact'
 import ItemIcon from './ItemIcon.js'
 
 // if folder:

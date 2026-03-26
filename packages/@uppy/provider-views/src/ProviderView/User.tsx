@@ -1,4 +1,4 @@
-import { Fragment } from 'preact'
+import { Fragment } from '@uppy/utils/preact'
 
 type UserProps = {
   i18n: (phrase: string) => string

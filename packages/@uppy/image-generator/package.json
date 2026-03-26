@@ -41,8 +41,7 @@
   "dependencies": {
     "@uppy/provider-views": "workspace:^",
     "@uppy/transloadit": "workspace:^",
-    "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",

@@ -64,7 +64,7 @@ import {
   %%ComponentName%% as %%PreactComponentName%%,
   type %%PropsTypeName%%,
 } from '@uppy/components'
-import { h as preactH, render as preactRender } from 'preact'
+import { h as preactH, render as preactRender } from '@uppy/utils/preact'
 import { useContext, useEffect, useRef } from 'react'
 import { UppyContext } from '../UppyContextProvider.js'
 
@@ -96,7 +96,7 @@ import {
   %%ComponentName%% as %%PreactComponentName%%,
   type %%PropsTypeName%%,
 } from '@uppy/components'
-import { h as preactH, render as preactRender } from 'preact'
+import { h as preactH, render as preactRender } from '@uppy/utils/preact'
 import { useUppyContext } from '../useUppyContext.js'
 
 export default defineComponent({
@@ -149,7 +149,7 @@ const SVELTE_TEMPLATE = `\
     type %%PropsTypeName%%,
     type UppyContext,
   } from '@uppy/components'
-  import { h as preactH, render as preactRender } from 'preact'
+  import { h as preactH, render as preactRender } from '@uppy/utils/preact'
   import { UppyContextKey } from '../UppyContextProvider.svelte'
 
   const props: Omit<%%PropsTypeName%%, 'ctx'> = $props()

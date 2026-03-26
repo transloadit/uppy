@@ -6,7 +6,7 @@ import type {
 } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import { VirtualList } from '@uppy/utils'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useState } from '@uppy/utils/preact/hooks'
 import Item from './Item/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
 

@@ -8,7 +8,7 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import { emaFilter, getTextDirection } from '@uppy/utils'
-import type { ComponentChild } from 'preact'
+import type { ComponentChild } from '@uppy/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import type { StatusBarOptions } from './StatusBarOptions.js'

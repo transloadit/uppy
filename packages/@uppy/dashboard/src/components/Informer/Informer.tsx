@@ -1,5 +1,5 @@
 import type { UIPluginOptions, Uppy } from '@uppy/core'
-import { Component, type ComponentChild } from 'preact'
+import { Component, type ComponentChild } from '@uppy/utils/preact'
 import FadeIn from './FadeIn.js'
 import TransitionGroup from './TransitionGroup.js'
 

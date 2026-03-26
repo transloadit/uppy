@@ -54,7 +54,7 @@
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.0",
