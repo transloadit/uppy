@@ -22,8 +22,6 @@ class TransloaditAssemblyWatcher<
 
   #resolve!: () => void
 
-  #reject!: (reason?: string) => void
-
   #uppy
 
   constructor(uppy: Uppy<M, B>, assemblyIDs: string[]) {
