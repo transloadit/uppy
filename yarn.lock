@@ -3529,18 +3529,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@biomejs/biome@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/biome@npm:2.0.5"
+"@biomejs/biome@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/biome@npm:2.1.2"
   dependencies:
-    "@biomejs/cli-darwin-arm64": "npm:2.0.5"
-    "@biomejs/cli-darwin-x64": "npm:2.0.5"
-    "@biomejs/cli-linux-arm64": "npm:2.0.5"
-    "@biomejs/cli-linux-arm64-musl": "npm:2.0.5"
-    "@biomejs/cli-linux-x64": "npm:2.0.5"
-    "@biomejs/cli-linux-x64-musl": "npm:2.0.5"
-    "@biomejs/cli-win32-arm64": "npm:2.0.5"
-    "@biomejs/cli-win32-x64": "npm:2.0.5"
+    "@biomejs/cli-darwin-arm64": "npm:2.1.2"
+    "@biomejs/cli-darwin-x64": "npm:2.1.2"
+    "@biomejs/cli-linux-arm64": "npm:2.1.2"
+    "@biomejs/cli-linux-arm64-musl": "npm:2.1.2"
+    "@biomejs/cli-linux-x64": "npm:2.1.2"
+    "@biomejs/cli-linux-x64-musl": "npm:2.1.2"
+    "@biomejs/cli-win32-arm64": "npm:2.1.2"
+    "@biomejs/cli-win32-x64": "npm:2.1.2"
   dependenciesMeta:
     "@biomejs/cli-darwin-arm64":
       optional: true
@@ -3560,62 +3560,62 @@ __metadata:
       optional: true
   bin:
     biome: bin/biome
-  checksum: 10/13ad6e67783e3831d09cb0cbcfbe4d93bf21da851b1159d0376dbe8ac6426f0c426674793d0b08726b1ccfef87d4b8172ad3195511d96a074ef11007ff53071a
+  checksum: 10/80aae8ffe580e3e508251bf54628c98ec5d88703cbec6978ee8f668a82efd30591bcc326b69caa89b314dba80fa3ddc706b7613e8942381f36ac3e70191636a5
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-arm64@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-darwin-arm64@npm:2.0.5"
+"@biomejs/cli-darwin-arm64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-darwin-arm64@npm:2.1.2"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-darwin-x64@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-darwin-x64@npm:2.0.5"
+"@biomejs/cli-darwin-x64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-darwin-x64@npm:2.1.2"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64-musl@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.0.5"
+"@biomejs/cli-linux-arm64-musl@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-linux-arm64-musl@npm:2.1.2"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-arm64@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-linux-arm64@npm:2.0.5"
+"@biomejs/cli-linux-arm64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-linux-arm64@npm:2.1.2"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64-musl@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-linux-x64-musl@npm:2.0.5"
+"@biomejs/cli-linux-x64-musl@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-linux-x64-musl@npm:2.1.2"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@biomejs/cli-linux-x64@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-linux-x64@npm:2.0.5"
+"@biomejs/cli-linux-x64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-linux-x64@npm:2.1.2"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-arm64@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-win32-arm64@npm:2.0.5"
+"@biomejs/cli-win32-arm64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-win32-arm64@npm:2.1.2"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@biomejs/cli-win32-x64@npm:2.0.5":
-  version: 2.0.5
-  resolution: "@biomejs/cli-win32-x64@npm:2.0.5"
+"@biomejs/cli-win32-x64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "@biomejs/cli-win32-x64@npm:2.1.2"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
@@ -9837,7 +9837,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/build@workspace:."
   dependencies:
-    "@biomejs/biome": "npm:2.0.5"
+    "@biomejs/biome": "npm:2.1.2"
     "@changesets/changelog-github": "npm:^0.5.1"
     "@changesets/cli": "patch:@changesets/cli@npm%3A2.29.5#~/.yarn/patches/@changesets-cli-npm-2.29.5-68d8030bf3.patch"
     npm-run-all: "npm:^4.1.5"

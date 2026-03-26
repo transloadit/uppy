@@ -4,7 +4,6 @@ import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import logger from '../logger.js'
-// biome-ignore lint/correctness/noUnusedImports: It is used as a type
 import Provider from './Provider.js'
 
 /**
