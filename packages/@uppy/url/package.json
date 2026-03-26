@@ -46,11 +46,11 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "nanoid": "^5.0.9",
-    "preact": "^10.26.10"
+    "nanoid": "^5.0.9"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "preact": "^10.26.10"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
@@ -59,6 +59,7 @@
     "playwright": "1.57.0",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
+    "preact": "^10.26.10",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"

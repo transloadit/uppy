@@ -41,18 +41,19 @@
   "dependencies": {
     "@uppy/provider-views": "workspace:^",
     "@uppy/transloadit": "workspace:^",
-    "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "cssnano": "^7.0.7",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
+    "preact": "^10.26.10",
     "sass": "^1.89.2"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "preact": "^10.26.10"
   },
   "publishConfig": {
     "access": "public"
