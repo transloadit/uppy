@@ -1,7 +1,7 @@
 import type { Body, Meta } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import type { h } from 'preact'
-import { useCallback } from 'preact/hooks'
+import { useCallback, useState } from 'preact/hooks'
 import type ProviderViews from './ProviderView.js'
 import type { Opts } from './ProviderView.js'
 
@@ -62,11 +62,17 @@ function DefaultForm<M extends Meta, B extends Body>({
   // In order to comply with Google's brand we need to create a different button
   // for the Google Drive plugin
   const isGoogleDrive = pluginName === 'Google Drive'
+  const [loading, setLoading] = useState(false)
 
   const onSubmit = useCallback(
-    (e: Event) => {
+    async (e: Event) => {
       e.preventDefault()
-      onAuth()
+      try {
+        setLoading(true)
+        await onAuth()
+      } finally {
+        setLoading(true)
+      }
     },
     [onAuth],
   )
@@ -75,6 +81,7 @@ function DefaultForm<M extends Meta, B extends Body>({
     <form onSubmit={onSubmit}>
       {isGoogleDrive ? (
         <button
+          disabled={loading}
           type="submit"
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn uppy-Provider-btn-google"
           data-uppy-super-focusable
@@ -84,6 +91,7 @@ function DefaultForm<M extends Meta, B extends Body>({
         </button>
       ) : (
         <button
+          disabled={loading}
           type="submit"
           className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
           data-uppy-super-focusable

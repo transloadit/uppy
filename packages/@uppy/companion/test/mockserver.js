@@ -73,7 +73,7 @@ export const grantToken = 'fake token'
 // companion stores certain global state, so the user needs to reset modules for each test
 // todo rewrite companion to not use global state
 // https://github.com/transloadit/uppy/issues/3284
-export const getServer = async (extraEnv) => {
+export const getServerWithEmitter = async (extraEnv) => {
   const { default: standalone } = await import('../src/standalone/index.js')
 
   const env = {
@@ -103,7 +103,10 @@ export const getServer = async (extraEnv) => {
     next()
   })
 
-  const { app } = standalone()
+  const { app, emitter } = standalone()
   authServer.use(app)
-  return authServer
+  return { server: authServer, app, emitter }
 }
+
+export const getServer = async (...args) =>
+  (await getServerWithEmitter(...args)).server

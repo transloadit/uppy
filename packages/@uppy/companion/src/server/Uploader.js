@@ -445,7 +445,7 @@ export default class Uploader {
     // make sure the keys get cleaned up.
     // https://github.com/transloadit/uppy/issues/3748
     const keyExpirySec = 60 * 60 * 24
-    const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
+    const redisKey = `${Uploader.STORAGE_PREFIX_UPLOAD_TOKEN}:${this.token}`
     this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }
 
@@ -780,4 +780,5 @@ export default class Uploader {
 }
 
 Uploader.FILE_NAME_PREFIX = 'uppy-file'
-Uploader.STORAGE_PREFIX = 'companion'
+Uploader.STORAGE_PREFIX_UPLOAD_TOKEN = 'companion' // todo rename to companion-upload (this is technically a breaking change)
+Uploader.STORAGE_PREFIX_CALLBACK_TOKEN = 'companion-callback'

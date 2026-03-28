@@ -4,7 +4,9 @@ const mockOauthState = () => {
   vi.mock('../src/server/helpers/oauth-state.js', async () => ({
     ...(await vi.importActual('../src/server/helpers/oauth-state.js')),
     generateState: () => ({}),
-    getFromState: (state) => {
+    getFromState: (state, key) => {
+      if (key === 'authCallbackToken') return undefined
+
       if (state === 'state-with-invalid-instance-url') {
         return 'http://localhost:3452'
       }
