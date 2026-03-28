@@ -255,6 +255,7 @@ class S3mini {
         method: 'PUT',
         key,
         uploadId,
+        partNumber,
       },
       data,
       onProgress,
