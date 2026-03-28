@@ -276,16 +276,6 @@ class S3mini {
     return typeof navigator !== 'undefined' && navigator.onLine === false
   }
 
-  /** Checks if error is an expired/invalid token that can be retried with fresh credentials */
-  private _isExpiredTokenError(err: unknown): boolean {
-    return (
-      this.getCredentials != null &&
-      err instanceof U.S3ServiceError &&
-      err.code != null &&
-      ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
-    )
-  }
-
   /**
    * Core XHR upload implementation using @uppy/utils/fetcher.
    *
@@ -538,7 +528,12 @@ class S3mini {
   public async abortMultipartUpload(
     key: string,
     uploadId: string,
-  ): Promise<object> {
+  ): Promise<{
+    status: string
+    key: string
+    uploadId: string
+    response: Record<string, unknown>
+  }> {
     this._checkKey(key)
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)

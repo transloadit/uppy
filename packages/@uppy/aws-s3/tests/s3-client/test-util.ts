@@ -1,9 +1,7 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest'
-import { S3mini } from '../../src/s3-client/index.js'
+import { S3mini, type UploadPart } from '../../src/s3-client/index.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.js'
 import { randomBytes } from '../test-utils/browser-crypto.js'
-
-let _providerName
 
 export const beforeRun = (raw, name, providerSpecific) => {
   if (!raw) {
@@ -26,7 +24,6 @@ export const beforeRun = (raw, name, providerSpecific) => {
     }
     describe(`:::: ${credentials.provider} ::::`, () => {
       expect(credentials.provider).toBe(name)
-      _providerName = credentials.provider
       expect(credentials.accessKeyId).toBeDefined()
       expect(credentials.secretAccessKey).toBeDefined()
       expect(credentials.endpoint).toBeDefined()
@@ -154,7 +151,7 @@ export const testRunner = (bucket) => {
   it('completeMultipartUpload assembles parts correctly', async () => {
     // key - key_bin
     const partSize = EIGHT_MB
-    const totalParts = Math.ceil(large_buffer.length / partSize)
+    const totalParts = Math.ceil(large_buffer.byteLength / partSize)
 
     const uploadId = await s3client.createMultipartUpload(
       key_bin,
@@ -163,7 +160,7 @@ export const testRunner = (bucket) => {
     expect(uploadId).toBeDefined()
 
     // upload all parts
-    const uploadPromises = []
+    const uploadPromises: Promise<UploadPart>[] = []
     for (let i = 0; i < totalParts; i++) {
       const partBuffer = large_buffer.subarray(i * partSize, (i + 1) * partSize)
       uploadPromises.push(
