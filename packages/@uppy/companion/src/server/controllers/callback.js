@@ -1,25 +1,15 @@
 /**
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
-import serialize from 'serialize-javascript'
+
+import emitter from '../emitter/index.js'
+import {
+  authCallbackErrorHtml,
+  legacyAuthCallbackHtml,
+} from '../helpers/html.js'
 import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import logger from '../logger.js'
-
-const closePageHtml = (origin) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-      <meta charset="utf-8" />
-      <script>
-      // if window.opener is nullish, we want the following line to throw to avoid
-      // the window closing without informing the user.
-      window.opener.postMessage(${serialize({ error: true })}, ${serialize(origin)})
-      window.close()
-      </script>
-  </head>
-  <body>Authentication failed.</body>
-  </html>`
 
 /**
  *
@@ -29,6 +19,7 @@ const closePageHtml = (origin) => `
  */
 export default function callback(req, res, next) {
   const { providerName } = req.params
+  const { companion } = req
 
   const grant = req.session.grant || {}
 
@@ -48,7 +39,23 @@ export default function callback(req, res, next) {
       req.id,
     )
     logger.debug(grant.response, 'callback.oauth.resp', req.id)
-    return res.status(400).send(closePageHtml(origin))
+
+    const authCallbackToken = oAuthState.getFromState(
+      grantDynamic.state,
+      'authCallbackToken',
+      companion.options.secret,
+    )
+    // only new Uppy clients will set an authCallbackToken in the state
+    // in that case, we send the token through the emitter.
+    if (authCallbackToken) {
+      emitter().emit(authCallbackToken, { error: true })
+      res.status(400).send(authCallbackErrorHtml())
+    } else {
+      // This is backwards compatible with old Uppy clients:
+      res.status(400).send(legacyAuthCallbackHtml({ error: true }, origin))
+    }
+
+    return
   }
 
   const { access_token: accessToken, refresh_token: refreshToken } =

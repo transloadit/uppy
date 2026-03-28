@@ -5,54 +5,131 @@ import * as logger from './logger.js'
 import * as redis from './redis.js'
 import Uploader from './Uploader.js'
 
-/**
- * the socket is used to send progress events during an upload
- *
- * @param {import('http').Server | import('https').Server} server
- */
-export default function setupSocket(server) {
-  const wss = new WebSocketServer({ server })
-  const redisClient = redis.client()
-
+function handleUploadSocketConnection({ token, ws }) {
   // A new connection is usually created when an upload begins,
   // or when connection fails while an upload is on-going and,
   // client attempts to reconnect.
-  wss.on('connection', (ws, req) => {
-    const fullPath = req.url
-    // the token identifies which ongoing upload's progress, the socket
-    // connection wishes to listen to.
-    const token = fullPath.replace(/^.*\/api\//, '')
-    logger.info(`connection received from ${token}`, 'socket.connect')
 
-    /**
-     *
-     * @param {{action: string, payload: object}} data
-     */
-    function send(data) {
-      ws.send(jsonStringify(data), (err) => {
-        if (err)
-          logger.error(err, 'socket.redis.error', Uploader.shortenToken(token))
-      })
-    }
+  // the token identifies which ongoing upload's progress, the socket
+  // connection wishes to listen to.
+  const redisClient = redis.client()
 
-    // if the redisClient is available, then we attempt to check the storage
-    // if we have any already stored state on the upload.
-    if (redisClient) {
-      redisClient
-        .get(`${Uploader.STORAGE_PREFIX}:${token}`)
-        .then((data) => {
-          if (data) {
-            const dataObj = JSON.parse(data.toString())
-            if (dataObj.action) send(dataObj)
-          }
-        })
-        .catch((err) =>
-          logger.error(err, 'socket.redis.error', Uploader.shortenToken(token)),
+  /**
+   *
+   * @param {{action: string, payload: object}} data
+   */
+  function send(data) {
+    ws.send(jsonStringify(data), (err) => {
+      if (err)
+        logger.error(
+          err,
+          'socket.upload.redis.error',
+          Uploader.shortenToken(token),
         )
-    }
+    })
+  }
 
-    emitter().emit(`connection:${token}`)
-    emitter().on(token, send)
+  // if the redisClient is available, then we attempt to check the storage
+  // if we have any already stored state on the upload.
+  if (redisClient) {
+    redisClient
+      .get(`${Uploader.STORAGE_PREFIX_UPLOAD_TOKEN}:${token}`)
+      .then((data) => {
+        if (data) {
+          const dataObj = JSON.parse(data.toString())
+          if (dataObj.action) send(dataObj)
+        }
+      })
+      .catch((err) =>
+        logger.error(
+          err,
+          'socket.upload.redis.error',
+          Uploader.shortenToken(token),
+        ),
+      )
+  }
+
+  emitter().emit(`connection:${token}`)
+  emitter().on(token, send)
+
+  ws.on('message', (jsonData) => {
+    try {
+      const data = JSON.parse(jsonData.toString())
+      // whitelist triggered actions
+      if (['pause', 'resume', 'cancel'].includes(data.action)) {
+        emitter().emit(`${data.action}:${token}`)
+      }
+    } catch (err) {
+      logger.error(err, 'socket.upload.error', Uploader.shortenToken(token))
+    }
+  })
+
+  ws.on('close', () => {
+    emitter().removeListener(token, send)
+  })
+}
+
+function handleAuthCallbackSocketConnection({ token, ws }) {
+  /**
+   *
+   * @param {{action: string, payload: object}} data
+   */
+  function send(data) {
+    ws.send(jsonStringify(data), (err) => {
+      if (err)
+        logger.error(
+          err,
+          'socket.auth.redis.error',
+          Uploader.shortenToken(token),
+        )
+    })
+  }
+
+  // todo we should use a unique prefix for these and upload tokens, so that we can easily distinguish them in the emitter and avoid any potential conflicts.
+  // but it's a breaking change so let's not do it now
+  // it's unlikely there will be any collision
+  emitter().on(token, send)
+
+  ws.on('close', () => {
+    emitter().removeListener(token, send)
+  })
+}
+
+export default function setupSockets(server) {
+  const wss = new WebSocketServer({ server })
+
+  wss.on('connection', (ws, req) => {
+    // basic router:
+    const path = req.url
+
+    // authentication callback token?
+    const authCallbackTokenMatch = path.match(
+      /^\/api2\/auth-callback\/token\/([^/]+)/,
+    )
+    const authCallbackToken = authCallbackTokenMatch?.[1]
+
+    // or token that identifies which ongoing upload's progress, the socket connection wishes to listen to.
+    const uploadTokenMatch = path.match(/^\/api\/([^/]+)/)
+    const uploadToken = uploadTokenMatch?.[1]
+
+    if (uploadToken) {
+      logger.info(
+        `Upload token connection received from ${uploadToken}`,
+        'socket.upload.connect',
+      )
+
+      handleUploadSocketConnection({ token: uploadToken, ws })
+    } else if (authCallbackToken) {
+      logger.info(
+        `Auth callback token connection received from ${authCallbackToken}`,
+        'socket.auth.callback.connect',
+      )
+
+      handleAuthCallbackSocketConnection({ token: authCallbackToken, ws })
+    } else {
+      ws.close()
+      return
+    }
 
     ws.on('error', (err) => {
       // https://github.com/websockets/ws/issues/1543
@@ -64,28 +141,12 @@ export default function setupSocket(server) {
       ) {
         logger.error(
           'WebSocket message too large',
-          'websocket.error',
-          Uploader.shortenToken(token),
+          'socket.upload.error',
+          Uploader.shortenToken(uploadToken),
         )
       } else {
-        logger.error(err, 'websocket.error', Uploader.shortenToken(token))
+        logger.error(err, 'socket.error', Uploader.shortenToken(uploadToken))
       }
-    })
-
-    ws.on('message', (jsonData) => {
-      try {
-        const data = JSON.parse(jsonData.toString())
-        // whitelist triggered actions
-        if (['pause', 'resume', 'cancel'].includes(data.action)) {
-          emitter().emit(`${data.action}:${token}`)
-        }
-      } catch (err) {
-        logger.error(err, 'websocket.error', Uploader.shortenToken(token))
-      }
-    })
-
-    ws.on('close', () => {
-      emitter().removeListener(token, send)
     })
   })
 }
