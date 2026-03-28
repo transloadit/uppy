@@ -1,4 +1,14 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { HttpResponse, http } from 'msw'
+import { setupServer } from 'msw/node'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 
 import 'whatwg-fetch'
 import Core, { type Meta, type UppyFile } from '@uppy/core'
@@ -39,15 +49,17 @@ const s3Responses = {
   abortMultipart: () => '',
 }
 
+const server = setupServer()
+const s3Url = 'https://test-bucket.s3.us-east-1.amazonaws.com/:key'
+
 /**
- * Creates mock signRequest + fetch for multipart upload tests.
- * signRequest encodes the operation in the URL so fetchMock can route correctly.
+ * Creates signRequest + MSW handler state for multipart upload tests.
  */
 function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
   const uploadId = opts.uploadId ?? 'test-upload-id'
   const key = opts.key ?? 'test-key'
 
-  // signRequest encodes operation details in the URL for fetchMock routing
+  // signRequest encodes operation details in the URL for MSW routing
   const signRequest = vi.fn().mockImplementation(async (req: any) => {
     const params = new URLSearchParams()
     if (req.uploadId) params.set('uploadId', req.uploadId)
@@ -60,56 +72,83 @@ function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
 
   const operations: string[] = []
 
-  const fetchMock = vi
-    .fn()
-    .mockImplementation(async (url: string | Request, init?: any) => {
-      const urlStr = typeof url === 'string' ? url : url.url
-      const method = init?.method || 'GET'
-      const params = new URL(urlStr).searchParams
-      const hasUploadId = params.has('uploadId')
+  const registerHandlers = ({
+    hangNonCreate = false,
+    listParts = [] as { partNumber: number; etag: string }[],
+  } = {}) => {
+    const maybeHang = () =>
+      hangNonCreate ? (new Promise(() => {}) as Promise<any>) : null
 
-      if (method === 'POST' && !hasUploadId) {
-        operations.push('createMultipart')
-        return new Response(s3Responses.createMultipart(uploadId, key), {
-          status: 200,
-          headers: { 'Content-Type': 'application/xml' },
-        })
-      }
-      if (method === 'PUT') {
-        operations.push('uploadPart')
-        return new Response('', {
-          status: 200,
-          headers: { ETag: '"etag-1"' },
-        })
-      }
-      if (method === 'POST' && hasUploadId) {
+    server.use(
+      http.post(s3Url, ({ request }) => {
+        const hasUploadId = new URL(request.url).searchParams.has('uploadId')
+        if (!hasUploadId) {
+          operations.push('createMultipart')
+          return new HttpResponse(s3Responses.createMultipart(uploadId, key), {
+            status: 200,
+            headers: { 'Content-Type': 'application/xml' },
+          })
+        }
+
         operations.push('completeMultipart')
-        return new Response(
+        const hung = maybeHang()
+        if (hung) return hung
+
+        return new HttpResponse(
           s3Responses.completeMultipart(
             `https://test-bucket.s3.amazonaws.com/${key}`,
             key,
           ),
           { status: 200, headers: { 'Content-Type': 'application/xml' } },
         )
-      }
-      if (method === 'GET' && hasUploadId) {
+      }),
+      http.put(s3Url, () => {
+        operations.push('uploadPart')
+        const hung = maybeHang()
+        if (hung) return hung
+        return new HttpResponse('', {
+          status: 200,
+          headers: { ETag: '"etag-1"' },
+        })
+      }),
+      http.get(s3Url, ({ request }) => {
+        const hasUploadId = new URL(request.url).searchParams.has('uploadId')
+        if (!hasUploadId) {
+          return new HttpResponse('Not Found', { status: 404 })
+        }
+
         operations.push('listParts')
-        return new Response(s3Responses.listParts([]), {
+        const hung = maybeHang()
+        if (hung) return hung
+
+        return new HttpResponse(s3Responses.listParts(listParts), {
           status: 200,
           headers: { 'Content-Type': 'application/xml' },
         })
-      }
-      if (method === 'DELETE') {
+      }),
+      http.delete(s3Url, () => {
         operations.push('abortMultipart')
-        return new Response('', { status: 204 })
-      }
-      return new Response('Not Found', { status: 404 })
-    })
+        return new HttpResponse('', { status: 204 })
+      }),
+    )
+  }
 
-  return { signRequest, fetchMock, operations, uploadId, key }
+  return { signRequest, operations, uploadId, key, registerHandlers }
 }
 
 describe('AwsS3', () => {
+  beforeAll(() => {
+    server.listen({ onUnhandledRequest: 'error' })
+  })
+
+  afterEach(() => {
+    server.resetHandlers()
+  })
+
+  afterAll(() => {
+    server.close()
+  })
+
   it('Registers AwsS3 upload plugin', () => {
     const core = new Core().use(AwsS3, {
       region: 'us-east-1',
@@ -338,32 +377,10 @@ describe('AwsS3', () => {
   })
 
   describe('Golden Retriever resume state (s3Multipart)', () => {
-    const originalFetch = globalThis.fetch
-
-    afterEach(() => {
-      globalThis.fetch = originalFetch
-    })
-
     it('persists s3Multipart on file state after creating multipart upload', async () => {
-      const { signRequest, fetchMock, uploadId } = createMultipartMocks()
-      // After createMultipart succeeds, hang on uploadPart so we can inspect state
-      fetchMock.mockImplementation(
-        async (url: string | Request, init?: any) => {
-          const urlStr = typeof url === 'string' ? url : url.url
-          const method = init?.method || 'GET'
-          const hasUploadId = new URL(urlStr).searchParams.has('uploadId')
-
-          if (method === 'POST' && !hasUploadId) {
-            return new Response(
-              s3Responses.createMultipart(uploadId, 'test-key'),
-              { status: 200, headers: { 'Content-Type': 'application/xml' } },
-            )
-          }
-          // Hang on everything else — we only need createMultipart to complete
-          return new Promise(() => {})
-        },
-      )
-      globalThis.fetch = fetchMock
+      const { signRequest, uploadId, registerHandlers } = createMultipartMocks()
+      // After createMultipart succeeds, hang on subsequent requests so we can inspect state
+      registerHandlers({ hangNonCreate: true })
 
       const core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
@@ -394,27 +411,11 @@ describe('AwsS3', () => {
     })
 
     it('clears s3Multipart when upload is aborted via cancelAll', async () => {
-      const { signRequest, fetchMock } = createMultipartMocks()
-      fetchMock.mockImplementation(
-        async (url: string | Request, init?: any) => {
-          const urlStr = typeof url === 'string' ? url : url.url
-          const method = init?.method || 'GET'
-          const hasUploadId = new URL(urlStr).searchParams.has('uploadId')
-
-          if (method === 'POST' && !hasUploadId) {
-            return new Response(
-              s3Responses.createMultipart('cancel-test-id', 'cancel-key'),
-              { status: 200, headers: { 'Content-Type': 'application/xml' } },
-            )
-          }
-          if (method === 'DELETE') {
-            return new Response('', { status: 204 })
-          }
-          // Hang on everything else
-          return new Promise(() => {})
-        },
-      )
-      globalThis.fetch = fetchMock
+      const { signRequest, registerHandlers } = createMultipartMocks({
+        uploadId: 'cancel-test-id',
+        key: 'cancel-key',
+      })
+      registerHandlers({ hangNonCreate: true })
 
       const core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
@@ -446,11 +447,12 @@ describe('AwsS3', () => {
     it('uses persisted s3Multipart key for resume (listParts, not createMultipart)', async () => {
       const persistedKey = 'persisted-object-key'
       const persistedUploadId = 'persisted-upload-id'
-      const { signRequest, fetchMock, operations } = createMultipartMocks({
-        uploadId: persistedUploadId,
-        key: persistedKey,
-      })
-      globalThis.fetch = fetchMock
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks({
+          uploadId: persistedUploadId,
+          key: persistedKey,
+        })
+      registerHandlers()
 
       const core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
