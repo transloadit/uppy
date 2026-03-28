@@ -71,7 +71,7 @@ function DefaultForm<M extends Meta, B extends Body>({
         setLoading(true)
         await onAuth()
       } finally {
-        setLoading(true)
+        setLoading(false)
       }
     },
     [onAuth],
