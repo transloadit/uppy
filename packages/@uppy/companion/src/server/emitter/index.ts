@@ -4,7 +4,7 @@ import redisEmitter from './redis-emitter.ts'
 
 type Listener = (...args: unknown[]) => void
 
-export type EmitterLike = {
+export interface EmitterLike {
   on: (eventName: string, handler: Listener) => unknown
   once: (eventName: string, handler: Listener) => unknown
   off?: (eventName: string, handler: Listener) => unknown
