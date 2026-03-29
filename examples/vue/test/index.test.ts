@@ -1,7 +1,17 @@
 import { userEvent } from '@vitest/browser/context'
-import { describe, expect, test } from 'vitest'
+import { setupWorker } from 'msw/browser'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { render } from 'vitest-browser-vue'
+import { tusHandlers } from '../../shared/tusHandlers.js'
 import App from '../src/App.vue'
+
+const worker = setupWorker(...tusHandlers)
+beforeAll(async () => {
+  await worker.start({ onUnhandledRequest: 'error' })
+})
+afterAll(() => {
+  worker.stop()
+})
 
 const createMockFile = (name: string, type: string, size: number = 1024) => {
   return new File(['test content'], name, { type })
