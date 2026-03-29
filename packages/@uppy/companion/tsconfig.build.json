@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "rewriteRelativeImportExtensions": true,
     "noEmitOnError": true
   },
   "include": ["src/**/*"]
