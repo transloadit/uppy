@@ -95,12 +95,13 @@ export default function s3(config) {
 
     if (config.acl != null) fields.acl = config.acl
 
-    if (config.enableAwsSseKms === true) {
-      fields['x-amz-server-side-encryption'] = 'aws:kms'
+    if (config.awsSse != null) {
+      fields['x-amz-server-side-encryption'] = config.awsSse
     }
 
     if (config.awsSseKmsKeyId) {
-      fields['x-amz-server-side-encryption-aws-kms-key-id'] = config.awsSseKmsKeyId
+      fields['x-amz-server-side-encryption-aws-kms-key-id'] =
+        config.awsSseKmsKeyId
     }
 
     Object.keys(metadata).forEach((metadataKey) => {
@@ -186,8 +187,8 @@ export default function s3(config) {
 
     if (config.acl != null) params.ACL = config.acl
 
-    if (config.enableAwsSseKms === true) {
-      params.ServerSideEncryption = 'aws:kms'
+    if (config.awsSse != null) {
+      params.ServerSideEncryption = config.awsSse
     }
 
     if (config.awsSseKmsKeyId) {

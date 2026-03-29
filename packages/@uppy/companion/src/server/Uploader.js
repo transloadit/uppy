@@ -752,8 +752,8 @@ export default class Uploader {
 
     if (options.acl != null) params.ACL = options.acl
 
-    if (options.enableAwsSseKms === true) {
-      params.ServerSideEncryption = 'aws:kms'
+    if (options.awsSse != null) {
+      params.ServerSideEncryption = options.awsSse
     }
 
     if (options.awsSseKmsKeyId) {
