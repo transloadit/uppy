@@ -1,13 +1,18 @@
-export interface GrantProviderStaticConfig {
-  transport?: 'session' | 'state' | undefined
-  state?: boolean | undefined
-  authorize_url?: string | undefined
-  access_url?: string | undefined
-  oauth?: number | undefined
-  scope_delimiter?: string | undefined
-  callback?: string | undefined
-  scope?: string[] | undefined
-  custom_params?: Record<string, string> | undefined
+import type { GrantProvider } from 'grant'
+
+export type GrantProviderStaticConfig = Pick<
+  GrantProvider,
+  | 'state'
+  | 'authorize_url'
+  | 'access_url'
+  | 'oauth'
+  | 'scope_delimiter'
+  | 'callback'
+  | 'scope'
+  | 'custom_params'
+> & {
+  transport?: 'session' | 'state' | undefined // more specific types
+  custom_params?: Record<string, string> | undefined // we want more specific types than grant's `any`
 }
 export type GrantStaticConfig = Record<string, GrantProviderStaticConfig>
 
