@@ -3,8 +3,8 @@ import { describe, expect, inject, it, vi } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.js'
 import { randomBytes } from '../test-utils/browser-crypto.js'
-import { beforeRun, cleanupTestBeforeAll } from './test-util.js'
 import type { BucketConfigs } from './teardown.js'
+import { beforeRun, cleanupTestBeforeAll } from './test-util.js'
 
 const name = 'minio'
 
