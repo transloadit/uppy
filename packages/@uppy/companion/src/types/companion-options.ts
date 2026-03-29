@@ -1,5 +1,5 @@
-import type { defaultOptions } from '../config/companion.ts'
-import type { CompanionInitOptions } from '../schemas/companion.ts'
+import type { defaultOptions } from '../config/companion.js'
+import type { CompanionInitOptions } from '../schemas/companion.js'
 
 type DefaultOptions = typeof defaultOptions
 

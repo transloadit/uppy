@@ -1,1 +1,1 @@
-export * from './companion.ts'
+export * from './companion.js'

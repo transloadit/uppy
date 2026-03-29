@@ -1,7 +1,7 @@
 import type { CorsOptions } from 'cors'
 import type { NextFunction, Request, Response } from 'express'
-import * as oAuthState from '../helpers/oauth-state.ts'
-import { isRecord } from '../helpers/type-guards.ts'
+import * as oAuthState from '../helpers/oauth-state.js'
+import { isRecord } from '../helpers/type-guards.js'
 
 /**
  * Derived from `cors` npm package.

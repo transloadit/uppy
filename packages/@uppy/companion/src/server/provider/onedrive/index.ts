@@ -1,11 +1,11 @@
 import type { Readable } from 'node:stream'
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.ts'
-import { prepareStream } from '../../helpers/utils.ts'
-import logger from '../../logger.ts'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import adaptData from './adapter.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
+import Provider, { type ProviderListResponse, type Query } from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 type OneDriveClient = ReturnType<typeof got.extend>
 

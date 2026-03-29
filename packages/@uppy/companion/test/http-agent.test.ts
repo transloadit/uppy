@@ -3,7 +3,7 @@ import { afterAll, afterEach, describe, expect, test } from 'vitest'
 import {
   FORBIDDEN_IP_ADDRESS,
   getProtectedGot,
-} from '../src/server/helpers/request.ts'
+} from '../src/server/helpers/request.js'
 
 afterEach(() => {
   nock.cleanAll()

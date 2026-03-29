@@ -8,16 +8,16 @@ import type { SessionOptions } from 'express-session'
 import session from 'express-session'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import * as companion from '../companion.ts'
-import type { CompanionInitOptions } from '../schemas/index.ts'
-import { isRecord, toError } from '../server/helpers/type-guards.ts'
-import logger from '../server/logger.ts'
-import * as redis from '../server/redis.ts'
+import * as companion from '../companion.js'
+import type { CompanionInitOptions } from '../schemas/index.js'
+import { isRecord, toError } from '../server/helpers/type-guards.js'
+import logger from '../server/logger.js'
+import * as redis from '../server/redis.js'
 import {
   buildHelpfulStartupMessage,
   generateSecret,
   getCompanionOptions,
-} from './helper.ts'
+} from './helper.js'
 
 export default function server(inputCompanionOptions?: CompanionInitOptions) {
   const companionOptions = getCompanionOptions(inputCompanionOptions)

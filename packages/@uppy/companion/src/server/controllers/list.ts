@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-import { respondWithError } from '../provider/error.ts'
+import { respondWithError } from '../provider/error.js'
 
 export default async function list(
   req: Request,

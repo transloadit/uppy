@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from 'vitest'
-import { defaultOptions } from '../src/config/companion.ts'
-import s3Client from '../src/server/s3-client.ts'
+import { defaultOptions } from '../src/config/companion.js'
+import s3Client from '../src/server/s3-client.js'
 
 const originalAwsRegion = process.env['AWS_REGION']
 

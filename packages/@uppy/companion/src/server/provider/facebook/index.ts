@@ -1,16 +1,16 @@
 import crypto from 'node:crypto'
 import type { Readable } from 'node:stream'
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.ts'
-import { HttpError, prepareStream } from '../../helpers/utils.ts'
-import logger from '../../logger.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { HttpError, prepareStream } from '../../helpers/utils.js'
+import logger from '../../logger.js'
 import Provider, {
   type CompanionLike,
   type ProviderListResponse,
   type Query,
-} from '../Provider.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import { adaptData, type FacebookListResponse, sortImages } from './adapter.ts'
+} from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import { adaptData, type FacebookListResponse, sortImages } from './adapter.js'
 
 type FacebookBatchRequest = {
   method: string

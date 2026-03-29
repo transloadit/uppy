@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import headerSanitize from '../src/server/header-blacklist.ts'
+import headerSanitize from '../src/server/header-blacklist.js'
 
 describe('Header black-list testing', () => {
   test('All headers invalid by name', () => {

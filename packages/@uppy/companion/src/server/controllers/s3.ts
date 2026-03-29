@@ -11,13 +11,13 @@ import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
-import { isRecord } from '../helpers/type-guards.ts'
+import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+import { isRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
   rfc2047EncodeMetadata,
   truncateFilename,
-} from '../helpers/utils.ts'
+} from '../helpers/utils.js'
 
 export default function s3(
   config: Pick<

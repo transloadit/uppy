@@ -1,7 +1,7 @@
 import type { S3Client } from '@aws-sdk/client-s3'
-import type { CompanionRuntimeOptions } from './companion-options.ts'
-import type Provider from '../server/provider/Provider.ts'
-import { CredentialsFetchResponse } from '../schemas/companion.ts'
+import type { CompanionRuntimeOptions } from './companion-options.js'
+import type Provider from '../server/provider/Provider.js'
+import { CredentialsFetchResponse } from '../schemas/companion.js'
 
 export type BuildUrl = (
   subPath: string,

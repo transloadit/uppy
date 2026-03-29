@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-import '../standalone/start-server.ts'
+import '../standalone/start-server.js'

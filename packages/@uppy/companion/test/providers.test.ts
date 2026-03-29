@@ -9,19 +9,19 @@ import {
   test,
   vi,
 } from 'vitest'
-import * as tokenService from '../src/server/helpers/jwt.ts'
-import { isRecord } from '../src/server/helpers/type-guards.ts'
-import * as providerModule from '../src/server/provider/index.ts'
-import * as defaults from './fixtures/constants.ts'
-import { nockGoogleDownloadFile } from './fixtures/drive.ts'
-import * as fixtures from './fixtures/index.ts'
+import * as tokenService from '../src/server/helpers/jwt.js'
+import { isRecord } from '../src/server/helpers/type-guards.js'
+import * as providerModule from '../src/server/provider/index.js'
+import * as defaults from './fixtures/constants.js'
+import { nockGoogleDownloadFile } from './fixtures/drive.js'
+import * as fixtures from './fixtures/index.js'
 import {
   nockZoomRecordings,
   nockZoomRevoke,
   expects as zoomExpects,
-} from './fixtures/zoom.ts'
-import mockOauthState from './mockoauthstate.ts'
-import { getServer } from './mockserver.ts'
+} from './fixtures/zoom.js'
+import mockOauthState from './mockoauthstate.js'
+import { getServer } from './mockserver.js'
 
 const { localZoomKey, localZoomSecret } = zoomExpects
 
@@ -30,7 +30,7 @@ vi.mock('tus-js-client')
 
 mockOauthState()
 
-vi.mock('../../src/server/helpers/request.ts', () => {
+vi.mock('../../src/server/helpers/request.js', () => {
   return {
     getURLMeta: () => Promise.resolve({ size: 758051 }),
   }

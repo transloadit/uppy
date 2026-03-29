@@ -1,4 +1,4 @@
-import * as defaults from './constants.ts'
+import * as defaults from './constants.js'
 
 export const expects: {
   listPath: string

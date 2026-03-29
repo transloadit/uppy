@@ -17,19 +17,19 @@ import throttle from 'lodash/throttle.js'
 import { serializeError } from 'serialize-error'
 import tus from 'tus-js-client'
 import validator from 'validator'
-import type { CompanionRuntimeOptions } from '../types/companion-options.ts'
-import emitter from './emitter/index.ts'
-import headerSanitize from './header-blacklist.ts'
-import { isRecord, toError } from './helpers/type-guards.ts'
+import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+import emitter from './emitter/index.js'
+import headerSanitize from './header-blacklist.js'
+import { isRecord, toError } from './helpers/type-guards.js'
 import {
   getBucket,
   hasMatch,
   jsonStringify,
   rfc2047EncodeMetadata,
   truncateFilename,
-} from './helpers/utils.ts'
-import * as logger from './logger.ts'
-import * as redis from './redis.ts'
+} from './helpers/utils.js'
+import * as logger from './logger.js'
+import * as redis from './redis.js'
 
 // Need to limit length or we can get
 // "MetadataTooLarge: Your metadata headers exceed the maximum allowed metadata size" in tus / S3

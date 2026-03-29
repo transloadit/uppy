@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express'
-import * as tokenService from '../helpers/jwt.ts'
-import { respondWithError } from '../provider/error.ts'
+import * as tokenService from '../helpers/jwt.js'
+import { respondWithError } from '../provider/error.js'
 
 export default async function logout(
   req: Request,

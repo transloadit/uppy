@@ -1,11 +1,11 @@
-import { isRecord } from '../helpers/type-guards.ts'
-import * as logger from '../logger.ts'
+import { isRecord } from '../helpers/type-guards.js'
+import * as logger from '../logger.js'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
   parseHttpError,
-} from './error.ts'
+} from './error.js'
 
 export { parseHttpError }
 

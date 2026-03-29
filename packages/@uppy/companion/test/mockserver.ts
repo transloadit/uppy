@@ -1,6 +1,6 @@
 import express from 'express'
 import session from 'express-session'
-import { expects as zoomExpects } from './fixtures/zoom.ts'
+import { expects as zoomExpects } from './fixtures/zoom.js'
 
 const { localZoomKey, localZoomSecret, localZoomVerificationToken } =
   zoomExpects
@@ -92,7 +92,7 @@ export const grantToken = 'fake token'
 export const getServer = async (
   extraEnv: Record<string, string | number | undefined> = {},
 ): Promise<ReturnType<typeof express>> => {
-  const { default: standalone } = await import('../src/standalone/index.ts')
+  const { default: standalone } = await import('../src/standalone/index.js')
 
   const env = {
     ...defaultEnv,

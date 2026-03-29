@@ -18,6 +18,6 @@
     "allowJs": false,
     "checkJs": false,
     "skipLibCheck": true,
-    "resolveJsonModule": true,
+    "resolveJsonModule": true
   }
 }

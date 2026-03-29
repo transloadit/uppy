@@ -1,15 +1,15 @@
 import { htmlEscape } from 'escape-goat'
 import type { NextFunction, Request, Response } from 'express'
 import got from 'got'
-import type { CredentialsFetchResponse } from '../../schemas/companion.ts'
-import type { CompanionRuntimeOptions } from '../../types/companion-options.ts'
+import type { CredentialsFetchResponse } from '../../schemas/companion.js'
+import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
 import type { CompanionExpressLocals } from '../../types/express.js'
-import * as tokenService from '../helpers/jwt.ts'
-import * as oAuthState from '../helpers/oauth-state.ts'
-import { isRecord, toError } from '../helpers/type-guards.ts'
-import { getRedirectPath, getURLBuilder } from '../helpers/utils.ts'
-import logger from '../logger.ts'
-import type Provider from './Provider.ts'
+import * as tokenService from '../helpers/jwt.js'
+import * as oAuthState from '../helpers/oauth-state.js'
+import { isRecord, toError } from '../helpers/type-guards.js'
+import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
+import logger from '../logger.js'
+import type Provider from './Provider.js'
 
 /**
  * @param url

@@ -2,9 +2,9 @@ import fs from 'node:fs'
 import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
 import z from 'zod'
-import type { CompanionInitOptions } from '../schemas/companion.ts'
-import { defaultGetKey } from '../server/helpers/utils.ts'
-import logger from '../server/logger.ts'
+import type { CompanionInitOptions } from '../schemas/companion.js'
+import { defaultGetKey } from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
 const defaultPeriodicPingUrls: string[] = []

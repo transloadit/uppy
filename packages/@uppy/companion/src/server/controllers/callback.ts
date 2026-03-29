@@ -4,9 +4,9 @@
 
 import type { NextFunction, Request, Response } from 'express'
 import serialize from 'serialize-javascript'
-import * as tokenService from '../helpers/jwt.ts'
-import * as oAuthState from '../helpers/oauth-state.ts'
-import logger from '../logger.ts'
+import * as tokenService from '../helpers/jwt.js'
+import * as oAuthState from '../helpers/oauth-state.js'
+import logger from '../logger.js'
 
 const closePageHtml = (origin: string | undefined) => `
   <!DOCTYPE html>

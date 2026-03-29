@@ -1,10 +1,10 @@
 import request from 'supertest'
 import { describe, expect, test, vi } from 'vitest'
-import { getServer } from './mockserver.ts'
+import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 
-vi.mock('../src/server/helpers/jwt.ts', () => {
+vi.mock('../src/server/helpers/jwt.js', () => {
   return {
     generateEncryptedToken: () => 'dummy token',
     verifyEncryptedToken: () => '',

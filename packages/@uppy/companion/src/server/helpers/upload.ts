@@ -1,7 +1,7 @@
 import type { Readable } from 'node:stream'
 import type { Request, Response } from 'express'
-import logger from '../logger.ts'
-import Uploader from '../Uploader.ts'
+import logger from '../logger.js'
+import Uploader from '../Uploader.js'
 
 export async function startDownUpload({
   req,

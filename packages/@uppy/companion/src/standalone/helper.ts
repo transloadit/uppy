@@ -4,9 +4,9 @@ import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
 import z from 'zod'
 import packageJson from '../../package.json' with { type: 'json' }
-import type { CompanionInitOptions } from '../schemas/index.ts'
-import * as utils from '../server/helpers/utils.ts'
-import logger from '../server/logger.ts'
+import type { CompanionInitOptions } from '../schemas/index.js'
+import * as utils from '../server/helpers/utils.js'
+import logger from '../server/logger.js'
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.

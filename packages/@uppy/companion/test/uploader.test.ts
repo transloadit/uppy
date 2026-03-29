@@ -14,12 +14,12 @@ import {
   test,
   vi,
 } from 'vitest'
-import { defaultOptions } from '../src/config/companion.ts'
-import Emitter from '../src/server/emitter/index.ts'
-import { isRecord } from '../src/server/helpers/type-guards.ts'
-import Uploader, { ValidationError } from '../src/server/Uploader.ts'
-import standalone from '../src/standalone/index.ts'
-import * as socketClient from './mocksocket.ts'
+import { defaultOptions } from '../src/config/companion.js'
+import Emitter from '../src/server/emitter/index.js'
+import { isRecord } from '../src/server/helpers/type-guards.js'
+import Uploader, { ValidationError } from '../src/server/Uploader.js'
+import standalone from '../src/standalone/index.js'
+import * as socketClient from './mocksocket.js'
 
 vi.mock('tus-js-client')
 vi.mock('express-prom-bundle')

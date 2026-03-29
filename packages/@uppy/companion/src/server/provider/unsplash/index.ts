@@ -1,11 +1,11 @@
 import type { Readable } from 'node:stream'
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.ts'
-import { prepareStream } from '../../helpers/utils.ts'
-import { ProviderApiError } from '../error.ts'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import adaptData from './adapter.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { prepareStream } from '../../helpers/utils.js'
+import { ProviderApiError } from '../error.js'
+import Provider, { type ProviderListResponse, type Query } from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BASE_URL = 'https://api.unsplash.com'
 

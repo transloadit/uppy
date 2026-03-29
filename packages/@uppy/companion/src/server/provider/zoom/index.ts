@@ -2,15 +2,15 @@ import type { Readable } from 'node:stream'
 import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
-import { isRecord } from '../../helpers/type-guards.ts'
-import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { getBasicAuthHeader, prepareStream } from '../../helpers/utils.js'
 import Provider, {
   type CompanionLike,
   type ProviderListResponse,
   type Query,
-} from '../Provider.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import adaptData from './adapter.ts'
+} from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BASE_URL = 'https://zoom.us/v2'
 const PAGE_SIZE = 300

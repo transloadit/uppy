@@ -1,6 +1,6 @@
 import crypto from 'node:crypto'
 import type { Request } from 'express'
-import type { GetBucketFn } from '../../schemas/companion.ts'
+import type { GetBucketFn } from '../../schemas/companion.js'
 
 const authTagLength = 16
 const nonceLength = 16

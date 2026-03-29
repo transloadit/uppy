@@ -1,15 +1,15 @@
 import type { Readable } from 'node:stream'
 import type { WebDAVClientOptions } from 'webdav'
 import { AuthType, createClient } from 'webdav'
-import { getProtectedHttpAgent, validateURL } from '../../helpers/request.ts'
-import { isRecord } from '../../helpers/type-guards.ts'
-import logger from '../../logger.ts'
+import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
+import { isRecord } from '../../helpers/type-guards.js'
+import logger from '../../logger.js'
 import {
   ProviderApiError,
   ProviderAuthError,
   ProviderUserError,
-} from '../error.ts'
-import Provider, { type Query } from '../Provider.ts'
+} from '../error.js'
+import Provider, { type Query } from '../Provider.js'
 
 const defaultDirectory = '/'
 

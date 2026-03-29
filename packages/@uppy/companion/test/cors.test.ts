@@ -2,7 +2,7 @@ import express from 'express'
 import request from 'supertest'
 import { describe, expect, test } from 'vitest'
 
-import { cors } from '../src/server/middlewares.ts'
+import { cors } from '../src/server/middlewares.js'
 
 async function run({
   corsOptions = {},

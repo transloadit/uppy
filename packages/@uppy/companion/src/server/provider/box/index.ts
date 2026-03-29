@@ -1,12 +1,12 @@
 import type { Readable } from 'node:stream'
 import got from 'got'
-import type { ProviderOptions } from '../../../schemas/companion.ts'
+import type { ProviderOptions } from '../../../schemas/companion.js'
 import type { BuildUrl } from '../../../types/express.js'
-import { isRecord } from '../../helpers/type-guards.ts'
-import { prepareStream } from '../../helpers/utils.ts'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.ts'
-import { withProviderErrorHandling } from '../providerErrors.ts'
-import adaptData from './adapter.ts'
+import { isRecord } from '../../helpers/type-guards.js'
+import { prepareStream } from '../../helpers/utils.js'
+import Provider, { type ProviderListResponse, type Query } from '../Provider.js'
+import { withProviderErrorHandling } from '../providerErrors.js'
+import adaptData from './adapter.js'
 
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256

@@ -1,4 +1,4 @@
-import { isRecord } from '../helpers/type-guards.ts'
+import { isRecord } from '../helpers/type-guards.js'
 
 type HttpErrorLike = {
   statusCode: number | undefined

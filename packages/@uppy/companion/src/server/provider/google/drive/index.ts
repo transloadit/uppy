@@ -1,16 +1,16 @@
 import type { Readable } from 'node:stream'
 import got from 'got'
-import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.ts'
-import { isRecord } from '../../../helpers/type-guards.ts'
-import { prepareStream } from '../../../helpers/utils.ts'
-import logger from '../../../logger.ts'
-import { ProviderAuthError } from '../../error.ts'
+import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
+import { isRecord } from '../../../helpers/type-guards.js'
+import { prepareStream } from '../../../helpers/utils.js'
+import logger from '../../../logger.js'
+import { ProviderAuthError } from '../../error.js'
 import Provider, {
   type ProviderListResponse,
   type Query,
-} from '../../Provider.ts'
-import { withGoogleErrorHandling } from '../../providerErrors.ts'
-import { logout, refreshToken } from '../index.ts'
+} from '../../Provider.js'
+import { withGoogleErrorHandling } from '../../providerErrors.js'
+import { logout, refreshToken } from '../index.js'
 import {
   adaptData,
   type DriveAbout,
@@ -20,7 +20,7 @@ import {
   isGsuiteFile,
   isShortcut,
   VIRTUAL_SHARED_DIR,
-} from './adapter.ts'
+} from './adapter.js'
 
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true

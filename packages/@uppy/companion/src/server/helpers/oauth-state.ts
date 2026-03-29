@@ -1,7 +1,7 @@
 import crypto from 'node:crypto'
 import type { CompanionSession } from '../../types/express.js'
-import { isRecord } from './type-guards.ts'
-import { decrypt, encrypt } from './utils.ts'
+import { isRecord } from './type-guards.js'
+import { decrypt, encrypt } from './utils.js'
 
 export type OAuthState = {
   id: string

@@ -1,6 +1,6 @@
 import type { RedisOptions } from 'ioredis'
 import { Redis } from 'ioredis'
-import * as logger from './logger.ts'
+import * as logger from './logger.js'
 
 let redisClient: Redis | undefined
 

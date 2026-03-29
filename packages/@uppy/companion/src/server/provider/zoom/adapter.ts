@@ -1,5 +1,5 @@
 import moment from 'moment-timezone'
-import { isRecord } from '../../helpers/type-guards.ts'
+import { isRecord } from '../../helpers/type-guards.js'
 
 const MIMETYPES = {
   MP4: 'video/mp4',

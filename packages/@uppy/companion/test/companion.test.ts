@@ -2,12 +2,12 @@ import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
 import packageJson from '../package.json' with { type: 'json' }
-import * as tokenService from '../src/server/helpers/jwt.ts'
-import { isRecord } from '../src/server/helpers/type-guards.ts'
-import * as defaults from './fixtures/constants.ts'
-import { nockGoogleDownloadFile } from './fixtures/drive.ts'
-import mockOauthState from './mockoauthstate.ts'
-import { getServer } from './mockserver.ts'
+import * as tokenService from '../src/server/helpers/jwt.js'
+import { isRecord } from '../src/server/helpers/type-guards.js'
+import * as defaults from './fixtures/constants.js'
+import { nockGoogleDownloadFile } from './fixtures/drive.js'
+import mockOauthState from './mockoauthstate.js'
+import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')

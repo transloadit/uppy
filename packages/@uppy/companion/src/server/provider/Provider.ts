@@ -5,7 +5,7 @@ import type {
   GrantDynamic,
   ProviderGrantConfig,
 } from '../../types/express.js'
-import { MAX_AGE_24H } from '../helpers/jwt.ts'
+import { MAX_AGE_24H } from '../helpers/jwt.js'
 
 // from express:
 export interface Query {
