@@ -42,7 +42,7 @@
     "test": {
       "dependsOn": ["^test"],
       "cache": false,
-      "passThroughEnv": ["BUCKET_ENV_MINIO"]
+      "passThroughEnv": ["VITE_MINIO_CONFIG"]
     },
     "test:e2e": {
       "dependsOn": ["^test:e2e"],

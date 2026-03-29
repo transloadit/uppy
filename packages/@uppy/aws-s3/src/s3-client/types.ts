@@ -1,6 +1,6 @@
 /** Request data to be pre-signed */
 export type presignableRequest = {
-  method: string
+  method: HttpMethod
   key: string
   uploadId?: string
   partNumber?: number
@@ -14,7 +14,7 @@ export type presignedResponse = {
 }
 
 /** Function that generates a pre-signed URL for a request */
-export type signRequestFn = (
+export type SignRequestFn = (
   request: presignableRequest,
 ) => Promise<presignedResponse>
 
@@ -40,36 +40,34 @@ export interface CredentialsResponse {
 }
 
 /** Function that retrieves temporary credentials */
-export type getCredentialsFn = (options?: {
+export type GetCredentialsFn = (options?: {
   signal?: AbortSignal
-}) => Promise<CredentialsResponse>
+}) => CredentialsResponse | Promise<CredentialsResponse>
 
 /** Base configuration shared by both signing approaches */
 type S3ConfigBase = {
-  /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
-  endpoint: string
   /** AWS region. Defaults to 'auto'. */
-  region?: string
+  region?: string | undefined
   /** Request size in bytes for multipart uploads. Defaults to 8MB. */
-  requestSizeInBytes?: number
+  requestSizeInBytes?: number | undefined
   /** Timeout in ms after which a request should be aborted. */
-  requestAbortTimeout?: number
+  requestAbortTimeout?: number | undefined
 }
 
 /** Config when using signRequest callback (region optional) */
 type S3ConfigWithSignRequest = S3ConfigBase & {
   /** Function to sign requests. Called for each S3 API request. */
-  signRequest: signRequestFn
-  getCredentials?: never
+  signRequest: SignRequestFn
 }
 
 /** Config when using getCredentials callback (region required for signing) */
 type S3ConfigWithGetCredentials = Omit<S3ConfigBase, 'region'> & {
-  signRequest?: never
   /** Function to retrieve temporary credentials for client-side signing. */
-  getCredentials: getCredentialsFn
+  getCredentials: GetCredentialsFn
   /** AWS region. Required for signing with getCredentials. */
-  region: string
+  region?: string
+  /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
+  endpoint: string
 }
 
 /** Configuration options for S3mini client */
@@ -109,10 +107,18 @@ export type BinaryData = ArrayBuffer | Uint8Array | Blob
 /** Progress callback for upload operations */
 export type OnProgressFn = (bytesUploaded: number, bytesTotal: number) => void
 
-export interface PutObjectResult {
+/** Raw XHR upload response (internal to S3mini) */
+export interface XhrUploadResult {
   status: number
   ok: boolean
   headers: {
     get(name: string): string | null
   }
+  response: string
+}
+
+/** Public result from putObject — includes object location derived from presigned URL */
+export interface PutObjectResult extends XhrUploadResult {
+  /** Object URL derived from the presigned URL (query string stripped) */
+  location: string
 }

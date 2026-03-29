@@ -14,64 +14,90 @@ import * as U from './utils.js'
  * Supports simple uploads, multipart uploads, and object deletion.
  *
  * @example
- * // Option 1: With signRequest callback
+ * // Option 1: With signRequest callback (no endpoint needed)
  * const s3 = new S3mini({
- *   endpoint: 'https://s3.amazonaws.com/my-bucket',
- *   signRequest: async ({ method, url, headers }) => {
- *     return await fetchSignedHeaders(method, url, headers);
+ *   signRequest: async ({ method, key, uploadId, partNumber }) => {
+ *     const resp = await fetch('/api/s3/sign', {
+ *       method: 'POST',
+ *       body: JSON.stringify({ method, key, uploadId, partNumber }),
+ *     });
+ *     return resp.json(); // { url }
  *   },
  * });
  *
- * // Option 2: With getCredentials callback (client-side signing)
+ * // Option 2: With getCredentials callback (endpoint required for client-side signing)
  * const s3 = new S3mini({
- *   endpoint: 'https://s3.amazonaws.com/my-bucket',
+ *   endpoint: 'https://s3.us-east-1.amazonaws.com/my-bucket',
  *   getCredentials: async () => {
  *     const resp = await fetch('/api/s3/credentials');
- *     return resp.json(); // { credentials, bucket, region }
+ *     return resp.json(); // { credentials, region }
  *   },
  * });
  *
  * await s3.putObject('file.txt', 'Hello, World!');
  */
 class S3mini {
-  readonly endpoint: URL
+  readonly endpoint?: URL
   readonly region: string
   readonly requestSizeInBytes: number
   readonly requestAbortTimeout?: number
 
-  private readonly getCredentials?: IT.getCredentialsFn
+  private readonly getCredentials?: IT.GetCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
   private cachedCredentialsPromise?: Promise<IT.CredentialsResponse>
-  private signRequest!: IT.signRequestFn
+  private signRequest!: IT.SignRequestFn
 
   constructor({
-    endpoint,
-    signRequest,
-    getCredentials,
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
     requestAbortTimeout = undefined,
+    ...rest
   }: IT.S3Config) {
-    this._validateConstructorParams(endpoint, signRequest, getCredentials)
-    this.endpoint = new URL(this._ensureValidUrl(endpoint))
+    if ('signRequest' in rest) {
+      const { signRequest } = rest
+      if (!signRequest) {
+        throw new TypeError(
+          'Either signRequest or getCredentials must be provided',
+        )
+      }
+
+      if (signRequest && typeof signRequest !== 'function') {
+        throw new TypeError('signRequest must be a function')
+      }
+
+      this.signRequest = signRequest
+    } else if ('getCredentials' in rest) {
+      const { getCredentials, endpoint } = rest
+      if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
+        throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
+      }
+      if (getCredentials && typeof getCredentials !== 'function') {
+        throw new TypeError('getCredentials must be a function')
+      }
+      this.endpoint = new URL(this._ensureValidUrl(endpoint))
+
+      this.getCredentials = getCredentials
+      this.signRequest = this._createCredentialBasedSigner()
+    } else {
+      throw new TypeError(
+        'Either signRequest or getCredentials must be provided',
+      )
+    }
+
     this.region = region
     this.requestSizeInBytes = requestSizeInBytes
     this.requestAbortTimeout = requestAbortTimeout
-
-    if (signRequest) {
-      this.signRequest = signRequest
-    } else if (getCredentials) {
-      this.getCredentials = getCredentials
-      this.signRequest = this._createCredentialBasedSigner()
-    }
   }
 
   /** Creates a presigner that fetches/caches credentials and generates pre-signed URLs. */
-  private _createCredentialBasedSigner(): IT.signRequestFn {
+  private _createCredentialBasedSigner(): IT.SignRequestFn {
     return async (
       request: IT.presignableRequest,
     ): Promise<IT.presignedResponse> => {
       const creds = await this._getCachedCredentials()
+      if (this.endpoint == null) {
+        throw new Error('Endpoint is required for credential-based signing')
+      }
       const presigner = createSigV4Signer({
         accessKeyId: creds.credentials.accessKeyId,
         secretAccessKey: creds.credentials.secretAccessKey,
@@ -92,42 +118,17 @@ class S3mini {
 
     // Cache the promise so concurrent calls wait for the same fetch
     if (this.cachedCredentialsPromise == null) {
-      this.cachedCredentialsPromise = this.getCredentials!({})
-        .then((creds) => {
-          this.cachedCredentials = creds
-          return creds
-        })
-        .finally(() => {
-          // Clear promise cache after resolution to allow future retries
-          this.cachedCredentialsPromise = undefined
-        })
+      try {
+        const creds = await this.getCredentials!({})
+        this.cachedCredentials = creds
+        return creds
+      } finally {
+        // Clear promise cache after resolution to allow future retries
+        this.cachedCredentialsPromise = undefined
+      }
     }
 
     return this.cachedCredentialsPromise
-  }
-
-  private _validateConstructorParams(
-    endpoint: string,
-    signRequest?: IT.signRequestFn,
-    getCredentials?: IT.getCredentialsFn,
-  ): void {
-    if (typeof endpoint !== 'string' || endpoint.trim().length === 0) {
-      throw new TypeError(C.ERROR_ENDPOINT_REQUIRED)
-    }
-
-    if (!signRequest && !getCredentials) {
-      throw new TypeError(
-        'Either signRequest or getCredentials must be provided',
-      )
-    }
-
-    if (signRequest && typeof signRequest !== 'function') {
-      throw new TypeError('signRequest must be a function')
-    }
-
-    if (getCredentials && typeof getCredentials !== 'function') {
-      throw new TypeError('getCredentials must be a function')
-    }
   }
 
   private _ensureValidUrl(raw: string): string {
@@ -155,48 +156,6 @@ class S3mini {
     }
   }
 
-  private _checkOpts(opts: object): void {
-    if (typeof opts !== 'object') {
-      throw new TypeError(`${C.ERROR_PREFIX}opts must be an object`)
-    }
-  }
-
-  private _filterIfHeaders(opts: Record<string, unknown>): {
-    filteredOpts: Record<string, string>
-    conditionalHeaders: Record<string, unknown>
-  } {
-    const filteredOpts: Record<string, string> = {}
-    const conditionalHeaders: Record<string, unknown> = {}
-
-    for (const [key, value] of Object.entries(opts)) {
-      if (
-        C.IFHEADERS.has(
-          key.toLowerCase() as typeof C.IFHEADERS extends Set<infer T>
-            ? T
-            : never,
-        )
-      ) {
-        conditionalHeaders[key] = value
-      } else {
-        filteredOpts[key] = value as string
-      }
-    }
-
-    return { filteredOpts, conditionalHeaders }
-  }
-
-  private _validateData(data: unknown): BodyInit {
-    if (
-      typeof data === 'string' ||
-      data instanceof ArrayBuffer ||
-      ArrayBuffer.isView(data) ||
-      data instanceof Blob
-    ) {
-      return data as BodyInit
-    }
-    throw new TypeError(C.ERROR_DATA_BUFFER_REQUIRED)
-  }
-
   private _validateUploadPartParams(
     key: string,
     uploadId: string,
@@ -213,75 +172,6 @@ class S3mini {
     }
   }
 
-  private async _presignedRequest(
-    method: IT.HttpMethod, // 'GET' | 'HEAD' | 'PUT' | 'POST' | 'DELETE'
-    key: string, // '' allowed for bucket‑level ops
-    {
-      uploadId,
-      partNumber,
-      body = '',
-      contentType,
-      tolerated = [],
-    }: {
-      uploadId?: string
-      partNumber?: number
-      body?: BodyInit
-      contentType?: string
-      tolerated?: number[]
-    } = {},
-  ): Promise<Response> {
-    // Get pre-signed URL from callback
-    const { url } = await this.signRequest({
-      method,
-      key,
-      uploadId,
-      partNumber,
-      contentType,
-    })
-
-    // Build request headers
-    const requestHeaders: Record<string, string> = contentType
-      ? { 'Content-Type': contentType }
-      : {}
-
-    try {
-      return await this._sendRequest(
-        url,
-        method,
-        requestHeaders,
-        body,
-        tolerated,
-      )
-    } catch (err) {
-      // If expired token error and using getCredentials, clear cache and retry once
-      if (
-        this.getCredentials &&
-        err instanceof U.S3ServiceError &&
-        err.code &&
-        ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
-      ) {
-        // Clear cache
-        this.clearCachedCredentials()
-
-        // Retry with fresh credentials
-        const fresh = await this.signRequest({
-          method,
-          key,
-          uploadId,
-          partNumber,
-        })
-        return this._sendRequest(
-          fresh.url,
-          method,
-          contentType ? { 'Content-Type': contentType } : {},
-          body,
-          tolerated,
-        )
-      }
-      throw err
-    }
-  }
-
   /**
    * Uploads an object to S3 using XHR for progress tracking.
    * @param key - Object key
@@ -292,31 +182,29 @@ class S3mini {
    */
   public async putObject(
     key: string,
-    data: IT.BinaryData | string,
+    data: XMLHttpRequestBodyInit,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
   ): Promise<IT.PutObjectResult> {
     this._checkKey(key)
 
-    const attemptUpload = async (): Promise<IT.PutObjectResult> => {
-      const { url } = await this.signRequest({ method: 'PUT', key })
-      return this._xhrUpload(url, data, onProgress, signal, fileType)
-    }
+    const { url, ...result } = await this.request({
+      request: { method: 'PUT', key },
+      data,
+      onProgress,
+      signal,
+      contentType: fileType,
+    })
 
-    try {
-      return await attemptUpload()
-    } catch (err) {
-      if (this._isExpiredTokenError(err)) {
-        this.clearCachedCredentials()
-        return attemptUpload()
-      }
-      throw err
+    return {
+      ...result,
+      location: U.removeQueryString(url),
     }
   }
 
   /** Initiates a multipart upload and returns the upload ID. */
-  public async getMultipartUploadId(
+  public async createMultipartUpload(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
   ): Promise<string> {
@@ -324,10 +212,11 @@ class S3mini {
     if (typeof fileType !== 'string') {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const res = await this._presignedRequest('POST', key, {
-      contentType: fileType,
+    const { response } = await this.request({
+      request: { method: 'POST', key, contentType: fileType },
     })
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+
+    const parsed = U.parseXml(response) as Record<string, unknown>
 
     if (parsed && typeof parsed === 'object') {
       // Check for both cases of InitiateMultipartUploadResult
@@ -355,37 +244,29 @@ class S3mini {
   public async uploadPart(
     key: string,
     uploadId: string,
-    data: IT.BinaryData | string,
+    data: XMLHttpRequestBodyInit,
     partNumber: number,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
   ): Promise<IT.UploadPart> {
     this._validateUploadPartParams(key, uploadId, partNumber)
-
-    const attemptUpload = async (): Promise<IT.UploadPart> => {
-      const { url } = await this.signRequest({
+    const result = await this.request({
+      request: {
         method: 'PUT',
         key,
         uploadId,
         partNumber,
-      })
-      const result = await this._xhrUpload(url, data, onProgress, signal)
-      return {
-        partNumber,
-        etag: result.headers.get('etag')
-          ? U.sanitizeETag(result.headers.get('etag')!)
-          : '',
-      }
-    }
+      },
+      data,
+      onProgress,
+      signal,
+    })
 
-    try {
-      return await attemptUpload()
-    } catch (err) {
-      if (this._isExpiredTokenError(err)) {
-        this.clearCachedCredentials()
-        return attemptUpload()
-      }
-      throw err
+    return {
+      etag: result.headers.get('etag')
+        ? U.sanitizeETag(result.headers.get('etag')!)
+        : '',
+      partNumber,
     }
   }
 
@@ -396,16 +277,6 @@ class S3mini {
     return typeof navigator !== 'undefined' && navigator.onLine === false
   }
 
-  /** Checks if error is an expired/invalid token that can be retried with fresh credentials */
-  private _isExpiredTokenError(err: unknown): boolean {
-    return (
-      this.getCredentials != null &&
-      err instanceof U.S3ServiceError &&
-      err.code != null &&
-      ['ExpiredToken', 'InvalidAccessKeyId'].includes(err.code)
-    )
-  }
-
   /**
    * Core XHR upload implementation using @uppy/utils/fetcher.
    *
@@ -414,23 +285,34 @@ class S3mini {
    * - Offline detection with automatic resume on reconnect
    * - Stall detection via ProgressTimeout
    */
-  private async _xhrUpload(
-    url: string,
-    data: IT.BinaryData | string,
-    onProgress?: IT.OnProgressFn,
-    signal?: AbortSignal,
-    contentType?: string,
-  ): Promise<IT.PutObjectResult> {
+  private async request({
+    request,
+    data,
+    onProgress,
+    signal,
+    contentType,
+  }: {
+    request: IT.presignableRequest
+    data?: XMLHttpRequestBodyInit
+    onProgress?: IT.OnProgressFn
+    signal?: AbortSignal
+    contentType?: string
+  }): Promise<IT.XhrUploadResult & { url: string }> {
     // Wait for online before starting
-    if (this._isOffline()) {
-      await this._waitForOnline(signal)
+    await this._waitForOnline(signal)
+
+    // Check if aborted while waiting for online
+    if (signal?.aborted) {
+      throw new DOMException('Upload aborted', 'AbortError')
     }
 
     try {
+      const { url } = await this.signRequest(request)
+
       const xhr = await fetcher(url, {
-        method: 'PUT',
+        method: request.method,
         // XHR natively supports ArrayBuffer, Uint8Array, Blob, and string
-        body: data as XMLHttpRequestBodyInit,
+        body: ['GET', 'HEAD'].includes(request.method) ? undefined : data,
         headers: contentType ? { 'Content-Type': contentType } : {},
         signal,
         timeout: this.requestAbortTimeout || 30_000,
@@ -464,107 +346,85 @@ class S3mini {
 
       // Return Response-like object for test compatibility
       return {
+        url,
         status: xhr.status,
         ok: xhr.status >= 200 && xhr.status < 300,
         headers: {
           get: (name: string) => xhr.getResponseHeader(name),
         },
+        response: xhr.responseText,
       }
     } catch (err: unknown) {
-      return this._handleUploadError(
-        err,
-        url,
-        data,
-        onProgress,
-        signal,
-        contentType,
-      )
-    }
-  }
-
-  /**
-   * Handles errors from _xhrUpload, including offline recovery and error mapping.
-   */
-  private async _handleUploadError(
-    err: unknown,
-    url: string,
-    data: IT.BinaryData | string,
-    onProgress?: IT.OnProgressFn,
-    signal?: AbortSignal,
-    contentType?: string,
-  ): Promise<IT.PutObjectResult> {
-    // Offline during request - wait and retry
-    if (this._isOffline()) {
-      await this._waitForOnline(signal)
-      // Check if aborted while waiting for online
-      if (signal?.aborted) {
-        throw new DOMException('Upload aborted', 'AbortError')
+      // Abort errors pass through
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        throw err
       }
-      return this._xhrUpload(url, data, onProgress, signal, contentType)
-    }
 
-    // Abort errors pass through
-    if (err instanceof DOMException && err.name === 'AbortError') {
+      const xhr = ((): XMLHttpRequest | null => {
+        // Network errors (from fetcher's NetworkError)
+        if (
+          err instanceof NetworkError ||
+          (err instanceof Error &&
+            'isNetworkError' in err &&
+            err.isNetworkError)
+        ) {
+          return 'request' in err ? (err as NetworkError).request : null
+        }
+        // Handle errors with attached XHR (from onAfterResponse throws)
+        if (
+          err instanceof Error &&
+          'request' in err &&
+          err.request instanceof XMLHttpRequest
+        ) {
+          return err.request
+        }
+        return null
+      })()
+
+      if (xhr) {
+        if (!xhr.status) {
+          throw new U.S3NetworkError(
+            'Network error during upload',
+            'NETWORK',
+            err,
+          )
+        }
+        // HTTP errors (non-2xx responses from NetworkError)
+        const parsedBody = this._parseErrorXml(
+          (name: string) => xhr.getResponseHeader(name),
+          xhr.responseText,
+        )
+        const serviceCode =
+          xhr.getResponseHeader('x-amz-error-code') ?? parsedBody.svcCode
+
+        // If expired token error and using getCredentials, clear cache and retry once
+        if (
+          this.getCredentials != null &&
+          serviceCode != null &&
+          ['ExpiredToken', 'InvalidAccessKeyId'].includes(serviceCode)
+        ) {
+          this.clearCachedCredentials()
+
+          // Retry with fresh credentials
+          return this.request({
+            request,
+            data,
+            onProgress,
+            signal,
+            contentType,
+          })
+        }
+
+        throw new U.S3ServiceError(
+          `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
+          xhr.status,
+          serviceCode,
+          xhr.responseText,
+        )
+      }
+
       throw err
     }
-
-    // Network errors (from fetcher's NetworkError)
-    if (
-      err instanceof NetworkError ||
-      (err instanceof Error && 'isNetworkError' in err && err.isNetworkError)
-    ) {
-      const xhr = 'request' in err ? (err as NetworkError).request : null
-      if (!xhr?.status) {
-        throw new U.S3NetworkError(
-          'Network error during upload',
-          'NETWORK',
-          err,
-        )
-      }
-      // HTTP errors (non-2xx responses from NetworkError)
-      const headerCode = xhr.getResponseHeader('x-amz-error-code')
-      const parsedBody = this._parseErrorXml(
-        (name: string) => xhr.getResponseHeader(name),
-        xhr.responseText,
-      )
-      const serviceCode = headerCode ?? parsedBody.svcCode
-      throw new U.S3ServiceError(
-        `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
-        xhr.status,
-        serviceCode,
-        xhr.responseText,
-      )
-    }
-
-    // Handle errors with attached XHR (from onAfterResponse throws)
-    if (
-      err instanceof Error &&
-      'request' in err &&
-      err.request instanceof XMLHttpRequest
-    ) {
-      const xhr = err.request
-      if (!xhr.status) {
-        throw new U.S3NetworkError(
-          'Network error during upload',
-          'NETWORK',
-          err,
-        )
-      }
-      const headerCode = xhr.getResponseHeader('x-amz-error-code')
-      const parsedBody = this._parseErrorXml(
-        (name: string) => xhr.getResponseHeader(name),
-        xhr.responseText,
-      )
-      const serviceCode = headerCode ?? parsedBody.svcCode
-      throw new U.S3ServiceError(
-        `S3 returned ${xhr.status}${serviceCode ? ` – ${serviceCode}` : ''}`,
-        xhr.status,
-        serviceCode,
-        xhr.responseText,
-      )
-    }
-
-    throw err
   }
 
   /** Lists uploaded parts for a multipart upload. */
@@ -576,11 +436,11 @@ class S3mini {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const res = await this._presignedRequest('GET', key, {
-      uploadId,
+    const { response } = await this.request({
+      request: { method: 'GET', key, uploadId },
     })
 
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+    const parsed = U.parseXml(response) as Record<string, unknown>
     const result = (parsed.listPartsResult ||
       parsed.ListPartsResult ||
       parsed) as Record<string, unknown>
@@ -613,13 +473,17 @@ class S3mini {
   ): Promise<IT.CompleteMultipartUploadResult> {
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
 
-    const res = await this._presignedRequest('POST', key, {
-      uploadId,
-      body: xmlBody,
-      contentType: C.XML_CONTENT_TYPE,
+    const { response } = await this.request({
+      request: {
+        method: 'POST',
+        key,
+        contentType: C.XML_CONTENT_TYPE,
+        uploadId,
+      },
+      data: xmlBody,
     })
 
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+    const parsed = U.parseXml(response) as Record<string, unknown>
     if (parsed && typeof parsed === 'object') {
       // Check for both cases (camelCase from our parser, PascalCase from S3)
       const result =
@@ -665,16 +529,22 @@ class S3mini {
   public async abortMultipartUpload(
     key: string,
     uploadId: string,
-  ): Promise<object> {
+  ): Promise<{
+    status: string
+    key: string
+    uploadId: string
+    response: Record<string, unknown>
+  }> {
     this._checkKey(key)
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const res = await this._presignedRequest('DELETE', key, {
-      uploadId,
+    const { response } = await this.request({
+      request: { method: 'DELETE', key, uploadId },
     })
-    const parsed = U.parseXml(await res.text()) as Record<string, unknown>
+
+    const parsed = U.parseXml(response) as Record<string, unknown>
     if (
       parsed &&
       'error' in parsed &&
@@ -704,10 +574,11 @@ class S3mini {
 
   /** Deletes an object from the bucket. Returns true on success. */
   public async deleteObject(key: string): Promise<boolean> {
-    const res = await this._presignedRequest('DELETE', key, {
-      tolerated: [200, 204],
+    const { status } = await this.request({
+      request: { method: 'DELETE', key },
     })
-    return res.status === 200 || res.status === 204
+
+    return status === 200 || status === 204
   }
 
   /**
@@ -726,6 +597,10 @@ class S3mini {
    */
   private _waitForOnline(signal?: AbortSignal): Promise<void> {
     return new Promise((resolve, reject) => {
+      if (!this._isOffline()) {
+        resolve()
+        return
+      }
       // Already online or not in browser
       if (
         typeof navigator === 'undefined' ||
@@ -762,57 +637,6 @@ class S3mini {
     })
   }
 
-  private async _sendRequest(
-    url: string,
-    method: IT.HttpMethod,
-    headers: Record<string, string>,
-    body?: BodyInit,
-    toleratedStatusCodes: number[] = [],
-  ): Promise<Response> {
-    // Wait for online if currently offline
-    if (this._isOffline()) {
-      await this._waitForOnline()
-    }
-
-    try {
-      const res = await fetch(url, {
-        method,
-        headers,
-        body: ['GET', 'HEAD'].includes(method) ? undefined : body,
-        signal: this.requestAbortTimeout
-          ? AbortSignal.timeout(this.requestAbortTimeout)
-          : undefined,
-      })
-      if (res.ok || toleratedStatusCodes.includes(res.status)) {
-        return res
-      }
-      await this._handleErrorResponse(res)
-      return res
-    } catch (err: unknown) {
-      // Check if we're offline - if so, wait and retry
-      if (this._isOffline()) {
-        await this._waitForOnline()
-        // Retry the request
-        return this._sendRequest(
-          url,
-          method,
-          headers,
-          body,
-          toleratedStatusCodes,
-        )
-      }
-
-      const code = U.extractErrCode(err)
-      if (
-        code &&
-        ['ENOTFOUND', 'EAI_AGAIN', 'ETIMEDOUT', 'ECONNREFUSED'].includes(code)
-      ) {
-        throw new U.S3NetworkError(`S3 network error: ${code}`, code, err)
-      }
-      throw err
-    }
-  }
-
   private _parseErrorXml(
     getHeader: (name: string) => string | null,
     body: string,
@@ -841,24 +665,6 @@ class S3mini {
           ? error.Message
           : undefined,
     }
-  }
-
-  private async _handleErrorResponse(res: Response): Promise<void> {
-    const errorBody = await res.text()
-    const parsedErrorBody = this._parseErrorXml(
-      (n) => res.headers.get(n),
-      errorBody,
-    )
-    const svcCode =
-      res.headers.get('x-amz-error-code') ??
-      parsedErrorBody.svcCode ??
-      'Unknown'
-    throw new U.S3ServiceError(
-      `S3 returned ${res.status} – ${svcCode}`,
-      res.status,
-      svcCode,
-      errorBody,
-    )
   }
 }
 

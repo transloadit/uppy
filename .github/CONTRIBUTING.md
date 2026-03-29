@@ -47,6 +47,10 @@ yarn build
 - `yarn typecheck` - Run TypeScript type checking
 - `yarn check` - Run Biome linting and formatting
 
+### Running minio tests
+
+Tests for `@uppy/aws-s3` need a minio server running inside Docker, and in order to run those tests you must set the environment variable `VITE_MINIO_CONFIG="test_user,test_password,http://localhost:9002/test-bucket,us-east-1"` when running the tests.
+
 ### Headless components
 
 When adding a new component to `@uppy/components`, you have to run `yarn migrate:components` from root

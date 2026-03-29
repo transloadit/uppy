@@ -1,5 +1,13 @@
 import type { ErrorWithCode, XmlMap, XmlValue } from './types.js'
 
+/** Strips query string and hash from a URL to derive the object location. */
+export function removeQueryString(urlString: string): string {
+  const urlObject = new URL(urlString)
+  urlObject.search = ''
+  urlObject.hash = ''
+  return urlObject.href
+}
+
 const ENCODR = new TextEncoder()
 const chunkSize = 0x8000 // 32KB chunks
 const HEXS = '0123456789abcdef'
