@@ -10373,7 +10373,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/instagram@workspace:*, @uppy/instagram@workspace:^, @uppy/instagram@workspace:packages/@uppy/instagram":
+"@uppy/instagram@workspace:packages/@uppy/instagram":
   version: 0.0.0-use.local
   resolution: "@uppy/instagram@workspace:packages/@uppy/instagram"
   dependencies:
@@ -10488,7 +10488,6 @@ __metadata:
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
     "@uppy/google-drive": "workspace:^"
-    "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
     "@uppy/unsplash": "workspace:^"
     "@uppy/url": "workspace:^"
@@ -23862,7 +23861,6 @@ __metadata:
     "@uppy/google-photos-picker": "workspace:*"
     "@uppy/image-editor": "workspace:*"
     "@uppy/image-generator": "workspace:*"
-    "@uppy/instagram": "workspace:*"
     "@uppy/locales": "workspace:*"
     "@uppy/onedrive": "workspace:*"
     "@uppy/provider-views": "workspace:*"
