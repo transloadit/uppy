@@ -56,10 +56,6 @@ export default function grantConfig(): GrantStaticConfig {
       access_url: 'https://api.box.com/oauth2/token',
       callback: '/box/callback',
     },
-    instagram: {
-      ...defaults,
-      callback: '/instagram/callback',
-    },
     facebook: {
       ...defaults,
       scope: ['email', 'user_photos'],
