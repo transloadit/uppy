@@ -34,30 +34,16 @@ describe('Test Provider options', () => {
 
     expect(grantConfig.googledrive.secret).toBe('google_secret')
 
-    expect(grantConfig.instagram.key).toBe('instagram_key')
-    expect(grantConfig.instagram.secret).toBe('instagram_secret')
-
     expect(grantConfig.zoom.key).toBe('zoom_key')
     expect(grantConfig.zoom.secret).toBe('zoom_secret')
   })
 
   test('adds extra provider config', () => {
-    process.env.COMPANION_INSTAGRAM_KEY = '123456'
     providerManager.addProviderOptions(
       getCompanionOptions(),
       grantConfig,
       getOauthProvider,
     )
-    expect(grantConfig.instagram).toEqual({
-      transport: 'session',
-      state: true,
-      callback: '/instagram/callback',
-      redirect_uri: 'http://localhost:3020/instagram/redirect',
-      key: '123456',
-      secret: 'instagram_secret',
-      protocol: 'https',
-      scope: ['user_profile', 'user_media'],
-    })
 
     expect(grantConfig.dropbox).toEqual({
       key: 'dropbox_key',
