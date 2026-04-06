@@ -106,7 +106,7 @@ class AddFiles extends Component<AddFilesProps> {
   }
 
   private renderMyDeviceAcquirer = () => {
-    const onClick =
+    const triggerMyDeviceInputClick =
       this.props.fileManagerSelectionType === 'folders'
         ? this.triggerFolderInputClick
         : this.triggerFileInputClick
@@ -123,7 +123,7 @@ class AddFiles extends Component<AddFilesProps> {
           role="tab"
           tabIndex={0}
           data-uppy-super-focusable
-          onClick={onClick}
+          onClick={triggerMyDeviceInputClick}
         >
           <div className="uppy-DashboardTab-inner">
             <svg
