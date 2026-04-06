@@ -9851,7 +9851,7 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@uppy/companion": "workspace:^"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14377,7 +14377,7 @@ __metadata:
     express: "npm:^4.22.0"
     express-session: "npm:^1.17.3"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14429,7 +14429,7 @@ __metadata:
     express-session: "npm:^1.15.6"
     npm-run-all: "npm:^4.1.2"
     preact: "npm:^10.26.10"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14444,7 +14444,7 @@ __metadata:
     cors: "npm:^2.8.5"
     dotenv: "npm:^16.0.1"
     express: "npm:^4.22.0"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14505,7 +14505,7 @@ __metadata:
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4.0.9"
     typescript: "npm:^5.7.3"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
     vitest: "npm:^3.2.4"
     vitest-browser-react: "npm:^1.0.0"
   languageName: unknown
@@ -14583,7 +14583,7 @@ __metadata:
     express: "npm:^4.22.0"
     he: "npm:^1.2.0"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14604,7 +14604,7 @@ __metadata:
     msw: "npm:^2.10.4"
     playwright: "npm:1.57.0"
     tailwindcss: "npm:^4.0.0"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
     vitest: "npm:^3.2.4"
     vitest-browser-vue: "npm:^1.0.0"
     vue: "npm:^3.5.14"
@@ -14622,7 +14622,7 @@ __metadata:
     express: "npm:^4.22.0"
     multer: "npm:^2.0.2"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14636,7 +14636,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.2.4"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14649,7 +14649,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -14662,7 +14662,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.2"
   languageName: unknown
   linkType: soft
 
@@ -24000,7 +24000,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^6.0.0 || ^7.0.0-0, vite@npm:^7.1.11":
+"vite@npm:^5.0.0 || ^6.0.0 || ^7.0.0-0":
   version: 7.1.11
   resolution: "vite@npm:7.1.11"
   dependencies:
@@ -24107,6 +24107,61 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10/8b8b6fe12318ca457396bf2053df7056cf4810f1d4a43b36b6afe59860e32b749c0685a290fe8a973b0d3da179ceec4c30cebbd3c91d0c47fbcf6436b17bdeef
+  languageName: node
+  linkType: hard
+
+"vite@npm:^7.3.2":
+  version: 7.3.2
+  resolution: "vite@npm:7.3.2"
+  dependencies:
+    esbuild: "npm:^0.27.0"
+    fdir: "npm:^6.5.0"
+    fsevents: "npm:~2.3.3"
+    picomatch: "npm:^4.0.3"
+    postcss: "npm:^8.5.6"
+    rollup: "npm:^4.43.0"
+    tinyglobby: "npm:^0.2.15"
+  peerDependencies:
+    "@types/node": ^20.19.0 || >=22.12.0
+    jiti: ">=1.21.0"
+    less: ^4.0.0
+    lightningcss: ^1.21.0
+    sass: ^1.70.0
+    sass-embedded: ^1.70.0
+    stylus: ">=0.54.8"
+    sugarss: ^5.0.0
+    terser: ^5.16.0
+    tsx: ^4.8.1
+    yaml: ^2.4.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    jiti:
+      optional: true
+    less:
+      optional: true
+    lightningcss:
+      optional: true
+    sass:
+      optional: true
+    sass-embedded:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+    tsx:
+      optional: true
+    yaml:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 10/c5f7a9a60011c41c836cedf31c8ee7624102aff9b6a7f3aab2ff47639721bba0916f81994c3a3ea6577a16c4f0dfee1e7dbd244e0da8edd5954e3c6d48daaaa2
   languageName: node
   linkType: hard
 
