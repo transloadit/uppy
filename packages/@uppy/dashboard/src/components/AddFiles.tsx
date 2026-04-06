@@ -106,6 +106,8 @@ class AddFiles extends Component<AddFilesProps> {
   }
 
   private renderMyDeviceAcquirer = () => {
+    // Cannot select both files and folders at once (webkitdirectory is all-or-nothing),
+    // so in 'both' mode the folder picker remains accessible via the tagline browse link.
     const triggerMyDeviceInputClick =
       this.props.fileManagerSelectionType === 'folders'
         ? this.triggerFolderInputClick
