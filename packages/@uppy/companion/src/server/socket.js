@@ -1,6 +1,6 @@
 import { WebSocketServer } from 'ws'
 import emitter from './emitter/index.js'
-import { jsonStringify } from './helpers/utils.js'
+import { getURLBuilder, jsonStringify } from './helpers/utils.js'
 import * as logger from './logger.js'
 import * as redis from './redis.js'
 import Uploader from './Uploader.js'
@@ -95,12 +95,21 @@ function handleAuthCallbackSocketConnection({ token, ws }) {
   })
 }
 
-export default function setupSockets(server) {
+export default function setupSockets(server, companionOptions) {
   const wss = new WebSocketServer({ server })
+
+  const urlBuilder = getURLBuilder(companionOptions)
+
+  const externalBasePath = urlBuilder('', true, true)
+  console.log('externalBasePath', externalBasePath)
 
   wss.on('connection', (ws, req) => {
     // basic router:
-    const path = req.url
+    let path = req.url
+    // strip off base path if any
+    if (externalBasePath && path.startsWith(externalBasePath)) {
+      path = path.slice(externalBasePath.length)
+    }
 
     // authentication callback token?
     const authCallbackTokenMatch = path.match(
@@ -142,10 +151,14 @@ export default function setupSockets(server) {
         logger.error(
           'WebSocket message too large',
           'socket.upload.error',
-          Uploader.shortenToken(uploadToken),
+          uploadToken && Uploader.shortenToken(uploadToken),
         )
       } else {
-        logger.error(err, 'socket.error', Uploader.shortenToken(uploadToken))
+        logger.error(
+          err,
+          'socket.error',
+          uploadToken && Uploader.shortenToken(uploadToken),
+        )
       }
     })
   })

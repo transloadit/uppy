@@ -188,18 +188,30 @@ export default class Provider<M extends Meta, B extends Body>
     authFormData: unknown
     signal: AbortSignal
   }): Promise<void> {
-    let authWindow: Window | null | undefined
+    await this.ensurePreAuth()
+    signal.throwIfAborted()
+
+    // Important: We need to do this synchronously, or else browsers might block the popup.
+    // (We cannot wait until the websocket connection is established).
+    // This opens up a race condtition if the websocket is not connected before the user
+    // completes(or cancels) authentication, but that’s a small compromose we gotta make.
+    const authCallbackToken = crypto.randomUUID()
+
+    const link = this.authUrl({
+      query: { uppyVersions },
+      authFormData,
+      authCallbackToken,
+    })
+    const authWindow = window.open(link, '_blank')
+    let interval: number | undefined
+    let webSocket: WebSocket | undefined
 
     try {
-      await this.ensurePreAuth()
-
-      signal.throwIfAborted()
-
       const host = getSocketHost(this.opts.companionUrl)
-      const authCallbackToken = crypto.randomUUID()
 
+      // Note that this promise is not guaranteed to settle in all cases
       const token = await new Promise<string>((resolve, reject) => {
-        const webSocket = new WebSocket(
+        webSocket = new WebSocket(
           `${host}/api2/auth-callback/token/${authCallbackToken}`,
         )
 
@@ -212,16 +224,7 @@ export default class Provider<M extends Meta, B extends Body>
             `Companion socket error ${JSON.stringify(error)}, closing socket`,
             'warning',
           )
-          webSocket.close() // 'close' event will be emitted
-        })
-
-        webSocket.addEventListener('open', () => {
-          const link = this.authUrl({
-            query: { uppyVersions },
-            authFormData,
-            authCallbackToken,
-          })
-          authWindow = window.open(link, '_blank')
+          webSocket?.close() // 'close' event will be emitted
         })
 
         webSocket.addEventListener('message', (e) => {
@@ -239,21 +242,18 @@ export default class Provider<M extends Meta, B extends Body>
           }
         })
 
-        const closeSocket = () => {
-          this.uppy.log(`Closing auth callback socket ${authCallbackToken}`)
-          webSocket.close()
+        signal.addEventListener('abort', () =>
+          reject(new Error('Authentication was aborted')),
+        )
+
+        // poll for user closure of the window, so we can reject when it happens
+        if (authWindow) {
+          interval = window.setInterval(() => {
+            if (authWindow.closed) {
+              reject(new Error('Auth window was closed by the user'))
+            }
+          }, 500)
         }
-
-        signal.addEventListener('abort', () => {
-          closeSocket()
-          authWindow?.close()
-          reject(new Error('Authentication was aborted'))
-        })
-
-        authWindow?.addEventListener('close', () => {
-          reject(new Error('Authentication window was closed by user'))
-          closeSocket()
-        })
       })
 
       this.setAuthToken(token)
@@ -261,9 +261,14 @@ export default class Provider<M extends Meta, B extends Body>
       const message = this.uppy.i18n('authAborted')
       this.uppy.info({ message }, 'warning', 5000)
       this.uppy.log(`Authentication failed: ${err.message}`, 'warning')
+      throw err
     } finally {
       // cleanup:
-      authWindow?.close()
+      // if we don't setTimeout, the window doesn't really close (I don't know why).
+      setTimeout(() => authWindow?.close(), 1)
+      this.uppy.log(`Closing auth callback socket ${authCallbackToken}`)
+      webSocket?.close()
+      clearInterval(interval)
     }
   }
 

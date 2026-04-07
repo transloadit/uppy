@@ -781,4 +781,3 @@ export default class Uploader {
 
 Uploader.FILE_NAME_PREFIX = 'uppy-file'
 Uploader.STORAGE_PREFIX_UPLOAD_TOKEN = 'companion' // todo rename to companion-upload (this is technically a breaking change)
-Uploader.STORAGE_PREFIX_CALLBACK_TOKEN = 'companion-callback'

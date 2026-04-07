@@ -11,9 +11,7 @@ export const authCallbackSuccessHtml = () => {
             'use strict';
 
             document.addEventListener('DOMContentLoaded', function () {
-              if (window.opener != null) {
-                window.close();
-              }
+              window.close();
             });
           })();
         </script>
@@ -35,9 +33,7 @@ export const authCallbackErrorHtml = () => {
             'use strict';
 
             document.addEventListener('DOMContentLoaded', function () {
-              if (window.opener != null) {
-                window.close();
-              }
+              window.close();
             });
           })();
         </script>
