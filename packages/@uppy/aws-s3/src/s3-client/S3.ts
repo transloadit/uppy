@@ -213,7 +213,8 @@ class S3mini {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
     const { response } = await this.request({
-      request: { method: 'POST', key, contentType: fileType },
+      request: { method: 'POST', key },
+      contentType: fileType,
     })
 
     const parsed = U.parseXml(response) as Record<string, unknown>
@@ -477,9 +478,9 @@ class S3mini {
       request: {
         method: 'POST',
         key,
-        contentType: C.XML_CONTENT_TYPE,
         uploadId,
       },
+      contentType: C.XML_CONTENT_TYPE,
       data: xmlBody,
     })
 

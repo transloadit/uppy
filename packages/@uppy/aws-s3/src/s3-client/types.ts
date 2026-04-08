@@ -1,12 +1,44 @@
-/** Request data to be pre-signed */
-export type PresignableRequest = {
-  method: HttpMethod
+export interface PresignableRequestBase {
   key: string
-  uploadId?: string
-  partNumber?: number
   expiresIn?: number
-  contentType?: string
 }
+
+export interface PutObjectRequest extends PresignableRequestBase {
+  method: 'PUT'
+}
+export interface DeleteObjectRequest extends PresignableRequestBase {
+  method: 'DELETE'
+}
+export interface CreateMultipartUploadRequest extends PresignableRequestBase {
+  method: 'POST'
+}
+export interface CompleteMultipartUploadRequest extends PresignableRequestBase {
+  method: 'POST'
+  uploadId: string
+}
+export interface DeleteMultipartUploadRequest extends PresignableRequestBase {
+  method: 'DELETE'
+  uploadId: string
+}
+export interface ListPartsRequest extends PresignableRequestBase {
+  method: 'GET'
+  uploadId: string
+}
+export interface UploadPartRequest extends PresignableRequestBase {
+  method: 'PUT'
+  uploadId: string
+  partNumber: number
+}
+
+/** Request data to be pre-signed */
+export type PresignableRequest =
+  | PutObjectRequest
+  | DeleteObjectRequest
+  | CreateMultipartUploadRequest
+  | CompleteMultipartUploadRequest
+  | DeleteMultipartUploadRequest
+  | ListPartsRequest
+  | UploadPartRequest
 
 /** Response with the pre-signed URL */
 export type presignedResponse = {
