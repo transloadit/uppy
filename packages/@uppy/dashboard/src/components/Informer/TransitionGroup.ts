@@ -4,7 +4,7 @@
  * @source https://github.com/developit/preact-transition-group
  */
 
-import { Component, cloneElement, h, toChildArray } from 'preact'
+import { Component, cloneElement, h, toChildArray } from '@uppy/utils/preact'
 
 function assign(obj, props) {
   return Object.assign(obj, props)

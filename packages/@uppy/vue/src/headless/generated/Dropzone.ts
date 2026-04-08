@@ -5,7 +5,7 @@ import {
   type DropzoneProps,
   Dropzone as PreactDropzone,
 } from '@uppy/components'
-import { h as preactH, render as preactRender } from 'preact'
+import { h as preactH, render as preactRender } from '@uppy/utils/preact'
 import { defineComponent, h, onMounted, ref, watch } from 'vue'
 import { useUppyContext } from '../useUppyContext.js'
 

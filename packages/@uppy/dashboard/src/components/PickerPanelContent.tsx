@@ -1,5 +1,5 @@
+import { useRef } from '@uppy/utils/preact/hooks'
 import classNames from 'classnames'
-import { useRef } from 'preact/hooks'
 import ignoreEvent from '../utils/ignoreEvent.js'
 
 type $TSFixMe = any

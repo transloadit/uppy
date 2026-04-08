@@ -7,7 +7,7 @@
     type UploadButtonProps,
     type UppyContext,
   } from '@uppy/components'
-  import { h as preactH, render as preactRender } from 'preact'
+  import { h as preactH, render as preactRender } from '@uppy/utils/preact'
   import { UppyContextKey } from '../UppyContextProvider.svelte'
 
   const props: Omit<UploadButtonProps, 'ctx'> = $props()

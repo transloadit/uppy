@@ -40,8 +40,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "devDependencies": {
     "cssnano": "^7.0.7",

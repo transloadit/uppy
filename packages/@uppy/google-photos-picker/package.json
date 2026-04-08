@@ -38,8 +38,7 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/provider-views": "workspace:^",
-    "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

@@ -1,8 +1,8 @@
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
 import { emaFilter } from '@uppy/utils'
-import type { ComponentChild } from 'preact'
-import { Component } from 'preact'
+import type { ComponentChild } from '@uppy/utils/preact'
+import { Component } from '@uppy/utils/preact'
 import statusBarStates from './StatusBarStates.js'
 import StatusBarUI, { type StatusBarUIProps } from './StatusBarUI.js'
 

@@ -12,8 +12,8 @@ import type {
 } from '@uppy/core'
 import type { CompanionFile } from '@uppy/utils'
 import { remoteFileObjToLocal } from '@uppy/utils'
+import type { h } from '@uppy/utils/preact'
 import classNames from 'classnames'
-import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
 import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'

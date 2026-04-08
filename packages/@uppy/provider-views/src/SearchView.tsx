@@ -1,4 +1,4 @@
-import type { ComponentChild } from 'preact'
+import type { ComponentChild } from '@uppy/utils/preact'
 import { useSearchForm } from './useSearchForm.js'
 
 interface SearchViewProps {

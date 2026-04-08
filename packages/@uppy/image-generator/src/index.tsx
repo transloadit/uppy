@@ -8,7 +8,7 @@ import {
   type OptionsWithRestructuredFields,
 } from '@uppy/transloadit'
 import { RateLimitedQueue } from '@uppy/utils'
-import type { h } from 'preact'
+import type { h } from '@uppy/utils/preact'
 import locale from './locale.js'
 
 export interface ImageGeneratorOptions extends UIPluginOptions {

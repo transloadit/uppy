@@ -45,8 +45,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

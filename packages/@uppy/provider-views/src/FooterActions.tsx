@@ -1,7 +1,7 @@
 import type { Body, Meta, PartialTree } from '@uppy/core'
 import type { I18n } from '@uppy/utils'
+import { useMemo } from '@uppy/utils/preact/hooks'
 import classNames from 'classnames'
-import { useMemo } from 'preact/hooks'
 import type ProviderView from './ProviderView/ProviderView.js'
 import getNumberOfSelectedFiles from './utils/PartialTreeUtils/getNumberOfSelectedFiles.js'
 
