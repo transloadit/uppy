@@ -110,13 +110,6 @@ export interface UploadPart {
   etag: string
 }
 
-export interface CompleteMultipartUploadResult {
-  location: string
-  bucket: string
-  key: string
-  etag: string
-}
-
 export interface ErrorWithCode {
   code?: string
   cause?: { code?: string }
@@ -142,15 +135,9 @@ export type OnProgressFn = (bytesUploaded: number, bytesTotal: number) => void
 /** Raw XHR upload response (internal to S3mini) */
 export interface XhrUploadResult {
   status: number
-  ok: boolean
   headers: {
     get(name: string): string | null
   }
-  response: string
-}
-
-/** Public result from putObject — includes object location derived from presigned URL */
-export interface PutObjectResult extends XhrUploadResult {
-  /** Object URL derived from the presigned URL (query string stripped) */
-  location: string
+  responseText: string
+  url: string
 }

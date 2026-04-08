@@ -186,10 +186,10 @@ class S3mini {
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
-  ): Promise<IT.PutObjectResult> {
+  ) {
     this._checkKey(key)
 
-    const { url, ...result } = await this.request({
+    const { url } = await this.request({
       request: { method: 'PUT', key },
       data,
       onProgress,
@@ -198,7 +198,6 @@ class S3mini {
     })
 
     return {
-      ...result,
       location: U.removeQueryString(url),
     }
   }
@@ -207,17 +206,17 @@ class S3mini {
   public async createMultipartUpload(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-  ): Promise<string> {
+  ) {
     this._checkKey(key)
     if (typeof fileType !== 'string') {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const { response } = await this.request({
+    const { responseText } = await this.request({
       request: { method: 'POST', key },
       contentType: fileType,
     })
 
-    const parsed = U.parseXml(response) as Record<string, unknown>
+    const parsed = U.parseXml(responseText) as Record<string, unknown>
 
     if (parsed && typeof parsed === 'object') {
       // Check for both cases of InitiateMultipartUploadResult
@@ -230,7 +229,7 @@ class S3mini {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return uploadId
+          return { uploadId }
         }
       }
     }
@@ -249,9 +248,9 @@ class S3mini {
     partNumber: number,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
-  ): Promise<IT.UploadPart> {
+  ) {
     this._validateUploadPartParams(key, uploadId, partNumber)
-    const result = await this.request({
+    const { headers } = await this.request({
       request: {
         method: 'PUT',
         key,
@@ -263,11 +262,15 @@ class S3mini {
       signal,
     })
 
+    const etag = headers.get('etag')
+    if (etag == null) {
+      throw new Error(
+        `${C.ERROR_PREFIX}Missing ETag in uploadPart response headers`,
+      )
+    }
+
     return {
-      etag: result.headers.get('etag')
-        ? U.sanitizeETag(result.headers.get('etag')!)
-        : '',
-      partNumber,
+      etag: U.sanitizeETag(etag),
     }
   }
 
@@ -298,7 +301,7 @@ class S3mini {
     onProgress?: IT.OnProgressFn
     signal?: AbortSignal
     contentType?: string
-  }): Promise<IT.XhrUploadResult & { url: string }> {
+  }): Promise<IT.XhrUploadResult> {
     // Wait for online before starting
     await this._waitForOnline(signal)
 
@@ -316,7 +319,7 @@ class S3mini {
         body: ['GET', 'HEAD'].includes(request.method) ? undefined : data,
         headers: contentType ? { 'Content-Type': contentType } : {},
         signal,
-        timeout: this.requestAbortTimeout || 30_000,
+        timeout: this.requestAbortTimeout ?? 30_000,
         retries: 3,
         /**
          * Retry logic:
@@ -345,15 +348,13 @@ class S3mini {
         },
       })
 
-      // Return Response-like object for test compatibility
       return {
         url,
         status: xhr.status,
-        ok: xhr.status >= 200 && xhr.status < 300,
         headers: {
           get: (name: string) => xhr.getResponseHeader(name),
         },
-        response: xhr.responseText,
+        responseText: xhr.responseText,
       }
     } catch (err: unknown) {
       // Abort errors pass through
@@ -437,11 +438,11 @@ class S3mini {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const { response } = await this.request({
+    const { responseText } = await this.request({
       request: { method: 'GET', key, uploadId },
     })
 
-    const parsed = U.parseXml(response) as Record<string, unknown>
+    const parsed = U.parseXml(responseText) as Record<string, unknown>
     const result = (parsed.listPartsResult ||
       parsed.ListPartsResult ||
       parsed) as Record<string, unknown>
@@ -471,10 +472,10 @@ class S3mini {
     key: string,
     uploadId: string,
     parts: Array<IT.UploadPart>,
-  ): Promise<IT.CompleteMultipartUploadResult> {
+  ) {
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
 
-    const { response } = await this.request({
+    const { responseText } = await this.request({
       request: {
         method: 'POST',
         key,
@@ -484,7 +485,7 @@ class S3mini {
       data: xmlBody,
     })
 
-    const parsed = U.parseXml(response) as Record<string, unknown>
+    const parsed = U.parseXml(responseText)
     if (parsed && typeof parsed === 'object') {
       // Check for both cases (camelCase from our parser, PascalCase from S3)
       const result =
@@ -508,14 +509,14 @@ class S3mini {
           )
         }
 
-        const etag = rawEtag ? U.sanitizeETag(rawEtag) : ''
+        const etag = rawEtag ? U.sanitizeETag(rawEtag) : undefined
 
         return {
           location: resultLocation,
-          bucket: resultBucket ?? '',
+          bucket: resultBucket,
           key: resultKey,
           etag,
-        } satisfies IT.CompleteMultipartUploadResult
+        }
       }
     }
 
@@ -527,25 +528,17 @@ class S3mini {
   }
 
   /** Aborts a multipart upload and removes all uploaded parts. */
-  public async abortMultipartUpload(
-    key: string,
-    uploadId: string,
-  ): Promise<{
-    status: string
-    key: string
-    uploadId: string
-    response: Record<string, unknown>
-  }> {
+  public async abortMultipartUpload(key: string, uploadId: string) {
     this._checkKey(key)
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const { response } = await this.request({
+    const { responseText } = await this.request({
       request: { method: 'DELETE', key, uploadId },
     })
 
-    const parsed = U.parseXml(response) as Record<string, unknown>
+    const parsed = U.parseXml(responseText) as Record<string, unknown>
     if (
       parsed &&
       'error' in parsed &&
@@ -559,7 +552,6 @@ class S3mini {
         )}`,
       )
     }
-    return { status: 'Aborted', key, uploadId, response: parsed }
   }
 
   private _buildCompleteMultipartUploadXml(
@@ -574,12 +566,16 @@ class S3mini {
   }
 
   /** Deletes an object from the bucket. Returns true on success. */
-  public async deleteObject(key: string): Promise<boolean> {
+  public async deleteObject(key: string) {
     const { status } = await this.request({
       request: { method: 'DELETE', key },
     })
 
-    return status === 200 || status === 204
+    if (status !== 200 && status !== 204) {
+      throw new Error(
+        `${C.ERROR_PREFIX}Failed to delete object. HTTP status: ${status}`,
+      )
+    }
   }
 
   /**

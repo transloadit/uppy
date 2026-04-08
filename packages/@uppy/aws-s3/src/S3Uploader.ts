@@ -260,7 +260,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const signal = this.#abortController?.signal
     signal?.throwIfAborted()
 
-    const result = await this.#options.s3Client.putObject(
+    const { location } = await this.#options.s3Client.putObject(
       this.#key,
       this.#data,
       this.#options.file.type || 'application/octet-stream',
@@ -272,7 +272,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     )
 
     this.#onSuccess({
-      location: result.location,
+      location,
       key: this.#key,
     })
   }
@@ -281,15 +281,17 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const signal = this.#abortController?.signal
     signal?.throwIfAborted()
 
-    this.#uploadId = await this.#options.s3Client.createMultipartUpload(
+    const { uploadId } = await this.#options.s3Client.createMultipartUpload(
       this.#key,
       this.#options.file.type || 'application/octet-stream',
     )
 
     // Persist resume state so Golden Retriever can restore it after page refresh
     this.#options.uppy.setFileState(this.#options.file.id, {
-      s3Multipart: { uploadId: this.#uploadId, key: this.#key },
+      s3Multipart: { uploadId, key: this.#key },
     })
+
+    this.#uploadId = uploadId
 
     await this.#uploadRemainingParts()
   }
@@ -306,7 +308,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       const chunkData = this.#data.slice(chunk.start, chunk.end)
       const chunkIndex = i // Capture for closure (cannot use for-loop variable i directly in a closure)
 
-      const part = await this.#options.s3Client.uploadPart(
+      const { etag } = await this.#options.s3Client.uploadPart(
         this.#key,
         this.#uploadId!,
         chunkData,
@@ -320,13 +322,13 @@ export default class S3Uploader<M extends Meta, B extends Body> {
 
       // after part finished uploading, update chunk state
       this.#chunkState[i].uploaded = chunk.size
-      this.#chunkState[i].etag = part.etag
+      this.#chunkState[i].etag = etag
       this.#onProgress()
 
       if (this.#options.onPartComplete) {
         this.#options.onPartComplete({
-          PartNumber: part.partNumber,
-          ETag: part.etag,
+          PartNumber: partNumber,
+          ETag: etag,
         })
       }
     }
@@ -337,15 +339,16 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       state.etag ? [{ partNumber: i + 1, etag: state.etag }] : [],
     )
 
-    const result = await this.#options.s3Client.completeMultipartUpload(
-      this.#key,
-      this.#uploadId!,
-      parts,
-    )
+    const { location, key } =
+      await this.#options.s3Client.completeMultipartUpload(
+        this.#key,
+        this.#uploadId!,
+        parts,
+      )
 
     this.#onSuccess({
-      location: result.location,
-      key: result.key,
+      location,
+      key,
       uploadId: this.#uploadId,
     })
   }
