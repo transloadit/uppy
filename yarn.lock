@@ -386,12 +386,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler@npm:^19.2.18":
-  version: 19.2.18
-  resolution: "@angular/compiler@npm:19.2.18"
+"@angular/compiler@npm:^19.2.20":
+  version: 19.2.20
+  resolution: "@angular/compiler@npm:19.2.20"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/1b7cb29bb06cc1da6e9a1f813b6d343d62ea801d42b28ed3d990860d1102da475b33765534e4f6274fabf921efdb0b34b204cbf28dcd3133a6b8be31a1e1310a
+  checksum: 10/9520dc6cf3b62b8f685ef8edbaa358b95fa9197e6809c8659ee2f4899e6cb7ff2ceded561a860b0358fdb0332d5245ac2b7c1de549f3b20f3c5dd899a9c6dbcb
   languageName: node
   linkType: hard
 
@@ -11294,7 +11294,7 @@ __metadata:
     "@angular/animations": "npm:^19.2.17"
     "@angular/cli": "npm:^19.0.0"
     "@angular/common": "npm:^19.2.17"
-    "@angular/compiler": "npm:^19.2.18"
+    "@angular/compiler": "npm:^19.2.20"
     "@angular/compiler-cli": "npm:^19.2.17"
     "@angular/core": "npm:^19.2.18"
     "@angular/forms": "npm:^19.2.17"
@@ -14341,7 +14341,7 @@ __metadata:
     "@angular-devkit/build-angular": "npm:^19.2.6"
     "@angular/cli": "npm:^19.2.6"
     "@angular/common": "npm:^19.2.17"
-    "@angular/compiler": "npm:^19.2.18"
+    "@angular/compiler": "npm:^19.2.20"
     "@angular/compiler-cli": "npm:^19.2.17"
     "@angular/core": "npm:^19.2.18"
     "@angular/forms": "npm:^19.2.17"
