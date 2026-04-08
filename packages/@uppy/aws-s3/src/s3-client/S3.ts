@@ -92,7 +92,7 @@ class S3mini {
   /** Creates a presigner that fetches/caches credentials and generates pre-signed URLs. */
   private _createCredentialBasedSigner(): IT.SignRequestFn {
     return async (
-      request: IT.presignableRequest,
+      request: IT.PresignableRequest,
     ): Promise<IT.presignedResponse> => {
       const creds = await this._getCachedCredentials()
       if (this.endpoint == null) {
@@ -292,7 +292,7 @@ class S3mini {
     signal,
     contentType,
   }: {
-    request: IT.presignableRequest
+    request: IT.PresignableRequest
     data?: XMLHttpRequestBodyInit
     onProgress?: IT.OnProgressFn
     signal?: AbortSignal

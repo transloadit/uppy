@@ -1,5 +1,5 @@
 /** Request data to be pre-signed */
-export type presignableRequest = {
+export type PresignableRequest = {
   method: HttpMethod
   key: string
   uploadId?: string
@@ -15,7 +15,7 @@ export type presignedResponse = {
 
 /** Function that generates a pre-signed URL for a request */
 export type SignRequestFn = (
-  request: presignableRequest,
+  request: PresignableRequest,
 ) => Promise<presignedResponse>
 
 /**

@@ -5,7 +5,7 @@
  */
 
 import * as C from './consts.js'
-import type { presignableRequest, presignedResponse } from './types.js'
+import type { PresignableRequest, presignedResponse } from './types.js'
 import * as U from './utils.js'
 
 export interface SignerConfig {
@@ -45,7 +45,7 @@ export function createSigV4Presigner(config: SignerConfig) {
   }
 
   return async function presign(
-    request: presignableRequest,
+    request: PresignableRequest,
   ): Promise<presignedResponse> {
     const {
       method,
