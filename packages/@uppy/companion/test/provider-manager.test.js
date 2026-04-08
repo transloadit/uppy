@@ -34,30 +34,16 @@ describe('Test Provider options', () => {
 
     expect(grantConfig.googledrive.secret).toBe('google_secret')
 
-    expect(grantConfig.instagram.key).toBe('instagram_key')
-    expect(grantConfig.instagram.secret).toBe('instagram_secret')
-
     expect(grantConfig.zoom.key).toBe('zoom_key')
     expect(grantConfig.zoom.secret).toBe('zoom_secret')
   })
 
   test('adds extra provider config', () => {
-    process.env.COMPANION_INSTAGRAM_KEY = '123456'
     providerManager.addProviderOptions(
       getCompanionOptions(),
       grantConfig,
       getOauthProvider,
     )
-    expect(grantConfig.instagram).toEqual({
-      transport: 'session',
-      state: true,
-      callback: '/instagram/callback',
-      redirect_uri: 'http://localhost:3020/instagram/redirect',
-      key: '123456',
-      secret: 'instagram_secret',
-      protocol: 'https',
-      scope: ['user_profile', 'user_media'],
-    })
 
     expect(grantConfig.dropbox).toEqual({
       key: 'dropbox_key',
@@ -119,7 +105,6 @@ describe('Test Provider options', () => {
     process.env.COMPANION_DROPBOX_SECRET_FILE = `${process.env.PWD}/test/resources/dropbox_secret_file`
     process.env.COMPANION_BOX_SECRET_FILE = `${process.env.PWD}/test/resources/box_secret_file`
     process.env.COMPANION_GOOGLE_SECRET_FILE = `${process.env.PWD}/test/resources/google_secret_file`
-    process.env.COMPANION_INSTAGRAM_SECRET_FILE = `${process.env.PWD}/test/resources/instagram_secret_file`
     process.env.COMPANION_ZOOM_SECRET_FILE = `${process.env.PWD}/test/resources/zoom_secret_file`
     process.env.COMPANION_ZOOM_VERIFICATION_TOKEN_FILE = `${process.env.PWD}/test/resources/zoom_verification_token_file`
 
@@ -134,7 +119,6 @@ describe('Test Provider options', () => {
     expect(grantConfig.dropbox.secret).toBe('xobpord')
     expect(grantConfig.box.secret).toBe('xwbepqd')
     expect(grantConfig.googledrive.secret).toBe('elgoog')
-    expect(grantConfig.instagram.secret).toBe('margatsni')
     expect(grantConfig.zoom.secret).toBe('u8Z5ceq')
     expect(companionOptions.providerOptions.zoom.verificationToken).toBe(
       'o0u8Z5c',
@@ -159,9 +143,6 @@ describe('Test Provider options', () => {
     expect(grantConfig.googledrive.key).toBeUndefined()
     expect(grantConfig.googledrive.secret).toBeUndefined()
 
-    expect(grantConfig.instagram.key).toBeUndefined()
-    expect(grantConfig.instagram.secret).toBeUndefined()
-
     expect(grantConfig.zoom.key).toBeUndefined()
     expect(grantConfig.zoom.secret).toBeUndefined()
   })
@@ -180,9 +161,6 @@ describe('Test Provider options', () => {
     expect(grantConfig.box.redirect_uri).toBe('http://domain.com/box/redirect')
     expect(grantConfig.googledrive.redirect_uri).toBe(
       'http://domain.com/drive/redirect',
-    )
-    expect(grantConfig.instagram.redirect_uri).toBe(
-      'http://domain.com/instagram/redirect',
     )
     expect(grantConfig.zoom.redirect_uri).toBe(
       'http://domain.com/zoom/redirect',
