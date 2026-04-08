@@ -1579,6 +1579,7 @@ export class Uppy<
     { leading: true, trailing: true },
   )
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: updateTotalProgress')]() {
     return this.#updateTotalProgress()
   }
@@ -1964,6 +1965,7 @@ export class Uppy<
     return undefined
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: getPlugins')](
     type: string,
   ): UnknownPlugin<M, B>[] {
@@ -2168,6 +2170,7 @@ export class Uppy<
     return uploadID
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: createUpload')](...args: any[]): string {
     // @ts-expect-error https://github.com/microsoft/TypeScript/issues/47595
     return this.#createUpload(...args)

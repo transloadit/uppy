@@ -11,7 +11,6 @@ import facebook from './facebook/index.js'
 import { Drive } from './google/drive/index.js'
 import instagram from './instagram/graph/index.js'
 import onedrive from './onedrive/index.js'
-// biome-ignore lint/correctness/noUnusedImports: It's used as a type
 import Provider, { isOAuthProvider } from './Provider.js'
 import unsplash from './unsplash/index.js'
 import webdav from './webdav/index.js'

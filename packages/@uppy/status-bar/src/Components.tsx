@@ -456,7 +456,6 @@ function ProgressBarComplete(props: ProgressBarCompleteProps) {
   return (
     <div
       className="uppy-StatusBar-content"
-      // biome-ignore lint/a11y/useSemanticElements: ...
       role="status"
       title={i18n('complete')}
     >
