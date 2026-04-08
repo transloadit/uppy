@@ -204,3 +204,63 @@ test('Upload, pause, and resume functionality', async () => {
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
 })
+
+test('My Device button triggers folder input when fileManagerSelectionType is "folders"', async () => {
+  render('<div id="uppy"></div>')
+  new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+    fileManagerSelectionType: 'folders',
+  })
+
+  const inputs = document.querySelectorAll(
+    '.uppy-Dashboard-input',
+  ) as NodeListOf<HTMLInputElement>
+  const fileInput = inputs[0]
+  const folderInput = inputs[1]
+
+  let fileInputClicked = false
+  let folderInputClicked = false
+  fileInput.addEventListener('click', () => {
+    fileInputClicked = true
+  })
+  folderInput.addEventListener('click', () => {
+    folderInputClicked = true
+  })
+
+  const myDeviceButton = page.getByRole('tab', { name: /my device/i })
+  await myDeviceButton.click()
+
+  expect(folderInputClicked).toBe(true)
+  expect(fileInputClicked).toBe(false)
+})
+
+test('My Device button triggers file input when fileManagerSelectionType is "files"', async () => {
+  render('<div id="uppy"></div>')
+  new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+    fileManagerSelectionType: 'files',
+  })
+
+  const inputs = document.querySelectorAll(
+    '.uppy-Dashboard-input',
+  ) as NodeListOf<HTMLInputElement>
+  const fileInput = inputs[0]
+  const folderInput = inputs[1]
+
+  let fileInputClicked = false
+  let folderInputClicked = false
+  fileInput.addEventListener('click', () => {
+    fileInputClicked = true
+  })
+  folderInput.addEventListener('click', () => {
+    folderInputClicked = true
+  })
+
+  const myDeviceButton = page.getByRole('tab', { name: /my device/i })
+  await myDeviceButton.click()
+
+  expect(fileInputClicked).toBe(true)
+  expect(folderInputClicked).toBe(false)
+})

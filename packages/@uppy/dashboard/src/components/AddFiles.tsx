@@ -106,6 +106,13 @@ class AddFiles extends Component<AddFilesProps> {
   }
 
   private renderMyDeviceAcquirer = () => {
+    // Cannot select both files and folders at once (webkitdirectory is all-or-nothing),
+    // so in 'both' mode the folder picker remains accessible via the tagline browse link.
+    const triggerMyDeviceInputClick =
+      this.props.fileManagerSelectionType === 'folders'
+        ? this.triggerFolderInputClick
+        : this.triggerFileInputClick
+
     return (
       <div
         className="uppy-DashboardTab"
@@ -118,7 +125,7 @@ class AddFiles extends Component<AddFilesProps> {
           role="tab"
           tabIndex={0}
           data-uppy-super-focusable
-          onClick={this.triggerFileInputClick}
+          onClick={triggerMyDeviceInputClick}
         >
           <div className="uppy-DashboardTab-inner">
             <svg
