@@ -33,13 +33,16 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "lodash": "^4.17.23",
-    "preact": "^10.26.10"
+    "lodash": "^4.17.23"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.199",
     "jsdom": "^26.1.0",
+    "preact": "^10.26.10",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "preact": "^10.26.10"
   }
 }

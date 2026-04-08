@@ -53,8 +53,7 @@
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@uppy/components": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/components": "workspace:^"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^6.0.0",
@@ -62,6 +61,7 @@
     "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^5.0.3",
     "@uppy/core": "workspace:^",
+    "preact": "^10.26.10",
     "svelte": "^5.27.0",
     "svelte-check": "^4.1.6",
     "tslib": "^2.8.1",
@@ -74,6 +74,7 @@
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
+    "preact": "^10.26.10",
     "svelte": "^4.0.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {

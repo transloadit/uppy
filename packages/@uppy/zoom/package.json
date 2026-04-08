@@ -36,17 +36,18 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/provider-views": "workspace:^",
-    "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "preact": "^10.26.10"
   },
   "publishConfig": {
     "access": "public"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
+    "preact": "^10.26.10",
     "typescript": "^5.8.3"
   }
 }

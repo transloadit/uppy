@@ -47,8 +47,7 @@
     "lodash": "^4.17.23",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
-    "nanoid": "^5.0.9",
-    "preact": "^10.26.10"
+    "nanoid": "^5.0.9"
   },
   "devDependencies": {
     "@types/deep-freeze": "^0",
@@ -57,8 +56,12 @@
     "jsdom": "^26.1.0",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
+    "preact": "^10.26.10",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "preact": "^10.26.10"
   }
 }

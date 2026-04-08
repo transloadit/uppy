@@ -44,11 +44,11 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "@uppy/utils": "workspace:^"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "preact": "^10.26.10"
   },
   "publishConfig": {
     "access": "public"
@@ -57,6 +57,7 @@
     "cssnano": "^7.0.7",
     "postcss": "^8.5.6",
     "postcss-cli": "^11.0.1",
+    "preact": "^10.26.10",
     "sass": "^1.89.2",
     "typescript": "^5.8.3"
   }
