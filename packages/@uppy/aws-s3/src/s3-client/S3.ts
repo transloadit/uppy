@@ -3,7 +3,7 @@
  * Modified to make it work with Uppy.
  */
 
-import { fetcher, NetworkError } from '@uppy/utils'
+import { fetcher } from '@uppy/utils'
 import * as C from './consts.js'
 import { createSigV4Signer } from './signer.js'
 import type * as IT from './types.js'
@@ -189,7 +189,7 @@ class S3mini {
   ) {
     this._checkKey(key)
 
-    const { url } = await this.request({
+    const { url, xhr } = await this.request({
       request: { method: 'PUT', key },
       data,
       onProgress,
@@ -199,6 +199,7 @@ class S3mini {
 
     return {
       location: U.removeQueryString(url),
+      etag: xhr.getResponseHeader('etag'),
     }
   }
 
@@ -211,12 +212,12 @@ class S3mini {
     if (typeof fileType !== 'string') {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const { responseText } = await this.request({
+    const { xhr } = await this.request({
       request: { method: 'POST', key },
       contentType: fileType,
     })
 
-    const parsed = U.parseXml(responseText) as Record<string, unknown>
+    const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
 
     if (parsed && typeof parsed === 'object') {
       // Check for both cases of InitiateMultipartUploadResult
@@ -250,7 +251,7 @@ class S3mini {
     signal?: AbortSignal,
   ) {
     this._validateUploadPartParams(key, uploadId, partNumber)
-    const { headers } = await this.request({
+    const { xhr } = await this.request({
       request: {
         method: 'PUT',
         key,
@@ -262,7 +263,7 @@ class S3mini {
       signal,
     })
 
-    const etag = headers.get('etag')
+    const etag = xhr.getResponseHeader('etag')
     if (etag == null) {
       throw new Error(
         `${C.ERROR_PREFIX}Missing ETag in uploadPart response headers`,
@@ -295,12 +296,14 @@ class S3mini {
     onProgress,
     signal,
     contentType,
+    shouldRetryCredentials = true,
   }: {
     request: IT.PresignableRequest
     data?: XMLHttpRequestBodyInit
     onProgress?: IT.OnProgressFn
     signal?: AbortSignal
     contentType?: string
+    shouldRetryCredentials?: boolean
   }): Promise<IT.XhrUploadResult> {
     // Wait for online before starting
     await this._waitForOnline(signal)
@@ -349,12 +352,8 @@ class S3mini {
       })
 
       return {
+        xhr,
         url,
-        status: xhr.status,
-        headers: {
-          get: (name: string) => xhr.getResponseHeader(name),
-        },
-        responseText: xhr.responseText,
       }
     } catch (err: unknown) {
       // Abort errors pass through
@@ -362,29 +361,14 @@ class S3mini {
         throw err
       }
 
-      const xhr = ((): XMLHttpRequest | null => {
-        // Network errors (from fetcher's NetworkError)
-        if (
-          err instanceof NetworkError ||
-          (err instanceof Error &&
-            'isNetworkError' in err &&
-            err.isNetworkError)
-        ) {
-          return 'request' in err ? (err as NetworkError).request : null
-        }
-        // Handle errors with attached XHR (from onAfterResponse throws)
-        if (
-          err instanceof Error &&
-          'request' in err &&
-          err.request instanceof XMLHttpRequest
-        ) {
-          return err.request
-        }
-        return null
-      })()
-
-      if (xhr) {
-        if (!xhr.status) {
+      // NetworkError or errors with attached XHR (from onAfterResponse throws)
+      if (
+        err instanceof Error &&
+        'request' in err &&
+        err.request instanceof XMLHttpRequest
+      ) {
+        const xhr = err.request as XMLHttpRequest
+        if (xhr.status === 0) {
           throw new U.S3NetworkError(
             'Network error during upload',
             'NETWORK',
@@ -401,6 +385,7 @@ class S3mini {
 
         // If expired token error and using getCredentials, clear cache and retry once
         if (
+          shouldRetryCredentials &&
           this.getCredentials != null &&
           serviceCode != null &&
           ['ExpiredToken', 'InvalidAccessKeyId'].includes(serviceCode)
@@ -414,6 +399,7 @@ class S3mini {
             onProgress,
             signal,
             contentType,
+            shouldRetryCredentials: false, // prevent infinite recursion
           })
         }
 
@@ -438,11 +424,11 @@ class S3mini {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const { responseText } = await this.request({
+    const { xhr } = await this.request({
       request: { method: 'GET', key, uploadId },
     })
 
-    const parsed = U.parseXml(responseText) as Record<string, unknown>
+    const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
     const result = (parsed.listPartsResult ||
       parsed.ListPartsResult ||
       parsed) as Record<string, unknown>
@@ -475,7 +461,7 @@ class S3mini {
   ) {
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
 
-    const { responseText } = await this.request({
+    const { xhr } = await this.request({
       request: {
         method: 'POST',
         key,
@@ -485,7 +471,7 @@ class S3mini {
       data: xmlBody,
     })
 
-    const parsed = U.parseXml(responseText)
+    const parsed = U.parseXml(xhr.responseText)
     if (parsed && typeof parsed === 'object') {
       // Check for both cases (camelCase from our parser, PascalCase from S3)
       const result =
@@ -534,11 +520,11 @@ class S3mini {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const { responseText } = await this.request({
+    const { xhr } = await this.request({
       request: { method: 'DELETE', key, uploadId },
     })
 
-    const parsed = U.parseXml(responseText) as Record<string, unknown>
+    const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
     if (
       parsed &&
       'error' in parsed &&
@@ -567,11 +553,11 @@ class S3mini {
 
   /** Deletes an object from the bucket. Returns true on success. */
   public async deleteObject(key: string) {
-    const { status } = await this.request({
+    const { xhr } = await this.request({
       request: { method: 'DELETE', key },
     })
 
-    if (status !== 200 && status !== 204) {
+    if (xhr.status !== 200 && xhr.status !== 204) {
       throw new Error(
         `${C.ERROR_PREFIX}Failed to delete object. HTTP status: ${status}`,
       )

@@ -134,10 +134,6 @@ export type OnProgressFn = (bytesUploaded: number, bytesTotal: number) => void
 
 /** Raw XHR upload response (internal to S3mini) */
 export interface XhrUploadResult {
-  status: number
-  headers: {
-    get(name: string): string | null
-  }
-  responseText: string
+  xhr: XMLHttpRequest
   url: string
 }

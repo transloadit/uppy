@@ -2,7 +2,6 @@ import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { S3mini } from '../../src/s3-client/S3.js'
 import { createSigV4Signer } from '../../src/s3-client/signer.js'
-import type { UploadPart } from '../../src/s3-client/types.js'
 import { randomBytes } from '../test-utils/browser-crypto.js'
 import { accessKeyId, getConfig, secretAccessKey } from './config.js'
 
@@ -88,7 +87,6 @@ if (config) {
 
       const result = await s3client.putObject(key, fileContents, 'text/plain')
 
-      expect(result.ok).toBe(true)
       expect(result.location).toBeDefined()
       expect(result.location).toContain(key)
       // location should be a clean URL without query string (no signing params)
@@ -101,17 +99,23 @@ if (config) {
       const partSize = 5 * 1024 * 1024 // 5MB
       const part = randomBytes(partSize)
 
-      const uploadId = await s3client.createMultipartUpload(
+      const { uploadId } = await s3client.createMultipartUpload(
         key,
         'application/octet-stream',
       )
       expect(uploadId).toBeDefined()
 
-      const uploaded = await s3client.uploadPart(key, uploadId, part, 1)
-      expect(uploaded.etag).toBeDefined()
+      const partNumber = 1
+      const { etag } = await s3client.uploadPart(
+        key,
+        uploadId,
+        part,
+        partNumber,
+      )
+      expect(etag).toBeDefined()
 
       const result = await s3client.completeMultipartUpload(key, uploadId, [
-        uploaded,
+        { etag, partNumber },
       ])
       expect(result.etag).toBeDefined()
       expect(result.location).toBeDefined()
@@ -155,7 +159,6 @@ if (config) {
 
         try {
           const result = await s3.putObject(testKey, 'Hello STS!', 'text/plain')
-          expect(result.ok).toBe(true)
           expect(result.location).toBeDefined()
           expect(result.location).toContain(testKey)
           expect(result.location).not.toContain('X-Amz-Signature')
@@ -235,17 +238,18 @@ if (config) {
         const partSize = 5 * 1024 * 1024 // 5MB
         const part = randomBytes(partSize)
 
-        const uploadId = await s3.createMultipartUpload(
+        const { uploadId } = await s3.createMultipartUpload(
           key,
           'application/octet-stream',
         )
         expect(uploadId).toBeDefined()
 
-        const uploaded = await s3.uploadPart(key, uploadId, part, 1)
-        expect(uploaded.etag).toBeDefined()
+        const partNumber = 1
+        const { etag } = await s3.uploadPart(key, uploadId, part, partNumber)
+        expect(etag).toBeDefined()
 
         const result = await s3.completeMultipartUpload(key, uploadId, [
-          uploaded,
+          { etag, partNumber },
         ])
         expect(result.etag).toBeDefined()
         expect(result.location).toBeDefined()
@@ -263,8 +267,7 @@ if (config) {
     // we don't need an explicit eTag method as we already get eTag in the putOject response
     it('putObject uploads successfully and returns ETag', async () => {
       const response = await s3client.putObject(key, content, 'text/plain')
-      expect(response.status).toBe(200)
-      expect(response.headers.get('etag')).toBeDefined()
+      expect(response.etag).toBeDefined()
       await s3client.deleteObject(key)
     })
 
@@ -278,8 +281,7 @@ if (config) {
       )
 
       expect(response).toBeDefined()
-      expect(response.status).toBe(200)
-      expect(response.headers.get('etag')).toBeDefined()
+      expect(response.etag).toBeDefined()
 
       // cleanup
 
@@ -289,7 +291,7 @@ if (config) {
     // test createMultipartUpload
 
     it('createMultipartUpload returns a valid uploadId', async () => {
-      const uploadId = await s3client.createMultipartUpload(
+      const { uploadId } = await s3client.createMultipartUpload(
         key_bin,
         'application/octet-stream',
       )
@@ -306,7 +308,7 @@ if (config) {
     it('uploadPart returns partNumber and Etag', async () => {
       const partData = randomBytes(EIGHT_MB)
 
-      const uploadId = await s3client.createMultipartUpload(
+      const { uploadId } = await s3client.createMultipartUpload(
         key_bin,
         'application/octet-stream',
       )
@@ -320,7 +322,6 @@ if (config) {
       )
 
       expect(partResult).toBeDefined()
-      expect(partResult.partNumber).toBe(1)
       expect(partResult.etag).toBeDefined()
       expect(typeof partResult.etag).toBe('string')
       expect(partResult.etag.length).toBe(32)
@@ -336,14 +337,14 @@ if (config) {
       const partSize = EIGHT_MB
       const totalParts = Math.ceil(large_buffer.byteLength / partSize)
 
-      const uploadId = await s3client.createMultipartUpload(
+      const { uploadId } = await s3client.createMultipartUpload(
         key_bin,
         'application/octet-stream',
       )
       expect(uploadId).toBeDefined()
 
       // upload all parts
-      const uploadPromises: Promise<UploadPart>[] = []
+      const uploadPromises: Promise<{ etag: string }>[] = []
       for (let i = 0; i < totalParts; i++) {
         const partBuffer = large_buffer.subarray(
           i * partSize,
@@ -359,15 +360,14 @@ if (config) {
 
       expect(uploadResponses.length).toBe(totalParts)
 
-      uploadResponses.forEach((response, index) => {
-        expect(response.partNumber).toBe(index + 1)
+      uploadResponses.forEach((response) => {
         expect(response.etag).toBeDefined()
       })
 
       // create multipart upload
 
-      const parts = uploadResponses.map((response) => ({
-        partNumber: response.partNumber,
+      const parts = uploadResponses.map((response, index) => ({
+        partNumber: index + 1,
         etag: response.etag,
       }))
 
@@ -381,7 +381,7 @@ if (config) {
       expect(typeof completeResponse).toBe('object')
       expect(completeResponse.etag).toBeDefined()
       expect(typeof completeResponse.etag).toBe('string')
-      expect(completeResponse.etag.length).toBe(32 + 2)
+      expect(completeResponse.etag!.length).toBe(32 + 2)
 
       // cleanup
 
@@ -390,7 +390,7 @@ if (config) {
 
     it('abortMultipartUpload cancels upload successfully', async () => {
       // start upload
-      const uploadId = await s3client.createMultipartUpload(
+      const { uploadId } = await s3client.createMultipartUpload(
         key_abort_multipart,
         'application/octet-stream',
       )
@@ -401,21 +401,13 @@ if (config) {
       await s3client.uploadPart(key_abort_multipart, uploadId, partData, 1)
 
       // abort
-      const abortResult = await s3client.abortMultipartUpload(
-        key_abort_multipart,
-        uploadId,
-      )
-
-      expect(abortResult).toBeDefined()
-      expect(abortResult.status).toBe('Aborted')
-      expect(abortResult.key).toBe(key_abort_multipart)
-      expect(abortResult.uploadId).toBe(uploadId)
+      await s3client.abortMultipartUpload(key_abort_multipart, uploadId)
     })
 
     it('listParts returns uploaded parts correctly', async () => {
       const partSize = EIGHT_MB
 
-      const uploadId = await s3client.createMultipartUpload(
+      const { uploadId } = await s3client.createMultipartUpload(
         key_list_parts,
         'application/octet-stream',
       )
