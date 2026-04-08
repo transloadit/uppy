@@ -22,13 +22,12 @@ FROM node:22.18.0-alpine
 WORKDIR /app
 
 # copy required files from build stage.
-COPY --from=build /app/packages/@uppy/companion/bin /app/bin
-COPY --from=build /app/packages/@uppy/companion/lib /app/lib
+COPY --from=build /app/packages/@uppy/companion/dist /app/dist
 COPY --from=build /app/packages/@uppy/companion/package.json /app/package.json
 COPY --from=build /app/packages/@uppy/companion/node_modules /app/node_modules
 
 ENV PATH "${PATH}:/app/node_modules/.bin"
 
-CMD ["node","/app/bin/companion"]
+CMD ["node","/app/dist/bin/companion.js"]
 # This can be overruled later
 EXPOSE 3020

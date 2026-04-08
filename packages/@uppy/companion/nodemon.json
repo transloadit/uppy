@@ -9,5 +9,5 @@
   "debug": true,
   "watch": ["/app/", "/src/"],
   "ext": "js dust html ejs css scss rb json htpasswd",
-  "exec": "node /app/lib/standalone/start-server.js"
+  "exec": "node /app/dist/standalone/start-server.js"
 }
