@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import getAllowedHosts, { isOriginAllowed } from './getAllowedHosts.js'
+import getAllowedHosts from './getAllowedHosts.js'
 
 describe('getAllowedHosts', () => {
   it('can convert companionAllowedHosts', () => {
@@ -28,22 +28,5 @@ describe('getAllowedHosts', () => {
     expect(getAllowedHosts(undefined, '//server.com:80/test')).toBe(
       'https:\\/\\/server\\.com:80',
     )
-  })
-})
-
-describe('isOriginAllowed', () => {
-  it('should check origin', () => {
-    expect(isOriginAllowed('a', [/^.+$/])).toBeTruthy()
-    expect(isOriginAllowed('a', ['^.+$'])).toBeTruthy()
-    expect(
-      isOriginAllowed('www.transloadit.com', ['^www\\.transloadit\\.com$']),
-    ).toBeTruthy()
-    expect(
-      isOriginAllowed('www.transloadit.com', ['^transloadit\\.com$']),
-    ).toBeFalsy()
-    expect(isOriginAllowed('match', ['fail', 'match'])).toBeTruthy()
-    expect(
-      isOriginAllowed('www.transloadit.com', ['\\.transloadit\\.com$']),
-    ).toBeTruthy()
   })
 })

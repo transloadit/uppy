@@ -47,15 +47,3 @@ export default function getAllowedHosts(
   ret = escapeRegex(ret)
   return ret
 }
-
-export function isOriginAllowed(
-  origin: string,
-  allowedOrigin: string | RegExp | Array<string | RegExp> | undefined,
-): boolean {
-  const patterns = Array.isArray(allowedOrigin)
-    ? allowedOrigin.map(wrapInRegex)
-    : [wrapInRegex(allowedOrigin)]
-  return patterns.some(
-    (pattern) => pattern?.test(origin) || pattern?.test(`${origin}/`),
-  ) // allowing for trailing '/'
-}

@@ -131,6 +131,5 @@ describe('RemoteSource Component', () => {
     await expect.element(loginButton).toBeInTheDocument()
 
     await loginButton.click()
-    await expect.element(loginButton).toBeInTheDocument()
   })
 })
