@@ -5,7 +5,7 @@
  */
 
 import * as C from './consts.js'
-import type { presignableRequest, presignedResponse } from './types.js'
+import type { PresignableRequest, presignedResponse } from './types.js'
 import * as U from './utils.js'
 
 export interface SignerConfig {
@@ -45,15 +45,9 @@ export function createSigV4Presigner(config: SignerConfig) {
   }
 
   return async function presign(
-    request: presignableRequest,
+    request: PresignableRequest,
   ): Promise<presignedResponse> {
-    const {
-      method,
-      key,
-      uploadId,
-      partNumber,
-      expiresIn = DEFAULT_EXPIRES_IN,
-    } = request
+    const { method, key, expiresIn = DEFAULT_EXPIRES_IN } = request
 
     // Build the URL - need to track encoded path separately because URL object decodes it
     const url = new URL(endpoint)
@@ -92,15 +86,15 @@ export function createSigV4Presigner(config: SignerConfig) {
     }
 
     // Add multipart-specific params
-    if (uploadId) {
-      url.searchParams.set('uploadId', uploadId)
+    if ('uploadId' in request) {
+      url.searchParams.set('uploadId', request.uploadId)
     }
-    if (partNumber !== undefined) {
-      url.searchParams.set('partNumber', String(partNumber))
+    if ('partNumber' in request) {
+      url.searchParams.set('partNumber', String(request.partNumber))
     }
 
     // For CreateMultipartUpload, add uploads param
-    if (method === 'POST' && !uploadId) {
+    if (method === 'POST' && !('uploadId' in request)) {
       url.searchParams.set('uploads', '')
     }
 

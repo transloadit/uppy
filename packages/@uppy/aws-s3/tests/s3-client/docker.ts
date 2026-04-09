@@ -1,32 +1,23 @@
 import { exec, spawn } from 'node:child_process'
-import { resolve } from 'node:path'
 import { promisify } from 'node:util'
-
-const CWD = resolve('.')
 
 const execAsync = promisify(exec)
 
-export async function getContainerName(serviceName) {
-  try {
-    // Find container by service name using docker ps
-    const { stdout } = await execAsync(
-      `docker ps --filter "label=com.docker.compose.service=${serviceName}" --format "{{.Names}}"`,
-    )
-    const containerName = stdout.trim().split('\n')[0] // Get first matching container
-    if (!containerName) {
-      throw new Error(`No running container found for service: ${serviceName}`)
-    }
-    return containerName
-  } catch (error) {
-    throw new Error(
-      `Failed to find container for service ${serviceName}: ${error.message}`,
-    )
+export async function getContainerName(serviceName: string) {
+  // Find container by service name using docker ps
+  const { stdout } = await execAsync(
+    `docker ps --filter "label=com.docker.compose.service=${serviceName}" --format "{{.Names}}"`,
+  )
+  const containerName = stdout.trim().split('\n')[0] // Get first matching container
+  if (!containerName) {
+    throw new Error(`No running container found for service: ${serviceName}`)
   }
+  return containerName
 }
 
 export async function execDockerCommand(
-  containerName,
-  command,
+  containerName: string,
+  command: string,
   timeoutMs = 10000,
 ) {
   // If it's a service name (like 'garage'), find the actual container name
@@ -34,9 +25,7 @@ export async function execDockerCommand(
   if (['garage', 'minio', 'ceph'].includes(containerName)) {
     try {
       actualContainerName = await getContainerName(containerName)
-      console.log(
-        `Found container: ${actualContainerName} for service: ${containerName}`,
-      )
+      // console.log(`Found container: ${actualContainerName} for service: ${containerName}`,)
     } catch (_error) {
       console.log(`Using container name as-is: ${containerName}`)
     }
@@ -74,27 +63,27 @@ export async function execDockerCommand(
   }
 }
 
-function run(cmd, args) {
-  return new Promise((res, rej) => {
-    const p = spawn(cmd, args, { cwd: CWD, stdio: 'inherit' })
+async function run(cmd: string, args: string[], env?: Record<string, string>) {
+  // console.log('running command:', cmd, args.join(' '))
+  return new Promise<void>((res, rej) => {
+    const p = spawn(cmd, args, {
+      stdio: 'inherit',
+      env: { ...process.env, ...env },
+    })
     p.on('close', (code) =>
       code === 0
         ? res()
         : rej(new Error(`${cmd} ${args.join(' ')} exited ${code}`)),
     )
+    p.on('error', (err) => rej(err))
   })
 }
-export const composeUp = (file) =>
-  run('docker', ['compose', '-f', file, 'up', '-d', '--force-recreate'])
-export const composeUpWait = (file) =>
-  run('docker', [
-    'compose',
-    '-f',
-    file,
-    'up',
-    '-d',
-    '--force-recreate',
-    '--wait',
-  ])
-export const composeDown = (file) =>
+
+export const composeUpWait = (file: string, env?: Record<string, string>) =>
+  run(
+    'docker',
+    ['compose', '-f', file, 'up', '-d', '--force-recreate', '--wait'],
+    env,
+  )
+export const composeDown = (file: string) =>
   run('docker', ['compose', '-f', file, 'down', '--remove-orphans', '-v'])

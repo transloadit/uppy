@@ -1,4 +1,3 @@
-import type { Body } from '@uppy/utils'
 import { createAbortError } from '@uppy/utils'
 
 import type { AwsS3Part } from './index.js'
@@ -21,10 +20,4 @@ export type MultipartUploadResultWithSignal = MultipartUploadResult & {
 export type UploadPartBytesResult = {
   ETag: string
   location?: string
-}
-
-export interface AwsBody extends Body {
-  location: string
-  key: string
-  bucket: string
 }
