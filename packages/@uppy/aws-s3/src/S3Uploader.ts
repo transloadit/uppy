@@ -212,11 +212,6 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     // Clean up event listeners
     this.#eventManager.remove()
     if (opts?.abortInS3 !== false && this.#uploadId) {
-      // Clear persisted resume state — the upload no longer exists in S3,
-      // so retries must start fresh instead of attempting to resume.
-      this.#options.uppy.setFileState(this.#options.file.id, {
-        s3Multipart: undefined,
-      })
       if (!this.#key) {
         throw new Error('Missing S3 object key for aborting upload')
       }
