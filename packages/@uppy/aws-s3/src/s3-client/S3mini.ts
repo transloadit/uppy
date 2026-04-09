@@ -117,14 +117,16 @@ class S3mini extends S3Client {
 
     // Cache the promise so concurrent calls wait for the same fetch
     if (this.cachedCredentialsPromise == null) {
-      try {
-        const creds = await this.getCredentials!({})
-        this.cachedCredentials = creds
-        return creds
-      } finally {
-        // Clear promise cache after resolution to allow future retries
-        this.cachedCredentialsPromise = undefined
-      }
+      this.cachedCredentialsPromise = (async () => {
+        try {
+          const creds = await this.getCredentials!({})
+          this.cachedCredentials = creds
+          return creds
+        } finally {
+          // Clear promise cache after resolution to allow future retries
+          this.cachedCredentialsPromise = undefined
+        }
+      })()
     }
 
     return this.cachedCredentialsPromise
