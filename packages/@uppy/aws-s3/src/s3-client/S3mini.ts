@@ -191,12 +191,8 @@ class S3mini extends S3Client {
   ) {
     this._checkKey(key)
 
-    const request: IT.PresignableRequest = { method: 'PUT', key }
-    const { url } = await this.signRequest(request)
-
-    const xhr = await this.request({
-      url,
-      method: request.method,
+    const { xhr, url } = await this.request({
+      request: { method: 'PUT', key },
       data,
       onProgress,
       signal,
@@ -221,11 +217,8 @@ class S3mini extends S3Client {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
 
-    const request: IT.PresignableRequest = { method: 'POST', key }
-    const { url } = await this.signRequest(request)
-    const xhr = await this.request({
-      url,
-      method: request.method,
+    const { xhr } = await this.request({
+      request: { method: 'POST', key },
       contentType: fileType,
     })
 
@@ -264,16 +257,13 @@ class S3mini extends S3Client {
   ) {
     this._validateUploadPartParams(key, uploadId, partNumber)
 
-    const request: IT.PresignableRequest = {
-      method: 'PUT',
-      key,
-      uploadId,
-      partNumber,
-    }
-    const { url } = await this.signRequest(request)
-    const xhr = await this.request({
-      url,
-      method: request.method,
+    const { xhr } = await this.request({
+      request: {
+        method: 'PUT',
+        key,
+        uploadId,
+        partNumber,
+      },
       data,
       onProgress,
       signal,
@@ -298,22 +288,20 @@ class S3mini extends S3Client {
    * - Stall detection via ProgressTimeout
    */
   private async request({
-    url,
-    method,
+    request,
     data,
     onProgress,
     signal,
     contentType,
     shouldRetryCredentials = true,
   }: {
-    url: string
-    method: IT.HttpMethod
+    request: IT.PresignableRequest
     data?: XMLHttpRequestBodyInit
     onProgress?: IT.OnProgressFn
     signal?: AbortSignal
     contentType?: string
     shouldRetryCredentials?: boolean
-  }): Promise<XMLHttpRequest> {
+  }): Promise<{ xhr: XMLHttpRequest; url: string }> {
     // Wait for online before starting
     await this.waitForOnline(signal)
 
@@ -323,14 +311,18 @@ class S3mini extends S3Client {
     }
 
     try {
-      return await this.xhr({
+      const { url } = await this.signRequest(request)
+
+      const xhr = await this.xhr({
         url,
-        method,
+        method: request.method,
         data,
         onProgress,
         signal,
         contentType,
       })
+
+      return { xhr, url }
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (
@@ -365,8 +357,7 @@ class S3mini extends S3Client {
 
           // Retry with fresh credentials
           return this.request({
-            url,
-            method,
+            request,
             data,
             onProgress,
             signal,
@@ -396,11 +387,8 @@ class S3mini extends S3Client {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const request: IT.PresignableRequest = { method: 'GET', key, uploadId }
-    const { url } = await this.signRequest(request)
-    const xhr = await this.request({
-      url,
-      method: request.method,
+    const { xhr } = await this.request({
+      request: { method: 'GET', key, uploadId },
     })
 
     const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
@@ -436,11 +424,8 @@ class S3mini extends S3Client {
   ) {
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
 
-    const request: IT.PresignableRequest = { method: 'POST', key, uploadId }
-    const { url } = await this.signRequest(request)
-    const xhr = await this.request({
-      url,
-      method: request.method,
+    const { xhr } = await this.request({
+      request: { method: 'POST', key, uploadId },
       contentType: C.XML_CONTENT_TYPE,
       data: xmlBody,
     })
@@ -494,11 +479,8 @@ class S3mini extends S3Client {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const request: IT.PresignableRequest = { method: 'DELETE', key, uploadId }
-    const { url } = await this.signRequest(request)
-    const xhr = await this.request({
-      url,
-      method: request.method,
+    const { xhr } = await this.request({
+      request: { method: 'DELETE', key, uploadId },
     })
 
     const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
@@ -530,17 +512,13 @@ class S3mini extends S3Client {
 
   /** Deletes an object from the bucket. Returns true on success. */
   public override async deleteObject(key: string) {
-    const request: IT.PresignableRequest = { method: 'DELETE', key }
-    const { url } = await this.signRequest(request)
-
-    const xhr = await this.request({
-      url,
-      method: request.method,
+    const { xhr } = await this.request({
+      request: { method: 'DELETE', key },
     })
 
     if (xhr.status !== 200 && xhr.status !== 204) {
       throw new Error(
-        `${C.ERROR_PREFIX}Failed to delete object. HTTP status: ${status}`,
+        `${C.ERROR_PREFIX}Failed to delete object. HTTP status: ${xhr.status}`,
       )
     }
   }
