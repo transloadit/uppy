@@ -212,7 +212,7 @@ class S3mini extends S3Client {
   public override async createMultipartUpload(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
-    metadata?: Record<string, unknown>,
+    metadata?: Record<string, unknown>, // todo support metadata here too?
   ) {
     this._checkKey(key)
     if (typeof fileType !== 'string') {
