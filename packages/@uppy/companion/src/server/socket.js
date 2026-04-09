@@ -101,7 +101,6 @@ export default function setupSockets(server, companionOptions) {
   const urlBuilder = getURLBuilder(companionOptions)
 
   const externalBasePath = urlBuilder('', true, true)
-  console.log('externalBasePath', externalBasePath)
 
   wss.on('connection', (ws, req) => {
     // basic router:
