@@ -20,7 +20,9 @@ import {
 } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import S3Uploader, { type UploadResult } from './S3Uploader.js'
-import S3mini from './s3-client/S3.js'
+import S3Companion from './s3-client/CompanionS3.js'
+import type S3Client from './s3-client/S3Client.js'
+import S3mini from './s3-client/S3mini.js'
 import type * as IT from './s3-client/types.js'
 
 // ============================================================================
@@ -125,7 +127,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 > {
   static VERSION = packageJson.version
 
-  #s3Client!: S3mini
+  #s3Client!: S3Client
   #queue!: TaskQueue
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
@@ -181,9 +183,8 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       if (typeof this.opts.companionEndpoint !== 'string') {
         throw new TypeError('companionEndpoint must be a string')
       }
-      // Mode: Companion signing
-      this.#s3Client = new S3mini({
-        signRequest: this.#createCompanionSigner(this.opts.companionEndpoint),
+      this.#s3Client = new S3Companion({
+        companionEndpoint: this.opts.companionEndpoint,
       })
     } else if ('getCredentials' in this.opts) {
       if (typeof this.opts.s3Endpoint !== 'string') {
@@ -214,23 +215,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
       throw new TypeError(
         'One of options `companionEndpoint`, `signRequest`, or `getCredentials` is required',
       )
-    }
-  }
-
-  /**
-   * Creates a signing function that calls Companion's /s3/sign endpoint.
-   */
-  #createCompanionSigner(companionUrl: string): IT.SignRequestFn {
-    return async (request) => {
-      const response = await fetch(`${companionUrl}/s3/sign`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(request),
-      })
-      if (!response.ok) {
-        throw new Error(`Failed to sign request: ${response.statusText}`)
-      }
-      return response.json()
     }
   }
 
@@ -285,6 +269,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           uppy: this.uppy,
           s3Client: this.#s3Client,
           file,
+          metadata: this.#getAllowedMeta(file),
           key: this.#generateKey(file),
           shouldUseMultipart: this.#shouldUseMultipart(file),
           getChunkSize: this.opts.getChunkSize,
@@ -359,22 +344,26 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   // Remote File Upload
   // --------------------------------------------------------------------------
 
+  #getAllowedMeta(file: UppyFile<M, B>) {
+    const allowedMetaFields = getAllowedMetaFields(
+      this.opts.allowedMetaFields,
+      file.meta,
+    )
+    return Object.fromEntries(
+      allowedMetaFields.map((key) => [key, file.meta[key]]),
+    )
+  }
+
   /**
    * Builds the request body sent to Companion's provider get endpoint.
    * Tells Companion to use its server-side S3 upload path.
    */
   #getCompanionClientArgs(file: RemoteUppyFile<M, B>): Record<string, unknown> {
-    const allowedMetaFields = getAllowedMetaFields(
-      this.opts.allowedMetaFields,
-      file.meta,
-    )
     return {
       ...file.remote.body,
       protocol: 's3-multipart',
       size: file.data.size,
-      metadata: Object.fromEntries(
-        allowedMetaFields.map((key) => [key, file.meta[key]]),
-      ),
+      metadata: this.#getAllowedMeta(file),
     }
   }
 

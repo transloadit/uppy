@@ -131,9 +131,3 @@ export type BinaryData = ArrayBuffer | Uint8Array | Blob
 
 /** Progress callback for upload operations */
 export type OnProgressFn = (bytesUploaded: number, bytesTotal: number) => void
-
-/** Raw XHR upload response (internal to S3mini) */
-export interface XhrUploadResult {
-  xhr: XMLHttpRequest
-  url: string
-}

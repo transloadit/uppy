@@ -1,4 +1,10 @@
-import type { ErrorWithCode, XmlMap, XmlValue } from './types.js'
+import type { XmlMap, XmlValue } from './types.js'
+
+export const sanitizeXmlETag = (etag: string): string =>
+  etag.replace(/^(&quot;|&#34;)+|(&quot;|&#34;)+$/g, '')
+
+export const sanitizeETag = (etag: string | null): string | undefined =>
+  etag?.replace(/^"+|"+$/g, '')
 
 /** Strips query string and hash from a URL to derive the object location. */
 export function removeQueryString(urlString: string): string {
@@ -8,25 +14,8 @@ export function removeQueryString(urlString: string): string {
   return urlObject.href
 }
 
-const ENCODR = new TextEncoder()
-const chunkSize = 0x8000 // 32KB chunks
+const textEncoder = new TextEncoder()
 const HEXS = '0123456789abcdef'
-
-export const getByteSize = (data: unknown): number => {
-  if (typeof data === 'string') {
-    return ENCODR.encode(data).byteLength
-  }
-  if (data instanceof ArrayBuffer) {
-    return data.byteLength
-  }
-  if (ArrayBuffer.isView(data)) {
-    return data.byteLength
-  }
-  if (data instanceof Blob) {
-    return data.size
-  }
-  throw new Error('Unsupported data type')
-}
 
 /**
  * Turn a raw ArrayBuffer into its hexadecimal representation.
@@ -43,27 +32,12 @@ export const hexFromBuffer = (buffer: ArrayBuffer): string => {
 }
 
 /**
- * Turn a raw ArrayBuffer into its base64 representation.
- * @param {ArrayBuffer} buffer The raw bytes.
- * @returns {string} Base64 string
- */
-export const base64FromBuffer = (buffer: ArrayBuffer): string => {
-  const bytes = new Uint8Array(buffer)
-  let result = ''
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    const chunk = bytes.subarray(i, i + chunkSize)
-    result += btoa(String.fromCodePoint(...chunk))
-  }
-  return result
-}
-
-/**
  * Compute SHA-256 hash of arbitrary string data.
  * @param {string} content The content to be hashed.
  * @returns {ArrayBuffer} The raw hash
  */
 export const sha256 = async (content: string): Promise<ArrayBuffer> => {
-  const data = ENCODR.encode(content)
+  const data = textEncoder.encode(content)
 
   return await globalThis.crypto.subtle.digest('SHA-256', data)
 }
@@ -80,31 +54,14 @@ export const hmac = async (
 ): Promise<ArrayBuffer> => {
   const secret = await globalThis.crypto.subtle.importKey(
     'raw',
-    typeof key === 'string' ? ENCODR.encode(key) : key,
+    typeof key === 'string' ? textEncoder.encode(key) : key,
     { name: 'HMAC', hash: 'SHA-256' },
     false,
     ['sign'],
   )
-  const data = ENCODR.encode(content)
+  const data = textEncoder.encode(content)
 
   return await globalThis.crypto.subtle.sign('HMAC', secret, data)
-}
-
-/**
- * Sanitize ETag value by removing quotes and XML entities
- * @param etag ETag value to sanitize
- * @returns Sanitized ETag
- */
-export const sanitizeETag = (etag: string): string => {
-  const replaceChars: Record<string, string> = {
-    '"': '',
-    '&quot;': '',
-    '&#34;': '',
-  }
-  return etag.replaceAll(
-    /(^("|&quot;|&#34;))|(("|&quot;|&#34;)$)/g,
-    (m) => replaceChars[m] || '',
-  )
 }
 
 const entityMap = {
@@ -114,20 +71,6 @@ const entityMap = {
   '&gt;': '>',
   '&amp;': '&',
 } as const
-
-/**
- * Escape special characters for XML
- * @param value String to escape
- * @returns XML-escaped string
- */
-export const escapeXml = (value: string): string => {
-  return value
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&apos;')
-}
 
 const unescapeXml = (value: string): string =>
   value.replaceAll(
@@ -190,7 +133,7 @@ const encodeAsHex = (c: string): string =>
  * @param uriStr URI string to escape
  * @returns Escaped URI string
  */
-export const uriEscape = (uriStr: string): string => {
+const uriEscape = (uriStr: string): string => {
   return encodeURIComponent(uriStr).replace(/[!'()*]/g, encodeAsHex)
 }
 
@@ -201,17 +144,6 @@ export const uriEscape = (uriStr: string): string => {
  */
 export const uriResourceEscape = (string: string): string => {
   return uriEscape(string).replaceAll('%2F', '/')
-}
-
-export const extractErrCode = (e: unknown): string | undefined => {
-  if (typeof e !== 'object' || e === null) {
-    return undefined
-  }
-  const err = e as ErrorWithCode
-  if (typeof err.code === 'string') {
-    return err.code
-  }
-  return typeof err.cause?.code === 'string' ? err.cause.code : undefined
 }
 
 export class S3Error extends Error {

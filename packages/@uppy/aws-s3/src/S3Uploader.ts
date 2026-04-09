@@ -1,6 +1,6 @@
 import { EventManager, type Uppy } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta } from '@uppy/utils'
-import type S3mini from './s3-client/S3.js'
+import type S3Client from './s3-client/S3Client.js'
 
 /** Persisted S3 multipart state for Golden Retriever resume support */
 interface S3MultipartState {
@@ -37,8 +37,9 @@ const MAX_PARTS = 10000
 
 interface S3UploaderOptions<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
-  s3Client: S3mini
+  s3Client: S3Client
   file: LocalUppyFile<M, B>
+  metadata: Record<string, unknown>
   key: string
   shouldUseMultipart?: boolean
   getChunkSize?: (file: { size: number }) => number
@@ -71,7 +72,7 @@ interface ChunkState {
 
 export default class S3Uploader<M extends Meta, B extends Body> {
   readonly #data: NonNullable<LocalUppyFile<M, B>['data']>
-  readonly #key: string
+  #key: string | undefined
   readonly #options: S3UploaderOptions<M, B>
   readonly #eventManager: EventManager<M, B>
 
@@ -88,7 +89,6 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     }
     this.#options = options
     this.#data = options.file.data
-    this.#key = options.key
     this.#eventManager = new EventManager(options.uppy)
 
     // Detect resume state from file (persisted by Golden Retriever across page refreshes).
@@ -217,6 +217,9 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       this.#options.uppy.setFileState(this.#options.file.id, {
         s3Multipart: undefined,
       })
+      if (!this.#key) {
+        throw new Error('Missing S3 object key for aborting upload')
+      }
       this.#options.s3Client
         .abortMultipartUpload(this.#key, this.#uploadId)
         .catch((abortErr) => {
@@ -239,6 +242,9 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       await this.#createUpload()
       return
     }
+    if (!this.#key) {
+      throw new Error('Missing S3 object key for resuming upload')
+    }
     const existingParts = await this.#options.s3Client.listParts(
       this.#uploadId,
       this.#key,
@@ -260,10 +266,11 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const signal = this.#abortController?.signal
     signal?.throwIfAborted()
 
-    const { location } = await this.#options.s3Client.putObject(
-      this.#key,
+    const { location, key } = await this.#options.s3Client.putObject(
+      this.#options.key,
       this.#data,
       this.#options.file.type || 'application/octet-stream',
+      this.#options.metadata,
       (bytesUploaded: number) => {
         this.#chunkState[0].uploaded = bytesUploaded
         this.#onProgress()
@@ -273,7 +280,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
 
     this.#onSuccess({
       location,
-      key: this.#key,
+      key,
     })
   }
 
@@ -281,14 +288,23 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const signal = this.#abortController?.signal
     signal?.throwIfAborted()
 
-    const { uploadId } = await this.#options.s3Client.createMultipartUpload(
-      this.#key,
-      this.#options.file.type || 'application/octet-stream',
-    )
+    const { uploadId, key } =
+      await this.#options.s3Client.createMultipartUpload(
+        this.#options.key,
+        this.#options.file.type || 'application/octet-stream',
+        this.#options.metadata,
+      )
+    if (key == null) {
+      throw new Error(
+        'S3 client did not return object key for multipart upload',
+      )
+    }
+
+    this.#key = key
 
     // Persist resume state so Golden Retriever can restore it after page refresh
     this.#options.uppy.setFileState(this.#options.file.id, {
-      s3Multipart: { uploadId, key: this.#key },
+      s3Multipart: { uploadId, key },
     })
 
     this.#uploadId = uploadId
@@ -308,6 +324,9 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       const chunkData = this.#data.slice(chunk.start, chunk.end)
       const chunkIndex = i // Capture for closure (cannot use for-loop variable i directly in a closure)
 
+      if (this.#key == null) {
+        throw new Error('Missing S3 object key for uploading part')
+      }
       const { etag } = await this.#options.s3Client.uploadPart(
         this.#key,
         this.#uploadId!,
@@ -338,6 +357,10 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const parts = this.#chunkState.flatMap((state, i) =>
       state.etag ? [{ partNumber: i + 1, etag: state.etag }] : [],
     )
+
+    if (this.#key == null) {
+      throw new Error('Missing S3 object key for completing multipart upload')
+    }
 
     const { location, key } =
       await this.#options.s3Client.completeMultipartUpload(

@@ -3,8 +3,8 @@
  * Modified to make it work with Uppy.
  */
 
-import { fetcher } from '@uppy/utils'
 import * as C from './consts.js'
+import S3Client from './S3Client.js'
 import { createSigV4Signer } from './signer.js'
 import type * as IT from './types.js'
 import * as U from './utils.js'
@@ -36,11 +36,10 @@ import * as U from './utils.js'
  *
  * await s3.putObject('file.txt', 'Hello, World!');
  */
-class S3mini {
+class S3mini extends S3Client {
   readonly endpoint?: URL
   readonly region: string
   readonly requestSizeInBytes: number
-  readonly requestAbortTimeout?: number
 
   private readonly getCredentials?: IT.GetCredentialsFn
   private cachedCredentials?: IT.CredentialsResponse
@@ -50,9 +49,10 @@ class S3mini {
   constructor({
     region = 'auto',
     requestSizeInBytes = C.DEFAULT_REQUEST_SIZE_IN_BYTES,
-    requestAbortTimeout = undefined,
+    requestAbortTimeout,
     ...rest
   }: IT.S3Config) {
+    super({ requestAbortTimeout })
     if ('signRequest' in rest) {
       const { signRequest } = rest
       if (!signRequest) {
@@ -86,7 +86,6 @@ class S3mini {
 
     this.region = region
     this.requestSizeInBytes = requestSizeInBytes
-    this.requestAbortTimeout = requestAbortTimeout
   }
 
   /** Creates a presigner that fetches/caches credentials and generates pre-signed URLs. */
@@ -180,17 +179,22 @@ class S3mini {
    * @param onProgress - Optional progress callback
    * @param signal - Optional abort signal
    */
-  public async putObject(
+  public override async putObject(
     key: string,
     data: XMLHttpRequestBodyInit,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
+    metadata?: Record<string, unknown>,
     onProgress?: IT.OnProgressFn,
     signal?: AbortSignal,
   ) {
     this._checkKey(key)
 
-    const { url, xhr } = await this.request({
-      request: { method: 'PUT', key },
+    const request: IT.PresignableRequest = { method: 'PUT', key }
+    const { url } = await this.signRequest(request)
+
+    const xhr = await this.request({
+      url,
+      method: request.method,
       data,
       onProgress,
       signal,
@@ -199,21 +203,27 @@ class S3mini {
 
     return {
       location: U.removeQueryString(url),
-      etag: xhr.getResponseHeader('etag'),
+      etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
+      key,
     }
   }
 
   /** Initiates a multipart upload and returns the upload ID. */
-  public async createMultipartUpload(
+  public override async createMultipartUpload(
     key: string,
     fileType: string = C.DEFAULT_STREAM_CONTENT_TYPE,
+    metadata?: Record<string, unknown>,
   ) {
     this._checkKey(key)
     if (typeof fileType !== 'string') {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
-    const { xhr } = await this.request({
-      request: { method: 'POST', key },
+
+    const request: IT.PresignableRequest = { method: 'POST', key }
+    const { url } = await this.signRequest(request)
+    const xhr = await this.request({
+      url,
+      method: request.method,
       contentType: fileType,
     })
 
@@ -230,7 +240,7 @@ class S3mini {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return { uploadId }
+          return { uploadId, key }
         }
       }
     }
@@ -242,7 +252,7 @@ class S3mini {
     )
   }
 
-  public async uploadPart(
+  public override async uploadPart(
     key: string,
     uploadId: string,
     data: XMLHttpRequestBodyInit,
@@ -251,35 +261,30 @@ class S3mini {
     signal?: AbortSignal,
   ) {
     this._validateUploadPartParams(key, uploadId, partNumber)
-    const { xhr } = await this.request({
-      request: {
-        method: 'PUT',
-        key,
-        uploadId,
-        partNumber,
-      },
+
+    const request: IT.PresignableRequest = {
+      method: 'PUT',
+      key,
+      uploadId,
+      partNumber,
+    }
+    const { url } = await this.signRequest(request)
+    const xhr = await this.request({
+      url,
+      method: request.method,
       data,
       onProgress,
       signal,
     })
 
-    const etag = xhr.getResponseHeader('etag')
+    const etag = U.sanitizeETag(xhr.getResponseHeader('etag'))
     if (etag == null) {
       throw new Error(
         `${C.ERROR_PREFIX}Missing ETag in uploadPart response headers`,
       )
     }
 
-    return {
-      etag: U.sanitizeETag(etag),
-    }
-  }
-
-  /**
-   * Helper to check if we're currently offline in a browser context.
-   */
-  private _isOffline(): boolean {
-    return typeof navigator !== 'undefined' && navigator.onLine === false
+    return { etag }
   }
 
   /**
@@ -291,76 +296,40 @@ class S3mini {
    * - Stall detection via ProgressTimeout
    */
   private async request({
-    request,
+    url,
+    method,
     data,
     onProgress,
     signal,
     contentType,
     shouldRetryCredentials = true,
   }: {
-    request: IT.PresignableRequest
+    url: string
+    method: IT.HttpMethod
     data?: XMLHttpRequestBodyInit
     onProgress?: IT.OnProgressFn
     signal?: AbortSignal
     contentType?: string
     shouldRetryCredentials?: boolean
-  }): Promise<IT.XhrUploadResult> {
+  }): Promise<XMLHttpRequest> {
     // Wait for online before starting
-    await this._waitForOnline(signal)
+    await this.waitForOnline(signal)
 
     // Check if aborted while waiting for online
     if (signal?.aborted) {
-      throw new DOMException('Upload aborted', 'AbortError')
+      throw new DOMException('Request aborted', 'AbortError')
     }
 
     try {
-      const { url } = await this.signRequest(request)
-
-      const xhr = await fetcher(url, {
-        method: request.method,
-        // XHR natively supports ArrayBuffer, Uint8Array, Blob, and string
-        body: ['GET', 'HEAD'].includes(request.method) ? undefined : data,
-        headers: contentType ? { 'Content-Type': contentType } : {},
-        signal,
-        timeout: this.requestAbortTimeout ?? 30_000,
-        retries: 3,
-        /**
-         * Retry logic:
-         * - Retries: 5xx server errors, 429 rate limiting
-         * - Skips: 4xx client errors (except 429), offline (handled separately)
-         */
-        shouldRetry: (xhr) => {
-          // If offline, don't retry via fetcher - our handler will resume
-          if (this._isOffline()) return false
-          // Don't retry client errors (except 429 rate limit)
-          if (xhr.status >= 400 && xhr.status < 500 && xhr.status !== 429) {
-            return false
-          }
-          return true
-        },
-        onUploadProgress: (event) => {
-          if (event.lengthComputable && onProgress) {
-            onProgress(event.loaded, event.total)
-          }
-        },
-        onTimeout: (timeout) => {
-          // Log stall detection - upload will continue but may be slow
-          console.warn(
-            `[S3mini] Upload stalled - no progress for ${Math.ceil(timeout / 1000)}s`,
-          )
-        },
-      })
-
-      return {
-        xhr,
+      return await this.xhr({
         url,
-      }
+        method,
+        data,
+        onProgress,
+        signal,
+        contentType,
+      })
     } catch (err: unknown) {
-      // Abort errors pass through
-      if (err instanceof DOMException && err.name === 'AbortError') {
-        throw err
-      }
-
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (
         err instanceof Error &&
@@ -370,7 +339,7 @@ class S3mini {
         const xhr = err.request as XMLHttpRequest
         if (xhr.status === 0) {
           throw new U.S3NetworkError(
-            'Network error during upload',
+            'Network error during S3 request',
             'NETWORK',
             err,
           )
@@ -394,7 +363,8 @@ class S3mini {
 
           // Retry with fresh credentials
           return this.request({
-            request,
+            url,
+            method,
             data,
             onProgress,
             signal,
@@ -416,7 +386,7 @@ class S3mini {
   }
 
   /** Lists uploaded parts for a multipart upload. */
-  public async listParts(
+  public override async listParts(
     uploadId: string,
     key: string,
   ): Promise<IT.UploadPart[]> {
@@ -424,8 +394,11 @@ class S3mini {
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
-    const { xhr } = await this.request({
-      request: { method: 'GET', key, uploadId },
+    const request: IT.PresignableRequest = { method: 'GET', key, uploadId }
+    const { url } = await this.signRequest(request)
+    const xhr = await this.request({
+      url,
+      method: request.method,
     })
 
     const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
@@ -447,26 +420,25 @@ class S3mini {
         )
         .map((p) => ({
           partNumber: parseInt(String(p.PartNumber), 10),
-          etag: U.sanitizeETag(String(p.ETag)),
+          etag: U.sanitizeXmlETag(String(p.ETag)),
         }))
     }
     return []
   }
 
   /** Completes a multipart upload by combining all uploaded parts. */
-  public async completeMultipartUpload(
+  public override async completeMultipartUpload(
     key: string,
     uploadId: string,
     parts: Array<IT.UploadPart>,
   ) {
     const xmlBody = this._buildCompleteMultipartUploadXml(parts)
 
-    const { xhr } = await this.request({
-      request: {
-        method: 'POST',
-        key,
-        uploadId,
-      },
+    const request: IT.PresignableRequest = { method: 'POST', key, uploadId }
+    const { url } = await this.signRequest(request)
+    const xhr = await this.request({
+      url,
+      method: request.method,
       contentType: C.XML_CONTENT_TYPE,
       data: xmlBody,
     })
@@ -495,7 +467,7 @@ class S3mini {
           )
         }
 
-        const etag = rawEtag ? U.sanitizeETag(rawEtag) : undefined
+        const etag = rawEtag ? U.sanitizeXmlETag(rawEtag) : undefined
 
         return {
           location: resultLocation,
@@ -514,14 +486,17 @@ class S3mini {
   }
 
   /** Aborts a multipart upload and removes all uploaded parts. */
-  public async abortMultipartUpload(key: string, uploadId: string) {
+  public override async abortMultipartUpload(key: string, uploadId: string) {
     this._checkKey(key)
     if (!uploadId) {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const { xhr } = await this.request({
-      request: { method: 'DELETE', key, uploadId },
+    const request: IT.PresignableRequest = { method: 'DELETE', key, uploadId }
+    const { url } = await this.signRequest(request)
+    const xhr = await this.request({
+      url,
+      method: request.method,
     })
 
     const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
@@ -552,9 +527,13 @@ class S3mini {
   }
 
   /** Deletes an object from the bucket. Returns true on success. */
-  public async deleteObject(key: string) {
-    const { xhr } = await this.request({
-      request: { method: 'DELETE', key },
+  public override async deleteObject(key: string) {
+    const request: IT.PresignableRequest = { method: 'DELETE', key }
+    const { url } = await this.signRequest(request)
+
+    const xhr = await this.request({
+      url,
+      method: request.method,
     })
 
     if (xhr.status !== 200 && xhr.status !== 204) {
@@ -571,53 +550,6 @@ class S3mini {
   public clearCachedCredentials(): void {
     this.cachedCredentials = undefined
     this.cachedCredentialsPromise = undefined
-  }
-
-  /**
-   * Waits for the browser to come back online.
-   * Returns a promise that resolves when the 'online' event fires,
-   * or rejects if the abort signal is triggered.
-   */
-  private _waitForOnline(signal?: AbortSignal): Promise<void> {
-    return new Promise((resolve, reject) => {
-      if (!this._isOffline()) {
-        resolve()
-        return
-      }
-      // Already online or not in browser
-      if (
-        typeof navigator === 'undefined' ||
-        navigator.onLine === true ||
-        navigator.onLine === undefined
-      ) {
-        resolve()
-        return
-      }
-
-      // Already aborted
-      if (signal?.aborted) {
-        reject(new DOMException('Upload aborted', 'AbortError'))
-        return
-      }
-
-      const cleanup = () => {
-        window.removeEventListener('online', onOnline)
-        signal?.removeEventListener('abort', onAbort)
-      }
-
-      const onOnline = () => {
-        cleanup()
-        resolve()
-      }
-
-      const onAbort = () => {
-        cleanup()
-        reject(new DOMException('Upload aborted', 'AbortError'))
-      }
-
-      window.addEventListener('online', onOnline)
-      signal?.addEventListener('abort', onAbort)
-    })
   }
 
   private _parseErrorXml(
