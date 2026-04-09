@@ -73,7 +73,7 @@ class S3Companion extends S3Client {
     })
 
     return {
-      location: U.removeQueryString(url),
+      location: `${url}${fields.key}`,
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
       key: fields.key,
     }
