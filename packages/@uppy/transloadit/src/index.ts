@@ -507,6 +507,16 @@ export default class Transloadit<
   #handleAssemblyStatusUpdate = (
     assemblyResponse: AssemblyResponse | undefined,
   ) => {
+    /**
+     * Note: We only Set a defined assemblyResponse into uppyState. Clearing plugin state is handled
+     * explicitly by `#prepareUpload` (new upload) and `#cancelAssembly` / `#onError`
+     * (user-initiated teardown). Otherwise the `this.assembly = undefined` cleanup
+     * in `#afterUpload`'s finally would wipe the final completed status from the
+     * UI right after upload completes.
+     */
+    if (assemblyResponse != null) {
+      this.setPluginState({ assemblyStatus: assemblyResponse })
+    }
     this.uppy.emit('restore:plugin-data-changed', {
       [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
     })
@@ -640,6 +650,7 @@ export default class Transloadit<
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
     this.uppy.emit('transloadit:assembly-cancelled', assembly)
     this.assembly = undefined
+    this.setPluginState({ assemblyStatus: undefined })
   }
 
   /**
@@ -653,6 +664,10 @@ export default class Transloadit<
         this.uppy.log(err)
       }
     }
+    // Always clear the cached Assembly status
+    // this.assembly was already set undefined by `#afterUpload` finally block
+    this.setPluginState({ assemblyStatus: undefined })
+
     // Reset allowNewUpload when upload is cancelled
     this.uppy.setState({ allowNewUpload: true })
   }
@@ -826,6 +841,10 @@ export default class Transloadit<
     // Prevent adding/dropping files during upload to avoid creating multiple assemblies
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
+
+    // Clear any previous Assembly's status so the UI doesn't show stale results
+    // from a prior run. The new status will be written on the next status event.
+    this.setPluginState({ assemblyStatus: undefined })
 
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function'
@@ -1009,6 +1028,7 @@ export default class Transloadit<
     this.uppy.on('restored', this.#onRestored)
 
     this.setPluginState({
+      assemblyStatus: undefined,
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
