@@ -323,8 +323,7 @@ describe('Transloadit', () => {
       assembly_id: 'flow-test-id',
       websocket_url: 'ws://localhost:8080',
       tus_url: 'http://localhost/resumable/files/',
-      assembly_ssl_url:
-        'https://api2.transloadit.com/assemblies/flow-test-id',
+      assembly_ssl_url: 'https://api2.transloadit.com/assemblies/flow-test-id',
     }
 
     const tusUploads = new Map()
@@ -344,9 +343,7 @@ describe('Transloadit', () => {
       }),
       http.post('http://localhost/resumable/files*', ({ request }) => {
         const uploadLengthHeader = request.headers.get('upload-length')
-        const uploadLength = uploadLengthHeader
-          ? Number(uploadLengthHeader)
-          : 0
+        const uploadLength = uploadLengthHeader ? Number(uploadLengthHeader) : 0
         const uploadId = `flow-upload-${uploadIndex++}`
         tusUploads.set(uploadId, {
           length: Number.isNaN(uploadLength) ? 0 : uploadLength,
@@ -369,9 +366,7 @@ describe('Transloadit', () => {
           if (!upload) return new HttpResponse(null, { status: 404 })
           const body = await request.arrayBuffer()
           const offsetHeader = request.headers.get('upload-offset')
-          const baseOffset = offsetHeader
-            ? Number(offsetHeader)
-            : upload.offset
+          const baseOffset = offsetHeader ? Number(offsetHeader) : upload.offset
           const nextOffset = baseOffset + body.byteLength
           upload.offset = nextOffset
           return new HttpResponse(null, {
@@ -414,9 +409,7 @@ describe('Transloadit', () => {
     })
 
     // Before upload: assemblyStatus should be undefined
-    expect(
-      uppy.getState().plugins.Transloadit.assemblyStatus,
-    ).toBeUndefined()
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
 
     // Track the assemblyStatus values we see as the store updates.
     // This avoids racing against the upload completion.
@@ -465,15 +458,14 @@ describe('Transloadit', () => {
 
     const plugin = uppy.getPlugin('Transloadit')
     // Simulate a prior Assembly still sitting in plugin state.
-    plugin['setPluginState']({
+    plugin.setPluginState({
       assemblyStatus: { assembly_id: 'prior', ok: 'ASSEMBLY_COMPLETED' },
     })
     expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeDefined()
 
     // Make #createAssembly fail so we can observe the clear-on-start without
     // running a full upload.
-    plugin.client.createAssembly = () =>
-      Promise.reject(new Error('stop here'))
+    plugin.client.createAssembly = () => Promise.reject(new Error('stop here'))
 
     uppy.addFile({
       source: 'test',
@@ -485,9 +477,7 @@ describe('Transloadit', () => {
 
     // `#prepareUpload` should have cleared the stale status at its start.
     // After the failure, it may still be undefined (no new Assembly created).
-    expect(
-      uppy.getState().plugins.Transloadit.assemblyStatus,
-    ).toBeUndefined()
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
   })
 
   it('clears assemblyStatus on cancelAll even after Assembly was torn down', async () => {
@@ -509,7 +499,7 @@ describe('Transloadit', () => {
     const plugin = uppy.getPlugin('Transloadit')
     // Simulate the post-completion state: assemblyStatus still cached, but
     // this.#assembly already torn down by `#afterUpload`'s finally block.
-    plugin['setPluginState']({
+    plugin.setPluginState({
       assemblyStatus: { assembly_id: 'done', ok: 'ASSEMBLY_COMPLETED' },
     })
     expect(plugin.assembly).toBeUndefined()
@@ -519,8 +509,6 @@ describe('Transloadit', () => {
     // Allow the async #onCancelAll handler to run.
     await Promise.resolve()
 
-    expect(
-      uppy.getState().plugins.Transloadit.assemblyStatus,
-    ).toBeUndefined()
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
   })
 })
