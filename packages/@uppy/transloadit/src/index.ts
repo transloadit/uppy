@@ -26,7 +26,9 @@ import AssemblyWatcher from './AssemblyWatcher.js'
 import Client, { type AssemblyError } from './Client.js'
 import locale from './locale.js'
 
-export type AssemblyResponse = AssemblyStatus
+export type AssemblyResponse = AssemblyStatus & {
+  execution_progress?: number
+}
 export type AssemblyFile = AssemblyStatusUpload
 export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
 export type AssemblyParameters = AssemblyInstructionsInput
@@ -79,6 +81,7 @@ type TransloaditState = {
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
   >
+  assemblyStatus: AssemblyResponse | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
