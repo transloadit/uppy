@@ -70,24 +70,3 @@ jobs:
           file: Dockerfile
           tags: ${{ steps.docker_meta.outputs.tags }}
           labels: ${{ steps.docker_meta.outputs.labels }}
-
-  heroku:
-    name: Heroku
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v6
-      - name: Alter dockerfile
-        run: |
-          sed -i 's/^EXPOSE 3020$/EXPOSE $PORT/g' Dockerfile
-      # https://github.com/AkhileshNS/heroku-deploy/issues/188
-      - name: Install Heroku CLI
-        run: |
-          curl https://cli-assets.heroku.com/install.sh | sh
-      - name: Deploy to heroku
-        uses: akhileshns/heroku-deploy@e3eb99d45a8e2ec5dca08735e089607befa4bf28 # v3.14.15
-        with:
-          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-          heroku_app_name: companion-demo
-          heroku_email: ${{secrets.HEROKU_EMAIL}}
-          usedocker: true
