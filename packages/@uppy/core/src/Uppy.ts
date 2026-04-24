@@ -1219,12 +1219,15 @@ export class Uppy<
    * Emits `file-added` per accepted file and `files-added` once for the batch.
    * Restriction failures emit `restriction-failed` and show an info message
    * without throwing — valid files in the same batch are still added. Any
-   * other errors are aggregated into an `AggregateError` (with `.errors`)
-   * and thrown.
+   * non-restriction error (for example, an exception from `onBeforeFileAdded`)
+   * is aggregated into an `AggregateError` (with `.errors`) and thrown
+   * *before* state is updated — when this happens, no files from the batch
+   * are added and `files-added` is not emitted.
    *
    * Prefer this over calling `addFile` in a loop when adding multiple files:
-   * batch listeners on `files-added` fire exactly once, and a single bad file
-   * does not abort the batch.
+   * batch listeners on `files-added` fire exactly once, and restriction
+   * failures on individual files do not abort the batch. Non-restriction
+   * errors still abort the batch before any files are added.
    */
   addFiles(fileDescriptors: MinimalRequiredUppyFile<M, B>[]): void {
     const { nextFilesState, validFilesToAdd, errors } =
