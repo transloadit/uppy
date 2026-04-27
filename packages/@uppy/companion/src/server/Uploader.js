@@ -752,6 +752,14 @@ export default class Uploader {
 
     if (options.acl != null) params.ACL = options.acl
 
+    if (options.awsSse != null) {
+      params.ServerSideEncryption = options.awsSse
+    }
+
+    if (options.awsSseKmsKeyId) {
+      params.SSEKMSKeyId = options.awsSseKmsKeyId
+    }
+
     const upload = new Upload({
       client,
       params,

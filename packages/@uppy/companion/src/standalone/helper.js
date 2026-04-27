@@ -141,6 +141,8 @@ const getConfigFromEnv = () => {
         process.env.COMPANION_AWS_USE_ACCELERATE_ENDPOINT === 'true',
       expires: parseInt(process.env.COMPANION_AWS_EXPIRES || '800', 10),
       acl: process.env.COMPANION_AWS_ACL,
+      awsSse: process.env.COMPANION_AWS_SSE,
+      awsSseKmsKeyId: process.env.COMPANION_AWS_SSE_KMS_KEY_ID,
       forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
     },
     server: {
