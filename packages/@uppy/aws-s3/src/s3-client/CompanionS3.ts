@@ -20,7 +20,7 @@ class S3Companion extends S3Client {
   private async _fetch(path: string, opts?: RequestInit) {
     const response = await fetch(`${this.companionEndpoint}/s3${path}`, opts)
     if (!response.ok) {
-      throw new Error(`Failed to sign request: ${response.statusText}`)
+      throw new Error(`Companion request failed: ${response.statusText}`)
     }
     return response
   }
@@ -73,7 +73,7 @@ class S3Companion extends S3Client {
     })
 
     return {
-      location: `${url}${fields.key}`,
+      location: `${url}${fields.key}`, // `url` is returned by the signer as the bucket URL without any path, but trailing slash, so we need to add the key (path) to get the full object URL
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
       key: fields.key,
     }
