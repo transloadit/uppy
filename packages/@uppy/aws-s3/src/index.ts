@@ -334,10 +334,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   #generateKey(file: UppyFile<M, B>): string {
-    return (
-      this.opts.generateObjectKey?.(file) ??
-      `${crypto.randomUUID()}-${file.name}`
-    )
+    return this.opts.generateObjectKey?.(file) ?? file.name
   }
 
   // --------------------------------------------------------------------------
