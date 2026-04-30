@@ -509,7 +509,7 @@ export default class Transloadit<
   ) => {
     /**
      * Note: We only Set a defined assemblyResponse into uppyState. Clearing plugin state is handled
-     * explicitly by `#prepareUpload` (new upload) and `#cancelAssembly` / `#onError`
+     * explicitly by `#prepareUpload` (new upload) and `#cancelAssembly`
      * (user-initiated teardown). Otherwise the `this.assembly = undefined` cleanup
      * in `#afterUpload`'s finally would wipe the final completed status from the
      * UI right after upload completes.
