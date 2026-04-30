@@ -61,7 +61,7 @@ export function fetcher(
   options: FetcherOptions = {},
 ): Promise<XMLHttpRequest> {
   const {
-    body = null,
+    body,
     headers = {},
     method = 'GET',
     onBeforeRequest = noop,

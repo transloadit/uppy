@@ -1,12 +1,44 @@
-/** Request data to be pre-signed */
-export type presignableRequest = {
-  method: string
+export interface PresignableRequestBase {
   key: string
-  uploadId?: string
-  partNumber?: number
   expiresIn?: number
-  contentType?: string
 }
+
+export interface PutObjectRequest extends PresignableRequestBase {
+  method: 'PUT'
+}
+export interface DeleteObjectRequest extends PresignableRequestBase {
+  method: 'DELETE'
+}
+export interface CreateMultipartUploadRequest extends PresignableRequestBase {
+  method: 'POST'
+}
+export interface CompleteMultipartUploadRequest extends PresignableRequestBase {
+  method: 'POST'
+  uploadId: string
+}
+export interface DeleteMultipartUploadRequest extends PresignableRequestBase {
+  method: 'DELETE'
+  uploadId: string
+}
+export interface ListPartsRequest extends PresignableRequestBase {
+  method: 'GET'
+  uploadId: string
+}
+export interface UploadPartRequest extends PresignableRequestBase {
+  method: 'PUT'
+  uploadId: string
+  partNumber: number
+}
+
+/** Request data to be pre-signed */
+export type PresignableRequest =
+  | PutObjectRequest
+  | DeleteObjectRequest
+  | CreateMultipartUploadRequest
+  | CompleteMultipartUploadRequest
+  | DeleteMultipartUploadRequest
+  | ListPartsRequest
+  | UploadPartRequest
 
 /** Response with the pre-signed URL */
 export type presignedResponse = {
@@ -14,8 +46,8 @@ export type presignedResponse = {
 }
 
 /** Function that generates a pre-signed URL for a request */
-export type signRequestFn = (
-  request: presignableRequest,
+export type SignRequestFn = (
+  request: PresignableRequest,
 ) => Promise<presignedResponse>
 
 /**
@@ -40,36 +72,34 @@ export interface CredentialsResponse {
 }
 
 /** Function that retrieves temporary credentials */
-export type getCredentialsFn = (options?: {
+export type GetCredentialsFn = (options?: {
   signal?: AbortSignal
-}) => Promise<CredentialsResponse>
+}) => CredentialsResponse | Promise<CredentialsResponse>
 
 /** Base configuration shared by both signing approaches */
 type S3ConfigBase = {
-  /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
-  endpoint: string
   /** AWS region. Defaults to 'auto'. */
-  region?: string
+  region?: string | undefined
   /** Request size in bytes for multipart uploads. Defaults to 8MB. */
-  requestSizeInBytes?: number
+  requestSizeInBytes?: number | undefined
   /** Timeout in ms after which a request should be aborted. */
-  requestAbortTimeout?: number
+  requestAbortTimeout?: number | undefined
 }
 
 /** Config when using signRequest callback (region optional) */
 type S3ConfigWithSignRequest = S3ConfigBase & {
   /** Function to sign requests. Called for each S3 API request. */
-  signRequest: signRequestFn
-  getCredentials?: never
+  signRequest: SignRequestFn
 }
 
 /** Config when using getCredentials callback (region required for signing) */
 type S3ConfigWithGetCredentials = Omit<S3ConfigBase, 'region'> & {
-  signRequest?: never
   /** Function to retrieve temporary credentials for client-side signing. */
-  getCredentials: getCredentialsFn
+  getCredentials: GetCredentialsFn
   /** AWS region. Required for signing with getCredentials. */
-  region: string
+  region?: string
+  /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
+  endpoint: string
 }
 
 /** Configuration options for S3mini client */
@@ -77,13 +107,6 @@ export type S3Config = S3ConfigWithSignRequest | S3ConfigWithGetCredentials
 
 export interface UploadPart {
   partNumber: number
-  etag: string
-}
-
-export interface CompleteMultipartUploadResult {
-  location: string
-  bucket: string
-  key: string
   etag: string
 }
 
@@ -108,11 +131,3 @@ export type BinaryData = ArrayBuffer | Uint8Array | Blob
 
 /** Progress callback for upload operations */
 export type OnProgressFn = (bytesUploaded: number, bytesTotal: number) => void
-
-export interface PutObjectResult {
-  status: number
-  ok: boolean
-  headers: {
-    get(name: string): string | null
-  }
-}
