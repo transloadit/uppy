@@ -144,7 +144,7 @@ class TransloaditAssembly extends Emitter {
       if (typeof details.progress_combined === 'number') {
         this.status = {
           ...this.status,
-          execution_progress: details.progress_combined,
+          progress_combined: details.progress_combined,
         }
       }
       this.emit('execution-progress', details)

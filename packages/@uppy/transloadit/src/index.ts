@@ -27,7 +27,7 @@ import Client, { type AssemblyError } from './Client.js'
 import locale from './locale.js'
 
 export type AssemblyResponse = AssemblyStatus & {
-  execution_progress?: number
+  progress_combined?: number
 }
 export type AssemblyFile = AssemblyStatusUpload
 export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
