@@ -662,11 +662,12 @@ export class Uppy<
           ...files[fileID].progress,
           ...defaultProgress,
         },
-        // @ts-expect-error these typed are inserted
+        // @ts-expect-error these types are inserted
         // into the namespace in their respective packages
-        // but core isn't ware of those
+        // but core isn't aware of those
         tus: undefined,
         transloadit: undefined,
+        s3Multipart: undefined,
       }
     })
 
