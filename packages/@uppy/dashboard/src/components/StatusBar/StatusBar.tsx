@@ -49,7 +49,6 @@ export function getUploadingState(
     return statusBarStates.STATE_COMPLETE
   }
 
-
   // ASSEMBLY_EXECUTING implies all uploads are done by Transloadit's state
   // machine, so it always outranks recoveredState.
 

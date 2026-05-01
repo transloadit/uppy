@@ -1,11 +1,11 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Form from '@uppy/form'
+import GoldenRetriever from '@uppy/golden-retriever'
 import ImageEditor from '@uppy/image-editor'
 import RemoteSources from '@uppy/remote-sources'
 import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Webcam from '@uppy/webcam'
-import GoldenRetriever from '@uppy/golden-retriever'
 
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
@@ -137,7 +137,8 @@ const dashboard = new Uppy({
         template_id: TEMPLATE_ID,
       },
     },
-  }).use(GoldenRetriever)
+  })
+  .use(GoldenRetriever)
 
 window.dashboard = dashboard
 
