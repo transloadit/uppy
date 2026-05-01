@@ -52,9 +52,7 @@ export function getUploadingState(
     return statusBarStates.STATE_COMPLETE
   }
 
-  // A live (non-terminal) Transloadit assembly outranks the "recovered, press
-  // Upload" prompt — but only when the user has no action to take. See #6017.
-  //
+
   // ASSEMBLY_EXECUTING implies all uploads are done by Transloadit's state
   // machine, so it always outranks recoveredState.
   //
