@@ -22,18 +22,24 @@ type StatusBarProps<M extends Meta, B extends Body> = {
 }
 
 /**
- * Minimal shape of a Transloadit assembly status, read from
- * `state.plugins.Transloadit.assemblyStatus`. Kept structural here so that
- * `@uppy/dashboard` does not depend on `@uppy/transloadit`.
+ * Mirror of Transloadit's `AssemblyStatus['ok']` union (see `@transloadit/types`).
+ * Kept structural here so `@uppy/dashboard` does not depend on `@uppy/transloadit`.
  */
-export type AssemblyStatus = { ok?: string }
+export type AssemblyOk =
+  | 'ASSEMBLY_UPLOADING'
+  | 'ASSEMBLY_EXECUTING'
+  | 'ASSEMBLY_COMPLETED'
+  | 'ASSEMBLY_CANCELED'
+  | 'ASSEMBLY_EXPIRED'
+  | 'ASSEMBLY_REPLAYING'
+  | 'REQUEST_ABORTED'
 
 export function getUploadingState(
   error: unknown,
   isAllComplete: boolean,
   recoveredState: State<any, any>['recoveredState'],
   files: Record<string, UppyFile<any, any>>,
-  assemblyStatus?: AssemblyStatus,
+  assemblyOk?: AssemblyOk,
 ): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {
     return statusBarStates.STATE_ERROR
@@ -58,10 +64,10 @@ export function getUploadingState(
   // 'restore-confirmed' → uppy.restore(uploadId), which is the only path that
   // re-invokes tus / Companion (Transloadit disables tus auto-resume via
   // `storeFingerprintForResuming: false`).
-  if (assemblyStatus?.ok === 'ASSEMBLY_EXECUTING') {
+  if (assemblyOk === 'ASSEMBLY_EXECUTING') {
     return statusBarStates.STATE_POSTPROCESSING
   }
-  if (assemblyStatus?.ok === 'ASSEMBLY_UPLOADING') {
+  if (assemblyOk === 'ASSEMBLY_UPLOADING') {
     const allUploadsComplete = Object.values(files).every(
       (f) => f.progress.uploadStarted && f.progress.uploadComplete,
     )
@@ -243,13 +249,13 @@ export default class StatusBar<
       error,
       recoveredState,
     } = state
-    // Read Transloadit's live assembly status (if installed) so a live assembly
-    // can outrank the recovery prompt — see issue #6017.
-    const assemblyStatus = (
+    // Read Transloadit's live assembly status `.ok` (if installed) so a live
+    // assembly can outrank the recovery prompt — see issue #6017.
+    const assemblyOk = (
       state.plugins?.Transloadit as
-        | { assemblyStatus?: AssemblyStatus }
+        | { assemblyStatus?: { ok?: AssemblyOk } }
         | undefined
-    )?.assemblyStatus
+    )?.assemblyStatus?.ok
 
     const {
       newFiles,
@@ -300,7 +306,7 @@ export default class StatusBar<
           isAllComplete,
           recoveredState,
           files || {},
-          assemblyStatus,
+          assemblyOk,
         )}
         allowNewUpload={allowNewUpload}
         totalProgress={totalProgress}

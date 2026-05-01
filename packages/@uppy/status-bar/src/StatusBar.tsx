@@ -25,18 +25,26 @@ const speedFilterHalfLife = 2000
 const ETAFilterHalfLife = 2000
 
 /**
- * Minimal shape of a Transloadit assembly status, read from
- * `state.plugins.Transloadit.assemblyStatus` (set by `@uppy/transloadit`).
+ * Mirror of Transloadit's `AssemblyStatus['ok']` union (see `@transloadit/types`).
  * Kept structural here so `@uppy/status-bar` does not depend on `@uppy/transloadit`.
+ * Errors leave `ok` absent on the server side, so this is the full set of
+ * non-error values the server can send.
  */
-type AssemblyStatus = { ok?: string }
+type AssemblyOk =
+  | 'ASSEMBLY_UPLOADING'
+  | 'ASSEMBLY_EXECUTING'
+  | 'ASSEMBLY_COMPLETED'
+  | 'ASSEMBLY_CANCELED'
+  | 'ASSEMBLY_EXPIRED'
+  | 'ASSEMBLY_REPLAYING'
+  | 'REQUEST_ABORTED'
 
 export function getUploadingState(
   error: unknown,
   isAllComplete: boolean,
   recoveredState: unknown,
   files: Record<string, UppyFile<any, any>>,
-  assemblyStatus?: AssemblyStatus,
+  assemblyOk?: AssemblyOk,
 ): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {
     return statusBarStates.STATE_ERROR
@@ -61,10 +69,10 @@ export function getUploadingState(
   // 'restore-confirmed' → uppy.restore(uploadId), which is the only path that
   // re-invokes tus / Companion (Transloadit disables tus auto-resume via
   // `storeFingerprintForResuming: false`).
-  if (assemblyStatus?.ok === 'ASSEMBLY_EXECUTING') {
+  if (assemblyOk === 'ASSEMBLY_EXECUTING') {
     return statusBarStates.STATE_POSTPROCESSING
   }
-  if (assemblyStatus?.ok === 'ASSEMBLY_UPLOADING') {
+  if (assemblyOk === 'ASSEMBLY_UPLOADING') {
     const allUploadsComplete = Object.values(files).every(
       (f) => f.progress.uploadStarted && f.progress.uploadComplete,
     )
@@ -254,13 +262,13 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     })
 
     // Transloadit's plugin state, if installed, exposes the live assembly
-    // status. Reading it here lets a non-terminal assembly outrank the
+    // status. Reading `.ok` here lets a non-terminal assembly outrank the
     // "press Upload to resume" UI on restore — see issue #6017.
-    const assemblyStatus = (
+    const assemblyOk = (
       state.plugins?.Transloadit as
-        | { assemblyStatus?: AssemblyStatus }
+        | { assemblyStatus?: { ok?: AssemblyOk } }
         | undefined
-    )?.assemblyStatus
+    )?.assemblyStatus?.ok
 
     return StatusBarUI({
       error,
@@ -269,7 +277,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
         isAllComplete,
         recoveredState,
         state.files || {},
-        assemblyStatus,
+        assemblyOk,
       ),
       allowNewUpload,
       totalProgress,
