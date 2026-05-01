@@ -247,7 +247,7 @@ export default class StatusBar<
     // can outrank the recovery prompt — see issue #6017.
     const assemblyStatus = (
       state.plugins?.Transloadit as
-        | { assemblyStatus?: AssemblyStatusLike }
+        | { assemblyStatus?: AssemblyStatus }
         | undefined
     )?.assemblyStatus
 

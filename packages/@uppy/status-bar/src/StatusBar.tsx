@@ -258,7 +258,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     // "press Upload to resume" UI on restore — see issue #6017.
     const assemblyStatus = (
       state.plugins?.Transloadit as
-        | { assemblyStatus?: AssemblyStatusLike }
+        | { assemblyStatus?: AssemblyStatus }
         | undefined
     )?.assemblyStatus
 
