@@ -1841,6 +1841,29 @@ export class Uppy<
           },
         },
       })
+
+      // Drop any currentUpload whose fileIDs are now all complete. This
+      // mirrors what `#removeUpload` does at the end of `#runUpload`, but
+      // is needed for completion paths that bypass `#runUpload` — notably
+      // SSE-driven Transloadit assembly completion during GoldenRetriever
+      // restore (no Resume click → no `uppy.restore(uploadID)` → orphaned
+      // entry in `currentUploads`, which then makes `uppy.clear()` throw
+      // when an uploader has `individualCancellation: false`).
+      const { currentUploads, files } = this.getState()
+      const updatedCurrentUploads = Object.fromEntries(
+        Object.entries(currentUploads).filter(([, upload]) =>
+          upload.fileIDs.some((id) => {
+            const f = files[id]
+            return f && !f.progress.complete && !f.error
+          }),
+        ),
+      )
+      if (
+        Object.keys(updatedCurrentUploads).length !==
+        Object.keys(currentUploads).length
+      ) {
+        this.setState({ currentUploads: updatedCurrentUploads })
+      }
     })
 
     this.on('restored', () => {
