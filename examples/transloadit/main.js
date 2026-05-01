@@ -5,6 +5,7 @@ import ImageEditor from '@uppy/image-editor'
 import RemoteSources from '@uppy/remote-sources'
 import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Webcam from '@uppy/webcam'
+import GoldenRetriever from '@uppy/golden-retriever'
 
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
@@ -119,9 +120,6 @@ window.formUppyWithDashboard = formUppyWithDashboard
 const dashboard = new Uppy({
   debug: true,
   autoProceed: false,
-  restrictions: {
-    allowedFileTypes: ['.png'],
-  },
 })
   .use(Dashboard, {
     inline: true,
@@ -139,7 +137,7 @@ const dashboard = new Uppy({
         template_id: TEMPLATE_ID,
       },
     },
-  })
+  }).use(GoldenRetriever)
 
 window.dashboard = dashboard
 
