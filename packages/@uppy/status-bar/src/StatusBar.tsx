@@ -27,8 +27,6 @@ const ETAFilterHalfLife = 2000
 /**
  * Mirror of Transloadit's `AssemblyStatus['ok']` union (see `@transloadit/types`).
  * Kept structural here so `@uppy/status-bar` does not depend on `@uppy/transloadit`.
- * Errors leave `ok` absent on the server side, so this is the full set of
- * non-error values the server can send.
  */
 type AssemblyOk =
   | 'ASSEMBLY_UPLOADING'
