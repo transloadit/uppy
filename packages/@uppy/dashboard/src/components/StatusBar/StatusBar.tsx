@@ -21,11 +21,19 @@ type StatusBarProps<M extends Meta, B extends Body> = {
   i18n: I18n
 }
 
-function getUploadingState(
+/**
+ * Minimal shape of a Transloadit assembly status, read from
+ * `state.plugins.Transloadit.assemblyStatus`. Kept structural here so that
+ * `@uppy/dashboard` does not depend on `@uppy/transloadit`.
+ */
+export type AssemblyStatus = { ok?: string }
+
+export function getUploadingState(
   error: unknown,
   isAllComplete: boolean,
   recoveredState: State<any, any>['recoveredState'],
   files: Record<string, UppyFile<any, any>>,
+  assemblyStatus?: AssemblyStatus,
 ): StatusBarUIProps<any, any>['uploadState'] {
   if (error) {
     return statusBarStates.STATE_ERROR
@@ -33,6 +41,34 @@ function getUploadingState(
 
   if (isAllComplete) {
     return statusBarStates.STATE_COMPLETE
+  }
+
+  // A live (non-terminal) Transloadit assembly outranks the "recovered, press
+  // Upload" prompt — but only when the user has no action to take. See #6017.
+  //
+  // ASSEMBLY_EXECUTING implies all uploads are done by Transloadit's state
+  // machine, so it always outranks recoveredState.
+  //
+  // ASSEMBLY_UPLOADING is ambiguous: server may be waiting for more bytes
+  // (tus partial / Companion mid-flight) OR may already have everything and
+  // be about to transition to EXECUTING. We can disambiguate by file progress:
+  // if every started file has uploadComplete:true, the bytes are on the server
+  // and the Resume button would be a no-op — show progress UI instead. If any
+  // file still has work to do, KEEP the Resume button so the user can trigger
+  // 'restore-confirmed' → uppy.restore(uploadId), which is the only path that
+  // re-invokes tus / Companion (Transloadit disables tus auto-resume via
+  // `storeFingerprintForResuming: false`).
+  if (assemblyStatus?.ok === 'ASSEMBLY_EXECUTING') {
+    return statusBarStates.STATE_POSTPROCESSING
+  }
+  if (assemblyStatus?.ok === 'ASSEMBLY_UPLOADING') {
+    const allUploadsComplete = Object.values(files).every(
+      (f) => f.progress.uploadStarted && f.progress.uploadComplete,
+    )
+    if (allUploadsComplete) {
+      return statusBarStates.STATE_UPLOADING
+    }
+    // Fall through: any unfinished upload means the user must press Resume.
   }
 
   if (recoveredState) {
@@ -198,6 +234,7 @@ export default class StatusBar<
   }
 
   render(): ComponentChild {
+    const state = this.props.uppy.getState()
     const {
       capabilities,
       files,
@@ -205,7 +242,14 @@ export default class StatusBar<
       totalProgress,
       error,
       recoveredState,
-    } = this.props.uppy.getState()
+    } = state
+    // Read Transloadit's live assembly status (if installed) so a live assembly
+    // can outrank the recovery prompt — see issue #6017.
+    const assemblyStatus = (
+      state.plugins?.Transloadit as
+        | { assemblyStatus?: AssemblyStatusLike }
+        | undefined
+    )?.assemblyStatus
 
     const {
       newFiles,
@@ -256,6 +300,7 @@ export default class StatusBar<
           isAllComplete,
           recoveredState,
           files || {},
+          assemblyStatus,
         )}
         allowNewUpload={allowNewUpload}
         totalProgress={totalProgress}
