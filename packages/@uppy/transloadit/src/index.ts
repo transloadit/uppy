@@ -858,6 +858,16 @@ export default class Transloadit<
     validateParams(assemblyOptions.params)
 
     try {
+      // `this.assembly` is normally cleared by `#afterUpload`'s `finally`,
+      // but `#afterUpload` only runs as part of `#runUpload`. The post-restore
+      // SSE-only completion path bypasses `#runUpload`, so a completed
+      // `this.assembly` can linger. Without this guard the `??` below would
+      // reuse it, `#attachAssemblyMetadata` wouldn't run for the new file,
+      // and tus would throw "neither an endpoint or an upload URL is provided"
+      if (this.assembly?.status?.ok === 'ASSEMBLY_COMPLETED') {
+        this.assembly = undefined
+      }
+
       const assembly =
         // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
         this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
