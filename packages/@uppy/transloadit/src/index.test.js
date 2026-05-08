@@ -244,15 +244,14 @@ describe('Transloadit', () => {
     // Should be reset to true after upload completes
     expect(uppy.getState().allowNewUpload).toBe(true)
 
-    // Plugin state reflected the assembly status the server returned.
     // The createAssembly mock returned ASSEMBLY_EXECUTING and the assembly
-    // setter forwarded that status into plugin state. We assert containment
-    // (not exact sequence) because the test environment doesn't reliably
-    // drive the polling-to-COMPLETED transition.
+    // setter forwarded that status into plugin state during the upload.
     expect(okHistory).toContain('ASSEMBLY_EXECUTING')
-    const finalStatus = uppy.getState().plugins.Transloadit.assemblyStatus
-    expect(finalStatus).toBeDefined()
-    expect(finalStatus.assembly_id).toBe('test-assembly-id')
+    // `assemblyStatus` is the live slot — it clears when `this.assembly`
+    // becomes undefined at the end of `#afterUpload`. `lastAssembly` is
+    // intentionally not populated here because no terminal event fires in
+    // this mocked flow (the server keeps returning ASSEMBLY_EXECUTING).
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
 
     server.close()
   })

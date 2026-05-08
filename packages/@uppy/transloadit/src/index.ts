@@ -81,7 +81,15 @@ type TransloaditState = {
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
   >
+  // Live status of the currently-active assembly. Tracks every status
+  // transition (UPLOADING → EXECUTING → ...). Cleared automatically when
+  // `this.assembly = undefined` (no live assembly).
   assemblyStatus: AssemblyResponse | undefined
+  // Snapshot of the most recently finished assembly (completed, cancelled, or
+  // errored). Persists across the gap between uploads so the UI can keep
+  // showing "your last upload's result" even after `assemblyStatus` clears.
+  // Overwritten by the next terminal event.
+  lastAssembly: AssemblyResponse | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -502,21 +510,17 @@ export default class Transloadit<
   }
 
   /**
-   * Allows Golden Retriever plugin to serialize the Assembly status so we can restore it later
+   * Mirrors the live Assembly status into plugin state and lets Golden
+   * Retriever serialize it for restore. The write is unconditional: when
+   * `this.assembly = undefined`, `assemblyResponse` is undefined and
+   * `assemblyStatus` clears too. Persistent display of the last terminal
+   * status is `lastAssembly`'s job, snapshotted in `#onAssemblyFinished` /
+   * `#cancelAssembly` / the assembly `error` listener.
    */
   #handleAssemblyStatusUpdate = (
     assemblyResponse: AssemblyResponse | undefined,
   ) => {
-    /**
-     * Note: We only Set a defined assemblyResponse into uppyState. Clearing plugin state is handled
-     * explicitly by `#prepareUpload` (new upload) and `#cancelAssembly`
-     * (user-initiated teardown). Otherwise the `this.assembly = undefined` cleanup
-     * in `#afterUpload`'s finally would wipe the final completed status from the
-     * UI right after upload completes.
-     */
-    if (assemblyResponse != null) {
-      this.setPluginState({ assemblyStatus: assemblyResponse })
-    }
+    this.setPluginState({ assemblyStatus: assemblyResponse })
     this.uppy.emit('restore:plugin-data-changed', {
       [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
     })
@@ -635,12 +639,14 @@ export default class Transloadit<
 
   /**
    * When an Assembly has finished processing, get the final state
-   * and emit it.
+   * and emit it. Snapshots the terminal status into `lastAssembly` so the
+   * UI can keep displaying the result after `assemblyStatus` clears.
    */
   #onAssemblyFinished(assembly: Assembly) {
     const url = getAssemblyUrlSsl(assembly.status)
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       assembly.status = finalStatus
+      this.setPluginState({ lastAssembly: finalStatus })
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -649,8 +655,12 @@ export default class Transloadit<
     await this.client.cancelAssembly(assembly)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
     this.uppy.emit('transloadit:assembly-cancelled', assembly)
+    // Snapshot the cancelled status before tearing down the live assembly,
+    // so consumers can still query "what did the last run end as".
+    this.setPluginState({ lastAssembly: assembly })
+    // Clearing `this.assembly` triggers `#handleAssemblyStatusUpdate(undefined)`
+    // which clears `assemblyStatus` — no separate clear needed.
     this.assembly = undefined
-    this.setPluginState({ assemblyStatus: undefined })
   }
 
   /**
@@ -664,9 +674,8 @@ export default class Transloadit<
         this.uppy.log(err)
       }
     }
-    // Always clear the cached Assembly status
-    // this.assembly was already set undefined by `#afterUpload` finally block
-    this.setPluginState({ assemblyStatus: undefined })
+    // `assemblyStatus` is cleared automatically when `this.assembly = undefined`
+    // (via `#cancelAssembly` above, or by `#afterUpload`'s finally block).
 
     // Reset allowNewUpload when upload is cancelled
     this.uppy.setState({ allowNewUpload: true })
@@ -778,6 +787,9 @@ export default class Transloadit<
     })
     assembly.on('error', (error: AssemblyError) => {
       error.assembly = assembly.status
+      // Snapshot the errored status before any teardown so the UI can keep
+      // showing what went wrong after `assemblyStatus` clears.
+      this.setPluginState({ lastAssembly: assembly.status })
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 
@@ -842,9 +854,10 @@ export default class Transloadit<
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
 
-    // Clear any previous Assembly's status so the UI doesn't show stale results
-    // from a prior run. The new status will be written on the next status event.
-    this.setPluginState({ assemblyStatus: undefined })
+    // `assemblyStatus` is already undefined here (cleared automatically when
+    // `this.assembly` was set to undefined at the end of the previous run).
+    // `lastAssembly` is intentionally NOT cleared so the UI can keep showing
+    // the previous run's terminal status until this run produces a new one.
 
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function'
@@ -1029,6 +1042,7 @@ export default class Transloadit<
 
     this.setPluginState({
       assemblyStatus: undefined,
+      lastAssembly: undefined,
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
