@@ -10,6 +10,9 @@ on:
       - 'packages/@uppy/companion/**'
       - '.github/workflows/companion-deploy.yml'
 
+permissions:
+  contents: read
+
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
 
