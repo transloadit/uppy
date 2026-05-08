@@ -53,9 +53,6 @@ jobs:
             platform: linux/arm64
             platform_tag: arm64
     runs-on: ${{ matrix.runner }}
-    env:
-      DOCKER_BUILDKIT: 0
-      COMPOSE_DOCKER_CLI_BUILD: 0
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
