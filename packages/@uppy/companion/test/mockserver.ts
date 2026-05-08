@@ -37,14 +37,6 @@ const defaultEnv = {
   COMPANION_GOOGLE_KEYS_ENDPOINT: undefined,
   COMPANION_GOOGLE_SECRET_FILE: undefined,
 
-<<<<<<< HEAD:packages/@uppy/companion/test/mockserver.ts
-  COMPANION_INSTAGRAM_KEY: 'instagram_key',
-  COMPANION_INSTAGRAM_SECRET: 'instagram_secret',
-  COMPANION_INSTAGRAM_KEYS_ENDPOINT: undefined,
-  COMPANION_INSTAGRAM_SECRET_FILE: undefined,
-
-=======
->>>>>>> 404243f8c (feat: remove @uppy/instagram (Instagram Basic Display API deprecated)):packages/@uppy/companion/test/mockserver.js
   COMPANION_FACEBOOK_KEY: 'facebook_key',
   COMPANION_FACEBOOK_SECRET: 'facebook_secret',
   COMPANION_FACEBOOK_KEYS_ENDPOINT: undefined,

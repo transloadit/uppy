@@ -7,7 +7,6 @@ import { getCredentialsResolver } from './credentials.js'
 import dropbox from './dropbox/index.js'
 import facebook from './facebook/index.js'
 import { Drive } from './google/drive/index.js'
-import instagram from './instagram/graph/index.js'
 import onedrive from './onedrive/index.js'
 import { isOAuthProvider, type ProviderCtor } from './Provider.js'
 import unsplash from './unsplash/index.js'
@@ -113,7 +112,6 @@ export function getDefaultProviders() {
     facebook,
     onedrive,
     zoom,
-    instagram,
     unsplash,
     webdav,
   }

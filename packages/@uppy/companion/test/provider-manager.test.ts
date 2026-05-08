@@ -74,32 +74,17 @@ describe('Test Provider options', () => {
 
     expect(googledrive['secret']).toBe('google_secret')
 
-    const instagram = requireGrantProviderConfig(grantConfig, 'instagram')
-    expect(instagram['key']).toBe('instagram_key')
-    expect(instagram['secret']).toBe('instagram_secret')
-
     const zoom = requireGrantProviderConfig(grantConfig, 'zoom')
     expect(zoom['key']).toBe('zoom_key')
     expect(zoom['secret']).toBe('zoom_secret')
   })
 
   test('adds extra provider config', () => {
-    process.env['COMPANION_INSTAGRAM_KEY'] = '123456'
     providerManager.addProviderOptions(
       getAddProviderOptionsArgs(getCompanionOptions()),
       grantConfig,
       getOauthProvider,
     )
-    expect(requireGrantProviderConfig(grantConfig, 'instagram')).toEqual({
-      transport: 'session',
-      state: true,
-      callback: '/instagram/callback',
-      redirect_uri: 'http://localhost:3020/instagram/redirect',
-      key: '123456',
-      secret: 'instagram_secret',
-      protocol: 'https',
-      scope: ['user_profile', 'user_media'],
-    })
 
     expect(requireGrantProviderConfig(grantConfig, 'dropbox')).toEqual({
       key: 'dropbox_key',
@@ -164,8 +149,6 @@ describe('Test Provider options', () => {
       `${process.env['PWD']}/test/resources/box_secret_file`
     process.env['COMPANION_GOOGLE_SECRET_FILE'] =
       `${process.env['PWD']}/test/resources/google_secret_file`
-    process.env['COMPANION_INSTAGRAM_SECRET_FILE'] =
-      `${process.env['PWD']}/test/resources/instagram_secret_file`
     process.env['COMPANION_ZOOM_SECRET_FILE'] =
       `${process.env['PWD']}/test/resources/zoom_secret_file`
     process.env['COMPANION_ZOOM_VERIFICATION_TOKEN_FILE'] =
@@ -188,9 +171,6 @@ describe('Test Provider options', () => {
     expect(
       requireGrantProviderConfig(grantConfig, 'googledrive')['secret'],
     ).toBe('elgoog')
-    expect(requireGrantProviderConfig(grantConfig, 'instagram')['secret']).toBe(
-      'margatsni',
-    )
     expect(requireGrantProviderConfig(grantConfig, 'zoom')['secret']).toBe(
       'u8Z5ceq',
     )
@@ -232,13 +212,6 @@ describe('Test Provider options', () => {
       getGrantProviderField(grantConfig, 'googledrive', 'secret'),
     ).toBeUndefined()
 
-    expect(
-      getGrantProviderField(grantConfig, 'instagram', 'key'),
-    ).toBeUndefined()
-    expect(
-      getGrantProviderField(grantConfig, 'instagram', 'secret'),
-    ).toBeUndefined()
-
     expect(getGrantProviderField(grantConfig, 'zoom', 'key')).toBeUndefined()
     expect(getGrantProviderField(grantConfig, 'zoom', 'secret')).toBeUndefined()
   })
@@ -262,9 +235,6 @@ describe('Test Provider options', () => {
     expect(
       requireGrantProviderConfig(grantConfig, 'googledrive')['redirect_uri'],
     ).toBe('http://domain.com/drive/redirect')
-    expect(
-      requireGrantProviderConfig(grantConfig, 'instagram')['redirect_uri'],
-    ).toBe('http://domain.com/instagram/redirect')
     expect(
       requireGrantProviderConfig(grantConfig, 'zoom')['redirect_uri'],
     ).toBe('http://domain.com/zoom/redirect')
