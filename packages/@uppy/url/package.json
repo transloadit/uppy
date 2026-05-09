@@ -12,6 +12,7 @@
     "build": "tsc --build tsconfig.build.json",
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
     "typecheck": "tsc --build",
+    "pretest": "yarn workspace @uppy/companion build",
     "test": "vitest run --silent='passed-only'",
     "test:e2e": "vitest run --project browser"
   },
