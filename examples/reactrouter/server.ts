@@ -41,7 +41,7 @@ async function startServer() {
 
     // TUS upload endpoints (before React Router)
     app.all('/api/upload/tus', (req, res) => tusServer.handle(req, res))
-    app.all('/api/upload/tus/*', (req, res) => tusServer.handle(req, res))
+    app.all('/api/upload/tus/{*splat}', (req, res) => tusServer.handle(req, res))
 
     // Handle Chrome DevTools requests silently
     app.get('/.well-known/appspecific/com.chrome.devtools.json', (req, res) => {
@@ -49,7 +49,7 @@ async function startServer() {
     })
 
     // React Router handles all other routes
-    app.all('*', reactRouterHandler)
+    app.all('/{*splat}', reactRouterHandler)
 
     const port = process.env.PORT || 3000
     const server = app.listen(port, () => {

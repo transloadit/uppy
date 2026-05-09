@@ -125,6 +125,9 @@ export function app(optionsArg: CompanionInitOptions) {
 
   const app = express()
 
+  // Needed for e.g. s3 `/params` endpoint metadata, like `metadata[key]=value` to be parsed into a metadata object
+  app.set('query parser', 'extended')
+
   if (options.metrics) {
     app.use(middlewares.metrics({ path: options.server.path }))
   }
