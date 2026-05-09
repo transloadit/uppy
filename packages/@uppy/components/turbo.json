@@ -14,7 +14,7 @@
     "build:css": {
       "inputs": [
         "src/input.css",
-        "src/image-editor.css",
+        "../image-editor/src/cropper.scss",
         "src/**/*.{js,ts,jsx,tsx}",
         "tailwind.config.js"
       ],

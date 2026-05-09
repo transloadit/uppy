@@ -153,4 +153,106 @@ describe('Dashboard', () => {
 
     core.destroy()
   })
+
+  describe('My Device acquirer respects fileManagerSelectionType', () => {
+    // `showNativePhotoCameraButton: true` is used to force the My Device tab
+    // to render — Dashboard hides it when it would be the only entry in the list
+    // (see `hasOnlyMyDevice` in AddFiles.tsx).
+    const mountDashboard = (
+      fileManagerSelectionType: 'files' | 'folders' | 'both',
+    ) => {
+      document.body.innerHTML = ''
+      const core = new Core()
+      core.use(DashboardPlugin, {
+        inline: true,
+        target: 'body',
+        fileManagerSelectionType,
+        showNativePhotoCameraButton: true,
+      })
+      return core
+    }
+
+    const getInputs = () => {
+      const fileInput = document.querySelector<HTMLInputElement>(
+        '.uppy-Dashboard-input:not([webkitdirectory])',
+      )!
+      const folderInput = document.querySelector<HTMLInputElement>(
+        '.uppy-Dashboard-input[webkitdirectory]',
+      )!
+      return { fileInput, folderInput }
+    }
+
+    const clickMyDeviceTab = () => {
+      const tab = document.querySelector<HTMLButtonElement>(
+        '[data-uppy-acquirer-id="MyDevice"] button[role="tab"]',
+      )!
+      tab.click()
+    }
+
+    it('triggers the folder input when set to "folders"', () => {
+      const core = mountDashboard('folders')
+      const { fileInput, folderInput } = getInputs()
+
+      let fileClicked = false
+      let folderClicked = false
+      fileInput.addEventListener('click', () => {
+        fileClicked = true
+      })
+      folderInput.addEventListener('click', () => {
+        folderClicked = true
+      })
+
+      clickMyDeviceTab()
+
+      expect(folderClicked).toBe(true)
+      expect(fileClicked).toBe(false)
+
+      core.destroy()
+    })
+
+    it('triggers the file input when set to "files"', () => {
+      const core = mountDashboard('files')
+      const { fileInput, folderInput } = getInputs()
+
+      let fileClicked = false
+      let folderClicked = false
+      fileInput.addEventListener('click', () => {
+        fileClicked = true
+      })
+      folderInput.addEventListener('click', () => {
+        folderClicked = true
+      })
+
+      clickMyDeviceTab()
+
+      expect(fileClicked).toBe(true)
+      expect(folderClicked).toBe(false)
+
+      core.destroy()
+    })
+
+    // `both` mode intentionally falls back to the file picker because a single
+    // HTML <input> cannot be webkitdirectory and not at the same time. The
+    // folder picker remains reachable via the tagline "browse folders" link.
+    it('falls back to the file input when set to "both"', () => {
+      const core = mountDashboard('both')
+      const { fileInput, folderInput } = getInputs()
+
+      let fileClicked = false
+      let folderClicked = false
+      fileInput.addEventListener('click', () => {
+        fileClicked = true
+      })
+      folderInput.addEventListener('click', () => {
+        folderClicked = true
+      })
+
+      clickMyDeviceTab()
+
+      expect(fileClicked).toBe(true)
+      expect(folderClicked).toBe(false)
+
+      core.destroy()
+    })
+  })
 })

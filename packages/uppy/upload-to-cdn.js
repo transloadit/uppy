@@ -37,7 +37,7 @@ import concat from 'concat-stream'
 import mime from 'mime-types'
 import packlist from 'npm-packlist'
 import pacote from 'pacote'
-import tar from 'tar'
+import { Parser as TarParser } from 'tar'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -62,7 +62,7 @@ async function getRemoteDistFiles(packageName, version) {
   console.log('Using npm package', pkg)
   const files = new Map()
   const tarball = await pacote.tarball.stream(pkg, (stream) =>
-    pipeline(stream, new tar.Parse()),
+    pipeline(stream, new TarParser()),
   )
 
   tarball.on('entry', (readEntry) => {

@@ -239,6 +239,10 @@ export default class Transloadit<
 > extends BasePlugin<Opts<M, B>, M, B, TransloaditState> {
   static VERSION = packageJson.version
 
+  static COMPANION_URL = COMPANION_URL
+
+  static COMPANION_ALLOWED_HOSTS = COMPANION_ALLOWED_HOSTS
+
   #rateLimitedQueue: RateLimitedQueue
 
   client: Client<M, B>
@@ -639,12 +643,15 @@ export default class Transloadit<
    * When all files are removed, cancel in-progress Assemblies.
    */
   #onCancelAll = async () => {
-    if (!this.assembly) return
-    try {
-      await this.#cancelAssembly(this.assembly.status)
-    } catch (err) {
-      this.uppy.log(err)
+    if (this.assembly) {
+      try {
+        await this.#cancelAssembly(this.assembly.status)
+      } catch (err) {
+        this.uppy.log(err)
+      }
     }
+    // Reset allowNewUpload when upload is cancelled
+    this.uppy.setState({ allowNewUpload: true })
   }
 
   #onRestored = (pluginData: Record<string, PersistentState>) => {
@@ -813,6 +820,10 @@ export default class Transloadit<
   }
 
   #prepareUpload = async (fileIDs: string[]) => {
+    // Prevent adding/dropping files during upload to avoid creating multiple assemblies
+    // TODO we should rewrite to instead infer allowNewUpload based on upload state
+    this.uppy.setState({ allowNewUpload: false })
+
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function'
         ? await this.opts.assemblyOptions()
@@ -850,6 +861,8 @@ export default class Transloadit<
         this.uppy.emit('preprocess-complete', file)
         this.uppy.emit('upload-error', file, err)
       })
+      // Reset allowNewUpload on error
+      this.uppy.setState({ allowNewUpload: true })
       throw err
     }
   }
@@ -916,6 +929,8 @@ export default class Transloadit<
       // we need to allow a new assembly to be created.
       // see https://github.com/transloadit/uppy/issues/5397
       this.assembly = undefined
+      // Allow new uploads now that this upload is complete
+      this.uppy.setState({ allowNewUpload: true })
     }
   }
 
@@ -931,6 +946,9 @@ export default class Transloadit<
       .submitError(err)
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
+
+    // Reset allowNewUpload when upload encounters an error
+    this.uppy.setState({ allowNewUpload: true })
   }
 
   #onTusError = (_: UppyFile<M, B> | undefined, err: Error) => {
@@ -1008,6 +1026,7 @@ export default class Transloadit<
     this.uppy.removePreProcessor(this.#prepareUpload)
     this.uppy.removePostProcessor(this.#afterUpload)
     this.uppy.off('error', this.#onError)
+    this.uppy.off('cancel-all', this.#onCancelAll)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.#onFileUploadURLAvailable)
@@ -1034,6 +1053,9 @@ export default class Transloadit<
 }
 
 export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
+
+// Re-export type from @transloadit/types so callers can import it from the plugin package.
+export type { AssemblyInstructionsInput } from '@transloadit/types'
 
 // Low-level classes for advanced usage (e.g., creating assemblies without file uploads)
 export { default as Assembly } from './Assembly.js'
