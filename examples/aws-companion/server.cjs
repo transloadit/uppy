@@ -45,7 +45,7 @@ const options = {
   filePath: DATA_DIR,
   secret: 'blah blah',
   debug: true,
-  corsOrigin: true,
+  corsOrigins: true,
 }
 
 // Create the data directory here for the sake of the example.
