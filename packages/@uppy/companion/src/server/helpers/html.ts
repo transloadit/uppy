@@ -51,7 +51,10 @@ export const authCallbackErrorHtml = () => {
  * @param {unknown} data data payload
  * @param {string} origin url string
  */
-export const legacyAuthCallbackHtml = (data, origin) => {
+export const legacyAuthCallbackHtml = (
+  data: unknown,
+  origin: string | undefined,
+) => {
   return `
     <!DOCTYPE html>
     <html>

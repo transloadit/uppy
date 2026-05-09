@@ -3,25 +3,14 @@
  */
 
 import type { NextFunction, Request, Response } from 'express'
-import serialize from 'serialize-javascript'
+import emitter from '../emitter/index.js'
+import {
+  authCallbackErrorHtml,
+  legacyAuthCallbackHtml,
+} from '../helpers/html.js'
 import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import logger from '../logger.js'
-
-const closePageHtml = (origin: string | undefined) => `
-  <!DOCTYPE html>
-  <html>
-  <head>
-      <meta charset="utf-8" />
-      <script>
-      // if window.opener is nullish, we want the following line to throw to avoid
-      // the window closing without informing the user.
-      window.opener.postMessage(${serialize({ error: true })}, ${serialize(origin)})
-      window.close()
-      </script>
-  </head>
-  <body>Authentication failed.</body>
-  </html>`
 
 export default function callback(
   req: Request,
@@ -29,6 +18,8 @@ export default function callback(
   next: NextFunction,
 ): void {
   const providerName = req.params['providerName']
+  const { companion } = req
+
   if (providerName == null || providerName.length === 0) {
     res.sendStatus(400)
     return
@@ -51,7 +42,25 @@ export default function callback(
       req.id,
     )
     logger.debug(req.session?.grant?.response, 'callback.oauth.resp', req.id)
-    res.status(400).send(closePageHtml(originString))
+    const authCallbackToken =
+      grantDynamic.state &&
+      oAuthState.getFromState(
+        grantDynamic.state,
+        'authCallbackToken',
+        companion.options.secret,
+      )
+    // only new Uppy clients will set an authCallbackToken in the state
+    // in that case, we send the token through the emitter.
+    if (authCallbackToken) {
+      emitter().emit(authCallbackToken, { error: true })
+      res.status(400).send(authCallbackErrorHtml())
+    } else {
+      // This is backwards compatible with old Uppy clients:
+      res
+        .status(400)
+        .send(legacyAuthCallbackHtml({ error: true }, originString))
+    }
+
     return
   }
 
