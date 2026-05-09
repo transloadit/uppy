@@ -9,6 +9,7 @@ export type OAuthState = {
   preAuthToken?: string
   companionInstance?: string
   customerDefinedAllowedOrigins?: string[]
+  authCallbackToken?: string
 }
 
 export const encodeState = (

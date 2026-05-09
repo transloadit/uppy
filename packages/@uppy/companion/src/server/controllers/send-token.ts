@@ -1,44 +1,11 @@
 import type { NextFunction, Request, Response } from 'express'
-import serialize from 'serialize-javascript'
+import emitter from '../emitter/index.js'
+import {
+  authCallbackSuccessHtml,
+  legacyAuthCallbackHtml,
+} from '../helpers/html.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isOriginAllowed } from './connect.js'
-
-const htmlContent = (token: string, origin: string): string => {
-  return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <meta charset="utf-8" />
-        <script>
-          (function() {
-            'use strict';
-
-            var data = ${serialize({ token })};
-            var origin = ${serialize(origin)};
-
-            if (window.opener != null) {
-              window.opener.postMessage(data, origin);
-              window.close();
-            } else {
-              // maybe this will work? (note that it's not possible to try/catch this to see whether it worked)
-              window.postMessage(data, origin);
-
-              console.warn('Unable to send the authentication token to the web app. This probably means that the web app was served from a HTTP server that includes the \`Cross-Origin-Opener-Policy: same-origin\` header. Make sure that the Uppy app is served from a server that does not send this header, or set to \`same-origin-allow-popups\`.');
-
-              addEventListener("DOMContentLoaded", function() {
-                document.body.appendChild(document.createTextNode('Something went wrong. Please contact the site administrator. You may now exit this page.'));
-              });
-            }
-          })();
-        </script>
-    </head>
-    <body>
-    <noscript>
-      JavaScript must be enabled for this to work.
-    </noscript>
-    </body>
-    </html>`
-}
 
 export default function sendToken(
   req: Request,
@@ -74,5 +41,18 @@ export default function sendToken(
     return
   }
 
-  res.send(htmlContent(`${uppyAuthToken}`, clientOrigin))
+  const authCallbackToken = oAuthState.getFromState(
+    state,
+    'authCallbackToken',
+    companion.options.secret,
+  )
+  // only new Uppy clients will set an authCallbackToken in the state
+  // in that case, we send the token through the emitter.
+  if (authCallbackToken) {
+    emitter().emit(authCallbackToken, { token: uppyAuthToken })
+    res.send(authCallbackSuccessHtml())
+  } else {
+    // This is backwards compatible with old Uppy clients:
+    res.send(legacyAuthCallbackHtml({ token: uppyAuthToken }, clientOrigin))
+  }
 }
