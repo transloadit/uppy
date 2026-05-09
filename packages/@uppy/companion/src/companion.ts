@@ -126,9 +126,7 @@ export function app(optionsArg: CompanionInitOptions) {
   const app = express()
 
   if (options.metrics) {
-    app.use(
-      /** @type {any} */ (middlewares.metrics({ path: options.server.path })),
-    )
+    app.use(middlewares.metrics({ path: options.server.path }))
   }
 
   app.get('/health', (_req, res) => res.end())

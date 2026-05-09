@@ -20,7 +20,7 @@ export default function callback(
   const providerName = req.params['providerName']
   const { companion } = req
 
-  if (providerName == null || providerName.length === 0) {
+  if (typeof providerName !== 'string' || providerName.length === 0) {
     res.sendStatus(400)
     return
   }

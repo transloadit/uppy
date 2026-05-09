@@ -97,7 +97,7 @@ export const verifyToken: RequestHandler = (req, res, next) => {
     }
     const { secret } = req.companion.options
     const providerName = req.params['providerName']
-    if (providerName == null || providerName.length === 0) {
+    if (typeof providerName !== 'string' || providerName.length === 0) {
       res.sendStatus(400)
       return
     }
@@ -124,7 +124,9 @@ export const verifyToken: RequestHandler = (req, res, next) => {
     const { providerOptions } = req.companion.options
     const providerName = req.params['providerName']
     const providerOption =
-      providerName != null ? providerOptions?.[providerName] : undefined
+      typeof providerName === 'string'
+        ? providerOptions?.[providerName]
+        : undefined
     const key = providerOption?.key
     if (!key) {
       logger.info(
@@ -146,7 +148,7 @@ export const verifyToken: RequestHandler = (req, res, next) => {
 // does not fail if token is invalid
 export const gentleVerifyToken: RequestHandler = (req, res, next) => {
   const providerName = req.params['providerName']
-  if (providerName == null || providerName.length === 0) {
+  if (typeof providerName !== 'string' || providerName.length === 0) {
     next()
     return
   }

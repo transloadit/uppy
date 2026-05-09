@@ -49,7 +49,7 @@
     "escape-string-regexp": "4.0.0",
     "express": "^5.2.1",
     "express-interceptor": "1.2.0",
-    "express-prom-bundle": "7",
+    "express-prom-bundle": "^8.0.0",
     "express-session": "1.18.1",
     "fast-safe-stringify": "^2.1.1",
     "formdata-node": "^6.0.3",

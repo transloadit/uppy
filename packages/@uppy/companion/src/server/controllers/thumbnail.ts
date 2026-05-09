@@ -7,7 +7,7 @@ async function thumbnail(
   next: NextFunction,
 ): Promise<void> {
   const id = req.params['id']
-  if (id == null) {
+  if (typeof id !== 'string' || id.length === 0) {
     res.sendStatus(400)
     return
   }
