@@ -85,11 +85,11 @@ type TransloaditState = {
   // transition (UPLOADING → EXECUTING → ...). Cleared automatically when
   // `this.assembly = undefined` (no live assembly).
   assemblyStatus: AssemblyResponse | undefined
-  // Snapshot of the most recently finished assembly (completed, cancelled, or
-  // errored). Persists across the gap between uploads so the UI can keep
-  // showing "your last upload's result" even after `assemblyStatus` clears.
-  // Overwritten by the next terminal event.
-  lastAssembly: AssemblyResponse | undefined
+  // Snapshot of the most recent non-null status seen. Persists across the
+  // gap between uploads so the UI can keep showing "your last upload's
+  // result" after `assemblyStatus` clears. Overwritten by the next
+  // status update routed through `#handleAssemblyStatusUpdate`.
+  lastAssemblyStatus: AssemblyResponse | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -511,15 +511,18 @@ export default class Transloadit<
 
   /**
    * Mirrors the live Assembly status into plugin state and lets Golden
-   * Retriever serialize it for restore. The write is unconditional: when
-   * `this.assembly = undefined`, `assemblyResponse` is undefined and
-   * `assemblyStatus` clears too. Persistent display of the last terminal
-   * status is `lastAssembly`'s job, snapshotted in `#onAssemblyFinished` /
-   * `#cancelAssembly` / the assembly `error` listener.
+   * Retriever serialize it for restore. `assemblyStatus` is written
+   * unconditionally — when `this.assembly = undefined`, `assemblyResponse`
+   * is undefined and `assemblyStatus` clears too. `lastAssemblyStatus`
+   * captures the most recent non-null status so the UI can keep displaying
+   * the previous run's result after `assemblyStatus` clears.
    */
   #handleAssemblyStatusUpdate = (
     assemblyResponse: AssemblyResponse | undefined,
   ) => {
+    if (assemblyResponse != null) {
+      this.setPluginState({ lastAssemblyStatus: assemblyResponse })
+    }
     this.setPluginState({ assemblyStatus: assemblyResponse })
     this.uppy.emit('restore:plugin-data-changed', {
       [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
@@ -639,14 +642,12 @@ export default class Transloadit<
 
   /**
    * When an Assembly has finished processing, get the final state
-   * and emit it. Snapshots the terminal status into `lastAssembly` so the
-   * UI can keep displaying the result after `assemblyStatus` clears.
+   * and emit it.
    */
   #onAssemblyFinished(assembly: Assembly) {
     const url = getAssemblyUrlSsl(assembly.status)
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       assembly.status = finalStatus
-      this.setPluginState({ lastAssembly: finalStatus })
       this.uppy.emit('transloadit:complete', finalStatus)
     })
   }
@@ -655,11 +656,6 @@ export default class Transloadit<
     await this.client.cancelAssembly(assembly)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
     this.uppy.emit('transloadit:assembly-cancelled', assembly)
-    // Snapshot the cancelled status before tearing down the live assembly,
-    // so consumers can still query "what did the last run end as".
-    this.setPluginState({ lastAssembly: assembly })
-    // Clearing `this.assembly` triggers `#handleAssemblyStatusUpdate(undefined)`
-    // which clears `assemblyStatus` — no separate clear needed.
     this.assembly = undefined
   }
 
@@ -787,9 +783,6 @@ export default class Transloadit<
     })
     assembly.on('error', (error: AssemblyError) => {
       error.assembly = assembly.status
-      // Snapshot the errored status before any teardown so the UI can keep
-      // showing what went wrong after `assemblyStatus` clears.
-      this.setPluginState({ lastAssembly: assembly.status })
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 
@@ -856,8 +849,8 @@ export default class Transloadit<
 
     // `assemblyStatus` is already undefined here (cleared automatically when
     // `this.assembly` was set to undefined at the end of the previous run).
-    // `lastAssembly` is intentionally NOT cleared so the UI can keep showing
-    // the previous run's terminal status until this run produces a new one.
+    // `lastAssemblyStatus` is intentionally NOT cleared so the UI can keep
+    // showing the previous run's status until this run produces a new one.
 
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function'
@@ -1042,7 +1035,7 @@ export default class Transloadit<
 
     this.setPluginState({
       assemblyStatus: undefined,
-      lastAssembly: undefined,
+      lastAssemblyStatus: undefined,
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
