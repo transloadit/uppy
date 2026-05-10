@@ -1,16 +1,19 @@
 import request from 'supertest'
-import { describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import * as tokenService from '../src/server/helpers/jwt.js'
-import mockOauthState from './mockoauthstate.js'
-import { getServer, grantToken } from './mockserver.js'
-
-vi.mock('express-prom-bundle')
-mockOauthState()
 
 const secret = 'secret'
 
+beforeEach(() => {
+  vi.mock('express-prom-bundle')
+
+  vi.resetModules()
+  vi.clearAllMocks()
+})
+
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', async () => {
+    const { getServer } = await import('./mockserver.js')
     return request(await getServer())
       .get('/drive/callback')
       .expect(302)
@@ -22,6 +25,7 @@ describe('test authentication callback', () => {
   })
 
   test('authentication callback sets cookie', async () => {
+    const { getServer, grantToken } = await import('./mockserver.js')
     return request(await getServer())
       .get('/dropbox/callback')
       .expect(302)
@@ -45,13 +49,55 @@ describe('test authentication callback', () => {
       })
   })
 
-  test('the token gets sent via html', async () => {
+  test('the token gets sent via websocket', async () => {
+    const callbackToken = 'auth-callback-token'
+
+    const oauthState = await import('../src/server/helpers/oauth-state.js')
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+      if (key === 'authCallbackToken') return callbackToken
+
+      return 'http://localhost:3020'
+    })
+
     const authData = {
       dropbox: { accessToken: 'token value' },
       drive: { accessToken: 'token value' },
     }
     const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
+    const onEmitted = vi.fn()
+
+    const { getServerWithEmitter } = await import('./mockserver.js')
+    const { server, emitter } = await getServerWithEmitter()
+    emitter.on(callbackToken, onEmitted)
+
+    await request(server)
+      .get(`/dropbox/send-token?uppyAuthToken=${encodeURIComponent(token)}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.text).toMatch('Authentication successful')
+      })
+
+    expect(onEmitted).toHaveBeenLastCalledWith({
+      token,
+    })
+  })
+
+  test('the token gets sent via legacy html mechanism', async () => {
+    const oauthState = await import('../src/server/helpers/oauth-state.js')
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+      if (key === 'authCallbackToken') return undefined
+
+      return 'http://localhost:3020'
+    })
+
+    const authData = {
+      dropbox: { accessToken: 'token value' },
+      drive: { accessToken: 'token value' },
+    }
+    const token = tokenService.generateEncryptedAuthToken(authData, secret)
+
+    const { getServer } = await import('./mockserver.js')
     // see mock ../../src/server/helpers/oauth-state above for state values
     return request(await getServer())
       .get(`/dropbox/send-token?uppyAuthToken=${encodeURIComponent(token)}`)
