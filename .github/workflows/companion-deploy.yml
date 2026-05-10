@@ -38,35 +38,49 @@ jobs:
           path: /tmp/companion-${{ github.sha }}.tar.gz
 
   docker:
-    name: DockerHub
-    runs-on: ubuntu-latest
-    env:
-      DOCKER_BUILDKIT: 0
-      COMPOSE_DOCKER_CLI_BUILD: 0
+    name: DockerHub (${{ matrix.platform }})
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            platform: linux/amd64
+            platform_tag: amd64
+          - runner: ubuntu-24.04-arm
+            platform: linux/arm64
+            platform_tag: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Checkout sources
         uses: actions/checkout@v6
-      - name: Docker meta
-        id: docker_meta
-        uses: docker/metadata-action@c299e40c65443455700f0fdfc63efafe5b349051 # v5.10.0
-        with:
-          images: transloadit/companion
-          tags: |
-            type=edge
-            type=raw,value=latest,enable=false
-      - uses: docker/setup-qemu-action@c7c53464625b32c7a7e944ae62b3e17d2b600130 # v3.7.0
       - uses: docker/setup-buildx-action@v3
       - name: Log in to DockerHub
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
-          username: ${{secrets.DOCKER_USERNAME}}
-          password: ${{secrets.DOCKER_PASSWORD}}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and push
         uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6.19.2
         with:
           push: true
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ matrix.platform }}
           file: Dockerfile
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: transloadit/companion:edge-${{ matrix.platform_tag }}
+
+  docker-manifest:
+    name: DockerHub manifest
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: docker/setup-buildx-action@v3
+      - name: Log in to DockerHub
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Publish edge manifest
+        run: |
+          docker buildx imagetools create \
+            --tag transloadit/companion:edge \
+            transloadit/companion:edge-amd64 \
+            transloadit/companion:edge-arm64

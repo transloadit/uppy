@@ -3,5 +3,10 @@
   "compilerOptions": {
     "noEmit": true
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": [
+    "src/**/*.ts",
+    "src/types/**/*.d.ts",
+    "test/**/*.ts",
+    "__mocks__/**/*.ts"
+  ]
 }
