@@ -43,7 +43,6 @@ jobs:
   docker:
     name: DockerHub (${{ matrix.platform }})
     strategy:
-      fail-fast: false
       matrix:
         include:
           - runner: ubuntu-24.04
