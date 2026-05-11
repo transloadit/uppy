@@ -131,7 +131,6 @@ vi_VN.strings = {
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'Zoom',
   poweredBy: 'Được cung cấp bởi %{uppy}',

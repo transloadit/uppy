@@ -8,7 +8,6 @@ export type ProviderIconProps = {
     | 'audio'
     | 'dropbox'
     | 'facebook'
-    | 'instagram'
     | 'onedrive'
     | 'googlephotos'
     | 'googledrive'
