@@ -81,14 +81,18 @@ type TransloaditState = {
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
   >
-  // Live status of the currently-active assembly. Tracks every status
-  // transition (UPLOADING → EXECUTING → ...). Cleared automatically when
-  // `this.assembly = undefined` (no live assembly).
+  /**
+   * Live status of the currently-active assembly. Tracks every status
+   * transition (UPLOADING → EXECUTING → ...). Cleared automatically when
+   * `this.assembly = undefined` (no live assembly).
+   */
   assemblyStatus: AssemblyResponse | undefined
-  // Snapshot of the most recent non-null status seen. Persists across the
-  // gap between uploads so the UI can keep showing "your last upload's
-  // result" after `assemblyStatus` clears. Overwritten by the next
-  // status update routed through `#handleAssemblyStatusUpdate`.
+  /**
+   * Snapshot of the most recent non-null status seen. Persists across the
+   * gap between uploads so the UI can keep showing "your last upload's
+   * result" after `assemblyStatus` clears. Overwritten by the next
+   * status update routed through `#handleAssemblyStatusUpdate`.
+   */
   lastAssemblyStatus: AssemblyResponse | undefined
   results: Array<{
     result: AssemblyResult
@@ -846,11 +850,6 @@ export default class Transloadit<
     // Prevent adding/dropping files during upload to avoid creating multiple assemblies
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
-
-    // `assemblyStatus` is already undefined here (cleared automatically when
-    // `this.assembly` was set to undefined at the end of the previous run).
-    // `lastAssemblyStatus` is intentionally NOT cleared so the UI can keep
-    // showing the previous run's status until this run produces a new one.
 
     const assemblyOptions = (
       typeof this.opts.assemblyOptions === 'function'
