@@ -26,7 +26,9 @@ import AssemblyWatcher from './AssemblyWatcher.js'
 import Client, { type AssemblyError } from './Client.js'
 import locale from './locale.js'
 
-export type AssemblyResponse = AssemblyStatus
+export type AssemblyResponse = AssemblyStatus & {
+  progress_combined?: number
+}
 export type AssemblyFile = AssemblyStatusUpload
 export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
 export type AssemblyParameters = AssemblyInstructionsInput
@@ -79,6 +81,19 @@ type TransloaditState = {
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
   >
+  /**
+   * Live status of the currently-active assembly. Tracks every status
+   * transition (UPLOADING → EXECUTING → ...). Cleared automatically when
+   * `this.assembly = undefined` (no live assembly).
+   */
+  assemblyStatus: AssemblyResponse | undefined
+  /**
+   * Snapshot of the most recent non-null status seen. Persists across the
+   * gap between uploads so the UI can keep showing "your last upload's
+   * result" after `assemblyStatus` clears. Overwritten by the next
+   * status update routed through `#handleAssemblyStatusUpdate`.
+   */
+  lastAssemblyStatus: AssemblyResponse | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -498,11 +513,20 @@ export default class Transloadit<
   }
 
   /**
-   * Allows Golden Retriever plugin to serialize the Assembly status so we can restore it later
+   * Mirrors the live Assembly status into plugin state and lets Golden
+   * Retriever serialize it for restore. `assemblyStatus` is written
+   * unconditionally — when `this.assembly = undefined`, `assemblyResponse`
+   * is undefined and `assemblyStatus` clears too. `lastAssemblyStatus`
+   * captures the most recent non-null status so the UI can keep displaying
+   * the previous run's result after `assemblyStatus` clears.
    */
   #handleAssemblyStatusUpdate = (
     assemblyResponse: AssemblyResponse | undefined,
   ) => {
+    if (assemblyResponse != null) {
+      this.setPluginState({ lastAssemblyStatus: assemblyResponse })
+    }
+    this.setPluginState({ assemblyStatus: assemblyResponse })
     this.uppy.emit('restore:plugin-data-changed', {
       [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
     })
@@ -649,6 +673,9 @@ export default class Transloadit<
         this.uppy.log(err)
       }
     }
+    // `assemblyStatus` is cleared automatically when `this.assembly = undefined`
+    // (via `#cancelAssembly` above, or by `#afterUpload`'s finally block).
+
     // Reset allowNewUpload when upload is cancelled
     this.uppy.setState({ allowNewUpload: true })
   }
@@ -1005,6 +1032,8 @@ export default class Transloadit<
     this.uppy.on('restored', this.#onRestored)
 
     this.setPluginState({
+      assemblyStatus: undefined,
+      lastAssemblyStatus: undefined,
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
