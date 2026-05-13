@@ -1165,7 +1165,6 @@ describe('src/Core', () => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
           if (file.name != null && /bar/.test(file.name)) {
-            // @ts-expect-error
             core.emit(
               'upload-error',
               file,
@@ -1201,7 +1200,6 @@ describe('src/Core', () => {
       const core = new Core()
       // @ts-expect-error
       core.store.state.currentUploads = {
-        // @ts-expect-error
         upload1: {
           fileIDs: [
             'uppy-file1/jpg-1e-image/jpeg',
@@ -1209,7 +1207,6 @@ describe('src/Core', () => {
             'uppy-file3/jpg-1e-image/jpeg',
           ],
         },
-        // @ts-expect-error
         upload2: {
           fileIDs: [
             'uppy-file4/jpg-1e-image/jpeg',
@@ -1344,7 +1341,6 @@ describe('src/Core', () => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
           if (!hasError) {
-            // @ts-expect-error
             core.emit('upload-error', file, new Error('foo'))
             hasError = true
           }
@@ -2038,7 +2034,6 @@ describe('src/Core', () => {
       core.once('file-added', (file) => {
         core.emit('upload-start', [file])
         core.emit('upload-progress', file, {
-          // @ts-expect-error
           bytesTotal: null,
           // @ts-expect-error
           bytesUploaded: null,
@@ -2493,7 +2488,6 @@ describe('src/Core', () => {
           },
         },
       })
-      // @ts-expect-error test does not care about missing properties
       core.emit(
         'upload-error',
         core.getFile('fileId'),
@@ -2538,11 +2532,8 @@ describe('src/Core', () => {
       const offlineEventMock = vi.fn()
       const backOnlineEventMock = vi.fn()
       const core = new Core()
-      // @ts-expect-error untyped
       core.on('is-offline', offlineEventMock)
-      // @ts-expect-error untyped
       core.on('is-online', onlineEventMock)
-      // @ts-expect-error untyped
       core.on('back-online', backOnlineEventMock)
 
       mockNavigatorOnline(true)

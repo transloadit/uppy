@@ -1,4 +1,3 @@
-// @ts-expect-error untyped
 import { FOCUSABLE_ELEMENTS, toArray } from '@uppy/utils'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 

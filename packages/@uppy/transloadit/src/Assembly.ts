@@ -1,4 +1,3 @@
-// @ts-expect-error untyped
 import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
 import {
   fetchWithNetworkError,
