@@ -247,9 +247,9 @@ nl_NL.strings = {
   zoomOut: 'Zoom uit',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.nl_NL = nl_NL
 }
 

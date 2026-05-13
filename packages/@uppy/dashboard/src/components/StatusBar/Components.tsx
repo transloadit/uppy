@@ -530,16 +530,17 @@ function ProgressBarError(props: ProgressBarErrorProps) {
     </div>
   )
 }
+
 export {
-  UploadBtn,
-  RetryBtn,
   CancelBtn,
-  PauseResumeButton,
   DoneBtn,
   LoadingSpinner,
-  ProgressDetails,
-  ProgressBarProcessing,
-  ProgressBarError,
-  ProgressBarUploading,
+  PauseResumeButton,
   ProgressBarComplete,
+  ProgressBarError,
+  ProgressBarProcessing,
+  ProgressBarUploading,
+  ProgressDetails,
+  RetryBtn,
+  UploadBtn,
 }

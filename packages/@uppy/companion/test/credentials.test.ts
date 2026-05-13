@@ -41,7 +41,7 @@ describe('providers requests with remote oauth keys', () => {
     // mocking request module used to fetch custom oauth credentials
     nock('http://localhost:2111')
       .post('/zoom-keys')
-      // @ts-ignore
+      // @ts-expect-error
       .reply((uri, { provider, parameters }) => {
         if (provider !== 'zoom' || parameters !== 'ZOOM-CREDENTIALS-PARAMS')
           return [400]

@@ -1,4 +1,4 @@
-// @ts-ignore untyped
+// @ts-expect-error untyped
 import { FOCUSABLE_ELEMENTS } from '@uppy/utils'
 import debounce from 'lodash/debounce.js'
 import getActiveOverlayEl from './getActiveOverlayEl.js'

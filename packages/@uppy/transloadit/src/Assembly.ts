@@ -1,4 +1,4 @@
-// @ts-ignore untyped
+// @ts-expect-error untyped
 import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
 import {
   fetchWithNetworkError,
@@ -299,9 +299,7 @@ class TransloaditAssembly extends Emitter {
         const prevResults = prevResultsMap[stepName] ?? []
 
         nextResults
-          .filter(
-            (n) => !prevResults || !prevResults.some((p) => p.id === n.id),
-          )
+          .filter((n) => !prevResults?.some((p) => p.id === n.id))
           .forEach((result) => {
             this.emit('result', stepName, result)
           })

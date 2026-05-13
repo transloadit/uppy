@@ -489,23 +489,22 @@ describe('provider file gets downloaded from', () => {
 })
 
 describe('connect to provider', () => {
-  test.each(providerNames)(
-    'connect to %s via grant.js endpoint',
-    async (providerName: string) => {
-      const oauthProvider = oauthProviders[providerName]
+  test.each(
+    providerNames,
+  )('connect to %s via grant.js endpoint', async (providerName: string) => {
+    const oauthProvider = oauthProviders[providerName]
 
-      if (oauthProvider == null) return
+    if (oauthProvider == null) return
 
-      await request(await getServerWithEnv())
-        .get(`/${providerName}/connect?foo=bar`)
-        .set('uppy-auth-token', token)
-        .expect(302)
-        .expect(
-          'Location',
-          `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`,
-        )
-    },
-  )
+    await request(await getServerWithEnv())
+      .get(`/${providerName}/connect?foo=bar`)
+      .set('uppy-auth-token', token)
+      .expect(302)
+      .expect(
+        'Location',
+        `http://localhost:3020/connect/${oauthProvider}?state=${OAUTH_STATE}`,
+      )
+  })
 })
 
 describe('logout of provider', () => {

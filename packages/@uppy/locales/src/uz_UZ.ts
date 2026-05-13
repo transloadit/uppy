@@ -221,9 +221,9 @@ uz_UZ.strings = {
   zoomOut: 'Kichraytirish',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.uz_UZ = uz_UZ
 }
 

@@ -229,9 +229,9 @@ ca_ES.strings = {
   unselectFileNamed: 'Desselecciona arxiu %{name}',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.ca_ES = ca_ES
 }
 
