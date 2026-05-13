@@ -189,6 +189,15 @@ describe('Transloadit', () => {
       },
     })
 
+    // Plugin state should start empty; track every distinct `ok` that lands in
+    // it so we can verify the assembly lifecycle is reflected.
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+    const okHistory = []
+    const unsubscribe = uppy.store.subscribe((_prev, next) => {
+      const ok = next.plugins.Transloadit.assemblyStatus?.ok
+      if (ok && ok !== okHistory.at(-1)) okHistory.push(ok)
+    })
+
     uppy.addFile({
       source: 'test',
       name: 'cat.jpg',
@@ -228,11 +237,21 @@ describe('Transloadit', () => {
     uppy.resumeAll()
 
     await uploadPromise
+    unsubscribe()
 
     expect(successSpy).toHaveBeenCalled()
 
     // Should be reset to true after upload completes
     expect(uppy.getState().allowNewUpload).toBe(true)
+
+    // The createAssembly mock returned ASSEMBLY_EXECUTING and the assembly
+    // setter forwarded that status into plugin state during the upload.
+    expect(okHistory).toContain('ASSEMBLY_EXECUTING')
+    // `assemblyStatus` is the live slot — it clears when `this.assembly`
+    // becomes undefined at the end of `#afterUpload`. `lastAssembly` is
+    // intentionally not populated here because no terminal event fires in
+    // this mocked flow (the server keeps returning ASSEMBLY_EXECUTING).
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
 
     server.close()
   })

@@ -222,7 +222,7 @@ export default class Uploader {
   /**
    * Uploads file to destination based on the supplied protocol (tus, s3-multipart, multipart)
    * For tus uploads, the deferredLength option is enabled, because file size value can be unreliable
-   * for some providers (Instagram particularly)
+   * for some providers.
    *
    * @param optionsIn
    */

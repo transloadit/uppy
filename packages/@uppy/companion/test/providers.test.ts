@@ -316,30 +316,6 @@ describe('list provider files', () => {
     expect1({ username, items, providerFixture })
   })
 
-  test('instagram', async () => {
-    nock('https://graph.instagram.com').get('/me?fields=username').reply(200, {
-      id: '17841405793187218',
-      username: defaults.USERNAME,
-    })
-    nock('https://graph.instagram.com')
-      .get(
-        '/me/media?fields=id%2Cmedia_type%2Cthumbnail_url%2Cmedia_url%2Ctimestamp%2Cchildren%7Bmedia_type%2Cmedia_url%2Cthumbnail_url%2Ctimestamp%7D',
-      )
-      .reply(200, {
-        data: [
-          {
-            id: defaults.ITEM_ID,
-            media_type: 'IMAGE',
-            timestamp: '2017-08-31T18:10:00+0000',
-            media_url: defaults.THUMBNAIL_URL,
-          },
-        ],
-      })
-
-    const { username, items, providerFixture } = await runTest('instagram')
-    expect1({ username, items, providerFixture })
-  })
-
   test('onedrive', async () => {
     nock('https://graph.microsoft.com').get('/v1.0/me').reply(200, {
       userPrincipalName: defaults.USERNAME,
@@ -490,20 +466,6 @@ describe('provider file gets downloaded from', () => {
     await runTest('facebook')
   })
 
-  test('instagram', async () => {
-    // times(2) because of size request
-    nock('https://graph.instagram.com')
-      .get(`/${defaults.ITEM_ID}?fields=media_url`)
-      .times(2)
-      .reply(200, {
-        id: defaults.ITEM_ID,
-        media_type: 'IMAGE',
-        media_url: defaults.THUMBNAIL_URL,
-        timestamp: '2017-08-31T18:10:00+0000',
-      })
-    await runTest('instagram')
-  })
-
   test('onedrive', async () => {
     nock('https://graph.microsoft.com')
       .get(`/v1.0/drives/DUMMY-DRIVE-ID/items/${defaults.ITEM_ID}`)
@@ -607,10 +569,6 @@ describe('logout of provider', () => {
       ])
 
     await runTest('facebook')
-  })
-
-  test('instagram', async () => {
-    await runTest('instagram')
   })
 
   test('onedrive', async () => {

@@ -1,6 +1,6 @@
 {
   "name": "uppy",
-  "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
+  "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox, Google Drive, S3 and more :dog:",
   "version": "5.2.4",
   "license": "MIT",
   "main": "lib/index.js",
@@ -55,7 +55,6 @@
     "@uppy/google-photos-picker": "workspace:*",
     "@uppy/image-editor": "workspace:*",
     "@uppy/image-generator": "workspace:*",
-    "@uppy/instagram": "workspace:*",
     "@uppy/locales": "workspace:*",
     "@uppy/onedrive": "workspace:*",
     "@uppy/provider-views": "workspace:*",
