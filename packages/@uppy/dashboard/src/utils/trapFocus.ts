@@ -24,8 +24,6 @@ function focusOnLastNode(event: $TSFixMe, nodes: $TSFixMe) {
 //    Firefox thinks <ul> is focusable, but we don't have <ul>s in our FOCUSABLE_ELEMENTS. Which means that if we tab into
 //    the <ul>, code will think that we are not in the active overlay, and we should focusOnFirstNode() of the currently
 //    active overlay!
-//    [Practical check] if we use (focusedItemIndex === -1), instagram provider in firefox will never get focus on its pics
-//    in the <ul>.
 function isFocusInOverlay(activeOverlayEl: $TSFixMe) {
   return activeOverlayEl.contains(document.activeElement)
 }
@@ -60,7 +58,7 @@ function trapFocus(
   }
 }
 
-// Traps focus inside of the currently open overlay (e.g. Dashboard, or e.g. Instagram),
+// Traps focus inside of the currently open overlay (e.g. Dashboard),
 // never lets focus disappear from the modal.
 export { trapFocus as forModal }
 

@@ -32,10 +32,6 @@ const companionOptions = {
       key: 'your google key',
       secret: 'your google secret',
     },
-    instagram: {
-      key: 'your instagram key',
-      secret: 'your instagram secret',
-    },
     dropbox: {
       key: 'your dropbox key',
       secret: 'your dropbox secret',

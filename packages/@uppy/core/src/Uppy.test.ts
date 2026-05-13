@@ -1962,7 +1962,7 @@ describe('src/Core', () => {
       })
 
       core.addFile({
-        source: 'instagram',
+        source: 'dropbox',
         name: 'foo.jpg',
         type: 'image/jpeg',
         // @ts-ignore
@@ -2028,7 +2028,7 @@ describe('src/Core', () => {
         })
       })
       core.addFile({
-        source: 'instagram',
+        source: 'dropbox',
         name: 'foo.jpg',
         type: 'image/jpeg',
         // @ts-ignore
@@ -2045,7 +2045,7 @@ describe('src/Core', () => {
         })
       })
       core.addFile({
-        source: 'instagram',
+        source: 'dropbox',
         name: 'bar.jpg',
         type: 'image/jpeg',
         // @ts-ignore

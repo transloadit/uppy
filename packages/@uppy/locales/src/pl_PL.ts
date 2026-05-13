@@ -144,7 +144,6 @@ pl_PL.strings = {
   pluginNameGoogleDrive: 'Google Drive',
   pluginNameGoogleDrivePicker: 'Google Drive',
   pluginNameGooglePhotosPicker: 'Google Photos',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameScreenCapture: 'Zrzut ekranu',
   pluginNameUnsplash: 'Unsplash',

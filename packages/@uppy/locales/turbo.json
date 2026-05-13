@@ -24,8 +24,7 @@
         "@uppy/dropbox#build",
         "@uppy/webdav#build",
         "@uppy/unsplash#build",
-        "@uppy/webcam#build",
-        "@uppy/instagram#build"
+        "@uppy/webcam#build"
       ],
       "inputs": [
         "script/**/*.{js,ts,jsx,tsx}",
