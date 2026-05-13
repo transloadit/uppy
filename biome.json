@@ -1,5 +1,5 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -14,10 +14,11 @@
       "bin/**",
       "e2e/**",
       "private/**",
-      "!packages/**/{dist,lib}/**",
+      "!packages/**/{dist,lib}",
       "!node_modules",
       "!.svelte-kit",
-      "!packages/@uppy/components/src/input.css"
+      "!packages/@uppy/components/src/input.css",
+      "!examples/angular/**/*.html"
     ]
   },
   "formatter": {
@@ -25,20 +26,11 @@
     "indentStyle": "space",
     "formatWithErrors": true
   },
+  "html": {
+    "experimentalFullSupportEnabled": true
+  },
   "linter": {
     "enabled": true,
-    "includes": [
-      "packages/**",
-      "examples/**",
-      "scripts/**",
-      "private/**",
-      "!packages/**/{dist,lib}/**",
-      "!node_modules",
-      "!.svelte-kit",
-      "!packages/@uppy/components/src/input.css",
-      "!**/*.vue",
-      "!**/*.svelte"
-    ],
     "rules": {
       "recommended": true,
       "suspicious": {
@@ -55,7 +47,9 @@
           "options": {
             "ignoreRestSiblings": true
           }
-        }
+        },
+        "noNestedComponentDefinitions": "error",
+        "noReactPropAssignments": "error"
       },
       "style": {
         "noNonNullAssertion": "off"
@@ -63,10 +57,6 @@
       "a11y": {
         "noSvgWithoutTitle": "off",
         "useSemanticElements": "off"
-      },
-      "nursery": {
-        "noNestedComponentDefinitions": "error",
-        "noReactPropAssign": "error"
       }
     }
   },
@@ -83,5 +73,32 @@
         "organizeImports": "on"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["**/*.vue", "**/*.svelte", "packages/@uppy/vue/**/*.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "useHookAtTopLevel": "off",
+            "useExhaustiveDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["examples/angular/**"],
+      "linter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": ["examples/nextjs/**/*.css"],
+      "css": {
+        "parser": {
+          "tailwindDirectives": true
+        }
+      }
+    }
+  ]
 }
