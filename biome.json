@@ -60,18 +60,6 @@
       }
     }
   },
-  "overrides": [
-    {
-      "includes": ["packages/@uppy/companion/**"],
-      "linter": {
-        "rules": {
-          "complexity": {
-            "useLiteralKeys": "off"
-          }
-        }
-      }
-    }
-  ],
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
@@ -87,6 +75,16 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["packages/@uppy/companion/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "useLiteralKeys": "off"
+          }
+        }
+      }
+    },
     {
       "includes": ["**/*.vue", "**/*.svelte", "packages/@uppy/vue/**/*.ts"],
       "linter": {
