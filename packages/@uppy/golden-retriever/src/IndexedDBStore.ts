@@ -100,12 +100,14 @@ let cleanedUp = false
 class IndexedDBStore {
   #ready: Promise<IDBDatabase> | IDBDatabase
 
-  // In-memory size cache — eliminates the O(n) cursor walk inside getSize()
-  // on every put(), making sequential puts O(1) instead of O(n²).
-  // null means "not yet initialised"; the first getSize() call populates it.
-  // Incremented on successful put, reset to null on delete (since we don't
-  // track deleted-file sizes — the next getSize() rebuilds from scratch,
-  // which is fast because the store shrinks after deletions).
+  /**
+   * In-memory size cache eliminates the O(n) cursor walk inside getSize()
+   * on every put(), making sequential puts O(1) instead of O(n²).
+   * null means "not yet initialised"; the first getSize() call populates it.
+   * Incremented on successful put, reset to null on delete (since we don't
+   * track deleted-file sizes — the next getSize() rebuilds from scratch,
+   * which is fast because the store shrinks after deletions).
+   */
   #cachedSize: number | null = null
 
   opts: Required<IndexedDBStoreOptions>
