@@ -16,17 +16,12 @@
       import {
         Uppy,
         Dashboard,
-        Instagram,
         GoogleDrive,
         Tus,
       } from 'https://releases.transloadit.com/uppy/v4.18.0/uppy.min.mjs'
 
       const uppy = new Uppy({ debug: true, autoProceed: false })
         .use(Dashboard, { trigger: '#uppyModalOpener' })
-        .use(Instagram, {
-          target: Dashboard,
-          companionUrl: 'http://localhost:3020',
-        })
         .use(GoogleDrive, {
           target: Dashboard,
           companionUrl: 'http://localhost:3020',

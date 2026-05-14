@@ -10373,21 +10373,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/instagram@workspace:*, @uppy/instagram@workspace:^, @uppy/instagram@workspace:packages/@uppy/instagram":
-  version: 0.0.0-use.local
-  resolution: "@uppy/instagram@workspace:packages/@uppy/instagram"
-  dependencies:
-    "@uppy/companion-client": "workspace:^"
-    "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
-    "@uppy/utils": "workspace:^"
-    preact: "npm:^10.26.10"
-    typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
 "@uppy/locales@workspace:*, @uppy/locales@workspace:packages/@uppy/locales":
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
@@ -10488,7 +10473,6 @@ __metadata:
     "@uppy/dropbox": "workspace:^"
     "@uppy/facebook": "workspace:^"
     "@uppy/google-drive": "workspace:^"
-    "@uppy/instagram": "workspace:^"
     "@uppy/onedrive": "workspace:^"
     "@uppy/unsplash": "workspace:^"
     "@uppy/url": "workspace:^"
@@ -23862,7 +23846,6 @@ __metadata:
     "@uppy/google-photos-picker": "workspace:*"
     "@uppy/image-editor": "workspace:*"
     "@uppy/image-generator": "workspace:*"
-    "@uppy/instagram": "workspace:*"
     "@uppy/locales": "workspace:*"
     "@uppy/onedrive": "workspace:*"
     "@uppy/provider-views": "workspace:*"

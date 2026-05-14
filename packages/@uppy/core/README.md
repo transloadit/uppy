@@ -11,8 +11,8 @@ Uppy is a sleek, modular JavaScript file uploader that integrates seamlessly
 with any application. It’s fast, provides a comprehensible API and lets you
 worry about more important problems than building a file uploader.
 
-- **Fetch** files from local disk, remote urls, Google Drive, Dropbox,
-  Instagram, or snap and record selfies with a camera;
+- **Fetch** files from local disk, remote urls, Google Drive, Dropbox, or snap
+  and record selfies with a camera;
 - **Preview** and edit metadata with a nice interface;
 - **Upload** to the final destination, optionally process/encode
 

@@ -2,7 +2,7 @@
   "name": "@uppy-dev/build",
   "version": "0.0.0",
   "private": true,
-  "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Instagram, Dropbox, Google Drive, S3 and more :dog:",
+  "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox, Google Drive, S3 and more :dog:",
   "license": "MIT",
   "workspaces": [
     "examples/*",

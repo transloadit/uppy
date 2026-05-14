@@ -7,9 +7,9 @@ import standalone from './index.js'
 const port: string | number =
   process.env['COMPANION_PORT'] || process.env['PORT'] || 3020
 
-const { app } = standalone()
+const { app, companionOptions } = standalone()
 
-companion.socket(app.listen(port))
+companion.socket(app.listen(port), companionOptions)
 
 logger.info(`Welcome to Companion! v${packageJson.version}`)
 logger.info(`Listening on http://localhost:${port}`)
