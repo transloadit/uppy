@@ -658,7 +658,10 @@ export default class Transloadit<
   async #cancelAssembly(assembly: AssemblyResponse) {
     await this.client.cancelAssembly(assembly)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
-    this.uppy.emit('transloadit:assembly-cancelled', assembly)
+
+    // assemblyStatus is updated since the cancellation is triggered , emit the updated assemblyStatus
+    const updatedAssemblyStatus = this.assembly?.status ?? assembly
+    this.uppy.emit('transloadit:assembly-cancelled', updatedAssemblyStatus)
     this.assembly = undefined
   }
 
