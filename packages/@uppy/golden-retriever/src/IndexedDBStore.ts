@@ -231,7 +231,13 @@ class IndexedDBStore {
       data: file.data,
     })
     const result = await waitForRequest<T>(request)
-    this.#cachedSize = (this.#cachedSize ?? 0) + (file.data.size ?? 0)
+    // Only update the cache if it is still live. If a concurrent delete()
+    // invalidated it (set it to null) while this put() was in flight, leave
+    // it null so the next getSize() does a fresh scan — resurrecting it from
+    // 0 here would silently drop the pre-existing total and the deletion.
+    if (this.#cachedSize !== null) {
+      this.#cachedSize += file.data.size
+    }
     return result
   }
 
