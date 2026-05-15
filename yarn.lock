@@ -8663,7 +8663,7 @@ __metadata:
     vitest: "npm:^3.2.4"
     webdav: "npm:^5.8.0"
     ws: "npm:8.20.1"
-    zod: "npm:^3.24.0"
+    zod: "npm:4.4.3"
   bin:
     companion: ./dist/bin/companion.js
   languageName: unknown
@@ -23747,10 +23747,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.24.0":
-  version: 3.25.76
-  resolution: "zod@npm:3.25.76"
-  checksum: 10/f0c963ec40cd96858451d1690404d603d36507c1fc9682f2dae59ab38b578687d542708a7fdbf645f77926f78c9ed558f57c3d3aa226c285f798df0c4da16995
+"zod@npm:4.4.3":
+  version: 4.4.3
+  resolution: "zod@npm:4.4.3"
+  checksum: 10/804b9a42aa8f35f2b3c5a8dff906291cb749115f83ee2afe3576d70b5b5c53c965365c7f4967690647a9c54af9838ff232a85ff9577a0a36c44b68bc6cdefe36
   languageName: node
   linkType: hard
 

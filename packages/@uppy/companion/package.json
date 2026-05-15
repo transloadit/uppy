@@ -75,7 +75,7 @@
     "validator": "13.15.35",
     "webdav": "^5.8.0",
     "ws": "8.20.1",
-    "zod": "^3.24.0"
+    "zod": "4.4.3"
   },
   "devDependencies": {
     "@types/common-tags": "^1.8.4",
