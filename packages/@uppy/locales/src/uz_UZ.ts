@@ -131,7 +131,6 @@ uz_UZ.strings = {
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'Zoom',
   poweredBy: '%{uppy} tomonidan quvvatlanadi',

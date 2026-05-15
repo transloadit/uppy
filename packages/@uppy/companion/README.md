@@ -8,7 +8,7 @@ Companion is a server integration for
 [Uppy](https://github.com/transloadit/uppy) file uploader.
 
 It handles the server-to-server communication between your server and file
-storage providers such as Google Drive, Dropbox, Instagram, etc. **Companion is
+storage providers such as Google Drive, Dropbox, etc. **Companion is
 not a target to upload files to**. For this, use a <https://tus.io> server (if
 you want resumable) or your existing Apache/Nginx server (if you don’t).
 [See here for full documentation](https://uppy.io/docs/companion/)

@@ -66,7 +66,7 @@ const defaultOptions = {
 
 /**
  * SearchProviderView, used for Unsplash and future image search providers.
- * Extends generic View, shared with regular providers like Google Drive and Instagram.
+ * Extends generic View, shared with regular providers like Google Drive.
  */
 export default class SearchProviderView<M extends Meta, B extends Body> {
   static VERSION = packageJson.version

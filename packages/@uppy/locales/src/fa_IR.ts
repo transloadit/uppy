@@ -128,7 +128,6 @@ fa_IR.strings = {
   pluginNameDropbox: 'دراپ باکس',
   pluginNameFacebook: 'فیس بوک',
   pluginNameGoogleDrive: 'درایو گوگل',
-  pluginNameInstagram: 'اینستاگرام',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'بزرگ‌نمایی',
   poweredBy: 'قدرت گرفته از %{uppy}',

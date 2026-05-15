@@ -56,9 +56,6 @@
       "path": "../@uppy/image-editor/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/instagram/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/onedrive/tsconfig.build.json"
     },
     {
