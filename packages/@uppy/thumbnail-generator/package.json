@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "exifr": "^7.0.0"
+    "exifr": "^7.1.3"
   },
   "devDependencies": {
     "jsdom": "^26.1.0",

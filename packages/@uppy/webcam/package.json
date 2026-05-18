@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "is-mobile": "^4.0.0",
+    "is-mobile": "^5.0.0",
     "preact": "^10.29.2"
   },
   "devDependencies": {

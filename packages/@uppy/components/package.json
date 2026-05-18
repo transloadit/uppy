@@ -44,7 +44,7 @@
     "clsx": "^2.1.1",
     "dequal": "^2.0.3",
     "preact": "^10.29.2",
-    "pretty-bytes": "^6.1.1"
+    "pretty-bytes": "^7.1.0"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.6",
