@@ -71,7 +71,12 @@ app.use((err, req, res) => {
   res.status(500).json({ message: err.message, error: err })
 })
 
-companion.socket(app.listen(3020))
+// `companion.socket` requires the same options object passed to
+// `companion.app(...)` since PR #6248 — it derives the external base path
+// from `options.server` so WS URLs work behind reverse proxies. Omitting the
+// second arg throws "Cannot read properties of undefined (reading 'server')"
+// inside getURLBuilder.
+companion.socket(app.listen(3020), companionOptions)
 
 console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)
