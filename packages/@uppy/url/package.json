@@ -47,8 +47,8 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "nanoid": "^5.0.9",
-    "preact": "^10.26.10"
+    "nanoid": "^5.1.11",
+    "preact": "^10.29.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
