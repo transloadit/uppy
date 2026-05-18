@@ -97,12 +97,6 @@
       }
     },
     {
-      "includes": ["examples/angular/**"],
-      "linter": {
-        "enabled": false
-      }
-    },
-    {
       "includes": ["examples/nextjs/**/*.css"],
       "css": {
         "parser": {
