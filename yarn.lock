@@ -7628,10 +7628,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@transloadit/types@npm:^4.1.3":
-  version: 4.1.3
-  resolution: "@transloadit/types@npm:4.1.3"
-  checksum: 10/449d00a1ce6ecec7c5ae310a57bc5c76b5fb6fb745373d1693ad0383048d4c53e576a6281cc38c750f7f5c999b4b50e302b0292d71427d08bc76a3e6db4312a1
+"@transloadit/types@npm:4.3.1":
+  version: 4.3.1
+  resolution: "@transloadit/types@npm:4.3.1"
+  checksum: 10/b0fab64edfc660efcec29ff5be8312fedd78faaeb6d7570cd7edeef66f3e3c37e8fed80ba28a88f1767ed46e1fecd98806a4ba14b6be3bea1658022a36493bb5
   languageName: node
   linkType: hard
 
@@ -9066,7 +9066,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
-    "@transloadit/types": "npm:^4.1.3"
+    "@transloadit/types": "npm:4.3.1"
     "@uppy/core": "workspace:^"
     "@uppy/tus": "workspace:^"
     "@uppy/utils": "workspace:^"
