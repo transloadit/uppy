@@ -66,9 +66,5 @@ const server = app.listen(3020, () => {
   console.log('listening on port 3020')
 })
 
-// `setupSockets` (aliased as `companion.socket`) requires the same options
-// object passed to `companion.app(...)` since PR #6248 — it now derives the
-// external base path from `options.server` so WS URLs work behind reverse
-// proxies. Passing only `server` throws `Cannot read properties of undefined
-// (reading 'server')` inside getURLBuilder.
+
 companion.socket(server, options)
