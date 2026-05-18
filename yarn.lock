@@ -7848,13 +7848,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint@npm:*, @types/eslint@npm:^8.2.0":
+"@types/eslint@npm:*":
   version: 8.56.10
   resolution: "@types/eslint@npm:8.56.10"
   dependencies:
     "@types/estree": "npm:*"
     "@types/json-schema": "npm:*"
   checksum: 10/0cdd914b944ebba51c35827d3ef95bc3e16eb82b4c2741f6437fa57cdb00a4407c77f89c220afe9e4c9566982ec8a0fb9b97c956ac3bd4623a3b6af32eed8424
+  languageName: node
+  linkType: hard
+
+"@types/eslint@npm:9.6.1":
+  version: 9.6.1
+  resolution: "@types/eslint@npm:9.6.1"
+  dependencies:
+    "@types/estree": "npm:*"
+    "@types/json-schema": "npm:*"
+  checksum: 10/719fcd255760168a43d0e306ef87548e1e15bffe361d5f4022b0f266575637acc0ecb85604ac97879ee8ae83c6a6d0613b0ed31d0209ddf22a0fe6d608fc56fe
   languageName: node
   linkType: hard
 
@@ -7903,12 +7913,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-session@npm:1.17.3":
-  version: 1.17.3
-  resolution: "@types/express-session@npm:1.17.3"
+"@types/express-session@npm:1.19.0":
+  version: 1.19.0
+  resolution: "@types/express-session@npm:1.19.0"
   dependencies:
     "@types/express": "npm:*"
-  checksum: 10/59d4821a0f362e3f9798a8a9cde6072277a11726172d08849df6f012957f4ca5f4d6ac30fc6942172afd42aebc094e57c82d1ecb44b84b05660126e4e5a3e165
+  checksum: 10/cc2d693a3a40a1c5d0739acec811b5a5d1e6be3fcb7513d920e6d0f604e7f8a6ac54509d604c6d32bde6a2ca57aa84d5dee067433a5ac9859ab47b7f2a855010
   languageName: node
   linkType: hard
 
@@ -7970,7 +7980,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/http-proxy@npm:^1, @types/http-proxy@npm:^1.17.15, @types/http-proxy@npm:^1.17.8":
+"@types/http-proxy@npm:1.17.17":
+  version: 1.17.17
+  resolution: "@types/http-proxy@npm:1.17.17"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/893e46e12be576baa471cf2fc13a4f0e413eaf30a5850de8fdbea3040e138ad4171234c59b986cf7137ff20a1582b254bf0c44cfd715d5ed772e1ab94dd75cd1
+  languageName: node
+  linkType: hard
+
+"@types/http-proxy@npm:^1.17.15, @types/http-proxy@npm:^1.17.8":
   version: 1.17.16
   resolution: "@types/http-proxy@npm:1.17.16"
   dependencies:
@@ -8606,9 +8625,9 @@ __metadata:
     "@types/content-disposition": "npm:0.5.9"
     "@types/cookie-parser": "npm:1.4.10"
     "@types/cors": "npm:2.8.6"
-    "@types/eslint": "npm:^8.2.0"
-    "@types/express-session": "npm:1.17.3"
-    "@types/http-proxy": "npm:^1"
+    "@types/eslint": "npm:9.6.1"
+    "@types/express-session": "npm:1.19.0"
+    "@types/http-proxy": "npm:1.17.17"
     "@types/jsonwebtoken": "npm:8.3.7"
     "@types/lodash": "npm:4.17.24"
     "@types/mime-types": "npm:3.0.1"
