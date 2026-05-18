@@ -7733,19 +7733,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/common-tags@npm:^1.8.4":
+"@types/common-tags@npm:1.8.4":
   version: 1.8.4
   resolution: "@types/common-tags@npm:1.8.4"
   checksum: 10/40c95a2f6388beb1cdeed3c9986ac0d6a3a551fce706e3e364a00ded48ab624b06b1ac8b94679bb2da9653e5eb3e450bad26873f5189993a5d8e8bdace74cbb2
   languageName: node
   linkType: hard
 
-"@types/compression@npm:1.7.0":
-  version: 1.7.0
-  resolution: "@types/compression@npm:1.7.0"
+"@types/compression@npm:1.8.1":
+  version: 1.8.1
+  resolution: "@types/compression@npm:1.8.1"
   dependencies:
     "@types/express": "npm:*"
-  checksum: 10/c0bd0637f6f5d6a6897fcd3550e3ded2a3d7bb6655ec66d9193e2e9bea041d36d9b25a6548820f721e41292283994600a948c447d10a0ff673dd633bef178770
+    "@types/node": "npm:*"
+  checksum: 10/cd746c830a5c981568d36989c3c43a55caf1872b54e3f9891b82fba04501de11882091df3ece11fbede2de01179c99d08639a08831e06c3966873f928407c01a
   languageName: node
   linkType: hard
 
@@ -7768,19 +7769,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/content-disposition@npm:^0.5.9":
+"@types/content-disposition@npm:0.5.9":
   version: 0.5.9
   resolution: "@types/content-disposition@npm:0.5.9"
   checksum: 10/d895703c0027ca6c4c0c1ede363909dbb590deec3b206a84b88a49c8b2840bcbd31b4ddeb2e1e6caa1af00801cc79c5b69a5c75a8152f2959810b10fe75a4e1f
   languageName: node
   linkType: hard
 
-"@types/cookie-parser@npm:1.4.2":
-  version: 1.4.2
-  resolution: "@types/cookie-parser@npm:1.4.2"
-  dependencies:
-    "@types/express": "npm:*"
-  checksum: 10/110ab558beb59f772ca43aa7257a3595536e71e08891810f7db88cc2e58b3c2b552c970e3e0806d787642923ff1d5b7717650257febcdfc632c8b5d6e2d301a0
+"@types/cookie-parser@npm:1.4.10":
+  version: 1.4.10
+  resolution: "@types/cookie-parser@npm:1.4.10"
+  peerDependencies:
+    "@types/express": "*"
+  checksum: 10/1f37b5a4115dbfd4b7bbea2d874fbf9495eca8c3e8c87fa7e38c50f9fff66222377c911cfdc7a1ea08855e822919c5534ebbcc4bf25b596bc6f7270e403483d9
   languageName: node
   linkType: hard
 
@@ -8001,10 +8002,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.191":
-  version: 4.14.191
-  resolution: "@types/lodash@npm:4.14.191"
-  checksum: 10/ab8cd8eeb941f0fb89248cd5d520b942b841e936e4fcb093370f76d137a8b6f6be0de7f38fc259d56d3cc45b1b50ed69d15c9b94922545166e3ef1f0218be2f2
+"@types/lodash@npm:4.17.24":
+  version: 4.17.24
+  resolution: "@types/lodash@npm:4.17.24"
+  checksum: 10/0f2082565f60f9787eefc046edc38458054512be5a8b3584ef0bad5fd9e85d0ab55ec5a1fbfae1ed6ba015cf1f9e837d5fb4da1f99fc60b8f74b2a46146fb00f
   languageName: node
   linkType: hard
 
@@ -8022,10 +8023,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mime-types@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@types/mime-types@npm:2.1.4"
-  checksum: 10/f8c521c54ee0c0b9f90a65356a80b1413ed27ccdc94f5c7ebb3de5d63cedb559cd2610ea55b4100805c7349606a920d96e54f2d16b2f0afa6b7cd5253967ccc9
+"@types/mime-types@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@types/mime-types@npm:3.0.1"
+  checksum: 10/96534e23b2180e5396a1e6a44f51ec59e349bd43daed4b5cb4548493126e9641cdc65f8292477e80c5e6063cf625330dae8edaf31357553b60baa23c32a8bafd
   languageName: node
   linkType: hard
 
@@ -8045,10 +8046,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ms@npm:0.7.31":
-  version: 0.7.31
-  resolution: "@types/ms@npm:0.7.31"
-  checksum: 10/6647b295fb2a5b8347c35efabaaed1777221f094be9941d387b4bf11df0eeacb3f8a4e495b8b66ce0e4c00593bc53ab5fc25f01ebb274cd989a834ae578099de
+"@types/ms@npm:2.1.0":
+  version: 2.1.0
+  resolution: "@types/ms@npm:2.1.0"
+  checksum: 10/532d2ebb91937ccc4a89389715e5b47d4c66e708d15942fe6cc25add6dc37b2be058230a327dd50f43f89b8b6d5d52b74685a9e8f70516edfc9bdd6be910eff4
   languageName: node
   linkType: hard
 
@@ -8061,7 +8062,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-schedule@npm:^2.1.8":
+"@types/node-schedule@npm:2.1.8":
   version: 2.1.8
   resolution: "@types/node-schedule@npm:2.1.8"
   dependencies:
@@ -8144,15 +8145,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/request@npm:2.48.8":
-  version: 2.48.8
-  resolution: "@types/request@npm:2.48.8"
+"@types/request@npm:2.48.13":
+  version: 2.48.13
+  resolution: "@types/request@npm:2.48.13"
   dependencies:
     "@types/caseless": "npm:*"
     "@types/node": "npm:*"
     "@types/tough-cookie": "npm:*"
-    form-data: "npm:^2.5.0"
-  checksum: 10/e260c665227b498aac9e8adef6d18f8c84a81f3ef71f3c00af160bbcd7d4a9b0e85e29bb861bb1756df64de48caf63b13264c13dacefa6cdd0356c75a5089ba9
+    form-data: "npm:^2.5.5"
+  checksum: 10/174abc42adfc0c45f6a675095b72be344e907afd74fcfe33dea4fbd7489d54bc5aae781e5064436a8079ea74458a1fdefeb62c5260a19a08c7b536529fac61c1
   languageName: node
   linkType: hard
 
@@ -8173,7 +8174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/serialize-javascript@npm:^5.0.4":
+"@types/serialize-javascript@npm:5.0.4":
   version: 5.0.4
   resolution: "@types/serialize-javascript@npm:5.0.4"
   checksum: 10/c342a4d151736c1ba4913e6d9b00537bcf62401a06e3489dcf96b7d51a4ab147efcf3fe20ca9491b1349ee7e55c6d69606682e1630f2e076e2828eaee3764f94
@@ -8238,13 +8239,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/supertest@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "@types/supertest@npm:6.0.3"
+"@types/supertest@npm:7.2.0":
+  version: 7.2.0
+  resolution: "@types/supertest@npm:7.2.0"
   dependencies:
     "@types/methods": "npm:^1.1.4"
     "@types/superagent": "npm:^8.1.0"
-  checksum: 10/6ec05eb591c97bc856b0e78c12f5bec10545f3a749688f34232d189797a506d971bc95931718eb57b378d8513f6d2d12462383e6d68455fa72df35c19de6e89e
+  checksum: 10/5a322e29b81033e90ac50ab315d49559b21809ee39b5681ab7386819463e30d68e29c63c946023a1c353e7f13fb3f20d64dcb89d3d8a0fff569450501aff786c
   languageName: node
   linkType: hard
 
@@ -8262,14 +8263,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/validator@npm:^13.15.10":
+"@types/validator@npm:13.15.10":
   version: 13.15.10
   resolution: "@types/validator@npm:13.15.10"
   checksum: 10/63117a776ced4d066d7fb63130d90ba487d38209dd45c25641ca1a6f5040e8394cc9a855750b919b72a923c5ffb51f8474f213b10b5aaa27d9db108bef07ad10
   languageName: node
   linkType: hard
 
-"@types/webpack@npm:^5.28.0":
+"@types/webpack@npm:5.28.5":
   version: 5.28.5
   resolution: "@types/webpack@npm:5.28.5"
   dependencies:
@@ -8280,12 +8281,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:8.5.3":
-  version: 8.5.3
-  resolution: "@types/ws@npm:8.5.3"
+"@types/ws@npm:8.18.1":
+  version: 8.18.1
+  resolution: "@types/ws@npm:8.18.1"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 10/08aac698ce6480b532d8311f790a8744ae489ccdd98f374cfe4b8245855439825c64b031abcbba4f30fb280da6cc2b02a4e261e16341d058ffaeecaa24ba2bd3
+  checksum: 10/1ce05e3174dcacf28dae0e9b854ef1c9a12da44c7ed73617ab6897c5cbe4fccbb155a20be5508ae9a7dde2f83bd80f5cf3baa386b934fc4b40889ec963e94f3a
   languageName: node
   linkType: hard
 
@@ -8600,27 +8601,27 @@ __metadata:
     "@aws-sdk/lib-storage": "npm:3.1047.0"
     "@aws-sdk/s3-presigned-post": "npm:3.1047.0"
     "@aws-sdk/s3-request-presigner": "npm:3.1047.0"
-    "@types/common-tags": "npm:^1.8.4"
-    "@types/compression": "npm:1.7.0"
-    "@types/content-disposition": "npm:^0.5.9"
-    "@types/cookie-parser": "npm:1.4.2"
+    "@types/common-tags": "npm:1.8.4"
+    "@types/compression": "npm:1.8.1"
+    "@types/content-disposition": "npm:0.5.9"
+    "@types/cookie-parser": "npm:1.4.10"
     "@types/cors": "npm:2.8.6"
     "@types/eslint": "npm:^8.2.0"
     "@types/express-session": "npm:1.17.3"
     "@types/http-proxy": "npm:^1"
     "@types/jsonwebtoken": "npm:8.3.7"
-    "@types/lodash": "npm:4.14.191"
-    "@types/mime-types": "npm:^2.1.4"
+    "@types/lodash": "npm:4.17.24"
+    "@types/mime-types": "npm:3.0.1"
     "@types/morgan": "npm:1.7.37"
-    "@types/ms": "npm:0.7.31"
+    "@types/ms": "npm:2.1.0"
     "@types/node": "npm:^20.19.0"
-    "@types/node-schedule": "npm:^2.1.8"
-    "@types/request": "npm:2.48.8"
-    "@types/serialize-javascript": "npm:^5.0.4"
-    "@types/supertest": "npm:^6.0.3"
-    "@types/validator": "npm:^13.15.10"
-    "@types/webpack": "npm:^5.28.0"
-    "@types/ws": "npm:8.5.3"
+    "@types/node-schedule": "npm:2.1.8"
+    "@types/request": "npm:2.48.13"
+    "@types/serialize-javascript": "npm:5.0.4"
+    "@types/supertest": "npm:7.2.0"
+    "@types/validator": "npm:13.15.10"
+    "@types/webpack": "npm:5.28.5"
+    "@types/ws": "npm:8.18.1"
     body-parser: "npm:2.2.2"
     common-tags: "npm:1.8.2"
     connect-redis: "npm:7.1.1"
@@ -13873,7 +13874,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^2.5.0":
+"form-data@npm:^2.5.5":
   version: 2.5.5
   resolution: "form-data@npm:2.5.5"
   dependencies:
