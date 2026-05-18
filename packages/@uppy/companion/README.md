@@ -68,7 +68,10 @@ on, you call the `socket` method like so.
 // ...
 const server = app.listen(PORT)
 
-companion.socket(server)
+// Pass the same `options` object you passed to `companion.app(options)` —
+// `companion.socket` needs `options.server` to compute the external base path
+// for incoming WS URLs (important behind reverse proxies).
+companion.socket(server, options)
 ```
 
 ### Run as standalone server
