@@ -11,7 +11,7 @@
   },
   "devDependencies": {
     "dotenv": "^16.0.1",
-    "express": "^4.22.0",
+    "express": "^5.2.1",
     "vite": "^7.1.11"
   },
   "private": true,
