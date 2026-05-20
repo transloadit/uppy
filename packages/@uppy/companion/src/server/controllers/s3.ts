@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import type { Part, S3Client } from '@aws-sdk/client-s3'
 import {
   AbortMultipartUploadCommand,
@@ -248,11 +247,6 @@ export default function s3(
     const { uploadId } = req.params
     const { key } = req.query
 
-    assert(
-      typeof uploadId === 'string' && uploadId.length > 0,
-      's3: uploadId must be provided.',
-    )
-
     if (typeof key !== 'string') {
       res.status(400).json({
         error:
@@ -266,7 +260,7 @@ export default function s3(
 
     const parts: Part[] = []
 
-    const listPartsPage = (startAt?: string) => {
+    function listPartsPage(startAt?: string) {
       s3Client
         .send(
           new ListPartsCommand({
@@ -309,7 +303,7 @@ export default function s3(
     const partNumber = req.params['partNumber']
     const key = req.query['key']
 
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+    if (uploadId == null || uploadId.length === 0) {
       res.status(400).json({ error: 's3: uploadId must be provided.' })
       return
     }
@@ -320,7 +314,7 @@ export default function s3(
       })
       return
     }
-    if (typeof partNumber !== 'string' || !parseInt(partNumber, 10)) {
+    if (partNumber == null || !parseInt(partNumber, 10)) {
       res.status(400).json({
         error: 's3: the part number must be a number between 1 and 10000.',
       })
@@ -369,7 +363,7 @@ export default function s3(
     const key = req.query['key']
     const partNumbers = req.query['partNumbers']
 
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+    if (uploadId == null || uploadId.length === 0) {
       res.status(400).json({ error: 's3: uploadId must be provided.' })
       return
     }
@@ -449,11 +443,6 @@ export default function s3(
     const { uploadId } = req.params
     const { key } = req.query
 
-    assert(
-      typeof uploadId === 'string' && uploadId.length > 0,
-      's3: uploadId must be provided.',
-    )
-
     if (typeof key !== 'string') {
       res.status(400).json({
         error:
@@ -498,11 +487,6 @@ export default function s3(
     const { uploadId } = req.params
     const { key } = req.query
     const { parts }: { parts: unknown } = req.body
-
-    assert(
-      typeof uploadId === 'string' && uploadId.length > 0,
-      's3: uploadId must be provided.',
-    )
 
     if (typeof key !== 'string') {
       res.status(400).json({

@@ -19,7 +19,7 @@ async function run({
     next()
   })
   app.use(cors(corsOptions))
-  app.options('/{*splat}', (_req, res) => {
+  app.options('*', (_req, res) => {
     res.status(204).end()
   })
 

@@ -14,7 +14,7 @@ export default function preauth(req: Request, res: Response): void {
   }
 
   const providerName = req.params['providerName']
-  if (typeof providerName !== 'string' || providerName.length === 0) {
+  if (providerName == null || providerName.length === 0) {
     res.sendStatus(400)
     return
   }
