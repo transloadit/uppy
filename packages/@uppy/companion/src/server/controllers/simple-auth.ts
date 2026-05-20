@@ -9,7 +9,7 @@ export default async function simpleAuth(
   next: NextFunction,
 ): Promise<void> {
   const providerName = req.params['providerName']
-  if (typeof providerName !== 'string' || providerName.length === 0) {
+  if (providerName == null || providerName.length === 0) {
     res.sendStatus(400)
     return
   }

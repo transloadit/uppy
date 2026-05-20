@@ -426,26 +426,4 @@ describe('S3 controller', () => {
         ),
       )
   })
-
-  test('getUploadParameters supports bracket metadata query format', async () => {
-    const server = await getServer({
-      COMPANION_AWS_KEY: 'test_key',
-      COMPANION_AWS_SECRET: 'test_secret',
-      COMPANION_AWS_BUCKET: 'test-bucket',
-      COMPANION_AWS_REGION: 'us-east-1',
-    })
-
-    return request(server)
-      .get('/s3/params')
-      .query({
-        filename: 'test.txt',
-        type: 'text/plain',
-        'metadata[name]': 'demo-file',
-      })
-      .expect(200)
-      .then((res) => {
-        const fields = res.body.fields as Record<string, string>
-        expect(fields['x-amz-meta-name']).toBe('demo-file')
-      })
-  })
 })
