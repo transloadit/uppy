@@ -76,7 +76,7 @@ const getNextPagePath = (
   currentQuery: Record<string, string>,
   currentPath: string | undefined,
 ): string | null => {
-  if (!data.paging || !data.paging.cursors) {
+  if (!data.paging?.cursors) {
     return null
   }
 

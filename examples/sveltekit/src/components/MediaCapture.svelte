@@ -42,36 +42,37 @@ const {
       <p>{mediaError.message ? `Camera error: ${mediaError.message}` : 'An unknown camera error occurred.'}</p>
     </div>
   {/if}
+  <!-- biome-ignore lint/a11y/useMediaCaption: live camera preview does not require captions -->
   <video
     class="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
     {...videoProps}
   ></video>
   <div class="flex gap-4 flex-wrap mt-4">
-    <button
+    <button type="button"
       class="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
       {...primaryActionButtonProps}
     >
       {primaryActionButtonLabel}
     </button>
-    <button
+    <button type="button"
       class="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
       {...recordButtonProps}
     >
       Record
     </button>
-    <button
+    <button type="button"
       class="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-red-300"
       {...stopRecordingButtonProps}
     >
       Stop
     </button>
-    <button
+    <button type="button"
       class="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
       {...submitButtonProps}
     >
       Submit
     </button>
-    <button
+    <button type="button"
       class="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
       {...discardButtonProps}
     >

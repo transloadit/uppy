@@ -25,7 +25,7 @@ import {
   Translator,
 } from '@uppy/utils'
 import throttle from 'lodash/throttle.js'
-// @ts-ignore untyped
+// @ts-expect-error untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 import type { h } from 'preact'
@@ -511,7 +511,7 @@ export class Uppy<
 
     // Exposing uppy object on window for debugging and testing
     if (this.opts.debug && typeof window !== 'undefined') {
-      // @ts-ignore Mutating the global object for debug purposes
+      // @ts-expect-error Mutating the global object for debug purposes
       window[this.opts.id] = this
     }
 
@@ -1592,6 +1592,7 @@ export class Uppy<
     { leading: true, trailing: true },
   )
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: updateTotalProgress')]() {
     return this.#updateTotalProgress()
   }
@@ -1977,6 +1978,7 @@ export class Uppy<
     return undefined
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: getPlugins')](
     type: string,
   ): UnknownPlugin<M, B>[] {
@@ -2181,6 +2183,7 @@ export class Uppy<
     return uploadID
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: createUpload')](...args: any[]): string {
     // @ts-expect-error https://github.com/microsoft/TypeScript/issues/47595
     return this.#createUpload(...args)

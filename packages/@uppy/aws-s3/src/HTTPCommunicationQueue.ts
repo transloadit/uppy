@@ -263,9 +263,9 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     const data = chunk.getData()
     if (method.toUpperCase() === 'POST') {
       const formData = new FormData()
-      Object.entries(fields!).forEach(([key, value]) =>
-        formData.set(key, value),
-      )
+      Object.entries(fields!).forEach(([key, value]) => {
+        formData.set(key, value)
+      })
       formData.set('file', data)
       body = formData
     } else {

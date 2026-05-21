@@ -159,12 +159,11 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       const data: { items: WebdavListItem[] } = { items: [] }
       const client = await this.getClient({ providerUserSession })
 
-      const dirResult = await client.getDirectoryContents(
+      const dir = await client.getDirectoryContents(
         (typeof query?.['directory'] === 'string'
           ? query?.['directory']
           : undefined) || '/',
       )
-      const dir = Array.isArray(dirResult) ? dirResult : dirResult.data
 
       dir.forEach((item) => {
         const isFolder = item.type === 'directory'

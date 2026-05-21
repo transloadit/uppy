@@ -7,7 +7,7 @@
   >
     <div class="flex items-center justify-center gap-4">
       <input v-bind="getFileInputProps()" class="hidden" />
-      <button
+      <button type="button"
         v-bind="getButtonProps()"
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
@@ -17,7 +17,7 @@
         Device
       </button>
 
-      <button
+      <button type="button"
         @click="() => props.openModal('webcam')"
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
@@ -27,7 +27,7 @@
         Webcam
       </button>
 
-      <button
+      <button type="button"
         @click="() => props.openModal('screen-capture')"
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
@@ -37,7 +37,7 @@
         Screen Capture
       </button>
 
-      <button
+      <button type="button"
         @click="() => props.openModal('dropbox')"
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >

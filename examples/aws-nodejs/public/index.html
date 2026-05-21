@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Uppy – AWS upload example</title>
@@ -24,7 +24,8 @@
     </footer>
     <noscript>You need JavaScript to run this example.</noscript>
     <script type="module">
-      import { Uppy, Dashboard, AwsS3 } from './uppy.min.mjs'
+      import { AwsS3, Dashboard, Uppy } from './uppy.min.mjs'
+
       function onUploadComplete(result) {
         console.log(
           'Upload complete! We’ve uploaded these files:',
@@ -34,7 +35,7 @@
       function onUploadSuccess(file, data) {
         console.log(
           'Upload success! We’ve uploaded this file:',
-          file.meta['name'],
+          file.meta.name,
         )
       }
       {

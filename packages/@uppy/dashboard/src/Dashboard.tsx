@@ -724,7 +724,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private handlePopState = (event: PopStateEvent) => {
     // Close the modal if the history state no longer contains our modal name
-    if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
+    if (this.isModalOpen() && !event.state?.[this.modalName]) {
       this.closeModal({ manualClose: false })
     }
 
@@ -970,9 +970,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (this.opts.trigger && !this.opts.inline) {
       const showModalTrigger = findAllDOMElements(this.opts.trigger)
       if (showModalTrigger) {
-        showModalTrigger.forEach((trigger) =>
-          trigger.addEventListener('click', this.openModal),
-        )
+        showModalTrigger.forEach((trigger) => {
+          trigger.addEventListener('click', this.openModal)
+        })
       } else {
         this.uppy.log(
           'Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself',
@@ -1010,9 +1010,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   removeEvents = (): void => {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach((trigger) =>
-        trigger.removeEventListener('click', this.openModal),
-      )
+      showModalTrigger.forEach((trigger) => {
+        trigger.removeEventListener('click', this.openModal)
+      })
     }
 
     this.stopListeningToResize()

@@ -125,6 +125,9 @@ export function app(optionsArg: CompanionInitOptions) {
 
   const app = express()
 
+  // Needed for e.g. s3 `/params` endpoint metadata, like `metadata[key]=value` to be parsed into a metadata object
+  app.set('query parser', 'extended')
+
   if (options.metrics) {
     app.use(middlewares.metrics({ path: options.server.path }))
   }
@@ -136,10 +139,10 @@ export function app(optionsArg: CompanionInitOptions) {
   app.use(interceptGrantErrorResponse)
 
   // override provider credentials at request time
-  // Making `POST` request to the `/connect/:provider/:override?` route requires a form body parser middleware:
+  // Making `POST` request to the `/connect/:provider{/:override}` route requires a form body parser middleware:
   // See https://github.com/simov/grant#dynamic-http
   app.use(
-    '/connect/:oauthProvider/:override?',
+    '/connect/:oauthProvider{/:override}',
     express.urlencoded({ extended: false }),
     getCredentialsOverrideMiddleware(
       providers as Record<string, typeof Provider>,
@@ -159,7 +162,7 @@ export function app(optionsArg: CompanionInitOptions) {
   app.use(middlewares.cors(options))
 
   // add uppy options to the request object so it can be accessed by subsequent handlers.
-  app.use('*', middlewares.getCompanionMiddleware(options))
+  app.use(middlewares.getCompanionMiddleware(options))
   app.use('/s3', s3(options.s3))
   if (options.enableUrlEndpoint) app.use('/url', url())
   if (options.enableGooglePickerEndpoint)
@@ -247,7 +250,7 @@ export function app(optionsArg: CompanionInitOptions) {
   )
 
   app.get(
-    '/:providerName/list/:id?',
+    '/:providerName/list{/:id}',
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.list,

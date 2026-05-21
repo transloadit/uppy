@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <title>Uppy – AWS upload example</title>
@@ -16,7 +16,8 @@
     </footer>
     <noscript>You need JavaScript to run this example.</noscript>
     <script type="module">
-      import { Uppy, Dashboard, AwsS3 } from './uppy.min.mjs'
+      import { AwsS3, Dashboard, Uppy } from './uppy.min.mjs'
+
       /**
        * This generator transforms a deep object into URL-encodable pairs
        * to work with `URLSearchParams` on the client and `body-parser` on the server.
@@ -258,7 +259,7 @@
         uppy.on('upload-success', (file, data) => {
           console.log(
             'Upload success! We’ve uploaded this file:',
-            file.meta['name'],
+            file.meta.name,
           )
         })
       }

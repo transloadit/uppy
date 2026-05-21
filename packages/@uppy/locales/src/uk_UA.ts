@@ -238,9 +238,9 @@ uk_UA.strings = {
   zoomOut: 'Зменшити',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.uk_UA = uk_UA
 }
 

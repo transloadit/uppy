@@ -12,7 +12,7 @@ export default async function refreshToken(
   next: NextFunction,
 ): Promise<void> {
   const providerName = req.params['providerName']
-  if (providerName == null) {
+  if (typeof providerName !== 'string' || providerName.length === 0) {
     res.sendStatus(400)
     return
   }
