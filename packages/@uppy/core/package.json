@@ -41,7 +41,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^0.3.4",
+    "@transloadit/prettier-bytes": "^1.1.0",
     "@uppy/store-default": "workspace:^",
     "@uppy/utils": "workspace:^",
     "lodash": "^4.18.1",
