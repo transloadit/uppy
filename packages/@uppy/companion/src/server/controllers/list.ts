@@ -7,8 +7,9 @@ export default async function list(
   next: NextFunction,
 ): Promise<void> {
   const { query, params, companion } = req
+  const id = params['id']
   const { providerUserSession, provider } = companion
-  if (!provider) {
+  if (!provider || (typeof id !== 'string' && id != null)) {
     res.sendStatus(400)
     return
   }
@@ -17,7 +18,7 @@ export default async function list(
     const data = await provider.list({
       companion,
       providerUserSession,
-      directory: params['id'],
+      directory: id,
       query,
     })
     res.json(data)

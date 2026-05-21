@@ -9,7 +9,9 @@ const port: string | number =
 
 const { app, companionOptions } = standalone()
 
-companion.socket(app.listen(port), companionOptions)
+const server = app.listen(port, () => {
+  logger.info(`Welcome to Companion! v${packageJson.version}`)
+  logger.info(`Listening on http://localhost:${port}`)
 
-logger.info(`Welcome to Companion! v${packageJson.version}`)
-logger.info(`Listening on http://localhost:${port}`)
+  companion.socket(server, companionOptions)
+})
