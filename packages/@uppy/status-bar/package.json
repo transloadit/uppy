@@ -46,7 +46,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^0.3.4",
+    "@transloadit/prettier-bytes": "^1.1.0",
     "@uppy/utils": "workspace:^",
     "classnames": "^2.5.1",
     "preact": "^10.29.2"
