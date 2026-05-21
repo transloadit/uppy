@@ -79,8 +79,7 @@
     "typecheck": "tsc --build"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.1049.0",
-    "adm-zip": "^0.5.5",
+    "@aws-sdk/client-s3": "^3.338.0",
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
     "cssnano": "^7.0.7",
