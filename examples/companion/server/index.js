@@ -71,7 +71,7 @@ app.use((err, req, res) => {
   res.status(500).json({ message: err.message, error: err })
 })
 
-companion.socket(app.listen(3020))
+companion.socket(app.listen(3020), companionOptions)
 
 console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)
