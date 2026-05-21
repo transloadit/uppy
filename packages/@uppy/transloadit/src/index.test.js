@@ -5,12 +5,16 @@ import { describe, expect, it, vi } from 'vitest'
 import Transloadit from './index.ts'
 import 'whatwg-fetch'
 
-// Mock EventSource for testing
-global.EventSource = vi.fn(() => ({
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-  close: vi.fn(),
-}))
+// Mock EventSource for testing. Vitest 4 made `vi.fn()` callable as a constructor,
+// but arrow-function implementations throw "is not a constructor" when invoked
+// with `new`. Use a regular function so `new EventSource(...)` works.
+global.EventSource = vi.fn(function MockEventSource() {
+  return {
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    close: vi.fn(),
+  }
+})
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {

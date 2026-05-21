@@ -1,7 +1,7 @@
 import Uppy, { type UppyEventMap, type UppyOptions } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import XHRUpload from '@uppy/xhr-upload'
-import { page, userEvent } from '@vitest/browser/context'
+import { page, userEvent } from 'vitest/browser'
 import { beforeEach, describe, expect } from 'vitest'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'

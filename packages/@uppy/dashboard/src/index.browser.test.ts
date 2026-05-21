@@ -1,5 +1,5 @@
 import Uppy from '@uppy/core'
-import { page, userEvent } from '@vitest/browser/context'
+import { page, userEvent } from 'vitest/browser'
 import { expect, test } from 'vitest'
 import Dashboard from './Dashboard.js'
 import '@uppy/core/css/style.css'

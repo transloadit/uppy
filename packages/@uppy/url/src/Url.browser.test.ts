@@ -1,5 +1,5 @@
 import Uppy from '@uppy/core'
-import { page } from '@vitest/browser/context'
+import { page } from 'vitest/browser'
 import { expect, test } from 'vitest'
 import Url from './Url.js'
 

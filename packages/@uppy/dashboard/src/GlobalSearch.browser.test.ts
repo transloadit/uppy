@@ -3,7 +3,7 @@ import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
 import { ProviderViews } from '@uppy/provider-views'
-import { page, userEvent } from '@vitest/browser/context'
+import { page, userEvent } from 'vitest/browser'
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { worker } from './setup.js'
 

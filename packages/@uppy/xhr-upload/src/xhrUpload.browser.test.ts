@@ -1,6 +1,6 @@
 import Uppy, { type UppyEventMap } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import { page, userEvent } from '@vitest/browser/context'
+import { page, userEvent } from 'vitest/browser'
 import { HttpResponse, http } from 'msw'
 import { afterEach, beforeEach, describe, expect } from 'vitest'
 import '@uppy/core/css/style.css'
