@@ -23,7 +23,7 @@
   "devDependencies": {
     "jsdom": "^26.1.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "repository": {
     "type": "git",

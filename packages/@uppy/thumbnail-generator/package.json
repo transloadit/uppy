@@ -44,7 +44,7 @@
     "jsdom": "^26.1.0",
     "namespace-emitter": "2.0.1",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
