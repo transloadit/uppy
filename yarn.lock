@@ -8421,7 +8421,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular"
   dependencies:
-    tslib: "npm:2.8.1"
+    tslib: "npm:^2.8.1"
   peerDependencies:
     "@angular/common": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0
@@ -9932,8 +9932,8 @@ __metadata:
     karma-jasmine: "npm:~5.1.0"
     karma-jasmine-html-reporter: "npm:~2.1.0"
     ng-packagr: "npm:^19.0.0"
-    rxjs: "npm:7.8.2"
-    tslib: "npm:2.8.1"
+    rxjs: "npm:~7.8.2"
+    tslib: "npm:^2.8.1"
     typescript: "npm:~5.5.4"
     zone.js: "npm:~0.15.0"
   languageName: unknown
@@ -20399,7 +20399,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rxjs@npm:7.8.2":
+"rxjs@npm:~7.8.2":
   version: 7.8.2
   resolution: "rxjs@npm:7.8.2"
   dependencies:
