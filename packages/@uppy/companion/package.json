@@ -74,7 +74,7 @@
     "tus-js-client": "^4.1.0",
     "validator": "^13.15.22",
     "webdav": "^5.8.0",
-    "ws": "8.17.1",
+    "ws": "8.20.1",
     "zod": "^3.24.0"
   },
   "devDependencies": {
