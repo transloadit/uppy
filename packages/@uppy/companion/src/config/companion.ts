@@ -24,6 +24,7 @@ export const defaultOptions = {
   },
   enableUrlEndpoint: false,
   enableGooglePickerEndpoint: false,
+  enableDropboxTokensEndpoint: false,
   allowLocalUrls: false,
   periodicPingUrls: defaultPeriodicPingUrls,
   streamingUpload: true,

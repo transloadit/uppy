@@ -94,6 +94,7 @@ type StandaloneCompanionOptions = Pick<
   | 's3'
   | 'enableUrlEndpoint'
   | 'enableGooglePickerEndpoint'
+  | 'enableDropboxTokensEndpoint'
   | 'periodicPingUrls'
   | 'periodicPingInterval'
   | 'periodicPingStaticPayload'
@@ -190,6 +191,8 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
     enableUrlEndpoint: process.env['COMPANION_ENABLE_URL_ENDPOINT'] === 'true',
     enableGooglePickerEndpoint:
       process.env['COMPANION_ENABLE_GOOGLE_PICKER_ENDPOINT'] === 'true',
+    enableDropboxTokensEndpoint:
+      process.env['COMPANION_ENABLE_DROPBOX_TOKENS_ENDPOINT'] === 'true',
     periodicPingUrls: process.env['COMPANION_PERIODIC_PING_URLS']
       ? process.env['COMPANION_PERIODIC_PING_URLS'].split(',')
       : [],

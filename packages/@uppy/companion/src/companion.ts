@@ -222,6 +222,21 @@ export function app(optionsArg: CompanionInitOptions) {
     controllers.sendToken,
   )
 
+  // Returns the decrypted Dropbox OAuth tokens for the current session so a client
+  // can drive a server-side /dropbox/import Assembly. Deliberately weakens the
+  // encrypted-token posture, so it is off unless explicitly enabled. The route keeps
+  // the :providerName segment because verifyToken and the provider middleware are
+  // keyed on it; the controller restricts the result to Dropbox.
+  if (options.enableDropboxTokensEndpoint) {
+    app.get(
+      '/:providerName/bridge-tokens',
+      middlewares.hasSessionAndProvider,
+      middlewares.hasOAuthProvider,
+      middlewares.verifyToken,
+      controllers.bridgeTokens,
+    )
+  }
+
   app.post(
     '/:providerName/simple-auth',
     express.json(),
