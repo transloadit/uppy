@@ -82,21 +82,20 @@ describe('url get', () => {
       .then((res) => expect(res.body.token).toBeTruthy())
   })
 
-  test.each(invalids)(
-    'downloads are not instantiated for invalid urls',
-    async (urlCase) => {
-      nockUrl()
+  test.each(
+    invalids,
+  )('downloads are not instantiated for invalid urls', async (urlCase) => {
+    nockUrl()
 
-      return request(await getMockServer())
-        .post('/url/get')
-        .set('Content-Type', 'application/json')
-        .send({
-          url: urlCase,
-          endpoint: 'http://tusd.tusdemo.net/files',
-          protocol: 'tus',
-        })
-        .expect(400)
-        .then((res) => expect(res.body.error).toBe('Invalid request body'))
-    },
-  )
+    return request(await getMockServer())
+      .post('/url/get')
+      .set('Content-Type', 'application/json')
+      .send({
+        url: urlCase,
+        endpoint: 'http://tusd.tusdemo.net/files',
+        protocol: 'tus',
+      })
+      .expect(400)
+      .then((res) => expect(res.body.error).toBe('Invalid request body'))
+  })
 })

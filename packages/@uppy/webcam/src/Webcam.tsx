@@ -311,7 +311,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
             ? stream.getAudioTracks()
             : stream.getVideoTracks()
 
-          if (!options || !options.deviceId) {
+          if (!options?.deviceId) {
             currentDeviceId = tracks[0].getSettings().deviceId
           } else {
             tracks.forEach((track) => {
@@ -519,7 +519,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
 
-      audioTracks.concat(videoTracks).forEach((track) => track.stop())
+      audioTracks.concat(videoTracks).forEach((track) => {
+        track.stop()
+      })
     }
 
     if (this.recorder) {

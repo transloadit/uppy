@@ -224,9 +224,9 @@ vi_VN.strings = {
   zoomOut: 'Thu nhỏ',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.vi_VN = vi_VN
 }
 

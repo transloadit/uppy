@@ -222,9 +222,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     // Create a new tus upload
     return new Promise<tus.Upload | string>((resolve, reject) => {
       let queuedRequest: ReturnType<RateLimitedQueue['run']>
-      // biome-ignore lint/style/useConst: ...
       let qRequest: () => () => void
-      // biome-ignore lint/style/useConst: ...
       let upload: tus.Upload
 
       const opts = {

@@ -1,8 +1,6 @@
 import Core, { type UIPlugin } from '@uppy/core'
 import GoogleDrivePlugin from '@uppy/google-drive'
-// @ts-ignore untyped
 import Url from '@uppy/url'
-// @ts-ignore untyped
 import WebcamPlugin from '@uppy/webcam'
 import resizeObserverPolyfill from 'resize-observer-polyfill'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
@@ -12,7 +10,6 @@ type $TSFixMe = any
 
 describe('Dashboard', () => {
   beforeAll(() => {
-    // @ts-ignore we're touching globals for the test
     globalThis.ResizeObserver =
       (resizeObserverPolyfill as any).default || resizeObserverPolyfill
   })

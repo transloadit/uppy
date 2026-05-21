@@ -1,5 +1,5 @@
 declare module 'express-interceptor' {
-  import type { Request, Response, RequestHandler } from 'express'
+  import type { Request, RequestHandler, Response } from 'express'
 
   type InterceptorConfig = {
     isInterceptable: () => boolean

@@ -11,14 +11,14 @@
   </head>
   <body>
     <noscript>You need JavaScript enabled for this example to work.</noscript>
-    <button id="uppyModalOpener">Open Modal</button>
+    <button type="button" id="uppyModalOpener">Open Modal</button>
 
     <script type="module">
       import {
-        Uppy,
         Dashboard,
-        Webcam,
         Tus,
+        Uppy,
+        Webcam,
       } from 'https://releases.transloadit.com/uppy/v4.18.0/uppy.min.mjs'
 
       const uppy = new Uppy({ debug: true, autoProceed: false })

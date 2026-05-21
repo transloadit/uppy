@@ -331,7 +331,9 @@ export default class XHRUpload<
       if (Array.isArray(value)) {
         // In this case we don't transform `item` to add brackets, it's up to
         // the user to add the brackets so it won't be overridden.
-        value.forEach((subItem) => formData.append(item, subItem))
+        value.forEach((subItem) => {
+          formData.append(item, subItem)
+        })
       } else {
         formData.append(item, value as string)
       }

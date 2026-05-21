@@ -244,9 +244,9 @@ sv_SE.strings = {
   zoomOut: 'Zooma ut',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.sv_SE = sv_SE
 }
 

@@ -806,9 +806,9 @@ export default class Uploader {
     if (this.options.useFormData) {
       const formData = new FormData()
 
-      Object.entries(this.metadata).forEach(([key, value]) =>
-        formData.append(key, value),
-      )
+      Object.entries(this.metadata).forEach(([key, value]) => {
+        formData.append(key, value)
+      })
 
       // see https://github.com/octet-stream/form-data/blob/73a5a24e635938026538673f94cbae1249a3f5cc/readme.md?plain=1#L232
       formData.set(this.fieldname, {

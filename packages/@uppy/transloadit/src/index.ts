@@ -110,7 +110,6 @@ type PersistentState = {
 }
 
 declare module '@uppy/core' {
-  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, PersistentState>) => void
@@ -191,7 +190,7 @@ function validateParams(params?: AssemblyOptions['params']): void {
     parsed = params
   }
 
-  if (!parsed.auth || !parsed.auth.key) {
+  if (!parsed.auth?.key) {
     throw new Error(
       'Transloadit: The `params.auth.key` option is required. ' +
         'You can find your Transloadit API key at https://transloadit.com/c/template-credentials',
@@ -486,7 +485,9 @@ export default class Transloadit<
       // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
       // and `onReceiveUploadUrl` in @uppy/tus
       const files = { ...this.uppy.getState().files }
-      filesFromAssembly.forEach((file) => delete files[file.id].tus)
+      filesFromAssembly.forEach((file) => {
+        delete files[file.id].tus
+      })
       this.uppy.setState({ files })
 
       this.uppy.emit('error', error)
@@ -1083,11 +1084,9 @@ export default class Transloadit<
   }
 }
 
-export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
-
 // Re-export type from @transloadit/types so callers can import it from the plugin package.
 export type { AssemblyInstructionsInput } from '@transloadit/types'
-
 // Low-level classes for advanced usage (e.g., creating assemblies without file uploads)
 export { default as Assembly } from './Assembly.js'
 export { AssemblyError, default as Client } from './Client.js'
+export { COMPANION_ALLOWED_HOSTS, COMPANION_URL }

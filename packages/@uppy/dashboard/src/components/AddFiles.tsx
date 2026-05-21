@@ -274,6 +274,7 @@ class AddFiles extends Component<AddFilesProps> {
     )
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: disable unused locale key warning')]() {
     // Those are actually used in `renderDropPasteBrowseTagline` method.
     this.props.i18nArray('dropPasteBoth')
@@ -306,27 +307,6 @@ class AddFiles extends Component<AddFilesProps> {
           <div className="uppy-DashboardTab-name">{acquirer.name}</div>
         </button>
       </div>
-    )
-  }
-
-  private renderAcquirers = (acquirers: TargetWithRender[]) => {
-    // Group last two buttons, so we don’t end up with
-    // just one button on a new line
-    const acquirersWithoutLastTwo = [...acquirers]
-    const lastTwoAcquirers = acquirersWithoutLastTwo.splice(
-      acquirers.length - 2,
-      acquirers.length,
-    )
-
-    return (
-      <>
-        {acquirersWithoutLastTwo.map((acquirer) =>
-          this.renderAcquirer(acquirer),
-        )}
-        <span role="presentation" style={{ 'white-space': 'nowrap' }}>
-          {lastTwoAcquirers.map((acquirer) => this.renderAcquirer(acquirer))}
-        </span>
-      </>
     )
   }
 
