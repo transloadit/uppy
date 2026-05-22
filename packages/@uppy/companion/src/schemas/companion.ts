@@ -55,7 +55,7 @@ export interface CompanionInitOptions {
   enableUrlEndpoint?: boolean | undefined
   enableGooglePickerEndpoint?: boolean | undefined
   /**
-   * Exposes the opt decrypted Dropbox OAuth tokens for the current session via
+   * Exposes the opt-in decrypted Dropbox OAuth tokens for the current session via
    * `GET /dropbox/bridge-tokens`. This deliberately returns raw OAuth tokens to the
    * client.
    */
