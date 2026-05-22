@@ -16,7 +16,7 @@ const disabledEnv = { COMPANION_ENABLE_DROPBOX_TOKENS_ENDPOINT: 'false' }
 describe('GET /:providerName/bridge-tokens', () => {
   test('returns the dropbox tokens, marked no-store, for a valid token', async () => {
     const token = tokenService.generateEncryptedAuthToken(
-      { dropbox: { accessToken: 'acc-123', } },
+      { dropbox: { accessToken: 'acc-123' } },
       secret,
     )
     return request(await getServer(enabledEnv))
