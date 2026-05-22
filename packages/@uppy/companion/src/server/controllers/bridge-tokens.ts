@@ -28,6 +28,5 @@ export default function bridgeTokens(req: Request, res: Response): void {
 
   res.json({
     accessToken: session.accessToken,
-    refreshToken: session.refreshToken ?? null,
   })
 }
