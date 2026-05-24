@@ -1,6 +1,6 @@
-import { userEvent } from 'vitest/browser'
 import { setupWorker } from 'msw/browser'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-svelte'
 import { tusHandlers } from '../../shared/tusHandlers.js'
 import PropsReactivity from '../src/components/test/props-reactivity.svelte'

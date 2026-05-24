@@ -1,6 +1,6 @@
 import Uppy from '@uppy/core'
-import { page } from 'vitest/browser'
 import { expect, test } from 'vitest'
+import { page } from 'vitest/browser'
 import Url from './Url.js'
 
 // Normally you would use one of vitest's framework renderers, such as vitest-browser-react,
