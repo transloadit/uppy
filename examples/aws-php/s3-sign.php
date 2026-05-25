@@ -11,12 +11,26 @@ $bucket = getenv('COMPANION_AWS_BUCKET') ?: 'uppy-test';
 // Directory to place uploaded files in.
 $directory = 'uppy-php-example';
 
-// Create the S3 client.
-$s3 = new Aws\S3\S3Client([
+// Read credentials from the repo's Companion-style env vars (matches the
+// .env used by the rest of the examples). Fall back to the AWS SDK's default
+// credential chain (~/.aws/credentials, AWS_ACCESS_KEY_ID, etc.) if these
+// aren't set.
+$awsKey = getenv('COMPANION_AWS_KEY') ?: null;
+$awsSecret = getenv('COMPANION_AWS_SECRET') ?: null;
+
+$clientConfig = [
   'version' => 'latest',
   'endpoint' => $awsEndpoint,
   'region' => $awsRegion,
-]);
+];
+if ($awsKey && $awsSecret) {
+  $clientConfig['credentials'] = [
+    'key' => $awsKey,
+    'secret' => $awsSecret,
+  ];
+}
+
+$s3 = new Aws\S3\S3Client($clientConfig);
 
 // The @uppy/aws-s3 plugin sends `{ method, key }` per operation.
 // This example only handles PUT (PutObject) — multipart is disabled client-side.
