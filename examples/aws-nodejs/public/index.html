@@ -57,7 +57,7 @@
             height: 400,
           })
           .use(AwsS3, {
-            bucket: window.UPPY_S3_BUCKET,
+            s3Endpoint: `https://${window.UPPY_S3_BUCKET}.s3.${window.UPPY_S3_REGION}.amazonaws.com`,
             region: window.UPPY_S3_REGION,
             getCredentials: async ({ signal }) => {
               const response = await fetch('/s3/sts', { signal })
