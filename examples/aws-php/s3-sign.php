@@ -2,7 +2,14 @@
 
 require 'vendor/autoload.php';
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Headers: GET, POST');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Short-circuit CORS preflight before any further processing.
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+  http_response_code(204);
+  exit;
+}
 
 // CONFIG: Change these variables to a valid region and bucket.
 $awsEndpoint = getenv('COMPANION_AWS_ENDPOINT') ?: null;
@@ -35,6 +42,13 @@ $s3 = new Aws\S3\S3Client($clientConfig);
 // The @uppy/aws-s3 plugin sends `{ method, key }` per operation.
 // This example only handles PUT (PutObject) — multipart is disabled client-side.
 $body = json_decode(file_get_contents('php://input'));
+if (!is_object($body)) {
+  http_response_code(400);
+  header('content-type: application/json');
+  echo json_encode(['error' => 'Invalid or empty JSON body']);
+  exit;
+}
+
 $method = $body->method ?? 'PUT';
 $key = $body->key ?? null;
 
