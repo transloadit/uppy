@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "@types/deep-freeze": "^0",
+    "@types/node": "^20.19.0",
     "cssnano": "^7.0.7",
     "deep-freeze": "^0.0.1",
     "jsdom": "^26.1.0",
@@ -59,6 +60,6 @@
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   }
 }

@@ -44,9 +44,10 @@
     "access": "public"
   },
   "devDependencies": {
+    "@types/node": "^20.19.0",
     "jsdom": "^26.1.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",

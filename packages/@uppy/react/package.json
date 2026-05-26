@@ -50,7 +50,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "exports": {
     ".": "./lib/index.js",
