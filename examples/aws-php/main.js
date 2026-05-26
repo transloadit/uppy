@@ -11,34 +11,24 @@ uppy.use(Dashboard, {
   target: 'body',
 })
 uppy.use(AwsS3, {
-  shouldUseMultipart: false, // The PHP backend only supports non-multipart uploads
+  // The PHP backend only signs single PutObject URLs (no multipart).
+  shouldUseMultipart: false,
 
-  getUploadParameters(file) {
-    // Send a request to our PHP signing endpoint.
-    return fetch('/s3-sign.php', {
-      method: 'post',
-      // Send and receive JSON.
+  // signRequest is called for each S3 operation. For single PUTs the
+  // request is `{ method: 'PUT', key }`. The server returns a presigned URL.
+  signRequest: async (request) => {
+    const response = await fetch('/s3-sign.php', {
+      method: 'POST',
       headers: {
         accept: 'application/json',
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        filename: file.name,
-        contentType: file.type,
+        method: request.method,
+        key: request.key,
       }),
     })
-      .then((response) => {
-        // Parse the JSON response.
-        return response.json()
-      })
-      .then((data) => {
-        // Return an object in the correct shape.
-        return {
-          method: data.method,
-          url: data.url,
-          fields: data.fields,
-          headers: data.headers,
-        }
-      })
+    if (!response.ok) throw new Error('Failed to get presigned URL')
+    return response.json()
   },
 })
