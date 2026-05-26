@@ -122,7 +122,7 @@ function getProtectedHttpAgent({
       override createConnection(
         options: http.ClientRequestArgs,
         callback?: (err: Error | null, stream: Duplex) => void,
-      ): Duplex {
+      ): Duplex | null | undefined {
         if (!allowLocalIPs && shouldBlockHost(options.host)) {
           const socket = undefined as unknown as Duplex // not sure about this but it's how it always worked
           callback?.(new Error(FORBIDDEN_IP_ADDRESS), socket)
@@ -140,7 +140,7 @@ function getProtectedHttpAgent({
     override createConnection(
       options: http.ClientRequestArgs,
       callback?: (err: Error | null, stream: Duplex) => void,
-    ): Duplex {
+    ): Duplex | null | undefined {
       if (!allowLocalIPs && shouldBlockHost(options.host)) {
         const socket = undefined as unknown as Duplex // not sure about this but it's how it always worked
         callback?.(new Error(FORBIDDEN_IP_ADDRESS), socket)

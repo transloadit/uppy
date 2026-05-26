@@ -1,4 +1,4 @@
-import prettierBytes from '@transloadit/prettier-bytes'
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, I18n, Meta, UppyFile } from '@uppy/utils'
 // @ts-expect-error untyped
 import match from 'mime-match'
