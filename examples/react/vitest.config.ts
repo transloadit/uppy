@@ -5,6 +5,11 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  // vite 8 (rolldown) no longer auto-dedupes React across the linked
+  // @uppy/react workspace, causing "Invalid hook call" / two React copies.
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+  },
   test: {
     browser: {
       enabled: true,
