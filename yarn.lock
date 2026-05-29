@@ -5681,23 +5681,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@redis/client@npm:^5.0.0":
-  version: 5.12.1
-  resolution: "@redis/client@npm:5.12.1"
-  dependencies:
-    cluster-key-slot: "npm:1.1.2"
-  peerDependencies:
-    "@node-rs/xxhash": ^1.1.0
-    "@opentelemetry/api": ">=1 <2"
-  peerDependenciesMeta:
-    "@node-rs/xxhash":
-      optional: true
-    "@opentelemetry/api":
-      optional: true
-  checksum: 10/6e7ac59761201ca0cb5eeff78e18b67eb0db2071b6bf3306d08697999a244329dd01a4d521963eb134da87c8ef6689ed52648f5fc15d6d2cd84a77cd5f3351c4
-  languageName: node
-  linkType: hard
-
 "@remix-run/node-fetch-server@npm:^0.9.0":
   version: 0.9.0
   resolution: "@remix-run/node-fetch-server@npm:0.9.0"
@@ -7676,20 +7659,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tus/file-store@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@tus/file-store@npm:2.1.0"
-  dependencies:
-    "@redis/client": "npm:^5.0.0"
-    "@tus/utils": "npm:^0.7.0"
-    debug: "npm:^4.3.4"
-  dependenciesMeta:
-    "@redis/client":
-      optional: true
-  checksum: 10/b057d9fffbb596213f83a9daf468d1bf0e25c1cb9a1eba517392d30ece00024ff9a225247225becec4fe7278738998ad19d3d94c2a975a4d465473f941dc66f6
-  languageName: node
-  linkType: hard
-
 "@tus/file-store@npm:latest":
   version: 2.0.0
   resolution: "@tus/file-store@npm:2.0.0"
@@ -7701,26 +7670,6 @@ __metadata:
     "@redis/client":
       optional: true
   checksum: 10/c70c0e01b2b8bac3d0a2486fa82df1a607d983c9dc0f51acb3a7391d4b5fee79536a693c113f753a5fa78c2752a8f6091bb3bad2543adf3442016bcb620ebd4f
-  languageName: node
-  linkType: hard
-
-"@tus/server@npm:^2.4.1":
-  version: 2.4.1
-  resolution: "@tus/server@npm:2.4.1"
-  dependencies:
-    "@redis/client": "npm:^5.0.0"
-    "@tus/utils": "npm:^0.7.0"
-    debug: "npm:^4.3.4"
-    ioredis: "npm:^5.4.1"
-    lodash.throttle: "npm:^4.1.1"
-    set-cookie-parser: "npm:^2.7.1"
-    srvx: "npm:~0.11.15"
-  dependenciesMeta:
-    "@redis/client":
-      optional: true
-    ioredis:
-      optional: true
-  checksum: 10/d1ac62b025bff046737482559d8a0ad7711cc53e70b339581cd698216bef1e124c26da45e79871b74b00767b486d8d43ca83d397e25ced29526e8d00c71a977b
   languageName: node
   linkType: hard
 
@@ -7748,13 +7697,6 @@ __metadata:
   version: 0.6.0
   resolution: "@tus/utils@npm:0.6.0"
   checksum: 10/2f6ee8d094fb85194e6884b87ffe2ec7962232a359258aad934a7b434ddf3b240aab9488ac31e3f97c9ea17a45ce8e81831cb5dfafe3e77454deaf0655c17580
-  languageName: node
-  linkType: hard
-
-"@tus/utils@npm:^0.7.0":
-  version: 0.7.0
-  resolution: "@tus/utils@npm:0.7.0"
-  checksum: 10/2c5235e8cbdc0c795f3db36261317244e27b2ca1c210c4f2a37cf36eea7d5f2f75f555ee9b629231c89a78844539dbc905802a1769ea5229d25ec8f405dec17c
   languageName: node
   linkType: hard
 
@@ -13188,19 +13130,6 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     express: "npm:^5.2.1"
     he: "npm:^1.2.0"
-    npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
-  languageName: unknown
-  linkType: soft
-
-"example-tus-min@workspace:examples/tus-min":
-  version: 0.0.0-use.local
-  resolution: "example-tus-min@workspace:examples/tus-min"
-  dependencies:
-    "@tus/file-store": "npm:^2.1.0"
-    "@tus/server": "npm:^2.4.1"
-    "@uppy/core": "workspace:*"
-    "@uppy/tus": "workspace:*"
     npm-run-all: "npm:^4.1.5"
     vite: "npm:^7.1.11"
   languageName: unknown
@@ -21371,15 +21300,6 @@ __metadata:
   version: 1.0.3
   resolution: "sprintf-js@npm:1.0.3"
   checksum: 10/c34828732ab8509c2741e5fd1af6b767c3daf2c642f267788f933a65b1614943c282e74c4284f4fa749c264b18ee016a0d37a3e5b73aee446da46277d3a85daa
-  languageName: node
-  linkType: hard
-
-"srvx@npm:~0.11.15":
-  version: 0.11.16
-  resolution: "srvx@npm:0.11.16"
-  bin:
-    srvx: bin/srvx.mjs
-  checksum: 10/5ec582e92d618220e24bbe9efe4900215081b1949327ee165f3cf4b01e766c458a8aaba50347e8fa1b536ac8b854e0e6d8cd970c62c64278487867699243124d
   languageName: node
   linkType: hard
 

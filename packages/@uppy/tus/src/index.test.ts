@@ -101,40 +101,5 @@ describe('Tus', () => {
       // `complete` result and via `getFile`.
       expect(core.getFile(id).response?.status).toBe(403)
     })
-
-    it('keeps the response readable after a successful upload', async () => {
-      const tusResumable = { 'Tus-Resumable': '1.0.0' }
-      nock('https://fake-endpoint.uppy.io')
-        .post('/files/')
-        .reply(201, '', {
-          ...tusResumable,
-          Location: 'https://fake-endpoint.uppy.io/files/abc',
-        })
-        .patch('/files/abc')
-        .reply(204, '', { ...tusResumable, 'Upload-Offset': '1024' })
-
-      const core = new Core<any, TusBody>()
-      core.use(Tus, {
-        endpoint: 'https://fake-endpoint.uppy.io/files/',
-        retryDelays: [],
-      })
-      const id = core.addFile({
-        type: 'application/octet-stream',
-        source: 'test',
-        name: 'test.bin',
-        data: new Blob([new Uint8Array(1024)]),
-      })
-
-      const result = await core.upload()
-      expect(result?.successful).toHaveLength(1)
-
-      // The response — including the underlying xhr — must still be readable
-      // after the upload completes (i.e. cleanup must not reset the xhr).
-      const response = core.getFile(id).response
-      expect(response?.status).toBe(200)
-      const { xhr } = response!.body!
-      expect(xhr).toBeInstanceOf(XMLHttpRequest)
-      expect(xhr.status).toBe(204)
-    })
   })
 })

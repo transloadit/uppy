@@ -234,8 +234,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
   ): Promise<tus.Upload | string> {
     this.resetUploaderReferences(file.id)
 
-    // Captured in `onError` before the upload is aborted, so the failing
-    // server response can be forwarded to the `upload-error` event.
+    // Captured in `onError` and forwarded to the `upload-error` event in the
+    // `.catch` below, so consumers can read the failing server response.
     let errorResponse:
       | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
       | undefined
@@ -380,10 +380,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
         this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
 
-        // Do not abort the request here: the upload has completed, and aborting
-        // it would reset the underlying `xhr` (status `0`, empty body) that we
-        // just exposed on `response.body.xhr`.
-        this.resetUploaderReferences(file.id, { abortRequest: false })
+        this.resetUploaderReferences(file.id)
         queuedRequest.done()
 
         if (upload.url) {
