@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "preact": "^10.29.2"
   },
   "devDependencies": {
     "cssnano": "^7.0.7",
@@ -50,7 +50,7 @@
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

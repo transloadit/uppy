@@ -1,4 +1,4 @@
-import prettierBytes from '@transloadit/prettier-bytes'
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta, State, Uppy } from '@uppy/core'
 import type { FileProcessingInfo, I18n } from '@uppy/utils'
 import { prettyETA } from '@uppy/utils'

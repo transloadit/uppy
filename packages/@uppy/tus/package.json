@@ -39,13 +39,13 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "tus-js-client": "^4.2.3"
+    "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "jsdom": "^26.1.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
