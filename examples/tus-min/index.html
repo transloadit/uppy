@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Uppy + Tus — minimal local-upload repro (#6287)</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 720px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+      }
+      pre {
+        background: #f4f4f4;
+        padding: 0.5rem;
+        border-radius: 4px;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        margin: 0;
+      }
+      #log {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+      code {
+        background: #eee;
+        padding: 0 0.25rem;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Uppy + Tus — minimal local-upload repro</h1>
+    <p>
+      Pick a normal file → <strong>success</strong> path.<br />
+      Pick a file whose name ends in <code>.bin</code> → server returns
+      <strong>HTTP 403</strong> with a JSON body (error path, issue #6287).
+    </p>
+    <input id="file" type="file" multiple />
+    <h2>Log (newest first)</h2>
+    <div id="log"></div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>
