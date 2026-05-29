@@ -9089,6 +9089,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/utils": "workspace:^"
     jsdom: "npm:^26.1.0"
+    nock: "npm:^13.1.0"
     tus-js-client: "npm:^4.2.3"
     typescript: "npm:^5.8.3"
     vitest: "npm:^3.2.4"

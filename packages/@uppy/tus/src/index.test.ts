@@ -1,5 +1,6 @@
-import Core from '@uppy/core'
-import { describe, expect, expectTypeOf, it } from 'vitest'
+import Core, { type UppyEventMap } from '@uppy/core'
+import nock from 'nock'
+import { afterEach, describe, expect, expectTypeOf, it } from 'vitest'
 import Tus, { type TusBody } from './index.js'
 
 describe('Tus', () => {
@@ -43,5 +44,97 @@ describe('Tus', () => {
     expectTypeOf(file.response?.body).toEqualTypeOf<
       { xhr: XMLHttpRequest } | undefined
     >()
+  })
+
+  describe('upload-error response', () => {
+    afterEach(() => {
+      nock.cleanAll()
+    })
+
+    it('sends the server response over the upload-error event', async () => {
+      nock('https://fake-endpoint.uppy.io')
+        .post('/files/')
+        .reply(
+          403,
+          JSON.stringify({
+            message:
+              'File cannot be uploaded as the BIN content type is disallowed!',
+            status_code: 403,
+          }),
+          { 'Content-Type': 'application/json' },
+        )
+
+      const core = new Core<any, TusBody>()
+      core.use(Tus, {
+        endpoint: 'https://fake-endpoint.uppy.io/files/',
+        // Avoid retrying so the failure surfaces immediately.
+        retryDelays: [],
+      })
+      const id = core.addFile({
+        type: 'application/octet-stream',
+        source: 'test',
+        name: 'test.bin',
+        data: new Blob([new Uint8Array(1024)]),
+      })
+
+      const event = new Promise<
+        Parameters<UppyEventMap<any, TusBody>['upload-error']>
+      >((resolve) => {
+        core.once('upload-error', (...args) => resolve(args))
+      })
+
+      await Promise.all([
+        core.upload().catch(() => {
+          // Core rejects the upload; we assert on the event/state instead.
+        }),
+        event.then(([, , response]) => {
+          expect(response?.status).toBe(403)
+          const { xhr } = response!.body!
+          expect(xhr).toBeInstanceOf(XMLHttpRequest)
+          expect(JSON.parse(xhr.responseText).message).toBe(
+            'File cannot be uploaded as the BIN content type is disallowed!',
+          )
+        }),
+      ])
+
+      // The response is also persisted on the file so it is available on the
+      // `complete` result and via `getFile`.
+      expect(core.getFile(id).response?.status).toBe(403)
+    })
+
+    it('keeps the response readable after a successful upload', async () => {
+      const tusResumable = { 'Tus-Resumable': '1.0.0' }
+      nock('https://fake-endpoint.uppy.io')
+        .post('/files/')
+        .reply(201, '', {
+          ...tusResumable,
+          Location: 'https://fake-endpoint.uppy.io/files/abc',
+        })
+        .patch('/files/abc')
+        .reply(204, '', { ...tusResumable, 'Upload-Offset': '1024' })
+
+      const core = new Core<any, TusBody>()
+      core.use(Tus, {
+        endpoint: 'https://fake-endpoint.uppy.io/files/',
+        retryDelays: [],
+      })
+      const id = core.addFile({
+        type: 'application/octet-stream',
+        source: 'test',
+        name: 'test.bin',
+        data: new Blob([new Uint8Array(1024)]),
+      })
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+
+      // The response — including the underlying xhr — must still be readable
+      // after the upload completes (i.e. cleanup must not reset the xhr).
+      const response = core.getFile(id).response
+      expect(response?.status).toBe(200)
+      const { xhr } = response!.body!
+      expect(xhr).toBeInstanceOf(XMLHttpRequest)
+      expect(xhr.status).toBe(204)
+    })
   })
 })
