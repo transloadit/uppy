@@ -63,7 +63,7 @@
     "@vitest/browser": "^4.1.6",
     "@vitest/browser-playwright": "^4.1.6",
     "cssnano": "^8.0.1",
-    "jsdom": "^26.1.0",
+    "jsdom": "^29.1.1",
     "playwright": "1.57.0",
     "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",

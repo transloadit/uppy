@@ -1,23 +1,47 @@
 import Core, { type UppyEventMap } from '@uppy/core'
-import nock from 'nock'
-import { describe, expect, it, vi } from 'vitest'
+import { http, HttpResponse } from 'msw'
+import { setupServer } from 'msw/node'
+import {
+  afterAll,
+  afterEach,
+  beforeAll,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest'
 import XHRUpload from './index.js'
+
+// MSW intercepts at the XMLHttpRequest layer (it patches the global
+// XMLHttpRequest), so it works regardless of how jsdom implements XHR
+// internally — unlike nock, which patches Node's http module and is bypassed
+// by newer jsdom versions. Because the request is short-circuited before it
+// ever hits the network, no CORS preflight (OPTIONS) is performed, so only the
+// POST handlers need to be mocked.
+const server = setupServer()
+
+const corsHeaders = { 'access-control-allow-origin': '*' }
+
+beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
+afterEach(() => server.resetHandlers())
+afterAll(() => server.close())
 
 describe('XHRUpload', () => {
   it('should leverage hooks from fetcher', async () => {
-    nock('https://fake-endpoint.uppy.io')
-      .defaultReplyHeaders({
-        'access-control-allow-method': 'POST',
-        'access-control-allow-origin': '*',
-      })
-      .options('/')
-      .reply(204, {})
-      .post('/')
-      .reply(401, {})
-      .options('/')
-      .reply(204, {})
-      .post('/')
-      .reply(200, 'https://fake-endpoint.uppy.io/random-id')
+    let postCount = 0
+    server.use(
+      http.post('https://fake-endpoint.uppy.io/', () => {
+        postCount += 1
+        // First attempt fails (triggers a retry), second succeeds.
+        if (postCount === 1) {
+          return new HttpResponse(null, { status: 401, headers: corsHeaders })
+        }
+        return new HttpResponse('https://fake-endpoint.uppy.io/random-id', {
+          status: 200,
+          headers: corsHeaders,
+        })
+      }),
+    )
 
     const core = new Core<any, { url: string }>()
     const shouldRetry = vi.fn(() => true)
@@ -62,15 +86,14 @@ describe('XHRUpload', () => {
   })
 
   it('should send response object over upload-error event', async () => {
-    nock('https://fake-endpoint.uppy.io')
-      .defaultReplyHeaders({
-        'access-control-allow-method': 'POST',
-        'access-control-allow-origin': '*',
-      })
-      .options('/')
-      .reply(204, {})
-      .post('/')
-      .reply(400, { status: 400, message: 'Oh no' })
+    server.use(
+      http.post('https://fake-endpoint.uppy.io/', () =>
+        HttpResponse.json(
+          { status: 400, message: 'Oh no' },
+          { status: 400, headers: corsHeaders },
+        ),
+      ),
+    )
 
     const core = new Core()
     const shouldRetry = vi.fn(() => false)
@@ -123,13 +146,13 @@ describe('XHRUpload', () => {
 
   describe('headers', () => {
     it('can be a function', async () => {
-      const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
-        'access-control-allow-method': 'POST',
-        'access-control-allow-origin': '*',
-        'access-control-allow-headers': 'x-sample-header',
-      })
-      scope.options('/').reply(200, {})
-      scope.post('/').matchHeader('x-sample-header', 'test.jpg').reply(200, {})
+      let receivedHeader: string | null = null
+      server.use(
+        http.post('https://fake-endpoint.uppy.io/', ({ request }) => {
+          receivedHeader = request.headers.get('x-sample-header')
+          return HttpResponse.json({}, { status: 200, headers: corsHeaders })
+        }),
+      )
 
       const core = new Core()
       core.use(XHRUpload, {
@@ -148,17 +171,19 @@ describe('XHRUpload', () => {
 
       await core.upload()
 
-      expect(scope.isDone()).toBe(true)
+      expect(receivedHeader).toBe('test.jpg')
     })
   })
 
   describe('endpoint', () => {
     it('can be a function', async () => {
-      const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
-        'access-control-allow-origin': '*',
-      })
-      scope.options('/upload/test.jpg').reply(200, {})
-      scope.post('/upload/test.jpg').reply(200, {})
+      let requested = false
+      server.use(
+        http.post('https://fake-endpoint.uppy.io/upload/test.jpg', () => {
+          requested = true
+          return HttpResponse.json({}, { status: 200, headers: corsHeaders })
+        }),
+      )
 
       const core = new Core()
       core.use(XHRUpload, {
@@ -178,15 +203,20 @@ describe('XHRUpload', () => {
 
       await core.upload()
 
-      expect(scope.isDone()).toBe(true)
+      expect(requested).toBe(true)
     })
 
     it('can be a function (bundle)', async () => {
-      const scope = nock('https://fake-endpoint.uppy.io').defaultReplyHeaders({
-        'access-control-allow-origin': '*',
-      })
-      scope.options('/upload-bundle/test.jpg,test2.jpg').reply(200, {})
-      scope.post('/upload-bundle/test.jpg,test2.jpg').reply(200, {})
+      let requested = false
+      server.use(
+        http.post(
+          'https://fake-endpoint.uppy.io/upload-bundle/test.jpg,test2.jpg',
+          () => {
+            requested = true
+            return HttpResponse.json({}, { status: 200, headers: corsHeaders })
+          },
+        ),
+      )
 
       const core = new Core()
       core.use(XHRUpload, {
@@ -212,7 +242,7 @@ describe('XHRUpload', () => {
 
       await core.upload()
 
-      expect(scope.isDone()).toBe(true)
+      expect(requested).toBe(true)
     })
   })
 })
