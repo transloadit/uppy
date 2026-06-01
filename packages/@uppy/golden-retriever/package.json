@@ -54,7 +54,7 @@
     "@uppy/xhr-upload": "workspace:^",
     "@vitest/browser": "^4.1.6",
     "@vitest/browser-playwright": "^4.1.6",
-    "playwright": "1.57.0",
+    "playwright": "1.60.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.6"
   }
