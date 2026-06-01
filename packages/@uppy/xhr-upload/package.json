@@ -50,7 +50,7 @@
     "@vitest/browser-playwright": "^4.1.6",
     "jsdom": "^29.1.1",
     "msw": "^2.10.4",
-    "playwright": "1.57.0",
+    "playwright": "1.60.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.6"
   },
