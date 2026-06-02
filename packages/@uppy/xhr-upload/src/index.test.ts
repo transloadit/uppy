@@ -180,6 +180,9 @@ describe('XHRUpload', () => {
       let requested = false
       server.use(
         http.post('https://fake-endpoint.uppy.io/upload/test.jpg', () => {
+          if (requested) {
+            throw new Error('Unexpected extra request')
+          }
           requested = true
           return HttpResponse.json({}, { status: 200, headers: corsHeaders })
         }),
