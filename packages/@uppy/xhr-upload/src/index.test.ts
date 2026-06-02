@@ -146,9 +146,11 @@ describe('XHRUpload', () => {
 
   describe('headers', () => {
     it('can be a function', async () => {
+      let postCount = 0
       let receivedHeader: string | null = null
       server.use(
         http.post('https://fake-endpoint.uppy.io/', ({ request }) => {
+          postCount += 1
           receivedHeader = request.headers.get('x-sample-header')
           return HttpResponse.json({}, { status: 200, headers: corsHeaders })
         }),
@@ -171,19 +173,17 @@ describe('XHRUpload', () => {
 
       await core.upload()
 
+      expect(postCount).toBe(1)
       expect(receivedHeader).toBe('test.jpg')
     })
   })
 
   describe('endpoint', () => {
     it('can be a function', async () => {
-      let requested = false
+      let postCount = 0
       server.use(
         http.post('https://fake-endpoint.uppy.io/upload/test.jpg', () => {
-          if (requested) {
-            throw new Error('Unexpected extra request')
-          }
-          requested = true
+          postCount += 1
           return HttpResponse.json({}, { status: 200, headers: corsHeaders })
         }),
       )
@@ -206,16 +206,16 @@ describe('XHRUpload', () => {
 
       await core.upload()
 
-      expect(requested).toBe(true)
+      expect(postCount).toBe(1)
     })
 
     it('can be a function (bundle)', async () => {
-      let requested = false
+      let postCount = 0
       server.use(
         http.post(
           'https://fake-endpoint.uppy.io/upload-bundle/test.jpg,test2.jpg',
           () => {
-            requested = true
+            postCount += 1
             return HttpResponse.json({}, { status: 200, headers: corsHeaders })
           },
         ),
@@ -245,7 +245,7 @@ describe('XHRUpload', () => {
 
       await core.upload()
 
-      expect(requested).toBe(true)
+      expect(postCount).toBe(1)
     })
   })
 })
