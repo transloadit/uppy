@@ -89,14 +89,7 @@ describe('ScreenCapture Component', () => {
 })
 
 describe('Webcam Component', () => {
-  // FIXME(vite8): quarantined. Under vite 8's rolldown/browser-test runtime
-  // this test passes in isolation but fails when it runs right after the
-  // ScreenCapture test — the "Webcam" button click silently doesn't open the
-  // modal (a test-isolation/sequencing issue between the two media-modal
-  // tests, not a product bug). dedupe, cleanup(), globals:true and chromium
-  // fake-media flags were all tried without success. Re-enable once the
-  // vitest-browser-react + vite 8 sequencing is resolved.
-  test.skip('renders with title, control buttons, and close functionality works', async () => {
+  test('renders with title, control buttons, and close functionality works', async () => {
     const screen = await render(<App />)
 
     await screen.getByRole('button', { name: 'Webcam' }).click()
