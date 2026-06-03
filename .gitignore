@@ -41,3 +41,6 @@ issues.txt
 # companion deployment files
 transloadit-cluster-kubeconfig.yaml
 companion-env.yml
+branch_structure.json
+temp_auto_push.bat
+temp_interactive_push.bat
