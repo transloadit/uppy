@@ -5,7 +5,7 @@ import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import chalk from 'chalk'
-import glob from 'glob'
+import { globSync } from 'glob'
 
 import { getLocales, getPaths, omit } from './helpers.mjs'
 
@@ -20,8 +20,7 @@ function getAllFilesPerPlugin(pluginNames) {
   const filesPerPlugin = {}
 
   function getFiles(name) {
-    return glob
-      .sync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
+    return globSync(`${root}/packages/@uppy/${name}/lib/**/*.js`)
       .filter((filePath) => !filePath.includes('locale.js'))
       .map((filePath) => fs.readFileSync(filePath, 'utf-8'))
   }

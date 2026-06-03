@@ -101,7 +101,7 @@
     "@types/ws": "8.18.1",
     "execa": "9.6.1",
     "http-proxy": "1.18.1",
-    "nock": "^13.1.3",
+    "nock": "^14.0.15",
     "supertest": "7.2.2",
     "typescript": "6.0.3",
     "vitest": "4.1.6"
