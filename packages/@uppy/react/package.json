@@ -44,7 +44,7 @@
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^16.0.0",
     "@types/react": "^19.2.14",
-    "@types/use-sync-external-store": "^0.0.6",
+    "@types/use-sync-external-store": "^1.5.0",
     "@uppy/core": "workspace:^",
     "jsdom": "^29.1.1",
     "react": "^19.2.6",
