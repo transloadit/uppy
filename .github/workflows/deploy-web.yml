@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy uppy.io
 
 on:
   workflow_dispatch:
@@ -37,15 +37,14 @@ jobs:
         env:
           SKIP_YARN_COREPACK_CHECK: 1
 
-      - name: Install dependencies
-        run: corepack yarn install --immutable
-      - name: Build website
-        run: corepack yarn build
+      - run: corepack yarn install --immutable
+      - run: corepack yarn build
+      - run: corepack yarn workspace uppy-io build
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: ./build
+          path: packages/uppy.io/build
 
       - name: Deploy to GitHub Pages
         id: deployment

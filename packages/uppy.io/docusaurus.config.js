@@ -38,11 +38,13 @@ const config = {
 				docs: {
 					breadcrumbs: false,
 					sidebarPath: require.resolve('./sidebars.js'),
-					editUrl: 'https://github.com/transloadit/uppy.io/blob/main/',
+					editUrl:
+						'https://github.com/transloadit/uppy/tree/main/packages/uppy.io',
 				},
 				blog: {
 					showReadingTime: true,
-					editUrl: 'https://github.com/transloadit/uppy.io/tree/main/',
+					editUrl:
+						'https://github.com/transloadit/uppy/tree/main/packages/uppy.io',
 					blogSidebarCount: 0,
 				},
 				theme: {

@@ -10,7 +10,6 @@
 		"lint:js": "eslint . --cache --max-warnings=0",
 		"lint:md": "run-s --continue-on-error remark:md remark:mdx",
 		"lint": "run-s --continue-on-error lint:js lint:md format:check-diff",
-		"prepare": "husky install",
 		"format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
 		"format:check": "prettier -c .",
 		"format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
@@ -22,21 +21,6 @@
 		"typecheck": "tsc --noEmit",
 		"write-heading-ids": "docusaurus write-heading-ids",
 		"write-translations": "docusaurus write-translations"
-	},
-	"lint-staged": {
-		"*.{js,jsx,ts,tsx}": [
-			"eslint --fix --cache",
-			"prettier --write"
-		],
-		"*.md": [
-			"remark -qf --",
-			"prettier --write"
-		],
-		"*.mdx": [
-			"remark -u mdx -qf --",
-			"prettier --write"
-		],
-		"*.{css,html,json,yml}": "prettier --write"
 	},
 	"browserslist": {
 		"production": [
@@ -56,7 +40,7 @@
 		"@docusaurus/preset-classic": "^3.9.2",
 		"@mdx-js/react": "^3.1.1",
 		"@uidotdev/usehooks": "^2.4.1",
-		"@uppy/react": "^5.1.1",
+		"@uppy/react": "workspace:*",
 		"clsx": "^2.1.1",
 		"prism-react-renderer": "^2.1.0",
 		"react": "^19.2.0",
@@ -74,8 +58,6 @@
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-markdown": "^5.1.0",
 		"eslint-plugin-mdx": "^3.6.2",
-		"husky": "^9.1.7",
-		"lint-staged": "^16.2.7",
 		"mdast-comment-marker": "^3.0.0",
 		"npm-run-all": "^4.1.5",
 		"prettier": "3.7.4",
