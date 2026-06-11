@@ -9,6 +9,7 @@
     "packages/@uppy/*",
     "packages/@uppy/angular/projects/uppy/*",
     "packages/uppy",
+    "packages/uppy.io",
     "private/*"
   ],
   "scripts": {
