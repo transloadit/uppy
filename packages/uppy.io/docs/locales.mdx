@@ -1,0 +1,930 @@
+---
+sidebar_position: 10
+---
+
+import Link from '@docusaurus/Link';
+
+# Internationalisation
+
+Uppy speaks many languages, English being the default. You can use a locale pack
+to translate Uppy into your language of choice.
+
+:::tip
+
+Checkout
+[`@uppy/locales`](https://github.com/transloadit/uppy/tree/main/packages/%40uppy/locales)
+on GitHub to see the list of supported languages.
+
+:::
+
+## Using a locale pack from npm
+
+This is the recommended way. Install `@uppy/locales` package from npm, then
+choose the locale you’d like to use: `@uppy/locales/lib/LANGUAGE_CODE`.
+
+```bash
+npm i @uppy/core @uppy/locales
+```
+
+```js
+import Uppy from '@uppy/core';
+import German from '@uppy/locales/lib/de_DE';
+// see below for the full list of locales
+const uppy = new Uppy({
+	debug: true,
+	locale: German,
+});
+```
+
+## Using a locale pack from CDN
+
+Add a `<script>` tag with Uppy bundle and the locale pack you’d like to use. You
+can copy/paste the link from the CDN column in the locales table. The locale
+will attach itself to the `Uppy.locales` object.
+
+```html
+<script src="https://releases.transloadit.com/uppy/v3.17.0/uppy.min.js"></script>
+<script src="https://releases.transloadit.com/uppy/locales/v3.3.1/de_DE.min.js"></script>
+
+<script>
+	var uppy = new Uppy.Uppy({
+		debug: true,
+		locale: Uppy.locales.de_DE,
+	});
+</script>
+```
+
+## Overriding locale strings for a specific plugin
+
+Many plugins come with their own locale strings, and the packs we provide
+consist of most of those strings. You can, however, override a locale string for
+a specific plugin, regardless of whether you are using locale pack or not. See
+the plugin documentation for the list of locale strings it uses.
+
+```js
+import Uppy from '@uppy/core';
+import DragDrop from '@uppy/drag-drop';
+import Russian from '@uppy/locales/lib/ru_RU';
+
+const uppy = new Uppy({
+	debug: true,
+	autoProceed: true,
+	locale: Russian,
+});
+uppy.use(DragDrop, {
+	target: '.UppyDragDrop',
+	// We are using the ru_RU locale pack (set above in Uppy options),
+	// but you can also override specific strings like so:
+	locale: {
+		strings: {
+			browse: 'выберите ;-)',
+		},
+	},
+});
+```
+
+## List of locales
+
+<table>
+	<thead>
+		<tr>
+			<th>38 Locales</th>
+			<th>NPM</th>
+			<th>CDN</th>
+			<th>Source on GitHub</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				Arabic <small>Saudi Arabia</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/ar_SA
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/ar_SA.min.js">
+					ar_SA.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/ar_SA.ts">
+					ar_SA.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Bulgarian <small>Bulgaria</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/bg_BG
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/bg_BG.min.js">
+					bg_BG.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/bg_BG.ts">
+					bg_BG.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Chinese <small>China</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/zh_CN
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/zh_CN.min.js">
+					zh_CN.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/zh_CN.ts">
+					zh_CN.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Chinese <small>Taiwan</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/zh_TW
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/zh_TW.min.js">
+					zh_TW.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/zh_TW.ts">
+					zh_TW.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Croatian <small>Croatia</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/hr_HR
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/hr_HR.min.js">
+					hr_HR.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/hr_HR.ts">
+					hr_HR.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Czech <small>Czechia</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/cs_CZ
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/cs_CZ.min.js">
+					cs_CZ.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/cs_CZ.ts">
+					cs_CZ.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Danish <small>Denmark</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/da_DK
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/da_DK.min.js">
+					da_DK.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/da_DK.ts">
+					da_DK.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Dutch <small>Netherlands</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/nl_NL
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/nl_NL.min.js">
+					nl_NL.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/nl_NL.ts">
+					nl_NL.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				English <small>United States</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/en_US
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/en_US.min.js">
+					en_US.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/en_US.ts">
+					en_US.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Finnish <small>Finland</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/fi_FI
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/fi_FI.min.js">
+					fi_FI.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/fi_FI.ts">
+					fi_FI.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				French <small>France</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/fr_FR
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/fr_FR.min.js">
+					fr_FR.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/fr_FR.ts">
+					fr_FR.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Galician <small>Spain</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/gl_ES
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/gl_ES.min.js">
+					gl_ES.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/gl_ES.ts">
+					gl_ES.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				German <small>Germany</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/de_DE
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/de_DE.min.js">
+					de_DE.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/de_DE.ts">
+					de_DE.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Greek <small>Greece</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/el_GR
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/el_GR.min.js">
+					el_GR.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/el_GR.ts">
+					el_GR.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Hebrew <small>Israel</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/he_IL
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/he_IL.min.js">
+					he_IL.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/he_IL.ts">
+					he_IL.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Hindi <small>India</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/hi_IN
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/hi_IN.min.js">
+					hi_IN.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/hi_IN.ts">
+					hi_IN.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Hungarian <small>Hungary</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/hu_HU
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/hu_HU.min.js">
+					hu_HU.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/hu_HU.ts">
+					hu_HU.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Icelandic <small>Iceland</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/is_IS
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/is_IS.min.js">
+					is_IS.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/is_IS.ts">
+					is_IS.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Indonesian <small>Indonesia</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/id_ID
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/id_ID.min.js">
+					id_ID.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/id_ID.ts">
+					id_ID.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Italian <small>Italy</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/it_IT
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/it_IT.min.js">
+					it_IT.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/it_IT.ts">
+					it_IT.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Japanese <small>Japan</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/ja_JP
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/ja_JP.min.js">
+					ja_JP.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/ja_JP.ts">
+					ja_JP.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Korean <small>South Korea</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/ko_KR
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/ko_KR.min.js">
+					ko_KR.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/ko_KR.ts">
+					ko_KR.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Norwegian Bokmål <small>Norway</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/nb_NO
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/nb_NO.min.js">
+					nb_NO.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/nb_NO.ts">
+					nb_NO.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Persian <small>Iran</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/fa_IR
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/fa_IR.min.js">
+					fa_IR.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/fa_IR.ts">
+					fa_IR.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Polish <small>Poland</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/pl_PL
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/pl_PL.min.js">
+					pl_PL.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/pl_PL.ts">
+					pl_PL.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Portuguese <small>Brazil</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/pt_BR
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/pt_BR.min.js">
+					pt_BR.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/pt_BR.ts">
+					pt_BR.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Portuguese <small>Portugal</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/pt_PT
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/pt_PT.min.js">
+					pt_PT.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/pt_PT.ts">
+					pt_PT.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Romanian <small>Romania</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/ro_RO
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/ro_RO.min.js">
+					ro_RO.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/ro_RO.ts">
+					ro_RO.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Russian <small>Russia</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/ru_RU
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/ru_RU.min.js">
+					ru_RU.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/ru_RU.ts">
+					ru_RU.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Serbian <small>Serbia</small>
+				<small>(Cyrillic)</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/sr_RS_Cyrillic
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/sr_RS_Cyrillic.min.js">
+					sr_RS_Cyrillic.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/sr_RS_Cyrillic.ts">
+					sr_RS_Cyrillic.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Serbian <small>Serbia</small>
+				<small>(Latin)</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/sr_RS_Latin
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/sr_RS_Latin.min.js">
+					sr_RS_Latin.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/sr_RS_Latin.ts">
+					sr_RS_Latin.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Slovak <small>Slovakia</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/sk_SK
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/sk_SK.min.js">
+					sk_SK.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/sk_SK.ts">
+					sk_SK.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Spanish <small>Spain</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/es_ES
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/es_ES.min.js">
+					es_ES.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/es_ES.ts">
+					es_ES.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Spanish <small>Mexico</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/es_MX
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/es_MX.min.js">
+					es_MX.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/es_MX.ts">
+					es_MX.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Swedish <small>Sweden</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/sv_SE
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/sv_SE.min.js">
+					sv_SE.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/sv_SE.ts">
+					sv_SE.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Thai <small>Thailand</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/th_TH
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/th_TH.min.js">
+					th_TH.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/th_TH.ts">
+					th_TH.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Turkish <small>Turkey</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/tr_TR
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/tr_TR.min.js">
+					tr_TR.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/tr_TR.ts">
+					tr_TR.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Ukrainian <small>Ukraine</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/uk_UA
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/uk_UA.min.js">
+					uk_UA.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/uk_UA.ts">
+					uk_UA.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Uzbek <small>Uzbekistan</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/uz_UZ
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/uz_UZ.min.js">
+					uz_UZ.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/uz_UZ.ts">
+					uz_UZ.ts
+				</Link>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Vietnamese <small>Vietnam</small>
+			</td>
+			<td>
+				<Link to="https://www.npmjs.com/package/@uppy/locales">
+					@uppy/locales/lib/vi_VN
+				</Link>
+			</td>
+			<td>
+				<Link to="https://releases.transloadit.com/uppy/locales/v3.3.1/vi_VN.min.js">
+					vi_VN.min.js
+				</Link>
+			</td>
+			<td>
+				<Link to="https://github.com/transloadit/uppy/blob/main/packages/%40uppy/locales/src/vi_VN.ts">
+					vi_VN.ts
+				</Link>
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+## Adding a new language string
+
+If you want to add a new locale string to use from Uppy code, add it to
+[locale.ts](https://github.com/transloadit/uppy/blob/main/packages/%40uppy/status-bar/src/locale.ts)
+and then run `yarn build`.
+
+## Contributing a new language
+
+If you speak a language we don’t yet support, you can contribute! Here’s how you
+do it:
+
+1. Go to the
+   [uppy/locales](https://github.com/transloadit/uppy/tree/main/packages/%40uppy/locales/src)
+   directory in the Uppy GitHub repo.
+2. Go to `en_US.js` and copy its contents, as English is the most up-to-date
+   locale.
+3. Press “Create new file”, name it according to the
+   [`language_COUNTRY` format](http://www.i18nguy.com/unicode/language-identifiers.html),
+   make sure to use underscore `_` as a divider. Examples: `en_US`, `en_GB`,
+   `ru_RU`, `ar_AE`. Variants should be trailing, for example `sr_RS_Latin` for
+   Serbian Latin vs Cyrillic.
+4. If your language has different pluralization rules than English, update the
+   `pluralize` implementation. If you are unsure how to do this, please ask us
+   for help in a [GitHub issue](https://github.com/transloadit/uppy/issues/new).
+5. Paste what you’ve copied from `en_US.js` and use it as a starting point to
+   translate strings into your language.
+6. When you are ready, save the file — this should create a PR that we’ll then
+   review 🎉 Thanks!

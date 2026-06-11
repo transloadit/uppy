@@ -1,0 +1,64 @@
+.section {
+	display: grid;
+	grid-gap: 1em;
+	align-items: stretch;
+}
+
+@media screen and (min-width: 40em) {
+	.section {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+section a:hover {
+	text-decoration: none;
+}
+
+.item {
+	color: black;
+	position: relative;
+	padding: 1em;
+	border: 1px solid var(--ifm-color-emphasis-300);
+	border-radius: var(--ifm-pagination-nav-border-radius);
+	transition: border-color var(--ifm-transition-fast)
+		var(--ifm-transition-timing-default);
+}
+
+.item svg {
+	width: 2.5em;
+	height: 2.5em;
+}
+
+.item[data-framework] {
+	display: flex;
+	align-items: center;
+	gap: 1em;
+}
+
+.item[data-framework='react'] svg {
+	color: #61dafb;
+}
+.item[data-framework='vue'] svg {
+	color: #4fc08d;
+}
+.item[data-framework='svelte'] svg {
+	color: #ff3e00;
+}
+.item[data-framework='angular'] svg {
+	color: #dd0031;
+}
+
+.item h2 {
+	font-size: 1rem;
+	font-family: var(--ifm-font-family-base);
+	margin-bottom: 0;
+}
+
+.item:hover {
+	border-color: var(--ifm-color-primary);
+}
+
+.item p {
+	margin: 0;
+	color: gray;
+}

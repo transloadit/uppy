@@ -1,0 +1,74 @@
+import UploadButton from '/src/components/UploadButton';
+import ThumbnailDemo from '/src/components/Thumbnail';
+import ProviderIconDemo from '/src/components/ProviderIcon';
+import FilesListDemo from '/src/components/FilesList';
+import DropzoneDemo from '/src/components/Dropzone';
+import FilesGridDemo from '/src/components/FilesGrid';
+
+#### `<UploadButton />`
+
+**Attributes**
+
+- `data-uppy-element="upload-button"`
+- `data-state="init" | "uploading" | "paused" | "error" | "complete"`
+
+<UploadButton />
+
+#### `<Thumbnail />`
+
+Component for displaying image thumbnails and/or SVG icons.
+
+**Props**:
+
+- `file: UppyFile<Meta, Body>`
+- `width?: string`
+- `height?: string`
+- `images?: boolean`
+
+<ThumbnailDemo />
+
+#### `<ProviderIcon />`
+
+Common icons, such as a webcam, device, Dropbox, Google Drive, OneDrive, etc.
+
+**Props**:
+
+- `provider`:
+  `'device' | 'camera' | 'screen-capture' | 'audio' | 'dropbox' | 'facebook' | 'instagram' | 'onedrive' | 'googlephotos' | 'googledrive'`
+- `fill?: string`
+
+<ProviderIconDemo />
+
+#### `<FilesList />`
+
+Component for displaying a list view of selected files.
+
+**Props**:
+
+- `editFile?: (file: UppyFile<Meta, Body>) => void`
+
+<FilesListDemo />
+
+#### `<FilesGrid />`
+
+Grid layout component for displaying files in a grid format.
+
+**Props**:
+
+- `editFile?: (file: UppyFile<Meta, Body>) => void`
+- `columns?: number`
+
+<FilesGridDemo />
+
+#### `<Dropzone />`
+
+Drag-and-drop zone component for file uploads.
+
+**Props**:
+
+- `width?: string`
+- `height?: string`
+- `note?: string`
+- `noClick?: boolean`
+
+<DropzoneDemo />

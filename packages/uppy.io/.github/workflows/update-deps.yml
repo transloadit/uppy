@@ -1,0 +1,96 @@
+name: Tools and deps update
+on:
+  schedule:
+    # Run once a week at 00:05 AM UTC on Sunday.
+    - cron: 5 0 * * 0
+
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - .github/workflows/update-deps.yml
+
+jobs:
+  deps-update:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Prevent other jobs from aborting if one fails
+      matrix:
+        include:
+          - id: uppy
+            subsystem: deps
+            run: |
+              git --no-pager show HEAD:yarn.lock | awk '{
+                if(isInsideUppyPackage) {
+                  # If we are inside an Uppy package block, we filter out that line (no print).
+                  if ($0 == "") {
+                    # If we are on an empty line, that marks the end of an Uppy package block.
+                    isInsideUppyPackage=0
+                  }
+                } else if($0 ~ /^"(@uppy\/|uppy@)/) {
+                  # Otherwise, if the line starts with `"@uppy/`, it marks the beginning of an Uppy
+                  # package block, and we filter out that line.
+                  isInsideUppyPackage=1
+                } else {
+                  # Otherwise, we are out of an Uppy package block, so that line can go through:
+                  print $0
+                }
+              }' > yarn.lock
+
+              corepack yarn --no-immutable
+              git diff --quiet || echo "NEW_VERSION=$(corepack yarn info uppy --json | jq -r .children.Version)" >> "$GITHUB_ENV"
+              git add yarn.lock
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - run: ${{ matrix.run }}
+      - name: Create or update pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: actions/tools-update-${{ matrix.id }}
+          COMMIT_MESSAGE: '${{ matrix.subsystem }}: update ${{ matrix.id }} to ${{ env.NEW_VERSION }}'
+          PR_BODY: This is an automated update of ${{ matrix.id }} to ${{ env.NEW_VERSION }}.
+          PR_TITLE: '${{ matrix.subsystem }}: update ${{ matrix.id }} to ${{ env.NEW_VERSION }}'
+        run: |
+          set -euo pipefail
+
+          if git diff --cached --quiet; then
+            echo "No dependency changes to publish."
+            exit 0
+          fi
+
+          base_sha="${{ github.sha }}"
+          if ! gh api "repos/${GITHUB_REPOSITORY}/git/ref/heads/${BRANCH_NAME}" >/dev/null 2>&1; then
+            gh api \
+              --method POST \
+              "repos/${GITHUB_REPOSITORY}/git/refs" \
+              -f ref="refs/heads/${BRANCH_NAME}" \
+              -f sha="${base_sha}" >/dev/null
+          fi
+
+          file_sha="$(gh api "repos/${GITHUB_REPOSITORY}/contents/yarn.lock?ref=${BRANCH_NAME}" --jq .sha)"
+          local_sha="$(git hash-object yarn.lock)"
+          if [ "${local_sha}" = "${file_sha}" ]; then
+            echo "${BRANCH_NAME} already has the generated yarn.lock."
+          else
+            content="$(base64 -w 0 yarn.lock)"
+            gh api \
+              --method PUT \
+              "repos/${GITHUB_REPOSITORY}/contents/yarn.lock" \
+              -f branch="${BRANCH_NAME}" \
+              -f message="${COMMIT_MESSAGE}" \
+              -f content="${content}" \
+              -f sha="${file_sha}" >/dev/null
+          fi
+
+          if gh pr view "${BRANCH_NAME}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Updated existing pull request for ${BRANCH_NAME}."
+          else
+            gh pr create \
+              --repo "${GITHUB_REPOSITORY}" \
+              --base main \
+              --head "${BRANCH_NAME}" \
+              --title "${PR_TITLE}" \
+              --body "${PR_BODY}"
+          fi
