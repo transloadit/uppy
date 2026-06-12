@@ -1,3 +1,8 @@
+// @vitest-environment node
+// `AbortController`/`AbortSignal` resolve to Node's globals; their abort event
+// is a Node `Event`. Under the jsdom environment vitest 4 swaps in jsdom's
+// `Event`, so cross-realm `instanceof Event` fails. This shim is DOM-agnostic,
+// so the node environment keeps both in the same realm.
 import { describe, expect, it, vi } from 'vitest'
 import { AbortController, AbortSignal } from './AbortController.js'
 

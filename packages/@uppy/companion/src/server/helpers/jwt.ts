@@ -38,7 +38,7 @@ const verifyJwtToken = (token: string, secret: EncryptionSecret) => {
   if (!decoded || typeof decoded !== 'object' || !('data' in decoded)) {
     throw new Error('Invalid token payload')
   }
-  return decoded.data
+  return decoded['data']
 }
 
 export const generateEncryptedToken = (

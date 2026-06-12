@@ -58,9 +58,9 @@
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "jsdom": "^26.1.0",
+    "jsdom": "^29.1.1",
     "resize-observer-polyfill": "^1.5.1",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   }
 }

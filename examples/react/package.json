@@ -9,7 +9,7 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.11",
+    "@tailwindcss/vite": "^4.3.0",
     "@uppy/core": "workspace:*",
     "@uppy/react": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
@@ -23,13 +23,14 @@
   "devDependencies": {
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.6.0",
-    "@vitest/browser": "^3.2.4",
+    "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/browser": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.6",
     "msw": "^2.10.4",
-    "playwright": "1.57.0",
+    "playwright": "1.60.0",
     "typescript": "^5.7.3",
-    "vite": "^7.1.11",
-    "vitest": "^3.2.4",
-    "vitest-browser-react": "^1.0.0"
+    "vite": "^8.0.14",
+    "vitest": "^4.1.6",
+    "vitest-browser-react": "^2.2.0"
   }
 }

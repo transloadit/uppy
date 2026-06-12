@@ -48,7 +48,7 @@
   "dependencies": {
     "@uppy/utils": "workspace:^",
     "cropperjs": "^1.6.2",
-    "preact": "^10.26.10"
+    "preact": "^10.29.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
@@ -57,8 +57,8 @@
     "access": "public"
   },
   "devDependencies": {
-    "cssnano": "^7.0.7",
-    "postcss": "^8.5.6",
+    "cssnano": "^8.0.1",
+    "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^5.8.3"

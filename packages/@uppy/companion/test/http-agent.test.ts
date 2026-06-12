@@ -1,19 +1,30 @@
 import nock from 'nock'
-import { afterAll, afterEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import {
   FORBIDDEN_IP_ADDRESS,
   getProtectedGot,
 } from '../src/server/helpers/request.js'
 
+// nock 14 activates HTTP interception (via @mswjs/interceptors) on import. The
+// "blocks ..." tests below rely on the protected agent rejecting the connection
+// itself — no response is mocked — and the agent rejects forbidden literal IPs
+// synchronously in createConnection with a non-connected socket, which trips
+// nock's passthrough ("Cannot use 'in' operator ... '_handle' in undefined").
+// So keep interception OFF by default and only enable it for the one test that
+// actually mocks a host. nock 14 is active on import, so restore both before
+// each test (so the first test can re-activate cleanly) and after each test
+// (so interception is never left enabled for subsequent test files).
+beforeEach(() => {
+  if (nock.isActive()) nock.restore()
+})
 afterEach(() => {
   nock.cleanAll()
-})
-afterAll(() => {
-  nock.restore()
+  if (nock.isActive()) nock.restore()
 })
 
 describe('test protected request Agent', () => {
   test('allows URLs without IP addresses', async () => {
+    nock.activate()
     nock('https://transloadit.com').get('/').reply(200)
     const url = 'https://transloadit.com'
     return getProtectedGot({ allowLocalIPs: false }).get(url)

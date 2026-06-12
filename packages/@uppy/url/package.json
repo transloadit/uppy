@@ -47,21 +47,22 @@
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "nanoid": "^5.0.9",
-    "preact": "^10.26.10"
+    "nanoid": "^5.1.11",
+    "preact": "^10.29.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "@vitest/browser": "^3.2.4",
-    "cssnano": "^7.0.7",
-    "playwright": "1.57.0",
-    "postcss": "^8.5.6",
+    "@vitest/browser": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.6",
+    "cssnano": "^8.0.1",
+    "playwright": "1.60.0",
+    "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   }
 }
