@@ -36,7 +36,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/provider-views": "workspace:^",
     "preact": "^10.29.2"
   },
   "peerDependencies": {

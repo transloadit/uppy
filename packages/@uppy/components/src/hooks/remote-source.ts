@@ -5,7 +5,7 @@ import type {
   UnknownProviderPluginState,
   UppyEventMap,
 } from '@uppy/core'
-import type { ProviderViews } from '@uppy/provider-views'
+import type { ProviderViews } from '@uppy/core/provider-views'
 import { dequal } from 'dequal/lite'
 import { Subscribers } from './utils.js'
 

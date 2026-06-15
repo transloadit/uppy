@@ -12,7 +12,7 @@ export function Core() {
 // Utilities
 export * as server from '@uppy/core/companion-client'
 
-import * as ProviderView from '@uppy/provider-views'
+import * as ProviderView from '@uppy/core/provider-views'
 
 export const views = { ProviderView }
 

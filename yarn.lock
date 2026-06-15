@@ -9076,7 +9076,6 @@ __metadata:
   resolution: "@uppy/box@workspace:packages/@uppy/box"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9215,8 +9214,12 @@ __metadata:
   dependencies:
     "@transloadit/prettier-bytes": "npm:^1.1.0"
     "@types/deep-freeze": "npm:^0"
+    "@types/gapi": "npm:^0.0.47"
+    "@types/google.accounts": "npm:^0.0.14"
+    "@types/google.picker": "npm:^0.0.42"
     "@types/lodash": "npm:^4.14.199"
     "@types/node": "npm:^20.19.0"
+    classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     deep-freeze: "npm:^0.0.1"
     jsdom: "npm:^29.1.1"
@@ -9224,6 +9227,7 @@ __metadata:
     mime-match: "npm:^1.0.2"
     namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^5.1.11"
+    p-queue: "npm:^9.3.0"
     p-retry: "npm:^6.1.0"
     postcss: "npm:^8.5.15"
     postcss-cli: "npm:^11.0.1"
@@ -9242,7 +9246,6 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/google-drive": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     "@uppy/thumbnail-generator": "workspace:^"
     "@uppy/url": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -9301,7 +9304,6 @@ __metadata:
   resolution: "@uppy/dropbox@workspace:packages/@uppy/dropbox"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9314,7 +9316,6 @@ __metadata:
   resolution: "@uppy/facebook@workspace:packages/@uppy/facebook"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9356,7 +9357,6 @@ __metadata:
   resolution: "@uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9369,7 +9369,6 @@ __metadata:
   resolution: "@uppy/google-drive@workspace:packages/@uppy/google-drive"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9382,7 +9381,6 @@ __metadata:
   resolution: "@uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9411,7 +9409,6 @@ __metadata:
   resolution: "@uppy/image-generator@workspace:packages/@uppy/image-generator"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     "@uppy/transloadit": "workspace:^"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.15"
@@ -9440,33 +9437,8 @@ __metadata:
   resolution: "@uppy/onedrive@workspace:packages/@uppy/onedrive"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@uppy/provider-views@workspace:*, @uppy/provider-views@workspace:^, @uppy/provider-views@workspace:packages/@uppy/provider-views":
-  version: 0.0.0-use.local
-  resolution: "@uppy/provider-views@workspace:packages/@uppy/provider-views"
-  dependencies:
-    "@types/gapi": "npm:^0.0.47"
-    "@types/google.accounts": "npm:^0.0.14"
-    "@types/google.picker": "npm:^0.0.42"
-    classnames: "npm:^2.5.1"
-    cssnano: "npm:^8.0.1"
-    jsdom: "npm:^29.1.1"
-    lodash: "npm:^4.18.1"
-    nanoid: "npm:^5.1.11"
-    p-queue: "npm:^9.3.0"
-    postcss: "npm:^8.5.15"
-    postcss-cli: "npm:^11.0.1"
-    preact: "npm:^10.29.2"
-    sass: "npm:^1.89.2"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^4.1.6"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9651,7 +9623,6 @@ __metadata:
   resolution: "@uppy/unsplash@workspace:packages/@uppy/unsplash"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9732,7 +9703,6 @@ __metadata:
   resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -9763,7 +9733,6 @@ __metadata:
   resolution: "@uppy/zoom@workspace:packages/@uppy/zoom"
   dependencies:
     "@uppy/core": "workspace:^"
-    "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
   peerDependencies:
@@ -13469,7 +13438,6 @@ __metadata:
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/google-drive": "workspace:*"
-    "@uppy/provider-views": "workspace:*"
     "@uppy/tus": "workspace:*"
     body-parser: "npm:^2.2.2"
     dotenv: "npm:^17.4.2"
@@ -23387,7 +23355,6 @@ __metadata:
     "@uppy/image-generator": "workspace:*"
     "@uppy/locales": "workspace:*"
     "@uppy/onedrive": "workspace:*"
-    "@uppy/provider-views": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/status-bar": "workspace:*"

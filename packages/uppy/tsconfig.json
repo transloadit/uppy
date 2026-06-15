@@ -55,9 +55,6 @@
       "path": "../@uppy/onedrive/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/provider-views/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/remote-sources/tsconfig.build.json"
     },
     {

@@ -8,9 +8,6 @@
   "exclude": ["./src/**/*.test.ts"],
   "references": [
     {
-      "path": "../provider-views/tsconfig.build.json"
-    },
-    {
       "path": "../tus/tsconfig.build.json"
     },
     {

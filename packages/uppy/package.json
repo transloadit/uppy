@@ -56,7 +56,6 @@
     "@uppy/image-generator": "workspace:*",
     "@uppy/locales": "workspace:*",
     "@uppy/onedrive": "workspace:*",
-    "@uppy/provider-views": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",
     "@uppy/status-bar": "workspace:*",

@@ -39,7 +39,6 @@
     "typecheck": "tsc --build"
   },
   "dependencies": {
-    "@uppy/provider-views": "workspace:^",
     "@uppy/transloadit": "workspace:^",
     "preact": "^10.29.2"
   },
