@@ -1,4 +1,3 @@
-import { RequestClient } from '@uppy/companion-client'
 import {
   BasePlugin,
   type DefinePluginOpts,
@@ -6,6 +5,7 @@ import {
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
+import { RequestClient } from '@uppy/core/companion-client'
 import type {
   Body,
   LocalUppyFile,

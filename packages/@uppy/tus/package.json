@@ -37,7 +37,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
     "tus-js-client": "^4.3.1"
   },
   "devDependencies": {

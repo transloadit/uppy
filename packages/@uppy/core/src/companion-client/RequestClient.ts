@@ -1,19 +1,19 @@
-import type Uppy from '@uppy/core'
+import pRetry, { AbortError } from 'p-retry'
+import packageJson from '../../package.json' with { type: 'json' }
+import type Uppy from '../index.js'
 import type {
   Body,
   Meta,
   RemoteUppyFile,
   RequestOptions,
   UppyFile,
-} from '@uppy/core/utils'
+} from '../utils/index.js'
 import {
   ErrorWithCause,
   fetchWithNetworkError,
   getSocketHost,
   UserFacingApiError,
-} from '@uppy/core/utils'
-import pRetry, { AbortError } from 'p-retry'
-import packageJson from '../package.json' with { type: 'json' }
+} from '../utils/index.js'
 import AuthError from './AuthError.js'
 
 type CompanionHeaders = Record<string, string> | undefined

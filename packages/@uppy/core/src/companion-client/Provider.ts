@@ -4,12 +4,12 @@ import type {
   PluginOpts,
   UnknownProviderPlugin,
   Uppy,
-} from '@uppy/core'
+} from '../index.js'
 import {
   type CompanionClientProvider,
   getSocketHost,
   type RequestOptions,
-} from '@uppy/core/utils'
+} from '../utils/index.js'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 

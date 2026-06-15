@@ -1,9 +1,9 @@
+import type { Body, Meta } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
   RequestClient,
-} from '@uppy/companion-client'
-import type { Body, Meta } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
+} from '@uppy/core/companion-client'
 import type {
   LocaleStrings,
   MinimalRequiredUppyFile,

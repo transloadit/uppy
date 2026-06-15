@@ -1,4 +1,3 @@
-import type { RequestClient } from '@uppy/companion-client'
 import type {
   Body,
   DefinePluginOpts,
@@ -9,6 +8,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin, EventManager } from '@uppy/core'
+import type { RequestClient } from '@uppy/core/companion-client'
 import {
   type FetcherOptions,
   fetcher,

@@ -9060,7 +9060,6 @@ __metadata:
     "@aws-sdk/client-s3": "npm:^3.362.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.362.0"
     "@types/node": "npm:^20.19.0"
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     jsdom: "npm:^26.1.0"
     nock: "npm:^13.1.0"
@@ -9076,25 +9075,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/box@workspace:packages/@uppy/box"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^5.8.3"
-  peerDependencies:
-    "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@uppy/companion-client@workspace:*, @uppy/companion-client@workspace:^, @uppy/companion-client@workspace:packages/@uppy/companion-client":
-  version: 0.0.0-use.local
-  resolution: "@uppy/companion-client@workspace:packages/@uppy/companion-client"
-  dependencies:
-    jsdom: "npm:^29.1.1"
-    namespace-emitter: "npm:^2.0.1"
-    p-retry: "npm:^6.1.0"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^4.1.6"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -9240,6 +9224,7 @@ __metadata:
     mime-match: "npm:^1.0.2"
     namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^5.1.11"
+    p-retry: "npm:^6.1.0"
     postcss: "npm:^8.5.15"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
@@ -9315,7 +9300,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dropbox@workspace:packages/@uppy/dropbox"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9329,7 +9313,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/facebook@workspace:packages/@uppy/facebook"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9372,7 +9355,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9386,7 +9368,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/google-drive@workspace:packages/@uppy/google-drive"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9400,7 +9381,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9459,7 +9439,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/onedrive@workspace:packages/@uppy/onedrive"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9657,7 +9636,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/tus@workspace:packages/@uppy/tus"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     jsdom: "npm:^29.1.1"
     tus-js-client: "npm:^4.3.1"
@@ -9672,7 +9650,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/unsplash@workspace:packages/@uppy/unsplash"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9686,7 +9663,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/url@workspace:packages/@uppy/url"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser": "npm:^4.1.6"
     "@vitest/browser-playwright": "npm:^4.1.6"
@@ -9755,7 +9731,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -9769,7 +9744,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@vitest/browser": "npm:^4.1.6"
@@ -9788,7 +9762,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/zoom@workspace:packages/@uppy/zoom"
   dependencies:
-    "@uppy/companion-client": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/provider-views": "workspace:^"
     preact: "npm:^10.29.2"
@@ -13493,7 +13466,6 @@ __metadata:
   resolution: "example-companion-custom-provider@workspace:examples/companion-custom-provider"
   dependencies:
     "@uppy/companion": "workspace:*"
-    "@uppy/companion-client": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/google-drive": "workspace:*"
@@ -23399,7 +23371,6 @@ __metadata:
     "@uppy/audio": "workspace:*"
     "@uppy/aws-s3": "workspace:*"
     "@uppy/box": "workspace:*"
-    "@uppy/companion-client": "workspace:*"
     "@uppy/compressor": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"

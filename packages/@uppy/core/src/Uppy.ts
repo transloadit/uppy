@@ -166,7 +166,7 @@ export interface BaseProviderPlugin {
  * that uses the Companion-assisted OAuth flow.
  * As the plugins are passed around throughout Uppy we need a generic type for this.
  * It may seems like duplication, but this type safe. Changing the type of `storage`
- * will error in the `Provider` class of @uppy/companion-client and vice versa.
+ * will error in the `Provider` class of @uppy/core/companion-client and vice versa.
  *
  * Note that this is the *plugin* class, not a version of the `Provider` class.
  * `Provider` does operate on Companion plugins with `uppy.getPlugin()`.
@@ -187,7 +187,7 @@ export type UnknownProviderPlugin<
  * UnknownSearchProviderPlugin can be any search Companion plugin (such as Unsplash).
  * As the plugins are passed around throughout Uppy we need a generic type for this.
  * It may seems like duplication, but this type safe. Changing the type of `title`
- * will error in the `SearchProvider` class of @uppy/companion-client and vice versa.
+ * will error in the `SearchProvider` class of @uppy/core/companion-client and vice versa.
  *
  * Note that this is the *plugin* class, not a version of the `SearchProvider` class.
  * `SearchProvider` does operate on Companion plugins with `uppy.getPlugin()`.

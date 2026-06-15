@@ -11,9 +11,6 @@
     },
     {
       "path": "../provider-views/tsconfig.build.json"
-    },
-    {
-      "path": "../companion-client/tsconfig.build.json"
     }
   ]
 }
