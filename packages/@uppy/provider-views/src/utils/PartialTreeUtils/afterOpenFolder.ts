@@ -4,7 +4,7 @@ import type {
   PartialTreeFolder,
   PartialTreeFolderNode,
 } from '@uppy/core'
-import type { CompanionFile } from '@uppy/utils'
+import type { CompanionFile } from '@uppy/core/utils'
 
 const afterOpenFolder = (
   oldPartialTree: PartialTree,

@@ -44,7 +44,6 @@
   "dependencies": {
     "@transloadit/types": "^4.3.1",
     "@uppy/tus": "workspace:^",
-    "@uppy/utils": "workspace:^",
     "component-emitter": "^2.0.0"
   },
   "peerDependencies": {

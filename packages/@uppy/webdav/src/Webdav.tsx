@@ -14,8 +14,8 @@ import type {
 } from '@uppy/core'
 
 import { UIPlugin } from '@uppy/core'
+import type { I18n, LocaleStrings } from '@uppy/core/utils'
 import { ProviderViews, SearchView } from '@uppy/provider-views'
-import type { I18n, LocaleStrings } from '@uppy/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
 import { useCallback, useState } from 'preact/hooks'

@@ -5,7 +5,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core'
-import type { CompanionFile } from '@uppy/utils'
+import type { CompanionFile } from '@uppy/core/utils'
 
 const afterScrollFolder = (
   oldPartialTree: PartialTree,

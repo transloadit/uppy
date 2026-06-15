@@ -5,7 +5,7 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '@uppy/core'
-import type { CompanionFile } from '@uppy/utils'
+import type { CompanionFile } from '@uppy/core/utils'
 import { describe, expect, it, vi } from 'vitest'
 import afterFill from './afterFill.js'
 import afterOpenFolder from './afterOpenFolder.js'

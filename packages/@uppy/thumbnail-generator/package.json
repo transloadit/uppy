@@ -37,7 +37,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
     "exifr": "^7.1.3"
   },
   "devDependencies": {

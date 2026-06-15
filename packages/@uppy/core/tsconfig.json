@@ -6,9 +6,5 @@
     "types": ["preact", "node"]
   },
   "include": ["./package.json", "./src/**/*.*"],
-  "references": [
-    {
-      "path": "../utils/tsconfig.build.json"
-    }
-  ]
+  "references": []
 }

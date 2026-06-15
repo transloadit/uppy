@@ -12,14 +12,14 @@ import type {
   Meta,
   RequestOptions,
   UppyFile,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import {
   createAbortError,
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
   RateLimitedQueue,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import createSignedURL from './createSignedURL.js'
 import { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'

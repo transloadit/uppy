@@ -7,7 +7,7 @@
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../utils/tsconfig.build.json"
+      "path": "../core/tsconfig.build.json"
     }
   ]
 }

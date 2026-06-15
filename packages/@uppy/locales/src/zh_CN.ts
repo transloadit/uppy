@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const zh_CN: Locale<0> = {
   strings: {},

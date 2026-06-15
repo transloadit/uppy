@@ -6,7 +6,7 @@ import type {
   CompanionFile,
   Meta,
   RemoteUppyFile,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 
 const companionFileToUppyFile = <M extends Meta, B extends Body>(
   file: CompanionFile,

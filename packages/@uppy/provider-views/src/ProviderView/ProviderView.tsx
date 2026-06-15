@@ -10,8 +10,8 @@ import type {
   UnknownProviderPluginState,
   ValidateableFile,
 } from '@uppy/core'
-import type { CompanionFile, I18n } from '@uppy/utils'
-import { remoteFileObjToLocal } from '@uppy/utils'
+import type { CompanionFile, I18n } from '@uppy/core/utils'
+import { remoteFileObjToLocal } from '@uppy/core/utils'
 import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'

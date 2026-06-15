@@ -4,8 +4,8 @@ import type {
   RateLimitedQueue,
   UppyFile,
   WrapPromiseFunctionType,
-} from '@uppy/utils'
-import { fetchWithNetworkError } from '@uppy/utils'
+} from '@uppy/core/utils'
+import { fetchWithNetworkError } from '@uppy/core/utils'
 import {
   type AssemblyResponse,
   getAssemblyUrlSsl,

@@ -1,9 +1,9 @@
-import type { Body, Meta } from '@uppy/utils'
-import { findDOMElement, getTextDirection } from '@uppy/utils'
 import { render } from 'preact'
 import type { PluginOpts } from './BasePlugin.js'
 import BasePlugin from './BasePlugin.js'
 import type { State } from './Uppy.js'
+import type { Body, Meta } from './utils/index.js'
+import { findDOMElement, getTextDirection } from './utils/index.js'
 
 /**
  * Defer a frequent call to the microtask queue.

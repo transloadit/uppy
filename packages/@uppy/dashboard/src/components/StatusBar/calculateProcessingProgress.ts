@@ -1,4 +1,4 @@
-import type { FileProcessingInfo, UppyFile } from '@uppy/utils'
+import type { FileProcessingInfo, UppyFile } from '@uppy/core/utils'
 
 export default function calculateProcessingProgress(
   files: Record<string, UppyFile<any, any>>,

@@ -1,6 +1,6 @@
 /// <reference lib="webworker" />
 
-import type { UppyFileId } from '@uppy/utils'
+import type { UppyFileId } from '@uppy/core/utils'
 
 declare const self: ServiceWorkerGlobalScope
 

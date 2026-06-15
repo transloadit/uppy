@@ -1,5 +1,6 @@
 import type { Body, Meta, MinimalRequiredUppyFile, Uppy } from '@uppy/core'
 import { UIPlugin, type UIPluginOptions } from '@uppy/core'
+import { RateLimitedQueue } from '@uppy/core/utils'
 import { FilterInput, SearchView } from '@uppy/provider-views'
 import {
   Assembly,
@@ -7,7 +8,6 @@ import {
   Client,
   type OptionsWithRestructuredFields,
 } from '@uppy/transloadit'
-import { RateLimitedQueue } from '@uppy/utils'
 import type { h } from 'preact'
 import locale from './locale.js'
 

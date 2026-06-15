@@ -3,7 +3,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '@uppy/core'
-import type { I18n } from '@uppy/utils'
+import type { I18n } from '@uppy/core/utils'
 import classNames from 'classnames'
 import type { h } from 'preact'
 import GridItem from './components/GridItem.js'

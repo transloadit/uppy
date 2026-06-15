@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const uk_UA: Locale<0 | 1 | 2> = {
   strings: {},
