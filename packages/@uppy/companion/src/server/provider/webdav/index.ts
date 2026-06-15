@@ -13,7 +13,15 @@ import Provider, { type Query } from '../Provider.js'
 
 const defaultDirectory = '/'
 
-type WebdavUserSession = { webdavUrl?: string }
+// Nextcloud/ownCloud/oCIS public share links look like https://host/s/<token>
+const isPublicLinkUrl = (url: string): boolean => /\/s\/([^/]+)/.test(url)
+
+type WebdavUserSession = {
+  webdavUrl?: string
+  // For public share links, the actual WebDAV endpoint resolved from the share
+  // URL (see getPublicLinkClient). Cached so we only probe for it once.
+  publicLinkUrl?: string
+}
 type WebdavClient = ReturnType<typeof createClient>
 
 type WebdavListItem = {
@@ -59,21 +67,11 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       throw new Error('invalid public link url')
     }
 
-    // Is this an ownCloud or Nextcloud public link URL? e.g. https://example.com/s/kFy9Lek5sm928xP
-    // they have specific urls that we can identify
-    // todo not sure if this is the right way to support nextcloud and other webdavs
-    if (/\/s\/([^/]+)/.test(webdavUrl)) {
-      const [baseURL, publicLinkToken] = webdavUrl.split('/s/')
-      if (!baseURL) {
-        throw new Error('invalid public link url')
-      }
-
-      return this.getClientHelper({
-        url: `${baseURL.replace('/index.php', '')}/public.php/webdav/`,
-        authType: AuthType.Password,
-        username: publicLinkToken!,
-        password: 'null',
-      })
+    // Is this an ownCloud, Nextcloud or oCIS public link URL?
+    // e.g. https://example.com/s/kFy9Lek5sm928xP
+    if (isPublicLinkUrl(webdavUrl)) {
+      const { client } = await this.getPublicLinkClient({ providerUserSession })
+      return client
     }
 
     // normal public WebDAV urls
@@ -81,6 +79,74 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       url: webdavUrl,
       authType: AuthType.None,
     })
+  }
+
+  /**
+   * Build a WebDAV client for a public share link (e.g. https://host/s/<token>).
+   *
+   * Servers expose public shares at different, non-discoverable WebDAV paths:
+   *   - Nextcloud / ownCloud 10: <base>/public.php/webdav/
+   *   - oCIS (ownCloud Infinite Scale): <base>/dav/public-files/<token>
+   *
+   * There is no standard WebDAV (or reliably-shaped capabilities) way to discover
+   * which one a given server uses, so we probe the known candidates with a cheap
+   * PROPFIND and use the first that answers as WebDAV. Hitting the wrong endpoint
+   * returns an HTML page, which the webdav client rejects with
+   * "Invalid response: No root multistatus found", so we just move on to the next
+   * candidate. The resolved endpoint is cached on the session (`publicLinkUrl`) so
+   * we only probe once per share.
+   */
+  async getPublicLinkClient({
+    providerUserSession,
+  }: {
+    providerUserSession: WebdavUserSession
+  }): Promise<{ client: WebdavClient; url: string }> {
+    const { webdavUrl, publicLinkUrl } = providerUserSession
+    const [baseURL, publicLinkToken] = (webdavUrl ?? '').split('/s/')
+    if (!baseURL || !publicLinkToken) {
+      throw new Error('invalid public link url')
+    }
+
+    const makeClient = (url: string) =>
+      this.getClientHelper({
+        url,
+        authType: AuthType.Password,
+        username: publicLinkToken,
+        password: 'null',
+      })
+
+    // Already resolved for this session: reuse it without probing again.
+    if (publicLinkUrl != null && publicLinkUrl.length > 0) {
+      return { client: await makeClient(publicLinkUrl), url: publicLinkUrl }
+    }
+
+    const base = baseURL.replace('/index.php', '')
+    const candidateUrls = [
+      `${base}/public.php/webdav/`, // Nextcloud, ownCloud 10
+      `${base}/dav/public-files/${publicLinkToken}`, // oCIS (ownCloud Infinite Scale)
+    ]
+
+    let lastErr: unknown
+    for (const url of candidateUrls) {
+      const client = await makeClient(url)
+      try {
+        // cheap depth-0 PROPFIND to verify this endpoint actually speaks WebDAV
+        await client.stat(defaultDirectory)
+        return { client, url }
+      } catch (err) {
+        lastErr = err
+      }
+    }
+
+    // None answered as WebDAV. Fall back to the default endpoint so the caller
+    // surfaces a meaningful error instead of a probe artifact.
+    const errForLog =
+      lastErr instanceof Error ? lastErr : new Error(String(lastErr))
+    logger.error(errForLog, 'provider.webdav.publicLink.unresolved')
+    return {
+      client: await makeClient(candidateUrls[0]!),
+      url: candidateUrls[0]!,
+    }
   }
 
   override async logout(): Promise<{ revoked: true }> {
@@ -103,7 +169,16 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
 
       const providerUserSession: WebdavUserSession = { webdavUrl }
 
-      const client = await this.getClient({ providerUserSession })
+      let client: WebdavClient
+      if (isPublicLinkUrl(webdavUrl)) {
+        // Resolve the actual WebDAV endpoint now and cache it on the session so
+        // subsequent list/download requests don't have to probe again.
+        const resolved = await this.getPublicLinkClient({ providerUserSession })
+        providerUserSession.publicLinkUrl = resolved.url
+        client = resolved.client
+      } else {
+        client = await this.getClient({ providerUserSession })
+      }
       // call the list operation as a way to validate the url
       await client.getDirectoryContents(defaultDirectory)
 
