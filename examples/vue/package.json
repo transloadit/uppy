@@ -27,7 +27,7 @@
     "msw": "^2.10.4",
     "playwright": "1.60.0",
     "tailwindcss": "^4.0.0",
-    "vite": "^7.1.11",
+    "vite": "^7.3.5",
     "vitest": "^4.1.6",
     "vitest-browser-vue": "^2.1.0"
   }

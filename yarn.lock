@@ -9013,7 +9013,7 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@uppy/companion": "workspace:^"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13508,7 +13508,7 @@ __metadata:
     express: "npm:^5.2.1"
     express-session: "npm:^1.17.3"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13560,7 +13560,7 @@ __metadata:
     express-session: "npm:^1.15.6"
     npm-run-all: "npm:^4.1.2"
     preact: "npm:^10.29.2"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13575,7 +13575,7 @@ __metadata:
     cors: "npm:^2.8.5"
     dotenv: "npm:^17.4.2"
     express: "npm:^5.2.1"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13716,7 +13716,7 @@ __metadata:
     express: "npm:^5.2.1"
     he: "npm:^1.2.0"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13738,7 +13738,7 @@ __metadata:
     msw: "npm:^2.10.4"
     playwright: "npm:1.60.0"
     tailwindcss: "npm:^4.0.0"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
     vitest: "npm:^4.1.6"
     vitest-browser-vue: "npm:^2.1.0"
     vue: "npm:^3.5.14"
@@ -13756,7 +13756,7 @@ __metadata:
     express: "npm:^5.2.1"
     multer: "npm:^2.0.2"
     npm-run-all: "npm:^4.1.5"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13770,7 +13770,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.2.4"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13783,7 +13783,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -13796,7 +13796,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all: "npm:^4.1.3"
-    vite: "npm:^7.1.11"
+    vite: "npm:^7.3.5"
   languageName: unknown
   linkType: soft
 
@@ -23674,7 +23674,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^5.0.0 || ^6.0.0 || ^7.0.0-0, vite@npm:^7.1.11":
+"vite@npm:^5.0.0 || ^6.0.0 || ^7.0.0-0":
   version: 7.1.11
   resolution: "vite@npm:7.1.11"
   dependencies:
@@ -23838,6 +23838,61 @@ __metadata:
   bin:
     vite: bin/vite.js
   checksum: 10/8b8b6fe12318ca457396bf2053df7056cf4810f1d4a43b36b6afe59860e32b749c0685a290fe8a973b0d3da179ceec4c30cebbd3c91d0c47fbcf6436b17bdeef
+  languageName: node
+  linkType: hard
+
+"vite@npm:^7.3.5":
+  version: 7.3.5
+  resolution: "vite@npm:7.3.5"
+  dependencies:
+    esbuild: "npm:^0.27.0"
+    fdir: "npm:^6.5.0"
+    fsevents: "npm:~2.3.3"
+    picomatch: "npm:^4.0.3"
+    postcss: "npm:^8.5.6"
+    rollup: "npm:^4.43.0"
+    tinyglobby: "npm:^0.2.15"
+  peerDependencies:
+    "@types/node": ^20.19.0 || >=22.12.0
+    jiti: ">=1.21.0"
+    less: ^4.0.0
+    lightningcss: ^1.21.0
+    sass: ^1.70.0
+    sass-embedded: ^1.70.0
+    stylus: ">=0.54.8"
+    sugarss: ^5.0.0
+    terser: ^5.16.0
+    tsx: ^4.8.1
+    yaml: ^2.4.2
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+    jiti:
+      optional: true
+    less:
+      optional: true
+    lightningcss:
+      optional: true
+    sass:
+      optional: true
+    sass-embedded:
+      optional: true
+    stylus:
+      optional: true
+    sugarss:
+      optional: true
+    terser:
+      optional: true
+    tsx:
+      optional: true
+    yaml:
+      optional: true
+  bin:
+    vite: bin/vite.js
+  checksum: 10/2e1337510d6b81948b035f8b096c9be22daf1101fc52ad3d06cad9e090057ba1c1396e5e12cbaac2485f9c6cdcc854f978fe862280bdfe1a9a4149c60734c125
   languageName: node
   linkType: hard
 
