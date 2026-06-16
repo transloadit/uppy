@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "@vitest/browser": "^4.1.6",
+    "@vitest/browser": "^4.1.8",
     "@vitest/browser-playwright": "^4.1.6",
     "cssnano": "^8.0.1",
     "playwright": "1.60.0",

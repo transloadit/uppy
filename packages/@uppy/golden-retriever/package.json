@@ -52,7 +52,7 @@
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
-    "@vitest/browser": "^4.1.6",
+    "@vitest/browser": "^4.1.8",
     "@vitest/browser-playwright": "^4.1.6",
     "playwright": "1.60.0",
     "typescript": "^5.8.3",

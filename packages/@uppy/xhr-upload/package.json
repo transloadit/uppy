@@ -46,7 +46,7 @@
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@vitest/browser": "^4.1.6",
+    "@vitest/browser": "^4.1.8",
     "@vitest/browser-playwright": "^4.1.6",
     "jsdom": "^29.1.1",
     "msw": "^2.10.4",
