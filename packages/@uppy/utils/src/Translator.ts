@@ -34,10 +34,11 @@ function insertReplacement(
     // can be JSX objects and will be otherwise incorrectly turned into strings.
     // Without this condition we’d get this: [object Object] hello [object Object] my <button>
     if (typeof chunk !== 'string') {
-      return newParts.push(chunk)
+      newParts.push(chunk)
+      return
     }
 
-    return rx[Symbol.split](chunk).forEach((raw, i, list) => {
+    rx[Symbol.split](chunk).forEach((raw, i, list) => {
       if (raw !== '') {
         newParts.push(raw)
       }

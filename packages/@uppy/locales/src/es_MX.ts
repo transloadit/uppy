@@ -198,9 +198,9 @@ es_MX.strings = {
   zoomOut: 'Alejar',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.es_MX = es_MX
 }
 

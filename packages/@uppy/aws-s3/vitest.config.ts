@@ -12,7 +12,7 @@ export default defineConfig({
           exclude: ['**/minio.test.ts'],
           environment: 'jsdom',
         },
-      }
+      },
       {
         test: {
           name: 's3-browser',

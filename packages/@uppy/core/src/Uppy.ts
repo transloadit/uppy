@@ -25,7 +25,7 @@ import {
   Translator,
 } from '@uppy/utils'
 import throttle from 'lodash/throttle.js'
-// @ts-ignore untyped
+// @ts-expect-error untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 import type { h } from 'preact'
@@ -511,7 +511,7 @@ export class Uppy<
 
     // Exposing uppy object on window for debugging and testing
     if (this.opts.debug && typeof window !== 'undefined') {
-      // @ts-ignore Mutating the global object for debug purposes
+      // @ts-expect-error Mutating the global object for debug purposes
       window[this.opts.id] = this
     }
 
@@ -1182,9 +1182,13 @@ export class Uppy<
   }
 
   /**
-   * Add a new file to `state.files`. This will run `onBeforeFileAdded`,
-   * try to guess file type in a clever way, check file against restrictions,
-   * and start an upload if `autoProceed === true`.
+   * Add a new file to `state.files`. Runs `onBeforeFileAdded`, guesses the
+   * file type, checks the file against restrictions, and starts an upload if
+   * `autoProceed === true`.
+   *
+   * Emits `file-added` and `files-added` with a single-element array. Throws
+   * on the first error, including restriction errors. Use `addFiles` for
+   * multi-file adds — see its documentation for batch semantics.
    */
   addFile(file: File | MinimalRequiredUppyFile<M, B>): UppyFile<M, B>['id'] {
     const { nextFilesState, validFilesToAdd, errors } =
@@ -1211,11 +1215,20 @@ export class Uppy<
   }
 
   /**
-   * Add multiple files to `state.files`. See the `addFile()` documentation.
+   * Add multiple files to `state.files`.
    *
-   * If an error occurs while adding a file, it is logged and the user is notified.
-   * This is good for UI plugins, but not for programmatic use.
-   * Programmatic users should usually still use `addFile()` on individual files.
+   * Emits `file-added` per accepted file and `files-added` once for the batch.
+   * Restriction failures emit `restriction-failed` and show an info message
+   * without throwing — valid files in the same batch are still added. Any
+   * non-restriction error (for example, an exception from `onBeforeFileAdded`)
+   * is aggregated into an `AggregateError` (with `.errors`) and thrown
+   * *before* state is updated — when this happens, no files from the batch
+   * are added and `files-added` is not emitted.
+   *
+   * Prefer this over calling `addFile` in a loop when adding multiple files:
+   * batch listeners on `files-added` fire exactly once, and restriction
+   * failures on individual files do not abort the batch. Non-restriction
+   * errors still abort the batch before any files are added.
    */
   addFiles(fileDescriptors: MinimalRequiredUppyFile<M, B>[]): void {
     const { nextFilesState, validFilesToAdd, errors } =
@@ -1580,6 +1593,7 @@ export class Uppy<
     { leading: true, trailing: true },
   )
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: updateTotalProgress')]() {
     return this.#updateTotalProgress()
   }
@@ -1965,6 +1979,7 @@ export class Uppy<
     return undefined
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: getPlugins')](
     type: string,
   ): UnknownPlugin<M, B>[] {
@@ -2169,6 +2184,7 @@ export class Uppy<
     return uploadID
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: createUpload')](...args: any[]): string {
     // @ts-expect-error https://github.com/microsoft/TypeScript/issues/47595
     return this.#createUpload(...args)

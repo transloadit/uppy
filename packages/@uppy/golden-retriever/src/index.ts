@@ -15,7 +15,6 @@ import MetaDataStore from './MetaDataStore.js'
 import ServiceWorkerStore from './ServiceWorkerStore.js'
 
 declare module '@uppy/core' {
-  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     'restore:plugin-data-changed': (data: Record<string, unknown>) => void
   }
