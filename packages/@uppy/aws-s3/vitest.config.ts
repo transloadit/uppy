@@ -9,9 +9,10 @@ export default defineConfig({
         test: {
           name: 's3-jsdom',
           include: ['**/*.test.ts'],
+          exclude: ['**/minio.test.ts'],
           environment: 'jsdom',
         },
-      },
+      }
       {
         test: {
           name: 's3-browser',
