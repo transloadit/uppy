@@ -24,8 +24,8 @@ app.get('/', (req, res) => {
     if (err) return res.status(500).send('Error loading page')
     // Inject bucket/region config so the client can read them.
     const config = `<script>
-      window.UPPY_S3_BUCKET = "${process.env.COMPANION_AWS_BUCKET}";
-      window.UPPY_S3_REGION = "${process.env.COMPANION_AWS_REGION}";
+      window.UPPY_S3_BUCKET = ${JSON.stringify(process.env.COMPANION_AWS_BUCKET)};
+      window.UPPY_S3_REGION = ${JSON.stringify(process.env.COMPANION_AWS_REGION)};
     </script>`
     res.setHeader('Content-Type', 'text/html')
     res.send(html.replace('</head>', `${config}</head>`))

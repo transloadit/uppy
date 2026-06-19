@@ -92,7 +92,7 @@ class S3mini extends S3Client {
   private _createCredentialBasedSigner(): IT.SignRequestFn {
     return async (
       request: IT.PresignableRequest,
-    ): Promise<IT.presignedResponse> => {
+    ): Promise<IT.PresignedResponse> => {
       const creds = await this._getCachedCredentials()
       if (this.endpoint == null) {
         throw new Error('Endpoint is required for credential-based signing')

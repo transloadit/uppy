@@ -5,7 +5,7 @@
  */
 
 import * as C from './consts.js'
-import type { PresignableRequest, presignedResponse } from './types.js'
+import type { PresignableRequest, PresignedResponse } from './types.js'
 import * as U from './utils.js'
 
 export interface SignerConfig {
@@ -46,7 +46,7 @@ export function createSigV4Presigner(config: SignerConfig) {
 
   return async function presign(
     request: PresignableRequest,
-  ): Promise<presignedResponse> {
+  ): Promise<PresignedResponse> {
     const { method, key, expiresIn = DEFAULT_EXPIRES_IN } = request
 
     // Build the URL - need to track encoded path separately because URL object decodes it

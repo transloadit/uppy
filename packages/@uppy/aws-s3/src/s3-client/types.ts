@@ -41,14 +41,14 @@ export type PresignableRequest =
   | UploadPartRequest
 
 /** Response with the pre-signed URL */
-export type presignedResponse = {
+export type PresignedResponse = {
   url: string
 }
 
 /** Function that generates a pre-signed URL for a request */
 export type SignRequestFn = (
   request: PresignableRequest,
-) => Promise<presignedResponse>
+) => Promise<PresignedResponse>
 
 /**
  * Temporary security credentials from STS or similar service.
@@ -92,11 +92,11 @@ type S3ConfigWithSignRequest = S3ConfigBase & {
   signRequest: SignRequestFn
 }
 
-/** Config when using getCredentials callback (region required for signing) */
+/** Config for the getCredentials callback (region optional). */
 type S3ConfigWithGetCredentials = Omit<S3ConfigBase, 'region'> & {
   /** Function to retrieve temporary credentials for client-side signing. */
   getCredentials: GetCredentialsFn
-  /** AWS region. Required for signing with getCredentials. */
+  /** AWS region. Optional; falls back to the getCredentials response or 'auto'. */
   region?: string
   /** Endpoint URL of the S3-compatible service (e.g., 'https://s3.amazonaws.com/bucket-name') */
   endpoint: string

@@ -1,4 +1,4 @@
-// Export the S3 class as default export and named export
+// Public exports for the S3 client.
 export { S3mini } from './S3mini.js'
 // Re-export types
 export type {

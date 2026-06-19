@@ -90,8 +90,6 @@
             height: 400,
           })
           .use(AwsS3, {
-            bucket: window.UPPY_S3_BUCKET,
-            region: window.UPPY_S3_REGION,
             signRequest: async (request) => {
               const response = await fetch('/s3/presign', {
                 method: 'POST',
