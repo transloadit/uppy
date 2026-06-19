@@ -61,7 +61,9 @@ class S3Companion extends S3Client {
       await response.json()
 
     const formData = new FormData()
-    Object.entries(fields).forEach(([key, value]) => formData.set(key, value))
+    Object.entries(fields).forEach(([key, value]) => {
+      formData.set(key, value)
+    })
     formData.set('file', data)
 
     const xhr = await this._request({

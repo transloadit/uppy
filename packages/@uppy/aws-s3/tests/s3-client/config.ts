@@ -2,7 +2,7 @@ export const accessKeyId = 'stsuser'
 export const secretAccessKey = 'stspassword123'
 
 export function getConfig(env: Record<string, string | undefined>) {
-  const config = env['VITE_MINIO_CONFIG']
+  const config = env.VITE_MINIO_CONFIG
   if (!config) {
     return undefined
   }

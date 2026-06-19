@@ -9,11 +9,9 @@ interface S3MultipartState {
 }
 
 declare module '@uppy/utils' {
-  // biome-ignore lint/correctness/noUnusedVariables: must match existing interface signature
   export interface LocalUppyFile<M extends Meta, B extends Body> {
     s3Multipart?: S3MultipartState
   }
-  // biome-ignore lint/correctness/noUnusedVariables: must match existing interface signature
   export interface RemoteUppyFile<M extends Meta, B extends Body> {
     s3Multipart?: S3MultipartState
   }
