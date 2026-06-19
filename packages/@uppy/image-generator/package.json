@@ -42,12 +42,12 @@
     "@uppy/provider-views": "workspace:^",
     "@uppy/transloadit": "workspace:^",
     "@uppy/utils": "workspace:^",
-    "preact": "^10.26.10"
+    "preact": "^10.29.2"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "cssnano": "^7.0.7",
-    "postcss": "^8.5.6",
+    "cssnano": "^8.0.1",
+    "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2"
   },

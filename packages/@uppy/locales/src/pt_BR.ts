@@ -148,7 +148,6 @@ pt_BR.strings = {
   pluginNameGoogleDrive: 'Google Drive',
   pluginNameGoogleDrivePicker: 'Google Drive',
   pluginNameGooglePhotosPicker: 'Google Photos',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameScreenCapture: 'Screencast',
   pluginNameUnsplash: 'Unsplash',
@@ -249,9 +248,9 @@ pt_BR.strings = {
   zoomOut: 'Diminuir o zoom',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.pt_BR = pt_BR
 }
 

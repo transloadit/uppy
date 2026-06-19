@@ -22,7 +22,7 @@
     "prepublishOnly": "rm -fr * && cp -r ../../../dist/uppy/angular .."
   },
   "dependencies": {
-    "tslib": "^2.0.0"
+    "tslib": "^2.8.1"
   },
   "peerDependencies": {
     "@angular/common": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0",

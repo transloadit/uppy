@@ -1,7 +1,7 @@
 {
   "name": "@uppy/xhr-upload",
   "description": "Plain and simple classic HTML multipart form uploads with Uppy, as well as uploads using the HTTP PUT method.",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -46,13 +46,13 @@
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@vitest/browser": "^3.2.4",
-    "jsdom": "^26.1.0",
+    "@vitest/browser": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.6",
+    "jsdom": "^29.1.1",
     "msw": "^2.10.4",
-    "nock": "^13.1.0",
-    "playwright": "1.57.0",
+    "playwright": "1.60.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

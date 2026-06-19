@@ -256,6 +256,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     else this.pause()
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: getChunkState')]() {
     return this.#chunkState
   }

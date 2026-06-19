@@ -1,6 +1,6 @@
-import prettierBytes from '@transloadit/prettier-bytes'
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, I18n, Meta, UppyFile } from '@uppy/utils'
-// @ts-ignore untyped
+// @ts-expect-error untyped
 import match from 'mime-match'
 import type { NonNullableUppyOptions, State } from './Uppy.js'
 
@@ -206,4 +206,4 @@ class Restricter<M extends Meta, B extends Body> {
   }
 }
 
-export { Restricter, defaultOptions, RestrictionError }
+export { defaultOptions, Restricter, RestrictionError }

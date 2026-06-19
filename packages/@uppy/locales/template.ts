@@ -12,9 +12,9 @@ const en_US: Locale<0 | 1> = {
 
 en_US.strings = {}
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.en_US = en_US
 }
 
