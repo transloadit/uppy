@@ -5,14 +5,9 @@ import {
   type PluginOpts,
   type Uppy,
 } from '@uppy/core'
+import type { RequestOptions } from '@uppy/core/companion-client'
 import { RequestClient } from '@uppy/core/companion-client'
-import type {
-  Body,
-  LocalUppyFile,
-  Meta,
-  RequestOptions,
-  UppyFile,
-} from '@uppy/core/utils'
+import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/core/utils'
 import {
   createAbortError,
   filterFilesToEmitUploadStarted,

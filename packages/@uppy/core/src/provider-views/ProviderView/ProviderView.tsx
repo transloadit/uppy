@@ -66,6 +66,17 @@ const getDefaultState = (
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
 
+/**
+ * Shape of the responses Companion returns from its `list` and `search`
+ * endpoints. The `Provider` methods are generic, so we pass this as the
+ * expected response type at the call sites.
+ */
+type ProviderListResponse = {
+  username: string
+  nextPagePath: string | null
+  items: CompanionFile[]
+}
+
 export interface Opts<M extends Meta, B extends Body> {
   provider: UnknownProviderPlugin<M, B>['provider']
   viewType: 'list' | 'grid'
@@ -248,10 +259,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     await this.#withAbort(async (signal) => {
       const scopePath =
         currentFolder.type === 'root' ? undefined : currentFolderId
-      const { items } = await this.provider.search!(searchString, {
-        signal,
-        path: scopePath,
-      })
+      const { items } = await this.provider.search<ProviderListResponse>(
+        searchString,
+        {
+          signal,
+          path: scopePath,
+        },
+      )
 
       // For each searched file, build the entire path (from the root all the way to the leaf node)
       // This is because we need to make sure all ancestor folders are present in the partialTree before we open the folder or check the file.
@@ -389,10 +403,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
       let currentPagePath = folderId
       let currentItems: CompanionFile[] = []
       do {
-        const { username, nextPagePath, items } = await this.provider.list(
-          currentPagePath,
-          { signal },
-        )
+        const { username, nextPagePath, items } =
+          await this.provider.list<ProviderListResponse>(currentPagePath, {
+            signal,
+          })
         // It's important to set the username during one of our first fetches
         this.plugin.setPluginState({ username })
 
@@ -478,10 +492,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
     ) {
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
-        const { nextPagePath, items } = await this.provider.list(
-          currentFolder.nextPagePath,
-          { signal },
-        )
+        const { nextPagePath, items } =
+          await this.provider.list<ProviderListResponse>(
+            currentFolder.nextPagePath,
+            { signal },
+          )
         const newPartialTree = PartialTreeUtils.afterScrollFolder(
           partialTree,
           currentFolderId,

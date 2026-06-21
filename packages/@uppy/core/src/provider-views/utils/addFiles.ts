@@ -1,8 +1,8 @@
+import type Provider from '../../companion-client/Provider.js'
+import type SearchProvider from '../../companion-client/SearchProvider.js'
 import type { UnknownPlugin } from '../../index.js'
 import type {
   Body,
-  CompanionClientProvider,
-  CompanionClientSearchProvider,
   CompanionFile,
   Meta,
   UppyFileNonGhost,
@@ -13,7 +13,7 @@ import companionFileToUppyFile from './companionFileToUppyFile.js'
 const addFiles = <M extends Meta, B extends Body>(
   companionFiles: CompanionFile[],
   plugin: UnknownPlugin<M, B>,
-  provider: CompanionClientProvider | CompanionClientSearchProvider,
+  provider: Provider<M, B> | SearchProvider<M, B>,
 ): void => {
   const uppyFiles = companionFiles.map((f) =>
     companionFileToUppyFile<M, B>(f, plugin, provider),

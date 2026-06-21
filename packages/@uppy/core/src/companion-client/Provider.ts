@@ -5,13 +5,12 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '../index.js'
-import {
-  type CompanionClientProvider,
-  getSocketHost,
-  type RequestOptions,
-} from '../utils/index.js'
+import { getSocketHost } from '../utils/index.js'
 import type { CompanionPluginOptions } from './index.js'
-import RequestClient, { authErrorStatusCode } from './RequestClient.js'
+import RequestClient, {
+  authErrorStatusCode,
+  type RequestOptions,
+} from './RequestClient.js'
 
 export interface Opts extends PluginOpts, CompanionPluginOptions {
   pluginId: string
@@ -31,10 +30,10 @@ function getOrigin() {
   return location.origin
 }
 
-export default class Provider<M extends Meta, B extends Body>
-  extends RequestClient<M, B>
-  implements CompanionClientProvider
-{
+export default class Provider<
+  M extends Meta,
+  B extends Body,
+> extends RequestClient<M, B> {
   #refreshingTokenPromise: Promise<void> | undefined
 
   provider: string
@@ -273,11 +272,13 @@ export default class Provider<M extends Meta, B extends Body>
   }
 
   async login({
-    uppyVersions,
+    uppyVersions = '',
     authFormData,
     signal,
   }: {
-    uppyVersions: string
+    // `uppyVersions` is optional because callers such as `ProviderView` do not
+    // have it on hand; the OAuth/simple-auth helpers always receive a string.
+    uppyVersions?: string
     authFormData: unknown
     signal: AbortSignal
   }): Promise<void> {

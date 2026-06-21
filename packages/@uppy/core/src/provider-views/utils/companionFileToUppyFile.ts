@@ -1,8 +1,8 @@
+import type Provider from '../../companion-client/Provider.js'
+import type SearchProvider from '../../companion-client/SearchProvider.js'
 import type { UnknownPlugin } from '../../index.js'
 import type {
   Body,
-  CompanionClientProvider,
-  CompanionClientSearchProvider,
   CompanionFile,
   Meta,
   RemoteUppyFile,
@@ -11,7 +11,7 @@ import type {
 const companionFileToUppyFile = <M extends Meta, B extends Body>(
   file: CompanionFile,
   plugin: UnknownPlugin<M, B>,
-  provider: CompanionClientProvider | CompanionClientSearchProvider,
+  provider: Provider<M, B> | SearchProvider<M, B>,
 ): RemoteUppyFile<M, B> => {
   const name = file.name || file.id
 
