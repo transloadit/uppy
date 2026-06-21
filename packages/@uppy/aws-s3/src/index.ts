@@ -662,10 +662,11 @@ export default class AwsS3Multipart<
       querify: true,
     })
 
-    const query = new URLSearchParams({ filename, type, ...metadata } as Record<
-      string,
-      string
-    >)
+    const query = new URLSearchParams({
+      filename,
+      ...(type != null && { type }),
+      ...metadata,
+    })
 
     return this.#client.get(`s3/params?${query}`, options)
   }

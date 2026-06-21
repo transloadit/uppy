@@ -3,7 +3,7 @@ import supportsMediaRecorder from './supportsMediaRecorder.js'
 
 describe('supportsMediaRecorder', () => {
   it('should return true if MediaRecorder is supported', () => {
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.MediaRecorder = class MediaRecorder {
       start() {}
     }
@@ -11,15 +11,15 @@ describe('supportsMediaRecorder', () => {
   })
 
   it('should return false if MediaRecorder is not supported', () => {
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.MediaRecorder = undefined
     expect(supportsMediaRecorder()).toEqual(false)
 
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.MediaRecorder = class MediaRecorder {}
     expect(supportsMediaRecorder()).toEqual(false)
 
-    // @ts-ignore
+    // @ts-expect-error
     globalThis.MediaRecorder = class MediaRecorder {
       foo() {}
     }

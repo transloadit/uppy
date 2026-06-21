@@ -14,7 +14,6 @@ export type RemoteSourceKeys =
   | 'Dropbox'
   | 'Facebook'
   | 'GoogleDrive'
-  | 'Instagram'
   | 'OneDrive'
   | 'Unsplash'
   | 'Url'

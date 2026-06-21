@@ -284,7 +284,9 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
   #stop = async () => {
     if (this.#stream) {
       const audioTracks = this.#stream.getAudioTracks()
-      audioTracks.forEach((track) => track.stop())
+      audioTracks.forEach((track) => {
+        track.stop()
+      })
     }
 
     if (this.#recorder) {

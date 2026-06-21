@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/nursery/useUniqueElementIds: it's fine */
+/** biome-ignore-all lint/correctness/useUniqueElementIds: it's fine */
 import Uppy, { type UppyFile } from '@uppy/core'
 import UppyImageEditor from '@uppy/image-editor'
 import {

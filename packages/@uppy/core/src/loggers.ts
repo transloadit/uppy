@@ -20,4 +20,4 @@ const debugLogger = {
     console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
 }
 
-export { justErrorsLogger, debugLogger }
+export { debugLogger, justErrorsLogger }

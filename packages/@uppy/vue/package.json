@@ -19,11 +19,11 @@
   ],
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "shallow-equal": "^3.0.0"
+    "shallow-equal": "^3.1.0"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "preact": "^10.26.10",
+    "preact": "^10.29.2",
     "typescript": "^5.8.3",
     "vue": "^3.5.14"
   },
@@ -42,7 +42,7 @@
     "@uppy/screen-capture": "workspace:^",
     "@uppy/status-bar": "workspace:^",
     "@uppy/webcam": "workspace:^",
-    "preact": "^10.26.10",
+    "preact": "^10.29.2",
     "vue": ">=3.0.0"
   },
   "peerDependenciesMeta": {

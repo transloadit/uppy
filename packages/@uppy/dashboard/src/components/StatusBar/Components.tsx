@@ -1,4 +1,4 @@
-import prettierBytes from '@transloadit/prettier-bytes'
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta, State, Uppy } from '@uppy/core'
 import type { FileProcessingInfo, I18n } from '@uppy/utils'
 import { prettyETA } from '@uppy/utils'
@@ -456,7 +456,6 @@ function ProgressBarComplete(props: ProgressBarCompleteProps) {
   return (
     <div
       className="uppy-StatusBar-content"
-      // biome-ignore lint/a11y/useSemanticElements: ...
       role="status"
       title={i18n('complete')}
     >
@@ -531,16 +530,17 @@ function ProgressBarError(props: ProgressBarErrorProps) {
     </div>
   )
 }
+
 export {
-  UploadBtn,
-  RetryBtn,
   CancelBtn,
-  PauseResumeButton,
   DoneBtn,
   LoadingSpinner,
-  ProgressDetails,
-  ProgressBarProcessing,
-  ProgressBarError,
-  ProgressBarUploading,
+  PauseResumeButton,
   ProgressBarComplete,
+  ProgressBarError,
+  ProgressBarProcessing,
+  ProgressBarUploading,
+  ProgressDetails,
+  RetryBtn,
+  UploadBtn,
 }

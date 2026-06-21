@@ -26,7 +26,9 @@ import AssemblyWatcher from './AssemblyWatcher.js'
 import Client, { type AssemblyError } from './Client.js'
 import locale from './locale.js'
 
-export type AssemblyResponse = AssemblyStatus
+export type AssemblyResponse = AssemblyStatus & {
+  progress_combined?: number
+}
 export type AssemblyFile = AssemblyStatusUpload
 export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
 export type AssemblyParameters = AssemblyInstructionsInput
@@ -79,6 +81,19 @@ type TransloaditState = {
     string,
     { assembly: string; id: string; uploadedFile: AssemblyFile }
   >
+  /**
+   * Live status of the currently-active assembly. Tracks every status
+   * transition (UPLOADING → EXECUTING → ...). Cleared automatically when
+   * `this.assembly = undefined` (no live assembly).
+   */
+  assemblyStatus: AssemblyResponse | undefined
+  /**
+   * Snapshot of the most recent non-null status seen. Persists across the
+   * gap between uploads so the UI can keep showing "your last upload's
+   * result" after `assemblyStatus` clears. Overwritten by the next
+   * status update routed through `#handleAssemblyStatusUpdate`.
+   */
+  lastAssemblyStatus: AssemblyResponse | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -95,7 +110,6 @@ type PersistentState = {
 }
 
 declare module '@uppy/core' {
-  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     // We're also overriding the `restored` event as it is now populated with Transloadit state.
     restored: (pluginData: Record<string, PersistentState>) => void
@@ -176,7 +190,7 @@ function validateParams(params?: AssemblyOptions['params']): void {
     parsed = params
   }
 
-  if (!parsed.auth || !parsed.auth.key) {
+  if (!parsed.auth?.key) {
     throw new Error(
       'Transloadit: The `params.auth.key` option is required. ' +
         'You can find your Transloadit API key at https://transloadit.com/c/template-credentials',
@@ -238,6 +252,10 @@ export default class Transloadit<
   B extends Body,
 > extends BasePlugin<Opts<M, B>, M, B, TransloaditState> {
   static VERSION = packageJson.version
+
+  static COMPANION_URL = COMPANION_URL
+
+  static COMPANION_ALLOWED_HOSTS = COMPANION_ALLOWED_HOSTS
 
   #rateLimitedQueue: RateLimitedQueue
 
@@ -302,7 +320,6 @@ export default class Transloadit<
     addPluginVersion('GoogleDrive', 'uppy-google-drive')
     addPluginVersion('GoogleDrivePicker', 'uppy-google-drive-picker')
     addPluginVersion('GooglePhotosPicker', 'uppy-google-photos-picker')
-    addPluginVersion('Instagram', 'uppy-instagram')
     addPluginVersion('OneDrive', 'uppy-onedrive')
     addPluginVersion('Zoom', 'uppy-zoom')
     addPluginVersion('Url', 'uppy-url')
@@ -468,7 +485,9 @@ export default class Transloadit<
       // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
       // and `onReceiveUploadUrl` in @uppy/tus
       const files = { ...this.uppy.getState().files }
-      filesFromAssembly.forEach((file) => delete files[file.id].tus)
+      filesFromAssembly.forEach((file) => {
+        delete files[file.id].tus
+      })
       this.uppy.setState({ files })
 
       this.uppy.emit('error', error)
@@ -495,11 +514,20 @@ export default class Transloadit<
   }
 
   /**
-   * Allows Golden Retriever plugin to serialize the Assembly status so we can restore it later
+   * Mirrors the live Assembly status into plugin state and lets Golden
+   * Retriever serialize it for restore. `assemblyStatus` is written
+   * unconditionally — when `this.assembly = undefined`, `assemblyResponse`
+   * is undefined and `assemblyStatus` clears too. `lastAssemblyStatus`
+   * captures the most recent non-null status so the UI can keep displaying
+   * the previous run's result after `assemblyStatus` clears.
    */
   #handleAssemblyStatusUpdate = (
     assemblyResponse: AssemblyResponse | undefined,
   ) => {
+    if (assemblyResponse != null) {
+      this.setPluginState({ lastAssemblyStatus: assemblyResponse })
+    }
+    this.setPluginState({ assemblyStatus: assemblyResponse })
     this.uppy.emit('restore:plugin-data-changed', {
       [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
     })
@@ -631,7 +659,10 @@ export default class Transloadit<
   async #cancelAssembly(assembly: AssemblyResponse) {
     await this.client.cancelAssembly(assembly)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
-    this.uppy.emit('transloadit:assembly-cancelled', assembly)
+
+    // if assemblyStatus has been updated after the cancellation was triggered, emit the updated assemblyStatus - fallback to the method argument
+    const updatedAssemblyStatus = this.assembly?.status ?? assembly
+    this.uppy.emit('transloadit:assembly-cancelled', updatedAssemblyStatus)
     this.assembly = undefined
   }
 
@@ -646,6 +677,9 @@ export default class Transloadit<
         this.uppy.log(err)
       }
     }
+    // `assemblyStatus` is cleared automatically when `this.assembly = undefined`
+    // (via `#cancelAssembly` above, or by `#afterUpload`'s finally block).
+
     // Reset allowNewUpload when upload is cancelled
     this.uppy.setState({ allowNewUpload: true })
   }
@@ -1002,6 +1036,8 @@ export default class Transloadit<
     this.uppy.on('restored', this.#onRestored)
 
     this.setPluginState({
+      assemblyStatus: undefined,
+      lastAssemblyStatus: undefined,
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
@@ -1048,11 +1084,9 @@ export default class Transloadit<
   }
 }
 
-export { COMPANION_URL, COMPANION_ALLOWED_HOSTS }
-
 // Re-export type from @transloadit/types so callers can import it from the plugin package.
 export type { AssemblyInstructionsInput } from '@transloadit/types'
-
 // Low-level classes for advanced usage (e.g., creating assemblies without file uploads)
 export { default as Assembly } from './Assembly.js'
 export { AssemblyError, default as Client } from './Client.js'
+export { COMPANION_ALLOWED_HOSTS, COMPANION_URL }

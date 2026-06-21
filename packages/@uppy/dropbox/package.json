@@ -40,11 +40,11 @@
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
-    "preact": "^10.26.10"
+    "preact": "^10.29.2"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "preact": "^10.26.10",
+    "preact": "^10.29.2",
     "typescript": "^5.8.3"
   }
 }

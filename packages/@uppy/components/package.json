@@ -43,15 +43,15 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "dequal": "^2.0.3",
-    "pretty-bytes": "^6.1.1"
+    "pretty-bytes": "^7.1.0"
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.6",
     "@uppy/core": "workspace:^",
-    "cssnano": "^7.0.7",
-    "postcss": "^8.5.6",
+    "cssnano": "^8.0.1",
+    "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
-    "preact": "^10.26.10",
+    "preact": "^10.29.2",
     "tailwindcss": "^4.0.6",
     "typescript": "^5.8.3"
   },
@@ -60,7 +60,7 @@
     "@uppy/image-editor": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^",
-    "preact": "^10.26.10"
+    "preact": "^10.29.2"
   },
   "peerDependenciesMeta": {
     "@uppy/image-editor": {

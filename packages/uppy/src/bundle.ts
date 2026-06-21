@@ -35,7 +35,6 @@ export { default as GoogleDrive } from '@uppy/google-drive'
 export { default as GoogleDrivePicker } from '@uppy/google-drive-picker'
 export { default as GooglePhotosPicker } from '@uppy/google-photos-picker'
 export { default as ImageEditor } from '@uppy/image-editor'
-export { default as Instagram } from '@uppy/instagram'
 export { default as OneDrive } from '@uppy/onedrive'
 export { default as RemoteSources } from '@uppy/remote-sources'
 export { default as ScreenCapture } from '@uppy/screen-capture'
@@ -50,16 +49,5 @@ export { default as Url } from '@uppy/url'
 export { default as Webcam } from '@uppy/webcam'
 export { default as XHRUpload } from '@uppy/xhr-upload'
 export { default as Zoom } from '@uppy/zoom'
-
-// Special hack for Transloadit static exports
-import Transloadit, {
-  COMPANION_ALLOWED_HOSTS,
-  COMPANION_URL,
-} from '@uppy/transloadit'
-
-// @ts-expect-error monkey patching
-Transloadit.COMPANION_URL = COMPANION_URL
-// @ts-expect-error monkey patching
-Transloadit.COMPANION_ALLOWED_HOSTS = COMPANION_ALLOWED_HOSTS
 
 export const locales = {}

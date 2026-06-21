@@ -10,16 +10,16 @@
     "@uppy/google-drive": "workspace:*",
     "@uppy/provider-views": "workspace:*",
     "@uppy/tus": "workspace:*",
-    "preact": "^10.26.10"
+    "preact": "^10.29.2"
   },
   "engines": {
     "node": ">=18.0.0"
   },
   "devDependencies": {
     "@uppy/companion": "workspace:*",
-    "body-parser": "^1.20.4",
-    "dotenv": "^16.0.1",
-    "express": "^4.22.0",
+    "body-parser": "^2.2.2",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "express-session": "^1.15.6",
     "npm-run-all": "^4.1.2",
     "vite": "^7.1.11"

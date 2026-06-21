@@ -1,5 +1,16 @@
 # @uppy/xhr-upload
 
+## 5.2.0
+
+### Minor Changes
+
+- 6b1abaa: Introduce modern, minimal TaskQueue to replace RateLimitedQueue
+
+### Patch Changes
+
+- Updated dependencies [6b1abaa]
+  - @uppy/utils@7.2.0
+
 ## 5.1.1
 
 ### Patch Changes

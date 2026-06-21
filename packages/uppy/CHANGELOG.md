@@ -1,5 +1,18 @@
 # uppy
 
+## 5.2.4
+
+### Patch Changes
+
+- 29d2772: remove monkey patch from uppy bundle package
+- a86c624: upgrade esbuild in uppy to "^0.27.0"
+- Updated dependencies [6b1abaa]
+- Updated dependencies [4787960]
+- Updated dependencies [2f6849d]
+- Updated dependencies [29d2772]
+  - @uppy/xhr-upload@5.2.0
+  - @uppy/transloadit@5.5.1
+
 ## 5.2.3
 
 ### Patch Changes

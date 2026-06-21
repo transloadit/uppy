@@ -12,6 +12,7 @@
     </div>
 
     <div class="mb-4">
+      <!-- biome-ignore lint/a11y/useAltText: alt is provided via editor.getImageProps() spread -->
       <img
         class="w-full max-h-[400px] rounded-lg border-2"
         v-bind="editor.getImageProps()"
@@ -29,31 +30,31 @@
     </div>
 
     <div class="flex gap-2 flex-wrap mb-4">
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getRotateButtonProps(-90)"
       >
         ↶ -90°
       </button>
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getRotateButtonProps(90)"
       >
         ↷ +90°
       </button>
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getFlipHorizontalButtonProps()"
       >
         ⇆ Flip
       </button>
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getZoomButtonProps(0.1)"
       >
         + Zoom
       </button>
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getZoomButtonProps(-0.1)"
       >
@@ -62,25 +63,25 @@
     </div>
 
     <div class="flex gap-2 flex-wrap mb-4">
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getCropSquareButtonProps()"
       >
         1:1
       </button>
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getCropLandscapeButtonProps()"
       >
         16:9
       </button>
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getCropPortraitButtonProps()"
       >
         9:16
       </button>
-      <button
+      <button type="button"
         class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
         v-bind="editor.getResetButtonProps()"
       >
@@ -89,13 +90,13 @@
     </div>
 
     <div class="flex gap-4 justify-end">
-      <button
+      <button type="button"
         class="bg-gray-500 text-white px-4 py-2 rounded-md"
         v-bind="editor.getCancelButtonProps({ onClick: close })"
       >
         Cancel
       </button>
-      <button
+      <button type="button"
         class="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
         v-bind="editor.getSaveButtonProps({ onClick: close })"
       >
