@@ -9,3 +9,4 @@ export * from "./useGooglePicker.svelte.js";
 export * from "./useRemoteSource.js";
 export * from "./useScreenCapture.svelte.js";
 export * from "./useWebcam.svelte.js";
+export * from "./useImageEditor.svelte.js";

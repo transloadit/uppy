@@ -21,9 +21,10 @@
     "url": "https://github.com/transloadit/uppy/issues"
   },
   "devDependencies": {
-    "jsdom": "^26.1.0",
+    "@types/node": "^20.19.0",
+    "jsdom": "^29.1.1",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   },
   "repository": {
     "type": "git",

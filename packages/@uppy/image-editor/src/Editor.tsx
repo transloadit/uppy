@@ -1,146 +1,49 @@
 import type { Body, Meta } from '@uppy/core'
 import type { I18n, LocalUppyFile } from '@uppy/utils'
-import Cropper from 'cropperjs'
 import { Component } from 'preact'
 import type ImageEditor from './ImageEditor.js'
-import getCanvasDataThatFitsPerfectlyIntoContainer from './utils/getCanvasDataThatFitsPerfectlyIntoContainer.js'
-import getScaleFactorThatRemovesDarkCorners from './utils/getScaleFactorThatRemovesDarkCorners.js'
-import limitCropboxMovementOnMove from './utils/limitCropboxMovementOnMove.js'
-import limitCropboxMovementOnResize from './utils/limitCropboxMovementOnResize.js'
+import type { AspectRatio } from './ImageEditor.js'
 
 type Props<M extends Meta, B extends Body> = {
   currentImage: LocalUppyFile<M, B>
-  storeCropperInstance: (cropper: Cropper) => void
+  objectUrl: string
+  initCropper: (imgElement: HTMLImageElement) => void
   opts: ImageEditor<M, B>['opts']
   i18n: I18n
   save: () => void
-}
-
-type State = {
-  angle90Deg: number
   angleGranular: number
-  prevCropboxData: Cropper.CropBoxData | null
+  rotateBy: (degrees: number) => void
+  rotateGranular: (degrees: number) => void
+  flipHorizontal: () => void
+  zoom: (ratio: number) => void
+  setAspectRatio: (ratio: AspectRatio) => void
+  reset: () => void
 }
 
 export default class Editor<M extends Meta, B extends Body> extends Component<
-  Props<M, B>,
-  State
+  Props<M, B>
 > {
   imgElement!: HTMLImageElement
 
-  cropper!: Cropper
-
-  constructor(props: Props<M, B>) {
-    super(props)
-    this.state = {
-      angle90Deg: 0,
-      angleGranular: 0,
-      prevCropboxData: null,
-    }
-    this.storePrevCropboxData = this.storePrevCropboxData.bind(this)
-    this.limitCropboxMovement = this.limitCropboxMovement.bind(this)
-  }
-
   componentDidMount(): void {
-    const { opts, storeCropperInstance } = this.props
-    this.cropper = new Cropper(this.imgElement, opts.cropperOptions)
-
-    this.imgElement.addEventListener('cropstart', this.storePrevCropboxData)
-    // @ts-expect-error custom cropper event but DOM API does not understand
-    this.imgElement.addEventListener('cropend', this.limitCropboxMovement)
-
-    storeCropperInstance(this.cropper)
-  }
-
-  componentWillUnmount(): void {
-    this.cropper.destroy()
-
-    this.imgElement.removeEventListener('cropstart', this.storePrevCropboxData)
-    // @ts-expect-error custom cropper event but DOM API does not understand
-    this.imgElement.removeEventListener('cropend', this.limitCropboxMovement)
-  }
-
-  storePrevCropboxData(): void {
-    this.setState({ prevCropboxData: this.cropper.getCropBoxData() })
-  }
-
-  limitCropboxMovement(event: { detail: { action: string } }): void {
-    const canvasData = this.cropper.getCanvasData()
-    const cropboxData = this.cropper.getCropBoxData()
-    const { prevCropboxData } = this.state
-
-    // 1. When we grab the cropbox in the middle and move it
-    if (event.detail.action === 'all') {
-      const newCropboxData = limitCropboxMovementOnMove(
-        canvasData,
-        cropboxData,
-        prevCropboxData!,
-      )
-      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
-      // 2. When we stretch the cropbox by one of its sides
-    } else {
-      const newCropboxData = limitCropboxMovementOnResize(
-        canvasData,
-        cropboxData,
-        prevCropboxData!,
-      )
-      if (newCropboxData) this.cropper.setCropBoxData(newCropboxData)
+    const { initCropper } = this.props
+    if (this.imgElement) {
+      initCropper(this.imgElement)
     }
   }
 
   onRotate90Deg = (): void => {
-    // 1. Set state
-    const { angle90Deg } = this.state
-    const newAngle = angle90Deg - 90
-    this.setState({
-      angle90Deg: newAngle,
-      angleGranular: 0,
-    })
-
-    // 2. Rotate the image
-    // Important to reset scale here, or cropper will get confused on further rotations
-    this.cropper.scale(1)
-    this.cropper.rotateTo(newAngle)
-
-    // 3. Fit the rotated image into the view
-    const canvasData = this.cropper.getCanvasData()
-    const containerData = this.cropper.getContainerData()
-    const newCanvasData = getCanvasDataThatFitsPerfectlyIntoContainer(
-      containerData,
-      canvasData,
-    )
-    this.cropper.setCanvasData(newCanvasData)
-
-    // 4. Make cropbox fully wrap the image
-    this.cropper.setCropBoxData(newCanvasData)
+    this.props.rotateBy(-90)
   }
 
   onRotateGranular = (ev: Event): void => {
-    // 1. Set state
     const newGranularAngle = Number((ev.target as HTMLInputElement).value)
-    this.setState({ angleGranular: newGranularAngle })
-
-    // 2. Rotate the image
-    const { angle90Deg } = this.state
-    const newAngle = angle90Deg + newGranularAngle
-    this.cropper.rotateTo(newAngle)
-
-    // 3. Scale the image so that it fits into the cropbox
-    const image = this.cropper.getImageData()
-    const scaleFactor = getScaleFactorThatRemovesDarkCorners(
-      image.naturalWidth,
-      image.naturalHeight,
-      newGranularAngle,
-    )
-    // Preserve flip
-    const scaleFactorX =
-      this.cropper.getImageData().scaleX < 0 ? -scaleFactor : scaleFactor
-    this.cropper.scale(scaleFactorX, scaleFactor)
+    this.props.rotateGranular(newGranularAngle)
   }
 
   renderGranularRotate() {
     const { i18n } = this.props
-    const { angleGranular } = this.state
+    const { angleGranular } = this.props
 
     return (
       <label
@@ -164,7 +67,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
   }
 
   renderRevert() {
-    const { i18n, opts } = this.props
+    const { i18n } = this.props
 
     return (
       <button
@@ -173,11 +76,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         className="uppy-u-reset uppy-c-btn"
         aria-label={i18n('revert')}
         onClick={() => {
-          this.cropper.reset()
-          this.cropper.setAspectRatio(
-            opts.cropperOptions.initialAspectRatio as number,
-          )
-          this.setState({ angle90Deg: 0, angleGranular: 0 })
+          this.props.reset()
         }}
       >
         <svg
@@ -228,9 +127,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         type="button"
         className="uppy-u-reset uppy-c-btn"
         aria-label={i18n('flipHorizontal')}
-        onClick={() =>
-          this.cropper.scaleX(-this.cropper.getData().scaleX || -1)
-        }
+        onClick={() => this.props.flipHorizontal()}
       >
         <svg
           aria-hidden="true"
@@ -255,7 +152,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         type="button"
         className="uppy-u-reset uppy-c-btn"
         aria-label={i18n('zoomIn')}
-        onClick={() => this.cropper.zoom(0.1)}
+        onClick={() => this.props.zoom(0.1)}
       >
         <svg
           aria-hidden="true"
@@ -281,7 +178,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         type="button"
         className="uppy-u-reset uppy-c-btn"
         aria-label={i18n('zoomOut')}
-        onClick={() => this.cropper.zoom(-0.1)}
+        onClick={() => this.props.zoom(-0.1)}
       >
         <svg
           aria-hidden="true"
@@ -306,7 +203,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         type="button"
         className="uppy-u-reset uppy-c-btn"
         aria-label={i18n('aspectRatioSquare')}
-        onClick={() => this.cropper.setAspectRatio(1)}
+        onClick={() => this.props.setAspectRatio('1:1')}
       >
         <svg
           aria-hidden="true"
@@ -331,7 +228,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         type="button"
         className="uppy-u-reset uppy-c-btn"
         aria-label={i18n('aspectRatioLandscape')}
-        onClick={() => this.cropper.setAspectRatio(16 / 9)}
+        onClick={() => this.props.setAspectRatio('16:9')}
       >
         <svg
           aria-hidden="true"
@@ -356,7 +253,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
         type="button"
         aria-label={i18n('aspectRatioPortrait')}
         className="uppy-u-reset uppy-c-btn"
-        onClick={() => this.cropper.setAspectRatio(9 / 16)}
+        onClick={() => this.props.setAspectRatio('9:16')}
       >
         <svg
           aria-hidden="true"
@@ -373,10 +270,8 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
   }
 
   render() {
-    const { currentImage, opts } = this.props
+    const { currentImage, objectUrl, opts } = this.props
     const { actions } = opts
-    if (currentImage.data == null) throw new Error('File data is empty')
-    const imageURL = URL.createObjectURL(currentImage.data)
 
     return (
       <div className="uppy-ImageCropper">
@@ -384,7 +279,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
           <img
             className="uppy-ImageCropper-image"
             alt={currentImage.name}
-            src={imageURL}
+            src={objectUrl}
             ref={(ref) => {
               this.imgElement = ref as HTMLImageElement
             }}

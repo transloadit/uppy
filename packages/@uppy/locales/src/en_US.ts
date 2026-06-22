@@ -44,7 +44,6 @@ en_US.strings = {
   browseFolders: 'browse folders',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
-  chooseFiles: 'Choose files',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -86,6 +85,7 @@ en_US.strings = {
   enterUrlToImport: 'Enter URL to import a file',
   error: 'Error',
   exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
+  failedToAddFiles: 'Failed to add files',
   failedToFetch:
     'Companion failed to fetch this URL, please make sure it’s correct',
   failedToUpload: 'Failed to upload %{file}',
@@ -153,7 +153,6 @@ en_US.strings = {
   pluginNameGoogleDrive: 'Google Drive',
   pluginNameGoogleDrivePicker: 'Google Drive',
   pluginNameGooglePhotosPicker: 'Google Photos',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameScreenCapture: 'Screencast',
   pluginNameUnsplash: 'Unsplash',
@@ -253,9 +252,9 @@ en_US.strings = {
   zoomOut: 'Zoom out',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.en_US = en_US
 }
 

@@ -10,8 +10,8 @@
     "cors": "^2.8.5"
   },
   "devDependencies": {
-    "dotenv": "^16.0.1",
-    "express": "^4.22.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
     "vite": "^7.1.11"
   },
   "private": true,

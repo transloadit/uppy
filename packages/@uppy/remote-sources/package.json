@@ -1,6 +1,6 @@
 {
   "name": "@uppy/remote-sources",
-  "description": "Uppy plugin that includes all remote sources that Uppy+Companion offer, like Instagram, Google Drive, Dropox, Box, Unsplash, Url etc",
+  "description": "Uppy plugin that includes all remote sources that Uppy+Companion offer, like Google Drive, Dropbox, Box, Unsplash, Url etc",
   "version": "3.1.0",
   "license": "MIT",
   "type": "module",
@@ -12,7 +12,6 @@
   },
   "keywords": [
     "file uploader",
-    "instagram",
     "google-drive",
     "facebook",
     "dropbox",
@@ -46,7 +45,6 @@
     "@uppy/dropbox": "workspace:^",
     "@uppy/facebook": "workspace:^",
     "@uppy/google-drive": "workspace:^",
-    "@uppy/instagram": "workspace:^",
     "@uppy/onedrive": "workspace:^",
     "@uppy/unsplash": "workspace:^",
     "@uppy/url": "workspace:^",
@@ -60,9 +58,9 @@
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "jsdom": "^26.1.0",
+    "jsdom": "^29.1.1",
     "resize-observer-polyfill": "^1.5.1",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   }
 }

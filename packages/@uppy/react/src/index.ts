@@ -8,6 +8,7 @@ export {
 export { useDropzone } from './useDropzone.js'
 export { useFileInput } from './useFileInput.js'
 export { useGooglePicker } from './useGooglePicker.js'
+export { useImageEditor } from './useImageEditor.js'
 export { useRemoteSource } from './useRemoteSource.js'
 export { useScreenCapture } from './useScreenCapture.js'
 export { default as useUppyEvent } from './useUppyEvent.js'

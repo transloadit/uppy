@@ -10,23 +10,18 @@
     />
   </head>
   <body>
-    <button id="uppyModalOpener">Open Modal</button>
+    <button type="button" id="uppyModalOpener">Open Modal</button>
     <noscript>This web page requires JavaScript to work properly.</noscript>
     <script type="module">
       import {
-        Uppy,
         Dashboard,
-        Instagram,
         GoogleDrive,
         Tus,
+        Uppy,
       } from 'https://releases.transloadit.com/uppy/v4.18.0/uppy.min.mjs'
 
       const uppy = new Uppy({ debug: true, autoProceed: false })
         .use(Dashboard, { trigger: '#uppyModalOpener' })
-        .use(Instagram, {
-          target: Dashboard,
-          companionUrl: 'http://localhost:3020',
-        })
         .use(GoogleDrive, {
           target: Dashboard,
           companionUrl: 'http://localhost:3020',

@@ -1,6 +1,6 @@
 {
   "name": "@uppy/svelte",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "description": "Uppy plugin that helps integrate Uppy into your Svelte project.",
   "type": "module",
   "sideEffects": [
@@ -17,6 +17,7 @@
       "svelte": "./dist/index.js"
     },
     "./css/style.css": "./dist/styles.css",
+    "./css/image-editor.css": "./dist/image-editor.css",
     "./dashboard": {
       "types": "./dist/components/Dashboard.svelte.d.ts",
       "svelte": "./dist/components/Dashboard.svelte"
@@ -47,25 +48,25 @@
   ],
   "scripts": {
     "build": "svelte-kit sync && svelte-package",
-    "build:css": "cp ../components/dist/styles.css dist/styles.css",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
     "prepublishOnly": "yarn run package",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.26.10"
+    "preact": "^10.29.2"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^6.0.0",
-    "@sveltejs/kit": "^2.49.5",
-    "@sveltejs/package": "^2.3.11",
-    "@sveltejs/vite-plugin-svelte": "^5.0.3",
+    "@sveltejs/adapter-auto": "^7.0.1",
+    "@sveltejs/kit": "^2.60.1",
+    "@sveltejs/package": "^2.5.7",
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@uppy/core": "workspace:^",
-    "svelte": "^5.27.0",
-    "svelte-check": "^4.1.6",
+    "svelte": "^5.55.8",
+    "svelte-check": "^4.4.8",
     "tslib": "^2.8.1",
     "typescript": "^5.8.3",
-    "vite": "^6.3.6"
+    "vite": "^8.0.13"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

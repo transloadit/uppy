@@ -148,9 +148,9 @@ ja_JP.strings = {
   openFolderNamed: '開いたフォルダ %{name}',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.ja_JP = ja_JP
 }
 

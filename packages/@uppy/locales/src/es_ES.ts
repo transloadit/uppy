@@ -137,7 +137,6 @@ es_ES.strings = {
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'Zoom',
   poweredBy: 'Desarrollado por %{uppy}',
@@ -233,9 +232,9 @@ es_ES.strings = {
   unselectFileNamed: 'Deseleccionar archivo %{name}',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.es_ES = es_ES
 }
 

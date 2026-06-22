@@ -1,7 +1,7 @@
 import assert from 'node:assert'
 import fs from 'node:fs'
 import path from 'node:path'
-import prettierBytes from '@transloadit/prettier-bytes'
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
 import type { Locale } from '@uppy/utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
@@ -173,26 +173,26 @@ describe('src/Core', () => {
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
       core.iteratePlugins((plugin) => {
-        // @ts-ignore
+        // @ts-expect-error
         plugin.run('hello')
       })
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.run.mock
           .calls.length,
       ).toEqual(1)
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.run.mock
           .calls[0],
       ).toEqual(['hello'])
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.run.mock
           .calls.length,
       ).toEqual(1)
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.run.mock
           .calls[0],
       ).toEqual(['hello'])
@@ -203,7 +203,7 @@ describe('src/Core', () => {
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         Object.keys(core[Symbol.for('uppy test: getPlugins')]('acquirer'))
           .length,
       ).toEqual(2)
@@ -211,14 +211,14 @@ describe('src/Core', () => {
       const plugin = core.getPlugin('TestSelector1')
       core.removePlugin(plugin!)
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         Object.keys(core[Symbol.for('uppy test: getPlugins')]('acquirer'))
           .length,
       ).toEqual(1)
-      // @ts-ignore
+      // @ts-expect-error
       expect(plugin.mocks.uninstall.mock.calls.length).toEqual(1)
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.run.mock
           .calls.length,
       ).toEqual(0)
@@ -232,22 +232,22 @@ describe('src/Core', () => {
       core.use(AcquirerPlugin2)
       core.updateAll({ foo: 'bar' })
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.update
           .mock.calls.length,
       ).toEqual(1)
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.update
           .mock.calls[0],
       ).toEqual([{ foo: 'bar' }])
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.update
           .mock.calls.length,
       ).toEqual(1)
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.update
           .mock.calls[0],
       ).toEqual([{ foo: 'bar' }])
@@ -285,12 +285,12 @@ describe('src/Core', () => {
       expect(core.getState()).toEqual(newState)
 
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[0].mocks.update
           .mock.calls[1],
       ).toEqual([newState])
       expect(
-        // @ts-ignore
+        // @ts-expect-error
         core[Symbol.for('uppy test: getPlugins')]('acquirer')[1].mocks.update
           .mock.calls[1],
       ).toEqual([newState])
@@ -405,7 +405,7 @@ describe('src/Core', () => {
     })
 
     const fileIDs = Object.keys(core.getState().files)
-    // @ts-ignore
+    // @ts-expect-error
     const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
@@ -443,7 +443,7 @@ describe('src/Core', () => {
     })
 
     const fileIDs = Object.keys(core.getState().files)
-    // @ts-ignore
+    // @ts-expect-error
     const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
@@ -481,7 +481,7 @@ describe('src/Core', () => {
     })
 
     const fileIDs = Object.keys(core.getState().files)
-    // @ts-ignore
+    // @ts-expect-error
     const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
@@ -522,7 +522,7 @@ describe('src/Core', () => {
     })
 
     const fileIDs = Object.keys(core.getState().files)
-    // @ts-ignore
+    // @ts-expect-error
     const id = core[Symbol.for('uppy test: createUpload')](fileIDs)
 
     expect(core.getState().currentUploads[id]).toBeDefined()
@@ -543,7 +543,7 @@ describe('src/Core', () => {
 
     const coreCancelEventMock = vi.fn()
     const coreStateUpdateEventMock = vi.fn()
-    // @ts-ignore
+    // @ts-expect-error
     const plugin = core[Symbol.for('uppy test: getPlugins')]('acquirer')[0]
 
     core.on('cancel-all', coreCancelEventMock)
@@ -939,7 +939,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo.webm',
           type: 'video/webm; codecs="vp8, opus"',
-          // @ts-ignore
+          // @ts-expect-error
           data: new File([sampleImage], {
             type: 'video/webm; codecs="vp8, opus"',
           }),
@@ -1106,7 +1106,7 @@ describe('src/Core', () => {
     it('does not dedupe different files', async () => {
       const core = new Core()
       const data = new Blob([sampleImage], { type: 'image/jpeg' })
-      // @ts-ignore
+      // @ts-expect-error
       data.lastModified = 1562770350937
 
       core.addFile({
@@ -1165,7 +1165,6 @@ describe('src/Core', () => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
           if (file.name != null && /bar/.test(file.name)) {
-            // @ts-ignore
             core.emit(
               'upload-error',
               file,
@@ -1199,9 +1198,8 @@ describe('src/Core', () => {
 
     it('should only upload files that are not already assigned to another upload id', () => {
       const core = new Core()
-      // @ts-ignore
+      // @ts-expect-error
       core.store.state.currentUploads = {
-        // @ts-ignore
         upload1: {
           fileIDs: [
             'uppy-file1/jpg-1e-image/jpeg',
@@ -1209,7 +1207,6 @@ describe('src/Core', () => {
             'uppy-file3/jpg-1e-image/jpeg',
           ],
         },
-        // @ts-ignore
         upload2: {
           fileIDs: [
             'uppy-file4/jpg-1e-image/jpeg',
@@ -1224,21 +1221,21 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        // @ts-ignore
+        // @ts-expect-error
         data: new Uint8Array(),
       })
       core.addFile({
         source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        // @ts-ignore
+        // @ts-expect-error
         data: new Uint8Array(),
       })
       core.addFile({
         source: 'file3',
         name: 'file3.jpg',
         type: 'image/jpeg',
-        // @ts-ignore
+        // @ts-expect-error
         data: new Uint8Array(),
       })
 
@@ -1344,7 +1341,6 @@ describe('src/Core', () => {
         fileIDs.forEach((fileID) => {
           const file = core.getFile(fileID)
           if (!hasError) {
-            // @ts-ignore
             core.emit('upload-error', file, new Error('foo'))
             hasError = true
           }
@@ -1548,7 +1544,7 @@ describe('src/Core', () => {
         core.setFileMeta(fileId, { caption: 'Test caption' })
 
         // Trigger the dashboard:file-edit-complete event to update validation state
-        // @ts-ignore
+        // @ts-expect-error
         core.emit('dashboard:file-edit-complete', core.getFile(fileId))
 
         const updatedFile = core.getFile(fileId)
@@ -1609,7 +1605,7 @@ describe('src/Core', () => {
 
         // Fix metadata for first file only
         core.setFileMeta(fileId1, { caption: 'Fixed caption' })
-        // @ts-ignore
+        // @ts-expect-error
         core.emit('dashboard:file-edit-complete', core.getFile(fileId1))
 
         // Add an error to file1 so it can be retried
@@ -1676,7 +1672,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'empty.dat',
         type: 'application/octet-stream',
-        // @ts-ignore
+        // @ts-expect-error
         data: new File([new Uint8Array(1000)], {
           type: 'application/octet-stream',
         }),
@@ -1768,7 +1764,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo1.png',
           type: 'image/png',
-          // @ts-ignore
+          // @ts-expect-error
           data: new File([sampleImage], { type: 'image/png' }),
         })
         throw new Error('should have thrown')
@@ -1786,7 +1782,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo1.png',
           type: 'image/png',
-          // @ts-ignore
+          // @ts-expect-error
           data: new File([sampleImage], { type: 'image/png' }),
         })
         throw new Error('should have thrown')
@@ -1813,7 +1809,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo1.png',
           type: 'image/png',
-          // @ts-ignore
+          // @ts-expect-error
           data: new File([sampleImage], { type: 'image/png' }),
         })
       }).not.toThrow()
@@ -1835,7 +1831,7 @@ describe('src/Core', () => {
         any
       >({
         store: DeepFrozenStore(),
-        // @ts-ignore
+        // @ts-expect-error
         meta: { foo2: 'bar2' },
       })
       core.setMeta({ foo: 'bar', bur: 'mur' })
@@ -1879,7 +1875,7 @@ describe('src/Core', () => {
         name: 'foo.jpg',
         type: 'image/jpeg',
         meta: {
-          // @ts-ignore
+          // @ts-expect-error
           resize: 5000,
         },
         data: testImage,
@@ -1910,7 +1906,7 @@ describe('src/Core', () => {
 
       core.emit('upload-start', [core.getFile(fileId)])
 
-      // @ts-ignore
+      // @ts-expect-error
       core.emit('upload-progress', file, {
         bytesUploaded: 12345,
         bytesTotal: 17175,
@@ -1923,7 +1919,7 @@ describe('src/Core', () => {
         uploadStarted: expect.any(Number),
       })
 
-      // @ts-ignore
+      // @ts-expect-error
       core.emit('upload-progress', file, {
         bytesUploaded: 17175,
         bytesTotal: 17175,
@@ -1951,25 +1947,25 @@ describe('src/Core', () => {
       core.addUploader(async ([id]) => {
         core.emit('upload-start', [core.getFile(id)])
         await progressPromise
-        // @ts-ignore deprecated
+        // @ts-expect-error deprecated
         core.emit('upload-progress', core.getFile(id), {
           bytesTotal: 3456,
           bytesUploaded: 1234,
         })
         await finishPromise
-        // @ts-ignore deprecated
+        // @ts-expect-error deprecated
         core.emit('upload-success', core.getFile(id), { uploadURL: 'lol' })
       })
 
       core.addFile({
-        source: 'instagram',
+        source: 'dropbox',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        // @ts-ignore
+        // @ts-expect-error
         data: {},
       })
 
-      // @ts-ignore
+      // @ts-expect-error
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
       const uploadStartedPromise = new Promise((resolve) =>
@@ -1985,7 +1981,7 @@ describe('src/Core', () => {
         bytesTotal: null,
       })
 
-      // @ts-ignore
+      // @ts-expect-error
       proceedUpload()
       // wait for progress event
       await progressPromise
@@ -1999,7 +1995,7 @@ describe('src/Core', () => {
 
       expect(core.getState().totalProgress).toBe(36)
 
-      // @ts-ignore
+      // @ts-expect-error
       finishUpload()
       // wait for success event
       await finishPromise
@@ -2021,38 +2017,37 @@ describe('src/Core', () => {
 
       core.once('file-added', (file) => {
         core.emit('upload-start', [file])
-        // @ts-ignore
+        // @ts-expect-error
         core.emit('upload-progress', file, {
           bytesTotal: 3456,
           bytesUploaded: 1234,
         })
       })
       core.addFile({
-        source: 'instagram',
+        source: 'dropbox',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        // @ts-ignore
+        // @ts-expect-error
         data: {},
       })
 
       core.once('file-added', (file) => {
         core.emit('upload-start', [file])
         core.emit('upload-progress', file, {
-          // @ts-ignore
           bytesTotal: null,
-          // @ts-ignore
+          // @ts-expect-error
           bytesUploaded: null,
         })
       })
       core.addFile({
-        source: 'instagram',
+        source: 'dropbox',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        // @ts-ignore
+        // @ts-expect-error
         data: {},
       })
 
-      // @ts-ignore
+      // @ts-expect-error
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
       // foo.jpg at 35%, bar.jpg has unknown size and will not be counted
@@ -2082,27 +2077,27 @@ describe('src/Core', () => {
 
       const [file1, file2] = core.getFiles()
       core.setFileState(file1.id, {
-        // @ts-ignore suddenly dates??
+        // @ts-expect-error suddenly dates??
         progress: { ...file1.progress, uploadStarted: new Date() },
       })
       core.setFileState(file2.id, {
-        // @ts-ignore suddenly dates??
+        // @ts-expect-error suddenly dates??
         progress: { ...file2.progress, uploadStarted: new Date() },
       })
 
-      // @ts-ignore test does not care about missing properties
+      // @ts-expect-error test does not care about missing properties
       core.emit('upload-progress', core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175,
       })
 
-      // @ts-ignore test does not care about missing properties
+      // @ts-expect-error test does not care about missing properties
       core.emit('upload-progress', core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175,
       })
 
-      // @ts-ignore
+      // @ts-expect-error
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
       expect(core.getState().totalProgress).toEqual(66)
@@ -2126,27 +2121,27 @@ describe('src/Core', () => {
 
       const [file1, file2] = core.getFiles()
       core.setFileState(file1.id, {
-        // @ts-ignore suddenly dates??
+        // @ts-expect-error suddenly dates??
         progress: { ...file1.progress, uploadStarted: new Date() },
       })
       core.setFileState(file2.id, {
-        // @ts-ignore suddenly dates??
+        // @ts-expect-error suddenly dates??
         progress: { ...file2.progress, uploadStarted: new Date() },
       })
 
-      // @ts-ignore test does not care about missing properties
+      // @ts-expect-error test does not care about missing properties
       core.emit('upload-progress', core.getFile(file1.id), {
         bytesUploaded: 12345,
         bytesTotal: 17175,
       })
 
-      // @ts-ignore test does not care about missing properties
+      // @ts-expect-error test does not care about missing properties
       core.emit('upload-progress', core.getFile(file2.id), {
         bytesUploaded: 10201,
         bytesTotal: 17175,
       })
 
-      // @ts-ignore
+      // @ts-expect-error
       core[Symbol.for('uppy test: updateTotalProgress')]()
 
       expect(core.getState().totalProgress).toEqual(66)
@@ -2199,7 +2194,7 @@ describe('src/Core', () => {
           },
         },
       }
-      // @ts-ignore
+      // @ts-expect-error
       core.setState(newState)
       expect(() => {
         core.clear()
@@ -2486,14 +2481,13 @@ describe('src/Core', () => {
       const core = new Core()
       core.setState({
         files: {
-          // @ts-ignore
+          // @ts-expect-error
           fileId: {
             id: 'fileId',
             name: 'filename',
           },
         },
       })
-      // @ts-ignore test does not care about missing properties
       core.emit(
         'upload-error',
         core.getFile('fileId'),
@@ -2510,9 +2504,9 @@ describe('src/Core', () => {
 
     it('should reset the error state when receiving the upload event', () => {
       const core = new Core()
-      // @ts-ignore test does not care about missing properties
+      // @ts-expect-error test does not care about missing properties
       core.emit('error', { foo: 'bar' })
-      // @ts-ignore test does not care about missing properties
+      // @ts-expect-error test does not care about missing properties
       core.emit('upload')
       expect(core.getState().error).toEqual(null)
     })
@@ -2529,7 +2523,7 @@ describe('src/Core', () => {
     }
 
     afterEach(() => {
-      // @ts-ignore readonly but whatever
+      // @ts-expect-error readonly but whatever
       globalThis.window.navigator.onLine = RealNavigatorOnline
     })
 
@@ -2538,11 +2532,8 @@ describe('src/Core', () => {
       const offlineEventMock = vi.fn()
       const backOnlineEventMock = vi.fn()
       const core = new Core()
-      // @ts-ignore untyped
       core.on('is-offline', offlineEventMock)
-      // @ts-ignore untyped
       core.on('is-online', onlineEventMock)
-      // @ts-ignore untyped
       core.on('back-online', backOnlineEventMock)
 
       mockNavigatorOnline(true)
@@ -2689,7 +2680,7 @@ describe('src/Core', () => {
         data: testImage,
       })
 
-      // @ts-ignore accessing private method
+      // @ts-expect-error accessing private method
       core[Symbol.for('uppy test: createUpload')](
         Object.keys(core.getState().files),
       )
@@ -2754,11 +2745,11 @@ describe('src/Core', () => {
 
       // logger.debug should have been called 1 time above,
       // but we call log in Core’s constructor to output VERSION, hence +1 here
-      // @ts-ignore
+      // @ts-expect-error
       expect(core.opts.logger.debug.mock.calls.length).toBe(2)
-      // @ts-ignore
+      // @ts-expect-error
       expect(core.opts.logger.error.mock.calls.length).toBe(2)
-      // @ts-ignore
+      // @ts-expect-error
       expect(core.opts.logger.warn.mock.calls.length).toBe(1)
     })
 
@@ -2781,13 +2772,13 @@ describe('src/Core', () => {
 
       // logger.debug should have been called 1 time above,
       // but we call log in Core’s constructor to output VERSION, hence +1 here
-      // @ts-ignore
+      // @ts-expect-error
       expect(core.opts.logger.debug.mock.calls.length).toBe(2)
-      // @ts-ignore
+      // @ts-expect-error
       expect(core.opts.logger.error.mock.calls.length).toBe(2)
       // logger.warn should have been called 1 time above,
       // but we warn in Core when using both logger and debug: true, hence +1 here
-      // @ts-ignore
+      // @ts-expect-error
       expect(core.opts.logger.warn.mock.calls.length).toBe(2)
     })
 
@@ -2805,14 +2796,14 @@ describe('src/Core', () => {
 
       // console.debug debug should have been called 2 times above,
       // ibut we call log n Core’ constructor to output VERSION, hence +1 here
-      // @ts-ignore
+      // @ts-expect-error
       expect(console.debug.mock.calls.length).toBe(3)
-      // @ts-ignore
+      // @ts-expect-error
       expect(console.error.mock.calls.length).toBe(1)
 
-      // @ts-ignore
+      // @ts-expect-error
       console.debug.mockClear()
-      // @ts-ignore
+      // @ts-expect-error
       console.error.mockClear()
 
       const core2 = new Core({
@@ -2825,9 +2816,9 @@ describe('src/Core', () => {
 
       // console.debug debug should have been called 2 times here,
       // but we call log in Core constructor to output VERSION, hence +1 here
-      // @ts-ignore
+      // @ts-expect-error
       expect(console.debug.mock.calls.length).toBe(3)
-      // @ts-ignore
+      // @ts-expect-error
       expect(console.error.mock.calls.length).toBe(1)
     })
 
@@ -2841,9 +2832,9 @@ describe('src/Core', () => {
       core.log('beep boop')
       core.log('beep beep', 'error')
 
-      // @ts-ignore
+      // @ts-expect-error
       expect(console.debug.mock.calls.length).toBe(0)
-      // @ts-ignore
+      // @ts-expect-error
       expect(console.error.mock.calls.length).toBe(1)
     })
   })

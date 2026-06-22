@@ -43,7 +43,7 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "lodash": "^4.17.21"
+    "lodash": "^4.18.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
@@ -52,8 +52,10 @@
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
-    "@vitest/browser": "^3.2.4",
+    "@vitest/browser": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.6",
+    "playwright": "1.60.0",
     "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "vitest": "^4.1.6"
   }
 }

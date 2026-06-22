@@ -14,7 +14,7 @@
     },
     "build:css": {
       "dependsOn": ["@uppy/svelte#build", "@uppy/components#build:css"],
-      "outputs": ["dist/styles.css"]
+      "outputs": ["dist/styles.css", "dist/image-editor.css"]
     }
   }
 }

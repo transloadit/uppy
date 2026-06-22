@@ -128,7 +128,6 @@ fa_IR.strings = {
   pluginNameDropbox: 'دراپ باکس',
   pluginNameFacebook: 'فیس بوک',
   pluginNameGoogleDrive: 'درایو گوگل',
-  pluginNameInstagram: 'اینستاگرام',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'بزرگ‌نمایی',
   poweredBy: 'قدرت گرفته از %{uppy}',
@@ -222,9 +221,9 @@ fa_IR.strings = {
   zoomOut: 'کوچک‌نمایی',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.fa_IR = fa_IR
 }
 
