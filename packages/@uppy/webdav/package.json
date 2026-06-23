@@ -38,7 +38,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
     "@uppy/provider-views": "workspace:^",
     "preact": "^10.29.2"
   },

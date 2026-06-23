@@ -40,7 +40,6 @@
     "@uppy/audio": "workspace:*",
     "@uppy/aws-s3": "workspace:*",
     "@uppy/box": "workspace:*",
-    "@uppy/companion-client": "workspace:*",
     "@uppy/compressor": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",

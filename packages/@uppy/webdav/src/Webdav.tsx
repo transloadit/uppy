@@ -1,8 +1,3 @@
-import {
-  type CompanionPluginOptions,
-  Provider,
-  tokenStorage,
-} from '@uppy/companion-client'
 import type {
   AsyncStore,
   Body,
@@ -12,8 +7,12 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-
 import { UIPlugin } from '@uppy/core'
+import {
+  type CompanionPluginOptions,
+  Provider,
+  tokenStorage,
+} from '@uppy/core/companion-client'
 import type { I18n, LocaleStrings } from '@uppy/core/utils'
 import { ProviderViews, SearchView } from '@uppy/provider-views'
 // biome-ignore lint/style/useImportType: h is not a type

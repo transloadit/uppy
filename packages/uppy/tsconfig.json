@@ -16,9 +16,6 @@
       "path": "../@uppy/box/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/companion-client/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/compressor/tsconfig.build.json"
     },
     {

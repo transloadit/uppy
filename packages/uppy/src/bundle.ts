@@ -10,7 +10,7 @@ export function Core() {
 }
 
 // Utilities
-export * as server from '@uppy/companion-client'
+export * as server from '@uppy/core/companion-client'
 
 import * as ProviderView from '@uppy/provider-views'
 

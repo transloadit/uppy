@@ -11,7 +11,7 @@ export type RequestOptions = {
 
 /**
  * CompanionClientProvider is subset of the types of the `Provider`
- * class from @uppy/companion-client.
+ * class from @uppy/core/companion-client.
  *
  * This is needed as the `Provider` class is passed around in Uppy and we
  * need to have shared types for it. Although we are duplicating some types,

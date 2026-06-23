@@ -40,6 +40,7 @@
     "./css/style.scss": "./src/style.scss",
     "./store-default": "./lib/store/index.js",
     "./utils": "./lib/utils/index.js",
+    "./companion-client": "./lib/companion-client/index.js",
     "./package.json": "./package.json"
   },
   "dependencies": {
@@ -48,6 +49,7 @@
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
     "nanoid": "^5.1.11",
+    "p-retry": "^6.1.0",
     "preact": "^10.29.2"
   },
   "devDependencies": {
