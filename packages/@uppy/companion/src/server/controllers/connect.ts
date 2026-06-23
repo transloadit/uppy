@@ -2,6 +2,7 @@ import type { CorsOptions } from 'cors'
 import type { NextFunction, Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord } from '../helpers/type-guards.js'
+import assert from 'node:assert'
 
 /**
  * Derived from `cors` npm package.
@@ -143,7 +144,12 @@ export default function connect(
           next(err)
           return
         }
-        stateObj.origin = finalOrigin
+        // RegExp is not allowed in the state object because it cannot be serialized to JSON, so we filter it out here.
+        if (Array.isArray(finalOrigin)) {
+          stateObj.origin = finalOrigin.flatMap((v) => (v instanceof RegExp ? [] : [v]))
+        } else if (!(finalOrigin instanceof RegExp)) {
+          stateObj.origin = finalOrigin
+        }
         encodeStateAndRedirect(req, res, stateObj)
       })
       return
