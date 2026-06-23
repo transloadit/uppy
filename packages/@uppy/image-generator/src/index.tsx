@@ -1,7 +1,7 @@
 import type { Body, Meta, MinimalRequiredUppyFile, Uppy } from '@uppy/core'
 import { UIPlugin, type UIPluginOptions } from '@uppy/core'
+import { FilterInput, SearchView } from '@uppy/core/provider-views'
 import { RateLimitedQueue } from '@uppy/core/utils'
-import { FilterInput, SearchView } from '@uppy/provider-views'
 import {
   Assembly,
   type AssemblyResult,

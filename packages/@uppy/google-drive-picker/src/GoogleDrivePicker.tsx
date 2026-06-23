@@ -5,12 +5,12 @@ import {
   RequestClient,
   tokenStorage,
 } from '@uppy/core/companion-client'
-import type { LocaleStrings } from '@uppy/core/utils'
 import {
   GoogleDriveIcon,
   GooglePickerView,
   type PickedItem,
-} from '@uppy/provider-views'
+} from '@uppy/core/provider-views'
+import type { LocaleStrings } from '@uppy/core/utils'
 
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'

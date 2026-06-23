@@ -13,8 +13,8 @@ import {
   SearchProvider,
   tokenStorage,
 } from '@uppy/core/companion-client'
+import { SearchProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { SearchProviderViews } from '@uppy/provider-views'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }

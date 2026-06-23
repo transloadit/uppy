@@ -7,9 +7,6 @@
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../provider-views/tsconfig.build.json"
-    },
-    {
       "path": "../tus/tsconfig.build.json"
     },
     {

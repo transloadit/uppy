@@ -13,8 +13,8 @@ import {
   Provider,
   tokenStorage,
 } from '@uppy/core/companion-client'
+import { ProviderViews, SearchView } from '@uppy/core/provider-views'
 import type { I18n, LocaleStrings } from '@uppy/core/utils'
-import { ProviderViews, SearchView } from '@uppy/provider-views'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
 import { useCallback, useState } from 'preact/hooks'
