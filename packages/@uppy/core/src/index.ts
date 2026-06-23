@@ -1,4 +1,3 @@
-export type { Store } from '@uppy/store-default'
 export type {
   Body,
   Meta,
@@ -11,6 +10,7 @@ export { default as EventManager } from './EventManager.js'
 export { debugLogger } from './loggers.js'
 export type { Restrictions, ValidateableFile } from './Restricter.js'
 export { RestrictionError } from './Restricter.js'
+export type { Store } from './store/index.js'
 export type { PluginTarget, UIPluginOptions } from './UIPlugin.js'
 export { default as UIPlugin } from './UIPlugin.js'
 export type {

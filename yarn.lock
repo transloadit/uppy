@@ -9237,7 +9237,6 @@ __metadata:
     "@transloadit/prettier-bytes": "npm:^1.1.0"
     "@types/deep-freeze": "npm:^0"
     "@types/node": "npm:^20.19.0"
-    "@uppy/store-default": "workspace:^"
     "@uppy/utils": "workspace:^"
     cssnano: "npm:^8.0.1"
     deep-freeze: "npm:^0.0.1"
@@ -9605,17 +9604,6 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
-  languageName: unknown
-  linkType: soft
-
-"@uppy/store-default@workspace:*, @uppy/store-default@workspace:^, @uppy/store-default@workspace:packages/@uppy/store-default":
-  version: 0.0.0-use.local
-  resolution: "@uppy/store-default@workspace:packages/@uppy/store-default"
-  dependencies:
-    "@types/node": "npm:^20.19.0"
-    jsdom: "npm:^29.1.1"
-    typescript: "npm:^5.8.3"
-    vitest: "npm:^4.1.6"
   languageName: unknown
   linkType: soft
 
@@ -23475,7 +23463,6 @@ __metadata:
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
     "@uppy/status-bar": "workspace:*"
-    "@uppy/store-default": "workspace:*"
     "@uppy/thumbnail-generator": "workspace:*"
     "@uppy/transloadit": "workspace:*"
     "@uppy/tus": "workspace:*"

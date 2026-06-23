@@ -1,6 +1,5 @@
 /* global AggregateError */
 
-import DefaultStore, { type Store } from '@uppy/store-default'
 import type {
   Body,
   CompanionClientProvider,
@@ -40,6 +39,7 @@ import {
   Restricter,
   RestrictionError,
 } from './Restricter.js'
+import DefaultStore, { type Store } from './store/index.js'
 import supportsUploadProgress from './supportsUploadProgress.js'
 
 type Processor = (
