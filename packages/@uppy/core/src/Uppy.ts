@@ -42,7 +42,7 @@ import {
 } from './Restricter.js'
 import supportsUploadProgress from './supportsUploadProgress.js'
 
-type Processor = (
+export type Processor = (
   fileIDs: string[],
   uploadID: string,
   // biome-ignore lint/suspicious/noConfusingVoidType: ...
