@@ -38,7 +38,6 @@
   },
   "dependencies": {
     "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^",
     "tus-js-client": "^4.3.1"
   },
   "devDependencies": {

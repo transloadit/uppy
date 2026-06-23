@@ -13,9 +13,8 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin, type Uppy } from '@uppy/core'
+import type { LocaleStrings } from '@uppy/core/utils'
 import { ProviderViews } from '@uppy/provider-views'
-
-import type { LocaleStrings } from '@uppy/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }

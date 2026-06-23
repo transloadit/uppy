@@ -5,13 +5,13 @@ import type {
   RemoteUppyFile,
   RequestOptions,
   UppyFile,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import {
   ErrorWithCause,
   fetchWithNetworkError,
   getSocketHost,
   UserFacingApiError,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import pRetry, { AbortError } from 'p-retry'
 import packageJson from '../package.json' with { type: 'json' }
 import AuthError from './AuthError.js'

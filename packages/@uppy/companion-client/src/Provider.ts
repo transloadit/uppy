@@ -9,7 +9,7 @@ import {
   type CompanionClientProvider,
   getSocketHost,
   type RequestOptions,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, { authErrorStatusCode } from './RequestClient.js'
 

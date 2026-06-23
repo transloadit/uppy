@@ -1,4 +1,4 @@
-import type { I18n } from '@uppy/utils'
+import type { I18n } from '@uppy/core/utils'
 import { useSearchForm } from './useSearchForm.js'
 
 interface FilterInputProps {

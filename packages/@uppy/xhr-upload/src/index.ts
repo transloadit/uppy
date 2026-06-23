@@ -20,7 +20,7 @@ import {
   NetworkError,
   type RemoteUppyFile,
   TaskQueue,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -70,7 +70,7 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
 
 export type { XhrUploadOpts as XHRUploadOptions }
 
-declare module '@uppy/utils' {
+declare module '@uppy/core/utils' {
   export interface LocalUppyFile<M extends Meta, B extends Body> {
     xhrUpload?: XhrUploadOpts<M, B>
   }

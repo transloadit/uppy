@@ -6,8 +6,8 @@ import type {
   CompanionFile,
   Meta,
   UppyFileNonGhost,
-} from '@uppy/utils'
-import { getSafeFileId } from '@uppy/utils'
+} from '@uppy/core/utils'
+import { getSafeFileId } from '@uppy/core/utils'
 import companionFileToUppyFile from './companionFileToUppyFile.js'
 
 const addFiles = <M extends Meta, B extends Body>(

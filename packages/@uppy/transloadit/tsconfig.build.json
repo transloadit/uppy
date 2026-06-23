@@ -17,9 +17,6 @@
       "path": "../tus/tsconfig.build.json"
     },
     {
-      "path": "../utils/tsconfig.build.json"
-    },
-    {
       "path": "../core/tsconfig.build.json"
     }
   ]

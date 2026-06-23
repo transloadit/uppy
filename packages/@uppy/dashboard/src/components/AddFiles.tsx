@@ -1,4 +1,4 @@
-import type { I18n, Translator } from '@uppy/utils'
+import type { I18n, Translator } from '@uppy/core/utils'
 import { Component, type ComponentChild, Fragment, type h } from 'preact'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 

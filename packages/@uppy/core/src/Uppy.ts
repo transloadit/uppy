@@ -1,28 +1,5 @@
 /* global AggregateError */
 
-import type {
-  Body,
-  CompanionClientProvider,
-  CompanionClientSearchProvider,
-  CompanionFile,
-  FileProgressNotStarted,
-  FileProgressStarted,
-  I18n,
-  Locale,
-  LocalUppyFile,
-  Meta,
-  MinimalRequiredUppyFile,
-  OptionalPluralizeLocale,
-  RemoteUppyFile,
-  UppyFile,
-  UppyFileId,
-} from '@uppy/utils'
-import {
-  getFileNameAndExtension,
-  getFileType,
-  getSafeFileId,
-  Translator,
-} from '@uppy/utils'
 import throttle from 'lodash/throttle.js'
 // @ts-expect-error untyped
 import ee from 'namespace-emitter'
@@ -41,6 +18,29 @@ import {
 } from './Restricter.js'
 import DefaultStore, { type Store } from './store/index.js'
 import supportsUploadProgress from './supportsUploadProgress.js'
+import type {
+  Body,
+  CompanionClientProvider,
+  CompanionClientSearchProvider,
+  CompanionFile,
+  FileProgressNotStarted,
+  FileProgressStarted,
+  I18n,
+  Locale,
+  LocalUppyFile,
+  Meta,
+  MinimalRequiredUppyFile,
+  OptionalPluralizeLocale,
+  RemoteUppyFile,
+  UppyFile,
+  UppyFileId,
+} from './utils/index.js'
+import {
+  getFileNameAndExtension,
+  getFileType,
+  getSafeFileId,
+  Translator,
+} from './utils/index.js'
 
 type Processor = (
   fileIDs: string[],

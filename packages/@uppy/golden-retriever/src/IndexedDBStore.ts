@@ -1,4 +1,4 @@
-import type { UppyFileId } from '@uppy/utils'
+import type { UppyFileId } from '@uppy/core/utils'
 
 const indexedDB =
   typeof window !== 'undefined' &&

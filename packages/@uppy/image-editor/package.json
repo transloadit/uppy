@@ -46,7 +46,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
     "cropperjs": "^1.6.2",
     "preact": "^10.29.2"
   },

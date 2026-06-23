@@ -1,5 +1,9 @@
 import type { Body, Meta, State as UppyState } from '@uppy/core'
-import type { LocalUppyFile, RemoteUppyFile, UppyFileId } from '@uppy/utils'
+import type {
+  LocalUppyFile,
+  RemoteUppyFile,
+  UppyFileId,
+} from '@uppy/core/utils'
 import throttle from 'lodash/throttle.js'
 
 // we don't want to store blobs in localStorage

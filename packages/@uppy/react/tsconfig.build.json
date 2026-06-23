@@ -10,9 +10,6 @@
   "exclude": ["./src/**/*.test.tsx"],
   "references": [
     {
-      "path": "../utils/tsconfig.build.json"
-    },
-    {
       "path": "../core/tsconfig.build.json"
     },
     {

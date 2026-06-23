@@ -10,8 +10,8 @@ import type {
   UnknownSearchProviderPluginState,
   ValidateableFile,
 } from '@uppy/core'
-import type { CompanionFile } from '@uppy/utils'
-import { remoteFileObjToLocal } from '@uppy/utils'
+import type { CompanionFile } from '@uppy/core/utils'
+import { remoteFileObjToLocal } from '@uppy/core/utils'
 import classNames from 'classnames'
 import type { h } from 'preact'
 import packageJson from '../../package.json' with { type: 'json' }
