@@ -17,7 +17,8 @@ nb_NO.strings = {
   },
   addedNumFiles: 'La til %{numFiles} fil(er)',
   addingMoreFiles: 'Legger til flere filer',
-  additionalRestrictionsFailed: '%{count} ekstra restriksjoner ble ikke oppfylt',
+  additionalRestrictionsFailed:
+    '%{count} ekstra restriksjoner ble ikke oppfylt',
   addMore: 'Legg til',
   addMoreFiles: 'Legg til filer',
   aggregateExceedsSize:
