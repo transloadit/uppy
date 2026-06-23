@@ -100,6 +100,16 @@ let cleanedUp = false
 class IndexedDBStore {
   #ready: Promise<IDBDatabase> | IDBDatabase
 
+  /**
+   * In-memory size cache eliminates the O(n) cursor walk inside getSize()
+   * on every put(), making sequential puts O(1) instead of O(n²).
+   * null means "not yet initialised"; the first getSize() call populates it.
+   * Incremented on successful put, reset to null on delete (since we don't
+   * track deleted-file sizes — the next getSize() rebuilds from scratch,
+   * which is fast because the store shrinks after deletions).
+   */
+  #cachedSize: number | null = null
+
   opts: Required<IndexedDBStoreOptions>
 
   name: string
@@ -173,8 +183,13 @@ class IndexedDBStore {
 
   /**
    * Get the total size of all stored files.
+   *
+   * Uses an in-memory cache after the first call so that sequential puts()
+   * are O(1) rather than O(n) per call — without it, a batch of N puts
+   * cursor-walks the entire store N times (O(n²) reads overall).
    */
   async getSize(): Promise<number> {
+    if (this.#cachedSize !== null) return this.#cachedSize
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readonly')
     const store = transaction.objectStore(STORE_NAME)
@@ -187,6 +202,7 @@ class IndexedDBStore {
           size += cursor.value.data.size
           cursor.continue()
         } else {
+          this.#cachedSize = size
           resolve(size)
         }
       }
@@ -216,7 +232,15 @@ class IndexedDBStore {
       expires: Date.now() + this.opts.expires,
       data: file.data,
     })
-    return waitForRequest(request)
+    const result = await waitForRequest<T>(request)
+    // Only update the cache if it is still live. If a concurrent delete()
+    // invalidated it (set it to null) while this put() was in flight, leave
+    // it null so the next getSize() does a fresh scan — resurrecting it from
+    // 0 here would silently drop the pre-existing total and the deletion.
+    if (this.#cachedSize !== null) {
+      this.#cachedSize += file.data.size
+    }
+    return result
   }
 
   /**
@@ -226,7 +250,12 @@ class IndexedDBStore {
     const db = await this.#ready
     const transaction = db.transaction([STORE_NAME], 'readwrite')
     const request = transaction.objectStore(STORE_NAME).delete(this.key(fileID))
-    return waitForRequest(request)
+    const result = await waitForRequest(request)
+    // We don't track the deleted file's size, so reset the cache so the
+    // next getSize() does a fresh scan (which will be fast after deletions
+    // since the store has shrunk).
+    this.#cachedSize = null
+    return result
   }
 
   /**
