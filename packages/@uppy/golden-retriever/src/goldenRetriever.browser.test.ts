@@ -1,13 +1,27 @@
 import Uppy, { type UppyEventMap, type UppyOptions } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import XHRUpload from '@uppy/xhr-upload'
-import { beforeEach, describe, expect } from 'vitest'
+import { beforeEach, describe, expect, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import { HttpResponse, http } from 'msw'
+import { connect, DB_NAME, STATE_STORE_NAME } from './IndexedDBStore.js'
 import GoldenRetriever from './index.js'
 import { test } from './test-extend.js'
+
+// The recovery snapshot now lives in IndexedDB's `state` store; clearing it
+// (plus localStorage for the fallback path) isolates tests from each other.
+async function clearPersistedState() {
+  localStorage.clear()
+  const db = await connect(DB_NAME)
+  await new Promise<void>((resolve) => {
+    const tx = db.transaction([STATE_STORE_NAME], 'readwrite')
+    tx.objectStore(STATE_STORE_NAME).clear()
+    tx.oncomplete = tx.onerror = () => resolve()
+  })
+  db.close()
+}
 
 function createUppy(
   { withPageReload = false }: { withPageReload?: boolean } = {},
@@ -34,7 +48,7 @@ beforeEach(async () => {
   GoldenRetriever[Symbol.for('uppy test: throttleTime')] = 0
 
   // clear any previously restored files so they don't interfere with tests
-  new Uppy().use(GoldenRetriever).clear()
+  await clearPersistedState()
   document.body.innerHTML = ''
 })
 
@@ -165,6 +179,89 @@ describe('Golden retriever', () => {
 
     expect(uppy.getFiles().length).toBe(2)
     expect(requestAt).toBe(1) // only the first file upload should have happened so far
+  })
+
+  // Regression test for https://github.com/transloadit/uppy/issues/6280
+  // A failing localStorage write must never break uploading. This is what
+  // originally broke: large Transloadit state overflowed localStorage's ~5MB
+  // cap, `setItem` threw QuotaExceededError, and the uncaught throw cascaded on
+  // every assembly update. Persistence is best-effort on every backend, so
+  // adding files must stay functional even when localStorage is unusable.
+  test('does not throw when localStorage is full/unavailable', async () => {
+    const originalSetItem = Storage.prototype.setItem
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(function (this: Storage, key: string, value: string) {
+        if (key.startsWith('uppyState:')) {
+          // Simulate Chrome hitting its ~5MB localStorage cap.
+          throw new DOMException('exceeded the quota', 'QuotaExceededError')
+        }
+        return originalSetItem.call(this, key, value)
+      })
+
+    try {
+      const uppy = createUppy().use(GoldenRetriever)
+
+      // Adding files persists the recovery snapshot. A throwing localStorage
+      // must not propagate out of that persistence.
+      expect(() => {
+        for (let i = 0; i < 5; i++) {
+          uppy.addFile({
+            name: `${i}.txt`,
+            type: 'text/plain',
+            data: createMockFile({ size: 1000 }),
+          })
+        }
+      }).not.toThrow()
+
+      // Uppy must remain functional despite persistence failing.
+      expect(uppy.getFiles().length).toBe(5)
+    } finally {
+      setItemSpy.mockRestore()
+    }
+  })
+
+  // Regression test for https://github.com/transloadit/uppy/issues/6280
+  // The recovery snapshot is persisted to IndexedDB (which has a far larger
+  // quota than localStorage's ~5MB cap), so recovery keeps working even when
+  // localStorage is full or unavailable.
+  test('recovers files via IndexedDB even when localStorage is unavailable', async ({
+    worker,
+  }) => {
+    worker.use(
+      http.post('http://localhost/upload', () => HttpResponse.json({})),
+    )
+
+    const originalSetItem = Storage.prototype.setItem
+    const setItemSpy = vi
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(function (this: Storage, key: string, value: string) {
+        if (key.startsWith('uppyState:')) {
+          // Simulate localStorage being full/unavailable.
+          throw new DOMException('exceeded the quota', 'QuotaExceededError')
+        }
+        return originalSetItem.call(this, key, value)
+      })
+
+    try {
+      let uppy = createUppy().use(GoldenRetriever)
+
+      const fileInput = document.querySelector('.uppy-Dashboard-input')!
+      const file = createMockFile({ size: 50000 })
+      await userEvent.upload(fileInput, file)
+
+      // Reload the page and recreate Uppy. The snapshot can only have survived
+      // in IndexedDB, since every localStorage write threw above.
+      uppy = createUppy({ withPageReload: true })
+        .use(GoldenRetriever)
+        .use(XHRUpload, { endpoint: 'http://localhost/upload' })
+      await new Promise((resolve) => uppy.once('restored', resolve))
+
+      expect(uppy.getFiles().length).toBe(1)
+      await expect.element(page.getByText(file.name)).toBeVisible()
+    } finally {
+      setItemSpy.mockRestore()
+    }
   })
 
   test('Should not clean up files upon completion if there were failed uploads and it should only make the failed file a ghost', async ({

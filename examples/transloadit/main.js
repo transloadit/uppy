@@ -5,12 +5,12 @@ import ImageEditor from '@uppy/image-editor'
 import RemoteSources from '@uppy/remote-sources'
 import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Webcam from '@uppy/webcam'
-
+import GoldenRetriever from '@uppy/golden-retriever'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy/image-editor/css/style.css'
 
-const TRANSLOADIT_KEY = '35c1aed03f5011e982b6afe82599b6a0'
+const TRANSLOADIT_KEY = 'RsiWVN5IVqWNbSjPnk79p40TEHnyigoi'
 // A trivial template that resizes images, just for example purposes.
 //
 // "steps": {
@@ -23,7 +23,7 @@ const TRANSLOADIT_KEY = '35c1aed03f5011e982b6afe82599b6a0'
 //     "imagemagick_stack": "v1.0.0"
 //   }
 // }
-const TEMPLATE_ID = 'bbc273f69e0c4694a5a9d1b587abc1bc'
+const TEMPLATE_ID = '71ca4de9ac8443e2bb2245881d902a81'
 
 /**
  * Form
@@ -56,7 +56,7 @@ const formUppy = new Uppy({
         template_id: TEMPLATE_ID,
       },
     },
-  })
+  }).use(GoldenRetriever)
 
 formUppy.on('error', (err) => {
   document.querySelector('#test-form .error').textContent = err.message
@@ -74,6 +74,65 @@ formUppy.on('complete', ({ transloadit }) => {
 })
 
 window.formUppy = formUppy
+
+// ── GoldenRetriever recovery footprint (issue #6280) ────────────────────────
+// Proves the recovery snapshot moved off localStorage: localStorage stays ~0
+// while IndexedDB absorbs the (potentially multi-MB) Transloadit assembly state.
+// Open the console and watch `IndexedDB` grow as you add files / processing runs.
+const GR_STATE_KEY = formUppy.getID()
+const kb = (n) => `${(n / 1024).toFixed(1)} KB`
+
+const lsSnapshotBytes = () =>
+  localStorage.getItem(`uppyState:${GR_STATE_KEY}`)?.length ?? 0
+
+const idbSnapshotBytes = () =>
+  new Promise((resolve) => {
+    const req = indexedDB.open('uppy-blobs')
+    req.onsuccess = () => {
+      const db = req.result
+      if (!db.objectStoreNames.contains('state')) {
+        db.close()
+        return resolve(0)
+      }
+      const get = db.transaction('state').objectStore('state').get(GR_STATE_KEY)
+      get.onsuccess = () => {
+        resolve(get.result ? JSON.stringify(get.result.metadata).length : 0)
+        db.close()
+      }
+      get.onerror = () => {
+        db.close()
+        resolve(0)
+      }
+    }
+    req.onerror = () => resolve(0)
+  })
+
+async function logRecoveryFootprint(label) {
+  const ls = lsSnapshotBytes()
+  const idb = await idbSnapshotBytes()
+  console.log(
+    `[GR #6280] ${label}: files=${formUppy.getFiles().length} | localStorage=${kb(ls)} | IndexedDB=${kb(idb)}`,
+  )
+  if (idb > 5 * 1024 * 1024)
+    console.warn(
+      `[GR #6280] snapshot is ${kb(idb)} — past localStorage's ~5MB cap; IndexedDB is carrying it. Old code would have thrown QuotaExceededError here.`,
+    )
+}
+
+console.log(
+  `[GR #6280] snapshot backend: ${window.indexedDB ? 'IndexedDB' : 'localStorage'}`,
+)
+formUppy.on('file-added', () => logRecoveryFootprint('file-added'))
+formUppy.on('restored', () => logRecoveryFootprint('restored'))
+formUppy.on('transloadit:assembly-created', () =>
+  logRecoveryFootprint('assembly-created'),
+)
+formUppy.on('complete', () => logRecoveryFootprint('complete'))
+// assemblyResponse (uploads + per-step results) is what bloats the snapshot.
+formUppy.on('restore:plugin-data-changed', (data) => {
+  const ar = data?.Transloadit?.assemblyResponse
+  if (ar) console.log(`[GR #6280] assemblyResponse=${kb(JSON.stringify(ar).length)}`)
+})
 
 /**
  * Form with Dashboard
@@ -120,7 +179,7 @@ const dashboard = new Uppy({
   debug: true,
   autoProceed: false,
   restrictions: {
-    allowedFileTypes: ['.png'],
+    allowedFileTypes: ['.png', '.jpg', '.jpeg'],
   },
 })
   .use(Dashboard, {
@@ -139,7 +198,7 @@ const dashboard = new Uppy({
         template_id: TEMPLATE_ID,
       },
     },
-  })
+  }).use(GoldenRetriever)
 
 window.dashboard = dashboard
 

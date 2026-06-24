@@ -10,6 +10,7 @@ import type {
 import { BasePlugin } from '@uppy/core'
 import type { UppyFileId } from '@uppy/utils'
 import packageJson from '../package.json' with { type: 'json' }
+import IndexedDBMetaDataStore from './IndexedDBMetaDataStore.js'
 import IndexedDBStore from './IndexedDBStore.js'
 import MetaDataStore from './MetaDataStore.js'
 import ServiceWorkerStore from './ServiceWorkerStore.js'
@@ -55,7 +56,7 @@ export default class GoldenRetriever<
 > extends BasePlugin<Opts, M, B> {
   static VERSION = packageJson.version
 
-  #metaDataStore: MetaDataStore<M, B>
+  #metaDataStore: MetaDataStore<M, B> | IndexedDBMetaDataStore<M, B>
 
   #serviceWorkerStore: ServiceWorkerStore | undefined
 
@@ -69,13 +70,19 @@ export default class GoldenRetriever<
     this.type = 'debugger'
     this.id = this.opts.id || 'GoldenRetriever'
 
-    this.#metaDataStore = new MetaDataStore({
+    const metaDataStoreOpts = {
       expires: this.opts.expires,
       storeName: uppy.getID(),
       throttleTime:
         // @ts-expect-error for tests
         GoldenRetriever[Symbol.for('uppy test: throttleTime')] ?? undefined,
-    })
+    }
+    // Prefer IndexedDB (large quota) over localStorage (~5MB) for the recovery
+    // snapshot, falling back to localStorage where IndexedDB is unavailable
+    // (e.g. some private-mode/webview contexts). See issue #6280.
+    this.#metaDataStore = IndexedDBStore.isSupported
+      ? new IndexedDBMetaDataStore(metaDataStoreOpts)
+      : new MetaDataStore(metaDataStoreOpts)
     if (this.opts.serviceWorker) {
       this.#serviceWorkerStore = new ServiceWorkerStore({
         storeName: uppy.getID(),
@@ -89,7 +96,7 @@ export default class GoldenRetriever<
   }
 
   async #restore(): Promise<void> {
-    const recoveredState = this.#metaDataStore.load()
+    const recoveredState = await this.#metaDataStore.load()
     if (!recoveredState) {
       return
     }

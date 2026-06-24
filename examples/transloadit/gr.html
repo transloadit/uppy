@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>GoldenRetriever × Transloadit (issue #6280)</title>
+  </head>
+  <body>
+    <style>
+      html {
+        background: #f1f1f1;
+      }
+      main {
+        padding: 20px;
+        font: 12pt sans-serif;
+        background: white;
+        width: 800px;
+        margin: auto;
+      }
+    </style>
+    <main>
+      <h1>GoldenRetriever recovery footprint (#6280)</h1>
+      <p>
+        Add files and watch the console: <code>localStorage</code> stays ~0
+        while <code>IndexedDB</code> grows as the recovery snapshot is persisted.
+      </p>
+      <div id="dashboard"></div>
+    </main>
+    <script type="module" src="/gr.js"></script>
+  </body>
+</html>

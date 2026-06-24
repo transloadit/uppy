@@ -11,6 +11,7 @@
     "@uppy/dashboard": "workspace:*",
     "@uppy/drop-target": "workspace:*",
     "@uppy/form": "workspace:*",
+    "@uppy/golden-retriever": "workspace:*",
     "@uppy/image-editor": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/transloadit": "workspace:*",
