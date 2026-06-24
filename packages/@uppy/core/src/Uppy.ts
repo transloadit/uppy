@@ -177,7 +177,19 @@ export type UnknownProviderPlugin<
   BaseProviderPlugin & {
     rootFolderId: string | null
     files: UppyFile<M, B>[]
-    provider: Provider<M, B>
+    // Structural subset of the real `Provider` class,structural rather than the nominal class type so custom
+    // providers matching the public surface aren't forced to inherit from `Provider`.
+    provider: Pick<
+      Provider<M, B>,
+      | 'name'
+      | 'provider'
+      | 'login'
+      | 'logout'
+      | 'fetchPreAuthToken'
+      | 'fileUrl'
+      | 'list'
+      | 'search'
+    >
     view: ProviderView<M, B>
   }
 
@@ -199,7 +211,11 @@ export type UnknownSearchProviderPlugin<
   B extends Body,
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> &
   BaseProviderPlugin & {
-    provider: SearchProvider<M, B>
+    // Structural subset of the real `SearchProvider` class (see note above).
+    provider: Pick<
+      SearchProvider<M, B>,
+      'name' | 'provider' | 'fileUrl' | 'search'
+    >
   }
 
 // for better readability
