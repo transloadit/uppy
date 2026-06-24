@@ -10,10 +10,18 @@ import type { StoredState } from './MetaDataStore.js'
 
 type MetaData<M extends Meta, B extends Body> = StoredState<M, B>['metadata']
 
-type StateRecord<M extends Meta, B extends Body> = {
+// `metadata` is stored as a JSON string, not a live object. IndexedDB persists
+// values via the structured clone algorithm, which *throws* on anything
+// non-cloneable (e.g. a function) anywhere in the graph — whereas the
+// localStorage path used `JSON.stringify`, which silently drops such values.
+// Cloning the live Uppy/Transloadit state directly made `put` throw, the error
+// was swallowed, and the snapshot froze at an early state — so restored files
+// looked not-yet-uploaded and were ghosted. Serializing to JSON ourselves keeps
+// the exact semantics of the (working) localStorage path. See issue #6280.
+type StateRecord = {
   id: string
   expires: number
-  metadata: MetaData<M, B>
+  metadata: string
 }
 
 type Options = { storeName: string; expires: number; throttleTime?: number }
@@ -52,15 +60,15 @@ export default class IndexedDBMetaDataStore<M extends Meta, B extends Body> {
 
   async load(): Promise<MetaData<M, B> | undefined> {
     const db = await this.#db
-    const record = await waitForRequest<StateRecord<M, B> | undefined>(
+    const record = await waitForRequest<StateRecord | undefined>(
       db
         .transaction([STATE_STORE_NAME])
         .objectStore(STATE_STORE_NAME)
         .get(this.#key),
     )
     if (!record || record.expires < Date.now()) return undefined
-    this.#cache = record.metadata
-    return record.metadata
+    this.#cache = JSON.parse(record.metadata)
+    return this.#cache ?? undefined
   }
 
   get(): MetaData<M, B> | undefined {
@@ -81,10 +89,12 @@ export default class IndexedDBMetaDataStore<M extends Meta, B extends Body> {
       if (this.#cache == null) {
         store.delete(this.#key)
       } else {
+        // JSON.stringify (not raw structured clone) so non-cloneable values are
+        // dropped instead of throwing. See the StateRecord comment above.
         store.put({
           id: this.#key,
           expires: Date.now() + this.#expires,
-          metadata: this.#cache,
+          metadata: JSON.stringify(this.#cache),
         })
       }
     } catch {
