@@ -17,7 +17,7 @@ type MetaData<M extends Meta, B extends Body> = StoredState<M, B>['metadata']
 // Cloning the live Uppy/Transloadit state directly made `put` throw, the error
 // was swallowed, and the snapshot froze at an early state — so restored files
 // looked not-yet-uploaded and were ghosted. Serializing to JSON ourselves keeps
-// the exact semantics of the (working) localStorage path. 
+// the exact semantics of the (working) localStorage path.
 type StateRecord = {
   id: string
   expires: number

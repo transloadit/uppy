@@ -64,7 +64,9 @@ export function connect(dbName: string): Promise<IDBDatabase> {
       if (event.oldVersion < 4) {
         // Added in v4: a store for GoldenRetriever's recovery snapshot, which
         // moved out of localStorage to escape its ~5MB quota. See issue #6280.
-        const store = db.createObjectStore(METADATA_STORE_NAME, { keyPath: 'id' })
+        const store = db.createObjectStore(METADATA_STORE_NAME, {
+          keyPath: 'id',
+        })
         store.createIndex('expires', 'expires', { unique: false })
       }
 

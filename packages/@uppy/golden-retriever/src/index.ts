@@ -77,7 +77,7 @@ export default class GoldenRetriever<
         // @ts-expect-error for tests
         GoldenRetriever[Symbol.for('uppy test: throttleTime')] ?? undefined,
     }
-    //  fallback to localStorage when IndexedDB is unavailable 
+    //  fallback to localStorage when IndexedDB is unavailable
     this.#metaDataStore = IndexedDBStore.isSupported
       ? new IndexedDBMetaDataStore(metaDataStoreOpts)
       : new MetaDataStore(metaDataStoreOpts)
