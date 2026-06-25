@@ -287,7 +287,9 @@ class IndexedDBStore {
       )
       await Promise.all([
         IndexedDBStore.#deleteExpired(transaction.objectStore(STORE_NAME)),
-        IndexedDBStore.#deleteExpired(transaction.objectStore(STATE_STORE_NAME)),
+        IndexedDBStore.#deleteExpired(
+          transaction.objectStore(STATE_STORE_NAME),
+        ),
       ])
     } finally {
       // Always release the connection, even if expiry fails — otherwise a
