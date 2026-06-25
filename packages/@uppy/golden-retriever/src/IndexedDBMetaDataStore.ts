@@ -47,6 +47,10 @@ export default class IndexedDBMetaDataStore<M extends Meta, B extends Body> {
 
   constructor(opts: Options) {
     this.#db = connect(DB_NAME)
+    // Attach a handler now so a connection failure can't surface as an
+    // unhandledrejection before load()/#save() get a chance to await it; both
+    // of those handle the rejection themselves (persistence is best-effort).
+    this.#db.catch(() => {})
     this.#key = opts.storeName
     this.#expires = opts.expires
     this.#saveThrottled =

@@ -280,15 +280,20 @@ class IndexedDBStore {
    */
   static async cleanup(): Promise<void> {
     const db = await connect(DB_NAME)
-    const transaction = db.transaction(
-      [STORE_NAME, STATE_STORE_NAME],
-      'readwrite',
-    )
-    await Promise.all([
-      IndexedDBStore.#deleteExpired(transaction.objectStore(STORE_NAME)),
-      IndexedDBStore.#deleteExpired(transaction.objectStore(STATE_STORE_NAME)),
-    ])
-    db.close()
+    try {
+      const transaction = db.transaction(
+        [STORE_NAME, STATE_STORE_NAME],
+        'readwrite',
+      )
+      await Promise.all([
+        IndexedDBStore.#deleteExpired(transaction.objectStore(STORE_NAME)),
+        IndexedDBStore.#deleteExpired(transaction.objectStore(STATE_STORE_NAME)),
+      ])
+    } finally {
+      // Always release the connection, even if expiry fails — otherwise a
+      // rejected delete would leak the connection (and could block upgrades).
+      db.close()
+    }
   }
 }
 
