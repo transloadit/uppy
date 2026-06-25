@@ -1,11 +1,11 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Form from '@uppy/form'
+import GoldenRetriever from '@uppy/golden-retriever'
 import ImageEditor from '@uppy/image-editor'
 import RemoteSources from '@uppy/remote-sources'
 import Transloadit, { COMPANION_URL } from '@uppy/transloadit'
 import Webcam from '@uppy/webcam'
-import GoldenRetriever from '@uppy/golden-retriever'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import '@uppy/image-editor/css/style.css'
@@ -56,7 +56,8 @@ const formUppy = new Uppy({
         template_id: TEMPLATE_ID,
       },
     },
-  }).use(GoldenRetriever)
+  })
+  .use(GoldenRetriever)
 
 formUppy.on('error', (err) => {
   document.querySelector('#test-form .error').textContent = err.message
@@ -131,7 +132,8 @@ formUppy.on('complete', () => logRecoveryFootprint('complete'))
 // assemblyResponse (uploads + per-step results) is what bloats the snapshot.
 formUppy.on('restore:plugin-data-changed', (data) => {
   const ar = data?.Transloadit?.assemblyResponse
-  if (ar) console.log(`[GR #6280] assemblyResponse=${kb(JSON.stringify(ar).length)}`)
+  if (ar)
+    console.log(`[GR #6280] assemblyResponse=${kb(JSON.stringify(ar).length)}`)
 })
 
 /**
@@ -198,7 +200,8 @@ const dashboard = new Uppy({
         template_id: TEMPLATE_ID,
       },
     },
-  }).use(GoldenRetriever)
+  })
+  .use(GoldenRetriever)
 
 window.dashboard = dashboard
 
