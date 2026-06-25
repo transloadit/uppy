@@ -8,8 +8,7 @@ const { fakeXhr } = vi.hoisted(() => ({
   fakeXhr: {
     status: 403,
     responseText: JSON.stringify({
-      message:
-        'File cannot be uploaded as the BIN content type is disallowed!',
+      message: 'File cannot be uploaded as the BIN content type is disallowed!',
       status_code: 403,
     }),
   },
