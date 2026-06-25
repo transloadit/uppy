@@ -59,16 +59,22 @@ export default class IndexedDBMetaDataStore<M extends Meta, B extends Body> {
   }
 
   async load(): Promise<MetaData<M, B> | undefined> {
-    const db = await this.#db
-    const record = await waitForRequest<StateRecord | undefined>(
-      db
-        .transaction([STATE_STORE_NAME])
-        .objectStore(STATE_STORE_NAME)
-        .get(this.#key),
-    )
-    if (!record || record.expires < Date.now()) return undefined
-    this.#cache = JSON.parse(record.metadata)
-    return this.#cache ?? undefined
+    try {
+      const db = await this.#db
+      const record = await waitForRequest<StateRecord | undefined>(
+        db
+          .transaction([STATE_STORE_NAME])
+          .objectStore(STATE_STORE_NAME)
+          .get(this.#key),
+      )
+      if (!record || record.expires < Date.now()) return undefined
+      this.#cache = JSON.parse(record.metadata)
+      return this.#cache ?? undefined
+    } catch {
+      // Best-effort: a corrupt record, failed read, or unavailable DB must
+      // never break restore — mirrors the localStorage path's tolerant parse.
+      return undefined
+    }
   }
 
   get(): MetaData<M, B> | undefined {

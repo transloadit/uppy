@@ -45,6 +45,7 @@ export function connect(dbName: string): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
       const db: IDBDatabase = (event.target as IDBOpenDBRequest).result
+      closeOnVersionChange(db)
       const transaction = (event.currentTarget as IDBOpenDBRequest)
         .transaction as IDBTransaction
 
@@ -74,10 +75,21 @@ export function connect(dbName: string): Promise<IDBDatabase> {
       }
     }
     request.onsuccess = (event) => {
-      resolve((event.target as IDBRequest).result)
+      const db = (event.target as IDBRequest).result as IDBDatabase
+      closeOnVersionChange(db)
+      resolve(db)
     }
     request.onerror = reject
   })
+}
+
+/**
+ * Close this connection when another tab/instance requests a higher DB version,
+ * so we never block its upgrade (and it never blocks ours). The connection is
+ * unusable afterwards, but recovery persistence is best-effort.
+ */
+function closeOnVersionChange(db: IDBDatabase): void {
+  db.onversionchange = () => db.close()
 }
 
 export function waitForRequest<T>(request: IDBRequest): Promise<T> {

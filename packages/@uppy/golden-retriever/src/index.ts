@@ -419,7 +419,14 @@ export default class GoldenRetriever<
   }
 
   install(): void {
-    this.#restore()
+    this.#restore().catch((err) => {
+      // Restore is best-effort: a failure here must not break the plugin.
+      this.uppy.log(
+        '[GoldenRetriever] Could not restore from a previous session',
+        'warning',
+      )
+      this.uppy.log(err)
+    })
 
     this.uppy.on('state-update', this.#handleStateUpdate)
     this.uppy.on('restore-confirmed', this.#handleRestoreConfirmed)
