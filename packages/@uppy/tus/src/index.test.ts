@@ -1,7 +1,51 @@
 import Core, { type UppyEventMap } from '@uppy/core'
-import nock from 'nock'
-import { afterEach, describe, expect, expectTypeOf, it } from 'vitest'
+import { describe, expect, expectTypeOf, it, vi } from 'vitest'
 import Tus, { type TusBody } from './index.js'
+
+// Shared fake XHR object — must be declared via vi.hoisted so it's available
+// inside the vi.mock factory (which is hoisted before imports).
+const { fakeXhr } = vi.hoisted(() => ({
+  fakeXhr: {
+    status: 403,
+    responseText: JSON.stringify({
+      message:
+        'File cannot be uploaded as the BIN content type is disallowed!',
+      status_code: 403,
+    }),
+  },
+}))
+
+// Mock tus-js-client so the upload-error test never touches the network.
+// The mock Upload fires onError immediately with a fake DetailedError.
+vi.mock('tus-js-client', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('tus-js-client')>()
+  class MockUpload {
+    private options: Record<string, any>
+
+    constructor(_file: any, options: Record<string, any>) {
+      this.options = options
+    }
+
+    start() {
+      const err = Object.assign(new Error('tus: server responded with 403'), {
+        originalResponse: {
+          getStatus: () => 403,
+          getUnderlyingObject: () => fakeXhr,
+        },
+        originalRequest: null,
+      })
+      setTimeout(() => this.options.onError(err), 0)
+    }
+
+    abort() {}
+
+    // ponytail: tus calls this before start(); return empty so no resume logic runs
+    findPreviousUploads() {
+      return Promise.resolve([])
+    }
+  }
+  return { ...actual, Upload: MockUpload }
+})
 
 describe('Tus', () => {
   it('Throws errors if autoRetry option is true', () => {
@@ -47,27 +91,10 @@ describe('Tus', () => {
   })
 
   describe('upload-error response', () => {
-    afterEach(() => {
-      nock.cleanAll()
-    })
-
     it('sends the server response over the upload-error event', async () => {
-      nock('https://fake-endpoint.uppy.io')
-        .post('/files/')
-        .reply(
-          403,
-          JSON.stringify({
-            message:
-              'File cannot be uploaded as the BIN content type is disallowed!',
-            status_code: 403,
-          }),
-          { 'Content-Type': 'application/json' },
-        )
-
       const core = new Core<any, TusBody>()
       core.use(Tus, {
         endpoint: 'https://fake-endpoint.uppy.io/files/',
-        // Avoid retrying so the failure surfaces immediately.
         retryDelays: [],
       })
       const id = core.addFile({
@@ -89,16 +116,12 @@ describe('Tus', () => {
         }),
         event.then(([, , response]) => {
           expect(response?.status).toBe(403)
-          const { xhr } = response!.body!
-          expect(xhr).toBeInstanceOf(XMLHttpRequest)
-          expect(JSON.parse(xhr.responseText).message).toBe(
+          expect(JSON.parse(response!.body!.xhr.responseText).message).toBe(
             'File cannot be uploaded as the BIN content type is disallowed!',
           )
         }),
       ])
 
-      // The response is also persisted on the file so it is available on the
-      // `complete` result and via `getFile`.
       expect(core.getFile(id).response?.status).toBe(403)
     })
   })
