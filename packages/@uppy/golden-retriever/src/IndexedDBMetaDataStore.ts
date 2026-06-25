@@ -3,7 +3,7 @@ import throttle from 'lodash/throttle.js'
 import {
   connect,
   DB_NAME,
-  STATE_STORE_NAME,
+  METADATA_STORE_NAME,
   waitForRequest,
 } from './IndexedDBStore.js'
 import type { StoredState } from './MetaDataStore.js'
@@ -67,8 +67,8 @@ export default class IndexedDBMetaDataStore<M extends Meta, B extends Body> {
       const db = await this.#db
       const record = await waitForRequest<StateRecord | undefined>(
         db
-          .transaction([STATE_STORE_NAME])
-          .objectStore(STATE_STORE_NAME)
+          .transaction([METADATA_STORE_NAME])
+          .objectStore(METADATA_STORE_NAME)
           .get(this.#key),
       )
       if (!record || record.expires < Date.now()) return undefined
@@ -94,8 +94,8 @@ export default class IndexedDBMetaDataStore<M extends Meta, B extends Body> {
     try {
       const db = await this.#db
       const store = db
-        .transaction([STATE_STORE_NAME], 'readwrite')
-        .objectStore(STATE_STORE_NAME)
+        .transaction([METADATA_STORE_NAME], 'readwrite')
+        .objectStore(METADATA_STORE_NAME)
       if (this.#cache == null) {
         store.delete(this.#key)
       } else {

@@ -10,19 +10,19 @@ import IndexedDBMetaDataStore from './IndexedDBMetaDataStore.js'
 import IndexedDBStore, {
   connect,
   DB_NAME,
-  STATE_STORE_NAME,
+  METADATA_STORE_NAME,
 } from './IndexedDBStore.js'
 import GoldenRetriever from './index.js'
 import { test } from './test-extend.js'
 
-// The recovery snapshot now lives in IndexedDB's `state` store; clearing it
+// The recovery snapshot now lives in IndexedDB's `metadata` store; clearing it
 // (plus localStorage for the fallback path) isolates tests from each other.
 async function clearPersistedState() {
   localStorage.clear()
   const db = await connect(DB_NAME)
   await new Promise<void>((resolve) => {
-    const tx = db.transaction([STATE_STORE_NAME], 'readwrite')
-    tx.objectStore(STATE_STORE_NAME).clear()
+    const tx = db.transaction([METADATA_STORE_NAME], 'readwrite')
+    tx.objectStore(METADATA_STORE_NAME).clear()
     tx.oncomplete = tx.onerror = () => resolve()
   })
   db.close()

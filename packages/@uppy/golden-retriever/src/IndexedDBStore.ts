@@ -16,10 +16,8 @@ const isSupported = !!indexedDB
 
 export const DB_NAME = 'uppy-blobs'
 const STORE_NAME = 'files' // maybe have a thumbnail store in the future
-// Holds GoldenRetriever's recovery snapshot (the metadata that used to live in
-// localStorage). IndexedDB has a far larger quota, so large Transloadit
-// assemblies no longer overflow it. See issue #6280.
-export const STATE_STORE_NAME = 'state'
+
+export const METADATA_STORE_NAME = 'metadata'
 const DEFAULT_EXPIRY = 24 * 60 * 60 * 1000 // 24 hours
 const DB_VERSION = 4
 const MiB = 0x10_00_00
@@ -66,7 +64,7 @@ export function connect(dbName: string): Promise<IDBDatabase> {
       if (event.oldVersion < 4) {
         // Added in v4: a store for GoldenRetriever's recovery snapshot, which
         // moved out of localStorage to escape its ~5MB quota. See issue #6280.
-        const store = db.createObjectStore(STATE_STORE_NAME, { keyPath: 'id' })
+        const store = db.createObjectStore(METADATA_STORE_NAME, { keyPath: 'id' })
         store.createIndex('expires', 'expires', { unique: false })
       }
 
@@ -282,13 +280,13 @@ class IndexedDBStore {
     const db = await connect(DB_NAME)
     try {
       const transaction = db.transaction(
-        [STORE_NAME, STATE_STORE_NAME],
+        [STORE_NAME, METADATA_STORE_NAME],
         'readwrite',
       )
       await Promise.all([
         IndexedDBStore.#deleteExpired(transaction.objectStore(STORE_NAME)),
         IndexedDBStore.#deleteExpired(
-          transaction.objectStore(STATE_STORE_NAME),
+          transaction.objectStore(METADATA_STORE_NAME),
         ),
       ])
     } finally {
