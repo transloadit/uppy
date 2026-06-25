@@ -7,7 +7,11 @@ import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import { HttpResponse, http } from 'msw'
 import IndexedDBMetaDataStore from './IndexedDBMetaDataStore.js'
-import { connect, DB_NAME, STATE_STORE_NAME } from './IndexedDBStore.js'
+import IndexedDBStore, {
+  connect,
+  DB_NAME,
+  STATE_STORE_NAME,
+} from './IndexedDBStore.js'
 import GoldenRetriever from './index.js'
 import { test } from './test-extend.js'
 
@@ -77,6 +81,11 @@ describe('Golden retriever', () => {
 
     const file = createMockFile({ size: 50000 })
     await userEvent.upload(fileInput, file)
+
+    // On the default path the snapshot is persisted to IndexedDB, so the old
+    // localStorage backend must stay untouched (this is the positive mirror of
+    // the localStorage-fallback test). See issue #6280.
+    expect(localStorage.getItem(`uppyState:${uppy.getID()}`)).toBeNull()
 
     // reload page and recreate Uppy instance
     uppy = createUppy({ withPageReload: true })
@@ -262,6 +271,44 @@ describe('Golden retriever', () => {
       await expect.element(page.getByText(file.name)).toBeVisible()
     } finally {
       setItemSpy.mockRestore()
+    }
+  })
+
+  // IndexedDB is the primary backend, but where it's unavailable (e.g. some
+  // private-mode/webview contexts) GoldenRetriever must fall back to the
+  // localStorage-backed MetaDataStore and still restore. This is the only test
+  // that exercises the fallback path — every other test runs on IndexedDB.
+  test('falls back to localStorage when IndexedDB is unavailable', async ({
+    worker,
+  }) => {
+    worker.use(
+      http.post('http://localhost/upload', () => HttpResponse.json({})),
+    )
+
+    const originalIsSupported = IndexedDBStore.isSupported
+    // The store backend is chosen from this flag at GoldenRetriever construction.
+    IndexedDBStore.isSupported = false
+
+    try {
+      let uppy = createUppy().use(GoldenRetriever)
+
+      const fileInput = document.querySelector('.uppy-Dashboard-input')!
+      const file = createMockFile({ size: 50000 })
+      await userEvent.upload(fileInput, file)
+
+      // The snapshot must land in localStorage (the fallback), not IndexedDB.
+      expect(localStorage.getItem(`uppyState:${uppy.getID()}`)).toBeTruthy()
+
+      // Reload and recreate Uppy; recovery must work off localStorage.
+      uppy = createUppy({ withPageReload: true })
+        .use(GoldenRetriever)
+        .use(XHRUpload, { endpoint: 'http://localhost/upload' })
+      await new Promise((resolve) => uppy.once('restored', resolve))
+
+      expect(uppy.getFiles().length).toBe(1)
+      await expect.element(page.getByText(file.name)).toBeVisible()
+    } finally {
+      IndexedDBStore.isSupported = originalIsSupported
     }
   })
 
