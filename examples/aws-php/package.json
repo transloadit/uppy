@@ -8,7 +8,7 @@
     "uppy": "workspace:*"
   },
   "devDependencies": {
-    "esbuild": "^0.25.0"
+    "esbuild": "^0.28.1"
   },
   "private": true,
   "type": "module",
