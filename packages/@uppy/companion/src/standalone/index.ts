@@ -146,7 +146,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
   }
 
   if (process.env['COMPANION_COOKIE_DOMAIN']) {
-    cookieOptions.domain = process.env['COMPANION_COOKIE_DOMAIN'];
+    cookieOptions.domain = process.env['COMPANION_COOKIE_DOMAIN']
   }
 
   sessionOptions.cookie = cookieOptions
