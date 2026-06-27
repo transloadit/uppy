@@ -60,7 +60,7 @@
     "@uppy/google-drive": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
-    "@vitest/browser": "^4.1.6",
+    "@vitest/browser": "^4.1.8",
     "@vitest/browser-playwright": "^4.1.6",
     "cssnano": "^8.0.1",
     "jsdom": "^29.1.1",

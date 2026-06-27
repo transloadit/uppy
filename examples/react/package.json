@@ -24,7 +24,7 @@
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^6.0.2",
-    "@vitest/browser": "^4.1.6",
+    "@vitest/browser": "^4.1.8",
     "@vitest/browser-playwright": "^4.1.6",
     "msw": "^2.10.4",
     "playwright": "1.60.0",

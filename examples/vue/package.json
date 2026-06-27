@@ -22,7 +22,7 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.11",
     "@vitejs/plugin-vue": "^6.0.1",
-    "@vitest/browser": "^4.1.6",
+    "@vitest/browser": "^4.1.8",
     "@vitest/browser-playwright": "^4.1.6",
     "msw": "^2.10.4",
     "playwright": "1.60.0",
