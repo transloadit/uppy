@@ -1,0 +1,89 @@
+---
+slug: /webdav
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import UppyCdnExample from '/src/components/UppyCdnExample';
+import CompanionOptions from './_companion-options.mdx';
+
+# Import from WebDAV
+
+WebDAV (Web Distributed Authoring and Versioning) is an extension of the HTTP
+protocol that enables users to manage files on remote servers. It supports
+uploading, downloading, editing, and organizing files over the web, making it a
+versatile option for remote file storage and collaboration.
+
+## When should I use this?
+
+When you want to let users import files from any WebDAV supported service, such
+as Nextcloud, OwnCloud, and Box.
+
+This plugin only supports public WebDAV URLs. Some providers offer WebDAV with
+OAuth, which is not supported.
+
+A [Companion](/docs/companion) instance is required for the WebDAV plugin to
+work. This saves the user bandwidth, especially helpful if they are on a mobile
+connection. You can self-host Companion or get a hosted version with any
+[Transloadit plan](https://transloadit.com/pricing/).
+
+:::note
+
+Companion has
+[Server Side Request Forgery](https://owasp.org/www-community/attacks/Server_Side_Request_Forgery)
+(SSRF) protections built-in so you don’t have to worry about the security
+implications of arbitrary URLs.
+
+:::
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/webdav
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/webdav
+```
+
+  </TabItem>
+
+  <TabItem value="cdn" label="CDN">
+    <UppyCdnExample>
+      {`
+        import { Uppy, WebDav } from "{{UPPY_JS_URL}}"
+        const uppy = new Uppy()
+        uppy.use(WebDav, {
+          // Options
+        })
+      `}
+    </UppyCdnExample>
+  </TabItem>
+</Tabs>
+
+## Use
+
+```js {10-13} showLineNumbers
+import Uppy from '@uppy/core';
+import Dashboard from '@uppy/dashboard';
+import WebDav from '@uppy/webdav';
+
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+
+new Uppy()
+	.use(Dashboard, { inline: true, target: '#dashboard' })
+	.use(WebDav, { companionUrl: 'https://your-companion.com' });
+```
+
+## API
+
+### Options
+
+<CompanionOptions />

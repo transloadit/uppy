@@ -9,6 +9,7 @@
     "packages/@uppy/*",
     "packages/@uppy/angular/projects/uppy/*",
     "packages/uppy",
+    "packages/uppy.io",
     "private/*"
   ],
   "scripts": {
@@ -16,7 +17,7 @@
     "build:clean": "git clean -Xfd packages e2e .parcel-cache coverage .turbo .turbo -e '!node_modules' -e '!**/node_modules/**/*'",
     "build:watch": "yarn build && turbo watch build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "migrate:components": "yarn workspace @uppy/components migrate",
-    "check": "yarn exec biome check --write",
+    "check": "yarn exec biome check --write && yarn workspace uppy-io format && yarn workspace uppy-io lint",
     "check:ci": "yarn exec biome ci",
     "dev": "yarn workspace @uppy-dev/dev dev",
     "dev:with-companion": "npm-run-all --parallel start:companion dev",

@@ -1,0 +1,130 @@
+#### `useDropzone(options?)`
+
+Creates a dropzone for drag-and-drop file uploads using Uppy.
+
+**Arguments**:
+
+- `noClick?: boolean`
+- `onDragOver?: (event: Event) => void`
+- `onDragEnter?: (event: Event) => void`
+- `onDragLeave?: (event: Event) => void`
+- `onDrop?: (files: File[]) => void`
+- `onFileInputChange?: (files: File[]) => void`
+
+**Returns**:
+
+- `getRootProps: Function`
+- `getInputProps: Function`
+
+#### `useFileInput(props?)`
+
+Creates a file input for programmatic file selection using Uppy.
+
+**Arguments**:
+
+- `multiple?: boolean`
+- `accept?: string`
+
+**Returns**:
+
+- `getInputProps: Function`
+- `getButtonProps: Function`
+
+#### `useRemoteSource(sourceId)`
+
+Manages remote source connections (cloud storage providers).
+
+**Arguments**:
+
+- `sourceId: 'Box' | 'Dropbox' | 'Facebook' | 'GoogleDrive' | 'Instagram' | 'OneDrive' | 'Unsplash' | 'Url' | 'Zoom'`
+
+**Returns**:
+
+```typescript
+{
+  state: {
+    authenticated: boolean | undefined
+    didFirstRender: boolean
+    searchString: string
+    loading: boolean | string
+    partialTree: PartialTree
+    currentFolderId: PartialTreeId
+    username: string | null
+    breadcrumbs: PartialTreeFolder[]
+    selectedAmount: number
+    error: string | null
+  }
+  login: Function
+  logout: Function
+  open: Function
+  checkbox: Function
+  done: Function
+  cancel: Function
+}
+```
+
+#### `useWebcam({ onSubmit })`
+
+Manages webcam functionality for capturing photos/videos.
+
+**Arguments**:
+
+- `onSubmit: () => void`
+
+**Returns**:
+
+```typescript
+{
+  state: {
+    hasCamera: boolean
+    cameraReady: boolean
+    cameraError: null | Error
+    recordingLengthSeconds: number
+    videoSources: MediaDeviceInfo[]
+    currentDeviceId: string | MediaStreamTrack | null | undefined
+    recordedVideo: null | string
+    isRecording: boolean
+    status: 'init' | 'ready' | 'recording' | 'captured' | 'error'
+  }
+  stop: Function
+  start: Function
+  getVideoProps: Function
+  getSnapshotButtonProps: Function
+  getRecordButtonProps: Function
+  getStopRecordingButtonProps: Function
+  getSubmitButtonProps: Function
+  getDiscardButtonProps: Function
+}
+```
+
+#### `useScreenCapture({ onSubmit })`
+
+Manages screen capture functionality for capturing screen image / video.
+
+**Arguments**:
+
+- `onSubmit: () => void`
+
+**Returns**:
+
+```typescript
+{
+	state: {
+		streamActive: boolean;
+		audioStreamActive: boolean;
+		recording: boolean;
+		recordedVideo: string | null;
+		screenRecError: Error | null;
+		capturedScreenshotUrl: string | null;
+		status: 'init' | 'ready' | 'recording' | 'captured' | 'error';
+	}
+	stop: Function;
+	start: Function;
+	getVideoProps: Function;
+	getScreenshotButtonProps: Function;
+	getRecordButtonProps: Function;
+	getStopRecordingButtonProps: Function;
+	getSubmitButtonProps: Function;
+	getDiscardButtonProps: Function;
+}
+```
