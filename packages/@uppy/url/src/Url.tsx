@@ -121,8 +121,6 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     this.client = new RequestClient(uppy, {
-      pluginId: this.id,
-      provider: 'url',
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,

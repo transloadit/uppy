@@ -48,7 +48,7 @@ export default function FilesList(props: FilesListProps) {
 
               <p className="uppy:truncate">{file.name}</p>
               <p className="uppy:text-gray-500 uppy:tabular-nums uppy:min-w-18 uppy:text-right uppy:ml-auto">
-                {prettyBytes(file.size || 0)}
+                {file.size != null && prettyBytes(file.size)}
               </p>
 
               <Fragment>

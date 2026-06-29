@@ -27,7 +27,7 @@ interface UppyFileBase<M extends Meta, B extends Body> {
   missingRequiredMetaFields?: string[]
   serverToken?: string | null
   size: number | null
-  source?: string
+  source?: string // todo remove this (doesn't seem to be actually used anywhere)
   type: string
   uploadURL?: string
   response?: {

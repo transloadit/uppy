@@ -1,6 +1,14 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
 import type { CompanionClientSearchProvider } from '@uppy/utils'
-import RequestClient, { type Opts } from './RequestClient.js'
+import RequestClient, {
+  type Opts as RequestClientOpts,
+} from './RequestClient.js'
+
+export interface Opts extends RequestClientOpts {
+  name?: string
+  provider: string
+  pluginId: string
+}
 
 const getName = (id: string): string => {
   return id
@@ -25,8 +33,8 @@ export default class SearchProvider<M extends Meta, B extends Body>
     super(uppy, opts)
     this.provider = opts.provider
     this.id = this.provider
-    this.name = this.opts.name || getName(this.id)
-    this.pluginId = this.opts.pluginId
+    this.name = opts.name || getName(this.id)
+    this.pluginId = opts.pluginId
   }
 
   fileUrl(id: string): string {

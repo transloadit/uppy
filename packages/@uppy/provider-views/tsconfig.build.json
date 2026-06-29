@@ -2,8 +2,7 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "outDir": "./lib",
-    "rootDir": "./src",
-    "types": ["google.accounts", "google.picker", "gapi"]
+    "rootDir": "./src"
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],
@@ -13,6 +12,9 @@
     },
     {
       "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../companion-client/tsconfig.build.json"
     }
   ]
 }

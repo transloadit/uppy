@@ -2,7 +2,8 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["google.accounts", "google.picker", "gapi"]
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
