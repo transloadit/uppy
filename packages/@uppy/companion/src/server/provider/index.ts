@@ -164,6 +164,8 @@ export function addProviderOptions(
         key?: string | undefined
         secret?: string | undefined
         credentialsURL?: string | undefined
+        scope?: string[]
+        customParams?: Record<string, string>
       }
     >
   },
@@ -215,6 +217,45 @@ export function addProviderOptions(
         ]
       if (provider) {
         Object.assign(grantProviderConfig, provider.getExtraGrantConfig())
+      }
+
+      // Allow operators to narrow or replace OAuth scopes and append custom
+      // params per provider. Runs after `getExtraGrantConfig()` so values
+      // supplied here win against provider-class defaults.
+      if (Array.isArray(providerOption.scope)) {
+        grantProviderConfig['scope'] = providerOption.scope
+      }
+      if (
+        providerOption.customParams &&
+        typeof providerOption.customParams === 'object' &&
+        !Array.isArray(providerOption.customParams)
+      ) {
+        // Drop non-string values defensively — TS types say
+        // `Record<string, string>` but JS callers can still pass numbers /
+        // booleans, which Grant forwards verbatim to OAuth providers and
+        // produces inconsistent downstream behaviour.
+        const sanitisedCustomParams: Record<string, string> = {}
+        for (const [key, value] of Object.entries(
+          providerOption.customParams,
+        )) {
+          if (typeof value === 'string') {
+            sanitisedCustomParams[key] = value
+          }
+        }
+        // Guard against a malformed existing `custom_params` (e.g. a provider
+        // class returning a non-object from `getExtraGrantConfig`) — spreading
+        // a string would expand to character-indexed keys.
+        const existingCustomParams = grantProviderConfig['custom_params']
+        const baseCustomParams =
+          existingCustomParams &&
+          typeof existingCustomParams === 'object' &&
+          !Array.isArray(existingCustomParams)
+            ? (existingCustomParams as Record<string, string>)
+            : {}
+        grantProviderConfig['custom_params'] = {
+          ...baseCustomParams,
+          ...sanitisedCustomParams,
+        }
       }
 
       // override grant.js redirect uri with companion's custom redirect url
