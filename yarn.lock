@@ -8457,12 +8457,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cors@npm:2.8.6":
-  version: 2.8.6
-  resolution: "@types/cors@npm:2.8.6"
+"@types/cors@npm:2.8.19":
+  version: 2.8.19
+  resolution: "@types/cors@npm:2.8.19"
   dependencies:
-    "@types/express": "npm:*"
-  checksum: 10/686ee19f6913812dffc218a7f9fdb0017b833457fc075bdfe0c5969ad327b5d3a76414441f703b96f9e0c51b78d08d11bd0fd3f33880113971323b29f5e692e6
+    "@types/node": "npm:*"
+  checksum: 10/9545cc532c9218754443f48a0c98c1a9ba4af1fe54a3425c95de75ff3158147bb39e666cb7c6bf98cc56a9c6dc7b4ce5b2cbdae6b55d5942e50c81b76ed6b825
   languageName: node
   linkType: hard
 
@@ -8708,12 +8708,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/morgan@npm:1.7.37":
-  version: 1.7.37
-  resolution: "@types/morgan@npm:1.7.37"
+"@types/morgan@npm:1.9.10":
+  version: 1.9.10
+  resolution: "@types/morgan@npm:1.9.10"
   dependencies:
-    "@types/express": "npm:*"
-  checksum: 10/bd9151317067c254e6e2c5c7d7c1041e6e6fa4ef886ab3fdfb707772cf3de6174fd1156d2d62131b015062e86e4838ccec5eb1d22f351dcafa87541b6a2b4a91
+    "@types/node": "npm:*"
+  checksum: 10/67c974efe93ae4f20084acc56800671fa7258eeef0126947f4cff8559493b2f72148676ca11c7bf88ae2e71031392108984d87bce913d89aeed78b82b82aee44
   languageName: node
   linkType: hard
 
@@ -9096,14 +9096,14 @@ __metadata:
     "@types/compression": "npm:1.8.1"
     "@types/content-disposition": "npm:0.5.9"
     "@types/cookie-parser": "npm:1.4.10"
-    "@types/cors": "npm:2.8.6"
+    "@types/cors": "npm:2.8.19"
     "@types/eslint": "npm:9.6.1"
     "@types/express-session": "npm:1.19.0"
     "@types/http-proxy": "npm:1.17.17"
     "@types/jsonwebtoken": "npm:9.0.10"
     "@types/lodash": "npm:4.17.24"
     "@types/mime-types": "npm:3.0.1"
-    "@types/morgan": "npm:1.7.37"
+    "@types/morgan": "npm:1.9.10"
     "@types/ms": "npm:2.1.0"
     "@types/node": "npm:20.19.41"
     "@types/node-schedule": "npm:2.1.8"
