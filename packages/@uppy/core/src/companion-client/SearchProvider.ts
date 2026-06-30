@@ -1,5 +1,4 @@
 import type { Body, Meta, Uppy } from '../index.js'
-import type { CompanionClientSearchProvider } from '../utils/index.js'
 import RequestClient, { type Opts } from './RequestClient.js'
 
 const getName = (id: string): string => {
@@ -9,10 +8,10 @@ const getName = (id: string): string => {
     .join(' ')
 }
 
-export default class SearchProvider<M extends Meta, B extends Body>
-  extends RequestClient<M, B>
-  implements CompanionClientSearchProvider
-{
+export default class SearchProvider<
+  M extends Meta,
+  B extends Body,
+> extends RequestClient<M, B> {
   provider: string
 
   id: string

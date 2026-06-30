@@ -27,10 +27,10 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
 > {
   async login({
     authFormData,
-    uppyVersions,
+    uppyVersions = '',
     signal,
   }: {
-    uppyVersions: string
+    uppyVersions?: string
     authFormData: unknown
     signal: AbortSignal
   }) {

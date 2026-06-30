@@ -1,13 +1,7 @@
 import pRetry, { AbortError } from 'p-retry'
 import packageJson from '../../package.json' with { type: 'json' }
 import type Uppy from '../index.js'
-import type {
-  Body,
-  Meta,
-  RemoteUppyFile,
-  RequestOptions,
-  UppyFile,
-} from '../utils/index.js'
+import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
 import {
   ErrorWithCause,
   fetchWithNetworkError,
@@ -15,6 +9,15 @@ import {
   UserFacingApiError,
 } from '../utils/index.js'
 import AuthError from './AuthError.js'
+
+export type RequestOptions = {
+  method?: string
+  data?: Record<string, unknown>
+  skipPostResponse?: boolean
+  signal?: AbortSignal
+  authFormData?: unknown
+  qs?: Record<string, string>
+}
 
 type CompanionHeaders = Record<string, string> | undefined
 

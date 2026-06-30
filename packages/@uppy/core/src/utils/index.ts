@@ -3,11 +3,6 @@ export {
   AbortSignal,
   createAbortError,
 } from './AbortController.js'
-export type {
-  CompanionClientProvider,
-  CompanionClientSearchProvider,
-  RequestOptions,
-} from './CompanionClientProvider.js'
 export type { CompanionFile } from './CompanionFile.js'
 
 export { default as canvasToBlob } from './canvasToBlob.js'
