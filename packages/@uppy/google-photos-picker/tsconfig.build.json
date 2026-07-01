@@ -10,15 +10,6 @@
   "exclude": ["./src/**/*.test.ts"],
   "references": [
     {
-      "path": "../companion-client/tsconfig.build.json"
-    },
-    {
-      "path": "../provider-views/tsconfig.build.json"
-    },
-    {
-      "path": "../utils/tsconfig.build.json"
-    },
-    {
       "path": "../core/tsconfig.build.json"
     }
   ]

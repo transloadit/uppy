@@ -1,7 +1,7 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta, State, Uppy } from '@uppy/core'
-import type { FileProcessingInfo, I18n } from '@uppy/utils'
-import { prettyETA } from '@uppy/utils'
+import type { FileProcessingInfo, I18n } from '@uppy/core/utils'
+import { prettyETA } from '@uppy/core/utils'
 import classNames from 'classnames'
 
 import statusBarStates from './StatusBarStates.js'

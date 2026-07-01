@@ -1,4 +1,4 @@
-import type { Body, Meta, UppyFile, UppyFileId } from '@uppy/utils'
+import type { Body, Meta, UppyFile, UppyFileId } from '@uppy/core/utils'
 import type {
   AddFilePayload,
   AllFilesMessage,

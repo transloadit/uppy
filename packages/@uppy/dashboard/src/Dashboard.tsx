@@ -10,10 +10,10 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import { defaultPickerIcon } from '@uppy/provider-views'
+import { defaultPickerIcon } from '@uppy/core/provider-views'
+import type { LocaleStrings } from '@uppy/core/utils'
+import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
-import type { LocaleStrings } from '@uppy/utils'
-import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/utils'
 import { nanoid } from 'nanoid/non-secure'
 import type { ComponentChild, h, VNode } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }

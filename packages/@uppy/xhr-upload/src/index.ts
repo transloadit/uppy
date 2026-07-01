@@ -1,4 +1,3 @@
-import type { RequestClient } from '@uppy/companion-client'
 import type {
   Body,
   DefinePluginOpts,
@@ -9,6 +8,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin, EventManager } from '@uppy/core'
+import type { RequestClient } from '@uppy/core/companion-client'
 import {
   type FetcherOptions,
   fetcher,
@@ -20,7 +20,7 @@ import {
   NetworkError,
   type RemoteUppyFile,
   TaskQueue,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -70,7 +70,7 @@ export interface XhrUploadOpts<M extends Meta, B extends Body>
 
 export type { XhrUploadOpts as XHRUploadOptions }
 
-declare module '@uppy/utils' {
+declare module '@uppy/core/utils' {
   export interface LocalUppyFile<M extends Meta, B extends Body> {
     xhrUpload?: XhrUploadOpts<M, B>
   }

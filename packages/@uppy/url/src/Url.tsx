@@ -1,15 +1,15 @@
+import type { Body, Meta } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
   RequestClient,
-} from '@uppy/companion-client'
-import type { Body, Meta } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
+} from '@uppy/core/companion-client'
 import type {
   LocaleStrings,
   MinimalRequiredUppyFile,
   RemoteUppyFile,
-} from '@uppy/utils'
-import { toArray } from '@uppy/utils'
+} from '@uppy/core/utils'
+import { toArray } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }

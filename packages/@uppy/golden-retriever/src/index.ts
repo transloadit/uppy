@@ -8,7 +8,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import type { UppyFileId } from '@uppy/utils'
+import type { UppyFileId } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import IndexedDBStore from './IndexedDBStore.js'
 import MetaDataStore from './MetaDataStore.js'

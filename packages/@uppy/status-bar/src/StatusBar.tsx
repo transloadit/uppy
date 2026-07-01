@@ -7,7 +7,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import { emaFilter, getTextDirection } from '@uppy/utils'
+import { emaFilter, getTextDirection } from '@uppy/core/utils'
 import type { ComponentChild } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'

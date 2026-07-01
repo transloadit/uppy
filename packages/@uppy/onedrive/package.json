@@ -34,9 +34,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/provider-views": "workspace:^",
-    "@uppy/utils": "workspace:^",
     "preact": "^10.29.2"
   },
   "peerDependencies": {

@@ -16,9 +16,6 @@
       "path": "../@uppy/box/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/companion-client/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/compressor/tsconfig.build.json"
     },
     {
@@ -58,16 +55,10 @@
       "path": "../@uppy/onedrive/tsconfig.build.json"
     },
     {
-      "path": "../@uppy/provider-views/tsconfig.build.json"
-    },
-    {
       "path": "../@uppy/remote-sources/tsconfig.build.json"
     },
     {
       "path": "../@uppy/screen-capture/tsconfig.build.json"
-    },
-    {
-      "path": "../@uppy/store-default/tsconfig.build.json"
     },
     {
       "path": "../@uppy/thumbnail-generator/tsconfig.build.json"

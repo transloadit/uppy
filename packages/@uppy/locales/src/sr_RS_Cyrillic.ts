@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const sr_RS_Cyrillic: Locale<0 | 1> = {
   strings: {},

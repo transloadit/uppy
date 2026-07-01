@@ -1,10 +1,28 @@
 /* global AggregateError */
 
-import DefaultStore, { type Store } from '@uppy/store-default'
+import throttle from 'lodash/throttle.js'
+// @ts-expect-error untyped
+import ee from 'namespace-emitter'
+import { nanoid } from 'nanoid/non-secure'
+import type { h } from 'preact'
+import packageJson from '../package.json' with { type: 'json' }
+import type BasePlugin from './BasePlugin.js'
+import type Provider from './companion-client/Provider.js'
+import type SearchProvider from './companion-client/SearchProvider.js'
+import getFileName from './getFileName.js'
+import locale from './locale.js'
+import { debugLogger, justErrorsLogger } from './loggers.js'
+import type ProviderView from './provider-views/ProviderView/ProviderView.js'
+import type { Restrictions, ValidateableFile } from './Restricter.js'
+import {
+  defaultOptions as defaultRestrictionOptions,
+  Restricter,
+  RestrictionError,
+} from './Restricter.js'
+import DefaultStore, { type Store } from './store/index.js'
+import supportsUploadProgress from './supportsUploadProgress.js'
 import type {
   Body,
-  CompanionClientProvider,
-  CompanionClientSearchProvider,
   CompanionFile,
   FileProgressNotStarted,
   FileProgressStarted,
@@ -17,30 +35,13 @@ import type {
   RemoteUppyFile,
   UppyFile,
   UppyFileId,
-} from '@uppy/utils'
+} from './utils/index.js'
 import {
   getFileNameAndExtension,
   getFileType,
   getSafeFileId,
   Translator,
-} from '@uppy/utils'
-import throttle from 'lodash/throttle.js'
-// @ts-expect-error untyped
-import ee from 'namespace-emitter'
-import { nanoid } from 'nanoid/non-secure'
-import type { h } from 'preact'
-import packageJson from '../package.json' with { type: 'json' }
-import type BasePlugin from './BasePlugin.js'
-import getFileName from './getFileName.js'
-import locale from './locale.js'
-import { debugLogger, justErrorsLogger } from './loggers.js'
-import type { Restrictions, ValidateableFile } from './Restricter.js'
-import {
-  defaultOptions as defaultRestrictionOptions,
-  Restricter,
-  RestrictionError,
-} from './Restricter.js'
-import supportsUploadProgress from './supportsUploadProgress.js'
+} from './utils/index.js'
 
 type Processor = (
   fileIDs: string[],
@@ -165,8 +166,6 @@ export interface BaseProviderPlugin {
  * UnknownProviderPlugin can be any Companion plugin (such as Google Drive)
  * that uses the Companion-assisted OAuth flow.
  * As the plugins are passed around throughout Uppy we need a generic type for this.
- * It may seems like duplication, but this type safe. Changing the type of `storage`
- * will error in the `Provider` class of @uppy/companion-client and vice versa.
  *
  * Note that this is the *plugin* class, not a version of the `Provider` class.
  * `Provider` does operate on Companion plugins with `uppy.getPlugin()`.
@@ -178,16 +177,25 @@ export type UnknownProviderPlugin<
   BaseProviderPlugin & {
     rootFolderId: string | null
     files: UppyFile<M, B>[]
-    provider: CompanionClientProvider
-    // Can't be typed unfortunately, we can't depend on `provider-views` in `core`.
-    view: any
+    // Structural subset of the real `Provider` class,structural rather than the nominal class type so custom
+    // providers matching the public surface aren't forced to inherit from `Provider`.
+    provider: Pick<
+      Provider<M, B>,
+      | 'name'
+      | 'provider'
+      | 'login'
+      | 'logout'
+      | 'fetchPreAuthToken'
+      | 'fileUrl'
+      | 'list'
+      | 'search'
+    >
+    view: ProviderView<M, B>
   }
 
 /*
  * UnknownSearchProviderPlugin can be any search Companion plugin (such as Unsplash).
  * As the plugins are passed around throughout Uppy we need a generic type for this.
- * It may seems like duplication, but this type safe. Changing the type of `title`
- * will error in the `SearchProvider` class of @uppy/companion-client and vice versa.
  *
  * Note that this is the *plugin* class, not a version of the `SearchProvider` class.
  * `SearchProvider` does operate on Companion plugins with `uppy.getPlugin()`.
@@ -203,7 +211,11 @@ export type UnknownSearchProviderPlugin<
   B extends Body,
 > = UnknownPlugin<M, B, UnknownSearchProviderPluginState> &
   BaseProviderPlugin & {
-    provider: CompanionClientSearchProvider
+    // Structural subset of the real `SearchProvider` class (see note above).
+    provider: Pick<
+      SearchProvider<M, B>,
+      'name' | 'provider' | 'fileUrl' | 'search'
+    >
   }
 
 // for better readability

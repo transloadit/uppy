@@ -1,8 +1,12 @@
 /** @jsx h */
 
-import { getAllowedHosts, Provider, tokenStorage } from '@uppy/companion-client'
 import { UIPlugin } from '@uppy/core'
-import { ProviderViews } from '@uppy/provider-views'
+import {
+  getAllowedHosts,
+  Provider,
+  tokenStorage,
+} from '@uppy/core/companion-client'
+import { ProviderViews } from '@uppy/core/provider-views'
 
 const defaultOptions = {}
 

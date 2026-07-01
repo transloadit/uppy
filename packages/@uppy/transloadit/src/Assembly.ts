@@ -1,9 +1,12 @@
-import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
+import type {
+  RateLimitedQueue,
+  WrapPromiseFunctionType,
+} from '@uppy/core/utils'
 import {
   fetchWithNetworkError,
   hasProperty as has,
   NetworkError,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import Emitter from 'component-emitter'
 import {
   type AssemblyFile,

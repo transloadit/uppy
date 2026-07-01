@@ -8,9 +8,6 @@
   "exclude": ["./src/**/*.test.ts"],
   "references": [
     {
-      "path": "../utils/tsconfig.build.json"
-    },
-    {
       "path": "../core/tsconfig.build.json"
     }
   ]

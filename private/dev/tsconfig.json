@@ -8,12 +8,6 @@
   "include": ["./package.json", "./*.ts", "./*.js"],
   "references": [
     {
-      "path": "../../packages/@uppy/store-default/tsconfig.build.json"
-    },
-    {
-      "path": "../../packages/@uppy/utils/tsconfig.build.json"
-    },
-    {
       "path": "../../packages/@uppy/core/tsconfig.build.json"
     },
     {

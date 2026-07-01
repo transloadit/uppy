@@ -42,7 +42,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
     "lodash": "^4.18.1"
   },
   "peerDependencies": {

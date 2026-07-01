@@ -1,9 +1,3 @@
-import {
-  type CompanionPluginOptions,
-  getAllowedHosts,
-  Provider,
-  tokenStorage,
-} from '@uppy/companion-client'
 import type {
   AsyncStore,
   Body,
@@ -13,9 +7,14 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin, type Uppy } from '@uppy/core'
-import { ProviderViews } from '@uppy/provider-views'
-
-import type { LocaleStrings } from '@uppy/utils'
+import {
+  type CompanionPluginOptions,
+  getAllowedHosts,
+  Provider,
+  tokenStorage,
+} from '@uppy/core/companion-client'
+import { ProviderViews } from '@uppy/core/provider-views'
+import type { LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
