@@ -374,6 +374,72 @@ describe('AwsS3', () => {
       expect(result).toBeDefined()
       expect(result?.successful).toHaveLength(0)
     })
+
+    it('aborts the multipart upload in S3 if the file is removed during createMultipartUpload', async () => {
+      const operations: string[] = []
+      let markCreateStarted!: () => void
+      const createStarted = new Promise<void>((r) => {
+        markCreateStarted = r
+      })
+      let releaseCreate!: () => void
+      const createGate = new Promise<void>((r) => {
+        releaseCreate = r
+      })
+
+      const signRequest = vi.fn(async (req: any) => {
+        const params = new URLSearchParams()
+        if (req.uploadId) params.set('uploadId', req.uploadId)
+        params.set('method', req.method)
+        return {
+          url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}?${params}`,
+        }
+      })
+
+      server.use(
+        http.post(s3Url, async ({ request }) => {
+          const hasUploadId = new URL(request.url).searchParams.has('uploadId')
+          if (!hasUploadId) {
+            operations.push('createMultipart')
+            markCreateStarted()
+            await createGate // hang create until the test releases it
+            return new HttpResponse(
+              s3Responses.createMultipart('upload-1', 'test-key'),
+              { status: 200, headers: { 'Content-Type': 'application/xml' } },
+            )
+          }
+          operations.push('completeMultipart')
+          return new HttpResponse('', { status: 200 })
+        }),
+        http.delete(s3Url, () => {
+          operations.push('abortMultipart')
+          return new HttpResponse('', { status: 204 })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.bin',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.bin'),
+      })
+      const fileId = Object.keys(core.getState().files)[0]
+
+      const uploadPromise = core.upload()
+      await createStarted // createMultipartUpload is now in flight
+      core.removeFile(fileId) // cancel while create is pending
+      releaseCreate() // let create finish so S3 returns the uploadId
+      await uploadPromise
+
+      // The create succeeded server-side, so the now-orphaned upload must be
+      // aborted in S3 rather than left behind.
+      await vi.waitFor(() => expect(operations).toContain('abortMultipart'))
+    })
   })
 
   describe('Golden Retriever resume state (s3Multipart)', () => {

@@ -294,13 +294,23 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     }
 
     this.#key = key
+    this.#uploadId = uploadId
+
+    // The file may have been removed/cancelled while createMultipartUpload was
+    // in flight. We deliberately don't pass the abort signal into the create
+    // request: if it were cancelled mid-flight, S3 might still create the upload
+    // while we never receive the uploadId — an orphan we couldn't clean up.
+    // Instead we let create finish, then abort the upload in S3 so it isn't left
+    // behind, and skip persisting resume state for a cancelled upload.
+    if (this.#abortController?.signal.aborted) {
+      this.abort()
+      return
+    }
 
     // Persist resume state so Golden Retriever can restore it after page refresh
     this.#options.uppy.setFileState(this.#options.file.id, {
       s3Multipart: { uploadId, key },
     })
-
-    this.#uploadId = uploadId
 
     await this.#uploadRemainingParts()
   }
