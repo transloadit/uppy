@@ -48,19 +48,20 @@
   },
   "dependencies": {
     "@uppy/utils": "workspace:^",
-    "is-mobile": "^5.0.0",
-    "preact": "^10.29.2"
+    "is-mobile": "^5.0.0"
   },
   "devDependencies": {
     "cssnano": "^8.0.1",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
+    "preact": "^10.29.2",
     "sass": "^1.89.2",
     "typescript": "^5.8.3",
     "vitest": "^4.1.6"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "preact": "^10.29.2"
   }
 }

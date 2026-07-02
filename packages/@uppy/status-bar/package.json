@@ -48,16 +48,17 @@
   "dependencies": {
     "@transloadit/prettier-bytes": "^1.1.0",
     "@uppy/utils": "workspace:^",
-    "classnames": "^2.5.1",
-    "preact": "^10.29.2"
+    "classnames": "^2.5.1"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "preact": "^10.29.2"
   },
   "devDependencies": {
     "cssnano": "^8.0.1",
     "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
+    "preact": "^10.29.2",
     "sass": "^1.89.2",
     "typescript": "^5.8.3"
   }

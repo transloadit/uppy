@@ -43,7 +43,6 @@
   "dependencies": {
     "clsx": "^2.1.1",
     "dequal": "^2.0.3",
-    "preact": "^10.29.2",
     "pretty-bytes": "^7.1.0"
   },
   "devDependencies": {
@@ -52,6 +51,7 @@
     "cssnano": "^8.0.1",
     "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
+    "preact": "^10.29.2",
     "tailwindcss": "^4.0.6",
     "typescript": "^5.8.3"
   },
@@ -59,7 +59,8 @@
     "@uppy/core": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
-    "@uppy/webcam": "workspace:^"
+    "@uppy/webcam": "workspace:^",
+    "preact": "^10.29.2"
   },
   "peerDependenciesMeta": {
     "@uppy/image-editor": {

@@ -34,11 +34,11 @@
     "@transloadit/prettier-bytes": "^1.1.0",
     "@uppy/utils": "workspace:^",
     "compressorjs": "^1.3.0",
-    "preact": "^10.29.2",
     "promise-queue": "^2.2.5"
   },
   "peerDependencies": {
-    "@uppy/core": "workspace:^"
+    "@uppy/core": "workspace:^",
+    "preact": "^10.29.2"
   },
   "publishConfig": {
     "access": "public"
@@ -46,6 +46,7 @@
   "devDependencies": {
     "@types/node": "^20.19.0",
     "jsdom": "^29.1.1",
+    "preact": "^10.29.2",
     "typescript": "^5.8.3",
     "vitest": "^4.1.6"
   },
