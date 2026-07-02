@@ -7,7 +7,6 @@ class S3Client {
 
   constructor({
     requestAbortTimeout,
-    ...rest
   }: { requestAbortTimeout?: number | undefined }) {
     this.requestAbortTimeout = requestAbortTimeout
   }
@@ -112,12 +111,6 @@ class S3Client {
         if (event.lengthComputable && onProgress) {
           onProgress(event.loaded, event.total)
         }
-      },
-      onTimeout: (timeout) => {
-        // Log stall detection - upload will continue but may be slow
-        console.warn(
-          `[S3mini] Upload stalled - no progress for ${Math.ceil(timeout / 1000)}s`,
-        )
       },
     })
   }
