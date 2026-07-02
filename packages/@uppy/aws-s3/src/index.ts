@@ -334,7 +334,15 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   #generateKey(file: UppyFile<M, B>): string {
-    return this.opts.generateObjectKey?.(file) ?? file.name
+    // in companion mode, no need to run the generateObjectKey function even if it's passed by the user,
+    // because the key is generated on the server side and we need to remove the option to pass generateObjectKey in companion mode.
+    if ('companionEndpoint' in this.opts) {
+      return file.name
+    }
+    return (
+      this.opts.generateObjectKey?.(file) ??
+      `${crypto.randomUUID()}-${file.name}`
+    )
   }
 
   // --------------------------------------------------------------------------
