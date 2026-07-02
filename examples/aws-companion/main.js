@@ -23,5 +23,5 @@ uppy.use(Dashboard, {
   plugins: ['GoogleDrive', 'Webcam'],
 })
 uppy.use(AwsS3, {
-  endpoint: 'http://localhost:3020',
+  companionEndpoint: 'http://localhost:3020',
 })

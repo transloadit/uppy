@@ -1,0 +1,20 @@
+services:
+  minio:
+    image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z-cpuv1
+    ports:
+      - 9002:9002
+      - 9003:9003
+    restart: always
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ADDRESS: ':9002'
+      MINIO_CONSOLE_ADDRESS: ':9003'
+      MC_HOST_local: 'http://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@localhost:9002'
+    command: minio server /data
+    healthcheck:
+      test: mc ready local
+      start_period: 5s
+      interval: 30s
+      timeout: 3s
+      retries: 3

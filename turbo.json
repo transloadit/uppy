@@ -41,7 +41,8 @@
     },
     "test": {
       "dependsOn": ["^test"],
-      "cache": false
+      "cache": false,
+      "passThroughEnv": ["VITE_MINIO_CONFIG"]
     },
     "test:e2e": {
       "dependsOn": ["^test:e2e"],
