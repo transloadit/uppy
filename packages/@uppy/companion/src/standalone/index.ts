@@ -84,7 +84,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
   })
   // log server requests.
   router.use(morgan('combined'))
-  morgan.token('url', (req) => {
+  morgan.token<Request>('url', (req) => {
     const { query, censored } = censorQuery(req.query)
     return censored
       ? `${req.path}?${qs.stringify(query)}`
