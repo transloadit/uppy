@@ -108,7 +108,7 @@ function getCommonCookieOptions({
   return cookieOptions
 }
 
-const getCookieName = (oauthProvider: string): string =>
+export const getCookieName = (oauthProvider: string): string =>
   `uppyAuthToken--${oauthProvider}`
 
 const addToCookies = ({
