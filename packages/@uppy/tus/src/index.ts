@@ -164,13 +164,28 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    * Clean up all references for a file's upload: the tus.Upload instance,
    * any events related to the file, and the Companion WebSocket connection.
    */
-  resetUploaderReferences(fileID: string, opts?: { abort: boolean }): void {
+  resetUploaderReferences(
+    fileID: string,
+    opts?: {
+      /** Terminate the upload on the server (sends a `DELETE` request). */
+      abort?: boolean
+      /**
+       * Abort the underlying request. Defaults to `true`. Set to `false` when
+       * the request has already completed (e.g. in the error handler), so the
+       * underlying `xhr` — and thus the server response — is preserved instead
+       * of being reset by `abort()`.
+       */
+      abortRequest?: boolean
+    },
+  ): void {
     const uploader = this.uploaders[fileID]
     if (uploader) {
-      uploader.abort()
+      if (opts?.abortRequest !== false) {
+        uploader.abort()
 
-      if (opts?.abort) {
-        uploader.abort(true)
+        if (opts?.abort) {
+          uploader.abort(true)
+        }
       }
 
       this.uploaders[fileID] = null
@@ -218,6 +233,12 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     file: LocalUppyFile<M, B>,
   ): Promise<tus.Upload | string> {
     this.resetUploaderReferences(file.id)
+
+    // Captured in `onError` and forwarded to the `upload-error` event in the
+    // `.catch` below, so consumers can read the failing server response.
+    let errorResponse:
+      | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
+      | undefined
 
     // Create a new tus upload
     return new Promise<tus.Upload | string>((resolve, reject) => {
@@ -291,6 +312,23 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       uploadOptions.onError = (err) => {
         this.uppy.log(err)
 
+        // tus-js-client only calls `onError` once it has given up retrying, so
+        // the request has already completed. Capture the server response (status
+        // + body) and forward it to the `upload-error` event and `file.response`,
+        // mirroring the shape emitted by `onSuccess`.
+        const originalResponse = (err as tus.DetailedError).originalResponse
+        if (originalResponse != null) {
+          errorResponse = {
+            status: originalResponse.getStatus(),
+            body: {
+              // We have to put `as XMLHttpRequest` because tus-js-client
+              // returns `any`, as the type differs in Node.js and the browser.
+              // In the browser it's always `XMLHttpRequest`.
+              xhr: originalResponse.getUnderlyingObject() as XMLHttpRequest,
+            } as unknown as B,
+          }
+        }
+
         const xhr =
           (err as tus.DetailedError).originalRequest != null
             ? (err as tus.DetailedError).originalRequest.getUnderlyingObject()
@@ -299,7 +337,11 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           err = new NetworkError(err, xhr)
         }
 
-        this.resetUploaderReferences(file.id)
+        // Do not abort the request here: it has already completed, and aborting
+        // it would reset the underlying `xhr` (status `0`, empty body) and
+        // discard the response we just captured. We still drop our references
+        // and remove the event listeners.
+        this.resetUploaderReferences(file.id, { abortRequest: false })
         queuedRequest?.abort()
 
         if (typeof opts.onError === 'function') {
@@ -516,7 +558,10 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         queuedRequest = this.requests.run(qRequest)
       })
     }).catch((err) => {
-      this.uppy.emit('upload-error', file, err)
+      // `errorResponse` is captured in the `onError` handler above (the request
+      // is intentionally not aborted there), so the server response is still
+      // available here to forward to the `upload-error` event.
+      this.uppy.emit('upload-error', file, err, errorResponse)
       throw err
     })
   }
