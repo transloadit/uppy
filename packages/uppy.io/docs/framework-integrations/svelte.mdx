@@ -1,0 +1,129 @@
+---
+slug: /svelte
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import HeadlessComponentsShared from './_headless-components-shared.mdx';
+import HooksShared from './_hooks-shared.mdx';
+import ContextValue from './_context-value.mdx';
+
+# Svelte
+
+[Svelte][] components for the Uppy UI plugins.
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/svelte
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/svelte
+```
+
+  </TabItem>
+</Tabs>
+
+:::note
+
+You also need to install the UI plugin you want to use. For instance,
+`@uppy/dashboard`.
+
+:::
+
+## Use
+
+Uppy offers three ways to build user interfaces:
+
+1. **Pre-composed, plug-and-play components.** Mainly `<Dashboard />` and
+   `<DragDrop />`. The downside is that you can’t customize the UI.
+2. **Headless components** (Svelte 5 only). Smaller componentes, easier to
+   override the styles or compose them together with your own components.
+3. **Hooks** (Svelte 5 only). Attach our logic to your own components, no
+   restrictions, create a tailor-made UI.
+
+### Components
+
+Pre-composed, plug-and-play components:
+
+- `<Dashboard />` renders [`@uppy/dashboard`](/docs/dashboard)
+- `<DashboardModal />` renders [`@uppy/dashboard`](/docs/dashboard) as a modal
+- `<DragDrop />` renders [`@uppy/drag-drop`](/docs/drag-drop) - Removed in favor
+  of Dropzone and useDropzone in Uppy 5.0
+- `<ProgressBar />` renders [`@uppy/progress-bar`](/docs/progress-bar) - Removed
+  in Uppy 5.0
+- `<StatusBar />` renders [`@uppy/status-bar`](/docs/status-bar)
+
+### Headless Components
+
+:::tip
+
+Play around with the Svelte headless components in StackBlitz
+
+:::
+
+:::note
+
+All components must be placed within a `UppyContextProvider`. Headless
+components only work with Svelte 5
+
+:::
+
+Uppy’s headless components are smaller and more flexible. All components must be
+placed within a `UppyContextProvider`. They come styled as well but you can
+override the styles with data attributes, for example with `UploadButton`:
+
+```css
+button[data-uppy-element='upload-button'][data-state='uploading'] {
+	background-color: lightblue;
+}
+```
+
+#### `UppyContextProvider`
+
+Provides Uppy context to child components and manages global upload
+status/progress.
+
+```svelte
+<script>
+	import { UppyContextProvider } from '@uppy/svelte';
+	import Uppy from '@uppy/core';
+
+	const uppy = new Uppy();
+</script>
+
+<UppyContextProvider {uppy}>
+	<!-- Your components and/or Uppy components -->
+</UppyContextProvider>
+```
+
+<ContextValue />
+
+<HeadlessComponentsShared />
+
+### Hooks
+
+:::tip
+
+Play around with the Svelte headless hooks in StackBlitz
+
+:::
+
+:::note
+
+All hooks must be used within a `UppyContextProvider`. Hooks only work in
+Svelte 5.
+
+:::
+
+<HooksShared />
+
+[svelte]: https://svelte.dev

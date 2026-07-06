@@ -1,0 +1,87 @@
+arturi:
+  email: 'artur@transloadit.com'
+  name: 'Artur Paikin'
+  id: 'artur'
+  tagline: 'Developer'
+  image_url: 'https://github.com/arturi.png'
+ife:
+  email: 'ifedapo@transloadit.com'
+  name: 'Ifedapo Olarewaju'
+  id: 'ife'
+  tagline: 'Software Developer'
+  image_url: 'https://github.com/ifedapoolarewaju.png'
+tyler:
+  email: 'tyler@transloadit.com'
+  name: 'Tyler McAllister'
+  id: tyler
+  tagline: 'Technical Writer'
+samuel:
+  email: 'samuel@transloadit.com'
+  name: 'Samuel Ogundipe'
+  id: samuel
+  tagline: 'Technical Writer'
+aj:
+  email: 'aj@transloadit.com'
+  name: 'A.J. van Loon'
+  id: aj
+  tagline: 'Writer & Editor'
+  image_url: 'https://github.com/AJvanLoon.png'
+kvz:
+  email: 'kevin@transloadit.com'
+  name: 'Kevin van Zonneveld'
+  id: kvz
+  tagline: 'Transloadit co-founder'
+  image_url: 'https://github.com/kvz.png'
+renee:
+  email: 'github@kooi.me'
+  name: 'Renée Kooi'
+  id: 'renee'
+  tagline: 'Developer'
+  image_url: 'https://github.com/goto-bus-stop.png'
+hedgerh:
+  email: 'harry@transloadit.com'
+  name: 'Harry Hedger'
+  id: 'harry'
+  tagline: 'Frontend developer'
+  image_url: 'https://github.com/hedgerh.png'
+aduh95:
+  email: 'antoine@transloadit.com'
+  name: 'Antoine du Hamel'
+  id: 'aduh95'
+  tagline: 'Developer'
+  image_url: 'https://github.com/aduh95.png'
+murderlon:
+  email: 'merlijn@transloadit.com'
+  name: 'Merlijn Vos'
+  id: 'merlijn'
+  tagline: 'Developer'
+  image_url: 'https://github.com/murderlon.png'
+mifi:
+  email: 'mikael@transloadit.com'
+  name: 'Mikael Finstad'
+  id: 'mikael'
+  tagline: 'Developer'
+  image_url: 'https://github.com/mifi.png'
+andrew:
+  email: 'andrew@transloadit.com'
+  name: 'Andrew Kachnic'
+  id: 'andrew'
+  tagline: 'Developer'
+evgenia:
+  email: 'lakesare@gmail.com'
+  name: 'Evgenia Karunus'
+  id: 'evgenia'
+  tagline: 'Developer'
+  image_url: 'https://github.com/lakesare.png'
+tim:
+  email: 'tim@transloadit.com'
+  name: 'Tim Koschuetzki'
+  id: 'tim'
+  tagline: 'Transloadit co-founder'
+  image_url: 'https://github.com/tim-kos.png'
+prakash:
+  email: 'prakash@transloadit.com'
+  name: 'Prakash'
+  id: 'prakash'
+  tagline: 'Developer'
+  image_url: 'https://github.com/qxprakash.png'

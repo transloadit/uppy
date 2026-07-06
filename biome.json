@@ -14,6 +14,7 @@
       "bin/**",
       "e2e/**",
       "private/**",
+      "!packages/uppy.io",
       "!packages/**/{dist,lib}",
       "!node_modules",
       "!.svelte-kit",

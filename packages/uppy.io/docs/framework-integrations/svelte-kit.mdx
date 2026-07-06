@@ -1,0 +1,282 @@
+---
+slug: /sveltekit
+---
+
+# SvelteKit
+
+Integration guide for using Uppy UI plugins and components with SvelteKit.
+
+:::tip
+
+Uppy can be used with any JavaScript framework. This guide shows how to
+integrate Uppy with SvelteKit.
+
+:::
+
+## Install
+
+```shell
+npm install @uppy/core @uppy/dashboard @uppy/svelte
+```
+
+## Tus
+
+[Tus][tus] is an open protocol for resumable uploads built on HTTP. This means
+accidentally closing your tab or losing connection lets you continue, for
+instance, your 10GB upload instead of starting all over.
+
+Tus supports any language, any platform, and any network. It requires a client
+and server integration to work. We will be using [tus Node.js][].
+
+Check out the [`@uppy/tus` docs](/docs/tus) for more information.
+
+Create a route where you want to handle uploads:
+
+```svelte
+<script>
+  import Uppy from '@uppy/core';
+  import { Dashboard } from '@uppy/svelte';
+  import Tus from '@uppy/tus';
+
+  import '@uppy/core/css/style.min.css';
+  import '@uppy/dashboard/css/style.min.css';
+
+  let uppy = new Uppy().use(Tus, { endpoint: '/api/upload' });
+</script>
+
+<Dashboard {uppy} theme="dark" />
+```
+
+[`@tus/server`][tus Node.js] does not directly support SvelteKit endpoints,
+which use the Fetch API’s `Request` and `Response` objects.
+
+However, you can integrate `@tus/server` by setting up a
+[custom server](https://svelte.dev/docs/kit/adapter-node#Custom-server).
+SvelteKit supports multiple [adapters](https://kit.svelte.dev/docs/adapters), so
+choose the one that fits your needs.
+
+The exact code to integrate [tus Node.js][] in your custom server depends on the
+framework you choose. Head over to the `@tus/server`
+[examples for the most popular Node.js servers](https://github.com/tus/tus-node-server/tree/main/packages/server#examples)
+to find the one that works for you.
+
+## Transloadit
+
+:::note
+
+Before continuing, you should have a [Transloadit](https://transloadit.com)
+account and a
+[template](https://transloadit.com/docs/getting-started/my-first-app/) set up.
+
+:::
+
+Transloadit’s strength is versatility. By handling video, audio, images,
+documents, and more, you only need one vendor for [all your file processing
+needs][transloadit-services]. The [`@uppy/transloadit`](/docs/transloadit)
+plugin directly uploads to Transloadit, so you only have to worry about creating
+a [template][transloadit-concepts]. It uses [Tus](#tus) under the hood, so you
+don’t have to sacrifice reliable, resumable uploads for convenience.
+
+When you go to production, always make sure to set the `signature`. **Not using
+[Signature Authentication](https://transloadit.com/docs/topics/signature-authentication/)
+can be a security risk**. Signature Authentication is a security measure that
+can prevent outsiders from tampering with your Assembly Instructions.
+
+Generating a signature should be done on the server to avoid leaking secrets.
+
+Start by creating a [server route](https://svelte.dev/docs/kit/routing#server)
+to generate the signature and params:
+
+```ts
+// src/routes/transloadit-params/+server.ts
+import type { RequestHandler } from '@sveltejs/kit';
+import crypto from 'crypto';
+
+function utcDateString(ms: number): string {
+	return new Date(ms)
+		.toISOString()
+		.replace(/-/g, '/')
+		.replace(/T/, ' ')
+		.replace(/\.\d+Z$/, '+00:00');
+}
+
+export const POST: RequestHandler = async ({ request }) => {
+	// Expire 1 hour from now (this must be milliseconds)
+	const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
+	const authKey = process.env.TRANSLOADIT_KEY;
+	const authSecret = process.env.TRANSLOADIT_SECRET;
+	const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
+
+	if (!authKey || !authSecret || !templateId) {
+		return new Response(
+			JSON.stringify({ error: 'Missing Transloadit credentials' }),
+			{ status: 500 },
+		);
+	}
+
+	const body = await request.json();
+	const params = JSON.stringify({
+		auth: {
+			key: authKey,
+			expires,
+		},
+		template_id: templateId,
+		fields: {
+			// You can use this in your template.
+			customValue: body.customValue,
+		},
+		// Your other params like notify_url, etc.
+	});
+
+	const signatureBytes = crypto
+		.createHmac('sha384', authSecret)
+		.update(Buffer.from(params, 'utf-8'));
+	// The final signature needs the hash name in front, so
+	// the hashing algorithm can be updated in a backwards-compatible
+	// way when old algorithms become insecure.
+	const signature = `sha384:${signatureBytes.digest('hex')}`;
+
+	return new Response(JSON.stringify({ expires, signature, params }), {
+		headers: { 'Content-Type': 'application/json' },
+	});
+};
+```
+
+On the client, we want to fetch the signature and params from the server. You
+may want to send values from Svelte state along to your endpoint, for instance,
+to add [`fields`](https://transloadit.com/docs/topics/assembly-variables/) which
+you can use in your template as global variables.
+
+```svelte
+<script>
+  import Uppy from '@uppy/core';
+  import { Dashboard } from '@uppy/svelte';
+  import Transloadit from '@uppy/transloadit';
+
+  let props = $props();
+
+  uppy.use(Transloadit, {
+    async assemblyOptions() {
+      // You can send metadata along for use in your template.
+      const { meta } = uppy.getState();
+      const body = JSON.stringify({ customValue: meta.customValue });
+      const res = await fetch('/transloadit-params', {
+        method: 'POST',
+        body,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      return res.json();
+    },
+  });
+
+  $effect(() => {
+    if (props.customValue) {
+      uppy.setMeta({ customValue: props.customValue });
+    }
+  })
+
+</script>
+
+<Dashboard {uppy} />
+```
+
+## HTTP uploads to your backend
+
+If you want to handle uploads yourself, you can use
+[`@uppy/xhr-upload`](/docs/xhr-upload).
+
+Create an endpoint, such as `src/routes/upload/+server.ts`:
+
+```ts
+import type { RequestHandler } from '@sveltejs/kit';
+import { requireUser } from '$lib/auth'; // Your optional logic
+import fs from 'fs';
+import path from 'path';
+
+export const POST: RequestHandler = async ({ request }) => {
+	const user = await requireUser(request); // Your optional logic
+
+	const formData = await request.formData();
+	const files = formData.getAll('files[]'); // Assuming 'files[]' is the field name used
+
+	for (const file of files) {
+		if (file instanceof File) {
+			const arrayBuffer = await file.arrayBuffer();
+			const buffer = Buffer.from(arrayBuffer);
+			const storageKey = `user-${user.id}-avatar-${file.name}`;
+			const uploadPath = path.join('uploads', storageKey);
+			fs.writeFileSync(uploadPath, buffer);
+			console.log(`Saved file to ${uploadPath}`);
+		}
+	}
+
+	return new Response(null);
+};
+```
+
+Create a page with your Uppy instance:
+
+```svelte
+<script>
+  import Uppy from '@uppy/core';
+  import { Dashboard } from '@uppy/svelte';
+  import XHRUpload from '@uppy/xhr-upload';
+
+  import '@uppy/core/css/style.min.css';
+  import '@uppy/dashboard/css/style.min.css';
+
+  let uppy = new Uppy().use(XHRUpload, { endpoint: '/upload' });
+</script>
+
+<Dashboard {uppy} />
+```
+
+If you want to send along other form fields with your upload, you can use
+[`@uppy/form`](/docs/form).
+
+```svelte
+<script>
+  import { onMount, onDestroy } from 'svelte';
+  import Uppy from '@uppy/core';
+  import { Dashboard } from '@uppy/svelte';
+  import XHRUpload from '@uppy/xhr-upload';
+  import Form from '@uppy/form';
+
+  import '@uppy/core/css/style.min.css';
+  import '@uppy/dashboard/css/style.min.css';
+
+  const uppy = new Uppy().use(XHRUpload, { endpoint: '/upload' });
+
+  // @uppy/form is client-side only, so we need to install it
+  // when the component is mounted.
+  onMount(() => {
+    uppy.use(Form, { target: '#form' });
+  });
+</script>
+
+<form id="form">
+  <label for="dob">Date of birth: </label>
+  <input type="date" name="dob" />
+  <Dashboard {uppy} />
+</form>
+```
+
+## Next steps
+
+- Add client-side file [restrictions](/docs/uppy/#restrictions).
+- Upload files together with other form fields with [`@uppy/form`](/docs/form).
+- Use your [language of choice](/docs/locales) instead of English.
+- Add an [image editor](/docs/image-editor) for cropping and resizing images.
+- Download files from remote sources, such as [Google Drive](/docs/google-drive)
+  and [Dropbox](/docs/dropbox), with [Companion](/docs/companion).
+- Add [Golden Retriever](/docs/golden-retriever) to save selected files in your
+  browser cache, so that if the browser crashes, or the user accidentally closes
+  the tab, Uppy can restore everything and continue uploading as if nothing
+  happened.
+
+[transloadit-concepts]: https://transloadit.com/docs/getting-started/concepts/
+[transloadit-services]: https://transloadit.com/services/
+[tus]: https://tus.io/
+[tus Node.js]: https://github.com/tus/tus-node-server

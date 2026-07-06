@@ -59,6 +59,8 @@ jobs:
           COMPANION_DOMAIN: localhost:3020
           COMPANION_PROTOCOL: http
           COMPANION_REDIS_URL: redis://localhost:6379
+      - name: Build website
+        run: corepack yarn workspace uppy-io build
 
   types:
     name: Types
@@ -105,3 +107,18 @@ jobs:
           corepack yarn workspaces focus @uppy-dev/build
       - name: Run linter
         run: corepack yarn run check:ci
+
+  lint_web:
+    name: Lint (uppy.io)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: yarn
+        env:
+          SKIP_YARN_COREPACK_CHECK: 1
+
+      - run: corepack yarn workspaces focus uppy-io
+      - run: corepack yarn workspace uppy-io lint

@@ -1,0 +1,80 @@
+{
+	"name": "uppy-io",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"build": "docusaurus build",
+		"clear": "docusaurus clear",
+		"deploy": "docusaurus deploy",
+		"dev": "docusaurus start",
+		"lint:js": "eslint . --cache --max-warnings=0",
+		"lint:md": "run-s --continue-on-error remark:md remark:mdx",
+		"lint": "run-s --continue-on-error lint:js lint:md format:check-diff",
+		"format:show-diff": "git diff --quiet || (echo 'Unable to show a diff because there are unstaged changes'; false) && (prettier . -w --loglevel silent && git --no-pager diff; git restore .)",
+		"format:check": "prettier -c .",
+		"format:check-diff": "yarn format:check || (yarn format:show-diff && false)",
+		"format": "prettier -w .",
+		"remark:md": "remark . -qf",
+		"remark:mdx": "remark . -e mdx -u mdx -qf",
+		"serve": "docusaurus serve",
+		"swizzle": "docusaurus swizzle",
+		"typecheck": "tsc --noEmit",
+		"write-heading-ids": "docusaurus write-heading-ids",
+		"write-translations": "docusaurus write-translations"
+	},
+	"browserslist": {
+		"production": [
+			">0.5%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	},
+	"dependencies": {
+		"@docusaurus/core": "^3.9.2",
+		"@docusaurus/plugin-client-redirects": "^3.9.2",
+		"@docusaurus/preset-classic": "^3.9.2",
+		"@mdx-js/react": "^3.1.1",
+		"@uidotdev/usehooks": "^2.4.1",
+		"@uppy/react": "workspace:*",
+		"clsx": "^2.1.1",
+		"prism-react-renderer": "^2.1.0",
+		"react": "^19.2.0",
+		"react-dom": "^19.2.0"
+	},
+	"devDependencies": {
+		"@docusaurus/eslint-plugin": "^3.9.2",
+		"@docusaurus/module-type-aliases": "^3.9.2",
+		"@tsconfig/docusaurus": "^2.0.7",
+		"@types/react": "^19.2.7",
+		"@types/react-dom": "^19.2.3",
+		"@typescript-eslint/eslint-plugin": "^8.48.1",
+		"@typescript-eslint/parser": "^8.48.1",
+		"eslint": "^8.0.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-markdown": "^5.1.0",
+		"eslint-plugin-mdx": "^3.6.2",
+		"mdast-comment-marker": "^3.0.0",
+		"npm-run-all": "^4.1.5",
+		"prettier": "3.7.4",
+		"remark-cli": "^12.0.1",
+		"remark-directive": "^4.0.0",
+		"remark-frontmatter": "^5.0.0",
+		"remark-gfm": "^4.0.1",
+		"remark-preset-lint-recommended": "^7.0.1",
+		"remark-retext": "^6.0.1",
+		"retext-english": "^5.0.0",
+		"retext-equality": "^7.1.0",
+		"retext-profanities": "^8.0.0",
+		"retext-quotes": "^6.0.2",
+		"retext-syntax-mentions": "^4.0.0",
+		"typescript": "^5.9.3",
+		"unified": "^11.0.5",
+		"unified-message-control": "^5.0.0",
+		"uppy": "latest"
+	}
+}

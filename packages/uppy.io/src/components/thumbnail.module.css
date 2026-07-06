@@ -1,0 +1,19 @@
+.wrapper {
+	max-width: 30rem;
+	padding: 1rem;
+	margin: 2rem auto;
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.wrapper div {
+	width: 128px;
+	height: 128px;
+}
+
+.wrapper div p {
+	font-size: 16px;
+	color: gray;
+}
