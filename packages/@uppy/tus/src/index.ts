@@ -184,7 +184,9 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         uploader.abort()
 
         if (opts?.abort) {
-          uploader.abort(true)
+          uploader.abort(true).catch((err) => {
+            this.uppy.log(err, 'warning')
+          })
         }
       }
 

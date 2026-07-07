@@ -124,4 +124,37 @@ describe('Tus', () => {
       expect(core.getFile(id).response?.status).toBe(403)
     })
   })
+
+  describe('terminate rejection', () => {
+    it('logs a failed best-effort terminate instead of leaving an unhandled rejection', async () => {
+      const core = new Core<any, TusBody>()
+      core.use(Tus, { endpoint: 'https://fake-endpoint.uppy.io/files/' })
+      const plugin = core.getPlugin<Tus<any, TusBody>>('Tus')!
+
+      const id = core.addFile({
+        type: 'application/octet-stream',
+        name: 'finished.bin',
+        data: new Blob([new Uint8Array(8)]),
+      })
+
+      // Stand-in for the tus.Upload whose terminate (abort(true)) rejects, as a
+      // compliant server does when terminating an already-finished upload.
+      plugin.uploaders[id] = {
+        abort: (shouldTerminate?: boolean) =>
+          shouldTerminate
+            ? Promise.reject(
+                new Error('tus: 400 cannot terminate finished upload'),
+              )
+            : Promise.resolve(),
+      } as unknown as (typeof plugin.uploaders)[string]
+
+      const logSpy = vi.spyOn(core, 'log')
+
+      plugin.resetUploaderReferences(id, { abort: true })
+      // Let the rejected terminate's `.catch` handler run.
+      await new Promise((resolve) => setTimeout(resolve, 0))
+
+      expect(logSpy).toHaveBeenCalledWith(expect.any(Error), 'warning')
+    })
+  })
 })
