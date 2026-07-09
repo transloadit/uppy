@@ -49,7 +49,12 @@ export default async function setup(project: TestProject) {
 
   const companionProcess = spawn(
     'node',
-    [join(__dirname, '../../@uppy/companion/test/with-load-balancer.mjs')],
+    [
+      join(
+        __dirname,
+        '../../@uppy/companion/dist/scripts/with-load-balancer.js',
+      ),
+    ],
     {
       stdio: 'inherit',
       cwd: join(__dirname, '../../../..'),

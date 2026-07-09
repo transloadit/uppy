@@ -8,14 +8,13 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import type { UppyFileId } from '@uppy/utils'
+import type { UppyFileId } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import IndexedDBStore from './IndexedDBStore.js'
 import MetaDataStore from './MetaDataStore.js'
 import ServiceWorkerStore from './ServiceWorkerStore.js'
 
 declare module '@uppy/core' {
-  // biome-ignore lint/correctness/noUnusedVariables: must be defined
   export interface UppyEventMap<M extends Meta, B extends Body> {
     'restore:plugin-data-changed': (data: Record<string, unknown>) => void
   }

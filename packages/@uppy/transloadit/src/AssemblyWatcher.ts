@@ -22,6 +22,7 @@ class TransloaditAssemblyWatcher<
 
   #resolve!: () => void
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: assigned in constructor, may be needed for future error handling
   #reject!: (reason?: string) => void
 
   #uppy

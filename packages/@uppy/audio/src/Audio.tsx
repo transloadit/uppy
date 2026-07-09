@@ -7,8 +7,8 @@ import type {
 } from '@uppy/core'
 
 import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils'
-import { getFileTypeExtension } from '@uppy/utils'
+import type { LocaleStrings } from '@uppy/core/utils'
+import { getFileTypeExtension } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import PermissionsScreen from './PermissionsScreen.js'
@@ -284,7 +284,9 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
   #stop = async () => {
     if (this.#stream) {
       const audioTracks = this.#stream.getAudioTracks()
-      audioTracks.forEach((track) => track.stop())
+      audioTracks.forEach((track) => {
+        track.stop()
+      })
     }
 
     if (this.#recorder) {

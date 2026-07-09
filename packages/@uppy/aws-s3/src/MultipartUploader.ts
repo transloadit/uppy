@@ -1,6 +1,6 @@
 import type { Uppy } from '@uppy/core'
-import type { Body, Meta, UppyFile } from '@uppy/utils'
-import { AbortController } from '@uppy/utils'
+import type { Body, Meta, UppyFile } from '@uppy/core/utils'
+import { AbortController } from '@uppy/core/utils'
 import type { HTTPCommunicationQueue } from './HTTPCommunicationQueue.js'
 
 const MB = 1024 * 1024
@@ -256,6 +256,7 @@ class MultipartUploader<M extends Meta, B extends Body> {
     else this.pause()
   }
 
+  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
   private [Symbol.for('uppy test: getChunkState')]() {
     return this.#chunkState
   }

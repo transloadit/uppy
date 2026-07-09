@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const tr_TR: Locale<0 | 1> = {
   strings: {},
@@ -141,9 +141,9 @@ tr_TR.strings = {
   openFolderNamed: 'Açık dosya %{name}',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.tr_TR = tr_TR
 }
 

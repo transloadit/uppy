@@ -32,6 +32,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3'
+import Arborist from '@npmcli/arborist'
 import AdmZip from 'adm-zip'
 import concat from 'concat-stream'
 import mime from 'mime-types'
@@ -102,7 +103,11 @@ async function getLocalDistFiles(packageName) {
 
   const prefix = 'dist'
 
-  const files = (await packlist({ path: packagePath })).flatMap((f) => {
+  // npm-packlist v7+ takes an Arborist tree (loaded from the package path)
+  // instead of a `{ path }` option.
+  const tree = await new Arborist({ path: packagePath }).loadActual()
+
+  const files = (await packlist(tree)).flatMap((f) => {
     const prefixSlash = `${prefix}/`
 
     if (f.startsWith(prefixSlash)) {

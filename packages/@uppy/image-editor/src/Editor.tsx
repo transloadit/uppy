@@ -1,5 +1,5 @@
 import type { Body, Meta } from '@uppy/core'
-import type { I18n, LocalUppyFile } from '@uppy/utils'
+import type { I18n, LocalUppyFile } from '@uppy/core/utils'
 import { Component } from 'preact'
 import type ImageEditor from './ImageEditor.js'
 import type { AspectRatio } from './ImageEditor.js'

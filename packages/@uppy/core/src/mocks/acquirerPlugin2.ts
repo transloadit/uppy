@@ -1,8 +1,8 @@
-import { vi } from 'vitest'
+import { type Mock, vi } from 'vitest'
 import UIPlugin from '../UIPlugin.js'
 import type Uppy from '../Uppy.js'
 
-type mock = ReturnType<typeof vi.fn>
+type mock = Mock<(...args: any[]) => any>
 
 export default class TestSelector2 extends UIPlugin<any, any, any> {
   name: string

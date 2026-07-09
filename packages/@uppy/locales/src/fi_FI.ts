@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const fi_FI: Locale<0 | 1> = {
   strings: {},
@@ -146,9 +146,9 @@ fi_FI.strings = {
   recording: 'Tallennetaan',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.fi_FI = fi_FI
 }
 

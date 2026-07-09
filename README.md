@@ -7,7 +7,7 @@ with any application. It’s fast, has a comprehensible API and lets you worry
 about more important problems than building a file uploader.
 
 - **Fetch** files from local disk, remote URLs, Google Drive, Dropbox, Box,
-  Instagram or snap and record selfies with a camera
+  or snap and record selfies with a camera
 - **Preview** and edit metadata with a nice interface
 - **Upload** to the final destination, optionally process/encode
 
@@ -82,7 +82,7 @@ For the supported frameworks (except Angular) Uppy offers three ways to build us
 - Lightweight, modular plugin-based architecture, light on dependencies :zap:
 - Resumable file uploads via the open [tus](https://tus.io/) standard, so large
   uploads survive network hiccups
-- Supports picking files from: Webcam, Dropbox, Box, Google Drive, Instagram,
+- Supports picking files from: Webcam, Dropbox, Box, Google Drive,
   bypassing the user’s device where possible, syncing between servers directly
   via [@uppy/companion](https://uppy.io/docs/companion)
 - Works great with file encoding and processing backends, such as
@@ -140,7 +140,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
 - [Uppy](https://uppy.io/docs/uppy/) — full list of options, methods and events
 - [Companion](https://uppy.io/docs/companion/) — setting up and running a
-  Companion instance, which adds support for Instagram, Dropbox, Box, Google
+  Companion instance, which adds support for Dropbox, Box, Google
   Drive and remote URLs
 - [React](https://uppy.io/docs/react/) — components to integrate Uppy UI plugins
   with React apps
@@ -153,7 +153,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 
 - [`Dashboard`](https://uppy.io/docs/dashboard/) — universal UI with previews,
   progress bars, metadata editor and all the cool stuff. Required for most UI
-  plugins like Webcam and Instagram
+  plugins like Webcam
 - Headless components ([react](https://uppy.io/docs/react/), [svelte](https://uppy.io/docs/svelte/), [vue](https://uppy.io/docs/vue/))
 
 ### Sources
@@ -166,8 +166,6 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
   Google Drive
 - ⓒ [`Dropbox`](https://uppy.io/docs/dropbox/) — import files from Dropbox
 - ⓒ [`Box`](https://uppy.io/docs/box/) — import files from Box
-- ⓒ [`Instagram`](https://uppy.io/docs/instagram/) — import images and videos
-  from Instagram
 - ⓒ [`Facebook`](https://uppy.io/docs/facebook/) — import images and videos from
   Facebook
 - ⓒ [`OneDrive`](https://uppy.io/docs/onedrive/) — import files from Microsoft
@@ -222,7 +220,7 @@ cases, the file input leaves some to be desired:
 - Uppy supports editing meta information before uploading.
 - Uppy allows cropping images before uploading.
 - There’s the situation where people are using their mobile devices and want to
-  upload on the go, but they have their picture on Instagram, files in Dropbox
+  upload on the go, but they have files in Dropbox
   or a plain file URL from anywhere on the open web. Uppy allows to pick files
   from those and push it to the destination without downloading it to your
   mobile device first.
@@ -272,7 +270,7 @@ If you want resumability with the Tus plugin, use
 [one of the tus server implementations](https://tus.io/implementations.html) 👌🏼
 
 And you’ll need [`@uppy/companion`](https://uppy.io/docs/companion) if you’d
-like your users to be able to pick files from Instagram, Google Drive, Dropbox
+like your users to be able to pick files from Google Drive, Dropbox
 or via direct URLs (with more services coming).
 
 ## Contributions are welcome

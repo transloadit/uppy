@@ -1,5 +1,8 @@
 import type { Body, Meta, UppyFile } from '@uppy/core'
-import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
+import type {
+  RateLimitedQueue,
+  WrapPromiseFunctionType,
+} from '@uppy/core/utils'
 import type AwsS3Multipart from './index.js'
 import type {
   AwsS3MultipartOptions,
@@ -263,9 +266,9 @@ export class HTTPCommunicationQueue<M extends Meta, B extends Body> {
     const data = chunk.getData()
     if (method.toUpperCase() === 'POST') {
       const formData = new FormData()
-      Object.entries(fields!).forEach(([key, value]) =>
-        formData.set(key, value),
-      )
+      Object.entries(fields!).forEach(([key, value]) => {
+        formData.set(key, value)
+      })
       formData.set('file', data)
       body = formData
     } else {

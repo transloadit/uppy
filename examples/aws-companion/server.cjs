@@ -66,4 +66,4 @@ const server = app.listen(3020, () => {
   console.log('listening on port 3020')
 })
 
-companion.socket(server)
+companion.socket(server, options)

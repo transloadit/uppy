@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const ca_ES: Locale<0 | 1> = {
   strings: {},
@@ -134,7 +134,6 @@ ca_ES.strings = {
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'Zoom',
   poweredBy: 'Desenvolupat per %{uppy}',
@@ -230,9 +229,9 @@ ca_ES.strings = {
   unselectFileNamed: 'Desselecciona arxiu %{name}',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.ca_ES = ca_ES
 }
 
