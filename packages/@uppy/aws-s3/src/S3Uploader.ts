@@ -80,6 +80,10 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   #uploadId?: string
   #uploadHasStarted: boolean = false
   #abortController: AbortController | undefined
+  // Both pause() and abort() abort the same signal; this flag lets the
+  // signal-less create checkpoint tell a resumable pause apart from a
+  // terminal cancel.
+  #paused: boolean = false
 
   constructor(options: S3UploaderOptions<M, B>) {
     if (options.file.data == null) {
@@ -181,6 +185,8 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   }
 
   async start(): Promise<void> {
+    // A (re)start clears any prior pause.
+    this.#paused = false
     // Abort any pending operations (if not already aborted)
     this.#abortController?.abort()
     // Always create a fresh AbortController (also for resume)
@@ -198,6 +204,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   }
 
   pause(): void {
+    this.#paused = true
     this.#abortController?.abort()
   }
 
@@ -206,6 +213,8 @@ export default class S3Uploader<M extends Meta, B extends Body> {
    * @param opts - `abortInS3`: Whether to also abort the multipart upload in S3. Default: true. Set to false to keep the multipart upload in S3 active, allowing for manual cleanup later and preventing accidental data loss if the user later tries to resume the upload.
    */
   abort(opts?: { abortInS3?: boolean }): void {
+    // aboring request
+    this.#paused = false
     this.#abortController?.abort()
     // Clean up event listeners
     this.#eventManager.remove()
@@ -296,13 +305,22 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     this.#key = key
     this.#uploadId = uploadId
 
-    // The file may have been removed/cancelled while createMultipartUpload was
-    // in flight. We deliberately don't pass the abort signal into the create
+    // The file may have been paused/removed/cancelled while createMultipartUpload
+    // was in flight. We deliberately don't pass the abort signal into the create
     // request: if it were cancelled mid-flight, S3 might still create the upload
     // while we never receive the uploadId — an orphan we couldn't clean up.
-    // Instead we let create finish, then abort the upload in S3 so it isn't left
-    // behind, and skip persisting resume state for a cancelled upload.
+    // So we let create finish, then act on *why* the signal was aborted:
     if (this.#abortController?.signal.aborted) {
+      if (this.#paused) {
+        // Paused, not cancelled: keep the S3 upload alive and persist resume
+        // state so start()/Golden Retriever can continue from the parts.
+        this.#options.uppy.setFileState(this.#options.file.id, {
+          s3Multipart: { uploadId, key },
+        })
+        return
+      }
+      // Cancelled: abort the now-created upload in S3 so it isn't left behind,
+      // and skip persisting resume state.
       this.abort()
       return
     }
