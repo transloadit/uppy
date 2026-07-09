@@ -43,8 +43,8 @@ You also need to install the UI plugin you want to use. For instance,
 
 Uppy offers three ways to build user interfaces:
 
-1. **Pre-composed, plug-and-play components.** Mainly `<Dashboard />` and
-   `<DragDrop />`. The downside is that you can’t customize the UI.
+1. **Pre-composed, plug-and-play components.** Mainly `<Dashboard />`. The
+   downside is that you can’t customize the UI.
 2. **Headless components.** Smaller components, easier to override the styles or
    compose them together with your own components.
 3. **Hooks.** Attach our logic to your own components, no restrictions, create a
@@ -56,11 +56,17 @@ Pre-composed, plug-and-play components:
 
 - `<Dashboard />` renders [`@uppy/dashboard`](/docs/dashboard)
 - `<DashboardModal />` renders [`@uppy/dashboard`](/docs/dashboard) as a modal
-- `<DragDrop />` renders [`@uppy/drag-drop`](/docs/drag-drop) - Removed in favor
-  of Dropzone and useDropzone in Uppy 5.0
-- `<ProgressBar />` renders [`@uppy/progress-bar`](/docs/progress-bar) - Removed
-  in Uppy 5.0
 - `<StatusBar />` renders [`@uppy/status-bar`](/docs/status-bar)
+
+:::note
+
+`<DragDrop />` and `<ProgressBar />` were removed in Uppy 5.0. Use the headless
+[`<Dropzone />`](#dropzone-) component or the
+[`useDropzone`](#usedropzoneoptions) hook instead. The
+[`@uppy/drag-drop`](/docs/drag-drop) plugin itself is still supported for setups
+without a framework.
+
+:::
 
 ### Headless Components
 

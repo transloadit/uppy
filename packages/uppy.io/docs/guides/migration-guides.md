@@ -69,6 +69,16 @@ The `@uppy/drag-drop` and `@uppy/file-input` plugins have been deprecated in
 favor of more flexible, headless hooks. These hooks provide the same
 functionality but with maximum customization freedom.
 
+:::note Update
+
+`@uppy/drag-drop` was later restored and remains supported for setups without a
+JavaScript framework or build step, such as server-rendered apps (PHP, Rails,
+Django) using the CDN bundle or plain `<script>` tags. Its framework wrappers
+were not restored: in React, Vue, or Svelte, use `Dropzone` or `useDropzone` as
+shown below.
+
+:::
+
 **Before:**
 
 ```js
