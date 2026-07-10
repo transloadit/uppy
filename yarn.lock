@@ -12142,7 +12142,7 @@ __metadata:
     mime-types: "npm:3.0.2"
     moment: "npm:2.30.1"
     moment-timezone: "npm:0.6.2"
-    morgan: "npm:1.10.1"
+    morgan: "npm:1.11.0"
     ms: "npm:2.1.3"
     nock: "npm:^14.0.15"
     node-schedule: "npm:2.1.1"
@@ -21594,16 +21594,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"morgan@npm:1.10.1":
-  version: 1.10.1
-  resolution: "morgan@npm:1.10.1"
+"morgan@npm:1.11.0":
+  version: 1.11.0
+  resolution: "morgan@npm:1.11.0"
   dependencies:
     basic-auth: "npm:~2.0.1"
     debug: "npm:2.6.9"
     depd: "npm:~2.0.0"
-    on-finished: "npm:~2.3.0"
+    on-finished: "npm:~2.4.1"
     on-headers: "npm:~1.1.0"
-  checksum: 10/f6a611bdcb9bebe8283381c49efedee81f50b75f6cbc52430cda1743ec35443c92d5e5d4384ce38b102d8c102162c92da563471def3cf840b4980160f278f8ba
+  checksum: 10/d6e72d98ccaab1eb191f9455b224711b626e235e7ace217060b3d44e23a3cdc4ba6d9097b30e9195728ef86ecd53589685f211b8acb4c16dbf958fa787bc5ec0
   languageName: node
   linkType: hard
 
