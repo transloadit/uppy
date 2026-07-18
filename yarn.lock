@@ -13268,10 +13268,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"adm-zip@npm:^0.5.5":
-  version: 0.5.14
-  resolution: "adm-zip@npm:0.5.14"
-  checksum: 10/64ccd4dca1195572fc185c42cdce8ebb9117dceaf590cc09536fd1dce2e7fc2afa6c7600095f7a6776db5ea638e855c2bc68c9bbaee47153e3d352324d10a27d
+"adm-zip@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "adm-zip@npm:0.6.0"
+  checksum: 10/6a49ab39055d8f716958d3a2055491ab86fe3359c4afeed9b14bbce78fb847bcd3cbaa0ff4921aaa19824aaa29d06691def1f53263db5224d06c068f922c5ba2
   languageName: node
   linkType: hard
 
@@ -27812,7 +27812,7 @@ __metadata:
     "@uppy/webdav": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     "@uppy/zoom": "workspace:*"
-    adm-zip: "npm:^0.5.5"
+    adm-zip: "npm:^0.6.0"
     chalk: "npm:^5.0.0"
     concat-stream: "npm:^2.0.0"
     cssnano: "npm:^8.0.1"

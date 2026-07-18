@@ -78,7 +78,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
     "@npmcli/arborist": "^9.6.0",
-    "adm-zip": "^0.5.5",
+    "adm-zip": "^0.6.0",
     "chalk": "^5.0.0",
     "concat-stream": "^2.0.0",
     "cssnano": "^8.0.1",
