@@ -5,7 +5,7 @@ import {
 } from '@uppy/components'
 
 import { useEffect, useMemo } from 'react'
-import { useSyncExternalStore } from 'use-sync-external-store/shim/index.js'
+import { useSyncExternalStore } from 'use-sync-external-store/shim'
 import { useUppyContext } from './headless/UppyContextProvider.js'
 
 export function useGooglePicker({

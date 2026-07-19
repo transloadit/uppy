@@ -1,9 +1,8 @@
 ---
 "@uppy/aws-s3": patch
 "@uppy/url": patch
-"@uppy/companion-client": patch
+"@uppy/core": patch
 "@uppy/components": patch
-"@uppy/provider-views": patch
 "@uppy/react": patch
 "@uppy/svelte": patch
 "@uppy/vue": patch
