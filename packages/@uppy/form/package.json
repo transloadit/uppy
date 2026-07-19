@@ -34,7 +34,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
     "get-form-data": "^3.0.0"
   },
   "peerDependencies": {

@@ -1,4 +1,3 @@
-import type { RequestClient } from '@uppy/companion-client'
 import type {
   Body,
   DefinePluginOpts,
@@ -8,6 +7,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin, EventManager } from '@uppy/core'
+import type { RequestClient } from '@uppy/core/companion-client'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
@@ -17,7 +17,7 @@ import {
   type LocalUppyFile,
   NetworkError,
   RateLimitedQueue,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import * as tus from 'tus-js-client'
 import packageJson from '../package.json' with { type: 'json' }
 import getFingerprint from './getFingerprint.js'
@@ -97,7 +97,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   keyof typeof defaultOptions
 >
 
-declare module '@uppy/utils' {
+declare module '@uppy/core/utils' {
   export interface LocalUppyFile<M extends Meta, B extends Body> {
     tus?: TusOpts<M, B>
   }

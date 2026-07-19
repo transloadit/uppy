@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/correctness/useUniqueElementIds: it's fine */
 import Uppy, { type UppyFile } from '@uppy/core'
-import UppyImageEditor from '@uppy/image-editor'
 import GoogleDrivePicker from '@uppy/google-drive-picker'
+import UppyImageEditor from '@uppy/image-editor'
 import {
   Dropzone,
   FilesGrid,
@@ -57,9 +57,9 @@ function App() {
   )
 
   const dialogRef = useRef<HTMLDialogElement>(null)
-  const [modalPlugin, setModalPlugin] = useState<
-    CustomDropzonePlugin | null
-  >(null)
+  const [modalPlugin, setModalPlugin] = useState<CustomDropzonePlugin | null>(
+    null,
+  )
   const [selectedFile, setSelectedFile] = useState<UppyFile<any, any> | null>(
     null,
   )

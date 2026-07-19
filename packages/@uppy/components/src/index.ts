@@ -4,7 +4,7 @@ export {
   createGooglePickerController,
   type GooglePickerOptions,
   type GooglePickerType,
-} from '@uppy/companion-client'
+} from '@uppy/core/companion-client'
 
 export { type DropzoneProps, default as Dropzone } from './Dropzone.js'
 export { default as FilesGrid, type FilesGridProps } from './FilesGrid.js'

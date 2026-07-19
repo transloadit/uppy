@@ -43,9 +43,6 @@
     "./css/style.scss": "./src/style.scss",
     "./package.json": "./package.json"
   },
-  "dependencies": {
-    "@uppy/utils": "workspace:^"
-  },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
   },

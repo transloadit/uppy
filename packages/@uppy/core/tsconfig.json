@@ -3,15 +3,8 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
-    "types": ["preact", "node"]
+    "types": ["preact", "node", "google.accounts", "google.picker", "gapi"]
   },
   "include": ["./package.json", "./src/**/*.*"],
-  "references": [
-    {
-      "path": "../store-default/tsconfig.build.json"
-    },
-    {
-      "path": "../utils/tsconfig.build.json"
-    }
-  ]
+  "references": []
 }

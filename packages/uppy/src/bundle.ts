@@ -10,9 +10,9 @@ export function Core() {
 }
 
 // Utilities
-export * as server from '@uppy/companion-client'
+export * as server from '@uppy/core/companion-client'
 
-import * as ProviderView from '@uppy/provider-views'
+import * as ProviderView from '@uppy/core/provider-views'
 
 export const views = { ProviderView }
 
@@ -23,6 +23,8 @@ export { default as AwsS3 } from '@uppy/aws-s3'
 export { default as Box } from '@uppy/box'
 // Miscellaneous
 export { default as Compressor } from '@uppy/compressor'
+// Stores
+export { default as DefaultStore } from '@uppy/core/store-default'
 // UI plugins
 export { default as Dashboard } from '@uppy/dashboard'
 export { default as DragDrop } from '@uppy/drag-drop'
@@ -39,8 +41,6 @@ export { default as OneDrive } from '@uppy/onedrive'
 export { default as RemoteSources } from '@uppy/remote-sources'
 export { default as ScreenCapture } from '@uppy/screen-capture'
 export { default as StatusBar } from '@uppy/status-bar'
-// Stores
-export { default as DefaultStore } from '@uppy/store-default'
 export { default as ThumbnailGenerator } from '@uppy/thumbnail-generator'
 export { default as Transloadit } from '@uppy/transloadit'
 export { default as Tus } from '@uppy/tus'

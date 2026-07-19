@@ -3,7 +3,6 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
-import type { Locale } from '@uppy/utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import BasePlugin, {
   type DefinePluginOpts,
@@ -21,6 +20,7 @@ import InvalidPluginWithoutType from './mocks/invalidPluginWithoutType.js'
 import { RestrictionError } from './Restricter.js'
 import UIPlugin from './UIPlugin.js'
 import type { State } from './Uppy.js'
+import type { Locale } from './utils/index.js'
 
 const sampleImage = fs.readFileSync(
   path.join(__dirname, '../../compressor/fixtures/image.jpg'),

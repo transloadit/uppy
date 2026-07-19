@@ -2,7 +2,7 @@
 @use "sass:color";
 @use '@uppy/core/src/_utils.scss';
 @use '@uppy/core/src/_variables.scss';
-@use '@uppy/provider-views/src/style.scss' as style3;
+@use '@uppy/core/src/provider-views/style.scss' as style3;
 
 // Component-specific css imports
 @use 'components/FileItem/index.scss';

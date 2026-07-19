@@ -5,7 +5,11 @@ import {
   useGooglePicker,
 } from '@uppy/react'
 
-export type CustomDropzonePlugin = 'webcam' | 'dropbox' | 'screen-capture' | 'image-editor'
+export type CustomDropzonePlugin =
+  | 'webcam'
+  | 'dropbox'
+  | 'screen-capture'
+  | 'image-editor'
 
 export interface CustomDropzoneProps {
   openModal: (plugin: CustomDropzonePlugin) => void

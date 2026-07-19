@@ -7,8 +7,8 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import type { I18n, Translator } from '@uppy/utils'
-import { isDragDropSupported } from '@uppy/utils'
+import type { I18n, Translator } from '@uppy/core/utils'
+import { isDragDropSupported } from '@uppy/core/utils'
 import classNames from 'classnames'
 import type { h } from 'preact'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
