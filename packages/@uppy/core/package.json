@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && sass --load-path=../../ src/provider-views/style.scss dist/provider-views.css && postcss dist/style.css -u cssnano -o dist/style.min.css && postcss dist/provider-views.css -u cssnano -o dist/provider-views.min.css",
     "typecheck": "tsc --build",
     "test": "vitest run --environment=jsdom --silent='passed-only'"
   },
@@ -38,20 +38,32 @@
     "./css/style.min.css": "./dist/style.min.css",
     "./css/style.css": "./dist/style.css",
     "./css/style.scss": "./src/style.scss",
+    "./store-default": "./lib/store/index.js",
+    "./utils": "./lib/utils/index.js",
+    "./companion-client": "./lib/companion-client/index.js",
+    "./provider-views": "./lib/provider-views/index.js",
+    "./provider-views/css/style.min.css": "./dist/provider-views.min.css",
+    "./provider-views/css/style.css": "./dist/provider-views.css",
+    "./provider-views/css/style.scss": "./src/provider-views/style.scss",
     "./package.json": "./package.json"
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^1.1.0",
-    "@uppy/store-default": "workspace:^",
-    "@uppy/utils": "workspace:^",
+    "classnames": "^2.5.1",
     "lodash": "^4.18.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
     "nanoid": "^5.1.11",
+    "p-queue": "^9.3.0",
+    "p-retry": "^6.1.0",
     "preact": "^10.29.2"
   },
   "devDependencies": {
     "@types/deep-freeze": "^0",
+    "@types/gapi": "^0.0.47",
+    "@types/google.accounts": "^0.0.14",
+    "@types/google.picker": "^0.0.42",
+    "@types/lodash": "^4.14.199",
     "@types/node": "^20.19.0",
     "cssnano": "^8.0.1",
     "deep-freeze": "^0.0.1",

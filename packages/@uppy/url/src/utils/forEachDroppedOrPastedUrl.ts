@@ -1,4 +1,4 @@
-import { toArray } from '@uppy/utils'
+import { toArray } from '@uppy/core/utils'
 
 /*
   SITUATION

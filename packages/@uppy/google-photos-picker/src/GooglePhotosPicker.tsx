@@ -1,16 +1,16 @@
+import type { AsyncStore, BaseProviderPlugin, Body, Meta } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
   RequestClient,
   tokenStorage,
-} from '@uppy/companion-client'
-import type { AsyncStore, BaseProviderPlugin, Body, Meta } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
+} from '@uppy/core/companion-client'
 import {
   GooglePhotosIcon,
   GooglePickerView,
   type PickedItem,
-} from '@uppy/provider-views'
-import type { LocaleStrings } from '@uppy/utils'
+} from '@uppy/core/provider-views'
+import type { LocaleStrings } from '@uppy/core/utils'
 
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'

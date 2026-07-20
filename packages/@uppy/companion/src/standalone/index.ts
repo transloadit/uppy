@@ -84,7 +84,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
   })
   // log server requests.
   router.use(morgan('combined'))
-  morgan.token('url', (req) => {
+  morgan.token<Request>('url', (req) => {
     const { query, censored } = censorQuery(req.query)
     return censored
       ? `${req.path}?${qs.stringify(query)}`
@@ -136,12 +136,20 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
     })
   }
 
-  if (process.env['COMPANION_COOKIE_DOMAIN']) {
-    sessionOptions.cookie = {
-      domain: process.env['COMPANION_COOKIE_DOMAIN'],
-      maxAge: 24 * 60 * 60 * 1000, // 1 day
-    }
+  const cookieOptions: SessionOptions['cookie'] = {
+    // AFAIK sessions are only used for the initial oauth2 dance, and not after that.
+    // Therefore 10 minutes should be plenty of time for the user to complete the oauth2 dance.
+    // we might want to see if we can make grant work without sessions, so we can remove sessions:
+    // https://github.com/transloadit/uppy/issues/4394
+    // https://github.com/transloadit/api2/pull/8345#pullrequestreview-4552806932
+    maxAge: 10 * 60 * 1000,
   }
+
+  if (process.env['COMPANION_COOKIE_DOMAIN']) {
+    cookieOptions.domain = process.env['COMPANION_COOKIE_DOMAIN']
+  }
+
+  sessionOptions.cookie = cookieOptions
 
   // Session is used for grant redirects, so that we don't need to expose secret tokens in URLs
   // See https://github.com/transloadit/uppy/pull/1668

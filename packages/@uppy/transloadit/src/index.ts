@@ -13,13 +13,13 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import {
   ErrorWithCause,
   hasProperty,
   RateLimitedQueue,
   type RemoteUppyFile,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
+import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
@@ -152,7 +152,7 @@ declare module '@uppy/core' {
   }
 }
 
-declare module '@uppy/utils' {
+declare module '@uppy/core/utils' {
   export interface LocalUppyFile<M extends Meta, B extends Body> {
     transloadit?: { assembly: string }
     tus?: TusOpts<M, B>

@@ -5,7 +5,7 @@ import { decrypt, encrypt } from './utils.js'
 
 export type OAuthState = {
   id: string
-  origin?: string | string[] | number | boolean | undefined // weird type because this is what express's res.getHeader and cors callback combined can possibly return
+  origin?: string | number | boolean | (string | boolean)[] | undefined // weird type because this is what express's res.getHeader and cors callback combined can possibly return
   preAuthToken?: string
   companionInstance?: string
   customerDefinedAllowedOrigins?: string[]
