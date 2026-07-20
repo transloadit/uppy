@@ -602,8 +602,11 @@ export default class Uploader {
   saveState(state: { action: string; payload: unknown }): void {
     if (!this.storage) return
     // make sure the keys get cleaned up.
+    // We don't need more than 10 minutes because progress events should make sure that it doesn't expire before the upload is done.
+    // assume that after the upload is done, we don't need it around for long
     // https://github.com/transloadit/uppy/issues/3748
-    const keyExpirySec = 60 * 60 * 24
+    // https://github.com/transloadit/api2/pull/8345#pullrequestreview-4552806932
+    const keyExpirySec = 60 * 10
     const redisKey = `${Uploader.STORAGE_PREFIX}:${this.token}`
     this.storage.set(redisKey, jsonStringify(state), 'EX', keyExpirySec)
   }

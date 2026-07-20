@@ -39,10 +39,6 @@
     ".": "./lib/index.js",
     "./package.json": "./package.json"
   },
-  "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^"
-  },
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",

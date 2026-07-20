@@ -1,8 +1,13 @@
-import type { Body, InternalMetadata, LocaleStrings, Meta } from '@uppy/utils'
 import { expectTypeOf, test } from 'vitest'
 import BasePlugin from './BasePlugin.js'
 import UIPlugin, { type UIPluginOptions } from './UIPlugin.js'
 import Uppy, { type UnknownPlugin } from './Uppy.js'
+import type {
+  Body,
+  InternalMetadata,
+  LocaleStrings,
+  Meta,
+} from './utils/index.js'
 
 interface Opts extends UIPluginOptions {
   foo: string
