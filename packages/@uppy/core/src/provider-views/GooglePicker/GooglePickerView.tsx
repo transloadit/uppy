@@ -51,11 +51,13 @@ export type GooglePickerViewProps = {
       pickerType: 'drive'
       apiKey: string
       appId: string
+      selectFolders?: boolean
     }
   | {
       pickerType: 'photos'
       apiKey?: undefined
       appId?: undefined
+      selectFolders?: undefined
     }
 )
 
@@ -67,6 +69,7 @@ export default function GooglePickerView({
   pickerType,
   apiKey,
   appId,
+  selectFolders,
   storage,
 }: GooglePickerViewProps) {
   const [loading, setLoading] = useState(false)
@@ -103,7 +106,11 @@ export default function GooglePickerView({
             token,
             apiKey,
             appId,
+            selectFolders: selectFolders ?? false,
             onFilesPicked,
+            onEmptyFolder: () => {
+              uppy.info(i18n('emptyOrInaccessibleFolder'), 'warning', 4000)
+            },
             signal,
             onLoadingChange: (isLoading: boolean) => setLoading(isLoading),
             onError: (err: unknown) => {
@@ -178,6 +185,7 @@ export default function GooglePickerView({
       clientId,
       onFilesPicked,
       pickerType,
+      selectFolders,
       setAccessToken,
       uppy,
       i18n,
