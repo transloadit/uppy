@@ -21,7 +21,7 @@ root/ (Dropbox)
 │   │   │   ├── nested-target.pdf
 │   │   │   ├── new-file.pdf
 │   │   │   └── ThisFolderNameIsIntentionallyLongAndUnbroken.../
-│   │   │       └── ThisFileNameIsIntentionallyLongAndUnbroken...01-24.pdf
+│   │   │       └── 24 files: ThisFileNameIsIntentionallyLongAndUnbroken...01.pdf through ...24.pdf
 │   │   ├── deep-file.txt
 │   │   ├── target.pdf
 │   │   └── workspace.pdf
