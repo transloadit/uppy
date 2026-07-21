@@ -162,6 +162,8 @@ describe('ProviderView Search E2E', () => {
     expect(currentBreadcrumbRect.right).toBeLessThanOrEqual(
       breadcrumbRect.right,
     )
+    expect(currentBreadcrumb.getAttribute('aria-current')).toBe('page')
+    expect(getComputedStyle(currentBreadcrumb).pointerEvents).not.toBe('none')
     expect(getComputedStyle(currentBreadcrumb).textOverflow).toBe('ellipsis')
     expect(logoutRect.right).toBeLessThanOrEqual(providerRect.right)
     await expect

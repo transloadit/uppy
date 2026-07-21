@@ -143,11 +143,10 @@
     min-width: 80px;
     color: variables.$gray-800;
     font-weight: 500;
-    cursor: normal;
-    pointer-events: none;
+    cursor: default;
   }
 
-  &:hover {
+  &:not(:last-of-type):hover {
     cursor: pointer;
   }
 

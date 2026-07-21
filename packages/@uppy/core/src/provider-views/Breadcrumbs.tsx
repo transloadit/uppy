@@ -21,18 +21,20 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
       {breadcrumbs.map((folder, index) => {
         const label =
           folder.type === 'root' ? title : (folder.data.name ?? i18n('unnamed'))
+        const isCurrent = breadcrumbs.length === index + 1
 
         return (
           <Fragment key={folder.id}>
             <button
               type="button"
               className="uppy-u-reset uppy-c-btn"
-              onClick={() => openFolder(folder.id)}
+              onClick={isCurrent ? undefined : () => openFolder(folder.id)}
+              aria-current={isCurrent ? 'page' : undefined}
               title={label}
             >
               {label}
             </button>
-            {breadcrumbs.length !== index + 1 && (
+            {!isCurrent && (
               <span
                 aria-hidden="true"
                 className="uppy-Provider-breadcrumbsSeparator"
