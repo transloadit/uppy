@@ -39,11 +39,14 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.362.0",
+    "@aws-sdk/client-sts": "^3.362.0",
     "@aws-sdk/s3-request-presigner": "^3.362.0",
     "@types/node": "^20.19.0",
     "@uppy/core": "workspace:^",
+    "@vitest/browser-playwright": "^4.1.6",
     "jsdom": "^26.1.0",
     "nock": "^13.1.0",
+    "playwright": "1.60.0",
     "typescript": "^5.8.3",
     "vitest": "^4.1.6",
     "whatwg-fetch": "3.6.2"

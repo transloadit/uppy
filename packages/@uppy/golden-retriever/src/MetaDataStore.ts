@@ -115,8 +115,11 @@ export default class MetaDataStore<M extends Meta, B extends Body> {
       localStorage.removeItem(this.name)
       return
     }
-    const state = JSON.stringify(this.#state)
-    localStorage.setItem(this.name, state)
+    try {
+      localStorage.setItem(this.name, JSON.stringify(this.#state))
+    } catch {
+      // Best-effort: out of quota / disabled storage must not break uploading.
+    }
   }
 
   /**
