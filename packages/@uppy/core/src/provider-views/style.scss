@@ -79,11 +79,16 @@
 }
 
 .uppy-Provider-breadcrumbs {
+  display: flex;
   flex: 1;
+  align-items: center;
+  min-width: 0;
   margin-bottom: 10px;
+  overflow: hidden;
   color: variables.$gray-700;
   font-size: 12px;
   text-align: start;
+  white-space: nowrap;
 
   .uppy-size--md & {
     margin-bottom: 0;
@@ -96,6 +101,7 @@
 
 .uppy-Provider-breadcrumbsIcon {
   display: inline-block;
+  flex: none;
   color: variables.$gray-700;
   line-height: 1;
   vertical-align: middle;
@@ -112,16 +118,29 @@
   @include utils.highlight-focus;
 
   display: inline-block;
+  flex: 0 1 auto;
+  min-width: 0;
   // for focus
   padding: 4px;
+  overflow: hidden;
   line-height: inherit;
+  text-overflow: ellipsis;
   border-radius: 3px;
+
+  &:first-of-type {
+    flex-shrink: 0;
+  }
+
+  &:not(:first-of-type):not(:last-of-type) {
+    max-width: 120px;
+  }
 
   &:not(:last-of-type) {
     text-decoration: underline;
   }
 
   &:last-of-type {
+    min-width: 80px;
     color: variables.$gray-800;
     font-weight: 500;
     cursor: normal;
@@ -136,12 +155,18 @@
     color: variables.$gray-200;
   }
 }
+
+.uppy-Provider-breadcrumbsSeparator {
+  flex: none;
+  margin: 0 2px;
+}
 // ...uppy-Provider-breadcrumbs|
 
 .uppy-ProviderBrowser {
   display: flex;
   flex: 1;
   flex-direction: column;
+  min-width: 0;
   height: 100%;
   font-weight: 400;
   font-size: 14px;

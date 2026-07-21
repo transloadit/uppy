@@ -18,21 +18,31 @@ export default function Breadcrumbs<M extends Meta, B extends Body>(
   return (
     <div className="uppy-Provider-breadcrumbs">
       <div className="uppy-Provider-breadcrumbsIcon">{breadcrumbsIcon}</div>
-      {breadcrumbs.map((folder, index) => (
-        <Fragment>
-          <button
-            key={folder.id}
-            type="button"
-            className="uppy-u-reset uppy-c-btn"
-            onClick={() => openFolder(folder.id)}
-          >
-            {folder.type === 'root'
-              ? title
-              : (folder.data.name ?? i18n('unnamed'))}
-          </button>
-          {breadcrumbs.length === index + 1 ? '' : ' / '}
-        </Fragment>
-      ))}
+      {breadcrumbs.map((folder, index) => {
+        const label =
+          folder.type === 'root' ? title : (folder.data.name ?? i18n('unnamed'))
+
+        return (
+          <Fragment key={folder.id}>
+            <button
+              type="button"
+              className="uppy-u-reset uppy-c-btn"
+              onClick={() => openFolder(folder.id)}
+              title={label}
+            >
+              {label}
+            </button>
+            {breadcrumbs.length !== index + 1 && (
+              <span
+                aria-hidden="true"
+                className="uppy-Provider-breadcrumbsSeparator"
+              >
+                /
+              </span>
+            )}
+          </Fragment>
+        )
+      })}
     </div>
   )
 }
