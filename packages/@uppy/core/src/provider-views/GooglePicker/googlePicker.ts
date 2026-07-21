@@ -207,7 +207,9 @@ export async function showDrivePicker({
   token,
   apiKey,
   appId,
+  selectFolders,
   onFilesPicked,
+  onEmptyFolder,
   signal,
   onLoadingChange,
   onError,
@@ -215,7 +217,9 @@ export async function showDrivePicker({
   token: string
   apiKey: string
   appId: string
+  selectFolders: boolean
   onFilesPicked: (files: PickedItem[], accessToken: string) => void
+  onEmptyFolder: () => void
   signal: AbortSignal | undefined
   onLoadingChange: (loading: boolean) => void
   onError: (err: unknown) => void
@@ -320,6 +324,14 @@ export async function showDrivePicker({
           ...(await handleDocObjectRecursively({ doc, token, signal })),
         )
       }
+
+      const pickedAFolder = picked.docs.some(
+        (doc) => doc.mimeType === 'application/vnd.google-apps.folder',
+      )
+      if (pickedAFolder && results.length === 0) {
+        onEmptyFolder()
+      }
+
       onFilesPicked(results, token)
     } catch (err) {
       onError(err)
@@ -337,9 +349,7 @@ export async function showDrivePicker({
     .addView(
       new google.picker.DocsView(google.picker.ViewId.DOCS)
         .setIncludeFolders(true)
-        // Note: setEnableDrives doesn't seem to work
-        // .setEnableDrives(true)
-        .setSelectFolderEnabled(true)
+        .setSelectFolderEnabled(selectFolders)
         .setMode(google.picker.DocsViewMode.LIST),
     )
     // NOTE: photos is broken and results in an error being returned from Google
