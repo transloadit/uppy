@@ -5,6 +5,10 @@ import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
 import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
+import {
+  LONG_PROVIDER_FILE_NAME,
+  LONG_PROVIDER_FOLDER_NAME,
+} from './mocks/CompanionHandler.js'
 import { worker } from './setup.js'
 
 import '@uppy/core/css/style.css'
@@ -74,6 +78,97 @@ afterEach(async () => {
 })
 
 describe('ProviderView Search E2E', () => {
+  test('long provider names stay within the Dashboard', async () => {
+    uppy = initializeUppy(['Dropbox'])
+
+    await expect
+      .element(page.getByRole('presentation').getByText('Dropbox'))
+      .toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+
+    for (const folderName of [
+      'first',
+      'second',
+      'third',
+      LONG_PROVIDER_FOLDER_NAME,
+    ]) {
+      const folder = page.getByRole('button', { name: folderName })
+      await expect.element(folder).toBeVisible()
+      await folder.click()
+    }
+
+    await expect
+      .element(
+        page.getByRole('checkbox', {
+          name: LONG_PROVIDER_FILE_NAME,
+          exact: true,
+        }),
+      )
+      .toBeVisible()
+
+    const panelBody = document.querySelector(
+      '.uppy-DashboardContent-panelBody',
+    ) as HTMLElement
+    const provider = document.querySelector(
+      '.uppy-ProviderBrowser',
+    ) as HTMLElement
+    const list = document.querySelector(
+      '.uppy-ProviderBrowser-list',
+    ) as HTMLElement
+    const breadcrumb = document.querySelector(
+      '.uppy-Provider-breadcrumbs',
+    ) as HTMLElement
+    const currentBreadcrumb = breadcrumb.querySelector(
+      'button:last-of-type',
+    ) as HTMLButtonElement
+    const logout = document.querySelector(
+      '.uppy-ProviderBrowser-userLogout',
+    ) as HTMLElement
+    const longFileLabel = Array.from(
+      document.querySelectorAll<HTMLElement>('.uppy-ProviderBrowserItem-inner'),
+    ).find(
+      (item) => item.textContent === LONG_PROVIDER_FILE_NAME,
+    ) as HTMLElement
+    const longFilename = longFileLabel.querySelector(
+      '.uppy-truncate-text',
+    ) as HTMLElement
+
+    const panelRect = panelBody.getBoundingClientRect()
+    const providerRect = provider.getBoundingClientRect()
+    const listRect = list.getBoundingClientRect()
+    const breadcrumbRect = breadcrumb.getBoundingClientRect()
+    const currentBreadcrumbRect = currentBreadcrumb.getBoundingClientRect()
+    const logoutRect = logout.getBoundingClientRect()
+    const filenameRect = longFilename.getBoundingClientRect()
+
+    expect(providerRect.width).toBeLessThanOrEqual(panelRect.width)
+    expect(providerRect.right).toBeLessThanOrEqual(panelRect.right)
+    expect(listRect.width).toBeLessThanOrEqual(panelRect.width)
+    expect(listRect.right).toBeLessThanOrEqual(panelRect.right)
+    expect(Math.abs(listRect.right - providerRect.right)).toBeLessThanOrEqual(1)
+
+    expect(list.scrollHeight).toBeGreaterThan(list.clientHeight)
+    list.scrollTop = 40
+    expect(list.scrollTop).toBeGreaterThan(0)
+
+    expect(longFilename.scrollWidth).toBeGreaterThan(longFilename.clientWidth)
+    expect(filenameRect.right).toBeLessThanOrEqual(listRect.right)
+    expect(getComputedStyle(longFilename).textOverflow).toBe('ellipsis')
+
+    expect(currentBreadcrumb.scrollWidth).toBeGreaterThan(
+      currentBreadcrumb.clientWidth,
+    )
+    expect(currentBreadcrumb.clientWidth).toBeGreaterThan(0)
+    expect(currentBreadcrumbRect.right).toBeLessThanOrEqual(
+      breadcrumbRect.right,
+    )
+    expect(getComputedStyle(currentBreadcrumb).textOverflow).toBe('ellipsis')
+    expect(logoutRect.right).toBeLessThanOrEqual(providerRect.right)
+    await expect
+      .element(page.getByRole('button', { name: 'Log out' }))
+      .toBeVisible()
+  })
+
   test('Search for nested file in Dropbox and verify results', async () => {
     uppy = initializeUppy(['Dropbox'])
     await expect

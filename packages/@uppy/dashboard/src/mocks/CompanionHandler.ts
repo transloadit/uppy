@@ -2,6 +2,14 @@ import { HttpResponse, http } from 'msw'
 
 const COMPANION_URL = 'http://companion.test'
 
+export const LONG_PROVIDER_FOLDER_NAME =
+  'ThisFolderNameIsIntentionallyLongAndUnbrokenSoThatItCannotFitInsideTheProviderBreadcrumbWithoutBeingTruncated'
+
+const LONG_PROVIDER_FOLDER_PATH = `/first/second/third/${LONG_PROVIDER_FOLDER_NAME}`
+const LONG_PROVIDER_FILE_NAME_PREFIX =
+  'ThisFileNameIsIntentionallyLongAndUnbrokenSoThatItCannotFitInsideTheProviderFileListWithoutBeingTruncated'
+export const LONG_PROVIDER_FILE_NAME = `${LONG_PROVIDER_FILE_NAME_PREFIX}01.pdf`
+
 /**
  * Mocked Folder structure :
  *
@@ -11,7 +19,9 @@ root/ (Dropbox)
 │   ├── second/
 │   │   ├── third/
 │   │   │   ├── nested-target.pdf
-│   │   │   └── new-file.pdf
+│   │   │   ├── new-file.pdf
+│   │   │   └── ThisFolderNameIsIntentionallyLongAndUnbroken.../
+│   │   │       └── ThisFileNameIsIntentionallyLongAndUnbroken...01-24.pdf
 │   │   ├── deep-file.txt
 │   │   ├── target.pdf
 │   │   └── workspace.pdf
@@ -203,7 +213,44 @@ export const handlers = [
             modifiedDate: '2024-01-10T00:00:00Z',
             size: 3072,
           },
+          {
+            isFolder: true,
+            icon: 'folder',
+            name: LONG_PROVIDER_FOLDER_NAME,
+            mimeType: 'folder',
+            id: 'folder-long-provider-name',
+            thumbnail: null,
+            requestPath: encodeURIComponent(LONG_PROVIDER_FOLDER_PATH),
+            modifiedDate: '2024-01-12T00:00:00Z',
+            size: null,
+          },
         ],
+        nextPagePath: null,
+      })
+    }
+
+    // Long folder with enough long-named files to exercise truncation and scrolling
+    if (pathStr === LONG_PROVIDER_FOLDER_PATH) {
+      return HttpResponse.json({
+        username: 'test-user@example.com',
+        items: Array.from({ length: 24 }, (_, index) => {
+          const sequence = String(index + 1).padStart(2, '0')
+          const name = `${LONG_PROVIDER_FILE_NAME_PREFIX}${sequence}.pdf`
+
+          return {
+            isFolder: false,
+            icon: 'file',
+            name,
+            mimeType: 'application/pdf',
+            id: `file-long-provider-name-${sequence}`,
+            thumbnail: null,
+            requestPath: encodeURIComponent(
+              `${LONG_PROVIDER_FOLDER_PATH}/${name}`,
+            ),
+            modifiedDate: '2024-01-13T00:00:00Z',
+            size: 4096 + index,
+          }
+        }),
         nextPagePath: null,
       })
     }
