@@ -14,10 +14,12 @@ const indexedDB =
 
 const isSupported = !!indexedDB
 
-const DB_NAME = 'uppy-blobs'
+export const DB_NAME = 'uppy-blobs'
 const STORE_NAME = 'files' // maybe have a thumbnail store in the future
+
+export const METADATA_STORE_NAME = 'metadata'
 const DEFAULT_EXPIRY = 24 * 60 * 60 * 1000 // 24 hours
-const DB_VERSION = 3
+const DB_VERSION = 4
 const MiB = 0x10_00_00
 
 /**
@@ -36,11 +38,12 @@ function migrateExpiration(store: IDBObjectStore): void {
   }
 }
 
-function connect(dbName: string): Promise<IDBDatabase> {
+export function connect(dbName: string): Promise<IDBDatabase> {
   const request = (indexedDB as IDBFactory).open(dbName, DB_VERSION)
   return new Promise((resolve, reject) => {
     request.onupgradeneeded = (event) => {
       const db: IDBDatabase = (event.target as IDBOpenDBRequest).result
+      closeOnVersionChange(db)
       const transaction = (event.currentTarget as IDBOpenDBRequest)
         .transaction as IDBTransaction
 
@@ -58,18 +61,38 @@ function connect(dbName: string): Promise<IDBDatabase> {
         migrateExpiration(store)
       }
 
+      if (event.oldVersion < 4) {
+        // Added in v4: a store for GoldenRetriever's recovery snapshot, which
+        // moved out of localStorage to escape its ~5MB quota. See issue #6280.
+        const store = db.createObjectStore(METADATA_STORE_NAME, {
+          keyPath: 'id',
+        })
+        store.createIndex('expires', 'expires', { unique: false })
+      }
+
       transaction.oncomplete = () => {
         resolve(db)
       }
     }
     request.onsuccess = (event) => {
-      resolve((event.target as IDBRequest).result)
+      const db = (event.target as IDBRequest).result as IDBDatabase
+      closeOnVersionChange(db)
+      resolve(db)
     }
     request.onerror = reject
   })
 }
 
-function waitForRequest<T>(request: IDBRequest): Promise<T> {
+/**
+ * Close this connection when another tab/instance requests a higher DB version,
+ * so we never block its upgrade (and it never blocks ours). The connection is
+ * unusable afterwards, but recovery persistence is best-effort.
+ */
+function closeOnVersionChange(db: IDBDatabase): void {
+  db.onversionchange = () => db.close()
+}
+
+export function waitForRequest<T>(request: IDBRequest): Promise<T> {
   return new Promise((resolve, reject) => {
     request.onsuccess = (event) => {
       resolve((event.target as IDBRequest).result)
@@ -230,17 +253,13 @@ class IndexedDBStore {
   }
 
   /**
-   * Delete all stored blobs that have an expiry date that is before Date.now().
-   * This is a static method because it deletes expired blobs from _all_ Uppy instances.
+   * Delete every expired entry in a store, using its `expires` index.
    */
-  static async cleanup(): Promise<void> {
-    const db = await connect(DB_NAME)
-    const transaction = db.transaction([STORE_NAME], 'readwrite')
-    const store = transaction.objectStore(STORE_NAME)
+  static #deleteExpired(store: IDBObjectStore): Promise<void> {
     const request = store
       .index('expires')
       .openCursor(IDBKeyRange.upperBound(Date.now()))
-    await new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       request.onsuccess = (event) => {
         const cursor = (event.target as IDBRequest).result
         if (cursor) {
@@ -252,7 +271,31 @@ class IndexedDBStore {
       }
       request.onerror = reject
     })
-    db.close()
+  }
+
+  /**
+   * Delete all stored blobs and recovery snapshots that have an expiry date
+   * before Date.now(). This is a static method because it deletes expired data
+   * from _all_ Uppy instances.
+   */
+  static async cleanup(): Promise<void> {
+    const db = await connect(DB_NAME)
+    try {
+      const transaction = db.transaction(
+        [STORE_NAME, METADATA_STORE_NAME],
+        'readwrite',
+      )
+      await Promise.all([
+        IndexedDBStore.#deleteExpired(transaction.objectStore(STORE_NAME)),
+        IndexedDBStore.#deleteExpired(
+          transaction.objectStore(METADATA_STORE_NAME),
+        ),
+      ])
+    } finally {
+      // Always release the connection, even if expiry fails — otherwise a
+      // rejected delete would leak the connection (and could block upgrades).
+      db.close()
+    }
   }
 }
 
