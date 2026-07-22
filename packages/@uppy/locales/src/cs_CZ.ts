@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const cs_CZ: Locale<0 | 1 | 2> = {
   strings: {},
@@ -274,9 +274,9 @@ cs_CZ.strings = {
   zoomOut: 'Oddálit',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.cs_CZ = cs_CZ
 }
 

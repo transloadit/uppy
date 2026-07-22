@@ -2,13 +2,11 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "emitDeclarationOnly": false,
-    "noEmit": true
+    "noEmit": true,
+    "types": ["preact", "node"]
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": [
-    {
-      "path": "../utils/tsconfig.build.json"
-    },
     {
       "path": "../core/tsconfig.build.json"
     }

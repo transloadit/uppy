@@ -2,7 +2,7 @@
 
 Hi, thanks for trying out the bundled version of the Uppy File Uploader. You can
 use this from a CDN
-(`<script src="https://releases.transloadit.com/uppy/v5.2.3/uppy.min.js"></script>`)
+(`<script src="https://releases.transloadit.com/uppy/v5.2.4/uppy.min.js"></script>`)
 or bundle it with your webapp.
 
 Note that the recommended way to use Uppy is to install it with yarn/npm and use
@@ -83,7 +83,7 @@ inline into the page. This, and many more configuration options can be found
 here: <https://uppy.io/docs/dashboard/>.
 
 Uppy has many more Plugins besides Xhr and the Dashboard. For example, you can
-enable Webcam, Instagram, or video encoding support. Note that for some Plugins,
+enable Webcam or video encoding support. Note that for some Plugins,
 you will need to run a server side component called: Companion. Those plugins
 are marked with a (c) symbol. Alternatively, you can sign up for a free
 Transloadit account. Transloadit runs Companion for you, tusd servers to handle

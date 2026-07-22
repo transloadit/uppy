@@ -122,7 +122,6 @@ export default () => {
       companionAllowedHosts,
       ...getCompanionKeysParams('GOOGLE_DRIVE'),
     })
-    // .use(Instagram, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Dropbox, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Box, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
     // .use(Facebook, { target: Dashboard, companionUrl: COMPANION_URL, companionAllowedHosts })
@@ -150,7 +149,6 @@ export default () => {
         'Box',
         'Dropbox',
         'Facebook',
-        'Instagram',
         'OneDrive',
         'Unsplash',
         'Zoom',
@@ -208,13 +206,13 @@ export default () => {
       break
     case 's3':
       uppyDashboard.use(AwsS3, {
-        endpoint: COMPANION_URL,
+        companionEndpoint: COMPANION_URL,
         shouldUseMultipart: false,
       })
       break
     case 's3-multipart':
       uppyDashboard.use(AwsS3, {
-        endpoint: COMPANION_URL,
+        companionEndpoint: COMPANION_URL,
         shouldUseMultipart: true,
       })
       break

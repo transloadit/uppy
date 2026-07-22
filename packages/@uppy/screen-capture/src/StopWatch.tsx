@@ -1,4 +1,4 @@
-import { Component } from '@uppy/utils/preact'
+import { Component } from 'preact'
 
 type $TSFixMe = any
 

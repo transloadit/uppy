@@ -1,9 +1,0 @@
-{
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true
-  },
-  "include": ["./package.json", "./src/**/*.*"],
-  "references": []
-}

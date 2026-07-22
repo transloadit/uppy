@@ -1,5 +1,5 @@
-import type { I18n } from '@uppy/utils'
-import type { ComponentChild } from '@uppy/utils/preact'
+import type { I18n } from '@uppy/core/utils'
+import type { ComponentChild } from 'preact'
 
 interface PermissionScreenProps {
   hasCamera: boolean

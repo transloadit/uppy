@@ -1,4 +1,4 @@
-import type { ComponentChild } from '@uppy/utils/preact'
+import type { ComponentChild } from 'preact'
 
 export interface VideoSourceSelectProps {
   currentDeviceId: string | MediaStreamTrack | null | undefined

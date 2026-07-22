@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const sr_RS_Latin: Locale<0 | 1> = {
   strings: {},
@@ -143,9 +143,9 @@ sr_RS_Latin.strings = {
   openFolderNamed: 'Otvori folder %{name}',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.sr_RS_Latin = sr_RS_Latin
 }
 

@@ -1,9 +1,5 @@
-import type { I18n } from '@uppy/utils'
-import {
-  Component,
-  type ComponentChild,
-  type ComponentProps,
-} from '@uppy/utils/preact'
+import type { I18n } from '@uppy/core/utils'
+import { Component, type ComponentChild, type ComponentProps } from 'preact'
 import DiscardButton from './DiscardButton.js'
 import RecordButton from './RecordButton.js'
 import RecordingLength from './RecordingLength.js'

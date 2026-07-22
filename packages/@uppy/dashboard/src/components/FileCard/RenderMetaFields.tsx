@@ -1,4 +1,4 @@
-import { h } from '@uppy/utils/preact'
+import { h } from 'preact'
 
 type $TSFixMe = any
 

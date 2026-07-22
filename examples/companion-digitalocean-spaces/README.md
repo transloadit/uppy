@@ -3,7 +3,7 @@
 This example uses Uppy to upload files to a
 [DigitalOcean Space](https://digitaloceanspaces.com/). DigitalOcean Spaces has
 an identical API to S3, so we can use the
-[AwsS3](https://uppy.io/docs/aws-s3-multipart) plugin. We use @uppy/companion
+[AwsS3](https://uppy.io/docs/aws-s3) plugin. We use @uppy/companion
 with a [custom `endpoint` configuration](./server.cjs#L39) that points to
 DigitalOcean.
 
@@ -30,7 +30,7 @@ copy the `.env.example` file:
 ```
 
 To setup the CORS settings of your Spaces bucket in accordance with
-[the plugin docs](https://uppy.io/docs/aws-s3-multipart/#setting-up-your-s3-bucket),
+[the plugin docs](https://uppy.io/docs/aws-s3/#setting-up-your-s3-bucket),
 you can use the [example XML config file](./setcors.xml) with the
 [`s3cmd` CLI](https://docs.digitalocean.com/products/spaces/reference/s3cmd/):
 

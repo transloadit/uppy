@@ -47,6 +47,10 @@ yarn build
 - `yarn typecheck` - Run TypeScript type checking
 - `yarn check` - Run Biome linting and formatting
 
+### Running minio tests
+
+Tests for `@uppy/aws-s3` need a minio server running inside Docker, and in order to run those tests you must set the environment variable `VITE_MINIO_CONFIG="test_user,test_password,http://localhost:9002/test-bucket,us-east-1"` when running the tests.
+
 ### Headless components
 
 When adding a new component to `@uppy/components`, you have to run `yarn migrate:components` from root
@@ -57,7 +61,7 @@ This is not needed for changing existing components.
 ## Companion
 
 If you’d like to work on features that the basic development version of Uppy
-doesn’t support, such as Uppy integrations with Instagram/Google Drive/Facebook
+doesn’t support, such as Uppy integrations with Google Drive/Facebook
 etc., you need to set up your `.env` file (copy the contents of `.env.example`
 and adjust them based on what you need to work on), and run:
 
@@ -78,7 +82,7 @@ when files are changed.
 ### How the Authentication and Token mechanism works
 
 This section describes how Authentication works between Companion and Providers.
-While this behaviour is the same for all Providers (Dropbox, Instagram, Google
+While this behaviour is the same for all Providers (Dropbox, Google
 Drive, etc.), we are going to be referring to Dropbox in place of any Provider
 throughout this section.
 

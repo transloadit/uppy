@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const bg_BG: Locale<0 | 1> = {
   strings: {},
@@ -164,9 +164,9 @@ bg_BG.strings = {
   },
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.bg_BG = bg_BG
 }
 

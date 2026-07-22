@@ -2,11 +2,7 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "@uppy/core#build",
-        "@uppy/dashboard#build",
-        "@uppy/utils#build"
-      ],
+      "dependsOn": ["@uppy/core#build", "@uppy/dashboard#build"],
       "inputs": [
         "projects/uppy/angular/src/**/*.{js,ts,jsx,tsx}",
         "package.json",

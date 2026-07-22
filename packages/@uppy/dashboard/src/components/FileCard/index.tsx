@@ -1,11 +1,6 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from '@uppy/utils/preact/hooks'
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.js'
 import ignoreEvent from '../../utils/ignoreEvent.js'
 import FilePreview from '../FilePreview.js'
@@ -120,7 +115,6 @@ export default function FileCard(props: $TSFixMe) {
       <div className="uppy-DashboardContent-bar">
         <div
           className="uppy-DashboardContent-title"
-          // biome-ignore lint/a11y/useSemanticElements: ...
           role="heading"
           aria-level={1}
         >

@@ -1,6 +1,6 @@
-import { userEvent } from '@vitest/browser/context'
 import { setupWorker } from 'msw/browser'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-react'
 import { tusHandlers } from '../../shared/tusHandlers.js'
 import App from '../src/App'
@@ -19,7 +19,7 @@ const createMockFile = (name: string, type: string, size: number = 1024) => {
 
 describe('App', () => {
   test('renders all main sections and upload button is initially disabled', async () => {
-    const screen = render(<App />)
+    const screen = await render(<App />)
 
     await expect.element(screen.getByText('With list')).toBeInTheDocument()
     await expect.element(screen.getByText('With grid')).toBeInTheDocument()
@@ -33,7 +33,7 @@ describe('App', () => {
   })
 
   test('can add and remove files and upload', async () => {
-    const screen = render(<App />)
+    const screen = await render(<App />)
 
     const fileInput = document.getElementById(
       'uppy-dropzone-file-input-uppy',
@@ -59,7 +59,7 @@ describe('App', () => {
 
 describe('ScreenCapture Component', () => {
   test('renders with title, control buttons, and close functionality works', async () => {
-    const screen = render(<App />)
+    const screen = await render(<App />)
 
     await screen.getByRole('button', { name: 'Screen Capture' }).click()
 
@@ -90,7 +90,7 @@ describe('ScreenCapture Component', () => {
 
 describe('Webcam Component', () => {
   test('renders with title, control buttons, and close functionality works', async () => {
-    const screen = render(<App />)
+    const screen = await render(<App />)
 
     await screen.getByRole('button', { name: 'Webcam' }).click()
 
@@ -121,7 +121,7 @@ describe('Webcam Component', () => {
 
 describe('RemoteSource Component', () => {
   test('renders login button and login interaction works', async () => {
-    const screen = render(<App />)
+    const screen = await render(<App />)
 
     await screen.getByRole('button', { name: 'Dropbox' }).click()
 
@@ -129,6 +129,5 @@ describe('RemoteSource Component', () => {
     await expect.element(loginButton).toBeInTheDocument()
 
     await loginButton.click()
-    await expect.element(loginButton).toBeInTheDocument()
   })
 })

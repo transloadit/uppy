@@ -1,8 +1,3 @@
-import {
-  type CompanionPluginOptions,
-  Provider,
-  tokenStorage,
-} from '@uppy/companion-client'
 import type {
   AsyncStore,
   Body,
@@ -12,13 +7,17 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-
 import { UIPlugin } from '@uppy/core'
-import { ProviderViews, SearchView } from '@uppy/provider-views'
-import type { I18n, LocaleStrings } from '@uppy/utils'
+import {
+  type CompanionPluginOptions,
+  Provider,
+  tokenStorage,
+} from '@uppy/core/companion-client'
+import { ProviderViews, SearchView } from '@uppy/core/provider-views'
+import type { I18n, LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from '@uppy/utils/preact'
-import { useCallback, useState } from '@uppy/utils/preact/hooks'
+import { type ComponentChild, h } from 'preact'
+import { useCallback, useState } from 'preact/hooks'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -28,10 +27,10 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
 > {
   async login({
     authFormData,
-    uppyVersions,
+    uppyVersions = '',
     signal,
   }: {
-    uppyVersions: string
+    uppyVersions?: string
     authFormData: unknown
     signal: AbortSignal
   }) {
