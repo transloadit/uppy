@@ -40,6 +40,8 @@
     "./css/style.scss": "./src/style.scss",
     "./store-default": "./lib/store/index.js",
     "./utils": "./lib/utils/index.js",
+    "./utils/preact": "./lib/utils/preact/index.js",
+    "./utils/preact/hooks": "./lib/utils/preact/hooks.js",
     "./companion-client": "./lib/companion-client/index.js",
     "./provider-views": "./lib/provider-views/index.js",
     "./provider-views/css/style.min.css": "./dist/provider-views.min.css",
