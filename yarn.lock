@@ -19069,9 +19069,9 @@ __metadata:
   linkType: hard
 
 "immutable@npm:^5.0.2":
-  version: 5.1.1
-  resolution: "immutable@npm:5.1.1"
-  checksum: 10/7506ca692039195d1b467d68a68b39f10699940d49a737deab801d43e095eb790e931e4cf5e1fe83be8862c106406d22dfe7b0df1c2556c8f3b1e4c73c9f47bf
+  version: 5.1.9
+  resolution: "immutable@npm:5.1.9"
+  checksum: 10/dc61ea6f79897320a048f193dec703dff25ad7bb633c3a0294677d2f258764c88da06e7c2b53d1aa51b6657c98d9f1c7341f49735b9b802fe6e834122cf78dcd
   languageName: node
   linkType: hard
 
