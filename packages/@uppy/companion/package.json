@@ -53,7 +53,7 @@
     "express-session": "1.19.0",
     "fast-safe-stringify": "^2.1.1",
     "formdata-node": "^6.0.3",
-    "got": "^13.0.0",
+    "got": "^14.6.6",
     "grant": "^5.4.24",
     "helmet": "8.1.0",
     "ioredis": "5.10.1",
@@ -101,7 +101,7 @@
     "@types/ws": "8.18.1",
     "execa": "9.6.1",
     "http-proxy": "1.18.1",
-    "nock": "^14.0.15",
+    "nock": "^15.0.0",
     "supertest": "7.2.2",
     "typescript": "6.0.3",
     "vitest": "4.1.6"

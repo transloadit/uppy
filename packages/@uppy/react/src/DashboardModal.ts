@@ -26,6 +26,11 @@ export interface DashboardModalProps<M extends Meta, B extends Body>
 class DashboardModal<M extends Meta, B extends Body> extends Component<
   DashboardModalProps<M, B>
 > {
+  // React 18's Component type still requires this legacy field, while React 19
+  // removed it. Declaring it keeps the generated types compatible with both
+  // supported React majors without emitting a runtime field.
+  declare refs: Record<string, Element>
+
   static defaultProps = {
     open: undefined,
     onRequestClose: undefined,

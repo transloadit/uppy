@@ -1,13 +1,33 @@
 import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
 import { dirname, join } from 'node:path'
-import { setTimeout } from 'node:timers/promises'
+import { setTimeout as delay } from 'node:timers/promises'
 import { fileURLToPath } from 'node:url'
 import type { TestProject } from 'vitest/node'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const mockServerPort = 62450
+const companionPorts = [3021, 3022, 3023]
+
+async function waitForCompanion(port: number): Promise<void> {
+  const deadline = Date.now() + 30_000
+
+  while (Date.now() < deadline) {
+    try {
+      const response = await fetch(`http://localhost:${port}`, {
+        signal: AbortSignal.timeout(1000),
+      })
+      if (response.ok) return
+    } catch {
+      // Companion is still starting.
+    }
+
+    await delay(100)
+  }
+
+  throw new Error(`Companion did not start on port ${port}`)
+}
 
 export default async function setup(project: TestProject) {
   const mockServer = createServer((req, res) => {
@@ -66,7 +86,13 @@ export default async function setup(project: TestProject) {
     },
   )
 
-  await setTimeout(1000)
+  try {
+    await Promise.all(companionPorts.map(waitForCompanion))
+  } catch (err) {
+    companionProcess.kill()
+    mockServer.close()
+    throw err
+  }
 
   return () => {
     companionProcess.kill()

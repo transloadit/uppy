@@ -59,10 +59,9 @@ export const nockZoomRevoke = ({
 }) => {
   nock('https://zoom.us')
     .post('/oauth/revoke?token=token+value')
-    .reply(function () {
-      const { headers } = this.req
+    .reply((request) => {
       const expected = getBasicAuthHeader(key, secret)
-      const success = headers['authorization'] === expected
+      const success = request.headers.get('authorization') === expected
       return success ? [200, { status: 'success' }] : [400]
     })
 }

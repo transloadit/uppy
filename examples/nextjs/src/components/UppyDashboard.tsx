@@ -1,7 +1,7 @@
 'use client'
 
 import Uppy from '@uppy/core'
-import { Dashboard } from '@uppy/react'
+import Dashboard from '@uppy/react/dashboard'
 import Transloadit from '@uppy/transloadit'
 import Tus from '@uppy/tus'
 import Xhr from '@uppy/xhr-upload'

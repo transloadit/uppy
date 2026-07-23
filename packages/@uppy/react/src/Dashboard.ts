@@ -25,6 +25,11 @@ export interface DashboardProps<M extends Meta, B extends Body>
 class Dashboard<M extends Meta, B extends Body> extends Component<
   DashboardProps<M, B>
 > {
+  // React 18's Component type still requires this legacy field, while React 19
+  // removed it. Declaring it keeps the generated types compatible with both
+  // supported React majors without emitting a runtime field.
+  declare refs: Record<string, Element>
+
   private container!: HTMLElement
 
   private plugin!: UnknownPlugin<M, B>

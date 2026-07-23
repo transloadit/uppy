@@ -802,7 +802,6 @@ export default class Uploader {
     const reqOptions: OptionsOfTextResponseBody = {
       headers: headerSanitize(this.options.headers),
       isStream: false,
-      resolveBodyOnly: false,
       responseType: 'text',
     }
 
