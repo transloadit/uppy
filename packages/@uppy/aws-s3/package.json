@@ -44,7 +44,7 @@
     "@types/node": "^20.19.0",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",
-    "jsdom": "^26.1.0",
+    "jsdom": "^29.1.1",
     "nock": "^13.1.0",
     "playwright": "1.61.1",
     "typescript": "^5.8.3",
