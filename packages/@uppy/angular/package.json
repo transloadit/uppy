@@ -12,7 +12,7 @@
     "@angular/animations": "^21.2.10",
     "@angular/common": "^21.2.10",
     "@angular/compiler": "^21.2.10",
-    "@angular/core": "^21.2.10",
+    "@angular/core": "^22.0.7",
     "@angular/forms": "^21.2.10",
     "@angular/platform-browser": "^21.2.10",
     "@angular/platform-browser-dynamic": "^21.2.10",

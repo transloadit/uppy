@@ -821,25 +821,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/core@npm:^19.2.18":
-  version: 19.2.18
-  resolution: "@angular/core@npm:19.2.18"
+"@angular/core@npm:^22.0.7":
+  version: 22.0.7
+  resolution: "@angular/core@npm:22.0.7"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    rxjs: ^6.5.3 || ^7.4.0
-    zone.js: ~0.15.0
-  checksum: 10/4e9207638e68c7431c22b17d2f70450e69c74333fec79d2c63a073202a71b46b85f6146b47930f54a29347112a66761e399748cb0260fc39a972ee34d89405d6
-  languageName: node
-  linkType: hard
-
-"@angular/core@npm:^21.2.10":
-  version: 21.2.17
-  resolution: "@angular/core@npm:21.2.17"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/compiler": 21.2.17
+    "@angular/compiler": 22.0.7
     rxjs: ^6.5.3 || ^7.4.0
     zone.js: ~0.15.0 || ~0.16.0
   peerDependenciesMeta:
@@ -847,7 +835,7 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10/63f1938f080ee0d2bb77c265c8ff3b377e942338d07845749e447080d72209393a060d8f87b043768beee8bac0d5c0652669388ba13a929e1211622886dd7756
+  checksum: 10/4267d6c8e87c3b37055dc7963c8b9b5864085b93f45f06104e2bdf5b6118c04fd5db33333c3319786c0bb983a6f31315e221116e1e2d29b3ea79bbee47aed7ec
   languageName: node
   linkType: hard
 
@@ -13678,7 +13666,7 @@ __metadata:
     "@angular/common": "npm:^21.2.10"
     "@angular/compiler": "npm:^21.2.10"
     "@angular/compiler-cli": "npm:^21.2.10"
-    "@angular/core": "npm:^21.2.10"
+    "@angular/core": "npm:^22.0.7"
     "@angular/forms": "npm:^21.2.10"
     "@angular/platform-browser": "npm:^21.2.10"
     "@angular/platform-browser-dynamic": "npm:^21.2.10"
@@ -17152,7 +17140,7 @@ __metadata:
     "@angular/common": "npm:^19.2.17"
     "@angular/compiler": "npm:^19.2.18"
     "@angular/compiler-cli": "npm:^19.2.17"
-    "@angular/core": "npm:^19.2.18"
+    "@angular/core": "npm:^22.0.7"
     "@angular/forms": "npm:^19.2.17"
     "@angular/platform-browser": "npm:^19.2.17"
     "@angular/platform-browser-dynamic": "npm:^19.2.17"
