@@ -12333,7 +12333,7 @@ __metadata:
   dependencies:
     cssnano: "npm:^8.0.1"
     jsdom: "npm:^29.1.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12464,7 +12464,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     cssnano: "npm:^8.0.1"
     dequal: "npm:^2.0.3"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     pretty-bytes: "npm:^7.1.0"
@@ -12523,7 +12523,7 @@ __metadata:
     nanoid: "npm:^5.1.11"
     p-queue: "npm:^9.3.0"
     p-retry: "npm:^6.1.0"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12551,7 +12551,7 @@ __metadata:
     lodash: "npm:^4.18.1"
     nanoid: "npm:^5.1.11"
     playwright: "npm:1.60.0"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     resize-observer-polyfill: "npm:^1.5.0"
@@ -12569,7 +12569,7 @@ __metadata:
   resolution: "@uppy/drag-drop@workspace:packages/@uppy/drag-drop"
   dependencies:
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12584,7 +12584,7 @@ __metadata:
   resolution: "@uppy/drop-target@workspace:packages/@uppy/drop-target"
   dependencies:
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     sass: "npm:^1.89.2"
     typescript: "npm:^5.8.3"
@@ -12688,7 +12688,7 @@ __metadata:
   dependencies:
     cropperjs: "npm:^1.6.2"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12705,7 +12705,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/transloadit": "workspace:^"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12804,7 +12804,7 @@ __metadata:
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12821,7 +12821,7 @@ __metadata:
     "@transloadit/prettier-bytes": "npm:^1.1.0"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12934,7 +12934,7 @@ __metadata:
     cssnano: "npm:^8.0.1"
     nanoid: "npm:^5.1.11"
     playwright: "npm:1.60.0"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -12981,7 +12981,7 @@ __metadata:
     cssnano: "npm:^8.0.1"
     is-mobile: "npm:^5.0.0"
     jsdom: "npm:^29.1.1"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
@@ -24202,6 +24202,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postcss@npm:^8.5.18":
+  version: 8.5.18
+  resolution: "postcss@npm:8.5.18"
+  dependencies:
+    nanoid: "npm:^3.3.12"
+    picocolors: "npm:^1.1.1"
+    source-map-js: "npm:^1.2.1"
+  checksum: 10/b43f2d2493d82dc43fa50d21cf184bf3b66229e7f53fa1dedc7b8a7c4cecd7ac8ee18fad099f47570da7f78bbf46997a4c6e6c87d8d8ece683dc1f32cda6db3b
+  languageName: node
+  linkType: hard
+
 "powershell-utils@npm:^0.1.0":
   version: 0.1.0
   resolution: "powershell-utils@npm:0.1.0"
@@ -28111,7 +28122,7 @@ __metadata:
     mime-types: "npm:^3.0.2"
     npm-packlist: "npm:^11.1.0"
     pacote: "npm:^21.5.0"
-    postcss: "npm:^8.5.15"
+    postcss: "npm:^8.5.18"
     postcss-cli: "npm:^11.0.1"
     sass: "npm:^1.89.2"
     tar: "npm:^7.5.7"

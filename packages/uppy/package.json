@@ -86,7 +86,7 @@
     "mime-types": "^3.0.2",
     "npm-packlist": "^11.1.0",
     "pacote": "^21.5.0",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.18",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "tar": "^7.5.7",

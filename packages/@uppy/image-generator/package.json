@@ -45,7 +45,7 @@
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "cssnano": "^8.0.1",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.18",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2"
   },
