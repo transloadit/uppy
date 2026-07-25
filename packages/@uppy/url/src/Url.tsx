@@ -11,7 +11,7 @@ import type {
 } from '@uppy/core/utils'
 import { toArray } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from 'preact'
+import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import UrlUI from './UrlUI.js'
