@@ -314,10 +314,28 @@ export async function showDrivePicker({
     try {
       onLoadingChange(true)
 
+      if (!picked.docs) {
+        throw new Error('Google Picker returned no selected documents')
+      }
+
       const results: PickedDriveItem[] = []
       for (const doc of picked.docs) {
+        if (!doc.name || !doc.mimeType) {
+          throw new Error(
+            `Google Picker returned an incomplete document (${doc.id})`,
+          )
+        }
         results.push(
-          ...(await handleDocObjectRecursively({ doc, token, signal })),
+          ...(await handleDocObjectRecursively({
+            doc: {
+              ...doc,
+              id: doc.id,
+              name: doc.name,
+              mimeType: doc.mimeType,
+            },
+            token,
+            signal,
+          })),
         )
       }
       onFilesPicked(results, token)
