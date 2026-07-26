@@ -12010,6 +12010,8 @@ __metadata:
     typescript: "npm:^5.8.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    "@uppy/google-drive-picker": "workspace:^"
+    "@uppy/google-photos-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -16929,6 +16931,8 @@ __metadata:
     "@types/react": "npm:^19.0.10"
     "@types/react-dom": "npm:^19.0.4"
     "@uppy/core": "workspace:*"
+    "@uppy/google-drive-picker": "workspace:*"
+    "@uppy/google-photos-picker": "workspace:*"
     "@uppy/react": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
