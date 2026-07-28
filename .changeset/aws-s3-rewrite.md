@@ -7,7 +7,7 @@
 The plugin is now built on a standalone S3 client and configuration is reduced to three
 mutually exclusive signing modes:
 
-- `getCredentials` — client-side SigV4 signing with temporary credentials
+- `getCredentials` — client-side SigV4 signing using temporary AWS credentials
 - `signRequest` — bring your own signer
 - `companionEndpoint` — Companion signing
 
