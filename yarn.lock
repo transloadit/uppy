@@ -25252,7 +25252,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serialize-javascript@npm:7.0.7":
+"serialize-javascript@npm:7.0.7, serialize-javascript@npm:^7.0.3":
   version: 7.0.7
   resolution: "serialize-javascript@npm:7.0.7"
   checksum: 10/da427e5660c88c24020cae037883ac234127248c7f972d7e1eb3cea863d89d1816fa4bcf0ecd39f92082c346347ed312c46e50c8473060dcd723bd1891e98942
@@ -25265,13 +25265,6 @@ __metadata:
   dependencies:
     randombytes: "npm:^2.1.0"
   checksum: 10/445a420a6fa2eaee4b70cbd884d538e259ab278200a2ededd73253ada17d5d48e91fb1f4cd224a236ab62ea7ba0a70c6af29fc93b4f3d3078bf7da1c031fde58
-  languageName: node
-  linkType: hard
-
-"serialize-javascript@npm:^7.0.3":
-  version: 7.0.6
-  resolution: "serialize-javascript@npm:7.0.6"
-  checksum: 10/e3790f5dfd08fd842f2824c3b0c7893e2db55ed23e44293c95501d487522f6eea576fea69a353bf3cee8f30256825cb92b2219380b37693a68bad95c8b0edfbb
   languageName: node
   linkType: hard
 
