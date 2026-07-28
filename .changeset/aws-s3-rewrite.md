@@ -8,10 +8,10 @@ The plugin is now built on a standalone S3 client and configuration is reduced t
 mutually exclusive signing modes:
 
 - `getCredentials` — client-side SigV4 signing using temporary AWS credentials
-- `signRequest` — bring your own signer
-- `companionEndpoint` — Companion signing
+- `signRequest` — bring your own signer (client side or server side)
+- `companionEndpoint` — Companion signing (as before)
 
-Companion is no longer required in the data path, and any S3-compatible service (R2,
+It is now much easier to use the S3 plugin without relying on Companion. Any S3-compatible service (R2,
 MinIO, DigitalOcean Spaces, …) works.
 
 **Removed options:** `endpoint`, `getTemporarySecurityCredentials`, `getUploadParameters`,
