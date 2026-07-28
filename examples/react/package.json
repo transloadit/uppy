@@ -31,7 +31,7 @@
     "msw": "^2.10.4",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
-    "vite": "^8.0.14",
+    "vite": "^8.1.5",
     "vitest": "^4.1.6",
     "vitest-browser-react": "^2.2.0"
   }
