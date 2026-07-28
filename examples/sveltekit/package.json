@@ -33,7 +33,7 @@
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.0.0",
+    "typescript": "^6.0.3",
     "vite": "^6.2.5",
     "vitest": "^4.1.6",
     "vitest-browser-svelte": "^2.1.1"
