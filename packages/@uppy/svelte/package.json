@@ -58,15 +58,15 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
-    "@sveltejs/kit": "^2.60.1",
+    "@sveltejs/kit": "^2.69.3",
     "@sveltejs/package": "^2.5.7",
-    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@uppy/core": "workspace:^",
-    "svelte": "^5.55.8",
+    "svelte": "^5.56.5",
     "svelte-check": "^4.4.8",
     "tslib": "^2.8.1",
     "typescript": "^6.0.3",
-    "vite": "^8.0.13"
+    "vite": "^8.1.5"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
