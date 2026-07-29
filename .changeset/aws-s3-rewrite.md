@@ -11,11 +11,13 @@ mutually exclusive signing modes:
 - `signRequest` — bring your own signer (client side or server side)
 - `companionEndpoint` — Companion signing (as before)
 
-It is now much easier to use the S3 plugin without relying on Companion. Any S3-compatible service (R2,
-MinIO, DigitalOcean Spaces, …) works.
+It is now much easier to use the S3 plugin without relying on Companion. Any S3-compatible
+service (R2, MinIO, DigitalOcean Spaces) now works in every signing mode, including
+client-side signing, which previously hardcoded `*.amazonaws.com` and could only target AWS.
 
-**Removed options:** `endpoint`, `getTemporarySecurityCredentials`, `getUploadParameters`,
-`signPart`, `createMultipartUpload`, `listParts`, `abortMultipartUpload`,
+**Removed options:** `endpoint`, `headers`, `cookiesRule`,
+`getTemporarySecurityCredentials`, `getUploadParameters`, `signPart`,
+`createMultipartUpload`, `listParts`, `abortMultipartUpload`,
 `completeMultipartUpload`, `uploadPartBytes`, `retryDelays`.
 
 **New options:** `s3Endpoint`, `region`, `getCredentials`, `signRequest`,
