@@ -3,9 +3,10 @@
 ---
 
 `@uppy/utils`, `@uppy/store-default`, `@uppy/companion-client` and `@uppy/provider-views`
-have been merged into `@uppy/core` and are no longer published to npm
-([#6370](https://github.com/transloadit/uppy/pull/6370)). They are now available as
-subpath exports:
+have been merged into `@uppy/core`
+([#6370](https://github.com/transloadit/uppy/pull/6370)). No new versions of them will be
+published: their existing releases stay on npm but are deprecated in favour of the
+`@uppy/core` subpaths.
 
 | Removed package          | New import                    |
 | ------------------------ | ----------------------------- |
@@ -14,7 +15,7 @@ subpath exports:
 | `@uppy/companion-client` | `@uppy/core/companion-client` |
 | `@uppy/provider-views`   | `@uppy/core/provider-views`   |
 
-Remove them from your `package.json` — every plugin already depends on `@uppy/core`, so
+Remove them from your `package.json` — every Uppy plugin already depends on `@uppy/core`, so
 there is now a single source of truth instead of a sub-dependency that could be pinned to
 an older copy in your lockfile.
 
@@ -28,5 +29,7 @@ Also breaking:
   hand-maintained stand-ins that existed only because `@uppy/utils` could not see the
   real provider classes. Import `Provider` from `@uppy/core/companion-client` instead.
 
-Nothing changes if you use the `uppy` meta-package or the CDN bundle — the re-exports
-were repointed to the new subpaths internally.
+Through the `uppy` meta-package or the CDN bundle, nothing changes: `server`
+(companion-client), `views.ProviderView` and `DefaultStore` keep their names and are
+repointed at the `@uppy/core` subpaths internally. Only direct imports of the four
+packages need the table above.
