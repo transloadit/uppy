@@ -1,7 +1,6 @@
 /* global AggregateError */
 
 import throttle from 'lodash/throttle.js'
-// @ts-expect-error untyped
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 import type { h } from 'preact'
