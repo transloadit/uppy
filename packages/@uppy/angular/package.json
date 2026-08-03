@@ -1,6 +1,7 @@
 {
   "name": "angular",
   "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -33,6 +34,6 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.2.0",
     "ng-packagr": "^21.2.3",
-    "typescript": "~5.9.3"
+    "typescript": "^6.0.3"
   }
 }
