@@ -19,6 +19,7 @@ tsconfig.build.tsbuildinfo
 .svelte-kit
 .turbo
 __screenshots__
+.vitest-attachments
 
 dist/
 lib/

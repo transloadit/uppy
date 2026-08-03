@@ -2,16 +2,10 @@
   "extends": "../../../tsconfig.shared",
   "compilerOptions": {
     "outDir": "./lib",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "types": ["preact", "google.accounts", "google.picker", "gapi"]
   },
   "include": ["./src/**/*.*"],
   "exclude": ["./src/**/*.test.ts"],
-  "references": [
-    {
-      "path": "../store-default/tsconfig.build.json"
-    },
-    {
-      "path": "../utils/tsconfig.build.json"
-    }
-  ]
+  "references": []
 }

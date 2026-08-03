@@ -1,7 +1,7 @@
 {
   "name": "@uppy/tus",
   "description": "Resumable uploads for Uppy using Tus.io",
-  "version": "5.1.0",
+  "version": "5.1.1",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -37,15 +37,13 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^",
-    "tus-js-client": "^4.2.3"
+    "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "jsdom": "^26.1.0",
-    "typescript": "^5.8.3",
-    "vitest": "^3.2.4"
+    "jsdom": "^29.1.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

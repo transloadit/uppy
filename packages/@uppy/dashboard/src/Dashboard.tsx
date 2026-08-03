@@ -10,12 +10,12 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import { defaultPickerIcon } from '@uppy/provider-views'
+import { defaultPickerIcon } from '@uppy/core/provider-views'
+import type { LocaleStrings } from '@uppy/core/utils'
+import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
+import type { ComponentChild, h, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
-import type { LocaleStrings } from '@uppy/utils'
-import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/utils'
 import { nanoid } from 'nanoid/non-secure'
-import type { ComponentChild, h, VNode } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
@@ -724,7 +724,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private handlePopState = (event: PopStateEvent) => {
     // Close the modal if the history state no longer contains our modal name
-    if (this.isModalOpen() && (!event.state || !event.state[this.modalName])) {
+    if (this.isModalOpen() && !event.state?.[this.modalName]) {
       this.closeModal({ manualClose: false })
     }
 
@@ -970,9 +970,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     if (this.opts.trigger && !this.opts.inline) {
       const showModalTrigger = findAllDOMElements(this.opts.trigger)
       if (showModalTrigger) {
-        showModalTrigger.forEach((trigger) =>
-          trigger.addEventListener('click', this.openModal),
-        )
+        showModalTrigger.forEach((trigger) => {
+          trigger.addEventListener('click', this.openModal)
+        })
       } else {
         this.uppy.log(
           'Dashboard modal trigger not found. Make sure `trigger` is set in Dashboard options, unless you are planning to call `dashboard.openModal()` method yourself',
@@ -1010,9 +1010,9 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   removeEvents = (): void => {
     const showModalTrigger = findAllDOMElements(this.opts.trigger)
     if (!this.opts.inline && showModalTrigger) {
-      showModalTrigger.forEach((trigger) =>
-        trigger.removeEventListener('click', this.openModal),
-      )
+      showModalTrigger.forEach((trigger) => {
+        trigger.removeEventListener('click', this.openModal)
+      })
     }
 
     this.stopListeningToResize()
@@ -1028,8 +1028,16 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.uppy.off('files-added', this.#generateLargeThumbnailIfSingleFile)
     this.uppy.off('file-removed', this.#generateLargeThumbnailIfSingleFile)
 
-    document.removeEventListener('focus', this.recordIfFocusedOnUppyRecently)
-    document.removeEventListener('click', this.recordIfFocusedOnUppyRecently)
+    document.removeEventListener(
+      'focus',
+      this.recordIfFocusedOnUppyRecently,
+      true,
+    )
+    document.removeEventListener(
+      'click',
+      this.recordIfFocusedOnUppyRecently,
+      true,
+    )
 
     if (this.opts.inline) {
       this.el!.removeEventListener('keydown', this.handleKeyDownInInline)

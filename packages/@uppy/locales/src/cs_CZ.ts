@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const cs_CZ: Locale<0 | 1 | 2> = {
   strings: {},
@@ -85,15 +85,16 @@ cs_CZ.strings = {
   discardRecordedFile: 'Zahodit nahraný soubor',
   done: 'Dokončeno',
   dropHint: 'Přetáhněte soubory sem',
-  dropPasteBoth: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',
-  dropPasteFiles: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',
-  dropPasteFolders: 'Přetáhněte soubory sem, vložte je, nebo %{browse}',
+  dropPasteBoth:
+    'Přetáhněte soubory sem, %{browseFiles}, nebo %{browseFolders}',
+  dropPasteFiles: 'Přetáhněte soubory sem, nebo %{browseFiles}',
+  dropPasteFolders: 'Přetáhněte soubory sem, nebo %{browseFolders}',
   dropPasteImportBoth:
-    'Přetáhněte soubory sem, vložte je, %{browse} nebo je importujte',
+    'Přetáhněte soubory sem, %{browseFiles}, %{browseFolders}, nebo je importujte z:',
   dropPasteImportFiles:
-    'Přetáhněte soubory sem, vložte je, %{browse} nebo je importujte',
+    'Přetáhněte soubory sem, %{browseFiles}, nebo je importujte z:',
   dropPasteImportFolders:
-    'Přetáhněte soubory sem, vložte je, %{browse} nebo je importujte',
+    'Přetáhněte soubory sem, %{browseFolders}, nebo je importujte z:',
   editFile: 'Upravit soubor',
   editFileWithFilename: 'Upravit soubor %{file}',
   editImage: 'Upravit obrázek',
@@ -273,9 +274,9 @@ cs_CZ.strings = {
   zoomOut: 'Oddálit',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.cs_CZ = cs_CZ
 }
 

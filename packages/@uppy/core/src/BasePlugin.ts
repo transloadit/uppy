@@ -7,9 +7,14 @@
  * See `Plugin` for the extended version with Preact rendering for interfaces.
  */
 
-import type { Body, I18n, Meta, OptionalPluralizeLocale } from '@uppy/utils'
-import { Translator } from '@uppy/utils'
 import type { State, UnknownPlugin, Uppy } from './Uppy.js'
+import type {
+  Body,
+  I18n,
+  Meta,
+  OptionalPluralizeLocale,
+} from './utils/index.js'
+import { Translator } from './utils/index.js'
 
 export type PluginOpts = {
   locale?: OptionalPluralizeLocale

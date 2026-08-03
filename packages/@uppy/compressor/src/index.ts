@@ -1,9 +1,8 @@
-import prettierBytes from '@transloadit/prettier-bytes'
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
 import { BasePlugin, type Uppy } from '@uppy/core'
-import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/utils'
-// @ts-ignore
-import { getFileNameAndExtension, RateLimitedQueue } from '@uppy/utils'
+import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/core/utils'
+import { getFileNameAndExtension, RateLimitedQueue } from '@uppy/core/utils'
 import CompressorJS from 'compressorjs'
 import locale from './locale.js'
 

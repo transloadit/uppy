@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const uz_UZ: Locale<0 | 1> = {
   strings: {},
@@ -131,7 +131,6 @@ uz_UZ.strings = {
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameZoom: 'Zoom',
   poweredBy: '%{uppy} tomonidan quvvatlanadi',
@@ -222,9 +221,9 @@ uz_UZ.strings = {
   zoomOut: 'Kichraytirish',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.uz_UZ = uz_UZ
 }
 

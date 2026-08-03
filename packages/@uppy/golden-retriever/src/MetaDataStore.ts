@@ -1,5 +1,9 @@
 import type { Body, Meta, State as UppyState } from '@uppy/core'
-import type { LocalUppyFile, RemoteUppyFile, UppyFileId } from '@uppy/utils'
+import type {
+  LocalUppyFile,
+  RemoteUppyFile,
+  UppyFileId,
+} from '@uppy/core/utils'
 import throttle from 'lodash/throttle.js'
 
 // we don't want to store blobs in localStorage
@@ -111,8 +115,11 @@ export default class MetaDataStore<M extends Meta, B extends Body> {
       localStorage.removeItem(this.name)
       return
     }
-    const state = JSON.stringify(this.#state)
-    localStorage.setItem(this.name, state)
+    try {
+      localStorage.setItem(this.name, JSON.stringify(this.#state))
+    } catch {
+      // Best-effort: out of quota / disabled storage must not break uploading.
+    }
   }
 
   /**

@@ -9,8 +9,10 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@tailwindcss/vite": "^4.1.11",
+    "@tailwindcss/vite": "^4.3.0",
     "@uppy/core": "workspace:*",
+    "@uppy/google-drive-picker": "workspace:*",
+    "@uppy/google-photos-picker": "workspace:*",
     "@uppy/react": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",
@@ -23,12 +25,14 @@
   "devDependencies": {
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
-    "@vitejs/plugin-react": "^4.6.0",
-    "@vitest/browser": "^3.2.4",
-    "playwright": "1.57.0",
-    "typescript": "^5.7.3",
-    "vite": "^7.1.11",
-    "vitest": "^3.2.4",
-    "vitest-browser-react": "^1.0.0"
+    "@vitejs/plugin-react": "^6.0.2",
+    "@vitest/browser": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.6",
+    "msw": "^2.10.4",
+    "playwright": "1.61.1",
+    "typescript": "^6.0.3",
+    "vite": "^8.1.5",
+    "vitest": "^4.1.6",
+    "vitest-browser-react": "^2.2.0"
   }
 }

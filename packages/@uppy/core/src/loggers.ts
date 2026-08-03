@@ -1,4 +1,4 @@
-import { getTimeStamp } from '@uppy/utils'
+import { getTimeStamp } from './utils/index.js'
 
 // Swallow all logs, except errors.
 // default if logger is not set or debug: false
@@ -20,4 +20,4 @@ const debugLogger = {
     console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
 }
 
-export { justErrorsLogger, debugLogger }
+export { debugLogger, justErrorsLogger }

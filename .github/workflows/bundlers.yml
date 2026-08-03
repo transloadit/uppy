@@ -42,7 +42,7 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run:
-          corepack yarn install
+          corepack yarn install --immutable
         env:
           # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
           CYPRESS_INSTALL_BINARY: 0
@@ -70,6 +70,12 @@ jobs:
           mkdir /tmp/artifacts && corepack yarn workspaces foreach --all
           --no-private pack --install-if-needed -o /tmp/artifacts/%s-${{
           github.sha }}.tgz
+      - name: Debug packaged uppy dependencies
+        run: |
+          rm -rf /tmp/uppy-debug
+          mkdir -p /tmp/uppy-debug
+          tar -xzf /tmp/artifacts/uppy-${{ github.sha }}.tgz --strip-components 1 -C /tmp/uppy-debug
+          node -e 'const pkg=require("/tmp/uppy-debug/package.json");const fields=["dependencies","peerDependencies","optionalDependencies","devDependencies"];let found=false;for(const f of fields){if(!pkg[f])continue;for(const [k,v] of Object.entries(pkg[f])){if(String(v).startsWith("workspace:")){console.log(`${f}: ${k}=${v}`);found=true;}}}if(found){process.exit(1)}else{console.log("No workspace:* entries in packaged uppy package.json")}'
       - name: Upload artifact
         if: success()
         uses: actions/upload-artifact@v6
@@ -86,9 +92,10 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -126,9 +133,10 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -168,9 +176,10 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -198,9 +207,10 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1
@@ -223,9 +233,10 @@ jobs:
         bundler-version: [latest]
     steps:
       - name: Download uppy tarball
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
-          path: /tmp/
+          name: packages
+          path: /tmp/packages/
       - name: Extract tarball
         run:
           tar -xzf /tmp/packages/uppy-${{ github.sha }}.tgz --strip-components 1

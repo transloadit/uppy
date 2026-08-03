@@ -34,13 +34,12 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
     "get-form-data": "^3.0.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }

@@ -1,15 +1,10 @@
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-import glob from 'glob'
+import { glob } from 'glob'
 
 export function getPaths(globPath) {
-  return new Promise((resolve, reject) => {
-    glob(globPath, (error, paths) => {
-      if (error) reject(error)
-      else resolve(paths)
-    })
-  })
+  return glob(globPath)
 }
 
 export function sortObjectAlphabetically(obj) {

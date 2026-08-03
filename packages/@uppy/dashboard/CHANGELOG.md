@@ -1,5 +1,11 @@
 # @uppy/dashboard
 
+## 5.1.1
+
+### Patch Changes
+
+- 6975782: Remove event listener for `focus` and `click`, preventing a memory leak.
+
 ## 5.1.0
 
 ### Minor Changes

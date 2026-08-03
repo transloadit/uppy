@@ -1,5 +1,4 @@
 import Box from '@uppy/box'
-import type { CompanionPluginOptions } from '@uppy/companion-client'
 import type {
   Body,
   DefinePluginOpts,
@@ -8,10 +7,10 @@ import type {
   Uppy,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
+import type { CompanionPluginOptions } from '@uppy/core/companion-client'
 import Dropbox from '@uppy/dropbox'
 import Facebook from '@uppy/facebook'
 import GoogleDrive from '@uppy/google-drive'
-import Instagram from '@uppy/instagram'
 import OneDrive from '@uppy/onedrive'
 import Unsplash from '@uppy/unsplash'
 import Url from '@uppy/url'
@@ -25,7 +24,6 @@ export const availablePlugins = {
   Dropbox,
   Facebook,
   GoogleDrive,
-  Instagram,
   OneDrive,
   Unsplash,
   Url,
@@ -37,7 +35,6 @@ export type AvailablePluginsKeys =
   | 'Dropbox'
   | 'Facebook'
   | 'GoogleDrive'
-  | 'Instagram'
   | 'OneDrive'
   | 'Unsplash'
   | 'Url'

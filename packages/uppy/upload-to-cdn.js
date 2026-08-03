@@ -32,12 +32,13 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3'
+import Arborist from '@npmcli/arborist'
 import AdmZip from 'adm-zip'
 import concat from 'concat-stream'
 import mime from 'mime-types'
 import packlist from 'npm-packlist'
 import pacote from 'pacote'
-import tar from 'tar'
+import { Parser as TarParser } from 'tar'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -62,7 +63,7 @@ async function getRemoteDistFiles(packageName, version) {
   console.log('Using npm package', pkg)
   const files = new Map()
   const tarball = await pacote.tarball.stream(pkg, (stream) =>
-    pipeline(stream, new tar.Parse()),
+    pipeline(stream, new TarParser()),
   )
 
   tarball.on('entry', (readEntry) => {
@@ -102,7 +103,11 @@ async function getLocalDistFiles(packageName) {
 
   const prefix = 'dist'
 
-  const files = (await packlist({ path: packagePath })).flatMap((f) => {
+  // npm-packlist v7+ takes an Arborist tree (loaded from the package path)
+  // instead of a `{ path }` option.
+  const tree = await new Arborist({ path: packagePath }).loadActual()
+
+  const files = (await packlist(tree)).flatMap((f) => {
     const prefixSlash = `${prefix}/`
 
     if (f.startsWith(prefixSlash)) {

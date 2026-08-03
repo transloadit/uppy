@@ -18,6 +18,7 @@ const dtf = new Intl.DateTimeFormat('en-US', {
   timeStyle: 'short',
 })
 
+// biome-ignore lint/correctness/noUnusedVariables: used as a Svelte action via use:setFolderCheckboxIndeterminate
 function setFolderCheckboxIndeterminate(
   node: HTMLInputElement,
   item: PartialTreeFolderNode,

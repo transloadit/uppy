@@ -1,6 +1,6 @@
 import type { Body, DefinePluginOpts, Meta, PluginOpts, Uppy } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
-import { getDroppedFiles, toArray } from '@uppy/utils'
+import { getDroppedFiles, toArray } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 
 declare module '@uppy/core' {

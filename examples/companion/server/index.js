@@ -32,10 +32,6 @@ const companionOptions = {
       key: 'your google key',
       secret: 'your google secret',
     },
-    instagram: {
-      key: 'your instagram key',
-      secret: 'your instagram secret',
-    },
     dropbox: {
       key: 'your dropbox key',
       secret: 'your dropbox secret',
@@ -75,7 +71,7 @@ app.use((err, req, res) => {
   res.status(500).json({ message: err.message, error: err })
 })
 
-companion.socket(app.listen(3020))
+companion.socket(app.listen(3020), companionOptions)
 
 console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)

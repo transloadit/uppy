@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const sk_SK: Locale<0 | 1> = {
   strings: {},
@@ -177,9 +177,9 @@ sk_SK.strings = {
   zoomOut: 'Oddialiť',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.sk_SK = sk_SK
 }
 

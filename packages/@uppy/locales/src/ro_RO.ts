@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const ro_RO: Locale<0 | 1> = {
   strings: {},
@@ -154,9 +154,9 @@ ro_RO.strings = {
   },
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.ro_RO = ro_RO
 }
 

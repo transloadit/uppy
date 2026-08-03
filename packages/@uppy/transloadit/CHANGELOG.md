@@ -1,5 +1,26 @@
 # @uppy/transloadit
 
+## 5.5.1
+
+### Patch Changes
+
+- 4787960: Add type re-export for `AssemblyInstructionsInput`
+- 2f6849d: Fix allowMultipleUploadBatches to prevent adding/removing files while an upload is in progress (#6156)
+- 29d2772: remove monkey patch from uppy bundle package
+- Updated dependencies [6b1abaa]
+  - @uppy/utils@7.2.0
+
+## 5.5.0
+
+### Minor Changes
+
+- 37f69d0: Migrate from 'transloadit' to '@transloadit/types' to get the types. No need to drag in the entire SDK.
+
+### Patch Changes
+
+- Updated dependencies [37f69d0]
+  - @uppy/tus@5.1.1
+
 ## 5.4.0
 
 ### Minor Changes

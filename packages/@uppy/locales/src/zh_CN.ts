@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const zh_CN: Locale<0> = {
   strings: {},
@@ -178,9 +178,9 @@ zh_CN.strings = {
   zoomOut: '缩小',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.zh_CN = zh_CN
 }
 
