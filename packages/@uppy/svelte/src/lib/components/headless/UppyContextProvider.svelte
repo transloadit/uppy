@@ -10,7 +10,7 @@ export type { UppyContext } from "@uppy/components";
 </script>
 
 <script lang="ts">
-  import { setContext, onMount } from 'svelte'
+  import { setContext } from 'svelte'
 
   let { uppy, children } = $props()
 
@@ -27,7 +27,8 @@ export type { UppyContext } from "@uppy/components";
     set progress(value) { progress = value },
   }
 
-  onMount(() => {
+  // Re-subscribe whenever the `uppy` prop changes
+  $effect(() => {
     if (!uppy) {
       throw new Error('ContextProvider: passing `uppy` as a prop is required')
     }
