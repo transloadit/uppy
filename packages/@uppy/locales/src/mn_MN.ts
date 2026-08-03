@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const mn_MN: Locale<0 | 1> = {
   strings: {},
@@ -17,8 +17,7 @@ mn_MN.strings = {
   },
   addedNumFiles: '%{numFiles} файл нэмэгдсэн',
   addingMoreFiles: 'Файл нэмж байна',
-  additionalRestrictionsFailed:
-    '%{count} шаардлага хангагдаагүй байна',
+  additionalRestrictionsFailed: '%{count} шаардлага хангагдаагүй байна',
   addMore: 'Нэмэх',
   addMoreFiles: 'Файл нэмэх',
   aggregateExceedsSize:
@@ -35,7 +34,7 @@ mn_MN.strings = {
   aspectRatioSquare: 'Дөрвөлжин тайралт',
   authAborted: 'Нэвтрэлт цуцлагдсан',
   authenticate: 'Холбогдох',
-  authenticateWith: 'Connect to %{pluginName}',
+  authenticateWith: '%{pluginName} үйлчилгээтэй холбогдох',
   authenticateWithTitle:
     '%{pluginName} үйлчилгээрүү нэвтрэн оруулах файлаа сонгоно уу',
   back: 'Буцах',
@@ -56,10 +55,10 @@ mn_MN.strings = {
   copyLinkToClipboardFallback: 'Доор байгаа URL-ийг хуулах',
   copyLinkToClipboardSuccess: 'Холбоос буферт хуулагдсан.',
   creatingAssembly: 'Хуулахад бэлдэж байна...',
-  creatingAssemblyFailed: 'Транслоадит: Хуулах зааварчилгаа үүсгэж чадсангүй',
-  dashboardTitle: 'Аппи Самбар',
-  dashboardWindowTitle: 'Аппи Цонх (escape товчоор хаана)',
-  dataUploadedOfTotal: '%{total}-н %{complete} ',
+  creatingAssemblyFailed: 'Transloadit: Хуулах зааварчилгаа үүсгэж чадсангүй',
+  dashboardTitle: 'Uppy Самбар',
+  dashboardWindowTitle: 'Uppy Цонх (escape товчоор хаана)',
+  dataUploadedOfTotal: '%{total}-н %{complete}',
   dataUploadedOfUnknown: '%{complete}',
   discardMediaFile: 'Медиаг хаях',
   discardRecordedFile: 'Бичсэн файлыг хаях',
@@ -69,8 +68,7 @@ mn_MN.strings = {
   dropPasteBoth: '%{browseFiles}, %{browseFolders} эсвэл энд наах',
   dropPasteFiles: '%{browseFiles} эсвэл энд наах',
   dropPasteFolders: '%{browseFolders} эсвэл энд наах',
-  dropPasteImportBoth:
-    '%{browseFiles}, %{browseFolders}, энд наах эсвэл:',
+  dropPasteImportBoth: '%{browseFiles}, %{browseFolders}, энд наах эсвэл:',
   dropPasteImportFiles: '%{browseFiles}, энд наах эсвэл:',
   dropPasteImportFolders: '%{browseFolders}, энд наах эсвэл:',
   editFile: 'Файл засварлах',
@@ -79,8 +77,7 @@ mn_MN.strings = {
   editing: '%{file}-г засварлаж байна',
   emptyFolderAdded: 'Хоосон хавтас байна',
   encoding: 'Энкод хийгдэж байна...',
-  enterCorrectUrl:
-    'Алдаатай URL: Файлыг заасан шууд холбоос оруулна',
+  enterCorrectUrl: 'Алдаатай URL: Файлыг заасан шууд холбоос оруулна',
   enterTextToSearch: 'Хайлт хийх текстээ оруулна уу',
   enterUrlToImport: 'Файл импортлох URL',
   error: 'Алдаа',
@@ -111,7 +108,8 @@ mn_MN.strings = {
   logOut: 'Гарах',
   micDisabled: 'Микрофонд хандах эрхийг хэрэглэгч түдгэлзүүлсэн',
   missingRequiredMetaField: 'Шаардлагатай мета мэдээлэл байхгүй байна',
-  missingRequiredMetaFieldOnFile: 'Шаардлагатай мета мэдээлэл %{fileName} файлд алга',
+  missingRequiredMetaFieldOnFile:
+    'Шаардлагатай мета мэдээлэл %{fileName} файлд алга',
   missingRequiredMetaFields: {
     '0': 'Дутуу мета мэдээлэл: %{fields}.',
     '1': 'Дутуу мета мэдээлэл: %{fields}.',
@@ -123,8 +121,7 @@ mn_MN.strings = {
   noCameraDescription:
     'Зураг авах эсвэл видео бичлэг хийхийн тулд камер холбоно уу',
   noCameraTitle: 'Камер ашиглах боломжгүй',
-  noDuplicates:
-    "'%{fileName}' файлыг давхардуулах боломжгүй",
+  noDuplicates: "'%{fileName}' файлыг давхардуулах боломжгүй",
   noFilesFound: 'Энд ямар ч файл эсвэл хавтас алга',
   noInternetConnection: 'Интернэтэд холбогдоогүй байна',
   noMoreFilesAllowed: 'Файл нэмэх боломжгүй',
@@ -132,19 +129,18 @@ mn_MN.strings = {
   openFolderNamed: '%{name} хавтсыг нээх',
   pause: 'Зогсоох',
   paused: 'Зогсоосон',
-  pauseUpload: 'Зогсоон',
+  pauseUpload: 'Хуулахыг зогсоох',
   pickFiles: 'Файл сонгох',
   pickPhotos: 'Фото сонгох',
   pleaseWait: 'Түр хүлээнэ үү',
   pluginNameAudio: 'Аудио',
-  pluginNameBox: 'Хайрцаг',
+  pluginNameBox: 'Box',
   pluginNameCamera: 'Камер',
   pluginNameDropbox: 'Dropbox',
   pluginNameFacebook: 'Facebook',
   pluginNameGoogleDrive: 'Google Drive',
   pluginNameGoogleDrivePicker: 'Google Drive',
   pluginNameGooglePhotosPicker: 'Google Photos',
-  pluginNameInstagram: 'Instagram',
   pluginNameOneDrive: 'OneDrive',
   pluginNameScreenCapture: 'Дэлгэцийн бичлэг',
   pluginNameUnsplash: 'Unsplash',
@@ -163,7 +159,8 @@ mn_MN.strings = {
   recordingStoppedMaxSize:
     'Файлын хэмжээ зөвшөөрөгдсөн дээд хязгаарт хүрсэн тул бичлэгийг зогсоосон',
   recordVideoBtn: 'Видео Бичлэг',
-  recoveredAllFiles: 'Бүх файлыг сэргээсэн. Хуулах процессыг үргэлжлүүлж болно.',
+  recoveredAllFiles:
+    'Бүх файлыг сэргээсэн. Хуулах процессыг үргэлжлүүлж болно.',
   recoveredXFiles: {
     '0': '1 файлыг сэргээж чадсангүй. Дахин сонгоод хуулах процессыг үргэлжлүүлнэ үү.',
     '1': '%{smart_count} файлыг сэргээж чадсангүй. Дахин сонгоод хуулах процессыг үргэлжлүүлнэ үү.',
@@ -176,7 +173,7 @@ mn_MN.strings = {
   resumeUpload: 'Үргэлжлүүлэн хуулах',
   retry: 'Дахин оролдох',
   retryUpload: 'Дахин оролдох',
-  revert: 'Reset',
+  revert: 'Буцаах',
   rotate: '90° эргүүлэх',
   save: 'Хадгалах',
   saveChanges: 'Хадгалах',
@@ -244,9 +241,9 @@ mn_MN.strings = {
   zoomOut: 'Холдуулах',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.mn_MN = mn_MN
 }
 
