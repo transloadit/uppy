@@ -78,11 +78,12 @@ type PreactRender = (
   ...children: any[]
 ) => VNode<any>
 
-interface MetaField {
+export interface MetaField {
   id: string
   name: string
   placeholder?: string
   render?: (field: FieldRenderOptions, h: PreactRender) => VNode<any>
+  type?: string
 }
 
 interface Target {
@@ -98,7 +99,7 @@ export interface TargetWithRender extends Target {
 
 export interface DashboardState<M extends Meta, B extends Body> {
   targets: Target[]
-  activePickerPanel: Target | undefined
+  activePickerPanel: Target
   showAddFilesPanel: boolean
   activeOverlayType: string | null
   fileCardFor: string | null
@@ -747,7 +748,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       trapFocus.forModal(
         event,
         this.getPluginState().activeOverlayType,
-        this.el,
+        this.el!,
       )
   }
 
@@ -902,7 +903,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       trapFocus.forInline(
         event,
         this.getPluginState().activeOverlayType,
-        this.el,
+        this.el!,
       )
   }
 
@@ -1076,7 +1077,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
         //                     try to press space multiple times. Focus will jump to Uppy.
         (isFocusNowhere && this.ifFocusedOnUppyRecently))
     ) {
-      this.superFocus(this.el, this.getPluginState().activeOverlayType)
+      this.superFocus(this.el!, this.getPluginState().activeOverlayType)
     } else {
       this.superFocus.cancel()
     }

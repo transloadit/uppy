@@ -1,10 +1,9 @@
 import type Uppy from '@uppy/core'
 import type { Body, Meta, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
+import type { MouseEventHandler } from 'preact'
 import type { DashboardState } from '../../../Dashboard.js'
 import copyToClipboard from '../../../utils/copyToClipboard.js'
-
-type $TSFixMe = any
 
 function EditButton<M extends Meta, B extends Body>({
   file,
@@ -103,15 +102,15 @@ function CopyLinkButton<M extends Meta, B extends Body>({
   uppy: Uppy<M, B>
   i18n: I18n
 }) {
-  const copyLinkToClipboard = (event: $TSFixMe) => {
-    copyToClipboard(file.uploadURL, i18n('copyLinkToClipboardFallback'))
+  const copyLinkToClipboard: MouseEventHandler<HTMLButtonElement> = (event) => {
+    copyToClipboard(file.uploadURL!, i18n('copyLinkToClipboardFallback'))
       .then(() => {
         uppy.log('Link copied to clipboard.')
         uppy.info(i18n('copyLinkToClipboardSuccess'), 'info', 3000)
       })
       .catch(uppy.log)
       // avoid losing focus
-      .then(() => event.target.focus({ preventScroll: true }))
+      .then(() => event.currentTarget.focus({ preventScroll: true }))
   }
 
   return (
