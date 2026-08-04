@@ -1,7 +1,7 @@
 {
   "name": "@uppy/angular",
   "description": "Angular component wrappers around Uppy's official UI plugins.",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "license": "MIT",
   "homepage": "https://uppy.io",
   "keywords": [
@@ -17,9 +17,6 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/transloadit/uppy.git"
-  },
-  "scripts": {
-    "prepublishOnly": "rm -fr * && cp -r ../../../dist/uppy/angular .."
   },
   "dependencies": {
     "tslib": "^2.8.1"
@@ -39,5 +36,17 @@
       "optional": true
     }
   },
-  "sideEffects": false
+  "sideEffects": false,
+  "module": "fesm2022/uppy-angular.mjs",
+  "typings": "types/uppy-angular.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./types/uppy-angular.d.ts",
+      "default": "./fesm2022/uppy-angular.mjs"
+    }
+  },
+  "type": "module"
 }

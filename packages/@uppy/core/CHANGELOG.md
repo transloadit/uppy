@@ -1,5 +1,56 @@
 # @uppy/core
 
+## 6.0.0
+
+### Major Changes
+
+- 7e8e04f: `@uppy/utils`, `@uppy/store-default`, `@uppy/companion-client` and `@uppy/provider-views`
+  have been merged into `@uppy/core`
+  ([#6370](https://github.com/transloadit/uppy/pull/6370)). No new versions of them will be
+  published: their existing releases stay on npm but are deprecated in favour of the
+  `@uppy/core` subpaths.
+
+  | Removed package          | New import                    |
+  | ------------------------ | ----------------------------- |
+  | `@uppy/utils`            | `@uppy/core/utils`            |
+  | `@uppy/store-default`    | `@uppy/core/store-default`    |
+  | `@uppy/companion-client` | `@uppy/core/companion-client` |
+  | `@uppy/provider-views`   | `@uppy/core/provider-views`   |
+
+  Remove them from your `package.json` — every Uppy plugin already depends on `@uppy/core`, so
+  there is now a single source of truth instead of a sub-dependency that could be pinned to
+  an older copy in your lockfile.
+
+  Also breaking:
+
+  - Provider CSS moved: `@uppy/provider-views/css/style.min.css` →
+    `@uppy/core/provider-views/css/style.min.css`. Most apps don't import this directly —
+    it ships bundled in `@uppy/dashboard`'s CSS.
+  - `RequestOptions` moved from `@uppy/utils` to `@uppy/core/companion-client`.
+  - `CompanionClientProvider` and `CompanionClientSearchProvider` are removed. They were
+    hand-maintained stand-ins that existed only because `@uppy/utils` could not see the
+    real provider classes. Import `Provider` from `@uppy/core/companion-client` instead.
+
+  Through the `uppy` meta-package or the CDN bundle, nothing changes: `server`
+  (companion-client), `views.ProviderView` and `DefaultStore` keep their names and are
+  repointed at the `@uppy/core` subpaths internally. Only direct imports of the four
+  packages need the table above.
+
+- ad4050b: Send token using websocket instead of window.opener.
+  Breaking in `@uppy/core` because it needs newest version of Companion in order to work.
+  Breaking in `@uppy/companion` because `companion.socket()` now requires `companionOptions` to be passed as the second argument.
+
+### Minor Changes
+
+- 84ad853: Import Preact from @uppy/core utilities to guarantee a single version across packages.
+
+### Patch Changes
+
+- 675697d: Add `useGooglePicker` react hook and remove unused `RequestClient` options `name`, `pluginId` and `provider`.
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- 2608032: Export the `Processor` type so consumers can type functions passed to `addPreProcessor`, `addPostProcessor`, and `addUploader`
+- 7ac2623: uploadRemoteFile() now queues token request and websocket request as a single job in the request queue.
+
 ## 5.2.0
 
 ### Minor Changes

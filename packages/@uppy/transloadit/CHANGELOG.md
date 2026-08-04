@@ -1,5 +1,27 @@
 # @uppy/transloadit
 
+## 6.0.0
+
+### Minor Changes
+
+- 12de077: Remove @uppy/instagram references from all the packages
+- 57f8daf: Add assemblyStatus and lastAssemblyStatus to transloadit's plugin state
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- ca916f6: emit updated AssemblyState in 'transloadit:assembly-cancelled' event
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [2608032]
+- Updated dependencies [7ac2623]
+- Updated dependencies [942db47]
+- Updated dependencies [ad4050b]
+- Updated dependencies [84ad853]
+  - @uppy/core@6.0.0
+  - @uppy/tus@6.0.0
+
 ## 5.5.1
 
 ### Patch Changes
