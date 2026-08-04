@@ -42,7 +42,7 @@ import {
   Translator,
 } from './utils/index.js'
 
-type Processor = (
+export type Processor = (
   fileIDs: string[],
   uploadID: string,
   // biome-ignore lint/suspicious/noConfusingVoidType: ...
