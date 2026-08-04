@@ -31,8 +31,8 @@
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "tsx": "^4.0.0",
-    "typescript": "^5.1.6",
-    "vite": "^6.3.6"
+    "typescript": "^6.0.3",
+    "vite": "^8.1.5"
   },
   "engines": {
     "node": ">=20.0.0"
