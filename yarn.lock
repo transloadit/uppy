@@ -11448,6 +11448,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/namespace-emitter@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@types/namespace-emitter@npm:2.0.0"
+  checksum: 10/226c068a055128612f7b623b1fd91e3bb49c81d8988c3d65524a73c9c092515abd8e559734c5defd46cf56e17f97cc73d1d320ef77f0f816490681d76b4ef2b8
+  languageName: node
+  linkType: hard
+
 "@types/node-forge@npm:^1.3.0":
   version: 1.3.11
   resolution: "@types/node-forge@npm:1.3.11"
@@ -11934,6 +11941,8 @@ __metadata:
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
+    "@uppy/google-drive-picker": "workspace:^"
+    "@uppy/google-photos-picker": "workspace:^"
     "@uppy/image-editor": "workspace:^"
     "@uppy/screen-capture": "workspace:^"
     "@uppy/webcam": "workspace:^"
@@ -11974,6 +11983,7 @@ __metadata:
     "@types/google.accounts": "npm:^0.0.18"
     "@types/google.picker": "npm:^0.0.52"
     "@types/lodash": "npm:^4.14.199"
+    "@types/namespace-emitter": "npm:^2.0.0"
     "@types/node": "npm:^20.19.0"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
@@ -16837,6 +16847,8 @@ __metadata:
     "@types/react": "npm:^19.0.10"
     "@types/react-dom": "npm:^19.0.4"
     "@uppy/core": "workspace:*"
+    "@uppy/google-drive-picker": "workspace:*"
+    "@uppy/google-photos-picker": "workspace:*"
     "@uppy/react": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
