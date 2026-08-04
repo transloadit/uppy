@@ -1,5 +1,24 @@
 # @uppy/image-editor
 
+## 5.0.0
+
+### Minor Changes
+
+- 84ad853: Import Preact from @uppy/core utilities to guarantee a single version across packages.
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- 2608031: Fix cropper not reinitializing after save/cancel by destroying previous instance in `start()` and cleaning up on file removal
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [2608032]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [84ad853]
+  - @uppy/core@6.0.0
+
 ## 4.2.0
 
 ### Minor Changes
