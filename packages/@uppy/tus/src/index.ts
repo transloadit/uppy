@@ -165,14 +165,21 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    * upload on the Tus server by sending a `DELETE` request. If not, it will just
    * cancel any current upload request and leave the upload in a half-uploaded state.
    *
+   * Terminating is best effort: the server may refuse to delete an upload it
+   * considers finished, which is benign, so a failure is logged as a warning
+   * and never rejects.
+   *
    * @param fileID
    * @param terminate Whether to terminate the upload on the server.
+   * @returns A promise that settles once the abort, including the server-side
+   * terminate, has finished.
    */
-  #abortUploader(fileID: string, terminate?: boolean) {
-    const uploader = this.uploaders[fileID]
-    uploader?.abort(terminate).catch((err) => {
+  async #abortUploader(fileID: string, terminate?: boolean): Promise<void> {
+    try {
+      await this.uploaders[fileID]?.abort(terminate)
+    } catch (err) {
       this.uppy.log(err, 'warning')
-    })
+    }
   }
 
   /**
