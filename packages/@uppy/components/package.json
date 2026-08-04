@@ -53,10 +53,12 @@
     "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^4.0.6",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",
+    "@uppy/google-drive-picker": "workspace:^",
+    "@uppy/google-photos-picker": "workspace:^",
     "@uppy/image-editor": "workspace:^",
     "@uppy/screen-capture": "workspace:^",
     "@uppy/webcam": "workspace:^"
