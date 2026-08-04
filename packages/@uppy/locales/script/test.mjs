@@ -16,6 +16,10 @@ import {
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url))
 const leadingLocaleName = 'en_US'
+// Node strips types when importing `.ts`, so the modes that compare language
+// packs read `src/` and stay independent of `yarn build`. (`unused` still needs
+// `lib/`, but of the *plugin* packages, to scan their compiled code for i18n calls.)
+const localePackGlob = `${root}/packages/@uppy/locales/src/*.ts`
 const mode = process.argv[2]
 const verbose = process.argv.includes('--verbose')
 const pluginLocaleDependencies = {
@@ -78,12 +82,6 @@ async function unused(filesPerPlugin, data) {
 // fails the build. Pass `--verbose` for the per-key breakdown; the default is a
 // one-line-per-locale summary so it stays readable in CI.
 function warnings({ leadingLocale, followerLocales }) {
-  if (leadingLocale == null) {
-    throw new Error(
-      `Leading locale "${leadingLocaleName}" not found. Run \`yarn build\` first — this check reads the compiled locales from lib/.`,
-    )
-  }
-
   const leadingStrings = leadingLocale.strings
   const total = Object.keys(leadingStrings).length
   const entries = Object.entries(followerLocales).sort(([a], [b]) =>
@@ -173,6 +171,116 @@ function warnings({ leadingLocale, followerLocales }) {
   }
 }
 
+// @uppy/core's Translator interpolates by building `new RegExp('%\\{' + arg + '\\}')`
+// from the option name, so only the exact `%{name}` form is ever substituted.
+const placeholderPattern = /%\{(\w+)\}/g
+
+/**
+ * Anything that looks like a placeholder but isn't the exact `%{name}` form:
+ * `% {name}`, `%{ name }`, `%{name` and `{name}` all render verbatim.
+ * Only meaningful for a `name` we already know is not present in its exact form.
+ */
+function findMalformedPlaceholder(string, name) {
+  const [match] = string.match(new RegExp(`%?\\s*\\{\\s*${name}\\s*\\}?`)) ?? []
+  return match
+}
+
+function getPlaceholders(string) {
+  return new Set(
+    Array.from(string.matchAll(placeholderPattern), ([, name]) => name),
+  )
+}
+
+/**
+ * A locale value is either a string, or an object of plural forms keyed by the
+ * indices the locale's `pluralize` returns. Normalize both into `[form, string]`
+ * pairs so every form gets checked.
+ */
+function getForms(value) {
+  if (typeof value === 'string') return [[null, value]]
+  return Object.entries(value)
+}
+
+// Unlike `warnings`, this mode does fail the build: a placeholder that cannot
+// interpolate is never an intentional translation choice, it is a typo that
+// renders raw `%{...}` to users. Diverging placeholder *sets* are advisory,
+// since a translation may legitimately spell a number out instead.
+function placeholders({ leadingLocale, followerLocales }) {
+  const errors = []
+  const logs = []
+
+  for (const [name, locale] of Object.entries(followerLocales)) {
+    for (const [key, value] of Object.entries(locale.strings)) {
+      const leadingValue = leadingLocale.strings[key]
+      // Excess keys are already reported by the `warnings` mode.
+      if (leadingValue == null) continue
+
+      const expected = new Set(
+        getForms(leadingValue).flatMap(([, string]) => [
+          ...getPlaceholders(string),
+        ]),
+      )
+
+      for (const [form, string] of getForms(value)) {
+        const where = [
+          chalk.cyan(name),
+          `→ ${chalk.yellow(key)}${form == null ? '' : `['${form}']`}`,
+        ].join(' ')
+        const found = getPlaceholders(string)
+
+        for (const placeholder of expected) {
+          if (found.has(placeholder)) continue
+
+          const malformed = findMalformedPlaceholder(string, placeholder)
+          if (malformed) {
+            errors.push(
+              [
+                `${where}: malformed placeholder ${chalk.red(malformed)},`,
+                `expected ${chalk.green(`%{${placeholder}}`)}.`,
+                `It will not interpolate and is rendered as-is:\n    ${string}`,
+              ].join(' '),
+            )
+          } else {
+            logs.push(
+              [
+                `${where}: missing placeholder ${chalk.red(`%{${placeholder}}`)}`,
+                `that ${chalk.cyan(leadingLocaleName)} has:\n    ${string}`,
+              ].join(' '),
+            )
+          }
+        }
+
+        for (const placeholder of found) {
+          if (expected.has(placeholder)) continue
+
+          logs.push(
+            [
+              `${where}: unknown placeholder ${chalk.red(`%{${placeholder}}`)}`,
+              `that ${chalk.cyan(leadingLocaleName)} does not have,`,
+              `so no value is passed for it and it is rendered as-is:\n    ${string}`,
+            ].join(' '),
+          )
+        }
+      }
+    }
+  }
+
+  if (logs.length) {
+    console.log(logs.join('\n'))
+    console.log(`\n${chalk.yellow(`${logs.length} placeholder warning(s).`)}`)
+  }
+
+  if (errors.length) {
+    return Promise.reject(
+      new Error(
+        `\n${errors.join('\n')}\n\n${errors.length} malformed placeholder(s).`,
+      ),
+    )
+  }
+
+  return undefined
+}
+
 function test() {
   switch (mode) {
     case 'unused':
@@ -187,17 +295,21 @@ function test() {
       )
 
     case 'warnings':
-      // Node cannot `import()` the TypeScript sources in `src/`, so we read the
-      // compiled output instead. This means `yarn build` has to have run first
-      // (the `unused` mode already relies on `lib/` for the same reason).
-      return getLocales(
-        `${root}/packages/@uppy/locales/lib/*.js`,
-        localeNameFromLocalePath,
-      ).then((locales) =>
-        warnings({
-          leadingLocale: locales[leadingLocaleName],
-          followerLocales: omit(locales, leadingLocaleName),
-        }),
+      return getLocales(localePackGlob, localeNameFromLocalePath).then(
+        (locales) =>
+          warnings({
+            leadingLocale: locales[leadingLocaleName],
+            followerLocales: omit(locales, leadingLocaleName),
+          }),
+      )
+
+    case 'placeholders':
+      return getLocales(localePackGlob, localeNameFromLocalePath).then(
+        (locales) =>
+          placeholders({
+            leadingLocale: locales[leadingLocaleName],
+            followerLocales: omit(locales, leadingLocaleName),
+          }),
       )
 
     default:

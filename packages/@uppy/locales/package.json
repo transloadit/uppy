@@ -8,7 +8,7 @@
   "scripts": {
     "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && yarn format",
     "format": "cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",
-    "test": "yarn node script/test.mjs unused && yarn node script/test.mjs warnings",
+    "test": "yarn node script/test.mjs unused && yarn node script/test.mjs placeholders && yarn node script/test.mjs warnings",
     "test:coverage-report": "yarn node script/test.mjs warnings --verbose",
     "typecheck": "tsc --build"
   },
