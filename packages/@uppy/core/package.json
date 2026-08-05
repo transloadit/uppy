@@ -63,8 +63,8 @@
   "devDependencies": {
     "@types/deep-freeze": "^0",
     "@types/gapi": "^0.0.47",
-    "@types/google.accounts": "^0.0.14",
-    "@types/google.picker": "^0.0.42",
+    "@types/google.accounts": "^0.0.18",
+    "@types/google.picker": "^0.0.52",
     "@types/lodash": "^4.14.199",
     "@types/namespace-emitter": "^2.0.0",
     "@types/node": "^20.19.0",
