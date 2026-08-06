@@ -36,9 +36,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/provider-views": "workspace:^",
-    "@uppy/utils": "workspace:^",
     "preact": "^10.29.2"
   },
   "peerDependencies": {
@@ -46,6 +43,6 @@
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }

@@ -3,13 +3,10 @@
 "@uppy/google-photos-picker": patch
 "@uppy/google-drive-picker": patch
 "@uppy/thumbnail-generator": patch
-"@uppy/companion-client": patch
 "@uppy/golden-retriever": patch
 "@uppy/image-generator": patch
-"@uppy/provider-views": patch
 "@uppy/remote-sources": patch
 "@uppy/screen-capture": patch
-"@uppy/store-default": patch
 "@uppy/google-drive": patch
 "@uppy/image-editor": patch
 "@uppy/transloadit": patch
@@ -31,7 +28,6 @@
 "@uppy/webdav": patch
 "@uppy/audio": patch
 "@uppy/react": patch
-"@uppy/utils": patch
 "@uppy/core": patch
 "@uppy/form": patch
 "@uppy/zoom": patch

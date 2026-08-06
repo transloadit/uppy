@@ -6,6 +6,7 @@ import packageJson from '../../package.json' with { type: 'json' }
 import type { CompanionRuntimeOptions } from '../types/companion-options.js'
 import type { ProviderUserSession } from '../types/express.js'
 import * as tokenService from './helpers/jwt.js'
+import { getCookieName } from './helpers/jwt.js'
 import { getURLBuilder } from './helpers/utils.js'
 import * as logger from './logger.js'
 import { isOAuthProvider } from './provider/Provider.js'
@@ -175,7 +176,7 @@ export const cookieAuthToken: RequestHandler = (req, res, next) => {
   if (oauthProvider == null || oauthProvider.length === 0) {
     return next()
   }
-  req.companion.authToken = req.cookies[`uppyAuthToken--${oauthProvider}`]
+  req.companion.authToken = req.cookies[getCookieName(oauthProvider)]
   return next()
 }
 

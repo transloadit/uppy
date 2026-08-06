@@ -37,14 +37,12 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/companion-client": "workspace:^",
-    "@uppy/utils": "workspace:^",
     "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
     "jsdom": "^29.1.1",
-    "typescript": "^5.8.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   },
   "peerDependencies": {

@@ -45,9 +45,7 @@
   },
   "dependencies": {
     "@transloadit/prettier-bytes": "^1.1.0",
-    "@uppy/provider-views": "workspace:^",
     "@uppy/thumbnail-generator": "workspace:^",
-    "@uppy/utils": "workspace:^",
     "classnames": "^2.5.1",
     "lodash": "^4.18.1",
     "nanoid": "^5.1.11",
@@ -64,12 +62,12 @@
     "@vitest/browser-playwright": "^4.1.6",
     "cssnano": "^8.0.1",
     "jsdom": "^29.1.1",
-    "playwright": "1.60.0",
+    "playwright": "1.61.1",
     "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
     "resize-observer-polyfill": "^1.5.0",
     "sass": "^1.89.2",
-    "typescript": "^5.8.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   },
   "peerDependencies": {

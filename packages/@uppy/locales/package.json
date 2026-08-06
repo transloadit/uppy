@@ -31,12 +31,12 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@uppy/utils": "workspace:^"
+    "@uppy/core": "workspace:^"
   },
   "devDependencies": {
     "chalk": "^5.0.0",
     "dedent": "^1.0.0",
     "glob": "^13.0.6",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }

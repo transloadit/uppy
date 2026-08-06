@@ -1,5 +1,5 @@
-import type { I18n } from '@uppy/utils'
-import type { h } from 'preact'
+import type { I18n } from '@uppy/core/utils'
+import type { h } from '@uppy/core/utils/preact'
 
 interface SubmitButtonProps {
   recording: boolean

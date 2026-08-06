@@ -1,4 +1,4 @@
-import { FOCUSABLE_ELEMENTS, toArray } from '@uppy/utils'
+import { FOCUSABLE_ELEMENTS, toArray } from '@uppy/core/utils'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
 type $TSFixMe = any

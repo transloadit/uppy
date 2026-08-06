@@ -47,7 +47,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@uppy/utils": "workspace:^",
     "is-mobile": "^5.0.0",
     "preact": "^10.29.2"
   },
@@ -57,7 +56,7 @@
     "postcss": "^8.5.15",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
-    "typescript": "^5.8.3",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   },
   "peerDependencies": {

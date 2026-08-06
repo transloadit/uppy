@@ -1,17 +1,17 @@
+import type { Body, Meta } from '@uppy/core'
+import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
   RequestClient,
-} from '@uppy/companion-client'
-import type { Body, Meta } from '@uppy/core'
-import { UIPlugin, type Uppy } from '@uppy/core'
+} from '@uppy/core/companion-client'
 import type {
   LocaleStrings,
   MinimalRequiredUppyFile,
   RemoteUppyFile,
-} from '@uppy/utils'
-import { toArray } from '@uppy/utils'
+} from '@uppy/core/utils'
+import { toArray } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from 'preact'
+import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import UrlUI from './UrlUI.js'
@@ -121,8 +121,6 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     this.client = new RequestClient(uppy, {
-      pluginId: this.id,
-      provider: 'url',
       companionUrl: this.opts.companionUrl,
       companionHeaders: this.opts.companionHeaders,
       companionCookiesRule: this.opts.companionCookiesRule,

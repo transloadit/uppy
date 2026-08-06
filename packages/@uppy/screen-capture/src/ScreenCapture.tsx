@@ -6,9 +6,9 @@ import type {
   Uppy,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings } from '@uppy/utils'
-import { getFileTypeExtension } from '@uppy/utils'
-import type { ComponentChild } from 'preact'
+import type { LocaleStrings } from '@uppy/core/utils'
+import { getFileTypeExtension } from '@uppy/core/utils'
+import type { ComponentChild } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import RecorderScreen from './RecorderScreen.js'
