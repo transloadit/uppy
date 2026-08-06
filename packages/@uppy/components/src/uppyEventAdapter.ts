@@ -61,6 +61,7 @@ export function createUppyEventAdapter({
   return {
     cleanup: () => {
       uppy.off('file-added', onFileAdded)
+      uppy.off('file-removed', onFileRemoved)
       uppy.off('progress', onProgress)
       uppy.off('upload', onUploadStarted)
       uppy.off('complete', onComplete)
