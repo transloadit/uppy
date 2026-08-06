@@ -36,7 +36,12 @@ vi.mock('tus-js-client', async (importOriginal) => {
       setTimeout(() => this.options.onError(err), 0)
     }
 
-    abort() {}
+    abort() {
+      // Mirrors XMLHttpRequest.abort(): the response object is reset. This
+      // makes the test fail if Tus aborts the completed errored request.
+      fakeXhr.status = 0
+      fakeXhr.responseText = ''
+    }
 
     // ponytail: tus calls this before start(); return empty so no resume logic runs
     findPreviousUploads() {
@@ -115,13 +120,19 @@ describe('Tus', () => {
         }),
         event.then(([, , response]) => {
           expect(response?.status).toBe(403)
+          expect(response?.body?.xhr.status).toBe(403)
           expect(JSON.parse(response!.body!.xhr.responseText).message).toBe(
             'File cannot be uploaded as the BIN content type is disallowed!',
           )
         }),
       ])
 
-      expect(core.getFile(id).response?.status).toBe(403)
+      const file = core.getFile(id)
+      expect(file.response?.status).toBe(403)
+      expect(file.response?.body?.xhr.status).toBe(403)
+      expect(JSON.parse(file.response!.body!.xhr.responseText).message).toBe(
+        'File cannot be uploaded as the BIN content type is disallowed!',
+      )
     })
   })
 })
