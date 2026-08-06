@@ -11,7 +11,7 @@ root/ (Dropbox)
 │   ├── second/
 │   │   ├── third/
 │   │   │   ├── nested-target.pdf
-│   │   │   ├── new-file.pdf
+│   │   │   └── new-file.pdf
 │   │   ├── deep-file.txt
 │   │   ├── target.pdf
 │   │   └── workspace.pdf
