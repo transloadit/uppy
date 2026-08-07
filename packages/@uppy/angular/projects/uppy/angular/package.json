@@ -4,6 +4,7 @@
   "version": "1.1.0",
   "license": "MIT",
   "homepage": "https://uppy.io",
+  "type": "module",
   "keywords": [
     "file uploader",
     "uppy",

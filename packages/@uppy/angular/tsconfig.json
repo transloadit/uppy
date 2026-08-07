@@ -2,7 +2,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": "./",
+    "rootDir": "./projects/uppy/angular/src",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
     "strict": true,
@@ -13,12 +13,10 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
-    "downlevelIteration": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022",
+    "module": "nodenext",
     "useDefineForClassFields": false,
     "lib": ["ES2022", "dom"],
     "allowSyntheticDefaultImports": true
