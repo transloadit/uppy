@@ -1,5 +1,25 @@
 # @uppy/companion
 
+## 7.0.0
+
+### Major Changes
+
+- 12de077: Remove @uppy/instagram references from all the packages
+- ad4050b: Send token using websocket instead of window.opener.
+  Breaking in `@uppy/core` because it needs newest version of Companion in order to work.
+  Breaking in `@uppy/companion` because `companion.socket()` now requires `companionOptions` to be passed as the second argument.
+- d9d44ce: Upgrade to express 5 - Companion no longer works when used as a middleware with Express 4.
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- 8c5814b: Upgrade runtime dependencies. Companion moves to `ws` 8.21.1, `morgan` 1.11.0,
+  `helmet` 8.3.0, `ioredis` 5.11.1, `serialize-javascript` 7.0.7,
+  `content-disposition` 2.0.1 and `p-map` 7.0.5. `@uppy/angular` moves to
+  `zone.js` ~0.16.2, matching its Angular 21 peer range.
+- 3b08374: Reduce companion redis key timeouts to 10 min - In theory this shouldn't affect users
+- e99a17f: Port Companion to TypeScript. Not really a breaking change but there could be some unexpected breakage.
+
 ## 6.2.2
 
 ### Patch Changes
