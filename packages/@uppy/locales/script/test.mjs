@@ -7,11 +7,17 @@ import { fileURLToPath } from 'node:url'
 import chalk from 'chalk'
 import { globSync } from 'glob'
 
-import { getLocales, getPaths, omit } from './helpers.mjs'
+import {
+  getLocales,
+  getPaths,
+  localeNameFromLocalePath,
+  omit,
+} from './helpers.mjs'
 
 const root = fileURLToPath(new URL('../../../../', import.meta.url))
 const leadingLocaleName = 'en_US'
 const mode = process.argv[2]
+const verbose = process.argv.includes('--verbose')
 const pluginLocaleDependencies = {
   core: ['provider-views', 'companion-client'],
 }
@@ -67,27 +73,61 @@ async function unused(filesPerPlugin, data) {
   return data
 }
 
+// Locales are community-contributed and always lag behind `en_US`, so
+// discrepancies are expected and this mode is advisory: it reports, it never
+// fails the build. Pass `--verbose` for the per-key breakdown; the default is a
+// one-line-per-locale summary so it stays readable in CI.
 function warnings({ leadingLocale, followerLocales }) {
-  const entries = Object.entries(followerLocales)
-  const logs = []
+  if (leadingLocale == null) {
+    throw new Error(
+      `Leading locale "${leadingLocaleName}" not found. Run \`yarn build\` first — this check reads the compiled locales from lib/.`,
+    )
+  }
+
+  const leadingStrings = leadingLocale.strings
+  const total = Object.keys(leadingStrings).length
+  const entries = Object.entries(followerLocales).sort(([a], [b]) =>
+    a.localeCompare(b),
+  )
+  const details = []
+  const summary = []
+  let missingTotal = 0
+  let excessTotal = 0
 
   for (const [name, locale] of entries) {
-    const missing = Object.keys(leadingLocale).filter((key) => !(key in locale))
-    const excess = Object.keys(locale).filter((key) => !(key in leadingLocale))
+    const strings = locale.strings
+    const missing = Object.keys(leadingStrings).filter(
+      (key) => !(key in strings),
+    )
+    const excess = Object.keys(strings).filter(
+      (key) => !(key in leadingStrings),
+    )
 
-    logs.push('\n')
-    logs.push(`--> Keys from ${leadingLocaleName} missing in ${name}`)
-    logs.push('\n')
+    missingTotal += missing.length
+    excessTotal += excess.length
+
+    summary.push(
+      [
+        chalk.cyan(name.padEnd(16)),
+        `${String(missing.length).padStart(3)} missing`,
+        `${String(excess.length).padStart(3)} excess`,
+        `(of ${total} keys in ${leadingLocaleName})`,
+      ].join('  '),
+    )
+
+    details.push('')
+    details.push(`--> Keys from ${leadingLocaleName} missing in ${name}`)
+    details.push('')
 
     for (const key of missing) {
-      let value = leadingLocale[key]
+      let value = leadingStrings[key]
 
       if (typeof value === 'object') {
         // For values with plural forms, just take the first one right now
         value = value[Object.keys(value)[0]]
       }
 
-      logs.push(
+      details.push(
         [
           `${chalk.cyan(name)} locale has missing string: '${chalk.red(key)}'`,
           `that is present in ${chalk.cyan(leadingLocaleName)}`,
@@ -96,12 +136,12 @@ function warnings({ leadingLocale, followerLocales }) {
       )
     }
 
-    logs.push('\n')
-    logs.push(`--> Keys from ${name} missing in ${leadingLocaleName}`)
-    logs.push('\n')
+    details.push('')
+    details.push(`--> Keys from ${name} missing in ${leadingLocaleName}`)
+    details.push('')
 
     for (const key of excess) {
-      logs.push(
+      details.push(
         [
           `${chalk.cyan(name)} locale has excess string:`,
           `'${chalk.yellow(key)}' that is not present`,
@@ -111,7 +151,26 @@ function warnings({ leadingLocale, followerLocales }) {
     }
   }
 
-  console.log(logs.join('\n'))
+  if (verbose) {
+    console.log(details.join('\n'))
+    console.log('')
+  }
+
+  console.log(`--> Locale coverage relative to ${leadingLocaleName}\n`)
+  console.log(summary.join('\n'))
+  console.log(
+    `\n${chalk.bold(`${entries.length} locales`)}: ${chalk.red(
+      `${missingTotal} missing`,
+    )}, ${chalk.yellow(`${excessTotal} excess`)} string(s) in total.`,
+  )
+
+  if (!verbose && missingTotal + excessTotal > 0) {
+    console.log(
+      chalk.dim(
+        'Re-run with --verbose to list the individual keys. This check is advisory and does not fail the build.',
+      ),
+    )
+  }
 }
 
 function test() {
@@ -128,12 +187,17 @@ function test() {
       )
 
     case 'warnings':
-      return getLocales(`${root}/packages/@uppy/locales/src/*.js`).then(
-        (locales) =>
-          warnings({
-            leadingLocale: locales[leadingLocaleName],
-            followerLocales: omit(locales, leadingLocaleName),
-          }),
+      // Node cannot `import()` the TypeScript sources in `src/`, so we read the
+      // compiled output instead. This means `yarn build` has to have run first
+      // (the `unused` mode already relies on `lib/` for the same reason).
+      return getLocales(
+        `${root}/packages/@uppy/locales/lib/*.js`,
+        localeNameFromLocalePath,
+      ).then((locales) =>
+        warnings({
+          leadingLocale: locales[leadingLocaleName],
+          followerLocales: omit(locales, leadingLocaleName),
+        }),
       )
 
     default:
