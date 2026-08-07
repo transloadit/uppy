@@ -23,4 +23,14 @@ describe('getSocketHost', () => {
       'ws://foo.bar/a/b/cd?e=fghi&l=k&m=n',
     )
   })
+
+  it('should strip a trailing slash so appended paths do not double up', () => {
+    expect(getSocketHost('http://localhost:3020/')).toEqual(
+      'ws://localhost:3020',
+    )
+
+    expect(getSocketHost('https://foo.bar/companion/')).toEqual(
+      'wss://foo.bar/companion',
+    )
+  })
 })
