@@ -1,9 +1,39 @@
+import type Uppy from '@uppy/core'
+import type { Body, State, UIPlugin } from '@uppy/core'
+import type {
+  I18n,
+  Meta,
+  Translator,
+  UppyFile,
+  UppyFileId,
+} from '@uppy/core/utils'
 import classNames from 'classnames'
+import type { ComponentChildren, MouseEventHandler } from 'preact'
+import type { TargetWithRender } from '../Dashboard.js'
 
-type $TSFixMe = any
+declare module '@uppy/core' {
+  export interface UppyEventMap<M extends Meta, B extends Body> {
+    'file-editor:cancel': (file: UppyFile<M, B>) => void
+  }
+}
 
-function EditorPanel(props: $TSFixMe) {
-  const file = props.files[props.fileCardFor]
+type EditorPanelProps<M extends Meta, B extends Body> = {
+  className?: string | undefined
+  closeFileEditor: () => void
+  editors: TargetWithRender[]
+  fileCardFor: UppyFileId | null
+  files: State<M, B>['files']
+  i18n: I18n
+  i18nArray: Translator['translateArray']
+  saveFileEditor: MouseEventHandler<HTMLButtonElement>
+  state: State<M, B>
+  uppy: Uppy<M, B>
+}
+
+function EditorPanel<M extends Meta, B extends Body>(
+  props: EditorPanelProps<M, B>,
+): ComponentChildren {
+  const file = props.files[props.fileCardFor!]
 
   const handleCancel = () => {
     props.uppy.emit('file-editor:cancel', file)
@@ -47,8 +77,15 @@ function EditorPanel(props: $TSFixMe) {
         </button>
       </div>
       <div className="uppy-DashboardContent-panelBody">
-        {props.editors.map((target: $TSFixMe) => {
-          return props.uppy.getPlugin(target.id).render(props.state)
+        {props.editors.map((target) => {
+          return (
+            props.uppy.getPlugin(target.id) as UIPlugin<
+              // biome-ignore lint/complexity/noBannedTypes: {} means anything except null or undefined.
+              {},
+              M,
+              B
+            >
+          ).render(props.state)
         })}
       </div>
     </div>

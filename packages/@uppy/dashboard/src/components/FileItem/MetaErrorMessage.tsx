@@ -1,22 +1,39 @@
-type $TSFixMe = any
+import type { Body, I18n, Meta, UppyFile } from '@uppy/core/utils'
+import type { ComponentChildren } from 'preact'
+import type { DashboardState } from '../../Dashboard.js'
 
-const metaFieldIdToName = (metaFieldId: $TSFixMe, metaFields: $TSFixMe) => {
-  const fields = typeof metaFields === 'function' ? metaFields() : metaFields
-  const field = fields.filter((f: $TSFixMe) => f.id === metaFieldId)
+function metaFieldIdToName<M extends Meta, B extends Body>(
+  metaFieldId: string,
+  metaFields: DashboardState<M, B>['metaFields'],
+) {
+  const fields =
+    typeof metaFields === 'function'
+      ? // @ts-expect-error TODO This should not be an error.
+        metaFields()
+      : metaFields
+  // @ts-expect-error TODO This should not be an error.
+  const field = fields.filter((f) => f.id === metaFieldId)
   return field[0].name
 }
 
-export default function MetaErrorMessage(props: $TSFixMe) {
+type MetaErrorMessageProps<M extends Meta, B extends Body> = {
+  i18n: I18n
+  file: UppyFile<M, B>
+  metaFields: DashboardState<M, B>['metaFields']
+  toggleFileCard: (show: boolean, fileId: string) => void
+}
+
+export default function MetaErrorMessage<M extends Meta, B extends Body>(
+  props: MetaErrorMessageProps<M, B>,
+): ComponentChildren {
   const { file, toggleFileCard, i18n, metaFields } = props
   const { missingRequiredMetaFields } = file
   if (!missingRequiredMetaFields?.length) {
-    return null as $TSFixMe
+    return null
   }
 
   const metaFieldsString = missingRequiredMetaFields
-    .map((missingMetaField: $TSFixMe) =>
-      metaFieldIdToName(missingMetaField, metaFields),
-    )
+    .map((missingMetaField) => metaFieldIdToName(missingMetaField, metaFields))
     .join(', ')
 
   return (
