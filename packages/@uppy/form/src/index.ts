@@ -9,7 +9,6 @@ import type {
 import { BasePlugin } from '@uppy/core'
 import { findDOMElement, toArray } from '@uppy/core/utils'
 
-// @ts-expect-error untyped
 import getFormData from 'get-form-data'
 
 import packageJson from '../package.json' with { type: 'json' }
