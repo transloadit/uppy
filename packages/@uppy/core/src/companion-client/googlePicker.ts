@@ -81,8 +81,12 @@ export interface PickingSession {
 
 export interface PickedItemBase {
   id: string
-  mimeType: string
-  name: string
+  // The Google Picker only guarantees these for some view types (Drive documents have them,
+  // but e.g. the Photos, Upload and YouTube views don't), so treat them as optional and let
+  // Uppy/Companion fall back when they're missing.
+  // https://developers.google.com/workspace/drive/picker/reference/picker.documentobject.mimetype
+  mimeType?: string
+  name?: string
 }
 
 export interface PickedDriveItem extends PickedItemBase {
@@ -216,8 +220,8 @@ async function handleDocObjectRecursively({
 }: {
   doc: {
     id: string
-    name: string
-    mimeType: string
+    name?: string
+    mimeType?: string
     shortcutDetails?: { targetMimeType: string }
   }
   token: string
@@ -321,7 +325,7 @@ async function showDrivePicker({
       onLoadingChange(true)
 
       const results: PickedDriveItem[] = []
-      for (const doc of picked.docs) {
+      for (const doc of picked.docs ?? []) {
         results.push(
           ...(await handleDocObjectRecursively({ doc, token, signal })),
         )

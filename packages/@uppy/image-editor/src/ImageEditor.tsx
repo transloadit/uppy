@@ -350,10 +350,7 @@ export default class ImageEditor<
    */
   start = (file: UppyFile<M, B>): void => {
     // Clean up any previous editing session
-    if (this.objectUrl) {
-      URL.revokeObjectURL(this.objectUrl)
-      this.objectUrl = null
-    }
+    this.stop()
 
     // Get file data - first try the passed file, then try fetching from Uppy state
     let fileData = file.data
@@ -480,8 +477,16 @@ export default class ImageEditor<
     return this.objectUrl
   }
 
+  handleFileRemoved = (file: UppyFile<M, B>): void => {
+    const { currentImage } = this.getPluginState()
+    if (currentImage && currentImage.id === file.id) {
+      this.stop()
+    }
+  }
+
   install(): void {
     this.resetEditorState(null)
+    this.uppy.on('file-removed', this.handleFileRemoved)
 
     const { target } = this.opts
     if (target) {
@@ -496,6 +501,7 @@ export default class ImageEditor<
       const file = this.uppy.getFile(currentImage.id)
       this.uppy.emit('file-editor:cancel', file)
     }
+    this.uppy.off('file-removed', this.handleFileRemoved)
     this.stop()
     this.unmount()
   }
