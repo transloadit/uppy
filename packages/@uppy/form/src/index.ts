@@ -9,7 +9,7 @@ import type {
 import { BasePlugin } from '@uppy/core'
 import { findDOMElement, toArray } from '@uppy/core/utils'
 
-import getFormData from 'get-form-data'
+import importedGetFormData from 'get-form-data'
 
 import packageJson from '../package.json' with { type: 'json' }
 
@@ -18,6 +18,28 @@ declare module '@uppy/core' {
     Form: Form<M, B>
   }
 }
+
+/**
+ * Get the `default` property of an object.
+ *
+ * This is a helper function to get imports of poorly packaged dependencies.
+ *
+ * @param input
+ *   The object to return, or whose `default` property to return.
+ * @returns
+ *   The `default` property of the input, of the input itself
+ */
+function defaultInterop<T extends {}>(
+  input: T,
+): T extends { default: any } ? T['default'] : T {
+  return ('default' in input ? input.default : input) as T extends {
+    default: any
+  }
+    ? T['default']
+    : T
+}
+
+const getFormData = defaultInterop(importedGetFormData)
 
 type Result<M extends Meta, B extends Body> = Parameters<
   UppyEventMap<M, B>['complete']
@@ -167,7 +189,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     // We want to exclude meta the the Form plugin itself has added
     // See https://github.com/transloadit/uppy/issues/1637
     delete formMeta[this.opts.resultName]
-    this.uppy.setMeta(formMeta)
+    this.uppy.setMeta(formMeta as Partial<M>)
   }
 
   install(): void {
