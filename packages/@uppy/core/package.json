@@ -55,7 +55,7 @@
     "lodash": "^4.18.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
-    "nanoid": "^5.1.11",
+    "nanoid": "^5.1.16",
     "p-queue": "^9.3.0",
     "p-retry": "^6.1.0",
     "preact": "^10.29.2"
