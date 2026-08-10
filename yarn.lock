@@ -8915,6 +8915,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/get-form-data@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@types/get-form-data@npm:3.0.0"
+  checksum: 10/056b08d5bfba4c3d9a1608c3e4968534f50d48cef68e059aff5a91cd23e1e2a6ee1ff404948e5ded9368da578ef8736499cce6b57ddb2323d52f2d84dc16347f
+  languageName: node
+  linkType: hard
+
 "@types/google.accounts@npm:^0.0.18":
   version: 0.0.18
   resolution: "@types/google.accounts@npm:0.0.18"
@@ -8996,6 +9003,13 @@ __metadata:
   version: 1.1.4
   resolution: "@types/methods@npm:1.1.4"
   checksum: 10/ad2a7178486f2fd167750f3eb920ab032a947ff2e26f55c86670a6038632d790b46f52e5b6ead5823f1e53fc68028f1e9ddd15cfead7903e04517c88debd72b1
+  languageName: node
+  linkType: hard
+
+"@types/mime-match@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@types/mime-match@npm:1.0.0"
+  checksum: 10/7baf6e89d33ec538a4cd38246b09f0866e608990f22bd2c4da1321eaa05a1c2365bca996fc68dd93f5afc79bf3ffba950762521896753a593c8fda1cd9712673
   languageName: node
   linkType: hard
 
@@ -9555,6 +9569,7 @@ __metadata:
     "@types/google.accounts": "npm:^0.0.18"
     "@types/google.picker": "npm:^0.0.52"
     "@types/lodash": "npm:^4.14.199"
+    "@types/mime-match": "npm:^1.0.0"
     "@types/namespace-emitter": "npm:^2.0.0"
     "@types/node": "npm:^20.19.0"
     classnames: "npm:^2.5.1"
@@ -9665,6 +9680,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/form@workspace:packages/@uppy/form"
   dependencies:
+    "@types/get-form-data": "npm:^3.0.0"
     get-form-data: "npm:^3.0.0"
     typescript: "npm:^6.0.3"
   peerDependencies:
