@@ -12,7 +12,7 @@
     "build": "tsc --build tsconfig.build.json",
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && sass --load-path=../../ src/provider-views/style.scss dist/provider-views.css && postcss dist/style.css -u cssnano -o dist/style.min.css && postcss dist/provider-views.css -u cssnano -o dist/provider-views.min.css",
     "typecheck": "tsc --build",
-    "test": "vitest run --environment=jsdom --silent='passed-only'"
+    "test": "vitest run --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -71,7 +71,6 @@
     "@types/node": "^20.19.0",
     "cssnano": "^8.0.1",
     "deep-freeze": "^0.0.1",
-    "jsdom": "^29.1.1",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",

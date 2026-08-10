@@ -6,7 +6,7 @@ import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import XHRUpload from './index.js'
-import { test } from './test-extend.js'
+import { it } from './test-extend.js'
 
 type UploadCompleteResult = Parameters<UppyEventMap<any, any>['complete']>[0]
 
@@ -54,7 +54,7 @@ afterEach(() => {
 })
 
 describe('XHRUpload browser mode', () => {
-  test('uploads a file in non-bundle mode', async ({ worker }) => {
+  it('uploads a file in non-bundle mode', async ({ worker }) => {
     const requests: MockUploadRequest[] = []
     worker.use(
       http.post('http://localhost/upload', async ({ request }) => {
@@ -96,7 +96,7 @@ describe('XHRUpload browser mode', () => {
       .toBeVisible()
   })
 
-  test('uploads files in a single request with bundle: true', async ({
+  it('uploads files in a single request with bundle: true', async ({
     worker,
   }) => {
     const requests: MockUploadRequest[] = []

@@ -44,13 +44,12 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
-    "jsdom": "^29.1.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build",
-    "test": "vitest run --environment=jsdom --silent='passed-only'"
+    "test": "vitest run --silent='passed-only'"
   }
 }

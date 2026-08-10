@@ -1,20 +1,20 @@
 import Core from '@uppy/core'
 import { HttpResponse, http } from 'msw'
-import { setupServer } from 'msw/node'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, vi } from 'vitest'
 import Transloadit from './index.ts'
+import { it } from './test-extend.ts'
 import 'whatwg-fetch'
 
 // Mock EventSource for testing. Vitest 4 made `vi.fn()` callable as a constructor,
 // but arrow-function implementations throw "is not a constructor" when invoked
 // with `new`. Use a regular function so `new EventSource(...)` works.
-global.EventSource = vi.fn(function MockEventSource() {
-  return {
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    close: vi.fn(),
-  }
-})
+// global.EventSource = vi.fn(function MockEventSource() {EventSource
+//   return {
+//     addEventListener: vi.fn(),
+//     removeEventListener: vi.fn(),
+//     close: vi.fn(),
+//   }
+// })
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
@@ -80,7 +80,7 @@ describe('Transloadit', () => {
     )
   })
 
-  it('should complete when resuming after pause', async () => {
+  it('should complete when resuming after pause', async ({ worker }) => {
     const assemblyStatusBase = {
       assembly_id: 'test-assembly-id',
       websocket_url: 'ws://localhost:8080',
@@ -93,7 +93,7 @@ describe('Transloadit', () => {
     let uploadIndex = 0
     const tusBaseUrl = 'http://localhost/resumable/files/'
 
-    const server = setupServer(
+    worker.use(
       http.options('http://localhost/resumable/files*', () => {
         return new HttpResponse(null, {
           status: 204,
@@ -179,8 +179,6 @@ describe('Transloadit', () => {
       }),
     )
 
-    server.listen({ onUnhandledRequest: 'error' })
-
     const uppy = new Core()
     const successSpy = vi.fn()
     uppy.on('complete', successSpy)
@@ -256,8 +254,6 @@ describe('Transloadit', () => {
     // intentionally not populated here because no terminal event fires in
     // this mocked flow (the server keeps returning ASSEMBLY_EXECUTING).
     expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
-
-    server.close()
   })
 
   it('resets allowNewUpload to true on preprocessor error', async () => {
@@ -278,7 +274,7 @@ describe('Transloadit', () => {
     uppy.addFile({
       source: 'test',
       name: 'test.jpg',
-      data: Buffer.from('test file content'),
+      data: new Blob(['test file content']),
     })
 
     // Initially should be true
