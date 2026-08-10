@@ -54,9 +54,9 @@
   },
   "devDependencies": {
     "cssnano": "^8.0.1",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }

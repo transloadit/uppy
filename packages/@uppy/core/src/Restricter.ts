@@ -1,5 +1,4 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
-// @ts-expect-error untyped
 import match from 'mime-match'
 import type { NonNullableUppyOptions, State } from './Uppy.js'
 import type { Body, I18n, Meta, UppyFile } from './utils/index.js'
