@@ -6,12 +6,12 @@
     "@uppy/dashboard": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
     "cors": "^2.8.5",
-    "express": "^4.22.0",
-    "multer": "^2.0.2"
+    "express": "^5.2.1",
+    "multer": "^2.2.0"
   },
   "devDependencies": {
     "npm-run-all": "^4.1.5",
-    "vite": "^7.1.11"
+    "vite": "^8.1.5"
   },
   "private": true,
   "scripts": {

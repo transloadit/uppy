@@ -1,10 +1,12 @@
-// @ts-ignore untyped
-import type { RateLimitedQueue, WrapPromiseFunctionType } from '@uppy/utils'
+import type {
+  RateLimitedQueue,
+  WrapPromiseFunctionType,
+} from '@uppy/core/utils'
 import {
   fetchWithNetworkError,
   hasProperty as has,
   NetworkError,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import Emitter from 'component-emitter'
 import {
   type AssemblyFile,
@@ -140,6 +142,13 @@ class TransloaditAssembly extends Emitter {
 
     this.#sse.addEventListener('assembly_execution_progress', (e) => {
       const details = JSON.parse(e.data)
+      // setting combined execution progress of the assembly
+      if (typeof details.progress_combined === 'number') {
+        this.status = {
+          ...this.status,
+          progress_combined: details.progress_combined,
+        }
+      }
       this.emit('execution-progress', details)
     })
 
@@ -292,9 +301,7 @@ class TransloaditAssembly extends Emitter {
         const prevResults = prevResultsMap[stepName] ?? []
 
         nextResults
-          .filter(
-            (n) => !prevResults || !prevResults.some((p) => p.id === n.id),
-          )
+          .filter((n) => !prevResults?.some((p) => p.id === n.id))
           .forEach((result) => {
             this.emit('result', stepName, result)
           })

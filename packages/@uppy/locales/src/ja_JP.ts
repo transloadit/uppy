@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const ja_JP: Locale<0 | 1> = {
   strings: {},
@@ -74,8 +74,8 @@ ja_JP.strings = {
   filter: 'フィルタ',
   finishEditingFile: 'ファイルの編集を終了',
   folderAdded: {
-    '0': '%{folder} から% {smart_count} 個のファイルを追加しました',
-    '1': '%{folder} から% {smart_count} 個のファイルを追加しました',
+    '0': '%{folder} から%{smart_count} 個のファイルを追加しました',
+    '1': '%{folder} から%{smart_count} 個のファイルを追加しました',
   },
   import: 'インポート',
   importFrom: '%{name}からインポート',
@@ -148,9 +148,9 @@ ja_JP.strings = {
   openFolderNamed: '開いたフォルダ %{name}',
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.ja_JP = ja_JP
 }
 

@@ -5,12 +5,16 @@ import { describe, expect, it, vi } from 'vitest'
 import Transloadit from './index.ts'
 import 'whatwg-fetch'
 
-// Mock EventSource for testing
-global.EventSource = vi.fn(() => ({
-  addEventListener: vi.fn(),
-  removeEventListener: vi.fn(),
-  close: vi.fn(),
-}))
+// Mock EventSource for testing. Vitest 4 made `vi.fn()` callable as a constructor,
+// but arrow-function implementations throw "is not a constructor" when invoked
+// with `new`. Use a regular function so `new EventSource(...)` works.
+global.EventSource = vi.fn(function MockEventSource() {
+  return {
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    close: vi.fn(),
+  }
+})
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
@@ -189,6 +193,15 @@ describe('Transloadit', () => {
       },
     })
 
+    // Plugin state should start empty; track every distinct `ok` that lands in
+    // it so we can verify the assembly lifecycle is reflected.
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+    const okHistory = []
+    const unsubscribe = uppy.store.subscribe((_prev, next) => {
+      const ok = next.plugins.Transloadit.assemblyStatus?.ok
+      if (ok && ok !== okHistory.at(-1)) okHistory.push(ok)
+    })
+
     uppy.addFile({
       source: 'test',
       name: 'cat.jpg',
@@ -228,11 +241,21 @@ describe('Transloadit', () => {
     uppy.resumeAll()
 
     await uploadPromise
+    unsubscribe()
 
     expect(successSpy).toHaveBeenCalled()
 
     // Should be reset to true after upload completes
     expect(uppy.getState().allowNewUpload).toBe(true)
+
+    // The createAssembly mock returned ASSEMBLY_EXECUTING and the assembly
+    // setter forwarded that status into plugin state during the upload.
+    expect(okHistory).toContain('ASSEMBLY_EXECUTING')
+    // `assemblyStatus` is the live slot — it clears when `this.assembly`
+    // becomes undefined at the end of `#afterUpload`. `lastAssembly` is
+    // intentionally not populated here because no terminal event fires in
+    // this mocked flow (the server keeps returning ASSEMBLY_EXECUTING).
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
 
     server.close()
   })

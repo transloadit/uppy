@@ -1,15 +1,10 @@
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
-import glob from 'glob'
+import { glob } from 'glob'
 
 export function getPaths(globPath) {
-  return new Promise((resolve, reject) => {
-    glob(globPath, (error, paths) => {
-      if (error) reject(error)
-      else resolve(paths)
-    })
-  })
+  return glob(globPath)
 }
 
 export function sortObjectAlphabetically(obj) {
@@ -24,16 +19,30 @@ export function omit(object, key) {
   return copy
 }
 
-export async function getLocales(pathPattern) {
+// Default key derivation, for the per-plugin layout:
+// `packages/@uppy/<plugin>/lib/locale.js` -> `<plugin>`
+export function pluginNameFromLocalePath(filePath) {
+  return path.basename(path.join(filePath, '..', '..'))
+}
+
+// Key derivation for the locale pack layout:
+// `packages/@uppy/locales/lib/ja_JP.js` -> `ja_JP`
+export function localeNameFromLocalePath(filePath) {
+  return path.basename(filePath, path.extname(filePath))
+}
+
+export async function getLocales(
+  pathPattern,
+  getKey = pluginNameFromLocalePath,
+) {
   const paths = await getPaths(pathPattern)
 
   return Object.fromEntries(
     await Promise.all(
       paths.map(async (filePath) => {
-        const pluginName = path.basename(path.join(filePath, '..', '..'))
         const { default: locale } = await import(pathToFileURL(filePath))
 
-        return [pluginName, locale]
+        return [getKey(filePath), locale]
       }),
     ),
   )

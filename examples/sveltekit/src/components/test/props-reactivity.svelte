@@ -14,9 +14,9 @@ let hideUploadButton = false
 </script>
 
 <main class="p-5 max-w-xl mx-auto">
-  <button onclick={() => (disabled = !disabled)}>Toggle dashboard</button>
+  <button type="button" onclick={() => (disabled = !disabled)}>Toggle dashboard</button>
   <Dashboard props={{disabled: disabled}} uppy={uppy} />
-  <button onclick={() => (hideUploadButton = !hideUploadButton)}>Toggle statusbar</button>
+  <button type="button" onclick={() => (hideUploadButton = !hideUploadButton)}>Toggle statusbar</button>
   <div id="statusbar-container">
     <StatusBar props={{ hideUploadButton }} uppy={uppy} />
   </div>

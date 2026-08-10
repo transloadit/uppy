@@ -8,11 +8,11 @@ import type {
   Uppy,
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
-import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/utils'
-import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/utils'
-import { isMobile } from 'is-mobile'
+import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/core/utils'
+import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from 'preact'
+import { type ComponentChild, h } from '@uppy/core/utils/preact'
+import { isMobile } from 'is-mobile'
 import packageJson from '../package.json' with { type: 'json' }
 import CameraIcon from './CameraIcon.js'
 import CameraScreen from './CameraScreen.js'
@@ -311,7 +311,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
             ? stream.getAudioTracks()
             : stream.getVideoTracks()
 
-          if (!options || !options.deviceId) {
+          if (!options?.deviceId) {
             currentDeviceId = tracks[0].getSettings().deviceId
           } else {
             tracks.forEach((track) => {
@@ -519,7 +519,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       const audioTracks = this.stream.getAudioTracks()
       const videoTracks = this.stream.getVideoTracks()
 
-      audioTracks.concat(videoTracks).forEach((track) => track.stop())
+      audioTracks.concat(videoTracks).forEach((track) => {
+        track.stop()
+      })
     }
 
     if (this.recorder) {

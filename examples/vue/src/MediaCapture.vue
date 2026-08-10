@@ -24,31 +24,31 @@
       <track kind="captions" />
     </video>
     <div class="flex gap-4 flex-wrap mt-4">
-      <button
+      <button type="button"
         class="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
         v-bind="primaryActionButtonProps"
       >
         {{ primaryActionButtonLabel }}
       </button>
-      <button
+      <button type="button"
         class="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
         v-bind="recordButtonProps"
       >
         Record
       </button>
-      <button
+      <button type="button"
         class="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-red-300"
         v-bind="stopRecordingButtonProps"
       >
         Stop
       </button>
-      <button
+      <button type="button"
         class="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
         v-bind="submitButtonProps"
       >
         Submit
       </button>
-      <button
+      <button type="button"
         class="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
         v-bind="discardButtonProps"
       >

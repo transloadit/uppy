@@ -4,7 +4,7 @@
   "type": "module",
   "devDependencies": {
     "npm-run-all": "^4.1.5",
-    "vite": "^7.1.11"
+    "vite": "^8.1.5"
   },
   "dependencies": {
     "@uppy/core": "workspace:*",
@@ -15,7 +15,7 @@
     "@uppy/remote-sources": "workspace:*",
     "@uppy/transloadit": "workspace:*",
     "@uppy/webcam": "workspace:*",
-    "express": "^4.22.0",
+    "express": "^5.2.1",
     "he": "^1.2.0"
   },
   "private": true,

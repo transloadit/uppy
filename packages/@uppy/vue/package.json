@@ -19,12 +19,12 @@
   ],
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.26.10",
-    "shallow-equal": "^3.0.0"
+    "preact": "^10.29.2",
+    "shallow-equal": "^3.1.0"
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "typescript": "^5.8.3",
+    "typescript": "^6.0.3",
     "vue": "^3.5.14"
   },
   "exports": {

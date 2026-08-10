@@ -1,4 +1,4 @@
-import type { Locale } from '@uppy/utils'
+import type { Locale } from '@uppy/core/utils'
 
 const fr_FR: Locale<0 | 1> = {
   strings: {},
@@ -215,9 +215,9 @@ fr_FR.strings = {
   },
 }
 
-// @ts-ignore untyped
+// @ts-expect-error untyped
 if (typeof Uppy !== 'undefined') {
-  // @ts-ignore untyped
+  // @ts-expect-error untyped
   globalThis.Uppy.locales.fr_FR = fr_FR
 }
 

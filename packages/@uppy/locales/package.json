@@ -8,7 +8,8 @@
   "scripts": {
     "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && yarn format",
     "format": "cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",
-    "test": "yarn node script/test.mjs unused",
+    "test": "yarn node script/test.mjs unused && yarn node script/test.mjs placeholders && yarn node script/test.mjs warnings",
+    "test:coverage-report": "yarn node script/test.mjs warnings --verbose",
     "typecheck": "tsc --build"
   },
   "keywords": [
@@ -31,12 +32,12 @@
     "CHANGELOG.md"
   ],
   "dependencies": {
-    "@uppy/utils": "workspace:^"
+    "@uppy/core": "workspace:^"
   },
   "devDependencies": {
     "chalk": "^5.0.0",
     "dedent": "^1.0.0",
-    "glob": "^8.0.0",
-    "typescript": "^5.8.3"
+    "glob": "^13.0.6",
+    "typescript": "^6.0.3"
   }
 }

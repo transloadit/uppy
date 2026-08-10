@@ -1,4 +1,3 @@
-import type { RequestClient } from '@uppy/companion-client'
 import type {
   Body,
   DefinePluginOpts,
@@ -8,6 +7,7 @@ import type {
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin, EventManager } from '@uppy/core'
+import type { RequestClient } from '@uppy/core/companion-client'
 import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
@@ -17,7 +17,7 @@ import {
   type LocalUppyFile,
   NetworkError,
   RateLimitedQueue,
-} from '@uppy/utils'
+} from '@uppy/core/utils'
 import * as tus from 'tus-js-client'
 import packageJson from '../package.json' with { type: 'json' }
 import getFingerprint from './getFingerprint.js'
@@ -97,7 +97,7 @@ type Opts<M extends Meta, B extends Body> = DefinePluginOpts<
   keyof typeof defaultOptions
 >
 
-declare module '@uppy/utils' {
+declare module '@uppy/core/utils' {
   export interface LocalUppyFile<M extends Meta, B extends Body> {
     tus?: TusOpts<M, B>
   }
@@ -161,18 +161,24 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
   }
 
   /**
+   * Stop the upload in Tus. If `terminate` is `true`, it will also terminate the
+   * upload on the Tus server by sending a `DELETE` request. If not, it will just
+   * cancel any current upload request and leave the upload in a half-uploaded state.
+   *
+   * @param fileID
+   * @param terminate Whether to terminate the upload on the server.
+   */
+  #abortUploader(fileID: string, terminate?: boolean) {
+    const uploader = this.uploaders[fileID]
+    uploader?.abort(terminate)
+  }
+
+  /**
    * Clean up all references for a file's upload: the tus.Upload instance,
    * any events related to the file, and the Companion WebSocket connection.
    */
-  resetUploaderReferences(fileID: string, opts?: { abort: boolean }): void {
-    const uploader = this.uploaders[fileID]
-    if (uploader) {
-      uploader.abort()
-
-      if (opts?.abort) {
-        uploader.abort(true)
-      }
-
+  #resetUploaderReferences(fileID: string): void {
+    if (this.uploaders[fileID]) {
       this.uploaders[fileID] = null
     }
     if (this.uploaderEvents[fileID]) {
@@ -203,7 +209,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    *
    * When working on this function, keep in mind:
    *  - When an upload is completed or cancelled for any reason, the tus.Upload and EventManager instances need to be cleaned
-   *    up using this.resetUploaderReferences().
+   *    up using this.#resetUploaderReferences() and this.#abortUploader().
    *  - When an upload is cancelled or paused, for any reason, it needs to be removed from the `this.requests` queue using
    *    `queuedRequest.abort()`.
    *  - When an upload is completed for any reason, including errors, it needs to be marked as such using
@@ -217,14 +223,19 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
   async #uploadLocalFile(
     file: LocalUppyFile<M, B>,
   ): Promise<tus.Upload | string> {
-    this.resetUploaderReferences(file.id)
+    this.#abortUploader(file.id)
+    this.#resetUploaderReferences(file.id)
+
+    // Captured in `onError` and forwarded to the `upload-error` event in the
+    // `.catch` below, so consumers can read the failing server response.
+    let errorResponse:
+      | Omit<NonNullable<UppyFile<M, B>['response']>, 'uploadURL'>
+      | undefined
 
     // Create a new tus upload
     return new Promise<tus.Upload | string>((resolve, reject) => {
       let queuedRequest: ReturnType<RateLimitedQueue['run']>
-      // biome-ignore lint/style/useConst: ...
       let qRequest: () => () => void
-      // biome-ignore lint/style/useConst: ...
       let upload: tus.Upload
 
       const opts = {
@@ -293,6 +304,23 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       uploadOptions.onError = (err) => {
         this.uppy.log(err)
 
+        // tus-js-client only calls `onError` once it has given up retrying, so
+        // the request has already completed. Capture the server response (status
+        // + body) and forward it to the `upload-error` event and `file.response`,
+        // mirroring the shape emitted by `onSuccess`.
+        const originalResponse = (err as tus.DetailedError).originalResponse
+        if (originalResponse != null) {
+          errorResponse = {
+            status: originalResponse.getStatus(),
+            body: {
+              // We have to put `as XMLHttpRequest` because tus-js-client
+              // returns `any`, as the type differs in Node.js and the browser.
+              // In the browser it's always `XMLHttpRequest`.
+              xhr: originalResponse.getUnderlyingObject() as XMLHttpRequest,
+            } as unknown as B,
+          }
+        }
+
         const xhr =
           (err as tus.DetailedError).originalRequest != null
             ? (err as tus.DetailedError).originalRequest.getUnderlyingObject()
@@ -301,7 +329,11 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           err = new NetworkError(err, xhr)
         }
 
-        this.resetUploaderReferences(file.id)
+        // Do not abort the request here: it has already completed, and aborting
+        // it would reset the underlying `xhr` (status `0`, empty body) and
+        // discard the response we just captured. We still drop our references
+        // and remove the event listeners.
+        this.#resetUploaderReferences(file.id)
         queuedRequest?.abort()
 
         if (typeof opts.onError === 'function') {
@@ -340,7 +372,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
         this.uppy.emit('upload-success', this.uppy.getFile(file.id), uploadResp)
 
-        this.resetUploaderReferences(file.id)
+        this.#abortUploader(file.id)
+        this.#resetUploaderReferences(file.id)
         queuedRequest.done()
 
         if (upload.url) {
@@ -462,7 +495,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           upload.start()
         }
         // Don't do anything here, the caller will take care of cancelling the upload itself
-        // using resetUploaderReferences(). This is because resetUploaderReferences() has to be
+        // using #resetUploaderReferences(). This is because #resetUploaderReferences() has to be
         // called when this request is still in the queue, and has not been started yet, too. At
         // that point this cancellation function is not going to be called.
         // Also, we need to remove the request from the queue _without_ destroying everything
@@ -483,7 +516,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
       eventManager.onFileRemove(file.id, (targetFileID) => {
         queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: !!upload.url })
+        this.#abortUploader(file.id, !!upload.url)
+        this.#resetUploaderReferences(file.id)
         resolve(`upload ${targetFileID} was removed`)
       })
 
@@ -506,7 +540,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
 
       eventManager.onCancelAll(file.id, () => {
         queuedRequest.abort()
-        this.resetUploaderReferences(file.id, { abort: !!upload.url })
+        this.#abortUploader(file.id, !!upload.url)
+        this.#resetUploaderReferences(file.id)
         resolve(`upload ${file.id} was canceled`)
       })
 
@@ -518,7 +553,10 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         queuedRequest = this.requests.run(qRequest)
       })
     }).catch((err) => {
-      this.uppy.emit('upload-error', file, err)
+      // `errorResponse` is captured in the `onError` handler above (the request
+      // is intentionally not aborted there), so the server response is still
+      // available here to forward to the `upload-error` event.
+      this.uppy.emit('upload-error', file, err, errorResponse)
       throw err
     })
   }

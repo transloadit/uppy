@@ -46,7 +46,7 @@ yarn workspace @uppy/[package-name] build
 - **Uppy Core** (`@uppy/core`) - Main class that manages plugins, state, and events
 - **Plugins** - Modular components for different functionalities:
   - **UI Plugins**: Dashboard, Drag & Drop, File Input, Webcam, etc.
-  - **Provider Plugins**: Google Drive, Dropbox, Instagram, etc. (require Companion)
+  - **Provider Plugins**: Google Drive, Dropbox, etc. (require Companion)
   - **Uploader Plugins**: Tus (resumable), XHR Upload, AWS S3, etc.
   - **Utility Plugins**: Golden Retriever (recovery), Thumbnail Generator, etc.
 

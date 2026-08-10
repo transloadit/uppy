@@ -1,6 +1,6 @@
 <script
   lang="ts"
-  generics="M extends import('@uppy/utils').Meta, B extends import('@uppy/utils').Body"
+  generics="M extends import('@uppy/core/utils').Meta, B extends import('@uppy/core/utils').Body"
 >
 import type { Uppy } from "@uppy/core";
 import DashboardPlugin, { type DashboardOptions } from "@uppy/dashboard";

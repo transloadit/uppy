@@ -5,7 +5,7 @@ import Webcam from './index.js'
 describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {
     it('should not have a mimeType set if no preferences given', () => {
-      // @ts-ignore
+      // @ts-expect-error
       globalThis.MediaRecorder = {
         isTypeSupported: () => true,
       }
@@ -17,7 +17,7 @@ describe('Webcam', () => {
     })
 
     it('should use preferredVideoMimeType', () => {
-      // @ts-ignore
+      // @ts-expect-error
       globalThis.MediaRecorder = {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
@@ -31,7 +31,7 @@ describe('Webcam', () => {
     })
 
     it('should not use preferredVideoMimeType if it is not supported', () => {
-      // @ts-ignore
+      // @ts-expect-error
       globalThis.MediaRecorder = {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
@@ -45,7 +45,7 @@ describe('Webcam', () => {
     })
 
     it('should pick type based on `allowedFileTypes`', () => {
-      // @ts-ignore
+      // @ts-expect-error
       globalThis.MediaRecorder = {
         isTypeSupported: () => true,
       }
@@ -59,7 +59,7 @@ describe('Webcam', () => {
     })
 
     it('should use first supported type from allowedFileTypes', () => {
-      // @ts-ignore
+      // @ts-expect-error
       globalThis.MediaRecorder = {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
@@ -73,7 +73,7 @@ describe('Webcam', () => {
     })
 
     it('should prefer preferredVideoMimeType over allowedFileTypes', () => {
-      // @ts-ignore
+      // @ts-expect-error
       globalThis.MediaRecorder = {
         isTypeSupported: () => true,
       }
@@ -89,7 +89,7 @@ describe('Webcam', () => {
     })
 
     it('should not use allowedFileTypes if they are unsupported', () => {
-      // @ts-ignore
+      // @ts-expect-error
       globalThis.MediaRecorder = {
         isTypeSupported: () => false,
       }

@@ -20,7 +20,7 @@ const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
   >
     <div class="flex items-center justify-center gap-4">
       <input {...getFileInputProps()} class="hidden" />
-      <button
+      <button type="button"
         {...getButtonProps()}
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
@@ -30,7 +30,7 @@ const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
         Device
       </button>
 
-      <button
+      <button type="button"
         onclick={() => openModal('webcam')}
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
@@ -40,7 +40,7 @@ const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
         Webcam
       </button>
 
-      <button
+      <button type="button"
         onclick={() => openModal('screen-capture')}
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
@@ -50,7 +50,7 @@ const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
         Screen Capture
       </button>
 
-      <button
+      <button type="button"
         onclick={() => openModal('dropbox')}
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
       >
