@@ -27,7 +27,7 @@ declare module '@uppy/core' {
  * @param input
  *   The object to return, or whose `default` property to return.
  * @returns
- *   The `default` property of the input, of the input itself
+ *   The `default` property of the input, or the input itself
  */
 function defaultInterop<T extends {}>(
   input: T,
