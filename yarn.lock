@@ -16847,6 +16847,7 @@ __metadata:
     "@uppy/tus": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     express: "npm:^5.2.1"
+    isbot: "npm:^5.1.40"
     react: "npm:^19.2.7"
     react-dom: "npm:^19.2.7"
     react-router: "npm:^8.3.0"
