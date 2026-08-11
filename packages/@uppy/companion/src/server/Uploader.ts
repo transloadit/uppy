@@ -913,6 +913,12 @@ export default class Uploader {
       ...(options['acl'] != null && {
         ACL: options['acl'],
       }),
+      ...(options['awsSse'] != null && {
+        ServerSideEncryption: options['awsSse'],
+      }),
+      ...(options['awsSseKmsKeyId'] != null && {
+        SSEKMSKeyId: options['awsSseKmsKeyId'],
+      }),
     }
 
     const upload = new Upload({

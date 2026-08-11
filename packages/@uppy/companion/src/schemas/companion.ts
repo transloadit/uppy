@@ -1,4 +1,8 @@
-import type { ObjectCannedACL, S3ClientConfig } from '@aws-sdk/client-s3'
+import type {
+  ObjectCannedACL,
+  S3ClientConfig,
+  ServerSideEncryption,
+} from '@aws-sdk/client-s3'
 import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import type { CorsOptions } from 'cors'
 import type { Request } from 'express'
@@ -81,6 +85,10 @@ export interface CompanionInitOptions {
     conditions?: PresignedPostOptions['Conditions'] | undefined
     forcePathStyle?: boolean
     acl?: ObjectCannedACL | undefined
+    /** Server-side encryption to request for uploaded objects, e.g. `aws:kms`. */
+    awsSse?: ServerSideEncryption | undefined
+    /** KMS key id or ARN to use when `awsSse` is a KMS encryption type. */
+    awsSseKmsKeyId?: string | undefined
     useAccelerateEndpoint?: boolean
     expires: number
     awsClientOptions?: S3ClientConfig & {
