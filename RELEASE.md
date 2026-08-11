@@ -18,13 +18,19 @@ yarn changeset
 
 ## 2. Merge the release PR
 
-The [release workflow](.github/workflows/release.yml) keeps a `[ci] release` pull
-request up to date with the pending version bumps and changelogs. Merging it into
-`main` is what starts a release.
+The `version` job of the [release workflow](.github/workflows/release.yml) keeps a
+`[ci] release` pull request up to date with the pending version bumps and
+changelogs. Merging it into `main` is what starts a release.
+
+The workflow is split into a `version` job and a `publish` job [as recommended by
+the changesets maintainers](https://github.com/changesets/changesets/issues/2025#issuecomment-4508748531),
+so that only `publish` is allowed to mint an npm OIDC token, and so a failed
+publish can be re-run without touching versioning. `publish` runs only when
+`version` reports there are no changesets left.
 
 ## 3. CI stages the packages
 
-On push to `main` with no changesets left, the workflow runs
+The `publish` job runs
 [`scripts/stage-publish.mjs`](scripts/stage-publish.mjs) (`yarn release`), which:
 
 - finds every non-private workspace package whose version is not on npm yet;
@@ -74,6 +80,21 @@ To throw a staged version away instead of publishing it, find its id with
   `--allow-publish` disabled so CI is unable to publish directly at all.
 - Approving is a 2FA action and can never be done by a token or in CI. It has to
   be a maintainer on their own machine.
+
+## Adding a second gate in GitHub
+
+The changesets maintainers pair the split workflow with a manually approved
+[GitHub environment](https://docs.github.com/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments),
+which stops the `publish` job before it runs at all. We do not, because the npm
+approval step above already provides proof-of-presence, and closer to where it
+matters — at the registry rather than at the runner.
+
+If you want both, create an `npm` environment with required reviewers and add one
+line to the `publish` job:
+
+```yaml
+    environment: npm
+```
 
 ## Escape hatches
 

@@ -217,14 +217,21 @@ async function main() {
       }
 
       staged.push({ name, version })
-      // changesets/action greps stdout for this to push the tag and open a
-      // GitHub release, and expects the annotated tag to exist locally.
-      await execOrThrow('git', [
+      // changesets/action greps stdout for this to create the tag and open a
+      // GitHub release. It creates the remote tag itself when `commitMode` is
+      // `github-api`, so a local tag that already exists is not worth failing a
+      // release over.
+      const tagResult = await exec('git', [
         'tag',
         `${name}@${version}`,
         '-m',
         `${name}@${version}`,
       ])
+      if (tagResult.code !== 0) {
+        console.warn(
+          `Could not create local git tag: ${tagResult.stderr.trim()}`,
+        )
+      }
       console.log(`New tag: ${name}@${version}`)
     }
   } finally {
