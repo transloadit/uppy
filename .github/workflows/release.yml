@@ -35,6 +35,10 @@ jobs:
           node-version: lts/*
           registry-url: "https://registry.npmjs.org"
 
+      # `npm stage` (staged publishing) needs npm 11.15.0 or newer, which is
+      # newer than what Node LTS bundles.
+      - run: npm install --global npm@latest
+
       # Allow yarn to make changes during release
       - run: corepack yarn config set enableHardenedMode false
       - run: corepack yarn --mode=update-lockfile
