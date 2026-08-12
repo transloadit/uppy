@@ -44,7 +44,10 @@
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
+    "@vitest/browser-playwright": "^4.1.6",
+    "playwright": "1.61.1",
     "typescript": "^6.0.3",
+    "vite": "^8.1.5",
     "vitest": "^4.1.6"
   },
   "scripts": {

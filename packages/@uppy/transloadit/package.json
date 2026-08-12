@@ -51,7 +51,9 @@
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
+    "@vitest/browser-playwright": "^4.1.6",
     "msw": "^2.10.4",
+    "playwright": "1.61.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.6",
     "whatwg-fetch": "^3.6.2"
