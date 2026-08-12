@@ -5,15 +5,14 @@ import type { DashboardState } from '../../Dashboard.js'
 function metaFieldIdToName<M extends Meta, B extends Body>(
   metaFieldId: string,
   metaFields: DashboardState<M, B>['metaFields'],
-) {
+  file: UppyFile<M, B>,
+): string {
   const fields =
-    typeof metaFields === 'function'
-      ? // @ts-expect-error TODO This should not be an error.
-        metaFields()
-      : metaFields
-  // @ts-expect-error TODO This should not be an error.
-  const field = fields.filter((f) => f.id === metaFieldId)
-  return field[0].name
+    typeof metaFields === 'function' ? metaFields(file) : metaFields
+  const field = fields?.find((f) => f.id === metaFieldId)
+  // `requiredMetaFields` is a core restriction, so a field can be required
+  // without having a matching entry in the Dashboard `metaFields` option.
+  return field?.name ?? metaFieldId
 }
 
 type MetaErrorMessageProps<M extends Meta, B extends Body> = {
@@ -33,7 +32,9 @@ export default function MetaErrorMessage<M extends Meta, B extends Body>(
   }
 
   const metaFieldsString = missingRequiredMetaFields
-    .map((missingMetaField) => metaFieldIdToName(missingMetaField, metaFields))
+    .map((missingMetaField) =>
+      metaFieldIdToName(missingMetaField, metaFields, file),
+    )
     .join(', ')
 
   return (
