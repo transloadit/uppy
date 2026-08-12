@@ -969,17 +969,22 @@ describe('src/Core', () => {
 
     it('should allow a duplicate file if its relativePath is different, thus the id is different', async () => {
       const core = new Core()
+      // The same File instance for both: `generateFileID` folds in
+      // `data.lastModified`, and every `new File()` stamps `Date.now()`, so two
+      // separate images would get different ids no matter what `relativePath`
+      // does.
+      const sameFileBlob = await fetchTestImage()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: await fetchTestImage(),
+        data: sameFileBlob,
       })
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: await fetchTestImage(),
+        data: sameFileBlob,
         meta: {
           relativePath: 'folder/a',
         },
