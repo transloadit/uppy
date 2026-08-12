@@ -2244,7 +2244,8 @@ describe('src/Core', () => {
       })
 
       const data = await fetchTestImage()
-      expect(async () => {
+      const data2 = await fetchTestImage()
+      expect(() => {
         // add 1 ghost file
         const fileId1 = core.addFile({
           source: 'vi',
@@ -2259,7 +2260,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo2.jpg',
           type: 'image/jpeg',
-          data: await fetchTestImage(),
+          data: data2,
         })
       }).not.toThrowError()
     })
