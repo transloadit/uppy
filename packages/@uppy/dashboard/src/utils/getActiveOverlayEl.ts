@@ -6,11 +6,11 @@ export default function getActiveOverlayEl(
   activeOverlayType?: string | null | undefined,
 ): HTMLElement {
   if (activeOverlayType) {
-    const overlayEl = dashboardEl.querySelector(
+    const overlayEl = dashboardEl.querySelector<HTMLElement>(
       `[data-uppy-paneltype="${activeOverlayType}"]`,
     )
     // if an overlay is already mounted
-    if (overlayEl) return overlayEl as HTMLElement
+    if (overlayEl) return overlayEl
   }
   return dashboardEl
 }

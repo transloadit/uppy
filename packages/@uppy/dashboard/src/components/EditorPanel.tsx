@@ -33,7 +33,11 @@ type EditorPanelProps<M extends Meta, B extends Body> = {
 function EditorPanel<M extends Meta, B extends Body>(
   props: EditorPanelProps<M, B>,
 ): ComponentChildren {
-  const file = props.files[props.fileCardFor!]
+  const file = props.fileCardFor ? props.files[props.fileCardFor] : undefined
+
+  if (!file) {
+    return null
+  }
 
   const handleCancel = () => {
     props.uppy.emit('file-editor:cancel', file)

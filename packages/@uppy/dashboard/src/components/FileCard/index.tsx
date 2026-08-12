@@ -48,11 +48,11 @@ export default function FileCard<M extends Meta, B extends Body>(
 
   const getMetaFields = () => {
     return typeof metaFields === 'function'
-      ? metaFields(files[fileCardFor!])
+      ? metaFields(files[fileCardFor])
       : metaFields
   }
 
-  const file = files[fileCardFor!]
+  const file = files[fileCardFor]
   const computedMetaFields = getMetaFields() ?? []
   const showEditButton = canEditFile(file)
 
@@ -80,8 +80,7 @@ export default function FileCard<M extends Meta, B extends Body>(
   }
 
   const handleCancel = () => {
-    // @ts-expect-error TODO fix me
-    toggleFileCard(false)
+    toggleFileCard(false, fileCardFor)
   }
 
   const [form] = useState(() => {

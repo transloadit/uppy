@@ -41,19 +41,13 @@ function getUploadingState(
       return uploadStates.STATE_UPLOADING
     }
     // If files are being preprocessed AND postprocessed at this time, we show the
-    // preprocess state. If any files are being uploaded we show uploading.
-    // @ts-expect-error TODO TypeScript catches a runtime issue here.
-    if (progress.preprocess && state !== uploadStates.STATE_UPLOADING) {
+    // preprocess state. The uploading state is handled by the early return above.
+    if (progress.preprocess) {
       state = uploadStates.STATE_PREPROCESSING
     }
     // If NO files are being preprocessed or uploaded right now, but some files are
     // being postprocessed, show the postprocess state.
-    if (
-      progress.postprocess &&
-      // @ts-expect-error TODO TypeScript catches a runtime issue here.
-      state !== uploadStates.STATE_UPLOADING &&
-      state !== uploadStates.STATE_PREPROCESSING
-    ) {
+    if (progress.postprocess && state !== uploadStates.STATE_PREPROCESSING) {
       state = uploadStates.STATE_POSTPROCESSING
     }
   }
