@@ -57,7 +57,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   disabled: boolean
   disableLocalFiles: boolean
   direction: UIPluginOptions['direction']
-  activePickerPanel: NonNullable<DashboardState<M, B>['activePickerPanel']>
+  activePickerPanel: DashboardState<M, B>['activePickerPanel']
   showFileEditor: boolean
   saveFileEditor: () => void
   closeFileEditor: () => void
@@ -131,7 +131,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
 export default function Dashboard<M extends Meta, B extends Body>(
   props: DashboardUIProps<M, B>,
 ) {
-  const { fileCardFor } = props
+  const { activePickerPanel, fileCardFor } = props
   const isNoFiles = props.totalFileCount === 0
   const isSingleFile = props.totalFileCount === 1
   const isSizeHeightMD = props.containerHeight > HEIGHT_MD
@@ -331,8 +331,12 @@ export default function Dashboard<M extends Meta, B extends Body>(
           </Slide>
 
           <Slide>
-            {props.activePickerPanel ? (
-              <PickerPanelContent key="Picker" {...props} />
+            {activePickerPanel ? (
+              <PickerPanelContent
+                key="Picker"
+                {...props}
+                activePickerPanel={activePickerPanel}
+              />
             ) : null}
           </Slide>
 

@@ -13,9 +13,10 @@ import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
 import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
-import type { ComponentChild, h, VNode } from '@uppy/core/utils/preact'
+import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import { nanoid } from 'nanoid/non-secure'
+import type { TargetedEvent } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
@@ -99,7 +100,7 @@ export interface TargetWithRender extends Target {
 
 export interface DashboardState<M extends Meta, B extends Body> {
   targets: Target[]
-  activePickerPanel: Target
+  activePickerPanel: Target | undefined
   showAddFilesPanel: boolean
   activeOverlayType: string | null
   fileCardFor: string | null
@@ -774,7 +775,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   private handleInputChange = (
-    event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
+    event: TargetedEvent<HTMLInputElement, Event>,
   ) => {
     event.preventDefault()
     const files = toArray(event.currentTarget.files || [])

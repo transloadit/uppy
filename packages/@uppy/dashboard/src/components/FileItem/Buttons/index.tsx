@@ -103,6 +103,7 @@ function CopyLinkButton<M extends Meta, B extends Body>({
   i18n: I18n
 }) {
   const copyLinkToClipboard: MouseEventHandler<HTMLButtonElement> = (event) => {
+    const { currentTarget } = event
     copyToClipboard(file.uploadURL!, i18n('copyLinkToClipboardFallback'))
       .then(() => {
         uppy.log('Link copied to clipboard.')
@@ -110,7 +111,7 @@ function CopyLinkButton<M extends Meta, B extends Body>({
       })
       .catch(uppy.log)
       // avoid losing focus
-      .then(() => event.currentTarget.focus({ preventScroll: true }))
+      .then(() => currentTarget.focus({ preventScroll: true }))
   }
 
   return (

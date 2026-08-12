@@ -6,7 +6,7 @@
 import type { TargetedEvent } from 'preact'
 
 function ignoreEvent(ev: TargetedEvent<Element>): void {
-  const { tagName } = ev.currentTarget
+  const { tagName } = ev.target as Element
   if (tagName === 'INPUT' || tagName === 'TEXTAREA') {
     ev.stopPropagation()
     return
