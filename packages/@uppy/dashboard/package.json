@@ -48,7 +48,7 @@
     "@uppy/thumbnail-generator": "workspace:^",
     "classnames": "^2.5.1",
     "lodash": "^4.18.1",
-    "nanoid": "^5.1.11",
+    "nanoid": "^6.0.1",
     "preact": "^10.29.2",
     "shallow-equal": "^3.1.0"
   },
