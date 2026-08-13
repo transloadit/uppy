@@ -1,7 +1,15 @@
+import { HttpResponse, http } from 'msw'
 import { setupWorker } from 'msw/browser'
 import { test as testBase } from 'vitest'
 
-const worker = setupWorker()
+const worker = setupWorker(
+  // Transloadit reports client-side upload failures to this endpoint. Several
+  // tests deliberately fail an upload, so mock it to keep the beacon from
+  // reaching the real service.
+  http.post('https://transloaditstatus.com/client_error', () =>
+    HttpResponse.json({ ok: true }),
+  ),
+)
 
 export const it = testBase.extend(
   'worker',

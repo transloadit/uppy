@@ -8,8 +8,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build",
-    "test": "vitest run --silent='passed-only'",
-    "test:e2e": "vitest run --project browser"
+    "test": "vitest run --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -44,7 +43,6 @@
     "@uppy/dashboard": "workspace:^",
     "@vitest/browser": "^4.1.6",
     "@vitest/browser-playwright": "^4.1.6",
-    "jsdom": "^29.1.1",
     "msw": "^2.10.4",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
