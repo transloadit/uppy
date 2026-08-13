@@ -8852,7 +8852,7 @@ __metadata:
     karma-coverage: "npm:~2.2.0"
     karma-jasmine: "npm:~5.1.0"
     karma-jasmine-html-reporter: "npm:~2.2.0"
-    ng-packagr: "npm:^21.2.3"
+    ng-packagr: "npm:^22.1.1"
     rxjs: "npm:~7.8.0"
     tslib: "npm:^2.3.0"
     typescript: "npm:~5.9.3"
@@ -9949,10 +9949,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"commander@npm:^14.0.0":
-  version: 14.0.3
-  resolution: "commander@npm:14.0.3"
-  checksum: 10/dfa9ebe2a433d277de5cb0252d23b10a543d245d892db858d23b516336a835c50fd4f52bee4cd13c705cc8acb6f03dc632c73dd806f7d06d3353eb09953dd17a
+"commander@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "commander@npm:15.0.0"
+  checksum: 10/a5dab1f5c3f1bf2ea19e8089f650f7fb65c3ed88e13ddde62e490d34b20057bcb2cd3de5b6ddc8aae93286083f8256ca0b812df842f574cbebe0e40f5b2f98f7
   languageName: node
   linkType: hard
 
@@ -11336,7 +11336,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:0.28.1, esbuild@npm:^0.28.1, esbuild@npm:~0.28.0":
+"esbuild@npm:0.28.1, esbuild@npm:^0.28.0, esbuild@npm:^0.28.1, esbuild@npm:~0.28.0":
   version: 0.28.1
   resolution: "esbuild@npm:0.28.1"
   dependencies:
@@ -15962,20 +15962,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ng-packagr@npm:^21.2.3":
-  version: 21.2.5
-  resolution: "ng-packagr@npm:21.2.5"
+"ng-packagr@npm:^22.1.1":
+  version: 22.1.1
+  resolution: "ng-packagr@npm:22.1.1"
   dependencies:
     "@ampproject/remapping": "npm:^2.3.0"
     "@rollup/plugin-json": "npm:^6.1.0"
     "@rollup/wasm-node": "npm:^4.24.0"
     ajv: "npm:^8.17.1"
-    ansi-colors: "npm:^4.1.3"
     browserslist: "npm:^4.26.0"
     chokidar: "npm:^5.0.0"
-    commander: "npm:^14.0.0"
+    commander: "npm:^15.0.0"
     dependency-graph: "npm:^1.0.0"
-    esbuild: "npm:^0.27.0"
+    esbuild: "npm:^0.28.0"
     find-cache-directory: "npm:^6.0.0"
     injection-js: "npm:^2.4.0"
     jsonc-parser: "npm:^3.3.1"
@@ -15984,15 +15983,15 @@ __metadata:
     piscina: "npm:^5.0.0"
     postcss: "npm:^8.4.47"
     rollup: "npm:^4.24.0"
-    rollup-plugin-dts: "npm:^6.4.0"
+    rollup-plugin-dts: "npm:~6.4.1"
     rxjs: "npm:^7.8.1"
     sass: "npm:^1.81.0"
     tinyglobby: "npm:^0.2.12"
   peerDependencies:
-    "@angular/compiler-cli": ^21.0.0 || ^21.2.0-next
+    "@angular/compiler-cli": ^22.0.0 || ^22.1.0-next || ^22.2.0-next
     tailwindcss: ^2.0.0 || ^3.0.0 || ^4.0.0
     tslib: ^2.3.0
-    typescript: ">=5.9 <6.0"
+    typescript: ">=6.0 <6.1"
   dependenciesMeta:
     rollup:
       optional: true
@@ -16001,7 +16000,7 @@ __metadata:
       optional: true
   bin:
     ng-packagr: src/cli/main.js
-  checksum: 10/30cfc1d0e371b586ced9d399d176a0f47613d1aeb1e89954d656f437ff362476912ffd265458afa0e107b9834e5c2c49c31690d5fbeb7272e3e0960bbb054152
+  checksum: 10/7c88ab3d582a0bcf4d91a6713567b1c9fe05b1019325e359ee4fcd6c008870a45cc40f10a48c2af1b7cb7e65e7de1d935e041a2cb1fc0c8e671628741cbe953d
   languageName: node
   linkType: hard
 
@@ -18537,7 +18536,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-dts@npm:^6.4.0":
+"rollup-plugin-dts@npm:~6.4.1":
   version: 6.4.1
   resolution: "rollup-plugin-dts@npm:6.4.1"
   dependencies:
