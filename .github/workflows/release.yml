@@ -50,15 +50,13 @@ jobs:
 
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d
+        uses: changesets/action@22ccf9aa43179fe9e27dc62e575971d28cce197c # v2.0.0
         with:
-          version: corepack yarn run version
-          publish: corepack yarn run release
-          commit: "[ci] release"
-          title: "[ci] release"
-          commitMode: github-api
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          version-script: corepack yarn run version
+          publish-script: corepack yarn run release
+          commit-message: "[ci] release"
+          pr-title: "[ci] release"
 
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
