@@ -39,3 +39,5 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: corepack yarn install --immutable --mode=skip-build
+      - name: Check for duplicate dependencies
+        run: corepack yarn dedupe --check

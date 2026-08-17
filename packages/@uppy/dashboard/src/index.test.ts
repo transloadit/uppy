@@ -6,8 +6,6 @@ import resizeObserverPolyfill from 'resize-observer-polyfill'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import DashboardPlugin from './index.js'
 
-type $TSFixMe = any
-
 describe('Dashboard', () => {
   beforeAll(() => {
     globalThis.ResizeObserver =
@@ -39,7 +37,8 @@ describe('Dashboard', () => {
         target: 'body',
       })
       core.use(GoogleDrivePlugin, {
-        target: DashboardPlugin as $TSFixMe,
+        // @ts-expect-error TODO fix me
+        target: DashboardPlugin,
         companionUrl: 'https://fake.uppy.io/',
       })
     }).not.toThrow()

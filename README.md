@@ -86,8 +86,9 @@ For the supported frameworks (except Angular) Uppy offers three ways to build us
   bypassing the user’s device where possible, syncing between servers directly
   via [@uppy/companion](https://uppy.io/docs/companion)
 - Works great with file encoding and processing backends, such as
-  [Transloadit](https://transloadit.com), works great without (all you need is
-  to roll your own Apache/Nginx/Node/FFmpeg/etc backend)
+  [Transloadit](https://transloadit.com), which handles encoding, conversion and
+  delivery for you; works great without one too, if you would rather run and
+  scale your own Apache/Nginx/Node/FFmpeg pipeline
 - Sleek user interface :sparkles:
 - Optional file recovery (after a browser crash) with
   [Golden Retriever](https://uppy.io/docs/golden-retriever/)

@@ -1,18 +1,10 @@
 import { HttpResponse, http } from 'msw'
-import { setupServer } from 'msw/node'
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
-
+import type { SetupWorker } from 'msw/browser'
 import 'whatwg-fetch'
 import Core, { type Meta, type UppyFile } from '@uppy/core'
+import { describe, expect, vi } from 'vitest'
 import AwsS3, { type AwsBody, type AwsS3Options } from '../src/index.js'
+import { test } from './test-utils/test-extend.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -49,13 +41,15 @@ const s3Responses = {
   abortMultipart: () => '',
 }
 
-const server = setupServer()
 const s3Url = 'https://test-bucket.s3.us-east-1.amazonaws.com/:key'
 
 /**
  * Creates signRequest + MSW handler state for multipart upload tests.
  */
-function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
+function createMultipartMocks(
+  worker: SetupWorker,
+  opts: { uploadId?: string; key?: string } = {},
+) {
   const uploadId = opts.uploadId ?? 'test-upload-id'
   const key = opts.key ?? 'test-key'
 
@@ -79,7 +73,7 @@ function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
     const maybeHang = () =>
       hangNonCreate ? (new Promise(() => {}) as Promise<any>) : null
 
-    server.use(
+    worker.use(
       http.post(s3Url, ({ request }) => {
         const hasUploadId = new URL(request.url).searchParams.has('uploadId')
         if (!hasUploadId) {
@@ -137,19 +131,7 @@ function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
 }
 
 describe('AwsS3', () => {
-  beforeAll(() => {
-    server.listen({ onUnhandledRequest: 'error' })
-  })
-
-  afterEach(() => {
-    server.resetHandlers()
-  })
-
-  afterAll(() => {
-    server.close()
-  })
-
-  it('Registers AwsS3 upload plugin', () => {
+  test('Registers AwsS3 upload plugin', () => {
     const core = new Core().use(AwsS3, {
       region: 'us-east-1',
       s3Endpoint: 'https://companion.example.com',
@@ -163,7 +145,7 @@ describe('AwsS3', () => {
   })
 
   describe('configuration validation', () => {
-    it('throws if no signing method is provided', () => {
+    test('throws if no signing method is provided', () => {
       expect(() => {
         const core = new Core()
         // @ts-expect-error - testing runtime validation, so omit required options
@@ -176,7 +158,7 @@ describe('AwsS3', () => {
       )
     })
 
-    it('accepts endpoint option', () => {
+    test('accepts endpoint option', () => {
       const core = new Core()
       core.use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
@@ -186,7 +168,7 @@ describe('AwsS3', () => {
       expect(core.getPlugin('AwsS3')).toBeDefined()
     })
 
-    it('accepts signRequest option', () => {
+    test('accepts signRequest option', () => {
       const core = new Core()
       core.use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
@@ -196,7 +178,7 @@ describe('AwsS3', () => {
       expect(core.getPlugin('AwsS3')).toBeDefined()
     })
 
-    it('accepts getCredentials option', () => {
+    test('accepts getCredentials option', () => {
       const core = new Core()
       core.use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
@@ -218,7 +200,7 @@ describe('AwsS3', () => {
         data: { size } as Blob,
       }) as unknown as UppyFile<Meta, AwsBody>
 
-    it('defaults to multipart for files > 100MB', () => {
+    test('defaults to multipart for files > 100MB', () => {
       const core = new Core<Meta, AwsBody>().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
@@ -237,7 +219,7 @@ describe('AwsS3', () => {
       expect(shouldUseMultipart(createFile(0))).toBe(false)
     })
 
-    it('handles very large files', () => {
+    test('handles very large files', () => {
       const core = new Core<Meta, AwsBody>().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
@@ -254,7 +236,7 @@ describe('AwsS3', () => {
   })
 
   describe('upload events', () => {
-    it('emits upload-start when upload begins', async () => {
+    test('emits upload-start when upload begins', async () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Test stop'))
 
       const core = new Core().use(AwsS3, {
@@ -283,7 +265,7 @@ describe('AwsS3', () => {
       expect(uploadStartHandler).toHaveBeenCalledTimes(1)
     })
 
-    it('emits upload-error on failure', async () => {
+    test('emits upload-error on failure', async () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Sign failed'))
 
       const core = new Core().use(AwsS3, {
@@ -314,7 +296,7 @@ describe('AwsS3', () => {
   })
 
   describe('abort', () => {
-    it('aborts when file is removed', async () => {
+    test('aborts when file is removed', async () => {
       const signRequest = vi
         .fn()
         .mockImplementation(
@@ -345,7 +327,7 @@ describe('AwsS3', () => {
       expect(result?.successful).toHaveLength(0)
     })
 
-    it('aborts when cancelAll is called', async () => {
+    test('aborts when cancelAll is called', async () => {
       const signRequest = vi
         .fn()
         .mockImplementation(
@@ -377,8 +359,11 @@ describe('AwsS3', () => {
   })
 
   describe('Golden Retriever resume state (s3Multipart)', () => {
-    it('persists s3Multipart on file state after creating multipart upload', async () => {
-      const { signRequest, uploadId, registerHandlers } = createMultipartMocks()
+    test('persists s3Multipart on file state after creating multipart upload', async ({
+      worker,
+    }) => {
+      const { signRequest, uploadId, registerHandlers } =
+        createMultipartMocks(worker)
       // After createMultipart succeeds, hang on subsequent requests so we can inspect state
       registerHandlers({ hangNonCreate: true })
 
@@ -410,8 +395,10 @@ describe('AwsS3', () => {
       await uploadPromise
     })
 
-    it('clears s3Multipart when upload is aborted via cancelAll', async () => {
-      const { signRequest, registerHandlers } = createMultipartMocks({
+    test('clears s3Multipart when upload is aborted via cancelAll', async ({
+      worker,
+    }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker, {
         uploadId: 'cancel-test-id',
         key: 'cancel-key',
       })
@@ -444,11 +431,13 @@ describe('AwsS3', () => {
       expect(file?.s3Multipart).toBeUndefined()
     })
 
-    it('uses persisted s3Multipart key for resume (listParts, not createMultipart)', async () => {
+    test('uses persisted s3Multipart key for resume (listParts, not createMultipart)', async ({
+      worker,
+    }) => {
       const persistedKey = 'persisted-object-key'
       const persistedUploadId = 'persisted-upload-id'
       const { signRequest, operations, registerHandlers } =
-        createMultipartMocks({
+        createMultipartMocks(worker, {
           uploadId: persistedUploadId,
           key: persistedKey,
         })
