@@ -1,35 +1,15 @@
 import Core, { type UppyEventMap } from '@uppy/core'
 import { HttpResponse, http } from 'msw'
-import { setupServer } from 'msw/node'
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  it,
-  vi,
-} from 'vitest'
+import { describe, expect, vi } from 'vitest'
 import XHRUpload from './index.js'
-
-// MSW intercepts at the XMLHttpRequest layer (it patches the global
-// XMLHttpRequest), so it works regardless of how jsdom implements XHR
-// internally — unlike nock, which patches Node's http module and is bypassed
-// by newer jsdom versions. Because the request is short-circuited before it
-// ever hits the network, no CORS preflight (OPTIONS) is performed, so only the
-// POST handlers need to be mocked.
-const server = setupServer()
+import { it } from './test-extend.js'
 
 const corsHeaders = { 'access-control-allow-origin': '*' }
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'error' }))
-afterEach(() => server.resetHandlers())
-afterAll(() => server.close())
-
 describe('XHRUpload', () => {
-  it('should leverage hooks from fetcher', async () => {
+  it('should leverage hooks from fetcher', async ({ worker }) => {
     let postCount = 0
-    server.use(
+    worker.use(
       http.post('https://fake-endpoint.uppy.io/', () => {
         postCount += 1
         // First attempt fails (triggers a retry), second succeeds.
@@ -85,8 +65,10 @@ describe('XHRUpload', () => {
     })
   })
 
-  it('should send response object over upload-error event', async () => {
-    server.use(
+  it('should send response object over upload-error event', async ({
+    worker,
+  }) => {
+    worker.use(
       http.post('https://fake-endpoint.uppy.io/', () =>
         HttpResponse.json(
           { status: 400, message: 'Oh no' },
@@ -145,10 +127,10 @@ describe('XHRUpload', () => {
   })
 
   describe('headers', () => {
-    it('can be a function', async () => {
+    it('can be a function', async ({ worker }) => {
       let postCount = 0
       let receivedHeader: string | null = null
-      server.use(
+      worker.use(
         http.post('https://fake-endpoint.uppy.io/', ({ request }) => {
           postCount += 1
           receivedHeader = request.headers.get('x-sample-header')
@@ -179,9 +161,9 @@ describe('XHRUpload', () => {
   })
 
   describe('endpoint', () => {
-    it('can be a function', async () => {
+    it('can be a function', async ({ worker }) => {
       let postCount = 0
-      server.use(
+      worker.use(
         http.post('https://fake-endpoint.uppy.io/upload/test.jpg', () => {
           postCount += 1
           return HttpResponse.json({}, { status: 200, headers: corsHeaders })
@@ -209,9 +191,9 @@ describe('XHRUpload', () => {
       expect(postCount).toBe(1)
     })
 
-    it('can be a function (bundle)', async () => {
+    it('can be a function (bundle)', async ({ worker }) => {
       let postCount = 0
-      server.use(
+      worker.use(
         http.post(
           'https://fake-endpoint.uppy.io/upload-bundle/test.jpg,test2.jpg',
           () => {
