@@ -1,17 +1,28 @@
+import type { Body, Meta, State, UIPlugin, Uppy } from '@uppy/core'
+import type { I18n } from '@uppy/core/utils'
 import { useRef } from '@uppy/core/utils/preact/hooks'
 import classNames from 'classnames'
+import type { ComponentChildren, MouseEventHandler } from 'preact'
+import type { DashboardState } from '../Dashboard.js'
 import ignoreEvent from '../utils/ignoreEvent.js'
 
-type $TSFixMe = any
+interface PickerPanelContentProps<M extends Meta, B extends Body> {
+  activePickerPanel: NonNullable<DashboardState<M, B>['activePickerPanel']>
+  className?: string | undefined
+  hideAllPanels: MouseEventHandler<HTMLButtonElement>
+  i18n: I18n
+  state: State<M, B>
+  uppy: Uppy<M, B>
+}
 
-function PickerPanelContent({
+function PickerPanelContent<M extends Meta, B extends Body>({
   activePickerPanel,
   className,
   hideAllPanels,
   i18n,
   state,
   uppy,
-}: $TSFixMe) {
+}: PickerPanelContentProps<M, B>): ComponentChildren {
   const ref = useRef<HTMLDivElement>(null)
   return (
     <div
@@ -42,7 +53,11 @@ function PickerPanelContent({
       </div>
 
       <div ref={ref} className="uppy-DashboardContent-panelBody">
-        {uppy.getPlugin(activePickerPanel.id).render(state, ref.current)}
+        {/** biome-ignore lint/complexity/noBannedTypes: {} means anything except null or undefined */}
+        {(uppy.getPlugin(activePickerPanel.id) as UIPlugin<{}, M, B>).render(
+          state,
+          ref.current!,
+        )}
       </div>
     </div>
   )

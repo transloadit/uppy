@@ -1,5 +1,7 @@
+import { setupWorker } from 'msw/browser'
 import { test as testBase } from 'vitest'
-import { worker } from './mocks/browser.js'
+
+export const worker = setupWorker()
 
 export const test = testBase.extend<{ worker: typeof worker }>({
   worker: [

@@ -1,8 +1,17 @@
-import { h } from '@uppy/core/utils/preact'
+import { type ComponentChildren, h } from '@uppy/core/utils/preact'
+import type { MetaField } from '../../Dashboard.js'
 
-type $TSFixMe = any
+interface RenderMetaFieldsProps {
+  computedMetaFields: MetaField[]
+  requiredMetaFields: string[]
+  updateMeta: (newVal: string, fieldId: string) => void
+  form: HTMLFormElement
+  formState: Record<string, string>
+}
 
-export default function RenderMetaFields(props: $TSFixMe) {
+export default function RenderMetaFields(
+  props: RenderMetaFieldsProps,
+): ComponentChildren {
   const {
     computedMetaFields,
     requiredMetaFields,
@@ -15,7 +24,7 @@ export default function RenderMetaFields(props: $TSFixMe) {
     text: 'uppy-u-reset uppy-c-textInput uppy-Dashboard-FileCard-input',
   }
 
-  return computedMetaFields.map((field: $TSFixMe) => {
+  return computedMetaFields.map((field) => {
     const id = `uppy-Dashboard-FileCard-input-${field.id}`
     const required = requiredMetaFields.includes(field.id)
     return (
@@ -27,7 +36,7 @@ export default function RenderMetaFields(props: $TSFixMe) {
           field.render(
             {
               value: formState[field.id],
-              onChange: (newVal: $TSFixMe) => updateMeta(newVal, field.id),
+              onChange: (newVal) => updateMeta(newVal, field.id),
               fieldCSSClasses,
               required,
               form: form.id,
