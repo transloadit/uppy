@@ -81,6 +81,10 @@ const aclSchema = z
   ])
   .optional()
 
+const sseSchema = z
+  .enum(['AES256', 'aws:fsx', 'aws:kms', 'aws:kms:dsse'])
+  .optional()
+
 type StandaloneCompanionOptions = Pick<
   CompanionInitOptions,
   | 'providerOptions'
@@ -177,6 +181,8 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
         process.env['COMPANION_AWS_USE_ACCELERATE_ENDPOINT'] === 'true',
       expires: parseInt(process.env['COMPANION_AWS_EXPIRES'] || '800', 10),
       acl: aclSchema.parse(process.env['COMPANION_AWS_ACL']),
+      awsSse: sseSchema.parse(process.env['COMPANION_AWS_SSE']),
+      awsSseKmsKeyId: process.env['COMPANION_AWS_SSE_KMS_KEY_ID'],
       forcePathStyle: process.env['COMPANION_AWS_FORCE_PATH_STYLE'] === 'true',
     },
     server: {

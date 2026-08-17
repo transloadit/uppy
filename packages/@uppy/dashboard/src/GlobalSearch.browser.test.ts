@@ -3,9 +3,10 @@ import { ProviderViews } from '@uppy/core/provider-views'
 import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
-import { afterAll, afterEach, beforeAll, describe, expect, test } from 'vitest'
+import { afterEach, beforeAll, describe, expect } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
-import { worker } from './setup.js'
+import { handlers } from '../src/mocks/CompanionHandler.js'
+import { test } from './test-extend.js'
 
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
@@ -24,13 +25,6 @@ beforeAll(async () => {
   // Disable search debounce inside ProviderView during tests to avoid long sleeps
   // @ts-expect-error test-only hook
   ProviderViews[Symbol.for('uppy test: searchDebounceMs')] = 0
-  await worker.start({
-    onUnhandledRequest: 'bypass',
-  })
-})
-
-afterAll(async () => {
-  await worker.stop()
 })
 
 type SourceName = 'Dropbox' | 'GoogleDrive'
@@ -74,7 +68,10 @@ afterEach(async () => {
 })
 
 describe('ProviderView Search E2E', () => {
-  test('Search for nested file in Dropbox and verify results', async () => {
+  test('Search for nested file in Dropbox and verify results', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
     await expect
       .element(page.getByRole('presentation').getByText('Dropbox'))
@@ -106,7 +103,10 @@ describe('ProviderView Search E2E', () => {
     expect(targetPdfItem).toBeTruthy()
   })
 
-  test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
+  test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -158,7 +158,10 @@ describe('ProviderView Search E2E', () => {
     expect(hasSecondFolder).toBeVisible()
   })
 
-  test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
+  test('Check folder in browse mode, search for nested item -> nested item should be checked', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -211,7 +214,10 @@ describe('ProviderView Search E2E', () => {
     expect(secondFolderCheckbox!.checked).toBe(true)
   })
 
-  test('Search for nested item, check it, go back to normal view -> parent should be partial', async () => {
+  test('Search for nested item, check it, go back to normal view -> parent should be partial', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -275,7 +281,10 @@ describe('ProviderView Search E2E', () => {
     ).toBe(true)
   })
 
-  test('Search for nested item, check then uncheck it, go back to normal view -> parent should be unchecked', async () => {
+  test('Search for nested item, check then uncheck it, go back to normal view -> parent should be unchecked', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -351,7 +360,10 @@ describe('ProviderView Search E2E', () => {
     expect(firstFolderCheckbox!.checked).toBe(false)
   })
 
-  test('Navigate into folder and perform scoped search -> should find nested files at multiple levels', async () => {
+  test('Navigate into folder and perform scoped search -> should find nested files at multiple levels', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -407,7 +419,10 @@ describe('ProviderView Search E2E', () => {
     expect(targetFiles.length).toBe(2)
   })
 
-  test('No duplicate items when searching and then browsing to the same file', async () => {
+  test('No duplicate items when searching and then browsing to the same file', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -489,7 +504,10 @@ describe('ProviderView Search E2E', () => {
     expect(readmeCheckboxInSearch!.checked).toBe(true)
   })
 
-  test('Client-side filtering works for providers without server-side search (Google Drive)', async () => {
+  test('Client-side filtering works for providers without server-side search (Google Drive)', async ({
+    worker,
+  }) => {
+    worker.use(...handlers)
     uppy = initializeUppy(['GoogleDrive'])
 
     await expect

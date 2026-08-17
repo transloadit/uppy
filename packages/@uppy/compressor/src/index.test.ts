@@ -1,9 +1,14 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import Core from '@uppy/core'
 import { getFileNameAndExtension } from '@uppy/core/utils'
 import { describe, expect, it } from 'vitest'
+import sampleImage from '../fixtures/image.jpg'
 import CompressorPlugin from './index.js'
+
+async function getSampleImage(name: string): Promise<File> {
+  const response = await fetch(sampleImage)
+  const blob = await response.blob()
+  return new File([blob], name, { type: blob.type })
+}
 
 // Compressor uses browser canvas API, so need to mock compress()
 // @ts-expect-error mocked
@@ -16,40 +21,32 @@ CompressorPlugin.prototype.compress = async (blob: File) => {
   }
 }
 
-const sampleImage = fs.readFileSync(
-  path.join(__dirname, '../fixtures/image.jpg'),
-)
-
-const file1 = {
-  source: 'test',
-  name: 'image-1.jpeg',
-  type: 'image/jpeg',
-  data: new File([sampleImage], 'image-1.jpeg', { type: 'image/jpeg' }),
-}
-const file2 = {
-  source: 'test',
-  name: 'yolo',
-  type: 'image/jpeg',
-  data: new File([sampleImage], 'yolo', { type: 'image/jpeg' }),
-}
-const file3 = {
-  source: 'test',
-  name: 'my.file.is.weird.png',
-  type: 'image/png',
-  data: new File([sampleImage], 'my.file.is.weird.png', { type: 'image/png' }),
-}
-
 describe('CompressorPlugin', () => {
-  it('should change update extension in file.name and file.meta.name', () => {
+  it('should change update extension in file.name and file.meta.name', async () => {
     const uppy = new Core()
     uppy.use(CompressorPlugin, {
       quality: 0.85,
       mimeType: 'image/webp',
     })
 
-    uppy.addFile(file1)
-    uppy.addFile(file2)
-    uppy.addFile(file3)
+    uppy.addFile({
+      source: 'test',
+      name: 'image-1.jpeg',
+      type: 'image/jpeg',
+      data: await getSampleImage('image-1.jpeg'),
+    })
+    uppy.addFile({
+      source: 'test',
+      name: 'yolo',
+      type: 'image/jpeg',
+      data: await getSampleImage('yolo'),
+    })
+    uppy.addFile({
+      source: 'test',
+      name: 'my.file.is.weird.png',
+      type: 'image/png',
+      data: await getSampleImage('my.file.is.weird.png'),
+    })
 
     // User changed file.meta.name
     uppy.setFileMeta(uppy.getFiles()[0].id, { name: 'new-name.jpeg' })
