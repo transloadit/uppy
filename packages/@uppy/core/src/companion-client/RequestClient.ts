@@ -8,6 +8,7 @@ import {
   getSocketHost,
   UserFacingApiError,
 } from '../utils/index.js'
+import stripTrailingSlash from '../utils/stripTrailingSlash.js'
 import AuthError from './AuthError.js'
 
 export type RequestOptions = {
@@ -26,11 +27,6 @@ export type Opts = {
   companionCookiesRule?: 'same-origin' | 'include' | 'omit'
   companionHeaders?: CompanionHeaders
   companionKeysParams?: Record<string, string>
-}
-
-// Remove the trailing slash so we can always safely append /xyz.
-function stripSlash(url: string) {
-  return url.replace(/\/$/, '')
 }
 
 const retryCount = 10 // set to a low number, like 2 to test manual user retries
@@ -129,7 +125,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
   get hostname(): string {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
-    return stripSlash(companion?.[host] ? companion[host] : host)
+    return stripTrailingSlash(companion?.[host] ? companion[host] : host)
   }
 
   async headers(emptyBody = false): Promise<Record<string, string>> {
