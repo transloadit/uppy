@@ -13,9 +13,10 @@ import { UIPlugin } from '@uppy/core'
 import { defaultPickerIcon } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
 import { findAllDOMElements, getDroppedFiles, toArray } from '@uppy/core/utils'
-import type { ComponentChild, h, VNode } from '@uppy/core/utils/preact'
+import type { ComponentChild, VNode } from '@uppy/core/utils/preact'
 import ThumbnailGenerator from '@uppy/thumbnail-generator'
 import { nanoid } from 'nanoid/non-secure'
+import type { TargetedEvent } from 'preact'
 import packageJson from '../package.json' with { type: 'json' }
 import DashboardUI from './components/Dashboard.js'
 import locale from './locale.js'
@@ -78,11 +79,12 @@ type PreactRender = (
   ...children: any[]
 ) => VNode<any>
 
-interface MetaField {
+export interface MetaField {
   id: string
   name: string
   placeholder?: string
   render?: (field: FieldRenderOptions, h: PreactRender) => VNode<any>
+  type?: string
 }
 
 interface Target {
@@ -747,7 +749,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       trapFocus.forModal(
         event,
         this.getPluginState().activeOverlayType,
-        this.el,
+        this.el!,
       )
   }
 
@@ -773,7 +775,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
   }
 
   private handleInputChange = (
-    event: h.JSX.TargetedEvent<HTMLInputElement, Event>,
+    event: TargetedEvent<HTMLInputElement, Event>,
   ) => {
     event.preventDefault()
     const files = toArray(event.currentTarget.files || [])
@@ -902,7 +904,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       trapFocus.forInline(
         event,
         this.getPluginState().activeOverlayType,
-        this.el,
+        this.el!,
       )
   }
 
@@ -1076,7 +1078,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
         //                     try to press space multiple times. Focus will jump to Uppy.
         (isFocusNowhere && this.ifFocusedOnUppyRecently))
     ) {
-      this.superFocus(this.el, this.getPluginState().activeOverlayType)
+      this.superFocus(this.el!, this.getPluginState().activeOverlayType)
     } else {
       this.superFocus.cancel()
     }

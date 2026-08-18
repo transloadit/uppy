@@ -1,11 +1,10 @@
-import assert from 'node:assert'
 import { describe, expect, it } from 'vitest'
 import DefaultStore, { type GenericState, type Listener } from './index.js'
 
 describe('DefaultStore', () => {
   it('cannot be created without new', () => {
     // @ts-expect-error TypeScript warns us that the following will throw.
-    assert.throws(() => DefaultStore(), /TypeError/)
+    expect(() => DefaultStore()).toThrow(TypeError)
   })
 
   it('merges in state using `setState`', () => {
