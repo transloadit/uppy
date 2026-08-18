@@ -26,7 +26,7 @@ export class DashboardComponent<M extends Meta, B extends Body>
 {
 	el = inject(ElementRef);
 
-	@Input() uppy: Uppy<M, B> = new Uppy();
+	@Input() uppy: Uppy<M, B> = this.createInitialUppy();
 	@Input() props: DashboardOptions<M, B> = {};
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
