@@ -6642,13 +6642,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/common-tags@npm:1.8.4":
-  version: 1.8.4
-  resolution: "@types/common-tags@npm:1.8.4"
-  checksum: 10/40c95a2f6388beb1cdeed3c9986ac0d6a3a551fce706e3e364a00ded48ab624b06b1ac8b94679bb2da9653e5eb3e450bad26873f5189993a5d8e8bdace74cbb2
-  languageName: node
-  linkType: hard
-
 "@types/connect-history-api-fallback@npm:^1.5.4":
   version: 1.5.4
   resolution: "@types/connect-history-api-fallback@npm:1.5.4"
@@ -7233,7 +7226,6 @@ __metadata:
     "@aws-sdk/lib-storage": "npm:3.1047.0"
     "@aws-sdk/s3-presigned-post": "npm:3.1047.0"
     "@aws-sdk/s3-request-presigner": "npm:3.1047.0"
-    "@types/common-tags": "npm:1.8.4"
     "@types/cookie-parser": "npm:1.4.10"
     "@types/cors": "npm:2.8.19"
     "@types/express-session": "npm:1.19.0"
@@ -7248,7 +7240,6 @@ __metadata:
     "@types/supertest": "npm:7.2.1"
     "@types/validator": "npm:13.15.10"
     "@types/ws": "npm:8.18.1"
-    common-tags: "npm:1.8.2"
     connect-redis: "npm:7.1.1"
     content-disposition: "npm:2.0.1"
     cookie-parser: "npm:1.4.7"
@@ -9670,13 +9661,6 @@ __metadata:
   version: 3.0.0
   resolution: "common-path-prefix@npm:3.0.0"
   checksum: 10/09c180e8d8495d42990d617f4d4b7522b5da20f6b236afe310192d401d1da8147a7835ae1ea37797ba0c2238ef3d06f3492151591451df34539fdb4b2630f2b3
-  languageName: node
-  linkType: hard
-
-"common-tags@npm:1.8.2":
-  version: 1.8.2
-  resolution: "common-tags@npm:1.8.2"
-  checksum: 10/c665d0f463ee79dda801471ad8da6cb33ff7332ba45609916a508ad3d77ba07ca9deeb452e83f81f24c2b081e2c1315347f23d239210e63d1c5e1a0c7c019fe2
   languageName: node
   linkType: hard
 

@@ -1,6 +1,5 @@
 import crypto from 'node:crypto'
 import fs from 'node:fs'
-import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
 import z from 'zod'
 import packageJson from '../../package.json' with { type: 'json' }
@@ -310,22 +309,22 @@ export const buildHelpfulStartupMessage = (
     },
   )
 
-  return stripIndent`
-    Welcome to Companion v${packageJson.version}
-    ===================================
+  return `
+Welcome to Companion v${packageJson.version}
+===================================
 
-    Congratulations on setting up Companion! Thanks for joining our cause, you have taken
-    the first step towards the future of file uploading! We
-    hope you are as excited about this as we are!
+Congratulations on setting up Companion! Thanks for joining our cause, you have taken
+the first step towards the future of file uploading! We
+hope you are as excited about this as we are!
 
-    While you did an awesome job on getting Companion running, this is just the welcome
-    message, so let's talk about the places that really matter:
+While you did an awesome job on getting Companion running, this is just the welcome
+message, so let's talk about the places that really matter:
 
-    - Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
-        ${callbackURLs.join(', ')}
-    - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
-    - https://github.com/transloadit/uppy/issues - report your bugs here
+- Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
+    ${callbackURLs.join(', ')}
+- The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
+- https://github.com/transloadit/uppy/issues - report your bugs here
 
-    So quit lollygagging, start uploading and experience the future!
-  `
+So quit lollygagging, start uploading and experience the future!
+`.trim()
 }
