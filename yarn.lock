@@ -3305,11 +3305,11 @@ __metadata:
   linkType: hard
 
 "@hono/node-server@npm:^1.19.9":
-  version: 1.19.14
-  resolution: "@hono/node-server@npm:1.19.14"
+  version: 1.19.17
+  resolution: "@hono/node-server@npm:1.19.17"
   peerDependencies:
     hono: ^4
-  checksum: 10/618dd95feeb3fd11ec8502e088879cd86529523788de19602edebd16892dd61899e73564d6e3d00875cc5a49488a908ddb2aa425d28f9cdeb7f22cfecabf022c
+  checksum: 10/b3fb8f627e59caafdcf49b463d5263931ccc404cb2d58999b9863636e68dcf01e919a73a449761db07349bd39dc91983b68a9f549b4c9927fde8c2de7e498689
   languageName: node
   linkType: hard
 
@@ -6187,9 +6187,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/kit@npm:^2.69.3":
-  version: 2.70.1
-  resolution: "@sveltejs/kit@npm:2.70.1"
+"@sveltejs/kit@npm:^2.70.2":
+  version: 2.70.2
+  resolution: "@sveltejs/kit@npm:2.70.2"
   dependencies:
     "@standard-schema/spec": "npm:^1.0.0"
     "@sveltejs/acorn-typescript": "npm:^1.0.9"
@@ -6216,7 +6216,7 @@ __metadata:
       optional: true
   bin:
     svelte-kit: svelte-kit.js
-  checksum: 10/5bc541f33981d45db903763ef844310df6454227e640b21c2799234c427822c9593e10f87ebef38e055dbd9558a489d828490916fb07cffbd5fbc4db0dd0dd17
+  checksum: 10/19aa80869068ff4daca1a3da1efa11a1dec52bfb58149e8a6cf754fb3d152b2c1139a512a3baf2ca8ad50e494567000a726ce26a803560554c56e6e3dd944964
   languageName: node
   linkType: hard
 
@@ -7679,7 +7679,7 @@ __metadata:
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
     "@sveltejs/adapter-auto": "npm:^7.0.1"
-    "@sveltejs/kit": "npm:^2.69.3"
+    "@sveltejs/kit": "npm:^2.70.2"
     "@sveltejs/package": "npm:^2.5.7"
     "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
     "@uppy/components": "workspace:^"
@@ -11457,7 +11457,7 @@ __metadata:
   resolution: "example-sveltekit@workspace:examples/sveltekit"
   dependencies:
     "@sveltejs/adapter-auto": "npm:^7.0.1"
-    "@sveltejs/kit": "npm:^2.69.3"
+    "@sveltejs/kit": "npm:^2.70.2"
     "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
@@ -12639,9 +12639,9 @@ __metadata:
   linkType: hard
 
 "hono@npm:^4.11.4":
-  version: 4.12.27
-  resolution: "hono@npm:4.12.27"
-  checksum: 10/f1bb52f3871093fae5b5bc40fb179ff2e6d43c6dab8d7065ef182d8ff6cdc1c41dc1124b07f2f02e0fe36ec1e39e72300ed3447f64391e39d71978616d4f5a07
+  version: 4.12.34
+  resolution: "hono@npm:4.12.34"
+  checksum: 10/c33104233b751c50e1821382eefad5584823ff2b635af261eb1e85c17bab706f73f3c1e5ace4d2f4c23a7fdced24e4e4de9cc5a32404b134ac93b66ff0e81a0a
   languageName: node
   linkType: hard
 
