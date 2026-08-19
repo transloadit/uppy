@@ -1,5 +1,26 @@
 # @uppy/tus
 
+## 6.0.0
+
+### Major Changes
+
+- 942db47: @uppy/tus: don't abort the request on error, so the server response (status + body) is forwarded to the `upload-error` event and `file.response` instead of being reset to status `0`.
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+  - @uppy/core@6.0.0
+
 ## 5.1.1
 
 ### Patch Changes
