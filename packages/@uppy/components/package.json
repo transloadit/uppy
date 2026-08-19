@@ -50,7 +50,7 @@
     "@tailwindcss/cli": "^4.0.6",
     "@uppy/core": "workspace:^",
     "cssnano": "^8.0.1",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "tailwindcss": "^4.0.6",
     "typescript": "^6.0.3"

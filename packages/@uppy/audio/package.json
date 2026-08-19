@@ -43,9 +43,10 @@
     "preact": "^10.29.2"
   },
   "devDependencies": {
+    "@vitest/browser-playwright": "^4.1.6",
     "cssnano": "^8.0.1",
-    "jsdom": "^29.1.1",
-    "postcss": "^8.5.15",
+    "playwright": "1.61.1",
+    "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
@@ -61,6 +62,6 @@
     "build": "tsc --build tsconfig.build.json",
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
     "typecheck": "tsc --build",
-    "test": "vitest run --environment=jsdom --silent='passed-only'"
+    "test": "vitest run --silent='passed-only'"
   }
 }

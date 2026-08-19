@@ -1,6 +1,6 @@
-import type { UppyFile } from '@uppy/core'
-
-type $TSFixMe = any
+import type { State, Uppy, UppyFile } from '@uppy/core'
+import type { Body, I18n, Meta } from '@uppy/core/utils'
+import type { ComponentChildren } from 'preact'
 
 const uploadStates = {
   STATE_ERROR: 'error',
@@ -10,14 +10,16 @@ const uploadStates = {
   STATE_POSTPROCESSING: 'postprocessing',
   STATE_COMPLETE: 'complete',
   STATE_PAUSED: 'paused',
-}
+} as const
+
+export type UploadState = (typeof uploadStates)[keyof typeof uploadStates]
 
 function getUploadingState(
-  isAllErrored: $TSFixMe,
-  isAllComplete: $TSFixMe,
-  isAllPaused: $TSFixMe,
+  isAllErrored: boolean | undefined,
+  isAllComplete: boolean,
+  isAllPaused: boolean,
   files: Record<string, UppyFile<any, any>> = {},
-): $TSFixMe {
+): UploadState {
   if (isAllErrored) {
     return uploadStates.STATE_ERROR
   }
@@ -30,7 +32,7 @@ function getUploadingState(
     return uploadStates.STATE_PAUSED
   }
 
-  let state = uploadStates.STATE_WAITING
+  let state: UploadState = uploadStates.STATE_WAITING
   const fileIDs = Object.keys(files)
   for (let i = 0; i < fileIDs.length; i++) {
     const { progress } = files[fileIDs[i] as keyof typeof files]
@@ -39,24 +41,31 @@ function getUploadingState(
       return uploadStates.STATE_UPLOADING
     }
     // If files are being preprocessed AND postprocessed at this time, we show the
-    // preprocess state. If any files are being uploaded we show uploading.
-    if (progress.preprocess && state !== uploadStates.STATE_UPLOADING) {
+    // preprocess state. The uploading state is handled by the early return above.
+    if (progress.preprocess) {
       state = uploadStates.STATE_PREPROCESSING
     }
     // If NO files are being preprocessed or uploaded right now, but some files are
     // being postprocessed, show the postprocess state.
-    if (
-      progress.postprocess &&
-      state !== uploadStates.STATE_UPLOADING &&
-      state !== uploadStates.STATE_PREPROCESSING
-    ) {
+    if (progress.postprocess && state !== uploadStates.STATE_PREPROCESSING) {
       state = uploadStates.STATE_POSTPROCESSING
     }
   }
   return state
 }
 
-function UploadStatus({
+interface UploadStatusProps<M extends Meta, B extends Body> {
+  files: State<M, B>['files']
+  i18n: I18n
+  isAllComplete: boolean
+  isAllErrored?: boolean | undefined
+  isAllPaused: boolean
+  inProgressNotPausedFiles: UppyFile<M, B>[]
+  newFiles: UppyFile<M, B>[]
+  processingFiles: UppyFile<M, B>[]
+}
+
+function UploadStatus<M extends Meta, B extends Body>({
   files,
   i18n,
   isAllComplete,
@@ -65,7 +74,7 @@ function UploadStatus({
   inProgressNotPausedFiles,
   newFiles,
   processingFiles,
-}: $TSFixMe) {
+}: UploadStatusProps<M, B>): ComponentChildren {
   const uploadingState = getUploadingState(
     isAllErrored,
     isAllComplete,
@@ -93,19 +102,33 @@ function UploadStatus({
   }
 }
 
-function PanelTopBar(props: $TSFixMe) {
+interface PanelTopBarProps<M extends Meta, B extends Body>
+  extends UploadStatusProps<M, B> {
+  allowNewUpload: boolean
+  i18n: I18n
+  hideCancelButton: boolean
+  maxNumberOfFiles: number | null
+  totalFileCount: number
+  toggleAddFilesPanel: (enabled: boolean) => void
+  uppy: Uppy<M, B>
+}
+
+function PanelTopBar<M extends Meta, B extends Body>(
+  props: PanelTopBarProps<M, B>,
+): ComponentChildren {
   const {
     i18n,
     isAllComplete,
     hideCancelButton,
     maxNumberOfFiles,
     toggleAddFilesPanel,
+    totalFileCount,
     uppy,
   } = props
   let { allowNewUpload } = props
   // TODO maybe this should be done in ../Dashboard.js, then just pass that down as `allowNewUpload`
   if (allowNewUpload && maxNumberOfFiles) {
-    allowNewUpload = props.totalFileCount < props.maxNumberOfFiles
+    allowNewUpload = totalFileCount < maxNumberOfFiles
   }
 
   return (

@@ -3,7 +3,13 @@
   "compilerOptions": {
     "emitDeclarationOnly": false,
     "noEmit": true,
-    "types": ["preact", "node", "google.accounts", "google.picker", "gapi"]
+    "types": [
+      "preact",
+      "google.accounts",
+      "google.picker",
+      "gapi",
+      "vite/client"
+    ]
   },
   "include": ["./package.json", "./src/**/*.*"],
   "references": []

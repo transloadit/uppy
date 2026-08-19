@@ -67,6 +67,8 @@ const defaultEnv = {
   COMPANION_AWS_SECRET: '',
   COMPANION_AWS_REGION: '',
   COMPANION_AWS_BUCKET: '',
+  COMPANION_AWS_SSE: undefined,
+  COMPANION_AWS_SSE_KMS_KEY_ID: undefined,
 } satisfies Record<string, string | number | undefined>
 
 function updateEnv(env: Record<string, string | number | undefined>): void {

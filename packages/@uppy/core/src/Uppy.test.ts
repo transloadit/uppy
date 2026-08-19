@@ -1,9 +1,7 @@
-import assert from 'node:assert'
-import fs from 'node:fs'
-import path from 'node:path'
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import sampleImage from '../../compressor/fixtures/image.jpg'
 import BasePlugin, {
   type DefinePluginOpts,
   type PluginOpts,
@@ -22,12 +20,11 @@ import UIPlugin from './UIPlugin.js'
 import type { State } from './Uppy.js'
 import type { Locale } from './utils/index.js'
 
-const sampleImage = fs.readFileSync(
-  path.join(__dirname, '../../compressor/fixtures/image.jpg'),
-)
-
-// @ts-expect-error type object can be second argument
-const testImage = new File([sampleImage], { type: 'image/jpeg' })
+async function fetchTestImage(): Promise<File> {
+  const response = await fetch(sampleImage)
+  const blob = await response.blob()
+  return new File([blob], 'image.jpg', { type: blob.type })
+}
 
 describe('src/Core', () => {
   const RealCreateObjectUrl = globalThis.URL.createObjectURL
@@ -387,21 +384,21 @@ describe('src/Core', () => {
     })
   })
 
-  it('should clear all uploads and files on cancelAll()', () => {
+  it('should clear all uploads and files on cancelAll()', async () => {
     const core = new Core()
 
     core.addFile({
       source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     core.addFile({
       source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     const fileIDs = Object.keys(core.getState().files)
@@ -417,7 +414,7 @@ describe('src/Core', () => {
     expect(Object.keys(core.getState().files).length).toEqual(0)
   })
 
-  it('should allow remove all uploads when individualCancellation is disabled', () => {
+  it('should allow remove all uploads when individualCancellation is disabled', async () => {
     const core = new Core()
 
     const { capabilities } = core.getState()
@@ -432,14 +429,14 @@ describe('src/Core', () => {
       source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     core.addFile({
       source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     const fileIDs = Object.keys(core.getState().files)
@@ -455,7 +452,7 @@ describe('src/Core', () => {
     expect(Object.keys(core.getState().files).length).toEqual(0)
   })
 
-  it('should disallow remove one upload when individualCancellation is disabled', () => {
+  it('should disallow remove one upload when individualCancellation is disabled', async () => {
     const core = new Core()
 
     const { capabilities } = core.getState()
@@ -470,14 +467,14 @@ describe('src/Core', () => {
       source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     core.addFile({
       source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     const fileIDs = Object.keys(core.getState().files)
@@ -487,8 +484,7 @@ describe('src/Core', () => {
     expect(core.getState().currentUploads[id]).toBeDefined()
     expect(Object.keys(core.getState().files).length).toEqual(2)
 
-    assert.throws(
-      () => core.removeFile(fileIDs[0]),
+    expect(() => core.removeFile(fileIDs[0])).toThrow(
       /The installed uploader plugin does not allow removing files during an upload/,
     )
 
@@ -496,7 +492,7 @@ describe('src/Core', () => {
     expect(Object.keys(core.getState().files).length).toEqual(2)
   })
 
-  it('should allow remove one upload when individualCancellation is enabled', () => {
+  it('should allow remove one upload when individualCancellation is enabled', async () => {
     const core = new Core()
 
     const { capabilities } = core.getState()
@@ -511,14 +507,14 @@ describe('src/Core', () => {
       source: 'vi',
       name: 'foo1.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     core.addFile({
       source: 'vi',
       name: 'foo2.jpg',
       type: 'image/jpeg',
-      data: testImage,
+      data: await fetchTestImage(),
     })
 
     const fileIDs = Object.keys(core.getState().files)
@@ -615,7 +611,7 @@ describe('src/Core', () => {
       expect(core.removePreProcessor(preprocessor)).toBe(false)
     })
 
-    it('should execute all the preprocessors when uploading a file', () => {
+    it('should execute all the preprocessors when uploading a file', async () => {
       const core = new Core()
       const preprocessor1 = vi.fn()
       const preprocessor2 = vi.fn()
@@ -626,7 +622,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       return core.upload().then(() => {
@@ -653,13 +649,13 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'rmd.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'kept.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       await core.upload()
@@ -671,13 +667,13 @@ describe('src/Core', () => {
       )
     })
 
-    it('should update the file progress state when preprocess-progress event is fired', () => {
+    it('should update the file progress state when preprocess-progress event is fired', async () => {
       const core = new Core()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileId = Object.keys(core.getState().files)[0]
@@ -697,14 +693,14 @@ describe('src/Core', () => {
       })
     })
 
-    it('should update the file progress state when preprocess-complete event is fired', () => {
+    it('should update the file progress state when preprocess-complete event is fired', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileID = Object.keys(core.getState().files)[0]
@@ -734,7 +730,7 @@ describe('src/Core', () => {
       expect(core.removePostProcessor(postprocessor)).toBe(false)
     })
 
-    it('should execute all the postprocessors when uploading a file', () => {
+    it('should execute all the postprocessors when uploading a file', async () => {
       const core = new Core()
       const postprocessor1 = vi.fn()
       const postprocessor2 = vi.fn()
@@ -745,7 +741,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       return core.upload().then(() => {
@@ -766,14 +762,14 @@ describe('src/Core', () => {
       })
     })
 
-    it('should update the file progress state when postprocess-progress event is fired', () => {
+    it('should update the file progress state when postprocess-progress event is fired', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileId = Object.keys(core.getState().files)[0]
@@ -793,14 +789,14 @@ describe('src/Core', () => {
       })
     })
 
-    it('should update the file progress state when postprocess-complete event is fired', () => {
+    it('should update the file progress state when postprocess-complete event is fired', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileId = Object.keys(core.getState().files)[0]
@@ -833,7 +829,7 @@ describe('src/Core', () => {
   })
 
   describe('adding a file', () => {
-    it('should call onBeforeFileAdded if it was specified in the options when initialising the class', () => {
+    it('should call onBeforeFileAdded if it was specified in the options when initialising the class', async () => {
       const onBeforeFileAdded = vi.fn()
 
       const core = new Core({
@@ -846,7 +842,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       expect(onBeforeFileAdded.mock.calls.length).toEqual(1)
@@ -856,7 +852,7 @@ describe('src/Core', () => {
 
     it('should allow uploading duplicate file if explicitly allowed in onBeforeFileAdded', async () => {
       const core = new Core({ onBeforeFileAdded: () => true })
-      const sameFileBlob = testImage
+      const sameFileBlob = await fetchTestImage()
 
       core.addFile({
         source: 'vi',
@@ -873,8 +869,8 @@ describe('src/Core', () => {
       })
     })
 
-    it('should add a file', () => {
-      const fileData = testImage
+    it('should add a file', async () => {
+      const fileData = await fetchTestImage()
       const fileAddedEventMock = vi.fn()
       const core = new Core()
       core.on('file-added', fileAddedEventMock)
@@ -910,27 +906,28 @@ describe('src/Core', () => {
       expect(fileAddedEventMock.mock.calls[0][0]).toEqual(newFile)
     })
 
-    it('should add a file from a File object', () => {
-      const fileData = testImage
+    it('should add a file from a File object', async () => {
+      const fileData = await fetchTestImage()
       const core = new Core()
 
       const fileId = core.addFile(fileData)
       expect(core.getFile(fileId).id).toEqual(fileId)
     })
 
-    it('should not allow a file that does not meet the restrictions', () => {
+    it('should not allow a file that does not meet the restrictions', async () => {
       const core = new Core({
         restrictions: {
           allowedFileTypes: ['image/gif', 'video/webm'],
         },
       })
 
+      const data = await fetchTestImage()
       expect(() => {
         core.addFile({
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data,
         })
       }).toThrow('You can only upload: image/gif, video/webm')
 
@@ -947,9 +944,9 @@ describe('src/Core', () => {
       }).not.toThrow()
     })
 
-    it('should not allow a dupicate file, a file with the same id', () => {
+    it('should not allow a dupicate file, a file with the same id', async () => {
       const core = new Core()
-      const sameFileBlob = testImage
+      const sameFileBlob = await fetchTestImage()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
@@ -970,19 +967,24 @@ describe('src/Core', () => {
       expect(core.getFiles().length).toEqual(1)
     })
 
-    it('should allow a duplicate file if its relativePath is different, thus the id is different', () => {
+    it('should allow a duplicate file if its relativePath is different, thus the id is different', async () => {
       const core = new Core()
+      // The same File instance for both: `generateFileID` folds in
+      // `data.lastModified`, and every `new File()` stamps `Date.now()`, so two
+      // separate images would get different ids no matter what `relativePath`
+      // does.
+      const sameFileBlob = await fetchTestImage()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: sameFileBlob,
       })
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: sameFileBlob,
         meta: {
           relativePath: 'folder/a',
         },
@@ -990,7 +992,7 @@ describe('src/Core', () => {
       expect(core.getFiles().length).toEqual(2)
     })
 
-    it('should not allow a file if onBeforeFileAdded returned false', () => {
+    it('should not allow a file if onBeforeFileAdded returned false', async () => {
       const core = new Core({
         onBeforeFileAdded: (file) => {
           if (file.source === 'vi') {
@@ -999,12 +1001,13 @@ describe('src/Core', () => {
           return undefined
         },
       })
+      const data = await fetchTestImage()
       expect(() => {
         core.addFile({
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data,
         })
       }).toThrow(
         'Cannot add the file because onBeforeFileAdded returned false.',
@@ -1019,17 +1022,18 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
 
         await core.upload()
 
+        const data = await fetchTestImage()
         expect(() => {
           core.addFile({
             source: 'vi',
             name: '123.foo',
             type: 'image/jpeg',
-            data: testImage,
+            data,
           })
         }).toThrow(/Cannot add more files/)
       })
@@ -1040,17 +1044,18 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
 
         await core.upload()
 
+        const data = await fetchTestImage()
         expect(() => {
           core.addFile({
             source: 'vi',
             name: '123.foo',
             type: 'image/jpeg',
-            data: testImage,
+            data,
           })
         }).toThrow(/Cannot add more files/)
       })
@@ -1063,13 +1068,13 @@ describe('src/Core', () => {
           source: 'vi',
           name: '1.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         core.addFile({
           source: 'vi',
           name: '2.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
 
         // removing 1 file
@@ -1086,13 +1091,13 @@ describe('src/Core', () => {
           source: 'vi',
           name: '1.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         const fileId2 = core.addFile({
           source: 'vi',
           name: '2.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
 
         // removing 2 files
@@ -1105,7 +1110,9 @@ describe('src/Core', () => {
 
     it('does not dedupe different files', async () => {
       const core = new Core()
-      const data = new Blob([sampleImage], { type: 'image/jpeg' })
+      const response = await fetch(sampleImage)
+      expect(response.ok).toBe(true)
+      const data = await response.blob()
       // @ts-expect-error
       data.lastModified = 1562770350937
 
@@ -1133,7 +1140,7 @@ describe('src/Core', () => {
   })
 
   describe('uploading a file', () => {
-    it('should return a { successful, failed } pair containing file objects', () => {
+    it('should return a { successful, failed } pair containing file objects', async () => {
       const core = new Core()
       core.addUploader(() => Promise.resolve())
 
@@ -1141,13 +1148,13 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       return expect(core.upload()).resolves.toMatchObject({
@@ -1156,7 +1163,7 @@ describe('src/Core', () => {
       })
     })
 
-    it('should return files with errors in the { failed } key', () => {
+    it('should return files with errors in the { failed } key', async () => {
       // use DeepFrozenStore in some tests to make sure we are not mutating things
       const core = new Core({
         store: DeepFrozenStore(),
@@ -1179,13 +1186,13 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       return expect(core.upload()).resolves.toMatchObject({
@@ -1251,7 +1258,7 @@ describe('src/Core', () => {
       ).resolves.toMatchSnapshot()
     })
 
-    it('should not upload if onBeforeUpload returned false', () => {
+    it('should not upload if onBeforeUpload returned false', async () => {
       const core = new Core({
         onBeforeUpload: (files) => {
           for (const fileId in files) {
@@ -1266,19 +1273,19 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: '123.foo',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       return core.upload().catch((err) => {
         expect(err.message).toStrictEqual(
@@ -1293,13 +1300,13 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       await expect(core.upload()).resolves.toBeDefined()
@@ -1315,7 +1322,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       await expect(core.upload()).resolves.toBeDefined()
 
@@ -1325,7 +1332,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: '123.foo',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       await expect(core.upload()).resolves.toBeDefined()
     })
@@ -1355,7 +1362,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       // First time 'upload' and 'upload-error' should be emitted
       await core.upload()
@@ -1372,7 +1379,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'bar.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       const onComplete = vi.fn()
       core.on('complete', onComplete)
@@ -1401,7 +1408,7 @@ describe('src/Core', () => {
   })
 
   describe('removing a file', () => {
-    it('should remove the file', () => {
+    it('should remove the file', async () => {
       const fileRemovedEventMock = vi.fn()
 
       const core = new Core()
@@ -1411,7 +1418,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileId = Object.keys(core.getState().files)[0]
@@ -1442,7 +1449,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.setFileState(id, {
         error: 'something went wrong',
@@ -1463,7 +1470,7 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       await core.retryAll()
@@ -1487,7 +1494,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
 
         // Simulate an upload attempt which triggers metadata validation
@@ -1525,7 +1532,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
 
         try {
@@ -1575,19 +1582,19 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'file1.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         const _fileId2 = core.addFile({
           source: 'vi',
           name: 'file2.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         const fileId3 = core.addFile({
           source: 'vi',
           name: 'file3.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
 
         try {
@@ -1635,14 +1642,14 @@ describe('src/Core', () => {
   })
 
   describe('get a file', () => {
-    it('should get the specified file', () => {
+    it('should get the specified file', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileId = Object.keys(core.getState().files)[0]
@@ -1659,14 +1666,14 @@ describe('src/Core', () => {
       expect(core.getFiles()).toEqual([])
     })
 
-    it('should return all files as an array', () => {
+    it('should return all files as an array', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
@@ -1844,14 +1851,14 @@ describe('src/Core', () => {
       })
     })
 
-    it('should update meta data for a file by calling updateMeta', () => {
+    it('should update meta data for a file by calling updateMeta', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileId = Object.keys(core.getState().files)[0]
@@ -1866,7 +1873,7 @@ describe('src/Core', () => {
       })
     })
 
-    it('should merge meta data when add file', () => {
+    it('should merge meta data when add file', async () => {
       const core = new Core({
         meta: { foo2: 'bar2' },
       })
@@ -1878,7 +1885,7 @@ describe('src/Core', () => {
           // @ts-expect-error
           resize: 5000,
         },
-        data: testImage,
+        data: await fetchTestImage(),
       })
       const fileId = Object.keys(core.getState().files)[0]
       expect(core.getFile(fileId).meta).toEqual({
@@ -1891,14 +1898,14 @@ describe('src/Core', () => {
   })
 
   describe('progress', () => {
-    it('should calculate the progress of a file upload', () => {
+    it('should calculate the progress of a file upload', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const fileId = Object.keys(core.getState().files)[0]
@@ -2056,7 +2063,7 @@ describe('src/Core', () => {
       core.destroy()
     })
 
-    it('should calculate the total progress of all file uploads', () => {
+    it('should calculate the total progress of all file uploads', async () => {
       // use DeepFrozenStore in some tests to make sure we are not mutating things
       const core = new Core({
         store: DeepFrozenStore(),
@@ -2066,13 +2073,13 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'foo2.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const [file1, file2] = core.getFiles()
@@ -2103,20 +2110,20 @@ describe('src/Core', () => {
       expect(core.getState().totalProgress).toEqual(66)
     })
 
-    it('should emit the progress', () => {
+    it('should emit the progress', async () => {
       const core = new Core()
 
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'foo2.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       const [file1, file2] = core.getFiles()
@@ -2152,19 +2159,19 @@ describe('src/Core', () => {
   })
 
   describe('clear', () => {
-    it('should reset state to default', () => {
+    it('should reset state to default', async () => {
       const core = new Core()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.addFile({
         source: 'vi',
         name: 'foo2.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       core.clear()
       expect(core.getState()).toMatchObject({
@@ -2203,7 +2210,7 @@ describe('src/Core', () => {
   })
 
   describe('checkRestrictions', () => {
-    it('should enforce the maxNumberOfFiles rule', () => {
+    it('should enforce the maxNumberOfFiles rule', async () => {
       const core = new Core({
         restrictions: {
           maxNumberOfFiles: 1,
@@ -2215,14 +2222,14 @@ describe('src/Core', () => {
         source: 'vi',
         name: 'foo1.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
       try {
         core.addFile({
           source: 'vi',
           name: 'foo2.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         throw new Error('should have thrown')
       } catch (err) {
@@ -2234,20 +2241,22 @@ describe('src/Core', () => {
       }
     })
 
-    it('should not enforce the maxNumberOfFiles rule for ghost files', () => {
+    it('should not enforce the maxNumberOfFiles rule for ghost files', async () => {
       const core = new Core({
         restrictions: {
           maxNumberOfFiles: 1,
         },
       })
 
+      const data = await fetchTestImage()
+      const data2 = await fetchTestImage()
       expect(() => {
         // add 1 ghost file
         const fileId1 = core.addFile({
           source: 'vi',
           name: 'foo1.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data,
         })
         core.setFileState(fileId1, { isGhost: true })
 
@@ -2256,14 +2265,14 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo2.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: data2,
         })
       }).not.toThrowError()
     })
 
     it.skip('should enforce the minNumberOfFiles rule')
 
-    it('should enforce the allowedFileTypes rule', () => {
+    it('should enforce the allowedFileTypes rule', async () => {
       const core = new Core({
         restrictions: {
           allowedFileTypes: ['image/gif', 'image/png'],
@@ -2275,7 +2284,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo2.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         throw new Error('should have thrown')
       } catch (err) {
@@ -2289,7 +2298,7 @@ describe('src/Core', () => {
       }
     })
 
-    it('should enforce the allowedFileTypes rule with file extensions', () => {
+    it('should enforce the allowedFileTypes rule with file extensions', async () => {
       const core = new Core({
         restrictions: {
           allowedFileTypes: ['.gif', '.jpg', '.jpeg'],
@@ -2301,7 +2310,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo2.png',
           type: '',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         throw new Error('should have thrown')
       } catch (err) {
@@ -2313,17 +2322,18 @@ describe('src/Core', () => {
         )
       }
 
+      const data = await fetchTestImage()
       expect(() =>
         core.addFile({
           source: 'vi',
           name: 'foo2.JPG',
           type: '',
-          data: testImage,
+          data,
         }),
       ).not.toThrow()
     })
 
-    it('should enforce the maxFileSize rule', () => {
+    it('should enforce the maxFileSize rule', async () => {
       const core = new Core({
         restrictions: {
           maxFileSize: 1234,
@@ -2335,7 +2345,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         throw new Error('should have thrown')
       } catch (err) {
@@ -2348,7 +2358,7 @@ describe('src/Core', () => {
       }
     })
 
-    it('should enforce the minFileSize rule', () => {
+    it('should enforce the minFileSize rule', async () => {
       const core = new Core({
         restrictions: {
           minFileSize: 1073741824,
@@ -2360,7 +2370,7 @@ describe('src/Core', () => {
           source: 'vi',
           name: 'foo.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: await fetchTestImage(),
         })
         throw new Error('should have thrown')
       } catch (err) {
@@ -2373,35 +2383,37 @@ describe('src/Core', () => {
       }
     })
 
-    it('should enforce the maxTotalFileSize rule', () => {
+    it('should enforce the maxTotalFileSize rule', async () => {
       const core = new Core({
         restrictions: {
           maxTotalFileSize: 20000,
         },
       })
 
+      const foo = await fetchTestImage()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: foo,
       })
 
+      const foo1 = await fetchTestImage()
       expect(() => {
         core.addFile({
           source: 'vi',
           name: 'foo1.jpg',
           type: 'image/jpeg',
-          data: testImage,
+          data: foo1,
         })
-      }).toThrowError(
+      }).toThrow(
         new RestrictionError(
           'You selected 34 KB of files, but maximum allowed size is 20 KB',
         ),
       )
     })
 
-    it('should report error on validateSingleFile', () => {
+    it('should report error on validateSingleFile', async () => {
       const core = new Core({
         restrictions: {
           minFileSize: 300000,
@@ -2419,7 +2431,7 @@ describe('src/Core', () => {
         name: 'foo1.jpg',
         extension: 'jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
         isFolder: false,
         mimeType: 'image/jpeg',
         modifiedDate: '2016-04-13T15:11:31.204Z',
@@ -2671,13 +2683,13 @@ describe('src/Core', () => {
   })
 
   describe('createUpload', () => {
-    it('should assign the specified files to a new upload', () => {
+    it('should assign the specified files to a new upload', async () => {
       const core = new Core()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
         type: 'image/jpeg',
-        data: testImage,
+        data: await fetchTestImage(),
       })
 
       // @ts-expect-error accessing private method

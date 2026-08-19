@@ -7,7 +7,7 @@ import {
 } from '@uppy/core/utils/preact'
 import type { DashboardState, TargetWithRender } from '../Dashboard.js'
 
-interface AddFilesProps {
+export interface AddFilesProps {
   i18n: I18n
   i18nArray: Translator['translateArray']
   acquirers: TargetWithRender[]
