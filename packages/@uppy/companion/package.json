@@ -40,7 +40,6 @@
     "@aws-sdk/s3-presigned-post": "3.1047.0",
     "@aws-sdk/s3-request-presigner": "3.1047.0",
     "body-parser": "2.3.0",
-    "common-tags": "1.8.2",
     "connect-redis": "7.1.1",
     "content-disposition": "2.0.1",
     "cookie-parser": "1.4.7",
@@ -78,7 +77,6 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
-    "@types/common-tags": "1.8.4",
     "@types/compression": "1.8.1",
     "@types/content-disposition": "0.5.9",
     "@types/cookie-parser": "1.4.10",
