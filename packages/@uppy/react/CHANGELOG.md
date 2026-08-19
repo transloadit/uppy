@@ -1,5 +1,35 @@
 # @uppy/react
 
+## 6.0.0
+
+### Minor Changes
+
+- 84ad853: Import Preact from @uppy/core utilities to guarantee a single version across packages.
+
+### Patch Changes
+
+- 675697d: Add `useGooglePicker` react hook and remove unused `RequestClient` options `name`, `pluginId` and `provider`.
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- Updated dependencies [675697d]
+- Updated dependencies [2608037]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [b9253f7]
+- Updated dependencies [12de077]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+  - @uppy/core@6.0.0
+  - @uppy/components@2.0.0
+  - @uppy/screen-capture@6.0.0
+  - @uppy/status-bar@6.0.0
+  - @uppy/dashboard@6.0.0
+  - @uppy/webcam@6.0.0
+
 ## 5.2.0
 
 ### Minor Changes
