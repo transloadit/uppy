@@ -1,13 +1,21 @@
+import type { I18n } from '@uppy/core/utils'
 import { Component } from '@uppy/core/utils/preact'
 
-type $TSFixMe = any
-
-function fmtMSS(s: number) {
+function fmtMSS(s: number): string {
   // biome-ignore lint/suspicious/noAssignInExpressions: ...
   return (s - (s %= 60)) / 60 + (s > 9 ? ':' : ':0') + s
 }
 
-class StopWatch extends Component {
+interface StopWatchProps {
+  i18n: I18n
+  recording: boolean
+}
+
+interface StopWatchState {
+  elapsedTime: number
+}
+
+class StopWatch extends Component<StopWatchProps, StopWatchState> {
   private wrapperStyle = {
     width: '100%',
     height: '100%',
@@ -51,7 +59,7 @@ class StopWatch extends Component {
 
   private timer?: ReturnType<typeof setTimeout>
 
-  constructor(props: $TSFixMe) {
+  constructor(props: StopWatchProps) {
     super(props)
     this.state = { elapsedTime: 0 }
   }
@@ -69,7 +77,7 @@ class StopWatch extends Component {
 
   timerTick() {
     this.timer = setTimeout(() => {
-      this.setState((state: $TSFixMe) => ({
+      this.setState((state) => ({
         elapsedTime: state.elapsedTime + 1,
       }))
       this.timerTick()
@@ -77,8 +85,8 @@ class StopWatch extends Component {
   }
 
   render() {
-    const { recording, i18n } = { ...this.props } as $TSFixMe
-    const { elapsedTime } = this.state as $TSFixMe
+    const { recording, i18n } = { ...this.props }
+    const { elapsedTime } = this.state
 
     // second to minutes and seconds
     const minAndSec = fmtMSS(elapsedTime)

@@ -45,7 +45,7 @@ class UIPlugin<
 
   isTargetDOMEl!: boolean
 
-  el!: HTMLElement | null
+  el: HTMLElement | null = null
 
   parent: unknown
 
