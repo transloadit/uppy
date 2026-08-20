@@ -7350,7 +7350,7 @@ __metadata:
     lodash: "npm:^4.18.1"
     mime-match: "npm:^1.0.2"
     namespace-emitter: "npm:^2.0.1"
-    nanoid: "npm:^5.1.11"
+    nanoid: "npm:^6.0.1"
     p-queue: "npm:^9.3.0"
     p-retry: "npm:^6.1.0"
     playwright: "npm:1.61.1"
@@ -7379,7 +7379,7 @@ __metadata:
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     lodash: "npm:^4.18.1"
-    nanoid: "npm:^5.1.11"
+    nanoid: "npm:^6.0.1"
     playwright: "npm:1.61.1"
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
@@ -7764,7 +7764,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     cssnano: "npm:^8.0.1"
-    nanoid: "npm:^5.1.11"
+    nanoid: "npm:^6.0.1"
     playwright: "npm:1.61.1"
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
@@ -15067,12 +15067,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanoid@npm:^5.1.11":
-  version: 5.1.11
-  resolution: "nanoid@npm:5.1.11"
+"nanoid@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "nanoid@npm:6.0.1"
   bin:
     nanoid: bin/nanoid.js
-  checksum: 10/d5971a1d39f68bd9845565c70a27733c832ba1bd73caad3c7b999a366c0355b6fcc65064f3b0179bca6cd36b50cacd5747d4482c303f026b58d62ebe31df9868
+  checksum: 10/e49582351f6fff22c275a58504950e923b74c611fc1eac9589a98e89506270d2d1e3b61ed6429df6e7529e54ff71d9f0c5fbb1c540aaee81ae33a523e88ca668
   languageName: node
   linkType: hard
 
