@@ -345,17 +345,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/animations@npm:^21.2.10":
-  version: 21.2.17
-  resolution: "@angular/animations@npm:21.2.17"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/core": 21.2.17
-  checksum: 10/032a38da4768051e1664ca7b152c958d12f3f002d3e6eb692bfd025e9dc5a6bfde2a8d9cdc9fa9fa994b763d12b444c435f796807cd2b3522236d1486feb873e
-  languageName: node
-  linkType: hard
-
 "@angular/build@npm:21.2.17":
   version: 21.2.17
   resolution: "@angular/build@npm:21.2.17"
@@ -7149,11 +7138,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular":
+"@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular":
   version: 0.0.0-use.local
-  resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular"
+  resolution: "@uppy/angular@workspace:packages/@uppy/angular"
   dependencies:
+    "@angular/common": "npm:^21.2.10"
+    "@angular/compiler": "npm:^21.2.10"
+    "@angular/compiler-cli": "npm:^21.2.10"
+    "@angular/core": "npm:^21.2.10"
+    ng-packagr: "npm:^21.2.3"
+    rxjs: "npm:~7.8.0"
     tslib: "npm:^2.8.1"
+    typescript: "npm:~5.9.3"
   peerDependencies:
     "@angular/common": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0
@@ -8560,29 +8556,6 @@ __metadata:
   checksum: 10/644e2e87ffdbb0cfeda22265709ecf2cce7c5ee978e22de446d38755fe243a896e2ccb0c0a95cbdc053c9b49c1e09f97d5cadf58f0560a9402447bc2ac7a6b8a
   languageName: node
   linkType: hard
-
-"angular@workspace:packages/@uppy/angular":
-  version: 0.0.0-use.local
-  resolution: "angular@workspace:packages/@uppy/angular"
-  dependencies:
-    "@angular-devkit/build-angular": "npm:^21.2.8"
-    "@angular/animations": "npm:^21.2.10"
-    "@angular/cli": "npm:^21.2.8"
-    "@angular/common": "npm:^21.2.10"
-    "@angular/compiler": "npm:^21.2.10"
-    "@angular/compiler-cli": "npm:^21.2.10"
-    "@angular/core": "npm:^21.2.10"
-    "@angular/forms": "npm:^21.2.10"
-    "@angular/platform-browser": "npm:^21.2.10"
-    "@angular/platform-browser-dynamic": "npm:^21.2.10"
-    "@angular/router": "npm:^21.2.10"
-    ng-packagr: "npm:^21.2.3"
-    rxjs: "npm:~7.8.0"
-    tslib: "npm:^2.3.0"
-    typescript: "npm:~5.9.3"
-    zone.js: "npm:~0.16.2"
-  languageName: unknown
-  linkType: soft
 
 "ansi-colors@npm:4.1.3, ansi-colors@npm:^4.1.1, ansi-colors@npm:^4.1.3":
   version: 4.1.3
