@@ -7355,7 +7355,7 @@ __metadata:
     mime-match: "npm:^1.0.2"
     namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^5.1.11"
-    p-queue: "npm:^9.3.0"
+    p-queue: "npm:^9.3.3"
     p-retry: "npm:^6.1.0"
     playwright: "npm:1.61.1"
     postcss: "npm:^8.5.23"
@@ -15950,13 +15950,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^9.3.0":
-  version: 9.3.0
-  resolution: "p-queue@npm:9.3.0"
+"p-queue@npm:^9.3.3":
+  version: 9.3.3
+  resolution: "p-queue@npm:9.3.3"
   dependencies:
     eventemitter3: "npm:^5.0.4"
     p-timeout: "npm:^7.0.0"
-  checksum: 10/ad1a229436508f166ad28cdb88377f5b7dc8557dacc44948558e95472b717709d33ad75d52096f56d41dc94507cad3137e60b42b73676a246c8314aef06b3131
+  checksum: 10/2bab74e87ed806ae2dd7ec10f1e0d0423eb4c07419e35947dc66f8b6d3f2d89e978b76b3940d5a41e1b54fda82b716eb2c1bacb63bd95286f0852413628d43b3
   languageName: node
   linkType: hard
 
