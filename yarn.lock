@@ -345,17 +345,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/animations@npm:^21.2.10":
-  version: 21.2.17
-  resolution: "@angular/animations@npm:21.2.17"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/core": 21.2.17
-  checksum: 10/032a38da4768051e1664ca7b152c958d12f3f002d3e6eb692bfd025e9dc5a6bfde2a8d9cdc9fa9fa994b763d12b444c435f796807cd2b3522236d1486feb873e
-  languageName: node
-  linkType: hard
-
 "@angular/build@npm:21.2.17":
   version: 21.2.17
   resolution: "@angular/build@npm:21.2.17"
@@ -6516,10 +6505,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@transloadit/prettier-bytes@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@transloadit/prettier-bytes@npm:1.1.0"
-  checksum: 10/93b70acdac989e8bf361424cfa63a0ca33b55b56a96858b1d36eb839f2d3de4175e71f35024f02b6eafe7ad5a585cde836d3365793e481e7ea882cb038ee36e7
+"@transloadit/prettier-bytes@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "@transloadit/prettier-bytes@npm:2.0.0"
+  checksum: 10/b0d0dd97293c33bdca26ee22bbdbc5d837f0aa3e9dab361700339cfc68092b62099ec356a34e94a9e2dc08feb9276e93fc5d680758d0fbf72f7dc794b80c8214
   languageName: node
   linkType: hard
 
@@ -7158,11 +7147,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular":
+"@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular":
   version: 0.0.0-use.local
-  resolution: "@uppy/angular@workspace:packages/@uppy/angular/projects/uppy/angular"
+  resolution: "@uppy/angular@workspace:packages/@uppy/angular"
   dependencies:
+    "@angular/common": "npm:^21.2.10"
+    "@angular/compiler": "npm:^21.2.10"
+    "@angular/compiler-cli": "npm:^21.2.10"
+    "@angular/core": "npm:^21.2.10"
+    ng-packagr: "npm:^21.2.3"
+    rxjs: "npm:~7.8.0"
     tslib: "npm:^2.8.1"
+    typescript: "npm:~5.9.3"
   peerDependencies:
     "@angular/common": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0
     "@angular/core": ^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0
@@ -7329,7 +7325,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/compressor@workspace:packages/@uppy/compressor"
   dependencies:
-    "@transloadit/prettier-bytes": "npm:^1.1.0"
+    "@transloadit/prettier-bytes": "npm:^2.0.0"
     "@types/node": "npm:^20.19.0"
     "@vitest/browser-playwright": "npm:^4.1.6"
     compressorjs: "npm:^1.3.0"
@@ -7347,7 +7343,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
-    "@transloadit/prettier-bytes": "npm:^1.1.0"
+    "@transloadit/prettier-bytes": "npm:^2.0.0"
     "@types/deep-freeze": "npm:^0"
     "@types/gapi": "npm:^0.0.47"
     "@types/google.accounts": "npm:^0.0.18"
@@ -7364,7 +7360,7 @@ __metadata:
     mime-match: "npm:^1.0.2"
     namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^5.1.11"
-    p-queue: "npm:^9.3.0"
+    p-queue: "npm:^9.3.3"
     p-retry: "npm:^6.1.0"
     playwright: "npm:1.61.1"
     postcss: "npm:^8.5.23"
@@ -7381,7 +7377,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
-    "@transloadit/prettier-bytes": "npm:^1.1.0"
+    "@transloadit/prettier-bytes": "npm:^2.0.0"
     "@uppy/core": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/google-drive": "workspace:^"
@@ -7661,7 +7657,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
-    "@transloadit/prettier-bytes": "npm:^1.1.0"
+    "@transloadit/prettier-bytes": "npm:^2.0.0"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.23"
@@ -8569,29 +8565,6 @@ __metadata:
   checksum: 10/644e2e87ffdbb0cfeda22265709ecf2cce7c5ee978e22de446d38755fe243a896e2ccb0c0a95cbdc053c9b49c1e09f97d5cadf58f0560a9402447bc2ac7a6b8a
   languageName: node
   linkType: hard
-
-"angular@workspace:packages/@uppy/angular":
-  version: 0.0.0-use.local
-  resolution: "angular@workspace:packages/@uppy/angular"
-  dependencies:
-    "@angular-devkit/build-angular": "npm:^21.2.8"
-    "@angular/animations": "npm:^21.2.10"
-    "@angular/cli": "npm:^21.2.8"
-    "@angular/common": "npm:^21.2.10"
-    "@angular/compiler": "npm:^21.2.10"
-    "@angular/compiler-cli": "npm:^21.2.10"
-    "@angular/core": "npm:^21.2.10"
-    "@angular/forms": "npm:^21.2.10"
-    "@angular/platform-browser": "npm:^21.2.10"
-    "@angular/platform-browser-dynamic": "npm:^21.2.10"
-    "@angular/router": "npm:^21.2.10"
-    ng-packagr: "npm:^21.2.3"
-    rxjs: "npm:~7.8.0"
-    tslib: "npm:^2.3.0"
-    typescript: "npm:~5.9.3"
-    zone.js: "npm:~0.16.2"
-  languageName: unknown
-  linkType: soft
 
 "ansi-colors@npm:4.1.3, ansi-colors@npm:^4.1.1, ansi-colors@npm:^4.1.3":
   version: 4.1.3
@@ -15959,13 +15932,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-queue@npm:^9.3.0":
-  version: 9.3.0
-  resolution: "p-queue@npm:9.3.0"
+"p-queue@npm:^9.3.3":
+  version: 9.3.3
+  resolution: "p-queue@npm:9.3.3"
   dependencies:
     eventemitter3: "npm:^5.0.4"
     p-timeout: "npm:^7.0.0"
-  checksum: 10/ad1a229436508f166ad28cdb88377f5b7dc8557dacc44948558e95472b717709d33ad75d52096f56d41dc94507cad3137e60b42b73676a246c8314aef06b3131
+  checksum: 10/2bab74e87ed806ae2dd7ec10f1e0d0423eb4c07419e35947dc66f8b6d3f2d89e978b76b3940d5a41e1b54fda82b716eb2c1bacb63bd95286f0852413628d43b3
   languageName: node
   linkType: hard
 
