@@ -50,13 +50,13 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^1.1.0",
+    "@transloadit/prettier-bytes": "^2.0.0",
     "classnames": "^2.5.1",
     "lodash": "^4.18.1",
     "mime-match": "^1.0.2",
     "namespace-emitter": "^2.0.1",
     "nanoid": "^5.1.11",
-    "p-queue": "^9.3.0",
+    "p-queue": "^9.3.3",
     "p-retry": "^6.1.0",
     "preact": "^10.29.2"
   },

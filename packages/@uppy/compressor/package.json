@@ -31,7 +31,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^1.1.0",
+    "@transloadit/prettier-bytes": "^2.0.0",
     "compressorjs": "^1.3.0",
     "preact": "^10.29.2"
   },
