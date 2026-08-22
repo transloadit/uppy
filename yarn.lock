@@ -6976,12 +6976,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19, @types/react@npm:^19.0.10, @types/react@npm:^19.2.14":
+"@types/react@npm:^19":
   version: 19.2.17
   resolution: "@types/react@npm:19.2.17"
   dependencies:
     csstype: "npm:^3.2.2"
   checksum: 10/8debb092bd0bb9c99176a31824c7587c27c775a6526b60060e7b9e8dc2af53aee2ffadc7a1e3845953792437db5699d34a9054e198c9d4e54a74728ff47c6725
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:^19.2.18":
+  version: 19.2.18
+  resolution: "@types/react@npm:19.2.18"
+  dependencies:
+    csstype: "npm:^3.2.2"
+  checksum: 10/c718ec5c5272ef5c1c77fcdd07f567c77197b593583539459b4bdaea89ca55ad7c814b7eb2151dccfa459b2c384b599a45e7e35550b789883d66b363d30c94d8
   languageName: node
   linkType: hard
 
@@ -7573,14 +7582,14 @@ __metadata:
   dependencies:
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.0.0"
-    "@types/react": "npm:^19.2.14"
+    "@types/react": "npm:^19.2.18"
     "@types/use-sync-external-store": "npm:^1.5.0"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     playwright: "npm:1.61.1"
     preact: "npm:^10.29.2"
-    react: "npm:^19.2.6"
+    react: "npm:^19.2.8"
     react-dom: "npm:^19.2.6"
     typescript: "npm:^6.0.3"
     use-sync-external-store: "npm:^1.6.0"
@@ -11343,7 +11352,7 @@ __metadata:
     "@uppy/tus": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     next: "npm:16.2.11"
-    react: "npm:19.2.7"
+    react: "npm:19.2.8"
     react-dom: "npm:19.2.7"
     tailwindcss: "npm:^4"
     typescript: "npm:^6.0.3"
@@ -11355,7 +11364,7 @@ __metadata:
   resolution: "example-react@workspace:examples/react"
   dependencies:
     "@tailwindcss/vite": "npm:^4.3.0"
-    "@types/react": "npm:^19.0.10"
+    "@types/react": "npm:^19.2.18"
     "@types/react-dom": "npm:^19.0.4"
     "@uppy/core": "workspace:*"
     "@uppy/google-drive-picker": "workspace:*"
@@ -11369,7 +11378,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^4.1.6"
     msw: "npm:^2.10.4"
     playwright: "npm:1.61.1"
-    react: "npm:^19.0.0"
+    react: "npm:^19.2.8"
     react-dom: "npm:^19.0.0"
     tailwindcss: "npm:^4.0.9"
     typescript: "npm:^6.0.3"
@@ -11390,7 +11399,7 @@ __metadata:
     "@tus/file-store": "npm:latest"
     "@tus/server": "npm:latest"
     "@types/express": "npm:^5.0.6"
-    "@types/react": "npm:^19.2.14"
+    "@types/react": "npm:^19.2.18"
     "@types/react-dom": "npm:^19.2.3"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
@@ -11400,7 +11409,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     express: "npm:^5.2.1"
     isbot: "npm:^5.1.40"
-    react: "npm:^19.2.7"
+    react: "npm:^19.2.8"
     react-dom: "npm:^19.2.7"
     react-router: "npm:^8.3.0"
     tsx: "npm:^4.0.0"
@@ -17245,14 +17254,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:19.2.7":
-  version: 19.2.7
-  resolution: "react@npm:19.2.7"
-  checksum: 10/2939997e87d7f0ee0d9d2bb556866b616b999dfb7916283647034eda867a045a39c4f7a736c8ea6beffffcd78397fc30f63a7a3aaf8425b683c3060670859560
-  languageName: node
-  linkType: hard
-
-"react@npm:^19.0.0, react@npm:^19.2.6, react@npm:^19.2.7":
+"react@npm:19.2.8, react@npm:^19.2.8":
   version: 19.2.8
   resolution: "react@npm:19.2.8"
   checksum: 10/a3c697798035e295ca9e51591d3a8700824535cb8c070fac1f8abbe69717ceb99108cbc4ba7b31a606806f336b1eba705705f63b9d39ace198fe51e8990ac843
