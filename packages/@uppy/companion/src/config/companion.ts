@@ -134,13 +134,19 @@ function validateUploadUrls(
 }
 
 /**
- * Validates the `server.validHosts` allowlist, which is matched exactly.
+ * Validates the `server.validHosts` allowlist.
+ *
+ * Pattern entries are anchored and compiled when matching, so a pattern that
+ * does not compile would throw per request; catch it at startup instead.
  */
 function validateValidHosts(validHosts: string[] | undefined): void {
   for (const host of validHosts ?? []) {
-    if (regexMetaCharacters.test(host)) {
+    if (!regexMetaCharacters.test(host)) continue
+    try {
+      new RegExp(`^(?:${host})$`)
+    } catch {
       throw new Error(
-        `server.validHosts entry "${host}" looks like a regular expression. Entries are matched exactly and are no longer compiled into regular expressions -- list the hosts explicitly, or pass a RegExp when configuring Companion programmatically.`,
+        `server.validHosts entry "${host}" is not a valid regular expression.`,
       )
     }
   }

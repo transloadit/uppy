@@ -67,19 +67,23 @@ export const hasUploadUrlMatch = (
 /**
  * Checks a hostname against the `server.validHosts` allowlist.
  *
- * String entries must match the host exactly (case-insensitively); as with
- * `uploadUrls` they are not treated as patterns. `RegExp` entries are tested
- * as-is.
+ * Entries without regex metacharacters are compared literally. Entries that
+ * are patterns -- which the docs explicitly allow, e.g. `(\w+).example.com` --
+ * are anchored, so that a pattern can no longer match a host that merely
+ * *contains* it (`example.com` used to match `example.com.evil.com`).
+ * `RegExp` entries are tested as-is.
  */
 export const hasHostMatch = (
   value: string,
   criteria: ReadonlyArray<string | RegExp>,
 ): boolean =>
-  criteria.some((i) =>
-    i instanceof RegExp
-      ? i.test(value)
-      : value.toLowerCase() === i.toLowerCase(),
-  )
+  criteria.some((i) => {
+    if (i instanceof RegExp) return i.test(value)
+    if (!regexMetaCharacters.test(i)) {
+      return value.toLowerCase() === i.toLowerCase()
+    }
+    return new RegExp(`^(?:${i})$`).test(value)
+  })
 
 export const jsonStringify = (data: unknown): string => {
   const cache: unknown[] = []
