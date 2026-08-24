@@ -110,7 +110,7 @@
     "test": "vitest run --silent='passed-only'"
   },
   "engines": {
-    "node": "^20.19.3 || >=22.0.0"
+    "node": ">=22.0.0"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
