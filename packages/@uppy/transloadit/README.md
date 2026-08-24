@@ -16,8 +16,7 @@ backend that receives those uploads and runs the processing workflow. This
 plugin connects the two; Uppy can also be used with other upload destinations.
 
 [Run the unsigned local demo →](https://github.com/transloadit/uppy/tree/main/examples/transloadit)
-(test use only). For production, follow the server-signed integration guide
-above.
+(test use only). For production, follow the server-signed integration guide.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile file encoding service.

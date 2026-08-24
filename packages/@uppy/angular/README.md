@@ -11,7 +11,23 @@ Uppy is being developed by the folks at [Transloadit](https://transloadit.com), 
 ## Example
 
 ```ts
-// TODO
+import { Component, type OnDestroy } from '@angular/core'
+import { DashboardComponent } from '@uppy/angular'
+import Uppy from '@uppy/core'
+
+@Component({
+  selector: 'app-uploader',
+  standalone: true,
+  imports: [DashboardComponent],
+  template: '<uppy-dashboard [uppy]="uppy"></uppy-dashboard>',
+})
+export class UploaderComponent implements OnDestroy {
+  readonly uppy = new Uppy()
+
+  ngOnDestroy(): void {
+    this.uppy.destroy()
+  }
+}
 ```
 
 ## Installation
