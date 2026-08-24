@@ -7,7 +7,6 @@
   "workspaces": [
     "examples/*",
     "packages/@uppy/*",
-    "packages/@uppy/angular/projects/uppy/*",
     "packages/uppy",
     "private/*"
   ],
