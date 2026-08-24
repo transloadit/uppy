@@ -7,15 +7,79 @@ const nonceLength = 16
 const encryptionKeyLength = 32
 const ivLength = 12
 
-export const hasMatch = (
+/**
+ * Characters that have no place in a literal URL or hostname, but do in a
+ * regular expression. Used to detect allowlist entries that were written as
+ * patterns, back when string entries were compiled into regexes.
+ */
+export const regexMetaCharacters = /[*+?^${}()|\\]/
+
+/**
+ * Checks whether a URL matches a single `uploadUrls` allowlist entry.
+ *
+ * `RegExp` entries are tested as-is. String entries are compared literally:
+ * same origin, and the path must match at a path boundary. They are
+ * deliberately *not* compiled into regexes -- that made every string an
+ * unanchored pattern, so any URL merely containing an allowed URL anywhere
+ * (in its path, query or fragment) passed the check, which let a caller point
+ * Companion at an arbitrary internal host. See
+ * https://github.com/transloadit/uppy/issues/6480
+ */
+const matchesUploadUrl = (
+  value: string,
+  criterion: string | RegExp,
+): boolean => {
+  if (criterion instanceof RegExp) return criterion.test(value)
+  if (value === criterion) return true
+
+  let url: URL
+  let allowed: URL
+  try {
+    url = new URL(value)
+    allowed = new URL(criterion)
+  } catch {
+    // A non-absolute entry can only ever match exactly, which we checked above.
+    return false
+  }
+
+  // `origin` is the string "null" for non-special schemes, which would make
+  // two otherwise unrelated URLs compare equal.
+  if (url.origin === 'null' || url.origin !== allowed.origin) return false
+
+  // An entry without a path (`https://example.com`) allows the whole origin.
+  const allowedPath = allowed.pathname
+  if (allowedPath === '/') return true
+
+  if (url.pathname === allowedPath) return true
+  return url.pathname.startsWith(
+    allowedPath.endsWith('/') ? allowedPath : `${allowedPath}/`,
+  )
+}
+
+/**
+ * Checks a URL against the `uploadUrls` allowlist.
+ */
+export const hasUploadUrlMatch = (
   value: string,
   criteria: ReadonlyArray<string | RegExp>,
-): boolean => {
-  return criteria.some((i) => {
-    if (i instanceof RegExp) return i.test(value)
-    return value === i || new RegExp(i).test(value)
-  })
-}
+): boolean => criteria.some((i) => matchesUploadUrl(value, i))
+
+/**
+ * Checks a hostname against the `server.validHosts` allowlist.
+ *
+ * String entries must match the host exactly (case-insensitively); as with
+ * `uploadUrls` they are not treated as patterns. `RegExp` entries are tested
+ * as-is.
+ */
+export const hasHostMatch = (
+  value: string,
+  criteria: ReadonlyArray<string | RegExp>,
+): boolean =>
+  criteria.some((i) =>
+    i instanceof RegExp
+      ? i.test(value)
+      : value.toLowerCase() === i.toLowerCase(),
+  )
 
 export const jsonStringify = (data: unknown): string => {
   const cache: unknown[] = []
