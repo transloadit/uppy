@@ -20,7 +20,7 @@ a versatile file encoding service.
 /** @jsx React */
 import React from 'react'
 import Uppy from '@uppy/core'
-import { DashboardModal } from '@uppy/react'
+import DashboardModal from '@uppy/react/dashboard-modal'
 
 const uppy = new Uppy()
 

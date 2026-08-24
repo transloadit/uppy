@@ -27,7 +27,7 @@ a versatile file encoding service.
 
 <script>
 import Uppy from '@uppy/core'
-import { DashboardModal } from '@uppy/vue'
+import DashboardModal from '@uppy/vue/dashboard-modal'
 
 export default {
   components: {
