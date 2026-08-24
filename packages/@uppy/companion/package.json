@@ -82,7 +82,7 @@
     "@types/lodash": "4.17.24",
     "@types/mime-types": "3.0.1",
     "@types/morgan": "1.9.10",
-    "@types/node": "22.20.1",
+    "@types/node": "^22.20.1",
     "@types/node-schedule": "2.1.8",
     "@types/serialize-javascript": "5.0.4",
     "@types/supertest": "7.2.1",
