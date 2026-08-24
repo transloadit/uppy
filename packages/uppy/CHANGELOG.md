@@ -1,5 +1,70 @@
 # uppy
 
+## 6.0.0
+
+### Major Changes
+
+- 12de077: Remove @uppy/instagram references from all the packages
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- Updated dependencies [dc32b3d]
+- Updated dependencies [675697d]
+- Updated dependencies [1230ab6]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [32b9f06]
+- Updated dependencies [2608032]
+- Updated dependencies [b9253f7]
+- Updated dependencies [2608031]
+- Updated dependencies [12de077]
+- Updated dependencies [260804f]
+- Updated dependencies [d9d44ce]
+- Updated dependencies [7ac2623]
+- Updated dependencies [57f8daf]
+- Updated dependencies [942db47]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [2608043]
+- Updated dependencies [ca916f6]
+- Updated dependencies [2608044]
+- Updated dependencies [3899a6e]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/aws-s3@6.0.0
+  - @uppy/url@6.0.0
+  - @uppy/core@6.0.0
+  - @uppy/locales@5.2.0
+  - @uppy/google-photos-picker@2.0.0
+  - @uppy/google-drive-picker@2.0.0
+  - @uppy/thumbnail-generator@6.0.0
+  - @uppy/golden-retriever@6.0.0
+  - @uppy/image-generator@2.0.0
+  - @uppy/remote-sources@4.0.0
+  - @uppy/screen-capture@6.0.0
+  - @uppy/google-drive@6.0.0
+  - @uppy/image-editor@5.0.0
+  - @uppy/transloadit@6.0.0
+  - @uppy/compressor@4.0.0
+  - @uppy/status-bar@6.0.0
+  - @uppy/xhr-upload@6.0.0
+  - @uppy/dashboard@6.0.0
+  - @uppy/drag-drop@6.0.0
+  - @uppy/facebook@6.0.0
+  - @uppy/onedrive@6.0.0
+  - @uppy/unsplash@6.0.0
+  - @uppy/dropbox@6.0.0
+  - @uppy/webcam@6.0.0
+  - @uppy/webdav@2.0.0
+  - @uppy/audio@4.0.0
+  - @uppy/form@6.0.0
+  - @uppy/zoom@5.0.0
+  - @uppy/box@5.0.0
+  - @uppy/tus@6.0.0
+  - @uppy/drop-target@5.0.0
+
 ## 5.2.4
 
 ### Patch Changes
