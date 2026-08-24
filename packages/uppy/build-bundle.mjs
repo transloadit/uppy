@@ -75,12 +75,12 @@ const methods = [
   ),
 ]
 
-// Add BUNDLE-README.MD
+const bundleReadme = new URL('../../BUNDLE-README.md', import.meta.url)
+
+// Include the bundle instructions in both the downloadable archive and npm package page.
 methods.push(
-  fs.copyFile(
-    new URL('../../BUNDLE-README.md', import.meta.url),
-    new URL('./dist/README.md', import.meta.url),
-  ),
+  fs.copyFile(bundleReadme, new URL('./README.md', import.meta.url)),
+  fs.copyFile(bundleReadme, new URL('./dist/README.md', import.meta.url)),
 )
 
 await Promise.all(methods).then(
