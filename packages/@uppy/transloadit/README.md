@@ -15,7 +15,9 @@ Uppy owns the open-source browser upload experience. Transloadit is the managed
 backend that receives those uploads and runs the processing workflow. This
 plugin connects the two; Uppy can also be used with other upload destinations.
 
-[Run the example →](https://github.com/transloadit/uppy/tree/main/examples/transloadit)
+[Run the unsigned local demo →](https://github.com/transloadit/uppy/tree/main/examples/transloadit)
+(test use only). For production, follow the server-signed integration guide
+above.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile file encoding service.
