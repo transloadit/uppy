@@ -6671,12 +6671,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:20.19.41":
-  version: 20.19.41
-  resolution: "@types/node@npm:20.19.41"
+"@types/node@npm:22.20.1":
+  version: 22.20.1
+  resolution: "@types/node@npm:22.20.1"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10/5eb38cabe687130093681fe35e2ee2230c0717ee44a784881229c8ea9ecfb3626be87edb3940c9b60886dc93b5cb5c66a58a4ff44f1de3936e6af92b65a029b2
+  checksum: 10/0949e49d0383569ebd1222a2f65a9adb9328a6a6dbed459a02cdb37c61147755386c004c4ffbe436de59f5859df1774b1dd6bf168f7aeee46884bb190e0c384f
   languageName: node
   linkType: hard
 
@@ -6964,7 +6964,7 @@ __metadata:
     "@types/lodash": "npm:4.17.24"
     "@types/mime-types": "npm:3.0.1"
     "@types/morgan": "npm:1.9.10"
-    "@types/node": "npm:20.19.41"
+    "@types/node": "npm:22.20.1"
     "@types/node-schedule": "npm:2.1.8"
     "@types/serialize-javascript": "npm:5.0.4"
     "@types/supertest": "npm:7.2.1"
