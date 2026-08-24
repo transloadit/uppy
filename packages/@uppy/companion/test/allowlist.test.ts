@@ -80,6 +80,28 @@ describe('hasHostMatch', () => {
     expect(hasHostMatch(host, allowed)).toBe(true)
   })
 
+  // The docs document patterns here, e.g. `(\w+).example.com`. They keep
+  // working, but are anchored so they cannot match a host that merely
+  // contains them.
+  describe('pattern entries', () => {
+    const pattern = ['(\\w+).myendpoint.com']
+
+    test.each([
+      'sub.myendpoint.com',
+      'sub2.myendpoint.com',
+    ])('accepts %s', (host) => {
+      expect(hasHostMatch(host, pattern)).toBe(true)
+    })
+
+    test.each([
+      'sub.myendpoint.com.evil.com',
+      'evil.com/sub.myendpoint.com',
+      'sub.myendpoint.comX',
+    ])('rejects %s', (host) => {
+      expect(hasHostMatch(host, pattern)).toBe(false)
+    })
+  })
+
   test('still supports RegExp entries as written', () => {
     expect(
       hasHostMatch('a.myendpoint.com', [/^[a-z]+\.myendpoint\.com$/]),
@@ -136,18 +158,32 @@ describe('validateConfig', () => {
     ).toThrow(/is not an absolute URL/)
   })
 
-  test('rejects a validHosts entry written as a regular expression', () => {
+  test('accepts a validHosts pattern entry', () => {
     expect(() =>
       validateConfig(
         withOptions({
           server: {
             host: 'localhost:3020',
             path: '',
-            validHosts: ['.*\\.myendpoint\\.com'],
+            validHosts: ['(\\w+).myendpoint.com'],
           },
         } as Partial<CompanionInitOptions>),
       ),
-    ).toThrow(/looks like a regular expression/)
+    ).not.toThrow()
+  })
+
+  test('rejects a validHosts entry that is not a valid regular expression', () => {
+    expect(() =>
+      validateConfig(
+        withOptions({
+          server: {
+            host: 'localhost:3020',
+            path: '',
+            validHosts: ['(unclosed.myendpoint.com'],
+          },
+        } as Partial<CompanionInitOptions>),
+      ),
+    ).toThrow(/is not a valid regular expression/)
   })
 
   test('accepts RegExp uploadUrls entries', () => {
