@@ -188,7 +188,8 @@ server-side component, is needed for a plugin to work.
 
 ### File Processing
 
-- [`Transloadit`](https://uppy.io/docs/transloadit/) — support for
+- [`Transloadit`](https://uppy.io/docs/guides/uppy-transloadit/) — signed
+  JavaScript, React, Next.js, Vue, and Angular examples for
   [Transloadit](http://transloadit.com)’s robust file uploading and encoding
   backend
 

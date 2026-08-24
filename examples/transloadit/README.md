@@ -1,7 +1,15 @@
 # Transloadit example
 
-This example shows how to make advantage of Uppy API to upload files to
-[Transloadit](https://transloadit.com/).
+This runnable JavaScript example uses Uppy for the browser upload experience
+and Transloadit as the managed backend that processes the uploaded files.
+
+For smaller production examples with server-side Signature Authentication,
+follow the canonical guides for
+[JavaScript](https://uppy.io/docs/guides/uppy-transloadit/#javascript),
+[React](https://uppy.io/docs/guides/uppy-transloadit/#react),
+[Next.js](https://uppy.io/docs/guides/uppy-transloadit/#nextjs),
+[Vue](https://uppy.io/docs/guides/uppy-transloadit/#vue), and
+[Angular](https://uppy.io/docs/guides/uppy-transloadit/#angular).
 
 ## Run it
 

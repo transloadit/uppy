@@ -57,6 +57,9 @@ global `window.Uppy` object. See the
 Documentation for this plugin can be found on the
 [Uppy website](https://uppy.io/docs/react).
 
+For a managed processing backend, follow the canonical
+[React + Uppy + Transloadit guide](https://uppy.io/docs/guides/uppy-transloadit/#react).
+
 ## License
 
 [The MIT License](./LICENSE).

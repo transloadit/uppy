@@ -26,6 +26,9 @@ Alternatively, you can also use this plugin in a pre-built bundle from Transload
 
 Documentation for this plugin can be found on the [Uppy website](https://uppy.io/docs/).
 
+For a managed processing backend, follow the canonical
+[Angular + Uppy + Transloadit guide](https://uppy.io/docs/guides/uppy-transloadit/#angular).
+
 ## License
 
 [The MIT License](./LICENSE).
