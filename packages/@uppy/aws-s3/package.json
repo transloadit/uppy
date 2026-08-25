@@ -41,7 +41,7 @@
     "@aws-sdk/client-s3": "^3.362.0",
     "@aws-sdk/client-sts": "^3.362.0",
     "@aws-sdk/s3-request-presigner": "^3.362.0",
-    "@types/node": "^20.19.0",
+    "@types/node": "^22.20.1",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",
     "playwright": "1.61.1",

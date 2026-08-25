@@ -42,7 +42,7 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/node": "^20.19.0",
+    "@types/node": "^22.20.1",
     "@vitest/browser-playwright": "^4.1.6",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
