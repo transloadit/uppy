@@ -60,10 +60,12 @@ jobs:
           COMPANION_PROTOCOL: http
           COMPANION_REDIS_URL: redis://localhost:6379
           VITE_MINIO_CONFIG: "test_user,test_password,http://localhost:9002/test-bucket,us-east-1"
-      # The Angular example isn't covered by `yarn build` (packages only) or
-      # `yarn test` (react/vue/sveltekit only), so build it explicitly.
-      - name: Build Angular example
-        run: corepack yarn workspace example-angular build
+      # The examples aren't covered by `yarn build` (packages only) or
+      # `yarn test` (react/vue/sveltekit only), so build and typecheck them
+      # explicitly. Run it after the unit tests so an example-only breakage
+      # doesn't mask the test results.
+      - name: Build and check examples
+        run: corepack yarn run build:examples
 
   types:
     name: Types

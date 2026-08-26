@@ -104,7 +104,7 @@ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 Add CSS
-[uppy.min.css](https://releases.transloadit.com/uppy/v5.2.4/uppy.min.css),
+[uppy.min.css](https://releases.transloadit.com/uppy/v6.0.0/uppy.min.css),
 either to your HTML page’s `<head>` or include in JS, if your bundler of choice
 supports it.
 
@@ -118,7 +118,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 ```html
 <!-- 1. Add CSS to `<head>` -->
 <link
-  href="https://releases.transloadit.com/uppy/v5.2.4/uppy.min.css"
+  href="https://releases.transloadit.com/uppy/v6.0.0/uppy.min.css"
   rel="stylesheet"
 />
 
@@ -129,7 +129,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
     Uppy,
     Dashboard,
     Tus,
-  } from 'https://releases.transloadit.com/uppy/v5.2.4/uppy.min.mjs'
+  } from 'https://releases.transloadit.com/uppy/v6.0.0/uppy.min.mjs'
 
   const uppy = new Uppy()
   uppy.use(Dashboard, { target: '#files-drag-drop' })
@@ -188,9 +188,11 @@ server-side component, is needed for a plugin to work.
 
 ### File Processing
 
-- [`Transloadit`](https://uppy.io/docs/transloadit/) — support for
-  [Transloadit](http://transloadit.com)’s robust file uploading and encoding
-  backend
+- [`Transloadit`](https://uppy.io/docs/transloadit/) — creates Assemblies that
+  upload files to [Transloadit](http://transloadit.com)’s encoding backend. See
+  the [integration guide](https://uppy.io/docs/guides/uppy-transloadit/) for
+  JavaScript, React, Next.js, Vue, and Angular examples with server-signed
+  Assembly options
 
 ### Miscellaneous
 
