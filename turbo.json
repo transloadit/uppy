@@ -36,8 +36,13 @@
     },
     "typecheck": {
       "outputLogs": "new-only",
-      "dependsOn": ["build"],
+      "dependsOn": ["build", "^build"],
       "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
+    },
+    "check": {
+      "outputLogs": "new-only",
+      "dependsOn": ["^build"],
+      "inputs": ["src/**/*.{js,ts,jsx,tsx,svelte}", "tsconfig.json"]
     },
     "test": {
       "dependsOn": ["^test"],
