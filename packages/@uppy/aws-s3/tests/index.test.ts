@@ -235,6 +235,47 @@ describe('AwsS3', () => {
     })
   })
 
+  describe('server-generated object key (#6496)', () => {
+    const bucketUrl = 'https://test-bucket.s3.us-east-1.amazonaws.com'
+
+    test('single-part: reports the key the signer actually used', async ({
+      worker,
+    }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers()
+      signRequest.mockImplementation(async (req: any) => {
+        const serverKey = `server-${req.key}`
+        return {
+          url: `${bucketUrl}/${serverKey}?method=${req.method}`,
+          key: serverKey,
+        }
+      })
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: bucketUrl,
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+        generateObjectKey: () => 'client-photo.jpg',
+      })
+      core.addFile({
+        source: 'test',
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        data: new File([new Uint8Array(KB)], 'photo.jpg'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      const response = onSuccess.mock.calls[0][1]
+      expect(response.body.key).toBe('server-client-photo.jpg')
+      expect(response.uploadURL).toBe(`${bucketUrl}/server-client-photo.jpg`)
+    })
+  })
+
   describe('upload events', () => {
     test('emits upload-start when upload begins', async () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Test stop'))
