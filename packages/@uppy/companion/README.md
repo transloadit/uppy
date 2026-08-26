@@ -108,19 +108,23 @@ COMPANION_UPLOAD_URLS="https://uploads.example.com/files/,https://other.example.
 
 #### Patterns
 
-Prefix an entry with `re:` to match with a regular expression instead. If the
-whole value starts with `re:` it is *not* split on `,`, so a `{n,m}` quantifier
-is safe to use; otherwise entries are comma-separated as usual and may mix
-literals and patterns.
+Prefix an entry with `re:` to match with a regular expression instead.
+
+Because the value is comma-separated, a pattern in a list cannot itself contain
+a `,` — a `{n,m}` quantifier would be split down the middle. If the whole value
+starts with `re:` it is therefore *not* split at all and is taken as one
+pattern, which is the way to use a quantifier. Combine alternatives with `|`
+rather than listing several patterns after a leading `re:`.
 
 ```sh
 COMPANION_UPLOAD_URLS="re:^https://(?:api2-[a-z0-9]+|api2)\\.example\\.com/files/"
 ```
 
 A pattern is tested against the whole URL, exactly as you wrote it. That is
-expressive, but it means the pattern itself carries the security property, and
-three mistakes silently turn it into an open door to your internal network.
-Companion warns about each at startup, but does not refuse to boot.
+expressive, but it means the pattern itself carries the security property.
+Companion does not check patterns for you, and the three mistakes below are not
+the kind you notice: get one wrong and uploads keep working, while your
+internal network becomes reachable. Read them before writing a pattern.
 
 **Anchor it with `^`.** Without it a pattern matches any URL that merely
 *contains* it, so an attacker appends your allowed URL to their own:

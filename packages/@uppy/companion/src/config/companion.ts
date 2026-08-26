@@ -6,7 +6,6 @@ import type { CompanionInitOptions } from '../schemas/companion.js'
 import {
   compileUploadUrlPattern,
   defaultGetKey,
-  findUploadUrlPatternPitfalls,
   regexMetaCharacters,
   uploadUrlPatternPrefix,
 } from '../server/helpers/utils.js'
@@ -112,18 +111,9 @@ function validateUploadUrls(
     }
 
     // A `re:` entry is a pattern, not a URL; compiling it here turns a typo
-    // into a failed boot rather than a failed upload. A pattern that compiles
-    // but is too permissive cannot be rejected -- it may well be deliberate --
-    // but it is worth saying so, because the failure mode is an SSRF rather
-    // than a broken upload, and so is not something anyone will notice.
+    // into a failed boot rather than a failed upload.
     if (entry.startsWith(uploadUrlPatternPrefix)) {
       compileUploadUrlPattern(entry)
-      for (const pitfall of findUploadUrlPatternPitfalls(entry)) {
-        logger.warn(
-          `uploadUrls entry "${entry}" is risky: ${pitfall}`,
-          'startup.uploadUrls',
-        )
-      }
       continue
     }
 

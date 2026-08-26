@@ -133,16 +133,8 @@ type StandaloneCompanionOptions = Pick<
  * Otherwise the value is a comma-separated list, whose entries may themselves
  * be `re:` patterns as long as they contain no comma.
  */
-export const parseUploadUrlsFromEnv = (value: string): string[] => {
-  if (!value.startsWith(utils.uploadUrlPatternPrefix)) return value.split(',')
-
-  if (value.includes(`,${utils.uploadUrlPatternPrefix}`)) {
-    throw new Error(
-      `COMPANION_UPLOAD_URLS starts with "${utils.uploadUrlPatternPrefix}", so the whole value is treated as one pattern and is not split on ",". Combine the alternatives into one pattern with "|", or drop the leading "${utils.uploadUrlPatternPrefix}" and list the entries separately.`,
-    )
-  }
-  return [value]
-}
+export const parseUploadUrlsFromEnv = (value: string): string[] =>
+  value.startsWith(utils.uploadUrlPatternPrefix) ? [value] : value.split(',')
 
 const getConfigFromEnv = (): StandaloneCompanionOptions => {
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']

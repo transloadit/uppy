@@ -3,7 +3,6 @@ import { validateConfig } from '../src/config/companion.js'
 import type { CompanionInitOptions } from '../src/schemas/companion.js'
 import {
   compileUploadUrlPattern,
-  findUploadUrlPatternPitfalls,
   hasHostMatch,
   hasUploadUrlMatch,
 } from '../src/server/helpers/utils.js'
@@ -259,10 +258,6 @@ describe('uploadUrls "re:" pattern entries', () => {
     ])('rejects %s', (url) => {
       expect(hasUploadUrlMatch(url, allowed)).toBe(false)
     })
-
-    test('is reported as free of pitfalls', () => {
-      expect(findUploadUrlPatternPitfalls(allowed[0]!)).toEqual([])
-    })
   })
 
   test('a "{n,m}" quantifier survives, because a lone pattern is not split', () => {
@@ -291,26 +286,26 @@ describe('uploadUrls "re:" pattern entries', () => {
     expect(hasUploadUrlMatch('https://evil.com/files/', allowed)).toBe(false)
   })
 
-  describe('pitfall detection', () => {
-    // Each of these compiles and looks plausible, but lets an attacker choose
-    // the host. They are warnings, not errors, so assert on what is reported.
-    test('flags a pattern that is not anchored', () => {
-      expect(
-        findUploadUrlPatternPitfalls('re:https://uploads\\.myendpoint\\.com/'),
-      ).toEqual([expect.stringContaining('not anchored')])
-      // ...and the pattern really is bypassable, which is why we warn.
+  test('rejects a pattern that does not compile', () => {
+    expect(() =>
+      compileUploadUrlPattern('re:^https://uploads\\.myendpoint\\.com/(files/'),
+    ).toThrow(/not a valid regular expression/)
+  })
+
+  // A pattern is matched as written, so these mistakes are the operator's to
+  // avoid. They are documented in the README; pin them down here so that the
+  // documentation cannot quietly stop describing what the matcher does.
+  describe('the documented pitfalls really do let a host through', () => {
+    test('a pattern with no "^" matches a URL that merely contains it', () => {
       expect(
         hasUploadUrlMatch(
-          'http://169.254.169.254/?x=https://uploads.myendpoint.com/',
+          'http://169.254.169.254/latest/meta-data/?x=https://uploads.myendpoint.com/',
           ['re:https://uploads\\.myendpoint\\.com/'],
         ),
       ).toBe(true)
     })
 
-    test('flags an unescaped "." in the host part', () => {
-      expect(
-        findUploadUrlPatternPitfalls('re:^https://.*\\.myendpoint\\.com/'),
-      ).toEqual([expect.stringContaining('unescaped "."')])
+    test('an unescaped "." in the host part crosses into the path', () => {
       expect(
         hasUploadUrlMatch('https://evil.com/x.myendpoint.com/y', [
           're:^https://.*\\.myendpoint\\.com/',
@@ -318,55 +313,13 @@ describe('uploadUrls "re:" pattern entries', () => {
       ).toBe(true)
     })
 
-    test('flags a host part that is not terminated', () => {
+    test.each([
+      'https://a.myendpoint.com.evil.com/',
+      'https://a.myendpoint.com@evil.com/',
+    ])('an unterminated host part matches %s', (url) => {
       expect(
-        findUploadUrlPatternPitfalls(
-          're:^https://[a-z0-9]+\\.myendpoint\\.com',
-        ),
-      ).toEqual([expect.stringContaining('not terminated')])
-      expect(
-        hasUploadUrlMatch('https://a.myendpoint.com.evil.com/', [
-          're:^https://[a-z0-9]+\\.myendpoint\\.com',
-        ]),
+        hasUploadUrlMatch(url, ['re:^https://[a-z0-9]+\\.myendpoint\\.com']),
       ).toBe(true)
-    })
-
-    test('accepts "$" as a terminator', () => {
-      expect(
-        findUploadUrlPatternPitfalls(
-          're:^https://[a-z0-9]+\\.myendpoint\\.com$',
-        ),
-      ).toEqual([])
-    })
-
-    test('understands escaped slashes and character classes', () => {
-      expect(
-        findUploadUrlPatternPitfalls(
-          're:^https:\\/\\/[a-z0-9.]+\\.myendpoint\\.com\\/files\\/',
-        ),
-      ).toEqual([])
-    })
-
-    test('says so when the shape cannot be checked at all', () => {
-      expect(findUploadUrlPatternPitfalls('re:^\\w+$')).toEqual([
-        expect.stringContaining('does not look like'),
-      ])
-    })
-  })
-
-  describe('compilation', () => {
-    test('rejects a pattern torn in half by a list separator', () => {
-      expect(() =>
-        compileUploadUrlPattern('re:^https://a{1\\.myendpoint\\.com/'),
-      ).toThrow(/unbalanced "\{"/)
-    })
-
-    test('rejects a pattern that does not compile', () => {
-      expect(() =>
-        compileUploadUrlPattern(
-          're:^https://uploads\\.myendpoint\\.com/(files/',
-        ),
-      ).toThrow(/not a valid regular expression/)
     })
   })
 })

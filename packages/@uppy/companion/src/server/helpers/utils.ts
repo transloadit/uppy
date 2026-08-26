@@ -24,34 +24,19 @@ export const regexMetaCharacters = /[*+?^${}()|\\]/
  * because sniffing cannot tell a pattern from a literal URL that happens to
  * contain the same character.
  *
- * A pattern is tested against the whole URL, as written. That is expressive but
- * unforgiving: see `findUploadUrlPatternPitfalls` for the mistakes that turn a
- * pattern into an open redirect, which are reported at startup.
+ * A pattern is tested against the whole URL, as written.
  */
 export const uploadUrlPatternPrefix = 're:'
 
 /**
- * Compiles a `re:` entry. Throws if it cannot be a working pattern at all;
- * mistakes that merely make it *too permissive* are reported separately, by
- * `findUploadUrlPatternPitfalls`.
+ * Compiles a `re:` entry. Whether the pattern is *correct* is up to whoever
+ * wrote it -- see the README on the mistakes that make one match hosts it was
+ * not meant to. Those cannot be detected reliably, and unlike every other way
+ * of getting this wrong they fail open rather than closed, so the README is
+ * where they are addressed.
  */
 export const compileUploadUrlPattern = (entry: string): RegExp => {
   const body = entry.slice(uploadUrlPatternPrefix.length)
-
-  // A list is comma-separated and is split before we get here, so a `{n,m}`
-  // quantifier in a list entry would already have been torn in half. That half
-  // often still compiles -- `{1` is a literal brace under Annex B -- and would
-  // silently mean something other than what was written, so reject it.
-  const unescaped = body.replace(/\\./g, '')
-  if (
-    (unescaped.match(/{/g)?.length ?? 0) !==
-    (unescaped.match(/}/g)?.length ?? 0)
-  ) {
-    throw new Error(
-      `uploadUrls entry "${entry}" has an unbalanced "{". A comma inside a pattern in a list is not supported, because the list is comma-separated -- put the pattern on its own in COMPANION_UPLOAD_URLS, where it is not split, or write "(?:ab|abc)" rather than "a{1,2}b".`,
-    )
-  }
-
   try {
     return new RegExp(body)
   } catch (cause) {
@@ -59,107 +44,6 @@ export const compileUploadUrlPattern = (entry: string): RegExp => {
       `uploadUrls entry "${entry}" is not a valid regular expression: ${(cause as Error).message}`,
     )
   }
-}
-
-/**
- * Finds the host portion of a pattern: what sits between `://` and the `/` that
- * begins the path. Escapes and character classes are stepped over, so a `/`
- * inside `[...]` does not end the host. `\/` counts as a `/`, since patterns are
- * often written with the slashes escaped.
- */
-const findPatternHost = (
-  body: string,
-): { host: string; terminated: boolean } | null => {
-  const scheme = /^\^?[a-zA-Z][a-zA-Z0-9+.-]*:(?:\\\/|\/){2}/.exec(body)
-  if (scheme == null) return null
-
-  const start = scheme[0].length
-  let inClass = false
-  for (let i = start; i < body.length; i += 1) {
-    const char = body[i]
-    if (char === '\\') {
-      if (body[i + 1] === '/' && !inClass) {
-        return { host: body.slice(start, i), terminated: true }
-      }
-      i += 1
-      continue
-    }
-    if (inClass) {
-      if (char === ']') inClass = false
-      continue
-    }
-    if (char === '[') {
-      inClass = true
-      continue
-    }
-    if (char === '/') return { host: body.slice(start, i), terminated: true }
-  }
-  return { host: body.slice(start), terminated: false }
-}
-
-/** Whether a `.` appears outside a character class, where it means "any character". */
-const hasWildcardDot = (pattern: string): boolean => {
-  let inClass = false
-  for (let i = 0; i < pattern.length; i += 1) {
-    const char = pattern[i]
-    if (char === '\\') {
-      i += 1
-      continue
-    }
-    if (inClass) {
-      if (char === ']') inClass = false
-      continue
-    }
-    if (char === '[') {
-      inClass = true
-      continue
-    }
-    if (char === '.') return true
-  }
-  return false
-}
-
-/**
- * Reports the mistakes that make a `uploadUrls` pattern match hosts it was
- * never meant to. A pattern is matched against the whole URL, so all three of
- * these let an attacker choose the host Companion uploads to -- which is the
- * bug this allowlist exists to prevent. See
- * https://github.com/transloadit/uppy/issues/6480
- *
- * These are warnings rather than errors: the checks are heuristics, and a
- * pattern is an explicit opt-in by someone who may have a reason we cannot see.
- */
-export const findUploadUrlPatternPitfalls = (entry: string): string[] => {
-  const body = entry.slice(uploadUrlPatternPrefix.length)
-  const pitfalls: string[] = []
-
-  if (!body.startsWith('^')) {
-    pitfalls.push(
-      `it is not anchored, so it matches any URL that merely *contains* it -- "http://169.254.169.254/?x=<an allowed url>" would pass. Start it with "^".`,
-    )
-  }
-
-  const parsed = findPatternHost(body)
-  if (parsed == null) {
-    pitfalls.push(
-      `it does not look like "^scheme://host/path", so it cannot be checked for the mistakes that let an attacker choose the host.`,
-    )
-    return pitfalls
-  }
-
-  if (hasWildcardDot(parsed.host)) {
-    pitfalls.push(
-      `its host part contains an unescaped ".", which matches any character including "/" and "@", so "https://evil.example/x.your-host.com/" can satisfy it. Escape it as "\\." or use a character class.`,
-    )
-  }
-
-  if (!parsed.terminated && !body.endsWith('$')) {
-    pitfalls.push(
-      `its host part is not terminated by "/" or "$", so it also matches a longer host -- "https://your-host.com.evil.example/" and "https://your-host.com@evil.example/" would pass. End the host with "/".`,
-    )
-  }
-
-  return pitfalls
 }
 
 // Entries come from config and so are few and fixed, but matching happens per
