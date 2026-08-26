@@ -19,7 +19,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
-    "build": "ng-packagr && mv dist/fesm2022 ./ && mv dist/types ./"
+    "build": "ng-packagr && rm -rf fesm2022 types && mv dist/fesm2022 ./ && mv dist/types ./"
   },
   "main": "./fesm2022/uppy-angular.mjs",
   "types": "./types/uppy-angular.d.ts",
