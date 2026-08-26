@@ -123,9 +123,6 @@ type StandaloneCompanionOptions = Pick<
 }
 
 /**
- * Loads the config from environment variables.
- */
-/**
  * Marks an allowlist entry as a regular expression. Standalone config is
  * strings all the way down -- env vars and JSON -- so this is the only way to
  * express one without configuring Companion programmatically, and it is
@@ -133,20 +130,12 @@ type StandaloneCompanionOptions = Pick<
  */
 const patternPrefix = 're:'
 
-/**
- * Parses one allowlist entry. `anchor` is for `validHosts`, where a pattern
- * has to match the whole hostname: a host is either in the set or it is not.
- * `uploadUrls` patterns are left as written, since an allowed endpoint has to
- * admit the upload id appended to it.
- */
-const parseAllowlistEntry = (
-  entry: string,
-  { anchor }: { anchor: boolean },
-): string | RegExp => {
+/** Resolves a `re:` entry to a RegExp, tested as written. */
+const parseAllowlistEntry = (entry: string): string | RegExp => {
   if (!entry.startsWith(patternPrefix)) return entry
   const body = entry.slice(patternPrefix.length)
   try {
-    return new RegExp(anchor ? `^(?:${body})$` : body)
+    return new RegExp(body)
   } catch (cause) {
     throw new Error(
       `Invalid regular expression in allowlist entry "${entry}": ${(cause as Error).message}`,
@@ -158,30 +147,27 @@ const parseAllowlistEntry = (
  * Splits a comma-separated allowlist. A value that is itself a pattern is not
  * split, so that a `{n,m}` quantifier survives.
  */
-export const parseAllowlist = (
-  value: string,
-  options: { anchor: boolean },
-): (string | RegExp)[] =>
-  (value.startsWith(patternPrefix) ? [value] : value.split(',')).map((entry) =>
-    parseAllowlistEntry(entry, options),
+export const parseAllowlist = (value: string): (string | RegExp)[] =>
+  (value.startsWith(patternPrefix) ? [value] : value.split(',')).map(
+    parseAllowlistEntry,
   )
 
 /** Resolves `re:` entries in an allowlist read from the JSON config file. */
-const parseAllowlistArray = (
-  value: unknown,
-  options: { anchor: boolean },
-): unknown =>
+const parseAllowlistArray = (value: unknown): unknown =>
   Array.isArray(value)
     ? value.map((entry) =>
-        typeof entry === 'string' ? parseAllowlistEntry(entry, options) : entry,
+        typeof entry === 'string' ? parseAllowlistEntry(entry) : entry,
       )
     : value
 
+/**
+ * Loads the config from environment variables.
+ */
 const getConfigFromEnv = (): StandaloneCompanionOptions => {
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
     process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
-  const validHosts = domains ? parseAllowlist(domains, { anchor: true }) : []
+  const validHosts = domains ? parseAllowlist(domains) : []
 
   return {
     providerOptions: {
@@ -277,9 +263,7 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       return undefined
     })(),
     sendSelfEndpoint: process.env['COMPANION_SELF_ENDPOINT'],
-    uploadUrls: uploadUrls
-      ? parseAllowlist(uploadUrls, { anchor: false })
-      : null,
+    uploadUrls: uploadUrls ? parseAllowlist(uploadUrls) : null,
     secret: getSecret('COMPANION_SECRET'),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
     allowLocalUrls: process.env['COMPANION_ALLOW_LOCAL_URLS'] === 'true',
@@ -343,11 +327,9 @@ const getConfigFromFile = () => {
   const config = JSON.parse(rawdata.toString('utf8'))
 
   // JSON cannot hold a RegExp either, so `re:` is resolved here too.
-  config.uploadUrls = parseAllowlistArray(config.uploadUrls, { anchor: false })
+  config.uploadUrls = parseAllowlistArray(config.uploadUrls)
   if (config.server?.validHosts != null) {
-    config.server.validHosts = parseAllowlistArray(config.server.validHosts, {
-      anchor: true,
-    })
+    config.server.validHosts = parseAllowlistArray(config.server.validHosts)
   }
   return config
 }

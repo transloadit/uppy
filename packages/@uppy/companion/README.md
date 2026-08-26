@@ -118,15 +118,12 @@ quantifier.
 
 ```sh
 COMPANION_UPLOAD_URLS="re:^https://(?:api2-[a-z0-9]+|api2)\\.example\\.com/files/"
-COMPANION_DOMAINS="re:(\\w+)\\.example\\.com"
+COMPANION_DOMAINS="re:^(\\w+)\\.example\\.com$"
 ```
 
-A `validHosts` pattern is anchored for you — a host is either in the set or it
-is not. Note that `.` still matches any character unless escaped.
-
-A `uploadUrls` pattern is tested against the whole URL as written, so the
+Patterns are matched as written, against the whole URL or hostname, so the
 pattern itself carries the security property. Three mistakes let an attacker
-choose the host, and none of them stops uploads working:
+choose the host, and none of them stops uploads or logins working:
 
 ```
 re:https://uploads\.example\.com/     # not anchored: allows
@@ -137,12 +134,17 @@ re:^https://[a-z0-9]+\.example\.com   # host not terminated: allows
                                       # https://a.example.com.evil.example/ and ...@evil.example/
 ```
 
-Anchor it, keep the host part from crossing a boundary, and end the host with
-`/`:
+Companion warns at startup about a pattern with no `^`, since that one is
+never intentional, but it cannot check the others. Anchor it, keep the host
+part from crossing a boundary, and end the host with `/`:
 
 ```
-re:^https://[a-z0-9-]+\.example\.com/files/
+COMPANION_UPLOAD_URLS="re:^https://[a-z0-9-]+\\.example\\.com/files/"
+COMPANION_DOMAINS="re:^(\\w+)\\.example\\.com$"
 ```
+
+A `validHosts` pattern should end with `$` as well — a host is either in the
+set or it is not, so there is nothing a partial match could usefully mean.
 
 #### Upgrading from a version before 5.x
 
@@ -156,7 +158,7 @@ nothing, so prefix it:
 +COMPANION_UPLOAD_URLS="re:^https://api2-(\\w+)\\.example\\.com/files/"
 
 -COMPANION_DOMAINS="(\\w+).example.com"
-+COMPANION_DOMAINS="re:(\\w+)\\.example\\.com"
++COMPANION_DOMAINS="re:^(\\w+)\\.example\\.com$"
 ```
 
 Companion cannot detect this — such an entry is a valid literal URL or

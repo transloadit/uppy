@@ -1,7 +1,8 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { validateConfig } from '../src/config/companion.js'
 import type { CompanionInitOptions } from '../src/schemas/companion.js'
 import { hasHostMatch, hasUploadUrlMatch } from '../src/server/helpers/utils.js'
+import logger from '../src/server/logger.js'
 import { parseAllowlist } from '../src/standalone/helper.js'
 
 describe('hasUploadUrlMatch', () => {
@@ -61,39 +62,41 @@ describe('hasHostMatch', () => {
 
 describe('parseAllowlist', () => {
   test('splits a list, leaving entries literal', () => {
-    expect(
-      parseAllowlist('https://a.com/,https://b.com/', { anchor: false }),
-    ).toEqual(['https://a.com/', 'https://b.com/'])
+    expect(parseAllowlist('https://a.com/,https://b.com/')).toEqual([
+      'https://a.com/',
+      'https://b.com/',
+    ])
   })
 
   test('resolves "re:" to a RegExp, so the matcher never sees the prefix', () => {
-    const [entry] = parseAllowlist('re:^https://\\w+\\.myendpoint\\.com/', {
-      anchor: false,
-    })
+    const [entry] = parseAllowlist('re:^https://\\w+\\.myendpoint\\.com/')
     expect(entry).toBeInstanceOf(RegExp)
     expect(hasUploadUrlMatch('https://a.myendpoint.com/files/', [entry!])).toBe(
       true,
     )
   })
 
-  test('anchors a validHosts pattern, so it cannot match a longer host', () => {
-    const hosts = parseAllowlist('re:(\\w+)\\.myendpoint\\.com', {
-      anchor: true,
-    })
-    expect(hasHostMatch('sub.myendpoint.com', hosts)).toBe(true)
-    expect(hasHostMatch('sub.myendpoint.com.evil.com', hosts)).toBe(false)
+  // Patterns are matched as written, for validHosts as for uploadUrls, so
+  // anchoring is the operator's to get right. validateConfig warns about a
+  // missing "^"; the README covers the rest.
+  test('leaves a validHosts pattern as written', () => {
+    const unanchored = parseAllowlist('re:(\\w+)\\.myendpoint\\.com')
+    expect(hasHostMatch('sub.myendpoint.com', unanchored)).toBe(true)
+    expect(hasHostMatch('sub.myendpoint.com.evil.com', unanchored)).toBe(true)
+
+    const anchored = parseAllowlist('re:^(\\w+)\\.myendpoint\\.com$')
+    expect(hasHostMatch('sub.myendpoint.com', anchored)).toBe(true)
+    expect(hasHostMatch('sub.myendpoint.com.evil.com', anchored)).toBe(false)
   })
 
   test('does not split a value that is itself a pattern', () => {
     expect(
-      parseAllowlist('re:^https://a\\w{1,3}\\.myendpoint\\.com/', {
-        anchor: false,
-      }),
+      parseAllowlist('re:^https://a\\w{1,3}\\.myendpoint\\.com/'),
     ).toHaveLength(1)
   })
 
   test('rejects a pattern that does not compile', () => {
-    expect(() => parseAllowlist('re:^https://(', { anchor: false })).toThrow(
+    expect(() => parseAllowlist('re:^https://(')).toThrow(
       /Invalid regular expression/,
     )
   })
@@ -134,6 +137,29 @@ describe('validateConfig', () => {
     expect(() =>
       validateConfig(withOptions({ uploadUrls: ['uploads.myendpoint.com'] })),
     ).toThrow(/is not an absolute URL/)
+  })
+
+  test('warns about a pattern with no "^", in either allowlist', () => {
+    const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+    try {
+      validateConfig(
+        withOptions({
+          uploadUrls: [/https:\/\/uploads\.myendpoint\.com\//],
+          server: {
+            host: 'localhost:3020',
+            path: '',
+            validHosts: [/uploads\.myendpoint\.com/],
+          },
+        } as Partial<CompanionInitOptions>),
+      )
+      expect(warn.mock.calls.map(([message]) => message)).toEqual([
+        expect.stringContaining('uploadUrls entry'),
+        expect.stringContaining('validHosts entry'),
+      ])
+      expect(warn.mock.calls[0]?.[0]).toContain('not anchored')
+    } finally {
+      warn.mockRestore()
+    }
   })
 
   test('accepts a RegExp uploadUrls entry', () => {

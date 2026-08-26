@@ -85,6 +85,20 @@ const validateConfigSchema = z.object({
 })
 
 /**
+ * Patterns are matched as written, so one that is not anchored also matches a
+ * value that merely *contains* it -- the shape of
+ * https://github.com/transloadit/uppy/issues/6480. It can be deliberate, so
+ * this warns rather than refuses.
+ */
+function warnIfUnanchored(pattern: RegExp, option: string): void {
+  if (pattern.source.startsWith('^')) return
+  logger.warn(
+    `${option} entry ${pattern} is not anchored, so it also matches values that merely contain it. Start it with "^".`,
+    `startup.${option}`,
+  )
+}
+
+/**
  * Validates the `uploadUrls` allowlist: only what is unambiguously broken. See
  * the README for migrating an entry that used to be compiled as a regex, and
  * for the mistakes that make a pattern too permissive.
@@ -94,12 +108,7 @@ function validateUploadUrls(
 ): void {
   for (const entry of uploadUrls ?? []) {
     if (entry instanceof RegExp) {
-      if (!entry.source.startsWith('^')) {
-        logger.warn(
-          `uploadUrls entry ${entry} is not anchored, so it also matches URLs that merely contain it. Anchor it with "^" and terminate it at a path boundary, e.g. /^https:\\/\\/example\\.com\\//`,
-          'startup.uploadUrls',
-        )
-      }
+      warnIfUnanchored(entry, 'uploadUrls')
       continue
     }
 
@@ -118,6 +127,14 @@ function validateUploadUrls(
         'startup.uploadUrls',
       )
     }
+  }
+}
+
+function validateValidHosts(
+  validHosts: NonNullable<CompanionInitOptions['server']>['validHosts'],
+): void {
+  for (const entry of validHosts ?? []) {
+    if (entry instanceof RegExp) warnIfUnanchored(entry, 'validHosts')
   }
 }
 
@@ -175,6 +192,7 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
   }
 
   validateUploadUrls(uploadUrls)
+  validateValidHosts(server.validHosts)
 
   const { corsOrigins } = companionOptions
   if (corsOrigins == null) {
