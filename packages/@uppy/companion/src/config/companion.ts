@@ -3,7 +3,7 @@ import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
 import z from 'zod'
 import type { CompanionInitOptions } from '../schemas/companion.js'
-import { defaultGetKey, patternPrefix } from '../server/helpers/utils.js'
+import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
@@ -85,12 +85,9 @@ const validateConfigSchema = z.object({
 })
 
 /**
- * Validates the `uploadUrls` allowlist.
- *
- * Only what is unambiguously broken: an entry that cannot be a URL at all. A
- * pattern is left to whoever wrote it -- see the README, which covers both
- * migrating an entry that used to be compiled as a regex and the mistakes that
- * make one too permissive.
+ * Validates the `uploadUrls` allowlist: only what is unambiguously broken. See
+ * the README for migrating an entry that used to be compiled as a regex, and
+ * for the mistakes that make a pattern too permissive.
  */
 function validateUploadUrls(
   uploadUrls: CompanionInitOptions['uploadUrls'],
@@ -105,11 +102,6 @@ function validateUploadUrls(
       }
       continue
     }
-
-    // A `re:` entry is a pattern, not a URL. `re:` happens to be a valid
-    // scheme, so it would parse rather than throw, and a `?` or `#` in the
-    // pattern would then read as a query or fragment.
-    if (entry.startsWith(patternPrefix)) continue
 
     let url: URL
     try {

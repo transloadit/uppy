@@ -91,112 +91,65 @@ you may also run the following command from within its directory
 npm start
 ```
 
-### Restricting upload destinations
+### Allowlists
 
 `uploadUrls` (`COMPANION_UPLOAD_URLS`) is the allowlist of destinations
-Companion will upload to. It is the only thing standing between a caller and
-your internal network, so it is mandatory in production.
-
-Entries are matched **literally**: the origin must be identical, and the path
-must match at a path boundary, so `https://uploads.example.com/files/` also
-allows `https://uploads.example.com/files/<id>` (which a resumable upload
-needs) but not `https://uploads.example.com/filesomething`.
+Companion uploads to; `server.validHosts` (`COMPANION_DOMAINS`) is the
+allowlist of hosts an OAuth flow may be redirected back to. Both are matched
+literally.
 
 ```sh
 COMPANION_UPLOAD_URLS="https://uploads.example.com/files/,https://other.example.com/files/"
+COMPANION_DOMAINS="sub1.example.com,sub2.example.com"
 ```
+
+A `uploadUrls` entry must be an absolute URL, and matches at a path boundary,
+so `https://uploads.example.com/files/` also allows the resumable upload id
+appended to it but not `.../filesomething`. A `validHosts` entry is a hostname,
+compared case-insensitively; a port is part of it, so `example.com` does not
+match `example.com:3020`.
 
 #### Patterns
 
-Prefix an entry with `re:` to match with a regular expression instead.
-
-Because the value is comma-separated, a pattern in a list cannot itself contain
-a `,` — a `{n,m}` quantifier would be split down the middle. If the whole value
-starts with `re:` it is therefore *not* split at all and is taken as one
-pattern, which is the way to use a quantifier. Combine alternatives with `|`
-rather than listing several patterns after a leading `re:`.
+Configuring Companion programmatically, pass a `RegExp`. Standalone config is
+strings all the way down, so prefix an entry with `re:` instead. A value that
+starts with `re:` is not split on `,`, which is how to use a `{n,m}`
+quantifier.
 
 ```sh
 COMPANION_UPLOAD_URLS="re:^https://(?:api2-[a-z0-9]+|api2)\\.example\\.com/files/"
+COMPANION_DOMAINS="re:(\\w+)\\.example\\.com"
 ```
 
-A pattern is tested against the whole URL, exactly as you wrote it. That is
-expressive, but it means the pattern itself carries the security property.
-Companion does not check patterns for you, and the three mistakes below are not
-the kind you notice: get one wrong and uploads keep working, while your
-internal network becomes reachable. Read them before writing a pattern.
+A `validHosts` pattern is anchored for you — a host is either in the set or it
+is not. Note that `.` still matches any character unless escaped.
 
-**Anchor it with `^`.** Without it a pattern matches any URL that merely
-*contains* it, so an attacker appends your allowed URL to their own:
+A `uploadUrls` pattern is tested against the whole URL as written, so the
+pattern itself carries the security property. Three mistakes let an attacker
+choose the host, and none of them stops uploads working:
 
 ```
-re:https://uploads\.example\.com/           # BAD
-  ↳ allows http://169.254.169.254/latest/meta-data/?x=https://uploads.example.com/
+re:https://uploads\.example\.com/     # not anchored: allows
+                                      # http://169.254.169.254/?x=https://uploads.example.com/
+re:^https://.*\.example\.com/         # "." spans "/" and "@": allows
+                                      # https://evil.example/x.example.com/y
+re:^https://[a-z0-9]+\.example\.com   # host not terminated: allows
+                                      # https://a.example.com.evil.example/ and ...@evil.example/
 ```
 
-**Escape `.` in the host.** An unescaped `.` matches any character, including
-`/` and `@`, which lets the "host" run into somebody else's path:
-
-```
-re:^https://.*\.example\.com/               # BAD
-  ↳ allows https://evil.example/x.example.com/y
-```
-
-**End the host with `/`.** An unterminated host also matches longer ones, both
-by suffix and through the userinfo trick, where the real host is what follows
-the `@`:
-
-```
-re:^https://[a-z0-9]+\.example\.com         # BAD
-  ↳ allows https://a.example.com.evil.example/
-  ↳ allows https://a.example.com@evil.example/
-```
-
-Put together, a pattern for "any subdomain of example.com, under /files/" is:
+Anchor it, keep the host part from crossing a boundary, and end the host with
+`/`:
 
 ```
 re:^https://[a-z0-9-]+\.example\.com/files/
 ```
 
-If you configure Companion programmatically rather than through the
-environment, prefer passing a real `RegExp` — or, better, list the URLs
-literally and skip patterns altogether.
+#### Upgrading from a version before 5.x
 
-### Restricting OAuth redirects
-
-`server.validHosts` (`COMPANION_DOMAINS`) is the allowlist of Companion hosts
-an OAuth flow may be redirected back to. A host that passes receives the
-authorization code, so it is worth the same care as `uploadUrls`.
-
-Entries are hostnames, compared literally and case-insensitively. A port is
-part of the hostname here: `example.com` does not match `example.com:3020`.
-
-```sh
-COMPANION_DOMAINS="sub1.example.com,sub2.example.com"
-```
-
-As with `uploadUrls`, prefix an entry with `re:` to match with a regular
-expression, and a value starting with `re:` is not split on `,`:
-
-```sh
-COMPANION_DOMAINS="re:(\\w+)\\.example\\.com"
-```
-
-Unlike `uploadUrls`, a `validHosts` pattern is **anchored for you** — it has to
-match the whole hostname. A host is either in the set or it is not, so there is
-nothing a partial match could usefully mean. Note that `.` still matches any
-character unless you escape it, so `sub.example.com` as a pattern also admits
-`subXexample.com`; write `re:sub\.example\.com`, or just use a literal entry.
-
-### Upgrading from a version before 5.x
-
-Both allowlists used to treat strings as regular expressions — `uploadUrls`
-compiled every entry and matched it anywhere in the URL, and `validHosts`
-guessed per entry by looking for regex metacharacters. Both are now literal
-unless prefixed with `re:`.
-
-If you wrote an entry as a pattern, it is now a literal value that matches
-nothing, and you need to migrate it:
+Strings used to be compiled into regular expressions — `uploadUrls` matched
+anywhere in the URL, and `validHosts` guessed per entry by looking for regex
+metacharacters. An entry written as a pattern is now a literal that matches
+nothing, so prefix it:
 
 ```diff
 -COMPANION_UPLOAD_URLS="https://api2-(\\w+)\\.example\\.com/files/"
@@ -206,10 +159,9 @@ nothing, and you need to migrate it:
 +COMPANION_DOMAINS="re:(\\w+)\\.example\\.com"
 ```
 
-Companion does not detect this for you — such an entry is a perfectly good
-literal URL or hostname as far as it can tell. It fails closed, though: the
-destination or redirect is refused rather than allowed, so uploads and logins
-break visibly and nothing is exposed while you notice.
+Companion cannot detect this — such an entry is a valid literal URL or
+hostname. It fails closed, though: uploads and logins break visibly and
+nothing is exposed while you notice.
 
 ### Deploy to heroku
 
