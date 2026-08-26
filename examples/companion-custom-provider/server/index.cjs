@@ -11,7 +11,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const uppy = require('@uppy/companion')
-const MyCustomProvider = require('./CustomProvider.cjs')
+const MyCustomProvider = require('./CustomProvider.js')
 
 const app = express()
 
