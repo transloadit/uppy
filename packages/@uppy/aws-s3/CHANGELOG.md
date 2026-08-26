@@ -1,5 +1,52 @@
 # @uppy/aws-s3
 
+## 6.0.0
+
+### Major Changes
+
+- dc32b3d: `@uppy/aws-s3` has been rewritten from scratch ([#6345](https://github.com/transloadit/uppy/pull/6345)).
+
+  The plugin is now built on a standalone S3 client and configuration is reduced to three
+  mutually exclusive signing modes:
+
+  - `getCredentials` — client-side SigV4 signing using temporary AWS credentials
+  - `signRequest` — bring your own signer (client side or server side)
+  - `companionEndpoint` — Companion signing (as before)
+
+  It is now much easier to use the S3 plugin without relying on Companion. Any S3-compatible
+  service (R2, MinIO, DigitalOcean Spaces) now works in every signing mode, including
+  client-side signing, which previously hardcoded `*.amazonaws.com` and could only target AWS.
+
+  **Removed options:** `endpoint`, `headers`, `cookiesRule`,
+  `getTemporarySecurityCredentials`, `getUploadParameters`, `signPart`,
+  `createMultipartUpload`, `listParts`, `abortMultipartUpload`,
+  `completeMultipartUpload`, `uploadPartBytes`, `retryDelays`.
+
+  **New options:** `s3Endpoint`, `region`, `getCredentials`, `signRequest`,
+  `companionEndpoint`, `generateObjectKey`.
+
+  **Unchanged:** `shouldUseMultipart`, `getChunkSize`, `allowedMetaFields`, `limit`.
+
+  See the migration guide for before/after examples for each signing mode.
+
+### Patch Changes
+
+- 675697d: Add `useGooglePicker` react hook and remove unused `RequestClient` options `name`, `pluginId` and `provider`.
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- d9d44ce: Improve type
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/core@6.0.0
+
 ## 5.1.0
 
 ### Minor Changes

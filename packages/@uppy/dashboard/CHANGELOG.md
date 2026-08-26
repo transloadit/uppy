@@ -1,5 +1,38 @@
 # @uppy/dashboard
 
+## 6.0.0
+
+### Minor Changes
+
+- ddffd2c: Narrow a number of `any` types to real types. Some affect the public interface.
+
+  This also fixes some bugs the new types revealed:
+
+  - The "copy link" helper now actually applies its styles to the temporary textarea it creates. Previously the style object was stringified to `"[object Object]"`, leaving the textarea unstyled and able to scroll the page when selected.
+  - Cancelling the file card now emits `dashboard:file-edit-complete` with the file being edited, instead of `undefined`.
+  - The "missing required meta fields" message now passes the file to a `metaFields` callback, which previously received `undefined`, and no longer throws when a field listed in the `requiredMetaFields` restriction has no matching entry in `metaFields`.
+
+- 84ad853: Import Preact from @uppy/core utilities to guarantee a single version across packages.
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- b9253f7: fix "My Device" button in dashboard, it now respects the fileManagerSelectionType.
+- 1a1aef3: Keep remote provider views within the Dashboard when breadcrumbs and filenames are long.
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/core@6.0.0
+  - @uppy/thumbnail-generator@6.0.0
+
 ## 5.1.1
 
 ### Patch Changes
