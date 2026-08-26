@@ -381,3 +381,29 @@ describe('parseUploadUrlsFromEnv', () => {
     ).toBe(true)
   })
 })
+
+describe('a pattern is safe however the operator spells it', () => {
+  // Written correctly, then with the two mistakes that make the equivalent
+  // whole-string regex exploitable: the terminating "/" left off, and ".*"
+  // used where a character class was meant.
+  const spellings = [
+    're:https://[a-z0-9]*\\.myendpoint\\.com/',
+    're:https://[a-z0-9]*\\.myendpoint\\.com',
+    're:https://.*\\.myendpoint\\.com/',
+  ]
+
+  test.each(spellings)('%s accepts the intended host', (entry) => {
+    expect(hasUploadUrlMatch('https://a.myendpoint.com/ok', [entry])).toBe(true)
+  })
+
+  test.each(spellings)('%s rejects every bypass', (entry) => {
+    for (const url of [
+      'https://evil.com/x.myendpoint.com/y',
+      'https://a.myendpoint.com.evil.com/',
+      'https://a.myendpoint.com@evil.com/',
+      'https://evil.com/?x=https://a.myendpoint.com/',
+    ]) {
+      expect(hasUploadUrlMatch(url, [entry])).toBe(false)
+    }
+  })
+})
