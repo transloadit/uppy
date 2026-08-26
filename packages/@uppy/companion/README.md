@@ -91,6 +91,73 @@ you may also run the following command from within its directory
 npm start
 ```
 
+### Restricting upload destinations
+
+`uploadUrls` (`COMPANION_UPLOAD_URLS`) is the allowlist of destinations
+Companion will upload to. It is the only thing standing between a caller and
+your internal network, so it is mandatory in production.
+
+Entries are matched **literally**: the origin must be identical, and the path
+must match at a path boundary, so `https://uploads.example.com/files/` also
+allows `https://uploads.example.com/files/<id>` (which a resumable upload
+needs) but not `https://uploads.example.com/filesomething`.
+
+```sh
+COMPANION_UPLOAD_URLS="https://uploads.example.com/files/,https://other.example.com/files/"
+```
+
+#### Patterns
+
+Prefix an entry with `re:` to match with a regular expression instead. If the
+whole value starts with `re:` it is *not* split on `,`, so a `{n,m}` quantifier
+is safe to use; otherwise entries are comma-separated as usual and may mix
+literals and patterns.
+
+```sh
+COMPANION_UPLOAD_URLS="re:^https://(?:api2-[a-z0-9]+|api2)\\.example\\.com/files/"
+```
+
+A pattern is tested against the whole URL, exactly as you wrote it. That is
+expressive, but it means the pattern itself carries the security property, and
+three mistakes silently turn it into an open door to your internal network.
+Companion warns about each at startup, but does not refuse to boot.
+
+**Anchor it with `^`.** Without it a pattern matches any URL that merely
+*contains* it, so an attacker appends your allowed URL to their own:
+
+```
+re:https://uploads\.example\.com/           # BAD
+  ↳ allows http://169.254.169.254/latest/meta-data/?x=https://uploads.example.com/
+```
+
+**Escape `.` in the host.** An unescaped `.` matches any character, including
+`/` and `@`, which lets the "host" run into somebody else's path:
+
+```
+re:^https://.*\.example\.com/               # BAD
+  ↳ allows https://evil.example/x.example.com/y
+```
+
+**End the host with `/`.** An unterminated host also matches longer ones, both
+by suffix and through the userinfo trick, where the real host is what follows
+the `@`:
+
+```
+re:^https://[a-z0-9]+\.example\.com         # BAD
+  ↳ allows https://a.example.com.evil.example/
+  ↳ allows https://a.example.com@evil.example/
+```
+
+Put together, a pattern for "any subdomain of example.com, under /files/" is:
+
+```
+re:^https://[a-z0-9-]+\.example\.com/files/
+```
+
+If you configure Companion programmatically rather than through the
+environment, prefer passing a real `RegExp` — or, better, list the URLs
+literally and skip patterns altogether.
+
 ### Deploy to heroku
 
 Companion can also be deployed to [Heroku](https://www.heroku.com)

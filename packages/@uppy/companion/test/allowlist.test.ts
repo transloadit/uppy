@@ -3,6 +3,7 @@ import { validateConfig } from '../src/config/companion.js'
 import type { CompanionInitOptions } from '../src/schemas/companion.js'
 import {
   compileUploadUrlPattern,
+  findUploadUrlPatternPitfalls,
   hasHostMatch,
   hasUploadUrlMatch,
 } from '../src/server/helpers/utils.js'
@@ -229,17 +230,17 @@ describe('validateConfig', () => {
 })
 
 describe('uploadUrls "re:" pattern entries', () => {
-  // Exactly what COMPANION_UPLOAD_URLS produces: split(',') over the env value.
-  const fromEnv = (value: string) => value.split(',')
+  // Exactly what COMPANION_UPLOAD_URLS produces.
+  const fromEnv = (value: string) => parseUploadUrlsFromEnv(value)
 
-  describe('a standalone config using patterns', () => {
+  describe('a correctly written pattern', () => {
+    // Anchored, host part cannot cross a boundary, host terminated by "/".
     const allowed = fromEnv(
-      're:https://api2-(\\w+)\\.myendpoint\\.com/resumable/files/?,re:https://api2\\.myendpoint\\.com/resumable/files/?',
+      're:^https://(?:api2-[a-z0-9]+|api2)\\.myendpoint\\.com/resumable/files/',
     )
 
     test.each([
       'https://api2-use1.myendpoint.com/resumable/files/',
-      'https://api2-use1.myendpoint.com/resumable/files',
       // A tus resume url is <endpoint>/<id>.
       'https://api2-use1.myendpoint.com/resumable/files/abc123',
       'https://api2.myendpoint.com/resumable/files/deadbeef',
@@ -251,159 +252,121 @@ describe('uploadUrls "re:" pattern entries', () => {
       // https://github.com/transloadit/uppy/issues/6480
       'http://169.254.169.254/latest/meta-data/?x=https://api2.myendpoint.com/resumable/files/',
       'http://169.254.169.254/latest/meta-data/',
-      // The host pattern is anchored, so it cannot run on into a suffix.
       'https://api2.myendpoint.com.evil.com/resumable/files/',
-      // Userinfo must not be able to disguise the real host.
       'https://api2.myendpoint.com@evil.com/resumable/files/',
       'http://api2.myendpoint.com/resumable/files/',
       'https://api2-use1.myendpoint.com/admin',
-      'https://evil.com/?y=https://api2.myendpoint.com/resumable/files/',
     ])('rejects %s', (url) => {
       expect(hasUploadUrlMatch(url, allowed)).toBe(false)
     })
+
+    test('is reported as free of pitfalls', () => {
+      expect(findUploadUrlPatternPitfalls(allowed[0]!)).toEqual([])
+    })
   })
 
-  test('matches a pattern path only at a path boundary', () => {
-    const entry = ['re:https://uploads\\.myendpoint\\.com/files']
-    expect(
-      hasUploadUrlMatch('https://uploads.myendpoint.com/files/a', entry),
-    ).toBe(true)
-    expect(
-      hasUploadUrlMatch('https://uploads.myendpoint.com/filesomething', entry),
-    ).toBe(false)
-  })
-
-  test('matches a port explicitly or not at all', () => {
-    expect(
-      hasUploadUrlMatch('https://uploads.myendpoint.com:8443/', [
-        're:https://uploads\\.myendpoint\\.com/',
-      ]),
-    ).toBe(false)
-    expect(
-      hasUploadUrlMatch('https://uploads.myendpoint.com:8443/', [
-        're:https://uploads\\.myendpoint\\.com:8443/',
-      ]),
-    ).toBe(true)
-  })
-
-  test('mixes literal and pattern entries in one allowlist', () => {
+  test('a "{n,m}" quantifier survives, because a lone pattern is not split', () => {
     const allowed = fromEnv(
-      'https://uploads.myendpoint.com/files/,re:https://\\w+\\.myotherendpoint\\.com/files/',
+      're:^https://api2-[a-z0-9]{1,3}\\.myendpoint\\.com/',
+    )
+    expect(allowed).toHaveLength(1)
+    expect(hasUploadUrlMatch('https://api2-ab.myendpoint.com/x', allowed)).toBe(
+      true,
+    )
+    expect(
+      hasUploadUrlMatch('https://api2-abcd.myendpoint.com/x', allowed),
+    ).toBe(false)
+  })
+
+  test('mixes literal and pattern entries in one list', () => {
+    const allowed = fromEnv(
+      'https://uploads.myendpoint.com/files/,re:^https://[a-z0-9]+\\.myendpoint\\.com/files/',
     )
     expect(
       hasUploadUrlMatch('https://uploads.myendpoint.com/files/a', allowed),
     ).toBe(true)
     expect(
-      hasUploadUrlMatch('https://a.myotherendpoint.com/files/b', allowed),
+      hasUploadUrlMatch('https://any.myendpoint.com/files/b', allowed),
     ).toBe(true)
     expect(hasUploadUrlMatch('https://evil.com/files/', allowed)).toBe(false)
   })
 
-  test('supports alternation, so a comma is never needed inside an entry', () => {
-    const entry = ['re:https://(?:api2-\\w+|api2)\\.myendpoint\\.com/files/']
-    expect(
-      hasUploadUrlMatch('https://api2-use1.myendpoint.com/files/x', entry),
-    ).toBe(true)
-    expect(
-      hasUploadUrlMatch('https://api2.myendpoint.com/files/x', entry),
-    ).toBe(true)
-    expect(
-      hasUploadUrlMatch('https://api3.myendpoint.com/files/x', entry),
-    ).toBe(false)
+  describe('pitfall detection', () => {
+    // Each of these compiles and looks plausible, but lets an attacker choose
+    // the host. They are warnings, not errors, so assert on what is reported.
+    test('flags a pattern that is not anchored', () => {
+      expect(
+        findUploadUrlPatternPitfalls('re:https://uploads\\.myendpoint\\.com/'),
+      ).toEqual([expect.stringContaining('not anchored')])
+      // ...and the pattern really is bypassable, which is why we warn.
+      expect(
+        hasUploadUrlMatch(
+          'http://169.254.169.254/?x=https://uploads.myendpoint.com/',
+          ['re:https://uploads\\.myendpoint\\.com/'],
+        ),
+      ).toBe(true)
+    })
+
+    test('flags an unescaped "." in the host part', () => {
+      expect(
+        findUploadUrlPatternPitfalls('re:^https://.*\\.myendpoint\\.com/'),
+      ).toEqual([expect.stringContaining('unescaped "."')])
+      expect(
+        hasUploadUrlMatch('https://evil.com/x.myendpoint.com/y', [
+          're:^https://.*\\.myendpoint\\.com/',
+        ]),
+      ).toBe(true)
+    })
+
+    test('flags a host part that is not terminated', () => {
+      expect(
+        findUploadUrlPatternPitfalls(
+          're:^https://[a-z0-9]+\\.myendpoint\\.com',
+        ),
+      ).toEqual([expect.stringContaining('not terminated')])
+      expect(
+        hasUploadUrlMatch('https://a.myendpoint.com.evil.com/', [
+          're:^https://[a-z0-9]+\\.myendpoint\\.com',
+        ]),
+      ).toBe(true)
+    })
+
+    test('accepts "$" as a terminator', () => {
+      expect(
+        findUploadUrlPatternPitfalls(
+          're:^https://[a-z0-9]+\\.myendpoint\\.com$',
+        ),
+      ).toEqual([])
+    })
+
+    test('understands escaped slashes and character classes', () => {
+      expect(
+        findUploadUrlPatternPitfalls(
+          're:^https:\\/\\/[a-z0-9.]+\\.myendpoint\\.com\\/files\\/',
+        ),
+      ).toEqual([])
+    })
+
+    test('says so when the shape cannot be checked at all', () => {
+      expect(findUploadUrlPatternPitfalls('re:^\\w+$')).toEqual([
+        expect.stringContaining('does not look like'),
+      ])
+    })
   })
 
-  test('rejects a pattern torn in half by the comma separator', () => {
-    // What `a{1,2}` becomes after split(',').
-    expect(() =>
-      compileUploadUrlPattern('re:https://a{1\\.myendpoint\\.com/'),
-    ).toThrow(/unbalanced "\{"/)
-  })
+  describe('compilation', () => {
+    test('rejects a pattern torn in half by a list separator', () => {
+      expect(() =>
+        compileUploadUrlPattern('re:^https://a{1\\.myendpoint\\.com/'),
+      ).toThrow(/unbalanced "\{"/)
+    })
 
-  test('rejects a pattern entry that is not scheme://host', () => {
-    expect(() =>
-      compileUploadUrlPattern('re:uploads\\.myendpoint\\.com/files/'),
-    ).toThrow(/must look like/)
-  })
-
-  test('rejects a pattern entry that does not compile', () => {
-    expect(() =>
-      compileUploadUrlPattern('re:https://uploads\\.myendpoint\\.com/(files/'),
-    ).toThrow()
-  })
-})
-
-describe('parseUploadUrlsFromEnv', () => {
-  test('splits a plain list on commas', () => {
-    expect(
-      parseUploadUrlsFromEnv(
-        'https://uploads.myendpoint.com/files/,https://other.myendpoint.com/files/',
-      ),
-    ).toEqual([
-      'https://uploads.myendpoint.com/files/',
-      'https://other.myendpoint.com/files/',
-    ])
-  })
-
-  test('does not split a value that is itself a pattern', () => {
-    // A `{n,m}` quantifier is only expressible because nothing splits here.
-    const value =
-      're:https://api2-\\w{1,3}\\.myendpoint\\.com/resumable/files/?'
-    expect(parseUploadUrlsFromEnv(value)).toEqual([value])
-    expect(
-      hasUploadUrlMatch(
-        'https://api2-ab.myendpoint.com/resumable/files/x',
-        parseUploadUrlsFromEnv(value),
-      ),
-    ).toBe(true)
-    expect(
-      hasUploadUrlMatch(
-        'https://api2-abcd.myendpoint.com/resumable/files/x',
-        parseUploadUrlsFromEnv(value),
-      ),
-    ).toBe(false)
-  })
-
-  test('rejects a leading pattern followed by further pattern entries', () => {
-    expect(() =>
-      parseUploadUrlsFromEnv(
-        're:https://a\\.myendpoint\\.com/,re:https://b\\.myendpoint\\.com/',
-      ),
-    ).toThrow(/Combine the alternatives into one pattern/)
-  })
-
-  test('still allows a pattern among literals when it does not lead', () => {
-    const entries = parseUploadUrlsFromEnv(
-      'https://uploads.myendpoint.com/files/,re:https://\\w+\\.myendpoint\\.com/files/',
-    )
-    expect(entries).toHaveLength(2)
-    expect(
-      hasUploadUrlMatch('https://any.myendpoint.com/files/x', entries),
-    ).toBe(true)
-  })
-})
-
-describe('a pattern is safe however the operator spells it', () => {
-  // Written correctly, then with the two mistakes that make the equivalent
-  // whole-string regex exploitable: the terminating "/" left off, and ".*"
-  // used where a character class was meant.
-  const spellings = [
-    're:https://[a-z0-9]*\\.myendpoint\\.com/',
-    're:https://[a-z0-9]*\\.myendpoint\\.com',
-    're:https://.*\\.myendpoint\\.com/',
-  ]
-
-  test.each(spellings)('%s accepts the intended host', (entry) => {
-    expect(hasUploadUrlMatch('https://a.myendpoint.com/ok', [entry])).toBe(true)
-  })
-
-  test.each(spellings)('%s rejects every bypass', (entry) => {
-    for (const url of [
-      'https://evil.com/x.myendpoint.com/y',
-      'https://a.myendpoint.com.evil.com/',
-      'https://a.myendpoint.com@evil.com/',
-      'https://evil.com/?x=https://a.myendpoint.com/',
-    ]) {
-      expect(hasUploadUrlMatch(url, [entry])).toBe(false)
-    }
+    test('rejects a pattern that does not compile', () => {
+      expect(() =>
+        compileUploadUrlPattern(
+          're:^https://uploads\\.myendpoint\\.com/(files/',
+        ),
+      ).toThrow(/not a valid regular expression/)
+    })
   })
 })
