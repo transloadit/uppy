@@ -1,4 +1,14 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Uppy with Next.js
+
+This example exercises Uppy upload destinations in a Next.js App Router
+application, including Transloadit. For the focused production integration,
+follow the canonical [Next.js + Uppy + Transloadit
+guide](https://uppy.io/docs/guides/uppy-transloadit/#nextjs). The guide's
+Next.js integration keeps the Transloadit Auth Secret on the server and returns
+signed Assembly options to the browser.
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with
+[`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 

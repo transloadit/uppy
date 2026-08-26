@@ -5,6 +5,8 @@ npm-debug.log*
 nohup.out
 node_modules
 .angular
+packages/@uppy/angular/fesm2022/
+packages/@uppy/angular/types/
 .cache
 .parcel-cache
 .eslintcache
@@ -30,7 +32,7 @@ examples/dev/bundle.js
 examples/aws-php/vendor/*
 test/endtoend/create-react-app/build/
 test/endtoend/create-react-app/coverage/
-uppy-*.tgz
+*.tgz
 generatedLocale.d.ts
 packages/@uppy/locales/src/en_US.js
 

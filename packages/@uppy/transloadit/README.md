@@ -11,7 +11,12 @@ The Transloadit plugin can be used to upload files to Transloadit for all kinds
 of processing, such as transcoding video, resizing images, zipping/unzipping,
 [and more](https://transloadit.com/services/).
 
-[Try it live →](https://uppy.io/examples/transloadit/)
+Uppy owns the open-source browser upload experience. Transloadit is the managed
+backend that receives those uploads and runs the processing workflow. This
+plugin connects the two; Uppy can also be used with other upload destinations.
+
+[Run the unsigned local demo →](https://github.com/transloadit/uppy/tree/main/examples/transloadit)
+(test use only). For production, follow the server-signed integration guide.
 
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile file encoding service.
@@ -22,11 +27,21 @@ a versatile file encoding service.
 import Uppy from '@uppy/core'
 import Transloadit from '@uppy/transloadit'
 
-const uppy = new Uppy()
-uppy.use(Transloadit, {
-  // Plugins
+const uppy = new Uppy().use(Transloadit, {
+  async assemblyOptions() {
+    const response = await fetch('/api/transloadit-params', { method: 'POST' })
+    if (!response.ok) {
+      throw new Error(`Could not prepare the upload (${response.status})`)
+    }
+    return response.json()
+  },
 })
 ```
+
+Generate the returned `params` and `signature` on your server. Never include
+your Transloadit Auth Secret in browser code. See the canonical
+[JavaScript, React, Next.js, Vue, and Angular guide](https://uppy.io/docs/guides/uppy-transloadit/)
+for complete examples.
 
 ## Installation
 
