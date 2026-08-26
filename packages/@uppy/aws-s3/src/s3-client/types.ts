@@ -43,7 +43,7 @@ export type PresignableRequest =
 /** Response with the pre-signed URL */
 export type PresignedResponse = {
   url: string
-// return the key which the signer signed for
+  // return the key which the signer signed for
   key?: string
 }
 
