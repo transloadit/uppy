@@ -106,6 +106,22 @@ needs) but not `https://uploads.example.com/filesomething`.
 COMPANION_UPLOAD_URLS="https://uploads.example.com/files/,https://other.example.com/files/"
 ```
 
+#### Upgrading from a version before 5.x
+
+Every string entry used to be compiled into a regular expression, and matched
+anywhere in the URL. Strings are now compared literally, so an entry written as
+a pattern stops matching and uploads to it start failing. Prefix it with `re:`
+and anchor it:
+
+```diff
+-COMPANION_UPLOAD_URLS="https://api2-(\\w+)\\.example\\.com/files/"
++COMPANION_UPLOAD_URLS="re:^https://api2-(\\w+)\\.example\\.com/files/"
+```
+
+Companion does not detect this for you — the entry is a valid literal URL as
+far as it can tell. It fails closed, though: the destination is refused rather
+than allowed, so nothing is exposed while you notice.
+
 #### Patterns
 
 Prefix an entry with `re:` to match with a regular expression instead.

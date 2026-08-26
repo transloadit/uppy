@@ -4,7 +4,6 @@ import validator from 'validator'
 import z from 'zod'
 import type { CompanionInitOptions } from '../schemas/companion.js'
 import {
-  compileUploadUrlPattern,
   defaultGetKey,
   regexMetaCharacters,
   uploadUrlPatternPrefix,
@@ -92,9 +91,10 @@ const validateConfigSchema = z.object({
 /**
  * Validates the `uploadUrls` allowlist.
  *
- * String entries are matched literally (same origin, path boundary), so an
- * entry written as a regular expression would silently never match. Catch that
- * at startup rather than at the first upload.
+ * Only what is unambiguously broken: an entry that cannot be a URL at all. A
+ * pattern is left to whoever wrote it -- see the README, which covers both
+ * migrating an entry that used to be compiled as a regex and the mistakes that
+ * make one too permissive.
  */
 function validateUploadUrls(
   uploadUrls: CompanionInitOptions['uploadUrls'],
@@ -110,12 +110,10 @@ function validateUploadUrls(
       continue
     }
 
-    // A `re:` entry is a pattern, not a URL; compiling it here turns a typo
-    // into a failed boot rather than a failed upload.
-    if (entry.startsWith(uploadUrlPatternPrefix)) {
-      compileUploadUrlPattern(entry)
-      continue
-    }
+    // A `re:` entry is a pattern, not a URL. `re:` happens to be a valid
+    // scheme, so it would parse rather than throw, and a `?` or `#` in the
+    // pattern would then read as a query or fragment.
+    if (entry.startsWith(uploadUrlPatternPrefix)) continue
 
     let url: URL
     try {
@@ -123,16 +121,6 @@ function validateUploadUrls(
     } catch {
       throw new Error(
         `uploadUrls entry "${entry}" is not an absolute URL. Include the scheme, e.g. "https://example.com/files/".`,
-      )
-    }
-
-    // A literal URL never contains a backslash, and a hostname never contains
-    // regex metacharacters -- both mean the entry was written as a pattern.
-    // Note that `$`, `(` and `)` are legal in a path, so we only look at the
-    // hostname for those.
-    if (entry.includes('\\') || regexMetaCharacters.test(url.hostname)) {
-      throw new Error(
-        `uploadUrls entry "${entry}" looks like a regular expression. Plain string entries are matched literally and are no longer compiled into regular expressions -- prefix the entry with "${uploadUrlPatternPrefix}" to have it treated as a pattern, or list the URLs explicitly.`,
       )
     }
 

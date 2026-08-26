@@ -130,22 +130,6 @@ describe('validateConfig', () => {
     expect(() => validateConfig(baseOptions)).not.toThrow()
   })
 
-  test('rejects an uploadUrls entry written as a regular expression', () => {
-    expect(() =>
-      validateConfig(
-        withOptions({ uploadUrls: ['https://.*\\.myendpoint\\.com/'] }),
-      ),
-    ).toThrow(/looks like a regular expression/)
-  })
-
-  test('points an unprefixed pattern at the "re:" prefix', () => {
-    expect(() =>
-      validateConfig(
-        withOptions({ uploadUrls: ['https://.*\\.myendpoint\\.com/'] }),
-      ),
-    ).toThrow(/prefix the entry with "re:"/)
-  })
-
   test('accepts a "re:" pattern entry', () => {
     expect(() =>
       validateConfig(
@@ -156,16 +140,6 @@ describe('validateConfig', () => {
     ).not.toThrow()
   })
 
-  test('rejects a malformed "re:" entry at startup', () => {
-    expect(() =>
-      validateConfig(
-        withOptions({
-          uploadUrls: ['re:https://uploads\\.myendpoint\\.com/(files/'],
-        }),
-      ),
-    ).toThrow()
-  })
-
   test('accepts a literal path containing URL-legal regex characters', () => {
     expect(() =>
       validateConfig(
@@ -174,15 +148,6 @@ describe('validateConfig', () => {
         }),
       ),
     ).not.toThrow()
-  })
-
-  test.each([
-    'https://uploads.*.myendpoint.com/',
-    'https://.*.myendpoint.com/',
-  ])('rejects an uploadUrls entry with a wildcard host: %s', (entry) => {
-    expect(() => validateConfig(withOptions({ uploadUrls: [entry] }))).toThrow(
-      /looks like a regular expression/,
-    )
   })
 
   test('rejects an uploadUrls entry that is not an absolute URL', () => {
@@ -321,5 +286,36 @@ describe('uploadUrls "re:" pattern entries', () => {
         hasUploadUrlMatch(url, ['re:^https://[a-z0-9]+\\.myendpoint\\.com']),
       ).toBe(true)
     })
+  })
+})
+
+describe('an entry that used to be compiled as a regex', () => {
+  // Before #6480 was fixed, every string was compiled with `new RegExp`.
+  // Such an entry is now taken literally, so it stops matching -- uploads fail
+  // rather than going somewhere unintended. Migrating it means adding "re:".
+  const old = 'https://api2-(\\w+)\\.myendpoint\\.com/resumable/files/?'
+
+  test('no longer matches, so the misconfiguration is immediately visible', () => {
+    expect(
+      hasUploadUrlMatch('https://api2-use1.myendpoint.com/resumable/files/x', [
+        old,
+      ]),
+    ).toBe(false)
+  })
+
+  test('works again once prefixed and anchored', () => {
+    const migrated = [`re:^${old}`]
+    expect(
+      hasUploadUrlMatch(
+        'https://api2-use1.myendpoint.com/resumable/files/x',
+        migrated,
+      ),
+    ).toBe(true)
+    expect(
+      hasUploadUrlMatch(
+        'http://169.254.169.254/?x=https://api2.myendpoint.com/resumable/files/',
+        migrated,
+      ),
+    ).toBe(false)
   })
 })
