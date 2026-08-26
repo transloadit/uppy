@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "turbo run --no-daemon build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
+    "build:examples": "turbo run --no-daemon build typecheck check --filter='./examples/*' --filter='./private/*'",
     "build:clean": "git clean -Xfd packages e2e .parcel-cache coverage .turbo .turbo -e '!node_modules' -e '!**/node_modules/**/*'",
     "build:watch": "yarn build && turbo watch build build:css --filter='./packages/@uppy/*' --filter='./packages/uppy'",
     "migrate:components": "yarn workspace @uppy/components migrate",
