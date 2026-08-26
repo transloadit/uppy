@@ -5,6 +5,8 @@ npm-debug.log*
 nohup.out
 node_modules
 .angular
+packages/@uppy/angular/fesm2022/
+packages/@uppy/angular/types/
 .cache
 .parcel-cache
 .eslintcache

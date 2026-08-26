@@ -19,8 +19,14 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
-    "build": "ng-packagr"
+    "build": "ng-packagr && mv dist/fesm2022 ./ && mv dist/types ./"
   },
+  "main": "./fesm2022/uppy-angular.mjs",
+  "types": "./types/uppy-angular.d.ts",
+  "files": [
+    "fesm2022",
+    "types"
+  ],
   "dependencies": {
     "tslib": "^2.8.1"
   },

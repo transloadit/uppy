@@ -49,7 +49,6 @@
   "scripts": {
     "build": "svelte-kit sync && svelte-package",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
-    "prepublishOnly": "yarn run package",
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
