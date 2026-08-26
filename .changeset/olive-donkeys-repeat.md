@@ -1,8 +1,13 @@
 ---
-'@uppy/companion': major
+'@uppy/companion': patch
 ---
 
 Match the `uploadUrls` and `server.validHosts` allowlists literally.
+
+**This is a security fix, and it changes behaviour: if any allowlist entry is
+written as a regular expression, it stops matching until you prefix it with
+`re:`.** See the migration below. It ships as a patch so that the fix reaches
+everyone, but check your config before upgrading.
 
 String entries used to be compiled into regular expressions and matched
 anywhere in the value, so any destination that merely *contained* an allowed
