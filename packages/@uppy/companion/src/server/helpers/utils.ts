@@ -15,14 +15,134 @@ const ivLength = 12
 export const regexMetaCharacters = /[*+?^${}()|\\]/
 
 /**
+ * Marks an `uploadUrls` entry as a pattern rather than a literal URL.
+ *
+ * Standalone can only ever produce strings -- `COMPANION_UPLOAD_URLS` splits
+ * on `,`, and the JSON config file holds JSON -- so without a marker there is
+ * no way to express a pattern short of configuring Companion programmatically.
+ * An explicit prefix is used rather than sniffing for regex metacharacters,
+ * because sniffing cannot tell a pattern from a literal URL that happens to
+ * contain the same character.
+ */
+export const uploadUrlPatternPrefix = 're:'
+
+/**
+ * Splits a pattern entry at the first `/` after the scheme. Everything before
+ * it is the host pattern, everything from it on is the path pattern. `?` and
+ * `#` are quantifiers here, not delimiters: query and fragment take no part in
+ * matching, so there is nothing for them to delimit.
+ */
+const uploadUrlPatternShape = /^([a-zA-Z][a-zA-Z0-9+.-]*):\/\/([^/]+)(\/.*)?$/
+
+export type UploadUrlPattern = {
+  scheme: string
+  host: RegExp
+  path: RegExp
+}
+
+/**
+ * Compiles a `re:` entry of the `uploadUrls` allowlist.
+ *
+ * The pattern is deliberately *not* applied to the URL as a single string.
+ * An unanchored pattern was the original bug (#6480), but anchoring alone does
+ * not fix it: `^https://\w+\.example\.com` still admits
+ * `https://foo.example.com.evil.internal/`, because nothing forces the match to
+ * end where the host ends. So the entry is split at the URL's own boundaries
+ * and each part is matched against the *parsed* URL:
+ *
+ * - the scheme is compared literally;
+ * - the host pattern must match the whole of `url.host`, so it cannot run past
+ *   the host into a suffix, and a port must be matched explicitly;
+ * - the path pattern is anchored at the start of `url.pathname` and must end on
+ *   a path boundary, so `/files/` still admits a tus id but not `/filesX`;
+ * - query and fragment are never looked at, so nothing can be smuggled there.
+ *
+ * Throws if the entry is malformed or does not compile. `validateConfig` calls
+ * this at startup so that a bad entry fails the boot rather than a request.
+ */
+export const compileUploadUrlPattern = (entry: string): UploadUrlPattern => {
+  const body = entry.slice(uploadUrlPatternPrefix.length)
+
+  // `COMPANION_UPLOAD_URLS` is comma-separated and is split before we get
+  // here, so a `{n,m}` quantifier would already have been torn in half. That
+  // half often still compiles -- `{1` is a literal brace under Annex B -- and
+  // would silently mean something other than what was written, so reject it.
+  const unescaped = body.replace(/\\./g, '')
+  if (
+    (unescaped.match(/{/g)?.length ?? 0) !==
+    (unescaped.match(/}/g)?.length ?? 0)
+  ) {
+    throw new Error(
+      `uploadUrls entry "${entry}" has an unbalanced "{". A comma inside a pattern is not supported, because the allowlist is comma-separated -- write "(?:ab|abc)" rather than "a{1,2}b", or list the alternatives as separate entries.`,
+    )
+  }
+
+  const shape = uploadUrlPatternShape.exec(body)
+  if (shape == null) {
+    throw new Error(
+      `uploadUrls entry "${entry}" must look like "${uploadUrlPatternPrefix}<scheme>://<host pattern>[/<path pattern>]".`,
+    )
+  }
+
+  const [, scheme, host, path = '/'] = shape
+  return {
+    scheme: scheme!.toLowerCase(),
+    // Anchored at both ends: the pattern must account for the entire host.
+    host: new RegExp(`^(?:${host})$`, 'i'),
+    // Anchored at the start only; the end is checked as a path boundary below,
+    // so that a resumable upload id may follow an allowed prefix.
+    path: new RegExp(`^(?:${path})`),
+  }
+}
+
+// Entries come from config and so are few and fixed, but matching happens per
+// request; compiling each time would be wasteful.
+const uploadUrlPatternCache = new Map<string, UploadUrlPattern>()
+
+const getUploadUrlPattern = (entry: string): UploadUrlPattern => {
+  let compiled = uploadUrlPatternCache.get(entry)
+  if (compiled == null) {
+    compiled = compileUploadUrlPattern(entry)
+    uploadUrlPatternCache.set(entry, compiled)
+  }
+  return compiled
+}
+
+const matchesUploadUrlPattern = (
+  url: URL,
+  pattern: UploadUrlPattern,
+): boolean => {
+  // Userinfo lets a URL read as one host while resolving to another
+  // (`https://uploads.example.com@evil.internal/`). We match on the parsed
+  // host, so this cannot fool the pattern, but an upload destination has no
+  // business carrying credentials in the URL either.
+  if (url.username !== '' || url.password !== '') return false
+  // `protocol` keeps its trailing colon.
+  if (url.protocol.slice(0, -1) !== pattern.scheme) return false
+  // `host` includes the port when it is not the default for the scheme.
+  if (!pattern.host.test(url.host)) return false
+
+  const match = pattern.path.exec(url.pathname)
+  if (match == null) return false
+
+  const [matched] = match
+  return (
+    matched.length === url.pathname.length ||
+    matched.endsWith('/') ||
+    url.pathname[matched.length] === '/'
+  )
+}
+
+/**
  * Checks whether a URL matches a single `uploadUrls` allowlist entry.
  *
- * `RegExp` entries are tested as-is. String entries are compared literally:
- * same origin, and the path must match at a path boundary. They are
- * deliberately *not* compiled into regexes -- that made every string an
- * unanchored pattern, so any URL merely containing an allowed URL anywhere
- * (in its path, query or fragment) passed the check, which let a caller point
- * Companion at an arbitrary internal host. See
+ * `RegExp` entries are tested as-is. Strings prefixed with `re:` are compiled
+ * as patterns, component by component (see `compileUploadUrlPattern`). Every
+ * other string is compared literally: same origin, and the path must match at a
+ * path boundary. Plain strings are deliberately *not* compiled into regexes --
+ * that made every string an unanchored pattern, so any URL merely containing an
+ * allowed URL anywhere (in its path, query or fragment) passed the check, which
+ * let a caller point Companion at an arbitrary internal host. See
  * https://github.com/transloadit/uppy/issues/6480
  */
 const matchesUploadUrl = (
@@ -30,6 +150,17 @@ const matchesUploadUrl = (
   criterion: string | RegExp,
 ): boolean => {
   if (criterion instanceof RegExp) return criterion.test(value)
+
+  if (criterion.startsWith(uploadUrlPatternPrefix)) {
+    let url: URL
+    try {
+      url = new URL(value)
+    } catch {
+      return false
+    }
+    return matchesUploadUrlPattern(url, getUploadUrlPattern(criterion))
+  }
+
   if (value === criterion) return true
 
   let url: URL

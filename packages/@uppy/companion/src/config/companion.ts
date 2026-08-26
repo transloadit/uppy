@@ -3,7 +3,12 @@ import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
 import z from 'zod'
 import type { CompanionInitOptions } from '../schemas/companion.js'
-import { defaultGetKey, regexMetaCharacters } from '../server/helpers/utils.js'
+import {
+  compileUploadUrlPattern,
+  defaultGetKey,
+  regexMetaCharacters,
+  uploadUrlPatternPrefix,
+} from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
@@ -105,6 +110,13 @@ function validateUploadUrls(
       continue
     }
 
+    // A `re:` entry is a pattern, not a URL; compiling it here turns a typo
+    // into a failed boot rather than a failed upload.
+    if (entry.startsWith(uploadUrlPatternPrefix)) {
+      compileUploadUrlPattern(entry)
+      continue
+    }
+
     let url: URL
     try {
       url = new URL(entry)
@@ -120,7 +132,7 @@ function validateUploadUrls(
     // hostname for those.
     if (entry.includes('\\') || regexMetaCharacters.test(url.hostname)) {
       throw new Error(
-        `uploadUrls entry "${entry}" looks like a regular expression. String entries are matched literally and are no longer compiled into regular expressions -- list the URLs explicitly, or pass a RegExp when configuring Companion programmatically.`,
+        `uploadUrls entry "${entry}" looks like a regular expression. Plain string entries are matched literally and are no longer compiled into regular expressions -- prefix the entry with "${uploadUrlPatternPrefix}" to have it treated as a pattern, or list the URLs explicitly.`,
       )
     }
 

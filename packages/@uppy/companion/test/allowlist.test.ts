@@ -1,7 +1,11 @@
 import { describe, expect, test } from 'vitest'
 import { validateConfig } from '../src/config/companion.js'
 import type { CompanionInitOptions } from '../src/schemas/companion.js'
-import { hasHostMatch, hasUploadUrlMatch } from '../src/server/helpers/utils.js'
+import {
+  compileUploadUrlPattern,
+  hasHostMatch,
+  hasUploadUrlMatch,
+} from '../src/server/helpers/utils.js'
 
 describe('hasUploadUrlMatch', () => {
   const allowed = ['https://uploads.myendpoint.com/files/']
@@ -133,6 +137,34 @@ describe('validateConfig', () => {
     ).toThrow(/looks like a regular expression/)
   })
 
+  test('points an unprefixed pattern at the "re:" prefix', () => {
+    expect(() =>
+      validateConfig(
+        withOptions({ uploadUrls: ['https://.*\\.myendpoint\\.com/'] }),
+      ),
+    ).toThrow(/prefix the entry with "re:"/)
+  })
+
+  test('accepts a "re:" pattern entry', () => {
+    expect(() =>
+      validateConfig(
+        withOptions({
+          uploadUrls: ['re:https://\\w+\\.myendpoint\\.com/files/'],
+        }),
+      ),
+    ).not.toThrow()
+  })
+
+  test('rejects a malformed "re:" entry at startup', () => {
+    expect(() =>
+      validateConfig(
+        withOptions({
+          uploadUrls: ['re:https://uploads\\.myendpoint\\.com/(files/'],
+        }),
+      ),
+    ).toThrow()
+  })
+
   test('accepts a literal path containing URL-legal regex characters', () => {
     expect(() =>
       validateConfig(
@@ -192,5 +224,109 @@ describe('validateConfig', () => {
         withOptions({ uploadUrls: [/^https:\/\/uploads\.myendpoint\.com\//] }),
       ),
     ).not.toThrow()
+  })
+})
+
+describe('uploadUrls "re:" pattern entries', () => {
+  // Exactly what COMPANION_UPLOAD_URLS produces: split(',') over the env value.
+  const fromEnv = (value: string) => value.split(',')
+
+  describe('a standalone config using patterns', () => {
+    const allowed = fromEnv(
+      're:https://api2-(\\w+)\\.myendpoint\\.com/resumable/files/?,re:https://api2\\.myendpoint\\.com/resumable/files/?',
+    )
+
+    test.each([
+      'https://api2-use1.myendpoint.com/resumable/files/',
+      'https://api2-use1.myendpoint.com/resumable/files',
+      // A tus resume url is <endpoint>/<id>.
+      'https://api2-use1.myendpoint.com/resumable/files/abc123',
+      'https://api2.myendpoint.com/resumable/files/deadbeef',
+    ])('accepts %s', (url) => {
+      expect(hasUploadUrlMatch(url, allowed)).toBe(true)
+    })
+
+    test.each([
+      // https://github.com/transloadit/uppy/issues/6480
+      'http://169.254.169.254/latest/meta-data/?x=https://api2.myendpoint.com/resumable/files/',
+      'http://169.254.169.254/latest/meta-data/',
+      // The host pattern is anchored, so it cannot run on into a suffix.
+      'https://api2.myendpoint.com.evil.com/resumable/files/',
+      // Userinfo must not be able to disguise the real host.
+      'https://api2.myendpoint.com@evil.com/resumable/files/',
+      'http://api2.myendpoint.com/resumable/files/',
+      'https://api2-use1.myendpoint.com/admin',
+      'https://evil.com/?y=https://api2.myendpoint.com/resumable/files/',
+    ])('rejects %s', (url) => {
+      expect(hasUploadUrlMatch(url, allowed)).toBe(false)
+    })
+  })
+
+  test('matches a pattern path only at a path boundary', () => {
+    const entry = ['re:https://uploads\\.myendpoint\\.com/files']
+    expect(
+      hasUploadUrlMatch('https://uploads.myendpoint.com/files/a', entry),
+    ).toBe(true)
+    expect(
+      hasUploadUrlMatch('https://uploads.myendpoint.com/filesomething', entry),
+    ).toBe(false)
+  })
+
+  test('matches a port explicitly or not at all', () => {
+    expect(
+      hasUploadUrlMatch('https://uploads.myendpoint.com:8443/', [
+        're:https://uploads\\.myendpoint\\.com/',
+      ]),
+    ).toBe(false)
+    expect(
+      hasUploadUrlMatch('https://uploads.myendpoint.com:8443/', [
+        're:https://uploads\\.myendpoint\\.com:8443/',
+      ]),
+    ).toBe(true)
+  })
+
+  test('mixes literal and pattern entries in one allowlist', () => {
+    const allowed = fromEnv(
+      'https://uploads.myendpoint.com/files/,re:https://\\w+\\.myotherendpoint\\.com/files/',
+    )
+    expect(
+      hasUploadUrlMatch('https://uploads.myendpoint.com/files/a', allowed),
+    ).toBe(true)
+    expect(
+      hasUploadUrlMatch('https://a.myotherendpoint.com/files/b', allowed),
+    ).toBe(true)
+    expect(hasUploadUrlMatch('https://evil.com/files/', allowed)).toBe(false)
+  })
+
+  test('supports alternation, so a comma is never needed inside an entry', () => {
+    const entry = ['re:https://(?:api2-\\w+|api2)\\.myendpoint\\.com/files/']
+    expect(
+      hasUploadUrlMatch('https://api2-use1.myendpoint.com/files/x', entry),
+    ).toBe(true)
+    expect(
+      hasUploadUrlMatch('https://api2.myendpoint.com/files/x', entry),
+    ).toBe(true)
+    expect(
+      hasUploadUrlMatch('https://api3.myendpoint.com/files/x', entry),
+    ).toBe(false)
+  })
+
+  test('rejects a pattern torn in half by the comma separator', () => {
+    // What `a{1,2}` becomes after split(',').
+    expect(() =>
+      compileUploadUrlPattern('re:https://a{1\\.myendpoint\\.com/'),
+    ).toThrow(/unbalanced "\{"/)
+  })
+
+  test('rejects a pattern entry that is not scheme://host', () => {
+    expect(() =>
+      compileUploadUrlPattern('re:uploads\\.myendpoint\\.com/files/'),
+    ).toThrow(/must look like/)
+  })
+
+  test('rejects a pattern entry that does not compile', () => {
+    expect(() =>
+      compileUploadUrlPattern('re:https://uploads\\.myendpoint\\.com/(files/'),
+    ).toThrow()
   })
 })
