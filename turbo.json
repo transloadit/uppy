@@ -21,7 +21,7 @@
         "bundle.mjs",
         "build-bundle.mjs"
       ],
-      "outputs": ["lib/**", "dist/**"]
+      "outputs": ["lib/**", "dist/**", "README.md"]
     },
     "uppy#build:css": {
       "outputLogs": "new-only",
