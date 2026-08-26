@@ -6,7 +6,7 @@ import {
   hasHostMatch,
   hasUploadUrlMatch,
 } from '../src/server/helpers/utils.js'
-import { parseUploadUrlsFromEnv } from '../src/standalone/helper.js'
+import { parseAllowlistFromEnv } from '../src/standalone/helper.js'
 
 describe('hasUploadUrlMatch', () => {
   const allowed = ['https://uploads.myendpoint.com/files/']
@@ -85,11 +85,8 @@ describe('hasHostMatch', () => {
     expect(hasHostMatch(host, allowed)).toBe(true)
   })
 
-  // The docs document patterns here, e.g. `(\w+).example.com`. They keep
-  // working, but are anchored so they cannot match a host that merely
-  // contains them.
-  describe('pattern entries', () => {
-    const pattern = ['(\\w+).myendpoint.com']
+  describe('"re:" pattern entries', () => {
+    const pattern = ['re:(\\w+)\\.myendpoint\\.com']
 
     test.each([
       'sub.myendpoint.com',
@@ -98,12 +95,29 @@ describe('hasHostMatch', () => {
       expect(hasHostMatch(host, pattern)).toBe(true)
     })
 
+    // Anchored, so a pattern cannot match a host that merely contains it.
     test.each([
       'sub.myendpoint.com.evil.com',
       'evil.com/sub.myendpoint.com',
       'sub.myendpoint.comX',
     ])('rejects %s', (host) => {
       expect(hasHostMatch(host, pattern)).toBe(false)
+    })
+
+    test('takes a character class literally without the prefix', () => {
+      // Sniffing for metacharacters could not see the "[", so this used to be
+      // compared literally and silently never matched.
+      expect(
+        hasHostMatch('dev.myendpoint.com', ['re:[dp]ev\\.myendpoint\\.com']),
+      ).toBe(true)
+      expect(
+        hasHostMatch('[dp]ev.myendpoint.com', ['[dp]ev.myendpoint.com']),
+      ).toBe(true)
+    })
+
+    test('leaves an IPv6 literal alone', () => {
+      expect(hasHostMatch('[::1]', ['[::1]'])).toBe(true)
+      expect(hasHostMatch(':', ['[::1]'])).toBe(false)
     })
   })
 
@@ -163,25 +177,11 @@ describe('validateConfig', () => {
           server: {
             host: 'localhost:3020',
             path: '',
-            validHosts: ['(\\w+).myendpoint.com'],
+            validHosts: ['re:(\\w+)\\.myendpoint\\.com'],
           },
         } as Partial<CompanionInitOptions>),
       ),
     ).not.toThrow()
-  })
-
-  test('rejects a validHosts entry that is not a valid regular expression', () => {
-    expect(() =>
-      validateConfig(
-        withOptions({
-          server: {
-            host: 'localhost:3020',
-            path: '',
-            validHosts: ['(unclosed.myendpoint.com'],
-          },
-        } as Partial<CompanionInitOptions>),
-      ),
-    ).toThrow(/is not a valid regular expression/)
   })
 
   test('accepts RegExp uploadUrls entries', () => {
@@ -195,7 +195,7 @@ describe('validateConfig', () => {
 
 describe('uploadUrls "re:" pattern entries', () => {
   // Exactly what COMPANION_UPLOAD_URLS produces.
-  const fromEnv = (value: string) => parseUploadUrlsFromEnv(value)
+  const fromEnv = (value: string) => parseAllowlistFromEnv(value)
 
   describe('a correctly written pattern', () => {
     // Anchored, host part cannot cross a boundary, host terminated by "/".
@@ -317,5 +317,28 @@ describe('an entry that used to be compiled as a regex', () => {
         migrated,
       ),
     ).toBe(false)
+  })
+})
+
+describe('a validHosts entry that used to be sniffed as a pattern', () => {
+  // Whether an entry was a pattern used to be inferred from its characters.
+  // It is now explicit, so an entry written as a bare pattern is a literal
+  // hostname: the OAuth redirect is refused rather than sent somewhere else.
+  test('no longer matches, so the misconfiguration is immediately visible', () => {
+    expect(hasHostMatch('sub.myendpoint.com', ['(\\w+).myendpoint.com'])).toBe(
+      false,
+    )
+  })
+
+  test('works again once prefixed', () => {
+    expect(
+      hasHostMatch('sub.myendpoint.com', ['re:(\\w+)\\.myendpoint\\.com']),
+    ).toBe(true)
+  })
+
+  test('a plain hostname is unaffected', () => {
+    expect(
+      hasHostMatch('uploads.myendpoint.com', ['uploads.myendpoint.com']),
+    ).toBe(true)
   })
 })

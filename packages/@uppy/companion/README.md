@@ -106,22 +106,6 @@ needs) but not `https://uploads.example.com/filesomething`.
 COMPANION_UPLOAD_URLS="https://uploads.example.com/files/,https://other.example.com/files/"
 ```
 
-#### Upgrading from a version before 5.x
-
-Every string entry used to be compiled into a regular expression, and matched
-anywhere in the URL. Strings are now compared literally, so an entry written as
-a pattern stops matching and uploads to it start failing. Prefix it with `re:`
-and anchor it:
-
-```diff
--COMPANION_UPLOAD_URLS="https://api2-(\\w+)\\.example\\.com/files/"
-+COMPANION_UPLOAD_URLS="re:^https://api2-(\\w+)\\.example\\.com/files/"
-```
-
-Companion does not detect this for you — the entry is a valid literal URL as
-far as it can tell. It fails closed, though: the destination is refused rather
-than allowed, so nothing is exposed while you notice.
-
 #### Patterns
 
 Prefix an entry with `re:` to match with a regular expression instead.
@@ -177,6 +161,55 @@ re:^https://[a-z0-9-]+\.example\.com/files/
 If you configure Companion programmatically rather than through the
 environment, prefer passing a real `RegExp` — or, better, list the URLs
 literally and skip patterns altogether.
+
+### Restricting OAuth redirects
+
+`server.validHosts` (`COMPANION_DOMAINS`) is the allowlist of Companion hosts
+an OAuth flow may be redirected back to. A host that passes receives the
+authorization code, so it is worth the same care as `uploadUrls`.
+
+Entries are hostnames, compared literally and case-insensitively. A port is
+part of the hostname here: `example.com` does not match `example.com:3020`.
+
+```sh
+COMPANION_DOMAINS="sub1.example.com,sub2.example.com"
+```
+
+As with `uploadUrls`, prefix an entry with `re:` to match with a regular
+expression, and a value starting with `re:` is not split on `,`:
+
+```sh
+COMPANION_DOMAINS="re:(\\w+)\\.example\\.com"
+```
+
+Unlike `uploadUrls`, a `validHosts` pattern is **anchored for you** — it has to
+match the whole hostname. A host is either in the set or it is not, so there is
+nothing a partial match could usefully mean. Note that `.` still matches any
+character unless you escape it, so `sub.example.com` as a pattern also admits
+`subXexample.com`; write `re:sub\.example\.com`, or just use a literal entry.
+
+### Upgrading from a version before 5.x
+
+Both allowlists used to treat strings as regular expressions — `uploadUrls`
+compiled every entry and matched it anywhere in the URL, and `validHosts`
+guessed per entry by looking for regex metacharacters. Both are now literal
+unless prefixed with `re:`.
+
+If you wrote an entry as a pattern, it is now a literal value that matches
+nothing, and you need to migrate it:
+
+```diff
+-COMPANION_UPLOAD_URLS="https://api2-(\\w+)\\.example\\.com/files/"
++COMPANION_UPLOAD_URLS="re:^https://api2-(\\w+)\\.example\\.com/files/"
+
+-COMPANION_DOMAINS="(\\w+).example.com"
++COMPANION_DOMAINS="re:(\\w+)\\.example\\.com"
+```
+
+Companion does not detect this for you — such an entry is a perfectly good
+literal URL or hostname as far as it can tell. It fails closed, though: the
+destination or redirect is refused rather than allowed, so uploads and logins
+break visibly and nothing is exposed while you notice.
 
 ### Deploy to heroku
 

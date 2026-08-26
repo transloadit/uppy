@@ -8,25 +8,20 @@ const encryptionKeyLength = 32
 const ivLength = 12
 
 /**
- * Characters that have no place in a literal URL or hostname, but do in a
- * regular expression. Used to detect allowlist entries that were written as
- * patterns, back when string entries were compiled into regexes.
- */
-export const regexMetaCharacters = /[*+?^${}()|\\]/
-
-/**
- * Marks an `uploadUrls` entry as a pattern rather than a literal URL.
+ * Marks an allowlist entry as a pattern rather than a literal value.
  *
- * Standalone can only ever produce strings -- `COMPANION_UPLOAD_URLS` splits
- * on `,`, and the JSON config file holds JSON -- so without a marker there is
- * no way to express a pattern short of configuring Companion programmatically.
+ * Standalone can only ever produce strings -- `COMPANION_UPLOAD_URLS` and
+ * `COMPANION_DOMAINS` split on `,`, and the JSON config file holds JSON -- so
+ * without a marker there is no way to express a pattern short of configuring
+ * Companion programmatically.
  * An explicit prefix is used rather than sniffing for regex metacharacters,
  * because sniffing cannot tell a pattern from a literal URL that happens to
  * contain the same character.
  *
- * A pattern is tested against the whole URL, as written.
+ * `uploadUrls` patterns are tested against the whole URL exactly as written;
+ * `validHosts` patterns must match a whole hostname, so they are anchored.
  */
-export const uploadUrlPatternPrefix = 're:'
+export const patternPrefix = 're:'
 
 /**
  * Compiles a `re:` entry. Whether the pattern is *correct* is up to whoever
@@ -36,7 +31,7 @@ export const uploadUrlPatternPrefix = 're:'
  * where they are addressed.
  */
 export const compileUploadUrlPattern = (entry: string): RegExp => {
-  const body = entry.slice(uploadUrlPatternPrefix.length)
+  const body = entry.slice(patternPrefix.length)
   try {
     return new RegExp(body)
   } catch (cause) {
@@ -77,7 +72,7 @@ const matchesUploadUrl = (
 ): boolean => {
   if (criterion instanceof RegExp) return criterion.test(value)
 
-  if (criterion.startsWith(uploadUrlPatternPrefix)) {
+  if (criterion.startsWith(patternPrefix)) {
     return getUploadUrlPattern(criterion).test(value)
   }
 
@@ -118,11 +113,16 @@ export const hasUploadUrlMatch = (
 /**
  * Checks a hostname against the `server.validHosts` allowlist.
  *
- * Entries without regex metacharacters are compared literally. Entries that
- * are patterns -- which the docs explicitly allow, e.g. `(\w+).example.com` --
- * are anchored, so that a pattern can no longer match a host that merely
- * *contains* it (`example.com` used to match `example.com.evil.com`).
- * `RegExp` entries are tested as-is.
+ * Strings prefixed with `re:` are patterns, every other string is compared
+ * literally. Which of the two an entry is used to be inferred by looking for
+ * regex metacharacters, which could only ever be a guess: it could not tell
+ * `[dp]ev.example.com` from a hostname, and it read a `.` as a literal dot in
+ * one entry and as "any character" in the next.
+ *
+ * A pattern is anchored. `validHosts` gates the OAuth redirect, and a host is
+ * either in the set or it is not -- there is nothing a partial match could
+ * usefully mean, and an unanchored one would let `example.com` admit
+ * `example.com.evil.com` and take the authorization code with it.
  */
 export const hasHostMatch = (
   value: string,
@@ -130,10 +130,10 @@ export const hasHostMatch = (
 ): boolean =>
   criteria.some((i) => {
     if (i instanceof RegExp) return i.test(value)
-    if (!regexMetaCharacters.test(i)) {
-      return value.toLowerCase() === i.toLowerCase()
+    if (i.startsWith(patternPrefix)) {
+      return new RegExp(`^(?:${i.slice(patternPrefix.length)})$`).test(value)
     }
-    return new RegExp(`^(?:${i})$`).test(value)
+    return value.toLowerCase() === i.toLowerCase()
   })
 
 export const jsonStringify = (data: unknown): string => {

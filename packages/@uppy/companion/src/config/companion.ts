@@ -3,11 +3,7 @@ import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
 import z from 'zod'
 import type { CompanionInitOptions } from '../schemas/companion.js'
-import {
-  defaultGetKey,
-  regexMetaCharacters,
-  uploadUrlPatternPrefix,
-} from '../server/helpers/utils.js'
+import { defaultGetKey, patternPrefix } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
@@ -113,7 +109,7 @@ function validateUploadUrls(
     // A `re:` entry is a pattern, not a URL. `re:` happens to be a valid
     // scheme, so it would parse rather than throw, and a `?` or `#` in the
     // pattern would then read as a query or fragment.
-    if (entry.startsWith(uploadUrlPatternPrefix)) continue
+    if (entry.startsWith(patternPrefix)) continue
 
     let url: URL
     try {
@@ -128,25 +124,6 @@ function validateUploadUrls(
       logger.warn(
         `uploadUrls entry "${entry}" has a query or fragment, which is ignored when matching. Only the origin and path are compared.`,
         'startup.uploadUrls',
-      )
-    }
-  }
-}
-
-/**
- * Validates the `server.validHosts` allowlist.
- *
- * Pattern entries are anchored and compiled when matching, so a pattern that
- * does not compile would throw per request; catch it at startup instead.
- */
-function validateValidHosts(validHosts: string[] | undefined): void {
-  for (const host of validHosts ?? []) {
-    if (!regexMetaCharacters.test(host)) continue
-    try {
-      new RegExp(`^(?:${host})$`)
-    } catch {
-      throw new Error(
-        `server.validHosts entry "${host}" is not a valid regular expression.`,
       )
     }
   }
@@ -206,7 +183,6 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
   }
 
   validateUploadUrls(uploadUrls)
-  validateValidHosts(server.validHosts)
 
   const { corsOrigins } = companionOptions
   if (corsOrigins == null) {
