@@ -6,6 +6,7 @@ import {
   hasHostMatch,
   hasUploadUrlMatch,
 } from '../src/server/helpers/utils.js'
+import { parseUploadUrlsFromEnv } from '../src/standalone/helper.js'
 
 describe('hasUploadUrlMatch', () => {
   const allowed = ['https://uploads.myendpoint.com/files/']
@@ -328,5 +329,55 @@ describe('uploadUrls "re:" pattern entries', () => {
     expect(() =>
       compileUploadUrlPattern('re:https://uploads\\.myendpoint\\.com/(files/'),
     ).toThrow()
+  })
+})
+
+describe('parseUploadUrlsFromEnv', () => {
+  test('splits a plain list on commas', () => {
+    expect(
+      parseUploadUrlsFromEnv(
+        'https://uploads.myendpoint.com/files/,https://other.myendpoint.com/files/',
+      ),
+    ).toEqual([
+      'https://uploads.myendpoint.com/files/',
+      'https://other.myendpoint.com/files/',
+    ])
+  })
+
+  test('does not split a value that is itself a pattern', () => {
+    // A `{n,m}` quantifier is only expressible because nothing splits here.
+    const value =
+      're:https://api2-\\w{1,3}\\.myendpoint\\.com/resumable/files/?'
+    expect(parseUploadUrlsFromEnv(value)).toEqual([value])
+    expect(
+      hasUploadUrlMatch(
+        'https://api2-ab.myendpoint.com/resumable/files/x',
+        parseUploadUrlsFromEnv(value),
+      ),
+    ).toBe(true)
+    expect(
+      hasUploadUrlMatch(
+        'https://api2-abcd.myendpoint.com/resumable/files/x',
+        parseUploadUrlsFromEnv(value),
+      ),
+    ).toBe(false)
+  })
+
+  test('rejects a leading pattern followed by further pattern entries', () => {
+    expect(() =>
+      parseUploadUrlsFromEnv(
+        're:https://a\\.myendpoint\\.com/,re:https://b\\.myendpoint\\.com/',
+      ),
+    ).toThrow(/Combine the alternatives into one pattern/)
+  })
+
+  test('still allows a pattern among literals when it does not lead', () => {
+    const entries = parseUploadUrlsFromEnv(
+      'https://uploads.myendpoint.com/files/,re:https://\\w+\\.myendpoint\\.com/files/',
+    )
+    expect(entries).toHaveLength(2)
+    expect(
+      hasUploadUrlMatch('https://any.myendpoint.com/files/x', entries),
+    ).toBe(true)
   })
 })

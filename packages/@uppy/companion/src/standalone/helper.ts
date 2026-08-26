@@ -125,6 +125,25 @@ type StandaloneCompanionOptions = Pick<
 /**
  * Loads the config from environment variables.
  */
+/**
+ * Splits `COMPANION_UPLOAD_URLS` into allowlist entries.
+ *
+ * A leading `re:` means the whole value is a single pattern, so that a comma
+ * inside it -- a `{n,m}` quantifier, say -- is not mistaken for a separator.
+ * Otherwise the value is a comma-separated list, whose entries may themselves
+ * be `re:` patterns as long as they contain no comma.
+ */
+export const parseUploadUrlsFromEnv = (value: string): string[] => {
+  if (!value.startsWith(utils.uploadUrlPatternPrefix)) return value.split(',')
+
+  if (value.includes(`,${utils.uploadUrlPatternPrefix}`)) {
+    throw new Error(
+      `COMPANION_UPLOAD_URLS starts with "${utils.uploadUrlPatternPrefix}", so the whole value is treated as one pattern and is not split on ",". Combine the alternatives into one pattern with "|", or drop the leading "${utils.uploadUrlPatternPrefix}" and list the entries separately.`,
+    )
+  }
+  return [value]
+}
+
 const getConfigFromEnv = (): StandaloneCompanionOptions => {
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
@@ -225,7 +244,7 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       return undefined
     })(),
     sendSelfEndpoint: process.env['COMPANION_SELF_ENDPOINT'],
-    uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
+    uploadUrls: uploadUrls ? parseUploadUrlsFromEnv(uploadUrls) : null,
     secret: getSecret('COMPANION_SECRET'),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
     allowLocalUrls: process.env['COMPANION_ALLOW_LOCAL_URLS'] === 'true',
