@@ -99,9 +99,10 @@ function warnIfUnanchored(pattern: RegExp, option: string): void {
 }
 
 /**
- * Validates the `uploadUrls` allowlist: only what is unambiguously broken. See
- * the README for migrating an entry that used to be compiled as a regex, and
- * for the mistakes that make a pattern too permissive.
+ * Validates the `uploadUrls` allowlist: only what is unambiguously broken.
+ * https://uppy.io/docs/companion/#uploadurls covers migrating an entry that
+ * used to be compiled as a regex, and the mistakes that make a pattern too
+ * permissive.
  */
 function validateUploadUrls(
   uploadUrls: CompanionInitOptions['uploadUrls'],
