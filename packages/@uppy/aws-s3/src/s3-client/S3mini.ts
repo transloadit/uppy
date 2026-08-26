@@ -196,7 +196,7 @@ class S3mini extends S3Client {
     return {
       location: U.removeQueryString(url),
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key: signedKey ?? key,
+      key: signedKey,
     }
   }
 
@@ -231,7 +231,7 @@ class S3mini extends S3Client {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return { uploadId, key: signedKey ?? key }
+          return { uploadId, key: signedKey }
         }
       }
     }
@@ -297,7 +297,7 @@ class S3mini extends S3Client {
     signal?: AbortSignal
     contentType?: string
     shouldRetryCredentials?: boolean
-  }): Promise<{ xhr: XMLHttpRequest; url: string; signedKey?: string }> {
+  }): Promise<{ xhr: XMLHttpRequest; url: string; signedKey: string }> {
     // Wait for online before starting
     await this.waitForOnline(signal)
 
@@ -318,11 +318,7 @@ class S3mini extends S3Client {
         contentType,
       })
 
-      return {
-        xhr,
-        url,
-        signedKey: signedKey || undefined,
-      }
+      return { xhr, url, signedKey: signedKey || request.key }
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (
