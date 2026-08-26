@@ -45,8 +45,7 @@ jobs:
       - name: Build
         run: corepack yarn build
 
-      - name: "@uppy/angular prepublish"
-        run: corepack yarn workspace @uppy/angular prepublishOnly
+      - run: corepack yarn workspace @uppy/angular pack
 
       - name: Create Release Pull Request or Publish
         id: changesets
