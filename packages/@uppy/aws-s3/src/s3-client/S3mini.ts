@@ -321,7 +321,7 @@ class S3mini extends S3Client {
       return {
         xhr,
         url,
-        signedKey: signedKey,
+        signedKey: signedKey || undefined,
       }
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
