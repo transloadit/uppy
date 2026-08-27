@@ -7109,7 +7109,6 @@ __metadata:
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
-    resize-observer-polyfill: "npm:^1.5.0"
     sass: "npm:^1.89.2"
     shallow-equal: "npm:^3.1.0"
     typescript: "npm:^6.0.3"
@@ -7346,7 +7345,6 @@ __metadata:
     "@uppy/zoom": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     playwright: "npm:1.61.1"
-    resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.6"
   peerDependencies:
@@ -16879,13 +16877,6 @@ __metadata:
   version: 1.0.0
   resolution: "requires-port@npm:1.0.0"
   checksum: 10/878880ee78ccdce372784f62f52a272048e2d0827c29ae31e7f99da18b62a2b9463ea03a75f277352f4697c100183debb0532371ad515a2d49d4bfe596dd4c20
-  languageName: node
-  linkType: hard
-
-"resize-observer-polyfill@npm:^1.5.0, resize-observer-polyfill@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "resize-observer-polyfill@npm:1.5.1"
-  checksum: 10/e10ee50cd6cf558001de5c6fb03fee15debd011c2f694564b71f81742eef03fb30d6c2596d1d5bf946d9991cb692fcef529b7bd2e4057041377ecc9636c753ce
   languageName: node
   linkType: hard
 
