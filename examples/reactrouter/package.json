@@ -33,7 +33,7 @@
     "@types/react-dom": "^19.2.3",
     "tsx": "^4.0.0",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5"
+    "vite": "^8.2.1"
   },
   "engines": {
     "node": ">=22.22.0"
