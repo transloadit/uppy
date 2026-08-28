@@ -1,172 +1,24 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import { HttpResponse, http } from 'msw'
+import { http } from 'msw'
 import { afterEach, beforeEach, describe, expect } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import { createMockS3Companion, toMswHandlers } from './mockCompanion.js'
 import S3, { type S3Options } from './S3.js'
 import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
 
-type Entry = {
-  name: string
-  isFolder: boolean
-  size?: number
-  mimeType?: string
-}
-type Call = { path: string; body: unknown; token: string | null }
-
-function splitKey(key: string) {
-  const bare = key.endsWith('/') ? key.slice(0, -1) : key
-  const slash = bare.lastIndexOf('/')
-  return {
-    prefix: slash === -1 ? '' : bare.slice(0, slash + 1),
-    name: bare.slice(slash + 1),
-  }
-}
-
-/** A tiny in-memory bucket behind Companion's S3 provider endpoints. */
-function createMockCompanion() {
-  const folders = new Map<string, Entry[]>([
-    [
-      '',
-      [
-        { name: 'docs', isFolder: true },
-        {
-          name: 'readme.md',
-          isFolder: false,
-          size: 9,
-          mimeType: 'text/markdown',
-        },
-      ],
-    ],
-    [
-      'docs/',
-      [
-        {
-          name: 'hello.txt',
-          isFolder: false,
-          size: 12,
-          mimeType: 'text/plain',
-        },
-      ],
-    ],
-  ])
-  const calls: Call[] = []
-
-  const record = async (request: Request): Promise<Call> => {
-    const call = {
-      path: new URL(request.url).pathname,
-      body: request.method === 'POST' ? await request.json() : undefined,
-      token: request.headers.get('uppy-auth-token'),
-    }
-    calls.push(call)
-    return call
-  }
-  const toItem = (prefix: string, entry: Entry) => {
-    const key = `${prefix}${entry.name}${entry.isFolder ? '/' : ''}`
-    return {
-      isFolder: entry.isFolder,
-      icon: entry.isFolder ? 'folder' : 'file',
-      id: encodeURIComponent(key),
-      name: entry.name,
-      requestPath: encodeURIComponent(key),
-      ...(entry.isFolder
-        ? {}
-        : {
-            mimeType: entry.mimeType ?? null,
-            size: entry.size ?? null,
-            thumbnail: null,
-          }),
-    }
-  }
-  const unauthorized = () =>
-    HttpResponse.json({ message: 'unauthorized' }, { status: 401 })
-
-  const handlers = [
-    http.options(
-      `${COMPANION}/*`,
-      () => new HttpResponse(null, { status: 204 }),
-    ),
-    http.post(`${COMPANION}/s3/simple-auth`, async ({ request }) => {
-      await record(request)
-      return HttpResponse.json({ uppyAuthToken: TOKEN })
-    }),
-    http.get(`${COMPANION}/s3/list/*`, async ({ request }) => {
-      const { token } = await record(request)
-      if (token !== TOKEN) return unauthorized()
-      const prefix = decodeURIComponent(
-        new URL(request.url).pathname.replace('/s3/list/', ''),
-      )
-      return HttpResponse.json({
-        username: 'my-bucket',
-        nextPagePath: null,
-        items: (folders.get(prefix) ?? []).map((entry) =>
-          toItem(prefix, entry),
-        ),
-      })
-    }),
-    http.post(`${COMPANION}/s3/mutate/create-folder`, async ({ request }) => {
-      const { body, token } = await record(request)
-      if (token !== TOKEN) return unauthorized()
-      const { parentId, name } = body as {
-        parentId: string | null
-        name: string
-      }
-      const prefix = parentId ? decodeURIComponent(parentId) : ''
-      folders.get(prefix)?.push({ name, isFolder: true })
-      folders.set(`${prefix}${name}/`, [])
-      const id = encodeURIComponent(`${prefix}${name}/`)
-      return HttpResponse.json({ id, requestPath: id })
-    }),
-    http.post(`${COMPANION}/s3/mutate/delete`, async ({ request }) => {
-      const { body, token } = await record(request)
-      if (token !== TOKEN) return unauthorized()
-      const { prefix, name } = splitKey(
-        decodeURIComponent((body as { id: string }).id),
-      )
-      folders.set(
-        prefix,
-        (folders.get(prefix) ?? []).filter((entry) => entry.name !== name),
-      )
-      return HttpResponse.json({ ok: true })
-    }),
-    http.post(`${COMPANION}/s3/mutate/move`, async ({ request }) => {
-      const { body, token } = await record(request)
-      if (token !== TOKEN) return unauthorized()
-      const { id, destination } = body as { id: string; destination: string }
-      const from = splitKey(decodeURIComponent(id))
-      const to = splitKey(destination)
-      const entry = folders
-        .get(from.prefix)
-        ?.find((candidate) => candidate.name === from.name)
-      folders.set(
-        from.prefix,
-        (folders.get(from.prefix) ?? []).filter(
-          (candidate) => candidate.name !== from.name,
-        ),
-      )
-      if (entry) folders.get(to.prefix)?.push({ ...entry, name: to.name })
-      const newId = encodeURIComponent(destination)
-      return HttpResponse.json({ id: newId, requestPath: newId })
-    }),
-    http.get(`${COMPANION}/s3/logout`, async ({ request }) => {
-      await record(request)
-      return HttpResponse.json({ ok: true, revoked: true })
-    }),
-  ]
-
-  return {
-    handlers,
-    calls,
-    lastCall: (path: string) =>
-      calls.filter((call) => call.path === path).at(-1),
-  }
-}
+const createMockCompanion = () =>
+  createMockS3Companion({ token: TOKEN, bucket: 'my-bucket' })
+const install = (
+  worker: { use: (...handlers: any[]) => void },
+  companion: ReturnType<typeof createMockCompanion>,
+) => worker.use(...toMswHandlers(companion, COMPANION, { http }))
 
 let uppy: Uppy | undefined
 
@@ -201,7 +53,7 @@ describe('S3 provider in the browser', () => {
     worker,
   }) => {
     const companion = createMockCompanion()
-    worker.use(...companion.handlers)
+    install(worker, companion)
     createUppy()
 
     await openBucket()
@@ -218,7 +70,7 @@ describe('S3 provider in the browser', () => {
     localStorage.setItem('companion-S3-auth-token', 'stale-token')
     localStorage.setItem('companion-S3-s3-bucket', 'other-bucket')
     const companion = createMockCompanion()
-    worker.use(...companion.handlers)
+    install(worker, companion)
     createUppy()
 
     await openBucket()
@@ -235,7 +87,7 @@ describe('S3 provider in the browser', () => {
     worker,
   }) => {
     const companion = createMockCompanion()
-    worker.use(...companion.handlers)
+    install(worker, companion)
     createUppy()
     await openBucket()
 
@@ -262,7 +114,7 @@ describe('S3 provider in the browser', () => {
     worker,
   }) => {
     const companion = createMockCompanion()
-    worker.use(...companion.handlers)
+    install(worker, companion)
     createUppy()
     await openBucket()
 
@@ -285,11 +137,9 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('renames in place, moves with a path, and deletes after confirmation', async ({
-    worker,
-  }) => {
+  it('renames in place and moves with a path', async ({ worker }) => {
     const companion = createMockCompanion()
-    worker.use(...companion.handlers)
+    install(worker, companion)
     createUppy()
     await openBucket()
 
@@ -326,14 +176,25 @@ describe('S3 provider in the browser', () => {
     await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
     await input.fill('archive/notes.md')
     await userEvent.keyboard('{Enter}')
-    await expect.element(page.getByText('notes.md')).not.toBeInTheDocument()
+    await expect
+      .element(page.getByText('notes.md', { exact: true }))
+      .not.toBeInTheDocument()
     expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
       id: 'notes.md',
       destination: 'archive/notes.md',
     })
+  })
 
-    // Delete asks for confirmation first
-    await page.getByRole('button', { name: 'Actions for archive' }).click()
+  it('deletes files after confirmation and refuses non-empty folders', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+    await openBucket()
+
+    // Cancel leaves everything alone
+    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await page.getByRole('menuitem', { name: 'Delete' }).click()
     const dialog = page.getByRole('dialog')
     await expect.element(dialog).toBeVisible()
@@ -341,17 +202,31 @@ describe('S3 provider in the browser', () => {
     await expect.element(dialog).not.toBeInTheDocument()
     expect(companion.lastCall('/s3/mutate/delete')).toBeUndefined()
 
-    await page.getByRole('button', { name: 'Actions for archive' }).click()
+    // Confirm deletes the file and says so. (`exact`, because the toast text
+    // contains the file name too.)
+    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await page.getByRole('menuitem', { name: 'Delete' }).click()
     await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
     await expect
-      .element(page.getByText('archive', { exact: true }))
+      .element(page.getByText('readme.md', { exact: true }))
       .not.toBeInTheDocument()
     expect(companion.lastCall('/s3/mutate/delete')?.body).toEqual({
-      id: 'archive/',
+      id: 'readme.md',
     })
     await expect
-      .element(page.getByText(/Deleted "archive"/).first())
+      .element(page.getByText(/Deleted "readme.md"/).first())
       .toBeVisible()
+
+    // Companion refuses to delete folders that still have entries
+    await page.getByRole('button', { name: 'Actions for docs' }).click()
+    await page.getByRole('menuitem', { name: 'Delete' }).click()
+    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
+    await expect
+      .element(page.getByText('The folder is not empty').first())
+      .toBeVisible()
+    expect(companion.lastCall('/s3/mutate/delete')?.body).toEqual({
+      id: 'docs/',
+    })
+    await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
   })
 })

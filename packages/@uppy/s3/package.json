@@ -37,6 +37,7 @@
   ],
   "exports": {
     ".": "./lib/index.js",
+    "./mockCompanion": "./lib/mockCompanion.js",
     "./package.json": "./package.json"
   },
   "dependencies": {
