@@ -23,8 +23,6 @@ export interface SmartCdnUrlOptions {
   endpoint?: string
 }
 
-import { hmacSha256Sync } from './sha256.js'
-
 const encoder = new TextEncoder()
 
 const toHex = (buffer: ArrayBuffer): string =>
@@ -37,24 +35,20 @@ export async function hmacSha256Hex(
   message: string,
 ): Promise<string> {
   const subtle = globalThis.crypto?.subtle
-  if (subtle) {
-    const key = await subtle.importKey(
-      'raw',
-      encoder.encode(secret),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign'],
+  if (!subtle) {
+    // WebCrypto is only exposed on secure contexts (https or localhost).
+    throw new Error(
+      'Signing Smart CDN URLs requires WebCrypto, which browsers only expose on secure origins (https:// or localhost).',
     )
-    return toHex(await subtle.sign('HMAC', key, encoder.encode(message)))
   }
-  // WebCrypto is unavailable on insecure (plain http, non-localhost) origins.
-  const digest = hmacSha256Sync(encoder.encode(secret), encoder.encode(message))
-  return toHex(
-    digest.buffer.slice(
-      digest.byteOffset,
-      digest.byteOffset + digest.byteLength,
-    ) as ArrayBuffer,
+  const key = await subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign'],
   )
+  return toHex(await subtle.sign('HMAC', key, encoder.encode(message)))
 }
 
 export async function getSignedSmartCdnUrl(

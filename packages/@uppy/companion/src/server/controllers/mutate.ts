@@ -16,8 +16,7 @@ const readNullableString = (body: unknown, key: string): string | null => {
 }
 
 function requireMutationProvider(req: Request, res: Response) {
-  const { provider, providerClass, providerUserSession, options } =
-    req.companion
+  const { provider, providerClass, providerUserSession } = req.companion
   if (!provider || !providerClass) {
     res.sendStatus(400)
     return null

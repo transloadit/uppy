@@ -1,8 +1,6 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
 import type { ProviderAction } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-// biome-ignore lint/style/useImportType: h is not a type
-import { h } from '@uppy/core/utils/preact'
 import S3, { type S3Options } from '@uppy/s3'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
