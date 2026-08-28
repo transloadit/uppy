@@ -1,90 +1,32 @@
 /**
- * Smart CDN URL signing in the browser (WebCrypto HMAC-SHA256).
+ * Smart CDN URL signing in the browser, on top of `@transloadit/utils`'
+ * isomorphic (WebCrypto) `getSignedSmartCdnUrl` — the same string-to-sign
+ * and HMAC as its Node twin and api2's `Signature.getSmartCDNUrl`.
  *
- * This is the browser twin of `getSignedSmartCdnUrl` from `@transloadit/utils`
- * (repo transloadit/node-sdk, `packages/utils`), which currently only ships
- * from its `./node` entry point (Node `crypto`). It is byte-compatible with
- * that function and with api2's `Signature.getSmartCDNUrl`, and it is meant
- * to be replaced by `@transloadit/utils` once that package exposes an
- * isomorphic (WebCrypto) build. The option names match `SmartCdnUrlOptions`
- * there; the differences are that `authKey`/`authSecret` are optional here
- * (omit both for an unsigned URL) and the extra `endpoint` for local api2s.
+ * The only addition here is `endpoint`: point the URL at a local api2's URL
+ * Transform (`https://api2-devdock.transloadit.dev/file/{workspace}`)
+ * instead of `https://{workspace}.tlcdn.com`. The signature does not cover
+ * the host, so swapping it keeps the URL valid.
  */
-export interface SmartCdnUrlOptions {
-  workspace: string
-  template: string
-  input: string
-  urlParams?: Record<
-    string,
-    string | number | boolean | (string | number | boolean)[]
-  >
-  /** ms since epoch; defaults to now + 1 hour. */
-  expiresAt?: number
-  authKey?: string
-  authSecret?: string
+import {
+  getSignedSmartCdnUrl as getTlcdnUrl,
+  type SmartCdnUrlOptions as UtilsSmartCdnUrlOptions,
+} from '@transloadit/utils'
+
+export type SmartCdnUrlOptions = UtilsSmartCdnUrlOptions & {
   /**
    * Base URL that precedes `/{template}/{input}`. Defaults to
-   * `https://{workspace}.tlcdn.com`. For a local api2 use e.g.
-   * `https://api2-devdock.transloadit.dev/file/{workspace}`.
+   * `https://{workspace}.tlcdn.com`.
    */
   endpoint?: string
-}
-
-const encoder = new TextEncoder()
-
-const toHex = (buffer: ArrayBuffer): string =>
-  Array.from(new Uint8Array(buffer), (b) =>
-    b.toString(16).padStart(2, '0'),
-  ).join('')
-
-export async function hmacSha256Hex(
-  secret: string,
-  message: string,
-): Promise<string> {
-  const subtle = globalThis.crypto?.subtle
-  if (!subtle) {
-    // WebCrypto is only exposed on secure contexts (https or localhost).
-    throw new Error(
-      'Signing Smart CDN URLs requires WebCrypto, which browsers only expose on secure origins (https:// or localhost).',
-    )
-  }
-  const key = await subtle.importKey(
-    'raw',
-    encoder.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
-    false,
-    ['sign'],
-  )
-  return toHex(await subtle.sign('HMAC', key, encoder.encode(message)))
 }
 
 export async function getSignedSmartCdnUrl(
   options: SmartCdnUrlOptions,
 ): Promise<string> {
-  const workspaceSlug = encodeURIComponent(options.workspace)
-  const templateSlug = encodeURIComponent(options.template)
-  const inputField = encodeURIComponent(options.input)
-  const query = new URLSearchParams()
-  for (const [key, value] of Object.entries(options.urlParams ?? {})) {
-    for (const item of Array.isArray(value) ? value : [value])
-      query.append(key, String(item))
-  }
-  const signed = Boolean(options.authKey && options.authSecret)
-  if (signed) {
-    query.set('auth_key', options.authKey as string)
-    query.set('exp', String(options.expiresAt ?? Date.now() + 60 * 60 * 1000))
-  }
-  query.sort()
-  if (signed) {
-    const stringToSign = `${workspaceSlug}/${templateSlug}/${inputField}?${query}`
-    query.set(
-      'sig',
-      `sha256:${await hmacSha256Hex(options.authSecret as string, stringToSign)}`,
-    )
-  }
-  const endpoint = (
-    options.endpoint ?? `https://${workspaceSlug}.tlcdn.com`
-  ).replace(/\/$/, '')
-  const qs = query.toString()
-  return `${endpoint}/${templateSlug}/${inputField}${qs ? `?${qs}` : ''}`
+  const { endpoint, ...utilsOptions } = options
+  const url = await getTlcdnUrl(utilsOptions)
+  if (!endpoint) return url
+  const { origin } = new URL(url)
+  return `${endpoint.replace(/\/$/, '')}${url.slice(origin.length)}`
 }

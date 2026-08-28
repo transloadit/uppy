@@ -6269,6 +6269,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@transloadit/utils@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "@transloadit/utils@npm:4.6.0"
+  checksum: 10/0b87ecb72bfa68317cc025eebec86fba8e52e215fadbf0ae4fe54634b954135b2dda2b935a887e4ca794e88028732027abe37d5220e0ab39679cc19c5a4dd112
+  languageName: node
+  linkType: hard
+
 "@tufjs/canonical-json@npm:2.0.0":
   version: 2.0.0
   resolution: "@tufjs/canonical-json@npm:2.0.0"
@@ -7457,6 +7464,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage"
   dependencies:
+    "@transloadit/utils": "npm:^4.6.0"
     "@uppy/core": "workspace:^"
     "@uppy/s3": "workspace:^"
     preact: "npm:^10.29.2"

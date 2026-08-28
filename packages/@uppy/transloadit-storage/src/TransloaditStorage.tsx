@@ -78,6 +78,11 @@ export default class TransloaditStorage<
   async smartCdnUrlFor(key: string): Promise<string> {
     const { workspace, template, authKey, authSecret, cdnEndpoint, urlParams } =
       this.opts
+    if (!authKey || !authSecret) {
+      throw new Error(
+        'TransloaditStorage: authKey and authSecret are required to sign Smart CDN URLs',
+      )
+    }
     return getSignedSmartCdnUrl({
       workspace,
       template: template ?? DEFAULT_TEMPLATE,
@@ -110,7 +115,12 @@ export default class TransloaditStorage<
         }
       },
     }
-    return [copyUrl, ...super.builtInActions()]
+    // Storage files are served from a signed-only template, so the action is
+    // only useful when the plugin can sign.
+    const canSign = Boolean(this.opts.authKey && this.opts.authSecret)
+    return canSign
+      ? [copyUrl, ...super.builtInActions()]
+      : super.builtInActions()
   }
 }
 
