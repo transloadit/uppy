@@ -230,7 +230,7 @@ export default () => {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
         assemblyOptions: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE
-          ? async (file) => {
+          ? async () => {
               // Store uploads in the folder currently open in the Transloadit Storage tab
               const storage = uppyDashboard.getPlugin('TransloaditStorage')
               const currentFolderId = storage?.getPluginState().currentFolderId
@@ -243,7 +243,8 @@ export default () => {
                   stored: {
                     robot: '/transloadit/store',
                     use: ':original',
-                    path: `${folder}${file.name}`,
+                    // ${file.name} is interpolated per file by Transloadit
+                    path: `${folder}\${file.name}`,
                     conflict_strategy: 'overwrite',
                   },
                 },

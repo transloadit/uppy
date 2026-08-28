@@ -95,6 +95,12 @@ export type S3Options = CompanionPluginOptions & {
    */
   autoConnect?: boolean
   /**
+   * Keep the browsing state (current folder, loaded tree) when the Dashboard
+   * panel closes, instead of resetting to the root like pickers do. Useful for
+   * management UIs that return to the same folder after an upload. Default: false.
+   */
+  keepStateOnClose?: boolean
+  /**
    * Pre-fill the bucket (optionally with `/prefix`) so users only have to click
    * "Connect". Useful for multi-tenant setups where the integrator scopes what
    * a user may browse, e.g. `assets-bucket/customer-123/`.
@@ -246,6 +252,13 @@ export default class S3<M extends Meta, B extends Body>
         />
       ),
     })
+
+    if (this.opts.keepStateOnClose) {
+      // ProviderViews resets its state when the Dashboard panel closes; a
+      // management UI wants to come back to the same folder instead.
+      // @ts-expect-error dashboard events are typed in @uppy/dashboard
+      this.uppy.off('dashboard:close-panel', this.view.resetPluginState)
+    }
 
     const { target } = this.opts
     if (target) {

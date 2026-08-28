@@ -43,6 +43,7 @@ export default class TransloaditStorage<
     super(uppy, {
       ...(rest as S3Options),
       id: opts.id ?? 'TransloaditStorage',
+      keepStateOnClose: opts.keepStateOnClose ?? true,
       bucket: prefix ? `${workspace}/${prefix}` : workspace,
       locale: undefined,
     })
