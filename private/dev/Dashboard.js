@@ -294,6 +294,10 @@ export default () => {
         import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_KEY || TRANSLOADIT_KEY,
       authSecret: TRANSLOADIT_SECRET,
       cdnEndpoint: import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT,
+      // A local api2 only serves Storage files on the CDN-required path.
+      ...(import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT && {
+        urlParams: { cdn: 'required' },
+      }),
     })
   } else {
     uppyDashboard.use(S3, {

@@ -95,13 +95,18 @@ export default class TransloaditStorage<
       label: this.i18n('copySmartCdnUrl'),
       appliesTo: 'file',
       refresh: false,
-      run: async ({ item, uppy }) => {
+      run: async ({ item, uppy, view }) => {
         const url = await this.smartCdnUrlFor(S3.keyOf(item.id))
         try {
           await navigator.clipboard.writeText(url)
           uppy.info(this.i18n('copiedSmartCdnUrl'), 'info', 3000)
         } catch {
-          window.prompt(this.i18n('smartCdnUrlPrompt'), url)
+          // No clipboard access (permission denied, insecure origin): show the
+          // URL in a dialog so it can be copied by hand.
+          await view.prompt({
+            title: this.i18n('smartCdnUrlPrompt'),
+            defaultValue: url,
+          })
         }
       },
     }

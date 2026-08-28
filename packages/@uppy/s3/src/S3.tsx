@@ -30,6 +30,9 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   M,
   B
 > {
+  /** Called after a successful simple-auth with the form data that was sent. */
+  onSimpleAuth?: (authFormData: unknown) => Promise<void>
+
   async login({
     authFormData,
     uppyVersions = '',
@@ -39,7 +42,8 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     authFormData: unknown
     signal: AbortSignal
   }) {
-    return this.loginSimpleAuth({ uppyVersions, authFormData, signal })
+    await this.loginSimpleAuth({ uppyVersions, authFormData, signal })
+    await this.onSimpleAuth?.(authFormData)
   }
 
   async logout<ResBody>(): Promise<ResBody> {
@@ -108,6 +112,22 @@ export type S3Options = CompanionPluginOptions & {
   bucket?: string
 }
 
+/** Where an object key lives: its parent "folder" prefix and its own name. */
+function splitKey(key: string): {
+  parent: string
+  name: string
+  isFolder: boolean
+} {
+  const isFolder = key.endsWith('/')
+  const bare = isFolder ? key.slice(0, -1) : key
+  const slash = bare.lastIndexOf('/')
+  return {
+    isFolder,
+    parent: slash === -1 ? '' : bare.slice(0, slash + 1),
+    name: bare.slice(slash + 1),
+  }
+}
+
 export default class S3<M extends Meta, B extends Body>
   extends UIPlugin<S3Options, M, B, UnknownProviderPluginState>
   implements UnknownProviderPlugin<M, B>
@@ -116,7 +136,7 @@ export default class S3<M extends Meta, B extends Body>
 
   icon: () => h.JSX.Element
 
-  provider: Provider<M, B>
+  provider: S3SimpleAuthProvider<M, B>
 
   view!: ProviderViews<M, B>
 
@@ -128,12 +148,19 @@ export default class S3<M extends Meta, B extends Body>
 
   #autoConnectAttempted = false
 
+  /** False until we know whether the stored Companion session matches `opts.bucket`. */
+  #sessionChecked = false
+
+  /** Storage key remembering which bucket the stored Companion session was opened for. */
+  #bucketStorageKey: string
+
   constructor(uppy: Uppy<M, B>, opts: S3Options) {
     super(uppy, opts)
     this.id = this.opts.id || 'S3'
     this.type = 'acquirer'
     this.files = []
     this.storage = this.opts.storage || tokenStorage
+    this.#bucketStorageKey = `companion-${this.id}-s3-bucket`
 
     this.defaultLocale = locale
     this.i18nInit()
@@ -171,6 +198,12 @@ export default class S3<M extends Meta, B extends Body>
       pluginId: this.id,
       supportsRefreshToken: false,
     })
+    this.provider.onSimpleAuth = async (authFormData) => {
+      const bucket = (authFormData as { bucket?: unknown } | null)?.bucket
+      if (typeof bucket === 'string') {
+        await this.storage.setItem(this.#bucketStorageKey, bucket)
+      }
+    }
 
     this.render = this.render.bind(this)
   }
@@ -185,24 +218,51 @@ export default class S3<M extends Meta, B extends Body>
       {
         id: 's3:rename',
         label: this.i18n('renameOrMove'),
-        appliesTo: 'file',
-        run: async ({ item }) => {
+        appliesTo: 'all',
+        run: async ({ item, view, uppy }) => {
           const key = S3.keyOf(item.id)
-          const destination = window
-            .prompt(this.i18n('renameOrMovePrompt'), key)
-            ?.trim()
-          if (!destination || destination === key) return
+          const { parent, name, isFolder } = splitKey(key)
+          const input = await view.prompt({
+            title: this.i18n('renameOrMoveTitle', { name }),
+            label: this.i18n('renameOrMovePrompt'),
+            defaultValue: name,
+            confirmLabel: this.i18n('rename'),
+          })
+          const value = input?.trim().replace(/^\/+/, '')
+          if (!value) return
+          // A bare name renames in place; anything with a "/" is a full key (move).
+          const isMove = value.includes('/')
+          let destination = isMove ? value : `${parent}${value}`
+          if (isFolder && !destination.endsWith('/')) destination += '/'
+          if (destination === key) return
           await this.provider.moveItem(key, destination)
+          uppy.info(
+            isMove
+              ? this.i18n('itemMoved', { path: destination })
+              : this.i18n('itemRenamed', { name: value }),
+            'info',
+            3000,
+          )
         },
       },
       {
         id: 's3:delete',
         label: this.i18n('deleteItem'),
         appliesTo: 'all',
-        run: async ({ item }) => {
-          const name = item.data.name ?? S3.keyOf(item.id)
-          if (!window.confirm(this.i18n('deleteConfirm', { name }))) return
-          await this.provider.deleteItem(S3.keyOf(item.id))
+        run: async ({ item, view, uppy }) => {
+          const key = S3.keyOf(item.id)
+          const name = item.data.name ?? key
+          const confirmed = await view.confirm({
+            title: this.i18n('deleteConfirm', { name }),
+            message: item.data.isFolder
+              ? this.i18n('deleteFolderHint')
+              : undefined,
+            confirmLabel: this.i18n('deleteItem'),
+            danger: true,
+          })
+          if (!confirmed) return
+          await this.provider.deleteItem(key)
+          uppy.info(this.i18n('itemDeleted', { name }), 'info', 3000)
         },
       },
     ]
@@ -213,13 +273,20 @@ export default class S3<M extends Meta, B extends Body>
       {
         id: 's3:newFolder',
         label: this.i18n('newFolder'),
-        run: async ({ currentFolderId }) => {
-          const name = window.prompt(this.i18n('newFolderPrompt'))?.trim()
+        run: async ({ currentFolderId, view, uppy }) => {
+          const name = (
+            await view.prompt({
+              title: this.i18n('newFolder'),
+              label: this.i18n('newFolderPrompt'),
+              confirmLabel: this.i18n('create'),
+            })
+          )?.trim()
           if (!name) return
           await this.provider.createFolder(
             currentFolderId ? S3.keyOf(currentFolderId) : null,
             name,
           )
+          uppy.info(this.i18n('folderCreated', { name }), 'info', 3000)
         },
       },
     ]
@@ -256,7 +323,6 @@ export default class S3<M extends Meta, B extends Body>
     if (this.opts.keepStateOnClose) {
       // ProviderViews resets its state when the Dashboard panel closes; a
       // management UI wants to come back to the same folder instead.
-      // @ts-expect-error dashboard events are typed in @uppy/dashboard
       this.uppy.off('dashboard:close-panel', this.view.resetPluginState)
     }
 
@@ -264,6 +330,8 @@ export default class S3<M extends Meta, B extends Body>
     if (target) {
       this.mount(target, this)
     }
+
+    this.#checkStoredSession()
   }
 
   uninstall() {
@@ -272,8 +340,43 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   render(state: unknown): ComponentChild {
+    if (!this.#sessionChecked) {
+      return <div className="uppy-Provider-loading">{this.i18n('loading')}</div>
+    }
     this.#maybeAutoConnect()
     return this.view.render(state)
+  }
+
+  /**
+   * A Companion session persisted by an earlier visit may belong to a different
+   * bucket than the one configured now (tenant switch, changed prefix). Drop it
+   * before the first listing so auto-connect signs in to the configured bucket
+   * instead of silently showing the old one.
+   */
+  async #checkStoredSession(): Promise<void> {
+    const { bucket } = this.opts
+    if (bucket) {
+      try {
+        const [token, storedBucket] = await Promise.all([
+          this.storage.getItem(this.provider.tokenKey),
+          this.storage.getItem(this.#bucketStorageKey),
+        ])
+        if (token && storedBucket !== bucket) {
+          this.uppy.log(
+            `[S3] stored session is for "${storedBucket ?? 'an unknown bucket'}", reconnecting to "${bucket}"`,
+          )
+          await this.provider.logout()
+        }
+      } catch (err) {
+        this.uppy.log(
+          `[S3] could not check the stored session: ${err instanceof Error ? err.message : String(err)}`,
+          'warning',
+        )
+      }
+    }
+    this.#sessionChecked = true
+    // Re-render now that the view may proceed.
+    this.setPluginState({})
   }
 
   /** Skip the auth form when the integrator already told us which bucket to open. */

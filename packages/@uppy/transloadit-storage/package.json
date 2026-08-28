@@ -8,7 +8,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "vitest run --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -46,6 +47,7 @@
   },
   "devDependencies": {
     "@uppy/core": "workspace:^",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
   }
 }
