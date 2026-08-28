@@ -10,7 +10,6 @@ import type {
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeId,
-  ProviderDialogState,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
@@ -22,6 +21,10 @@ import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
 import ProviderDialog from '../ProviderDialog.js'
+import ProviderDialogController, {
+  type ConfirmOptions,
+  type PromptOptions,
+} from '../ProviderDialogController.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
@@ -180,6 +183,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   constructor(plugin: UnknownProviderPlugin<M, B>, opts: PassedOpts<M, B>) {
     this.plugin = plugin
     this.provider = opts.provider
+    this.#dialogs = new ProviderDialogController(plugin)
 
     const defaultOptions: DefaultOpts<M, B> = {
       viewType: 'list',
@@ -227,7 +231,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   resetPluginState(): void {
-    this.#cancelDialog()
+    this.#dialogs.cancel()
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
 
@@ -318,62 +322,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.uppy.info(message, 'error', 5000)
   }
 
-  #dialogResolve: ((value: string | boolean | null) => void) | null = null
+  #dialogs: ProviderDialogController
 
   /**
    * Ask the user for a string with an inline dialog (instead of `window.prompt`).
    * Resolves with `null` when the user cancels.
    */
-  prompt(options: {
-    title: string
-    label?: string | undefined
-    defaultValue?: string | undefined
-    confirmLabel?: string | undefined
-  }): Promise<string | null> {
-    return this.#openDialog({ kind: 'prompt', ...options }) as Promise<
-      string | null
-    >
+  prompt(options: PromptOptions): Promise<string | null> {
+    return this.#dialogs.prompt(options)
   }
 
   /** Ask the user to confirm something with an inline dialog (instead of `window.confirm`). */
-  confirm(options: {
-    title: string
-    message?: string | undefined
-    confirmLabel?: string | undefined
-    danger?: boolean | undefined
-  }): Promise<boolean> {
-    return this.#openDialog({ kind: 'confirm', ...options }).then(
-      (value) => value === true,
-    )
-  }
-
-  #openDialog(dialog: ProviderDialogState): Promise<string | boolean | null> {
-    // Only one dialog at a time; a newer request cancels the pending one.
-    this.#cancelDialog()
-    return new Promise((resolve) => {
-      this.#dialogResolve = resolve
-      this.plugin.setPluginState({ dialog })
-    })
-  }
-
-  #settleDialog(value: string | boolean | null): void {
-    const resolve = this.#dialogResolve
-    if (!resolve) return
-    this.#dialogResolve = null
-    this.plugin.setPluginState({ dialog: undefined })
-    resolve(value)
-  }
-
-  #cancelDialog = (): void => {
-    if (!this.#dialogResolve) return
-    const { dialog } = this.plugin.getPluginState()
-    this.#settleDialog(dialog?.kind === 'prompt' ? null : false)
-  }
-
-  #confirmDialog = (value?: string): void => {
-    if (!this.#dialogResolve) return
-    const { dialog } = this.plugin.getPluginState()
-    this.#settleDialog(dialog?.kind === 'prompt' ? (value ?? '') : true)
+  confirm(options: ConfirmOptions): Promise<boolean> {
+    return this.#dialogs.confirm(options)
   }
 
   tearDown(): void {
@@ -922,8 +883,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
           <ProviderDialog
             dialog={dialog}
             i18n={i18n}
-            onConfirm={this.#confirmDialog}
-            onCancel={this.#cancelDialog}
+            onConfirm={this.#dialogs.submit}
+            onCancel={this.#dialogs.cancel}
           />
         )}
       </div>

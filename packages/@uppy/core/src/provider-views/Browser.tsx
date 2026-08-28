@@ -9,6 +9,7 @@ import type { I18n } from '../utils/index.js'
 import { VirtualList } from '../utils/index.js'
 import { getApplicableActions } from './Item/components/ItemActionsMenu.js'
 import ItemActionsPopover from './Item/components/ItemActionsPopover.js'
+import useItemMenu from './Item/components/useItemMenu.js'
 import Item from './Item/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
 import type { ProviderAction } from './ProviderView/ProviderView.js'
@@ -28,8 +29,6 @@ type BrowserProps<M extends Meta, B extends Body> = {
   actions?: ProviderAction<M, B>[]
   runAction?: ProviderView<M, B>['runAction']
 }
-
-type OpenMenu = { id: string; anchor: HTMLElement }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   const {
@@ -51,11 +50,8 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
   // At most one item actions menu is open; it lives here (not in the item) so
   // it can be rendered outside the scrolling list.
-  const [openMenu, setOpenMenu] = useState<OpenMenu | null>(null)
+  const menu = useItemMenu(displayedPartialTree)
   const bodyRef = useRef<HTMLDivElement>(null)
-  const openMenuItem = openMenu
-    ? displayedPartialTree.find((item) => item.id === openMenu.id)
-    : undefined
 
   // This records whether the user is holding the SHIFT key this very moment.
   // Typically, this is implemented using `onClick((e) => e.shiftKey)` -
@@ -76,11 +72,6 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     }
   }, [])
 
-  // The item behind an open menu can disappear (deleted, folder refreshed).
-  useEffect(() => {
-    if (openMenu && !openMenuItem) setOpenMenu(null)
-  }, [openMenu, openMenuItem])
-
   if (isLoading) {
     return (
       <div className="uppy-Provider-loading">
@@ -92,8 +83,6 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   if (displayedPartialTree.length === 0) {
     return <div className="uppy-Provider-empty">{noResultsLabel}</div>
   }
-
-  const closeMenu = () => setOpenMenu(null)
 
   const renderItem = (item: PartialTreeFile | PartialTreeFolderNode) => (
     <Item
@@ -114,24 +103,20 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       utmSource={utmSource}
       actions={actions}
       runAction={runAction}
-      menuOpen={openMenu?.id === item.id}
-      toggleMenu={(anchor) =>
-        setOpenMenu((current) =>
-          current?.id === item.id ? null : { id: item.id, anchor },
-        )
-      }
+      menuOpen={menu.isOpen(item.id)}
+      toggleMenu={(anchor) => menu.toggle(item.id, anchor)}
     />
   )
 
   const popover =
-    openMenu && openMenuItem && runAction ? (
+    menu.open && menu.openItem && runAction ? (
       <ItemActionsPopover
-        file={openMenuItem}
-        actions={getApplicableActions(actions, openMenuItem)}
-        anchor={openMenu.anchor}
+        file={menu.openItem}
+        actions={getApplicableActions(actions, menu.openItem)}
+        anchor={menu.open.anchor}
         containerRef={bodyRef}
         runAction={runAction}
-        onClose={closeMenu}
+        onClose={menu.close}
         i18n={i18n}
       />
     ) : null
