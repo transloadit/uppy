@@ -13,7 +13,12 @@ import {
   Provider,
   tokenStorage,
 } from '@uppy/core/companion-client'
-import { ProviderViews, SearchView } from '@uppy/core/provider-views'
+import {
+  type ProviderAction,
+  type ProviderToolbarAction,
+  ProviderViews,
+  SearchView,
+} from '@uppy/core/provider-views'
 import type { I18n, LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
@@ -75,6 +80,15 @@ const AuthForm = ({
 
 export type S3Options = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>
+  /**
+   * Show management actions (rename/move, delete, new folder). Requires a
+   * Companion whose S3 provider allows mutations. Default: true.
+   */
+  enableActions?: boolean
+  /** Extra per-item actions, appended to the built-in ones. */
+  actions?: ProviderAction<any, any>[]
+  /** Extra toolbar actions, appended to the built-in ones. */
+  toolbarActions?: ProviderToolbarAction<any, any>[]
   /**
    * Pre-fill the bucket (optionally with `/prefix`) so users only have to click
    * "Connect". Useful for multi-tenant setups where the integrator scopes what
@@ -148,13 +162,72 @@ export default class S3<M extends Meta, B extends Body>
     this.render = this.render.bind(this)
   }
 
+  /** The S3 object key behind a partial-tree item id (ids are URL-encoded keys). */
+  static keyOf(id: string): string {
+    return decodeURIComponent(id)
+  }
+
+  builtInActions(): ProviderAction<M, B>[] {
+    return [
+      {
+        id: 's3:rename',
+        label: this.i18n('renameOrMove'),
+        appliesTo: 'file',
+        run: async ({ item }) => {
+          const key = S3.keyOf(item.id)
+          const destination = window
+            .prompt(this.i18n('renameOrMovePrompt'), key)
+            ?.trim()
+          if (!destination || destination === key) return
+          await this.provider.moveItem(key, destination)
+        },
+      },
+      {
+        id: 's3:delete',
+        label: this.i18n('deleteItem'),
+        appliesTo: 'all',
+        run: async ({ item }) => {
+          const name = item.data.name ?? S3.keyOf(item.id)
+          if (!window.confirm(this.i18n('deleteConfirm', { name }))) return
+          await this.provider.deleteItem(S3.keyOf(item.id))
+        },
+      },
+    ]
+  }
+
+  builtInToolbarActions(): ProviderToolbarAction<M, B>[] {
+    return [
+      {
+        id: 's3:newFolder',
+        label: this.i18n('newFolder'),
+        run: async ({ currentFolderId }) => {
+          const name = window.prompt(this.i18n('newFolderPrompt'))?.trim()
+          if (!name) return
+          await this.provider.createFolder(
+            currentFolderId ? S3.keyOf(currentFolderId) : null,
+            name,
+          )
+        },
+      },
+    ]
+  }
+
   install() {
+    const enableActions = this.opts.enableActions !== false
     this.view = new ProviderViews(this, {
       provider: this.provider,
       viewType: 'list',
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
+      actions: [
+        ...(enableActions ? this.builtInActions() : []),
+        ...(this.opts.actions ?? []),
+      ],
+      toolbarActions: [
+        ...(enableActions ? this.builtInToolbarActions() : []),
+        ...(this.opts.toolbarActions ?? []),
+      ],
       // Use the plugin's own i18n (which includes our defaultLocale) rather than
       // the core one that ProviderViews hands us, so the label resolves even
       // when the integrator does not load @uppy/locales.

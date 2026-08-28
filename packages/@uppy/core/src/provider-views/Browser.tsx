@@ -9,6 +9,7 @@ import type { I18n } from '../utils/index.js'
 import { VirtualList } from '../utils/index.js'
 import Item from './Item/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
+import type { ProviderAction } from './ProviderView/ProviderView.js'
 
 type BrowserProps<M extends Meta, B extends Body> = {
   displayedPartialTree: (PartialTreeFile | PartialTreeFolderNode)[]
@@ -22,6 +23,8 @@ type BrowserProps<M extends Meta, B extends Body> = {
   noResultsLabel: string
   virtualList: boolean
   utmSource: string
+  actions?: ProviderAction<M, B>[]
+  runAction?: ProviderView<M, B>['runAction']
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
@@ -37,6 +40,8 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     noResultsLabel,
     virtualList,
     utmSource,
+    actions = [],
+    runAction,
   } = props
 
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
@@ -89,6 +94,8 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       openFolder={openFolder}
       file={item}
       utmSource={utmSource}
+      actions={actions}
+      runAction={runAction}
     />
   )
 

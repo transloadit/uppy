@@ -178,6 +178,43 @@ export default class Provider<US = unknown> {
   }
 
   /**
+   * Delete a file or (empty) folder. Providers that support mutations override
+   * this and set `supportsMutations` to true.
+   */
+  async deleteItem(options: {
+    companion: CompanionLike
+    id: string
+    providerUserSession: US
+  }): Promise<void> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Move or rename a file. `destination` is a full path/id in the provider's
+   * own addressing scheme; the response carries the new id.
+   */
+  async moveItem(options: {
+    companion: CompanionLike
+    id: string
+    destination: string
+    providerUserSession: US
+  }): Promise<{ id: string; requestPath: string }> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Create a folder inside `parentId` (null for the root).
+   */
+  async createFolder(options: {
+    companion: CompanionLike
+    parentId: string | null
+    name: string
+    providerUserSession: US
+  }): Promise<{ id: string; requestPath: string }> {
+    throw new Error('method not implemented')
+  }
+
+  /**
    * Name of the OAuth provider (passed to Grant). Return empty string if no OAuth provider is needed.
    */
   static get oauthProvider(): string | undefined {
@@ -193,6 +230,11 @@ export default class Provider<US = unknown> {
   }
 
   static get hasSimpleAuth(): boolean {
+    return false
+  }
+
+  /** Whether deleteItem/moveItem/createFolder are implemented. */
+  static get supportsMutations(): boolean {
     return false
   }
 

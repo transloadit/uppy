@@ -39,6 +39,7 @@ export default {
     },
     allFilesFromFolderNamed: 'All files from folder %{name}',
     openFolderNamed: 'Open folder %{name}',
+    itemActionsNamed: 'Actions for %{name}',
     cancel: 'Cancel',
     logOut: 'Log out',
     logIn: 'Log in',

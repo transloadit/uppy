@@ -4,6 +4,7 @@ import type { Body, Meta, PartialTreeFolder } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
 import Breadcrumbs from '../Breadcrumbs.js'
 import type ProviderView from './ProviderView.js'
+import type { ProviderToolbarAction } from './ProviderView.js'
 import User from './User.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {
@@ -15,6 +16,8 @@ type HeaderProps<M extends Meta, B extends Body> = {
   logout: () => void
   username: string | null
   i18n: I18n
+  toolbarActions?: ProviderToolbarAction<M, B>[]
+  runToolbarAction?: (action: ProviderToolbarAction<M, B>) => void
 }
 
 export default function Header<M extends Meta, B extends Body>(
@@ -36,6 +39,20 @@ export default function Header<M extends Meta, B extends Body>(
             title={props.title}
             i18n={props.i18n}
           />
+        )}
+        {props.toolbarActions && props.toolbarActions.length > 0 && (
+          <div className="uppy-ProviderBrowser-toolbar">
+            {props.toolbarActions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
+                onClick={() => props.runToolbarAction?.(action)}
+              >
+                {action.label}
+              </button>
+            ))}
+          </div>
         )}
         <User
           logout={props.logout}

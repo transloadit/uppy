@@ -413,3 +413,95 @@
 .picker-dialog {
   z-index: 20001 !important;
 }
+
+// Item actions ("⋯" menu) and header toolbar, used when a provider view is
+// configured with `actions` / `toolbarActions`.
+.uppy-ProviderBrowserItem-actions {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.uppy-ProviderBrowserItem-actionsBtn {
+  padding: 4px 6px;
+  color: variables.$gray-600;
+  border-radius: 4px;
+  line-height: 1;
+
+  &:hover,
+  &:focus {
+    color: variables.$gray-800;
+    background-color: variables.$gray-200;
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-400;
+
+    &:hover,
+    &:focus {
+      background-color: variables.$gray-700;
+    }
+  }
+}
+
+.uppy-ProviderBrowserItem-actionsMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: variables.$zIndex-3;
+  min-width: 180px;
+  padding: 4px;
+  background-color: variables.$white;
+  border: 1px solid variables.$gray-200;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(variables.$black, 0.15);
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-800;
+    border-color: variables.$gray-700;
+  }
+}
+
+.uppy-ProviderBrowserItem-actionsMenuItem {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  color: variables.$gray-800;
+  font-size: 13px;
+  text-align: left;
+  border-radius: 4px;
+
+  &:hover,
+  &:focus {
+    background-color: variables.$gray-100;
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+
+    &:hover,
+    &:focus {
+      background-color: variables.$gray-700;
+    }
+  }
+}
+
+.uppy-ProviderBrowser-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-right: 10px;
+}
+
+.uppy-ProviderBrowser-toolbarBtn {
+  padding: 4px 10px;
+  color: variables.$blue;
+  font-size: 12px;
+  line-height: 1.4;
+  border: 1px solid rgba(variables.$blue, 0.4);
+  border-radius: 4px;
+
+  &:hover,
+  &:focus {
+    background-color: rgba(variables.$blue, 0.08);
+  }
+}

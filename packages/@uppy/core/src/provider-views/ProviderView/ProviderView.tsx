@@ -12,6 +12,7 @@ import type {
   PartialTreeId,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
+  Uppy,
   ValidateableFile,
 } from '../../index.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
@@ -77,8 +78,46 @@ type ProviderListResponse = {
   items: CompanionFile[]
 }
 
+/** Context handed to a per-item action (rename, delete, copy URL, …). */
+export interface ProviderActionContext<M extends Meta, B extends Body> {
+  item: PartialTreeFile | PartialTreeFolderNode
+  view: ProviderView<M, B>
+  uppy: Uppy<M, B>
+  i18n: I18n
+}
+
+/** A per-item action shown in the item's "⋯" menu. */
+export interface ProviderAction<M extends Meta, B extends Body> {
+  id: string
+  label: string
+  /** Which items get this action; defaults to 'all'. */
+  appliesTo?: 'file' | 'folder' | 'all'
+  /** Reload the current folder after the action ran (default true). */
+  refresh?: boolean
+  run: (context: ProviderActionContext<M, B>) => Promise<void> | void
+}
+
+/** Context handed to a toolbar (current-folder level) action such as "New folder". */
+export interface ProviderToolbarActionContext<M extends Meta, B extends Body> {
+  currentFolderId: PartialTreeId
+  view: ProviderView<M, B>
+  uppy: Uppy<M, B>
+  i18n: I18n
+}
+
+export interface ProviderToolbarAction<M extends Meta, B extends Body> {
+  id: string
+  label: string
+  refresh?: boolean
+  run: (context: ProviderToolbarActionContext<M, B>) => Promise<void> | void
+}
+
 export interface Opts<M extends Meta, B extends Body> {
   provider: UnknownProviderPlugin<M, B>['provider']
+  /** Per-item actions (rename, delete, …) rendered in an item menu. */
+  actions?: ProviderAction<M, B>[]
+  /** Folder-level actions (new folder, …) rendered in the header. */
+  toolbarActions?: ProviderToolbarAction<M, B>[]
   viewType: 'list' | 'grid'
   showTitles: boolean
   showFilter: boolean
@@ -187,6 +226,68 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   resetPluginState(): void {
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
+  }
+
+  /**
+   * Forget everything we know about the current folder and fetch it again.
+   * Used after mutations (rename, delete, new folder, upload into folder).
+   */
+  refreshCurrentFolder = async (): Promise<void> => {
+    const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    const byId = new Map(partialTree.map((node) => [node.id, node]))
+    const isInsideCurrent = (
+      node: PartialTreeFile | PartialTreeFolderNode,
+    ): boolean => {
+      let parentId: PartialTreeId = node.parentId
+      while (parentId !== undefined) {
+        if (parentId === currentFolderId) return true
+        const parent = byId.get(parentId)
+        if (!parent || parent.type === 'root') return false
+        parentId = parent.parentId
+      }
+      return false
+    }
+    const nextTree = partialTree
+      .filter((node) => node.type === 'root' || !isInsideCurrent(node))
+      .map((node) =>
+        node.id === currentFolderId && node.type !== 'file'
+          ? { ...node, cached: false, nextPagePath: null }
+          : node,
+      )
+    this.plugin.setPluginState({ partialTree: nextTree })
+    await this.openFolder(currentFolderId)
+  }
+
+  runAction = async (
+    action: ProviderAction<M, B>,
+    item: PartialTreeFile | PartialTreeFolderNode,
+  ): Promise<void> => {
+    const { uppy } = this.plugin
+    try {
+      await action.run({ item, view: this, uppy, i18n: uppy.i18n })
+      if (action.refresh !== false) await this.refreshCurrentFolder()
+    } catch (err) {
+      this.#handleActionError(err)
+    }
+  }
+
+  runToolbarAction = async (
+    action: ProviderToolbarAction<M, B>,
+  ): Promise<void> => {
+    const { uppy } = this.plugin
+    const { currentFolderId } = this.plugin.getPluginState()
+    try {
+      await action.run({ currentFolderId, view: this, uppy, i18n: uppy.i18n })
+      if (action.refresh !== false) await this.refreshCurrentFolder()
+    } catch (err) {
+      this.#handleActionError(err)
+    }
+  }
+
+  #handleActionError(err: unknown): void {
+    const message = err instanceof Error ? err.message : String(err)
+    this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
+    this.plugin.uppy.info(message, 'error', 5000)
   }
 
   tearDown(): void {
@@ -691,6 +792,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
           logout={this.logout}
           username={username}
           i18n={i18n}
+          toolbarActions={opts.toolbarActions ?? []}
+          runToolbarAction={this.runToolbarAction}
         />
         {opts.showFilter && (
           <FilterInput
@@ -717,6 +820,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
             i18n={this.plugin.uppy.i18n}
             isLoading={loading}
             utmSource="Companion"
+            actions={opts.actions ?? []}
+            runAction={this.runAction}
           />
         )}
 

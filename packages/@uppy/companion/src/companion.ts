@@ -261,6 +261,29 @@ export function app(optionsArg: CompanionInitOptions) {
     middlewares.verifyToken,
     controllers.get,
   )
+
+  // Mutations (delete / move / create folder) for providers that support them
+  app.post(
+    '/:providerName/mutate/delete',
+    express.json(),
+    middlewares.hasSessionAndProvider,
+    middlewares.verifyToken,
+    controllers.deleteItem,
+  )
+  app.post(
+    '/:providerName/mutate/move',
+    express.json(),
+    middlewares.hasSessionAndProvider,
+    middlewares.verifyToken,
+    controllers.moveItem,
+  )
+  app.post(
+    '/:providerName/mutate/create-folder',
+    express.json(),
+    middlewares.hasSessionAndProvider,
+    middlewares.verifyToken,
+    controllers.createFolder,
+  )
   // backwards compat:
   app.post(
     '/search/:providerName/get/:id',

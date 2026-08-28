@@ -138,6 +138,7 @@ en_US.strings = {
   noInternetConnection: 'No Internet connection',
   noMoreFilesAllowed: 'Cannot add more files',
   noSearchResults: 'Unfortunately, there are no results for this search',
+  itemActionsNamed: 'Actions for %{name}',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   paused: 'Paused',
