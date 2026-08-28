@@ -10,6 +10,7 @@ import type {
   PartialTreeFolder,
   PartialTreeFolderNode,
   PartialTreeId,
+  ProviderDialogState,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
@@ -20,6 +21,7 @@ import { remoteFileObjToLocal } from '../../utils/index.js'
 import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
+import ProviderDialog from '../ProviderDialog.js'
 import addFiles from '../utils/addFiles.js'
 import getClickedRange from '../utils/getClickedRange.js'
 import handleError from '../utils/handleError.js'
@@ -225,6 +227,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   resetPluginState(): void {
+    this.#cancelDialog()
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
 
@@ -234,6 +237,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   refreshCurrentFolder = async (): Promise<void> => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    // Remember what was selected so a refresh does not silently drop it.
+    const checkedIds = partialTree.flatMap((node) =>
+      node.type !== 'root' &&
+      node.parentId === currentFolderId &&
+      node.status === 'checked'
+        ? [node.id]
+        : [],
+    )
     const byId = new Map(partialTree.map((node) => [node.id, node]))
     const isInsideCurrent = (
       node: PartialTreeFile | PartialTreeFolderNode,
@@ -256,6 +267,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     this.plugin.setPluginState({ partialTree: nextTree })
     await this.openFolder(currentFolderId)
+
+    // Re-apply the selection to the items that survived the refresh.
+    const { partialTree: refreshedTree } = this.plugin.getPluginState()
+    const survivors = checkedIds.filter((id) =>
+      refreshedTree.some(
+        (node) =>
+          node.type !== 'root' && node.id === id && node.status !== 'checked',
+      ),
+    )
+    if (survivors.length > 0) {
+      this.plugin.setPluginState({
+        partialTree: PartialTreeUtils.afterToggleCheckbox(
+          refreshedTree,
+          survivors,
+        ),
+      })
+    }
   }
 
   runAction = async (
@@ -288,6 +316,64 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const message = err instanceof Error ? err.message : String(err)
     this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
     this.plugin.uppy.info(message, 'error', 5000)
+  }
+
+  #dialogResolve: ((value: string | boolean | null) => void) | null = null
+
+  /**
+   * Ask the user for a string with an inline dialog (instead of `window.prompt`).
+   * Resolves with `null` when the user cancels.
+   */
+  prompt(options: {
+    title: string
+    label?: string | undefined
+    defaultValue?: string | undefined
+    confirmLabel?: string | undefined
+  }): Promise<string | null> {
+    return this.#openDialog({ kind: 'prompt', ...options }) as Promise<
+      string | null
+    >
+  }
+
+  /** Ask the user to confirm something with an inline dialog (instead of `window.confirm`). */
+  confirm(options: {
+    title: string
+    message?: string | undefined
+    confirmLabel?: string | undefined
+    danger?: boolean | undefined
+  }): Promise<boolean> {
+    return this.#openDialog({ kind: 'confirm', ...options }).then(
+      (value) => value === true,
+    )
+  }
+
+  #openDialog(dialog: ProviderDialogState): Promise<string | boolean | null> {
+    // Only one dialog at a time; a newer request cancels the pending one.
+    this.#cancelDialog()
+    return new Promise((resolve) => {
+      this.#dialogResolve = resolve
+      this.plugin.setPluginState({ dialog })
+    })
+  }
+
+  #settleDialog(value: string | boolean | null): void {
+    const resolve = this.#dialogResolve
+    if (!resolve) return
+    this.#dialogResolve = null
+    this.plugin.setPluginState({ dialog: undefined })
+    resolve(value)
+  }
+
+  #cancelDialog = (): void => {
+    if (!this.#dialogResolve) return
+    const { dialog } = this.plugin.getPluginState()
+    this.#settleDialog(dialog?.kind === 'prompt' ? null : false)
+  }
+
+  #confirmDialog = (value?: string): void => {
+    if (!this.#dialogResolve) return
+    const { dialog } = this.plugin.getPluginState()
+    this.#settleDialog(dialog?.kind === 'prompt' ? (value ?? '') : true)
   }
 
   tearDown(): void {
@@ -772,7 +858,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString, searchResults } =
+    const { partialTree, username, searchString, searchResults, dialog } =
       this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
 
@@ -832,6 +918,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           validateAggregateRestrictions={this.validateAggregateRestrictions}
         />
+        {dialog && (
+          <ProviderDialog
+            dialog={dialog}
+            i18n={i18n}
+            onConfirm={this.#confirmDialog}
+            onCancel={this.#cancelDialog}
+          />
+        )}
       </div>
     )
   }

@@ -162,6 +162,7 @@
 // ...uppy-Provider-breadcrumbs|
 
 .uppy-ProviderBrowser {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -444,10 +445,11 @@
   }
 }
 
+// Rendered by Browser as a sibling of the scrolling list (inside the
+// `position: relative` body) and positioned from the trigger's rect, so it is
+// never clipped by the list's overflow.
 .uppy-ProviderBrowserItem-actionsMenu {
   position: absolute;
-  top: 100%;
-  right: 0;
   z-index: variables.$zIndex-3;
   min-width: 180px;
   padding: 4px;
@@ -503,5 +505,86 @@
   &:hover,
   &:focus {
     background-color: rgba(variables.$blue, 0.08);
+  }
+}
+
+// Inline prompt/confirm dialog (ProviderView.prompt / .confirm), used by
+// provider actions instead of window.prompt / window.confirm.
+.uppy-ProviderDialog-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: variables.$zIndex-4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: rgba(variables.$black, 0.35);
+}
+
+.uppy-ProviderDialog {
+  width: 100%;
+  max-width: 360px;
+  padding: 18px 20px;
+  color: variables.$gray-800;
+  background-color: variables.$white;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(variables.$black, 0.25);
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+    background-color: variables.$gray-800;
+  }
+}
+
+.uppy-ProviderDialog-title {
+  margin: 0 0 12px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.uppy-ProviderDialog-label {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.uppy-ProviderDialog-labelText {
+  display: block;
+  margin-bottom: 6px;
+  color: variables.$gray-700;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-300;
+  }
+}
+
+.uppy-ProviderDialog-input {
+  width: 100%;
+}
+
+.uppy-ProviderDialog-message {
+  margin: 0 0 14px;
+  color: variables.$gray-700;
+  font-size: 13px;
+  line-height: 1.4;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-300;
+  }
+}
+
+.uppy-ProviderDialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.uppy-ProviderDialog-confirm--danger {
+  background-color: variables.$red;
+
+  &:not(:disabled):hover {
+    background-color: color.adjust(variables.$red, $lightness: -10%, $space: hsl);
   }
 }

@@ -41,6 +41,7 @@ export default {
     openFolderNamed: 'Open folder %{name}',
     itemActionsNamed: 'Actions for %{name}',
     cancel: 'Cancel',
+    dialogConfirm: 'OK',
     logOut: 'Log out',
     logIn: 'Log in',
     pickFiles: 'Pick files',

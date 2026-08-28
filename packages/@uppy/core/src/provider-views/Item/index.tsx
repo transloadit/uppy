@@ -24,6 +24,8 @@ type ItemProps = {
     action: ProviderAction<any, any>,
     file: PartialTreeFile | PartialTreeFolderNode,
   ) => void
+  menuOpen?: boolean
+  toggleMenu?: (anchor: HTMLElement) => void
 }
 
 export default function Item(props: ItemProps): h.JSX.Element {
@@ -37,14 +39,17 @@ export default function Item(props: ItemProps): h.JSX.Element {
     utmSource,
     actions = [],
     runAction,
+    menuOpen = false,
+    toggleMenu,
   } = props
 
   const actionsMenu =
-    actions.length > 0 && runAction ? (
+    actions.length > 0 && runAction && toggleMenu ? (
       <ItemActionsMenu
         file={file}
         actions={actions}
-        runAction={runAction}
+        open={menuOpen}
+        onToggle={toggleMenu}
         i18n={i18n}
       />
     ) : null
