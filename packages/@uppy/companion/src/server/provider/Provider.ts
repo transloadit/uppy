@@ -6,6 +6,7 @@ import type {
   ProviderGrantConfig,
 } from '../../types/express.js'
 import { MAX_AGE_24H } from '../helpers/jwt.js'
+import logger from '../logger.js'
 
 // from express:
 export interface Query {
@@ -212,6 +213,35 @@ export default class Provider<US = unknown> {
     providerUserSession: US
   }): Promise<{ id: string; requestPath: string }> {
     throw new Error('method not implemented')
+  }
+
+  /**
+   * Run `fn`, translating any error through `mapProviderError()` and logging
+   * it under `tag` before rethrowing. Providers wrap their SDK calls in this so
+   * error mapping and logging live in one place.
+   */
+  protected async withErrorHandling<T>(
+    tag: string,
+    fn: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await fn()
+    } catch (err: unknown) {
+      const mapped = this.mapProviderError(err)
+      const errForLog =
+        mapped instanceof Error ? mapped : new Error(String(mapped))
+      logger.error(errForLog, tag)
+      throw mapped
+    }
+  }
+
+  /**
+   * Translate an error from the provider's SDK/API into a Companion error
+   * (ProviderAuthError, ProviderUserError, ProviderApiError). The default keeps
+   * the error as-is; providers override this to add their mapping.
+   */
+  protected mapProviderError(err: unknown): unknown {
+    return err
   }
 
   /**

@@ -547,36 +547,31 @@ export default class S3Provider extends Provider<S3UserSession> {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
-    try {
-      return await fn()
-    } catch (err: unknown) {
-      let err2: unknown = err
-      const name = isRecord(err) ? err['name'] : undefined
-      const status = isRecord(err)
-        ? (err['$metadata'] as { httpStatusCode?: number } | undefined)
-            ?.httpStatusCode
-        : undefined
-      if (
-        name === 'NoSuchBucket' ||
-        name === 'AccessDenied' ||
-        name === 'InvalidAccessKeyId' ||
-        status === 403 ||
-        status === 404
-      ) {
-        err2 = new ProviderUserError({
-          message: `S3 error: ${String(name ?? status)}`,
-        })
-      } else if (status === 409 || status === 400) {
-        err2 = new ProviderUserError({
-          message: err instanceof Error ? err.message : `S3 error ${status}`,
-        })
-      } else if (status != null && !(err instanceof ProviderUserError)) {
-        err2 = new ProviderApiError('S3 API error', status)
-      }
-      const errForLog = err2 instanceof Error ? err2 : new Error(String(err2))
-      logger.error(errForLog, tag)
-      throw err2
+  protected override mapProviderError(err: unknown): unknown {
+    const name = isRecord(err) ? err['name'] : undefined
+    const status = isRecord(err)
+      ? (err['$metadata'] as { httpStatusCode?: number } | undefined)
+          ?.httpStatusCode
+      : undefined
+    if (
+      name === 'NoSuchBucket' ||
+      name === 'AccessDenied' ||
+      name === 'InvalidAccessKeyId' ||
+      status === 403 ||
+      status === 404
+    ) {
+      return new ProviderUserError({
+        message: `S3 error: ${String(name ?? status)}`,
+      })
     }
+    if (status === 409 || status === 400) {
+      return new ProviderUserError({
+        message: err instanceof Error ? err.message : `S3 error ${status}`,
+      })
+    }
+    if (status != null && !(err instanceof ProviderUserError)) {
+      return new ProviderApiError('S3 API error', status)
+    }
+    return err
   }
 }

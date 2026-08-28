@@ -240,23 +240,16 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
-    try {
-      return await fn()
-    } catch (err: unknown) {
-      let err2: unknown = err
-      const status = isRecord(err) ? err['status'] : undefined
-      if (status === 401) err2 = new ProviderAuthError()
-      const response = isRecord(err) ? err['response'] : undefined
-      if (response != null) {
-        err2 = new ProviderApiError(
-          'WebDAV API error',
-          typeof status === 'number' ? status : undefined,
-        )
-      }
-      const errForLog = err2 instanceof Error ? err2 : new Error(String(err2))
-      logger.error(errForLog, tag)
-      throw err2
+  protected override mapProviderError(err: unknown): unknown {
+    const status = isRecord(err) ? err['status'] : undefined
+    if (status === 401) return new ProviderAuthError()
+    const response = isRecord(err) ? err['response'] : undefined
+    if (response != null) {
+      return new ProviderApiError(
+        'WebDAV API error',
+        typeof status === 'number' ? status : undefined,
+      )
     }
+    return err
   }
 }
