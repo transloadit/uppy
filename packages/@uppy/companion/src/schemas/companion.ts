@@ -91,6 +91,13 @@ export interface CompanionInitOptions {
     awsSseKmsKeyId?: string | undefined
     useAccelerateEndpoint?: boolean
     expires: number
+    /**
+     * Buckets that the S3 *provider* (browsing/importing files from S3 in the
+     * Dashboard) is allowed to list and download from. Use `['*']` to allow any
+     * bucket the credentials can access (e.g. when an upstream proxy already
+     * enforces authorization). Unset/empty disables S3 browsing entirely.
+     */
+    browsableBuckets?: string[] | undefined
     awsClientOptions?: S3ClientConfig & {
       /** @deprecated */
       accessKeyId?: unknown

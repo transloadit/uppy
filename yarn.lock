@@ -7354,6 +7354,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/s3@workspace:packages/@uppy/s3":
+  version: 0.0.0-use.local
+  resolution: "@uppy/s3@workspace:packages/@uppy/s3"
+  dependencies:
+    "@uppy/core": "workspace:^"
+    preact: "npm:^10.29.2"
+    typescript: "npm:^6.0.3"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"

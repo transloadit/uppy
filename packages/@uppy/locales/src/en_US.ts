@@ -154,11 +154,14 @@ en_US.strings = {
   pluginNameGoogleDrivePicker: 'Google Drive',
   pluginNameGooglePhotosPicker: 'Google Photos',
   pluginNameOneDrive: 'OneDrive',
+  pluginNameS3: 'S3',
   pluginNameScreenCapture: 'Screencast',
   pluginNameUnsplash: 'Unsplash',
   pluginNameUrl: 'Link',
   pluginNameWebdav: 'WebDAV',
   pluginNameZoom: 'Zoom',
+  pluginS3InputLabel:
+    'Bucket, optionally with a /prefix (e.g. my-bucket/customer-123)',
   pluginWebdavInputLabel:
     'WebDAV URL for a file (e.g. from ownCloud or Nextcloud)',
   poweredBy: 'Powered by %{uppy}',

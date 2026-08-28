@@ -13,6 +13,7 @@ import ImageEditor from '@uppy/image-editor'
 import ImageGenerator from '@uppy/image-generator'
 import english from '@uppy/locales/lib/en_US.js'
 import RemoteSources from '@uppy/remote-sources'
+import S3 from '@uppy/s3'
 import ScreenCapture from '@uppy/screen-capture'
 import Transloadit from '@uppy/transloadit'
 import Tus from '@uppy/tus'
@@ -165,6 +166,12 @@ export default () => {
       target: Dashboard,
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
+    })
+    .use(S3, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+      bucket: import.meta.env.VITE_S3_BROWSE_BUCKET,
     })
     .use(Audio, {
       target: Dashboard,

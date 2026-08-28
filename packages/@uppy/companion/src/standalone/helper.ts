@@ -183,6 +183,12 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       awsSse: sseSchema.parse(process.env['COMPANION_AWS_SSE']),
       awsSseKmsKeyId: process.env['COMPANION_AWS_SSE_KMS_KEY_ID'],
       forcePathStyle: process.env['COMPANION_AWS_FORCE_PATH_STYLE'] === 'true',
+      browsableBuckets: process.env['COMPANION_AWS_BROWSABLE_BUCKETS']
+        ? process.env['COMPANION_AWS_BROWSABLE_BUCKETS']
+            .split(',')
+            .map((b) => b.trim())
+            .filter(Boolean)
+        : undefined,
     },
     server: {
       host: process.env['COMPANION_DOMAIN'],
