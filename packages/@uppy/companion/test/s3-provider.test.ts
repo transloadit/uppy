@@ -1,5 +1,13 @@
 import { Readable } from 'node:stream'
+import {
+  CopyObjectCommand,
+  DeleteObjectCommand,
+  HeadObjectCommand,
+  ListObjectsV2Command,
+  PutObjectCommand,
+} from '@aws-sdk/client-s3'
 import { describe, expect, test, vi } from 'vitest'
+import { ProviderUserError } from '../src/server/provider/error.js'
 import S3Provider from '../src/server/provider/s3/index.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
@@ -8,8 +16,23 @@ const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
   return provider
 }
 
-const companionWith = (browsableBuckets?: string[]) =>
-  ({ options: { s3: { browsableBuckets } } }) as never
+const companionWith = (
+  browsableBuckets?: string[],
+  mutableBuckets?: string[],
+) => ({ options: { s3: { browsableBuckets, mutableBuckets } } }) as never
+
+const notFound = () =>
+  Object.assign(new Error('NotFound'), {
+    name: 'NotFound',
+    $metadata: { httpStatusCode: 404 },
+  })
+
+type Cmd = { input: Record<string, unknown> }
+const inputsOf = (send: ReturnType<typeof vi.fn>, type: unknown) =>
+  send.mock.calls
+    .map((c) => c[0])
+    .filter((cmd) => cmd instanceof (type as never))
+    .map((cmd) => (cmd as unknown as Cmd).input)
 
 describe('S3 provider', () => {
   test('simpleAuth parses "bucket", "bucket/prefix" and "s3://bucket/prefix"', async () => {
@@ -133,5 +156,212 @@ describe('S3 provider', () => {
         providerUserSession: { bucket: 'b', prefix: 'tenant/' },
       }),
     ).rejects.toThrow()
+  })
+
+  test('mutations require the bucket to be in mutableBuckets', async () => {
+    const send = vi.fn(async () => ({}))
+    const provider = makeProvider(send)
+    const session = { bucket: 'b', prefix: '' }
+    await expect(
+      provider.deleteItem({
+        companion: companionWith(['b']),
+        id: 'x.txt',
+        providerUserSession: session,
+      }),
+    ).rejects.toBeInstanceOf(ProviderUserError)
+    await expect(
+      provider.createFolder({
+        companion: companionWith(['b'], ['other']),
+        parentId: null,
+        name: 'docs',
+        providerUserSession: session,
+      }),
+    ).rejects.toBeInstanceOf(ProviderUserError)
+    expect(send).not.toHaveBeenCalled()
+    await expect(
+      provider.deleteItem({
+        companion: companionWith(['b'], ['*']),
+        id: 'x.txt',
+        providerUserSession: session,
+      }),
+    ).resolves.toBeUndefined()
+    expect(inputsOf(send, DeleteObjectCommand)).toEqual([
+      { Bucket: 'b', Key: 'x.txt' },
+    ])
+  })
+
+  test('deleteItem refuses folders that still have entries', async () => {
+    let listing: Record<string, unknown> = {
+      Contents: [{ Key: 'a/' }, { Key: 'a/x.txt' }],
+    }
+    const send = vi.fn(async (cmd: unknown) =>
+      cmd instanceof ListObjectsV2Command ? listing : {},
+    )
+    const provider = makeProvider(send)
+    const args = {
+      companion: companionWith(['b'], ['b']),
+      id: 'a/',
+      providerUserSession: { bucket: 'b', prefix: '' },
+    }
+    await expect(provider.deleteItem(args)).rejects.toThrow('User error')
+    listing = { CommonPrefixes: [{ Prefix: 'a/sub/' }], Contents: [] }
+    await expect(provider.deleteItem(args)).rejects.toThrow('User error')
+    expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
+    listing = { Contents: [{ Key: 'a/' }] }
+    await expect(provider.deleteItem(args)).resolves.toBeUndefined()
+    expect(inputsOf(send, DeleteObjectCommand)).toEqual([
+      { Bucket: 'b', Key: 'a/' },
+    ])
+  })
+
+  test('moveItem renames files without overwriting and stays inside the prefix', async () => {
+    const send = vi.fn(async (cmd: unknown) => {
+      if (cmd instanceof HeadObjectCommand) {
+        if ((cmd as unknown as Cmd).input['Key'] === 't/taken.txt') return {}
+        throw notFound()
+      }
+      return {}
+    })
+    const provider = makeProvider(send)
+    const companion = companionWith(['b'], ['b'])
+    const providerUserSession = { bucket: 'b', prefix: 't/' }
+    await expect(
+      provider.moveItem({
+        companion,
+        id: 't/a.txt',
+        destination: 't/taken.txt',
+        providerUserSession,
+      }),
+    ).rejects.toThrow('User error')
+    await expect(
+      provider.moveItem({
+        companion,
+        id: 't/a.txt',
+        destination: 'other/a.txt',
+        providerUserSession,
+      }),
+    ).rejects.toBeInstanceOf(ProviderUserError)
+    await expect(
+      provider.moveItem({
+        companion,
+        id: 't/a.txt',
+        destination: 't/../a.txt',
+        providerUserSession,
+      }),
+    ).rejects.toBeInstanceOf(ProviderUserError)
+    await expect(
+      provider.moveItem({
+        companion,
+        id: 't/a.txt',
+        destination: 't/sub/',
+        providerUserSession,
+      }),
+    ).rejects.toThrow('User error')
+    expect(inputsOf(send, CopyObjectCommand)).toEqual([])
+    await expect(
+      provider.moveItem({
+        companion,
+        id: 't/a.txt',
+        destination: 't/b.txt',
+        providerUserSession,
+      }),
+    ).resolves.toEqual({ id: 't/b.txt', requestPath: 't%2Fb.txt' })
+    expect(inputsOf(send, CopyObjectCommand)).toEqual([
+      { Bucket: 'b', CopySource: '/b/t/a.txt', Key: 't/b.txt' },
+    ])
+    expect(inputsOf(send, DeleteObjectCommand)).toEqual([
+      { Bucket: 'b', Key: 't/a.txt' },
+    ])
+  })
+
+  test('moveItem moves folders entry by entry, copying before deleting', async () => {
+    const listings: Record<string, unknown> = {
+      'old/': {
+        CommonPrefixes: [{ Prefix: 'old/sub/' }],
+        Contents: [{ Key: 'old/' }, { Key: 'old/a.txt' }],
+      },
+      'old/sub/': { Contents: [{ Key: 'old/sub/b.txt' }] },
+      'new/': { Contents: [] },
+    }
+    const send = vi.fn(async (cmd: unknown) => {
+      if (cmd instanceof ListObjectsV2Command)
+        return (
+          listings[(cmd as unknown as Cmd).input['Prefix'] as string] ?? {
+            Contents: [],
+          }
+        )
+      if (cmd instanceof HeadObjectCommand) throw notFound()
+      return {}
+    })
+    const provider = makeProvider(send)
+    const companion = companionWith(['b'], ['b'])
+    const providerUserSession = { bucket: 'b', prefix: '' }
+    await expect(
+      provider.moveItem({
+        companion,
+        id: 'old/',
+        destination: 'old/inner/',
+        providerUserSession,
+      }),
+    ).rejects.toThrow('User error')
+    await expect(
+      provider.moveItem({
+        companion,
+        id: 'old/',
+        destination: 'new',
+        providerUserSession,
+      }),
+    ).resolves.toEqual({ id: 'new/', requestPath: 'new%2F' })
+    expect(inputsOf(send, PutObjectCommand).map((i) => i['Key'])).toEqual([
+      'new/',
+      'new/sub/',
+    ])
+    expect(inputsOf(send, CopyObjectCommand)).toEqual([
+      { Bucket: 'b', CopySource: '/b/old/a.txt', Key: 'new/a.txt' },
+      { Bucket: 'b', CopySource: '/b/old/sub/b.txt', Key: 'new/sub/b.txt' },
+    ])
+    expect(inputsOf(send, DeleteObjectCommand).map((i) => i['Key'])).toEqual([
+      'old/a.txt',
+      'old/sub/b.txt',
+      'old/sub/',
+      'old/',
+    ])
+    const order = send.mock.calls.map((c) => (c[0] as object).constructor.name)
+    expect(order.lastIndexOf('CopyObjectCommand')).toBeLessThan(
+      order.indexOf('DeleteObjectCommand'),
+    )
+  })
+
+  test('createFolder refuses names that already exist', async () => {
+    const send = vi.fn(async (cmd: unknown) => {
+      if (cmd instanceof ListObjectsV2Command) return { Contents: [] }
+      if (cmd instanceof HeadObjectCommand) {
+        if ((cmd as unknown as Cmd).input['Key'] === 'docs/taken/') return {}
+        throw notFound()
+      }
+      return {}
+    })
+    const provider = makeProvider(send)
+    const companion = companionWith(['b'], ['b'])
+    const providerUserSession = { bucket: 'b', prefix: '' }
+    await expect(
+      provider.createFolder({
+        companion,
+        parentId: 'docs/',
+        name: 'taken',
+        providerUserSession,
+      }),
+    ).rejects.toThrow('User error')
+    await expect(
+      provider.createFolder({
+        companion,
+        parentId: 'docs/',
+        name: ' fresh ',
+        providerUserSession,
+      }),
+    ).resolves.toEqual({ id: 'docs/fresh/', requestPath: 'docs%2Ffresh%2F' })
+    expect(inputsOf(send, PutObjectCommand)).toEqual([
+      { Bucket: 'b', Key: 'docs/fresh/', Body: '' },
+    ])
   })
 })

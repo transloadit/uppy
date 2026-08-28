@@ -98,6 +98,12 @@ export interface CompanionInitOptions {
      * enforces authorization). Unset/empty disables S3 browsing entirely.
      */
     browsableBuckets?: string[] | undefined
+    /**
+     * Buckets the S3 provider may *change* (delete, rename/move, create
+     * folders) from the Dashboard. Separate from `browsableBuckets` so a
+     * read-only browser is the default; `['*']` allows every browsable bucket.
+     */
+    mutableBuckets?: string[] | undefined
     awsClientOptions?: S3ClientConfig & {
       /** @deprecated */
       accessKeyId?: unknown

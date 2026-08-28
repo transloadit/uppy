@@ -3,6 +3,7 @@ import {
   CopyObjectCommand,
   DeleteObjectCommand,
   GetObjectCommand,
+  HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   type S3Client,
@@ -36,6 +37,29 @@ type CompanionS3Options = Pick<CompanionRuntimeOptions, 's3'>
 
 const ensureTrailingSlash = (s: string): string =>
   s.length === 0 || s.endsWith('/') ? s : `${s}/`
+
+/** Upper bound on the entries (objects + folders) a folder move may touch. */
+const MAX_FOLDER_MOVE_ENTRIES = 1000
+/** How many S3 calls a folder move runs at once. */
+const MOVE_CONCURRENCY = 8
+
+const isNotFound = (err: unknown): boolean => {
+  if (!isRecord(err)) return false
+  const status = (err['$metadata'] as { httpStatusCode?: number } | undefined)
+    ?.httpStatusCode
+  return (
+    err['name'] === 'NotFound' || err['name'] === 'NoSuchKey' || status === 404
+  )
+}
+
+const runBatched = async <T>(
+  items: T[],
+  fn: (item: T) => Promise<unknown>,
+): Promise<void> => {
+  for (let i = 0; i < items.length; i += MOVE_CONCURRENCY) {
+    await Promise.all(items.slice(i, i + MOVE_CONCURRENCY).map(fn))
+  }
+}
 
 /**
  * Parses user input like `my-bucket`, `my-bucket/some/prefix` or
@@ -97,6 +121,21 @@ export default class S3Provider extends Provider<S3UserSession> {
         allowed.length === 0
           ? 'S3 browsing is not enabled on this Companion (set `s3.browsableBuckets` / COMPANION_AWS_BROWSABLE_BUCKETS)'
           : `Bucket "${bucket}" is not allowed for browsing`,
+    })
+  }
+
+  /**
+   * Mutations are gated separately from browsing so a read-only browser is
+   * the default even when credentials would allow writes.
+   */
+  assertBucketMutable(companionOptions: CompanionS3Options, bucket: string) {
+    const allowed = companionOptions.s3?.mutableBuckets ?? []
+    if (allowed.includes('*') || allowed.includes(bucket)) return
+    throw new ProviderUserError({
+      message:
+        allowed.length === 0
+          ? 'Changing files in S3 is not enabled on this Companion (set `s3.mutableBuckets` / COMPANION_AWS_MUTABLE_BUCKETS)'
+          : `Bucket "${bucket}" is read-only`,
     })
   }
 
@@ -234,7 +273,7 @@ export default class S3Provider extends Provider<S3UserSession> {
       }
       const { bucket, prefix } = providerUserSession
       this.assertBucketAllowed(companion.options, bucket)
-      if (!id.startsWith(prefix)) throw new ProviderAuthError()
+      this.#assertInsidePrefix(prefix, id)
       const client = this.getClient(companion.options)
       const res = await client.send(
         new GetObjectCommand({ Bucket: bucket, Key: id }),
@@ -247,8 +286,126 @@ export default class S3Provider extends Provider<S3UserSession> {
   }
 
   #assertInsidePrefix(prefix: string, key: string): void {
-    if (!key.startsWith(prefix) || key.includes('../'))
-      throw new ProviderAuthError()
+    if (!key.startsWith(prefix) || key.split('/').includes('..')) {
+      // A user error (not an auth error) so the Dashboard shows the message
+      // instead of bouncing the user to the connect screen.
+      throw new ProviderUserError({
+        message: 'That path is outside the folder you are allowed to browse',
+      })
+    }
+  }
+
+  async #exists(
+    client: S3Client,
+    bucket: string,
+    key: string,
+  ): Promise<boolean> {
+    try {
+      await client.send(new HeadObjectCommand({ Bucket: bucket, Key: key }))
+      return true
+    } catch (err) {
+      if (isNotFound(err)) return false
+      throw err
+    }
+  }
+
+  /** True when anything other than the folder's own marker lives under it. */
+  async #folderHasEntries(
+    client: S3Client,
+    bucket: string,
+    folderKey: string,
+  ): Promise<boolean> {
+    const page = await client.send(
+      new ListObjectsV2Command({
+        Bucket: bucket,
+        Prefix: folderKey,
+        Delimiter: '/',
+        MaxKeys: 2,
+      }),
+    )
+    return (
+      (page.CommonPrefixes ?? []).length > 0 ||
+      (page.Contents ?? []).some((o) => o.Key !== folderKey)
+    )
+  }
+
+  async #copyObject(
+    client: S3Client,
+    bucket: string,
+    from: string,
+    to: string,
+  ): Promise<void> {
+    await client.send(
+      new CopyObjectCommand({
+        Bucket: bucket,
+        CopySource: `/${bucket}/${from.split('/').map(encodeURIComponent).join('/')}`,
+        Key: to,
+      }),
+    )
+  }
+
+  /**
+   * Moves a folder object by object. S3 has no folder move; walking with
+   * delimiter listings also carries over empty sub-folders (catalog rows on
+   * Transloadit Storage, zero-byte markers on plain S3). Destination folders
+   * are created and every object is copied before anything is deleted, so a
+   * failure half-way never loses data.
+   */
+  async #moveFolder(
+    client: S3Client,
+    bucket: string,
+    source: string,
+    target: string,
+  ): Promise<void> {
+    const objects: string[] = []
+    const folders: string[] = [source] // parents before children
+    for (let i = 0; i < folders.length; i++) {
+      const folder = folders[i] as string
+      let token: string | undefined
+      do {
+        const page = await client.send(
+          new ListObjectsV2Command({
+            Bucket: bucket,
+            Prefix: folder,
+            Delimiter: '/',
+            ...(token && { ContinuationToken: token }),
+          }),
+        )
+        for (const p of page.CommonPrefixes ?? []) {
+          if (p.Prefix) folders.push(p.Prefix)
+        }
+        for (const o of page.Contents ?? []) {
+          if (o.Key && o.Key !== folder) objects.push(o.Key)
+        }
+        if (objects.length + folders.length > MAX_FOLDER_MOVE_ENTRIES) {
+          throw new ProviderUserError({
+            message: `This folder has more than ${MAX_FOLDER_MOVE_ENTRIES} entries; move it with an S3 client instead`,
+          })
+        }
+        token = page.IsTruncated ? page.NextContinuationToken : undefined
+      } while (token)
+    }
+    const renamed = (key: string) => `${target}${key.slice(source.length)}`
+    for (const folder of folders) {
+      await client.send(
+        new PutObjectCommand({
+          Bucket: bucket,
+          Key: renamed(folder),
+          Body: '',
+        }),
+      )
+    }
+    await runBatched(objects, (key) =>
+      this.#copyObject(client, bucket, key, renamed(key)),
+    )
+    await runBatched(objects, (key) =>
+      client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key })),
+    )
+    for (const folder of [...folders].reverse()) {
+      await client.send(
+        new DeleteObjectCommand({ Bucket: bucket, Key: folder }),
+      )
+    }
   }
 
   override async deleteItem({
@@ -265,8 +422,15 @@ export default class S3Provider extends Provider<S3UserSession> {
         throw new ProviderAuthError()
       const { bucket, prefix } = providerUserSession
       this.assertBucketAllowed(companion.options, bucket)
+      this.assertBucketMutable(companion.options, bucket)
       this.#assertInsidePrefix(prefix, id)
       const client = this.getClient(companion.options)
+      if (
+        id.endsWith('/') &&
+        (await this.#folderHasEntries(client, bucket, id))
+      ) {
+        throw new ProviderUserError({ message: 'The folder is not empty' })
+      }
       await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
     })
   }
@@ -287,22 +451,43 @@ export default class S3Provider extends Provider<S3UserSession> {
         throw new ProviderAuthError()
       const { bucket, prefix } = providerUserSession
       this.assertBucketAllowed(companion.options, bucket)
+      this.assertBucketMutable(companion.options, bucket)
       this.#assertInsidePrefix(prefix, id)
       this.#assertInsidePrefix(prefix, destination)
-      if (id.endsWith('/') || destination.endsWith('/')) {
-        throw new ProviderUserError({ message: 'Folders cannot be moved yet' })
+      const isFolder = id.endsWith('/')
+      if (!isFolder && destination.endsWith('/')) {
+        throw new ProviderUserError({
+          message: 'The destination of a file must be a file path',
+        })
       }
-      if (id === destination) return { id, requestPath: encodeURIComponent(id) }
+      const target = isFolder ? ensureTrailingSlash(destination) : destination
+      if (target === id) return { id, requestPath: encodeURIComponent(id) }
       const client = this.getClient(companion.options)
-      await client.send(
-        new CopyObjectCommand({
-          Bucket: bucket,
-          CopySource: `/${bucket}/${id.split('/').map(encodeURIComponent).join('/')}`,
-          Key: destination,
-        }),
-      )
-      await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
-      return { id: destination, requestPath: encodeURIComponent(destination) }
+      if (isFolder) {
+        if (target.startsWith(id)) {
+          throw new ProviderUserError({
+            message: 'A folder cannot be moved into itself',
+          })
+        }
+        if (
+          (await this.#folderHasEntries(client, bucket, target)) ||
+          (await this.#exists(client, bucket, target))
+        ) {
+          throw new ProviderUserError({
+            message: `"${target}" already exists`,
+          })
+        }
+        await this.#moveFolder(client, bucket, id, target)
+      } else {
+        if (await this.#exists(client, bucket, target)) {
+          throw new ProviderUserError({
+            message: `"${target}" already exists`,
+          })
+        }
+        await this.#copyObject(client, bucket, id, target)
+        await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
+      }
+      return { id: target, requestPath: encodeURIComponent(target) }
     })
   }
 
@@ -324,6 +509,7 @@ export default class S3Provider extends Provider<S3UserSession> {
           throw new ProviderAuthError()
         const { bucket, prefix } = providerUserSession
         this.assertBucketAllowed(companion.options, bucket)
+        this.assertBucketMutable(companion.options, bucket)
         const cleanName = name.trim().replace(/^\/+|\/+$/g, '')
         if (
           cleanName.length === 0 ||
@@ -337,6 +523,14 @@ export default class S3Provider extends Provider<S3UserSession> {
         this.#assertInsidePrefix(prefix, parent)
         const key = `${parent}${cleanName}/`
         const client = this.getClient(companion.options)
+        if (
+          (await this.#folderHasEntries(client, bucket, key)) ||
+          (await this.#exists(client, bucket, key))
+        ) {
+          throw new ProviderUserError({
+            message: `A folder named "${cleanName}" already exists`,
+          })
+        }
         await client.send(
           new PutObjectCommand({ Bucket: bucket, Key: key, Body: '' }),
         )
