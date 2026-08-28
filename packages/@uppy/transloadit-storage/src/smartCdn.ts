@@ -1,7 +1,14 @@
 /**
- * Smart CDN URL signing in the browser (WebCrypto HMAC-SHA256). Byte-compatible
- * with `getSignedSmartCdnUrl` from `@transloadit/utils/node` and the api2
- * `Signature.getSmartCDNUrl` implementation.
+ * Smart CDN URL signing in the browser (WebCrypto HMAC-SHA256).
+ *
+ * This is the browser twin of `getSignedSmartCdnUrl` from `@transloadit/utils`
+ * (repo transloadit/node-sdk, `packages/utils`), which currently only ships
+ * from its `./node` entry point (Node `crypto`). It is byte-compatible with
+ * that function and with api2's `Signature.getSmartCDNUrl`, and it is meant
+ * to be replaced by `@transloadit/utils` once that package exposes an
+ * isomorphic (WebCrypto) build. The option names match `SmartCdnUrlOptions`
+ * there; the differences are that `authKey`/`authSecret` are optional here
+ * (omit both for an unsigned URL) and the extra `endpoint` for local api2s.
  */
 export interface SmartCdnUrlOptions {
   workspace: string
