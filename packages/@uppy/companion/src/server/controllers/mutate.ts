@@ -3,6 +3,14 @@ import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
 
+type MutationContext = {
+  provider: NonNullable<Request['companion']['provider']>
+  providerUserSession: Request['companion']['providerUserSession']
+  companion: Request['companion']
+}
+
+type ParsedInput<I> = { ok: true; input: I } | { ok: false; message: string }
+
 const readString = (body: unknown, key: string): string | null => {
   if (!isRecord(body)) return null
   const value = body[key]
@@ -15,99 +23,88 @@ const readNullableString = (body: unknown, key: string): string | null => {
   return typeof value === 'string' ? value : null
 }
 
-function requireMutationProvider(req: Request, res: Response) {
-  const { provider, providerClass, providerUserSession } = req.companion
-  if (!provider || !providerClass) {
-    res.sendStatus(400)
-    return null
-  }
-  if (!providerClass.supportsMutations) {
-    res
-      .status(400)
-      .json({ message: 'This provider does not support mutations' })
-    return null
-  }
-  return { provider, providerUserSession, companion: req.companion }
-}
-
-export async function deleteItem(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  const ctx = requireMutationProvider(req, res)
-  if (!ctx) return
-  const id = readString(req.body, 'id')
-  if (id === null) {
-    res.status(400).json({ message: 'Missing id' })
-    return
-  }
-  try {
-    await ctx.provider.deleteItem({
-      companion: ctx.companion,
-      id,
-      providerUserSession: ctx.providerUserSession,
-    })
-    res.json({ ok: true })
-  } catch (err) {
-    logger.error(err, 'controller.mutate.delete.error', req.id)
-    if (respondWithError(err, res)) return
-    next(err)
-  }
-}
-
-export async function moveItem(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  const ctx = requireMutationProvider(req, res)
-  if (!ctx) return
-  const id = readString(req.body, 'id')
-  const destination = readString(req.body, 'destination')
-  if (id === null || destination === null) {
-    res.status(400).json({ message: 'Missing id or destination' })
-    return
-  }
-  try {
-    const result = await ctx.provider.moveItem({
-      companion: ctx.companion,
-      id,
-      destination,
-      providerUserSession: ctx.providerUserSession,
-    })
-    res.json(result)
-  } catch (err) {
-    logger.error(err, 'controller.mutate.move.error', req.id)
-    if (respondWithError(err, res)) return
-    next(err)
+/**
+ * Builds an Express handler for one provider mutation: checks that the
+ * provider supports mutations, validates the body, runs the mutation and maps
+ * provider errors to HTTP responses.
+ */
+function mutation<I>(
+  name: string,
+  parse: (body: unknown) => ParsedInput<I>,
+  run: (ctx: MutationContext, input: I) => Promise<unknown>,
+) {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
+    const { provider, providerClass, providerUserSession } = req.companion
+    if (!provider || !providerClass) {
+      res.sendStatus(400)
+      return
+    }
+    if (!providerClass.supportsMutations) {
+      res
+        .status(400)
+        .json({ message: 'This provider does not support mutations' })
+      return
+    }
+    const parsed = parse(req.body)
+    if (!parsed.ok) {
+      res.status(400).json({ message: parsed.message })
+      return
+    }
+    try {
+      res.json(
+        await run(
+          { provider, providerUserSession, companion: req.companion },
+          parsed.input,
+        ),
+      )
+    } catch (err) {
+      logger.error(err, `controller.mutate.${name}.error`, req.id)
+      if (respondWithError(err, res)) return
+      next(err)
+    }
   }
 }
 
-export async function createFolder(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  const ctx = requireMutationProvider(req, res)
-  if (!ctx) return
-  const name = readString(req.body, 'name')
-  const parentId = readNullableString(req.body, 'parentId')
-  if (name === null) {
-    res.status(400).json({ message: 'Missing name' })
-    return
-  }
-  try {
-    const result = await ctx.provider.createFolder({
-      companion: ctx.companion,
-      parentId: parentId || null,
-      name,
-      providerUserSession: ctx.providerUserSession,
-    })
-    res.json(result)
-  } catch (err) {
-    logger.error(err, 'controller.mutate.createFolder.error', req.id)
-    if (respondWithError(err, res)) return
-    next(err)
-  }
-}
+export const deleteItem = mutation(
+  'delete',
+  (body) => {
+    const id = readString(body, 'id')
+    return id === null
+      ? { ok: false, message: 'Missing id' }
+      : { ok: true, input: { id } }
+  },
+  async ({ provider, providerUserSession, companion }, { id }) => {
+    await provider.deleteItem({ companion, id, providerUserSession })
+    return { ok: true }
+  },
+)
+
+export const moveItem = mutation(
+  'move',
+  (body) => {
+    const id = readString(body, 'id')
+    const destination = readString(body, 'destination')
+    return id === null || destination === null
+      ? { ok: false, message: 'Missing id or destination' }
+      : { ok: true, input: { id, destination } }
+  },
+  ({ provider, providerUserSession, companion }, { id, destination }) =>
+    provider.moveItem({ companion, id, destination, providerUserSession }),
+)
+
+export const createFolder = mutation(
+  'createFolder',
+  (body) => {
+    const name = readString(body, 'name')
+    const parentId = readNullableString(body, 'parentId')
+    return name === null
+      ? { ok: false, message: 'Missing name' }
+      : { ok: true, input: { name, parentId: parentId || null } }
+  },
+  ({ provider, providerUserSession, companion }, { name, parentId }) =>
+    provider.createFolder({ companion, parentId, name, providerUserSession }),
+)
