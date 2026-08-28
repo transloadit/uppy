@@ -90,6 +90,11 @@ export type S3Options = CompanionPluginOptions & {
   /** Extra toolbar actions, appended to the built-in ones. */
   toolbarActions?: ProviderToolbarAction<any, any>[]
   /**
+   * When a `bucket` is configured, connect without showing the auth form.
+   * Default: true.
+   */
+  autoConnect?: boolean
+  /**
    * Pre-fill the bucket (optionally with `/prefix`) so users only have to click
    * "Connect". Useful for multi-tenant setups where the integrator scopes what
    * a user may browse, e.g. `assets-bucket/customer-123/`.
@@ -114,6 +119,8 @@ export default class S3<M extends Meta, B extends Body>
   files: UppyFile<M, B>[]
 
   rootFolderId: string | null = null
+
+  #autoConnectAttempted = false
 
   constructor(uppy: Uppy<M, B>, opts: S3Options) {
     super(uppy, opts)
@@ -252,7 +259,23 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   render(state: unknown): ComponentChild {
+    this.#maybeAutoConnect()
     return this.view.render(state)
+  }
+
+  /** Skip the auth form when the integrator already told us which bucket to open. */
+  #maybeAutoConnect(): void {
+    const { bucket, autoConnect } = this.opts
+    if (this.#autoConnectAttempted || autoConnect === false || !bucket) return
+    const { authenticated, didFirstRender } = this.getPluginState()
+    if (!didFirstRender || authenticated !== false) return
+    this.#autoConnectAttempted = true
+    this.view.handleAuth({ bucket }).catch((err: unknown) => {
+      this.uppy.log(
+        `[S3] auto-connect failed: ${err instanceof Error ? err.message : String(err)}`,
+        'warning',
+      )
+    })
   }
 }
 
