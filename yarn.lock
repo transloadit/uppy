@@ -7354,7 +7354,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/s3@workspace:packages/@uppy/s3":
+"@uppy/s3@workspace:^, @uppy/s3@workspace:packages/@uppy/s3":
   version: 0.0.0-use.local
   resolution: "@uppy/s3@workspace:packages/@uppy/s3"
   dependencies:
@@ -7443,6 +7443,19 @@ __metadata:
     playwright: "npm:1.61.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.6"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage":
+  version: 0.0.0-use.local
+  resolution: "@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage"
+  dependencies:
+    "@uppy/core": "workspace:^"
+    "@uppy/s3": "workspace:^"
+    preact: "npm:^10.29.2"
+    typescript: "npm:^6.0.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown

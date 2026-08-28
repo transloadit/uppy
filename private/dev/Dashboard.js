@@ -16,6 +16,7 @@ import RemoteSources from '@uppy/remote-sources'
 import S3 from '@uppy/s3'
 import ScreenCapture from '@uppy/screen-capture'
 import Transloadit from '@uppy/transloadit'
+import TransloaditStorage from '@uppy/transloadit-storage'
 import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
 import Webdav from '@uppy/webdav'
@@ -167,12 +168,6 @@ export default () => {
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
     })
-    .use(S3, {
-      target: Dashboard,
-      companionUrl: COMPANION_URL,
-      companionAllowedHosts,
-      bucket: import.meta.env.VITE_S3_BROWSE_BUCKET,
-    })
     .use(Audio, {
       target: Dashboard,
       showRecordingLength: true,
@@ -234,7 +229,27 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        assemblyOptions,
+        assemblyOptions: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE
+          ? async (file) => {
+              // Store uploads in the folder currently open in the Transloadit Storage tab
+              const storage = uppyDashboard.getPlugin('TransloaditStorage')
+              const currentFolderId = storage?.getPluginState().currentFolderId
+              const folder = currentFolderId
+                ? decodeURIComponent(currentFolderId)
+                : ''
+              return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
+                auth: { key: TRANSLOADIT_KEY },
+                steps: {
+                  stored: {
+                    robot: '/transloadit/store',
+                    use: ':original',
+                    path: `${folder}${file.name}`,
+                    conflict_strategy: 'overwrite',
+                  },
+                },
+              })
+            }
+          : assemblyOptions,
       })
       break
     case 'transloadit-s3':
@@ -266,6 +281,28 @@ export default () => {
     uppyDashboard.use(GoldenRetriever, { serviceWorker: true })
   }
 
+  // S3-compatible browsing: plain S3 bucket, or Transloadit Storage (workspace bucket + Smart CDN URLs)
+  if (import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE) {
+    uppyDashboard.use(TransloaditStorage, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+      workspace: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE,
+      // Smart CDN URLs are signed with a SmartCDN-enabled key (may differ from the API key)
+      authKey:
+        import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_KEY || TRANSLOADIT_KEY,
+      authSecret: TRANSLOADIT_SECRET,
+      cdnEndpoint: import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT,
+    })
+  } else {
+    uppyDashboard.use(S3, {
+      target: Dashboard,
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+      bucket: import.meta.env.VITE_S3_BROWSE_BUCKET,
+    })
+  }
+
   window.uppy = uppyDashboard
 
   uppyDashboard.on('complete', (result) => {
@@ -278,6 +315,9 @@ export default () => {
     console.log('failed files:', result.failed)
     if (UPLOADER === 'transloadit') {
       console.log('Transloadit result:', result.transloadit)
+      uppyDashboard
+        .getPlugin('TransloaditStorage')
+        ?.view?.refreshCurrentFolder()
     }
   })
 
