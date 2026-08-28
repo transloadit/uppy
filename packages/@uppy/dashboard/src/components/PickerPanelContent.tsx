@@ -6,6 +6,9 @@ import type { ComponentChildren, MouseEventHandler } from 'preact'
 import type { DashboardState } from '../Dashboard.js'
 import ignoreEvent from '../utils/ignoreEvent.js'
 
+// biome-ignore lint/complexity/noBannedTypes: {} means anything except null or undefined
+type AnyUIPlugin<M extends Meta, B extends Body> = UIPlugin<{}, M, B>
+
 interface PickerPanelContentProps<M extends Meta, B extends Body> {
   activePickerPanel: NonNullable<DashboardState<M, B>['activePickerPanel']>
   className?: string | undefined
@@ -24,6 +27,10 @@ function PickerPanelContent<M extends Meta, B extends Body>({
   uppy,
 }: PickerPanelContentProps<M, B>): ComponentChildren {
   const ref = useRef<HTMLDivElement>(null)
+  const activePlugin = uppy.getPlugin(activePickerPanel.id) as
+    | AnyUIPlugin<M, B>
+    | undefined
+
   return (
     <div
       className={classNames('uppy-DashboardContent-panel', className)}
@@ -53,11 +60,10 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       </div>
 
       <div ref={ref} className="uppy-DashboardContent-panelBody">
-        {/** biome-ignore lint/complexity/noBannedTypes: {} means anything except null or undefined */}
-        {(uppy.getPlugin(activePickerPanel.id) as UIPlugin<{}, M, B>).render(
-          state,
-          ref.current!,
-        )}
+        {/* The panel can still be rendered once while its plugin is being
+            removed (uppy.removePlugin / uppy.destroy), so tolerate a
+            missing plugin instead of throwing during teardown. */}
+        {activePlugin?.render(state, ref.current!)}
       </div>
     </div>
   )
