@@ -293,35 +293,34 @@ export default class ProviderView<M extends Meta, B extends Body> {
   runAction = (
     action: ProviderAction<M, B>,
     item: PartialTreeFile | PartialTreeFolderNode,
-  ): Promise<void> => this.#run(action, { item })
+  ): Promise<void> =>
+    this.#run(action, () => action.run({ item, ...this.#actionContext() }))
 
   runToolbarAction = (action: ProviderToolbarAction<M, B>): Promise<void> =>
-    this.#run(action, {
-      currentFolderId: this.plugin.getPluginState().currentFolderId,
-    })
+    this.#run(action, () =>
+      action.run({
+        currentFolderId: this.plugin.getPluginState().currentFolderId,
+        ...this.#actionContext(),
+      }),
+    )
 
-  /** Runs an action with the shared context, refreshes, and reports errors as toasts. */
-  async #run<Ctx extends object>(
-    action: {
-      run: (
-        context: Ctx & {
-          view: ProviderView<M, B>
-          uppy: Uppy<M, B>
-          i18n: I18n
-        },
-      ) => Promise<void> | void
-      refresh?: boolean | undefined
-    },
-    context: Ctx,
-  ): Promise<void> {
+  #actionContext = () => {
     const { uppy } = this.plugin
+    return { view: this, uppy, i18n: uppy.i18n }
+  }
+
+  /** Runs an action, refreshes the folder, and reports errors as toasts. */
+  async #run(
+    { refresh }: { refresh?: boolean | undefined },
+    run: () => Promise<void> | void,
+  ): Promise<void> {
     try {
-      await action.run({ ...context, view: this, uppy, i18n: uppy.i18n })
-      if (action.refresh !== false) await this.refreshCurrentFolder()
+      await run()
+      if (refresh !== false) await this.refreshCurrentFolder()
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
-      uppy.log(`[ProviderView] action failed: ${message}`, 'error')
-      uppy.info(message, 'error', 5000)
+      this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
+      this.plugin.uppy.info(message, 'error', 5000)
     }
   }
 
