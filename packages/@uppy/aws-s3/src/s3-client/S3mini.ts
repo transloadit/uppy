@@ -231,7 +231,18 @@ class S3mini extends S3Client {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return { uploadId, key: signedKey }
+          // S3 echoes the key the upload was created for. Prefer it, so that
+          // multipart uploads pick up a server-generated key even when the
+          // signer doesn't return one, and fall back to the signed key for
+          // S3-compatible services that omit it.
+          const responseKey = uploadResult.key || uploadResult.Key
+          return {
+            uploadId,
+            key:
+              typeof responseKey === 'string' && responseKey.length > 0
+                ? responseKey
+                : signedKey,
+          }
         }
       }
     }

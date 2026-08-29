@@ -275,10 +275,15 @@ describe('AwsS3', () => {
       expect(response.uploadURL).toBe(`${bucketUrl}/server-client-photo.jpg`)
     })
 
-    test('multipart: signs every request with the key the signer used', async ({
-      worker,
-    }) => {
-      // A key the signer mints at create time, which the client cannot derive.
+    /**
+     * Uploads a file with a signer that mints the object key when the
+     * multipart upload is created, and refuses to sign for any key it never
+     * issued — the way a server generating unique keys behaves.
+     */
+    async function uploadWithServerMintedKey(
+      worker: SetupWorker,
+      { returnKeyFromSigner }: { returnKeyFromSigner: boolean },
+    ) {
       const serverKey = 'server-9f3a-big.dat'
       const { signRequest, registerHandlers } = createMultipartMocks(worker, {
         key: serverKey,
@@ -291,7 +296,6 @@ describe('AwsS3', () => {
         if (isCreate) {
           knownKeys.add(serverKey)
         } else if (!knownKeys.has(req.key)) {
-          // A real signer would fail to sign for an upload it never created.
           throw new Error(`signer received an unknown key: ${req.key}`)
         }
 
@@ -302,7 +306,7 @@ describe('AwsS3', () => {
 
         return {
           url: `${bucketUrl}/${serverKey}?${params}`,
-          ...(isCreate ? { key: serverKey } : {}),
+          ...(isCreate && returnKeyFromSigner ? { key: serverKey } : {}),
         }
       })
 
@@ -326,16 +330,40 @@ describe('AwsS3', () => {
       core.on('upload-error', (_file, err) => onError(err.message))
       await core.upload()
 
-      expect(onError).not.toHaveBeenCalled()
-      expect(onSuccess).toHaveBeenCalledTimes(1)
-      expect(onSuccess.mock.calls[0][1].body.key).toBe(serverKey)
-
-      // Only the createMultipartUpload call may use the client key; every
-      // request after it has to use the key the signer handed back.
+      // Only createMultipartUpload may use the client key; every request after
+      // it has to use the key the upload was actually created for.
       const keysAfterCreate = signRequest.mock.calls
         .map((call: any) => call[0])
         .filter((req: any) => !(req.method === 'POST' && !req.uploadId))
         .map((req: any) => req.key)
+
+      return { serverKey, onSuccess, onError, keysAfterCreate }
+    }
+
+    test('multipart: uses the key returned by the signer', async ({
+      worker,
+    }) => {
+      const { serverKey, onSuccess, onError, keysAfterCreate } =
+        await uploadWithServerMintedKey(worker, { returnKeyFromSigner: true })
+
+      expect(onError).not.toHaveBeenCalled()
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSuccess.mock.calls[0][1].body.key).toBe(serverKey)
+      expect(keysAfterCreate.length).toBeGreaterThan(0)
+      expect(keysAfterCreate.every((key: string) => key === serverKey)).toBe(
+        true,
+      )
+    })
+
+    test('multipart: falls back to the key S3 reports when the signer omits it', async ({
+      worker,
+    }) => {
+      const { serverKey, onSuccess, onError, keysAfterCreate } =
+        await uploadWithServerMintedKey(worker, { returnKeyFromSigner: false })
+
+      expect(onError).not.toHaveBeenCalled()
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSuccess.mock.calls[0][1].body.key).toBe(serverKey)
       expect(keysAfterCreate.length).toBeGreaterThan(0)
       expect(keysAfterCreate.every((key: string) => key === serverKey)).toBe(
         true,
