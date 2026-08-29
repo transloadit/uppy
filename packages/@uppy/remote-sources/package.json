@@ -60,7 +60,6 @@
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",
     "playwright": "1.61.1",
-    "resize-observer-polyfill": "^1.5.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.6"
   }

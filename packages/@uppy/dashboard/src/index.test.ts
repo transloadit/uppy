@@ -2,20 +2,10 @@ import Core, { type UIPlugin } from '@uppy/core'
 import GoogleDrivePlugin from '@uppy/google-drive'
 import Url from '@uppy/url'
 import WebcamPlugin from '@uppy/webcam'
-import resizeObserverPolyfill from 'resize-observer-polyfill'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import DashboardPlugin from './index.js'
 
 describe('Dashboard', () => {
-  beforeAll(() => {
-    globalThis.ResizeObserver =
-      (resizeObserverPolyfill as any).default || resizeObserverPolyfill
-  })
-  afterAll(() => {
-    // @ts-expect-error we're touching globals for the test
-    delete globalThis.ResizeObserver
-  })
-
   it('works without any remote provider plugins', () => {
     const core = new Core()
 
