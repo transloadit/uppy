@@ -290,36 +290,39 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  runAction = async (
+  runAction = (
     action: ProviderAction<M, B>,
     item: PartialTreeFile | PartialTreeFolderNode,
-  ): Promise<void> => {
+  ): Promise<void> => this.#run(action, { item })
+
+  runToolbarAction = (action: ProviderToolbarAction<M, B>): Promise<void> =>
+    this.#run(action, {
+      currentFolderId: this.plugin.getPluginState().currentFolderId,
+    })
+
+  /** Runs an action with the shared context, refreshes, and reports errors as toasts. */
+  async #run<Ctx extends object>(
+    action: {
+      run: (
+        context: Ctx & {
+          view: ProviderView<M, B>
+          uppy: Uppy<M, B>
+          i18n: I18n
+        },
+      ) => Promise<void> | void
+      refresh?: boolean | undefined
+    },
+    context: Ctx,
+  ): Promise<void> {
     const { uppy } = this.plugin
     try {
-      await action.run({ item, view: this, uppy, i18n: uppy.i18n })
+      await action.run({ ...context, view: this, uppy, i18n: uppy.i18n })
       if (action.refresh !== false) await this.refreshCurrentFolder()
     } catch (err) {
-      this.#handleActionError(err)
+      const message = err instanceof Error ? err.message : String(err)
+      uppy.log(`[ProviderView] action failed: ${message}`, 'error')
+      uppy.info(message, 'error', 5000)
     }
-  }
-
-  runToolbarAction = async (
-    action: ProviderToolbarAction<M, B>,
-  ): Promise<void> => {
-    const { uppy } = this.plugin
-    const { currentFolderId } = this.plugin.getPluginState()
-    try {
-      await action.run({ currentFolderId, view: this, uppy, i18n: uppy.i18n })
-      if (action.refresh !== false) await this.refreshCurrentFolder()
-    } catch (err) {
-      this.#handleActionError(err)
-    }
-  }
-
-  #handleActionError(err: unknown): void {
-    const message = err instanceof Error ? err.message : String(err)
-    this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
-    this.plugin.uppy.info(message, 'error', 5000)
   }
 
   #dialogs: ProviderDialogController
