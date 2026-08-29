@@ -445,12 +445,15 @@
   }
 }
 
-// Rendered by Browser as a sibling of the scrolling list (inside the
-// `position: relative` body) and positioned from the trigger's rect, so it is
-// never clipped by the list's overflow.
+// A `popover="auto"` element in the top layer, positioned from the trigger's
+// viewport rect by ItemActionsPopover (the UA's `inset: 0; margin: auto` is
+// reset so `top`/`right` apply). `z-index` only matters where the Popover API
+// is missing and this is a plain positioned div.
 .uppy-ProviderBrowserItem-actionsMenu {
-  position: absolute;
+  position: fixed;
+  inset: auto;
   z-index: variables.$zIndex-3;
+  margin: 0;
   min-width: 180px;
   padding: 4px;
   background-color: variables.$white;
@@ -509,31 +512,30 @@
 }
 
 // Inline prompt/confirm dialog (ProviderView.prompt / .confirm), used by
-// provider actions instead of window.prompt / window.confirm.
-.uppy-ProviderDialog-overlay {
-  position: absolute;
-  inset: 0;
-  z-index: variables.$zIndex-4;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background-color: rgba(variables.$black, 0.35);
-}
-
+// provider actions instead of window.prompt / window.confirm. A native
+// <dialog> shown with showModal(): centred in the top layer with ::backdrop.
 .uppy-ProviderDialog {
   width: 100%;
   max-width: 360px;
-  padding: 18px 20px;
+  padding: 0;
   color: variables.$gray-800;
   background-color: variables.$white;
+  border: 0;
   border-radius: 8px;
   box-shadow: 0 8px 24px rgba(variables.$black, 0.25);
+
+  &::backdrop {
+    background-color: rgba(variables.$black, 0.35);
+  }
 
   [data-uppy-theme='dark'] & {
     color: variables.$gray-200;
     background-color: variables.$gray-800;
   }
+}
+
+.uppy-ProviderDialog-form {
+  padding: 18px 20px;
 }
 
 .uppy-ProviderDialog-title {

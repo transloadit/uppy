@@ -12,8 +12,11 @@ type ProviderDialogProps = {
 }
 
 /**
- * Inline replacement for `window.prompt` / `window.confirm`, rendered on top
- * of the provider browser. Driven by `ProviderView.prompt()` / `.confirm()`.
+ * Inline replacement for `window.prompt` / `window.confirm`, driven by
+ * `ProviderView.prompt()` / `.confirm()`. A native `<dialog>` opened with
+ * `showModal()`: focus trap, Escape (the `cancel` event), `::backdrop` and
+ * focus restore come from the browser. Engines without `showModal` get the
+ * same dialog inline, without the trap.
  */
 export default function ProviderDialog({
   dialog,
@@ -24,6 +27,7 @@ export default function ProviderDialog({
   const [value, setValue] = useState(
     dialog.kind === 'prompt' ? (dialog.defaultValue ?? '') : '',
   )
+  const dialogRef = useRef<HTMLDialogElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
   const titleId = useId()
@@ -31,42 +35,34 @@ export default function ProviderDialog({
   const danger = dialog.kind === 'confirm' && dialog.danger === true
 
   useEffect(() => {
-    const previouslyFocused = document.activeElement as HTMLElement | null
-    if (inputRef.current) {
-      inputRef.current.focus()
-      inputRef.current.select()
-    } else {
-      confirmRef.current?.focus()
-    }
-    return () => {
-      previouslyFocused?.focus?.()
-    }
+    const el = dialogRef.current
+    if (!el) return
+    if (typeof el.showModal === 'function') el.showModal()
+    else el.setAttribute('open', '')
+    ;(inputRef.current ?? confirmRef.current)?.focus()
+    inputRef.current?.select()
   }, [])
 
   return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: backdrop click-to-dismiss, the dialog itself is keyboard operable
-    <div
-      className="uppy-ProviderDialog-overlay"
-      onMouseDown={(event) => {
+    <dialog
+      ref={dialogRef}
+      className="uppy-ProviderDialog"
+      aria-labelledby={titleId}
+      onCancel={onCancel}
+      onClick={(event) => {
         if (event.target === event.currentTarget) onCancel()
+      }}
+      onKeyDown={(event) => {
+        // The browser closes the dialog on Escape; only keep the Dashboard from
+        // treating the same key press as "close the modal".
+        if (event.key === 'Escape') event.stopPropagation()
       }}
     >
       <form
-        className="uppy-ProviderDialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
+        className="uppy-ProviderDialog-form"
         onSubmit={(event) => {
           event.preventDefault()
           onConfirm(isPrompt ? value : undefined)
-        }}
-        onKeyDown={(event) => {
-          if (event.key === 'Escape') {
-            // Keep the Dashboard from treating this as "close the modal".
-            event.preventDefault()
-            event.stopPropagation()
-            onCancel()
-          }
         }}
       >
         <h3 id={titleId} className="uppy-ProviderDialog-title">
@@ -114,6 +110,6 @@ export default function ProviderDialog({
           </button>
         </div>
       </form>
-    </div>
+    </dialog>
   )
 }

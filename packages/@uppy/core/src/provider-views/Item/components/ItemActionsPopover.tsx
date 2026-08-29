@@ -9,7 +9,7 @@ type ItemActionsPopoverProps = {
   actions: ProviderAction<any, any>[]
   /** The "⋯" button the menu belongs to. */
   anchor: HTMLElement
-  /** The `position: relative` element the menu is positioned in. */
+  /** The scrolling list; scrolling it would leave the menu behind. */
   containerRef: RefObject<HTMLElement>
   runAction: (
     action: ProviderAction<any, any>,
@@ -22,11 +22,11 @@ type ItemActionsPopoverProps = {
 const GAP = 4
 
 /**
- * The open actions menu for one item. Rendered by `Browser` next to the
- * scrolling list rather than inside the item, positioned from the trigger's
- * bounding rect (flipping upwards near the bottom), so the list's overflow
- * cannot clip it. Closes on Escape, outside click, scroll, resize and after
- * running an action; arrow keys move between entries.
+ * The open actions menu for one item: a `popover="auto"` element in the top
+ * layer, positioned from the trigger's viewport rect (flipping upwards near
+ * the bottom), so no ancestor can clip it. Light-dismiss, Escape and focus
+ * return are the browser's; arrow keys move between entries. Engines without
+ * the Popover API get a plain positioned menu that closes on Escape/Tab/action.
  */
 export default function ItemActionsPopover({
   file,
@@ -45,51 +45,38 @@ export default function ItemActionsPopover({
 
   useLayoutEffect(() => {
     const menu = menuRef.current
-    const container = containerRef.current
-    if (!menu || !container) return
+    if (!menu) return
     const a = anchor.getBoundingClientRect()
-    const c = container.getBoundingClientRect()
     const height = menu.offsetHeight
-    const fitsBelow = a.bottom + GAP + height <= c.bottom
-    const fitsAbove = a.top - GAP - height >= c.top
-    const top =
-      fitsBelow || !fitsAbove
-        ? a.bottom - c.top + GAP
-        : a.top - c.top - GAP - height
+    const fitsBelow = a.bottom + GAP + height <= window.innerHeight
     setPosition({
-      top: Math.max(0, top),
-      right: Math.max(0, c.right - a.right),
+      top: fitsBelow ? a.bottom + GAP : Math.max(0, a.top - GAP - height),
+      right: Math.max(0, window.innerWidth - a.right),
     })
-  }, [anchor, containerRef])
+  }, [anchor])
 
   useEffect(() => {
-    const onMouseDown = (event: MouseEvent) => {
-      const target = event.target as Node
-      if (menuRef.current?.contains(target) || anchor.contains(target)) return
-      onClose()
-    }
-    // Our position goes stale when the list inside the container scrolls or
-    // the panel resizes. (Scrolling of ancestors moves the container and the
-    // menu together, so only scrolls *inside* the container matter.)
+    const menu = menuRef.current
     const container = containerRef.current
-    document.addEventListener('mousedown', onMouseDown)
-    container?.addEventListener('scroll', onClose, true)
-    window.addEventListener('resize', onClose)
-    return () => {
-      document.removeEventListener('mousedown', onMouseDown)
-      container?.removeEventListener('scroll', onClose, true)
-      window.removeEventListener('resize', onClose)
+    if (!menu) return
+    // Mirror the browser's light-dismiss / Escape into our state.
+    const onToggle = (event: Event) => {
+      if ((event as Event & { newState?: string }).newState === 'closed')
+        onClose()
     }
-  }, [anchor, containerRef, onClose])
-
-  useEffect(() => {
-    // Move focus into the menu so it is keyboard operable straight away.
+    menu.addEventListener('toggle', onToggle)
+    if (typeof menu.showPopover === 'function') menu.showPopover()
+    container?.addEventListener('scroll', onClose, true)
     // `preventScroll`: the Dashboard panel is an overflow:hidden container that
     // would otherwise be scrolled (mid slide-in animation) to reveal the item.
-    menuRef.current
-      ?.querySelector<HTMLElement>('[role="menuitem"]')
+    menu
+      .querySelector<HTMLElement>('[role="menuitem"]')
       ?.focus({ preventScroll: true })
-  }, [])
+    return () => {
+      menu.removeEventListener('toggle', onToggle)
+      container?.removeEventListener('scroll', onClose, true)
+    }
+  }, [containerRef, onClose])
 
   const closeAndRefocus = () => {
     onClose()
@@ -107,10 +94,11 @@ export default function ItemActionsPopover({
     }
     switch (event.key) {
       case 'Escape':
-        event.preventDefault()
-        // Keep the Dashboard from treating this as "close the modal".
+        // The browser hides the popover; keep the Dashboard from treating the
+        // same key press as "close the modal".
         event.stopPropagation()
-        closeAndRefocus()
+        if (typeof menuRef.current?.hidePopover !== 'function')
+          closeAndRefocus()
         break
       case 'ArrowDown':
         focusAt(index + 1)
@@ -135,6 +123,7 @@ export default function ItemActionsPopover({
     <div
       ref={menuRef}
       className="uppy-ProviderBrowserItem-actionsMenu"
+      popover="auto"
       role="menu"
       aria-label={i18n('itemActionsNamed', {
         name: file.data.name ?? i18n('unnamed'),

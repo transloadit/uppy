@@ -110,7 +110,10 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
 
   const popover =
     menu.open && menu.openItem && runAction ? (
+      // Keyed per item: switching menus must unmount the old popover, or its
+      // (queued) light-dismiss `toggle` event would close the new one.
       <ItemActionsPopover
+        key={menu.open.id}
         file={menu.openItem}
         actions={getApplicableActions(actions, menu.openItem)}
         anchor={menu.open.anchor}
