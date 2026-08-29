@@ -6,6 +6,7 @@ import {
   HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
+  paginateListObjectsV2,
   type S3Client,
 } from '@aws-sdk/client-s3'
 import { lookup as mimeLookup } from 'mime-types'
@@ -150,6 +151,25 @@ export default class S3Provider extends Provider<S3UserSession> {
     return client
   }
 
+  /**
+   * Every operation starts here: a valid session, an allowlisted bucket
+   * (writable when `mutate`), and every key inside the scoped prefix.
+   */
+  #session(
+    companion: CompanionLike,
+    providerUserSession: S3UserSession,
+    { mutate = false, keys = [] as string[] } = {},
+  ): { bucket: string; prefix: string; client: S3Client } {
+    if (!this.isAuthenticated({ providerUserSession })) {
+      throw new ProviderAuthError()
+    }
+    const { bucket, prefix } = providerUserSession
+    this.assertBucketAllowed(companion.options, bucket)
+    if (mutate) this.assertBucketMutable(companion.options, bucket)
+    for (const key of keys) this.#assertInsidePrefix(prefix, key)
+    return { bucket, prefix, client: this.getClient(companion.options) }
+  }
+
   override async logout(): Promise<{ revoked: true }> {
     return { revoked: true }
   }
@@ -188,12 +208,11 @@ export default class S3Provider extends Provider<S3UserSession> {
     directory?: string | undefined
   }): Promise<ProviderListResponse> {
     return this.withErrorHandling('provider.s3.list.error', async () => {
-      if (!this.isAuthenticated({ providerUserSession })) {
-        throw new ProviderAuthError()
-      }
-      const { bucket, prefix: rootPrefix } = providerUserSession
-      this.assertBucketAllowed(companion.options, bucket)
-      const client = this.getClient(companion.options)
+      const {
+        bucket,
+        prefix: rootPrefix,
+        client,
+      } = this.#session(companion, providerUserSession)
 
       // `directory` is the (already URL-decoded) key prefix of the folder being
       // listed; the root of the session is the scoped prefix.
@@ -268,13 +287,9 @@ export default class S3Provider extends Provider<S3UserSession> {
     providerUserSession: S3UserSession
   }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.withErrorHandling('provider.s3.download.error', async () => {
-      if (!this.isAuthenticated({ providerUserSession })) {
-        throw new ProviderAuthError()
-      }
-      const { bucket, prefix } = providerUserSession
-      this.assertBucketAllowed(companion.options, bucket)
-      this.#assertInsidePrefix(prefix, id)
-      const client = this.getClient(companion.options)
+      const { bucket, client } = this.#session(companion, providerUserSession, {
+        keys: [id],
+      })
       const res = await client.send(
         new GetObjectCommand({ Bucket: bucket, Key: id }),
       )
@@ -361,16 +376,10 @@ export default class S3Provider extends Provider<S3UserSession> {
     const folders: string[] = [source] // parents before children
     for (let i = 0; i < folders.length; i++) {
       const folder = folders[i] as string
-      let token: string | undefined
-      do {
-        const page = await client.send(
-          new ListObjectsV2Command({
-            Bucket: bucket,
-            Prefix: folder,
-            Delimiter: '/',
-            ...(token && { ContinuationToken: token }),
-          }),
-        )
+      for await (const page of paginateListObjectsV2(
+        { client },
+        { Bucket: bucket, Prefix: folder, Delimiter: '/' },
+      )) {
         for (const p of page.CommonPrefixes ?? []) {
           if (p.Prefix) folders.push(p.Prefix)
         }
@@ -382,8 +391,7 @@ export default class S3Provider extends Provider<S3UserSession> {
             message: `This folder has more than ${MAX_FOLDER_MOVE_ENTRIES} entries; move it with an S3 client instead`,
           })
         }
-        token = page.IsTruncated ? page.NextContinuationToken : undefined
-      } while (token)
+      }
     }
     const renamed = (key: string) => `${target}${key.slice(source.length)}`
     for (const folder of folders) {
@@ -418,13 +426,10 @@ export default class S3Provider extends Provider<S3UserSession> {
     providerUserSession: S3UserSession
   }): Promise<void> {
     return this.withErrorHandling('provider.s3.delete.error', async () => {
-      if (!this.isAuthenticated({ providerUserSession }))
-        throw new ProviderAuthError()
-      const { bucket, prefix } = providerUserSession
-      this.assertBucketAllowed(companion.options, bucket)
-      this.assertBucketMutable(companion.options, bucket)
-      this.#assertInsidePrefix(prefix, id)
-      const client = this.getClient(companion.options)
+      const { bucket, client } = this.#session(companion, providerUserSession, {
+        mutate: true,
+        keys: [id],
+      })
       if (
         id.endsWith('/') &&
         (await this.#folderHasEntries(client, bucket, id))
@@ -447,13 +452,10 @@ export default class S3Provider extends Provider<S3UserSession> {
     providerUserSession: S3UserSession
   }): Promise<{ id: string; requestPath: string }> {
     return this.withErrorHandling('provider.s3.move.error', async () => {
-      if (!this.isAuthenticated({ providerUserSession }))
-        throw new ProviderAuthError()
-      const { bucket, prefix } = providerUserSession
-      this.assertBucketAllowed(companion.options, bucket)
-      this.assertBucketMutable(companion.options, bucket)
-      this.#assertInsidePrefix(prefix, id)
-      this.#assertInsidePrefix(prefix, destination)
+      const { bucket, client } = this.#session(companion, providerUserSession, {
+        mutate: true,
+        keys: [id, destination],
+      })
       const isFolder = id.endsWith('/')
       if (!isFolder && destination.endsWith('/')) {
         throw new ProviderUserError({
@@ -462,7 +464,6 @@ export default class S3Provider extends Provider<S3UserSession> {
       }
       const target = isFolder ? ensureTrailingSlash(destination) : destination
       if (target === id) return { id, requestPath: encodeURIComponent(id) }
-      const client = this.getClient(companion.options)
       if (isFolder) {
         if (target.startsWith(id)) {
           throw new ProviderUserError({
@@ -505,11 +506,11 @@ export default class S3Provider extends Provider<S3UserSession> {
     return this.withErrorHandling(
       'provider.s3.createFolder.error',
       async () => {
-        if (!this.isAuthenticated({ providerUserSession }))
-          throw new ProviderAuthError()
-        const { bucket, prefix } = providerUserSession
-        this.assertBucketAllowed(companion.options, bucket)
-        this.assertBucketMutable(companion.options, bucket)
+        const { bucket, prefix, client } = this.#session(
+          companion,
+          providerUserSession,
+          { mutate: true },
+        )
         const cleanName = name.trim().replace(/^\/+|\/+$/g, '')
         if (
           cleanName.length === 0 ||
@@ -522,7 +523,6 @@ export default class S3Provider extends Provider<S3UserSession> {
         const parent = parentId ? ensureTrailingSlash(parentId) : prefix
         this.#assertInsidePrefix(prefix, parent)
         const key = `${parent}${cleanName}/`
-        const client = this.getClient(companion.options)
         if (
           (await this.#folderHasEntries(client, bucket, key)) ||
           (await this.#exists(client, bucket, key))

@@ -5,6 +5,7 @@ import {
   HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
+  S3Client,
 } from '@aws-sdk/client-s3'
 import { describe, expect, test, vi } from 'vitest'
 import { ProviderUserError } from '../src/server/provider/error.js'
@@ -12,7 +13,9 @@ import S3Provider from '../src/server/provider/s3/index.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
   const provider = new S3Provider({ allowLocalUrls: false })
-  vi.spyOn(provider, 'getClient').mockReturnValue({ send } as never)
+  // A real S3Client prototype: the SDK paginator insists on `instanceof`.
+  const client = Object.assign(Object.create(S3Client.prototype), { send })
+  vi.spyOn(provider, 'getClient').mockReturnValue(client as never)
   return provider
 }
 
