@@ -21,7 +21,8 @@ import * as U from './utils.js'
  *       method: 'POST',
  *       body: JSON.stringify({ method, key, uploadId, partNumber }),
  *     });
- *     return resp.json(); // { url }
+ *     // { url } — or { url, key } if the server signed for a different key
+ *     return resp.json();
  *   },
  * });
  *

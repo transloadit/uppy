@@ -43,7 +43,16 @@ export type PresignableRequest =
 /** Response with the pre-signed URL */
 export type PresignedResponse = {
   url: string
-  // return the key which the signer signed for
+  /**
+   * The object key the signer actually signed for, when it differs from the
+   * requested one — for example when the server generates its own keys.
+   * Omit it to keep the requested key.
+   *
+   * Only used when creating an object: `putObject` reports it back to the
+   * user, and `createMultipartUpload` signs every subsequent request for it.
+   * It is ignored for requests that carry an `uploadId`, whose key is already
+   * fixed by the multipart upload they belong to.
+   */
   key?: string
 }
 
