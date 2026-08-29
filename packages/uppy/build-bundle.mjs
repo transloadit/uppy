@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fs from 'node:fs/promises'
-import chalk from 'chalk'
+import { styleText } from 'node:util'
 
 import esbuild from 'esbuild'
 
@@ -30,13 +30,13 @@ function buildBundle(
     .then(() => {
       if (minify) {
         console.info(
-          chalk.green(`✓ Built Minified Bundle [${standalone}]:`),
-          chalk.magenta(bundleFile),
+          styleText('green', `✓ Built Minified Bundle [${standalone}]:`),
+          styleText('magenta', bundleFile),
         )
       } else {
         console.info(
-          chalk.green(`✓ Built Bundle [${standalone}]:`),
-          chalk.magenta(bundleFile),
+          styleText('green', `✓ Built Bundle [${standalone}]:`),
+          styleText('magenta', bundleFile),
         )
       }
     })
@@ -85,9 +85,9 @@ methods.push(
 
 await Promise.all(methods).then(
   () => {
-    console.info(chalk.yellow('✓ JS bundles 🎉'))
+    console.info(styleText('yellow', '✓ JS bundles 🎉'))
   },
   (err) => {
-    console.error(chalk.red('✗ Error:'), chalk.red(err.message))
+    console.error(styleText('red', '✗ Error:'), styleText('red', err.message))
   },
 )
