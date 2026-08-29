@@ -128,6 +128,19 @@ function splitKey(key: string): {
   }
 }
 
+/**
+ * Wraps an action's `run` so it only has to return the success toast (or
+ * nothing when the user cancelled); errors keep going through ProviderView.
+ */
+const withToast =
+  <Ctx extends { uppy: Uppy<any, any> }>(
+    run: (context: Ctx) => Promise<string | undefined>,
+  ) =>
+  async (context: Ctx): Promise<void> => {
+    const message = await run(context)
+    if (message) context.uppy.info(message, 'info', 3000)
+  }
+
 export default class S3<M extends Meta, B extends Body>
   extends UIPlugin<S3Options, M, B, UnknownProviderPluginState>
   implements UnknownProviderPlugin<M, B>
@@ -219,7 +232,7 @@ export default class S3<M extends Meta, B extends Body>
         id: 's3:rename',
         label: this.i18n('renameOrMove'),
         appliesTo: 'all',
-        run: async ({ item, view, uppy }) => {
+        run: withToast(async ({ item, view }) => {
           const key = S3.keyOf(item.id)
           const { parent, name, isFolder } = splitKey(key)
           const input = await view.prompt({
@@ -229,27 +242,23 @@ export default class S3<M extends Meta, B extends Body>
             confirmLabel: this.i18n('rename'),
           })
           const value = input?.trim().replace(/^\/+/, '')
-          if (!value) return
+          if (!value) return undefined
           // A bare name renames in place; anything with a "/" is a full key (move).
           const isMove = value.includes('/')
           let destination = isMove ? value : `${parent}${value}`
           if (isFolder && !destination.endsWith('/')) destination += '/'
-          if (destination === key) return
+          if (destination === key) return undefined
           await this.provider.moveItem(key, destination)
-          uppy.info(
-            isMove
-              ? this.i18n('itemMoved', { path: destination })
-              : this.i18n('itemRenamed', { name: value }),
-            'info',
-            3000,
-          )
-        },
+          return isMove
+            ? this.i18n('itemMoved', { path: destination })
+            : this.i18n('itemRenamed', { name: value })
+        }),
       },
       {
         id: 's3:delete',
         label: this.i18n('deleteItem'),
         appliesTo: 'all',
-        run: async ({ item, view, uppy }) => {
+        run: withToast(async ({ item, view }) => {
           const key = S3.keyOf(item.id)
           const name = item.data.name ?? key
           const confirmed = await view.confirm({
@@ -260,10 +269,10 @@ export default class S3<M extends Meta, B extends Body>
             confirmLabel: this.i18n('deleteItem'),
             danger: true,
           })
-          if (!confirmed) return
+          if (!confirmed) return undefined
           await this.provider.deleteItem(key)
-          uppy.info(this.i18n('itemDeleted', { name }), 'info', 3000)
-        },
+          return this.i18n('itemDeleted', { name })
+        }),
       },
     ]
   }
@@ -273,7 +282,7 @@ export default class S3<M extends Meta, B extends Body>
       {
         id: 's3:newFolder',
         label: this.i18n('newFolder'),
-        run: async ({ currentFolderId, view, uppy }) => {
+        run: withToast(async ({ currentFolderId, view }) => {
           const name = (
             await view.prompt({
               title: this.i18n('newFolder'),
@@ -281,13 +290,13 @@ export default class S3<M extends Meta, B extends Body>
               confirmLabel: this.i18n('create'),
             })
           )?.trim()
-          if (!name) return
+          if (!name) return undefined
           await this.provider.createFolder(
             currentFolderId ? S3.keyOf(currentFolderId) : null,
             name,
           )
-          uppy.info(this.i18n('folderCreated', { name }), 'info', 3000)
-        },
+          return this.i18n('folderCreated', { name })
+        }),
       },
     ]
   }
@@ -368,10 +377,7 @@ export default class S3<M extends Meta, B extends Body>
           await this.provider.logout()
         }
       } catch (err) {
-        this.uppy.log(
-          `[S3] could not check the stored session: ${err instanceof Error ? err.message : String(err)}`,
-          'warning',
-        )
+        this.#warn('could not check the stored session', err)
       }
     }
     this.#sessionChecked = true
@@ -386,12 +392,14 @@ export default class S3<M extends Meta, B extends Body>
     const { authenticated, didFirstRender } = this.getPluginState()
     if (!didFirstRender || authenticated !== false) return
     this.#autoConnectAttempted = true
-    this.view.handleAuth({ bucket }).catch((err: unknown) => {
-      this.uppy.log(
-        `[S3] auto-connect failed: ${err instanceof Error ? err.message : String(err)}`,
-        'warning',
-      )
-    })
+    this.view
+      .handleAuth({ bucket })
+      .catch((err: unknown) => this.#warn('auto-connect failed', err))
+  }
+
+  #warn(what: string, err: unknown): void {
+    const reason = err instanceof Error ? err.message : String(err)
+    this.uppy.log(`[S3] ${what}: ${reason}`, 'warning')
   }
 }
 
