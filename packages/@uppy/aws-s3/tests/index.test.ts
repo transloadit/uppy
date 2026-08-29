@@ -274,6 +274,73 @@ describe('AwsS3', () => {
       expect(response.body.key).toBe('server-client-photo.jpg')
       expect(response.uploadURL).toBe(`${bucketUrl}/server-client-photo.jpg`)
     })
+
+    test('multipart: signs every request with the key the signer used', async ({
+      worker,
+    }) => {
+      // A key the signer mints at create time, which the client cannot derive.
+      const serverKey = 'server-9f3a-big.dat'
+      const { signRequest, registerHandlers } = createMultipartMocks(worker, {
+        key: serverKey,
+      })
+      registerHandlers()
+
+      const knownKeys = new Set<string>()
+      signRequest.mockImplementation(async (req: any) => {
+        const isCreate = req.method === 'POST' && !req.uploadId
+        if (isCreate) {
+          knownKeys.add(serverKey)
+        } else if (!knownKeys.has(req.key)) {
+          // A real signer would fail to sign for an upload it never created.
+          throw new Error(`signer received an unknown key: ${req.key}`)
+        }
+
+        const params = new URLSearchParams()
+        if (req.uploadId) params.set('uploadId', req.uploadId)
+        if (req.partNumber) params.set('partNumber', String(req.partNumber))
+        params.set('method', req.method)
+
+        return {
+          url: `${bucketUrl}/${serverKey}?${params}`,
+          ...(isCreate ? { key: serverKey } : {}),
+        }
+      })
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: bucketUrl,
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+        generateObjectKey: () => 'client-big.dat',
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const onSuccess = vi.fn()
+      const onError = vi.fn()
+      core.on('upload-success', onSuccess)
+      core.on('upload-error', (_file, err) => onError(err.message))
+      await core.upload()
+
+      expect(onError).not.toHaveBeenCalled()
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSuccess.mock.calls[0][1].body.key).toBe(serverKey)
+
+      // Only the createMultipartUpload call may use the client key; every
+      // request after it has to use the key the signer handed back.
+      const keysAfterCreate = signRequest.mock.calls
+        .map((call: any) => call[0])
+        .filter((req: any) => !(req.method === 'POST' && !req.uploadId))
+        .map((req: any) => req.key)
+      expect(keysAfterCreate.length).toBeGreaterThan(0)
+      expect(keysAfterCreate.every((key: string) => key === serverKey)).toBe(
+        true,
+      )
+    })
   })
 
   describe('upload events', () => {
