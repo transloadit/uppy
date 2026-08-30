@@ -30,6 +30,11 @@ function PickerPanelContent<M extends Meta, B extends Body>({
   const activePlugin = uppy.getPlugin(activePickerPanel.id) as
     | AnyUIPlugin<M, B>
     | undefined
+  // A plugin that is the whole page (a file library rather than a picker)
+  // asks for plain chrome: just its title, and nothing to cancel.
+  const standalone = Boolean(
+    (activePlugin?.opts as { standalone?: boolean } | undefined)?.standalone,
+  )
 
   return (
     <div
@@ -48,15 +53,19 @@ function PickerPanelContent<M extends Meta, B extends Body>({
           role="heading"
           aria-level={1}
         >
-          {i18n('importFrom', { name: activePickerPanel.name })}
+          {standalone
+            ? activePickerPanel.name
+            : i18n('importFrom', { name: activePickerPanel.name })}
         </div>
-        <button
-          className="uppy-DashboardContent-back"
-          type="button"
-          onClick={hideAllPanels}
-        >
-          {i18n('cancel')}
-        </button>
+        {standalone ? null : (
+          <button
+            className="uppy-DashboardContent-back"
+            type="button"
+            onClick={hideAllPanels}
+          >
+            {i18n('cancel')}
+          </button>
+        )}
       </div>
 
       <div ref={ref} className="uppy-DashboardContent-panelBody">
