@@ -6595,10 +6595,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.17.24, @types/lodash@npm:^4.14.199":
-  version: 4.17.24
-  resolution: "@types/lodash@npm:4.17.24"
-  checksum: 10/0f2082565f60f9787eefc046edc38458054512be5a8b3584ef0bad5fd9e85d0ab55ec5a1fbfae1ed6ba015cf1f9e837d5fb4da1f99fc60b8f74b2a46146fb00f
+"@types/lodash@npm:4.17.25, @types/lodash@npm:^4.17.25":
+  version: 4.17.25
+  resolution: "@types/lodash@npm:4.17.25"
+  checksum: 10/f786e05664439cc8d327fd97c62c060d81b3c4ed52127d01fbc926139e1a669c1554bf3cd0dbb43f8fcc7d9b5c6c23c543cc36de8dc815c9f289ea852b26ebd6
   languageName: node
   linkType: hard
 
@@ -6952,7 +6952,7 @@ __metadata:
     "@types/express-session": "npm:1.19.0"
     "@types/http-proxy": "npm:1.17.17"
     "@types/jsonwebtoken": "npm:9.0.10"
-    "@types/lodash": "npm:4.17.24"
+    "@types/lodash": "npm:4.17.25"
     "@types/mime-types": "npm:3.0.1"
     "@types/morgan": "npm:1.9.10"
     "@types/node": "npm:^22.20.1"
@@ -7064,7 +7064,7 @@ __metadata:
     "@types/gapi": "npm:^0.0.47"
     "@types/google.accounts": "npm:^0.0.18"
     "@types/google.picker": "npm:^0.0.52"
-    "@types/lodash": "npm:^4.14.199"
+    "@types/lodash": "npm:^4.17.25"
     "@types/mime-match": "npm:^1.0.0"
     "@types/namespace-emitter": "npm:^2.0.0"
     "@types/node": "npm:^22.20.1"
@@ -7109,7 +7109,6 @@ __metadata:
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
     preact: "npm:^10.29.2"
-    resize-observer-polyfill: "npm:^1.5.0"
     sass: "npm:^1.89.2"
     shallow-equal: "npm:^3.1.0"
     typescript: "npm:^6.0.3"
@@ -7345,7 +7344,6 @@ __metadata:
     "@uppy/zoom": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     playwright: "npm:1.61.1"
-    resize-observer-polyfill: "npm:^1.5.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.6"
   peerDependencies:
@@ -10952,7 +10950,7 @@ __metadata:
     react: "npm:^19.2.8"
     react-dom: "npm:^19.2.7"
     react-router: "npm:^8.3.0"
-    tsx: "npm:^4.0.0"
+    tsx: "npm:^4.23.12"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.1.5"
   languageName: unknown
@@ -16881,13 +16879,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resize-observer-polyfill@npm:^1.5.0, resize-observer-polyfill@npm:^1.5.1":
-  version: 1.5.1
-  resolution: "resize-observer-polyfill@npm:1.5.1"
-  checksum: 10/e10ee50cd6cf558001de5c6fb03fee15debd011c2f694564b71f81742eef03fb30d6c2596d1d5bf946d9991cb692fcef529b7bd2e4057041377ecc9636c753ce
-  languageName: node
-  linkType: hard
-
 "resolve-alpn@npm:^1.2.0":
   version: 1.2.1
   resolution: "resolve-alpn@npm:1.2.1"
@@ -18733,9 +18724,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.0.0":
-  version: 4.23.1
-  resolution: "tsx@npm:4.23.1"
+"tsx@npm:^4.23.12":
+  version: 4.23.12
+  resolution: "tsx@npm:4.23.12"
   dependencies:
     esbuild: "npm:~0.28.0"
     fsevents: "npm:~2.3.3"
@@ -18744,7 +18735,7 @@ __metadata:
       optional: true
   bin:
     tsx: dist/cli.mjs
-  checksum: 10/01123a290130314507630f1d1cf8fa71f5e93305d5d8aa57ed012f68e3c1aef2e73f537fa6064b022cb4c813fcd0e286abd6b59db5442ece3c5105e09e10b922
+  checksum: 10/167a5571cb211aff257d200cd75a1003b1e0e59d641c1e6ff99f6cdfada46ff6ce311e105722699b4763feb1371b2d8084bcc413c7e54aae3761c852817dc0b0
   languageName: node
   linkType: hard
 
