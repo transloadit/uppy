@@ -1,3 +1,4 @@
+import { getSignedSmartCdnUrl } from '@transloadit/utils'
 import Audio from '@uppy/audio'
 import AwsS3 from '@uppy/aws-s3'
 import Compressor from '@uppy/compressor'
@@ -21,7 +22,6 @@ import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
 import Webdav from '@uppy/webdav'
 import XHRUpload from '@uppy/xhr-upload'
-
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
@@ -229,28 +229,9 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        assemblyOptions: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE
-          ? async () => {
-              // Store uploads in the folder currently open in the Transloadit Storage tab
-              const storage = uppyDashboard.getPlugin('TransloaditStorage')
-              const currentFolderId = storage?.getPluginState().currentFolderId
-              const folder = currentFolderId
-                ? decodeURIComponent(currentFolderId)
-                : ''
-              return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
-                auth: { key: TRANSLOADIT_KEY },
-                steps: {
-                  stored: {
-                    robot: '/transloadit/store',
-                    use: ':original',
-                    // ${file.name} is interpolated per file by Transloadit
-                    path: `${folder}\${file.name}`,
-                    conflict_strategy: 'overwrite',
-                  },
-                },
-              })
-            }
-          : assemblyOptions,
+        // With Transloadit Storage configured, the storage plugin below replaces
+        // this with createStoreAssemblyOptions() (uploads land in the open folder).
+        assemblyOptions,
       })
       break
     case 'transloadit-s3':
@@ -284,20 +265,39 @@ export default () => {
 
   // S3-compatible browsing: plain S3 bucket, or Transloadit Storage (workspace bucket + Smart CDN URLs)
   if (import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE) {
+    const cdnEndpoint = import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT
     uppyDashboard.use(TransloaditStorage, {
       target: Dashboard,
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
       workspace: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE,
-      // Smart CDN URLs are signed with a SmartCDN-enabled key (may differ from the API key)
-      authKey:
-        import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_KEY || TRANSLOADIT_KEY,
-      authSecret: TRANSLOADIT_SECRET,
-      cdnEndpoint: import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT,
-      // A local api2 only serves Storage files on the CDN-required path.
-      ...(import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT && {
-        urlParams: { cdn: 'required' },
-      }),
+      // The harness signs in the browser with the dev secret; a real app signs
+      // on its server (this callback is the only thing the plugin needs).
+      getSmartCdnUrl: async (key) => {
+        const url = await getSignedSmartCdnUrl({
+          workspace: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE,
+          template: 'builtin/storage-serve@0.0.1',
+          input: key,
+          // Smart CDN URLs are signed with a SmartCDN-enabled key (may differ from the API key)
+          authKey:
+            import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_KEY || TRANSLOADIT_KEY,
+          authSecret: TRANSLOADIT_SECRET,
+          // A local api2 only serves Storage files on the CDN-required path.
+          ...(cdnEndpoint && { urlParams: { cdn: 'required' } }),
+        })
+        // The signature does not cover the host: point it at a local api2 if asked.
+        return cdnEndpoint
+          ? `${cdnEndpoint.replace(/\/$/, '')}${url.slice(new URL(url).origin.length)}`
+          : url
+      },
+      storeUploads: {
+        signAssembly: (params) =>
+          generateSignatureIfSecret(TRANSLOADIT_SECRET, {
+            auth: { key: TRANSLOADIT_KEY },
+            ...params,
+          }),
+      },
+      reopenAfterUpload: true,
     })
   } else {
     uppyDashboard.use(S3, {
@@ -320,9 +320,6 @@ export default () => {
     console.log('failed files:', result.failed)
     if (UPLOADER === 'transloadit') {
       console.log('Transloadit result:', result.transloadit)
-      uppyDashboard
-        .getPlugin('TransloaditStorage')
-        ?.view?.refreshCurrentFolder()
     }
   })
 

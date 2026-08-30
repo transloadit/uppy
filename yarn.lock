@@ -6865,6 +6865,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
+    "@transloadit/utils": "npm:^4.6.0"
     "@uppy/companion": "workspace:^"
     vite: "npm:^8.1.5"
   languageName: unknown
@@ -7464,7 +7465,6 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage"
   dependencies:
-    "@transloadit/utils": "npm:^4.6.0"
     "@uppy/core": "workspace:^"
     "@uppy/s3": "workspace:^"
     preact: "npm:^10.29.2"

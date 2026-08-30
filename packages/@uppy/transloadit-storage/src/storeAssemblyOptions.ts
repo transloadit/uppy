@@ -1,0 +1,58 @@
+import type { Body, Meta, Uppy } from '@uppy/core'
+
+/** The subset of `@uppy/transloadit`'s AssemblyParameters this helper builds. */
+export type StoreAssemblyParameters = {
+  steps: Record<string, Record<string, unknown>>
+  [key: string]: unknown
+}
+
+/** What `@uppy/transloadit` expects back from `assemblyOptions`. */
+export type SignedAssemblyOptions = {
+  params: StoreAssemblyParameters
+  signature: string
+  fields?: Record<string, string>
+}
+
+export type StoreUploadsOptions = {
+  /**
+   * Signs the Assembly params (adds `auth.key`/`auth.expires` and returns the
+   * signature). Keep the secret on your server: this is the place to call an
+   * authenticated route.
+   */
+  signAssembly: (
+    params: StoreAssemblyParameters,
+  ) => Promise<SignedAssemblyOptions>
+  /** What `/transloadit/store` does when the path exists. Default: `overwrite`. */
+  conflictStrategy?: 'overwrite' | 'rename' | 'error'
+}
+
+/**
+ * Builds the `assemblyOptions` function for `@uppy/transloadit` that stores
+ * every upload in the folder currently open in the Transloadit Storage panel.
+ * The params are built unsigned; `signAssembly` turns them into what the
+ * Transloadit plugin sends.
+ */
+export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
+  uppy: Uppy<M, B>,
+  options: StoreUploadsOptions & { storagePluginId?: string },
+): () => Promise<SignedAssemblyOptions> {
+  const pluginId = options.storagePluginId ?? 'TransloaditStorage'
+  return async () => {
+    const storage = uppy.getPlugin(pluginId)
+    const currentFolderId = (
+      storage?.getPluginState() as { currentFolderId?: string | null }
+    )?.currentFolderId
+    const folder = currentFolderId ? decodeURIComponent(currentFolderId) : ''
+    return options.signAssembly({
+      steps: {
+        stored: {
+          robot: '/transloadit/store',
+          use: ':original',
+          // `${file.name}` is interpolated per file by Transloadit.
+          path: `${folder}\${file.name}`,
+          conflict_strategy: options.conflictStrategy ?? 'overwrite',
+        },
+      },
+    })
+  }
+}

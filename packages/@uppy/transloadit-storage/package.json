@@ -1,6 +1,6 @@
 {
   "name": "@uppy/transloadit-storage",
-  "description": "Browse and manage files in Transloadit Storage from Uppy, with Smart CDN URLs.",
+  "description": "Browse and manage files in Transloadit Storage from Uppy, upload into the open folder, and copy Smart CDN URLs.",
   "version": "0.1.0",
   "license": "MIT",
   "types": "types/index.d.ts",
@@ -39,7 +39,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/utils": "^4.6.0",
     "@uppy/s3": "workspace:^",
     "preact": "^10.29.2"
   },
