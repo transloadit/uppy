@@ -104,6 +104,18 @@ export interface CompanionInitOptions {
      * read-only browser is the default; `['*']` allows every browsable bucket.
      */
     mutableBuckets?: string[] | undefined
+    /**
+     * Secret used to verify storage *grants*: short-lived HS256 JWTs minted by
+     * your own server after it authenticated the user, carrying the bucket,
+     * the prefix they may see and their scopes (`read`/`write`). When set, the
+     * S3 provider refuses client-supplied bucket names (see `allowBucketAuth`).
+     */
+    grantSecret?: string | undefined
+    /**
+     * Keep accepting client-supplied bucket names next to grants. Development
+     * only: it lets anyone who can reach Companion pick a browsable bucket.
+     */
+    allowBucketAuth?: boolean | undefined
     awsClientOptions?: S3ClientConfig & {
       /** @deprecated */
       accessKeyId?: unknown

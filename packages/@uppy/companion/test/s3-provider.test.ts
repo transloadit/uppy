@@ -7,8 +7,12 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3'
+import jwt from 'jsonwebtoken'
 import { describe, expect, test, vi } from 'vitest'
-import { ProviderUserError } from '../src/server/provider/error.js'
+import {
+  ProviderAuthError,
+  ProviderUserError,
+} from '../src/server/provider/error.js'
 import S3Provider from '../src/server/provider/s3/index.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
@@ -22,7 +26,32 @@ const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
 const companionWith = (
   browsableBuckets?: string[],
   mutableBuckets?: string[],
-) => ({ options: { s3: { browsableBuckets, mutableBuckets } } }) as never
+  extra: { grantSecret?: string; allowBucketAuth?: boolean } = {},
+) =>
+  ({
+    options: { s3: { browsableBuckets, mutableBuckets, ...extra } },
+  }) as never
+
+const GRANT_SECRET = 'grant-secret-for-tests'
+const mintGrant = (
+  claims: Partial<Record<string, unknown>> = {},
+  secret = GRANT_SECRET,
+) =>
+  jwt.sign(
+    {
+      v: 1,
+      bucket: 'b',
+      prefix: 'tenant/',
+      scopes: ['read', 'write'],
+      sub: 'user-1',
+      ...claims,
+    },
+    secret,
+    {
+      algorithm: 'HS256',
+      ...(claims['exp'] === undefined && { expiresIn: 900 }),
+    },
+  )
 
 const notFound = () =>
   Object.assign(new Error('NotFound'), {
@@ -42,12 +71,12 @@ describe('S3 provider', () => {
     const provider = makeProvider()
     await expect(
       provider.simpleAuth({ requestBody: { form: { bucket: 'my-bucket' } } }),
-    ).resolves.toEqual({ bucket: 'my-bucket', prefix: '' })
+    ).resolves.toMatchObject({ bucket: 'my-bucket', prefix: '' })
     await expect(
       provider.simpleAuth({
         requestBody: { form: { bucket: 's3://my-bucket/some/prefix' } },
       }),
-    ).resolves.toEqual({ bucket: 'my-bucket', prefix: 'some/prefix/' })
+    ).resolves.toMatchObject({ bucket: 'my-bucket', prefix: 'some/prefix/' })
     await expect(
       provider.simpleAuth({ requestBody: { form: { bucket: '  ' } } }),
     ).rejects.toThrow()
@@ -366,5 +395,111 @@ describe('S3 provider', () => {
     expect(inputsOf(send, PutObjectCommand)).toEqual([
       { Bucket: 'b', Key: 'docs/fresh/', Body: '' },
     ])
+  })
+
+  describe('storage grants', () => {
+    test('a valid grant becomes a scoped, expiring session', async () => {
+      const provider = makeProvider()
+      const session = await provider.simpleAuth({
+        requestBody: { form: { grant: mintGrant({ prefix: '/tenant' }) } },
+        companion: companionWith(['b'], ['b'], { grantSecret: GRANT_SECRET }),
+      })
+      expect(session).toMatchObject({
+        bucket: 'b',
+        prefix: 'tenant/',
+        scopes: ['read', 'write'],
+      })
+      expect(session.exp).toBeGreaterThan(Math.floor(Date.now() / 1000))
+    })
+
+    test('expired grants are auth errors, tampered grants are user errors', async () => {
+      const provider = makeProvider()
+      const companion = companionWith(['b'], ['b'], {
+        grantSecret: GRANT_SECRET,
+      })
+      await expect(
+        provider.simpleAuth({
+          requestBody: {
+            form: {
+              grant: mintGrant({ exp: Math.floor(Date.now() / 1000) - 60 }),
+            },
+          },
+          companion,
+        }),
+      ).rejects.toBeInstanceOf(ProviderAuthError)
+      await expect(
+        provider.simpleAuth({
+          requestBody: { form: { grant: mintGrant({}, 'another-secret') } },
+          companion,
+        }),
+      ).rejects.toBeInstanceOf(ProviderUserError)
+      await expect(
+        provider.simpleAuth({
+          requestBody: { form: { grant: mintGrant({ scopes: ['admin'] }) } },
+          companion,
+        }),
+      ).rejects.toBeInstanceOf(ProviderUserError)
+    })
+
+    test('bucket auth is refused once a grant secret is configured, unless allowed for dev', async () => {
+      const provider = makeProvider()
+      await expect(
+        provider.simpleAuth({
+          requestBody: { form: { bucket: 'b' } },
+          companion: companionWith(['b'], [], { grantSecret: GRANT_SECRET }),
+        }),
+      ).rejects.toThrow('User error')
+      await expect(
+        provider.simpleAuth({
+          requestBody: { form: { bucket: 'b/tenant' } },
+          companion: companionWith(['b'], [], {
+            grantSecret: GRANT_SECRET,
+            allowBucketAuth: true,
+          }),
+        }),
+      ).resolves.toEqual({
+        bucket: 'b',
+        prefix: 'tenant/',
+        scopes: ['read', 'write'],
+      })
+      await expect(
+        provider.simpleAuth({
+          requestBody: { form: { grant: mintGrant() } },
+          companion: companionWith(['b']),
+        }),
+      ).rejects.toBeInstanceOf(ProviderUserError)
+    })
+
+    test('read-only and expired sessions are enforced on every operation', async () => {
+      const send = vi.fn(async () => ({ Contents: [] }))
+      const provider = makeProvider(send)
+      const companion = companionWith(['b'], ['b'])
+      const readOnly = {
+        bucket: 'b',
+        prefix: '',
+        scopes: ['read' as const],
+        exp: 2_000_000_000,
+      }
+      await expect(
+        provider.list({ companion, providerUserSession: readOnly }),
+      ).resolves.toMatchObject({ items: [] })
+      await expect(
+        provider.createFolder({
+          companion,
+          parentId: null,
+          name: 'x',
+          providerUserSession: readOnly,
+        }),
+      ).rejects.toBeInstanceOf(ProviderUserError)
+      const expired = {
+        ...readOnly,
+        scopes: ['read' as const, 'write' as const],
+        exp: 1,
+      }
+      await expect(
+        provider.list({ companion, providerUserSession: expired }),
+      ).rejects.toBeInstanceOf(ProviderAuthError)
+      expect(send).toHaveBeenCalledTimes(1)
+    })
   })
 })

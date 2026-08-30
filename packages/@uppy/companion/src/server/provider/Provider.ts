@@ -174,7 +174,13 @@ export default class Provider<US = unknown> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<object> {
+  async simpleAuth({
+    requestBody,
+    companion,
+  }: {
+    requestBody: unknown
+    companion?: CompanionLike | undefined
+  }): Promise<object> {
     throw new Error('method not implemented')
   }
 

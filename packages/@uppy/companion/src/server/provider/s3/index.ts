@@ -9,7 +9,9 @@ import {
   paginateListObjectsV2,
   type S3Client,
 } from '@aws-sdk/client-s3'
+import jwt from 'jsonwebtoken'
 import { lookup as mimeLookup } from 'mime-types'
+import pMap from 'p-map'
 import type { CompanionRuntimeOptions } from '../../../types/companion-options.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
@@ -26,13 +28,68 @@ import Provider, {
   type Query,
 } from '../Provider.js'
 
+export type S3GrantScope = 'read' | 'write'
+
 /**
- * Session for the S3 provider. Created via "simple auth" (non-OAuth):
- * the user (or the integrator, via a default) picks a bucket and an optional
- * prefix that scopes what they are allowed to browse. This is the hook for
- * multi-tenant DAM: e.g. `bucket: 'customer-assets', prefix: 'coursera/prof-123/'`.
+ * Session for the S3 provider, created via "simple auth" (non-OAuth) in one
+ * of two ways:
+ * - a **grant**: a short-lived JWT minted by the integrator's server after it
+ *   authenticated the user, carrying the bucket, the prefix the user may see
+ *   and the scopes they hold (see `S3Grant`). This is the multi-tenant path.
+ * - a **bucket** (`my-bucket/optional/prefix`) typed or configured on the
+ *   client. Only accepted when Companion is not configured for grants, or
+ *   `s3.allowBucketAuth` is set (development).
  */
-type S3UserSession = { bucket: string; prefix: string }
+type S3UserSession = {
+  bucket: string
+  prefix: string
+  /** Missing on bucket sessions and on tokens from before grants existed. */
+  scopes?: S3GrantScope[]
+  /** Unix seconds; only grant sessions expire. */
+  exp?: number
+}
+
+/** Claims of a storage grant (`s3.grantSecret`, HS256). */
+export type S3Grant = {
+  v: 1
+  bucket: string
+  prefix: string
+  scopes: S3GrantScope[]
+  sub?: string
+  iat?: number
+  exp: number
+}
+
+const GRANT_SCOPES: S3GrantScope[] = ['read', 'write']
+
+/** Validate the decoded JWT payload against the grant contract. */
+const parseGrantClaims = (payload: unknown): S3Grant => {
+  if (
+    !isRecord(payload) ||
+    payload['v'] !== 1 ||
+    typeof payload['bucket'] !== 'string' ||
+    payload['bucket'].length === 0 ||
+    typeof payload['prefix'] !== 'string' ||
+    !Array.isArray(payload['scopes']) ||
+    !payload['scopes'].every(
+      (scope): scope is S3GrantScope =>
+        typeof scope === 'string' && (GRANT_SCOPES as string[]).includes(scope),
+    ) ||
+    typeof payload['exp'] !== 'number'
+  ) {
+    throw new ProviderUserError({ message: 'Invalid storage grant' })
+  }
+  const prefix = payload['prefix'].replace(/^\/+/, '')
+  return {
+    v: 1,
+    bucket: payload['bucket'],
+    prefix: ensureTrailingSlash(prefix),
+    scopes: [...new Set(payload['scopes'])],
+    ...(typeof payload['sub'] === 'string' && { sub: payload['sub'] }),
+    ...(typeof payload['iat'] === 'number' && { iat: payload['iat'] }),
+    exp: payload['exp'],
+  }
+}
 
 type CompanionS3Options = Pick<CompanionRuntimeOptions, 's3'>
 
@@ -51,15 +108,6 @@ const isNotFound = (err: unknown): boolean => {
   return (
     err['name'] === 'NotFound' || err['name'] === 'NoSuchKey' || status === 404
   )
-}
-
-const runBatched = async <T>(
-  items: T[],
-  fn: (item: T) => Promise<unknown>,
-): Promise<void> => {
-  for (let i = 0; i < items.length; i += MOVE_CONCURRENCY) {
-    await Promise.all(items.slice(i, i + MOVE_CONCURRENCY).map(fn))
-  }
 }
 
 /**
@@ -163,7 +211,23 @@ export default class S3Provider extends Provider<S3UserSession> {
     if (!this.isAuthenticated({ providerUserSession })) {
       throw new ProviderAuthError()
     }
-    const { bucket, prefix } = providerUserSession
+    const { bucket, prefix, scopes, exp } = providerUserSession
+    // An expired grant is an auth error: the client fetches a fresh grant.
+    if (exp !== undefined && exp <= Math.floor(Date.now() / 1000)) {
+      throw new ProviderAuthError()
+    }
+    // Scope checks are user errors, so the Dashboard explains instead of
+    // bouncing to the connect screen (a fresh grant would not help).
+    if (scopes && !scopes.includes('read')) {
+      throw new ProviderUserError({
+        message: 'Your session does not allow browsing this storage',
+      })
+    }
+    if (mutate && scopes && !scopes.includes('write')) {
+      throw new ProviderUserError({
+        message: 'Your session is read-only',
+      })
+    }
     this.assertBucketAllowed(companion.options, bucket)
     if (mutate) this.assertBucketMutable(companion.options, bucket)
     for (const key of keys) this.#assertInsidePrefix(prefix, key)
@@ -176,13 +240,33 @@ export default class S3Provider extends Provider<S3UserSession> {
 
   override async simpleAuth({
     requestBody,
+    companion,
   }: {
     requestBody: unknown
+    companion?: CompanionLike | undefined
   }): Promise<S3UserSession> {
     if (!isRecord(requestBody) || !isRecord(requestBody['form'])) {
       throw new ProviderUserError({ message: 'Invalid request body' })
     }
     const { form } = requestBody
+    const s3Options = companion?.options.s3
+    const grantSecret = s3Options?.grantSecret
+
+    if (typeof form['grant'] === 'string' && form['grant'].length > 0) {
+      if (!grantSecret) {
+        throw new ProviderUserError({
+          message:
+            'This Companion is not configured for storage grants (set `s3.grantSecret` / COMPANION_AWS_GRANT_SECRET)',
+        })
+      }
+      return this.#sessionFromGrant(form['grant'], grantSecret)
+    }
+
+    if (grantSecret && !s3Options?.allowBucketAuth) {
+      throw new ProviderUserError({
+        message: 'This Companion only accepts server-issued grants',
+      })
+    }
     const bucketInput = typeof form['bucket'] === 'string' ? form['bucket'] : ''
     const parsed = parseBucketInput(bucketInput)
     if (parsed == null) {
@@ -191,9 +275,29 @@ export default class S3Provider extends Provider<S3UserSession> {
           'Please provide a bucket name (optionally followed by /prefix)',
       })
     }
-    // Note: companion options are not available in simpleAuth, so the bucket
-    // allowlist is enforced on list()/download() instead.
-    return parsed
+    // The bucket allowlist is enforced on every operation (see #session);
+    // bucket sessions are unscoped and do not expire.
+    return { ...parsed, scopes: [...GRANT_SCOPES] }
+  }
+
+  #sessionFromGrant(grant: string, secret: string): S3UserSession {
+    let payload: unknown
+    try {
+      payload = jwt.verify(grant, secret, { algorithms: ['HS256'] })
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        // Expired grants are an auth error so the client asks for a new one.
+        throw new ProviderAuthError()
+      }
+      throw new ProviderUserError({ message: 'Invalid storage grant' })
+    }
+    const claims = parseGrantClaims(payload)
+    return {
+      bucket: claims.bucket,
+      prefix: claims.prefix,
+      scopes: claims.scopes,
+      exp: claims.exp,
+    }
   }
 
   override async list({
@@ -403,11 +507,16 @@ export default class S3Provider extends Provider<S3UserSession> {
         }),
       )
     }
-    await runBatched(objects, (key) =>
-      this.#copyObject(client, bucket, key, renamed(key)),
+    await pMap(
+      objects,
+      (key) => this.#copyObject(client, bucket, key, renamed(key)),
+      { concurrency: MOVE_CONCURRENCY },
     )
-    await runBatched(objects, (key) =>
-      client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key })),
+    await pMap(
+      objects,
+      (key) =>
+        client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key })),
+      { concurrency: MOVE_CONCURRENCY },
     )
     for (const folder of [...folders].reverse()) {
       await client.send(

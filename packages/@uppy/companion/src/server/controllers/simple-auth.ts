@@ -23,6 +23,7 @@ export default async function simpleAuth(
   try {
     const simpleAuthResponse = await provider.simpleAuth({
       requestBody: req.body,
+      companion: req.companion,
     })
 
     req.companion.providerUserSession = {

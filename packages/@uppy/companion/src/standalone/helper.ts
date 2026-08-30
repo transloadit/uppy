@@ -197,6 +197,9 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       mutableBuckets: parseBucketList(
         process.env['COMPANION_AWS_MUTABLE_BUCKETS'],
       ),
+      grantSecret: process.env['COMPANION_AWS_GRANT_SECRET'],
+      allowBucketAuth:
+        process.env['COMPANION_AWS_ALLOW_BUCKET_AUTH'] === 'true',
     },
     server: {
       host: process.env['COMPANION_DOMAIN'],
