@@ -26,12 +26,50 @@ import { useCallback, useState } from '@uppy/core/utils/preact/hooks'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
+/** Unverified claims of a storage grant (the client only needs to *read* them). */
+export type S3GrantClaims = {
+  bucket: string
+  prefix: string
+  scopes: ('read' | 'write')[]
+  exp?: number
+}
+
+/**
+ * Reads the payload of a JWT grant without verifying it — verification is
+ * Companion's job; the client only uses the claims to know what UI to show.
+ */
+export function decodeGrant(grant: string): S3GrantClaims | null {
+  try {
+    const payload = grant.split('.')[1]
+    if (!payload) return null
+    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
+    const claims = JSON.parse(json) as Partial<S3GrantClaims>
+    if (typeof claims.bucket !== 'string') return null
+    return {
+      bucket: claims.bucket,
+      prefix: typeof claims.prefix === 'string' ? claims.prefix : '',
+      scopes: Array.isArray(claims.scopes) ? claims.scopes : ['read', 'write'],
+      ...(typeof claims.exp === 'number' && { exp: claims.exp }),
+    }
+  } catch {
+    return null
+  }
+}
+
 class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   M,
   B
 > {
   /** Called after a successful simple-auth with the form data that was sent. */
   onSimpleAuth?: (authFormData: unknown) => Promise<void>
+
+  /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
+  getGrant?: () => Promise<string>
+
+  #regranting: Promise<void> | undefined
+
+  /** True between a successful login and a logout: only then is a 401 an *expired* session. */
+  #hasSession = false
 
   async login({
     authFormData,
@@ -42,11 +80,59 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     authFormData: unknown
     signal: AbortSignal
   }) {
-    await this.loginSimpleAuth({ uppyVersions, authFormData, signal })
-    await this.onSimpleAuth?.(authFormData)
+    const form = isFormWithCredentials(authFormData)
+      ? authFormData
+      : this.getGrant
+        ? { grant: await this.getGrant() }
+        : authFormData
+    await this.loginSimpleAuth({ uppyVersions, authFormData: form, signal })
+    this.#hasSession = true
+    await this.onSimpleAuth?.(form)
+  }
+
+  /**
+   * Grants are short-lived: when Companion answers 401 mid-session, fetch a
+   * fresh grant once and retry the request instead of bouncing the user to
+   * the connect screen.
+   */
+  protected override async request<ResBody>(
+    ...args: Parameters<Provider<M, B>['request']>
+  ): Promise<ResBody> {
+    try {
+      return await super.request<ResBody>(...args)
+    } catch (err) {
+      const [{ path, signal }] = args
+      const isAuthError = (err as { isAuthError?: boolean }).isAuthError
+      // The first listing before any login is ProviderViews probing whether a
+      // session exists; that 401 must reach it so auto-connect can start.
+      if (
+        !isAuthError ||
+        !this.getGrant ||
+        !this.#hasSession ||
+        path.endsWith('/simple-auth')
+      ) {
+        throw err
+      }
+      if (this.#regranting == null) {
+        // Many requests may fail at once; mint one grant for all of them.
+        this.#regranting = (async () => {
+          this.#hasSession = false
+          await this.removeAuthToken()
+          await this.login({
+            authFormData: {},
+            signal: signal ?? new AbortController().signal,
+          })
+        })().finally(() => {
+          this.#regranting = undefined
+        })
+      }
+      await this.#regranting
+      return await super.request<ResBody>(...args)
+    }
   }
 
   async logout<ResBody>(): Promise<ResBody> {
+    this.#hasSession = false
     await this.removeAuthToken()
     return {
       ok: true,
@@ -54,6 +140,33 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     } as unknown as ResBody
   }
 }
+
+const isFormWithCredentials = (
+  data: unknown,
+): data is { bucket?: string; grant?: string } =>
+  typeof data === 'object' &&
+  data !== null &&
+  (typeof (data as { bucket?: unknown }).bucket === 'string' ||
+    typeof (data as { grant?: unknown }).grant === 'string')
+
+/** Shown while a server-issued grant connects; a button remains for retries. */
+const GrantAuthForm = ({
+  i18n,
+  onAuth,
+}: {
+  i18n: I18n
+  onAuth: (arg: Record<string, never>) => void
+}) => (
+  <div className="uppy-Provider-auth">
+    <button
+      type="button"
+      className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
+      onClick={() => onAuth({})}
+    >
+      {i18n('authenticate')}
+    </button>
+  </div>
+)
 
 const AuthForm = ({
   i18n,
@@ -106,10 +219,18 @@ export type S3Options = CompanionPluginOptions & {
   keepStateOnClose?: boolean
   /**
    * Pre-fill the bucket (optionally with `/prefix`) so users only have to click
-   * "Connect". Useful for multi-tenant setups where the integrator scopes what
-   * a user may browse, e.g. `assets-bucket/customer-123/`.
+   * "Connect". Development / single-tenant use; Companions configured with a
+   * grant secret refuse it.
    */
   bucket?: string
+  /**
+   * Fetch a server-issued storage grant (a short-lived JWT your backend mints
+   * after authenticating the user, scoped to a bucket, prefix and
+   * `read`/`write`). The plugin connects with it automatically, hides the
+   * mutation actions when the grant is read-only, and fetches a new one when
+   * Companion reports the session expired.
+   */
+  getGrant?: () => Promise<string>
 }
 
 /** Where an object key lives: its parent "folder" prefix and its own name. */
@@ -167,6 +288,9 @@ export default class S3<M extends Meta, B extends Body>
   /** Storage key remembering which bucket the stored Companion session was opened for. */
   #bucketStorageKey: string
 
+  /** Claims of the grant the current session was opened with, if any. */
+  #grant: S3GrantClaims | null = null
+
   constructor(uppy: Uppy<M, B>, opts: S3Options) {
     super(uppy, opts)
     this.id = this.opts.id || 'S3'
@@ -211,10 +335,14 @@ export default class S3<M extends Meta, B extends Body>
       pluginId: this.id,
       supportsRefreshToken: false,
     })
+    this.provider.getGrant = this.opts.getGrant
     this.provider.onSimpleAuth = async (authFormData) => {
-      const bucket = (authFormData as { bucket?: unknown } | null)?.bucket
-      if (typeof bucket === 'string') {
-        await this.storage.setItem(this.#bucketStorageKey, bucket)
+      if (!isFormWithCredentials(authFormData)) return
+      if (typeof authFormData.grant === 'string') {
+        this.#grant = decodeGrant(authFormData.grant)
+        this.#applyActions()
+      } else if (typeof authFormData.bucket === 'string') {
+        await this.storage.setItem(this.#bucketStorageKey, authFormData.bucket)
       }
     }
 
@@ -301,33 +429,47 @@ export default class S3<M extends Meta, B extends Body>
     ]
   }
 
+  /** Whether the current session may change files (bucket sessions always may). */
+  get canMutate(): boolean {
+    return this.#grant ? this.#grant.scopes.includes('write') : true
+  }
+
+  /** (Re)compute the actions: the integrator's switch, and the grant's scopes. */
+  #applyActions(): void {
+    const enableActions = this.opts.enableActions !== false && this.canMutate
+    this.view.opts.actions = [
+      ...(enableActions ? this.builtInActions() : []),
+      ...(this.opts.actions ?? []),
+    ]
+    this.view.opts.toolbarActions = [
+      ...(enableActions ? this.builtInToolbarActions() : []),
+      ...(this.opts.toolbarActions ?? []),
+    ]
+    this.setPluginState({})
+  }
+
   install() {
-    const enableActions = this.opts.enableActions !== false
     this.view = new ProviderViews(this, {
       provider: this.provider,
       viewType: 'list',
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
-      actions: [
-        ...(enableActions ? this.builtInActions() : []),
-        ...(this.opts.actions ?? []),
-      ],
-      toolbarActions: [
-        ...(enableActions ? this.builtInToolbarActions() : []),
-        ...(this.opts.toolbarActions ?? []),
-      ],
       // Use the plugin's own i18n (which includes our defaultLocale) rather than
       // the core one that ProviderViews hands us, so the label resolves even
       // when the integrator does not load @uppy/locales.
-      renderAuthForm: ({ onAuth }) => (
-        <AuthForm
-          onAuth={onAuth}
-          i18n={this.i18n}
-          defaultBucket={this.opts.bucket}
-        />
-      ),
+      renderAuthForm: ({ onAuth }) =>
+        this.opts.getGrant ? (
+          <GrantAuthForm onAuth={onAuth} i18n={this.i18n} />
+        ) : (
+          <AuthForm
+            onAuth={onAuth}
+            i18n={this.i18n}
+            defaultBucket={this.opts.bucket}
+          />
+        ),
     })
+    this.#applyActions()
 
     if (this.opts.keepStateOnClose) {
       // ProviderViews resets its state when the Dashboard panel closes; a
@@ -363,8 +505,18 @@ export default class S3<M extends Meta, B extends Body>
    * instead of silently showing the old one.
    */
   async #checkStoredSession(): Promise<void> {
-    const { bucket } = this.opts
-    if (bucket) {
+    const { bucket, getGrant } = this.opts
+    if (getGrant) {
+      // Grants are short-lived and scoped to whoever is logged in now: never
+      // reuse a session persisted by an earlier visit.
+      try {
+        if (await this.storage.getItem(this.provider.tokenKey)) {
+          await this.provider.logout()
+        }
+      } catch (err) {
+        this.#warn('could not drop the stored session', err)
+      }
+    } else if (bucket) {
       try {
         const [token, storedBucket] = await Promise.all([
           this.storage.getItem(this.provider.tokenKey),
@@ -385,15 +537,16 @@ export default class S3<M extends Meta, B extends Body>
     this.setPluginState({})
   }
 
-  /** Skip the auth form when the integrator already told us which bucket to open. */
+  /** Skip the auth form when the integrator already told us how to connect. */
   #maybeAutoConnect(): void {
-    const { bucket, autoConnect } = this.opts
-    if (this.#autoConnectAttempted || autoConnect === false || !bucket) return
+    const { bucket, getGrant, autoConnect } = this.opts
+    if (this.#autoConnectAttempted || autoConnect === false) return
+    if (!bucket && !getGrant) return
     const { authenticated, didFirstRender } = this.getPluginState()
     if (!didFirstRender || authenticated !== false) return
     this.#autoConnectAttempted = true
     this.view
-      .handleAuth({ bucket })
+      .handleAuth(getGrant ? {} : { bucket })
       .catch((err: unknown) => this.#warn('auto-connect failed', err))
   }
 

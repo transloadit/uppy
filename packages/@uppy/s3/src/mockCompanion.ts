@@ -29,6 +29,53 @@ export type MockS3Response = { status: number; body: unknown }
 
 export type MockS3Call = MockS3Request & { path: string }
 
+/** Claims of a mock grant (see `mockGrant`). */
+export type MockS3GrantClaims = {
+  bucket: string
+  prefix?: string
+  scopes?: ('read' | 'write')[]
+  /** Unix seconds. Defaults to 15 minutes from now. */
+  exp?: number
+}
+
+const base64url = (value: string): string =>
+  btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+
+/**
+ * Builds an *unsigned* grant in JWT shape for the mock (a real Companion would
+ * reject it): `getGrant` implementations in tests can return this.
+ */
+export function mockGrant(claims: MockS3GrantClaims): string {
+  const payload = {
+    v: 1,
+    bucket: claims.bucket,
+    prefix: claims.prefix ?? '',
+    scopes: claims.scopes ?? ['read', 'write'],
+    exp: claims.exp ?? Math.floor(Date.now() / 1000) + 15 * 60,
+  }
+  return `${base64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))}.${base64url(
+    JSON.stringify(payload),
+  )}.mock-signature`
+}
+
+const decodeMockGrant = (grant: string): MockS3GrantClaims | null => {
+  try {
+    const payload = grant.split('.')[1] ?? ''
+    const claims = JSON.parse(
+      atob(payload.replace(/-/g, '+').replace(/_/g, '/')),
+    ) as Partial<MockS3GrantClaims>
+    if (typeof claims.bucket !== 'string') return null
+    return {
+      bucket: claims.bucket,
+      prefix: typeof claims.prefix === 'string' ? claims.prefix : '',
+      scopes: Array.isArray(claims.scopes) ? claims.scopes : ['read', 'write'],
+      ...(typeof claims.exp === 'number' && { exp: claims.exp }),
+    }
+  } catch {
+    return null
+  }
+}
+
 export type MockS3CompanionOptions = {
   /** Folder key (`''` for the root, `docs/` for a folder) → its entries. */
   folders?: Record<string, MockS3Entry[]>
@@ -42,6 +89,8 @@ export type MockS3Companion = {
   folders: Map<string, MockS3Entry[]>
   calls: MockS3Call[]
   token: string
+  /** Scope/expiry of the current session when it was opened with a grant. */
+  readonly session: MockS3GrantClaims | null
   /** Serve one request; `null` when the URL is not an `/s3/*` endpoint. */
   handle(request: MockS3Request): MockS3Response | null
   lastCall(path: string): MockS3Call | undefined
@@ -83,7 +132,11 @@ export function createMockS3Companion(
   )
   const token = options.token ?? 'mock-auth-token'
   let bucket = options.bucket ?? 'my-bucket'
+  let session: MockS3GrantClaims | null = null
   const calls: MockS3Call[] = []
+  const nowSeconds = () => Math.floor(Date.now() / 1000)
+  const expired = () =>
+    session?.exp !== undefined && session.exp <= nowSeconds()
 
   const toItem = (prefix: string, entry: MockS3Entry) => {
     const key = `${prefix}${entry.name}${entry.isFolder ? '/' : ''}`
@@ -137,16 +190,40 @@ export function createMockS3Companion(
     if (method === 'OPTIONS') return { status: 204, body: null }
 
     if (method === 'POST' && path.endsWith('/s3/simple-auth')) {
-      const form = (body as { form?: { bucket?: string } } | null)?.form
-      if (typeof form?.bucket === 'string' && form.bucket.length > 0) {
+      const form = (
+        body as { form?: { bucket?: string; grant?: string } } | null
+      )?.form
+      if (typeof form?.grant === 'string') {
+        const claims = decodeMockGrant(form.grant)
+        if (!claims) return userError('Invalid storage grant')
+        if (claims.exp !== undefined && claims.exp <= nowSeconds()) {
+          return json({ message: 'Unauthorized' }, 401)
+        }
+        session = claims
+        bucket = claims.bucket
+      } else if (typeof form?.bucket === 'string' && form.bucket.length > 0) {
+        session = null
         bucket = form.bucket.replace(/^s3:\/\//, '').split('/')[0] ?? bucket
       }
       return json({ uppyAuthToken: token })
     }
     if (method === 'GET' && path.endsWith('/s3/logout')) {
+      session = null
       return json({ ok: true, revoked: true })
     }
-    if (request.token !== token) return json({ message: 'unauthorized' }, 401)
+    if (request.token !== token || expired()) {
+      return json({ message: 'unauthorized' }, 401)
+    }
+    if (session && !session.scopes?.includes('read')) {
+      return userError('Your session does not allow browsing this storage')
+    }
+    if (
+      path.includes('/s3/mutate/') &&
+      session &&
+      !session.scopes?.includes('write')
+    ) {
+      return userError('Your session is read-only')
+    }
 
     if (method === 'GET' && path.includes('/s3/list')) {
       const prefix = decodeURIComponent(path.replace(/^.*\/s3\/list\/?/, ''))
@@ -235,6 +312,9 @@ export function createMockS3Companion(
     folders,
     calls,
     token,
+    get session() {
+      return session
+    },
     handle,
     lastCall: (path) => calls.filter((call) => call.path === path).at(-1),
   }

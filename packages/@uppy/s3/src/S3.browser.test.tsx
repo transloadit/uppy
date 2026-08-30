@@ -1,12 +1,16 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { http } from 'msw'
-import { afterEach, beforeEach, describe, expect } from 'vitest'
+import { afterEach, beforeEach, describe, expect, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
-import { createMockS3Companion, toMswHandlers } from './mockCompanion.js'
+import {
+  createMockS3Companion,
+  mockGrant,
+  toMswHandlers,
+} from './mockCompanion.js'
 import S3, { type S3Options } from './S3.js'
 import { it } from './test-extend.js'
 
@@ -228,5 +232,73 @@ describe('S3 provider in the browser', () => {
       id: 'docs/',
     })
     await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
+  })
+
+  describe('server-issued grants', () => {
+    it('connects with a grant instead of a bucket', async ({ worker }) => {
+      const companion = createMockCompanion()
+      install(worker, companion)
+      const grant = mockGrant({ bucket: 'my-bucket' })
+      const getGrant = vi.fn(async () => grant)
+      createUppy({ bucket: undefined, getGrant })
+
+      await openBucket()
+      expect(getGrant).toHaveBeenCalledTimes(1)
+      expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
+        form: { grant },
+      })
+      expect(companion.session).toMatchObject({ bucket: 'my-bucket' })
+      // Mutations are available: the grant carries the write scope.
+      await expect
+        .element(page.getByRole('button', { name: 'New folder' }))
+        .toBeVisible()
+    })
+
+    it('fetches a new grant when the session expires mid-way', async ({
+      worker,
+    }) => {
+      const companion = createMockCompanion()
+      install(worker, companion)
+      const shortLived = mockGrant({
+        bucket: 'my-bucket',
+        exp: Math.floor(Date.now() / 1000) + 1,
+      })
+      const getGrant = vi
+        .fn<() => Promise<string>>()
+        .mockResolvedValueOnce(shortLived)
+        .mockResolvedValue(mockGrant({ bucket: 'my-bucket' }))
+      createUppy({ bucket: undefined, getGrant })
+
+      await openBucket()
+      await new Promise((resolve) => setTimeout(resolve, 1_200))
+      // The next listing hits an expired session: one re-grant, then it succeeds.
+      await page.getByText('docs', { exact: true }).click()
+      await expect.element(page.getByText('hello.txt')).toBeVisible()
+      expect(getGrant).toHaveBeenCalledTimes(2)
+      expect(
+        companion.calls.filter((call) => call.path.endsWith('/s3/simple-auth')),
+      ).toHaveLength(2)
+    })
+
+    it('hides the mutation actions for a read-only grant', async ({
+      worker,
+    }) => {
+      const companion = createMockCompanion()
+      install(worker, companion)
+      createUppy({
+        bucket: undefined,
+        getGrant: async () =>
+          mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
+      })
+
+      await openBucket()
+      expect(companion.session?.scopes).toEqual(['read'])
+      await expect
+        .element(page.getByRole('button', { name: 'New folder' }))
+        .not.toBeInTheDocument()
+      await expect
+        .element(page.getByRole('button', { name: 'Actions for readme.md' }))
+        .not.toBeInTheDocument()
+    })
   })
 })
