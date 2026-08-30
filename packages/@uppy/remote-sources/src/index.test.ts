@@ -1,20 +1,9 @@
 import Core from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import resizeObserverPolyfill from 'resize-observer-polyfill'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import RemoteSources from './index.js'
 
 describe('RemoteSources', () => {
-  beforeAll(() => {
-    globalThis.ResizeObserver =
-      resizeObserverPolyfill.default || resizeObserverPolyfill
-  })
-
-  afterAll(() => {
-    // @ts-expect-error delete does not have to be conditional
-    delete globalThis.ResizeObserver
-  })
-
   it('should install RemoteSources with default options', () => {
     expect(() => {
       const core = new Core()
