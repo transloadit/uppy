@@ -18,6 +18,8 @@ type HeaderProps<M extends Meta, B extends Body> = {
   i18n: I18n
   toolbarActions?: ProviderToolbarAction<M, B>[]
   runToolbarAction?: (action: ProviderToolbarAction<M, B>) => void
+  /** The plugin is the whole page: no user/logout row (the app owns the session). */
+  standalone?: boolean
 }
 
 export default function Header<M extends Meta, B extends Body>(
@@ -54,11 +56,13 @@ export default function Header<M extends Meta, B extends Body>(
             ))}
           </div>
         )}
-        <User
-          logout={props.logout}
-          username={props.username}
-          i18n={props.i18n}
-        />
+        {!props.standalone && (
+          <User
+            logout={props.logout}
+            username={props.username}
+            i18n={props.i18n}
+          />
+        )}
       </div>
     </div>
   )

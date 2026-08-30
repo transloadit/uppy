@@ -31,7 +31,8 @@ function PickerPanelContent<M extends Meta, B extends Body>({
     | AnyUIPlugin<M, B>
     | undefined
   // A plugin that is the whole page (a file library rather than a picker)
-  // asks for plain chrome: just its title, and nothing to cancel.
+  // asks for no chrome: the page around it owns the heading, and there is
+  // nothing to cancel.
   const standalone = Boolean(
     (activePlugin?.opts as { standalone?: boolean } | undefined)?.standalone,
   )
@@ -47,17 +48,15 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       onDrop={ignoreEvent}
       onPaste={ignoreEvent}
     >
-      <div className="uppy-DashboardContent-bar">
-        <div
-          className="uppy-DashboardContent-title"
-          role="heading"
-          aria-level={1}
-        >
-          {standalone
-            ? activePickerPanel.name
-            : i18n('importFrom', { name: activePickerPanel.name })}
-        </div>
-        {standalone ? null : (
+      {!standalone && (
+        <div className="uppy-DashboardContent-bar">
+          <div
+            className="uppy-DashboardContent-title"
+            role="heading"
+            aria-level={1}
+          >
+            {i18n('importFrom', { name: activePickerPanel.name })}
+          </div>
           <button
             className="uppy-DashboardContent-back"
             type="button"
@@ -65,8 +64,8 @@ function PickerPanelContent<M extends Meta, B extends Body>({
           >
             {i18n('cancel')}
           </button>
-        )}
-      </div>
+        </div>
+      )}
 
       <div ref={ref} className="uppy-DashboardContent-panelBody">
         {/* The panel can still be rendered once while its plugin is being

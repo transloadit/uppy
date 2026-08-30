@@ -107,12 +107,19 @@ describe('S3 provider in the browser', () => {
     await openBucket()
 
     const panel = page.getByRole('tabpanel')
+    // The page around the plugin owns the heading and the session.
     await expect
       .element(panel.getByRole('heading', { level: 1 }))
-      .toHaveTextContent(/^S3$/)
+      .not.toBeInTheDocument()
     await expect
       .element(panel.getByRole('button', { name: 'Cancel' }))
       .not.toBeInTheDocument()
+    await expect
+      .element(panel.getByRole('button', { name: 'Log out' }))
+      .not.toBeInTheDocument()
+    await expect
+      .element(panel.getByRole('button', { name: 'New folder' }))
+      .toBeVisible()
   })
 
   it('opens one item menu at a time and closes it with Escape', async ({

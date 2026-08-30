@@ -843,6 +843,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
+          standalone={Boolean(
+            (this.plugin.opts as { standalone?: boolean }).standalone,
+          )}
         />
         {opts.showFilter && (
           <FilterInput
