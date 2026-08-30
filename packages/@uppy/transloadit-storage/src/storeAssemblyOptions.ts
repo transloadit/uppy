@@ -42,7 +42,16 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     const currentFolderId = (
       storage?.getPluginState() as { currentFolderId?: string | null }
     )?.currentFolderId
-    const folder = currentFolderId ? decodeURIComponent(currentFolderId) : ''
+    // Folder ids are full storage keys. At the root of the browsing session
+    // there is no folder id, but a grant may confine the session to a prefix
+    // (the plugin's `prefix` option) — uploads must land inside it.
+    const prefix = (storage as { opts?: { prefix?: string } } | undefined)?.opts
+      ?.prefix
+    const normalizedPrefix =
+      prefix && !prefix.endsWith('/') ? `${prefix}/` : (prefix ?? '')
+    const folder = currentFolderId
+      ? decodeURIComponent(currentFolderId)
+      : normalizedPrefix
     return options.signAssembly({
       steps: {
         stored: {

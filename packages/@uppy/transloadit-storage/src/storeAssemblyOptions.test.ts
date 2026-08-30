@@ -1,57 +1,72 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { createStoreAssemblyOptions } from './storeAssemblyOptions.js'
 
-const uppyWithFolder = (currentFolderId: string | null) =>
-  ({
-    getPlugin: (id: string) =>
-      id === 'TransloaditStorage'
-        ? { getPluginState: () => ({ currentFolderId }) }
-        : undefined,
-  }) as never
+function fakeUppy(state: { currentFolderId?: string | null; prefix?: string }) {
+  return {
+    getPlugin: () => ({
+      getPluginState: () => ({
+        currentFolderId: state.currentFolderId ?? null,
+      }),
+      opts: { prefix: state.prefix },
+    }),
+  } as never
+}
+
+const passthroughSign = async (params: never) => ({
+  params,
+  signature: 'sig',
+})
+
+function storedPath(result: { params: { steps: Record<string, unknown> } }) {
+  return (result.params.steps.stored as { path: string }).path
+}
 
 describe('createStoreAssemblyOptions', () => {
-  it('stores uploads in the open folder and lets the app sign', async () => {
-    const signAssembly = vi.fn(async (params) => ({
-      params: { ...params, auth: { key: 'k', expires: 'later' } },
-      signature: 'sha384:signed',
-    }))
-    const assemblyOptions = createStoreAssemblyOptions(
-      uppyWithFolder(encodeURIComponent('docs/sub/')),
-      { signAssembly },
-    )
-    const result = await assemblyOptions()
-    expect(signAssembly).toHaveBeenCalledWith({
-      steps: {
-        stored: {
-          robot: '/transloadit/store',
-          use: ':original',
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: Transloadit interpolates it
-          path: 'docs/sub/${file.name}',
-          conflict_strategy: 'overwrite',
-        },
-      },
+  it('stores at the bucket root when there is no folder and no prefix', async () => {
+    const build = createStoreAssemblyOptions(fakeUppy({}), {
+      signAssembly: passthroughSign,
     })
-    expect(result.signature).toBe('sha384:signed')
-    expect(result.params.auth).toEqual({ key: 'k', expires: 'later' })
+    expect(storedPath(await build())).toBe('${file.name}')
   })
 
-  it('targets the root and honours the conflict strategy and plugin id', async () => {
-    const signAssembly = vi.fn(async (params) => ({ params, signature: 's' }))
-    const uppy = {
-      getPlugin: (id: string) =>
-        id === 'Storage'
-          ? { getPluginState: () => ({ currentFolderId: null }) }
-          : undefined,
-    } as never
-    await createStoreAssemblyOptions(uppy, {
-      signAssembly,
+  it('falls back to the grant prefix at the root of a confined session', async () => {
+    const build = createStoreAssemblyOptions(
+      fakeUppy({ prefix: 'users/ana/' }),
+      { signAssembly: passthroughSign },
+    )
+    expect(storedPath(await build())).toBe('users/ana/${file.name}')
+  })
+
+  it('normalizes a prefix without a trailing slash', async () => {
+    const build = createStoreAssemblyOptions(
+      fakeUppy({ prefix: 'users/ana' }),
+      {
+        signAssembly: passthroughSign,
+      },
+    )
+    expect(storedPath(await build())).toBe('users/ana/${file.name}')
+  })
+
+  it('uses the open folder key, which already contains the prefix', async () => {
+    const build = createStoreAssemblyOptions(
+      fakeUppy({
+        prefix: 'users/ana/',
+        currentFolderId: encodeURIComponent('users/ana/photos/'),
+      }),
+      { signAssembly: passthroughSign },
+    )
+    expect(storedPath(await build())).toBe('users/ana/photos/${file.name}')
+  })
+
+  it('passes the conflict strategy through', async () => {
+    const build = createStoreAssemblyOptions(fakeUppy({}), {
+      signAssembly: passthroughSign,
       conflictStrategy: 'rename',
-      storagePluginId: 'Storage',
-    })()
-    expect(signAssembly.mock.calls[0]?.[0].steps.stored).toMatchObject({
-      // biome-ignore lint/suspicious/noTemplateCurlyInString: Transloadit interpolates it
-      path: '${file.name}',
-      conflict_strategy: 'rename',
     })
+    const result = await build()
+    expect(
+      (result.params.steps.stored as { conflict_strategy: string })
+        .conflict_strategy,
+    ).toBe('rename')
   })
 })
