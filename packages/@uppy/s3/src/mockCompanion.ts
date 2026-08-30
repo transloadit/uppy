@@ -27,7 +27,11 @@ export type MockS3Request = {
 
 export type MockS3Response = { status: number; body: unknown }
 
-export type MockS3Call = MockS3Request & { path: string }
+export type MockS3Call = MockS3Request & {
+  path: string
+  /** HTTP status the mock answered with (set once the request was handled). */
+  status?: number
+}
 
 /** Claims of a mock grant (see `mockGrant`). */
 export type MockS3GrantClaims = {
@@ -179,13 +183,17 @@ export function createMockS3Companion(
     return typeof value === 'string' ? value : null
   }
 
-  const handle = (request: MockS3Request): MockS3Response | null => {
+  // Holder object: TypeScript cannot see that handleInner assigns the current call.
+  const inFlight: { call: MockS3Call | undefined } = { call: undefined }
+  const currentCall = () => inFlight.call
+  const handleInner = (request: MockS3Request): MockS3Response | null => {
     const url = new URL(request.url, 'http://mock.invalid')
     const path = url.pathname
     if (!/\/s3\/(simple-auth|list|mutate\/[a-z-]+|logout)(\/|$)/.test(path)) {
       return null
     }
-    calls.push({ ...request, path })
+    inFlight.call = { ...request, path }
+    calls.push(inFlight.call)
     const { method, body } = request
     if (method === 'OPTIONS') return { status: 204, body: null }
 
@@ -306,6 +314,13 @@ export function createMockS3Companion(
       return json({ id: newId, requestPath: newId })
     }
     return json({ message: 'unhandled mock route' }, 500)
+  }
+  const handle = (request: MockS3Request): MockS3Response | null => {
+    inFlight.call = undefined
+    const result = handleInner(request)
+    const call = currentCall()
+    if (result && call) call.status = result.status
+    return result
   }
 
   return {

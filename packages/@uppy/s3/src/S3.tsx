@@ -103,8 +103,9 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     } catch (err) {
       const [{ path, signal }] = args
       const isAuthError = (err as { isAuthError?: boolean }).isAuthError
-      // The first listing before any login is ProviderViews probing whether a
-      // session exists; that 401 must reach it so auto-connect can start.
+      // Without a session there is nothing to refresh: a 401 on the initial
+      // listing is ProviderViews probing for one (only happens when the plugin
+      // is not auto-connecting) and must reach it so the connect UI shows.
       if (
         !isAuthError ||
         !this.getGrant ||
@@ -231,6 +232,12 @@ export type S3Options = CompanionPluginOptions & {
    * Companion reports the session expired.
    */
   getGrant?: () => Promise<string>
+  /**
+   * The plugin is the whole page (a file library), not a picker inside the
+   * Dashboard: the panel header shows just the plugin title instead of
+   * "Import from …" and has no Cancel button. Default: false.
+   */
+  standalone?: boolean
 }
 
 /** Where an object key lives: its parent "folder" prefix and its own name. */
@@ -290,6 +297,9 @@ export default class S3<M extends Meta, B extends Body>
 
   /** Claims of the grant the current session was opened with, if any. */
   #grant: S3GrantClaims | null = null
+
+  /** True when no usable Companion session is stored, so auto-connect must log in first. */
+  #needsLogin = false
 
   constructor(uppy: Uppy<M, B>, opts: S3Options) {
     super(uppy, opts)
@@ -494,7 +504,11 @@ export default class S3<M extends Meta, B extends Body>
     if (!this.#sessionChecked) {
       return <div className="uppy-Provider-loading">{this.i18n('loading')}</div>
     }
-    this.#maybeAutoConnect()
+    if (this.#shouldPreAuthenticate()) {
+      this.#preAuthenticate()
+    } else {
+      this.#maybeAutoConnect()
+    }
     return this.view.render(state)
   }
 
@@ -509,6 +523,7 @@ export default class S3<M extends Meta, B extends Body>
     if (getGrant) {
       // Grants are short-lived and scoped to whoever is logged in now: never
       // reuse a session persisted by an earlier visit.
+      this.#needsLogin = true
       try {
         if (await this.storage.getItem(this.provider.tokenKey)) {
           await this.provider.logout()
@@ -527,6 +542,9 @@ export default class S3<M extends Meta, B extends Body>
             `[S3] stored session is for "${storedBucket ?? 'an unknown bucket'}", reconnecting to "${bucket}"`,
           )
           await this.provider.logout()
+          this.#needsLogin = true
+        } else if (!token) {
+          this.#needsLogin = true
         }
       } catch (err) {
         this.#warn('could not check the stored session', err)
@@ -537,7 +555,36 @@ export default class S3<M extends Meta, B extends Body>
     this.setPluginState({})
   }
 
-  /** Skip the auth form when the integrator already told us how to connect. */
+  /**
+   * Whether to log in before ProviderViews renders for the first time. Its
+   * first render probes for a session with an unauthenticated listing — a 401
+   * by design — which is wasted (and logged by browsers) when we already know
+   * there is no session and how to open one.
+   */
+  #shouldPreAuthenticate(): boolean {
+    const { bucket, getGrant, autoConnect } = this.opts
+    return (
+      !this.#autoConnectAttempted &&
+      autoConnect !== false &&
+      this.#needsLogin &&
+      Boolean(bucket || getGrant)
+    )
+  }
+
+  #preAuthenticate(): void {
+    const { bucket, getGrant } = this.opts
+    this.#autoConnectAttempted = true
+    // Mark the probing render as done; handleAuth lists the root itself.
+    this.setPluginState({ didFirstRender: true })
+    this.view
+      .handleAuth(getGrant ? {} : { bucket })
+      .catch((err: unknown) => this.#warn('auto-connect failed', err))
+  }
+
+  /**
+   * Skip the auth form when the integrator already told us how to connect and
+   * a stored session turned out to be invalid after all.
+   */
   #maybeAutoConnect(): void {
     const { bucket, getGrant, autoConnect } = this.opts
     if (this.#autoConnectAttempted || autoConnect === false) return
