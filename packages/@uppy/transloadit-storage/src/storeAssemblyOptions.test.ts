@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest'
+import type { StoreAssemblyParameters } from './storeAssemblyOptions.js'
+
 import { createStoreAssemblyOptions } from './storeAssemblyOptions.js'
 
 function fakeUppy(state: { currentFolderId?: string | null; prefix?: string }) {
@@ -12,7 +14,7 @@ function fakeUppy(state: { currentFolderId?: string | null; prefix?: string }) {
   } as never
 }
 
-const passthroughSign = async (params: never) => ({
+const passthroughSign = async (params: StoreAssemblyParameters) => ({
   params,
   signature: 'sig',
 })
