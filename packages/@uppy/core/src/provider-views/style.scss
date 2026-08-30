@@ -288,8 +288,15 @@
 }
 
 .uppy-ProviderBrowser-searchFilterInput::placeholder {
-  color: variables.$gray-500;
+  // WCAG AA: $gray-700 on $gray-200 is 6.5:1 (5.0:1 on the $gray-300 focus background);
+  // $gray-500 was 2.6:1.
+  color: variables.$gray-700;
   opacity: 1;
+
+  [data-uppy-theme='dark'] & {
+    // $gray-400 on $gray-900 is 8.6:1 (6.6:1 on the $gray-800 focus background).
+    color: variables.$gray-400;
+  }
 }
 
 .uppy-ProviderBrowser-searchFilterReset {
