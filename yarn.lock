@@ -6269,14 +6269,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@transloadit/utils@npm:^4.6.0":
-  version: 4.6.0
-  resolution: "@transloadit/utils@npm:4.6.0"
-  checksum: 10/0b87ecb72bfa68317cc025eebec86fba8e52e215fadbf0ae4fe54634b954135b2dda2b935a887e4ca794e88028732027abe37d5220e0ab39679cc19c5a4dd112
-  languageName: node
-  linkType: hard
-
-"@transloadit/utils@npm:^4.8.0":
+"@transloadit/utils@npm:^4.6.0, @transloadit/utils@npm:^4.8.0":
   version: 4.8.0
   resolution: "@transloadit/utils@npm:4.8.0"
   checksum: 10/baa3450285a762c4d3e2e7c09b5152867692008d373f8475ec5117eaff2959a1f7f8d78cd84277ccc762354bff23132812dde976a189d9a44e38431026342db1
