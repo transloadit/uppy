@@ -68,49 +68,51 @@ describe('parseAllowlist', () => {
     ])
   })
 
-  test('resolves "re:" to a RegExp, so the matcher never sees the prefix', () => {
-    const [entry] = parseAllowlist('re:^https://\\w+\\.myendpoint\\.com/')
+  test('resolves an entry starting with "^" to a RegExp', () => {
+    const [entry] = parseAllowlist('^https://\\w+\\.myendpoint\\.com/')
     expect(entry).toBeInstanceOf(RegExp)
     expect(hasUploadUrlMatch('https://a.myendpoint.com/files/', [entry!])).toBe(
       true,
     )
   })
 
-  // Patterns are matched as written, for validHosts as for uploadUrls, so
-  // anchoring is the operator's to get right. validateConfig warns about a
-  // missing "^"; the README covers the rest.
+  // Patterns are matched as written, for validHosts as for uploadUrls, so the
+  // tail end is still the operator's to anchor.
   test('leaves a validHosts pattern as written', () => {
-    const unanchored = parseAllowlist('re:(\\w+)\\.myendpoint\\.com')
-    expect(hasHostMatch('sub.myendpoint.com', unanchored)).toBe(true)
-    expect(hasHostMatch('sub.myendpoint.com.evil.com', unanchored)).toBe(true)
+    const openEnded = parseAllowlist('^(\\w+)\\.myendpoint\\.com')
+    expect(hasHostMatch('sub.myendpoint.com', openEnded)).toBe(true)
+    expect(hasHostMatch('sub.myendpoint.com.evil.com', openEnded)).toBe(true)
 
-    const anchored = parseAllowlist('re:^(\\w+)\\.myendpoint\\.com$')
+    const anchored = parseAllowlist('^(\\w+)\\.myendpoint\\.com$')
     expect(hasHostMatch('sub.myendpoint.com', anchored)).toBe(true)
     expect(hasHostMatch('sub.myendpoint.com.evil.com', anchored)).toBe(false)
   })
 
   test('does not split a value that is itself a pattern', () => {
     expect(
-      parseAllowlist('re:^https://a\\w{1,3}\\.myendpoint\\.com/'),
+      parseAllowlist('^https://a\\w{1,3}\\.myendpoint\\.com/'),
     ).toHaveLength(1)
   })
 
-  test('rejects a pattern that does not compile', () => {
-    expect(() => parseAllowlist('re:^https://(')).toThrow(
+  test('rejects a pattern that does not compile, keeping the cause', () => {
+    expect(() => parseAllowlist('^https://(')).toThrow(
       /Invalid regular expression/,
+    )
+    expect(() => parseAllowlist('^https://(')).toThrow(
+      expect.objectContaining({ cause: expect.any(SyntaxError) }),
     )
   })
 
-  // "re:" is resolved here and nowhere else, so a programmatic caller passing
-  // an untrusted string cannot turn it into a pattern.
-  test('is the only place "re:" means anything', () => {
-    expect(hasUploadUrlMatch('https://evil.com/', ['re:.*'])).toBe(false)
-    expect(hasHostMatch('evil.com', ['re:.*'])).toBe(false)
+  // "^" is resolved here and nowhere else, so a programmatic caller passing an
+  // untrusted string cannot turn it into a pattern.
+  test('is the only place a leading "^" means anything', () => {
+    expect(hasUploadUrlMatch('https://evil.com/', ['^.*'])).toBe(false)
+    expect(hasHostMatch('evil.com', ['^.*'])).toBe(false)
   })
 
   // Entries written as patterns before #6480 are now literal, and stop
   // matching: the destination is refused rather than misdirected.
-  test('an unprefixed pattern is a literal that matches nothing', () => {
+  test('a pattern that does not start with "^" is a literal that matches nothing', () => {
     expect(hasHostMatch('sub.myendpoint.com', ['(\\w+).myendpoint.com'])).toBe(
       false,
     )
@@ -134,9 +136,10 @@ describe('validateConfig', () => {
   })
 
   test('rejects an uploadUrls entry that is not an absolute URL', () => {
-    expect(() =>
-      validateConfig(withOptions({ uploadUrls: ['uploads.myendpoint.com'] })),
-    ).toThrow(/is not an absolute URL/)
+    const parse = () =>
+      validateConfig(withOptions({ uploadUrls: ['uploads.myendpoint.com'] }))
+    expect(parse).toThrow(/is not an absolute URL/)
+    expect(parse).toThrow(expect.objectContaining({ cause: expect.any(Error) }))
   })
 
   test('warns about a pattern with no "^", in either allowlist', () => {

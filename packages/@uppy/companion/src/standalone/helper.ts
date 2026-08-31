@@ -123,22 +123,28 @@ type StandaloneCompanionOptions = Pick<
 }
 
 /**
- * Marks an allowlist entry as a regular expression. Standalone config is
- * strings all the way down -- env vars and JSON -- so this is the only way to
- * express one without configuring Companion programmatically, and it is
- * resolved here so that a `RegExp` is all the matcher ever sees.
+ * Tells an allowlist entry that is a regular expression from one that is a
+ * literal URL or hostname. Standalone config is strings all the way down --
+ * env vars and JSON -- so a marker is the only way to express a pattern
+ * without configuring Companion programmatically, and `^` is the marker
+ * because neither a URL nor a hostname can start with one, and a pattern that
+ * is not anchored there matches values that merely *contain* it, which is the
+ * bypass this whole change is about
+ * (https://github.com/transloadit/uppy/issues/6480).
  */
-const patternPrefix = 're:'
+const isPattern = (value: string): boolean => value.startsWith('^')
 
-/** Resolves a `re:` entry to a RegExp, tested as written. */
+/** Resolves an entry starting with `^` to a RegExp, tested as written. */
 const parseAllowlistEntry = (entry: string): string | RegExp => {
-  if (!entry.startsWith(patternPrefix)) return entry
-  const body = entry.slice(patternPrefix.length)
+  if (!isPattern(entry)) return entry
   try {
-    return new RegExp(body)
+    return new RegExp(entry)
   } catch (cause) {
     throw new Error(
-      `Invalid regular expression in allowlist entry "${entry}": ${(cause as Error).message}`,
+      `Invalid regular expression in allowlist entry "${entry}"`,
+      {
+        cause,
+      },
     )
   }
 }
@@ -148,11 +154,9 @@ const parseAllowlistEntry = (entry: string): string | RegExp => {
  * split, so that a `{n,m}` quantifier survives.
  */
 export const parseAllowlist = (value: string): (string | RegExp)[] =>
-  (value.startsWith(patternPrefix) ? [value] : value.split(',')).map(
-    parseAllowlistEntry,
-  )
+  (isPattern(value) ? [value] : value.split(',')).map(parseAllowlistEntry)
 
-/** Resolves `re:` entries in an allowlist read from the JSON config file. */
+/** Resolves the pattern entries in an allowlist read from the JSON config file. */
 const parseAllowlistArray = (value: unknown): unknown =>
   Array.isArray(value)
     ? value.map((entry) =>
@@ -326,7 +330,7 @@ const getConfigFromFile = () => {
   const rawdata = fs.readFileSync(path)
   const config = JSON.parse(rawdata.toString('utf8'))
 
-  // JSON cannot hold a RegExp either, so `re:` is resolved here too.
+  // JSON cannot hold a RegExp either, so patterns are resolved here too.
   config.uploadUrls = parseAllowlistArray(config.uploadUrls)
   if (config.server?.validHosts != null) {
     config.server.validHosts = parseAllowlistArray(config.server.validHosts)

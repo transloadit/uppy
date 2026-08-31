@@ -116,9 +116,10 @@ function validateUploadUrls(
     let url: URL
     try {
       url = new URL(entry)
-    } catch {
+    } catch (cause) {
       throw new Error(
         `uploadUrls entry "${entry}" is not an absolute URL. Include the scheme, e.g. "https://example.com/files/".`,
+        { cause },
       )
     }
 
