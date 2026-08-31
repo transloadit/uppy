@@ -23,8 +23,8 @@
     "shallow-equal": "^3.1.0"
   },
   "devDependencies": {
-    "@uppy/core": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
+    "@uppy/core": "workspace:^",
     "typescript": "^6.0.3",
     "vue": "^3.5.14"
   },

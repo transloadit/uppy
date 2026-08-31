@@ -43,8 +43,8 @@
     "preact": "^10.29.2"
   },
   "devDependencies": {
-    "@uppy/core": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
+    "@uppy/core": "workspace:^",
     "cssnano": "^8.0.1",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",

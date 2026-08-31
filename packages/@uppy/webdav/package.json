@@ -44,8 +44,8 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "@uppy/core": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
+    "@uppy/core": "workspace:^",
     "typescript": "^6.0.3"
   }
 }
