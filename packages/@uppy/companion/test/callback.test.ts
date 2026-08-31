@@ -1,6 +1,6 @@
 import request from 'supertest'
 import { beforeEach, describe, expect, test, vi } from 'vitest'
-import * as tokenService from '../src/server/helpers/jwt.js'
+import * as tokenService from '../lib/server/helpers/jwt.js'
 
 const secret = 'secret'
 
@@ -52,7 +52,7 @@ describe('test authentication callback', () => {
   test('the token gets sent via websocket', async () => {
     const callbackToken = 'auth-callback-token'
 
-    const oauthState = await import('../src/server/helpers/oauth-state.js')
+    const oauthState = await import('../lib/server/helpers/oauth-state.js')
     vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
       if (key === 'authCallbackToken') return callbackToken
 
@@ -84,7 +84,7 @@ describe('test authentication callback', () => {
   })
 
   test('the token gets sent via legacy html mechanism', async () => {
-    const oauthState = await import('../src/server/helpers/oauth-state.js')
+    const oauthState = await import('../lib/server/helpers/oauth-state.js')
     vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
       if (key === 'authCallbackToken') return undefined
 
@@ -98,7 +98,7 @@ describe('test authentication callback', () => {
     const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
     const { getServer } = await import('./mockserver.js')
-    // see mock ../../src/server/helpers/oauth-state above for state values
+    // see mock ../../lib/server/helpers/oauth-state above for state values
     return request(await getServer())
       .get(`/dropbox/send-token?uppyAuthToken=${encodeURIComponent(token)}`)
       .expect(200)

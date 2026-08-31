@@ -3,7 +3,7 @@ import type { SetupWorker } from 'msw/browser'
 import 'whatwg-fetch'
 import Core, { type Meta, type UppyFile } from '@uppy/core'
 import { describe, expect, vi } from 'vitest'
-import AwsS3, { type AwsBody, type AwsS3Options } from '../src/index.js'
+import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
 import { test } from './test-utils/test-extend.js'
 
 const KB = 1024

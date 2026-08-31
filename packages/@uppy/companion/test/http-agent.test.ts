@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, test } from 'vitest'
 import {
   FORBIDDEN_IP_ADDRESS,
   getProtectedGot,
-} from '../src/server/helpers/request.js'
+} from '../lib/server/helpers/request.js'
 
 // nock 14 activates HTTP interception (via @mswjs/interceptors) on import. The
 // "blocks ..." tests below rely on the protected agent rejecting the connection

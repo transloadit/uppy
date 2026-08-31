@@ -4,7 +4,7 @@ import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 
-vi.mock('../src/server/helpers/jwt.js', () => {
+vi.mock('../lib/server/helpers/jwt.js', () => {
   return {
     generateEncryptedToken: () => 'dummy token',
     verifyEncryptedToken: () => '',
