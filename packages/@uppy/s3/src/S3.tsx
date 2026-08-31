@@ -368,14 +368,23 @@ export default class S3<M extends Meta, B extends Body>
     // The panel may be loading the root at this very moment (auto-open on
     // showPanel); walking concurrently would race it. Wait it out, and only
     // load the root ourselves when it is not cached yet.
-    await this.#settledListing()
-    const root = this.getPluginState().partialTree.find(
-      (node) => node.type === 'root',
-    )
-    if (!root || !(root as { cached?: boolean }).cached) {
-      await this.view.openFolder(this.rootFolderId)
-      await this.#settledListing()
+    // The panel auto-opens the root on its first render — but only after
+    // auth and the listing round-trip, which on a cold load lands seconds
+    // after a deep-link restore starts. Let that load go first; only load
+    // the root ourselves when no panel is going to (headless use).
+    const rootReady = () => {
+      const root = this.getPluginState().partialTree.find(
+        (node) => node.type === 'root',
+      )
+      return Boolean(root && (root as { cached?: boolean }).cached)
     }
+    for (let waited = 0; !rootReady() && waited < 15_000; waited += 100) {
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    }
+    if (!rootReady()) {
+      await this.view.openFolder(this.rootFolderId)
+    }
+    await this.#settledListing()
     if (key === null || key === '') return true
     const prefix = key.endsWith('/') ? key : `${key}/`
     let path = ''
