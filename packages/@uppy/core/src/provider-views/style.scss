@@ -591,10 +591,13 @@
 }
 
 .uppy-ProviderDialog-confirm--danger {
-  background-color: variables.$red;
+  background-color: var(--uppy-color-danger, #{variables.$red});
 
   &:not(:disabled):hover {
-    background-color: color.adjust(variables.$red, $lightness: -10%, $space: hsl);
+    background-color: var(
+      --uppy-color-danger-hover,
+      #{color.adjust(variables.$red, $lightness: -10%, $space: hsl)}
+    );
   }
 }
 
@@ -720,10 +723,15 @@
 
 .uppy-ItemDetail-action {
   padding: 9px 14px;
-  color: variables.$gray-800;
+  color: var(--uppy-color-secondary, #{variables.$gray-800});
   font-size: 13px;
   background-color: variables.$white;
-  border: 1px solid variables.$gray-300;
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--uppy-color-secondary, #{variables.$gray-800}) 25%,
+      transparent
+    );
   border-radius: 4px;
 
   &:not(:disabled):hover {
@@ -731,11 +739,19 @@
   }
 
   &.uppy-ItemDetail-action--danger {
-    color: variables.$red;
-    border-color: rgba(variables.$red, 0.4);
+    color: var(--uppy-color-danger, #{variables.$red});
+    border-color: color-mix(
+      in srgb,
+      var(--uppy-color-danger, #{variables.$red}) 40%,
+      transparent
+    );
 
     &:not(:disabled):hover {
-      background-color: rgba(variables.$red, 0.06);
+      background-color: color-mix(
+        in srgb,
+        var(--uppy-color-danger, #{variables.$red}) 6%,
+        transparent
+      );
     }
   }
 
@@ -748,7 +764,7 @@
 
 // Manager mode: destructive entries in the "..." menu.
 .uppy-ProviderBrowserItem-actionsMenuItem--danger {
-  color: variables.$red;
+  color: var(--uppy-color-danger, #{variables.$red});
 }
 
 // Manager mode: the bulk-selection footer.
