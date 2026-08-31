@@ -26,6 +26,7 @@ import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import { useCallback, useState } from '@uppy/core/utils/preact/hooks'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
+import StorageIcon from './StorageIcon.js'
 
 /** Unverified claims of a storage grant (the client only needs to *read* them). */
 export type S3GrantClaims = {
@@ -327,29 +328,7 @@ export default class S3<M extends Meta, B extends Body>
     this.defaultLocale = locale
     this.i18nInit()
     this.title = this.i18n('pluginNameS3')
-    this.icon = () => (
-      <svg
-        className="uppy-DashboardTab-iconS3"
-        width="32"
-        height="32"
-        viewBox="0 0 32 32"
-        aria-hidden="true"
-      >
-        <g fill="none" fill-rule="evenodd">
-          <ellipse cx="16" cy="9" rx="9" ry="3.5" fill="currentcolor" />
-          <path
-            d="M7 9v14c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5V9"
-            stroke="currentcolor"
-            stroke-width="2"
-          />
-          <path
-            d="M7 16c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5"
-            stroke="currentcolor"
-            stroke-width="2"
-          />
-        </g>
-      </svg>
-    )
+    this.icon = () => <StorageIcon className="uppy-DashboardTab-iconS3" />
 
     this.provider = new S3SimpleAuthProvider(uppy, {
       companionUrl: this.opts.companionUrl,
@@ -377,6 +356,27 @@ export default class S3<M extends Meta, B extends Body>
   /** The S3 object key behind a partial-tree item id (ids are URL-encoded keys). */
   static keyOf(id: string): string {
     return decodeURIComponent(id)
+  }
+
+  /**
+   * Opens the folder at `key` (e.g. `docs/photos/`), walking down from the
+   * root so each parent listing reveals the next segment. Returns false when
+   * a segment no longer exists — the view then stays at the deepest
+   * surviving ancestor (useful for restoring stale deep links).
+   */
+  async openFolderPath(key: string | null): Promise<boolean> {
+    await this.view.openFolder(null)
+    if (key === null || key === '') return true
+    const prefix = key.endsWith('/') ? key : `${key}/`
+    let path = ''
+    for (const segment of prefix.split('/').filter(Boolean)) {
+      path += `${segment}/`
+      const folderId = encodeURIComponent(path)
+      const { partialTree } = this.getPluginState()
+      if (!partialTree.some((node) => node.id === folderId)) return false
+      await this.view.openFolder(folderId)
+    }
+    return true
   }
 
   /**

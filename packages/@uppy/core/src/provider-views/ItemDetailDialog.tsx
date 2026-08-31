@@ -1,3 +1,4 @@
+import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { h } from 'preact'
 import { useEffect, useRef, useState } from 'preact/hooks'
 import type {
@@ -24,19 +25,6 @@ type ItemDetailDialogProps<M extends Meta, B extends Body> = {
   ) => Promise<string>
   onClose: () => void
   i18n: I18n
-}
-
-function formatBytes(size: number): string {
-  if (size < 1024) return `${size} B`
-  const units = ['KB', 'MB', 'GB', 'TB']
-  let value = size
-  let unit = 'B'
-  for (const next of units) {
-    if (value < 1024) break
-    value /= 1024
-    unit = next
-  }
-  return `${value.toFixed(value >= 10 ? 0 : 1)} ${unit}`
 }
 
 /**
@@ -139,7 +127,7 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
           {typeof size === 'number' && (
             <>
               <dt>{i18n('detailSize')}</dt>
-              <dd>{formatBytes(size)}</dd>
+              <dd>{prettierBytes(size)}</dd>
             </>
           )}
           {mimeType && (

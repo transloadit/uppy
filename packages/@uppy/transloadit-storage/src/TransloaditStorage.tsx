@@ -1,11 +1,12 @@
 import type { Body, Meta, UploadResult, Uppy } from '@uppy/core'
 import type { ProviderAction } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
-import S3, { type S3Options } from '@uppy/s3'
+import S3, { type S3Options, StorageIcon } from '@uppy/s3'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import {
   createStoreAssemblyOptions,
+  normalizePrefix,
   type StoreUploadsOptions,
 } from './storeAssemblyOptions.js'
 
@@ -83,23 +84,7 @@ export default class TransloaditStorage<
     this.i18nInit()
     this.setOptions({ locale: opts.locale })
     this.title = this.i18n('pluginNameTransloaditStorage')
-    this.icon = () => (
-      <svg width="32" height="32" viewBox="0 0 32 32" aria-hidden="true">
-        <g fill="none" fill-rule="evenodd">
-          <ellipse cx="16" cy="9" rx="9" ry="3.5" fill="#0d8ceb" />
-          <path
-            d="M7 9v14c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5V9"
-            stroke="#0d8ceb"
-            stroke-width="2"
-          />
-          <path
-            d="M7 16c0 1.93 4.03 3.5 9 3.5s9-1.57 9-3.5"
-            stroke="#0d8ceb"
-            stroke-width="2"
-          />
-        </g>
-      </svg>
-    )
+    this.icon = () => <StorageIcon color="#0d8ceb" />
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
@@ -167,11 +152,7 @@ export default class TransloaditStorage<
           const { currentFolderId } = this.getPluginState() as {
             currentFolderId?: string | null
           }
-          const rawPrefix = this.opts.prefix
-          const normalizedPrefix =
-            rawPrefix && !rawPrefix.endsWith('/')
-              ? `${rawPrefix}/`
-              : (rawPrefix ?? '')
+          const normalizedPrefix = normalizePrefix(this.opts.prefix)
           this.opts.onUploadRequest({
             prefix: currentFolderId
               ? decodeURIComponent(currentFolderId)

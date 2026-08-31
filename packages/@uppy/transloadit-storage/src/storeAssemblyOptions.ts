@@ -31,6 +31,11 @@ export type StoreUploadsOptions = {
  * `folder` (a full storage key prefix, '' for the root). Apps that own the
  * upload UI (see `onUploadRequest`) sign these server-side themselves.
  */
+/** `photos` → `photos/`; empty/undefined → `''`. */
+export function normalizePrefix(prefix: string | undefined): string {
+  return prefix && !prefix.endsWith('/') ? `${prefix}/` : (prefix ?? '')
+}
+
 export function buildStoreAssemblyParams(
   folder: string,
   conflictStrategy: 'overwrite' | 'rename' | 'error' = 'overwrite',
@@ -69,8 +74,7 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     // (the plugin's `prefix` option) — uploads must land inside it.
     const prefix = (storage as { opts?: { prefix?: string } } | undefined)?.opts
       ?.prefix
-    const normalizedPrefix =
-      prefix && !prefix.endsWith('/') ? `${prefix}/` : (prefix ?? '')
+    const normalizedPrefix = normalizePrefix(prefix)
     const folder = currentFolderId
       ? decodeURIComponent(currentFolderId)
       : normalizedPrefix
