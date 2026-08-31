@@ -4,7 +4,7 @@
     "composite": true,
     "noEmit": true,
     "module": "preserve",
-    "outDir": "${configDir}/lib",
+    "resolveJsonModule": true,
     "rootDir": "${configDir}",
     "skipLibCheck": true,
     "target": "esnext",

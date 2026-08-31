@@ -823,7 +823,7 @@ export default class Uploader {
         },
       })
 
-      reqOptions.body = formData as FormDataLike
+      reqOptions.body = formData as unknown as FormDataLike
     } else {
       if (this.size != null) {
         reqOptions.headers = {

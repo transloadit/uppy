@@ -1,3 +1,7 @@
 {
-  "extends": "@uppy-dev/tsconfig/build"
+  "extends": "@uppy-dev/tsconfig/build",
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "types": ["node"]
+  }
 }
