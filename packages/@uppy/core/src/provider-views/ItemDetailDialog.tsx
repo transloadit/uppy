@@ -172,13 +172,6 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
             {action.label}
           </button>
         ))}
-        <button
-          type="button"
-          className="uppy-u-reset uppy-c-btn uppy-c-btn-primary"
-          onClick={onClose}
-        >
-          {i18n('close')}
-        </button>
       </footer>
     </dialog>
   )
