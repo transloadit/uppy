@@ -10494,7 +10494,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esbuild@npm:0.28.1, esbuild@npm:^0.28.0, esbuild@npm:^0.28.1, esbuild@npm:~0.28.0":
+"esbuild@npm:0.28.1, esbuild@npm:^0.28.0, esbuild@npm:^0.28.1":
   version: 0.28.1
   resolution: "esbuild@npm:0.28.1"
   dependencies:
@@ -10950,7 +10950,6 @@ __metadata:
     react: "npm:^19.2.8"
     react-dom: "npm:^19.2.7"
     react-router: "npm:^8.3.0"
-    tsx: "npm:^4.23.12"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.1.5"
   languageName: unknown
@@ -18721,21 +18720,6 @@ __metadata:
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
   checksum: 10/7dbf34e6f55c6492637adb81b555af5e3b4f9cc6b998fb440dac82d3b42bdc91560a35a5fb75e20e24a076c651438234da6743d139e4feabf0783f3cdfe1dddb
-  languageName: node
-  linkType: hard
-
-"tsx@npm:^4.23.12":
-  version: 4.23.12
-  resolution: "tsx@npm:4.23.12"
-  dependencies:
-    esbuild: "npm:~0.28.0"
-    fsevents: "npm:~2.3.3"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    tsx: dist/cli.mjs
-  checksum: 10/167a5571cb211aff257d200cd75a1003b1e0e59d641c1e6ff99f6cdfada46ff6ce311e105722699b4763feb1371b2d8084bcc413c7e54aae3761c852817dc0b0
   languageName: node
   linkType: hard
 
