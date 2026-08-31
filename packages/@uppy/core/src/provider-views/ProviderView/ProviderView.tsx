@@ -99,6 +99,8 @@ export interface ProviderActionContext<M extends Meta, B extends Body> {
 export interface ProviderAction<M extends Meta, B extends Body> {
   id: string
   label: string
+  /** Renders red in the menu / detail dialog (destructive actions). */
+  danger?: boolean
   /** Which items get this action; defaults to 'all'. */
   appliesTo?: 'file' | 'folder' | 'all'
   /** Reload the current folder after the action ran (default true). */

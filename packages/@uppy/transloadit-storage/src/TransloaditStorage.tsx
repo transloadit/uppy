@@ -37,6 +37,13 @@ export type TransloaditStorageOptions = Omit<S3Options, 'bucket' | 'locale'> & {
    * refresh the folder so the new files show up. Default: false.
    */
   reopenAfterUpload?: boolean
+  /**
+   * Takes over the toolbar's "Upload files" action, e.g. to open a full
+   * Dashboard modal with remote sources. Receives the storage prefix of the
+   * folder that is open; after uploading, call the plugin's
+   * `refreshListing()` so the new files show up.
+   */
+  onUploadRequest?: (context: { prefix: string }) => void
 }
 
 /**
@@ -152,8 +159,26 @@ export default class TransloaditStorage<
       label: this.i18n('uploadFiles'),
       refresh: false,
       run: () => {
-        // A file picker owned by the widget: files go straight into the
-        // folder that is open (storeUploads builds the Assembly params).
+        // The host app can take over (e.g. a full Dashboard modal with
+        // remote sources); otherwise a plain file picker owned by the
+        // widget. Either way files go into the folder that is open
+        // (storeUploads builds the Assembly params).
+        if (this.opts.onUploadRequest) {
+          const { currentFolderId } = this.getPluginState() as {
+            currentFolderId?: string | null
+          }
+          const rawPrefix = this.opts.prefix
+          const normalizedPrefix =
+            rawPrefix && !rawPrefix.endsWith('/')
+              ? `${rawPrefix}/`
+              : (rawPrefix ?? '')
+          this.opts.onUploadRequest({
+            prefix: currentFolderId
+              ? decodeURIComponent(currentFolderId)
+              : normalizedPrefix,
+          })
+          return
+        }
         const input = document.createElement('input')
         input.type = 'file'
         input.multiple = true

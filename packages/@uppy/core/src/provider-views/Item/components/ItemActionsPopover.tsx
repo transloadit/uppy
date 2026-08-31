@@ -169,7 +169,11 @@ export default function ItemActionsPopover({
           key={action.id}
           type="button"
           role="menuitem"
-          className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-actionsMenuItem"
+          className={`uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-actionsMenuItem${
+            action.danger
+              ? ' uppy-ProviderBrowserItem-actionsMenuItem--danger'
+              : ''
+          }`}
           onClick={(event) => {
             event.stopPropagation()
             event.preventDefault()

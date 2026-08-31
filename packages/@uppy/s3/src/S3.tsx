@@ -379,6 +379,17 @@ export default class S3<M extends Meta, B extends Body>
     return decodeURIComponent(id)
   }
 
+  /**
+   * Re-list the folder that is open — e.g. after uploads that happened
+   * outside the browser panel (an app-owned upload modal).
+   */
+  async refreshListing(): Promise<void> {
+    const { currentFolderId } = this.getPluginState() as {
+      currentFolderId?: string | null
+    }
+    await this.view.openFolder(currentFolderId ?? null)
+  }
+
   builtInActions(): ProviderAction<M, B>[] {
     return [
       {
@@ -410,6 +421,7 @@ export default class S3<M extends Meta, B extends Body>
       {
         id: 's3:delete',
         label: this.i18n('deleteItem'),
+        danger: true,
         appliesTo: 'all',
         run: withToast(async ({ item, view }) => {
           const key = S3.keyOf(item.id)

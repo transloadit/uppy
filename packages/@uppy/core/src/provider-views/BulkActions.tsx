@@ -41,10 +41,12 @@ export default function BulkActions<M extends Meta, B extends Body>({
           <button
             key={action.id}
             type="button"
-            className={classNames('uppy-u-reset uppy-c-btn', {
-              'uppy-c-btn-primary': !action.danger,
-              'uppy-ProviderDialog-confirm--danger': action.danger,
-            })}
+            className={classNames(
+              'uppy-u-reset uppy-c-btn uppy-c-btn-primary',
+              {
+                'uppy-ProviderDialog-confirm--danger': action.danger,
+              },
+            )}
             onClick={() => runBulkAction(action)}
           >
             {action.label}

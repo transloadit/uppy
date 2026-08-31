@@ -94,53 +94,76 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
       }}
       onClose={onClose}
     >
-      <div
-        className="uppy-ItemDetail-preview"
-        data-testid="file-detail-preview"
-      >
-        {previewUrl ? (
-          <img
-            src={previewUrl}
-            alt=""
-            className="uppy-ItemDetail-previewImage"
-          />
-        ) : (
-          <span className="uppy-ItemDetail-previewIcon" aria-hidden="true">
-            <ItemIcon itemIconString={item.data.icon} />
-          </span>
-        )}
-      </div>
-      <div className="uppy-ItemDetail-meta">
-        <h3 className="uppy-ProviderDialog-title uppy-ItemDetail-name">
-          {name}
-        </h3>
+      <header className="uppy-ItemDetail-header">
+        <h3 className="uppy-ItemDetail-name">{name}</h3>
+        <button
+          type="button"
+          className="uppy-u-reset uppy-c-btn uppy-ItemDetail-close"
+          aria-label={i18n('close')}
+          onClick={onClose}
+        >
+          <svg
+            aria-hidden="true"
+            width="14"
+            height="14"
+            viewBox="0 0 14 14"
+            fill="none"
+          >
+            <path
+              d="M2 2l10 10M12 2L2 12"
+              stroke="currentColor"
+              stroke-width="1.6"
+              stroke-linecap="round"
+            />
+          </svg>
+        </button>
+      </header>
+      <div className="uppy-ItemDetail-body">
+        <div
+          className="uppy-ItemDetail-preview"
+          data-testid="file-detail-preview"
+        >
+          {previewUrl ? (
+            <img
+              src={previewUrl}
+              alt=""
+              className="uppy-ItemDetail-previewImage"
+            />
+          ) : (
+            <span className="uppy-ItemDetail-previewIcon" aria-hidden="true">
+              <ItemIcon itemIconString={item.data.icon} />
+            </span>
+          )}
+        </div>
         <dl className="uppy-ItemDetail-facts">
           {typeof size === 'number' && (
-            <div className="uppy-ItemDetail-fact">
+            <>
               <dt>{i18n('detailSize')}</dt>
               <dd>{formatBytes(size)}</dd>
-            </div>
+            </>
           )}
           {mimeType && (
-            <div className="uppy-ItemDetail-fact">
+            <>
               <dt>{i18n('detailType')}</dt>
               <dd>{mimeType}</dd>
-            </div>
+            </>
           )}
           {modified && (
-            <div className="uppy-ItemDetail-fact">
+            <>
               <dt>{i18n('detailModified')}</dt>
               <dd>{modified}</dd>
-            </div>
+            </>
           )}
         </dl>
       </div>
-      <div className="uppy-ProviderDialog-actions uppy-ItemDetail-actions">
+      <footer className="uppy-ItemDetail-actions">
         {applicable.map((action) => (
           <button
             key={action.id}
             type="button"
-            className="uppy-u-reset uppy-c-btn uppy-c-btn-secondary uppy-ItemDetail-action"
+            className={`uppy-u-reset uppy-c-btn uppy-ItemDetail-action${
+              action.danger ? ' uppy-ItemDetail-action--danger' : ''
+            }`}
             onClick={() => {
               onClose()
               runAction(action, item)
@@ -156,7 +179,7 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
         >
           {i18n('close')}
         </button>
-      </div>
+      </footer>
     </dialog>
   )
 }

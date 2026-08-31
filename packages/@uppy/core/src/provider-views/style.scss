@@ -600,73 +600,166 @@
 
 // Manager mode: the item detail modal.
 .uppy-ItemDetail {
-  width: min(440px, calc(100vw - 32px));
+  width: min(480px, calc(100vw - 32px));
+}
+
+.uppy-ItemDetail-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 14px 14px 20px;
+  border-bottom: 1px solid variables.$gray-200;
+
+  [data-uppy-theme='dark'] & {
+    border-bottom-color: variables.$gray-700;
+  }
+}
+
+.uppy-ItemDetail-name {
+  flex: 1;
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.uppy-ItemDetail-close {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: variables.$gray-600;
+  border-radius: 50%;
+
+  &:hover {
+    color: variables.$gray-800;
+    background-color: variables.$gray-100;
+  }
+
+  [data-uppy-theme='dark'] &:hover {
+    color: variables.$gray-100;
+    background-color: variables.$gray-700;
+  }
+}
+
+.uppy-ItemDetail-body {
+  padding: 16px 20px;
 }
 
 .uppy-ItemDetail-preview {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 140px;
-  margin-bottom: 12px;
-  background-color: variables.$gray-100;
-  border-radius: 6px;
+  height: 200px;
+  margin-bottom: 14px;
   overflow: hidden;
+  background-color: variables.$gray-50;
+  border: 1px solid variables.$gray-200;
+  border-radius: 6px;
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-900;
+    border-color: variables.$gray-700;
+  }
 }
 
 .uppy-ItemDetail-previewImage {
-  max-width: 100%;
-  max-height: 240px;
   display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 
 .uppy-ItemDetail-previewIcon svg {
-  width: 48px;
-  height: 48px;
-}
-
-.uppy-ItemDetail-name {
-  overflow-wrap: anywhere;
+  width: 56px;
+  height: 56px;
+  opacity: 0.8;
 }
 
 .uppy-ItemDetail-facts {
-  margin: 0 0 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
 
-  .uppy-ItemDetail-fact {
-    display: flex;
-    gap: 8px;
-    font-size: 13px;
-    line-height: 1.6;
+  dt {
+    color: variables.$gray-600;
+  }
 
-    dt {
-      min-width: 72px;
-      color: variables.$gray-600;
-    }
+  dd {
+    margin: 0;
+    color: variables.$gray-800;
+    overflow-wrap: anywhere;
 
-    dd {
-      margin: 0;
-      overflow-wrap: anywhere;
+    [data-uppy-theme='dark'] & {
+      color: variables.$gray-200;
     }
   }
 }
 
 .uppy-ItemDetail-actions {
+  display: flex;
   flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 14px 20px;
+  background-color: variables.$gray-50;
+  border-top: 1px solid variables.$gray-200;
+  border-radius: 0 0 8px 8px;
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-900;
+    border-top-color: variables.$gray-700;
+  }
 }
 
 .uppy-ItemDetail-action {
-  background-color: variables.$gray-200;
+  padding: 9px 14px;
   color: variables.$gray-800;
+  font-size: 13px;
+  background-color: variables.$white;
+  border: 1px solid variables.$gray-300;
+  border-radius: 4px;
 
   &:not(:disabled):hover {
-    background-color: variables.$gray-300;
+    background-color: variables.$gray-100;
   }
+
+  &.uppy-ItemDetail-action--danger {
+    color: variables.$red;
+    border-color: rgba(variables.$red, 0.4);
+
+    &:not(:disabled):hover {
+      background-color: rgba(variables.$red, 0.06);
+    }
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+    background-color: variables.$gray-800;
+    border-color: variables.$gray-600;
+  }
+}
+
+// Manager mode: destructive entries in the "..." menu.
+.uppy-ProviderBrowserItem-actionsMenuItem--danger {
+  color: variables.$red;
 }
 
 // Manager mode: the bulk-selection footer.
 .uppy-ProviderBrowser-footer-count {
   align-self: center;
   margin-right: auto;
+  color: variables.$gray-700;
+  font-weight: 500;
   font-size: 13px;
-  color: variables.$gray-600;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-300;
+  }
 }
