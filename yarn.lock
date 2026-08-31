@@ -6992,7 +6992,6 @@ __metadata:
     serialize-error: "npm:13.0.1"
     serialize-javascript: "npm:7.0.7"
     supertest: "npm:7.2.2"
-    supports-color: "npm:10.2.2"
     tus-js-client: "npm:4.3.1"
     typescript: "npm:^6.0.3"
     validator: "npm:13.15.35"
@@ -18388,13 +18387,6 @@ __metadata:
     methods: "npm:^1.1.2"
     superagent: "npm:^10.3.0"
   checksum: 10/41b29e005b7f0fec8e062df1e43037d5a29b40c1172331d1b448e8b39ed3cc020d2aac342aad6d6e75c1e07b2f08c32bff6472cd726ab4fc9b3f10969937979d
-  languageName: node
-  linkType: hard
-
-"supports-color@npm:10.2.2":
-  version: 10.2.2
-  resolution: "supports-color@npm:10.2.2"
-  checksum: 10/bd132705fc07213a4024131fb061f0a46a48b49ecaf434bb029c0a5aa0339b969236d496d63969e3c248a90fdcac16d4f9c5bf187e7be0bfb5e804ed13bef6b0
   languageName: node
   linkType: hard
 
