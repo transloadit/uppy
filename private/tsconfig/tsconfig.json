@@ -1,0 +1,15 @@
+{
+  "exclude": ["${configDir}/src"],
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "module": "preserve",
+    "outDir": "${configDir}/lib",
+    "rootDir": "${configDir}",
+    "skipLibCheck": true,
+    "target": "esnext",
+    "types": ["vite/client"],
+    "useUnknownInCatchVariables": false,
+    "verbatimModuleSyntax": true
+  }
+}

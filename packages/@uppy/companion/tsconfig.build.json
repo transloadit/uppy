@@ -1,9 +1,3 @@
 {
-  "extends": "./tsconfig.shared",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "noEmitOnError": true
-  },
-  "include": ["src/**/*"]
+  "extends": "@uppy-dev/tsconfig/build"
 }

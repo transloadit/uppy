@@ -1,14 +1,4 @@
 {
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true,
-    "types": ["preact", "node"]
-  },
-  "include": ["./package.json", "./src/**/*.*"],
-  "references": [
-    {
-      "path": "../core/tsconfig.build.json"
-    }
-  ]
+  "extends": "@uppy-dev/tsconfig",
+  "references": [{ "path": "./tsconfig.build.json" }]
 }

@@ -6863,6 +6863,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy-dev/tsconfig@workspace:private/tsconfig":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/tsconfig@workspace:private/tsconfig"
+  dependencies:
+    vitest: "npm:^4.1.6"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular":
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular"

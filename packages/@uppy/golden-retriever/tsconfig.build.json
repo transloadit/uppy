@@ -1,14 +1,8 @@
 {
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src"
-  },
-  "include": ["./src/**/*.*"],
-  "exclude": ["./src/**/*.test.ts"],
+  "extends": "@uppy-dev/tsconfig/build",
   "references": [
-    {
-      "path": "../core/tsconfig.build.json"
-    }
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../dashboard/tsconfig.build.json" },
+    { "path": "../xhr-upload/tsconfig.build.json" }
   ]
 }

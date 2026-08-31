@@ -1,0 +1,17 @@
+{
+  "include": ["${configDir}/src"],
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "module": "nodenext",
+    "outDir": "${configDir}/lib",
+    "rootDir": "${configDir}/src",
+    "skipLibCheck": true,
+    "target": "esnext",
+    "useUnknownInCatchVariables": false,
+    "verbatimModuleSyntax": true
+  }
+}
