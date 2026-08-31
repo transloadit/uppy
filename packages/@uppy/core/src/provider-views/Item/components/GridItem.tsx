@@ -46,20 +46,30 @@ function GridItem({
           data-uppy-super-focusable
         />
       )}
-      <label
-        htmlFor={selectable ? file.id : undefined}
-        aria-label={file.data.name ?? i18n('unnamed')}
-        className="uppy-u-reset uppy-ProviderBrowserItem-inner"
-        onClick={
-          !selectable && onFileClick && !file.data.isFolder
-            ? () => onFileClick(file)
-            : undefined
-        }
-      >
-        <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
-        {showTitles && (file.data.name ?? i18n('unnamed'))}
-        {children}
-      </label>
+      {!selectable && onFileClick && !file.data.isFolder ? (
+        <button
+          type="button"
+          aria-label={i18n('openFileNamed', {
+            name: file.data.name ?? i18n('unnamed'),
+          })}
+          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+          onClick={() => onFileClick(file)}
+        >
+          <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
+          {showTitles && (file.data.name ?? i18n('unnamed'))}
+          {children}
+        </button>
+      ) : (
+        <label
+          htmlFor={selectable ? file.id : undefined}
+          aria-label={file.data.name ?? i18n('unnamed')}
+          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+        >
+          <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
+          {showTitles && (file.data.name ?? i18n('unnamed'))}
+          {children}
+        </label>
+      )}
       {actionsMenu}
     </li>
   )

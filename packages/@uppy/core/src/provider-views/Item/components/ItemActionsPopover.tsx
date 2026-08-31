@@ -1,5 +1,11 @@
 import type { h, RefObject } from 'preact'
-import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks'
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'preact/hooks'
 import type { PartialTreeFile, PartialTreeFolderNode } from '../../../index.js'
 import type { I18n } from '../../../utils/index.js'
 import type { ProviderAction } from '../../ProviderView/ProviderView.js'
@@ -47,7 +53,7 @@ export default function ItemActionsPopover({
   // menu is actually rendered (a closed `[popover]` is display:none and
   // reports height 0, which would break the flip), and re-measured whenever
   // the page scrolls or resizes so the menu never detaches from its trigger.
-  const reposition = () => {
+  const reposition = useCallback(() => {
     const menu = menuRef.current
     if (!menu) return
     const a = anchor.getBoundingClientRect()
@@ -57,9 +63,9 @@ export default function ItemActionsPopover({
       top: fitsBelow ? a.bottom + GAP : Math.max(0, a.top - GAP - height),
       right: Math.max(0, window.innerWidth - a.right),
     })
-  }
+  }, [anchor])
 
-  useLayoutEffect(reposition, [anchor])
+  useLayoutEffect(reposition, [reposition])
 
   useEffect(() => {
     const menu = menuRef.current
@@ -99,7 +105,7 @@ export default function ItemActionsPopover({
       window.removeEventListener('scroll', onPageScroll, true)
       window.removeEventListener('resize', reposition)
     }
-  }, [containerRef, onClose])
+  }, [containerRef, onClose, reposition])
 
   const closeAndRefocus = () => {
     onClose()
