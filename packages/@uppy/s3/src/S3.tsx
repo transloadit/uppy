@@ -365,7 +365,17 @@ export default class S3<M extends Meta, B extends Body>
    * surviving ancestor (useful for restoring stale deep links).
    */
   async openFolderPath(key: string | null): Promise<boolean> {
-    await this.view.openFolder(null)
+    // The panel may be loading the root at this very moment (auto-open on
+    // showPanel); walking concurrently would race it. Wait it out, and only
+    // load the root ourselves when it is not cached yet.
+    await this.#settledListing()
+    const root = this.getPluginState().partialTree.find(
+      (node) => node.type === 'root',
+    )
+    if (!root || !(root as { cached?: boolean }).cached) {
+      await this.view.openFolder(this.rootFolderId)
+      await this.#settledListing()
+    }
     if (key === null || key === '') return true
     const prefix = key.endsWith('/') ? key : `${key}/`
     let path = ''
@@ -377,6 +387,13 @@ export default class S3<M extends Meta, B extends Body>
       await this.view.openFolder(folderId)
     }
     return true
+  }
+
+  /** Resolves once no listing request is in flight. */
+  async #settledListing(): Promise<void> {
+    while ((this.getPluginState() as { loading?: boolean | string }).loading) {
+      await new Promise((resolve) => setTimeout(resolve, 50))
+    }
   }
 
   /**
