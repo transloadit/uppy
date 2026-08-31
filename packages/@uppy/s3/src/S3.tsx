@@ -386,6 +386,17 @@ export default class S3<M extends Meta, B extends Body>
       if (!partialTree.some((node) => node.id === folderId)) return false
       await this.view.openFolder(folderId)
     }
+    // The panel's first render auto-opens the root; when that lands after the
+    // walk, openFolder's cached-return resets currentFolderId. Settle and
+    // reassert (cached opens are instant) so the deep link wins either way.
+    const target = encodeURIComponent(prefix)
+    for (let attempt = 0; attempt < 2; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, 300))
+      await this.#settledListing()
+      if (this.getPluginState().currentFolderId !== target) {
+        await this.view.openFolder(target)
+      }
+    }
     return true
   }
 
