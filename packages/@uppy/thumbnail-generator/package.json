@@ -40,6 +40,7 @@
     "exifr": "^7.1.3"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",
     "namespace-emitter": "2.0.1",
     "playwright": "1.61.1",

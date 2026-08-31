@@ -34,6 +34,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "preact": "^10.29.2"
   },
   "peerDependencies": {
