@@ -57,6 +57,8 @@ export default class TransloaditStorage<
       ...(rest as S3Options),
       id: opts.id ?? 'TransloaditStorage',
       keepStateOnClose: opts.keepStateOnClose ?? true,
+      // A standalone library is a manager, not a picker, unless told otherwise.
+      mode: opts.mode ?? (opts.standalone ? 'manager' : 'picker'),
       // With a grant the server decides; the bucket is the development fallback.
       ...(!opts.getGrant && {
         bucket: prefix ? `${workspace}/${prefix}` : workspace,
@@ -96,6 +98,23 @@ export default class TransloaditStorage<
   override builtInActions(): ProviderAction<M, B>[] {
     const { getSmartCdnUrl } = this.opts
     if (!getSmartCdnUrl) return super.builtInActions()
+    const download: ProviderAction<M, B> = {
+      id: 'transloadit:download',
+      label: this.i18n('download'),
+      appliesTo: 'file',
+      refresh: false,
+      run: async ({ item }) => {
+        const url = await getSmartCdnUrl(S3.keyOf(item.id))
+        const response = await fetch(url)
+        if (!response.ok) throw new Error(this.i18n('downloadFailed'))
+        const blobUrl = URL.createObjectURL(await response.blob())
+        const link = document.createElement('a')
+        link.href = blobUrl
+        link.download = item.data.name ?? 'download'
+        link.click()
+        URL.revokeObjectURL(blobUrl)
+      },
+    }
     const copyUrl: ProviderAction<M, B> = {
       id: 'transloadit:copySmartCdnUrl',
       label: this.i18n('copySmartCdnUrl'),
@@ -116,7 +135,46 @@ export default class TransloaditStorage<
         }
       },
     }
-    return [copyUrl, ...super.builtInActions()]
+    const base = super.builtInActions()
+    const deleteIndex = base.findIndex((action) => action.id === 's3:delete')
+    const ordered =
+      deleteIndex === -1
+        ? [...base, download]
+        : [...base.slice(0, deleteIndex), download, ...base.slice(deleteIndex)]
+    return [copyUrl, ...ordered]
+  }
+
+  override builtInToolbarActions() {
+    const base = super.builtInToolbarActions()
+    if (!this.opts.storeUploads) return base
+    const upload = {
+      id: 'transloadit:uploadFiles',
+      label: this.i18n('uploadFiles'),
+      refresh: false,
+      run: () => {
+        // A file picker owned by the widget: files go straight into the
+        // folder that is open (storeUploads builds the Assembly params).
+        const input = document.createElement('input')
+        input.type = 'file'
+        input.multiple = true
+        input.style.display = 'none'
+        input.addEventListener('change', () => {
+          this.uppy.addFiles(
+            Array.from(input.files ?? []).map((file) => ({
+              name: file.name,
+              type: file.type,
+              data: file,
+              source: this.id,
+              isRemote: false,
+            })),
+          )
+          input.remove()
+        })
+        document.body.appendChild(input)
+        input.click()
+      },
+    }
+    return [upload, ...base]
   }
 
   override install(): void {
@@ -130,6 +188,8 @@ export default class TransloaditStorage<
             ...storeUploads,
             storagePluginId: this.id,
           }),
+          // Files are stored verbatim, not encoded: label the wait honestly.
+          locale: { strings: { encoding: this.i18n('storing') } },
         })
       } else {
         this.uppy.log(
@@ -155,7 +215,11 @@ export default class TransloaditStorage<
   #reopenAfterUpload = (result: UploadResult<M, B>): void => {
     if (result.failed && result.failed.length > 0) return
     setTimeout(() => {
-      this.uppy.clear()
+      try {
+        this.uppy.clear()
+      } catch {
+        // Some uploaders refuse to clear mid-flight; the refresh matters more.
+      }
       const dashboard = this.uppy.getPlugin('Dashboard') as
         | { showPanel?: (id: string) => void }
         | undefined

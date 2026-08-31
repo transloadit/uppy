@@ -597,3 +597,76 @@
     background-color: color.adjust(variables.$red, $lightness: -10%, $space: hsl);
   }
 }
+
+// Manager mode: the item detail modal.
+.uppy-ItemDetail {
+  width: min(440px, calc(100vw - 32px));
+}
+
+.uppy-ItemDetail-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  margin-bottom: 12px;
+  background-color: variables.$gray-100;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.uppy-ItemDetail-previewImage {
+  max-width: 100%;
+  max-height: 240px;
+  display: block;
+}
+
+.uppy-ItemDetail-previewIcon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.uppy-ItemDetail-name {
+  overflow-wrap: anywhere;
+}
+
+.uppy-ItemDetail-facts {
+  margin: 0 0 12px;
+
+  .uppy-ItemDetail-fact {
+    display: flex;
+    gap: 8px;
+    font-size: 13px;
+    line-height: 1.6;
+
+    dt {
+      min-width: 72px;
+      color: variables.$gray-600;
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+.uppy-ItemDetail-actions {
+  flex-wrap: wrap;
+}
+
+.uppy-ItemDetail-action {
+  background-color: variables.$gray-200;
+  color: variables.$gray-800;
+
+  &:not(:disabled):hover {
+    background-color: variables.$gray-300;
+  }
+}
+
+// Manager mode: the bulk-selection footer.
+.uppy-ProviderBrowser-footer-count {
+  align-self: center;
+  margin-right: auto;
+  font-size: 13px;
+  color: variables.$gray-600;
+}

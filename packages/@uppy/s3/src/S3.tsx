@@ -15,6 +15,7 @@ import {
 } from '@uppy/core/companion-client'
 import {
   type ProviderAction,
+  type ProviderBulkAction,
   type ProviderToolbarAction,
   ProviderViews,
   SearchView,
@@ -238,6 +239,20 @@ export type S3Options = CompanionPluginOptions & {
    * "Import from …" and has no Cancel button. Default: false.
    */
   standalone?: boolean
+  /**
+   * 'picker' (default): rows are checkboxes and the selection is added to
+   * Uppy. 'manager' (file-library UIs): clicking a file opens its detail
+   * modal, multi-select hides behind an explicit toggle, and the selection
+   * feeds bulk actions (delete, move) instead of picking.
+   */
+  mode?: 'picker' | 'manager'
+  /**
+   * Manager mode: resolves a preview image URL for a file's detail modal
+   * (e.g. a signed thumbnail URL your server produces for the key).
+   */
+  getPreviewUrl?: (key: string) => Promise<string>
+  /** Manager mode: extra bulk actions, appended to the built-in ones. */
+  bulkActions?: ProviderBulkAction<any, any>[]
 }
 
 /** Where an object key lives: its parent "folder" prefix and its own name. */
@@ -444,6 +459,61 @@ export default class S3<M extends Meta, B extends Body>
     return this.#grant ? this.#grant.scopes.includes('write') : true
   }
 
+  /** Bulk actions over the multi-selection in manager mode. */
+  builtInBulkActions(): ProviderBulkAction<M, B>[] {
+    return [
+      {
+        id: 's3:bulkMove',
+        label: this.i18n('moveSelected'),
+        run: withToast(async ({ items, view }) => {
+          const destination = (
+            await view.prompt({
+              title: this.i18n('moveSelected'),
+              label: this.i18n('moveSelectedPrompt'),
+              confirmLabel: this.i18n('moveSelected').replace(/…$/, ''),
+            })
+          )
+            ?.trim()
+            .replace(/^\/+/, '')
+          if (destination === undefined || destination === null)
+            return undefined
+          const folder =
+            destination === '' || destination.endsWith('/')
+              ? destination
+              : `${destination}/`
+          for (const item of items) {
+            const key = S3.keyOf(item.id)
+            const { name, isFolder } = splitKey(key)
+            await this.provider.moveItem(
+              key,
+              `${folder}${name}${isFolder ? '/' : ''}`,
+            )
+          }
+          return this.i18n('itemsMoved', { smart_count: items.length })
+        }),
+      },
+      {
+        id: 's3:bulkDelete',
+        label: this.i18n('deleteItem'),
+        danger: true,
+        run: withToast(async ({ items, view }) => {
+          const confirmed = await view.confirm({
+            title: this.i18n('deleteSelectedConfirm', {
+              smart_count: items.length,
+            }),
+            confirmLabel: this.i18n('deleteItem'),
+            danger: true,
+          })
+          if (!confirmed) return undefined
+          for (const item of items) {
+            await this.provider.deleteItem(S3.keyOf(item.id))
+          }
+          return this.i18n('itemsDeleted', { smart_count: items.length })
+        }),
+      },
+    ]
+  }
+
   /** (Re)compute the actions: the integrator's switch, and the grant's scopes. */
   #applyActions(): void {
     const enableActions = this.opts.enableActions !== false && this.canMutate
@@ -455,16 +525,25 @@ export default class S3<M extends Meta, B extends Body>
       ...(enableActions ? this.builtInToolbarActions() : []),
       ...(this.opts.toolbarActions ?? []),
     ]
+    this.view.opts.bulkActions = [
+      ...(enableActions ? this.builtInBulkActions() : []),
+      ...(this.opts.bulkActions ?? []),
+    ]
     this.setPluginState({})
   }
 
   install() {
+    const { getPreviewUrl } = this.opts
     this.view = new ProviderViews(this, {
       provider: this.provider,
       viewType: 'list',
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
+      mode: this.opts.mode,
+      getPreviewUrl: getPreviewUrl
+        ? (item) => getPreviewUrl(S3.keyOf(item.id))
+        : undefined,
       // Use the plugin's own i18n (which includes our defaultLocale) rather than
       // the core one that ProviderViews hands us, so the label resolves even
       // when the integrator does not load @uppy/locales.

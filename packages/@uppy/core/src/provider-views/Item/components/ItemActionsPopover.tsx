@@ -43,7 +43,11 @@ export default function ItemActionsPopover({
     right: number
   } | null>(null)
 
-  useLayoutEffect(() => {
+  // Position from the trigger's live viewport rect. Measured only while the
+  // menu is actually rendered (a closed `[popover]` is display:none and
+  // reports height 0, which would break the flip), and re-measured whenever
+  // the page scrolls or resizes so the menu never detaches from its trigger.
+  const reposition = () => {
     const menu = menuRef.current
     if (!menu) return
     const a = anchor.getBoundingClientRect()
@@ -53,7 +57,9 @@ export default function ItemActionsPopover({
       top: fitsBelow ? a.bottom + GAP : Math.max(0, a.top - GAP - height),
       right: Math.max(0, window.innerWidth - a.right),
     })
-  }, [anchor])
+  }
+
+  useLayoutEffect(reposition, [anchor])
 
   useEffect(() => {
     const menu = menuRef.current
@@ -66,7 +72,23 @@ export default function ItemActionsPopover({
     }
     menu.addEventListener('toggle', onToggle)
     if (typeof menu.showPopover === 'function') menu.showPopover()
-    container?.addEventListener('scroll', onClose, true)
+    // Showing the popover gives it a real height: correct the estimate.
+    reposition()
+    const onPageScroll = (event: Event) => {
+      // The scrolling list closes the menu; anything else (the host page)
+      // moves the trigger, so the menu follows it.
+      if (
+        container &&
+        event.target instanceof Node &&
+        container.contains(event.target)
+      ) {
+        onClose()
+        return
+      }
+      reposition()
+    }
+    window.addEventListener('scroll', onPageScroll, true)
+    window.addEventListener('resize', reposition)
     // `preventScroll`: the Dashboard panel is an overflow:hidden container that
     // would otherwise be scrolled (mid slide-in animation) to reveal the item.
     menu
@@ -74,7 +96,8 @@ export default function ItemActionsPopover({
       ?.focus({ preventScroll: true })
     return () => {
       menu.removeEventListener('toggle', onToggle)
-      container?.removeEventListener('scroll', onClose, true)
+      window.removeEventListener('scroll', onPageScroll, true)
+      window.removeEventListener('resize', reposition)
     }
   }, [containerRef, onClose])
 

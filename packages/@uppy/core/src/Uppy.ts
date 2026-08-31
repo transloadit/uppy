@@ -158,6 +158,10 @@ export type UnknownProviderPluginState = {
   username: string | null
   searchResults?: string[] | undefined
   dialog?: ProviderDialogState | undefined
+  /** Manager mode: whether the multi-select toggle is currently on. */
+  selectionActive?: boolean
+  /** Manager mode: the item whose detail modal is open. */
+  detailItemId?: string | undefined
 }
 
 // biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation

@@ -12,6 +12,8 @@ type GridItemProps = {
   children?: h.JSX.Element | null
   i18n: any
   actionsMenu?: h.JSX.Element | null
+  selectable?: boolean
+  onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
 
 function GridItem({
@@ -24,26 +26,35 @@ function GridItem({
   children = null,
   i18n,
   actionsMenu = null,
+  selectable = true,
+  onFileClick,
 }: GridItemProps): h.JSX.Element {
   return (
     <li
       className={className}
       title={isDisabled && restrictionError ? restrictionError : undefined}
     >
-      <input
-        type="checkbox"
-        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
-        onChange={toggleCheckbox}
-        name="listitem"
-        id={file.id}
-        checked={file.status === 'checked'}
-        disabled={isDisabled}
-        data-uppy-super-focusable
-      />
+      {selectable && (
+        <input
+          type="checkbox"
+          className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
+          onChange={toggleCheckbox}
+          name="listitem"
+          id={file.id}
+          checked={file.status === 'checked'}
+          disabled={isDisabled}
+          data-uppy-super-focusable
+        />
+      )}
       <label
-        htmlFor={file.id}
+        htmlFor={selectable ? file.id : undefined}
         aria-label={file.data.name ?? i18n('unnamed')}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+        onClick={
+          !selectable && onFileClick && !file.data.isFolder
+            ? () => onFileClick(file)
+            : undefined
+        }
       >
         <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
         {showTitles && (file.data.name ?? i18n('unnamed'))}

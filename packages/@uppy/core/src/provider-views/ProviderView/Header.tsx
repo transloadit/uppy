@@ -20,6 +20,8 @@ type HeaderProps<M extends Meta, B extends Body> = {
   runToolbarAction?: (action: ProviderToolbarAction<M, B>) => void
   /** The plugin is the whole page: no user/logout row (the app owns the session). */
   standalone?: boolean
+  /** Manager mode: the explicit multi-select switch. */
+  selectionToggle?: { active: boolean; onToggle: () => void }
 }
 
 export default function Header<M extends Meta, B extends Body>(
@@ -42,9 +44,22 @@ export default function Header<M extends Meta, B extends Body>(
             i18n={props.i18n}
           />
         )}
-        {props.toolbarActions && props.toolbarActions.length > 0 && (
+        {((props.toolbarActions && props.toolbarActions.length > 0) ||
+          props.selectionToggle) && (
           <div className="uppy-ProviderBrowser-toolbar">
-            {props.toolbarActions.map((action) => (
+            {props.selectionToggle && (
+              <button
+                type="button"
+                className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
+                aria-pressed={props.selectionToggle.active}
+                onClick={props.selectionToggle.onToggle}
+              >
+                {props.selectionToggle.active
+                  ? props.i18n('cancel')
+                  : props.i18n('selectMultiple')}
+              </button>
+            )}
+            {props.toolbarActions?.map((action) => (
               <button
                 key={action.id}
                 type="button"

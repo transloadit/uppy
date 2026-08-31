@@ -18,5 +18,20 @@ export default {
     newFolderPrompt: 'Name of the new folder:',
     create: 'Create',
     folderCreated: 'Created folder "%{name}"',
+    moveSelected: 'Move…',
+    moveSelectedPrompt:
+      'Folder to move the selection into (empty for the root):',
+    itemsMoved: {
+      0: 'Moved %{smart_count} item',
+      1: 'Moved %{smart_count} items',
+    },
+    deleteSelectedConfirm: {
+      0: 'Delete %{smart_count} item?',
+      1: 'Delete %{smart_count} items?',
+    },
+    itemsDeleted: {
+      0: 'Deleted %{smart_count} item',
+      1: 'Deleted %{smart_count} items',
+    },
   },
 }

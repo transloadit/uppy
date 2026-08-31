@@ -8,6 +8,8 @@ export {
 export type {
   ProviderAction,
   ProviderActionContext,
+  ProviderBulkAction,
+  ProviderBulkActionContext,
   ProviderToolbarAction,
   ProviderToolbarActionContext,
 } from './ProviderView/ProviderView.js'

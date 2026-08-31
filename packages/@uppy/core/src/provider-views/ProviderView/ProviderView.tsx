@@ -18,8 +18,10 @@ import type {
 import type { CompanionFile, I18n } from '../../utils/index.js'
 import { remoteFileObjToLocal } from '../../utils/index.js'
 import Browser from '../Browser.js'
+import BulkActions from '../BulkActions.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
+import ItemDetailDialog from '../ItemDetailDialog.js'
 import ProviderDialog from '../ProviderDialog.js'
 import ProviderDialogController, {
   type ConfirmOptions,
@@ -68,6 +70,8 @@ const getDefaultState = (
   didFirstRender: false,
   username: null,
   loading: false,
+  selectionActive: false,
+  detailItemId: undefined,
 })
 
 type Optional<T, K extends keyof T> = Pick<Partial<T>, K> & Omit<T, K>
@@ -117,12 +121,42 @@ export interface ProviderToolbarAction<M extends Meta, B extends Body> {
   run: (context: ProviderToolbarActionContext<M, B>) => Promise<void> | void
 }
 
+/** Context handed to a bulk action over the currently selected items. */
+export interface ProviderBulkActionContext<M extends Meta, B extends Body> {
+  items: (PartialTreeFile | PartialTreeFolderNode)[]
+  view: ProviderView<M, B>
+  uppy: Uppy<M, B>
+  i18n: I18n
+}
+
+/** Manager mode: an action over the multi-selected items (bulk delete, move, …). */
+export interface ProviderBulkAction<M extends Meta, B extends Body> {
+  id: string
+  label: string
+  danger?: boolean
+  refresh?: boolean
+  run: (context: ProviderBulkActionContext<M, B>) => Promise<void> | void
+}
+
 export interface Opts<M extends Meta, B extends Body> {
   provider: UnknownProviderPlugin<M, B>['provider']
   /** Per-item actions (rename, delete, …) rendered in an item menu. */
   actions?: ProviderAction<M, B>[]
   /** Folder-level actions (new folder, …) rendered in the header. */
   toolbarActions?: ProviderToolbarAction<M, B>[]
+  /**
+   * 'picker' (default): rows are checkboxes and the footer adds the selection
+   * to Uppy. 'manager' (file-library UIs): a plain click opens an item's
+   * details, multi-select hides behind an explicit toggle, and the selection
+   * feeds `bulkActions` instead of picking.
+   */
+  mode?: 'picker' | 'manager'
+  /** Manager mode: actions over the multi-selected items. */
+  bulkActions?: ProviderBulkAction<M, B>[]
+  /** Manager mode: resolves a preview image URL for the detail modal. */
+  getPreviewUrl?: (
+    item: PartialTreeFile | PartialTreeFolderNode,
+  ) => Promise<string>
   viewType: 'list' | 'grid'
   showTitles: boolean
   showFilter: boolean
@@ -323,6 +357,35 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.plugin.uppy.info(message, 'error', 5000)
     }
   }
+
+  /** Manager mode: switch the multi-select checkboxes on or off. */
+  toggleSelectionMode = (): void => {
+    const { selectionActive } = this.plugin.getPluginState()
+    if (selectionActive) this.cancelSelection()
+    this.plugin.setPluginState({ selectionActive: !selectionActive })
+  }
+
+  /** Manager mode: open the detail modal for one item. */
+  openItemDetail = (item: PartialTreeFile | PartialTreeFolderNode): void => {
+    this.plugin.setPluginState({ detailItemId: item.id })
+  }
+
+  closeItemDetail = (): void => {
+    this.plugin.setPluginState({ detailItemId: undefined })
+  }
+
+  /** Manager mode: run a bulk action over the checked items, then clear the selection. */
+  runBulkAction = (action: ProviderBulkAction<M, B>): Promise<void> =>
+    this.#run(action, async () => {
+      const { partialTree } = this.plugin.getPluginState()
+      const items = partialTree.filter(
+        (node): node is PartialTreeFile | PartialTreeFolderNode =>
+          node.type !== 'root' && node.status === 'checked',
+      )
+      if (items.length === 0) return
+      await action.run({ items, ...this.#actionContext() })
+      this.cancelSelection()
+    })
 
   #dialogs: ProviderDialogController
 
@@ -821,9 +884,24 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const { partialTree, username, searchString, searchResults, dialog } =
-      this.plugin.getPluginState()
+    const {
+      partialTree,
+      username,
+      searchString,
+      searchResults,
+      dialog,
+      selectionActive = false,
+      detailItemId,
+    } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
+    const isManager = opts.mode === 'manager'
+    const selectable = !isManager || selectionActive
+    const detailItem = detailItemId
+      ? partialTree.find(
+          (node): node is PartialTreeFile | PartialTreeFolderNode =>
+            node.type !== 'root' && node.id === detailItemId,
+        )
+      : undefined
 
     return (
       <div
@@ -846,6 +924,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
           standalone={Boolean(
             (this.plugin.opts as { standalone?: boolean }).standalone,
           )}
+          selectionToggle={
+            isManager
+              ? {
+                  active: selectionActive,
+                  onToggle: this.toggleSelectionMode,
+                }
+              : undefined
+          }
         />
         {opts.showFilter && (
           <FilterInput
@@ -874,16 +960,42 @@ export default class ProviderView<M extends Meta, B extends Body> {
             utmSource="Companion"
             actions={opts.actions ?? []}
             runAction={this.runAction}
+            selectable={selectable}
+            onFileClick={
+              isManager && !selectionActive ? this.openItemDetail : undefined
+            }
           />
         )}
 
-        <FooterActions
-          partialTree={partialTree}
-          donePicking={this.donePicking}
-          cancelSelection={this.cancelSelection}
-          i18n={i18n}
-          validateAggregateRestrictions={this.validateAggregateRestrictions}
-        />
+        {isManager ? (
+          selectionActive && (
+            <BulkActions
+              partialTree={partialTree}
+              bulkActions={opts.bulkActions ?? []}
+              runBulkAction={this.runBulkAction}
+              cancelSelection={this.cancelSelection}
+              i18n={i18n}
+            />
+          )
+        ) : (
+          <FooterActions
+            partialTree={partialTree}
+            donePicking={this.donePicking}
+            cancelSelection={this.cancelSelection}
+            i18n={i18n}
+            validateAggregateRestrictions={this.validateAggregateRestrictions}
+          />
+        )}
+        {detailItem && (
+          <ItemDetailDialog
+            item={detailItem}
+            actions={opts.actions ?? []}
+            runAction={this.runAction}
+            getPreviewUrl={opts.getPreviewUrl}
+            onClose={this.closeItemDetail}
+            i18n={i18n}
+          />
+        )}
         {dialog && (
           <ProviderDialog
             dialog={dialog}
