@@ -11,6 +11,7 @@ import {
 } from '@aws-sdk/client-s3'
 import {
   normalizeStorageGrantPrefix,
+  STORAGE_GRANT_SCOPES,
   type StorageGrantClaims,
   type StorageGrantScope,
   verifyStorageGrant,
@@ -243,7 +244,7 @@ export default class S3Provider extends Provider<S3UserSession> {
     }
     // The bucket allowlist is enforced on every operation (see #session);
     // bucket sessions are unscoped and do not expire.
-    return { ...parsed, scopes: [...GRANT_SCOPES] }
+    return { ...parsed, scopes: [...STORAGE_GRANT_SCOPES] }
   }
 
   #sessionFromGrant(grant: string, secret: string): S3UserSession {

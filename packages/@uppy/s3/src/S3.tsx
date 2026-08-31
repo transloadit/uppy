@@ -32,8 +32,8 @@ import StorageIcon from './StorageIcon.js'
 /** Unverified claims of a storage grant (the client only needs to *read* them). */
 export type S3GrantClaims = Pick<
   StorageGrantClaims,
-  'bucket' | 'prefix' | 'scopes' | 'exp'
->
+  'bucket' | 'prefix' | 'scopes'
+> & { exp?: number }
 
 /**
  * Reads the payload of a JWT grant without verifying it — verification is
@@ -41,28 +41,6 @@ export type S3GrantClaims = Pick<
  */
 export function decodeGrant(grant: string): S3GrantClaims | null {
   return decodeStorageGrant(grant)
-}
-
-/**
- * Reads the payload of a JWT grant without verifying it — verification is
- * Companion's job; the client only uses the claims to know what UI to show.
- */
-export function decodeGrant(grant: string): S3GrantClaims | null {
-  try {
-    const payload = grant.split('.')[1]
-    if (!payload) return null
-    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
-    const claims = JSON.parse(json) as Partial<S3GrantClaims>
-    if (typeof claims.bucket !== 'string') return null
-    return {
-      bucket: claims.bucket,
-      prefix: typeof claims.prefix === 'string' ? claims.prefix : '',
-      scopes: Array.isArray(claims.scopes) ? claims.scopes : ['read', 'write'],
-      ...(typeof claims.exp === 'number' && { exp: claims.exp }),
-    }
-  } catch {
-    return null
-  }
 }
 
 class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
