@@ -27,6 +27,28 @@ export type StoreUploadsOptions = {
 }
 
 /**
+ * The unsigned /transloadit/store Assembly params for uploading into
+ * `folder` (a full storage key prefix, '' for the root). Apps that own the
+ * upload UI (see `onUploadRequest`) sign these server-side themselves.
+ */
+export function buildStoreAssemblyParams(
+  folder: string,
+  conflictStrategy: 'overwrite' | 'rename' | 'error' = 'overwrite',
+): StoreAssemblyParameters {
+  return {
+    steps: {
+      stored: {
+        robot: '/transloadit/store',
+        use: ':original',
+        // `${file.name}` is interpolated per file by Transloadit.
+        path: `${folder}\${file.name}`,
+        conflict_strategy: conflictStrategy,
+      },
+    },
+  }
+}
+
+/**
  * Builds the `assemblyOptions` function for `@uppy/transloadit` that stores
  * every upload in the folder currently open in the Transloadit Storage panel.
  * The params are built unsigned; `signAssembly` turns them into what the
@@ -52,16 +74,8 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     const folder = currentFolderId
       ? decodeURIComponent(currentFolderId)
       : normalizedPrefix
-    return options.signAssembly({
-      steps: {
-        stored: {
-          robot: '/transloadit/store',
-          use: ':original',
-          // `${file.name}` is interpolated per file by Transloadit.
-          path: `${folder}\${file.name}`,
-          conflict_strategy: options.conflictStrategy ?? 'overwrite',
-        },
-      },
-    })
+    return options.signAssembly(
+      buildStoreAssemblyParams(folder, options.conflictStrategy ?? 'overwrite'),
+    )
   }
 }
