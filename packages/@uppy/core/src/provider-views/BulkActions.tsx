@@ -15,13 +15,11 @@ export default function BulkActions<M extends Meta, B extends Body>({
   partialTree,
   bulkActions,
   runBulkAction,
-  cancelSelection,
   i18n,
 }: {
   partialTree: PartialTree
   bulkActions: ProviderBulkAction<M, B>[]
   runBulkAction: ProviderView<M, B>['runBulkAction']
-  cancelSelection: ProviderView<M, B>['cancelSelection']
   i18n: I18n
 }): h.JSX.Element | null {
   const nSelected = useMemo(
@@ -52,13 +50,6 @@ export default function BulkActions<M extends Meta, B extends Body>({
             {action.label}
           </button>
         ))}
-        <button
-          className="uppy-u-reset uppy-c-btn uppy-c-btn-link"
-          onClick={cancelSelection}
-          type="button"
-        >
-          {i18n('cancel')}
-        </button>
       </div>
     </div>
   )

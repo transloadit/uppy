@@ -975,7 +975,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
               partialTree={partialTree}
               bulkActions={opts.bulkActions ?? []}
               runBulkAction={this.runBulkAction}
-              cancelSelection={this.cancelSelection}
               i18n={i18n}
             />
           )
