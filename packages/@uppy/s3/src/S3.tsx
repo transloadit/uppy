@@ -381,13 +381,11 @@ export default class S3<M extends Meta, B extends Body>
 
   /**
    * Re-list the folder that is open — e.g. after uploads that happened
-   * outside the browser panel (an app-owned upload modal).
+   * outside the browser panel (an app-owned upload modal). Busts the
+   * folder cache, unlike openFolder().
    */
   async refreshListing(): Promise<void> {
-    const { currentFolderId } = this.getPluginState() as {
-      currentFolderId?: string | null
-    }
-    await this.view.openFolder(currentFolderId ?? null)
+    await this.view.refreshCurrentFolder()
   }
 
   builtInActions(): ProviderAction<M, B>[] {
