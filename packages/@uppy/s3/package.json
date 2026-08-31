@@ -41,6 +41,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
+    "@transloadit/utils": "^4.8.0",
     "preact": "^10.29.2"
   },
   "peerDependencies": {

@@ -9,7 +9,12 @@ import {
   paginateListObjectsV2,
   type S3Client,
 } from '@aws-sdk/client-s3'
-import jwt from 'jsonwebtoken'
+import {
+  normalizeStorageGrantPrefix,
+  type StorageGrantClaims,
+  type StorageGrantScope,
+  verifyStorageGrant,
+} from '@transloadit/utils/node'
 import { lookup as mimeLookup } from 'mime-types'
 import pMap from 'p-map'
 import type { CompanionRuntimeOptions } from '../../../types/companion-options.js'
@@ -28,7 +33,7 @@ import Provider, {
   type Query,
 } from '../Provider.js'
 
-export type S3GrantScope = 'read' | 'write'
+export type S3GrantScope = StorageGrantScope
 
 /**
  * Session for the S3 provider, created via "simple auth" (non-OAuth) in one
@@ -50,46 +55,7 @@ type S3UserSession = {
 }
 
 /** Claims of a storage grant (`s3.grantSecret`, HS256). */
-export type S3Grant = {
-  v: 1
-  bucket: string
-  prefix: string
-  scopes: S3GrantScope[]
-  sub?: string
-  iat?: number
-  exp: number
-}
-
-const GRANT_SCOPES: S3GrantScope[] = ['read', 'write']
-
-/** Validate the decoded JWT payload against the grant contract. */
-const parseGrantClaims = (payload: unknown): S3Grant => {
-  if (
-    !isRecord(payload) ||
-    payload['v'] !== 1 ||
-    typeof payload['bucket'] !== 'string' ||
-    payload['bucket'].length === 0 ||
-    typeof payload['prefix'] !== 'string' ||
-    !Array.isArray(payload['scopes']) ||
-    !payload['scopes'].every(
-      (scope): scope is S3GrantScope =>
-        typeof scope === 'string' && (GRANT_SCOPES as string[]).includes(scope),
-    ) ||
-    typeof payload['exp'] !== 'number'
-  ) {
-    throw new ProviderUserError({ message: 'Invalid storage grant' })
-  }
-  const prefix = payload['prefix'].replace(/^\/+/, '')
-  return {
-    v: 1,
-    bucket: payload['bucket'],
-    prefix: ensureTrailingSlash(prefix),
-    scopes: [...new Set(payload['scopes'])],
-    ...(typeof payload['sub'] === 'string' && { sub: payload['sub'] }),
-    ...(typeof payload['iat'] === 'number' && { iat: payload['iat'] }),
-    exp: payload['exp'],
-  }
-}
+export type S3Grant = StorageGrantClaims
 
 type CompanionS3Options = Pick<CompanionRuntimeOptions, 's3'>
 
@@ -281,20 +247,19 @@ export default class S3Provider extends Provider<S3UserSession> {
   }
 
   #sessionFromGrant(grant: string, secret: string): S3UserSession {
-    let payload: unknown
+    let claims: StorageGrantClaims
     try {
-      payload = jwt.verify(grant, secret, { algorithms: ['HS256'] })
+      claims = verifyStorageGrant(grant, secret)
     } catch (err) {
-      if (err instanceof jwt.TokenExpiredError) {
+      if (err instanceof Error && /expired/i.test(err.message)) {
         // Expired grants are an auth error so the client asks for a new one.
         throw new ProviderAuthError()
       }
       throw new ProviderUserError({ message: 'Invalid storage grant' })
     }
-    const claims = parseGrantClaims(payload)
     return {
       bucket: claims.bucket,
-      prefix: claims.prefix,
+      prefix: normalizeStorageGrantPrefix(claims.prefix),
       scopes: claims.scopes,
       exp: claims.exp,
     }

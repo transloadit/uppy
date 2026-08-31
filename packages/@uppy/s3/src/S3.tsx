@@ -1,3 +1,4 @@
+import { decodeStorageGrant, type StorageGrantClaims } from '@transloadit/utils'
 import type {
   AsyncStore,
   Body,
@@ -29,11 +30,17 @@ import locale from './locale.js'
 import StorageIcon from './StorageIcon.js'
 
 /** Unverified claims of a storage grant (the client only needs to *read* them). */
-export type S3GrantClaims = {
-  bucket: string
-  prefix: string
-  scopes: ('read' | 'write')[]
-  exp?: number
+export type S3GrantClaims = Pick<
+  StorageGrantClaims,
+  'bucket' | 'prefix' | 'scopes' | 'exp'
+>
+
+/**
+ * Reads the payload of a JWT grant without verifying it — verification is
+ * Companion's job; the client only uses the claims to know what UI to show.
+ */
+export function decodeGrant(grant: string): S3GrantClaims | null {
+  return decodeStorageGrant(grant)
 }
 
 /**
