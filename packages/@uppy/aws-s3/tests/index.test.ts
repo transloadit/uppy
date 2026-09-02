@@ -1,7 +1,6 @@
+import Core, { type Meta, type UppyFile } from '@uppy/core'
 import { HttpResponse, http } from 'msw'
 import type { SetupWorker } from 'msw/browser'
-import 'whatwg-fetch'
-import Core, { type Meta, type UppyFile } from '@uppy/core'
 import { describe, expect, vi } from 'vitest'
 import AwsS3, { type AwsBody, type AwsS3Options } from '../src/index.js'
 import { test } from './test-utils/test-extend.js'

@@ -3,7 +3,6 @@ import { HttpResponse, http } from 'msw'
 import { describe, expect, vi } from 'vitest'
 import Transloadit from './index.ts'
 import { it } from './test-extend.ts'
-import 'whatwg-fetch'
 
 // The `websocket_url` in these tests points at nothing, and MSW cannot
 // intercept server-sent events, so a real EventSource would keep retrying the
