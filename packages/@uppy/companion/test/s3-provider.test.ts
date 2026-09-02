@@ -4,6 +4,7 @@ import {
   DeleteObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
+  NotFound,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3'
@@ -54,10 +55,7 @@ const mintGrant = (
   )
 
 const notFound = () =>
-  Object.assign(new Error('NotFound'), {
-    name: 'NotFound',
-    $metadata: { httpStatusCode: 404 },
-  })
+  new NotFound({ message: 'NotFound', $metadata: { httpStatusCode: 404 } })
 
 type Cmd = { input: Record<string, unknown> }
 const inputsOf = (send: ReturnType<typeof vi.fn>, type: unknown) =>
@@ -80,7 +78,7 @@ describe('S3 provider', () => {
     expect(auth2).toMatchObject({ bucket: 'my-bucket', prefix: 'some/prefix/' })
     await expect(
       provider.simpleAuth({ requestBody: { form: { bucket: '  ' } } }),
-    ).rejects.toThrow()
+    ).rejects.toThrow(ProviderUserError)
   })
 
   test('list maps folders and files, skips the placeholder object and paginates', async () => {
@@ -159,12 +157,12 @@ describe('S3 provider', () => {
         providerUserSession: session,
       }),
     ).rejects.toThrow('User error')
-    await expect(
-      provider.list({
+    expect(
+      await provider.list({
         companion: companionWith(['*']),
         providerUserSession: session,
       }),
-    ).resolves.toMatchObject({ items: [] })
+    ).toMatchObject({ items: [] })
   })
 
   test('download streams the object and enforces the session prefix', async () => {
@@ -188,7 +186,7 @@ describe('S3 provider', () => {
         id: 'other/file.txt',
         providerUserSession: { bucket: 'b', prefix: 'tenant/' },
       }),
-    ).rejects.toThrow()
+    ).rejects.toThrow(ProviderUserError)
   })
 
   test('mutations require the bucket to be in mutableBuckets', async () => {
@@ -211,13 +209,13 @@ describe('S3 provider', () => {
       }),
     ).rejects.toBeInstanceOf(ProviderUserError)
     expect(send).not.toHaveBeenCalled()
-    await expect(
-      provider.deleteItem({
+    expect(
+      await provider.deleteItem({
         companion: companionWith(['b'], ['*']),
         id: 'x.txt',
         providerUserSession: session,
       }),
-    ).resolves.toBeUndefined()
+    ).toBeUndefined()
     expect(inputsOf(send, DeleteObjectCommand)).toEqual([
       { Bucket: 'b', Key: 'x.txt' },
     ])
@@ -241,7 +239,7 @@ describe('S3 provider', () => {
     await expect(provider.deleteItem(args)).rejects.toThrow('User error')
     expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
     listing = { Contents: [{ Key: 'a/' }] }
-    await expect(provider.deleteItem(args)).resolves.toBeUndefined()
+    expect(await provider.deleteItem(args)).toBeUndefined()
     expect(inputsOf(send, DeleteObjectCommand)).toEqual([
       { Bucket: 'b', Key: 'a/' },
     ])
@@ -291,14 +289,14 @@ describe('S3 provider', () => {
       }),
     ).rejects.toThrow('User error')
     expect(inputsOf(send, CopyObjectCommand)).toEqual([])
-    await expect(
-      provider.moveItem({
+    expect(
+      await provider.moveItem({
         companion,
         id: 't/a.txt',
         destination: 't/b.txt',
         providerUserSession,
       }),
-    ).resolves.toEqual({ id: 't/b.txt', requestPath: 't%2Fb.txt' })
+    ).toEqual({ id: 't/b.txt', requestPath: 't%2Fb.txt' })
     expect(inputsOf(send, CopyObjectCommand)).toEqual([
       { Bucket: 'b', CopySource: '/b/t/a.txt', Key: 't/b.txt' },
     ])
@@ -337,14 +335,14 @@ describe('S3 provider', () => {
         providerUserSession,
       }),
     ).rejects.toThrow('User error')
-    await expect(
-      provider.moveItem({
+    expect(
+      await provider.moveItem({
         companion,
         id: 'old/',
         destination: 'new',
         providerUserSession,
       }),
-    ).resolves.toEqual({ id: 'new/', requestPath: 'new%2F' })
+    ).toEqual({ id: 'new/', requestPath: 'new%2F' })
     expect(inputsOf(send, PutObjectCommand).map((i) => i['Key'])).toEqual([
       'new/',
       'new/sub/',
@@ -385,14 +383,14 @@ describe('S3 provider', () => {
         providerUserSession,
       }),
     ).rejects.toThrow('User error')
-    await expect(
-      provider.createFolder({
+    expect(
+      await provider.createFolder({
         companion,
         parentId: 'docs/',
         name: ' fresh ',
         providerUserSession,
       }),
-    ).resolves.toEqual({ id: 'docs/fresh/', requestPath: 'docs%2Ffresh%2F' })
+    ).toEqual({ id: 'docs/fresh/', requestPath: 'docs%2Ffresh%2F' })
     expect(inputsOf(send, PutObjectCommand)).toEqual([
       { Bucket: 'b', Key: 'docs/fresh/', Body: '' },
     ])
@@ -450,15 +448,15 @@ describe('S3 provider', () => {
           companion: companionWith(['b'], [], { grantSecret: GRANT_SECRET }),
         }),
       ).rejects.toThrow('User error')
-      await expect(
-        provider.simpleAuth({
+      expect(
+        await provider.simpleAuth({
           requestBody: { form: { bucket: 'b/tenant' } },
           companion: companionWith(['b'], [], {
             grantSecret: GRANT_SECRET,
             allowBucketAuth: true,
           }),
         }),
-      ).resolves.toEqual({
+      ).toEqual({
         bucket: 'b',
         prefix: 'tenant/',
         scopes: ['read', 'write'],
@@ -481,9 +479,9 @@ describe('S3 provider', () => {
         scopes: ['read' as const],
         exp: 2_000_000_000,
       }
-      await expect(
-        provider.list({ companion, providerUserSession: readOnly }),
-      ).resolves.toMatchObject({ items: [] })
+      expect(
+        await provider.list({ companion, providerUserSession: readOnly }),
+      ).toMatchObject({ items: [] })
       await expect(
         provider.createFolder({
           companion,

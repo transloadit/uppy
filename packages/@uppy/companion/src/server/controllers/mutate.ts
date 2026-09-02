@@ -14,12 +14,6 @@ type ParsedInput<I> = { ok: true; input: I } | { ok: false; message: string }
 const readString = (body: unknown, key: string): string | null => {
   if (!isRecord(body)) return null
   const value = body[key]
-  return typeof value === 'string' && value.length > 0 ? value : null
-}
-
-const readNullableString = (body: unknown, key: string): string | null => {
-  if (!isRecord(body)) return null
-  const value = body[key]
   return typeof value === 'string' ? value : null
 }
 
@@ -73,7 +67,7 @@ export const deleteItem = mutation(
   'delete',
   (body) => {
     const id = readString(body, 'id')
-    return id === null
+    return !id
       ? { ok: false, message: 'Missing id' }
       : { ok: true, input: { id } }
   },
@@ -88,7 +82,7 @@ export const moveItem = mutation(
   (body) => {
     const id = readString(body, 'id')
     const destination = readString(body, 'destination')
-    return id === null || destination === null
+    return !id || !destination
       ? { ok: false, message: 'Missing id or destination' }
       : { ok: true, input: { id, destination } }
   },
@@ -100,8 +94,8 @@ export const createFolder = mutation(
   'createFolder',
   (body) => {
     const name = readString(body, 'name')
-    const parentId = readNullableString(body, 'parentId')
-    return name === null
+    const parentId = readString(body, 'parentId')
+    return !name
       ? { ok: false, message: 'Missing name' }
       : { ok: true, input: { name, parentId: parentId || null } }
   },

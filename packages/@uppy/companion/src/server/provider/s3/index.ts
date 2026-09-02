@@ -5,9 +5,12 @@ import {
   GetObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
+  NoSuchKey,
+  NotFound,
   PutObjectCommand,
   paginateListObjectsV2,
   type S3Client,
+  S3ServiceException,
 } from '@aws-sdk/client-s3'
 import {
   normalizeStorageGrantPrefix,
@@ -34,14 +37,12 @@ import Provider, {
   type Query,
 } from '../Provider.js'
 
-export type S3GrantScope = StorageGrantScope
-
 /**
  * Session for the S3 provider, created via "simple auth" (non-OAuth) in one
  * of two ways:
  * - a **grant**: a short-lived JWT minted by the integrator's server after it
  *   authenticated the user, carrying the bucket, the prefix the user may see
- *   and the scopes they hold (see `S3Grant`). This is the multi-tenant path.
+ *   and the scopes they hold (see `StorageGrantClaims`). This is the multi-tenant path.
  * - a **bucket** (`my-bucket/optional/prefix`) typed or configured on the
  *   client. Only accepted when Companion is not configured for grants, or
  *   `s3.allowBucketAuth` is set (development).
@@ -50,13 +51,12 @@ type S3UserSession = {
   bucket: string
   prefix: string
   /** Missing on bucket sessions and on tokens from before grants existed. */
-  scopes?: S3GrantScope[]
+  scopes?: StorageGrantScope[]
   /** Unix seconds; only grant sessions expire. */
   exp?: number
 }
 
 /** Claims of a storage grant (`s3.grantSecret`, HS256). */
-export type S3Grant = StorageGrantClaims
 
 type CompanionS3Options = Pick<CompanionRuntimeOptions, 's3'>
 
@@ -68,14 +68,10 @@ const MAX_FOLDER_MOVE_ENTRIES = 1000
 /** How many S3 calls a folder move runs at once. */
 const MOVE_CONCURRENCY = 8
 
-const isNotFound = (err: unknown): boolean => {
-  if (!isRecord(err)) return false
-  const status = (err['$metadata'] as { httpStatusCode?: number } | undefined)
-    ?.httpStatusCode
-  return (
-    err['name'] === 'NotFound' || err['name'] === 'NoSuchKey' || status === 404
-  )
-}
+const isNotFound = (err: unknown): boolean =>
+  err instanceof NotFound ||
+  err instanceof NoSuchKey ||
+  (err instanceof S3ServiceException && err.$metadata.httpStatusCode === 404)
 
 /**
  * Parses user input like `my-bucket`, `my-bucket/some/prefix` or
@@ -444,8 +440,7 @@ export default class S3Provider extends Provider<S3UserSession> {
   ): Promise<void> {
     const objects: string[] = []
     const folders: string[] = [source] // parents before children
-    for (let i = 0; i < folders.length; i++) {
-      const folder = folders[i] as string
+    for (const folder of folders) {
       for await (const page of paginateListObjectsV2(
         { client },
         { Bucket: bucket, Prefix: folder, Delimiter: '/' },
@@ -590,6 +585,7 @@ export default class S3Provider extends Provider<S3UserSession> {
         if (
           cleanName.length === 0 ||
           cleanName.includes('/') ||
+          cleanName.includes('\\') ||
           cleanName === '..' ||
           cleanName === '.'
         ) {

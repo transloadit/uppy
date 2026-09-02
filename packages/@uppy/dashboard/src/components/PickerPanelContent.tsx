@@ -1,4 +1,11 @@
-import type { Body, Meta, State, UIPlugin, Uppy } from '@uppy/core'
+import type {
+  Body,
+  Meta,
+  State,
+  UIPlugin,
+  UIPluginOptions,
+  Uppy,
+} from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
 import { useRef } from '@uppy/core/utils/preact/hooks'
 import classNames from 'classnames'
@@ -6,8 +13,11 @@ import type { ComponentChildren, MouseEventHandler } from 'preact'
 import type { DashboardState } from '../Dashboard.js'
 import ignoreEvent from '../utils/ignoreEvent.js'
 
-// biome-ignore lint/complexity/noBannedTypes: {} means anything except null or undefined
-type AnyUIPlugin<M extends Meta, B extends Body> = UIPlugin<{}, M, B>
+type AnyUIPlugin<M extends Meta, B extends Body> = UIPlugin<
+  UIPluginOptions,
+  M,
+  B
+>
 
 interface PickerPanelContentProps<M extends Meta, B extends Body> {
   activePickerPanel: NonNullable<DashboardState<M, B>['activePickerPanel']>

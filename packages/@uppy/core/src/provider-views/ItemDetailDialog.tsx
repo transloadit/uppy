@@ -53,7 +53,8 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   useEffect(() => {
     if (!getPreviewUrl || item.data.isFolder) return
     let cancelled = false
-    getPreviewUrl(item)
+    // The callback may return any thenable (PromiseLike); normalize for .catch.
+    Promise.resolve(getPreviewUrl(item))
       .then((url) => {
         if (!cancelled) setPreviewUrl(url)
       })

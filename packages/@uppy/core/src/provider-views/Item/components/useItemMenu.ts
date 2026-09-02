@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useState } from 'preact/hooks'
 import type { PartialTreeFile, PartialTreeFolderNode } from '../../../index.js'
 
 export type OpenItemMenu = { id: string; anchor: HTMLElement }
@@ -11,12 +11,13 @@ export type OpenItemMenu = { id: string; anchor: HTMLElement }
 export default function useItemMenu(
   items: (PartialTreeFile | PartialTreeFolderNode)[],
 ) {
-  const [open, setOpen] = useState<OpenItemMenu | null>(null)
-  const openItem = open ? items.find((item) => item.id === open.id) : undefined
-
-  useEffect(() => {
-    if (open && !openItem) setOpen(null)
-  }, [open, openItem])
+  const [opened, setOpen] = useState<OpenItemMenu | null>(null)
+  const openItem = opened
+    ? items.find((item) => item.id === opened.id)
+    : undefined
+  // Derived, not synced in an effect: a menu whose item disappeared (deleted,
+  // folder refreshed) is simply closed.
+  const open = opened && openItem ? opened : null
 
   const close = useCallback(() => setOpen(null), [])
   const toggle = useCallback(

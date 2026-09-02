@@ -1,6 +1,5 @@
 import classNames from 'classnames'
 import type { h } from 'preact'
-import { useMemo } from 'preact/hooks'
 import type { Body, Meta, PartialTree } from '../index.js'
 import type { I18n } from '../utils/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
@@ -22,10 +21,7 @@ export default function BulkActions<M extends Meta, B extends Body>({
   runBulkAction: ProviderView<M, B>['runBulkAction']
   i18n: I18n
 }): h.JSX.Element | null {
-  const nSelected = useMemo(
-    () => getNumberOfSelectedFiles(partialTree),
-    [partialTree],
-  )
+  const nSelected = getNumberOfSelectedFiles(partialTree)
 
   if (nSelected === 0) return null
 

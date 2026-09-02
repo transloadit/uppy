@@ -76,7 +76,9 @@ export default function ItemActionsPopover({
       if ((event as Event & { newState?: string }).newState === 'closed')
         onClose()
     }
-    menu.addEventListener('toggle', onToggle)
+    const controller = new AbortController()
+    const { signal } = controller
+    menu.addEventListener('toggle', onToggle, { signal })
     if (typeof menu.showPopover === 'function') menu.showPopover()
     // Showing the popover gives it a real height: correct the estimate.
     reposition()
@@ -93,18 +95,14 @@ export default function ItemActionsPopover({
       }
       reposition()
     }
-    window.addEventListener('scroll', onPageScroll, true)
-    window.addEventListener('resize', reposition)
+    window.addEventListener('scroll', onPageScroll, { capture: true, signal })
+    window.addEventListener('resize', reposition, { signal })
     // `preventScroll`: the Dashboard panel is an overflow:hidden container that
     // would otherwise be scrolled (mid slide-in animation) to reveal the item.
     menu
       .querySelector<HTMLElement>('[role="menuitem"]')
       ?.focus({ preventScroll: true })
-    return () => {
-      menu.removeEventListener('toggle', onToggle)
-      window.removeEventListener('scroll', onPageScroll, true)
-      window.removeEventListener('resize', reposition)
-    }
+    return () => controller.abort()
   }, [containerRef, onClose, reposition])
 
   const closeAndRefocus = () => {

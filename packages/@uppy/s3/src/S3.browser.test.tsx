@@ -42,18 +42,6 @@ async function openBucket() {
   await expect.element(page.getByText('readme.md')).toBeVisible()
 }
 
-/** A clean auto-connect logs in first: no listing (and no 401) before simple-auth. */
-function expectAuthenticatedBeforeListing(
-  companion: ReturnType<typeof createMockCompanion>,
-) {
-  const paths = companion.calls.map((call) => call.path)
-  const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
-  const firstList = paths.findIndex((p) => p.includes('/s3/list'))
-  expect(firstAuth).toBeGreaterThanOrEqual(0)
-  expect(firstList).toBeGreaterThan(firstAuth)
-  expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
-}
-
 beforeEach(() => {
   document.body.innerHTML = ''
   localStorage.clear()
@@ -78,7 +66,12 @@ describe('S3 provider in the browser', () => {
       form: { bucket: 'my-bucket' },
     })
     expect(localStorage.getItem('companion-S3-s3-bucket')).toBe('my-bucket')
-    expectAuthenticatedBeforeListing(companion)
+    const paths = companion.calls.map((call) => call.path)
+    const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
+    const firstList = paths.findIndex((p) => p.includes('/s3/list'))
+    expect(firstAuth).toBeGreaterThanOrEqual(0)
+    expect(firstList).toBeGreaterThan(firstAuth)
+    expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
   })
 
   it('reconnects when the stored session belongs to another bucket', async ({
@@ -282,7 +275,12 @@ describe('S3 provider in the browser', () => {
       expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
         form: { grant },
       })
-      expectAuthenticatedBeforeListing(companion)
+      const paths = companion.calls.map((call) => call.path)
+      const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
+      const firstList = paths.findIndex((p) => p.includes('/s3/list'))
+      expect(firstAuth).toBeGreaterThanOrEqual(0)
+      expect(firstList).toBeGreaterThan(firstAuth)
+      expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
       expect(companion.session).toMatchObject({ bucket: 'my-bucket' })
       // Mutations are available: the grant carries the write scope.
       await expect

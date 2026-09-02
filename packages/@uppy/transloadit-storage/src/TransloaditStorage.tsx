@@ -104,7 +104,9 @@ export default class TransloaditStorage<
         link.href = blobUrl
         link.download = item.data.name ?? 'download'
         link.click()
-        URL.revokeObjectURL(blobUrl)
+        // Revoking synchronously can cancel the download (Firefox); give the
+        // browser time to open the URL first.
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10_000)
       },
     }
     const copyUrl: ProviderAction<M, B> = {

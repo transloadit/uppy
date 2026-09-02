@@ -1,3 +1,5 @@
+import type { Body, Meta, Uppy } from '@uppy/core'
+
 import { describe, expect, it } from 'vitest'
 import type { StoreAssemblyParameters } from './storeAssemblyOptions.js'
 
@@ -11,7 +13,7 @@ function fakeUppy(state: { currentFolderId?: string | null; prefix?: string }) {
       }),
       opts: { prefix: state.prefix },
     }),
-  } as never
+  } as unknown as Uppy<Meta, Body>
 }
 
 const passthroughSign = async (params: StoreAssemblyParameters) => ({

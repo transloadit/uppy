@@ -11,16 +11,21 @@ type ItemActionsMenuProps = {
   i18n: I18n
 }
 
+const appliesToItem = (
+  action: ProviderAction<any, any>,
+  file: PartialTreeFile | PartialTreeFolderNode,
+): boolean => {
+  const appliesTo = action.appliesTo ?? 'all'
+  if (appliesTo === 'all') return true
+  return appliesTo === 'folder' ? file.data.isFolder : !file.data.isFolder
+}
+
 /** The actions from `actions` that apply to this item (file vs folder). */
 export function getApplicableActions(
   actions: ProviderAction<any, any>[],
   file: PartialTreeFile | PartialTreeFolderNode,
 ): ProviderAction<any, any>[] {
-  return actions.filter((action) => {
-    const appliesTo = action.appliesTo ?? 'all'
-    if (appliesTo === 'all') return true
-    return appliesTo === 'folder' ? file.data.isFolder : !file.data.isFolder
-  })
+  return actions.filter((action) => appliesToItem(action, file))
 }
 
 /**
@@ -35,7 +40,7 @@ export default function ItemActionsMenu({
   onToggle,
   i18n,
 }: ItemActionsMenuProps): h.JSX.Element | null {
-  if (getApplicableActions(actions, file).length === 0) return null
+  if (!actions.some((action) => appliesToItem(action, file))) return null
 
   return (
     <div className="uppy-ProviderBrowserItem-actions">
