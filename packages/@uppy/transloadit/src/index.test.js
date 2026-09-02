@@ -5,23 +5,6 @@ import Transloadit from './index.ts'
 import { it } from './test-extend.ts'
 import 'whatwg-fetch'
 
-// The `websocket_url` in these tests points at nothing, and MSW cannot
-// intercept server-sent events, so a real EventSource would keep retrying the
-// connection for the lifetime of the page. Stub it out instead. Vitest 4 made
-// `vi.fn()` callable as a constructor, but arrow-function implementations throw
-// "is not a constructor" when invoked with `new`. Use a regular function so
-// `new EventSource(...)` works.
-vi.stubGlobal(
-  'EventSource',
-  vi.fn(function MockEventSource() {
-    return {
-      addEventListener: vi.fn(),
-      removeEventListener: vi.fn(),
-      close: vi.fn(),
-    }
-  }),
-)
-
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
     const error = new Error('expected failure')
