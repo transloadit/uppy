@@ -34,9 +34,6 @@ export function useSearchForm(onSubmit: () => void): { formId: string } {
     form.addEventListener('submit', submit)
     return () => {
       form.removeEventListener('submit', submit)
-      // `remove()` rather than `document.body.removeChild(form)`: when the
-      // provider view is unmounted during uppy.destroy() the form may already
-      // be gone, and a throwing effect cleanup surfaces as an unhandled error.
       form.remove()
     }
   }, [form, submit])

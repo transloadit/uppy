@@ -3,7 +3,6 @@
   "description": "Browse and import files from S3-compatible object storage (AWS S3, Cloudflare R2, MinIO, Transloadit Storage) into Uppy.",
   "version": "0.1.0",
   "license": "MIT",
-  "types": "types/index.d.ts",
   "type": "module",
   "sideEffects": false,
   "scripts": {

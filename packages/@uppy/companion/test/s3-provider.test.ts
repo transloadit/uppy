@@ -69,14 +69,15 @@ const inputsOf = (send: ReturnType<typeof vi.fn>, type: unknown) =>
 describe('S3 provider', () => {
   test('simpleAuth parses "bucket", "bucket/prefix" and "s3://bucket/prefix"', async () => {
     const provider = makeProvider()
-    await expect(
-      provider.simpleAuth({ requestBody: { form: { bucket: 'my-bucket' } } }),
-    ).resolves.toMatchObject({ bucket: 'my-bucket', prefix: '' })
-    await expect(
-      provider.simpleAuth({
-        requestBody: { form: { bucket: 's3://my-bucket/some/prefix' } },
-      }),
-    ).resolves.toMatchObject({ bucket: 'my-bucket', prefix: 'some/prefix/' })
+    const auth1 = await provider.simpleAuth({
+      requestBody: { form: { bucket: 'my-bucket' } },
+    })
+    expect(auth1).toMatchObject({ bucket: 'my-bucket', prefix: '' })
+
+    const auth2 = await provider.simpleAuth({
+      requestBody: { form: { bucket: 's3://my-bucket/some/prefix' } },
+    })
+    expect(auth2).toMatchObject({ bucket: 'my-bucket', prefix: 'some/prefix/' })
     await expect(
       provider.simpleAuth({ requestBody: { form: { bucket: '  ' } } }),
     ).rejects.toThrow()

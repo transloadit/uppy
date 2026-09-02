@@ -96,12 +96,16 @@ export interface CompanionInitOptions {
      * Dashboard) is allowed to list and download from. Use `['*']` to allow any
      * bucket the credentials can access (e.g. when an upstream proxy already
      * enforces authorization). Unset/empty disables S3 browsing entirely.
+     *
+     * @default []
      */
     browsableBuckets?: string[] | undefined
     /**
      * Buckets the S3 provider may *change* (delete, rename/move, create
      * folders) from the Dashboard. Separate from `browsableBuckets` so a
      * read-only browser is the default; `['*']` allows every browsable bucket.
+     *
+     * @default []
      */
     mutableBuckets?: string[] | undefined
     /**
@@ -114,6 +118,8 @@ export interface CompanionInitOptions {
     /**
      * Keep accepting client-supplied bucket names next to grants. Development
      * only: it lets anyone who can reach Companion pick a browsable bucket.
+     *
+     * @default false
      */
     allowBucketAuth?: boolean | undefined
     awsClientOptions?: S3ClientConfig & {

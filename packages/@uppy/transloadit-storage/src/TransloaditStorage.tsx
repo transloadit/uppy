@@ -230,7 +230,7 @@ export default class TransloaditStorage<
         | { showPanel?: (id: string) => void }
         | undefined
       dashboard?.showPanel?.(this.id)
-      void this.view.refreshCurrentFolder()
+      this.view.refreshCurrentFolder()
     }, 0)
   }
 }

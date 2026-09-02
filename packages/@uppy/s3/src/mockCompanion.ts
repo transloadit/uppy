@@ -8,7 +8,6 @@
  * Keys follow the S3 provider's addressing: folders end with `/`, ids in
  * responses are `encodeURIComponent(key)`.
  */
-
 export type MockS3Entry = {
   name: string
   isFolder: boolean

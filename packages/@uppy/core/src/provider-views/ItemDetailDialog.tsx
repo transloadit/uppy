@@ -22,7 +22,7 @@ type ItemDetailDialogProps<M extends Meta, B extends Body> = {
   /** Resolves a preview image URL for a file (e.g. a signed thumbnail URL). */
   getPreviewUrl?: (
     item: PartialTreeFile | PartialTreeFolderNode,
-  ) => Promise<string>
+  ) => PromiseLike<string>
   onClose: () => void
   i18n: I18n
 }
@@ -124,24 +124,24 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
           )}
         </div>
         <dl className="uppy-ItemDetail-facts">
-          {typeof size === 'number' && (
+          {typeof size === 'number' ? (
             <>
               <dt>{i18n('detailSize')}</dt>
               <dd>{prettierBytes(size)}</dd>
             </>
-          )}
-          {mimeType && (
+          ) : null}
+          {mimeType ? (
             <>
               <dt>{i18n('detailType')}</dt>
               <dd>{mimeType}</dd>
             </>
-          )}
-          {modified && (
+          ) : null}
+          {modified ? (
             <>
               <dt>{i18n('detailModified')}</dt>
               <dd>{modified}</dd>
             </>
-          )}
+          ) : null}
         </dl>
       </div>
       <footer className="uppy-ItemDetail-actions">

@@ -484,7 +484,7 @@ export default class S3Provider extends Provider<S3UserSession> {
         client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key })),
       { concurrency: MOVE_CONCURRENCY },
     )
-    for (const folder of [...folders].reverse()) {
+    for (const folder of folders.toReversed()) {
       await client.send(
         new DeleteObjectCommand({ Bucket: bucket, Key: folder }),
       )
