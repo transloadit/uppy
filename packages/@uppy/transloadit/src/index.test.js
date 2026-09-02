@@ -3,7 +3,6 @@ import { HttpResponse, http } from 'msw'
 import { describe, expect, vi } from 'vitest'
 import Transloadit from './index.ts'
 import { it } from './test-extend.ts'
-import 'whatwg-fetch'
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {

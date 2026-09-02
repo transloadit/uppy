@@ -6920,7 +6920,6 @@ __metadata:
     playwright: "npm:1.61.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.6"
-    whatwg-fetch: "npm:3.6.20"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -7445,7 +7444,6 @@ __metadata:
     playwright: "npm:1.61.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.6"
-    whatwg-fetch: "npm:^3.6.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
   languageName: unknown
@@ -19731,13 +19729,6 @@ __metadata:
   version: 0.1.4
   resolution: "websocket-extensions@npm:0.1.4"
   checksum: 10/b5399b487d277c78cdd2aef63764b67764aa9899431e3a2fa272c6ad7236a0fb4549b411d89afa76d5afd664c39d62fc19118582dc937e5bb17deb694f42a0d1
-  languageName: node
-  linkType: hard
-
-"whatwg-fetch@npm:3.6.20, whatwg-fetch@npm:^3.6.2":
-  version: 3.6.20
-  resolution: "whatwg-fetch@npm:3.6.20"
-  checksum: 10/2b4ed92acd6a7ad4f626a6cb18b14ec982bbcaf1093e6fe903b131a9c6decd14d7f9c9ca3532663c2759d1bdf01d004c77a0adfb2716a5105465c20755a8c57c
   languageName: node
   linkType: hard
 
