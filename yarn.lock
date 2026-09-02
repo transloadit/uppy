@@ -6450,6 +6450,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/express-interceptor@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@types/express-interceptor@npm:1.2.0"
+  dependencies:
+    "@types/express": "npm:*"
+  checksum: 10/90cad2d8b1968529e2fd019a8468fa576bc20c6f660677df87299f9e1933475ccb82b9a40eb8f5ae4fd71aab745d1d95723d44de2a775af6ddea7d0aea012253
+  languageName: node
+  linkType: hard
+
 "@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^5.0.0":
   version: 5.1.1
   resolution: "@types/express-serve-static-core@npm:5.1.1"
@@ -6949,6 +6958,8 @@ __metadata:
     "@aws-sdk/s3-request-presigner": "npm:3.1047.0"
     "@types/cookie-parser": "npm:1.4.10"
     "@types/cors": "npm:2.8.19"
+    "@types/express": "npm:^5.0.6"
+    "@types/express-interceptor": "npm:^1.2.0"
     "@types/express-session": "npm:1.19.0"
     "@types/http-proxy": "npm:1.17.17"
     "@types/jsonwebtoken": "npm:9.0.10"
