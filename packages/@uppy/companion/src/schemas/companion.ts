@@ -91,6 +91,37 @@ export interface CompanionInitOptions {
     awsSseKmsKeyId?: string | undefined
     useAccelerateEndpoint?: boolean
     expires: number
+    /**
+     * Buckets that the S3 *provider* (browsing/importing files from S3 in the
+     * Dashboard) is allowed to list and download from. Use `['*']` to allow any
+     * bucket the credentials can access (e.g. when an upstream proxy already
+     * enforces authorization). Unset/empty disables S3 browsing entirely.
+     *
+     * @default []
+     */
+    browsableBuckets?: string[] | undefined
+    /**
+     * Buckets the S3 provider may *change* (delete, rename/move, create
+     * folders) from the Dashboard. Separate from `browsableBuckets` so a
+     * read-only browser is the default; `['*']` allows every browsable bucket.
+     *
+     * @default []
+     */
+    mutableBuckets?: string[] | undefined
+    /**
+     * Secret used to verify storage *grants*: short-lived HS256 JWTs minted by
+     * your own server after it authenticated the user, carrying the bucket,
+     * the prefix they may see and their scopes (`read`/`write`). When set, the
+     * S3 provider refuses client-supplied bucket names (see `allowBucketAuth`).
+     */
+    grantSecret?: string | undefined
+    /**
+     * Keep accepting client-supplied bucket names next to grants. Development
+     * only: it lets anyone who can reach Companion pick a browsable bucket.
+     *
+     * @default false
+     */
+    allowBucketAuth?: boolean | undefined
     awsClientOptions?: S3ClientConfig & {
       /** @deprecated */
       accessKeyId?: unknown

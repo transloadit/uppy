@@ -1,0 +1,58 @@
+{
+  "name": "@uppy/s3",
+  "description": "Browse and import files from S3-compatible object storage (AWS S3, Cloudflare R2, MinIO, Transloadit Storage) into Uppy.",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build",
+    "test": "vitest run --silent='passed-only'"
+  },
+  "keywords": [
+    "file uploader",
+    "uppy",
+    "uppy-plugin",
+    "s3",
+    "r2",
+    "object storage",
+    "provider",
+    "dam"
+  ],
+  "homepage": "https://uppy.io",
+  "bugs": {
+    "url": "https://github.com/transloadit/uppy/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/transloadit/uppy.git"
+  },
+  "files": [
+    "src",
+    "lib",
+    "dist",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./lib/index.js",
+    "./mockCompanion": "./lib/mockCompanion.js",
+    "./package.json": "./package.json"
+  },
+  "dependencies": {
+    "@transloadit/utils": "^4.8.0",
+    "preact": "^10.29.2"
+  },
+  "peerDependencies": {
+    "@uppy/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@uppy/core": "workspace:^",
+    "@uppy/dashboard": "workspace:^",
+    "@vitest/browser-playwright": "^4.1.6",
+    "msw": "^2.10.4",
+    "playwright": "1.61.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.6"
+  }
+}

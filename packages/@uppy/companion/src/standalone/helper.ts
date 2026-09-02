@@ -35,6 +35,14 @@ const hasProtocol = (url: string): boolean => {
 
 const companionProtocol = process.env['COMPANION_PROTOCOL'] || 'http'
 
+const parseBucketList = (value: string | undefined): string[] | undefined =>
+  value
+    ? value
+        .split(',')
+        .map((b) => b.trim())
+        .filter(Boolean)
+    : undefined
+
 function getCorsOrigins() {
   if (process.env['COMPANION_CLIENT_ORIGINS']) {
     switch (process.env['COMPANION_CLIENT_ORIGINS']) {
@@ -183,6 +191,15 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       awsSse: sseSchema.parse(process.env['COMPANION_AWS_SSE']),
       awsSseKmsKeyId: process.env['COMPANION_AWS_SSE_KMS_KEY_ID'],
       forcePathStyle: process.env['COMPANION_AWS_FORCE_PATH_STYLE'] === 'true',
+      browsableBuckets: parseBucketList(
+        process.env['COMPANION_AWS_BROWSABLE_BUCKETS'],
+      ),
+      mutableBuckets: parseBucketList(
+        process.env['COMPANION_AWS_MUTABLE_BUCKETS'],
+      ),
+      grantSecret: process.env['COMPANION_AWS_GRANT_SECRET'],
+      allowBucketAuth:
+        process.env['COMPANION_AWS_ALLOW_BUCKET_AUTH'] === 'true',
     },
     server: {
       host: process.env['COMPANION_DOMAIN'],

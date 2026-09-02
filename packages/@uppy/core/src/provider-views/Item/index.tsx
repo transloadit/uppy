@@ -6,7 +6,9 @@ import type {
   PartialTreeId,
 } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
+import type { ProviderAction } from '../ProviderView/ProviderView.js'
 import GridItem from './components/GridItem.js'
+import ItemActionsMenu from './components/ItemActionsMenu.js'
 import ListItem from './components/ListItem.js'
 
 type ItemProps = {
@@ -17,6 +19,15 @@ type ItemProps = {
   showTitles: boolean
   i18n: I18n
   utmSource: string
+  actions?: ProviderAction<any, any>[]
+  runAction?: (
+    action: ProviderAction<any, any>,
+    file: PartialTreeFile | PartialTreeFolderNode,
+  ) => void
+  menuOpen?: boolean
+  toggleMenu?: (anchor: HTMLElement) => void
+  selectable?: boolean
+  onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
 
 export default function Item(props: ItemProps): h.JSX.Element {
@@ -28,7 +39,24 @@ export default function Item(props: ItemProps): h.JSX.Element {
     openFolder,
     file,
     utmSource,
+    actions = [],
+    runAction,
+    menuOpen = false,
+    toggleMenu,
+    selectable = true,
+    onFileClick,
   } = props
+
+  const actionsMenu =
+    actions.length > 0 && runAction && toggleMenu ? (
+      <ItemActionsMenu
+        file={file}
+        actions={actions}
+        open={menuOpen}
+        onToggle={toggleMenu}
+        i18n={i18n}
+      />
+    ) : null
 
   const restrictionError = file.type === 'folder' ? null : file.restrictionError
   const isDisabled = !!restrictionError && file.status !== 'checked'
@@ -51,6 +79,9 @@ export default function Item(props: ItemProps): h.JSX.Element {
     ),
     isDisabled,
     restrictionError,
+    actionsMenu,
+    selectable,
+    onFileClick,
   }
 
   switch (viewType) {

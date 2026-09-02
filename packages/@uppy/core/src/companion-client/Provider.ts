@@ -388,4 +388,32 @@ export default class Provider<
     await this.removeAuthToken()
     return response
   }
+
+  deleteItem(id: string, options?: RequestOptions): Promise<{ ok: true }> {
+    return this.post<{ ok: true }>(`${this.id}/mutate/delete`, { id }, options)
+  }
+
+  moveItem(
+    id: string,
+    destination: string,
+    options?: RequestOptions,
+  ): Promise<{ id: string; requestPath: string }> {
+    return this.post<{ id: string; requestPath: string }>(
+      `${this.id}/mutate/move`,
+      { id, destination },
+      options,
+    )
+  }
+
+  createFolder(
+    parentId: string | null,
+    name: string,
+    options?: RequestOptions,
+  ): Promise<{ id: string; requestPath: string }> {
+    return this.post<{ id: string; requestPath: string }>(
+      `${this.id}/mutate/create-folder`,
+      { parentId, name },
+      options,
+    )
+  }
 }

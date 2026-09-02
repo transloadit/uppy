@@ -6269,6 +6269,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@transloadit/utils@npm:^4.6.0, @transloadit/utils@npm:^4.8.0":
+  version: 4.8.0
+  resolution: "@transloadit/utils@npm:4.8.0"
+  checksum: 10/baa3450285a762c4d3e2e7c09b5152867692008d373f8475ec5117eaff2959a1f7f8d78cd84277ccc762354bff23132812dde976a189d9a44e38431026342db1
+  languageName: node
+  linkType: hard
+
 "@tufjs/canonical-json@npm:2.0.0":
   version: 2.0.0
   resolution: "@tufjs/canonical-json@npm:2.0.0"
@@ -6858,6 +6865,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
+    "@transloadit/utils": "npm:^4.6.0"
     "@uppy/companion": "workspace:^"
     vite: "npm:^8.1.5"
   languageName: unknown
@@ -6946,6 +6954,7 @@ __metadata:
     "@aws-sdk/lib-storage": "npm:3.1047.0"
     "@aws-sdk/s3-presigned-post": "npm:3.1047.0"
     "@aws-sdk/s3-request-presigner": "npm:3.1047.0"
+    "@transloadit/utils": "npm:^4.8.0"
     "@types/cookie-parser": "npm:1.4.10"
     "@types/cors": "npm:2.8.19"
     "@types/express-session": "npm:1.19.0"
@@ -7349,6 +7358,24 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy/s3@workspace:^, @uppy/s3@workspace:packages/@uppy/s3":
+  version: 0.0.0-use.local
+  resolution: "@uppy/s3@workspace:packages/@uppy/s3"
+  dependencies:
+    "@transloadit/utils": "npm:^4.8.0"
+    "@uppy/core": "workspace:^"
+    "@uppy/dashboard": "workspace:^"
+    "@vitest/browser-playwright": "npm:^4.1.6"
+    msw: "npm:^2.10.4"
+    playwright: "npm:1.61.1"
+    preact: "npm:^10.29.2"
+    typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.6"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/screen-capture@workspace:*, @uppy/screen-capture@workspace:packages/@uppy/screen-capture":
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
@@ -7424,6 +7451,20 @@ __metadata:
     exifr: "npm:^7.1.3"
     namespace-emitter: "npm:2.0.1"
     playwright: "npm:1.61.1"
+    typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.6"
+  peerDependencies:
+    "@uppy/core": "workspace:^"
+  languageName: unknown
+  linkType: soft
+
+"@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage":
+  version: 0.0.0-use.local
+  resolution: "@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage"
+  dependencies:
+    "@uppy/core": "workspace:^"
+    "@uppy/s3": "workspace:^"
+    preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.6"
   peerDependencies:
