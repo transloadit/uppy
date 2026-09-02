@@ -89,7 +89,7 @@ export const grantToken = 'fake token'
 export const getServerWithEmitter = async (
   extraEnv: Record<string, string | number | undefined> = {},
 ) => {
-  const { default: standalone } = await import('../src/standalone/index.js')
+  const { default: standalone } = await import('../lib/standalone/index.js')
 
   const env = {
     ...defaultEnv,

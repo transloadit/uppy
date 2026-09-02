@@ -75,6 +75,8 @@
   "devDependencies": {
     "@types/cookie-parser": "1.4.10",
     "@types/cors": "2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/express-interceptor": "^1.2.0",
     "@types/express-session": "1.19.0",
     "@types/http-proxy": "1.17.17",
     "@types/jsonwebtoken": "9.0.10",
@@ -87,6 +89,7 @@
     "@types/supertest": "7.2.1",
     "@types/validator": "13.15.10",
     "@types/ws": "8.18.1",
+    "@uppy-dev/tsconfig": "workspace:^",
     "execa": "10.0.0",
     "http-proxy": "1.18.1",
     "nock": "^14.0.16",

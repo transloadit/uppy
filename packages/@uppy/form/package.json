@@ -41,6 +41,7 @@
   },
   "devDependencies": {
     "@types/get-form-data": "^3.0.0",
+    "@uppy-dev/tsconfig": "workspace:^",
     "typescript": "^6.0.3"
   }
 }

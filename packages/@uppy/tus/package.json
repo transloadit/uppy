@@ -40,6 +40,7 @@
     "tus-js-client": "^4.3.1"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",
     "playwright": "1.61.1",

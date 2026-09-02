@@ -9,9 +9,9 @@ import {
   test,
   vi,
 } from 'vitest'
-import * as tokenService from '../src/server/helpers/jwt.js'
-import { isRecord } from '../src/server/helpers/type-guards.js'
-import * as providerModule from '../src/server/provider/index.js'
+import * as tokenService from '../lib/server/helpers/jwt.js'
+import { isRecord } from '../lib/server/helpers/type-guards.js'
+import * as providerModule from '../lib/server/provider/index.js'
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
 import * as fixtures from './fixtures/index.js'
@@ -30,7 +30,7 @@ vi.mock('tus-js-client')
 
 mockOauthState()
 
-vi.mock('../../src/server/helpers/request.js', () => {
+vi.mock('../../lib/server/helpers/request.js', () => {
   return {
     getURLMeta: () => Promise.resolve({ size: 758051 }),
   }

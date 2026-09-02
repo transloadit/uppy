@@ -6450,6 +6450,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/express-interceptor@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "@types/express-interceptor@npm:1.2.0"
+  dependencies:
+    "@types/express": "npm:*"
+  checksum: 10/90cad2d8b1968529e2fd019a8468fa576bc20c6f660677df87299f9e1933475ccb82b9a40eb8f5ae4fd71aab745d1d95723d44de2a775af6ddea7d0aea012253
+  languageName: node
+  linkType: hard
+
 "@types/express-serve-static-core@npm:*, @types/express-serve-static-core@npm:^5.0.0":
   version: 5.1.1
   resolution: "@types/express-serve-static-core@npm:5.1.1"
@@ -6863,6 +6872,14 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy-dev/tsconfig@workspace:^, @uppy-dev/tsconfig@workspace:private/tsconfig":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/tsconfig@workspace:private/tsconfig"
+  dependencies:
+    vitest: "npm:^4.1.6"
+  languageName: unknown
+  linkType: soft
+
 "@uppy/angular@workspace:*, @uppy/angular@workspace:packages/@uppy/angular":
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular"
@@ -6893,6 +6910,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/audio@workspace:packages/@uppy/audio"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     cssnano: "npm:^8.0.1"
     playwright: "npm:1.61.1"
@@ -6915,6 +6933,7 @@ __metadata:
     "@aws-sdk/client-sts": "npm:^3.362.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.362.0"
     "@types/node": "npm:^22.20.1"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     playwright: "npm:1.61.1"
@@ -6930,6 +6949,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/box@workspace:packages/@uppy/box"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -6949,6 +6969,8 @@ __metadata:
     "@aws-sdk/s3-request-presigner": "npm:3.1047.0"
     "@types/cookie-parser": "npm:1.4.10"
     "@types/cors": "npm:2.8.19"
+    "@types/express": "npm:^5.0.6"
+    "@types/express-interceptor": "npm:^1.2.0"
     "@types/express-session": "npm:1.19.0"
     "@types/http-proxy": "npm:1.17.17"
     "@types/jsonwebtoken": "npm:9.0.10"
@@ -6961,6 +6983,7 @@ __metadata:
     "@types/supertest": "npm:7.2.1"
     "@types/validator": "npm:13.15.10"
     "@types/ws": "npm:8.18.1"
+    "@uppy-dev/tsconfig": "workspace:^"
     connect-redis: "npm:7.1.1"
     content-disposition: "npm:2.0.1"
     cookie-parser: "npm:1.4.7"
@@ -7009,6 +7032,7 @@ __metadata:
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
     "@tailwindcss/cli": "npm:^4.0.6"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     clsx: "npm:^2.1.1"
     cssnano: "npm:^8.0.1"
@@ -7042,6 +7066,7 @@ __metadata:
   dependencies:
     "@transloadit/prettier-bytes": "npm:^2.0.0"
     "@types/node": "npm:^22.20.1"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     compressorjs: "npm:^1.3.0"
     playwright: "npm:1.61.1"
@@ -7067,6 +7092,7 @@ __metadata:
     "@types/mime-match": "npm:^1.0.0"
     "@types/namespace-emitter": "npm:^2.0.0"
     "@types/node": "npm:^22.20.1"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
@@ -7093,6 +7119,7 @@ __metadata:
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
     "@transloadit/prettier-bytes": "npm:^2.0.0"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dropbox": "workspace:^"
     "@uppy/google-drive": "workspace:^"
@@ -7121,6 +7148,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/drag-drop@workspace:packages/@uppy/drag-drop"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
@@ -7136,6 +7164,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/drop-target@workspace:packages/@uppy/drop-target"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
@@ -7150,6 +7179,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/dropbox@workspace:packages/@uppy/dropbox"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7162,6 +7192,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/facebook@workspace:packages/@uppy/facebook"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7175,6 +7206,7 @@ __metadata:
   resolution: "@uppy/form@workspace:packages/@uppy/form"
   dependencies:
     "@types/get-form-data": "npm:^3.0.0"
+    "@uppy-dev/tsconfig": "workspace:^"
     get-form-data: "npm:^3.0.0"
     typescript: "npm:^6.0.3"
   peerDependencies:
@@ -7186,6 +7218,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@uppy/xhr-upload": "workspace:^"
@@ -7203,6 +7236,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/google-drive-picker@workspace:packages/@uppy/google-drive-picker"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7215,6 +7249,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/google-drive@workspace:packages/@uppy/google-drive"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7227,6 +7262,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/google-photos-picker@workspace:packages/@uppy/google-photos-picker"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7239,6 +7275,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/image-editor@workspace:packages/@uppy/image-editor"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     cropperjs: "npm:^1.6.2"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.23"
@@ -7255,6 +7292,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/image-generator@workspace:packages/@uppy/image-generator"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/transloadit": "workspace:^"
     cssnano: "npm:^8.0.1"
@@ -7271,6 +7309,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     glob: "npm:^13.0.6"
     typescript: "npm:^6.0.3"
@@ -7281,6 +7320,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/onedrive@workspace:packages/@uppy/onedrive"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7297,6 +7337,7 @@ __metadata:
     "@testing-library/react": "npm:^16.0.0"
     "@types/react": "npm:^19.2.18"
     "@types/use-sync-external-store": "npm:^1.5.0"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
@@ -7331,6 +7372,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/remote-sources@workspace:packages/@uppy/remote-sources"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/box": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -7354,6 +7396,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/screen-capture@workspace:packages/@uppy/screen-capture"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
@@ -7370,6 +7413,7 @@ __metadata:
   resolution: "@uppy/status-bar@workspace:packages/@uppy/status-bar"
   dependencies:
     "@transloadit/prettier-bytes": "npm:^2.0.0"
+    "@uppy-dev/tsconfig": "workspace:^"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     postcss: "npm:^8.5.23"
@@ -7421,6 +7465,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/thumbnail-generator@workspace:packages/@uppy/thumbnail-generator"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     exifr: "npm:^7.1.3"
     namespace-emitter: "npm:2.0.1"
@@ -7437,6 +7482,7 @@ __metadata:
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
     "@transloadit/types": "npm:^4.3.1"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/tus": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
@@ -7455,6 +7501,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/tus@workspace:packages/@uppy/tus"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     playwright: "npm:1.61.1"
@@ -7470,6 +7517,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/unsplash@workspace:packages/@uppy/unsplash"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7482,6 +7530,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/url@workspace:packages/@uppy/url"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     cssnano: "npm:^8.0.1"
@@ -7502,6 +7551,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/vue@workspace:packages/@uppy/vue"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
@@ -7531,6 +7581,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/webcam@workspace:packages/@uppy/webcam"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
     cssnano: "npm:^8.0.1"
     is-mobile: "npm:^5.0.0"
@@ -7550,6 +7601,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -7562,6 +7614,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.6"
@@ -7578,6 +7631,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/zoom@workspace:packages/@uppy/zoom"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"

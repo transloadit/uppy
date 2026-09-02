@@ -1,9 +1,9 @@
 import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
+import * as tokenService from '../lib/server/helpers/jwt.js'
+import { isRecord } from '../lib/server/helpers/type-guards.js'
 import packageJson from '../package.json' with { type: 'json' }
-import * as tokenService from '../src/server/helpers/jwt.js'
-import { isRecord } from '../src/server/helpers/type-guards.js'
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
 import mockOauthState from './mockoauthstate.js'
@@ -239,7 +239,7 @@ describe('handle main oauth redirect', async () => {
   })
 
   test('do not redirect to invalid uppy instances', () => {
-    const state = 'state-with-invalid-instance-url' // see mock ../../src/server/helpers/oauth-state above
+    const state = 'state-with-invalid-instance-url' // see mock ../../lib/server/helpers/oauth-state above
     return request(serverWithMainOauth)
       .get(`/dropbox/redirect?state=${state}`)
       .set('uppy-auth-token', token)

@@ -1,11 +1,6 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src",
-    "types": ["preact", "google.accounts", "google.picker", "gapi"]
-  },
-  "include": ["./src/**/*.*"],
-  "exclude": ["./src/**/*.test.ts"],
-  "references": []
+    "types": ["google.accounts", "google.picker", "gapi"]
+  }
 }

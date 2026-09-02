@@ -1,7 +1,10 @@
 import { htmlEscape } from 'escape-goat'
 import type { NextFunction, Request, Response } from 'express'
 import got from 'got'
-import type { CredentialsFetchResponse } from '../../schemas/companion.js'
+import type {
+  CredentialsFetchResponse,
+  ProviderOptions,
+} from '../../schemas/companion.js'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
 import type { CompanionExpressLocals } from '../../types/express.js'
 import * as tokenService from '../helpers/jwt.js'
@@ -53,7 +56,8 @@ async function fetchProviderKeys(
   companionOptions: CompanionRuntimeOptions,
   credentialRequestParams: unknown,
 ): Promise<CredentialsFetchResponse | null> {
-  let providerConfig = companionOptions.providerOptions[providerName]
+  let providerConfig: ProviderOptions | undefined =
+    companionOptions.providerOptions[providerName]
   if (!providerConfig) {
     providerConfig = companionOptions.customProviders?.[providerName]?.config
   }

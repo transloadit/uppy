@@ -1,26 +1,11 @@
 {
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src"
-  },
-  "include": ["./src/**/*.*"],
-  "exclude": ["./src/**/*.test.ts"],
+  "extends": "@uppy-dev/tsconfig/build",
   "references": [
-    {
-      "path": "../thumbnail-generator/tsconfig.build.json"
-    },
-    {
-      "path": "../core/tsconfig.build.json"
-    },
-    {
-      "path": "../google-drive/tsconfig.build.json"
-    },
-    {
-      "path": "../url/tsconfig.build.json"
-    },
-    {
-      "path": "../webcam/tsconfig.build.json"
-    }
+    { "path": "../core/tsconfig.build.json" },
+    { "path": "../dropbox/tsconfig.build.json" },
+    { "path": "../google-drive/tsconfig.build.json" },
+    { "path": "../thumbnail-generator/tsconfig.build.json" },
+    { "path": "../url/tsconfig.build.json" },
+    { "path": "../webcam/tsconfig.build.json" }
   ]
 }

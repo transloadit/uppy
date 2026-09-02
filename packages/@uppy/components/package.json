@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.6",
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "cssnano": "^8.0.1",
     "postcss": "^8.5.23",

@@ -47,6 +47,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",

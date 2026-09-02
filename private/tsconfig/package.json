@@ -1,0 +1,13 @@
+{
+  "name": "@uppy-dev/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "description": "TypeScript config presets that Uppy packages extend.",
+  "exports": {
+    ".": "./tsconfig.json",
+    "./build": "./tsconfig.build.json"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.6"
+  }
+}

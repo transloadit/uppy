@@ -39,6 +39,7 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",

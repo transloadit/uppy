@@ -52,6 +52,7 @@
     "shallow-equal": "^3.1.0"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dropbox": "workspace:^",
     "@uppy/google-drive": "workspace:^",
