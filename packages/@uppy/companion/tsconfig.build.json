@@ -2,6 +2,7 @@
   "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
     "lib": ["esnext"],
+    "outDir": "dist",
     "types": ["node"]
   }
 }
