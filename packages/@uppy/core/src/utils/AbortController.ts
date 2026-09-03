@@ -1,5 +1,3 @@
-import hasProperty from './hasProperty.js'
-
 /**
  * @deprecated
  *   Use the global [`AbortController`](https://developer.mozilla.org/docs/Web/API/AbortController).
@@ -21,7 +19,7 @@ export const createAbortError = (
   options?: Parameters<typeof Error>[1],
 ): DOMException => {
   const err = new DOMException(message, 'AbortError')
-  if (options != null && hasProperty(options, 'cause')) {
+  if (options != null && Object.hasOwn(options, 'cause')) {
     Object.defineProperty(err, 'cause', {
       // @ts-expect-error TS is drunk
       __proto__: null,
