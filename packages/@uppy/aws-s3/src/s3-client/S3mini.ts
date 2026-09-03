@@ -312,6 +312,12 @@ class S3mini extends S3Client {
     }
 
     try {
+      // In signRequest mode the client proposes a key (`generateObjectKey`, or
+      // its default) and sends it to the signer: `requestedKey`. A backend that
+      // derives its own key must return it: `returnedKey`. The key the request
+      // was actually signed for is `actualKey`: the returned key if the backend
+      // changed it, otherwise the requested one.
+      // See https://uppy.io/docs/aws-s3/#signrequestrequest
       const requestedKey = request.key
       const { url, key: returnedKey } = await this.signRequest(request)
 
