@@ -21,7 +21,7 @@ import * as U from './utils.js'
  *       method: 'POST',
  *       body: JSON.stringify({ method, key, uploadId, partNumber }),
  *     });
- *     return resp.json(); // { url }
+ *     return resp.json(); // { url } or { url, key }
  *   },
  * });
  *

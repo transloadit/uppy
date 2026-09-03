@@ -43,7 +43,11 @@ export type PresignableRequest =
 /** Response with the pre-signed URL */
 export type PresignedResponse = {
   url: string
-  // return the key which the signer signed for
+  /**
+   * Key the request was signed for, if the server changed it (e.g. added a
+   * prefix). Defaults to the requested key. Only honored on `putObject` and
+   * `createMultipartUpload`; later requests already carry the right key.
+   */
   key?: string
 }
 
