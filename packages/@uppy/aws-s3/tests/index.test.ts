@@ -56,7 +56,7 @@ function createMultipartMocks(
   const signRequest = vi.fn().mockImplementation(async (req: any) => {
     const params = new URLSearchParams()
     if (req.uploadId) params.set('uploadId', req.uploadId)
-    if (req.partNumber) params.set('partNumber', String(req.partNumber))
+    if (req.partNumber != null) params.set('partNumber', String(req.partNumber))
     params.set('method', req.method)
     return {
       url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key || key}?${params}`,
@@ -290,7 +290,8 @@ describe('AwsS3', () => {
         }
         const params = new URLSearchParams({ method: req.method })
         if (req.uploadId) params.set('uploadId', req.uploadId)
-        if (req.partNumber) params.set('partNumber', String(req.partNumber))
+        if (req.partNumber != null)
+          params.set('partNumber', String(req.partNumber))
         return {
           url: `${bucketUrl}/${serverKey}?${params}`,
           ...(isCreate ? { key: serverKey } : {}),
@@ -375,7 +376,8 @@ describe('AwsS3', () => {
       signRequest.mockImplementation(async (req: any) => {
         const params = new URLSearchParams({ method: req.method })
         if (req.uploadId) params.set('uploadId', req.uploadId)
-        if (req.partNumber) params.set('partNumber', String(req.partNumber))
+        if (req.partNumber != null)
+          params.set('partNumber', String(req.partNumber))
         return { url: `${bucketUrl}/dir-${req.key}?${params}` }
       })
 
