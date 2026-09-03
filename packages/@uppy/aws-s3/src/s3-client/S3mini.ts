@@ -300,7 +300,7 @@ class S3mini extends S3Client {
   }): Promise<{
     xhr: XMLHttpRequest
     url: string
-    /** The key the request was signed for; differs from the requested key if the signer chose another one. */
+    /** The key the request was signed for, keep in mind it can differ from the requested key if the signer is modifying the key */
     actualKey: string
   }> {
     // Wait for online before starting
