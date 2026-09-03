@@ -356,9 +356,10 @@ describe('AwsS3', () => {
       })
 
       const uploadPromise = core.upload()
-      await new Promise((resolve) => setTimeout(resolve, 100))
-
-      expect(core.getFile(fileId).s3Multipart?.key).toBe(serverKey)
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart?.key).toBe(serverKey),
+        { timeout: 10_000 },
+      )
 
       core.cancelAll()
       await uploadPromise
@@ -580,24 +581,26 @@ describe('AwsS3', () => {
       const uploadPromise = core.upload()
 
       // Wait for createMultipart to complete and state to be persisted
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart).toBeDefined(),
+        { timeout: 10_000 },
+      )
 
-      const file = core.getFile(fileId)
-      expect(file.s3Multipart).toBeDefined()
-      expect(file.s3Multipart?.uploadId).toBe(uploadId)
+      expect(core.getFile(fileId).s3Multipart?.uploadId).toBe(uploadId)
 
       // Clean up
       core.cancelAll()
       await uploadPromise
     })
 
-    test('clears s3Multipart when upload is aborted via cancelAll', async ({
+    test('aborts the multipart upload in S3 when cancelled via cancelAll', async ({
       worker,
     }) => {
-      const { signRequest, registerHandlers } = createMultipartMocks(worker, {
-        uploadId: 'cancel-test-id',
-        key: 'cancel-key',
-      })
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks(worker, {
+          uploadId: 'cancel-test-id',
+          key: 'cancel-key',
+        })
       registerHandlers({ hangNonCreate: true })
 
       const core = new Core().use(AwsS3, {
@@ -616,15 +619,20 @@ describe('AwsS3', () => {
 
       const uploadPromise = core.upload()
 
-      // Wait for createMultipart, then cancel
-      await new Promise((resolve) => setTimeout(resolve, 50))
+      // Wait for createMultipart to persist state, then cancel
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart).toBeDefined(),
+        { timeout: 10_000 },
+      )
       core.cancelAll()
-
       await uploadPromise
 
-      const file = core.getFile(fileId)
-      // s3Multipart should be cleared so retries don't use a dead uploadId
-      expect(file?.s3Multipart).toBeUndefined()
+      // cancelAll removes the file; the multipart upload must be aborted in S3
+      // so a dead uploadId is not left behind.
+      expect(core.getFile(fileId)).toBeUndefined()
+      await vi.waitFor(() => expect(operations).toContain('abortMultipart'), {
+        timeout: 10_000,
+      })
     })
 
     test('uses persisted s3Multipart key for resume (listParts, not createMultipart)', async ({
@@ -658,10 +666,7 @@ describe('AwsS3', () => {
         s3Multipart: { uploadId: persistedUploadId, key: persistedKey },
       })
 
-      const uploadPromise = core.upload()
-
-      // Wait for the resume flow to call listParts (via fetch), then cancel
-      await new Promise((resolve) => setTimeout(resolve, 100))
+      await core.upload()
 
       // Should have resumed (listParts) instead of creating a new multipart upload
       expect(operations).toContain('listParts')
@@ -670,10 +675,6 @@ describe('AwsS3', () => {
       // The signRequest calls should use the persisted key, not a generated one
       const signedKeys = signRequest.mock.calls.map((call: any) => call[0].key)
       expect(signedKeys.every((k: string) => k === persistedKey)).toBe(true)
-
-      // Clean up
-      core.cancelAll()
-      await uploadPromise
     })
   })
 })
