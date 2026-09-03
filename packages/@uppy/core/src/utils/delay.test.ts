@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest'
-import { AbortController } from './AbortController.js'
 import delay from './delay.js'
 
 describe('delay', () => {
@@ -12,7 +11,7 @@ describe('delay', () => {
   })
 
   it('should reject if signal is already aborted', async () => {
-    const signal = { aborted: true } as any as AbortSignal
+    const signal = AbortSignal.abort()
     const start = Date.now()
     await expect(delay(100, { signal })).rejects.toHaveProperty(
       'name',
