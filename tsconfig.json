@@ -35,6 +35,7 @@
     { "path": "./packages/@uppy/webcam/tsconfig.json" },
     { "path": "./packages/@uppy/webdav/tsconfig.json" },
     { "path": "./packages/@uppy/xhr-upload/tsconfig.json" },
-    { "path": "./packages/@uppy/zoom/tsconfig.json" }
+    { "path": "./packages/@uppy/zoom/tsconfig.json" },
+    { "path": "./packages/uppy/tsconfig.json" }
   ]
 }

@@ -17,9 +17,12 @@ test('tsconfig.json', async () => {
   const tsconfig = await readJSON('tsconfig.json')
   expect(tsconfig).toStrictEqual({
     files: [],
-    references: packages.map((name) => ({
-      path: `./packages/@uppy/${name}/tsconfig.json`,
-    })),
+    references: [
+      ...packages.map((name) => ({
+        path: `./packages/@uppy/${name}/tsconfig.json`,
+      })),
+      './packages/uppy/tsconfig.json',
+    ],
   })
 })
 
