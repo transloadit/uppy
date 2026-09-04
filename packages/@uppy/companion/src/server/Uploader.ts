@@ -729,8 +729,16 @@ export default class Uploader {
         onProgress(bytesUploaded, bytesTotal) {
           uploader.onProgress(bytesUploaded, bytesTotal)
         },
-        onSuccess() {
-          resolve({ url: uploader.tus?.url ?? null })
+        onSuccess(payload) {
+          resolve({
+            url: uploader.tus?.url ?? null,
+            extraData: {
+              response: {
+                responseText: payload.lastResponse.getBody(),
+                status: payload.lastResponse.getStatus(),
+              },
+            },
+          })
         },
       }
 
