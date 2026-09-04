@@ -293,8 +293,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
         {
           retries: retryCount,
           signal,
-          onFailedAttempt: (err) =>
-            this.uppy.log(`Retrying upload due to: ${err.message}`, 'warning'),
+          onFailedAttempt: ({ error }) =>
+            this.uppy.log(
+              `Retrying upload due to: ${error.message}`,
+              'warning',
+            ),
         },
       )
     } catch (err) {
