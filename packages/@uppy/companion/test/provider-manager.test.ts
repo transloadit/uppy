@@ -241,6 +241,109 @@ describe('Test Provider options', () => {
   })
 })
 
+describe('Test Provider scope and customParams overrides', () => {
+  beforeEach(() => {
+    setDefaultEnv()
+    grantConfig = createGrantConfig()
+    companionOptions = getCompanionOptions()
+  })
+
+  function getDriveOption() {
+    const drive = companionOptions.providerOptions?.['drive']
+    if (drive == null) {
+      throw new Error('Expected companionOptions.providerOptions["drive"]')
+    }
+    return drive as typeof drive & {
+      scope?: unknown
+      customParams?: unknown
+    }
+  }
+
+  test('replaces the default OAuth scope (googledrive) when an array is supplied', () => {
+    getDriveOption().scope = [
+      'https://www.googleapis.com/auth/drive.file',
+    ]
+
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'googledrive')['scope'],
+    ).toEqual(['https://www.googleapis.com/auth/drive.file'])
+  })
+
+  test('merges customParams over the provider defaults (googledrive)', () => {
+    getDriveOption().customParams = {
+      login_hint: 'user@example.com',
+      // Override one default field; the others should remain.
+      prompt: 'select_account',
+    }
+
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'googledrive')['custom_params'],
+    ).toEqual({
+      access_type: 'offline',
+      prompt: 'select_account',
+      login_hint: 'user@example.com',
+    })
+  })
+
+  test('ignores non-array scope and non-object customParams', () => {
+    const drive = getDriveOption()
+    drive.scope = 'drive.file'
+    drive.customParams = 'not-an-object'
+
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'googledrive')['scope'],
+    ).toEqual(['https://www.googleapis.com/auth/drive.readonly'])
+    expect(
+      requireGrantProviderConfig(grantConfig, 'googledrive')['custom_params'],
+    ).toEqual({
+      access_type: 'offline',
+      prompt: 'consent',
+    })
+  })
+
+  test('drops non-string customParams values (TS type is Record<string, string>)', () => {
+    getDriveOption().customParams = {
+      login_hint: 'user@example.com',
+      // Non-string values should be dropped, not forwarded to Grant.
+      max_age: 3600,
+      include_granted_scopes: true,
+      nested: { foo: 'bar' },
+    }
+
+    providerManager.addProviderOptions(
+      getAddProviderOptionsArgs(companionOptions),
+      grantConfig,
+      getOauthProvider,
+    )
+
+    expect(
+      requireGrantProviderConfig(grantConfig, 'googledrive')['custom_params'],
+    ).toEqual({
+      access_type: 'offline',
+      prompt: 'consent',
+      login_hint: 'user@example.com',
+    })
+  })
+})
+
 describe('Test Custom Provider options', () => {
   test('adds custom provider options', () => {
     const providers = providerManager.getDefaultProviders()
