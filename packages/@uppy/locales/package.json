@@ -35,7 +35,6 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "chalk": "^5.0.0",
     "glob": "^13.0.6",
     "typescript": "^6.0.3"
   }

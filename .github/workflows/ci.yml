@@ -49,7 +49,7 @@ jobs:
         run:
           corepack yarn install --immutable
       - name: Install Playwright Browsers
-        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps
+        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
       - name: Build
         run: corepack yarn run build
       - name: Run tests

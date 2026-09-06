@@ -1,12 +1,7 @@
-import util from 'node:util'
+import { inspect, styleText } from 'node:util'
 import escapeStringRegexp from 'escape-string-regexp'
-import supportsColors from 'supports-color'
 
-type StyleTextFn = (
-  style: Parameters<NonNullable<typeof util.styleText>>[0],
-  text: string,
-) => string
-type Colors = Parameters<StyleTextFn>[0]
+type Colors = Parameters<typeof styleText>[0]
 type LogLevel = 'error' | 'info' | 'warn' | 'debug'
 
 let valuesToMask: string[] = []
@@ -36,11 +31,6 @@ let processName = 'companion'
 export function setProcessName(newProcessName: string): void {
   processName = newProcessName
 }
-
-const styleText: StyleTextFn =
-  typeof util.styleText === 'function' && supportsColors.stderr
-    ? (style, text) => util.styleText(style, text)
-    : (_style, text) => text
 
 /**
  * Logs a message.
@@ -77,7 +67,7 @@ function log(params: {
       return arg.message
     }
     if (typeof arg === 'string') return arg
-    return util.inspect(arg)
+    return inspect(arg)
   }
 
   const msgString = msgToString()

@@ -65,7 +65,7 @@
     "@types/gapi": "^0.0.47",
     "@types/google.accounts": "^0.0.18",
     "@types/google.picker": "^0.0.52",
-    "@types/lodash": "^4.14.199",
+    "@types/lodash": "^4.17.25",
     "@types/mime-match": "^1.0.0",
     "@types/namespace-emitter": "^2.0.0",
     "@types/node": "^22.20.1",
@@ -77,7 +77,7 @@
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5",
+    "vite": "^8.2.2",
     "vitest": "^4.1.6"
   }
 }

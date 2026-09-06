@@ -21,7 +21,7 @@ import * as U from './utils.js'
  *       method: 'POST',
  *       body: JSON.stringify({ method, key, uploadId, partNumber }),
  *     });
- *     return resp.json(); // { url }
+ *     return resp.json(); // { url } or { url, key }
  *   },
  * });
  *
@@ -185,7 +185,7 @@ class S3mini extends S3Client {
   }: IT.PutObjectParams) {
     this._checkKey(key)
 
-    const { xhr, url } = await this.request({
+    const { xhr, url, signedKey } = await this.request({
       request: { method: 'PUT', key },
       data,
       onProgress,
@@ -196,7 +196,7 @@ class S3mini extends S3Client {
     return {
       location: U.removeQueryString(url),
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key,
+      key: signedKey,
     }
   }
 
@@ -212,7 +212,7 @@ class S3mini extends S3Client {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
 
-    const { xhr } = await this.request({
+    const { xhr, signedKey } = await this.request({
       request: { method: 'POST', key },
       contentType: fileType,
       signal,
@@ -231,7 +231,7 @@ class S3mini extends S3Client {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return { uploadId, key }
+          return { uploadId, key: signedKey }
         }
       }
     }
@@ -297,7 +297,7 @@ class S3mini extends S3Client {
     signal?: AbortSignal
     contentType?: string
     shouldRetryCredentials?: boolean
-  }): Promise<{ xhr: XMLHttpRequest; url: string }> {
+  }): Promise<{ xhr: XMLHttpRequest; url: string; signedKey: string }> {
     // Wait for online before starting
     await this.waitForOnline(signal)
 
@@ -307,7 +307,7 @@ class S3mini extends S3Client {
     }
 
     try {
-      const { url } = await this.signRequest(request)
+      const { url, key: signedKey } = await this.signRequest(request)
 
       const xhr = await this.xhr({
         url,
@@ -318,7 +318,7 @@ class S3mini extends S3Client {
         contentType,
       })
 
-      return { xhr, url }
+      return { xhr, url, signedKey: signedKey || request.key }
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (
