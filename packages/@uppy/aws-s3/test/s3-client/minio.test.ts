@@ -28,7 +28,7 @@ if (config) {
   const key_bin = 'test-multipart.bin'
 
   const large_buffer = randomBytes(EIGHT_MB * 3.2)
-  const content = 'some content'
+  const content = new Blob(['some content'])
   const key = 'first-test-object.txt'
   const key_list_parts = 'test-list-parts.bin'
   const key_abort_multipart = 'test-abort-multipart.bin'
@@ -93,7 +93,7 @@ if (config) {
 
       const result = await s3client.putObject({
         key,
-        data: 'Hello from pre-signed URL test.',
+        data: new Blob(['Hello from pre-signed URL test.']),
         fileType: 'text/plain',
       })
 
@@ -172,7 +172,7 @@ if (config) {
         try {
           const result = await s3.putObject({
             key: testKey,
-            data: 'Hello STS!',
+            data: new Blob(['Hello STS!']),
             fileType: 'text/plain',
           })
           expect(result.location).toBeDefined()
@@ -214,12 +214,12 @@ if (config) {
 
         await s3.putObject({
           key: `sts-cache-1-${Date.now()}.txt`,
-          data: 'File 1',
+          data: new Blob(['File 1']),
           fileType: 'text/plain',
         })
         await s3.putObject({
           key: `sts-cache-2-${Date.now()}.txt`,
-          data: 'File 2',
+          data: new Blob(['File 2']),
           fileType: 'text/plain',
         })
         expect(fetchCount).toBe(1)
