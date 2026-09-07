@@ -32,7 +32,7 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.3",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5"
+    "vite": "^8.2.2"
   },
   "engines": {
     "node": ">=22.22.0"

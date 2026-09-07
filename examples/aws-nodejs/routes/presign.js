@@ -20,6 +20,10 @@ const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
 
 const expiresIn = 900 // 15 minutes
 
+// Objects are stored under this directory. Uppy proposes a key (the file
+// name by default); the server decides where it actually goes.
+const directory = 'uppy-nodejs-example'
+
 let s3Client
 function getS3Client() {
   s3Client ??= new S3Client({
@@ -50,6 +54,9 @@ router.post('/s3/presign', async (req, res, next) => {
     }
 
     let command
+    // Set only when this request creates an object. It's returned to Uppy,
+    // which then uses it for every later request of the same upload.
+    let objectKey
 
     if (method === 'PUT' && uploadId && partNumber) {
       // UploadPart (multipart)
@@ -61,16 +68,20 @@ router.post('/s3/presign', async (req, res, next) => {
       })
     } else if (method === 'PUT' && !uploadId && !partNumber) {
       // PutObject (simple upload)
+      objectKey = `${directory}/${key}`
       command = new PutObjectCommand({
         Bucket: bucket,
-        Key: key,
+        Key: objectKey,
         ContentType: contentType || 'application/octet-stream',
       })
     } else if (method === 'POST' && !uploadId) {
-      // CreateMultipartUpload
+      // CreateMultipartUpload. This is the only multipart request where the
+      // key may be changed. Parts, complete, abort and list arrive with the
+      // key returned here and must be signed for it as-is.
+      objectKey = `${directory}/${key}`
       command = new CreateMultipartUploadCommand({
         Bucket: bucket,
-        Key: key,
+        Key: objectKey,
         ContentType: contentType || 'application/octet-stream',
       })
     } else if (method === 'POST' && uploadId) {
@@ -99,7 +110,7 @@ router.post('/s3/presign', async (req, res, next) => {
     }
 
     const url = await getSignedUrl(client, command, { expiresIn })
-    res.json({ url })
+    res.json(objectKey ? { url, key: objectKey } : { url })
   } catch (err) {
     next(err)
   }
