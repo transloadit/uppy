@@ -47,6 +47,13 @@ export type PresignedResponse = {
    * Overrides the requested key when the backend derives its own (e.g. adds a
    * prefix). Only honored on `putObject` and `createMultipartUpload`; later
    * requests already carry the right key.
+   *
+   * Return it whenever the server stores the object under a different key,
+   * even if you don't read the key back. Without it the two upload paths
+   * disagree about what `upload-success` reports: a single-part `PUT` has no
+   * key to fall back on and reports the requested one, while a multipart
+   * upload reports the key S3 echoes in `CompleteMultipartUploadResult`. The
+   * same signer then yields a different key depending on the file's size.
    */
   key?: string
   /**
