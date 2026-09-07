@@ -1,5 +1,5 @@
 import nock from 'nock'
-import { getBasicAuthHeader } from '../../lib/server/helpers/utils.js'
+import { getBasicAuthHeader } from '../../dist/server/helpers/utils.js'
 
 export const expects = {
   listPath: 'DUMMY-UUID%3D%3D',

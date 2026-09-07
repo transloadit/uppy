@@ -1,5 +1,5 @@
-import emitter from '../lib/server/emitter/index.js'
-import { isRecord } from '../lib/server/helpers/type-guards.js'
+import emitter from '../dist/server/emitter/index.js'
+import { isRecord } from '../dist/server/helpers/type-guards.js'
 
 type UploadMessage = Record<string, unknown> & { action: string }
 

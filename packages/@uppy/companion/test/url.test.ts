@@ -6,9 +6,9 @@ import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
-vi.mock('../lib/server/helpers/request.js', async () => {
+vi.mock('../dist/server/helpers/request.js', async () => {
   return {
-    ...(await vi.importActual('../lib/server/helpers/request.js')),
+    ...(await vi.importActual('../dist/server/helpers/request.js')),
     getURLMeta: () => {
       return Promise.resolve({ size: 7580, type: 'image/jpg' })
     },

@@ -2,12 +2,12 @@ import { createServer } from 'node:http'
 import express from 'express'
 import request from 'supertest'
 import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
-import { defaultOptions } from '../lib/config/companion.js'
-import * as tokenService from '../lib/server/helpers/jwt.js'
-import * as oAuthState from '../lib/server/helpers/oauth-state.js'
-import { gentleVerifyToken, verifyToken } from '../lib/server/middlewares.js'
-import { getCredentialsOverrideMiddleware } from '../lib/server/provider/credentials.js'
-import Provider from '../lib/server/provider/Provider.js'
+import { defaultOptions } from '../dist/config/companion.js'
+import * as tokenService from '../dist/server/helpers/jwt.js'
+import * as oAuthState from '../dist/server/helpers/oauth-state.js'
+import { gentleVerifyToken, verifyToken } from '../dist/server/middlewares.js'
+import { getCredentialsOverrideMiddleware } from '../dist/server/provider/credentials.js'
+import Provider from '../dist/server/provider/Provider.js'
 
 vi.mock('express-prom-bundle')
 
