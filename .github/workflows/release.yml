@@ -5,17 +5,57 @@ on:
     branches:
       - main
 
-permissions:
-  id-token: write # Required for OIDC
-  contents: write
-  pull-requests: write
+# Each job declares the narrowest permissions it needs; only `publish` gets to
+# mint an OIDC token for npm.
+permissions: {}
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  release:
-    name: Release
+  version:
+    name: Version
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # to push the release branch
+      pull-requests: write # to open the release pull request
+    outputs:
+      hasChangesets: ${{ steps.changesets.outputs.hasChangesets }}
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
+      # Allow yarn to make changes during release
+      - run: corepack yarn config set enableHardenedMode false
+      - run: corepack yarn --mode=update-lockfile
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+
+      - name: Create Release Pull Request
+        id: changesets
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d
+        with:
+          version: corepack yarn run version
+          commit: "[ci] release"
+          title: "[ci] release"
+          commitMode: github-api
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish:
+    name: Publish
+    needs: version
+    # Only once the release pull request has been merged and no changesets are left.
+    if: needs.version.outputs.hasChangesets == 'false'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to create git tags and GitHub releases
+      id-token: write # to mint an OIDC token for npm trusted publishing
     env:
       AWS_REGION: auto
       S3_BUCKET: ${{ secrets.S3_BUCKET }}
@@ -35,6 +75,10 @@ jobs:
           node-version: lts/*
           registry-url: "https://registry.npmjs.org"
 
+      # `npm stage` (staged publishing) needs npm 11.15.0 or newer, which is
+      # newer than what Node LTS bundles.
+      - run: npm install --global npm@latest
+
       # Allow yarn to make changes during release
       - run: corepack yarn config set enableHardenedMode false
       - run: corepack yarn --mode=update-lockfile
@@ -47,14 +91,13 @@ jobs:
 
       - run: corepack yarn workspace @uppy/angular pack
 
-      - name: Create Release Pull Request or Publish
+      # Stages the packages on npm. They are not live until a maintainer runs
+      # `yarn release:approve` locally — see RELEASE.md.
+      - name: Stage release on npm
         id: changesets
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d
         with:
-          version: corepack yarn run version
           publish: corepack yarn run release
-          commit: "[ci] release"
-          title: "[ci] release"
           commitMode: github-api
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -82,9 +125,11 @@ jobs:
   # See also companion-deploy.yml
   docker:
     name: DockerHub
-    needs: release
-    if: ${{ needs.release.outputs.published == 'true' && needs.release.outputs.companionWasReleased }}
+    needs: publish
+    if: ${{ needs.publish.outputs.published == 'true' && needs.publish.outputs.companionWasReleased }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     env:
       DOCKER_BUILDKIT: 0
       COMPOSE_DOCKER_CLI_BUILD: 0
