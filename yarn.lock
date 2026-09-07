@@ -7694,21 +7694,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitejs/plugin-react@npm:^6.0.2":
-  version: 6.0.2
-  resolution: "@vitejs/plugin-react@npm:6.0.2"
+"@vitejs/plugin-react@npm:^6.1.0":
+  version: 6.1.0
+  resolution: "@vitejs/plugin-react@npm:6.1.0"
   dependencies:
-    "@rolldown/pluginutils": "npm:^1.0.0"
+    "@rolldown/pluginutils": "npm:^1.0.1"
   peerDependencies:
     "@rolldown/plugin-babel": ^0.1.7 || ^0.2.0
     babel-plugin-react-compiler: ^1.0.0
+    oxc-transform-react: ^0.145.0
     vite: ^8.0.0
   peerDependenciesMeta:
     "@rolldown/plugin-babel":
       optional: true
     babel-plugin-react-compiler:
       optional: true
-  checksum: 10/4b3693e94c1907aac699df34fa71c8d5d53228b110f7520dcaca56c96c7127772e806147fa9d2f15edfc64cdefbe13b28c4c71e058601f7311d303ad435701c6
+    oxc-transform-react:
+      optional: true
+  checksum: 10/2572ca59bcd54df9646dde2b71bb4a783865854fcd2078bfd12ef389f3ec00017de2226bbf5b5acc840547f9dbcf42e1341ba0dbcc5beba5bb8f5f24f90c7a5f
   languageName: node
   linkType: hard
 
@@ -10943,7 +10946,7 @@ __metadata:
     "@uppy/screen-capture": "workspace:*"
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
-    "@vitejs/plugin-react": "npm:^6.0.2"
+    "@vitejs/plugin-react": "npm:^6.1.0"
     "@vitest/browser-playwright": "npm:^4.1.6"
     msw: "npm:^2.10.4"
     playwright: "npm:1.61.1"
