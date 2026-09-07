@@ -1,5 +1,6 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalDependencies": ["private/tsconfig/tsconfig*.json"],
   "tasks": {
     "build": {
       "outputLogs": "new-only",
@@ -37,12 +38,20 @@
     "typecheck": {
       "outputLogs": "new-only",
       "dependsOn": ["build", "^build"],
-      "inputs": ["src/**/*.{js,ts,jsx,tsx}", "tsconfig.json"]
+      "inputs": [
+        "{src,test}/**/*.{js,ts,jsx,tsx}",
+        "tsconfig.json",
+        "tsconfig.build.json"
+      ]
     },
     "check": {
       "outputLogs": "new-only",
       "dependsOn": ["^build"],
-      "inputs": ["src/**/*.{js,ts,jsx,tsx,svelte}", "tsconfig.json"]
+      "inputs": [
+        "{src,test}/**/*.{js,ts,jsx,tsx,svelte}",
+        "tsconfig.json",
+        "tsconfig.build.json"
+      ]
     },
     "test": {
       "dependsOn": ["^test"],
