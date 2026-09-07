@@ -1,5 +1,5 @@
 import type { S3Client } from '@aws-sdk/client-s3'
-import { CredentialsFetchResponse } from '../schemas/companion.js'
+import type { CredentialsFetchResponse } from '../schemas/companion.js'
 import type Provider from '../server/provider/Provider.js'
 import type { CompanionRuntimeOptions } from './companion-options.js'
 
@@ -38,17 +38,6 @@ export interface GrantDynamic {
   state?: string
 }
 
-export interface CompanionSession {
-  grant?: {
-    state?: string | null
-    dynamic?: GrantDynamic | null
-    response?: {
-      access_token?: string
-      refresh_token?: string
-    }
-  }
-}
-
 export interface CompanionExpressLocals {
   grant?: {
     dynamic?: {
@@ -62,12 +51,23 @@ export interface CompanionExpressLocals {
 
 declare global {
   namespace Express {
-    // eslint-disable-next-line @typescript-eslint/no-empty-object-type
     interface Request {
       companion: CompanionContext
       id?: string
       cookies?: Record<string, string>
-      session?: CompanionSession
+    }
+  }
+}
+
+declare module 'express-session' {
+  export interface Session {
+    grant?: {
+      state?: string | null
+      dynamic?: GrantDynamic | null
+      response?: {
+        access_token?: string
+        refresh_token?: string
+      }
     }
   }
 }

@@ -12,7 +12,6 @@ import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
-  hasProperty,
   isNetworkError,
   type LocalUppyFile,
   NetworkError,
@@ -271,7 +270,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
           userProvidedPromise = onBeforeRequest(req, file)
         }
 
-        if (hasProperty(queuedRequest, 'shouldBeRequeued')) {
+        if (Object.hasOwn(queuedRequest, 'shouldBeRequeued')) {
           if (!queuedRequest.shouldBeRequeued) return Promise.reject()
           // TODO: switch to `Promise.withResolvers` on the next major if available.
           let done: () => void
@@ -457,7 +456,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
         srcProp: string,
         destProp: string,
       ) => {
-        if (hasProperty(obj, srcProp) && !hasProperty(obj, destProp)) {
+        if (Object.hasOwn(obj, srcProp) && !Object.hasOwn(obj, destProp)) {
           obj[destProp] = obj[srcProp]
         }
       }

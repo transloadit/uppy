@@ -5,7 +5,7 @@
   "description": "React Router + Uppy upload example with TUS and XHR support",
   "type": "module",
   "scripts": {
-    "dev": "tsx ./server.ts",
+    "dev": "node ./server.ts",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
@@ -31,9 +31,8 @@
     "@types/express": "^5.0.6",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.3",
-    "tsx": "^4.23.12",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5"
+    "vite": "^8.2.2"
   },
   "engines": {
     "node": ">=22.22.0"
