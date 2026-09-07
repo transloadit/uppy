@@ -1,5 +1,5 @@
 {
-  "exclude": ["${configDir}/src"],
+  "exclude": ["${configDir}/src", "${configDir}/lib", "${configDir}/dist"],
   "compilerOptions": {
     "composite": true,
     "noEmit": true,
