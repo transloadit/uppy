@@ -1,6 +1,6 @@
 import { RateLimitedQueue } from '@uppy/core/utils'
 import { describe, expect, it, vi } from 'vitest'
-import Assembly from '../lib/Assembly.ts'
+import Assembly from '../lib/Assembly.js'
 
 describe('Transloadit/Assembly', () => {
   describe('status diffing', () => {
