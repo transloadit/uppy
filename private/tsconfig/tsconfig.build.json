@@ -1,0 +1,20 @@
+{
+  "include": ["${configDir}/src"],
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "erasableSyntaxOnly": true,
+    "exactOptionalPropertyTypes": true,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "module": "nodenext",
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
+    "outDir": "${configDir}/lib",
+    "rootDir": "${configDir}/src",
+    "skipLibCheck": true,
+    "target": "esnext",
+    "verbatimModuleSyntax": true
+  }
+}

@@ -1,8 +1,10 @@
 import { beforeEach, describe, expect, test } from 'vitest'
-import createGrantConfig from '../src/config/grant.js'
-import * as providerManager from '../src/server/provider/index.js'
-import Provider, { type ProviderCtor } from '../src/server/provider/Provider.js'
-import { getCompanionOptions } from '../src/standalone/helper.js'
+import createGrantConfig from '../dist/config/grant.js'
+import * as providerManager from '../dist/server/provider/index.js'
+import Provider, {
+  type ProviderCtor,
+} from '../dist/server/provider/Provider.js'
+import { getCompanionOptions } from '../dist/standalone/helper.js'
 import { setDefaultEnv } from './mockserver.js'
 
 type GrantConfigType = providerManager.GrantConfig

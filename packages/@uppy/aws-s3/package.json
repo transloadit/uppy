@@ -42,6 +42,7 @@
     "@aws-sdk/client-sts": "^3.362.0",
     "@aws-sdk/s3-request-presigner": "^3.362.0",
     "@types/node": "^22.20.1",
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",
     "playwright": "1.61.1",

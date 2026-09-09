@@ -52,6 +52,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.6",
     "cssnano": "^8.0.1",
