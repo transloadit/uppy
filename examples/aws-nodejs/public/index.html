@@ -50,7 +50,7 @@
 
       // Mode 1: Client-side signing with STS credentials
       {
-        const uppy = new Uppy({ debug: true })
+        const uppy = new Uppy({ id: 'uppy-sts', debug: true })
           .use(Dashboard, {
             inline: true,
             target: '#uppy-sts',
@@ -83,7 +83,7 @@
 
       // Mode 2: Server-side signing with presigned URLs
       {
-        const uppy = new Uppy({ debug: true })
+        const uppy = new Uppy({ id: 'uppy-sign', debug: true })
           .use(Dashboard, {
             inline: true,
             target: '#uppy-sign',

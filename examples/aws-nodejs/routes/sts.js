@@ -10,13 +10,20 @@ const { STSClient, GetFederationTokenCommand } = require('@aws-sdk/client-sts')
 
 const expiresIn = 900 // 15 minutes
 
-// IAM policy for the federated user — allows PutObject to the bucket.
+// IAM policy for the federated user — allows uploads to the bucket.
 const policy = {
   Version: '2012-10-17',
   Statement: [
     {
       Effect: 'Allow',
-      Action: ['s3:PutObject'],
+      // ListMultipartUploadParts and AbortMultipartUpload are needed because
+      // files over 100MiB use multipart: GoldenRetriever resumes via ListParts,
+      // and cancelling an upload aborts it in S3.
+      Action: [
+        's3:PutObject',
+        's3:ListMultipartUploadParts',
+        's3:AbortMultipartUpload',
+      ],
       Resource: [
         `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}/*`,
         `arn:aws:s3:::${process.env.COMPANION_AWS_BUCKET}`,
