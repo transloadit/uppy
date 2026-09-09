@@ -1,6 +1,6 @@
 import { Uppy } from '@uppy/core'
 import { describe, expect, it } from 'vitest'
-import Webcam from './index.js'
+import Webcam from '../lib/index.js'
 
 describe('Webcam', () => {
   describe('_getMediaRecorderOptions', () => {

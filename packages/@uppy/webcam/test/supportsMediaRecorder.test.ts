@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import supportsMediaRecorder from './supportsMediaRecorder.js'
+import supportsMediaRecorder from '../lib/supportsMediaRecorder.js'
 
 describe('supportsMediaRecorder', () => {
   it('should return true if MediaRecorder is supported', () => {

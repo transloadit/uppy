@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import RequestClient from './RequestClient.js'
+import RequestClient from '../../lib/companion-client/RequestClient.js'
 
 describe('RequestClient', () => {
   it('has a hostname without trailing slash', () => {

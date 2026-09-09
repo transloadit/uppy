@@ -5,8 +5,13 @@ const ignore = ['angular', 'svelte']
 
 const projectRoot = new URL('../../../', import.meta.url)
 
-const packages = (await readdir(new URL('packages/@uppy/', projectRoot)))
-  .filter((name) => !ignore.includes(name))
+const packages = (
+  await readdir(new URL('packages/@uppy/', projectRoot), {
+    withFileTypes: true,
+  })
+)
+  .filter((entry) => entry.isDirectory() && !ignore.includes(entry.name))
+  .map((entry) => entry.name)
   .sort()
 
 async function readJSON(path: string): Promise<any> {
@@ -21,7 +26,7 @@ test('tsconfig.json', async () => {
       ...packages.map((name) => ({
         path: `./packages/@uppy/${name}/tsconfig.json`,
       })),
-      './packages/uppy/tsconfig.json',
+      { path: './packages/uppy/tsconfig.json' },
     ],
   })
 })
@@ -39,7 +44,7 @@ test.each(packages)('packages/@uppy/%s/tsconfig.build.json', async (name) => {
       ...pkg.devDependencies,
       ...pkg.peerDependencies,
     })
-      .filter((dep) => dep.startsWith('@uppy'))
+      .filter((dep) => dep.startsWith('@uppy/'))
       .sort()
 
     if (deps.length) {

@@ -107,7 +107,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "start": "node ./dist/standalone/start-server.js",
     "start:dev": "bash start-dev",
-    "typecheck": "tsc",
+    "typecheck": "tsc --build",
     "check": "yarn typecheck && yarn test",
     "test": "vitest run --silent='passed-only'"
   },

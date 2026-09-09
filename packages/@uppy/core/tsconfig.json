@@ -1,4 +1,13 @@
 {
   "extends": "@uppy-dev/tsconfig",
-  "references": [{ "path": "./tsconfig.build.json" }]
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ],
+  "compilerOptions": {
+    "noImplicitOverride": false,
+    "noUncheckedIndexedAccess": false,
+    "useUnknownInCatchVariables": false
+  }
 }

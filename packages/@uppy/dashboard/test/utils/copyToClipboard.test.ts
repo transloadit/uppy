@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import copyToClipboard from './copyToClipboard.js'
+import copyToClipboard from '../../lib/utils/copyToClipboard.js'
 
 describe('copyToClipboard', () => {
   it.skip('should copy the specified text to the clipboard', () => {

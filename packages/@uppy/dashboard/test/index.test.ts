@@ -3,7 +3,7 @@ import GoogleDrivePlugin from '@uppy/google-drive'
 import Url from '@uppy/url'
 import WebcamPlugin from '@uppy/webcam'
 import { describe, expect, it } from 'vitest'
-import DashboardPlugin from './index.js'
+import DashboardPlugin from '../lib/index.js'
 
 describe('Dashboard', () => {
   it('works without any remote provider plugins', () => {

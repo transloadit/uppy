@@ -119,7 +119,7 @@ export interface UploadPart {
 /** Parameters for {@link S3Client.putObject}. */
 export interface PutObjectParams {
   key: string
-  data: Blob | File | string
+  data: Blob | File
   fileType?: string
   metadata?: Record<string, unknown>
   onProgress?: OnProgressFn
