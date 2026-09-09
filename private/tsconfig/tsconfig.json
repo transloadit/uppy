@@ -2,14 +2,17 @@
   "exclude": ["${configDir}/src", "${configDir}/lib", "${configDir}/dist"],
   "compilerOptions": {
     "composite": true,
-    "noEmit": true,
+    "erasableSyntaxOnly": true,
+    "exactOptionalPropertyTypes": true,
     "module": "preserve",
+    "noEmit": true,
+    "noImplicitOverride": true,
+    "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "rootDir": "${configDir}",
     "skipLibCheck": true,
     "target": "esnext",
     "types": ["vite/client"],
-    "useUnknownInCatchVariables": false,
     "verbatimModuleSyntax": true
   }
 }
