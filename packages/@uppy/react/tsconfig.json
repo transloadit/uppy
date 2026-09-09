@@ -1,30 +1,8 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "@uppy-dev/tsconfig",
   "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true,
-    "jsxImportSource": "react",
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "jsxImportSource": "react"
   },
-  "include": ["./package.json", "./src/**/*.*"],
-  "references": [
-    {
-      "path": "../core/tsconfig.build.json"
-    },
-    {
-      "path": "../components/tsconfig.build.json"
-    },
-    {
-      "path": "../dashboard/tsconfig.build.json"
-    },
-    {
-      "path": "../screen-capture/tsconfig.build.json"
-    },
-    {
-      "path": "../webcam/tsconfig.build.json"
-    },
-    {
-      "path": "../status-bar/tsconfig.build.json"
-    }
-  ]
+  "references": [{ "path": "./tsconfig.build.json" }]
 }
