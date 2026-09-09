@@ -1,7 +1,16 @@
 {
   "extends": "@uppy-dev/tsconfig/build",
   "references": [
-    { "path": "../core/tsconfig.build.json" },
-    { "path": "../dashboard/tsconfig.build.json" }
-  ]
+    {
+      "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../dashboard/tsconfig.build.json"
+    }
+  ],
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": false,
+    "useUnknownInCatchVariables": false
+  }
 }
