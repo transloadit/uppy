@@ -154,7 +154,7 @@ Add a `.env` file **at the root of the repository** (the same directory as
 `package.json` and `.env.example`, not `examples/aws-nodejs/`) — `index.js`
 loads `../../.env`. You can start from `cp .env.example .env`.
 
-```
+```sh
 COMPANION_AWS_BUCKET=MY-UPPY-BUCKET
 COMPANION_AWS_REGION=…
 COMPANION_AWS_KEY=…
