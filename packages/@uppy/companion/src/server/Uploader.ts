@@ -23,7 +23,7 @@ import headerSanitize from './header-blacklist.js'
 import { isRecord, toError } from './helpers/type-guards.js'
 import {
   getBucket,
-  hasMatch,
+  hasUploadUrlMatch,
   jsonStringify,
   rfc2047EncodeMetadata,
   truncateFilename,
@@ -161,7 +161,7 @@ function validateOptions(options: UploaderOptions): void {
       }
 
       const allowedUrls = options.companionOptions.uploadUrls
-      if (allowedUrls && !hasMatch(url, allowedUrls)) {
+      if (allowedUrls && !hasUploadUrlMatch(url, allowedUrls)) {
         throw new ValidationError(
           'upload destination does not match any allowed destinations',
         )
