@@ -27,6 +27,8 @@ test('tsconfig.json', async () => {
         path: `./packages/@uppy/${name}/tsconfig.json`,
       })),
       { path: './packages/uppy/tsconfig.json' },
+      { path: './examples/aws-companion/tsconfig.json' },
+      { path: './examples/aws-nodejs/tsconfig.json' },
     ],
   })
 })

@@ -2,10 +2,11 @@
   "name": "example-aws-nodejs",
   "version": "1.0.0",
   "description": "Uppy for AWS S3 with a custom Node.js backend for signing URLs",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "node --watch index.js",
-    "start": "node index.js"
+    "dev": "node --watch index.ts",
+    "start": "node index.ts"
   },
   "private": true,
   "license": "MIT",
@@ -14,7 +15,6 @@
     "@aws-sdk/client-sts": "^3.338.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",
     "body-parser": "^1.20.4",
-    "dotenv": "^17.4.2",
     "express": "^5.2.1"
   }
 }

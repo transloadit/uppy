@@ -6,8 +6,8 @@
  * aborting multipart uploads, and only under the example's own prefix.
  */
 
-const { Router } = require('express')
-const { STSClient, GetFederationTokenCommand } = require('@aws-sdk/client-sts')
+import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
+import { Router } from 'express'
 
 const expiresIn = 900 // 15 minutes
 
@@ -39,7 +39,7 @@ const policy = {
   ],
 }
 
-let stsClient
+let stsClient: STSClient
 function getSTSClient() {
   stsClient ??= new STSClient({
     region: process.env.COMPANION_AWS_REGION,
@@ -53,7 +53,7 @@ function getSTSClient() {
 
 const router = Router()
 
-router.get('/s3/sts', (req, res, next) => {
+export const sts = router.get('/s3/sts', (req, res, next) => {
   // Before giving the STS token to the client, you should first check if they
   // are authorized to perform that operation, and if the request is legit.
   // For the sake of simplification, we skip that check in this example.
@@ -75,5 +75,3 @@ router.get('/s3/sts', (req, res, next) => {
       })
     }, next)
 })
-
-module.exports = router

@@ -36,6 +36,8 @@
     { "path": "./packages/@uppy/webdav/tsconfig.json" },
     { "path": "./packages/@uppy/xhr-upload/tsconfig.json" },
     { "path": "./packages/@uppy/zoom/tsconfig.json" },
-    { "path": "./packages/uppy/tsconfig.json" }
+    { "path": "./packages/uppy/tsconfig.json" },
+    { "path": "./examples/aws-companion/tsconfig.json" },
+    { "path": "./examples/aws-nodejs/tsconfig.json" }
   ]
 }
