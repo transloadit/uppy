@@ -59,6 +59,11 @@
           .use(AwsS3, {
             s3Endpoint: `https://${window.UPPY_S3_BUCKET}.s3.${window.UPPY_S3_REGION}.amazonaws.com`,
             region: window.UPPY_S3_REGION,
+            // Client-side signing never reaches /s3/presign, so the prefix that
+            // route adds has to be applied here instead. The STS credentials
+            // are scoped to this prefix.
+            generateObjectKey: (file) =>
+              `uppy-nodejs-example/${crypto.randomUUID()}-${file.name}`,
             getCredentials: async ({ signal }) => {
               const response = await fetch('/s3/sts', { signal })
               if (!response.ok) throw new Error('Failed to get credentials')

@@ -10,13 +10,17 @@ A simple and fully working example of Uppy and AWS S3 storage with a Node.js
   it directly.
 
 Both demos also use `@uppy/golden-retriever`, so selected files and in-progress
-multipart uploads survive a page reload. Resuming issues a `ListParts` request
-through the signing endpoint.
+multipart uploads survive a page reload. Resuming issues a `ListParts` request:
+through `/s3/presign` for server-side signing, and straight to S3 from the
+browser for the STS demo.
 
-Uploads land at `uppy-nodejs-example/<random-uuid>-<filename>`. The plugin's
-default [`generateObjectKey`](https://uppy.io/docs/aws-s3/#generateobjectkeyfile)
-prepends the UUID, and `POST /s3/presign` prepends the directory and returns the
-final key to Uppy, which reports it in `upload-success`.
+Uploads from both demos land at `uppy-nodejs-example/<random-uuid>-<filename>`,
+but the prefix is applied in different places. For server-side signing,
+`POST /s3/presign` prepends it and returns the final key to Uppy, which reports
+it in `upload-success`. Client-side signing never reaches that route, so the STS
+demo sets [`generateObjectKey`](https://uppy.io/docs/aws-s3/#generateobjectkeyfile)
+in `public/index.html` instead. The STS credentials are scoped to that prefix,
+so changing it in one place without the other will cause `AccessDenied`.
 
 `@uppy/aws-s3` only switches to multipart for files larger than 100&nbsp;MiB by
 default ([`shouldUseMultipart`](https://uppy.io/docs/aws-s3/#shouldusemultipartfile)).
@@ -98,17 +102,21 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
            "s3:ListMultipartUploadParts",
            "s3:AbortMultipartUpload"
          ],
-         "Resource": "arn:aws:s3:::MY-UPPY-BUCKET/*"
+         "Resource": "arn:aws:s3:::MY-UPPY-BUCKET/uppy-nodejs-example/*"
        }
      ]
    }
    ```
 
-   The S3 statement is required as well as the bucket policy: a
+   The S3 statement is what actually authorizes both demos: a
    `GetFederationToken` session gets the **intersection** of this user's
    identity-based policies and the session policy that `routes/sts.js` passes in
    the call. Without S3 actions here the intersection is empty and every
-   client-side upload fails with `AccessDenied`.
+   client-side upload fails with `AccessDenied`. The bucket policy in step 2 is
+   not part of that intersection — it names the IAM user, not the federated
+   session (`arn:aws:sts::ACCOUNT-ID:federated-user/123user`, from the `Name` in
+   `routes/sts.js`) — and it is redundant for a same-account bucket once this
+   policy is in place. Keep it only if the bucket lives in another account.
 
 ### AWS Credentials
 
@@ -138,8 +146,9 @@ corepack yarn build
 ```
 
 The build step is required. Without `packages/uppy/dist/uppy.min.mjs` the server
-falls back to an old Uppy release from the CDN that has none of the options this
-example uses, and the demo silently fails at upload time.
+logs a warning and falls back to an old Uppy release from the CDN whose
+`@uppy/aws-s3` predates both `getCredentials` and `signRequest`. The Dashboards
+still render, so the problem only surfaces as an upload error.
 
 Add a `.env` file **at the root of the repository** (the same directory as
 `package.json` and `.env.example`, not `examples/aws-nodejs/`) — `index.js`
