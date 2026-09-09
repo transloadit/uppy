@@ -133,7 +133,7 @@ You may use existing AWS credentials or create a new user in the IAM page.
 
 ## Prerequisites
 
-Node.js 22 or newer, and a clone of the whole `uppy` repository — this example
+Node.js 22 or newer, and a clone of the whole `uppy` repository. This example
 is a Yarn workspace and reads both the `.env` file and the Uppy browser bundle
 from the repository root, so the folder cannot be used standalone.
 
