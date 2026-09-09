@@ -11,7 +11,7 @@
   position: relative;
   box-sizing: border-box;
   color: $gray-800;
-  font-family: $font-family-base;
+  font-family: var(--uppy-font-family, #{$font-family-base});
   line-height: 1;
   text-align: left;
   -webkit-font-smoothing: antialiased;
@@ -41,7 +41,7 @@
   all: initial;
   box-sizing: border-box;
   appearance: none;
-  font-family: $font-family-base;
+  font-family: var(--uppy-font-family, #{$font-family-base});
   line-height: 1;
 }
 
@@ -135,16 +135,20 @@
   padding: 10px 18px;
   color: $white;
   font-size: 14px;
-  background-color: $blue;
+  background-color: var(--uppy-color-primary, #{$blue});
   border-radius: 4px;
 
   &:not(:disabled):hover {
-    background-color: color.adjust($blue, $lightness: -10%, $space: hsl);
+    background-color: var(
+      --uppy-color-primary-hover,
+      #{color.adjust($blue, $lightness: -10%, $space: hsl)}
+    );
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba($blue, 0.4);
+    box-shadow: 0 0 0 3px
+      color-mix(in srgb, var(--uppy-color-primary, #{$blue}) 40%, transparent);
   }
 
   .uppy-size--md & {

@@ -6,6 +6,7 @@ import type {
   ProviderGrantConfig,
 } from '../../types/express.js'
 import { MAX_AGE_24H } from '../helpers/jwt.js'
+import logger from '../logger.js'
 
 // from express:
 export interface Query {
@@ -173,8 +174,80 @@ export default class Provider<US = unknown> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<object> {
+  async simpleAuth({
+    requestBody,
+    companion,
+  }: {
+    requestBody: unknown
+    companion?: CompanionLike | undefined
+  }): Promise<object> {
     throw new Error('method not implemented')
+  }
+
+  /**
+   * Delete a file or (empty) folder. Providers that support mutations override
+   * this and set `supportsMutations` to true.
+   */
+  async deleteItem(options: {
+    companion: CompanionLike
+    id: string
+    providerUserSession: US
+  }): Promise<void> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Move or rename a file. `destination` is a full path/id in the provider's
+   * own addressing scheme; the response carries the new id.
+   */
+  async moveItem(options: {
+    companion: CompanionLike
+    id: string
+    destination: string
+    providerUserSession: US
+  }): Promise<{ id: string; requestPath: string }> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Create a folder inside `parentId` (null for the root).
+   */
+  async createFolder(options: {
+    companion: CompanionLike
+    parentId: string | null
+    name: string
+    providerUserSession: US
+  }): Promise<{ id: string; requestPath: string }> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Run `fn`, translating any error through `mapProviderError()` and logging
+   * it under `tag` before rethrowing. Providers wrap their SDK calls in this so
+   * error mapping and logging live in one place.
+   */
+  protected async withErrorHandling<T>(
+    tag: string,
+    fn: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await fn()
+    } catch (err: unknown) {
+      const mapped = this.mapProviderError(err)
+      const errForLog =
+        mapped instanceof Error ? mapped : new Error(String(mapped))
+      logger.error(errForLog, tag)
+      throw mapped
+    }
+  }
+
+  /**
+   * Translate an error from the provider's SDK/API into a Companion error
+   * (ProviderAuthError, ProviderUserError, ProviderApiError). The default keeps
+   * the error as-is; providers override this to add their mapping.
+   */
+  protected mapProviderError(err: unknown): unknown {
+    return err
   }
 
   /**
@@ -193,6 +266,11 @@ export default class Provider<US = unknown> {
   }
 
   static get hasSimpleAuth(): boolean {
+    return false
+  }
+
+  /** Whether deleteItem/moveItem/createFolder are implemented. */
+  static get supportsMutations(): boolean {
     return false
   }
 

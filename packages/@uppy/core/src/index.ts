@@ -18,6 +18,7 @@ export type {
   PartialTreeId,
   PluginTypeRegistry,
   Processor,
+  ProviderDialogState,
   State,
   UnknownPlugin,
   UnknownProviderPlugin,

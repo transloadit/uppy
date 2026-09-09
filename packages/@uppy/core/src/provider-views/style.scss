@@ -162,6 +162,7 @@
 // ...uppy-Provider-breadcrumbs|
 
 .uppy-ProviderBrowser {
+  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -287,8 +288,15 @@
 }
 
 .uppy-ProviderBrowser-searchFilterInput::placeholder {
-  color: variables.$gray-500;
+  // WCAG AA: $gray-700 on $gray-200 is 6.5:1 (5.0:1 on the $gray-300 focus background);
+  // $gray-500 was 2.6:1.
+  color: variables.$gray-700;
   opacity: 1;
+
+  [data-uppy-theme='dark'] & {
+    // $gray-400 on $gray-900 is 8.6:1 (6.6:1 on the $gray-800 focus background).
+    color: variables.$gray-400;
+  }
 }
 
 .uppy-ProviderBrowser-searchFilterReset {
@@ -412,4 +420,362 @@
 }
 .picker-dialog {
   z-index: 20001 !important;
+}
+
+// Item actions ("⋯" menu) and header toolbar, used when a provider view is
+// configured with `actions` / `toolbarActions`.
+.uppy-ProviderBrowserItem-actions {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.uppy-ProviderBrowserItem-actionsBtn {
+  padding: 4px 6px;
+  color: variables.$gray-600;
+  border-radius: 4px;
+  line-height: 1;
+
+  &:hover,
+  &:focus {
+    color: variables.$gray-800;
+    background-color: variables.$gray-200;
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-400;
+
+    &:hover,
+    &:focus {
+      background-color: variables.$gray-700;
+    }
+  }
+}
+
+// A `popover="auto"` element in the top layer, positioned from the trigger's
+// viewport rect by ItemActionsPopover (the UA's `inset: 0; margin: auto` is
+// reset so `top`/`right` apply). `z-index` only matters where the Popover API
+// is missing and this is a plain positioned div.
+.uppy-ProviderBrowserItem-actionsMenu {
+  position: fixed;
+  inset: auto;
+  z-index: variables.$zIndex-3;
+  margin: 0;
+  min-width: 180px;
+  padding: 4px;
+  background-color: variables.$white;
+  border: 1px solid variables.$gray-200;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(variables.$black, 0.15);
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-800;
+    border-color: variables.$gray-700;
+  }
+}
+
+.uppy-ProviderBrowserItem-actionsMenuItem {
+  display: block;
+  width: 100%;
+  padding: 7px 10px;
+  color: variables.$gray-800;
+  font-size: 13px;
+  text-align: left;
+  border-radius: 4px;
+
+  &:hover,
+  &:focus {
+    background-color: variables.$gray-100;
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+
+    &:hover,
+    &:focus {
+      background-color: variables.$gray-700;
+    }
+  }
+}
+
+.uppy-ProviderBrowser-toolbar {
+  display: flex;
+  gap: 6px;
+  margin-right: 10px;
+}
+
+.uppy-ProviderBrowser-toolbarBtn {
+  padding: 4px 10px;
+  color: variables.$blue;
+  font-size: 12px;
+  line-height: 1.4;
+  border: 1px solid rgba(variables.$blue, 0.4);
+  border-radius: 4px;
+
+  &:hover,
+  &:focus {
+    background-color: rgba(variables.$blue, 0.08);
+  }
+}
+
+// Inline prompt/confirm dialog (ProviderView.prompt / .confirm), used by
+// provider actions instead of window.prompt / window.confirm. A native
+// <dialog> shown with showModal(): centred in the top layer with ::backdrop.
+.uppy-ProviderDialog {
+  width: 100%;
+  max-width: 360px;
+  padding: 0;
+  color: variables.$gray-800;
+  background-color: variables.$white;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(variables.$black, 0.25);
+
+  &::backdrop {
+    background-color: rgba(variables.$black, 0.35);
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+    background-color: variables.$gray-800;
+  }
+}
+
+.uppy-ProviderDialog-form {
+  padding: 18px 20px;
+}
+
+.uppy-ProviderDialog-title {
+  margin: 0 0 12px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.uppy-ProviderDialog-label {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 13px;
+}
+
+.uppy-ProviderDialog-labelText {
+  display: block;
+  margin-bottom: 6px;
+  color: variables.$gray-700;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-300;
+  }
+}
+
+.uppy-ProviderDialog-input {
+  width: 100%;
+}
+
+.uppy-ProviderDialog-message {
+  margin: 0 0 14px;
+  color: variables.$gray-700;
+  font-size: 13px;
+  line-height: 1.4;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-300;
+  }
+}
+
+.uppy-ProviderDialog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.uppy-ProviderDialog-confirm--danger {
+  background-color: var(--uppy-color-danger, #{variables.$red});
+
+  &:not(:disabled):hover {
+    background-color: var(
+      --uppy-color-danger-hover,
+      #{color.adjust(variables.$red, $lightness: -10%, $space: hsl)}
+    );
+  }
+}
+
+// Manager mode: the item detail modal.
+.uppy-ItemDetail {
+  width: min(480px, calc(100vw - 32px));
+}
+
+.uppy-ItemDetail-header {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 14px 14px 14px 20px;
+  border-bottom: 1px solid variables.$gray-200;
+
+  [data-uppy-theme='dark'] & {
+    border-bottom-color: variables.$gray-700;
+  }
+}
+
+.uppy-ItemDetail-name {
+  flex: 1;
+  margin: 0;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.uppy-ItemDetail-close {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  color: variables.$gray-600;
+  border-radius: 50%;
+
+  &:hover {
+    color: variables.$gray-800;
+    background-color: variables.$gray-100;
+  }
+
+  [data-uppy-theme='dark'] &:hover {
+    color: variables.$gray-100;
+    background-color: variables.$gray-700;
+  }
+}
+
+.uppy-ItemDetail-body {
+  padding: 16px 20px;
+}
+
+.uppy-ItemDetail-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  background-color: variables.$gray-50;
+  border: 1px solid variables.$gray-200;
+  border-radius: 6px;
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-900;
+    border-color: variables.$gray-700;
+  }
+}
+
+.uppy-ItemDetail-previewImage {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.uppy-ItemDetail-previewIcon svg {
+  width: 56px;
+  height: 56px;
+  opacity: 0.8;
+}
+
+.uppy-ItemDetail-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+
+  dt {
+    color: variables.$gray-600;
+  }
+
+  dd {
+    margin: 0;
+    color: variables.$gray-800;
+    overflow-wrap: anywhere;
+
+    [data-uppy-theme='dark'] & {
+      color: variables.$gray-200;
+    }
+  }
+}
+
+.uppy-ItemDetail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+  padding: 14px 20px;
+  background-color: variables.$gray-50;
+  border-top: 1px solid variables.$gray-200;
+  border-radius: 0 0 8px 8px;
+
+  [data-uppy-theme='dark'] & {
+    background-color: variables.$gray-900;
+    border-top-color: variables.$gray-700;
+  }
+}
+
+.uppy-ItemDetail-action {
+  padding: 9px 14px;
+  color: var(--uppy-color-secondary, #{variables.$gray-800});
+  font-size: 13px;
+  background-color: variables.$white;
+  border: 1px solid
+    color-mix(
+      in srgb,
+      var(--uppy-color-secondary, #{variables.$gray-800}) 25%,
+      transparent
+    );
+  border-radius: 4px;
+
+  &:not(:disabled):hover {
+    background-color: variables.$gray-100;
+  }
+
+  &.uppy-ItemDetail-action--danger {
+    color: var(--uppy-color-danger, #{variables.$red});
+    border-color: color-mix(
+      in srgb,
+      var(--uppy-color-danger, #{variables.$red}) 40%,
+      transparent
+    );
+
+    &:not(:disabled):hover {
+      background-color: color-mix(
+        in srgb,
+        var(--uppy-color-danger, #{variables.$red}) 6%,
+        transparent
+      );
+    }
+  }
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+    background-color: variables.$gray-800;
+    border-color: variables.$gray-600;
+  }
+}
+
+// Manager mode: destructive entries in the "..." menu.
+.uppy-ProviderBrowserItem-actionsMenuItem--danger {
+  color: var(--uppy-color-danger, #{variables.$red});
+}
+
+// Manager mode: the bulk-selection footer.
+.uppy-ProviderBrowser-footer-count {
+  align-self: center;
+  margin-right: auto;
+  color: variables.$gray-700;
+  font-weight: 500;
+  font-size: 13px;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-300;
+  }
 }

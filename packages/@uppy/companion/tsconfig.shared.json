@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "NodeNext",
     "declaration": true,
-    "target": "es2022",
+    "target": "es2023",
     "noImplicitAny": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
