@@ -151,7 +151,7 @@ logs a warning and falls back to an old Uppy release from the CDN whose
 still render, so the problem only surfaces as an upload error.
 
 Add a `.env` file **at the root of the repository** (the same directory as
-`package.json` and `.env.example`, not `examples/aws-nodejs/`) — `index.js`
+`package.json` and `.env.example`, not `examples/aws-nodejs/`). `index.js`
 loads `../../.env`. You can start from `cp .env.example .env`.
 
 ```sh
