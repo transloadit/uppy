@@ -6,8 +6,6 @@
     "declarationMap": true,
     "erasableSyntaxOnly": true,
     "exactOptionalPropertyTypes": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "preact",
     "module": "nodenext",
     "noImplicitOverride": true,
     "noUncheckedIndexedAccess": true,
