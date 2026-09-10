@@ -5,4 +5,4 @@
 "@uppy/vue": patch
 ---
 
-Removed unused the `preact` dependency.
+Removed the unused `preact` dependency.
