@@ -49,7 +49,7 @@ jobs:
 
       - name: Create Release Pull Request or Publish
         id: changesets
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51
         with:
           version: corepack yarn run version
           publish: corepack yarn run release
