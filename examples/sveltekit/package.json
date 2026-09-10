@@ -26,7 +26,7 @@
     "@sveltejs/kit": "^2.70.2",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@tailwindcss/vite": "^4.0.0",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.11",
     "msw": "^2.10.4",
     "playwright": "1.61.1",
     "svelte": "^5.56.5",
