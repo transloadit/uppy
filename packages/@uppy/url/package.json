@@ -52,14 +52,15 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.11",
     "cssnano": "^8.0.1",
     "playwright": "1.61.1",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.11"
   }
 }

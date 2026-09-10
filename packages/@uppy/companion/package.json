@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "types": "dist/companion.d.ts",
   "author": "Transloadit.com",
@@ -60,7 +60,7 @@
     "lodash": "4.18.1",
     "mime-types": "3.0.2",
     "moment-timezone": "0.6.2",
-    "morgan": "1.11.0",
+    "morgan": "1.12.0",
     "node-schedule": "2.1.1",
     "p-map": "7.0.5",
     "prom-client": "15.1.3",
@@ -89,12 +89,13 @@
     "@types/supertest": "7.2.1",
     "@types/validator": "13.15.10",
     "@types/ws": "8.18.1",
+    "@uppy-dev/tsconfig": "workspace:^",
     "execa": "10.0.0",
     "http-proxy": "1.18.1",
     "nock": "^14.0.16",
     "supertest": "7.2.2",
     "typescript": "^6.0.3",
-    "vitest": "4.1.6"
+    "vitest": "^4.1.11"
   },
   "files": [
     "dist/",
@@ -106,7 +107,7 @@
     "deploy": "kubectl apply -f infra/kube/companion-kube.yml",
     "start": "node ./dist/standalone/start-server.js",
     "start:dev": "bash start-dev",
-    "typecheck": "tsc",
+    "typecheck": "tsc --build",
     "check": "yarn typecheck && yarn test",
     "test": "vitest run --silent='passed-only'"
   },

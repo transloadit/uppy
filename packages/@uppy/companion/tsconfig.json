@@ -1,12 +1,8 @@
 {
-  "extends": "./tsconfig.shared",
+  "extends": "@uppy-dev/tsconfig",
+  "references": [{ "path": "./tsconfig.build.json" }],
   "compilerOptions": {
-    "noEmit": true
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/types/**/*.d.ts",
-    "test/**/*.ts",
-    "__mocks__/**/*.ts"
-  ]
+    "lib": ["esnext"],
+    "types": ["node"]
+  }
 }

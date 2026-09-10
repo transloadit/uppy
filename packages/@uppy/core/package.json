@@ -69,7 +69,8 @@
     "@types/mime-match": "^1.0.0",
     "@types/namespace-emitter": "^2.0.0",
     "@types/node": "^22.20.1",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@uppy-dev/tsconfig": "workspace:^",
+    "@vitest/browser-playwright": "^4.1.11",
     "cssnano": "^8.0.1",
     "deep-freeze": "^0.0.1",
     "playwright": "1.61.1",
@@ -78,6 +79,6 @@
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
     "vite": "^8.2.2",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.11"
   }
 }

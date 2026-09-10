@@ -19,11 +19,11 @@ Additionally, this example uses python dependencies. Move into this directory,
 and install them using pip:
 
 ```sh
-corepack yarn workspace @uppy-example/python-xhr installPythonDeps
+corepack yarn workspace example-xhr-python installPythonDeps
 ```
 
 Then, again in the **repository root**, start this example by doing:
 
 ```sh
-corepack yarn workspace @uppy-example/python-xhr start
+corepack yarn workspace example-xhr-python start
 ```
