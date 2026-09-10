@@ -19,7 +19,6 @@
   ],
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.29.2",
     "shallow-equal": "^3.1.0"
   },
   "devDependencies": {

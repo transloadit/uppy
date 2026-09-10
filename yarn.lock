@@ -525,7 +525,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:3.1047.0, @aws-sdk/client-s3@npm:^3.338.0, @aws-sdk/client-s3@npm:^3.362.0":
+"@aws-sdk/client-s3@npm:3.1047.0, @aws-sdk/client-s3@npm:^3.338.0":
   version: 3.1047.0
   resolution: "@aws-sdk/client-s3@npm:3.1047.0"
   dependencies:
@@ -945,7 +945,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-request-presigner@npm:3.1047.0, @aws-sdk/s3-request-presigner@npm:^3.338.0, @aws-sdk/s3-request-presigner@npm:^3.362.0":
+"@aws-sdk/s3-request-presigner@npm:3.1047.0, @aws-sdk/s3-request-presigner@npm:^3.338.0":
   version: 3.1047.0
   resolution: "@aws-sdk/s3-request-presigner@npm:3.1047.0"
   dependencies:
@@ -7020,7 +7020,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-dev/tsconfig@workspace:^, @uppy-dev/tsconfig@workspace:private/tsconfig":
+"@uppy-dev/tsconfig@workspace:*, @uppy-dev/tsconfig@workspace:^, @uppy-dev/tsconfig@workspace:private/tsconfig":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/tsconfig@workspace:private/tsconfig"
   dependencies:
@@ -7077,13 +7077,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/aws-s3@workspace:packages/@uppy/aws-s3"
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.362.0"
     "@aws-sdk/client-sts": "npm:^3.362.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.362.0"
     "@types/node": "npm:^22.20.1"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.11"
+    msw: "npm:^2.10.4"
     playwright: "npm:1.61.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.11"
@@ -7217,7 +7216,6 @@ __metadata:
     "@vitest/browser-playwright": "npm:^4.1.11"
     compressorjs: "npm:^1.3.0"
     playwright: "npm:1.61.1"
-    preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
@@ -7277,6 +7275,7 @@ __metadata:
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     lodash: "npm:^4.18.1"
+    msw: "npm:^2.10.4"
     nanoid: "npm:^5.1.11"
     playwright: "npm:1.61.1"
     postcss: "npm:^8.5.23"
@@ -7371,6 +7370,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.11"
     lodash: "npm:^4.18.1"
+    msw: "npm:^2.10.4"
     playwright: "npm:1.61.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.11"
@@ -7435,7 +7435,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/image-generator@workspace:*, @uppy/image-generator@workspace:packages/@uppy/image-generator":
+"@uppy/image-generator@workspace:packages/@uppy/image-generator":
   version: 0.0.0-use.local
   resolution: "@uppy/image-generator@workspace:packages/@uppy/image-generator"
   dependencies:
@@ -7452,7 +7452,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/locales@workspace:*, @uppy/locales@workspace:packages/@uppy/locales":
+"@uppy/locales@workspace:packages/@uppy/locales":
   version: 0.0.0-use.local
   resolution: "@uppy/locales@workspace:packages/@uppy/locales"
   dependencies:
@@ -7489,7 +7489,6 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.11"
     playwright: "npm:1.61.1"
-    preact: "npm:^10.29.2"
     react: "npm:^19.2.8"
     react-dom: "npm:^19.2.6"
     typescript: "npm:^6.0.3"
@@ -7583,7 +7582,6 @@ __metadata:
     "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    preact: "npm:^10.29.2"
     svelte: "npm:^5.56.5"
     svelte-check: "npm:^4.4.8"
     tslib: "npm:^2.8.1"
@@ -7700,7 +7698,6 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
-    preact: "npm:^10.29.2"
     shallow-equal: "npm:^3.1.0"
     typescript: "npm:^6.0.3"
     vue: "npm:^3.5.14"
@@ -7743,7 +7740,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy/webdav@workspace:*, @uppy/webdav@workspace:packages/@uppy/webdav":
+"@uppy/webdav@workspace:packages/@uppy/webdav":
   version: 0.0.0-use.local
   resolution: "@uppy/webdav@workspace:packages/@uppy/webdav"
   dependencies:
@@ -19165,6 +19162,7 @@ __metadata:
   dependencies:
     "@aws-sdk/client-s3": "npm:^3.338.0"
     "@npmcli/arborist": "npm:^10.0.1"
+    "@uppy-dev/tsconfig": "workspace:*"
     "@uppy/audio": "workspace:*"
     "@uppy/aws-s3": "workspace:*"
     "@uppy/box": "workspace:*"
@@ -19181,8 +19179,6 @@ __metadata:
     "@uppy/google-drive-picker": "workspace:*"
     "@uppy/google-photos-picker": "workspace:*"
     "@uppy/image-editor": "workspace:*"
-    "@uppy/image-generator": "workspace:*"
-    "@uppy/locales": "workspace:*"
     "@uppy/onedrive": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
@@ -19193,7 +19189,6 @@ __metadata:
     "@uppy/unsplash": "workspace:*"
     "@uppy/url": "workspace:*"
     "@uppy/webcam": "workspace:*"
-    "@uppy/webdav": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     "@uppy/zoom": "workspace:*"
     adm-zip: "npm:^0.6.0"

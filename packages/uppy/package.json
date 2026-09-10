@@ -53,8 +53,6 @@
     "@uppy/google-drive-picker": "workspace:*",
     "@uppy/google-photos-picker": "workspace:*",
     "@uppy/image-editor": "workspace:*",
-    "@uppy/image-generator": "workspace:*",
-    "@uppy/locales": "workspace:*",
     "@uppy/onedrive": "workspace:*",
     "@uppy/remote-sources": "workspace:*",
     "@uppy/screen-capture": "workspace:*",
@@ -65,7 +63,6 @@
     "@uppy/unsplash": "workspace:*",
     "@uppy/url": "workspace:*",
     "@uppy/webcam": "workspace:*",
-    "@uppy/webdav": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
     "@uppy/zoom": "workspace:*"
   },
@@ -78,6 +75,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
     "@npmcli/arborist": "^10.0.1",
+    "@uppy-dev/tsconfig": "workspace:*",
     "adm-zip": "^0.6.0",
     "concat-stream": "^2.0.0",
     "cssnano": "^8.0.1",

@@ -36,7 +36,6 @@
   ],
   "dependencies": {
     "@uppy/components": "workspace:^",
-    "preact": "^10.29.2",
     "use-sync-external-store": "^1.6.0"
   },
   "devDependencies": {
