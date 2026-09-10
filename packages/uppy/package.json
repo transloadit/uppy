@@ -75,7 +75,6 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
     "@npmcli/arborist": "^10.0.1",
-    "@uppy-dev/tsconfig": "workspace:*",
     "adm-zip": "^0.6.0",
     "concat-stream": "^2.0.0",
     "cssnano": "^8.0.1",

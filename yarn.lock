@@ -7020,7 +7020,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@uppy-dev/tsconfig@workspace:*, @uppy-dev/tsconfig@workspace:^, @uppy-dev/tsconfig@workspace:private/tsconfig":
+"@uppy-dev/tsconfig@workspace:^, @uppy-dev/tsconfig@workspace:private/tsconfig":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/tsconfig@workspace:private/tsconfig"
   dependencies:
@@ -19162,7 +19162,6 @@ __metadata:
   dependencies:
     "@aws-sdk/client-s3": "npm:^3.338.0"
     "@npmcli/arborist": "npm:^10.0.1"
-    "@uppy-dev/tsconfig": "workspace:*"
     "@uppy/audio": "workspace:*"
     "@uppy/aws-s3": "workspace:*"
     "@uppy/box": "workspace:*"
