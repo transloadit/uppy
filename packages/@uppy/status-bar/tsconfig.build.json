@@ -6,6 +6,8 @@
     }
   ],
   "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false
   }

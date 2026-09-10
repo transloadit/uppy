@@ -1,8 +1,7 @@
 {
   "extends": "@uppy-dev/tsconfig",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "jsxImportSource": "react"
+    "jsx": "react-jsx"
   },
   "references": [{ "path": "./tsconfig.build.json" }]
 }
