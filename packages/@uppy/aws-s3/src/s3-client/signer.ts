@@ -146,4 +146,4 @@ export function createSigV4Presigner(config: SignerConfig) {
 }
 
 // Keep the old name as an alias for backward compatibility during migration
-export const createSigV4Signer = createSigV4Presigner
+export { createSigV4Presigner as createSigV4Signer }
