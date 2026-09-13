@@ -185,7 +185,7 @@ class S3mini extends S3Client {
   }: IT.PutObjectParams) {
     this._checkKey(key)
 
-    const { xhr, url, actualKey } = await this.request({
+    const { xhr, url, resolvedKey } = await this.request({
       request: { method: 'PUT', key },
       data,
       onProgress,
@@ -196,7 +196,7 @@ class S3mini extends S3Client {
     return {
       location: U.removeQueryString(url),
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key: actualKey,
+      key: resolvedKey,
     }
   }
 
@@ -212,7 +212,7 @@ class S3mini extends S3Client {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
 
-    const { xhr, actualKey } = await this.request({
+    const { xhr, resolvedKey } = await this.request({
       request: { method: 'POST', key },
       contentType: fileType,
       signal,
@@ -231,7 +231,7 @@ class S3mini extends S3Client {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return { uploadId, key: actualKey }
+          return { uploadId, key: resolvedKey }
         }
       }
     }
@@ -300,8 +300,8 @@ class S3mini extends S3Client {
   }): Promise<{
     xhr: XMLHttpRequest
     url: string
-    /** The key the request was signed for, keep in mind it can differ from the requested key if the signer is modifying the key */
-    actualKey: string
+    /** Key the request was signed for. Differs from the requested key when the signer returns its own. */
+    resolvedKey: string
   }> {
     // Wait for online before starting
     await this.waitForOnline(signal)
@@ -312,17 +312,8 @@ class S3mini extends S3Client {
     }
 
     try {
-      /**
-       * In signRequest mode the client proposes a key (`generateObjectKey`, or
-       * its default) and sends it to the signer: `requestedKey`. A backend that
-       * derives its own key must return it: `returnedKey`. The key the request
-       * was actually signed for is `actualKey`: the returned key if the backend
-       * changed it, otherwise the requested one.
-       *
-       * @see https://uppy.io/docs/aws-s3/#signrequestrequest
-       */
       const requestedKey = request.key
-      const { url, key: returnedKey } = await this.signRequest(request)
+      const { url, key: signerKey } = await this.signRequest(request)
 
       const xhr = await this.xhr({
         url,
@@ -333,8 +324,9 @@ class S3mini extends S3Client {
         contentType,
       })
 
-      const actualKey = returnedKey || requestedKey
-      return { xhr, url, actualKey }
+      // A blank key from the signer is not an override.
+      const resolvedKey = signerKey?.trim() ? signerKey : requestedKey
+      return { xhr, url, resolvedKey }
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (
