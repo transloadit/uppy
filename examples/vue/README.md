@@ -7,5 +7,5 @@ commands:
 cp .env.example .env
 corepack yarn install
 corepack yarn build
-corepack yarn workspace @uppy-example/vue3 dev
+corepack yarn workspace example-vue dev
 ```
