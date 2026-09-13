@@ -2,6 +2,8 @@
   "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false,
     "types": ["google.accounts", "google.picker", "gapi"],

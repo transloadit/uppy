@@ -2,7 +2,7 @@
   "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
-    "jsxImportSource": "react",
+    "jsx": "react-jsx",
     "noImplicitOverride": false
   },
   "references": [
