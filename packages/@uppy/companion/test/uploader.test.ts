@@ -14,11 +14,11 @@ import {
   test,
   vi,
 } from 'vitest'
-import { defaultOptions } from '../src/config/companion.js'
-import Emitter from '../src/server/emitter/index.js'
-import { isRecord } from '../src/server/helpers/type-guards.js'
-import Uploader, { ValidationError } from '../src/server/Uploader.js'
-import standalone from '../src/standalone/index.js'
+import { defaultOptions } from '../dist/config/companion.js'
+import Emitter from '../dist/server/emitter/index.js'
+import { isRecord } from '../dist/server/helpers/type-guards.js'
+import Uploader, { ValidationError } from '../dist/server/Uploader.js'
+import standalone from '../dist/standalone/index.js'
 import * as socketClient from './mocksocket.js'
 
 vi.mock('tus-js-client')
@@ -132,6 +132,96 @@ describe('uploader', () => {
     } satisfies ConstructorParameters<typeof Uploader>[0]
 
     new Uploader(opts) // no validation error
+  })
+
+  // Regression test for https://github.com/transloadit/uppy/issues/6480:
+  // string entries used to be compiled into unanchored regexes, so any
+  // destination merely *containing* an allowed URL was accepted.
+  test.each([
+    'http://internal-admin:9090/admin?next=https://uploads.myendpoint.com/files/',
+    'http://internal-admin:9090/admin#https://uploads.myendpoint.com/files/',
+    'http://169.254.169.254/latest/meta-data/?u=https://uploads.myendpoint.com/files/',
+    'https://uploads.myendpoint.com.evil.com/files/',
+    'https://evil.com/https://uploads.myendpoint.com/files/',
+    'https://uploads.myendpoint.com/filesomething',
+    'http://uploads.myendpoint.com/files/',
+  ])('uploader rejects string uploadUrls that only contain an allowed URL: %s', async (endpoint) => {
+    const opts = {
+      companionOptions: {
+        ...companionOptions,
+        uploadUrls: ['https://uploads.myendpoint.com/files/'],
+      },
+      endpoint,
+      protocol: 'multipart',
+      size: 1,
+      pathPrefix,
+      metadata: { name: 'file.txt', type: 'text/plain' },
+    } satisfies ConstructorParameters<typeof Uploader>[0]
+
+    expect(() => new Uploader(opts)).toThrow(
+      new ValidationError(
+        'upload destination does not match any allowed destinations',
+      ),
+    )
+  })
+
+  test.each([
+    'https://uploads.myendpoint.com/files/',
+    'https://uploads.myendpoint.com/files/nested/file.txt',
+    'https://UPLOADS.myendpoint.com/files/',
+    'https://uploads.myendpoint.com:443/files/',
+  ])('uploader accepts string uploadUrls literally: %s', async (endpoint) => {
+    const opts = {
+      companionOptions: {
+        ...companionOptions,
+        uploadUrls: ['https://uploads.myendpoint.com/files/'],
+      },
+      endpoint,
+      protocol: 'multipart',
+      size: 1,
+      pathPrefix,
+      metadata: { name: 'file.txt', type: 'text/plain' },
+    } satisfies ConstructorParameters<typeof Uploader>[0]
+
+    new Uploader(opts) // no validation error
+  })
+
+  test('uploader accepts an origin-only string uploadUrl for that origin', async () => {
+    const opts = {
+      companionOptions: {
+        ...companionOptions,
+        uploadUrls: ['https://uploads.myendpoint.com'],
+      },
+      endpoint: 'https://uploads.myendpoint.com/anything',
+      protocol: 'multipart',
+      size: 1,
+      pathPrefix,
+      metadata: { name: 'file.txt', type: 'text/plain' },
+    } satisfies ConstructorParameters<typeof Uploader>[0]
+
+    new Uploader(opts) // no validation error
+  })
+
+  test('uploader validates uploadUrl in addition to endpoint', async () => {
+    const opts = {
+      companionOptions: {
+        ...companionOptions,
+        uploadUrls: ['https://uploads.myendpoint.com/files/'],
+      },
+      endpoint: 'https://uploads.myendpoint.com/files/',
+      uploadUrl:
+        'http://internal-admin:9090/admin?next=https://uploads.myendpoint.com/files/',
+      protocol: 'tus',
+      size: 1,
+      pathPrefix,
+      metadata: { name: 'file.txt', type: 'text/plain' },
+    } satisfies ConstructorParameters<typeof Uploader>[0]
+
+    expect(() => new Uploader(opts)).toThrow(
+      new ValidationError(
+        'upload destination does not match any allowed destinations',
+      ),
+    )
   })
 
   test('upload functions with tus protocol', async () => {

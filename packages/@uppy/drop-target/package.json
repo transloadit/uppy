@@ -1,7 +1,7 @@
 {
   "name": "@uppy/drop-target",
   "description": "Lets your users drag and drop files on a DOM element",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -50,6 +50,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "cssnano": "^8.0.1",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",

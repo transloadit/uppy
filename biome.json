@@ -14,7 +14,7 @@
       "bin/**",
       "e2e/**",
       "private/**",
-      "!packages/**/{dist,lib}",
+      "!packages/**/{angular/src,dist,lib}",
       "!node_modules",
       "!.svelte-kit",
       "!packages/@uppy/components/src/input.css",

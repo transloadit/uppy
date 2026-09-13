@@ -1,7 +1,7 @@
 {
   "name": "@uppy/components",
   "description": "Headless Uppy components, made in Preact",
-  "version": "1.2.0",
+  "version": "2.0.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.6",
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "cssnano": "^8.0.1",
     "postcss": "^8.5.23",

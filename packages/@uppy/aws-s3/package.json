@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "5.1.0",
+  "version": "6.1.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -41,13 +41,13 @@
     "@aws-sdk/client-s3": "^3.362.0",
     "@aws-sdk/client-sts": "^3.362.0",
     "@aws-sdk/s3-request-presigner": "^3.362.0",
-    "@types/node": "^20.19.0",
+    "@types/node": "^22.20.1",
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.11",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6",
-    "whatwg-fetch": "3.6.20"
+    "vitest": "^4.1.11"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

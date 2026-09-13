@@ -1,7 +1,7 @@
 {
   "name": "@uppy/box",
   "description": "Import files from Box, into Uppy.",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -43,6 +43,7 @@
     "access": "public"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "typescript": "^6.0.3"
   }

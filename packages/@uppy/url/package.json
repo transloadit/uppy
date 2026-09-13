@@ -1,7 +1,7 @@
 {
   "name": "@uppy/url",
   "description": "The Url plugin lets users import files from the Internet. Paste any URL and it’ll be added!",
-  "version": "5.1.0",
+  "version": "6.0.0",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -52,15 +52,15 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@vitest/browser": "^4.1.6",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.11",
     "cssnano": "^8.0.1",
     "playwright": "1.61.1",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.11"
   }
 }

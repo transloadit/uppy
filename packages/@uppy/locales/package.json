@@ -1,7 +1,7 @@
 {
   "name": "@uppy/locales",
   "description": "Uppy language packs",
-  "version": "5.1.1",
+  "version": "5.2.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -35,8 +35,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
-    "chalk": "^5.0.0",
-    "dedent": "^1.0.0",
+    "@uppy-dev/tsconfig": "workspace:^",
     "glob": "^13.0.6",
     "typescript": "^6.0.3"
   }

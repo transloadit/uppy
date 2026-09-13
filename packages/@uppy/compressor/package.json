@@ -1,7 +1,7 @@
 {
   "name": "@uppy/compressor",
   "description": "Uppy plugin that compresses images before upload, saving up to 60% in size",
-  "version": "3.1.0",
+  "version": "4.0.0",
   "license": "MIT",
   "keywords": [
     "file uploader",
@@ -31,10 +31,9 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^1.1.0",
+    "@transloadit/prettier-bytes": "^2.0.0",
     "compressorjs": "^1.3.0",
-    "preact": "^10.29.2",
-    "promise-queue": "^2.2.5"
+    "preact": "^10.29.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
@@ -43,12 +42,13 @@
     "access": "public"
   },
   "devDependencies": {
-    "@types/node": "^20.19.0",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@types/node": "^22.20.1",
+    "@uppy-dev/tsconfig": "workspace:^",
+    "@vitest/browser-playwright": "^4.1.11",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5",
-    "vitest": "^4.1.6"
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",

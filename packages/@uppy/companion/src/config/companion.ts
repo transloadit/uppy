@@ -85,6 +85,62 @@ const validateConfigSchema = z.object({
 })
 
 /**
+ * Patterns are matched as written, so one that is not anchored also matches a
+ * value that merely *contains* it -- the shape of
+ * https://github.com/transloadit/uppy/issues/6480. It can be deliberate, so
+ * this warns rather than refuses.
+ */
+function warnIfUnanchored(pattern: RegExp, option: string): void {
+  if (pattern.source.startsWith('^')) return
+  logger.warn(
+    `${option} entry ${pattern} is not anchored, so it also matches values that merely contain it. Start it with "^".`,
+    `startup.${option}`,
+  )
+}
+
+/**
+ * Validates the `uploadUrls` allowlist: only what is unambiguously broken.
+ * https://uppy.io/docs/companion/#uploadurls covers migrating an entry that
+ * used to be compiled as a regex, and the mistakes that make a pattern too
+ * permissive.
+ */
+function validateUploadUrls(
+  uploadUrls: CompanionInitOptions['uploadUrls'],
+): void {
+  for (const entry of uploadUrls ?? []) {
+    if (entry instanceof RegExp) {
+      warnIfUnanchored(entry, 'uploadUrls')
+      continue
+    }
+
+    let url: URL
+    try {
+      url = new URL(entry)
+    } catch (cause) {
+      throw new Error(
+        `uploadUrls entry "${entry}" is not an absolute URL. Include the scheme, e.g. "https://example.com/files/".`,
+        { cause },
+      )
+    }
+
+    if (url.search || url.hash) {
+      logger.warn(
+        `uploadUrls entry "${entry}" has a query or fragment, which is ignored when matching. Only the origin and path are compared.`,
+        'startup.uploadUrls',
+      )
+    }
+  }
+}
+
+function validateValidHosts(
+  validHosts: NonNullable<CompanionInitOptions['server']>['validHosts'],
+): void {
+  for (const entry of validHosts ?? []) {
+    if (entry instanceof RegExp) warnIfUnanchored(entry, 'validHosts')
+  }
+}
+
+/**
  * Validates that the mandatory Companion options are set.
  *
  * If invalid, throws with an error explaining what needs to be fixed.
@@ -136,6 +192,9 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
       'startup.uploadUrls',
     )
   }
+
+  validateUploadUrls(uploadUrls)
+  validateValidHosts(server.validHosts)
 
   const { corsOrigins } = companionOptions
   if (corsOrigins == null) {
