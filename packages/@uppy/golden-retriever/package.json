@@ -52,6 +52,7 @@
     "@uppy/dashboard": "workspace:^",
     "@uppy/xhr-upload": "workspace:^",
     "@vitest/browser-playwright": "^4.1.11",
+    "msw": "^2.10.4",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"

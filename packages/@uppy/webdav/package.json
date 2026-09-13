@@ -3,7 +3,6 @@
   "description": "Import files from WebDAV into Uppy.",
   "version": "2.0.0",
   "license": "MIT",
-  "types": "types/index.d.ts",
   "type": "module",
   "sideEffects": false,
   "scripts": {

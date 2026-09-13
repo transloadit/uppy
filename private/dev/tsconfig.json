@@ -5,7 +5,6 @@
     "noEmit": true,
     "allowJs": true
   },
-  "include": ["./package.json", "./*.ts", "./*.js"],
   "references": [
     {
       "path": "../../packages/@uppy/core/tsconfig.build.json"

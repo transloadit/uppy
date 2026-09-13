@@ -52,8 +52,7 @@
     "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@uppy/components": "workspace:^",
-    "preact": "^10.29.2"
+    "@uppy/components": "workspace:^"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^7.0.1",
