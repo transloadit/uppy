@@ -20,9 +20,10 @@ const { getButtonProps, getInputProps: getFileInputProps } = useFileInput()
   >
     <div class="flex items-center justify-center gap-4">
       <input {...getFileInputProps()} class="hidden" />
-      <button type="button"
+      <button
         {...getButtonProps()}
         class="hover:bg-gray-100 transition-colors p-2 rounded-md flex flex-col items-center gap-2 text-sm"
+        type="button"
       >
         <div class="bg-white shadow-md rounded-md p-1">
           <ProviderIcon provider="device" fill="#1269cf" />

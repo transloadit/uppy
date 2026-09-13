@@ -42,6 +42,7 @@ yarn build
 - `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
 - `yarn start:companion` - Start only Companion server at http://localhost:3020
 - `yarn build:watch` - Build packages in watch mode
+- `yarn build:examples` - Build and type-check the examples and the dev playground
 - `yarn test` - Run tests for all packages
 - `yarn test:watch` - Run tests in watch mode
 - `yarn typecheck` - Run TypeScript type checking

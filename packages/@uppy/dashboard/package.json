@@ -1,7 +1,7 @@
 {
   "name": "@uppy/dashboard",
   "description": "Universal UI plugin for Uppy.",
-  "version": "5.1.1",
+  "version": "6.0.0",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -12,8 +12,7 @@
     "build": "tsc --build tsconfig.build.json",
     "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
     "typecheck": "tsc --build",
-    "test": "vitest run --silent='passed-only'",
-    "test:e2e": "vitest run --project browser"
+    "test": "vitest run --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -44,7 +43,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^1.1.0",
+    "@transloadit/prettier-bytes": "^2.0.0",
     "@uppy/thumbnail-generator": "workspace:^",
     "classnames": "^2.5.1",
     "lodash": "^4.18.1",
@@ -53,22 +52,20 @@
     "shallow-equal": "^3.1.0"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dropbox": "workspace:^",
     "@uppy/google-drive": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
-    "@vitest/browser": "^4.1.6",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@vitest/browser-playwright": "^4.1.11",
     "cssnano": "^8.0.1",
-    "jsdom": "^29.1.1",
-    "playwright": "1.60.0",
-    "postcss": "^8.5.15",
+    "playwright": "1.61.1",
+    "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
-    "resize-observer-polyfill": "^1.5.0",
     "sass": "^1.89.2",
-    "typescript": "^5.8.3",
-    "vitest": "^4.1.6"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

@@ -8,27 +8,22 @@
  * @param {string} fallbackString
  * @returns {Promise}
  */
-
-type $TSFixMe = any
-
 export default function copyToClipboard(
-  textToCopy: $TSFixMe,
+  textToCopy: string,
   fallbackString = 'Copy the URL below',
-): $TSFixMe {
-  return new Promise<void>((resolve) => {
+): Promise<void> {
+  return new Promise((resolve) => {
     const textArea = document.createElement('textarea')
-    textArea.setAttribute('style', {
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '2em',
-      height: '2em',
-      padding: 0,
-      border: 'none',
-      outline: 'none',
-      boxShadow: 'none',
-      background: 'transparent',
-    } as $TSFixMe as string)
+    textArea.style.position = 'fixed'
+    textArea.style.top = '0'
+    textArea.style.left = '0'
+    textArea.style.width = '2em'
+    textArea.style.height = '2em'
+    textArea.style.padding = '0'
+    textArea.style.border = 'none'
+    textArea.style.outline = 'none'
+    textArea.style.boxShadow = 'none'
+    textArea.style.background = 'transparent'
 
     textArea.value = textToCopy
     document.body.appendChild(textArea)
@@ -46,8 +41,8 @@ export default function copyToClipboard(
         return magicCopyFailed()
       }
       document.body.removeChild(textArea)
-      return resolve()
-    } catch (_err) {
+      resolve()
+    } catch {
       document.body.removeChild(textArea)
       return magicCopyFailed()
     }

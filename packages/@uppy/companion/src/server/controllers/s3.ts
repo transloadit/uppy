@@ -24,6 +24,8 @@ export default function s3(
   config: Pick<
     CompanionRuntimeOptions['s3'],
     | 'acl'
+    | 'awsSse'
+    | 'awsSseKmsKeyId'
     | 'getKey'
     | 'expires'
     | 'conditions'
@@ -122,6 +124,14 @@ export default function s3(
 
     if (config.acl != null) fields['acl'] = config.acl
 
+    if (config.awsSse != null) {
+      fields['x-amz-server-side-encryption'] = config.awsSse
+    }
+    if (config.awsSseKmsKeyId != null) {
+      fields['x-amz-server-side-encryption-aws-kms-key-id'] =
+        config.awsSseKmsKeyId
+    }
+
     Object.entries(metadata).forEach(([metadataKey, value]) => {
       if (typeof value !== 'string') return
       fields[`x-amz-meta-${metadataKey}`] = value
@@ -216,6 +226,10 @@ export default function s3(
       ContentType: type,
       Metadata: rfc2047EncodeMetadata(metadata),
       ...(config.acl != null && { ACL: config.acl }),
+      ...(config.awsSse != null && { ServerSideEncryption: config.awsSse }),
+      ...(config.awsSseKmsKeyId != null && {
+        SSEKMSKeyId: config.awsSseKmsKeyId,
+      }),
     }
 
     client.send(new CreateMultipartUploadCommand(params)).then((data) => {

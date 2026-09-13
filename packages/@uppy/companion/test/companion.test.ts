@@ -1,9 +1,9 @@
 import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
+import * as tokenService from '../dist/server/helpers/jwt.js'
+import { isRecord } from '../dist/server/helpers/type-guards.js'
 import packageJson from '../package.json' with { type: 'json' }
-import * as tokenService from '../src/server/helpers/jwt.js'
-import { isRecord } from '../src/server/helpers/type-guards.js'
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
 import mockOauthState from './mockoauthstate.js'
@@ -239,7 +239,7 @@ describe('handle main oauth redirect', async () => {
   })
 
   test('do not redirect to invalid uppy instances', () => {
-    const state = 'state-with-invalid-instance-url' // see mock ../../src/server/helpers/oauth-state above
+    const state = 'state-with-invalid-instance-url' // see mock ../../dist/server/helpers/oauth-state above
     return request(serverWithMainOauth)
       .get(`/dropbox/redirect?state=${state}`)
       .set('uppy-auth-token', token)
@@ -446,6 +446,56 @@ describe('S3 controller', () => {
       .then((res) => {
         const fields = res.body.fields as Record<string, string>
         expect(fields['x-amz-meta-name']).toBe('demo-file')
+      })
+  })
+
+  test('getUploadParameters includes SSE-KMS fields when configured', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+      COMPANION_AWS_SSE: 'aws:kms',
+      COMPANION_AWS_SSE_KMS_KEY_ID: 'test-kms-key-id',
+    })
+
+    return request(server)
+      .get('/s3/params')
+      .query({
+        filename: 'test.txt',
+        type: 'text/plain',
+      })
+      .expect(200)
+      .then((res) => {
+        const fields = res.body.fields as Record<string, string>
+        expect(fields['x-amz-server-side-encryption']).toBe('aws:kms')
+        expect(fields['x-amz-server-side-encryption-aws-kms-key-id']).toBe(
+          'test-kms-key-id',
+        )
+      })
+  })
+
+  test('getUploadParameters omits SSE fields by default', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+    return request(server)
+      .get('/s3/params')
+      .query({
+        filename: 'test.txt',
+        type: 'text/plain',
+      })
+      .expect(200)
+      .then((res) => {
+        const fields = res.body.fields as Record<string, string>
+        expect(fields['x-amz-server-side-encryption']).toBeUndefined()
+        expect(
+          fields['x-amz-server-side-encryption-aws-kms-key-id'],
+        ).toBeUndefined()
       })
   })
 })

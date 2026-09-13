@@ -27,7 +27,7 @@ interface UppyFileBase<M extends Meta, B extends Body> {
   missingRequiredMetaFields?: string[]
   serverToken?: string | null
   size: number | null
-  source?: string
+  source?: string // todo remove this (doesn't seem to be actually used anywhere)
   type: string
   uploadURL?: string
   response?: {
@@ -81,11 +81,11 @@ export type UppyFileNonGhost<M extends Meta, B extends Body> =
 /*
  * The user facing type for UppyFile used in uppy.addFile() and uppy.setOptions()
  */
-export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = Required<
-  Pick<UppyFile<M, B>, 'name'>
-> & { data: NonNullable<UppyFile<M, B>['data']> } & Partial<
-    Omit<UppyFile<M, B>, 'name' | 'meta' | 'data'>
-    // We want to omit the 'meta' from UppyFile because of internal metadata
-    // (see InternalMetadata in `UppyFile.js`), as when adding a new file
-    // that is not required.
-  > & { meta?: M }
+export type MinimalRequiredUppyFile<M extends Meta, B extends Body> = {
+  data: NonNullable<UppyFile<M, B>['data']>
+} & Partial<
+  Omit<UppyFile<M, B>, 'meta' | 'data'>
+  // We want to omit the 'meta' from UppyFile because of internal metadata
+  // (see InternalMetadata in `UppyFile.js`), as when adding a new file
+  // that is not required.
+> & { meta?: M }

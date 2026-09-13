@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "5.2.0",
+  "version": "6.0.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -11,7 +11,7 @@
     "build": "tsc --build tsconfig.build.json",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
     "typecheck": "tsc --build",
-    "test": "vitest run --environment=jsdom --silent='passed-only'"
+    "test": "vitest run --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -41,16 +41,17 @@
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^16.0.0",
-    "@types/react": "^19.2.14",
+    "@types/react": "^19.2.18",
     "@types/use-sync-external-store": "^1.5.0",
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "jsdom": "^29.1.1",
-    "react": "^19.2.6",
+    "@vitest/browser-playwright": "^4.1.11",
+    "playwright": "1.61.1",
+    "react": "^19.2.8",
     "react-dom": "^19.2.6",
-    "typescript": "^5.8.3",
-    "vitest": "^4.1.6"
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.11"
   },
   "exports": {
     ".": "./lib/index.js",

@@ -1,6 +1,7 @@
-export default function hasProperty(
-  object: Parameters<typeof Object.hasOwn>[0],
-  key: Parameters<typeof Object.hasOwn>[1],
-): ReturnType<typeof Object.hasOwn> {
-  return Object.hasOwn(object, key)
-}
+/**
+ * @deprecated
+ *   Use [`Object.hasOwn`](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/hasOwn).
+ */
+const hasProperty = Object.hasOwn
+
+export default hasProperty

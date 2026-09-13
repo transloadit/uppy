@@ -16,7 +16,7 @@ import {
 import { ProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
-import { type ComponentChild, h } from 'preact'
+import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 

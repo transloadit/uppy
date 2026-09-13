@@ -1,7 +1,7 @@
 import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
+import { Fragment } from '@uppy/core/utils/preact'
+import { useEffect, useState } from '@uppy/core/utils/preact/hooks'
 import { clsx } from 'clsx'
-import { Fragment } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
 import prettyBytes from 'pretty-bytes'
 import { Thumbnail, type UppyContext } from './index.js'
 
@@ -48,7 +48,7 @@ export default function FilesList(props: FilesListProps) {
 
               <p className="uppy:truncate">{file.name}</p>
               <p className="uppy:text-gray-500 uppy:tabular-nums uppy:min-w-18 uppy:text-right uppy:ml-auto">
-                {prettyBytes(file.size || 0)}
+                {file.size != null && prettyBytes(file.size)}
               </p>
 
               <Fragment>

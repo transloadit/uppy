@@ -17,6 +17,7 @@ export type {
   PartialTreeFolderRoot,
   PartialTreeId,
   PluginTypeRegistry,
+  Processor,
   State,
   UnknownPlugin,
   UnknownProviderPlugin,

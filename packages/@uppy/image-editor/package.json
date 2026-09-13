@@ -1,7 +1,7 @@
 {
   "name": "@uppy/image-editor",
   "description": "Image editor and cropping UI",
-  "version": "4.2.0",
+  "version": "5.0.0",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -56,10 +56,11 @@
     "access": "public"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "cssnano": "^8.0.1",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
-    "typescript": "^5.8.3"
+    "typescript": "^6.0.3"
   }
 }

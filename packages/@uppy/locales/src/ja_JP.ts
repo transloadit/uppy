@@ -74,8 +74,8 @@ ja_JP.strings = {
   filter: 'フィルタ',
   finishEditingFile: 'ファイルの編集を終了',
   folderAdded: {
-    '0': '%{folder} から% {smart_count} 個のファイルを追加しました',
-    '1': '%{folder} から% {smart_count} 個のファイルを追加しました',
+    '0': '%{folder} から%{smart_count} 個のファイルを追加しました',
+    '1': '%{folder} から%{smart_count} 個のファイルを追加しました',
   },
   import: 'インポート',
   importFrom: '%{name}からインポート',

@@ -1,10 +1,13 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "@uppy-dev/tsconfig",
+  "references": [
+    {
+      "path": "./tsconfig.build.json"
+    }
+  ],
   "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true,
-    "types": ["preact", "node", "google.accounts", "google.picker", "gapi"]
-  },
-  "include": ["./package.json", "./src/**/*.*"],
-  "references": []
+    "noImplicitOverride": false,
+    "noUncheckedIndexedAccess": false,
+    "useUnknownInCatchVariables": false
+  }
 }

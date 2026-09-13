@@ -16,16 +16,16 @@
     "@uppy/transloadit": "workspace:*",
     "@uppy/tus": "workspace:*",
     "@uppy/xhr-upload": "workspace:*",
-    "next": "16.1.5",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
+    "@types/node": "^22.20.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^6.0.3"
   }
 }

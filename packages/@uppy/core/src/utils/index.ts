@@ -61,7 +61,6 @@ export { default as isDragDropSupported } from './isDragDropSupported.js'
 export { default as isNetworkError } from './isNetworkError.js'
 export { default as isObjectURL } from './isObjectURL.js'
 export { default as isPreviewSupported } from './isPreviewSupported.js'
-export { default as isTouchDevice } from './isTouchDevice.js'
 
 export { default as mimeTypes } from './mimeTypes.js'
 

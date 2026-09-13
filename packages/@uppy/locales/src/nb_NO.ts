@@ -219,7 +219,7 @@ nb_NO.strings = {
   },
   uploadPaused: 'Opplasting midlertidig stoppet',
   uploadStalled:
-    'Opplastingen har ikke gjort fremgang på %{seconds} sekunder. Du vil kanskje prøve på nytt.',
+    'Opplastingen har ikke gjort fremgang på %{seconds} sekunder. Du kan prøve på nytt.',
   uploadXFiles: {
     '0': 'Last opp %{smart_count} fil',
     '1': 'Last opp %{smart_count} filer',

@@ -1,4 +1,4 @@
-type $TSFixMe = any
+import type { VNode } from 'preact'
 
 function iconImage() {
   return (
@@ -136,7 +136,12 @@ function iconText() {
   )
 }
 
-export default function getIconByMime(fileType: $TSFixMe): $TSFixMe {
+interface Icon {
+  color: string
+  icon: VNode
+}
+
+export default function getIconByMime(fileType: string): Icon {
   const defaultChoice = {
     color: '#838999',
     icon: iconFile(),

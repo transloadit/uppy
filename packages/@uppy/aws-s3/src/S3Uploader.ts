@@ -2,21 +2,6 @@ import { EventManager, type Uppy } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta } from '@uppy/core/utils'
 import type S3Client from './s3-client/S3Client.js'
 
-/** Persisted S3 multipart state for Golden Retriever resume support */
-interface S3MultipartState {
-  uploadId: string
-  key: string
-}
-
-declare module '@uppy/core/utils' {
-  export interface LocalUppyFile<M extends Meta, B extends Body> {
-    s3Multipart?: S3MultipartState
-  }
-  export interface RemoteUppyFile<M extends Meta, B extends Body> {
-    s3Multipart?: S3MultipartState
-  }
-}
-
 // ============================================================================
 // Constants
 // ============================================================================

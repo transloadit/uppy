@@ -1,7 +1,7 @@
 import type { Body, Meta, UppyEventMap, UppyFile } from '@uppy/core'
+import { Fragment } from '@uppy/core/utils/preact'
+import { useEffect, useState } from '@uppy/core/utils/preact/hooks'
 import { clsx } from 'clsx'
-import { Fragment } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
 import prettyBytes from 'pretty-bytes'
 import { Thumbnail } from './index.js'
 import type { UppyContext } from './types.js'
@@ -67,7 +67,7 @@ export default function FilesGrid(props: FilesGridProps) {
               </p>
               <div className="uppy:flex uppy:items-center uppy:gap-2">
                 <p className=" uppy:text-gray-500 uppy:tabular-nums ">
-                  {prettyBytes(file.size || 0)}
+                  {file.size != null && prettyBytes(file.size)}
                 </p>
 
                 {editFile && (

@@ -1,6 +1,5 @@
 import crypto from 'node:crypto'
 import fs from 'node:fs'
-import { stripIndent } from 'common-tags'
 import merge from 'lodash/merge.js'
 import z from 'zod'
 import packageJson from '../../package.json' with { type: 'json' }
@@ -81,6 +80,10 @@ const aclSchema = z
   ])
   .optional()
 
+const sseSchema = z
+  .enum(['AES256', 'aws:fsx', 'aws:kms', 'aws:kms:dsse'])
+  .optional()
+
 type StandaloneCompanionOptions = Pick<
   CompanionInitOptions,
   | 'providerOptions'
@@ -120,13 +123,55 @@ type StandaloneCompanionOptions = Pick<
 }
 
 /**
+ * Tells an allowlist entry that is a regular expression from one that is a
+ * literal URL or hostname. Standalone config is strings all the way down --
+ * env vars and JSON -- so a marker is the only way to express a pattern
+ * without configuring Companion programmatically, and `^` is the marker
+ * because neither a URL nor a hostname can start with one, and a pattern that
+ * is not anchored there matches values that merely *contain* it, which is the
+ * bypass this whole change is about
+ * (https://github.com/transloadit/uppy/issues/6480).
+ */
+const isPattern = (value: string): boolean => value.startsWith('^')
+
+/** Resolves an entry starting with `^` to a RegExp, tested as written. */
+const parseAllowlistEntry = (entry: string): string | RegExp => {
+  if (!isPattern(entry)) return entry
+  try {
+    return new RegExp(entry)
+  } catch (cause) {
+    throw new Error(
+      `Invalid regular expression in allowlist entry "${entry}"`,
+      {
+        cause,
+      },
+    )
+  }
+}
+
+/**
+ * Splits a comma-separated allowlist. A value that is itself a pattern is not
+ * split, so that a `{n,m}` quantifier survives.
+ */
+export const parseAllowlist = (value: string): (string | RegExp)[] =>
+  (isPattern(value) ? [value] : value.split(',')).map(parseAllowlistEntry)
+
+/** Resolves the pattern entries in an allowlist read from the JSON config file. */
+const parseAllowlistArray = (value: unknown): unknown =>
+  Array.isArray(value)
+    ? value.map((entry) =>
+        typeof entry === 'string' ? parseAllowlistEntry(entry) : entry,
+      )
+    : value
+
+/**
  * Loads the config from environment variables.
  */
 const getConfigFromEnv = (): StandaloneCompanionOptions => {
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
     process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
-  const validHosts = domains ? domains.split(',') : []
+  const validHosts = domains ? parseAllowlist(domains) : []
 
   return {
     providerOptions: {
@@ -177,6 +222,8 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
         process.env['COMPANION_AWS_USE_ACCELERATE_ENDPOINT'] === 'true',
       expires: parseInt(process.env['COMPANION_AWS_EXPIRES'] || '800', 10),
       acl: aclSchema.parse(process.env['COMPANION_AWS_ACL']),
+      awsSse: sseSchema.parse(process.env['COMPANION_AWS_SSE']),
+      awsSseKmsKeyId: process.env['COMPANION_AWS_SSE_KMS_KEY_ID'],
       forcePathStyle: process.env['COMPANION_AWS_FORCE_PATH_STYLE'] === 'true',
     },
     server: {
@@ -220,7 +267,7 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       return undefined
     })(),
     sendSelfEndpoint: process.env['COMPANION_SELF_ENDPOINT'],
-    uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
+    uploadUrls: uploadUrls ? parseAllowlist(uploadUrls) : null,
     secret: getSecret('COMPANION_SECRET'),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
     allowLocalUrls: process.env['COMPANION_ALLOW_LOCAL_URLS'] === 'true',
@@ -281,7 +328,14 @@ const getConfigFromFile = () => {
   if (!path) return {}
 
   const rawdata = fs.readFileSync(path)
-  return JSON.parse(rawdata.toString('utf8'))
+  const config = JSON.parse(rawdata.toString('utf8'))
+
+  // JSON cannot hold a RegExp either, so patterns are resolved here too.
+  config.uploadUrls = parseAllowlistArray(config.uploadUrls)
+  if (config.server?.validHosts != null) {
+    config.server.validHosts = parseAllowlistArray(config.server.validHosts)
+  }
+  return config
 }
 
 export const getCompanionOptions = (
@@ -304,22 +358,22 @@ export const buildHelpfulStartupMessage = (
     },
   )
 
-  return stripIndent`
-    Welcome to Companion v${packageJson.version}
-    ===================================
+  return `
+Welcome to Companion v${packageJson.version}
+===================================
 
-    Congratulations on setting up Companion! Thanks for joining our cause, you have taken
-    the first step towards the future of file uploading! We
-    hope you are as excited about this as we are!
+Congratulations on setting up Companion! Thanks for joining our cause, you have taken
+the first step towards the future of file uploading! We
+hope you are as excited about this as we are!
 
-    While you did an awesome job on getting Companion running, this is just the welcome
-    message, so let's talk about the places that really matter:
+While you did an awesome job on getting Companion running, this is just the welcome
+message, so let's talk about the places that really matter:
 
-    - Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
-        ${callbackURLs.join(', ')}
-    - The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
-    - https://github.com/transloadit/uppy/issues - report your bugs here
+- Be sure to add the following URLs as your Oauth redirect uris on their corresponding developer interfaces:
+    ${callbackURLs.join(', ')}
+- The URL ${buildURL('/metrics', true)} is available for  statistics to keep Companion running smoothly
+- https://github.com/transloadit/uppy/issues - report your bugs here
 
-    So quit lollygagging, start uploading and experience the future!
-  `
+So quit lollygagging, start uploading and experience the future!
+`.trim()
 }
