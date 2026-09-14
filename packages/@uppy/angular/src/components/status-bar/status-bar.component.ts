@@ -8,10 +8,9 @@ import {
 	type OnDestroy,
 	type SimpleChanges,
 } from "@angular/core";
-import { Uppy } from "@uppy/core";
+import type { Body, Meta, Uppy } from "@uppy/core";
 import type { StatusBarOptions } from "@uppy/status-bar";
 import StatusBar from "@uppy/status-bar";
-import type { Body, Meta } from "@uppy/core";
 import { UppyAngularWrapper } from "../../utils/wrapper";
 
 @Component({
@@ -26,7 +25,9 @@ export class StatusBarComponent<M extends Meta, B extends Body>
 {
 	el = inject(ElementRef);
 
-	@Input() uppy: Uppy<M, B> = new Uppy();
+	// Left unset on purpose: the wrapper creates (and destroys) its own instance in
+	// `onMount` when nothing is passed in, so we never build one just to throw it away.
+	@Input() uppy!: Uppy<M, B>;
 	@Input() props: StatusBarOptions = {};
 
 	/** Inserted by Angular inject() migration for backwards compatibility */
