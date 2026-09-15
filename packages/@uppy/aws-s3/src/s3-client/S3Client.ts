@@ -71,6 +71,7 @@ class S3Client {
     onProgress,
     signal,
     contentType,
+    headers,
   }: {
     url: string
     method: IT.HttpMethod
@@ -78,6 +79,7 @@ class S3Client {
     onProgress?: IT.OnProgressFn
     signal?: AbortSignal
     contentType?: string
+    headers?: Record<string, string>
   }) {
     // Check if aborted while waiting for online
     if (signal?.aborted) {
@@ -88,7 +90,17 @@ class S3Client {
       method,
       // XHR natively supports ArrayBuffer, Uint8Array, Blob, and string
       body: ['GET', 'HEAD'].includes(method) ? undefined : data,
-      headers: contentType ? { 'Content-Type': contentType } : {},
+      // XHR appends rather than replaces on a case-insensitive name clash, so
+      // the built-in Content-Type must go when the signer sends its own.
+      headers: {
+        ...(contentType &&
+        !Object.keys(headers ?? {}).some(
+          (k) => k.toLowerCase() === 'content-type',
+        )
+          ? { 'Content-Type': contentType }
+          : {}),
+        ...headers,
+      },
       signal,
       timeout: this.requestAbortTimeout,
       retries: 3,
