@@ -44,9 +44,9 @@ export type PresignableRequest =
 export type PresignedResponse = {
   url: string
   /**
-   * Key the request was signed for, if the server changed it (e.g. added a
-   * prefix). Defaults to the requested key. Only honored on `putObject` and
-   * `createMultipartUpload`; later requests already carry the right key.
+   * Overrides the requested key when the backend derives its own (e.g. adds a
+   * prefix). Only honored on `putObject` and `createMultipartUpload`; later
+   * requests already carry the right key.
    */
   key?: string
 }
