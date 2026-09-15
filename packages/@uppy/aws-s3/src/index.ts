@@ -246,7 +246,10 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     await Promise.allSettled(promises)
     // After the upload batch is done, restore resumable uploads capability.
     // It may have been set to false if there were remote files in this batch.
-    this.#setResumableUploadsCapability(true)
+    // Skip it if the plugin was removed while the batch was running.
+    if (this.uppy.getPlugin(this.id)) {
+      this.#setResumableUploadsCapability(true)
+    }
   }
 
   // --------------------------------------------------------------------------

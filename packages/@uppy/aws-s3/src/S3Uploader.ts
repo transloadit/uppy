@@ -126,12 +126,10 @@ export default class S3Uploader<M extends Meta, B extends Body> {
 
     this.#eventManager.onFileRemove(fileId, () => {
       this.abort()
-      this.#options.onAbort?.()
     })
 
     this.#eventManager.onCancelAll(fileId, () => {
       this.abort()
-      this.#options.onAbort?.()
     })
 
     this.#eventManager.onFilePause(fileId, (isPaused) => {
@@ -237,6 +235,8 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       if (!this.#key) {
         throw new Error('Missing S3 object key for aborting upload')
       }
+      // Not queued: uninstall() and cancel-all clear the queue, which would
+      // drop it and leak the multipart upload.
       this.#options.s3Client
         .abortMultipartUpload({ key: this.#key, uploadId: this.#uploadId })
         .catch((abortErr) => {
@@ -247,6 +247,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     this.#key = undefined
     this.#uploadId = undefined
     this.#uploadHasStarted = false
+    this.#options.onAbort?.()
   }
 
   async #resumeMultipartUpload(

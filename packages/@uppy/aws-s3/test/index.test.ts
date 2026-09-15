@@ -752,6 +752,32 @@ describe('AwsS3', () => {
       expect(operations.filter((o) => o === 'createMultipart')).toHaveLength(1)
       expect(operations.filter((o) => o === 'listParts')).toHaveLength(1)
     })
+
+    test('removing the plugin mid-upload settles the upload promise', async ({
+      worker,
+    }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers({ hangNonCreate: true })
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+
+      const uploadPromise = core.upload()
+      // Remove only once the request is in flight, so an uploader exists.
+      await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(1))
+      core.removePlugin(core.getPlugin('AwsS3')!)
+      await expect(uploadPromise).resolves.toBeDefined()
+    })
   })
 
   describe('Golden Retriever resume state (s3Multipart)', () => {
