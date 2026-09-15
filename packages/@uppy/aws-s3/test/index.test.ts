@@ -656,6 +656,102 @@ describe('AwsS3', () => {
       const result = await core.upload()
       expect(result?.successful).toHaveLength(1)
     })
+
+    test('a failed part aborts its in-flight siblings', async ({ worker }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers()
+
+      const held: { part: string; release: () => void }[] = []
+      worker.use(
+        http.put(s3Url, async ({ request }) => {
+          const part = new URL(request.url).searchParams.get('partNumber')!
+          await new Promise<void>((release) => held.push({ part, release }))
+          return part === '1'
+            ? new HttpResponse('', { status: 403 })
+            : new HttpResponse('', {
+                status: 200,
+                headers: { ETag: '"etag-1"' },
+              })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(11 * MB)], 'big.dat'),
+      })
+
+      const onError = vi.fn()
+      const partUploaded = vi.fn()
+      core.on('upload-error', onError)
+      core.on('s3-multipart:part-uploaded', partUploaded)
+      const uploadPromise = core.upload()
+
+      // Fail part 1 only once its siblings are in flight.
+      await vi.waitFor(() => expect(held).toHaveLength(3), { timeout: 10_000 })
+      held.find((h) => h.part === '1')!.release()
+      await uploadPromise
+      expect(onError).toHaveBeenCalledTimes(1)
+
+      // The siblings were aborted with the failed attempt, so releasing
+      // their responses now must not complete any part.
+      for (const { release } of held) release()
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      expect(partUploaded).not.toHaveBeenCalled()
+    })
+
+    test('pause then immediate resume does not abort the new attempt', async ({
+      worker,
+    }) => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks(worker)
+      registerHandlers()
+
+      // Holds the first attempt's two parts; the pause aborts those fetches,
+      // so they are never released. The resumed attempt's parts pass through.
+      const held: (() => void)[] = []
+      worker.use(
+        http.put(s3Url, async () => {
+          if (held.length < 2) {
+            await new Promise<void>((resolve) => held.push(resolve))
+          }
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+      await vi.waitFor(() => expect(held).toHaveLength(2), { timeout: 10_000 })
+      core.pauseResume(fileId)
+      core.pauseResume(fileId)
+      const result = await uploadPromise
+
+      expect(result?.successful).toHaveLength(1)
+      expect(operations.filter((o) => o === 'createMultipart')).toHaveLength(1)
+      expect(operations.filter((o) => o === 'listParts')).toHaveLength(1)
+    })
   })
 
   describe('Golden Retriever resume state (s3Multipart)', () => {

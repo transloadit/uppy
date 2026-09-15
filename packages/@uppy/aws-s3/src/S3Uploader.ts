@@ -195,8 +195,9 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     // Abort any pending operations (if not already aborted)
     this.#abortController?.abort()
     // Always create a fresh AbortController (also for resume)
-    this.#abortController = new AbortController()
-    const signal = this.#abortController.signal
+    const controller = new AbortController()
+    this.#abortController = controller
+    const { signal } = controller
 
     try {
       const uploadId = this.#uploadId
@@ -211,6 +212,9 @@ export default class S3Uploader<M extends Meta, B extends Body> {
         }
       }
     } catch (err) {
+      // Stop this attempt's sibling requests. A newer start() owns a different
+      // controller, so a late failure here cannot abort it.
+      controller.abort()
       this.#onError(err instanceof Error ? err : new Error(err))
     }
   }
