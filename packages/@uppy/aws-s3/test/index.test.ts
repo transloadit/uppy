@@ -556,6 +556,45 @@ describe('AwsS3', () => {
     })
   })
 
+  describe('concurrency', { timeout: 15_000 }, () => {
+    test('a hung signer does not pin a queue slot after cancel', async ({
+      worker,
+    }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers()
+      signRequest.mockImplementationOnce(() => new Promise(() => {}))
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+        limit: 1,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'hung.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'hung.txt'),
+      })
+
+      const uploadPromise = core.upload()
+      // Cancel only once the request is parked inside the hung signer.
+      await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(1))
+      core.cancelAll()
+      await uploadPromise
+
+      core.addFile({
+        source: 'test',
+        name: 'second.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'second.txt'),
+      })
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+    })
+  })
+
   describe('Golden Retriever resume state (s3Multipart)', () => {
     test('persists s3Multipart on file state after creating multipart upload', async ({
       worker,

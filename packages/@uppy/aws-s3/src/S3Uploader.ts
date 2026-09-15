@@ -1,5 +1,5 @@
 import { EventManager, type Uppy } from '@uppy/core'
-import type { Body, LocalUppyFile, Meta } from '@uppy/core/utils'
+import type { Body, LocalUppyFile, Meta, TaskQueue } from '@uppy/core/utils'
 import type S3Client from './s3-client/S3Client.js'
 
 // ============================================================================
@@ -21,6 +21,7 @@ const MAX_PARTS = 10000
 interface S3UploaderOptions<M extends Meta, B extends Body> {
   uppy: Uppy<M, B>
   s3Client: S3Client
+  queue: TaskQueue
   file: LocalUppyFile<M, B>
   metadata: Record<string, unknown>
   key: string
@@ -165,6 +166,31 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     return Math.ceil(fileSize / MAX_PARTS)
   }
 
+  /**
+   * Run one S3 request through the shared queue. Dropped if the upload is
+   * aborted while queued; frees its slot on abort even when the work itself
+   * (e.g. a hung signRequest) never settles.
+   */
+  #queued<T>(signal: AbortSignal, task: () => Promise<T>): Promise<T> {
+    signal.throwIfAborted()
+    return this.#options.queue
+      .add(async () => {
+        signal.throwIfAborted()
+        let onAbort!: () => void
+        const aborted = new Promise<never>((_, reject) => {
+          onAbort = () =>
+            reject(signal.reason ?? new DOMException('Aborted', 'AbortError'))
+          signal.addEventListener('abort', onAbort, { once: true })
+        })
+        try {
+          return await Promise.race([task(), aborted])
+        } finally {
+          signal.removeEventListener('abort', onAbort)
+        }
+      })
+      .abortOn(signal)
+  }
+
   async start(): Promise<void> {
     // Abort any pending operations (if not already aborted)
     this.#abortController?.abort()
@@ -226,11 +252,10 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     if (!this.#key) {
       throw new Error('Missing S3 object key for resuming upload')
     }
-    const existingParts = await this.#options.s3Client.listParts({
-      uploadId,
-      key: this.#key,
-      signal,
-    })
+    const key = this.#key
+    const existingParts = await this.#queued(signal, () =>
+      this.#options.s3Client.listParts({ uploadId, key, signal }),
+    )
     // Sync local state with S3 - mark already-uploaded parts
     for (const part of existingParts) {
       const chunkIndex = part.partNumber - 1
@@ -245,17 +270,19 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   }
 
   async #uploadNonMultipart(signal: AbortSignal): Promise<void> {
-    const { location, key } = await this.#options.s3Client.putObject({
-      key: this.#options.key,
-      data: this.#data,
-      fileType: this.#options.file.type || 'application/octet-stream',
-      metadata: this.#options.metadata,
-      onProgress: (bytesUploaded: number) => {
-        this.#chunkState[0].uploaded = bytesUploaded
-        this.#onProgress()
-      },
-      signal,
-    })
+    const { location, key } = await this.#queued(signal, () =>
+      this.#options.s3Client.putObject({
+        key: this.#options.key,
+        data: this.#data,
+        fileType: this.#options.file.type || 'application/octet-stream',
+        metadata: this.#options.metadata,
+        onProgress: (bytesUploaded: number) => {
+          this.#chunkState[0].uploaded = bytesUploaded
+          this.#onProgress()
+        },
+        signal,
+      }),
+    )
 
     this.#onSuccess({
       location,
@@ -264,83 +291,78 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   }
 
   async #uploadMultipart(signal: AbortSignal): Promise<void> {
-    const { uploadId, key } =
-      await this.#options.s3Client.createMultipartUpload({
-        key: this.#options.key,
-        fileType: this.#options.file.type || 'application/octet-stream',
-        metadata: this.#options.metadata,
-        signal,
+    await this.#queued(signal, async () => {
+      const { uploadId, key } =
+        await this.#options.s3Client.createMultipartUpload({
+          key: this.#options.key,
+          fileType: this.#options.file.type || 'application/octet-stream',
+          metadata: this.#options.metadata,
+          signal,
+        })
+
+      // Recorded inside the task: an abort landing between S3's response and
+      // the queue settling would otherwise drop the uploadId and orphan the
+      // upload in S3.
+      this.#key = key // Note: may differ from this.#options.key
+      this.#uploadId = uploadId
+
+      // Persist resume state so Golden Retriever can restore it after page refresh
+      this.#options.uppy.setFileState(this.#options.file.id, {
+        s3Multipart: { uploadId, key },
       })
-
-    this.#key = key // Note: may differ from this.#options.key
-    this.#uploadId = uploadId
-
-    // Persist resume state so Golden Retriever can restore it after page refresh
-    this.#options.uppy.setFileState(this.#options.file.id, {
-      s3Multipart: { uploadId, key },
     })
 
     await this.#uploadRemainingParts(signal)
   }
 
   async #uploadRemainingParts(signal: AbortSignal): Promise<void> {
-    for (let i = 0; i < this.#chunks.length; i++) {
-      signal.throwIfAborted()
-      if (this.#chunkState[i].etag) continue // already uploaded
+    const key = this.#key
+    const uploadId = this.#uploadId
+    if (key == null || uploadId == null) {
+      throw new Error('Missing S3 object key or uploadId for uploading parts')
+    }
 
-      const chunk = this.#chunks[i]
-      const partNumber = i + 1
-      const chunkData = this.#data.slice(chunk.start, chunk.end)
-      const chunkIndex = i // Capture for closure (cannot use for-loop variable i directly in a closure)
+    for (const chunk of this.#chunks) {
+      if (this.#chunkState[chunk.index].etag) continue // already uploaded
+      await this.#queued(signal, async () => {
+        const { etag } = await this.#options.s3Client.uploadPart({
+          key,
+          uploadId,
+          data: this.#data.slice(chunk.start, chunk.end),
+          partNumber: chunk.index + 1,
+          onProgress: (bytesUploaded: number) => {
+            this.#chunkState[chunk.index].uploaded = bytesUploaded
+            this.#onProgress()
+          },
+          signal,
+        })
 
-      if (this.#key == null) {
-        throw new Error('Missing S3 object key for uploading part')
-      }
-      const { etag } = await this.#options.s3Client.uploadPart({
-        key: this.#key,
-        uploadId: this.#uploadId!,
-        data: chunkData,
-        partNumber,
-        onProgress: (bytesUploaded: number) => {
-          this.#chunkState[chunkIndex].uploaded = bytesUploaded
-          this.#onProgress()
-        },
-        signal,
-      })
-
-      // after part finished uploading, update chunk state
-      this.#chunkState[i].uploaded = chunk.size
-      this.#chunkState[i].etag = etag
-      this.#onProgress()
-
-      if (this.#options.onPartComplete) {
-        this.#options.onPartComplete({
-          PartNumber: partNumber,
+        this.#chunkState[chunk.index] = { uploaded: chunk.size, etag }
+        this.#onProgress()
+        this.#options.onPartComplete?.({
+          PartNumber: chunk.index + 1,
           ETag: etag,
         })
-      }
+      })
     }
 
     const parts = this.#chunkState.flatMap((state, i) =>
       state.etag ? [{ partNumber: i + 1, etag: state.etag }] : [],
     )
 
-    if (this.#key == null) {
-      throw new Error('Missing S3 object key for completing multipart upload')
-    }
-
-    const { location, key } =
-      await this.#options.s3Client.completeMultipartUpload({
-        key: this.#key,
-        uploadId: this.#uploadId!,
+    const { location, key: completedKey } = await this.#queued(signal, () =>
+      this.#options.s3Client.completeMultipartUpload({
+        key,
+        uploadId,
         parts,
         signal,
-      })
+      }),
+    )
 
     this.#onSuccess({
       location,
-      key,
-      uploadId: this.#uploadId,
+      key: completedKey,
+      uploadId,
     })
   }
 
