@@ -261,6 +261,10 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const existingParts = await this.#queued(signal, () =>
       this.#options.s3Client.listParts({ uploadId, key, signal }),
     )
+    // Drop progress reported by the aborted attempt; those parts restart.
+    for (const state of this.#chunkState) {
+      if (!state.etag) state.uploaded = 0
+    }
     // Sync local state with S3 - mark already-uploaded parts
     for (const part of existingParts) {
       const chunkIndex = part.partNumber - 1
