@@ -53,8 +53,8 @@ export type PresignedResponse = {
    * Headers the URL was signed with (`X-Amz-SignedHeaders`), e.g.
    * `Content-Disposition`. Sent on the request; a `Content-Type` here
    * replaces the built-in one. Each must also be in the bucket's CORS
-   * `AllowedHeaders`. Browsers silently drop forbidden request headers
-   * (`Host`, `Content-Length`, `Date`), so do not sign those.
+   * `AllowedHeaders`. Do not include browser-forbidden headers such as `Host`,
+   * `Content-Length`, or `Date` in this object; JavaScript cannot set them.
    */
   headers?: Record<string, string>
 }
