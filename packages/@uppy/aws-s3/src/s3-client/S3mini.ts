@@ -307,7 +307,7 @@ class S3mini extends S3Client {
     }
 
     try {
-      const { url, key: signedKey } = await this.signRequest(request)
+      const { url, key: signedKey, headers } = await this.signRequest(request)
 
       const xhr = await this.xhr({
         url,
@@ -316,6 +316,7 @@ class S3mini extends S3Client {
         onProgress,
         signal,
         contentType,
+        headers,
       })
 
       return { xhr, url, signedKey: signedKey || request.key }
