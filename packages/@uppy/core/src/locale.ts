@@ -44,6 +44,8 @@ export default {
     logIn: 'Log in',
     pickFiles: 'Pick files',
     pickPhotos: 'Pick photos',
+    emptyOrInaccessibleFolder:
+      "This folder is empty, or it contains files this app doesn't have permission to access.",
     filter: 'Filter',
     resetFilter: 'Reset filter',
     loading: 'Loading...',
