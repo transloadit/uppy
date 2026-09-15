@@ -2,7 +2,7 @@ import qs from 'node:querystring'
 import { URL } from 'node:url'
 import type { Request, Response } from 'express'
 import * as oAuthState from '../helpers/oauth-state.js'
-import { hasMatch } from '../helpers/utils.js'
+import { hasHostMatch } from '../helpers/utils.js'
 
 export default function oauthRedirect(req: Request, res: Response): void {
   const secret = req.companion.options.secret
@@ -47,7 +47,7 @@ export default function oauthRedirect(req: Request, res: Response): void {
   }
 
   if (
-    hasMatch(handlerHostName, req.companion.options.server.validHosts ?? [])
+    hasHostMatch(handlerHostName, req.companion.options.server.validHosts ?? [])
   ) {
     const url = `${handler}/connect/${oauthProvider}/callback?${params}`
     res.redirect(url)

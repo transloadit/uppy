@@ -123,13 +123,55 @@ type StandaloneCompanionOptions = Pick<
 }
 
 /**
+ * Tells an allowlist entry that is a regular expression from one that is a
+ * literal URL or hostname. Standalone config is strings all the way down --
+ * env vars and JSON -- so a marker is the only way to express a pattern
+ * without configuring Companion programmatically, and `^` is the marker
+ * because neither a URL nor a hostname can start with one, and a pattern that
+ * is not anchored there matches values that merely *contain* it, which is the
+ * bypass this whole change is about
+ * (https://github.com/transloadit/uppy/issues/6480).
+ */
+const isPattern = (value: string): boolean => value.startsWith('^')
+
+/** Resolves an entry starting with `^` to a RegExp, tested as written. */
+const parseAllowlistEntry = (entry: string): string | RegExp => {
+  if (!isPattern(entry)) return entry
+  try {
+    return new RegExp(entry)
+  } catch (cause) {
+    throw new Error(
+      `Invalid regular expression in allowlist entry "${entry}"`,
+      {
+        cause,
+      },
+    )
+  }
+}
+
+/**
+ * Splits a comma-separated allowlist. A value that is itself a pattern is not
+ * split, so that a `{n,m}` quantifier survives.
+ */
+export const parseAllowlist = (value: string): (string | RegExp)[] =>
+  (isPattern(value) ? [value] : value.split(',')).map(parseAllowlistEntry)
+
+/** Resolves the pattern entries in an allowlist read from the JSON config file. */
+const parseAllowlistArray = (value: unknown): unknown =>
+  Array.isArray(value)
+    ? value.map((entry) =>
+        typeof entry === 'string' ? parseAllowlistEntry(entry) : entry,
+      )
+    : value
+
+/**
  * Loads the config from environment variables.
  */
 const getConfigFromEnv = (): StandaloneCompanionOptions => {
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
     process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
-  const validHosts = domains ? domains.split(',') : []
+  const validHosts = domains ? parseAllowlist(domains) : []
 
   return {
     providerOptions: {
@@ -225,7 +267,7 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       return undefined
     })(),
     sendSelfEndpoint: process.env['COMPANION_SELF_ENDPOINT'],
-    uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
+    uploadUrls: uploadUrls ? parseAllowlist(uploadUrls) : null,
     secret: getSecret('COMPANION_SECRET'),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
     allowLocalUrls: process.env['COMPANION_ALLOW_LOCAL_URLS'] === 'true',
@@ -286,7 +328,14 @@ const getConfigFromFile = () => {
   if (!path) return {}
 
   const rawdata = fs.readFileSync(path)
-  return JSON.parse(rawdata.toString('utf8'))
+  const config = JSON.parse(rawdata.toString('utf8'))
+
+  // JSON cannot hold a RegExp either, so patterns are resolved here too.
+  config.uploadUrls = parseAllowlistArray(config.uploadUrls)
+  if (config.server?.validHosts != null) {
+    config.server.validHosts = parseAllowlistArray(config.server.validHosts)
+  }
+  return config
 }
 
 export const getCompanionOptions = (
