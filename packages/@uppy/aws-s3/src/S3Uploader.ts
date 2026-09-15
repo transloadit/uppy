@@ -322,42 +322,47 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       throw new Error('Missing S3 object key or uploadId for uploading parts')
     }
 
-    for (const chunk of this.#chunks) {
-      if (this.#chunkState[chunk.index].etag) continue // already uploaded
-      await this.#queued(signal, async () => {
-        const { etag } = await this.#options.s3Client.uploadPart({
-          key,
-          uploadId,
-          data: this.#data.slice(chunk.start, chunk.end),
-          partNumber: chunk.index + 1,
-          onProgress: (bytesUploaded: number) => {
-            this.#chunkState[chunk.index].uploaded = bytesUploaded
-            this.#onProgress()
-          },
-          signal,
-        })
+    await Promise.all(
+      this.#chunks
+        .filter((chunk) => !this.#chunkState[chunk.index].etag)
+        .map((chunk) =>
+          this.#queued(signal, async () => {
+            const { etag } = await this.#options.s3Client.uploadPart({
+              key,
+              uploadId,
+              // Sliced here, not up front, so only admitted parts exist.
+              data: this.#data.slice(chunk.start, chunk.end),
+              partNumber: chunk.index + 1,
+              onProgress: (bytesUploaded: number) => {
+                this.#chunkState[chunk.index].uploaded = bytesUploaded
+                this.#onProgress()
+              },
+              signal,
+            })
 
-        this.#chunkState[chunk.index] = { uploaded: chunk.size, etag }
-        this.#onProgress()
-        this.#options.onPartComplete?.({
-          PartNumber: chunk.index + 1,
-          ETag: etag,
-        })
-      })
-    }
+            this.#chunkState[chunk.index] = { uploaded: chunk.size, etag }
+            this.#onProgress()
+            this.#options.onPartComplete?.({
+              PartNumber: chunk.index + 1,
+              ETag: etag,
+            })
+          }),
+        ),
+    )
 
     const parts = this.#chunkState.flatMap((state, i) =>
       state.etag ? [{ partNumber: i + 1, etag: state.etag }] : [],
     )
 
-    const { location, key: completedKey } = await this.#queued(signal, () =>
-      this.#options.s3Client.completeMultipartUpload({
+    // Not queued: it is a tiny request, and queueing it would park this file's
+    // success behind every part other files enqueued in the meantime.
+    const { location, key: completedKey } =
+      await this.#options.s3Client.completeMultipartUpload({
         key,
         uploadId,
         parts,
         signal,
-      }),
-    )
+      })
 
     this.#onSuccess({
       location,

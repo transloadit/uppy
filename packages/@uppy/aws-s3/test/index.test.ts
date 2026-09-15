@@ -557,6 +557,69 @@ describe('AwsS3', () => {
   })
 
   describe('concurrency', { timeout: 15_000 }, () => {
+    test('uploads parts in parallel, bounded by limit', async ({ worker }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers()
+
+      const held: (() => void)[] = []
+      let inFlight = 0
+      let peak = 0
+      let completedParts: number[] = []
+      worker.use(
+        // Records the part list sent to CompleteMultipartUpload, then falls
+        // through to the handler installed above.
+        http.post(s3Url, async ({ request }) => {
+          if (!new URL(request.url).searchParams.has('uploadId')) return
+          const body = await request.clone().text()
+          completedParts = [
+            ...body.matchAll(/<PartNumber>(\d+)<\/PartNumber>/g),
+          ].map((m) => Number(m[1]))
+        }),
+        // Holds the first `limit` parts; later parts pass straight through.
+        http.put(s3Url, async () => {
+          inFlight += 1
+          peak = Math.max(peak, inFlight)
+          try {
+            if (held.length < 2) {
+              await new Promise<void>((resolve) => held.push(resolve))
+            }
+            return new HttpResponse('', {
+              status: 200,
+              headers: { ETag: '"etag-1"' },
+            })
+          } finally {
+            inFlight -= 1
+          }
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+        limit: 2,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        // Parts are at least 5 MB: three parts, two in flight, one waiting.
+        data: new File([new Uint8Array(11 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+      await vi.waitFor(() => expect(held).toHaveLength(2), { timeout: 10_000 })
+      // Reverse so parts finish out of order.
+      for (const release of held.reverse()) release()
+      const result = await uploadPromise
+
+      expect(result?.successful).toHaveLength(1)
+      expect(peak).toBe(2)
+      // The completion list must be ascending whatever the finish order.
+      expect(completedParts).toEqual([1, 2, 3])
+    })
+
     test('a hung signer does not pin a queue slot after cancel', async ({
       worker,
     }) => {
