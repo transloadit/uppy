@@ -1,17 +1,17 @@
-const { mkdtempSync } = require('node:fs')
-const os = require('node:os')
-const path = require('node:path')
+import { mkdtempSync } from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { styleText } from 'node:util'
+import * as companion from '@uppy/companion'
+import bodyParser from 'body-parser'
+import type { Request, Response } from 'express'
+import express from 'express'
+import session from 'express-session'
+import MyCustomProvider from './CustomProvider.ts'
 
-require('dotenv').config({
-  path: path.join(__dirname, '..', '..', '..', '.env'),
-})
-const express = require('express')
 // the ../../../packages is just to use the local version
 // instead of the npm version—in a real app use `require('@uppy/companion')`
-const bodyParser = require('body-parser')
-const session = require('express-session')
-const uppy = require('@uppy/companion')
-const MyCustomProvider = require('./CustomProvider.js')
+process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '..', '.env'))
 
 const app = express()
 
@@ -35,7 +35,7 @@ const AUTHORIZE_URL = 'https://unsplash.com/oauth/authorize'
 const ACCESS_URL = 'https://unsplash.com/oauth/token'
 
 // initialize uppy
-const uppyOptions = {
+const companionOptions: companion.CompanionInitOptions = {
   providerOptions: {
     drive: {
       key: process.env.COMPANION_GOOGLE_KEY,
@@ -45,6 +45,7 @@ const uppyOptions = {
   customProviders: {
     myunsplash: {
       config: {
+        // @ts-expect-error TODO solve this type error.
         // your oauth handlers
         authorize_url: AUTHORIZE_URL,
         access_url: ACCESS_URL,
@@ -52,6 +53,7 @@ const uppyOptions = {
         key: process.env.COMPANION_UNSPLASH_KEY,
         secret: process.env.COMPANION_UNSPLASH_SECRET,
       },
+      // @ts-expect-error TODO solve this type error.
       // you provider class/module:
       module: MyCustomProvider,
     },
@@ -65,7 +67,7 @@ const uppyOptions = {
   debug: true,
 }
 
-app.use(uppy.app(uppyOptions).app)
+app.use(companion.app(companionOptions).app)
 
 // handle 404
 app.use((req, res) => {
@@ -73,12 +75,12 @@ app.use((req, res) => {
 })
 
 // handle server errors
-app.use((err, req, res) => {
-  console.error('\x1b[31m', err.stack, '\x1b[0m')
+app.use((err: Error, req: Request, res: Response) => {
+  console.error(styleText('red', String(err.stack)))
   res.status(500).json({ message: err.message, error: err })
 })
 
-uppy.socket(app.listen(3020), uppyOptions)
+companion.socket(app.listen(3020), companionOptions)
 
 console.log('Welcome to Companion!')
 console.log(`Listening on http://0.0.0.0:${3020}`)

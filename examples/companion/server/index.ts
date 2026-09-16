@@ -1,7 +1,10 @@
-const express = require('express')
-const bodyParser = require('body-parser')
-const session = require('express-session')
-const companion = require('@uppy/companion')
+import { styleText } from 'node:util'
+import type { CompanionInitOptions } from '@uppy/companion'
+import companion from '@uppy/companion'
+import bodyParser from 'body-parser'
+import type { Request, Response } from 'express'
+import express from 'express'
+import session from 'express-session'
 
 const app = express()
 
@@ -26,7 +29,7 @@ app.get('/', (req, res) => {
 })
 
 // initialize uppy
-const companionOptions = {
+const companionOptions: CompanionInitOptions = {
   providerOptions: {
     drive: {
       key: 'your google key',
@@ -43,8 +46,6 @@ const companionOptions = {
     s3: {
       key: 'your s3 key',
       secret: 'your s3 secret',
-      bucket: 'your s3 bucket',
-      region: 'your s3 region',
     },
   },
   corsOrigins: ['*'], // Note: this is not safe for production
@@ -54,7 +55,6 @@ const companionOptions = {
   },
   filePath: './output',
   secret: 'some-secret',
-  debug: true,
 }
 
 const { app: companionApp } = companion.app(companionOptions)
@@ -66,8 +66,8 @@ app.use((req, res) => {
 })
 
 // handle server errors
-app.use((err, req, res) => {
-  console.error('\x1b[31m', err.stack, '\x1b[0m')
+app.use((err: Error, req: Request, res: Response) => {
+  console.error(styleText('red', String(err.stack)))
   res.status(500).json({ message: err.message, error: err })
 })
 
