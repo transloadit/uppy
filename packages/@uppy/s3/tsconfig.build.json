@@ -1,14 +1,20 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src"
+    "exactOptionalPropertyTypes": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "noImplicitOverride": false,
+    "noUncheckedIndexedAccess": false,
+    "strict": true,
+    "useUnknownInCatchVariables": false
   },
-  "include": ["./src/**/*.*"],
-  "exclude": ["./src/**/*.test.ts"],
   "references": [
     {
       "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../dashboard/tsconfig.build.json"
     }
   ]
 }

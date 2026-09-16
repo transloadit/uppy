@@ -43,11 +43,12 @@
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
-    "@vitest/browser-playwright": "^4.1.6",
+    "@uppy-dev/tsconfig": "workspace:^",
+    "@vitest/browser-playwright": "^4.1.11",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
     "vite": "^8.2.2",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.11"
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",

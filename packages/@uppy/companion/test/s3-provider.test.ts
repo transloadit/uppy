@@ -13,8 +13,8 @@ import { describe, expect, test, vi } from 'vitest'
 import {
   ProviderAuthError,
   ProviderUserError,
-} from '../src/server/provider/error.js'
-import S3Provider from '../src/server/provider/s3/index.js'
+} from '../dist/server/provider/error.js'
+import S3Provider from '../dist/server/provider/s3/index.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
   const provider = new S3Provider({ allowLocalUrls: false })

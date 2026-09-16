@@ -1,13 +1,14 @@
 {
-  "extends": "../../../tsconfig.shared",
+  "extends": "@uppy-dev/tsconfig",
   "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "strict": true,
+    "useUnknownInCatchVariables": false
   },
-  "include": ["./package.json", "./src/**/*.*"],
   "references": [
     {
-      "path": "../core/tsconfig.build.json"
+      "path": "./tsconfig.build.json"
     }
   ]
 }

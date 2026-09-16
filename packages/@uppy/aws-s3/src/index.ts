@@ -402,3 +402,18 @@ export interface AwsBody extends Body {
   location: string
   key: string
 }
+
+/** Persisted S3 multipart state for Golden Retriever resume support */
+interface S3MultipartState {
+  uploadId: string
+  key: string
+}
+
+declare module '@uppy/core/utils' {
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
+}

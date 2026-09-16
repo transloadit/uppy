@@ -22,5 +22,5 @@ commands:
 ```sh
 corepack yarn install
 corepack yarn build
-corepack yarn workspace @uppy-example/custom-provider start
+corepack yarn workspace example-companion-custom-provider start
 ```

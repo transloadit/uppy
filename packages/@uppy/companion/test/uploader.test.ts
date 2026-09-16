@@ -14,11 +14,11 @@ import {
   test,
   vi,
 } from 'vitest'
-import { defaultOptions } from '../src/config/companion.js'
-import Emitter from '../src/server/emitter/index.js'
-import { isRecord } from '../src/server/helpers/type-guards.js'
-import Uploader, { ValidationError } from '../src/server/Uploader.js'
-import standalone from '../src/standalone/index.js'
+import { defaultOptions } from '../dist/config/companion.js'
+import Emitter from '../dist/server/emitter/index.js'
+import { isRecord } from '../dist/server/helpers/type-guards.js'
+import Uploader, { ValidationError } from '../dist/server/Uploader.js'
+import standalone from '../dist/standalone/index.js'
 import * as socketClient from './mocksocket.js'
 
 vi.mock('tus-js-client')
