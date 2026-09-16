@@ -60,11 +60,12 @@ export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
   allowedMetaFields?: string[] | boolean
 
   /**
-   * Maximum number of concurrent uploads to S3. Single-part uploads and the
+   * Maximum number of concurrent requests to S3. Single-part uploads and the
    * parts of a multipart upload share this pool, so one large file uses up to
-   * `limit` connections. A remote (Companion) upload takes one slot for its
-   * whole duration. The small requests that create, complete, or abort a
-   * multipart upload are not counted. `0` means unlimited.
+   * `limit` connections. Creating a multipart upload and listing its parts on
+   * resume take a slot too; completing or aborting one does not. A remote
+   * (Companion) upload takes one slot for its whole duration. `0` means
+   * unlimited.
    *
    * Default: 6 — chosen to match the browser's HTTP/1.1 per-origin connection
    * limit. Most browsers allow 6 concurrent connections per host, so this
