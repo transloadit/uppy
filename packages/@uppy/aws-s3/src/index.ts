@@ -258,6 +258,9 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   // --------------------------------------------------------------------------
 
   async #uploadLocalFile(file: LocalUppyFile<M, B>): Promise<void> {
+    // An upload-start listener may have removed the file just now.
+    if (!this.uppy.getFile(file.id)) return
+
     try {
       return await new Promise((resolve, reject) => {
         // Create uploader (events are wired internally).

@@ -525,6 +525,31 @@ describe('AwsS3', () => {
       expect(result?.successful).toHaveLength(0)
     })
 
+    test('skips a file removed by an upload-start listener', async ({
+      worker,
+    }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+      core.on('upload-start', () => core.removeFile(fileId))
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(0)
+      expect(signRequest).not.toHaveBeenCalled()
+    })
+
     test('aborts when cancelAll is called', async () => {
       const signRequest = vi
         .fn()
