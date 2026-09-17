@@ -2,8 +2,14 @@ import Uppy from '@uppy/core'
 import Transloadit from '@uppy/transloadit'
 import { describe, expect, it } from 'vitest'
 import TransloaditStorage from '../lib/index.js'
+import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
 
 const STORING = 'Storing…'
+
+const signAssembly = async (params: StoreAssemblyParameters) => ({
+  params,
+  signature: 'test-signature',
+})
 
 /**
  * Install both plugins the way `storeUploads` is meant to be used, optionally
@@ -26,7 +32,7 @@ function install({
   uppy.use(TransloaditStorage, {
     workspace: 'workspace',
     companionUrl: 'http://localhost:3020',
-    storeUploads: { template_id: 'template' },
+    storeUploads: { signAssembly },
   })
   return uppy.getPlugin('Transloadit')!
 }
