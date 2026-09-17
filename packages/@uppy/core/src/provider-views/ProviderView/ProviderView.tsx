@@ -354,8 +354,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
       await run()
       if (refresh !== false) await this.refreshCurrentFolder()
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
-      this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
+      const raw = err instanceof Error ? err.message : String(err)
+      this.plugin.uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
+      // Companion reports user-facing failures as locale keys; an error a
+      // plugin threw itself already carries a translated message.
+      const message =
+        (err as { name?: string } | undefined)?.name === 'UserFacingApiError'
+          ? this.plugin.uppy.i18n(raw)
+          : raw
       this.plugin.uppy.info(message, 'error', 5000)
     }
   }
