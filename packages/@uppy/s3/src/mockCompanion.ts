@@ -84,7 +84,11 @@ export type MockS3CompanionOptions = {
   folders?: Record<string, MockS3Entry[]>
   /** Token handed out by simple-auth; requests must send it back. */
   token?: string
-  /** Bucket name reported as the "username" of the listing. */
+  /**
+   * Bucket the mock serves, reported as the "username" of the listing. Like a
+   * real Companion, it comes from this configuration or from a grant — never
+   * from the client.
+   */
   bucket?: string
 }
 
@@ -122,7 +126,12 @@ const json = (body: unknown, status = 200): MockS3Response => ({
   status,
   body,
 })
-const userError = (message: string): MockS3Response => json({ message }, 400)
+/**
+ * Companion reports user-facing failures as locale keys (`@uppy/core`'s
+ * `s3*` strings), never as English sentences.
+ */
+const userError = (localeKey: string): MockS3Response =>
+  json({ message: localeKey }, 400)
 
 export function createMockS3Companion(
   options: MockS3CompanionOptions = {},
@@ -134,7 +143,8 @@ export function createMockS3Companion(
     ]),
   )
   const token = options.token ?? 'mock-auth-token'
-  let bucket = options.bucket ?? 'my-bucket'
+  const configuredBucket = options.bucket ?? 'my-bucket'
+  let bucket = configuredBucket
   let session: MockS3GrantClaims | null = null
   const calls: MockS3Call[] = []
   const nowSeconds = () => Math.floor(Date.now() / 1000)
@@ -197,20 +207,19 @@ export function createMockS3Companion(
     if (method === 'OPTIONS') return { status: 204, body: null }
 
     if (method === 'POST' && path.endsWith('/s3/simple-auth')) {
-      const form = (
-        body as { form?: { bucket?: string; grant?: string } } | null
-      )?.form
+      // The client sends `{}` or `{ grant }`; the bucket is never its call.
+      const form = (body as { form?: { grant?: string } } | null)?.form
       if (typeof form?.grant === 'string') {
         const claims = decodeMockGrant(form.grant)
-        if (!claims) return userError('Invalid storage grant')
+        if (!claims) return userError('s3InvalidGrant')
         if (claims.exp !== undefined && claims.exp <= nowSeconds()) {
           return json({ message: 'Unauthorized' }, 401)
         }
         session = claims
         bucket = claims.bucket
-      } else if (typeof form?.bucket === 'string' && form.bucket.length > 0) {
+      } else {
         session = null
-        bucket = form.bucket.replace(/^s3:\/\//, '').split('/')[0] ?? bucket
+        bucket = configuredBucket
       }
       return json({ uppyAuthToken: token })
     }
@@ -222,14 +231,14 @@ export function createMockS3Companion(
       return json({ message: 'unauthorized' }, 401)
     }
     if (session && !session.scopes?.includes('read')) {
-      return userError('Your session does not allow browsing this storage')
+      return userError('s3InvalidGrant')
     }
     if (
       path.includes('/s3/mutate/') &&
       session &&
       !session.scopes?.includes('write')
     ) {
-      return userError('Your session is read-only')
+      return userError('s3ReadOnlySession')
     }
 
     if (method === 'GET' && path.includes('/s3/list')) {
@@ -246,12 +255,12 @@ export function createMockS3Companion(
           ?.trim()
           .replace(/^\/+|\/+$/g, '') ?? ''
       if (name.length === 0 || name.includes('/')) {
-        return userError('Invalid folder name')
+        return userError('s3InvalidName')
       }
       const parentId = str(body, 'parentId')
       const prefix = parentId ? decodeURIComponent(parentId) : ''
       const key = `${prefix}${name}/`
-      if (has(key)) return userError(`A folder named "${name}" already exists`)
+      if (has(key)) return userError('s3AlreadyExists')
       folders.set(prefix, [...entriesOf(prefix), { name, isFolder: true }])
       folders.set(key, [])
       const id = encodeURIComponent(key)
@@ -259,57 +268,56 @@ export function createMockS3Companion(
     }
     if (method === 'POST' && path.endsWith('/s3/mutate/delete')) {
       const id = str(body, 'id')
-      if (!id) return userError('Missing id')
+      if (!id) return userError('s3RequestFailed')
       const key = decodeURIComponent(id)
       if (key.endsWith('/') && entriesOf(key).length > 0) {
-        return userError('The folder is not empty')
+        return userError('s3FolderNotEmpty')
       }
+      // Deleting a folder marker that is not there is a no-op success.
       remove(key)
       return json({ ok: true })
     }
     if (method === 'POST' && path.endsWith('/s3/mutate/move')) {
       const id = str(body, 'id')
       const destination = str(body, 'destination')
-      if (!id || !destination) return userError('Missing id or destination')
+      if (!id || !destination) return userError('s3RequestFailed')
       const key = decodeURIComponent(id)
-      const isFolder = key.endsWith('/')
-      if (!isFolder && destination.endsWith('/')) {
-        return userError('The destination of a file must be a file path')
-      }
-      const target =
-        isFolder && !destination.endsWith('/') ? `${destination}/` : destination
-      if (target !== key) {
-        if (isFolder && target.startsWith(key)) {
-          return userError('A folder cannot be moved into itself')
-        }
-        if (has(target)) return userError(`"${target}" already exists`)
-        const from = splitKey(key)
-        const to = splitKey(target)
-        const entry = entriesOf(from.prefix).find(
-          (candidate) => candidate.name === from.name,
+      // One file at a time: a folder is a key prefix, and walking it is the
+      // client's job (`moveFolder` in `@uppy/s3`).
+      if (key.endsWith('/') || destination.endsWith('/')) {
+        return userError(
+          key.endsWith('/')
+            ? 's3FolderMoveNotSupported'
+            : 's3DestinationMustBeFile',
         )
-        if (!entry) return json({ message: 'Not found' }, 404)
+      }
+      if (destination !== key) {
+        const from = splitKey(key)
+        const to = splitKey(destination)
+        const entry = entriesOf(from.prefix).find(
+          (candidate) => candidate.name === from.name && !candidate.isFolder,
+        )
+        if (!entry) return userError('s3NotFound')
+        const existing = entriesOf(to.prefix).find(
+          (candidate) => candidate.name === to.name,
+        )
+        // Idempotent: the same file already sitting at the destination means an
+        // earlier attempt got through, so only the source is left to clean up.
+        if (existing && (existing.isFolder || existing.size !== entry.size)) {
+          return userError('s3AlreadyExists')
+        }
         folders.set(
           from.prefix,
           entriesOf(from.prefix).filter((c) => c.name !== from.name),
         )
-        folders.set(to.prefix, [
-          ...entriesOf(to.prefix),
-          { ...entry, name: to.name },
-        ])
-        if (isFolder) {
-          for (const folder of [...folders.keys()]) {
-            if (folder.startsWith(key)) {
-              folders.set(
-                `${target}${folder.slice(key.length)}`,
-                folders.get(folder) ?? [],
-              )
-              folders.delete(folder)
-            }
-          }
+        if (!existing) {
+          folders.set(to.prefix, [
+            ...entriesOf(to.prefix),
+            { ...entry, name: to.name },
+          ])
         }
       }
-      const newId = encodeURIComponent(target)
+      const newId = encodeURIComponent(destination)
       return json({ id: newId, requestPath: newId })
     }
     return json({ message: 'unhandled mock route' }, 500)

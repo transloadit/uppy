@@ -82,14 +82,16 @@ export default {
     // Errors from Companion's S3 provider, which reports them as locale keys.
     s3AlreadyExists: 'A file or folder with that name already exists',
     s3DestinationMustBeFile: 'The destination of a file must be a file path',
-    s3FileTooLargeToMove: 'Files larger than 5 GB cannot be moved or renamed here',
+    s3FileTooLargeToMove:
+      'Files larger than 5 GB cannot be moved or renamed here',
     s3FolderMoveNotSupported: 'Folders have to be moved item by item',
     s3FolderNotEmpty: 'The folder is not empty',
     s3InvalidGrant: 'Your access to this storage could not be verified',
     s3InvalidName: 'That name is not allowed',
     s3NotConfigured: 'This storage is not available',
     s3NotFound: 'The file or folder no longer exists',
-    s3OutsideAllowedFolder: 'That path is outside the folder you have access to',
+    s3OutsideAllowedFolder:
+      'That path is outside the folder you have access to',
     s3ReadOnlySession: 'Your session is read-only',
     s3RequestFailed: 'The storage request failed',
   },

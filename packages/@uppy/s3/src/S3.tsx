@@ -19,16 +19,15 @@ import {
   type ProviderBulkAction,
   type ProviderToolbarAction,
   ProviderViews,
-  SearchView,
 } from '@uppy/core/provider-views'
 import type { I18n, LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
-import { useCallback, useState } from '@uppy/core/utils/preact/hooks'
 // Load Dashboard's event augmentation without adding a runtime dependency.
 import type {} from '@uppy/dashboard'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
+import moveFolder from './moveFolder.js'
 import StorageIcon from './StorageIcon.js'
 
 /** Unverified claims of a storage grant (the client only needs to *read* them). */
@@ -73,7 +72,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       ? authFormData
       : this.getGrant
         ? { grant: await this.getGrant() }
-        : authFormData
+        : {}
     await this.loginSimpleAuth({ uppyVersions, authFormData: form, signal })
     this.#hasSession = true
     await this.onSimpleAuth?.(form)
@@ -131,16 +130,17 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   }
 }
 
-const isFormWithCredentials = (
-  data: unknown,
-): data is { bucket?: string; grant?: string } =>
+const isFormWithCredentials = (data: unknown): data is { grant: string } =>
   typeof data === 'object' &&
   data !== null &&
-  (typeof (data as { bucket?: unknown }).bucket === 'string' ||
-    typeof (data as { grant?: unknown }).grant === 'string')
+  typeof (data as { grant?: unknown }).grant === 'string'
 
-/** Shown while a server-issued grant connects; a button remains for retries. */
-const GrantAuthForm = ({
+/**
+ * The connect screen: Companion decides which bucket the session sees (its own
+ * configuration, or the grant), so there is nothing to type — one button, which
+ * also remains as a retry while auto-connect runs.
+ */
+const ConnectAuthForm = ({
   i18n,
   onAuth,
 }: {
@@ -158,33 +158,6 @@ const GrantAuthForm = ({
   </div>
 )
 
-const AuthForm = ({
-  i18n,
-  onAuth,
-  defaultBucket,
-}: {
-  i18n: I18n
-  onAuth: (arg: { bucket: string }) => void
-  defaultBucket?: string | undefined
-}) => {
-  const [bucket, setBucket] = useState(defaultBucket ?? '')
-
-  const onSubmit = useCallback(() => {
-    onAuth({ bucket: bucket.trim() })
-  }, [onAuth, bucket])
-
-  return (
-    <SearchView
-      value={bucket}
-      onChange={setBucket}
-      onSubmit={onSubmit}
-      inputLabel={i18n('pluginS3InputLabel')}
-    >
-      {i18n('authenticate')}
-    </SearchView>
-  )
-}
-
 export type S3Options = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>
   /**
@@ -197,8 +170,8 @@ export type S3Options = CompanionPluginOptions & {
   /** Extra toolbar actions, appended to the built-in ones. */
   toolbarActions?: ProviderToolbarAction<any, any>[]
   /**
-   * When a `bucket` is configured, connect without showing the auth form.
-   * Default: true.
+   * Connect without showing the connect screen whenever no Companion session
+   * is stored yet. Default: true.
    */
   autoConnect?: boolean
   /**
@@ -207,12 +180,6 @@ export type S3Options = CompanionPluginOptions & {
    * management UIs that return to the same folder after an upload. Default: false.
    */
   keepStateOnClose?: boolean
-  /**
-   * Pre-fill the bucket (optionally with `/prefix`) so users only have to click
-   * "Connect". Development / single-tenant use; Companions configured with a
-   * grant secret refuse it.
-   */
-  bucket?: string
   /**
    * Fetch a server-issued storage grant (a short-lived JWT your backend mints
    * after authenticating the user, scoped to a bucket, prefix and
@@ -292,11 +259,8 @@ export default class S3<M extends Meta, B extends Body>
 
   #autoConnectAttempted = false
 
-  /** False until we know whether the stored Companion session matches `opts.bucket`. */
+  /** False until we know whether a Companion session is stored. */
   #sessionChecked = false
-
-  /** Storage key remembering which bucket the stored Companion session was opened for. */
-  #bucketStorageKey: string
 
   /** Claims of the grant the current session was opened with, if any. */
   #grant: S3GrantClaims | null = null
@@ -310,7 +274,6 @@ export default class S3<M extends Meta, B extends Body>
     this.type = 'acquirer'
     this.files = []
     this.storage = this.opts.storage || tokenStorage
-    this.#bucketStorageKey = `companion-${this.id}-s3-bucket`
 
     this.defaultLocale = locale
     this.i18nInit()
@@ -329,12 +292,8 @@ export default class S3<M extends Meta, B extends Body>
     this.provider.getGrant = this.opts.getGrant
     this.provider.onSimpleAuth = async (authFormData) => {
       if (!isFormWithCredentials(authFormData)) return
-      if (typeof authFormData.grant === 'string') {
-        this.#grant = decodeGrant(authFormData.grant)
-        this.#applyActions()
-      } else if (typeof authFormData.bucket === 'string') {
-        await this.storage.setItem(this.#bucketStorageKey, authFormData.bucket)
-      }
+      this.#grant = decodeGrant(authFormData.grant)
+      this.#applyActions()
     }
 
     this.render = this.render.bind(this)
@@ -434,7 +393,7 @@ export default class S3<M extends Meta, B extends Body>
           let destination = isMove ? value : `${parent}${value}`
           if (isFolder && !destination.endsWith('/')) destination += '/'
           if (destination === key) return undefined
-          await this.provider.moveItem(key, destination)
+          await this.#move(key, destination, isFolder)
           return isMove
             ? this.i18n('itemMoved', { path: destination })
             : this.i18n('itemRenamed', { name: value })
@@ -488,7 +447,7 @@ export default class S3<M extends Meta, B extends Body>
     ]
   }
 
-  /** Whether the current session may change files (bucket sessions always may). */
+  /** Whether the current session may change files (without a grant it always may). */
   get canMutate(): boolean {
     return this.#grant ? this.#grant.scopes.includes('write') : true
   }
@@ -518,9 +477,10 @@ export default class S3<M extends Meta, B extends Body>
           for (const item of items) {
             const key = S3.keyOf(item.id)
             const { name, isFolder } = splitKey(key)
-            await this.provider.moveItem(
+            await this.#move(
               key,
               `${folder}${name}${isFolder ? '/' : ''}`,
+              isFolder,
             )
           }
           return this.i18n('itemsMoved', { smart_count: items.length })
@@ -546,6 +506,29 @@ export default class S3<M extends Meta, B extends Body>
         }),
       },
     ]
+  }
+
+  /**
+   * Moves one item. Companion only moves files: a folder is a key prefix, so
+   * the client walks it and moves its files one by one (see `moveFolder`).
+   */
+  async #move(
+    key: string,
+    destination: string,
+    isFolder: boolean,
+  ): Promise<void> {
+    if (!isFolder) {
+      await this.provider.moveItem(key, destination)
+      return
+    }
+    if (destination.startsWith(key)) {
+      throw new Error(this.i18n('folderMoveIntoItself'))
+    }
+    await moveFolder({
+      provider: this.provider,
+      source: key,
+      target: destination,
+    })
   }
 
   /** (Re)compute the actions: the integrator's switch, and the grant's scopes. */
@@ -581,16 +564,9 @@ export default class S3<M extends Meta, B extends Body>
       // Use the plugin's own i18n (which includes our defaultLocale) rather than
       // the core one that ProviderViews hands us, so the label resolves even
       // when the integrator does not load @uppy/locales.
-      renderAuthForm: ({ onAuth }) =>
-        this.opts.getGrant ? (
-          <GrantAuthForm onAuth={onAuth} i18n={this.i18n} />
-        ) : (
-          <AuthForm
-            onAuth={onAuth}
-            i18n={this.i18n}
-            defaultBucket={this.opts.bucket}
-          />
-        ),
+      renderAuthForm: ({ onAuth }) => (
+        <ConnectAuthForm onAuth={onAuth} i18n={this.i18n} />
+      ),
     })
     this.#applyActions()
 
@@ -626,42 +602,23 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   /**
-   * A Companion session persisted by an earlier visit may belong to a different
-   * bucket than the one configured now (tenant switch, changed prefix). Drop it
-   * before the first listing so auto-connect signs in to the configured bucket
-   * instead of silently showing the old one.
+   * Find out whether a usable Companion session is stored, so auto-connect
+   * knows whether it has to log in before the first listing.
    */
   async #checkStoredSession(): Promise<void> {
-    const { bucket, getGrant } = this.opts
-    if (getGrant) {
-      // Grants are short-lived and scoped to whoever is logged in now: never
-      // reuse a session persisted by an earlier visit.
-      this.#needsLogin = true
-      try {
-        if (await this.storage.getItem(this.provider.tokenKey)) {
-          await this.provider.logout()
-        }
-      } catch (err) {
-        this.#warn('could not drop the stored session', err)
+    const { getGrant } = this.opts
+    try {
+      const token = await this.storage.getItem(this.provider.tokenKey)
+      if (getGrant) {
+        // Grants are short-lived and scoped to whoever is logged in now: never
+        // reuse a session persisted by an earlier visit.
+        this.#needsLogin = true
+        if (token) await this.provider.logout()
+      } else {
+        this.#needsLogin = !token
       }
-    } else if (bucket) {
-      try {
-        const [token, storedBucket] = await Promise.all([
-          this.storage.getItem(this.provider.tokenKey),
-          this.storage.getItem(this.#bucketStorageKey),
-        ])
-        if (token && storedBucket !== bucket) {
-          this.uppy.log(
-            `[S3] stored session is for "${storedBucket ?? 'an unknown bucket'}", reconnecting to "${bucket}"`,
-          )
-          await this.provider.logout()
-          this.#needsLogin = true
-        } else if (!token) {
-          this.#needsLogin = true
-        }
-      } catch (err) {
-        this.#warn('could not check the stored session', err)
-      }
+    } catch (err) {
+      this.#warn('could not check the stored session', err)
     }
     this.#sessionChecked = true
     // Re-render now that the view may proceed.
@@ -675,38 +632,33 @@ export default class S3<M extends Meta, B extends Body>
    * there is no session and how to open one.
    */
   #shouldPreAuthenticate(): boolean {
-    const { bucket, getGrant, autoConnect } = this.opts
     return (
       !this.#autoConnectAttempted &&
-      autoConnect !== false &&
-      this.#needsLogin &&
-      Boolean(bucket || getGrant)
+      this.opts.autoConnect !== false &&
+      this.#needsLogin
     )
   }
 
   #preAuthenticate(): void {
-    const { bucket, getGrant } = this.opts
     this.#autoConnectAttempted = true
     // Mark the probing render as done; handleAuth lists the root itself.
     this.setPluginState({ didFirstRender: true })
     this.view
-      .handleAuth(getGrant ? {} : { bucket })
+      .handleAuth({})
       .catch((err: unknown) => this.#warn('auto-connect failed', err))
   }
 
   /**
-   * Skip the auth form when the integrator already told us how to connect and
-   * a stored session turned out to be invalid after all.
+   * Skip the connect screen when a stored session turned out to be invalid
+   * after all.
    */
   #maybeAutoConnect(): void {
-    const { bucket, getGrant, autoConnect } = this.opts
-    if (this.#autoConnectAttempted || autoConnect === false) return
-    if (!bucket && !getGrant) return
+    if (this.#autoConnectAttempted || this.opts.autoConnect === false) return
     const { authenticated, didFirstRender } = this.getPluginState()
     if (!didFirstRender || authenticated !== false) return
     this.#autoConnectAttempted = true
     this.view
-      .handleAuth(getGrant ? {} : { bucket })
+      .handleAuth({})
       .catch((err: unknown) => this.#warn('auto-connect failed', err))
   }
 

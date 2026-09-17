@@ -31,7 +31,6 @@ function createUppy(options: Partial<S3Options> = {}) {
   document.body.appendChild(target)
   uppy = new Uppy().use(Dashboard, { target, inline: true }).use(S3, {
     companionUrl: COMPANION,
-    bucket: 'my-bucket',
     ...options,
   })
   return uppy
@@ -53,7 +52,7 @@ afterEach(() => {
 })
 
 describe('S3 provider in the browser', () => {
-  it('auto-connects to the configured bucket and lists it', async ({
+  it('auto-connects and lists the bucket Companion serves', async ({
     worker,
   }) => {
     const companion = createMockCompanion()
@@ -62,10 +61,8 @@ describe('S3 provider in the browser', () => {
 
     await openBucket()
     await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
-    expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
-      form: { bucket: 'my-bucket' },
-    })
-    expect(localStorage.getItem('companion-S3-s3-bucket')).toBe('my-bucket')
+    // The client cannot pick a bucket: it just asks for a session.
+    expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({ form: {} })
     const paths = companion.calls.map((call) => call.path)
     const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
     const firstList = paths.findIndex((p) => p.includes('/s3/list'))
@@ -74,23 +71,17 @@ describe('S3 provider in the browser', () => {
     expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
   })
 
-  it('reconnects when the stored session belongs to another bucket', async ({
+  it('reuses a stored session instead of connecting again', async ({
     worker,
   }) => {
-    localStorage.setItem('companion-S3-auth-token', 'stale-token')
-    localStorage.setItem('companion-S3-s3-bucket', 'other-bucket')
+    localStorage.setItem('companion-S3-auth-token', TOKEN)
     const companion = createMockCompanion()
     install(worker, companion)
     createUppy()
 
     await openBucket()
-    expect(companion.calls.some((call) => call.token === 'stale-token')).toBe(
-      false,
-    )
-    expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
-      form: { bucket: 'my-bucket' },
-    })
-    expect(localStorage.getItem('companion-S3-s3-bucket')).toBe('my-bucket')
+    expect(companion.lastCall('/s3/simple-auth')).toBeUndefined()
+    expect(companion.calls.every((call) => call.token === TOKEN)).toBe(true)
   })
 
   it('shows plain chrome when standalone', async ({ worker }) => {
@@ -190,31 +181,74 @@ describe('S3 provider in the browser', () => {
       destination: 'notes.md',
     })
 
-    // Folders can be renamed too; the trailing slash is kept
-    await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
-    await input.fill('archive')
-    await userEvent.keyboard('{Enter}')
-    await expect
-      .element(page.getByText('archive', { exact: true }))
-      .toBeVisible()
-    expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
-      id: 'docs/',
-      destination: 'archive/',
-    })
-
     // A path moves the file
     await page.getByRole('button', { name: 'Actions for notes.md' }).click()
     await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
-    await input.fill('archive/notes.md')
+    await input.fill('docs/notes.md')
     await userEvent.keyboard('{Enter}')
     await expect
       .element(page.getByText('notes.md', { exact: true }))
       .not.toBeInTheDocument()
     expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
       id: 'notes.md',
-      destination: 'archive/notes.md',
+      destination: 'docs/notes.md',
     })
+  })
+
+  it('renames a folder by moving its contents one by one', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+    await openBucket()
+
+    await page.getByRole('button', { name: 'Actions for docs' }).click()
+    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page
+      .getByLabelText('New name, or a full path to move it somewhere else:')
+      .fill('archive')
+    await userEvent.keyboard('{Enter}')
+
+    await expect
+      .element(page.getByText('archive', { exact: true }))
+      .toBeVisible()
+    await expect
+      .element(page.getByText('docs', { exact: true }))
+      .not.toBeInTheDocument()
+    // Companion only ever moved files; the folders were created and deleted.
+    expect(
+      companion.calls
+        .filter((call) => call.path.endsWith('/s3/mutate/move'))
+        .map((call) => call.body),
+    ).toEqual([{ id: 'docs/hello.txt', destination: 'archive/hello.txt' }])
+    expect(companion.folders.get('archive/')).toEqual([
+      { name: 'hello.txt', isFolder: false, size: 12, mimeType: 'text/plain' },
+    ])
+    expect(companion.folders.has('docs/')).toBe(false)
+    await expect
+      .element(page.getByText(/Renamed to "archive"/).first())
+      .toBeVisible()
+  })
+
+  it('refuses to move a folder into itself', async ({ worker }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+    await openBucket()
+
+    await page.getByRole('button', { name: 'Actions for docs' }).click()
+    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page
+      .getByLabelText('New name, or a full path to move it somewhere else:')
+      .fill('docs/inner')
+    await userEvent.keyboard('{Enter}')
+
+    await expect
+      .element(page.getByText('A folder cannot be moved into itself').first())
+      .toBeVisible()
+    expect(companion.lastCall('/s3/mutate/move')).toBeUndefined()
+    expect(companion.lastCall('/s3/mutate/create-folder')).toBeUndefined()
   })
 
   it('deletes files after confirmation and refuses non-empty folders', async ({
@@ -268,7 +302,7 @@ describe('S3 provider in the browser', () => {
       install(worker, companion)
       const grant = mockGrant({ bucket: 'my-bucket' })
       const getGrant = vi.fn(async () => grant)
-      createUppy({ bucket: undefined, getGrant })
+      createUppy({ getGrant })
 
       await openBucket()
       expect(getGrant).toHaveBeenCalledTimes(1)
@@ -301,7 +335,7 @@ describe('S3 provider in the browser', () => {
         .fn<() => Promise<string>>()
         .mockResolvedValueOnce(shortLived)
         .mockResolvedValue(mockGrant({ bucket: 'my-bucket' }))
-      createUppy({ bucket: undefined, getGrant })
+      createUppy({ getGrant })
 
       await openBucket()
       await new Promise((resolve) => setTimeout(resolve, 1_200))
@@ -320,7 +354,6 @@ describe('S3 provider in the browser', () => {
       const companion = createMockCompanion()
       install(worker, companion)
       createUppy({
-        bucket: undefined,
         getGrant: async () =>
           mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       })

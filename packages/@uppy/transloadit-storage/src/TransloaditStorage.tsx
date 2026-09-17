@@ -10,12 +10,13 @@ import {
   type StoreUploadsOptions,
 } from './storeAssemblyOptions.js'
 
-export type TransloaditStorageOptions = Omit<S3Options, 'bucket' | 'locale'> & {
+export type TransloaditStorageOptions = Omit<S3Options, 'locale'> & {
   locale?: LocaleStrings<typeof locale>
   /**
-   * Workspace slug; Transloadit Storage exposes it as the S3 bucket. Used as
-   * the bucket for development Companions that allow bucket auth; with
-   * `getGrant` the grant decides.
+   * Workspace slug, the bucket Transloadit Storage exposes. Which bucket the
+   * session actually sees is Companion's call (its configuration, or the
+   * grant); this is the Workspace the surrounding app signs for, and is
+   * readable as `plugin.opts.workspace`.
    */
   workspace: string
   /** Optional folder prefix to confine browsing to, e.g. `customer-123/`. */
@@ -67,10 +68,6 @@ export default class TransloaditStorage<
       keepStateOnClose: opts.keepStateOnClose ?? true,
       // A standalone library is a manager, not a picker, unless told otherwise.
       mode: opts.mode ?? (opts.standalone ? 'manager' : 'picker'),
-      // With a grant the server decides; the bucket is the development fallback.
-      ...(!opts.getGrant && {
-        bucket: prefix ? `${workspace}/${prefix}` : workspace,
-      }),
       locale: undefined,
     })
     this.opts = {

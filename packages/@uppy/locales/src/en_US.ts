@@ -119,6 +119,7 @@ en_US.strings = {
   },
   folderAlreadyAdded: 'The folder "%{folder}" was already added',
   folderCreated: 'Created folder "%{name}"',
+  folderMoveIntoItself: 'A folder cannot be moved into itself',
   generateImage: 'Generate image',
   generateImagePlaceholder:
     'A serene sunset over a mountain lake, with pine trees reflecting in the water',
@@ -200,8 +201,6 @@ en_US.strings = {
   pluginNameUrl: 'Link',
   pluginNameWebdav: 'WebDAV',
   pluginNameZoom: 'Zoom',
-  pluginS3InputLabel:
-    'Bucket, optionally with a /prefix (e.g. my-bucket/customer-123)',
   pluginWebdavInputLabel:
     'WebDAV URL for a file (e.g. from ownCloud or Nextcloud)',
   poweredBy: 'Powered by %{uppy}',
@@ -233,6 +232,19 @@ en_US.strings = {
   retryUpload: 'Retry upload',
   revert: 'Reset',
   rotate: 'Rotate 90°',
+  s3AlreadyExists: 'A file or folder with that name already exists',
+  s3DestinationMustBeFile: 'The destination of a file must be a file path',
+  s3FileTooLargeToMove:
+    'Files larger than 5 GB cannot be moved or renamed here',
+  s3FolderMoveNotSupported: 'Folders have to be moved item by item',
+  s3FolderNotEmpty: 'The folder is not empty',
+  s3InvalidGrant: 'Your access to this storage could not be verified',
+  s3InvalidName: 'That name is not allowed',
+  s3NotConfigured: 'This storage is not available',
+  s3NotFound: 'The file or folder no longer exists',
+  s3OutsideAllowedFolder: 'That path is outside the folder you have access to',
+  s3ReadOnlySession: 'Your session is read-only',
+  s3RequestFailed: 'The storage request failed',
   save: 'Save',
   saveChanges: 'Save changes',
   search: 'Search',

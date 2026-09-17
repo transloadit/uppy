@@ -304,7 +304,6 @@ export default () => {
       target: Dashboard,
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
-      bucket: import.meta.env.VITE_S3_BROWSE_BUCKET,
     })
   }
 
