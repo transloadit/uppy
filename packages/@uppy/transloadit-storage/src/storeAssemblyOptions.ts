@@ -22,7 +22,7 @@ export type StoreUploadsOptions = {
   signAssembly: (
     params: StoreAssemblyParameters,
   ) => Promise<SignedAssemblyOptions>
-  /** What `/transloadit/store` does when the path exists. Default: `overwrite`. */
+  /** What `/transloadit/store` does when the path exists. Default: `error`. */
   conflictStrategy?: 'overwrite' | 'rename' | 'error'
 }
 
@@ -38,7 +38,7 @@ export function normalizePrefix(prefix: string | undefined): string {
 
 export function buildStoreAssemblyParams(
   folder: string,
-  conflictStrategy: 'overwrite' | 'rename' | 'error' = 'overwrite',
+  conflictStrategy: 'overwrite' | 'rename' | 'error' = 'error',
 ): StoreAssemblyParameters {
   return {
     steps: {
@@ -79,7 +79,7 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
       ? decodeURIComponent(currentFolderId)
       : normalizedPrefix
     return options.signAssembly(
-      buildStoreAssemblyParams(folder, options.conflictStrategy ?? 'overwrite'),
+      buildStoreAssemblyParams(folder, options.conflictStrategy ?? 'error'),
     )
   }
 }
