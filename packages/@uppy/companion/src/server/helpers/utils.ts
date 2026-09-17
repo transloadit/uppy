@@ -1,7 +1,10 @@
 import crypto from 'node:crypto'
 import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
 import type { Request } from 'express'
-import type { GetBucketFn } from '../../schemas/companion.js'
+import type {
+  GetBucketFn,
+  S3ObjectWriteOptions,
+} from '../../schemas/companion.js'
 
 const authTagLength = 16
 const nonceLength = 16
@@ -348,11 +351,7 @@ export function s3WriteParams({
   acl,
   awsSse,
   awsSseKmsKeyId,
-}: {
-  acl?: ObjectCannedACL | undefined
-  awsSse?: ServerSideEncryption | undefined
-  awsSseKmsKeyId?: string | undefined
-}): {
+}: S3ObjectWriteOptions): {
   ACL?: ObjectCannedACL
   ServerSideEncryption?: ServerSideEncryption
   SSEKMSKeyId?: string

@@ -20,14 +20,44 @@ export interface ProviderOptions {
 }
 
 /**
+ * Settings for connecting to an S3-compatible endpoint. Shared by the `s3`
+ * upload block, the S3 provider (`providerOptions.s3`, which falls back to the
+ * upload block field by field) and the S3 client factory, so the three cannot
+ * drift apart.
+ */
+export interface S3ConnectionOptions {
+  key?: string | undefined
+  secret?: string | undefined
+  sessionToken?: string | undefined
+  region?: string | undefined
+  endpoint?: string | undefined
+  forcePathStyle?: boolean | undefined
+  awsClientOptions?:
+    | (S3ClientConfig & {
+        /** @deprecated */
+        accessKeyId?: unknown
+        /** @deprecated */
+        secretAccessKey?: unknown
+      })
+    | undefined
+}
+
+/** Attributes of the objects Companion writes: uploads, copies, folder markers. */
+export interface S3ObjectWriteOptions {
+  acl?: ObjectCannedACL | undefined
+  /** Server-side encryption to request, e.g. `aws:kms`. */
+  awsSse?: ServerSideEncryption | undefined
+  /** KMS key id or ARN to use when `awsSse` is a KMS encryption type. */
+  awsSseKmsKeyId?: string | undefined
+}
+
+/**
  * Options of the S3 *provider* (browsing and managing an S3-compatible bucket
  * from the Dashboard through `@uppy/s3`), configured under
  * `providerOptions.s3` like every other provider. It is separate from the `s3`
  * block, which configures *uploads* to S3: the two features may use different
- * credentials, accounts and buckets. Credentials and connection settings left
- * unset here fall back to the `s3` upload block (`key` and `secret` are
- * inherited from {@link ProviderOptions} and fall back to `s3.key` /
- * `s3.secret` like the rest).
+ * credentials, accounts and buckets. Every connection and object-write setting
+ * left unset here falls back to the same-named field of the `s3` upload block.
  *
  * The provider is disabled until either `bucket` (single-tenant: everyone who
  * can reach Companion browses that bucket, so put Companion behind your own
@@ -36,17 +66,10 @@ export interface ProviderOptions {
  * Restrict what the provider's credentials may do with IAM or a bucket
  * policy; Companion only enforces the per-user prefix carried by grants.
  */
-export interface S3ProviderOptions extends ProviderOptions {
-  /** Falls back to `s3.sessionToken`. */
-  sessionToken?: string | undefined
-  /** Falls back to `s3.region`. */
-  region?: string | undefined
-  /** Falls back to `s3.endpoint`. */
-  endpoint?: string | undefined
-  /** Falls back to `s3.forcePathStyle`. */
-  forcePathStyle?: boolean | undefined
-  /** Falls back to `s3.awsClientOptions`. */
-  awsClientOptions?: S3ClientConfig | undefined
+export interface S3ProviderOptions
+  extends ProviderOptions,
+    S3ConnectionOptions,
+    S3ObjectWriteOptions {
   /**
    * The bucket to browse when grants are not used. Ignored once a grant key
    * is configured: the grant then names the bucket.
@@ -72,12 +95,6 @@ export interface S3ProviderOptions extends ProviderOptions {
    * can verify grants but not mint them.
    */
   grantPublicKey?: string | string[] | undefined
-  /** ACL for objects the provider writes (copies, folder markers). Falls back to `s3.acl`. */
-  acl?: ObjectCannedACL | undefined
-  /** Server-side encryption for objects the provider writes. Falls back to `s3.awsSse`. */
-  awsSse?: ServerSideEncryption | undefined
-  /** KMS key for `awsSse`. Falls back to `s3.awsSseKmsKeyId`. */
-  awsSseKmsKeyId?: string | undefined
 }
 
 type ProviderConstructor = typeof Provider
@@ -132,35 +149,20 @@ export interface CompanionInitOptions {
 
   corsOrigins?: CorsOptions['origin'] | undefined
   periodicPingStaticPayload?: unknown
-  s3?: {
-    /** @deprecated */
-    accessKeyId?: unknown
-    /** @deprecated */
-    secretAccessKey?: unknown
-
-    region?: string | undefined
-    endpoint?: string | undefined
-    bucket?: string | GetBucketFn | undefined
-    key?: string | undefined
-    getKey?: GetKeyFn | undefined
-    secret?: string | undefined
-    sessionToken?: string | undefined
-    conditions?: PresignedPostOptions['Conditions'] | undefined
-    forcePathStyle?: boolean
-    acl?: ObjectCannedACL | undefined
-    /** Server-side encryption to request for uploaded objects, e.g. `aws:kms`. */
-    awsSse?: ServerSideEncryption | undefined
-    /** KMS key id or ARN to use when `awsSse` is a KMS encryption type. */
-    awsSseKmsKeyId?: string | undefined
-    useAccelerateEndpoint?: boolean
-    expires: number
-    awsClientOptions?: S3ClientConfig & {
+  /** Uploads to S3 (`@uppy/aws-s3`). The S3 *provider* is `providerOptions.s3`. */
+  s3?: S3ConnectionOptions &
+    S3ObjectWriteOptions & {
       /** @deprecated */
       accessKeyId?: unknown
       /** @deprecated */
       secretAccessKey?: unknown
+
+      bucket?: string | GetBucketFn | undefined
+      getKey?: GetKeyFn | undefined
+      conditions?: PresignedPostOptions['Conditions'] | undefined
+      useAccelerateEndpoint?: boolean
+      expires: number
     }
-  }
   maxFilenameLength?: number | undefined
   uploadUrls?: (string | RegExp)[] | undefined | null
   cookieDomain?: string | undefined

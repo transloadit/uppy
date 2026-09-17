@@ -13,7 +13,11 @@ import {
   S3ServiceException,
 } from '@aws-sdk/client-s3'
 import { lookup as mimeLookup } from 'mime-types'
-import type { S3ProviderOptions } from '../../../schemas/companion.js'
+import type {
+  S3ConnectionOptions,
+  S3ObjectWriteOptions,
+  S3ProviderOptions,
+} from '../../../schemas/companion.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { s3WriteParams } from '../../helpers/utils.js'
 import logger from '../../logger.js'
@@ -65,16 +69,36 @@ type ResolvedConfig = {
   | { mode: 'bucket'; bucket: string; prefix: string }
 )
 
-/** Settings the provider may override on top of the `s3` upload block. */
-const OVERRIDABLE = [
-  'key',
-  'secret',
-  'sessionToken',
-  'region',
-  'endpoint',
-  'forcePathStyle',
-  'awsClientOptions',
-] as const
+/**
+ * The settings the provider may set on top of the `s3` upload block, as
+ * records so that a field added to the shared option types without being
+ * listed here fails to compile.
+ */
+const CONNECTION_KEYS: Record<keyof S3ConnectionOptions, true> = {
+  key: true,
+  secret: true,
+  sessionToken: true,
+  region: true,
+  endpoint: true,
+  forcePathStyle: true,
+  awsClientOptions: true,
+}
+const WRITE_KEYS: Record<keyof S3ObjectWriteOptions, true> = {
+  acl: true,
+  awsSse: true,
+  awsSseKmsKeyId: true,
+}
+
+/** The listed fields of `source` that are set. */
+const pickDefined = <T extends object, K extends keyof T>(
+  source: T,
+  keys: Record<K, true>,
+): Partial<Pick<T, K>> =>
+  Object.fromEntries(
+    (Object.keys(keys) as K[])
+      .filter((key) => source[key] != null)
+      .map((key) => [key, source[key]]),
+  ) as Partial<Pick<T, K>>
 
 /** `CopyObject` refuses sources above this size; larger objects need a multipart copy. */
 const MAX_COPY_BYTES = 5 * 1024 ** 3
@@ -103,21 +127,16 @@ const resolveConfig = (companion: CompanionLike): ResolvedConfig => {
     )
   }
   // The provider's own settings win; anything unset comes from the upload block.
-  // `Object.fromEntries` cannot keep the key/value pairing in the type.
-  const overrides = Object.fromEntries(
-    OVERRIDABLE.filter((key) => own[key] != null).map((key) => [key, own[key]]),
-  ) as Pick<S3ProviderOptions, (typeof OVERRIDABLE)[number]>
   const s3 = {
     ...upload,
     // Browsing goes to the plain endpoint; transfer acceleration is an upload concern.
     useAccelerateEndpoint: false,
-    ...overrides,
+    ...pickDefined(own, CONNECTION_KEYS),
   }
   const clientOptions = { s3 }
   const writeParams = s3WriteParams({
-    acl: own.acl ?? upload?.acl,
-    awsSse: own.awsSse ?? upload?.awsSse,
-    awsSseKmsKeyId: own.awsSseKmsKeyId ?? upload?.awsSseKmsKeyId,
+    ...upload,
+    ...pickDefined(own, WRITE_KEYS),
   })
   const keys: GrantKeys = {
     secrets: own.grantSecret,

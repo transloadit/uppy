@@ -1,35 +1,20 @@
-import type { S3ClientConfig } from '@aws-sdk/client-s3'
-import { S3Client } from '@aws-sdk/client-s3'
-import type { GetBucketFn } from '../schemas/companion.js'
+import { S3Client, type S3ClientConfig } from '@aws-sdk/client-s3'
+import type { GetBucketFn, S3ConnectionOptions } from '../schemas/companion.js'
 
 /**
- * The `s3` options this module reads. A subset of the `s3` block of Companion's
- * options, so that anything holding these settings (the S3 *provider* merges
- * its own over the upload block's) can build a client without pretending to be
- * a full upload configuration.
+ * The `s3` options this module reads: the shared connection settings plus the
+ * upload-only bits it needs. A subset of the `s3` upload block, so that
+ * anything holding these settings (the S3 *provider* merges its own over the
+ * upload block's) can build a client without pretending to be a full upload
+ * configuration.
  */
-export interface S3ClientOptions {
+export interface S3ClientOptions extends S3ConnectionOptions {
   /** @deprecated Use `key`. Rejected, not read. */
   accessKeyId?: unknown
   /** @deprecated Use `secret`. Rejected, not read. */
   secretAccessKey?: unknown
-
-  endpoint?: string | undefined
-  region?: string | undefined
-  forcePathStyle?: boolean | undefined
   bucket?: string | GetBucketFn | undefined
-  key?: string | undefined
-  secret?: string | undefined
-  sessionToken?: string | undefined
   useAccelerateEndpoint?: boolean | undefined
-  awsClientOptions?:
-    | (S3ClientConfig & {
-        /** @deprecated */
-        accessKeyId?: unknown
-        /** @deprecated */
-        secretAccessKey?: unknown
-      })
-    | undefined
 }
 
 /**
