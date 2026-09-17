@@ -197,7 +197,17 @@ export default class TransloaditStorage<
             storagePluginId: this.id,
           }),
           // Files are stored verbatim, not encoded: label the wait honestly.
-          locale: { strings: { encoding: this.i18n('storing') } },
+          // `setOptions` merges one level deep, so replacing `locale` wholesale
+          // would drop the integrator's own transloadit strings. Merge, and keep
+          // the relabel on top: `storing` on this plugin is the knob for it, and
+          // uppy.setOptions({ locale }) copies a whole pack in here otherwise.
+          locale: {
+            ...transloadit.opts.locale,
+            strings: {
+              ...transloadit.opts.locale?.strings,
+              encoding: this.i18n('storing'),
+            },
+          },
         })
       } else {
         this.uppy.log(
