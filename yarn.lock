@@ -8902,7 +8902,7 @@ __metadata:
     typescript: "npm:^6.0.3"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
-    vitest-browser-svelte: "npm:^3.0.0"
+    vitest-browser-svelte: "npm:^3.1.0"
   languageName: unknown
   linkType: soft
 
@@ -16238,15 +16238,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest-browser-svelte@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "vitest-browser-svelte@npm:3.0.0"
+"vitest-browser-svelte@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "vitest-browser-svelte@npm:3.1.0"
   dependencies:
     "@testing-library/svelte-core": "npm:^1.1.3"
   peerDependencies:
     svelte: ^3 || ^4 || ^5 || ^5.0.0-next.0
-    vitest: ^4.0.0
-  checksum: 10/4e66372dfed075c79d7546b7d41f17621ec1c6b06d7e4637174b461415b4222d3beed78539f768ba7f9bb19cede54d707f841c0aad0376086cc2eb2d2912a37e
+    vitest: ^4.0.0 || ^5.0.0
+  checksum: 10/f09a0353e03e0791741ea55e10dfe876fff12a32958bf92392c390957665436f6941ddf0ddb19fee2f3c35752112b0ada6dc978fc2654c4cdd059ae6bcdabcc4
   languageName: node
   linkType: hard
 

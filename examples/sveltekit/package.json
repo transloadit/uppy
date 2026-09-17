@@ -35,6 +35,6 @@
     "typescript": "^6.0.3",
     "vite": "^8.2.2",
     "vitest": "^4.1.11",
-    "vitest-browser-svelte": "^3.0.0"
+    "vitest-browser-svelte": "^3.1.0"
   }
 }
