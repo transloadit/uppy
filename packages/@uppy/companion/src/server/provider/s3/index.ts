@@ -14,10 +14,10 @@ import {
 } from '@aws-sdk/client-s3'
 import { lookup as mimeLookup } from 'mime-types'
 import type { S3ProviderOptions } from '../../../schemas/companion.js'
-import type { CompanionRuntimeOptions } from '../../../types/companion-options.js'
 import { isRecord } from '../../helpers/type-guards.js'
+import { s3WriteParams } from '../../helpers/utils.js'
 import logger from '../../logger.js'
-import getS3Client from '../../s3-client.js'
+import getS3Client, { type S3ClientOptions } from '../../s3-client.js'
 import {
   ProviderApiError,
   ProviderAuthError,
@@ -30,6 +30,7 @@ import Provider, {
   type Query,
 } from '../Provider.js'
 import {
+  ensureTrailingSlash,
   GrantExpiredError,
   type GrantKeys,
   hasGrantKeys,
@@ -55,26 +56,25 @@ type S3UserSession = {
   exp?: number
 }
 
-/** Object attributes Companion sets when it writes (copies, folder markers). */
-type WriteParams = Pick<S3ProviderOptions, 'acl' | 'awsSse' | 'awsSseKmsKeyId'>
+type ResolvedConfig = {
+  clientOptions: { s3: S3ClientOptions }
+  /** Object attributes Companion sets when it writes (copies, folder markers). */
+  writeParams: ReturnType<typeof s3WriteParams>
+} & (
+  | { mode: 'grant'; keys: GrantKeys }
+  | { mode: 'bucket'; bucket: string; prefix: string }
+)
 
-type ResolvedConfig =
-  | {
-      mode: 'grant'
-      keys: GrantKeys
-      clientOptions: Pick<CompanionRuntimeOptions, 's3'>
-      write: WriteParams
-    }
-  | {
-      mode: 'bucket'
-      bucket: string
-      prefix: string
-      clientOptions: Pick<CompanionRuntimeOptions, 's3'>
-      write: WriteParams
-    }
-
-const ensureTrailingSlash = (s: string): string =>
-  s.length === 0 || s.endsWith('/') ? s : `${s}/`
+/** Settings the provider may override on top of the `s3` upload block. */
+const OVERRIDABLE = [
+  'key',
+  'secret',
+  'sessionToken',
+  'region',
+  'endpoint',
+  'forcePathStyle',
+  'awsClientOptions',
+] as const
 
 /** `CopyObject` refuses sources above this size; larger objects need a multipart copy. */
 const MAX_COPY_BYTES = 5 * 1024 ** 3
@@ -84,12 +84,6 @@ const isNotFound = (err: unknown): boolean =>
   err instanceof NoSuchKey ||
   (err instanceof S3ServiceException && err.$metadata.httpStatusCode === 404)
 
-const iconForKey = (key: string): string => {
-  const mime = mimeLookup(key)
-  if (typeof mime === 'string' && mime.startsWith('video/')) return 'video'
-  return 'file'
-}
-
 /**
  * Something the operator has to fix. The details go to Companion's log; the
  * browser only gets a generic, translatable message.
@@ -98,6 +92,63 @@ const operatorError = (details: string): ProviderUserError => {
   logger.error(details, 'provider.s3.config')
   return new ProviderUserError({ message: 's3NotConfigured' })
 }
+
+const resolveConfig = (companion: CompanionLike): ResolvedConfig => {
+  const upload = companion.options.s3
+  const own: S3ProviderOptions | undefined =
+    companion.options.providerOptions?.['s3']
+  if (own == null || typeof own !== 'object') {
+    throw operatorError(
+      'The S3 provider is not configured: set `providerOptions.s3` (see S3ProviderOptions)',
+    )
+  }
+  // The provider's own settings win; anything unset comes from the upload block.
+  // `Object.fromEntries` cannot keep the key/value pairing in the type.
+  const overrides = Object.fromEntries(
+    OVERRIDABLE.filter((key) => own[key] != null).map((key) => [key, own[key]]),
+  ) as Pick<S3ProviderOptions, (typeof OVERRIDABLE)[number]>
+  const s3 = {
+    ...upload,
+    // Browsing goes to the plain endpoint; transfer acceleration is an upload concern.
+    useAccelerateEndpoint: false,
+    ...overrides,
+  }
+  const clientOptions = { s3 }
+  const writeParams = s3WriteParams({
+    acl: own.acl ?? upload?.acl,
+    awsSse: own.awsSse ?? upload?.awsSse,
+    awsSseKmsKeyId: own.awsSseKmsKeyId ?? upload?.awsSseKmsKeyId,
+  })
+  const keys: GrantKeys = {
+    secrets: own.grantSecret,
+    publicKeys: own.grantPublicKey,
+  }
+  if (hasGrantKeys(keys)) {
+    return { mode: 'grant', keys, clientOptions, writeParams }
+  }
+  if (typeof own.bucket === 'string' && own.bucket.length > 0) {
+    return {
+      mode: 'bucket',
+      bucket: own.bucket,
+      prefix: normalizeStorageGrantPrefix(own.prefix ?? ''),
+      clientOptions,
+      writeParams,
+    }
+  }
+  throw operatorError(
+    'The S3 provider needs either `providerOptions.s3.bucket` or a grant key (`grantSecret` / `grantPublicKey`)',
+  )
+}
+
+/**
+ * Configuration and client, resolved once per Companion `app()` — there is one
+ * options object per app, and neither the merge nor `new S3Client()` is worth
+ * redoing on every request. The trade-off: an embedder that mutates the
+ * options object at runtime is not picked up.
+ */
+type CacheEntry = { config: ResolvedConfig; client?: S3Client }
+
+const perOptions = new WeakMap<object, CacheEntry>()
 
 /**
  * Adapter for browsing and managing S3-compatible object storage (AWS S3,
@@ -131,7 +182,7 @@ export default class S3Provider extends Provider<S3UserSession> {
   }
 
   /** Overridable for tests. */
-  getClient(clientOptions: Pick<CompanionRuntimeOptions, 's3'>): S3Client {
+  getClient(clientOptions: { s3?: S3ClientOptions | undefined }): S3Client {
     const client = getS3Client(clientOptions)
     if (client == null) {
       throw operatorError(
@@ -141,56 +192,25 @@ export default class S3Provider extends Provider<S3UserSession> {
     return client
   }
 
+  /** The cache entry for this Companion app, filling it on first use. */
+  #entry(companion: CompanionLike): CacheEntry {
+    const cached = perOptions.get(companion.options)
+    if (cached != null) return cached
+    // Deliberately outside the cache: a misconfigured provider keeps
+    // reporting itself on every request.
+    const entry: CacheEntry = { config: resolveConfig(companion) }
+    perOptions.set(companion.options, entry)
+    return entry
+  }
+
   #config(companion: CompanionLike): ResolvedConfig {
-    const upload = companion.options.s3
-    const own: S3ProviderOptions | undefined =
-      companion.options.providerOptions?.['s3']
-    if (own == null || typeof own !== 'object') {
-      throw operatorError(
-        'The S3 provider is not configured: set `providerOptions.s3` (see S3ProviderOptions)',
-      )
-    }
-    // The provider's own settings win; anything unset comes from the upload block.
-    const s3 = {
-      ...upload,
-      expires: upload?.expires ?? 0,
-      // Browsing goes to the plain endpoint; transfer acceleration is an upload concern.
-      useAccelerateEndpoint: false,
-      ...(own.key != null && { key: own.key }),
-      ...(own.secret != null && { secret: own.secret }),
-      ...(own.sessionToken != null && { sessionToken: own.sessionToken }),
-      ...(own.region != null && { region: own.region }),
-      ...(own.endpoint != null && { endpoint: own.endpoint }),
-      ...(own.forcePathStyle != null && { forcePathStyle: own.forcePathStyle }),
-      ...(own.awsClientOptions != null && {
-        awsClientOptions: own.awsClientOptions,
-      }),
-    } as NonNullable<CompanionRuntimeOptions['s3']>
-    const clientOptions: Pick<CompanionRuntimeOptions, 's3'> = { s3 }
-    const write: WriteParams = {
-      acl: own.acl ?? upload?.acl,
-      awsSse: own.awsSse ?? upload?.awsSse,
-      awsSseKmsKeyId: own.awsSseKmsKeyId ?? upload?.awsSseKmsKeyId,
-    }
-    const keys: GrantKeys = {
-      secrets: own.grantSecret,
-      publicKeys: own.grantPublicKey,
-    }
-    if (hasGrantKeys(keys)) {
-      return { mode: 'grant', keys, clientOptions, write }
-    }
-    if (typeof own.bucket === 'string' && own.bucket.length > 0) {
-      return {
-        mode: 'bucket',
-        bucket: own.bucket,
-        prefix: normalizeStorageGrantPrefix(own.prefix ?? ''),
-        clientOptions,
-        write,
-      }
-    }
-    throw operatorError(
-      'The S3 provider needs either `providerOptions.s3.bucket` or a grant key (`grantSecret` / `grantPublicKey`)',
-    )
+    return this.#entry(companion).config
+  }
+
+  #client(companion: CompanionLike): S3Client {
+    const entry = this.#entry(companion)
+    entry.client ??= this.getClient(entry.config.clientOptions)
+    return entry.client
   }
 
   /**
@@ -202,7 +222,12 @@ export default class S3Provider extends Provider<S3UserSession> {
     companion: CompanionLike,
     providerUserSession: S3UserSession,
     { mutate = false, keys = [] as string[] } = {},
-  ): { bucket: string; prefix: string; client: S3Client; write: WriteParams } {
+  ): {
+    bucket: string
+    prefix: string
+    client: S3Client
+    writeParams: ResolvedConfig['writeParams']
+  } {
     const config = this.#config(companion)
     if (!this.isAuthenticated({ providerUserSession })) {
       throw new ProviderAuthError()
@@ -224,8 +249,8 @@ export default class S3Provider extends Provider<S3UserSession> {
     return {
       bucket,
       prefix,
-      client: this.getClient(config.clientOptions),
-      write: config.write,
+      client: this.#client(companion),
+      writeParams: config.writeParams,
     }
   }
 
@@ -238,9 +263,8 @@ export default class S3Provider extends Provider<S3UserSession> {
     companion,
   }: {
     requestBody: unknown
-    companion?: CompanionLike | undefined
+    companion: CompanionLike
   }): Promise<S3UserSession> {
-    if (companion == null) throw new Error('companion is required')
     const config = this.#config(companion)
     if (config.mode === 'bucket') {
       return { bucket: config.bucket, prefix: config.prefix, write: true }
@@ -259,24 +283,15 @@ export default class S3Provider extends Provider<S3UserSession> {
         bucket: claims.bucket,
         prefix: claims.prefix,
         write: claims.write,
+        // Sizes the session token: it expires with the grant.
         exp: claims.exp,
       }
     } catch (err) {
       // Expired grants are an auth error so the client asks for a new one.
       if (err instanceof GrantExpiredError) throw new ProviderAuthError()
-      logger.debug(
-        err instanceof Error ? err.message : String(err),
-        'provider.s3.grant.invalid',
-      )
+      logger.debug(err, 'provider.s3.grant.invalid')
       throw new ProviderUserError({ message: 's3InvalidGrant' })
     }
-  }
-
-  /** Grant sessions expire with their grant; bucket sessions use the default. */
-  override simpleAuthTokenMaxAge(providerUserSession: S3UserSession): number {
-    const { exp } = providerUserSession
-    if (exp == null) return super.simpleAuthTokenMaxAge(providerUserSession)
-    return Math.max(0, exp - Math.floor(Date.now() / 1000))
   }
 
   override async list({
@@ -337,14 +352,15 @@ export default class S3Provider extends Provider<S3UserSession> {
         if (!key || key === prefix) continue
         const name = key.slice(prefix.length)
         const requestPath = encodeURIComponent(key)
+        const mimeType = mimeLookup(key) || null
         items.push({
           isFolder: false,
-          icon: iconForKey(key),
+          icon: mimeType?.startsWith('video/') ? 'video' : 'file',
           id: requestPath,
           name,
           requestPath,
           modifiedDate: obj.LastModified?.toISOString(),
-          mimeType: mimeLookup(key) || null,
+          mimeType,
           size: obj.Size ?? null,
           thumbnail: null,
         })
@@ -425,14 +441,6 @@ export default class S3Provider extends Provider<S3UserSession> {
     )
   }
 
-  #writeParams({ acl, awsSse, awsSseKmsKeyId }: WriteParams) {
-    return {
-      ...(acl != null && { ACL: acl }),
-      ...(awsSse != null && { ServerSideEncryption: awsSse }),
-      ...(awsSseKmsKeyId != null && { SSEKMSKeyId: awsSseKmsKeyId }),
-    }
-  }
-
   override async deleteItem({
     companion,
     id,
@@ -475,7 +483,7 @@ export default class S3Provider extends Provider<S3UserSession> {
     providerUserSession: S3UserSession
   }): Promise<{ id: string; requestPath: string }> {
     return this.withErrorHandling('provider.s3.move.error', async () => {
-      const { bucket, client, write } = this.#session(
+      const { bucket, client, writeParams } = this.#session(
         companion,
         providerUserSession,
         { mutate: true, keys: [id, destination] },
@@ -492,14 +500,16 @@ export default class S3Provider extends Provider<S3UserSession> {
       }
       if (destination === id) return result
 
-      const source = await this.#head(client, bucket, id)
+      const [source, existing] = await Promise.all([
+        this.#head(client, bucket, id),
+        this.#head(client, bucket, destination),
+      ])
       if (source == null) {
         throw new ProviderUserError({ message: 's3NotFound' })
       }
       if ((source.ContentLength ?? 0) > MAX_COPY_BYTES) {
         throw new ProviderUserError({ message: 's3FileTooLargeToMove' })
       }
-      const existing = await this.#head(client, bucket, destination)
       if (existing != null) {
         // Same size and ETag: the copy already happened (an earlier attempt
         // stopped before deleting the source). Anything else is a conflict.
@@ -518,7 +528,7 @@ export default class S3Provider extends Provider<S3UserSession> {
             Bucket: bucket,
             CopySource: `/${bucket}/${id.split('/').map(encodeURIComponent).join('/')}`,
             Key: destination,
-            ...this.#writeParams(write),
+            ...writeParams,
           }),
         )
       }
@@ -541,7 +551,7 @@ export default class S3Provider extends Provider<S3UserSession> {
     return this.withErrorHandling(
       'provider.s3.createFolder.error',
       async () => {
-        const { bucket, prefix, client, write } = this.#session(
+        const { bucket, prefix, client, writeParams } = this.#session(
           companion,
           providerUserSession,
           {
@@ -561,10 +571,16 @@ export default class S3Provider extends Provider<S3UserSession> {
         }
         const parent = parentId ? ensureTrailingSlash(parentId) : prefix
         const key = `${parent}${cleanName}/`
-        if (
-          (await this.#folderHasEntries(client, bucket, key)) ||
-          (await this.#head(client, bucket, key)) != null
-        ) {
+        // Without a delimiter one entry is enough to tell: it is either the
+        // folder's own marker or something already stored under it.
+        const taken = await client.send(
+          new ListObjectsV2Command({
+            Bucket: bucket,
+            Prefix: key,
+            MaxKeys: 1,
+          }),
+        )
+        if ((taken.Contents ?? []).length > 0) {
           throw new ProviderUserError({ message: 's3AlreadyExists' })
         }
         await client.send(
@@ -572,7 +588,7 @@ export default class S3Provider extends Provider<S3UserSession> {
             Bucket: bucket,
             Key: key,
             Body: '',
-            ...this.#writeParams(write),
+            ...writeParams,
           }),
         )
         return { id: key, requestPath: encodeURIComponent(key) }
@@ -591,15 +607,12 @@ export default class S3Provider extends Provider<S3UserSession> {
   /**
    * Companion's own errors pass through. Of S3's, only "not found" is the
    * user's business; everything else (permissions, wrong endpoint, throttling)
-   * is logged for the operator and reported to the browser generically.
+   * is reported to the browser generically — the original goes to Companion's
+   * log, which `withErrorHandling` takes care of.
    */
   protected override mapProviderError(err: unknown): unknown {
     if (err instanceof ProviderApiError) return err
     if (isNotFound(err)) return new ProviderUserError({ message: 's3NotFound' })
-    logger.error(
-      err instanceof Error ? err : new Error(String(err)),
-      'provider.s3.error',
-    )
     return new ProviderUserError({ message: 's3RequestFailed' })
   }
 }

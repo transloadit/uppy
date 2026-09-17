@@ -1,6 +1,36 @@
 import type { S3ClientConfig } from '@aws-sdk/client-s3'
 import { S3Client } from '@aws-sdk/client-s3'
-import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+import type { GetBucketFn } from '../schemas/companion.js'
+
+/**
+ * The `s3` options this module reads. A subset of the `s3` block of Companion's
+ * options, so that anything holding these settings (the S3 *provider* merges
+ * its own over the upload block's) can build a client without pretending to be
+ * a full upload configuration.
+ */
+export interface S3ClientOptions {
+  /** @deprecated Use `key`. Rejected, not read. */
+  accessKeyId?: unknown
+  /** @deprecated Use `secret`. Rejected, not read. */
+  secretAccessKey?: unknown
+
+  endpoint?: string | undefined
+  region?: string | undefined
+  forcePathStyle?: boolean | undefined
+  bucket?: string | GetBucketFn | undefined
+  key?: string | undefined
+  secret?: string | undefined
+  sessionToken?: string | undefined
+  useAccelerateEndpoint?: boolean | undefined
+  awsClientOptions?:
+    | (S3ClientConfig & {
+        /** @deprecated */
+        accessKeyId?: unknown
+        /** @deprecated */
+        secretAccessKey?: unknown
+      })
+    | undefined
+}
 
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
@@ -9,7 +39,7 @@ import type { CompanionRuntimeOptions } from '../types/companion-options.js'
  * @param createPresignedPostMode whether this s3 client is for createPresignedPost
  */
 export default function s3Client(
-  companionOptions: Pick<CompanionRuntimeOptions, 's3'>,
+  companionOptions: { s3?: S3ClientOptions | undefined },
   createPresignedPostMode = false,
 ): S3Client | null {
   let s3Client: S3Client | null = null

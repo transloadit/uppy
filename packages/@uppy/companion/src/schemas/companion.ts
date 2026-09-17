@@ -25,7 +25,9 @@ export interface ProviderOptions {
  * `providerOptions.s3` like every other provider. It is separate from the `s3`
  * block, which configures *uploads* to S3: the two features may use different
  * credentials, accounts and buckets. Credentials and connection settings left
- * unset here fall back to the `s3` upload block.
+ * unset here fall back to the `s3` upload block (`key` and `secret` are
+ * inherited from {@link ProviderOptions} and fall back to `s3.key` /
+ * `s3.secret` like the rest).
  *
  * The provider is disabled until either `bucket` (single-tenant: everyone who
  * can reach Companion browses that bucket, so put Companion behind your own
@@ -35,10 +37,6 @@ export interface ProviderOptions {
  * policy; Companion only enforces the per-user prefix carried by grants.
  */
 export interface S3ProviderOptions extends ProviderOptions {
-  /** Access key id. Falls back to `s3.key`. */
-  key?: string | undefined
-  /** Secret access key. Falls back to `s3.secret`. */
-  secret?: string | undefined
   /** Falls back to `s3.sessionToken`. */
   sessionToken?: string | undefined
   /** Falls back to `s3.region`. */

@@ -19,7 +19,6 @@ export type StorageGrant = {
   write: boolean
   /** Unix seconds. */
   exp: number
-  sub?: string
 }
 
 /** The keys Companion accepts grants from. Several allow key rotation. */
@@ -78,7 +77,7 @@ const grantClaimsSchema = z.object({
 })
 
 /** Drops unset and blank entries, so a key list is either real keys or empty. */
-const toKeyList = (keys: string | string[] | undefined): string[] => {
+export const toKeyList = (keys: string | string[] | undefined): string[] => {
   if (keys === undefined) return []
   const list = typeof keys === 'string' ? [keys] : keys
   return list.filter((key) => key.trim().length > 0)
@@ -91,10 +90,44 @@ export function hasGrantKeys(keys: GrantKeys): boolean {
   )
 }
 
+/** Appends a `/` unless the value is empty or already ends with one. */
+export const ensureTrailingSlash = (value: string): string =>
+  value.length === 0 || value.endsWith('/') ? value : `${value}/`
+
 /** Companion's prefix policy: no leading slashes, a trailing slash unless empty. */
 export function normalizeStorageGrantPrefix(prefix: string): string {
-  const cleaned = prefix.replace(/^\/+/, '')
-  return cleaned.length === 0 || cleaned.endsWith('/') ? cleaned : `${cleaned}/`
+  return ensureTrailingSlash(prefix.replace(/^\/+/, ''))
+}
+
+type KeyCandidate = { key: string; algorithms: Algorithm[] }
+
+/**
+ * Verifies `token` against every candidate and returns the claims of the first
+ * one whose signature matches — including when there are no candidates at all,
+ * which is simply a grant no key verifies.
+ */
+function verifyWithAnyKey(
+  token: string,
+  candidates: KeyCandidate[],
+  options: { clockTimestamp: number | undefined },
+): unknown {
+  // A TokenExpiredError can only come from a key whose signature matched, so
+  // it is worth reporting even when a later key fails for another reason.
+  let expired = false
+
+  for (const candidate of candidates) {
+    try {
+      return jwt.verify(token, candidate.key, {
+        ...options,
+        algorithms: candidate.algorithms,
+      })
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) expired = true
+    }
+  }
+
+  if (expired) throw new GrantExpiredError()
+  throw new InvalidGrantError()
 }
 
 /**
@@ -109,7 +142,7 @@ export function verifyStorageGrant(
   keys: GrantKeys,
   now?: Date,
 ): StorageGrant {
-  const candidates: { key: string; algorithms: Algorithm[] }[] = [
+  const candidates: KeyCandidate[] = [
     ...toKeyList(keys.secrets).map((key) => ({
       key,
       algorithms: SECRET_ALGORITHMS,
@@ -119,36 +152,11 @@ export function verifyStorageGrant(
       algorithms: PUBLIC_KEY_ALGORITHMS,
     })),
   ]
-  if (candidates.length === 0) throw new InvalidGrantError()
 
-  const options = {
+  const payload = verifyWithAnyKey(token, candidates, {
     clockTimestamp:
       now === undefined ? undefined : Math.floor(now.getTime() / 1000),
-  }
-
-  let payload: unknown
-  let verified = false
-  // A TokenExpiredError can only come from a key whose signature matched, so
-  // it is worth reporting even when a later key fails for another reason.
-  let expired = false
-
-  for (const candidate of candidates) {
-    try {
-      payload = jwt.verify(token, candidate.key, {
-        ...options,
-        algorithms: candidate.algorithms,
-      })
-      verified = true
-      break
-    } catch (err) {
-      if (err instanceof jwt.TokenExpiredError) expired = true
-    }
-  }
-
-  if (!verified) {
-    if (expired) throw new GrantExpiredError()
-    throw new InvalidGrantError()
-  }
+  })
 
   const parsed = grantClaimsSchema.safeParse(payload)
   if (!parsed.success) throw new InvalidGrantError()
@@ -159,6 +167,5 @@ export function verifyStorageGrant(
     prefix: normalizeStorageGrantPrefix(claims.prefix),
     write: claims.scopes.includes('write'),
     exp: claims.exp,
-    ...(claims.sub === undefined ? {} : { sub: claims.sub }),
   }
 }

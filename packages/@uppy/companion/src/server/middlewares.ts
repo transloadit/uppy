@@ -61,6 +61,15 @@ export const hasSimpleAuthProvider: RequestHandler = (req, res, next) => {
   return next()
 }
 
+export const hasMutationProvider: RequestHandler = (req, res, next) => {
+  if (!req.companion.providerClass?.supportsMutations) {
+    logger.debug('Provider does not support mutations.', undefined, req.id)
+    return res.sendStatus(400)
+  }
+
+  return next()
+}
+
 export const hasBody: RequestHandler = (req, res, next) => {
   if (!req.body) {
     logger.debug(

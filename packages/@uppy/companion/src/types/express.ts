@@ -17,6 +17,12 @@ export interface ProviderGrantConfig {
 export interface ProviderUserSession {
   accessToken?: string
   refreshToken?: string | undefined
+  /**
+   * Reserved: when a provider's session expires, in unix seconds. When a
+   * provider's session expires earlier than `authStateExpiry`, the session
+   * token is capped to it.
+   */
+  exp?: number
   [key: string]: unknown
 }
 

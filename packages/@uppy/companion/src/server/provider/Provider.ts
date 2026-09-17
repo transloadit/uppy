@@ -179,19 +179,9 @@ export default class Provider<US = unknown> {
     companion,
   }: {
     requestBody: unknown
-    companion?: CompanionLike | undefined
+    companion: CompanionLike
   }): Promise<object> {
     throw new Error('method not implemented')
-  }
-
-  /**
-   * Lifetime, in seconds, of the session token issued after `simpleAuth()`.
-   * Defaults to `authStateExpiry`; providers whose sessions expire earlier
-   * (e.g. ones opened with a short-lived grant) override this so the token
-   * expires with the session instead of re-checking expiry on every request.
-   */
-  simpleAuthTokenMaxAge(providerUserSession: US): number {
-    return (this.constructor as typeof Provider).authStateExpiry
   }
 
   /**
@@ -234,9 +224,10 @@ export default class Provider<US = unknown> {
   }
 
   /**
-   * Run `fn`, translating any error through `mapProviderError()` and logging
-   * it under `tag` before rethrowing. Providers wrap their SDK calls in this so
-   * error mapping and logging live in one place.
+   * Run `fn`, logging the original error under `tag` and rethrowing it
+   * translated by `mapProviderError()`. Providers wrap their SDK calls in this
+   * so error mapping and logging live in one place: the log keeps the error as
+   * the provider threw it, and `mapProviderError()` stays a pure mapping.
    */
   protected async withErrorHandling<T>(
     tag: string,
@@ -245,18 +236,16 @@ export default class Provider<US = unknown> {
     try {
       return await fn()
     } catch (err: unknown) {
-      const mapped = this.mapProviderError(err)
-      const errForLog =
-        mapped instanceof Error ? mapped : new Error(String(mapped))
-      logger.error(errForLog, tag)
-      throw mapped
+      logger.error(err, tag)
+      throw this.mapProviderError(err)
     }
   }
 
   /**
    * Translate an error from the provider's SDK/API into a Companion error
-   * (ProviderAuthError, ProviderUserError, ProviderApiError). The default keeps
-   * the error as-is; providers override this to add their mapping.
+   * (ProviderAuthError, ProviderUserError, ProviderApiError). Pure: it maps and
+   * returns, it does not log or throw. The default keeps the error as-is;
+   * providers override this to add their mapping.
    */
   protected mapProviderError(err: unknown): unknown {
     return err

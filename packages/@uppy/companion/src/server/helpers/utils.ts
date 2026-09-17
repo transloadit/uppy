@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
 import type { Request } from 'express'
 import type { GetBucketFn } from '../../schemas/companion.js'
 
@@ -337,6 +338,30 @@ export const getBucket = ({
     )
   }
   return bucket
+}
+
+/**
+ * The object attributes Companion asks S3 for when it writes, in the shape the
+ * AWS commands take. Unset options are left out rather than sent as undefined.
+ */
+export function s3WriteParams({
+  acl,
+  awsSse,
+  awsSseKmsKeyId,
+}: {
+  acl?: ObjectCannedACL | undefined
+  awsSse?: ServerSideEncryption | undefined
+  awsSseKmsKeyId?: string | undefined
+}): {
+  ACL?: ObjectCannedACL
+  ServerSideEncryption?: ServerSideEncryption
+  SSEKMSKeyId?: string
+} {
+  return {
+    ...(acl != null && { ACL: acl }),
+    ...(awsSse != null && { ServerSideEncryption: awsSse }),
+    ...(awsSseKmsKeyId != null && { SSEKMSKeyId: awsSseKmsKeyId }),
+  }
 }
 
 export const truncateFilename = (

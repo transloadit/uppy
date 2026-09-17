@@ -8,6 +8,7 @@ import type {
 } from '../schemas/companion.js'
 import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
+import { hasGrantKeys, toKeyList } from '../server/provider/s3/grant.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
 const defaultPeriodicPingUrls: string[] = []
@@ -38,6 +39,17 @@ export const defaultOptions = {
 }
 
 /**
+ * Fields of a provider's options that hold a secret. A field may hold a single
+ * secret or a list of them (the S3 provider's grant signing secrets rotate),
+ * so every value goes through `toKeyList`.
+ */
+const SECRET_FIELDS = ['secret', 'grantSecret'] as const
+
+type SecretFields = Partial<
+  Record<(typeof SECRET_FIELDS)[number], string | string[]>
+>
+
+/**
  * Returns secrets that should be masked in log messages.
  */
 export function getMaskableSecrets(
@@ -46,10 +58,12 @@ export function getMaskableSecrets(
   const secrets: string[] = []
   const { customProviders, providerOptions = {}, s3 } = companionOptions ?? {}
 
-  Object.keys(providerOptions).forEach((provider) => {
-    const secret = providerOptions[provider]?.secret
-    if (secret != null) secrets.push(secret)
-  })
+  for (const providerOption of Object.values(providerOptions)) {
+    const fields = providerOption as SecretFields | undefined
+    for (const field of SECRET_FIELDS) {
+      secrets.push(...toKeyList(fields?.[field]))
+    }
+  }
 
   if (customProviders) {
     Object.keys(customProviders).forEach((provider) => {
@@ -61,15 +75,6 @@ export function getMaskableSecrets(
   const s3Secret = s3?.['secret']
   if (s3Secret != null) {
     secrets.push(s3Secret)
-  }
-
-  // The S3 provider's own `secret` is covered by the loop above; its storage
-  // grant signing secrets are not.
-  const { grantSecret } = providerOptions['s3'] ?? {}
-  if (typeof grantSecret === 'string') {
-    secrets.push(grantSecret)
-  } else if (Array.isArray(grantSecret)) {
-    secrets.push(...grantSecret)
   }
 
   return secrets
@@ -163,12 +168,12 @@ function validateValidHosts(
 function validateS3Provider(
   s3Provider: S3ProviderOptions | undefined | null,
 ): void {
-  if (s3Provider == null || Object.values(s3Provider).every((v) => v == null)) {
-    return
-  }
+  if (s3Provider == null) return
 
-  const hasGrantKey =
-    s3Provider.grantSecret != null || s3Provider.grantPublicKey != null
+  const hasGrantKey = hasGrantKeys({
+    secrets: s3Provider.grantSecret,
+    publicKeys: s3Provider.grantPublicKey,
+  })
 
   if (!hasGrantKey && s3Provider.bucket == null) {
     logger.warn(
@@ -182,6 +187,19 @@ function validateS3Provider(
     )
   }
 }
+
+/**
+ * Fields that only ever configured *uploads*, so finding one under
+ * `providerOptions.s3` means the config predates the S3 provider. `awsSse` and
+ * the other credential/connection settings are shared by both, so they are not
+ * listed here.
+ */
+const UPLOAD_ONLY_S3_FIELDS = [
+  'getKey',
+  'conditions',
+  'expires',
+  'useAccelerateEndpoint',
+] as const
 
 /**
  * Validates that the mandatory Companion options are set.
@@ -212,9 +230,6 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
   }
 
   if (providerOptions) {
-    // `providerOptions.s3` is *not* deprecated: it configures the S3 provider
-    // (browsing a bucket), which is a different feature from the top-level
-    // `s3` block (uploading to a bucket).
     const deprecatedOptions: Record<string, string> = {
       microsoft: 'providerOptions.onedrive',
       google: 'providerOptions.drive',
@@ -226,6 +241,19 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
         )
       }
     })
+
+    // `providerOptions.s3` is *not* deprecated: it configures the S3 provider
+    // (browsing a bucket), which is a different feature from the top-level
+    // `s3` block (uploading to a bucket). It used to be where the upload
+    // settings lived, though, so an upload-only field there is the old config.
+    const uploadOnlyField = UPLOAD_ONLY_S3_FIELDS.find((field) =>
+      Object.hasOwn(providerOptions['s3'] ?? {}, field),
+    )
+    if (uploadOnlyField != null) {
+      throw new Error(
+        `The Provider option "providerOptions.s3.${uploadOnlyField}" is no longer supported. Please use the option "s3.${uploadOnlyField}" instead: the upload settings belong in the top-level "s3" block, while "providerOptions.s3" now configures the S3 provider.`,
+      )
+    }
   }
 
   if (uploadUrls == null || uploadUrls.length === 0) {

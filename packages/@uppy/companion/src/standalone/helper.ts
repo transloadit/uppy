@@ -39,30 +39,18 @@ const hasProtocol = (url: string): boolean => {
 const companionProtocol = process.env['COMPANION_PROTOCOL'] || 'http'
 
 /**
- * Splits a comma-separated list of storage grant keys into the
- * `string | string[]` the S3 provider takes, so that a new key can be rolled
- * out while grants signed with the previous one still verify. Unset, or set to
- * nothing but separators, means no key at all.
+ * Splits a comma-separated list of storage grant keys into the list the S3
+ * provider takes, so that a new key can be rolled out while grants signed with
+ * the previous one still verify. Unset, or set to nothing but separators,
+ * means no key at all.
  */
-const parseGrantKeys = (
-  value: string | undefined,
-): string | string[] | undefined => {
+const parseGrantKeys = (value: string | undefined): string[] | undefined => {
   const keys = (value ?? '')
     .split(',')
     .map((key) => key.trim())
     .filter(Boolean)
-  if (keys.length === 0) return undefined
-  return keys.length === 1 ? keys[0] : keys
+  return keys.length === 0 ? undefined : keys
 }
-
-/**
- * Same, for PEM public keys: environment variables usually carry those with
- * literal `\n` sequences rather than real newlines, and PEM contains no comma,
- * so splitting a list of them stays safe.
- */
-const parseGrantPublicKeys = (
-  value: string | undefined,
-): string | string[] | undefined => parseGrantKeys(value?.replace(/\\n/g, '\n'))
 
 function getCorsOrigins() {
   if (process.env['COMPANION_CLIENT_ORIGINS']) {
@@ -199,29 +187,45 @@ const parseAllowlistArray = (value: unknown): unknown =>
  * account, endpoint and credentials. The provider stays disabled until it has
  * either a bucket (single-tenant) or a grant key (multi-tenant).
  */
-const getS3ProviderOptionsFromEnv = (): S3ProviderOptions => ({
-  key: process.env['COMPANION_S3_PROVIDER_KEY'],
-  secret: getSecret('COMPANION_S3_PROVIDER_SECRET'),
-  region: process.env['COMPANION_S3_PROVIDER_REGION'],
-  endpoint: process.env['COMPANION_S3_PROVIDER_ENDPOINT'],
-  forcePathStyle: process.env['COMPANION_S3_PROVIDER_FORCE_PATH_STYLE']
-    ? process.env['COMPANION_S3_PROVIDER_FORCE_PATH_STYLE'] === 'true'
-    : undefined,
-  bucket: process.env['COMPANION_S3_PROVIDER_BUCKET'],
-  prefix: process.env['COMPANION_S3_PROVIDER_PREFIX'],
-  grantSecret: parseGrantKeys(getSecret('COMPANION_S3_PROVIDER_GRANT_SECRET')),
-  grantPublicKey: parseGrantPublicKeys(
-    process.env['COMPANION_S3_PROVIDER_GRANT_PUBLIC_KEY'],
-  ),
-  acl: aclSchema.parse(process.env['COMPANION_S3_PROVIDER_ACL']),
-  awsSse: sseSchema.parse(process.env['COMPANION_S3_PROVIDER_SSE']),
-  awsSseKmsKeyId: process.env['COMPANION_S3_PROVIDER_SSE_KMS_KEY_ID'],
-})
+const getS3ProviderOptionsFromEnv = (): S3ProviderOptions | undefined => {
+  // "Configured" is the key being there at all, so an entirely unset
+  // environment leaves `providerOptions.s3` out rather than present and blank.
+  const isConfigured = Object.keys(process.env).some(
+    (name) =>
+      name.startsWith('COMPANION_S3_PROVIDER_') && process.env[name] != null,
+  )
+  if (!isConfigured) return undefined
+
+  return {
+    key: process.env['COMPANION_S3_PROVIDER_KEY'],
+    secret: getSecret('COMPANION_S3_PROVIDER_SECRET'),
+    region: process.env['COMPANION_S3_PROVIDER_REGION'],
+    endpoint: process.env['COMPANION_S3_PROVIDER_ENDPOINT'],
+    forcePathStyle: process.env['COMPANION_S3_PROVIDER_FORCE_PATH_STYLE']
+      ? process.env['COMPANION_S3_PROVIDER_FORCE_PATH_STYLE'] === 'true'
+      : undefined,
+    bucket: process.env['COMPANION_S3_PROVIDER_BUCKET'],
+    prefix: process.env['COMPANION_S3_PROVIDER_PREFIX'],
+    grantSecret: parseGrantKeys(
+      getSecret('COMPANION_S3_PROVIDER_GRANT_SECRET'),
+    ),
+    grantPublicKey: parseGrantKeys(
+      process.env['COMPANION_S3_PROVIDER_GRANT_PUBLIC_KEY']?.replace(
+        /\\n/g,
+        '\n',
+      ),
+    ), // PEM arrives from the environment with literal `\n` escapes
+    acl: aclSchema.parse(process.env['COMPANION_S3_PROVIDER_ACL']),
+    awsSse: sseSchema.parse(process.env['COMPANION_S3_PROVIDER_SSE']),
+    awsSseKmsKeyId: process.env['COMPANION_S3_PROVIDER_SSE_KMS_KEY_ID'],
+  }
+}
 
 /**
  * Loads the config from environment variables.
  */
 const getConfigFromEnv = (): StandaloneCompanionOptions => {
+  const s3ProviderOptions = getS3ProviderOptionsFromEnv()
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
     process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
@@ -265,8 +269,9 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
         secret: process.env['COMPANION_UNSPLASH_SECRET'],
       },
       // Browsing S3 from the Dashboard, which is a different feature from the
-      // `s3` block below (uploading to S3), with its own credentials.
-      s3: getS3ProviderOptionsFromEnv(),
+      // `s3` block below (uploading to S3), with its own credentials. Left out
+      // entirely when nothing configures it.
+      ...(s3ProviderOptions === undefined ? {} : { s3: s3ProviderOptions }),
     },
     s3: {
       key: process.env['COMPANION_AWS_KEY'],

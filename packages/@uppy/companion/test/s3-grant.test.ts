@@ -1,5 +1,5 @@
 import { generateKeyPairSync } from 'node:crypto'
-import jwt, { type Algorithm } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { describe, expect, test } from 'vitest'
 import {
   GrantExpiredError,
@@ -8,63 +8,39 @@ import {
   InvalidGrantError,
   normalizeStorageGrantPrefix,
   verifyStorageGrant,
-} from '../dist/server/provider/s3/grant.js'
+} from '../src/server/provider/s3/grant.js'
+import {
+  claims,
+  type GrantClaims,
+  mint,
+  nowSeconds,
+  GRANT_SECRET as SECRET,
+} from './fixtures/s3.js'
 
-const SECRET = 'grant-secret-one'
 const OTHER_SECRET = 'grant-secret-two'
 
-const { privateKey: ecPrivateKey, publicKey: ecPublicKey } =
+const generateEcKeyPair = () =>
   generateKeyPairSync('ec', {
     namedCurve: 'P-256',
     publicKeyEncoding: { type: 'spki', format: 'pem' },
     privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
   })
 
-const { privateKey: rsaPrivateKey, publicKey: rsaPublicKey } =
-  generateKeyPairSync('rsa', {
-    modulusLength: 2048,
-    publicKeyEncoding: { type: 'spki', format: 'pem' },
-    privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
-  })
-
-const nowSeconds = () => Math.floor(Date.now() / 1000)
-
-type Claims = {
-  v?: unknown
-  bucket?: unknown
-  prefix?: unknown
-  scopes?: unknown
-  exp?: unknown
-  sub?: unknown
-}
-
-const claims = (overrides: Claims = {}): Record<string, unknown> => ({
-  v: 1,
-  bucket: 'my-bucket',
-  prefix: 'tenant-1/',
-  scopes: ['read'],
-  exp: nowSeconds() + 900,
-  ...overrides,
-})
-
-const mint = (
-  payload: Record<string, unknown>,
-  key: string,
-  algorithm: Algorithm = 'HS256',
-): string => jwt.sign(payload, key, { algorithm })
+const { privateKey: ecPrivateKey, publicKey: ecPublicKey } = generateEcKeyPair()
+const { publicKey: otherEcPublicKey } = generateEcKeyPair()
 
 /**
  * Signs a raw JSON string, which skips jsonwebtoken's own validation of the
  * registered claims, so malformed grants can be minted at all.
  */
-const mintRaw = (payload: Record<string, unknown>, key: string): string =>
+const mintRaw = (payload: GrantClaims, key: string): string =>
   jwt.sign(JSON.stringify(payload), key, { algorithm: 'HS256' })
 
 const base64url = (value: string): string =>
   Buffer.from(value, 'utf8').toString('base64url')
 
 describe('verifyStorageGrant', () => {
-  test('verifies an HS256 grant', () => {
+  test('verifies an HS256 grant, keeping only what the provider acts on', () => {
     const token = mint(
       claims({ prefix: '/tenant-1', scopes: ['read', 'write'], sub: 'user-9' }),
       SECRET,
@@ -75,17 +51,10 @@ describe('verifyStorageGrant', () => {
       prefix: 'tenant-1/',
       write: true,
       exp: expect.any(Number),
-      sub: 'user-9',
     })
-  })
-
-  test('omits sub when the grant carries none', () => {
-    const grant = verifyStorageGrant(mint(claims(), SECRET), {
-      secrets: [SECRET],
-    })
-
-    expect(grant.write).toBe(false)
-    expect('sub' in grant).toBe(false)
+    expect(
+      verifyStorageGrant(mint(claims(), SECRET), { secrets: [SECRET] }).write,
+    ).toBe(false)
   })
 
   test('verifies an ES256 grant against a PEM public key', () => {
@@ -97,11 +66,18 @@ describe('verifyStorageGrant', () => {
   })
 
   test('verifies an RS256 grant against a PEM public key', () => {
-    const token = mint(claims(), rsaPrivateKey, 'RS256')
+    // Generated here rather than at module load: RSA is slow, and this is the
+    // only test that needs a pair.
+    const { privateKey, publicKey } = generateKeyPairSync('rsa', {
+      modulusLength: 2048,
+      publicKeyEncoding: { type: 'spki', format: 'pem' },
+      privateKeyEncoding: { type: 'pkcs8', format: 'pem' },
+    })
+    const token = mint(claims(), privateKey, 'RS256')
 
-    expect(
-      verifyStorageGrant(token, { publicKeys: [rsaPublicKey] }).bucket,
-    ).toBe('my-bucket')
+    expect(verifyStorageGrant(token, { publicKeys: [publicKey] }).bucket).toBe(
+      'my-bucket',
+    )
   })
 
   test('accepts a grant signed with any of the rotated secrets', () => {
@@ -162,7 +138,9 @@ describe('verifyStorageGrant', () => {
       verifyStorageGrant(token, { publicKeys: ecPublicKey }),
     ).toThrow(InvalidGrantError)
     expect(() =>
-      verifyStorageGrant(token, { publicKeys: [rsaPublicKey, ecPublicKey] }),
+      verifyStorageGrant(token, {
+        publicKeys: [otherEcPublicKey, ecPublicKey],
+      }),
     ).toThrow(InvalidGrantError)
   })
 

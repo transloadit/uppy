@@ -6,26 +6,34 @@ import {
   ListObjectsV2Command,
   NotFound,
   PutObjectCommand,
-  S3Client,
   S3ServiceException,
 } from '@aws-sdk/client-s3'
-import jwt from 'jsonwebtoken'
 import { describe, expect, test, vi } from 'vitest'
 import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
 import S3Provider from '../src/server/provider/s3/index.js'
+import {
+  claims,
+  GRANT_SECRET,
+  type GrantClaims,
+  mint,
+  nowSeconds,
+} from './fixtures/s3.js'
 
 const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
   const provider = new S3Provider({ allowLocalUrls: false })
-  const client = Object.assign(Object.create(S3Client.prototype), { send })
-  vi.spyOn(provider, 'getClient').mockReturnValue(client as never)
+  vi.spyOn(provider, 'getClient').mockReturnValue({ send } as never)
   return provider
 }
 
 type S3Cfg = Record<string, unknown>
-/** Companion options with the provider configured under `providerOptions.s3`. */
+/**
+ * Companion options with the provider configured under `providerOptions.s3`.
+ * A fresh object every call: the provider caches its config and client per
+ * options object, so sharing one would leak a client between tests.
+ */
 const companionWith = (s3Provider?: S3Cfg, s3Upload?: S3Cfg) =>
   ({
     options: {
@@ -34,25 +42,16 @@ const companionWith = (s3Provider?: S3Cfg, s3Upload?: S3Cfg) =>
     },
   }) as never
 
-const GRANT_SECRET = 'grant-secret-for-tests'
-const mintGrant = (
-  claims: Partial<Record<string, unknown>> = {},
-  secret = GRANT_SECRET,
-) =>
-  jwt.sign(
-    {
-      v: 1,
+const mintGrant = (overrides: GrantClaims = {}, secret = GRANT_SECRET) =>
+  mint(
+    claims({
       bucket: 'b',
       prefix: 'tenant/',
       scopes: ['read', 'write'],
       sub: 'user-1',
-      ...claims,
-    },
+      ...overrides,
+    }),
     secret,
-    {
-      algorithm: 'HS256',
-      ...(claims['exp'] === undefined && { expiresIn: 900 }),
-    },
   )
 
 const notFound = () =>
@@ -68,7 +67,7 @@ const inputsOf = (send: ReturnType<typeof vi.fn>, type: unknown) =>
 const userError = (message: string) =>
   expect.objectContaining({ name: 'ProviderUserError', json: { message } })
 
-const bucketCompanion = companionWith({ bucket: 'b', region: 'r' })
+const bucketCompanion = () => companionWith({ bucket: 'b', region: 'r' })
 const bucketSession = { bucket: 'b', prefix: '', write: true }
 
 describe('S3 provider', () => {
@@ -91,19 +90,12 @@ describe('S3 provider', () => {
 
     test('bucket mode: every session gets the configured bucket and prefix', async () => {
       const provider = makeProvider()
-      expect(
-        await provider.simpleAuth({
-          requestBody: { form: { bucket: 'other', grant: 'x' } },
-          companion: companionWith({ bucket: 'b', prefix: '/uploads' }),
-        }),
-      ).toEqual({ bucket: 'b', prefix: 'uploads/', write: true })
-      expect(
-        provider.simpleAuthTokenMaxAge({
-          bucket: 'b',
-          prefix: '',
-          write: true,
-        }),
-      ).toBe(S3Provider.authStateExpiry)
+      const session = await provider.simpleAuth({
+        requestBody: { form: { bucket: 'other', grant: 'x' } },
+        companion: companionWith({ bucket: 'b', prefix: '/uploads' }),
+      })
+      // No `exp`: the session token gets Companion's default lifetime.
+      expect(session).toEqual({ bucket: 'b', prefix: 'uploads/', write: true })
     })
 
     test("the provider's credentials fall back to the upload block", async () => {
@@ -126,6 +118,26 @@ describe('S3 provider', () => {
       })
     })
 
+    test('the client is built once per companion options object', async () => {
+      const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
+      const companion = bucketCompanion()
+      await provider.list({ companion, providerUserSession: bucketSession })
+      await provider.deleteItem({
+        companion,
+        id: 'x.txt',
+        providerUserSession: bucketSession,
+      })
+      expect(vi.mocked(provider.getClient)).toHaveBeenCalledTimes(1)
+    })
+
+    test('a second companion options object gets its own client', async () => {
+      const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
+      for (const companion of [bucketCompanion(), bucketCompanion()]) {
+        await provider.list({ companion, providerUserSession: bucketSession })
+      }
+      expect(vi.mocked(provider.getClient)).toHaveBeenCalledTimes(2)
+    })
+
     test('sessions from another configuration are rejected as unauthenticated', async () => {
       const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
       for (const providerUserSession of [
@@ -136,7 +148,7 @@ describe('S3 provider', () => {
       ]) {
         await expect(
           provider.list({
-            companion: bucketCompanion,
+            companion: bucketCompanion(),
             providerUserSession: providerUserSession as never,
           }),
         ).rejects.toBeInstanceOf(ProviderAuthError)
@@ -145,24 +157,24 @@ describe('S3 provider', () => {
   })
 
   describe('storage grants', () => {
-    const companion = companionWith({ grantSecret: GRANT_SECRET, region: 'r' })
+    const companion = () =>
+      companionWith({ grantSecret: GRANT_SECRET, region: 'r' })
 
     test('a valid grant becomes a session that expires with the grant', async () => {
       const provider = makeProvider()
       const session = await provider.simpleAuth({
         requestBody: { form: { grant: mintGrant({ prefix: '/tenant' }) } },
-        companion,
+        companion: companion(),
       })
       expect(session).toMatchObject({
         bucket: 'b',
         prefix: 'tenant/',
         write: true,
       })
-      const now = Math.floor(Date.now() / 1000)
-      expect(session.exp).toBeGreaterThan(now)
-      const maxAge = provider.simpleAuthTokenMaxAge(session)
-      expect(maxAge).toBeGreaterThan(800)
-      expect(maxAge).toBeLessThanOrEqual(900)
+      // `exp` is what sizes the session token: it expires with the grant.
+      const now = nowSeconds()
+      expect(session.exp).toBeGreaterThan(now + 800)
+      expect(session.exp).toBeLessThanOrEqual(now + 900)
     })
 
     test('read-only grants open read-only sessions', async () => {
@@ -170,7 +182,7 @@ describe('S3 provider', () => {
       expect(
         await provider.simpleAuth({
           requestBody: { form: { grant: mintGrant({ scopes: ['read'] }) } },
-          companion,
+          companion: companion(),
         }),
       ).toMatchObject({ write: false })
     })
@@ -178,9 +190,12 @@ describe('S3 provider', () => {
     test('expired grants are auth errors, anything else invalid is a user error', async () => {
       const provider = makeProvider()
       const auth = (grant: unknown) =>
-        provider.simpleAuth({ requestBody: { form: { grant } }, companion })
+        provider.simpleAuth({
+          requestBody: { form: { grant } },
+          companion: companion(),
+        })
       await expect(
-        auth(mintGrant({ exp: Math.floor(Date.now() / 1000) - 60 })),
+        auth(mintGrant({ exp: nowSeconds() - 60 })),
       ).rejects.toBeInstanceOf(ProviderAuthError)
       await expect(auth(mintGrant({}, 'another-secret'))).rejects.toEqual(
         userError('s3InvalidGrant'),
@@ -217,12 +232,16 @@ describe('S3 provider', () => {
       const send = vi.fn(async () => ({ Contents: [] }))
       const provider = makeProvider(send)
       const readOnly = { bucket: 'b', prefix: '', write: false }
+      const options = companion()
       expect(
-        await provider.list({ companion, providerUserSession: readOnly }),
+        await provider.list({
+          companion: options,
+          providerUserSession: readOnly,
+        }),
       ).toMatchObject({ items: [] })
       await expect(
         provider.createFolder({
-          companion,
+          companion: options,
           parentId: null,
           name: 'x',
           providerUserSession: readOnly,
@@ -230,7 +249,7 @@ describe('S3 provider', () => {
       ).rejects.toEqual(userError('s3ReadOnlySession'))
       await expect(
         provider.deleteItem({
-          companion,
+          companion: options,
           id: 'x.txt',
           providerUserSession: readOnly,
         }),
@@ -255,7 +274,7 @@ describe('S3 provider', () => {
     }))
     const provider = makeProvider(send)
     const res = await provider.list({
-      companion: bucketCompanion,
+      companion: bucketCompanion(),
       providerUserSession: bucketSession,
       directory: 'blog/',
     })
@@ -345,7 +364,7 @@ describe('S3 provider', () => {
     )
     const provider = makeProvider(send)
     const args = {
-      companion: bucketCompanion,
+      companion: bucketCompanion(),
       id: 'a/',
       providerUserSession: bucketSession,
     }
@@ -382,13 +401,13 @@ describe('S3 provider', () => {
       })
       return { provider: makeProvider(send), send }
     }
-    const companion = companionWith({ bucket: 'b', prefix: 't/' })
+    const companion = () => companionWith({ bucket: 'b', prefix: 't/' })
     const providerUserSession = { bucket: 'b', prefix: 't/', write: true }
     const move = (
       provider: S3Provider,
       id: string,
       destination: string,
-      c = companion,
+      c = companion(),
     ) =>
       provider.moveItem({ companion: c, id, destination, providerUserSession })
 
@@ -474,14 +493,13 @@ describe('S3 provider', () => {
 
   describe('createFolder', () => {
     const makeFolderProvider = () => {
-      const send = vi.fn(async (cmd: unknown) => {
-        if (cmd instanceof ListObjectsV2Command) return { Contents: [] }
-        if (cmd instanceof HeadObjectCommand) {
-          if ((cmd as unknown as Cmd).input['Key'] === 'docs/taken/') return {}
-          throw notFound()
-        }
-        return {}
-      })
+      // Only `docs/taken/` is in the bucket already.
+      const send = vi.fn(async (cmd: unknown) =>
+        cmd instanceof ListObjectsV2Command &&
+        (cmd as unknown as Cmd).input['Prefix'] === 'docs/taken/'
+          ? { Contents: [{ Key: 'docs/taken/' }] }
+          : { Contents: [] },
+      )
       return { provider: makeProvider(send), send }
     }
 
@@ -489,7 +507,7 @@ describe('S3 provider', () => {
       const { provider, send } = makeFolderProvider()
       const create = (parentId: string | null, name: string) =>
         provider.createFolder({
-          companion: bucketCompanion,
+          companion: bucketCompanion(),
           parentId,
           name,
           providerUserSession: bucketSession,
@@ -497,6 +515,10 @@ describe('S3 provider', () => {
       await expect(create('docs/', 'taken')).rejects.toEqual(
         userError('s3AlreadyExists'),
       )
+      // One listing, without a delimiter: a marker or any child is enough.
+      expect(inputsOf(send, ListObjectsV2Command)).toEqual([
+        { Bucket: 'b', Prefix: 'docs/taken/', MaxKeys: 1 },
+      ])
       await expect(create('docs/', 'a/b')).rejects.toEqual(
         userError('s3InvalidName'),
       )
@@ -559,7 +581,7 @@ describe('S3 provider', () => {
     const provider = makeProvider(send)
     const list = () =>
       provider.list({
-        companion: bucketCompanion,
+        companion: bucketCompanion(),
         providerUserSession: bucketSession,
       })
     await expect(list()).rejects.toEqual(userError('s3RequestFailed'))

@@ -294,12 +294,8 @@ describe('Test S3 provider options', () => {
     for (const name of s3Env) delete process.env[name]
   })
 
-  test('is left unconfigured when no environment variable is set', () => {
-    const s3 = getCompanionOptions().providerOptions?.['s3']
-    expect(s3).toBeDefined()
-    expect(Object.values(s3 ?? {}).every((value) => value === undefined)).toBe(
-      true,
-    )
+  test('is left out entirely when no environment variable is set', () => {
+    expect(getCompanionOptions().providerOptions?.['s3']).toBeUndefined()
   })
 
   test('reads the bucket, the grant keys and the write options', () => {
@@ -322,16 +318,17 @@ describe('Test S3 provider options', () => {
       bucket: 'some-bucket',
       prefix: 'uploads/',
       grantSecret: ['next', 'previous'],
-      grantPublicKey:
+      grantPublicKey: [
         '-----BEGIN PUBLIC KEY-----\nabc\n-----END PUBLIC KEY-----',
+      ],
       acl: 'private',
     })
   })
 
-  test('keeps a single grant secret a string', () => {
+  test('reads a single grant secret as a one-entry list', () => {
     process.env['COMPANION_S3_PROVIDER_GRANT_SECRET'] = 'only_one'
-    expect(getCompanionOptions().providerOptions?.['s3']?.grantSecret).toBe(
-      'only_one',
-    )
+    expect(
+      getCompanionOptions().providerOptions?.['s3']?.grantSecret,
+    ).toStrictEqual(['only_one'])
   })
 })
