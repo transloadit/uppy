@@ -612,19 +612,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/lib-storage@npm:3.1047.0":
-  version: 3.1047.0
-  resolution: "@aws-sdk/lib-storage@npm:3.1047.0"
+"@aws-sdk/lib-storage@npm:3.1129.0":
+  version: 3.1129.0
+  resolution: "@aws-sdk/lib-storage@npm:3.1129.0"
   dependencies:
-    "@smithy/core": "npm:^3.24.1"
-    "@smithy/types": "npm:^4.14.1"
+    "@smithy/core": "npm:^3.33.3"
+    "@smithy/types": "npm:^4.17.2"
     buffer: "npm:5.6.0"
     events: "npm:3.3.0"
     stream-browserify: "npm:3.0.0"
     tslib: "npm:^2.6.2"
   peerDependencies:
-    "@aws-sdk/client-s3": ^3.1047.0
-  checksum: 10/df30f626230074108b99e6243915ad1786b883310ceae089a981f770864d2e9d7cefe2ff378ce71c52c3e7f2bf20687df7deb6d4ddcda7aa282cf44f411c5788
+    "@aws-sdk/client-s3": ^3.1129.0
+  checksum: 10/065b4a9de66526c4479a3b75ec97c76a32769c1191240c212e58b5c61416fd3070becfc917fce2257f7c234a8254f78ac768cec7563f73bf968ebbf9fed52b76
   languageName: node
   linkType: hard
 
@@ -3834,6 +3834,23 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@redis/client@npm:^5.0.0":
+  version: 5.12.1
+  resolution: "@redis/client@npm:5.12.1"
+  dependencies:
+    cluster-key-slot: "npm:1.1.2"
+  peerDependencies:
+    "@node-rs/xxhash": ^1.1.0
+    "@opentelemetry/api": ">=1 <2"
+  peerDependenciesMeta:
+    "@node-rs/xxhash":
+      optional: true
+    "@opentelemetry/api":
+      optional: true
+  checksum: 10/6e7ac59761201ca0cb5eeff78e18b67eb0db2071b6bf3306d08697999a244329dd01a4d521963eb134da87c8ef6689ed52648f5fc15d6d2cd84a77cd5f3351c4
+  languageName: node
+  linkType: hard
+
 "@remix-run/node-fetch-server@npm:^0.13.3":
   version: 0.13.3
   resolution: "@remix-run/node-fetch-server@npm:0.13.3"
@@ -4454,14 +4471,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/core@npm:^3.24.1, @smithy/core@npm:^3.24.6, @smithy/core@npm:^3.25.1":
-  version: 3.25.1
-  resolution: "@smithy/core@npm:3.25.1"
+"@smithy/core@npm:^3.24.1, @smithy/core@npm:^3.24.6, @smithy/core@npm:^3.25.1, @smithy/core@npm:^3.33.3":
+  version: 3.33.3
+  resolution: "@smithy/core@npm:3.33.3"
   dependencies:
-    "@aws-crypto/crc32": "npm:5.2.0"
-    "@smithy/types": "npm:^4.15.0"
+    "@smithy/types": "npm:^4.17.2"
     tslib: "npm:^2.6.2"
-  checksum: 10/72c298974c80133a5218f73882a31bd27157e0fc1773f32a29197c90c2122f42feb97871782e977f450cf0114467ab771496a57f2060d24406db79df71f593a4
+  checksum: 10/76d67070bada0a32bfe44f2c07e0c871675990d3ff7f7574c749df036ae3b4bc63a374513637b0b16fc153dbf01d66af565b875dced77cfbd45e975a4f4d0059
   languageName: node
   linkType: hard
 
@@ -4518,12 +4534,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@smithy/types@npm:^4.14.1, @smithy/types@npm:^4.14.3, @smithy/types@npm:^4.15.0":
-  version: 4.15.0
-  resolution: "@smithy/types@npm:4.15.0"
+"@smithy/types@npm:^4.14.1, @smithy/types@npm:^4.14.3, @smithy/types@npm:^4.15.0, @smithy/types@npm:^4.17.2":
+  version: 4.18.0
+  resolution: "@smithy/types@npm:4.18.0"
   dependencies:
     tslib: "npm:^2.6.2"
-  checksum: 10/e41a84ec3eb9feb45040ccd541b1cacf0fc2375297802886459cb9311ff361080978c08ef98e9ad69f41d80ad212279d682a8fe30a993381b2f1dd376c1006c3
+  checksum: 10/18719c5ae8eef71ef10d79e8628b528a9f0aede5fb036c9a798f676b7b4a35efd10fc0d3b7e1f8921746c66c4ae2a8277570f99a0545fbc4eae6c994997f83cd
   languageName: node
   linkType: hard
 
@@ -4605,10 +4621,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/load-config@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@sveltejs/load-config@npm:0.2.0"
-  checksum: 10/cc2258aaeadbc365db25461888ba4bba90ed48e296315c860922751a10f4c3ece835029db2d0a59ce9a015e5c588bfc04c21b99d91c2e06950488cdc2bc9d1ce
+"@sveltejs/load-config@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "@sveltejs/load-config@npm:0.2.3"
+  checksum: 10/cafc9bdf01ff68af1dbba16c416f688a855e0090497fb6855925177ae030775a5c0919243ffd6633046bb22f195e3f128a823345929f26acbf10490777caf030
   languageName: node
   linkType: hard
 
@@ -4954,22 +4970,22 @@ __metadata:
   linkType: hard
 
 "@tus/server@npm:latest":
-  version: 2.3.0
-  resolution: "@tus/server@npm:2.3.0"
+  version: 2.4.5
+  resolution: "@tus/server@npm:2.4.5"
   dependencies:
-    "@redis/client": "npm:^1.6.0"
-    "@tus/utils": "npm:^0.6.0"
+    "@redis/client": "npm:^5.0.0"
+    "@tus/utils": "npm:^0.7.1"
     debug: "npm:^4.3.4"
     ioredis: "npm:^5.4.1"
     lodash.throttle: "npm:^4.1.1"
     set-cookie-parser: "npm:^2.7.1"
-    srvx: "npm:~0.8.2"
+    srvx: "npm:~0.11.15"
   dependenciesMeta:
     "@redis/client":
       optional: true
     ioredis:
       optional: true
-  checksum: 10/18684f30ee3c36607e8fc5bc840a235ed38ce657e3590e5cd785f67687839e484b038289cc128097116ffb26f0fc11f3cceb8109b19edc72072945efc51d07d3
+  checksum: 10/6f4bf631d320709865092980afe6337a4099c6627accd6cad12ef8f278d14146036c0a64c7cec9d1330fca4fa3ee4754fb618b586109ee849f809667635f332e
   languageName: node
   linkType: hard
 
@@ -4977,6 +4993,13 @@ __metadata:
   version: 0.6.0
   resolution: "@tus/utils@npm:0.6.0"
   checksum: 10/2f6ee8d094fb85194e6884b87ffe2ec7962232a359258aad934a7b434ddf3b240aab9488ac31e3f97c9ea17a45ce8e81831cb5dfafe3e77454deaf0655c17580
+  languageName: node
+  linkType: hard
+
+"@tus/utils@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "@tus/utils@npm:0.7.1"
+  checksum: 10/967cb8b77e8a29a8bc30398f9adc79a4bb41e0d8f0c38aaf99a8bd4b1c765eb1ae7cbddb70539405975c705b29a6f3a9e474de60d3ea9ea40a4bbc093bb5bc90
   languageName: node
   linkType: hard
 
@@ -5531,7 +5554,7 @@ __metadata:
   dependencies:
     "@aws-sdk/client-s3": "npm:3.1047.0"
     "@aws-sdk/client-sts": "npm:3.1047.0"
-    "@aws-sdk/lib-storage": "npm:3.1047.0"
+    "@aws-sdk/lib-storage": "npm:3.1129.0"
     "@aws-sdk/s3-presigned-post": "npm:3.1047.0"
     "@aws-sdk/s3-request-presigner": "npm:3.1047.0"
     "@transloadit/utils": "npm:^4.8.0"
@@ -6025,7 +6048,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
     svelte: "npm:^5.56.5"
-    svelte-check: "npm:^4.4.8"
+    svelte-check: "npm:^4.7.6"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.2.2"
@@ -7579,13 +7602,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie-es@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "cookie-es@npm:2.0.0"
-  checksum: 10/dffbfec1846fc3fce4a8e8bcf650f8bb26c7ec7f00ac18060226dd21a0e14372d593b91289ed52834141ab85d6bcb6755834be560d789c138127e6d594bdde0f
-  languageName: node
-  linkType: hard
-
 "cookie-es@npm:^3.1.1":
   version: 3.1.1
   resolution: "cookie-es@npm:3.1.1"
@@ -8924,12 +8940,12 @@ __metadata:
     msw: "npm:^2.10.4"
     playwright: "npm:1.61.1"
     svelte: "npm:^5.56.5"
-    svelte-check: "npm:^4.0.0"
+    svelte-check: "npm:^4.7.6"
     tailwindcss: "npm:^4.0.0"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.2.2"
     vitest: "npm:^4.1.11"
-    vitest-browser-svelte: "npm:^3.0.0"
+    vitest-browser-svelte: "npm:^3.1.0"
   languageName: unknown
   linkType: soft
 
@@ -15107,14 +15123,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"srvx@npm:~0.8.2":
-  version: 0.8.7
-  resolution: "srvx@npm:0.8.7"
-  dependencies:
-    cookie-es: "npm:^2.0.0"
+"srvx@npm:~0.11.15":
+  version: 0.11.22
+  resolution: "srvx@npm:0.11.22"
   bin:
     srvx: bin/srvx.mjs
-  checksum: 10/b71ea8be8f333962788150babcf7319f4f514136ac5b919c9799c2d43e7c7d139b1f34b4f0795ccac71d8a56e7e27c176dbf98186229b80bd99626e88c89efcf
+  checksum: 10/2933fb46a7a466482f6f149000d2c453b2783c45aa16809d8783e3fb10f7d279b9260c3fa2052b1922318ea5fe1ea7cbb46e50a255321b407bd7995ba0ba94ca
   languageName: node
   linkType: hard
 
@@ -15434,22 +15448,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte-check@npm:^4.0.0, svelte-check@npm:^4.4.8":
-  version: 4.7.3
-  resolution: "svelte-check@npm:4.7.3"
+"svelte-check@npm:^4.7.6":
+  version: 4.7.6
+  resolution: "svelte-check@npm:4.7.6"
   dependencies:
     "@jridgewell/trace-mapping": "npm:^0.3.25"
-    "@sveltejs/load-config": "npm:^0.2.0"
+    "@sveltejs/load-config": "npm:^0.2.3"
     chokidar: "npm:^4.0.1"
     fdir: "npm:^6.2.0"
     picocolors: "npm:^1.0.0"
     sade: "npm:^1.7.4"
   peerDependencies:
     svelte: ^4.0.0 || ^5.0.0-next.0
-    typescript: ">=5.0.0"
+    typescript: ^5.0.0 || ^6.0.0
   bin:
     svelte-check: bin/svelte-check
-  checksum: 10/8d41a73e7356f63ba4d6658d9e343f391bee3c552c8640b7e7326f98a540b5fb04db8d7d5e3525d398a9385ec4e2a3d5f7d7accc5b5dc5c8b9f16545a8162fa7
+  checksum: 10/a32c374cbab1288d0f39e310bb3811126738dea8e521c9c35e78ae0c937ca18026122fbb3ae3de0feb4c02fd71554c61b704d95da1c59060e130cc5d5288e894
   languageName: node
   linkType: hard
 
@@ -16267,15 +16281,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest-browser-svelte@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "vitest-browser-svelte@npm:3.0.0"
+"vitest-browser-svelte@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "vitest-browser-svelte@npm:3.1.0"
   dependencies:
     "@testing-library/svelte-core": "npm:^1.1.3"
   peerDependencies:
     svelte: ^3 || ^4 || ^5 || ^5.0.0-next.0
-    vitest: ^4.0.0
-  checksum: 10/4e66372dfed075c79d7546b7d41f17621ec1c6b06d7e4637174b461415b4222d3beed78539f768ba7f9bb19cede54d707f841c0aad0376086cc2eb2d2912a37e
+    vitest: ^4.0.0 || ^5.0.0
+  checksum: 10/f09a0353e03e0791741ea55e10dfe876fff12a32958bf92392c390957665436f6941ddf0ddb19fee2f3c35752112b0ada6dc978fc2654c4cdd059ae6bcdabcc4
   languageName: node
   linkType: hard
 
