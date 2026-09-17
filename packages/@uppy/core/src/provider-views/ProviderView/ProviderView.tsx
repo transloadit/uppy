@@ -105,7 +105,10 @@ export interface ProviderAction<M extends Meta, B extends Body> {
   appliesTo?: 'file' | 'folder' | 'all'
   /** Reload the current folder after the action ran (default true). */
   refresh?: boolean
-  run: (context: ProviderActionContext<M, B>) => Promise<void> | void
+  /** Return false for a cancellation/no-op to retain the current listing. */
+  run: (
+    context: ProviderActionContext<M, B>,
+  ) => Promise<void | false> | void | false
 }
 
 /** Context handed to a toolbar (current-folder level) action such as "New folder". */
@@ -120,7 +123,9 @@ export interface ProviderToolbarAction<M extends Meta, B extends Body> {
   id: string
   label: string
   refresh?: boolean
-  run: (context: ProviderToolbarActionContext<M, B>) => Promise<void> | void
+  run: (
+    context: ProviderToolbarActionContext<M, B>,
+  ) => Promise<void | false> | void | false
 }
 
 /** Context handed to a bulk action over the currently selected items. */
@@ -137,7 +142,9 @@ export interface ProviderBulkAction<M extends Meta, B extends Body> {
   label: string
   danger?: boolean
   refresh?: boolean
-  run: (context: ProviderBulkActionContext<M, B>) => Promise<void> | void
+  run: (
+    context: ProviderBulkActionContext<M, B>,
+  ) => Promise<void | false> | void | false
 }
 
 export interface Opts<M extends Meta, B extends Body> {
@@ -309,7 +316,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
       .filter((node) => !invalidateAll || navigationIds.has(node.id))
       .map((node) =>
         (invalidateAll || node.id === currentFolderId) && node.type !== 'file'
-          ? { ...node, cached: false, nextPagePath: null }
+          ? // Checked ancestors may only reflect previously selected children. Never let a new
+            // listing inherit that aggregate selection; restore surviving children explicitly below.
+            {
+              ...node,
+              status: 'unchecked' as const,
+              cached: false,
+              nextPagePath: null,
+            }
           : node,
       )
     this.plugin.setPluginState({ partialTree: nextTree })
@@ -355,10 +369,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
   /** Runs an action, refreshes the folder, and reports errors as toasts. */
   async #run(
     { refresh }: { refresh?: boolean | undefined },
-    run: () => Promise<void> | void,
+    run: () => Promise<void | false> | void | false,
   ): Promise<void> {
     try {
-      await run()
+      if ((await run()) === false) return
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
       this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
@@ -415,8 +429,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
         }
         return true
       })
-      if (items.length === 0) return
-      await action.run({ items, ...this.#actionContext() })
+      if (items.length === 0) return false
+      if ((await action.run({ items, ...this.#actionContext() })) === false)
+        return false
       this.cancelSelection()
     })
 
@@ -729,24 +744,40 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async handleScroll(event: Event): Promise<void> {
+    if (shouldHandleScroll(event)) await this.loadNextPage()
+  }
+
+  #nextPageRequest: Promise<boolean> | undefined
+
+  /** Load the current folder's next page, shared by scrolling and programmatic navigation. */
+  loadNextPage(): Promise<boolean> {
+    if (!this.#nextPageRequest) {
+      this.#nextPageRequest = this.#loadNextPage().finally(() => {
+        this.#nextPageRequest = undefined
+      })
+    }
+    return this.#nextPageRequest
+  }
+
+  async #loadNextPage(): Promise<boolean> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
-    const currentFolder = partialTree.find(
-      (i) => i.id === currentFolderId,
-    ) as PartialTreeFolder
+    const currentFolder = partialTree.find((i) => i.id === currentFolderId)
     if (
-      shouldHandleScroll(event) &&
-      !this.isHandlingScroll &&
+      currentFolder &&
+      currentFolder.type !== 'file' &&
       currentFolder.nextPagePath
     ) {
+      const pagePath = currentFolder.nextPagePath
+      let loaded = false
       this.isHandlingScroll = true
       await this.#withAbort(async (signal) => {
         const { nextPagePath, items } =
-          await this.provider.list<ProviderListResponse>(
-            currentFolder.nextPagePath,
-            { signal },
-          )
+          await this.provider.list<ProviderListResponse>(pagePath, { signal })
+        const current = this.plugin.getPluginState()
+        if (signal.aborted || current.currentFolderId !== currentFolderId)
+          return
         const newPartialTree = PartialTreeUtils.afterScrollFolder(
-          partialTree,
+          current.partialTree,
           currentFolderId,
           items,
           nextPagePath,
@@ -754,9 +785,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
         )
 
         this.plugin.setPluginState({ partialTree: newPartialTree })
+        loaded = true
       }).catch(handleError(this.plugin.uppy))
       this.isHandlingScroll = false
+      return loaded
     }
+    return false
   }
 
   validateSingleFile = (file: CompanionFile): string | null => {

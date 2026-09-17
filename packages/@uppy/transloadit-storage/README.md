@@ -103,6 +103,12 @@ The browser also uses Companion's effective mutation capability from each listin
 `mutableBuckets`. Older servers without that field show read actions only; upgrade Companion
 together with this plugin to enable management actions.
 
+Generic S3 moves are a separate, non-atomic copy/delete operation. They default to disabled:
+enable `s3.conditionalMoves` (`COMPANION_AWS_CONDITIONAL_MOVES=true`) only after testing your exact
+endpoint's conditional source copy, destination copy and delete support. Some S3-compatible
+servers silently ignore conditional deletes; a preliminary HEAD request cannot make them safe.
+Native Transloadit Storage moves do not need this option and never fall back to copy/delete.
+
 ## Upload configuration
 
 `storeUploads.transloaditPluginId` selects the installed `@uppy/transloadit` plugin (default:
@@ -111,7 +117,10 @@ preserves its locale overrides, and enables `waitForEncoding` so completion incl
 Step and reports its failures. If your application already owns an Assembly pipeline, call
 `createStoreAssemblyOptions(uppy, { signAssembly, storagePluginId })` explicitly and compose it
 deliberately; the widget will not overwrite that pipeline. Uploads at the browsing root use the
-authenticated grant's prefix. Your signing endpoint must independently authorize that destination
+authenticated grant's prefix, initializing the session first even if the panel has not been opened.
+An authentication failure stops the upload before requesting a signature. `onUploadRequest` can
+also expose an app-owned upload flow without enabling `storeUploads`.
+Your signing endpoint must independently authorize that destination
 and restrict the allowed Steps; client-side folder selection is not an authorization boundary.
 
 This contract requires the matching API2 catalog/Built-in deployment and SDK/types release before

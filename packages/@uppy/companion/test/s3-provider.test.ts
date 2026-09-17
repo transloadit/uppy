@@ -12,6 +12,7 @@ import {
 import { signParamsSync } from '@transloadit/utils/node'
 import jwt from 'jsonwebtoken'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
+import { getMaskableSecrets } from '../dist/config/companion.js'
 import {
   ProviderAuthError,
   ProviderUserError,
@@ -37,6 +38,7 @@ const companionWith = (
     awsSseKmsKeyId?: string
     grantSecret?: string
     allowBucketAuth?: boolean
+    conditionalMoves?: boolean
     transloaditStorage?: {
       apiEndpoint: string
       workspaces: Record<string, { key: string; secret: string }>
@@ -44,7 +46,14 @@ const companionWith = (
   } = {},
 ) =>
   ({
-    options: { s3: { browsableBuckets, mutableBuckets, ...extra } },
+    options: {
+      s3: {
+        conditionalMoves: true,
+        browsableBuckets,
+        mutableBuckets,
+        ...extra,
+      },
+    },
   }) as never
 
 const GRANT_SECRET = 'grant-secret-for-tests'
@@ -79,6 +88,66 @@ const inputsOf = (send: ReturnType<typeof vi.fn>, type: unknown) =>
     .map((cmd) => (cmd as unknown as Cmd).input)
 
 describe('S3 provider', () => {
+  test('masks the secret that can mint Storage grants', () => {
+    expect(
+      getMaskableSecrets({ s3: { grantSecret: GRANT_SECRET } } as never),
+    ).toContain(GRANT_SECRET)
+  })
+
+  test('refuses copy/delete moves without confirmed endpoint condition support', async () => {
+    const send = vi.fn(async (command: unknown) => {
+      if (
+        command instanceof HeadObjectCommand &&
+        command.input.Key === 'target.txt'
+      )
+        throw notFound()
+      return { ContentLength: 1, ETag: 'source' }
+    })
+    await expect(
+      makeProvider(send).moveItem({
+        companion: companionWith(['b'], ['b'], { conditionalMoves: false }),
+        providerUserSession: { bucket: 'b', prefix: '' },
+        id: 'source.txt',
+        destination: 'target.txt',
+      }),
+    ).rejects.toMatchObject({
+      json: { message: expect.stringContaining('conditionalMoves') },
+    })
+    expect(inputsOf(send, CopyObjectCommand)).toEqual([])
+    expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
+  })
+
+  test('reports native Storage outages as gateway failures without upstream details', async () => {
+    const server = createServer((_request, response) => {
+      response.writeHead(503, { 'Content-Type': 'application/json' })
+      response.end(JSON.stringify({ error: 'private upstream diagnostic' }))
+    })
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+    onTestFinished(
+      () => new Promise<void>((resolve) => server.close(() => resolve())),
+    )
+    const address = server.address()
+    if (!address || typeof address === 'string')
+      throw new Error('Expected TCP address')
+    const provider = new TransloaditStorageProvider({ allowLocalUrls: true })
+    vi.spyOn(provider, 'getClient').mockReturnValue(
+      Object.create(S3Client.prototype),
+    )
+    await expect(
+      provider.moveItem({
+        companion: companionWith(['b'], ['b'], {
+          transloaditStorage: {
+            apiEndpoint: `http://127.0.0.1:${address.port}`,
+            workspaces: { b: { key: 'test-key', secret: 'test-secret' } },
+          },
+        }),
+        providerUserSession: { bucket: 'b', prefix: '' },
+        id: 'source.txt',
+        destination: 'target.txt',
+      }),
+    ).rejects.toMatchObject({ name: 'ProviderApiError', statusCode: 502 })
+  })
+
   test.each([
     { mutableBuckets: [] },
     { mutableBuckets: ['b'] },

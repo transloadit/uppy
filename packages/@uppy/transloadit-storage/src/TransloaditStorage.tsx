@@ -171,7 +171,7 @@ export default class TransloaditStorage<
 
   override builtInToolbarActions() {
     const base = super.builtInToolbarActions()
-    if (!this.opts.storeUploads) return base
+    if (!this.opts.storeUploads && !this.opts.onUploadRequest) return base
     const upload = {
       id: 'transloadit:uploadFiles',
       label: this.i18n('uploadFiles'),

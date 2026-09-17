@@ -108,6 +108,11 @@ export interface CompanionInitOptions {
      * @default []
      */
     mutableBuckets?: string[] | undefined
+    /** Enable generic copy/delete moves only after verifying the endpoint honors source and
+     * destination copy conditions and conditional deletes. Native Storage moves do not use this.
+     * @default false
+     */
+    conditionalMoves?: boolean | undefined
     /**
      * Secret used to verify storage *grants*: short-lived HS256 JWTs minted by
      * your own server after it authenticated the user, carrying the bucket,

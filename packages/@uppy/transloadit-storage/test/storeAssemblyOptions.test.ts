@@ -1,6 +1,6 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
 
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
 
 import {
@@ -16,6 +16,7 @@ function fakeUppy(state: {
   return {
     getPlugin: () => ({
       getPluginState: () => ({
+        authenticated: true,
         currentFolderId: state.currentFolderId ?? null,
       }),
       opts: { prefix: state.prefix },
@@ -34,6 +35,43 @@ function storedPath(result: { params: { steps: Record<string, unknown> } }) {
 }
 
 describe('createStoreAssemblyOptions', () => {
+  it('initializes the grant before choosing an upload destination', async () => {
+    let authenticated = false
+    const storage = {
+      rootPrefix: '',
+      getPluginState: () => ({ authenticated, currentFolderId: null }),
+      openFolderPath: vi.fn(async () => {
+        authenticated = true
+        storage.rootPrefix = 'tenant/'
+        return true
+      }),
+    }
+    const signAssembly = vi.fn(passthroughSign)
+    const build = createStoreAssemblyOptions(
+      { getPlugin: () => storage } as unknown as Uppy<Meta, Body>,
+      { signAssembly },
+    )
+    expect(storedPath(await build())).toBe('tenant/${file.name}')
+    expect(storage.openFolderPath).toHaveBeenCalledWith('')
+    await build()
+    expect(storage.openFolderPath).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not ask the server to sign an upload when grant initialization fails', async () => {
+    const signAssembly = vi.fn(passthroughSign)
+    const storage = {
+      rootPrefix: '',
+      getPluginState: () => ({ authenticated: false }),
+      openFolderPath: async () => false,
+    }
+    const build = createStoreAssemblyOptions(
+      { getPlugin: () => storage } as unknown as Uppy<Meta, Body>,
+      { signAssembly },
+    )
+    await expect(build()).rejects.toThrow('authenticate')
+    expect(signAssembly).not.toHaveBeenCalled()
+  })
+
   it('uses the authenticated grant root instead of the caller prefix option', async () => {
     const build = createStoreAssemblyOptions(
       fakeUppy({ prefix: 'wrong/', rootPrefix: 'users/ana/' }),

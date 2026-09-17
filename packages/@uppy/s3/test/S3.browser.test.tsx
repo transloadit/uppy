@@ -74,6 +74,77 @@ afterEach(() => {
 })
 
 describe('S3 provider in the browser', () => {
+  it('opens a folder beyond the first listing page', async ({ worker }) => {
+    const companion = createMockS3Companion({
+      token: TOKEN,
+      pageSize: 1,
+      folders: {
+        '': [
+          { name: 'readme.md', isFolder: false },
+          { name: 'docs', isFolder: true },
+        ],
+        'docs/': [],
+      },
+    })
+    install(worker, companion)
+    const app = createUppy()
+    const plugin =
+      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    expect(await plugin.openFolderPath('docs/')).toBe(true)
+    expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
+  })
+
+  it('normalizes grant roots before deriving customer paths', async ({
+    worker,
+  }) => {
+    install(worker, createMockCompanion())
+    const app = createUppy({
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', prefix: '/tenant' }),
+    })
+    const plugin =
+      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    await plugin.openFolderPath('')
+    expect(plugin.rootPrefix).toBe('tenant/')
+  })
+
+  it('keeps a cancelled rename from discarding its listing', async ({
+    worker,
+  }) => {
+    install(worker, createMockCompanion())
+    const app = createUppy()
+    await openBucket()
+    const plugin =
+      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    const item = plugin
+      .getPluginState()
+      .partialTree.find((entry) => entry.id === 'readme.md')
+    if (!item || item.type !== 'file') throw new Error('Missing readme')
+    vi.spyOn(plugin.view, 'prompt').mockResolvedValue(null)
+    const refresh = vi.spyOn(plugin.view, 'refreshCurrentFolder')
+    const rename = plugin
+      .builtInActions()
+      .find((action) => action.id === 's3:rename')!
+    await plugin.view.runAction(rename, item)
+    expect(refresh).not.toHaveBeenCalled()
+  })
+
+  it('offers the custom upload action without replacing an application Assembly', () => {
+    const onUploadRequest = vi.fn()
+    uppy = new Uppy().use(TransloaditStorage, {
+      workspace: 'my-bucket',
+      companionUrl: COMPANION,
+      onUploadRequest,
+    })
+    const plugin =
+      uppy.getPlugin<
+        TransloaditStorage<Record<string, unknown>, Record<string, never>>
+      >('TransloaditStorage')!
+    expect(plugin.builtInToolbarActions().map((action) => action.id)).toContain(
+      'transloadit:uploadFiles',
+    )
+  })
+
   it('hides write actions when Companion reports a read-only bucket', async ({
     worker,
   }) => {
@@ -302,6 +373,10 @@ describe('S3 provider in the browser', () => {
       .partialTree.find((node) => node.id === 'docs%2Fhello.txt')
     if (!file || file.type !== 'file') throw new Error('Missing hello.txt')
     plugin.view.toggleCheckbox(file, false)
+    companion.folders
+      .get('docs/')
+      ?.push({ name: 'new-unselected.txt', isFolder: false })
+    await plugin.refreshListing()
     const run = vi.fn(async () => {})
     await plugin.view.runBulkAction({
       id: 'test:selection',
@@ -695,20 +770,26 @@ describe('S3 provider in the browser', () => {
     it('fetches a new grant when the session expires mid-way', async ({
       worker,
     }) => {
-      const companion = createMockCompanion()
+      let now = Math.floor(Date.now() / 1000)
+      const companion = createMockS3Companion({
+        token: TOKEN,
+        nowSeconds: () => now,
+      })
       install(worker, companion)
       const shortLived = mockGrant({
         bucket: 'my-bucket',
-        exp: Math.floor(Date.now() / 1000) + 1,
+        exp: now + 900,
       })
       const getGrant = vi
         .fn<() => Promise<string>>()
         .mockResolvedValueOnce(shortLived)
-        .mockResolvedValue(mockGrant({ bucket: 'my-bucket' }))
+        .mockImplementation(async () =>
+          mockGrant({ bucket: 'my-bucket', exp: now + 900 }),
+        )
       createUppy({ bucket: undefined, getGrant })
 
       await openBucket()
-      await new Promise((resolve) => setTimeout(resolve, 1_200))
+      now += 901
       // The next listing hits an expired session: one re-grant, then it succeeds.
       await page.getByText('docs', { exact: true }).click()
       await expect.element(page.getByText('hello.txt')).toBeVisible()

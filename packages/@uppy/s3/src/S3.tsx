@@ -1,4 +1,8 @@
-import { decodeStorageGrant, type StorageGrantClaims } from '@transloadit/utils'
+import {
+  decodeStorageGrant,
+  normalizeStorageGrantPrefix,
+  type StorageGrantClaims,
+} from '@transloadit/utils'
 import type {
   AsyncStore,
   Body,
@@ -285,9 +289,10 @@ const withToast =
   <Ctx extends { uppy: Uppy<any, any> }>(
     run: (context: Ctx) => Promise<string | undefined>,
   ) =>
-  async (context: Ctx): Promise<void> => {
+  async (context: Ctx): Promise<void | false> => {
     const message = await run(context)
-    if (message) context.uppy.info(message, 'info', 3000)
+    if (!message) return false
+    context.uppy.info(message, 'info', 3000)
   }
 
 export default class S3<M extends Meta, B extends Body>
@@ -411,8 +416,13 @@ export default class S3<M extends Meta, B extends Body>
       .filter(Boolean)) {
       path += `${segment}/`
       const folderId = encodeURIComponent(path)
-      const { partialTree } = this.getPluginState()
-      if (!partialTree.some((node) => node.id === folderId)) return false
+      while (
+        !this.getPluginState().partialTree.some(
+          (node) => node.id === folderId && node.type === 'folder',
+        )
+      ) {
+        if (!(await this.view.loadNextPage())) return false
+      }
       await this.view.openFolder(folderId)
     }
     return true
@@ -529,7 +539,7 @@ export default class S3<M extends Meta, B extends Body>
 
   /** Current session root for paths typed into the UI; the server still enforces the grant. */
   get rootPrefix(): string {
-    if (this.#grant) return this.#grant.prefix
+    if (this.#grant) return normalizeStorageGrantPrefix(this.#grant.prefix)
     const parts = (this.#sessionBucket ?? this.opts.bucket ?? '')
       .replace(/^s3:\/\//, '')
       .split('/')

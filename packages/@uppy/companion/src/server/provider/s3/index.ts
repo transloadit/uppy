@@ -236,6 +236,12 @@ export default class S3Provider extends Provider<S3UserSession> {
       throwHttpErrors: false,
       responseType: 'json',
     })
+    if (response.statusCode >= 500) {
+      throw new ProviderApiError(
+        'Storage is temporarily unavailable; retry later',
+        502,
+      )
+    }
     if (response.statusCode !== 200) {
       throw new ProviderUserError({
         message:
@@ -688,6 +694,14 @@ export default class S3Provider extends Provider<S3UserSession> {
           target,
         )
         return { id: path, requestPath: encodeURIComponent(path) }
+      }
+      // Some S3-compatible endpoints silently ignore conditional deletes; HEAD cannot close
+      // that race. Operators must verify all copy/delete conditions before enabling moves.
+      if (companion.options.s3?.conditionalMoves !== true) {
+        throw new ProviderUserError({
+          message:
+            'Safe moves require verified conditional-operation support (s3.conditionalMoves / COMPANION_AWS_CONDITIONAL_MOVES)',
+        })
       }
       if (isFolder) {
         if (target.startsWith(id)) {

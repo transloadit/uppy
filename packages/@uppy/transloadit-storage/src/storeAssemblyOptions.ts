@@ -68,9 +68,6 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
   const pluginId = options.storagePluginId ?? 'TransloaditStorage'
   return async () => {
     const storage = uppy.getPlugin(pluginId)
-    const currentFolderId = (
-      storage?.getPluginState() as { currentFolderId?: string | null }
-    )?.currentFolderId
     // Folder ids are full storage keys. At the root of the browsing session
     // there is no folder id, but a grant may confine the session to a prefix
     // (the plugin's `prefix` option) — uploads must land inside it.
@@ -83,11 +80,24 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
         `Install the Transloadit Storage plugin "${pluginId}" before creating an Assembly`,
       )
     }
+    if (!storage.getPluginState().authenticated) {
+      if (
+        !('openFolderPath' in storage) ||
+        typeof storage.openFolderPath !== 'function' ||
+        !(await storage.openFolderPath(''))
+      ) {
+        throw new Error(
+          'Could not authenticate Transloadit Storage before uploading; reconnect and retry',
+        )
+      }
+    }
+    const { currentFolderId } = storage.getPluginState()
     const prefix = storage.rootPrefix
     const normalizedPrefix = normalizePrefix(prefix)
-    const folder = currentFolderId
-      ? decodeURIComponent(currentFolderId)
-      : normalizedPrefix
+    const folder =
+      typeof currentFolderId === 'string' && currentFolderId
+        ? decodeURIComponent(currentFolderId)
+        : normalizedPrefix
     return options.signAssembly(
       buildStoreAssemblyParams(folder, options.conflictStrategy ?? 'error'),
     )

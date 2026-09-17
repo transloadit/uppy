@@ -88,6 +88,10 @@ export type MockS3CompanionOptions = {
   bucket?: string
   /** Matches Companion's effective per-listing mutation policy. Defaults to true. */
   canMutate?: boolean
+  /** Inject the server clock to test expiration without depending on browser/render speed. */
+  nowSeconds?: () => number
+  /** Maximum entries per listing page; defaults to an unpaginated listing. */
+  pageSize?: number
 }
 
 export type MockS3Companion = {
@@ -139,7 +143,7 @@ export function createMockS3Companion(
   let bucket = options.bucket ?? 'my-bucket'
   let session: MockS3GrantClaims | null = null
   const calls: MockS3Call[] = []
-  const nowSeconds = () => Math.floor(Date.now() / 1000)
+  const nowSeconds = options.nowSeconds ?? (() => Math.floor(Date.now() / 1000))
   const expired = () =>
     session?.exp !== undefined && session.exp <= nowSeconds()
 
@@ -253,13 +257,22 @@ export function createMockS3Companion(
         return userError(
           'That path is outside the folder you are allowed to browse',
         )
+      const entries = entriesOf(prefix)
+      const offset = Number(url.searchParams.get('offset') ?? 0)
+      const pageSize = Math.max(1, options.pageSize ?? entries.length)
+      const nextOffset = offset + pageSize
       return json({
         username: bucket,
         canMutate:
           (options.canMutate ?? true) &&
           (session?.scopes?.includes('write') ?? true),
-        nextPagePath: null,
-        items: entriesOf(prefix).map((entry) => toItem(prefix, entry)),
+        nextPagePath:
+          nextOffset < entries.length
+            ? `${encodeURIComponent(prefix)}?offset=${nextOffset}`
+            : null,
+        items: entries
+          .slice(offset, nextOffset)
+          .map((entry) => toItem(prefix, entry)),
       })
     }
     if (method === 'POST' && path.endsWith('/s3/mutate/create-folder')) {
