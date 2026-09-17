@@ -11,10 +11,10 @@ type MutationContext = {
 
 /** Present and non-empty; not trimmed, like the wire format the client sends. */
 const requiredString = z.string().min(1)
-/** Missing, null, non-string or empty all mean "the root folder". */
+/** Missing, null or empty mean "the root folder"; anything else must be a string. */
 const parentIdField = z
   .string()
-  .catch('')
+  .nullish()
   .transform((value) => value || null)
 
 /**
