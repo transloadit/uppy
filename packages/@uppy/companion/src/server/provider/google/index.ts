@@ -1,5 +1,12 @@
 import got from 'got'
+import type {
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderRefreshTokenOptions,
+  ProviderRefreshTokenResponse,
+} from '../Provider.js'
 import { withGoogleErrorHandling } from '../providerErrors.js'
+import type { DriveUserSession } from './drive/index.js'
 
 /**
  * Reusable google stuff
@@ -14,11 +21,7 @@ export async function refreshToken({
   clientId,
   clientSecret,
   refreshToken: theRefreshToken,
-}: {
-  clientId: string | undefined
-  clientSecret: string | undefined
-  refreshToken: string
-}): Promise<{ accessToken: string }> {
+}: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
   return withGoogleErrorHandling(
     'google',
     'provider.google.token.refresh.error',
@@ -45,9 +48,7 @@ export async function refreshToken({
 
 export async function logout({
   providerUserSession: { accessToken: token },
-}: {
-  providerUserSession: { accessToken: string }
-}): Promise<{ revoked: true }> {
+}: ProviderLogoutOptions<DriveUserSession>): Promise<ProviderLogoutResponse> {
   return withGoogleErrorHandling(
     'google',
     'provider.google.logout.error',
