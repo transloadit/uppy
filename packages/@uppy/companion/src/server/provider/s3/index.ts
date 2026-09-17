@@ -17,10 +17,13 @@ import {
   STORAGE_GRANT_SCOPES,
   type StorageGrantClaims,
   type StorageGrantScope,
+  signParamsSync,
   verifyStorageGrant,
 } from '@transloadit/utils/node'
+import got from 'got'
 import { lookup as mimeLookup } from 'mime-types'
 import pMap from 'p-map'
+import { z } from 'zod'
 import type { CompanionRuntimeOptions } from '../../../types/companion-options.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
@@ -100,6 +103,9 @@ const iconForKey = (key: string): string => {
  * that the S3 upload endpoints already use.
  */
 export default class S3Provider extends Provider<S3UserSession> {
+  protected get nativeStorage(): boolean {
+    return false
+  }
   static override get hasSimpleAuth() {
     return true
   }
@@ -151,7 +157,25 @@ export default class S3Provider extends Provider<S3UserSession> {
     })
   }
 
-  getClient(companionOptions: CompanionS3Options): S3Client {
+  getClient(companionOptions: CompanionS3Options, bucket?: string): S3Client {
+    if (this.nativeStorage) {
+      const credentials = this.#storageCredentials(companionOptions, bucket)
+      companionOptions = {
+        ...companionOptions,
+        s3: {
+          ...companionOptions.s3,
+          key: credentials.key,
+          secret: credentials.secret,
+          awsClientOptions: {
+            ...companionOptions.s3?.awsClientOptions,
+            credentials: {
+              accessKeyId: credentials.key,
+              secretAccessKey: credentials.secret,
+            },
+          },
+        },
+      }
+    }
     const client = getS3Client(companionOptions)
     if (client == null) {
       throw new ProviderUserError({
@@ -160,6 +184,75 @@ export default class S3Provider extends Provider<S3UserSession> {
       })
     }
     return client
+  }
+
+  #storageCredentials(
+    options: CompanionS3Options,
+    workspace: string | undefined,
+  ): { key: string; secret: string } {
+    const workspaces = options.s3?.transloaditStorage?.workspaces
+    if (
+      workspace === undefined ||
+      !workspaces ||
+      !Object.hasOwn(workspaces, workspace) ||
+      !workspaces[workspace]
+    ) {
+      throw new ProviderUserError({
+        message:
+          'This Companion has no native Storage credentials for this Workspace',
+      })
+    }
+    return workspaces[workspace]
+  }
+
+  async #moveStorageEntry(
+    options: CompanionS3Options,
+    workspace: string,
+    source: string,
+    destination: string,
+  ): Promise<string> {
+    const credentials = this.#storageCredentials(options, workspace)
+    const endpoint = options.s3?.transloaditStorage?.apiEndpoint
+    if (!endpoint)
+      throw new ProviderUserError({
+        message: 'Native Storage management is not configured',
+      })
+    const params = JSON.stringify({
+      auth: {
+        key: credentials.key,
+        expires: new Date(Date.now() + 60_000).toISOString(),
+      },
+      source,
+      destination,
+    })
+    const response = await got.post(new URL('/dam/entries/move', endpoint), {
+      form: {
+        params,
+        signature: signParamsSync(params, credentials.secret, 'sha256'),
+      },
+      timeout: { request: 30_000 },
+      retry: { limit: 0 },
+      followRedirect: false,
+      throwHttpErrors: false,
+      responseType: 'json',
+    })
+    if (response.statusCode !== 200) {
+      throw new ProviderUserError({
+        message:
+          'Storage could not move this item. Refresh the folder and check your access and destination.',
+      })
+    }
+    const moved = z
+      .object({ ok: z.literal('DAM_ENTRY_MOVED'), path: z.string().min(1) })
+      .safeParse(response.body)
+    if (!moved.success)
+      throw new ProviderApiError('Invalid native Storage move response', 502)
+    if (moved.data.path !== destination)
+      throw new ProviderApiError(
+        'Storage move returned an unexpected path',
+        502,
+      )
+    return moved.data.path
   }
 
   /**
@@ -194,7 +287,7 @@ export default class S3Provider extends Provider<S3UserSession> {
     this.assertBucketAllowed(companion.options, bucket)
     if (mutate) this.assertBucketMutable(companion.options, bucket)
     for (const key of keys) this.#assertInsidePrefix(prefix, key)
-    return { bucket, prefix, client: this.getClient(companion.options) }
+    return { bucket, prefix, client: this.getClient(companion.options, bucket) }
   }
 
   override async logout(): Promise<{ revoked: true }> {
@@ -225,7 +318,7 @@ export default class S3Provider extends Provider<S3UserSession> {
       return this.#sessionFromGrant(form['grant'], grantSecret)
     }
 
-    if (grantSecret && !s3Options?.allowBucketAuth) {
+    if ((this.nativeStorage || grantSecret) && !s3Options?.allowBucketAuth) {
       throw new ProviderUserError({
         message: 'This Companion only accepts server-issued grants',
       })
@@ -282,9 +375,9 @@ export default class S3Provider extends Provider<S3UserSession> {
 
       // `directory` is the (already URL-decoded) key prefix of the folder being
       // listed; the root of the session is the scoped prefix.
-      let prefix = directory ? ensureTrailingSlash(directory) : rootPrefix
+      const prefix = directory ? ensureTrailingSlash(directory) : rootPrefix
       // Never allow escaping the scoped prefix.
-      if (!prefix.startsWith(rootPrefix)) prefix = rootPrefix
+      this.#assertInsidePrefix(rootPrefix, prefix)
 
       const cursor =
         typeof query?.['cursor'] === 'string' ? query['cursor'] : undefined
@@ -339,7 +432,11 @@ export default class S3Provider extends Provider<S3UserSession> {
           ? `${encodeURIComponent(prefix)}?cursor=${encodeURIComponent(res.NextContinuationToken)}`
           : null
 
-      return { items, nextPagePath, username: bucket }
+      const mutableBuckets = companion.options.s3?.mutableBuckets ?? []
+      const canMutate =
+        (mutableBuckets.includes('*') || mutableBuckets.includes(bucket)) &&
+        (providerUserSession.scopes?.includes('write') ?? true)
+      return { items, nextPagePath, username: bucket, canMutate }
     })
   }
 
@@ -367,7 +464,11 @@ export default class S3Provider extends Provider<S3UserSession> {
   }
 
   #assertInsidePrefix(prefix: string, key: string): void {
-    if (!key.startsWith(prefix) || key.split('/').includes('..')) {
+    if (
+      !key.startsWith(prefix) ||
+      key.includes('\\') ||
+      key.split('/').some((part) => part === '..' || part === '.')
+    ) {
       // A user error (not an auth error) so the Dashboard shows the message
       // instead of bouncing the user to the connect screen.
       throw new ProviderUserError({
@@ -415,14 +516,46 @@ export default class S3Provider extends Provider<S3UserSession> {
     bucket: string,
     from: string,
     to: string,
+    options: CompanionRuntimeOptions,
+    etag: string,
   ): Promise<void> {
     await client.send(
       new CopyObjectCommand({
         Bucket: bucket,
         CopySource: `/${bucket}/${from.split('/').map(encodeURIComponent).join('/')}`,
         Key: to,
+        // The HEAD preflight is only a friendly error. This condition is the write barrier.
+        IfNoneMatch: '*',
+        CopySourceIfMatch: etag,
+        ...this.#writePolicy(options),
       }),
     )
+  }
+
+  #writePolicy(options: CompanionRuntimeOptions) {
+    const s3 = options.s3
+    return {
+      ...(s3?.acl != null && { ACL: s3.acl }),
+      ...(s3?.awsSse != null && { ServerSideEncryption: s3.awsSse }),
+      ...(s3?.awsSseKmsKeyId != null && { SSEKMSKeyId: s3.awsSseKmsKeyId }),
+    }
+  }
+
+  #assertCopySize(size: number | undefined): void {
+    if (size !== undefined && size > 5 * 1024 ** 3)
+      throw new ProviderUserError({
+        message:
+          'This object exceeds the 5 GB single-copy limit. Use an S3 client with multipart copy; no source files were deleted.',
+      })
+  }
+
+  #requireCopyEtag(etag: string | undefined): string {
+    if (!etag)
+      throw new ProviderUserError({
+        message:
+          'The storage provider did not return an ETag. A safe move is unavailable; use an S3 client instead. No source files were deleted.',
+      })
+    return etag
   }
 
   /**
@@ -437,8 +570,10 @@ export default class S3Provider extends Provider<S3UserSession> {
     bucket: string,
     source: string,
     target: string,
+    options: CompanionRuntimeOptions,
   ): Promise<void> {
-    const objects: string[] = []
+    const objects: { key: string; etag: string }[] = []
+    const markers = new Map<string, string>()
     const folders: string[] = [source] // parents before children
     for (const folder of folders) {
       for await (const page of paginateListObjectsV2(
@@ -449,7 +584,11 @@ export default class S3Provider extends Provider<S3UserSession> {
           if (p.Prefix) folders.push(p.Prefix)
         }
         for (const o of page.Contents ?? []) {
-          if (o.Key && o.Key !== folder) objects.push(o.Key)
+          this.#assertCopySize(o.Size)
+          if (o.Key === folder)
+            markers.set(folder, this.#requireCopyEtag(o.ETag))
+          else if (o.Key)
+            objects.push({ key: o.Key, etag: this.#requireCopyEtag(o.ETag) })
         }
         if (objects.length + folders.length > MAX_FOLDER_MOVE_ENTRIES) {
           throw new ProviderUserError({
@@ -465,23 +604,30 @@ export default class S3Provider extends Provider<S3UserSession> {
           Bucket: bucket,
           Key: renamed(folder),
           Body: '',
+          IfNoneMatch: '*',
+          ...this.#writePolicy(options),
         }),
       )
     }
     await pMap(
       objects,
-      (key) => this.#copyObject(client, bucket, key, renamed(key)),
+      ({ key, etag }) =>
+        this.#copyObject(client, bucket, key, renamed(key), options, etag),
       { concurrency: MOVE_CONCURRENCY },
     )
     await pMap(
       objects,
-      (key) =>
-        client.send(new DeleteObjectCommand({ Bucket: bucket, Key: key })),
+      ({ key, etag }) =>
+        client.send(
+          new DeleteObjectCommand({ Bucket: bucket, Key: key, IfMatch: etag }),
+        ),
       { concurrency: MOVE_CONCURRENCY },
     )
     for (const folder of folders.toReversed()) {
+      const etag = markers.get(folder)
+      if (!etag) continue
       await client.send(
-        new DeleteObjectCommand({ Bucket: bucket, Key: folder }),
+        new DeleteObjectCommand({ Bucket: bucket, Key: folder, IfMatch: etag }),
       )
     }
   }
@@ -534,6 +680,15 @@ export default class S3Provider extends Provider<S3UserSession> {
       }
       const target = isFolder ? ensureTrailingSlash(destination) : destination
       if (target === id) return { id, requestPath: encodeURIComponent(id) }
+      if (this.nativeStorage) {
+        const path = await this.#moveStorageEntry(
+          companion.options,
+          bucket,
+          id,
+          target,
+        )
+        return { id: path, requestPath: encodeURIComponent(path) }
+      }
       if (isFolder) {
         if (target.startsWith(id)) {
           throw new ProviderUserError({
@@ -548,15 +703,29 @@ export default class S3Provider extends Provider<S3UserSession> {
             message: `"${target}" already exists`,
           })
         }
-        await this.#moveFolder(client, bucket, id, target)
+        await this.#moveFolder(client, bucket, id, target, companion.options)
       } else {
         if (await this.#exists(client, bucket, target)) {
           throw new ProviderUserError({
             message: `"${target}" already exists`,
           })
         }
-        await this.#copyObject(client, bucket, id, target)
-        await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
+        const source = await client.send(
+          new HeadObjectCommand({ Bucket: bucket, Key: id }),
+        )
+        this.#assertCopySize(source.ContentLength)
+        const etag = this.#requireCopyEtag(source.ETag)
+        await this.#copyObject(
+          client,
+          bucket,
+          id,
+          target,
+          companion.options,
+          etag,
+        )
+        await client.send(
+          new DeleteObjectCommand({ Bucket: bucket, Key: id, IfMatch: etag }),
+        )
       }
       return { id: target, requestPath: encodeURIComponent(target) }
     })
@@ -603,7 +772,13 @@ export default class S3Provider extends Provider<S3UserSession> {
           })
         }
         await client.send(
-          new PutObjectCommand({ Bucket: bucket, Key: key, Body: '' }),
+          new PutObjectCommand({
+            Bucket: bucket,
+            Key: key,
+            Body: '',
+            IfNoneMatch: '*',
+            ...this.#writePolicy(companion.options),
+          }),
         )
         return { id: key, requestPath: encodeURIComponent(key) }
       },
@@ -635,14 +810,27 @@ export default class S3Provider extends Provider<S3UserSession> {
         message: `S3 error: ${String(name ?? status)}`,
       })
     }
-    if (status === 409 || status === 400) {
+    if (status === 409 || status === 412) {
       return new ProviderUserError({
-        message: err instanceof Error ? err.message : `S3 error ${status}`,
+        message:
+          'The source or destination changed during this operation. Refresh the folder and check both paths before retrying; the conflicting source was not deleted.',
       })
     }
+    if (status === 400)
+      return new ProviderUserError({
+        message:
+          'The storage provider rejected this operation. Check its supported S3 operations and bucket configuration.',
+      })
     if (status != null && !(err instanceof ProviderUserError)) {
       return new ProviderApiError('S3 API error', status)
     }
     return err
+  }
+}
+
+/** Separate provider/session namespace: native Storage never falls back to S3 copy/delete. */
+export class TransloaditStorageProvider extends S3Provider {
+  protected override get nativeStorage(): boolean {
+    return true
   }
 }

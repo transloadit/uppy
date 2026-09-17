@@ -9,7 +9,7 @@ import facebook from './facebook/index.js'
 import { Drive } from './google/drive/index.js'
 import onedrive from './onedrive/index.js'
 import { isOAuthProvider, type ProviderCtor } from './Provider.js'
-import s3 from './s3/index.js'
+import s3, { TransloaditStorageProvider } from './s3/index.js'
 import unsplash from './unsplash/index.js'
 import webdav from './webdav/index.js'
 import zoom from './zoom/index.js'
@@ -116,6 +116,7 @@ export function getDefaultProviders() {
     unsplash,
     webdav,
     s3,
+    'transloadit-storage': TransloaditStorageProvider,
   }
 }
 

@@ -726,6 +726,7 @@
   color: var(--uppy-color-secondary, #{variables.$gray-800});
   font-size: 13px;
   background-color: variables.$white;
+  border: 1px solid rgba(variables.$gray-800, 0.25);
   border: 1px solid
     color-mix(
       in srgb,
@@ -740,6 +741,7 @@
 
   &.uppy-ItemDetail-action--danger {
     color: var(--uppy-color-danger, #{variables.$red});
+    border-color: rgba(variables.$red, 0.4);
     border-color: color-mix(
       in srgb,
       var(--uppy-color-danger, #{variables.$red}) 40%,
@@ -747,6 +749,7 @@
     );
 
     &:not(:disabled):hover {
+      background-color: rgba(variables.$red, 0.06);
       background-color: color-mix(
         in srgb,
         var(--uppy-color-danger, #{variables.$red}) 6%,

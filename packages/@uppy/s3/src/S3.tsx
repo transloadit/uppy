@@ -52,6 +52,22 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   /** Called after a successful simple-auth with the form data that was sent. */
   onSimpleAuth?: (authFormData: unknown) => Promise<void>
 
+  onCapabilities?: (canMutate: boolean) => void
+
+  override async list<ResBody>(
+    ...args: Parameters<Provider<M, B>['list']>
+  ): Promise<ResBody> {
+    const response = await super.list<ResBody>(...args)
+    this.onCapabilities?.(
+      typeof response === 'object' &&
+        response !== null &&
+        !Array.isArray(response) &&
+        'canMutate' in response &&
+        response.canMutate === true,
+    )
+    return response
+  }
+
   /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
   getGrant?: () => Promise<string>
 
@@ -90,7 +106,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     try {
       return await super.request<ResBody>(...args)
     } catch (err) {
-      const [{ path, signal }] = args
+      const [{ path }] = args
       const isAuthError = (err as { isAuthError?: boolean }).isAuthError
       // Without a session there is nothing to refresh: a 401 on the initial
       // listing is ProviderViews probing for one (only happens when the plugin
@@ -98,7 +114,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       if (
         !isAuthError ||
         !this.getGrant ||
-        !this.#hasSession ||
+        (!this.#hasSession && !this.#regranting) ||
         path.endsWith('/simple-auth')
       ) {
         throw err
@@ -106,11 +122,10 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       if (this.#regranting == null) {
         // Many requests may fail at once; mint one grant for all of them.
         this.#regranting = (async () => {
-          this.#hasSession = false
           await this.removeAuthToken()
           await this.login({
             authFormData: {},
-            signal: signal ?? new AbortController().signal,
+            signal: new AbortController().signal,
           })
         })().finally(() => {
           this.#regranting = undefined
@@ -185,7 +200,10 @@ const AuthForm = ({
   )
 }
 
-export type S3Options = CompanionPluginOptions & {
+export type S3Options<
+  M extends Meta = Meta,
+  B extends Body = Body,
+> = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>
   /**
    * Show management actions (rename/move, delete, new folder). Requires a
@@ -193,9 +211,9 @@ export type S3Options = CompanionPluginOptions & {
    */
   enableActions?: boolean
   /** Extra per-item actions, appended to the built-in ones. */
-  actions?: ProviderAction<any, any>[]
+  actions?: ProviderAction<M, B>[]
   /** Extra toolbar actions, appended to the built-in ones. */
-  toolbarActions?: ProviderToolbarAction<any, any>[]
+  toolbarActions?: ProviderToolbarAction<M, B>[]
   /**
    * When a `bucket` is configured, connect without showing the auth form.
    * Default: true.
@@ -240,7 +258,7 @@ export type S3Options = CompanionPluginOptions & {
    */
   getPreviewUrl?: (key: string) => Promise<string>
   /** Manager mode: extra bulk actions, appended to the built-in ones. */
-  bulkActions?: ProviderBulkAction<any, any>[]
+  bulkActions?: ProviderBulkAction<M, B>[]
 }
 
 /** Where an object key lives: its parent "folder" prefix and its own name. */
@@ -273,10 +291,14 @@ const withToast =
   }
 
 export default class S3<M extends Meta, B extends Body>
-  extends UIPlugin<S3Options, M, B, UnknownProviderPluginState>
+  extends UIPlugin<S3Options<M, B>, M, B, UnknownProviderPluginState>
   implements UnknownProviderPlugin<M, B>
 {
   static VERSION = packageJson.version
+
+  protected get providerName(): string {
+    return 's3'
+  }
 
   icon: () => h.JSX.Element
 
@@ -294,17 +316,20 @@ export default class S3<M extends Meta, B extends Body>
 
   /** False until we know whether the stored Companion session matches `opts.bucket`. */
   #sessionChecked = false
+  #sessionReady: Promise<void> | undefined
+  #sessionBucket: string | undefined
 
   /** Storage key remembering which bucket the stored Companion session was opened for. */
   #bucketStorageKey: string
 
   /** Claims of the grant the current session was opened with, if any. */
   #grant: S3GrantClaims | null = null
+  #serverCanMutate = false
 
   /** True when no usable Companion session is stored, so auto-connect must log in first. */
   #needsLogin = false
 
-  constructor(uppy: Uppy<M, B>, opts: S3Options) {
+  constructor(uppy: Uppy<M, B>, opts: S3Options<M, B>) {
     super(uppy, opts)
     this.id = this.opts.id || 'S3'
     this.type = 'acquirer'
@@ -322,17 +347,23 @@ export default class S3<M extends Meta, B extends Body>
       companionHeaders: this.opts.companionHeaders,
       companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
-      provider: 's3',
+      provider: this.providerName,
       pluginId: this.id,
       supportsRefreshToken: false,
     })
     this.provider.getGrant = this.opts.getGrant
+    this.provider.onCapabilities = (canMutate) => {
+      this.#serverCanMutate = canMutate
+      this.#applyActions()
+    }
     this.provider.onSimpleAuth = async (authFormData) => {
       if (!isFormWithCredentials(authFormData)) return
       if (typeof authFormData.grant === 'string') {
         this.#grant = decodeGrant(authFormData.grant)
         this.#applyActions()
       } else if (typeof authFormData.bucket === 'string') {
+        this.#grant = null
+        this.#sessionBucket = authFormData.bucket
         await this.storage.setItem(this.#bucketStorageKey, authFormData.bucket)
       }
     }
@@ -352,55 +383,53 @@ export default class S3<M extends Meta, B extends Body>
    * surviving ancestor (useful for restoring stale deep links).
    */
   async openFolderPath(key: string | null): Promise<boolean> {
-    // The panel may be loading the root at this very moment (auto-open on
-    // showPanel); walking concurrently would race it. Wait it out, and only
-    // load the root ourselves when it is not cached yet.
-    // The panel auto-opens the root on its first render — but only after
-    // auth and the listing round-trip, which on a cold load lands seconds
-    // after a deep-link restore starts. Let that load go first; only load
-    // the root ourselves when no panel is going to (headless use).
-    const rootReady = () => {
-      const root = this.getPluginState().partialTree.find(
-        (node) => node.type === 'root',
-      )
-      return Boolean(root && (root as { cached?: boolean }).cached)
-    }
-    for (let waited = 0; !rootReady() && waited < 15_000; waited += 100) {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    }
-    if (!rootReady()) {
-      await this.view.openFolder(this.rootFolderId)
-    }
+    await this.#sessionReady
+    // This call owns initial navigation even without a rendered panel. Prevent a later first
+    // render from reopening the root after the requested deep link has finished.
+    this.#autoConnectAttempted = true
+    this.setPluginState({ didFirstRender: true })
     await this.#settledListing()
-    if (key === null || key === '') return true
-    const prefix = key.endsWith('/') ? key : `${key}/`
-    let path = ''
-    for (const segment of prefix.split('/').filter(Boolean)) {
+    if (!this.getPluginState().authenticated && this.#needsLogin) {
+      if (!this.opts.getGrant && !this.opts.bucket) return false
+      await this.view.handleAuth(
+        this.opts.getGrant ? {} : { bucket: this.opts.bucket },
+      )
+      if (!this.getPluginState().authenticated) return false
+    }
+    const root = this.rootPrefix
+    const prefix = key ? (key.endsWith('/') ? key : `${key}/`) : root
+    if (
+      !prefix.startsWith(root) ||
+      prefix.split('/').some((segment) => segment === '..' || segment === '.')
+    )
+      return false
+    await this.view.openFolder(this.rootFolderId)
+    let path = root
+    for (const segment of prefix
+      .slice(root.length)
+      .split('/')
+      .filter(Boolean)) {
       path += `${segment}/`
       const folderId = encodeURIComponent(path)
       const { partialTree } = this.getPluginState()
       if (!partialTree.some((node) => node.id === folderId)) return false
       await this.view.openFolder(folderId)
     }
-    // The panel's first render auto-opens the root; when that lands after the
-    // walk, openFolder's cached-return resets currentFolderId. Settle and
-    // reassert (cached opens are instant) so the deep link wins either way.
-    const target = encodeURIComponent(prefix)
-    for (let attempt = 0; attempt < 2; attempt++) {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      await this.#settledListing()
-      if (this.getPluginState().currentFolderId !== target) {
-        await this.view.openFolder(target)
-      }
-    }
     return true
   }
 
   /** Resolves once no listing request is in flight. */
   async #settledListing(): Promise<void> {
-    while ((this.getPluginState() as { loading?: boolean | string }).loading) {
-      await new Promise((resolve) => setTimeout(resolve, 50))
-    }
+    if (!this.getPluginState().loading) return
+    await new Promise<void>((resolve) => {
+      const changed = () => {
+        if (this.getPluginState().loading) return
+        this.uppy.off('state-update', changed)
+        resolve()
+      }
+      this.uppy.on('state-update', changed)
+      changed()
+    })
   }
 
   /**
@@ -413,6 +442,7 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   builtInActions(): ProviderAction<M, B>[] {
+    if (!this.canMutate) return []
     return [
       {
         id: 's3:rename',
@@ -429,9 +459,11 @@ export default class S3<M extends Meta, B extends Body>
           })
           const value = input?.trim().replace(/^\/+/, '')
           if (!value) return undefined
-          // A bare name renames in place; anything with a "/" is a full key (move).
+          // A bare name renames in place; a path is relative to the granted browsing root.
           const isMove = value.includes('/')
-          let destination = isMove ? value : `${parent}${value}`
+          let destination = isMove
+            ? `${this.rootPrefix}${value}`
+            : `${parent}${value}`
           if (isFolder && !destination.endsWith('/')) destination += '/'
           if (destination === key) return undefined
           await this.provider.moveItem(key, destination)
@@ -488,9 +520,24 @@ export default class S3<M extends Meta, B extends Body>
     ]
   }
 
-  /** Whether the current session may change files (bucket sessions always may). */
+  /** Both the session and Companion must allow changes; older servers fail closed. */
   get canMutate(): boolean {
-    return this.#grant ? this.#grant.scopes.includes('write') : true
+    return (
+      this.#serverCanMutate && (this.#grant?.scopes.includes('write') ?? true)
+    )
+  }
+
+  /** Current session root for paths typed into the UI; the server still enforces the grant. */
+  get rootPrefix(): string {
+    if (this.#grant) return this.#grant.prefix
+    const parts = (this.#sessionBucket ?? this.opts.bucket ?? '')
+      .replace(/^s3:\/\//, '')
+      .split('/')
+    const prefix = parts
+      .slice(1)
+      .join('/')
+      .replace(/^\/+|\/+$/g, '')
+    return prefix ? `${prefix}/` : ''
   }
 
   /** Bulk actions over the multi-selection in manager mode. */
@@ -511,10 +558,11 @@ export default class S3<M extends Meta, B extends Body>
             .replace(/^\/+/, '')
           if (destination === undefined || destination === null)
             return undefined
-          const folder =
+          const relativeFolder =
             destination === '' || destination.endsWith('/')
               ? destination
               : `${destination}/`
+          const folder = `${this.rootPrefix}${relativeFolder}`
           for (const item of items) {
             const key = S3.keyOf(item.id)
             const { name, isFolder } = splitKey(key)
@@ -550,17 +598,17 @@ export default class S3<M extends Meta, B extends Body>
 
   /** (Re)compute the actions: the integrator's switch, and the grant's scopes. */
   #applyActions(): void {
-    const enableActions = this.opts.enableActions !== false && this.canMutate
+    const enableActions = this.opts.enableActions !== false
     this.view.opts.actions = [
       ...(enableActions ? this.builtInActions() : []),
       ...(this.opts.actions ?? []),
     ]
     this.view.opts.toolbarActions = [
-      ...(enableActions ? this.builtInToolbarActions() : []),
+      ...(enableActions && this.canMutate ? this.builtInToolbarActions() : []),
       ...(this.opts.toolbarActions ?? []),
     ]
     this.view.opts.bulkActions = [
-      ...(enableActions ? this.builtInBulkActions() : []),
+      ...(enableActions && this.canMutate ? this.builtInBulkActions() : []),
       ...(this.opts.bulkActions ?? []),
     ]
     this.setPluginState({})
@@ -605,7 +653,7 @@ export default class S3<M extends Meta, B extends Body>
       this.mount(target, this)
     }
 
-    this.#checkStoredSession()
+    this.#sessionReady = this.#checkStoredSession()
   }
 
   uninstall() {
@@ -658,10 +706,15 @@ export default class S3<M extends Meta, B extends Body>
           this.#needsLogin = true
         } else if (!token) {
           this.#needsLogin = true
+        } else {
+          this.#sessionBucket = storedBucket ?? undefined
         }
       } catch (err) {
         this.#warn('could not check the stored session', err)
       }
+    } else {
+      this.#sessionBucket =
+        (await this.storage.getItem(this.#bucketStorageKey)) ?? undefined
     }
     this.#sessionChecked = true
     // Re-render now that the view may proceed.

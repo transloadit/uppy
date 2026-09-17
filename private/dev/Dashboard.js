@@ -229,9 +229,10 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        // With Transloadit Storage configured, the storage plugin below replaces
-        // this with createStoreAssemblyOptions() (uploads land in the open folder).
-        assemblyOptions,
+        // Storage owns Assembly options when it installs storeUploads below.
+        ...(import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE
+          ? {}
+          : { assemblyOptions }),
       })
       break
     case 'transloadit-s3':

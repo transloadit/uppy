@@ -29,6 +29,12 @@ export default class ProviderDialogController {
   #store: DialogStateStore
 
   #resolve: ((value: string | boolean | null) => void) | null = null
+  #revision = 0
+
+  /** Remount the input when replacing a prompt in the same render batch. */
+  get revision(): number {
+    return this.#revision
+  }
 
   constructor(store: DialogStateStore) {
     this.#store = store
@@ -61,6 +67,7 @@ export default class ProviderDialogController {
 
   #open(dialog: ProviderDialogState): Promise<string | boolean | null> {
     this.cancel()
+    this.#revision += 1
     return new Promise((resolve) => {
       this.#resolve = resolve
       this.#store.setPluginState({ dialog })

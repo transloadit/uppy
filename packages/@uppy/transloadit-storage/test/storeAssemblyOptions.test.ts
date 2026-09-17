@@ -8,13 +8,18 @@ import {
   createStoreAssemblyOptions,
 } from '../lib/storeAssemblyOptions.js'
 
-function fakeUppy(state: { currentFolderId?: string | null; prefix?: string }) {
+function fakeUppy(state: {
+  currentFolderId?: string | null
+  prefix?: string
+  rootPrefix?: string
+}) {
   return {
     getPlugin: () => ({
       getPluginState: () => ({
         currentFolderId: state.currentFolderId ?? null,
       }),
       opts: { prefix: state.prefix },
+      rootPrefix: state.rootPrefix ?? state.prefix ?? '',
     }),
   } as unknown as Uppy<Meta, Body>
 }
@@ -29,6 +34,13 @@ function storedPath(result: { params: { steps: Record<string, unknown> } }) {
 }
 
 describe('createStoreAssemblyOptions', () => {
+  it('uses the authenticated grant root instead of the caller prefix option', async () => {
+    const build = createStoreAssemblyOptions(
+      fakeUppy({ prefix: 'wrong/', rootPrefix: 'users/ana/' }),
+      { signAssembly: passthroughSign },
+    )
+    expect(storedPath(await build())).toBe('users/ana/${file.name}')
+  })
   it('never silently replaces a stored file unless overwrite is explicitly requested', async () => {
     const build = createStoreAssemblyOptions(fakeUppy({}), {
       signAssembly: passthroughSign,

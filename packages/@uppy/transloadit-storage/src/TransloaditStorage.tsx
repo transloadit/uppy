@@ -10,7 +10,10 @@ import {
   type StoreUploadsOptions,
 } from './storeAssemblyOptions.js'
 
-export type TransloaditStorageOptions = Omit<S3Options, 'bucket' | 'locale'> & {
+export type TransloaditStorageOptions<
+  M extends Meta = Meta,
+  B extends Body = Body,
+> = Omit<S3Options<M, B>, 'bucket' | 'locale'> & {
   locale?: LocaleStrings<typeof locale>
   /**
    * Workspace slug; Transloadit Storage exposes it as the S3 bucket. Used as
@@ -26,6 +29,8 @@ export type TransloaditStorageOptions = Omit<S3Options, 'bucket' | 'locale'> & {
    * action is only offered when this is set.
    */
   getSmartCdnUrl?: (key: string) => Promise<string>
+  /** Server-authorized, version-pinned original URL with Content-Disposition: attachment. */
+  getDownloadUrl?: (key: string) => Promise<string>
   /**
    * Store uploads in the folder that is open in this panel, through an
    * `@uppy/transloadit` plugin installed on the same Uppy instance. You sign
@@ -57,12 +62,33 @@ export default class TransloaditStorage<
 > extends S3<M, B> {
   static override VERSION = packageJson.version
 
-  declare opts: TransloaditStorageOptions & S3Options
+  protected override get providerName(): string {
+    return 'transloadit-storage'
+  }
 
-  constructor(uppy: Uppy<M, B>, opts: TransloaditStorageOptions) {
+  declare opts: TransloaditStorageOptions<M, B> & S3Options<M, B>
+
+  constructor(uppy: Uppy<M, B>, opts: TransloaditStorageOptions<M, B>) {
+    // Fail before Uppy registers a half-installed provider with no view to tear down.
+    if (opts.storeUploads) {
+      const pluginId = opts.storeUploads.transloaditPluginId ?? 'Transloadit'
+      const uploader = uppy.getPlugin(pluginId)
+      if (!uploader)
+        throw new Error(
+          `Install @uppy/transloadit with id "${pluginId}" before using storeUploads`,
+        )
+      if (
+        'assemblyOptions' in uploader.opts &&
+        uploader.opts.assemblyOptions != null
+      ) {
+        throw new Error(
+          'storeUploads cannot replace existing assemblyOptions; compose your upload pipeline with createStoreAssemblyOptions instead',
+        )
+      }
+    }
     const { workspace, prefix, ...rest } = opts
     super(uppy, {
-      ...(rest as S3Options),
+      ...(rest as S3Options<M, B>),
       id: opts.id ?? 'TransloaditStorage',
       keepStateOnClose: opts.keepStateOnClose ?? true,
       // A standalone library is a manager, not a picker, unless told otherwise.
@@ -77,7 +103,7 @@ export default class TransloaditStorage<
       ...this.opts,
       workspace,
       prefix,
-    } as TransloaditStorageOptions & S3Options
+    } as TransloaditStorageOptions<M, B> & S3Options<M, B>
     this.defaultLocale = {
       strings: { ...(this.defaultLocale?.strings ?? {}), ...locale.strings },
     }
@@ -88,25 +114,28 @@ export default class TransloaditStorage<
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
-    const { getSmartCdnUrl } = this.opts
-    if (!getSmartCdnUrl) return super.builtInActions()
+    const { getSmartCdnUrl, getDownloadUrl } = this.opts
     const download: ProviderAction<M, B> = {
       id: 'transloadit:download',
       label: this.i18n('download'),
       appliesTo: 'file',
       refresh: false,
       run: async ({ item }) => {
-        const url = await getSmartCdnUrl(S3.keyOf(item.id))
-        const response = await fetch(url)
-        if (!response.ok) throw new Error(this.i18n('downloadFailed'))
-        const blobUrl = URL.createObjectURL(await response.blob())
+        if (!getDownloadUrl) return
+        const url = new URL(
+          await getDownloadUrl(S3.keyOf(item.id)),
+          window.location.href,
+        )
+        if (url.protocol !== 'https:' && url.protocol !== 'http:')
+          throw new Error(this.i18n('downloadFailed'))
         const link = document.createElement('a')
-        link.href = blobUrl
-        link.download = item.data.name ?? 'download'
+        link.href = url.href
+        link.download = ''
+        link.rel = 'noreferrer'
+        link.hidden = true
+        document.body.appendChild(link)
         link.click()
-        // Revoking synchronously can cancel the download (Firefox); give the
-        // browser time to open the URL first.
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 10_000)
+        link.remove()
       },
     }
     const copyUrl: ProviderAction<M, B> = {
@@ -115,6 +144,7 @@ export default class TransloaditStorage<
       appliesTo: 'file',
       refresh: false,
       run: async ({ item, uppy, view }) => {
+        if (!getSmartCdnUrl) return
         const url = await getSmartCdnUrl(S3.keyOf(item.id))
         try {
           await navigator.clipboard.writeText(url)
@@ -131,11 +161,12 @@ export default class TransloaditStorage<
     }
     const base = super.builtInActions()
     const deleteIndex = base.findIndex((action) => action.id === 's3:delete')
-    const ordered =
-      deleteIndex === -1
+    const ordered = !getDownloadUrl
+      ? base
+      : deleteIndex === -1
         ? [...base, download]
         : [...base.slice(0, deleteIndex), download, ...base.slice(deleteIndex)]
-    return [copyUrl, ...ordered]
+    return getSmartCdnUrl ? [copyUrl, ...ordered] : ordered
   }
 
   override builtInToolbarActions() {
@@ -154,7 +185,7 @@ export default class TransloaditStorage<
           const { currentFolderId } = this.getPluginState() as {
             currentFolderId?: string | null
           }
-          const normalizedPrefix = normalizePrefix(this.opts.prefix)
+          const normalizedPrefix = normalizePrefix(this.rootPrefix)
           this.opts.onUploadRequest({
             prefix: currentFolderId
               ? decodeURIComponent(currentFolderId)
@@ -186,26 +217,31 @@ export default class TransloaditStorage<
   }
 
   override install(): void {
-    super.install()
     const { storeUploads, reopenAfterUpload } = this.opts
     if (storeUploads) {
-      const transloadit = this.uppy.getPlugin('Transloadit')
-      if (transloadit) {
-        transloadit.setOptions({
-          assemblyOptions: createStoreAssemblyOptions(this.uppy, {
-            ...storeUploads,
-            storagePluginId: this.id,
-          }),
-          // Files are stored verbatim, not encoded: label the wait honestly.
-          locale: { strings: { encoding: this.i18n('storing') } },
-        })
-      } else {
-        this.uppy.log(
-          '[TransloaditStorage] storeUploads needs an @uppy/transloadit plugin installed before this plugin (or use createStoreAssemblyOptions yourself)',
-          'warning',
+      const pluginId = storeUploads.transloaditPluginId ?? 'Transloadit'
+      const transloadit = this.uppy.getPlugin(pluginId)
+      if (!transloadit) {
+        throw new Error(
+          `Install @uppy/transloadit with id "${pluginId}" before using storeUploads`,
         )
       }
+      transloadit.setOptions({
+        waitForEncoding: true,
+        assemblyOptions: createStoreAssemblyOptions(this.uppy, {
+          ...storeUploads,
+          storagePluginId: this.id,
+        }),
+        locale: {
+          ...transloadit.opts.locale,
+          strings: {
+            encoding: this.i18n('storing'),
+            ...transloadit.opts.locale?.strings,
+          },
+        },
+      })
     }
+    super.install()
     if (reopenAfterUpload) this.uppy.on('complete', this.#reopenAfterUpload)
   }
 

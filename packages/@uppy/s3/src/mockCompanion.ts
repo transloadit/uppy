@@ -86,6 +86,8 @@ export type MockS3CompanionOptions = {
   token?: string
   /** Bucket name reported as the "username" of the listing. */
   bucket?: string
+  /** Matches Companion's effective per-listing mutation policy. Defaults to true. */
+  canMutate?: boolean
 }
 
 export type MockS3Companion = {
@@ -169,7 +171,9 @@ export function createMockS3Companion(
     const { prefix, name } = splitKey(key)
     folders.set(
       prefix,
-      entriesOf(prefix).filter((entry) => entry.name !== name),
+      entriesOf(prefix).filter(
+        (entry) => entry.name !== name || entry.isFolder !== key.endsWith('/'),
+      ),
     )
     if (key.endsWith('/')) {
       for (const folder of [...folders.keys()]) {
@@ -209,8 +213,16 @@ export function createMockS3Companion(
         session = claims
         bucket = claims.bucket
       } else if (typeof form?.bucket === 'string' && form.bucket.length > 0) {
-        session = null
-        bucket = form.bucket.replace(/^s3:\/\//, '').split('/')[0] ?? bucket
+        const [name, ...segments] = form.bucket
+          .replace(/^s3:\/\//, '')
+          .split('/')
+        bucket = name ?? bucket
+        const prefix = segments.join('/').replace(/^\/+|\/+$/g, '')
+        session = {
+          bucket,
+          prefix: prefix ? `${prefix}/` : '',
+          scopes: ['read', 'write'],
+        }
       }
       return json({ uppyAuthToken: token })
     }
@@ -233,9 +245,19 @@ export function createMockS3Companion(
     }
 
     if (method === 'GET' && path.includes('/s3/list')) {
-      const prefix = decodeURIComponent(path.replace(/^.*\/s3\/list\/?/, ''))
+      const prefix =
+        decodeURIComponent(path.replace(/^.*\/s3\/list\/?/, '')) ||
+        session?.prefix ||
+        ''
+      if (!prefix.startsWith(session?.prefix ?? ''))
+        return userError(
+          'That path is outside the folder you are allowed to browse',
+        )
       return json({
         username: bucket,
+        canMutate:
+          (options.canMutate ?? true) &&
+          (session?.scopes?.includes('write') ?? true),
         nextPagePath: null,
         items: entriesOf(prefix).map((entry) => toItem(prefix, entry)),
       })
@@ -249,7 +271,9 @@ export function createMockS3Companion(
         return userError('Invalid folder name')
       }
       const parentId = str(body, 'parentId')
-      const prefix = parentId ? decodeURIComponent(parentId) : ''
+      const prefix = parentId
+        ? decodeURIComponent(parentId)
+        : (session?.prefix ?? '')
       const key = `${prefix}${name}/`
       if (has(key)) return userError(`A folder named "${name}" already exists`)
       folders.set(prefix, [...entriesOf(prefix), { name, isFolder: true }])

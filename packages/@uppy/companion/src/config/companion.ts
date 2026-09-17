@@ -56,6 +56,11 @@ export function getMaskableSecrets(
   if (s3Secret != null) {
     secrets.push(s3Secret)
   }
+  for (const credentials of Object.values(
+    s3?.transloaditStorage?.workspaces ?? {},
+  )) {
+    secrets.push(credentials.secret)
+  }
 
   return secrets
 }

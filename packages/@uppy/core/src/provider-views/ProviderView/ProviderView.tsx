@@ -267,6 +267,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   resetPluginState(): void {
+    this.#selectionRoots.clear()
     this.#dialogs.cancel()
     this.plugin.setPluginState(getDefaultState(this.plugin.rootFolderId))
   }
@@ -275,7 +276,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
    * Forget everything we know about the current folder and fetch it again.
    * Used after mutations (rename, delete, new folder, upload into folder).
    */
-  refreshCurrentFolder = async (): Promise<void> => {
+  refreshCurrentFolder = async (invalidateAll = false): Promise<void> => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
     // Remember what was selected so a refresh does not silently drop it.
     const checkedIds = partialTree.flatMap((node) =>
@@ -298,10 +299,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
       return false
     }
+    // A move can affect a previously visited destination, and a failed batch can have partial
+    // writes. Retain navigation ancestors, but no sibling/descendant listings after a mutation.
+    const navigationIds = new Set(
+      getBreadcrumbs(partialTree, currentFolderId).map((node) => node.id),
+    )
     const nextTree = partialTree
       .filter((node) => node.type === 'root' || !isInsideCurrent(node))
+      .filter((node) => !invalidateAll || navigationIds.has(node.id))
       .map((node) =>
-        node.id === currentFolderId && node.type !== 'file'
+        (invalidateAll || node.id === currentFolderId) && node.type !== 'file'
           ? { ...node, cached: false, nextPagePath: null }
           : node,
       )
@@ -352,12 +359,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
   ): Promise<void> {
     try {
       await run()
-      if (refresh !== false) await this.refreshCurrentFolder()
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
       this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
       this.plugin.uppy.info(message, 'error', 5000)
     }
+    if (refresh !== false) await this.refreshCurrentFolder(true)
   }
 
   /** Manager mode: switch the multi-select checkboxes on or off. */
@@ -376,14 +383,38 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ detailItemId: undefined })
   }
 
+  // Checkbox aggregation also checks parents of selected children. Only user-selected folders
+  // (and their selected descendants) may become folder mutation targets.
+  #selectionRoots = new Set<string>()
+
   /** Manager mode: run a bulk action over the checked items, then clear the selection. */
   runBulkAction = (action: ProviderBulkAction<M, B>): Promise<void> =>
     this.#run(action, async () => {
       const { partialTree } = this.plugin.getPluginState()
-      const items = partialTree.filter(
+      const byId = new Map(partialTree.map((node) => [node.id, node]))
+      const explicitlySelected = (id: string): boolean => {
+        let node = byId.get(id)
+        while (node && node.type !== 'root') {
+          if (this.#selectionRoots.has(node.id)) return true
+          node = byId.get(node.parentId)
+        }
+        return false
+      }
+      const checked = partialTree.filter(
         (node): node is PartialTreeFile | PartialTreeFolderNode =>
-          node.type !== 'root' && node.status === 'checked',
+          node.type !== 'root' &&
+          node.status === 'checked' &&
+          (node.type === 'file' || explicitlySelected(node.id)),
       )
+      const checkedIds = new Set(checked.map((node) => node.id))
+      const items = checked.filter((node) => {
+        let parent = byId.get(node.parentId)
+        while (parent && parent.type !== 'root') {
+          if (checkedIds.has(parent.id)) return false
+          parent = byId.get(parent.parentId)
+        }
+        return true
+      })
       if (items.length === 0) return
       await action.run({ items, ...this.#actionContext() })
       this.cancelSelection()
@@ -417,6 +448,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   cancelSelection(): void {
+    this.#selectionRoots.clear()
     const { partialTree } = this.plugin.getPluginState()
     const newPartialTree: PartialTree = partialTree.map((item) =>
       item.type === 'root' ? item : { ...item, status: 'unchecked' },
@@ -656,6 +688,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
    * Removes session token on client side.
    */
   async logout(): Promise<void> {
+    this.#selectionRoots.clear()
     await this.#withAbort(async (signal) => {
       const res = await this.provider.logout<{
         ok: boolean
@@ -785,6 +818,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
       partialTree,
       clickedRange,
     )
+
+    for (const id of clickedRange) {
+      const node = newPartialTree.find((entry) => entry.id === id)
+      if (node && node.type !== 'root' && node.status === 'checked')
+        this.#selectionRoots.add(id)
+    }
+    for (const id of this.#selectionRoots) {
+      const node = newPartialTree.find((entry) => entry.id === id)
+      if (!node || node.type === 'root' || node.status === 'unchecked')
+        this.#selectionRoots.delete(id)
+    }
 
     this.plugin.setPluginState({ partialTree: newPartialTree })
     this.previousCheckbox = ourItem.id
@@ -999,6 +1043,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         )}
         {dialog && (
           <ProviderDialog
+            key={this.#dialogs.revision}
             dialog={dialog}
             i18n={i18n}
             onConfirm={this.#dialogs.submit}

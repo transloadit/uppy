@@ -115,6 +115,11 @@ export interface CompanionInitOptions {
      * S3 provider refuses client-supplied bucket names (see `allowBucketAuth`).
      */
     grantSecret?: string | undefined
+    /** Native Transloadit Storage: bind each grant Workspace to its own server-held API key. */
+    transloaditStorage?: {
+      apiEndpoint: string
+      workspaces: Record<string, { key: string; secret: string }>
+    }
     /**
      * Keep accepting client-supplied bucket names next to grants. Development
      * only: it lets anyone who can reach Companion pick a browsable bucket.

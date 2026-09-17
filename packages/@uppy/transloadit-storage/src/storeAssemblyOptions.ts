@@ -14,6 +14,8 @@ export type SignedAssemblyOptions = {
 }
 
 export type StoreUploadsOptions = {
+  /** Installed @uppy/transloadit plugin to configure; defaults to `Transloadit`. */
+  transloaditPluginId?: string
   /**
    * Signs the Assembly params (adds `auth.key`/`auth.expires` and returns the
    * signature). Keep the secret on your server: this is the place to call an
@@ -72,8 +74,16 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     // Folder ids are full storage keys. At the root of the browsing session
     // there is no folder id, but a grant may confine the session to a prefix
     // (the plugin's `prefix` option) — uploads must land inside it.
-    const prefix = (storage as { opts?: { prefix?: string } } | undefined)?.opts
-      ?.prefix
+    if (
+      !storage ||
+      !('rootPrefix' in storage) ||
+      typeof storage.rootPrefix !== 'string'
+    ) {
+      throw new Error(
+        `Install the Transloadit Storage plugin "${pluginId}" before creating an Assembly`,
+      )
+    }
+    const prefix = storage.rootPrefix
     const normalizedPrefix = normalizePrefix(prefix)
     const folder = currentFolderId
       ? decodeURIComponent(currentFolderId)
