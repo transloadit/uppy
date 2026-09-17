@@ -2,7 +2,10 @@ import fs from 'node:fs'
 import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
 import z from 'zod'
-import type { CompanionInitOptions } from '../schemas/companion.js'
+import type {
+  CompanionInitOptions,
+  S3ProviderOptions,
+} from '../schemas/companion.js'
 import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
 
@@ -14,7 +17,10 @@ export const defaultOptions = {
     protocol: 'http',
     path: '',
   },
-  providerOptions: {},
+  // Typed rather than left as `{}`: the runtime options are this object
+  // intersected with `CompanionInitOptions`, and a bare `{}` erases what
+  // `providerOptions.s3` is (`S3ProviderOptions`) for everything reading it.
+  providerOptions: {} as NonNullable<CompanionInitOptions['providerOptions']>,
   s3: {
     endpoint: 'https://{service}.{region}.amazonaws.com',
     conditions: defaultS3Conditions,
@@ -55,6 +61,15 @@ export function getMaskableSecrets(
   const s3Secret = s3?.['secret']
   if (s3Secret != null) {
     secrets.push(s3Secret)
+  }
+
+  // The S3 provider's own `secret` is covered by the loop above; its storage
+  // grant signing secrets are not.
+  const { grantSecret } = providerOptions['s3'] ?? {}
+  if (typeof grantSecret === 'string') {
+    secrets.push(grantSecret)
+  } else if (Array.isArray(grantSecret)) {
+    secrets.push(...grantSecret)
   }
 
   return secrets
@@ -141,6 +156,34 @@ function validateValidHosts(
 }
 
 /**
+ * Points out the two ways `providerOptions.s3` ends up doing nothing, or less,
+ * than it looks like it does. Neither is fatal: the provider itself refuses
+ * connections it cannot serve.
+ */
+function validateS3Provider(
+  s3Provider: S3ProviderOptions | undefined | null,
+): void {
+  if (s3Provider == null || Object.values(s3Provider).every((v) => v == null)) {
+    return
+  }
+
+  const hasGrantKey =
+    s3Provider.grantSecret != null || s3Provider.grantPublicKey != null
+
+  if (!hasGrantKey && s3Provider.bucket == null) {
+    logger.warn(
+      'S3 provider is configured but has neither `bucket` nor `grantSecret`/`grantPublicKey`; it will refuse every connection',
+      'startup.providerOptions.s3',
+    )
+  } else if (hasGrantKey && s3Provider.bucket != null) {
+    logger.info(
+      'S3 provider has a grant key, so `bucket` and `prefix` are ignored: each grant names the bucket and prefix it allows',
+      'startup.providerOptions.s3',
+    )
+  }
+}
+
+/**
  * Validates that the mandatory Companion options are set.
  *
  * If invalid, throws with an error explaining what needs to be fixed.
@@ -169,10 +212,12 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
   }
 
   if (providerOptions) {
+    // `providerOptions.s3` is *not* deprecated: it configures the S3 provider
+    // (browsing a bucket), which is a different feature from the top-level
+    // `s3` block (uploading to a bucket).
     const deprecatedOptions: Record<string, string> = {
       microsoft: 'providerOptions.onedrive',
       google: 'providerOptions.drive',
-      s3: 's3',
     }
     Object.keys(deprecatedOptions).forEach((deprecated) => {
       if (Object.hasOwn(providerOptions, deprecated)) {
@@ -195,6 +240,7 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
 
   validateUploadUrls(uploadUrls)
   validateValidHosts(server.validHosts)
+  validateS3Provider(providerOptions?.['s3'])
 
   const { corsOrigins } = companionOptions
   if (corsOrigins == null) {

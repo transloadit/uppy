@@ -276,3 +276,62 @@ describe('Test Custom Provider options', () => {
     expect(providers['foo' as keyof typeof providers]).toBeTruthy()
   })
 })
+
+describe('Test S3 provider options', () => {
+  const s3Env = [
+    'COMPANION_S3_PROVIDER_KEY',
+    'COMPANION_S3_PROVIDER_SECRET',
+    'COMPANION_S3_PROVIDER_FORCE_PATH_STYLE',
+    'COMPANION_S3_PROVIDER_BUCKET',
+    'COMPANION_S3_PROVIDER_PREFIX',
+    'COMPANION_S3_PROVIDER_GRANT_SECRET',
+    'COMPANION_S3_PROVIDER_GRANT_PUBLIC_KEY',
+    'COMPANION_S3_PROVIDER_ACL',
+  ]
+
+  beforeEach(() => {
+    setDefaultEnv()
+    for (const name of s3Env) delete process.env[name]
+  })
+
+  test('is left unconfigured when no environment variable is set', () => {
+    const s3 = getCompanionOptions().providerOptions?.['s3']
+    expect(s3).toBeDefined()
+    expect(Object.values(s3 ?? {}).every((value) => value === undefined)).toBe(
+      true,
+    )
+  })
+
+  test('reads the bucket, the grant keys and the write options', () => {
+    process.env['COMPANION_S3_PROVIDER_KEY'] = 's3_provider_key'
+    process.env['COMPANION_S3_PROVIDER_SECRET'] = 's3_provider_secret'
+    process.env['COMPANION_S3_PROVIDER_FORCE_PATH_STYLE'] = 'true'
+    process.env['COMPANION_S3_PROVIDER_BUCKET'] = 'some-bucket'
+    process.env['COMPANION_S3_PROVIDER_PREFIX'] = 'uploads/'
+    // A list, so a grant key can be rotated without invalidating live grants.
+    process.env['COMPANION_S3_PROVIDER_GRANT_SECRET'] = ' next , previous ,'
+    // PEM usually arrives with literal `\n` sequences.
+    process.env['COMPANION_S3_PROVIDER_GRANT_PUBLIC_KEY'] =
+      '-----BEGIN PUBLIC KEY-----\\nabc\\n-----END PUBLIC KEY-----'
+    process.env['COMPANION_S3_PROVIDER_ACL'] = 'private'
+
+    expect(getCompanionOptions().providerOptions?.['s3']).toMatchObject({
+      key: 's3_provider_key',
+      secret: 's3_provider_secret',
+      forcePathStyle: true,
+      bucket: 'some-bucket',
+      prefix: 'uploads/',
+      grantSecret: ['next', 'previous'],
+      grantPublicKey:
+        '-----BEGIN PUBLIC KEY-----\nabc\n-----END PUBLIC KEY-----',
+      acl: 'private',
+    })
+  })
+
+  test('keeps a single grant secret a string', () => {
+    process.env['COMPANION_S3_PROVIDER_GRANT_SECRET'] = 'only_one'
+    expect(getCompanionOptions().providerOptions?.['s3']?.grantSecret).toBe(
+      'only_one',
+    )
+  })
+})

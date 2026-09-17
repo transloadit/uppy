@@ -2,4 +2,22 @@
 "@uppy/companion": minor
 ---
 
-Add an S3 provider (`/s3/*`) for browsing S3-compatible object storage (AWS S3, Cloudflare R2, MinIO, Transloadit Storage) with simple auth (`bucket[/prefix]`), plus optional mutations: delete, rename/move (files and folders) and create folder via `POST /:provider/mutate/{delete,move,create-folder}`. Browsing is off unless `s3.browsableBuckets` / `COMPANION_AWS_BROWSABLE_BUCKETS` allowlists buckets, and mutations are off unless `s3.mutableBuckets` / `COMPANION_AWS_MUTABLE_BUCKETS` does.
+Add an S3 provider (`/s3/*`) for browsing and managing S3-compatible object storage (AWS S3,
+Cloudflare R2, MinIO, Transloadit Storage) from the Dashboard. It is configured under
+`providerOptions.s3` (`COMPANION_S3_PROVIDER_*`), with its own optional credentials, region and
+endpoint that fall back to the `s3` upload block, so browsing and uploading can use different
+accounts and buckets.
+
+The provider stays disabled until it is given one of two modes. Single-tenant: `bucket` (and
+optionally `prefix`) names the one bucket everybody browses, so Companion has to sit behind your own
+authentication. Multi-tenant: your server mints a short-lived storage grant per user after it
+authenticated them, naming the bucket, the prefix they may see and whether they may write, and
+Companion verifies it with `grantSecret` (HS256, several accepted so keys can be rotated) or
+`grantPublicKey` (asymmetric, so Companion can verify grants but not mint them). With a grant key
+configured, `bucket` and `prefix` are ignored. What the provider's credentials may reach at all
+belongs in an IAM or bucket policy; Companion only enforces the prefix a grant carries.
+
+Mutations — delete, rename/move a single file, and create folder — are exposed as
+`POST /:provider/mutate/{delete,move,create-folder}` and are refused unless the grant carries write
+scope. Moving a folder is orchestrated by the client, which walks the folder and moves its entries
+one by one.

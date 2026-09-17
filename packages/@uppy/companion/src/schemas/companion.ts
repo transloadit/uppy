@@ -19,6 +19,69 @@ export interface ProviderOptions {
   verificationToken?: string | undefined
 }
 
+/**
+ * Options of the S3 *provider* (browsing and managing an S3-compatible bucket
+ * from the Dashboard through `@uppy/s3`), configured under
+ * `providerOptions.s3` like every other provider. It is separate from the `s3`
+ * block, which configures *uploads* to S3: the two features may use different
+ * credentials, accounts and buckets. Credentials and connection settings left
+ * unset here fall back to the `s3` upload block.
+ *
+ * The provider is disabled until either `bucket` (single-tenant: everyone who
+ * can reach Companion browses that bucket, so put Companion behind your own
+ * authentication) or a grant key (`grantSecret` / `grantPublicKey`,
+ * multi-tenant: your server issues a short-lived grant per user) is set.
+ * Restrict what the provider's credentials may do with IAM or a bucket
+ * policy; Companion only enforces the per-user prefix carried by grants.
+ */
+export interface S3ProviderOptions extends ProviderOptions {
+  /** Access key id. Falls back to `s3.key`. */
+  key?: string | undefined
+  /** Secret access key. Falls back to `s3.secret`. */
+  secret?: string | undefined
+  /** Falls back to `s3.sessionToken`. */
+  sessionToken?: string | undefined
+  /** Falls back to `s3.region`. */
+  region?: string | undefined
+  /** Falls back to `s3.endpoint`. */
+  endpoint?: string | undefined
+  /** Falls back to `s3.forcePathStyle`. */
+  forcePathStyle?: boolean | undefined
+  /** Falls back to `s3.awsClientOptions`. */
+  awsClientOptions?: S3ClientConfig | undefined
+  /**
+   * The bucket to browse when grants are not used. Ignored once a grant key
+   * is configured: the grant then names the bucket.
+   */
+  bucket?: string | undefined
+  /**
+   * Key prefix inside `bucket` that browsing is confined to, e.g.
+   * `uploads/`. Only used together with `bucket`.
+   */
+  prefix?: string | undefined
+  /**
+   * Secret(s) that storage grants are signed with (HS256). A grant is a
+   * short-lived JWT your own server mints after it authenticated the user,
+   * carrying the bucket, the prefix they may see and whether they may write.
+   * Pass several to rotate: grants signed with any of them verify. Distinct
+   * from Companion's `secret`, which protects the session token Companion
+   * hands back to the browser.
+   */
+  grantSecret?: string | string[] | undefined
+  /**
+   * PEM public key(s) for grants signed asymmetrically (ES256/384/512,
+   * RS256/384/512, PS256/384/512). Preferred over `grantSecret`: Companion
+   * can verify grants but not mint them.
+   */
+  grantPublicKey?: string | string[] | undefined
+  /** ACL for objects the provider writes (copies, folder markers). Falls back to `s3.acl`. */
+  acl?: ObjectCannedACL | undefined
+  /** Server-side encryption for objects the provider writes. Falls back to `s3.awsSse`. */
+  awsSse?: ServerSideEncryption | undefined
+  /** KMS key for `awsSse`. Falls back to `s3.awsSseKmsKeyId`. */
+  awsSseKmsKeyId?: string | undefined
+}
+
 type ProviderConstructor = typeof Provider
 
 export interface CustomProvider {
@@ -50,7 +113,9 @@ export interface CompanionInitOptions {
   // optional:
   preAuthSecret?: string | Buffer | undefined
   loggerProcessName?: string | undefined
-  providerOptions?: Record<string, ProviderOptions> | undefined
+  providerOptions?:
+    | (Record<string, ProviderOptions> & { s3?: S3ProviderOptions | undefined })
+    | undefined
   customProviders?: Record<string, CustomProvider> | undefined
   redisUrl?: string | undefined
   redisOptions?: RedisOptions | undefined
@@ -91,37 +156,6 @@ export interface CompanionInitOptions {
     awsSseKmsKeyId?: string | undefined
     useAccelerateEndpoint?: boolean
     expires: number
-    /**
-     * Buckets that the S3 *provider* (browsing/importing files from S3 in the
-     * Dashboard) is allowed to list and download from. Use `['*']` to allow any
-     * bucket the credentials can access (e.g. when an upstream proxy already
-     * enforces authorization). Unset/empty disables S3 browsing entirely.
-     *
-     * @default []
-     */
-    browsableBuckets?: string[] | undefined
-    /**
-     * Buckets the S3 provider may *change* (delete, rename/move, create
-     * folders) from the Dashboard. Separate from `browsableBuckets` so a
-     * read-only browser is the default; `['*']` allows every browsable bucket.
-     *
-     * @default []
-     */
-    mutableBuckets?: string[] | undefined
-    /**
-     * Secret used to verify storage *grants*: short-lived HS256 JWTs minted by
-     * your own server after it authenticated the user, carrying the bucket,
-     * the prefix they may see and their scopes (`read`/`write`). When set, the
-     * S3 provider refuses client-supplied bucket names (see `allowBucketAuth`).
-     */
-    grantSecret?: string | undefined
-    /**
-     * Keep accepting client-supplied bucket names next to grants. Development
-     * only: it lets anyone who can reach Companion pick a browsable bucket.
-     *
-     * @default false
-     */
-    allowBucketAuth?: boolean | undefined
     awsClientOptions?: S3ClientConfig & {
       /** @deprecated */
       accessKeyId?: unknown
