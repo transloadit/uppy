@@ -6071,6 +6071,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/s3": "workspace:^"
+    "@uppy/transloadit": "workspace:^"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.11"
