@@ -185,6 +185,16 @@ export default class Provider<US = unknown> {
   }
 
   /**
+   * Lifetime, in seconds, of the session token issued after `simpleAuth()`.
+   * Defaults to `authStateExpiry`; providers whose sessions expire earlier
+   * (e.g. ones opened with a short-lived grant) override this so the token
+   * expires with the session instead of re-checking expiry on every request.
+   */
+  simpleAuthTokenMaxAge(providerUserSession: US): number {
+    return (this.constructor as typeof Provider).authStateExpiry
+  }
+
+  /**
    * Delete a file or (empty) folder. Providers that support mutations override
    * this and set `supportsMutations` to true.
    */
@@ -197,8 +207,10 @@ export default class Provider<US = unknown> {
   }
 
   /**
-   * Move or rename a file. `destination` is a full path/id in the provider's
-   * own addressing scheme; the response carries the new id.
+   * Move or rename a single file. `destination` is a full path/id in the
+   * provider's own addressing scheme; the response carries the new id.
+   * Folders are moved by the client, item by item, through this and the
+   * other mutations.
    */
   async moveItem(options: {
     companion: CompanionLike

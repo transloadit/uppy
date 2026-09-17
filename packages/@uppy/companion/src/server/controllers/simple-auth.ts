@@ -36,18 +36,16 @@ export default async function simpleAuth(
       undefined,
       req.id,
     )
+    const maxAge = provider.simpleAuthTokenMaxAge(
+      req.companion.providerUserSession,
+    )
     const uppyAuthToken = tokenService.generateEncryptedAuthToken(
       { [providerName]: req.companion.providerUserSession },
       secret,
-      providerClass.authStateExpiry,
+      maxAge,
     )
 
-    tokenService.addToCookiesIfNeeded(
-      req,
-      res,
-      uppyAuthToken,
-      providerClass.authStateExpiry,
-    )
+    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, maxAge)
 
     res.send({ uppyAuthToken })
   } catch (err) {
