@@ -10,6 +10,11 @@ signing on your application server; browser-provided paths are not authorization
 Choose `'rename'` to allocate a free name or `'overwrite'` to create a new version deliberately.
 Ordinary non-Storage uploads are unchanged.
 
+An upload batch shares one Assembly. With the default `'error'`, one collision can fail the
+Assembly and make completion tracking report every file as failed. This is not a transaction:
+files stored before the failure may already exist. Inspect the Assembly before retrying. Choose
+`'rename'` when ordinary filename collisions should not abort a multi-file upload.
+
 After `ASSEMBLY_COMPLETED`, save the canonical stored result from `results[producingStep][i]`
 with your application's owner/project record. A store step annotating `:original` reports in
 `results[':original']`, not necessarily under the name `stored`. Verify the completed Assembly
@@ -26,6 +31,12 @@ The native catalog API and `@transloadit/node`'s `getStoredAsset()` return that 
 - `asset_id` follows the logical asset and selects its current version.
 - `asset_id` plus `version_id` selects exact retained bytes, without falling back after overwrite.
 
+Identity survives a **native catalog move or rename**. This widget currently uses S3 copy/delete
+for those actions: the copy receives new identities and the original is deleted. That invalidates
+saved references to the original for imports and uncached delivery. Applications that retain
+asset references must use native catalog moves instead, or keep this widget's management actions
+disabled. Generic S3 copy semantics are not an identity-preserving move.
+
 Use those exclusive selectors with `/transloadit/import` in the same authenticated Workspace.
 Deleting an asset or removing its retained version makes the reference unavailable. IDs are not
 authorization or a backup. Keep permissions attached to stable asset identity where possible.
@@ -38,5 +49,7 @@ version-pinned Built-in. `@transloadit/viewer` uses the asset ID as input and ve
 Current public-prefix policy still controls uncached public delivery of historical versions.
 
 This contract requires the matching API2 catalog/Built-in deployment and SDK/types release before
-production rollout. Companion's S3 listing protocol remains path-based; this package does not
+production rollout. `@transloadit/viewer` is an unpublished private preview, not yet an npm install;
+maintainers can follow the [local packing and devdock guide](https://github.com/transloadit/node-sdk/blob/img-onboard/docs/img-dogfood.md).
+Companion's S3 listing protocol remains path-based; this package does not
 invent Storage IDs for arbitrary S3 providers or fetch metadata for every listed file.

@@ -22,7 +22,7 @@ export type StoreUploadsOptions = {
   signAssembly: (
     params: StoreAssemblyParameters,
   ) => Promise<SignedAssemblyOptions>
-  /** What `/transloadit/store` does when the path exists. Default: `error`. */
+  /** A collision fails the shared Assembly by default. Use `rename` to continue multi-file batches. */
   conflictStrategy?: 'overwrite' | 'rename' | 'error'
 }
 
