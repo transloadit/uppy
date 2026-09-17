@@ -90,15 +90,11 @@ class S3Client {
       method,
       // XHR natively supports ArrayBuffer, Uint8Array, Blob, and string
       body: ['GET', 'HEAD'].includes(method) ? undefined : data,
-      // XHR appends rather than replaces on a case-insensitive name clash, so
-      // the built-in Content-Type must go when the signer sends its own.
+      // The signer's headers come last so a `Content-Type` it signed wins over
+      // the file's own type. `fetcher` folds names that differ only in case,
+      // so this holds for a lowercase `content-type` too.
       headers: {
-        ...(contentType &&
-        !Object.keys(headers ?? {}).some(
-          (k) => k.toLowerCase() === 'content-type',
-        )
-          ? { 'Content-Type': contentType }
-          : {}),
+        ...(contentType ? { 'Content-Type': contentType } : {}),
         ...headers,
       },
       signal,
