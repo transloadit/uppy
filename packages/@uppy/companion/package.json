@@ -36,7 +36,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1047.0",
     "@aws-sdk/client-sts": "3.1047.0",
-    "@aws-sdk/lib-storage": "3.1047.0",
+    "@aws-sdk/lib-storage": "3.1129.0",
     "@aws-sdk/s3-presigned-post": "3.1047.0",
     "@aws-sdk/s3-request-presigner": "3.1047.0",
     "@transloadit/utils": "^4.8.0",
