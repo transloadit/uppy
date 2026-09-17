@@ -147,6 +147,9 @@
 
   &:focus {
     outline: none;
+    // Fallback for engines without color-mix() (Safari < 16.2), which would
+    // otherwise be left with `outline: none` and no focus indicator at all.
+    box-shadow: $focus-shadow;
     box-shadow: 0 0 0 3px
       color-mix(in srgb, var(--uppy-color-primary, #{$blue}) 40%, transparent);
   }

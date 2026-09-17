@@ -15,6 +15,9 @@
     },
     {
       "path": "../s3/tsconfig.build.json"
+    },
+    {
+      "path": "../transloadit/tsconfig.build.json"
     }
   ]
 }
