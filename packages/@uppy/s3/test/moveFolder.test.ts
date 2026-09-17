@@ -187,7 +187,9 @@ describe('moveFolder', () => {
 
     expect(provider.maxInFlight).toBe(3)
     expect(provider.tree['moved/']).toHaveLength(9)
-    expect(onProgress).toHaveBeenCalledTimes(9)
+    // Once up front with 0 done, then once per moved file.
+    expect(onProgress).toHaveBeenCalledTimes(10)
+    expect(onProgress).toHaveBeenNthCalledWith(1, 0, 9)
     expect(onProgress).toHaveBeenLastCalledWith(9, 9)
   })
 
@@ -204,5 +206,92 @@ describe('moveFolder', () => {
       moveFolder({ provider: failing, source: 'docs/', target: 'archive/' }),
     ).rejects.toThrow('s3FileTooLargeToMove')
     expect(provider.tree['docs/']).toContain('docs/hello.txt')
+  })
+})
+
+describe('moveFolder guards', () => {
+  it('ignores listed entries that are not inside the folder being walked', async () => {
+    const provider = createFakeProvider({
+      '': ['docs/', 'archive/'],
+      'docs/': ['docs/a.txt'],
+      'archive/': ['archive/stray.txt'],
+    })
+    // A listing that misreports entries from elsewhere (the destination, the
+    // root, the folder itself) must not steer the walk.
+    const list = provider.list.bind(provider)
+    provider.list = async (directory, options) => {
+      const page = await list(directory, options)
+      if (directory === 'docs%2F') {
+        page.items.push(
+          { requestPath: 'archive%2F', isFolder: true },
+          { requestPath: 'archive%2Fstray.txt', isFolder: false },
+          { requestPath: 'other.txt', isFolder: false },
+          { requestPath: 'docs%2F', isFolder: true },
+        )
+      }
+      return page
+    }
+    const log: string[] = []
+    await moveFolder({
+      provider,
+      source: 'docs/',
+      target: 'archive/',
+      log: (m) => log.push(m),
+    })
+    expect(provider.tree['archive/']).toEqual([
+      'archive/stray.txt',
+      'archive/a.txt',
+    ])
+    expect(provider.tree['docs/']).toBeUndefined()
+    expect(log.filter((m) => m.startsWith('ignoring'))).toHaveLength(4)
+  })
+
+  it('refuses a target inside the source and keys without a trailing slash', async () => {
+    const provider = createFakeProvider(tree())
+    await expect(
+      moveFolder({ provider, source: 'docs/', target: 'docs/inner/' }),
+    ).rejects.toThrow(/into itself/)
+    await expect(
+      moveFolder({ provider, source: 'docs', target: 'archive/' }),
+    ).rejects.toThrow(/must end with/)
+    expect(provider.tree).toEqual(tree())
+  })
+
+  it('stops with an AbortError when the signal aborts, leaving the rest in place', async () => {
+    const provider = createFakeProvider({
+      '': ['docs/'],
+      'docs/': ['docs/1.txt', 'docs/2.txt', 'docs/3.txt', 'docs/4.txt'],
+    })
+    const controller = new AbortController()
+    const moved: number[] = []
+    const promise = moveFolder({
+      provider,
+      source: 'docs/',
+      target: 'archive/',
+      concurrency: 1,
+      signal: controller.signal,
+      onProgress: (done) => {
+        moved.push(done)
+        if (done === 2) controller.abort()
+      },
+    })
+    await expect(promise).rejects.toMatchObject({ name: 'AbortError' })
+    expect(provider.tree['docs/']).toEqual(['docs/3.txt', 'docs/4.txt'])
+    expect(provider.tree['archive/']).toEqual([
+      'archive/1.txt',
+      'archive/2.txt',
+    ])
+  })
+
+  it('does not loop on a listing whose next page never advances', async () => {
+    const provider = createFakeProvider(tree())
+    const list = provider.list.bind(provider)
+    provider.list = async (directory) => ({
+      ...(await list(directory, {})),
+      nextPagePath: 'docs%2F?page=0',
+    })
+    await expect(
+      moveFolder({ provider, source: 'docs/', target: 'archive/' }),
+    ).rejects.toThrow(/repeats page/)
   })
 })

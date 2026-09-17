@@ -4,8 +4,9 @@
  * Companion's S3 provider moves one *file* at a time (`s3FolderMoveNotSupported`
  * for anything ending in `/`), because a "folder" in an object store is just a
  * key prefix: moving one means copying every object under it. Doing that in the
- * browser keeps the server request short-lived and lets an interrupted move be
- * re-run — creating a folder that already exists is treated as success.
+ * browser keeps the server request short-lived, lets the user cancel, and lets
+ * an interrupted move be re-run — creating a folder that already exists is
+ * treated as success.
  */
 
 /** One entry of a Companion listing; only what the walk needs. */
@@ -21,6 +22,8 @@ type ListResponse = {
   nextPagePath: string | null
 }
 
+type RequestOptions = { signal?: AbortSignal | undefined }
+
 /**
  * The bit of `@uppy/core/companion-client`'s `Provider` this needs — declared
  * structurally so tests can pass a fake.
@@ -29,13 +32,18 @@ type ListResponse = {
  * them) and URL-encoded keys for `list()` (as Companion's listing reports them).
  */
 export type FolderMoveProvider = {
-  list(
-    directory: string | null,
-    options: { signal?: AbortSignal },
-  ): Promise<ListResponse>
-  createFolder(parentId: string | null, name: string): Promise<unknown>
-  moveItem(id: string, destination: string): Promise<unknown>
-  deleteItem(id: string): Promise<unknown>
+  list(directory: string | null, options: RequestOptions): Promise<ListResponse>
+  createFolder(
+    parentId: string | null,
+    name: string,
+    options?: RequestOptions,
+  ): Promise<unknown>
+  moveItem(
+    id: string,
+    destination: string,
+    options?: RequestOptions,
+  ): Promise<unknown>
+  deleteItem(id: string, options?: RequestOptions): Promise<unknown>
 }
 
 export type MoveFolderOptions = {
@@ -46,8 +54,12 @@ export type MoveFolderOptions = {
   target: string
   /** How many file moves are in flight at once. Default: 4. */
   concurrency?: number
+  /** Aborts between and inside requests; the returned promise rejects with an `AbortError`. */
+  signal?: AbortSignal | undefined
   /** Called after every file that moved, with the number of files in total. */
   onProgress?: (done: number, total: number) => void
+  /** Receives one line per step, for debugging with `uppy.log`. */
+  log?: (message: string) => void
 }
 
 /** Splits a folder key (`docs/photos/`) into its parent (`docs/`) and name. */
@@ -60,29 +72,50 @@ function splitFolderKey(key: string): { parent: string; name: string } {
   }
 }
 
+const abortError = () =>
+  new DOMException('The folder move was cancelled', 'AbortError')
+
+const throwIfAborted = (signal: AbortSignal | undefined) => {
+  if (signal?.aborted) throw abortError()
+}
+
 /**
- * Lists `folder` (following every page) and reports what is in it.
+ * Lists `folder` (following every page) and reports what is in it. Only
+ * entries that really live under `folder` count: a backend that answered with
+ * something else must not steer the walk elsewhere.
  */
 async function listFolder(
   provider: FolderMoveProvider,
   folder: string,
+  signal: AbortSignal | undefined,
+  log: (message: string) => void,
 ): Promise<{ folders: string[]; files: string[] }> {
-  const folders: string[] = []
-  const files: string[] = []
+  const folders = new Set<string>()
+  const files = new Set<string>()
+  const seenPages = new Set<string>()
   let pagePath: string | null = encodeURIComponent(folder)
   do {
+    throwIfAborted(signal)
+    if (seenPages.has(pagePath)) {
+      throw new Error(`Listing of "${folder}" repeats page "${pagePath}"`)
+    }
+    seenPages.add(pagePath)
     const { items, nextPagePath }: ListResponse = await provider.list(
       pagePath,
-      {},
+      { signal },
     )
     for (const item of items) {
       const key = decodeURIComponent(item.requestPath)
-      if (item.isFolder) folders.push(key)
-      else files.push(key)
+      if (!key.startsWith(folder) || key === folder) {
+        log(`ignoring "${key}": not inside "${folder}"`)
+        continue
+      }
+      if (item.isFolder) folders.add(key)
+      else files.add(key)
     }
     pagePath = nextPagePath
   } while (pagePath)
-  return { folders, files }
+  return { folders: [...folders], files: [...files] }
 }
 
 /**
@@ -96,26 +129,52 @@ export default async function moveFolder({
   source,
   target,
   concurrency = 4,
+  signal,
   onProgress,
+  log = () => {},
 }: MoveFolderOptions): Promise<void> {
+  if (!source.endsWith('/') || !target.endsWith('/')) {
+    throw new Error(`Folder keys must end with "/": "${source}" → "${target}"`)
+  }
+  if (target.startsWith(source)) {
+    throw new Error(`Cannot move "${source}" into itself ("${target}")`)
+  }
+  log(`move folder "${source}" → "${target}"`)
+
   // 1. Walk the source breadth-first, so parents come before their children.
   const subFolders: string[] = []
   const files: string[] = []
   const queue: string[] = [source]
   while (queue.length > 0) {
     const folder = queue.shift() as string
-    const listed = await listFolder(provider, folder)
-    subFolders.push(...listed.folders)
-    queue.push(...listed.folders)
-    files.push(...listed.files)
+    const listed = await listFolder(provider, folder, signal, log)
+    for (const sub of listed.folders) {
+      // Defensive: never walk the destination or a folder seen already, so a
+      // listing that misreports entries cannot make the move feed on itself.
+      if (sub.startsWith(target) || subFolders.includes(sub)) continue
+      subFolders.push(sub)
+      queue.push(sub)
+    }
+    for (const file of listed.files) {
+      if (!files.includes(file)) files.push(file)
+    }
   }
+  log(`found ${files.length} file(s) in ${subFolders.length + 1} folder(s)`)
 
   // 2. Create the destination folders, parents first.
-  const destinationOf = (key: string) => `${target}${key.slice(source.length)}`
+  const destinationOf = (key: string) => {
+    if (!key.startsWith(source)) {
+      throw new Error(`"${key}" is not inside "${source}"`)
+    }
+    return `${target}${key.slice(source.length)}`
+  }
   for (const folder of [target, ...subFolders.map(destinationOf)]) {
+    throwIfAborted(signal)
     const { parent, name } = splitFolderKey(folder)
     try {
-      await provider.createFolder(parent === '' ? null : parent, name)
+      await provider.createFolder(parent === '' ? null : parent, name, {
+        signal,
+      })
     } catch (err) {
       // An earlier, interrupted run may have created it already.
       if ((err as Error | undefined)?.message !== 's3AlreadyExists') throw err
@@ -125,12 +184,16 @@ export default async function moveFolder({
   // 3. Move the files, a few at a time.
   let done = 0
   let next = 0
+  onProgress?.(0, files.length)
   const workers = Array.from(
     { length: Math.max(1, Math.min(concurrency, files.length)) },
     async () => {
       while (next < files.length) {
+        throwIfAborted(signal)
         const file = files[next++] as string
-        await provider.moveItem(file, destinationOf(file))
+        const destination = destinationOf(file)
+        log(`move "${file}" → "${destination}"`)
+        await provider.moveItem(file, destination, { signal })
         done += 1
         onProgress?.(done, files.length)
       }
@@ -140,7 +203,10 @@ export default async function moveFolder({
 
   // 4. Delete the now-empty source folders, deepest first.
   for (const folder of [...subFolders].reverse()) {
-    await provider.deleteItem(folder)
+    throwIfAborted(signal)
+    await provider.deleteItem(folder, { signal })
   }
-  await provider.deleteItem(source)
+  throwIfAborted(signal)
+  await provider.deleteItem(source, { signal })
+  log(`moved "${source}" → "${target}"`)
 }

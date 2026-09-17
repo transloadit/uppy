@@ -345,16 +345,22 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return { view: this, uppy, i18n: uppy.i18n }
   }
 
-  /** Runs an action, refreshes the folder, and reports errors as toasts. */
+  /**
+   * Runs an action, refreshes the folder (also after a failure or a cancel, so
+   * a partially applied change shows), and reports errors as toasts.
+   */
   async #run(
     { refresh }: { refresh?: boolean | undefined },
     run: () => Promise<void> | void,
   ): Promise<void> {
     try {
       await run()
-      if (refresh !== false) await this.refreshCurrentFolder()
     } catch (err) {
       const raw = err instanceof Error ? err.message : String(err)
+      if ((err as { name?: string } | undefined)?.name === 'AbortError') {
+        this.plugin.uppy.log('[ProviderView] action cancelled', 'warning')
+        return
+      }
       this.plugin.uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
       // Companion reports user-facing failures as locale keys; an error a
       // plugin threw itself already carries a translated message.
@@ -363,6 +369,35 @@ export default class ProviderView<M extends Meta, B extends Body> {
           ? this.plugin.uppy.i18n(raw)
           : raw
       this.plugin.uppy.info(message, 'error', 5000)
+    } finally {
+      if (refresh !== false) await this.refreshCurrentFolder()
+    }
+  }
+
+  #cancelLongOperation: (() => void) | undefined
+
+  /**
+   * Runs a long write operation (a folder move, a bulk delete) behind the
+   * loading screen, with a Cancel button and progress text. `signal` aborts
+   * when the user cancels, the panel closes or uploads are cancelled; pass it
+   * to every request. The operation should throw an `AbortError` when it
+   * stops early, which `#run` treats as a cancel rather than a failure.
+   */
+  async runWithProgress(
+    op: (context: {
+      signal: AbortSignal
+      setProgress: (label: string) => void
+    }) => Promise<void>,
+  ): Promise<void> {
+    try {
+      await this.#withAbort(async (signal) => {
+        this.#cancelLongOperation = () => this.#abortController?.abort()
+        this.setLoading(true)
+        await op({ signal, setProgress: (label) => this.setLoading(label) })
+      })
+    } finally {
+      this.#cancelLongOperation = undefined
+      this.setLoading(false)
     }
   }
 
@@ -965,6 +1000,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
             showTitles={opts.showTitles}
             i18n={this.plugin.uppy.i18n}
             isLoading={loading}
+            onCancelLoading={this.#cancelLongOperation}
             utmSource="Companion"
             actions={opts.actions ?? []}
             runAction={this.runAction}

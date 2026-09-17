@@ -227,6 +227,20 @@ function splitKey(key: string): {
 }
 
 /**
+ * The keys of a selection without the items inside a selected folder: checking
+ * a folder also checks its loaded children, and moving or deleting the folder
+ * covers them.
+ */
+function topLevelKeys(items: { id: string }[]): string[] {
+  const keys = items.map((item) => S3.keyOf(item.id))
+  const folders = keys.filter((key) => key.endsWith('/'))
+  return keys.filter(
+    (key) =>
+      !folders.some((folder) => folder !== key && key.startsWith(folder)),
+  )
+}
+
+/**
  * Wraps an action's `run` so it only has to return the success toast (or
  * nothing when the user cancelled); errors keep going through ProviderView.
  */
@@ -393,7 +407,13 @@ export default class S3<M extends Meta, B extends Body>
           let destination = isMove ? value : `${parent}${value}`
           if (isFolder && !destination.endsWith('/')) destination += '/'
           if (destination === key) return undefined
-          await this.#move(key, destination, isFolder)
+          await view.runWithProgress(({ signal, setProgress }) =>
+            this.#move(key, destination, isFolder, {
+              signal,
+              onProgress: (done, total) =>
+                setProgress(this.i18n('movingFiles', { done, total })),
+            }),
+          )
           return isMove
             ? this.i18n('itemMoved', { path: destination })
             : this.i18n('itemRenamed', { name: value })
@@ -474,16 +494,25 @@ export default class S3<M extends Meta, B extends Body>
             destination === '' || destination.endsWith('/')
               ? destination
               : `${destination}/`
-          for (const item of items) {
-            const key = S3.keyOf(item.id)
-            const { name, isFolder } = splitKey(key)
-            await this.#move(
-              key,
-              `${folder}${name}${isFolder ? '/' : ''}`,
-              isFolder,
-            )
-          }
-          return this.i18n('itemsMoved', { smart_count: items.length })
+          const keys = topLevelKeys(items)
+          await view.runWithProgress(async ({ signal, setProgress }) => {
+            for (const [index, key] of keys.entries()) {
+              setProgress(
+                this.i18n('movingItems', {
+                  done: index + 1,
+                  total: keys.length,
+                }),
+              )
+              const { name, isFolder } = splitKey(key)
+              await this.#move(
+                key,
+                `${folder}${name}${isFolder ? '/' : ''}`,
+                isFolder,
+                { signal },
+              )
+            }
+          })
+          return this.i18n('itemsMoved', { smart_count: keys.length })
         }),
       },
       {
@@ -499,9 +528,17 @@ export default class S3<M extends Meta, B extends Body>
             danger: true,
           })
           if (!confirmed) return undefined
-          for (const item of items) {
-            await this.provider.deleteItem(S3.keyOf(item.id))
-          }
+          await view.runWithProgress(async ({ signal, setProgress }) => {
+            for (const [index, item] of items.entries()) {
+              setProgress(
+                this.i18n('deletingItems', {
+                  done: index + 1,
+                  total: items.length,
+                }),
+              )
+              await this.provider.deleteItem(S3.keyOf(item.id), { signal })
+            }
+          })
           return this.i18n('itemsDeleted', { smart_count: items.length })
         }),
       },
@@ -516,9 +553,16 @@ export default class S3<M extends Meta, B extends Body>
     key: string,
     destination: string,
     isFolder: boolean,
+    {
+      signal,
+      onProgress,
+    }: {
+      signal?: AbortSignal | undefined
+      onProgress?: ((done: number, total: number) => void) | undefined
+    } = {},
   ): Promise<void> {
     if (!isFolder) {
-      await this.provider.moveItem(key, destination)
+      await this.provider.moveItem(key, destination, { signal })
       return
     }
     if (destination.startsWith(key)) {
@@ -528,6 +572,9 @@ export default class S3<M extends Meta, B extends Body>
       provider: this.provider,
       source: key,
       target: destination,
+      signal,
+      onProgress,
+      log: (message) => this.uppy.log(`[S3] ${message}`),
     })
   }
 

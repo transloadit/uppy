@@ -22,6 +22,8 @@ type BrowserProps<M extends Meta, B extends Body> = {
   showTitles: boolean
   i18n: I18n
   isLoading: boolean | string
+  /** Set while a cancellable operation runs; renders a Cancel button. */
+  onCancelLoading?: (() => void) | undefined
   openFolder: ProviderView<M, B>['openFolder']
   noResultsLabel: string
   virtualList: boolean
@@ -41,6 +43,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     showTitles,
     i18n,
     isLoading,
+    onCancelLoading,
     openFolder,
     noResultsLabel,
     virtualList,
@@ -79,7 +82,18 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
   if (isLoading) {
     return (
       <div className="uppy-Provider-loading">
-        {typeof isLoading === 'string' ? isLoading : i18n('loading')}
+        <span>
+          {typeof isLoading === 'string' ? isLoading : i18n('loading')}
+        </span>
+        {onCancelLoading && (
+          <button
+            type="button"
+            className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Provider-loadingCancel"
+            onClick={onCancelLoading}
+          >
+            {i18n('cancel')}
+          </button>
+        )}
       </div>
     )
   }

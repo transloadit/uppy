@@ -186,13 +186,14 @@ describe('S3 provider in the browser', () => {
     await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
     await input.fill('docs/notes.md')
     await userEvent.keyboard('{Enter}')
+    // The list hides behind the progress screen while the move runs, so wait
+    // for the request itself rather than for the row to disappear.
+    await expect
+      .poll(() => companion.lastCall('/s3/mutate/move')?.body)
+      .toEqual({ id: 'notes.md', destination: 'docs/notes.md' })
     await expect
       .element(page.getByText('notes.md', { exact: true }))
       .not.toBeInTheDocument()
-    expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
-      id: 'notes.md',
-      destination: 'docs/notes.md',
-    })
   })
 
   it('renames a folder by moving its contents one by one', async ({
