@@ -385,10 +385,25 @@ describe('S3 provider', () => {
 
   describe('moveItem', () => {
     const heads: Record<string, { ContentLength: number; ETag: string }> = {
-      't/a.txt': { ContentLength: 3, ETag: '"etag-a"' },
-      't/taken.txt': { ContentLength: 9, ETag: '"etag-taken"' },
-      't/copied.txt': { ContentLength: 3, ETag: '"etag-a"' },
-      't/huge.bin': { ContentLength: 6 * 1024 ** 3, ETag: '"etag-huge"' },
+      't/a.txt': {
+        ContentLength: 3,
+        ETag: '"47bce5c74f589f4867dbd57e9ca9f808"',
+      },
+      't/taken.txt': {
+        ContentLength: 9,
+        ETag: '"9c8fb2f5b8a1c3d4e5f60718293a4b5c"',
+      },
+      't/copied.txt': {
+        ContentLength: 3,
+        ETag: '"47bce5c74f589f4867dbd57e9ca9f808"',
+      },
+      't/huge.bin': {
+        ContentLength: 6 * 1024 ** 3,
+        ETag: '"0123456789abcdef0123456789abcdef-2"',
+      },
+      // A backend that answers a placeholder ETag for every object.
+      't/p.txt': { ContentLength: 3, ETag: '"placeholder"' },
+      't/p-copy.txt': { ContentLength: 3, ETag: '"placeholder"' },
     }
     const makeMoveProvider = () => {
       const send = vi.fn(async (cmd: unknown) => {
@@ -452,6 +467,14 @@ describe('S3 provider', () => {
         userError('s3FileTooLargeToMove'),
       )
       expect(inputsOf(send, CopyObjectCommand)).toEqual([])
+      expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
+    })
+
+    test('does not trust a placeholder ETag to skip the copy', async () => {
+      const { provider, send } = makeMoveProvider()
+      await expect(move(provider, 't/p.txt', 't/p-copy.txt')).rejects.toEqual(
+        userError('s3AlreadyExists'),
+      )
       expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
     })
 

@@ -103,6 +103,9 @@ const pickDefined = <T extends object, K extends keyof T>(
 /** `CopyObject` refuses sources above this size; larger objects need a multipart copy. */
 const MAX_COPY_BYTES = 5 * 1024 ** 3
 
+const isContentEtag = (etag: string): boolean =>
+  /^"?[0-9a-f]{32}(-\d+)?"?$/i.test(etag)
+
 const isNotFound = (err: unknown): boolean =>
   err instanceof NotFound ||
   err instanceof NoSuchKey ||
@@ -534,10 +537,14 @@ export default class S3Provider extends Provider<S3UserSession> {
         // stopped before deleting the source). Anything else is a conflict.
         // (Under SSE-KMS a copy gets a new ETag, so a resumed move of such an
         // object reports a conflict rather than deleting the source.)
+        // Only trust ETags that look like S3's own (an MD5, or MD5-partcount
+        // for multipart uploads): a backend answering a placeholder for every
+        // object would otherwise have the source deleted without a copy.
         const sameObject =
           existing.ContentLength === source.ContentLength &&
           existing.ETag != null &&
-          existing.ETag === source.ETag
+          existing.ETag === source.ETag &&
+          isContentEtag(existing.ETag)
         if (!sameObject) {
           throw new ProviderUserError({ message: 's3AlreadyExists' })
         }
