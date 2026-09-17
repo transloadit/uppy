@@ -1,10 +1,19 @@
-import type { Readable } from 'node:stream'
 import got from 'got'
-import type { ProviderOptions } from '../../../schemas/companion.js'
-import type { BuildUrl } from '../../../types/express.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.js'
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+  ProviderLogoutOptions,
+  ProviderLogoutResponse,
+  ProviderSizeOptions,
+  ProviderThumbnailOptions,
+  ProviderThumbnailResponse,
+  Query,
+} from '../Provider.js'
+import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
@@ -12,12 +21,6 @@ const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
 const BOX_THUMBNAIL_SIZE = 256
 
 type BoxUserSession = { accessToken: string }
-type CompanionLike = {
-  buildURL?: BuildUrl
-  options: {
-    providerOptions: Record<string, Pick<ProviderOptions, 'key' | 'secret'>>
-  }
-}
 
 const getClient = ({ token }: { token: string }) =>
   got.extend({
@@ -89,12 +92,7 @@ export default class Box extends Provider<BoxUserSession> {
     providerUserSession: { accessToken: token },
     query,
     companion,
-  }: {
-    directory?: string | undefined
-    providerUserSession: BoxUserSession
-    query?: Query
-    companion: CompanionLike
-  }): Promise<ProviderListResponse> {
+  }: ProviderListOptions<BoxUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.box.list.error', async () => {
       const [userInfo, files] = await Promise.all([
         getUserInfo({ token }),
@@ -108,10 +106,7 @@ export default class Box extends Provider<BoxUserSession> {
   override async download({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: BoxUserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<BoxUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling('provider.box.download.error', async () => {
       const stream = getClient({ token }).stream.get(`files/${id}/content`, {
         responseType: 'json',
@@ -125,10 +120,7 @@ export default class Box extends Provider<BoxUserSession> {
   override async thumbnail({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: BoxUserSession
-  }): Promise<{ stream: Readable; contentType: string }> {
+  }: ProviderThumbnailOptions<BoxUserSession>): Promise<ProviderThumbnailResponse> {
     return this.#withErrorHandling('provider.box.thumbnail.error', async () => {
       const extension = 'jpg' // you can set this to png to more easily reproduce http 202 retry-after
 
@@ -160,10 +152,7 @@ export default class Box extends Provider<BoxUserSession> {
   override async size({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: BoxUserSession
-  }): Promise<number> {
+  }: ProviderSizeOptions<BoxUserSession>): Promise<number> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
         .get(`files/${id}`, { responseType: 'json' })
@@ -182,10 +171,7 @@ export default class Box extends Provider<BoxUserSession> {
   override async logout({
     companion,
     providerUserSession: { accessToken: token },
-  }: {
-    companion: CompanionLike
-    providerUserSession: BoxUserSession
-  }): Promise<{ revoked: true }> {
+  }: ProviderLogoutOptions<BoxUserSession>): Promise<ProviderLogoutResponse> {
     return this.#withErrorHandling('provider.box.logout.error', async () => {
       const { key, secret } = companion.options.providerOptions['box']!
       await getClient({ token }).post('oauth2/revoke', {

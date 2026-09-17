@@ -29,6 +29,13 @@ export interface ProviderListItem {
   thumbnail?: string | null | undefined
 }
 
+export interface ProviderListOptions<US = unknown> {
+  companion: CompanionContext
+  directory?: string | undefined
+  providerUserSession: US
+  query?: Query
+}
+
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
@@ -36,7 +43,81 @@ export interface ProviderListResponse {
   username?: string | null | undefined
 }
 
+export interface ProviderSearchOptions<US = unknown> {
+  providerUserSession: US
+  query: { q: string; path?: string; [k: string]: unknown }
+  companion: { buildURL: BuildUrl }
+}
+
 export type ProviderSearchResponse = ProviderListResponse
+
+export interface ProviderDownloadOptions<US = unknown> {
+  companion: CompanionLike
+  id: string
+  providerUserSession: US
+  query: Query
+}
+
+export interface ProviderDownloadResponse {
+  stream: Readable
+  size: number | undefined
+}
+
+export interface ProviderThumbnailOptions<US = unknown> {
+  id: string
+  providerUserSession: US
+}
+
+export interface ProviderThumbnailResponse {
+  stream: Readable
+  contentType?: string
+}
+
+export interface ProviderSizeOptions<US = unknown> {
+  id: string
+  providerUserSession: US
+  query: Query
+}
+
+export interface ProviderDeauthorizationCallbackOptions {
+  companion: CompanionLike
+  body: unknown
+  headers: Record<string, (string | string[]) | undefined>
+}
+
+export interface ProviderDeauthorizationCallbackResponse {
+  data?: unknown
+  status?: number
+}
+
+export interface ProviderRefreshTokenOptions {
+  redirectUri: string | undefined
+  clientId: string | undefined
+  clientSecret: string | undefined
+  refreshToken: string
+}
+
+export interface ProviderRefreshTokenResponse {
+  accessToken: string
+}
+
+export interface ProviderLogoutOptions<US = unknown> {
+  providerUserSession: US
+  companion: CompanionLike
+}
+
+export interface ProviderLogoutResponse {
+  revoked: boolean
+  manual_revoke_url?: string
+}
+
+export interface ProviderSimpleAuthOptions {
+  requestBody: unknown
+}
+
+interface ProviderGrantDynamicToUserSessionOptions {
+  grantDynamic: GrantDynamic
+}
 
 /**
  * Provider interface defines the specifications of any provider implementation
@@ -75,12 +156,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async list(options: {
-    companion: CompanionContext
-    directory?: string | undefined
-    providerUserSession: US
-    query?: Query
-  }): Promise<ProviderListResponse> {
+  async list(options: ProviderListOptions<US>): Promise<ProviderListResponse> {
     throw new Error('method not implemented')
   }
 
@@ -89,11 +165,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async search(options: {
-    providerUserSession: US
-    query: { q: string; path?: string; [k: string]: unknown }
-    companion: { buildURL: BuildUrl }
-  }): Promise<ProviderSearchResponse> {
+  async search(
+    options: ProviderSearchOptions,
+  ): Promise<ProviderSearchResponse> {
     throw new Error('method not implemented')
   }
 
@@ -102,12 +176,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async download(options: {
-    companion: CompanionLike
-    id: string
-    providerUserSession: US
-    query: Query
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  async download(
+    options: ProviderDownloadOptions<US>,
+  ): Promise<ProviderDownloadResponse> {
     throw new Error('method not implemented')
   }
 
@@ -116,10 +187,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async thumbnail(options: {
-    id: string
-    providerUserSession: US
-  }): Promise<{ stream: Readable; contentType?: string }> {
+  async thumbnail(
+    options: ProviderThumbnailOptions<US>,
+  ): Promise<ProviderThumbnailResponse> {
     throw new Error('method not implemented')
   }
 
@@ -128,11 +198,7 @@ export default class Provider<US = unknown> {
    * if that fails, it will call this method to get the size.
    * So if your provider has a different method for getting the size, you can return the size here
    */
-  async size(options: {
-    id: string
-    providerUserSession: US
-    query: unknown
-  }): Promise<number | undefined> {
+  async size(options: ProviderSizeOptions<US>): Promise<number | undefined> {
     return undefined
   }
 
@@ -141,23 +207,18 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async deauthorizationCallback(options: {
-    companion: CompanionLike
-    body: unknown
-    headers: Record<string, (string | string[]) | undefined>
-  }): Promise<{ data?: unknown; status?: number }> {
+  async deauthorizationCallback(
+    options: ProviderDeauthorizationCallbackOptions,
+  ): Promise<ProviderDeauthorizationCallbackResponse> {
     throw new Error('method not implemented')
   }
 
   /**
    * Generate a new access token based on the refresh token
    */
-  async refreshToken(options: {
-    redirectUri: string | undefined
-    clientId: string | undefined
-    clientSecret: string | undefined
-    refreshToken: string
-  }): Promise<{ accessToken: string }> {
+  async refreshToken(
+    options: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
     throw new Error('method not implemented')
   }
 
@@ -166,14 +227,13 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async logout(options: {
-    providerUserSession: US
-    companion: CompanionLike
-  }): Promise<{ revoked: boolean; manual_revoke_url?: string }> {
+  async logout(
+    options: ProviderLogoutOptions<US>,
+  ): Promise<ProviderLogoutResponse> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<object> {
+  async simpleAuth(options: ProviderSimpleAuthOptions): Promise<object> {
     throw new Error('method not implemented')
   }
 
@@ -184,11 +244,9 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession({
-    grantDynamic,
-  }: {
-    grantDynamic: GrantDynamic
-  }): Record<string, unknown> {
+  static grantDynamicToUserSession(
+    options: ProviderGrantDynamicToUserSessionOptions,
+  ): Record<string, unknown> {
     return {}
   }
 

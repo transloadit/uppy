@@ -1,9 +1,14 @@
-import type { Readable } from 'node:stream'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'
 import { ProviderApiError } from '../error.js'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.js'
+import type {
+  ProviderDownloadOptions,
+  ProviderDownloadResponse,
+  ProviderListOptions,
+  ProviderListResponse,
+} from '../Provider.js'
+import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
@@ -35,10 +40,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
   override async list({
     providerUserSession: { accessToken: token },
     query,
-  }: {
-    providerUserSession: UnsplashUserSession
-    query?: Query | undefined
-  }): Promise<ProviderListResponse> {
+  }: ProviderListOptions<UnsplashUserSession>): Promise<ProviderListResponse> {
     const q = typeof query?.['q'] === 'string' ? query['q'] : undefined
     if (!q) {
       throw new ProviderApiError('Search query missing', 400)
@@ -60,10 +62,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
   override async download({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: UnsplashUserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<UnsplashUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling(
       'provider.unsplash.download.error',
       async () => {
