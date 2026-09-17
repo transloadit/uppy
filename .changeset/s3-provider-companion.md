@@ -13,8 +13,8 @@ optionally `prefix`) names the one bucket everybody browses, so Companion has to
 authentication. Multi-tenant: your server mints a short-lived storage grant per user after it
 authenticated them, naming the bucket, the prefix they may see and whether they may write, and
 Companion verifies it with `grantSecret` (HS256, several accepted so keys can be rotated) or
-`grantPublicKey` (asymmetric, so Companion can verify grants but not mint them). With a grant key
-configured, `bucket` and `prefix` are ignored. What the provider's credentials may reach at all
+`grantPublicKey` (asymmetric, so Companion can verify grants but not mint them). The two modes are
+exclusive: Companion refuses to start with both a grant key and `bucket`/`prefix`, or with neither. What the provider's credentials may reach at all
 belongs in an IAM or bucket policy; Companion only enforces the prefix a grant carries.
 
 Mutations — delete, rename/move a single file, and create folder — are exposed as

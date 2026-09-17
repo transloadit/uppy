@@ -218,7 +218,7 @@ describe('S3 provider', () => {
       ).toMatchObject({ bucket: 'b' })
     })
 
-    test('the bucket option is ignored once a grant key is configured', async () => {
+    test('a grant key wins over a bucket if both slip past startup validation', async () => {
       const provider = makeProvider()
       await expect(
         provider.simpleAuth({

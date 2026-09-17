@@ -71,13 +71,14 @@ export interface S3ProviderOptions
     S3ConnectionOptions,
     S3ObjectWriteOptions {
   /**
-   * The bucket to browse when grants are not used. Ignored once a grant key
-   * is configured: the grant then names the bucket.
+   * The bucket to browse when grants are not used. Exclusive with the grant
+   * keys (Companion refuses to start with both): with grants, each grant
+   * names its bucket.
    */
   bucket?: string | undefined
   /**
    * Key prefix inside `bucket` that browsing is confined to, e.g.
-   * `uploads/`. Only used together with `bucket`.
+   * `uploads/`. Only together with `bucket`.
    */
   prefix?: string | undefined
   /**

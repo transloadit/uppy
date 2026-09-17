@@ -160,30 +160,52 @@ function validateValidHosts(
   }
 }
 
+const keyList = z.union([z.string(), z.array(z.string())]).optional()
+
 /**
- * Points out the two ways `providerOptions.s3` ends up doing nothing, or less,
- * than it looks like it does. Neither is fatal: the provider itself refuses
- * connections it cannot serve.
+ * The two modes of the S3 provider are exclusive: either `bucket` (with an
+ * optional `prefix`) names the one bucket everybody browses, or a grant key
+ * makes each grant name its own bucket and prefix. Setting both is a mistake
+ * (typically a development bucket left next to production grant keys), and
+ * setting neither leaves the provider unable to serve anything; both are
+ * refused at startup rather than logged.
  */
+const s3ProviderOptionsSchema = z
+  .object({
+    bucket: z.string().min(1).optional(),
+    prefix: z.string().optional(),
+    grantSecret: keyList,
+    grantPublicKey: keyList,
+  })
+  .superRefine((s3, ctx) => {
+    const hasGrantKey = hasGrantKeys({
+      secrets: s3.grantSecret,
+      publicKeys: s3.grantPublicKey,
+    })
+    if (hasGrantKey && (s3.bucket != null || s3.prefix != null)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: [s3.bucket != null ? 'bucket' : 'prefix'],
+        message:
+          'cannot be combined with a grant key (`grantSecret` / `grantPublicKey`): each grant names the bucket and prefix it allows',
+      })
+    } else if (!hasGrantKey && s3.bucket == null) {
+      ctx.addIssue({
+        code: 'custom',
+        message:
+          'set either `bucket` (single-tenant) or a grant key (`grantSecret` / `grantPublicKey`, multi-tenant)',
+      })
+    }
+  })
+
 function validateS3Provider(
   s3Provider: S3ProviderOptions | undefined | null,
 ): void {
   if (s3Provider == null) return
-
-  const hasGrantKey = hasGrantKeys({
-    secrets: s3Provider.grantSecret,
-    publicKeys: s3Provider.grantPublicKey,
-  })
-
-  if (!hasGrantKey && s3Provider.bucket == null) {
-    logger.warn(
-      'S3 provider is configured but has neither `bucket` nor `grantSecret`/`grantPublicKey`; it will refuse every connection',
-      'startup.providerOptions.s3',
-    )
-  } else if (hasGrantKey && s3Provider.bucket != null) {
-    logger.info(
-      'S3 provider has a grant key, so `bucket` and `prefix` are ignored: each grant names the bucket and prefix it allows',
-      'startup.providerOptions.s3',
+  const result = s3ProviderOptionsSchema.safeParse(s3Provider)
+  if (!result.success) {
+    throw new Error(
+      `Invalid providerOptions.s3: ${z.prettifyError(result.error)}`,
     )
   }
 }
