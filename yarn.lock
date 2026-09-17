@@ -6093,7 +6093,11 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
+    "@uppy/dashboard": "workspace:^"
     "@uppy/s3": "workspace:^"
+    "@vitest/browser-playwright": "npm:^4.1.11"
+    msw: "npm:^2.10.4"
+    playwright: "npm:1.61.1"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.11"

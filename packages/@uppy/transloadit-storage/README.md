@@ -103,6 +103,11 @@ The browser also uses Companion's effective mutation capability from each listin
 `mutableBuckets`. Older servers without that field show read actions only; upgrade Companion
 together with this plugin to enable management actions.
 
+Queued imports include their original bucket in the download URL. Companion refuses a missing
+or different bucket before reading any bytes, so reconnecting cannot silently import a same-named
+file from another Workspace. Upgrade Companion and the browser package together; older queued
+imports need to be selected again.
+
 Generic S3 moves are a separate, non-atomic copy/delete operation. They default to disabled:
 enable `s3.conditionalMoves` (`COMPANION_AWS_CONDITIONAL_MOVES=true`) only after testing your exact
 endpoint's conditional source copy, destination copy and delete support. Some S3-compatible

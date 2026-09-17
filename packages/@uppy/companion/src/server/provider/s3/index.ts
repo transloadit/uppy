@@ -449,13 +449,23 @@ export default class S3Provider extends Provider<S3UserSession> {
   override async download({
     companion,
     id,
+    query,
     providerUserSession,
   }: {
     companion: CompanionLike
     id: string
+    query?: unknown
     providerUserSession: S3UserSession
   }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.withErrorHandling('provider.s3.download.error', async () => {
+      // A queued file outlives the browser session that selected it. Never reinterpret its key
+      // in a newly connected bucket (including legacy queues with no source-bucket binding).
+      if (!isRecord(query) || query['bucket'] !== providerUserSession.bucket) {
+        throw new ProviderUserError({
+          message:
+            'This file was selected in another storage session. Reconnect to its original bucket and select it again.',
+        })
+      }
       const { bucket, client } = this.#session(companion, providerUserSession, {
         keys: [id],
       })
@@ -605,6 +615,19 @@ export default class S3Provider extends Provider<S3UserSession> {
     }
     const renamed = (key: string) => `${target}${key.slice(source.length)}`
     for (const folder of folders) {
+      const etag = markers.get(folder)
+      if (etag) {
+        // A slash-suffixed object may carry bytes and metadata, not just mark an empty folder.
+        await this.#copyObject(
+          client,
+          bucket,
+          folder,
+          renamed(folder),
+          options,
+          etag,
+        )
+        continue
+      }
       await client.send(
         new PutObjectCommand({
           Bucket: bucket,

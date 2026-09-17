@@ -58,10 +58,21 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
 
   onCapabilities?: (canMutate: boolean) => void
 
+  #bucket: string | undefined
+
   override async list<ResBody>(
     ...args: Parameters<Provider<M, B>['list']>
   ): Promise<ResBody> {
     const response = await super.list<ResBody>(...args)
+    if (
+      typeof response === 'object' &&
+      response !== null &&
+      !Array.isArray(response) &&
+      'username' in response &&
+      typeof response.username === 'string'
+    ) {
+      this.#bucket = response.username
+    }
     this.onCapabilities?.(
       typeof response === 'object' &&
         response !== null &&
@@ -72,10 +83,41 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     return response
   }
 
+  override fileUrl(id: string): string {
+    if (!this.#bucket)
+      throw new Error('Browse the storage folder before selecting files.')
+    const url = new URL(super.fileUrl(id))
+    url.searchParams.set('bucket', this.#bucket)
+    return url.href
+  }
+
   /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
   getGrant?: () => Promise<string>
 
   #regranting: Promise<void> | undefined
+  #sessionAbort = new AbortController()
+  #tokenWrites: Promise<void> = Promise.resolve()
+
+  override async setAuthToken(token: string): Promise<void> {
+    const signal = this.#sessionAbort.signal
+    // Serialize async storage writes with logout's removal; a late write cannot resurrect a token.
+    const write = this.#tokenWrites
+      .catch(() => {})
+      .then(async () => {
+        signal.throwIfAborted()
+        await super.setAuthToken(token)
+      })
+    this.#tokenWrites = write
+    await write
+  }
+
+  protected override async removeAuthToken(): Promise<void> {
+    const write = this.#tokenWrites
+      .catch(() => {})
+      .then(() => super.removeAuthToken())
+    this.#tokenWrites = write
+    await write
+  }
 
   /** True between a successful login and a logout: only then is a 401 an *expired* session. */
   #hasSession = false
@@ -89,14 +131,20 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     authFormData: unknown
     signal: AbortSignal
   }) {
+    if (this.#sessionAbort.signal.aborted)
+      this.#sessionAbort = new AbortController()
+    signal = AbortSignal.any([signal, this.#sessionAbort.signal])
     const form = isFormWithCredentials(authFormData)
       ? authFormData
       : this.getGrant
         ? { grant: await this.getGrant() }
         : authFormData
+    signal.throwIfAborted()
     await this.loginSimpleAuth({ uppyVersions, authFormData: form, signal })
-    this.#hasSession = true
+    signal.throwIfAborted()
     await this.onSimpleAuth?.(form)
+    signal.throwIfAborted()
+    this.#hasSession = true
   }
 
   /**
@@ -107,9 +155,17 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   protected override async request<ResBody>(
     ...args: Parameters<Provider<M, B>['request']>
   ): Promise<ResBody> {
+    const sessionSignal = this.#sessionAbort.signal
+    const [options] = args
+    const signal = options.signal
+      ? AbortSignal.any([options.signal, sessionSignal])
+      : sessionSignal
     try {
-      return await super.request<ResBody>(...args)
+      const result = await super.request<ResBody>({ ...options, signal })
+      sessionSignal.throwIfAborted()
+      return result
     } catch (err) {
+      sessionSignal.throwIfAborted()
       const [{ path }] = args
       const isAuthError = (err as { isAuthError?: boolean }).isAuthError
       // Without a session there is nothing to refresh: a 401 on the initial
@@ -125,22 +181,28 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       }
       if (this.#regranting == null) {
         // Many requests may fail at once; mint one grant for all of them.
-        this.#regranting = (async () => {
+        const renewal = (async () => {
           await this.removeAuthToken()
+          sessionSignal.throwIfAborted()
           await this.login({
             authFormData: {},
             signal: new AbortController().signal,
           })
         })().finally(() => {
-          this.#regranting = undefined
+          if (this.#regranting === renewal) this.#regranting = undefined
         })
+        this.#regranting = renewal
       }
       await this.#regranting
-      return await super.request<ResBody>(...args)
+      sessionSignal.throwIfAborted()
+      return await super.request<ResBody>({ ...options, signal })
     }
   }
 
   async logout<ResBody>(): Promise<ResBody> {
+    this.#sessionAbort.abort()
+    this.#regranting = undefined
+    this.#bucket = undefined
     this.#hasSession = false
     await this.removeAuthToken()
     return {

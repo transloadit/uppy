@@ -222,7 +222,7 @@ en_US.strings = {
   removeFile: 'Remove file',
   rename: 'Rename',
   renameOrMove: 'Rename / move…',
-  renameOrMovePrompt: 'New name, or a full path to move it somewhere else:',
+  renameOrMovePrompt: 'New name, or a path relative to the browsing root:',
   renameOrMoveTitle: 'Rename or move "%{name}"',
   reSelect: 'Re-select',
   resetFilter: 'Reset filter',

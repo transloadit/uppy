@@ -572,6 +572,7 @@ describe('S3 provider', () => {
     const res = await provider.download({
       companion: companionWith(['b']),
       id: 'tenant/file.txt',
+      query: { bucket: 'b' },
       providerUserSession: { bucket: 'b', prefix: 'tenant/' },
     })
     expect(res.size).toBe(5)
@@ -582,9 +583,71 @@ describe('S3 provider', () => {
       provider.download({
         companion: companionWith(['b']),
         id: 'other/file.txt',
+        query: { bucket: 'b' },
         providerUserSession: { bucket: 'b', prefix: 'tenant/' },
       }),
     ).rejects.toThrow(ProviderUserError)
+  })
+
+  test.each([
+    { bucket: 'previous-bucket' },
+    {},
+  ])('a queued import cannot read the same path from a different session bucket (%j)', async (query) => {
+    const send = vi.fn(async () => ({
+      Body: Readable.from(['wrong-bucket-bytes']),
+      ContentLength: 18,
+    }))
+    await expect(
+      makeProvider(send).download({
+        companion: companionWith(['b']),
+        id: 'tenant/file.txt',
+        query,
+        providerUserSession: { bucket: 'b', prefix: 'tenant/' },
+      }),
+    ).rejects.toBeInstanceOf(ProviderUserError)
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  test('folder moves preserve the body of slash-suffixed objects', async () => {
+    const objects = new Map([['old/', 'not-an-empty-marker']])
+    const send = vi.fn(async (command: unknown) => {
+      if (command instanceof HeadObjectCommand) throw notFound()
+      if (command instanceof ListObjectsV2Command)
+        return {
+          Contents:
+            command.input.Prefix === 'old/'
+              ? [{ Key: 'old/', Size: 19, ETag: 'original-etag' }]
+              : [],
+        }
+      if (command instanceof PutObjectCommand)
+        objects.set(command.input.Key!, String(command.input.Body))
+      if (command instanceof CopyObjectCommand) {
+        const source = decodeURIComponent(
+          command.input.CopySource!.slice('/b/'.length),
+        )
+        objects.set(command.input.Key!, objects.get(source)!)
+      }
+      if (command instanceof DeleteObjectCommand)
+        objects.delete(command.input.Key!)
+      return {}
+    })
+    await makeProvider(send).moveItem({
+      companion: companionWith(['b'], ['b']),
+      providerUserSession: { bucket: 'b', prefix: '' },
+      id: 'old/',
+      destination: 'new/',
+    })
+    expect(objects.get('new/')).toBe('not-an-empty-marker')
+    expect(objects.has('old/')).toBe(false)
+    expect(inputsOf(send, CopyObjectCommand)).toEqual([
+      {
+        Bucket: 'b',
+        CopySource: '/b/old/',
+        Key: 'new/',
+        IfNoneMatch: '*',
+        CopySourceIfMatch: 'original-etag',
+      },
+    ])
   })
 
   test('mutations require the bucket to be in mutableBuckets', async () => {
@@ -753,10 +816,16 @@ describe('S3 provider', () => {
       }),
     ).toEqual({ id: 'new/', requestPath: 'new%2F' })
     expect(inputsOf(send, PutObjectCommand).map((i) => i['Key'])).toEqual([
-      'new/',
       'new/sub/',
     ])
     expect(inputsOf(send, CopyObjectCommand)).toEqual([
+      {
+        Bucket: 'b',
+        CopySource: '/b/old/',
+        Key: 'new/',
+        IfNoneMatch: '*',
+        CopySourceIfMatch: 'folder',
+      },
       {
         Bucket: 'b',
         CopySource: '/b/old/a.txt',

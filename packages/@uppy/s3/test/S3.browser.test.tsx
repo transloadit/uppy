@@ -1,4 +1,4 @@
-import Uppy, { BasePlugin, type PluginOpts } from '@uppy/core'
+import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { http } from 'msw'
 import {
@@ -13,10 +13,8 @@ import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
-import TransloaditStorage from '../../transloadit-storage/lib/TransloaditStorage.js'
 import {
   createMockS3Companion,
-  handleFetchRequest,
   mockGrant,
   toMswHandlers,
 } from '../lib/mockCompanion.js'
@@ -34,18 +32,6 @@ const install = (
 ) => worker.use(...toMswHandlers(companion, COMPANION, { http }))
 
 let uppy: Uppy | undefined
-
-class FixtureUploader extends BasePlugin<
-  PluginOpts & { assemblyOptions?: unknown; waitForEncoding?: boolean },
-  Record<string, unknown>,
-  Record<string, never>
-> {
-  constructor(app: Uppy, options: PluginOpts & { assemblyOptions?: unknown }) {
-    super(app, options)
-    this.id = options.id ?? 'Transloadit'
-    this.type = 'uploader'
-  }
-}
 
 function createUppy(options: Partial<S3Options> = {}) {
   const target = document.createElement('div')
@@ -74,6 +60,22 @@ afterEach(() => {
 })
 
 describe('S3 provider in the browser', () => {
+  it('pins a queued import URL to the bucket where the file was selected', async ({
+    worker,
+  }) => {
+    install(worker, createMockCompanion())
+    const app = createUppy()
+    await openBucket()
+    const plugin =
+      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    const queuedUrl = new URL(plugin.provider.fileUrl('readme.md'))
+    await plugin.view.logout()
+    await plugin.view.handleAuth({ bucket: 'other-bucket' })
+    expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
+    expect(
+      new URL(plugin.provider.fileUrl('readme.md')).searchParams.get('bucket'),
+    ).toBe('other-bucket')
+  })
   it('opens a folder beyond the first listing page', async ({ worker }) => {
     const companion = createMockS3Companion({
       token: TOKEN,
@@ -127,22 +129,6 @@ describe('S3 provider in the browser', () => {
       .find((action) => action.id === 's3:rename')!
     await plugin.view.runAction(rename, item)
     expect(refresh).not.toHaveBeenCalled()
-  })
-
-  it('offers the custom upload action without replacing an application Assembly', () => {
-    const onUploadRequest = vi.fn()
-    uppy = new Uppy().use(TransloaditStorage, {
-      workspace: 'my-bucket',
-      companionUrl: COMPANION,
-      onUploadRequest,
-    })
-    const plugin =
-      uppy.getPlugin<
-        TransloaditStorage<Record<string, unknown>, Record<string, never>>
-      >('TransloaditStorage')!
-    expect(plugin.builtInToolbarActions().map((action) => action.id)).toContain(
-      'transloadit:uploadFiles',
-    )
   })
 
   it('hides write actions when Companion reports a read-only bucket', async ({
@@ -283,43 +269,6 @@ describe('S3 provider in the browser', () => {
     expect(performance.now() - started).toBeLessThan(2000)
     expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
   }, 20000)
-  it('storeUploads refuses to overwrite explicit Assembly configuration', () => {
-    const assemblyOptions = { params: { template_id: 'owned-template' } }
-    uppy = new Uppy().use(FixtureUploader, { assemblyOptions })
-    expect(() =>
-      uppy?.use(TransloaditStorage, {
-        workspace: 'my-bucket',
-        companionUrl: COMPANION,
-        storeUploads: {
-          signAssembly: async (params) => ({ params, signature: 'test' }),
-        },
-      }),
-    ).toThrow('createStoreAssemblyOptions')
-    expect(
-      uppy.getPlugin<FixtureUploader>('Transloadit')?.opts.assemblyOptions,
-    ).toBe(assemblyOptions)
-  })
-  it('storeUploads targets a custom uploader ID and preserves its locale', () => {
-    const uploaderLocale = {
-      strings: { encoding: 'My processing label', custom: 'Keep me' },
-    }
-    uppy = new Uppy().use(FixtureUploader, {
-      id: 'WeddingUpload',
-      locale: uploaderLocale,
-    })
-    uppy.use(TransloaditStorage, {
-      workspace: 'my-bucket',
-      companionUrl: COMPANION,
-      storeUploads: {
-        transloaditPluginId: 'WeddingUpload',
-        signAssembly: async (params) => ({ params, signature: 'test' }),
-      },
-    })
-    const uploader = uppy.getPlugin<FixtureUploader>('WeddingUpload')
-    expect(uploader?.opts.assemblyOptions).toBeTypeOf('function')
-    expect(uploader?.opts.waitForEncoding).toBe(true)
-    expect(uploader?.opts.locale).toEqual(uploaderLocale)
-  })
   it('bulk actions receive only topmost selected entries and refresh after partial failure', async ({
     worker,
   }) => {
@@ -389,66 +338,6 @@ describe('S3 provider in the browser', () => {
         items: [expect.objectContaining({ id: 'docs%2Fhello.txt' })],
       }),
     )
-  })
-  it('Storage uses its own provider and keeps original downloads available to read-only users', async ({
-    worker,
-  }) => {
-    const companion = createMockCompanion()
-    const nativeCompanion = {
-      ...companion,
-      handle: (request: Parameters<typeof companion.handle>[0]) =>
-        companion.handle({
-          ...request,
-          url: request.url.replace('/transloadit-storage/', '/s3/'),
-        }),
-    }
-    worker.use(
-      http.all(
-        `${COMPANION}/transloadit-storage/*`,
-        async ({ request }) =>
-          (await handleFetchRequest(nativeCompanion, request)) ?? undefined,
-      ),
-    )
-    const target = document.createElement('div')
-    document.body.appendChild(target)
-    const getDownloadUrl = vi.fn(async () => '/authorized-original/readme')
-    uppy = new Uppy()
-      .use(Dashboard, { target, inline: true })
-      .use(TransloaditStorage, {
-        companionUrl: COMPANION,
-        workspace: 'my-bucket',
-        getGrant: async () =>
-          mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
-        getDownloadUrl,
-      })
-    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
-    await expect.element(page.getByText('readme.md')).toBeVisible()
-    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-    await expect
-      .element(page.getByRole('menuitem', { name: 'Rename / move…' }))
-      .not.toBeInTheDocument()
-    await expect
-      .element(page.getByRole('menuitem', { name: 'Download', exact: true }))
-      .toBeVisible()
-    const downloads: string[] = []
-    const capture = (event: MouseEvent) => {
-      if (event.target instanceof HTMLAnchorElement) {
-        event.preventDefault()
-        downloads.push(event.target.href)
-      }
-    }
-    document.addEventListener('click', capture, true)
-    try {
-      await page
-        .getByRole('menuitem', { name: 'Download', exact: true })
-        .click()
-      await expect
-        .poll(() => downloads)
-        .toEqual([new URL('/authorized-original/readme', location.href).href])
-      expect(getDownloadUrl).toHaveBeenCalledWith('readme.md')
-    } finally {
-      document.removeEventListener('click', capture, true)
-    }
   })
 
   it('resolves typed move destinations relative to the granted root', async ({
@@ -696,14 +585,61 @@ describe('S3 provider in the browser', () => {
   })
 
   describe('server-issued grants', () => {
+    it('does not restore a session when a pending grant resolves after logout', async ({
+      worker,
+    }) => {
+      let now = Math.floor(Date.now() / 1000)
+      const companion = createMockS3Companion({
+        token: TOKEN,
+        nowSeconds: () => now,
+      })
+      install(worker, companion)
+      let finishRenewal: ((grant: string) => void) | undefined
+      const getGrant = vi
+        .fn<() => Promise<string>>()
+        .mockResolvedValueOnce(
+          mockGrant({ bucket: 'my-bucket', exp: now + 900 }),
+        )
+        .mockImplementationOnce(
+          () =>
+            new Promise((resolve) => {
+              finishRenewal = resolve
+            }),
+        )
+      const app = createUppy({ bucket: undefined, getGrant })
+      await openBucket()
+      const plugin =
+        app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+      now += 901
+      const request = plugin.provider
+        .list(null, { signal: new AbortController().signal })
+        .then(
+          (result) => ({ result }),
+          (error: unknown) => ({ error }),
+        )
+      await vi.waitFor(() => expect(getGrant).toHaveBeenCalledTimes(2))
+      await plugin.view.logout()
+      if (!finishRenewal) throw new Error('Renewal did not start')
+      finishRenewal(mockGrant({ bucket: 'my-bucket', exp: now + 900 }))
+      expect(await request).toHaveProperty('error')
+      expect(await plugin.storage.getItem(plugin.provider.tokenKey)).toBeNull()
+      expect(plugin.getPluginState().authenticated).toBe(false)
+      expect(
+        companion.calls.filter((call) => call.path.endsWith('/simple-auth')),
+      ).toHaveLength(1)
+    })
     it('shares renewal across concurrent expired requests and does not inherit a caller abort', async ({
       worker,
     }) => {
-      const companion = createMockCompanion()
+      let now = Math.floor(Date.now() / 1000)
+      const companion = createMockS3Companion({
+        token: TOKEN,
+        nowSeconds: () => now,
+      })
       install(worker, companion)
       const shortLived = mockGrant({
         bucket: 'my-bucket',
-        exp: Math.floor(Date.now() / 1000) + 1,
+        exp: now + 900,
       })
       let finishRenewal: ((grant: string) => void) | undefined
       const getGrant = vi
@@ -717,7 +653,7 @@ describe('S3 provider in the browser', () => {
         )
       const app = createUppy({ bucket: undefined, getGrant })
       await openBucket()
-      await new Promise((resolve) => setTimeout(resolve, 1200))
+      now += 901
       const plugin =
         app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')
       if (!plugin) throw new Error('Missing S3 plugin')
@@ -734,10 +670,14 @@ describe('S3 provider in the browser', () => {
         (result) => ({ result }),
         (error: unknown) => ({ error }),
       )
+      await vi.waitFor(() =>
+        expect(
+          companion.calls.filter((call) => call.status === 401),
+        ).toHaveLength(2),
+      )
       canceled.abort()
-      await new Promise((resolve) => setTimeout(resolve, 50))
       if (!finishRenewal) throw new Error('Renewal did not start')
-      finishRenewal(mockGrant({ bucket: 'my-bucket' }))
+      finishRenewal(mockGrant({ bucket: 'my-bucket', exp: now + 900 }))
       await first
       expect(await secondResult).toHaveProperty('result')
       expect(getGrant).toHaveBeenCalledTimes(2)
