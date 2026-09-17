@@ -33,6 +33,8 @@ export interface ProviderListItem {
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
+  /** Effective Storage write capability after both session and server policy checks. */
+  canMutate?: boolean
   nextPagePath?: string | null | undefined
   username?: string | null | undefined
 }

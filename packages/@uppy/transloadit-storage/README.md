@@ -23,6 +23,10 @@ server-side; do not trust a browser-supplied receipt. Uppy preserves the returne
 Save `workspace`, `asset_id`, `version_id`, the **returned** `path`, `size`, `mime`, available
 checksums and image dimensions. Explicit collision renaming can change the requested filename.
 The native catalog API and `@transloadit/node`'s `getStoredAsset()` return that same record.
+`getStoredAssemblyResults({ assemblyId, workspace })` fetches and validates all stored results,
+including video, audio and documents, with their Assembly/step/result/input provenance. First bind
+the Assembly to the authenticated application's upload record. Register idempotently by
+Assembly/step/result ID (or asset/version), not by filename or webhook count.
 `getStoredImageReceipt()` additionally verifies trusted upload metadata for image rendering.
 
 ## Location, identity and bytes
@@ -31,11 +35,18 @@ The native catalog API and `@transloadit/node`'s `getStoredAsset()` return that 
 - `asset_id` follows the logical asset and selects its current version.
 - `asset_id` plus `version_id` selects exact retained bytes, without falling back after overwrite.
 
-Identity survives a **native catalog move or rename**. This widget currently uses S3 copy/delete
-for those actions: the copy receives new identities and the original is deleted. That invalidates
-saved references to the original for imports and uncached delivery. Applications that retain
-asset references must use native catalog moves instead, or keep this widget's management actions
-disabled. Generic S3 copy semantics are not an identity-preserving move.
+Identity survives a **native catalog move or rename**. This plugin uses Companion's separate
+`transloadit-storage` provider: file and folder moves call the native catalog endpoint, preserving
+retained references. If that endpoint or its Workspace credentials are unavailable, the action
+fails; it never falls back to copy/delete. The generic `@uppy/s3` provider keeps S3 copy/delete
+semantics, which create a new asset rather than preserving identity.
+
+Generic S3 moves require conditional copy/delete support and source ETags. Destination writes
+must not overwrite, and source deletion must still match the copied object. A folder move there is
+driven from the browser, file by file, and is not one transaction: a conflict can leave copied
+destinations, so inspect both paths before retrying. Objects above the 5 GB single-copy limit are
+refused before starting mutations; use an S3 client with multipart copy for those. These limits do
+not apply to native Storage catalog moves.
 
 Use those exclusive selectors with `/transloadit/import` in the same authenticated Workspace.
 Deleting an asset or removing its retained version makes the reference unavailable. IDs are not
@@ -47,6 +58,77 @@ native catalog query (`listStoredAssets({ prefix: key, limit: 1 })`, checking ex
 Then build delivery from the returned receipt. Do not insert the mutable key or its hash into a
 version-pinned Built-in. `@transloadit/viewer` uses the asset ID as input and version ID as `v`.
 Current public-prefix policy still controls uncached public delivery of historical versions.
+
+`getDownloadUrl(key)` follows the same application authorization and exact-path resolution, then
+returns `client.getStoredAssetUrl(asset, { download: true })` from the Node SDK. This selects the
+exact original version and a safe attachment filename. Downloads navigate directly to that URL;
+the widget does not buffer the file in a browser Blob. Read-only users may download or copy links
+when those callbacks are configured. Preview, browser-compatible playback and original download
+are separate decisions; an original video URL does not transcode unsupported codecs.
+
+## Companion configuration
+
+Configure the provider under `providerOptions['transloadit-storage']`: everything the S3 provider
+takes (`S3ProviderOptions`, minus the bucket, prefix and credential fields it does not use), plus
+`apiEndpoint` and a credential pair for every Workspace you serve. Grants only: a grant names the
+Workspace (as its bucket), the prefix the user may see and whether they may write, and Companion
+holds the credentials — a grant never carries them, and there is no bucket form to fall back on.
+Verify grants with `grantSecret` (HMAC) or, preferably, `grantPublicKey`. The same key pair signs
+S3 requests and native catalog calls (SHA-256, matching the combined Storage/Smart CDN key). Keys
+and the grant secret stay on the server.
+
+```ts
+const companionOptions = {
+  providerOptions: {
+    'transloadit-storage': {
+      endpoint: storageS3Endpoint,
+      region: 'auto',
+      grantPublicKey,
+      apiEndpoint: 'https://api2.transloadit.com',
+      workspaces: {
+        'my-workspace': { key: workspaceKey, secret: workspaceSecret },
+      },
+    },
+  },
+}
+```
+
+These are Companion server options, not browser plugin options. Your hosted Companion must deploy
+this provider and configure the Workspace map before enabling it. A single static S3 key cannot
+serve arbitrary Workspaces. Prefix checks, expired-session checks and write scopes are enforced
+server-side for both source and destination.
+
+The browser never names a bucket: `@uppy/s3` and this plugin have no `bucket` option, and the
+session sees whatever Companion (or the grant) decides. Each listing reports `canMutate` and the
+session's root `prefix`; the browser hides the management actions when the server says the session
+is read-only, and resolves paths typed into the move dialogs relative to that browsing root. Older
+servers that report neither show read actions only — upgrade Companion together with this plugin.
+
+Queued imports include their original bucket in the download URL. Companion refuses a missing
+or different bucket before reading any bytes, so reconnecting cannot silently import a same-named
+file from another Workspace. Upgrade Companion and the browser package together; older queued
+imports need to be selected again.
+
+A folder moves as one native operation on this provider. On the generic `@uppy/s3` provider
+Companion moves one file at a time, so the browser walks the folder and moves its files itself,
+behind a progress screen with a Cancel button; a multi-selection is a sequence either way, so
+partial failures refresh the listing before a retry. Generic S3 moves need no configuration: they
+are always available and use conditional copy/delete headers (`If-None-Match`, `CopySourceIfMatch`,
+`If-Match`) where the endpoint supports them.
+
+## Upload configuration
+
+`storeUploads.transloaditPluginId` selects the installed `@uppy/transloadit` plugin (default:
+`Transloadit`). The convenience option configures only a plugin without `assemblyOptions` and
+preserves its locale overrides, and enables `waitForEncoding` so completion includes the Storage
+Step and reports its failures. If your application already owns an Assembly pipeline, call
+`createStoreAssemblyOptions(uppy, { signAssembly, storagePluginId })` explicitly and compose it
+deliberately; the widget will not overwrite that pipeline. Uploads at the browsing root use the
+authenticated grant's prefix, initializing the session first even if the panel has not been opened.
+An authentication failure stops the upload before requesting a signature. `onUploadRequest` can
+also expose an app-owned upload flow without enabling `storeUploads`.
+Your signing endpoint must independently authorize that destination
+and restrict the allowed Steps; client-side folder selection is not an authorization boundary.
 
 This contract requires the matching API2 catalog/Built-in deployment and SDK/types release before
 production rollout. `@transloadit/viewer` is an unpublished private preview, not yet an npm install;

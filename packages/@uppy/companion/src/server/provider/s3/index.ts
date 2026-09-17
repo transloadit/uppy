@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto'
 import type { Readable } from 'node:stream'
 import {
   CopyObjectCommand,
@@ -12,11 +13,14 @@ import {
   type S3Client,
   S3ServiceException,
 } from '@aws-sdk/client-s3'
+import got from 'got'
 import { lookup as mimeLookup } from 'mime-types'
+import { z } from 'zod'
 import type {
   S3ConnectionOptions,
   S3ObjectWriteOptions,
   S3ProviderOptions,
+  TransloaditStorageProviderOptions,
 } from '../../../schemas/companion.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { s3WriteParams } from '../../helpers/utils.js'
@@ -60,10 +64,18 @@ type S3UserSession = {
   exp?: number
 }
 
+/** Native Transloadit Storage: catalog moves and per-Workspace credentials. */
+type NativeStorage = Pick<
+  TransloaditStorageProviderOptions,
+  'apiEndpoint' | 'workspaces'
+>
+
 type ResolvedConfig = {
   clientOptions: { s3: S3ClientOptions }
   /** Object attributes Companion sets when it writes (copies, folder markers). */
   writeParams: ReturnType<typeof s3WriteParams>
+  /** Set for the `transloadit-storage` provider. */
+  native?: NativeStorage
 } & (
   | { mode: 'grant'; keys: GrantKeys }
   | { mode: 'bucket'; bucket: string; prefix: string }
@@ -106,6 +118,10 @@ const MAX_COPY_BYTES = 5 * 1024 ** 3
 const isContentEtag = (etag: string): boolean =>
   /^"?[0-9a-f]{32}(-\d+)?"?$/i.test(etag)
 
+const isPreconditionFailed = (err: unknown): boolean =>
+  err instanceof S3ServiceException &&
+  (err.$metadata.httpStatusCode === 412 || err.$metadata.httpStatusCode === 409)
+
 const isNotFound = (err: unknown): boolean =>
   err instanceof NotFound ||
   err instanceof NoSuchKey ||
@@ -120,13 +136,18 @@ const operatorError = (details: string): ProviderUserError => {
   return new ProviderUserError({ message: 's3NotConfigured' })
 }
 
-const resolveConfig = (companion: CompanionLike): ResolvedConfig => {
+type ProviderOptionsKey = 's3' | 'transloadit-storage'
+
+const resolveConfig = (
+  companion: CompanionLike,
+  optionsKey: ProviderOptionsKey,
+): ResolvedConfig => {
   const upload = companion.options.s3
-  const own: S3ProviderOptions | undefined =
-    companion.options.providerOptions?.['s3']
+  const own: S3ProviderOptions | TransloaditStorageProviderOptions | undefined =
+    companion.options.providerOptions?.[optionsKey]
   if (own == null || typeof own !== 'object') {
     throw operatorError(
-      'The S3 provider is not configured: set `providerOptions.s3` (see S3ProviderOptions)',
+      `The ${optionsKey} provider is not configured: set \`providerOptions['${optionsKey}']\``,
     )
   }
   // The provider's own settings win; anything unset comes from the upload block.
@@ -134,25 +155,47 @@ const resolveConfig = (companion: CompanionLike): ResolvedConfig => {
     ...upload,
     // Browsing goes to the plain endpoint; transfer acceleration is an upload concern.
     useAccelerateEndpoint: false,
-    ...pickDefined(own, CONNECTION_KEYS),
+    ...pickDefined(own as S3ConnectionOptions, CONNECTION_KEYS),
   }
   const clientOptions = { s3 }
   const writeParams = s3WriteParams({
     ...upload,
-    ...pickDefined(own, WRITE_KEYS),
+    ...pickDefined(own as S3ObjectWriteOptions, WRITE_KEYS),
   })
   const keys: GrantKeys = {
     secrets: own.grantSecret,
     publicKeys: own.grantPublicKey,
   }
+  if (optionsKey === 'transloadit-storage') {
+    // Native Storage: grants only, and Companion must hold every Workspace's key.
+    const { apiEndpoint, workspaces } = own as TransloaditStorageProviderOptions
+    if (!hasGrantKeys(keys)) {
+      throw operatorError(
+        'The transloadit-storage provider needs a grant key (`grantSecret` / `grantPublicKey`); it does not take a `bucket`',
+      )
+    }
+    if (typeof apiEndpoint !== 'string' || !isRecord(workspaces)) {
+      throw operatorError(
+        "The transloadit-storage provider needs `apiEndpoint` and `workspaces` under providerOptions['transloadit-storage']",
+      )
+    }
+    return {
+      mode: 'grant',
+      keys,
+      clientOptions,
+      writeParams,
+      native: { apiEndpoint, workspaces },
+    }
+  }
   if (hasGrantKeys(keys)) {
     return { mode: 'grant', keys, clientOptions, writeParams }
   }
-  if (typeof own.bucket === 'string' && own.bucket.length > 0) {
+  const { bucket, prefix } = own as S3ProviderOptions
+  if (typeof bucket === 'string' && bucket.length > 0) {
     return {
       mode: 'bucket',
-      bucket: own.bucket,
-      prefix: normalizeStorageGrantPrefix(own.prefix ?? ''),
+      bucket,
+      prefix: normalizeStorageGrantPrefix(prefix ?? ''),
       clientOptions,
       writeParams,
     }
@@ -168,7 +211,7 @@ const resolveConfig = (companion: CompanionLike): ResolvedConfig => {
  * redoing on every request. The trade-off: an embedder that mutates the
  * options object at runtime is not picked up.
  */
-type CacheEntry = { config: ResolvedConfig; client?: S3Client }
+type CacheEntry = { config: ResolvedConfig; clients: Map<string, S3Client> }
 
 const perOptions = new WeakMap<object, CacheEntry>()
 
@@ -181,6 +224,11 @@ const perOptions = new WeakMap<object, CacheEntry>()
  * flag carried by grants.
  */
 export default class S3Provider extends Provider<S3UserSession> {
+  /** Where this provider's options live under `providerOptions`. */
+  protected get optionsKey(): ProviderOptionsKey {
+    return 's3'
+  }
+
   static override get hasSimpleAuth() {
     return true
   }
@@ -220,19 +268,53 @@ export default class S3Provider extends Provider<S3UserSession> {
     if (cached != null) return cached
     // Deliberately outside the cache: a misconfigured provider keeps
     // reporting itself on every request.
-    const entry: CacheEntry = { config: resolveConfig(companion) }
+    const entry: CacheEntry = {
+      config: resolveConfig(companion, this.optionsKey),
+      clients: new Map(),
+    }
     perOptions.set(companion.options, entry)
     return entry
+  }
+
+  /** The key pair Companion holds for a Workspace (native Storage only). */
+  #workspaceCredentials(
+    native: NativeStorage,
+    workspace: string,
+  ): { key: string; secret: string } {
+    const credentials = Object.hasOwn(native.workspaces, workspace)
+      ? native.workspaces[workspace]
+      : undefined
+    if (credentials == null) {
+      throw operatorError(
+        `No credentials for Workspace "${workspace}" under providerOptions['transloadit-storage'].workspaces`,
+      )
+    }
+    return credentials
   }
 
   #config(companion: CompanionLike): ResolvedConfig {
     return this.#entry(companion).config
   }
 
-  #client(companion: CompanionLike): S3Client {
+  #client(companion: CompanionLike, bucket: string): S3Client {
     const entry = this.#entry(companion)
-    entry.client ??= this.getClient(entry.config.clientOptions)
-    return entry.client
+    const { config } = entry
+    // Plain S3 uses one key for every bucket; native Storage one per Workspace.
+    const cacheKey = config.native ? bucket : ''
+    let client = entry.clients.get(cacheKey)
+    if (client == null) {
+      let { clientOptions } = config
+      if (config.native) {
+        const { key, secret } = this.#workspaceCredentials(
+          config.native,
+          bucket,
+        )
+        clientOptions = { s3: { ...clientOptions.s3, key, secret } }
+      }
+      client = this.getClient(clientOptions)
+      entry.clients.set(cacheKey, client)
+    }
+    return client
   }
 
   /**
@@ -249,6 +331,7 @@ export default class S3Provider extends Provider<S3UserSession> {
     prefix: string
     client: S3Client
     writeParams: ResolvedConfig['writeParams']
+    native: NativeStorage | undefined
   } {
     const config = this.#config(companion)
     if (!this.isAuthenticated({ providerUserSession })) {
@@ -271,8 +354,9 @@ export default class S3Provider extends Provider<S3UserSession> {
     return {
       bucket,
       prefix,
-      client: this.#client(companion),
+      client: this.#client(companion, bucket),
       writeParams: config.writeParams,
+      native: config.native,
     }
   }
 
@@ -393,23 +477,38 @@ export default class S3Provider extends Provider<S3UserSession> {
           ? `${encodeURIComponent(prefix)}?cursor=${encodeURIComponent(res.NextContinuationToken)}`
           : null
 
-      return { items, nextPagePath, username: bucket }
+      return {
+        items,
+        nextPagePath,
+        username: bucket,
+        // The client shows write actions only when the session allows them,
+        // and resolves paths the user types against the session's root.
+        canMutate: providerUserSession.write,
+        prefix: rootPrefix,
+      }
     })
   }
 
   override async download({
     companion,
     id,
+    query,
     providerUserSession,
   }: {
     companion: CompanionLike
     id: string
+    query?: unknown
     providerUserSession: S3UserSession
   }): Promise<{ stream: Readable; size: number | undefined }> {
     return this.withErrorHandling('provider.s3.download.error', async () => {
       const { bucket, client } = this.#session(companion, providerUserSession, {
         keys: [id],
       })
+      // A queued file outlives the browser session that selected it. Its key
+      // must never be read from a bucket the user connected to later.
+      if (!isRecord(query) || query['bucket'] !== bucket) {
+        throw new ProviderUserError({ message: 's3SelectedInOtherSession' })
+      }
       const res = await client.send(
         new GetObjectCommand({ Bucket: bucket, Key: id }),
       )
@@ -421,7 +520,11 @@ export default class S3Provider extends Provider<S3UserSession> {
   }
 
   #assertInsidePrefix(prefix: string, key: string): void {
-    if (!key.startsWith(prefix)) {
+    if (
+      !key.startsWith(prefix) ||
+      key.includes('\\') ||
+      key.split('/').some((part) => part === '..' || part === '.')
+    ) {
       // A user error (not an auth error) so the Dashboard shows the message
       // instead of bouncing the user to the connect screen.
       throw new ProviderUserError({ message: 's3OutsideAllowedFolder' })
@@ -505,11 +608,14 @@ export default class S3Provider extends Provider<S3UserSession> {
     providerUserSession: S3UserSession
   }): Promise<{ id: string; requestPath: string }> {
     return this.withErrorHandling('provider.s3.move.error', async () => {
-      const { bucket, client, writeParams } = this.#session(
+      const { bucket, client, writeParams, native } = this.#session(
         companion,
         providerUserSession,
         { mutate: true, keys: [id, destination] },
       )
+      if (native) {
+        return this.#nativeMove(native, bucket, id, destination)
+      }
       if (id.endsWith('/')) {
         throw new ProviderUserError({ message: 's3FolderMoveNotSupported' })
       }
@@ -554,13 +660,82 @@ export default class S3Provider extends Provider<S3UserSession> {
             Bucket: bucket,
             CopySource: `/${bucket}/${id.split('/').map(encodeURIComponent).join('/')}`,
             Key: destination,
+            // The HEADs above are a friendly early check; these conditions are
+            // the write barrier where the endpoint honours them: never
+            // overwrite the destination, and copy exactly what was inspected.
+            IfNoneMatch: '*',
+            ...(source.ETag != null && { CopySourceIfMatch: source.ETag }),
             ...writeParams,
           }),
         )
       }
-      await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
+      // Delete only the object that was copied; a source replaced meanwhile
+      // stays put and the user gets a conflict.
+      await client.send(
+        new DeleteObjectCommand({
+          Bucket: bucket,
+          Key: id,
+          ...(source.ETag != null && { IfMatch: source.ETag }),
+        }),
+      )
       return result
     })
+  }
+
+  /**
+   * One signed call to Transloadit's catalog moves a file or a whole folder
+   * and keeps asset identity; it never falls back to S3 copy/delete.
+   */
+  async #nativeMove(
+    native: NativeStorage,
+    workspace: string,
+    id: string,
+    destination: string,
+  ): Promise<{ id: string; requestPath: string }> {
+    const isFolder = id.endsWith('/')
+    const target = isFolder ? ensureTrailingSlash(destination) : destination
+    if (!isFolder && destination.endsWith('/')) {
+      throw new ProviderUserError({ message: 's3DestinationMustBeFile' })
+    }
+    if (isFolder && target.startsWith(id)) {
+      throw new ProviderUserError({ message: 's3FolderIntoItself' })
+    }
+    if (target === id) return { id, requestPath: encodeURIComponent(id) }
+    const { key, secret } = this.#workspaceCredentials(native, workspace)
+    const params = JSON.stringify({
+      auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
+      source: id,
+      destination: target,
+    })
+    const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
+    const response = await got.post(
+      new URL('/dam/entries/move', native.apiEndpoint),
+      {
+        form: { params, signature },
+        timeout: { request: 30_000 },
+        retry: { limit: 0 },
+        followRedirect: false,
+        throwHttpErrors: false,
+        responseType: 'json',
+      },
+    )
+    if (response.statusCode >= 500) {
+      throw new ProviderApiError('Storage is temporarily unavailable', 502)
+    }
+    if (response.statusCode !== 200) {
+      logger.warn(
+        `native Storage move refused: ${response.statusCode}`,
+        'provider.s3.nativeMove',
+      )
+      throw new ProviderUserError({ message: 's3RequestFailed' })
+    }
+    const moved = z
+      .object({ ok: z.literal('DAM_ENTRY_MOVED'), path: z.string().min(1) })
+      .safeParse(response.body)
+    if (!moved.success || moved.data.path !== target) {
+      throw new ProviderApiError('Unexpected native Storage move response', 502)
+    }
+    return { id: target, requestPath: encodeURIComponent(target) }
   }
 
   override async createFolder({
@@ -614,6 +789,7 @@ export default class S3Provider extends Provider<S3UserSession> {
             Bucket: bucket,
             Key: key,
             Body: '',
+            IfNoneMatch: '*',
             ...writeParams,
           }),
         )
@@ -639,6 +815,20 @@ export default class S3Provider extends Provider<S3UserSession> {
   protected override mapProviderError(err: unknown): unknown {
     if (err instanceof ProviderApiError) return err
     if (isNotFound(err)) return new ProviderUserError({ message: 's3NotFound' })
+    if (isPreconditionFailed(err)) {
+      return new ProviderUserError({ message: 's3Conflict' })
+    }
     return new ProviderUserError({ message: 's3RequestFailed' })
+  }
+}
+
+/**
+ * Transloadit Storage: the S3 provider on Storage's S3-compatible endpoint,
+ * with native catalog moves and one key pair per Workspace. Configured under
+ * `providerOptions['transloadit-storage']`.
+ */
+export class TransloaditStorageProvider extends S3Provider {
+  protected override get optionsKey(): ProviderOptionsKey {
+    return 'transloadit-storage'
   }
 }

@@ -175,7 +175,9 @@ export default class Provider<
       { form: authFormData },
       { qs: { uppyVersions }, signal },
     )
-    this.setAuthToken(response.uppyAuthToken)
+    signal.throwIfAborted()
+    await this.setAuthToken(response.uppyAuthToken)
+    signal.throwIfAborted()
   }
 
   protected async loginOAuth({

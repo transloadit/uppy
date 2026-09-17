@@ -1,4 +1,8 @@
-import { decodeStorageGrant, type StorageGrantClaims } from '@transloadit/utils'
+import {
+  decodeStorageGrant,
+  normalizeStorageGrantPrefix,
+  type StorageGrantClaims,
+} from '@transloadit/utils'
 import type {
   AsyncStore,
   Body,
@@ -36,6 +40,14 @@ export type S3GrantClaims = Pick<
   'bucket' | 'prefix' | 'scopes'
 > & { exp?: number }
 
+/** What a listing tells the client about the session it was served for. */
+export type S3SessionCapabilities = {
+  /** Companion allows this session to change files. */
+  canMutate: boolean
+  /** Key prefix the session is rooted at: `''` or ending with `/`. */
+  prefix: string
+}
+
 /**
  * Reads the payload of a JWT grant without verifying it — verification is
  * Companion's job; the client only uses the claims to know what UI to show.
@@ -51,10 +63,80 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   /** Called after a successful simple-auth with the form data that was sent. */
   onSimpleAuth?: (authFormData: unknown) => Promise<void>
 
+  /** Called with what every listing reports about the session. */
+  onCapabilities?: (capabilities: S3SessionCapabilities) => void
+
+  /** Bucket of the session, as the latest listing reported it. */
+  #bucket: string | undefined
+
+  override async list<ResBody>(
+    ...args: Parameters<Provider<M, B>['list']>
+  ): Promise<ResBody> {
+    const response = await super.list<ResBody>(...args)
+    const body =
+      typeof response === 'object' &&
+      response !== null &&
+      !Array.isArray(response)
+        ? (response as {
+            username?: unknown
+            canMutate?: unknown
+            prefix?: unknown
+          })
+        : undefined
+    if (typeof body?.username === 'string') {
+      this.#bucket = body.username
+    }
+    this.onCapabilities?.({
+      canMutate: body?.canMutate === true,
+      prefix: typeof body?.prefix === 'string' ? body.prefix : '',
+    })
+    return response
+  }
+
+  /**
+   * A queued import outlives the session that selected it: pin the bucket the
+   * file was listed in, so Companion can refuse to read the same key from
+   * whatever bucket a later session happens to see.
+   */
+  override fileUrl(id: string): string {
+    if (!this.#bucket)
+      throw new Error('Browse the storage folder before selecting files.')
+    const url = new URL(super.fileUrl(id))
+    url.searchParams.set('bucket', this.#bucket)
+    return url.href
+  }
+
   /** Mints a server-issued grant; set by the plugin when `getGrant` is configured. */
   getGrant?: () => Promise<string>
 
   #regranting: Promise<void> | undefined
+
+  /** Aborts everything belonging to the session that `logout()` ended. */
+  #sessionAbort = new AbortController()
+
+  #tokenWrites: Promise<void> = Promise.resolve()
+
+  override async setAuthToken(token: string): Promise<void> {
+    const signal = this.#sessionAbort.signal
+    // Serialize async storage writes with logout's removal; a late write cannot
+    // resurrect a token of a session that ended in the meantime.
+    const write = this.#tokenWrites
+      .catch(() => {})
+      .then(async () => {
+        signal.throwIfAborted()
+        await super.setAuthToken(token)
+      })
+    this.#tokenWrites = write
+    await write
+  }
+
+  protected override async removeAuthToken(): Promise<void> {
+    const write = this.#tokenWrites
+      .catch(() => {})
+      .then(() => super.removeAuthToken())
+    this.#tokenWrites = write
+    await write
+  }
 
   /** True between a successful login and a logout: only then is a 401 an *expired* session. */
   #hasSession = false
@@ -68,14 +150,22 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     authFormData: unknown
     signal: AbortSignal
   }) {
+    if (this.#sessionAbort.signal.aborted)
+      this.#sessionAbort = new AbortController()
+    signal = AbortSignal.any([signal, this.#sessionAbort.signal])
+    // The client cannot pick a bucket: it asks for a session, with a grant when
+    // the integrator mints one, and Companion decides what it sees.
     const form = isFormWithCredentials(authFormData)
       ? authFormData
       : this.getGrant
         ? { grant: await this.getGrant() }
         : {}
+    signal.throwIfAborted()
     await this.loginSimpleAuth({ uppyVersions, authFormData: form, signal })
-    this.#hasSession = true
+    signal.throwIfAborted()
     await this.onSimpleAuth?.(form)
+    signal.throwIfAborted()
+    this.#hasSession = true
   }
 
   /**
@@ -86,10 +176,18 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   protected override async request<ResBody>(
     ...args: Parameters<Provider<M, B>['request']>
   ): Promise<ResBody> {
+    const sessionSignal = this.#sessionAbort.signal
+    const [options] = args
+    const signal = options.signal
+      ? AbortSignal.any([options.signal, sessionSignal])
+      : sessionSignal
     try {
-      return await super.request<ResBody>(...args)
+      const result = await super.request<ResBody>({ ...options, signal })
+      sessionSignal.throwIfAborted()
+      return result
     } catch (err) {
-      const [{ path, signal }] = args
+      sessionSignal.throwIfAborted()
+      const [{ path }] = args
       const isAuthError = (err as { isAuthError?: boolean }).isAuthError
       // Without a session there is nothing to refresh: a 401 on the initial
       // listing is ProviderViews probing for one (only happens when the plugin
@@ -97,30 +195,36 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       if (
         !isAuthError ||
         !this.getGrant ||
-        !this.#hasSession ||
+        (!this.#hasSession && !this.#regranting) ||
         path.endsWith('/simple-auth')
       ) {
         throw err
       }
       if (this.#regranting == null) {
-        // Many requests may fail at once; mint one grant for all of them.
-        this.#regranting = (async () => {
-          this.#hasSession = false
+        // Many requests may fail at once; mint one grant for all of them. The
+        // renewal is shared, so it must not inherit one caller's abort signal.
+        const renewal = (async () => {
           await this.removeAuthToken()
+          sessionSignal.throwIfAborted()
           await this.login({
             authFormData: {},
-            signal: signal ?? new AbortController().signal,
+            signal: new AbortController().signal,
           })
         })().finally(() => {
-          this.#regranting = undefined
+          if (this.#regranting === renewal) this.#regranting = undefined
         })
+        this.#regranting = renewal
       }
       await this.#regranting
-      return await super.request<ResBody>(...args)
+      sessionSignal.throwIfAborted()
+      return await super.request<ResBody>({ ...options, signal })
     }
   }
 
   async logout<ResBody>(): Promise<ResBody> {
+    this.#sessionAbort.abort()
+    this.#regranting = undefined
+    this.#bucket = undefined
     this.#hasSession = false
     await this.removeAuthToken()
     return {
@@ -158,7 +262,10 @@ const ConnectAuthForm = ({
   </div>
 )
 
-export type S3Options = CompanionPluginOptions & {
+export type S3Options<
+  M extends Meta = Meta,
+  B extends Body = Body,
+> = CompanionPluginOptions & {
   locale?: LocaleStrings<typeof locale>
   /**
    * Show management actions (rename/move, delete, new folder). Requires a
@@ -166,9 +273,9 @@ export type S3Options = CompanionPluginOptions & {
    */
   enableActions?: boolean
   /** Extra per-item actions, appended to the built-in ones. */
-  actions?: ProviderAction<any, any>[]
+  actions?: ProviderAction<M, B>[]
   /** Extra toolbar actions, appended to the built-in ones. */
-  toolbarActions?: ProviderToolbarAction<any, any>[]
+  toolbarActions?: ProviderToolbarAction<M, B>[]
   /**
    * Connect without showing the connect screen whenever no Companion session
    * is stored yet. Default: true.
@@ -207,7 +314,7 @@ export type S3Options = CompanionPluginOptions & {
    */
   getPreviewUrl?: (key: string) => Promise<string>
   /** Manager mode: extra bulk actions, appended to the built-in ones. */
-  bulkActions?: ProviderBulkAction<any, any>[]
+  bulkActions?: ProviderBulkAction<M, B>[]
 }
 
 /** Where an object key lives: its parent "folder" prefix and its own name. */
@@ -227,37 +334,31 @@ function splitKey(key: string): {
 }
 
 /**
- * The keys of a selection without the items inside a selected folder: checking
- * a folder also checks its loaded children, and moving or deleting the folder
- * covers them.
- */
-function topLevelKeys(items: { id: string }[]): string[] {
-  const keys = items.map((item) => S3.keyOf(item.id))
-  const folders = keys.filter((key) => key.endsWith('/'))
-  return keys.filter(
-    (key) =>
-      !folders.some((folder) => folder !== key && key.startsWith(folder)),
-  )
-}
-
-/**
- * Wraps an action's `run` so it only has to return the success toast (or
- * nothing when the user cancelled); errors keep going through ProviderView.
+ * Wraps an action's `run` so it only has to return the success toast; an action
+ * that returns nothing did nothing (a cancelled prompt) and says so with
+ * `false`, which keeps ProviderView from refreshing the listing. Errors keep
+ * going through ProviderView.
  */
 const withToast =
   <Ctx extends { uppy: Uppy<any, any> }>(
     run: (context: Ctx) => Promise<string | undefined>,
   ) =>
-  async (context: Ctx): Promise<void> => {
+  async (context: Ctx): Promise<void | false> => {
     const message = await run(context)
-    if (message) context.uppy.info(message, 'info', 3000)
+    if (!message) return false
+    context.uppy.info(message, 'info', 3000)
   }
 
 export default class S3<M extends Meta, B extends Body>
-  extends UIPlugin<S3Options, M, B, UnknownProviderPluginState>
+  extends UIPlugin<S3Options<M, B>, M, B, UnknownProviderPluginState>
   implements UnknownProviderPlugin<M, B>
 {
   static VERSION = packageJson.version
+
+  /** Companion provider this plugin talks to; subclasses point at their own. */
+  protected get providerName(): string {
+    return 's3'
+  }
 
   icon: () => h.JSX.Element
 
@@ -276,13 +377,20 @@ export default class S3<M extends Meta, B extends Body>
   /** False until we know whether a Companion session is stored. */
   #sessionChecked = false
 
+  /** Resolves once that check is done. */
+  #sessionReady: Promise<void> | undefined
+
   /** Claims of the grant the current session was opened with, if any. */
   #grant: S3GrantClaims | null = null
+
+  /** What the latest listing reported; `undefined` until the first one. */
+  #serverCanMutate = false
+  #serverPrefix: string | undefined
 
   /** True when no usable Companion session is stored, so auto-connect must log in first. */
   #needsLogin = false
 
-  constructor(uppy: Uppy<M, B>, opts: S3Options) {
+  constructor(uppy: Uppy<M, B>, opts: S3Options<M, B>) {
     super(uppy, opts)
     this.id = this.opts.id || 'S3'
     this.type = 'acquirer'
@@ -299,11 +407,16 @@ export default class S3<M extends Meta, B extends Body>
       companionHeaders: this.opts.companionHeaders,
       companionKeysParams: this.opts.companionKeysParams,
       companionCookiesRule: this.opts.companionCookiesRule,
-      provider: 's3',
+      provider: this.providerName,
       pluginId: this.id,
       supportsRefreshToken: false,
     })
     this.provider.getGrant = this.opts.getGrant
+    this.provider.onCapabilities = ({ canMutate, prefix }) => {
+      this.#serverCanMutate = canMutate
+      this.#serverPrefix = prefix
+      this.#applyActions()
+    }
     this.provider.onSimpleAuth = async (authFormData) => {
       if (!isFormWithCredentials(authFormData)) return
       this.#grant = decodeGrant(authFormData.grant)
@@ -320,60 +433,69 @@ export default class S3<M extends Meta, B extends Body>
 
   /**
    * Opens the folder at `key` (e.g. `docs/photos/`), walking down from the
-   * root so each parent listing reveals the next segment. Returns false when
-   * a segment no longer exists — the view then stays at the deepest
-   * surviving ancestor (useful for restoring stale deep links).
+   * browsing root so each parent listing reveals the next segment — loading
+   * further pages when a segment is not on the first one. Returns false when a
+   * segment no longer exists, or when the key is outside the session's root:
+   * the view then stays where the walk got to (useful for restoring stale deep
+   * links).
    */
   async openFolderPath(key: string | null): Promise<boolean> {
-    // The panel may be loading the root at this very moment (auto-open on
-    // showPanel); walking concurrently would race it. Wait it out, and only
-    // load the root ourselves when it is not cached yet.
-    // The panel auto-opens the root on its first render — but only after
-    // auth and the listing round-trip, which on a cold load lands seconds
-    // after a deep-link restore starts. Let that load go first; only load
-    // the root ourselves when no panel is going to (headless use).
-    const rootReady = () => {
-      const root = this.getPluginState().partialTree.find(
-        (node) => node.type === 'root',
-      )
-      return Boolean(root && (root as { cached?: boolean }).cached)
+    await this.#sessionReady
+    // This call owns the initial navigation even without a rendered panel:
+    // prevent a later first render from reopening the root behind our back.
+    this.#autoConnectAttempted = true
+    this.setPluginState({ didFirstRender: true })
+    await this.#settledListing()
+    if (!this.getPluginState().authenticated && this.#needsLogin) {
+      // The client has nothing to fill in: Companion (or the grant) decides
+      // which bucket the session sees.
+      await this.view.handleAuth({})
+      if (!this.getPluginState().authenticated) return false
     }
-    for (let waited = 0; !rootReady() && waited < 15_000; waited += 100) {
-      await new Promise((resolve) => setTimeout(resolve, 100))
-    }
-    if (!rootReady()) {
+    // Without a grant only a listing tells us which prefix the session is
+    // rooted at, so make sure we have had one before judging the key.
+    if (!this.#grant && this.#serverPrefix === undefined) {
       await this.view.openFolder(this.rootFolderId)
     }
-    await this.#settledListing()
-    if (key === null || key === '') return true
-    const prefix = key.endsWith('/') ? key : `${key}/`
-    let path = ''
-    for (const segment of prefix.split('/').filter(Boolean)) {
+    const root = this.rootPrefix
+    const prefix = key ? (key.endsWith('/') ? key : `${key}/`) : root
+    if (
+      !prefix.startsWith(root) ||
+      prefix.split('/').some((segment) => segment === '..' || segment === '.')
+    )
+      return false
+    await this.view.openFolder(this.rootFolderId)
+    let path = root
+    for (const segment of prefix
+      .slice(root.length)
+      .split('/')
+      .filter(Boolean)) {
       path += `${segment}/`
       const folderId = encodeURIComponent(path)
-      const { partialTree } = this.getPluginState()
-      if (!partialTree.some((node) => node.id === folderId)) return false
-      await this.view.openFolder(folderId)
-    }
-    // The panel's first render auto-opens the root; when that lands after the
-    // walk, openFolder's cached-return resets currentFolderId. Settle and
-    // reassert (cached opens are instant) so the deep link wins either way.
-    const target = encodeURIComponent(prefix)
-    for (let attempt = 0; attempt < 2; attempt++) {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      await this.#settledListing()
-      if (this.getPluginState().currentFolderId !== target) {
-        await this.view.openFolder(target)
+      while (
+        !this.getPluginState().partialTree.some(
+          (node) => node.id === folderId && node.type === 'folder',
+        )
+      ) {
+        if (!(await this.view.loadNextPage())) return false
       }
+      await this.view.openFolder(folderId)
     }
     return true
   }
 
   /** Resolves once no listing request is in flight. */
   async #settledListing(): Promise<void> {
-    while ((this.getPluginState() as { loading?: boolean | string }).loading) {
-      await new Promise((resolve) => setTimeout(resolve, 50))
-    }
+    if (!this.getPluginState().loading) return
+    await new Promise<void>((resolve) => {
+      const changed = () => {
+        if (this.getPluginState().loading) return
+        this.uppy.off('state-update', changed)
+        resolve()
+      }
+      this.uppy.on('state-update', changed)
+      changed()
+    })
   }
 
   /**
@@ -386,6 +508,7 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   builtInActions(): ProviderAction<M, B>[] {
+    if (!this.canMutate) return []
     return [
       {
         id: 's3:rename',
@@ -402,13 +525,16 @@ export default class S3<M extends Meta, B extends Body>
           })
           const value = input?.trim().replace(/^\/+/, '')
           if (!value) return undefined
-          // A bare name renames in place; anything with a "/" is a full key (move).
+          // A bare name renames in place; a path is relative to the browsing
+          // root the session is scoped to.
           const isMove = value.includes('/')
-          let destination = isMove ? value : `${parent}${value}`
+          let destination = isMove
+            ? `${this.rootPrefix}${value}`
+            : `${parent}${value}`
           if (isFolder && !destination.endsWith('/')) destination += '/'
           if (destination === key) return undefined
           await view.runWithProgress(({ signal, setProgress }) =>
-            this.#move(key, destination, isFolder, {
+            this.moveEntry(key, destination, isFolder, {
               signal,
               onProgress: (done, total) =>
                 setProgress(this.i18n('movingFiles', { done, total })),
@@ -467,9 +593,21 @@ export default class S3<M extends Meta, B extends Body>
     ]
   }
 
-  /** Whether the current session may change files (without a grant it always may). */
+  /** Both the session and Companion must allow changes; older servers fail closed. */
   get canMutate(): boolean {
-    return this.#grant ? this.#grant.scopes.includes('write') : true
+    return (
+      this.#serverCanMutate && (this.#grant?.scopes.includes('write') ?? true)
+    )
+  }
+
+  /**
+   * Root the session browses, which paths typed into the UI are relative to:
+   * the grant's prefix, or what the latest listing reported. The server still
+   * enforces it — this only decides what the UI builds.
+   */
+  get rootPrefix(): string {
+    if (this.#grant) return normalizeStorageGrantPrefix(this.#grant.prefix)
+    return this.#serverPrefix ?? ''
   }
 
   /** Bulk actions over the multi-selection in manager mode. */
@@ -490,11 +628,15 @@ export default class S3<M extends Meta, B extends Body>
             .replace(/^\/+/, '')
           if (destination === undefined || destination === null)
             return undefined
-          const folder =
+          const relativeFolder =
             destination === '' || destination.endsWith('/')
               ? destination
               : `${destination}/`
-          const keys = topLevelKeys(items)
+          // Typed destinations are relative to the browsing root.
+          const folder = `${this.rootPrefix}${relativeFolder}`
+          // ProviderView hands us the top-most selected items only: moving a
+          // folder covers everything under it.
+          const keys = items.map((item) => S3.keyOf(item.id))
           await view.runWithProgress(async ({ signal, setProgress }) => {
             for (const [index, key] of keys.entries()) {
               setProgress(
@@ -504,7 +646,7 @@ export default class S3<M extends Meta, B extends Body>
                 }),
               )
               const { name, isFolder } = splitKey(key)
-              await this.#move(
+              await this.moveEntry(
                 key,
                 `${folder}${name}${isFolder ? '/' : ''}`,
                 isFolder,
@@ -546,10 +688,11 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   /**
-   * Moves one item. Companion only moves files: a folder is a key prefix, so
-   * the client walks it and moves its files one by one (see `moveFolder`).
+   * Moves one item. The generic S3 provider only moves files: a folder is a key
+   * prefix, so the client walks it and moves its files one by one (see
+   * `moveFolder`). Backends that move a whole subtree themselves override this.
    */
-  async #move(
+  protected async moveEntry(
     key: string,
     destination: string,
     isFolder: boolean,
@@ -578,19 +721,19 @@ export default class S3<M extends Meta, B extends Body>
     })
   }
 
-  /** (Re)compute the actions: the integrator's switch, and the grant's scopes. */
+  /** (Re)compute the actions: the integrator's switch, and what the session may do. */
   #applyActions(): void {
-    const enableActions = this.opts.enableActions !== false && this.canMutate
+    const enableActions = this.opts.enableActions !== false
     this.view.opts.actions = [
       ...(enableActions ? this.builtInActions() : []),
       ...(this.opts.actions ?? []),
     ]
     this.view.opts.toolbarActions = [
-      ...(enableActions ? this.builtInToolbarActions() : []),
+      ...(enableActions && this.canMutate ? this.builtInToolbarActions() : []),
       ...(this.opts.toolbarActions ?? []),
     ]
     this.view.opts.bulkActions = [
-      ...(enableActions ? this.builtInBulkActions() : []),
+      ...(enableActions && this.canMutate ? this.builtInBulkActions() : []),
       ...(this.opts.bulkActions ?? []),
     ]
     this.setPluginState({})
@@ -628,7 +771,7 @@ export default class S3<M extends Meta, B extends Body>
       this.mount(target, this)
     }
 
-    this.#checkStoredSession()
+    this.#sessionReady = this.#checkStoredSession()
   }
 
   uninstall() {

@@ -81,10 +81,13 @@ export default {
     pleaseWait: 'Please wait',
     // Errors from Companion's S3 provider, which reports them as locale keys.
     s3AlreadyExists: 'A file or folder with that name already exists',
+    s3Conflict:
+      'The file changed while it was being moved. Refresh the folder and try again.',
     s3DestinationMustBeFile: 'The destination of a file must be a file path',
     s3FileTooLargeToMove:
       'Files larger than 5 GB cannot be moved or renamed here',
     s3FolderMoveNotSupported: 'Folders have to be moved item by item',
+    s3FolderIntoItself: 'A folder cannot be moved into itself',
     s3FolderNotEmpty: 'The folder is not empty',
     s3InvalidGrant: 'Your access to this storage could not be verified',
     s3InvalidName: 'That name is not allowed',
@@ -94,5 +97,7 @@ export default {
       'That path is outside the folder you have access to',
     s3ReadOnlySession: 'Your session is read-only',
     s3RequestFailed: 'The storage request failed',
+    s3SelectedInOtherSession:
+      'This file was selected in another storage session. Reconnect and select it again.',
   },
 }

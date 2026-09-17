@@ -5,6 +5,7 @@ import z from 'zod'
 import type {
   CompanionInitOptions,
   S3ProviderOptions,
+  TransloaditStorageProviderOptions,
 } from '../schemas/companion.js'
 import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
@@ -75,6 +76,11 @@ export function getMaskableSecrets(
   const s3Secret = s3?.['secret']
   if (s3Secret != null) {
     secrets.push(s3Secret)
+  }
+  for (const credentials of Object.values(
+    providerOptions['transloadit-storage']?.workspaces ?? {},
+  )) {
+    secrets.push(credentials.secret)
   }
 
   return secrets
@@ -198,15 +204,46 @@ const s3ProviderOptionsSchema = z
     }
   })
 
+/** Native Transloadit Storage: grants only, and a key pair per Workspace. */
+const transloaditStorageProviderOptionsSchema = z
+  .object({
+    grantSecret: keyList,
+    grantPublicKey: keyList,
+    apiEndpoint: z.string().url(),
+    workspaces: z.record(
+      z.string().min(1),
+      z.object({ key: z.string().min(1), secret: z.string().min(1) }),
+    ),
+  })
+  .refine(
+    (s3) =>
+      hasGrantKeys({ secrets: s3.grantSecret, publicKeys: s3.grantPublicKey }),
+    {
+      message:
+        'set a grant key (`grantSecret` / `grantPublicKey`); native Storage takes no `bucket`',
+    },
+  )
+
 function validateS3Provider(
   s3Provider: S3ProviderOptions | undefined | null,
+  transloaditStorage: TransloaditStorageProviderOptions | undefined | null,
 ): void {
-  if (s3Provider == null) return
-  const result = s3ProviderOptionsSchema.safeParse(s3Provider)
-  if (!result.success) {
-    throw new Error(
-      `Invalid providerOptions.s3: ${z.prettifyError(result.error)}`,
-    )
+  if (s3Provider != null) {
+    const result = s3ProviderOptionsSchema.safeParse(s3Provider)
+    if (!result.success) {
+      throw new Error(
+        `Invalid providerOptions.s3: ${z.prettifyError(result.error)}`,
+      )
+    }
+  }
+  if (transloaditStorage != null) {
+    const result =
+      transloaditStorageProviderOptionsSchema.safeParse(transloaditStorage)
+    if (!result.success) {
+      throw new Error(
+        `Invalid providerOptions['transloadit-storage']: ${z.prettifyError(result.error)}`,
+      )
+    }
   }
 }
 
@@ -290,7 +327,10 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
 
   validateUploadUrls(uploadUrls)
   validateValidHosts(server.validHosts)
-  validateS3Provider(providerOptions?.['s3'])
+  validateS3Provider(
+    providerOptions?.['s3'],
+    providerOptions?.['transloadit-storage'],
+  )
 
   const { corsOrigins } = companionOptions
   if (corsOrigins == null) {

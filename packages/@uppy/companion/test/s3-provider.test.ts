@@ -1,3 +1,4 @@
+import { createServer } from 'node:http'
 import { Readable } from 'node:stream'
 import {
   CopyObjectCommand,
@@ -8,12 +9,14 @@ import {
   PutObjectCommand,
   S3ServiceException,
 } from '@aws-sdk/client-s3'
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, onTestFinished, test, vi } from 'vitest'
 import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
-import S3Provider from '../src/server/provider/s3/index.js'
+import S3Provider, {
+  TransloaditStorageProvider,
+} from '../src/server/provider/s3/index.js'
 import {
   claims,
   GRANT_SECRET,
@@ -340,6 +343,7 @@ describe('S3 provider', () => {
     const res = await provider.download({
       companion,
       id: 'tenant/file.txt',
+      query: { bucket: 'b' },
       providerUserSession,
     })
     expect(res.size).toBe(5)
@@ -350,9 +354,52 @@ describe('S3 provider', () => {
       provider.download({
         companion,
         id: 'other/file.txt',
+        query: { bucket: 'b' },
         providerUserSession,
       }),
     ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+    // A file queued while connected to another bucket is never read from this one.
+    for (const query of [undefined, {}, { bucket: 'other' }]) {
+      await expect(
+        provider.download({
+          companion,
+          id: 'tenant/file.txt',
+          query,
+          providerUserSession,
+        }),
+      ).rejects.toEqual(userError('s3SelectedInOtherSession'))
+    }
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+
+  test('list reports the write capability and the session root', async () => {
+    const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
+    const companion = companionWith({ bucket: 'b', prefix: 'tenant/' })
+    expect(
+      await provider.list({
+        companion,
+        providerUserSession: { bucket: 'b', prefix: 'tenant/', write: true },
+      }),
+    ).toMatchObject({ canMutate: true, prefix: 'tenant/' })
+    expect(
+      await provider.list({
+        companion,
+        providerUserSession: { bucket: 'b', prefix: 'tenant/', write: false },
+      }),
+    ).toMatchObject({ canMutate: false, prefix: 'tenant/' })
+  })
+
+  test('keys with dot segments or backslashes never pass the prefix check', async () => {
+    const provider = makeProvider(vi.fn(async () => ({})))
+    for (const id of ['t/../x.txt', 't/./x.txt', 't/a\\b.txt']) {
+      await expect(
+        provider.deleteItem({
+          companion: companionWith({ bucket: 'b', prefix: 't/' }),
+          id,
+          providerUserSession: { bucket: 'b', prefix: 't/', write: true },
+        }),
+      ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+    }
   })
 
   test('deleteItem refuses folders that still have entries', async () => {
@@ -432,11 +479,23 @@ describe('S3 provider', () => {
         id: 't/b.txt',
         requestPath: 't%2Fb.txt',
       })
+      // The copy never overwrites and copies exactly the inspected object;
+      // the delete only removes that same object.
       expect(inputsOf(send, CopyObjectCommand)).toEqual([
-        { Bucket: 'b', CopySource: '/b/t/a.txt', Key: 't/b.txt' },
+        {
+          Bucket: 'b',
+          CopySource: '/b/t/a.txt',
+          Key: 't/b.txt',
+          IfNoneMatch: '*',
+          CopySourceIfMatch: '"47bce5c74f589f4867dbd57e9ca9f808"',
+        },
       ])
       expect(inputsOf(send, DeleteObjectCommand)).toEqual([
-        { Bucket: 'b', Key: 't/a.txt' },
+        {
+          Bucket: 'b',
+          Key: 't/a.txt',
+          IfMatch: '"47bce5c74f589f4867dbd57e9ca9f808"',
+        },
       ])
       const order = send.mock.calls.map(
         (c) => (c[0] as object).constructor.name,
@@ -486,8 +545,74 @@ describe('S3 provider', () => {
       })
       expect(inputsOf(send, CopyObjectCommand)).toEqual([])
       expect(inputsOf(send, DeleteObjectCommand)).toEqual([
-        { Bucket: 'b', Key: 't/a.txt' },
+        {
+          Bucket: 'b',
+          Key: 't/a.txt',
+          IfMatch: '"47bce5c74f589f4867dbd57e9ca9f808"',
+        },
       ])
+    })
+
+    test('a source replaced after the copy is kept and reported as a conflict', async () => {
+      const { provider, send } = makeMoveProvider()
+      send.mockImplementation(async (cmd: unknown) => {
+        if (cmd instanceof HeadObjectCommand) {
+          const key = (cmd as unknown as Cmd).input['Key'] as string
+          if (key === 't/a.txt') return heads[key] as object
+          throw notFound()
+        }
+        if (cmd instanceof DeleteObjectCommand) {
+          // The endpoint honours IfMatch: the object changed since the HEAD.
+          throw new S3ServiceException({
+            name: 'PreconditionFailed',
+            $fault: 'client',
+            $metadata: { httpStatusCode: 412 },
+          })
+        }
+        return {}
+      })
+      await expect(move(provider, 't/a.txt', 't/b.txt')).rejects.toEqual(
+        userError('s3Conflict'),
+      )
+      expect(inputsOf(send, CopyObjectCommand)).toHaveLength(1)
+    })
+
+    test('concurrent moves cannot both land on one destination', async () => {
+      const objects = new Map([
+        ['t/a.txt', 'a'],
+        ['t/b.txt', 'b'],
+      ])
+      const send = vi.fn(async (cmd: unknown) => {
+        const input = (cmd as unknown as Cmd).input
+        const key = input['Key'] as string
+        if (cmd instanceof HeadObjectCommand) {
+          if (!objects.has(key)) throw notFound()
+          return {
+            ContentLength: 1,
+            ETag: `"${'0'.repeat(31)}${objects.get(key)}"`,
+          }
+        }
+        if (cmd instanceof CopyObjectCommand) {
+          if (input['IfNoneMatch'] === '*' && objects.has(key)) {
+            throw new S3ServiceException({
+              name: 'PreconditionFailed',
+              $fault: 'client',
+              $metadata: { httpStatusCode: 412 },
+            })
+          }
+          const from = (input['CopySource'] as string).replace('/b/', '')
+          objects.set(key, objects.get(from) ?? '')
+        }
+        if (cmd instanceof DeleteObjectCommand) objects.delete(key)
+        return {}
+      })
+      const provider = makeProvider(send)
+      const results = await Promise.allSettled([
+        move(provider, 't/a.txt', 't/x.txt'),
+        move(provider, 't/b.txt', 't/x.txt'),
+      ])
+      expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(1)
+      expect([...objects.values()].sort()).toEqual(['a', 'b'])
     })
 
     test('copies carry the configured ACL and encryption, falling back to the upload block', async () => {
@@ -506,6 +631,8 @@ describe('S3 provider', () => {
           Bucket: 'b',
           CopySource: '/b/t/a.txt',
           Key: 't/b.txt',
+          IfNoneMatch: '*',
+          CopySourceIfMatch: '"47bce5c74f589f4867dbd57e9ca9f808"',
           ACL: 'public-read',
           ServerSideEncryption: 'aws:kms',
           SSEKMSKeyId: 'kms-key',
@@ -557,7 +684,7 @@ describe('S3 provider', () => {
         requestPath: 'docs%2Ffresh%2F',
       })
       expect(inputsOf(send, PutObjectCommand)).toEqual([
-        { Bucket: 'b', Key: 'docs/fresh/', Body: '' },
+        { Bucket: 'b', Key: 'docs/fresh/', Body: '', IfNoneMatch: '*' },
       ])
     })
 
@@ -586,8 +713,169 @@ describe('S3 provider', () => {
         }),
       ).toEqual({ id: 't/x/', requestPath: 't%2Fx%2F' })
       expect(inputsOf(send, PutObjectCommand)).toEqual([
-        { Bucket: 'b', Key: 't/x/', Body: '', ServerSideEncryption: 'AES256' },
+        {
+          Bucket: 'b',
+          Key: 't/x/',
+          Body: '',
+          IfNoneMatch: '*',
+          ServerSideEncryption: 'AES256',
+        },
       ])
+    })
+  })
+
+  describe('transloadit-storage (native moves)', () => {
+    const makeNative = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
+      const provider = new TransloaditStorageProvider({ allowLocalUrls: true })
+      vi.spyOn(provider, 'getClient').mockReturnValue({ send } as never)
+      return provider
+    }
+    const nativeCompanion = (apiEndpoint: string) =>
+      ({
+        options: {
+          providerOptions: {
+            'transloadit-storage': {
+              grantSecret: GRANT_SECRET,
+              region: 'auto',
+              apiEndpoint,
+              workspaces: { b: { key: 'ws-key', secret: 'ws-secret' } },
+            },
+          },
+        },
+      }) as never
+    const session = { bucket: 'b', prefix: 'tenant/', write: true }
+    const listen = async (
+      handler: Parameters<typeof createServer>[1],
+    ): Promise<string> => {
+      const server = createServer(handler)
+      await new Promise<void>((resolve) =>
+        server.listen(0, '127.0.0.1', resolve),
+      )
+      onTestFinished(
+        () => new Promise<void>((resolve) => server.close(() => resolve())),
+      )
+      const address = server.address()
+      if (address == null || typeof address === 'string') throw new Error()
+      return `http://127.0.0.1:${address.port}`
+    }
+
+    test('takes grants only and uses the Workspace key for S3 calls', async () => {
+      const provider = makeNative(vi.fn(async () => ({ Contents: [] })))
+      const companion = nativeCompanion('http://storage.test')
+      await expect(
+        provider.simpleAuth({ requestBody: { form: {} }, companion }),
+      ).rejects.toEqual(userError('s3InvalidGrant'))
+      await provider.list({ companion, providerUserSession: session })
+      expect(vi.mocked(provider.getClient).mock.calls[0]?.[0]).toMatchObject({
+        s3: { key: 'ws-key', secret: 'ws-secret', region: 'auto' },
+      })
+      await expect(
+        provider.list({
+          companion,
+          providerUserSession: { ...session, bucket: 'someone-else' },
+        }),
+      ).rejects.toEqual(userError('s3NotConfigured'))
+    })
+
+    test('moves files and whole folders with one signed native call', async () => {
+      const requests: { url: string | undefined; body: URLSearchParams }[] = []
+      const endpoint = await listen(async (request, response) => {
+        let body = ''
+        for await (const chunk of request) body += chunk
+        const form = new URLSearchParams(body)
+        requests.push({ url: request.url, body: form })
+        const params = JSON.parse(form.get('params') ?? '{}')
+        response.setHeader('Content-Type', 'application/json')
+        response.end(
+          JSON.stringify({ ok: 'DAM_ENTRY_MOVED', path: params.destination }),
+        )
+      })
+      const send = vi.fn()
+      const provider = makeNative(send)
+      const companion = nativeCompanion(endpoint)
+      expect(
+        await provider.moveItem({
+          companion,
+          providerUserSession: session,
+          id: 'tenant/photo.jpg',
+          destination: 'tenant/renamed.jpg',
+        }),
+      ).toEqual({
+        id: 'tenant/renamed.jpg',
+        requestPath: 'tenant%2Frenamed.jpg',
+      })
+      expect(
+        await provider.moveItem({
+          companion,
+          providerUserSession: session,
+          id: 'tenant/album/',
+          destination: 'tenant/archive',
+        }),
+      ).toEqual({ id: 'tenant/archive/', requestPath: 'tenant%2Farchive%2F' })
+      expect(requests.map((r) => r.url)).toEqual([
+        '/dam/entries/move',
+        '/dam/entries/move',
+      ])
+      const params = requests[0]?.body.get('params') ?? ''
+      expect(JSON.parse(params)).toMatchObject({
+        auth: { key: 'ws-key' },
+        source: 'tenant/photo.jpg',
+        destination: 'tenant/renamed.jpg',
+      })
+      const { createHmac } = await import('node:crypto')
+      expect(requests[0]?.body.get('signature')).toBe(
+        `sha256:${createHmac('sha256', 'ws-secret').update(params).digest('hex')}`,
+      )
+      // Never S3 copy/delete, and the usual checks still apply.
+      expect(send).not.toHaveBeenCalled()
+      await expect(
+        provider.moveItem({
+          companion,
+          providerUserSession: { ...session, write: false },
+          id: 'tenant/photo.jpg',
+          destination: 'tenant/x.jpg',
+        }),
+      ).rejects.toEqual(userError('s3ReadOnlySession'))
+      await expect(
+        provider.moveItem({
+          companion,
+          providerUserSession: session,
+          id: 'tenant/photo.jpg',
+          destination: 'other/x.jpg',
+        }),
+      ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+      await expect(
+        provider.moveItem({
+          companion,
+          providerUserSession: session,
+          id: 'tenant/album/',
+          destination: 'tenant/album/inner/',
+        }),
+      ).rejects.toEqual(userError('s3FolderIntoItself'))
+      expect(requests).toHaveLength(2)
+    })
+
+    test('reports Storage outages as gateway errors and refusals generically', async () => {
+      let status = 503
+      const endpoint = await listen((_request, response) => {
+        response.writeHead(status, { 'Content-Type': 'application/json' })
+        response.end(JSON.stringify({ error: 'private upstream diagnostic' }))
+      })
+      const provider = makeNative()
+      const args = {
+        companion: nativeCompanion(endpoint),
+        providerUserSession: session,
+        id: 'tenant/a.jpg',
+        destination: 'tenant/b.jpg',
+      }
+      await expect(provider.moveItem(args)).rejects.toMatchObject({
+        name: 'ProviderApiError',
+        statusCode: 502,
+      })
+      status = 409
+      await expect(provider.moveItem(args)).rejects.toEqual(
+        userError('s3RequestFailed'),
+      )
     })
   })
 
@@ -610,6 +898,12 @@ describe('S3 provider', () => {
     await expect(list()).rejects.toEqual(userError('s3RequestFailed'))
     error = notFound()
     await expect(list()).rejects.toEqual(userError('s3NotFound'))
+    error = new S3ServiceException({
+      name: 'PreconditionFailed',
+      $fault: 'client',
+      $metadata: { httpStatusCode: 412 },
+    })
+    await expect(list()).rejects.toEqual(userError('s3Conflict'))
     error = new ProviderUserError({ message: 'passthrough' })
     await expect(list()).rejects.toEqual(userError('passthrough'))
   })

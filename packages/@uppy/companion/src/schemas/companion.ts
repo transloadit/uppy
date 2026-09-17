@@ -98,6 +98,22 @@ export interface S3ProviderOptions
   grantPublicKey?: string | string[] | undefined
 }
 
+/**
+ * Options of the `transloadit-storage` provider: the S3 provider pointed at
+ * Transloadit Storage's S3-compatible endpoint, plus native catalog moves
+ * (files and whole folders in one call, preserving asset identity). Grants
+ * only: a grant names the Workspace (as its bucket), and Companion holds the
+ * credentials of every Workspace it serves; a grant never carries credentials.
+ * The same key pair signs S3 requests and native API calls.
+ */
+export interface TransloaditStorageProviderOptions
+  extends Omit<S3ProviderOptions, 'bucket' | 'prefix' | 'key' | 'secret'> {
+  /** Transloadit API endpoint, e.g. `https://api2.transloadit.com`. */
+  apiEndpoint: string
+  /** Credentials per Workspace slug. */
+  workspaces: Record<string, { key: string; secret: string }>
+}
+
 type ProviderConstructor = typeof Provider
 
 export interface CustomProvider {
@@ -130,7 +146,10 @@ export interface CompanionInitOptions {
   preAuthSecret?: string | Buffer | undefined
   loggerProcessName?: string | undefined
   providerOptions?:
-    | (Record<string, ProviderOptions> & { s3?: S3ProviderOptions | undefined })
+    | (Record<string, ProviderOptions> & {
+        s3?: S3ProviderOptions | undefined
+        'transloadit-storage'?: TransloaditStorageProviderOptions | undefined
+      })
     | undefined
   customProviders?: Record<string, CustomProvider> | undefined
   redisUrl?: string | undefined

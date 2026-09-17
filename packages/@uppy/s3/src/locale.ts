@@ -4,7 +4,7 @@ export default {
     authenticate: 'Connect',
     renameOrMove: 'Rename / move…',
     renameOrMoveTitle: 'Rename or move "%{name}"',
-    renameOrMovePrompt: 'New name, or a full path to move it somewhere else:',
+    renameOrMovePrompt: 'New name, or a path relative to the browsing root:',
     rename: 'Rename',
     itemRenamed: 'Renamed to "%{name}"',
     itemMoved: 'Moved to "%{path}"',

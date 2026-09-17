@@ -221,7 +221,7 @@ en_US.strings = {
   removeFile: 'Remove file',
   rename: 'Rename',
   renameOrMove: 'Rename / move…',
-  renameOrMovePrompt: 'New name, or a full path to move it somewhere else:',
+  renameOrMovePrompt: 'New name, or a path relative to the browsing root:',
   renameOrMoveTitle: 'Rename or move "%{name}"',
   reSelect: 'Re-select',
   resetFilter: 'Reset filter',
@@ -233,10 +233,13 @@ en_US.strings = {
   revert: 'Reset',
   rotate: 'Rotate 90°',
   s3AlreadyExists: 'A file or folder with that name already exists',
+  s3Conflict:
+    'The file changed while it was being moved. Refresh the folder and try again.',
   s3DestinationMustBeFile: 'The destination of a file must be a file path',
   s3FileTooLargeToMove:
     'Files larger than 5 GB cannot be moved or renamed here',
   s3FolderMoveNotSupported: 'Folders have to be moved item by item',
+  s3FolderIntoItself: 'A folder cannot be moved into itself',
   s3FolderNotEmpty: 'The folder is not empty',
   s3InvalidGrant: 'Your access to this storage could not be verified',
   s3InvalidName: 'That name is not allowed',
@@ -245,6 +248,8 @@ en_US.strings = {
   s3OutsideAllowedFolder: 'That path is outside the folder you have access to',
   s3ReadOnlySession: 'Your session is read-only',
   s3RequestFailed: 'The storage request failed',
+  s3SelectedInOtherSession:
+    'This file was selected in another storage session. Reconnect and select it again.',
   save: 'Save',
   saveChanges: 'Save changes',
   search: 'Search',

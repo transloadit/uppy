@@ -90,6 +90,18 @@ export type MockS3CompanionOptions = {
    * from the client.
    */
   bucket?: string
+  /**
+   * Key prefix a session without a grant is confined to (`''` by default): the
+   * listing root, where `createFolder(null, …)` puts new folders, and the only
+   * subtree that may be listed. A grant carries its own prefix.
+   */
+  prefix?: string
+  /** Matches Companion's effective per-listing mutation policy. Defaults to true. */
+  canMutate?: boolean
+  /** Inject the server clock to test expiration without depending on browser/render speed. */
+  nowSeconds?: () => number
+  /** Maximum entries per listing page; defaults to an unpaginated listing. */
+  pageSize?: number
 }
 
 export type MockS3Companion = {
@@ -98,7 +110,10 @@ export type MockS3Companion = {
   token: string
   /** Scope/expiry of the current session when it was opened with a grant. */
   readonly session: MockS3GrantClaims | null
-  /** Serve one request; `null` when the URL is not an `/s3/*` endpoint. */
+  /**
+   * Serve one request; `null` when the URL is neither an `/s3/*` nor a
+   * `/transloadit-storage/*` endpoint.
+   */
   handle(request: MockS3Request): MockS3Response | null
   lastCall(path: string): MockS3Call | undefined
 }
@@ -147,9 +162,17 @@ export function createMockS3Companion(
   let bucket = configuredBucket
   let session: MockS3GrantClaims | null = null
   const calls: MockS3Call[] = []
-  const nowSeconds = () => Math.floor(Date.now() / 1000)
+  const nowSeconds = options.nowSeconds ?? (() => Math.floor(Date.now() / 1000))
   const expired = () =>
     session?.exp !== undefined && session.exp <= nowSeconds()
+  const asPrefix = (value: string) => {
+    const bare = value.replace(/^\/+|\/+$/g, '')
+    return bare ? `${bare}/` : ''
+  }
+  const configuredPrefix = asPrefix(options.prefix ?? '')
+  /** Root of the session: the grant's prefix, or the one the mock is configured with. */
+  const sessionPrefix = () =>
+    session ? asPrefix(session.prefix ?? '') : configuredPrefix
 
   const toItem = (prefix: string, entry: MockS3Entry) => {
     const key = `${prefix}${entry.name}${entry.isFolder ? '/' : ''}`
@@ -179,7 +202,9 @@ export function createMockS3Companion(
     const { prefix, name } = splitKey(key)
     folders.set(
       prefix,
-      entriesOf(prefix).filter((entry) => entry.name !== name),
+      entriesOf(prefix).filter(
+        (entry) => entry.name !== name || entry.isFolder !== key.endsWith('/'),
+      ),
     )
     if (key.endsWith('/')) {
       for (const folder of [...folders.keys()]) {
@@ -198,15 +223,23 @@ export function createMockS3Companion(
   const handleInner = (request: MockS3Request): MockS3Response | null => {
     const url = new URL(request.url, 'http://mock.invalid')
     const path = url.pathname
-    if (!/\/s3\/(simple-auth|list|mutate\/[a-z-]+|logout)(\/|$)/.test(path)) {
+    // Transloadit Storage is the same HTTP surface under its own provider name;
+    // the only difference is that it moves folders natively (see mutate/move).
+    const route =
+      /\/(s3|transloadit-storage)\/(simple-auth|list|mutate\/[a-z-]+|logout)(\/|$)/.exec(
+        path,
+      )
+    if (!route) {
       return null
     }
+    const operation = route[2] as string
+    const nativeMoves = route[1] === 'transloadit-storage'
     inFlight.call = { ...request, path }
     calls.push(inFlight.call)
     const { method, body } = request
     if (method === 'OPTIONS') return { status: 204, body: null }
 
-    if (method === 'POST' && path.endsWith('/s3/simple-auth')) {
+    if (method === 'POST' && operation === 'simple-auth') {
       // The client sends `{}` or `{ grant }`; the bucket is never its call.
       const form = (body as { form?: { grant?: string } } | null)?.form
       if (typeof form?.grant === 'string') {
@@ -223,7 +256,7 @@ export function createMockS3Companion(
       }
       return json({ uppyAuthToken: token })
     }
-    if (method === 'GET' && path.endsWith('/s3/logout')) {
+    if (method === 'GET' && operation === 'logout') {
       session = null
       return json({ ok: true, revoked: true })
     }
@@ -234,22 +267,40 @@ export function createMockS3Companion(
       return userError('s3InvalidGrant')
     }
     if (
-      path.includes('/s3/mutate/') &&
+      operation.startsWith('mutate/') &&
       session &&
       !session.scopes?.includes('write')
     ) {
       return userError('s3ReadOnlySession')
     }
 
-    if (method === 'GET' && path.includes('/s3/list')) {
-      const prefix = decodeURIComponent(path.replace(/^.*\/s3\/list\/?/, ''))
+    if (method === 'GET' && operation === 'list') {
+      const root = sessionPrefix()
+      const prefix =
+        decodeURIComponent(path.replace(/^.*\/list\/?/, '')) || root
+      if (!prefix.startsWith(root)) return userError('s3OutsideAllowedFolder')
+      const entries = entriesOf(prefix)
+      const offset = Number(url.searchParams.get('offset') ?? 0)
+      const pageSize = Math.max(1, options.pageSize ?? entries.length)
+      const nextOffset = offset + pageSize
       return json({
         username: bucket,
-        nextPagePath: null,
-        items: entriesOf(prefix).map((entry) => toItem(prefix, entry)),
+        // What the session may do, and where it is rooted: the client hides
+        // the management actions and resolves typed paths with these.
+        canMutate:
+          (options.canMutate ?? true) &&
+          (session?.scopes?.includes('write') ?? true),
+        prefix: root,
+        nextPagePath:
+          nextOffset < entries.length
+            ? `${encodeURIComponent(prefix)}?offset=${nextOffset}`
+            : null,
+        items: entries
+          .slice(offset, nextOffset)
+          .map((entry) => toItem(prefix, entry)),
       })
     }
-    if (method === 'POST' && path.endsWith('/s3/mutate/create-folder')) {
+    if (method === 'POST' && operation === 'mutate/create-folder') {
       const name =
         str(body, 'name')
           ?.trim()
@@ -258,7 +309,7 @@ export function createMockS3Companion(
         return userError('s3InvalidName')
       }
       const parentId = str(body, 'parentId')
-      const prefix = parentId ? decodeURIComponent(parentId) : ''
+      const prefix = parentId ? decodeURIComponent(parentId) : sessionPrefix()
       const key = `${prefix}${name}/`
       if (has(key)) return userError('s3AlreadyExists')
       folders.set(prefix, [...entriesOf(prefix), { name, isFolder: true }])
@@ -266,7 +317,7 @@ export function createMockS3Companion(
       const id = encodeURIComponent(key)
       return json({ id, requestPath: id })
     }
-    if (method === 'POST' && path.endsWith('/s3/mutate/delete')) {
+    if (method === 'POST' && operation === 'mutate/delete') {
       const id = str(body, 'id')
       if (!id) return userError('s3RequestFailed')
       const key = decodeURIComponent(id)
@@ -277,19 +328,47 @@ export function createMockS3Companion(
       remove(key)
       return json({ ok: true })
     }
-    if (method === 'POST' && path.endsWith('/s3/mutate/move')) {
+    if (method === 'POST' && operation === 'mutate/move') {
       const id = str(body, 'id')
       const destination = str(body, 'destination')
       if (!id || !destination) return userError('s3RequestFailed')
       const key = decodeURIComponent(id)
-      // One file at a time: a folder is a key prefix, and walking it is the
-      // client's job (`moveFolder` in `@uppy/s3`).
-      if (key.endsWith('/') || destination.endsWith('/')) {
-        return userError(
-          key.endsWith('/')
-            ? 's3FolderMoveNotSupported'
-            : 's3DestinationMustBeFile',
-        )
+      if (key.endsWith('/')) {
+        // The generic provider moves one file at a time: a folder is a key
+        // prefix, and walking it is the client's job (`moveFolder` in
+        // `@uppy/s3`). Transloadit Storage moves the whole subtree natively.
+        if (!nativeMoves) return userError('s3FolderMoveNotSupported')
+        if (!destination.endsWith('/'))
+          return userError('s3DestinationMustBeFile')
+        if (destination !== key) {
+          if (!has(key)) return userError('s3NotFound')
+          if (has(destination)) return userError('s3AlreadyExists')
+          if (destination.startsWith(key)) return userError('s3RequestFailed')
+          for (const folder of [...folders.keys()]) {
+            if (!folder.startsWith(key)) continue
+            const entries = entriesOf(folder)
+            folders.delete(folder)
+            folders.set(`${destination}${folder.slice(key.length)}`, entries)
+          }
+          const from = splitKey(key)
+          const to = splitKey(destination)
+          folders.set(
+            from.prefix,
+            entriesOf(from.prefix).filter(
+              (candidate) =>
+                candidate.name !== from.name || !candidate.isFolder,
+            ),
+          )
+          folders.set(to.prefix, [
+            ...entriesOf(to.prefix),
+            { name: to.name, isFolder: true },
+          ])
+        }
+        const movedId = encodeURIComponent(destination)
+        return json({ id: movedId, requestPath: movedId })
+      }
+      if (destination.endsWith('/')) {
+        return userError('s3DestinationMustBeFile')
       }
       if (destination !== key) {
         const from = splitKey(key)
@@ -350,7 +429,7 @@ const corsHeaders = {
 
 /**
  * Serve a Fetch API `Request` from the mock; resolves to `null` when the
- * request is not for an `/s3/*` endpoint (so callers can pass it through).
+ * request is for neither provider's endpoints (so callers can pass it through).
  */
 export async function handleFetchRequest(
   mock: MockS3Companion,
@@ -389,17 +468,19 @@ type MswLike = {
   }
 }
 
-/** msw request handlers for every `/s3/*` endpoint under `companionUrl`. */
+/** msw request handlers for both providers' endpoints under `companionUrl`. */
 export function toMswHandlers(
   mock: MockS3Companion,
   companionUrl: string,
   msw: MswLike,
 ): unknown[] {
+  const base = companionUrl.replace(/\/$/, '')
+  const serve = async ({ request }: { request: Request }) =>
+    (await handleFetchRequest(mock, request)) ?? undefined
+  // The Transloadit Storage provider speaks the same protocol under its own
+  // name (with native folder moves), so the mock serves both.
   return [
-    msw.http.all(
-      `${companionUrl.replace(/\/$/, '')}/s3/*`,
-      async ({ request }) =>
-        (await handleFetchRequest(mock, request)) ?? undefined,
-    ),
+    msw.http.all(`${base}/s3/*`, serve),
+    msw.http.all(`${base}/transloadit-storage/*`, serve),
   ]
 }
