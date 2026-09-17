@@ -165,22 +165,6 @@ export default class TransloaditStorage<
     return getSmartCdnUrl ? [copyUrl, ...ordered] : ordered
   }
 
-  /**
-   * Transloadit Storage moves a file or a whole folder in one native catalog
-   * call (which preserves asset identity), so there is no client-side walk.
-   */
-  protected override async moveEntry(
-    key: string,
-    destination: string,
-    isFolder: boolean,
-    { signal }: { signal?: AbortSignal | undefined } = {},
-  ): Promise<void> {
-    if (isFolder && destination.startsWith(key)) {
-      throw new Error(this.i18n('folderMoveIntoItself'))
-    }
-    await this.provider.moveItem(key, destination, { signal })
-  }
-
   override builtInToolbarActions() {
     const base = super.builtInToolbarActions()
     if (!this.opts.storeUploads && !this.opts.onUploadRequest) return base

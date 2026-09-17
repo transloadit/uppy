@@ -319,13 +319,13 @@ export default class S3Provider extends Provider<S3UserSession> {
 
   /**
    * Every operation starts here: a session that matches the current
-   * configuration, write access when `mutate`, and every key inside the
+   * configuration, write access when `requireWrite`, and every key inside the
    * session's prefix.
    */
   #session(
     companion: CompanionLike,
     providerUserSession: S3UserSession,
-    { mutate = false, keys = [] as string[] } = {},
+    { requireWrite = false, keys = [] as string[] } = {},
   ): {
     bucket: string
     prefix: string
@@ -346,7 +346,7 @@ export default class S3Provider extends Provider<S3UserSession> {
     ) {
       throw new ProviderAuthError()
     }
-    if (mutate && !write) {
+    if (requireWrite && !write) {
       // A user error, not an auth error: a fresh session would not help.
       throw new ProviderUserError({ message: 's3ReadOnlySession' })
     }
@@ -418,6 +418,7 @@ export default class S3Provider extends Provider<S3UserSession> {
         bucket,
         prefix: rootPrefix,
         client,
+        native,
       } = this.#session(companion, providerUserSession, {
         keys: directory ? [ensureTrailingSlash(directory)] : [],
       })
@@ -483,7 +484,8 @@ export default class S3Provider extends Provider<S3UserSession> {
         username: bucket,
         // The client shows write actions only when the session allows them,
         // and resolves paths the user types against the session's root.
-        canMutate: providerUserSession.write,
+        canWrite: providerUserSession.write,
+        movesFolders: native != null,
         prefix: rootPrefix,
       }
     })
@@ -577,7 +579,7 @@ export default class S3Provider extends Provider<S3UserSession> {
   }): Promise<void> {
     return this.withErrorHandling('provider.s3.delete.error', async () => {
       const { bucket, client } = this.#session(companion, providerUserSession, {
-        mutate: true,
+        requireWrite: true,
         keys: [id],
       })
       if (
@@ -611,7 +613,7 @@ export default class S3Provider extends Provider<S3UserSession> {
       const { bucket, client, writeParams, native } = this.#session(
         companion,
         providerUserSession,
-        { mutate: true, keys: [id, destination] },
+        { requireWrite: true, keys: [id, destination] },
       )
       if (native) {
         return this.#nativeMove(native, bucket, id, destination)
@@ -756,7 +758,7 @@ export default class S3Provider extends Provider<S3UserSession> {
           companion,
           providerUserSession,
           {
-            mutate: true,
+            requireWrite: true,
             keys: parentId ? [ensureTrailingSlash(parentId)] : [],
           },
         )

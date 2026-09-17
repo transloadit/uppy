@@ -33,8 +33,10 @@ export interface ProviderListItem {
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
-  /** Effective Storage write capability after both session and server policy checks. */
-  canMutate?: boolean
+  /** Whether this session may change files (delete, move, create folders). */
+  canWrite?: boolean
+  /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
+  movesFolders?: boolean
   nextPagePath?: string | null | undefined
   username?: string | null | undefined
 }

@@ -178,13 +178,13 @@ describe('S3 provider in the browser', () => {
     const companion = createMockS3Companion({
       token: TOKEN,
       bucket: 'my-bucket',
-      canMutate: false,
+      canWrite: false,
     })
     install(worker, companion)
     const app = createUppy()
     await openBucket()
     const plugin = pluginOf(app)
-    expect(plugin.canMutate).toBe(false)
+    expect(plugin.canWrite).toBe(false)
     expect(plugin.builtInActions()).toEqual([])
     await expect
       .element(page.getByRole('button', { name: 'New folder', exact: true }))

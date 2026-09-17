@@ -24,7 +24,7 @@ one by one.
 
 Single-file moves copy with `IfNoneMatch: *` and `CopySourceIfMatch`, and delete with `IfMatch`,
 so an endpoint that honours conditional requests never overwrites a destination or deletes a
-source that changed meanwhile (`s3Conflict`). Listings report `canMutate` and the session `prefix`
+source that changed meanwhile (`s3Conflict`). Listings report `canWrite`, `movesFolders` and the session `prefix`
 so the client can hide write actions and resolve typed paths. Downloads must name the bucket the
 file was selected in (`?bucket=`), so a queued import cannot be read from a later session.
 

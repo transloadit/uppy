@@ -96,8 +96,8 @@ export type MockS3CompanionOptions = {
    * subtree that may be listed. A grant carries its own prefix.
    */
   prefix?: string
-  /** Matches Companion's effective per-listing mutation policy. Defaults to true. */
-  canMutate?: boolean
+  /** Whether Companion lets the session change files. Defaults to true. */
+  canWrite?: boolean
   /** Inject the server clock to test expiration without depending on browser/render speed. */
   nowSeconds?: () => number
   /** Maximum entries per listing page; defaults to an unpaginated listing. */
@@ -287,9 +287,10 @@ export function createMockS3Companion(
         username: bucket,
         // What the session may do, and where it is rooted: the client hides
         // the management actions and resolves typed paths with these.
-        canMutate:
-          (options.canMutate ?? true) &&
+        canWrite:
+          (options.canWrite ?? true) &&
           (session?.scopes?.includes('write') ?? true),
+        movesFolders: nativeMoves,
         prefix: root,
         nextPagePath:
           nextOffset < entries.length
