@@ -1,12 +1,12 @@
 /**
- * Moving a folder client-side.
+ * Folder operations done client-side.
  *
- * Companion's S3 provider moves one *file* at a time (`s3FolderMoveNotSupported`
- * for anything ending in `/`), because a "folder" in an object store is just a
- * key prefix: moving one means copying every object under it. Doing that in the
- * browser keeps the server request short-lived, lets the user cancel, and lets
- * an interrupted move be re-run — creating a folder that already exists is
- * treated as success.
+ * Companion's S3 provider moves and deletes one *entry* at a time (a folder
+ * can only be deleted once empty; `moveItem` refuses folder keys unless the
+ * backend moves folders natively), because a "folder" in an object store is
+ * just a key prefix: moving or deleting one means touching every object under
+ * it. Doing that in the browser keeps each server request short-lived, lets
+ * the user cancel, and lets an interrupted operation be re-run.
  */
 
 /** One entry of a Companion listing; only what the walk needs. */
@@ -46,20 +46,29 @@ export type FolderMoveProvider = {
   deleteItem(id: string, options?: RequestOptions): Promise<unknown>
 }
 
-export type MoveFolderOptions = {
+/** What `moveFolder` and `deleteFolder` share. */
+type FolderOperationOptions = {
   provider: FolderMoveProvider
+  /** How many per-file requests are in flight at once. Default: 4. */
+  concurrency?: number
+  /** Aborts between and inside requests; the returned promise rejects with an `AbortError`. */
+  signal?: AbortSignal | undefined
+  /** Called before the first file and after every file, with the total. */
+  onProgress?: (done: number, total: number) => void
+  /** Receives one line per step, for debugging with `uppy.log`. */
+  log?: (message: string) => void
+}
+
+export type MoveFolderOptions = FolderOperationOptions & {
   /** Decoded key of the folder to move, ending with `/`. */
   source: string
   /** Decoded key the folder should end up at, ending with `/`. */
   target: string
-  /** How many file moves are in flight at once. Default: 4. */
-  concurrency?: number
-  /** Aborts between and inside requests; the returned promise rejects with an `AbortError`. */
-  signal?: AbortSignal | undefined
-  /** Called after every file that moved, with the number of files in total. */
-  onProgress?: (done: number, total: number) => void
-  /** Receives one line per step, for debugging with `uppy.log`. */
-  log?: (message: string) => void
+}
+
+export type DeleteFolderOptions = FolderOperationOptions & {
+  /** Decoded key of the folder to delete, ending with `/`. */
+  folder: string
 }
 
 /** Splits a folder key (`docs/photos/`) into its parent (`docs/`) and name. */
@@ -73,10 +82,16 @@ function splitFolderKey(key: string): { parent: string; name: string } {
 }
 
 const abortError = () =>
-  new DOMException('The folder move was cancelled', 'AbortError')
+  new DOMException('The folder operation was cancelled', 'AbortError')
 
 const throwIfAborted = (signal: AbortSignal | undefined) => {
   if (signal?.aborted) throw abortError()
+}
+
+const assertFolderKey = (key: string, what: string) => {
+  if (!key.endsWith('/')) {
+    throw new Error(`${what} must be a folder key ending with "/": "${key}"`)
+  }
 }
 
 /**
@@ -119,39 +134,27 @@ async function listFolder(
 }
 
 /**
- * Moves the folder at `source` to `target`: creates the destination folders,
- * moves every file under it (a few at a time), then deletes the emptied source
- * folders. Not atomic — a failure part-way leaves the rest behind, and running
- * it again picks up where it stopped.
+ * Walks `root` breadth-first and returns its sub-folders (parents before
+ * children) and files. `skip` keeps the walk out of a subtree, e.g. a move's
+ * destination.
  */
-export default async function moveFolder({
-  provider,
-  source,
-  target,
-  concurrency = 4,
-  signal,
-  onProgress,
-  log = () => {},
-}: MoveFolderOptions): Promise<void> {
-  if (!source.endsWith('/') || !target.endsWith('/')) {
-    throw new Error(`Folder keys must end with "/": "${source}" → "${target}"`)
-  }
-  if (target.startsWith(source)) {
-    throw new Error(`Cannot move "${source}" into itself ("${target}")`)
-  }
-  log(`move folder "${source}" → "${target}"`)
-
-  // 1. Walk the source breadth-first, so parents come before their children.
+async function walkFolder(
+  provider: FolderMoveProvider,
+  root: string,
+  signal: AbortSignal | undefined,
+  log: (message: string) => void,
+  skip: (folder: string) => boolean = () => false,
+): Promise<{ subFolders: string[]; files: string[] }> {
   const subFolders: string[] = []
   const files: string[] = []
-  const queue: string[] = [source]
+  const queue: string[] = [root]
   while (queue.length > 0) {
     const folder = queue.shift() as string
     const listed = await listFolder(provider, folder, signal, log)
     for (const sub of listed.folders) {
-      // Defensive: never walk the destination or a folder seen already, so a
-      // listing that misreports entries cannot make the move feed on itself.
-      if (sub.startsWith(target) || subFolders.includes(sub)) continue
+      // Defensive: never walk a folder twice, so a listing that misreports
+      // entries cannot make the operation feed on itself.
+      if (skip(sub) || subFolders.includes(sub)) continue
       subFolders.push(sub)
       queue.push(sub)
     }
@@ -160,6 +163,73 @@ export default async function moveFolder({
     }
   }
   log(`found ${files.length} file(s) in ${subFolders.length + 1} folder(s)`)
+  return { subFolders, files }
+}
+
+/** Runs `perFile` over `files`, a few at a time, reporting progress. */
+async function forEachFile(
+  files: string[],
+  { concurrency = 4, signal, onProgress }: FolderOperationOptions,
+  perFile: (file: string) => Promise<unknown>,
+): Promise<void> {
+  let done = 0
+  let next = 0
+  onProgress?.(0, files.length)
+  const workers = Array.from(
+    { length: Math.max(1, Math.min(concurrency, files.length)) },
+    async () => {
+      while (next < files.length) {
+        throwIfAborted(signal)
+        const file = files[next++] as string
+        await perFile(file)
+        done += 1
+        onProgress?.(done, files.length)
+      }
+    },
+  )
+  await Promise.all(workers)
+}
+
+/** Deletes the (by now empty) folders, deepest first, then `root` itself. */
+async function deleteEmptiedFolders(
+  provider: FolderMoveProvider,
+  root: string,
+  subFolders: string[],
+  signal: AbortSignal | undefined,
+): Promise<void> {
+  for (const folder of [...subFolders].reverse()) {
+    throwIfAborted(signal)
+    await provider.deleteItem(folder, { signal })
+  }
+  throwIfAborted(signal)
+  await provider.deleteItem(root, { signal })
+}
+
+/**
+ * Moves the folder at `source` to `target`: creates the destination folders,
+ * moves every file under it (a few at a time), then deletes the emptied source
+ * folders. Not atomic — a failure part-way leaves the rest behind, and running
+ * it again picks up where it stopped.
+ */
+export default async function moveFolder(
+  options: MoveFolderOptions,
+): Promise<void> {
+  const { provider, source, target, signal, log = () => {} } = options
+  assertFolderKey(source, 'The source')
+  assertFolderKey(target, 'The target')
+  if (target.startsWith(source)) {
+    throw new Error(`Cannot move "${source}" into itself ("${target}")`)
+  }
+  log(`move folder "${source}" → "${target}"`)
+
+  // 1. Walk the source; never into the destination (S3 may list it already).
+  const { subFolders, files } = await walkFolder(
+    provider,
+    source,
+    signal,
+    log,
+    (folder) => folder.startsWith(target),
+  )
 
   // 2. Create the destination folders, parents first.
   const destinationOf = (key: string) => {
@@ -182,31 +252,33 @@ export default async function moveFolder({
   }
 
   // 3. Move the files, a few at a time.
-  let done = 0
-  let next = 0
-  onProgress?.(0, files.length)
-  const workers = Array.from(
-    { length: Math.max(1, Math.min(concurrency, files.length)) },
-    async () => {
-      while (next < files.length) {
-        throwIfAborted(signal)
-        const file = files[next++] as string
-        const destination = destinationOf(file)
-        log(`move "${file}" → "${destination}"`)
-        await provider.moveItem(file, destination, { signal })
-        done += 1
-        onProgress?.(done, files.length)
-      }
-    },
-  )
-  await Promise.all(workers)
+  await forEachFile(files, options, (file) => {
+    const destination = destinationOf(file)
+    log(`move "${file}" → "${destination}"`)
+    return provider.moveItem(file, destination, { signal })
+  })
 
-  // 4. Delete the now-empty source folders, deepest first.
-  for (const folder of [...subFolders].reverse()) {
-    throwIfAborted(signal)
-    await provider.deleteItem(folder, { signal })
-  }
-  throwIfAborted(signal)
-  await provider.deleteItem(source, { signal })
+  // 4. Delete the now-empty source folders.
+  await deleteEmptiedFolders(provider, source, subFolders, signal)
   log(`moved "${source}" → "${target}"`)
+}
+
+/**
+ * Deletes the folder at `folder` with everything in it: every file (a few at
+ * a time), then the emptied folders deepest first. Not atomic — a failure
+ * part-way leaves the rest behind, and running it again finishes the job.
+ */
+export async function deleteFolder(
+  options: DeleteFolderOptions,
+): Promise<void> {
+  const { provider, folder, signal, log = () => {} } = options
+  assertFolderKey(folder, 'The folder')
+  log(`delete folder "${folder}"`)
+  const { subFolders, files } = await walkFolder(provider, folder, signal, log)
+  await forEachFile(files, options, (file) => {
+    log(`delete "${file}"`)
+    return provider.deleteItem(file, { signal })
+  })
+  await deleteEmptiedFolders(provider, folder, subFolders, signal)
+  log(`deleted "${folder}"`)
 }

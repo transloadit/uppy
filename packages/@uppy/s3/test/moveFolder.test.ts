@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from 'vitest'
-import moveFolder, { type FolderMoveProvider } from '../lib/moveFolder.js'
+import moveFolder, {
+  deleteFolder,
+  type FolderMoveProvider,
+} from '../lib/moveFolder.js'
 
 /** Folder key (`''` for the root) → the keys it contains. */
 type Tree = Record<string, string[]>
@@ -253,7 +256,7 @@ describe('moveFolder guards', () => {
     ).rejects.toThrow(/into itself/)
     await expect(
       moveFolder({ provider, source: 'docs', target: 'archive/' }),
-    ).rejects.toThrow(/must end with/)
+    ).rejects.toThrow(/must be a folder key/)
     expect(provider.tree).toEqual(tree())
   })
 
@@ -293,5 +296,55 @@ describe('moveFolder guards', () => {
     await expect(
       moveFolder({ provider, source: 'docs/', target: 'archive/' }),
     ).rejects.toThrow(/repeats page/)
+  })
+})
+
+describe('deleteFolder', () => {
+  it('deletes every file, then the emptied folders deepest first', async () => {
+    const provider = createFakeProvider(tree())
+    const order: string[] = []
+    const deleteItem = provider.deleteItem.bind(provider)
+    provider.deleteItem = async (id, options) => {
+      order.push(id)
+      return deleteItem(id, options)
+    }
+    const progress: number[] = []
+    await deleteFolder({
+      provider,
+      folder: 'docs/',
+      concurrency: 1,
+      onProgress: (done) => progress.push(done),
+    })
+    expect(provider.tree).toEqual({ '': ['readme.md'] })
+    expect(order).toEqual([
+      'docs/hello.txt',
+      'docs/images/logo.png',
+      'docs/images/',
+      'docs/',
+    ])
+    expect(progress).toEqual([0, 1, 2])
+  })
+
+  it('refuses a key without a trailing slash and stops on abort', async () => {
+    const provider = createFakeProvider(tree())
+    await expect(deleteFolder({ provider, folder: 'docs' })).rejects.toThrow(
+      /must be a folder key/,
+    )
+    const controller = new AbortController()
+    await expect(
+      deleteFolder({
+        provider,
+        folder: 'docs/',
+        concurrency: 1,
+        signal: controller.signal,
+        onProgress: (done) => {
+          if (done === 1) controller.abort()
+        },
+      }),
+    ).rejects.toMatchObject({ name: 'AbortError' })
+    // One file gone, the rest untouched: running it again finishes the job.
+    expect(provider.tree['docs/']).toEqual(['docs/images/'])
+    await deleteFolder({ provider, folder: 'docs/' })
+    expect(provider.tree).toEqual({ '': ['readme.md'] })
   })
 })

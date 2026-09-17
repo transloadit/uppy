@@ -575,7 +575,7 @@ describe('S3 provider in the browser', () => {
     expect(companion.lastCall('/s3/mutate/create-folder')).toBeUndefined()
   })
 
-  it('deletes files after confirmation and refuses non-empty folders', async ({
+  it('deletes files after confirmation and folders with their contents', async ({
     worker,
   }) => {
     const companion = createMockCompanion()
@@ -597,27 +597,39 @@ describe('S3 provider in the browser', () => {
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await page.getByRole('menuitem', { name: 'Delete' }).click()
     await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
+    // (The loading screen hides the list while the request is in flight, so
+    // wait for the toast before looking at the calls.)
     await expect
-      .element(page.getByText('readme.md', { exact: true }))
-      .not.toBeInTheDocument()
+      .element(page.getByText(/Deleted "readme.md"/).first())
+      .toBeVisible()
     expect(companion.lastCall('/s3/mutate/delete')?.body).toEqual({
       id: 'readme.md',
     })
     await expect
-      .element(page.getByText(/Deleted "readme.md"/).first())
-      .toBeVisible()
+      .element(page.getByText('readme.md', { exact: true }))
+      .not.toBeInTheDocument()
 
-    // Companion refuses to delete folders that still have entries
+    // A folder is emptied first (Companion only deletes empty folders), then
+    // deleted itself.
     await page.getByRole('button', { name: 'Actions for docs' }).click()
     await page.getByRole('menuitem', { name: 'Delete' }).click()
-    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
     await expect
-      .element(page.getByText('The folder is not empty').first())
+      .element(
+        dialog.getByText('The folder and everything in it will be deleted.'),
+      )
       .toBeVisible()
-    expect(companion.lastCall('/s3/mutate/delete')?.body).toEqual({
-      id: 'docs/',
-    })
-    await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
+    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
+    await expect.element(page.getByText(/Deleted "docs"/).first()).toBeVisible()
+    await expect
+      .element(page.getByText('docs', { exact: true }))
+      .not.toBeInTheDocument()
+    expect(
+      companion.calls
+        .filter((call) => call.path === '/s3/mutate/delete')
+        .slice(1)
+        .map((call) => call.body),
+    ).toEqual([{ id: 'docs/hello.txt' }, { id: 'docs/' }])
+    expect(companion.folders.has('docs/')).toBe(false)
   })
 
   describe('server-issued grants', () => {

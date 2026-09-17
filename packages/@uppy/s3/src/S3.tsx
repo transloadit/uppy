@@ -31,7 +31,7 @@ import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import type {} from '@uppy/dashboard'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
-import moveFolder from './moveFolder.js'
+import moveFolder, { deleteFolder } from './moveFolder.js'
 import StorageIcon from './StorageIcon.js'
 
 /** Unverified claims of a storage grant (the client only needs to *read* them). */
@@ -568,7 +568,13 @@ export default class S3<M extends Meta, B extends Body>
             danger: true,
           })
           if (!confirmed) return undefined
-          await this.provider.deleteItem(key)
+          await view.runWithProgress(({ signal, setProgress }) =>
+            this.#delete(key, {
+              signal,
+              onProgress: (done, total) =>
+                setProgress(this.i18n('deletingFiles', { done, total })),
+            }),
+          )
           return this.i18n('itemDeleted', { name })
         }),
       },
@@ -684,7 +690,7 @@ export default class S3<M extends Meta, B extends Body>
                   total: items.length,
                 }),
               )
-              await this.provider.deleteItem(S3.keyOf(item.id), { signal })
+              await this.#delete(S3.keyOf(item.id), { signal })
             }
           })
           return this.i18n('itemsDeleted', { smart_count: items.length })
@@ -727,6 +733,33 @@ export default class S3<M extends Meta, B extends Body>
       provider: this.provider,
       source: key,
       target: destination,
+      signal,
+      onProgress,
+      log: (message) => this.uppy.log(`[S3] ${message}`),
+    })
+  }
+
+  /**
+   * Deletes one item. Companion only deletes a folder once it is empty, so a
+   * folder is walked and emptied first (see `deleteFolder`).
+   */
+  async #delete(
+    key: string,
+    {
+      signal,
+      onProgress,
+    }: {
+      signal?: AbortSignal | undefined
+      onProgress?: ((done: number, total: number) => void) | undefined
+    } = {},
+  ): Promise<void> {
+    if (!key.endsWith('/')) {
+      await this.provider.deleteItem(key, { signal })
+      return
+    }
+    await deleteFolder({
+      provider: this.provider,
+      folder: key,
       signal,
       onProgress,
       log: (message) => this.uppy.log(`[S3] ${message}`),
