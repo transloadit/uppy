@@ -327,6 +327,44 @@ describe('Transloadit', () => {
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
 
+  it('closes the assembly and clears state as soon as cancel-all fires', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    const cancelRequest = vi.fn(() => Promise.reject(new Error('offline')))
+    plugin.client.cancelAssembly = cancelRequest
+    const assembly = new Assembly(
+      {
+        assembly_id: 'test-assembly-id',
+        assembly_ssl_url:
+          'https://api2.transloadit.com/assemblies/test-assembly-id',
+        ok: 'ASSEMBLY_EXECUTING',
+      },
+      new RateLimitedQueue(),
+    )
+    plugin.assembly = assembly
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus?.ok).toBe(
+      'ASSEMBLY_EXECUTING',
+    )
+
+    uppy.cancelAll()
+
+    // Synchronously, before the (failing) cancel request has settled.
+    expect(assembly.closed).toBe(true)
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+    expect(uppy.getState().plugins.Transloadit.lastAssemblyStatus?.ok).toBe(
+      'ASSEMBLY_EXECUTING',
+    )
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(cancelRequest).toHaveBeenCalledTimes(1)
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+  })
+
   it('exposes the assembly error in plugin state', async ({ worker }) => {
     const status = {
       assembly_id: 'test-assembly-id',

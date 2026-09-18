@@ -664,26 +664,26 @@ export default class Transloadit<
   async #cancelAssembly(assembly: AssemblyResponse) {
     await this.client.cancelAssembly(assembly)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
-
-    // if assemblyStatus has been updated after the cancellation was triggered, emit the updated assemblyStatus - fallback to the method argument
-    const updatedAssemblyStatus = this.assembly?.status ?? assembly
-    this.uppy.emit('transloadit:assembly-cancelled', updatedAssemblyStatus)
-    this.assembly = undefined
+    this.uppy.emit('transloadit:assembly-cancelled', assembly)
   }
 
   /**
    * When all files are removed, cancel in-progress Assemblies.
    */
   #onCancelAll = async () => {
-    if (this.assembly) {
+    const assembly = this.assembly
+    if (assembly) {
+      // Stop listening and clear `assemblyStatus` before the request goes
+      // out: a late SSE frame must not resurrect the assembly, and the UI
+      // must reset even when the cancel request itself fails (e.g. offline).
+      assembly.close()
+      this.assembly = undefined
       try {
-        await this.#cancelAssembly(this.assembly.status)
+        await this.#cancelAssembly(assembly.status)
       } catch (err) {
         this.uppy.log(err)
       }
     }
-    // `assemblyStatus` is cleared automatically when `this.assembly = undefined`
-    // (via `#cancelAssembly` above, or by `#afterUpload`'s finally block).
 
     // Reset allowNewUpload when upload is cancelled
     this.uppy.setState({ allowNewUpload: true })
