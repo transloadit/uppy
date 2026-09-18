@@ -233,6 +233,35 @@ describe('AwsS3', () => {
       expect(shouldUseMultipart(createFile(70 * 1024 * MB))).toBe(true) // 70GB
       expect(shouldUseMultipart(createFile(400 * 1024 * MB))).toBe(true) // 400GB
     })
+
+    test('uses multipart for a file below the 5 MiB part minimum when asked to', async ({
+      worker,
+    }) => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks(worker)
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'small.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'small.txt'),
+      })
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+      expect(operations).toEqual([
+        'createMultipart',
+        'uploadPart',
+        'completeMultipart',
+      ])
+    })
   })
 
   describe('server-generated object key (#6496)', () => {
