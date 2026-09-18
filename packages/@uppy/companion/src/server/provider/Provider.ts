@@ -183,6 +183,15 @@ export default class Provider<US = unknown> {
     throw new Error('method not implemented')
   }
 
+  /**
+   * Opens a session without OAuth ("simple" is *not OAuth*, not *a login
+   * form*): the client posts whatever this provider needs to `/simple-auth`
+   * and gets a session token back. What is posted is up to the provider —
+   * a form the user filled in (WebDAV's server URL) or credentials the app
+   * fetched itself (the S3 provider's storage grant, exchanged with no UI).
+   * The returned object is the provider's session, stored in the token and
+   * handed back on every later request as `providerUserSession`.
+   */
   async simpleAuth({
     requestBody,
     companion,
@@ -275,6 +284,7 @@ export default class Provider<US = unknown> {
     return {}
   }
 
+  /** Whether `simpleAuth()` is implemented (sessions are opened without OAuth). */
   static get hasSimpleAuth(): boolean {
     return false
   }
