@@ -57,7 +57,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
   }
 
   /** One client per Workspace, signed with that Workspace's key pair. */
-  protected override clientFor(
+  protected override clientOptionsFor(
     config: ResolvedConfig<ParsedTransloaditStorageOptions>,
     bucket: string,
   ): { cacheKey: string; clientOptions: S3ClientOptions } {

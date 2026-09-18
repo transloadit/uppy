@@ -149,15 +149,18 @@ const itemRef = (key: string): ItemRef => ({
 })
 
 /**
- * S3 clients, kept per Companion `app()` (its options object) and, within
- * that, per provider and bucket. A client is cheap to build but holds what
- * is not: its resolved credentials (a metadata or STS round trip when
- * Companion runs on a role) and its keep-alive connections. The
- * configuration itself is re-derived on every request; that is a small
- * parse. The trade-off: an embedder that swaps credentials in the options
- * object at runtime keeps the clients built with the old ones.
+ * S3 clients per Companion `app()`, and within an app per provider and
+ * bucket. A client is cheap to build but holds what is not: its resolved
+ * credentials (a metadata or STS round trip when Companion runs on a role)
+ * and its keep-alive connections. The configuration itself is re-derived on
+ * every request; that is a small parse.
+ *
+ * Keyed on the app's options object because that is the one per-app value a
+ * provider sees: `req.companion` is rebuilt for every request. The
+ * trade-off: an embedder that swaps credentials in the options object at
+ * runtime keeps the clients built with the old ones.
  */
-const clients = new WeakMap<object, Map<string, S3Client>>()
+const clientsByApp = new WeakMap<object, Map<string, S3Client>>()
 
 /**
  * Adapter for browsing and managing S3-compatible object storage (AWS S3,
@@ -199,8 +202,8 @@ export default class S3Provider<
     return false
   }
 
-  /** The client options for `bucket`, and the key they are cached under. */
-  protected clientFor(
+  /** The client options for `bucket`, and the key that client is cached under. */
+  protected clientOptionsFor(
     config: ResolvedConfig<P>,
     _bucket: string,
   ): { cacheKey: string; clientOptions: S3ClientOptions } {
@@ -260,18 +263,18 @@ export default class S3Provider<
     config: ResolvedConfig<P>,
     bucket: string,
   ): S3Client {
-    let perApp = clients.get(companion.options)
-    if (perApp == null) {
-      perApp = new Map()
-      clients.set(companion.options, perApp)
+    let appClients = clientsByApp.get(companion.options)
+    if (appClients == null) {
+      appClients = new Map()
+      clientsByApp.set(companion.options, appClients)
     }
-    const { cacheKey, clientOptions } = this.clientFor(config, bucket)
+    const { cacheKey, clientOptions } = this.clientOptionsFor(config, bucket)
     // Provider names and bucket names cannot contain `/`, so the two cannot collide.
     const key = `${this.optionsKey}/${cacheKey}`
-    let client = perApp.get(key)
+    let client = appClients.get(key)
     if (client == null) {
       client = this.getClient(clientOptions)
-      perApp.set(key, client)
+      appClients.set(key, client)
     }
     return client
   }
