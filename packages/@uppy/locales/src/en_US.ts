@@ -303,6 +303,7 @@ en_US.strings = {
     '0': 'Upload +%{smart_count} file',
     '1': 'Upload +%{smart_count} files',
   },
+  webdavCannotConnect: 'Cannot connect to server',
   xFilesSelected: {
     '0': '%{smart_count} file selected',
     '1': '%{smart_count} files selected',

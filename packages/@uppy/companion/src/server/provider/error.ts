@@ -27,17 +27,16 @@ export class ProviderApiError extends Error {
  *
  * - `code`: a stable identifier of the failure (`S3_NOT_FOUND`), for every
  *   message Companion itself owns; `@uppy/core` maps it to the locale string
- *   describing it.
- * - `message`: text shown verbatim, for what cannot have a code (an error
- *   forwarded from a provider's own API). Older Uppy versions read only this
- *   field, so existing English messages stay as they are; new messages get a
- *   `code`, which those versions cannot show anyway.
+ *   describing it. Older Uppy versions read only `message`, so a code that
+ *   replaces a message they used to show is sent together with that message.
+ * - `message` alone: text shown verbatim, for what cannot have a code (an
+ *   error forwarded from a provider's own API).
  *
  * See https://github.com/transloadit/uppy/issues/5436 for where this is going:
  * codes with typed metadata for every Companion error, not only provider ones.
  */
 export type ProviderUserErrorBody =
-  | { code: string; message?: undefined }
+  | { code: string; message?: string }
   | { message: string; code?: undefined }
 
 /**

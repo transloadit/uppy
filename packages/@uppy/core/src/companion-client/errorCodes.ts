@@ -6,7 +6,7 @@ type LocaleKey = keyof (typeof locale)['strings']
  * The error codes Companion reports (`{ code }` in a 400 body), each mapped to
  * the locale string that describes it to the user.
  *
- * TODO: derive the codes from `@uppy/companion` (`S3ErrorCode`) instead of
+ * TODO: derive the codes from `@uppy/companion` (`ProviderErrorCode`) instead of
  * mirroring them, once the monorepo's tsconfig lets client packages import
  * its types.
  */
@@ -26,6 +26,7 @@ export const companionErrorLocaleKeys = {
   S3_READ_ONLY_SESSION: 's3ReadOnlySession',
   S3_REQUEST_FAILED: 's3RequestFailed',
   S3_SELECTED_IN_OTHER_SESSION: 's3SelectedInOtherSession',
+  WEBDAV_CANNOT_CONNECT: 'webdavCannotConnect',
 } as const satisfies Record<string, LocaleKey>
 
 export type CompanionErrorCode = keyof typeof companionErrorLocaleKeys
