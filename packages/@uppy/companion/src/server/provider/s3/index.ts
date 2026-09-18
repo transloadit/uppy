@@ -266,7 +266,8 @@ export default class S3Provider<
       clients.set(companion.options, perApp)
     }
     const { cacheKey, clientOptions } = this.clientFor(config, bucket)
-    const key = `${this.optionsKey}\u0000${cacheKey}`
+    // Provider names and bucket names cannot contain `/`, so the two cannot collide.
+    const key = `${this.optionsKey}/${cacheKey}`
     let client = perApp.get(key)
     if (client == null) {
       client = this.getClient(clientOptions)
