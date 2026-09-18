@@ -10,8 +10,12 @@ export default {
     itemMoved: 'Moved to "%{path}"',
     movingFiles: 'Moving %{done} of %{total} files…',
     movingItems: 'Moving %{done} of %{total} items…',
+    movingItemFiles:
+      'Moving item %{item} of %{items}: %{done} of %{total} files…',
     deletingItems: 'Deleting %{done} of %{total} items…',
     deletingFiles: 'Deleting %{done} of %{total} files…',
+    deletingItemFiles:
+      'Deleting item %{item} of %{items}: %{done} of %{total} files…',
     deleteItem: 'Delete',
     deleteConfirm: 'Delete "%{name}"?',
     deleteFolderHint: 'The folder and everything in it will be deleted.',

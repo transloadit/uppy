@@ -73,6 +73,8 @@ en_US.strings = {
     '1': 'Delete %{smart_count} items?',
   },
   deletingFiles: 'Deleting %{done} of %{total} files…',
+  deletingItemFiles:
+    'Deleting item %{item} of %{items}: %{done} of %{total} files…',
   deletingItems: 'Deleting %{done} of %{total} items…',
   detailModified: 'Modified',
   detailSize: 'Size',
@@ -165,6 +167,8 @@ en_US.strings = {
   moveSelected: 'Move…',
   moveSelectedPrompt: 'Folder to move the selection into (empty for the root):',
   movingFiles: 'Moving %{done} of %{total} files…',
+  movingItemFiles:
+    'Moving item %{item} of %{items}: %{done} of %{total} files…',
   movingItems: 'Moving %{done} of %{total} items…',
   myDevice: 'My Device',
   newFolder: 'New folder',

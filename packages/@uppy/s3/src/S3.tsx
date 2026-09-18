@@ -664,10 +664,11 @@ export default class S3<M extends Meta, B extends Body>
           const keys = items.map((item) => S3.keyOf(item.id))
           await view.runWithProgress(async ({ signal, setProgress }) => {
             for (const [index, key] of keys.entries()) {
+              const item = { item: index + 1, items: keys.length }
               setProgress(
                 this.i18n('movingItems', {
-                  done: index + 1,
-                  total: keys.length,
+                  done: item.item,
+                  total: item.items,
                 }),
               )
               const { name, isFolder } = splitKey(key)
@@ -675,7 +676,14 @@ export default class S3<M extends Meta, B extends Body>
                 key,
                 `${folder}${name}${isFolder ? '/' : ''}`,
                 isFolder,
-                { signal },
+                {
+                  signal,
+                  // A folder reports its files as it goes.
+                  onProgress: (done, total) =>
+                    setProgress(
+                      this.i18n('movingItemFiles', { ...item, done, total }),
+                    ),
+                },
               )
             }
           })
@@ -697,13 +705,21 @@ export default class S3<M extends Meta, B extends Body>
           if (!confirmed) return undefined
           await view.runWithProgress(async ({ signal, setProgress }) => {
             for (const [index, item] of items.entries()) {
+              const count = { item: index + 1, items: items.length }
               setProgress(
                 this.i18n('deletingItems', {
-                  done: index + 1,
-                  total: items.length,
+                  done: count.item,
+                  total: count.items,
                 }),
               )
-              await this.#delete(S3.keyOf(item.id), { signal })
+              await this.#delete(S3.keyOf(item.id), {
+                signal,
+                // A folder reports its files as it goes.
+                onProgress: (done, total) =>
+                  setProgress(
+                    this.i18n('deletingItemFiles', { ...count, done, total }),
+                  ),
+              })
             }
           })
           return this.i18n('itemsDeleted', { smart_count: items.length })
