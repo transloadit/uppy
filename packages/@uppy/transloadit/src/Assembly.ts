@@ -106,6 +106,15 @@ class TransloaditAssembly extends Emitter {
       }
 
       if (e.data === 'assembly_uploading_finished') {
+        // SSE only sends this marker, never a new envelope, so advance `ok`
+        // here. A full refetch may already be past EXECUTING; never go back.
+        if (!isStatus(this.status.ok, ASSEMBLY_EXECUTING)) {
+          // `AssemblyStatus` is a union; overriding `ok` on a spread needs a cast.
+          this.status = {
+            ...this.status,
+            ok: ASSEMBLY_EXECUTING,
+          } as AssemblyResponse
+        }
         this.emit('executing')
       }
 

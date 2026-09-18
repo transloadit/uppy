@@ -1,5 +1,5 @@
 import { RateLimitedQueue } from '@uppy/core/utils'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Assembly from '../lib/Assembly.js'
 
 describe('Transloadit/Assembly', () => {
@@ -186,6 +186,64 @@ describe('Transloadit/Assembly', () => {
       expect(result[6]).toEqual(['result', 'step_one', { id: 'thumb4' }])
       expect(result[7]).toEqual(['result', 'step_two', { id: 'transcript' }])
       expect(result[8]).toEqual(['finished'])
+    })
+  })
+
+  describe('live status', () => {
+    class FakeEventSource {
+      static last
+
+      #listeners = {}
+
+      constructor() {
+        FakeEventSource.last = this
+      }
+
+      addEventListener(type, fn) {
+        this.#listeners[type] ??= []
+        this.#listeners[type].push(fn)
+      }
+
+      dispatch(type, data) {
+        for (const fn of this.#listeners[type] ?? []) fn({ data })
+      }
+
+      close() {}
+    }
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    function connect(status) {
+      vi.stubGlobal('EventSource', FakeEventSource)
+      const assembly = new Assembly(
+        { assembly_id: 'a', websocket_url: 'ws://localhost', ...status },
+        new RateLimitedQueue(),
+      )
+      assembly.connect()
+      return assembly
+    }
+
+    it('advances ok to ASSEMBLY_EXECUTING when SSE says uploading finished', () => {
+      const assembly = connect({ ok: 'ASSEMBLY_UPLOADING' })
+      const seen = []
+      assembly.on('status', (status) => seen.push(status.ok))
+
+      FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+      assembly.close()
+
+      expect(assembly.status.ok).toBe('ASSEMBLY_EXECUTING')
+      expect(seen).toEqual(['ASSEMBLY_EXECUTING'])
+    })
+
+    it('never moves a completed assembly back to executing', () => {
+      const assembly = connect({ ok: 'ASSEMBLY_COMPLETED' })
+
+      FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+      assembly.close()
+
+      expect(assembly.status.ok).toBe('ASSEMBLY_COMPLETED')
     })
   })
 })
