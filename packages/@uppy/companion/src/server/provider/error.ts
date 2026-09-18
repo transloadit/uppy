@@ -23,13 +23,25 @@ export class ProviderApiError extends Error {
 }
 
 /**
+ * What a `ProviderUserError` sends to the browser (as a 400 response body).
+ *
+ * `message` is passed through the client's `i18n`: a key of the `@uppy/core`
+ * locale is translated, anything else is shown verbatim (the translator falls
+ * back to the string itself). Messages Companion owns should be locale keys;
+ * text forwarded from a provider's own API cannot be, and stays verbatim.
+ * Existing English messages stay as they are: older Uppy versions show them
+ * verbatim, and would show a new key as a bare key.
+ */
+export type ProviderUserErrorBody = { message: string }
+
+/**
  * Error thrown when the provider response should be forwarded to the client
  * as-is (e.g. user-facing validation errors).
  */
 export class ProviderUserError extends ProviderApiError {
-  json: unknown // arbitrary JSON.stringify-able object that will be passed to the client
+  json: ProviderUserErrorBody
 
-  constructor(json: unknown) {
+  constructor(json: ProviderUserErrorBody) {
     super('User error', undefined)
     this.name = 'ProviderUserError'
     this.json = json
@@ -93,11 +105,7 @@ function errorToResponse(
   }
 
   if (name === 'ProviderUserError') {
-    const json = err['json'] as Record<string, unknown>
-    return {
-      code: 400,
-      json,
-    }
+    return { code: 400, json: err['json'] as ProviderUserErrorBody }
   }
 
   if (name === 'ProviderApiError') {

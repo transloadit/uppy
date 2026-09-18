@@ -3,7 +3,7 @@ import got from 'got'
 import { z } from 'zod'
 import type { S3ClientOptions } from '../../../schemas/companion.js'
 import logger from '../../logger.js'
-import { ProviderApiError, ProviderUserError } from '../error.js'
+import { ProviderApiError } from '../error.js'
 import {
   type NativeStorage,
   type ParsedTransloaditStorageOptions,
@@ -15,6 +15,7 @@ import S3Provider, {
   type ResolvedConfig,
   type S3Session,
 } from './index.js'
+import { s3UserError } from './messages.js'
 
 const moveResponseSchema = z.object({
   ok: z.literal('DAM_ENTRY_MOVED'),
@@ -104,7 +105,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
         `native Storage move refused: ${response.statusCode}`,
         'provider.transloadit-storage.move',
       )
-      throw new ProviderUserError({ message: 's3RequestFailed' })
+      throw s3UserError('s3RequestFailed')
     }
     const moved = moveResponseSchema.safeParse(response.body)
     if (!moved.success || moved.data.path !== destination) {

@@ -145,7 +145,29 @@ const json = (body: unknown, status = 200): MockS3Response => ({
  * Companion reports user-facing failures as locale keys (`@uppy/core`'s
  * `s3*` strings), never as English sentences.
  */
-const userError = (localeKey: string): MockS3Response =>
+/**
+ * The locale keys Companion's S3 provider answers with.
+ * TODO: import `S3UserMessageKey` from `@uppy/companion` instead of mirroring
+ * it, once the monorepo's tsconfig lets client packages use its types.
+ */
+type S3CompanionMessageKey =
+  | 's3AlreadyExists'
+  | 's3Conflict'
+  | 's3DestinationMustBeFile'
+  | 's3FileTooLargeToMove'
+  | 's3FolderIntoItself'
+  | 's3FolderMoveNotSupported'
+  | 's3FolderNotEmpty'
+  | 's3InvalidGrant'
+  | 's3InvalidName'
+  | 's3NotConfigured'
+  | 's3NotFound'
+  | 's3OutsideAllowedFolder'
+  | 's3ReadOnlySession'
+  | 's3RequestFailed'
+  | 's3SelectedInOtherSession'
+
+const userError = (localeKey: S3CompanionMessageKey): MockS3Response =>
   json({ message: localeKey }, 400)
 
 export function createMockS3Companion(

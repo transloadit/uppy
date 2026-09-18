@@ -24,11 +24,7 @@ import { isRecord } from '../../helpers/type-guards.js'
 import { s3WriteParams } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import getS3Client from '../../s3-client.js'
-import {
-  ProviderApiError,
-  ProviderAuthError,
-  ProviderUserError,
-} from '../error.js'
+import { ProviderApiError, ProviderAuthError } from '../error.js'
 import Provider, {
   type CompanionLike,
   type ProviderListItem,
@@ -45,6 +41,7 @@ import {
   GrantExpiredError,
   verifyStorageGrant,
 } from './grant.js'
+import { s3UserError } from './messages.js'
 
 /**
  * Session of the S3 provider, opened through "simple auth" (see `config.ts`).
@@ -291,7 +288,7 @@ export default class S3Provider<
     }
     if (requireWrite && !write) {
       // A user error, not an auth error: a fresh session would not help.
-      throw new ProviderUserError({ message: 's3ReadOnlySession' })
+      throw s3UserError('s3ReadOnlySession')
     }
     for (const key of keys) this.#assertInsidePrefix(prefix, key)
     return {
@@ -328,7 +325,7 @@ export default class S3Provider<
         : {}
     const grant = form['grant']
     if (typeof grant !== 'string' || grant.length === 0) {
-      throw new ProviderUserError({ message: 's3InvalidGrant' })
+      throw s3UserError('s3InvalidGrant')
     }
     try {
       const claims = verifyStorageGrant(grant, config.keys)
@@ -343,7 +340,7 @@ export default class S3Provider<
       // Expired grants are an auth error so the client asks for a new one.
       if (err instanceof GrantExpiredError) throw new ProviderAuthError()
       logger.debug(err, 'provider.s3.grant.invalid')
-      throw new ProviderUserError({ message: 's3InvalidGrant' })
+      throw s3UserError('s3InvalidGrant')
     }
   }
 
@@ -459,7 +456,7 @@ export default class S3Provider<
       // A queued file outlives the browser session that selected it. Its key
       // must never be read from a bucket the user connected to later.
       if (!isRecord(query) || query['bucket'] !== bucket) {
-        throw new ProviderUserError({ message: 's3SelectedInOtherSession' })
+        throw s3UserError('s3SelectedInOtherSession')
       }
       const res = await client.send(
         new GetObjectCommand({ Bucket: bucket, Key: id }),
@@ -475,7 +472,7 @@ export default class S3Provider<
     if (!key.startsWith(prefix) || hasUnsafeSegment(key)) {
       // A user error (not an auth error) so the Dashboard shows the message
       // instead of bouncing the user to the connect screen.
-      throw new ProviderUserError({ message: 's3OutsideAllowedFolder' })
+      throw s3UserError('s3OutsideAllowedFolder')
     }
   }
 
@@ -532,7 +529,7 @@ export default class S3Provider<
         id.endsWith('/') &&
         (await this.#folderHasEntries(client, bucket, id))
       ) {
-        throw new ProviderUserError({ message: 's3FolderNotEmpty' })
+        throw s3UserError('s3FolderNotEmpty')
       }
       await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
     })
@@ -561,14 +558,14 @@ export default class S3Provider<
       })
       const isFolder = id.endsWith('/')
       if (isFolder && !this.supportsMoveFolder) {
-        throw new ProviderUserError({ message: 's3FolderMoveNotSupported' })
+        throw s3UserError('s3FolderMoveNotSupported')
       }
       if (!isFolder && destination.endsWith('/')) {
-        throw new ProviderUserError({ message: 's3DestinationMustBeFile' })
+        throw s3UserError('s3DestinationMustBeFile')
       }
       const target = isFolder ? ensureTrailingSlash(destination) : destination
       if (isFolder && target.startsWith(id)) {
-        throw new ProviderUserError({ message: 's3FolderIntoItself' })
+        throw s3UserError('s3FolderIntoItself')
       }
       if (target === id) return itemRef(id)
       return this.move(session, id, target)
@@ -590,10 +587,10 @@ export default class S3Provider<
       this.#head(client, bucket, destination),
     ])
     if (source == null) {
-      throw new ProviderUserError({ message: 's3NotFound' })
+      throw s3UserError('s3NotFound')
     }
     if ((source.ContentLength ?? 0) > MAX_COPY_BYTES) {
-      throw new ProviderUserError({ message: 's3FileTooLargeToMove' })
+      throw s3UserError('s3FileTooLargeToMove')
     }
     if (existing != null) {
       // Same size and ETag: the copy already happened (an earlier attempt
@@ -609,7 +606,7 @@ export default class S3Provider<
         existing.ETag === source.ETag &&
         isContentEtag(existing.ETag)
       if (!sameObject) {
-        throw new ProviderUserError({ message: 's3AlreadyExists' })
+        throw s3UserError('s3AlreadyExists')
       }
     } else {
       await client.send(
@@ -670,7 +667,7 @@ export default class S3Provider<
           cleanName.includes('/') ||
           hasUnsafeSegment(cleanName)
         ) {
-          throw new ProviderUserError({ message: 's3InvalidName' })
+          throw s3UserError('s3InvalidName')
         }
         const key = `${parentFolder ?? prefix}${cleanName}/`
         // Without a delimiter one entry is enough to tell: it is either the
@@ -683,7 +680,7 @@ export default class S3Provider<
           }),
         )
         if ((taken.Contents ?? []).length > 0) {
-          throw new ProviderUserError({ message: 's3AlreadyExists' })
+          throw s3UserError('s3AlreadyExists')
         }
         await client.send(
           new PutObjectCommand({
@@ -717,12 +714,12 @@ export default class S3Provider<
   protected override mapProviderError(err: unknown): unknown {
     if (err instanceof ProviderApiError) return err
     if (err instanceof S3ConfigError) {
-      return new ProviderUserError({ message: 's3NotConfigured' })
+      return s3UserError('s3NotConfigured')
     }
-    if (isNotFound(err)) return new ProviderUserError({ message: 's3NotFound' })
+    if (isNotFound(err)) return s3UserError('s3NotFound')
     if (isPreconditionFailed(err)) {
-      return new ProviderUserError({ message: 's3Conflict' })
+      return s3UserError('s3Conflict')
     }
-    return new ProviderUserError({ message: 's3RequestFailed' })
+    return s3UserError('s3RequestFailed')
   }
 }
