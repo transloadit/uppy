@@ -149,20 +149,6 @@ const itemRef = (key: string): ItemRef => ({
 })
 
 /**
- * S3 clients per Companion `app()`, and within an app per provider and
- * bucket. A client is cheap to build but holds what is not: its resolved
- * credentials (a metadata or STS round trip when Companion runs on a role)
- * and its keep-alive connections. The configuration itself is re-derived on
- * every request; that is a small parse.
- *
- * Keyed on the app's options object because that is the one per-app value a
- * provider sees: `req.companion` is rebuilt for every request. The
- * trade-off: an embedder that swaps credentials in the options object at
- * runtime keeps the clients built with the old ones.
- */
-const clientsByApp = new WeakMap<object, Map<string, S3Client>>()
-
-/**
  * Adapter for browsing and managing S3-compatible object storage (AWS S3,
  * Cloudflare R2, MinIO, ...). Configured under `providerOptions.s3`;
  * credentials left unset there fall back to the `s3` upload block.
@@ -258,23 +244,24 @@ export default class S3Provider<
     }
   }
 
+  /**
+   * The client for `bucket`, built on first use and kept for the app's
+   * lifetime in `companion.s3ProviderClients`: a client is cheap to build but
+   * holds what is not, its resolved credentials (a metadata or STS round trip
+   * when Companion runs on a role) and its keep-alive connections.
+   */
   #client(
     companion: CompanionLike,
     config: ResolvedConfig<P>,
     bucket: string,
   ): S3Client {
-    let appClients = clientsByApp.get(companion.options)
-    if (appClients == null) {
-      appClients = new Map()
-      clientsByApp.set(companion.options, appClients)
-    }
     const { cacheKey, clientOptions } = this.clientOptionsFor(config, bucket)
     // Provider names and bucket names cannot contain `/`, so the two cannot collide.
     const key = `${this.optionsKey}/${cacheKey}`
-    let client = appClients.get(key)
+    let client = companion.s3ProviderClients.get(key)
     if (client == null) {
       client = this.getClient(clientOptions)
-      appClients.set(key, client)
+      companion.s3ProviderClients.set(key, client)
     }
     return client
   }

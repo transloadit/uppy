@@ -32,9 +32,8 @@ const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
 
 type S3Cfg = Record<string, unknown>
 /**
- * Companion options with the provider configured under `providerOptions.s3`.
- * A fresh object every call: the provider caches its S3 client per
- * options object, so sharing one would leak a client between tests.
+ * Companion context with the provider configured under `providerOptions.s3`.
+ * A fresh one every call, with its own client map, as every app has.
  */
 const companionWith = (s3Provider?: S3Cfg, s3Upload?: S3Cfg) =>
   ({
@@ -42,6 +41,7 @@ const companionWith = (s3Provider?: S3Cfg, s3Upload?: S3Cfg) =>
       s3: s3Upload,
       providerOptions: s3Provider ? { s3: s3Provider } : {},
     },
+    s3ProviderClients: new Map(),
   }) as never
 
 const mintGrant = (overrides: GrantClaims = {}, secret = GRANT_SECRET) =>
@@ -731,6 +731,7 @@ describe('S3 provider', () => {
     }
     const nativeCompanion = (apiEndpoint: string) =>
       ({
+        s3ProviderClients: new Map(),
         options: {
           providerOptions: {
             'transloadit-storage': {

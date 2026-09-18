@@ -36,6 +36,8 @@ export type CompanionContext = {
   buildURL?: BuildUrl
   s3Client?: S3Client
   s3ClientCreatePresignedPost?: S3Client
+  /** The S3 provider's clients, one per bucket it has served, for the app's lifetime. */
+  s3ProviderClients: Map<string, S3Client>
   getProviderCredentials?: () => Promise<CredentialsFetchResponse | null>
 }
 

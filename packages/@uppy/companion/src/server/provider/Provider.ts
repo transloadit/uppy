@@ -15,7 +15,7 @@ export interface Query {
 
 export type CompanionLike = Pick<
   CompanionContext,
-  'getProviderCredentials' | 'options'
+  'getProviderCredentials' | 'options' | 's3ProviderClients'
 >
 
 export interface ProviderListItem {

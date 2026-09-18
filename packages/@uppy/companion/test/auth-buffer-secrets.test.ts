@@ -42,6 +42,7 @@ function createOAuthApp(options: OAuthReqOptions) {
   app.use((req, _res, next) => {
     req.companion = {
       options: companionOptions,
+      s3ProviderClients: new Map(),
       providerClass: DriveProvider,
       authToken: req.get('uppy-auth-token') ?? undefined,
     }
