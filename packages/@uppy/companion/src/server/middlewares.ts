@@ -294,7 +294,8 @@ export const getCompanionMiddleware = (
   options: CompanionRuntimeOptions,
 ): RequestHandler => {
   // Built once per app, not per request: an S3 client holds its resolved
-  // credentials and keep-alive connections, and the options never change.
+  // credentials and keep-alive connections. The trade-off: an embedder that
+  // swaps credentials in the options object at runtime keeps these clients.
   const s3Client = getS3Client(options, false)
   const s3ClientCreatePresignedPost = getS3Client(options, true)
   // The S3 *provider* builds its clients lazily (per bucket, from grants) and

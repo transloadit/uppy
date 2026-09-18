@@ -118,7 +118,7 @@ describe('S3 provider', () => {
       })
     })
 
-    test('the client is built once per companion options object', async () => {
+    test('the client is built once per companion app', async () => {
       const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
       const companion = bucketCompanion()
       await provider.list({ companion, providerUserSession: bucketSession })
@@ -130,7 +130,7 @@ describe('S3 provider', () => {
       expect(vi.mocked(provider.getClient)).toHaveBeenCalledTimes(1)
     })
 
-    test('a second companion options object gets its own client', async () => {
+    test('a second companion app gets its own client', async () => {
       const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
       for (const companion of [bucketCompanion(), bucketCompanion()]) {
         await provider.list({ companion, providerUserSession: bucketSession })
