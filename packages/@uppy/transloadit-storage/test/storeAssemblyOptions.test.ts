@@ -63,12 +63,13 @@ describe('createStoreAssemblyOptions', () => {
       rootPrefix: '',
       getPluginState: () => ({ authenticated: false }),
       openFolderPath: async () => false,
+      i18n: (key: string) => `translated ${key}`,
     }
     const build = createStoreAssemblyOptions(
       { getPlugin: () => storage } as unknown as Uppy<Meta, Body>,
       { signAssembly },
     )
-    await expect(build()).rejects.toThrow('authenticate')
+    await expect(build()).rejects.toThrow('translated storageNotConnected')
     expect(signAssembly).not.toHaveBeenCalled()
   })
 
