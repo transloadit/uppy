@@ -10,6 +10,7 @@
  */
 import jwt, { type Algorithm } from 'jsonwebtoken'
 import { z } from 'zod'
+import type { S3ProviderOptions } from '../../../schemas/companion.js'
 
 /** A verified grant, reduced to what the provider acts on. */
 export type StorageGrant = {
@@ -21,13 +22,15 @@ export type StorageGrant = {
   exp: number
 }
 
-/** The keys Companion accepts grants from. Several allow key rotation. */
-export type GrantKeys = {
-  /** HS256 secret(s); several for rotation. */
-  secrets?: string | string[] | undefined
-  /** PEM public key(s) for ES256/384/512, RS256/384/512, PS256/384/512. */
-  publicKeys?: string | string[] | undefined
-}
+/**
+ * The keys Companion accepts grants from, as they appear in the provider's
+ * options: HS256 secret(s) and/or PEM public keys (ES/RS/PS). Several of each
+ * allow rotation.
+ */
+export type GrantKeys = Pick<
+  S3ProviderOptions,
+  'grantSecret' | 'grantPublicKey'
+>
 
 /** The grant verified, but its `exp` has passed. */
 export class GrantExpiredError extends Error {
@@ -86,7 +89,8 @@ export const toKeyList = (keys: string | string[] | undefined): string[] => {
 /** Whether Companion is configured to accept grants at all. */
 export function hasGrantKeys(keys: GrantKeys): boolean {
   return (
-    toKeyList(keys.secrets).length > 0 || toKeyList(keys.publicKeys).length > 0
+    toKeyList(keys.grantSecret).length > 0 ||
+    toKeyList(keys.grantPublicKey).length > 0
   )
 }
 
@@ -143,11 +147,11 @@ export function verifyStorageGrant(
   now?: Date,
 ): StorageGrant {
   const candidates: KeyCandidate[] = [
-    ...toKeyList(keys.secrets).map((key) => ({
+    ...toKeyList(keys.grantSecret).map((key) => ({
       key,
       algorithms: SECRET_ALGORITHMS,
     })),
-    ...toKeyList(keys.publicKeys).map((key) => ({
+    ...toKeyList(keys.grantPublicKey).map((key) => ({
       key,
       algorithms: PUBLIC_KEY_ALGORITHMS,
     })),

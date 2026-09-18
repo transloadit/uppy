@@ -2,14 +2,15 @@ import fs from 'node:fs'
 import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
 import z from 'zod'
-import type {
-  CompanionInitOptions,
-  S3ProviderOptions,
-  TransloaditStorageProviderOptions,
-} from '../schemas/companion.js'
+import type { CompanionInitOptions } from '../schemas/companion.js'
+import { isRecord } from '../server/helpers/type-guards.js'
 import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
-import { hasGrantKeys, toKeyList } from '../server/provider/s3/grant.js'
+import {
+  parseS3ProviderOptions,
+  parseTransloaditStorageProviderOptions,
+} from '../server/provider/s3/config.js'
+import { toKeyList } from '../server/provider/s3/grant.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
 const defaultPeriodicPingUrls: string[] = []
@@ -39,16 +40,28 @@ export const defaultOptions = {
   metrics: true,
 }
 
-/**
- * Fields of a provider's options that hold a secret. A field may hold a single
- * secret or a list of them (the S3 provider's grant signing secrets rotate),
- * so every value goes through `toKeyList`.
- */
-const SECRET_FIELDS = ['secret', 'grantSecret'] as const
+/** A field holding one secret, or a list of them (grant signing secrets rotate). */
+const SECRET_FIELDS = new Set(['secret', 'grantSecret'])
 
-type SecretFields = Partial<
-  Record<(typeof SECRET_FIELDS)[number], string | string[]>
->
+/**
+ * Every secret under `value`, at any depth (`customProviders.*.config.secret`,
+ * `workspaces.*.secret`, ...). Only plain objects are walked: a configured
+ * class instance (an SDK request handler, say) may hold cycles.
+ */
+function collectSecrets(value: unknown, into: string[]): void {
+  if (!isRecord(value)) return
+  const proto = Object.getPrototypeOf(value)
+  if (proto !== Object.prototype && proto !== null) return
+  for (const [name, child] of Object.entries(value)) {
+    if (SECRET_FIELDS.has(name)) {
+      if (typeof child === 'string' || Array.isArray(child)) {
+        into.push(...toKeyList(child as string | string[]))
+      }
+    } else {
+      collectSecrets(child, into)
+    }
+  }
+}
 
 /**
  * Returns secrets that should be masked in log messages.
@@ -57,32 +70,8 @@ export function getMaskableSecrets(
   companionOptions: CompanionInitOptions,
 ): string[] {
   const secrets: string[] = []
-  const { customProviders, providerOptions = {}, s3 } = companionOptions ?? {}
-
-  for (const providerOption of Object.values(providerOptions)) {
-    const fields = providerOption as SecretFields | undefined
-    for (const field of SECRET_FIELDS) {
-      secrets.push(...toKeyList(fields?.[field]))
-    }
-  }
-
-  if (customProviders) {
-    Object.keys(customProviders).forEach((provider) => {
-      const secret = customProviders[provider]?.config?.secret
-      if (secret != null) secrets.push(secret)
-    })
-  }
-
-  const s3Secret = s3?.['secret']
-  if (s3Secret != null) {
-    secrets.push(s3Secret)
-  }
-  for (const credentials of Object.values(
-    providerOptions['transloadit-storage']?.workspaces ?? {},
-  )) {
-    secrets.push(credentials.secret)
-  }
-
+  const { customProviders, providerOptions, s3 } = companionOptions ?? {}
+  collectSecrets({ customProviders, providerOptions, s3 }, secrets)
   return secrets
 }
 
@@ -166,100 +155,6 @@ function validateValidHosts(
   }
 }
 
-const keyList = z.union([z.string(), z.array(z.string())]).optional()
-
-/**
- * The two modes of the S3 provider are exclusive: either `bucket` (with an
- * optional `prefix`) names the one bucket everybody browses, or a grant key
- * makes each grant name its own bucket and prefix. Setting both is a mistake
- * (typically a development bucket left next to production grant keys), and
- * setting neither leaves the provider unable to serve anything; both are
- * refused at startup rather than logged.
- */
-const s3ProviderOptionsSchema = z
-  .object({
-    bucket: z.string().min(1).optional(),
-    prefix: z.string().optional(),
-    grantSecret: keyList,
-    grantPublicKey: keyList,
-  })
-  .superRefine((s3, ctx) => {
-    const hasGrantKey = hasGrantKeys({
-      secrets: s3.grantSecret,
-      publicKeys: s3.grantPublicKey,
-    })
-    if (hasGrantKey && (s3.bucket != null || s3.prefix != null)) {
-      ctx.addIssue({
-        code: 'custom',
-        path: [s3.bucket != null ? 'bucket' : 'prefix'],
-        message:
-          'cannot be combined with a grant key (`grantSecret` / `grantPublicKey`): each grant names the bucket and prefix it allows',
-      })
-    } else if (!hasGrantKey && s3.bucket == null) {
-      ctx.addIssue({
-        code: 'custom',
-        message:
-          'set either `bucket` (single-tenant) or a grant key (`grantSecret` / `grantPublicKey`, multi-tenant)',
-      })
-    }
-  })
-
-/** Native Transloadit Storage: grants only, and a key pair per Workspace. */
-const transloaditStorageProviderOptionsSchema = z
-  .object({
-    grantSecret: keyList,
-    grantPublicKey: keyList,
-    apiEndpoint: z.string().url(),
-    workspaces: z.record(
-      z.string().min(1),
-      z.object({ key: z.string().min(1), secret: z.string().min(1) }),
-    ),
-  })
-  .refine(
-    (s3) =>
-      hasGrantKeys({ secrets: s3.grantSecret, publicKeys: s3.grantPublicKey }),
-    {
-      message:
-        'set a grant key (`grantSecret` / `grantPublicKey`); native Storage takes no `bucket`',
-    },
-  )
-
-function validateS3Provider(
-  s3Provider: S3ProviderOptions | undefined | null,
-  transloaditStorage: TransloaditStorageProviderOptions | undefined | null,
-): void {
-  if (s3Provider != null) {
-    const result = s3ProviderOptionsSchema.safeParse(s3Provider)
-    if (!result.success) {
-      throw new Error(
-        `Invalid providerOptions.s3: ${z.prettifyError(result.error)}`,
-      )
-    }
-  }
-  if (transloaditStorage != null) {
-    const result =
-      transloaditStorageProviderOptionsSchema.safeParse(transloaditStorage)
-    if (!result.success) {
-      throw new Error(
-        `Invalid providerOptions['transloadit-storage']: ${z.prettifyError(result.error)}`,
-      )
-    }
-  }
-}
-
-/**
- * Fields that only ever configured *uploads*, so finding one under
- * `providerOptions.s3` means the config predates the S3 provider. `awsSse` and
- * the other credential/connection settings are shared by both, so they are not
- * listed here.
- */
-const UPLOAD_ONLY_S3_FIELDS = [
-  'getKey',
-  'conditions',
-  'expires',
-  'useAccelerateEndpoint',
-] as const
-
 /**
  * Validates that the mandatory Companion options are set.
  *
@@ -301,16 +196,12 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
       }
     })
 
-    // `providerOptions.s3` is *not* deprecated: it configures the S3 provider
-    // (browsing a bucket), which is a different feature from the top-level
-    // `s3` block (uploading to a bucket). It used to be where the upload
-    // settings lived, though, so an upload-only field there is the old config.
-    const uploadOnlyField = UPLOAD_ONLY_S3_FIELDS.find((field) =>
-      Object.hasOwn(providerOptions['s3'] ?? {}, field),
-    )
-    if (uploadOnlyField != null) {
-      throw new Error(
-        `The Provider option "providerOptions.s3.${uploadOnlyField}" is no longer supported. Please use the option "s3.${uploadOnlyField}" instead: the upload settings belong in the top-level "s3" block, while "providerOptions.s3" now configures the S3 provider.`,
+    if (providerOptions['s3'] != null) {
+      parseS3ProviderOptions(providerOptions['s3'])
+    }
+    if (providerOptions['transloadit-storage'] != null) {
+      parseTransloaditStorageProviderOptions(
+        providerOptions['transloadit-storage'],
       )
     }
   }
@@ -327,10 +218,6 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
 
   validateUploadUrls(uploadUrls)
   validateValidHosts(server.validHosts)
-  validateS3Provider(
-    providerOptions?.['s3'],
-    providerOptions?.['transloadit-storage'],
-  )
 
   const { corsOrigins } = companionOptions
   if (corsOrigins == null) {

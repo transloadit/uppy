@@ -46,23 +46,24 @@ describe('verifyStorageGrant', () => {
       SECRET,
     )
 
-    expect(verifyStorageGrant(token, { secrets: SECRET })).toEqual({
+    expect(verifyStorageGrant(token, { grantSecret: SECRET })).toEqual({
       bucket: 'my-bucket',
       prefix: 'tenant-1/',
       write: true,
       exp: expect.any(Number),
     })
     expect(
-      verifyStorageGrant(mint(claims(), SECRET), { secrets: [SECRET] }).write,
+      verifyStorageGrant(mint(claims(), SECRET), { grantSecret: [SECRET] })
+        .write,
     ).toBe(false)
   })
 
   test('verifies an ES256 grant against a PEM public key', () => {
     const token = mint(claims(), ecPrivateKey, 'ES256')
 
-    expect(verifyStorageGrant(token, { publicKeys: ecPublicKey }).bucket).toBe(
-      'my-bucket',
-    )
+    expect(
+      verifyStorageGrant(token, { grantPublicKey: ecPublicKey }).bucket,
+    ).toBe('my-bucket')
   })
 
   test('verifies an RS256 grant against a PEM public key', () => {
@@ -75,23 +76,26 @@ describe('verifyStorageGrant', () => {
     })
     const token = mint(claims(), privateKey, 'RS256')
 
-    expect(verifyStorageGrant(token, { publicKeys: [publicKey] }).bucket).toBe(
-      'my-bucket',
-    )
+    expect(
+      verifyStorageGrant(token, { grantPublicKey: [publicKey] }).bucket,
+    ).toBe('my-bucket')
   })
 
   test('accepts a grant signed with any of the rotated secrets', () => {
     const token = mint(claims(), OTHER_SECRET)
 
     expect(
-      verifyStorageGrant(token, { secrets: [SECRET, OTHER_SECRET] }).bucket,
+      verifyStorageGrant(token, { grantSecret: [SECRET, OTHER_SECRET] }).bucket,
     ).toBe('my-bucket')
   })
 
   test('tries secrets and public keys together', () => {
     const hs = mint(claims(), SECRET)
     const es = mint(claims(), ecPrivateKey, 'ES256')
-    const keys: GrantKeys = { secrets: [SECRET], publicKeys: [ecPublicKey] }
+    const keys: GrantKeys = {
+      grantSecret: [SECRET],
+      grantPublicKey: [ecPublicKey],
+    }
 
     expect(verifyStorageGrant(hs, keys).bucket).toBe('my-bucket')
     expect(verifyStorageGrant(es, keys).bucket).toBe('my-bucket')
@@ -103,7 +107,7 @@ describe('verifyStorageGrant', () => {
       JSON.stringify(claims({ bucket: 'someone-elses-bucket' })),
     )}.${signature}`
 
-    expect(() => verifyStorageGrant(forged, { secrets: SECRET })).toThrow(
+    expect(() => verifyStorageGrant(forged, { grantSecret: SECRET })).toThrow(
       InvalidGrantError,
     )
   })
@@ -112,7 +116,7 @@ describe('verifyStorageGrant', () => {
     const token = mint(claims(), 'not-configured')
 
     expect(() =>
-      verifyStorageGrant(token, { secrets: [SECRET, OTHER_SECRET] }),
+      verifyStorageGrant(token, { grantSecret: [SECRET, OTHER_SECRET] }),
     ).toThrow(InvalidGrantError)
   })
 
@@ -121,11 +125,11 @@ describe('verifyStorageGrant', () => {
       JSON.stringify({ alg: 'none', typ: 'JWT' }),
     )}.${base64url(JSON.stringify(claims()))}.`
 
-    expect(() => verifyStorageGrant(token, { secrets: SECRET })).toThrow(
+    expect(() => verifyStorageGrant(token, { grantSecret: SECRET })).toThrow(
       InvalidGrantError,
     )
     expect(() =>
-      verifyStorageGrant(token, { publicKeys: ecPublicKey }),
+      verifyStorageGrant(token, { grantPublicKey: ecPublicKey }),
     ).toThrow(InvalidGrantError)
   })
 
@@ -135,11 +139,11 @@ describe('verifyStorageGrant', () => {
     const token = mint(claims(), ecPublicKey, 'HS256')
 
     expect(() =>
-      verifyStorageGrant(token, { publicKeys: ecPublicKey }),
+      verifyStorageGrant(token, { grantPublicKey: ecPublicKey }),
     ).toThrow(InvalidGrantError)
     expect(() =>
       verifyStorageGrant(token, {
-        publicKeys: [otherEcPublicKey, ecPublicKey],
+        grantPublicKey: [otherEcPublicKey, ecPublicKey],
       }),
     ).toThrow(InvalidGrantError)
   })
@@ -147,7 +151,7 @@ describe('verifyStorageGrant', () => {
   test('rejects a grant whose scopes lack read', () => {
     const token = mint(claims({ scopes: ['write'] }), SECRET)
 
-    expect(() => verifyStorageGrant(token, { secrets: SECRET })).toThrow(
+    expect(() => verifyStorageGrant(token, { grantSecret: SECRET })).toThrow(
       InvalidGrantError,
     )
   })
@@ -163,7 +167,7 @@ describe('verifyStorageGrant', () => {
 
     for (const payload of cases) {
       expect(() =>
-        verifyStorageGrant(mintRaw(payload, SECRET), { secrets: SECRET }),
+        verifyStorageGrant(mintRaw(payload, SECRET), { grantSecret: SECRET }),
       ).toThrow(InvalidGrantError)
     }
   })
@@ -173,17 +177,20 @@ describe('verifyStorageGrant', () => {
     const token = mint(claims({ exp }), SECRET)
 
     expect(
-      verifyStorageGrant(token, { secrets: SECRET }, new Date((exp - 1) * 1000))
-        .exp,
+      verifyStorageGrant(
+        token,
+        { grantSecret: SECRET },
+        new Date((exp - 1) * 1000),
+      ).exp,
     ).toBe(exp)
     // `exp` is inclusive: at exactly `exp` the grant is already gone.
     expect(() =>
-      verifyStorageGrant(token, { secrets: SECRET }, new Date(exp * 1000)),
+      verifyStorageGrant(token, { grantSecret: SECRET }, new Date(exp * 1000)),
     ).toThrow(GrantExpiredError)
     expect(() =>
       verifyStorageGrant(
         token,
-        { secrets: SECRET },
+        { grantSecret: SECRET },
         new Date((exp + 60) * 1000),
       ),
     ).toThrow(GrantExpiredError)
@@ -192,33 +199,33 @@ describe('verifyStorageGrant', () => {
   test('an expired grant signed with an unknown secret is invalid, not expired', () => {
     const token = mint(claims({ exp: nowSeconds() - 60 }), 'not-configured')
 
-    expect(() => verifyStorageGrant(token, { secrets: SECRET })).toThrow(
+    expect(() => verifyStorageGrant(token, { grantSecret: SECRET })).toThrow(
       InvalidGrantError,
     )
-    expect(() => verifyStorageGrant(token, { secrets: SECRET })).not.toThrow(
-      GrantExpiredError,
-    )
+    expect(() =>
+      verifyStorageGrant(token, { grantSecret: SECRET }),
+    ).not.toThrow(GrantExpiredError)
   })
 
   test('reports expiry even when another configured key fails to verify', () => {
     const token = mint(claims({ exp: nowSeconds() - 60 }), OTHER_SECRET)
 
     expect(() =>
-      verifyStorageGrant(token, { secrets: [SECRET, OTHER_SECRET] }),
+      verifyStorageGrant(token, { grantSecret: [SECRET, OTHER_SECRET] }),
     ).toThrow(GrantExpiredError)
   })
 
   test('rejects garbage and throws when no key is configured', () => {
-    expect(() => verifyStorageGrant('not-a-jwt', { secrets: SECRET })).toThrow(
-      InvalidGrantError,
-    )
+    expect(() =>
+      verifyStorageGrant('not-a-jwt', { grantSecret: SECRET }),
+    ).toThrow(InvalidGrantError)
     expect(() => verifyStorageGrant(mint(claims(), SECRET), {})).toThrow(
       InvalidGrantError,
     )
     expect(() =>
       verifyStorageGrant(mint(claims(), SECRET), {
-        secrets: [],
-        publicKeys: undefined,
+        grantSecret: [],
+        grantPublicKey: undefined,
       }),
     ).toThrow(InvalidGrantError)
   })
@@ -238,15 +245,15 @@ describe('normalizeStorageGrantPrefix', () => {
 describe('hasGrantKeys', () => {
   test('is true only when a non-empty key is configured', () => {
     expect(hasGrantKeys({})).toBe(false)
-    expect(hasGrantKeys({ secrets: undefined, publicKeys: undefined })).toBe(
-      false,
-    )
-    expect(hasGrantKeys({ secrets: [] })).toBe(false)
-    expect(hasGrantKeys({ secrets: '' })).toBe(false)
-    expect(hasGrantKeys({ secrets: [''] })).toBe(false)
-    expect(hasGrantKeys({ publicKeys: '' })).toBe(false)
-    expect(hasGrantKeys({ secrets: SECRET })).toBe(true)
-    expect(hasGrantKeys({ secrets: ['', SECRET] })).toBe(true)
-    expect(hasGrantKeys({ publicKeys: ecPublicKey })).toBe(true)
+    expect(
+      hasGrantKeys({ grantSecret: undefined, grantPublicKey: undefined }),
+    ).toBe(false)
+    expect(hasGrantKeys({ grantSecret: [] })).toBe(false)
+    expect(hasGrantKeys({ grantSecret: '' })).toBe(false)
+    expect(hasGrantKeys({ grantSecret: [''] })).toBe(false)
+    expect(hasGrantKeys({ grantPublicKey: '' })).toBe(false)
+    expect(hasGrantKeys({ grantSecret: SECRET })).toBe(true)
+    expect(hasGrantKeys({ grantSecret: ['', SECRET] })).toBe(true)
+    expect(hasGrantKeys({ grantPublicKey: ecPublicKey })).toBe(true)
   })
 })

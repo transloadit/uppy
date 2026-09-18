@@ -42,6 +42,22 @@ export interface S3ConnectionOptions {
     | undefined
 }
 
+/**
+ * What the S3 client factory reads: the connection settings plus the
+ * upload-only bits it needs. A subset of the `s3` upload block, so that
+ * anything holding these settings (the S3 *provider* merges its own over the
+ * upload block's) can build a client without pretending to be a full upload
+ * configuration.
+ */
+export interface S3ClientOptions extends S3ConnectionOptions {
+  /** @deprecated Use `key`. Rejected, not read. */
+  accessKeyId?: unknown
+  /** @deprecated Use `secret`. Rejected, not read. */
+  secretAccessKey?: unknown
+  bucket?: string | GetBucketFn | undefined
+  useAccelerateEndpoint?: boolean | undefined
+}
+
 /** Attributes of the objects Companion writes: uploads, copies, folder markers. */
 export interface S3ObjectWriteOptions {
   acl?: ObjectCannedACL | undefined
@@ -170,17 +186,10 @@ export interface CompanionInitOptions {
   corsOrigins?: CorsOptions['origin'] | undefined
   periodicPingStaticPayload?: unknown
   /** Uploads to S3 (`@uppy/aws-s3`). The S3 *provider* is `providerOptions.s3`. */
-  s3?: S3ConnectionOptions &
+  s3?: S3ClientOptions &
     S3ObjectWriteOptions & {
-      /** @deprecated */
-      accessKeyId?: unknown
-      /** @deprecated */
-      secretAccessKey?: unknown
-
-      bucket?: string | GetBucketFn | undefined
       getKey?: GetKeyFn | undefined
       conditions?: PresignedPostOptions['Conditions'] | undefined
-      useAccelerateEndpoint?: boolean
       expires: number
     }
   maxFilenameLength?: number | undefined

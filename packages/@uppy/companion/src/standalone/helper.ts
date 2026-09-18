@@ -9,6 +9,7 @@ import type {
 } from '../schemas/index.js'
 import * as utils from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
+import { toKeyList } from '../server/provider/s3/grant.js'
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
@@ -39,18 +40,13 @@ const hasProtocol = (url: string): boolean => {
 const companionProtocol = process.env['COMPANION_PROTOCOL'] || 'http'
 
 /**
- * Splits a comma-separated list of storage grant keys into the list the S3
- * provider takes, so that a new key can be rolled out while grants signed with
- * the previous one still verify. Unset, or set to nothing but separators,
- * means no key at all.
+ * A comma-separated list of storage grant keys, so that a new key can be
+ * rolled out while grants signed with the previous one still verify.
  */
-const parseGrantKeys = (value: string | undefined): string[] | undefined => {
-  const keys = (value ?? '')
-    .split(',')
-    .map((key) => key.trim())
-    .filter(Boolean)
-  return keys.length === 0 ? undefined : keys
-}
+const parseGrantKeys = (value: string | undefined): string[] | undefined =>
+  value === undefined
+    ? undefined
+    : toKeyList(value.split(',').map((key) => key.trim()))
 
 function getCorsOrigins() {
   if (process.env['COMPANION_CLIENT_ORIGINS']) {

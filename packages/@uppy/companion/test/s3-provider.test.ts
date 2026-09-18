@@ -14,9 +14,8 @@ import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
-import S3Provider, {
-  TransloaditStorageProvider,
-} from '../src/server/provider/s3/index.js'
+import S3Provider from '../src/server/provider/s3/index.js'
+import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
 import {
   claims,
   GRANT_SECRET,
@@ -221,14 +220,14 @@ describe('S3 provider', () => {
       ).toMatchObject({ bucket: 'b' })
     })
 
-    test('a grant key wins over a bucket if both slip past startup validation', async () => {
+    test('refuses a bucket next to a grant key even without startup validation', async () => {
       const provider = makeProvider()
       await expect(
         provider.simpleAuth({
           requestBody: { form: {} },
           companion: companionWith({ bucket: 'b', grantSecret: GRANT_SECRET }),
         }),
-      ).rejects.toEqual(userError('s3InvalidGrant'))
+      ).rejects.toEqual(userError('s3NotConfigured'))
     })
 
     test('read-only sessions may list but not change anything', async () => {

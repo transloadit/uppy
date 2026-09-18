@@ -37,6 +37,8 @@ export interface ProviderListResponse {
   canWrite?: boolean
   /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
   movesFolders?: boolean
+  /** Root the session is confined to, which paths the user types are relative to. */
+  prefix?: string
   nextPagePath?: string | null | undefined
   username?: string | null | undefined
 }

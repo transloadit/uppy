@@ -23,7 +23,10 @@ function mutation<S extends z.ZodType>(
   schema: S,
   run: (
     provider: Provider,
-    companion: CompanionContext,
+    context: {
+      companion: CompanionContext
+      providerUserSession: CompanionContext['providerUserSession']
+    },
     input: z.infer<S>,
   ) => Promise<unknown>,
 ) {
@@ -43,7 +46,12 @@ function mutation<S extends z.ZodType>(
       return
     }
     try {
-      res.json(await run(provider, req.companion, parsed.data))
+      const { companion } = req
+      const context = {
+        companion,
+        providerUserSession: companion.providerUserSession,
+      }
+      res.json(await run(provider, context, parsed.data))
     } catch (err) {
       if (respondWithError(err, res)) return
       next(err)
@@ -54,34 +62,20 @@ function mutation<S extends z.ZodType>(
 const operations = {
   delete: mutation(
     z.object({ id: requiredString }),
-    async (provider, companion, { id }) => {
-      await provider.deleteItem({
-        companion,
-        id,
-        providerUserSession: companion.providerUserSession,
-      })
+    async (provider, context, { id }) => {
+      await provider.deleteItem({ ...context, id })
       return { ok: true }
     },
   ),
   move: mutation(
     z.object({ id: requiredString, destination: requiredString }),
-    (provider, companion, { id, destination }) =>
-      provider.moveItem({
-        companion,
-        id,
-        destination,
-        providerUserSession: companion.providerUserSession,
-      }),
+    (provider, context, { id, destination }) =>
+      provider.moveItem({ ...context, id, destination }),
   ),
   'create-folder': mutation(
     z.object({ name: requiredString, parentId: parentIdField }),
-    (provider, companion, { name, parentId }) =>
-      provider.createFolder({
-        companion,
-        parentId,
-        name,
-        providerUserSession: companion.providerUserSession,
-      }),
+    (provider, context, { name, parentId }) =>
+      provider.createFolder({ ...context, parentId, name }),
   ),
 }
 

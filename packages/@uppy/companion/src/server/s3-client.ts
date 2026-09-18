@@ -1,21 +1,7 @@
 import { S3Client, type S3ClientConfig } from '@aws-sdk/client-s3'
-import type { GetBucketFn, S3ConnectionOptions } from '../schemas/companion.js'
+import type { S3ClientOptions } from '../schemas/companion.js'
 
-/**
- * The `s3` options this module reads: the shared connection settings plus the
- * upload-only bits it needs. A subset of the `s3` upload block, so that
- * anything holding these settings (the S3 *provider* merges its own over the
- * upload block's) can build a client without pretending to be a full upload
- * configuration.
- */
-export interface S3ClientOptions extends S3ConnectionOptions {
-  /** @deprecated Use `key`. Rejected, not read. */
-  accessKeyId?: unknown
-  /** @deprecated Use `secret`. Rejected, not read. */
-  secretAccessKey?: unknown
-  bucket?: string | GetBucketFn | undefined
-  useAccelerateEndpoint?: boolean | undefined
-}
+export type { S3ClientOptions }
 
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
