@@ -258,6 +258,10 @@ export function createMockS3Companion(
       }
       return json({ uppyAuthToken: token })
     }
+    if (method === 'GET' && operation === 'logout') {
+      session = null
+      return json({ ok: true, revoked: true })
+    }
     if (request.token !== token || expired()) {
       return { status: 401, body: null }
     }

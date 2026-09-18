@@ -271,7 +271,6 @@ export default () => {
       target: Dashboard,
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
-      workspace: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE,
       // The harness signs in the browser with the dev secret; a real app signs
       // on its server (this callback is the only thing the plugin needs).
       getSmartCdnUrl: async (key) => {

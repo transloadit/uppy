@@ -31,6 +31,24 @@ export const companionErrorLocaleKeys = {
 
 export type CompanionErrorCode = keyof typeof companionErrorLocaleKeys
 
+/**
+ * What to show the user for a `UserFacingApiError`: the code's locale string
+ * when this version knows the code, the verbatim `message` otherwise, and the
+ * generic Companion failure when there is only a code it does not know
+ * (the request client puts the code in `message` then).
+ */
+export function describeCompanionError(
+  i18n: (key: string) => string,
+  error: { code?: string | undefined; message: string },
+): string {
+  const localeKey = error.code
+    ? localeKeyForCompanionError(error.code)
+    : undefined
+  if (localeKey) return i18n(localeKey)
+  if (error.code && error.message === error.code) return i18n('companionError')
+  return error.message
+}
+
 /** The locale key for `code`, or `undefined` for a code this version does not know. */
 export function localeKeyForCompanionError(
   code: string,

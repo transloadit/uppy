@@ -208,8 +208,9 @@ async function deleteEmptiedFolders(
 /**
  * Moves the folder at `source` to `target`: creates the destination folders,
  * moves every file under it (a few at a time), then deletes the emptied source
- * folders. Not atomic — a failure part-way leaves the rest behind, and running
- * it again picks up where it stopped.
+ * folders. A `target` that already exists is refused (as a native folder move
+ * would), never merged into. Not atomic — a failure part-way leaves files in
+ * both folders, to be moved by hand.
  */
 export default async function moveFolder(
   options: MoveFolderOptions,
@@ -238,21 +239,12 @@ export default async function moveFolder(
     }
     return `${target}${key.slice(source.length)}`
   }
+  // Companion refuses a folder that exists, so a taken `target` stops the
+  // move here, before anything is touched.
   for (const folder of [target, ...subFolders.map(destinationOf)]) {
     throwIfAborted(signal)
     const { parent, name } = splitFolderKey(folder)
-    try {
-      await provider.createFolder(parent === '' ? null : parent, name, {
-        signal,
-      })
-    } catch (err) {
-      // An earlier, interrupted run may have created it already.
-      if (
-        (err as { code?: string } | undefined)?.code !== 'S3_ALREADY_EXISTS'
-      ) {
-        throw err
-      }
-    }
+    await provider.createFolder(parent === '' ? null : parent, name, { signal })
   }
 
   // 3. Move the files, a few at a time.

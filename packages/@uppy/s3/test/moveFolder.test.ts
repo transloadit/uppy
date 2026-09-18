@@ -158,23 +158,6 @@ describe('moveFolder', () => {
     expect(provider.tree['moved/sub/']).toEqual(['moved/sub/d.txt'])
   })
 
-  it('treats an existing destination folder as created, so it can be re-run', async () => {
-    const provider = createFakeProvider({
-      ...tree(),
-      '': ['docs/', 'archive/'],
-      'archive/': [],
-    })
-
-    await expect(
-      moveFolder({ provider, source: 'docs/', target: 'archive/' }),
-    ).resolves.toBeUndefined()
-    expect(provider.tree['archive/']).toEqual([
-      'archive/images/',
-      'archive/hello.txt',
-    ])
-    expect(provider.tree['docs/']).toBeUndefined()
-  })
-
   it('moves files with bounded concurrency and reports progress', async () => {
     const files = Array.from({ length: 9 }, (_, i) => `docs/file-${i}.txt`)
     const provider = createFakeProvider({ '': ['docs/'], 'docs/': files })
@@ -213,21 +196,34 @@ describe('moveFolder', () => {
 })
 
 describe('moveFolder guards', () => {
-  it('ignores listed entries that are not inside the folder being walked', async () => {
+  it('refuses a target that already exists instead of merging into it', async () => {
     const provider = createFakeProvider({
       '': ['docs/', 'archive/'],
-      'docs/': ['docs/a.txt'],
-      'archive/': ['archive/stray.txt'],
+      'docs/': ['docs/hello.txt'],
+      'archive/': ['archive/old.txt'],
     })
-    // A listing that misreports entries from elsewhere (the destination, the
+    await expect(
+      moveFolder({ provider, source: 'docs/', target: 'archive/' }),
+    ).rejects.toMatchObject({ code: 'S3_ALREADY_EXISTS' })
+    expect(provider.tree['docs/']).toEqual(['docs/hello.txt'])
+    expect(provider.tree['archive/']).toEqual(['archive/old.txt'])
+  })
+
+  it('ignores listed entries that are not inside the folder being walked', async () => {
+    const provider = createFakeProvider({
+      '': ['docs/', 'other/'],
+      'docs/': ['docs/a.txt'],
+      'other/': ['other/stray.txt'],
+    })
+    // A listing that misreports entries from elsewhere (another folder, the
     // root, the folder itself) must not steer the walk.
     const list = provider.list.bind(provider)
     provider.list = async (directory, options) => {
       const page = await list(directory, options)
       if (directory === 'docs%2F') {
         page.items.push(
-          { requestPath: 'archive%2F', isFolder: true },
-          { requestPath: 'archive%2Fstray.txt', isFolder: false },
+          { requestPath: 'other%2F', isFolder: true },
+          { requestPath: 'other%2Fstray.txt', isFolder: false },
           { requestPath: 'other.txt', isFolder: false },
           { requestPath: 'docs%2F', isFolder: true },
         )
@@ -241,10 +237,8 @@ describe('moveFolder guards', () => {
       target: 'archive/',
       log: (m) => log.push(m),
     })
-    expect(provider.tree['archive/']).toEqual([
-      'archive/stray.txt',
-      'archive/a.txt',
-    ])
+    expect(provider.tree['archive/']).toEqual(['archive/a.txt'])
+    expect(provider.tree['other/']).toEqual(['other/stray.txt'])
     expect(provider.tree['docs/']).toBeUndefined()
     expect(log.filter((m) => m.startsWith('ignoring'))).toHaveLength(4)
   })

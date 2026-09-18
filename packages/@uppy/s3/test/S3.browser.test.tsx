@@ -151,6 +151,22 @@ describe('S3 provider in the browser', () => {
     expect(plugin.rootPrefix).toBe('tenant/')
   })
 
+  it('forgets the session on logout', async ({ worker }) => {
+    install(worker, createMockCompanion())
+    const plugin = pluginOf(
+      createUppy({
+        getGrant: async () =>
+          mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      }),
+    )
+    await plugin.openFolderPath('')
+    expect(plugin.rootPrefix).toBe('tenant/')
+    expect(plugin.canWrite).toBe(true)
+    await plugin.view.logout()
+    expect(plugin.rootPrefix).toBe('')
+    expect(plugin.canWrite).toBe(false)
+  })
+
   it('keeps a cancelled rename from discarding its listing', async ({
     worker,
   }) => {

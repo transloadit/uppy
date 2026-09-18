@@ -2,7 +2,7 @@ import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
 import packageJson from '../../../package.json' with { type: 'json' }
-import { localeKeyForCompanionError } from '../../companion-client/errorCodes.js'
+import { describeCompanionError } from '../../companion-client/errorCodes.js'
 import type {
   Body,
   Meta,
@@ -398,17 +398,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
         // A `UserFacingApiError` is for the user: a locale key from Companion,
         // or a translated message a plugin threw. Anything else is a transport
         // or programming error whose text is not.
-        const userFacing = err as
-          | { name?: string; code?: string | undefined }
-          | undefined
-        const localeKey = userFacing?.code
-          ? localeKeyForCompanionError(userFacing.code)
-          : undefined
         const message =
-          userFacing?.name === 'UserFacingApiError'
-            ? localeKey
-              ? this.plugin.uppy.i18n(localeKey)
-              : raw
+          err instanceof Error && err.name === 'UserFacingApiError'
+            ? describeCompanionError(this.plugin.uppy.i18n, err)
             : this.plugin.uppy.i18n('companionError')
         this.plugin.uppy.info(message, 'error', 5000)
       }
@@ -558,13 +550,26 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       await op(abortController.signal)
     } finally {
+      // Only this operation's controller: a newer operation may have replaced
+      // it (and aborted this one) meanwhile.
+      if (this.#abortController === abortController) {
+        this.#abortController = undefined
+      }
       // @ts-expect-error this should be typed in @uppy/dashboard.
       // Even then I don't think we can make this work without adding dashboard
       // as a dependency to provider-views.
       this.plugin.uppy.off('dashboard:close-panel', cancelRequest)
       this.plugin.uppy.off('cancel-all', cancelRequest)
-      this.#abortController = undefined
     }
+  }
+
+  /**
+   * Ends a listing's loading state, unless a long operation (`runWithProgress`)
+   * has taken the screen over meanwhile: the listing it aborted must not wipe
+   * the progress screen on its way out.
+   */
+  #doneLoading(): void {
+    if (this.#cancelLongOperation === undefined) this.setLoading(false)
   }
 
   async #search(): Promise<void> {
@@ -683,7 +688,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         searchResults: items.map((item) => item.requestPath),
       })
     }).catch(handleError(this.plugin.uppy))
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   // debounced search function is initialized in the constructor
@@ -758,7 +763,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       })
     }).catch(handleError(this.plugin.uppy))
 
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   /**
@@ -802,7 +807,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         this.openFolder(this.plugin.rootFolderId),
       ])
     }).catch(handleError(this.plugin.uppy))
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   async handleScroll(event: Event): Promise<void> {
@@ -894,7 +899,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // 4. Reset state
       this.resetPluginState()
     }).catch(handleError(this.plugin.uppy))
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   toggleCheckbox(

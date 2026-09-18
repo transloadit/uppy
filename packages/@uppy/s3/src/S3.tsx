@@ -70,6 +70,9 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   /** Called with what every listing reports about the session. */
   onSession?: (session: S3Session) => void
 
+  /** Called when the session ends (`logout()`), before the token is removed. */
+  onLogout?: () => void
+
   /** Bucket of the session, as the latest listing reported it. */
   #bucket: string | undefined
 
@@ -78,8 +81,13 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   ): Promise<ResBody> {
     const response = await super.list<ResBody>(...args)
     // The wire shape is `ProviderListResponse['session']` on the Companion side.
-    const { session } = (response ?? {}) as { session?: Partial<S3Session> }
-    if (typeof session?.bucket === 'string') this.#bucket = session.bucket
+    const { session, username } = (response ?? {}) as {
+      session?: Partial<S3Session>
+      username?: unknown
+    }
+    // Older Companions report no session; the bucket is still the username.
+    const bucket = session?.bucket ?? username
+    if (typeof bucket === 'string') this.#bucket = bucket
     this.onSession?.({
       bucket: session?.bucket ?? '',
       prefix: session?.prefix ?? '',
@@ -222,6 +230,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     this.#regranting = undefined
     this.#bucket = undefined
     this.#hasSession = false
+    this.onLogout?.()
     await this.removeAuthToken()
     return {
       ok: true,
@@ -411,6 +420,13 @@ export default class S3<M extends Meta, B extends Body>
       this.#session = session
       this.#applyActions()
     }
+    this.provider.onLogout = () => {
+      // Nothing from the ended session may inform the next one.
+      this.#session = undefined
+      this.#grant = null
+      this.#needsLogin = true
+      this.#applyActions()
+    }
     this.provider.onSimpleAuth = async (authFormData) => {
       if (!isFormWithCredentials(authFormData)) return
       this.#grant = decodeGrant(authFormData.grant)
@@ -450,6 +466,14 @@ export default class S3<M extends Meta, B extends Body>
     // rooted at, so make sure we have had one before judging the key.
     if (!this.#grant && this.#session === undefined) {
       await this.view.openFolder(this.rootFolderId)
+      if (this.#session === undefined) {
+        // The stored session no longer works: open a new one, once.
+        if (this.getPluginState().authenticated !== false) return false
+        await this.view.handleAuth({})
+        if (!this.getPluginState().authenticated) return false
+        await this.view.openFolder(this.rootFolderId)
+        if (!this.#grant && this.#session === undefined) return false
+      }
     }
     const root = this.rootPrefix
     const prefix = key ? (key.endsWith('/') ? key : `${key}/`) : root
@@ -709,6 +733,7 @@ export default class S3<M extends Meta, B extends Body>
       await this.provider.moveItem(key, destination, { signal })
       return
     }
+    if (destination === key) return
     if (destination.startsWith(key)) {
       // The same message Companion would answer with.
       throw new UserFacingApiError(this.i18n('s3FolderIntoItself'))
