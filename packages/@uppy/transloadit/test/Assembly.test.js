@@ -245,5 +245,15 @@ describe('Transloadit/Assembly', () => {
 
       expect(assembly.status.ok).toBe('ASSEMBLY_COMPLETED')
     })
+
+    it('keeps progress_combined when a full status replaces it', () => {
+      const base = { ok: 'ASSEMBLY_EXECUTING', uploads: {}, results: {} }
+      const assembly = new Assembly(base, new RateLimitedQueue())
+      assembly.status = { ...base, progress_combined: 42 }
+
+      assembly.updateStatus({ ...base })
+
+      expect(assembly.status.progress_combined).toBe(42)
+    })
   })
 })

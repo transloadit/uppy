@@ -80,8 +80,13 @@ class TransloaditAssembly extends Emitter {
     return this.#status
   }
   set status(status: AssemblyResponse) {
-    this.#status = status
-    this.emit('status', status)
+    // `progress_combined` only arrives over SSE; a full status fetched from
+    // the server never carries it, so keep the last value we saw.
+    this.#status = {
+      progress_combined: this.#status.progress_combined,
+      ...status,
+    }
+    this.emit('status', this.#status)
   }
 
   #connectServerSentEvents() {
