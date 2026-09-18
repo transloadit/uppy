@@ -33,12 +33,15 @@ export interface ProviderListItem {
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
-  /** Whether this session may change files (delete, move, create folders). */
-  canWrite?: boolean
-  /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
-  movesFolders?: boolean
-  /** Root the session is confined to, which paths the user types are relative to. */
-  prefix?: string
+  /** What the listing tells the client about the session it was served for. */
+  session?: {
+    /** Whether the session may change files (delete, move, create folders). */
+    canWrite: boolean
+    /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
+    supportsMoveFolder: boolean
+    /** Root the session is confined to, which paths the user types are relative to. */
+    prefix: string
+  }
   nextPagePath?: string | null | undefined
   username?: string | null | undefined
 }

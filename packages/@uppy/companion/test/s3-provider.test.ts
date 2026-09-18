@@ -379,13 +379,15 @@ describe('S3 provider', () => {
         companion,
         providerUserSession: { bucket: 'b', prefix: 'tenant/', write: true },
       }),
-    ).toMatchObject({ canWrite: true, movesFolders: false, prefix: 'tenant/' })
+    ).toMatchObject({
+      session: { canWrite: true, supportsMoveFolder: false, prefix: 'tenant/' },
+    })
     expect(
       await provider.list({
         companion,
         providerUserSession: { bucket: 'b', prefix: 'tenant/', write: false },
       }),
-    ).toMatchObject({ canWrite: false, prefix: 'tenant/' })
+    ).toMatchObject({ session: { canWrite: false, prefix: 'tenant/' } })
   })
 
   test('keys with dot segments or backslashes never pass the prefix check', async () => {
@@ -766,7 +768,7 @@ describe('S3 provider', () => {
       ).rejects.toEqual(userError('s3InvalidGrant'))
       expect(
         await provider.list({ companion, providerUserSession: session }),
-      ).toMatchObject({ movesFolders: true })
+      ).toMatchObject({ session: { supportsMoveFolder: true } })
       expect(vi.mocked(provider.getClient).mock.calls[0]?.[0]).toMatchObject({
         s3: { key: 'ws-key', secret: 'ws-secret', region: 'auto' },
       })

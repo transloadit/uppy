@@ -52,7 +52,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     return parseTransloaditStorageProviderOptions(own)
   }
 
-  protected override get movesFolders(): boolean {
+  protected override get supportsMoveFolder(): boolean {
     return true
   }
 

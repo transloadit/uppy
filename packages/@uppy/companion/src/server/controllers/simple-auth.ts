@@ -16,7 +16,7 @@ function getTokenMaxAge(
   providerUserSession: ProviderUserSession | undefined,
 ): number {
   const exp = providerUserSession?.exp
-  if (typeof exp !== 'number') return providerClass.authStateExpiry
+  if (exp == null) return providerClass.authStateExpiry
   return Math.min(
     providerClass.authStateExpiry,
     Math.max(0, exp - Math.floor(Date.now() / 1000)),

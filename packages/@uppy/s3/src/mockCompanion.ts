@@ -287,11 +287,13 @@ export function createMockS3Companion(
         username: bucket,
         // What the session may do, and where it is rooted: the client hides
         // the management actions and resolves typed paths with these.
-        canWrite:
-          (options.canWrite ?? true) &&
-          (session?.scopes?.includes('write') ?? true),
-        movesFolders: nativeMoves,
-        prefix: root,
+        session: {
+          canWrite:
+            (options.canWrite ?? true) &&
+            (session?.scopes?.includes('write') ?? true),
+          supportsMoveFolder: nativeMoves,
+          prefix: root,
+        },
         nextPagePath:
           nextOffset < entries.length
             ? `${encodeURIComponent(prefix)}?offset=${nextOffset}`
@@ -327,7 +329,7 @@ export function createMockS3Companion(
       }
       // Deleting a folder marker that is not there is a no-op success.
       remove(key)
-      return json({ ok: true })
+      return { status: 204, body: null }
     }
     if (method === 'POST' && operation === 'mutate/move') {
       const id = str(body, 'id')

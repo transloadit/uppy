@@ -60,7 +60,8 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   if (res.ok) {
-    return res.json()
+    // A mutation with nothing to report answers 204.
+    return res.status === 204 ? (undefined as ResJson) : res.json()
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`

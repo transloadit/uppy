@@ -9,8 +9,7 @@ test.each([
   parentId,
 }) => {
   const write = vi.fn()
-  const json = vi.fn()
-  const status = vi.fn(() => ({ json }))
+  const sendStatus = vi.fn()
   // Only the fields the preceding middleware guarantees are needed here.
   await mutate(
     {
@@ -18,9 +17,9 @@ test.each([
       companion: { provider: { createFolder: write } },
       body: { name: 'photos', parentId },
     } as never,
-    { status, json, sendStatus: vi.fn() } as never,
+    { sendStatus, json: vi.fn() } as never,
     vi.fn(),
   )
-  expect(status).toHaveBeenCalledWith(400)
+  expect(sendStatus).toHaveBeenCalledWith(400)
   expect(write).not.toHaveBeenCalled()
 })

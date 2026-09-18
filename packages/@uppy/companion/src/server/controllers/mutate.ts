@@ -42,7 +42,7 @@ function mutation<S extends z.ZodType>(
     }
     const parsed = schema.safeParse(req.body)
     if (!parsed.success) {
-      res.status(400).json({ message: 'Invalid request body' })
+      res.sendStatus(400)
       return
     }
     try {
@@ -51,7 +51,9 @@ function mutation<S extends z.ZodType>(
         companion,
         providerUserSession: companion.providerUserSession,
       }
-      res.json(await run(provider, context, parsed.data))
+      const result = await run(provider, context, parsed.data)
+      if (result === undefined) res.sendStatus(204)
+      else res.json(result)
     } catch (err) {
       if (respondWithError(err, res)) return
       next(err)
@@ -62,10 +64,7 @@ function mutation<S extends z.ZodType>(
 const operations = {
   delete: mutation(
     z.object({ id: requiredString }),
-    async (provider, context, { id }) => {
-      await provider.deleteItem({ ...context, id })
-      return { ok: true }
-    },
+    (provider, context, { id }) => provider.deleteItem({ ...context, id }),
   ),
   move: mutation(
     z.object({ id: requiredString, destination: requiredString }),

@@ -13,6 +13,7 @@ import {
   S3ServiceException,
 } from '@aws-sdk/client-s3'
 import { lookup as mimeLookup } from 'mime-types'
+import { z } from 'zod'
 import type {
   CompanionInitOptions,
   S3ClientOptions,
@@ -45,15 +46,21 @@ import {
   verifyStorageGrant,
 } from './grant.js'
 
-/** Session of the S3 provider, opened through "simple auth" (see `config.ts`). */
-export type S3UserSession = {
-  bucket: string
+/**
+ * Session of the S3 provider, opened through "simple auth" (see `config.ts`).
+ * Checked at runtime because it comes back from the client inside Companion's
+ * session token, which may predate the current version.
+ */
+const userSessionSchema = z.object({
+  bucket: z.string().min(1),
   /** Key prefix the session is confined to: empty, or ending with `/`. */
-  prefix: string
-  write: boolean
+  prefix: z.string(),
+  write: z.boolean(),
   /** Unix seconds; only grant sessions carry it, to size the session token. */
-  exp?: number
-}
+  exp: z.number().optional(),
+})
+
+export type S3UserSession = z.infer<typeof userSessionSchema>
 
 /** Object attributes Companion sets when it writes (copies, folder markers). */
 type WriteParams = ReturnType<typeof s3WriteParams>
@@ -121,7 +128,12 @@ const isNotFound = (err: unknown): boolean =>
   err instanceof NoSuchKey ||
   (err instanceof S3ServiceException && err.$metadata.httpStatusCode === 404)
 
-/** `\` and `.`/`..` segments never belong in a key Companion is asked to touch. */
+/**
+ * S3 allows `\` and `.`/`..` segments in keys, but the session's prefix is a
+ * plain string boundary and some S3-compatible endpoints, proxies and URL
+ * handling resolve dot segments. Rather than trust every layer not to, such
+ * keys are refused; objects named that way stay off-limits to Companion.
+ */
 const hasUnsafeSegment = (key: string): boolean =>
   key.includes('\\') ||
   key.split('/').some((part) => part === '..' || part === '.')
@@ -182,7 +194,7 @@ export default class S3Provider<
   }
 
   /** Whether `moveItem` takes a folder and moves everything under it. */
-  protected get movesFolders(): boolean {
+  protected get supportsMoveFolder(): boolean {
     return false
   }
 
@@ -199,13 +211,7 @@ export default class S3Provider<
   }: {
     providerUserSession: S3UserSession | undefined
   }): boolean {
-    return (
-      providerUserSession != null &&
-      typeof providerUserSession.bucket === 'string' &&
-      providerUserSession.bucket.length > 0 &&
-      typeof providerUserSession.prefix === 'string' &&
-      typeof providerUserSession.write === 'boolean'
-    )
+    return userSessionSchema.safeParse(providerUserSession).success
   }
 
   /** Overridable for tests. */
@@ -224,8 +230,7 @@ export default class S3Provider<
     const parsed = this.parseOptions(own)
     // The provider's own settings win; anything unset comes from the upload
     // block. Only the connection and write settings are read from it.
-    const fallback = (upload ?? {}) as S3ConnectionOptions &
-      S3ObjectWriteOptions
+    const fallback: S3ConnectionOptions & S3ObjectWriteOptions = upload ?? {}
     return {
       ...parsed,
       clientOptions: {
@@ -438,9 +443,11 @@ export default class S3Provider<
         username: bucket,
         // The client shows write actions only when the session allows them,
         // and resolves paths the user types against the session's root.
-        canWrite: providerUserSession.write,
-        movesFolders: this.movesFolders,
-        prefix: rootPrefix,
+        session: {
+          canWrite: providerUserSession.write,
+          supportsMoveFolder: this.supportsMoveFolder,
+          prefix: rootPrefix,
+        },
       }
     })
   }
@@ -545,7 +552,7 @@ export default class S3Provider<
   /**
    * Moves or renames one item. Plain S3 moves files only (a folder is a key
    * prefix, so the client walks it and moves its files one by one); a backend
-   * that `movesFolders` gets folders too, with a normalised target.
+   * that `supportsMoveFolder` gets folders too, with a normalised target.
    */
   override async moveItem({
     companion,
@@ -564,7 +571,7 @@ export default class S3Provider<
         keys: [id, destination],
       })
       const isFolder = id.endsWith('/')
-      if (isFolder && !this.movesFolders) {
+      if (isFolder && !this.supportsMoveFolder) {
         throw new ProviderUserError({ message: 's3FolderMoveNotSupported' })
       }
       if (!isFolder && destination.endsWith('/')) {

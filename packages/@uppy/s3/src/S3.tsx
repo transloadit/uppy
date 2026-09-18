@@ -45,7 +45,7 @@ export type S3SessionCapabilities = {
   /** Companion allows this session to change files. */
   canWrite: boolean
   /** Companion moves a whole folder itself; otherwise the client walks it. */
-  movesFolders: boolean
+  supportsMoveFolder: boolean
   /** Key prefix the session is rooted at: `''` or ending with `/`. */
   prefix: string
 }
@@ -79,20 +79,23 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       typeof response === 'object' &&
       response !== null &&
       !Array.isArray(response)
-        ? (response as {
-            username?: unknown
-            canWrite?: unknown
-            movesFolders?: unknown
-            prefix?: unknown
-          })
+        ? (response as { username?: unknown; session?: unknown })
         : undefined
     if (typeof body?.username === 'string') {
       this.#bucket = body.username
     }
+    const session =
+      typeof body?.session === 'object' && body.session !== null
+        ? (body.session as {
+            canWrite?: unknown
+            supportsMoveFolder?: unknown
+            prefix?: unknown
+          })
+        : undefined
     this.onCapabilities?.({
-      canWrite: body?.canWrite === true,
-      movesFolders: body?.movesFolders === true,
-      prefix: typeof body?.prefix === 'string' ? body.prefix : '',
+      canWrite: session?.canWrite === true,
+      supportsMoveFolder: session?.supportsMoveFolder === true,
+      prefix: typeof session?.prefix === 'string' ? session.prefix : '',
     })
     return response
   }
@@ -389,7 +392,7 @@ export default class S3<M extends Meta, B extends Body>
 
   /** What the latest listing reported; `undefined` until the first one. */
   #serverCanWrite = false
-  #serverMovesFolders = false
+  #serverSupportsMoveFolder = false
   #serverPrefix: string | undefined
 
   /** True when no usable Companion session is stored, so auto-connect must log in first. */
@@ -417,9 +420,13 @@ export default class S3<M extends Meta, B extends Body>
       supportsRefreshToken: false,
     })
     this.provider.getGrant = this.opts.getGrant
-    this.provider.onCapabilities = ({ canWrite, movesFolders, prefix }) => {
+    this.provider.onCapabilities = ({
+      canWrite,
+      supportsMoveFolder,
+      prefix,
+    }) => {
       this.#serverCanWrite = canWrite
-      this.#serverMovesFolders = movesFolders
+      this.#serverSupportsMoveFolder = supportsMoveFolder
       this.#serverPrefix = prefix
       this.#applyActions()
     }
@@ -723,7 +730,7 @@ export default class S3<M extends Meta, B extends Body>
     if (destination.startsWith(key)) {
       throw new Error(this.i18n('folderMoveIntoItself'))
     }
-    if (this.#serverMovesFolders) {
+    if (this.#serverSupportsMoveFolder) {
       // The backend moves the whole folder in one call (Transloadit Storage
       // does, preserving asset identity); nothing to walk.
       await this.provider.moveItem(key, destination, { signal })
