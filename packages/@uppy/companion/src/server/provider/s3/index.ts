@@ -42,7 +42,6 @@ import {
 import {
   ensureTrailingSlash,
   GrantExpiredError,
-  InvalidGrantError,
   verifyStorageGrant,
 } from './grant.js'
 
@@ -321,19 +320,24 @@ export default class S3Provider<
     requestBody: unknown
     companion: CompanionLike
   }): Promise<S3UserSession> {
-    return this.withErrorHandling('provider.s3.auth.error', async () => {
-      const { config } = this.#entry(companion)
-      if (config.mode === 'bucket') {
-        return { bucket: config.bucket, prefix: config.prefix, write: true }
-      }
-      const form =
-        isRecord(requestBody) && isRecord(requestBody['form'])
-          ? requestBody['form']
-          : {}
-      const grant = form['grant']
-      if (typeof grant !== 'string' || grant.length === 0) {
-        throw new InvalidGrantError('No storage grant in the request')
-      }
+    // Only the configuration goes through the error wrapper: a grant that
+    // does not verify is the client's doing, not something to log as an error.
+    const { config } = await this.withErrorHandling(
+      'provider.s3.auth.error',
+      async () => this.#entry(companion),
+    )
+    if (config.mode === 'bucket') {
+      return { bucket: config.bucket, prefix: config.prefix, write: true }
+    }
+    const form =
+      isRecord(requestBody) && isRecord(requestBody['form'])
+        ? requestBody['form']
+        : {}
+    const grant = form['grant']
+    if (typeof grant !== 'string' || grant.length === 0) {
+      throw new ProviderUserError({ message: 's3InvalidGrant' })
+    }
+    try {
       const claims = verifyStorageGrant(grant, config.keys)
       return {
         bucket: claims.bucket,
@@ -342,7 +346,12 @@ export default class S3Provider<
         // Sizes the session token: it expires with the grant.
         exp: claims.exp,
       }
-    })
+    } catch (err) {
+      // Expired grants are an auth error so the client asks for a new one.
+      if (err instanceof GrantExpiredError) throw new ProviderAuthError()
+      logger.debug(err, 'provider.s3.grant.invalid')
+      throw new ProviderUserError({ message: 's3InvalidGrant' })
+    }
   }
 
   override async list({
@@ -699,18 +708,14 @@ export default class S3Provider<
   }
 
   /**
-   * Companion's own errors pass through. An expired grant is an auth error so
-   * the client fetches a new one; an invalid grant, a misconfiguration and S3's
-   * "not found" are the user's business. Everything else (permissions, wrong
-   * endpoint, throttling) is reported to the browser generically — the
-   * original goes to Companion's log, which `withErrorHandling` takes care of.
+   * Companion's own errors pass through. A misconfiguration and S3's "not
+   * found" are the user's business (the details of the former are in the
+   * log). Everything else (permissions, wrong endpoint, throttling) is
+   * reported to the browser generically — the original goes to Companion's
+   * log, which `withErrorHandling` takes care of.
    */
   protected override mapProviderError(err: unknown): unknown {
     if (err instanceof ProviderApiError) return err
-    if (err instanceof GrantExpiredError) return new ProviderAuthError()
-    if (err instanceof InvalidGrantError) {
-      return new ProviderUserError({ message: 's3InvalidGrant' })
-    }
     if (err instanceof S3ConfigError) {
       return new ProviderUserError({ message: 's3NotConfigured' })
     }

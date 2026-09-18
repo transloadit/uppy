@@ -45,20 +45,27 @@ const SECRET_FIELDS = new Set(['secret', 'grantSecret'])
 
 /**
  * Every secret under `value`, at any depth (`customProviders.*.config.secret`,
- * `workspaces.*.secret`, ...). Only plain objects are walked: a configured
- * class instance (an SDK request handler, say) may hold cycles.
+ * `workspaces.*.secret`, ...). Only plain objects are walked, each once: a
+ * configured class instance (an SDK request handler, say) is not a place for
+ * secrets, and neither it nor a self-referencing config may hang the startup.
  */
-function collectSecrets(value: unknown, into: string[]): void {
-  if (!isRecord(value)) return
+function collectSecrets(
+  value: unknown,
+  into: string[],
+  seen = new WeakSet<object>(),
+): void {
+  if (!isRecord(value) || seen.has(value)) return
   const proto = Object.getPrototypeOf(value)
   if (proto !== Object.prototype && proto !== null) return
+  seen.add(value)
   for (const [name, child] of Object.entries(value)) {
     if (SECRET_FIELDS.has(name)) {
-      if (typeof child === 'string' || Array.isArray(child)) {
-        into.push(...toKeyList(child as string | string[]))
+      const list = typeof child === 'string' ? [child] : child
+      if (Array.isArray(list)) {
+        into.push(...toKeyList(list.filter((key) => typeof key === 'string')))
       }
     } else {
-      collectSecrets(child, into)
+      collectSecrets(child, into, seen)
     }
   }
 }
