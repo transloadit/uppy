@@ -24,8 +24,8 @@ one by one.
 
 Single-file moves copy with `IfNoneMatch: *` and `CopySourceIfMatch`, and delete with `IfMatch`,
 so an endpoint that honours conditional requests never overwrites a destination or deletes a
-source that changed meanwhile (`s3Conflict`). User-facing failures are sent as `{ code }`, a stable error
-code that is also the `@uppy/core` locale key the client translates; `{ message }` stays for text forwarded verbatim
+source that changed meanwhile (`s3Conflict`). User-facing failures are sent as `{ code }` (`S3_NOT_FOUND`, ...), which
+`@uppy/core` maps to the locale string it shows; `{ message }` stays for text forwarded verbatim
 from a provider's own API, which is all older Uppy versions read. Listings carry a `session` object (`bucket`, `prefix`, `canWrite`, `supportsMoveFolder`)
 so the client can hide write actions and resolve typed paths. Downloads must name the bucket the
 file was selected in (`?bucket=`), so a queued import cannot be read from a later session.

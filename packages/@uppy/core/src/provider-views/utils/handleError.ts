@@ -1,3 +1,4 @@
+import { localeKeyForCompanionError } from '../../companion-client/errorCodes.js'
 import type Uppy from '../../index.js'
 
 const handleError =
@@ -16,10 +17,11 @@ const handleError =
 
     if (error.name === 'UserFacingApiError') {
       const { code } = error as { code?: string }
+      const localeKey = code ? localeKeyForCompanionError(code) : undefined
       uppy.info(
         {
           message: uppy.i18n('companionError'),
-          details: code ? uppy.i18n(code) : error.message,
+          details: localeKey ? uppy.i18n(localeKey) : error.message,
         },
         'warning',
         5000,

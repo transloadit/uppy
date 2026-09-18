@@ -65,7 +65,7 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   let errMsg = `Failed request with status: ${res.status}. ${res.statusText}`
-  let errData: any
+  let errData: { message?: unknown; code?: unknown; requestId?: unknown }
   try {
     errData = await res.json()
 
@@ -80,9 +80,14 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   if (res.status >= 400 && res.status <= 499) {
     const { message, code } = errData
     if (typeof code === 'string') {
-      throw new UserFacingApiError(message ?? code, code)
+      throw new UserFacingApiError(
+        typeof message === 'string' ? message : code,
+        code,
+      )
     }
-    if (message) throw new UserFacingApiError(message)
+    if (typeof message === 'string' && message) {
+      throw new UserFacingApiError(message)
+    }
   }
 
   throw new HttpError({ statusCode: res.status, message: errMsg })

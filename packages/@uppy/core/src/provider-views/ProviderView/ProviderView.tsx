@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
 import packageJson from '../../../package.json' with { type: 'json' }
+import { localeKeyForCompanionError } from '../../companion-client/errorCodes.js'
 import type {
   Body,
   Meta,
@@ -400,10 +401,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
         const userFacing = err as
           | { name?: string; code?: string | undefined }
           | undefined
+        const localeKey = userFacing?.code
+          ? localeKeyForCompanionError(userFacing.code)
+          : undefined
         const message =
           userFacing?.name === 'UserFacingApiError'
-            ? userFacing.code
-              ? this.plugin.uppy.i18n(userFacing.code)
+            ? localeKey
+              ? this.plugin.uppy.i18n(localeKey)
               : raw
             : this.plugin.uppy.i18n('companionError')
         this.plugin.uppy.info(message, 'error', 5000)

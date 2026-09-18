@@ -8,6 +8,8 @@
  * Keys follow the S3 provider's addressing: folders end with `/`, ids in
  * responses are `encodeURIComponent(key)`.
  */
+import type { CompanionErrorCode } from '@uppy/core'
+
 export type MockS3Entry = {
   name: string
   isFolder: boolean
@@ -142,32 +144,10 @@ const json = (body: unknown, status = 200): MockS3Response => ({
   body,
 })
 /**
- * Companion reports its own user-facing failures by `code` (also `@uppy/core`'s
- * `s3*` locale keys), never as English sentences.
+ * Companion reports its own user-facing failures by `code`, never as English
+ * sentences; `@uppy/core` maps each code to its locale string.
  */
-/**
- * The error codes Companion's S3 provider answers with.
- * TODO: import `S3UserMessageKey` from `@uppy/companion` instead of mirroring
- * it, once the monorepo's tsconfig lets client packages use its types.
- */
-type S3CompanionMessageKey =
-  | 's3AlreadyExists'
-  | 's3Conflict'
-  | 's3DestinationMustBeFile'
-  | 's3FileTooLargeToMove'
-  | 's3FolderIntoItself'
-  | 's3FolderMoveNotSupported'
-  | 's3FolderNotEmpty'
-  | 's3InvalidGrant'
-  | 's3InvalidName'
-  | 's3NotConfigured'
-  | 's3NotFound'
-  | 's3OutsideAllowedFolder'
-  | 's3ReadOnlySession'
-  | 's3RequestFailed'
-  | 's3SelectedInOtherSession'
-
-const userError = (code: S3CompanionMessageKey): MockS3Response =>
+const userError = (code: CompanionErrorCode): MockS3Response =>
   json({ code }, 400)
 
 export function createMockS3Companion(
@@ -266,7 +246,7 @@ export function createMockS3Companion(
       const form = (body as { form?: { grant?: string } } | null)?.form
       if (typeof form?.grant === 'string') {
         const claims = decodeMockGrant(form.grant)
-        if (!claims) return userError('s3InvalidGrant')
+        if (!claims) return userError('S3_INVALID_GRANT')
         if (claims.exp !== undefined && claims.exp <= nowSeconds()) {
           return { status: 401, body: null }
         }
@@ -282,21 +262,22 @@ export function createMockS3Companion(
       return { status: 401, body: null }
     }
     if (session && !session.scopes?.includes('read')) {
-      return userError('s3InvalidGrant')
+      return userError('S3_INVALID_GRANT')
     }
     if (
       operation.startsWith('mutate/') &&
       session &&
       !session.scopes?.includes('write')
     ) {
-      return userError('s3ReadOnlySession')
+      return userError('S3_READ_ONLY_SESSION')
     }
 
     if (method === 'GET' && operation === 'list') {
       const root = sessionPrefix()
       const prefix =
         decodeURIComponent(path.replace(/^.*\/list\/?/, '')) || root
-      if (!prefix.startsWith(root)) return userError('s3OutsideAllowedFolder')
+      if (!prefix.startsWith(root))
+        return userError('S3_OUTSIDE_ALLOWED_FOLDER')
       const entries = entriesOf(prefix)
       const offset = Number(url.searchParams.get('offset') ?? 0)
       const pageSize = Math.max(1, options.pageSize ?? entries.length)
@@ -328,12 +309,12 @@ export function createMockS3Companion(
           ?.trim()
           .replace(/^\/+|\/+$/g, '') ?? ''
       if (name.length === 0 || name.includes('/')) {
-        return userError('s3InvalidName')
+        return userError('S3_INVALID_NAME')
       }
       const parentId = str(body, 'parentId')
       const prefix = parentId ? decodeURIComponent(parentId) : sessionPrefix()
       const key = `${prefix}${name}/`
-      if (has(key)) return userError('s3AlreadyExists')
+      if (has(key)) return userError('S3_ALREADY_EXISTS')
       folders.set(prefix, [...entriesOf(prefix), { name, isFolder: true }])
       folders.set(key, [])
       const id = encodeURIComponent(key)
@@ -341,10 +322,10 @@ export function createMockS3Companion(
     }
     if (method === 'POST' && operation === 'mutate/delete') {
       const id = str(body, 'id')
-      if (!id) return userError('s3RequestFailed')
+      if (!id) return userError('S3_REQUEST_FAILED')
       const key = decodeURIComponent(id)
       if (key.endsWith('/') && entriesOf(key).length > 0) {
-        return userError('s3FolderNotEmpty')
+        return userError('S3_FOLDER_NOT_EMPTY')
       }
       // Deleting a folder marker that is not there is a no-op success.
       remove(key)
@@ -353,19 +334,19 @@ export function createMockS3Companion(
     if (method === 'POST' && operation === 'mutate/move') {
       const id = str(body, 'id')
       const destination = str(body, 'destination')
-      if (!id || !destination) return userError('s3RequestFailed')
+      if (!id || !destination) return userError('S3_REQUEST_FAILED')
       const key = decodeURIComponent(id)
       if (key.endsWith('/')) {
         // The generic provider moves one file at a time: a folder is a key
         // prefix, and walking it is the client's job (`moveFolder` in
         // `@uppy/s3`). Transloadit Storage moves the whole subtree natively.
-        if (!nativeMoves) return userError('s3FolderMoveNotSupported')
+        if (!nativeMoves) return userError('S3_FOLDER_MOVE_NOT_SUPPORTED')
         if (!destination.endsWith('/'))
-          return userError('s3DestinationMustBeFile')
+          return userError('S3_DESTINATION_MUST_BE_FILE')
         if (destination !== key) {
-          if (!has(key)) return userError('s3NotFound')
-          if (has(destination)) return userError('s3AlreadyExists')
-          if (destination.startsWith(key)) return userError('s3RequestFailed')
+          if (!has(key)) return userError('S3_NOT_FOUND')
+          if (has(destination)) return userError('S3_ALREADY_EXISTS')
+          if (destination.startsWith(key)) return userError('S3_REQUEST_FAILED')
           for (const folder of [...folders.keys()]) {
             if (!folder.startsWith(key)) continue
             const entries = entriesOf(folder)
@@ -390,7 +371,7 @@ export function createMockS3Companion(
         return json({ id: movedId, requestPath: movedId })
       }
       if (destination.endsWith('/')) {
-        return userError('s3DestinationMustBeFile')
+        return userError('S3_DESTINATION_MUST_BE_FILE')
       }
       if (destination !== key) {
         const from = splitKey(key)
@@ -398,14 +379,14 @@ export function createMockS3Companion(
         const entry = entriesOf(from.prefix).find(
           (candidate) => candidate.name === from.name && !candidate.isFolder,
         )
-        if (!entry) return userError('s3NotFound')
+        if (!entry) return userError('S3_NOT_FOUND')
         const existing = entriesOf(to.prefix).find(
           (candidate) => candidate.name === to.name,
         )
         // Idempotent: the same file already sitting at the destination means an
         // earlier attempt got through, so only the source is left to clean up.
         if (existing && (existing.isFolder || existing.size !== entry.size)) {
-          return userError('s3AlreadyExists')
+          return userError('S3_ALREADY_EXISTS')
         }
         folders.set(
           from.prefix,

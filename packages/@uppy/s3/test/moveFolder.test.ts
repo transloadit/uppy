@@ -13,8 +13,8 @@ type FakeProvider = FolderMoveProvider & {
   maxInFlight: number
 }
 
-const userError = (message: string) =>
-  Object.assign(new Error(message), { name: 'UserFacingApiError' })
+const userError = (code: string) =>
+  Object.assign(new Error(code), { name: 'UserFacingApiError', code })
 
 const parentOf = (key: string) => {
   const bare = key.endsWith('/') ? key.slice(0, -1) : key
@@ -63,7 +63,7 @@ function createFakeProvider(
       const parent = parentId ?? ''
       const key = `${parent}${name}/`
       if ((state.tree[parent] ?? []).includes(key)) {
-        throw userError('s3AlreadyExists')
+        throw userError('S3_ALREADY_EXISTS')
       }
       state.tree[parent] = [...(state.tree[parent] ?? []), key]
       state.tree[key] = []
@@ -71,7 +71,7 @@ function createFakeProvider(
     },
     async moveItem(id, destination) {
       if (id.endsWith('/') || destination.endsWith('/')) {
-        throw userError('s3FolderMoveNotSupported')
+        throw userError('S3_FOLDER_MOVE_NOT_SUPPORTED')
       }
       inFlight += 1
       state.maxInFlight = Math.max(state.maxInFlight, inFlight)
@@ -81,7 +81,7 @@ function createFakeProvider(
       const from = parentOf(id)
       try {
         if (!(state.tree[from] ?? []).includes(id))
-          throw userError('s3NotFound')
+          throw userError('S3_NOT_FOUND')
         state.tree[from] = (state.tree[from] ?? []).filter((key) => key !== id)
         const to = parentOf(destination)
         state.tree[to] = [...(state.tree[to] ?? []), destination]
@@ -92,7 +92,7 @@ function createFakeProvider(
     },
     async deleteItem(id) {
       if (id.endsWith('/') && (state.tree[id] ?? []).length > 0) {
-        throw userError('s3FolderNotEmpty')
+        throw userError('S3_FOLDER_NOT_EMPTY')
       }
       delete state.tree[id]
       const parent = parentOf(id)
@@ -201,13 +201,13 @@ describe('moveFolder', () => {
     const failing: FolderMoveProvider = {
       ...provider,
       moveItem: async () => {
-        throw userError('s3FileTooLargeToMove')
+        throw userError('S3_FILE_TOO_LARGE_TO_MOVE')
       },
     }
 
     await expect(
       moveFolder({ provider: failing, source: 'docs/', target: 'archive/' }),
-    ).rejects.toThrow('s3FileTooLargeToMove')
+    ).rejects.toThrow('S3_FILE_TOO_LARGE_TO_MOVE')
     expect(provider.tree['docs/']).toContain('docs/hello.txt')
   })
 })

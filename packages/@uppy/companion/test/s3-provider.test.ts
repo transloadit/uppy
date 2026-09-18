@@ -81,13 +81,13 @@ describe('S3 provider', () => {
           requestBody: { form: {} },
           companion: companionWith(undefined),
         }),
-      ).rejects.toEqual(userError('s3NotConfigured'))
+      ).rejects.toEqual(userError('S3_NOT_CONFIGURED'))
       await expect(
         provider.simpleAuth({
           requestBody: { form: {} },
           companion: companionWith({ region: 'r' }),
         }),
-      ).rejects.toEqual(userError('s3NotConfigured'))
+      ).rejects.toEqual(userError('S3_NOT_CONFIGURED'))
     })
 
     test('bucket mode: every session gets the configured bucket and prefix', async () => {
@@ -198,12 +198,14 @@ describe('S3 provider', () => {
         auth(mintGrant({ exp: nowSeconds() - 60 })),
       ).rejects.toBeInstanceOf(ProviderAuthError)
       await expect(auth(mintGrant({}, 'another-secret'))).rejects.toEqual(
-        userError('s3InvalidGrant'),
+        userError('S3_INVALID_GRANT'),
       )
       await expect(auth(mintGrant({ scopes: ['write'] }))).rejects.toEqual(
-        userError('s3InvalidGrant'),
+        userError('S3_INVALID_GRANT'),
       )
-      await expect(auth(undefined)).rejects.toEqual(userError('s3InvalidGrant'))
+      await expect(auth(undefined)).rejects.toEqual(
+        userError('S3_INVALID_GRANT'),
+      )
     })
 
     test('grants signed with a rotated-in secret verify too', async () => {
@@ -225,7 +227,7 @@ describe('S3 provider', () => {
           requestBody: { form: {} },
           companion: companionWith({ bucket: 'b', grantSecret: GRANT_SECRET }),
         }),
-      ).rejects.toEqual(userError('s3NotConfigured'))
+      ).rejects.toEqual(userError('S3_NOT_CONFIGURED'))
     })
 
     test('read-only sessions may list but not change anything', async () => {
@@ -246,14 +248,14 @@ describe('S3 provider', () => {
           name: 'x',
           providerUserSession: readOnly,
         }),
-      ).rejects.toEqual(userError('s3ReadOnlySession'))
+      ).rejects.toEqual(userError('S3_READ_ONLY_SESSION'))
       await expect(
         provider.deleteItem({
           companion: options,
           id: 'x.txt',
           providerUserSession: readOnly,
         }),
-      ).rejects.toEqual(userError('s3ReadOnlySession'))
+      ).rejects.toEqual(userError('S3_READ_ONLY_SESSION'))
       expect(send).toHaveBeenCalledTimes(1)
     })
   })
@@ -325,7 +327,7 @@ describe('S3 provider', () => {
         providerUserSession,
         directory: 'other-tenant/',
       }),
-    ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+    ).rejects.toEqual(userError('S3_OUTSIDE_ALLOWED_FOLDER'))
     expect(send).toHaveBeenCalledTimes(1)
   })
 
@@ -354,7 +356,7 @@ describe('S3 provider', () => {
         query: { bucket: 'b' },
         providerUserSession,
       }),
-    ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+    ).rejects.toEqual(userError('S3_OUTSIDE_ALLOWED_FOLDER'))
     // A file queued while connected to another bucket is never read from this one.
     for (const query of [undefined, {}, { bucket: 'other' }]) {
       await expect(
@@ -364,7 +366,7 @@ describe('S3 provider', () => {
           query,
           providerUserSession,
         }),
-      ).rejects.toEqual(userError('s3SelectedInOtherSession'))
+      ).rejects.toEqual(userError('S3_SELECTED_IN_OTHER_SESSION'))
     }
     expect(send).toHaveBeenCalledTimes(1)
   })
@@ -397,7 +399,7 @@ describe('S3 provider', () => {
           id,
           providerUserSession: { bucket: 'b', prefix: 't/', write: true },
         }),
-      ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+      ).rejects.toEqual(userError('S3_OUTSIDE_ALLOWED_FOLDER'))
     }
   })
 
@@ -415,11 +417,11 @@ describe('S3 provider', () => {
       providerUserSession: bucketSession,
     }
     await expect(provider.deleteItem(args)).rejects.toEqual(
-      userError('s3FolderNotEmpty'),
+      userError('S3_FOLDER_NOT_EMPTY'),
     )
     listing = { CommonPrefixes: [{ Prefix: 'a/sub/' }], Contents: [] }
     await expect(provider.deleteItem(args)).rejects.toEqual(
-      userError('s3FolderNotEmpty'),
+      userError('S3_FOLDER_NOT_EMPTY'),
     )
     expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
     listing = { Contents: [{ Key: 'a/' }] }
@@ -507,22 +509,22 @@ describe('S3 provider', () => {
     test('refuses conflicts, folders, and anything outside the prefix', async () => {
       const { provider, send } = makeMoveProvider()
       await expect(move(provider, 't/a.txt', 't/taken.txt')).rejects.toEqual(
-        userError('s3AlreadyExists'),
+        userError('S3_ALREADY_EXISTS'),
       )
       await expect(move(provider, 't/a.txt', 'other/a.txt')).rejects.toEqual(
-        userError('s3OutsideAllowedFolder'),
+        userError('S3_OUTSIDE_ALLOWED_FOLDER'),
       )
       await expect(move(provider, 't/a.txt', 't/sub/')).rejects.toEqual(
-        userError('s3DestinationMustBeFile'),
+        userError('S3_DESTINATION_MUST_BE_FILE'),
       )
       await expect(move(provider, 't/sub/', 't/moved/')).rejects.toEqual(
-        userError('s3FolderMoveNotSupported'),
+        userError('S3_FOLDER_MOVE_NOT_SUPPORTED'),
       )
       await expect(move(provider, 't/missing.txt', 't/x.txt')).rejects.toEqual(
-        userError('s3NotFound'),
+        userError('S3_NOT_FOUND'),
       )
       await expect(move(provider, 't/huge.bin', 't/x.bin')).rejects.toEqual(
-        userError('s3FileTooLargeToMove'),
+        userError('S3_FILE_TOO_LARGE_TO_MOVE'),
       )
       expect(inputsOf(send, CopyObjectCommand)).toEqual([])
       expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
@@ -531,7 +533,7 @@ describe('S3 provider', () => {
     test('does not trust a placeholder ETag to skip the copy', async () => {
       const { provider, send } = makeMoveProvider()
       await expect(move(provider, 't/p.txt', 't/p-copy.txt')).rejects.toEqual(
-        userError('s3AlreadyExists'),
+        userError('S3_ALREADY_EXISTS'),
       )
       expect(inputsOf(send, DeleteObjectCommand)).toEqual([])
     })
@@ -571,7 +573,7 @@ describe('S3 provider', () => {
         return {}
       })
       await expect(move(provider, 't/a.txt', 't/b.txt')).rejects.toEqual(
-        userError('s3Conflict'),
+        userError('S3_CONFLICT'),
       )
       expect(inputsOf(send, CopyObjectCommand)).toHaveLength(1)
     })
@@ -662,20 +664,20 @@ describe('S3 provider', () => {
           providerUserSession: bucketSession,
         })
       await expect(create('docs/', 'taken')).rejects.toEqual(
-        userError('s3AlreadyExists'),
+        userError('S3_ALREADY_EXISTS'),
       )
       // One listing, without a delimiter: a marker or any child is enough.
       expect(inputsOf(send, ListObjectsV2Command)).toEqual([
         { Bucket: 'b', Prefix: 'docs/taken/', MaxKeys: 1 },
       ])
       await expect(create('docs/', 'a/b')).rejects.toEqual(
-        userError('s3InvalidName'),
+        userError('S3_INVALID_NAME'),
       )
       await expect(create('docs/', '..')).rejects.toEqual(
-        userError('s3InvalidName'),
+        userError('S3_INVALID_NAME'),
       )
       await expect(create('docs/', '  ')).rejects.toEqual(
-        userError('s3InvalidName'),
+        userError('S3_INVALID_NAME'),
       )
       expect(inputsOf(send, PutObjectCommand)).toEqual([])
       expect(await create('docs/', ' fresh ')).toEqual({
@@ -702,7 +704,7 @@ describe('S3 provider', () => {
           name: 'x',
           providerUserSession,
         }),
-      ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+      ).rejects.toEqual(userError('S3_OUTSIDE_ALLOWED_FOLDER'))
       expect(
         await provider.createFolder({
           companion,
@@ -764,7 +766,7 @@ describe('S3 provider', () => {
       const companion = nativeCompanion('http://storage.test')
       await expect(
         provider.simpleAuth({ requestBody: { form: {} }, companion }),
-      ).rejects.toEqual(userError('s3InvalidGrant'))
+      ).rejects.toEqual(userError('S3_INVALID_GRANT'))
       expect(
         await provider.list({ companion, providerUserSession: session }),
       ).toMatchObject({ session: { supportsMoveFolder: true } })
@@ -778,7 +780,7 @@ describe('S3 provider', () => {
           companion,
           providerUserSession: { ...session, bucket: 'someone-else' },
         }),
-      ).rejects.toEqual(userError('s3NotConfigured'))
+      ).rejects.toEqual(userError('S3_NOT_CONFIGURED'))
     })
 
     test('moves files and whole folders with one signed native call', async () => {
@@ -839,7 +841,7 @@ describe('S3 provider', () => {
           id: 'tenant/photo.jpg',
           destination: 'tenant/x.jpg',
         }),
-      ).rejects.toEqual(userError('s3ReadOnlySession'))
+      ).rejects.toEqual(userError('S3_READ_ONLY_SESSION'))
       await expect(
         provider.moveItem({
           companion,
@@ -847,7 +849,7 @@ describe('S3 provider', () => {
           id: 'tenant/photo.jpg',
           destination: 'other/x.jpg',
         }),
-      ).rejects.toEqual(userError('s3OutsideAllowedFolder'))
+      ).rejects.toEqual(userError('S3_OUTSIDE_ALLOWED_FOLDER'))
       await expect(
         provider.moveItem({
           companion,
@@ -855,7 +857,7 @@ describe('S3 provider', () => {
           id: 'tenant/album/',
           destination: 'tenant/album/inner/',
         }),
-      ).rejects.toEqual(userError('s3FolderIntoItself'))
+      ).rejects.toEqual(userError('S3_FOLDER_INTO_ITSELF'))
       expect(requests).toHaveLength(2)
     })
 
@@ -878,7 +880,7 @@ describe('S3 provider', () => {
       })
       status = 409
       await expect(provider.moveItem(args)).rejects.toEqual(
-        userError('s3RequestFailed'),
+        userError('S3_REQUEST_FAILED'),
       )
     })
   })
@@ -899,15 +901,15 @@ describe('S3 provider', () => {
         companion: bucketCompanion(),
         providerUserSession: bucketSession,
       })
-    await expect(list()).rejects.toEqual(userError('s3RequestFailed'))
+    await expect(list()).rejects.toEqual(userError('S3_REQUEST_FAILED'))
     error = notFound()
-    await expect(list()).rejects.toEqual(userError('s3NotFound'))
+    await expect(list()).rejects.toEqual(userError('S3_NOT_FOUND'))
     error = new S3ServiceException({
       name: 'PreconditionFailed',
       $fault: 'client',
       $metadata: { httpStatusCode: 412 },
     })
-    await expect(list()).rejects.toEqual(userError('s3Conflict'))
+    await expect(list()).rejects.toEqual(userError('S3_CONFLICT'))
     error = new ProviderUserError({ message: 'passthrough' })
     await expect(list()).rejects.toEqual(
       expect.objectContaining({ json: { message: 'passthrough' } }),

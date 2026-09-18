@@ -36,12 +36,12 @@ import {
   parseS3ProviderOptions,
   S3ConfigError,
 } from './config.js'
+import { s3UserError } from './errorCodes.js'
 import {
   ensureTrailingSlash,
   GrantExpiredError,
   verifyStorageGrant,
 } from './grant.js'
-import { s3UserError } from './messages.js'
 
 /**
  * Session of the S3 provider, opened through "simple auth" (see `config.ts`).
@@ -288,7 +288,7 @@ export default class S3Provider<
     }
     if (requireWrite && !write) {
       // A user error, not an auth error: a fresh session would not help.
-      throw s3UserError('s3ReadOnlySession')
+      throw s3UserError('S3_READ_ONLY_SESSION')
     }
     for (const key of keys) this.#assertInsidePrefix(prefix, key)
     return {
@@ -325,7 +325,7 @@ export default class S3Provider<
         : {}
     const grant = form['grant']
     if (typeof grant !== 'string' || grant.length === 0) {
-      throw s3UserError('s3InvalidGrant')
+      throw s3UserError('S3_INVALID_GRANT')
     }
     try {
       const claims = verifyStorageGrant(grant, config.keys)
@@ -340,7 +340,7 @@ export default class S3Provider<
       // Expired grants are an auth error so the client asks for a new one.
       if (err instanceof GrantExpiredError) throw new ProviderAuthError()
       logger.debug(err, 'provider.s3.grant.invalid')
-      throw s3UserError('s3InvalidGrant')
+      throw s3UserError('S3_INVALID_GRANT')
     }
   }
 
@@ -456,7 +456,7 @@ export default class S3Provider<
       // A queued file outlives the browser session that selected it. Its key
       // must never be read from a bucket the user connected to later.
       if (!isRecord(query) || query['bucket'] !== bucket) {
-        throw s3UserError('s3SelectedInOtherSession')
+        throw s3UserError('S3_SELECTED_IN_OTHER_SESSION')
       }
       const res = await client.send(
         new GetObjectCommand({ Bucket: bucket, Key: id }),
@@ -472,7 +472,7 @@ export default class S3Provider<
     if (!key.startsWith(prefix) || hasUnsafeSegment(key)) {
       // A user error (not an auth error) so the Dashboard shows the message
       // instead of bouncing the user to the connect screen.
-      throw s3UserError('s3OutsideAllowedFolder')
+      throw s3UserError('S3_OUTSIDE_ALLOWED_FOLDER')
     }
   }
 
@@ -529,7 +529,7 @@ export default class S3Provider<
         id.endsWith('/') &&
         (await this.#folderHasEntries(client, bucket, id))
       ) {
-        throw s3UserError('s3FolderNotEmpty')
+        throw s3UserError('S3_FOLDER_NOT_EMPTY')
       }
       await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
     })
@@ -558,14 +558,14 @@ export default class S3Provider<
       })
       const isFolder = id.endsWith('/')
       if (isFolder && !this.supportsMoveFolder) {
-        throw s3UserError('s3FolderMoveNotSupported')
+        throw s3UserError('S3_FOLDER_MOVE_NOT_SUPPORTED')
       }
       if (!isFolder && destination.endsWith('/')) {
-        throw s3UserError('s3DestinationMustBeFile')
+        throw s3UserError('S3_DESTINATION_MUST_BE_FILE')
       }
       const target = isFolder ? ensureTrailingSlash(destination) : destination
       if (isFolder && target.startsWith(id)) {
-        throw s3UserError('s3FolderIntoItself')
+        throw s3UserError('S3_FOLDER_INTO_ITSELF')
       }
       if (target === id) return itemRef(id)
       return this.move(session, id, target)
@@ -587,10 +587,10 @@ export default class S3Provider<
       this.#head(client, bucket, destination),
     ])
     if (source == null) {
-      throw s3UserError('s3NotFound')
+      throw s3UserError('S3_NOT_FOUND')
     }
     if ((source.ContentLength ?? 0) > MAX_COPY_BYTES) {
-      throw s3UserError('s3FileTooLargeToMove')
+      throw s3UserError('S3_FILE_TOO_LARGE_TO_MOVE')
     }
     if (existing != null) {
       // Same size and ETag: the copy already happened (an earlier attempt
@@ -606,7 +606,7 @@ export default class S3Provider<
         existing.ETag === source.ETag &&
         isContentEtag(existing.ETag)
       if (!sameObject) {
-        throw s3UserError('s3AlreadyExists')
+        throw s3UserError('S3_ALREADY_EXISTS')
       }
     } else {
       await client.send(
@@ -667,7 +667,7 @@ export default class S3Provider<
           cleanName.includes('/') ||
           hasUnsafeSegment(cleanName)
         ) {
-          throw s3UserError('s3InvalidName')
+          throw s3UserError('S3_INVALID_NAME')
         }
         const key = `${parentFolder ?? prefix}${cleanName}/`
         // Without a delimiter one entry is enough to tell: it is either the
@@ -680,7 +680,7 @@ export default class S3Provider<
           }),
         )
         if ((taken.Contents ?? []).length > 0) {
-          throw s3UserError('s3AlreadyExists')
+          throw s3UserError('S3_ALREADY_EXISTS')
         }
         await client.send(
           new PutObjectCommand({
@@ -714,12 +714,12 @@ export default class S3Provider<
   protected override mapProviderError(err: unknown): unknown {
     if (err instanceof ProviderApiError) return err
     if (err instanceof S3ConfigError) {
-      return s3UserError('s3NotConfigured')
+      return s3UserError('S3_NOT_CONFIGURED')
     }
-    if (isNotFound(err)) return s3UserError('s3NotFound')
+    if (isNotFound(err)) return s3UserError('S3_NOT_FOUND')
     if (isPreconditionFailed(err)) {
-      return s3UserError('s3Conflict')
+      return s3UserError('S3_CONFLICT')
     }
-    return s3UserError('s3RequestFailed')
+    return s3UserError('S3_REQUEST_FAILED')
   }
 }

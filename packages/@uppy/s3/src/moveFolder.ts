@@ -247,7 +247,11 @@ export default async function moveFolder(
       })
     } catch (err) {
       // An earlier, interrupted run may have created it already.
-      if ((err as Error | undefined)?.message !== 's3AlreadyExists') throw err
+      if (
+        (err as { code?: string } | undefined)?.code !== 'S3_ALREADY_EXISTS'
+      ) {
+        throw err
+      }
     }
   }
 

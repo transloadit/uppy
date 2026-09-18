@@ -25,9 +25,9 @@ export class ProviderApiError extends Error {
 /**
  * What a `ProviderUserError` sends to the browser (as a 400 response body).
  *
- * - `code`: a stable identifier of the failure, for every message Companion
- *   itself owns. By convention it is also the key of the `@uppy/core` locale
- *   string that describes it, so the client translates it directly.
+ * - `code`: a stable identifier of the failure (`S3_NOT_FOUND`), for every
+ *   message Companion itself owns; `@uppy/core` maps it to the locale string
+ *   describing it.
  * - `message`: text shown verbatim, for what cannot have a code (an error
  *   forwarded from a provider's own API). Older Uppy versions read only this
  *   field, so existing English messages stay as they are; new messages get a
