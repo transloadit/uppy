@@ -142,7 +142,7 @@ const json = (body: unknown, status = 200): MockS3Response => ({
   body,
 })
 /**
- * Companion reports user-facing failures as locale keys (`@uppy/core`'s
+ * Companion reports its own user-facing failures as `i18nKey` (`@uppy/core`'s
  * `s3*` strings), never as English sentences.
  */
 /**
@@ -167,8 +167,8 @@ type S3CompanionMessageKey =
   | 's3RequestFailed'
   | 's3SelectedInOtherSession'
 
-const userError = (localeKey: S3CompanionMessageKey): MockS3Response =>
-  json({ message: localeKey }, 400)
+const userError = (i18nKey: S3CompanionMessageKey): MockS3Response =>
+  json({ i18nKey }, 400)
 
 export function createMockS3Companion(
   options: MockS3CompanionOptions = {},

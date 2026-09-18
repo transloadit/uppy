@@ -132,13 +132,14 @@ function parseOrThrow<T>(
   schema: z.ZodType<T>,
   value: unknown,
 ): T {
-  const result = schema.safeParse(value)
-  if (!result.success) {
-    throw new S3ConfigError(
-      `Invalid ${label}: ${z.prettifyError(result.error)}`,
-    )
+  try {
+    return schema.parse(value)
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      throw new S3ConfigError(`Invalid ${label}: ${z.prettifyError(err)}`)
+    }
+    throw err
   }
-  return result.data
 }
 
 /** Parses `providerOptions.s3`; throws an {@link S3ConfigError} that says what is wrong. */

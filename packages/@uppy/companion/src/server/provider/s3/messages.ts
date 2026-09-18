@@ -29,5 +29,5 @@ export const S3_USER_MESSAGE_KEYS = [
 export type S3UserMessageKey = (typeof S3_USER_MESSAGE_KEYS)[number]
 
 /** A user-facing failure the browser translates and shows as is. */
-export const s3UserError = (message: S3UserMessageKey): ProviderUserError =>
-  new ProviderUserError({ message })
+export const s3UserError = (i18nKey: S3UserMessageKey): ProviderUserError =>
+  new ProviderUserError({ i18nKey })

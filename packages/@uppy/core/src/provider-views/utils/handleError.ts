@@ -15,10 +15,11 @@ const handleError =
     uppy.log(error, 'error')
 
     if (error.name === 'UserFacingApiError') {
+      const { i18nKey } = error as { i18nKey?: string }
       uppy.info(
         {
           message: uppy.i18n('companionError'),
-          details: uppy.i18n(error.message),
+          details: i18nKey ? uppy.i18n(i18nKey) : error.message,
         },
         'warning',
         5000,

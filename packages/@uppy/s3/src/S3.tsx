@@ -710,8 +710,8 @@ export default class S3<M extends Meta, B extends Body>
       return
     }
     if (destination.startsWith(key)) {
-      // The same locale key Companion answers with; `ProviderView` translates it.
-      throw new UserFacingApiError('s3FolderIntoItself')
+      // The same message Companion would answer with.
+      throw new UserFacingApiError(this.i18n('s3FolderIntoItself'))
     }
     if (this.#session?.supportsMoveFolder) {
       // The backend moves the whole folder in one call (Transloadit Storage

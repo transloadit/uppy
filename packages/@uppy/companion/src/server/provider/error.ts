@@ -25,14 +25,16 @@ export class ProviderApiError extends Error {
 /**
  * What a `ProviderUserError` sends to the browser (as a 400 response body).
  *
- * `message` is passed through the client's `i18n`: a key of the `@uppy/core`
- * locale is translated, anything else is shown verbatim (the translator falls
- * back to the string itself). Messages Companion owns should be locale keys;
- * text forwarded from a provider's own API cannot be, and stays verbatim.
- * Existing English messages stay as they are: older Uppy versions show them
- * verbatim, and would show a new key as a bare key.
+ * - `i18nKey`: a key of the `@uppy/core` locale; the client translates it.
+ *   Use it for every message Companion itself owns.
+ * - `message`: text shown verbatim, for what cannot be a key (an error
+ *   forwarded from a provider's own API). Older Uppy versions read only this
+ *   field, so existing English messages stay as they are; new messages get an
+ *   `i18nKey`, which those versions cannot show anyway.
  */
-export type ProviderUserErrorBody = { message: string }
+export type ProviderUserErrorBody =
+  | { i18nKey: string; message?: undefined }
+  | { message: string; i18nKey?: undefined }
 
 /**
  * Error thrown when the provider response should be forwarded to the client

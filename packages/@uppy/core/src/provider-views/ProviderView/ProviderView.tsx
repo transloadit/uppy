@@ -394,13 +394,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
         this.plugin.uppy.log('[ProviderView] action cancelled', 'warning')
       } else {
         this.plugin.uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
-        // A `UserFacingApiError` carries a locale key (Companion reports
-        // user-facing failures that way, and a plugin may throw one too);
-        // anything else is a transport or programming error whose text is
-        // not for the user.
+        // A `UserFacingApiError` is for the user: a locale key from Companion,
+        // or a translated message a plugin threw. Anything else is a transport
+        // or programming error whose text is not.
+        const userFacing = err as
+          | { name?: string; i18nKey?: string | undefined }
+          | undefined
         const message =
-          (err as { name?: string } | undefined)?.name === 'UserFacingApiError'
-            ? this.plugin.uppy.i18n(raw)
+          userFacing?.name === 'UserFacingApiError'
+            ? userFacing.i18nKey
+              ? this.plugin.uppy.i18n(userFacing.i18nKey)
+              : raw
             : this.plugin.uppy.i18n('companionError')
         this.plugin.uppy.info(message, 'error', 5000)
       }

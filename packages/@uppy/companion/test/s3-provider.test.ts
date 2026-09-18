@@ -66,8 +66,8 @@ const inputsOf = (send: ReturnType<typeof vi.fn>, type: unknown) =>
     .filter((cmd) => cmd instanceof (type as never))
     .map((cmd) => (cmd as unknown as Cmd).input)
 
-const userError = (message: string) =>
-  expect.objectContaining({ name: 'ProviderUserError', json: { message } })
+const userError = (i18nKey: string) =>
+  expect.objectContaining({ name: 'ProviderUserError', json: { i18nKey } })
 
 const bucketCompanion = () => companionWith({ bucket: 'b', region: 'r' })
 const bucketSession = { bucket: 'b', prefix: '', write: true }
@@ -909,6 +909,8 @@ describe('S3 provider', () => {
     })
     await expect(list()).rejects.toEqual(userError('s3Conflict'))
     error = new ProviderUserError({ message: 'passthrough' })
-    await expect(list()).rejects.toEqual(userError('passthrough'))
+    await expect(list()).rejects.toEqual(
+      expect.objectContaining({ json: { message: 'passthrough' } }),
+    )
   })
 })

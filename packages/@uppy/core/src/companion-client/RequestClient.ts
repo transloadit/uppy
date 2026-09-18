@@ -69,15 +69,20 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   try {
     errData = await res.json()
 
-    if (errData.message) errMsg = `${errMsg} message: ${errData.message}`
+    const detail = errData.message ?? errData.i18nKey
+    if (detail) errMsg = `${errMsg} message: ${detail}`
     if (errData.requestId) errMsg = `${errMsg} request-Id: ${errData.requestId}`
   } catch (cause) {
     // if the response contains invalid JSON, let's ignore the error data
     throw new Error(errMsg, { cause })
   }
 
-  if (res.status >= 400 && res.status <= 499 && errData.message) {
-    throw new UserFacingApiError(errData.message)
+  if (res.status >= 400 && res.status <= 499) {
+    const { message, i18nKey } = errData
+    if (typeof i18nKey === 'string') {
+      throw new UserFacingApiError(message ?? i18nKey, i18nKey)
+    }
+    if (message) throw new UserFacingApiError(message)
   }
 
   throw new HttpError({ statusCode: res.status, message: errMsg })
