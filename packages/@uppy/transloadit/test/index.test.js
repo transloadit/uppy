@@ -1,7 +1,9 @@
 import Core from '@uppy/core'
+import { RateLimitedQueue } from '@uppy/core/utils'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, vi } from 'vitest'
+import Assembly from '../lib/Assembly.js'
 import { it } from './test-extend.ts'
 
 describe('Transloadit', () => {
@@ -323,5 +325,51 @@ describe('Transloadit', () => {
 
     // Should be reset to true
     expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('exposes the assembly error in plugin state', async ({ worker }) => {
+    const status = {
+      assembly_id: 'test-assembly-id',
+      assembly_ssl_url:
+        'https://api2.transloadit.com/assemblies/test-assembly-id',
+      websocket_url: 'ws://localhost:8080',
+      ok: 'ASSEMBLY_EXECUTING',
+      uploads: [],
+      results: {},
+    }
+    worker.use(
+      http.get('https://api2.transloadit.com/assemblies/*', () =>
+        HttpResponse.json({
+          ...status,
+          ok: undefined,
+          error: 'INVALID_FILE_META_DATA',
+          message: 'One of the files is broken',
+        }),
+      ),
+    )
+
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+
+    // Restoring reconnects to the assembly and refetches its status, which
+    // is the polling error path.
+    uppy.emit('restored', { Transloadit: { assemblyResponse: status } })
+    await plugin.restored
+
+    const state = uppy.getState().plugins.Transloadit
+    expect(state.error?.error).toBe('INVALID_FILE_META_DATA')
+    expect(state.error?.message).toBe('One of the files is broken')
+    expect(state.error?.assembly?.assembly_id).toBe('test-assembly-id')
+    // The live slot is gone, the error stays until a new assembly starts.
+    expect(state.assemblyStatus).toBeUndefined()
+
+    plugin.assembly = new Assembly(status, new RateLimitedQueue())
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
   })
 })

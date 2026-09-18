@@ -93,6 +93,11 @@ type TransloaditState = {
    * status update routed through `#handleAssemblyStatusUpdate`.
    */
   lastAssemblyStatus: AssemblyResponse | undefined
+  /**
+   * The error the live assembly failed with, if any. Set when the assembly
+   * reports an error and cleared when the next assembly starts.
+   */
+  error: AssemblyError | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -544,6 +549,7 @@ export default class Transloadit<
     this.#handleAssemblyStatusUpdate(newAssembly?.status)
 
     if (newAssembly) {
+      this.setPluginState({ error: undefined })
       newAssembly.on('status', this.#handleAssemblyStatusUpdate)
     }
   }
@@ -789,6 +795,7 @@ export default class Transloadit<
     })
     assembly.on('error', (error: AssemblyError) => {
       error.assembly = assembly.status
+      this.setPluginState({ error })
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 
@@ -1037,6 +1044,7 @@ export default class Transloadit<
     this.setPluginState({
       assemblyStatus: undefined,
       lastAssemblyStatus: undefined,
+      error: undefined,
       // Contains file data from Transloadit, indexed by their Transloadit-assigned ID.
       files: {},
       // Contains result data from Transloadit.
