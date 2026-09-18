@@ -5040,7 +5040,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cookie-parser@npm:1.4.10":
+"@types/cookie-parser@npm:1.4.10, @types/cookie-parser@npm:^1.4.10":
   version: 1.4.10
   resolution: "@types/cookie-parser@npm:1.4.10"
   peerDependencies:
@@ -5063,7 +5063,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cors@npm:2.8.19":
+"@types/cors@npm:2.8.19, @types/cors@npm:^2.8.19":
   version: 2.8.19
   resolution: "@types/cors@npm:2.8.19"
   dependencies:
@@ -5121,7 +5121,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/express-session@npm:1.19.0":
+"@types/express-session@npm:1.19.0, @types/express-session@npm:^1.19.0":
   version: 1.19.0
   resolution: "@types/express-session@npm:1.19.0"
   dependencies:
@@ -8612,6 +8612,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-aws-companion@workspace:examples/aws-companion"
   dependencies:
+    "@types/cookie-parser": "npm:^1.4.10"
+    "@types/cors": "npm:^2.8.19"
+    "@types/express-session": "npm:^1.19.0"
     "@uppy/aws-s3": "workspace:*"
     "@uppy/companion": "workspace:*"
     "@uppy/core": "workspace:*"
@@ -8621,7 +8624,6 @@ __metadata:
     body-parser: "npm:^2.2.2"
     cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.5"
-    dotenv: "npm:^17.4.2"
     express: "npm:^5.2.1"
     express-session: "npm:^1.17.3"
     npm-run-all: "npm:^4.1.5"
@@ -8637,7 +8639,6 @@ __metadata:
     "@aws-sdk/client-sts": "npm:^3.338.0"
     "@aws-sdk/s3-request-presigner": "npm:^3.338.0"
     body-parser: "npm:^1.20.4"
-    dotenv: "npm:^17.4.2"
     express: "npm:^5.2.1"
   languageName: unknown
   linkType: soft

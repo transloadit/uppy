@@ -1,9 +1,11 @@
-const path = require('node:path')
-const { existsSync } = require('node:fs')
-require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
+import { existsSync, readFile } from 'node:fs'
+import path from 'node:path'
+import bodyParser from 'body-parser'
+import express from 'express'
+import { presign } from './routes/presign.ts'
+import { sts } from './routes/sts.ts'
 
-const express = require('express')
-const bodyParser = require('body-parser')
+process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '.env'))
 
 const app = express()
 const port = process.env.PORT ?? 8080
@@ -11,16 +13,16 @@ const port = process.env.PORT ?? 8080
 app.use(bodyParser.json())
 
 // --- S3 signing routes ---
-app.use(require('./routes/sts'))
-app.use(require('./routes/presign'))
+app.use(sts)
+app.use(presign)
 
 // ---------------------------------------------------------------------------
 // Static file serving
 // ---------------------------------------------------------------------------
 
 app.get('/', (req, res) => {
-  const htmlPath = path.join(__dirname, 'public', 'index.html')
-  require('node:fs').readFile(htmlPath, 'utf8', (err, html) => {
+  const htmlPath = path.join(import.meta.dirname, 'public', 'index.html')
+  readFile(htmlPath, 'utf8', (err, html) => {
     if (err) return res.status(500).send('Error loading page')
     // Inject bucket/region config so the client can read them.
     const config = `<script>
@@ -37,8 +39,8 @@ app.get('/index.html', (req, res) => {
 
 app.get('/uppy.min.mjs', (req, res) => {
   res.setHeader('Content-Type', 'text/javascript')
-  const bundlePath = path.join(
-    __dirname,
+  const bundlePath = path.resolve(
+    import.meta.dirname,
     '../..',
     'packages/uppy/dist',
     'uppy.min.mjs',
@@ -56,8 +58,8 @@ app.get('/uppy.min.mjs', (req, res) => {
 })
 app.get('/uppy.min.css', (req, res) => {
   res.setHeader('Content-Type', 'text/css')
-  const bundlePath = path.join(
-    __dirname,
+  const bundlePath = path.resolve(
+    import.meta.dirname,
     '../..',
     'packages/uppy/dist',
     'uppy.min.css',
