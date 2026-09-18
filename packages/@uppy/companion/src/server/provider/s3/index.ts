@@ -149,19 +149,15 @@ const itemRef = (key: string): ItemRef => ({
 })
 
 /**
- * Configuration and clients, resolved once per Companion `app()` and provider
- * (keyed on the provider's own options block) — there is one options object
- * per app, and neither the merge nor `new S3Client()` is worth redoing on
- * every request. The trade-off: an embedder that mutates the options object
- * at runtime is not picked up. A misconfigured provider is not cached, so it
- * keeps reporting itself on every request.
+ * S3 clients, kept per Companion `app()` (its options object) and, within
+ * that, per provider and bucket. A client is cheap to build but holds what
+ * is not: its resolved credentials (a metadata or STS round trip when
+ * Companion runs on a role) and its keep-alive connections. The
+ * configuration itself is re-derived on every request; that is a small
+ * parse. The trade-off: an embedder that swaps credentials in the options
+ * object at runtime keeps the clients built with the old ones.
  */
-type CacheEntry<P extends ParsedS3ProviderOptions> = {
-  config: ResolvedConfig<P>
-  clients: Map<string, S3Client>
-}
-
-const perOptions = new WeakMap<object, CacheEntry<ParsedS3ProviderOptions>>()
+const clients = new WeakMap<object, Map<string, S3Client>>()
 
 /**
  * Adapter for browsing and managing S3-compatible object storage (AWS S3,
@@ -230,10 +226,15 @@ export default class S3Provider<
     return client
   }
 
-  #resolveConfig(
-    companion: CompanionLike,
-    own: S3ConnectionOptions & S3ObjectWriteOptions,
-  ): ResolvedConfig<P> {
+  #config(companion: CompanionLike): ResolvedConfig<P> {
+    // Typed as what this method reads from it; `parseOptions` checks the rest.
+    const own: (S3ConnectionOptions & S3ObjectWriteOptions) | undefined =
+      companion.options.providerOptions?.[this.optionsKey]
+    if (own == null) {
+      throw new S3ConfigError(
+        `The ${this.optionsKey} provider is not configured: set \`providerOptions['${this.optionsKey}']\``,
+      )
+    }
     const parsed = this.parseOptions(own)
     // The provider's own settings win; anything unset comes from the upload
     // block. Only the connection and write settings are read from it.
@@ -254,30 +255,22 @@ export default class S3Provider<
     }
   }
 
-  /** The cache entry for this Companion app, filling it on first use. */
-  #entry(companion: CompanionLike): CacheEntry<P> {
-    const own: unknown = companion.options.providerOptions?.[this.optionsKey]
-    if (!isRecord(own)) {
-      throw new S3ConfigError(
-        `The ${this.optionsKey} provider is not configured: set \`providerOptions['${this.optionsKey}']\``,
-      )
+  #client(
+    companion: CompanionLike,
+    config: ResolvedConfig<P>,
+    bucket: string,
+  ): S3Client {
+    let perApp = clients.get(companion.options)
+    if (perApp == null) {
+      perApp = new Map()
+      clients.set(companion.options, perApp)
     }
-    const cached = perOptions.get(own) as CacheEntry<P> | undefined
-    if (cached != null) return cached
-    const entry: CacheEntry<P> = {
-      config: this.#resolveConfig(companion, own),
-      clients: new Map(),
-    }
-    perOptions.set(own, entry)
-    return entry
-  }
-
-  #client(entry: CacheEntry<P>, bucket: string): S3Client {
-    const { cacheKey, clientOptions } = this.clientFor(entry.config, bucket)
-    let client = entry.clients.get(cacheKey)
+    const { cacheKey, clientOptions } = this.clientFor(config, bucket)
+    const key = `${this.optionsKey}\u0000${cacheKey}`
+    let client = perApp.get(key)
     if (client == null) {
       client = this.getClient(clientOptions)
-      entry.clients.set(cacheKey, client)
+      perApp.set(key, client)
     }
     return client
   }
@@ -292,8 +285,7 @@ export default class S3Provider<
     providerUserSession: S3UserSession,
     { requireWrite = false, keys = [] }: SessionChecks = {},
   ): S3Session<P> {
-    const entry = this.#entry(companion)
-    const { config } = entry
+    const config = this.#config(companion)
     if (!this.isAuthenticated({ providerUserSession })) {
       throw new ProviderAuthError()
     }
@@ -311,7 +303,12 @@ export default class S3Provider<
       throw new ProviderUserError({ message: 's3ReadOnlySession' })
     }
     for (const key of keys) this.#assertInsidePrefix(prefix, key)
-    return { bucket, prefix, client: this.#client(entry, bucket), config }
+    return {
+      bucket,
+      prefix,
+      client: this.#client(companion, config, bucket),
+      config,
+    }
   }
 
   override async logout(): Promise<{ revoked: true }> {
@@ -327,9 +324,9 @@ export default class S3Provider<
   }): Promise<S3UserSession> {
     // Only the configuration goes through the error wrapper: a grant that
     // does not verify is the client's doing, not something to log as an error.
-    const { config } = await this.withErrorHandling(
+    const config = await this.withErrorHandling(
       'provider.s3.auth.error',
-      async () => this.#entry(companion),
+      async () => this.#config(companion),
     )
     if (config.mode === 'bucket') {
       return { bucket: config.bucket, prefix: config.prefix, write: true }

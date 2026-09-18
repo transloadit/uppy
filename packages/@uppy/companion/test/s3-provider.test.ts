@@ -33,7 +33,7 @@ const makeProvider = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
 type S3Cfg = Record<string, unknown>
 /**
  * Companion options with the provider configured under `providerOptions.s3`.
- * A fresh object every call: the provider caches its config and client per
+ * A fresh object every call: the provider caches its S3 client per
  * options object, so sharing one would leak a client between tests.
  */
 const companionWith = (s3Provider?: S3Cfg, s3Upload?: S3Cfg) =>
