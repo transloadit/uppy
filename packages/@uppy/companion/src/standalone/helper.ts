@@ -184,36 +184,35 @@ const parseAllowlistArray = (value: unknown): unknown =>
  * either a bucket (single-tenant) or a grant key (multi-tenant).
  */
 const getS3ProviderOptionsFromEnv = (): S3ProviderOptions | undefined => {
-  // "Configured" is the key being there at all, so an entirely unset
-  // environment leaves `providerOptions.s3` out rather than present and blank.
+  // A blank variable is an unset one (env files and compose templates list
+  // variables they do not use), and an environment with none set leaves
+  // `providerOptions.s3` out rather than present and blank.
+  const env = (name: string): string | undefined =>
+    process.env[`COMPANION_S3_PROVIDER_${name}`] || undefined
   const isConfigured = Object.keys(process.env).some(
-    (name) =>
-      name.startsWith('COMPANION_S3_PROVIDER_') && process.env[name] != null,
+    (name) => name.startsWith('COMPANION_S3_PROVIDER_') && process.env[name],
   )
   if (!isConfigured) return undefined
 
+  const forcePathStyle = env('FORCE_PATH_STYLE')
   return {
-    key: process.env['COMPANION_S3_PROVIDER_KEY'],
-    secret: getSecret('COMPANION_S3_PROVIDER_SECRET'),
-    region: process.env['COMPANION_S3_PROVIDER_REGION'],
-    endpoint: process.env['COMPANION_S3_PROVIDER_ENDPOINT'],
-    forcePathStyle: process.env['COMPANION_S3_PROVIDER_FORCE_PATH_STYLE']
-      ? process.env['COMPANION_S3_PROVIDER_FORCE_PATH_STYLE'] === 'true'
-      : undefined,
-    bucket: process.env['COMPANION_S3_PROVIDER_BUCKET'],
-    prefix: process.env['COMPANION_S3_PROVIDER_PREFIX'],
+    key: env('KEY'),
+    secret: getSecret('COMPANION_S3_PROVIDER_SECRET') || undefined,
+    region: env('REGION'),
+    endpoint: env('ENDPOINT'),
+    forcePathStyle: forcePathStyle ? forcePathStyle === 'true' : undefined,
+    bucket: env('BUCKET'),
+    prefix: env('PREFIX'),
     grantSecret: parseGrantKeys(
       getSecret('COMPANION_S3_PROVIDER_GRANT_SECRET'),
     ),
+    // PEM arrives from the environment with literal `\n` escapes.
     grantPublicKey: parseGrantKeys(
-      process.env['COMPANION_S3_PROVIDER_GRANT_PUBLIC_KEY']?.replace(
-        /\\n/g,
-        '\n',
-      ),
-    ), // PEM arrives from the environment with literal `\n` escapes
-    acl: aclSchema.parse(process.env['COMPANION_S3_PROVIDER_ACL']),
-    awsSse: sseSchema.parse(process.env['COMPANION_S3_PROVIDER_SSE']),
-    awsSseKmsKeyId: process.env['COMPANION_S3_PROVIDER_SSE_KMS_KEY_ID'],
+      env('GRANT_PUBLIC_KEY')?.replace(/\\n/g, '\n'),
+    ),
+    acl: aclSchema.parse(env('ACL')),
+    awsSse: sseSchema.parse(env('SSE')),
+    awsSseKmsKeyId: env('SSE_KMS_KEY_ID'),
   }
 }
 

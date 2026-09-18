@@ -16,6 +16,7 @@ import S3Provider, {
   itemRef,
   type ResolvedConfig,
   type S3Session,
+  withOwnCredentials,
 } from './index.js'
 
 const moveResponseSchema = z.object({
@@ -66,7 +67,11 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     const { key, secret } = workspaceCredentials(config.native, bucket)
     return {
       cacheKey: bucket,
-      clientOptions: { ...config.clientOptions, key, secret },
+      clientOptions: withOwnCredentials({
+        ...config.clientOptions,
+        key,
+        secret,
+      }),
     }
   }
 

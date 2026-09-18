@@ -118,6 +118,32 @@ describe('S3 provider', () => {
       })
     })
 
+    test("the provider's own key pair beats credentials inherited from the upload block", async () => {
+      const send = vi.fn(async () => ({ Contents: [] }))
+      const provider = makeProvider(send)
+      await provider.list({
+        companion: companionWith(
+          { bucket: 'b', key: 'provider-key', secret: 'provider-secret' },
+          {
+            region: 'r',
+            awsClientOptions: {
+              credentials: { accessKeyId: 'u', secretAccessKey: 'u' },
+              maxAttempts: 2,
+            },
+          },
+        ),
+        providerUserSession: bucketSession,
+      })
+      expect(vi.mocked(provider.getClient).mock.calls[0]?.[0]).toMatchObject({
+        key: 'provider-key',
+        secret: 'provider-secret',
+        awsClientOptions: { maxAttempts: 2 },
+      })
+      expect(
+        vi.mocked(provider.getClient).mock.calls[0]?.[0]?.awsClientOptions,
+      ).not.toHaveProperty('credentials')
+    })
+
     test('the client is built once per companion app', async () => {
       const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
       const companion = bucketCompanion()
@@ -230,10 +256,21 @@ describe('S3 provider', () => {
       ).rejects.toEqual(userError('S3_NOT_CONFIGURED'))
     })
 
+    test('a session from bucket mode is rejected once grants are required', async () => {
+      const provider = makeProvider(vi.fn(async () => ({ Contents: [] })))
+      // Bucket-mode sessions are the only ones without an expiry.
+      await expect(
+        provider.list({
+          companion: companion(),
+          providerUserSession: { bucket: 'b', prefix: '', write: true },
+        }),
+      ).rejects.toMatchObject({ isAuthError: true })
+    })
+
     test('read-only sessions may list but not change anything', async () => {
       const send = vi.fn(async () => ({ Contents: [] }))
       const provider = makeProvider(send)
-      const readOnly = { bucket: 'b', prefix: '', write: false }
+      const readOnly = { bucket: 'b', prefix: '', write: false, exp: 4e9 }
       const options = companion()
       expect(
         await provider.list({
@@ -745,7 +782,8 @@ describe('S3 provider', () => {
           },
         },
       }) as never
-    const session = { bucket: 'b', prefix: 'tenant/', write: true }
+    // Grant sessions always carry an expiry (here far in the future).
+    const session = { bucket: 'b', prefix: 'tenant/', write: true, exp: 4e9 }
     const listen = async (
       handler: Parameters<typeof createServer>[1],
     ): Promise<string> => {
@@ -781,6 +819,29 @@ describe('S3 provider', () => {
           providerUserSession: { ...session, bucket: 'someone-else' },
         }),
       ).rejects.toEqual(userError('S3_NOT_CONFIGURED'))
+    })
+
+    test('moving a folder onto its own key is a no-op, not "into itself"', async () => {
+      const provider = makeNative()
+      const companion = nativeCompanion('http://storage.test')
+      for (const destination of ['tenant/album/', 'tenant/album']) {
+        expect(
+          await provider.moveItem({
+            companion,
+            providerUserSession: session,
+            id: 'tenant/album/',
+            destination,
+          }),
+        ).toEqual({ id: 'tenant/album/', requestPath: 'tenant%2Falbum%2F' })
+      }
+      await expect(
+        provider.moveItem({
+          companion,
+          providerUserSession: session,
+          id: 'tenant/album/',
+          destination: 'tenant/album/inner/',
+        }),
+      ).rejects.toEqual(userError('S3_FOLDER_INTO_ITSELF'))
     })
 
     test('moves files and whole folders with one signed native call', async () => {

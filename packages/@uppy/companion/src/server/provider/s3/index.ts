@@ -150,6 +150,19 @@ export const itemRef = (key: string): ItemRef => ({
 })
 
 /**
+ * The client factory lets `awsClientOptions.credentials` win over `key` and
+ * `secret`. Options inherited from the upload block may carry such
+ * credentials; when the provider (or a Workspace) has its own key pair, that
+ * pair must be the one used.
+ */
+export const withOwnCredentials = (
+  options: S3ClientOptions,
+): S3ClientOptions => {
+  const { credentials: _, ...awsClientOptions } = options.awsClientOptions ?? {}
+  return { ...options, awsClientOptions }
+}
+
+/**
  * Adapter for browsing and managing S3-compatible object storage (AWS S3,
  * Cloudflare R2, MinIO, ...). Configured under `providerOptions.s3`;
  * credentials left unset there fall back to the `s3` upload block.
@@ -230,14 +243,18 @@ export default class S3Provider<
     // block. Only the connection and write settings are read from it.
     const fallback: S3ConnectionOptions & S3ObjectWriteOptions =
       companion.options.s3 ?? {}
+    const clientOptions: S3ClientOptions = {
+      ...pickDefined(fallback, CONNECTION_KEYS),
+      // Browsing goes to the plain endpoint; acceleration is an upload concern.
+      useAccelerateEndpoint: false,
+      ...pickDefined(own, CONNECTION_KEYS),
+    }
     return {
       ...parsed,
-      clientOptions: {
-        ...pickDefined(fallback, CONNECTION_KEYS),
-        // Browsing goes to the plain endpoint; acceleration is an upload concern.
-        useAccelerateEndpoint: false,
-        ...pickDefined(own, CONNECTION_KEYS),
-      },
+      clientOptions:
+        own.key != null && own.secret != null
+          ? withOwnCredentials(clientOptions)
+          : clientOptions,
       writeParams: s3WriteParams({
         ...pickDefined(fallback, WRITE_KEYS),
         ...pickDefined(own, WRITE_KEYS),
@@ -281,15 +298,15 @@ export default class S3Provider<
     if (!this.isAuthenticated({ providerUserSession })) {
       throw new ProviderAuthError()
     }
-    const { bucket, prefix, write } = providerUserSession
-    // A session opened under an earlier configuration (other bucket or
-    // prefix, or before grants were configured) has to be reopened.
-    if (
-      config.mode === 'bucket' &&
-      (bucket !== config.bucket || prefix !== config.prefix)
-    ) {
-      throw new ProviderAuthError()
-    }
+    const { bucket, prefix, write, exp } = providerUserSession
+    // A session opened under an earlier configuration has to be reopened:
+    // another bucket or prefix in bucket mode, or a bucket-mode session (the
+    // only kind without an expiry) once grants are required.
+    const stale =
+      config.mode === 'bucket'
+        ? bucket !== config.bucket || prefix !== config.prefix
+        : exp == null
+    if (stale) throw new ProviderAuthError()
     if (requireWrite && !write) {
       // A user error, not an auth error: a fresh session would not help.
       throw userError('S3_READ_ONLY_SESSION')
@@ -555,10 +572,10 @@ export default class S3Provider<
         throw userError('S3_DESTINATION_MUST_BE_FILE')
       }
       const target = isFolder ? ensureTrailingSlash(destination) : destination
+      if (target === id) return itemRef(id)
       if (isFolder && target.startsWith(id)) {
         throw userError('S3_FOLDER_INTO_ITSELF')
       }
-      if (target === id) return itemRef(id)
       return this.move(session, id, target)
     })
   }

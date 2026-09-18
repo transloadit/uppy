@@ -7,6 +7,7 @@ import type {
 } from '../../types/express.js'
 import { MAX_AGE_24H } from '../helpers/jwt.js'
 import logger from '../logger.js'
+import { ProviderAuthError, ProviderUserError } from './error.js'
 
 // from express:
 export interface Query {
@@ -257,7 +258,19 @@ export default class Provider<US = unknown> {
     try {
       return await fn()
     } catch (err: unknown) {
-      logger.error(err, tag)
+      if (
+        err instanceof ProviderUserError ||
+        err instanceof ProviderAuthError
+      ) {
+        // Thrown on purpose for the user (a name taken, a stale session):
+        // routine, and a client can trigger them at will. Not an error log.
+        logger.debug(
+          `${err.name}: ${err instanceof ProviderUserError ? JSON.stringify(err.json) : err.message}`,
+          tag,
+        )
+      } else {
+        logger.error(err, tag)
+      }
       throw this.mapProviderError(err)
     }
   }

@@ -76,9 +76,10 @@ export interface S3ObjectWriteOptions {
  * left unset here falls back to the same-named field of the `s3` upload block.
  *
  * The provider is disabled until either `bucket` (single-tenant: everyone who
- * can reach Companion browses that bucket, so put Companion behind your own
- * authentication) or a grant key (`grantSecret` / `grantPublicKey`,
- * multi-tenant: your server issues a short-lived grant per user) is set.
+ * can reach Companion browses *and changes* that bucket, so put Companion
+ * behind your own authentication) or a grant key (`grantSecret` /
+ * `grantPublicKey`, multi-tenant: your server issues a short-lived grant per
+ * user, which decides whether they may write) is set.
  * Restrict what the provider's credentials may do with IAM or a bucket
  * policy; Companion only enforces the per-user prefix carried by grants.
  */

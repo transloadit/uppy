@@ -54,6 +54,12 @@ const uploadOnly = (field: string) =>
   notHere(
     `is an upload setting: use "s3.${field}" instead (the top-level "s3" block configures uploads, "providerOptions.s3" configures the S3 provider)`,
   )
+const uploadOnlyFields = {
+  getKey: uploadOnly('getKey'),
+  conditions: uploadOnly('conditions'),
+  expires: uploadOnly('expires'),
+  useAccelerateEndpoint: uploadOnly('useAccelerateEndpoint'),
+}
 
 /**
  * The two modes are exclusive: either `bucket` (with an optional `prefix`)
@@ -67,10 +73,7 @@ const s3ProviderOptionsSchema = z
     bucket: z.string().min(1).optional(),
     prefix: z.string().optional(),
     ...grantKeyFields,
-    getKey: uploadOnly('getKey'),
-    conditions: uploadOnly('conditions'),
-    expires: uploadOnly('expires'),
-    useAccelerateEndpoint: uploadOnly('useAccelerateEndpoint'),
+    ...uploadOnlyFields,
   })
   .transform((s3, ctx): ParsedS3ProviderOptions => {
     if (hasGrantKeys(s3)) {
@@ -104,6 +107,7 @@ const s3ProviderOptionsSchema = z
 const transloaditStorageProviderOptionsSchema = z
   .object({
     ...grantKeyFields,
+    ...uploadOnlyFields,
     bucket: notHere(
       'native Storage takes no bucket: each grant names its Workspace',
     ),
