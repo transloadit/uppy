@@ -34,17 +34,19 @@ export type GrantKeys = Pick<
 
 /** The grant verified, but its `exp` has passed. */
 export class GrantExpiredError extends Error {
-  constructor(message = 'The storage grant has expired') {
-    super(message)
-    this.name = 'GrantExpiredError'
+  override name = 'GrantExpiredError'
+
+  constructor() {
+    super('The storage grant has expired')
   }
 }
 
 /** The grant did not verify, or its claims are not a v1 grant. */
 export class InvalidGrantError extends Error {
-  constructor(message = 'Invalid storage grant') {
-    super(message)
-    this.name = 'InvalidGrantError'
+  override name = 'InvalidGrantError'
+
+  constructor() {
+    super('Invalid storage grant')
   }
 }
 
@@ -113,7 +115,7 @@ type KeyCandidate = { key: string; algorithms: Algorithm[] }
 function verifyWithAnyKey(
   token: string,
   candidates: KeyCandidate[],
-  options: { clockTimestamp: number | undefined },
+  clockTimestamp: number | undefined,
 ): unknown {
   // A TokenExpiredError can only come from a key whose signature matched, so
   // it is worth reporting even when a later key fails for another reason.
@@ -122,7 +124,7 @@ function verifyWithAnyKey(
   for (const candidate of candidates) {
     try {
       return jwt.verify(token, candidate.key, {
-        ...options,
+        clockTimestamp,
         algorithms: candidate.algorithms,
       })
     } catch (err) {
@@ -157,10 +159,11 @@ export function verifyStorageGrant(
     })),
   ]
 
-  const payload = verifyWithAnyKey(token, candidates, {
-    clockTimestamp:
-      now === undefined ? undefined : Math.floor(now.getTime() / 1000),
-  })
+  const payload = verifyWithAnyKey(
+    token,
+    candidates,
+    now === undefined ? undefined : Math.floor(now.getTime() / 1000),
+  )
 
   const parsed = grantClaimsSchema.safeParse(payload)
   if (!parsed.success) throw new InvalidGrantError()

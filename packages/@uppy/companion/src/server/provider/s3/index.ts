@@ -59,13 +59,11 @@ const userSessionSchema = z.object({
 
 export type S3UserSession = z.infer<typeof userSessionSchema>
 
-/** Object attributes Companion sets when it writes (copies, folder markers). */
-type WriteParams = ReturnType<typeof s3WriteParams>
-
 /** The parsed provider options plus what every request needs from them. */
 export type ResolvedConfig<P extends ParsedS3ProviderOptions> = P & {
   clientOptions: S3ClientOptions
-  writeParams: WriteParams
+  /** Attributes Companion sets when it writes (copies, folder markers). */
+  writeParams: ReturnType<typeof s3WriteParams>
 }
 
 /** What every operation starts from: a checked session and its client. */
@@ -74,6 +72,12 @@ export type S3Session<P extends ParsedS3ProviderOptions> = {
   prefix: string
   client: S3Client
   config: ResolvedConfig<P>
+}
+
+/** What every request carries, on top of its own arguments. */
+type Args<T> = T & {
+  companion: CompanionLike
+  providerUserSession: S3UserSession
 }
 
 type SessionChecks = {
@@ -140,7 +144,7 @@ const hasUnsafeSegment = (key: string): boolean =>
   key.includes('\\') ||
   key.split('/').some((part) => part === '..' || part === '.')
 
-const itemRef = (key: string): ItemRef => ({
+export const itemRef = (key: string): ItemRef => ({
   id: key,
   requestPath: encodeURIComponent(key),
 })
@@ -349,12 +353,10 @@ export default class S3Provider<
     providerUserSession,
     query,
     directory,
-  }: {
-    companion: CompanionLike
-    providerUserSession: S3UserSession
+  }: Args<{
     query?: Query | undefined
     directory?: string | undefined
-  }): Promise<ProviderListResponse> {
+  }>): Promise<ProviderListResponse> {
     return this.withErrorHandling('provider.s3.list.error', async () => {
       // `directory` is the (already URL-decoded) key prefix of the folder
       // being listed; the root of the session is its prefix.
@@ -443,12 +445,10 @@ export default class S3Provider<
     id,
     query,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    id: string
-    query?: unknown
-    providerUserSession: S3UserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: Args<{ id: string; query?: unknown }>): Promise<{
+    stream: Readable
+    size: number | undefined
+  }> {
     return this.withErrorHandling('provider.s3.download.error', async () => {
       const { bucket, client } = this.session(companion, providerUserSession, {
         keys: [id],
@@ -515,11 +515,7 @@ export default class S3Provider<
     companion,
     id,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    id: string
-    providerUserSession: S3UserSession
-  }): Promise<void> {
+  }: Args<{ id: string }>): Promise<void> {
     return this.withErrorHandling('provider.s3.delete.error', async () => {
       const { bucket, client } = this.session(companion, providerUserSession, {
         requireWrite: true,
@@ -545,12 +541,7 @@ export default class S3Provider<
     id,
     destination,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    id: string
-    destination: string
-    providerUserSession: S3UserSession
-  }): Promise<ItemRef> {
+  }: Args<{ id: string; destination: string }>): Promise<ItemRef> {
     return this.withErrorHandling('provider.s3.move.error', async () => {
       const session = this.session(companion, providerUserSession, {
         requireWrite: true,
@@ -640,12 +631,7 @@ export default class S3Provider<
     parentId,
     name,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    parentId: string | null
-    name: string
-    providerUserSession: S3UserSession
-  }): Promise<ItemRef> {
+  }: Args<{ parentId: string | null; name: string }>): Promise<ItemRef> {
     return this.withErrorHandling(
       'provider.s3.createFolder.error',
       async () => {
@@ -713,13 +699,9 @@ export default class S3Provider<
    */
   protected override mapProviderError(err: unknown): unknown {
     if (err instanceof ProviderApiError) return err
-    if (err instanceof S3ConfigError) {
-      return userError('S3_NOT_CONFIGURED')
-    }
+    if (err instanceof S3ConfigError) return userError('S3_NOT_CONFIGURED')
     if (isNotFound(err)) return userError('S3_NOT_FOUND')
-    if (isPreconditionFailed(err)) {
-      return userError('S3_CONFLICT')
-    }
+    if (isPreconditionFailed(err)) return userError('S3_CONFLICT')
     return userError('S3_REQUEST_FAILED')
   }
 }

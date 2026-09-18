@@ -13,6 +13,7 @@ import {
 } from './config.js'
 import S3Provider, {
   type ItemRef,
+  itemRef,
   type ResolvedConfig,
   type S3Session,
 } from './index.js'
@@ -74,11 +75,13 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
    * and keeps asset identity; it never falls back to S3 copy/delete.
    */
   protected override async move(
-    { bucket: workspace, config }: S3Session<ParsedTransloaditStorageOptions>,
+    {
+      bucket: workspace,
+      config: { native },
+    }: S3Session<ParsedTransloaditStorageOptions>,
     id: string,
     destination: string,
   ): Promise<ItemRef> {
-    const { native } = config
     const { key, secret } = workspaceCredentials(native, workspace)
     const params = JSON.stringify({
       auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
@@ -111,6 +114,6 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     if (!moved.success || moved.data.path !== destination) {
       throw new ProviderApiError('Unexpected native Storage move response', 502)
     }
-    return { id: destination, requestPath: encodeURIComponent(destination) }
+    return itemRef(destination)
   }
 }
