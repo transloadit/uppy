@@ -1,5 +1,5 @@
 import { RateLimitedQueue } from '@uppy/core/utils'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import Assembly from '../lib/Assembly.js'
 
 describe('Transloadit/Assembly', () => {
@@ -186,6 +186,102 @@ describe('Transloadit/Assembly', () => {
       expect(result[6]).toEqual(['result', 'step_one', { id: 'thumb4' }])
       expect(result[7]).toEqual(['result', 'step_two', { id: 'transcript' }])
       expect(result[8]).toEqual(['finished'])
+    })
+  })
+
+  describe('live status', () => {
+    class FakeEventSource {
+      static last
+
+      #listeners = {}
+
+      constructor() {
+        FakeEventSource.last = this
+      }
+
+      addEventListener(type, fn) {
+        this.#listeners[type] ??= []
+        this.#listeners[type].push(fn)
+      }
+
+      dispatch(type, data) {
+        for (const fn of this.#listeners[type] ?? []) fn({ data })
+      }
+
+      close() {}
+    }
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    function connect(status) {
+      vi.stubGlobal('EventSource', FakeEventSource)
+      const assembly = new Assembly(
+        { assembly_id: 'a', websocket_url: 'ws://localhost', ...status },
+        new RateLimitedQueue(),
+      )
+      assembly.connect()
+      return assembly
+    }
+
+    it('advances ok to ASSEMBLY_EXECUTING when SSE says uploading finished', () => {
+      const assembly = connect({ ok: 'ASSEMBLY_UPLOADING' })
+      const seen = []
+      assembly.on('status', (status) => seen.push(status.ok))
+
+      FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+      assembly.close()
+
+      expect(assembly.status.ok).toBe('ASSEMBLY_EXECUTING')
+      expect(seen).toEqual(['ASSEMBLY_EXECUTING'])
+    })
+
+    it('only advances from ASSEMBLY_UPLOADING', () => {
+      for (const status of [
+        { ok: 'ASSEMBLY_COMPLETED' },
+        { ok: 'ASSEMBLY_CANCELED' },
+        { ok: 'ASSEMBLY_REPLAYING' },
+        { error: 'ASSEMBLY_CRASHED', message: 'boom' },
+      ]) {
+        const assembly = connect(status)
+
+        FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+        assembly.close()
+
+        expect(assembly.status.ok).toBe(status.ok)
+        expect(assembly.status.error).toBe(status.error)
+      }
+    })
+
+    it('folds an SSE error envelope into the status before emitting error', () => {
+      const assembly = connect({ ok: 'ASSEMBLY_EXECUTING' })
+      const events = []
+      assembly.on('status', (status) => events.push(['status', status.error]))
+      assembly.on('error', (error) => events.push(['error', error.error]))
+
+      FakeEventSource.last.dispatch(
+        'assembly_error',
+        JSON.stringify({ error: 'ASSEMBLY_CRASHED', message: 'boom' }),
+      )
+
+      expect(assembly.closed).toBe(true)
+      expect(assembly.status.error).toBe('ASSEMBLY_CRASHED')
+      expect(assembly.status.message).toBe('boom')
+      expect(events).toEqual([
+        ['status', 'ASSEMBLY_CRASHED'],
+        ['error', 'ASSEMBLY_CRASHED'],
+      ])
+    })
+
+    it('keeps progress_combined when a full status replaces it', () => {
+      const base = { ok: 'ASSEMBLY_EXECUTING', uploads: {}, results: {} }
+      const assembly = new Assembly(base, new RateLimitedQueue())
+      assembly.status = { ...base, progress_combined: 42 }
+
+      assembly.updateStatus({ ...base })
+
+      expect(assembly.status.progress_combined).toBe(42)
     })
   })
 })
