@@ -142,11 +142,11 @@ const json = (body: unknown, status = 200): MockS3Response => ({
   body,
 })
 /**
- * Companion reports its own user-facing failures as `i18nKey` (`@uppy/core`'s
- * `s3*` strings), never as English sentences.
+ * Companion reports its own user-facing failures by `code` (also `@uppy/core`'s
+ * `s3*` locale keys), never as English sentences.
  */
 /**
- * The locale keys Companion's S3 provider answers with.
+ * The error codes Companion's S3 provider answers with.
  * TODO: import `S3UserMessageKey` from `@uppy/companion` instead of mirroring
  * it, once the monorepo's tsconfig lets client packages use its types.
  */
@@ -167,8 +167,8 @@ type S3CompanionMessageKey =
   | 's3RequestFailed'
   | 's3SelectedInOtherSession'
 
-const userError = (i18nKey: S3CompanionMessageKey): MockS3Response =>
-  json({ i18nKey }, 400)
+const userError = (code: S3CompanionMessageKey): MockS3Response =>
+  json({ code }, 400)
 
 export function createMockS3Companion(
   options: MockS3CompanionOptions = {},

@@ -1,9 +1,9 @@
 import { ProviderUserError } from '../error.js'
 
 /**
- * The messages the S3 providers send to the browser, as `@uppy/core` locale
- * keys (`packages/@uppy/core/src/locale.ts` holds the English text). A test
- * checks that every key here exists there.
+ * The error codes the S3 providers send to the browser. Each is also a
+ * `@uppy/core` locale key (`packages/@uppy/core/src/locale.ts` holds the
+ * English text); a test checks that every code here exists there.
  *
  * TODO: share this list with the client packages (`@uppy/s3` mirrors it)
  * once the monorepo's tsconfig lets them import Companion's types.
@@ -28,6 +28,6 @@ export const S3_USER_MESSAGE_KEYS = [
 
 export type S3UserMessageKey = (typeof S3_USER_MESSAGE_KEYS)[number]
 
-/** A user-facing failure the browser translates and shows as is. */
-export const s3UserError = (i18nKey: S3UserMessageKey): ProviderUserError =>
-  new ProviderUserError({ i18nKey })
+/** A user-facing failure, reported by code; the browser translates it. */
+export const s3UserError = (code: S3UserMessageKey): ProviderUserError =>
+  new ProviderUserError({ code })

@@ -398,12 +398,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
         // or a translated message a plugin threw. Anything else is a transport
         // or programming error whose text is not.
         const userFacing = err as
-          | { name?: string; i18nKey?: string | undefined }
+          | { name?: string; code?: string | undefined }
           | undefined
         const message =
           userFacing?.name === 'UserFacingApiError'
-            ? userFacing.i18nKey
-              ? this.plugin.uppy.i18n(userFacing.i18nKey)
+            ? userFacing.code
+              ? this.plugin.uppy.i18n(userFacing.code)
               : raw
             : this.plugin.uppy.i18n('companionError')
         this.plugin.uppy.info(message, 'error', 5000)

@@ -69,7 +69,7 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   try {
     errData = await res.json()
 
-    const detail = errData.message ?? errData.i18nKey
+    const detail = errData.message ?? errData.code
     if (detail) errMsg = `${errMsg} message: ${detail}`
     if (errData.requestId) errMsg = `${errMsg} request-Id: ${errData.requestId}`
   } catch (cause) {
@@ -78,9 +78,9 @@ async function handleJSONResponse<ResJson>(res: Response): Promise<ResJson> {
   }
 
   if (res.status >= 400 && res.status <= 499) {
-    const { message, i18nKey } = errData
-    if (typeof i18nKey === 'string') {
-      throw new UserFacingApiError(message ?? i18nKey, i18nKey)
+    const { message, code } = errData
+    if (typeof code === 'string') {
+      throw new UserFacingApiError(message ?? code, code)
     }
     if (message) throw new UserFacingApiError(message)
   }

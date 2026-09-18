@@ -66,8 +66,8 @@ const inputsOf = (send: ReturnType<typeof vi.fn>, type: unknown) =>
     .filter((cmd) => cmd instanceof (type as never))
     .map((cmd) => (cmd as unknown as Cmd).input)
 
-const userError = (i18nKey: string) =>
-  expect.objectContaining({ name: 'ProviderUserError', json: { i18nKey } })
+const userError = (code: string) =>
+  expect.objectContaining({ name: 'ProviderUserError', json: { code } })
 
 const bucketCompanion = () => companionWith({ bucket: 'b', region: 'r' })
 const bucketSession = { bucket: 'b', prefix: '', write: true }
