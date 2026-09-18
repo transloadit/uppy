@@ -12,7 +12,7 @@ import type {
   Uppy,
   UppyFile,
 } from '@uppy/core'
-import { UIPlugin } from '@uppy/core'
+import { UIPlugin, UserFacingApiError } from '@uppy/core'
 import {
   type CompanionPluginOptions,
   Provider,
@@ -41,13 +41,15 @@ export type S3GrantClaims = Pick<
 > & { exp?: number }
 
 /** What a listing tells the client about the session it was served for. */
-export type S3SessionCapabilities = {
+export type S3Session = {
+  /** Bucket the session is browsing. */
+  bucket: string
+  /** Key prefix the session is rooted at: `''` or ending with `/`. */
+  prefix: string
   /** Companion allows this session to change files. */
   canWrite: boolean
   /** Companion moves a whole folder itself; otherwise the client walks it. */
   supportsMoveFolder: boolean
-  /** Key prefix the session is rooted at: `''` or ending with `/`. */
-  prefix: string
 }
 
 /**
@@ -66,7 +68,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   onSimpleAuth?: (authFormData: unknown) => Promise<void>
 
   /** Called with what every listing reports about the session. */
-  onCapabilities?: (capabilities: S3SessionCapabilities) => void
+  onSession?: (session: S3Session) => void
 
   /** Bucket of the session, as the latest listing reported it. */
   #bucket: string | undefined
@@ -75,27 +77,14 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     ...args: Parameters<Provider<M, B>['list']>
   ): Promise<ResBody> {
     const response = await super.list<ResBody>(...args)
-    const body =
-      typeof response === 'object' &&
-      response !== null &&
-      !Array.isArray(response)
-        ? (response as { username?: unknown; session?: unknown })
-        : undefined
-    if (typeof body?.username === 'string') {
-      this.#bucket = body.username
-    }
-    const session =
-      typeof body?.session === 'object' && body.session !== null
-        ? (body.session as {
-            canWrite?: unknown
-            supportsMoveFolder?: unknown
-            prefix?: unknown
-          })
-        : undefined
-    this.onCapabilities?.({
+    // The wire shape is `ProviderListResponse['session']` on the Companion side.
+    const { session } = (response ?? {}) as { session?: Partial<S3Session> }
+    if (typeof session?.bucket === 'string') this.#bucket = session.bucket
+    this.onSession?.({
+      bucket: session?.bucket ?? '',
+      prefix: session?.prefix ?? '',
       canWrite: session?.canWrite === true,
       supportsMoveFolder: session?.supportsMoveFolder === true,
-      prefix: typeof session?.prefix === 'string' ? session.prefix : '',
     })
     return response
   }
@@ -390,10 +379,8 @@ export default class S3<M extends Meta, B extends Body>
   /** Claims of the grant the current session was opened with, if any. */
   #grant: S3GrantClaims | null = null
 
-  /** What the latest listing reported; `undefined` until the first one. */
-  #serverCanWrite = false
-  #serverSupportsMoveFolder = false
-  #serverPrefix: string | undefined
+  /** What the latest listing reported about the session; `undefined` until the first one. */
+  #session: S3Session | undefined
 
   /** True when no usable Companion session is stored, so auto-connect must log in first. */
   #needsLogin = false
@@ -420,14 +407,8 @@ export default class S3<M extends Meta, B extends Body>
       supportsRefreshToken: false,
     })
     this.provider.getGrant = this.opts.getGrant
-    this.provider.onCapabilities = ({
-      canWrite,
-      supportsMoveFolder,
-      prefix,
-    }) => {
-      this.#serverCanWrite = canWrite
-      this.#serverSupportsMoveFolder = supportsMoveFolder
-      this.#serverPrefix = prefix
+    this.provider.onSession = (session) => {
+      this.#session = session
       this.#applyActions()
     }
     this.provider.onSimpleAuth = async (authFormData) => {
@@ -467,7 +448,7 @@ export default class S3<M extends Meta, B extends Body>
     }
     // Without a grant only a listing tells us which prefix the session is
     // rooted at, so make sure we have had one before judging the key.
-    if (!this.#grant && this.#serverPrefix === undefined) {
+    if (!this.#grant && this.#session === undefined) {
       await this.view.openFolder(this.rootFolderId)
     }
     const root = this.rootPrefix
@@ -615,7 +596,8 @@ export default class S3<M extends Meta, B extends Body>
   /** Both the session and Companion must allow changes; older servers fail closed. */
   get canWrite(): boolean {
     return (
-      this.#serverCanWrite && (this.#grant?.scopes.includes('write') ?? true)
+      (this.#session?.canWrite ?? false) &&
+      (this.#grant?.scopes.includes('write') ?? true)
     )
   }
 
@@ -626,7 +608,7 @@ export default class S3<M extends Meta, B extends Body>
    */
   get rootPrefix(): string {
     if (this.#grant) return normalizeStorageGrantPrefix(this.#grant.prefix)
-    return this.#serverPrefix ?? ''
+    return this.#session?.prefix ?? ''
   }
 
   /** Bulk actions over the multi-selection in manager mode. */
@@ -640,7 +622,7 @@ export default class S3<M extends Meta, B extends Body>
             await view.prompt({
               title: this.i18n('moveSelected'),
               label: this.i18n('moveSelectedPrompt'),
-              confirmLabel: this.i18n('moveSelected').replace(/…$/, ''),
+              confirmLabel: this.i18n('move'),
             })
           )
             ?.trim()
@@ -728,9 +710,10 @@ export default class S3<M extends Meta, B extends Body>
       return
     }
     if (destination.startsWith(key)) {
-      throw new Error(this.i18n('folderMoveIntoItself'))
+      // The same locale key Companion answers with; `ProviderView` translates it.
+      throw new UserFacingApiError('s3FolderIntoItself')
     }
-    if (this.#serverSupportsMoveFolder) {
+    if (this.#session?.supportsMoveFolder) {
       // The backend moves the whole folder in one call (Transloadit Storage
       // does, preserving asset identity); nothing to walk.
       await this.provider.moveItem(key, destination, { signal })
@@ -800,6 +783,7 @@ export default class S3<M extends Meta, B extends Body>
       showFilter: true,
       showBreadcrumbs: true,
       mode: this.opts.mode,
+      standalone: this.opts.standalone,
       getPreviewUrl: getPreviewUrl
         ? (item) => getPreviewUrl(S3.keyOf(item.id))
         : undefined,

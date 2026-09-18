@@ -8,5 +8,6 @@ export default {
     downloadFailed: 'Could not download this file',
     uploadFiles: 'Upload files',
     storing: 'Storing…',
+    storageNotConnected: 'Connect to Transloadit Storage before uploading',
   },
 }

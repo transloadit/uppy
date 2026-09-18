@@ -53,7 +53,6 @@ describe('Transloadit Storage in the browser', () => {
   it('offers the custom upload action without replacing an application Assembly', () => {
     const onUploadRequest = vi.fn()
     uppy = new Uppy().use(TransloaditStorage, {
-      workspace: 'my-bucket',
       companionUrl: COMPANION,
       onUploadRequest,
     })
@@ -72,7 +71,6 @@ describe('Transloadit Storage in the browser', () => {
     uppy = new Uppy().use(FixtureUploader, { assemblyOptions })
     expect(() =>
       uppy?.use(TransloaditStorage, {
-        workspace: 'my-bucket',
         companionUrl: COMPANION,
         storeUploads: {
           signAssembly: async (params) => ({ params, signature: 'test' }),
@@ -93,7 +91,6 @@ describe('Transloadit Storage in the browser', () => {
       locale: uploaderLocale,
     })
     uppy.use(TransloaditStorage, {
-      workspace: 'my-bucket',
       companionUrl: COMPANION,
       storeUploads: {
         transloaditPluginId: 'WeddingUpload',
@@ -118,7 +115,6 @@ describe('Transloadit Storage in the browser', () => {
       .use(Dashboard, { target, inline: true })
       .use(TransloaditStorage, {
         companionUrl: COMPANION,
-        workspace: 'my-bucket',
         getGrant: async () =>
           mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
         getDownloadUrl,
@@ -170,7 +166,6 @@ describe('Transloadit Storage in the browser', () => {
       .use(Dashboard, { target, inline: true })
       .use(TransloaditStorage, {
         companionUrl: COMPANION,
-        workspace: 'my-bucket',
       })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()

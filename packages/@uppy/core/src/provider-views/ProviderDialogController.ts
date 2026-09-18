@@ -1,22 +1,14 @@
-import type { ProviderDialogState } from '../index.js'
+import type {
+  ConfirmOptions,
+  PromptOptions,
+  ProviderDialogState,
+} from '../index.js'
+
+export type { ConfirmOptions, PromptOptions }
 
 type DialogStateStore = {
   getPluginState(): { dialog?: ProviderDialogState | undefined }
   setPluginState(patch: { dialog?: ProviderDialogState | undefined }): void
-}
-
-export type PromptOptions = {
-  title: string
-  label?: string | undefined
-  defaultValue?: string | undefined
-  confirmLabel?: string | undefined
-}
-
-export type ConfirmOptions = {
-  title: string
-  message?: string | undefined
-  confirmLabel?: string | undefined
-  danger?: boolean | undefined
 }
 
 /**

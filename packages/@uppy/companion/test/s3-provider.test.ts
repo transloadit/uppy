@@ -111,12 +111,10 @@ describe('S3 provider', () => {
         providerUserSession: bucketSession,
       })
       expect(getClient.mock.calls[0]?.[0]).toMatchObject({
-        s3: {
-          key: 'provider-key',
-          secret: 'provider-secret',
-          region: 'eu-west-1',
-          useAccelerateEndpoint: false,
-        },
+        key: 'provider-key',
+        secret: 'provider-secret',
+        region: 'eu-west-1',
+        useAccelerateEndpoint: false,
       })
     })
 
@@ -770,7 +768,9 @@ describe('S3 provider', () => {
         await provider.list({ companion, providerUserSession: session }),
       ).toMatchObject({ session: { supportsMoveFolder: true } })
       expect(vi.mocked(provider.getClient).mock.calls[0]?.[0]).toMatchObject({
-        s3: { key: 'ws-key', secret: 'ws-secret', region: 'auto' },
+        key: 'ws-key',
+        secret: 'ws-secret',
+        region: 'auto',
       })
       await expect(
         provider.list({

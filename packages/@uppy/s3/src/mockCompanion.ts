@@ -246,7 +246,7 @@ export function createMockS3Companion(
         const claims = decodeMockGrant(form.grant)
         if (!claims) return userError('s3InvalidGrant')
         if (claims.exp !== undefined && claims.exp <= nowSeconds()) {
-          return json({ message: 'Unauthorized' }, 401)
+          return { status: 401, body: null }
         }
         session = claims
         bucket = claims.bucket
@@ -256,12 +256,8 @@ export function createMockS3Companion(
       }
       return json({ uppyAuthToken: token })
     }
-    if (method === 'GET' && operation === 'logout') {
-      session = null
-      return json({ ok: true, revoked: true })
-    }
     if (request.token !== token || expired()) {
-      return json({ message: 'unauthorized' }, 401)
+      return { status: 401, body: null }
     }
     if (session && !session.scopes?.includes('read')) {
       return userError('s3InvalidGrant')
@@ -288,11 +284,12 @@ export function createMockS3Companion(
         // What the session may do, and where it is rooted: the client hides
         // the management actions and resolves typed paths with these.
         session: {
+          bucket,
+          prefix: root,
           canWrite:
             (options.canWrite ?? true) &&
             (session?.scopes?.includes('write') ?? true),
           supportsMoveFolder: nativeMoves,
-          prefix: root,
         },
         nextPagePath:
           nextOffset < entries.length

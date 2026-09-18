@@ -169,6 +169,11 @@ export interface Opts<M extends Meta, B extends Body> {
   getPreviewUrl?: (
     item: PartialTreeFile | PartialTreeFolderNode,
   ) => Promise<string>
+  /**
+   * The plugin is the whole page: no user/logout row in the header (the app
+   * owns the session).
+   */
+  standalone?: boolean
   viewType: 'list' | 'grid'
   showTitles: boolean
   showFilter: boolean
@@ -389,12 +394,14 @@ export default class ProviderView<M extends Meta, B extends Body> {
         this.plugin.uppy.log('[ProviderView] action cancelled', 'warning')
       } else {
         this.plugin.uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
-        // Companion reports user-facing failures as locale keys; an error a
-        // plugin threw itself already carries a translated message.
+        // A `UserFacingApiError` carries a locale key (Companion reports
+        // user-facing failures that way, and a plugin may throw one too);
+        // anything else is a transport or programming error whose text is
+        // not for the user.
         const message =
           (err as { name?: string } | undefined)?.name === 'UserFacingApiError'
             ? this.plugin.uppy.i18n(raw)
-            : raw
+            : this.plugin.uppy.i18n('companionError')
         this.plugin.uppy.info(message, 'error', 5000)
       }
     }
@@ -1048,9 +1055,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
-          standalone={Boolean(
-            (this.plugin.opts as { standalone?: boolean }).standalone,
-          )}
+          standalone={opts.standalone ?? false}
           selectionToggle={
             isManager
               ? {

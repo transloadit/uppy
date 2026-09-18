@@ -44,17 +44,16 @@ const keyList = z.union([z.string(), z.array(z.string())]).optional()
 const grantKeyFields = { grantSecret: keyList, grantPublicKey: keyList }
 
 /**
- * Fields that only ever configured *uploads*, so finding one under
- * `providerOptions.s3` means the config predates the S3 provider. `awsSse` and
- * the other credential/connection settings are shared by both, so they are not
- * listed here.
+ * A field that must not be set. `providerOptions.s3` used to be where the
+ * upload settings lived, so an upload-only field there is the old config; the
+ * message says where it belongs now.
  */
-const UPLOAD_ONLY_S3_FIELDS = [
-  'getKey',
-  'conditions',
-  'expires',
-  'useAccelerateEndpoint',
-] as const
+const notHere = (message: string) => z.never({ error: message }).optional()
+
+const uploadOnly = (field: string) =>
+  notHere(
+    `is an upload setting: use "s3.${field}" instead (the top-level "s3" block configures uploads, "providerOptions.s3" configures the S3 provider)`,
+  )
 
 /**
  * The two modes are exclusive: either `bucket` (with an optional `prefix`)
@@ -68,6 +67,10 @@ const s3ProviderOptionsSchema = z
     bucket: z.string().min(1).optional(),
     prefix: z.string().optional(),
     ...grantKeyFields,
+    getKey: uploadOnly('getKey'),
+    conditions: uploadOnly('conditions'),
+    expires: uploadOnly('expires'),
+    useAccelerateEndpoint: uploadOnly('useAccelerateEndpoint'),
   })
   .transform((s3, ctx): ParsedS3ProviderOptions => {
     if (hasGrantKeys(s3)) {
@@ -101,6 +104,10 @@ const s3ProviderOptionsSchema = z
 const transloaditStorageProviderOptionsSchema = z
   .object({
     ...grantKeyFields,
+    bucket: notHere(
+      'native Storage takes no bucket: each grant names its Workspace',
+    ),
+    prefix: notHere('native Storage takes no prefix: each grant names its own'),
     apiEndpoint: z.string().url(),
     workspaces: z.record(
       z.string().min(1),
@@ -136,18 +143,6 @@ function parseOrThrow<T>(
 
 /** Parses `providerOptions.s3`; throws an {@link S3ConfigError} that says what is wrong. */
 export function parseS3ProviderOptions(own: unknown): ParsedS3ProviderOptions {
-  // `providerOptions.s3` is *not* deprecated: it configures the S3 provider
-  // (browsing a bucket), which is a different feature from the top-level `s3`
-  // block (uploading to a bucket). It used to be where the upload settings
-  // lived, though, so an upload-only field there is the old config.
-  const uploadOnlyField = UPLOAD_ONLY_S3_FIELDS.find(
-    (field) => own != null && Object.hasOwn(own, field),
-  )
-  if (uploadOnlyField != null) {
-    throw new S3ConfigError(
-      `The Provider option "providerOptions.s3.${uploadOnlyField}" is no longer supported. Please use the option "s3.${uploadOnlyField}" instead: the upload settings belong in the top-level "s3" block, while "providerOptions.s3" now configures the S3 provider.`,
-    )
-  }
   return parseOrThrow('providerOptions.s3', s3ProviderOptionsSchema, own)
 }
 

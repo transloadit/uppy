@@ -35,6 +35,8 @@ export interface ProviderListResponse {
   items: ProviderListItem[]
   /** What the listing tells the client about the session it was served for. */
   session?: {
+    /** Bucket (or equivalent container) the session is browsing. */
+    bucket: string
     /** Whether the session may change files (delete, move, create folders). */
     canWrite: boolean
     /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
@@ -215,10 +217,11 @@ export default class Provider<US = unknown> {
   }
 
   /**
-   * Move or rename a single file. `destination` is a full path/id in the
-   * provider's own addressing scheme; the response carries the new id.
-   * Folders are moved by the client, item by item, through this and the
-   * other mutations.
+   * Move or rename one item. `destination` is a full path/id in the provider's
+   * own addressing scheme; the response carries the new id. Folders are
+   * accepted only by providers whose listings report
+   * `session.supportsMoveFolder`; otherwise the client moves a folder's
+   * entries one by one through this and the other mutations.
    */
   async moveItem(options: {
     companion: CompanionLike

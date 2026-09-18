@@ -10,6 +10,7 @@ export { default as UIPlugin } from './UIPlugin.js'
 export type {
   AsyncStore,
   BaseProviderPlugin,
+  ConfirmOptions,
   PartialTree,
   PartialTreeFile,
   PartialTreeFolder,
@@ -18,6 +19,7 @@ export type {
   PartialTreeId,
   PluginTypeRegistry,
   Processor,
+  PromptOptions,
   ProviderDialogState,
   State,
   UnknownPlugin,
@@ -36,3 +38,4 @@ export type {
   MinimalRequiredUppyFile,
   UppyFile,
 } from './utils/index.js'
+export { default as UserFacingApiError } from './utils/UserFacingApiError.js'

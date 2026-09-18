@@ -8,7 +8,6 @@ export default {
     rename: 'Rename',
     itemRenamed: 'Renamed to "%{name}"',
     itemMoved: 'Moved to "%{path}"',
-    folderMoveIntoItself: 'A folder cannot be moved into itself',
     movingFiles: 'Moving %{done} of %{total} files…',
     movingItems: 'Moving %{done} of %{total} items…',
     deletingItems: 'Deleting %{done} of %{total} items…',
@@ -21,6 +20,7 @@ export default {
     newFolderPrompt: 'Name of the new folder:',
     create: 'Create',
     folderCreated: 'Created folder "%{name}"',
+    move: 'Move',
     moveSelected: 'Move…',
     moveSelectedPrompt:
       'Folder to move the selection into (empty for the root):',

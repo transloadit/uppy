@@ -67,7 +67,7 @@ type WriteParams = ReturnType<typeof s3WriteParams>
 
 /** The parsed provider options plus what every request needs from them. */
 export type ResolvedConfig<P extends ParsedS3ProviderOptions> = P & {
-  clientOptions: { s3: S3ClientOptions }
+  clientOptions: S3ClientOptions
   writeParams: WriteParams
 }
 
@@ -76,8 +76,13 @@ export type S3Session<P extends ParsedS3ProviderOptions> = {
   bucket: string
   prefix: string
   client: S3Client
-  writeParams: WriteParams
   config: ResolvedConfig<P>
+}
+
+type SessionChecks = {
+  requireWrite?: boolean
+  /** Keys the request names; each must lie inside the session's prefix. */
+  keys?: string[]
 }
 
 export type ItemRef = { id: string; requestPath: string }
@@ -202,7 +207,7 @@ export default class S3Provider<
   protected clientFor(
     config: ResolvedConfig<P>,
     _bucket: string,
-  ): { cacheKey: string; clientOptions: { s3: S3ClientOptions } } {
+  ): { cacheKey: string; clientOptions: S3ClientOptions } {
     return { cacheKey: '', clientOptions: config.clientOptions }
   }
 
@@ -215,8 +220,8 @@ export default class S3Provider<
   }
 
   /** Overridable for tests. */
-  getClient(clientOptions: { s3?: S3ClientOptions | undefined }): S3Client {
-    const client = getS3Client(clientOptions)
+  getClient(clientOptions: S3ClientOptions): S3Client {
+    const client = getS3Client({ s3: clientOptions })
     if (client == null) {
       throw new S3ConfigError(
         `The ${this.optionsKey} provider has no region: set \`providerOptions['${this.optionsKey}'].region\` (or \`s3.region\`)`,
@@ -225,25 +230,26 @@ export default class S3Provider<
     return client
   }
 
-  #resolveConfig(companion: CompanionLike, own: object): ResolvedConfig<P> {
-    const upload = companion.options.s3
+  #resolveConfig(
+    companion: CompanionLike,
+    own: S3ConnectionOptions & S3ObjectWriteOptions,
+  ): ResolvedConfig<P> {
     const parsed = this.parseOptions(own)
     // The provider's own settings win; anything unset comes from the upload
     // block. Only the connection and write settings are read from it.
-    const fallback: S3ConnectionOptions & S3ObjectWriteOptions = upload ?? {}
+    const fallback: S3ConnectionOptions & S3ObjectWriteOptions =
+      companion.options.s3 ?? {}
     return {
       ...parsed,
       clientOptions: {
-        s3: {
-          ...pickDefined(fallback, CONNECTION_KEYS),
-          // Browsing goes to the plain endpoint; acceleration is an upload concern.
-          useAccelerateEndpoint: false,
-          ...pickDefined(own as S3ConnectionOptions, CONNECTION_KEYS),
-        },
+        ...pickDefined(fallback, CONNECTION_KEYS),
+        // Browsing goes to the plain endpoint; acceleration is an upload concern.
+        useAccelerateEndpoint: false,
+        ...pickDefined(own, CONNECTION_KEYS),
       },
       writeParams: s3WriteParams({
         ...pickDefined(fallback, WRITE_KEYS),
-        ...pickDefined(own as S3ObjectWriteOptions, WRITE_KEYS),
+        ...pickDefined(own, WRITE_KEYS),
       }),
     }
   }
@@ -251,7 +257,7 @@ export default class S3Provider<
   /** The cache entry for this Companion app, filling it on first use. */
   #entry(companion: CompanionLike): CacheEntry<P> {
     const own: unknown = companion.options.providerOptions?.[this.optionsKey]
-    if (own == null || typeof own !== 'object') {
+    if (!isRecord(own)) {
       throw new S3ConfigError(
         `The ${this.optionsKey} provider is not configured: set \`providerOptions['${this.optionsKey}']\``,
       )
@@ -284,7 +290,7 @@ export default class S3Provider<
   protected session(
     companion: CompanionLike,
     providerUserSession: S3UserSession,
-    { requireWrite = false, keys = [] as string[] } = {},
+    { requireWrite = false, keys = [] }: SessionChecks = {},
   ): S3Session<P> {
     const entry = this.#entry(companion)
     const { config } = entry
@@ -305,13 +311,7 @@ export default class S3Provider<
       throw new ProviderUserError({ message: 's3ReadOnlySession' })
     }
     for (const key of keys) this.#assertInsidePrefix(prefix, key)
-    return {
-      bucket,
-      prefix,
-      client: this.#client(entry, bucket),
-      writeParams: config.writeParams,
-      config,
-    }
+    return { bucket, prefix, client: this.#client(entry, bucket), config }
   }
 
   override async logout(): Promise<{ revoked: true }> {
@@ -444,9 +444,10 @@ export default class S3Provider<
         // The client shows write actions only when the session allows them,
         // and resolves paths the user types against the session's root.
         session: {
+          bucket,
+          prefix: rootPrefix,
           canWrite: providerUserSession.write,
           supportsMoveFolder: this.supportsMoveFolder,
-          prefix: rootPrefix,
         },
       }
     })
@@ -592,7 +593,7 @@ export default class S3Provider<
    * the source deleted.
    */
   protected async move(
-    { bucket, client, writeParams }: S3Session<P>,
+    { bucket, client, config: { writeParams } }: S3Session<P>,
     id: string,
     destination: string,
   ): Promise<ItemRef> {
@@ -666,11 +667,15 @@ export default class S3Provider<
         const parentFolder = parentId
           ? ensureTrailingSlash(parentId)
           : undefined
-        const { bucket, prefix, client, writeParams } = this.session(
-          companion,
-          providerUserSession,
-          { requireWrite: true, keys: parentFolder ? [parentFolder] : [] },
-        )
+        const {
+          bucket,
+          prefix,
+          client,
+          config: { writeParams },
+        } = this.session(companion, providerUserSession, {
+          requireWrite: true,
+          keys: parentFolder ? [parentFolder] : [],
+        })
         const cleanName = name.trim().replace(/^\/+|\/+$/g, '')
         if (
           cleanName.length === 0 ||

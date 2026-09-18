@@ -60,11 +60,11 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
   protected override clientFor(
     config: ResolvedConfig<ParsedTransloaditStorageOptions>,
     bucket: string,
-  ): { cacheKey: string; clientOptions: { s3: S3ClientOptions } } {
+  ): { cacheKey: string; clientOptions: S3ClientOptions } {
     const { key, secret } = workspaceCredentials(config.native, bucket)
     return {
       cacheKey: bucket,
-      clientOptions: { s3: { ...config.clientOptions.s3, key, secret } },
+      clientOptions: { ...config.clientOptions, key, secret },
     }
   }
 

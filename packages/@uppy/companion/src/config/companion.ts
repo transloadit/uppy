@@ -14,16 +14,19 @@ import { toKeyList } from '../server/provider/s3/grant.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
 const defaultPeriodicPingUrls: string[] = []
+// Typed rather than left as `{}`: the runtime options are this object
+// intersected with `CompanionInitOptions`, and a bare `{}` would erase what
+// `providerOptions.s3` is for everything reading it.
+const defaultProviderOptions: NonNullable<
+  CompanionInitOptions['providerOptions']
+> = {}
 
 export const defaultOptions = {
   server: {
     protocol: 'http',
     path: '',
   },
-  // Typed rather than left as `{}`: the runtime options are this object
-  // intersected with `CompanionInitOptions`, and a bare `{}` erases what
-  // `providerOptions.s3` is (`S3ProviderOptions`) for everything reading it.
-  providerOptions: {} as NonNullable<CompanionInitOptions['providerOptions']>,
+  providerOptions: defaultProviderOptions,
   s3: {
     endpoint: 'https://{service}.{region}.amazonaws.com',
     conditions: defaultS3Conditions,

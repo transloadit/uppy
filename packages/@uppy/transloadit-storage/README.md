@@ -99,11 +99,12 @@ serve arbitrary Workspaces. Prefix checks, expired-session checks and write scop
 server-side for both source and destination.
 
 The browser never names a bucket: `@uppy/s3` and this plugin have no `bucket` option, and the
-session sees whatever Companion (or the grant) decides. Each listing reports `canWrite`, whether
-the server moves folders itself (`movesFolders`, true for this provider) and the
-session's root `prefix`; the browser hides the management actions when the server says the session
-is read-only, and resolves paths typed into the move dialogs relative to that browsing root. Older
-servers that report neither show read actions only — upgrade Companion together with this plugin.
+session sees whatever Companion (or the grant) decides. Each listing carries a `session` object:
+the `bucket`, the session's root `prefix`, `canWrite`, and whether the server moves folders itself
+(`supportsMoveFolder`, true for this provider); the browser hides the management actions when the
+server says the session is read-only, and resolves paths typed into the move dialogs relative to
+that browsing root. Older servers that report no session show read actions only — upgrade
+Companion together with this plugin.
 
 Queued imports include their original bucket in the download URL. Companion refuses a missing
 or different bucket before reading any bytes, so reconnecting cannot silently import a same-named
