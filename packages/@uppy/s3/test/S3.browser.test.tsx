@@ -632,6 +632,45 @@ describe('S3 provider in the browser', () => {
     expect(companion.folders.has('docs/')).toBe(false)
   })
 
+  it('offers the bulk actions in the header while items are checked (picker mode)', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+    await openBucket()
+
+    const deleteButton = page.getByRole('button', {
+      name: 'Delete',
+      exact: true,
+    })
+    await expect.element(deleteButton).not.toBeInTheDocument()
+
+    await page.getByRole('checkbox', { name: /docs/ }).click()
+    await page.getByRole('checkbox', { name: 'readme.md' }).click()
+    await expect.element(deleteButton).toBeVisible()
+    await expect
+      .element(page.getByRole('button', { name: 'Move…' }))
+      .toBeVisible()
+
+    await deleteButton.click()
+    const dialog = page.getByRole('dialog')
+    await expect.element(dialog.getByText('Delete 2 items?')).toBeVisible()
+    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
+    await expect
+      .element(page.getByText(/Deleted 2 items/).first())
+      .toBeVisible()
+    await expect
+      .element(page.getByText('readme.md', { exact: true }))
+      .not.toBeInTheDocument()
+    expect(
+      companion.calls
+        .filter((call) => call.path === '/s3/mutate/delete')
+        .map((call) => call.body),
+    ).toEqual([{ id: 'docs/hello.txt' }, { id: 'docs/' }, { id: 'readme.md' }])
+    await expect.element(deleteButton).not.toBeInTheDocument()
+  })
+
   describe('server-issued grants', () => {
     it('connects with a grant instead of a plain session', async ({
       worker,

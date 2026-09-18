@@ -160,7 +160,10 @@ export interface Opts<M extends Meta, B extends Body> {
    * feeds `bulkActions` instead of picking.
    */
   mode?: 'picker' | 'manager'
-  /** Manager mode: actions over the multi-selected items. */
+  /**
+   * Actions over the multi-selected items: in the header while something is
+   * checked (picker mode), or in the footer of the manager's selection mode.
+   */
   bulkActions?: ProviderBulkAction<M, B>[]
   /** Manager mode: resolves a preview image URL for the detail modal. */
   getPreviewUrl?: (
@@ -445,7 +448,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   // (and their selected descendants) may become folder mutation targets.
   #selectionRoots = new Set<string>()
 
-  /** Manager mode: run a bulk action over the checked items, then clear the selection. */
+  /** Run a bulk action over the checked items, then clear the selection. */
   runBulkAction = (action: ProviderBulkAction<M, B>): Promise<void> =>
     this.#run(action, async () => {
       const { partialTree } = this.plugin.getPluginState()
@@ -1055,6 +1058,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
                   onToggle: this.toggleSelectionMode,
                 }
               : undefined
+          }
+          bulkActions={isManager ? undefined : opts.bulkActions}
+          runBulkAction={this.runBulkAction}
+          selectedCount={
+            isManager ? undefined : getNumberOfSelectedFiles(partialTree)
           }
         />
         {opts.showFilter && (
