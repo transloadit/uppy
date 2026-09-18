@@ -347,6 +347,9 @@ describe('Transloadit', () => {
       new RateLimitedQueue(),
     )
     plugin.assembly = assembly
+    plugin.setPluginState({ error: new Error('from a previous run') })
+    const cancelSpy = vi.fn()
+    uppy.on('transloadit:assembly-cancel', cancelSpy)
     expect(uppy.getState().plugins.Transloadit.assemblyStatus?.ok).toBe(
       'ASSEMBLY_EXECUTING',
     )
@@ -355,6 +358,10 @@ describe('Transloadit', () => {
 
     // Synchronously, before the (failing) cancel request has settled.
     expect(assembly.closed).toBe(true)
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+    // This is what lets the AssemblyWatcher, and so `uppy.upload()`, settle.
+    expect(cancelSpy).toHaveBeenCalledTimes(1)
+    expect(cancelSpy.mock.calls[0][0].assembly_id).toBe('test-assembly-id')
     expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
     expect(uppy.getState().plugins.Transloadit.lastAssemblyStatus?.ok).toBe(
       'ASSEMBLY_EXECUTING',
@@ -401,11 +408,12 @@ describe('Transloadit', () => {
     await plugin.restored
 
     const state = uppy.getState().plugins.Transloadit
-    expect(state.error?.error).toBe('INVALID_FILE_META_DATA')
     expect(state.error?.message).toBe('One of the files is broken')
-    expect(state.error?.assembly?.assembly_id).toBe('test-assembly-id')
-    // The live slot is gone, the error stays until a new assembly starts.
+    expect(state.error?.assembly?.error).toBe('INVALID_FILE_META_DATA')
+    // The live slot is gone; the last status and the error keep the failure
+    // until a new assembly starts.
     expect(state.assemblyStatus).toBeUndefined()
+    expect(state.lastAssemblyStatus?.error).toBe('INVALID_FILE_META_DATA')
 
     plugin.assembly = new Assembly(status, new RateLimitedQueue())
     expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()

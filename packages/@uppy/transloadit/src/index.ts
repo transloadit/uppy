@@ -94,10 +94,12 @@ type TransloaditState = {
    */
   lastAssemblyStatus: AssemblyResponse | undefined
   /**
-   * The error the live assembly failed with, if any. Set when the assembly
-   * reports an error and cleared when the next assembly starts.
+   * The error the live assembly failed with, if any: a plain `Error` with
+   * the API's error response (or the network error) spread onto it, plus
+   * the assembly status at the time of the failure. Cleared when the next
+   * assembly starts and on cancel-all.
    */
-  error: AssemblyError | undefined
+  error: (Error & { assembly?: AssemblyResponse }) | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -546,10 +548,15 @@ export default class Transloadit<
     }
     this.#assembly = newAssembly
 
+    if (newAssembly) {
+      // A new run starts clean. Write this before the status so no
+      // subscriber sees the new status next to the previous run's error.
+      this.setPluginState({ error: undefined })
+    }
+
     this.#handleAssemblyStatusUpdate(newAssembly?.status)
 
     if (newAssembly) {
-      this.setPluginState({ error: undefined })
       newAssembly.on('status', this.#handleAssemblyStatusUpdate)
     }
   }
@@ -657,7 +664,7 @@ export default class Transloadit<
     const url = getAssemblyUrlSsl(assembly.status)
     this.client.getAssemblyStatus(url).then((finalStatus) => {
       assembly.status = finalStatus
-      this.uppy.emit('transloadit:complete', finalStatus)
+      this.uppy.emit('transloadit:complete', assembly.status)
     })
   }
 
@@ -671,6 +678,9 @@ export default class Transloadit<
    * When all files are removed, cancel in-progress Assemblies.
    */
   #onCancelAll = async () => {
+    // Whatever was showing, a live assembly or a previous run's error, is gone.
+    this.setPluginState({ error: undefined })
+
     const assembly = this.assembly
     if (assembly) {
       // Stop listening and clear `assemblyStatus` before the request goes
@@ -678,6 +688,9 @@ export default class Transloadit<
       // must reset even when the cancel request itself fails (e.g. offline).
       assembly.close()
       this.assembly = undefined
+      // No terminal status can arrive anymore, so let the AssemblyWatcher
+      // (and with it `#afterUpload` and `uppy.upload()`) settle.
+      this.uppy.emit('transloadit:assembly-cancel', assembly.status)
       try {
         await this.#cancelAssembly(assembly.status)
       } catch (err) {

@@ -237,13 +237,41 @@ describe('Transloadit/Assembly', () => {
       expect(seen).toEqual(['ASSEMBLY_EXECUTING'])
     })
 
-    it('never moves a completed assembly back to executing', () => {
-      const assembly = connect({ ok: 'ASSEMBLY_COMPLETED' })
+    it('only advances from ASSEMBLY_UPLOADING', () => {
+      for (const status of [
+        { ok: 'ASSEMBLY_COMPLETED' },
+        { ok: 'ASSEMBLY_CANCELED' },
+        { ok: 'ASSEMBLY_REPLAYING' },
+        { error: 'ASSEMBLY_CRASHED', message: 'boom' },
+      ]) {
+        const assembly = connect(status)
 
-      FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
-      assembly.close()
+        FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+        assembly.close()
 
-      expect(assembly.status.ok).toBe('ASSEMBLY_COMPLETED')
+        expect(assembly.status.ok).toBe(status.ok)
+        expect(assembly.status.error).toBe(status.error)
+      }
+    })
+
+    it('folds an SSE error envelope into the status before emitting error', () => {
+      const assembly = connect({ ok: 'ASSEMBLY_EXECUTING' })
+      const events = []
+      assembly.on('status', (status) => events.push(['status', status.error]))
+      assembly.on('error', (error) => events.push(['error', error.error]))
+
+      FakeEventSource.last.dispatch(
+        'assembly_error',
+        JSON.stringify({ error: 'ASSEMBLY_CRASHED', message: 'boom' }),
+      )
+
+      expect(assembly.closed).toBe(true)
+      expect(assembly.status.error).toBe('ASSEMBLY_CRASHED')
+      expect(assembly.status.message).toBe('boom')
+      expect(events).toEqual([
+        ['status', 'ASSEMBLY_CRASHED'],
+        ['error', 'ASSEMBLY_CRASHED'],
+      ])
     })
 
     it('keeps progress_combined when a full status replaces it', () => {
