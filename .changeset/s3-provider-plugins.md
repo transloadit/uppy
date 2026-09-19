@@ -4,7 +4,7 @@
 "@uppy/locales": minor
 ---
 
-New `@uppy/s3` plugin: browse and manage an S3-compatible bucket from the Dashboard (rename/move, delete, new folder; `autoConnect`, `keepStateOnClose`). New `@uppy/transloadit-storage` plugin: the same browser pointed at a Transloadit Storage workspace, with a "Copy Smart CDN URL" action supplied by the application's authenticated server callback. Secrets stay on the server.
+New `@uppy/s3` plugin: browse and manage an S3-compatible bucket from the Dashboard (rename/move, delete, new folder; `autoConnect`, `keepStateOnClose`). What the user may see and change comes from Companion, either from the bucket it is configured with or from the storage grant your server issued. Moving a folder runs item by item from the client, so progress is visible and a failure stops at a known point. New `@uppy/transloadit-storage` plugin: the same browser pointed at a Transloadit Storage workspace, with a "Copy Smart CDN URL" action supplied by the application's authenticated server callback. Secrets stay on the server.
 
 Storage uploads default to refusing collisions. Opt into renaming or overwriting explicitly, and
 save the returned Workspace, asset ID, version ID and final path. The package README explains how

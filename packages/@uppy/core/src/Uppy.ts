@@ -131,22 +131,24 @@ export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
  */
 export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 
+export type PromptOptions = {
+  title: string
+  label?: string | undefined
+  defaultValue?: string | undefined
+  confirmLabel?: string | undefined
+}
+
+export type ConfirmOptions = {
+  title: string
+  message?: string | undefined
+  confirmLabel?: string | undefined
+  danger?: boolean | undefined
+}
+
 /** An inline prompt/confirm dialog a provider view is currently showing. */
 export type ProviderDialogState =
-  | {
-      kind: 'prompt'
-      title: string
-      label?: string | undefined
-      defaultValue?: string | undefined
-      confirmLabel?: string | undefined
-    }
-  | {
-      kind: 'confirm'
-      title: string
-      message?: string | undefined
-      confirmLabel?: string | undefined
-      danger?: boolean | undefined
-    }
+  | ({ kind: 'prompt' } & PromptOptions)
+  | ({ kind: 'confirm' } & ConfirmOptions)
 
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined

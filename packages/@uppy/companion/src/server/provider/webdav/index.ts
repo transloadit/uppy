@@ -4,11 +4,8 @@ import { AuthType, createClient } from 'webdav'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
-import {
-  ProviderApiError,
-  ProviderAuthError,
-  ProviderUserError,
-} from '../error.js'
+import { ProviderApiError, ProviderAuthError } from '../error.js'
+import { userError } from '../errorCodes.js'
 import Provider, { type Query } from '../Provider.js'
 
 const defaultDirectory = '/'
@@ -116,7 +113,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         typeof code === 'string' &&
         ['ECONNREFUSED', 'ENOTFOUND'].includes(code)
       ) {
-        throw new ProviderUserError({ message: 'Cannot connect to server' })
+        throw userError('WEBDAV_CANNOT_CONNECT', 'Cannot connect to server')
       }
       throw err
     }

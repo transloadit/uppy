@@ -1,4 +1,5 @@
-import type { Body, Meta, Uppy } from '@uppy/core'
+import { type Body, type Meta, type Uppy, UserFacingApiError } from '@uppy/core'
+import type TransloaditStorage from './TransloaditStorage.js'
 
 /** The subset of `@uppy/transloadit`'s AssemblyParameters this helper builds. */
 export type StoreAssemblyParameters = {
@@ -28,16 +29,16 @@ export type StoreUploadsOptions = {
   conflictStrategy?: 'overwrite' | 'rename' | 'error'
 }
 
-/**
- * The unsigned /transloadit/store Assembly params for uploading into
- * `folder` (a full storage key prefix, '' for the root). Apps that own the
- * upload UI (see `onUploadRequest`) sign these server-side themselves.
- */
 /** `photos` → `photos/`; empty/undefined → `''`. */
 export function normalizePrefix(prefix: string | undefined): string {
   return prefix && !prefix.endsWith('/') ? `${prefix}/` : (prefix ?? '')
 }
 
+/**
+ * The unsigned /transloadit/store Assembly params for uploading into
+ * `folder` (a full storage key prefix, '' for the root). Apps that own the
+ * upload UI (see `onUploadRequest`) sign these server-side themselves.
+ */
 export function buildStoreAssemblyParams(
   folder: string,
   conflictStrategy: 'overwrite' | 'rename' | 'error' = 'error',
@@ -67,29 +68,23 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
 ): () => Promise<SignedAssemblyOptions> {
   const pluginId = options.storagePluginId ?? 'TransloaditStorage'
   return async () => {
-    const storage = uppy.getPlugin(pluginId)
-    // Folder ids are full storage keys. At the root of the browsing session
-    // there is no folder id, but a grant may confine the session to a prefix
-    // (the plugin's `prefix` option) — uploads must land inside it.
-    if (
-      !storage ||
-      !('rootPrefix' in storage) ||
-      typeof storage.rootPrefix !== 'string'
-    ) {
+    const storage = uppy.getPlugin(pluginId) as
+      | TransloaditStorage<M, B>
+      | undefined
+    if (!storage) {
+      // A wiring mistake, not something the user can act on.
       throw new Error(
         `Install the Transloadit Storage plugin "${pluginId}" before creating an Assembly`,
       )
     }
-    if (!storage.getPluginState().authenticated) {
-      if (
-        !('openFolderPath' in storage) ||
-        typeof storage.openFolderPath !== 'function' ||
-        !(await storage.openFolderPath(''))
-      ) {
-        throw new Error(
-          'Could not authenticate Transloadit Storage before uploading; reconnect and retry',
-        )
-      }
+    // Folder ids are full storage keys. At the root of the browsing session
+    // there is no folder id, but the session may be confined to a prefix (the
+    // grant's, or the one Companion serves) — uploads must land inside it.
+    if (
+      !storage.getPluginState().authenticated &&
+      !(await storage.openFolderPath(''))
+    ) {
+      throw new UserFacingApiError(storage.i18n('storageNotConnected'))
     }
     const { currentFolderId } = storage.getPluginState()
     const prefix = storage.rootPrefix

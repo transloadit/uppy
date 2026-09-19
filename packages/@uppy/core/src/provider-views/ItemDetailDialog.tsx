@@ -22,7 +22,7 @@ type ItemDetailDialogProps<M extends Meta, B extends Body> = {
   /** Resolves a preview image URL for a file (e.g. a signed thumbnail URL). */
   getPreviewUrl?: (
     item: PartialTreeFile | PartialTreeFolderNode,
-  ) => PromiseLike<string>
+  ) => Promise<string>
   onClose: () => void
   i18n: I18n
 }
@@ -53,7 +53,7 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   useEffect(() => {
     if (!getPreviewUrl || item.data.isFolder) return
     let cancelled = false
-    // The callback may return any thenable (PromiseLike); normalize for .catch.
+    // `Promise.resolve`: a JavaScript integrator may return any thenable.
     Promise.resolve(getPreviewUrl(item))
       .then((url) => {
         if (!cancelled) setPreviewUrl(url)
@@ -68,9 +68,11 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
 
   const name = item.data.name ?? i18n('unnamed')
   const applicable = getApplicableActions(actions, item)
-  const size = (item.data as { size?: number | null }).size
-  const mimeType = (item.data as { mimeType?: string | null }).mimeType
-  const modified = (item.data as { modifiedDate?: string | null }).modifiedDate
+  // Only files carry these; Companion answers `null` for what it does not know.
+  const file = item.type === 'file' ? item.data : undefined
+  const size = file?.size
+  const mimeType = file?.mimeType
+  const modified = file?.modifiedDate
 
   return (
     <dialog

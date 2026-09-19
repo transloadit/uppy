@@ -42,10 +42,11 @@ fails; it never falls back to copy/delete. The generic `@uppy/s3` provider keeps
 semantics, which create a new asset rather than preserving identity.
 
 Generic S3 moves require conditional copy/delete support and source ETags. Destination writes
-must not overwrite, and source deletion must still match the copied object. Folder moves are not
-one transaction: a conflict can leave copied destinations, so inspect both paths before retrying.
-Objects above the 5 GB single-copy limit are refused before starting mutations; use an S3 client
-with multipart copy for those. These limits do not apply to native Storage catalog moves.
+must not overwrite, and source deletion must still match the copied object. A folder move there is
+driven from the browser, file by file, and is not one transaction: a conflict can leave copied
+destinations, so inspect both paths before retrying. Objects above the 5 GB single-copy limit are
+refused before starting mutations; use an S3 client with multipart copy for those. These limits do
+not apply to native Storage catalog moves.
 
 Use those exclusive selectors with `/transloadit/import` in the same authenticated Workspace.
 Deleting an asset or removing its retained version makes the reference unavailable. IDs are not
@@ -67,23 +68,22 @@ are separate decisions; an original video URL does not transcode unsupported cod
 
 ## Companion configuration
 
-Use server-issued grants for the `transloadit-storage` provider, scoped to a Workspace, prefix and
-read/write permissions. Configure a credential pair for every allowed Workspace on Companion;
-a grant never supplies credentials or chooses an API endpoint. Native calls use SHA-256, matching
-the combined Storage/Smart CDN key. Keys and the grant secret stay on the server.
-
-Native Storage refuses unsigned bucket-form authentication even when `grantSecret` is missing.
-Only an explicit `allowBucketAuth: true` enables that development-only escape hatch.
+Configure the provider under `providerOptions['transloadit-storage']`: everything the S3 provider
+takes (`S3ProviderOptions`, minus the bucket, prefix and credential fields it does not use), plus
+`apiEndpoint` and a credential pair for every Workspace you serve. Grants only: a grant names the
+Workspace (as its bucket), the prefix the user may see and whether they may write, and Companion
+holds the credentials — a grant never carries them, and there is no bucket form to fall back on.
+Verify grants with `grantSecret` (HMAC) or, preferably, `grantPublicKey`. The same key pair signs
+S3 requests and native catalog calls (SHA-256, matching the combined Storage/Smart CDN key). Keys
+and the grant secret stay on the server.
 
 ```ts
-const storage = {
-  s3: {
-    endpoint: storageS3Endpoint,
-    region: 'auto',
-    browsableBuckets: ['my-workspace'],
-    mutableBuckets: ['my-workspace'],
-    grantSecret,
-    transloaditStorage: {
+const companionOptions = {
+  providerOptions: {
+    'transloadit-storage': {
+      endpoint: storageS3Endpoint,
+      region: 'auto',
+      grantPublicKey,
       apiEndpoint: 'https://api2.transloadit.com',
       workspaces: {
         'my-workspace': { key: workspaceKey, secret: workspaceSecret },
@@ -94,25 +94,29 @@ const storage = {
 ```
 
 These are Companion server options, not browser plugin options. Your hosted Companion must deploy
-this provider and configure the Workspace map before enabling it. An allowlist alone cannot make
-a single static S3 key work for arbitrary Workspaces. Prefix checks, expired-session checks and
-write scopes are enforced server-side for both source and destination. Paths entered in move
-dialogs are relative to the granted browsing root. A folder moves as one native operation; a
-multi-selection remains a sequence, so partial failures refresh the listing before a retry.
-The browser also uses Companion's effective mutation capability from each listing, including
-`mutableBuckets`. Older servers without that field show read actions only; upgrade Companion
-together with this plugin to enable management actions.
+this provider and configure the Workspace map before enabling it. A single static S3 key cannot
+serve arbitrary Workspaces. Prefix checks, expired-session checks and write scopes are enforced
+server-side for both source and destination.
+
+The browser never names a bucket: `@uppy/s3` and this plugin have no `bucket` option, and the
+session sees whatever Companion (or the grant) decides. Each listing carries a `session` object:
+the `bucket`, the session's root `prefix`, `canWrite`, and whether the server moves folders itself
+(`supportsMoveFolder`, true for this provider); the browser hides the management actions when the
+server says the session is read-only, and resolves paths typed into the move dialogs relative to
+that browsing root. Older servers that report no session show read actions only — upgrade
+Companion together with this plugin.
 
 Queued imports include their original bucket in the download URL. Companion refuses a missing
 or different bucket before reading any bytes, so reconnecting cannot silently import a same-named
 file from another Workspace. Upgrade Companion and the browser package together; older queued
 imports need to be selected again.
 
-Generic S3 moves are a separate, non-atomic copy/delete operation. They default to disabled:
-enable `s3.conditionalMoves` (`COMPANION_AWS_CONDITIONAL_MOVES=true`) only after testing your exact
-endpoint's conditional source copy, destination copy and delete support. Some S3-compatible
-servers silently ignore conditional deletes; a preliminary HEAD request cannot make them safe.
-Native Transloadit Storage moves do not need this option and never fall back to copy/delete.
+A folder moves as one native operation on this provider. On the generic `@uppy/s3` provider
+Companion moves one file at a time, so the browser walks the folder and moves its files itself,
+behind a progress screen with a Cancel button; a multi-selection is a sequence either way, so
+partial failures refresh the listing before a retry. Generic S3 moves need no configuration: they
+are always available and use conditional copy/delete headers (`If-None-Match`, `CopySourceIfMatch`,
+`If-Match`) where the endpoint supports them.
 
 ## Upload configuration
 

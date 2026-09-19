@@ -2,22 +2,29 @@ export default {
   strings: {
     pluginNameS3: 'S3',
     authenticate: 'Connect',
-    pluginS3InputLabel:
-      'Bucket, optionally with a /prefix (e.g. my-bucket/customer-123)',
     renameOrMove: 'Rename / move…',
     renameOrMoveTitle: 'Rename or move "%{name}"',
     renameOrMovePrompt: 'New name, or a path relative to the browsing root:',
     rename: 'Rename',
     itemRenamed: 'Renamed to "%{name}"',
     itemMoved: 'Moved to "%{path}"',
+    movingFiles: 'Moving %{done} of %{total} files…',
+    movingItems: 'Moving %{done} of %{total} items…',
+    movingItemFiles:
+      'Moving item %{item} of %{items}: %{done} of %{total} files…',
+    deletingItems: 'Deleting %{done} of %{total} items…',
+    deletingFiles: 'Deleting %{done} of %{total} files…',
+    deletingItemFiles:
+      'Deleting item %{item} of %{items}: %{done} of %{total} files…',
     deleteItem: 'Delete',
     deleteConfirm: 'Delete "%{name}"?',
-    deleteFolderHint: 'Only empty folders can be deleted.',
+    deleteFolderHint: 'The folder and everything in it will be deleted.',
     itemDeleted: 'Deleted "%{name}"',
     newFolder: 'New folder',
     newFolderPrompt: 'Name of the new folder:',
     create: 'Create',
     folderCreated: 'Created folder "%{name}"',
+    move: 'Move',
     moveSelected: 'Move…',
     moveSelectedPrompt:
       'Folder to move the selection into (empty for the root):',

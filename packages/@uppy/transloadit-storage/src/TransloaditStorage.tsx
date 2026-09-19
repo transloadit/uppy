@@ -13,16 +13,8 @@ import {
 export type TransloaditStorageOptions<
   M extends Meta = Meta,
   B extends Body = Body,
-> = Omit<S3Options<M, B>, 'bucket' | 'locale'> & {
+> = Omit<S3Options<M, B>, 'locale'> & {
   locale?: LocaleStrings<typeof locale>
-  /**
-   * Workspace slug; Transloadit Storage exposes it as the S3 bucket. Used as
-   * the bucket for development Companions that allow bucket auth; with
-   * `getGrant` the grant decides.
-   */
-  workspace: string
-  /** Optional folder prefix to confine browsing to, e.g. `customer-123/`. */
-  prefix?: string
   /**
    * Returns a Smart CDN URL for a stored file (its key). Sign it on your
    * server — no credentials live in the browser. The "Copy Smart CDN URL"
@@ -86,24 +78,17 @@ export default class TransloaditStorage<
         )
       }
     }
-    const { workspace, prefix, ...rest } = opts
+    // No Workspace or prefix option: which ones the session sees is
+    // Companion's call (its configuration, or the grant).
     super(uppy, {
-      ...(rest as S3Options<M, B>),
+      ...(opts as S3Options<M, B>),
       id: opts.id ?? 'TransloaditStorage',
       keepStateOnClose: opts.keepStateOnClose ?? true,
       // A standalone library is a manager, not a picker, unless told otherwise.
       mode: opts.mode ?? (opts.standalone ? 'manager' : 'picker'),
-      // With a grant the server decides; the bucket is the development fallback.
-      ...(!opts.getGrant && {
-        bucket: prefix ? `${workspace}/${prefix}` : workspace,
-      }),
+      // Applied below, once this plugin's own strings are merged in.
       locale: undefined,
     })
-    this.opts = {
-      ...this.opts,
-      workspace,
-      prefix,
-    } as TransloaditStorageOptions<M, B> & S3Options<M, B>
     this.defaultLocale = {
       strings: { ...(this.defaultLocale?.strings ?? {}), ...locale.strings },
     }

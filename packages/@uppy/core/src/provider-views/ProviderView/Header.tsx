@@ -4,7 +4,10 @@ import type { Body, Meta, PartialTreeFolder } from '../../index.js'
 import type { I18n } from '../../utils/index.js'
 import Breadcrumbs from '../Breadcrumbs.js'
 import type ProviderView from './ProviderView.js'
-import type { ProviderToolbarAction } from './ProviderView.js'
+import type {
+  ProviderBulkAction,
+  ProviderToolbarAction,
+} from './ProviderView.js'
 import User from './User.js'
 
 type HeaderProps<M extends Meta, B extends Body> = {
@@ -22,11 +25,20 @@ type HeaderProps<M extends Meta, B extends Body> = {
   standalone?: boolean
   /** Manager mode: the explicit multi-select switch. */
   selectionToggle?: { active: boolean; onToggle: () => void }
+  /**
+   * Picker mode: actions over the checked items, shown next to the folder
+   * actions while something is selected. (Manager mode has them in its footer.)
+   */
+  bulkActions?: ProviderBulkAction<M, B>[]
+  runBulkAction?: (action: ProviderBulkAction<M, B>) => void
+  selectedCount?: number
 }
 
 export default function Header<M extends Meta, B extends Body>(
   props: HeaderProps<M, B>,
 ) {
+  const bulkActions =
+    props.selectedCount && props.selectedCount > 0 ? props.bulkActions : []
   return (
     <div className="uppy-ProviderBrowser-header">
       <div
@@ -45,6 +57,7 @@ export default function Header<M extends Meta, B extends Body>(
           />
         )}
         {((props.toolbarActions && props.toolbarActions.length > 0) ||
+          (bulkActions && bulkActions.length > 0) ||
           props.selectionToggle) && (
           <div className="uppy-ProviderBrowser-toolbar">
             {props.selectionToggle && (
@@ -65,6 +78,19 @@ export default function Header<M extends Meta, B extends Body>(
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
                 onClick={() => props.runToolbarAction?.(action)}
+              >
+                {action.label}
+              </button>
+            ))}
+            {bulkActions?.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                className={classNames(
+                  'uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn',
+                  action.danger && 'uppy-ProviderBrowser-toolbarBtn--danger',
+                )}
+                onClick={() => props.runBulkAction?.(action)}
               >
                 {action.label}
               </button>

@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
 import packageJson from '../../../package.json' with { type: 'json' }
+import { describeCompanionError } from '../../companion-client/errorCodes.js'
 import type {
   Body,
   Meta,
@@ -160,12 +161,20 @@ export interface Opts<M extends Meta, B extends Body> {
    * feeds `bulkActions` instead of picking.
    */
   mode?: 'picker' | 'manager'
-  /** Manager mode: actions over the multi-selected items. */
+  /**
+   * Actions over the multi-selected items: in the header while something is
+   * checked (picker mode), or in the footer of the manager's selection mode.
+   */
   bulkActions?: ProviderBulkAction<M, B>[]
   /** Manager mode: resolves a preview image URL for the detail modal. */
   getPreviewUrl?: (
     item: PartialTreeFile | PartialTreeFolderNode,
   ) => Promise<string>
+  /**
+   * The plugin is the whole page: no user/logout row in the header (the app
+   * owns the session).
+   */
+  standalone?: boolean
   viewType: 'list' | 'grid'
   showTitles: boolean
   showFilter: boolean
@@ -285,6 +294,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   refreshCurrentFolder = async (invalidateAll = false): Promise<void> => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
+    // A refresh scheduled after an action can land once the plugin is gone.
+    if (partialTree == null) return
     // Remember what was selected so a refresh does not silently drop it.
     const checkedIds = partialTree.flatMap((node) =>
       node.type !== 'root' &&
@@ -366,7 +377,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return { view: this, uppy, i18n: uppy.i18n }
   }
 
-  /** Runs an action, refreshes the folder, and reports errors as toasts. */
+  /**
+   * Runs an action and reports errors as toasts. An action that returns
+   * `false` did nothing (a cancelled prompt) and keeps the current listing;
+   * anything else, including a failure or a cancelled long operation, refreshes
+   * the folder so a partially applied change shows.
+   */
   async #run(
     { refresh }: { refresh?: boolean | undefined },
     run: () => Promise<void | false> | void | false,
@@ -374,11 +390,49 @@ export default class ProviderView<M extends Meta, B extends Body> {
     try {
       if ((await run()) === false) return
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
-      this.plugin.uppy.log(`[ProviderView] action failed: ${message}`, 'error')
-      this.plugin.uppy.info(message, 'error', 5000)
+      const raw = err instanceof Error ? err.message : String(err)
+      if ((err as { name?: string } | undefined)?.name === 'AbortError') {
+        this.plugin.uppy.log('[ProviderView] action cancelled', 'warning')
+      } else {
+        this.plugin.uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
+        // A `UserFacingApiError` is for the user: a locale key from Companion,
+        // or a translated message a plugin threw. Anything else is a transport
+        // or programming error whose text is not.
+        const message =
+          err instanceof Error && err.name === 'UserFacingApiError'
+            ? describeCompanionError(this.plugin.uppy.i18n, err)
+            : this.plugin.uppy.i18n('companionError')
+        this.plugin.uppy.info(message, 'error', 5000)
+      }
     }
     if (refresh !== false) await this.refreshCurrentFolder(true)
+  }
+
+  #cancelLongOperation: (() => void) | undefined
+
+  /**
+   * Runs a long write operation (a folder move, a bulk delete) behind the
+   * loading screen, with a Cancel button and progress text. `signal` aborts
+   * when the user cancels, the panel closes or uploads are cancelled; pass it
+   * to every request. The operation should throw an `AbortError` when it
+   * stops early, which `#run` treats as a cancel rather than a failure.
+   */
+  async runWithProgress(
+    op: (context: {
+      signal: AbortSignal
+      setProgress: (label: string) => void
+    }) => Promise<void>,
+  ): Promise<void> {
+    try {
+      await this.#withAbort(async (signal) => {
+        this.#cancelLongOperation = () => this.#abortController?.abort()
+        this.setLoading(true)
+        await op({ signal, setProgress: (label) => this.setLoading(label) })
+      })
+    } finally {
+      this.#cancelLongOperation = undefined
+      this.setLoading(false)
+    }
   }
 
   /** Manager mode: switch the multi-select checkboxes on or off. */
@@ -401,7 +455,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   // (and their selected descendants) may become folder mutation targets.
   #selectionRoots = new Set<string>()
 
-  /** Manager mode: run a bulk action over the checked items, then clear the selection. */
+  /** Run a bulk action over the checked items, then clear the selection. */
   runBulkAction = (action: ProviderBulkAction<M, B>): Promise<void> =>
     this.#run(action, async () => {
       const { partialTree } = this.plugin.getPluginState()
@@ -496,13 +550,26 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       await op(abortController.signal)
     } finally {
+      // Only this operation's controller: a newer operation may have replaced
+      // it (and aborted this one) meanwhile.
+      if (this.#abortController === abortController) {
+        this.#abortController = undefined
+      }
       // @ts-expect-error this should be typed in @uppy/dashboard.
       // Even then I don't think we can make this work without adding dashboard
       // as a dependency to provider-views.
       this.plugin.uppy.off('dashboard:close-panel', cancelRequest)
       this.plugin.uppy.off('cancel-all', cancelRequest)
-      this.#abortController = undefined
     }
+  }
+
+  /**
+   * Ends a listing's loading state, unless a long operation (`runWithProgress`)
+   * has taken the screen over meanwhile: the listing it aborted must not wipe
+   * the progress screen on its way out.
+   */
+  #doneLoading(): void {
+    if (this.#cancelLongOperation === undefined) this.setLoading(false)
   }
 
   async #search(): Promise<void> {
@@ -621,7 +688,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         searchResults: items.map((item) => item.requestPath),
       })
     }).catch(handleError(this.plugin.uppy))
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   // debounced search function is initialized in the constructor
@@ -696,7 +763,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       })
     }).catch(handleError(this.plugin.uppy))
 
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   /**
@@ -740,7 +807,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         this.openFolder(this.plugin.rootFolderId),
       ])
     }).catch(handleError(this.plugin.uppy))
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   async handleScroll(event: Event): Promise<void> {
@@ -832,7 +899,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // 4. Reset state
       this.resetPluginState()
     }).catch(handleError(this.plugin.uppy))
-    this.setLoading(false)
+    this.#doneLoading()
   }
 
   toggleCheckbox(
@@ -1001,9 +1068,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
-          standalone={Boolean(
-            (this.plugin.opts as { standalone?: boolean }).standalone,
-          )}
+          standalone={opts.standalone ?? false}
           selectionToggle={
             isManager
               ? {
@@ -1011,6 +1076,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
                   onToggle: this.toggleSelectionMode,
                 }
               : undefined
+          }
+          bulkActions={isManager ? undefined : opts.bulkActions}
+          runBulkAction={this.runBulkAction}
+          selectedCount={
+            isManager ? undefined : getNumberOfSelectedFiles(partialTree)
           }
         />
         {opts.showFilter && (
@@ -1037,6 +1107,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
             showTitles={opts.showTitles}
             i18n={this.plugin.uppy.i18n}
             isLoading={loading}
+            onCancelLoading={this.#cancelLongOperation}
             utmSource="Companion"
             actions={opts.actions ?? []}
             runAction={this.runAction}

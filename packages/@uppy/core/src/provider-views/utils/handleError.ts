@@ -1,3 +1,4 @@
+import { describeCompanionError } from '../../companion-client/errorCodes.js'
 import type Uppy from '../../index.js'
 
 const handleError =
@@ -18,7 +19,7 @@ const handleError =
       uppy.info(
         {
           message: uppy.i18n('companionError'),
-          details: uppy.i18n(error.message),
+          details: describeCompanionError(uppy.i18n, error),
         },
         'warning',
         5000,

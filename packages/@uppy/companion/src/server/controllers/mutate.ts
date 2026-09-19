@@ -1,92 +1,97 @@
 import type { NextFunction, Request, Response } from 'express'
 import { z } from 'zod'
-import logger from '../logger.js'
+import type { CompanionContext } from '../../types/express.js'
 import { respondWithError } from '../provider/error.js'
-
-type MutationContext = {
-  provider: NonNullable<Request['companion']['provider']>
-  providerUserSession: Request['companion']['providerUserSession']
-  companion: Request['companion']
-}
+import type Provider from '../provider/Provider.js'
 
 /** Present and non-empty; not trimmed, like the wire format the client sends. */
 const requiredString = z.string().min(1)
-/** Missing, null or empty mean the root; malformed supplied values must never redirect a write. */
+/** Missing, null or empty mean "the root folder"; anything else must be a string. */
 const parentIdField = z
   .string()
   .nullish()
   .transform((value) => value || null)
 
 /**
- * Builds an Express handler for one provider mutation: checks that the
- * provider supports mutations, validates the body, runs the mutation and maps
- * provider errors to HTTP responses. `invalid` is the message for a body that
- * does not match `schema`; provider errors are mapped by `respondWithError`.
+ * Builds a handler for one provider mutation: validates the body, runs the
+ * mutation and maps provider errors to HTTP responses. That a provider is
+ * attached and supports mutations is guaranteed by the middleware chain
+ * (`hasSessionAndProvider`, `hasMutationProvider`); provider errors are turned
+ * into responses by `respondWithError`, and logged by the provider itself.
  */
 function mutation<S extends z.ZodType>(
-  name: string,
   schema: S,
-  invalid: string,
-  run: (ctx: MutationContext, input: z.infer<S>) => Promise<unknown>,
+  run: (
+    provider: Provider,
+    context: {
+      companion: CompanionContext
+      providerUserSession: CompanionContext['providerUserSession']
+    },
+    input: z.infer<S>,
+  ) => Promise<unknown>,
 ) {
   return async (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
-    const { provider, providerClass, providerUserSession } = req.companion
-    if (!provider || !providerClass) {
+    const { provider } = req.companion
+    if (!provider) {
       res.sendStatus(400)
-      return
-    }
-    if (!providerClass.supportsMutations) {
-      res
-        .status(400)
-        .json({ message: 'This provider does not support mutations' })
       return
     }
     const parsed = schema.safeParse(req.body)
     if (!parsed.success) {
-      res.status(400).json({ message: invalid })
+      res.sendStatus(400)
       return
     }
     try {
-      res.json(
-        await run(
-          { provider, providerUserSession, companion: req.companion },
-          parsed.data,
-        ),
-      )
+      const { companion } = req
+      const context = {
+        companion,
+        providerUserSession: companion.providerUserSession,
+      }
+      const result = await run(provider, context, parsed.data)
+      if (result === undefined) res.sendStatus(204)
+      else res.json(result)
     } catch (err) {
-      logger.error(err, `controller.mutate.${name}.error`, req.id)
       if (respondWithError(err, res)) return
       next(err)
     }
   }
 }
 
-export const deleteItem = mutation(
-  'delete',
-  z.object({ id: requiredString }),
-  'Missing id',
-  async ({ provider, providerUserSession, companion }, { id }) => {
-    await provider.deleteItem({ companion, id, providerUserSession })
-    return { ok: true }
-  },
-)
+const operations = {
+  delete: mutation(
+    z.object({ id: requiredString }),
+    (provider, context, { id }) => provider.deleteItem({ ...context, id }),
+  ),
+  move: mutation(
+    z.object({ id: requiredString, destination: requiredString }),
+    (provider, context, { id, destination }) =>
+      provider.moveItem({ ...context, id, destination }),
+  ),
+  'create-folder': mutation(
+    z.object({ name: requiredString, parentId: parentIdField }),
+    (provider, context, { name, parentId }) =>
+      provider.createFolder({ ...context, parentId, name }),
+  ),
+}
 
-export const moveItem = mutation(
-  'move',
-  z.object({ id: requiredString, destination: requiredString }),
-  'Missing id or destination',
-  ({ provider, providerUserSession, companion }, { id, destination }) =>
-    provider.moveItem({ companion, id, destination, providerUserSession }),
-)
-
-export const createFolder = mutation(
-  'createFolder',
-  z.object({ name: requiredString, parentId: parentIdField }),
-  'Missing name',
-  ({ provider, providerUserSession, companion }, { name, parentId }) =>
-    provider.createFolder({ companion, parentId, name, providerUserSession }),
-)
+/** Dispatches `/:providerName/mutate/:operation` to the matching mutation. */
+export default function mutate(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const operation = req.params['operation']
+  const handler =
+    typeof operation === 'string' && Object.hasOwn(operations, operation)
+      ? operations[operation as keyof typeof operations]
+      : undefined
+  if (handler == null) {
+    res.sendStatus(404)
+    return
+  }
+  void handler(req, res, next)
+}

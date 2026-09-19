@@ -30,6 +30,10 @@
   color: variables.$gray-500;
 }
 
+.uppy-Provider-loadingCancel {
+  margin-top: 12px;
+}
+
 .uppy-Provider-empty {
   color: variables.$gray-500;
 }
@@ -515,6 +519,16 @@
   &:hover,
   &:focus {
     background-color: rgba(variables.$blue, 0.08);
+  }
+}
+
+.uppy-ProviderBrowser-toolbarBtn--danger {
+  color: var(--uppy-color-danger, #{variables.$red});
+  border-color: rgba(variables.$red, 0.4);
+
+  &:hover,
+  &:focus {
+    background-color: rgba(variables.$red, 0.08);
   }
 }
 

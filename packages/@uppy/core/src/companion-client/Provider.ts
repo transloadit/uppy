@@ -391,8 +391,8 @@ export default class Provider<
     return response
   }
 
-  deleteItem(id: string, options?: RequestOptions): Promise<{ ok: true }> {
-    return this.post<{ ok: true }>(`${this.id}/mutate/delete`, { id }, options)
+  deleteItem(id: string, options?: RequestOptions): Promise<void> {
+    return this.post<void>(`${this.id}/mutate/delete`, { id }, options)
   }
 
   moveItem(

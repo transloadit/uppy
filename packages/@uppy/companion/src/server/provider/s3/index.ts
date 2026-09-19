@@ -4,72 +4,130 @@ import {
   DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
+  type HeadObjectCommandOutput,
   ListObjectsV2Command,
   NoSuchKey,
   NotFound,
   PutObjectCommand,
-  paginateListObjectsV2,
   type S3Client,
   S3ServiceException,
 } from '@aws-sdk/client-s3'
-import {
-  normalizeStorageGrantPrefix,
-  STORAGE_GRANT_SCOPES,
-  type StorageGrantClaims,
-  type StorageGrantScope,
-  signParamsSync,
-  verifyStorageGrant,
-} from '@transloadit/utils/node'
-import got from 'got'
 import { lookup as mimeLookup } from 'mime-types'
-import pMap from 'p-map'
 import { z } from 'zod'
-import type { CompanionRuntimeOptions } from '../../../types/companion-options.js'
+import type {
+  CompanionInitOptions,
+  S3ClientOptions,
+  S3ConnectionOptions,
+  S3ObjectWriteOptions,
+} from '../../../schemas/companion.js'
 import { isRecord } from '../../helpers/type-guards.js'
+import { s3WriteParams } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import getS3Client from '../../s3-client.js'
-import {
-  ProviderApiError,
-  ProviderAuthError,
-  ProviderUserError,
-} from '../error.js'
+import { ProviderApiError, ProviderAuthError } from '../error.js'
+import { userError } from '../errorCodes.js'
 import Provider, {
   type CompanionLike,
   type ProviderListItem,
   type ProviderListResponse,
   type Query,
 } from '../Provider.js'
+import {
+  type ParsedS3ProviderOptions,
+  parseS3ProviderOptions,
+  S3ConfigError,
+} from './config.js'
+import {
+  ensureTrailingSlash,
+  GrantExpiredError,
+  verifyStorageGrant,
+} from './grant.js'
 
 /**
- * Session for the S3 provider, created via "simple auth" (non-OAuth) in one
- * of two ways:
- * - a **grant**: a short-lived JWT minted by the integrator's server after it
- *   authenticated the user, carrying the bucket, the prefix the user may see
- *   and the scopes they hold (see `StorageGrantClaims`). This is the multi-tenant path.
- * - a **bucket** (`my-bucket/optional/prefix`) typed or configured on the
- *   client. Only accepted when Companion is not configured for grants, or
- *   `s3.allowBucketAuth` is set (development).
+ * Session of the S3 provider, opened through "simple auth" (see `config.ts`).
+ * Checked at runtime because it comes back from the client inside Companion's
+ * session token, which may predate the current version.
  */
-type S3UserSession = {
-  bucket: string
-  prefix: string
-  /** Missing on bucket sessions and on tokens from before grants existed. */
-  scopes?: StorageGrantScope[]
-  /** Unix seconds; only grant sessions expire. */
-  exp?: number
+const userSessionSchema = z.object({
+  bucket: z.string().min(1),
+  /** Key prefix the session is confined to: empty, or ending with `/`. */
+  prefix: z.string(),
+  write: z.boolean(),
+  /** Unix seconds; only grant sessions carry it, to size the session token. */
+  exp: z.number().optional(),
+})
+
+export type S3UserSession = z.infer<typeof userSessionSchema>
+
+/** The parsed provider options plus what every request needs from them. */
+export type ResolvedConfig<P extends ParsedS3ProviderOptions> = P & {
+  clientOptions: S3ClientOptions
+  /** Attributes Companion sets when it writes (copies, folder markers). */
+  writeParams: ReturnType<typeof s3WriteParams>
 }
 
-/** Claims of a storage grant (`s3.grantSecret`, HS256). */
+/** What every operation starts from: a checked session and its client. */
+export type S3Session<P extends ParsedS3ProviderOptions> = {
+  bucket: string
+  prefix: string
+  client: S3Client
+  config: ResolvedConfig<P>
+}
 
-type CompanionS3Options = Pick<CompanionRuntimeOptions, 's3'>
+/** What every request carries, on top of its own arguments. */
+type Args<T> = T & {
+  companion: CompanionLike
+  providerUserSession: S3UserSession
+}
 
-const ensureTrailingSlash = (s: string): string =>
-  s.length === 0 || s.endsWith('/') ? s : `${s}/`
+type SessionChecks = {
+  requireWrite?: boolean
+  /** Keys the request names; each must lie inside the session's prefix. */
+  keys?: string[]
+}
 
-/** Upper bound on the entries (objects + folders) a folder move may touch. */
-const MAX_FOLDER_MOVE_ENTRIES = 1000
-/** How many S3 calls a folder move runs at once. */
-const MOVE_CONCURRENCY = 8
+export type ItemRef = { id: string; requestPath: string }
+
+/**
+ * The settings the provider may set on top of the `s3` upload block, as
+ * records so that a field added to the shared option types without being
+ * listed here fails to compile.
+ */
+const CONNECTION_KEYS: Record<keyof S3ConnectionOptions, true> = {
+  key: true,
+  secret: true,
+  sessionToken: true,
+  region: true,
+  endpoint: true,
+  forcePathStyle: true,
+  awsClientOptions: true,
+}
+const WRITE_KEYS: Record<keyof S3ObjectWriteOptions, true> = {
+  acl: true,
+  awsSse: true,
+  awsSseKmsKeyId: true,
+}
+
+/** The listed fields of `source` that are set. */
+const pickDefined = <T extends object, K extends keyof T>(
+  source: T,
+  keys: Record<K, true>,
+): Partial<Pick<T, K>> =>
+  Object.fromEntries(
+    (Object.keys(keys) as K[])
+      .filter((key) => source[key] != null)
+      .map((key) => [key, source[key]]),
+  ) as Partial<Pick<T, K>>
+
+/** `CopyObject` refuses sources above this size; larger objects need a multipart copy. */
+const MAX_COPY_BYTES = 5 * 1024 ** 3
+
+const isContentEtag = (etag: string): boolean =>
+  /^"?[0-9a-f]{32}(-\d+)?"?$/i.test(etag)
+
+const isPreconditionFailed = (err: unknown): boolean =>
+  err instanceof S3ServiceException &&
+  (err.$metadata.httpStatusCode === 412 || err.$metadata.httpStatusCode === 409)
 
 const isNotFound = (err: unknown): boolean =>
   err instanceof NotFound ||
@@ -77,35 +135,55 @@ const isNotFound = (err: unknown): boolean =>
   (err instanceof S3ServiceException && err.$metadata.httpStatusCode === 404)
 
 /**
- * Parses user input like `my-bucket`, `my-bucket/some/prefix` or
- * `s3://my-bucket/some/prefix` into { bucket, prefix }.
+ * S3 allows `\` and `.`/`..` segments in keys, but the session's prefix is a
+ * plain string boundary and some S3-compatible endpoints, proxies and URL
+ * handling resolve dot segments. Rather than trust every layer not to, such
+ * keys are refused; objects named that way stay off-limits to Companion.
  */
-const parseBucketInput = (
-  raw: string,
-): { bucket: string; prefix: string } | null => {
-  const cleaned = raw.trim().replace(/^s3:\/\//, '')
-  if (cleaned.length === 0) return null
-  const [bucket, ...rest] = cleaned.split('/')
-  if (!bucket) return null
-  const prefix = ensureTrailingSlash(rest.join('/').replace(/^\/+/, ''))
-  return { bucket, prefix }
-}
+const hasUnsafeSegment = (key: string): boolean =>
+  key.includes('\\') ||
+  key.split('/').some((part) => part === '..' || part === '.')
 
-const iconForKey = (key: string): string => {
-  const mime = mimeLookup(key)
-  if (typeof mime === 'string' && mime.startsWith('video/')) return 'video'
-  return 'file'
+export const itemRef = (key: string): ItemRef => ({
+  id: key,
+  requestPath: encodeURIComponent(key),
+})
+
+/**
+ * The client factory lets `awsClientOptions.credentials` win over `key` and
+ * `secret`. Options inherited from the upload block may carry such
+ * credentials; when the provider (or a Workspace) has its own key pair, that
+ * pair must be the one used.
+ */
+export const withOwnCredentials = (
+  options: S3ClientOptions,
+): S3ClientOptions => {
+  const { credentials: _, ...awsClientOptions } = options.awsClientOptions ?? {}
+  return { ...options, awsClientOptions }
 }
 
 /**
- * Adapter for browsing S3-compatible object storage (AWS S3, Cloudflare R2,
- * MinIO, ...). Uses the same `s3` Companion options (key/secret/region/endpoint)
- * that the S3 upload endpoints already use.
+ * Adapter for browsing and managing S3-compatible object storage (AWS S3,
+ * Cloudflare R2, MinIO, ...). Configured under `providerOptions.s3`;
+ * credentials left unset there fall back to the `s3` upload block.
+ * Bucket-level permissions are the job of IAM / bucket policies on those
+ * credentials: Companion only enforces the per-user prefix and write flag
+ * carried by grants.
+ *
+ * Backends with more than plain S3 (Transloadit Storage) subclass this and
+ * override the `protected` seams: how their options parse, which client
+ * serves a bucket, and how a move is carried out.
  */
-export default class S3Provider extends Provider<S3UserSession> {
-  protected get nativeStorage(): boolean {
-    return false
+export default class S3Provider<
+  P extends ParsedS3ProviderOptions = ParsedS3ProviderOptions,
+> extends Provider<S3UserSession> {
+  /** Where this provider's options live under `providerOptions`. */
+  protected get optionsKey(): keyof NonNullable<
+    CompanionInitOptions['providerOptions']
+  > {
+    return 's3'
   }
+
   static override get hasSimpleAuth() {
     return true
   }
@@ -114,186 +192,132 @@ export default class S3Provider extends Provider<S3UserSession> {
     return true
   }
 
+  /** Validates and parses this provider's own options block. */
+  protected parseOptions(own: unknown): P {
+    return parseS3ProviderOptions(own) as P
+  }
+
+  /** Whether `moveItem` takes a folder and moves everything under it. */
+  protected get supportsMoveFolder(): boolean {
+    return false
+  }
+
+  /** The client options for `bucket`, and the key that client is cached under. */
+  protected clientOptionsFor(
+    config: ResolvedConfig<P>,
+    _bucket: string,
+  ): { cacheKey: string; clientOptions: S3ClientOptions } {
+    return { cacheKey: '', clientOptions: config.clientOptions }
+  }
+
   isAuthenticated({
     providerUserSession,
   }: {
     providerUserSession: S3UserSession | undefined
   }): boolean {
-    return (
-      providerUserSession != null &&
-      typeof providerUserSession.bucket === 'string' &&
-      providerUserSession.bucket.length > 0
-    )
+    return userSessionSchema.safeParse(providerUserSession).success
   }
 
-  /**
-   * S3 browsing is off unless the integrator explicitly allowlists buckets.
-   * Otherwise anyone could use Companion's credentials to list arbitrary
-   * buckets (including a shared upload bucket).
-   */
-  assertBucketAllowed(companionOptions: CompanionS3Options, bucket: string) {
-    const allowed = companionOptions.s3?.browsableBuckets ?? []
-    if (allowed.includes('*') || allowed.includes(bucket)) return
-    throw new ProviderUserError({
-      message:
-        allowed.length === 0
-          ? 'S3 browsing is not enabled on this Companion (set `s3.browsableBuckets` / COMPANION_AWS_BROWSABLE_BUCKETS)'
-          : `Bucket "${bucket}" is not allowed for browsing`,
-    })
-  }
-
-  /**
-   * Mutations are gated separately from browsing so a read-only browser is
-   * the default even when credentials would allow writes.
-   */
-  assertBucketMutable(companionOptions: CompanionS3Options, bucket: string) {
-    const allowed = companionOptions.s3?.mutableBuckets ?? []
-    if (allowed.includes('*') || allowed.includes(bucket)) return
-    throw new ProviderUserError({
-      message:
-        allowed.length === 0
-          ? 'Changing files in S3 is not enabled on this Companion (set `s3.mutableBuckets` / COMPANION_AWS_MUTABLE_BUCKETS)'
-          : `Bucket "${bucket}" is read-only`,
-    })
-  }
-
-  getClient(companionOptions: CompanionS3Options, bucket?: string): S3Client {
-    if (this.nativeStorage) {
-      const credentials = this.#storageCredentials(companionOptions, bucket)
-      companionOptions = {
-        ...companionOptions,
-        s3: {
-          ...companionOptions.s3,
-          key: credentials.key,
-          secret: credentials.secret,
-          awsClientOptions: {
-            ...companionOptions.s3?.awsClientOptions,
-            credentials: {
-              accessKeyId: credentials.key,
-              secretAccessKey: credentials.secret,
-            },
-          },
-        },
-      }
-    }
-    const client = getS3Client(companionOptions)
+  /** Overridable for tests. */
+  getClient(clientOptions: S3ClientOptions): S3Client {
+    const client = getS3Client({ s3: clientOptions })
     if (client == null) {
-      throw new ProviderUserError({
-        message:
-          'Companion is not configured for S3 (missing `s3` options such as region)',
-      })
+      throw new S3ConfigError(
+        `The ${this.optionsKey} provider has no region: set \`providerOptions['${this.optionsKey}'].region\` (or \`s3.region\`)`,
+      )
     }
     return client
   }
 
-  #storageCredentials(
-    options: CompanionS3Options,
-    workspace: string | undefined,
-  ): { key: string; secret: string } {
-    const workspaces = options.s3?.transloaditStorage?.workspaces
-    if (
-      workspace === undefined ||
-      !workspaces ||
-      !Object.hasOwn(workspaces, workspace) ||
-      !workspaces[workspace]
-    ) {
-      throw new ProviderUserError({
-        message:
-          'This Companion has no native Storage credentials for this Workspace',
-      })
-    }
-    return workspaces[workspace]
-  }
-
-  async #moveStorageEntry(
-    options: CompanionS3Options,
-    workspace: string,
-    source: string,
-    destination: string,
-  ): Promise<string> {
-    const credentials = this.#storageCredentials(options, workspace)
-    const endpoint = options.s3?.transloaditStorage?.apiEndpoint
-    if (!endpoint)
-      throw new ProviderUserError({
-        message: 'Native Storage management is not configured',
-      })
-    const params = JSON.stringify({
-      auth: {
-        key: credentials.key,
-        expires: new Date(Date.now() + 60_000).toISOString(),
-      },
-      source,
-      destination,
-    })
-    const response = await got.post(new URL('/dam/entries/move', endpoint), {
-      form: {
-        params,
-        signature: signParamsSync(params, credentials.secret, 'sha256'),
-      },
-      timeout: { request: 30_000 },
-      retry: { limit: 0 },
-      followRedirect: false,
-      throwHttpErrors: false,
-      responseType: 'json',
-    })
-    if (response.statusCode >= 500) {
-      throw new ProviderApiError(
-        'Storage is temporarily unavailable; retry later',
-        502,
+  #config(companion: CompanionLike): ResolvedConfig<P> {
+    // Typed as what this method reads from it; `parseOptions` checks the rest.
+    const own: (S3ConnectionOptions & S3ObjectWriteOptions) | undefined =
+      companion.options.providerOptions?.[this.optionsKey]
+    if (own == null) {
+      throw new S3ConfigError(
+        `The ${this.optionsKey} provider is not configured: set \`providerOptions['${this.optionsKey}']\``,
       )
     }
-    if (response.statusCode !== 200) {
-      throw new ProviderUserError({
-        message:
-          'Storage could not move this item. Refresh the folder and check your access and destination.',
-      })
+    const parsed = this.parseOptions(own)
+    // The provider's own settings win; anything unset comes from the upload
+    // block. Only the connection and write settings are read from it.
+    const fallback: S3ConnectionOptions & S3ObjectWriteOptions =
+      companion.options.s3 ?? {}
+    const clientOptions: S3ClientOptions = {
+      ...pickDefined(fallback, CONNECTION_KEYS),
+      // Browsing goes to the plain endpoint; acceleration is an upload concern.
+      useAccelerateEndpoint: false,
+      ...pickDefined(own, CONNECTION_KEYS),
     }
-    const moved = z
-      .object({ ok: z.literal('DAM_ENTRY_MOVED'), path: z.string().min(1) })
-      .safeParse(response.body)
-    if (!moved.success)
-      throw new ProviderApiError('Invalid native Storage move response', 502)
-    if (moved.data.path !== destination)
-      throw new ProviderApiError(
-        'Storage move returned an unexpected path',
-        502,
-      )
-    return moved.data.path
+    return {
+      ...parsed,
+      clientOptions:
+        own.key != null && own.secret != null
+          ? withOwnCredentials(clientOptions)
+          : clientOptions,
+      writeParams: s3WriteParams({
+        ...pickDefined(fallback, WRITE_KEYS),
+        ...pickDefined(own, WRITE_KEYS),
+      }),
+    }
   }
 
   /**
-   * Every operation starts here: a valid session, an allowlisted bucket
-   * (writable when `mutate`), and every key inside the scoped prefix.
+   * The client for `bucket`, built on first use and kept for the app's
+   * lifetime in `companion.s3ProviderClients`: a client is cheap to build but
+   * holds what is not, its resolved credentials (a metadata or STS round trip
+   * when Companion runs on a role) and its keep-alive connections.
    */
-  #session(
+  #client(
+    companion: CompanionLike,
+    config: ResolvedConfig<P>,
+    bucket: string,
+  ): S3Client {
+    const { cacheKey, clientOptions } = this.clientOptionsFor(config, bucket)
+    // Provider names and bucket names cannot contain `/`, so the two cannot collide.
+    const key = `${this.optionsKey}/${cacheKey}`
+    let client = companion.s3ProviderClients.get(key)
+    if (client == null) {
+      client = this.getClient(clientOptions)
+      companion.s3ProviderClients.set(key, client)
+    }
+    return client
+  }
+
+  /**
+   * Every operation starts here: a session that matches the current
+   * configuration, write access when `requireWrite`, and every key inside the
+   * session's prefix.
+   */
+  protected session(
     companion: CompanionLike,
     providerUserSession: S3UserSession,
-    { mutate = false, keys = [] as string[] } = {},
-  ): { bucket: string; prefix: string; client: S3Client } {
+    { requireWrite = false, keys = [] }: SessionChecks = {},
+  ): S3Session<P> {
+    const config = this.#config(companion)
     if (!this.isAuthenticated({ providerUserSession })) {
       throw new ProviderAuthError()
     }
-    const { bucket, prefix, scopes, exp } = providerUserSession
-    // An expired grant is an auth error: the client fetches a fresh grant.
-    if (exp !== undefined && exp <= Math.floor(Date.now() / 1000)) {
-      throw new ProviderAuthError()
+    const { bucket, prefix, write, exp } = providerUserSession
+    // A session opened under an earlier configuration has to be reopened:
+    // another bucket or prefix in bucket mode, or a bucket-mode session (the
+    // only kind without an expiry) once grants are required.
+    const stale =
+      config.mode === 'bucket'
+        ? bucket !== config.bucket || prefix !== config.prefix
+        : exp == null
+    if (stale) throw new ProviderAuthError()
+    if (requireWrite && !write) {
+      // A user error, not an auth error: a fresh session would not help.
+      throw userError('S3_READ_ONLY_SESSION')
     }
-    // Scope checks are user errors, so the Dashboard explains instead of
-    // bouncing to the connect screen (a fresh grant would not help).
-    if (scopes && !scopes.includes('read')) {
-      throw new ProviderUserError({
-        message: 'Your session does not allow browsing this storage',
-      })
-    }
-    if (mutate && scopes && !scopes.includes('write')) {
-      throw new ProviderUserError({
-        message: 'Your session is read-only',
-      })
-    }
-    this.assertBucketAllowed(companion.options, bucket)
-    if (mutate) this.assertBucketMutable(companion.options, bucket)
     for (const key of keys) this.#assertInsidePrefix(prefix, key)
-    return { bucket, prefix, client: this.getClient(companion.options, bucket) }
+    return {
+      bucket,
+      prefix,
+      client: this.#client(companion, config, bucket),
+      config,
+    }
   }
 
   override async logout(): Promise<{ revoked: true }> {
@@ -305,59 +329,39 @@ export default class S3Provider extends Provider<S3UserSession> {
     companion,
   }: {
     requestBody: unknown
-    companion?: CompanionLike | undefined
+    companion: CompanionLike
   }): Promise<S3UserSession> {
-    if (!isRecord(requestBody) || !isRecord(requestBody['form'])) {
-      throw new ProviderUserError({ message: 'Invalid request body' })
+    // Only the configuration goes through the error wrapper: a grant that
+    // does not verify is the client's doing, not something to log as an error.
+    const config = await this.withErrorHandling(
+      'provider.s3.auth.error',
+      async () => this.#config(companion),
+    )
+    if (config.mode === 'bucket') {
+      return { bucket: config.bucket, prefix: config.prefix, write: true }
     }
-    const { form } = requestBody
-    const s3Options = companion?.options.s3
-    const grantSecret = s3Options?.grantSecret
-
-    if (typeof form['grant'] === 'string' && form['grant'].length > 0) {
-      if (!grantSecret) {
-        throw new ProviderUserError({
-          message:
-            'This Companion is not configured for storage grants (set `s3.grantSecret` / COMPANION_AWS_GRANT_SECRET)',
-        })
-      }
-      return this.#sessionFromGrant(form['grant'], grantSecret)
+    const form =
+      isRecord(requestBody) && isRecord(requestBody['form'])
+        ? requestBody['form']
+        : {}
+    const grant = form['grant']
+    if (typeof grant !== 'string' || grant.length === 0) {
+      throw userError('S3_INVALID_GRANT')
     }
-
-    if ((this.nativeStorage || grantSecret) && !s3Options?.allowBucketAuth) {
-      throw new ProviderUserError({
-        message: 'This Companion only accepts server-issued grants',
-      })
-    }
-    const bucketInput = typeof form['bucket'] === 'string' ? form['bucket'] : ''
-    const parsed = parseBucketInput(bucketInput)
-    if (parsed == null) {
-      throw new ProviderUserError({
-        message:
-          'Please provide a bucket name (optionally followed by /prefix)',
-      })
-    }
-    // The bucket allowlist is enforced on every operation (see #session);
-    // bucket sessions are unscoped and do not expire.
-    return { ...parsed, scopes: [...STORAGE_GRANT_SCOPES] }
-  }
-
-  #sessionFromGrant(grant: string, secret: string): S3UserSession {
-    let claims: StorageGrantClaims
     try {
-      claims = verifyStorageGrant(grant, secret)
-    } catch (err) {
-      if (err instanceof Error && /expired/i.test(err.message)) {
-        // Expired grants are an auth error so the client asks for a new one.
-        throw new ProviderAuthError()
+      const claims = verifyStorageGrant(grant, config.keys)
+      return {
+        bucket: claims.bucket,
+        prefix: claims.prefix,
+        write: claims.write,
+        // Sizes the session token: it expires with the grant.
+        exp: claims.exp,
       }
-      throw new ProviderUserError({ message: 'Invalid storage grant' })
-    }
-    return {
-      bucket: claims.bucket,
-      prefix: normalizeStorageGrantPrefix(claims.prefix),
-      scopes: claims.scopes,
-      exp: claims.exp,
+    } catch (err) {
+      // Expired grants are an auth error so the client asks for a new one.
+      if (err instanceof GrantExpiredError) throw new ProviderAuthError()
+      logger.debug(err, 'provider.s3.grant.invalid')
+      throw userError('S3_INVALID_GRANT')
     }
   }
 
@@ -366,24 +370,22 @@ export default class S3Provider extends Provider<S3UserSession> {
     providerUserSession,
     query,
     directory,
-  }: {
-    companion: CompanionLike
-    providerUserSession: S3UserSession
+  }: Args<{
     query?: Query | undefined
     directory?: string | undefined
-  }): Promise<ProviderListResponse> {
+  }>): Promise<ProviderListResponse> {
     return this.withErrorHandling('provider.s3.list.error', async () => {
+      // `directory` is the (already URL-decoded) key prefix of the folder
+      // being listed; the root of the session is its prefix.
+      const folder = directory ? ensureTrailingSlash(directory) : undefined
       const {
         bucket,
         prefix: rootPrefix,
         client,
-      } = this.#session(companion, providerUserSession)
-
-      // `directory` is the (already URL-decoded) key prefix of the folder being
-      // listed; the root of the session is the scoped prefix.
-      const prefix = directory ? ensureTrailingSlash(directory) : rootPrefix
-      // Never allow escaping the scoped prefix.
-      this.#assertInsidePrefix(rootPrefix, prefix)
+      } = this.session(companion, providerUserSession, {
+        keys: folder ? [folder] : [],
+      })
+      const prefix = folder ?? rootPrefix
 
       const cursor =
         typeof query?.['cursor'] === 'string' ? query['cursor'] : undefined
@@ -420,14 +422,15 @@ export default class S3Provider extends Provider<S3UserSession> {
         if (!key || key === prefix) continue
         const name = key.slice(prefix.length)
         const requestPath = encodeURIComponent(key)
+        const mimeType = mimeLookup(key) || null
         items.push({
           isFolder: false,
-          icon: iconForKey(key),
+          icon: mimeType?.startsWith('video/') ? 'video' : 'file',
           id: requestPath,
           name,
           requestPath,
           modifiedDate: obj.LastModified?.toISOString(),
-          mimeType: mimeLookup(key) || null,
+          mimeType,
           size: obj.Size ?? null,
           thumbnail: null,
         })
@@ -438,11 +441,19 @@ export default class S3Provider extends Provider<S3UserSession> {
           ? `${encodeURIComponent(prefix)}?cursor=${encodeURIComponent(res.NextContinuationToken)}`
           : null
 
-      const mutableBuckets = companion.options.s3?.mutableBuckets ?? []
-      const canMutate =
-        (mutableBuckets.includes('*') || mutableBuckets.includes(bucket)) &&
-        (providerUserSession.scopes?.includes('write') ?? true)
-      return { items, nextPagePath, username: bucket, canMutate }
+      return {
+        items,
+        nextPagePath,
+        username: bucket,
+        // The client shows write actions only when the session allows them,
+        // and resolves paths the user types against the session's root.
+        session: {
+          bucket,
+          prefix: rootPrefix,
+          canWrite: providerUserSession.write,
+          supportsMoveFolder: this.supportsMoveFolder,
+        },
+      }
     })
   }
 
@@ -451,24 +462,19 @@ export default class S3Provider extends Provider<S3UserSession> {
     id,
     query,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    id: string
-    query?: unknown
-    providerUserSession: S3UserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: Args<{ id: string; query?: unknown }>): Promise<{
+    stream: Readable
+    size: number | undefined
+  }> {
     return this.withErrorHandling('provider.s3.download.error', async () => {
-      // A queued file outlives the browser session that selected it. Never reinterpret its key
-      // in a newly connected bucket (including legacy queues with no source-bucket binding).
-      if (!isRecord(query) || query['bucket'] !== providerUserSession.bucket) {
-        throw new ProviderUserError({
-          message:
-            'This file was selected in another storage session. Reconnect to its original bucket and select it again.',
-        })
-      }
-      const { bucket, client } = this.#session(companion, providerUserSession, {
+      const { bucket, client } = this.session(companion, providerUserSession, {
         keys: [id],
       })
+      // A queued file outlives the browser session that selected it. Its key
+      // must never be read from a bucket the user connected to later.
+      if (!isRecord(query) || query['bucket'] !== bucket) {
+        throw userError('S3_SELECTED_IN_OTHER_SESSION')
+      }
       const res = await client.send(
         new GetObjectCommand({ Bucket: bucket, Key: id }),
       )
@@ -480,29 +486,24 @@ export default class S3Provider extends Provider<S3UserSession> {
   }
 
   #assertInsidePrefix(prefix: string, key: string): void {
-    if (
-      !key.startsWith(prefix) ||
-      key.includes('\\') ||
-      key.split('/').some((part) => part === '..' || part === '.')
-    ) {
+    if (!key.startsWith(prefix) || hasUnsafeSegment(key)) {
       // A user error (not an auth error) so the Dashboard shows the message
       // instead of bouncing the user to the connect screen.
-      throw new ProviderUserError({
-        message: 'That path is outside the folder you are allowed to browse',
-      })
+      throw userError('S3_OUTSIDE_ALLOWED_FOLDER')
     }
   }
 
-  async #exists(
+  async #head(
     client: S3Client,
     bucket: string,
     key: string,
-  ): Promise<boolean> {
+  ): Promise<HeadObjectCommandOutput | null> {
     try {
-      await client.send(new HeadObjectCommand({ Bucket: bucket, Key: key }))
-      return true
+      return await client.send(
+        new HeadObjectCommand({ Bucket: bucket, Key: key }),
+      )
     } catch (err) {
-      if (isNotFound(err)) return false
+      if (isNotFound(err)) return null
       throw err
     }
   }
@@ -527,245 +528,119 @@ export default class S3Provider extends Provider<S3UserSession> {
     )
   }
 
-  async #copyObject(
-    client: S3Client,
-    bucket: string,
-    from: string,
-    to: string,
-    options: CompanionRuntimeOptions,
-    etag: string,
-  ): Promise<void> {
-    await client.send(
-      new CopyObjectCommand({
-        Bucket: bucket,
-        CopySource: `/${bucket}/${from.split('/').map(encodeURIComponent).join('/')}`,
-        Key: to,
-        // The HEAD preflight is only a friendly error. This condition is the write barrier.
-        IfNoneMatch: '*',
-        CopySourceIfMatch: etag,
-        ...this.#writePolicy(options),
-      }),
-    )
-  }
-
-  #writePolicy(options: CompanionRuntimeOptions) {
-    const s3 = options.s3
-    return {
-      ...(s3?.acl != null && { ACL: s3.acl }),
-      ...(s3?.awsSse != null && { ServerSideEncryption: s3.awsSse }),
-      ...(s3?.awsSseKmsKeyId != null && { SSEKMSKeyId: s3.awsSseKmsKeyId }),
-    }
-  }
-
-  #assertCopySize(size: number | undefined): void {
-    if (size !== undefined && size > 5 * 1024 ** 3)
-      throw new ProviderUserError({
-        message:
-          'This object exceeds the 5 GB single-copy limit. Use an S3 client with multipart copy; no source files were deleted.',
-      })
-  }
-
-  #requireCopyEtag(etag: string | undefined): string {
-    if (!etag)
-      throw new ProviderUserError({
-        message:
-          'The storage provider did not return an ETag. A safe move is unavailable; use an S3 client instead. No source files were deleted.',
-      })
-    return etag
-  }
-
-  /**
-   * Moves a folder object by object. S3 has no folder move; walking with
-   * delimiter listings also carries over empty sub-folders (catalog rows on
-   * Transloadit Storage, zero-byte markers on plain S3). Destination folders
-   * are created and every object is copied before anything is deleted, so a
-   * failure half-way never loses data.
-   */
-  async #moveFolder(
-    client: S3Client,
-    bucket: string,
-    source: string,
-    target: string,
-    options: CompanionRuntimeOptions,
-  ): Promise<void> {
-    const objects: { key: string; etag: string }[] = []
-    const markers = new Map<string, string>()
-    const folders: string[] = [source] // parents before children
-    for (const folder of folders) {
-      for await (const page of paginateListObjectsV2(
-        { client },
-        { Bucket: bucket, Prefix: folder, Delimiter: '/' },
-      )) {
-        for (const p of page.CommonPrefixes ?? []) {
-          if (p.Prefix) folders.push(p.Prefix)
-        }
-        for (const o of page.Contents ?? []) {
-          this.#assertCopySize(o.Size)
-          if (o.Key === folder)
-            markers.set(folder, this.#requireCopyEtag(o.ETag))
-          else if (o.Key)
-            objects.push({ key: o.Key, etag: this.#requireCopyEtag(o.ETag) })
-        }
-        if (objects.length + folders.length > MAX_FOLDER_MOVE_ENTRIES) {
-          throw new ProviderUserError({
-            message: `This folder has more than ${MAX_FOLDER_MOVE_ENTRIES} entries; move it with an S3 client instead`,
-          })
-        }
-      }
-    }
-    const renamed = (key: string) => `${target}${key.slice(source.length)}`
-    for (const folder of folders) {
-      const etag = markers.get(folder)
-      if (etag) {
-        // A slash-suffixed object may carry bytes and metadata, not just mark an empty folder.
-        await this.#copyObject(
-          client,
-          bucket,
-          folder,
-          renamed(folder),
-          options,
-          etag,
-        )
-        continue
-      }
-      await client.send(
-        new PutObjectCommand({
-          Bucket: bucket,
-          Key: renamed(folder),
-          Body: '',
-          IfNoneMatch: '*',
-          ...this.#writePolicy(options),
-        }),
-      )
-    }
-    await pMap(
-      objects,
-      ({ key, etag }) =>
-        this.#copyObject(client, bucket, key, renamed(key), options, etag),
-      { concurrency: MOVE_CONCURRENCY },
-    )
-    await pMap(
-      objects,
-      ({ key, etag }) =>
-        client.send(
-          new DeleteObjectCommand({ Bucket: bucket, Key: key, IfMatch: etag }),
-        ),
-      { concurrency: MOVE_CONCURRENCY },
-    )
-    for (const folder of folders.toReversed()) {
-      const etag = markers.get(folder)
-      if (!etag) continue
-      await client.send(
-        new DeleteObjectCommand({ Bucket: bucket, Key: folder, IfMatch: etag }),
-      )
-    }
-  }
-
   override async deleteItem({
     companion,
     id,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    id: string
-    providerUserSession: S3UserSession
-  }): Promise<void> {
+  }: Args<{ id: string }>): Promise<void> {
     return this.withErrorHandling('provider.s3.delete.error', async () => {
-      const { bucket, client } = this.#session(companion, providerUserSession, {
-        mutate: true,
+      const { bucket, client } = this.session(companion, providerUserSession, {
+        requireWrite: true,
         keys: [id],
       })
       if (
         id.endsWith('/') &&
         (await this.#folderHasEntries(client, bucket, id))
       ) {
-        throw new ProviderUserError({ message: 'The folder is not empty' })
+        throw userError('S3_FOLDER_NOT_EMPTY')
       }
       await client.send(new DeleteObjectCommand({ Bucket: bucket, Key: id }))
     })
   }
 
+  /**
+   * Moves or renames one item. Plain S3 moves files only (a folder is a key
+   * prefix, so the client walks it and moves its files one by one); a backend
+   * that `supportsMoveFolder` gets folders too, with a normalised target.
+   */
   override async moveItem({
     companion,
     id,
     destination,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    id: string
-    destination: string
-    providerUserSession: S3UserSession
-  }): Promise<{ id: string; requestPath: string }> {
+  }: Args<{ id: string; destination: string }>): Promise<ItemRef> {
     return this.withErrorHandling('provider.s3.move.error', async () => {
-      const { bucket, client } = this.#session(companion, providerUserSession, {
-        mutate: true,
+      const session = this.session(companion, providerUserSession, {
+        requireWrite: true,
         keys: [id, destination],
       })
       const isFolder = id.endsWith('/')
+      if (isFolder && !this.supportsMoveFolder) {
+        throw userError('S3_FOLDER_MOVE_NOT_SUPPORTED')
+      }
       if (!isFolder && destination.endsWith('/')) {
-        throw new ProviderUserError({
-          message: 'The destination of a file must be a file path',
-        })
+        throw userError('S3_DESTINATION_MUST_BE_FILE')
       }
       const target = isFolder ? ensureTrailingSlash(destination) : destination
-      if (target === id) return { id, requestPath: encodeURIComponent(id) }
-      if (this.nativeStorage) {
-        const path = await this.#moveStorageEntry(
-          companion.options,
-          bucket,
-          id,
-          target,
-        )
-        return { id: path, requestPath: encodeURIComponent(path) }
+      if (target === id) return itemRef(id)
+      if (isFolder && target.startsWith(id)) {
+        throw userError('S3_FOLDER_INTO_ITSELF')
       }
-      // Some S3-compatible endpoints silently ignore conditional deletes; HEAD cannot close
-      // that race. Operators must verify all copy/delete conditions before enabling moves.
-      if (companion.options.s3?.conditionalMoves !== true) {
-        throw new ProviderUserError({
-          message:
-            'Safe moves require verified conditional-operation support (s3.conditionalMoves / COMPANION_AWS_CONDITIONAL_MOVES)',
-        })
-      }
-      if (isFolder) {
-        if (target.startsWith(id)) {
-          throw new ProviderUserError({
-            message: 'A folder cannot be moved into itself',
-          })
-        }
-        if (
-          (await this.#folderHasEntries(client, bucket, target)) ||
-          (await this.#exists(client, bucket, target))
-        ) {
-          throw new ProviderUserError({
-            message: `"${target}" already exists`,
-          })
-        }
-        await this.#moveFolder(client, bucket, id, target, companion.options)
-      } else {
-        if (await this.#exists(client, bucket, target)) {
-          throw new ProviderUserError({
-            message: `"${target}" already exists`,
-          })
-        }
-        const source = await client.send(
-          new HeadObjectCommand({ Bucket: bucket, Key: id }),
-        )
-        this.#assertCopySize(source.ContentLength)
-        const etag = this.#requireCopyEtag(source.ETag)
-        await this.#copyObject(
-          client,
-          bucket,
-          id,
-          target,
-          companion.options,
-          etag,
-        )
-        await client.send(
-          new DeleteObjectCommand({ Bucket: bucket, Key: id, IfMatch: etag }),
-        )
-      }
-      return { id: target, requestPath: encodeURIComponent(target) }
+      return this.move(session, id, target)
     })
+  }
+
+  /**
+   * Moves one object: copy, then delete the source. Re-running an interrupted
+   * move works: a destination that already holds the same object only needs
+   * the source deleted.
+   */
+  protected async move(
+    { bucket, client, config: { writeParams } }: S3Session<P>,
+    id: string,
+    destination: string,
+  ): Promise<ItemRef> {
+    const [source, existing] = await Promise.all([
+      this.#head(client, bucket, id),
+      this.#head(client, bucket, destination),
+    ])
+    if (source == null) {
+      throw userError('S3_NOT_FOUND')
+    }
+    if ((source.ContentLength ?? 0) > MAX_COPY_BYTES) {
+      throw userError('S3_FILE_TOO_LARGE_TO_MOVE')
+    }
+    if (existing != null) {
+      // Same size and ETag: the copy already happened (an earlier attempt
+      // stopped before deleting the source). Anything else is a conflict.
+      // (Under SSE-KMS a copy gets a new ETag, so a resumed move of such an
+      // object reports a conflict rather than deleting the source.)
+      // Only trust ETags that look like S3's own (an MD5, or MD5-partcount
+      // for multipart uploads): a backend answering a placeholder for every
+      // object would otherwise have the source deleted without a copy.
+      const sameObject =
+        existing.ContentLength === source.ContentLength &&
+        existing.ETag != null &&
+        existing.ETag === source.ETag &&
+        isContentEtag(existing.ETag)
+      if (!sameObject) {
+        throw userError('S3_ALREADY_EXISTS')
+      }
+    } else {
+      await client.send(
+        new CopyObjectCommand({
+          Bucket: bucket,
+          CopySource: `/${bucket}/${id.split('/').map(encodeURIComponent).join('/')}`,
+          Key: destination,
+          // The HEADs above are a friendly early check; these conditions are
+          // the write barrier where the endpoint honours them: never
+          // overwrite the destination, and copy exactly what was inspected.
+          IfNoneMatch: '*',
+          ...(source.ETag != null && { CopySourceIfMatch: source.ETag }),
+          ...writeParams,
+        }),
+      )
+    }
+    // Delete only the object that was copied; a source replaced meanwhile
+    // stays put and the user gets a conflict.
+    await client.send(
+      new DeleteObjectCommand({
+        Bucket: bucket,
+        Key: id,
+        ...(source.ETag != null && { IfMatch: source.ETag }),
+      }),
+    )
+    return itemRef(destination)
   }
 
   override async createFolder({
@@ -773,40 +648,42 @@ export default class S3Provider extends Provider<S3UserSession> {
     parentId,
     name,
     providerUserSession,
-  }: {
-    companion: CompanionLike
-    parentId: string | null
-    name: string
-    providerUserSession: S3UserSession
-  }): Promise<{ id: string; requestPath: string }> {
+  }: Args<{ parentId: string | null; name: string }>): Promise<ItemRef> {
     return this.withErrorHandling(
       'provider.s3.createFolder.error',
       async () => {
-        const { bucket, prefix, client } = this.#session(
-          companion,
-          providerUserSession,
-          { mutate: true },
-        )
+        const parentFolder = parentId
+          ? ensureTrailingSlash(parentId)
+          : undefined
+        const {
+          bucket,
+          prefix,
+          client,
+          config: { writeParams },
+        } = this.session(companion, providerUserSession, {
+          requireWrite: true,
+          keys: parentFolder ? [parentFolder] : [],
+        })
         const cleanName = name.trim().replace(/^\/+|\/+$/g, '')
         if (
           cleanName.length === 0 ||
           cleanName.includes('/') ||
-          cleanName.includes('\\') ||
-          cleanName === '..' ||
-          cleanName === '.'
+          hasUnsafeSegment(cleanName)
         ) {
-          throw new ProviderUserError({ message: 'Invalid folder name' })
+          throw userError('S3_INVALID_NAME')
         }
-        const parent = parentId ? ensureTrailingSlash(parentId) : prefix
-        this.#assertInsidePrefix(prefix, parent)
-        const key = `${parent}${cleanName}/`
-        if (
-          (await this.#folderHasEntries(client, bucket, key)) ||
-          (await this.#exists(client, bucket, key))
-        ) {
-          throw new ProviderUserError({
-            message: `A folder named "${cleanName}" already exists`,
-          })
+        const key = `${parentFolder ?? prefix}${cleanName}/`
+        // Without a delimiter one entry is enough to tell: it is either the
+        // folder's own marker or something already stored under it.
+        const taken = await client.send(
+          new ListObjectsV2Command({
+            Bucket: bucket,
+            Prefix: key,
+            MaxKeys: 1,
+          }),
+        )
+        if ((taken.Contents ?? []).length > 0) {
+          throw userError('S3_ALREADY_EXISTS')
         }
         await client.send(
           new PutObjectCommand({
@@ -814,10 +691,10 @@ export default class S3Provider extends Provider<S3UserSession> {
             Key: key,
             Body: '',
             IfNoneMatch: '*',
-            ...this.#writePolicy(companion.options),
+            ...writeParams,
           }),
         )
-        return { id: key, requestPath: encodeURIComponent(key) }
+        return itemRef(key)
       },
     )
   }
@@ -830,44 +707,18 @@ export default class S3Provider extends Provider<S3UserSession> {
     throw new Error('call to thumbnail is not implemented')
   }
 
+  /**
+   * Companion's own errors pass through. A misconfiguration and S3's "not
+   * found" are the user's business (the details of the former are in the
+   * log). Everything else (permissions, wrong endpoint, throttling) is
+   * reported to the browser generically — the original goes to Companion's
+   * log, which `withErrorHandling` takes care of.
+   */
   protected override mapProviderError(err: unknown): unknown {
-    const name = isRecord(err) ? err['name'] : undefined
-    const status = isRecord(err)
-      ? (err['$metadata'] as { httpStatusCode?: number } | undefined)
-          ?.httpStatusCode
-      : undefined
-    if (
-      name === 'NoSuchBucket' ||
-      name === 'AccessDenied' ||
-      name === 'InvalidAccessKeyId' ||
-      status === 403 ||
-      status === 404
-    ) {
-      return new ProviderUserError({
-        message: `S3 error: ${String(name ?? status)}`,
-      })
-    }
-    if (status === 409 || status === 412) {
-      return new ProviderUserError({
-        message:
-          'The source or destination changed during this operation. Refresh the folder and check both paths before retrying; the conflicting source was not deleted.',
-      })
-    }
-    if (status === 400)
-      return new ProviderUserError({
-        message:
-          'The storage provider rejected this operation. Check its supported S3 operations and bucket configuration.',
-      })
-    if (status != null && !(err instanceof ProviderUserError)) {
-      return new ProviderApiError('S3 API error', status)
-    }
-    return err
-  }
-}
-
-/** Separate provider/session namespace: native Storage never falls back to S3 copy/delete. */
-export class TransloaditStorageProvider extends S3Provider {
-  protected override get nativeStorage(): boolean {
-    return true
+    if (err instanceof ProviderApiError) return err
+    if (err instanceof S3ConfigError) return userError('S3_NOT_CONFIGURED')
+    if (isNotFound(err)) return userError('S3_NOT_FOUND')
+    if (isPreconditionFailed(err)) return userError('S3_CONFLICT')
+    return userError('S3_REQUEST_FAILED')
   }
 }

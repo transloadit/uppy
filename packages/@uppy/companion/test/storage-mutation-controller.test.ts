@@ -1,5 +1,5 @@
 import { expect, test, vi } from 'vitest'
-import { createFolder } from '../dist/server/controllers/mutate.js'
+import { mutate } from '../src/server/controllers/index.js'
 
 test.each([
   { parentId: 42 },
@@ -9,20 +9,17 @@ test.each([
   parentId,
 }) => {
   const write = vi.fn()
-  const json = vi.fn()
-  const status = vi.fn(() => ({ json }))
-  // Only the fields supplied by Companion's preceding middleware are needed by this controller.
-  await createFolder(
+  const sendStatus = vi.fn()
+  // Only the fields the preceding middleware guarantees are needed here.
+  await mutate(
     {
-      companion: {
-        provider: { createFolder: write },
-        providerClass: { supportsMutations: true },
-      },
+      params: { operation: 'create-folder' },
+      companion: { provider: { createFolder: write } },
       body: { name: 'photos', parentId },
     } as never,
-    { status, json } as never,
+    { sendStatus, json: vi.fn() } as never,
     vi.fn(),
   )
-  expect(status).toHaveBeenCalledWith(400)
+  expect(sendStatus).toHaveBeenCalledWith(400)
   expect(write).not.toHaveBeenCalled()
 })

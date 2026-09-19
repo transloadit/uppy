@@ -23,6 +23,7 @@ import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
+const RENAME_LABEL = 'New name, or a path relative to the browsing root:'
 
 const createMockCompanion = () =>
   createMockS3Companion({ token: TOKEN, bucket: 'my-bucket' })
@@ -33,15 +34,22 @@ const install = (
 
 let uppy: Uppy | undefined
 
+type TestPlugin = S3<Record<string, unknown>, Record<string, never>>
+
 function createUppy(options: Partial<S3Options> = {}) {
   const target = document.createElement('div')
   document.body.appendChild(target)
   uppy = new Uppy().use(Dashboard, { target, inline: true }).use(S3, {
     companionUrl: COMPANION,
-    bucket: 'my-bucket',
     ...options,
   })
   return uppy
+}
+
+const pluginOf = (app: Uppy): TestPlugin => {
+  const plugin = app.getPlugin<TestPlugin>('S3')
+  if (!plugin) throw new Error('Missing S3 plugin')
+  return plugin
 }
 
 async function openBucket() {
@@ -60,22 +68,57 @@ afterEach(() => {
 })
 
 describe('S3 provider in the browser', () => {
+  it('auto-connects and lists the bucket Companion serves', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+
+    await openBucket()
+    await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
+    // The client cannot pick a bucket: it just asks for a session.
+    expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({ form: {} })
+    const paths = companion.calls.map((call) => call.path)
+    const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
+    const firstList = paths.findIndex((p) => p.includes('/s3/list'))
+    expect(firstAuth).toBeGreaterThanOrEqual(0)
+    expect(firstList).toBeGreaterThan(firstAuth)
+    expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
+  })
+
+  it('reuses a stored session instead of connecting again', async ({
+    worker,
+  }) => {
+    localStorage.setItem('companion-S3-auth-token', TOKEN)
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+
+    await openBucket()
+    expect(companion.lastCall('/s3/simple-auth')).toBeUndefined()
+    expect(companion.calls.every((call) => call.token === TOKEN)).toBe(true)
+  })
+
   it('pins a queued import URL to the bucket where the file was selected', async ({
     worker,
   }) => {
     install(worker, createMockCompanion())
     const app = createUppy()
     await openBucket()
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    const plugin = pluginOf(app)
     const queuedUrl = new URL(plugin.provider.fileUrl('readme.md'))
-    await plugin.view.logout()
-    await plugin.view.handleAuth({ bucket: 'other-bucket' })
     expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
-    expect(
-      new URL(plugin.provider.fileUrl('readme.md')).searchParams.get('bucket'),
-    ).toBe('other-bucket')
+    // The queued URL keeps its bucket; a new session has to browse again
+    // before it may hand out one, so a key can never be reinterpreted in
+    // whatever bucket the next session happens to see.
+    await plugin.view.logout()
+    expect(() => plugin.provider.fileUrl('readme.md')).toThrow(
+      'Browse the storage folder',
+    )
+    expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
   })
+
   it('opens a folder beyond the first listing page', async ({ worker }) => {
     const companion = createMockS3Companion({
       token: TOKEN,
@@ -89,9 +132,7 @@ describe('S3 provider in the browser', () => {
       },
     })
     install(worker, companion)
-    const app = createUppy()
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    const plugin = pluginOf(createUppy())
     expect(await plugin.openFolderPath('docs/')).toBe(true)
     expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
   })
@@ -100,14 +141,30 @@ describe('S3 provider in the browser', () => {
     worker,
   }) => {
     install(worker, createMockCompanion())
-    const app = createUppy({
-      getGrant: async () =>
-        mockGrant({ bucket: 'my-bucket', prefix: '/tenant' }),
-    })
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    const plugin = pluginOf(
+      createUppy({
+        getGrant: async () =>
+          mockGrant({ bucket: 'my-bucket', prefix: '/tenant' }),
+      }),
+    )
     await plugin.openFolderPath('')
     expect(plugin.rootPrefix).toBe('tenant/')
+  })
+
+  it('forgets the session on logout', async ({ worker }) => {
+    install(worker, createMockCompanion())
+    const plugin = pluginOf(
+      createUppy({
+        getGrant: async () =>
+          mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      }),
+    )
+    await plugin.openFolderPath('')
+    expect(plugin.rootPrefix).toBe('tenant/')
+    expect(plugin.canWrite).toBe(true)
+    await plugin.view.logout()
+    expect(plugin.rootPrefix).toBe('')
+    expect(plugin.canWrite).toBe(false)
   })
 
   it('keeps a cancelled rename from discarding its listing', async ({
@@ -116,8 +173,7 @@ describe('S3 provider in the browser', () => {
     install(worker, createMockCompanion())
     const app = createUppy()
     await openBucket()
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+    const plugin = pluginOf(app)
     const item = plugin
       .getPluginState()
       .partialTree.find((entry) => entry.id === 'readme.md')
@@ -126,25 +182,25 @@ describe('S3 provider in the browser', () => {
     const refresh = vi.spyOn(plugin.view, 'refreshCurrentFolder')
     const rename = plugin
       .builtInActions()
-      .find((action) => action.id === 's3:rename')!
+      .find((action) => action.id === 's3:rename')
+    if (!rename) throw new Error('Missing rename action')
     await plugin.view.runAction(rename, item)
     expect(refresh).not.toHaveBeenCalled()
   })
 
-  it('hides write actions when Companion reports a read-only bucket', async ({
+  it('hides write actions when Companion reports a read-only session', async ({
     worker,
   }) => {
     const companion = createMockS3Companion({
       token: TOKEN,
       bucket: 'my-bucket',
-      canMutate: false,
+      canWrite: false,
     })
     install(worker, companion)
     const app = createUppy()
     await openBucket()
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
-    expect(plugin.canMutate).toBe(false)
+    const plugin = pluginOf(app)
+    expect(plugin.canWrite).toBe(false)
     expect(plugin.builtInActions()).toEqual([])
     await expect
       .element(page.getByRole('button', { name: 'New folder', exact: true }))
@@ -157,10 +213,7 @@ describe('S3 provider in the browser', () => {
     install(worker, createMockCompanion())
     const app = createUppy()
     await openBucket()
-    const view =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>(
-        'S3',
-      )!.view
+    const { view } = pluginOf(app)
     const first = view.prompt({ title: 'First name', defaultValue: 'old.txt' })
     await expect
       .element(
@@ -223,32 +276,31 @@ describe('S3 provider in the browser', () => {
     install(worker, companion)
     const app = createUppy()
     await openBucket()
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')
-    if (!plugin) throw new Error('Missing S3 plugin')
+    const plugin = pluginOf(app)
     await plugin.provider.deleteItem('docs')
     expect(companion.folders.get('')).toEqual([
       { name: 'readme.md', isFolder: false },
       { name: 'docs', isFolder: true },
     ])
   })
-  it('restores a scoped bucket session and opens its existing nested folder', async ({
+
+  it('restores a session scoped to a prefix and opens its nested folder', async ({
     worker,
   }) => {
     const companion = createMockS3Companion({
       token: TOKEN,
       bucket: 'my-bucket',
+      // Companion confines this session to a prefix and reports it in the
+      // listing; the client never asks for one.
+      prefix: 'tenant/',
       folders: {
         'tenant/': [{ name: 'photos', isFolder: true }],
         'tenant/photos/': [],
       },
     })
     install(worker, companion)
-    const app = createUppy({ bucket: undefined, autoConnect: false })
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')
-    if (!plugin) throw new Error('Missing S3 plugin')
-    await plugin.view.handleAuth({ bucket: 'my-bucket/tenant/' })
+    const plugin = pluginOf(createUppy({ autoConnect: false }))
+    await plugin.view.handleAuth({})
     expect(plugin.rootPrefix).toBe('tenant/')
     expect(await plugin.openFolderPath('tenant/photos/')).toBe(true)
     expect(plugin.getPluginState().currentFolderId).toBe('tenant%2Fphotos%2F')
@@ -260,15 +312,14 @@ describe('S3 provider in the browser', () => {
   }) => {
     const companion = createMockCompanion()
     install(worker, companion)
-    uppy = new Uppy().use(S3, { companionUrl: COMPANION, bucket: 'my-bucket' })
-    const plugin =
-      uppy.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')
-    if (!plugin) throw new Error('Missing S3 plugin')
+    uppy = new Uppy().use(S3, { companionUrl: COMPANION })
+    const plugin = pluginOf(uppy)
     const started = performance.now()
     expect(await plugin.openFolderPath('docs/')).toBe(true)
     expect(performance.now() - started).toBeLessThan(2000)
     expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
   }, 20000)
+
   it('bulk actions receive only topmost selected entries and refresh after partial failure', async ({
     worker,
   }) => {
@@ -276,9 +327,7 @@ describe('S3 provider in the browser', () => {
     install(worker, companion)
     const app = createUppy({ mode: 'manager' })
     await openBucket()
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')
-    if (!plugin) throw new Error('Missing S3 plugin')
+    const plugin = pluginOf(app)
     await plugin.view.openFolder('docs%2F')
     await plugin.view.openFolder(null)
     const folder = plugin
@@ -313,9 +362,7 @@ describe('S3 provider in the browser', () => {
     install(worker, companion)
     const app = createUppy({ mode: 'manager' })
     await openBucket()
-    const plugin =
-      app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')
-    if (!plugin) throw new Error('Missing S3 plugin')
+    const plugin = pluginOf(app)
     await plugin.view.openFolder('docs%2F')
     const file = plugin
       .getPluginState()
@@ -355,11 +402,12 @@ describe('S3 provider in the browser', () => {
       },
     })
     install(worker, companion)
-    createUppy({
-      bucket: undefined,
-      getGrant: async () =>
-        mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
-    })
+    const plugin = pluginOf(
+      createUppy({
+        getGrant: async () =>
+          mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
+      }),
+    )
     await page.getByRole('tab', { name: 'S3' }).click()
     await page.getByRole('button', { name: 'Actions for photo.jpg' }).click()
     await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
@@ -374,45 +422,11 @@ describe('S3 provider in the browser', () => {
         id: 'tenant/photo.jpg',
         destination: 'tenant/archive/photo.jpg',
       })
-  })
-  it('auto-connects to the configured bucket and lists it', async ({
-    worker,
-  }) => {
-    const companion = createMockCompanion()
-    install(worker, companion)
-    createUppy()
-
-    await openBucket()
-    await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
-    expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
-      form: { bucket: 'my-bucket' },
-    })
-    expect(localStorage.getItem('companion-S3-s3-bucket')).toBe('my-bucket')
-    const paths = companion.calls.map((call) => call.path)
-    const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
-    const firstList = paths.findIndex((p) => p.includes('/s3/list'))
-    expect(firstAuth).toBeGreaterThanOrEqual(0)
-    expect(firstList).toBeGreaterThan(firstAuth)
-    expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
-  })
-
-  it('reconnects when the stored session belongs to another bucket', async ({
-    worker,
-  }) => {
-    localStorage.setItem('companion-S3-auth-token', 'stale-token')
-    localStorage.setItem('companion-S3-s3-bucket', 'other-bucket')
-    const companion = createMockCompanion()
-    install(worker, companion)
-    createUppy()
-
-    await openBucket()
-    expect(companion.calls.some((call) => call.token === 'stale-token')).toBe(
-      false,
-    )
-    expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
-      form: { bucket: 'my-bucket' },
-    })
-    expect(localStorage.getItem('companion-S3-s3-bucket')).toBe('my-bucket')
+    // Wait for the refresh the move triggers, so nothing is in flight after.
+    await expect
+      .poll(() => plugin.getPluginState().partialTree.map((node) => node.id))
+      .not.toContain('tenant%2Fphoto.jpg')
+    await expect.poll(() => plugin.getPluginState().loading).toBeFalsy()
   })
 
   it('shows plain chrome when standalone', async ({ worker }) => {
@@ -500,9 +514,7 @@ describe('S3 provider in the browser', () => {
     // Bare name → rename in the current folder
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
-    const input = page.getByLabelText(
-      'New name, or a path relative to the browsing root:',
-    )
+    const input = page.getByLabelText(RENAME_LABEL)
     await expect.element(input).toHaveValue('readme.md')
     await input.fill('notes.md')
     await page.getByRole('button', { name: 'Rename', exact: true }).click()
@@ -512,34 +524,74 @@ describe('S3 provider in the browser', () => {
       destination: 'notes.md',
     })
 
-    // Folders can be renamed too; the trailing slash is kept
-    await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
-    await input.fill('archive')
-    await userEvent.keyboard('{Enter}')
-    await expect
-      .element(page.getByText('archive', { exact: true }))
-      .toBeVisible()
-    expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
-      id: 'docs/',
-      destination: 'archive/',
-    })
-
     // A path moves the file
     await page.getByRole('button', { name: 'Actions for notes.md' }).click()
     await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
-    await input.fill('archive/notes.md')
+    await input.fill('docs/notes.md')
     await userEvent.keyboard('{Enter}')
+    // The list hides behind the progress screen while the move runs, so wait
+    // for the request itself rather than for the row to disappear.
+    await expect
+      .poll(() => companion.lastCall('/s3/mutate/move')?.body)
+      .toEqual({ id: 'notes.md', destination: 'docs/notes.md' })
     await expect
       .element(page.getByText('notes.md', { exact: true }))
       .not.toBeInTheDocument()
-    expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
-      id: 'notes.md',
-      destination: 'archive/notes.md',
-    })
   })
 
-  it('deletes files after confirmation and refuses non-empty folders', async ({
+  it('renames a folder by moving its contents one by one', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+    await openBucket()
+
+    await page.getByRole('button', { name: 'Actions for docs' }).click()
+    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByLabelText(RENAME_LABEL).fill('archive')
+    await userEvent.keyboard('{Enter}')
+
+    await expect
+      .element(page.getByText('archive', { exact: true }))
+      .toBeVisible()
+    await expect
+      .element(page.getByText('docs', { exact: true }))
+      .not.toBeInTheDocument()
+    // Companion only ever moved files; the folders were created and deleted.
+    expect(
+      companion.calls
+        .filter((call) => call.path.endsWith('/s3/mutate/move'))
+        .map((call) => call.body),
+    ).toEqual([{ id: 'docs/hello.txt', destination: 'archive/hello.txt' }])
+    expect(companion.folders.get('archive/')).toEqual([
+      { name: 'hello.txt', isFolder: false, size: 12, mimeType: 'text/plain' },
+    ])
+    expect(companion.folders.has('docs/')).toBe(false)
+    await expect
+      .element(page.getByText(/Renamed to "archive"/).first())
+      .toBeVisible()
+  })
+
+  it('refuses to move a folder into itself', async ({ worker }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+    await openBucket()
+
+    await page.getByRole('button', { name: 'Actions for docs' }).click()
+    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByLabelText(RENAME_LABEL).fill('docs/inner')
+    await userEvent.keyboard('{Enter}')
+
+    await expect
+      .element(page.getByText('A folder cannot be moved into itself').first())
+      .toBeVisible()
+    expect(companion.lastCall('/s3/mutate/move')).toBeUndefined()
+    expect(companion.lastCall('/s3/mutate/create-folder')).toBeUndefined()
+  })
+
+  it('deletes files after confirmation and folders with their contents', async ({
     worker,
   }) => {
     const companion = createMockCompanion()
@@ -561,30 +613,108 @@ describe('S3 provider in the browser', () => {
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await page.getByRole('menuitem', { name: 'Delete' }).click()
     await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
+    // (The loading screen hides the list while the request is in flight, so
+    // wait for the toast before looking at the calls.)
     await expect
-      .element(page.getByText('readme.md', { exact: true }))
-      .not.toBeInTheDocument()
+      .element(page.getByText(/Deleted "readme.md"/).first())
+      .toBeVisible()
     expect(companion.lastCall('/s3/mutate/delete')?.body).toEqual({
       id: 'readme.md',
     })
     await expect
-      .element(page.getByText(/Deleted "readme.md"/).first())
-      .toBeVisible()
+      .element(page.getByText('readme.md', { exact: true }))
+      .not.toBeInTheDocument()
 
-    // Companion refuses to delete folders that still have entries
+    // A folder is emptied first (Companion only deletes empty folders), then
+    // deleted itself.
     await page.getByRole('button', { name: 'Actions for docs' }).click()
     await page.getByRole('menuitem', { name: 'Delete' }).click()
+    await expect
+      .element(
+        dialog.getByText('The folder and everything in it will be deleted.'),
+      )
+      .toBeVisible()
+    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
+    await expect.element(page.getByText(/Deleted "docs"/).first()).toBeVisible()
+    await expect
+      .element(page.getByText('docs', { exact: true }))
+      .not.toBeInTheDocument()
+    expect(
+      companion.calls
+        .filter((call) => call.path === '/s3/mutate/delete')
+        .slice(1)
+        .map((call) => call.body),
+    ).toEqual([{ id: 'docs/hello.txt' }, { id: 'docs/' }])
+    expect(companion.folders.has('docs/')).toBe(false)
+  })
+
+  it('offers the bulk actions in the header while items are checked (picker mode)', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    createUppy()
+    await openBucket()
+
+    const deleteButton = page.getByRole('button', {
+      name: 'Delete',
+      exact: true,
+    })
+    await expect.element(deleteButton).not.toBeInTheDocument()
+
+    await page.getByRole('checkbox', { name: /docs/ }).click()
+    await page.getByRole('checkbox', { name: 'readme.md' }).click()
+    await expect.element(deleteButton).toBeVisible()
+    await expect
+      .element(page.getByRole('button', { name: 'Move…' }))
+      .toBeVisible()
+
+    await deleteButton.click()
+    const dialog = page.getByRole('dialog')
+    await expect.element(dialog.getByText('Delete 2 items?')).toBeVisible()
     await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
     await expect
-      .element(page.getByText('The folder is not empty').first())
+      .element(page.getByText(/Deleted 2 items/).first())
       .toBeVisible()
-    expect(companion.lastCall('/s3/mutate/delete')?.body).toEqual({
-      id: 'docs/',
-    })
-    await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
+    await expect
+      .element(page.getByText('readme.md', { exact: true }))
+      .not.toBeInTheDocument()
+    expect(
+      companion.calls
+        .filter((call) => call.path === '/s3/mutate/delete')
+        .map((call) => call.body),
+    ).toEqual([{ id: 'docs/hello.txt' }, { id: 'docs/' }, { id: 'readme.md' }])
+    await expect.element(deleteButton).not.toBeInTheDocument()
   })
 
   describe('server-issued grants', () => {
+    it('connects with a grant instead of a plain session', async ({
+      worker,
+    }) => {
+      const companion = createMockCompanion()
+      install(worker, companion)
+      const grant = mockGrant({ bucket: 'my-bucket' })
+      const getGrant = vi.fn(async () => grant)
+      createUppy({ getGrant })
+
+      await openBucket()
+      expect(getGrant).toHaveBeenCalledTimes(1)
+      expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
+        form: { grant },
+      })
+      const paths = companion.calls.map((call) => call.path)
+      const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
+      const firstList = paths.findIndex((p) => p.includes('/s3/list'))
+      expect(firstAuth).toBeGreaterThanOrEqual(0)
+      expect(firstList).toBeGreaterThan(firstAuth)
+      expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
+      expect(companion.session).toMatchObject({ bucket: 'my-bucket' })
+      // Mutations are available: the grant carries the write scope.
+      await expect
+        .element(page.getByRole('button', { name: 'New folder' }))
+        .toBeVisible()
+    })
+
     it('does not restore a session when a pending grant resolves after logout', async ({
       worker,
     }) => {
@@ -606,10 +736,9 @@ describe('S3 provider in the browser', () => {
               finishRenewal = resolve
             }),
         )
-      const app = createUppy({ bucket: undefined, getGrant })
+      const app = createUppy({ getGrant })
       await openBucket()
-      const plugin =
-        app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')!
+      const plugin = pluginOf(app)
       now += 901
       const request = plugin.provider
         .list(null, { signal: new AbortController().signal })
@@ -628,6 +757,7 @@ describe('S3 provider in the browser', () => {
         companion.calls.filter((call) => call.path.endsWith('/simple-auth')),
       ).toHaveLength(1)
     })
+
     it('shares renewal across concurrent expired requests and does not inherit a caller abort', async ({
       worker,
     }) => {
@@ -637,10 +767,7 @@ describe('S3 provider in the browser', () => {
         nowSeconds: () => now,
       })
       install(worker, companion)
-      const shortLived = mockGrant({
-        bucket: 'my-bucket',
-        exp: now + 900,
-      })
+      const shortLived = mockGrant({ bucket: 'my-bucket', exp: now + 900 })
       let finishRenewal: ((grant: string) => void) | undefined
       const getGrant = vi
         .fn<() => Promise<string>>()
@@ -651,12 +778,10 @@ describe('S3 provider in the browser', () => {
               finishRenewal = resolve
             }),
         )
-      const app = createUppy({ bucket: undefined, getGrant })
+      const app = createUppy({ getGrant })
       await openBucket()
       now += 901
-      const plugin =
-        app.getPlugin<S3<Record<string, unknown>, Record<string, never>>>('S3')
-      if (!plugin) throw new Error('Missing S3 plugin')
+      const plugin = pluginOf(app)
       const canceled = new AbortController()
       const first = plugin.provider
         .list(null, { signal: canceled.signal })
@@ -682,30 +807,6 @@ describe('S3 provider in the browser', () => {
       expect(await secondResult).toHaveProperty('result')
       expect(getGrant).toHaveBeenCalledTimes(2)
     })
-    it('connects with a grant instead of a bucket', async ({ worker }) => {
-      const companion = createMockCompanion()
-      install(worker, companion)
-      const grant = mockGrant({ bucket: 'my-bucket' })
-      const getGrant = vi.fn(async () => grant)
-      createUppy({ bucket: undefined, getGrant })
-
-      await openBucket()
-      expect(getGrant).toHaveBeenCalledTimes(1)
-      expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
-        form: { grant },
-      })
-      const paths = companion.calls.map((call) => call.path)
-      const firstAuth = paths.findIndex((p) => p.endsWith('/s3/simple-auth'))
-      const firstList = paths.findIndex((p) => p.includes('/s3/list'))
-      expect(firstAuth).toBeGreaterThanOrEqual(0)
-      expect(firstList).toBeGreaterThan(firstAuth)
-      expect(companion.calls.filter((call) => call.status === 401)).toEqual([])
-      expect(companion.session).toMatchObject({ bucket: 'my-bucket' })
-      // Mutations are available: the grant carries the write scope.
-      await expect
-        .element(page.getByRole('button', { name: 'New folder' }))
-        .toBeVisible()
-    })
 
     it('fetches a new grant when the session expires mid-way', async ({
       worker,
@@ -716,17 +817,14 @@ describe('S3 provider in the browser', () => {
         nowSeconds: () => now,
       })
       install(worker, companion)
-      const shortLived = mockGrant({
-        bucket: 'my-bucket',
-        exp: now + 900,
-      })
+      const shortLived = mockGrant({ bucket: 'my-bucket', exp: now + 900 })
       const getGrant = vi
         .fn<() => Promise<string>>()
         .mockResolvedValueOnce(shortLived)
         .mockImplementation(async () =>
           mockGrant({ bucket: 'my-bucket', exp: now + 900 }),
         )
-      createUppy({ bucket: undefined, getGrant })
+      createUppy({ getGrant })
 
       await openBucket()
       now += 901
@@ -745,7 +843,6 @@ describe('S3 provider in the browser', () => {
       const companion = createMockCompanion()
       install(worker, companion)
       createUppy({
-        bucket: undefined,
         getGrant: async () =>
           mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       })

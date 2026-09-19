@@ -19,6 +19,118 @@ export interface ProviderOptions {
   verificationToken?: string | undefined
 }
 
+/**
+ * Settings for connecting to an S3-compatible endpoint. Shared by the `s3`
+ * upload block, the S3 provider (`providerOptions.s3`, which falls back to the
+ * upload block field by field) and the S3 client factory, so the three cannot
+ * drift apart.
+ */
+export interface S3ConnectionOptions {
+  key?: string | undefined
+  secret?: string | undefined
+  sessionToken?: string | undefined
+  region?: string | undefined
+  endpoint?: string | undefined
+  forcePathStyle?: boolean | undefined
+  awsClientOptions?:
+    | (S3ClientConfig & {
+        /** @deprecated */
+        accessKeyId?: unknown
+        /** @deprecated */
+        secretAccessKey?: unknown
+      })
+    | undefined
+}
+
+/**
+ * What the S3 client factory reads: the connection settings plus the
+ * upload-only bits it needs. A subset of the `s3` upload block, so that
+ * anything holding these settings (the S3 *provider* merges its own over the
+ * upload block's) can build a client without pretending to be a full upload
+ * configuration.
+ */
+export interface S3ClientOptions extends S3ConnectionOptions {
+  /** @deprecated Use `key`. Rejected, not read. */
+  accessKeyId?: unknown
+  /** @deprecated Use `secret`. Rejected, not read. */
+  secretAccessKey?: unknown
+  bucket?: string | GetBucketFn | undefined
+  useAccelerateEndpoint?: boolean | undefined
+}
+
+/** Attributes of the objects Companion writes: uploads, copies, folder markers. */
+export interface S3ObjectWriteOptions {
+  acl?: ObjectCannedACL | undefined
+  /** Server-side encryption to request, e.g. `aws:kms`. */
+  awsSse?: ServerSideEncryption | undefined
+  /** KMS key id or ARN to use when `awsSse` is a KMS encryption type. */
+  awsSseKmsKeyId?: string | undefined
+}
+
+/**
+ * Options of the S3 *provider* (browsing and managing an S3-compatible bucket
+ * from the Dashboard through `@uppy/s3`), configured under
+ * `providerOptions.s3` like every other provider. It is separate from the `s3`
+ * block, which configures *uploads* to S3: the two features may use different
+ * credentials, accounts and buckets. Every connection and object-write setting
+ * left unset here falls back to the same-named field of the `s3` upload block.
+ *
+ * The provider is disabled until either `bucket` (single-tenant: everyone who
+ * can reach Companion browses *and changes* that bucket, so put Companion
+ * behind your own authentication) or a grant key (`grantSecret` /
+ * `grantPublicKey`, multi-tenant: your server issues a short-lived grant per
+ * user, which decides whether they may write) is set.
+ * Restrict what the provider's credentials may do with IAM or a bucket
+ * policy; Companion only enforces the per-user prefix carried by grants.
+ */
+export interface S3ProviderOptions
+  extends ProviderOptions,
+    S3ConnectionOptions,
+    S3ObjectWriteOptions {
+  /**
+   * The bucket to browse when grants are not used. Exclusive with the grant
+   * keys (Companion refuses to start with both): with grants, each grant
+   * names its bucket.
+   */
+  bucket?: string | undefined
+  /**
+   * Key prefix inside `bucket` that browsing is confined to, e.g.
+   * `uploads/`. Only together with `bucket`.
+   */
+  prefix?: string | undefined
+  /**
+   * Secret(s) that storage grants are signed with (HS256). A grant is a
+   * short-lived JWT your own server mints after it authenticated the user,
+   * carrying the bucket, the prefix they may see and whether they may write.
+   * Pass several to rotate: grants signed with any of them verify. Distinct
+   * from Companion's `secret`, which protects the session token Companion
+   * hands back to the browser.
+   */
+  grantSecret?: string | string[] | undefined
+  /**
+   * PEM public key(s) for grants signed asymmetrically (ES256/384/512,
+   * RS256/384/512, PS256/384/512). Preferred over `grantSecret`: Companion
+   * can verify grants but not mint them.
+   */
+  grantPublicKey?: string | string[] | undefined
+}
+
+/**
+ * Options of the `transloadit-storage` provider: the S3 provider pointed at
+ * Transloadit Storage's S3-compatible endpoint, plus native catalog moves
+ * (files and whole folders in one call, preserving asset identity). Grants
+ * only: a grant names the Workspace (as its bucket), and Companion holds the
+ * credentials of every Workspace it serves; a grant never carries credentials.
+ * The same key pair signs S3 requests and native API calls.
+ */
+export interface TransloaditStorageProviderOptions
+  extends Omit<S3ProviderOptions, 'bucket' | 'prefix' | 'key' | 'secret'> {
+  /** Transloadit API endpoint, e.g. `https://api2.transloadit.com`. */
+  apiEndpoint: string
+  /** Credentials per Workspace slug. */
+  workspaces: Record<string, { key: string; secret: string }>
+}
+
 type ProviderConstructor = typeof Provider
 
 export interface CustomProvider {
@@ -50,7 +162,12 @@ export interface CompanionInitOptions {
   // optional:
   preAuthSecret?: string | Buffer | undefined
   loggerProcessName?: string | undefined
-  providerOptions?: Record<string, ProviderOptions> | undefined
+  providerOptions?:
+    | (Record<string, ProviderOptions> & {
+        s3?: S3ProviderOptions | undefined
+        'transloadit-storage'?: TransloaditStorageProviderOptions | undefined
+      })
+    | undefined
   customProviders?: Record<string, CustomProvider> | undefined
   redisUrl?: string | undefined
   redisOptions?: RedisOptions | undefined
@@ -69,76 +186,13 @@ export interface CompanionInitOptions {
 
   corsOrigins?: CorsOptions['origin'] | undefined
   periodicPingStaticPayload?: unknown
-  s3?: {
-    /** @deprecated */
-    accessKeyId?: unknown
-    /** @deprecated */
-    secretAccessKey?: unknown
-
-    region?: string | undefined
-    endpoint?: string | undefined
-    bucket?: string | GetBucketFn | undefined
-    key?: string | undefined
-    getKey?: GetKeyFn | undefined
-    secret?: string | undefined
-    sessionToken?: string | undefined
-    conditions?: PresignedPostOptions['Conditions'] | undefined
-    forcePathStyle?: boolean
-    acl?: ObjectCannedACL | undefined
-    /** Server-side encryption to request for uploaded objects, e.g. `aws:kms`. */
-    awsSse?: ServerSideEncryption | undefined
-    /** KMS key id or ARN to use when `awsSse` is a KMS encryption type. */
-    awsSseKmsKeyId?: string | undefined
-    useAccelerateEndpoint?: boolean
-    expires: number
-    /**
-     * Buckets that the S3 *provider* (browsing/importing files from S3 in the
-     * Dashboard) is allowed to list and download from. Use `['*']` to allow any
-     * bucket the credentials can access (e.g. when an upstream proxy already
-     * enforces authorization). Unset/empty disables S3 browsing entirely.
-     *
-     * @default []
-     */
-    browsableBuckets?: string[] | undefined
-    /**
-     * Buckets the S3 provider may *change* (delete, rename/move, create
-     * folders) from the Dashboard. Separate from `browsableBuckets` so a
-     * read-only browser is the default; `['*']` allows every browsable bucket.
-     *
-     * @default []
-     */
-    mutableBuckets?: string[] | undefined
-    /** Enable generic copy/delete moves only after verifying the endpoint honors source and
-     * destination copy conditions and conditional deletes. Native Storage moves do not use this.
-     * @default false
-     */
-    conditionalMoves?: boolean | undefined
-    /**
-     * Secret used to verify storage *grants*: short-lived HS256 JWTs minted by
-     * your own server after it authenticated the user, carrying the bucket,
-     * the prefix they may see and their scopes (`read`/`write`). When set, the
-     * S3 provider refuses client-supplied bucket names (see `allowBucketAuth`).
-     */
-    grantSecret?: string | undefined
-    /** Native Transloadit Storage: bind each grant Workspace to its own server-held API key. */
-    transloaditStorage?: {
-      apiEndpoint: string
-      workspaces: Record<string, { key: string; secret: string }>
+  /** Uploads to S3 (`@uppy/aws-s3`). The S3 *provider* is `providerOptions.s3`. */
+  s3?: S3ClientOptions &
+    S3ObjectWriteOptions & {
+      getKey?: GetKeyFn | undefined
+      conditions?: PresignedPostOptions['Conditions'] | undefined
+      expires: number
     }
-    /**
-     * Keep accepting client-supplied bucket names next to grants. Development
-     * only: it lets anyone who can reach Companion pick a browsable bucket.
-     *
-     * @default false
-     */
-    allowBucketAuth?: boolean | undefined
-    awsClientOptions?: S3ClientConfig & {
-      /** @deprecated */
-      accessKeyId?: unknown
-      /** @deprecated */
-      secretAccessKey?: unknown
-    }
-  }
   maxFilenameLength?: number | undefined
   uploadUrls?: (string | RegExp)[] | undefined | null
   cookieDomain?: string | undefined
