@@ -23,7 +23,8 @@ interface S3UploaderOptions<M extends Meta, B extends Body> {
   s3Client: S3Client
   file: LocalUppyFile<M, B>
   metadata: Record<string, unknown>
-  key: string
+  /** Key proposed by the client. The signer may store the object under another. */
+  requestedKey: string
   shouldUseMultipart?: boolean
   getChunkSize?: (file: { size: number }) => number
   onProgress?: (bytesUploaded: number, bytesTotal: number) => void
@@ -55,7 +56,8 @@ interface ChunkState {
 
 export default class S3Uploader<M extends Meta, B extends Body> {
   readonly #data: NonNullable<LocalUppyFile<M, B>['data']>
-  #key: string | undefined
+  /** Key the object is stored under: the signer's if it returned one, else the requested one. */
+  #resolvedKey: string | undefined
   readonly #options: S3UploaderOptions<M, B>
   readonly #eventManager: EventManager<M, B>
 
@@ -78,7 +80,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     // Must run before #initChunks so it can force multipart mode for resumed uploads.
     const resumeState = options.file.s3Multipart
     if (resumeState) {
-      this.#key = resumeState.key
+      this.#resolvedKey = resumeState.key
       this.#uploadId = resumeState.uploadId
       this.#uploadHasStarted = true
     }
@@ -204,17 +206,20 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     this.#eventManager.remove()
 
     if (opts?.abortInS3 !== false && this.#uploadId) {
-      if (!this.#key) {
+      if (!this.#resolvedKey) {
         throw new Error('Missing S3 object key for aborting upload')
       }
       this.#options.s3Client
-        .abortMultipartUpload({ key: this.#key, uploadId: this.#uploadId })
+        .abortMultipartUpload({
+          key: this.#resolvedKey,
+          uploadId: this.#uploadId,
+        })
         .catch((abortErr) => {
           this.#options.log?.(abortErr, 'warning')
         })
     }
 
-    this.#key = undefined
+    this.#resolvedKey = undefined
     this.#uploadId = undefined
     this.#uploadHasStarted = false
   }
@@ -223,12 +228,12 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     uploadId: string,
     signal: AbortSignal,
   ): Promise<void> {
-    if (!this.#key) {
+    if (!this.#resolvedKey) {
       throw new Error('Missing S3 object key for resuming upload')
     }
     const existingParts = await this.#options.s3Client.listParts({
       uploadId,
-      key: this.#key,
+      key: this.#resolvedKey,
       signal,
     })
     // Sync local state with S3 - mark already-uploaded parts
@@ -246,7 +251,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
 
   async #uploadNonMultipart(signal: AbortSignal): Promise<void> {
     const { location, key } = await this.#options.s3Client.putObject({
-      key: this.#options.key,
+      key: this.#options.requestedKey,
       data: this.#data,
       fileType: this.#options.file.type || 'application/octet-stream',
       metadata: this.#options.metadata,
@@ -266,13 +271,13 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   async #uploadMultipart(signal: AbortSignal): Promise<void> {
     const { uploadId, key } =
       await this.#options.s3Client.createMultipartUpload({
-        key: this.#options.key,
+        key: this.#options.requestedKey,
         fileType: this.#options.file.type || 'application/octet-stream',
         metadata: this.#options.metadata,
         signal,
       })
 
-    this.#key = key // Note: may differ from this.#options.key
+    this.#resolvedKey = key
     this.#uploadId = uploadId
 
     // Persist resume state so Golden Retriever can restore it after page refresh
@@ -293,11 +298,11 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       const chunkData = this.#data.slice(chunk.start, chunk.end)
       const chunkIndex = i // Capture for closure (cannot use for-loop variable i directly in a closure)
 
-      if (this.#key == null) {
+      if (this.#resolvedKey == null) {
         throw new Error('Missing S3 object key for uploading part')
       }
       const { etag } = await this.#options.s3Client.uploadPart({
-        key: this.#key,
+        key: this.#resolvedKey,
         uploadId: this.#uploadId!,
         data: chunkData,
         partNumber,
@@ -325,13 +330,13 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       state.etag ? [{ partNumber: i + 1, etag: state.etag }] : [],
     )
 
-    if (this.#key == null) {
+    if (this.#resolvedKey == null) {
       throw new Error('Missing S3 object key for completing multipart upload')
     }
 
     const { location, key } =
       await this.#options.s3Client.completeMultipartUpload({
-        key: this.#key,
+        key: this.#resolvedKey,
         uploadId: this.#uploadId!,
         parts,
         signal,
