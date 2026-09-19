@@ -175,7 +175,9 @@ export default class Provider<
       { form: authFormData },
       { qs: { uppyVersions }, signal },
     )
-    this.setAuthToken(response.uppyAuthToken)
+    signal.throwIfAborted()
+    await this.setAuthToken(response.uppyAuthToken)
+    signal.throwIfAborted()
   }
 
   protected async loginOAuth({
@@ -387,5 +389,33 @@ export default class Provider<
     const response = await this.get<ResBody>(`${this.id}/logout`, options)
     await this.removeAuthToken()
     return response
+  }
+
+  deleteItem(id: string, options?: RequestOptions): Promise<void> {
+    return this.post<void>(`${this.id}/mutate/delete`, { id }, options)
+  }
+
+  moveItem(
+    id: string,
+    destination: string,
+    options?: RequestOptions,
+  ): Promise<{ id: string; requestPath: string }> {
+    return this.post<{ id: string; requestPath: string }>(
+      `${this.id}/mutate/move`,
+      { id, destination },
+      options,
+    )
+  }
+
+  createFolder(
+    parentId: string | null,
+    name: string,
+    options?: RequestOptions,
+  ): Promise<{ id: string; requestPath: string }> {
+    return this.post<{ id: string; requestPath: string }>(
+      `${this.id}/mutate/create-folder`,
+      { parentId, name },
+      options,
+    )
   }
 }

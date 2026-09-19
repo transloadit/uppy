@@ -135,6 +135,49 @@ describe('validateConfig', () => {
     expect(() => validateConfig(baseOptions)).not.toThrow()
   })
 
+  describe('providerOptions.s3', () => {
+    const withS3 = (s3: Record<string, unknown>) =>
+      withOptions({ providerOptions: { s3 } } as Partial<CompanionInitOptions>)
+
+    test('accepts a bucket, or a grant key, on its own', () => {
+      expect(() =>
+        validateConfig(withS3({ bucket: 'b', prefix: 'uploads/' })),
+      ).not.toThrow()
+      expect(() => validateConfig(withS3({ grantSecret: 's' }))).not.toThrow()
+      expect(() =>
+        validateConfig(withS3({ grantPublicKey: ['pem'], region: 'r' })),
+      ).not.toThrow()
+    })
+
+    test('refuses a bucket or prefix next to a grant key', () => {
+      expect(() =>
+        validateConfig(withS3({ bucket: 'b', grantSecret: 's' })),
+      ).toThrow(/cannot be combined with a grant key[\s\S]*at bucket/)
+      expect(() =>
+        validateConfig(withS3({ prefix: 'p/', grantPublicKey: 'pem' })),
+      ).toThrow(/cannot be combined with a grant key[\s\S]*at prefix/)
+    })
+
+    test('refuses a provider block with neither', () => {
+      expect(() => validateConfig(withS3({ region: 'r' }))).toThrow(
+        /set either `bucket`.*or a grant key/,
+      )
+      expect(() => validateConfig(withS3({ bucket: '' }))).toThrow(
+        /providerOptions\.s3/,
+      )
+      // blank keys do not count as configured
+      expect(() => validateConfig(withS3({ grantSecret: [''] }))).toThrow(
+        /set either `bucket`/,
+      )
+    })
+
+    test('still points old upload settings at the top-level s3 block', () => {
+      expect(() =>
+        validateConfig(withS3({ bucket: 'b', expires: 800 })),
+      ).toThrow(/"s3\.expires" instead/)
+    })
+  })
+
   test('rejects an uploadUrls entry that is not an absolute URL', () => {
     const parse = () =>
       validateConfig(withOptions({ uploadUrls: ['uploads.myendpoint.com'] }))

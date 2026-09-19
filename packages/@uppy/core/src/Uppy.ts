@@ -131,6 +131,25 @@ export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
  */
 export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 
+export type PromptOptions = {
+  title: string
+  label?: string | undefined
+  defaultValue?: string | undefined
+  confirmLabel?: string | undefined
+}
+
+export type ConfirmOptions = {
+  title: string
+  message?: string | undefined
+  confirmLabel?: string | undefined
+  danger?: boolean | undefined
+}
+
+/** An inline prompt/confirm dialog a provider view is currently showing. */
+export type ProviderDialogState =
+  | ({ kind: 'prompt' } & PromptOptions)
+  | ({ kind: 'confirm' } & ConfirmOptions)
+
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
   didFirstRender: boolean
@@ -140,6 +159,11 @@ export type UnknownProviderPluginState = {
   currentFolderId: PartialTreeId
   username: string | null
   searchResults?: string[] | undefined
+  dialog?: ProviderDialogState | undefined
+  /** Manager mode: whether the multi-select toggle is currently on. */
+  selectionActive?: boolean
+  /** Manager mode: the item whose detail modal is open. */
+  detailItemId?: string | undefined
 }
 
 // biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation

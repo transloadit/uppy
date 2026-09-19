@@ -6,6 +6,8 @@ import type {
   ProviderGrantConfig,
 } from '../../types/express.js'
 import { MAX_AGE_24H } from '../helpers/jwt.js'
+import logger from '../logger.js'
+import { ProviderAuthError, ProviderUserError } from './error.js'
 
 // from express:
 export interface Query {
@@ -14,7 +16,7 @@ export interface Query {
 
 export type CompanionLike = Pick<
   CompanionContext,
-  'getProviderCredentials' | 'options'
+  'getProviderCredentials' | 'options' | 's3ProviderClients'
 >
 
 export interface ProviderListItem {
@@ -32,6 +34,17 @@ export interface ProviderListItem {
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
+  /** What the listing tells the client about the session it was served for. */
+  session?: {
+    /** Bucket (or equivalent container) the session is browsing. */
+    bucket: string
+    /** Whether the session may change files (delete, move, create folders). */
+    canWrite: boolean
+    /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
+    supportsMoveFolder: boolean
+    /** Root the session is confined to, which paths the user types are relative to. */
+    prefix: string
+  }
   nextPagePath?: string | null | undefined
   username?: string | null | undefined
 }
@@ -173,8 +186,103 @@ export default class Provider<US = unknown> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<object> {
+  /**
+   * Opens a session without OAuth ("simple" is *not OAuth*, not *a login
+   * form*): the client posts whatever this provider needs to `/simple-auth`
+   * and gets a session token back. What is posted is up to the provider —
+   * a form the user filled in (WebDAV's server URL) or credentials the app
+   * fetched itself (the S3 provider's storage grant, exchanged with no UI).
+   * The returned object is the provider's session, stored in the token and
+   * handed back on every later request as `providerUserSession`.
+   */
+  async simpleAuth({
+    requestBody,
+    companion,
+  }: {
+    requestBody: unknown
+    companion: CompanionLike
+  }): Promise<object> {
     throw new Error('method not implemented')
+  }
+
+  /**
+   * Delete a file or (empty) folder. Providers that support mutations override
+   * this and set `supportsMutations` to true.
+   */
+  async deleteItem(options: {
+    companion: CompanionLike
+    id: string
+    providerUserSession: US
+  }): Promise<void> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Move or rename one item. `destination` is a full path/id in the provider's
+   * own addressing scheme; the response carries the new id. Folders are
+   * accepted only by providers whose listings report
+   * `session.supportsMoveFolder`; otherwise the client moves a folder's
+   * entries one by one through this and the other mutations.
+   */
+  async moveItem(options: {
+    companion: CompanionLike
+    id: string
+    destination: string
+    providerUserSession: US
+  }): Promise<{ id: string; requestPath: string }> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Create a folder inside `parentId` (null for the root).
+   */
+  async createFolder(options: {
+    companion: CompanionLike
+    parentId: string | null
+    name: string
+    providerUserSession: US
+  }): Promise<{ id: string; requestPath: string }> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Run `fn`, logging the original error under `tag` and rethrowing it
+   * translated by `mapProviderError()`. Providers wrap their SDK calls in this
+   * so error mapping and logging live in one place: the log keeps the error as
+   * the provider threw it, and `mapProviderError()` stays a pure mapping.
+   */
+  protected async withErrorHandling<T>(
+    tag: string,
+    fn: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await fn()
+    } catch (err: unknown) {
+      if (
+        err instanceof ProviderUserError ||
+        err instanceof ProviderAuthError
+      ) {
+        // Thrown on purpose for the user (a name taken, a stale session):
+        // routine, and a client can trigger them at will. Not an error log.
+        logger.debug(
+          `${err.name}: ${err instanceof ProviderUserError ? JSON.stringify(err.json) : err.message}`,
+          tag,
+        )
+      } else {
+        logger.error(err, tag)
+      }
+      throw this.mapProviderError(err)
+    }
+  }
+
+  /**
+   * Translate an error from the provider's SDK/API into a Companion error
+   * (ProviderAuthError, ProviderUserError, ProviderApiError). Pure: it maps and
+   * returns, it does not log or throw. The default keeps the error as-is;
+   * providers override this to add their mapping.
+   */
+  protected mapProviderError(err: unknown): unknown {
+    return err
   }
 
   /**
@@ -192,7 +300,13 @@ export default class Provider<US = unknown> {
     return {}
   }
 
+  /** Whether `simpleAuth()` is implemented (sessions are opened without OAuth). */
   static get hasSimpleAuth(): boolean {
+    return false
+  }
+
+  /** Whether deleteItem/moveItem/createFolder are implemented. */
+  static get supportsMutations(): boolean {
     return false
   }
 
