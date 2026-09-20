@@ -185,7 +185,7 @@ class S3mini extends S3Client {
   }: IT.PutObjectParams) {
     this._checkKey(key)
 
-    const { xhr, url, signedKey } = await this.request({
+    const { xhr, url, resolvedKey } = await this.request({
       request: { method: 'PUT', key },
       data,
       onProgress,
@@ -196,7 +196,7 @@ class S3mini extends S3Client {
     return {
       location: U.removeQueryString(url),
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key: signedKey,
+      key: resolvedKey,
     }
   }
 
@@ -212,7 +212,7 @@ class S3mini extends S3Client {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
 
-    const { xhr, signedKey } = await this.request({
+    const { xhr, resolvedKey } = await this.request({
       request: { method: 'POST', key },
       contentType: fileType,
       signal,
@@ -231,7 +231,7 @@ class S3mini extends S3Client {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return { uploadId, key: signedKey }
+          return { uploadId, key: resolvedKey }
         }
       }
     }
@@ -297,7 +297,12 @@ class S3mini extends S3Client {
     signal?: AbortSignal
     contentType?: string
     shouldRetryCredentials?: boolean
-  }): Promise<{ xhr: XMLHttpRequest; url: string; signedKey: string }> {
+  }): Promise<{
+    xhr: XMLHttpRequest
+    url: string
+    /** Key the request was signed for. Differs from the requested key when the signer returns its own. */
+    resolvedKey: string
+  }> {
     // Wait for online before starting
     await this.waitForOnline(signal)
 
@@ -307,7 +312,8 @@ class S3mini extends S3Client {
     }
 
     try {
-      const { url, key: signedKey, headers } = await this.signRequest(request)
+      const requestedKey = request.key
+      const { url, key: signerKey, headers } = await this.signRequest(request)
 
       const xhr = await this.xhr({
         url,
@@ -319,7 +325,9 @@ class S3mini extends S3Client {
         headers,
       })
 
-      return { xhr, url, signedKey: signedKey || request.key }
+      // A blank key from the signer is not an override.
+      const resolvedKey = signerKey?.trim() ? signerKey : requestedKey
+      return { xhr, url, resolvedKey }
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (

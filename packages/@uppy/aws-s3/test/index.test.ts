@@ -403,12 +403,15 @@ describe('AwsS3', () => {
       expect(keys.every((k: string) => k === 'client-big.dat')).toBe(true)
     })
 
-    test('ignores an empty key from the signer', async ({ worker }) => {
+    test.for([
+      '',
+      '   ',
+    ])('ignores a blank key from the signer (%j)', async (key, { worker }) => {
       const { signRequest, registerHandlers } = createMultipartMocks(worker)
       registerHandlers()
       signRequest.mockImplementation(async (req: any) => ({
         url: `${bucketUrl}/${req.key}?method=${req.method}`,
-        key: '',
+        key,
       }))
 
       const core = new Core().use(AwsS3, {
