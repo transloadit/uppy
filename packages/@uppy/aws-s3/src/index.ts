@@ -270,7 +270,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           s3Client: this.#s3Client,
           file,
           metadata: this.#getAllowedMeta(file),
-          key: this.#generateKey(file),
+          requestedKey: this.#generateKey(file),
           shouldUseMultipart: this.#shouldUseMultipart(file),
           getChunkSize: this.opts.getChunkSize,
           log: (...args) => this.uppy.log(...args),
