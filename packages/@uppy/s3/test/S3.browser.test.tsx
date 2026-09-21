@@ -478,6 +478,89 @@ describe('S3 provider in the browser', () => {
     )
   })
 
+  it('closes the item detail dialog with Escape without closing the Dashboard modal', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    uppy = new Uppy()
+      .use(Dashboard, { inline: false })
+      .use(S3, { companionUrl: COMPANION, mode: 'manager' })
+    const dashboard = uppy.getPlugin<Dashboard<any, any>>('Dashboard')
+    if (!dashboard) throw new Error('Missing Dashboard plugin')
+    // The close is animated, so watch for the request rather than the state.
+    const modalClosed = vi.fn()
+    uppy.on('dashboard:modal-closed', modalClosed)
+    dashboard.openModal()
+    await openBucket()
+    const plugin = pluginOf(uppy)
+    const file = plugin
+      .getPluginState()
+      .partialTree.find(
+        (node) => node.type === 'file' && node.data.name === 'readme.md',
+      )
+    if (!file || file.type !== 'file') throw new Error('Missing readme.md')
+    plugin.view.openItemDetail(file)
+    await expect
+      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .toBeVisible()
+
+    await userEvent.keyboard('{Escape}')
+    await expect
+      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .not.toBeInTheDocument()
+    // The same key press must not fall through to the Dashboard's own Escape handler.
+    expect(modalClosed).not.toHaveBeenCalled()
+  })
+
+  it('closes the item detail dialog with Escape on engines without showModal()', async ({
+    worker,
+  }) => {
+    const companion = createMockCompanion()
+    install(worker, companion)
+    // Safari < 15.4 has no showModal(); the dialog then opens non-modal and
+    // never fires `cancel` on Escape.
+    const showModal = Object.getOwnPropertyDescriptor(
+      HTMLDialogElement.prototype,
+      'showModal',
+    )
+    if (!showModal) throw new Error('Expected a native showModal()')
+    Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
+      value: undefined,
+      configurable: true,
+    })
+    try {
+      uppy = new Uppy()
+        .use(Dashboard, { inline: false })
+        .use(S3, { companionUrl: COMPANION, mode: 'manager' })
+      const dashboard = uppy.getPlugin<Dashboard<any, any>>('Dashboard')
+      if (!dashboard) throw new Error('Missing Dashboard plugin')
+      const modalClosed = vi.fn()
+      uppy.on('dashboard:modal-closed', modalClosed)
+      dashboard.openModal()
+      await openBucket()
+      const plugin = pluginOf(uppy)
+      const file = plugin
+        .getPluginState()
+        .partialTree.find(
+          (node) => node.type === 'file' && node.data.name === 'readme.md',
+        )
+      if (!file || file.type !== 'file') throw new Error('Missing readme.md')
+      plugin.view.openItemDetail(file)
+      await expect
+        .element(page.getByRole('dialog', { name: 'readme.md' }))
+        .toBeVisible()
+
+      await userEvent.keyboard('{Escape}')
+      await expect
+        .element(page.getByRole('dialog', { name: 'readme.md' }))
+        .not.toBeInTheDocument()
+      expect(modalClosed).not.toHaveBeenCalled()
+    } finally {
+      Object.defineProperty(HTMLDialogElement.prototype, 'showModal', showModal)
+    }
+  })
+
   it('creates a folder through the inline dialog and refreshes the listing', async ({
     worker,
   }) => {
