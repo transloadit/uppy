@@ -34,3 +34,5 @@ A second provider, `transloadit-storage` (configured under `providerOptions['tra
 with `apiEndpoint` and per-Workspace `workspaces` credentials, grants only), browses Transloadit
 Storage over S3 and moves files and whole folders through the native catalog API, preserving asset
 identity.
+
+Also changes how the webdav provider classifies a 401. Moving its error mapping into `mapProviderError` turned the old assign-then-overwrite into early returns, and because the `webdav` package sets both `status` and `response` on every non-2xx response the auth branch used to be dead code. A 401 while listing or downloading now surfaces as an auth error (HTTP 401) rather than a generic `ProviderApiError` (HTTP 424), so the client drops the session and re-prompts instead of showing a plain failure.
