@@ -55,8 +55,10 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       id={`uppy-DashboardContent-panel--${activePickerPanel.id}`}
       onDragOver={(event) => {
         ignoreEvent(event)
-        // Nothing here takes a drop, so don't show the copy cursor that promises one.
-        if (event.dataTransfer) event.dataTransfer.dropEffect = 'none'
+        // Where that blocked the drop (anywhere but a text field), don't show
+        // the copy cursor that promises one.
+        if (event.defaultPrevented && event.dataTransfer)
+          event.dataTransfer.dropEffect = 'none'
       }}
       onDragLeave={ignoreEvent}
       onDrop={ignoreEvent}
