@@ -47,7 +47,12 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
     const dialog = dialogRef.current
     if (!dialog) return
     if (typeof dialog.showModal === 'function') dialog.showModal()
-    else dialog.setAttribute('open', '')
+    else {
+      // No focus trap without showModal(): put focus on the close button
+      // ourselves so Escape reaches this dialog and not the page behind it.
+      dialog.setAttribute('open', '')
+      dialog.querySelector<HTMLButtonElement>('button')?.focus()
+    }
   }, [])
 
   useEffect(() => {
@@ -84,9 +89,13 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
         onClose()
       }}
       onKeyDown={(event) => {
-        // The browser closes the dialog on Escape; only keep the Dashboard from
-        // treating the same key press as "close the modal".
-        if (event.key === 'Escape') event.stopPropagation()
+        if (event.key !== 'Escape') return
+        // Close it here rather than through the `cancel` event, which only a
+        // modal dialog fires, and keep the Dashboard from treating the same
+        // key press as "close the modal".
+        event.preventDefault()
+        event.stopPropagation()
+        onClose()
       }}
       onClose={onClose}
     >
