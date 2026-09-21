@@ -83,6 +83,11 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
         event.preventDefault()
         onClose()
       }}
+      onKeyDown={(event) => {
+        // The browser closes the dialog on Escape; only keep the Dashboard from
+        // treating the same key press as "close the modal".
+        if (event.key === 'Escape') event.stopPropagation()
+      }}
       onClose={onClose}
     >
       <header className="uppy-ItemDetail-header">
