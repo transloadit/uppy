@@ -53,7 +53,11 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
       id={`uppy-DashboardContent-panel--${activePickerPanel.id}`}
-      onDragOver={ignoreEvent}
+      onDragOver={(event) => {
+        ignoreEvent(event)
+        // Nothing here takes a drop, so don't show the copy cursor that promises one.
+        if (event.dataTransfer) event.dataTransfer.dropEffect = 'none'
+      }}
       onDragLeave={ignoreEvent}
       onDrop={ignoreEvent}
       onPaste={ignoreEvent}
