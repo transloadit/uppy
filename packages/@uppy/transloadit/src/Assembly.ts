@@ -80,8 +80,12 @@ class TransloaditAssembly extends Emitter {
     return this.#status
   }
   set status(status: AssemblyResponse) {
-    this.#status = status
-    this.emit('status', status)
+    // `progress_combined` only arrives over SSE; a full status fetched from
+    // the server never carries it, so keep the last value we saw.
+    const { progress_combined } = this.#status
+    this.#status =
+      progress_combined == null ? status : { progress_combined, ...status }
+    this.emit('status', this.#status)
   }
 
   #connectServerSentEvents() {
@@ -106,6 +110,16 @@ class TransloaditAssembly extends Emitter {
       }
 
       if (e.data === 'assembly_uploading_finished') {
+        // SSE only sends this marker, never a new envelope, so advance `ok`
+        // here. UPLOADING is the only state this marker can legitimately
+        // leave; a refetch may already have moved on (or errored).
+        if (this.status.ok === ASSEMBLY_UPLOADING) {
+          // `AssemblyStatus` is a union; overriding `ok` on a spread needs a cast.
+          this.status = {
+            ...this.status,
+            ok: ASSEMBLY_EXECUTING,
+          } as AssemblyResponse
+        }
         this.emit('executing')
       }
 
@@ -160,6 +174,15 @@ class TransloaditAssembly extends Emitter {
   }
 
   #onError(assemblyOrError: AssemblyResponse | NetworkError | Error) {
+    if (
+      typeof assemblyOrError === 'object' &&
+      !(assemblyOrError instanceof Error)
+    ) {
+      // An errored envelope from the API: fold it into the status so that
+      // `status` (and the plugin state mirroring it) shows the failure
+      // instead of the last good state.
+      this.status = { ...this.status, ...assemblyOrError } as AssemblyResponse
+    }
     this.emit(
       'error',
       Object.assign(new Error(assemblyOrError.message), assemblyOrError),
@@ -223,6 +246,8 @@ class TransloaditAssembly extends Emitter {
         this.status = status
       }
     } catch (err) {
+      // A fetch that was in flight when we closed is nobody's business.
+      if (this.closed) return
       this.#onError(err)
     }
   }
