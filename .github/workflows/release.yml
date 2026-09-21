@@ -51,11 +51,10 @@ jobs:
         id: changesets
         uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51
         with:
-          version: corepack yarn run version
-          publish: corepack yarn run release
-          commit: "[ci] release"
-          title: "[ci] release"
-          commitMode: github-api
+          version-script: corepack yarn run version
+          publish-script: corepack yarn run release
+          commit-message: "[ci] release"
+          pr-title: "[ci] release"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
