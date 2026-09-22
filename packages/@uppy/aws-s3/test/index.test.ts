@@ -517,6 +517,109 @@ describe('AwsS3', () => {
     })
   })
 
+  describe('POST policy (#6536)', () => {
+    test('uploads with a multipart/form-data POST when the signer returns fields', async ({
+      worker,
+    }) => {
+      const rawKey = 'uploads/a b#1/../ü.jpg'
+      const seen: {
+        method: string
+        contentType: string
+        extra: string | null
+        entries: string[]
+      }[] = []
+      worker.use(
+        http.post('https://bucket.test/', async ({ request }) => {
+          const form = await request.formData()
+          seen.push({
+            method: request.method,
+            contentType: request.headers.get('content-type') ?? '',
+            extra: request.headers.get('x-extra'),
+            entries: [...form.keys()],
+          })
+          return new HttpResponse('', {
+            status: 204,
+            headers: { ETag: '"post-etag"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://bucket.test',
+        region: 'us-east-1',
+        signRequest: async () => ({
+          url: 'https://bucket.test/',
+          fields: { key: rawKey, policy: 'p', 'x-amz-signature': 's' },
+          // Content-Type is dropped on the POST path (it would replace the
+          // form boundary); any other header still goes out.
+          headers: { 'Content-Type': 'image/jpeg', 'X-Extra': 'yes' },
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        data: new File([new Uint8Array(KB)], 'photo.jpg'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(seen).toHaveLength(1)
+      expect(seen[0].method).toBe('POST')
+      expect(seen[0].contentType).toMatch(/^multipart\/form-data; boundary=/)
+      expect(seen[0].extra).toBe('yes')
+      expect(seen[0].entries).toContain('policy')
+      expect(seen[0].entries.at(-1)).toBe('file')
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      const response = onSuccess.mock.calls[0][1]
+      expect(response.body.key).toBe(rawKey)
+      expect(response.uploadURL).toBe(
+        'https://bucket.test/uploads/a%20b%231/../%C3%BC.jpg',
+      )
+    })
+
+    test('rejects fields returned for a request other than PutObject', async ({
+      worker,
+    }) => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks(worker)
+      registerHandlers()
+      signRequest.mockImplementation(async (req: any) => ({
+        url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}?method=${req.method}`,
+        fields: { key: req.key, policy: 'p' },
+      }))
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const onError = vi.fn()
+      core.on('upload-error', onError)
+      await core.upload()
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      const error = onError.mock.calls[0][1]
+      expect(error).toBeInstanceOf(TypeError)
+      expect(error.message).toContain(
+        'signRequest may only return fields for the PutObject request',
+      )
+      expect(operations).toHaveLength(0)
+    })
+  })
+
   describe('upload events', () => {
     test('emits upload-start when upload begins', async () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Test stop'))

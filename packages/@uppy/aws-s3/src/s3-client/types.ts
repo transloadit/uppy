@@ -5,6 +5,11 @@ export interface PresignableRequestBase {
 
 export interface PutObjectRequest extends PresignableRequestBase {
   method: 'PUT'
+  /**
+   * MIME type of the object. Sent as a header on a presigned PUT. For a POST
+   * policy, include it as the `Content-Type` field and policy condition.
+   */
+  contentType?: string
 }
 export interface DeleteObjectRequest extends PresignableRequestBase {
   method: 'DELETE'
@@ -46,7 +51,8 @@ export type PresignedResponse = {
   /**
    * Overrides the requested key when the backend derives its own (e.g. adds a
    * prefix). Only honored on `putObject` and `createMultipartUpload`; later
-   * requests already carry the right key.
+   * requests already carry the right key. When `fields` is present,
+   * `fields.key` is what S3 stores and wins over this.
    */
   key?: string
   /**
@@ -57,6 +63,19 @@ export type PresignedResponse = {
    * `Content-Length`, or `Date` in this object; JavaScript cannot set them.
    */
   headers?: Record<string, string>
+  /**
+   * Form fields of an S3 POST policy (`policy`, `x-amz-signature`, `key`, …).
+   * When present the object is uploaded with a `multipart/form-data` POST to
+   * `url` instead of a PUT. Only valid for the `{ method: 'PUT', key }`
+   * (PutObject) request; multipart parts have no POST form. `fields.key` must
+   * be the concrete object key (build it from `request.key`); the
+   * `${filename}` placeholder is rejected. A `file` field and
+   * `success_action_redirect` are rejected too. No `Content-Type` is sent
+   * unless you add it as a field, so use `request.contentType`; a
+   * `Content-Type` in `headers` is dropped on this path, other headers are
+   * still sent.
+   */
+  fields?: Record<string, string>
 }
 
 /** Function that generates a pre-signed URL for a request */
