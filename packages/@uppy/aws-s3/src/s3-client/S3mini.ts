@@ -196,7 +196,7 @@ class S3mini extends S3Client {
     return {
       // the POST action URL is the bucket, the object lives under it
       location: fields
-        ? `${U.removeQueryString(url).replace(/\/+$/, '')}/${U.uriResourceEscape(resolvedKey.replace(/^\/+/, ''))}`
+        ? `${U.removeQueryString(url).replace(/\/+$/, '')}/${U.uriResourceEscape(resolvedKey)}`
         : U.removeQueryString(url),
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
       key: resolvedKey,

@@ -547,13 +547,20 @@ describe('AwsS3', () => {
       const core = new Core().use(AwsS3, {
         s3Endpoint: 'https://bucket.test',
         region: 'us-east-1',
-        signRequest: async () => ({
-          url: 'https://bucket.test/',
-          fields: { key: rawKey, policy: 'p', 'x-amz-signature': 's' },
-          // Content-Type is dropped on the POST path (it would replace the
-          // form boundary); any other header still goes out.
-          headers: { 'Content-Type': 'image/jpeg', 'X-Extra': 'yes' },
-        }),
+        signRequest: async (req) => {
+          // the signer needs the type to put it in the policy
+          expect(req).toMatchObject({
+            method: 'PUT',
+            contentType: 'image/jpeg',
+          })
+          return {
+            url: 'https://bucket.test/',
+            fields: { key: rawKey, policy: 'p', 'x-amz-signature': 's' },
+            // Content-Type is dropped on the POST path (it would replace the
+            // form boundary); any other header still goes out.
+            headers: { 'Content-Type': 'image/jpeg', 'X-Extra': 'yes' },
+          }
+        },
         shouldUseMultipart: false,
       })
       core.addFile({
@@ -579,6 +586,42 @@ describe('AwsS3', () => {
       expect(response.body.key).toBe(rawKey)
       expect(response.uploadURL).toBe(
         'https://bucket.test/uploads/a%20b%231/../%C3%BC.jpg',
+      )
+    })
+
+    test('keeps a leading slash from fields.key in the location', async ({
+      worker,
+    }) => {
+      worker.use(
+        http.post(
+          'https://bucket.test/',
+          () => new HttpResponse('', { status: 204 }),
+        ),
+      )
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://bucket.test',
+        region: 'us-east-1',
+        signRequest: async () => ({
+          url: 'https://bucket.test/',
+          fields: { key: '/leading.txt', policy: 'p' },
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'leading.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'leading.txt'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      // `/leading.txt` is the object's exact key; the double slash is real.
+      expect(onSuccess.mock.calls[0][1].body.key).toBe('/leading.txt')
+      expect(onSuccess.mock.calls[0][1].uploadURL).toBe(
+        'https://bucket.test//leading.txt',
       )
     })
 
