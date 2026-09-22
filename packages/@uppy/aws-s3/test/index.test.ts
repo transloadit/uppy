@@ -492,6 +492,87 @@ describe('AwsS3', () => {
     })
   })
 
+  describe('signed headers (#6548)', () => {
+    test('sends the headers returned by the signer', async ({ worker }) => {
+      let seen: Headers | undefined
+      worker.use(
+        http.put(s3Url, ({ request }) => {
+          seen = request.headers
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest: async (req) => ({
+          url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}`,
+          headers: {
+            'Content-Disposition': 'inline; filename="a.pdf"',
+            // lowercase on purpose: it must replace the built-in header, not
+            // be appended to it
+            'content-type': 'application/pdf',
+          },
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.pdf',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.pdf'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(seen?.get('content-disposition')).toBe('inline; filename="a.pdf"')
+      expect(seen?.get('content-type')).toBe('application/pdf')
+    })
+
+    test('falls back to the file type when the signer sends no headers', async ({
+      worker,
+    }) => {
+      let seen: Headers | undefined
+      worker.use(
+        http.put(s3Url, ({ request }) => {
+          seen = request.headers
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest: async (req) => ({
+          url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}`,
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.pdf',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.pdf'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(seen?.get('content-type')).toBe('text/plain')
+    })
+  })
+
   describe('upload events', () => {
     test('emits upload-start when upload begins', async () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Test stop'))
