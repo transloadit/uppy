@@ -255,8 +255,14 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       data: this.#data,
       fileType: this.#options.file.type || 'application/octet-stream',
       metadata: this.#options.metadata,
-      onProgress: (bytesUploaded: number) => {
-        this.#chunkState[0].uploaded = bytesUploaded
+      // a POST policy upload also counts the form envelope, so scale to the file
+      onProgress: (bytesUploaded: number, bytesTotal: number) => {
+        this.#chunkState[0].uploaded = bytesTotal
+          ? Math.min(
+              this.#data.size,
+              Math.round((bytesUploaded / bytesTotal) * this.#data.size),
+            )
+          : 0
         this.#onProgress()
       },
       signal,
