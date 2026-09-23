@@ -55,8 +55,7 @@ jobs:
           publish-script: corepack yarn run release
           commit-message: "[ci] release"
           pr-title: "[ci] release"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check if Companion was released
         id: checkIfCompanionWasReleased
