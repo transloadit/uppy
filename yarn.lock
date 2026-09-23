@@ -5141,6 +5141,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/formidable@npm:^3.5.1":
+  version: 3.5.1
+  resolution: "@types/formidable@npm:3.5.1"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: 10/4d693f89a3b0d5f45cc71d71f1b1b963e38c736a7264eb795fa4cb63cec06893da5ce9e7652ccd99e711ddcbc2ec6c4a489377a3dd6fda9d20f48337ef211644
+  languageName: node
+  linkType: hard
+
 "@types/gapi@npm:^0.0.47":
   version: 0.0.47
   resolution: "@types/gapi@npm:0.0.47"
@@ -5264,6 +5273,15 @@ __metadata:
   version: 2.1.0
   resolution: "@types/ms@npm:2.1.0"
   checksum: 10/532d2ebb91937ccc4a89389715e5b47d4c66e708d15942fe6cc25add6dc37b2be058230a327dd50f43f89b8b6d5d52b74685a9e8f70516edfc9bdd6be910eff4
+  languageName: node
+  linkType: hard
+
+"@types/multer@npm:^2.2.0":
+  version: 2.2.0
+  resolution: "@types/multer@npm:2.2.0"
+  dependencies:
+    "@types/express": "npm:*"
+  checksum: 10/b12d8c3a77eeb81a2513e7db1404cb89d12b06eab5e92ba82f6f02b775e23e89bb4fcdc9724aa70a025c458aca9e8feb66f27c7062d1db683fd8c5664e14bec8
   languageName: node
   linkType: hard
 
@@ -8864,6 +8882,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-xhr-bundle@workspace:examples/xhr-bundle"
   dependencies:
+    "@types/cors": "npm:^2.8.19"
+    "@types/multer": "npm:^2.2.0"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
@@ -8879,6 +8899,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-xhr-node@workspace:examples/xhr-node"
   dependencies:
+    "@types/formidable": "npm:^3.5.1"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/webcam": "workspace:*"

@@ -25,7 +25,7 @@ http
       res.end()
       return
     }
-    if (req.url === '/upload' && req.method.toLowerCase() === 'post') {
+    if (req.url === '/upload' && req.method?.toLowerCase() === 'post') {
       // parse a file upload
       const form = formidable({
         keepExtensions: true,
@@ -39,15 +39,16 @@ http
           res.write(JSON.stringify(err))
           return res.end()
         }
-        const {
-          file: [{ filepath, originalFilename, mimetype, size }],
-        } = files
-        console.log('saved file', {
-          filepath,
-          originalFilename,
-          mimetype,
-          size,
-        })
+        const { file } = files
+        if (file) {
+          const [{ filepath, originalFilename, mimetype, size }] = file
+          console.log('saved file', {
+            filepath,
+            originalFilename,
+            mimetype,
+            size,
+          })
+        }
         res.writeHead(200, headers)
         res.write(JSON.stringify({ fields, files }))
         return res.end()
