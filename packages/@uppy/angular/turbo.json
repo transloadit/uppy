@@ -2,7 +2,11 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@uppy/core#build", "@uppy/dashboard#build"],
+      "dependsOn": [
+        "@uppy/core#build",
+        "@uppy/dashboard#build",
+        "@uppy/status-bar#build"
+      ],
       "inputs": [
         "src/**/*.{js,ts,jsx,tsx}",
         "package.json",
@@ -10,7 +14,7 @@
         "tsconfig.lib.json",
         "tsconfig.lib.prod.json"
       ],
-      "outputs": ["fesm2022/**", "types/**", "dist/**"]
+      "outputs": ["dist/**", "fesm2022/**", "types/**"]
     }
   }
 }
