@@ -285,9 +285,9 @@ describe('AwsS3', () => {
 
       const result = await core.upload()
       expect(result?.successful).toHaveLength(1)
-      // A multipart upload of zero parts cannot be completed.
-      expect(operations).not.toContain('createMultipart')
-      expect(operations).not.toContain('completeMultipart')
+      // A multipart upload of zero parts cannot be completed, so expect one
+      // plain PUT (the mock logs every PUT as 'uploadPart').
+      expect(operations).toEqual(['uploadPart'])
     })
   })
 
