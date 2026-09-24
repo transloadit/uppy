@@ -1,6 +1,5 @@
 import type { Readable } from 'node:stream'
 import type {
-  BuildUrl,
   CompanionContext,
   GrantDynamic,
   ProviderGrantConfig,
@@ -46,7 +45,7 @@ export interface ProviderListResponse {
 export interface ProviderSearchOptions<US = unknown> {
   providerUserSession: US
   query: { q: string; path?: string; [k: string]: unknown }
-  companion: { buildURL: BuildUrl }
+  companion: Required<Pick<CompanionContext, 'buildURL'>>
 }
 
 export type ProviderSearchResponse = ProviderListResponse
