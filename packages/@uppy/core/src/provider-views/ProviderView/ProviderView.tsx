@@ -16,6 +16,7 @@ import type {
   Uppy,
   ValidateableFile,
 } from '../../index.js'
+import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
 import { remoteFileObjToLocal } from '../../utils/index.js'
 import Browser from '../Browser.js'
@@ -414,12 +415,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const raw = err instanceof Error ? err.message : String(err)
     uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
     // A `UserFacingApiError` is for the user: a locale key from Companion, or a
-    // translated message a plugin threw. Anything else is a transport or
-    // programming error whose text is not.
+    // translated message a plugin threw. Any other text is not: a failed
+    // Companion request (the request client wraps those, auth errors aside)
+    // says so, anything else (a bug, a browser API refusing) only that the
+    // action failed.
     const message =
       err instanceof Error && err.name === 'UserFacingApiError'
         ? describeCompanionError(uppy.i18n, err)
-        : uppy.i18n('companionError')
+        : err instanceof ErrorWithCause ||
+            (err as { isAuthError?: unknown } | null)?.isAuthError === true
+          ? uppy.i18n('companionError')
+          : uppy.i18n('actionFailed')
     uppy.info(message, 'error', 5000)
   }
 

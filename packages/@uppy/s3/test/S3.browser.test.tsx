@@ -1,6 +1,6 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
-import { http } from 'msw'
+import { HttpResponse, http } from 'msw'
 import type { SetupWorker } from 'msw/browser'
 import {
   afterEach,
@@ -502,6 +502,48 @@ describe('S3 provider in the browser', () => {
     await expect.element(prompt).toBeVisible()
     click(prompt.element())
     await expect.element(prompt).not.toBeInTheDocument()
+  })
+
+  it('says a failed action failed, and blames Companion only for its requests', async ({
+    worker,
+  }) => {
+    setup(worker, {
+      actions: [
+        {
+          id: 'broken',
+          label: 'Broken',
+          refresh: false,
+          run: () => {
+            throw new Error('internal detail')
+          },
+        },
+      ],
+    })
+    await openBucket()
+    const runAction = async (name: string) => {
+      await page.getByRole('button', { name: 'Actions for readme.md' }).click()
+      await page.getByRole('menuitem', { name }).click()
+    }
+
+    await runAction('Broken')
+    await expect
+      .element(page.getByText('The action failed').first())
+      .toBeVisible()
+    expect(document.body.textContent).not.toContain('internal detail')
+
+    worker.use(
+      http.post(`${COMPANION}/s3/mutate/delete`, () =>
+        HttpResponse.json({}, { status: 500 }),
+      ),
+    )
+    await runAction('Delete')
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: 'Delete', exact: true })
+      .click()
+    await expect
+      .element(page.getByText('Connection with Companion failed').first())
+      .toBeVisible()
   })
 
   it('opens one item menu at a time and closes it with Escape', async ({

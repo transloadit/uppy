@@ -75,7 +75,7 @@ function getStoreUploader<M extends Meta, B extends Body>(
 function download(url: string, invalidUrlMessage: string): void {
   const { href, protocol } = new URL(url, window.location.href)
   // A user-facing error, so the Dashboard shows this message rather than a
-  // generic Companion failure.
+  // generic "the action failed".
   if (protocol !== 'https:' && protocol !== 'http:')
     throw new UserFacingApiError(invalidUrlMessage)
   const link = document.createElement('a')
