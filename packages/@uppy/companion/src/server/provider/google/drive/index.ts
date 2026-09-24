@@ -5,17 +5,16 @@ import { isRecord } from '../../../helpers/type-guards.js'
 import { prepareStream } from '../../../helpers/utils.js'
 import logger from '../../../logger.js'
 import { ProviderAuthError } from '../../error.js'
-import type {
-  ProviderDownloadOptions,
-  ProviderDownloadResponse,
-  ProviderListOptions,
-  ProviderListResponse,
-  ProviderLogoutOptions,
-  ProviderLogoutResponse,
-  ProviderRefreshTokenOptions,
-  ProviderRefreshTokenResponse,
+import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
+  type ProviderListResponse,
+  type ProviderLogoutOptions,
+  type ProviderLogoutResponse,
+  type ProviderRefreshTokenOptions,
+  type ProviderRefreshTokenResponse,
 } from '../../Provider.js'
-import Provider from '../../Provider.js'
 import { withGoogleErrorHandling } from '../../providerErrors.js'
 import { type GoogleUserSession, logout, refreshToken } from '../index.js'
 import {
