@@ -47,25 +47,21 @@
     "svelte"
   ],
   "scripts": {
-    "build": "svelte-kit sync && svelte-package",
+    "build": "svelte-package",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
-    "typecheck": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
     "@uppy/components": "workspace:^",
     "preact": "^10.29.2"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^7.0.1",
-    "@sveltejs/kit": "^2.70.2",
     "@sveltejs/package": "^2.5.7",
-    "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@uppy/core": "workspace:^",
     "svelte": "^5.56.5",
     "svelte-check": "^4.7.6",
     "tslib": "^2.8.1",
-    "typescript": "^6.0.3",
-    "vite": "^8.2.2"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

@@ -6085,10 +6085,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
-    "@sveltejs/adapter-auto": "npm:^7.0.1"
-    "@sveltejs/kit": "npm:^2.70.2"
     "@sveltejs/package": "npm:^2.5.7"
-    "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
@@ -6096,7 +6093,6 @@ __metadata:
     svelte-check: "npm:^4.7.6"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.2.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
