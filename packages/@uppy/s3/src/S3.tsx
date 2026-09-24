@@ -266,10 +266,11 @@ const ConnectAuthForm = ({
   </div>
 )
 
-export type S3Options<
-  M extends Meta = Meta,
-  B extends Body = Body,
-> = CompanionPluginOptions & {
+export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
+  CompanionPluginOptions,
+  'locale'
+> & {
+  // Replaces the base option's, which accepts any key.
   locale?: LocaleStrings<typeof locale>
   /**
    * Show management actions (rename/move, delete, new folder). Requires a

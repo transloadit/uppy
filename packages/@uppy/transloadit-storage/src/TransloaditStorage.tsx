@@ -23,7 +23,11 @@ export type TransloaditStorageOptions<
   M extends Meta = Meta,
   B extends Body = Body,
 > = Omit<S3Options<M, B>, 'locale'> & {
-  locale?: LocaleStrings<typeof locale>
+  /** This plugin's strings and the S3 plugin's it shows too. */
+  locale?: {
+    strings: LocaleStrings<typeof locale>['strings'] &
+      NonNullable<S3Options['locale']>['strings']
+  }
   /**
    * Returns a Smart CDN URL for a stored file (its key). Sign it on your
    * server — no credentials live in the browser. The "Copy Smart CDN URL"
