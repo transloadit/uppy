@@ -51,7 +51,7 @@
     "express-session": "1.19.0",
     "fast-safe-stringify": "^2.1.1",
     "formdata-node": "^6.0.3",
-    "got": "^13.0.0",
+    "got": "^16.0.0",
     "grant": "^5.4.24",
     "helmet": "8.3.0",
     "ioredis": "5.11.1",
