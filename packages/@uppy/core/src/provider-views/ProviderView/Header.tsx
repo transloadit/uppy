@@ -61,10 +61,11 @@ export default function Header<M extends Meta, B extends Body>(
           props.selectionToggle) && (
           <div className="uppy-ProviderBrowser-toolbar">
             {props.selectionToggle && (
+              // The label says what a click does; no `aria-pressed`, which
+              // would announce "Cancel, pressed".
               <button
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
-                aria-pressed={props.selectionToggle.active}
                 onClick={props.selectionToggle.onToggle}
               >
                 {props.selectionToggle.active
