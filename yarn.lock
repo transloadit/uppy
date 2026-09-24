@@ -313,7 +313,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:3.1134.0, @aws-sdk/client-s3@npm:^3.1047.0, @aws-sdk/client-s3@npm:^3.338.0, @aws-sdk/client-s3@npm:^3.362.0":
+"@aws-sdk/client-s3@npm:3.1134.0, @aws-sdk/client-s3@npm:^3.1134.0, @aws-sdk/client-s3@npm:^3.338.0, @aws-sdk/client-s3@npm:^3.362.0":
   version: 3.1134.0
   resolution: "@aws-sdk/client-s3@npm:3.1134.0"
   dependencies:
@@ -332,7 +332,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-sts@npm:^3.1047.0, @aws-sdk/client-sts@npm:^3.338.0, @aws-sdk/client-sts@npm:^3.362.0":
+"@aws-sdk/client-sts@npm:^3.1134.0, @aws-sdk/client-sts@npm:^3.338.0, @aws-sdk/client-sts@npm:^3.362.0":
   version: 3.1134.0
   resolution: "@aws-sdk/client-sts@npm:3.1134.0"
   dependencies:
@@ -489,7 +489,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/lib-storage@npm:^3.1129.0":
+"@aws-sdk/lib-storage@npm:^3.1134.0":
   version: 3.1134.0
   resolution: "@aws-sdk/lib-storage@npm:3.1134.0"
   dependencies:
@@ -535,7 +535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-presigned-post@npm:^3.1047.0":
+"@aws-sdk/s3-presigned-post@npm:^3.1134.0":
   version: 3.1134.0
   resolution: "@aws-sdk/s3-presigned-post@npm:3.1134.0"
   dependencies:
@@ -550,7 +550,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/s3-request-presigner@npm:^3.1047.0, @aws-sdk/s3-request-presigner@npm:^3.338.0, @aws-sdk/s3-request-presigner@npm:^3.362.0":
+"@aws-sdk/s3-request-presigner@npm:^3.1134.0, @aws-sdk/s3-request-presigner@npm:^3.338.0, @aws-sdk/s3-request-presigner@npm:^3.362.0":
   version: 3.1134.0
   resolution: "@aws-sdk/s3-request-presigner@npm:3.1134.0"
   dependencies:
@@ -5284,11 +5284,11 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/companion@workspace:packages/@uppy/companion"
   dependencies:
-    "@aws-sdk/client-s3": "npm:^3.1047.0"
-    "@aws-sdk/client-sts": "npm:^3.1047.0"
-    "@aws-sdk/lib-storage": "npm:^3.1129.0"
-    "@aws-sdk/s3-presigned-post": "npm:^3.1047.0"
-    "@aws-sdk/s3-request-presigner": "npm:^3.1047.0"
+    "@aws-sdk/client-s3": "npm:^3.1134.0"
+    "@aws-sdk/client-sts": "npm:^3.1134.0"
+    "@aws-sdk/lib-storage": "npm:^3.1134.0"
+    "@aws-sdk/s3-presigned-post": "npm:^3.1134.0"
+    "@aws-sdk/s3-request-presigner": "npm:^3.1134.0"
     "@types/cookie-parser": "npm:^1.4.10"
     "@types/cors": "npm:^2.8.19"
     "@types/express": "npm:^5.0.6"
