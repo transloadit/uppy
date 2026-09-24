@@ -10,7 +10,7 @@ type LocaleKey = keyof (typeof locale)['strings']
  * mirroring them, once the monorepo's tsconfig lets client packages import
  * its types.
  */
-export const companionErrorLocaleKeys = {
+const companionErrorLocaleKeys = {
   S3_ALREADY_EXISTS: 's3AlreadyExists',
   S3_CONFLICT: 's3Conflict',
   S3_DESTINATION_MUST_BE_FILE: 's3DestinationMustBeFile',
@@ -41,19 +41,9 @@ export function describeCompanionError(
   i18n: (key: string) => string,
   error: { code?: string | undefined; message: string },
 ): string {
-  const localeKey = error.code
-    ? localeKeyForCompanionError(error.code)
-    : undefined
-  if (localeKey) return i18n(localeKey)
-  if (error.code && error.message === error.code) return i18n('companionError')
+  const { code } = error
+  if (code && Object.hasOwn(companionErrorLocaleKeys, code))
+    return i18n(companionErrorLocaleKeys[code as CompanionErrorCode])
+  if (code && error.message === code) return i18n('companionError')
   return error.message
-}
-
-/** The locale key for `code`, or `undefined` for a code this version does not know. */
-export function localeKeyForCompanionError(
-  code: string,
-): LocaleKey | undefined {
-  return Object.hasOwn(companionErrorLocaleKeys, code)
-    ? companionErrorLocaleKeys[code as CompanionErrorCode]
-    : undefined
 }

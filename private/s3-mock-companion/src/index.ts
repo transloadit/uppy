@@ -1,9 +1,9 @@
 /**
- * An in-memory stand-in for Companion's S3 provider endpoints, for tests of
- * anything built on `@uppy/s3` (Uppy's own browser tests, integrators'
- * Playwright/Cypress suites). Framework-agnostic: `handle()` takes a plain
- * description of the request and returns `{ status, body }`, and
- * `handleFetchRequest()` / `toMswHandlers()` adapt that to the Fetch API / msw.
+ * An in-memory stand-in for Companion's S3 provider endpoints, shared by the
+ * browser tests of `@uppy/s3` and `@uppy/transloadit-storage` (a private
+ * workspace package, never published). `handle()` takes a plain description
+ * of the request and returns `{ status, body }`; `handleFetchRequest()` /
+ * `toMswHandlers()` adapt that to the Fetch API / msw.
  *
  * Keys follow the S3 provider's addressing: folders end with `/`, ids in
  * responses are `encodeURIComponent(key)`.
@@ -14,7 +14,21 @@ import {
   type StorageGrantClaims,
 } from '@transloadit/utils'
 import type { CompanionErrorCode } from '@uppy/core'
-import { splitKey } from './keys.js'
+
+/**
+ * `docs/a.txt` → parent `docs/`, name `a.txt`. Its own copy, not `@uppy/s3`'s:
+ * a test double should not share the code it tests.
+ */
+function splitKey(key: string) {
+  const isFolder = key.endsWith('/')
+  const bare = isFolder ? key.slice(0, -1) : key
+  const slash = bare.lastIndexOf('/')
+  return {
+    isFolder,
+    parent: slash === -1 ? '' : bare.slice(0, slash + 1),
+    name: bare.slice(slash + 1),
+  }
+}
 
 export type MockS3Entry = {
   name: string

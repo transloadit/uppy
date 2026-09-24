@@ -4,7 +4,7 @@ import {
   createMockS3Companion,
   mockGrant,
   toMswHandlers,
-} from '@uppy/s3/mockCompanion'
+} from '@uppy-dev/s3-mock-companion'
 import { http } from 'msw'
 import type { SetupWorker } from 'msw/browser'
 import { afterEach, beforeEach, describe, expect, vi } from 'vitest'

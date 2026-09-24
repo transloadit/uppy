@@ -36,7 +36,6 @@
   ],
   "exports": {
     ".": "./lib/index.js",
-    "./mockCompanion": "./lib/mockCompanion.js",
     "./package.json": "./package.json"
   },
   "dependencies": {
@@ -47,6 +46,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/s3-mock-companion": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",

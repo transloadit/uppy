@@ -36,7 +36,7 @@ import moveFolder, { deleteFolder } from './moveFolder.js'
 import StorageIcon from './StorageIcon.js'
 
 /** Unverified claims of a storage grant (the client only needs to *read* them). */
-export type S3GrantClaims = Pick<
+type S3GrantClaims = Pick<
   StorageGrantClaims,
   'bucket' | 'prefix' | 'scopes'
 > & { exp?: number }
@@ -57,7 +57,7 @@ export type S3Session = {
  * Reads the payload of a JWT grant without verifying it — verification is
  * Companion's job; the client only uses the claims to know what UI to show.
  */
-export function decodeGrant(grant: string): S3GrantClaims | null {
+function decodeGrant(grant: string): S3GrantClaims | null {
   return decodeStorageGrant(grant)
 }
 

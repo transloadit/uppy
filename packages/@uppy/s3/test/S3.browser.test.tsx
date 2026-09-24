@@ -20,7 +20,7 @@ import {
   type MockS3CompanionOptions,
   mockGrant,
   toMswHandlers,
-} from '../lib/mockCompanion.js'
+} from '@uppy-dev/s3-mock-companion'
 import S3, { type S3Options } from '../lib/S3.js'
 import { it } from './test-extend.js'
 
