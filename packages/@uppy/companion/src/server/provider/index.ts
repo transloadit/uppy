@@ -66,6 +66,9 @@ export function getProviderMiddleware(
         'provider.middleware.invalid',
         req.id,
       )
+      // Hand the request on without a provider so `hasSessionAndProvider`
+      // answers 400. Returning here would leave the request unanswered.
+      next()
       return
     }
 
