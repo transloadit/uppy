@@ -51,7 +51,6 @@ export { default as getFileTypeExtension } from './getFileTypeExtension.js'
 
 export { default as getSocketHost } from './getSocketHost.js'
 export { default as getSpeed } from './getSpeed.js'
-export { default as stripTrailingSlash } from './stripTrailingSlash.js'
 
 export { default as getTextDirection } from './getTextDirection.js'
 export { default as getTimeStamp } from './getTimeStamp.js'
@@ -76,6 +75,7 @@ export {
 } from './RateLimitedQueue.js'
 export { default as remoteFileObjToLocal } from './remoteFileObjToLocal.js'
 export { default as secondsToTime } from './secondsToTime.js'
+export { default as stripTrailingSlash } from './stripTrailingSlash.js'
 export {
   type AbortablePromise as TaskQueueAbortablePromise,
   TaskQueue,
