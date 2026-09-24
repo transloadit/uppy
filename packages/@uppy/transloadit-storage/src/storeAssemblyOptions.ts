@@ -14,6 +14,8 @@ export type SignedAssemblyOptions = {
   fields?: Record<string, string>
 }
 
+type ConflictStrategy = 'overwrite' | 'rename' | 'error'
+
 export type StoreUploadsOptions = {
   /** Installed @uppy/transloadit plugin to configure; defaults to `Transloadit`. */
   transloaditPluginId?: string
@@ -26,12 +28,30 @@ export type StoreUploadsOptions = {
     params: StoreAssemblyParameters,
   ) => Promise<SignedAssemblyOptions>
   /** A collision fails the shared Assembly by default. Use `rename` to continue multi-file batches. */
-  conflictStrategy?: 'overwrite' | 'rename' | 'error'
+  conflictStrategy?: ConflictStrategy
 }
 
 /** `photos` → `photos/`; empty/undefined → `''`. */
-export function normalizePrefix(prefix: string | undefined): string {
+function normalizePrefix(prefix: string | undefined): string {
   return prefix && !prefix.endsWith('/') ? `${prefix}/` : (prefix ?? '')
+}
+
+/**
+ * The storage key prefix of the folder open in `storage`. Folder ids are full
+ * storage keys. At the root of the browsing session there is no folder id, but
+ * the session may be confined to a prefix (the grant's, or the one Companion
+ * serves) — uploads must land inside it.
+ */
+export function openFolderKey(
+  storage: Pick<
+    TransloaditStorage<Meta, Body>,
+    'getPluginState' | 'rootPrefix'
+  >,
+): string {
+  const { currentFolderId } = storage.getPluginState()
+  return currentFolderId
+    ? decodeURIComponent(currentFolderId)
+    : normalizePrefix(storage.rootPrefix)
 }
 
 /**
@@ -41,7 +61,7 @@ export function normalizePrefix(prefix: string | undefined): string {
  */
 export function buildStoreAssemblyParams(
   folder: string,
-  conflictStrategy: 'overwrite' | 'rename' | 'error' = 'error',
+  conflictStrategy: ConflictStrategy = 'error',
 ): StoreAssemblyParameters {
   return {
     steps: {
@@ -77,24 +97,18 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
         `Install the Transloadit Storage plugin "${pluginId}" before creating an Assembly`,
       )
     }
-    // Folder ids are full storage keys. At the root of the browsing session
-    // there is no folder id, but the session may be confined to a prefix (the
-    // grant's, or the one Companion serves) — uploads must land inside it.
+    // The session's root is only known once it is connected.
     if (
       !storage.getPluginState().authenticated &&
       !(await storage.openFolderPath(''))
     ) {
       throw new UserFacingApiError(storage.i18n('storageNotConnected'))
     }
-    const { currentFolderId } = storage.getPluginState()
-    const prefix = storage.rootPrefix
-    const normalizedPrefix = normalizePrefix(prefix)
-    const folder =
-      typeof currentFolderId === 'string' && currentFolderId
-        ? decodeURIComponent(currentFolderId)
-        : normalizedPrefix
     return options.signAssembly(
-      buildStoreAssemblyParams(folder, options.conflictStrategy ?? 'error'),
+      buildStoreAssemblyParams(
+        openFolderKey(storage),
+        options.conflictStrategy,
+      ),
     )
   }
 }

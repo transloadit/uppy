@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
+import { splitKey } from '../lib/keys.js'
 import moveFolder, {
   deleteFolder,
   type FolderMoveProvider,
@@ -16,11 +17,7 @@ type FakeProvider = FolderMoveProvider & {
 const userError = (code: string) =>
   Object.assign(new Error(code), { name: 'UserFacingApiError', code })
 
-const parentOf = (key: string) => {
-  const bare = key.endsWith('/') ? key.slice(0, -1) : key
-  const slash = bare.lastIndexOf('/')
-  return slash === -1 ? '' : bare.slice(0, slash + 1)
-}
+const parentOf = (key: string) => splitKey(key).parent
 
 /**
  * A provider backed by a plain tree, close enough to Companion's S3 endpoints:

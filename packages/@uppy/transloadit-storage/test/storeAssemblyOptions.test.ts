@@ -1,26 +1,23 @@
 import type { Body, Meta, Uppy } from '@uppy/core'
-
 import { describe, expect, it, vi } from 'vitest'
-import type { StoreAssemblyParameters } from '../lib/storeAssemblyOptions.js'
-
 import {
   buildStoreAssemblyParams,
   createStoreAssemblyOptions,
+  type StoreAssemblyParameters,
 } from '../lib/storeAssemblyOptions.js'
 
-function fakeUppy(state: {
+/** An Uppy whose connected storage plugin has `currentFolderId` open. */
+function fakeUppy({
+  currentFolderId = null,
+  rootPrefix = '',
+}: {
   currentFolderId?: string | null
-  prefix?: string
   rootPrefix?: string
 }) {
   return {
     getPlugin: () => ({
-      getPluginState: () => ({
-        authenticated: true,
-        currentFolderId: state.currentFolderId ?? null,
-      }),
-      opts: { prefix: state.prefix },
-      rootPrefix: state.rootPrefix ?? state.prefix ?? '',
+      getPluginState: () => ({ authenticated: true, currentFolderId }),
+      rootPrefix,
     }),
   } as unknown as Uppy<Meta, Body>
 }
@@ -73,13 +70,6 @@ describe('createStoreAssemblyOptions', () => {
     expect(signAssembly).not.toHaveBeenCalled()
   })
 
-  it('uses the authenticated grant root instead of the caller prefix option', async () => {
-    const build = createStoreAssemblyOptions(
-      fakeUppy({ prefix: 'wrong/', rootPrefix: 'users/ana/' }),
-      { signAssembly: passthroughSign },
-    )
-    expect(storedPath(await build())).toBe('users/ana/${file.name}')
-  })
   it('never silently replaces a stored file unless overwrite is explicitly requested', async () => {
     const build = createStoreAssemblyOptions(fakeUppy({}), {
       signAssembly: passthroughSign,
@@ -94,6 +84,7 @@ describe('createStoreAssemblyOptions', () => {
       buildStoreAssemblyParams('photos/', 'overwrite').steps.stored,
     ).toMatchObject({ conflict_strategy: 'overwrite' })
   })
+
   it('stores at the bucket root when there is no folder and no prefix', async () => {
     const build = createStoreAssemblyOptions(fakeUppy({}), {
       signAssembly: passthroughSign,
@@ -103,7 +94,7 @@ describe('createStoreAssemblyOptions', () => {
 
   it('falls back to the grant prefix at the root of a confined session', async () => {
     const build = createStoreAssemblyOptions(
-      fakeUppy({ prefix: 'users/ana/' }),
+      fakeUppy({ rootPrefix: 'users/ana/' }),
       { signAssembly: passthroughSign },
     )
     expect(storedPath(await build())).toBe('users/ana/${file.name}')
@@ -111,7 +102,7 @@ describe('createStoreAssemblyOptions', () => {
 
   it('normalizes a prefix without a trailing slash', async () => {
     const build = createStoreAssemblyOptions(
-      fakeUppy({ prefix: 'users/ana' }),
+      fakeUppy({ rootPrefix: 'users/ana' }),
       {
         signAssembly: passthroughSign,
       },
@@ -122,7 +113,7 @@ describe('createStoreAssemblyOptions', () => {
   it('uses the open folder key, which already contains the prefix', async () => {
     const build = createStoreAssemblyOptions(
       fakeUppy({
-        prefix: 'users/ana/',
+        rootPrefix: 'users/ana/',
         currentFolderId: encodeURIComponent('users/ana/photos/'),
       }),
       { signAssembly: passthroughSign },
@@ -135,10 +126,8 @@ describe('createStoreAssemblyOptions', () => {
       signAssembly: passthroughSign,
       conflictStrategy: 'rename',
     })
-    const result = await build()
-    expect(
-      (result.params.steps.stored as { conflict_strategy: string })
-        .conflict_strategy,
-    ).toBe('rename')
+    expect((await build()).params.steps.stored).toMatchObject({
+      conflict_strategy: 'rename',
+    })
   })
 })

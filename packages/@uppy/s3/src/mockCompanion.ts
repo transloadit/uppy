@@ -8,7 +8,13 @@
  * Keys follow the S3 provider's addressing: folders end with `/`, ids in
  * responses are `encodeURIComponent(key)`.
  */
+import {
+  decodeStorageGrant,
+  normalizeStorageGrantPrefix,
+  type StorageGrantClaims,
+} from '@transloadit/utils'
 import type { CompanionErrorCode } from '@uppy/core'
+import { splitKey } from './keys.js'
 
 export type MockS3Entry = {
   name: string
@@ -43,8 +49,12 @@ export type MockS3GrantClaims = {
   exp?: number
 }
 
+/** Base64url of the UTF-8 bytes of `value`, as JWTs encode their parts. */
 const base64url = (value: string): string =>
-  btoa(value).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
+  btoa(String.fromCharCode(...new TextEncoder().encode(value)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '')
 
 /**
  * Builds an *unsigned* grant in JWT shape for the mock (a real Companion would
@@ -61,24 +71,6 @@ export function mockGrant(claims: MockS3GrantClaims): string {
   return `${base64url(JSON.stringify({ alg: 'HS256', typ: 'JWT' }))}.${base64url(
     JSON.stringify(payload),
   )}.mock-signature`
-}
-
-const decodeMockGrant = (grant: string): MockS3GrantClaims | null => {
-  try {
-    const payload = grant.split('.')[1] ?? ''
-    const claims = JSON.parse(
-      atob(payload.replace(/-/g, '+').replace(/_/g, '/')),
-    ) as Partial<MockS3GrantClaims>
-    if (typeof claims.bucket !== 'string') return null
-    return {
-      bucket: claims.bucket,
-      prefix: typeof claims.prefix === 'string' ? claims.prefix : '',
-      scopes: Array.isArray(claims.scopes) ? claims.scopes : ['read', 'write'],
-      ...(typeof claims.exp === 'number' && { exp: claims.exp }),
-    }
-  } catch {
-    return null
-  }
 }
 
 export type MockS3CompanionOptions = {
@@ -130,15 +122,6 @@ const DEFAULT_FOLDERS: Record<string, MockS3Entry[]> = {
   ],
 }
 
-const splitKey = (key: string) => {
-  const bare = key.endsWith('/') ? key.slice(0, -1) : key
-  const slash = bare.lastIndexOf('/')
-  return {
-    prefix: slash === -1 ? '' : bare.slice(0, slash + 1),
-    name: bare.slice(slash + 1),
-  }
-}
-
 const json = (body: unknown, status = 200): MockS3Response => ({
   status,
   body,
@@ -149,6 +132,10 @@ const json = (body: unknown, status = 200): MockS3Response => ({
  */
 const userError = (code: CompanionErrorCode): MockS3Response =>
   json({ code }, 400)
+
+/** The endpoints both providers serve: Transloadit Storage is the same HTTP surface under its own name. */
+const ROUTE =
+  /\/(s3|transloadit-storage)\/(simple-auth|list|mutate\/[a-z-]+|logout)(\/|$)/
 
 export function createMockS3Companion(
   options: MockS3CompanionOptions = {},
@@ -161,29 +148,25 @@ export function createMockS3Companion(
   )
   const token = options.token ?? 'mock-auth-token'
   const configuredBucket = options.bucket ?? 'my-bucket'
+  const configuredPrefix = normalizeStorageGrantPrefix(options.prefix ?? '')
   let bucket = configuredBucket
-  let session: MockS3GrantClaims | null = null
+  let session: StorageGrantClaims | null = null
   const calls: MockS3Call[] = []
   const nowSeconds = options.nowSeconds ?? (() => Math.floor(Date.now() / 1000))
-  const expired = () =>
-    session?.exp !== undefined && session.exp <= nowSeconds()
-  const asPrefix = (value: string) => {
-    const bare = value.replace(/^\/+|\/+$/g, '')
-    return bare ? `${bare}/` : ''
-  }
-  const configuredPrefix = asPrefix(options.prefix ?? '')
   /** Root of the session: the grant's prefix, or the one the mock is configured with. */
   const sessionPrefix = () =>
-    session ? asPrefix(session.prefix ?? '') : configuredPrefix
+    session ? normalizeStorageGrantPrefix(session.prefix) : configuredPrefix
 
   const toItem = (prefix: string, entry: MockS3Entry) => {
-    const key = `${prefix}${entry.name}${entry.isFolder ? '/' : ''}`
+    const id = encodeURIComponent(
+      `${prefix}${entry.name}${entry.isFolder ? '/' : ''}`,
+    )
     return {
       isFolder: entry.isFolder,
       icon: entry.isFolder ? 'folder' : 'file',
-      id: encodeURIComponent(key),
+      id,
       name: entry.name,
-      requestPath: encodeURIComponent(key),
+      requestPath: id,
       ...(entry.isFolder
         ? {}
         : {
@@ -193,22 +176,33 @@ export function createMockS3Companion(
           }),
     }
   }
-  const entriesOf = (prefix: string) => folders.get(prefix) ?? []
-  const has = (key: string) => {
-    const { prefix, name } = splitKey(key)
-    return entriesOf(prefix).some(
-      (entry) => entry.name === name && entry.isFolder === key.endsWith('/'),
-    )
+  /** The response of a mutation: the (new) id of the entry at `key`. */
+  const entryResponse = (key: string) => {
+    const id = encodeURIComponent(key)
+    return json({ id, requestPath: id })
   }
+  const entriesOf = (prefix: string) => folders.get(prefix) ?? []
+  /** Matches the entry at `key`: a file and a folder may share a name. */
+  const isEntry = (key: string) => {
+    const { name, isFolder } = splitKey(key)
+    return (entry: MockS3Entry) =>
+      entry.name === name && entry.isFolder === isFolder
+  }
+  const find = (key: string) =>
+    entriesOf(splitKey(key).parent).find(isEntry(key))
+  const add = (key: string, entry: MockS3Entry) => {
+    const { parent } = splitKey(key)
+    folders.set(parent, [...entriesOf(parent), entry])
+  }
+  /** Removes the entry at `key` (only the file, or only the folder, of that name) and a folder's subtree. */
   const remove = (key: string) => {
-    const { prefix, name } = splitKey(key)
+    const { parent, isFolder } = splitKey(key)
+    const matches = isEntry(key)
     folders.set(
-      prefix,
-      entriesOf(prefix).filter(
-        (entry) => entry.name !== name || entry.isFolder !== key.endsWith('/'),
-      ),
+      parent,
+      entriesOf(parent).filter((entry) => !matches(entry)),
     )
-    if (key.endsWith('/')) {
+    if (isFolder) {
       for (const folder of [...folders.keys()]) {
         if (folder.startsWith(key)) folders.delete(folder)
       }
@@ -219,37 +213,21 @@ export function createMockS3Companion(
     return typeof value === 'string' ? value : null
   }
 
-  // Holder object: TypeScript cannot see that handleInner assigns the current call.
-  const inFlight: { call: MockS3Call | undefined } = { call: undefined }
-  const currentCall = () => inFlight.call
-  const handleInner = (request: MockS3Request): MockS3Response | null => {
-    const url = new URL(request.url, 'http://mock.invalid')
-    const path = url.pathname
-    // Transloadit Storage is the same HTTP surface under its own provider name;
-    // the only difference is that it moves folders natively (see mutate/move).
-    const route =
-      /\/(s3|transloadit-storage)\/(simple-auth|list|mutate\/[a-z-]+|logout)(\/|$)/.exec(
-        path,
-      )
-    if (!route) {
-      return null
-    }
-    const operation = route[2] as string
-    const nativeMoves = route[1] === 'transloadit-storage'
-    inFlight.call = { ...request, path }
-    calls.push(inFlight.call)
-    const { method, body } = request
+  const respond = (
+    { method, body, token: sentToken }: MockS3Request,
+    url: URL,
+    operation: string,
+    nativeMoves: boolean,
+  ): MockS3Response => {
     if (method === 'OPTIONS') return { status: 204, body: null }
 
     if (method === 'POST' && operation === 'simple-auth') {
       // The client sends `{}` or `{ grant }`; the bucket is never its call.
       const form = (body as { form?: { grant?: string } } | null)?.form
       if (typeof form?.grant === 'string') {
-        const claims = decodeMockGrant(form.grant)
+        const claims = decodeStorageGrant(form.grant)
         if (!claims) return userError('S3_INVALID_GRANT')
-        if (claims.exp !== undefined && claims.exp <= nowSeconds()) {
-          return { status: 401, body: null }
-        }
+        if (claims.exp <= nowSeconds()) return { status: 401, body: null }
         session = claims
         bucket = claims.bucket
       } else {
@@ -262,16 +240,16 @@ export function createMockS3Companion(
       session = null
       return json({ ok: true, revoked: true })
     }
-    if (request.token !== token || expired()) {
+    if (sentToken !== token || (session && session.exp <= nowSeconds())) {
       return { status: 401, body: null }
     }
-    if (session && !session.scopes?.includes('read')) {
+    if (session && !session.scopes.includes('read')) {
       return userError('S3_INVALID_GRANT')
     }
     if (
       operation.startsWith('mutate/') &&
       session &&
-      !session.scopes?.includes('write')
+      !session.scopes.includes('write')
     ) {
       return userError('S3_READ_ONLY_SESSION')
     }
@@ -279,7 +257,7 @@ export function createMockS3Companion(
     if (method === 'GET' && operation === 'list') {
       const root = sessionPrefix()
       const prefix =
-        decodeURIComponent(path.replace(/^.*\/list\/?/, '')) || root
+        decodeURIComponent(url.pathname.replace(/^.*\/list\/?/, '')) || root
       if (!prefix.startsWith(root))
         return userError('S3_OUTSIDE_ALLOWED_FOLDER')
       const entries = entriesOf(prefix)
@@ -295,7 +273,7 @@ export function createMockS3Companion(
           prefix: root,
           canWrite:
             (options.canWrite ?? true) &&
-            (session?.scopes?.includes('write') ?? true),
+            (session?.scopes.includes('write') ?? true),
           supportsMoveFolder: nativeMoves,
         },
         nextPagePath:
@@ -318,11 +296,10 @@ export function createMockS3Companion(
       const parentId = str(body, 'parentId')
       const prefix = parentId ? decodeURIComponent(parentId) : sessionPrefix()
       const key = `${prefix}${name}/`
-      if (has(key)) return userError('S3_ALREADY_EXISTS')
-      folders.set(prefix, [...entriesOf(prefix), { name, isFolder: true }])
+      if (find(key)) return userError('S3_ALREADY_EXISTS')
+      add(key, { name, isFolder: true })
       folders.set(key, [])
-      const id = encodeURIComponent(key)
-      return json({ id, requestPath: id })
+      return entryResponse(key)
     }
     if (method === 'POST' && operation === 'mutate/delete') {
       const id = str(body, 'id')
@@ -348,8 +325,8 @@ export function createMockS3Companion(
         if (!destination.endsWith('/'))
           return userError('S3_DESTINATION_MUST_BE_FILE')
         if (destination !== key) {
-          if (!has(key)) return userError('S3_NOT_FOUND')
-          if (has(destination)) return userError('S3_ALREADY_EXISTS')
+          if (!find(key)) return userError('S3_NOT_FOUND')
+          if (find(destination)) return userError('S3_ALREADY_EXISTS')
           if (destination.startsWith(key)) return userError('S3_REQUEST_FAILED')
           for (const folder of [...folders.keys()]) {
             if (!folder.startsWith(key)) continue
@@ -357,63 +334,49 @@ export function createMockS3Companion(
             folders.delete(folder)
             folders.set(`${destination}${folder.slice(key.length)}`, entries)
           }
-          const from = splitKey(key)
-          const to = splitKey(destination)
-          folders.set(
-            from.prefix,
-            entriesOf(from.prefix).filter(
-              (candidate) =>
-                candidate.name !== from.name || !candidate.isFolder,
-            ),
-          )
-          folders.set(to.prefix, [
-            ...entriesOf(to.prefix),
-            { name: to.name, isFolder: true },
-          ])
+          remove(key)
+          add(destination, { name: splitKey(destination).name, isFolder: true })
         }
-        const movedId = encodeURIComponent(destination)
-        return json({ id: movedId, requestPath: movedId })
+        return entryResponse(destination)
       }
       if (destination.endsWith('/')) {
         return userError('S3_DESTINATION_MUST_BE_FILE')
       }
       if (destination !== key) {
-        const from = splitKey(key)
-        const to = splitKey(destination)
-        const entry = entriesOf(from.prefix).find(
-          (candidate) => candidate.name === from.name && !candidate.isFolder,
-        )
+        const entry = find(key)
         if (!entry) return userError('S3_NOT_FOUND')
-        const existing = entriesOf(to.prefix).find(
-          (candidate) => candidate.name === to.name,
+        const { parent, name } = splitKey(destination)
+        const existing = entriesOf(parent).find(
+          (candidate) => candidate.name === name,
         )
         // Idempotent: the same file already sitting at the destination means an
         // earlier attempt got through, so only the source is left to clean up.
         if (existing && (existing.isFolder || existing.size !== entry.size)) {
           return userError('S3_ALREADY_EXISTS')
         }
-        folders.set(
-          from.prefix,
-          entriesOf(from.prefix).filter((c) => c.name !== from.name),
-        )
-        if (!existing) {
-          folders.set(to.prefix, [
-            ...entriesOf(to.prefix),
-            { ...entry, name: to.name },
-          ])
-        }
+        remove(key)
+        if (!existing) add(destination, { ...entry, name })
       }
-      const newId = encodeURIComponent(destination)
-      return json({ id: newId, requestPath: newId })
+      return entryResponse(destination)
     }
     return json({ message: 'unhandled mock route' }, 500)
   }
+
   const handle = (request: MockS3Request): MockS3Response | null => {
-    inFlight.call = undefined
-    const result = handleInner(request)
-    const call = currentCall()
-    if (result && call) call.status = result.status
-    return result
+    const url = new URL(request.url, 'http://mock.invalid')
+    const route = ROUTE.exec(url.pathname)
+    if (!route) return null
+    const call: MockS3Call = { ...request, path: url.pathname }
+    calls.push(call)
+    const response = respond(
+      request,
+      url,
+      route[2] as string,
+      // The only difference: Transloadit Storage moves folders natively.
+      route[1] === 'transloadit-storage',
+    )
+    call.status = response.status
+    return response
   }
 
   return {
@@ -466,26 +429,24 @@ export async function handleFetchRequest(
 }
 
 /** The subset of `msw` this needs, passed in so msw stays a dev dependency. */
-type MswLike = {
+type MswLike<Handler> = {
   http: {
     all(
       path: string,
       resolver: (info: { request: Request }) => Promise<Response | undefined>,
-    ): unknown
+    ): Handler
   }
 }
 
 /** msw request handlers for both providers' endpoints under `companionUrl`. */
-export function toMswHandlers(
+export function toMswHandlers<Handler>(
   mock: MockS3Companion,
   companionUrl: string,
-  msw: MswLike,
-): unknown[] {
+  msw: MswLike<Handler>,
+): Handler[] {
   const base = companionUrl.replace(/\/$/, '')
   const serve = async ({ request }: { request: Request }) =>
     (await handleFetchRequest(mock, request)) ?? undefined
-  // The Transloadit Storage provider speaks the same protocol under its own
-  // name (with native folder moves), so the mock serves both.
   return [
     msw.http.all(`${base}/s3/*`, serve),
     msw.http.all(`${base}/transloadit-storage/*`, serve),

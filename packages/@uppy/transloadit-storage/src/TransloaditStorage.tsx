@@ -1,12 +1,21 @@
-import type { Body, Meta, UploadResult, Uppy } from '@uppy/core'
-import type { ProviderAction } from '@uppy/core/provider-views'
+import {
+  type Body,
+  type Meta,
+  type UploadResult,
+  type Uppy,
+  UserFacingApiError,
+} from '@uppy/core'
+import type {
+  ProviderAction,
+  ProviderToolbarAction,
+} from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
 import S3, { type S3Options, StorageIcon } from '@uppy/s3'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import {
   createStoreAssemblyOptions,
-  normalizePrefix,
+  openFolderKey,
   type StoreUploadsOptions,
 } from './storeAssemblyOptions.js'
 
@@ -44,6 +53,37 @@ export type TransloaditStorageOptions<
   onUploadRequest?: (context: { prefix: string }) => void
 }
 
+/** The `@uppy/transloadit` plugin `storeUploads` configures. */
+function getStoreUploader<M extends Meta, B extends Body>(
+  uppy: Uppy<M, B>,
+  { transloaditPluginId = 'Transloadit' }: StoreUploadsOptions,
+) {
+  const uploader = uppy.getPlugin(transloaditPluginId)
+  if (!uploader) {
+    throw new Error(
+      `Install @uppy/transloadit with id "${transloaditPluginId}" before using storeUploads`,
+    )
+  }
+  return uploader
+}
+
+/** Starts a browser download of `url` (an http(s) URL, or one relative to the page). */
+function download(url: string, invalidUrlMessage: string): void {
+  const { href, protocol } = new URL(url, window.location.href)
+  // A user-facing error, so the Dashboard shows this message rather than a
+  // generic Companion failure.
+  if (protocol !== 'https:' && protocol !== 'http:')
+    throw new UserFacingApiError(invalidUrlMessage)
+  const link = document.createElement('a')
+  link.href = href
+  link.download = ''
+  link.rel = 'noreferrer'
+  link.hidden = true
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+}
+
 /**
  * Transloadit Storage = the S3 provider plugin pointed at Transloadit's
  * S3-compatible endpoint, plus Transloadit-specific actions.
@@ -58,17 +98,12 @@ export default class TransloaditStorage<
     return 'transloadit-storage'
   }
 
-  declare opts: TransloaditStorageOptions<M, B> & S3Options<M, B>
+  declare opts: TransloaditStorageOptions<M, B>
 
   constructor(uppy: Uppy<M, B>, opts: TransloaditStorageOptions<M, B>) {
     // Fail before Uppy registers a half-installed provider with no view to tear down.
     if (opts.storeUploads) {
-      const pluginId = opts.storeUploads.transloaditPluginId ?? 'Transloadit'
-      const uploader = uppy.getPlugin(pluginId)
-      if (!uploader)
-        throw new Error(
-          `Install @uppy/transloadit with id "${pluginId}" before using storeUploads`,
-        )
+      const uploader = getStoreUploader(uppy, opts.storeUploads)
       if (
         'assemblyOptions' in uploader.opts &&
         uploader.opts.assemblyOptions != null
@@ -81,136 +116,112 @@ export default class TransloaditStorage<
     // No Workspace or prefix option: which ones the session sees is
     // Companion's call (its configuration, or the grant).
     super(uppy, {
-      ...(opts as S3Options<M, B>),
+      ...opts,
       id: opts.id ?? 'TransloaditStorage',
       keepStateOnClose: opts.keepStateOnClose ?? true,
       // A standalone library is a manager, not a picker, unless told otherwise.
       mode: opts.mode ?? (opts.standalone ? 'manager' : 'picker'),
-      // Applied below, once this plugin's own strings are merged in.
-      locale: undefined,
     })
     this.defaultLocale = {
-      strings: { ...(this.defaultLocale?.strings ?? {}), ...locale.strings },
+      strings: { ...this.defaultLocale?.strings, ...locale.strings },
     }
     this.i18nInit()
-    this.setOptions({ locale: opts.locale })
     this.title = this.i18n('pluginNameTransloaditStorage')
     this.icon = () => <StorageIcon color="#0d8ceb" />
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
     const { getSmartCdnUrl, getDownloadUrl } = this.opts
-    const download: ProviderAction<M, B> = {
-      id: 'transloadit:download',
-      label: this.i18n('download'),
-      appliesTo: 'file',
-      refresh: false,
-      run: async ({ item }) => {
-        if (!getDownloadUrl) return
-        const url = new URL(
-          await getDownloadUrl(S3.keyOf(item.id)),
-          window.location.href,
-        )
-        if (url.protocol !== 'https:' && url.protocol !== 'http:')
-          throw new Error(this.i18n('downloadFailed'))
-        const link = document.createElement('a')
-        link.href = url.href
-        link.download = ''
-        link.rel = 'noreferrer'
-        link.hidden = true
-        document.body.appendChild(link)
-        link.click()
-        link.remove()
-      },
+    const actions = super.builtInActions()
+    if (getDownloadUrl) {
+      // Before the destructive action, which stays last.
+      const deleteIndex = actions.findIndex(({ id }) => id === 's3:delete')
+      actions.splice(deleteIndex === -1 ? actions.length : deleteIndex, 0, {
+        id: 'transloadit:download',
+        label: this.i18n('download'),
+        appliesTo: 'file',
+        refresh: false,
+        run: async ({ item }) => {
+          download(
+            await getDownloadUrl(S3.keyOf(item.id)),
+            this.i18n('downloadFailed'),
+          )
+        },
+      })
     }
-    const copyUrl: ProviderAction<M, B> = {
-      id: 'transloadit:copySmartCdnUrl',
-      label: this.i18n('copySmartCdnUrl'),
-      appliesTo: 'file',
-      refresh: false,
-      run: async ({ item, uppy, view }) => {
-        if (!getSmartCdnUrl) return
-        const url = await getSmartCdnUrl(S3.keyOf(item.id))
-        try {
-          await navigator.clipboard.writeText(url)
-          uppy.info(this.i18n('copiedSmartCdnUrl'), 'info', 3000)
-        } catch {
-          // No clipboard access (permission denied, insecure origin): show the
-          // URL in a dialog so it can be copied by hand.
-          await view.prompt({
-            title: this.i18n('smartCdnUrlPrompt'),
-            defaultValue: url,
-          })
-        }
-      },
+    if (getSmartCdnUrl) {
+      actions.unshift({
+        id: 'transloadit:copySmartCdnUrl',
+        label: this.i18n('copySmartCdnUrl'),
+        appliesTo: 'file',
+        refresh: false,
+        run: async ({ item, uppy, view }) => {
+          const url = await getSmartCdnUrl(S3.keyOf(item.id))
+          try {
+            await navigator.clipboard.writeText(url)
+            uppy.info(this.i18n('copiedSmartCdnUrl'), 'info', 3000)
+          } catch {
+            // No clipboard access (permission denied, insecure origin): show the
+            // URL in a dialog so it can be copied by hand.
+            await view.prompt({
+              title: this.i18n('smartCdnUrlPrompt'),
+              defaultValue: url,
+            })
+          }
+        },
+      })
     }
-    const base = super.builtInActions()
-    const deleteIndex = base.findIndex((action) => action.id === 's3:delete')
-    const ordered = !getDownloadUrl
-      ? base
-      : deleteIndex === -1
-        ? [...base, download]
-        : [...base.slice(0, deleteIndex), download, ...base.slice(deleteIndex)]
-    return getSmartCdnUrl ? [copyUrl, ...ordered] : ordered
+    return actions
   }
 
-  override builtInToolbarActions() {
-    const base = super.builtInToolbarActions()
-    if (!this.opts.storeUploads && !this.opts.onUploadRequest) return base
-    const upload = {
-      id: 'transloadit:uploadFiles',
-      label: this.i18n('uploadFiles'),
-      refresh: false,
-      run: () => {
-        // The host app can take over (e.g. a full Dashboard modal with
-        // remote sources); otherwise a plain file picker owned by the
-        // widget. Either way files go into the folder that is open
-        // (storeUploads builds the Assembly params).
-        if (this.opts.onUploadRequest) {
-          const { currentFolderId } = this.getPluginState() as {
-            currentFolderId?: string | null
-          }
-          const normalizedPrefix = normalizePrefix(this.rootPrefix)
-          this.opts.onUploadRequest({
-            prefix: currentFolderId
-              ? decodeURIComponent(currentFolderId)
-              : normalizedPrefix,
-          })
-          return
-        }
-        const input = document.createElement('input')
-        input.type = 'file'
-        input.multiple = true
-        input.style.display = 'none'
-        input.addEventListener('change', () => {
-          this.uppy.addFiles(
-            Array.from(input.files ?? []).map((file) => ({
-              name: file.name,
-              type: file.type,
-              data: file,
-              source: this.id,
-              isRemote: false,
-            })),
-          )
-          input.remove()
-        })
-        document.body.appendChild(input)
-        input.click()
+  override builtInToolbarActions(): ProviderToolbarAction<M, B>[] {
+    const actions = super.builtInToolbarActions()
+    const { storeUploads, onUploadRequest } = this.opts
+    if (!storeUploads && !onUploadRequest) return actions
+    return [
+      {
+        id: 'transloadit:uploadFiles',
+        label: this.i18n('uploadFiles'),
+        refresh: false,
+        // The host app can take over (e.g. a full Dashboard modal with remote
+        // sources); otherwise a plain file picker owned by the widget. Either
+        // way files go into the folder that is open (storeUploads builds the
+        // Assembly params).
+        run: () => {
+          if (onUploadRequest) onUploadRequest({ prefix: openFolderKey(this) })
+          else this.#pickFiles()
+        },
       },
-    }
-    return [upload, ...base]
+      ...actions,
+    ]
+  }
+
+  /** Lets the user pick local files and adds them to Uppy. */
+  #pickFiles(): void {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.multiple = true
+    input.style.display = 'none'
+    input.addEventListener('change', () => {
+      this.uppy.addFiles(
+        Array.from(input.files ?? [], (file) => ({
+          name: file.name,
+          type: file.type,
+          data: file,
+          source: this.id,
+          isRemote: false,
+        })),
+      )
+      input.remove()
+    })
+    document.body.appendChild(input)
+    input.click()
   }
 
   override install(): void {
     const { storeUploads, reopenAfterUpload } = this.opts
     if (storeUploads) {
-      const pluginId = storeUploads.transloaditPluginId ?? 'Transloadit'
-      const transloadit = this.uppy.getPlugin(pluginId)
-      if (!transloadit) {
-        throw new Error(
-          `Install @uppy/transloadit with id "${pluginId}" before using storeUploads`,
-        )
-      }
+      const transloadit = getStoreUploader(this.uppy, storeUploads)
       transloadit.setOptions({
         waitForEncoding: true,
         assemblyOptions: createStoreAssemblyOptions(this.uppy, {
@@ -242,7 +253,7 @@ export default class TransloaditStorage<
    * listeners (Dashboard's own success state) run on the final result first.
    */
   #reopenAfterUpload = (result: UploadResult<M, B>): void => {
-    if (result.failed && result.failed.length > 0) return
+    if (result.failed?.length) return
     setTimeout(() => {
       try {
         this.uppy.clear()

@@ -8,6 +8,7 @@
  * it. Doing that in the browser keeps each server request short-lived, lets
  * the user cancel, and lets an interrupted operation be re-run.
  */
+import { splitKey } from './keys.js'
 
 /** One entry of a Companion listing; only what the walk needs. */
 type ListedItem = {
@@ -71,16 +72,6 @@ export type DeleteFolderOptions = FolderOperationOptions & {
   folder: string
 }
 
-/** Splits a folder key (`docs/photos/`) into its parent (`docs/`) and name. */
-function splitFolderKey(key: string): { parent: string; name: string } {
-  const bare = key.endsWith('/') ? key.slice(0, -1) : key
-  const slash = bare.lastIndexOf('/')
-  return {
-    parent: slash === -1 ? '' : bare.slice(0, slash + 1),
-    name: bare.slice(slash + 1),
-  }
-}
-
 const abortError = () =>
   new DOMException('The folder operation was cancelled', 'AbortError')
 
@@ -105,8 +96,8 @@ async function listFolder(
   signal: AbortSignal | undefined,
   log: (message: string) => void,
 ): Promise<{ folders: string[]; files: string[] }> {
-  const folders = new Set<string>()
-  const files = new Set<string>()
+  const folders: string[] = []
+  const files: string[] = []
   const seenPages = new Set<string>()
   let pagePath: string | null = encodeURIComponent(folder)
   do {
@@ -115,22 +106,19 @@ async function listFolder(
       throw new Error(`Listing of "${folder}" repeats page "${pagePath}"`)
     }
     seenPages.add(pagePath)
-    const { items, nextPagePath }: ListResponse = await provider.list(
-      pagePath,
-      { signal },
-    )
+    const { items, nextPagePath } = await provider.list(pagePath, { signal })
     for (const item of items) {
       const key = decodeURIComponent(item.requestPath)
       if (!key.startsWith(folder) || key === folder) {
         log(`ignoring "${key}": not inside "${folder}"`)
         continue
       }
-      if (item.isFolder) folders.add(key)
-      else files.add(key)
+      if (item.isFolder) folders.push(key)
+      else files.push(key)
     }
     pagePath = nextPagePath
   } while (pagePath)
-  return { folders: [...folders], files: [...files] }
+  return { folders, files }
 }
 
 /**
@@ -145,25 +133,19 @@ async function walkFolder(
   log: (message: string) => void,
   skip: (folder: string) => boolean = () => false,
 ): Promise<{ subFolders: string[]; files: string[] }> {
-  const subFolders: string[] = []
-  const files: string[] = []
-  const queue: string[] = [root]
-  while (queue.length > 0) {
-    const folder = queue.shift() as string
+  // Sets, so that a listing that misreports entries can never make the walk
+  // visit a folder twice or feed on itself. A `Set` iterates entries added
+  // while iterating, which makes it the queue too.
+  const folders = new Set([root])
+  const files = new Set<string>()
+  for (const folder of folders) {
     const listed = await listFolder(provider, folder, signal, log)
-    for (const sub of listed.folders) {
-      // Defensive: never walk a folder twice, so a listing that misreports
-      // entries cannot make the operation feed on itself.
-      if (skip(sub) || subFolders.includes(sub)) continue
-      subFolders.push(sub)
-      queue.push(sub)
-    }
-    for (const file of listed.files) {
-      if (!files.includes(file)) files.push(file)
-    }
+    for (const sub of listed.folders) if (!skip(sub)) folders.add(sub)
+    for (const file of listed.files) files.add(file)
   }
-  log(`found ${files.length} file(s) in ${subFolders.length + 1} folder(s)`)
-  return { subFolders, files }
+  folders.delete(root)
+  log(`found ${files.size} file(s) in ${folders.size + 1} folder(s)`)
+  return { subFolders: [...folders], files: [...files] }
 }
 
 /** Runs `perFile` over `files`, a few at a time, reporting progress. */
@@ -180,8 +162,7 @@ async function forEachFile(
     async () => {
       while (next < files.length) {
         throwIfAborted(signal)
-        const file = files[next++] as string
-        await perFile(file)
+        await perFile(files[next++])
         done += 1
         onProgress?.(done, files.length)
       }
@@ -197,12 +178,10 @@ async function deleteEmptiedFolders(
   subFolders: string[],
   signal: AbortSignal | undefined,
 ): Promise<void> {
-  for (const folder of [...subFolders].reverse()) {
+  for (const folder of [...subFolders].reverse().concat(root)) {
     throwIfAborted(signal)
     await provider.deleteItem(folder, { signal })
   }
-  throwIfAborted(signal)
-  await provider.deleteItem(root, { signal })
 }
 
 /**
@@ -232,18 +211,14 @@ export default async function moveFolder(
     (folder) => folder.startsWith(target),
   )
 
-  // 2. Create the destination folders, parents first.
-  const destinationOf = (key: string) => {
-    if (!key.startsWith(source)) {
-      throw new Error(`"${key}" is not inside "${source}"`)
-    }
-    return `${target}${key.slice(source.length)}`
-  }
+  // 2. Create the destination folders, parents first. (The walk only reports
+  // keys inside `source`.)
+  const destinationOf = (key: string) => `${target}${key.slice(source.length)}`
   // Companion refuses a folder that exists, so a taken `target` stops the
   // move here, before anything is touched.
   for (const folder of [target, ...subFolders.map(destinationOf)]) {
     throwIfAborted(signal)
-    const { parent, name } = splitFolderKey(folder)
+    const { parent, name } = splitKey(folder)
     await provider.createFolder(parent === '' ? null : parent, name, { signal })
   }
 
