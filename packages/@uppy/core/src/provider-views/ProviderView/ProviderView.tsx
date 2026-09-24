@@ -345,8 +345,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ partialTree: nextTree })
     await this.openFolder(currentFolderId)
 
+    const { partialTree: refreshedTree, detailItemId } =
+      this.plugin.getPluginState()
+    // The item of an open detail modal did not survive the refresh.
+    if (detailItemId && !refreshedTree.some(({ id }) => id === detailItemId)) {
+      this.closeItemDetail()
+    }
     // Re-apply the selection to the items that survived the refresh.
-    const { partialTree: refreshedTree } = this.plugin.getPluginState()
     const survivors = checkedIds.filter((id) =>
       refreshedTree.some(
         (node) =>
@@ -454,8 +459,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ selectionActive: !selectionActive })
   }
 
+  /**
+   * The item of the open detail modal as last seen in the tree. A refresh
+   * drops the folder's items until it is listed again; the modal keeps
+   * showing this one meanwhile instead of closing and reopening.
+   */
+  #detailItem: PartialTreeFile | PartialTreeFolderNode | undefined
+
   /** Manager mode: open the detail modal for one item. */
   openItemDetail = (item: PartialTreeFile | PartialTreeFolderNode): void => {
+    this.#detailItem = item
     this.plugin.setPluginState({ detailItemId: item.id })
   }
 
@@ -1051,12 +1064,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const breadcrumbs = this.getBreadcrumbs()
     const isManager = opts.mode === 'manager'
     const selectable = !isManager || selectionActive
-    const detailItem = detailItemId
-      ? partialTree.find(
+    if (detailItemId) {
+      this.#detailItem =
+        partialTree.find(
           (node): node is PartialTreeFile | PartialTreeFolderNode =>
             node.type !== 'root' && node.id === detailItemId,
-        )
-      : undefined
+        ) ?? this.#detailItem
+    }
+    const detailItem =
+      this.#detailItem?.id === detailItemId ? this.#detailItem : undefined
 
     return (
       <div

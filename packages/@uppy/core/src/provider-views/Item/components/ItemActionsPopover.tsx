@@ -14,9 +14,9 @@ import type {
   PartialTreeFolderNode,
 } from '../../../index.js'
 import type { I18n } from '../../../utils/index.js'
+import { stopEscapePropagation } from '../../ModalDialog.js'
 import type ProviderView from '../../ProviderView/ProviderView.js'
 import type { ProviderAction } from '../../ProviderView/ProviderView.js'
-import { stopEscapePropagation } from '../../useModalDialog.js'
 
 type ItemActionsPopoverProps<M extends Meta, B extends Body> = {
   file: PartialTreeFile | PartialTreeFolderNode

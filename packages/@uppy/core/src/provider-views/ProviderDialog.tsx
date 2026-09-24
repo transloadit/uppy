@@ -3,7 +3,7 @@ import type { h } from 'preact'
 import { useEffect, useId, useRef, useState } from 'preact/hooks'
 import type { ProviderDialogState } from '../index.js'
 import type { I18n } from '../utils/index.js'
-import { stopEscapePropagation, useModalDialog } from './useModalDialog.js'
+import ModalDialog from './ModalDialog.js'
 
 type ProviderDialogProps = {
   dialog: ProviderDialogState
@@ -14,8 +14,7 @@ type ProviderDialogProps = {
 
 /**
  * Inline replacement for `window.prompt` / `window.confirm`, driven by
- * `ProviderView.prompt()` / `.confirm()`, as a native modal `<dialog>` (see
- * `useModalDialog`).
+ * `ProviderView.prompt()` / `.confirm()`, as a {@link ModalDialog}.
  */
 export default function ProviderDialog({
   dialog,
@@ -26,29 +25,22 @@ export default function ProviderDialog({
   const [value, setValue] = useState(
     dialog.kind === 'prompt' ? (dialog.defaultValue ?? '') : '',
   )
-  const dialogRef = useRef<HTMLDialogElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
   const titleId = useId()
   const isPrompt = dialog.kind === 'prompt'
   const danger = dialog.kind === 'confirm' && dialog.danger === true
 
-  useModalDialog(dialogRef)
   useEffect(() => {
     ;(inputRef.current ?? confirmRef.current)?.focus()
     inputRef.current?.select()
   }, [])
 
   return (
-    <dialog
-      ref={dialogRef}
+    <ModalDialog
       className="uppy-ProviderDialog"
       aria-labelledby={titleId}
-      onCancel={onCancel}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) onCancel()
-      }}
-      onKeyDown={stopEscapePropagation}
+      onDismiss={onCancel}
     >
       <form
         className="uppy-ProviderDialog-form"
@@ -102,6 +94,6 @@ export default function ProviderDialog({
           </button>
         </div>
       </form>
-    </dialog>
+    </ModalDialog>
   )
 }

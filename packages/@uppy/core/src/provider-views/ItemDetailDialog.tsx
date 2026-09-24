@@ -1,7 +1,7 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import classNames from 'classnames'
 import type { h } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import type {
   Body,
   Meta,
@@ -11,9 +11,9 @@ import type {
 import type { I18n } from '../utils/index.js'
 import { getApplicableActions } from './Item/components/ItemActionsMenu.js'
 import ItemIcon from './Item/components/ItemIcon.js'
+import ModalDialog from './ModalDialog.js'
 import type ProviderView from './ProviderView/ProviderView.js'
 import type { Opts, ProviderAction } from './ProviderView/ProviderView.js'
-import { stopEscapePropagation, useModalDialog } from './useModalDialog.js'
 
 type ItemDetailDialogProps<M extends Meta, B extends Body> = {
   item: PartialTreeFile | PartialTreeFolderNode
@@ -26,9 +26,9 @@ type ItemDetailDialogProps<M extends Meta, B extends Body> = {
 }
 
 /**
- * The detail view of one item in manager mode: a native modal `<dialog>` (see
- * `useModalDialog`) with a preview, the item's metadata, and the same actions
- * the "…" menu offers (they are the one shared list).
+ * The detail view of one item in manager mode: a {@link ModalDialog} with a
+ * preview, the item's metadata, and the same actions the "…" menu offers (they
+ * are the one shared list).
  */
 export default function ItemDetailDialog<M extends Meta, B extends Body>({
   item,
@@ -38,18 +38,18 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   onClose,
   i18n,
 }: ItemDetailDialogProps<M, B>): h.JSX.Element {
-  const dialogRef = useRef<HTMLDialogElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-
-  useModalDialog(dialogRef)
+  // The item as the dialog opened: a listing update replaces the `item` object
+  // but not the preview (another item gets a new dialog; see its `key`).
+  const [previewItem] = useState(item)
 
   useEffect(() => {
-    if (!getPreviewUrl || item.data.isFolder) return
+    if (!getPreviewUrl || previewItem.data.isFolder) return
     let cancelled = false
     // Inside `then`: a JavaScript integrator may throw synchronously or return
     // any thenable.
     Promise.resolve()
-      .then(() => getPreviewUrl(item))
+      .then(() => getPreviewUrl(previewItem))
       .then((url) => {
         if (!cancelled) setPreviewUrl(url)
       })
@@ -59,7 +59,7 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
     return () => {
       cancelled = true
     }
-  }, [getPreviewUrl, item])
+  }, [getPreviewUrl, previewItem])
 
   const name = item.data.name ?? i18n('unnamed')
   const applicable = getApplicableActions(actions, item)
@@ -70,16 +70,10 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   const modified = file?.modifiedDate
 
   return (
-    <dialog
-      ref={dialogRef}
+    <ModalDialog
       className="uppy-ProviderDialog uppy-ItemDetail"
       aria-label={name}
-      onCancel={(event) => {
-        event.preventDefault()
-        onClose()
-      }}
-      onClose={onClose}
-      onKeyDown={stopEscapePropagation}
+      onDismiss={onClose}
     >
       <header className="uppy-ItemDetail-header">
         <h3 className="uppy-ItemDetail-name">{name}</h3>
@@ -161,6 +155,6 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
           </button>
         ))}
       </footer>
-    </dialog>
+    </ModalDialog>
   )
 }

@@ -455,6 +455,55 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
+  it('dismisses dialogs on a backdrop click and previews an item once', async ({
+    worker,
+  }) => {
+    const getPreviewUrl = vi.fn(
+      async () => 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+    )
+    const { plugin } = setup(worker, { mode: 'manager', getPreviewUrl })
+    await openBucket()
+
+    /** A click on the `::backdrop` (outside the box), and one that only ends there. */
+    const click = (dialog: Element, { startInside = false } = {}) => {
+      const rect = dialog.getBoundingClientRect()
+      const outside = {
+        bubbles: true,
+        clientX: rect.left - 5,
+        clientY: rect.top - 5,
+      }
+      dialog.dispatchEvent(
+        new PointerEvent(
+          'pointerdown',
+          startInside
+            ? { bubbles: true, clientX: rect.left + 5, clientY: rect.top + 5 }
+            : outside,
+        ),
+      )
+      dialog.dispatchEvent(new MouseEvent('click', outside))
+    }
+
+    await page.getByRole('button', { name: 'Open readme.md' }).click()
+    const details = page.getByRole('dialog', { name: 'readme.md' })
+    await expect.element(details).toBeVisible()
+    // A listing update replaces the item object, not the dialog's preview.
+    await plugin.view.refreshCurrentFolder(true)
+    await expect.element(details).toBeVisible()
+    expect(getPreviewUrl).toHaveBeenCalledTimes(1)
+
+    // Selecting text inside and releasing outside is not a dismissal.
+    click(details.element(), { startInside: true })
+    await expect.element(details).toBeVisible()
+    click(details.element())
+    await expect.element(details).not.toBeInTheDocument()
+
+    await page.getByRole('button', { name: 'New folder' }).click()
+    const prompt = page.getByRole('dialog', { name: 'New folder' })
+    await expect.element(prompt).toBeVisible()
+    click(prompt.element())
+    await expect.element(prompt).not.toBeInTheDocument()
+  })
+
   it('opens one item menu at a time and closes it with Escape', async ({
     worker,
   }) => {
