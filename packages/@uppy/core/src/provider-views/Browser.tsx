@@ -120,22 +120,23 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
       file={item}
       utmSource={utmSource}
       actions={actions}
-      runAction={runAction}
-      menuOpen={menu.isOpen(item.id)}
-      toggleMenu={(anchor) => menu.toggle(item.id, anchor)}
+      menuOpen={menu.open?.item.id === item.id}
+      toggleMenu={
+        runAction ? (anchor) => menu.toggle(item.id, anchor) : undefined
+      }
       selectable={selectable}
       onFileClick={onFileClick}
     />
   )
 
   const popover =
-    menu.open && menu.openItem && runAction ? (
+    menu.open && runAction ? (
       // Keyed per item: switching menus must unmount the old popover, or its
       // (queued) light-dismiss `toggle` event would close the new one.
       <ItemActionsPopover
-        key={menu.open.id}
-        file={menu.openItem}
-        actions={getApplicableActions(actions, menu.openItem)}
+        key={menu.open.item.id}
+        file={menu.open.item}
+        actions={getApplicableActions(actions, menu.open.item)}
         anchor={menu.open.anchor}
         containerRef={bodyRef}
         runAction={runAction}

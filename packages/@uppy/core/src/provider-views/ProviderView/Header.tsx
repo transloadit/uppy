@@ -37,8 +37,8 @@ type HeaderProps<M extends Meta, B extends Body> = {
 export default function Header<M extends Meta, B extends Body>(
   props: HeaderProps<M, B>,
 ) {
-  const bulkActions =
-    props.selectedCount && props.selectedCount > 0 ? props.bulkActions : []
+  const toolbarActions = props.toolbarActions ?? []
+  const bulkActions = (props.selectedCount && props.bulkActions) || []
   return (
     <div className="uppy-ProviderBrowser-header">
       <div
@@ -56,8 +56,8 @@ export default function Header<M extends Meta, B extends Body>(
             i18n={props.i18n}
           />
         )}
-        {((props.toolbarActions && props.toolbarActions.length > 0) ||
-          (bulkActions && bulkActions.length > 0) ||
+        {(toolbarActions.length > 0 ||
+          bulkActions.length > 0 ||
           props.selectionToggle) && (
           <div className="uppy-ProviderBrowser-toolbar">
             {props.selectionToggle && (
@@ -72,7 +72,7 @@ export default function Header<M extends Meta, B extends Body>(
                   : props.i18n('selectMultiple')}
               </button>
             )}
-            {props.toolbarActions?.map((action) => (
+            {toolbarActions.map((action) => (
               <button
                 key={action.id}
                 type="button"
@@ -82,7 +82,7 @@ export default function Header<M extends Meta, B extends Body>(
                 {action.label}
               </button>
             ))}
-            {bulkActions?.map((action) => (
+            {bulkActions.map((action) => (
               <button
                 key={action.id}
                 type="button"

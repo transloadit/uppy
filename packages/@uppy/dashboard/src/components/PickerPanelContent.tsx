@@ -13,12 +13,6 @@ import type { ComponentChildren, MouseEventHandler } from 'preact'
 import type { DashboardState } from '../Dashboard.js'
 import ignoreEvent from '../utils/ignoreEvent.js'
 
-type AnyUIPlugin<M extends Meta, B extends Body> = UIPlugin<
-  UIPluginOptions,
-  M,
-  B
->
-
 interface PickerPanelContentProps<M extends Meta, B extends Body> {
   activePickerPanel: NonNullable<DashboardState<M, B>['activePickerPanel']>
   className?: string | undefined
@@ -38,14 +32,12 @@ function PickerPanelContent<M extends Meta, B extends Body>({
 }: PickerPanelContentProps<M, B>): ComponentChildren {
   const ref = useRef<HTMLDivElement>(null)
   const activePlugin = uppy.getPlugin(activePickerPanel.id) as
-    | AnyUIPlugin<M, B>
+    | UIPlugin<UIPluginOptions & { standalone?: boolean }, M, B>
     | undefined
   // A plugin that is the whole page (a file library rather than a picker)
   // asks for no chrome: the page around it owns the heading, and there is
   // nothing to cancel.
-  const standalone = Boolean(
-    (activePlugin?.opts as { standalone?: boolean } | undefined)?.standalone,
-  )
+  const standalone = Boolean(activePlugin?.opts.standalone)
 
   return (
     <div

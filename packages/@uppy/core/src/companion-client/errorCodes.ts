@@ -3,7 +3,7 @@ import type locale from '../locale.js'
 type LocaleKey = keyof (typeof locale)['strings']
 
 /**
- * The error codes Companion reports (`{ code }` in a 400 body), each mapped to
+ * The error codes Companion reports (`{ code }` in a 4xx body), each mapped to
  * the locale string that describes it to the user.
  *
  * TODO: derive the codes from `@uppy/companion` (`ProviderErrorCode`) instead of

@@ -26,6 +26,9 @@ const getName = (id: string) => {
     .join(' ')
 }
 
+/** Where Companion put an item it moved or created. */
+type MutatedItem = { id: string; requestPath: string }
+
 function getOrigin() {
   return location.origin
 }
@@ -399,8 +402,8 @@ export default class Provider<
     id: string,
     destination: string,
     options?: RequestOptions,
-  ): Promise<{ id: string; requestPath: string }> {
-    return this.post<{ id: string; requestPath: string }>(
+  ): Promise<MutatedItem> {
+    return this.post<MutatedItem>(
       `${this.id}/mutate/move`,
       { id, destination },
       options,
@@ -411,8 +414,8 @@ export default class Provider<
     parentId: string | null,
     name: string,
     options?: RequestOptions,
-  ): Promise<{ id: string; requestPath: string }> {
-    return this.post<{ id: string; requestPath: string }>(
+  ): Promise<MutatedItem> {
+    return this.post<MutatedItem>(
       `${this.id}/mutate/create-folder`,
       { parentId, name },
       options,

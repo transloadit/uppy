@@ -3,6 +3,7 @@ import type { h } from 'preact'
 import { useEffect, useId, useRef, useState } from 'preact/hooks'
 import type { ProviderDialogState } from '../index.js'
 import type { I18n } from '../utils/index.js'
+import { stopEscapePropagation, useModalDialog } from './useModalDialog.js'
 
 type ProviderDialogProps = {
   dialog: ProviderDialogState
@@ -13,10 +14,8 @@ type ProviderDialogProps = {
 
 /**
  * Inline replacement for `window.prompt` / `window.confirm`, driven by
- * `ProviderView.prompt()` / `.confirm()`. A native `<dialog>` opened with
- * `showModal()`: focus trap, Escape (the `cancel` event), `::backdrop` and
- * focus restore come from the browser. Engines without `showModal` get the
- * same dialog inline, without the trap.
+ * `ProviderView.prompt()` / `.confirm()`, as a native modal `<dialog>` (see
+ * `useModalDialog`).
  */
 export default function ProviderDialog({
   dialog,
@@ -34,11 +33,8 @@ export default function ProviderDialog({
   const isPrompt = dialog.kind === 'prompt'
   const danger = dialog.kind === 'confirm' && dialog.danger === true
 
+  useModalDialog(dialogRef)
   useEffect(() => {
-    const el = dialogRef.current
-    if (!el) return
-    if (typeof el.showModal === 'function') el.showModal()
-    else el.setAttribute('open', '')
     ;(inputRef.current ?? confirmRef.current)?.focus()
     inputRef.current?.select()
   }, [])
@@ -52,11 +48,7 @@ export default function ProviderDialog({
       onClick={(event) => {
         if (event.target === event.currentTarget) onCancel()
       }}
-      onKeyDown={(event) => {
-        // The browser closes the dialog on Escape; only keep the Dashboard from
-        // treating the same key press as "close the modal".
-        if (event.key === 'Escape') event.stopPropagation()
-      }}
+      onKeyDown={stopEscapePropagation}
     >
       <form
         className="uppy-ProviderDialog-form"

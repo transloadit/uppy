@@ -429,7 +429,6 @@
 // Item actions ("⋯" menu) and header toolbar, used when a provider view is
 // configured with `actions` / `toolbarActions`.
 .uppy-ProviderBrowserItem-actions {
-  position: relative;
   flex-shrink: 0;
   margin-left: auto;
 }
@@ -500,6 +499,12 @@
       background-color: variables.$gray-700;
     }
   }
+
+  // Destructive entries, in both themes.
+  &--danger,
+  [data-uppy-theme='dark'] &--danger {
+    color: var(--uppy-color-danger, #{variables.$red});
+  }
 }
 
 .uppy-ProviderBrowser-toolbar {
@@ -559,12 +564,17 @@
   padding: 18px 20px;
 }
 
-.uppy-ProviderDialog-title {
-  margin: 0 0 12px;
+.uppy-ProviderDialog-title,
+.uppy-ItemDetail-name {
+  margin: 0;
   font-weight: 600;
   font-size: 15px;
   line-height: 1.3;
   overflow-wrap: anywhere;
+}
+
+.uppy-ProviderDialog-title {
+  margin-bottom: 12px;
 }
 
 .uppy-ProviderDialog-label {
@@ -573,14 +583,18 @@
   font-size: 13px;
 }
 
-.uppy-ProviderDialog-labelText {
-  display: block;
-  margin-bottom: 6px;
+.uppy-ProviderDialog-labelText,
+.uppy-ProviderDialog-message {
   color: variables.$gray-700;
 
   [data-uppy-theme='dark'] & {
     color: variables.$gray-300;
   }
+}
+
+.uppy-ProviderDialog-labelText {
+  display: block;
+  margin-bottom: 6px;
 }
 
 .uppy-ProviderDialog-input {
@@ -589,13 +603,8 @@
 
 .uppy-ProviderDialog-message {
   margin: 0 0 14px;
-  color: variables.$gray-700;
   font-size: 13px;
   line-height: 1.4;
-
-  [data-uppy-theme='dark'] & {
-    color: variables.$gray-300;
-  }
 }
 
 .uppy-ProviderDialog-actions {
@@ -634,11 +643,6 @@
 
 .uppy-ItemDetail-name {
   flex: 1;
-  margin: 0;
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 1.3;
-  overflow-wrap: anywhere;
 }
 
 .uppy-ItemDetail-close {
@@ -753,6 +757,17 @@
     background-color: variables.$gray-100;
   }
 
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-200;
+    background-color: variables.$gray-800;
+    border-color: variables.$gray-600;
+
+    &:not(:disabled):hover {
+      background-color: variables.$gray-700;
+    }
+  }
+
+  // After the theme colours, so destructive actions stay red in both.
   &.uppy-ItemDetail-action--danger {
     color: var(--uppy-color-danger, #{variables.$red});
     border-color: rgba(variables.$red, 0.4);
@@ -771,17 +786,6 @@
       );
     }
   }
-
-  [data-uppy-theme='dark'] & {
-    color: variables.$gray-200;
-    background-color: variables.$gray-800;
-    border-color: variables.$gray-600;
-  }
-}
-
-// Manager mode: destructive entries in the "..." menu.
-.uppy-ProviderBrowserItem-actionsMenuItem--danger {
-  color: var(--uppy-color-danger, #{variables.$red});
 }
 
 // Manager mode: the bulk-selection footer.
