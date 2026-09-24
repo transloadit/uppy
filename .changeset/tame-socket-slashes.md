@@ -2,4 +2,4 @@
 "@uppy/core": patch
 ---
 
-Strip trailing slashes from `companionUrl` when building the websocket URL, so a `companionUrl` ending in `/` no longer produces `ws://host//api/...` and breaks remote uploads.
+Strip all trailing slashes from `companionUrl` (previously only one was stripped for HTTP requests, and none for websockets), so a `companionUrl` ending in `/` no longer produces `ws://host//api/...` and breaks remote uploads.
