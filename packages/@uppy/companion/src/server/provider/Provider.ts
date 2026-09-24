@@ -114,10 +114,6 @@ export interface ProviderSimpleAuthOptions {
   requestBody: unknown
 }
 
-interface ProviderGrantDynamicToUserSessionOptions {
-  grantDynamic: GrantDynamic
-}
-
 /**
  * Provider interface defines the specifications of any provider implementation
  */
@@ -243,9 +239,9 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession(
-    options: ProviderGrantDynamicToUserSessionOptions,
-  ): Record<string, unknown> {
+  static grantDynamicToUserSession(options: {
+    grantDynamic: GrantDynamic
+  }): Record<string, unknown> {
     return {}
   }
 
