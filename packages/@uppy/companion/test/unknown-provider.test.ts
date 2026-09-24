@@ -4,11 +4,8 @@ import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 
-// The provider param middleware must always hand the request on. Before this
-// test existed, an unknown provider name left the request without a response
-// (the middleware returned without calling `next()`), so clients hung until
-// their own timeout instead of getting the 400 that `hasSessionAndProvider`
-// sends.
+// The provider param middleware must always call `next()`, so that
+// `hasSessionAndProvider` answers 400 instead of the request hanging.
 describe('unknown provider', () => {
   test.each([
     '/nonexistent/list/',
