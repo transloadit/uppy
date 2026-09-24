@@ -162,6 +162,42 @@ describe('Transloadit Storage in the browser', () => {
     }
   })
 
+  it('takes files dropped on its panel when it stores uploads', async ({
+    worker,
+  }) => {
+    worker.use(
+      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
+        http,
+      }),
+    )
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    uppy = new Uppy()
+      .use(FixtureUploader, {})
+      .use(Dashboard, { target, inline: true })
+      .use(TransloaditStorage, {
+        companionUrl: COMPANION,
+        storeUploads: {
+          signAssembly: async (params) => ({ params, signature: 'test' }),
+        },
+      })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+
+    const dataTransfer = new DataTransfer()
+    dataTransfer.items.add(new File(['hi'], 'dropped.txt'))
+    const panel = document.querySelector('[data-uppy-panelType="PickerPanel"]')
+    if (!panel) throw new Error('Missing picker panel')
+    for (const type of ['dragover', 'drop']) {
+      panel.dispatchEvent(
+        new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }),
+      )
+    }
+    await expect
+      .poll(() => uppy?.getFiles().map((file) => file.name))
+      .toEqual(['dropped.txt'])
+  })
+
   it('renames a folder in one native move instead of walking it', async ({
     worker,
   }) => {

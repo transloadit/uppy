@@ -32,12 +32,21 @@ function PickerPanelContent<M extends Meta, B extends Body>({
 }: PickerPanelContentProps<M, B>): ComponentChildren {
   const ref = useRef<HTMLDivElement>(null)
   const activePlugin = uppy.getPlugin(activePickerPanel.id) as
-    | UIPlugin<UIPluginOptions & { standalone?: boolean }, M, B>
+    | (UIPlugin<UIPluginOptions & { standalone?: boolean }, M, B> & {
+        acceptsFileDrops?: boolean
+      })
     | undefined
   // A plugin that is the whole page (a file library rather than a picker)
   // asks for no chrome: the page around it owns the heading, and there is
   // nothing to cancel.
   const standalone = Boolean(activePlugin?.opts.standalone)
+  // Files dropped on a picker would be uploaded somewhere else than what it
+  // shows, so a panel ignores them, unless its plugin stores what is dropped
+  // on it (a storage library uploading into its open folder): then the
+  // Dashboard takes the drop as it would anywhere else.
+  const dropHandlers = activePlugin?.acceptsFileDrops
+    ? {}
+    : { onDragOver: ignoreEvent, onDragLeave: ignoreEvent, onDrop: ignoreEvent }
 
   return (
     <div
@@ -45,9 +54,7 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
       id={`uppy-DashboardContent-panel--${activePickerPanel.id}`}
-      onDragOver={ignoreEvent}
-      onDragLeave={ignoreEvent}
-      onDrop={ignoreEvent}
+      {...dropHandlers}
       onPaste={ignoreEvent}
     >
       {!standalone && (

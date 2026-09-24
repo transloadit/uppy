@@ -134,6 +134,15 @@ export default class TransloaditStorage<
     this.icon = () => <StorageIcon color="#0d8ceb" />
   }
 
+  /**
+   * With `storeUploads`, files dropped on the panel are stored in the folder
+   * that is open, so the Dashboard accepts drops there (see its
+   * `PickerPanelContent`).
+   */
+  get acceptsFileDrops(): boolean {
+    return this.opts.storeUploads != null && this.canWrite
+  }
+
   override builtInActions(): ProviderAction<M, B>[] {
     const { getSmartCdnUrl, getDownloadUrl } = this.opts
     const actions = super.builtInActions()
