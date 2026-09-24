@@ -17,7 +17,7 @@ import type {
 } from '../../Provider.js'
 import Provider from '../../Provider.js'
 import { withGoogleErrorHandling } from '../../providerErrors.js'
-import { logout, refreshToken } from '../index.js'
+import { type GoogleUserSession, logout, refreshToken } from '../index.js'
 import {
   adaptData,
   type DriveAbout,
@@ -143,14 +143,10 @@ export async function streamGoogleFile({
   return { stream, size }
 }
 
-export interface DriveUserSession {
-  accessToken: string
-}
-
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
-export class Drive extends Provider<DriveUserSession> {
+export class Drive extends Provider<GoogleUserSession> {
   static override get oauthProvider() {
     return 'googledrive'
   }
@@ -162,7 +158,7 @@ export class Drive extends Provider<DriveUserSession> {
   // Define these as real methods (not prototype assignment), so we don't risk
   // instance fields shadowing the prototype in downlevel transpiles.
   override logout(
-    args: ProviderLogoutOptions<DriveUserSession>,
+    args: ProviderLogoutOptions<GoogleUserSession>,
   ): Promise<ProviderLogoutResponse> {
     return logout(args)
   }
@@ -177,7 +173,7 @@ export class Drive extends Provider<DriveUserSession> {
     directory: directoryIn,
     providerUserSession: { accessToken: token },
     query,
-  }: ProviderListOptions<DriveUserSession>): Promise<ProviderListResponse> {
+  }: ProviderListOptions<GoogleUserSession>): Promise<ProviderListResponse> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.list.error',
@@ -280,7 +276,7 @@ export class Drive extends Provider<DriveUserSession> {
   override async download({
     id,
     providerUserSession: { accessToken: token },
-  }: ProviderDownloadOptions<DriveUserSession>): Promise<ProviderDownloadResponse> {
+  }: ProviderDownloadOptions<GoogleUserSession>): Promise<ProviderDownloadResponse> {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 
