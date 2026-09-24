@@ -8,15 +8,14 @@ import {
   ProviderAuthError,
   ProviderUserError,
 } from '../error.js'
-import type {
-  ProviderDownloadOptions,
-  ProviderDownloadResponse,
-  ProviderListOptions,
-  ProviderListResponse,
-  ProviderLogoutResponse,
-  ProviderSimpleAuthOptions,
+import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
+  type ProviderListResponse,
+  type ProviderLogoutResponse,
+  type ProviderSimpleAuthOptions,
 } from '../Provider.js'
-import Provider from '../Provider.js'
 
 const defaultDirectory = '/'
 

@@ -3,16 +3,15 @@ import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
 import { HttpError, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
-import type {
-  ProviderDownloadOptions,
-  ProviderDownloadResponse,
-  ProviderListOptions,
-  ProviderListResponse,
-  ProviderLogoutOptions,
-  ProviderLogoutResponse,
-  ProviderThumbnailResponse,
+import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
+  type ProviderListResponse,
+  type ProviderLogoutOptions,
+  type ProviderLogoutResponse,
+  type ProviderThumbnailResponse,
 } from '../Provider.js'
-import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import { adaptData, type FacebookListResponse, sortImages } from './adapter.js'
 

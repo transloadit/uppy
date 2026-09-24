@@ -1,6 +1,5 @@
 import type { Readable } from 'node:stream'
 import type {
-  BuildUrl,
   CompanionContext,
   GrantDynamic,
   ProviderGrantConfig,
@@ -46,7 +45,7 @@ export interface ProviderListResponse {
 export interface ProviderSearchOptions<US = unknown> {
   providerUserSession: US
   query: { q: string; path?: string; [k: string]: unknown }
-  companion: { buildURL: BuildUrl }
+  companion: Required<Pick<CompanionContext, 'buildURL'>>
 }
 
 export type ProviderSearchResponse = ProviderListResponse
@@ -115,10 +114,6 @@ export interface ProviderSimpleAuthOptions {
   requestBody: unknown
 }
 
-interface ProviderGrantDynamicToUserSessionOptions {
-  grantDynamic: GrantDynamic
-}
-
 /**
  * Provider interface defines the specifications of any provider implementation
  */
@@ -166,7 +161,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async search(
-    options: ProviderSearchOptions,
+    options: ProviderSearchOptions<US>,
   ): Promise<ProviderSearchResponse> {
     throw new Error('method not implemented')
   }
@@ -244,9 +239,9 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession(
-    options: ProviderGrantDynamicToUserSessionOptions,
-  ): Record<string, unknown> {
+  static grantDynamicToUserSession(options: {
+    grantDynamic: GrantDynamic
+  }): Record<string, unknown> {
     return {}
   }
 

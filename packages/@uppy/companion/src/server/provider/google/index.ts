@@ -6,11 +6,14 @@ import type {
   ProviderRefreshTokenResponse,
 } from '../Provider.js'
 import { withGoogleErrorHandling } from '../providerErrors.js'
-import type { DriveUserSession } from './drive/index.js'
 
 /**
  * Reusable google stuff
  */
+
+export interface GoogleUserSession {
+  accessToken: string
+}
 
 const getOauthClient = () =>
   got.extend({
@@ -48,7 +51,7 @@ export async function refreshToken({
 
 export async function logout({
   providerUserSession: { accessToken: token },
-}: ProviderLogoutOptions<DriveUserSession>): Promise<ProviderLogoutResponse> {
+}: ProviderLogoutOptions<GoogleUserSession>): Promise<ProviderLogoutResponse> {
   return withGoogleErrorHandling(
     'google',
     'provider.google.logout.error',

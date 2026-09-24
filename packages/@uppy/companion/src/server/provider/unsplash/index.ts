@@ -2,13 +2,12 @@ import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'
 import { ProviderApiError } from '../error.js'
-import type {
-  ProviderDownloadOptions,
-  ProviderDownloadResponse,
-  ProviderListOptions,
-  ProviderListResponse,
+import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
+  type ProviderListResponse,
 } from '../Provider.js'
-import Provider from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
