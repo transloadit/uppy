@@ -6142,7 +6142,7 @@ __metadata:
     "@uppy/tus": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.11"
     component-emitter: "npm:^2.0.0"
-    msw: "npm:^2.10.4"
+    msw: "npm:^2.15.0"
     playwright: "npm:1.61.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.11"
@@ -6272,7 +6272,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.11"
-    msw: "npm:^2.10.4"
+    msw: "npm:^2.15.0"
     playwright: "npm:1.61.1"
     typescript: "npm:^6.0.3"
     vitest: "npm:^4.1.11"
@@ -8820,7 +8820,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-react": "npm:^6.1.0"
     "@vitest/browser-playwright": "npm:^4.1.11"
-    msw: "npm:^2.10.4"
+    msw: "npm:^2.15.0"
     playwright: "npm:1.61.1"
     react: "npm:^19.2.8"
     react-dom: "npm:^19.0.0"
@@ -8877,7 +8877,7 @@ __metadata:
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@vitest/browser-playwright": "npm:^4.1.11"
-    msw: "npm:^2.10.4"
+    msw: "npm:^2.15.0"
     playwright: "npm:1.61.1"
     svelte: "npm:^5.56.5"
     svelte-check: "npm:^4.7.6"
@@ -8922,7 +8922,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-vue": "npm:^6.0.1"
     "@vitest/browser-playwright": "npm:^4.1.11"
-    msw: "npm:^2.10.4"
+    msw: "npm:^2.15.0"
     playwright: "npm:1.61.1"
     tailwindcss: "npm:^4.0.0"
     vite: "npm:^8.2.2"
@@ -11721,7 +11721,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^2.10.4":
+"msw@npm:^2.15.0":
   version: 2.15.0
   resolution: "msw@npm:2.15.0"
   dependencies:
