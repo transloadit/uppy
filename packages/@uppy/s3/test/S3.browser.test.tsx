@@ -571,6 +571,72 @@ describe('S3 provider in the browser', () => {
     )
   })
 
+  /**
+   * Opens the details of readme.md in a manager inside a Dashboard *modal*
+   * (the inline harness never hits the Dashboard's document-level Escape
+   * handler); resolves to a spy on the modal closing.
+   */
+  async function openDetailsInDashboardModal(worker: SetupWorker) {
+    serveCompanion(worker)
+    uppy = new Uppy()
+      .use(Dashboard, { inline: false })
+      .use(S3, { companionUrl: COMPANION, mode: 'manager' })
+    // The close is animated, so watch for the request rather than the state.
+    const modalClosed = vi.fn()
+    uppy.on('dashboard:modal-closed', modalClosed)
+    uppy
+      .getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
+        'Dashboard',
+      )
+      ?.openModal()
+    await openBucket()
+    await page.getByRole('button', { name: 'Open readme.md' }).click()
+    await expect
+      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .toBeVisible()
+    return modalClosed
+  }
+
+  it('closes the item detail dialog with Escape without closing the Dashboard modal', async ({
+    worker,
+  }) => {
+    const modalClosed = await openDetailsInDashboardModal(worker)
+
+    await userEvent.keyboard('{Escape}')
+    await expect
+      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .not.toBeInTheDocument()
+    // The same key press must not fall through to the Dashboard's own Escape handler.
+    expect(modalClosed).not.toHaveBeenCalled()
+  })
+
+  it('closes the item detail dialog with Escape on engines without showModal()', async ({
+    worker,
+  }) => {
+    // Safari < 15.4 has no showModal(); the dialog then opens non-modal and
+    // never fires `cancel` on Escape.
+    const showModal = Object.getOwnPropertyDescriptor(
+      HTMLDialogElement.prototype,
+      'showModal',
+    )
+    if (!showModal) throw new Error('Expected a native showModal()')
+    Object.defineProperty(HTMLDialogElement.prototype, 'showModal', {
+      value: undefined,
+      configurable: true,
+    })
+    try {
+      const modalClosed = await openDetailsInDashboardModal(worker)
+
+      await userEvent.keyboard('{Escape}')
+      await expect
+        .element(page.getByRole('dialog', { name: 'readme.md' }))
+        .not.toBeInTheDocument()
+      expect(modalClosed).not.toHaveBeenCalled()
+    } finally {
+      Object.defineProperty(HTMLDialogElement.prototype, 'showModal', showModal)
+    }
+  })
+
   it('creates a folder through the inline dialog and refreshes the listing', async ({
     worker,
   }) => {

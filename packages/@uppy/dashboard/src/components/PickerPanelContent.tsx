@@ -9,7 +9,11 @@ import type {
 import type { I18n } from '@uppy/core/utils'
 import { useRef } from '@uppy/core/utils/preact/hooks'
 import classNames from 'classnames'
-import type { ComponentChildren, MouseEventHandler } from 'preact'
+import type {
+  ComponentChildren,
+  MouseEventHandler,
+  TargetedDragEvent,
+} from 'preact'
 import type { DashboardState } from '../Dashboard.js'
 import ignoreEvent from '../utils/ignoreEvent.js'
 
@@ -46,7 +50,17 @@ function PickerPanelContent<M extends Meta, B extends Body>({
   // Dashboard takes the drop as it would anywhere else.
   const dropHandlers = activePlugin?.acceptsFileDrops
     ? {}
-    : { onDragOver: ignoreEvent, onDragLeave: ignoreEvent, onDrop: ignoreEvent }
+    : {
+        onDragOver: (event: TargetedDragEvent<HTMLDivElement>) => {
+          ignoreEvent(event)
+          // Where that blocked the drop (anywhere but a text field), don't
+          // show the copy cursor that promises one.
+          if (event.defaultPrevented && event.dataTransfer)
+            event.dataTransfer.dropEffect = 'none'
+        },
+        onDragLeave: ignoreEvent,
+        onDrop: ignoreEvent,
+      }
 
   return (
     <div
