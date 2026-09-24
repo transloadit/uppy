@@ -1,3 +1,4 @@
+import classNames from 'classnames'
 import type { h, RefObject } from 'preact'
 import {
   useCallback,
@@ -6,21 +7,25 @@ import {
   useRef,
   useState,
 } from 'preact/hooks'
-import type { PartialTreeFile, PartialTreeFolderNode } from '../../../index.js'
+import type {
+  Body,
+  Meta,
+  PartialTreeFile,
+  PartialTreeFolderNode,
+} from '../../../index.js'
 import type { I18n } from '../../../utils/index.js'
+import { stopEscapePropagation } from '../../ModalDialog.js'
+import type ProviderView from '../../ProviderView/ProviderView.js'
 import type { ProviderAction } from '../../ProviderView/ProviderView.js'
 
-type ItemActionsPopoverProps = {
+type ItemActionsPopoverProps<M extends Meta, B extends Body> = {
   file: PartialTreeFile | PartialTreeFolderNode
-  actions: ProviderAction<any, any>[]
+  actions: ProviderAction<M, B>[]
   /** The "⋯" button the menu belongs to. */
   anchor: HTMLElement
   /** The scrolling list; scrolling it would leave the menu behind. */
   containerRef: RefObject<HTMLElement>
-  runAction: (
-    action: ProviderAction<any, any>,
-    file: PartialTreeFile | PartialTreeFolderNode,
-  ) => void
+  runAction: ProviderView<M, B>['runAction']
   onClose: () => void
   i18n: I18n
 }
@@ -34,7 +39,7 @@ const GAP = 4
  * return are the browser's; arrow keys move between entries. Engines without
  * the Popover API get a plain positioned menu that closes on Escape/Tab/action.
  */
-export default function ItemActionsPopover({
+export default function ItemActionsPopover<M extends Meta, B extends Body>({
   file,
   actions,
   anchor,
@@ -42,17 +47,17 @@ export default function ItemActionsPopover({
   runAction,
   onClose,
   i18n,
-}: ItemActionsPopoverProps): h.JSX.Element {
+}: ItemActionsPopoverProps<M, B>): h.JSX.Element {
   const menuRef = useRef<HTMLDivElement>(null)
   const [position, setPosition] = useState<{
     top: number
     right: number
   } | null>(null)
 
-  // Position from the trigger's live viewport rect. Measured only while the
-  // menu is actually rendered (a closed `[popover]` is display:none and
-  // reports height 0, which would break the flip), and re-measured whenever
-  // the page scrolls or resizes so the menu never detaches from its trigger.
+  // Position from the trigger's live viewport rect, re-measured whenever the
+  // page scrolls or resizes so the menu never detaches from its trigger. The
+  // flip needs the menu's height, which a closed `[popover]` (display: none)
+  // reports as 0.
   const reposition = useCallback(() => {
     const menu = menuRef.current
     if (!menu) return
@@ -65,6 +70,9 @@ export default function ItemActionsPopover({
     })
   }, [anchor])
 
+  // A first placement before paint, which also lifts `visibility: hidden` so
+  // the effect below can focus an entry; that effect measures again once the
+  // popover is shown.
   useLayoutEffect(reposition, [reposition])
 
   useEffect(() => {
@@ -121,9 +129,8 @@ export default function ItemActionsPopover({
     }
     switch (event.key) {
       case 'Escape':
-        // The browser hides the popover; keep the Dashboard from treating the
-        // same key press as "close the modal".
-        event.stopPropagation()
+        // The browser hides a popover itself.
+        stopEscapePropagation(event)
         if (typeof menuRef.current?.hidePopover !== 'function')
           closeAndRefocus()
         break
@@ -167,11 +174,10 @@ export default function ItemActionsPopover({
           key={action.id}
           type="button"
           role="menuitem"
-          className={`uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-actionsMenuItem${
-            action.danger
-              ? ' uppy-ProviderBrowserItem-actionsMenuItem--danger'
-              : ''
-          }`}
+          className={classNames(
+            'uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-actionsMenuItem',
+            action.danger && 'uppy-ProviderBrowserItem-actionsMenuItem--danger',
+          )}
           onClick={(event) => {
             event.stopPropagation()
             event.preventDefault()

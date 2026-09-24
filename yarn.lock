@@ -5536,6 +5536,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy-dev/s3-mock-companion@workspace:^, @uppy-dev/s3-mock-companion@workspace:private/s3-mock-companion":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/s3-mock-companion@workspace:private/s3-mock-companion"
+  dependencies:
+    "@transloadit/utils": "npm:^4.8.0"
+    "@uppy-dev/tsconfig": "workspace:^"
+    "@uppy/core": "workspace:^"
+    typescript: "npm:^6.0.3"
+  languageName: unknown
+  linkType: soft
+
 "@uppy-dev/tsconfig@workspace:^, @uppy-dev/tsconfig@workspace:private/tsconfig":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/tsconfig@workspace:private/tsconfig"
@@ -6060,6 +6071,7 @@ __metadata:
   resolution: "@uppy/s3@workspace:packages/@uppy/s3"
   dependencies:
     "@transloadit/utils": "npm:^4.8.0"
+    "@uppy-dev/s3-mock-companion": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -6163,6 +6175,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage"
   dependencies:
+    "@uppy-dev/s3-mock-companion": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"

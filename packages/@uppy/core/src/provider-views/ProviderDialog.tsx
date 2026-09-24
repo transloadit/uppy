@@ -3,6 +3,7 @@ import type { h } from 'preact'
 import { useEffect, useId, useRef, useState } from 'preact/hooks'
 import type { ProviderDialogState } from '../index.js'
 import type { I18n } from '../utils/index.js'
+import ModalDialog from './ModalDialog.js'
 
 type ProviderDialogProps = {
   dialog: ProviderDialogState
@@ -13,10 +14,7 @@ type ProviderDialogProps = {
 
 /**
  * Inline replacement for `window.prompt` / `window.confirm`, driven by
- * `ProviderView.prompt()` / `.confirm()`. A native `<dialog>` opened with
- * `showModal()`: focus trap, Escape (the `cancel` event), `::backdrop` and
- * focus restore come from the browser. Engines without `showModal` get the
- * same dialog inline, without the trap.
+ * `ProviderView.prompt()` / `.confirm()`, as a {@link ModalDialog}.
  */
 export default function ProviderDialog({
   dialog,
@@ -27,7 +25,6 @@ export default function ProviderDialog({
   const [value, setValue] = useState(
     dialog.kind === 'prompt' ? (dialog.defaultValue ?? '') : '',
   )
-  const dialogRef = useRef<HTMLDialogElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
   const titleId = useId()
@@ -35,28 +32,15 @@ export default function ProviderDialog({
   const danger = dialog.kind === 'confirm' && dialog.danger === true
 
   useEffect(() => {
-    const el = dialogRef.current
-    if (!el) return
-    if (typeof el.showModal === 'function') el.showModal()
-    else el.setAttribute('open', '')
     ;(inputRef.current ?? confirmRef.current)?.focus()
     inputRef.current?.select()
   }, [])
 
   return (
-    <dialog
-      ref={dialogRef}
+    <ModalDialog
       className="uppy-ProviderDialog"
       aria-labelledby={titleId}
-      onCancel={onCancel}
-      onClick={(event) => {
-        if (event.target === event.currentTarget) onCancel()
-      }}
-      onKeyDown={(event) => {
-        // The browser closes the dialog on Escape; only keep the Dashboard from
-        // treating the same key press as "close the modal".
-        if (event.key === 'Escape') event.stopPropagation()
-      }}
+      onDismiss={onCancel}
     >
       <form
         className="uppy-ProviderDialog-form"
@@ -110,6 +94,6 @@ export default function ProviderDialog({
           </button>
         </div>
       </form>
-    </dialog>
+    </ModalDialog>
   )
 }

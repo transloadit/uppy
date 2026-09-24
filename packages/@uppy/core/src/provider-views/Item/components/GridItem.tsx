@@ -29,6 +29,14 @@ function GridItem({
   selectable = true,
   onFileClick,
 }: GridItemProps): h.JSX.Element {
+  const name = file.data.name ?? i18n('unnamed')
+  const content = (
+    <>
+      <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
+      {showTitles && name}
+      {children}
+    </>
+  )
   return (
     <li
       className={className}
@@ -49,25 +57,19 @@ function GridItem({
       {!selectable && onFileClick && !file.data.isFolder ? (
         <button
           type="button"
-          aria-label={i18n('openFileNamed', {
-            name: file.data.name ?? i18n('unnamed'),
-          })}
+          aria-label={i18n('openFileNamed', { name })}
           className="uppy-u-reset uppy-ProviderBrowserItem-inner"
           onClick={() => onFileClick(file)}
         >
-          <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
-          {showTitles && (file.data.name ?? i18n('unnamed'))}
-          {children}
+          {content}
         </button>
       ) : (
         <label
           htmlFor={selectable ? file.id : undefined}
-          aria-label={file.data.name ?? i18n('unnamed')}
+          aria-label={name}
           className="uppy-u-reset uppy-ProviderBrowserItem-inner"
         >
-          <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
-          {showTitles && (file.data.name ?? i18n('unnamed'))}
-          {children}
+          {content}
         </label>
       )}
       {actionsMenu}

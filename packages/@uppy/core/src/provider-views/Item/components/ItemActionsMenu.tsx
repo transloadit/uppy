@@ -1,30 +1,35 @@
 import type { h } from 'preact'
-import type { PartialTreeFile, PartialTreeFolderNode } from '../../../index.js'
+import type {
+  Body,
+  Meta,
+  PartialTreeFile,
+  PartialTreeFolderNode,
+} from '../../../index.js'
 import type { I18n } from '../../../utils/index.js'
 import type { ProviderAction } from '../../ProviderView/ProviderView.js'
 
+/** What deciding whether an action applies to an item needs. */
+type Applicable = Pick<ProviderAction<Meta, Body>, 'appliesTo'>
+
 type ItemActionsMenuProps = {
   file: PartialTreeFile | PartialTreeFolderNode
-  actions: ProviderAction<any, any>[]
+  actions: Applicable[]
   open: boolean
   onToggle: (anchor: HTMLElement) => void
   i18n: I18n
 }
 
 const appliesToItem = (
-  action: ProviderAction<any, any>,
+  { appliesTo = 'all' }: Applicable,
   file: PartialTreeFile | PartialTreeFolderNode,
-): boolean => {
-  const appliesTo = action.appliesTo ?? 'all'
-  if (appliesTo === 'all') return true
-  return appliesTo === 'folder' ? file.data.isFolder : !file.data.isFolder
-}
+): boolean =>
+  appliesTo === 'all' || appliesTo === (file.data.isFolder ? 'folder' : 'file')
 
 /** The actions from `actions` that apply to this item (file vs folder). */
-export function getApplicableActions(
-  actions: ProviderAction<any, any>[],
+export function getApplicableActions<A extends Applicable>(
+  actions: A[],
   file: PartialTreeFile | PartialTreeFolderNode,
-): ProviderAction<any, any>[] {
+): A[] {
   return actions.filter((action) => appliesToItem(action, file))
 }
 

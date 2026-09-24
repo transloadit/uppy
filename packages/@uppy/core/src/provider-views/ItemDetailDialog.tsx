@@ -1,6 +1,7 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
+import classNames from 'classnames'
 import type { h } from 'preact'
-import { useEffect, useRef, useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import type {
   Body,
   Meta,
@@ -10,27 +11,24 @@ import type {
 import type { I18n } from '../utils/index.js'
 import { getApplicableActions } from './Item/components/ItemActionsMenu.js'
 import ItemIcon from './Item/components/ItemIcon.js'
-import type { ProviderAction } from './ProviderView/ProviderView.js'
+import ModalDialog from './ModalDialog.js'
+import type ProviderView from './ProviderView/ProviderView.js'
+import type { Opts, ProviderAction } from './ProviderView/ProviderView.js'
 
 type ItemDetailDialogProps<M extends Meta, B extends Body> = {
   item: PartialTreeFile | PartialTreeFolderNode
   actions: ProviderAction<M, B>[]
-  runAction: (
-    action: ProviderAction<M, B>,
-    item: PartialTreeFile | PartialTreeFolderNode,
-  ) => void
+  runAction: ProviderView<M, B>['runAction']
   /** Resolves a preview image URL for a file (e.g. a signed thumbnail URL). */
-  getPreviewUrl?: (
-    item: PartialTreeFile | PartialTreeFolderNode,
-  ) => Promise<string>
+  getPreviewUrl?: Opts<M, B>['getPreviewUrl']
   onClose: () => void
   i18n: I18n
 }
 
 /**
- * The detail view of one item in manager mode: a native modal with a preview,
- * the item's metadata, and the same actions the "…" menu offers (they are the
- * one shared list). Closing restores focus per the browser's dialog semantics.
+ * The detail view of one item in manager mode: a {@link ModalDialog} with a
+ * preview, the item's metadata, and the same actions the "…" menu offers (they
+ * are the one shared list).
  */
 export default function ItemDetailDialog<M extends Meta, B extends Body>({
   item,
@@ -40,26 +38,18 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   onClose,
   i18n,
 }: ItemDetailDialogProps<M, B>): h.JSX.Element {
-  const dialogRef = useRef<HTMLDialogElement>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  // The item as the dialog opened: a listing update replaces the `item` object
+  // but not the preview (another item gets a new dialog; see its `key`).
+  const [previewItem] = useState(item)
 
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog) return
-    if (typeof dialog.showModal === 'function') dialog.showModal()
-    else {
-      // No focus trap without showModal(): put focus on the close button
-      // ourselves so Escape reaches this dialog and not the page behind it.
-      dialog.setAttribute('open', '')
-      dialog.querySelector<HTMLButtonElement>('button')?.focus()
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!getPreviewUrl || item.data.isFolder) return
+    if (!getPreviewUrl || previewItem.data.isFolder) return
     let cancelled = false
-    // `Promise.resolve`: a JavaScript integrator may return any thenable.
-    Promise.resolve(getPreviewUrl(item))
+    // Inside `then`: a JavaScript integrator may throw synchronously or return
+    // any thenable.
+    Promise.resolve()
+      .then(() => getPreviewUrl(previewItem))
       .then((url) => {
         if (!cancelled) setPreviewUrl(url)
       })
@@ -69,7 +59,7 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
     return () => {
       cancelled = true
     }
-  }, [getPreviewUrl, item])
+  }, [getPreviewUrl, previewItem])
 
   const name = item.data.name ?? i18n('unnamed')
   const applicable = getApplicableActions(actions, item)
@@ -80,24 +70,10 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   const modified = file?.modifiedDate
 
   return (
-    <dialog
-      ref={dialogRef}
+    <ModalDialog
       className="uppy-ProviderDialog uppy-ItemDetail"
       aria-label={name}
-      onCancel={(event) => {
-        event.preventDefault()
-        onClose()
-      }}
-      onKeyDown={(event) => {
-        if (event.key !== 'Escape') return
-        // Close it here rather than through the `cancel` event, which only a
-        // modal dialog fires, and keep the Dashboard from treating the same
-        // key press as "close the modal".
-        event.preventDefault()
-        event.stopPropagation()
-        onClose()
-      }}
-      onClose={onClose}
+      onDismiss={onClose}
     >
       <header className="uppy-ItemDetail-header">
         <h3 className="uppy-ItemDetail-name">{name}</h3>
@@ -166,9 +142,10 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
           <button
             key={action.id}
             type="button"
-            className={`uppy-u-reset uppy-c-btn uppy-ItemDetail-action${
-              action.danger ? ' uppy-ItemDetail-action--danger' : ''
-            }`}
+            className={classNames(
+              'uppy-u-reset uppy-c-btn uppy-ItemDetail-action',
+              action.danger && 'uppy-ItemDetail-action--danger',
+            )}
             onClick={() => {
               onClose()
               runAction(action, item)
@@ -178,6 +155,6 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
           </button>
         ))}
       </footer>
-    </dialog>
+    </ModalDialog>
   )
 }

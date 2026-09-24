@@ -4,26 +4,40 @@ import {
   createMockS3Companion,
   mockGrant,
   toMswHandlers,
-} from '@uppy/s3/mockCompanion'
+} from '@uppy-dev/s3-mock-companion'
 import { http } from 'msw'
+import type { SetupWorker } from 'msw/browser'
 import { afterEach, beforeEach, describe, expect, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
-import TransloaditStorage from '../lib/TransloaditStorage.js'
+import TransloaditStorage, {
+  type TransloaditStorageOptions,
+} from '../lib/TransloaditStorage.js'
 import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
-const createMockCompanion = () =>
-  createMockS3Companion({ token: TOKEN, bucket: 'my-bucket' })
-// The mock serves the `transloadit-storage` provider under its own path, with
-// native folder moves — the only thing that differs from generic S3.
-const install = (
-  worker: { use: (...handlers: any[]) => void },
-  companion: ReturnType<typeof createMockCompanion>,
-) => worker.use(...toMswHandlers(companion, COMPANION, { http }))
+
+/**
+ * Serves a mock Companion and installs the plugin into an inline Dashboard.
+ * The mock serves the `transloadit-storage` provider under its own path, with
+ * native folder moves — the only thing that differs from generic S3.
+ */
+function setup(
+  worker: SetupWorker,
+  options: Partial<TransloaditStorageOptions> = {},
+) {
+  const companion = createMockS3Companion({ token: TOKEN })
+  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  const target = document.createElement('div')
+  document.body.appendChild(target)
+  uppy = new Uppy()
+    .use(Dashboard, { target, inline: true })
+    .use(TransloaditStorage, { companionUrl: COMPANION, ...options })
+  return companion
+}
 
 let uppy: Uppy | undefined
 
@@ -106,19 +120,12 @@ describe('Transloadit Storage in the browser', () => {
   it('Storage uses its own provider and keeps original downloads available to read-only users', async ({
     worker,
   }) => {
-    const companion = createMockCompanion()
-    install(worker, companion)
-    const target = document.createElement('div')
-    document.body.appendChild(target)
     const getDownloadUrl = vi.fn(async () => '/authorized-original/readme')
-    uppy = new Uppy()
-      .use(Dashboard, { target, inline: true })
-      .use(TransloaditStorage, {
-        companionUrl: COMPANION,
-        getGrant: async () =>
-          mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
-        getDownloadUrl,
-      })
+    const companion = setup(worker, {
+      getGrant: async () =>
+        mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
+      getDownloadUrl,
+    })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
     // Every request went to the plugin's own provider, never to /s3/.
@@ -155,18 +162,46 @@ describe('Transloadit Storage in the browser', () => {
     }
   })
 
-  it('renames a folder in one native move instead of walking it', async ({
+  it('takes files dropped on its panel when it stores uploads', async ({
     worker,
   }) => {
-    const companion = createMockCompanion()
-    install(worker, companion)
+    worker.use(
+      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
+        http,
+      }),
+    )
     const target = document.createElement('div')
     document.body.appendChild(target)
     uppy = new Uppy()
+      .use(FixtureUploader, {})
       .use(Dashboard, { target, inline: true })
       .use(TransloaditStorage, {
         companionUrl: COMPANION,
+        storeUploads: {
+          signAssembly: async (params) => ({ params, signature: 'test' }),
+        },
       })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+
+    const dataTransfer = new DataTransfer()
+    dataTransfer.items.add(new File(['hi'], 'dropped.txt'))
+    const panel = document.querySelector('[data-uppy-panelType="PickerPanel"]')
+    if (!panel) throw new Error('Missing picker panel')
+    for (const type of ['dragover', 'drop']) {
+      panel.dispatchEvent(
+        new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }),
+      )
+    }
+    await expect
+      .poll(() => uppy?.getFiles().map((file) => file.name))
+      .toEqual(['dropped.txt'])
+  })
+
+  it('renames a folder in one native move instead of walking it', async ({
+    worker,
+  }) => {
+    const companion = setup(worker)
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
 

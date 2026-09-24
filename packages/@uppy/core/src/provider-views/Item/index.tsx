@@ -1,6 +1,8 @@
 import classNames from 'classnames'
 import type { h } from 'preact'
 import type {
+  Body,
+  Meta,
   PartialTreeFile,
   PartialTreeFolderNode,
   PartialTreeId,
@@ -19,13 +21,10 @@ type ItemProps = {
   showTitles: boolean
   i18n: I18n
   utmSource: string
-  actions?: ProviderAction<any, any>[]
-  runAction?: (
-    action: ProviderAction<any, any>,
-    file: PartialTreeFile | PartialTreeFolderNode,
-  ) => void
+  actions?: Pick<ProviderAction<Meta, Body>, 'appliesTo'>[]
   menuOpen?: boolean
-  toggleMenu?: (anchor: HTMLElement) => void
+  /** Opens or closes this item's actions menu; no menu without it. */
+  toggleMenu?: ((anchor: HTMLElement) => void) | undefined
   selectable?: boolean
   onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
@@ -40,7 +39,6 @@ export default function Item(props: ItemProps): h.JSX.Element {
     file,
     utmSource,
     actions = [],
-    runAction,
     menuOpen = false,
     toggleMenu,
     selectable = true,
@@ -48,7 +46,7 @@ export default function Item(props: ItemProps): h.JSX.Element {
   } = props
 
   const actionsMenu =
-    actions.length > 0 && runAction && toggleMenu ? (
+    actions.length > 0 && toggleMenu ? (
       <ItemActionsMenu
         file={file}
         actions={actions}

@@ -16,6 +16,7 @@ import type {
   Uppy,
   ValidateableFile,
 } from '../../index.js'
+import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
 import { remoteFileObjToLocal } from '../../utils/index.js'
 import Browser from '../Browser.js'
@@ -88,6 +89,27 @@ type ProviderListResponse = {
   items: CompanionFile[]
 }
 
+/** `node` and its ancestors below the root, nearest first. */
+function lineage(
+  byId: Map<PartialTreeId, PartialTreeFile | PartialTreeFolder>,
+  node: PartialTreeFile | PartialTreeFolderNode,
+): (PartialTreeFile | PartialTreeFolderNode)[] {
+  const chain = [node]
+  let parent = byId.get(node.parentId)
+  while (parent && parent.type !== 'root') {
+    chain.push(parent)
+    parent = byId.get(parent.parentId)
+  }
+  return chain
+}
+
+/**
+ * What an action's `run` returns: `false` when it did nothing (a cancelled
+ * prompt), which keeps the current listing instead of refreshing it.
+ */
+// biome-ignore lint/suspicious/noConfusingVoidType: `run` may return nothing.
+type ActionResult = Promise<void | false> | void | false
+
 /** Context handed to a per-item action (rename, delete, copy URL, …). */
 export interface ProviderActionContext<M extends Meta, B extends Body> {
   item: PartialTreeFile | PartialTreeFolderNode
@@ -107,9 +129,7 @@ export interface ProviderAction<M extends Meta, B extends Body> {
   /** Reload the current folder after the action ran (default true). */
   refresh?: boolean
   /** Return false for a cancellation/no-op to retain the current listing. */
-  run: (
-    context: ProviderActionContext<M, B>,
-  ) => Promise<void | false> | void | false
+  run: (context: ProviderActionContext<M, B>) => ActionResult
 }
 
 /** Context handed to a toolbar (current-folder level) action such as "New folder". */
@@ -124,9 +144,7 @@ export interface ProviderToolbarAction<M extends Meta, B extends Body> {
   id: string
   label: string
   refresh?: boolean
-  run: (
-    context: ProviderToolbarActionContext<M, B>,
-  ) => Promise<void | false> | void | false
+  run: (context: ProviderToolbarActionContext<M, B>) => ActionResult
 }
 
 /** Context handed to a bulk action over the currently selected items. */
@@ -143,9 +161,7 @@ export interface ProviderBulkAction<M extends Meta, B extends Body> {
   label: string
   danger?: boolean
   refresh?: boolean
-  run: (
-    context: ProviderBulkActionContext<M, B>,
-  ) => Promise<void | false> | void | false
+  run: (context: ProviderBulkActionContext<M, B>) => ActionResult
 }
 
 export interface Opts<M extends Meta, B extends Body> {
@@ -305,18 +321,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
         : [],
     )
     const byId = new Map(partialTree.map((node) => [node.id, node]))
-    const isInsideCurrent = (
-      node: PartialTreeFile | PartialTreeFolderNode,
-    ): boolean => {
-      let parentId: PartialTreeId = node.parentId
-      while (parentId !== undefined) {
-        if (parentId === currentFolderId) return true
-        const parent = byId.get(parentId)
-        if (!parent || parent.type === 'root') return false
-        parentId = parent.parentId
-      }
-      return false
-    }
+    const isInsideCurrent = (node: PartialTreeFile | PartialTreeFolderNode) =>
+      lineage(byId, node).some(({ parentId }) => parentId === currentFolderId)
     // A move can affect a previously visited destination, and a failed batch can have partial
     // writes. Retain navigation ancestors, but no sibling/descendant listings after a mutation.
     const navigationIds = new Set(
@@ -340,8 +346,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ partialTree: nextTree })
     await this.openFolder(currentFolderId)
 
+    const { partialTree: refreshedTree, detailItemId } =
+      this.plugin.getPluginState()
+    // The item of an open detail modal did not survive the refresh.
+    if (detailItemId && !refreshedTree.some(({ id }) => id === detailItemId)) {
+      this.closeItemDetail()
+    }
     // Re-apply the selection to the items that survived the refresh.
-    const { partialTree: refreshedTree } = this.plugin.getPluginState()
     const survivors = checkedIds.filter((id) =>
       refreshedTree.some(
         (node) =>
@@ -385,27 +396,37 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   async #run(
     { refresh }: { refresh?: boolean | undefined },
-    run: () => Promise<void | false> | void | false,
+    run: () => ActionResult,
   ): Promise<void> {
     try {
       if ((await run()) === false) return
     } catch (err) {
-      const raw = err instanceof Error ? err.message : String(err)
-      if ((err as { name?: string } | undefined)?.name === 'AbortError') {
-        this.plugin.uppy.log('[ProviderView] action cancelled', 'warning')
-      } else {
-        this.plugin.uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
-        // A `UserFacingApiError` is for the user: a locale key from Companion,
-        // or a translated message a plugin threw. Anything else is a transport
-        // or programming error whose text is not.
-        const message =
-          err instanceof Error && err.name === 'UserFacingApiError'
-            ? describeCompanionError(this.plugin.uppy.i18n, err)
-            : this.plugin.uppy.i18n('companionError')
-        this.plugin.uppy.info(message, 'error', 5000)
-      }
+      this.#reportActionError(err)
     }
     if (refresh !== false) await this.refreshCurrentFolder(true)
+  }
+
+  #reportActionError(err: unknown): void {
+    const { uppy } = this.plugin
+    if ((err as { name?: unknown } | null | undefined)?.name === 'AbortError') {
+      uppy.log('[ProviderView] action cancelled', 'warning')
+      return
+    }
+    const raw = err instanceof Error ? err.message : String(err)
+    uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
+    // A `UserFacingApiError` is for the user: a locale key from Companion, or a
+    // translated message a plugin threw. Any other text is not: a failed
+    // Companion request (the request client wraps those, auth errors aside)
+    // says so, anything else (a bug, a browser API refusing) only that the
+    // action failed.
+    const message =
+      err instanceof Error && err.name === 'UserFacingApiError'
+        ? describeCompanionError(uppy.i18n, err)
+        : err instanceof ErrorWithCause ||
+            (err as { isAuthError?: unknown } | null)?.isAuthError === true
+          ? uppy.i18n('companionError')
+          : uppy.i18n('actionFailed')
+    uppy.info(message, 'error', 5000)
   }
 
   #cancelLongOperation: (() => void) | undefined
@@ -425,7 +446,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
   ): Promise<void> {
     try {
       await this.#withAbort(async (signal) => {
-        this.#cancelLongOperation = () => this.#abortController?.abort()
+        // This operation's controller: a later request replaces the field.
+        const controller = this.#abortController
+        this.#cancelLongOperation = () => controller?.abort()
         this.setLoading(true)
         await op({ signal, setProgress: (label) => this.setLoading(label) })
       })
@@ -442,8 +465,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ selectionActive: !selectionActive })
   }
 
+  /**
+   * The item of the open detail modal as last seen in the tree. A refresh
+   * drops the folder's items until it is listed again; the modal keeps
+   * showing this one meanwhile instead of closing and reopening.
+   */
+  #detailItem: PartialTreeFile | PartialTreeFolderNode | undefined
+
   /** Manager mode: open the detail modal for one item. */
   openItemDetail = (item: PartialTreeFile | PartialTreeFolderNode): void => {
+    this.#detailItem = item
     this.plugin.setPluginState({ detailItemId: item.id })
   }
 
@@ -460,29 +491,21 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#run(action, async () => {
       const { partialTree } = this.plugin.getPluginState()
       const byId = new Map(partialTree.map((node) => [node.id, node]))
-      const explicitlySelected = (id: string): boolean => {
-        let node = byId.get(id)
-        while (node && node.type !== 'root') {
-          if (this.#selectionRoots.has(node.id)) return true
-          node = byId.get(node.parentId)
-        }
-        return false
-      }
       const checked = partialTree.filter(
         (node): node is PartialTreeFile | PartialTreeFolderNode =>
           node.type !== 'root' &&
           node.status === 'checked' &&
-          (node.type === 'file' || explicitlySelected(node.id)),
+          (node.type === 'file' ||
+            lineage(byId, node).some(({ id }) => this.#selectionRoots.has(id))),
       )
       const checkedIds = new Set(checked.map((node) => node.id))
-      const items = checked.filter((node) => {
-        let parent = byId.get(node.parentId)
-        while (parent && parent.type !== 'root') {
-          if (checkedIds.has(parent.id)) return false
-          parent = byId.get(parent.parentId)
-        }
-        return true
-      })
+      // Only the top-most: an action on a folder covers what is inside it.
+      const items = checked.filter(
+        (node) =>
+          !lineage(byId, node)
+            .slice(1)
+            .some(({ id }) => checkedIds.has(id)),
+      )
       if (items.length === 0) return false
       if ((await action.run({ items, ...this.#actionContext() })) === false)
         return false
@@ -920,14 +943,18 @@ export default class ProviderView<M extends Meta, B extends Body> {
       clickedRange,
     )
 
+    const statusById = new Map(
+      newPartialTree.map((node) => [
+        node.id,
+        node.type === 'root' ? undefined : node.status,
+      ]),
+    )
     for (const id of clickedRange) {
-      const node = newPartialTree.find((entry) => entry.id === id)
-      if (node && node.type !== 'root' && node.status === 'checked')
-        this.#selectionRoots.add(id)
+      if (statusById.get(id) === 'checked') this.#selectionRoots.add(id)
     }
     for (const id of this.#selectionRoots) {
-      const node = newPartialTree.find((entry) => entry.id === id)
-      if (!node || node.type === 'root' || node.status === 'unchecked')
+      const status = statusById.get(id)
+      if (status === undefined || status === 'unchecked')
         this.#selectionRoots.delete(id)
     }
 
@@ -1043,12 +1070,15 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const breadcrumbs = this.getBreadcrumbs()
     const isManager = opts.mode === 'manager'
     const selectable = !isManager || selectionActive
-    const detailItem = detailItemId
-      ? partialTree.find(
+    if (detailItemId) {
+      this.#detailItem =
+        partialTree.find(
           (node): node is PartialTreeFile | PartialTreeFolderNode =>
             node.type !== 'root' && node.id === detailItemId,
-        )
-      : undefined
+        ) ?? this.#detailItem
+    }
+    const detailItem =
+      this.#detailItem?.id === detailItemId ? this.#detailItem : undefined
 
     return (
       <div
@@ -1138,6 +1168,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
         )}
         {detailItem && (
           <ItemDetailDialog
+            // A different item gets a fresh dialog (no stale preview).
+            key={detailItem.id}
             item={detailItem}
             actions={opts.actions ?? []}
             runAction={this.runAction}

@@ -3,11 +3,7 @@
  */
 
 export type { CompanionPluginOptions } from './CompanionPluginOptions.js'
-export {
-  type CompanionErrorCode,
-  describeCompanionError,
-  localeKeyForCompanionError,
-} from './errorCodes.js'
+export type { CompanionErrorCode } from './errorCodes.js'
 export { default as getAllowedHosts } from './getAllowedHosts.js'
 export type {
   GooglePickerOptions,

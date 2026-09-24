@@ -1,0 +1,22 @@
+{
+  "name": "@uppy-dev/s3-mock-companion",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "In-memory mock of Companion's S3 provider endpoints for Uppy's browser tests.",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build"
+  },
+  "dependencies": {
+    "@transloadit/utils": "^4.8.0"
+  },
+  "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
+    "@uppy/core": "workspace:^",
+    "typescript": "^6.0.3"
+  }
+}

@@ -41,6 +41,18 @@ export default function ListItem({
   selectable = true,
   onFileClick,
 }: ListItemProps): h.JSX.Element {
+  const fileContent = (
+    <>
+      <div className="uppy-ProviderBrowserItem-iconWrap">
+        <ItemIcon itemIconString={file.data.icon} />
+      </div>
+      {showTitles && (
+        <span className="uppy-truncate-text">
+          {file.data.name ?? i18n('unnamed')}
+        </span>
+      )}
+    </>
+  )
   return (
     <li
       className={className}
@@ -96,14 +108,7 @@ export default function ListItem({
           htmlFor={file.id}
           className="uppy-u-reset uppy-ProviderBrowserItem-inner"
         >
-          <div className="uppy-ProviderBrowserItem-iconWrap">
-            <ItemIcon itemIconString={file.data.icon} />
-          </div>
-          {showTitles && (
-            <span className="uppy-truncate-text">
-              {file.data.name ?? i18n('unnamed')}
-            </span>
-          )}
+          {fileContent}
         </label>
       ) : (
         // manager mode: a plain click opens the item's details
@@ -115,14 +120,7 @@ export default function ListItem({
             name: file.data.name ?? i18n('unnamed'),
           })}
         >
-          <div className="uppy-ProviderBrowserItem-iconWrap">
-            <ItemIcon itemIconString={file.data.icon} />
-          </div>
-          {showTitles && (
-            <span className="uppy-truncate-text">
-              {file.data.name ?? i18n('unnamed')}
-            </span>
-          )}
+          {fileContent}
         </button>
       )}
       {actionsMenu}

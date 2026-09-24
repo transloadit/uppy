@@ -9,15 +9,13 @@ import type {
 import type { I18n } from '@uppy/core/utils'
 import { useRef } from '@uppy/core/utils/preact/hooks'
 import classNames from 'classnames'
-import type { ComponentChildren, MouseEventHandler } from 'preact'
+import type {
+  ComponentChildren,
+  MouseEventHandler,
+  TargetedDragEvent,
+} from 'preact'
 import type { DashboardState } from '../Dashboard.js'
 import ignoreEvent from '../utils/ignoreEvent.js'
-
-type AnyUIPlugin<M extends Meta, B extends Body> = UIPlugin<
-  UIPluginOptions,
-  M,
-  B
->
 
 interface PickerPanelContentProps<M extends Meta, B extends Body> {
   activePickerPanel: NonNullable<DashboardState<M, B>['activePickerPanel']>
@@ -38,14 +36,31 @@ function PickerPanelContent<M extends Meta, B extends Body>({
 }: PickerPanelContentProps<M, B>): ComponentChildren {
   const ref = useRef<HTMLDivElement>(null)
   const activePlugin = uppy.getPlugin(activePickerPanel.id) as
-    | AnyUIPlugin<M, B>
+    | (UIPlugin<UIPluginOptions & { standalone?: boolean }, M, B> & {
+        acceptsFileDrops?: boolean
+      })
     | undefined
   // A plugin that is the whole page (a file library rather than a picker)
   // asks for no chrome: the page around it owns the heading, and there is
   // nothing to cancel.
-  const standalone = Boolean(
-    (activePlugin?.opts as { standalone?: boolean } | undefined)?.standalone,
-  )
+  const standalone = Boolean(activePlugin?.opts.standalone)
+  // Files dropped on a picker would be uploaded somewhere else than what it
+  // shows, so a panel ignores them, unless its plugin stores what is dropped
+  // on it (a storage library uploading into its open folder): then the
+  // Dashboard takes the drop as it would anywhere else.
+  const dropHandlers = activePlugin?.acceptsFileDrops
+    ? {}
+    : {
+        onDragOver: (event: TargetedDragEvent<HTMLDivElement>) => {
+          ignoreEvent(event)
+          // Where that blocked the drop (anywhere but a text field), don't
+          // show the copy cursor that promises one.
+          if (event.defaultPrevented && event.dataTransfer)
+            event.dataTransfer.dropEffect = 'none'
+        },
+        onDragLeave: ignoreEvent,
+        onDrop: ignoreEvent,
+      }
 
   return (
     <div
@@ -53,15 +68,7 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
       id={`uppy-DashboardContent-panel--${activePickerPanel.id}`}
-      onDragOver={(event) => {
-        ignoreEvent(event)
-        // Where that blocked the drop (anywhere but a text field), don't show
-        // the copy cursor that promises one.
-        if (event.defaultPrevented && event.dataTransfer)
-          event.dataTransfer.dropEffect = 'none'
-      }}
-      onDragLeave={ignoreEvent}
-      onDrop={ignoreEvent}
+      {...dropHandlers}
       onPaste={ignoreEvent}
     >
       {!standalone && (
