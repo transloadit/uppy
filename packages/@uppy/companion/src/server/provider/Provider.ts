@@ -166,7 +166,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async search(
-    options: ProviderSearchOptions,
+    options: ProviderSearchOptions<US>,
   ): Promise<ProviderSearchResponse> {
     throw new Error('method not implemented')
   }
