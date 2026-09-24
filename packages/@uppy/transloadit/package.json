@@ -42,7 +42,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/types": "^4.3.1",
+    "@transloadit/types": "^4.4.0",
     "@uppy/tus": "workspace:^",
     "component-emitter": "^2.0.0"
   },
