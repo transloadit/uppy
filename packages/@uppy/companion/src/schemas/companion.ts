@@ -44,7 +44,7 @@ export interface CompanionInitOptions {
     path?: string | undefined
     implicitPath?: string | undefined
     oauthDomain?: string | undefined
-    validHosts?: string[] | undefined
+    validHosts?: (string | RegExp)[] | undefined
   }
 
   // optional:
@@ -99,7 +99,7 @@ export interface CompanionInitOptions {
     }
   }
   maxFilenameLength?: number | undefined
-  uploadUrls?: RegExp[] | string[] | undefined | null
+  uploadUrls?: (string | RegExp)[] | undefined | null
   cookieDomain?: string | undefined
   streamingUpload?: boolean | undefined
   tusDeferredUploadLength?: boolean | undefined

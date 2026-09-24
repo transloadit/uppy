@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox, Google Drive, S3 and more :dog:",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -78,8 +78,7 @@
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
     "@npmcli/arborist": "^10.0.1",
-    "adm-zip": "^0.6.0",
-    "chalk": "^5.0.0",
+    "adm-zip": "^0.6.1",
     "concat-stream": "^2.0.0",
     "cssnano": "^8.0.1",
     "esbuild": "^0.28.1",

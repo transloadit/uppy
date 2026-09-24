@@ -1,14 +1,12 @@
 {
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true,
-    "types": ["preact", "node"]
-  },
-  "include": ["./package.json", "./src/**/*.*"],
+  "extends": "@uppy-dev/tsconfig",
   "references": [
     {
-      "path": "../core/tsconfig.build.json"
+      "path": "./tsconfig.build.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "noUncheckedIndexedAccess": false,
+    "useUnknownInCatchVariables": false
+  }
 }
