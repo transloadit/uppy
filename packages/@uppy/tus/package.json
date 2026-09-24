@@ -45,7 +45,7 @@
     "@vitest/browser-playwright": "^4.1.11",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.1"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

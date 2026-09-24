@@ -48,7 +48,7 @@
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
     "vite": "^8.2.2",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.1"
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
