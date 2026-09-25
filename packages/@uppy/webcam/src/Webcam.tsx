@@ -343,6 +343,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.uppy.info(err.message, 'error')
         })
     })
+    return undefined
   }
 
   getMediaRecorderOptions(): { mimeType?: string } {

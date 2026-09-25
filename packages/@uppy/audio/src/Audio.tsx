@@ -162,6 +162,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
           this.uppy.info(err.message, 'error')
         })
     })
+    return undefined
   }
 
   #startRecording = (): void => {

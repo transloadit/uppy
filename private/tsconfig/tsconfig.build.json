@@ -8,6 +8,7 @@
     "exactOptionalPropertyTypes": true,
     "module": "nodenext",
     "noImplicitOverride": true,
+    "noImplicitReturns": true,
     "noUncheckedIndexedAccess": true,
     "outDir": "${configDir}/lib",
     "rootDir": "${configDir}/src",
