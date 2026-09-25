@@ -57,46 +57,45 @@ export function getProviderMiddleware(
   ): void => {
     const ProviderClass = providers[providerName]
     if (
-      !ProviderClass ||
-      !(
-        req.companion.options.server.host &&
-        req.companion.options.server.protocol
-      )
+      ProviderClass &&
+      req.companion.options.server.host &&
+      req.companion.options.server.protocol
     ) {
+      const { allowLocalUrls, providerOptions } = req.companion.options
+      const { oauthProvider } = ProviderClass
+
+      let providerGrantConfig: GrantProviderConfig | undefined
+      if (isOAuthProvider(oauthProvider)) {
+        req.companion.getProviderCredentials = getCredentialsResolver(
+          providerName,
+          req.companion.options,
+          req,
+        )
+
+        providerGrantConfig = grantConfig[oauthProvider]
+        req.companion.providerGrantConfig = providerGrantConfig ?? {}
+      }
+
+      const secret = providerOptions[providerName]?.secret
+
+      const providerArgs = {
+        secret,
+        providerName,
+        allowLocalUrls,
+        ...(providerGrantConfig && { providerGrantConfig }),
+      }
+      req.companion.provider = new ProviderClass(providerArgs)
+      req.companion.providerName = providerName
+      req.companion.providerClass = ProviderClass
+    } else {
       logger.warn(
         'invalid provider options detected. Provider will not be loaded',
         'provider.middleware.invalid',
         req.id,
       )
-      return
     }
-
-    const { allowLocalUrls, providerOptions } = req.companion.options
-    const { oauthProvider } = ProviderClass
-
-    let providerGrantConfig: GrantProviderConfig | undefined
-    if (isOAuthProvider(oauthProvider)) {
-      req.companion.getProviderCredentials = getCredentialsResolver(
-        providerName,
-        req.companion.options,
-        req,
-      )
-
-      providerGrantConfig = grantConfig[oauthProvider]
-      req.companion.providerGrantConfig = providerGrantConfig ?? {}
-    }
-
-    const secret = providerOptions[providerName]?.secret
-
-    const providerArgs = {
-      secret,
-      providerName,
-      allowLocalUrls,
-      ...(providerGrantConfig && { providerGrantConfig }),
-    }
-    req.companion.provider = new ProviderClass(providerArgs)
-    req.companion.providerName = providerName
-    req.companion.providerClass = ProviderClass
+    // Always hand the request on: without a provider, `hasSessionAndProvider`
+    // answers 400 instead of leaving the request unanswered.
     next()
   }
 
