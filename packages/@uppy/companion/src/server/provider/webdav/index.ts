@@ -225,10 +225,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     )
   }
 
-  override async thumbnail({
-    id,
-    providerUserSession,
-  }: {
+  override async thumbnail(_options: {
     id: string
     providerUserSession: WebdavUserSession
   }): Promise<never> {

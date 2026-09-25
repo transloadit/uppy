@@ -53,7 +53,7 @@ describe('test authentication callback', () => {
     const callbackToken = 'auth-callback-token'
 
     const oauthState = await import('../dist/server/helpers/oauth-state.js')
-    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((_state, key) => {
       if (key === 'authCallbackToken') return callbackToken
 
       return 'http://localhost:3020'
@@ -85,7 +85,7 @@ describe('test authentication callback', () => {
 
   test('the token gets sent via legacy html mechanism', async () => {
     const oauthState = await import('../dist/server/helpers/oauth-state.js')
-    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((_state, key) => {
       if (key === 'authCallbackToken') return undefined
 
       return 'http://localhost:3020'

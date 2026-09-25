@@ -15,7 +15,7 @@ import logger from '../logger.js'
 export default function callback(
   req: Request,
   res: Response,
-  next: NextFunction,
+  _next: NextFunction,
 ): void {
   const providerName = req.params['providerName']
   const { companion } = req

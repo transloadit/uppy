@@ -201,13 +201,13 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  private handleRootDrop = (e: DragEvent) => {
+  handleRootDrop = (e: DragEvent) => {
     forEachDroppedOrPastedUrl(e.dataTransfer!, 'drop', (url) => {
       this.addFile(url)
     })
   }
 
-  private handleRootPaste = (e: ClipboardEvent) => {
+  handleRootPaste = (e: ClipboardEvent) => {
     forEachDroppedOrPastedUrl(e.clipboardData!, 'paste', (url) => {
       this.addFile(url)
     })

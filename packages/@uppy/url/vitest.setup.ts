@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const mockServerPort = 62450
 
-export default async function setup(project: TestProject) {
+export default async function setup(_project: TestProject) {
   const mockServer = createServer((req, res) => {
     const fileName = `DALL·E IMG_9078 - 学中文 🤑`
 

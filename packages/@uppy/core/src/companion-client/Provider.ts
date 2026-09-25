@@ -131,7 +131,7 @@ export default class Provider<
     }
   }
 
-  authQuery(data: unknown): Record<string, string> {
+  authQuery(_data: unknown): Record<string, string> {
     return {}
   }
 

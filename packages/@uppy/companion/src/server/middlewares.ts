@@ -147,7 +147,7 @@ export const verifyToken: RequestHandler = (req, res, next) => {
 }
 
 // does not fail if token is invalid
-export const gentleVerifyToken: RequestHandler = (req, res, next) => {
+export const gentleVerifyToken: RequestHandler = (req, _res, next) => {
   const providerName = req.params['providerName']
   if (typeof providerName !== 'string' || providerName.length === 0) {
     next()
@@ -171,7 +171,7 @@ export const gentleVerifyToken: RequestHandler = (req, res, next) => {
   next()
 }
 
-export const cookieAuthToken: RequestHandler = (req, res, next) => {
+export const cookieAuthToken: RequestHandler = (req, _res, next) => {
   const oauthProvider = req.companion.providerClass?.oauthProvider
   if (oauthProvider == null || oauthProvider.length === 0) {
     return next()

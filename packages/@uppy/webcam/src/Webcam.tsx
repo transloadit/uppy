@@ -137,11 +137,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private supportsUserMedia
 
-  private protocol: 'http' | 'https'
-
   private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
 
-  private icon: () => h.JSX.Element
+  icon: () => h.JSX.Element
 
   public webcamActive
 
@@ -159,7 +157,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
-    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.type = 'acquirer'
     this.capturedMediaFile = null

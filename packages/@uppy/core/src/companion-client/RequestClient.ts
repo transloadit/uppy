@@ -124,7 +124,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     this.#companionHeaders = headers
   }
 
-  private [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
+  [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
     return this.#companionHeaders
   }
 

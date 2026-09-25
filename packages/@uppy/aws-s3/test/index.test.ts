@@ -21,7 +21,7 @@ const s3Responses = {
        <Key>${key}</Key>
      </InitiateMultipartUploadResult>`,
 
-  uploadPart: (etag: string) => '',
+  uploadPart: (_etag: string) => '',
 
   listParts: (parts: { partNumber: number; etag: string }[]) =>
     `<?xml version="1.0" encoding="UTF-8"?>

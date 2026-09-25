@@ -159,7 +159,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
 
   // Routes
   if (process.env['COMPANION_HIDE_WELCOME'] !== 'true') {
-    router.get('/', (req, res) => {
+    router.get('/', (_req, res) => {
       res.setHeader('Content-Type', 'text/plain')
       res.send(buildHelpfulStartupMessage(companionOptions))
     })
@@ -182,7 +182,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
   ) {
     router.get(
       '/.well-known/microsoft-identity-association.json',
-      (req, res) => {
+      (_req, res) => {
         const content = JSON.stringify({
           associatedApplications: [
             { applicationId: process.env['COMPANION_ONEDRIVE_KEY'] },
@@ -198,7 +198,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
     )
   }
 
-  app.use((req, res) => {
+  app.use((_req, res) => {
     return res.status(404).json({ message: 'Not Found' })
   })
 

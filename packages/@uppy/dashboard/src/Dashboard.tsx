@@ -260,8 +260,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private dashboardIsDisabled!: boolean
 
-  private savedScrollPosition!: number
-
   private savedActiveElement!: HTMLElement
 
   private resizeObserver!: ResizeObserver
@@ -437,8 +435,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   openModal = (): Promise<void> => {
     const { promise, resolve } = createPromise<void>()
-    // save scroll position
-    this.savedScrollPosition = window.pageYOffset
     // save active element, so we can restore focus when modal is closed
     this.savedActiveElement = document.activeElement as HTMLElement
 

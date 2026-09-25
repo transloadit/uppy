@@ -197,7 +197,7 @@ export default class ImageGenerator<
       const assembly = new Assembly(assemblyResponse, this.rateLimitedQueue)
       this.assembly = assembly
 
-      assembly.on('result', (stepName: string, result: AssemblyResult) => {
+      assembly.on('result', (_stepName: string, result: AssemblyResult) => {
         const { results } = this.getPluginState()
         this.setPluginState({
           results: [...results, result],

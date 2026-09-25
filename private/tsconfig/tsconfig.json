@@ -10,6 +10,8 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "resolveJsonModule": true,
     "rootDir": "${configDir}",
     "skipLibCheck": true,

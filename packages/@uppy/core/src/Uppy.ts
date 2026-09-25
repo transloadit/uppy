@@ -143,9 +143,10 @@ export type UnknownProviderPluginState = {
   searchResults?: string[] | undefined
 }
 
-// biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation
-// biome-ignore lint/correctness/noUnusedVariables: Type parameters are used in module augmentation
-export interface PluginTypeRegistry<M extends Meta, B extends Body> {}
+// Extended via module augmentation. `Record<never, …>` adds no keys, but references
+// the type parameters so they aren't reported as unused.
+export interface PluginTypeRegistry<M extends Meta, B extends Body>
+  extends Record<never, [M, B]> {}
 
 export interface AsyncStore {
   getItem: (key: string) => Promise<string | null>
@@ -1603,10 +1604,9 @@ export class Uppy<
     () => this.#updateTotalProgress(),
     500,
     { leading: true, trailing: true },
-  )
+  );
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: updateTotalProgress')]() {
+  [Symbol.for('uppy test: updateTotalProgress')]() {
     return this.#updateTotalProgress()
   }
 
@@ -1991,10 +1991,7 @@ export class Uppy<
     return undefined
   }
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: getPlugins')](
-    type: string,
-  ): UnknownPlugin<M, B>[] {
+  [Symbol.for('uppy test: getPlugins')](type: string): UnknownPlugin<M, B>[] {
     return this.#plugins[type]
   }
 
@@ -2196,8 +2193,7 @@ export class Uppy<
     return uploadID
   }
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: createUpload')](...args: any[]): string {
+  [Symbol.for('uppy test: createUpload')](...args: any[]): string {
     // @ts-expect-error https://github.com/microsoft/TypeScript/issues/47595
     return this.#createUpload(...args)
   }

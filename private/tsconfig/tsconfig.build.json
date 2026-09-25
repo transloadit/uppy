@@ -11,6 +11,8 @@
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "outDir": "${configDir}/lib",
     "rootDir": "${configDir}/src",
     "skipLibCheck": true,

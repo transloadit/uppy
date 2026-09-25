@@ -1590,7 +1590,7 @@ describe('src/Core', () => {
           type: 'image/jpeg',
           data: await fetchTestImage(),
         })
-        const _fileId2 = core.addFile({
+        core.addFile({
           source: 'vi',
           name: 'file2.jpg',
           type: 'image/jpeg',
