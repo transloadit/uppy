@@ -22,7 +22,7 @@ const getClient = ({ token }: { token: string }): UnsplashClient =>
 const getPhotoMeta = async (client: UnsplashClient, id: string) =>
   client
     .get(`photos/${id}`, { responseType: 'json' })
-    .json<{ links: { download?: string; download_location?: string } }>()
+    .json<{ links: { download_location?: string } }>()
 
 interface UnsplashUserSession {
   accessToken: string
@@ -70,25 +70,32 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
         const client = getClient({ token })
 
         const {
-          links: { download: url, download_location: attributionUrl },
+          links: { download_location: attributionUrl },
         } = await getPhotoMeta(client, id)
 
-        if (!url || !attributionUrl) {
+        if (!attributionUrl) {
           throw new Error(
-            'Unexpected Unsplash response: missing download links',
+            'Unexpected Unsplash response: missing download_location link',
           )
         }
 
-        const stream = got.stream.get(url, { responseType: 'json' })
-        const { size } = await prepareStream(stream)
-
         // To attribute the author of the image, we call the `download_location`
-        // endpoint to increment the download count on Unsplash.
+        // endpoint to increment the download count on Unsplash. Its response
+        // also contains the URL we should download the photo from (on
+        // `images.unsplash.com`). We must not use `links.download` instead,
+        // because that points at `unsplash.com`, which is behind bot protection
+        // and would make us stream a challenge page instead of the image.
         // https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
-        await client.get(attributionUrl, {
-          prefixUrl: '',
-          responseType: 'json',
-        })
+        const { url } = await client
+          .get(attributionUrl, { prefixUrl: '', responseType: 'json' })
+          .json<{ url?: string }>()
+
+        if (!url) {
+          throw new Error('Unexpected Unsplash response: missing download url')
+        }
+
+        const stream = got.stream.get(url)
+        const { size } = await prepareStream(stream)
 
         // finally, stream on!
         return { stream, size }

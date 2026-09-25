@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import cookieParser from 'cookie-parser'
+import type { Express } from 'express'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
@@ -20,6 +21,7 @@ import * as controllers from './server/controllers/index.js'
 import s3 from './server/controllers/s3.js'
 import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
+import type { EmitterLike } from './server/emitter/index.js'
 import createEmitter from './server/emitter/index.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
@@ -93,7 +95,10 @@ export const errors = {
 /**
  * Entry point into initializing the Companion app.
  */
-export function app(optionsArg: CompanionInitOptions) {
+export function app(optionsArg: CompanionInitOptions): {
+  app: Express
+  emitter: EmitterLike
+} {
   setLoggerProcessName(optionsArg)
 
   validateConfig(optionsArg)
@@ -297,7 +302,12 @@ export function app(optionsArg: CompanionInitOptions) {
       const { providerName } = req.params
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
-      const { key, secret } = options.providerOptions[providerName]!
+      const providerOptions = options.providerOptions[providerName]
+      if (!providerOptions) {
+        res.sendStatus(400)
+        return
+      }
+      const { key, secret } = providerOptions
 
       function getTransloaditGateway() {
         const oauthProvider = getOauthProvider(providerName)

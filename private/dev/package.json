@@ -10,8 +10,9 @@
     "@uppy/companion": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5"
+    "vite": "^8.2.2"
   },
   "private": true,
   "type": "module",

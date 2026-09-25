@@ -62,10 +62,10 @@
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@uppy/core": "workspace:^",
     "svelte": "^5.56.5",
-    "svelte-check": "^4.4.8",
+    "svelte-check": "^4.7.6",
     "tslib": "^2.8.1",
     "typescript": "^6.0.3",
-    "vite": "^8.1.5"
+    "vite": "^8.2.2"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

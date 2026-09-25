@@ -1,5 +1,3 @@
-/// <reference types="vite/client" />
-
 import type Uppy from '@uppy/core'
 
 declare global {

@@ -7,15 +7,70 @@ const nonceLength = 16
 const encryptionKeyLength = 32
 const ivLength = 12
 
-export const hasMatch = (
+/**
+ * Checks whether a URL matches a single `uploadUrls` allowlist entry.
+ *
+ * `RegExp` entries are tested as written. Strings are compared literally: same
+ * origin, and the path must match at a path boundary, so an allowed endpoint
+ * still admits the resumable upload id appended to it.
+ *
+ * Strings were once compiled into regexes, which made them unanchored: any URL
+ * merely *containing* an allowed one passed, so a caller could point Companion
+ * at an internal host. https://github.com/transloadit/uppy/issues/6480
+ */
+const matchesUploadUrl = (
+  value: string,
+  criterion: string | RegExp,
+): boolean => {
+  if (criterion instanceof RegExp) return criterion.test(value)
+  if (value === criterion) return true
+
+  let url: URL
+  let allowed: URL
+  try {
+    url = new URL(value)
+    allowed = new URL(criterion)
+  } catch {
+    // A non-absolute entry can only ever match exactly, checked above.
+    return false
+  }
+
+  // `origin` is "null" for non-special schemes, which would compare equal.
+  if (url.origin === 'null' || url.origin !== allowed.origin) return false
+
+  // An entry without a path (`https://example.com`) allows its whole origin.
+  const allowedPath = allowed.pathname
+  if (allowedPath === '/') return true
+
+  if (url.pathname === allowedPath) return true
+  return url.pathname.startsWith(
+    allowedPath.endsWith('/') ? allowedPath : `${allowedPath}/`,
+  )
+}
+
+/** Checks a URL against the `uploadUrls` allowlist. */
+export const hasUploadUrlMatch = (
   value: string,
   criteria: ReadonlyArray<string | RegExp>,
-): boolean => {
-  return criteria.some((i) => {
-    if (i instanceof RegExp) return i.test(value)
-    return value === i || new RegExp(i).test(value)
-  })
-}
+): boolean => criteria.some((i) => matchesUploadUrl(value, i))
+
+/**
+ * Checks a hostname against the `server.validHosts` allowlist.
+ *
+ * `RegExp` entries are tested as written, strings compared literally. Whether
+ * a string was a pattern used to be inferred from its characters, which could
+ * not tell `[dp]ev.example.com` from a hostname, and read `.` as a literal dot
+ * in one entry and as "any character" in the next.
+ */
+export const hasHostMatch = (
+  value: string,
+  criteria: ReadonlyArray<string | RegExp>,
+): boolean =>
+  criteria.some((i) =>
+    i instanceof RegExp
+      ? i.test(value)
+      : value.toLowerCase() === i.toLowerCase(),
+  )
 
 export const jsonStringify = (data: unknown): string => {
   const cache: unknown[] = []

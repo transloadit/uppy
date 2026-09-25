@@ -1,5 +1,19 @@
 # @uppy/core
 
+## 6.0.2
+
+### Patch Changes
+
+- c011da4: `fetcher` now folds header names that differ only in case into one entry (last
+  one wins) instead of letting `XMLHttpRequest` combine their values.
+
+## 6.0.1
+
+### Patch Changes
+
+- a4823a2: Deprecate `AbortController`, `AbortSignal`, and `createAbortError` exports. Users can use the builtin global equivalents instead.
+- f31b3c5: Deprecate `hasProperty`. Use `Object.hasOwn` instead.
+
 ## 6.0.0
 
 ### Major Changes

@@ -1,5 +1,27 @@
 # uppy
 
+## 6.0.2
+
+### Patch Changes
+
+- Updated dependencies [5660fb9]
+- Updated dependencies [c011da4]
+- Updated dependencies [c011da4]
+- Updated dependencies [c2982bc]
+  - @uppy/aws-s3@6.2.0
+  - @uppy/core@6.0.2
+  - @uppy/locales@5.2.1
+
+## 6.0.1
+
+### Patch Changes
+
+- Updated dependencies [24e96ee]
+- Updated dependencies [a4823a2]
+- Updated dependencies [f31b3c5]
+  - @uppy/aws-s3@6.1.0
+  - @uppy/core@6.0.1
+
 ## 6.0.0
 
 ### Major Changes

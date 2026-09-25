@@ -1,5 +1,29 @@
 # @uppy/aws-s3
 
+## 6.2.0
+
+### Minor Changes
+
+- c011da4: `signRequest` may return `headers` to send with the presigned request, e.g. a signed `Content-Disposition`.
+
+### Patch Changes
+
+- 5660fb9: A blank `key` returned by `signRequest` is now treated as no override; the requested key is used instead.
+
+## 6.1.0
+
+### Minor Changes
+
+- 24e96ee: `signRequest` can now return the object key it signed for, as `key` next to `url`. When a signing server stores the object under a different key than the one Uppy proposed (a directory prefix, a server-generated name), returning `{ url, key }` from the request that creates the upload, the single-part `PUT`, or the multipart create, makes Uppy use that key for the rest of the upload and report it in `upload-success`. Previously the client-generated key was reported even when the server had stored the object elsewhere (#6496).
+
+  `key` is optional. Signers that return only `{ url }` are unchanged. Requests that carry an `uploadId` must be signed for the key they receive; a `key` returned on those requests is ignored.
+
+### Patch Changes
+
+- Updated dependencies [a4823a2]
+- Updated dependencies [f31b3c5]
+  - @uppy/core@6.0.1
+
 ## 6.0.0
 
 ### Major Changes

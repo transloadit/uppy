@@ -270,7 +270,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           s3Client: this.#s3Client,
           file,
           metadata: this.#getAllowedMeta(file),
-          key: this.#generateKey(file),
+          requestedKey: this.#generateKey(file),
           shouldUseMultipart: this.#shouldUseMultipart(file),
           getChunkSize: this.opts.getChunkSize,
           log: (...args) => this.uppy.log(...args),
@@ -401,4 +401,19 @@ export type { AwsS3Options as AwsS3MultipartOptions }
 export interface AwsBody extends Body {
   location: string
   key: string
+}
+
+/** Persisted S3 multipart state for Golden Retriever resume support */
+interface S3MultipartState {
+  uploadId: string
+  key: string
+}
+
+declare module '@uppy/core/utils' {
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
 }
