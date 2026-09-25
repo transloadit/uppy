@@ -394,10 +394,18 @@ export default class Provider<
     return response
   }
 
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   deleteItem(id: string, options?: RequestOptions): Promise<void> {
     return this.post<void>(`${this.id}/mutate/delete`, { id }, options)
   }
 
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   moveItem(
     id: string,
     destination: string,
@@ -410,6 +418,10 @@ export default class Provider<
     )
   }
 
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   createFolder(
     parentId: string | null,
     name: string,

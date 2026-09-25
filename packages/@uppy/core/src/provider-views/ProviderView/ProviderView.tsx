@@ -110,7 +110,12 @@ function lineage(
 // biome-ignore lint/suspicious/noConfusingVoidType: `run` may return nothing.
 type ActionResult = Promise<void | false> | void | false
 
-/** Context handed to a per-item action (rename, delete, copy URL, …). */
+/**
+ * Context handed to a per-item action (rename, delete, copy URL, …).
+ *
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export interface ProviderActionContext<M extends Meta, B extends Body> {
   item: PartialTreeFile | PartialTreeFolderNode
   view: ProviderView<M, B>
@@ -118,7 +123,12 @@ export interface ProviderActionContext<M extends Meta, B extends Body> {
   i18n: I18n
 }
 
-/** A per-item action shown in the item's "⋯" menu. */
+/**
+ * A per-item action shown in the item's "⋯" menu.
+ *
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export interface ProviderAction<M extends Meta, B extends Body> {
   id: string
   label: string
@@ -132,7 +142,12 @@ export interface ProviderAction<M extends Meta, B extends Body> {
   run: (context: ProviderActionContext<M, B>) => ActionResult
 }
 
-/** Context handed to a toolbar (current-folder level) action such as "New folder". */
+/**
+ * Context handed to a toolbar (current-folder level) action such as "New folder".
+ *
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export interface ProviderToolbarActionContext<M extends Meta, B extends Body> {
   currentFolderId: PartialTreeId
   view: ProviderView<M, B>
@@ -140,6 +155,10 @@ export interface ProviderToolbarActionContext<M extends Meta, B extends Body> {
   i18n: I18n
 }
 
+/**
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export interface ProviderToolbarAction<M extends Meta, B extends Body> {
   id: string
   label: string
@@ -147,7 +166,12 @@ export interface ProviderToolbarAction<M extends Meta, B extends Body> {
   run: (context: ProviderToolbarActionContext<M, B>) => ActionResult
 }
 
-/** Context handed to a bulk action over the currently selected items. */
+/**
+ * Context handed to a bulk action over the currently selected items.
+ *
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export interface ProviderBulkActionContext<M extends Meta, B extends Body> {
   items: (PartialTreeFile | PartialTreeFolderNode)[]
   view: ProviderView<M, B>
@@ -155,7 +179,12 @@ export interface ProviderBulkActionContext<M extends Meta, B extends Body> {
   i18n: I18n
 }
 
-/** Manager mode: an action over the multi-selected items (bulk delete, move, …). */
+/**
+ * Manager mode: an action over the multi-selected items (bulk delete, move, …).
+ *
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export interface ProviderBulkAction<M extends Meta, B extends Body> {
   id: string
   label: string
@@ -166,29 +195,53 @@ export interface ProviderBulkAction<M extends Meta, B extends Body> {
 
 export interface Opts<M extends Meta, B extends Body> {
   provider: UnknownProviderPlugin<M, B>['provider']
-  /** Per-item actions (rename, delete, …) rendered in an item menu. */
+  /**
+   * Per-item actions (rename, delete, …) rendered in an item menu.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   actions?: ProviderAction<M, B>[]
-  /** Folder-level actions (new folder, …) rendered in the header. */
+  /**
+   * Folder-level actions (new folder, …) rendered in the header.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   toolbarActions?: ProviderToolbarAction<M, B>[]
   /**
    * 'picker' (default): rows are checkboxes and the footer adds the selection
    * to Uppy. 'manager' (file-library UIs): a plain click opens an item's
    * details, multi-select hides behind an explicit toggle, and the selection
    * feeds `bulkActions` instead of picking.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
    */
   mode?: 'picker' | 'manager'
   /**
    * Actions over the multi-selected items: in the header while something is
    * checked (picker mode), or in the footer of the manager's selection mode.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
    */
   bulkActions?: ProviderBulkAction<M, B>[]
-  /** Manager mode: resolves a preview image URL for the detail modal. */
+  /**
+   * Manager mode: resolves a preview image URL for the detail modal.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   getPreviewUrl?: (
     item: PartialTreeFile | PartialTreeFolderNode,
   ) => Promise<string>
   /**
    * The plugin is the whole page: no user/logout row in the header (the app
    * owns the session).
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
    */
   standalone?: boolean
   viewType: 'list' | 'grid'
@@ -307,6 +360,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
   /**
    * Forget everything we know about the current folder and fetch it again.
    * Used after mutations (rename, delete, new folder, upload into folder).
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
    */
   refreshCurrentFolder = async (invalidateAll = false): Promise<void> => {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
@@ -369,12 +425,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   runAction = (
     action: ProviderAction<M, B>,
     item: PartialTreeFile | PartialTreeFolderNode,
   ): Promise<void> =>
     this.#run(action, () => action.run({ item, ...this.#actionContext() }))
 
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   runToolbarAction = (action: ProviderToolbarAction<M, B>): Promise<void> =>
     this.#run(action, () =>
       action.run({
@@ -437,6 +501,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
    * when the user cancels, the panel closes or uploads are cancelled; pass it
    * to every request. The operation should throw an `AbortError` when it
    * stops early, which `#run` treats as a cancel rather than a failure.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
    */
   async runWithProgress(
     op: (context: {
@@ -458,7 +525,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  /** Manager mode: switch the multi-select checkboxes on or off. */
+  /**
+   * Manager mode: switch the multi-select checkboxes on or off.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   toggleSelectionMode = (): void => {
     const { selectionActive } = this.plugin.getPluginState()
     if (selectionActive) this.cancelSelection()
@@ -472,12 +544,21 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   #detailItem: PartialTreeFile | PartialTreeFolderNode | undefined
 
-  /** Manager mode: open the detail modal for one item. */
+  /**
+   * Manager mode: open the detail modal for one item.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   openItemDetail = (item: PartialTreeFile | PartialTreeFolderNode): void => {
     this.#detailItem = item
     this.plugin.setPluginState({ detailItemId: item.id })
   }
 
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   closeItemDetail = (): void => {
     this.plugin.setPluginState({ detailItemId: undefined })
   }
@@ -486,7 +567,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
   // (and their selected descendants) may become folder mutation targets.
   #selectionRoots = new Set<string>()
 
-  /** Run a bulk action over the checked items, then clear the selection. */
+  /**
+   * Run a bulk action over the checked items, then clear the selection.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   runBulkAction = (action: ProviderBulkAction<M, B>): Promise<void> =>
     this.#run(action, async () => {
       const { partialTree } = this.plugin.getPluginState()
@@ -517,12 +603,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
   /**
    * Ask the user for a string with an inline dialog (instead of `window.prompt`).
    * Resolves with `null` when the user cancels.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
    */
   prompt(options: PromptOptions): Promise<string | null> {
     return this.#dialogs.prompt(options)
   }
 
-  /** Ask the user to confirm something with an inline dialog (instead of `window.confirm`). */
+  /**
+   * Ask the user to confirm something with an inline dialog (instead of `window.confirm`).
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
   confirm(options: ConfirmOptions): Promise<boolean> {
     return this.#dialogs.confirm(options)
   }

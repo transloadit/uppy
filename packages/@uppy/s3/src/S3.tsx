@@ -266,6 +266,10 @@ const ConnectAuthForm = ({
   </div>
 )
 
+/**
+ * @experimental `@uppy/s3` is experimental: its options, behaviour and
+ * Companion endpoints will change incompatibly, also in minor releases.
+ */
 export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   CompanionPluginOptions,
   'locale'
@@ -338,6 +342,12 @@ const DELETE_PROGRESS = {
   itemFiles: 'deletingItemFiles',
 } as const
 
+/**
+ * Browse and manage an S3-compatible bucket through Companion's S3 provider.
+ *
+ * @experimental `@uppy/s3` is experimental: its options, behaviour and
+ * Companion endpoints will change incompatibly, also in minor releases.
+ */
 export default class S3<M extends Meta, B extends Body>
   extends UIPlugin<S3Options<M, B>, M, B, UnknownProviderPluginState>
   implements UnknownProviderPlugin<M, B>
@@ -813,6 +823,10 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   install() {
+    this.uppy.log(
+      `[${this.id}] ${this.title} is experimental: expect breaking changes, also in minor releases.`,
+      'warning',
+    )
     const { getPreviewUrl } = this.opts
     this.view = new ProviderViews(this, {
       provider: this.provider,

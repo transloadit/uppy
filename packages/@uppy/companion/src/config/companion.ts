@@ -170,6 +170,14 @@ function validateValidHosts(
  *
  * If invalid, throws with an error explaining what needs to be fixed.
  */
+/** The file-management providers' HTTP API is not settled yet. */
+function warnExperimentalProvider(name: string): void {
+  logger.warn(
+    `EXPERIMENTAL: the ${name} provider (providerOptions['${name}'], endpoints /${name}/*) will change incompatibly in future releases, also minor ones. Do not build on its HTTP API yet.`,
+    'startup.experimental',
+  )
+}
+
 export function validateConfig(companionOptions: CompanionInitOptions): void {
   const parsedConfig = validateConfigSchema.parse(companionOptions)
   const { filePath } = parsedConfig
@@ -208,11 +216,13 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
 
     if (providerOptions['s3'] != null) {
       parseS3ProviderOptions(providerOptions['s3'])
+      warnExperimentalProvider('s3')
     }
     if (providerOptions['transloadit-storage'] != null) {
       parseTransloaditStorageProviderOptions(
         providerOptions['transloadit-storage'],
       )
+      warnExperimentalProvider('transloadit-storage')
     }
   }
 

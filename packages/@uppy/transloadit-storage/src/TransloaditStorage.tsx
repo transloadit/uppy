@@ -19,6 +19,11 @@ import {
   type StoreUploadsOptions,
 } from './storeAssemblyOptions.js'
 
+/**
+ * @experimental `@uppy/transloadit-storage` is experimental: its options,
+ * behaviour and Companion endpoints will change incompatibly, also in
+ * minor releases.
+ */
 export type TransloaditStorageOptions<
   M extends Meta = Meta,
   B extends Body = Body,
@@ -91,6 +96,10 @@ function download(url: string, invalidUrlMessage: string): void {
 /**
  * Transloadit Storage = the S3 provider plugin pointed at Transloadit's
  * S3-compatible endpoint, plus Transloadit-specific actions.
+ *
+ * @experimental `@uppy/transloadit-storage` is experimental: its options,
+ * behaviour and Companion endpoints will change incompatibly, also in
+ * minor releases.
  */
 export default class TransloaditStorage<
   M extends Meta,
@@ -138,6 +147,10 @@ export default class TransloaditStorage<
    * With `storeUploads`, files dropped on the panel are stored in the folder
    * that is open, so the Dashboard accepts drops there (see its
    * `PickerPanelContent`).
+   *
+   * @experimental `@uppy/transloadit-storage` is experimental: its options,
+   * behaviour and Companion endpoints will change incompatibly, also in
+   * minor releases.
    */
   get acceptsFileDrops(): boolean {
     return this.opts.storeUploads != null && this.canWrite

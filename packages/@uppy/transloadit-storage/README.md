@@ -1,5 +1,9 @@
 # `@uppy/transloadit-storage`
 
+> [!WARNING]
+> Experimental. This plugin, `@uppy/s3` and the Companion endpoints they use will change
+> incompatibly, also in minor releases, as they make way for a standalone file manager.
+
 Browse and manage a Workspace's Storage through an authenticated Companion grant, and upload
 into the open directory with `@uppy/transloadit`. Keep grants, Assembly signing and Smart CDN
 signing on your application server; browser-provided paths are not authorization.

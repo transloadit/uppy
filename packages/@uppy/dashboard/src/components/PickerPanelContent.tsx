@@ -37,6 +37,8 @@ function PickerPanelContent<M extends Meta, B extends Body>({
   const ref = useRef<HTMLDivElement>(null)
   const activePlugin = uppy.getPlugin(activePickerPanel.id) as
     | (UIPlugin<UIPluginOptions & { standalone?: boolean }, M, B> & {
+        // `standalone` and `acceptsFileDrops` are experimental, for the
+        // file-management plugins (`@uppy/s3`); they will change.
         acceptsFileDrops?: boolean
       })
     | undefined
