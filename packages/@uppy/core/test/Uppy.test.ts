@@ -593,9 +593,9 @@ describe('src/Core', () => {
       })
       return core.upload().then((result) => {
         if (result) {
-          expect(result.pre).toBe('ok')
-          expect(result.upload).toBe('ok')
-          expect(result.post).toBe('ok')
+          expect(result['pre']).toBe('ok')
+          expect(result['upload']).toBe('ok')
+          expect(result['post']).toBe('ok')
         }
       })
     })

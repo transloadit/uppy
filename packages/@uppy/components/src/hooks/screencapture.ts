@@ -69,7 +69,7 @@ export function createScreenCaptureController(
     next,
     patch,
   ): void => {
-    const screenCapturePatch = patch?.plugins?.ScreenCapture as
+    const screenCapturePatch = patch?.plugins?.['ScreenCapture'] as
       | ScreenCaptureState
       | undefined
 

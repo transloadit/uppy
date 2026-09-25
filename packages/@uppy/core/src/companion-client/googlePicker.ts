@@ -632,8 +632,10 @@ export function createGooglePickerStoreAdapter({
         _next,
         patch,
       ): void => {
-        const screenCapturePatch = (patch?.plugins?.GoogleDrivePicker ??
-          patch?.plugins?.GooglePhotosPicker) as GooglePickerState | undefined
+        const screenCapturePatch = (patch?.plugins?.['GoogleDrivePicker'] ??
+          patch?.plugins?.['GooglePhotosPicker']) as
+          | GooglePickerState
+          | undefined
 
         if (screenCapturePatch) listener(screenCapturePatch)
       }

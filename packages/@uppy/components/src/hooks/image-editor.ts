@@ -91,7 +91,7 @@ export function createImageEditorController<
     _next,
     patch,
   ) => {
-    const editorPatch = patch?.plugins?.ImageEditor
+    const editorPatch = patch?.plugins?.['ImageEditor']
     if (editorPatch) {
       subscribers.emit()
     }

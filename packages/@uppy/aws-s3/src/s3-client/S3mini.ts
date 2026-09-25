@@ -223,12 +223,12 @@ class S3mini extends S3Client {
     if (parsed && typeof parsed === 'object') {
       // Check for both cases of InitiateMultipartUploadResult
       const uploadResult =
-        (parsed.initiateMultipartUploadResult as Record<string, unknown>) ||
-        (parsed.InitiateMultipartUploadResult as Record<string, unknown>)
+        (parsed['initiateMultipartUploadResult'] as Record<string, unknown>) ||
+        (parsed['InitiateMultipartUploadResult'] as Record<string, unknown>)
 
       if (uploadResult && typeof uploadResult === 'object') {
         // Check for both cases of uploadId
-        const uploadId = uploadResult.uploadId || uploadResult.UploadId
+        const uploadId = uploadResult['uploadId'] || uploadResult['UploadId']
 
         if (uploadId && typeof uploadId === 'string') {
           return { uploadId, key: resolvedKey }
@@ -399,12 +399,12 @@ class S3mini extends S3Client {
     })
 
     const parsed = U.parseXml(xhr.responseText) as Record<string, unknown>
-    const result = (parsed.listPartsResult ||
-      parsed.ListPartsResult ||
+    const result = (parsed['listPartsResult'] ||
+      parsed['ListPartsResult'] ||
       parsed) as Record<string, unknown>
 
     if (result && typeof result === 'object') {
-      const parts = result.Part || result.part || []
+      const parts = result['Part'] || result['part'] || []
       const partsArray = Array.isArray(parts) ? parts : [parts]
 
       return partsArray
@@ -416,8 +416,8 @@ class S3mini extends S3Client {
             'ETag' in p,
         )
         .map((p) => ({
-          partNumber: parseInt(String(p.PartNumber), 10),
-          etag: U.sanitizeXmlETag(String(p.ETag)),
+          partNumber: parseInt(String(p['PartNumber']), 10),
+          etag: U.sanitizeXmlETag(String(p['ETag'])),
         }))
     }
     return []
@@ -443,8 +443,8 @@ class S3mini extends S3Client {
     if (parsed && typeof parsed === 'object') {
       // Check for both cases (camelCase from our parser, PascalCase from S3)
       const result =
-        parsed.completeMultipartUploadResult ||
-        parsed.CompleteMultipartUploadResult ||
+        parsed['completeMultipartUploadResult'] ||
+        parsed['CompleteMultipartUploadResult'] ||
         parsed
 
       if (result && typeof result === 'object') {
@@ -452,10 +452,14 @@ class S3mini extends S3Client {
 
         // S3 returns PascalCase (Location, Bucket, Key, ETag).
         // Normalize to lowercase for our type interface.
-        const resultLocation = (r.Location || r.location) as string | undefined
-        const resultBucket = (r.Bucket || r.bucket) as string | undefined
-        const resultKey = (r.Key || r.key) as string | undefined
-        const rawEtag = (r.ETag || r.eTag || r.etag) as string | undefined
+        const resultLocation = (r['Location'] || r['location']) as
+          | string
+          | undefined
+        const resultBucket = (r['Bucket'] || r['bucket']) as string | undefined
+        const resultKey = (r['Key'] || r['key']) as string | undefined
+        const rawEtag = (r['ETag'] || r['eTag'] || r['etag']) as
+          | string
+          | undefined
 
         if (!resultLocation || !resultKey) {
           throw new Error(
@@ -501,13 +505,13 @@ class S3mini extends S3Client {
     if (
       parsed &&
       'error' in parsed &&
-      typeof parsed.error === 'object' &&
-      parsed.error !== null &&
-      'message' in parsed.error
+      typeof parsed['error'] === 'object' &&
+      parsed['error'] !== null &&
+      'message' in parsed['error']
     ) {
       throw new Error(
         `${C.ERROR_PREFIX}Failed to abort multipart upload: ${String(
-          parsed.error.message,
+          parsed['error'].message,
         )}`,
       )
     }
@@ -559,20 +563,20 @@ class S3mini extends S3Client {
       !parsedBody ||
       typeof parsedBody !== 'object' ||
       !('Error' in parsedBody) ||
-      !parsedBody.Error ||
-      typeof parsedBody.Error !== 'object'
+      !parsedBody['Error'] ||
+      typeof parsedBody['Error'] !== 'object'
     ) {
       return {}
     }
-    const error = parsedBody.Error
+    const error = parsedBody['Error']
     return {
       svcCode:
-        'Code' in error && typeof error.Code === 'string'
-          ? error.Code
+        'Code' in error && typeof error['Code'] === 'string'
+          ? error['Code']
           : undefined,
       errorMessage:
-        'Message' in error && typeof error.Message === 'string'
-          ? error.Message
+        'Message' in error && typeof error['Message'] === 'string'
+          ? error['Message']
           : undefined,
     }
   }

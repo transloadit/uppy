@@ -133,13 +133,13 @@ describe('remote credentials with transloadit_gateway', () => {
     const res = await connectWithGateway(gateway)
     expect(res.text).not.toContain('Could not fetch credentials')
     expect(res.status).toBe(302)
-    expect(res.headers.location).toContain('dropbox.com')
+    expect(res.headers['location']).toContain('dropbox.com')
   })
 
   test('a configured gateway becomes the redirect_uri host', async () => {
     const res = await connectWithGateway('https://gateway.example.com')
     expect(res.status).toBe(302)
-    expect(decodeURIComponent(res.headers.location ?? '')).toContain(
+    expect(decodeURIComponent(res.headers['location'] ?? '')).toContain(
       'redirect_uri=https://gateway.example.com/',
     )
   })

@@ -12,8 +12,8 @@ export async function setup() {
   const { endpoint, rootAccessKeyId, rootSecretAccessKey } = config
 
   console.log('⏫  starting minio image', composeFile)
-  process.env.MINIO_ROOT_USER = rootAccessKeyId
-  process.env.MINIO_ROOT_PASSWORD = rootSecretAccessKey
+  process.env['MINIO_ROOT_USER'] = rootAccessKeyId
+  process.env['MINIO_ROOT_PASSWORD'] = rootSecretAccessKey
   await composeUpWait(composeFile)
   const bucketName = new URL(endpoint).pathname.split('/')[1]
   await execDockerCommand(

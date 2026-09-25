@@ -57,8 +57,9 @@ describe('Dashboard', () => {
     core.use(DashboardPlugin, { inline: false })
     core.use(WebcamPlugin)
 
-    const dashboardPlugins = core.getState().plugins.Dashboard!
-      .targets as UIPlugin<any, any, any>[]
+    const dashboardPlugins = core.getState().plugins['Dashboard']![
+      'targets'
+    ] as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below
     expect(dashboardPlugins.length).toEqual(2)
@@ -77,8 +78,9 @@ describe('Dashboard', () => {
     core.use(DashboardPlugin, { inline: false })
     core.use(WebcamPlugin, { target: 'body' })
 
-    const dashboardPlugins = core.getState().plugins.Dashboard!
-      .targets as UIPlugin<any, any, any>[]
+    const dashboardPlugins = core.getState().plugins['Dashboard']![
+      'targets'
+    ] as UIPlugin<any, any, any>[]
 
     // two built-in plugins + these ones below
     expect(dashboardPlugins.length).toEqual(1)

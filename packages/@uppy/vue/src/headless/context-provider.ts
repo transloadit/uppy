@@ -68,7 +68,7 @@ export const UppyContextProvider = defineComponent({
       uppyEventAdapter?.cleanup()
     })
 
-    return () => slots.default?.()
+    return () => slots['default']?.()
   },
 })
 

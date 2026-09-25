@@ -9,6 +9,7 @@
     "module": "nodenext",
     "noImplicitOverride": true,
     "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "outDir": "${configDir}/lib",
     "rootDir": "${configDir}/src",

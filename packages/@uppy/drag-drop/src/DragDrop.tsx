@@ -206,7 +206,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     const dragDropClass = `uppy-u-reset
       uppy-DragDrop-container
       ${this.isDragDropSupported ? 'uppy-DragDrop--isDragDropSupported' : ''}
-      ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
+      ${this.getPluginState()['isDraggingOver'] ? 'uppy-DragDrop--isDraggingOver' : ''}
     `
 
     const dragDropStyle = {

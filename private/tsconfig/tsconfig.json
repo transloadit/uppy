@@ -8,6 +8,7 @@
     "noEmit": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true,
     "resolveJsonModule": true,
     "rootDir": "${configDir}",
