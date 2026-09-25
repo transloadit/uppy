@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 7.0.3
+
+### Patch Changes
+
+- 5cd9512: Ignore an empty (or whitespace-only) `transloadit_gateway` in fetched provider credentials again. Since 7.0.0 an empty string was passed to `new URL()`, which threw `Invalid URL` and turned every OAuth login using such credentials into a "Could not fetch credentials" page.
+- 071d167: Requests naming an unknown provider (for example `/nonexistent/list/`, or `/instagram/list/` now that Instagram is gone) are answered with a 400 again instead of being left without a response. The provider middleware stopped calling `next()` on that path in the TypeScript port, so such requests hung until the client gave up.
+
 ## 7.0.2
 
 ### Patch Changes

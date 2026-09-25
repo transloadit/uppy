@@ -1,5 +1,12 @@
 # @uppy/core
 
+## 6.0.2
+
+### Patch Changes
+
+- c011da4: `fetcher` now folds header names that differ only in case into one entry (last
+  one wins) instead of letting `XMLHttpRequest` combine their values.
+
 ## 6.0.1
 
 ### Patch Changes
