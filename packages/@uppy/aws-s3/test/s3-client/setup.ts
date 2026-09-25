@@ -34,7 +34,10 @@ export async function setup() {
     )
   } catch (err) {
     // User may already exist, that's fine
-    console.log('STS user setup:', err.message || 'error occurred')
+    console.log(
+      'STS user setup:',
+      (err instanceof Error && err.message) || 'error occurred',
+    )
   }
   console.log(`✅  minio is ready`)
 }

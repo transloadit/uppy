@@ -362,7 +362,6 @@ export default class ImageEditor<
     if (fileData instanceof Blob) {
       this.objectUrl = URL.createObjectURL(fileData)
     } else {
-      // eslint-disable-next-line no-console
       console.warn(
         '[Uppy ImageEditor] Cannot edit file: file.data is not a Blob.',
         'File:',

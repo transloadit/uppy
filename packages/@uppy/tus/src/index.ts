@@ -180,10 +180,8 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     if (this.uploaders[fileID]) {
       this.uploaders[fileID] = null
     }
-    if (this.uploaderEvents[fileID]) {
-      this.uploaderEvents[fileID]!.remove()
-      this.uploaderEvents[fileID] = null
-    }
+    this.uploaderEvents[fileID]?.remove()
+    this.uploaderEvents[fileID] = null
   }
 
   /**

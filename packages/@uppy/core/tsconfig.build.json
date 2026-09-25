@@ -6,7 +6,6 @@
     "jsxImportSource": "preact",
     "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false,
-    "types": ["google.accounts", "google.picker", "gapi"],
-    "useUnknownInCatchVariables": false
+    "types": ["google.accounts", "google.picker", "gapi"]
   }
 }

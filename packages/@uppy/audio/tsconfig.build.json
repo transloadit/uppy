@@ -10,7 +10,6 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "noImplicitOverride": false,
-    "noUncheckedIndexedAccess": false,
-    "useUnknownInCatchVariables": false
+    "noUncheckedIndexedAccess": false
   }
 }

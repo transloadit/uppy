@@ -9,7 +9,6 @@
     "exactOptionalPropertyTypes": false,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "noImplicitOverride": false,
-    "useUnknownInCatchVariables": false
+    "noImplicitOverride": false
   }
 }

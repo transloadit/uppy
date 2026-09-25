@@ -40,6 +40,7 @@ import {
   getFileType,
   getSafeFileId,
   Translator,
+  toError,
 } from './utils/index.js'
 
 export type Processor = (
@@ -924,7 +925,7 @@ export class Uppy<
     try {
       this.#restricter.validateSingleFile(file)
     } catch (err) {
-      return err.message
+      return toError(err).message
     }
     return null
   }
@@ -936,7 +937,7 @@ export class Uppy<
     try {
       this.#restricter.validateAggregateRestrictions(existingFiles, files)
     } catch (err) {
-      return err.message
+      return toError(err).message
     }
     return null
   }
@@ -2414,7 +2415,7 @@ export class Uppy<
       this.emit('complete', result!)
       return result
     } catch (err) {
-      this.#informAndEmit([err])
+      this.#informAndEmit([toError(err)])
       throw err
     }
   }

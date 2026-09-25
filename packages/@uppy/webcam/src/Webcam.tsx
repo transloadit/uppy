@@ -9,7 +9,13 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/core/utils'
-import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/core/utils'
+import {
+  canvasToBlob,
+  getFileTypeExtension,
+  isRestrictionError,
+  mimeTypes,
+  toError,
+} from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import { isMobile } from 'is-mobile'
@@ -461,7 +467,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.#enableMirror = false
         } catch (err) {
           // Logging the error, exept restrictions, which is handled in Core
-          if (!err.isRestriction) {
+          if (!isRestrictionError(err)) {
             this.uppy.log(err)
           }
         }
@@ -508,7 +514,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       }
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
-      if (!err.isRestriction) {
+      if (!isRestrictionError(err)) {
         this.uppy.log(err, 'error')
       }
     }
@@ -583,7 +589,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     try {
       await this.opts.onBeforeSnapshot()
     } catch (err) {
-      const message = typeof err === 'object' ? err.message : err
+      const { message } = toError(err)
       this.uppy.info(message, 'error', 5000)
       throw new Error(`onBeforeSnapshot: ${message}`)
     }
@@ -600,7 +606,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     } catch (error) {
       // Logging the error, except restrictions, which is handled in Core
       this.captureInProgress = false
-      if (!error.isRestriction) {
+      if (!isRestrictionError(error)) {
         this.uppy.log(error)
       }
     }
