@@ -223,7 +223,7 @@ describe('Transloadit Storage in the browser', () => {
   it('renames a folder in one native move instead of walking it', async ({
     worker,
   }) => {
-    const companion = setup(worker)
+    const companion = setup(worker, { mode: 'manager' })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
 

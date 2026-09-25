@@ -215,9 +215,10 @@ export interface Opts<M extends Meta, B extends Body> {
   toolbarActions?: ProviderToolbarAction<M, B>[]
   /**
    * 'picker' (default): rows are checkboxes and the footer adds the selection
-   * to Uppy. 'manager' (file-library UIs): a plain click opens an item's
-   * details, multi-select hides behind an explicit toggle, and the selection
-   * feeds `bulkActions` instead of picking. 'manager' is list view only for
+   * to Uppy. 'manager' (file-library UIs, until a dedicated file manager
+   * plugin replaces it): a plain click opens an item's details, multi-select
+   * hides behind an explicit toggle, and the selection feeds `bulkActions`
+   * instead of picking. 'manager' is list view only for
    * now (`viewType: 'list'`): the grid view does not lay out its items.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
@@ -225,9 +226,9 @@ export interface Opts<M extends Meta, B extends Body> {
    */
   mode?: 'picker' | 'manager'
   /**
-   * Actions over the multi-selected items: in the header while something is
-   * checked (picker mode), or in the footer of the manager's selection mode.
-   * List view only for now (`viewType: 'list'`).
+   * Manager mode only: actions over the multi-selected items, in the footer
+   * of its selection mode. (Picker mode picks the checked items.) List view
+   * only for now (`viewType: 'list'`).
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -1247,9 +1248,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
                 }
               : undefined
           }
-          bulkActions={isManager ? undefined : opts.bulkActions}
-          runBulkAction={this.runBulkAction}
-          selectedCount={isManager ? undefined : selectedCount}
           busy={busy}
         />
         {opts.showFilter && (

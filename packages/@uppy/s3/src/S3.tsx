@@ -290,8 +290,9 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   // Replaces the base option's, which accepts any key.
   locale?: LocaleStrings<typeof locale>
   /**
-   * Show management actions (rename/move, delete, new folder). Requires a
-   * Companion whose S3 provider allows mutations. Default: true.
+   * Manager mode: show the file changes (rename/move, delete, new folder,
+   * bulk move/delete) when the session may write. Picker mode never offers
+   * them: picking files is not changing them. Default: true.
    */
   enableActions?: boolean
   /** Extra per-item actions, appended to the built-in ones. */
@@ -325,9 +326,10 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   standalone?: boolean
   /**
    * 'picker' (default): rows are checkboxes and the selection is added to
-   * Uppy. 'manager' (file-library UIs): clicking a file opens its detail
-   * modal, multi-select hides behind an explicit toggle, and the selection
-   * feeds bulk actions (delete, move) instead of picking.
+   * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,
+   * until a dedicated file manager plugin replaces it): clicking a file opens
+   * its detail modal, files can be renamed, moved and deleted, multi-select
+   * hides behind an explicit toggle, and the selection feeds bulk actions.
    */
   mode?: 'picker' | 'manager'
   /**
@@ -544,7 +546,7 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   builtInActions(): ProviderAction<M, B>[] {
-    if (!this.canWrite) return []
+    if (!this.#offersChanges) return []
     return [
       {
         id: 's3:rename',
@@ -612,6 +614,7 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   builtInToolbarActions(): ProviderToolbarAction<M, B>[] {
+    if (!this.#offersChanges) return []
     return [
       {
         id: 's3:newFolder',
@@ -637,6 +640,7 @@ export default class S3<M extends Meta, B extends Body>
 
   /** Bulk actions over the multi-selection in manager mode. */
   builtInBulkActions(): ProviderBulkAction<M, B>[] {
+    if (!this.#offersChanges) return []
     return [
       {
         id: 's3:bulkMove',
@@ -722,6 +726,15 @@ export default class S3<M extends Meta, B extends Body>
       (this.#session?.canWrite ?? false) &&
       (this.#grant?.scopes.includes('write') ?? true)
     )
+  }
+
+  /**
+   * Whether the built-in file changes are offered: in manager mode only
+   * (picking files is not changing them), and only where the session may
+   * write.
+   */
+  get #offersChanges(): boolean {
+    return this.opts.mode === 'manager' && this.canWrite
   }
 
   /**
@@ -838,8 +851,9 @@ export default class S3<M extends Meta, B extends Body>
   /** (Re)compute the actions: the integrator's switch, and what the session may do. */
   #applyActions(): void {
     const enableActions = this.opts.enableActions !== false
-    // The per-item actions check `canWrite` themselves: a subclass may add
-    // read-only ones (e.g. download).
+    // The built-in ones check `#offersChanges` themselves: a subclass may add
+    // actions that change nothing (e.g. download) or that work in picker mode
+    // too (e.g. upload into the open folder).
     const withBuiltIns = enableActions && this.canWrite
     this.view.opts.actions = [
       ...(enableActions ? this.builtInActions() : []),

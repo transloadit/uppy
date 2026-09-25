@@ -195,7 +195,7 @@ describe('S3 provider in the browser', () => {
   it('keeps a cancelled rename from discarding its listing', async ({
     worker,
   }) => {
-    const { plugin } = setup(worker)
+    const { plugin } = setup(worker, { mode: 'manager' })
     await openBucket()
     const item = plugin
       .getPluginState()
@@ -402,6 +402,7 @@ describe('S3 provider in the browser', () => {
     worker,
   }) => {
     const { companion, plugin } = setup(worker, {
+      mode: 'manager',
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
       companion: {
@@ -440,7 +441,10 @@ describe('S3 provider in the browser', () => {
   })
 
   it('shows plain chrome when standalone', async ({ worker }) => {
-    setup(worker, { standalone: true })
+    setup(worker, {
+      mode: 'manager',
+      standalone: true,
+    })
     await openBucket()
 
     const panel = page.getByRole('tabpanel')
@@ -512,6 +516,7 @@ describe('S3 provider in the browser', () => {
     worker,
   }) => {
     setup(worker, {
+      mode: 'manager',
       actions: [
         {
           id: 'broken',
@@ -695,7 +700,7 @@ describe('S3 provider in the browser', () => {
   it('opens one item menu at a time and closes it with Escape', async ({
     worker,
   }) => {
-    setup(worker)
+    setup(worker, { mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
@@ -786,7 +791,7 @@ describe('S3 provider in the browser', () => {
   it('creates a folder through the inline dialog and refreshes the listing', async ({
     worker,
   }) => {
-    const { companion } = setup(worker)
+    const { companion } = setup(worker, { mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'New folder' }).click()
@@ -809,7 +814,7 @@ describe('S3 provider in the browser', () => {
   })
 
   it('renames in place and moves with a path', async ({ worker }) => {
-    const { companion } = setup(worker)
+    const { companion } = setup(worker, { mode: 'manager' })
     await openBucket()
 
     // Bare name → rename in the current folder
@@ -843,7 +848,7 @@ describe('S3 provider in the browser', () => {
   it('renames a folder by moving its contents one by one', async ({
     worker,
   }) => {
-    const { companion } = setup(worker)
+    const { companion } = setup(worker, { mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
@@ -873,7 +878,7 @@ describe('S3 provider in the browser', () => {
   })
 
   it('refuses to move a folder into itself', async ({ worker }) => {
-    const { companion } = setup(worker)
+    const { companion } = setup(worker, { mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
@@ -891,7 +896,7 @@ describe('S3 provider in the browser', () => {
   it('deletes files after confirmation and folders with their contents', async ({
     worker,
   }) => {
-    const { companion } = setup(worker)
+    const { companion } = setup(worker, { mode: 'manager' })
     await openBucket()
 
     // Cancel leaves everything alone
@@ -943,41 +948,22 @@ describe('S3 provider in the browser', () => {
     expect(companion.folders.has('docs/')).toBe(false)
   })
 
-  it('offers the bulk actions in the header while items are checked (picker mode)', async ({
+  it('offers no file changes in picker mode: picking is not changing', async ({
     worker,
   }) => {
-    const { companion } = setup(worker)
+    setup(worker)
     await openBucket()
-
-    const deleteButton = page.getByRole('button', {
-      name: 'Delete',
-      exact: true,
-    })
-    await expect.element(deleteButton).not.toBeInTheDocument()
 
     await page.getByRole('checkbox', { name: /docs/ }).click()
     await page.getByRole('checkbox', { name: 'readme.md' }).click()
-    await expect.element(deleteButton).toBeVisible()
+    for (const name of ['New folder…', 'Move…', 'Delete']) {
+      await expect
+        .element(page.getByRole('button', { name, exact: true }))
+        .not.toBeInTheDocument()
+    }
     await expect
-      .element(page.getByRole('button', { name: 'Move…' }))
-      .toBeVisible()
-
-    await deleteButton.click()
-    const dialog = page.getByRole('dialog')
-    await expect.element(dialog.getByText('Delete 2 items?')).toBeVisible()
-    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
-    await expect
-      .element(page.getByText(/Deleted 2 items/).first())
-      .toBeVisible()
-    await expect
-      .element(page.getByText('readme.md', { exact: true }))
+      .element(page.getByRole('button', { name: 'Actions for readme.md' }))
       .not.toBeInTheDocument()
-    expect(
-      companion.calls
-        .filter((call) => call.path === '/s3/mutate/delete')
-        .map((call) => call.body),
-    ).toEqual([{ id: 'docs/hello.txt' }, { id: 'docs/' }, { id: 'readme.md' }])
-    await expect.element(deleteButton).not.toBeInTheDocument()
   })
 
   describe('server-issued grants', () => {
@@ -986,7 +972,10 @@ describe('S3 provider in the browser', () => {
     }) => {
       const grant = mockGrant({ bucket: 'my-bucket' })
       const getGrant = vi.fn(async () => grant)
-      const { companion } = setup(worker, { getGrant })
+      const { companion } = setup(worker, {
+        mode: 'manager',
+        getGrant,
+      })
 
       await openBucket()
       expect(getGrant).toHaveBeenCalledTimes(1)

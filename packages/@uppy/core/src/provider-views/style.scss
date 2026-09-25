@@ -581,19 +581,6 @@
   }
 }
 
-.uppy-ProviderBrowser-toolbarBtn--danger {
-  &,
-  [data-uppy-theme='dark'] & {
-    color: var(--uppy-color-danger, #{variables.$red});
-    border-color: rgba(variables.$red, 0.4);
-  }
-
-  &:not(:disabled):hover,
-  [data-uppy-theme='dark'] &:not(:disabled):hover {
-    background-color: rgba(variables.$red, 0.08);
-  }
-}
-
 // Inline prompt/confirm dialog (ProviderView.prompt / .confirm), used by
 // provider actions instead of window.prompt / window.confirm. A native
 // <dialog> shown with showModal(): centred in the top layer with ::backdrop.
