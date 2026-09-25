@@ -136,7 +136,7 @@ describe('Transloadit Storage in the browser', () => {
     ).toBe(true)
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await expect
-      .element(page.getByRole('menuitem', { name: 'Rename / move…' }))
+      .element(page.getByRole('menuitem', { name: 'Rename or move…' }))
       .not.toBeInTheDocument()
     await expect
       .element(page.getByRole('menuitem', { name: 'Download', exact: true }))
@@ -228,9 +228,9 @@ describe('Transloadit Storage in the browser', () => {
     await expect.element(page.getByText('readme.md')).toBeVisible()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
     await page
-      .getByLabelText('New name, or a path relative to the browsing root:')
+      .getByLabelText('New name, or a path relative to the root folder:')
       .fill('archive')
     await userEvent.keyboard('{Enter}')
 

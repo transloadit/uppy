@@ -91,7 +91,7 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
             className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Provider-loadingCancel"
             onClick={onCancelLoading}
           >
-            {i18n('cancel')}
+            {i18n('stopOperation')}
           </button>
         )}
       </div>

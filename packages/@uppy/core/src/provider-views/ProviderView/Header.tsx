@@ -32,6 +32,11 @@ type HeaderProps<M extends Meta, B extends Body> = {
   bulkActions?: ProviderBulkAction<M, B>[]
   runBulkAction?: (action: ProviderBulkAction<M, B>) => void
   selectedCount?: number
+  /**
+   * A long operation runs (`ProviderView.runWithProgress`): anything that
+   * would start another request, and so abort it, is disabled.
+   */
+  busy?: boolean
 }
 
 export default function Header<M extends Meta, B extends Body>(
@@ -39,6 +44,7 @@ export default function Header<M extends Meta, B extends Body>(
 ) {
   const toolbarActions = props.toolbarActions ?? []
   const bulkActions = (props.selectedCount && props.bulkActions) || []
+  const busy = props.busy ?? false
   return (
     <div className="uppy-ProviderBrowser-header">
       <div
@@ -54,6 +60,7 @@ export default function Header<M extends Meta, B extends Body>(
             breadcrumbsIcon={props.pluginIcon?.()}
             title={props.title}
             i18n={props.i18n}
+            disabled={busy}
           />
         )}
         {(toolbarActions.length > 0 ||
@@ -67,6 +74,7 @@ export default function Header<M extends Meta, B extends Body>(
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
                 onClick={props.selectionToggle.onToggle}
+                disabled={busy}
               >
                 {props.selectionToggle.active
                   ? props.i18n('cancelSelection')
@@ -79,6 +87,7 @@ export default function Header<M extends Meta, B extends Body>(
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
                 onClick={() => props.runToolbarAction?.(action)}
+                disabled={busy}
               >
                 {action.label}
               </button>
@@ -92,6 +101,7 @@ export default function Header<M extends Meta, B extends Body>(
                   action.danger && 'uppy-ProviderBrowser-toolbarBtn--danger',
                 )}
                 onClick={() => props.runBulkAction?.(action)}
+                disabled={busy}
               >
                 {action.label}
               </button>
@@ -103,6 +113,7 @@ export default function Header<M extends Meta, B extends Body>(
             logout={props.logout}
             username={props.username}
             i18n={props.i18n}
+            disabled={busy}
           />
         )}
       </div>

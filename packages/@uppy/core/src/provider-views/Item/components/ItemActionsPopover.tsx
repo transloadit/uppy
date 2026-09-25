@@ -49,25 +49,27 @@ export default function ItemActionsPopover<M extends Meta, B extends Body>({
   i18n,
 }: ItemActionsPopoverProps<M, B>): h.JSX.Element {
   const menuRef = useRef<HTMLDivElement>(null)
-  const [position, setPosition] = useState<{
-    top: number
-    right: number
-  } | null>(null)
+  const [position, setPosition] = useState<
+    ({ top: number } & ({ right: number } | { left: number })) | null
+  >(null)
 
   // Position from the trigger's live viewport rect, re-measured whenever the
   // page scrolls or resizes so the menu never detaches from its trigger. The
   // flip needs the menu's height, which a closed `[popover]` (display: none)
-  // reports as 0.
+  // reports as 0. The menu lines up with the trigger's inline-end edge, and
+  // opens towards the row: leftwards, or rightwards in a right-to-left UI.
   const reposition = useCallback(() => {
     const menu = menuRef.current
     if (!menu) return
     const a = anchor.getBoundingClientRect()
     const height = menu.offsetHeight
     const fitsBelow = a.bottom + GAP + height <= window.innerHeight
-    setPosition({
-      top: fitsBelow ? a.bottom + GAP : Math.max(0, a.top - GAP - height),
-      right: Math.max(0, window.innerWidth - a.right),
-    })
+    const top = fitsBelow ? a.bottom + GAP : Math.max(0, a.top - GAP - height)
+    setPosition(
+      getComputedStyle(anchor).direction === 'rtl'
+        ? { top, left: Math.max(0, a.left) }
+        : { top, right: Math.max(0, window.innerWidth - a.right) },
+    )
   }, [anchor])
 
   // A first placement before paint, which also lifts `visibility: hidden` so
@@ -164,7 +166,12 @@ export default function ItemActionsPopover<M extends Meta, B extends Body>({
       })}
       style={
         position
-          ? { top: `${position.top}px`, right: `${position.right}px` }
+          ? {
+              top: `${position.top}px`,
+              ...('left' in position
+                ? { left: `${position.left}px` }
+                : { right: `${position.right}px` }),
+            }
           : { visibility: 'hidden' }
       }
       onKeyDown={onKeyDown}

@@ -27,14 +27,16 @@ export default function ProviderDialog({
   )
   const inputRef = useRef<HTMLInputElement>(null)
   const confirmRef = useRef<HTMLButtonElement>(null)
+  const cancelRef = useRef<HTMLButtonElement>(null)
   const titleId = useId()
   const isPrompt = dialog.kind === 'prompt'
   const danger = dialog.kind === 'confirm' && dialog.danger === true
 
   useEffect(() => {
-    ;(inputRef.current ?? confirmRef.current)?.focus()
+    // A destructive confirm starts on Cancel: a stray Enter must not delete.
+    ;(inputRef.current ?? (danger ? cancelRef : confirmRef).current)?.focus()
     inputRef.current?.select()
-  }, [])
+  }, [danger])
 
   return (
     <ModalDialog
@@ -76,6 +78,7 @@ export default function ProviderDialog({
         )}
         <div className="uppy-ProviderDialog-actions">
           <button
+            ref={cancelRef}
             type="button"
             className="uppy-u-reset uppy-c-btn uppy-c-btn-link"
             onClick={onCancel}

@@ -261,9 +261,11 @@ const isGrantForm = (data: unknown): data is { grant: string } =>
  */
 const ConnectAuthForm = ({
   i18n,
+  pluginName,
   onAuth,
 }: {
   i18n: I18n
+  pluginName: string
   onAuth: (arg: Record<string, never>) => void
 }) => (
   <div className="uppy-Provider-auth">
@@ -272,7 +274,7 @@ const ConnectAuthForm = ({
       className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
       onClick={() => onAuth({})}
     >
-      {i18n('authenticate')}
+      {i18n('authenticateWith', { pluginName })}
     </button>
   </div>
 )
@@ -556,7 +558,7 @@ export default class S3<M extends Meta, B extends Body>
               title: this.i18n('renameOrMoveTitle', { name }),
               label: this.i18n('renameOrMovePrompt'),
               defaultValue: name,
-              confirmLabel: this.i18n('rename'),
+              confirmLabel: this.i18n('save'),
             }),
           )
           if (!value) return undefined
@@ -572,8 +574,11 @@ export default class S3<M extends Meta, B extends Body>
             [key],
             (_, options) => this.#move(key, destination, options),
           )
+          // Paths are shown as the user types them: relative to the root.
           return isMove
-            ? this.i18n('itemMoved', { path: destination })
+            ? this.i18n('itemMoved', {
+                path: destination.slice(this.rootPrefix.length),
+              })
             : this.i18n('itemRenamed', { name: value })
         }),
       },
@@ -614,7 +619,7 @@ export default class S3<M extends Meta, B extends Body>
         run: this.#withToast(async ({ currentFolderId, view }) => {
           const name = (
             await view.prompt({
-              title: this.i18n('newFolder'),
+              title: this.i18n('newFolderTitle'),
               label: this.i18n('newFolderPrompt'),
               confirmLabel: this.i18n('create'),
             })
@@ -639,7 +644,9 @@ export default class S3<M extends Meta, B extends Body>
         run: this.#withToast(async ({ items, view }) => {
           const input = typedPath(
             await view.prompt({
-              title: this.i18n('moveSelected'),
+              title: this.i18n('moveSelectedTitle', {
+                smart_count: items.length,
+              }),
               label: this.i18n('moveSelectedPrompt'),
               confirmLabel: this.i18n('move'),
             }),
@@ -672,10 +679,14 @@ export default class S3<M extends Meta, B extends Body>
         label: this.i18n('deleteItem'),
         danger: true,
         run: this.#withToast(async ({ items, view }) => {
+          const folders = items.filter((item) => item.data.isFolder).length
           const confirmed = await view.confirm({
             title: this.i18n('deleteSelectedConfirm', {
               smart_count: items.length,
             }),
+            message: folders
+              ? this.i18n('deleteSelectedFolderHint', { smart_count: folders })
+              : undefined,
             confirmLabel: this.i18n('deleteItem'),
             danger: true,
           })
@@ -865,8 +876,12 @@ export default class S3<M extends Meta, B extends Body>
       // Use the plugin's own i18n (which includes our defaultLocale) rather than
       // the core one that ProviderViews hands us, so the label resolves even
       // when the integrator does not load @uppy/locales.
-      renderAuthForm: ({ onAuth }) => (
-        <ConnectAuthForm onAuth={onAuth} i18n={this.i18n} />
+      renderAuthForm: ({ onAuth, pluginName }) => (
+        <ConnectAuthForm
+          onAuth={onAuth}
+          pluginName={pluginName}
+          i18n={this.i18n}
+        />
       ),
     })
     this.#applyActions()

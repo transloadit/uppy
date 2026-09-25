@@ -26,7 +26,7 @@ import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
-const RENAME_LABEL = 'New name, or a path relative to the browsing root:'
+const RENAME_LABEL = 'New name, or a path relative to the root folder:'
 
 let uppy: Uppy | undefined
 
@@ -219,7 +219,7 @@ describe('S3 provider in the browser', () => {
     expect(plugin.canWrite).toBe(false)
     expect(plugin.builtInActions()).toEqual([])
     await expect
-      .element(page.getByRole('button', { name: 'New folder', exact: true }))
+      .element(page.getByRole('button', { name: 'New folder…', exact: true }))
       .not.toBeInTheDocument()
   })
 
@@ -416,18 +416,22 @@ describe('S3 provider in the browser', () => {
     })
     await page.getByRole('tab', { name: 'S3' }).click()
     await page.getByRole('button', { name: 'Actions for photo.jpg' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
     await page
       .getByRole('dialog')
       .getByRole('textbox')
       .fill('archive/photo.jpg')
-    await page.getByRole('button', { name: 'Rename', exact: true }).click()
+    await page.getByRole('button', { name: 'Save', exact: true }).click()
     await expect
       .poll(() => companion.lastCall('/s3/mutate/move')?.body)
       .toEqual({
         id: 'tenant/photo.jpg',
         destination: 'tenant/archive/photo.jpg',
       })
+    // The toast shows the path as typed, not the key with the root prefix.
+    await expect
+      .element(page.getByText('Moved to "archive/photo.jpg"').first())
+      .toBeVisible()
     // Wait for the refresh the move triggers, so nothing is in flight after.
     await expect
       .poll(() => plugin.getPluginState().partialTree.map((node) => node.id))
@@ -605,6 +609,89 @@ describe('S3 provider in the browser', () => {
       .not.toBeInTheDocument()
   })
 
+  it('counts the selection as the bulk actions get it and warns about folder contents', async ({
+    worker,
+  }) => {
+    const { plugin } = setup(worker, { mode: 'manager' })
+    await openBucket()
+    // With docs listed, its file is checked along with it: still one item.
+    await plugin.view.openFolder('docs%2F')
+    await plugin.view.openFolder(null)
+    await page.getByRole('button', { name: 'Select multiple' }).click()
+    await page.getByRole('checkbox', { name: /docs/ }).click()
+    await page.getByRole('checkbox', { name: 'readme.md' }).click()
+    await expect.element(page.getByText('2 selected')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Delete', exact: true }).click()
+    const dialog = page.getByRole('dialog', { name: 'Delete 2 items?' })
+    await expect
+      .element(
+        dialog.getByText(
+          'The selected folder and everything in it will be deleted.',
+        ),
+      )
+      .toBeVisible()
+    // A destructive confirm starts on Cancel.
+    await expect
+      .element(dialog.getByRole('button', { name: 'Cancel' }))
+      .toHaveFocus()
+    await userEvent.keyboard('{Escape}')
+
+    await page.getByRole('button', { name: 'Move…' }).click()
+    await expect
+      .element(page.getByRole('dialog', { name: 'Move 2 items' }))
+      .toBeVisible()
+    await userEvent.keyboard('{Escape}')
+  })
+
+  it('offers no multi-select in an empty folder', async ({ worker }) => {
+    setup(worker, {
+      mode: 'manager',
+      companion: { folders: { '': [{ name: 'empty', isFolder: true }] } },
+    })
+    await page.getByRole('tab', { name: 'S3' }).click()
+    const toggle = page.getByRole('button', { name: 'Select multiple' })
+    await expect.element(toggle).toBeVisible()
+    await page.getByRole('button', { name: 'Open folder empty' }).click()
+    await expect
+      .element(page.getByText('You have no files or folders here'))
+      .toBeVisible()
+    await expect.element(toggle).not.toBeInTheDocument()
+  })
+
+  it('keeps the controls that would abort a long operation disabled while it runs', async ({
+    worker,
+  }) => {
+    const { plugin } = setup(worker, { mode: 'manager' })
+    await openBucket()
+    await page.getByRole('button', { name: 'Select multiple' }).click()
+    await page.getByRole('checkbox', { name: 'readme.md' }).click()
+
+    const operation = plugin.view
+      .runWithProgress(({ signal, setProgress }) => {
+        setProgress('Moving 1 of 2 files…')
+        return new Promise((_, reject) =>
+          signal.addEventListener('abort', () => reject(signal.reason)),
+        )
+      })
+      .catch((err: unknown) => err)
+    await expect.element(page.getByText('Moving 1 of 2 files…')).toBeVisible()
+    for (const name of ['Cancel selection', 'New folder…', 'Log out']) {
+      await expect.element(page.getByRole('button', { name })).toBeDisabled()
+    }
+    await expect.element(page.getByRole('searchbox')).toBeDisabled()
+    await expect
+      .element(page.getByRole('button', { name: 'Move…' }))
+      .not.toBeInTheDocument()
+
+    await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    expect(await operation).toMatchObject({ name: 'AbortError' })
+    await expect
+      .element(page.getByRole('button', { name: 'New folder…' }))
+      .toBeEnabled()
+    await expect.element(page.getByRole('searchbox')).toBeEnabled()
+  })
+
   it('opens one item menu at a time and closes it with Escape', async ({
     worker,
   }) => {
@@ -727,11 +814,11 @@ describe('S3 provider in the browser', () => {
 
     // Bare name → rename in the current folder
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
     const input = page.getByLabelText(RENAME_LABEL)
     await expect.element(input).toHaveValue('readme.md')
     await input.fill('notes.md')
-    await page.getByRole('button', { name: 'Rename', exact: true }).click()
+    await page.getByRole('button', { name: 'Save', exact: true }).click()
     await expect.element(page.getByText('notes.md')).toBeVisible()
     expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
       id: 'readme.md',
@@ -740,7 +827,7 @@ describe('S3 provider in the browser', () => {
 
     // A path moves the file
     await page.getByRole('button', { name: 'Actions for notes.md' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
     await input.fill('docs/notes.md')
     await userEvent.keyboard('{Enter}')
     // The list hides behind the progress screen while the move runs, so wait
@@ -760,7 +847,7 @@ describe('S3 provider in the browser', () => {
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
     await page.getByLabelText(RENAME_LABEL).fill('archive')
     await userEvent.keyboard('{Enter}')
 
@@ -790,7 +877,7 @@ describe('S3 provider in the browser', () => {
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
     await page.getByLabelText(RENAME_LABEL).fill('docs/inner')
     await userEvent.keyboard('{Enter}')
 
