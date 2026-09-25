@@ -214,13 +214,31 @@ describe('S3 provider in the browser', () => {
   it('hides write actions when Companion reports a read-only session', async ({
     worker,
   }) => {
-    const { plugin } = setup(worker, { companion: { canWrite: false } })
+    const { plugin } = setup(worker, {
+      mode: 'manager',
+      companion: { canWrite: false },
+    })
     await openBucket()
     expect(plugin.canWrite).toBe(false)
     expect(plugin.builtInActions()).toEqual([])
     await expect
       .element(page.getByRole('button', { name: 'New folder…', exact: true }))
       .not.toBeInTheDocument()
+    // Nothing to do with a selection either.
+    await expect
+      .element(page.getByRole('button', { name: 'Select multiple' }))
+      .not.toBeInTheDocument()
+  })
+
+  it('offers no built-in file changes with enableActions: false', async ({
+    worker,
+  }) => {
+    const { plugin } = setup(worker, { mode: 'manager', enableActions: false })
+    await openBucket()
+    expect(plugin.canWrite).toBe(true)
+    expect(plugin.builtInActions()).toEqual([])
+    expect(plugin.builtInToolbarActions()).toEqual([])
+    expect(plugin.builtInBulkActions()).toEqual([])
   })
 
   it('replaces an open prompt without keeping its previous input', async ({

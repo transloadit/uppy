@@ -118,9 +118,11 @@ describe('Transloadit Storage in the browser', () => {
   }) => {
     const getDownloadUrl = vi.fn(async () => '/authorized-original/readme')
     const companion = setup(worker, {
+      mode: 'manager',
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       getDownloadUrl,
+      onUploadRequest: () => {},
     })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
@@ -130,6 +132,10 @@ describe('Transloadit Storage in the browser', () => {
         call.path.startsWith('/transloadit-storage/'),
       ),
     ).toBe(true)
+    // Uploads land in the open folder, which a read-only grant may not change.
+    await expect
+      .element(page.getByRole('button', { name: 'Upload files' }))
+      .not.toBeInTheDocument()
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await expect
       .element(page.getByRole('menuitem', { name: 'Rename or move…' }))

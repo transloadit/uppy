@@ -55,8 +55,7 @@ export default function Header<M extends Meta, B extends Body>(
         {(toolbarActions.length > 0 || props.selectionToggle) && (
           <div className="uppy-ProviderBrowser-toolbar">
             {props.selectionToggle && (
-              // The label says what a click does; no `aria-pressed`, which
-              // would announce "Cancel, pressed".
+              // The label says what a click does, so no `aria-pressed` on top.
               <button
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"

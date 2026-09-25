@@ -528,6 +528,12 @@
     background-color: variables.$gray-100;
   }
 
+  // Invisible, except in forced-colors mode, which drops the background.
+  &:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: -2px;
+  }
+
   [data-uppy-theme='dark'] & {
     color: variables.$gray-200;
 
@@ -712,7 +718,7 @@
 }
 
 .uppy-ItemDetail-close {
-  @include utils.blue-border-focus;
+  @include utils.blue-border-focus-visible;
 
   display: flex;
   flex-shrink: 0;
@@ -729,7 +735,7 @@
   }
 
   [data-uppy-theme='dark'] & {
-    @include utils.blue-border-focus--dark;
+    @include utils.blue-border-focus-visible--dark;
   }
 
   [data-uppy-theme='dark'] &:hover {
@@ -816,7 +822,7 @@
 }
 
 .uppy-ItemDetail-action {
-  @include utils.blue-border-focus;
+  @include utils.blue-border-focus-visible;
 
   padding: 9px 14px;
   color: var(--uppy-color-secondary, #{variables.$gray-800});
@@ -836,7 +842,7 @@
   }
 
   [data-uppy-theme='dark'] & {
-    @include utils.blue-border-focus--dark;
+    @include utils.blue-border-focus-visible--dark;
 
     color: variables.$gray-200;
     background-color: variables.$gray-800;

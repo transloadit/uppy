@@ -24,7 +24,7 @@ import {
   type ProviderToolbarAction,
   ProviderViews,
 } from '@uppy/core/provider-views'
-import type { I18n, LocaleStrings } from '@uppy/core/utils'
+import type { LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 // Load Dashboard's event augmentation without adding a runtime dependency.
@@ -255,31 +255,6 @@ const isGrantForm = (data: unknown): data is { grant: string } =>
   typeof (data as { grant?: unknown }).grant === 'string'
 
 /**
- * The connect screen: Companion decides which bucket the session sees (its own
- * configuration, or the grant), so there is nothing to type — one button, which
- * also remains as a retry while auto-connect runs.
- */
-const ConnectAuthForm = ({
-  i18n,
-  pluginName,
-  onAuth,
-}: {
-  i18n: I18n
-  pluginName: string
-  onAuth: (arg: Record<string, never>) => void
-}) => (
-  <div className="uppy-Provider-auth">
-    <button
-      type="button"
-      className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
-      onClick={() => onAuth({})}
-    >
-      {i18n('authenticateWith', { pluginName })}
-    </button>
-  </div>
-)
-
-/**
  * @experimental `@uppy/s3` is experimental: its options, behaviour and
  * Companion endpoints will change incompatibly, also in minor releases.
  */
@@ -290,9 +265,11 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   // Replaces the base option's, which accepts any key.
   locale?: LocaleStrings<typeof locale>
   /**
-   * Manager mode: show the file changes (rename/move, delete, new folder,
-   * bulk move/delete) when the session may write. Picker mode never offers
-   * them: picking files is not changing them. Default: true.
+   * Manager mode: offer the built-in file changes (rename/move, delete, new
+   * folder, bulk move/delete) when the session may write. Picker mode never
+   * offers them: picking files is not changing them. Uploads a plugin adds
+   * (Transloadit Storage's `storeUploads`) are governed by their own options.
+   * Default: true.
    */
   enableActions?: boolean
   /** Extra per-item actions, appended to the built-in ones. */
@@ -889,16 +866,6 @@ export default class S3<M extends Meta, B extends Body>
       getPreviewUrl: getPreviewUrl
         ? (item) => getPreviewUrl(S3.keyOf(item.id))
         : undefined,
-      // Use the plugin's own i18n (which includes our defaultLocale) rather than
-      // the core one that ProviderViews hands us, so the label resolves even
-      // when the integrator does not load @uppy/locales.
-      renderAuthForm: ({ onAuth, pluginName }) => (
-        <ConnectAuthForm
-          onAuth={onAuth}
-          pluginName={pluginName}
-          i18n={this.i18n}
-        />
-      ),
     })
     this.#applyActions()
 

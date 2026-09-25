@@ -375,6 +375,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
     // A refresh scheduled after an action can land once the plugin is gone.
     if (partialTree == null) return
+    // Listing now would abort a running long operation, which refreshes the
+    // folder itself when it ends.
+    if (this.#cancelLongOperation) return
     const refresh = ++this.#refreshes
     // Remember what was selected so a refresh does not silently drop it.
     const checkedIds = partialTree.flatMap((node) =>
@@ -1240,7 +1243,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
           runToolbarAction={this.runToolbarAction}
           standalone={opts.standalone ?? false}
           selectionToggle={
-            isManager && (selectionActive || !isEmptyFolder)
+            isManager &&
+            (opts.bulkActions?.length ?? 0) > 0 &&
+            (selectionActive || !isEmptyFolder)
               ? {
                   active: selectionActive,
                   onToggle: this.toggleSelectionMode,

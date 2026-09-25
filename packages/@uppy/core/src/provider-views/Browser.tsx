@@ -79,14 +79,23 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     }
   }, [])
 
+  // A long operation replaced the list, and with it whatever had focus: its
+  // Stop button takes over.
+  const stopRef = useRef<HTMLButtonElement>(null)
+  const canStop = Boolean(isLoading && onCancelLoading)
+  useEffect(() => {
+    if (canStop) stopRef.current?.focus()
+  }, [canStop])
+
   if (isLoading) {
     return (
       <div className="uppy-Provider-loading">
-        <span>
+        <span role="status">
           {typeof isLoading === 'string' ? isLoading : i18n('loading')}
         </span>
         {onCancelLoading && (
           <button
+            ref={stopRef}
             type="button"
             className="uppy-u-reset uppy-c-btn uppy-c-btn-link uppy-Provider-loadingCancel"
             onClick={onCancelLoading}

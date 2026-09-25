@@ -21,7 +21,7 @@ export default function BulkActions<M extends Meta, B extends Body>({
   runBulkAction: ProviderView<M, B>['runBulkAction']
   i18n: I18n
 }): h.JSX.Element | null {
-  if (selectedCount === 0) return null
+  if (selectedCount === 0 || bulkActions.length === 0) return null
 
   return (
     <div className="uppy-ProviderBrowser-footer">
