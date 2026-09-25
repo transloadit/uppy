@@ -37,7 +37,6 @@ describe('Dashboard', () => {
         target: 'body',
       })
       core.use(GoogleDrivePlugin, {
-        // @ts-expect-error TODO fix me
         target: DashboardPlugin,
         companionUrl: 'https://fake.uppy.io/',
       })

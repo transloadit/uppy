@@ -10,6 +10,7 @@
     "@uppy/companion": "workspace:^"
   },
   "devDependencies": {
+    "typescript": "^6.0.3",
     "vite": "^8.1.5"
   },
   "private": true,
@@ -17,6 +18,7 @@
   "scripts": {
     "dev": "vite --clearScreen false",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --build"
   }
 }

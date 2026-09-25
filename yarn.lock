@@ -6859,6 +6859,7 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@uppy/companion": "workspace:^"
+    typescript: "npm:^6.0.3"
     vite: "npm:^8.1.5"
   languageName: unknown
   linkType: soft

@@ -41,10 +41,6 @@ const companionAllowedHosts =
   import.meta.env.VITE_COMPANION_ALLOWED_HOSTS &&
   new RegExp(import.meta.env.VITE_COMPANION_ALLOWED_HOSTS)
 
-import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
-import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
-console.log(import.meta.env)
-
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
@@ -61,7 +57,7 @@ async function assemblyOptions() {
   })
 }
 
-function getCompanionKeysParams(name) {
+function getCompanionKeysParams(name: string) {
   const {
     [`VITE_COMPANION_${name}_KEYS_PARAMS_CREDENTIALS_NAME`]: credentialsName,
     [`VITE_COMPANION_${name}_KEYS_PARAMS_KEY`]: key,
@@ -94,7 +90,11 @@ export default () => {
   //   requiredMetaFields: ['caption'],
   // }
 
-  const uppyDashboard = new Uppy({
+  const uppyDashboard = new Uppy<{
+    username: string
+    license: string
+    params?: string
+  }>({
     locale: english,
     logger: debugLogger,
     meta: {
@@ -166,10 +166,7 @@ export default () => {
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
     })
-    .use(Audio, {
-      target: Dashboard,
-      showRecordingLength: true,
-    })
+    .use(Audio, { target: Dashboard })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
@@ -231,7 +228,7 @@ export default () => {
       })
       break
     case 'transloadit-s3':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL })
+      uppyDashboard.use(AwsS3, { companionEndpoint: COMPANION_URL })
       uppyDashboard.use(Transloadit, {
         waitForEncoding: true,
         importFromUploadURLs: true,
@@ -262,7 +259,7 @@ export default () => {
   window.uppy = uppyDashboard
 
   uppyDashboard.on('complete', (result) => {
-    if (result.failed.length === 0) {
+    if (!result.failed?.length) {
       console.log('Upload successful 😀')
     } else {
       console.warn('Upload failed 😞')
@@ -274,6 +271,5 @@ export default () => {
     }
   })
 
-  const modalTrigger = document.querySelector('#pick-files')
-  if (modalTrigger) modalTrigger.click()
+  document.querySelector<HTMLElement>('#pick-files')?.click()
 }
