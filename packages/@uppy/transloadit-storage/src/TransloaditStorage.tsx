@@ -203,7 +203,8 @@ export default class TransloaditStorage<
   override builtInToolbarActions(): ProviderToolbarAction<M, B>[] {
     const actions = super.builtInToolbarActions()
     const { storeUploads, onUploadRequest } = this.opts
-    if (!storeUploads && !onUploadRequest) return actions
+    // Uploads land in the open folder: only a session that may write.
+    if ((!storeUploads && !onUploadRequest) || !this.canWrite) return actions
     return [
       {
         id: 'transloadit:uploadFiles',

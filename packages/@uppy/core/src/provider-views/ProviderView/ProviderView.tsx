@@ -1202,7 +1202,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // A long operation owns the screen: anything that would start another
     // request (and so abort it) is disabled or hidden meanwhile.
     const busy = this.#cancelLongOperation !== undefined
-    const selectedCount = this.getBulkActionItems().length
     // Nothing to select in a folder we know is empty (unlike one being listed).
     const currentFolder = partialTree.find(({ id }) => id === currentFolderId)
     const isEmptyFolder =
@@ -1289,7 +1288,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         {busy ? null : isManager ? (
           selectionActive && (
             <BulkActions
-              selectedCount={selectedCount}
+              selectedCount={this.getBulkActionItems().length}
               bulkActions={opts.bulkActions ?? []}
               runBulkAction={this.runBulkAction}
               i18n={i18n}

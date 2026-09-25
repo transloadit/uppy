@@ -730,11 +730,15 @@ export default class S3<M extends Meta, B extends Body>
 
   /**
    * Whether the built-in file changes are offered: in manager mode only
-   * (picking files is not changing them), and only where the session may
-   * write.
+   * (picking files is not changing them), unless turned off, and only where
+   * the session may write.
    */
   get #offersChanges(): boolean {
-    return this.opts.mode === 'manager' && this.canWrite
+    return (
+      this.opts.mode === 'manager' &&
+      this.opts.enableActions !== false &&
+      this.canWrite
+    )
   }
 
   /**
@@ -850,21 +854,19 @@ export default class S3<M extends Meta, B extends Body>
 
   /** (Re)compute the actions: the integrator's switch, and what the session may do. */
   #applyActions(): void {
-    const enableActions = this.opts.enableActions !== false
-    // The built-in ones check `#offersChanges` themselves: a subclass may add
-    // actions that change nothing (e.g. download) or that work in picker mode
-    // too (e.g. upload into the open folder).
-    const withBuiltIns = enableActions && this.canWrite
+    // The built-in lists decide what they offer (see `#offersChanges`): a
+    // subclass may add actions that change nothing (e.g. download) or that
+    // work in picker mode too (e.g. upload into the open folder).
     this.view.opts.actions = [
-      ...(enableActions ? this.builtInActions() : []),
+      ...this.builtInActions(),
       ...(this.opts.actions ?? []),
     ]
     this.view.opts.toolbarActions = [
-      ...(withBuiltIns ? this.builtInToolbarActions() : []),
+      ...this.builtInToolbarActions(),
       ...(this.opts.toolbarActions ?? []),
     ]
     this.view.opts.bulkActions = [
-      ...(withBuiltIns ? this.builtInBulkActions() : []),
+      ...this.builtInBulkActions(),
       ...(this.opts.bulkActions ?? []),
     ]
     this.setPluginState({})

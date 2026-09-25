@@ -64,20 +64,16 @@ afterEach(() => {
 })
 
 describe('Transloadit Storage in the browser', () => {
-  it('offers the custom upload action without replacing an application Assembly', () => {
+  it('offers the custom upload action in picker mode, and hands it the open folder', async ({
+    worker,
+  }) => {
     const onUploadRequest = vi.fn()
-    uppy = new Uppy().use(TransloaditStorage, {
-      companionUrl: COMPANION,
-      onUploadRequest,
-    })
-    const plugin =
-      uppy.getPlugin<
-        TransloaditStorage<Record<string, unknown>, Record<string, never>>
-      >('TransloaditStorage')
-    if (!plugin) throw new Error('Missing Transloadit Storage plugin')
-    expect(plugin.builtInToolbarActions().map((action) => action.id)).toContain(
-      'transloadit:uploadFiles',
-    )
+    setup(worker, { onUploadRequest })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    expect(onUploadRequest).toHaveBeenCalledWith({ prefix: '' })
   })
 
   it('storeUploads refuses to overwrite explicit Assembly configuration', () => {
