@@ -58,6 +58,7 @@ function GridItem({
         <button
           type="button"
           aria-label={i18n('openFileNamed', { name })}
+          data-uppy-item-id={file.id}
           className="uppy-u-reset uppy-ProviderBrowserItem-inner"
           onClick={() => onFileClick(file)}
         >

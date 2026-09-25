@@ -101,9 +101,20 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   ): Promise<ResBody> {
     const response = await super.list<ResBody>(...args)
     // The wire shape is `ProviderListResponse['session']` on the Companion side.
-    const { session } = response as { session: S3Session }
-    this.#bucket = session.bucket
-    this.onSession?.(session)
+    const { session, username } = (response ?? {}) as {
+      session?: Partial<S3Session>
+      username?: unknown
+    }
+    // Defensive for a Companion that sends no session: the bucket is still
+    // the username, and nothing may be changed.
+    const bucket = session?.bucket ?? username
+    if (typeof bucket === 'string') this.#bucket = bucket
+    this.onSession?.({
+      bucket: typeof bucket === 'string' ? bucket : '',
+      prefix: session?.prefix ?? '',
+      canWrite: session?.canWrite === true,
+      supportsMoveFolder: session?.supportsMoveFolder === true,
+    })
     return response
   }
 

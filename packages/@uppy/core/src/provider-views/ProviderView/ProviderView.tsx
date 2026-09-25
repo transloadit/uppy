@@ -368,6 +368,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
     // A refresh scheduled after an action can land once the plugin is gone.
     if (partialTree == null) return
+    const refresh = ++this.#refreshes
     // Remember what was selected so a refresh does not silently drop it.
     const checkedIds = partialTree.flatMap((node) =>
       node.type !== 'root' &&
@@ -404,8 +405,21 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const { partialTree: refreshedTree, detailItemId } =
       this.plugin.getPluginState()
-    // The item of an open detail modal did not survive the refresh.
-    if (detailItemId && !refreshedTree.some(({ id }) => id === detailItemId)) {
+    // The plugin may have been removed while the folder was listed.
+    if (refreshedTree == null) return
+    // The item of an open detail modal did not survive the refresh. Only
+    // judged once the folder was listed again, and by the latest refresh (a
+    // newer one aborted this listing and dropped the items again).
+    const listed = refreshedTree.some(
+      (node) =>
+        node.id === currentFolderId && node.type !== 'file' && node.cached,
+    )
+    if (
+      refresh === this.#refreshes &&
+      listed &&
+      detailItemId &&
+      !refreshedTree.some(({ id }) => id === detailItemId)
+    ) {
       this.closeItemDetail()
     }
     // Re-apply the selection to the items that survived the refresh.
@@ -543,6 +557,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
    * showing this one meanwhile instead of closing and reopening.
    */
   #detailItem: PartialTreeFile | PartialTreeFolderNode | undefined
+
+  #refreshes = 0
 
   /**
    * Manager mode: open the detail modal for one item.

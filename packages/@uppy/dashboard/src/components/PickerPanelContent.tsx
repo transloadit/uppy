@@ -49,20 +49,28 @@ function PickerPanelContent<M extends Meta, B extends Body>({
   // Files dropped on a picker would be uploaded somewhere else than what it
   // shows, so a panel ignores them, unless its plugin stores what is dropped
   // on it (a storage library uploading into its open folder): then the
-  // Dashboard takes the drop as it would anywhere else.
-  const dropHandlers = activePlugin?.acceptsFileDrops
-    ? {}
-    : {
-        onDragOver: (event: TargetedDragEvent<HTMLDivElement>) => {
-          ignoreEvent(event)
-          // Where that blocked the drop (anywhere but a text field), don't
-          // show the copy cursor that promises one.
-          if (event.defaultPrevented && event.dataTransfer)
-            event.dataTransfer.dropEffect = 'none'
-        },
-        onDragLeave: ignoreEvent,
-        onDrop: ignoreEvent,
-      }
+  // Dashboard takes a drag of files as it would anywhere else. Not a drag of
+  // text or links, nor one over a text field or an open dialog.
+  const leaveToDashboard = (event: TargetedDragEvent<HTMLDivElement>) => {
+    const target = event.target as Element
+    return (
+      Boolean(activePlugin?.acceptsFileDrops) &&
+      Boolean(event.dataTransfer?.types.includes('Files')) &&
+      target.closest('input, textarea, dialog') == null
+    )
+  }
+  const ignoreDrag = (event: TargetedDragEvent<HTMLDivElement>) => {
+    if (leaveToDashboard(event)) return
+    ignoreEvent(event)
+    // Where that blocked the drop (anywhere but a text field), don't show the
+    // copy cursor that promises one.
+    if (
+      event.type === 'dragover' &&
+      event.defaultPrevented &&
+      event.dataTransfer
+    )
+      event.dataTransfer.dropEffect = 'none'
+  }
 
   return (
     <div
@@ -70,7 +78,9 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       role="tabpanel"
       data-uppy-panelType="PickerPanel"
       id={`uppy-DashboardContent-panel--${activePickerPanel.id}`}
-      {...dropHandlers}
+      onDragOver={ignoreDrag}
+      onDragLeave={ignoreDrag}
+      onDrop={ignoreDrag}
       onPaste={ignoreEvent}
     >
       {!standalone && (

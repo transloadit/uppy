@@ -1,7 +1,7 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import classNames from 'classnames'
 import type { h } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { useEffect, useId, useState } from 'preact/hooks'
 import type {
   Body,
   Meta,
@@ -39,6 +39,7 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   i18n,
 }: ItemDetailDialogProps<M, B>): h.JSX.Element {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+  const titleId = useId()
   // The item as the dialog opened: a listing update replaces the `item` object
   // but not the preview (another item gets a new dialog; see its `key`).
   const [previewItem] = useState(item)
@@ -72,11 +73,22 @@ export default function ItemDetailDialog<M extends Meta, B extends Body>({
   return (
     <ModalDialog
       className="uppy-ProviderDialog uppy-ItemDetail"
-      aria-label={name}
+      aria-labelledby={titleId}
       onDismiss={onClose}
+      restoreFocus={(dialog) => {
+        // The item's (re-rendered) row, or at least its list.
+        const browser = dialog.closest('.uppy-ProviderBrowser')
+        return (
+          browser?.querySelector<HTMLElement>(
+            `[data-uppy-item-id="${CSS.escape(item.id)}"]`,
+          ) ?? browser?.querySelector<HTMLElement>('.uppy-ProviderBrowser-list')
+        )
+      }}
     >
       <header className="uppy-ItemDetail-header">
-        <h3 className="uppy-ItemDetail-name">{name}</h3>
+        <h3 id={titleId} className="uppy-ItemDetail-name">
+          {name}
+        </h3>
         <button
           type="button"
           className="uppy-u-reset uppy-c-btn uppy-ItemDetail-close"

@@ -184,15 +184,37 @@ describe('Transloadit Storage in the browser', () => {
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
 
-    const dataTransfer = new DataTransfer()
-    dataTransfer.items.add(new File(['hi'], 'dropped.txt'))
     const panel = document.querySelector('[data-uppy-panelType="PickerPanel"]')
     if (!panel) throw new Error('Missing picker panel')
-    for (const type of ['dragover', 'drop']) {
-      panel.dispatchEvent(
-        new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }),
-      )
+    const drag = (types: string[], dataTransfer: DataTransfer) => {
+      for (const type of types) {
+        panel.dispatchEvent(
+          new DragEvent(type, {
+            bubbles: true,
+            cancelable: true,
+            dataTransfer,
+          }),
+        )
+      }
     }
+    const isDraggingOver = () =>
+      uppy
+        ?.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
+          'Dashboard',
+        )
+        ?.getPluginState().isDraggingOver
+
+    // Dragged text (a link, a selection) is not an upload: no drop overlay.
+    const text = new DataTransfer()
+    text.setData('text/plain', 'https://example.com/')
+    drag(['dragover'], text)
+    expect(isDraggingOver()).toBeFalsy()
+
+    const files = new DataTransfer()
+    files.items.add(new File(['hi'], 'dropped.txt'))
+    drag(['dragover'], files)
+    expect(isDraggingOver()).toBe(true)
+    drag(['drop'], files)
     await expect
       .poll(() => uppy?.getFiles().map((file) => file.name))
       .toEqual(['dropped.txt'])
