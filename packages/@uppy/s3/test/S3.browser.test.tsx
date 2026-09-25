@@ -570,6 +570,25 @@ describe('S3 provider in the browser', () => {
     )
   })
 
+  it('adds files dropped on its panel to the uploads, like a drop on the Dashboard', async ({
+    worker,
+  }) => {
+    setup(worker)
+    await openBucket()
+    const panel = document.querySelector('[data-uppy-panelType="PickerPanel"]')
+    if (!panel) throw new Error('Missing picker panel')
+    const dataTransfer = new DataTransfer()
+    dataTransfer.items.add(new File(['hi'], 'dropped.txt'))
+    for (const type of ['dragover', 'drop']) {
+      panel.dispatchEvent(
+        new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer }),
+      )
+    }
+    await expect
+      .poll(() => uppy?.getFiles().map((file) => file.name))
+      .toEqual(['dropped.txt'])
+  })
+
   it('opens one item menu at a time and closes it with Escape', async ({
     worker,
   }) => {

@@ -693,6 +693,18 @@ export default class S3<M extends Meta, B extends Body>
     ]
   }
 
+  /**
+   * Files dropped on the panel join the Dashboard's uploads, as they would
+   * when dropped anywhere else in it (they are not stored in the open folder).
+   * See the Dashboard's `PickerPanelContent`.
+   *
+   * @experimental `@uppy/s3` is experimental: its options, behaviour and
+   * Companion endpoints will change incompatibly, also in minor releases.
+   */
+  get acceptsFileDrops(): boolean {
+    return true
+  }
+
   /** Both Companion and the grant must allow changes; nothing may before the first listing. */
   get canWrite(): boolean {
     return (

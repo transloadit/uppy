@@ -145,15 +145,15 @@ export default class TransloaditStorage<
 
   /**
    * With `storeUploads`, files dropped on the panel are stored in the folder
-   * that is open, so the Dashboard accepts drops there (see its
-   * `PickerPanelContent`).
+   * that is open, which only a session that can write may do. Without it they
+   * join the Dashboard's uploads, as with `@uppy/s3`.
    *
    * @experimental `@uppy/transloadit-storage` is experimental: its options,
    * behaviour and Companion endpoints will change incompatibly, also in
    * minor releases.
    */
-  get acceptsFileDrops(): boolean {
-    return this.opts.storeUploads != null && this.canWrite
+  override get acceptsFileDrops(): boolean {
+    return this.opts.storeUploads == null || this.canWrite
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
