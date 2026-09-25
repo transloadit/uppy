@@ -715,6 +715,33 @@ describe('S3 provider in the browser', () => {
     await expect.element(page.getByRole('searchbox')).toBeEnabled()
   })
 
+  it('applies mode and enableActions changed with setOptions right away', async ({
+    worker,
+  }) => {
+    const { plugin } = setup(worker)
+    await openBucket()
+    const newFolder = page.getByRole('button', {
+      name: 'New folder…',
+      exact: true,
+    })
+    await expect.element(newFolder).not.toBeInTheDocument()
+
+    plugin.setOptions({ mode: 'manager' })
+    await expect.element(newFolder).toBeVisible()
+    await expect
+      .element(page.getByRole('button', { name: 'Open readme.md' }))
+      .toBeVisible()
+
+    plugin.setOptions({ enableActions: false })
+    await expect.element(newFolder).not.toBeInTheDocument()
+
+    plugin.setOptions({ mode: 'picker', enableActions: true })
+    await expect
+      .element(page.getByRole('checkbox', { name: 'readme.md' }))
+      .toBeVisible()
+    await expect.element(newFolder).not.toBeInTheDocument()
+  })
+
   it('opens one item menu at a time and closes it with Escape', async ({
     worker,
   }) => {

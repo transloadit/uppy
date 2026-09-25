@@ -7,6 +7,8 @@ import type {
   AsyncStore,
   Body,
   Meta,
+  PartialTreeFile,
+  PartialTreeFolderNode,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
@@ -849,23 +851,47 @@ export default class S3<M extends Meta, B extends Body>
     this.setPluginState({})
   }
 
+  /** The view options that follow the plugin's own. */
+  #viewOptions() {
+    const { mode, standalone, getPreviewUrl } = this.opts
+    return {
+      mode,
+      standalone,
+      getPreviewUrl: getPreviewUrl
+        ? (item: PartialTreeFile | PartialTreeFolderNode) =>
+            getPreviewUrl(S3.keyOf(item.id))
+        : undefined,
+    }
+  }
+
+  /** Applies changed options to the view and its actions right away. */
+  override setOptions(newOpts: Partial<S3Options<M, B>>): void {
+    const previousMode = this.opts.mode
+    super.setOptions(newOpts)
+    // Not installed yet: `install` reads the options.
+    if (!this.view) return
+    if (this.opts.mode !== previousMode) {
+      // A selection means something else in the other mode (picking vs a
+      // bulk action), and picker mode has no details.
+      this.view.cancelSelection()
+      this.setPluginState({ selectionActive: false, detailItemId: undefined })
+    }
+    Object.assign(this.view.opts, this.#viewOptions())
+    this.#applyActions()
+  }
+
   install() {
     this.uppy.log(
       `[${this.id}] ${this.title} is experimental: expect breaking changes, also in minor releases.`,
       'warning',
     )
-    const { getPreviewUrl } = this.opts
     this.view = new ProviderViews(this, {
       provider: this.provider,
       viewType: 'list',
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
-      mode: this.opts.mode,
-      standalone: this.opts.standalone,
-      getPreviewUrl: getPreviewUrl
-        ? (item) => getPreviewUrl(S3.keyOf(item.id))
-        : undefined,
+      ...this.#viewOptions(),
     })
     this.#applyActions()
 
