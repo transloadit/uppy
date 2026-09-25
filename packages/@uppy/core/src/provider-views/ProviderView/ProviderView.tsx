@@ -197,6 +197,8 @@ export interface Opts<M extends Meta, B extends Body> {
   provider: UnknownProviderPlugin<M, B>['provider']
   /**
    * Per-item actions (rename, delete, …) rendered in an item menu.
+   * List view only for now (`viewType: 'list'`): the grid view does not lay
+   * out the item menu.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -204,6 +206,8 @@ export interface Opts<M extends Meta, B extends Body> {
   actions?: ProviderAction<M, B>[]
   /**
    * Folder-level actions (new folder, …) rendered in the header.
+   * Like the other file-management options, meant for the list view
+   * (`viewType: 'list'`) for now.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -211,17 +215,20 @@ export interface Opts<M extends Meta, B extends Body> {
   toolbarActions?: ProviderToolbarAction<M, B>[]
   /**
    * 'picker' (default): rows are checkboxes and the footer adds the selection
-   * to Uppy. 'manager' (file-library UIs): a plain click opens an item's
-   * details, multi-select hides behind an explicit toggle, and the selection
-   * feeds `bulkActions` instead of picking.
+   * to Uppy. 'manager' (file-library UIs, until a dedicated file manager
+   * plugin replaces it): a plain click opens an item's details, multi-select
+   * hides behind an explicit toggle, and the selection feeds `bulkActions`
+   * instead of picking. 'manager' is list view only for
+   * now (`viewType: 'list'`): the grid view does not lay out its items.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
    */
   mode?: 'picker' | 'manager'
   /**
-   * Actions over the multi-selected items: in the header while something is
-   * checked (picker mode), or in the footer of the manager's selection mode.
+   * Manager mode only: actions over the multi-selected items, in the footer
+   * of its selection mode. (Picker mode picks the checked items.) List view
+   * only for now (`viewType: 'list'`).
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -368,6 +375,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, currentFolderId } = this.plugin.getPluginState()
     // A refresh scheduled after an action can land once the plugin is gone.
     if (partialTree == null) return
+    // Listing now would abort a running long operation, which refreshes the
+    // folder itself when it ends.
+    if (this.#cancelLongOperation) return
     const refresh = ++this.#refreshes
     // Remember what was selected so a refresh does not silently drop it.
     const checkedIds = partialTree.flatMap((node) =>
@@ -584,6 +594,33 @@ export default class ProviderView<M extends Meta, B extends Body> {
   #selectionRoots = new Set<string>()
 
   /**
+   * The items a bulk action gets: the checked ones, top-most only (an action
+   * on a folder covers what is inside it). The selection count shown next to
+   * the bulk actions counts these too.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  getBulkActionItems = (): (PartialTreeFile | PartialTreeFolderNode)[] => {
+    const { partialTree } = this.plugin.getPluginState()
+    const byId = new Map(partialTree.map((node) => [node.id, node]))
+    const checked = partialTree.filter(
+      (node): node is PartialTreeFile | PartialTreeFolderNode =>
+        node.type !== 'root' &&
+        node.status === 'checked' &&
+        (node.type === 'file' ||
+          lineage(byId, node).some(({ id }) => this.#selectionRoots.has(id))),
+    )
+    const checkedIds = new Set(checked.map((node) => node.id))
+    return checked.filter(
+      (node) =>
+        !lineage(byId, node)
+          .slice(1)
+          .some(({ id }) => checkedIds.has(id)),
+    )
+  }
+
+  /**
    * Run a bulk action over the checked items, then clear the selection.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
@@ -591,23 +628,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   runBulkAction = (action: ProviderBulkAction<M, B>): Promise<void> =>
     this.#run(action, async () => {
-      const { partialTree } = this.plugin.getPluginState()
-      const byId = new Map(partialTree.map((node) => [node.id, node]))
-      const checked = partialTree.filter(
-        (node): node is PartialTreeFile | PartialTreeFolderNode =>
-          node.type !== 'root' &&
-          node.status === 'checked' &&
-          (node.type === 'file' ||
-            lineage(byId, node).some(({ id }) => this.#selectionRoots.has(id))),
-      )
-      const checkedIds = new Set(checked.map((node) => node.id))
-      // Only the top-most: an action on a folder covers what is inside it.
-      const items = checked.filter(
-        (node) =>
-          !lineage(byId, node)
-            .slice(1)
-            .some(({ id }) => checkedIds.has(id)),
-      )
+      const items = this.getBulkActionItems()
       if (items.length === 0) return false
       if ((await action.run({ items, ...this.#actionContext() })) === false)
         return false
@@ -1170,6 +1191,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     const {
       partialTree,
+      currentFolderId,
       username,
       searchString,
       searchResults,
@@ -1180,6 +1202,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const breadcrumbs = this.getBreadcrumbs()
     const isManager = opts.mode === 'manager'
     const selectable = !isManager || selectionActive
+    // A long operation owns the screen: anything that would start another
+    // request (and so abort it) is disabled or hidden meanwhile.
+    const busy = this.#cancelLongOperation !== undefined
+    // Nothing to select in a folder we know is empty (unlike one being listed).
+    const currentFolder = partialTree.find(({ id }) => id === currentFolderId)
+    const isEmptyFolder =
+      currentFolder?.type !== 'file' &&
+      currentFolder?.cached === true &&
+      !partialTree.some(
+        (node) => node.type !== 'root' && node.parentId === currentFolderId,
+      )
     if (detailItemId) {
       this.#detailItem =
         partialTree.find(
@@ -1210,18 +1243,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
           runToolbarAction={this.runToolbarAction}
           standalone={opts.standalone ?? false}
           selectionToggle={
-            isManager
+            isManager &&
+            (opts.bulkActions?.length ?? 0) > 0 &&
+            (selectionActive || !isEmptyFolder)
               ? {
                   active: selectionActive,
                   onToggle: this.toggleSelectionMode,
                 }
               : undefined
           }
-          bulkActions={isManager ? undefined : opts.bulkActions}
-          runBulkAction={this.runBulkAction}
-          selectedCount={
-            isManager ? undefined : getNumberOfSelectedFiles(partialTree)
-          }
+          busy={busy}
         />
         {opts.showFilter && (
           <FilterInput
@@ -1230,6 +1261,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
             onSubmit={() => {}}
             inputLabel={i18n('filter')}
             i18n={i18n}
+            disabled={busy}
           />
         )}
 
@@ -1258,10 +1290,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
           />
         )}
 
-        {isManager ? (
+        {busy ? null : isManager ? (
           selectionActive && (
             <BulkActions
-              partialTree={partialTree}
+              selectedCount={this.getBulkActionItems().length}
               bulkActions={opts.bulkActions ?? []}
               runBulkAction={this.runBulkAction}
               i18n={i18n}

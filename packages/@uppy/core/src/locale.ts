@@ -47,11 +47,14 @@ export default {
       1: '%{smart_count} selected',
     },
     selectMultiple: 'Select multiple',
+    cancelSelection: 'Cancel selection',
     close: 'Close',
     detailSize: 'Size',
     detailType: 'Type',
     detailModified: 'Modified',
     cancel: 'Cancel',
+    // Stops a long operation (moving or deleting many files) midway.
+    stopOperation: 'Stop',
     dialogConfirm: 'OK',
     logOut: 'Log out',
     logIn: 'Log in',
@@ -83,7 +86,7 @@ export default {
     // Errors from Companion's S3 provider, which reports them as locale keys.
     s3AlreadyExists: 'A file or folder with that name already exists',
     s3Conflict:
-      'The file changed while it was being moved. Refresh the folder and try again.',
+      'The file changed while it was being moved. Refresh the folder and try again',
     s3DestinationMustBeFile: 'The destination of a file must be a file path',
     s3FileTooLargeToMove:
       'Files larger than 5 GB cannot be moved or renamed here',
@@ -99,7 +102,7 @@ export default {
     s3ReadOnlySession: 'Your session is read-only',
     s3RequestFailed: 'The storage request failed',
     s3SelectedInOtherSession:
-      'This file was selected in another storage session. Reconnect and select it again.',
+      'This file was selected in another storage session. Reconnect and select it again',
     webdavCannotConnect: 'Cannot connect to server',
   },
 }

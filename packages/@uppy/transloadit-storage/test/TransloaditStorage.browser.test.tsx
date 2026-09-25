@@ -64,20 +64,16 @@ afterEach(() => {
 })
 
 describe('Transloadit Storage in the browser', () => {
-  it('offers the custom upload action without replacing an application Assembly', () => {
+  it('offers the custom upload action in picker mode, and hands it the open folder', async ({
+    worker,
+  }) => {
     const onUploadRequest = vi.fn()
-    uppy = new Uppy().use(TransloaditStorage, {
-      companionUrl: COMPANION,
-      onUploadRequest,
-    })
-    const plugin =
-      uppy.getPlugin<
-        TransloaditStorage<Record<string, unknown>, Record<string, never>>
-      >('TransloaditStorage')
-    if (!plugin) throw new Error('Missing Transloadit Storage plugin')
-    expect(plugin.builtInToolbarActions().map((action) => action.id)).toContain(
-      'transloadit:uploadFiles',
-    )
+    setup(worker, { onUploadRequest })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    expect(onUploadRequest).toHaveBeenCalledWith({ prefix: '' })
   })
 
   it('storeUploads refuses to overwrite explicit Assembly configuration', () => {
@@ -122,9 +118,11 @@ describe('Transloadit Storage in the browser', () => {
   }) => {
     const getDownloadUrl = vi.fn(async () => '/authorized-original/readme')
     const companion = setup(worker, {
+      mode: 'manager',
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       getDownloadUrl,
+      onUploadRequest: () => {},
     })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
@@ -134,9 +132,13 @@ describe('Transloadit Storage in the browser', () => {
         call.path.startsWith('/transloadit-storage/'),
       ),
     ).toBe(true)
+    // Uploads land in the open folder, which a read-only grant may not change.
+    await expect
+      .element(page.getByRole('button', { name: 'Upload files' }))
+      .not.toBeInTheDocument()
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
     await expect
-      .element(page.getByRole('menuitem', { name: 'Rename / move…' }))
+      .element(page.getByRole('menuitem', { name: 'Rename or move…' }))
       .not.toBeInTheDocument()
     await expect
       .element(page.getByRole('menuitem', { name: 'Download', exact: true }))
@@ -223,14 +225,14 @@ describe('Transloadit Storage in the browser', () => {
   it('renames a folder in one native move instead of walking it', async ({
     worker,
   }) => {
-    const companion = setup(worker)
+    const companion = setup(worker, { mode: 'manager' })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename / move…' }).click()
+    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
     await page
-      .getByLabelText('New name, or a path relative to the browsing root:')
+      .getByLabelText('New name, or a path relative to the root folder:')
       .fill('archive')
     await userEvent.keyboard('{Enter}')
 

@@ -110,12 +110,20 @@
   line-height: 1;
   vertical-align: middle;
   margin-inline-end: 4px;
+
+  [data-uppy-theme='dark'] & {
+    color: variables.$gray-300;
+  }
 }
 
 .uppy-Provider-breadcrumbsIcon svg {
   width: 13px;
   height: 13px;
   fill: variables.$gray-700;
+
+  [data-uppy-theme='dark'] & {
+    fill: variables.$gray-300;
+  }
 }
 
 .uppy-Provider-breadcrumbs button {
@@ -150,8 +158,13 @@
     cursor: default;
   }
 
-  &:not(:last-of-type):hover {
+  &:not(:last-of-type):not(:disabled):hover {
     cursor: pointer;
+  }
+
+  // While a long operation runs (see ProviderView.runWithProgress).
+  &:disabled {
+    opacity: 0.5;
   }
 
   [data-uppy-theme='dark'] & {
@@ -267,6 +280,10 @@
     display: none;
   }
 
+  &:disabled {
+    opacity: 0.6;
+  }
+
   [data-uppy-theme='dark'] & {
     color: variables.$gray-200;
     background-color: variables.$gray-900;
@@ -333,8 +350,13 @@
   border-radius: 3px;
   cursor: pointer;
 
-  &:hover {
+  &:not(:disabled):hover {
     text-decoration: underline;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
   }
 
   [data-uppy-theme='dark'] & {
@@ -430,26 +452,32 @@
 // configured with `actions` / `toolbarActions`.
 .uppy-ProviderBrowserItem-actions {
   flex-shrink: 0;
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .uppy-ProviderBrowserItem-actionsBtn {
+  @include utils.blue-border-focus-visible;
+
   padding: 4px 6px;
   color: variables.$gray-600;
   border-radius: 4px;
   line-height: 1;
 
+  // Hover, and while its menu is open; keyboard focus gets the ring.
   &:hover,
-  &:focus {
+  &[aria-expanded='true'] {
     color: variables.$gray-800;
     background-color: variables.$gray-200;
   }
 
   [data-uppy-theme='dark'] & {
+    @include utils.blue-border-focus-visible--dark;
+
     color: variables.$gray-400;
 
     &:hover,
-    &:focus {
+    &[aria-expanded='true'] {
+      color: variables.$gray-200;
       background-color: variables.$gray-700;
     }
   }
@@ -483,19 +511,34 @@
   padding: 7px 10px;
   color: variables.$gray-800;
   font-size: 13px;
-  text-align: left;
   border-radius: 4px;
 
-  &:hover,
+  // Also over `[dir='rtl'] .uppy-c-btn`, which centres button text.
+  &,
+  [dir='rtl'] & {
+    text-align: start;
+  }
+
   &:focus {
+    outline: none;
+  }
+
+  &:hover,
+  &:focus-visible {
     background-color: variables.$gray-100;
+  }
+
+  // Invisible, except in forced-colors mode, which drops the background.
+  &:focus-visible {
+    outline: 2px solid transparent;
+    outline-offset: -2px;
   }
 
   [data-uppy-theme='dark'] & {
     color: variables.$gray-200;
 
     &:hover,
-    &:focus {
+    &:focus-visible {
       background-color: variables.$gray-700;
     }
   }
@@ -510,10 +553,12 @@
 .uppy-ProviderBrowser-toolbar {
   display: flex;
   gap: 6px;
-  margin-right: 10px;
+  margin-inline-end: 10px;
 }
 
 .uppy-ProviderBrowser-toolbarBtn {
+  @include utils.blue-border-focus-visible;
+
   padding: 4px 10px;
   color: variables.$blue;
   font-size: 12px;
@@ -521,19 +566,24 @@
   border: 1px solid rgba(variables.$blue, 0.4);
   border-radius: 4px;
 
-  &:hover,
-  &:focus {
+  &:not(:disabled):hover {
     background-color: rgba(variables.$blue, 0.08);
   }
-}
 
-.uppy-ProviderBrowser-toolbarBtn--danger {
-  color: var(--uppy-color-danger, #{variables.$red});
-  border-color: rgba(variables.$red, 0.4);
+  &:disabled {
+    opacity: 0.5;
+  }
 
-  &:hover,
-  &:focus {
-    background-color: rgba(variables.$red, 0.08);
+  // Like the "Log out" link next to it.
+  [data-uppy-theme='dark'] & {
+    @include utils.blue-border-focus-visible--dark;
+
+    color: variables.$gray-200;
+    border-color: variables.$gray-600;
+
+    &:not(:disabled):hover {
+      background-color: variables.$gray-800;
+    }
   }
 }
 
@@ -599,6 +649,16 @@
 
 .uppy-ProviderDialog-input {
   width: 100%;
+
+  // The text input's dark colours are the dialog's own background.
+  [data-uppy-theme='dark'] .uppy-ProviderDialog & {
+    background-color: variables.$gray-900;
+    border-color: variables.$gray-600;
+
+    &:focus {
+      border-color: variables.$gray-400;
+    }
+  }
 }
 
 .uppy-ProviderDialog-message {
@@ -622,6 +682,17 @@
       #{color.adjust(variables.$red, $lightness: -10%, $space: hsl)}
     );
   }
+
+  &:focus,
+  [data-uppy-theme='dark'] &:focus {
+    box-shadow: 0 0 0 3px rgba(variables.$red, 0.4);
+    box-shadow: 0 0 0 3px
+      color-mix(
+        in srgb,
+        var(--uppy-color-danger, #{variables.$red}) 40%,
+        transparent
+      );
+  }
 }
 
 // Manager mode: the item detail modal.
@@ -633,7 +704,8 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  padding: 14px 14px 14px 20px;
+  padding-block: 14px;
+  padding-inline: 20px 14px;
   border-bottom: 1px solid variables.$gray-200;
 
   [data-uppy-theme='dark'] & {
@@ -646,6 +718,8 @@
 }
 
 .uppy-ItemDetail-close {
+  @include utils.blue-border-focus-visible;
+
   display: flex;
   flex-shrink: 0;
   align-items: center;
@@ -658,6 +732,10 @@
   &:hover {
     color: variables.$gray-800;
     background-color: variables.$gray-100;
+  }
+
+  [data-uppy-theme='dark'] & {
+    @include utils.blue-border-focus-visible--dark;
   }
 
   [data-uppy-theme='dark'] &:hover {
@@ -710,6 +788,10 @@
 
   dt {
     color: variables.$gray-600;
+
+    [data-uppy-theme='dark'] & {
+      color: variables.$gray-400;
+    }
   }
 
   dd {
@@ -740,6 +822,8 @@
 }
 
 .uppy-ItemDetail-action {
+  @include utils.blue-border-focus-visible;
+
   padding: 9px 14px;
   color: var(--uppy-color-secondary, #{variables.$gray-800});
   font-size: 13px;
@@ -758,6 +842,8 @@
   }
 
   [data-uppy-theme='dark'] & {
+    @include utils.blue-border-focus-visible--dark;
+
     color: variables.$gray-200;
     background-color: variables.$gray-800;
     border-color: variables.$gray-600;
@@ -790,8 +876,7 @@
 
 // Manager mode: the bulk-selection footer.
 .uppy-ProviderBrowser-footer-count {
-  align-self: center;
-  margin-right: auto;
+  margin-inline-end: 12px;
   color: variables.$gray-700;
   font-weight: 500;
   font-size: 13px;

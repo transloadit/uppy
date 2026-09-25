@@ -7,6 +7,8 @@ import type {
   AsyncStore,
   Body,
   Meta,
+  PartialTreeFile,
+  PartialTreeFolderNode,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
@@ -24,7 +26,7 @@ import {
   type ProviderToolbarAction,
   ProviderViews,
 } from '@uppy/core/provider-views'
-import type { I18n, LocaleStrings } from '@uppy/core/utils'
+import type { LocaleStrings } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 // Load Dashboard's event augmentation without adding a runtime dependency.
@@ -255,29 +257,6 @@ const isGrantForm = (data: unknown): data is { grant: string } =>
   typeof (data as { grant?: unknown }).grant === 'string'
 
 /**
- * The connect screen: Companion decides which bucket the session sees (its own
- * configuration, or the grant), so there is nothing to type — one button, which
- * also remains as a retry while auto-connect runs.
- */
-const ConnectAuthForm = ({
-  i18n,
-  onAuth,
-}: {
-  i18n: I18n
-  onAuth: (arg: Record<string, never>) => void
-}) => (
-  <div className="uppy-Provider-auth">
-    <button
-      type="button"
-      className="uppy-u-reset uppy-c-btn uppy-c-btn-primary uppy-Provider-authBtn"
-      onClick={() => onAuth({})}
-    >
-      {i18n('authenticate')}
-    </button>
-  </div>
-)
-
-/**
  * @experimental `@uppy/s3` is experimental: its options, behaviour and
  * Companion endpoints will change incompatibly, also in minor releases.
  */
@@ -288,8 +267,11 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   // Replaces the base option's, which accepts any key.
   locale?: LocaleStrings<typeof locale>
   /**
-   * Show management actions (rename/move, delete, new folder). Requires a
-   * Companion whose S3 provider allows mutations. Default: true.
+   * Manager mode: offer the built-in file changes (rename/move, delete, new
+   * folder, bulk move/delete) when the session may write. Picker mode never
+   * offers them: picking files is not changing them. Uploads a plugin adds
+   * (Transloadit Storage's `storeUploads`) are governed by their own options.
+   * Default: true.
    */
   enableActions?: boolean
   /** Extra per-item actions, appended to the built-in ones. */
@@ -323,9 +305,10 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   standalone?: boolean
   /**
    * 'picker' (default): rows are checkboxes and the selection is added to
-   * Uppy. 'manager' (file-library UIs): clicking a file opens its detail
-   * modal, multi-select hides behind an explicit toggle, and the selection
-   * feeds bulk actions (delete, move) instead of picking.
+   * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,
+   * until a dedicated file manager plugin replaces it): clicking a file opens
+   * its detail modal, files can be renamed, moved and deleted, multi-select
+   * hides behind an explicit toggle, and the selection feeds bulk actions.
    */
   mode?: 'picker' | 'manager'
   /**
@@ -542,7 +525,7 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   builtInActions(): ProviderAction<M, B>[] {
-    if (!this.canWrite) return []
+    if (!this.#offersChanges) return []
     return [
       {
         id: 's3:rename',
@@ -556,7 +539,7 @@ export default class S3<M extends Meta, B extends Body>
               title: this.i18n('renameOrMoveTitle', { name }),
               label: this.i18n('renameOrMovePrompt'),
               defaultValue: name,
-              confirmLabel: this.i18n('rename'),
+              confirmLabel: this.i18n('save'),
             }),
           )
           if (!value) return undefined
@@ -572,8 +555,11 @@ export default class S3<M extends Meta, B extends Body>
             [key],
             (_, options) => this.#move(key, destination, options),
           )
+          // Paths are shown as the user types them: relative to the root.
           return isMove
-            ? this.i18n('itemMoved', { path: destination })
+            ? this.i18n('itemMoved', {
+                path: destination.slice(this.rootPrefix.length),
+              })
             : this.i18n('itemRenamed', { name: value })
         }),
       },
@@ -607,6 +593,7 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   builtInToolbarActions(): ProviderToolbarAction<M, B>[] {
+    if (!this.#offersChanges) return []
     return [
       {
         id: 's3:newFolder',
@@ -614,7 +601,7 @@ export default class S3<M extends Meta, B extends Body>
         run: this.#withToast(async ({ currentFolderId, view }) => {
           const name = (
             await view.prompt({
-              title: this.i18n('newFolder'),
+              title: this.i18n('newFolderTitle'),
               label: this.i18n('newFolderPrompt'),
               confirmLabel: this.i18n('create'),
             })
@@ -632,6 +619,7 @@ export default class S3<M extends Meta, B extends Body>
 
   /** Bulk actions over the multi-selection in manager mode. */
   builtInBulkActions(): ProviderBulkAction<M, B>[] {
+    if (!this.#offersChanges) return []
     return [
       {
         id: 's3:bulkMove',
@@ -639,7 +627,9 @@ export default class S3<M extends Meta, B extends Body>
         run: this.#withToast(async ({ items, view }) => {
           const input = typedPath(
             await view.prompt({
-              title: this.i18n('moveSelected'),
+              title: this.i18n('moveSelectedTitle', {
+                smart_count: items.length,
+              }),
               label: this.i18n('moveSelectedPrompt'),
               confirmLabel: this.i18n('move'),
             }),
@@ -672,10 +662,14 @@ export default class S3<M extends Meta, B extends Body>
         label: this.i18n('deleteItem'),
         danger: true,
         run: this.#withToast(async ({ items, view }) => {
+          const folders = items.filter((item) => item.data.isFolder).length
           const confirmed = await view.confirm({
             title: this.i18n('deleteSelectedConfirm', {
               smart_count: items.length,
             }),
+            message: folders
+              ? this.i18n('deleteSelectedFolderHint', { smart_count: folders })
+              : undefined,
             confirmLabel: this.i18n('deleteItem'),
             danger: true,
           })
@@ -693,11 +687,36 @@ export default class S3<M extends Meta, B extends Body>
     ]
   }
 
+  /**
+   * Files dropped on the panel join the Dashboard's uploads, as they would
+   * when dropped anywhere else in it (they are not stored in the open folder).
+   * See the Dashboard's `PickerPanelContent`.
+   *
+   * @experimental `@uppy/s3` is experimental: its options, behaviour and
+   * Companion endpoints will change incompatibly, also in minor releases.
+   */
+  get acceptsFileDrops(): boolean {
+    return true
+  }
+
   /** Both Companion and the grant must allow changes; nothing may before the first listing. */
   get canWrite(): boolean {
     return (
       (this.#session?.canWrite ?? false) &&
       (this.#grant?.scopes.includes('write') ?? true)
+    )
+  }
+
+  /**
+   * Whether the built-in file changes are offered: in manager mode only
+   * (picking files is not changing them), unless turned off, and only where
+   * the session may write.
+   */
+  get #offersChanges(): boolean {
+    return (
+      this.opts.mode === 'manager' &&
+      this.opts.enableActions !== false &&
+      this.canWrite
     )
   }
 
@@ -814,23 +833,51 @@ export default class S3<M extends Meta, B extends Body>
 
   /** (Re)compute the actions: the integrator's switch, and what the session may do. */
   #applyActions(): void {
-    const enableActions = this.opts.enableActions !== false
-    // The per-item actions check `canWrite` themselves: a subclass may add
-    // read-only ones (e.g. download).
-    const withBuiltIns = enableActions && this.canWrite
+    // The built-in lists decide what they offer (see `#offersChanges`): a
+    // subclass may add actions that change nothing (e.g. download) or that
+    // work in picker mode too (e.g. upload into the open folder).
     this.view.opts.actions = [
-      ...(enableActions ? this.builtInActions() : []),
+      ...this.builtInActions(),
       ...(this.opts.actions ?? []),
     ]
     this.view.opts.toolbarActions = [
-      ...(withBuiltIns ? this.builtInToolbarActions() : []),
+      ...this.builtInToolbarActions(),
       ...(this.opts.toolbarActions ?? []),
     ]
     this.view.opts.bulkActions = [
-      ...(withBuiltIns ? this.builtInBulkActions() : []),
+      ...this.builtInBulkActions(),
       ...(this.opts.bulkActions ?? []),
     ]
     this.setPluginState({})
+  }
+
+  /** The view options that follow the plugin's own. */
+  #viewOptions() {
+    const { mode, standalone, getPreviewUrl } = this.opts
+    return {
+      mode,
+      standalone,
+      getPreviewUrl: getPreviewUrl
+        ? (item: PartialTreeFile | PartialTreeFolderNode) =>
+            getPreviewUrl(S3.keyOf(item.id))
+        : undefined,
+    }
+  }
+
+  /** Applies changed options to the view and its actions right away. */
+  override setOptions(newOpts: Partial<S3Options<M, B>>): void {
+    const previousMode = this.opts.mode
+    super.setOptions(newOpts)
+    // Not installed yet: `install` reads the options.
+    if (!this.view) return
+    if (this.opts.mode !== previousMode) {
+      // A selection means something else in the other mode (picking vs a
+      // bulk action), and picker mode has no details.
+      this.view.cancelSelection()
+      this.setPluginState({ selectionActive: false, detailItemId: undefined })
+    }
+    Object.assign(this.view.opts, this.#viewOptions())
+    this.#applyActions()
   }
 
   install() {
@@ -838,24 +885,13 @@ export default class S3<M extends Meta, B extends Body>
       `[${this.id}] ${this.title} is experimental: expect breaking changes, also in minor releases.`,
       'warning',
     )
-    const { getPreviewUrl } = this.opts
     this.view = new ProviderViews(this, {
       provider: this.provider,
       viewType: 'list',
       showTitles: true,
       showFilter: true,
       showBreadcrumbs: true,
-      mode: this.opts.mode,
-      standalone: this.opts.standalone,
-      getPreviewUrl: getPreviewUrl
-        ? (item) => getPreviewUrl(S3.keyOf(item.id))
-        : undefined,
-      // Use the plugin's own i18n (which includes our defaultLocale) rather than
-      // the core one that ProviderViews hands us, so the label resolves even
-      // when the integrator does not load @uppy/locales.
-      renderAuthForm: ({ onAuth }) => (
-        <ConnectAuthForm onAuth={onAuth} i18n={this.i18n} />
-      ),
+      ...this.#viewOptions(),
     })
     this.#applyActions()
 

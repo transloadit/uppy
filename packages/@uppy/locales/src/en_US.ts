@@ -44,6 +44,7 @@ en_US.strings = {
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
   cancel: 'Cancel',
+  cancelSelection: 'Cancel selection',
   cancelUpload: 'Cancel upload',
   close: 'Close',
   closeModal: 'Close Modal',
@@ -72,6 +73,10 @@ en_US.strings = {
   deleteSelectedConfirm: {
     '0': 'Delete %{smart_count} item?',
     '1': 'Delete %{smart_count} items?',
+  },
+  deleteSelectedFolderHint: {
+    '0': 'The selected folder and everything in it will be deleted.',
+    '1': 'The selected folders and everything in them will be deleted.',
   },
   deletingFiles: 'Deleting %{done} of %{total} files…',
   deletingItemFiles:
@@ -166,14 +171,20 @@ en_US.strings = {
   },
   move: 'Move',
   moveSelected: 'Move…',
-  moveSelectedPrompt: 'Folder to move the selection into (empty for the root):',
+  moveSelectedPrompt:
+    'Destination folder, relative to the root folder (leave empty for the root folder):',
+  moveSelectedTitle: {
+    '0': 'Move %{smart_count} item',
+    '1': 'Move %{smart_count} items',
+  },
   movingFiles: 'Moving %{done} of %{total} files…',
   movingItemFiles:
     'Moving item %{item} of %{items}: %{done} of %{total} files…',
   movingItems: 'Moving %{done} of %{total} items…',
   myDevice: 'My Device',
-  newFolder: 'New folder',
+  newFolder: 'New folder…',
   newFolderPrompt: 'Name of the new folder:',
+  newFolderTitle: 'New folder',
   noAudioDescription:
     'In order to record audio, please connect a microphone or another audio input device',
   noAudioTitle: 'Microphone Not Available',
@@ -228,9 +239,8 @@ en_US.strings = {
     '1': 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
   },
   removeFile: 'Remove file',
-  rename: 'Rename',
-  renameOrMove: 'Rename / move…',
-  renameOrMovePrompt: 'New name, or a path relative to the browsing root:',
+  renameOrMove: 'Rename or move…',
+  renameOrMovePrompt: 'New name, or a path relative to the root folder:',
   renameOrMoveTitle: 'Rename or move "%{name}"',
   reSelect: 'Re-select',
   resetFilter: 'Reset filter',
@@ -243,7 +253,7 @@ en_US.strings = {
   rotate: 'Rotate 90°',
   s3AlreadyExists: 'A file or folder with that name already exists',
   s3Conflict:
-    'The file changed while it was being moved. Refresh the folder and try again.',
+    'The file changed while it was being moved. Refresh the folder and try again',
   s3DestinationMustBeFile: 'The destination of a file must be a file path',
   s3FileTooLargeToMove:
     'Files larger than 5 GB cannot be moved or renamed here',
@@ -258,7 +268,7 @@ en_US.strings = {
   s3ReadOnlySession: 'Your session is read-only',
   s3RequestFailed: 'The storage request failed',
   s3SelectedInOtherSession:
-    'This file was selected in another storage session. Reconnect and select it again.',
+    'This file was selected in another storage session. Reconnect and select it again',
   save: 'Save',
   saveChanges: 'Save changes',
   search: 'Search',
@@ -278,6 +288,7 @@ en_US.strings = {
   startRecording: 'Begin video recording',
   stopAudioRecording: 'Stop audio recording',
   stopCapturing: 'Stop screen capturing',
+  stopOperation: 'Stop',
   stopRecording: 'Stop video recording',
   storageNotConnected: 'Connect to Transloadit Storage before uploading',
   storing: 'Storing…',

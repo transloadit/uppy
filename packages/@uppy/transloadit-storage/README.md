@@ -4,9 +4,14 @@
 > Experimental. This plugin, `@uppy/s3` and the Companion endpoints they use will change
 > incompatibly, also in minor releases, as they make way for a standalone file manager.
 
-Browse and manage a Workspace's Storage through an authenticated Companion grant, and upload
-into the open directory with `@uppy/transloadit`. Keep grants, Assembly signing and Smart CDN
-signing on your application server; browser-provided paths are not authorization.
+Browse a Workspace's Storage through an authenticated Companion grant, and upload into the open
+directory with `@uppy/transloadit`. Keep grants, Assembly signing and Smart CDN signing on your
+application server; browser-provided paths are not authorization.
+
+In the Dashboard the plugin is a picker by default: files can be browsed and picked, and, with
+`storeUploads` or `onUploadRequest`, uploaded into the open folder (also by dropping them on the
+panel). Renaming, moving, deleting and new folders need `mode: 'manager'` (the default with
+`standalone`), a stopgap until a dedicated file manager plugin.
 
 ## Upload results are the durable handoff
 
@@ -105,7 +110,7 @@ server-side for both source and destination.
 The browser never names a bucket: `@uppy/s3` and this plugin have no `bucket` option, and the
 session sees whatever Companion (or the grant) decides. Each listing carries a `session` object:
 the `bucket`, the session's root `prefix`, `canWrite`, and whether the server moves folders itself
-(`supportsMoveFolder`, true for this provider); the browser hides the management actions when the
+(`supportsMoveFolder`, true for this provider); the browser hides the file changes and uploads when the
 server says the session is read-only, and resolves paths typed into the move dialogs relative to
 that browsing root. Older servers that report no session show read actions only — upgrade
 Companion together with this plugin.
@@ -117,7 +122,7 @@ imports need to be selected again.
 
 A folder moves as one native operation on this provider. On the generic `@uppy/s3` provider
 Companion moves one file at a time, so the browser walks the folder and moves its files itself,
-behind a progress screen with a Cancel button; a multi-selection is a sequence either way, so
+behind a progress screen with a Stop button; a multi-selection is a sequence either way, so
 partial failures refresh the listing before a retry. Generic S3 moves need no configuration: they
 are always available and use conditional copy/delete headers (`If-None-Match`, `CopySourceIfMatch`,
 `If-Match`) where the endpoint supports them.
