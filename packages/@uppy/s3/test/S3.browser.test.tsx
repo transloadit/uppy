@@ -546,6 +546,30 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
+  it('keeps the details open through overlapping refreshes and refocuses the item', async ({
+    worker,
+  }) => {
+    const { plugin } = setup(worker, { mode: 'manager' })
+    await openBucket()
+    await page.getByRole('button', { name: 'Open readme.md' }).click()
+    const details = page.getByRole('dialog', { name: 'readme.md' })
+    await expect.element(details).toBeVisible()
+
+    // The second refresh aborts the first one's listing.
+    await Promise.all([
+      plugin.view.refreshCurrentFolder(true),
+      plugin.view.refreshCurrentFolder(true),
+    ])
+    await expect.element(details).toBeVisible()
+
+    // The row that opened it was re-rendered by the refresh.
+    await userEvent.keyboard('{Escape}')
+    await expect.element(details).not.toBeInTheDocument()
+    expect(document.activeElement?.getAttribute('aria-label')).toBe(
+      'Open readme.md',
+    )
+  })
+
   it('opens one item menu at a time and closes it with Escape', async ({
     worker,
   }) => {

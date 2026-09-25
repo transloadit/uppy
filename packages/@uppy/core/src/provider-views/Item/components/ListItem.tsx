@@ -116,6 +116,7 @@ export default function ListItem({
           type="button"
           className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
           onClick={() => onFileClick?.(file)}
+          data-uppy-item-id={file.id}
           aria-label={i18n('openFileNamed', {
             name: file.data.name ?? i18n('unnamed'),
           })}

@@ -2,6 +2,11 @@
 "@uppy/companion": minor
 ---
 
+**Experimental:** the S3 and Transloadit Storage providers' options and HTTP API (`/s3/*`,
+`/transloadit-storage/*`) will change incompatibly, also in minor releases. Companion logs a
+warning at startup when either is configured. The `{ code }` error bodies are not part of that:
+they are the stable way providers report user-facing errors.
+
 Add an S3 provider (`/s3/*`) for browsing and managing S3-compatible object storage (AWS S3,
 Cloudflare R2, MinIO, Transloadit Storage) from the Dashboard. It is configured under
 `providerOptions.s3` (`COMPANION_S3_PROVIDER_*`), with its own optional credentials, region and

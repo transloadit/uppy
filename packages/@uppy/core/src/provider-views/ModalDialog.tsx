@@ -5,8 +5,13 @@ type ModalDialogProps = Omit<
   h.JSX.HTMLAttributes<HTMLDialogElement>,
   'ref' | 'onCancel' | 'onClick' | 'onKeyDown' | 'onPointerDown'
 > & {
-  /** Escape, or a click on the backdrop. */
+  /** Escape, a click on the backdrop, or another close request (`cancel`). */
   onDismiss: () => void
+  /**
+   * Where focus goes on close when the element that had it at open is gone
+   * (e.g. a refresh re-rendered it); the dialog is still in the document.
+   */
+  restoreFocus?: (dialog: HTMLDialogElement) => HTMLElement | null | undefined
   children: ComponentChildren
 }
 
@@ -41,6 +46,7 @@ const isOnBackdrop = (event: MouseEvent): boolean => {
  */
 export default function ModalDialog({
   onDismiss,
+  restoreFocus,
   children,
   ...attributes
 }: ModalDialogProps): h.JSX.Element {
@@ -48,10 +54,17 @@ export default function ModalDialog({
   // Only a click that also started on the backdrop dismisses: selecting text
   // in the dialog and releasing outside it is not one.
   const pressedBackdrop = useRef(false)
+  // Read at close, which the effect below runs once for.
+  const restoreFocusRef = useRef(restoreFocus)
+  restoreFocusRef.current = restoreFocus
 
   useEffect(() => {
     const dialog = ref.current
     if (!dialog) return
+    const opener =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null
     if (typeof dialog.showModal === 'function') dialog.showModal()
     else {
       // No focus trap without showModal(): focus the dialog's first button
@@ -61,6 +74,15 @@ export default function ModalDialog({
     }
     return () => {
       if (dialog.open && typeof dialog.close === 'function') dialog.close()
+      // The browser returns focus to the opener, but not to one that is gone,
+      // and not at all for a dialog opened without showModal().
+      const { activeElement } = document
+      if (activeElement !== document.body && !dialog.contains(activeElement))
+        return
+      const target = opener?.isConnected
+        ? opener
+        : restoreFocusRef.current?.(dialog)
+      target?.focus()
     }
   }, [])
 
@@ -80,7 +102,8 @@ export default function ModalDialog({
         pressedBackdrop.current = false
       }}
       onKeyDown={(event) => {
-        if (event.key !== 'Escape') return
+        // Escape while composing text (IME) cancels the composition only.
+        if (event.key !== 'Escape' || event.isComposing) return
         // Handled here rather than through the `cancel` event, which only a
         // modal dialog fires; and the Dashboard must not treat the same key
         // press as "close the modal".

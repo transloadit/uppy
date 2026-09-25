@@ -1,13 +1,25 @@
 import { type Body, type Meta, type Uppy, UserFacingApiError } from '@uppy/core'
 import type TransloaditStorage from './TransloaditStorage.js'
 
-/** The subset of `@uppy/transloadit`'s AssemblyParameters this helper builds. */
+/**
+ * The subset of `@uppy/transloadit`'s AssemblyParameters this helper builds.
+ *
+ * @experimental `@uppy/transloadit-storage` is experimental: its options,
+ * behaviour and Companion endpoints will change incompatibly, also in
+ * minor releases.
+ */
 export type StoreAssemblyParameters = {
   steps: Record<string, Record<string, unknown>>
   [key: string]: unknown
 }
 
-/** What `@uppy/transloadit` expects back from `assemblyOptions`. */
+/**
+ * What `@uppy/transloadit` expects back from `assemblyOptions`.
+ *
+ * @experimental `@uppy/transloadit-storage` is experimental: its options,
+ * behaviour and Companion endpoints will change incompatibly, also in
+ * minor releases.
+ */
 export type SignedAssemblyOptions = {
   params: StoreAssemblyParameters
   signature: string
@@ -16,6 +28,11 @@ export type SignedAssemblyOptions = {
 
 type ConflictStrategy = 'overwrite' | 'rename' | 'error'
 
+/**
+ * @experimental `@uppy/transloadit-storage` is experimental: its options,
+ * behaviour and Companion endpoints will change incompatibly, also in
+ * minor releases.
+ */
 export type StoreUploadsOptions = {
   /** Installed @uppy/transloadit plugin to configure; defaults to `Transloadit`. */
   transloaditPluginId?: string
@@ -58,6 +75,10 @@ export function openFolderKey(
  * The unsigned /transloadit/store Assembly params for uploading into
  * `folder` (a full storage key prefix, '' for the root). Apps that own the
  * upload UI (see `onUploadRequest`) sign these server-side themselves.
+ *
+ * @experimental `@uppy/transloadit-storage` is experimental: its options,
+ * behaviour and Companion endpoints will change incompatibly, also in
+ * minor releases.
  */
 export function buildStoreAssemblyParams(
   folder: string,
@@ -81,6 +102,10 @@ export function buildStoreAssemblyParams(
  * every upload in the folder currently open in the Transloadit Storage panel.
  * The params are built unsigned; `signAssembly` turns them into what the
  * Transloadit plugin sends.
+ *
+ * @experimental `@uppy/transloadit-storage` is experimental: its options,
+ * behaviour and Companion endpoints will change incompatibly, also in
+ * minor releases.
  */
 export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
   uppy: Uppy<M, B>,

@@ -34,7 +34,13 @@ export interface ProviderListItem {
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
-  /** What the listing tells the client about the session it was served for. */
+  /**
+   * What the listing tells the client about the session it was served for.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
   session?: {
     /** Bucket (or equivalent container) the session is browsing. */
     bucket: string
@@ -208,6 +214,10 @@ export default class Provider<US = unknown> {
   /**
    * Delete a file or (empty) folder. Providers that support mutations override
    * this and set `supportsMutations` to true.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
    */
   async deleteItem(options: {
     companion: CompanionLike
@@ -223,6 +233,10 @@ export default class Provider<US = unknown> {
    * accepted only by providers whose listings report
    * `session.supportsMoveFolder`; otherwise the client moves a folder's
    * entries one by one through this and the other mutations.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
    */
   async moveItem(options: {
     companion: CompanionLike
@@ -235,6 +249,10 @@ export default class Provider<US = unknown> {
 
   /**
    * Create a folder inside `parentId` (null for the root).
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
    */
   async createFolder(options: {
     companion: CompanionLike
@@ -305,7 +323,13 @@ export default class Provider<US = unknown> {
     return false
   }
 
-  /** Whether deleteItem/moveItem/createFolder are implemented. */
+  /**
+   * Whether deleteItem/moveItem/createFolder are implemented.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
   static get supportsMutations(): boolean {
     return false
   }

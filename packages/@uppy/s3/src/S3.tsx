@@ -101,9 +101,20 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   ): Promise<ResBody> {
     const response = await super.list<ResBody>(...args)
     // The wire shape is `ProviderListResponse['session']` on the Companion side.
-    const { session } = response as { session: S3Session }
-    this.#bucket = session.bucket
-    this.onSession?.(session)
+    const { session, username } = (response ?? {}) as {
+      session?: Partial<S3Session>
+      username?: unknown
+    }
+    // Defensive for a Companion that sends no session: the bucket is still
+    // the username, and nothing may be changed.
+    const bucket = session?.bucket ?? username
+    if (typeof bucket === 'string') this.#bucket = bucket
+    this.onSession?.({
+      bucket: typeof bucket === 'string' ? bucket : '',
+      prefix: session?.prefix ?? '',
+      canWrite: session?.canWrite === true,
+      supportsMoveFolder: session?.supportsMoveFolder === true,
+    })
     return response
   }
 
@@ -266,6 +277,10 @@ const ConnectAuthForm = ({
   </div>
 )
 
+/**
+ * @experimental `@uppy/s3` is experimental: its options, behaviour and
+ * Companion endpoints will change incompatibly, also in minor releases.
+ */
 export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   CompanionPluginOptions,
   'locale'
@@ -338,6 +353,12 @@ const DELETE_PROGRESS = {
   itemFiles: 'deletingItemFiles',
 } as const
 
+/**
+ * Browse and manage an S3-compatible bucket through Companion's S3 provider.
+ *
+ * @experimental `@uppy/s3` is experimental: its options, behaviour and
+ * Companion endpoints will change incompatibly, also in minor releases.
+ */
 export default class S3<M extends Meta, B extends Body>
   extends UIPlugin<S3Options<M, B>, M, B, UnknownProviderPluginState>
   implements UnknownProviderPlugin<M, B>
@@ -813,6 +834,10 @@ export default class S3<M extends Meta, B extends Body>
   }
 
   install() {
+    this.uppy.log(
+      `[${this.id}] ${this.title} is experimental: expect breaking changes, also in minor releases.`,
+      'warning',
+    )
     const { getPreviewUrl } = this.opts
     this.view = new ProviderViews(this, {
       provider: this.provider,

@@ -182,6 +182,10 @@ const parseAllowlistArray = (value: unknown): unknown =>
  * unset falls back to the `s3` upload block, so the provider can use its own
  * account, endpoint and credentials. The provider stays disabled until it has
  * either a bucket (single-tenant) or a grant key (multi-tenant).
+ *
+ * @experimental Part of the file-management provider API (S3, Transloadit
+ * Storage): options, endpoints and methods will change incompatibly, also
+ * in minor releases.
  */
 const getS3ProviderOptionsFromEnv = (): S3ProviderOptions | undefined => {
   // A blank variable is an unset one (env files and compose templates list

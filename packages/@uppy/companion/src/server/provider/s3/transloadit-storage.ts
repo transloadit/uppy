@@ -45,6 +45,10 @@ const workspaceCredentials = (
  * with native catalog moves and one key pair per Workspace (a grant names the
  * Workspace as its bucket). Configured under
  * `providerOptions['transloadit-storage']`.
+ *
+ * @experimental Part of the file-management provider API (S3, Transloadit
+ * Storage): options, endpoints and methods will change incompatibly, also
+ * in minor releases.
  */
 export default class TransloaditStorageProvider extends S3Provider<ParsedTransloaditStorageOptions> {
   protected override get optionsKey() {

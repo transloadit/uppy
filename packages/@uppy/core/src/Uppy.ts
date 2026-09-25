@@ -131,6 +131,10 @@ export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
  */
 export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 
+/**
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export type PromptOptions = {
   title: string
   label?: string | undefined
@@ -138,6 +142,10 @@ export type PromptOptions = {
   confirmLabel?: string | undefined
 }
 
+/**
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export type ConfirmOptions = {
   title: string
   message?: string | undefined
@@ -145,7 +153,12 @@ export type ConfirmOptions = {
   danger?: boolean | undefined
 }
 
-/** An inline prompt/confirm dialog a provider view is currently showing. */
+/**
+ * An inline prompt/confirm dialog a provider view is currently showing.
+ *
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
 export type ProviderDialogState =
   | ({ kind: 'prompt' } & PromptOptions)
   | ({ kind: 'confirm' } & ConfirmOptions)
