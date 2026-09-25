@@ -33,7 +33,7 @@ vi.mock('tus-js-client', async (importOriginal) => {
         },
         originalRequest: null,
       })
-      setTimeout(() => this.options.onError(err), 0)
+      setTimeout(() => this.options['onError'](err), 0)
     }
 
     abort() {

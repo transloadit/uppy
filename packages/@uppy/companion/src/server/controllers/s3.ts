@@ -607,7 +607,7 @@ export default function s3(
    * - region: the region where that bucket is stored.
    */
   function getTemporarySecurityCredentials(
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction,
   ) {

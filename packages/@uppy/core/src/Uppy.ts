@@ -40,6 +40,7 @@ import {
   getFileType,
   getSafeFileId,
   Translator,
+  toError,
 } from './utils/index.js'
 
 export type Processor = (
@@ -142,9 +143,10 @@ export type UnknownProviderPluginState = {
   searchResults?: string[] | undefined
 }
 
-// biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation
-// biome-ignore lint/correctness/noUnusedVariables: Type parameters are used in module augmentation
-export interface PluginTypeRegistry<M extends Meta, B extends Body> {}
+// Extended via module augmentation. `Record<never, …>` adds no keys, but references
+// the type parameters so they aren't reported as unused.
+export interface PluginTypeRegistry<M extends Meta, B extends Body>
+  extends Record<never, [M, B]> {}
 
 export interface AsyncStore {
   getItem: (key: string) => Promise<string | null>
@@ -924,7 +926,7 @@ export class Uppy<
     try {
       this.#restricter.validateSingleFile(file)
     } catch (err) {
-      return err.message
+      return toError(err).message
     }
     return null
   }
@@ -936,7 +938,7 @@ export class Uppy<
     try {
       this.#restricter.validateAggregateRestrictions(existingFiles, files)
     } catch (err) {
-      return err.message
+      return toError(err).message
     }
     return null
   }
@@ -1602,10 +1604,9 @@ export class Uppy<
     () => this.#updateTotalProgress(),
     500,
     { leading: true, trailing: true },
-  )
+  );
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: updateTotalProgress')]() {
+  [Symbol.for('uppy test: updateTotalProgress')]() {
     return this.#updateTotalProgress()
   }
 
@@ -1990,10 +1991,7 @@ export class Uppy<
     return undefined
   }
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: getPlugins')](
-    type: string,
-  ): UnknownPlugin<M, B>[] {
+  [Symbol.for('uppy test: getPlugins')](type: string): UnknownPlugin<M, B>[] {
     return this.#plugins[type]
   }
 
@@ -2195,8 +2193,7 @@ export class Uppy<
     return uploadID
   }
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: createUpload')](...args: any[]): string {
+  [Symbol.for('uppy test: createUpload')](...args: any[]): string {
     // @ts-expect-error https://github.com/microsoft/TypeScript/issues/47595
     return this.#createUpload(...args)
   }
@@ -2343,7 +2340,7 @@ export class Uppy<
    * Start an upload for all the files that are not currently being uploaded.
    */
   async upload(): Promise<NonNullable<UploadResult<M, B>> | undefined> {
-    if (!this.#plugins.uploader?.length) {
+    if (!this.#plugins['uploader']?.length) {
       this.log('No uploader type plugins are used', 'warning')
     }
 
@@ -2414,7 +2411,7 @@ export class Uppy<
       this.emit('complete', result!)
       return result
     } catch (err) {
-      this.#informAndEmit([err])
+      this.#informAndEmit([toError(err)])
       throw err
     }
   }

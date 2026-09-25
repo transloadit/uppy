@@ -1,12 +1,15 @@
+import { isAuthError } from '../../companion-client/AuthError.js'
 import type Uppy from '../../index.js'
+import { toError } from '../../utils/index.js'
 
 const handleError =
   (uppy: Uppy<any, any>) =>
-  (error: Error): void => {
+  (err: unknown): void => {
     // authError just means we're not authenticated, don't report it
-    if ((error as any).isAuthError) {
+    if (isAuthError(err)) {
       return
     }
+    const error = toError(err)
     // AbortError means the user has clicked "cancel" on an operation
     if (error.name === 'AbortError') {
       uppy.log('Aborting request', 'warning')

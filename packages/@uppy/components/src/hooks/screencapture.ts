@@ -65,11 +65,11 @@ export function createScreenCaptureController(
   const subscribers = new Subscribers()
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-    prev,
-    next,
+    _prev,
+    _next,
     patch,
   ): void => {
-    const screenCapturePatch = patch?.plugins?.ScreenCapture as
+    const screenCapturePatch = patch?.plugins?.['ScreenCapture'] as
       | ScreenCaptureState
       | undefined
 

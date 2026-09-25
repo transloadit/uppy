@@ -4882,6 +4882,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tsconfig/strictest@npm:^2.0.8":
+  version: 2.0.8
+  resolution: "@tsconfig/strictest@npm:2.0.8"
+  checksum: 10/74c493af61886c2653df94635ecb79a0d9e61ecc0136475698cfa4adbb8957583497a1907de4ed9882557fd22d187985a4e4ab28290db236d7a0dd8264a6ba44
+  languageName: node
+  linkType: hard
+
 "@tufjs/canonical-json@npm:2.0.0":
   version: 2.0.0
   resolution: "@tufjs/canonical-json@npm:2.0.0"
@@ -5438,6 +5445,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/tsconfig@workspace:private/tsconfig"
   dependencies:
+    "@tsconfig/strictest": "npm:^2.0.8"
     vitest: "npm:^4.1.11"
   languageName: unknown
   linkType: soft

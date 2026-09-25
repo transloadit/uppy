@@ -15,11 +15,13 @@ import {
   filterFilesToEmitUploadStarted,
   filterFilesToUpload,
   getAllowedMetaFields,
+  isAbortError,
   isNetworkError,
   type LocalUppyFile,
   NetworkError,
   type RemoteUppyFile,
   TaskQueue,
+  toError,
 } from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
@@ -255,7 +257,8 @@ export default class XHRUpload<
             }
           }
 
-          const uploadURL = typeof body?.url === 'string' ? body.url : undefined
+          const uploadURL =
+            typeof body?.['url'] === 'string' ? body['url'] : undefined
 
           for (const { id } of files) {
             this.uppy.emit('upload-success', this.uppy.getFile(id), {
@@ -266,11 +269,15 @@ export default class XHRUpload<
           }
 
           return res
-        } catch (error) {
-          if (error.name === 'AbortError') {
+        } catch (e) {
+          const error = toError(e)
+          if (isAbortError(error)) {
             return undefined
           }
-          const request = error.request as XMLHttpRequest | undefined
+          const request =
+            'request' in error
+              ? (error.request as XMLHttpRequest | undefined)
+              : undefined
 
           for (const file of files) {
             this.uppy.emit(
@@ -405,7 +412,7 @@ export default class XHRUpload<
         })
       })
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (isAbortError(error)) {
         return
       }
       throw error
@@ -445,7 +452,7 @@ export default class XHRUpload<
         })
       })
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (isAbortError(error)) {
         return
       }
       throw error
@@ -545,7 +552,7 @@ export default class XHRUpload<
     }
   }
 
-  install(): void {
+  override install(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({
@@ -559,7 +566,7 @@ export default class XHRUpload<
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({

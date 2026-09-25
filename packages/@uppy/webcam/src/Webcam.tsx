@@ -9,7 +9,13 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/core/utils'
-import { canvasToBlob, getFileTypeExtension, mimeTypes } from '@uppy/core/utils'
+import {
+  canvasToBlob,
+  getFileTypeExtension,
+  isRestrictionError,
+  mimeTypes,
+  toError,
+} from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import { isMobile } from 'is-mobile'
@@ -131,11 +137,9 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
   private supportsUserMedia
 
-  private protocol: 'http' | 'https'
-
   private capturedMediaFile: MinimalRequiredUppyFile<M, B> | null
 
-  private icon: () => h.JSX.Element
+  icon: () => h.JSX.Element
 
   public webcamActive
 
@@ -153,7 +157,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
     this.supportsUserMedia = !!this.mediaDevices
-    this.protocol = location.protocol.match(/https/i) ? 'https' : 'http'
     this.id = this.opts.id || 'Webcam'
     this.type = 'acquirer'
     this.capturedMediaFile = null
@@ -228,7 +231,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     return 'init'
   }
 
-  setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
+  override setOptions(newOpts: Partial<WebcamOptions<M, B>>): void {
     super.setOptions({
       ...newOpts,
       videoConstraints: {
@@ -337,6 +340,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.uppy.info(err.message, 'error')
         })
     })
+    return undefined
   }
 
   getMediaRecorderOptions(): { mimeType?: string } {
@@ -461,7 +465,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.#enableMirror = false
         } catch (err) {
           // Logging the error, exept restrictions, which is handled in Core
-          if (!err.isRestriction) {
+          if (!isRestrictionError(err)) {
             this.uppy.log(err)
           }
         }
@@ -508,7 +512,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
       }
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
-      if (!err.isRestriction) {
+      if (!isRestrictionError(err)) {
         this.uppy.log(err, 'error')
       }
     }
@@ -583,7 +587,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     try {
       await this.opts.onBeforeSnapshot()
     } catch (err) {
-      const message = typeof err === 'object' ? err.message : err
+      const { message } = toError(err)
       this.uppy.info(message, 'error', 5000)
       throw new Error(`onBeforeSnapshot: ${message}`)
     }
@@ -600,7 +604,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     } catch (error) {
       // Logging the error, except restrictions, which is handled in Core
       this.captureInProgress = false
-      if (!error.isRestriction) {
+      if (!isRestrictionError(error)) {
         this.uppy.log(error)
       }
     }
@@ -701,7 +705,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render(): ComponentChild {
+  override render(): ComponentChild {
     if (!this.webcamActive) {
       this.start()
     }
@@ -741,7 +745,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     )
   }
 
-  install(): void {
+  override install(): void {
     const { mobileNativeCamera, modes, videoConstraints } = this.opts
 
     const { target } = this.opts
@@ -791,12 +795,12 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.stop()
     this.unmount()
   }
 
-  onUnmount(): void {
+  override onUnmount(): void {
     this.stop()
   }
 }

@@ -261,7 +261,7 @@ export const handlers = [
   // Mock search endpoint
   http.get(`${COMPANION_URL}/:provider/search`, ({ request, params }) => {
     const url = new URL(request.url)
-    const provider = params.provider as string
+    const provider = params['provider'] as string
     const query = url.searchParams.get('q') || ''
     const searchPath = url.searchParams.get('path')
 

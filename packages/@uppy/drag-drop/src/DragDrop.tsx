@@ -202,11 +202,11 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     return <span className="uppy-DragDrop-note">{this.opts.note}</span>
   }
 
-  render(): ComponentChild {
+  override render(): ComponentChild {
     const dragDropClass = `uppy-u-reset
       uppy-DragDrop-container
       ${this.isDragDropSupported ? 'uppy-DragDrop--isDragDropSupported' : ''}
-      ${this.getPluginState().isDraggingOver ? 'uppy-DragDrop--isDraggingOver' : ''}
+      ${this.getPluginState()['isDraggingOver'] ? 'uppy-DragDrop--isDraggingOver' : ''}
     `
 
     const dragDropStyle = {
@@ -234,7 +234,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     )
   }
 
-  install(): void {
+  override install(): void {
     const { target } = this.opts
 
     this.setPluginState({
@@ -246,7 +246,7 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.unmount()
   }
 }

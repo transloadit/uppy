@@ -1,4 +1,4 @@
-import { exec, spawn } from 'node:child_process'
+import { type ExecException, exec, spawn } from 'node:child_process'
 import { promisify } from 'node:util'
 
 const execAsync = promisify(exec)
@@ -42,7 +42,9 @@ export async function execDockerCommand(
       console.warn(`Warning from docker exec: ${stderr}`)
     }
     return stdout.trim()
-  } catch (error) {
+  } catch (err) {
+    // promisified `exec` rejects with the ExecException, plus the output
+    const error = err as ExecException & { stdout?: string; stderr?: string }
     // Handle timeout specifically
     if (error.killed && error.signal === 'SIGTERM') {
       throw new Error(

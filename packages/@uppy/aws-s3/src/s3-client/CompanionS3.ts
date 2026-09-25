@@ -80,9 +80,9 @@ class S3Companion extends S3Client {
     })
 
     return {
-      location: `${url}${fields.key}`, // `url` is returned by the signer as the bucket URL without any path, but trailing slash, so we need to add the key (path) to get the full object URL
+      location: `${url}${fields['key']}`, // `url` is returned by the signer as the bucket URL without any path, but trailing slash, so we need to add the key (path) to get the full object URL
       etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key: fields.key,
+      key: fields['key'],
     }
   }
 

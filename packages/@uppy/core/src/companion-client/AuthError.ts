@@ -11,4 +11,11 @@ class AuthError extends Error {
   }
 }
 
+// checks the property, as `instanceof AuthError` is unsafe, see above
+export function isAuthError(err: unknown): err is AuthError {
+  return (
+    err instanceof Error && 'isAuthError' in err && err.isAuthError === true
+  )
+}
+
 export default AuthError

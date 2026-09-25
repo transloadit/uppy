@@ -75,7 +75,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async list(options: {
+  async list(_options: {
     companion: CompanionContext
     directory?: string | undefined
     providerUserSession: US
@@ -89,7 +89,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async search(options: {
+  async search(_options: {
     providerUserSession: US
     query: { q: string; path?: string; [k: string]: unknown }
     companion: { buildURL: BuildUrl }
@@ -102,7 +102,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async download(options: {
+  async download(_options: {
     companion: CompanionLike
     id: string
     providerUserSession: US
@@ -116,7 +116,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async thumbnail(options: {
+  async thumbnail(_options: {
     id: string
     providerUserSession: US
   }): Promise<{ stream: Readable; contentType?: string }> {
@@ -128,7 +128,7 @@ export default class Provider<US = unknown> {
    * if that fails, it will call this method to get the size.
    * So if your provider has a different method for getting the size, you can return the size here
    */
-  async size(options: {
+  async size(_options: {
     id: string
     providerUserSession: US
     query: unknown
@@ -141,7 +141,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async deauthorizationCallback(options: {
+  async deauthorizationCallback(_options: {
     companion: CompanionLike
     body: unknown
     headers: Record<string, (string | string[]) | undefined>
@@ -152,7 +152,7 @@ export default class Provider<US = unknown> {
   /**
    * Generate a new access token based on the refresh token
    */
-  async refreshToken(options: {
+  async refreshToken(_options: {
     redirectUri: string | undefined
     clientId: string | undefined
     clientSecret: string | undefined
@@ -166,14 +166,14 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async logout(options: {
+  async logout(_options: {
     providerUserSession: US
     companion: CompanionLike
   }): Promise<{ revoked: boolean; manual_revoke_url?: string }> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<object> {
+  async simpleAuth(_options: { requestBody: unknown }): Promise<object> {
     throw new Error('method not implemented')
   }
 
@@ -184,9 +184,7 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession({
-    grantDynamic,
-  }: {
+  static grantDynamicToUserSession(_options: {
     grantDynamic: GrantDynamic
   }): Record<string, unknown> {
     return {}

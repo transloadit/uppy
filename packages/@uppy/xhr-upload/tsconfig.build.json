@@ -9,8 +9,6 @@
     }
   ],
   "compilerOptions": {
-    "exactOptionalPropertyTypes": false,
-    "noImplicitOverride": false,
-    "useUnknownInCatchVariables": false
+    "exactOptionalPropertyTypes": false
   }
 }

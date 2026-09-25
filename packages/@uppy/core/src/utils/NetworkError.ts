@@ -1,5 +1,5 @@
 class NetworkError extends Error {
-  public cause: unknown
+  public override cause: unknown
 
   public isNetworkError: true
 

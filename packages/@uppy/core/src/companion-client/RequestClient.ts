@@ -6,9 +6,11 @@ import {
   ErrorWithCause,
   fetchWithNetworkError,
   getSocketHost,
+  isAbortError,
+  toError,
   UserFacingApiError,
 } from '../utils/index.js'
-import AuthError from './AuthError.js'
+import AuthError, { isAuthError } from './AuthError.js'
 
 export type RequestOptions = {
   method?: string
@@ -122,7 +124,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     this.#companionHeaders = headers
   }
 
-  private [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
+  [Symbol.for('uppy test: getCompanionHeaders')](): CompanionHeaders {
     return this.#companionHeaders
   }
 
@@ -198,9 +200,9 @@ export default class RequestClient<M extends Meta, B extends Body> {
     } catch (err) {
       // pass these through
       if (
-        err.isAuthError ||
-        err.name === 'UserFacingApiError' ||
-        err.name === 'AbortError'
+        isAuthError(err) ||
+        isAbortError(err) ||
+        toError(err).name === 'UserFacingApiError'
       )
         throw err
 
@@ -300,12 +302,12 @@ export default class RequestClient<M extends Meta, B extends Body> {
     } catch (err) {
       // this is a bit confusing, but note that an error with the `name` prop set to 'AbortError' (from AbortController)
       // is not the same as `p-retry` `AbortError`
-      if (err.name === 'AbortError') {
+      if (isAbortError(err)) {
         // The file upload was aborted, it’s not an error
         return undefined
       }
 
-      this.uppy.emit('upload-error', file, err)
+      this.uppy.emit('upload-error', file, toError(err))
       throw err
     }
   }
@@ -348,17 +350,17 @@ export default class RequestClient<M extends Meta, B extends Body> {
       return await this.#requestSocketToken({ file, postBody, signal })
     } catch (outerErr) {
       // throwing AbortError will cause p-retry to stop retrying
-      if (outerErr.isAuthError) throw new AbortError(outerErr)
+      if (isAuthError(outerErr)) throw new AbortError(outerErr)
 
-      if (outerErr.cause == null) throw outerErr
+      if (!(outerErr instanceof Error) || outerErr.cause == null) throw outerErr
       const err = outerErr.cause
 
-      const isRetryableHttpError = () =>
-        [408, 409, 429, 418, 423].includes(err.statusCode) ||
-        (err.statusCode >= 500 &&
-          err.statusCode <= 599 &&
-          ![501, 505].includes(err.statusCode))
-      if (err.name === 'HttpError' && !isRetryableHttpError()) {
+      const isRetryableHttpError = ({ statusCode }: HttpError) =>
+        [408, 409, 429, 418, 423].includes(statusCode) ||
+        (statusCode >= 500 &&
+          statusCode <= 599 &&
+          ![501, 505].includes(statusCode))
+      if (err instanceof HttpError && !isRetryableHttpError(err)) {
         throw new AbortError(err)
       }
 
@@ -519,7 +521,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
                         )
                     }
                   } catch (err) {
-                    onFatalError(err)
+                    onFatalError(toError(err))
                   }
                 })
 
@@ -545,7 +547,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
             })
           } catch (err) {
             if (socketAbortController.signal.aborted) return
-            onFatalError(err)
+            onFatalError(toError(err))
           }
         }
 

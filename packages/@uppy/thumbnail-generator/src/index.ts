@@ -46,7 +46,12 @@ function canvasToBlob(
   try {
     canvas.getContext('2d')!.getImageData(0, 0, 1, 1)
   } catch (err) {
-    if (err.code === 18) {
+    if (
+      typeof err === 'object' &&
+      err != null &&
+      'code' in err &&
+      err.code === 18
+    ) {
       return Promise.reject(
         new Error('cannot read image, probably an svg with external resources'),
       )

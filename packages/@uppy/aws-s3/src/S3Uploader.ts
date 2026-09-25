@@ -1,5 +1,6 @@
 import { EventManager, type Uppy } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta } from '@uppy/core/utils'
+import { toError } from '@uppy/core/utils'
 import type S3Client from './s3-client/S3Client.js'
 
 // ============================================================================
@@ -187,7 +188,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
         }
       }
     } catch (err) {
-      this.#onError(err instanceof Error ? err : new Error(err))
+      this.#onError(toError(err))
     }
   }
 

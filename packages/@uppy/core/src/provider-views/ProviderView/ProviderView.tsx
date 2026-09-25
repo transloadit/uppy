@@ -644,7 +644,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     )
   }
 
-  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+  render(_state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
