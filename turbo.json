@@ -6,7 +6,7 @@
       "outputLogs": "new-only",
       "dependsOn": ["^build"],
       "inputs": [
-        "src/**/*.{js,ts,jsx,tsx}",
+        "src/**/*.{js,ts,jsx,tsx,svelte}",
         "package.json",
         "tsconfig.json",
         "tsconfig.build.json"
@@ -19,6 +19,8 @@
       "inputs": [
         "src/**/*.{js,ts,jsx,tsx}",
         "package.json",
+        "tsconfig.json",
+        "tsconfig.build.json",
         "bundle.mjs",
         "build-bundle.mjs"
       ],
