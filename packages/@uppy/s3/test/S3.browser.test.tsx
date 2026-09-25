@@ -589,6 +589,22 @@ describe('S3 provider in the browser', () => {
       .toEqual(['dropped.txt'])
   })
 
+  it('toggles selection mode with a button that says what it does', async ({
+    worker,
+  }) => {
+    setup(worker, { mode: 'manager' })
+    await openBucket()
+    await page.getByRole('button', { name: 'Select multiple' }).click()
+    await page.getByRole('checkbox', { name: 'readme.md' }).click()
+    await page.getByRole('button', { name: 'Cancel selection' }).click()
+    await expect
+      .element(page.getByRole('button', { name: 'Select multiple' }))
+      .toBeVisible()
+    await expect
+      .element(page.getByRole('checkbox', { name: 'readme.md' }))
+      .not.toBeInTheDocument()
+  })
+
   it('opens one item menu at a time and closes it with Escape', async ({
     worker,
   }) => {

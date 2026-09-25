@@ -44,6 +44,7 @@ en_US.strings = {
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
   cancel: 'Cancel',
+  cancelSelection: 'Cancel selection',
   cancelUpload: 'Cancel upload',
   close: 'Close',
   closeModal: 'Close Modal',

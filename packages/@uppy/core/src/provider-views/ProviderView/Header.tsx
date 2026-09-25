@@ -69,7 +69,7 @@ export default function Header<M extends Meta, B extends Body>(
                 onClick={props.selectionToggle.onToggle}
               >
                 {props.selectionToggle.active
-                  ? props.i18n('cancel')
+                  ? props.i18n('cancelSelection')
                   : props.i18n('selectMultiple')}
               </button>
             )}

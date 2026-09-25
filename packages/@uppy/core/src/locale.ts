@@ -47,6 +47,7 @@ export default {
       1: '%{smart_count} selected',
     },
     selectMultiple: 'Select multiple',
+    cancelSelection: 'Cancel selection',
     close: 'Close',
     detailSize: 'Size',
     detailType: 'Type',
