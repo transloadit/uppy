@@ -65,7 +65,7 @@ export default class Provider<
     this.supportsRefreshToken = !!opts.supportsRefreshToken
   }
 
-  async headers(): Promise<Record<string, string>> {
+  override async headers(): Promise<Record<string, string>> {
     const [headers, token] = await Promise.all([
       super.headers(),
       this.#getAuthToken(),
@@ -83,7 +83,7 @@ export default class Provider<
     return { ...headers, ...authHeaders }
   }
 
-  onReceiveResponse(response: Response): Response {
+  override onReceiveResponse(response: Response): Response {
     super.onReceiveResponse(response)
     const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
@@ -294,7 +294,7 @@ export default class Provider<
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
-  protected async request<ResBody>(
+  protected override async request<ResBody>(
     ...args: Parameters<RequestClient<M, B>['request']>
   ): Promise<ResBody> {
     await this.#refreshingTokenPromise

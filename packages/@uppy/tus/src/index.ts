@@ -654,7 +654,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     await this.#uploadFiles(filesToUpload)
   }
 
-  install(): void {
+  override install(): void {
     this.uppy.setState({
       capabilities: {
         ...this.uppy.getState().capabilities,
@@ -664,7 +664,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.uppy.setState({
       capabilities: {
         ...this.uppy.getState().capabilities,

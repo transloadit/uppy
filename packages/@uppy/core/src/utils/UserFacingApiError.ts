@@ -1,5 +1,5 @@
 class UserFacingApiError extends Error {
-  name = 'UserFacingApiError'
+  override name = 'UserFacingApiError'
 }
 
 export default UserFacingApiError

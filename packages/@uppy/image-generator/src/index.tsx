@@ -106,14 +106,14 @@ export default class ImageGenerator<
     )
   }
 
-  install(): void {
+  override install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.clearLoadingInterval()
     this.closeAssembly(true) // Cancel any in-progress assembly
     this.unmount()
@@ -267,7 +267,7 @@ export default class ImageGenerator<
     this.setPluginState(defaultState)
   }
 
-  render() {
+  override render() {
     const {
       prompt,
       results,

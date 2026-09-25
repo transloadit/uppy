@@ -44,12 +44,12 @@ class CameraScreen extends Component<CameraScreenProps> {
 
   refs: any
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     const { onFocus } = this.props
     onFocus()
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     const { onStop } = this.props
     onStop()
   }

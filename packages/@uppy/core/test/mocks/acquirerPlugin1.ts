@@ -32,11 +32,11 @@ export default class TestSelector1 extends UIPlugin<any, any, any> {
     return Promise.resolve('success')
   }
 
-  update(state: any) {
+  override update(state: any) {
     this.mocks.update(state)
   }
 
-  uninstall() {
+  override uninstall() {
     this.mocks.uninstall()
   }
 }

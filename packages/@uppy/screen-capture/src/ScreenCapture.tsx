@@ -164,7 +164,7 @@ export default class ScreenCapture<
     })
   }
 
-  install(): null | undefined {
+  override install(): null | undefined {
     if (!isScreenRecordingSupported()) {
       this.uppy.log('Screen recorder access is not supported', 'warning')
       return null
@@ -184,7 +184,7 @@ export default class ScreenCapture<
     return undefined
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     if (this.videoStream) {
       this.stop()
     }
@@ -629,7 +629,7 @@ export default class ScreenCapture<
     }
   }
 
-  render(): ComponentChild {
+  override render(): ComponentChild {
     // get screen recorder state
     const recorderState = this.getPluginState()
 

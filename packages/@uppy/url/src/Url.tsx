@@ -213,18 +213,18 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  render(): ComponentChild {
+  override render(): ComponentChild {
     return <UrlUI i18n={this.i18n} addFile={this.addFile} />
   }
 
-  install(): void {
+  override install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.unmount()
   }
 }

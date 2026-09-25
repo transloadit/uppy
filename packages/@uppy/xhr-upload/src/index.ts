@@ -551,7 +551,7 @@ export default class XHRUpload<
     }
   }
 
-  install(): void {
+  override install(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({
@@ -565,7 +565,7 @@ export default class XHRUpload<
     this.uppy.addUploader(this.#handleUpload)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     if (this.opts.bundle) {
       const { capabilities } = this.uppy.getState()
       this.uppy.setState({

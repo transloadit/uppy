@@ -7,7 +7,6 @@
   ],
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
-    "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false
   }
 }

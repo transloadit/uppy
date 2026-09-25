@@ -180,7 +180,7 @@ class UIPlugin<
     )
   }
 
-  update(state: Partial<State<M, B>>): void {
+  override update(state: Partial<State<M, B>>): void {
     if (this.el != null) {
       this.#updateUI?.(state)
     }

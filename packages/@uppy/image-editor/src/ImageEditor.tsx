@@ -483,7 +483,7 @@ export default class ImageEditor<
     }
   }
 
-  install(): void {
+  override install(): void {
     this.resetEditorState(null)
     this.uppy.on('file-removed', this.handleFileRemoved)
 
@@ -493,7 +493,7 @@ export default class ImageEditor<
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     const { currentImage } = this.getPluginState()
 
     if (currentImage) {
@@ -505,7 +505,7 @@ export default class ImageEditor<
     this.unmount()
   }
 
-  render() {
+  override render() {
     const { currentImage, angleGranular } = this.getPluginState()
 
     if (currentImage === null || currentImage.isRemote) {

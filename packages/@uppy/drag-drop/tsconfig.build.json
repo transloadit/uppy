@@ -7,7 +7,6 @@
   ],
   "compilerOptions": {
     "jsx": "react-jsx",
-    "jsxImportSource": "preact",
-    "noImplicitOverride": false
+    "jsxImportSource": "preact"
   }
 }
