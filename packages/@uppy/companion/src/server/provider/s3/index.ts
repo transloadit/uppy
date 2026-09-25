@@ -173,6 +173,10 @@ export const withOwnCredentials = (
  * Backends with more than plain S3 (Transloadit Storage) subclass this and
  * override the `protected` seams: how their options parse, which client
  * serves a bucket, and how a move is carried out.
+ *
+ * @experimental Part of the file-management provider API (S3, Transloadit
+ * Storage): options, endpoints and methods will change incompatibly, also
+ * in minor releases.
  */
 export default class S3Provider<
   P extends ParsedS3ProviderOptions = ParsedS3ProviderOptions,

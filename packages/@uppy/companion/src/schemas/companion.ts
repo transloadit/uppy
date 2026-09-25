@@ -82,6 +82,10 @@ export interface S3ObjectWriteOptions {
  * user, which decides whether they may write) is set.
  * Restrict what the provider's credentials may do with IAM or a bucket
  * policy; Companion only enforces the per-user prefix carried by grants.
+ *
+ * @experimental Part of the file-management provider API (S3, Transloadit
+ * Storage): options, endpoints and methods will change incompatibly, also
+ * in minor releases.
  */
 export interface S3ProviderOptions
   extends ProviderOptions,
@@ -122,6 +126,10 @@ export interface S3ProviderOptions
  * only: a grant names the Workspace (as its bucket), and Companion holds the
  * credentials of every Workspace it serves; a grant never carries credentials.
  * The same key pair signs S3 requests and native API calls.
+ *
+ * @experimental Part of the file-management provider API (S3, Transloadit
+ * Storage): options, endpoints and methods will change incompatibly, also
+ * in minor releases.
  */
 export interface TransloaditStorageProviderOptions
   extends Omit<S3ProviderOptions, 'bucket' | 'prefix' | 'key' | 'secret'> {

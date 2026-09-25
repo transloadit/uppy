@@ -78,7 +78,13 @@ const operations = {
   ),
 }
 
-/** Dispatches `/:providerName/mutate/:operation` to the matching mutation. */
+/**
+ * Dispatches `/:providerName/mutate/:operation` to the matching mutation.
+ *
+ * @experimental Part of the file-management provider API (S3, Transloadit
+ * Storage): options, endpoints and methods will change incompatibly, also
+ * in minor releases.
+ */
 export default function mutate(
   req: Request,
   res: Response,
