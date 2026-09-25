@@ -295,11 +295,13 @@ async function handleDocObjectRecursively({
   return items
 }
 
-async function showDrivePicker({
+export async function showDrivePicker({
   token,
   apiKey,
   appId,
+  selectFolders,
   onFilesPicked,
+  onEmptyFolder,
   signal,
   onLoadingChange,
   onError,
@@ -307,7 +309,9 @@ async function showDrivePicker({
   token: string
   apiKey: string
   appId: string
+  selectFolders: boolean
   onFilesPicked: (files: PickedItem[], accessToken: string) => void
+  onEmptyFolder: () => void
   signal: AbortSignal | undefined
   onLoadingChange: (loading: boolean) => void
   onError: (err: unknown) => void
@@ -330,6 +334,14 @@ async function showDrivePicker({
           ...(await handleDocObjectRecursively({ doc, token, signal })),
         )
       }
+
+      const pickedAFolder = (picked.docs ?? []).some(
+        (doc) => doc.mimeType === 'application/vnd.google-apps.folder',
+      )
+      if (pickedAFolder && results.length === 0) {
+        onEmptyFolder()
+      }
+
       onFilesPicked(results, token)
     } catch (err) {
       onError(err)
@@ -347,9 +359,7 @@ async function showDrivePicker({
     .addView(
       new google.picker.DocsView(google.picker.ViewId.DOCS)
         .setIncludeFolders(true)
-        // Note: setEnableDrives doesn't seem to work
-        // .setEnableDrives(true)
-        .setSelectFolderEnabled(true)
+        .setSelectFolderEnabled(selectFolders)
         .setMode(google.picker.DocsViewMode.LIST),
     )
     // NOTE: photos is broken and results in an error being returned from Google
@@ -661,6 +671,13 @@ export interface GooglePickerOptions
   requestClientId: string
   apiKey?: string
   appId?: string
+  /**
+   * Whether folders can be *selected* in the Google Drive picker.
+   * Folders are always shown so users can navigate into them.
+   * Under the `drive.file` scope, picking a folder only yields files the app
+   * already has access to, so this defaults to `false`.
+   */
+  selectFolders?: boolean
   store: GooglePickerStore
 }
 
@@ -676,6 +693,7 @@ export function createGooglePickerController({
   clientId,
   apiKey,
   appId,
+  selectFolders = false,
 }: {
   uppy: Uppy
 } & GooglePickerOptions) {
@@ -750,7 +768,11 @@ export function createGooglePickerController({
           token,
           apiKey,
           appId,
+          selectFolders,
           onFilesPicked: handleFilesPicked,
+          onEmptyFolder: () => {
+            uppy.info(uppy.i18n('emptyOrInaccessibleFolder'), 'warning', 4000)
+          },
           signal: abortController.signal,
           onLoadingChange: (isLoading: boolean) => setLoading(isLoading),
           onError: (err: unknown) => {
