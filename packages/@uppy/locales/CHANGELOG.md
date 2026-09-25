@@ -1,5 +1,13 @@
 # @uppy/locales
 
+## 5.2.1
+
+### Patch Changes
+
+- c2982bc: Add the Azerbaijani (`az_AZ`) locale.
+- Updated dependencies [c011da4]
+  - @uppy/core@6.0.2
+
 ## 5.2.0
 
 ### Minor Changes
