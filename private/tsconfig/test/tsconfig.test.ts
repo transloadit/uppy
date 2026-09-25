@@ -27,6 +27,15 @@ test('tsconfig.json', async () => {
         path: `./packages/@uppy/${name}/tsconfig.json`,
       })),
       { path: './packages/uppy/tsconfig.json' },
+      { path: './examples/aws-companion/tsconfig.json' },
+      { path: './examples/aws-nodejs/tsconfig.json' },
+      { path: './examples/aws-php/tsconfig.json' },
+      { path: './examples/companion/tsconfig.json' },
+      { path: './examples/companion-custom-provider/tsconfig.json' },
+      { path: './examples/xhr-bundle/tsconfig.json' },
+      { path: './examples/xhr-node/tsconfig.json' },
+      { path: './examples/xhr-php/tsconfig.json' },
+      { path: './examples/xhr-python/tsconfig.json' },
     ],
   })
 })

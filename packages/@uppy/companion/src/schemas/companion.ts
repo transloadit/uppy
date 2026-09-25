@@ -90,7 +90,7 @@ export interface CompanionInitOptions {
     /** KMS key id or ARN to use when `awsSse` is a KMS encryption type. */
     awsSseKmsKeyId?: string | undefined
     useAccelerateEndpoint?: boolean
-    expires: number
+    expires?: number | undefined
     awsClientOptions?: S3ClientConfig & {
       /** @deprecated */
       accessKeyId?: unknown

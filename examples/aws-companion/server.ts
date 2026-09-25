@@ -1,31 +1,37 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const crypto = require('node:crypto')
-const companion = require('@uppy/companion')
+import fs from 'node:fs'
+import path from 'node:path'
+import * as companion from '@uppy/companion'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import cors from 'cors'
+import express from 'express'
+import session from 'express-session'
 
-require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
-const app = require('express')()
+process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '.env'))
 
-const DATA_DIR = path.join(__dirname, 'tmp')
+const DATA_DIR = path.join(import.meta.dirname, 'tmp')
+
+const app = express()
+const port = 3020
 
 app.use(
-  require('cors')({
+  cors({
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST', 'OPTIONS'],
     credentials: true,
   }),
 )
-app.use(require('cookie-parser')())
-app.use(require('body-parser').json())
+app.use(cookieParser())
+app.use(bodyParser.json())
 app.use(
-  require('express-session')({
+  session({
     secret: 'hello planet',
     saveUninitialized: false,
     resave: false,
   }),
 )
 
-const options = {
+const options: companion.CompanionInitOptions = {
   providerOptions: {
     drive: {
       key: process.env.COMPANION_GOOGLE_KEY,
@@ -41,19 +47,14 @@ const options = {
     endpoint: process.env.COMPANION_AWS_ENDPOINT,
     forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
   },
-  server: { host: 'localhost:3020' },
+  server: { host: `localhost:${port}` },
   filePath: DATA_DIR,
   secret: 'blah blah',
-  debug: true,
   corsOrigins: true,
 }
 
 // Create the data directory here for the sake of the example.
-try {
-  fs.accessSync(DATA_DIR)
-} catch (_err) {
-  fs.mkdirSync(DATA_DIR)
-}
+fs.mkdirSync(DATA_DIR, { recursive: true })
 process.on('exit', () => {
   fs.rmSync(DATA_DIR, { recursive: true, force: true })
 })
@@ -62,8 +63,8 @@ const { app: companionApp } = companion.app(options)
 
 app.use(companionApp)
 
-const server = app.listen(3020, () => {
-  console.log('listening on port 3020')
+const server = app.listen(port, () => {
+  console.log('listening on port', port)
 })
 
 companion.socket(server, options)
