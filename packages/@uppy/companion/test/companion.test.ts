@@ -6,12 +6,23 @@ import { isRecord } from '../dist/server/helpers/type-guards.js'
 import packageJson from '../package.json' with { type: 'json' }
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
-import mockOauthState from './mockoauthstate.js'
 import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
-mockOauthState()
+
+vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
+  ...(await vi.importActual('../dist/server/helpers/oauth-state.js')),
+  generateState: () => ({}),
+  getFromState: (state: string) => {
+    if (state === 'state-with-invalid-instance-url') {
+      return 'http://localhost:3452'
+    }
+
+    return 'http://localhost:3020'
+  },
+  encodeState: () => 'some-cool-nice-encrytpion',
+}))
 
 const fakeLocalhost = 'localhost.com'
 
