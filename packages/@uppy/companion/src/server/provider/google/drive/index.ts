@@ -6,11 +6,17 @@ import { prepareStream } from '../../../helpers/utils.js'
 import logger from '../../../logger.js'
 import { ProviderAuthError } from '../../error.js'
 import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
   type ProviderListResponse,
-  type Query,
+  type ProviderLogoutOptions,
+  type ProviderLogoutResponse,
+  type ProviderRefreshTokenOptions,
+  type ProviderRefreshTokenResponse,
 } from '../../Provider.js'
 import { withGoogleErrorHandling } from '../../providerErrors.js'
-import { logout, refreshToken } from '../index.js'
+import { type GoogleUserSession, logout, refreshToken } from '../index.js'
 import {
   adaptData,
   type DriveAbout,
@@ -136,14 +142,10 @@ export async function streamGoogleFile({
   return { stream, size }
 }
 
-interface DriveUserSession {
-  accessToken: string
-}
-
 /**
  * Adapter for API https://developers.google.com/drive/api/v3/
  */
-export class Drive extends Provider<DriveUserSession> {
+export class Drive extends Provider<GoogleUserSession> {
   static override get oauthProvider() {
     return 'googledrive'
   }
@@ -154,16 +156,15 @@ export class Drive extends Provider<DriveUserSession> {
 
   // Define these as real methods (not prototype assignment), so we don't risk
   // instance fields shadowing the prototype in downlevel transpiles.
-  override logout(args: Parameters<typeof logout>[0]) {
+  override logout(
+    args: ProviderLogoutOptions<GoogleUserSession>,
+  ): Promise<ProviderLogoutResponse> {
     return logout(args)
   }
 
-  override refreshToken(args: {
-    redirectUri: string | undefined
-    clientId: string | undefined
-    clientSecret: string | undefined
-    refreshToken: string
-  }) {
+  override refreshToken(
+    args: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
     return refreshToken(args)
   }
 
@@ -171,11 +172,7 @@ export class Drive extends Provider<DriveUserSession> {
     directory: directoryIn,
     providerUserSession: { accessToken: token },
     query,
-  }: {
-    directory?: string | undefined
-    providerUserSession: DriveUserSession
-    query?: Query | undefined
-  }): Promise<ProviderListResponse> {
+  }: ProviderListOptions<GoogleUserSession>): Promise<ProviderListResponse> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.list.error',
@@ -278,10 +275,7 @@ export class Drive extends Provider<DriveUserSession> {
   override async download({
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    providerUserSession: DriveUserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<GoogleUserSession>): Promise<ProviderDownloadResponse> {
     if (mockAccessTokenExpiredError != null) {
       logger.warn(`Access token: ${token}`)
 

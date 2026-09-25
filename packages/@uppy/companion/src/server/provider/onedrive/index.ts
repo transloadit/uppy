@@ -1,9 +1,19 @@
-import type { Readable } from 'node:stream'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
-import Provider, { type ProviderListResponse, type Query } from '../Provider.js'
+import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
+  type ProviderListResponse,
+  type ProviderLogoutResponse,
+  type ProviderRefreshTokenOptions,
+  type ProviderRefreshTokenResponse,
+  type ProviderSizeOptions,
+  type ProviderThumbnailResponse,
+  type Query,
+} from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import adaptData from './adapter.js'
 
@@ -59,11 +69,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     directory,
     providerUserSession: { accessToken: token },
     query,
-  }: {
-    directory?: string | undefined
-    providerUserSession: OneDriveUserSession
-    query?: Query | undefined
-  }): Promise<ProviderListResponse> {
+  }: ProviderListOptions<OneDriveUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.onedrive.list.error', async () => {
       const queryRecord = getQueryRecord(query)
       const path = directory ? `items/${directory}` : 'root'
@@ -101,11 +107,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     id,
     providerUserSession: { accessToken: token },
     query,
-  }: {
-    id: string
-    providerUserSession: OneDriveUserSession
-    query: Query
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<OneDriveUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling(
       'provider.onedrive.download.error',
       async () => {
@@ -120,10 +122,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<{
-    stream: Readable
-    contentType: string
-  }> {
+  override async thumbnail(): Promise<ProviderThumbnailResponse> {
     // not implementing this because a public thumbnail from onedrive will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -136,11 +135,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     id,
     query,
     providerUserSession: { accessToken: token },
-  }: {
-    id: string
-    query: Query
-    providerUserSession: OneDriveUserSession
-  }): Promise<number | undefined> {
+  }: ProviderSizeOptions<OneDriveUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.onedrive.size.error', async () => {
       const queryRecord = getQueryRecord(query)
       const body = await getClient({ token })
@@ -153,7 +148,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     })
   }
 
-  override async logout() {
+  override async logout(): Promise<ProviderLogoutResponse> {
     // apparently M$ doesn't support programmatic oauth2 revoke
     return {
       revoked: false,
@@ -166,12 +161,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     clientSecret,
     refreshToken,
     redirectUri,
-  }: {
-    clientId: string | undefined
-    clientSecret: string | undefined
-    refreshToken: string
-    redirectUri: string
-  }): Promise<{ accessToken: string }> {
+  }: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
     return this.#withErrorHandling(
       'provider.onedrive.token.refresh.error',
       async () => {
