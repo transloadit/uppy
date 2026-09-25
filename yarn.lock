@@ -5429,7 +5429,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/companion": "workspace:^"
+    typescript: "npm:^6.0.3"
     vite: "npm:^8.2.2"
   languageName: unknown
   linkType: soft

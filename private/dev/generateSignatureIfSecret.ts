@@ -1,5 +1,7 @@
-const enc = new TextEncoder('utf-8')
-async function sign(secret, body) {
+import type { AssemblyParameters } from '@uppy/transloadit'
+
+const enc = new TextEncoder()
+async function sign(secret: string, body: string) {
   const algorithm = { name: 'HMAC', hash: 'SHA-384' }
 
   const key = await crypto.subtle.importKey(
@@ -16,7 +18,7 @@ async function sign(secret, body) {
   )
   return `sha384:${Array.from(new Uint8Array(signature), (x) => x.toString(16).padStart(2, '0')).join('')}`
 }
-function getExpiration(future) {
+function getExpiration(future: number) {
   return new Date(Date.now() + future)
     .toISOString()
     .replace('T', ' ')
@@ -25,18 +27,18 @@ function getExpiration(future) {
 /**
  * Adds an expiration date and signs the params object if a secret is passed to
  * it. If no secret is given, it returns the same object.
- *
- * @param {string | undefined} secret
- * @param {object} params
- * @returns {Promise<{ params: string, signature?: string }>}
  */
-export default async function generateSignatureIfSecret(secret, params) {
-  let signature
-  if (secret) {
-    params.auth.expires = getExpiration(5 * 60 * 1000)
-    params = JSON.stringify(params)
-    signature = await sign(secret, params)
-  }
+export default async function generateSignatureIfSecret(
+  secret: string | undefined,
+  params: AssemblyParameters,
+) {
+  if (!secret) return { params, fields: {} }
 
-  return { params, signature }
+  if (params.auth) params.auth.expires = getExpiration(5 * 60 * 1000)
+  const paramsString = JSON.stringify(params)
+  return {
+    params: paramsString,
+    signature: await sign(secret, paramsString),
+    fields: {},
+  }
 }

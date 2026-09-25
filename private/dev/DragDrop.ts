@@ -6,10 +6,6 @@ import Tus from '@uppy/tus'
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
 const { VITE_TUS_ENDPOINT: TUS_ENDPOINT } = import.meta.env
 
-import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
-import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
-console.log(import.meta.env)
-
 export default () => {
   const uppyDashboard = new Uppy({
     debug: true,
@@ -24,7 +20,7 @@ export default () => {
   window.uppy = uppyDashboard
 
   uppyDashboard.on('complete', (result) => {
-    if (result.failed.length === 0) {
+    if (!result.failed?.length) {
       console.log('Upload successful 😀')
     } else {
       console.warn('Upload failed 😞')
