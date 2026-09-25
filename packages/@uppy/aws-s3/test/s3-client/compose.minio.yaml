@@ -1,6 +1,11 @@
 services:
   minio:
-    image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z-cpuv1
+    # quay.io/minio/minio (and docker.io/minio/minio) stopped being publicly
+    # pullable on 2026-09-24 ("unauthorized: access to the requested resource is
+    # not authorized"), which broke CI. bitnamilegacy/minio:2025.7.23 bundles the
+    # exact same MinIO server build (RELEASE.2025-07-23T15-54-02Z) plus `mc`, from
+    # a frozen repository, so it is pinned by tag and digest.
+    image: docker.io/bitnamilegacy/minio:2025.7.23@sha256:8935e75fa5d11295c17171e4aa49efe390a1193cd7f12e4d21b92af9ffef09d7
     ports:
       - 9002:9002
       - 9003:9003
@@ -11,7 +16,9 @@ services:
       MINIO_ADDRESS: ':9002'
       MINIO_CONSOLE_ADDRESS: ':9003'
       MC_HOST_local: 'http://${MINIO_ROOT_USER}:${MINIO_ROOT_PASSWORD}@localhost:9002'
-    command: minio server /data
+    # The Bitnami image runs as uid 1001 and cannot create /data; use its
+    # pre-created, group-writable data directory instead.
+    command: minio server /bitnami/minio/data
     healthcheck:
       test: mc ready local
       start_period: 5s
