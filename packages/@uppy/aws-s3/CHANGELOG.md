@@ -1,5 +1,15 @@
 # @uppy/aws-s3
 
+## 6.2.0
+
+### Minor Changes
+
+- c011da4: `signRequest` may return `headers` to send with the presigned request, e.g. a signed `Content-Disposition`.
+
+### Patch Changes
+
+- 5660fb9: A blank `key` returned by `signRequest` is now treated as no override; the requested key is used instead.
+
 ## 6.1.0
 
 ### Minor Changes
