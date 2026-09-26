@@ -6,6 +6,16 @@ export const sanitizeXmlETag = (etag: string): string =>
 export const sanitizeETag = (etag: string | null): string | undefined =>
   etag?.replace(/^"+|"+$/g, '')
 
+/** Drops any case of `content-type` from a header map. */
+export function omitContentType(
+  headers: Record<string, string> | undefined,
+): Record<string, string> | undefined {
+  if (!headers) return headers
+  return Object.fromEntries(
+    Object.entries(headers).filter(([k]) => k.toLowerCase() !== 'content-type'),
+  )
+}
+
 /** Strips query string and hash from a URL to derive the object location. */
 export function removeQueryString(urlString: string): string {
   const urlObject = new URL(urlString)
