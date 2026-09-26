@@ -1,3 +1,4 @@
+import type { S3Client } from '@aws-sdk/client-s3'
 import corsImport from 'cors'
 import type { NextFunction, Request, RequestHandler, Response } from 'express'
 import promBundle from 'express-prom-bundle'
@@ -55,6 +56,15 @@ export const hasOAuthProvider: RequestHandler = (req, res, next) => {
 export const hasSimpleAuthProvider: RequestHandler = (req, res, next) => {
   if (!isSimpleAuthProviderReq(req)) {
     logger.debug('Provider does not support simple auth.', undefined, req.id)
+    return res.sendStatus(400)
+  }
+
+  return next()
+}
+
+export const hasMutationProvider: RequestHandler = (req, res, next) => {
+  if (!req.companion.providerClass?.supportsMutations) {
+    logger.debug('Provider does not support mutations.', undefined, req.id)
     return res.sendStatus(400)
   }
 
@@ -283,15 +293,24 @@ export const metrics = ({
 export const getCompanionMiddleware = (
   options: CompanionRuntimeOptions,
 ): RequestHandler => {
+  // Built once per app, not per request: an S3 client holds its resolved
+  // credentials and keep-alive connections. The trade-off: an embedder that
+  // swaps credentials in the options object at runtime keeps these clients.
+  const s3Client = getS3Client(options, false)
+  const s3ClientCreatePresignedPost = getS3Client(options, true)
+  // The S3 *provider* builds its clients lazily (per bucket, from grants) and
+  // keeps them here.
+  const s3ProviderClients = new Map<string, S3Client>()
+  const buildURL = getURLBuilder(options)
+
   const middleware = (req: Request, _res: Response, next: NextFunction) => {
-    const s3Client = getS3Client(options, false)
-    const s3ClientCreatePresignedPost = getS3Client(options, true)
     const authToken =
       req.header('uppy-auth-token') || req.query['uppyAuthToken']
 
     req.companion = {
       options,
-      buildURL: getURLBuilder(options),
+      buildURL,
+      s3ProviderClients,
       ...(s3Client && { s3Client }),
       ...(s3ClientCreatePresignedPost && { s3ClientCreatePresignedPost }),
       ...(typeof authToken === 'string' && { authToken }),

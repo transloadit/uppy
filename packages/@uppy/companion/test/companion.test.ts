@@ -499,3 +499,26 @@ describe('S3 controller', () => {
       })
   })
 })
+
+describe('provider mutations', () => {
+  test('a provider without mutations is rejected before the body is read', async () =>
+    request(await getServerWithEnv())
+      .post('/webdav/mutate/delete')
+      .set('Content-Type', 'application/json')
+      .send({ id: 'some-file' })
+      .expect(400))
+
+  test('an unknown operation is a 404', async () => {
+    const s3Token = tokenService.generateEncryptedAuthToken(
+      { s3: { bucket: 'some-bucket', prefix: '' } },
+      secret,
+    )
+
+    return request(await getServerWithEnv())
+      .post('/s3/mutate/frobnicate')
+      .set('uppy-auth-token', s3Token)
+      .set('Content-Type', 'application/json')
+      .send({ id: 'some-file' })
+      .expect(404)
+  })
+})
