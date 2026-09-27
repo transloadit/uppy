@@ -48,6 +48,16 @@ const options = {
     drive: {
       key: 'GOOGLE_KEY',
       secret: 'GOOGLE_SECRET',
+      // Optional: override the OAuth scope requested at consent time. When
+      // omitted, Companion uses the default scope for the provider. Operators
+      // can supply a narrower scope (e.g. `drive.file` for Google Drive,
+      // `Files.Read` for OneDrive) to satisfy least-privilege requirements,
+      // accepting any provider-side functional trade-offs.
+      scope: ['https://www.googleapis.com/auth/drive.file'],
+      // Optional: shallow-merged onto the provider's default `custom_params`.
+      // Useful for adding things like `login_hint` without losing
+      // `access_type: 'offline'`.
+      customParams: { login_hint: 'user@example.com' },
     },
   },
   server: {
