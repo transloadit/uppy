@@ -257,8 +257,7 @@ export default class XHRUpload<
             }
           }
 
-          const uploadURL =
-            typeof body?.['url'] === 'string' ? body['url'] : undefined
+          const uploadURL = typeof body?.url === 'string' ? body.url : undefined
 
           for (const { id } of files) {
             this.uppy.emit('upload-success', this.uppy.getFile(id), {

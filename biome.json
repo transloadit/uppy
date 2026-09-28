@@ -36,9 +36,6 @@
       "suspicious": {
         "noExplicitAny": "off"
       },
-      "complexity": {
-        "useLiteralKeys": "off"
-      },
       "correctness": {
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
@@ -78,6 +75,16 @@
     }
   },
   "overrides": [
+    {
+      "includes": ["packages/@uppy/companion/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "useLiteralKeys": "off"
+          }
+        }
+      }
+    },
     {
       "includes": ["**/*.vue", "**/*.svelte", "packages/@uppy/vue/**/*.ts"],
       "linter": {

@@ -7,6 +7,7 @@
     "declarationMap": true,
     "erasableSyntaxOnly": true,
     "module": "nodenext",
+    "noPropertyAccessFromIndexSignature": false,
     "outDir": "${configDir}/lib",
     "rootDir": "${configDir}/src",
     "target": "esnext",

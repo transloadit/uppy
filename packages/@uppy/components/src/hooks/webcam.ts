@@ -55,7 +55,7 @@ export function createWebcamController(
     _next,
     patch,
   ) => {
-    const webcamPatch = patch?.plugins?.['Webcam'] as WebcamState | undefined
+    const webcamPatch = patch?.plugins?.Webcam as WebcamState | undefined
     if (webcamPatch) {
       subscribers.emit()
     }

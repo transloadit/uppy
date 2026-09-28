@@ -6,6 +6,7 @@
     "erasableSyntaxOnly": true,
     "module": "preserve",
     "noEmit": true,
+    "noPropertyAccessFromIndexSignature": false,
     "resolveJsonModule": true,
     "rootDir": "${configDir}",
     "target": "esnext",
