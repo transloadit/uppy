@@ -10,6 +10,7 @@ import {
   vi,
 } from 'vitest'
 import * as tokenService from '../dist/server/helpers/jwt.js'
+import * as oAuthState from '../dist/server/helpers/oauth-state.js'
 import { nockZoomRevoke, expects as zoomExpects } from './fixtures/zoom.js'
 import { getServer } from './mockserver.js'
 
@@ -92,5 +93,54 @@ describe('providers requests with remote oauth keys', () => {
       .set('uppy-auth-token', token)
       .set('uppy-credentials-params', encodedParams)
       .expect(424)
+  })
+})
+
+describe('remote credentials with transloadit_gateway', () => {
+  const getDropboxServer = () =>
+    getServer({
+      COMPANION_DROPBOX_KEYS_ENDPOINT: 'http://localhost:2111/dropbox-keys',
+    })
+
+  const preAuthToken = tokenService.generateEncryptedToken(
+    { key: 'transloadit-key', credentialsName: 'dropbox-creds' },
+    'different secret', // COMPANION_PREAUTH_SECRET in mockserver
+  )
+  const state = oAuthState.encodeState(
+    { id: 'test-state', preAuthToken, origin: 'http://localhost:3020' },
+    secret,
+  )
+
+  const connectWithGateway = async (transloadit_gateway: string) => {
+    nock('http://localhost:2111')
+      .post('/dropbox-keys')
+      .reply(200, {
+        credentials: {
+          key: 'remote-dropbox-key',
+          secret: 'remote-dropbox-secret',
+          transloadit_gateway,
+        },
+      })
+    return request(await getDropboxServer()).get(
+      `/connect/dropbox?state=${encodeURIComponent(state)}`,
+    )
+  }
+
+  test.each([
+    ['empty', ''],
+    ['whitespace-only', '  '],
+  ])('a %s gateway is ignored and the OAuth redirect proceeds', async (_, gateway) => {
+    const res = await connectWithGateway(gateway)
+    expect(res.text).not.toContain('Could not fetch credentials')
+    expect(res.status).toBe(302)
+    expect(res.headers.location).toContain('dropbox.com')
+  })
+
+  test('a configured gateway becomes the redirect_uri host', async () => {
+    const res = await connectWithGateway('https://gateway.example.com')
+    expect(res.status).toBe(302)
+    expect(decodeURIComponent(res.headers.location ?? '')).toContain(
+      'redirect_uri=https://gateway.example.com/',
+    )
   })
 })
