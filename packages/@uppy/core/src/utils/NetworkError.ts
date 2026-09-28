@@ -1,6 +1,4 @@
 class NetworkError extends Error {
-  public override cause: unknown
-
   public isNetworkError: true
 
   public request: null | XMLHttpRequest

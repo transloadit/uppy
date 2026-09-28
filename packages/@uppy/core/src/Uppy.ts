@@ -36,6 +36,7 @@ import type {
   UppyFileId,
 } from './utils/index.js'
 import {
+  getErrorMessage,
   getFileNameAndExtension,
   getFileType,
   getSafeFileId,
@@ -926,7 +927,7 @@ export class Uppy<
     try {
       this.#restricter.validateSingleFile(file)
     } catch (err) {
-      return toError(err).message
+      return getErrorMessage(err)
     }
     return null
   }
@@ -938,7 +939,7 @@ export class Uppy<
     try {
       this.#restricter.validateAggregateRestrictions(existingFiles, files)
     } catch (err) {
-      return toError(err).message
+      return getErrorMessage(err)
     }
     return null
   }

@@ -326,7 +326,6 @@ export default class GoldenRetriever<
   #handleStateUpdate = (
     prevState: State<M, B>,
     nextState: State<M, B>,
-    _patch: Partial<State<M, B>> | undefined,
   ): void => {
     if (nextState.currentUploads !== prevState.currentUploads) {
       const { currentUploads } = this.uppy.getState()

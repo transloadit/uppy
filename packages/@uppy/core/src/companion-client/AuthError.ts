@@ -11,7 +11,13 @@ class AuthError extends Error {
   }
 }
 
-// checks the property, as `instanceof AuthError` is unsafe, see above
+/**
+ * Check whether a thrown value is an {@link AuthError}. This checks its
+ * `isAuthError` property, as `instanceof AuthError` is unsafe (see above).
+ *
+ * @param err The thrown value.
+ * @returns Whether `err` is an auth error.
+ */
 export function isAuthError(err: unknown): err is AuthError {
   return (
     err instanceof Error && 'isAuthError' in err && err.isAuthError === true

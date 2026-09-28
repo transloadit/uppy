@@ -117,14 +117,14 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  #start = (options?: { deviceId?: string }): Promise<never> | undefined => {
+  #start = (options?: { deviceId?: string }): Promise<void> => {
     if (!this.#supportsUserMedia) {
       return Promise.reject(new Error('Microphone access not supported'))
     }
 
     this.#audioActive = true
 
-    this.#hasAudioCheck().then((hasAudio) => {
+    return this.#hasAudioCheck().then((hasAudio) => {
       this.setPluginState({
         hasAudio,
       })
@@ -162,7 +162,6 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
           this.uppy.info(err.message, 'error')
         })
     })
-    return undefined
   }
 
   #startRecording = (): void => {

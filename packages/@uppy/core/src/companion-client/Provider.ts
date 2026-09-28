@@ -5,7 +5,7 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '../index.js'
-import { getSocketHost, toError } from '../utils/index.js'
+import { getErrorMessage, getSocketHost } from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, {
@@ -260,7 +260,7 @@ export default class Provider<
     } catch (err) {
       const message = this.uppy.i18n('authAborted')
       this.uppy.info({ message }, 'warning', 5000)
-      this.uppy.log(`Authentication failed: ${toError(err).message}`, 'warning')
+      this.uppy.log(`Authentication failed: ${getErrorMessage(err)}`, 'warning')
       throw err
     } finally {
       // cleanup:

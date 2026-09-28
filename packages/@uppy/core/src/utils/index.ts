@@ -44,6 +44,7 @@ export { default as getAllowedMetaFields } from './getAllowedMetaFields.js'
 export { default as getBytesRemaining } from './getBytesRemaining.js'
 
 export { default as getDroppedFiles } from './getDroppedFiles/index.js'
+export { default as getErrorMessage } from './getErrorMessage.js'
 export { default as getETA } from './getETA.js'
 export { default as getFileNameAndExtension } from './getFileNameAndExtension.js'
 export { default as getFileType } from './getFileType.js'

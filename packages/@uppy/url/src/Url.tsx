@@ -9,7 +9,7 @@ import type {
   MinimalRequiredUppyFile,
   RemoteUppyFile,
 } from '@uppy/core/utils'
-import { isRestrictionError, toArray, toError } from '@uppy/core/utils'
+import { getErrorMessage, isRestrictionError, toArray } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
@@ -185,19 +185,19 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
         if (!isRestrictionError(err)) {
           this.uppy.log(err)
         }
-        return undefined
+        return
       }
     } catch (err) {
       this.uppy.log(err)
       this.uppy.info(
         {
           message: this.i18n('failedToFetch'),
-          details: toError(err).message,
+          details: getErrorMessage(err),
         },
         'error',
         4000,
       )
-      return undefined
+      return
     }
   }
 

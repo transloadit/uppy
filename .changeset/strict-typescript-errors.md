@@ -12,8 +12,8 @@
 "@uppy/xhr-upload": patch
 ---
 
-Stricter TypeScript: extend `@tsconfig/strictest` and type caught errors as `unknown`.
+Stricter TypeScript: enable most `@tsconfig/strictest` options and type caught errors as `unknown`.
 
-- `@uppy/core/utils`: add `toError`, `isAbortError` and `isRestrictionError` helpers.
-- `@uppy/webcam`: `icon` is now public, like on other acquirer plugins.
+- `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers.
+- `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
 - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. `addFile()` now resolves to `undefined` on failure, as per its type. The failed-fetch notification's `details` is now the error message instead of the Error object.

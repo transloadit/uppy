@@ -98,8 +98,6 @@ function UploadStatus<M extends Meta, B extends Body>({
       return i18n('uploadComplete')
     case 'error':
       return i18n('error')
-    default:
-      return undefined
   }
 }
 

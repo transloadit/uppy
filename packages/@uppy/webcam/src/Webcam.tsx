@@ -11,10 +11,10 @@ import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings, LocalUppyFileNonGhost } from '@uppy/core/utils'
 import {
   canvasToBlob,
+  getErrorMessage,
   getFileTypeExtension,
   isRestrictionError,
   mimeTypes,
-  toError,
 } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
@@ -284,7 +284,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     options: {
       deviceId: string
     } | null = null,
-  ): Promise<never> | undefined {
+  ): Promise<void> {
     if (!this.supportsUserMedia) {
       return Promise.reject(new Error('Webcam access not supported'))
     }
@@ -297,8 +297,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
 
     const constraints = this.getConstraints(options?.deviceId)
 
-    // TODO: add a return and/or convert this to async/await
-    this.hasCameraCheck().then((hasCamera) => {
+    return this.hasCameraCheck().then((hasCamera) => {
       this.setPluginState({
         hasCamera,
       })
@@ -340,7 +339,6 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
           this.uppy.info(err.message, 'error')
         })
     })
-    return undefined
   }
 
   getMediaRecorderOptions(): { mimeType?: string } {
@@ -587,7 +585,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
     try {
       await this.opts.onBeforeSnapshot()
     } catch (err) {
-      const { message } = toError(err)
+      const message = getErrorMessage(err)
       this.uppy.info(message, 'error', 5000)
       throw new Error(`onBeforeSnapshot: ${message}`)
     }
