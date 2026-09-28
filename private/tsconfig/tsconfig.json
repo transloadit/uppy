@@ -1,16 +1,11 @@
 {
-  "extends": "@tsconfig/strictest/tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "exclude": ["${configDir}/src", "${configDir}/lib", "${configDir}/dist"],
   "compilerOptions": {
-    "composite": true,
-    "erasableSyntaxOnly": true,
     "module": "preserve",
     "noEmit": true,
-    "noPropertyAccessFromIndexSignature": false,
     "resolveJsonModule": true,
     "rootDir": "${configDir}",
-    "target": "esnext",
-    "types": ["vite/client"],
-    "verbatimModuleSyntax": true
+    "types": ["vite/client"]
   }
 }

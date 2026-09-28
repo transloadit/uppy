@@ -1,0 +1,25 @@
+{
+  // Shared by both presets.
+  // The strictness options are based on @tsconfig/strictest, minus those that Biome covers:
+  // - noUnusedLocals: noUnusedVariables, noUnusedImports, noUnusedPrivateClassMembers
+  // - noUnusedParameters: noUnusedFunctionParameters
+  // - allowUnreachableCode: noUnreachable
+  // - allowUnusedLabels: noUnusedLabels
+  // - noFallthroughCasesInSwitch: noFallthroughSwitchClause
+  // - noPropertyAccessFromIndexSignature: conflicts with useLiteralKeys
+  // esModuleInterop is implied by `module: nodenext` and `module: preserve`.
+  "compilerOptions": {
+    "composite": true,
+    "erasableSyntaxOnly": true,
+    "target": "esnext",
+    "verbatimModuleSyntax": true,
+
+    "exactOptionalPropertyTypes": true,
+    "isolatedModules": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true,
+    "skipLibCheck": true,
+    "strict": true
+  }
+}

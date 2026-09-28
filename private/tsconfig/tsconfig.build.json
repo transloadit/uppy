@@ -1,16 +1,11 @@
 {
-  "extends": "@tsconfig/strictest/tsconfig.json",
+  "extends": "./tsconfig.base.json",
   "include": ["${configDir}/src"],
   "compilerOptions": {
-    "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "erasableSyntaxOnly": true,
     "module": "nodenext",
-    "noPropertyAccessFromIndexSignature": false,
     "outDir": "${configDir}/lib",
-    "rootDir": "${configDir}/src",
-    "target": "esnext",
-    "verbatimModuleSyntax": true
+    "rootDir": "${configDir}/src"
   }
 }

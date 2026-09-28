@@ -13,8 +13,5 @@
   },
   "devDependencies": {
     "vitest": "^4.1.11"
-  },
-  "dependencies": {
-    "@tsconfig/strictest": "^2.0.8"
   }
 }
