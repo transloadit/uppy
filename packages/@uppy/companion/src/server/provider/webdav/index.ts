@@ -219,7 +219,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         const client = await this.getClient({ providerUserSession })
         const statResult = await client.stat(id)
         const stat = 'data' in statResult ? statResult.data : statResult
-        const stream = client.createReadStream(`/${id}`)
+        const stream = client.createReadStream(`/${id}`) as Readable
         return { stream, size: stat.size }
       },
     )
