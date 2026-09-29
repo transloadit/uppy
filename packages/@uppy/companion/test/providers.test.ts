@@ -20,7 +20,6 @@ import {
   nockZoomRevoke,
   expects as zoomExpects,
 } from './fixtures/zoom.js'
-import mockOauthState from './mockoauthstate.js'
 import { getServer } from './mockserver.js'
 
 const { localZoomKey, localZoomSecret } = zoomExpects
@@ -28,7 +27,10 @@ const { localZoomKey, localZoomSecret } = zoomExpects
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
 
-mockOauthState()
+vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
+  ...(await vi.importActual('../dist/server/helpers/oauth-state.js')),
+  encodeState: () => 'some-cool-nice-encrytpion',
+}))
 
 vi.mock('../../dist/server/helpers/request.js', () => {
   return {
