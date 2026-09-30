@@ -1,5 +1,4 @@
 <script lang="ts">
-import type { PartialTreeFolderNode } from '@uppy/core'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'
 import { useRemoteSource } from '@uppy/svelte'
 
@@ -17,17 +16,6 @@ const dtf = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short',
   timeStyle: 'short',
 })
-
-// biome-ignore lint/correctness/noUnusedVariables: used as a Svelte action via use:setFolderCheckboxIndeterminate
-function setFolderCheckboxIndeterminate(
-  node: HTMLInputElement,
-  item: PartialTreeFolderNode,
-) {
-  if (item.status === 'partial') {
-    // Can only be set via JS
-    node.indeterminate = true
-  }
-}
 </script>
 
 {#if !remoteSource.state.authenticated}
@@ -102,7 +90,7 @@ function setFolderCheckboxIndeterminate(
             <!-- Folder Item -->
             <li class="flex items-center gap-2 mb-2">
               <input
-                use:setFolderCheckboxIndeterminate={item}
+                indeterminate={item.status === 'partial'}
                 type="checkbox"
                 onchange={() => remoteSource.checkbox(item, false)}
                 checked={item.status === 'checked'}
@@ -127,10 +115,11 @@ function setFolderCheckboxIndeterminate(
       >
         <button
           type="button"
-          class="text-blue-500"
-          onclick={() => {
-            remoteSource.done()
-            close()
+          class="text-blue-500 disabled:opacity-50"
+          disabled={!!remoteSource.state.error}
+          onclick={async () => {
+            // done() resolves false when nothing was added (e.g. too many files)
+            if (await remoteSource.done()) close()
           }}
         >
           Done
@@ -145,6 +134,9 @@ function setFolderCheckboxIndeterminate(
         <p class="text-gray-500 text-sm">
           Selected {remoteSource.state.selectedAmount} items
         </p>
+        {#if remoteSource.state.error}
+          <p class="text-red-500 text-sm">{remoteSource.state.error}</p>
+        {/if}
       </div>
     {/if}
   </div>
