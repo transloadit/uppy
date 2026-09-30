@@ -43,7 +43,7 @@ describe('providers requests with remote oauth keys', () => {
     nock('http://localhost:2111')
       .post('/zoom-keys')
       // @ts-expect-error
-      .reply((uri, { provider, parameters }) => {
+      .reply((_uri, { provider, parameters }) => {
         if (provider !== 'zoom' || parameters !== 'ZOOM-CREDENTIALS-PARAMS')
           return [400]
 

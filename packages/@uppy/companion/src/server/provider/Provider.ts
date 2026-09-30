@@ -201,7 +201,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async list(options: ProviderListOptions<US>): Promise<ProviderListResponse> {
+  async list(_options: ProviderListOptions<US>): Promise<ProviderListResponse> {
     throw new Error('method not implemented')
   }
 
@@ -211,7 +211,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async search(
-    options: ProviderSearchOptions<US>,
+    _options: ProviderSearchOptions<US>,
   ): Promise<ProviderSearchResponse> {
     throw new Error('method not implemented')
   }
@@ -222,7 +222,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async download(
-    options: ProviderDownloadOptions<US>,
+    _options: ProviderDownloadOptions<US>,
   ): Promise<ProviderDownloadResponse> {
     throw new Error('method not implemented')
   }
@@ -233,7 +233,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async thumbnail(
-    options: ProviderThumbnailOptions<US>,
+    _options: ProviderThumbnailOptions<US>,
   ): Promise<ProviderThumbnailResponse> {
     throw new Error('method not implemented')
   }
@@ -243,7 +243,7 @@ export default class Provider<US = unknown> {
    * if that fails, it will call this method to get the size.
    * So if your provider has a different method for getting the size, you can return the size here
    */
-  async size(options: ProviderSizeOptions<US>): Promise<number | undefined> {
+  async size(_options: ProviderSizeOptions<US>): Promise<number | undefined> {
     return undefined
   }
 
@@ -253,7 +253,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async deauthorizationCallback(
-    options: ProviderDeauthorizationCallbackOptions,
+    _options: ProviderDeauthorizationCallbackOptions,
   ): Promise<ProviderDeauthorizationCallbackResponse> {
     throw new Error('method not implemented')
   }
@@ -262,7 +262,7 @@ export default class Provider<US = unknown> {
    * Generate a new access token based on the refresh token
    */
   async refreshToken(
-    options: ProviderRefreshTokenOptions,
+    _options: ProviderRefreshTokenOptions,
   ): Promise<ProviderRefreshTokenResponse> {
     throw new Error('method not implemented')
   }
@@ -273,7 +273,7 @@ export default class Provider<US = unknown> {
    * This method should be overridden by provider implementations.
    */
   async logout(
-    options: ProviderLogoutOptions<US>,
+    _options: ProviderLogoutOptions<US>,
   ): Promise<ProviderLogoutResponse> {
     throw new Error('method not implemented')
   }
@@ -287,10 +287,7 @@ export default class Provider<US = unknown> {
    * The returned object is the provider's session, stored in the token and
    * handed back on every later request as `providerUserSession`.
    */
-  async simpleAuth({
-    requestBody,
-    companion,
-  }: ProviderSimpleAuthOptions): Promise<object> {
+  async simpleAuth(_options: ProviderSimpleAuthOptions): Promise<object> {
     throw new Error('method not implemented')
   }
 
@@ -302,7 +299,7 @@ export default class Provider<US = unknown> {
    * Storage): options, endpoints and methods will change incompatibly, also
    * in minor releases.
    */
-  async deleteItem(options: ProviderDeleteItemOptions<US>): Promise<void> {
+  async deleteItem(_options: ProviderDeleteItemOptions<US>): Promise<void> {
     throw new Error('method not implemented')
   }
 
@@ -318,7 +315,7 @@ export default class Provider<US = unknown> {
    * in minor releases.
    */
   async moveItem(
-    options: ProviderMoveItemOptions<US>,
+    _options: ProviderMoveItemOptions<US>,
   ): Promise<ProviderMoveItemResponse> {
     throw new Error('method not implemented')
   }
@@ -331,7 +328,7 @@ export default class Provider<US = unknown> {
    * in minor releases.
    */
   async createFolder(
-    options: ProviderCreateFolderOptions<US>,
+    _options: ProviderCreateFolderOptions<US>,
   ): Promise<ProviderCreateFolderResponse> {
     throw new Error('method not implemented')
   }
@@ -383,7 +380,7 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession(options: {
+  static grantDynamicToUserSession(_options: {
     grantDynamic: GrantDynamic
   }): Record<string, unknown> {
     return {}

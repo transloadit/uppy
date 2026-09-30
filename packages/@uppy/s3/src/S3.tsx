@@ -17,6 +17,7 @@ import type {
 import { UIPlugin, UserFacingApiError } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  isAuthError,
   Provider,
   tokenStorage,
 } from '@uppy/core/companion-client'
@@ -155,7 +156,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     await this.#queueTokenWrite(() => super.removeAuthToken())
   }
 
-  async login({
+  override async login({
     authFormData,
     uppyVersions = '',
     signal,
@@ -205,7 +206,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
       // listing is ProviderViews probing for one (only happens when the plugin
       // is not auto-connecting) and must reach it so the connect UI shows.
       if (
-        !err?.isAuthError ||
+        !isAuthError(err) ||
         !this.getGrant ||
         (!this.#hasSession && !this.#regranting) ||
         options.path.endsWith('/simple-auth')
@@ -237,7 +238,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     return renewal
   }
 
-  async logout<ResBody>(): Promise<ResBody> {
+  override async logout<ResBody>(): Promise<ResBody> {
     this.#sessionAbort.abort()
     this.#regranting = undefined
     this.#bucket = undefined
@@ -880,7 +881,7 @@ export default class S3<M extends Meta, B extends Body>
     this.#applyActions()
   }
 
-  install() {
+  override install() {
     this.uppy.log(
       `[${this.id}] ${this.title} is experimental: expect breaking changes, also in minor releases.`,
       'warning',
@@ -909,12 +910,12 @@ export default class S3<M extends Meta, B extends Body>
     this.#sessionReady = this.#checkStoredSession()
   }
 
-  uninstall() {
+  override uninstall() {
     this.view.tearDown()
     this.unmount()
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     if (!this.#sessionChecked) {
       return <div className="uppy-Provider-loading">{this.i18n('loading')}</div>
     }

@@ -72,7 +72,7 @@ describe('Dashboard', () => {
 
   it('should not automatically add plugins which have a non-Dashboard target', () => {
     const core = new Core()
-    WebcamPlugin.prototype.start = () => undefined
+    WebcamPlugin.prototype.start = () => Promise.resolve()
     core.use(Url, { companionUrl: 'https://companion.uppy.io' })
     core.use(DashboardPlugin, { inline: false })
     core.use(WebcamPlugin, { target: 'body' })

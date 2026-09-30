@@ -4,10 +4,7 @@
     "exactOptionalPropertyTypes": false,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "noImplicitOverride": false,
-    "noUncheckedIndexedAccess": false,
-    "strict": true,
-    "useUnknownInCatchVariables": false
+    "noUncheckedIndexedAccess": false
   },
   "references": [
     {

@@ -31,7 +31,7 @@ class RecorderScreen<M extends Meta, B extends Body> extends Component<
 > {
   videoElement: HTMLVideoElement | null = null
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     const { onStop } = this.props
     onStop()
   }

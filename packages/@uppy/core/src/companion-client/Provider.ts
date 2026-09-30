@@ -5,7 +5,8 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '../index.js'
-import { getSocketHost } from '../utils/index.js'
+import { getErrorMessage, getSocketHost } from '../utils/index.js'
+import { isAuthError } from './AuthError.js'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, {
   authErrorStatusCode,
@@ -67,7 +68,7 @@ export default class Provider<
     this.supportsRefreshToken = !!opts.supportsRefreshToken
   }
 
-  async headers(): Promise<Record<string, string>> {
+  override async headers(): Promise<Record<string, string>> {
     const [headers, token] = await Promise.all([
       super.headers(),
       this.#getAuthToken(),
@@ -85,7 +86,7 @@ export default class Provider<
     return { ...headers, ...authHeaders }
   }
 
-  onReceiveResponse(response: Response): Response {
+  override onReceiveResponse(response: Response): Response {
     super.onReceiveResponse(response)
     const plugin = this.#getPlugin()
     const oldAuthenticated = plugin.getPluginState().authenticated
@@ -133,7 +134,7 @@ export default class Provider<
     }
   }
 
-  authQuery(data: unknown): Record<string, string> {
+  authQuery(_data: unknown): Record<string, string> {
     return {}
   }
 
@@ -264,7 +265,7 @@ export default class Provider<
     } catch (err) {
       const message = this.uppy.i18n('authAborted')
       this.uppy.info({ message }, 'warning', 5000)
-      this.uppy.log(`Authentication failed: ${err.message}`, 'warning')
+      this.uppy.log(`Authentication failed: ${getErrorMessage(err)}`, 'warning')
       throw err
     } finally {
       // cleanup:
@@ -298,7 +299,7 @@ export default class Provider<
     return `${this.hostname}/${this.id}/get/${id}`
   }
 
-  protected async request<ResBody>(
+  protected override async request<ResBody>(
     ...args: Parameters<RequestClient<M, B>['request']>
   ): Promise<ResBody> {
     await this.#refreshingTokenPromise
@@ -315,7 +316,7 @@ export default class Provider<
       if (!this.supportsRefreshToken) throw err
       // only handle auth errors (401 from provider), and only handle them if we have a (refresh) token
       const authTokenAfter = await this.#getAuthToken()
-      if (!err.isAuthError || !authTokenAfter) throw err
+      if (!isAuthError(err) || !authTokenAfter) throw err
 
       if (this.#refreshingTokenPromise == null) {
         // Many provider requests may be starting at once, however refresh token should only be called once.
@@ -329,7 +330,7 @@ export default class Provider<
             })
             await this.setAuthToken(response.uppyAuthToken)
           } catch (refreshTokenErr) {
-            if (refreshTokenErr.isAuthError) {
+            if (isAuthError(refreshTokenErr)) {
               // if refresh-token has failed with auth error, delete token, so we don't keep trying to refresh in future
               await this.removeAuthToken()
             }

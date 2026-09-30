@@ -149,7 +149,7 @@ describe('Transloadit', () => {
           })
         },
       ),
-      http.post('https://api2.transloadit.com/assemblies', ({ request }) => {
+      http.post('https://api2.transloadit.com/assemblies', () => {
         return HttpResponse.json({
           ...assemblyStatusBase,
           ok: 'ASSEMBLY_EXECUTING',

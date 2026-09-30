@@ -2,6 +2,7 @@ import classNames from 'classnames'
 import debounce from 'lodash/debounce.js'
 import type { h } from 'preact'
 import packageJson from '../../../package.json' with { type: 'json' }
+import { isAuthError } from '../../companion-client/AuthError.js'
 import { describeCompanionError } from '../../companion-client/errorCodes.js'
 import type {
   Body,
@@ -18,7 +19,11 @@ import type {
 } from '../../index.js'
 import ErrorWithCause from '../../utils/ErrorWithCause.js'
 import type { CompanionFile, I18n } from '../../utils/index.js'
-import { remoteFileObjToLocal } from '../../utils/index.js'
+import {
+  getErrorMessage,
+  isAbortError,
+  remoteFileObjToLocal,
+} from '../../utils/index.js'
 import Browser from '../Browser.js'
 import BulkActions from '../BulkActions.js'
 import FilterInput from '../FilterInput.js'
@@ -496,12 +501,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   #reportActionError(err: unknown): void {
     const { uppy } = this.plugin
-    if ((err as { name?: unknown } | null | undefined)?.name === 'AbortError') {
+    if (isAbortError(err)) {
       uppy.log('[ProviderView] action cancelled', 'warning')
       return
     }
-    const raw = err instanceof Error ? err.message : String(err)
-    uppy.log(`[ProviderView] action failed: ${raw}`, 'error')
+    uppy.log(`[ProviderView] action failed: ${getErrorMessage(err)}`, 'error')
     // A `UserFacingApiError` is for the user: a locale key from Companion, or a
     // translated message a plugin threw. Any other text is not: a failed
     // Companion request (the request client wraps those, auth errors aside)
@@ -510,8 +514,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const message =
       err instanceof Error && err.name === 'UserFacingApiError'
         ? describeCompanionError(uppy.i18n, err)
-        : err instanceof ErrorWithCause ||
-            (err as { isAuthError?: unknown } | null)?.isAuthError === true
+        : err instanceof ErrorWithCause || isAuthError(err)
           ? uppy.i18n('companionError')
           : uppy.i18n('actionFailed')
     uppy.info(message, 'error', 5000)
@@ -630,9 +633,9 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#run(action, async () => {
       const items = this.getBulkActionItems()
       if (items.length === 0) return false
-      if ((await action.run({ items, ...this.#actionContext() })) === false)
-        return false
-      this.cancelSelection()
+      const result = await action.run({ items, ...this.#actionContext() })
+      if (result !== false) this.cancelSelection()
+      return result
     })
 
   #dialogs: ProviderDialogController
@@ -1162,7 +1165,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     )
   }
 
-  render(state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+  render(_state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 

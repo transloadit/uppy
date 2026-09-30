@@ -326,7 +326,6 @@ export default class GoldenRetriever<
   #handleStateUpdate = (
     prevState: State<M, B>,
     nextState: State<M, B>,
-    patch: Partial<State<M, B>> | undefined,
   ): void => {
     if (nextState.currentUploads !== prevState.currentUploads) {
       const { currentUploads } = this.uppy.getState()
@@ -416,7 +415,7 @@ export default class GoldenRetriever<
     this.#patchMetadata({ pluginData: data })
   }
 
-  install(): void {
+  override install(): void {
     this.#restore().catch((err) => {
       // Restore is best-effort: a failure here must not break the plugin.
       this.uppy.log(
@@ -431,7 +430,7 @@ export default class GoldenRetriever<
     this.uppy.on('restore:plugin-data-changed', this.#handlePluginDataChanged)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.uppy.off('state-update', this.#handleStateUpdate)
     this.uppy.off('restore-confirmed', this.#handleRestoreConfirmed)
     this.uppy.off('restore:plugin-data-changed', this.#handlePluginDataChanged)

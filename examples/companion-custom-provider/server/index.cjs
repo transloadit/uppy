@@ -25,7 +25,7 @@ app.use(
 )
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   res.setHeader('Content-Type', 'text/plain')
   res.send('Welcome to my uppy companion service')
 })
@@ -68,12 +68,12 @@ const uppyOptions = {
 app.use(uppy.app(uppyOptions).app)
 
 // handle 404
-app.use((req, res) => {
+app.use((_req, res) => {
   return res.status(404).json({ message: 'Not Found' })
 })
 
 // handle server errors
-app.use((err, req, res) => {
+app.use((err, _req, res, _next) => {
   console.error('\x1b[31m', err.stack, '\x1b[0m')
   res.status(500).json({ message: err.message, error: err })
 })

@@ -24,7 +24,6 @@
     "exactOptionalPropertyTypes": false,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false
   }
 }

@@ -14,7 +14,7 @@ afterAll(() => {
   worker.stop()
 })
 
-const createMockFile = (name: string, type: string, size: number = 1024) => {
+const createMockFile = (name: string, type: string) => {
   return new File(['test content'], name, { type })
 }
 
