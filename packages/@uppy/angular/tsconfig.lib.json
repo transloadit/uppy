@@ -4,8 +4,6 @@
   "compilerOptions": {
     "inlineSources": true,
     "module": "preserve",
-    "moduleResolution": "bundler",
-    "types": []
   },
   "angularCompilerOptions": {
     "strictTemplates": true,
