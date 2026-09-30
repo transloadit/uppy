@@ -4849,13 +4849,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/retry@npm:0.12.2":
-  version: 0.12.2
-  resolution: "@types/retry@npm:0.12.2"
-  checksum: 10/e5675035717b39ce4f42f339657cae9637cf0c0051cf54314a6a2c44d38d91f6544be9ddc0280587789b6afd056be5d99dbe3e9f4df68c286c36321579b1bf4a
-  languageName: node
-  linkType: hard
-
 "@types/send@npm:*":
   version: 0.17.6
   resolution: "@types/send@npm:0.17.6"
@@ -5214,7 +5207,7 @@ __metadata:
     namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^6.0.1"
     p-queue: "npm:^9.3.3"
-    p-retry: "npm:^6.1.0"
+    p-retry: "npm:^8.0.0"
     playwright: "npm:1.61.1"
     postcss: "npm:^8.5.23"
     postcss-cli: "npm:^11.0.1"
@@ -5562,10 +5555,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/svelte@workspace:packages/@uppy/svelte"
   dependencies:
-    "@sveltejs/adapter-auto": "npm:^7.0.1"
-    "@sveltejs/kit": "npm:^2.70.2"
     "@sveltejs/package": "npm:^2.5.7"
-    "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     preact: "npm:^10.29.2"
@@ -5573,7 +5563,6 @@ __metadata:
     svelte-check: "npm:^4.7.6"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.2.2"
   peerDependencies:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -9153,10 +9142,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-network-error@npm:^1.0.0":
-  version: 1.1.0
-  resolution: "is-network-error@npm:1.1.0"
-  checksum: 10/b2fe6aac07f814a9de275efd05934c832c129e7ba292d27614e9e8eec9e043b7a0bbeaeca5d0916b0f462edbec2aa2eaee974ee0a12ac095040e9515c222c251
+"is-network-error@npm:^1.3.0":
+  version: 1.3.2
+  resolution: "is-network-error@npm:1.3.2"
+  checksum: 10/6d5c0663f476acf7fd5894b5bdce14284aec6b595ad34484d430249b736372e46c345249fd1688bddb2c1380d72c28741838926d1d078264e37e779e970f9d93
   languageName: node
   linkType: hard
 
@@ -11141,14 +11130,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"p-retry@npm:^6.1.0":
-  version: 6.2.0
-  resolution: "p-retry@npm:6.2.0"
+"p-retry@npm:^8.0.0":
+  version: 8.0.1
+  resolution: "p-retry@npm:8.0.1"
   dependencies:
-    "@types/retry": "npm:0.12.2"
-    is-network-error: "npm:^1.0.0"
-    retry: "npm:^0.13.1"
-  checksum: 10/1a5ac16828c96c03c354f78d643dfc7aa8f8b998e1b60e27533da2c75e5cabfb1c7f88ce312e813e09a80b056011fbb372d384132e9c92d27d052bd7c282a978
+    is-network-error: "npm:^1.3.0"
+  checksum: 10/2134597266a134d1bcdaec7e605e605c89fe8fb6a8fd913b1102838fea6b1112320fcab327cfb83a58354baaf483057f6561f48245748098bb3cf462276f8e83
   languageName: node
   linkType: hard
 
@@ -12268,13 +12255,6 @@ __metadata:
   version: 0.12.0
   resolution: "retry@npm:0.12.0"
   checksum: 10/1f914879f97e7ee931ad05fe3afa629bd55270fc6cf1c1e589b6a99fab96d15daad0fa1a52a00c729ec0078045fe3e399bd4fd0c93bcc906957bdc17f89cb8e6
-  languageName: node
-  linkType: hard
-
-"retry@npm:^0.13.1":
-  version: 0.13.1
-  resolution: "retry@npm:0.13.1"
-  checksum: 10/6125ec2e06d6e47e9201539c887defba4e47f63471db304c59e4b82fc63c8e89ca06a77e9d34939a9a42a76f00774b2f46c0d4a4cbb3e287268bd018ed69426d
   languageName: node
   linkType: hard
 
