@@ -159,7 +159,7 @@ export function app(optionsArg: CompanionInitOptions): {
   )
   app.use(grant.default.express(grantConfig))
 
-  app.use((req, res, next) => {
+  app.use((_req, res, next) => {
     if (options.sendSelfEndpoint) {
       const { protocol } = options.server
       res.header('i-am', `${protocol}://${options.sendSelfEndpoint}`)

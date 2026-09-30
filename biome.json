@@ -39,7 +39,7 @@
       "correctness": {
         "useExhaustiveDependencies": "error",
         "useHookAtTopLevel": "error",
-        "noUnusedFunctionParameters": "off",
+        "noUnusedFunctionParameters": "error",
         "noUnusedImports": "error",
         "noUnusedPrivateClassMembers": "error",
         "noUnusedVariables": {

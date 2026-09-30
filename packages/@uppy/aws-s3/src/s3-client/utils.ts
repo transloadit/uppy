@@ -26,7 +26,7 @@ export const hexFromBuffer = (buffer: ArrayBuffer): string => {
   const bytes = new Uint8Array(buffer)
   let hex = ''
   for (const byte of bytes) {
-    hex += HEXS[byte >> 4]! + HEXS[byte & 0x0f]!
+    hex += HEXS[byte >> 4] + HEXS[byte & 0x0f]
   }
   return hex
 }

@@ -4,12 +4,12 @@
     "exactOptionalPropertyTypes": false,
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
-    "noImplicitOverride": false,
-    "noUncheckedIndexedAccess": false,
-    "strict": true,
-    "useUnknownInCatchVariables": false
+    "noUncheckedIndexedAccess": false
   },
   "references": [
+    {
+      "path": "../../../private/s3-mock-companion/tsconfig.build.json"
+    },
     {
       "path": "../core/tsconfig.build.json"
     },
