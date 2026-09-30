@@ -1,9 +1,21 @@
+import Uppy from '@uppy/core'
+import UppyScreenCapture from '@uppy/screen-capture'
+import { UppyContextProvider } from '@uppy/vue'
+import UppyWebcam from '@uppy/webcam'
 import { HttpResponse, http } from 'msw'
 import { setupWorker } from 'msw/browser'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test, vi } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-vue'
+import { type Component, defineComponent, h } from 'vue'
+import {
+  describeModalEsc,
+  describeRemoteSource,
+} from '../../shared/remoteSourceTests.js'
 import App from '../src/App.vue'
+import RemoteSource from '../src/RemoteSource.vue'
+import ScreenCapture from '../src/ScreenCapture.vue'
+import Webcam from '../src/Webcam.vue'
 
 const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 
@@ -168,5 +180,44 @@ describe('RemoteSource Component', () => {
     await expect.element(loginButton).toBeInTheDocument()
 
     await loginButton.click()
+  })
+})
+
+const withUppy = (uppy: Uppy<any, any>, child: Component, props: object) =>
+  defineComponent({
+    setup: () => () =>
+      h(UppyContextProvider, { uppy }, { default: () => h(child, props) }),
+  })
+
+describeRemoteSource(async (uppy, close) =>
+  render(withUppy(uppy, RemoteSource, { id: 'Dropbox', close })),
+)
+
+describeModalEsc(async () => render(App))
+
+describe('Media capture lifecycle', () => {
+  test('Webcam stops the camera on unmount', async () => {
+    const uppy = new Uppy().use(UppyWebcam)
+    const plugin = uppy.getPlugin('Webcam') as any
+    const screen = render(withUppy(uppy, Webcam, { close: () => {} }))
+    await expect
+      .element(screen.getByRole('heading', { name: 'Camera' }))
+      .toBeInTheDocument()
+    // installed after mount, so a stop() from a failed start() can't count
+    const stop = vi.spyOn(plugin, 'stop').mockImplementation(async () => {})
+    await screen.unmount()
+    expect(stop).toHaveBeenCalled()
+  })
+
+  test('ScreenCapture stops the capture on unmount', async () => {
+    const uppy = new Uppy().use(UppyScreenCapture)
+    const plugin = uppy.getPlugin('ScreenCapture') as any
+    const screen = render(withUppy(uppy, ScreenCapture, { close: () => {} }))
+    await expect
+      .element(screen.getByRole('heading', { name: 'Screen Capture' }))
+      .toBeInTheDocument()
+    const stop = vi.spyOn(plugin, 'stop').mockImplementation(() => {})
+    await screen.unmount()
+    expect(stop).toHaveBeenCalled()
   })
 })

@@ -85,7 +85,7 @@
         >
           <input
             type="checkbox"
-            :ref="(el) => setIndeterminate(el as HTMLInputElement, item)"
+            :indeterminate="item.status === 'partial'"
             @change="() => remoteSource.checkbox(item, false)"
             :checked="item.status === 'checked'"
           />
@@ -107,11 +107,12 @@
     >
       <button
         type="button"
-        class="text-blue-500"
+        class="text-blue-500 disabled:opacity-50"
+        :disabled="!!remoteSource.state.error"
         @click="
-          () => {
-            remoteSource.done()
-            props.close()
+          async () => {
+            // done() resolves false when nothing was added (e.g. too many files)
+            if (await remoteSource.done()) props.close()
           }
         "
       >
@@ -127,12 +128,14 @@
       <p class="text-gray-500 text-sm">
         Selected {{ remoteSource.state.selectedAmount }} items
       </p>
+      <p v-if="remoteSource.state.error" class="text-red-500 text-sm">
+        {{ remoteSource.state.error }}
+      </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { PartialTreeFolderNode } from '@uppy/core'
 import type { AvailablePluginsKeys } from '@uppy/remote-sources'
 import { useRemoteSource } from '@uppy/vue'
 
@@ -146,12 +149,4 @@ const dtf = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short',
   timeStyle: 'short',
 })
-const setIndeterminate = (
-  el: HTMLInputElement | null,
-  item: PartialTreeFolderNode,
-) => {
-  if (el && item.status === 'partial') {
-    el.indeterminate = true
-  }
-}
 </script>

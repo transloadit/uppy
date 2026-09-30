@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { useWebcam } from '@uppy/vue'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import MediaCapture from './MediaCapture.vue'
 
 const props = defineProps<{
@@ -26,8 +26,9 @@ const webcam = useWebcam({ onSubmit: props.close })
 
 onMounted(() => {
   webcam.value.start()
-  return () => {
-    webcam.value.stop()
-  }
+})
+// Vue ignores a cleanup returned from onMounted (unlike React's useEffect)
+onUnmounted(() => {
+  webcam.value.stop()
 })
 </script>

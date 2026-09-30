@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { useScreenCapture } from '@uppy/vue'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 import MediaCapture from './MediaCapture.vue'
 
 const props = defineProps<{
@@ -26,8 +26,9 @@ const screenCapture = useScreenCapture({ onSubmit: props.close })
 
 onMounted(() => {
   screenCapture.value.start()
-  return () => {
-    screenCapture.value.stop()
-  }
+})
+// Vue ignores a cleanup returned from onMounted (unlike React's useEffect)
+onUnmounted(() => {
+  screenCapture.value.stop()
 })
 </script>
