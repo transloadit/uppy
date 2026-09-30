@@ -1,5 +1,22 @@
 # uppy
 
+## 6.0.4
+
+### Patch Changes
+
+- Updated dependencies [4895bcc]
+- Updated dependencies [3f1aca3]
+  - @uppy/core@6.2.0
+  - @uppy/audio@4.0.1
+  - @uppy/aws-s3@6.2.2
+  - @uppy/dashboard@6.0.1
+  - @uppy/screen-capture@6.0.1
+  - @uppy/thumbnail-generator@6.0.1
+  - @uppy/transloadit@6.0.1
+  - @uppy/url@6.0.1
+  - @uppy/webcam@6.0.1
+  - @uppy/xhr-upload@6.0.1
+
 ## 6.0.3
 
 ### Patch Changes

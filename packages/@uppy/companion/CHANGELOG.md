@@ -1,5 +1,17 @@
 # @uppy/companion
 
+## 7.1.1
+
+### Patch Changes
+
+- 452b52b: Reuse shared option and response types for all Companion provider methods. Some provider method types were widened to match the base `Provider` class:
+  
+  - `logout()` of Box, Dropbox, Facebook and S3 now returns `{ revoked: boolean }` instead of `{ revoked: true }`.
+  - Zoom `deauthorizationCallback()` headers may now be `string | string[]`.
+  - Zoom `list()` query is now the generic `Query` type instead of `{ cursor?: string | null }`.
+  - WebDAV `thumbnail()` no longer declares its unused parameters.
+- d85c649: Fix WebDAV provider bypassing SSRF protection: requests to private, loopback and link-local addresses are now blocked unless `allowLocalUrls` is enabled.
+
 ## 7.1.0
 
 ### Minor Changes
