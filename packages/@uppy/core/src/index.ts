@@ -1,5 +1,6 @@
 export type { DefinePluginOpts, PluginOpts } from './BasePlugin.js'
 export { default as BasePlugin } from './BasePlugin.js'
+export type { CompanionErrorCode } from './companion-client/errorCodes.js'
 export { default as EventManager } from './EventManager.js'
 export { debugLogger } from './loggers.js'
 export type { Restrictions, ValidateableFile } from './Restricter.js'
@@ -10,6 +11,7 @@ export { default as UIPlugin } from './UIPlugin.js'
 export type {
   AsyncStore,
   BaseProviderPlugin,
+  ConfirmOptions,
   PartialTree,
   PartialTreeFile,
   PartialTreeFolder,
@@ -18,6 +20,8 @@ export type {
   PartialTreeId,
   PluginTypeRegistry,
   Processor,
+  PromptOptions,
+  ProviderDialogState,
   State,
   UnknownPlugin,
   UnknownProviderPlugin,
@@ -35,3 +39,4 @@ export type {
   MinimalRequiredUppyFile,
   UppyFile,
 } from './utils/index.js'
+export { default as UserFacingApiError } from './utils/UserFacingApiError.js'

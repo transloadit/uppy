@@ -5,6 +5,8 @@ import type {
   ProviderGrantConfig,
 } from '../../types/express.js'
 import { MAX_AGE_24H } from '../helpers/jwt.js'
+import logger from '../logger.js'
+import { ProviderAuthError, ProviderUserError } from './error.js'
 
 // from express:
 export interface Query {
@@ -112,6 +114,37 @@ export interface ProviderLogoutResponse {
 
 export interface ProviderSimpleAuthOptions {
   requestBody: unknown
+  companion: CompanionLike
+}
+
+export interface ProviderDeleteItemOptions<US = unknown> {
+  companion: CompanionLike
+  id: string
+  providerUserSession: US
+}
+
+export interface ProviderMoveItemOptions<US = unknown> {
+  companion: CompanionLike
+  id: string
+  destination: string
+  providerUserSession: US
+}
+
+export interface ProviderMoveItemResponse {
+  id: string
+  requestPath: string
+}
+
+export interface ProviderCreateFolderOptions<US = unknown> {
+  companion: CompanionLike
+  parentId: string | null
+  name: string
+  providerUserSession: US
+}
+
+export interface ProviderCreateFolderResponse {
+  id: string
+  requestPath: string
 }
 
 /**
@@ -228,8 +261,102 @@ export default class Provider<US = unknown> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth(options: ProviderSimpleAuthOptions): Promise<object> {
+  /**
+   * Opens a session without OAuth ("simple" is *not OAuth*, not *a login
+   * form*): the client posts whatever this provider needs to `/simple-auth`
+   * and gets a session token back. What is posted is up to the provider —
+   * a form the user filled in (WebDAV's server URL) or credentials the app
+   * fetched itself (the S3 provider's storage grant, exchanged with no UI).
+   * The returned object is the provider's session, stored in the token and
+   * handed back on every later request as `providerUserSession`.
+   */
+  async simpleAuth({
+    requestBody,
+    companion,
+  }: ProviderSimpleAuthOptions): Promise<object> {
     throw new Error('method not implemented')
+  }
+
+  /**
+   * Delete a file or (empty) folder. Providers that support mutations override
+   * this and set `supportsMutations` to true.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  async deleteItem(options: ProviderDeleteItemOptions<US>): Promise<void> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Move or rename one item. `destination` is a full path/id in the provider's
+   * own addressing scheme; the response carries the new id. Folders are
+   * accepted only by providers whose listings report
+   * `session.supportsMoveFolder`; otherwise the client moves a folder's
+   * entries one by one through this and the other mutations.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  async moveItem(
+    options: ProviderMoveItemOptions<US>,
+  ): Promise<ProviderMoveItemResponse> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Create a folder inside `parentId` (null for the root).
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  async createFolder(
+    options: ProviderCreateFolderOptions<US>,
+  ): Promise<ProviderCreateFolderResponse> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Run `fn`, logging the original error under `tag` and rethrowing it
+   * translated by `mapProviderError()`. Providers wrap their SDK calls in this
+   * so error mapping and logging live in one place: the log keeps the error as
+   * the provider threw it, and `mapProviderError()` stays a pure mapping.
+   */
+  protected async withErrorHandling<T>(
+    tag: string,
+    fn: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await fn()
+    } catch (err: unknown) {
+      if (
+        err instanceof ProviderUserError ||
+        err instanceof ProviderAuthError
+      ) {
+        // Thrown on purpose for the user (a name taken, a stale session):
+        // routine, and a client can trigger them at will. Not an error log.
+        logger.debug(
+          `${err.name}: ${err instanceof ProviderUserError ? JSON.stringify(err.json) : err.message}`,
+          tag,
+        )
+      } else {
+        logger.error(err, tag)
+      }
+      throw this.mapProviderError(err)
+    }
+  }
+
+  /**
+   * Translate an error from the provider's SDK/API into a Companion error
+   * (ProviderAuthError, ProviderUserError, ProviderApiError). Pure: it maps and
+   * returns, it does not log or throw. The default keeps the error as-is;
+   * providers override this to add their mapping.
+   */
+  protected mapProviderError(err: unknown): unknown {
+    return err
   }
 
   /**
@@ -239,13 +366,27 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession(options: {
+  static grantDynamicToUserSession({
+    grantDynamic,
+  }: {
     grantDynamic: GrantDynamic
   }): Record<string, unknown> {
     return {}
   }
 
+  /** Whether `simpleAuth()` is implemented (sessions are opened without OAuth). */
   static get hasSimpleAuth(): boolean {
+    return false
+  }
+
+  /**
+   * Whether deleteItem/moveItem/createFolder are implemented.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  static get supportsMutations(): boolean {
     return false
   }
 

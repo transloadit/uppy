@@ -34,6 +34,7 @@
     },
     "build:css": {
       "outputLogs": "new-only",
+      "dependsOn": ["^build:css"],
       "inputs": ["src/**/*.scss"],
       "outputs": ["lib/**/*.css", "dist/**/*.css"]
     },
