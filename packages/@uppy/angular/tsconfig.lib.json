@@ -3,7 +3,7 @@
   "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
     "inlineSources": true,
-    "module": "preserve",
+    "module": "preserve"
   },
   "angularCompilerOptions": {
     "strictTemplates": true,
