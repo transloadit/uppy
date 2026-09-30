@@ -39,33 +39,21 @@ test.each(packages)('packages/@uppy/%s/tsconfig.build.json', async (name) => {
 
   let expected: { path: string }[] | undefined
   if (pkg.dependencies || pkg.devDependencies || pkg.peerDependencies) {
-    const deps = Object.keys({
+    const references = Object.keys({
       ...pkg.dependencies,
       ...pkg.devDependencies,
       ...pkg.peerDependencies,
     })
-      .filter((dep) => dep.startsWith('@uppy'))
+      .filter((dep) => dep.startsWith('@uppy') && dep !== '@uppy-dev/tsconfig')
       .sort()
+      .map((dep) => ({
+        path: dep.startsWith('@uppy-dev/')
+          ? `../../../private/${dep.replace(/^@uppy-dev\//, '')}/tsconfig.build.json`
+          : `../${dep.replace(/^@uppy\//, '')}/tsconfig.build.json`,
+      }))
 
-    for (const dep of deps) {
-      if (!dep.startsWith('@uppy')) {
-        continue
-      }
-
-      if (dep === '@uppy-dev/tsconfig') {
-        continue
-      }
-
-      expected ||= []
-      if (dep.startsWith('@uppy-dev')) {
-        expected.push({
-          path: `../../../private/${dep.replace(/^@uppy-dev\//, '')}/tsconfig.build.json`,
-        })
-      } else {
-        expected.push({
-          path: `../${dep.replace(/^@uppy\//, '')}/tsconfig.build.json`,
-        })
-      }
+    if (references.length) {
+      expected = references
     }
   }
 
