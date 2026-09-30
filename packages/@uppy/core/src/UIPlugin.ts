@@ -200,11 +200,12 @@ class UIPlugin<
 
 export default UIPlugin
 
+type PluginClass = new (...args: any[]) => BasePlugin<any, any, any>
+
 export type PluginTarget<M extends Meta, B extends Body> =
   | string
   | Element
-  | typeof BasePlugin
-  | typeof UIPlugin
+  | PluginClass
   | BasePlugin<any, M, B>
 
 export interface UIPluginOptions extends PluginOpts {

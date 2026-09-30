@@ -4962,7 +4962,9 @@ __metadata:
   resolution: "@uppy-dev/dev@workspace:private/dev"
   dependencies:
     "@transloadit/utils": "npm:^4.6.0"
+    "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/companion": "workspace:^"
+    typescript: "npm:^6.0.3"
     vite: "npm:^8.2.2"
   languageName: unknown
   linkType: soft
