@@ -24,7 +24,7 @@
     "test": "turbo run test --concurrency=1 --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./private/tsconfig' --filter='./examples/{react,vue,sveltekit}' -- --browser.headless",
     "test:e2e": "turbo run test:e2e --concurrency=1 --filter='./packages/@uppy/*' --filter='./packages/uppy' --filter='./examples/{react,vue,sveltekit}' -- --browser.headless",
     "test:watch": "turbo watch test --filter='./packages/@uppy/*' --filter='./packages/uppy'",
-    "typecheck": "tsc --build --verbose",
+    "typecheck": "tsc --build && yarn workspace @uppy/svelte typecheck",
     "version": "changeset version && corepack yarn install --mode=update-lockfile && node scripts/update-readme-versions.mjs",
     "release": "changeset publish"
   },
