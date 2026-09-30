@@ -625,6 +625,38 @@ describe('AwsS3', () => {
       )
     })
 
+    test.for([
+      [{ key: '' }, 'fields.key must be a concrete object key'],
+      [
+        { key: 'u/\u0024{filename}' },
+        'fields.key must be a concrete object key',
+      ],
+      [{ key: 'a', FILE: 'x' }, 'fields must not contain "file"'],
+      [{ key: 'a', Success_Action_Redirect: 'x' }, 'success_action_status'],
+      [{ key: 'a', redirect: 'x' }, 'success_action_status'],
+    ] as const)('rejects unsafe fields %o', async ([fields, message]) => {
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://bucket.test',
+        region: 'us-east-1',
+        signRequest: async () => ({ url: 'https://bucket.test/', fields }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.txt'),
+      })
+
+      const onError = vi.fn()
+      core.on('upload-error', onError)
+      await core.upload()
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onError.mock.calls[0][1]).toBeInstanceOf(TypeError)
+      expect(onError.mock.calls[0][1].message).toContain(message)
+    })
+
     test('rejects fields returned for a request other than PutObject', async ({
       worker,
     }) => {
