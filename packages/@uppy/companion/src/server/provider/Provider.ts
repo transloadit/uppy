@@ -383,9 +383,7 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession({
-    grantDynamic,
-  }: {
+  static grantDynamicToUserSession(options: {
     grantDynamic: GrantDynamic
   }): Record<string, unknown> {
     return {}
