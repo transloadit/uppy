@@ -139,13 +139,13 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   ): Promise<string | undefined> => {
     // Do not process local files
     if (protocollessUrl.startsWith('blob')) {
-      return undefined
+      return
     }
     const url = addProtocolToURL(protocollessUrl)
     if (!checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
       this.uppy.info(this.i18n('enterCorrectUrl'), 'error', 4000)
-      return undefined
+      return
     }
 
     this.uppy.log(`[URL] Adding file from dropped/pasted url: ${url}`)

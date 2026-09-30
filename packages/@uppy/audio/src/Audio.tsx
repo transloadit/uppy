@@ -8,7 +8,11 @@ import type {
 
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { getFileTypeExtension, isRestrictionError } from '@uppy/core/utils'
+import {
+  getErrorMessage,
+  getFileTypeExtension,
+  isRestrictionError,
+} from '@uppy/core/utils'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 import PermissionsScreen from './PermissionsScreen.js'
@@ -159,7 +163,7 @@ export default class Audio<M extends Meta, B extends Body> extends UIPlugin<
             audioReady: false,
             cameraError: err,
           })
-          this.uppy.info(err.message, 'error')
+          this.uppy.info(getErrorMessage(err), 'error')
         })
     })
   }

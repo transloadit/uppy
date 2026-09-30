@@ -336,7 +336,7 @@ export default class Webcam<M extends Meta, B extends Body> extends UIPlugin<
             cameraReady: false,
             cameraError: err,
           })
-          this.uppy.info(err.message, 'error')
+          this.uppy.info(getErrorMessage(err), 'error')
         })
     })
   }

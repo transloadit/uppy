@@ -40,6 +40,7 @@ import {
   getFileNameAndExtension,
   getFileType,
   getSafeFileId,
+  isRestrictionError,
   Translator,
   toError,
 } from './utils/index.js'
@@ -1116,7 +1117,7 @@ export class Uppy<
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
         this.upload().catch((err) => {
-          if (!err.isRestriction) {
+          if (!isRestrictionError(err)) {
             this.log(err.stack || err.message || err)
           }
         })

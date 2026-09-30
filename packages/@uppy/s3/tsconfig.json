@@ -2,9 +2,7 @@
   "extends": "@uppy-dev/tsconfig",
   "compilerOptions": {
     "exactOptionalPropertyTypes": false,
-    "noUncheckedIndexedAccess": false,
-    "strict": true,
-    "useUnknownInCatchVariables": false
+    "noUncheckedIndexedAccess": false
   },
   "references": [
     {
