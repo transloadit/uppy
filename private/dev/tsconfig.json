@@ -31,10 +31,10 @@
       "path": "../../packages/@uppy/golden-retriever/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/google-drive/tsconfig.build.json"
+      "path": "../../packages/@uppy/google-drive-picker/tsconfig.build.json"
     },
     {
-      "path": "../../packages/@uppy/google-drive-picker/tsconfig.build.json"
+      "path": "../../packages/@uppy/google-drive/tsconfig.build.json"
     },
     {
       "path": "../../packages/@uppy/google-photos-picker/tsconfig.build.json"
@@ -52,7 +52,13 @@
       "path": "../../packages/@uppy/remote-sources/tsconfig.build.json"
     },
     {
+      "path": "../../packages/@uppy/s3/tsconfig.build.json"
+    },
+    {
       "path": "../../packages/@uppy/screen-capture/tsconfig.build.json"
+    },
+    {
+      "path": "../../packages/@uppy/transloadit-storage/tsconfig.build.json"
     },
     {
       "path": "../../packages/@uppy/transloadit/tsconfig.build.json"

@@ -1,5 +1,3 @@
-import type { AssemblyParameters } from '@uppy/transloadit'
-
 const enc = new TextEncoder()
 async function sign(secret: string, body: string) {
   const algorithm = { name: 'HMAC', hash: 'SHA-384' }
@@ -28,10 +26,9 @@ function getExpiration(future: number) {
  * Adds an expiration date and signs the params object if a secret is passed to
  * it. If no secret is given, it returns the same object.
  */
-export default async function generateSignatureIfSecret(
-  secret: string | undefined,
-  params: AssemblyParameters,
-) {
+export default async function generateSignatureIfSecret<
+  P extends { auth?: { key: string; expires?: string } },
+>(secret: string | undefined, params: P) {
   if (!secret) return { params, fields: {} }
 
   if (params.auth) params.auth.expires = getExpiration(5 * 60 * 1000)

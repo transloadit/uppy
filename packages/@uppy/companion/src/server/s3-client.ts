@@ -1,6 +1,7 @@
-import type { S3ClientConfig } from '@aws-sdk/client-s3'
-import { S3Client } from '@aws-sdk/client-s3'
-import type { CompanionRuntimeOptions } from '../types/companion-options.js'
+import { S3Client, type S3ClientConfig } from '@aws-sdk/client-s3'
+import type { S3ClientOptions } from '../schemas/companion.js'
+
+export type { S3ClientOptions }
 
 /**
  * instantiates the aws-sdk s3 client that will be used for s3 uploads.
@@ -9,7 +10,7 @@ import type { CompanionRuntimeOptions } from '../types/companion-options.js'
  * @param createPresignedPostMode whether this s3 client is for createPresignedPost
  */
 export default function s3Client(
-  companionOptions: Pick<CompanionRuntimeOptions, 's3'>,
+  companionOptions: { s3?: S3ClientOptions | undefined },
   createPresignedPostMode = false,
 ): S3Client | null {
   let s3Client: S3Client | null = null
