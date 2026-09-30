@@ -8,7 +8,6 @@ import { pipeline } from 'node:stream/promises'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
 import type { Request } from 'express'
-import type { FormDataLike } from 'form-data-encoder'
 import { FormData } from 'formdata-node'
 import type { OptionsOfTextResponseBody, Response } from 'got'
 import got from 'got'
@@ -23,7 +22,7 @@ import headerSanitize from './header-blacklist.js'
 import { isRecord, toError } from './helpers/type-guards.js'
 import {
   getBucket,
-  hasMatch,
+  hasUploadUrlMatch,
   jsonStringify,
   rfc2047EncodeMetadata,
   truncateFilename,
@@ -161,7 +160,7 @@ function validateOptions(options: UploaderOptions): void {
       }
 
       const allowedUrls = options.companionOptions.uploadUrls
-      if (allowedUrls && !hasMatch(url, allowedUrls)) {
+      if (allowedUrls && !hasUploadUrlMatch(url, allowedUrls)) {
         throw new ValidationError(
           'upload destination does not match any allowed destinations',
         )
@@ -823,7 +822,8 @@ export default class Uploader {
         },
       })
 
-      reqOptions.body = formData as FormDataLike
+      // @ts-expect-error This type error will be resolved by updating to the latest `got`.
+      reqOptions.body = formData
     } else {
       if (this.size != null) {
         reqOptions.headers = {

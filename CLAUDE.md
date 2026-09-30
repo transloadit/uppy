@@ -76,7 +76,6 @@ The build system uses Turbo (turbo.json) for task orchestration:
 - Special handling for the main `uppy` package bundle
 
 ### TypeScript Configuration
-- Shared config in `tsconfig.shared.json`
 - Individual packages have `tsconfig.json` and `tsconfig.build.json`
 - Build outputs include declaration files (.d.ts) and source maps
 

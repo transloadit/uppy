@@ -26,6 +26,9 @@ const getName = (id: string) => {
     .join(' ')
 }
 
+/** Where Companion put an item it moved or created. */
+type MutatedItem = { id: string; requestPath: string }
+
 function getOrigin() {
   return location.origin
 }
@@ -175,7 +178,9 @@ export default class Provider<
       { form: authFormData },
       { qs: { uppyVersions }, signal },
     )
-    this.setAuthToken(response.uppyAuthToken)
+    signal.throwIfAborted()
+    await this.setAuthToken(response.uppyAuthToken)
+    signal.throwIfAborted()
   }
 
   protected async loginOAuth({
@@ -387,5 +392,45 @@ export default class Provider<
     const response = await this.get<ResBody>(`${this.id}/logout`, options)
     await this.removeAuthToken()
     return response
+  }
+
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  deleteItem(id: string, options?: RequestOptions): Promise<void> {
+    return this.post<void>(`${this.id}/mutate/delete`, { id }, options)
+  }
+
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  moveItem(
+    id: string,
+    destination: string,
+    options?: RequestOptions,
+  ): Promise<MutatedItem> {
+    return this.post<MutatedItem>(
+      `${this.id}/mutate/move`,
+      { id, destination },
+      options,
+    )
+  }
+
+  /**
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  createFolder(
+    parentId: string | null,
+    name: string,
+    options?: RequestOptions,
+  ): Promise<MutatedItem> {
+    return this.post<MutatedItem>(
+      `${this.id}/mutate/create-folder`,
+      { parentId, name },
+      options,
+    )
   }
 }

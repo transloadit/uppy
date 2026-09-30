@@ -9,6 +9,24 @@ A simple and fully working example of Uppy and AWS S3 storage with a Node.js
   to `POST /s3/presign`. The server generates a presigned URL; the browser uses
   it directly.
 
+Both demos also use `@uppy/golden-retriever`, so selected files and in-progress
+multipart uploads survive a page reload. Resuming issues a `ListParts` request:
+through `/s3/presign` for server-side signing, and straight to S3 from the
+browser for the STS demo.
+
+Uploads from both demos land at `uppy-nodejs-example/<random-uuid>-<filename>`,
+but the prefix is applied in different places. For server-side signing,
+`POST /s3/presign` prepends it and returns the final key to Uppy, which reports
+it in `upload-success`. Client-side signing never reaches that route, so the STS
+demo sets [`generateObjectKey`](https://uppy.io/docs/aws-s3/#generateobjectkeyfile)
+in `public/index.html` instead. The STS credentials are scoped to that prefix,
+so changing it in one place without the other will cause `AccessDenied`.
+
+`@uppy/aws-s3` only switches to multipart for files larger than 100&nbsp;MiB by
+default ([`shouldUseMultipart`](https://uppy.io/docs/aws-s3/#shouldusemultipartfile)).
+Below that size every upload is a single `PUT`, so the multipart permissions and
+the `POST`/`GET`/`DELETE` branches of `/s3/presign` are never exercised.
+
 ## AWS Configuration
 
 It's assumed that you are familiar with AWS, at least, with the storage service
@@ -29,14 +47,18 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
    [
      {
        "AllowedHeaders": ["*"],
-       "AllowedMethods": ["GET", "PUT", "HEAD", "POST", "DELETE"],
+       "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
        "AllowedOrigins": ["*"],
-       "ExposeHeaders": ["ETag", "Location"]
+       "ExposeHeaders": ["ETag"]
      }
    ]
    ```
 
-2. Add the following Policy to `MY-UPPY-BUCKET`:
+   `ETag` must be exposed or multipart uploads cannot be completed. `GET` and
+   `DELETE` are only needed for the multipart list-parts and abort calls.
+
+2. Add the following Policy to `MY-UPPY-BUCKET`, replacing `ACCOUNT-ID` with
+   your 12-digit AWS account ID (S3 rejects wildcards inside a principal ARN):
 
    ```json
    {
@@ -46,11 +68,10 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
          "Sid": "MyMultipartPolicyStatement1",
          "Effect": "Allow",
          "Principal": {
-           "AWS": "arn:aws:iam::*:user/MY-UPPY-USER"
+           "AWS": "arn:aws:iam::ACCOUNT-ID:user/MY-UPPY-USER"
          },
          "Action": [
            "s3:PutObject",
-           "s3:PutObjectAcl",
            "s3:ListMultipartUploadParts",
            "s3:AbortMultipartUpload"
          ],
@@ -62,6 +83,7 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
 
 3. Add the following Policy to `MY-UPPY-USER`: (required for client-side signing
    via the STS endpoint)
+
    ```json
    {
      "Version": "2012-10-17",
@@ -71,10 +93,30 @@ get STS Federated Token and upload files to `MY-UPPY-BUCKET`:
          "Effect": "Allow",
          "Action": ["sts:GetFederationToken"],
          "Resource": ["arn:aws:sts::*:federated-user/*"]
+       },
+       {
+         "Sid": "MyStsPolicyStatement2",
+         "Effect": "Allow",
+         "Action": [
+           "s3:PutObject",
+           "s3:ListMultipartUploadParts",
+           "s3:AbortMultipartUpload"
+         ],
+         "Resource": "arn:aws:s3:::MY-UPPY-BUCKET/uppy-nodejs-example/*"
        }
      ]
    }
    ```
+
+   The S3 statement is what actually authorizes both demos: a
+   `GetFederationToken` session gets the **intersection** of this user's
+   identity-based policies and the session policy that `routes/sts.js` passes in
+   the call. Without S3 actions here the intersection is empty and every
+   client-side upload fails with `AccessDenied`. The bucket policy in step 2 is
+   not part of that intersection — it names the IAM user, not the federated
+   session (`arn:aws:sts::ACCOUNT-ID:federated-user/123user`, from the `Name` in
+   `routes/sts.js`) — and it is redundant for a same-account bucket once this
+   policy is in place. Keep it only if the bucket lives in another account.
 
 ### AWS Credentials
 
@@ -82,28 +124,46 @@ You may use existing AWS credentials or create a new user in the IAM page.
 
 - Make sure you setup the AWS credentials properly and write down the Access Key
   ID and Secret Access Key.
-- You may configure AWS S3 credentials using
-  [environment variables](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/loading-node-credentials-environment.html)
-  or a
-  [credentials file in `~/.aws/credentials`](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/setting-credentials-node.html).
+- This example reads credentials **only** from `COMPANION_AWS_KEY` and
+  `COMPANION_AWS_SECRET` (see `routes/sts.js` and `routes/presign.js`). Both
+  clients are constructed with an explicit `credentials` object, which bypasses
+  the AWS SDK's default provider chain, so `AWS_ACCESS_KEY_ID`, `AWS_PROFILE`
+  and `~/.aws/credentials` are ignored. Remove that `credentials` block from
+  both files if you want the default chain instead.
 
 ## Prerequisites
 
-Download this code or clone repository into a folder and install dependencies:
+Node.js 22 or newer, and a clone of the whole `uppy` repository. This example
+is a Yarn workspace and reads both the `.env` file and the Uppy browser bundle
+from the repository root, so the folder cannot be used standalone.
+
+From the root of the repository, install dependencies and build the browser
+bundle this example serves:
 
 ```sh
-CYPRESS_INSTALL_BINARY=0 corepack yarn install
+corepack yarn install
+corepack yarn build
 ```
 
-Add a `.env` file to the root directory and define the S3 bucket name and port
-variables like the example below:
+The build step is required. Without `packages/uppy/dist/uppy.min.mjs` the server
+logs a warning and falls back to an old Uppy release from the CDN whose
+`@uppy/aws-s3` predates both `getCredentials` and `signRequest`. The Dashboards
+still render, so the problem only surfaces as an upload error.
 
-```
+Add a `.env` file **at the root of the repository** (the same directory as
+`package.json` and `.env.example`, not `examples/aws-nodejs/`). `index.js`
+loads `../../.env`. You can start from `cp .env.example .env`.
+
+```sh
 COMPANION_AWS_BUCKET=MY-UPPY-BUCKET
 COMPANION_AWS_REGION=…
 COMPANION_AWS_KEY=…
 COMPANION_AWS_SECRET=…
 PORT=8080
+
+# Optional, server-side signing only: path-style addressing for
+# S3-compatible endpoints such as MinIO or LocalStack.
+# COMPANION_AWS_FORCE_PATH_STYLE=true
 ```
 
 N.B.: This example uses `COMPANION_AWS_` environment variables to facilitate
@@ -115,7 +175,7 @@ use Companion at all.
 Start the application:
 
 ```sh
-corepack yarn workspace @uppy-example/aws-nodejs start
+corepack yarn workspace example-aws-nodejs start
 ```
 
 Dashboard demo should now be available at http://localhost:8080.

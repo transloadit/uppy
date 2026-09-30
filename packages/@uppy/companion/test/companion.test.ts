@@ -1,17 +1,26 @@
 import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
+import * as tokenService from '../dist/server/helpers/jwt.js'
+import { isRecord } from '../dist/server/helpers/type-guards.js'
 import packageJson from '../package.json' with { type: 'json' }
-import * as tokenService from '../src/server/helpers/jwt.js'
-import { isRecord } from '../src/server/helpers/type-guards.js'
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
-import mockOauthState from './mockoauthstate.js'
 import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
-mockOauthState()
+
+vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
+  ...(await vi.importActual('../dist/server/helpers/oauth-state.js')),
+  getFromState: (state: string) => {
+    if (state === 'state-with-invalid-instance-url') {
+      return 'http://localhost:3452'
+    }
+
+    return 'http://localhost:3020'
+  },
+}))
 
 const fakeLocalhost = 'localhost.com'
 
@@ -239,7 +248,7 @@ describe('handle main oauth redirect', async () => {
   })
 
   test('do not redirect to invalid uppy instances', () => {
-    const state = 'state-with-invalid-instance-url' // see mock ../../src/server/helpers/oauth-state above
+    const state = 'state-with-invalid-instance-url' // see mock ../../dist/server/helpers/oauth-state above
     return request(serverWithMainOauth)
       .get(`/dropbox/redirect?state=${state}`)
       .set('uppy-auth-token', token)
@@ -497,5 +506,28 @@ describe('S3 controller', () => {
           fields['x-amz-server-side-encryption-aws-kms-key-id'],
         ).toBeUndefined()
       })
+  })
+})
+
+describe('provider mutations', () => {
+  test('a provider without mutations is rejected before the body is read', async () =>
+    request(await getServerWithEnv())
+      .post('/webdav/mutate/delete')
+      .set('Content-Type', 'application/json')
+      .send({ id: 'some-file' })
+      .expect(400))
+
+  test('an unknown operation is a 404', async () => {
+    const s3Token = tokenService.generateEncryptedAuthToken(
+      { s3: { bucket: 'some-bucket', prefix: '' } },
+      secret,
+    )
+
+    return request(await getServerWithEnv())
+      .post('/s3/mutate/frobnicate')
+      .set('uppy-auth-token', s3Token)
+      .set('Content-Type', 'application/json')
+      .send({ id: 'some-file' })
+      .expect(404)
   })
 })

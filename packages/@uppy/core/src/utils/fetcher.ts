@@ -3,6 +3,28 @@ import ProgressTimeout from './ProgressTimeout.js'
 
 const noop = (): void => {}
 
+/**
+ * Folds header names that differ only in case into a single entry, last one
+ * wins.
+ *
+ * Per the XHR spec, `setRequestHeader()` *combines* values when it is called
+ * twice with names that are a byte-case-insensitive match, so passing both
+ * `Content-Type` and `content-type` would send `Content-Type: a, b` rather
+ * than the intended `b`. Callers merge header objects from several sources
+ * (defaults, user options, a request signer), and plain objects have
+ * case-sensitive keys, so such a clash is easy to produce by accident — and
+ * for a signed request it turns into an opaque signature mismatch.
+ */
+function dedupeHeaders(
+  headers: Record<string, string>,
+): Iterable<[string, string]> {
+  const byLowerCaseName = new Map<string, [string, string]>()
+  for (const [name, value] of Object.entries(headers)) {
+    byLowerCaseName.set(name.toLowerCase(), [name, value])
+  }
+  return byLowerCaseName.values()
+}
+
 export type FetcherOptions = {
   /** The HTTP method to use for the request. Default is 'GET'. */
   method?: string
@@ -132,10 +154,8 @@ export function fetcher(
         onUploadProgress(event)
       }
 
-      if (headers) {
-        Object.keys(headers).forEach((key) => {
-          xhr.setRequestHeader(key, headers[key])
-        })
+      for (const [name, value] of dedupeHeaders(headers)) {
+        xhr.setRequestHeader(name, value)
       }
 
       function abort() {

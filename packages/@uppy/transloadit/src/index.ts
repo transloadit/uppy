@@ -15,7 +15,6 @@ import type {
 import { BasePlugin } from '@uppy/core'
 import {
   ErrorWithCause,
-  hasProperty,
   RateLimitedQueue,
   type RemoteUppyFile,
 } from '@uppy/core/utils'
@@ -936,7 +935,7 @@ export default class Transloadit<
       }
 
       const incompleteFiles = files.filter(
-        (file) => !hasProperty(this.completedFiles, file.id),
+        (file) => !Object.hasOwn(this.completedFiles, file.id),
       )
       incompleteFiles.forEach((file) => {
         this.uppy.emit('postprocess-progress', file, {

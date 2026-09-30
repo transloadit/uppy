@@ -59,15 +59,21 @@ if ($method !== 'PUT' || !$key) {
   exit;
 }
 
+// The object is stored under $directory, not under the key Uppy proposed,
+// so the real key is returned as well. Uppy reports it in `upload-success`.
+// If you add multipart later, only change the key on CreateMultipartUpload;
+// requests carrying an uploadId must be signed for the key they send.
+$objectKey = "{$directory}/{$key}";
+
 $command = $s3->getCommand('putObject', [
   'Bucket' => $bucket,
-  'Key' => "{$directory}/{$key}",
+  'Key' => $objectKey,
 ]);
 
 $request = $s3->createPresignedRequest($command, '+5 minutes');
 
 header('content-type: application/json');
-// signRequest expects a `{ url }` response — no method/fields/headers.
 echo json_encode([
   'url' => (string) $request->getUri(),
+  'key' => $objectKey,
 ]);

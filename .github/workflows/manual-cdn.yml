@@ -29,9 +29,9 @@ jobs:
       S3_ENDPOINT: ${{ secrets.S3_ENDPOINT }}
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Install Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: lts/*
       - name: Install upload-to-cdn dependencies

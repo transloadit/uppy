@@ -1,14 +1,11 @@
 {
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "outDir": "./lib",
-    "rootDir": "./src"
-  },
-  "include": ["./src/**/*.*"],
-  "exclude": ["./src/**/*.test.ts"],
+  "extends": "@uppy-dev/tsconfig/build",
   "references": [
     {
       "path": "../box/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
     },
     {
       "path": "../dashboard/tsconfig.build.json"
@@ -33,9 +30,10 @@
     },
     {
       "path": "../zoom/tsconfig.build.json"
-    },
-    {
-      "path": "../core/tsconfig.build.json"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noImplicitOverride": false
+  }
 }

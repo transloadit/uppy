@@ -2,11 +2,7 @@ import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/core/utils'
-import {
-  fetchWithNetworkError,
-  hasProperty as has,
-  NetworkError,
-} from '@uppy/core/utils'
+import { fetchWithNetworkError, NetworkError } from '@uppy/core/utils'
 import Emitter from 'component-emitter'
 import {
   type AssemblyFile,
@@ -281,7 +277,7 @@ class TransloaditAssembly extends Emitter {
     const nextUploads = next.uploads
     if (nextUploads != null && prevUploads != null) {
       Object.keys(nextUploads)
-        .filter((upload) => !has(prevUploads, upload))
+        .filter((upload) => !Object.hasOwn(prevUploads, upload))
         .forEach((upload) => {
           // This is a bit confusing. Not sure why Object.keys was chosen here, because nextUploads is an Array. Object.keys returns strings for array keys ("0", "1", etc.). Typescript expects arrays to be indexed with a number, not a string nextUploads[0], even though JavaScript is fine with it, so we need to type assert here:
           this.emit('upload', nextUploads[upload as unknown as number])

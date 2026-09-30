@@ -19,5 +19,5 @@ To run this example, from the **repository root**, run:
 
 ```sh
 corepack yarn install
-corepack yarn workspace @uppy-example/aws-companion start
+corepack yarn workspace example-aws-companion start
 ```
