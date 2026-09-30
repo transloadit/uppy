@@ -1,7 +1,7 @@
 import { fetcher } from '@uppy/core/utils'
 import type * as IT from './types.js'
 
-class S3Client {
+abstract class S3Client {
   readonly requestAbortTimeout?: number
 
   constructor({
@@ -71,6 +71,7 @@ class S3Client {
     onProgress,
     signal,
     contentType,
+    headers,
   }: {
     url: string
     method: IT.HttpMethod
@@ -78,6 +79,7 @@ class S3Client {
     onProgress?: IT.OnProgressFn
     signal?: AbortSignal
     contentType?: string
+    headers?: Record<string, string>
   }) {
     // Check if aborted while waiting for online
     if (signal?.aborted) {
@@ -88,7 +90,13 @@ class S3Client {
       method,
       // XHR natively supports ArrayBuffer, Uint8Array, Blob, and string
       body: ['GET', 'HEAD'].includes(method) ? undefined : data,
-      headers: contentType ? { 'Content-Type': contentType } : {},
+      // The signer's headers come last so a `Content-Type` it signed wins over
+      // the file's own type. `fetcher` folds names that differ only in case,
+      // so this holds for a lowercase `content-type` too.
+      headers: {
+        ...(contentType ? { 'Content-Type': contentType } : {}),
+        ...headers,
+      },
       signal,
       timeout: this.requestAbortTimeout,
       retries: 3,
@@ -114,53 +122,39 @@ class S3Client {
     })
   }
 
-  public async putObject(params: IT.PutObjectParams): Promise<{
+  public abstract putObject(params: IT.PutObjectParams): Promise<{
     location: string
     key: string
     etag: string | undefined
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async createMultipartUpload(
+  public abstract createMultipartUpload(
     params: IT.CreateMultipartUploadParams,
   ): Promise<{
     uploadId: string
     key: string
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async uploadPart(params: IT.UploadPartParams): Promise<{
+  public abstract uploadPart(params: IT.UploadPartParams): Promise<{
     etag: string
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async listParts(params: IT.ListPartsParams): Promise<IT.UploadPart[]> {
-    throw new Error('Not implemented')
-  }
+  public abstract listParts(
+    params: IT.ListPartsParams,
+  ): Promise<IT.UploadPart[]>
 
-  public async completeMultipartUpload(
+  public abstract completeMultipartUpload(
     params: IT.CompleteMultipartUploadParams,
   ): Promise<{
     location: string
     bucket: string | undefined
     key: string
     etag?: string | undefined
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async abortMultipartUpload(
+  public abstract abortMultipartUpload(
     params: IT.AbortMultipartUploadParams,
-  ): Promise<void> {
-    throw new Error('Not implemented')
-  }
-
-  public async deleteObject(params: IT.DeleteObjectParams): Promise<void> {
-    throw new Error('Not implemented')
-  }
+  ): Promise<void>
 }
 
 export default S3Client

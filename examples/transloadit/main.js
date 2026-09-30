@@ -62,7 +62,7 @@ formUppy.on('error', (err) => {
   document.querySelector('#test-form .error').textContent = err.message
 })
 
-formUppy.on('upload-error', (file, err) => {
+formUppy.on('upload-error', (_file, err) => {
   document.querySelector('#test-form .error').textContent = err.message
 })
 

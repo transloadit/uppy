@@ -156,11 +156,11 @@ export default class Compressor<
     }
   }
 
-  install(): void {
+  override install(): void {
     this.uppy.addPreProcessor(this.prepareUpload)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.uppy.removePreProcessor(this.prepareUpload)
   }
 }

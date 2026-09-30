@@ -47,7 +47,7 @@ class S3Companion extends S3Client {
   }
 
   public override async putObject({
-    key: keyIn,
+    key: requestedKey,
     data,
     fileType = C.DEFAULT_STREAM_CONTENT_TYPE,
     metadata = {},
@@ -55,7 +55,7 @@ class S3Companion extends S3Client {
     signal,
   }: IT.PutObjectParams) {
     const searchParams = new URLSearchParams({
-      filename: keyIn,
+      filename: requestedKey,
       type: fileType,
       ...Object.fromEntries(
         Object.entries(metadata).map(([k, v]) => [`metadata[${k}]`, String(v)]),
@@ -87,7 +87,7 @@ class S3Companion extends S3Client {
   }
 
   public override async createMultipartUpload({
-    key: keyIn,
+    key: requestedKey,
     fileType = C.DEFAULT_STREAM_CONTENT_TYPE,
     metadata,
     signal,
@@ -99,7 +99,11 @@ class S3Companion extends S3Client {
     const method = 'POST'
     const response = await this._fetch('/multipart', {
       method,
-      body: JSON.stringify({ filename: keyIn, metadata, type: fileType }),
+      body: JSON.stringify({
+        filename: requestedKey,
+        metadata,
+        type: fileType,
+      }),
       headers: { 'content-type': 'application/json' },
       signal,
     })

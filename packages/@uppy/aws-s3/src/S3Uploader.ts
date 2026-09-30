@@ -1,5 +1,6 @@
 import { EventManager, type Uppy } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta, TaskQueue } from '@uppy/core/utils'
+import { toError } from '@uppy/core/utils'
 import type S3Client from './s3-client/S3Client.js'
 
 // ============================================================================
@@ -24,7 +25,8 @@ interface S3UploaderOptions<M extends Meta, B extends Body> {
   queue: TaskQueue
   file: LocalUppyFile<M, B>
   metadata: Record<string, unknown>
-  key: string
+  /** Key proposed by the client. The signer may store the object under another. */
+  requestedKey: string
   shouldUseMultipart?: boolean
   getChunkSize?: (file: { size: number }) => number
   onProgress?: (bytesUploaded: number, bytesTotal: number) => void
@@ -56,7 +58,8 @@ interface ChunkState {
 
 export default class S3Uploader<M extends Meta, B extends Body> {
   readonly #data: NonNullable<LocalUppyFile<M, B>['data']>
-  #key: string | undefined
+  /** Key the object is stored under: the signer's if it returned one, else the requested one. */
+  #resolvedKey: string | undefined
   readonly #options: S3UploaderOptions<M, B>
   readonly #eventManager: EventManager<M, B>
 
@@ -79,7 +82,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     // Must run before #initChunks so it can force multipart mode for resumed uploads.
     const resumeState = options.file.s3Multipart
     if (resumeState) {
-      this.#key = resumeState.key
+      this.#resolvedKey = resumeState.key
       this.#uploadId = resumeState.uploadId
       this.#uploadHasStarted = true
     }
@@ -87,12 +90,13 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const fileSize = options.file.data.size
 
     // Determine if we should use multipart
-    // If we're resuming a multipart upload, force multipart. Otherwise use
-    // the boolean option (true/false) and ensure the file is larger than
-    // S3's minimum chunk size when enabling multipart.
+    // If we're resuming a multipart upload, force multipart. Otherwise follow
+    // the option. S3's 5 MiB minimum applies to every part except the last, so
+    // a smaller file is a valid one-part upload. An empty file has no part to
+    // send, so it stays a single PUT.
     this.#shouldUseMultipart =
       Boolean(resumeState) ||
-      (this.#options.shouldUseMultipart === true && fileSize > MIN_CHUNK_SIZE)
+      (this.#options.shouldUseMultipart === true && fileSize > 0)
 
     // Create chunks based on upload strategy
     if (this.#shouldUseMultipart) {
@@ -213,7 +217,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       // Stop this attempt's sibling requests. A newer start() owns a different
       // controller, so a late failure here cannot abort it.
       controller.abort()
-      this.#onError(err instanceof Error ? err : new Error(err))
+      this.#onError(toError(err))
     }
   }
 
@@ -232,19 +236,22 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     this.#eventManager.remove()
 
     if (opts?.abortInS3 !== false && this.#uploadId) {
-      if (!this.#key) {
+      if (!this.#resolvedKey) {
         throw new Error('Missing S3 object key for aborting upload')
       }
       // Not queued: uninstall() and cancel-all clear the queue, which would
       // drop it and leak the multipart upload.
       this.#options.s3Client
-        .abortMultipartUpload({ key: this.#key, uploadId: this.#uploadId })
+        .abortMultipartUpload({
+          key: this.#resolvedKey,
+          uploadId: this.#uploadId,
+        })
         .catch((abortErr) => {
           this.#options.log?.(abortErr, 'warning')
         })
     }
 
-    this.#key = undefined
+    this.#resolvedKey = undefined
     this.#uploadId = undefined
     this.#uploadHasStarted = false
     this.#options.onAbort?.()
@@ -254,10 +261,10 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     uploadId: string,
     signal: AbortSignal,
   ): Promise<void> {
-    if (!this.#key) {
+    if (!this.#resolvedKey) {
       throw new Error('Missing S3 object key for resuming upload')
     }
-    const key = this.#key
+    const key = this.#resolvedKey
     const existingParts = await this.#queued(signal, () =>
       this.#options.s3Client.listParts({ uploadId, key, signal }),
     )
@@ -281,7 +288,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   async #uploadNonMultipart(signal: AbortSignal): Promise<void> {
     const { location, key } = await this.#queued(signal, () =>
       this.#options.s3Client.putObject({
-        key: this.#options.key,
+        key: this.#options.requestedKey,
         data: this.#data,
         fileType: this.#options.file.type || 'application/octet-stream',
         metadata: this.#options.metadata,
@@ -303,7 +310,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     await this.#queued(signal, async () => {
       const { uploadId, key } =
         await this.#options.s3Client.createMultipartUpload({
-          key: this.#options.key,
+          key: this.#options.requestedKey,
           fileType: this.#options.file.type || 'application/octet-stream',
           metadata: this.#options.metadata,
           signal,
@@ -312,7 +319,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
       // Recorded inside the task: an abort landing between S3's response and
       // the queue settling would otherwise drop the uploadId and orphan the
       // upload in S3.
-      this.#key = key // Note: may differ from this.#options.key
+      this.#resolvedKey = key
       this.#uploadId = uploadId
 
       // Persist resume state so Golden Retriever can restore it after page refresh
@@ -325,7 +332,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
   }
 
   async #uploadRemainingParts(signal: AbortSignal): Promise<void> {
-    const key = this.#key
+    const key = this.#resolvedKey
     const uploadId = this.#uploadId
     if (key == null || uploadId == null) {
       throw new Error('Missing S3 object key or uploadId for uploading parts')

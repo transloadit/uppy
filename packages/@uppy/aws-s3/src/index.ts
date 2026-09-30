@@ -141,7 +141,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.id = this.opts.id || 'AwsS3'
   }
 
-  install(): void {
+  override install(): void {
     this.#setResumableUploadsCapability(true)
     this.#initS3Client()
     this.#queue = new TaskQueue({ concurrency: this.opts.limit })
@@ -149,7 +149,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.on('cancel-all', this.#handleCancelAll)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.#setResumableUploadsCapability(false)
     this.uppy.removeUploader(this.#upload)
     this.uppy.off('cancel-all', this.#handleCancelAll)
@@ -271,7 +271,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           queue: this.#queue,
           file,
           metadata: this.#getAllowedMeta(file),
-          key: this.#generateKey(file),
+          requestedKey: this.#generateKey(file),
           shouldUseMultipart: this.#shouldUseMultipart(file),
           getChunkSize: this.opts.getChunkSize,
           log: (...args) => this.uppy.log(...args),

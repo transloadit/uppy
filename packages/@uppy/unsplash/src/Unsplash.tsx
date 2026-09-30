@@ -90,7 +90,7 @@ export default class Unsplash<M extends Meta, B extends Body>
     })
   }
 
-  install(): void {
+  override install(): void {
     this.view = new SearchProviderViews(this, {
       provider: this.provider,
       viewType: 'unsplash',
@@ -104,11 +104,11 @@ export default class Unsplash<M extends Meta, B extends Body>
     }
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.unmount()
   }
 }

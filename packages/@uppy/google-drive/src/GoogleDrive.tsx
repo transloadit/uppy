@@ -114,7 +114,7 @@ export default class GoogleDrive<M extends Meta, B extends Body>
     this.render = this.render.bind(this)
   }
 
-  install(): void {
+  override install(): void {
     this.view = new DriveProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
@@ -127,12 +127,12 @@ export default class GoogleDrive<M extends Meta, B extends Body>
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.view.tearDown()
     this.unmount()
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 }

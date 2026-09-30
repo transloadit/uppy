@@ -2,7 +2,7 @@
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
 
-import type { NextFunction, Request, Response } from 'express'
+import type { Request, Response } from 'express'
 import emitter from '../emitter/index.js'
 import {
   authCallbackErrorHtml,
@@ -12,11 +12,7 @@ import * as tokenService from '../helpers/jwt.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import logger from '../logger.js'
 
-export default function callback(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
+export default function callback(req: Request, res: Response): void {
   const providerName = req.params['providerName']
   const { companion } = req
 

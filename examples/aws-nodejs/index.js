@@ -18,7 +18,7 @@ app.use(require('./routes/presign'))
 // Static file serving
 // ---------------------------------------------------------------------------
 
-app.get('/', (req, res) => {
+app.get('/', (_req, res) => {
   const htmlPath = path.join(__dirname, 'public', 'index.html')
   require('node:fs').readFile(htmlPath, 'utf8', (err, html) => {
     if (err) return res.status(500).send('Error loading page')
@@ -31,11 +31,11 @@ app.get('/', (req, res) => {
     res.send(html.replace('</head>', `${config}</head>`))
   })
 })
-app.get('/index.html', (req, res) => {
+app.get('/index.html', (_req, res) => {
   res.setHeader('Location', '/').sendStatus(308).end()
 })
 
-app.get('/uppy.min.mjs', (req, res) => {
+app.get('/uppy.min.mjs', (_req, res) => {
   res.setHeader('Content-Type', 'text/javascript')
   const bundlePath = path.join(
     __dirname,
@@ -54,7 +54,7 @@ app.get('/uppy.min.mjs', (req, res) => {
     )
   }
 })
-app.get('/uppy.min.css', (req, res) => {
+app.get('/uppy.min.css', (_req, res) => {
   res.setHeader('Content-Type', 'text/css')
   const bundlePath = path.join(
     __dirname,
