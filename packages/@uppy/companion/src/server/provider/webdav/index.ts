@@ -1,3 +1,4 @@
+import type { Readable } from 'node:stream'
 import type { WebDAVClientOptions } from 'webdav'
 import { AuthType, createClient } from 'webdav'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'

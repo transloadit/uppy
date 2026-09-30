@@ -15,7 +15,7 @@ export interface Query {
 
 export type CompanionLike = Pick<
   CompanionContext,
-  'getProviderCredentials' | 'options'
+  'getProviderCredentials' | 'options' | 's3ProviderClients'
 >
 
 export interface ProviderListItem {
@@ -40,6 +40,23 @@ export interface ProviderListOptions<US = unknown> {
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
+  /**
+   * What the listing tells the client about the session it was served for.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  session?: {
+    /** Bucket (or equivalent container) the session is browsing. */
+    bucket: string
+    /** Whether the session may change files (delete, move, create folders). */
+    canWrite: boolean
+    /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
+    supportsMoveFolder: boolean
+    /** Root the session is confined to, which paths the user types are relative to. */
+    prefix: string
+  }
   nextPagePath?: string | null | undefined
   username?: string | null | undefined
 }

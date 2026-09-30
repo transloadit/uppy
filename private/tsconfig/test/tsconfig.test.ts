@@ -37,20 +37,35 @@ test.each(packages)('packages/@uppy/%s/tsconfig.build.json', async (name) => {
     `packages/@uppy/${name}/tsconfig.build.json`,
   )
 
-  let expected: unknown[] | undefined
+  let expected: { path: string }[] | undefined
   if (pkg.dependencies || pkg.devDependencies || pkg.peerDependencies) {
     const deps = Object.keys({
       ...pkg.dependencies,
       ...pkg.devDependencies,
       ...pkg.peerDependencies,
     })
-      .filter((dep) => dep.startsWith('@uppy/'))
+      .filter((dep) => dep.startsWith('@uppy'))
       .sort()
 
-    if (deps.length) {
-      expected = deps.map((dep) => ({
-        path: `../${dep.replace(/^@uppy\//, '')}/tsconfig.build.json`,
-      }))
+    for (const dep of deps) {
+      if (!dep.startsWith('@uppy')) {
+        continue
+      }
+
+      if (dep === '@uppy-dev/tsconfig') {
+        continue
+      }
+
+      expected ||= []
+      if (dep.startsWith('@uppy-dev')) {
+        expected.push({
+          path: `../../../private/${dep.replace(/^@uppy-dev\//, '')}/tsconfig.build.json`,
+        })
+      } else {
+        expected.push({
+          path: `../${dep.replace(/^@uppy\//, '')}/tsconfig.build.json`,
+        })
+      }
     }
   }
 
