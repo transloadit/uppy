@@ -132,15 +132,19 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
     }
-    const { protocol } = new URL(url)
-    const HttpAgentClass = getProtectedHttpAgent({
-      protocol,
-      allowLocalIPs: !allowLocalUrls,
+    const HttpAgent = getProtectedHttpAgent({
+      protocol: 'http',
+      allowLocalIPs: allowLocalUrls,
+    })
+    const HttpsAgent = getProtectedHttpAgent({
+      protocol: 'https',
+      allowLocalIPs: allowLocalUrls,
     })
 
     return createClient(url, {
       ...options,
-      [`${protocol}Agent`]: new HttpAgentClass(),
+      httpAgent: new HttpAgent(),
+      httpsAgent: new HttpsAgent(),
     })
   }
 
