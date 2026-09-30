@@ -50,6 +50,7 @@
     "@angular/compiler": "^22.1.1",
     "@angular/compiler-cli": "^22.1.1",
     "@angular/core": "^22.1.1",
+    "@uppy-dev/tsconfig": "workspace:^",
     "ng-packagr": "^22.1.1",
     "rxjs": "~7.8.0",
     "typescript": "^6.0.3"
