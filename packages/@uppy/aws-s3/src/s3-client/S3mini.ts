@@ -572,7 +572,7 @@ class S3mini extends S3Client {
   }
 
   /** Deletes an object from the bucket. Returns true on success. */
-  public override async deleteObject({ key, signal }: IT.DeleteObjectParams) {
+  public async deleteObject({ key, signal }: IT.DeleteObjectParams) {
     const { xhr } = await this.request({
       request: { method: 'DELETE', key },
       signal,

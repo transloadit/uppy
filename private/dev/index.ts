@@ -3,6 +3,10 @@ import 'uppy/dist/uppy.css'
 import Dashboard from './Dashboard.js'
 import DragDrop from './DragDrop.js'
 
+import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
+import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
+console.log(import.meta.env)
+
 switch (window.location.pathname.toLowerCase()) {
   case '/':
   case '/dashboard.html':

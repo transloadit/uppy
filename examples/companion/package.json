@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "dependencies": {
     "@uppy/companion": "workspace:*",
-    "body-parser": "^1.20.4",
+    "body-parser": "^2.2.2",
     "express": "^5.2.1",
     "express-session": "^1.15.6",
     "vite": "^8.2.2"

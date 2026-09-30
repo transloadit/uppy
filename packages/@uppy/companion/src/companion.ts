@@ -156,7 +156,7 @@ export function app(optionsArg: CompanionInitOptions): {
   )
   app.use(grant.default.express(grantConfig))
 
-  app.use((req, res, next) => {
+  app.use((_req, res, next) => {
     if (options.sendSelfEndpoint) {
       const { protocol } = options.server
       res.header('i-am', `${protocol}://${options.sendSelfEndpoint}`)
@@ -265,6 +265,16 @@ export function app(optionsArg: CompanionInitOptions): {
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.get,
+  )
+
+  // Mutations (delete / move / create folder) for providers that support them
+  app.post(
+    '/:providerName/mutate/:operation',
+    express.json(),
+    middlewares.hasSessionAndProvider,
+    middlewares.hasMutationProvider,
+    middlewares.verifyToken,
+    controllers.mutate,
   )
   // backwards compat:
   app.post(

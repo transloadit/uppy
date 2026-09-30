@@ -2,6 +2,6 @@
 .git
 website
 assets
-private
+private/dev
 e2e
 .env

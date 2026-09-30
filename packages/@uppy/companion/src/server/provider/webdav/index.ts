@@ -4,12 +4,16 @@ import { AuthType, createClient } from 'webdav'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
-import {
-  ProviderApiError,
-  ProviderAuthError,
-  ProviderUserError,
-} from '../error.js'
-import Provider, { type Query } from '../Provider.js'
+import { ProviderApiError, ProviderAuthError } from '../error.js'
+import { userError } from '../errorCodes.js'
+import Provider, {
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
+  type ProviderListResponse,
+  type ProviderLogoutResponse,
+  type ProviderSimpleAuthOptions,
+} from '../Provider.js'
 
 const defaultDirectory = '/'
 
@@ -83,15 +87,13 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     })
   }
 
-  override async logout(): Promise<{ revoked: true }> {
+  override async logout(): Promise<ProviderLogoutResponse> {
     return { revoked: true }
   }
 
   override async simpleAuth({
     requestBody,
-  }: {
-    requestBody: unknown
-  }): Promise<WebdavUserSession> {
+  }: ProviderSimpleAuthOptions): Promise<WebdavUserSession> {
     try {
       if (!isRecord(requestBody) || !isRecord(requestBody['form'])) {
         throw new Error('Invalid request body')
@@ -116,7 +118,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         typeof code === 'string' &&
         ['ECONNREFUSED', 'ENOTFOUND'].includes(code)
       ) {
-        throw new ProviderUserError({ message: 'Cannot connect to server' })
+        throw userError('WEBDAV_CANNOT_CONNECT', 'Cannot connect to server')
       }
       throw err
     }
@@ -146,11 +148,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     providerUserSession,
     query,
     directory,
-  }: {
-    providerUserSession: WebdavUserSession
-    query?: Query | undefined
-    directory?: string | undefined
-  }): Promise<{ items: WebdavListItem[] }> {
+  }: ProviderListOptions<WebdavUserSession>): Promise<ProviderListResponse> {
     return this.withErrorHandling('provider.webdav.list.error', async () => {
       if (!this.isAuthenticated({ providerUserSession })) {
         throw new ProviderAuthError()
@@ -209,29 +207,20 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
   override async download({
     id,
     providerUserSession,
-  }: {
-    id: string
-    providerUserSession: WebdavUserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<WebdavUserSession>): Promise<ProviderDownloadResponse> {
     return this.withErrorHandling(
       'provider.webdav.download.error',
       async () => {
         const client = await this.getClient({ providerUserSession })
         const statResult = await client.stat(id)
         const stat = 'data' in statResult ? statResult.data : statResult
-        const stream = client.createReadStream(`/${id}`)
+        const stream = client.createReadStream(`/${id}`) as Readable
         return { stream, size: stat.size }
       },
     )
   }
 
-  override async thumbnail({
-    id,
-    providerUserSession,
-  }: {
-    id: string
-    providerUserSession: WebdavUserSession
-  }): Promise<never> {
+  override async thumbnail(): Promise<never> {
     // not implementing this because a public thumbnail from webdav will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -240,23 +229,16 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  async withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
-    try {
-      return await fn()
-    } catch (err: unknown) {
-      let err2: unknown = err
-      const status = isRecord(err) ? err['status'] : undefined
-      if (status === 401) err2 = new ProviderAuthError()
-      const response = isRecord(err) ? err['response'] : undefined
-      if (response != null) {
-        err2 = new ProviderApiError(
-          'WebDAV API error',
-          typeof status === 'number' ? status : undefined,
-        )
-      }
-      const errForLog = err2 instanceof Error ? err2 : new Error(String(err2))
-      logger.error(errForLog, tag)
-      throw err2
+  protected override mapProviderError(err: unknown): unknown {
+    const status = isRecord(err) ? err['status'] : undefined
+    if (status === 401) return new ProviderAuthError()
+    const response = isRecord(err) ? err['response'] : undefined
+    if (response != null) {
+      return new ProviderApiError(
+        'WebDAV API error',
+        typeof status === 'number' ? status : undefined,
+      )
     }
+    return err
   }
 }

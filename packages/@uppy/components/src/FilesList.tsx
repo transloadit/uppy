@@ -17,8 +17,8 @@ export default function FilesList(props: FilesListProps) {
 
   useEffect(() => {
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-      prev,
-      next,
+      _prev,
+      _next,
       patch,
     ) => {
       if (patch?.files) {

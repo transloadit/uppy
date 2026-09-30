@@ -32,7 +32,9 @@
     width: 17px;
     height: 17px;
     background-color: $white;
-    border: 1px solid $gray-300;
+    // WCAG non-text contrast: $gray-600 on white is 4.6:1 (4.2:1 on a $gray-100 hover
+    // background); $gray-300 was 1.6:1.
+    border: 1px solid $gray-600;
     border-radius: 3px;
     margin-inline-end: 15px;
 

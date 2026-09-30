@@ -1,11 +1,12 @@
 import type { Readable } from 'node:stream'
 import type {
-  BuildUrl,
   CompanionContext,
   GrantDynamic,
   ProviderGrantConfig,
 } from '../../types/express.js'
 import { MAX_AGE_24H } from '../helpers/jwt.js'
+import logger from '../logger.js'
+import { ProviderAuthError, ProviderUserError } from './error.js'
 
 // from express:
 export interface Query {
@@ -14,7 +15,7 @@ export interface Query {
 
 export type CompanionLike = Pick<
   CompanionContext,
-  'getProviderCredentials' | 'options'
+  'getProviderCredentials' | 'options' | 's3ProviderClients'
 >
 
 export interface ProviderListItem {
@@ -29,14 +30,139 @@ export interface ProviderListItem {
   thumbnail?: string | null | undefined
 }
 
+export interface ProviderListOptions<US = unknown> {
+  companion: CompanionContext
+  directory?: string | undefined
+  providerUserSession: US
+  query?: Query
+}
+
 // todo use these types in the Uppy client
 export interface ProviderListResponse {
   items: ProviderListItem[]
+  /**
+   * What the listing tells the client about the session it was served for.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  session?: {
+    /** Bucket (or equivalent container) the session is browsing. */
+    bucket: string
+    /** Whether the session may change files (delete, move, create folders). */
+    canWrite: boolean
+    /** Whether `moveItem` accepts a folder id and moves the whole folder itself. */
+    supportsMoveFolder: boolean
+    /** Root the session is confined to, which paths the user types are relative to. */
+    prefix: string
+  }
   nextPagePath?: string | null | undefined
   username?: string | null | undefined
 }
 
+export interface ProviderSearchOptions<US = unknown> {
+  providerUserSession: US
+  query: { q: string; path?: string; [k: string]: unknown }
+  companion: Required<Pick<CompanionContext, 'buildURL'>>
+}
+
 export type ProviderSearchResponse = ProviderListResponse
+
+export interface ProviderDownloadOptions<US = unknown> {
+  companion: CompanionLike
+  id: string
+  providerUserSession: US
+  query: Query
+}
+
+export interface ProviderDownloadResponse {
+  stream: Readable
+  size: number | undefined
+}
+
+export interface ProviderThumbnailOptions<US = unknown> {
+  id: string
+  providerUserSession: US
+}
+
+export interface ProviderThumbnailResponse {
+  stream: Readable
+  contentType?: string
+}
+
+export interface ProviderSizeOptions<US = unknown> {
+  id: string
+  providerUserSession: US
+  query: Query
+}
+
+export interface ProviderDeauthorizationCallbackOptions {
+  companion: CompanionLike
+  body: unknown
+  headers: Record<string, (string | string[]) | undefined>
+}
+
+export interface ProviderDeauthorizationCallbackResponse {
+  data?: unknown
+  status?: number
+}
+
+export interface ProviderRefreshTokenOptions {
+  redirectUri: string | undefined
+  clientId: string | undefined
+  clientSecret: string | undefined
+  refreshToken: string
+}
+
+export interface ProviderRefreshTokenResponse {
+  accessToken: string
+}
+
+export interface ProviderLogoutOptions<US = unknown> {
+  providerUserSession: US
+  companion: CompanionLike
+}
+
+export interface ProviderLogoutResponse {
+  revoked: boolean
+  manual_revoke_url?: string
+}
+
+export interface ProviderSimpleAuthOptions {
+  requestBody: unknown
+  companion: CompanionLike
+}
+
+export interface ProviderDeleteItemOptions<US = unknown> {
+  companion: CompanionLike
+  id: string
+  providerUserSession: US
+}
+
+export interface ProviderMoveItemOptions<US = unknown> {
+  companion: CompanionLike
+  id: string
+  destination: string
+  providerUserSession: US
+}
+
+export interface ProviderMoveItemResponse {
+  id: string
+  requestPath: string
+}
+
+export interface ProviderCreateFolderOptions<US = unknown> {
+  companion: CompanionLike
+  parentId: string | null
+  name: string
+  providerUserSession: US
+}
+
+export interface ProviderCreateFolderResponse {
+  id: string
+  requestPath: string
+}
 
 /**
  * Provider interface defines the specifications of any provider implementation
@@ -75,12 +201,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async list(options: {
-    companion: CompanionContext
-    directory?: string | undefined
-    providerUserSession: US
-    query?: Query
-  }): Promise<ProviderListResponse> {
+  async list(_options: ProviderListOptions<US>): Promise<ProviderListResponse> {
     throw new Error('method not implemented')
   }
 
@@ -89,11 +210,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async search(options: {
-    providerUserSession: US
-    query: { q: string; path?: string; [k: string]: unknown }
-    companion: { buildURL: BuildUrl }
-  }): Promise<ProviderSearchResponse> {
+  async search(
+    _options: ProviderSearchOptions<US>,
+  ): Promise<ProviderSearchResponse> {
     throw new Error('method not implemented')
   }
 
@@ -102,12 +221,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async download(options: {
-    companion: CompanionLike
-    id: string
-    providerUserSession: US
-    query: Query
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  async download(
+    _options: ProviderDownloadOptions<US>,
+  ): Promise<ProviderDownloadResponse> {
     throw new Error('method not implemented')
   }
 
@@ -116,10 +232,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async thumbnail(options: {
-    id: string
-    providerUserSession: US
-  }): Promise<{ stream: Readable; contentType?: string }> {
+  async thumbnail(
+    _options: ProviderThumbnailOptions<US>,
+  ): Promise<ProviderThumbnailResponse> {
     throw new Error('method not implemented')
   }
 
@@ -128,11 +243,7 @@ export default class Provider<US = unknown> {
    * if that fails, it will call this method to get the size.
    * So if your provider has a different method for getting the size, you can return the size here
    */
-  async size(options: {
-    id: string
-    providerUserSession: US
-    query: unknown
-  }): Promise<number | undefined> {
+  async size(_options: ProviderSizeOptions<US>): Promise<number | undefined> {
     return undefined
   }
 
@@ -141,23 +252,18 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async deauthorizationCallback(options: {
-    companion: CompanionLike
-    body: unknown
-    headers: Record<string, (string | string[]) | undefined>
-  }): Promise<{ data?: unknown; status?: number }> {
+  async deauthorizationCallback(
+    _options: ProviderDeauthorizationCallbackOptions,
+  ): Promise<ProviderDeauthorizationCallbackResponse> {
     throw new Error('method not implemented')
   }
 
   /**
    * Generate a new access token based on the refresh token
    */
-  async refreshToken(options: {
-    redirectUri: string | undefined
-    clientId: string | undefined
-    clientSecret: string | undefined
-    refreshToken: string
-  }): Promise<{ accessToken: string }> {
+  async refreshToken(
+    _options: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
     throw new Error('method not implemented')
   }
 
@@ -166,15 +272,105 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async logout(options: {
-    providerUserSession: US
-    companion: CompanionLike
-  }): Promise<{ revoked: boolean; manual_revoke_url?: string }> {
+  async logout(
+    _options: ProviderLogoutOptions<US>,
+  ): Promise<ProviderLogoutResponse> {
     throw new Error('method not implemented')
   }
 
-  async simpleAuth({ requestBody }: { requestBody: unknown }): Promise<object> {
+  /**
+   * Opens a session without OAuth ("simple" is *not OAuth*, not *a login
+   * form*): the client posts whatever this provider needs to `/simple-auth`
+   * and gets a session token back. What is posted is up to the provider —
+   * a form the user filled in (WebDAV's server URL) or credentials the app
+   * fetched itself (the S3 provider's storage grant, exchanged with no UI).
+   * The returned object is the provider's session, stored in the token and
+   * handed back on every later request as `providerUserSession`.
+   */
+  async simpleAuth(_options: ProviderSimpleAuthOptions): Promise<object> {
     throw new Error('method not implemented')
+  }
+
+  /**
+   * Delete a file or (empty) folder. Providers that support mutations override
+   * this and set `supportsMutations` to true.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  async deleteItem(_options: ProviderDeleteItemOptions<US>): Promise<void> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Move or rename one item. `destination` is a full path/id in the provider's
+   * own addressing scheme; the response carries the new id. Folders are
+   * accepted only by providers whose listings report
+   * `session.supportsMoveFolder`; otherwise the client moves a folder's
+   * entries one by one through this and the other mutations.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  async moveItem(
+    _options: ProviderMoveItemOptions<US>,
+  ): Promise<ProviderMoveItemResponse> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Create a folder inside `parentId` (null for the root).
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  async createFolder(
+    _options: ProviderCreateFolderOptions<US>,
+  ): Promise<ProviderCreateFolderResponse> {
+    throw new Error('method not implemented')
+  }
+
+  /**
+   * Run `fn`, logging the original error under `tag` and rethrowing it
+   * translated by `mapProviderError()`. Providers wrap their SDK calls in this
+   * so error mapping and logging live in one place: the log keeps the error as
+   * the provider threw it, and `mapProviderError()` stays a pure mapping.
+   */
+  protected async withErrorHandling<T>(
+    tag: string,
+    fn: () => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await fn()
+    } catch (err: unknown) {
+      if (
+        err instanceof ProviderUserError ||
+        err instanceof ProviderAuthError
+      ) {
+        // Thrown on purpose for the user (a name taken, a stale session):
+        // routine, and a client can trigger them at will. Not an error log.
+        logger.debug(
+          `${err.name}: ${err instanceof ProviderUserError ? JSON.stringify(err.json) : err.message}`,
+          tag,
+        )
+      } else {
+        logger.error(err, tag)
+      }
+      throw this.mapProviderError(err)
+    }
+  }
+
+  /**
+   * Translate an error from the provider's SDK/API into a Companion error
+   * (ProviderAuthError, ProviderUserError, ProviderApiError). Pure: it maps and
+   * returns, it does not log or throw. The default keeps the error as-is;
+   * providers override this to add their mapping.
+   */
+  protected mapProviderError(err: unknown): unknown {
+    return err
   }
 
   /**
@@ -184,15 +380,25 @@ export default class Provider<US = unknown> {
     return undefined
   }
 
-  static grantDynamicToUserSession({
-    grantDynamic,
-  }: {
+  static grantDynamicToUserSession(_options: {
     grantDynamic: GrantDynamic
   }): Record<string, unknown> {
     return {}
   }
 
+  /** Whether `simpleAuth()` is implemented (sessions are opened without OAuth). */
   static get hasSimpleAuth(): boolean {
+    return false
+  }
+
+  /**
+   * Whether deleteItem/moveItem/createFolder are implemented.
+   *
+   * @experimental Part of the file-management provider API (S3, Transloadit
+   * Storage): options, endpoints and methods will change incompatibly, also
+   * in minor releases.
+   */
+  static get supportsMutations(): boolean {
     return false
   }
 

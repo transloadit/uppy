@@ -35,11 +35,11 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
 
   private plugin!: DashboardPlugin<M, B>
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     this.installPlugin()
   }
 
-  componentDidUpdate(prevProps: DashboardModal<M, B>['props']): void {
+  override componentDidUpdate(prevProps: DashboardModal<M, B>['props']): void {
     const { uppy, open, onRequestClose } = this.props
     if (prevProps.uppy !== uppy) {
       this.uninstallPlugin(prevProps)
@@ -59,7 +59,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     }
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     this.uninstallPlugin()
   }
 
@@ -94,7 +94,7 @@ class DashboardModal<M extends Meta, B extends Body> extends Component<
     uppy.removePlugin(this.plugin)
   }
 
-  render() {
+  override render() {
     return h('div', {
       className: 'uppy-Container',
       ref: (container: HTMLElement) => {

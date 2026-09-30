@@ -1,3 +1,4 @@
+import { getSignedSmartCdnUrl } from '@transloadit/utils'
 import Audio from '@uppy/audio'
 import AwsS3 from '@uppy/aws-s3'
 import Compressor from '@uppy/compressor'
@@ -13,13 +14,16 @@ import ImageEditor from '@uppy/image-editor'
 import ImageGenerator from '@uppy/image-generator'
 import english from '@uppy/locales/lib/en_US.js'
 import RemoteSources from '@uppy/remote-sources'
+import S3 from '@uppy/s3'
 import ScreenCapture from '@uppy/screen-capture'
 import Transloadit from '@uppy/transloadit'
+import TransloaditStorage, {
+  type SignedAssemblyOptions,
+} from '@uppy/transloadit-storage'
 import Tus from '@uppy/tus'
 import Webcam from '@uppy/webcam'
 import Webdav from '@uppy/webdav'
 import XHRUpload from '@uppy/xhr-upload'
-
 import generateSignatureIfSecret from './generateSignatureIfSecret.js'
 
 // DEV CONFIG: create a .env file in the project root directory to customize those values.
@@ -41,10 +45,6 @@ const companionAllowedHosts =
   import.meta.env.VITE_COMPANION_ALLOWED_HOSTS &&
   new RegExp(import.meta.env.VITE_COMPANION_ALLOWED_HOSTS)
 
-import.meta.env.VITE_TRANSLOADIT_KEY &&= '***' // to avoid leaking secrets in screenshots.
-import.meta.env.VITE_TRANSLOADIT_SECRET &&= '***' // to avoid leaking secrets in screenshots.
-console.log(import.meta.env)
-
 // DEV CONFIG: enable or disable Golden Retriever
 
 const RESTORE = false
@@ -61,7 +61,7 @@ async function assemblyOptions() {
   })
 }
 
-function getCompanionKeysParams(name) {
+function getCompanionKeysParams(name: string) {
   const {
     [`VITE_COMPANION_${name}_KEYS_PARAMS_CREDENTIALS_NAME`]: credentialsName,
     [`VITE_COMPANION_${name}_KEYS_PARAMS_KEY`]: key,
@@ -94,7 +94,11 @@ export default () => {
   //   requiredMetaFields: ['caption'],
   // }
 
-  const uppyDashboard = new Uppy({
+  const uppyDashboard = new Uppy<{
+    username: string
+    license: string
+    params?: string
+  }>({
     locale: english,
     logger: debugLogger,
     meta: {
@@ -166,10 +170,7 @@ export default () => {
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
     })
-    .use(Audio, {
-      target: Dashboard,
-      showRecordingLength: true,
-    })
+    .use(Audio, { target: Dashboard })
     .use(ScreenCapture, { target: Dashboard })
     .use(Form, { target: '#upload-form' })
     .use(ImageEditor, { target: Dashboard })
@@ -227,11 +228,14 @@ export default () => {
       uppyDashboard.use(Transloadit, {
         service: TRANSLOADIT_SERVICE_URL,
         waitForEncoding: true,
-        assemblyOptions,
+        // Storage owns Assembly options when it installs storeUploads below.
+        ...(import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE
+          ? {}
+          : { assemblyOptions }),
       })
       break
     case 'transloadit-s3':
-      uppyDashboard.use(AwsS3, { companionUrl: COMPANION_URL })
+      uppyDashboard.use(AwsS3, { companionEndpoint: COMPANION_URL })
       uppyDashboard.use(Transloadit, {
         waitForEncoding: true,
         importFromUploadURLs: true,
@@ -259,10 +263,59 @@ export default () => {
     uppyDashboard.use(GoldenRetriever, { serviceWorker: true })
   }
 
+  // S3-compatible browsing: plain S3 bucket, or Transloadit Storage (workspace bucket + Smart CDN URLs)
+  if (import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE) {
+    const cdnEndpoint = import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT
+    uppyDashboard.use(TransloaditStorage, {
+      target: Dashboard,
+      // Manager mode: the file changes (rename, move, delete, new folder)
+      // only exist there; picker mode only browses and picks.
+      mode: 'manager',
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+      // The harness signs in the browser with the dev secret; a real app signs
+      // on its server (this callback is the only thing the plugin needs).
+      getSmartCdnUrl: async (key) => {
+        const url = await getSignedSmartCdnUrl({
+          workspace: import.meta.env.VITE_TRANSLOADIT_STORAGE_WORKSPACE,
+          template: 'builtin/storage-serve@0.0.1',
+          input: key,
+          // Smart CDN URLs are signed with a SmartCDN-enabled key (may differ from the API key)
+          authKey:
+            import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_KEY || TRANSLOADIT_KEY,
+          authSecret: TRANSLOADIT_SECRET,
+          // A local api2 only serves Storage files on the CDN-required path.
+          ...(cdnEndpoint && { urlParams: { cdn: 'required' } }),
+        })
+        // The signature does not cover the host: point it at a local api2 if asked.
+        return cdnEndpoint
+          ? `${cdnEndpoint.replace(/\/$/, '')}${url.slice(new URL(url).origin.length)}`
+          : url
+      },
+      storeUploads: {
+        // Signed params are a JSON string, which SignedAssemblyOptions doesn't
+        // model yet (@uppy/transloadit accepts both).
+        signAssembly: (params) =>
+          generateSignatureIfSecret(TRANSLOADIT_SECRET, {
+            auth: { key: TRANSLOADIT_KEY },
+            ...params,
+          }) as unknown as Promise<SignedAssemblyOptions>,
+      },
+      reopenAfterUpload: true,
+    })
+  } else {
+    uppyDashboard.use(S3, {
+      target: Dashboard,
+      mode: 'manager',
+      companionUrl: COMPANION_URL,
+      companionAllowedHosts,
+    })
+  }
+
   window.uppy = uppyDashboard
 
   uppyDashboard.on('complete', (result) => {
-    if (result.failed.length === 0) {
+    if (!result.failed?.length) {
       console.log('Upload successful 😀')
     } else {
       console.warn('Upload failed 😞')
@@ -274,6 +327,5 @@ export default () => {
     }
   })
 
-  const modalTrigger = document.querySelector('#pick-files')
-  if (modalTrigger) modalTrigger.click()
+  document.querySelector<HTMLElement>('#pick-files')?.click()
 }

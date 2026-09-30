@@ -193,7 +193,7 @@ export interface AbortMultipartUploadParams {
   signal?: AbortSignal
 }
 
-/** Parameters for {@link S3Client.deleteObject}. */
+/** Parameters for {@link S3mini.deleteObject}. */
 export interface DeleteObjectParams {
   key: string
   signal?: AbortSignal
