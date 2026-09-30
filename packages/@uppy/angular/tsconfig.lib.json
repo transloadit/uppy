@@ -1,17 +1,11 @@
 /* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
+  "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
-    "outDir": "../../../out-tsc/lib",
-    "moduleResolution": "bundler",
-    "declaration": true,
-    "declarationMap": true,
     "inlineSources": true,
-    "types": [],
-    "strict": true,
-    "noImplicitOverride": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "types": []
   },
   "angularCompilerOptions": {
     "strictTemplates": true,
