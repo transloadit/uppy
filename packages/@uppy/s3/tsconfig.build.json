@@ -1,0 +1,20 @@
+{
+  "extends": "@uppy-dev/tsconfig/build",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "noImplicitOverride": false,
+    "noUncheckedIndexedAccess": false,
+    "strict": true,
+    "useUnknownInCatchVariables": false
+  },
+  "references": [
+    {
+      "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../dashboard/tsconfig.build.json"
+    }
+  ]
+}
