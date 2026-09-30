@@ -14,6 +14,7 @@ import {
   ProviderAuthError,
   ProviderUserError,
 } from '../src/server/provider/error.js'
+import type { Query } from '../src/server/provider/Provider.js'
 import S3Provider from '../src/server/provider/s3/index.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
 import {
@@ -400,7 +401,8 @@ describe('S3 provider', () => {
         provider.download({
           companion,
           id: 'tenant/file.txt',
-          query,
+          // `undefined` is not a valid `Query`, but must still be refused
+          query: query as Query,
           providerUserSession,
         }),
       ).rejects.toEqual(userError('S3_SELECTED_IN_OTHER_SESSION'))
