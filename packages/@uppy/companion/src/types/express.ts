@@ -17,6 +17,11 @@ export interface ProviderGrantConfig {
 export interface ProviderUserSession {
   accessToken?: string
   refreshToken?: string | undefined
+  /**
+   * When the provider's session expires, in unix seconds. A session that
+   * expires earlier than `authStateExpiry` caps the session token to it.
+   */
+  exp?: number
   [key: string]: unknown
 }
 
@@ -31,6 +36,8 @@ export type CompanionContext = {
   buildURL?: BuildUrl
   s3Client?: S3Client
   s3ClientCreatePresignedPost?: S3Client
+  /** The S3 provider's clients, one per bucket it has served, for the app's lifetime. */
+  s3ProviderClients: Map<string, S3Client>
   getProviderCredentials?: () => Promise<CredentialsFetchResponse | null>
 }
 

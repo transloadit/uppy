@@ -269,6 +269,16 @@ export function app(optionsArg: CompanionInitOptions): {
     middlewares.verifyToken,
     controllers.get,
   )
+
+  // Mutations (delete / move / create folder) for providers that support them
+  app.post(
+    '/:providerName/mutate/:operation',
+    express.json(),
+    middlewares.hasSessionAndProvider,
+    middlewares.hasMutationProvider,
+    middlewares.verifyToken,
+    controllers.mutate,
+  )
   // backwards compat:
   app.post(
     '/search/:providerName/get/:id',
@@ -305,7 +315,12 @@ export function app(optionsArg: CompanionInitOptions): {
       const { providerName } = req.params
       // for simplicity, we just return the normal credentials for the provider, but in a real-world scenario,
       // we would query based on parameters
-      const { key, secret } = options.providerOptions[providerName]!
+      const providerOptions = options.providerOptions[providerName]
+      if (!providerOptions) {
+        res.sendStatus(400)
+        return
+      }
+      const { key, secret } = providerOptions
 
       function getTransloaditGateway() {
         const oauthProvider = getOauthProvider(providerName)
