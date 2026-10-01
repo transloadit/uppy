@@ -286,17 +286,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/router@npm:^22.1.1":
-  version: 22.1.5
-  resolution: "@angular/router@npm:22.1.5"
+"@angular/router@npm:^22.2.0":
+  version: 22.2.0
+  resolution: "@angular/router@npm:22.2.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": 22.1.5
-    "@angular/core": 22.1.5
-    "@angular/platform-browser": 22.1.5
+    "@angular/common": 22.2.0
+    "@angular/core": 22.2.0
+    "@angular/platform-browser": 22.2.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/622b3da4b0089b58190fbaebf62e57ea5e355fecbb218d19a5ff846824ffa4c36862c822f8ed0dbf003b371aa375672e4d0044ede1955621e4557c55d8babf0a
+  checksum: 10/6e88ce985a7f69daf29bc13f07a8317fc249924d0adf1ec5bb2f7feb659f29908fc624885c7ccd7e4a18f79b43ec203d9c826688d76f1906ef9c07f0d1cdd457
   languageName: node
   linkType: hard
 
@@ -7812,7 +7812,7 @@ __metadata:
     "@angular/forms": "npm:^22.1.1"
     "@angular/platform-browser": "npm:^22.2.0"
     "@angular/platform-browser-dynamic": "npm:^22.1.1"
-    "@angular/router": "npm:^22.1.1"
+    "@angular/router": "npm:^22.2.0"
     "@uppy/angular": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
