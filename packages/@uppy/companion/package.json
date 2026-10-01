@@ -65,7 +65,7 @@
     "p-map": "^7.0.5",
     "prom-client": "^15.1.3",
     "serialize-error": "^13.0.1",
-    "serialize-javascript": "^7.0.7",
+    "serialize-javascript": "^7.1.2",
     "tus-js-client": "^4.3.1",
     "validator": "^13.15.35",
     "webdav": "^5.10.0",
