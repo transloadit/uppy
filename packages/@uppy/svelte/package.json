@@ -52,8 +52,7 @@
     "typecheck": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {
-    "@uppy/components": "workspace:^",
-    "preact": "^10.29.2"
+    "@uppy/components": "workspace:^"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.7",
