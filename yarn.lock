@@ -286,17 +286,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/router@npm:^22.1.1":
-  version: 22.1.5
-  resolution: "@angular/router@npm:22.1.5"
+"@angular/router@npm:^22.2.0":
+  version: 22.2.0
+  resolution: "@angular/router@npm:22.2.0"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": 22.1.5
-    "@angular/core": 22.1.5
-    "@angular/platform-browser": 22.1.5
+    "@angular/common": 22.2.0
+    "@angular/core": 22.2.0
+    "@angular/platform-browser": 22.2.0
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/622b3da4b0089b58190fbaebf62e57ea5e355fecbb218d19a5ff846824ffa4c36862c822f8ed0dbf003b371aa375672e4d0044ede1955621e4557c55d8babf0a
+  checksum: 10/6e88ce985a7f69daf29bc13f07a8317fc249924d0adf1ec5bb2f7feb659f29908fc624885c7ccd7e4a18f79b43ec203d9c826688d76f1906ef9c07f0d1cdd457
   languageName: node
   linkType: hard
 
@@ -5121,7 +5121,7 @@ __metadata:
     p-map: "npm:^7.0.5"
     prom-client: "npm:^15.1.3"
     serialize-error: "npm:^13.0.1"
-    serialize-javascript: "npm:^7.0.7"
+    serialize-javascript: "npm:^7.1.2"
     supertest: "npm:^7.2.2"
     tus-js-client: "npm:^4.3.1"
     typescript: "npm:^6.0.3"
@@ -7812,7 +7812,7 @@ __metadata:
     "@angular/forms": "npm:^22.1.1"
     "@angular/platform-browser": "npm:^22.2.0"
     "@angular/platform-browser-dynamic": "npm:^22.1.1"
-    "@angular/router": "npm:^22.1.1"
+    "@angular/router": "npm:^22.2.0"
     "@uppy/angular": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
@@ -8813,9 +8813,9 @@ __metadata:
   linkType: hard
 
 "hono@npm:^4.11.4":
-  version: 4.13.5
-  resolution: "hono@npm:4.13.5"
-  checksum: 10/a302e8d3a5329276ca436333e54679ef864e92e1b3fbd4db0d98cc56e71748622a1654103fcdf9ee866027b797255557e1ade05c8ceb866411603d74bf71bf43
+  version: 4.13.9
+  resolution: "hono@npm:4.13.9"
+  checksum: 10/dd1274856461b84de420bde27f91bdec836de53fd446a6bd18e8ef7e89928943030548319a22336175934c264f1eb9acd8f86c82463c9a4610630b6848ba4c56
   languageName: node
   linkType: hard
 
@@ -12643,10 +12643,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serialize-javascript@npm:^7.0.7":
-  version: 7.1.1
-  resolution: "serialize-javascript@npm:7.1.1"
-  checksum: 10/fa20ff05b658803e8a1e4417df393e2b3afa33518682f5beecfc6a2082029fc9fd4e9aff1c16630af2fae4157dc701d15372e48d979f04a3c4f6f7a2c5bbeeae
+"serialize-javascript@npm:^7.1.2":
+  version: 7.1.2
+  resolution: "serialize-javascript@npm:7.1.2"
+  checksum: 10/e5550ef83b945196f563d33b3c80767e2f27f8c3856b4d19e515f5fd881273d80b9f7fced9247c8ed7cafff5c4de244cf93ed45fd6dc572c4aec303cd47f8dfc
   languageName: node
   linkType: hard
 
