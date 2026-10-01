@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "^3.362.0",
-    "@aws-sdk/client-sts": "^3.362.0",
+    "@aws-sdk/client-sts": "^3.1139.0",
     "@aws-sdk/s3-request-presigner": "^3.362.0",
     "@types/node": "^22.20.1",
     "@uppy-dev/tsconfig": "workspace:^",

@@ -11,7 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.338.0",
-    "@aws-sdk/client-sts": "^3.338.0",
+    "@aws-sdk/client-sts": "^3.1139.0",
     "@aws-sdk/s3-request-presigner": "^3.338.0",
     "body-parser": "^2.2.2",
     "dotenv": "^17.4.2",
