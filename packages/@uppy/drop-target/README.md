@@ -23,6 +23,9 @@ uppy.use(DropTarget, {
 })
 ```
 
+`target` is required: an element or a CSS selector. Import
+`@uppy/drop-target/css/style.css` for the overlay shown while dragging.
+
 ## Installation
 
 ```bash

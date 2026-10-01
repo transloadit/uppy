@@ -24,7 +24,13 @@ With React:
 ```jsx
 import { useState } from 'react'
 import Uppy from '@uppy/core'
-import { Dropzone, FilesList, UploadButton, UppyContextProvider } from '@uppy/react'
+import {
+  Dropzone,
+  FilesList,
+  UploadButton,
+  UppyContextProvider,
+} from '@uppy/react'
+import '@uppy/react/css/style.css'
 
 function Uploader() {
   const [uppy] = useState(() => new Uppy())

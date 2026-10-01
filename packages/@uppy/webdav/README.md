@@ -5,7 +5,8 @@
 [![npm version](https://img.shields.io/npm/v/@uppy/webdav.svg?style=flat-square)](https://www.npmjs.com/package/@uppy/webdav)
 
 The WebDAV plugin for Uppy lets users import files from any WebDAV server, such
-as Nextcloud or ownCloud. Only public WebDAV URLs are supported.
+as Nextcloud or ownCloud. Only public WebDAV URLs are supported. Companion
+refuses hosts on private networks unless its `allowLocalUrls` option is set.
 
 A [Companion](https://uppy.io/docs/companion) instance is required for the
 WebDAV plugin to work. Companion connects to the WebDAV server, downloads the

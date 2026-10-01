@@ -47,6 +47,7 @@ const companionOptions = {
       key: process.env.S3_KEY,
       secret: process.env.S3_SECRET,
       region: 'us-east-1',
+      endpoint: 'https://…', // for R2, MinIO and other non-AWS storage
       bucket: 'my-bucket',
       prefix: 'uploads/', // optional: confine browsing to a prefix
     },
@@ -54,9 +55,14 @@ const companionOptions = {
 }
 ```
 
-With `bucket`, everyone who can reach Companion browses that bucket. To scope
-access per user, configure `grantSecret` or `grantPublicKey` instead and pass
-`getGrant` to the plugin.
+With `bucket`, everyone who can reach Companion browses that bucket, and with
+`mode: 'manager'` can also change it, so put Companion behind your own
+authentication. To scope access per user, configure `grantSecret` or
+`grantPublicKey` instead and pass `getGrant` to the plugin; the grant then
+decides whether the user may write.
+
+The `s3` provider needs `@uppy/companion` 7.1 or later. It is separate from the
+top-level `s3` option, which configures uploads to S3.
 
 ## Installation
 
