@@ -16,8 +16,7 @@ packages/@uppy/angular/types/
 yarn-error.log
 .idea
 .env
-tsconfig.tsbuildinfo
-tsconfig.build.tsbuildinfo
+*.tsbuildinfo
 .svelte-kit
 .turbo
 __screenshots__
