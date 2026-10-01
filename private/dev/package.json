@@ -6,9 +6,6 @@
       "@uppy": "../../packages/@uppy"
     }
   },
-  "dependencies": {
-    "@uppy/companion": "workspace:^"
-  },
   "devDependencies": {
     "@transloadit/utils": "^4.6.0",
     "@uppy-dev/tsconfig": "workspace:^",
