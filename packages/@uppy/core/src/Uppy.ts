@@ -36,10 +36,13 @@ import type {
   UppyFileId,
 } from './utils/index.js'
 import {
+  getErrorMessage,
   getFileNameAndExtension,
   getFileType,
   getSafeFileId,
+  isRestrictionError,
   Translator,
+  toError,
 } from './utils/index.js'
 
 export type Processor = (
@@ -131,6 +134,38 @@ export type PartialTreeFolder = PartialTreeFolderNode | PartialTreeFolderRoot
  */
 export type PartialTree = (PartialTreeFile | PartialTreeFolder)[]
 
+/**
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
+export type PromptOptions = {
+  title: string
+  label?: string | undefined
+  defaultValue?: string | undefined
+  confirmLabel?: string | undefined
+}
+
+/**
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
+export type ConfirmOptions = {
+  title: string
+  message?: string | undefined
+  confirmLabel?: string | undefined
+  danger?: boolean | undefined
+}
+
+/**
+ * An inline prompt/confirm dialog a provider view is currently showing.
+ *
+ * @experimental Part of the file-management API added for `@uppy/s3`: it
+ * will change incompatibly, also in minor releases.
+ */
+export type ProviderDialogState =
+  | ({ kind: 'prompt' } & PromptOptions)
+  | ({ kind: 'confirm' } & ConfirmOptions)
+
 export type UnknownProviderPluginState = {
   authenticated: boolean | undefined
   didFirstRender: boolean
@@ -140,11 +175,17 @@ export type UnknownProviderPluginState = {
   currentFolderId: PartialTreeId
   username: string | null
   searchResults?: string[] | undefined
+  dialog?: ProviderDialogState | undefined
+  /** Manager mode: whether the multi-select toggle is currently on. */
+  selectionActive?: boolean
+  /** Manager mode: the item whose detail modal is open. */
+  detailItemId?: string | undefined
 }
 
-// biome-ignore lint/suspicious/noEmptyInterface: PluginTypeRegistry is extended via module augmentation
-// biome-ignore lint/correctness/noUnusedVariables: Type parameters are used in module augmentation
-export interface PluginTypeRegistry<M extends Meta, B extends Body> {}
+// Extended via module augmentation. `Record<never, …>` adds no keys, but references
+// the type parameters so they aren't reported as unused.
+export interface PluginTypeRegistry<M extends Meta, B extends Body>
+  extends Record<never, [M, B]> {}
 
 export interface AsyncStore {
   getItem: (key: string) => Promise<string | null>
@@ -924,7 +965,7 @@ export class Uppy<
     try {
       this.#restricter.validateSingleFile(file)
     } catch (err) {
-      return err.message
+      return getErrorMessage(err)
     }
     return null
   }
@@ -936,7 +977,7 @@ export class Uppy<
     try {
       this.#restricter.validateAggregateRestrictions(existingFiles, files)
     } catch (err) {
-      return err.message
+      return getErrorMessage(err)
     }
     return null
   }
@@ -1076,7 +1117,7 @@ export class Uppy<
       this.scheduledAutoProceed = setTimeout(() => {
         this.scheduledAutoProceed = null
         this.upload().catch((err) => {
-          if (!err.isRestriction) {
+          if (!isRestrictionError(err)) {
             this.log(err.stack || err.message || err)
           }
         })
@@ -1602,10 +1643,9 @@ export class Uppy<
     () => this.#updateTotalProgress(),
     500,
     { leading: true, trailing: true },
-  )
+  );
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: updateTotalProgress')]() {
+  [Symbol.for('uppy test: updateTotalProgress')]() {
     return this.#updateTotalProgress()
   }
 
@@ -1990,10 +2030,7 @@ export class Uppy<
     return undefined
   }
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: getPlugins')](
-    type: string,
-  ): UnknownPlugin<M, B>[] {
+  [Symbol.for('uppy test: getPlugins')](type: string): UnknownPlugin<M, B>[] {
     return this.#plugins[type]
   }
 
@@ -2195,8 +2232,7 @@ export class Uppy<
     return uploadID
   }
 
-  // biome-ignore lint/correctness/noUnusedPrivateClassMembers: accessed via Symbol in tests
-  private [Symbol.for('uppy test: createUpload')](...args: any[]): string {
+  [Symbol.for('uppy test: createUpload')](...args: any[]): string {
     // @ts-expect-error https://github.com/microsoft/TypeScript/issues/47595
     return this.#createUpload(...args)
   }
@@ -2414,7 +2450,7 @@ export class Uppy<
       this.emit('complete', result!)
       return result
     } catch (err) {
-      this.#informAndEmit([err])
+      this.#informAndEmit([toError(err)])
       throw err
     }
   }

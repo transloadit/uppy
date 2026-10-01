@@ -99,7 +99,7 @@ export default class OneDrive<M extends Meta, B extends Body>
     this.render = this.render.bind(this)
   }
 
-  install(): void {
+  override install(): void {
     this.view = new ProviderViews(this, {
       provider: this.provider,
       loadAllFiles: true,
@@ -112,12 +112,12 @@ export default class OneDrive<M extends Meta, B extends Body>
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.view.tearDown()
     this.unmount()
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 }

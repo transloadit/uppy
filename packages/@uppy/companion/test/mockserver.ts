@@ -103,7 +103,7 @@ export const getServerWithEmitter = async (
   authServer.use(
     session({ secret: 'grant', resave: true, saveUninitialized: true }),
   )
-  authServer.all('{*splat}/callback', (req, res, next) => {
+  authServer.all('{*splat}/callback', (req, _res, next) => {
     if (req.session) {
       req.session['grant'] = {
         response: { access_token: grantToken },
@@ -113,7 +113,7 @@ export const getServerWithEmitter = async (
   })
   authServer.all(
     ['{*splat}/send-token', '{*splat}/redirect'],
-    (req, res, next) => {
+    (req, _res, next) => {
       const state =
         typeof req.query['state'] === 'string' ? req.query['state'] : null
       if (req.session) {

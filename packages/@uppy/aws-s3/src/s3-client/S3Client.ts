@@ -2,7 +2,7 @@ import { fetcher } from '@uppy/core/utils'
 import type * as IT from './types.js'
 import * as U from './utils.js'
 
-class S3Client {
+abstract class S3Client {
   readonly requestAbortTimeout?: number
 
   constructor({
@@ -162,53 +162,39 @@ class S3Client {
     }
   }
 
-  public async putObject(params: IT.PutObjectParams): Promise<{
+  public abstract putObject(params: IT.PutObjectParams): Promise<{
     location: string
     key: string
     etag: string | undefined
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async createMultipartUpload(
+  public abstract createMultipartUpload(
     params: IT.CreateMultipartUploadParams,
   ): Promise<{
     uploadId: string
     key: string
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async uploadPart(params: IT.UploadPartParams): Promise<{
+  public abstract uploadPart(params: IT.UploadPartParams): Promise<{
     etag: string
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async listParts(params: IT.ListPartsParams): Promise<IT.UploadPart[]> {
-    throw new Error('Not implemented')
-  }
+  public abstract listParts(
+    params: IT.ListPartsParams,
+  ): Promise<IT.UploadPart[]>
 
-  public async completeMultipartUpload(
+  public abstract completeMultipartUpload(
     params: IT.CompleteMultipartUploadParams,
   ): Promise<{
     location: string
     bucket: string | undefined
     key: string
     etag?: string | undefined
-  }> {
-    throw new Error('Not implemented')
-  }
+  }>
 
-  public async abortMultipartUpload(
+  public abstract abortMultipartUpload(
     params: IT.AbortMultipartUploadParams,
-  ): Promise<void> {
-    throw new Error('Not implemented')
-  }
-
-  public async deleteObject(params: IT.DeleteObjectParams): Promise<void> {
-    throw new Error('Not implemented')
-  }
+  ): Promise<void>
 }
 
 export default S3Client

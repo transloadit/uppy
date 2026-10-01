@@ -53,7 +53,7 @@ function getSTSClient() {
 
 const router = Router()
 
-router.get('/s3/sts', (req, res, next) => {
+router.get('/s3/sts', (_req, res, next) => {
   // Before giving the STS token to the client, you should first check if they
   // are authorized to perform that operation, and if the request is legit.
   // For the sake of simplification, we skip that check in this example.
