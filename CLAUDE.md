@@ -13,9 +13,12 @@ Uppy is a modular JavaScript file uploader that integrates seamlessly with any a
 - `yarn build:watch` - Watch mode for building packages
 - `yarn test` - Run tests for all packages
 - `yarn test:watch` - Run tests in watch mode
-- `yarn typecheck` - Type checking across all packages
+- `yarn typecheck` - Type checking across all packages (not examples; `build:examples` covers those)
 - `yarn check` - Run Biome linting and formatting
 - `yarn check:ci` - Run Biome in CI mode (no writes)
+- `yarn test:e2e` - Run e2e tests (only `@uppy/url` has them)
+- `yarn build:examples` - Build, typecheck and lint `examples/*` and `private/*`
+- `yarn build:clean` - Delete all gitignored files (except `node_modules`) under `packages/`, plus `coverage/`, `.turbo/`, `.parcel-cache/`
 
 ### Development Server
 - `yarn dev` - Start development server (from private/dev workspace)
@@ -23,7 +26,7 @@ Uppy is a modular JavaScript file uploader that integrates seamlessly with any a
 - `yarn start:companion` - Start only the Companion server
 
 ### Single Test Execution
-To run tests for a specific package:
+To run tests for a specific package (not every package has a `test` script):
 ```bash
 yarn workspace @uppy/[package-name] test
 # Example: yarn workspace @uppy/core test
@@ -45,25 +48,26 @@ yarn workspace @uppy/[package-name] build
 ### Core Architecture
 - **Uppy Core** (`@uppy/core`) - Main class that manages plugins, state, and events
 - **Plugins** - Modular components for different functionalities:
-  - **UI Plugins**: Dashboard, Drag & Drop, File Input, Webcam, etc.
+  - **UI Plugins**: Dashboard, Drag & Drop, Webcam, etc.
   - **Provider Plugins**: Google Drive, Dropbox, etc. (require Companion)
   - **Uploader Plugins**: Tus (resumable), XHR Upload, AWS S3, etc.
   - **Utility Plugins**: Golden Retriever (recovery), Thumbnail Generator, etc.
 
 ### Plugin Types
-1. **Acquirer** - Gets files (File Input, Webcam, Google Drive)
-2. **Modifier** - Modifies files (Image Editor, Compressor)
-3. **Uploader** - Uploads files (Tus, XHR, AWS S3)
-4. **Presenter** - Shows UI (Dashboard, Progress Bar, Status Bar)
-5. **Orchestrator** - Manages workflow
-6. **Logger** - Handles logging
+The `type` field each plugin sets:
+- `acquirer` - Gets files (Drag & Drop, Webcam, Google Drive, Url, Form)
+- `modifier` - Processes files after they are added (Compressor rewrites the file; Thumbnail Generator only sets `file.preview`)
+- `editor` - Edits files (Image Editor)
+- `uploader` - Uploads files (Tus, XHR Upload, AWS S3)
+- `orchestrator` - Hosts other UI plugins (Dashboard)
+- `progressindicator` - Shows upload progress (Status Bar)
+- `preset` - Bundles other plugins (Remote Sources)
+- `debugger` - Golden Retriever
 
 ### Key Packages
-- `@uppy/core` - Main Uppy class and plugin system
+- `@uppy/core` - Main Uppy class and plugin system. Also exports `@uppy/core/utils`, `@uppy/core/companion-client` and `@uppy/core/provider-views` (formerly separate packages)
 - `@uppy/dashboard` - Complete UI with file management
 - `@uppy/companion` - Server-side component for remote providers
-- `@uppy/companion-client` - Client for communicating with Companion
-- `@uppy/utils` - Shared utilities
 - `@uppy/components` - Headless Preact components (with framework wrappers)
 
 ## Build System
@@ -71,11 +75,12 @@ yarn workspace @uppy/[package-name] build
 ### Turbo Configuration
 The build system uses Turbo (turbo.json) for task orchestration:
 - Builds have dependency ordering (`dependsOn: ["^build"]`)
-- TypeScript builds output to `lib/` and `dist/` directories
+- TypeScript compiles to `lib/`; CSS and bundles go to `dist/`
 - CSS builds process SCSS files to CSS
 - Special handling for the main `uppy` package bundle
 
 ### TypeScript Configuration
+- Shared base config in `private/tsconfig/` (workspace `@uppy-dev/tsconfig`, extended as `@uppy-dev/tsconfig` / `@uppy-dev/tsconfig/build`)
 - Individual packages have `tsconfig.json` and `tsconfig.build.json`
 - Build outputs include declaration files (.d.ts) and source maps
 
@@ -106,8 +111,8 @@ The build system uses Turbo (turbo.json) for task orchestration:
 - Unit tests use `.test.{ts,tsx}` extensions and browser tests `.browser.test.{ts,tsx}`
 
 ### Running Tests
-- Tests run in parallel across packages via Turbo
-- Examples also include tests (React, Vue, SvelteKit examples)
+- `yarn test` runs packages one at a time (`--concurrency=1`) and passes `--browser.headless` to Vitest (most suites use Vitest browser mode)
+- It also runs the React, Vue and SvelteKit example tests and `private/tsconfig`
 - Use `yarn test` for development
 
 ## Companion Server
@@ -116,14 +121,20 @@ The Companion server enables integration with remote file sources:
 - Handles OAuth flows for providers like Google Drive, Dropbox
 - Proxies file downloads to avoid CORS issues
 - Provides search functionality for providers
-- Located in `packages/@uppy/companion/`
+- Located in `packages/@uppy/companion/`; see its `ARCHITECTURE.md`
+
+## Releases
+
+- Uses Changesets. Changes to published packages should add a changeset (`yarn changeset`); CI doesn't enforce it, but the `[ci] release` PR is generated from them
+- `yarn run version` / `yarn run release` are run by `.github/workflows/release.yml` on push to `main`, not by hand
 
 ## Important Notes
 
 - Never commit sensitive information (API keys, tokens)
 - Follow existing code conventions and patterns within each package
-- Use the `@uppy/utils` package for shared functionality
+- Use `@uppy/core/utils` for shared functionality
 - UI components should be accessible and support internationalization
 - Always run `yarn check` and `yarn typecheck` before committing
 - When adding a new component to `@uppy/components`, you have to run `yarn migrate:components` from root.
   This is not needed for changing existing components.
+- More area-specific rules live in `.cursor/rules/` (headless components, Svelte, core)
