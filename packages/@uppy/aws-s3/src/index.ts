@@ -400,6 +400,15 @@ export type { AwsS3Options as AwsS3MultipartOptions }
 /** Body type for AWS S3 upload responses */
 export interface AwsBody extends Body {
   location: string
+  /**
+   * The key the object was stored under.
+   *
+   * For a single-part upload this is the `key` the signer returned, falling
+   * back to the one `generateObjectKey` proposed. For a multipart upload it is
+   * the key S3 reports on complete. So a signer that relocates the object
+   * without returning a `key` is reported accurately only for multipart
+   * uploads; return `key` from `signRequest` to make both paths agree.
+   */
   key: string
 }
 

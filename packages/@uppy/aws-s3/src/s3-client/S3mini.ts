@@ -452,6 +452,13 @@ class S3mini extends S3Client {
 
         // S3 returns PascalCase (Location, Bucket, Key, ETag).
         // Normalize to lowercase for our type interface.
+        //
+        // The key here is authoritative and safe to adopt: complete is the last
+        // request of the upload, so it is only reported, never signed for again.
+        // The same field on `InitiateMultipartUploadResult` is deliberately not
+        // read: every later request would be signed for it, and a signer that
+        // derives the key on each request would prefix an already-prefixed key
+        // and get `NoSuchUpload`.
         const resultLocation = (r.Location || r.location) as string | undefined
         const resultBucket = (r.Bucket || r.bucket) as string | undefined
         const resultKey = (r.Key || r.key) as string | undefined
