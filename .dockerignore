@@ -1,7 +1,5 @@
 **/node_modules
 .git
-website
 assets
 private/dev
-e2e
 .env
