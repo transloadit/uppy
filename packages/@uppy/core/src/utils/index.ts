@@ -44,6 +44,7 @@ export { default as getAllowedMetaFields } from './getAllowedMetaFields.js'
 export { default as getBytesRemaining } from './getBytesRemaining.js'
 
 export { default as getDroppedFiles } from './getDroppedFiles/index.js'
+export { default as getErrorMessage } from './getErrorMessage.js'
 export { default as getETA } from './getETA.js'
 export { default as getFileNameAndExtension } from './getFileNameAndExtension.js'
 export { default as getFileType } from './getFileType.js'
@@ -56,11 +57,13 @@ export { default as getTextDirection } from './getTextDirection.js'
 export { default as getTimeStamp } from './getTimeStamp.js'
 
 export { default as hasProperty } from './hasProperty.js'
+export { default as isAbortError } from './isAbortError.js'
 export { default as isDOMElement } from './isDOMElement.js'
 export { default as isDragDropSupported } from './isDragDropSupported.js'
 export { default as isNetworkError } from './isNetworkError.js'
 export { default as isObjectURL } from './isObjectURL.js'
 export { default as isPreviewSupported } from './isPreviewSupported.js'
+export { default as isRestrictionError } from './isRestrictionError.js'
 
 export { default as mimeTypes } from './mimeTypes.js'
 
@@ -89,6 +92,7 @@ export type {
 export { default as Translator } from './Translator.js'
 
 export { default as toArray } from './toArray.js'
+export { default as toError } from './toError.js'
 export { default as truncateString } from './truncateString.js'
 
 export type {

@@ -46,7 +46,12 @@ function canvasToBlob(
   try {
     canvas.getContext('2d')!.getImageData(0, 0, 1, 1)
   } catch (err) {
-    if (err.code === 18) {
+    if (
+      typeof err === 'object' &&
+      err != null &&
+      'code' in err &&
+      err.code === 18
+    ) {
       return Promise.reject(
         new Error('cannot read image, probably an svg with external resources'),
       )
@@ -471,7 +476,7 @@ export default class ThumbnailGenerator<
     })
   }
 
-  install(): void {
+  override install(): void {
     this.uppy.on('file-removed', this.onFileRemoved)
     this.uppy.on('cancel-all', this.onAllFilesRemoved)
 
@@ -489,7 +494,7 @@ export default class ThumbnailGenerator<
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.uppy.off('file-removed', this.onFileRemoved)
     this.uppy.off('cancel-all', this.onAllFilesRemoved)
 

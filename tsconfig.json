@@ -24,10 +24,12 @@
     { "path": "./packages/@uppy/onedrive/tsconfig.json" },
     { "path": "./packages/@uppy/react/tsconfig.json" },
     { "path": "./packages/@uppy/remote-sources/tsconfig.json" },
+    { "path": "./packages/@uppy/s3/tsconfig.json" },
     { "path": "./packages/@uppy/screen-capture/tsconfig.json" },
     { "path": "./packages/@uppy/status-bar/tsconfig.json" },
     { "path": "./packages/@uppy/thumbnail-generator/tsconfig.json" },
     { "path": "./packages/@uppy/transloadit/tsconfig.json" },
+    { "path": "./packages/@uppy/transloadit-storage/tsconfig.json" },
     { "path": "./packages/@uppy/tus/tsconfig.json" },
     { "path": "./packages/@uppy/unsplash/tsconfig.json" },
     { "path": "./packages/@uppy/url/tsconfig.json" },
@@ -36,6 +38,15 @@
     { "path": "./packages/@uppy/webdav/tsconfig.json" },
     { "path": "./packages/@uppy/xhr-upload/tsconfig.json" },
     { "path": "./packages/@uppy/zoom/tsconfig.json" },
-    { "path": "./packages/uppy/tsconfig.json" }
+    { "path": "./packages/uppy/tsconfig.json" },
+    { "path": "./examples/aws-companion/tsconfig.json" },
+    { "path": "./examples/aws-nodejs/tsconfig.json" },
+    { "path": "./examples/aws-php/tsconfig.json" },
+    { "path": "./examples/companion/tsconfig.json" },
+    { "path": "./examples/companion-custom-provider/tsconfig.json" },
+    { "path": "./examples/xhr-bundle/tsconfig.json" },
+    { "path": "./examples/xhr-node/tsconfig.json" },
+    { "path": "./examples/xhr-php/tsconfig.json" },
+    { "path": "./examples/xhr-python/tsconfig.json" }
   ]
 }

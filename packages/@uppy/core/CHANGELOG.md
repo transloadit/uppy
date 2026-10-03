@@ -1,5 +1,35 @@
 # @uppy/core
 
+## 6.2.0
+
+### Minor Changes
+
+- 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
+  
+  - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
+  - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
+  - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
+
+### Patch Changes
+
+- 4895bcc: Fix `target` option type to accept any plugin class (e.g. `target: Dashboard`).
+
+## 6.1.0
+
+### Minor Changes
+
+- 480e44c: **Experimental** (marked `@experimental` in the types): the file-management additions below exist
+  for `@uppy/s3` and will change incompatibly, also in minor releases.
+
+  ProviderViews can now show per-item actions (`actions`, rendered as a "⋯" menu) and header `toolbarActions`, refresh the open folder with `refreshCurrentFolder()`, and ask the user for input with inline `prompt()` / `confirm()` dialogs. A new `mode: 'manager'` (a file library: clicking opens an item's details, multi-select behind a toggle, the selection feeds `bulkActions`) is a stopgap until a dedicated file manager plugin; `bulkActions` only exist there. The Companion client gained `deleteItem()`, `moveItem()` and `createFolder()` for providers that support mutations.
+
+## 6.0.2
+
+### Patch Changes
+
+- c011da4: `fetcher` now folds header names that differ only in case into one entry (last
+  one wins) instead of letting `XMLHttpRequest` combine their values.
+
 ## 6.0.1
 
 ### Patch Changes

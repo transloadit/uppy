@@ -49,6 +49,14 @@ export type PresignedResponse = {
    * requests already carry the right key.
    */
   key?: string
+  /**
+   * Headers the URL was signed with (`X-Amz-SignedHeaders`), e.g.
+   * `Content-Disposition`. Sent on the request; a `Content-Type` here
+   * replaces the built-in one. Each must also be in the bucket's CORS
+   * `AllowedHeaders`. Do not include browser-forbidden headers such as `Host`,
+   * `Content-Length`, or `Date` in this object; JavaScript cannot set them.
+   */
+  headers?: Record<string, string>
 }
 
 /** Function that generates a pre-signed URL for a request */
@@ -166,7 +174,7 @@ export interface AbortMultipartUploadParams {
   signal?: AbortSignal
 }
 
-/** Parameters for {@link S3Client.deleteObject}. */
+/** Parameters for {@link S3mini.deleteObject}. */
 export interface DeleteObjectParams {
   key: string
   signal?: AbortSignal

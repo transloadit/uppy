@@ -16,8 +16,7 @@ packages/@uppy/angular/types/
 yarn-error.log
 .idea
 .env
-tsconfig.tsbuildinfo
-tsconfig.build.tsbuildinfo
+*.tsbuildinfo
 .svelte-kit
 .turbo
 __screenshots__
@@ -25,8 +24,11 @@ __screenshots__
 
 dist/
 lib/
-# @uppy/svelte needs lib inside src
-!src/lib
+# @uppy/svelte keeps its sources in src/lib, which `lib/` above would swallow.
+# The pattern must be anchored to the repo root: a bare `!src/lib` is treated as
+# `<root>/src/lib` and never matches, which also hides the directory from tools
+# that watch files through .gitignore (e.g. `turbo watch`).
+!packages/@uppy/svelte/src/lib/
 coverage/
 examples/dev/bundle.js
 examples/aws-php/vendor/*

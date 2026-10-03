@@ -17,6 +17,7 @@ import {
   ErrorWithCause,
   RateLimitedQueue,
   type RemoteUppyFile,
+  toError,
 } from '@uppy/core/utils'
 import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import packageJson from '../package.json' with { type: 'json' }
@@ -443,7 +444,8 @@ export default class Transloadit<
 
       this.uppy.log(`[Transloadit] Created Assembly ${assemblyID}`)
       return assembly
-    } catch (err) {
+    } catch (e) {
+      const err = toError(e)
       // TODO: use AssemblyError?
       const wrapped = new ErrorWithCause(
         `${this.i18n('creatingAssemblyFailed')}: ${err.message}`,
@@ -908,7 +910,7 @@ export default class Transloadit<
         // Clear preprocessing state when the Assembly could not be created,
         // otherwise the UI gets confused about the lingering progress keys
         this.uppy.emit('preprocess-complete', file)
-        this.uppy.emit('upload-error', file, err)
+        this.uppy.emit('upload-error', file, toError(err))
       })
       // Reset allowNewUpload on error
       this.uppy.setState({ allowNewUpload: true })
@@ -1013,7 +1015,7 @@ export default class Transloadit<
     }
   }
 
-  install(): void {
+  override install(): void {
     this.uppy.addPreProcessor(this.#prepareUpload)
     this.uppy.addPostProcessor(this.#afterUpload)
 
@@ -1074,7 +1076,7 @@ export default class Transloadit<
     })
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.uppy.removePreProcessor(this.#prepareUpload)
     this.uppy.removePostProcessor(this.#afterUpload)
     this.uppy.off('error', this.#onError)

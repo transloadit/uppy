@@ -21,7 +21,7 @@ const s3Responses = {
        <Key>${key}</Key>
      </InitiateMultipartUploadResult>`,
 
-  uploadPart: (etag: string) => '',
+  uploadPart: () => '',
 
   listParts: (parts: { partNumber: number; etag: string }[]) =>
     `<?xml version="1.0" encoding="UTF-8"?>
@@ -233,6 +233,62 @@ describe('AwsS3', () => {
       expect(shouldUseMultipart(createFile(70 * 1024 * MB))).toBe(true) // 70GB
       expect(shouldUseMultipart(createFile(400 * 1024 * MB))).toBe(true) // 400GB
     })
+
+    test('uses multipart for a file below the 5 MiB part minimum when asked to', async ({
+      worker,
+    }) => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks(worker)
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'small.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'small.txt'),
+      })
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+      expect(operations).toEqual([
+        'createMultipart',
+        'uploadPart',
+        'completeMultipart',
+      ])
+    })
+
+    test('sends an empty file with a single PUT even when asked for multipart', async ({
+      worker,
+    }) => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks(worker)
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'empty.txt',
+        type: 'text/plain',
+        data: new File([], 'empty.txt'),
+      })
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+      // A multipart upload of zero parts cannot be completed, so expect one
+      // plain PUT (the mock logs every PUT as 'uploadPart').
+      expect(operations).toEqual(['uploadPart'])
+    })
   })
 
   describe('server-generated object key (#6496)', () => {
@@ -433,6 +489,87 @@ describe('AwsS3', () => {
       await core.upload()
 
       expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
+    })
+  })
+
+  describe('signed headers (#6548)', () => {
+    test('sends the headers returned by the signer', async ({ worker }) => {
+      let seen: Headers | undefined
+      worker.use(
+        http.put(s3Url, ({ request }) => {
+          seen = request.headers
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest: async (req) => ({
+          url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}`,
+          headers: {
+            'Content-Disposition': 'inline; filename="a.pdf"',
+            // lowercase on purpose: it must replace the built-in header, not
+            // be appended to it
+            'content-type': 'application/pdf',
+          },
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.pdf',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.pdf'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(seen?.get('content-disposition')).toBe('inline; filename="a.pdf"')
+      expect(seen?.get('content-type')).toBe('application/pdf')
+    })
+
+    test('falls back to the file type when the signer sends no headers', async ({
+      worker,
+    }) => {
+      let seen: Headers | undefined
+      worker.use(
+        http.put(s3Url, ({ request }) => {
+          seen = request.headers
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest: async (req) => ({
+          url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}`,
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.pdf',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.pdf'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(seen?.get('content-type')).toBe('text/plain')
     })
   })
 

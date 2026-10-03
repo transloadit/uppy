@@ -4,8 +4,5 @@
     {
       "path": "../core/tsconfig.build.json"
     }
-  ],
-  "compilerOptions": {
-    "noImplicitOverride": false
-  }
+  ]
 }

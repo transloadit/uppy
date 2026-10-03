@@ -313,7 +313,7 @@ class S3mini extends S3Client {
 
     try {
       const requestedKey = request.key
-      const { url, key: signerKey } = await this.signRequest(request)
+      const { url, key: signerKey, headers } = await this.signRequest(request)
 
       const xhr = await this.xhr({
         url,
@@ -322,6 +322,7 @@ class S3mini extends S3Client {
         onProgress,
         signal,
         contentType,
+        headers,
       })
 
       // A blank key from the signer is not an override.
@@ -524,7 +525,7 @@ class S3mini extends S3Client {
   }
 
   /** Deletes an object from the bucket. Returns true on success. */
-  public override async deleteObject({ key, signal }: IT.DeleteObjectParams) {
+  public async deleteObject({ key, signal }: IT.DeleteObjectParams) {
     const { xhr } = await this.request({
       request: { method: 'DELETE', key },
       signal,

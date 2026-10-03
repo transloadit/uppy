@@ -1,5 +1,6 @@
 import { EventManager, type Uppy } from '@uppy/core'
 import type { Body, LocalUppyFile, Meta } from '@uppy/core/utils'
+import { toError } from '@uppy/core/utils'
 import type S3Client from './s3-client/S3Client.js'
 
 // ============================================================================
@@ -88,12 +89,13 @@ export default class S3Uploader<M extends Meta, B extends Body> {
     const fileSize = options.file.data.size
 
     // Determine if we should use multipart
-    // If we're resuming a multipart upload, force multipart. Otherwise use
-    // the boolean option (true/false) and ensure the file is larger than
-    // S3's minimum chunk size when enabling multipart.
+    // If we're resuming a multipart upload, force multipart. Otherwise follow
+    // the option. S3's 5 MiB minimum applies to every part except the last, so
+    // a smaller file is a valid one-part upload. An empty file has no part to
+    // send, so it stays a single PUT.
     this.#shouldUseMultipart =
       Boolean(resumeState) ||
-      (this.#options.shouldUseMultipart === true && fileSize > MIN_CHUNK_SIZE)
+      (this.#options.shouldUseMultipart === true && fileSize > 0)
 
     // Create chunks based on upload strategy
     if (this.#shouldUseMultipart) {
@@ -187,7 +189,7 @@ export default class S3Uploader<M extends Meta, B extends Body> {
         }
       }
     } catch (err) {
-      this.#onError(err instanceof Error ? err : new Error(err))
+      this.#onError(toError(err))
     }
   }
 

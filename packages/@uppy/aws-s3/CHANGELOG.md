@@ -1,5 +1,31 @@
 # @uppy/aws-s3
 
+## 6.2.2
+
+### Patch Changes
+
+- 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
+  
+  - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
+  - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
+  - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
+
+## 6.2.1
+
+### Patch Changes
+
+- e89c8de: `shouldUseMultipart: true` (or a function returning `true`) is now honored for files of 5 MiB or smaller, as it was in v5. S3 only requires 5 MiB for parts other than the last, so a small file is a valid one-part multipart upload. Empty files are still sent with a single PUT.
+
+## 6.2.0
+
+### Minor Changes
+
+- c011da4: `signRequest` may return `headers` to send with the presigned request, e.g. a signed `Content-Disposition`.
+
+### Patch Changes
+
+- 5660fb9: A blank `key` returned by `signRequest` is now treated as no override; the requested key is used instead.
+
 ## 6.1.0
 
 ### Minor Changes

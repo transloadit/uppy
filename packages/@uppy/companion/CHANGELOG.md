@@ -1,5 +1,73 @@
 # @uppy/companion
 
+## 7.1.1
+
+### Patch Changes
+
+- 452b52b: Reuse shared option and response types for all Companion provider methods. Some provider method types were widened to match the base `Provider` class:
+  
+  - `logout()` of Box, Dropbox, Facebook and S3 now returns `{ revoked: boolean }` instead of `{ revoked: true }`.
+  - Zoom `deauthorizationCallback()` headers may now be `string | string[]`.
+  - Zoom `list()` query is now the generic `Query` type instead of `{ cursor?: string | null }`.
+  - WebDAV `thumbnail()` no longer declares its unused parameters.
+- d85c649: Fix WebDAV provider bypassing SSRF protection: requests to private, loopback and link-local addresses are now blocked unless `allowLocalUrls` is enabled.
+
+## 7.1.0
+
+### Minor Changes
+
+- 480e44c: **Experimental:** the S3 and Transloadit Storage providers' options and HTTP API (`/s3/*`,
+  `/transloadit-storage/*`) will change incompatibly, also in minor releases. Companion logs a
+  warning at startup when either is configured. The `{ code }` error bodies are not part of that:
+  they are the stable way providers report user-facing errors.
+
+  Add an S3 provider (`/s3/*`) for browsing and managing S3-compatible object storage (AWS S3,
+  Cloudflare R2, MinIO, Transloadit Storage) from the Dashboard. It is configured under
+  `providerOptions.s3` (`COMPANION_S3_PROVIDER_*`), with its own optional credentials, region and
+  endpoint that fall back to the `s3` upload block, so browsing and uploading can use different
+  accounts and buckets.
+
+  The provider stays disabled until it is given one of two modes. Single-tenant: `bucket` (and
+  optionally `prefix`) names the one bucket everybody browses, so Companion has to sit behind your own
+  authentication. Multi-tenant: your server mints a short-lived storage grant per user after it
+  authenticated them, naming the bucket, the prefix they may see and whether they may write, and
+  Companion verifies it with `grantSecret` (HS256, several accepted so keys can be rotated) or
+  `grantPublicKey` (asymmetric, so Companion can verify grants but not mint them). The two modes are
+  exclusive: Companion refuses to start with both a grant key and `bucket`/`prefix`, or with neither. What the provider's credentials may reach at all
+  belongs in an IAM or bucket policy; Companion only enforces the prefix a grant carries.
+
+  Mutations — delete, rename/move a single file, and create folder — are exposed as
+  `POST /:provider/mutate/{delete,move,create-folder}` and are refused unless the grant carries write
+  scope. Moving a folder is orchestrated by the client, which walks the folder and moves its entries
+  one by one.
+
+  Single-file moves copy with `IfNoneMatch: *` and `CopySourceIfMatch`, and delete with `IfMatch`,
+  so an endpoint that honours conditional requests never overwrites a destination or deletes a
+  source that changed meanwhile (`s3Conflict`). User-facing failures are sent as `{ code }` (`S3_NOT_FOUND`, ...), which
+  `@uppy/core` maps to the locale string it shows; `{ message }` stays for text forwarded verbatim
+  from a provider's own API, which is all older Uppy versions read. Listings carry a `session` object (`bucket`, `prefix`, `canWrite`, `supportsMoveFolder`)
+  so the client can hide write actions and resolve typed paths. Downloads must name the bucket the
+  file was selected in (`?bucket=`), so a queued import cannot be read from a later session.
+
+  A second provider, `transloadit-storage` (configured under `providerOptions['transloadit-storage']`
+  with `apiEndpoint` and per-Workspace `workspaces` credentials, grants only), browses Transloadit
+  Storage over S3 and moves files and whole folders through the native catalog API, preserving asset
+  identity.
+
+  Also changes how the webdav provider classifies a 401. Moving its error mapping into `mapProviderError` turned the old assign-then-overwrite into early returns, and because the `webdav` package sets both `status` and `response` on every non-2xx response the auth branch used to be dead code. A 401 while listing or downloading now surfaces as an auth error (HTTP 401) rather than a generic `ProviderApiError` (HTTP 424), so the client drops the session and re-prompts instead of showing a plain failure.
+
+### Patch Changes
+
+- 029694a: Refresh dependencies: `@aws-sdk/*` 3.1047.0 → 3.1134.0 (now requires `^3.1134.0`, fixing an unmet `@aws-sdk/lib-storage` peer dependency on `@aws-sdk/client-s3`), `ipaddr.js` 2.5.0, `serialize-javascript` 7.1.1, `ws` 8.21.3, `moment-timezone` 0.6.4, `morgan` 1.12.1 and `p-map` 7.0.8.
+- 029694a: Unpin all dependencies. All dependencies now use caret ranges.
+
+## 7.0.3
+
+### Patch Changes
+
+- 5cd9512: Ignore an empty (or whitespace-only) `transloadit_gateway` in fetched provider credentials again. Since 7.0.0 an empty string was passed to `new URL()`, which threw `Invalid URL` and turned every OAuth login using such credentials into a "Could not fetch credentials" page.
+- 071d167: Requests naming an unknown provider (for example `/nonexistent/list/`, or `/instagram/list/` now that Instagram is gone) are answered with a 400 again instead of being left without a response. The provider middleware stopped calling `next()` on that path in the TypeScript port, so such requests hung until the client gave up.
+
 ## 7.0.2
 
 ### Patch Changes

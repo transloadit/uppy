@@ -192,7 +192,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.setMeta(formMeta as Partial<M>)
   }
 
-  install(): void {
+  override install(): void {
     this.#form = assertHTMLFormElement(findDOMElement(this.opts.target))
 
     this.#form.addEventListener('submit', this.handleFormSubmit)
@@ -200,7 +200,7 @@ export default class Form<M extends Meta, B extends Body> extends BasePlugin<
     this.uppy.on('complete', this.handleSuccess)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.#form.removeEventListener('submit', this.handleFormSubmit)
     this.uppy.off('upload', this.handleUploadStart)
     this.uppy.off('complete', this.handleSuccess)
