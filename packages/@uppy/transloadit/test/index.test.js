@@ -1,7 +1,9 @@
 import Core from '@uppy/core'
+import { RateLimitedQueue } from '@uppy/core/utils'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, vi } from 'vitest'
+import Assembly from '../lib/Assembly.js'
 import { it } from './test-extend.ts'
 
 describe('Transloadit', () => {
@@ -323,5 +325,97 @@ describe('Transloadit', () => {
 
     // Should be reset to true
     expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('closes the assembly and clears state as soon as cancel-all fires', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    const cancelRequest = vi.fn(() => Promise.reject(new Error('offline')))
+    plugin.client.cancelAssembly = cancelRequest
+    const assembly = new Assembly(
+      {
+        assembly_id: 'test-assembly-id',
+        assembly_ssl_url:
+          'https://api2.transloadit.com/assemblies/test-assembly-id',
+        ok: 'ASSEMBLY_EXECUTING',
+      },
+      new RateLimitedQueue(),
+    )
+    plugin.assembly = assembly
+    plugin.setPluginState({ error: new Error('from a previous run') })
+    const cancelSpy = vi.fn()
+    uppy.on('transloadit:assembly-cancel', cancelSpy)
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus?.ok).toBe(
+      'ASSEMBLY_EXECUTING',
+    )
+
+    uppy.cancelAll()
+
+    // Synchronously, before the (failing) cancel request has settled.
+    expect(assembly.closed).toBe(true)
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+    // This is what lets the AssemblyWatcher, and so `uppy.upload()`, settle.
+    expect(cancelSpy).toHaveBeenCalledTimes(1)
+    expect(cancelSpy.mock.calls[0][0].assembly_id).toBe('test-assembly-id')
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+    expect(uppy.getState().plugins.Transloadit.lastAssemblyStatus?.ok).toBe(
+      'ASSEMBLY_EXECUTING',
+    )
+
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(cancelRequest).toHaveBeenCalledTimes(1)
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
+  })
+
+  it('exposes the assembly error in plugin state', async ({ worker }) => {
+    const status = {
+      assembly_id: 'test-assembly-id',
+      assembly_ssl_url:
+        'https://api2.transloadit.com/assemblies/test-assembly-id',
+      websocket_url: 'ws://localhost:8080',
+      ok: 'ASSEMBLY_EXECUTING',
+      uploads: [],
+      results: {},
+    }
+    worker.use(
+      http.get('https://api2.transloadit.com/assemblies/*', () =>
+        HttpResponse.json({
+          ...status,
+          ok: undefined,
+          error: 'INVALID_FILE_META_DATA',
+          message: 'One of the files is broken',
+        }),
+      ),
+    )
+
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+
+    // Restoring reconnects to the assembly and refetches its status, which
+    // is the polling error path.
+    uppy.emit('restored', { Transloadit: { assemblyResponse: status } })
+    await plugin.restored
+
+    const state = uppy.getState().plugins.Transloadit
+    expect(state.error?.message).toBe('One of the files is broken')
+    expect(state.error?.assembly?.error).toBe('INVALID_FILE_META_DATA')
+    // The live slot is gone; the last status and the error keep the failure
+    // until a new assembly starts.
+    expect(state.assemblyStatus).toBeUndefined()
+    expect(state.lastAssemblyStatus?.error).toBe('INVALID_FILE_META_DATA')
+
+    plugin.assembly = new Assembly(status, new RateLimitedQueue())
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
   })
 })
