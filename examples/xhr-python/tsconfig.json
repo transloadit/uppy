@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "module": "preserve",
+    "target": "esnext",
+    "types": ["vite/client"]
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "references": [
+    { "path": "../../packages/@uppy/aws-s3/tsconfig.build.json" },
+    { "path": "../../packages/@uppy/core/tsconfig.build.json" },
+    { "path": "../../packages/@uppy/dashboard/tsconfig.build.json" }
+  ],
+  "compilerOptions": {
+    "module": "preserve",
+    "noEmit": true,
+    "target": "esnext"
+  }
+}

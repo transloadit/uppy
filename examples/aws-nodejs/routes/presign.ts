@@ -6,17 +6,18 @@
  * actual request directly to S3 using that URL.
  */
 
-const { Router } = require('express')
-const {
-  S3Client,
+import type { $Command } from '@aws-sdk/client-s3'
+import {
   AbortMultipartUploadCommand,
   CompleteMultipartUploadCommand,
   CreateMultipartUploadCommand,
   ListPartsCommand,
   PutObjectCommand,
+  S3Client,
   UploadPartCommand,
-} = require('@aws-sdk/client-s3')
-const { getSignedUrl } = require('@aws-sdk/s3-request-presigner')
+} from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { Router } from 'express'
 
 const expiresIn = 900 // 15 minutes
 
@@ -24,13 +25,13 @@ const expiresIn = 900 // 15 minutes
 // name by default); the server decides where it actually goes.
 const directory = 'uppy-nodejs-example'
 
-let s3Client
+let s3Client: S3Client
 function getS3Client() {
   s3Client ??= new S3Client({
     region: process.env.COMPANION_AWS_REGION,
     credentials: {
-      accessKeyId: process.env.COMPANION_AWS_KEY,
-      secretAccessKey: process.env.COMPANION_AWS_SECRET,
+      accessKeyId: process.env.COMPANION_AWS_KEY!,
+      secretAccessKey: process.env.COMPANION_AWS_SECRET!,
     },
     forcePathStyle: process.env.COMPANION_AWS_FORCE_PATH_STYLE === 'true',
   })
@@ -39,7 +40,7 @@ function getS3Client() {
 
 const router = Router()
 
-router.post('/s3/presign', async (req, res, next) => {
+export const presign = router.post('/s3/presign', async (req, res, next) => {
   // Before giving the presigned URL to the client, you should first check if
   // they are authorized to perform that operation, and if the request is legit.
   // For the sake of simplification, we skip that check in this example.
@@ -53,10 +54,10 @@ router.post('/s3/presign', async (req, res, next) => {
       return res.status(400).json({ error: 'method and key are required' })
     }
 
-    let command
+    let command: $Command<any, any, any>
     // Set only when this request creates an object. It's returned to Uppy,
     // which then uses it for every later request of the same upload.
-    let objectKey
+    let objectKey: string | undefined
 
     if (method === 'PUT' && uploadId && partNumber) {
       // UploadPart (multipart)
@@ -115,5 +116,3 @@ router.post('/s3/presign', async (req, res, next) => {
     next(err)
   }
 })
-
-module.exports = router
