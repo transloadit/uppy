@@ -17,4 +17,4 @@
 "uppy": patch
 ---
 
-Stop embedding a source map in the minified CSS. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, were larger than the unminified CSS. They now contain only the minified CSS, at about half the gzipped size.
+Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
