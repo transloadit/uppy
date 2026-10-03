@@ -1,15 +1,15 @@
-const { Readable } = require('node:stream')
+import { Readable } from 'node:stream'
+import type { ProviderListResponse } from '@uppy/companion'
 
 const BASE_URL = 'https://api.unsplash.com'
 
-function adaptData(res) {
-  const data = {
+function adaptData(items: any[]) {
+  const data: ProviderListResponse = {
     username: null,
     items: [],
     nextPagePath: null,
   }
 
-  const items = res
   items.forEach((item) => {
     const isFolder = !!item.published_at
     data.items.push({
@@ -34,11 +34,15 @@ function adaptData(res) {
 export default class MyCustomProvider {
   static version = 2
 
-  static get oauthProvider() {
-    return 'myunsplash'
-  }
+  oauthProvider = 'myunsplash'
 
-  async list({ token, directory }) {
+  async list({
+    token,
+    directory,
+  }: {
+    token: string
+    directory?: string | undefined
+  }) {
     const path = directory ? `/${directory}/photos` : ''
 
     const resp = await fetch(`${BASE_URL}/collections${path}`, {
@@ -51,17 +55,17 @@ export default class MyCustomProvider {
         `Errornous HTTP response (${resp.status} ${resp.statusText})`,
       )
     }
-    return adaptData(await resp.json())
+    return adaptData((await resp.json()) as any[])
   }
 
-  async download({ id, token }) {
+  async download({ id, token }: { id: string; token: string }) {
     const resp = await fetch(`${BASE_URL}/photos/${id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
 
-    const contentLengthStr = resp.headers['content-length']
+    const contentLengthStr = resp.headers.get('content-length')!
     const contentLength = parseInt(contentLengthStr, 10)
     const size =
       !Number.isNaN(contentLength) && contentLength >= 0
@@ -73,6 +77,6 @@ export default class MyCustomProvider {
         `Errornous HTTP response (${resp.status} ${resp.statusText})`,
       )
     }
-    return { stream: Readable.fromWeb(resp.body), size }
+    return { stream: Readable.fromWeb(resp.body!), size }
   }
 }
