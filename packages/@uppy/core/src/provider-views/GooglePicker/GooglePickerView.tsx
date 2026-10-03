@@ -20,6 +20,7 @@ export function useGooglePicker({
   clientId,
   apiKey,
   appId,
+  selectFolders,
   storage,
   store,
 }: GooglePickerOptions & { uppy: Uppy<any, any> } & Pick<
@@ -38,6 +39,7 @@ export function useGooglePicker({
         clientId,
         apiKey,
         appId,
+        selectFolders,
         storage,
         store,
       }),
@@ -49,6 +51,7 @@ export function useGooglePicker({
       pickerType,
       apiKey,
       appId,
+      selectFolders,
       storage,
       store,
     ],
@@ -78,11 +81,13 @@ export type GooglePickerViewProps = {
       pickerType: 'drive'
       apiKey: string
       appId: string
+      selectFolders?: boolean
     }
   | {
       pickerType: 'photos'
       apiKey?: undefined
       appId?: undefined
+      selectFolders?: undefined
     }
 )
 
@@ -95,6 +100,7 @@ export default function GooglePickerView({
   pickerType,
   apiKey,
   appId,
+  selectFolders,
   storage,
   requestClientId,
   companionUrl,
@@ -113,6 +119,7 @@ export default function GooglePickerView({
     clientId,
     apiKey,
     appId,
+    selectFolders,
     storage,
     store,
   })

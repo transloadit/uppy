@@ -1,4 +1,10 @@
-import type { AsyncStore, BaseProviderPlugin, Body, Meta } from '@uppy/core'
+import type {
+  AsyncStore,
+  BaseProviderPlugin,
+  Body,
+  DefinePluginOpts,
+  Meta,
+} from '@uppy/core'
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
@@ -22,11 +28,21 @@ export type GoogleDrivePickerOptions = CompanionPluginOptions & {
   clientId: string
   apiKey: string
   appId: string
+  selectFolders?: boolean
   locale?: LocaleStrings<typeof locale>
 }
 
+const defaultOptions = {
+  selectFolders: false,
+} satisfies Partial<GoogleDrivePickerOptions>
+
 export default class GoogleDrivePicker<M extends Meta, B extends Body>
-  extends UIPlugin<GoogleDrivePickerOptions, M, B, GooglePickerState>
+  extends UIPlugin<
+    DefinePluginOpts<GoogleDrivePickerOptions, keyof typeof defaultOptions>,
+    M,
+    B,
+    GooglePickerState
+  >
   implements BaseProviderPlugin
 {
   static VERSION = packageJson.version
@@ -44,7 +60,7 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
   requestClientId = GoogleDrivePicker.requestClientId
 
   constructor(uppy: Uppy<M, B>, opts: GoogleDrivePickerOptions) {
-    super(uppy, opts)
+    super(uppy, { ...defaultOptions, ...opts })
     this.id = this.opts.id || 'GoogleDrivePicker'
     this.storage = this.opts.storage || tokenStorage
 
@@ -95,6 +111,7 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
       clientId={this.opts.clientId}
       apiKey={this.opts.apiKey}
       appId={this.opts.appId}
+      selectFolders={this.opts.selectFolders}
       requestClientId={GoogleDrivePicker.requestClientId}
       companionUrl={this.opts.companionUrl}
     />
