@@ -9,7 +9,6 @@ packages/@uppy/angular/fesm2022/
 packages/@uppy/angular/types/
 .cache
 .parcel-cache
-.eslintcache
 .vscode/settings.json
 .yarn/cache
 .yarn/install-state.gz
@@ -30,18 +29,10 @@ lib/
 # that watch files through .gitignore (e.g. `turbo watch`).
 !packages/@uppy/svelte/src/lib/
 coverage/
-examples/dev/bundle.js
 examples/aws-php/vendor/*
-test/endtoend/create-react-app/build/
-test/endtoend/create-react-app/coverage/
 *.tgz
-generatedLocale.d.ts
-packages/@uppy/locales/src/en_US.js
 
 **/output/*
-!output/.keep
-examples/dev/file.txt
-issues.txt
 
 # companion deployment files
 transloadit-cluster-kubeconfig.yaml

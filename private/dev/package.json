@@ -1,11 +1,6 @@
 {
   "name": "@uppy-dev/dev",
   "version": "0.0.0",
-  "aliasify": {
-    "aliases": {
-      "@uppy": "../../packages/@uppy"
-    }
-  },
   "devDependencies": {
     "@transloadit/utils": "^4.6.0",
     "@uppy-dev/tsconfig": "workspace:^",
