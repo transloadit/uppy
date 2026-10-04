@@ -372,6 +372,55 @@ describe('Transloadit', () => {
     expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
   })
 
+  it('ignores the error of an assembly that is no longer current', async ({
+    worker,
+  }) => {
+    const status = {
+      assembly_id: 'test-assembly-id',
+      assembly_ssl_url:
+        'https://api2.transloadit.com/assemblies/test-assembly-id',
+      websocket_url: 'ws://localhost:8080',
+      ok: 'ASSEMBLY_EXECUTING',
+      uploads: [],
+      results: {},
+    }
+    worker.use(
+      http.get('https://api2.transloadit.com/assemblies/*', () =>
+        HttpResponse.json(status),
+      ),
+    )
+
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.cancelAssembly = () => Promise.resolve()
+
+    // Restoring is the cheapest way to get a fully connected assembly.
+    uppy.emit('restored', { Transloadit: { assemblyResponse: status } })
+    await plugin.restored
+    const assembly = plugin.assembly
+    expect(assembly).toBeDefined()
+
+    uppy.cancelAll()
+    expect(plugin.assembly).toBeUndefined()
+
+    const errorEvents = []
+    uppy.on('transloadit:assembly-error', () => errorEvents.push('error'))
+    assembly.emit(
+      'error',
+      Object.assign(new Error('late failure'), { error: 'LATE' }),
+    )
+
+    // The stale assembly must not write over the cleared state, but the
+    // event still has to fire so AssemblyWatcher can settle.
+    expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
+    expect(errorEvents).toEqual(['error'])
+  })
+
   it('exposes the assembly error in plugin state', async ({ worker }) => {
     const status = {
       assembly_id: 'test-assembly-id',

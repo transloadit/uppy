@@ -532,10 +532,14 @@ export default class Transloadit<
   #handleAssemblyStatusUpdate = (
     assemblyResponse: AssemblyResponse | undefined,
   ) => {
-    if (assemblyResponse != null) {
-      this.setPluginState({ lastAssemblyStatus: assemblyResponse })
-    }
-    this.setPluginState({ assemblyStatus: assemblyResponse })
+    this.setPluginState(
+      assemblyResponse != null
+        ? {
+            lastAssemblyStatus: assemblyResponse,
+            assemblyStatus: assemblyResponse,
+          }
+        : { assemblyStatus: undefined },
+    )
     this.uppy.emit('restore:plugin-data-changed', {
       [this.id]: assemblyResponse ? { assemblyResponse } : undefined,
     })
@@ -810,7 +814,12 @@ export default class Transloadit<
     })
     assembly.on('error', (error: AssemblyError) => {
       error.assembly = assembly.status
-      this.setPluginState({ error })
+      // A cancelled or replaced assembly must not write over the current
+      // run's state, but the event still has to go out: AssemblyWatcher
+      // settles `#afterUpload` off it.
+      if (assembly === this.assembly) {
+        this.setPluginState({ error })
+      }
       this.uppy.emit('transloadit:assembly-error', assembly.status, error)
     })
 

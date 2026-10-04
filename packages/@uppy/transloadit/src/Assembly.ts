@@ -46,6 +46,17 @@ class TransloaditAssembly extends Emitter {
 
   #status: AssemblyResponse
 
+  /**
+   * When the SSE `assembly_uploading_finished` handler advances `ok` itself,
+   * the `ok` it replaced. `#diffStatus` compares against this instead of the
+   * current status, because a client-advanced `ok` would make the
+   * uploading -> executing transition look like it already happened and
+   * suppress the derived `'executing'` and `'metadata'` events. Losing
+   * `'metadata'` strands `waitForMetadata` uploads, which complete off that
+   * event alone. Cleared as soon as a server status lands.
+   */
+  #okBeforeClientAdvance: AssemblyResponse['ok'] | undefined
+
   pollInterval: ReturnType<typeof setInterval> | null
 
   closed: boolean
@@ -114,6 +125,7 @@ class TransloaditAssembly extends Emitter {
         // here. UPLOADING is the only state this marker can legitimately
         // leave; a refetch may already have moved on (or errored).
         if (this.status.ok === ASSEMBLY_UPLOADING) {
+          this.#okBeforeClientAdvance = this.status.ok
           // `AssemblyStatus` is a union; overriding `ok` on a spread needs a cast.
           this.status = {
             ...this.status,
@@ -180,8 +192,11 @@ class TransloaditAssembly extends Emitter {
     ) {
       // An errored envelope from the API: fold it into the status so that
       // `status` (and the plugin state mirroring it) shows the failure
-      // instead of the last good state.
-      this.status = { ...this.status, ...assemblyOrError } as AssemblyResponse
+      // instead of the last good state. The API omits `ok` on an error, so
+      // drop the previous one rather than leaving `ok: ASSEMBLY_EXECUTING`
+      // sitting next to the error.
+      const { ok: _previousOk, ...withoutOk } = this.status
+      this.status = { ...withoutOk, ...assemblyOrError } as AssemblyResponse
     }
     this.emit(
       'error',
@@ -243,6 +258,7 @@ class TransloaditAssembly extends Emitter {
       if (diff) {
         this.updateStatus(status)
       } else {
+        this.#okBeforeClientAdvance = undefined
         this.status = status
       }
     } catch (err) {
@@ -262,6 +278,7 @@ class TransloaditAssembly extends Emitter {
    */
   updateStatus(next: AssemblyResponse): void {
     this.#diffStatus(this.status, next)
+    this.#okBeforeClientAdvance = undefined
     this.status = next
   }
 
@@ -270,7 +287,7 @@ class TransloaditAssembly extends Emitter {
    * to `next`.
    */
   #diffStatus(prev: AssemblyResponse, next: AssemblyResponse) {
-    const prevStatus = prev.ok
+    const prevStatus = this.#okBeforeClientAdvance ?? prev.ok
     const nextStatus = next.ok
 
     if (next.error && !prev.error) {

@@ -254,6 +254,58 @@ describe('Transloadit/Assembly', () => {
       }
     })
 
+    it('still emits metadata after the SSE marker advanced ok', () => {
+      // `waitForMetadata` uploads complete off 'metadata' alone, and
+      // #diffStatus only emits it on the uploading -> executing transition.
+      // Advancing `ok` from the SSE marker must not hide that transition.
+      const base = { uploads: {}, results: {} }
+      const assembly = connect({ ...base, ok: 'ASSEMBLY_UPLOADING' })
+
+      FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+      expect(assembly.status.ok).toBe('ASSEMBLY_EXECUTING')
+
+      const events = []
+      for (const name of ['executing', 'metadata', 'finished']) {
+        assembly.on(name, () => events.push(name))
+      }
+      assembly.updateStatus({ ...base, ok: 'ASSEMBLY_COMPLETED' })
+      assembly.close()
+
+      expect(events).toEqual(['executing', 'metadata', 'finished'])
+    })
+
+    it('stops diffing against the advanced ok once a server status lands', () => {
+      const base = { uploads: {}, results: {} }
+      const assembly = connect({ ...base, ok: 'ASSEMBLY_UPLOADING' })
+
+      FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+      // A server status replaces the client-advanced one...
+      assembly.updateStatus({ ...base, ok: 'ASSEMBLY_EXECUTING' })
+
+      const events = []
+      assembly.on('executing', () => events.push('executing'))
+      assembly.on('metadata', () => events.push('metadata'))
+      // ...so this transition is genuinely not a new uploading -> executing.
+      assembly.updateStatus({ ...base, ok: 'ASSEMBLY_EXECUTING' })
+      assembly.close()
+
+      expect(events).toEqual([])
+    })
+
+    it('drops a stale ok when folding in an error envelope', () => {
+      const assembly = connect({ ok: 'ASSEMBLY_EXECUTING' })
+
+      FakeEventSource.last.dispatch(
+        'assembly_error',
+        JSON.stringify({ error: 'ASSEMBLY_CRASHED', message: 'boom' }),
+      )
+
+      // The API omits `ok` on an error; a retained ASSEMBLY_EXECUTING would
+      // describe the failed job as still running.
+      expect(assembly.status.error).toBe('ASSEMBLY_CRASHED')
+      expect(assembly.status.ok).toBeUndefined()
+    })
+
     it('folds an SSE error envelope into the status before emitting error', () => {
       const assembly = connect({ ok: 'ASSEMBLY_EXECUTING' })
       const events = []
