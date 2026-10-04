@@ -32,12 +32,6 @@ vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
   encodeState: () => 'some-cool-nice-encrytpion',
 }))
 
-vi.mock('../../dist/server/helpers/request.js', () => {
-  return {
-    getURLMeta: () => Promise.resolve({ size: 758051 }),
-  }
-})
-
 const getServerWithEnv = async () =>
   getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
