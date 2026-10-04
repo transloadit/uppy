@@ -292,6 +292,28 @@ describe('Transloadit/Assembly', () => {
       expect(events).toEqual([])
     })
 
+    it('emits one status event for an errored polling update', () => {
+      // #diffStatus routes the errored status through #onError, which stores
+      // it and closes the assembly; updateStatus must not store it again.
+      const base = { uploads: {}, results: {} }
+      const assembly = new Assembly(
+        { ...base, ok: 'ASSEMBLY_EXECUTING' },
+        new RateLimitedQueue(),
+      )
+      const seen = []
+      assembly.on('status', (status) => seen.push(status.error))
+      assembly.on('error', () => {})
+
+      assembly.updateStatus({
+        ...base,
+        error: 'ASSEMBLY_CRASHED',
+        message: 'boom',
+      })
+
+      expect(seen).toEqual(['ASSEMBLY_CRASHED'])
+      expect(assembly.closed).toBe(true)
+    })
+
     it('drops a stale ok when folding in an error envelope', () => {
       const assembly = connect({ ok: 'ASSEMBLY_EXECUTING' })
 

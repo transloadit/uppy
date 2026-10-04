@@ -277,7 +277,10 @@ class TransloaditAssembly extends Emitter {
    * emitted for status changes, new files, and new results.
    */
   updateStatus(next: AssemblyResponse): void {
-    this.#diffStatus(this.status, next)
+    // An errored status goes through `#onError`, which stores it and closes
+    // the assembly itself. Assigning it again here would emit a second
+    // `'status'` event, and do it on an already-closed assembly.
+    if (this.#diffStatus(this.status, next)) return
     this.#okBeforeClientAdvance = undefined
     this.status = next
   }
@@ -285,13 +288,17 @@ class TransloaditAssembly extends Emitter {
   /**
    * Diff two assembly statuses, and emit the events necessary to go from `prev`
    * to `next`.
+   *
+   * Returns whether `next` was routed through `#onError`, which already stored
+   * it, so the caller must not store it a second time.
    */
-  #diffStatus(prev: AssemblyResponse, next: AssemblyResponse) {
+  #diffStatus(prev: AssemblyResponse, next: AssemblyResponse): boolean {
     const prevStatus = this.#okBeforeClientAdvance ?? prev.ok
     const nextStatus = next.ok
 
     if (next.error && !prev.error) {
-      return this.#onError(next)
+      this.#onError(next)
+      return true
     }
 
     // Desired emit order:
@@ -353,7 +360,7 @@ class TransloaditAssembly extends Emitter {
       this.emit('finished')
     }
 
-    return undefined
+    return false
   }
 
   /**

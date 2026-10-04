@@ -372,6 +372,83 @@ describe('Transloadit', () => {
     expect(uppy.getState().plugins.Transloadit.assemblyStatus).toBeUndefined()
   })
 
+  // `assembly_finished` only says the assembly ended: the API sends it after a
+  // cancellation and after a failure too. These cover both, plus the case where
+  // the assembly is cancelled while the final-status request is in flight.
+  const finishedStatus = {
+    assembly_id: 'test-assembly-id',
+    assembly_ssl_url:
+      'https://api2.transloadit.com/assemblies/test-assembly-id',
+    websocket_url: 'ws://localhost:8080',
+    ok: 'ASSEMBLY_EXECUTING',
+    uploads: [],
+    results: {},
+  }
+
+  async function restoreConnectedAssembly(worker, getStatus) {
+    worker.use(
+      http.get('https://api2.transloadit.com/assemblies/*', () =>
+        HttpResponse.json(getStatus()),
+      ),
+    )
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      waitForEncoding: true,
+      assemblyOptions: {
+        params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.cancelAssembly = () => Promise.resolve()
+    uppy.emit('restored', {
+      Transloadit: { assemblyResponse: finishedStatus },
+    })
+    await plugin.restored
+    return { uppy, plugin, assembly: plugin.assembly }
+  }
+
+  const settle = () => new Promise((resolve) => setTimeout(resolve, 50))
+
+  it('does not emit complete for an assembly cancelled mid-request', async ({
+    worker,
+  }) => {
+    const status = { ...finishedStatus, ok: 'ASSEMBLY_COMPLETED' }
+    const { uppy, assembly } = await restoreConnectedAssembly(
+      worker,
+      () => status,
+    )
+    const events = []
+    uppy.on('transloadit:complete', () => events.push('complete'))
+
+    uppy.cancelAll()
+    assembly.emit('finished')
+    await settle()
+
+    expect(events).toEqual([])
+  })
+
+  it('still emits complete when the assembly ended by cancellation', async ({
+    worker,
+  }) => {
+    // `transloadit:complete` mirrors `assembly_finished`, which the API sends
+    // on cancellation and failure too. Narrowing it to successes only would
+    // silently strip terminal notifications from existing consumers, so the
+    // event keeps firing and hands over the status to inspect.
+    let status = { ...finishedStatus }
+    const { uppy, assembly } = await restoreConnectedAssembly(
+      worker,
+      () => status,
+    )
+    const completed = []
+    uppy.on('transloadit:complete', (a) => completed.push(a.ok))
+
+    status = { ...finishedStatus, ok: 'ASSEMBLY_CANCELED' }
+    assembly.emit('finished')
+    await settle()
+
+    expect(completed).toEqual(['ASSEMBLY_CANCELED'])
+  })
+
   it('ignores the error of an assembly that is no longer current', async ({
     worker,
   }) => {
