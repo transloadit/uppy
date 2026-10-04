@@ -158,6 +158,16 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     for (const fileId of Object.keys(this.#uploaders)) {
       const uploader = this.#uploaders[fileId]
       if (uploader) {
+        // The file stays in Uppy but never finished. Without an error the
+        // settled upload would count it as successful.
+        const file = this.uppy.getFile(fileId)
+        if (file) {
+          this.uppy.emit(
+            'upload-error',
+            file,
+            new Error('Upload aborted: the AwsS3 plugin was removed'),
+          )
+        }
         uploader.abort()
       }
     }

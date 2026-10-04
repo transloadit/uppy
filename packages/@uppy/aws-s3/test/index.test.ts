@@ -918,7 +918,7 @@ describe('AwsS3', () => {
       expect(operations.filter((o) => o === 'listParts')).toHaveLength(1)
     })
 
-    test('removing the plugin mid-upload settles the upload promise', async ({
+    test('removing the plugin mid-upload settles the upload as failed', async ({
       worker,
     }) => {
       const { signRequest, registerHandlers } = createMultipartMocks(worker)
@@ -941,7 +941,9 @@ describe('AwsS3', () => {
       // Remove only once the request is in flight, so an uploader exists.
       await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(1))
       core.removePlugin(core.getPlugin('AwsS3')!)
-      await expect(uploadPromise).resolves.toBeDefined()
+      const result = await uploadPromise
+      expect(result?.successful).toHaveLength(0)
+      expect(result?.failed).toHaveLength(1)
     })
   })
 
