@@ -449,6 +449,37 @@ describe('Transloadit', () => {
     expect(completed).toEqual(['ASSEMBLY_CANCELED'])
   })
 
+  it('ignores status from an assembly that was replaced', async ({
+    worker,
+  }) => {
+    const {
+      uppy,
+      plugin,
+      assembly: first,
+    } = await restoreConnectedAssembly(worker, () => ({ ...finishedStatus }))
+
+    const second = new Assembly(
+      { ...finishedStatus, assembly_id: 'second-assembly' },
+      new RateLimitedQueue(),
+    )
+    plugin.assembly = second
+    expect(
+      uppy.getState().plugins.Transloadit.assemblyStatus?.assembly_id,
+    ).toBe('second-assembly')
+
+    // The superseded assembly fails. Its status must not reach plugin state,
+    // which is what happened while the setter only detached on clear.
+    first.status = {
+      ...finishedStatus,
+      error: 'ASSEMBLY_CRASHED',
+      message: 'boom',
+    }
+
+    const state = uppy.getState().plugins.Transloadit
+    expect(state.assemblyStatus?.assembly_id).toBe('second-assembly')
+    expect(state.lastAssemblyStatus?.error).toBeUndefined()
+  })
+
   it('ignores the error of an assembly that is no longer current', async ({
     worker,
   }) => {

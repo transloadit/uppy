@@ -23,13 +23,21 @@ import Tus, { type TusDetailedError, type TusOpts } from '@uppy/tus'
 import packageJson from '../package.json' with { type: 'json' }
 import Assembly from './Assembly.js'
 import AssemblyWatcher from './AssemblyWatcher.js'
-import Client, { type AssemblyError } from './Client.js'
+import Client from './Client.js'
 import locale from './locale.js'
 
 export type AssemblyResponse = AssemblyStatus & {
   progress_combined?: number
 }
 export type AssemblyFile = AssemblyStatusUpload
+/**
+ * What the Assembly actually emits on `'error'`: a plain `Error` with the
+ * API's error response (or a network error) spread onto it. It is not an
+ * `AssemblyError` instance, and a network failure carries none of the
+ * response fields, so they are all optional.
+ */
+export type AssemblyStateError = Error &
+  Partial<AssemblyResponse> & { assembly?: AssemblyResponse }
 export type AssemblyResult = AssemblyStatusResult & { localId: string | null }
 export type AssemblyParameters = AssemblyInstructionsInput
 
@@ -97,10 +105,13 @@ type TransloaditState = {
   /**
    * The error the live assembly failed with, if any: a plain `Error` with
    * the API's error response (or the network error) spread onto it, plus
-   * the assembly status at the time of the failure. Cleared when the next
+   * the assembly status at the time of the failure. The response fields are
+   * part of the type so consumers can read `error.error` or
+   * `error.assembly_id` without a cast, but a network failure carries none
+   * of them, which is why they are all optional. Cleared when the next
    * assembly starts and on cancel-all.
    */
-  error: (Error & { assembly?: AssemblyResponse }) | undefined
+  error: AssemblyStateError | undefined
   results: Array<{
     result: AssemblyResult
     stepName: string
@@ -549,9 +560,11 @@ export default class Transloadit<
     return this.#assembly
   }
   set assembly(newAssembly: Assembly | undefined) {
-    if (!newAssembly && this.assembly) {
-      this.assembly.off('status', this.#handleAssemblyStatusUpdate)
-    }
+    // Detach unconditionally. Only unsubscribing when clearing left the old
+    // assembly attached whenever one live assembly replaced another, so its
+    // later failure would write over the new run's status, and assigning the
+    // same assembly twice would subscribe twice.
+    this.assembly?.off('status', this.#handleAssemblyStatusUpdate)
     this.#assembly = newAssembly
 
     if (newAssembly) {
@@ -822,7 +835,7 @@ export default class Transloadit<
     assembly.on('upload', (file: AssemblyFile) => {
       this.#onFileUploadComplete(id, file)
     })
-    assembly.on('error', (error: AssemblyError) => {
+    assembly.on('error', (error: AssemblyStateError) => {
       error.assembly = assembly.status
       // A cancelled or replaced assembly must not write over the current
       // run's state, but the event still has to go out: AssemblyWatcher
