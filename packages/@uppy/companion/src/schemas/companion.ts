@@ -199,7 +199,7 @@ export interface CompanionInitOptions {
     S3ObjectWriteOptions & {
       getKey?: GetKeyFn | undefined
       conditions?: PresignedPostOptions['Conditions'] | undefined
-      expires: number
+      expires?: number | undefined
     }
   maxFilenameLength?: number | undefined
   uploadUrls?: (string | RegExp)[] | undefined | null

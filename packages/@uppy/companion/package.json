@@ -35,7 +35,7 @@
   "bin": "./dist/bin/companion.js",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1134.0",
-    "@aws-sdk/client-sts": "^3.1134.0",
+    "@aws-sdk/client-sts": "^3.1139.0",
     "@aws-sdk/lib-storage": "^3.1134.0",
     "@aws-sdk/s3-presigned-post": "^3.1134.0",
     "@aws-sdk/s3-request-presigner": "^3.1134.0",
@@ -65,7 +65,7 @@
     "p-map": "^7.0.5",
     "prom-client": "^15.1.3",
     "serialize-error": "^13.0.1",
-    "serialize-javascript": "^7.0.7",
+    "serialize-javascript": "^7.1.2",
     "tus-js-client": "^4.3.1",
     "validator": "^13.15.35",
     "webdav": "^5.10.0",

@@ -19,7 +19,7 @@
     "url": "git+https://github.com/transloadit/uppy.git"
   },
   "scripts": {
-    "build": "ng-packagr && node scripts/collect-dist.mjs"
+    "build": "ng-packagr -c tsconfig.lib.prod.json && node scripts/collect-dist.mjs"
   },
   "main": "./fesm2022/uppy-angular.mjs",
   "types": "./types/uppy-angular.d.ts",
@@ -31,7 +31,6 @@
     "tslib": "^2.8.1"
   },
   "peerDependencies": {
-    "@angular/common": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^22.0.0",
     "@angular/core": "^17.0.0 || ^18.0.0 || ^19.0.0 || ^20.0.0 || ^21.0.0 || ^22.0.0",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
@@ -46,7 +45,6 @@
     }
   },
   "devDependencies": {
-    "@angular/common": "^22.1.4",
     "@angular/compiler": "^22.1.1",
     "@angular/compiler-cli": "^22.1.1",
     "@angular/core": "^22.1.1",
