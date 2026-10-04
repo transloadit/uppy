@@ -267,9 +267,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   // Local File Upload
   // --------------------------------------------------------------------------
 
-  async #uploadLocalFile(file: LocalUppyFile<M, B>): Promise<void> {
-    // An upload-start listener may have removed the file just now.
-    if (!this.uppy.getFile(file.id)) return
+  async #uploadLocalFile(fileAtStart: LocalUppyFile<M, B>): Promise<void> {
+    // An upload-start listener may have removed or changed the file just now.
+    const file = this.uppy.getFile(fileAtStart.id) as
+      | LocalUppyFile<M, B>
+      | undefined
+    if (!file) return
 
     let uploader: S3Uploader<M, B> | undefined
     try {

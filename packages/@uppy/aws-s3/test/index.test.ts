@@ -690,6 +690,35 @@ describe('AwsS3', () => {
       expect(signRequest).not.toHaveBeenCalled()
     })
 
+    test('uses file changes made by an upload-start listener', async ({
+      worker,
+    }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers()
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+        generateObjectKey: (file) =>
+          `${String(file.meta['folder'] ?? 'none')}-${file.name}`,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        data: new File([new Uint8Array(KB)], 'photo.jpg'),
+      })
+      core.on('upload-start', (files) => {
+        for (const file of files)
+          core.setFileMeta(file.id, { folder: 'chosen' })
+      })
+
+      await core.upload()
+      expect(signRequest.mock.calls[0][0].key).toBe('chosen-photo.jpg')
+    })
+
     test('aborts when cancelAll is called', async () => {
       const signRequest = vi
         .fn()
