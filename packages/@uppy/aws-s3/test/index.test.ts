@@ -918,6 +918,41 @@ describe('AwsS3', () => {
       expect(operations.filter((o) => o === 'listParts')).toHaveLength(1)
     })
 
+    test('a retry started from an upload-error listener stays abortable', async ({
+      worker,
+    }) => {
+      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+      registerHandlers()
+      signRequest
+        .mockRejectedValueOnce(new Error('first attempt fails'))
+        .mockImplementationOnce(() => new Promise(() => {}))
+
+      const core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'test.txt'),
+      })
+
+      // Retry synchronously, while the failed attempt is still unwinding.
+      let retry: Promise<unknown> | undefined
+      core.once('upload-error', () => {
+        retry = core.retryUpload(fileId)
+      })
+      await core.upload()
+      await vi.waitFor(() => expect(signRequest).toHaveBeenCalledTimes(2))
+
+      // The retry hangs in its signer; removing the plugin must still abort it.
+      core.removePlugin(core.getPlugin('AwsS3')!)
+      await expect(retry).resolves.toBeDefined()
+    })
+
     test('removing the plugin mid-upload settles the upload as failed', async ({
       worker,
     }) => {

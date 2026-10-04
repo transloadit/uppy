@@ -271,11 +271,12 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     // An upload-start listener may have removed the file just now.
     if (!this.uppy.getFile(file.id)) return
 
+    let uploader: S3Uploader<M, B> | undefined
     try {
       return await new Promise((resolve, reject) => {
         // Create uploader (events are wired internally).
         // S3Uploader detects resume state from file.s3Multipart internally.
-        const uploader = new S3Uploader<M, B>({
+        uploader = new S3Uploader<M, B>({
           uppy: this.uppy,
           s3Client: this.#s3Client,
           queue: this.#queue,
@@ -327,8 +328,10 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         uploader.start()
       })
     } finally {
-      // Clean up uploader instance after upload completes or fails
-      delete this.#uploaders[file.id]
+      // Clean up uploader instance after upload completes or fails. A retry
+      // started from an upload-error listener may already have registered its
+      // own uploader for this file, so only remove ours.
+      if (this.#uploaders[file.id] === uploader) delete this.#uploaders[file.id]
     }
   }
 
