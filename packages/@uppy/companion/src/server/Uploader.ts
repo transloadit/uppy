@@ -291,7 +291,9 @@ export default class Uploader {
       logger.debug('Received from client: cancel', 'uploader', this.shortToken)
       if (this.tus) {
         const shouldTerminate = !!this.tus.url
-        this.tus.abort(shouldTerminate).catch(() => {})
+        this.tus.abort(shouldTerminate).catch((err) => {
+          logger.warn(err, 'uploader.tus.abort.error', this.shortToken)
+        })
       }
       this.#canceled = true
       this.abortReadStream(new Error('Canceled'))
@@ -438,7 +440,10 @@ export default class Uploader {
     if (!this.tmpPath) return
     try {
       await unlink(this.tmpPath)
-    } catch {}
+    } catch (err) {
+      // Best-effort cleanup; log so a failed unlink (which leaks a temp file) is visible.
+      logger.warn(err, 'uploader.cleanup.error', this.shortToken)
+    }
   }
 
   async tryUploadStream(
