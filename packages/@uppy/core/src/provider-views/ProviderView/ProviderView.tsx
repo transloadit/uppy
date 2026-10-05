@@ -449,6 +449,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         partialTree: PartialTreeUtils.afterToggleCheckbox(
           refreshedTree,
           survivors,
+          this.opts.mode === 'manager',
         ),
       })
     }
@@ -674,6 +675,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   /** @experimental Stop the running `runWithProgress` operation, if any. */
   cancelLongOperation = (): void => this.#cancelLongOperation?.()
+
+  /** @experimental Whether `cancelLongOperation` has something to stop. */
+  get canCancelOperation(): boolean {
+    return this.#cancelLongOperation !== undefined
+  }
 
   tearDown(): void {
     // Nothing.
@@ -1073,15 +1079,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#doneLoading()
   }
 
+  /**
+   * `visibleOrder` is the rows as a custom UI shows them (sorted, filtered),
+   * so a shift-click range matches what the user sees.
+   */
   toggleCheckbox(
     ourItem: PartialTreeFolderNode | PartialTreeFile,
     isShiftKeyPressed: boolean,
+    visibleOrder: (
+      | PartialTreeFolderNode
+      | PartialTreeFile
+    )[] = this.getDisplayedPartialTree(),
   ) {
     const { partialTree } = this.plugin.getPluginState()
 
     const clickedRange = getClickedRange(
       ourItem.id,
-      this.getDisplayedPartialTree(),
+      visibleOrder,
       isShiftKeyPressed,
       this.previousCheckbox,
     )
@@ -1089,6 +1103,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
       partialTree,
       clickedRange,
+      this.opts.mode === 'manager',
     )
 
     const statusById = new Map(
