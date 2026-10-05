@@ -661,6 +661,20 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return this.#dialogs.confirm(options)
   }
 
+  /**
+   * Answer the open dialog from a headless UI (`value` is the prompt's input).
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  submitDialog = (value?: string): void => this.#dialogs.submit(value)
+
+  /** @experimental See `submitDialog`. */
+  cancelDialog = (): void => this.#dialogs.cancel()
+
+  /** @experimental Stop the running `runWithProgress` operation, if any. */
+  cancelLongOperation = (): void => this.#cancelLongOperation?.()
+
   tearDown(): void {
     // Nothing.
   }
