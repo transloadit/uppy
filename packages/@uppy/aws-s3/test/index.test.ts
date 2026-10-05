@@ -577,6 +577,82 @@ describe('AwsS3', () => {
     })
   })
 
+  describe('companionEndpoint (#6669)', () => {
+    const companion = 'https://companion.example.com'
+    const bucketUrl = 'https://test-bucket.s3.us-east-1.amazonaws.com'
+
+    function createMultipartCore() {
+      const core = new Core().use(AwsS3, {
+        companionEndpoint: companion,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+      return core
+    }
+
+    test('retries transient Companion failures on create, sign part and complete', async ({
+      worker,
+    }) => {
+      const calls: Record<string, number> = {}
+      /** Answers the first call with `status`, later ones with `body`. */
+      const failFirst = (name: string, status: number, body: object) => () => {
+        calls[name] = (calls[name] ?? 0) + 1
+        return calls[name] === 1
+          ? new HttpResponse(null, { status })
+          : HttpResponse.json(body)
+      }
+      worker.use(
+        http.post(
+          `${companion}/s3/multipart`,
+          failFirst('create', 503, { uploadId: 'up-1', key: 'big.dat' }),
+        ),
+        http.get(
+          `${companion}/s3/multipart/up-1/:partNumber`,
+          failFirst('sign', 502, { url: `${bucketUrl}/big.dat` }),
+        ),
+        http.post(
+          `${companion}/s3/multipart/up-1/complete`,
+          failFirst('complete', 429, {
+            location: `${bucketUrl}/big.dat`,
+            key: 'big.dat',
+          }),
+        ),
+        http.put(
+          `${bucketUrl}/big.dat`,
+          () => new HttpResponse('', { headers: { ETag: '"etag-1"' } }),
+        ),
+      )
+
+      const core = createMultipartCore()
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      // Each first call fails once; signing covers two 5 MB+ parts.
+      expect(calls).toEqual({ create: 2, sign: 3, complete: 2 })
+    })
+
+    test('does not retry Companion client errors', async ({ worker }) => {
+      const create = vi.fn(() => new HttpResponse(null, { status: 400 }))
+      worker.use(http.post(`${companion}/s3/multipart`, create))
+
+      const core = createMultipartCore()
+      const onError = vi.fn()
+      core.on('upload-error', onError)
+      await core.upload()
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onError.mock.calls[0][1].request.status).toBe(400)
+      expect(create).toHaveBeenCalledTimes(1)
+    })
+  })
+
   describe('abort', () => {
     test('aborts when file is removed', async () => {
       const signRequest = vi
