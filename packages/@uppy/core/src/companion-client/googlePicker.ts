@@ -65,8 +65,6 @@ export interface UnspecifiedMediaItem extends MediaItemBase {
 
 export type MediaItem = VideoMediaItem | PhotoMediaItem | UnspecifiedMediaItem
 
-export type MediaType = MediaItem['type']
-
 // https://developers.google.com/photos/picker/reference/rest/v1/sessions
 export interface PickingSession {
   id: string
