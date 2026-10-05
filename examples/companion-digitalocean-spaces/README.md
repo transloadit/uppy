@@ -4,7 +4,7 @@ This example uses Uppy to upload files to a
 [DigitalOcean Space](https://digitaloceanspaces.com/). DigitalOcean Spaces has
 an identical API to S3, so we can use the
 [AwsS3](https://uppy.io/docs/aws-s3) plugin. We use @uppy/companion
-with a [custom `endpoint` configuration](./server.cjs#L39) that points to
+with a [custom `endpoint` configuration](./server.ts#L55) that points to
 DigitalOcean.
 
 ## Running it
