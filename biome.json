@@ -11,8 +11,6 @@
       "packages/**",
       "examples/**",
       "scripts/**",
-      "bin/**",
-      "e2e/**",
       "private/**",
       "!packages/**/{angular/src,dist,lib}",
       "!node_modules",
