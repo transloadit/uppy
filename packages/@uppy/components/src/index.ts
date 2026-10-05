@@ -40,6 +40,11 @@ export {
   type ScreenCaptureStore,
 } from './hooks/screencapture.js'
 export {
+  createStorageManagerController,
+  type StorageManagerSnapshot,
+  type StorageManagerStore,
+} from './hooks/storage-manager.js'
+export {
   createWebcamController,
   type WebcamSnapshot,
   type WebcamStatus,
