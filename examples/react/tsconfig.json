@@ -1,20 +1,11 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "useDefineForClassFields": true,
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "allowJs": false,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
     "allowImportingTsExtensions": true,
+    "jsx": "react-jsx",
     "module": "preserve",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
-  },
-  "include": ["src", "src/**/*.tsx"],
-  "references": [{ "path": "./tsconfig.node.json" }]
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "target": "esnext"
+  }
 }
