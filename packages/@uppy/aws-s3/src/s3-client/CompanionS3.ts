@@ -34,7 +34,7 @@ class S3Companion extends S3Client {
       url: `${this.companionEndpoint}/s3${path}`,
       method,
       data,
-      contentType: data && 'application/json',
+      contentType: data ? 'application/json' : undefined,
       signal,
     }).catch((err) => {
       // Only status 0 is a real network error; anything else is an HTTP
