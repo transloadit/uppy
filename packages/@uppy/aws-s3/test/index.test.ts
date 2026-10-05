@@ -648,7 +648,9 @@ describe('AwsS3', () => {
       await core.upload()
 
       expect(onError).toHaveBeenCalledTimes(1)
-      expect(onError.mock.calls[0][1].request.status).toBe(400)
+      const error = onError.mock.calls[0][1]
+      expect(error.message).toBe('Companion request failed with status 400')
+      expect(error.request.status).toBe(400)
       expect(create).toHaveBeenCalledTimes(1)
     })
   })

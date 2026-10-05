@@ -36,6 +36,15 @@ class S3Companion extends S3Client {
       data,
       contentType: data && 'application/json',
       signal,
+    }).catch((err) => {
+      // Only status 0 is a real network error; anything else is an HTTP
+      // error response from Companion and should not be reported as one.
+      const { request } = err
+      if (!request?.status) throw err
+      throw Object.assign(
+        new Error(`Companion request failed with status ${request.status}`),
+        { request },
+      )
     })
     return JSON.parse(xhr.responseText || 'null')
   }
