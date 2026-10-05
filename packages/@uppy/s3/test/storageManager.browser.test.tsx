@@ -33,6 +33,17 @@ it('browses and deletes without a rendered panel', async ({ worker }) => {
   const { state } = manager.getSnapshot()
   expect(state.breadcrumbs.map((crumb) => crumb.id)).toHaveLength(2)
 
+  expect(state.cancellable).toBe(false)
+
+  // The detail survives the refresh that empties the folder meanwhile.
+  manager.getSnapshot().openDetail(state.partialTree[0]!)
+  const refreshing = manager.getSnapshot().refresh()
+  expect(manager.getSnapshot().state.detailItem?.id).toBe(
+    state.partialTree[0]!.id,
+  )
+  await refreshing
+  manager.getSnapshot().closeDetail()
+
   const remove = state.actions.find((action) => action.id === 's3:delete')!
   const done = manager.getSnapshot().runAction(remove, state.partialTree[0]!)
   await vi.waitFor(() =>

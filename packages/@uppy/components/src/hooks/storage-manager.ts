@@ -30,7 +30,10 @@ export type StorageManagerSnapshot = {
     breadcrumbs: PartialTreeFolder[]
     /** What a bulk action runs on: the checked items, top-most only. */
     selected: Item[]
+    /** Kept while a refresh relists its folder; cleared when it is gone. */
     detailItem: Item | undefined
+    /** Whether `cancelOperation` has a running move or bulk change to stop. */
+    cancellable: boolean
     actions: ProviderAction<any, any>[]
     toolbarActions: ProviderToolbarAction<any, any>[]
     bulkActions: ProviderBulkAction<any, any>[]
@@ -79,6 +82,7 @@ export function createStorageManagerController(
   const view = plugin.view as ProviderViews<any, any>
   const subscribers = new Subscribers()
   let didFirstRender = false
+  let lastDetail: Item | undefined
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     _prev,
@@ -90,15 +94,19 @@ export function createStorageManagerController(
 
   const readState = (): StorageManagerSnapshot['state'] => {
     const state = plugin.getPluginState()
+    const partialTree = view.getDisplayedPartialTree()
+    const found = partialTree.find(({ id }) => id === state.detailItemId)
+    // A refresh empties the folder until it is listed again: keep the item
+    // meanwhile. ProviderView closes the detail if the listing lost it.
+    lastDetail =
+      found ?? (lastDetail?.id === state.detailItemId ? lastDetail : undefined)
     return {
       ...state,
-      partialTree: view.getDisplayedPartialTree(),
+      partialTree,
       breadcrumbs: view.getBreadcrumbs(),
       selected: view.getBulkActionItems(),
-      // ponytail: blank while a refresh relists the item's folder; keep the last item in the UI if that flickers.
-      detailItem: view
-        .getDisplayedPartialTree()
-        .find(({ id }) => id === state.detailItemId),
+      detailItem: lastDetail,
+      cancellable: view.canCancelOperation,
       actions: view.opts.actions ?? [],
       toolbarActions: view.opts.toolbarActions ?? [],
       bulkActions: view.opts.bulkActions ?? [],
