@@ -1,6 +1,6 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import sampleImage from '../../compressor/fixtures/image.jpg'
 import BasePlugin, {
   type DefinePluginOpts,
@@ -27,15 +27,6 @@ async function fetchTestImage(): Promise<File> {
 }
 
 describe('src/Core', () => {
-  const RealCreateObjectUrl = globalThis.URL.createObjectURL
-  beforeEach(() => {
-    globalThis.URL.createObjectURL = vi.fn().mockReturnValue('newUrl')
-  })
-
-  afterEach(() => {
-    globalThis.URL.createObjectURL = RealCreateObjectUrl
-  })
-
   it('should expose a class', () => {
     const core = new Core()
     expect(core.constructor.name).toEqual('Uppy')
