@@ -5,6 +5,8 @@ import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-react'
 import App from '../src/App'
 
+const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
+
 /**
  * MSW handlers that mock the tus resumable upload protocol.
  *
@@ -14,10 +16,8 @@ import App from '../src/App'
  *
  * See https://tus.io/protocols/resumable-upload#protocol
  */
-const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
-
 const worker = setupWorker(
-  http.post(TUS_ENDPOINT, async ({ request }) => {
+  http.post(TUS_ENDPOINT, ({ request }) => {
     const uploadLength = request.headers.get('Upload-Length') || '0'
     return new HttpResponse(null, {
       status: 201,
