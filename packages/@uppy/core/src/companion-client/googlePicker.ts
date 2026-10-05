@@ -295,6 +295,11 @@ async function handleDocObjectRecursively({
   return items
 }
 
+// Google's Picker calls back with a "loaded" action once its iframe is ready. If it fails to load
+// (e.g. third-party cookies blocked), it shows an error page without a close button that blocks the
+// whole page, and never calls back. So if we don't hear from it in time, we close it ourselves.
+const DRIVE_PICKER_LOAD_TIMEOUT_MS = 15_000
+
 async function showDrivePicker({
   token,
   apiKey,
@@ -303,6 +308,7 @@ async function showDrivePicker({
   signal,
   onLoadingChange,
   onError,
+  onPickerFailed,
 }: {
   token: string
   apiKey: string
@@ -311,6 +317,7 @@ async function showDrivePicker({
   signal: AbortSignal | undefined
   onLoadingChange: (loading: boolean) => void
   onError: (err: unknown) => void
+  onPickerFailed: () => void
 }): Promise<void> {
   // google drive picker will crash hard if given an invalid token, so we need to check it first
   // https://github.com/transloadit/uppy/pull/5443#pullrequestreview-2452439265
@@ -355,11 +362,27 @@ async function showDrivePicker({
     // NOTE: photos is broken and results in an error being returned from Google
     // I think it's the old Picasa photos
     // .addView(google.picker.ViewId.PHOTOS)
-    .setCallback(onPicked)
+    .setCallback((res) => {
+      clearTimeout(loadTimeout)
+      if (res.action === google.picker.Action.ERROR) {
+        failPicker()
+        return
+      }
+      onPicked(res)
+    })
     .build()
 
+  const failPicker = () => {
+    picker.dispose()
+    onPickerFailed()
+  }
+  const loadTimeout = setTimeout(failPicker, DRIVE_PICKER_LOAD_TIMEOUT_MS)
+
   picker.setVisible(true)
-  signal?.addEventListener('abort', () => picker.dispose())
+  signal?.addEventListener('abort', () => {
+    clearTimeout(loadTimeout)
+    picker.dispose()
+  })
 }
 
 async function showPhotosPicker({
@@ -756,6 +779,10 @@ export function createGooglePickerController({
           onError: (err: unknown) => {
             uppy.log(err)
             uppy.info(uppy.i18n('failedToAddFiles'), 'error')
+          },
+          onPickerFailed: () => {
+            uppy.log('Google Drive Picker failed to load', 'error')
+            uppy.info(uppy.i18n('googleDrivePickerFailed'), 'error', 15_000)
           },
         })
       } else {

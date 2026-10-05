@@ -110,6 +110,8 @@ en_US.strings = {
   generating4: 'AI is working...',
   generating5: 'Creating magic...',
   generatingThumbnails: 'Generating thumbnails...',
+  googleDrivePickerFailed:
+    'Google Drive could not be loaded. This usually happens when your browser blocks third-party cookies. Please allow third-party cookies for this site and try again.',
   import: 'Import',
   importFiles: 'Import files from:',
   importFrom: 'Import from %{name}',
