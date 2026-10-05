@@ -143,4 +143,14 @@ describe('remote credentials with transloadit_gateway', () => {
       'redirect_uri=https://gateway.example.com/',
     )
   })
+
+  test('a failure resolving credentials returns a logged 500, not a silent 200', async () => {
+    // A non-empty but invalid gateway makes `new URL(path, gateway)` throw,
+    // which exercises the catch block. Previously it sent the error page with a
+    // default 200 status (and no log), so the failure looked like a success to
+    // access logs and alerting. It must now return a non-2xx status.
+    const res = await connectWithGateway('not a valid url')
+    expect(res.status).toBe(500)
+    expect(res.text).toContain('Could not fetch credentials')
+  })
 })
