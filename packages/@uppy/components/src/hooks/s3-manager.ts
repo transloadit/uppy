@@ -98,8 +98,7 @@ export function createS3ManagerController(
     const found = partialTree.find(({ id }) => id === state.detailItemId)
     // A refresh empties the folder until it is listed again: keep the item
     // meanwhile. ProviderView closes the detail if the listing lost it.
-    lastDetail =
-      found ?? (lastDetail?.id === state.detailItemId ? lastDetail : undefined)
+    if (found || lastDetail?.id !== state.detailItemId) lastDetail = found
     return {
       ...state,
       partialTree,
@@ -117,12 +116,12 @@ export function createS3ManagerController(
   // `useSyncExternalStore` expects.
   let cachedSnapshot: S3ManagerSnapshot = {
     state: readState(),
-    open: view.openFolder.bind(view),
+    open: view.openFolder,
     openPath: (key) => plugin.openFolderPath(key),
     loadMore: view.loadNextPage.bind(view),
     refresh: () => view.refreshCurrentFolder(true),
-    checkbox: view.toggleCheckbox.bind(view),
-    cancelSelection: view.cancelSelection.bind(view),
+    checkbox: view.toggleCheckbox,
+    cancelSelection: view.cancelSelection,
     toggleSelectionMode: view.toggleSelectionMode,
     openDetail: view.openItemDetail,
     closeDetail: view.closeItemDetail,
@@ -132,8 +131,8 @@ export function createS3ManagerController(
     submitDialog: view.submitDialog,
     cancelDialog: view.cancelDialog,
     cancelOperation: view.cancelLongOperation,
-    login: view.handleAuth.bind(view),
-    logout: view.logout.bind(view),
+    login: view.handleAuth,
+    logout: view.logout,
   }
 
   const getSnapshot = () => {
