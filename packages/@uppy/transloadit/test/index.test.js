@@ -324,4 +324,60 @@ describe('Transloadit', () => {
     // Should be reset to true
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
+
+  it('fails a retried file and allows new uploads when fetching Assembly options fails', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: () => Promise.reject(new Error('signing unavailable')),
+    })
+    const id = uppy.addFile({
+      source: 'test',
+      name: 'abc',
+      data: new Uint8Array(100),
+    })
+    uppy.setFileState(id, { error: 'earlier failure' })
+
+    // Unlike upload(), a retry has no error event to fall back on.
+    await expect(uppy.retryUpload(id)).rejects.toThrow('signing unavailable')
+
+    expect(uppy.getFile(id).error).toBe('signing unavailable')
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('leaves no Assembly behind for an upload cancelled while its options were fetched', async () => {
+    const signing = Promise.withResolvers()
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: () => signing.promise })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => ({
+      assembly_id: 'stale',
+      ok: 'ASSEMBLY_UPLOADING',
+      assembly_ssl_url: 'https://api2.transloadit.com/assemblies/stale',
+      tus_url: 'https://api2.transloadit.com/resumable/files/',
+      websocket_url: 'https://api2.transloadit.com/ws',
+      uploads: [],
+      results: {},
+    }))
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    const id = uppy.addFile(file)
+
+    const upload = uppy.upload()
+    uppy.cancelAll()
+    // Added again, the same file has the same id as the one just removed.
+    expect(uppy.addFile(file)).toBe(id)
+    signing.resolve({
+      params: {
+        auth: { key: 'test-auth-key' },
+        template_id: 'test-template-id',
+      },
+    })
+    await upload
+
+    // Nothing for the next batch to reuse, and the new file is not bound to it.
+    expect(plugin.client.createAssembly).not.toHaveBeenCalled()
+    expect(plugin.assembly).toBeUndefined()
+    expect(uppy.getFile(id).transloadit).toBeUndefined()
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
 })
