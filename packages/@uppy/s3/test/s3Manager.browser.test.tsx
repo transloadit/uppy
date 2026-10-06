@@ -1,4 +1,4 @@
-import { createStorageManagerController } from '@uppy/components'
+import { createS3ManagerController } from '@uppy/components'
 import Uppy from '@uppy/core'
 import {
   createMockS3Companion,
@@ -22,7 +22,7 @@ it('browses and deletes without a rendered panel', async ({ worker }) => {
   const companion = createMockS3Companion({ token: 'test-token' })
   worker.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
-  const manager = createStorageManagerController(uppy, 'S3', {
+  const manager = createS3ManagerController(uppy, 'S3', {
     initialFolderKey: 'docs/',
   })
   const names = () =>

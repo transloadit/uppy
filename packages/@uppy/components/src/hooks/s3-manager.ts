@@ -23,7 +23,7 @@ type Item = PartialTreeFile | PartialTreeFolderNode
  * `@uppy/transloadit-storage`). It will change incompatibly, also in minor
  * releases.
  */
-export type StorageManagerSnapshot = {
+export type S3ManagerSnapshot = {
   state: Omit<UnknownProviderPluginState, 'partialTree'> & {
     /** The open folder's items, not the whole tree. */
     partialTree: Item[]
@@ -59,10 +59,10 @@ export type StorageManagerSnapshot = {
   logout: ProviderViews<any, any>['logout']
 }
 
-/** @experimental See `StorageManagerSnapshot`. */
-export type StorageManagerStore = {
+/** @experimental See `S3ManagerSnapshot`. */
+export type S3ManagerStore = {
   subscribe: (listener: () => void) => () => void
-  getSnapshot: () => StorageManagerSnapshot
+  getSnapshot: () => S3ManagerSnapshot
   mount: () => void
   unmount: () => void
 }
@@ -71,12 +71,12 @@ type StoragePlugin = UnknownProviderPlugin<any, any> & {
   openFolderPath(key: string | null): Promise<boolean>
 }
 
-/** @experimental See `StorageManagerSnapshot`. */
-export function createStorageManagerController(
+/** @experimental See `S3ManagerSnapshot`. */
+export function createS3ManagerController(
   uppy: Uppy<any, any>,
   pluginId: string,
   { initialFolderKey = null }: { initialFolderKey?: string | null } = {},
-): StorageManagerStore {
+): S3ManagerStore {
   const plugin = uppy.getPlugin<StoragePlugin>(pluginId)
   if (!plugin) throw new Error(`(${pluginId}) is not installed`)
   const view = plugin.view as ProviderViews<any, any>
@@ -92,7 +92,7 @@ export function createStorageManagerController(
     if (patch?.plugins?.[pluginId]) subscribers.emit()
   }
 
-  const readState = (): StorageManagerSnapshot['state'] => {
+  const readState = (): S3ManagerSnapshot['state'] => {
     const state = plugin.getPluginState()
     const partialTree = view.getDisplayedPartialTree()
     const found = partialTree.find(({ id }) => id === state.detailItemId)
@@ -115,7 +115,7 @@ export function createStorageManagerController(
 
   // Cached so the reference stays stable while nothing changed, as
   // `useSyncExternalStore` expects.
-  let cachedSnapshot: StorageManagerSnapshot = {
+  let cachedSnapshot: S3ManagerSnapshot = {
     state: readState(),
     open: view.openFolder.bind(view),
     openPath: (key) => plugin.openFolderPath(key),

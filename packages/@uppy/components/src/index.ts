@@ -35,15 +35,15 @@ export {
   type RemoteSourceStore,
 } from './hooks/remote-source.js'
 export {
+  createS3ManagerController,
+  type S3ManagerSnapshot,
+  type S3ManagerStore,
+} from './hooks/s3-manager.js'
+export {
   createScreenCaptureController,
   type ScreenCaptureSnapshot,
   type ScreenCaptureStore,
 } from './hooks/screencapture.js'
-export {
-  createStorageManagerController,
-  type StorageManagerSnapshot,
-  type StorageManagerStore,
-} from './hooks/storage-manager.js'
 export {
   createWebcamController,
   type WebcamSnapshot,
