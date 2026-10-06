@@ -421,4 +421,69 @@ describe('Transloadit', () => {
     expect(uppy.getFile(id).transloadit).toBeUndefined()
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
+
+  /** One deferred `assemblyOptions()` per upload, answered by the test. */
+  function deferredSignings(count) {
+    const signings = Array.from({ length: count }, () =>
+      Promise.withResolvers(),
+    )
+    const signer = {
+      signings,
+      calls: 0,
+      assemblyOptions: () => signings[signer.calls++].promise,
+    }
+    return signer
+  }
+
+  it('reports nothing for a cancelled attempt whose options fail, leaving a newer upload of the same file alone', async () => {
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    const id = uppy.addFile(file)
+
+    const first = uppy.upload()
+    uppy.cancelAll()
+    expect(uppy.addFile(file)).toBe(id)
+    const second = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+    signings[0].reject(new Error('signing unavailable'))
+    await first
+
+    // The file now belongs to the second upload, which is still preparing.
+    expect(uppy.getFile(id).error).toBeFalsy()
+    expect(uppy.getState().allowNewUpload).toBe(false)
+    expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1)
+
+    uppy.cancelAll()
+    signings[1].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await second
+  })
+
+  it('does not reopen admission for a cancelled attempt while another upload is preparing', async () => {
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn()
+    uppy.addFile({ source: 'test', name: 'old.txt', data: new Blob(['old']) })
+
+    const first = uppy.upload()
+    uppy.cancelAll()
+    uppy.addFile({ source: 'test', name: 'new.txt', data: new Blob(['new']) })
+    const second = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+    signings[0].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await first
+
+    expect(plugin.client.createAssembly).not.toHaveBeenCalled()
+    expect(uppy.getState().allowNewUpload).toBe(false)
+    expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1)
+
+    uppy.cancelAll()
+    signings[1].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await second
+  })
 })

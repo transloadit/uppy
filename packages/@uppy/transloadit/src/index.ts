@@ -884,7 +884,7 @@ export default class Transloadit<
 
       if (assembly == null) {
         // Nothing left to upload: every file was removed, or the upload cancelled.
-        this.uppy.setState({ allowNewUpload: true })
+        this.#allowNewUploadIfIdle()
         return
       }
 
@@ -899,6 +899,16 @@ export default class Transloadit<
       this.assembly = assembly
       this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
+      if (cancelled()) {
+        // Its files are gone, or belong to a newer upload by now, which owns
+        // their error state and admission: this attempt has nothing to report.
+        this.uppy.log(
+          `[Transloadit] A cancelled upload could not be prepared: ${toError(err).message}`,
+          'warning',
+        )
+        this.#allowNewUploadIfIdle()
+        return
+      }
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
         // Clear preprocessing state when the Assembly could not be created,
@@ -909,6 +919,16 @@ export default class Transloadit<
       // Reset allowNewUpload on error
       this.uppy.setState({ allowNewUpload: true })
       throw err
+    }
+  }
+
+  /**
+   * Files may be added again once an attempt ends with nothing to upload,
+   * unless another upload is preparing or running meanwhile and holds that.
+   */
+  #allowNewUploadIfIdle() {
+    if (Object.keys(this.uppy.getState().currentUploads).length === 0) {
+      this.uppy.setState({ allowNewUpload: true })
     }
   }
 
