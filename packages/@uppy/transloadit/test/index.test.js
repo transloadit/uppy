@@ -380,4 +380,45 @@ describe('Transloadit', () => {
     expect(uppy.getFile(id).transloadit).toBeUndefined()
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
+
+  it('cancels the Assembly of an upload cancelled while it was being created', async () => {
+    const creating = Promise.withResolvers()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    const status = {
+      assembly_id: 'stale',
+      ok: 'ASSEMBLY_UPLOADING',
+      assembly_ssl_url: 'https://api2.transloadit.com/assemblies/stale',
+      tus_url: 'https://api2.transloadit.com/resumable/files/',
+      websocket_url: 'https://api2.transloadit.com/ws',
+      uploads: [],
+      results: {},
+    }
+    plugin.client.createAssembly = vi.fn(() => creating.promise)
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    const id = uppy.addFile(file)
+
+    const upload = uppy.upload()
+    await vi.waitFor(() =>
+      expect(plugin.client.createAssembly).toHaveBeenCalledOnce(),
+    )
+    uppy.cancelAll()
+    expect(uppy.addFile(file)).toBe(id)
+    creating.resolve(status)
+    await upload
+
+    expect(plugin.client.cancelAssembly).toHaveBeenCalledWith(status)
+    expect(plugin.assembly).toBeUndefined()
+    expect(uppy.getFile(id).transloadit).toBeUndefined()
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
 })
