@@ -1,8 +1,6 @@
 # Uppy Repository Guide
 
-This file provides repository guidance for coding agents. Maintain shared instructions here;
-`CLAUDE.md` imports this file for compatibility with Claude Code versions that do not read
-`AGENTS.md` directly.
+This file provides repository guidance for coding agents. Maintain shared instructions here.
 
 ## Repository Overview
 
