@@ -92,7 +92,8 @@ export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
     | {
         /**
          * Custom function to sign requests.
-         * Called with request details, should return signed headers.
+         * Called with one request, returns the presigned URL for it (see
+         * `PresignedResponse` for the optional `key`, `headers` and `fields`).
          * Alternative to using Companion endpoint.
          */
         signRequest: IT.SignRequestFn
