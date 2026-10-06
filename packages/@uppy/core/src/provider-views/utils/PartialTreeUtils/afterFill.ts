@@ -16,7 +16,7 @@ export type ApiList = (directory: PartialTreeId) => Promise<{
 }>
 
 const recursivelyFetch = async (
-  queue: PQueue,
+  enqueue: (folder: PartialTreeFolderNode) => void,
   poorTree: PartialTree,
   poorFolder: PartialTreeFolderNode,
   apiList: ApiList,
@@ -64,11 +64,7 @@ const recursivelyFetch = async (
   poorFolder.nextPagePath = null
   poorTree.push(...files, ...folders)
 
-  folders.forEach(async (folder) => {
-    queue.add(() =>
-      recursivelyFetch(queue, poorTree, folder, apiList, validateSingleFile),
-    )
-  })
+  folders.forEach(enqueue)
 }
 
 const afterFill = async (
@@ -81,6 +77,26 @@ const afterFill = async (
 
   // fill up the missing parts of a partialTree!
   const poorTree: PartialTree = shallowClone(partialTree)
+  // The first listing to fail (an abort included) fails the whole fill: adding
+  // the files that could be listed and quietly leaving out the rest would be
+  // worse. It also keeps a rejected `queue.add()` from going unhandled.
+  let failure: { error: unknown } | undefined
+  const enqueue = (poorFolder: PartialTreeFolderNode) => {
+    queue
+      .add(() =>
+        recursivelyFetch(
+          enqueue,
+          poorTree,
+          poorFolder,
+          apiList,
+          validateSingleFile,
+        ),
+      )
+      .catch((error: unknown) => {
+        failure ??= { error }
+        queue.clear()
+      })
+  }
   const poorFolders = poorTree.filter(
     (item) =>
       item.type === 'folder' &&
@@ -89,17 +105,7 @@ const afterFill = async (
       (item.cached === false || item.nextPagePath),
   ) as PartialTreeFolderNode[]
   // per each poor folder, recursively fetch all files and make them .checked!
-  poorFolders.forEach((poorFolder) => {
-    queue.add(() =>
-      recursivelyFetch(
-        queue,
-        poorTree,
-        poorFolder,
-        apiList,
-        validateSingleFile,
-      ),
-    )
-  })
+  poorFolders.forEach(enqueue)
 
   queue.on('completed', () => {
     const nOfFilesChecked = poorTree.filter(
@@ -109,6 +115,7 @@ const afterFill = async (
   })
 
   await queue.onIdle()
+  if (failure) throw failure.error
 
   return poorTree
 }

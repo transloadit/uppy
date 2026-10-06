@@ -128,6 +128,33 @@ describe('afterFill()', () => {
     expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '2_4'])
   })
 
+  it('fails the whole fill when a listing fails, instead of leaving files out', async () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const listed: PartialTreeId[] = []
+    const mock = (path: PartialTreeId) => {
+      listed.push(path)
+      if (path === '1') {
+        return Promise.resolve({ nextPagePath: null, items: [_cFile('1_1')] })
+      }
+      return Promise.reject(new Error('listing failed'))
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toThrow('listing failed')
+    expect(listed).toEqual(['1', '2'])
+  })
+
   it('fetches remaining pages in a folder', async () => {
     // prettier-ignore
     const tree: PartialTree = [
