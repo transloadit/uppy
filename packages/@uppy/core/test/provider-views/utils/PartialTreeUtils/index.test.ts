@@ -6,7 +6,9 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '../../../../lib/index.js'
-import afterFill from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
+import afterFill, {
+  type ApiList,
+} from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
 import afterOpenFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterOpenFolder.js'
 import afterScrollFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterScrollFolder.js'
 import afterToggleCheckbox from '../../../../lib/provider-views/utils/PartialTreeUtils/afterToggleCheckbox.js'
@@ -273,6 +275,99 @@ describe('afterFill()', () => {
       '777_2_1',
       '777_2_1_1',
     ])
+  })
+
+  it('rejects when a subfolder listing fails, even though its sibling loads', async () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const boom = new Error('Companion responded 500')
+    const mock: ApiList = (path) => {
+      if (path === '2') {
+        const items = [_cFile('2_1'), _cFolder('ok'), _cFolder('bad')]
+        return Promise.resolve({ nextPagePath: null, items })
+      }
+      if (path === 'ok') {
+        return Promise.resolve({ nextPagePath: null, items: [_cFile('ok_1')] })
+      }
+      // settles last, after 'ok' has already completed
+      if (path === 'bad') {
+        return new Promise<never>((_, reject) =>
+          setTimeout(() => reject(boom), 20),
+        )
+      }
+      return Promise.reject(new Error(`unexpected path ${path}`))
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toBe(boom)
+  })
+
+  it('rejects even when the listing rejects without a reason', async () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const mock: ApiList = () => Promise.reject()
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toBeUndefined()
+  })
+
+  it('rejects with the first failure and starts no listings after it', async () => {
+    // eight checked folders; the queue runs six at a time
+    const ids = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8']
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      ...ids.map((id) =>
+        _folder(id, { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      ),
+    ]
+    const first = new Error('first')
+    const listed: string[] = []
+    const mock: ApiList = (path) => {
+      listed.push(path as string)
+      if (path === 'f1') return Promise.reject(first)
+      if (path === 'f2') return Promise.reject(new Error('second'))
+      // leaves, so unfixed code finishes the crawl instead of recursing forever
+      if (path?.endsWith('_sub')) {
+        return Promise.resolve({ nextPagePath: null, items: [] })
+      }
+      // in-flight siblings finish later and each reveal a subfolder
+      return new Promise((resolve) =>
+        setTimeout(
+          () =>
+            resolve({ nextPagePath: null, items: [_cFolder(`${path}_sub`)] }),
+          20,
+        ),
+      )
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toBe(first)
+    // neither the queued f7/f8 nor the subfolders revealed by f3..f6 are listed
+    expect(listed.sort()).toEqual(['f1', 'f2', 'f3', 'f4', 'f5', 'f6'])
   })
 })
 
