@@ -2214,13 +2214,31 @@ export class Uppy<
 
     this.emit('upload', uploadID, this.getFilesByIds(fileIDs))
 
+    // A retry owns its files from now on. Earlier batches must not process or
+    // classify them using the retry's mutable file state when they finish.
+    const newFileIDs = new Set(fileIDs)
+    const updatedUploads = { ...currentUploads }
+    for (const [id, upload] of Object.entries(currentUploads)) {
+      const remainingFileIDs = upload.fileIDs.filter(
+        (id) => !newFileIDs.has(id),
+      )
+      if (remainingFileIDs.length !== upload.fileIDs.length) {
+        if (remainingFileIDs.length === 0) {
+          // As with file removal, an emptied batch must not be restored later.
+          delete updatedUploads[id]
+        } else {
+          updatedUploads[id] = { ...upload, fileIDs: remainingFileIDs }
+        }
+      }
+    }
+
     this.setState({
       allowNewUpload:
         this.opts.allowMultipleUploadBatches !== false &&
         this.opts.allowMultipleUploads !== false,
 
       currentUploads: {
-        ...currentUploads,
+        ...updatedUploads,
         [uploadID]: {
           fileIDs,
           step: 0,
