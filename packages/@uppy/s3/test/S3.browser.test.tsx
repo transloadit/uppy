@@ -1046,16 +1046,13 @@ describe('S3 provider in the browser', () => {
       })
       await openBucket()
       now += 901
-      const request = plugin.provider
-        .list(null, { signal: new AbortController().signal })
-        .then(
-          (result) => ({ result }),
-          (error: unknown) => ({ error }),
-        )
+      const request = plugin.provider.list(null, {
+        signal: new AbortController().signal,
+      })
       await vi.waitFor(() => expect(getGrant).toHaveBeenCalledTimes(2))
       await plugin.view.logout()
       finishRenewal()
-      expect(await request).toHaveProperty('error')
+      await expect(request).rejects.toThrow()
       expect(await plugin.storage.getItem(plugin.provider.tokenKey)).toBeNull()
       expect(plugin.getPluginState().authenticated).toBe(false)
       expect(
@@ -1082,11 +1079,6 @@ describe('S3 provider in the browser', () => {
       const second = plugin.provider.list(null, {
         signal: new AbortController().signal,
       })
-      // Attach rejection handling immediately: a broken concurrent renewal must not be unhandled.
-      const secondResult = second.then(
-        (result) => ({ result }),
-        (error: unknown) => ({ error }),
-      )
       await vi.waitFor(() =>
         expect(
           companion.calls.filter((call) => call.status === 401),
@@ -1095,7 +1087,7 @@ describe('S3 provider in the browser', () => {
       canceled.abort()
       finishRenewal()
       await first
-      expect(await secondResult).toHaveProperty('result')
+      await second
       expect(getGrant).toHaveBeenCalledTimes(2)
     })
 

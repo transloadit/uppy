@@ -103,7 +103,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       expect(plugin.processQueue).toHaveBeenCalledTimes(1)
     })
 
-    it('should process items in the queue one by one', () => {
+    it('should process items in the queue one by one', async () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
       plugin.requestThumbnail = vi.fn(() => delay(100))
@@ -122,21 +122,15 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       expect(plugin.requestThumbnail).toHaveBeenCalledTimes(1)
       expect(plugin.requestThumbnail).toHaveBeenCalledWith(file1)
 
-      return delay(110)
-        .then(() => {
-          expect(plugin.requestThumbnail).toHaveBeenCalledTimes(2)
-          expect(plugin.requestThumbnail).toHaveBeenCalledWith(file2)
-          return delay(110)
-        })
-        .then(() => {
-          expect(plugin.requestThumbnail).toHaveBeenCalledTimes(3)
-          expect(plugin.requestThumbnail).toHaveBeenCalledWith(file3)
-          return delay(110)
-        })
-        .then(() => {
-          expect(plugin.queue).toEqual([])
-          expect(plugin.queueProcessing).toEqual(false)
-        })
+      await delay(110)
+      expect(plugin.requestThumbnail).toHaveBeenCalledTimes(2)
+      expect(plugin.requestThumbnail).toHaveBeenCalledWith(file2)
+      await delay(110)
+      expect(plugin.requestThumbnail).toHaveBeenCalledTimes(3)
+      expect(plugin.requestThumbnail).toHaveBeenCalledWith(file3)
+      await delay(110)
+      expect(plugin.queue).toEqual([])
+      expect(plugin.queueProcessing).toEqual(false)
     })
 
     it('should revoke object URLs when files are removed', async () => {
@@ -194,9 +188,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   describe('events', () => {
     const core = new MockCore()
     const plugin = new ThumbnailGeneratorPlugin(core)
-    plugin.createThumbnail = vi.fn((file) =>
-      delay(100).then(() => `blob:${file.id}.png`),
-    )
+    plugin.createThumbnail = vi.fn(async (file) => {
+      await delay(100)
+      return `blob:${file.id}.png`
+    })
     plugin.setPreviewURL = vi.fn()
     plugin.install()
 
@@ -223,19 +218,19 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         add({ id: 'bar3', type: 'image/png', data: new Blob() })
       }))
 
-    it('should emit thumbnail:all-generated when all thumbnails were generated', () => {
-      return new Promise((resolve) => {
+    it('should emit thumbnail:all-generated when all thumbnails were generated', async () => {
+      await new Promise((resolve) => {
         core.on('thumbnail:all-generated', resolve)
         add({ id: 'bar4', type: 'image/png', data: new Blob() })
         add({ id: 'bar5', type: 'image/png', data: new Blob() })
-      }).then(() => {
-        expect(plugin.queue).toHaveLength(0)
       })
+
+      expect(plugin.queue).toHaveLength(0)
     })
   })
 
   describe('requestThumbnail', () => {
-    it('should call createThumbnail if it is a supported filetype', () => {
+    it('should call createThumbnail if it is a supported filetype', async () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
@@ -245,17 +240,17 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'image/png', isRemote: false }
-      return plugin.requestThumbnail(file).then(() => {
-        expect(plugin.createThumbnail).toHaveBeenCalledTimes(1)
-        expect(plugin.createThumbnail).toHaveBeenCalledWith(
-          file,
-          plugin.opts.thumbnailWidth,
-          plugin.opts.thumbnailHeight,
-        )
-      })
+      await plugin.requestThumbnail(file)
+
+      expect(plugin.createThumbnail).toHaveBeenCalledTimes(1)
+      expect(plugin.createThumbnail).toHaveBeenCalledWith(
+        file,
+        plugin.opts.thumbnailWidth,
+        plugin.opts.thumbnailHeight,
+      )
     })
 
-    it('should not call createThumbnail if it is not a supported filetype', () => {
+    it('should not call createThumbnail if it is not a supported filetype', async () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
@@ -265,12 +260,12 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'text/html', isRemote: false }
-      return plugin.requestThumbnail(file).then(() => {
-        expect(plugin.createThumbnail).toHaveBeenCalledTimes(0)
-      })
+      await plugin.requestThumbnail(file)
+
+      expect(plugin.createThumbnail).toHaveBeenCalledTimes(0)
     })
 
-    it('should not call createThumbnail if the file is remote', () => {
+    it('should not call createThumbnail if the file is remote', async () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
@@ -280,12 +275,12 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'image/png', isRemote: true }
-      return plugin.requestThumbnail(file).then(() => {
-        expect(plugin.createThumbnail).toHaveBeenCalledTimes(0)
-      })
+      await plugin.requestThumbnail(file)
+
+      expect(plugin.createThumbnail).toHaveBeenCalledTimes(0)
     })
 
-    it('should call setPreviewURL with the thumbnail image', () => {
+    it('should call setPreviewURL with the thumbnail image', async () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
 
@@ -295,10 +290,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'image/png', isRemote: false }
-      return plugin.requestThumbnail(file).then(() => {
-        expect(plugin.setPreviewURL).toHaveBeenCalledTimes(1)
-        expect(plugin.setPreviewURL).toHaveBeenCalledWith('file1', 'preview')
-      })
+      await plugin.requestThumbnail(file)
+
+      expect(plugin.setPreviewURL).toHaveBeenCalledTimes(1)
+      expect(plugin.setPreviewURL).toHaveBeenCalledWith('file1', 'preview')
     })
   })
 
