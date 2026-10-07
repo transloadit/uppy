@@ -47,7 +47,7 @@ test('Upload, pause, and resume functionality', async () => {
   let isPaused = false
   let progress = 0
 
-  const uppy = new Uppy({
+  using uppy = new Uppy({
     // Enable resumable uploads capability for pause/resume functionality
     restrictions: { maxNumberOfFiles: 1 },
   }).use(Dashboard, {

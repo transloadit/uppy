@@ -23,7 +23,7 @@ describe('XHRUpload', () => {
       }),
     )
 
-    const core = new Core<any, { url: string }>()
+    using core = new Core<any, { url: string }>()
     const shouldRetry = vi.fn(() => true)
     const onBeforeRequest = vi.fn(() => {})
     const onAfterResponse = vi.fn(() => {})
@@ -77,7 +77,7 @@ describe('XHRUpload', () => {
       ),
     )
 
-    const core = new Core()
+    using core = new Core()
     const shouldRetry = vi.fn(() => false)
 
     core.use(XHRUpload, {
@@ -138,7 +138,7 @@ describe('XHRUpload', () => {
         }),
       )
 
-      const core = new Core()
+      using core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: 'https://fake-endpoint.uppy.io',
@@ -170,7 +170,7 @@ describe('XHRUpload', () => {
         }),
       )
 
-      const core = new Core()
+      using core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: (file) =>
@@ -203,7 +203,7 @@ describe('XHRUpload', () => {
         ),
       )
 
-      const core = new Core()
+      using core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: (file) =>

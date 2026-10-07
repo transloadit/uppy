@@ -10,7 +10,7 @@ describe('Webcam', () => {
         isTypeSupported: () => true,
       }
 
-      const uppy = new Uppy().use(Webcam)
+      using uppy = new Uppy().use(Webcam)
       expect(
         uppy.getPlugin('Webcam')?.getMediaRecorderOptions().mimeType,
       ).not.toBeDefined()
@@ -22,7 +22,7 @@ describe('Webcam', () => {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
 
-      const uppy = new Uppy().use(Webcam, {
+      using uppy = new Uppy().use(Webcam, {
         preferredVideoMimeType: 'video/webm',
       })
       expect(
@@ -36,7 +36,7 @@ describe('Webcam', () => {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
 
-      const uppy = new Uppy().use(Webcam, {
+      using uppy = new Uppy().use(Webcam, {
         preferredVideoMimeType: 'video/mp4',
       })
       expect(
@@ -50,7 +50,7 @@ describe('Webcam', () => {
         isTypeSupported: () => true,
       }
 
-      const uppy = new Uppy({
+      using uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
@@ -64,7 +64,7 @@ describe('Webcam', () => {
         isTypeSupported: (ty) => ty === 'video/webm',
       }
 
-      const uppy = new Uppy({
+      using uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(
@@ -78,7 +78,7 @@ describe('Webcam', () => {
         isTypeSupported: () => true,
       }
 
-      const uppy = new Uppy({
+      using uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam, {
         preferredVideoMimeType: 'video/webm',
@@ -94,7 +94,7 @@ describe('Webcam', () => {
         isTypeSupported: () => false,
       }
 
-      const uppy = new Uppy({
+      using uppy = new Uppy({
         restrictions: { allowedFileTypes: ['video/mp4', 'video/webm'] },
       }).use(Webcam)
       expect(

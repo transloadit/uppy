@@ -23,7 +23,7 @@ CompressorPlugin.prototype.compress = async (blob: File) => {
 
 describe('CompressorPlugin', () => {
   it('should change update extension in file.name and file.meta.name', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(CompressorPlugin, {
       quality: 0.85,
       mimeType: 'image/webp',

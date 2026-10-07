@@ -129,7 +129,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3Client
-  #queue!: TaskQueue
+  #queue: TaskQueue | undefined
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -150,7 +150,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.#setResumableUploadsCapability(false)
     this.uppy.removeUploader(this.#upload)
     this.uppy.off('cancel-all', this.#handleCancelAll)
-    this.#queue.clear()
+    this.#queue?.clear()
     // Abort and clean up any in-flight uploads
     for (const fileId of Object.keys(this.#uploaders)) {
       const uploader = this.#uploaders[fileId]
@@ -172,7 +172,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
   #handleCancelAll = (): void => {
     this.#setResumableUploadsCapability(true)
-    this.#queue.clear()
+    this.#queue?.clear()
   }
 
   // --------------------------------------------------------------------------
@@ -238,7 +238,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         // via getQueue(), so no outer queue wrapping is needed here.
         return this.#uploadRemoteFile(file)
       }
-      return this.#queue.add(async () => {
+      return this.#queue!.add(async () => {
         // File may have been removed while waiting in the queue.
         // Unlike actively uploading files, queued files don't have an S3Uploader
         // instance yet, so there's no event listener to catch the removal.
