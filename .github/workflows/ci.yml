@@ -43,15 +43,15 @@ jobs:
           cache-from: type=gha,scope=companion-${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=companion-${{ matrix.arch }}
       # A successful build doesn't prove the image runs, so start it and wait
-      # for Companion to respond.
+      # for its health check to pass.
       - name: Smoke test
         run: |
-          docker run --detach --name companion --publish 3020:3020 \
+          docker run --detach --name companion \
             --env COMPANION_SECRET=ci --env COMPANION_DOMAIN=localhost:3020 \
             --env COMPANION_DATADIR=/tmp --env COMPANION_CLIENT_ORIGINS=true \
             companion:ci
           for _ in $(seq 30); do
-            curl --silent --fail http://localhost:3020/health > /dev/null && exit 0
+            [ "$(docker inspect --format '{{.State.Health.Status}}' companion)" = healthy ] && exit 0
             sleep 1
           done
           docker logs companion
