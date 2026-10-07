@@ -6,6 +6,7 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "target": "esnext"
+    "target": "esnext",
+    "types": ["vitest/config"]
   }
 }
