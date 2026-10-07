@@ -204,3 +204,46 @@ test('Upload, pause, and resume functionality', async () => {
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
 })
+
+test('Shows Error heading and retry button when upload fails before first progress event (#6564, #6565)', async () => {
+  render('<div id="uppy"></div>')
+
+  const uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.addUploader(async (fileIDs) => {
+    const file = uppy.getFile(fileIDs[0]!)
+    uppy.emit('upload-start', [file])
+    // Fail immediately without emitting upload-progress
+    uppy.emit('upload-error', file, new Error('Upload failed'))
+  })
+
+  const fileInput = document.querySelector(
+    '.uppy-Dashboard-input',
+  ) as HTMLInputElement
+  await userEvent.upload(
+    fileInput,
+    new File(['test content'], 'failed-file.txt'),
+  )
+
+  await expect.element(page.getByText('failed-file.txt')).toBeVisible()
+
+  // Start upload
+  await page.getByRole('button', { name: 'Upload 1 file' }).click()
+
+  // Wait for upload error state
+  await new Promise((resolve) => setTimeout(resolve, 300))
+
+  // Heading in PickerPanelTopBar should display "Error" instead of "Uploading 1 file" (#6564)
+  const barTitle = document.querySelector('.uppy-DashboardContent-title')
+  expect(barTitle?.textContent).toBe('Error')
+
+  // Individual file retry button should be present even if percentage is undefined (#6565)
+  const retryBtn = document.querySelector(
+    '.uppy-Dashboard-Item-progressIndicator',
+  )
+  expect(retryBtn).not.toBeNull()
+  expect(retryBtn?.getAttribute('aria-label')).toBe('Retry upload')
+})
