@@ -44,10 +44,8 @@ function Folder({
   const ref = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (ref.current && item.status === 'partial') {
-      // Can only be set via JS
-      ref.current.indeterminate = true
-    }
+    // Can only be set via JS, and must be cleared again when the status changes
+    if (ref.current) ref.current.indeterminate = item.status === 'partial'
   }, [item.status])
 
   return (
@@ -159,10 +157,11 @@ export function RemoteSource({
         <div className="flex items-center gap-4 bg-gray-100 py-2 px-4 absolute bottom-0 left-0 right-0">
           <button
             type="button"
-            className="text-blue-500"
-            onClick={() => {
-              done()
-              close()
+            className="text-blue-500 disabled:opacity-50"
+            disabled={!!state.error}
+            onClick={async () => {
+              // done() resolves false when nothing was added (e.g. too many files)
+              if (await done()) close()
             }}
           >
             Done
@@ -179,6 +178,7 @@ export function RemoteSource({
           <p className="text-gray-500 text-sm">
             Selected {state.selectedAmount} items
           </p>
+          {state.error && <p className="text-red-500 text-sm">{state.error}</p>}
         </div>
       )}
     </div>

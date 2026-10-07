@@ -1,9 +1,15 @@
+import { UppyContextProvider } from '@uppy/react'
 import { HttpResponse, http } from 'msw'
 import { setupWorker } from 'msw/browser'
 import { afterAll, beforeAll, describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-react'
+import {
+  describeModalEsc,
+  describeRemoteSource,
+} from '../../shared/remoteSourceTests.js'
 import App from '../src/App'
+import { RemoteSource } from '../src/RemoteSource'
 
 const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 
@@ -168,3 +174,13 @@ describe('RemoteSource Component', () => {
     await loginButton.click()
   })
 })
+
+describeRemoteSource((uppy, close) =>
+  render(
+    <UppyContextProvider uppy={uppy}>
+      <RemoteSource id="Dropbox" close={close} />
+    </UppyContextProvider>,
+  ),
+)
+
+describeModalEsc(() => render(<App />))
