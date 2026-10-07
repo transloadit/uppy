@@ -33,14 +33,10 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
       - name: Build
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
-          context: .
-          file: Dockerfile
           platforms: ${{ matrix.platform }}
           load: true
           tags: companion:ci
@@ -55,7 +51,7 @@ jobs:
             --env COMPANION_DATADIR=/tmp --env COMPANION_CLIENT_ORIGINS=true \
             companion:ci
           for _ in $(seq 30); do
-            curl --silent --fail http://localhost:3020/ > /dev/null && exit 0
+            curl --silent --fail http://localhost:3020/health > /dev/null && exit 0
             sleep 1
           done
           docker logs companion
