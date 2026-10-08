@@ -15,6 +15,21 @@ function render(html: string) {
   return root
 }
 
+function uploadFiles(files: File[]) {
+  const fileInput = document.querySelector(
+    '.uppy-Dashboard-input',
+  ) as HTMLInputElement
+  return userEvent.upload(fileInput, files)
+}
+
+function topBarTitle() {
+  return (
+    document
+      .querySelector('.uppy-DashboardContent-title')
+      ?.textContent?.trim() ?? ''
+  )
+}
+
 test('Basic Dashboard functionality works in the browser', async () => {
   render('<div id="uppy"></div>')
   new Uppy().use(Dashboard, {
@@ -203,4 +218,135 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
+})
+
+test('shows the individual retry button when an upload fails before any progress event', async () => {
+  render('<div id="uppy"></div>')
+
+  let failFirstAttempt = true
+  const uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.addUploader(async (fileIDs) => {
+    const file = uppy.getFile(fileIDs[0]!)!
+    uppy.emit('upload-start', [file])
+
+    if (failFirstAttempt) {
+      failFirstAttempt = false
+      uppy.emit('upload-error', file, new Error('Simulated failure'))
+      return
+    }
+
+    uppy.emit('upload-progress', file, {
+      uploadStarted: file.progress.uploadStarted ?? Date.now(),
+      bytesUploaded: file.size ?? 0,
+      bytesTotal: file.size ?? 0,
+    })
+    uppy.emit('upload-success', file, {
+      status: 200,
+      uploadURL: 'https://example.com/upload/test.txt',
+    })
+  })
+
+  await uploadFiles([new File(['Hello, World!'], 'test.txt')])
+  await expect.element(page.getByText('test.txt')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Upload 1 file' }).click()
+
+  // The file failed before emitting any progress, so its percentage is unknown,
+  // but the individual retry control must still be shown.
+  const fileRetryButton = page.getByTitle('Retry upload', { exact: true })
+  await expect.element(fileRetryButton).toBeVisible()
+
+  // Clicking the retry control uploads the file again and succeeds.
+  await fileRetryButton.click()
+  await expect(page.getByText('Complete', { exact: true })).toBeVisible()
+})
+
+test('hides the individual retry button when the upload failed and hideRetryButton is set', async () => {
+  render('<div id="uppy"></div>')
+
+  const uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+    hideRetryButton: true,
+  })
+
+  uppy.addUploader(async (fileIDs) => {
+    const file = uppy.getFile(fileIDs[0]!)!
+    uppy.emit('upload-start', [file])
+    uppy.emit('upload-error', file, new Error('Simulated failure'))
+  })
+
+  await uploadFiles([new File(['Hello, World!'], 'test.txt')])
+  await expect.element(page.getByText('test.txt')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Upload 1 file' }).click()
+
+  await expect.poll(() => topBarTitle()).toContain('Error')
+  const fileRetryButton = page.getByTitle('Retry upload', { exact: true })
+  await expect(fileRetryButton).not.toBeInTheDocument()
+})
+
+test('shows the error heading when the only upload has failed', async () => {
+  render('<div id="uppy"></div>')
+
+  const uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.addUploader(async (fileIDs) => {
+    const file = uppy.getFile(fileIDs[0]!)!
+    uppy.emit('upload-start', [file])
+    uppy.emit('upload-error', file, new Error('Simulated failure'))
+  })
+
+  await uploadFiles([new File(['Hello, World!'], 'test.txt')])
+  await expect.element(page.getByText('test.txt')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Upload 1 file' }).click()
+
+  await expect.poll(() => topBarTitle()).toBe('Error')
+})
+
+test('keeps an uploading heading for a mixed batch with a failed file and an active upload', async () => {
+  render('<div id="uppy"></div>')
+
+  let finishFileB: (() => void) | null = null
+  const fileBUpload = new Promise<void>((resolve) => {
+    finishFileB = resolve
+  })
+
+  const uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.addUploader(async (fileIDs) => {
+    const files = fileIDs.map((id) => uppy.getFile(id)!)
+    uppy.emit('upload-start', files)
+
+    // First file fails, second file keeps uploading.
+    uppy.emit('upload-error', files[0], new Error('Simulated failure'))
+    await fileBUpload
+  })
+
+  await uploadFiles([
+    new File(['Hello, World!'], 'a.txt'),
+    new File(['Hello, World!'], 'b.txt'),
+  ])
+  await expect.element(page.getByText('a.txt')).toBeVisible()
+
+  await page.getByRole('button', { name: 'Upload 2 files' }).click()
+
+  // Not all files errored, so the heading must not switch to "Error".
+  await expect
+    .poll(() => topBarTitle(), { timeout: 2000 })
+    .toMatch(/Uploading \d+ files/)
+  expect(topBarTitle()).not.toBe('Error')
+
+  finishFileB!()
 })
