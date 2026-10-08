@@ -571,7 +571,7 @@ describe('src/Core', () => {
   })
 
   describe('upload hooks', () => {
-    it('should add data returned from upload hooks to the .upload() result', () => {
+    it('should add data returned from upload hooks to the .upload() result', async () => {
       const core = new Core()
       core.addPreProcessor((_, uploadID) => {
         core.addResultData(uploadID, { pre: 'ok' })
@@ -582,13 +582,12 @@ describe('src/Core', () => {
       core.addUploader((_, uploadID) => {
         core.addResultData(uploadID, { upload: 'ok' })
       })
-      return core.upload().then((result) => {
-        if (result) {
-          expect(result.pre).toBe('ok')
-          expect(result.upload).toBe('ok')
-          expect(result.post).toBe('ok')
-        }
-      })
+      const result = await core.upload()
+
+      expect.assert(result)
+      expect(result.pre).toBe('ok')
+      expect(result.upload).toBe('ok')
+      expect(result.post).toBe('ok')
     })
   })
 
@@ -616,16 +615,16 @@ describe('src/Core', () => {
         data: await fetchTestImage(),
       })
 
-      return core.upload().then(() => {
-        const fileId = Object.keys(core.getState().files)[0]
-        expect(preprocessor1.mock.calls.length).toEqual(1)
+      await core.upload()
 
-        expect(preprocessor1.mock.calls[0][0].length).toEqual(1)
-        expect(preprocessor1.mock.calls[0][0][0]).toEqual(fileId)
+      const fileId = Object.keys(core.getState().files)[0]
+      expect(preprocessor1.mock.calls.length).toEqual(1)
 
-        expect(preprocessor2.mock.calls[0][0].length).toEqual(1)
-        expect(preprocessor2.mock.calls[0][0][0]).toEqual(fileId)
-      })
+      expect(preprocessor1.mock.calls[0][0].length).toEqual(1)
+      expect(preprocessor1.mock.calls[0][0][0]).toEqual(fileId)
+
+      expect(preprocessor2.mock.calls[0][0].length).toEqual(1)
+      expect(preprocessor2.mock.calls[0][0][0]).toEqual(fileId)
     })
 
     it('should not pass removed file IDs to next step', async () => {
@@ -735,22 +734,22 @@ describe('src/Core', () => {
         data: await fetchTestImage(),
       })
 
-      return core.upload().then(() => {
-        expect(postprocessor1.mock.calls.length).toEqual(1)
-        // const lastModifiedTime = new Date()
-        // const fileId = 'foojpg' + lastModifiedTime.getTime()
-        const fileId = 'uppy-foo/jpg-1e-image'
+      await core.upload()
 
-        expect(postprocessor1.mock.calls[0][0].length).toEqual(1)
-        expect(postprocessor1.mock.calls[0][0][0].substring(0, 17)).toEqual(
-          fileId.substring(0, 17),
-        )
+      expect(postprocessor1.mock.calls.length).toEqual(1)
+      // const lastModifiedTime = new Date()
+      // const fileId = 'foojpg' + lastModifiedTime.getTime()
+      const fileId = 'uppy-foo/jpg-1e-image'
 
-        expect(postprocessor2.mock.calls[0][0].length).toEqual(1)
-        expect(postprocessor2.mock.calls[0][0][0].substring(0, 17)).toEqual(
-          fileId.substring(0, 17),
-        )
-      })
+      expect(postprocessor1.mock.calls[0][0].length).toEqual(1)
+      expect(postprocessor1.mock.calls[0][0][0].substring(0, 17)).toEqual(
+        fileId.substring(0, 17),
+      )
+
+      expect(postprocessor2.mock.calls[0][0].length).toEqual(1)
+      expect(postprocessor2.mock.calls[0][0][0].substring(0, 17)).toEqual(
+        fileId.substring(0, 17),
+      )
     })
 
     it('should update the file progress state when postprocess-progress event is fired', async () => {
@@ -1194,7 +1193,7 @@ describe('src/Core', () => {
       })
     })
 
-    it('should only upload files that are not already assigned to another upload id', () => {
+    it('should only upload files that are not already assigned to another upload id', async () => {
       const core = new Core()
       // @ts-expect-error
       core.store.state.currentUploads = {
@@ -1238,15 +1237,13 @@ describe('src/Core', () => {
       })
 
       // uploadID is random, we don't want randomness in the snapshot
-      return expect(
-        core
-          .upload()
-          .then((r) =>
-            typeof r!.uploadID === 'string' && r!.uploadID.length === 21
-              ? { ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }
-              : r,
-          ),
-      ).resolves.toMatchSnapshot()
+      const r = await core.upload()
+      const result =
+        typeof r!.uploadID === 'string' && r!.uploadID.length === 21
+          ? { ...r, uploadID: 'cjd09qwxb000dlql4tp4doz8h' }
+          : r
+
+      expect(result).toMatchSnapshot()
     })
 
     it('should not upload if onBeforeUpload returned false', async () => {

@@ -1,7 +1,7 @@
 import emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 
-type UploadMessage = Record<string, unknown> & { action: string }
+export type UploadMessage = Record<string, unknown> & { action: string }
 
 function isUploadMessage(value: unknown): value is UploadMessage {
   return isRecord(value) && typeof value['action'] === 'string'
