@@ -1,5 +1,13 @@
 # @uppy/companion
 
+## 7.1.2
+
+### Patch Changes
+
+- c0e17d5: Make the init option `s3.expires` optional.
+- c0e17d5: Expose the `ProviderListResponse` type.
+- c0e17d5: Export the `CompanionInitOptions` type.
+
 ## 7.1.1
 
 ### Patch Changes
