@@ -1,7 +1,9 @@
 import { playwright } from '@vitest/browser-playwright'
+import { msw } from 'msw/vite'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
+  plugins: [msw()],
   test: {
     projects: [
       { test: { name: 'unit', include: ['test/**/*.test.ts'] } },

@@ -50,7 +50,7 @@
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@vitest/browser-playwright": "^4.1.11",
-    "msw": "^2.10.4",
+    "msw": "^3.0.1",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"

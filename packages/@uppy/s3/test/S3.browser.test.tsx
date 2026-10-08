@@ -1,19 +1,20 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { HttpResponse, http } from 'msw'
-import type { SetupWorker } from 'msw/browser'
 import {
   afterEach,
   beforeEach,
   describe,
   expect,
   expectTypeOf,
+  it,
   vi,
 } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import { network } from 'virtual:msw'
 import {
   createMockS3Companion,
   type MockS3Companion,
@@ -22,7 +23,6 @@ import {
   toMswHandlers,
 } from '@uppy-dev/s3-mock-companion'
 import S3, { type S3Options } from '../lib/S3.js'
-import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
@@ -39,21 +39,18 @@ const pluginOf = (app: Uppy): TestPlugin => {
 }
 
 /** Serves a mock Companion through msw. */
-function serveCompanion(worker: SetupWorker, options?: MockS3CompanionOptions) {
+function serveCompanion(options?: MockS3CompanionOptions) {
   const companion = createMockS3Companion({ token: TOKEN, ...options })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   return companion
 }
 
 /** Serves a mock Companion and installs the plugin into an inline Dashboard. */
-function setup(
-  worker: SetupWorker,
-  {
-    companion: companionOptions,
-    ...options
-  }: Partial<S3Options> & { companion?: MockS3CompanionOptions } = {},
-) {
-  const companion = serveCompanion(worker, companionOptions)
+function setup({
+  companion: companionOptions,
+  ...options
+}: Partial<S3Options> & { companion?: MockS3CompanionOptions } = {}) {
+  const companion = serveCompanion(companionOptions)
   const target = document.createElement('div')
   document.body.appendChild(target)
   uppy = new Uppy().use(Dashboard, { target, inline: true }).use(S3, {
@@ -110,11 +107,12 @@ afterEach(() => {
   uppy = undefined
 })
 
+network.configure({ context: { quiet: true } })
+await network.enable()
+
 describe('S3 provider in the browser', () => {
-  it('auto-connects and lists the bucket Companion serves', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker)
+  it('auto-connects and lists the bucket Companion serves', async () => {
+    const { companion } = setup()
 
     await openBucket()
     await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
@@ -123,21 +121,17 @@ describe('S3 provider in the browser', () => {
     expectLoginBeforeListing(companion)
   })
 
-  it('reuses a stored session instead of connecting again', async ({
-    worker,
-  }) => {
+  it('reuses a stored session instead of connecting again', async () => {
     localStorage.setItem('companion-S3-auth-token', TOKEN)
-    const { companion } = setup(worker)
+    const { companion } = setup()
 
     await openBucket()
     expect(companion.lastCall('/s3/simple-auth')).toBeUndefined()
     expect(companion.calls.every((call) => call.token === TOKEN)).toBe(true)
   })
 
-  it('pins a queued import URL to the bucket where the file was selected', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker)
+  it('pins a queued import URL to the bucket where the file was selected', async () => {
+    const { plugin } = setup()
     await openBucket()
     const queuedUrl = new URL(plugin.provider.fileUrl('readme.md'))
     expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
@@ -151,8 +145,8 @@ describe('S3 provider in the browser', () => {
     expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
   })
 
-  it('opens a folder beyond the first listing page', async ({ worker }) => {
-    const { plugin } = setup(worker, {
+  it('opens a folder beyond the first listing page', async () => {
+    const { plugin } = setup({
       companion: {
         pageSize: 1,
         folders: {
@@ -168,10 +162,8 @@ describe('S3 provider in the browser', () => {
     expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
   })
 
-  it('normalizes grant roots before deriving customer paths', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, {
+  it('normalizes grant roots before deriving customer paths', async () => {
+    const { plugin } = setup({
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: '/tenant' }),
     })
@@ -179,8 +171,8 @@ describe('S3 provider in the browser', () => {
     expect(plugin.rootPrefix).toBe('tenant/')
   })
 
-  it('forgets the session on logout', async ({ worker }) => {
-    const { plugin } = setup(worker, {
+  it('forgets the session on logout', async () => {
+    const { plugin } = setup({
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
     })
@@ -192,10 +184,8 @@ describe('S3 provider in the browser', () => {
     expect(plugin.canWrite).toBe(false)
   })
 
-  it('keeps a cancelled rename from discarding its listing', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
+  it('keeps a cancelled rename from discarding its listing', async () => {
+    const { plugin } = setup({ mode: 'manager' })
     await openBucket()
     const item = plugin
       .getPluginState()
@@ -211,10 +201,8 @@ describe('S3 provider in the browser', () => {
     expect(refresh).not.toHaveBeenCalled()
   })
 
-  it('hides write actions when Companion reports a read-only session', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, {
+  it('hides write actions when Companion reports a read-only session', async () => {
+    const { plugin } = setup({
       mode: 'manager',
       companion: { canWrite: false },
     })
@@ -230,10 +218,8 @@ describe('S3 provider in the browser', () => {
       .not.toBeInTheDocument()
   })
 
-  it('offers no built-in file changes with enableActions: false', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager', enableActions: false })
+  it('offers no built-in file changes with enableActions: false', async () => {
+    const { plugin } = setup({ mode: 'manager', enableActions: false })
     await openBucket()
     expect(plugin.canWrite).toBe(true)
     expect(plugin.builtInActions()).toEqual([])
@@ -241,10 +227,8 @@ describe('S3 provider in the browser', () => {
     expect(plugin.builtInBulkActions()).toEqual([])
   })
 
-  it('replaces an open prompt without keeping its previous input', async ({
-    worker,
-  }) => {
-    const { view } = setup(worker).plugin
+  it('replaces an open prompt without keeping its previous input', async () => {
+    const { view } = setup().plugin
     await openBucket()
     const first = view.prompt({ title: 'First name', defaultValue: 'old.txt' })
     await expect
@@ -296,8 +280,8 @@ describe('S3 provider in the browser', () => {
   ])('the mock preserves a same-named folder when %s a file', async ([
     ,
     mutate,
-  ], { worker }) => {
-    const { companion, plugin } = setup(worker, {
+  ]) => {
+    const { companion, plugin } = setup({
       companion: {
         folders: {
           '': [
@@ -321,10 +305,8 @@ describe('S3 provider in the browser', () => {
     })
   })
 
-  it('restores a session scoped to a prefix and opens its nested folder', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, {
+  it('restores a session scoped to a prefix and opens its nested folder', async () => {
+    const { plugin } = setup({
       autoConnect: false,
       companion: {
         // Companion confines this session to a prefix and reports it in the
@@ -343,10 +325,8 @@ describe('S3 provider in the browser', () => {
     expect(await plugin.openFolderPath('outside/')).toBe(false)
   })
 
-  it('opens a headless folder without waiting for a panel to start the listing', async ({
-    worker,
-  }) => {
-    serveCompanion(worker)
+  it('opens a headless folder without waiting for a panel to start the listing', async () => {
+    serveCompanion()
     uppy = new Uppy().use(S3, { companionUrl: COMPANION })
     const plugin = pluginOf(uppy)
     const started = performance.now()
@@ -355,10 +335,8 @@ describe('S3 provider in the browser', () => {
     expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
   }, 20000)
 
-  it('bulk actions receive only topmost selected entries and refresh after partial failure', async ({
-    worker,
-  }) => {
-    const { companion, plugin } = setup(worker, { mode: 'manager' })
+  it('bulk actions receive only topmost selected entries and refresh after partial failure', async () => {
+    const { companion, plugin } = setup({ mode: 'manager' })
     await openBucket()
     await plugin.view.openFolder('docs%2F')
     await plugin.view.openFolder(null)
@@ -387,10 +365,8 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('selecting the only child never makes its propagated parent a mutation target', async ({
-    worker,
-  }) => {
-    const { companion, plugin } = setup(worker, { mode: 'manager' })
+  it('selecting the only child never makes its propagated parent a mutation target', async () => {
+    const { companion, plugin } = setup({ mode: 'manager' })
     await openBucket()
     await plugin.view.openFolder('docs%2F')
     const file = plugin
@@ -416,10 +392,8 @@ describe('S3 provider in the browser', () => {
     )
   })
 
-  it('resolves typed move destinations relative to the granted root', async ({
-    worker,
-  }) => {
-    const { companion, plugin } = setup(worker, {
+  it('resolves typed move destinations relative to the granted root', async () => {
+    const { companion, plugin } = setup({
       mode: 'manager',
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
@@ -458,8 +432,8 @@ describe('S3 provider in the browser', () => {
     await expect.poll(() => plugin.getPluginState().loading).toBeFalsy()
   })
 
-  it('shows plain chrome when standalone', async ({ worker }) => {
-    setup(worker, {
+  it('shows plain chrome when standalone', async () => {
+    setup({
       mode: 'manager',
       standalone: true,
     })
@@ -481,13 +455,11 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('dismisses dialogs on a backdrop click and previews an item once', async ({
-    worker,
-  }) => {
+  it('dismisses dialogs on a backdrop click and previews an item once', async () => {
     const getPreviewUrl = vi.fn(
       async () => 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
     )
-    const { plugin } = setup(worker, { mode: 'manager', getPreviewUrl })
+    const { plugin } = setup({ mode: 'manager', getPreviewUrl })
     await openBucket()
 
     /** A click on the `::backdrop` (outside the box), and one that only ends there. */
@@ -530,10 +502,8 @@ describe('S3 provider in the browser', () => {
     await expect.element(prompt).not.toBeInTheDocument()
   })
 
-  it('says a failed action failed, and blames Companion only for its requests', async ({
-    worker,
-  }) => {
-    setup(worker, {
+  it('says a failed action failed, and blames Companion only for its requests', async () => {
+    setup({
       mode: 'manager',
       actions: [
         {
@@ -558,7 +528,7 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
     expect(document.body.textContent).not.toContain('internal detail')
 
-    worker.use(
+    network.use(
       http.post(`${COMPANION}/s3/mutate/delete`, () =>
         HttpResponse.json({}, { status: 500 }),
       ),
@@ -573,10 +543,8 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('keeps the details open through overlapping refreshes and refocuses the item', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
+  it('keeps the details open through overlapping refreshes and refocuses the item', async () => {
+    const { plugin } = setup({ mode: 'manager' })
     await openBucket()
     await page.getByRole('button', { name: 'Open readme.md' }).click()
     const details = page.getByRole('dialog', { name: 'readme.md' })
@@ -597,10 +565,8 @@ describe('S3 provider in the browser', () => {
     )
   })
 
-  it('adds files dropped on its panel to the uploads, like a drop on the Dashboard', async ({
-    worker,
-  }) => {
-    setup(worker)
+  it('adds files dropped on its panel to the uploads, like a drop on the Dashboard', async () => {
+    setup()
     await openBucket()
     const panel = document.querySelector('[data-uppy-panelType="PickerPanel"]')
     if (!panel) throw new Error('Missing picker panel')
@@ -616,10 +582,8 @@ describe('S3 provider in the browser', () => {
       .toEqual(['dropped.txt'])
   })
 
-  it('toggles selection mode with a button that says what it does', async ({
-    worker,
-  }) => {
-    setup(worker, { mode: 'manager' })
+  it('toggles selection mode with a button that says what it does', async () => {
+    setup({ mode: 'manager' })
     await openBucket()
     await page.getByRole('button', { name: 'Select multiple' }).click()
     await page.getByRole('checkbox', { name: 'readme.md' }).click()
@@ -632,10 +596,8 @@ describe('S3 provider in the browser', () => {
       .not.toBeInTheDocument()
   })
 
-  it('counts the selection as the bulk actions get it and warns about folder contents', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
+  it('counts the selection as the bulk actions get it and warns about folder contents', async () => {
+    const { plugin } = setup({ mode: 'manager' })
     await openBucket()
     // With docs listed, its file is checked along with it: still one item.
     await plugin.view.openFolder('docs%2F')
@@ -667,8 +629,8 @@ describe('S3 provider in the browser', () => {
     await userEvent.keyboard('{Escape}')
   })
 
-  it('offers no multi-select in an empty folder', async ({ worker }) => {
-    setup(worker, {
+  it('offers no multi-select in an empty folder', async () => {
+    setup({
       mode: 'manager',
       companion: { folders: { '': [{ name: 'empty', isFolder: true }] } },
     })
@@ -682,10 +644,8 @@ describe('S3 provider in the browser', () => {
     await expect.element(toggle).not.toBeInTheDocument()
   })
 
-  it('keeps the controls that would abort a long operation disabled while it runs', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
+  it('keeps the controls that would abort a long operation disabled while it runs', async () => {
+    const { plugin } = setup({ mode: 'manager' })
     await openBucket()
     await page.getByRole('button', { name: 'Select multiple' }).click()
     await page.getByRole('checkbox', { name: 'readme.md' }).click()
@@ -715,10 +675,8 @@ describe('S3 provider in the browser', () => {
     await expect.element(page.getByRole('searchbox')).toBeEnabled()
   })
 
-  it('applies mode and enableActions changed with setOptions right away', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker)
+  it('applies mode and enableActions changed with setOptions right away', async () => {
+    const { plugin } = setup()
     await openBucket()
     const newFolder = page.getByRole('button', {
       name: 'New folder…',
@@ -742,10 +700,8 @@ describe('S3 provider in the browser', () => {
     await expect.element(newFolder).not.toBeInTheDocument()
   })
 
-  it('opens one item menu at a time and closes it with Escape', async ({
-    worker,
-  }) => {
-    setup(worker, { mode: 'manager' })
+  it('opens one item menu at a time and closes it with Escape', async () => {
+    setup({ mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
@@ -772,8 +728,8 @@ describe('S3 provider in the browser', () => {
    * (the inline harness never hits the Dashboard's document-level Escape
    * handler); resolves to a spy on the modal closing.
    */
-  async function openDetailsInDashboardModal(worker: SetupWorker) {
-    serveCompanion(worker)
+  async function openDetailsInDashboardModal() {
+    serveCompanion()
     uppy = new Uppy()
       .use(Dashboard, { inline: false })
       .use(S3, { companionUrl: COMPANION, mode: 'manager' })
@@ -793,10 +749,8 @@ describe('S3 provider in the browser', () => {
     return modalClosed
   }
 
-  it('closes the item detail dialog with Escape without closing the Dashboard modal', async ({
-    worker,
-  }) => {
-    const modalClosed = await openDetailsInDashboardModal(worker)
+  it('closes the item detail dialog with Escape without closing the Dashboard modal', async () => {
+    const modalClosed = await openDetailsInDashboardModal()
 
     await userEvent.keyboard('{Escape}')
     await expect
@@ -806,9 +760,7 @@ describe('S3 provider in the browser', () => {
     expect(modalClosed).not.toHaveBeenCalled()
   })
 
-  it('closes the item detail dialog with Escape on engines without showModal()', async ({
-    worker,
-  }) => {
+  it('closes the item detail dialog with Escape on engines without showModal()', async () => {
     // Safari < 15.4 has no showModal(); the dialog then opens non-modal and
     // never fires `cancel` on Escape.
     const showModal = Object.getOwnPropertyDescriptor(
@@ -821,7 +773,7 @@ describe('S3 provider in the browser', () => {
       configurable: true,
     })
     try {
-      const modalClosed = await openDetailsInDashboardModal(worker)
+      const modalClosed = await openDetailsInDashboardModal()
 
       await userEvent.keyboard('{Escape}')
       await expect
@@ -833,10 +785,8 @@ describe('S3 provider in the browser', () => {
     }
   })
 
-  it('creates a folder through the inline dialog and refreshes the listing', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
+  it('creates a folder through the inline dialog and refreshes the listing', async () => {
+    const { companion } = setup({ mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'New folder' }).click()
@@ -858,8 +808,8 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('renames in place and moves with a path', async ({ worker }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
+  it('renames in place and moves with a path', async () => {
+    const { companion } = setup({ mode: 'manager' })
     await openBucket()
 
     // Bare name → rename in the current folder
@@ -890,10 +840,8 @@ describe('S3 provider in the browser', () => {
       .not.toBeInTheDocument()
   })
 
-  it('renames a folder by moving its contents one by one', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
+  it('renames a folder by moving its contents one by one', async () => {
+    const { companion } = setup({ mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
@@ -922,8 +870,8 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('refuses to move a folder into itself', async ({ worker }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
+  it('refuses to move a folder into itself', async () => {
+    const { companion } = setup({ mode: 'manager' })
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for docs' }).click()
@@ -938,10 +886,8 @@ describe('S3 provider in the browser', () => {
     expect(companion.lastCall('/s3/mutate/create-folder')).toBeUndefined()
   })
 
-  it('deletes files after confirmation and folders with their contents', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
+  it('deletes files after confirmation and folders with their contents', async () => {
+    const { companion } = setup({ mode: 'manager' })
     await openBucket()
 
     // Cancel leaves everything alone
@@ -993,10 +939,8 @@ describe('S3 provider in the browser', () => {
     expect(companion.folders.has('docs/')).toBe(false)
   })
 
-  it('offers no file changes in picker mode: picking is not changing', async ({
-    worker,
-  }) => {
-    setup(worker)
+  it('offers no file changes in picker mode: picking is not changing', async () => {
+    setup()
     await openBucket()
 
     await page.getByRole('checkbox', { name: /docs/ }).click()
@@ -1012,12 +956,10 @@ describe('S3 provider in the browser', () => {
   })
 
   describe('server-issued grants', () => {
-    it('connects with a grant instead of a plain session', async ({
-      worker,
-    }) => {
+    it('connects with a grant instead of a plain session', async () => {
       const grant = mockGrant({ bucket: 'my-bucket' })
       const getGrant = vi.fn(async () => grant)
-      const { companion } = setup(worker, {
+      const { companion } = setup({
         mode: 'manager',
         getGrant,
       })
@@ -1035,12 +977,10 @@ describe('S3 provider in the browser', () => {
         .toBeVisible()
     })
 
-    it('does not restore a session when a pending grant resolves after logout', async ({
-      worker,
-    }) => {
+    it('does not restore a session when a pending grant resolves after logout', async () => {
       let now = Math.floor(Date.now() / 1000)
       const { getGrant, finishRenewal } = grantWithPendingRenewal(() => now)
-      const { companion, plugin } = setup(worker, {
+      const { companion, plugin } = setup({
         getGrant,
         companion: { nowSeconds: () => now },
       })
@@ -1063,12 +1003,10 @@ describe('S3 provider in the browser', () => {
       ).toHaveLength(1)
     })
 
-    it('shares renewal across concurrent expired requests and does not inherit a caller abort', async ({
-      worker,
-    }) => {
+    it('shares renewal across concurrent expired requests and does not inherit a caller abort', async () => {
       let now = Math.floor(Date.now() / 1000)
       const { getGrant, finishRenewal } = grantWithPendingRenewal(() => now)
-      const { companion, plugin } = setup(worker, {
+      const { companion, plugin } = setup({
         getGrant,
         companion: { nowSeconds: () => now },
       })
@@ -1099,14 +1037,12 @@ describe('S3 provider in the browser', () => {
       expect(getGrant).toHaveBeenCalledTimes(2)
     })
 
-    it('fetches a new grant when the session expires mid-way', async ({
-      worker,
-    }) => {
+    it('fetches a new grant when the session expires mid-way', async () => {
       let now = Math.floor(Date.now() / 1000)
       const getGrant = vi.fn(async () =>
         mockGrant({ bucket: 'my-bucket', exp: now + 900 }),
       )
-      const { companion } = setup(worker, {
+      const { companion } = setup({
         getGrant,
         companion: { nowSeconds: () => now },
       })
@@ -1122,10 +1058,8 @@ describe('S3 provider in the browser', () => {
       ).toHaveLength(2)
     })
 
-    it('hides the mutation actions for a read-only grant', async ({
-      worker,
-    }) => {
-      const { companion } = setup(worker, {
+    it('hides the mutation actions for a read-only grant', async () => {
+      const { companion } = setup({
         getGrant: async () =>
           mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       })
