@@ -222,13 +222,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/core@npm:^22.1.1":
-  version: 22.1.5
-  resolution: "@angular/core@npm:22.1.5"
+"@angular/core@npm:^22.2.1":
+  version: 22.2.1
+  resolution: "@angular/core@npm:22.2.1"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/compiler": 22.1.5
+    "@angular/compiler": 22.2.1
     rxjs: ^6.5.3 || ^7.4.0
     zone.js: ~0.15.0 || ~0.16.0
   peerDependenciesMeta:
@@ -236,7 +236,7 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10/c1f71bc48eff08865ea253161d94da4b52963da735860f00d09d2268a81114141cb96b6d2b5871a4515c1393872f99b6b1c1cdf8644ef752217169e0bad30c85
+  checksum: 10/986434a77632e09450aab8a1421762dbc018a671b8d4a1a8eb9055b31bc1499cb909779a3722032c8e5de32a944ad8dc1561ddd8d91fef64b0a3409b4f232692
   languageName: node
   linkType: hard
 
@@ -5011,7 +5011,7 @@ __metadata:
   dependencies:
     "@angular/compiler": "npm:^22.1.1"
     "@angular/compiler-cli": "npm:^22.1.1"
-    "@angular/core": "npm:^22.1.1"
+    "@angular/core": "npm:^22.2.1"
     "@uppy-dev/tsconfig": "workspace:^"
     ng-packagr: "npm:^22.1.1"
     rxjs: "npm:~7.8.0"
@@ -7817,7 +7817,7 @@ __metadata:
     "@angular/common": "npm:^22.1.4"
     "@angular/compiler": "npm:^22.1.1"
     "@angular/compiler-cli": "npm:^22.1.1"
-    "@angular/core": "npm:^22.1.1"
+    "@angular/core": "npm:^22.2.1"
     "@angular/forms": "npm:^22.1.1"
     "@angular/platform-browser": "npm:^22.2.0"
     "@angular/platform-browser-dynamic": "npm:^22.1.1"
