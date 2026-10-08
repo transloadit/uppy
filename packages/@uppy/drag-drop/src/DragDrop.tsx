@@ -143,14 +143,15 @@ export default class DragDrop<M extends Meta, B extends Body> extends UIPlugin<
       this.uppy.log(error, 'error')
     }
 
+    // Browsers empty `event.dataTransfer` once this handler yields
+    this.opts.onDrop?.(event)
+
     // Add all dropped files
     const files = await getDroppedFiles(event.dataTransfer!, { logDropError })
     if (files.length > 0) {
       this.uppy.log('[DragDrop] Files dropped')
       this.addFiles(files)
     }
-
-    this.opts.onDrop?.(event)
   }
 
   private renderHiddenFileInput() {
