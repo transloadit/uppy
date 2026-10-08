@@ -329,7 +329,8 @@ en_US.strings = {
     '1': '%{smart_count} more files added',
   },
   xTimeLeft: '%{time} left',
-  youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+  youCanOnlyUploadFileTypes:
+    '%{file} type is not permitted. You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'You can only upload %{smart_count} file',
     '1': 'You can only upload %{smart_count} files',
