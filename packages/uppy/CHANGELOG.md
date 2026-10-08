@@ -1,5 +1,25 @@
 # uppy
 
+## 6.0.5
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+- Updated dependencies [ec0c114]
+- Updated dependencies [715eb80]
+  - @uppy/aws-s3@6.3.0
+  - @uppy/audio@4.0.2
+  - @uppy/core@6.2.1
+  - @uppy/dashboard@6.0.2
+  - @uppy/drag-drop@6.0.1
+  - @uppy/drop-target@5.0.1
+  - @uppy/image-editor@5.0.1
+  - @uppy/image-generator@2.0.1
+  - @uppy/screen-capture@6.0.2
+  - @uppy/status-bar@6.0.1
+  - @uppy/url@6.0.2
+  - @uppy/webcam@6.0.2
+
 ## 6.0.4
 
 ### Patch Changes
