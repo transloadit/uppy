@@ -1,10 +1,11 @@
 import Uppy, { type UppyEventMap, type UppyOptions } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import XHRUpload from '@uppy/xhr-upload'
-import { beforeEach, describe, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import { network } from 'virtual:msw'
 import GoldenRetriever from '@uppy/golden-retriever'
 import { HttpResponse, http } from 'msw'
 import IndexedDBMetaDataStore from '../lib/IndexedDBMetaDataStore.js'
@@ -13,7 +14,6 @@ import IndexedDBStore, {
   DB_NAME,
   METADATA_STORE_NAME,
 } from '../lib/IndexedDBStore.js'
-import { test } from './test-extend.js'
 
 // The recovery snapshot now lives in IndexedDB's `metadata` store; clearing it
 // (plus localStorage for the fallback path) isolates tests from each other.
@@ -48,6 +48,13 @@ function createUppy(
   })
 }
 
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => {
+  network.resetHandlers()
+})
+
 beforeEach(async () => {
   // @ts-expect-error dunno
   GoldenRetriever[Symbol.for('uppy test: throttleTime')] = 0
@@ -70,8 +77,8 @@ const createMockFile = ({
 }) => new File(['a'.repeat(size)], name, { type })
 
 describe('Golden retriever', () => {
-  test('Restore files', async ({ worker }) => {
-    worker.use(
+  test('Restore files', async () => {
+    network.use(
       http.post('http://localhost/upload', () => HttpResponse.json({})),
     )
 
@@ -119,9 +126,9 @@ describe('Golden retriever', () => {
     expect(uppy.getFiles().length).toBe(0)
   })
 
-  test('Should not re-upload completed files', async ({ worker }) => {
+  test('Should not re-upload completed files', async () => {
     let requestAt = 0
-    worker.use(
+    network.use(
       http.post('http://localhost/upload', () => {
         if (requestAt === 0) {
           requestAt += 1
@@ -165,10 +172,10 @@ describe('Golden retriever', () => {
       })
     await new Promise((resolve) => uppy.once('restored', resolve))
 
-    worker.resetHandlers()
+    network.resetHandlers()
 
     requestAt = 0 // reset request counter
-    worker.use(
+    network.use(
       http.post('http://localhost/upload', () => {
         if (requestAt === 0) {
           requestAt += 1
@@ -195,10 +202,8 @@ describe('Golden retriever', () => {
   // private-mode/webview contexts) GoldenRetriever must fall back to the
   // localStorage-backed MetaDataStore and still restore. This is the only test
   // that exercises the fallback path — every other test runs on IndexedDB.
-  test('falls back to localStorage when IndexedDB is unavailable', async ({
-    worker,
-  }) => {
-    worker.use(
+  test('falls back to localStorage when IndexedDB is unavailable', async () => {
+    network.use(
       http.post('http://localhost/upload', () => HttpResponse.json({})),
     )
 
@@ -278,12 +283,10 @@ describe('Golden retriever', () => {
     expect(restored.pluginData.Transloadit.callback).toBeUndefined()
   })
 
-  test('Should not clean up files upon completion if there were failed uploads and it should only make the failed file a ghost', async ({
-    worker,
-  }) => {
+  test('Should not clean up files upon completion if there were failed uploads and it should only make the failed file a ghost', async () => {
     let requestAt = 0
     let respondSecondRequest: (() => void) | undefined
-    worker.use(
+    network.use(
       http.post('http://localhost/upload', async () => {
         if (requestAt === 0) {
           requestAt += 1

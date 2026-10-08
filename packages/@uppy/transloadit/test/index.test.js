@@ -1,8 +1,15 @@
+import { network } from 'virtual:msw'
 import Core from '@uppy/core'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, vi } from 'vitest'
-import { it } from './test-extend.ts'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => {
+  network.resetHandlers()
+})
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', () => {
@@ -68,7 +75,7 @@ describe('Transloadit', () => {
     )
   })
 
-  it('should complete when resuming after pause', async ({ worker }) => {
+  it('should complete when resuming after pause', async () => {
     const assemblyStatusBase = {
       assembly_id: 'test-assembly-id',
       websocket_url: 'ws://localhost:8080',
@@ -81,7 +88,7 @@ describe('Transloadit', () => {
     let uploadIndex = 0
     const tusBaseUrl = 'http://localhost/resumable/files/'
 
-    worker.use(
+    network.use(
       http.options('http://localhost/resumable/files*', () => {
         return new HttpResponse(null, {
           status: 204,
