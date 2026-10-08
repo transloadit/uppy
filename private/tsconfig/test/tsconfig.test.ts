@@ -35,6 +35,7 @@ test('tsconfig.json', async () => {
       { path: './examples/nextjs/tsconfig.json' },
       { path: './examples/react/tsconfig.json' },
       { path: './examples/reactrouter/tsconfig.json' },
+      { path: './examples/vue/tsconfig.json' },
       { path: './examples/xhr-bundle/tsconfig.json' },
       { path: './examples/xhr-node/tsconfig.json' },
       { path: './examples/xhr-php/tsconfig.json' },
