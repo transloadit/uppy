@@ -360,7 +360,7 @@ export default class Provider<
         path: `${this.id}/preauth/`,
         method: 'POST',
         data: { params: this.companionKeysParams },
-        skipPostResponse: true,
+        onReceiveResponse: super.onReceiveResponse,
       })
       this.preAuthToken = res.token
     } catch (err) {

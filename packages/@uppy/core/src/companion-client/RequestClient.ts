@@ -15,7 +15,6 @@ import AuthError, { isAuthError } from './AuthError.js'
 export type RequestOptions = {
   method?: string
   data?: Record<string, unknown>
-  /** Skip subclass response handling, while retaining Companion host discovery. */
   skipPostResponse?: boolean
   signal?: AbortSignal
   authFormData?: unknown
@@ -189,12 +188,14 @@ export default class RequestClient<M extends Meta, B extends Body> {
     method = 'GET',
     data,
     skipPostResponse,
+    onReceiveResponse = this.onReceiveResponse,
     signal,
   }: {
     path: string
     method?: string
     data?: Record<string, unknown>
     skipPostResponse?: boolean
+    onReceiveResponse?: (response: Response) => void
     signal?: AbortSignal
   }): Promise<ResBody> {
     try {
@@ -206,11 +207,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       })
-      if (skipPostResponse) {
-        RequestClient.prototype.onReceiveResponse.call(this, response)
-      } else {
-        this.onReceiveResponse(response)
-      }
+      if (!skipPostResponse) onReceiveResponse.call(this, response)
 
       return await handleJSONResponse<ResBody>(response)
     } catch (err) {
