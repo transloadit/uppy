@@ -188,12 +188,14 @@ export default class RequestClient<M extends Meta, B extends Body> {
     method = 'GET',
     data,
     skipPostResponse,
+    onReceiveResponse = this.onReceiveResponse,
     signal,
   }: {
     path: string
     method?: string
     data?: Record<string, unknown>
     skipPostResponse?: boolean
+    onReceiveResponse?: (response: Response) => void
     signal?: AbortSignal
   }): Promise<ResBody> {
     try {
@@ -205,7 +207,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       })
-      if (!skipPostResponse) this.onReceiveResponse(response)
+      if (!skipPostResponse) onReceiveResponse.call(this, response)
 
       return await handleJSONResponse<ResBody>(response)
     } catch (err) {
