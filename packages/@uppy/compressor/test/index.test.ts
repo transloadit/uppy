@@ -1,6 +1,5 @@
 import CompressorPlugin from '@uppy/compressor'
 import Core from '@uppy/core'
-import { getFileNameAndExtension } from '@uppy/core/utils'
 import { describe, expect, it } from 'vitest'
 import sampleImage from '../fixtures/image.jpg'
 
@@ -8,17 +7,6 @@ async function getSampleImage(name: string): Promise<File> {
   const response = await fetch(sampleImage)
   const blob = await response.blob()
   return new File([blob], name, { type: blob.type })
-}
-
-// Compressor uses browser canvas API, so need to mock compress()
-// @ts-expect-error mocked
-CompressorPlugin.prototype.compress = async (blob: File) => {
-  return {
-    name: `${getFileNameAndExtension(blob.name).name}.webp`,
-    type: 'image/webp',
-    data: blob,
-    size: 123,
-  }
 }
 
 describe('CompressorPlugin', () => {

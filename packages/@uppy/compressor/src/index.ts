@@ -15,6 +15,22 @@ declare module '@uppy/core' {
   }
 }
 
+/**
+ * Convert image type to extension.
+ *
+ * @param contentType The content type to convert.
+ * @returns The file extension extension.
+ */
+function toFileExtension(contentType: string): string {
+  const [, extension] = contentType.split('/')
+
+  if (extension === 'jpeg') {
+    return 'jpg'
+  }
+
+  return extension!
+}
+
 export interface CompressorOpts extends PluginOpts, CompressorJS.Options {
   limit?: number
 }
@@ -74,19 +90,21 @@ export default class Compressor<
             `[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`,
           )
           totalCompressedSize += compressedSavingsSize
-          const { name, type, size } = compressedBlob as File
+          let { name, type, size } = compressedBlob as File
 
           const compressedFileName = getFileNameAndExtension(name)
+          const { extension = toFileExtension(type) } = compressedFileName
+          if (!name.endsWith(`.${extension}`)) {
+            name += `.${extension}`
+          }
           const metaFileName = getFileNameAndExtension(file.meta.name)
 
           // Name (file.meta.name) might have been changed by user, so we update only the extension
-          const newMetaName = `${metaFileName.name}.${compressedFileName.extension}`
+          const newMetaName = `${metaFileName.name}.${extension}`
 
           this.uppy.setFileState(file.id, {
             ...(name && { name }),
-            ...(compressedFileName.extension && {
-              extension: compressedFileName.extension,
-            }),
+            extension,
             ...(type && { type }),
             ...(size && { size }),
             data: compressedBlob,
