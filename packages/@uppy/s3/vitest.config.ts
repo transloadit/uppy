@@ -3,7 +3,6 @@ import { msw } from 'msw/vite'
 import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
-  plugins: [msw()],
   test: {
     projects: [
       {
@@ -14,6 +13,7 @@ export default defineConfig({
         },
       },
       {
+        plugins: [msw()],
         test: {
           name: 'browser',
           include: ['test/**/*.browser.test.tsx'],
