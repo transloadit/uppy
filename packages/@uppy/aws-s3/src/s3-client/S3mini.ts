@@ -21,7 +21,7 @@ import * as U from './utils.js'
  *       method: 'POST',
  *       body: JSON.stringify({ method, key, uploadId, partNumber }),
  *     });
- *     return resp.json(); // { url } or { url, key }
+ *     return resp.json(); // { url }, { url, key, headers }, or { url, fields } for a POST policy
  *   },
  * });
  *
@@ -185,19 +185,35 @@ class S3mini extends S3Client {
   }: IT.PutObjectParams) {
     this._checkKey(key)
 
-    const { xhr, url, resolvedKey } = await this.request({
-      request: { method: 'PUT', key },
-      data,
-      onProgress,
+    const request = { method: 'PUT', key, contentType: fileType } as const
+    return this.signed({
+      request,
       signal,
-      contentType: fileType,
+      send: async (presigned) => {
+        const { url, fields, headers } = presigned
+        if (fields) {
+          return this.postObject({
+            url,
+            fields,
+            headers,
+            data,
+            onProgress,
+            signal,
+          })
+        }
+        const { xhr, resolvedKey } = await this.send(request, presigned, {
+          data,
+          onProgress,
+          signal,
+          contentType: fileType,
+        })
+        return {
+          location: U.removeQueryString(url),
+          etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
+          key: resolvedKey,
+        }
+      },
     })
-
-    return {
-      location: U.removeQueryString(url),
-      etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key: resolvedKey,
-    }
   }
 
   /** Initiates a multipart upload and returns the upload ID. */
@@ -276,33 +292,25 @@ class S3mini extends S3Client {
   }
 
   /**
-   * Core XHR upload implementation using @uppy/core/utils fetcher.
+   * Signs `request` and hands the result to `send`, mapping S3 errors.
    *
    * Features:
    * - Automatic retry with exponential backoff (3 attempts)
    * - Offline detection with automatic resume on reconnect
    * - Stall detection via ProgressTimeout
+   * - One re-sign with fresh credentials on an expired token
    */
-  private async request({
+  private async signed<T>({
     request,
-    data,
-    onProgress,
     signal,
-    contentType,
+    send,
     shouldRetryCredentials = true,
   }: {
     request: IT.PresignableRequest
-    data?: XMLHttpRequestBodyInit
-    onProgress?: IT.OnProgressFn
     signal?: AbortSignal
-    contentType?: string
+    send: (presigned: IT.PresignedResponse) => Promise<T>
     shouldRetryCredentials?: boolean
-  }): Promise<{
-    xhr: XMLHttpRequest
-    url: string
-    /** Key the request was signed for. Differs from the requested key when the signer returns its own. */
-    resolvedKey: string
-  }> {
+  }): Promise<T> {
     // Wait for online before starting
     await this.waitForOnline(signal)
 
@@ -312,22 +320,7 @@ class S3mini extends S3Client {
     }
 
     try {
-      const requestedKey = request.key
-      const { url, key: signerKey, headers } = await this.signRequest(request)
-
-      const xhr = await this.xhr({
-        url,
-        method: request.method,
-        data,
-        onProgress,
-        signal,
-        contentType,
-        headers,
-      })
-
-      // A blank key from the signer is not an override.
-      const resolvedKey = signerKey?.trim() ? signerKey : requestedKey
-      return { xhr, url, resolvedKey }
+      return await send(await this.signRequest(request))
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (
@@ -361,12 +354,10 @@ class S3mini extends S3Client {
           this.clearCachedCredentials()
 
           // Retry with fresh credentials
-          return this.request({
+          return this.signed({
             request,
-            data,
-            onProgress,
             signal,
-            contentType,
+            send,
             shouldRetryCredentials: false, // prevent infinite recursion
           })
         }
@@ -381,6 +372,65 @@ class S3mini extends S3Client {
 
       throw err
     }
+  }
+
+  /** Sends `request` as signed, with `data` as its body. */
+  private async send(
+    request: IT.PresignableRequest,
+    { url, key: signerKey, headers, fields }: IT.PresignedResponse,
+    {
+      data,
+      onProgress,
+      signal,
+      contentType,
+    }: {
+      data?: XMLHttpRequestBodyInit
+      onProgress?: IT.OnProgressFn
+      signal?: AbortSignal
+      contentType?: string
+    },
+  ): Promise<{
+    xhr: XMLHttpRequest
+    url: string
+    /** Key the request was signed for. Differs from the requested key when the signer returns its own. */
+    resolvedKey: string
+  }> {
+    if (fields) {
+      throw new TypeError(
+        `${C.ERROR_PREFIX}signRequest may only return fields for the PutObject request`,
+      )
+    }
+    const xhr = await this.xhr({
+      url,
+      method: request.method,
+      data,
+      onProgress,
+      signal,
+      contentType,
+      headers,
+    })
+    // A blank key from the signer is not an override.
+    const resolvedKey = signerKey?.trim() ? signerKey : request.key
+    return { xhr, url, resolvedKey }
+  }
+
+  /** Signs and sends one S3 request. */
+  private request({
+    request,
+    signal,
+    ...body
+  }: {
+    request: IT.PresignableRequest
+    data?: XMLHttpRequestBodyInit
+    onProgress?: IT.OnProgressFn
+    signal?: AbortSignal
+    contentType?: string
+  }) {
+    return this.signed({
+      request,
+      signal,
+      send: (presigned) => this.send(request, presigned, { signal, ...body }),
+    })
   }
 
   /** Lists uploaded parts for a multipart upload. */
