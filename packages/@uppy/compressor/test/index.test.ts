@@ -23,7 +23,7 @@ CompressorPlugin.prototype.compress = async (blob: File) => {
 
 describe('CompressorPlugin', () => {
   it('should change update extension in file.name and file.meta.name', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(CompressorPlugin, {
       quality: 0.85,
       mimeType: 'image/webp',
@@ -51,20 +51,19 @@ describe('CompressorPlugin', () => {
     // User changed file.meta.name
     uppy.setFileMeta(uppy.getFiles()[0].id, { name: 'new-name.jpeg' })
 
-    return uppy.upload().then(() => {
-      const files = uppy.getFiles()
+    await uppy.upload()
+    const files = uppy.getFiles()
 
-      expect(files[0].meta.name).toEqual('new-name.webp')
-      expect(files[0].name).toEqual('image-1.webp')
-      expect(files[0].meta.type).toEqual('image/webp')
+    expect(files[0].meta.name).toEqual('new-name.webp')
+    expect(files[0].name).toEqual('image-1.webp')
+    expect(files[0].meta.type).toEqual('image/webp')
 
-      expect(files[1].meta.name).toEqual('yolo.webp')
-      expect(files[1].meta.type).toEqual('image/webp')
-      expect(files[1].name).toEqual('yolo.webp')
+    expect(files[1].meta.name).toEqual('yolo.webp')
+    expect(files[1].meta.type).toEqual('image/webp')
+    expect(files[1].name).toEqual('yolo.webp')
 
-      expect(files[2].meta.name).toEqual('my.file.is.weird.webp')
-      expect(files[2].meta.type).toEqual('image/webp')
-      expect(files[2].name).toEqual('my.file.is.weird.webp')
-    })
+    expect(files[2].meta.name).toEqual('my.file.is.weird.webp')
+    expect(files[2].meta.type).toEqual('image/webp')
+    expect(files[2].name).toEqual('my.file.is.weird.webp')
   })
 })

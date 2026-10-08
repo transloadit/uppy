@@ -29,17 +29,17 @@ test('can add locale strings without type error', async () => {
 })
 
 test('can use Uppy class without generics', async () => {
-  const core = new Uppy()
+  using core = new Uppy()
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
 })
 
 test('can .use() a plugin', async () => {
-  const core = new Uppy().use(TestPlugin)
+  using core = new Uppy().use(TestPlugin)
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
 })
 
 test('can .getPlugin() with a generic', async () => {
-  const core = new Uppy().use(TestPlugin)
+  using core = new Uppy().use(TestPlugin)
   const plugin = core.getPlugin<TestPlugin<any, any>>('TestPlugin')
   const plugin2 = core.getPlugin('TestPlugin')
   expectTypeOf(plugin).toEqualTypeOf<TestPlugin<any, any> | undefined>()
@@ -53,7 +53,7 @@ test('can .getPlugin() with a generic', async () => {
 test('Meta and Body generic move through the Uppy class', async () => {
   type M = { foo: string }
   type B = { bar: string }
-  const core = new Uppy<M, B>()
+  using core = new Uppy<M, B>()
 
   core.addUploader(() => Promise.resolve())
 
@@ -95,7 +95,7 @@ declare module '@uppy/core' {
 }
 
 test('Type Registry: getPlugin with registered plugin name returns correct type', () => {
-  const uppy = new Uppy()
+  using uppy = new Uppy()
   uppy.use(TestRegistryPlugin)
 
   // When using a registered plugin name, TypeScript should infer the correct type from PluginTypeRegistry
@@ -107,7 +107,7 @@ test('Type Registry: getPlugin with registered plugin name returns correct type'
 })
 
 test('Type Registry: getPlugin with unregistered name returns UnknownPlugin', () => {
-  const uppy = new Uppy()
+  using uppy = new Uppy()
 
   // When using a non-registered string, should return UnknownPlugin
   const plugin = uppy.getPlugin('SomeRandomPlugin')
@@ -118,7 +118,7 @@ test('Type Registry: getPlugin with unregistered name returns UnknownPlugin', ()
 })
 
 test('Type Registry: getPlugin with dynamic string returns UnknownPlugin', () => {
-  const uppy = new Uppy()
+  using uppy = new Uppy()
   const pluginName: string = 'DynamicName'
 
   // Dynamic string should use the fallback overload unlike literal string
@@ -134,7 +134,7 @@ test('Type Registry: works with custom Meta and Body types', () => {
   type CustomBody = { encrypted: boolean }
 
   // With custom Meta and Body types
-  const uppy = new Uppy<CustomMeta, CustomBody>()
+  using uppy = new Uppy<CustomMeta, CustomBody>()
   uppy.use(TestRegistryPlugin)
 
   const plugin = uppy.getPlugin('TestRegistryPlugin')

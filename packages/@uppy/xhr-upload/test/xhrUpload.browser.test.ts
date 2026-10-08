@@ -1,7 +1,7 @@
 import Uppy, { type UppyEventMap } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { HttpResponse, http } from 'msw'
-import { afterEach, beforeEach, describe, expect } from 'vitest'
+import { beforeEach, describe, expect } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
@@ -15,13 +15,11 @@ type MockUploadRequest = {
   fileNames: string[]
 }
 
-let uppy: Uppy | undefined
-
 function createUppy({ bundle = false }: { bundle?: boolean } = {}) {
   const target = document.createElement('div')
   document.body.appendChild(target)
 
-  uppy = new Uppy({ debug: true })
+  return new Uppy({ debug: true })
     .use(Dashboard, {
       target,
       inline: true,
@@ -30,8 +28,6 @@ function createUppy({ bundle = false }: { bundle?: boolean } = {}) {
       endpoint: 'http://localhost/upload',
       bundle,
     })
-
-  return uppy
 }
 
 function createMockFile(name: string, size: number = 16) {
@@ -46,11 +42,6 @@ function waitForUploadComplete(uppy: Uppy<any, any>) {
 
 beforeEach(() => {
   document.body.innerHTML = ''
-})
-
-afterEach(() => {
-  uppy?.destroy()
-  uppy = undefined
 })
 
 describe('XHRUpload browser mode', () => {
@@ -72,7 +63,7 @@ describe('XHRUpload browser mode', () => {
       }),
     )
 
-    const uppy = createUppy()
+    using uppy = createUppy()
     const completePromise = waitForUploadComplete(uppy)
     const fileInput = document.querySelector('.uppy-Dashboard-input')!
 
@@ -116,7 +107,7 @@ describe('XHRUpload browser mode', () => {
       }),
     )
 
-    const uppy = createUppy({ bundle: true })
+    using uppy = createUppy({ bundle: true })
     const completePromise = waitForUploadComplete(uppy)
     const fileInput = document.querySelector('.uppy-Dashboard-input')!
 

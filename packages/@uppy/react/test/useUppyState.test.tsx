@@ -6,7 +6,7 @@ import { describe, expect, expectTypeOf, it } from 'vitest'
 
 describe('useUppyState', () => {
   it('should return and update value with the correct type', () => {
-    const uppy = new Uppy()
+    using uppy = new Uppy()
     const { result, rerender } = renderHook(() =>
       useUppyState(uppy, (state) => state.totalProgress),
     )
@@ -20,7 +20,7 @@ describe('useUppyState', () => {
   })
 
   it('does not re-render unnecessarily', () => {
-    const uppy = new Uppy()
+    using uppy = new Uppy()
     let renderCount = 0
 
     const Component = React.memo((props: { uppy: Uppy<any, any> }) => {
