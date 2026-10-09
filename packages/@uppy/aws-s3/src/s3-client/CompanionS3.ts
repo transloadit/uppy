@@ -17,12 +17,36 @@ class S3Companion extends S3Client {
     this.companionEndpoint = companionEndpoint
   }
 
-  private async _fetch(path: string, opts?: RequestInit) {
-    const response = await fetch(`${this.companionEndpoint}/s3${path}`, opts)
-    if (!response.ok) {
-      throw new Error(`Companion request failed: ${response.statusText}`)
-    }
-    return response
+  /**
+   * Sends a JSON request to Companion through `_request`, so it gets the same
+   * retries, abort and offline handling as the S3 requests themselves.
+   */
+  private async _fetchJson<T>(
+    path: string,
+    {
+      method = 'GET',
+      body,
+      signal,
+    }: { method?: IT.HttpMethod; body?: unknown; signal?: AbortSignal } = {},
+  ): Promise<T> {
+    const data = body === undefined ? undefined : JSON.stringify(body)
+    const xhr = await this._request({
+      url: `${this.companionEndpoint}/s3${path}`,
+      method,
+      data,
+      contentType: data ? 'application/json' : undefined,
+      signal,
+    }).catch((err) => {
+      // Only status 0 is a real network error; anything else is an HTTP
+      // error response from Companion and should not be reported as one.
+      const { request } = err
+      if (!request?.status) throw err
+      throw Object.assign(
+        new Error(`Companion request failed with status ${request.status}`),
+        { request },
+      )
+    })
+    return JSON.parse(xhr.responseText || 'null')
   }
 
   private async _request({
@@ -61,9 +85,10 @@ class S3Companion extends S3Client {
         Object.entries(metadata).map(([k, v]) => [`metadata[${k}]`, String(v)]),
       ),
     })
-    const response = await this._fetch(`/params?${searchParams}`)
-    const { url, fields }: { url: string; fields: Record<string, string> } =
-      await response.json()
+    const { url, fields } = await this._fetchJson<{
+      url: string
+      fields: Record<string, string>
+    }>(`/params?${searchParams}`, { signal })
 
     await this.waitForOnline(signal)
     return this.postObject({ url, fields, data, onProgress, signal })
@@ -79,22 +104,14 @@ class S3Companion extends S3Client {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
 
-    const method = 'POST'
-    const response = await this._fetch('/multipart', {
-      method,
-      body: JSON.stringify({
-        filename: requestedKey,
-        metadata,
-        type: fileType,
-      }),
-      headers: { 'content-type': 'application/json' },
+    const { key, uploadId } = await this._fetchJson<{
+      key?: string
+      uploadId?: string
+    }>('/multipart', {
+      method: 'POST',
+      body: { filename: requestedKey, metadata, type: fileType },
       signal,
     })
-    const {
-      key,
-      uploadId,
-    }: { key?: string; uploadId?: string; bucket?: string } =
-      await response.json()
 
     if (uploadId == null) throw new Error('No uploadId returned')
     if (key == null) throw new Error('No key returned')
@@ -110,15 +127,10 @@ class S3Companion extends S3Client {
     onProgress,
     signal,
   }: IT.UploadPartParams) {
-    const response = await this._fetch(
+    const { url } = await this._fetchJson<{ url: string }>(
       `/multipart/${encodeURIComponent(uploadId)}/${encodeURIComponent(partNumber)}?${new URLSearchParams({ key })}`,
-      {
-        method: 'GET',
-        signal,
-      },
+      { signal },
     )
-
-    const { url }: { url: string } = await response.json()
 
     const xhr = await this._request({
       url,
@@ -147,15 +159,10 @@ class S3Companion extends S3Client {
       throw new TypeError(C.ERROR_UPLOAD_ID_REQUIRED)
     }
 
-    const response = await this._fetch(
+    const parts = await this._fetchJson<{ PartNumber: string; ETag: string }[]>(
       `/multipart/${encodeURIComponent(uploadId)}?${new URLSearchParams({ key })}`,
-      {
-        method: 'GET',
-        signal,
-      },
+      { signal },
     )
-
-    const parts: { PartNumber: string; ETag: string }[] = await response.json()
 
     return parts.map((p) => ({
       partNumber: parseInt(String(p.PartNumber), 10),
@@ -169,36 +176,29 @@ class S3Companion extends S3Client {
     parts,
     signal,
   }: IT.CompleteMultipartUploadParams) {
-    const response = await this._fetch(
-      `/multipart/${encodeURIComponent(uploadId)}/complete?${new URLSearchParams({ key })}`,
-      {
-        method: 'POST',
-        body: JSON.stringify({
-          parts: parts.map((part) => ({
-            PartNumber: part.partNumber,
-            ETag: part.etag,
-          })),
-        }),
-        headers: { 'content-type': 'application/json' },
-        signal,
-      },
-    )
-
     const {
       location,
       bucket,
       key: resultKey,
-    }: {
+    } = await this._fetchJson<{
       location: string
       bucket?: string
       key: string
-    } = await response.json()
+    }>(
+      `/multipart/${encodeURIComponent(uploadId)}/complete?${new URLSearchParams({ key })}`,
+      {
+        method: 'POST',
+        body: {
+          parts: parts.map((part) => ({
+            PartNumber: part.partNumber,
+            ETag: part.etag,
+          })),
+        },
+        signal,
+      },
+    )
 
-    return {
-      location,
-      bucket,
-      key: resultKey,
-    }
+    return { location, bucket, key: resultKey }
   }
 
   public override async abortMultipartUpload({
@@ -206,12 +206,9 @@ class S3Companion extends S3Client {
     uploadId,
     signal,
   }: IT.AbortMultipartUploadParams) {
-    await this._fetch(
+    await this._fetchJson(
       `/multipart/${encodeURIComponent(uploadId)}?${new URLSearchParams({ key })}`,
-      {
-        method: 'DELETE',
-        signal,
-      },
+      { method: 'DELETE', signal },
     )
   }
 }
