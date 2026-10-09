@@ -27,7 +27,11 @@ import {
   type ProviderToolbarAction,
   ProviderViews,
 } from '@uppy/core/provider-views'
-import type { LocaleStrings } from '@uppy/core/utils'
+import {
+  ErrorWithCause,
+  isAbortError,
+  type LocaleStrings,
+} from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 // Load Dashboard's event augmentation without adding a runtime dependency.
@@ -170,9 +174,22 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     signal = AbortSignal.any([signal, this.#sessionAbort.signal])
     // The client cannot pick a bucket: it asks for a session, with a grant when
     // the integrator mints one, and Companion decides what it sees.
-    const grant = isGrantForm(authFormData)
-      ? authFormData.grant
-      : await this.getGrant?.()
+    let grant: string | undefined
+    if (isGrantForm(authFormData)) {
+      grant = authFormData.grant
+    } else {
+      try {
+        grant = await this.getGrant?.()
+      } catch (err) {
+        // Keep cancellation/auth control flow intact. Other grant callback
+        // failures are reported through handleError as a safe Companion
+        // warning, without exposing the callback's message.
+        if (isAbortError(err) || isAuthError(err)) throw err
+        throw new ErrorWithCause('Could not obtain the storage grant', {
+          cause: err,
+        })
+      }
+    }
     signal.throwIfAborted()
     await this.loginSimpleAuth({
       uppyVersions,
