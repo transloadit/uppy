@@ -179,6 +179,44 @@ describe('S3 provider in the browser', () => {
     expect(plugin.rootPrefix).toBe('tenant/')
   })
 
+  it('shows a safe warning when the grant callback rejects', async ({
+    worker,
+  }) => {
+    const { plugin } = setup(worker, {
+      autoConnect: false,
+      getGrant: async () => {
+        throw new Error('private-diagnostic-sentinel')
+      },
+    })
+    const info = vi.spyOn(uppy!, 'info')
+
+    await plugin.view.handleAuth({})
+
+    expect(info).toHaveBeenCalledTimes(1)
+    expect(info).toHaveBeenCalledWith(
+      'Connection with Companion failed',
+      'warning',
+      5000,
+    )
+    expect(info.mock.calls.flat().join(' ')).not.toContain(
+      'private-diagnostic-sentinel',
+    )
+  })
+
+  it('keeps grant callback cancellation silent', async ({ worker }) => {
+    const { plugin } = setup(worker, {
+      autoConnect: false,
+      getGrant: async () => {
+        throw Object.assign(new Error('aborted'), { name: 'AbortError' })
+      },
+    })
+    const info = vi.spyOn(uppy!, 'info')
+
+    await plugin.view.handleAuth({})
+
+    expect(info).not.toHaveBeenCalled()
+  })
+
   it('forgets the session on logout', async ({ worker }) => {
     const { plugin } = setup(worker, {
       getGrant: async () =>
