@@ -25,7 +25,15 @@ export default function redisEmitter(
   const getPrefixedEventName = (eventName: string) => `${prefix}${eventName}`
 
   const errorEmitter = new EventEmitter()
-  const handleError = (err: unknown) => errorEmitter.emit('error', err)
+  const handleError = (err: unknown) => {
+    // Log so these background redis pub/sub failures are observable regardless of
+    // whether a consumer subscribed. Only emit when an 'error' listener exists,
+    // because emitting 'error' with none throws and would mask the original error.
+    logger.error(err, 'redis.emitter.error')
+    if (errorEmitter.listenerCount('error') > 0) {
+      errorEmitter.emit('error', err)
+    }
+  }
 
   async function makeRedis() {
     const publisher = redisClient.duplicate({ lazyConnect: true })
