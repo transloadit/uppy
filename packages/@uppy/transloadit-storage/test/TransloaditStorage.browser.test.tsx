@@ -64,6 +64,31 @@ afterEach(() => {
 })
 
 describe('Transloadit Storage in the browser', () => {
+  it('mounts as a standalone manager without Dashboard', async ({ worker }) => {
+    worker.use(
+      ...toMswHandlers(
+        createMockS3Companion({ token: TOKEN }),
+        COMPANION,
+        { http },
+      ),
+    )
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    uppy = new Uppy().use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      standalone: true,
+      target,
+    })
+
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+    expect(target.textContent).toContain('readme.md')
+    expect(uppy?.getPlugin('Dashboard')).toBeUndefined()
+    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
+    await expect
+      .element(page.getByRole('menuitem', { name: 'Rename or move…' }))
+      .toBeVisible()
+  })
+
   it('offers the custom upload action in picker mode, and hands it the open folder', async ({
     worker,
   }) => {
