@@ -60,8 +60,12 @@ export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
   allowedMetaFields?: string[] | boolean
 
   /**
-   * Maximum number of files uploading concurrently.
-   * Each file uploads its parts sequentially.
+   * Maximum number of concurrent requests to S3. Single-part uploads and the
+   * parts of a multipart upload share this pool, so one large file uses up to
+   * `limit` connections. Creating a multipart upload and listing its parts on
+   * resume take a slot too; completing or aborting one does not. A remote
+   * (Companion) upload takes one slot for its whole duration. `0` means
+   * unlimited.
    *
    * Default: 6 — chosen to match the browser's HTTP/1.1 per-origin connection
    * limit. Most browsers allow 6 concurrent connections per host, so this
@@ -155,6 +159,16 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     for (const fileId of Object.keys(this.#uploaders)) {
       const uploader = this.#uploaders[fileId]
       if (uploader) {
+        // The file stays in Uppy but never finished. Without an error the
+        // settled upload would count it as successful.
+        const file = this.uppy.getFile(fileId)
+        if (file) {
+          this.uppy.emit(
+            'upload-error',
+            file,
+            new Error('Upload aborted: the AwsS3 plugin was removed'),
+          )
+        }
         uploader.abort()
       }
     }
@@ -238,37 +252,38 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         // via getQueue(), so no outer queue wrapping is needed here.
         return this.#uploadRemoteFile(file)
       }
-      return this.#queue.add(async () => {
-        // File may have been removed while waiting in the queue.
-        // Unlike actively uploading files, queued files don't have an S3Uploader
-        // instance yet, so there's no event listener to catch the removal.
-        // Re-fetch the file to ensure it still exists before starting upload.
-        const currentFile = this.uppy.getFile(file.id)
-        if (!currentFile) {
-          return
-        }
-        return this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
-      })
+      return this.#uploadLocalFile(file)
     })
 
     await Promise.allSettled(promises)
     // After the upload batch is done, restore resumable uploads capability.
     // It may have been set to false if there were remote files in this batch.
-    this.#setResumableUploadsCapability(true)
+    // Skip it if the plugin was removed while the batch was running.
+    if (this.uppy.getPlugin(this.id)) {
+      this.#setResumableUploadsCapability(true)
+    }
   }
 
   // --------------------------------------------------------------------------
   // Local File Upload
   // --------------------------------------------------------------------------
 
-  async #uploadLocalFile(file: LocalUppyFile<M, B>): Promise<void> {
+  async #uploadLocalFile(fileAtStart: LocalUppyFile<M, B>): Promise<void> {
+    // An upload-start listener may have removed or changed the file just now.
+    const file = this.uppy.getFile(fileAtStart.id) as
+      | LocalUppyFile<M, B>
+      | undefined
+    if (!file) return
+
+    let uploader: S3Uploader<M, B> | undefined
     try {
       return await new Promise((resolve, reject) => {
         // Create uploader (events are wired internally).
         // S3Uploader detects resume state from file.s3Multipart internally.
-        const uploader = new S3Uploader<M, B>({
+        uploader = new S3Uploader<M, B>({
           uppy: this.uppy,
           s3Client: this.#s3Client,
+          queue: this.#queue,
           file,
           metadata: this.#getAllowedMeta(file),
           requestedKey: this.#generateKey(file),
@@ -317,8 +332,10 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         uploader.start()
       })
     } finally {
-      // Clean up uploader instance after upload completes or fails
-      delete this.#uploaders[file.id]
+      // Clean up uploader instance after upload completes or fails. A retry
+      // started from an upload-error listener may already have registered its
+      // own uploader for this file, so only remove ours.
+      if (this.#uploaders[file.id] === uploader) delete this.#uploaders[file.id]
     }
   }
 
