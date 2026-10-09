@@ -26,6 +26,8 @@ export default {
     companionError: 'Connection with Companion failed',
     actionFailed: 'The action failed',
     authAborted: 'Authentication aborted',
+    googleDrivePickerFailed:
+      'Google Drive could not be loaded. This usually happens when your browser blocks third-party cookies. Please allow third-party cookies for this site and try again.',
     companionUnauthorizeHint:
       'To unauthorize to your %{provider} account, please go to %{url}',
     failedToUpload: 'Failed to upload %{file}',
