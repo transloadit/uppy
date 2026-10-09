@@ -324,4 +324,166 @@ describe('Transloadit', () => {
     // Should be reset to true
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
+
+  it('fails a retried file and allows new uploads when fetching Assembly options fails', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: () => Promise.reject(new Error('signing unavailable')),
+    })
+    const id = uppy.addFile({
+      source: 'test',
+      name: 'abc',
+      data: new Uint8Array(100),
+    })
+    uppy.setFileState(id, { error: 'earlier failure' })
+
+    // Unlike upload(), a retry has no error event to fall back on.
+    await expect(uppy.retryUpload(id)).rejects.toThrow('signing unavailable')
+
+    expect(uppy.getFile(id).error).toBe('signing unavailable')
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('leaves no Assembly behind for an upload cancelled while its options were fetched', async () => {
+    const signing = Promise.withResolvers()
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: () => signing.promise })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => ({
+      assembly_id: 'stale',
+      ok: 'ASSEMBLY_UPLOADING',
+      assembly_ssl_url: 'https://api2.transloadit.com/assemblies/stale',
+      tus_url: 'https://api2.transloadit.com/resumable/files/',
+      websocket_url: 'https://api2.transloadit.com/ws',
+      uploads: [],
+      results: {},
+    }))
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    const id = uppy.addFile(file)
+
+    const upload = uppy.upload()
+    uppy.cancelAll()
+    // Added again, the same file has the same id as the one just removed.
+    expect(uppy.addFile(file)).toBe(id)
+    signing.resolve({
+      params: {
+        auth: { key: 'test-auth-key' },
+        template_id: 'test-template-id',
+      },
+    })
+    await upload
+
+    // Nothing for the next batch to reuse, and the new file is not bound to it.
+    expect(plugin.client.createAssembly).not.toHaveBeenCalled()
+    expect(plugin.assembly).toBeUndefined()
+    expect(uppy.getFile(id).transloadit).toBeUndefined()
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('cancels the Assembly of an upload cancelled while it was being created', async () => {
+    const creating = Promise.withResolvers()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    const status = {
+      assembly_id: 'stale',
+      ok: 'ASSEMBLY_UPLOADING',
+      assembly_ssl_url: 'https://api2.transloadit.com/assemblies/stale',
+      tus_url: 'https://api2.transloadit.com/resumable/files/',
+      websocket_url: 'https://api2.transloadit.com/ws',
+      uploads: [],
+      results: {},
+    }
+    plugin.client.createAssembly = vi.fn(() => creating.promise)
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    const id = uppy.addFile(file)
+
+    const upload = uppy.upload()
+    await vi.waitFor(() =>
+      expect(plugin.client.createAssembly).toHaveBeenCalledOnce(),
+    )
+    uppy.cancelAll()
+    expect(uppy.addFile(file)).toBe(id)
+    creating.resolve(status)
+    await upload
+
+    expect(plugin.client.cancelAssembly).toHaveBeenCalledWith(status)
+    expect(plugin.assembly).toBeUndefined()
+    expect(uppy.getFile(id).transloadit).toBeUndefined()
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  /** One deferred `assemblyOptions()` per upload, answered by the test. */
+  function deferredSignings(count) {
+    const signings = Array.from({ length: count }, () =>
+      Promise.withResolvers(),
+    )
+    const signer = {
+      signings,
+      calls: 0,
+      assemblyOptions: () => signings[signer.calls++].promise,
+    }
+    return signer
+  }
+
+  it('reports nothing for a cancelled attempt whose options fail, leaving a newer upload of the same file alone', async () => {
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    const id = uppy.addFile(file)
+
+    const first = uppy.upload()
+    uppy.cancelAll()
+    expect(uppy.addFile(file)).toBe(id)
+    const second = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+    signings[0].reject(new Error('signing unavailable'))
+    await first
+
+    // The file now belongs to the second upload, which is still preparing.
+    expect(uppy.getFile(id).error).toBeFalsy()
+    expect(uppy.getState().allowNewUpload).toBe(false)
+    expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1)
+
+    uppy.cancelAll()
+    signings[1].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await second
+  })
+
+  it('does not reopen admission for a cancelled attempt while another upload is preparing', async () => {
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn()
+    uppy.addFile({ source: 'test', name: 'old.txt', data: new Blob(['old']) })
+
+    const first = uppy.upload()
+    uppy.cancelAll()
+    uppy.addFile({ source: 'test', name: 'new.txt', data: new Blob(['new']) })
+    const second = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+    signings[0].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await first
+
+    expect(plugin.client.createAssembly).not.toHaveBeenCalled()
+    expect(uppy.getState().allowNewUpload).toBe(false)
+    expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1)
+
+    uppy.cancelAll()
+    signings[1].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await second
+  })
 })

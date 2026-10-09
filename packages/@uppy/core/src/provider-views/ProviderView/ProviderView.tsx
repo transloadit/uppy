@@ -449,6 +449,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         partialTree: PartialTreeUtils.afterToggleCheckbox(
           refreshedTree,
           survivors,
+          this.opts.mode === 'manager',
         ),
       })
     }
@@ -659,6 +660,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   confirm(options: ConfirmOptions): Promise<boolean> {
     return this.#dialogs.confirm(options)
+  }
+
+  /**
+   * Answer the open dialog from a headless UI (`value` is the prompt's input).
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  submitDialog = (value?: string): void => this.#dialogs.submit(value)
+
+  /** @experimental See `submitDialog`. */
+  cancelDialog = (): void => this.#dialogs.cancel()
+
+  /** @experimental Stop the running `runWithProgress` operation, if any. */
+  cancelLongOperation = (): void => this.#cancelLongOperation?.()
+
+  /** @experimental Whether `cancelLongOperation` has something to stop. */
+  get canCancelOperation(): boolean {
+    return this.#cancelLongOperation !== undefined
   }
 
   tearDown(): void {
@@ -1059,15 +1079,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#doneLoading()
   }
 
+  /**
+   * `visibleOrder` is the rows as a custom UI shows them (sorted, filtered),
+   * so a shift-click range matches what the user sees.
+   */
   toggleCheckbox(
     ourItem: PartialTreeFolderNode | PartialTreeFile,
     isShiftKeyPressed: boolean,
+    visibleOrder: (
+      | PartialTreeFolderNode
+      | PartialTreeFile
+    )[] = this.getDisplayedPartialTree(),
   ) {
     const { partialTree } = this.plugin.getPluginState()
 
     const clickedRange = getClickedRange(
       ourItem.id,
-      this.getDisplayedPartialTree(),
+      visibleOrder,
       isShiftKeyPressed,
       this.previousCheckbox,
     )
@@ -1075,6 +1103,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
       partialTree,
       clickedRange,
+      this.opts.mode === 'manager',
     )
 
     const statusById = new Map(

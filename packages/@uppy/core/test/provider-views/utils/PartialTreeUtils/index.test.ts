@@ -6,6 +6,7 @@ import type {
   PartialTreeFolderRoot,
   PartialTreeId,
 } from '../../../../lib/index.js'
+import getClickedRange from '../../../../lib/provider-views/utils/getClickedRange.js'
 import afterFill from '../../../../lib/provider-views/utils/PartialTreeUtils/afterFill.js'
 import afterOpenFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterOpenFolder.js'
 import afterScrollFolder from '../../../../lib/provider-views/utils/PartialTreeUtils/afterScrollFolder.js'
@@ -125,6 +126,33 @@ describe('afterFill()', () => {
     )
     expect(checkedFiles.length).toEqual(4)
     expect(checkedFiles.map((f) => f.id)).toEqual(['2_1', '2_2', '2_3', '2_4'])
+  })
+
+  it('fails the whole fill when a listing fails, instead of leaving files out', async () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const listed: PartialTreeId[] = []
+    const mock = (path: PartialTreeId) => {
+      listed.push(path)
+      if (path === '1') {
+        return Promise.resolve({ nextPagePath: null, items: [_cFile('1_1')] })
+      }
+      return Promise.reject(new Error('listing failed'))
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+      ),
+    ).rejects.toThrow('listing failed')
+    expect(listed).toEqual(['1', '2'])
   })
 
   it('fetches remaining pages in a folder', async () => {
@@ -403,6 +431,30 @@ describe('afterScrollFolder()', () => {
 })
 
 describe('afterToggleCheckbox()', () => {
+  it('manager mode: loaded children do not check a folder with more pages', () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot', nextPagePath: 'page2' }),
+      _file('1_1', { parentId: '1' }),
+      _file('1_2', { parentId: '1' }),
+    ]
+    const picked = afterToggleCheckbox(tree, ['1_1', '1_2'])
+    expect(getFolder(picked, '1').status).toEqual('checked')
+
+    const managed = afterToggleCheckbox(tree, ['1_1', '1_2'], true)
+    expect(getFolder(managed, '1').status).toEqual('partial')
+    // so the next page does not come in checked
+    const scrolled = afterScrollFolder(
+      managed,
+      '1',
+      [_cFile('1_3')],
+      null,
+      () => null,
+    )
+    expect(getFile(scrolled, '1_3').status).toEqual('unchecked')
+  })
+
   // prettier-ignore
   const oldPartialTree: PartialTree = [
     _root('ourRoot'),
@@ -632,5 +684,18 @@ describe('getBreadcrumbs()', () => {
     ]
     const result = getBreadcrumbs(treeWithNullRoot, null)
     expect(result.map((f) => f.id)).toEqual([null])
+  })
+})
+
+describe('getClickedRange()', () => {
+  const rows = ['c', 'a', 'b'].map((id) => _file(id, { parentId: 'root' }))
+
+  it('follows the order it is given', () => {
+    expect(getClickedRange('b', rows, true, 'c')).toEqual(['c', 'a', 'b'])
+  })
+
+  it('toggles only the clicked row when it or the anchor is not shown', () => {
+    expect(getClickedRange('x', rows, true, 'c')).toEqual(['x'])
+    expect(getClickedRange('a', rows, true, 'gone')).toEqual(['a'])
   })
 })

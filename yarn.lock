@@ -5518,6 +5518,7 @@ __metadata:
     "@transloadit/utils": "npm:^4.8.0"
     "@uppy-dev/s3-mock-companion": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
+    "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.11"
