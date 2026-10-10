@@ -620,15 +620,16 @@ describe('Transloadit', () => {
       name: 'failed.txt',
       data: new Blob(['failed']),
     })
-    // An earlier failure: not part of upload(), retried on its own meanwhile.
+    // Uploaded once before, so upload() leaves it out.
     uppy.setFileState(failed, {
-      error: 'earlier failure',
       progress: { ...uppy.getFile(failed).progress, uploadStarted: 1 },
     })
 
     const upload = uppy.upload()
     await vi.waitFor(() => expect(signer.calls).toBe(1))
+    // It failed back then, and is retried on its own while upload() prepares.
     // A retry is created even while admission is closed; its signing is the second.
+    uppy.setFileState(failed, { error: 'earlier failure' })
     const retry = uppy.retryUpload(failed)
     await vi.waitFor(() => expect(signer.calls).toBe(2))
 
@@ -659,12 +660,12 @@ describe('Transloadit', () => {
       data: new Blob(['failed']),
     })
     uppy.setFileState(failed, {
-      error: 'earlier failure',
       progress: { ...uppy.getFile(failed).progress, uploadStarted: 1 },
     })
 
     const upload = uppy.upload()
     await vi.waitFor(() => expect(signer.calls).toBe(1))
+    uppy.setFileState(failed, { error: 'earlier failure' })
     const retry = uppy.retryUpload(failed)
     await vi.waitFor(() => expect(signer.calls).toBe(2))
 
@@ -672,6 +673,7 @@ describe('Transloadit', () => {
     // admission while the retry is still preparing.
     signings[0].reject(new Error('signing unavailable'))
     await expect(upload).rejects.toThrow('signing unavailable')
+    expect(uppy.getFile(failed).error).toBeFalsy()
     expect(uppy.getState().allowNewUpload).toBe(false)
     expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1)
 
