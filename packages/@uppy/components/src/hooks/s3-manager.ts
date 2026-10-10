@@ -3,8 +3,9 @@ import type {
   PartialTreeFile,
   PartialTreeFolder,
   PartialTreeFolderNode,
+  PartialTreeId,
+  ProviderDialogState,
   UnknownProviderPlugin,
-  UnknownProviderPluginState,
   UppyEventMap,
 } from '@uppy/core'
 import type {
@@ -16,47 +17,70 @@ import type {
 import { dequal } from 'dequal/lite'
 import { Subscribers } from './utils.js'
 
-type Item = PartialTreeFile | PartialTreeFolderNode
+/** @experimental A file or folder row of the manager. */
+export type S3ManagerItem = PartialTreeFile | PartialTreeFolderNode
 
 /**
- * @experimental A headless manager-mode storage browser (`@uppy/s3`,
- * `@uppy/transloadit-storage`). It will change incompatibly, also in minor
- * releases.
+ * @experimental The state of a headless manager-mode storage browser
+ * (`@uppy/s3`, `@uppy/transloadit-storage`). It will change incompatibly,
+ * also in minor releases. These types are the hook's own: what computes
+ * them (ProviderView today) can be replaced without changing them.
  */
+export type S3ManagerState = {
+  authenticated: boolean | undefined
+  /** A string is the progress text of a listing or a long operation. */
+  loading: boolean | string
+  currentFolderId: PartialTreeId
+  /** The open folder's items, not the whole tree. */
+  partialTree: S3ManagerItem[]
+  breadcrumbs: PartialTreeFolder[]
+  /** What a bulk action runs on: the checked items, top-most only. */
+  selected: S3ManagerItem[]
+  /** Kept while a refresh relists its folder; cleared when it is gone. */
+  detailItem: S3ManagerItem | undefined
+  /** The prompt or confirm an action is waiting on, if any. */
+  dialog: ProviderDialogState | undefined
+  selectionActive: boolean
+  /** Whether `cancelOperation` has a running move or bulk change to stop. */
+  cancellable: boolean
+  actions: ProviderAction<any, any>[]
+  toolbarActions: ProviderToolbarAction<any, any>[]
+  bulkActions: ProviderBulkAction<any, any>[]
+}
+
+/** @experimental See `S3ManagerState`. */
 export type S3ManagerSnapshot = {
-  state: Omit<UnknownProviderPluginState, 'partialTree'> & {
-    /** The open folder's items, not the whole tree. */
-    partialTree: Item[]
-    breadcrumbs: PartialTreeFolder[]
-    /** What a bulk action runs on: the checked items, top-most only. */
-    selected: Item[]
-    /** Kept while a refresh relists its folder; cleared when it is gone. */
-    detailItem: Item | undefined
-    /** Whether `cancelOperation` has a running move or bulk change to stop. */
-    cancellable: boolean
-    actions: ProviderAction<any, any>[]
-    toolbarActions: ProviderToolbarAction<any, any>[]
-    bulkActions: ProviderBulkAction<any, any>[]
-  }
-  open: ProviderViews<any, any>['openFolder']
+  state: S3ManagerState
+  /** Open a folder by item id. */
+  open: (folderId: PartialTreeId) => Promise<void>
   /** Open a folder by key (e.g. `docs/photos/`); false when it doesn't exist. */
   openPath: (key: string | null) => Promise<boolean>
-  loadMore: ProviderViews<any, any>['loadNextPage']
+  /** Load the open folder's next page; false when there is none. */
+  loadMore: () => Promise<boolean>
   refresh: () => Promise<void>
-  checkbox: ProviderViews<any, any>['toggleCheckbox']
-  cancelSelection: ProviderViews<any, any>['cancelSelection']
-  toggleSelectionMode: ProviderViews<any, any>['toggleSelectionMode']
-  openDetail: ProviderViews<any, any>['openItemDetail']
-  closeDetail: ProviderViews<any, any>['closeItemDetail']
-  runAction: ProviderViews<any, any>['runAction']
-  runToolbarAction: ProviderViews<any, any>['runToolbarAction']
-  runBulkAction: ProviderViews<any, any>['runBulkAction']
-  submitDialog: ProviderViews<any, any>['submitDialog']
-  cancelDialog: ProviderViews<any, any>['cancelDialog']
+  /** `visibleOrder` is the rows as shown (sorted, filtered), for shift-click ranges. */
+  checkbox: (
+    item: S3ManagerItem,
+    isShiftKeyPressed: boolean,
+    visibleOrder?: S3ManagerItem[],
+  ) => void
+  cancelSelection: () => void
+  toggleSelectionMode: () => void
+  openDetail: (item: S3ManagerItem) => void
+  closeDetail: () => void
+  runAction: (
+    action: ProviderAction<any, any>,
+    item: S3ManagerItem,
+  ) => Promise<void>
+  runToolbarAction: (action: ProviderToolbarAction<any, any>) => Promise<void>
+  runBulkAction: (action: ProviderBulkAction<any, any>) => Promise<void>
+  /** Answer the open dialog (`value` is the prompt's input). */
+  submitDialog: (value?: string) => void
+  cancelDialog: () => void
   /** Stop a running move or bulk change (`state.loading` is set meanwhile). */
-  cancelOperation: ProviderViews<any, any>['cancelLongOperation']
-  login: ProviderViews<any, any>['handleAuth']
-  logout: ProviderViews<any, any>['logout']
+  cancelOperation: () => void
+  login: () => Promise<void>
+  logout: () => Promise<void>
 }
 
 /** @experimental See `S3ManagerSnapshot`. */
@@ -82,7 +106,7 @@ export function createS3ManagerController(
   const view = plugin.view as ProviderViews<any, any>
   const subscribers = new Subscribers()
   let didFirstRender = false
-  let lastDetail: Item | undefined
+  let lastDetail: S3ManagerItem | undefined
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     _prev,
@@ -92,7 +116,7 @@ export function createS3ManagerController(
     if (patch?.plugins?.[pluginId]) subscribers.emit()
   }
 
-  const readState = (): S3ManagerSnapshot['state'] => {
+  const readState = (): S3ManagerState => {
     const state = plugin.getPluginState()
     const partialTree = view.getDisplayedPartialTree()
     const found = partialTree.find(({ id }) => id === state.detailItemId)
@@ -100,11 +124,15 @@ export function createS3ManagerController(
     // meanwhile. ProviderView closes the detail if the listing lost it.
     if (found || lastDetail?.id !== state.detailItemId) lastDetail = found
     return {
-      ...state,
+      authenticated: state.authenticated,
+      loading: state.loading,
+      currentFolderId: state.currentFolderId,
       partialTree,
       breadcrumbs: view.getBreadcrumbs(),
       selected: view.getBulkActionItems(),
       detailItem: lastDetail,
+      dialog: state.dialog,
+      selectionActive: state.selectionActive ?? false,
       cancellable: view.canCancelOperation,
       actions: view.opts.actions ?? [],
       toolbarActions: view.opts.toolbarActions ?? [],
@@ -118,9 +146,10 @@ export function createS3ManagerController(
     state: readState(),
     open: view.openFolder,
     openPath: (key) => plugin.openFolderPath(key),
-    loadMore: view.loadNextPage.bind(view),
+    loadMore: () => view.loadNextPage(),
     refresh: () => view.refreshCurrentFolder(true),
-    checkbox: view.toggleCheckbox,
+    checkbox: (item, isShiftKeyPressed, visibleOrder) =>
+      view.toggleCheckbox(item, isShiftKeyPressed, visibleOrder),
     cancelSelection: view.cancelSelection,
     toggleSelectionMode: view.toggleSelectionMode,
     openDetail: view.openItemDetail,
@@ -131,7 +160,7 @@ export function createS3ManagerController(
     submitDialog: view.submitDialog,
     cancelDialog: view.cancelDialog,
     cancelOperation: view.cancelLongOperation,
-    login: view.handleAuth,
+    login: () => view.handleAuth(),
     logout: view.logout,
   }
 
