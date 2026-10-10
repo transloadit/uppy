@@ -893,9 +893,12 @@ export default class Transloadit<
         await this.#reserveFiles(assembly, fileIDs)
         if (cancelled()) {
           // Cancelled while reserving: an Assembly made for this attempt is
-          // dropped like one cancelled during creation, so the next batch
-          // cannot pick it up. A restored one was cancelled by cancel-all.
-          if (assembly !== restored) await this.#cancelAssembly(assembly.status)
+          // cancelled on the server, as on the creation path, so the next
+          // batch cannot pick it up. Only on the server: `this.assembly` may
+          // be a newer upload's by now. A recovered one stays with its batch.
+          if (assembly !== restored) {
+            await this.client.cancelAssembly(assembly.status)
+          }
           this.#allowNewUploadIfIdle(uploadID)
           return
         }

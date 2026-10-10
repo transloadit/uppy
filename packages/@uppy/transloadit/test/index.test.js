@@ -532,6 +532,82 @@ describe('Transloadit', () => {
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
 
+  it("leaves a newer upload's Assembly alone when cancelling one whose files were reserved", async ({
+    worker,
+  }) => {
+    const status = (id) => ({
+      assembly_id: id,
+      ok: 'ASSEMBLY_UPLOADING',
+      assembly_ssl_url: `https://api2.transloadit.com/assemblies/${id}`,
+      tus_url: 'https://api2.transloadit.com/resumable/files/',
+      websocket_url: 'https://api2.transloadit.com/ws',
+      uploads: [],
+      results: {},
+    })
+    // The newer upload connects to its Assembly.
+    worker.use(
+      http.get(
+        'https://api2.transloadit.com/ws',
+        () => new HttpResponse(null, { status: 204 }),
+      ),
+      http.get('https://api2.transloadit.com/assemblies/:id', ({ params }) =>
+        HttpResponse.json(status(params.id)),
+      ),
+    )
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      importFromUploadURLs: true,
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    let created = 0
+    plugin.client.createAssembly = vi.fn(async () => status(`A${++created}`))
+    let reserved
+    const reserving = new Promise((resolve) => {
+      reserved = resolve
+    })
+    plugin.client.reserveFile = vi
+      .fn()
+      .mockImplementationOnce(() => reserving)
+      .mockResolvedValue(undefined)
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    // Keep the newer upload in its upload step, as a real uploader would.
+    let uploaded
+    const uploading = new Promise((resolve) => {
+      uploaded = resolve
+    })
+    uppy.addUploader(() => uploading)
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    uppy.addFile(file)
+
+    const first = uppy.upload()
+    await vi.waitFor(() =>
+      expect(plugin.client.reserveFile).toHaveBeenCalledOnce(),
+    )
+    uppy.cancelAll()
+    uppy.addFile(file)
+    const second = uppy.upload()
+    await vi.waitFor(() =>
+      expect(plugin.assembly?.status.assembly_id).toBe('A2'),
+    )
+    reserved()
+    await first
+
+    expect(
+      plugin.client.cancelAssembly.mock.calls.map(([s]) => s.assembly_id),
+    ).toEqual(['A1'])
+    expect(plugin.assembly?.status.assembly_id).toBe('A2')
+
+    uppy.cancelAll()
+    uploaded()
+    await second.catch(() => {})
+  })
+
   it('keeps admission closed when options fail for a retry while another upload prepares', async () => {
     const signer = deferredSignings(2)
     const { signings } = signer
