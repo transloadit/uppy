@@ -155,6 +155,43 @@ describe('afterFill()', () => {
     expect(listed).toEqual(['1', '2'])
   })
 
+  it('stops listing subfolders once a listing failed', async () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const listed: PartialTreeId[] = []
+    let answer!: (listing: {
+      nextPagePath: PartialTreeId
+      items: CompanionFile[]
+    }) => void
+    const slow = new Promise<{
+      nextPagePath: PartialTreeId
+      items: CompanionFile[]
+    }>((resolve) => {
+      answer = resolve
+    })
+    const mock = (path: PartialTreeId) => {
+      listed.push(path)
+      return path === '1' ? slow : Promise.reject(new Error('listing failed'))
+    }
+
+    const fill = afterFill(
+      tree,
+      mock,
+      () => null,
+      () => {},
+    )
+    // '2' has failed by now; '1' still answers, with a subfolder.
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    answer({ nextPagePath: null, items: [_cFolder('1_1')] })
+
+    await expect(fill).rejects.toThrow('listing failed')
+    expect(listed).toEqual(['1', '2'])
+  })
+
   it('fetches remaining pages in a folder', async () => {
     // prettier-ignore
     const tree: PartialTree = [

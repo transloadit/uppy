@@ -82,6 +82,9 @@ const afterFill = async (
   // worse. It also keeps a rejected `queue.add()` from going unhandled.
   let failure: { error: unknown } | undefined
   const enqueue = (poorFolder: PartialTreeFolderNode) => {
+    // Nothing more once a listing failed: the queue was cleared, and the
+    // listings still in flight must not refill it with their subfolders.
+    if (failure) return
     queue
       .add(() =>
         recursivelyFetch(
