@@ -6,6 +6,7 @@ import type {
   PartialTreeId,
   ProviderDialogState,
   UnknownProviderPlugin,
+  UnknownProviderPluginState,
   UppyEventMap,
 } from '@uppy/core'
 import type {
@@ -48,7 +49,12 @@ export type S3ManagerState = {
   bulkActions: ProviderBulkAction<any, any>[]
 }
 
-/** @experimental See `S3ManagerState`. */
+/**
+ * @experimental See `S3ManagerState`. The commands that start a request
+ * (`open`, `openPath`, `loadMore`, `login`, `logout` and the three `run…`)
+ * do nothing while `state.cancellable` is set: a request then would abort
+ * the running operation part-way.
+ */
 export type S3ManagerSnapshot = {
   state: S3ManagerState
   /** Open a folder by item id. */
@@ -57,6 +63,7 @@ export type S3ManagerSnapshot = {
   openPath: (key: string | null) => Promise<boolean>
   /** Load the open folder's next page; false when there is none. */
   loadMore: () => Promise<boolean>
+  /** Relist the open folder. Selections in other folders are kept. */
   refresh: () => Promise<void>
   /** `visibleOrder` is the rows as shown (sorted, filtered), for shift-click ranges. */
   checkbox: (
@@ -103,81 +110,104 @@ export function createS3ManagerController(
 ): S3ManagerStore {
   const plugin = uppy.getPlugin<StoragePlugin>(pluginId)
   if (!plugin) throw new Error(`(${pluginId}) is not installed`)
+  if (!plugin.view || typeof plugin.openFolderPath !== 'function') {
+    throw new Error(
+      `(${pluginId}) is not a manager-mode storage plugin (@uppy/s3, @uppy/transloadit-storage)`,
+    )
+  }
   const view = plugin.view as ProviderViews<any, any>
   const subscribers = new Subscribers()
   let didFirstRender = false
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-    _prev,
-    _next,
-    patch,
+    prev,
+    next,
   ) => {
-    if (patch?.plugins?.[pluginId]) subscribers.emit()
+    // `setPluginState` puts every plugin in the patch: compare ours instead.
+    if (prev.plugins[pluginId] !== next.plugins[pluginId]) subscribers.emit()
   }
 
-  const readState = (): S3ManagerState => {
-    const state = plugin.getPluginState()
-    return {
-      authenticated: state.authenticated,
-      loading: state.loading,
-      currentFolderId: state.currentFolderId,
-      partialTree: view.getDisplayedPartialTree(),
-      breadcrumbs: view.getBreadcrumbs(),
-      selected: view.getBulkActionItems(),
-      detailItem: view.getDetailItem(),
-      dialog: state.dialog,
-      selectionActive: state.selectionActive ?? false,
-      cancellable: view.canCancelOperation,
-      actions: view.opts.actions ?? [],
-      toolbarActions: view.opts.toolbarActions ?? [],
-      bulkActions: view.opts.bulkActions ?? [],
-    }
-  }
+  /** `command`, unless a cancellable operation runs: a request now would abort it. */
+  const unlessBusy =
+    <A extends unknown[], R>(command: (...args: A) => Promise<R>, busy: R) =>
+    (...args: A): Promise<R> =>
+      view.canCancelOperation ? Promise.resolve(busy) : command(...args)
+
+  const readState = (state: UnknownProviderPluginState): S3ManagerState => ({
+    authenticated: state.authenticated,
+    loading: state.loading,
+    currentFolderId: state.currentFolderId,
+    partialTree: view.getDisplayedPartialTree(),
+    breadcrumbs: view.getBreadcrumbs(),
+    selected: view.getBulkActionItems(),
+    detailItem: view.getDetailItem(),
+    dialog: state.dialog,
+    selectionActive: state.selectionActive ?? false,
+    cancellable: view.canCancelOperation,
+    actions: view.opts.actions ?? [],
+    toolbarActions: view.opts.toolbarActions ?? [],
+    bulkActions: view.opts.bulkActions ?? [],
+  })
 
   // Cached so the reference stays stable while nothing changed, as
   // `useSyncExternalStore` expects.
+  let lastPluginState = plugin.getPluginState()
   let cachedSnapshot: S3ManagerSnapshot = {
-    state: readState(),
-    open: view.openFolder,
-    openPath: (key) => plugin.openFolderPath(key),
-    loadMore: () => view.loadNextPage(),
-    refresh: () => view.refreshCurrentFolder(true),
+    state: readState(lastPluginState),
+    open: unlessBusy(view.openFolder, undefined),
+    openPath: unlessBusy(
+      (key: string | null) => plugin.openFolderPath(key),
+      false,
+    ),
+    loadMore: unlessBusy(() => view.loadNextPage(), false),
+    // Only the open folder is relisted: selections elsewhere survive, like
+    // the plugin's own refreshListing().
+    refresh: () => view.refreshCurrentFolder(),
     checkbox: (item, isShiftKeyPressed, visibleOrder) =>
       view.toggleCheckbox(item, isShiftKeyPressed, visibleOrder),
     cancelSelection: view.cancelSelection,
     toggleSelectionMode: view.toggleSelectionMode,
     openDetail: view.openItemDetail,
     closeDetail: view.closeItemDetail,
-    runAction: view.runAction,
-    runToolbarAction: view.runToolbarAction,
-    runBulkAction: view.runBulkAction,
+    runAction: unlessBusy(view.runAction, undefined),
+    runToolbarAction: unlessBusy(view.runToolbarAction, undefined),
+    runBulkAction: unlessBusy(view.runBulkAction, undefined),
     submitDialog: view.submitDialog,
     cancelDialog: view.cancelDialog,
     cancelOperation: view.cancelLongOperation,
-    login: () => view.handleAuth(),
-    logout: view.logout,
+    login: unlessBusy(() => view.handleAuth(), undefined),
+    logout: unlessBusy(view.logout, undefined),
   }
 
   const getSnapshot = () => {
-    const state = readState()
-    if (!dequal(cachedSnapshot.state, state))
-      cachedSnapshot = { ...cachedSnapshot, state }
+    // The plugin replaces its state object on every change, so the same
+    // object means nothing to recompute (a logout whose request failed is
+    // the one exception: it clears the selection roots without a state
+    // change, and `selected` catches up on the next one). A plugin removed
+    // while mounted reads as an empty state: the last snapshot stays.
+    const state = plugin.getPluginState()
+    if (!state.partialTree || state === lastPluginState) return cachedSnapshot
+    lastPluginState = state
+    const next = readState(state)
+    if (!dequal(cachedSnapshot.state, next)) {
+      cachedSnapshot = { ...cachedSnapshot, state: next }
+    }
     return cachedSnapshot
   }
 
   const mount = () => {
     uppy.on('state-update', onStateUpdate)
-    if (!didFirstRender) {
-      didFirstRender = true
-      // Logs in when needed and lists the folder without a rendered panel.
-      plugin.openFolderPath(initialFolderKey).catch((err: unknown) => {
-        uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
-      })
-    }
+    // Once per controller: React StrictMode unmounts and mounts again with
+    // the same one, and a second walk would abort the first.
+    if (didFirstRender) return
+    didFirstRender = true
+    // Logs in when needed and lists the folder without a rendered panel.
+    plugin.openFolderPath(initialFolderKey).catch((err: unknown) => {
+      uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
+    })
   }
 
   const unmount = () => {
-    didFirstRender = false
     uppy.off('state-update', onStateUpdate)
   }
 

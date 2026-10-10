@@ -1,5 +1,5 @@
 import { createS3ManagerController } from '@uppy/components'
-import Uppy from '@uppy/core'
+import Uppy, { BasePlugin } from '@uppy/core'
 import {
   createMockS3Companion,
   toMswHandlers,
@@ -17,6 +17,12 @@ afterEach(() => {
   uppy = undefined
   localStorage.clear()
 })
+
+/** Any other plugin: its state changes must not reach the manager. */
+class Other extends BasePlugin<any, any, any> {
+  override id = 'Other'
+  override type = 'acquirer'
+}
 
 it('browses and deletes without a rendered panel', async ({ worker }) => {
   const companion = createMockS3Companion({ token: 'test-token' })
@@ -79,5 +85,122 @@ it('finds the detail item anywhere in the tree, for a recreated controller too',
   // A remount gets a new controller: the item is the view's, not the hook's.
   const again = createS3ManagerController(uppy, 'S3')
   expect(again.getSnapshot().state.detailItem?.id).toBe(hello!.id)
+  manager.unmount()
+})
+
+it('refuses a plugin that is not a manager-mode storage browser', () => {
+  uppy = new Uppy().use(Other)
+  expect(() => createS3ManagerController(uppy!, 'Other')).toThrow(
+    'not a manager-mode storage plugin',
+  )
+  expect(() => createS3ManagerController(uppy!, 'Nope')).toThrow(
+    'not installed',
+  )
+})
+
+it('walks to the initial folder once, StrictMode remounts included', async ({
+  worker,
+}) => {
+  const companion = createMockS3Companion({ token: 'test-token' })
+  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
+  const walk = vi.spyOn(uppy.getPlugin<S3<any, any>>('S3')!, 'openFolderPath')
+  const manager = createS3ManagerController(uppy, 'S3', {
+    initialFolderKey: 'docs/',
+  })
+  // StrictMode mounts, unmounts and mounts again with the same controller.
+  manager.mount()
+  manager.unmount()
+  manager.mount()
+  expect(walk).toHaveBeenCalledOnce()
+  await walk.mock.results[0]!.value
+  expect(manager.getSnapshot().state.breadcrumbs).toHaveLength(2)
+  manager.unmount()
+})
+
+it('refuses to navigate while an operation can be cancelled', async ({
+  worker,
+}) => {
+  const companion = createMockS3Companion({ token: 'test-token' })
+  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
+  const plugin = uppy.getPlugin<S3<any, any>>('S3')!
+  const walk = vi.spyOn(plugin, 'openFolderPath')
+  const manager = createS3ManagerController(uppy, 'S3')
+  manager.mount()
+  await walk.mock.results[0]!.value
+  const docs = manager
+    .getSnapshot()
+    .state.partialTree.find((item) => item.data.name === 'docs')!
+
+  // A long operation (a folder move, a bulk delete) behind the progress screen.
+  let finish!: () => void
+  const operation = plugin.view.runWithProgress(
+    () =>
+      new Promise<void>((resolve) => {
+        finish = resolve
+      }),
+  )
+  expect(manager.getSnapshot().state.cancellable).toBe(true)
+
+  await manager.getSnapshot().open(docs.id)
+  expect(await manager.getSnapshot().openPath('docs/')).toBe(false)
+  expect(await manager.getSnapshot().loadMore()).toBe(false)
+  expect(manager.getSnapshot().state.currentFolderId).toBe(null)
+
+  finish()
+  await operation
+  await manager.getSnapshot().open(docs.id)
+  expect(manager.getSnapshot().state.currentFolderId).toBe(docs.id)
+  manager.unmount()
+})
+
+it('keeps selections in other folders across a refresh', async ({ worker }) => {
+  const companion = createMockS3Companion({ token: 'test-token' })
+  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
+  const walk = vi.spyOn(uppy.getPlugin<S3<any, any>>('S3')!, 'openFolderPath')
+  const manager = createS3ManagerController(uppy, 'S3')
+  manager.mount()
+  await walk.mock.results[0]!.value
+  const { partialTree } = manager.getSnapshot().state
+  const readme = partialTree.find((item) => item.data.name === 'readme.md')!
+  const docs = partialTree.find((item) => item.data.name === 'docs')!
+  manager.getSnapshot().checkbox(readme, false)
+
+  await manager.getSnapshot().open(docs.id)
+  expect(manager.getSnapshot().state.currentFolderId).toBe(docs.id)
+  await manager.getSnapshot().refresh()
+
+  expect(manager.getSnapshot().state.selected.map((item) => item.id)).toEqual([
+    readme.id,
+  ])
+  manager.unmount()
+})
+
+it('emits for its own plugin only, and survives the plugin being removed', async ({
+  worker,
+}) => {
+  const companion = createMockS3Companion({ token: 'test-token' })
+  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  uppy = new Uppy()
+    .use(S3, { companionUrl: COMPANION, mode: 'manager' })
+    .use(Other)
+  const walk = vi.spyOn(uppy.getPlugin<S3<any, any>>('S3')!, 'openFolderPath')
+  const manager = createS3ManagerController(uppy, 'S3')
+  const changed = vi.fn()
+  manager.subscribe(changed)
+  manager.mount()
+  await walk.mock.results[0]!.value
+
+  // State updates emit synchronously, so the count is exact between awaits.
+  const emitted = changed.mock.calls.length
+  uppy.getPlugin('Other')!.setPluginState({ ping: 1 })
+  uppy.setState({ meta: { ping: 1 } })
+  expect(changed.mock.calls.length).toBe(emitted)
+
+  const last = manager.getSnapshot()
+  uppy.removePlugin(uppy.getPlugin('S3')!)
+  expect(manager.getSnapshot()).toBe(last)
   manager.unmount()
 })
