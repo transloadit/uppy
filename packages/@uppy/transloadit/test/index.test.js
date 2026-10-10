@@ -486,4 +486,121 @@ describe('Transloadit', () => {
     signings[1].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
     await second
   })
+  it('leaves no Assembly behind for an upload cancelled while its files were reserved', async () => {
+    let reserved
+    const reserving = new Promise((resolve) => {
+      reserved = resolve
+    })
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      importFromUploadURLs: true,
+      assemblyOptions: {
+        params: {
+          auth: { key: 'test-auth-key' },
+          template_id: 'test-template-id',
+        },
+      },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    const status = {
+      assembly_id: 'stale',
+      ok: 'ASSEMBLY_UPLOADING',
+      assembly_ssl_url: 'https://api2.transloadit.com/assemblies/stale',
+      tus_url: 'https://api2.transloadit.com/resumable/files/',
+      websocket_url: 'https://api2.transloadit.com/ws',
+      uploads: [],
+      results: {},
+    }
+    plugin.client.createAssembly = vi.fn(async () => status)
+    plugin.client.reserveFile = vi.fn(() => reserving)
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    const file = { source: 'test', name: 'same.txt', data: new Blob(['same']) }
+    const id = uppy.addFile(file)
+
+    const upload = uppy.upload()
+    await vi.waitFor(() =>
+      expect(plugin.client.reserveFile).toHaveBeenCalledOnce(),
+    )
+    uppy.cancelAll()
+    expect(uppy.addFile(file)).toBe(id)
+    reserved()
+    await upload
+
+    expect(plugin.client.cancelAssembly).toHaveBeenCalledWith(status)
+    expect(plugin.assembly).toBeUndefined()
+    expect(uppy.getFile(id).transloadit).toBeUndefined()
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('keeps admission closed when options fail for a retry while another upload prepares', async () => {
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    uppy.getPlugin('Transloadit').client.createAssembly = vi.fn()
+    uppy.addFile({ source: 'test', name: 'new.txt', data: new Blob(['new']) })
+    const failed = uppy.addFile({
+      source: 'test',
+      name: 'failed.txt',
+      data: new Blob(['failed']),
+    })
+    // An earlier failure: not part of upload(), retried on its own meanwhile.
+    uppy.setFileState(failed, {
+      error: 'earlier failure',
+      progress: { ...uppy.getFile(failed).progress, uploadStarted: 1 },
+    })
+
+    const upload = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(1))
+    // A retry is created even while admission is closed; its signing is the second.
+    const retry = uppy.retryUpload(failed)
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+
+    signings[1].reject(new Error('signing unavailable'))
+    await expect(retry).rejects.toThrow('signing unavailable')
+    // The first upload is still preparing: nothing may be added yet.
+    expect(uppy.getState().allowNewUpload).toBe(false)
+    expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1)
+
+    uppy.cancelAll()
+    signings[0].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await upload
+  })
+
+  it('keeps admission closed when options fail for an upload while a retry prepares', async () => {
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn()
+    // The failure is reported to Transloadit; not under test here.
+    plugin.client.submitError = vi.fn(async () => {})
+    uppy.addFile({ source: 'test', name: 'new.txt', data: new Blob(['new']) })
+    const failed = uppy.addFile({
+      source: 'test',
+      name: 'failed.txt',
+      data: new Blob(['failed']),
+    })
+    uppy.setFileState(failed, {
+      error: 'earlier failure',
+      progress: { ...uppy.getFile(failed).progress, uploadStarted: 1 },
+    })
+
+    const upload = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(1))
+    const retry = uppy.retryUpload(failed)
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+
+    // upload() reports through the error event, which must not reopen
+    // admission while the retry is still preparing.
+    signings[0].reject(new Error('signing unavailable'))
+    await expect(upload).rejects.toThrow('signing unavailable')
+    expect(uppy.getState().allowNewUpload).toBe(false)
+    expect(Object.keys(uppy.getState().currentUploads)).toHaveLength(1)
+
+    uppy.cancelAll()
+    signings[1].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await retry
+  })
 })
