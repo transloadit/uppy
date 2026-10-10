@@ -876,20 +876,29 @@ export default class Transloadit<
       }
       validateParams(assemblyOptions.params)
 
+      // Already defined if files were recovered with Golden Retriever (#onRestored).
+      const restored = this.assembly
       const assembly = cancelled()
         ? null
-        : // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
-          (this.assembly ??
+        : (restored ??
           (await this.#createAssembly(fileIDs, assemblyOptions, cancelled)))
 
       if (assembly == null) {
         // Nothing left to upload: every file was removed, or the upload cancelled.
-        this.#allowNewUploadIfIdle()
+        this.#allowNewUploadIfIdle(uploadID)
         return
       }
 
       if (this.opts.importFromUploadURLs) {
         await this.#reserveFiles(assembly, fileIDs)
+        if (cancelled()) {
+          // Cancelled while reserving: an Assembly made for this attempt is
+          // dropped like one cancelled during creation, so the next batch
+          // cannot pick it up. A restored one was cancelled by cancel-all.
+          if (assembly !== restored) await this.#cancelAssembly(assembly.status)
+          this.#allowNewUploadIfIdle(uploadID)
+          return
+        }
       }
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
@@ -906,7 +915,7 @@ export default class Transloadit<
           `[Transloadit] A cancelled upload could not be prepared: ${toError(err).message}`,
           'warning',
         )
-        this.#allowNewUploadIfIdle()
+        this.#allowNewUploadIfIdle(uploadID)
         return
       }
       fileIDs.forEach((fileID) => {
@@ -916,20 +925,23 @@ export default class Transloadit<
         this.uppy.emit('preprocess-complete', file)
         this.uppy.emit('upload-error', file, toError(err))
       })
-      // Reset allowNewUpload on error
-      this.uppy.setState({ allowNewUpload: true })
+      // Reopen admission, unless another upload still holds it closed.
+      this.#allowNewUploadIfIdle(uploadID)
       throw err
     }
   }
 
   /**
-   * Files may be added again once an attempt ends with nothing to upload,
-   * unless another upload is preparing or running meanwhile and holds that.
+   * Files may be added again once an attempt ends with nothing to upload or
+   * fails, unless another upload is preparing or running meanwhile and holds
+   * that. `endingUploadID` is the attempt itself: core only drops it once its
+   * preprocessor has thrown, so it does not count.
    */
-  #allowNewUploadIfIdle() {
-    if (Object.keys(this.uppy.getState().currentUploads).length === 0) {
-      this.uppy.setState({ allowNewUpload: true })
-    }
+  #allowNewUploadIfIdle(endingUploadID?: string) {
+    const running = Object.keys(this.uppy.getState().currentUploads).filter(
+      (id) => id !== endingUploadID,
+    )
+    if (running.length === 0) this.uppy.setState({ allowNewUpload: true })
   }
 
   #afterUpload = async (fileIDs: string[], uploadID: string): Promise<void> => {
@@ -1012,8 +1024,9 @@ export default class Transloadit<
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
 
-    // Reset allowNewUpload when upload encounters an error
-    this.uppy.setState({ allowNewUpload: true })
+    // Reopen admission after a failed upload (core has dropped it by now),
+    // unless another one is still preparing or running.
+    this.#allowNewUploadIfIdle()
   }
 
   #onTusError = (_: UppyFile<M, B> | undefined, err: Error) => {
