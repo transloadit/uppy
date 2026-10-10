@@ -24,8 +24,10 @@ export type S3ManagerItem = PartialTreeFile | PartialTreeFolderNode
 /**
  * @experimental The state of a headless manager-mode storage browser
  * (`@uppy/s3`, `@uppy/transloadit-storage`). It will change incompatibly,
- * also in minor releases. These types are the hook's own: what computes
- * them (ProviderView today) can be replaced without changing them.
+ * also in minor releases. The state and the commands are the hook's own
+ * types, not ProviderView's method signatures or plugin state, so what
+ * computes them (ProviderView today) can be replaced behind them. The action
+ * descriptors are still core's `ProviderAction` types.
  */
 export type S3ManagerState = {
   authenticated: boolean | undefined
@@ -86,7 +88,8 @@ export type S3ManagerSnapshot = {
   cancelDialog: () => void
   /** Stop a running move or bulk change (`state.loading` is set meanwhile). */
   cancelOperation: () => void
-  login: () => Promise<void>
+  /** `authFormData` is passed to the provider, e.g. `{ grant }` for `@uppy/s3`. */
+  login: (authFormData?: unknown) => Promise<void>
   logout: () => Promise<void>
 }
 
@@ -175,7 +178,10 @@ export function createS3ManagerController(
     submitDialog: view.submitDialog,
     cancelDialog: view.cancelDialog,
     cancelOperation: view.cancelLongOperation,
-    login: unlessBusy(() => view.handleAuth(), undefined),
+    login: unlessBusy(
+      (authFormData?: unknown) => view.handleAuth(authFormData),
+      undefined,
+    ),
     logout: unlessBusy(view.logout, undefined),
   }
 

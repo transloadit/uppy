@@ -204,3 +204,16 @@ it('emits for its own plugin only, and survives the plugin being removed', async
   expect(manager.getSnapshot()).toBe(last)
   manager.unmount()
 })
+
+it('passes login form data through, such as a grant', async ({ worker }) => {
+  const companion = createMockS3Companion({ token: 'test-token' })
+  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
+  const plugin = uppy.getPlugin<S3<any, any>>('S3')!
+  const manager = createS3ManagerController(uppy, 'S3')
+  const auth = vi.spyOn(plugin.view, 'handleAuth').mockResolvedValue()
+
+  await manager.getSnapshot().login({ grant: 'signed-grant' })
+
+  expect(auth).toHaveBeenCalledWith({ grant: 'signed-grant' })
+})
