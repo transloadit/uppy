@@ -10,6 +10,9 @@
 The Tus plugin brings [tus.io][] resumable file uploading to Uppy by wrapping
 the [tus-js-client][].
 
+tus is funded through [Open Collective](https://opencollective.com/tus). If your
+product relies on resumable uploads, consider sponsoring it.
+
 Uppy is being developed by the folks at [Transloadit](https://transloadit.com),
 a versatile file encoding service.
 
