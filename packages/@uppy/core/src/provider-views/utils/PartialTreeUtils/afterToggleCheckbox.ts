@@ -131,9 +131,10 @@ const afterToggleCheckbox = (
     percolateDown(tree, item.id, item.status === 'checked')
   })
 
-  if (newlyCheckedItems.length === 0) return tree
-  // all checked items have the same parent so we only need to perlocate the first item
-  percolateUp(tree, newlyCheckedItems[0].parentId, loadedPagesOnly)
+  // A range from a custom UI can span folders: recompute each parent.
+  for (const parentId of new Set(newlyCheckedItems.map((i) => i.parentId))) {
+    percolateUp(tree, parentId, loadedPagesOnly)
+  }
   return tree
 }
 

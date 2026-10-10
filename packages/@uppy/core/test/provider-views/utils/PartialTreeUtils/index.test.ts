@@ -455,6 +455,20 @@ describe('afterToggleCheckbox()', () => {
     expect(getFile(scrolled, '1_3').status).toEqual('unchecked')
   })
 
+  it('recomputes every parent of a range that spans folders', () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('1', { parentId: 'ourRoot' }),
+      _file('1_1', { parentId: '1' }),
+      _folder('2', { parentId: 'ourRoot' }),
+      _file('2_1', { parentId: '2' }),
+    ]
+    const toggled = afterToggleCheckbox(tree, ['1_1', '2_1'])
+    expect(getFolder(toggled, '1').status).toEqual('checked')
+    expect(getFolder(toggled, '2').status).toEqual('checked')
+  })
+
   // prettier-ignore
   const oldPartialTree: PartialTree = [
     _root('ourRoot'),
