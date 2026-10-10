@@ -56,3 +56,28 @@ it('browses and deletes without a rendered panel', async ({ worker }) => {
   expect(companion.lastCall('/s3/mutate/delete')).toBeDefined()
   manager.unmount()
 })
+
+it('finds the detail item anywhere in the tree, for a recreated controller too', async ({
+  worker,
+}) => {
+  const companion = createMockS3Companion({ token: 'test-token' })
+  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
+  const manager = createS3ManagerController(uppy, 'S3', {
+    initialFolderKey: 'docs/',
+  })
+  // The spy keeps the implementation; its promise says when the walk is done.
+  const walk = vi.spyOn(uppy.getPlugin<S3<any, any>>('S3')!, 'openFolderPath')
+  manager.mount()
+  await walk.mock.results[0]!.value
+  const [hello] = manager.getSnapshot().state.partialTree
+  manager.getSnapshot().openDetail(hello!)
+  // The root was listed by the walk, so this opens without a request.
+  await manager.getSnapshot().open(null)
+  expect(manager.getSnapshot().state.detailItem?.id).toBe(hello!.id)
+
+  // A remount gets a new controller: the item is the view's, not the hook's.
+  const again = createS3ManagerController(uppy, 'S3')
+  expect(again.getSnapshot().state.detailItem?.id).toBe(hello!.id)
+  manager.unmount()
+})

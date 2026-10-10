@@ -106,7 +106,6 @@ export function createS3ManagerController(
   const view = plugin.view as ProviderViews<any, any>
   const subscribers = new Subscribers()
   let didFirstRender = false
-  let lastDetail: S3ManagerItem | undefined
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     _prev,
@@ -118,19 +117,14 @@ export function createS3ManagerController(
 
   const readState = (): S3ManagerState => {
     const state = plugin.getPluginState()
-    const partialTree = view.getDisplayedPartialTree()
-    const found = partialTree.find(({ id }) => id === state.detailItemId)
-    // A refresh empties the folder until it is listed again: keep the item
-    // meanwhile. ProviderView closes the detail if the listing lost it.
-    if (found || lastDetail?.id !== state.detailItemId) lastDetail = found
     return {
       authenticated: state.authenticated,
       loading: state.loading,
       currentFolderId: state.currentFolderId,
-      partialTree,
+      partialTree: view.getDisplayedPartialTree(),
       breadcrumbs: view.getBreadcrumbs(),
       selected: view.getBulkActionItems(),
-      detailItem: lastDetail,
+      detailItem: view.getDetailItem(),
       dialog: state.dialog,
       selectionActive: state.selectionActive ?? false,
       cancellable: view.canCancelOperation,
