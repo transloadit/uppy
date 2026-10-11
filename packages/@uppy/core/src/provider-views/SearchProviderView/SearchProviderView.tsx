@@ -210,7 +210,8 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  async donePicking(): Promise<void> {
+  /** Resolves `true` when the checked files were added to Uppy (same contract as `ProviderView`). */
+  async donePicking(): Promise<boolean> {
     const { partialTree } = this.plugin.getPluginState()
 
     // 1. Add files
@@ -219,6 +220,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
 
     // 2. Reset state
     this.resetPluginState()
+    return true
   }
 
   toggleCheckbox(

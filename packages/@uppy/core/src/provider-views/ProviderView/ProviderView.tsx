@@ -1023,11 +1023,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
     return result
   }
 
-  async donePicking(): Promise<void> {
+  /** Resolves `true` when the checked files were added to Uppy. */
+  async donePicking(): Promise<boolean> {
     const { partialTree } = this.plugin.getPluginState()
 
-    if (this.isLoading) return
+    if (this.isLoading) return false
     this.setLoading(true)
+    let added = false
     await this.#withAbort(async (signal) => {
       // 1. Enrich our partialTree by fetching all 'checked' but not-yet-fetched folders
       const enrichedTree: PartialTree = await PartialTreeUtils.afterFill(
@@ -1052,11 +1054,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
       // 3. Add files
       const companionFiles = getCheckedFilesWithPaths(enrichedTree)
       addFiles(companionFiles, this.plugin, this.provider)
+      added = true
 
       // 4. Reset state
       this.resetPluginState()
     }).catch(handleError(this.plugin.uppy))
     this.#doneLoading()
+    return added
   }
 
   toggleCheckbox(

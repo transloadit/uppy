@@ -59,9 +59,12 @@ export function createRemoteSourceController(
     _next,
     patch,
   ) => {
-    if (patch?.plugins?.[sourceId]) {
-      subscribers.emit()
-    }
+    // `state.error` also depends on Uppy's files and restrictions;
+    // `setOptions()` changes the latter with an empty patch.
+    if (patch && !patch.files && !patch.plugins?.[sourceId]) return
+    const prevSnapshot = cachedSnapshot
+    // Notify only on a real change: the Svelte adapter re-renders on every notification.
+    if (getSnapshot() !== prevSnapshot) subscribers.emit()
   }
 
   // Keep a cached snapshot so that the reference stays stable when nothing

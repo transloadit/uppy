@@ -62,8 +62,10 @@ function closeModal() {
 
     <UploadButton />
 
+    <!-- Esc closes the dialog natively; reset the modal state too -->
     <dialog
       bind:this={dialogRef}
+      onclose={closeModal}
       class="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
     >
       {#if modalPlugin === 'webcam'}
