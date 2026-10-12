@@ -30,13 +30,16 @@ class S3Companion extends S3Client {
     }: { method?: IT.HttpMethod; body?: unknown; signal?: AbortSignal } = {},
   ): Promise<T> {
     const data = body === undefined ? undefined : JSON.stringify(body)
-    const xhr = await this._request({
-      url: `${this.companionEndpoint}/s3${path}`,
-      method,
-      data,
-      contentType: data ? 'application/json' : undefined,
-      signal,
-    }).catch((err) => {
+    try {
+      const xhr = await this._request({
+        url: `${this.companionEndpoint}/s3${path}`,
+        method,
+        data,
+        contentType: data ? 'application/json' : undefined,
+        signal,
+      })
+      return xhr.responseText ? JSON.parse(xhr.responseText) : (null as T)
+    } catch (err) {
       // Only status 0 is a real network error; anything else is an HTTP
       // error response from Companion and should not be reported as one.
       const { request } = err
@@ -45,8 +48,7 @@ class S3Companion extends S3Client {
         new Error(`Companion request failed with status ${request.status}`),
         { request },
       )
-    })
-    return JSON.parse(xhr.responseText || 'null')
+    }
   }
 
   private async _request({
