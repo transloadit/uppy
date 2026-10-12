@@ -6,6 +6,8 @@ describe('Transloadit/Assembly', () => {
   describe('status diffing', () => {
     function attemptDiff(prev, next) {
       const assembly = new Assembly(prev, new RateLimitedQueue())
+      // Lifecycle events fire once per assembly, so let it see `prev` first.
+      assembly.updateStatus(prev)
       const events = []
       assembly.emit = vi.fn((name, ...args) => {
         events.push([name, ...args])
@@ -254,9 +256,7 @@ describe('Transloadit/Assembly', () => {
       }
     })
 
-    it('does not re-emit executing/metadata when a diffed status lands after the SSE marker', () => {
-      // Over SSE, 'executing' and 'metadata' come from their own markers; a
-      // poll that was in flight must not emit them a second time.
+    it('emits executing and metadata once when SSE and a poll both report them', () => {
       const base = { uploads: {}, results: {} }
       const assembly = connect({ ...base, ok: 'ASSEMBLY_UPLOADING' })
       const events = []
@@ -266,9 +266,51 @@ describe('Transloadit/Assembly', () => {
 
       FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
       assembly.updateStatus({ ...base, ok: 'ASSEMBLY_EXECUTING' })
+      FakeEventSource.last.dispatch(
+        'message',
+        'assembly_upload_meta_data_extracted',
+      )
       assembly.close()
 
-      expect(events).toEqual(['executing'])
+      expect(events).toEqual(['executing', 'metadata'])
+    })
+
+    it('still emits metadata from a poll when SSE drops before its marker', () => {
+      // `waitForMetadata` uploads complete off 'metadata' alone.
+      const base = { uploads: {}, results: {} }
+      const assembly = connect({ ...base, ok: 'ASSEMBLY_UPLOADING' })
+      const events = []
+      for (const name of ['executing', 'metadata', 'finished']) {
+        assembly.on(name, () => events.push(name))
+      }
+
+      FakeEventSource.last.dispatch('message', 'assembly_uploading_finished')
+      assembly.updateStatus({ ...base, ok: 'ASSEMBLY_COMPLETED' })
+      assembly.close()
+
+      expect(events).toEqual(['executing', 'metadata', 'finished'])
+    })
+
+    it('emits no status from an errored polling update', () => {
+      // #diffStatus routes the errored status through #onError, which closes
+      // the assembly; updateStatus must not store it on a closed assembly.
+      const base = { uploads: {}, results: {} }
+      const assembly = new Assembly(
+        { ...base, ok: 'ASSEMBLY_EXECUTING' },
+        new RateLimitedQueue(),
+      )
+      const events = []
+      assembly.on('status', () => events.push('status'))
+      assembly.on('error', () => events.push('error'))
+
+      assembly.updateStatus({
+        ...base,
+        error: 'ASSEMBLY_CRASHED',
+        message: 'boom',
+      })
+
+      expect(events).toEqual(['error'])
+      expect(assembly.closed).toBe(true)
     })
 
     it('keeps polling after a status fetch throws', async () => {
