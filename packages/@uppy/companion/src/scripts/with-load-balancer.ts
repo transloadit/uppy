@@ -2,7 +2,6 @@
 
 import http from 'node:http'
 import process from 'node:process'
-import { fileURLToPath } from 'node:url'
 import { execa, execaNode } from 'execa'
 import httpProxy from 'http-proxy'
 
@@ -65,8 +64,6 @@ await execa('yarn', ['workspace', '@uppy/companion', 'build'], {
 const startCompanion = ({ name, port }: { name: string; port: number }) =>
   execaNode('packages/@uppy/companion/dist/standalone/start-server.js', {
     nodeOptions: [
-      '--env-file',
-      fileURLToPath(new URL('.env', repoRoot)),
       // Watch mode support is limited to Windows and macOS at the time of writing.
       ...(isWindows || isOSX
         ? ['--watch-path', 'packages/@uppy/companion/dist', '--watch']
