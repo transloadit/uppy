@@ -7,7 +7,11 @@
     },
     "build:css": {
       "dependsOn": ["@uppy/components#build:css"],
-      "outputs": ["dist/styles.css", "dist/image-editor.css"]
+      "outputs": [
+        "dist/styles.css",
+        "dist/image-editor.css",
+        "dist/image-editor.css.map"
+      ]
     }
   }
 }

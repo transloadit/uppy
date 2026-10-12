@@ -46,9 +46,12 @@ async function startServer() {
     )
 
     // Handle Chrome DevTools requests silently
-    app.get('/.well-known/appspecific/com.chrome.devtools.json', (req, res) => {
-      res.status(404).end()
-    })
+    app.get(
+      '/.well-known/appspecific/com.chrome.devtools.json',
+      (_req, res) => {
+        res.status(404).end()
+      },
+    )
 
     // React Router handles all other routes
     app.all('/{*splat}', reactRouterHandler)

@@ -12,7 +12,6 @@
     }
   ],
   "compilerOptions": {
-    "noImplicitOverride": false,
     "noUncheckedIndexedAccess": false
   }
 }

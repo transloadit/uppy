@@ -55,8 +55,8 @@ export function createRemoteSourceController(
   let didFirstRender = false
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-    prev,
-    next,
+    _prev,
+    _next,
     patch,
   ) => {
     if (patch?.plugins?.[sourceId]) {

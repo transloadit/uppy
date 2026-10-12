@@ -27,6 +27,19 @@ test('tsconfig.json', async () => {
         path: `./packages/@uppy/${name}/tsconfig.json`,
       })),
       { path: './packages/uppy/tsconfig.json' },
+      { path: './examples/aws-companion/tsconfig.json' },
+      { path: './examples/aws-nodejs/tsconfig.json' },
+      { path: './examples/aws-php/tsconfig.json' },
+      { path: './examples/companion/tsconfig.json' },
+      { path: './examples/companion-custom-provider/tsconfig.json' },
+      { path: './examples/nextjs/tsconfig.json' },
+      { path: './examples/react/tsconfig.json' },
+      { path: './examples/reactrouter/tsconfig.json' },
+      { path: './examples/vue/tsconfig.json' },
+      { path: './examples/xhr-bundle/tsconfig.json' },
+      { path: './examples/xhr-node/tsconfig.json' },
+      { path: './examples/xhr-php/tsconfig.json' },
+      { path: './examples/xhr-python/tsconfig.json' },
     ],
   })
 })
@@ -37,20 +50,23 @@ test.each(packages)('packages/@uppy/%s/tsconfig.build.json', async (name) => {
     `packages/@uppy/${name}/tsconfig.build.json`,
   )
 
-  let expected: unknown[] | undefined
+  let expected: { path: string }[] | undefined
   if (pkg.dependencies || pkg.devDependencies || pkg.peerDependencies) {
-    const deps = Object.keys({
+    const references = Object.keys({
       ...pkg.dependencies,
       ...pkg.devDependencies,
       ...pkg.peerDependencies,
     })
-      .filter((dep) => dep.startsWith('@uppy/'))
+      .filter((dep) => dep.startsWith('@uppy') && dep !== '@uppy-dev/tsconfig')
       .sort()
-
-    if (deps.length) {
-      expected = deps.map((dep) => ({
-        path: `../${dep.replace(/^@uppy\//, '')}/tsconfig.build.json`,
+      .map((dep) => ({
+        path: dep.startsWith('@uppy-dev/')
+          ? `../../../private/${dep.replace(/^@uppy-dev\//, '')}/tsconfig.build.json`
+          : `../${dep.replace(/^@uppy\//, '')}/tsconfig.build.json`,
       }))
+
+    if (references.length) {
+      expected = references
     }
   }
 

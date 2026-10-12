@@ -9,7 +9,7 @@ import type {
   MinimalRequiredUppyFile,
   RemoteUppyFile,
 } from '@uppy/core/utils'
-import { toArray } from '@uppy/core/utils'
+import { getErrorMessage, isRestrictionError, toArray } from '@uppy/core/utils'
 // biome-ignore lint/style/useImportType: h is not a type
 import { type ComponentChild, h } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
@@ -139,13 +139,13 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
   ): Promise<string | undefined> => {
     // Do not process local files
     if (protocollessUrl.startsWith('blob')) {
-      return undefined
+      return
     }
     const url = addProtocolToURL(protocollessUrl)
     if (!checkIfCorrectURL(url)) {
       this.uppy.log(`[URL] Incorrect URL entered: ${url}`)
       this.uppy.info(this.i18n('enterCorrectUrl'), 'error', 4000)
-      return undefined
+      return
     }
 
     this.uppy.log(`[URL] Adding file from dropped/pasted url: ${url}`)
@@ -182,49 +182,49 @@ export default class Url<M extends Meta, B extends Body> extends UIPlugin<
       try {
         return this.uppy.addFile(file)
       } catch (err) {
-        if (!err.isRestriction) {
+        if (!isRestrictionError(err)) {
           this.uppy.log(err)
         }
-        return err
+        return
       }
     } catch (err) {
       this.uppy.log(err)
       this.uppy.info(
         {
           message: this.i18n('failedToFetch'),
-          details: err,
+          details: getErrorMessage(err),
         },
         'error',
         4000,
       )
-      return err
+      return
     }
   }
 
-  private handleRootDrop = (e: DragEvent) => {
+  handleRootDrop = (e: DragEvent) => {
     forEachDroppedOrPastedUrl(e.dataTransfer!, 'drop', (url) => {
       this.addFile(url)
     })
   }
 
-  private handleRootPaste = (e: ClipboardEvent) => {
+  handleRootPaste = (e: ClipboardEvent) => {
     forEachDroppedOrPastedUrl(e.clipboardData!, 'paste', (url) => {
       this.addFile(url)
     })
   }
 
-  render(): ComponentChild {
+  override render(): ComponentChild {
     return <UrlUI i18n={this.i18n} addFile={this.addFile} />
   }
 
-  install(): void {
+  override install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.unmount()
   }
 }

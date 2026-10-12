@@ -1,0 +1,23 @@
+{
+  "extends": "@uppy-dev/tsconfig/build",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
+    "noUncheckedIndexedAccess": false
+  },
+  "references": [
+    {
+      "path": "../../../private/s3-mock-companion/tsconfig.build.json"
+    },
+    {
+      "path": "../core/tsconfig.build.json"
+    },
+    {
+      "path": "../dashboard/tsconfig.build.json"
+    },
+    {
+      "path": "../s3/tsconfig.build.json"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import sampleImage from '../../compressor/fixtures/image.jpg'
 import BasePlugin, {
   type DefinePluginOpts,
@@ -27,15 +27,6 @@ async function fetchTestImage(): Promise<File> {
 }
 
 describe('src/Core', () => {
-  const RealCreateObjectUrl = globalThis.URL.createObjectURL
-  beforeEach(() => {
-    globalThis.URL.createObjectURL = vi.fn().mockReturnValue('newUrl')
-  })
-
-  afterEach(() => {
-    globalThis.URL.createObjectURL = RealCreateObjectUrl
-  })
-
   it('should expose a class', () => {
     const core = new Core()
     expect(core.constructor.name).toEqual('Uppy')
@@ -1502,7 +1493,10 @@ describe('src/Core', () => {
           await core.upload()
         } catch (error) {
           expect(error).toBeInstanceOf(RestrictionError)
-          expect(error.message).toContain('Missing required meta fields')
+          expect(error).toHaveProperty(
+            'message',
+            expect.stringContaining('Missing required meta fields'),
+          )
         }
 
         // File should now have missing metadata error after upload attempt
@@ -1539,7 +1533,10 @@ describe('src/Core', () => {
           await core.upload()
         } catch (error) {
           expect(error).toBeInstanceOf(RestrictionError)
-          expect(error.message).toContain('Missing required meta fields')
+          expect(error).toHaveProperty(
+            'message',
+            expect.stringContaining('Missing required meta fields'),
+          )
         }
 
         // Verify file has missing metadata error after upload attempt
@@ -1584,7 +1581,7 @@ describe('src/Core', () => {
           type: 'image/jpeg',
           data: await fetchTestImage(),
         })
-        const _fileId2 = core.addFile({
+        core.addFile({
           source: 'vi',
           name: 'file2.jpg',
           type: 'image/jpeg',
@@ -1601,7 +1598,10 @@ describe('src/Core', () => {
           await core.upload()
         } catch (error) {
           expect(error).toBeInstanceOf(RestrictionError)
-          expect(error.message).toContain('Missing required meta fields')
+          expect(error).toHaveProperty(
+            'message',
+            expect.stringContaining('Missing required meta fields'),
+          )
         }
 
         // Give one file a different error (not metadata-related)
@@ -1777,7 +1777,7 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
-        expect(err.message).toEqual('You can only upload: image/jpeg')
+        expect(err).toHaveProperty('message', 'You can only upload: image/jpeg')
       }
 
       core.setOptions({
@@ -1795,7 +1795,8 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
-        expect(err.message).toEqual(
+        expect(err).toHaveProperty(
+          'message',
           'Vous pouvez seulement téléverser: image/jpeg',
         )
       }
@@ -2234,7 +2235,7 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
-        expect(err.message).toStrictEqual('You can only upload 1 file')
+        expect(err).toHaveProperty('message', 'You can only upload 1 file')
         expect(core.getState().info[0].message).toEqual(
           'You can only upload 1 file',
         )
@@ -2289,7 +2290,8 @@ describe('src/Core', () => {
         throw new Error('should have thrown')
       } catch (err) {
         expect(err).toBeInstanceOf(RestrictionError)
-        expect(err.message).toStrictEqual(
+        expect(err).toHaveProperty(
+          'message',
           'You can only upload: image/gif, image/png',
         )
         expect(core.getState().info[0].message).toEqual(
@@ -2314,7 +2316,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err.message).toStrictEqual(
+        expect(err).toHaveProperty(
+          'message',
           'You can only upload: .gif, .jpg, .jpeg',
         )
         expect(core.getState().info[0].message).toEqual(
@@ -2349,7 +2352,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err.message).toStrictEqual(
+        expect(err).toHaveProperty(
+          'message',
           'foo.jpg exceeds maximum allowed size of 1.2 KB',
         )
         expect(core.getState().info[0].message).toEqual(
@@ -2374,7 +2378,8 @@ describe('src/Core', () => {
         })
         throw new Error('should have thrown')
       } catch (err) {
-        expect(err.message).toStrictEqual(
+        expect(err).toHaveProperty(
+          'message',
           'This file is smaller than the allowed size of 1 GB',
         )
         expect(core.getState().info[0].message).toEqual(

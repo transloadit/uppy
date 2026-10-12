@@ -6,8 +6,6 @@
     }
   ],
   "compilerOptions": {
-    "noImplicitOverride": false,
-    "noUncheckedIndexedAccess": false,
-    "useUnknownInCatchVariables": false
+    "noUncheckedIndexedAccess": false
   }
 }

@@ -1,0 +1,12 @@
+{
+  "references": [
+    { "path": "../../packages/@uppy/companion/tsconfig.build.json" }
+  ],
+  "compilerOptions": {
+    "erasableSyntaxOnly": true,
+    "checkJs": true,
+    "module": "nodenext",
+    "noEmit": true,
+    "types": ["node", "vite/client"]
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "uppy",
   "description": "Extensible JavaScript file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox, Google Drive, S3 and more :dog:",
-  "version": "6.0.2",
+  "version": "6.0.4",
   "license": "MIT",
   "main": "lib/index.js",
   "module": "lib/index.js",
@@ -72,7 +72,7 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json && yarn build:bundle",
     "build:bundle": "node build-bundle.mjs",
-    "build:css": "sass --load-path=../../packages src/style.scss dist/uppy.css && postcss dist/uppy.css -u cssnano -o dist/uppy.min.css",
+    "build:css": "sass --load-path=../../packages src/style.scss dist/uppy.css && postcss dist/uppy.css -u cssnano --map -o dist/uppy.min.css",
     "typecheck": "tsc --build"
   },
   "devDependencies": {

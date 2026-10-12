@@ -78,7 +78,7 @@ beforeAll(async () => {
   })
   await request(app).get('/')
   if (!mockReq) throw new Error('Expected an Express request instance')
-  mockReq.companion = { options: runtimeOptions }
+  mockReq.companion = { options: runtimeOptions, s3ProviderClients: new Map() }
 })
 
 describe('uploader', () => {
