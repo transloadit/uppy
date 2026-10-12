@@ -1,9 +1,9 @@
 {
-  "extends": "./tsconfig.shared",
+  "extends": "@uppy-dev/tsconfig/build",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "noEmitOnError": true
-  },
-  "include": ["src/**/*"]
+    "lib": ["esnext"],
+    "noEmitOnError": true,
+    "outDir": "dist",
+    "types": ["node"]
+  }
 }

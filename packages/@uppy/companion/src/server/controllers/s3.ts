@@ -17,6 +17,7 @@ import { isRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
   rfc2047EncodeMetadata,
+  s3WriteParams,
   truncateFilename,
 } from '../helpers/utils.js'
 
@@ -225,11 +226,7 @@ export default function s3(
       Key: key,
       ContentType: type,
       Metadata: rfc2047EncodeMetadata(metadata),
-      ...(config.acl != null && { ACL: config.acl }),
-      ...(config.awsSse != null && { ServerSideEncryption: config.awsSse }),
-      ...(config.awsSseKmsKeyId != null && {
-        SSEKMSKeyId: config.awsSseKmsKeyId,
-      }),
+      ...s3WriteParams(config),
     }
 
     client.send(new CreateMultipartUploadCommand(params)).then((data) => {
@@ -607,7 +604,7 @@ export default function s3(
    * - region: the region where that bucket is stored.
    */
   function getTemporarySecurityCredentials(
-    req: Request,
+    _req: Request,
     res: Response,
     next: NextFunction,
   ) {

@@ -3,18 +3,30 @@ import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import validator from 'validator'
 import z from 'zod'
 import type { CompanionInitOptions } from '../schemas/companion.js'
+import { isRecord } from '../server/helpers/type-guards.js'
 import { defaultGetKey } from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
+import {
+  parseS3ProviderOptions,
+  parseTransloaditStorageProviderOptions,
+} from '../server/provider/s3/config.js'
+import { toKeyList } from '../server/provider/s3/grant.js'
 
 const defaultS3Conditions: PresignedPostOptions['Conditions'] = []
 const defaultPeriodicPingUrls: string[] = []
+// Typed rather than left as `{}`: the runtime options are this object
+// intersected with `CompanionInitOptions`, and a bare `{}` would erase what
+// `providerOptions.s3` is for everything reading it.
+const defaultProviderOptions: NonNullable<
+  CompanionInitOptions['providerOptions']
+> = {}
 
 export const defaultOptions = {
   server: {
     protocol: 'http',
     path: '',
   },
-  providerOptions: {},
+  providerOptions: defaultProviderOptions,
   s3: {
     endpoint: 'https://{service}.{region}.amazonaws.com',
     conditions: defaultS3Conditions,
@@ -31,6 +43,36 @@ export const defaultOptions = {
   metrics: true,
 }
 
+/** A field holding one secret, or a list of them (grant signing secrets rotate). */
+const SECRET_FIELDS = new Set(['secret', 'grantSecret'])
+
+/**
+ * Every secret under `value`, at any depth (`customProviders.*.config.secret`,
+ * `workspaces.*.secret`, ...). Only plain objects are walked, each once: a
+ * configured class instance (an SDK request handler, say) is not a place for
+ * secrets, and neither it nor a self-referencing config may hang the startup.
+ */
+function collectSecrets(
+  value: unknown,
+  into: string[],
+  seen = new WeakSet<object>(),
+): void {
+  if (!isRecord(value) || seen.has(value)) return
+  const proto = Object.getPrototypeOf(value)
+  if (proto !== Object.prototype && proto !== null) return
+  seen.add(value)
+  for (const [name, child] of Object.entries(value)) {
+    if (SECRET_FIELDS.has(name)) {
+      const list = typeof child === 'string' ? [child] : child
+      if (Array.isArray(list)) {
+        into.push(...toKeyList(list.filter((key) => typeof key === 'string')))
+      }
+    } else {
+      collectSecrets(child, into, seen)
+    }
+  }
+}
+
 /**
  * Returns secrets that should be masked in log messages.
  */
@@ -38,25 +80,8 @@ export function getMaskableSecrets(
   companionOptions: CompanionInitOptions,
 ): string[] {
   const secrets: string[] = []
-  const { customProviders, providerOptions = {}, s3 } = companionOptions ?? {}
-
-  Object.keys(providerOptions).forEach((provider) => {
-    const secret = providerOptions[provider]?.secret
-    if (secret != null) secrets.push(secret)
-  })
-
-  if (customProviders) {
-    Object.keys(customProviders).forEach((provider) => {
-      const secret = customProviders[provider]?.config?.secret
-      if (secret != null) secrets.push(secret)
-    })
-  }
-
-  const s3Secret = s3?.['secret']
-  if (s3Secret != null) {
-    secrets.push(s3Secret)
-  }
-
+  const { customProviders, providerOptions, s3 } = companionOptions ?? {}
+  collectSecrets({ customProviders, providerOptions, s3 }, secrets)
   return secrets
 }
 
@@ -85,10 +110,74 @@ const validateConfigSchema = z.object({
 })
 
 /**
+ * Patterns are matched as written, so one that is not anchored also matches a
+ * value that merely *contains* it -- the shape of
+ * https://github.com/transloadit/uppy/issues/6480. It can be deliberate, so
+ * this warns rather than refuses.
+ */
+function warnIfUnanchored(pattern: RegExp, option: string): void {
+  if (pattern.source.startsWith('^')) return
+  logger.warn(
+    `${option} entry ${pattern} is not anchored, so it also matches values that merely contain it. Start it with "^".`,
+    `startup.${option}`,
+  )
+}
+
+/**
+ * Validates the `uploadUrls` allowlist: only what is unambiguously broken.
+ * https://uppy.io/docs/companion/#uploadurls covers migrating an entry that
+ * used to be compiled as a regex, and the mistakes that make a pattern too
+ * permissive.
+ */
+function validateUploadUrls(
+  uploadUrls: CompanionInitOptions['uploadUrls'],
+): void {
+  for (const entry of uploadUrls ?? []) {
+    if (entry instanceof RegExp) {
+      warnIfUnanchored(entry, 'uploadUrls')
+      continue
+    }
+
+    let url: URL
+    try {
+      url = new URL(entry)
+    } catch (cause) {
+      throw new Error(
+        `uploadUrls entry "${entry}" is not an absolute URL. Include the scheme, e.g. "https://example.com/files/".`,
+        { cause },
+      )
+    }
+
+    if (url.search || url.hash) {
+      logger.warn(
+        `uploadUrls entry "${entry}" has a query or fragment, which is ignored when matching. Only the origin and path are compared.`,
+        'startup.uploadUrls',
+      )
+    }
+  }
+}
+
+function validateValidHosts(
+  validHosts: NonNullable<CompanionInitOptions['server']>['validHosts'],
+): void {
+  for (const entry of validHosts ?? []) {
+    if (entry instanceof RegExp) warnIfUnanchored(entry, 'validHosts')
+  }
+}
+
+/**
  * Validates that the mandatory Companion options are set.
  *
  * If invalid, throws with an error explaining what needs to be fixed.
  */
+/** The file-management providers' HTTP API is not settled yet. */
+function warnExperimentalProvider(name: string): void {
+  logger.warn(
+    `EXPERIMENTAL: the ${name} provider (providerOptions['${name}'], endpoints /${name}/*) will change incompatibly in future releases, also minor ones. Do not build on its HTTP API yet.`,
+    'startup.experimental',
+  )
+}
+
 export function validateConfig(companionOptions: CompanionInitOptions): void {
   const parsedConfig = validateConfigSchema.parse(companionOptions)
   const { filePath } = parsedConfig
@@ -116,7 +205,6 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
     const deprecatedOptions: Record<string, string> = {
       microsoft: 'providerOptions.onedrive',
       google: 'providerOptions.drive',
-      s3: 's3',
     }
     Object.keys(deprecatedOptions).forEach((deprecated) => {
       if (Object.hasOwn(providerOptions, deprecated)) {
@@ -125,6 +213,17 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
         )
       }
     })
+
+    if (providerOptions['s3'] != null) {
+      parseS3ProviderOptions(providerOptions['s3'])
+      warnExperimentalProvider('s3')
+    }
+    if (providerOptions['transloadit-storage'] != null) {
+      parseTransloaditStorageProviderOptions(
+        providerOptions['transloadit-storage'],
+      )
+      warnExperimentalProvider('transloadit-storage')
+    }
   }
 
   if (uploadUrls == null || uploadUrls.length === 0) {
@@ -136,6 +235,9 @@ export function validateConfig(companionOptions: CompanionInitOptions): void {
       'startup.uploadUrls',
     )
   }
+
+  validateUploadUrls(uploadUrls)
+  validateValidHosts(server.validHosts)
 
   const { corsOrigins } = companionOptions
   if (corsOrigins == null) {

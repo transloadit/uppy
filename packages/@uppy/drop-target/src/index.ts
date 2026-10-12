@@ -174,12 +174,12 @@ export default class DropTarget<
     }
   }
 
-  install(): void {
+  override install(): void {
     this.setPluginState({ isDraggingOver: false })
     this.addListeners()
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.removeListeners()
   }
 }

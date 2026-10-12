@@ -7,7 +7,7 @@ import type {
 } from '@uppy/core'
 import { UIPlugin } from '@uppy/core'
 import type { LocaleStrings } from '@uppy/core/utils'
-import { getFileTypeExtension } from '@uppy/core/utils'
+import { getFileTypeExtension, isRestrictionError } from '@uppy/core/utils'
 import type { ComponentChild } from '@uppy/core/utils/preact'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
@@ -164,7 +164,7 @@ export default class ScreenCapture<
     })
   }
 
-  install(): null | undefined {
+  override install(): null | undefined {
     if (!isScreenRecordingSupported()) {
       this.uppy.log('Screen recorder access is not supported', 'warning')
       return null
@@ -184,7 +184,7 @@ export default class ScreenCapture<
     return undefined
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     if (this.videoStream) {
       this.stop()
     }
@@ -439,7 +439,7 @@ export default class ScreenCapture<
       }
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
-      if (!err.isRestriction) {
+      if (!isRestrictionError(err)) {
         this.uppy.log(err, 'warning')
       }
     }
@@ -608,7 +608,7 @@ export default class ScreenCapture<
               if (this.getPluginState().capturedScreenshotUrl) {
                 this.setPluginState({ capturedScreenshotUrl: null })
               }
-              if (!err.isRestriction) {
+              if (!isRestrictionError(err)) {
                 this.uppy.log(err, 'error')
               }
               reject(err)
@@ -629,7 +629,7 @@ export default class ScreenCapture<
     }
   }
 
-  render(): ComponentChild {
+  override render(): ComponentChild {
     // get screen recorder state
     const recorderState = this.getPluginState()
 

@@ -47,7 +47,7 @@ class S3Companion extends S3Client {
   }
 
   public override async putObject({
-    key: keyIn,
+    key: requestedKey,
     data,
     fileType = C.DEFAULT_STREAM_CONTENT_TYPE,
     metadata = {},
@@ -55,7 +55,7 @@ class S3Companion extends S3Client {
     signal,
   }: IT.PutObjectParams) {
     const searchParams = new URLSearchParams({
-      filename: keyIn,
+      filename: requestedKey,
       type: fileType,
       ...Object.fromEntries(
         Object.entries(metadata).map(([k, v]) => [`metadata[${k}]`, String(v)]),
@@ -65,29 +65,12 @@ class S3Companion extends S3Client {
     const { url, fields }: { url: string; fields: Record<string, string> } =
       await response.json()
 
-    const formData = new FormData()
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.set(key, value)
-    })
-    formData.set('file', data)
-
-    const xhr = await this._request({
-      url,
-      method: 'POST',
-      data: formData,
-      onProgress,
-      signal,
-    })
-
-    return {
-      location: `${url}${fields.key}`, // `url` is returned by the signer as the bucket URL without any path, but trailing slash, so we need to add the key (path) to get the full object URL
-      etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key: fields.key,
-    }
+    await this.waitForOnline(signal)
+    return this.postObject({ url, fields, data, onProgress, signal })
   }
 
   public override async createMultipartUpload({
-    key: keyIn,
+    key: requestedKey,
     fileType = C.DEFAULT_STREAM_CONTENT_TYPE,
     metadata,
     signal,
@@ -99,7 +82,11 @@ class S3Companion extends S3Client {
     const method = 'POST'
     const response = await this._fetch('/multipart', {
       method,
-      body: JSON.stringify({ filename: keyIn, metadata, type: fileType }),
+      body: JSON.stringify({
+        filename: requestedKey,
+        metadata,
+        type: fileType,
+      }),
       headers: { 'content-type': 'application/json' },
       signal,
     })

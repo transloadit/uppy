@@ -3,9 +3,13 @@ import fs from 'node:fs'
 import merge from 'lodash/merge.js'
 import z from 'zod'
 import packageJson from '../../package.json' with { type: 'json' }
-import type { CompanionInitOptions } from '../schemas/index.js'
+import type {
+  CompanionInitOptions,
+  S3ProviderOptions,
+} from '../schemas/index.js'
 import * as utils from '../server/helpers/utils.js'
 import logger from '../server/logger.js'
+import { toKeyList } from '../server/provider/s3/grant.js'
 
 /**
  * Tries to read the secret from a file if the according environment variable is set.
@@ -34,6 +38,15 @@ const hasProtocol = (url: string): boolean => {
 }
 
 const companionProtocol = process.env['COMPANION_PROTOCOL'] || 'http'
+
+/**
+ * A comma-separated list of storage grant keys, so that a new key can be
+ * rolled out while grants signed with the previous one still verify.
+ */
+const parseGrantKeys = (value: string | undefined): string[] | undefined =>
+  value === undefined
+    ? undefined
+    : toKeyList(value.split(',').map((key) => key.trim()))
 
 function getCorsOrigins() {
   if (process.env['COMPANION_CLIENT_ORIGINS']) {
@@ -123,13 +136,99 @@ type StandaloneCompanionOptions = Pick<
 }
 
 /**
+ * Tells an allowlist entry that is a regular expression from one that is a
+ * literal URL or hostname. Standalone config is strings all the way down --
+ * env vars and JSON -- so a marker is the only way to express a pattern
+ * without configuring Companion programmatically, and `^` is the marker
+ * because neither a URL nor a hostname can start with one, and a pattern that
+ * is not anchored there matches values that merely *contain* it, which is the
+ * bypass this whole change is about
+ * (https://github.com/transloadit/uppy/issues/6480).
+ */
+const isPattern = (value: string): boolean => value.startsWith('^')
+
+/** Resolves an entry starting with `^` to a RegExp, tested as written. */
+const parseAllowlistEntry = (entry: string): string | RegExp => {
+  if (!isPattern(entry)) return entry
+  try {
+    return new RegExp(entry)
+  } catch (cause) {
+    throw new Error(
+      `Invalid regular expression in allowlist entry "${entry}"`,
+      {
+        cause,
+      },
+    )
+  }
+}
+
+/**
+ * Splits a comma-separated allowlist. A value that is itself a pattern is not
+ * split, so that a `{n,m}` quantifier survives.
+ */
+export const parseAllowlist = (value: string): (string | RegExp)[] =>
+  (isPattern(value) ? [value] : value.split(',')).map(parseAllowlistEntry)
+
+/** Resolves the pattern entries in an allowlist read from the JSON config file. */
+const parseAllowlistArray = (value: unknown): unknown =>
+  Array.isArray(value)
+    ? value.map((entry) =>
+        typeof entry === 'string' ? parseAllowlistEntry(entry) : entry,
+      )
+    : value
+
+/**
+ * Options of the S3 provider (browsing S3 from the Dashboard). Anything left
+ * unset falls back to the `s3` upload block, so the provider can use its own
+ * account, endpoint and credentials. The provider stays disabled until it has
+ * either a bucket (single-tenant) or a grant key (multi-tenant).
+ *
+ * @experimental Part of the file-management provider API (S3, Transloadit
+ * Storage): options, endpoints and methods will change incompatibly, also
+ * in minor releases.
+ */
+const getS3ProviderOptionsFromEnv = (): S3ProviderOptions | undefined => {
+  // A blank variable is an unset one (env files and compose templates list
+  // variables they do not use), and an environment with none set leaves
+  // `providerOptions.s3` out rather than present and blank.
+  const env = (name: string): string | undefined =>
+    process.env[`COMPANION_S3_PROVIDER_${name}`] || undefined
+  const isConfigured = Object.keys(process.env).some(
+    (name) => name.startsWith('COMPANION_S3_PROVIDER_') && process.env[name],
+  )
+  if (!isConfigured) return undefined
+
+  const forcePathStyle = env('FORCE_PATH_STYLE')
+  return {
+    key: env('KEY'),
+    secret: getSecret('COMPANION_S3_PROVIDER_SECRET') || undefined,
+    region: env('REGION'),
+    endpoint: env('ENDPOINT'),
+    forcePathStyle: forcePathStyle ? forcePathStyle === 'true' : undefined,
+    bucket: env('BUCKET'),
+    prefix: env('PREFIX'),
+    grantSecret: parseGrantKeys(
+      getSecret('COMPANION_S3_PROVIDER_GRANT_SECRET'),
+    ),
+    // PEM arrives from the environment with literal `\n` escapes.
+    grantPublicKey: parseGrantKeys(
+      env('GRANT_PUBLIC_KEY')?.replace(/\\n/g, '\n'),
+    ),
+    acl: aclSchema.parse(env('ACL')),
+    awsSse: sseSchema.parse(env('SSE')),
+    awsSseKmsKeyId: env('SSE_KMS_KEY_ID'),
+  }
+}
+
+/**
  * Loads the config from environment variables.
  */
 const getConfigFromEnv = (): StandaloneCompanionOptions => {
+  const s3ProviderOptions = getS3ProviderOptionsFromEnv()
   const uploadUrls = process.env['COMPANION_UPLOAD_URLS']
   const domains =
     process.env['COMPANION_DOMAINS'] || process.env['COMPANION_DOMAIN'] || null
-  const validHosts = domains ? domains.split(',') : []
+  const validHosts = domains ? parseAllowlist(domains) : []
 
   return {
     providerOptions: {
@@ -168,6 +267,10 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
         key: process.env['COMPANION_UNSPLASH_KEY'],
         secret: process.env['COMPANION_UNSPLASH_SECRET'],
       },
+      // Browsing S3 from the Dashboard, which is a different feature from the
+      // `s3` block below (uploading to S3), with its own credentials. Left out
+      // entirely when nothing configures it.
+      ...(s3ProviderOptions === undefined ? {} : { s3: s3ProviderOptions }),
     },
     s3: {
       key: process.env['COMPANION_AWS_KEY'],
@@ -225,7 +328,7 @@ const getConfigFromEnv = (): StandaloneCompanionOptions => {
       return undefined
     })(),
     sendSelfEndpoint: process.env['COMPANION_SELF_ENDPOINT'],
-    uploadUrls: uploadUrls ? uploadUrls.split(',') : null,
+    uploadUrls: uploadUrls ? parseAllowlist(uploadUrls) : null,
     secret: getSecret('COMPANION_SECRET'),
     preAuthSecret: getSecret('COMPANION_PREAUTH_SECRET'),
     allowLocalUrls: process.env['COMPANION_ALLOW_LOCAL_URLS'] === 'true',
@@ -286,7 +389,14 @@ const getConfigFromFile = () => {
   if (!path) return {}
 
   const rawdata = fs.readFileSync(path)
-  return JSON.parse(rawdata.toString('utf8'))
+  const config = JSON.parse(rawdata.toString('utf8'))
+
+  // JSON cannot hold a RegExp either, so patterns are resolved here too.
+  config.uploadUrls = parseAllowlistArray(config.uploadUrls)
+  if (config.server?.validHosts != null) {
+    config.server.validHosts = parseAllowlistArray(config.server.validHosts)
+  }
+  return config
 }
 
 export const getCompanionOptions = (

@@ -7,5 +7,5 @@ If you want to spawn a local webserver, you can use the following commands
 
 ```sh
 corepack yarn install
-corepack yarn workspace @uppy-example/cdn dev
+corepack yarn workspace example-cdn dev
 ```

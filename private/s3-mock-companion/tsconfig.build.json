@@ -1,0 +1,13 @@
+{
+  "extends": "@uppy-dev/tsconfig/build",
+  "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "noUncheckedIndexedAccess": false,
+    "strict": true
+  },
+  "references": [
+    {
+      "path": "../../packages/@uppy/core/tsconfig.build.json"
+    }
+  ]
+}
