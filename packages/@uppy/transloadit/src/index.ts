@@ -398,7 +398,6 @@ export default class Transloadit<
   async #createAssembly(
     fileIDs: string[],
     assemblyOptions: OptionsWithRestructuredFields,
-    cancelled: () => boolean,
   ) {
     this.uppy.log('[Transloadit] Create Assembly')
 
@@ -412,8 +411,8 @@ export default class Transloadit<
         .getFiles()
         .filter(({ id }) => fileIDs.includes(id))
 
-      if ((files.length === 0 && fileIDs.length !== 0) || cancelled()) {
-        // All files have been removed, or the upload was cancelled: cancelling.
+      if (files.length === 0 && fileIDs.length !== 0) {
+        // All files have been removed, cancelling.
         await this.client.cancelAssembly(newAssembly)
         return null
       }
@@ -851,57 +850,32 @@ export default class Transloadit<
     return assembly
   }
 
-  #prepareUpload = async (fileIDs: string[], uploadID: string) => {
+  #prepareUpload = async (fileIDs: string[]) => {
     // Prevent adding/dropping files during upload to avoid creating multiple assemblies
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
-    // Cancelled while waiting below. Core does not stop a running preprocessor,
-    // and a file added again meanwhile has the id of the removed one, so the
-    // files alone cannot tell: an Assembly created now would attach to that
-    // file and be reused by the next batch, whatever it was signed for.
-    const cancelled = () => !(uploadID in this.uppy.getState().currentUploads)
+
+    const assemblyOptions = (
+      typeof this.opts.assemblyOptions === 'function'
+        ? await this.opts.assemblyOptions()
+        : this.opts.assemblyOptions
+    ) as OptionsWithRestructuredFields
+
+    assemblyOptions.fields = {
+      ...(assemblyOptions.fields ?? {}),
+    }
+    validateParams(assemblyOptions.params)
 
     try {
-      // Fetching the options can fail like creating the Assembly can; both
-      // must fail the files and allow new uploads, as a retry has no `error`
-      // event to fall back on.
-      const assemblyOptions = (
-        typeof this.opts.assemblyOptions === 'function'
-          ? await this.opts.assemblyOptions()
-          : this.opts.assemblyOptions
-      ) as OptionsWithRestructuredFields
+      const assembly =
+        // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
+        this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
 
-      assemblyOptions.fields = {
-        ...(assemblyOptions.fields ?? {}),
-      }
-      validateParams(assemblyOptions.params)
-
-      // Already defined if files were recovered with Golden Retriever (#onRestored).
-      const restored = this.assembly
-      const assembly = cancelled()
-        ? null
-        : (restored ??
-          (await this.#createAssembly(fileIDs, assemblyOptions, cancelled)))
-
-      if (assembly == null) {
-        // Nothing left to upload: every file was removed, or the upload cancelled.
-        this.#allowNewUploadIfIdle(uploadID)
-        return
-      }
+      if (assembly == null)
+        throw new Error('All files were canceled after assembly was created')
 
       if (this.opts.importFromUploadURLs) {
         await this.#reserveFiles(assembly, fileIDs)
-        if (cancelled()) {
-          // Cancelled while reserving: an Assembly made for this attempt is
-          // cancelled on the server, as on the creation path, so the next
-          // batch cannot pick it up. Only on the server: `this.assembly` may
-          // be a newer upload's by now. A recovered one stays with its batch.
-          if (assembly !== restored) {
-            await this.client.cancelAssembly(assembly.status)
-          }
-          this.#allowNewUploadIfIdle(uploadID)
-          return
-        }
       }
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
@@ -911,16 +885,6 @@ export default class Transloadit<
       this.assembly = assembly
       this.#connectAssembly(assembly, fileIDs)
     } catch (err) {
-      if (cancelled()) {
-        // Its files are gone, or belong to a newer upload by now, which owns
-        // their error state and admission: this attempt has nothing to report.
-        this.uppy.log(
-          `[Transloadit] A cancelled upload could not be prepared: ${toError(err).message}`,
-          'warning',
-        )
-        this.#allowNewUploadIfIdle(uploadID)
-        return
-      }
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
         // Clear preprocessing state when the Assembly could not be created,
@@ -928,23 +892,10 @@ export default class Transloadit<
         this.uppy.emit('preprocess-complete', file)
         this.uppy.emit('upload-error', file, toError(err))
       })
-      // Reopen admission, unless another upload still holds it closed.
-      this.#allowNewUploadIfIdle(uploadID)
+      // Reset allowNewUpload on error
+      this.uppy.setState({ allowNewUpload: true })
       throw err
     }
-  }
-
-  /**
-   * Files may be added again once an attempt ends with nothing to upload or
-   * fails, unless another upload is preparing or running meanwhile and holds
-   * that. `endingUploadID` is the attempt itself: core only drops it once its
-   * preprocessor has thrown, so it does not count.
-   */
-  #allowNewUploadIfIdle(endingUploadID?: string) {
-    const running = Object.keys(this.uppy.getState().currentUploads).filter(
-      (id) => id !== endingUploadID,
-    )
-    if (running.length === 0) this.uppy.setState({ allowNewUpload: true })
   }
 
   #afterUpload = async (fileIDs: string[], uploadID: string): Promise<void> => {
@@ -1027,9 +978,8 @@ export default class Transloadit<
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
 
-    // Reopen admission after a failed upload (core has dropped it by now),
-    // unless another one is still preparing or running.
-    this.#allowNewUploadIfIdle()
+    // Reset allowNewUpload when upload encounters an error
+    this.uppy.setState({ allowNewUpload: true })
   }
 
   #onTusError = (_: UppyFile<M, B> | undefined, err: Error) => {
