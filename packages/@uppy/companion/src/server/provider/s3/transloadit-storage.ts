@@ -1,5 +1,5 @@
 import { createHmac } from 'node:crypto'
-import got from 'got'
+import got, { type Response } from 'got'
 import { z } from 'zod'
 import type { S3ClientOptions } from '../../../schemas/companion.js'
 import logger from '../../logger.js'
@@ -25,10 +25,51 @@ const moveResponseSchema = z.object({
 })
 
 /** The key pair Companion holds for a Workspace. */
-const workspaceCredentials = (
+const workspaceCredentials = async (
   native: NativeStorage,
   workspace: string,
-): { key: string; secret: string } => {
+): Promise<{ key: string; secret: string }> => {
+  if (native.credentialsSecret != null) {
+    if (!/^[a-f0-9]{32}$/.test(workspace)) throw userError('S3_INVALID_GRANT')
+    const timestamp = Math.floor(Date.now() / 1000)
+    const signature = createHmac('sha256', native.credentialsSecret)
+      .update(`file-library-credentials:v1:${timestamp}:${workspace}`)
+      .digest('hex')
+    // The endpoint is operator configuration, never a URL from the session or browser.
+    // Do not log got errors: their request options contain the server proof.
+    let response: Response<unknown>
+    try {
+      response = await got.post(
+        new URL('/internal/file-library/credentials', native.apiEndpoint),
+        {
+          json: { workspace },
+          headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
+          timeout: { request: 5000 },
+          retry: { limit: 0 },
+          followRedirect: false,
+          throwHttpErrors: false,
+          responseType: 'json',
+        },
+      )
+    } catch {
+      throw new ProviderApiError('Storage is temporarily unavailable', 502)
+    }
+    if (response.statusCode === 403) throw userError('S3_REQUEST_FAILED')
+    const credentials = z
+      .object({
+        workspace: z.literal(workspace),
+        authKey: z.string().min(1).max(256),
+        authSecret: z.string().min(1).max(1024),
+      })
+      .safeParse(response.body)
+    if (response.statusCode !== 200 || !credentials.success) {
+      throw new ProviderApiError('Storage is temporarily unavailable', 502)
+    }
+    return {
+      key: credentials.data.authKey,
+      secret: credentials.data.authSecret,
+    }
+  }
   const credentials = Object.hasOwn(native.workspaces, workspace)
     ? native.workspaces[workspace]
     : undefined
@@ -68,7 +109,37 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     config: ResolvedConfig<ParsedTransloaditStorageOptions>,
     bucket: string,
   ): { cacheKey: string; clientOptions: S3ClientOptions } {
-    const { key, secret } = workspaceCredentials(config.native, bucket)
+    if (config.native.credentialsSecret != null) {
+      const ownOptions = withOwnCredentials(config.clientOptions)
+      return {
+        cacheKey: bucket,
+        clientOptions: {
+          ...ownOptions,
+          awsClientOptions: {
+            ...ownOptions.awsClientOptions,
+            credentials: async () => {
+              const { key, secret } = await workspaceCredentials(
+                config.native,
+                bucket,
+              )
+              return {
+                accessKeyId: key,
+                secretAccessKey: secret,
+                // Stay beyond the SDK's five-minute refresh window. API2 still checks live
+                // Workspace admission on every S3 request, independently of these credentials.
+                expiration: new Date(Date.now() + 10 * 60_000),
+              }
+            },
+          },
+        },
+      }
+    }
+    const credentials = Object.hasOwn(config.native.workspaces, bucket)
+      ? config.native.workspaces[bucket]
+      : undefined
+    if (!credentials)
+      throw new S3ConfigError(`No credentials for Workspace "${bucket}"`)
+    const { key, secret } = credentials
     return {
       cacheKey: bucket,
       clientOptions: withOwnCredentials({
@@ -91,7 +162,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     id: string,
     destination: string,
   ): Promise<ItemRef> {
-    const { key, secret } = workspaceCredentials(native, workspace)
+    const { key, secret } = await workspaceCredentials(native, workspace)
     const params = JSON.stringify({
       auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
       source: id,

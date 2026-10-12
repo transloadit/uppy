@@ -26,8 +26,13 @@ export type ParsedS3ProviderOptions =
 /** Native Transloadit Storage: catalog moves and per-Workspace credentials. */
 export type NativeStorage = {
   apiEndpoint: string
-  workspaces: Record<string, { key: string; secret: string }>
-}
+} & (
+  | {
+      workspaces: Record<string, { key: string; secret: string }>
+      credentialsSecret?: never
+    }
+  | { credentialsSecret: string; workspaces?: never }
+)
 
 export type ParsedTransloaditStorageOptions = {
   mode: 'grant'
@@ -113,10 +118,13 @@ const transloaditStorageProviderOptionsSchema = z
     ),
     prefix: notHere('native Storage takes no prefix: each grant names its own'),
     apiEndpoint: z.string().url(),
-    workspaces: z.record(
-      z.string().min(1),
-      z.object({ key: z.string().min(1), secret: z.string().min(1) }),
-    ),
+    credentialsSecret: z.string().min(32).optional(),
+    workspaces: z
+      .record(
+        z.string().min(1),
+        z.object({ key: z.string().min(1), secret: z.string().min(1) }),
+      )
+      .optional(),
   })
   .transform((own, ctx): ParsedTransloaditStorageOptions => {
     if (!hasGrantKeys(own)) {
@@ -127,7 +135,22 @@ const transloaditStorageProviderOptionsSchema = z
       })
       return z.NEVER
     }
-    const { apiEndpoint, workspaces } = own
+    const { apiEndpoint, workspaces, credentialsSecret } = own
+    if ((workspaces == null) === (credentialsSecret == null)) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'set exactly one of workspaces or credentialsSecret',
+      })
+      return z.NEVER
+    }
+    if (credentialsSecret != null) {
+      return {
+        mode: 'grant',
+        keys: own,
+        native: { apiEndpoint, credentialsSecret },
+      }
+    }
+    if (workspaces == null) return z.NEVER
     return { mode: 'grant', keys: own, native: { apiEndpoint, workspaces } }
   })
 
