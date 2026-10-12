@@ -1,3 +1,4 @@
+import { NetworkError } from '@uppy/core/utils'
 import * as C from './consts.js'
 import S3Client from './S3Client.js'
 import type * as IT from './types.js'
@@ -42,8 +43,8 @@ class S3Companion extends S3Client {
     } catch (err) {
       // Only status 0 is a real network error; anything else is an HTTP
       // error response from Companion and should not be reported as one.
+      if (!(err instanceof NetworkError) || !err.request?.status) throw err
       const { request } = err
-      if (!request?.status) throw err
       throw Object.assign(
         new Error(`Companion request failed with status ${request.status}`),
         { request },
