@@ -673,6 +673,16 @@ describe('S3 provider in the browser', () => {
     await expect.element(newFolder).not.toBeInTheDocument()
   })
 
+  it('keeps the selection when setOptions repeats the default mode', async () => {
+    const { plugin } = setup()
+    await openBucket()
+    await page.getByRole('checkbox', { name: 'readme.md' }).click()
+    expect(plugin.view.getSelectedAmount()).toBe(1)
+
+    plugin.setOptions({ mode: 'picker' })
+    expect(plugin.view.getSelectedAmount()).toBe(1)
+  })
+
   it('opens one item menu at a time and closes it with Escape', async () => {
     setup({ mode: 'manager' })
     await openBucket()

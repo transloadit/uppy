@@ -847,11 +847,11 @@ export default class S3<M extends Meta, B extends Body>
 
   /** Applies changed options to the view and its actions right away. */
   override setOptions(newOpts: Partial<S3Options<M, B>>): void {
-    const previousMode = this.opts.mode
+    const previousMode = this.opts.mode ?? 'picker'
     super.setOptions(newOpts)
     // Not installed yet: `install` reads the options.
     if (!this.view) return
-    if (this.opts.mode !== previousMode) {
+    if ((this.opts.mode ?? 'picker') !== previousMode) {
       // A selection means something else in the other mode (picking vs a
       // bulk action), and picker mode has no detail item.
       this.view.cancelSelection()
