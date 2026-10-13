@@ -18,8 +18,6 @@ type HeaderProps<M extends Meta, B extends Body> = {
   i18n: I18n
   toolbarActions?: ProviderToolbarAction<M, B>[]
   runToolbarAction?: (action: ProviderToolbarAction<M, B>) => void
-  /** The plugin is the whole page: no user/logout row (the app owns the session). */
-  standalone?: boolean
   /**
    * A long operation runs (`ProviderView.runWithProgress`): anything that
    * would start another request, and so abort it, is disabled.
@@ -65,14 +63,12 @@ export default function Header<M extends Meta, B extends Body>(
             ))}
           </div>
         )}
-        {!props.standalone && (
-          <User
-            logout={props.logout}
-            username={props.username}
-            i18n={props.i18n}
-            disabled={busy}
-          />
-        )}
+        <User
+          logout={props.logout}
+          username={props.username}
+          i18n={props.i18n}
+          disabled={busy}
+        />
       </div>
     </div>
   )

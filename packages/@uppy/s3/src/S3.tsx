@@ -297,12 +297,6 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
    */
   getGrant?: () => Promise<string>
   /**
-   * The plugin is the whole page (a file library), not a picker inside the
-   * Dashboard: the panel header shows just the plugin title instead of
-   * "Import from …" and has no Cancel button. Default: false.
-   */
-  standalone?: boolean
-  /**
    * 'picker' (default): rows are checkboxes and the selection is added to
    * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,
    * until a dedicated file manager plugin replaces it): files can be renamed,
@@ -848,8 +842,7 @@ export default class S3<M extends Meta, B extends Body>
 
   /** The view options that follow the plugin's own. */
   #viewOptions() {
-    const { mode, standalone } = this.opts
-    return { mode, standalone }
+    return { mode: this.opts.mode }
   }
 
   /** Applies changed options to the view and its actions right away. */

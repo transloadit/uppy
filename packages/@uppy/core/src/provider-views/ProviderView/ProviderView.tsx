@@ -235,14 +235,6 @@ export interface Opts<M extends Meta, B extends Body> {
    * will change incompatibly, also in minor releases.
    */
   bulkActions?: ProviderBulkAction<M, B>[]
-  /**
-   * The plugin is the whole page: no user/logout row in the header (the app
-   * owns the session).
-   *
-   * @experimental Part of the file-management API added for `@uppy/s3`: it
-   * will change incompatibly, also in minor releases.
-   */
-  standalone?: boolean
   viewType: 'list' | 'grid'
   showTitles: boolean
   showFilter: boolean
@@ -1241,7 +1233,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
-          standalone={opts.standalone ?? false}
           busy={busy}
         />
         {opts.showFilter && (

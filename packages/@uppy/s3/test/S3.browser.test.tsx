@@ -465,29 +465,6 @@ describe('S3 provider in the browser', () => {
     await expect.poll(() => plugin.getPluginState().loading).toBeFalsy()
   })
 
-  it('shows plain chrome when standalone', async () => {
-    setup({
-      mode: 'manager',
-      standalone: true,
-    })
-    await openBucket()
-
-    const panel = page.getByRole('tabpanel')
-    // The page around the plugin owns the heading and the session.
-    await expect
-      .element(panel.getByRole('heading', { level: 1 }))
-      .not.toBeInTheDocument()
-    await expect
-      .element(panel.getByRole('button', { name: 'Cancel' }))
-      .not.toBeInTheDocument()
-    await expect
-      .element(panel.getByRole('button', { name: 'Log out' }))
-      .not.toBeInTheDocument()
-    await expect
-      .element(panel.getByRole('button', { name: 'New folder' }))
-      .toBeVisible()
-  })
-
   it('dismisses a dialog on a backdrop click, not on a click that only ends there', async () => {
     setup({ mode: 'manager' })
     await openBucket()

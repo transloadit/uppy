@@ -132,8 +132,6 @@ export default class TransloaditStorage<
       ...opts,
       id: opts.id ?? 'TransloaditStorage',
       keepStateOnClose: opts.keepStateOnClose ?? true,
-      // A standalone library is a manager, not a picker, unless told otherwise.
-      mode: opts.mode ?? (opts.standalone ? 'manager' : 'picker'),
     })
     this.defaultLocale = {
       strings: { ...this.defaultLocale?.strings, ...locale.strings },
