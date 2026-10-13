@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["private/tsconfig/tsconfig*.json"],
+  "noUpdateNotifier": true,
   "tasks": {
     "build": {
       "outputLogs": "new-only",
