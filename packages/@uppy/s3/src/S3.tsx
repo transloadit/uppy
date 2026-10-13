@@ -7,8 +7,6 @@ import type {
   AsyncStore,
   Body,
   Meta,
-  PartialTreeFile,
-  PartialTreeFolderNode,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
@@ -307,16 +305,12 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   /**
    * 'picker' (default): rows are checkboxes and the selection is added to
    * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,
-   * until a dedicated file manager plugin replaces it): clicking a file opens
-   * its detail modal, files can be renamed, moved and deleted, multi-select
-   * hides behind an explicit toggle, and the selection feeds bulk actions.
+   * until a dedicated file manager plugin replaces it): files can be renamed,
+   * moved and deleted, and a headless UI (`useS3Manager`) selects them for
+   * bulk actions and shows their details. Uppy's own panel has no selection
+   * or detail view in this mode.
    */
   mode?: 'picker' | 'manager'
-  /**
-   * Manager mode: resolves a preview image URL for a file's detail modal
-   * (e.g. a signed thumbnail URL your server produces for the key).
-   */
-  getPreviewUrl?: (key: string) => Promise<string>
   /** Manager mode: extra bulk actions, appended to the built-in ones. */
   bulkActions?: ProviderBulkAction<M, B>[]
 }
@@ -854,15 +848,8 @@ export default class S3<M extends Meta, B extends Body>
 
   /** The view options that follow the plugin's own. */
   #viewOptions() {
-    const { mode, standalone, getPreviewUrl } = this.opts
-    return {
-      mode,
-      standalone,
-      getPreviewUrl: getPreviewUrl
-        ? (item: PartialTreeFile | PartialTreeFolderNode) =>
-            getPreviewUrl(S3.keyOf(item.id))
-        : undefined,
-    }
+    const { mode, standalone } = this.opts
+    return { mode, standalone }
   }
 
   /** Applies changed options to the view and its actions right away. */

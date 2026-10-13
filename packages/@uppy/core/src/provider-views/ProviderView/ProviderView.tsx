@@ -27,7 +27,6 @@ import {
 import Browser from '../Browser.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
-import ItemDetailDialog from '../ItemDetailDialog.js'
 import ProviderDialog from '../ProviderDialog.js'
 import ProviderDialogController, {
   type ConfirmOptions,
@@ -135,7 +134,7 @@ export interface ProviderActionContext<M extends Meta, B extends Body> {
 export interface ProviderAction<M extends Meta, B extends Body> {
   id: string
   label: string
-  /** Renders red in the menu / detail dialog (destructive actions). */
+  /** Renders red in the menu (destructive actions). */
   danger?: boolean
   /** Which items get this action; defaults to 'all'. */
   appliesTo?: 'file' | 'folder' | 'all'
@@ -236,15 +235,6 @@ export interface Opts<M extends Meta, B extends Body> {
    * will change incompatibly, also in minor releases.
    */
   bulkActions?: ProviderBulkAction<M, B>[]
-  /**
-   * Manager mode: resolves a preview image URL for the detail modal.
-   *
-   * @experimental Part of the file-management API added for `@uppy/s3`: it
-   * will change incompatibly, also in minor releases.
-   */
-  getPreviewUrl?: (
-    item: PartialTreeFile | PartialTreeFolderNode,
-  ) => Promise<string>
   /**
    * The plugin is the whole page: no user/logout row in the header (the app
    * owns the session).
@@ -419,7 +409,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.plugin.getPluginState()
     // The plugin may have been removed while the folder was listed.
     if (refreshedTree == null) return
-    // The item of an open detail modal did not survive the refresh. Only
+    // The detail item did not survive the refresh. Only
     // judged once the folder was listed again, and by the latest refresh (a
     // newer one aborted this listing and dropped the items again).
     const listed = refreshedTree.some(
@@ -551,16 +541,17 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   /**
-   * The item of the open detail modal as last seen in the tree. A refresh
-   * drops the folder's items until it is listed again; the modal keeps
-   * showing this one meanwhile instead of closing and reopening.
+   * The detail item as last seen in the tree. A refresh drops the folder's
+   * items until it is listed again; the detail keeps this one meanwhile
+   * instead of closing and reopening.
    */
   #detailItem: PartialTreeFile | PartialTreeFolderNode | undefined
 
   #refreshes = 0
 
   /**
-   * Manager mode: open the detail modal for one item.
+   * Manager mode: make one item the detail item, which a headless UI shows
+   * (see `getDetailItem`).
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -579,8 +570,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   /**
-   * The item of the open detail modal: as it is in the tree, or as last seen
-   * while a refresh relists its folder. `undefined` once the modal is closed.
+   * The detail item: as it is in the tree, or as last seen while a refresh
+   * relists its folder. `undefined` once closed.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -1231,7 +1222,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     // A long operation owns the screen: anything that would start another
     // request (and so abort it) is disabled or hidden meanwhile.
     const busy = this.#cancelLongOperation !== undefined
-    const detailItem = this.getDetailItem()
 
     return (
       <div
@@ -1284,7 +1274,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
             actions={opts.actions ?? []}
             runAction={this.runAction}
             selectable={!isManager}
-            onFileClick={isManager ? this.openItemDetail : undefined}
           />
         )}
 
@@ -1295,18 +1284,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
             cancelSelection={this.cancelSelection}
             i18n={i18n}
             validateAggregateRestrictions={this.validateAggregateRestrictions}
-          />
-        )}
-        {detailItem && (
-          <ItemDetailDialog
-            // A different item gets a fresh dialog (no stale preview).
-            key={detailItem.id}
-            item={detailItem}
-            actions={opts.actions ?? []}
-            runAction={this.runAction}
-            getPreviewUrl={opts.getPreviewUrl}
-            onClose={this.closeItemDetail}
-            i18n={i18n}
           />
         )}
         {dialog && (

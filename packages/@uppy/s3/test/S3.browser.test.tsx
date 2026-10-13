@@ -239,6 +239,27 @@ describe('S3 provider in the browser', () => {
       .not.toBeInTheDocument()
   })
 
+  it('lists files as plain rows in manager mode and keeps folders and the item menu working', async () => {
+    setup({ mode: 'manager' })
+    await openBucket()
+    await expect
+      .element(page.getByRole('button', { name: 'Open readme.md' }))
+      .not.toBeInTheDocument()
+    await page.getByText('readme.md', { exact: true }).click()
+    await expect.element(page.getByRole('dialog')).not.toBeInTheDocument()
+
+    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
+    await expect
+      .element(page.getByRole('menu', { name: 'Actions for readme.md' }))
+      .toBeVisible()
+    await userEvent.keyboard('{Escape}')
+
+    await page.getByRole('button', { name: 'Open folder docs' }).click()
+    await expect
+      .element(page.getByText('hello.txt', { exact: true }))
+      .toBeVisible()
+  })
+
   it('replaces an open prompt without keeping its previous input', async () => {
     const { view } = setup().plugin
     await openBucket()
@@ -467,11 +488,8 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('dismisses dialogs on a backdrop click and previews an item once', async () => {
-    const getPreviewUrl = vi.fn(
-      async () => 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
-    )
-    const { plugin } = setup({ mode: 'manager', getPreviewUrl })
+  it('dismisses a dialog on a backdrop click, not on a click that only ends there', async () => {
+    setup({ mode: 'manager' })
     await openBucket()
 
     /** A click on the `::backdrop` (outside the box), and one that only ends there. */
@@ -493,22 +511,11 @@ describe('S3 provider in the browser', () => {
       dialog.dispatchEvent(new MouseEvent('click', outside))
     }
 
-    await page.getByRole('button', { name: 'Open readme.md' }).click()
-    const details = page.getByRole('dialog', { name: 'readme.md' })
-    await expect.element(details).toBeVisible()
-    // A listing update replaces the item object, not the dialog's preview.
-    await plugin.view.refreshCurrentFolder(true)
-    await expect.element(details).toBeVisible()
-    expect(getPreviewUrl).toHaveBeenCalledTimes(1)
-
-    // Selecting text inside and releasing outside is not a dismissal.
-    click(details.element(), { startInside: true })
-    await expect.element(details).toBeVisible()
-    click(details.element())
-    await expect.element(details).not.toBeInTheDocument()
-
     await page.getByRole('button', { name: 'New folder' }).click()
     const prompt = page.getByRole('dialog', { name: 'New folder' })
+    await expect.element(prompt).toBeVisible()
+    // Selecting text inside and releasing outside is not a dismissal.
+    click(prompt.element(), { startInside: true })
     await expect.element(prompt).toBeVisible()
     click(prompt.element())
     await expect.element(prompt).not.toBeInTheDocument()
@@ -555,26 +562,21 @@ describe('S3 provider in the browser', () => {
       .toBeVisible()
   })
 
-  it('keeps the details open through overlapping refreshes and refocuses the item', async () => {
+  it('keeps the detail item through overlapping refreshes', async () => {
     const { plugin } = setup({ mode: 'manager' })
     await openBucket()
-    await page.getByRole('button', { name: 'Open readme.md' }).click()
-    const details = page.getByRole('dialog', { name: 'readme.md' })
-    await expect.element(details).toBeVisible()
+    const readme = plugin
+      .getPluginState()
+      .partialTree.find((node) => node.id === 'readme.md')
+    if (readme?.type !== 'file') throw new Error('Missing readme.md')
+    plugin.view.openItemDetail(readme)
 
     // The second refresh aborts the first one's listing.
     await Promise.all([
       plugin.view.refreshCurrentFolder(true),
       plugin.view.refreshCurrentFolder(true),
     ])
-    await expect.element(details).toBeVisible()
-
-    // The row that opened it was re-rendered by the refresh.
-    await userEvent.keyboard('{Escape}')
-    await expect.element(details).not.toBeInTheDocument()
-    expect(document.activeElement?.getAttribute('aria-label')).toBe(
-      'Open readme.md',
-    )
+    expect(plugin.view.getDetailItem()?.id).toBe('readme.md')
   })
 
   it('adds files dropped on its panel to the uploads, like a drop on the Dashboard', async () => {
@@ -681,8 +683,8 @@ describe('S3 provider in the browser', () => {
     plugin.setOptions({ mode: 'manager' })
     await expect.element(newFolder).toBeVisible()
     await expect
-      .element(page.getByRole('button', { name: 'Open readme.md' }))
-      .toBeVisible()
+      .element(page.getByRole('checkbox', { name: 'readme.md' }))
+      .not.toBeInTheDocument()
 
     plugin.setOptions({ enableActions: false })
     await expect.element(newFolder).not.toBeInTheDocument()
@@ -718,11 +720,11 @@ describe('S3 provider in the browser', () => {
   })
 
   /**
-   * Opens the details of readme.md in a manager inside a Dashboard *modal*
+   * Opens the "New folder" prompt in a manager inside a Dashboard *modal*
    * (the inline harness never hits the Dashboard's document-level Escape
    * handler); resolves to a spy on the modal closing.
    */
-  async function openDetailsInDashboardModal() {
+  async function openPromptInDashboardModal() {
     serveCompanion()
     uppy = new Uppy()
       .use(Dashboard, { inline: false })
@@ -736,25 +738,25 @@ describe('S3 provider in the browser', () => {
       )
       ?.openModal()
     await openBucket()
-    await page.getByRole('button', { name: 'Open readme.md' }).click()
+    await page.getByRole('button', { name: 'New folder' }).click()
     await expect
-      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .element(page.getByRole('dialog', { name: 'New folder' }))
       .toBeVisible()
     return modalClosed
   }
 
-  it('closes the item detail dialog with Escape without closing the Dashboard modal', async () => {
-    const modalClosed = await openDetailsInDashboardModal()
+  it('closes a prompt with Escape without closing the Dashboard modal', async () => {
+    const modalClosed = await openPromptInDashboardModal()
 
     await userEvent.keyboard('{Escape}')
     await expect
-      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .element(page.getByRole('dialog', { name: 'New folder' }))
       .not.toBeInTheDocument()
     // The same key press must not fall through to the Dashboard's own Escape handler.
     expect(modalClosed).not.toHaveBeenCalled()
   })
 
-  it('closes the item detail dialog with Escape on engines without showModal()', async () => {
+  it('closes a prompt with Escape on engines without showModal()', async () => {
     // Safari < 15.4 has no showModal(); the dialog then opens non-modal and
     // never fires `cancel` on Escape.
     const showModal = Object.getOwnPropertyDescriptor(
@@ -767,11 +769,11 @@ describe('S3 provider in the browser', () => {
       configurable: true,
     })
     try {
-      const modalClosed = await openDetailsInDashboardModal()
+      const modalClosed = await openPromptInDashboardModal()
 
       await userEvent.keyboard('{Escape}')
       await expect
-        .element(page.getByRole('dialog', { name: 'readme.md' }))
+        .element(page.getByRole('dialog', { name: 'New folder' }))
         .not.toBeInTheDocument()
       expect(modalClosed).not.toHaveBeenCalled()
     } finally {

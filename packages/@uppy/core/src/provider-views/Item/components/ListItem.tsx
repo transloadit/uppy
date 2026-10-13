@@ -22,10 +22,8 @@ type ListItemProps = {
   showTitles: boolean
   i18n: any
   actionsMenu?: h.JSX.Element | null
-  /** Picker mode (or manager mode with the toggle on): rows are checkboxes. */
+  /** Picker mode: rows are checkboxes. Manager mode lists files as plain rows. */
   selectable?: boolean
-  /** Manager mode: a plain click on a file opens its details. */
-  onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
 
 export default function ListItem({
@@ -39,7 +37,6 @@ export default function ListItem({
   i18n,
   actionsMenu = null,
   selectable = true,
-  onFileClick,
 }: ListItemProps): h.JSX.Element {
   const fileContent = (
     <>
@@ -111,18 +108,8 @@ export default function ListItem({
           {fileContent}
         </label>
       ) : (
-        // manager mode: a plain click opens the item's details
-        <button
-          type="button"
-          className="uppy-u-reset uppy-c-btn uppy-ProviderBrowserItem-inner"
-          onClick={() => onFileClick?.(file)}
-          data-uppy-item-id={file.id}
-          aria-label={i18n('openFileNamed', {
-            name: file.data.name ?? i18n('unnamed'),
-          })}
-        >
-          {fileContent}
-        </button>
+        // manager mode: files are not picked; their actions are in the menu
+        <div className="uppy-ProviderBrowserItem-inner">{fileContent}</div>
       )}
       {actionsMenu}
     </li>

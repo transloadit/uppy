@@ -40,12 +40,7 @@ export default {
     },
     allFilesFromFolderNamed: 'All files from folder %{name}',
     openFolderNamed: 'Open folder %{name}',
-    openFileNamed: 'Open %{name}',
     itemActionsNamed: 'Actions for %{name}',
-    close: 'Close',
-    detailSize: 'Size',
-    detailType: 'Type',
-    detailModified: 'Modified',
     cancel: 'Cancel',
     // Stops a long operation (moving or deleting many files) midway.
     stopOperation: 'Stop',

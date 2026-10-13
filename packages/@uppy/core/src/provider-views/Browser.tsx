@@ -31,7 +31,6 @@ type BrowserProps<M extends Meta, B extends Body> = {
   actions?: ProviderAction<M, B>[]
   runAction?: ProviderView<M, B>['runAction']
   selectable?: boolean
-  onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
 
 function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
@@ -51,7 +50,6 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
     actions = [],
     runAction,
     selectable = true,
-    onFileClick,
   } = props
 
   const [isShiftKeyPressed, setIsShiftKeyPressed] = useState(false)
@@ -134,7 +132,6 @@ function Browser<M extends Meta, B extends Body>(props: BrowserProps<M, B>) {
         runAction ? (anchor) => menu.toggle(item.id, anchor) : undefined
       }
       selectable={selectable}
-      onFileClick={onFileClick}
     />
   )
 

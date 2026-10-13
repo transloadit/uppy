@@ -13,7 +13,6 @@ type GridItemProps = {
   i18n: any
   actionsMenu?: h.JSX.Element | null
   selectable?: boolean
-  onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
 
 function GridItem({
@@ -27,7 +26,6 @@ function GridItem({
   i18n,
   actionsMenu = null,
   selectable = true,
-  onFileClick,
 }: GridItemProps): h.JSX.Element {
   const name = file.data.name ?? i18n('unnamed')
   const content = (
@@ -54,25 +52,13 @@ function GridItem({
           data-uppy-super-focusable
         />
       )}
-      {!selectable && onFileClick && !file.data.isFolder ? (
-        <button
-          type="button"
-          aria-label={i18n('openFileNamed', { name })}
-          data-uppy-item-id={file.id}
-          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
-          onClick={() => onFileClick(file)}
-        >
-          {content}
-        </button>
-      ) : (
-        <label
-          htmlFor={selectable ? file.id : undefined}
-          aria-label={name}
-          className="uppy-u-reset uppy-ProviderBrowserItem-inner"
-        >
-          {content}
-        </label>
-      )}
+      <label
+        htmlFor={selectable ? file.id : undefined}
+        aria-label={name}
+        className="uppy-u-reset uppy-ProviderBrowserItem-inner"
+      >
+        {content}
+      </label>
       {actionsMenu}
     </li>
   )

@@ -45,7 +45,6 @@ en_US.strings = {
   browseFolders: 'browse folders',
   cancel: 'Cancel',
   cancelUpload: 'Cancel upload',
-  close: 'Close',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -81,9 +80,6 @@ en_US.strings = {
   deletingItemFiles:
     'Deleting item %{item} of %{items}: %{done} of %{total} files…',
   deletingItems: 'Deleting %{done} of %{total} items…',
-  detailModified: 'Modified',
-  detailSize: 'Size',
-  detailType: 'Type',
   dialogConfirm: 'OK',
   discardMediaFile: 'Discard Media',
   discardRecordedFile: 'Discard recorded file',
@@ -192,7 +188,6 @@ en_US.strings = {
   noInternetConnection: 'No Internet connection',
   noMoreFilesAllowed: 'Cannot add more files',
   noSearchResults: 'Unfortunately, there are no results for this search',
-  openFileNamed: 'Open %{name}',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   paused: 'Paused',

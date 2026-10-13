@@ -26,7 +26,6 @@ type ItemProps = {
   /** Opens or closes this item's actions menu; no menu without it. */
   toggleMenu?: ((anchor: HTMLElement) => void) | undefined
   selectable?: boolean
-  onFileClick?: (file: PartialTreeFile | PartialTreeFolderNode) => void
 }
 
 export default function Item(props: ItemProps): h.JSX.Element {
@@ -42,7 +41,6 @@ export default function Item(props: ItemProps): h.JSX.Element {
     menuOpen = false,
     toggleMenu,
     selectable = true,
-    onFileClick,
   } = props
 
   const actionsMenu =
@@ -79,7 +77,6 @@ export default function Item(props: ItemProps): h.JSX.Element {
     restrictionError,
     actionsMenu,
     selectable,
-    onFileClick,
   }
 
   switch (viewType) {
