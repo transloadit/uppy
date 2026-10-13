@@ -213,9 +213,7 @@ describe('S3 provider in the browser', () => {
       .element(page.getByRole('button', { name: 'New folder…', exact: true }))
       .not.toBeInTheDocument()
     // Nothing to do with a selection either.
-    await expect
-      .element(page.getByRole('button', { name: 'Select multiple' }))
-      .not.toBeInTheDocument()
+    expect(plugin.builtInBulkActions()).toEqual([])
   })
 
   it('offers no built-in file changes with enableActions: false', async () => {
@@ -225,6 +223,20 @@ describe('S3 provider in the browser', () => {
     expect(plugin.builtInActions()).toEqual([])
     expect(plugin.builtInToolbarActions()).toEqual([])
     expect(plugin.builtInBulkActions()).toEqual([])
+  })
+
+  it('has no selection UI in manager mode: selecting is for a headless UI', async () => {
+    setup({ mode: 'manager' })
+    await openBucket()
+    await expect
+      .element(page.getByRole('button', { name: 'Actions for readme.md' }))
+      .toBeVisible()
+    await expect
+      .element(page.getByRole('button', { name: 'Select multiple' }))
+      .not.toBeInTheDocument()
+    await expect
+      .element(page.getByRole('checkbox', { name: 'readme.md' }))
+      .not.toBeInTheDocument()
   })
 
   it('replaces an open prompt without keeping its previous input', async () => {
@@ -582,32 +594,32 @@ describe('S3 provider in the browser', () => {
       .toEqual(['dropped.txt'])
   })
 
-  it('toggles selection mode with a button that says what it does', async () => {
-    setup({ mode: 'manager' })
-    await openBucket()
-    await page.getByRole('button', { name: 'Select multiple' }).click()
-    await page.getByRole('checkbox', { name: 'readme.md' }).click()
-    await page.getByRole('button', { name: 'Cancel selection' }).click()
-    await expect
-      .element(page.getByRole('button', { name: 'Select multiple' }))
-      .toBeVisible()
-    await expect
-      .element(page.getByRole('checkbox', { name: 'readme.md' }))
-      .not.toBeInTheDocument()
-  })
-
   it('counts the selection as the bulk actions get it and warns about folder contents', async () => {
     const { plugin } = setup({ mode: 'manager' })
     await openBucket()
     // With docs listed, its file is checked along with it: still one item.
     await plugin.view.openFolder('docs%2F')
     await plugin.view.openFolder(null)
-    await page.getByRole('button', { name: 'Select multiple' }).click()
-    await page.getByRole('checkbox', { name: /docs/ }).click()
-    await page.getByRole('checkbox', { name: 'readme.md' }).click()
-    await expect.element(page.getByText('2 selected')).toBeVisible()
+    const { partialTree } = plugin.getPluginState()
+    const docs = partialTree.find((node) => node.id === 'docs%2F')
+    const readme = partialTree.find((node) => node.id === 'readme.md')
+    if (docs?.type !== 'folder' || readme?.type !== 'file')
+      throw new Error('Missing docs or readme.md')
+    plugin.view.toggleCheckbox(docs, false)
+    plugin.view.toggleCheckbox(readme, false)
+    expect(
+      plugin.view
+        .getBulkActionItems()
+        .map((item) => item.id)
+        .sort(),
+    ).toEqual(['docs%2F', 'readme.md'])
 
-    await page.getByRole('button', { name: 'Delete', exact: true }).click()
+    const bulkAction = (id: string) => {
+      const action = plugin.view.opts.bulkActions?.find((a) => a.id === id)
+      if (!action) throw new Error(`Missing bulk action ${id}`)
+      return action
+    }
+    const deleting = plugin.view.runBulkAction(bulkAction('s3:bulkDelete'))
     const dialog = page.getByRole('dialog', { name: 'Delete 2 items?' })
     await expect
       .element(
@@ -621,34 +633,19 @@ describe('S3 provider in the browser', () => {
       .element(dialog.getByRole('button', { name: 'Cancel' }))
       .toHaveFocus()
     await userEvent.keyboard('{Escape}')
+    await deleting
 
-    await page.getByRole('button', { name: 'Move…' }).click()
+    const moving = plugin.view.runBulkAction(bulkAction('s3:bulkMove'))
     await expect
       .element(page.getByRole('dialog', { name: 'Move 2 items' }))
       .toBeVisible()
     await userEvent.keyboard('{Escape}')
-  })
-
-  it('offers no multi-select in an empty folder', async () => {
-    setup({
-      mode: 'manager',
-      companion: { folders: { '': [{ name: 'empty', isFolder: true }] } },
-    })
-    await page.getByRole('tab', { name: 'S3' }).click()
-    const toggle = page.getByRole('button', { name: 'Select multiple' })
-    await expect.element(toggle).toBeVisible()
-    await page.getByRole('button', { name: 'Open folder empty' }).click()
-    await expect
-      .element(page.getByText('You have no files or folders here'))
-      .toBeVisible()
-    await expect.element(toggle).not.toBeInTheDocument()
+    await moving
   })
 
   it('keeps the controls that would abort a long operation disabled while it runs', async () => {
     const { plugin } = setup({ mode: 'manager' })
     await openBucket()
-    await page.getByRole('button', { name: 'Select multiple' }).click()
-    await page.getByRole('checkbox', { name: 'readme.md' }).click()
 
     const operation = plugin.view
       .runWithProgress(({ signal, setProgress }) => {
@@ -659,13 +656,10 @@ describe('S3 provider in the browser', () => {
       })
       .catch((err: unknown) => err)
     await expect.element(page.getByText('Moving 1 of 2 files…')).toBeVisible()
-    for (const name of ['Cancel selection', 'New folder…', 'Log out']) {
+    for (const name of ['New folder…', 'Log out']) {
       await expect.element(page.getByRole('button', { name })).toBeDisabled()
     }
     await expect.element(page.getByRole('searchbox')).toBeDisabled()
-    await expect
-      .element(page.getByRole('button', { name: 'Move…' }))
-      .not.toBeInTheDocument()
 
     await page.getByRole('button', { name: 'Stop', exact: true }).click()
     expect(await operation).toMatchObject({ name: 'AbortError' })

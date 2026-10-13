@@ -42,12 +42,6 @@ export default {
     openFolderNamed: 'Open folder %{name}',
     openFileNamed: 'Open %{name}',
     itemActionsNamed: 'Actions for %{name}',
-    itemsSelected: {
-      0: '%{smart_count} selected',
-      1: '%{smart_count} selected',
-    },
-    selectMultiple: 'Select multiple',
-    cancelSelection: 'Cancel selection',
     close: 'Close',
     detailSize: 'Size',
     detailType: 'Type',

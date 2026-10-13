@@ -873,9 +873,9 @@ export default class S3<M extends Meta, B extends Body>
     if (!this.view) return
     if (this.opts.mode !== previousMode) {
       // A selection means something else in the other mode (picking vs a
-      // bulk action), and picker mode has no details.
+      // bulk action), and picker mode has no detail item.
       this.view.cancelSelection()
-      this.setPluginState({ selectionActive: false, detailItemId: undefined })
+      this.setPluginState({ detailItemId: undefined })
     }
     Object.assign(this.view.opts, this.#viewOptions())
     this.#applyActions()

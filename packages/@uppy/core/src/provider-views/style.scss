@@ -873,15 +873,3 @@
     }
   }
 }
-
-// Manager mode: the bulk-selection footer.
-.uppy-ProviderBrowser-footer-count {
-  margin-inline-end: 12px;
-  color: variables.$gray-700;
-  font-weight: 500;
-  font-size: 13px;
-
-  [data-uppy-theme='dark'] & {
-    color: variables.$gray-300;
-  }
-}

@@ -25,7 +25,6 @@ import {
   remoteFileObjToLocal,
 } from '../../utils/index.js'
 import Browser from '../Browser.js'
-import BulkActions from '../BulkActions.js'
 import FilterInput from '../FilterInput.js'
 import FooterActions from '../FooterActions.js'
 import ItemDetailDialog from '../ItemDetailDialog.js'
@@ -77,7 +76,6 @@ const getDefaultState = (
   didFirstRender: false,
   username: null,
   loading: false,
-  selectionActive: false,
   detailItemId: undefined,
 })
 
@@ -221,19 +219,18 @@ export interface Opts<M extends Meta, B extends Body> {
   /**
    * 'picker' (default): rows are checkboxes and the footer adds the selection
    * to Uppy. 'manager' (file-library UIs, until a dedicated file manager
-   * plugin replaces it): a plain click opens an item's details, multi-select
-   * hides behind an explicit toggle, and the selection feeds `bulkActions`
-   * instead of picking. 'manager' is list view only for
-   * now (`viewType: 'list'`): the grid view does not lay out its items.
+   * plugin replaces it): files are not picked, the plugin's `actions` change
+   * them, and a headless UI (`useS3Manager`) selects them for `bulkActions`.
+   * This panel has no selection UI in manager mode. List view only for now
+   * (`viewType: 'list'`): the grid view does not lay out its items.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
    */
   mode?: 'picker' | 'manager'
   /**
-   * Manager mode only: actions over the multi-selected items, in the footer
-   * of its selection mode. (Picker mode picks the checked items.) List view
-   * only for now (`viewType: 'list'`).
+   * Manager mode only: actions over the selected items, run with
+   * `runBulkAction` by a headless UI. (Picker mode picks the checked items.)
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -551,18 +548,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.#cancelLongOperation = undefined
       this.setLoading(false)
     }
-  }
-
-  /**
-   * Manager mode: switch the multi-select checkboxes on or off.
-   *
-   * @experimental Part of the file-management API added for `@uppy/s3`: it
-   * will change incompatibly, also in minor releases.
-   */
-  toggleSelectionMode = (): void => {
-    const { selectionActive } = this.plugin.getPluginState()
-    if (selectionActive) this.cancelSelection()
-    this.plugin.setPluginState({ selectionActive: !selectionActive })
   }
 
   /**
@@ -1239,29 +1224,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
       )
     }
 
-    const {
-      partialTree,
-      currentFolderId,
-      username,
-      searchString,
-      searchResults,
-      dialog,
-      selectionActive = false,
-    } = this.plugin.getPluginState()
+    const { partialTree, username, searchString, searchResults, dialog } =
+      this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
     const isManager = opts.mode === 'manager'
-    const selectable = !isManager || selectionActive
     // A long operation owns the screen: anything that would start another
     // request (and so abort it) is disabled or hidden meanwhile.
     const busy = this.#cancelLongOperation !== undefined
-    // Nothing to select in a folder we know is empty (unlike one being listed).
-    const currentFolder = partialTree.find(({ id }) => id === currentFolderId)
-    const isEmptyFolder =
-      currentFolder?.type !== 'file' &&
-      currentFolder?.cached === true &&
-      !partialTree.some(
-        (node) => node.type !== 'root' && node.parentId === currentFolderId,
-      )
     const detailItem = this.getDetailItem()
 
     return (
@@ -1283,16 +1252,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
           standalone={opts.standalone ?? false}
-          selectionToggle={
-            isManager &&
-            (opts.bulkActions?.length ?? 0) > 0 &&
-            (selectionActive || !isEmptyFolder)
-              ? {
-                  active: selectionActive,
-                  onToggle: this.toggleSelectionMode,
-                }
-              : undefined
-          }
           busy={busy}
         />
         {opts.showFilter && (
@@ -1324,23 +1283,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
             utmSource="Companion"
             actions={opts.actions ?? []}
             runAction={this.runAction}
-            selectable={selectable}
-            onFileClick={
-              isManager && !selectionActive ? this.openItemDetail : undefined
-            }
+            selectable={!isManager}
+            onFileClick={isManager ? this.openItemDetail : undefined}
           />
         )}
 
-        {busy ? null : isManager ? (
-          selectionActive && (
-            <BulkActions
-              selectedCount={this.getBulkActionItems().length}
-              bulkActions={opts.bulkActions ?? []}
-              runBulkAction={this.runBulkAction}
-              i18n={i18n}
-            />
-          )
-        ) : (
+        {busy || isManager ? null : (
           <FooterActions
             partialTree={partialTree}
             donePicking={this.donePicking}

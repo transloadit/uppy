@@ -44,7 +44,6 @@ en_US.strings = {
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
   cancel: 'Cancel',
-  cancelSelection: 'Cancel selection',
   cancelUpload: 'Cancel upload',
   close: 'Close',
   closeModal: 'Close Modal',
@@ -153,10 +152,6 @@ en_US.strings = {
   itemsMoved: {
     '0': 'Moved %{smart_count} item',
     '1': 'Moved %{smart_count} items',
-  },
-  itemsSelected: {
-    '0': '%{smart_count} selected',
-    '1': '%{smart_count} selected',
   },
   loadedXFiles: 'Loaded %{numFiles} files',
   loading: 'Loading...',
@@ -273,7 +268,6 @@ en_US.strings = {
   saveChanges: 'Save changes',
   search: 'Search',
   searchImages: 'Search for images',
-  selectMultiple: 'Select multiple',
   selectX: {
     '0': 'Select %{smart_count}',
     '1': 'Select %{smart_count}',

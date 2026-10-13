@@ -43,7 +43,6 @@ export type S3ManagerState = {
   detailItem: S3ManagerItem | undefined
   /** The prompt or confirm an action is waiting on, if any. */
   dialog: ProviderDialogState | undefined
-  selectionActive: boolean
   /** Whether `cancelOperation` has a running move or bulk change to stop. */
   cancellable: boolean
   actions: ProviderAction<any, any>[]
@@ -74,7 +73,6 @@ export type S3ManagerSnapshot = {
     visibleOrder?: S3ManagerItem[],
   ) => void
   cancelSelection: () => void
-  toggleSelectionMode: () => void
   openDetail: (item: S3ManagerItem) => void
   closeDetail: () => void
   runAction: (
@@ -175,7 +173,6 @@ export function createS3ManagerController(
     selected: view.getBulkActionItems(),
     detailItem: view.getDetailItem(),
     dialog: state.dialog,
-    selectionActive: state.selectionActive ?? false,
     cancellable: view.canCancelOperation,
     actions: view.opts.actions ?? [],
     toolbarActions: view.opts.toolbarActions ?? [],
@@ -199,7 +196,6 @@ export function createS3ManagerController(
     checkbox: (item, isShiftKeyPressed, visibleOrder) =>
       view.toggleCheckbox(item, isShiftKeyPressed, visibleOrder),
     cancelSelection: view.cancelSelection,
-    toggleSelectionMode: view.toggleSelectionMode,
     openDetail: view.openItemDetail,
     closeDetail: view.closeItemDetail,
     runAction: unlessBusy(view.runAction, undefined),
