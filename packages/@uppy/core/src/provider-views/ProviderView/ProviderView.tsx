@@ -585,8 +585,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   /**
    * The items a bulk action gets: the checked ones, top-most only (an action
-   * on a folder covers what is inside it). The selection count shown next to
-   * the bulk actions counts these too.
+   * on a folder covers what is inside it). A headless UI's selection count
+   * (`useS3Manager`'s `selected`) is these items.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.

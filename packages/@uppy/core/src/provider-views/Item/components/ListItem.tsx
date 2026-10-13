@@ -109,7 +109,9 @@ export default function ListItem({
         </label>
       ) : (
         // manager mode: files are not picked; their actions are in the menu
-        <div className="uppy-ProviderBrowserItem-inner">{fileContent}</div>
+        <div className="uppy-u-reset uppy-ProviderBrowserItem-inner">
+          {fileContent}
+        </div>
       )}
       {actionsMenu}
     </li>
