@@ -1,6 +1,6 @@
+import { network } from 'virtual:msw'
 import { HttpResponse, http } from 'msw'
-import { setupWorker } from 'msw/browser'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-svelte'
 import PropsReactivity from '../src/components/test/props-reactivity.svelte'
@@ -17,39 +17,37 @@ const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
  *
  * See https://tus.io/protocols/resumable-upload#protocol
  */
-const worker = setupWorker(
-  http.post(TUS_ENDPOINT, ({ request }) => {
-    const uploadLength = request.headers.get('Upload-Length') || '0'
-    return new HttpResponse(null, {
-      status: 201,
-      headers: {
-        Location: `${TUS_ENDPOINT}mock-upload-id`,
-        'Tus-Resumable': '1.0.0',
-        'Upload-Offset': '0',
-        'Upload-Length': uploadLength,
-      },
-    })
-  }),
-  http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
-    const uploadOffset = request.headers.get('Upload-Offset') || '0'
-    const body = await request.arrayBuffer()
-    const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
-    return new HttpResponse(null, {
-      status: 204,
-      headers: {
-        'Tus-Resumable': '1.0.0',
-        'Upload-Offset': String(newOffset),
-      },
-    })
-  }),
-)
+network.configure({
+  context: { quiet: true },
+  handlers: [
+    http.post(TUS_ENDPOINT, ({ request }) => {
+      const uploadLength = request.headers.get('Upload-Length') || '0'
+      return new HttpResponse(null, {
+        status: 201,
+        headers: {
+          Location: `${TUS_ENDPOINT}mock-upload-id`,
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': '0',
+          'Upload-Length': uploadLength,
+        },
+      })
+    }),
+    http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
+      const uploadOffset = request.headers.get('Upload-Offset') || '0'
+      const body = await request.arrayBuffer()
+      const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
+      return new HttpResponse(null, {
+        status: 204,
+        headers: {
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': String(newOffset),
+        },
+      })
+    }),
+  ],
+})
 
-beforeAll(async () => {
-  await worker.start({ onUnhandledRequest: 'error' })
-})
-afterAll(() => {
-  worker.stop()
-})
+await network.enable()
 
 const createMockFile = (name: string, type: string) => {
   return new File(['test content'], name, { type })

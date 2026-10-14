@@ -1,9 +1,8 @@
+import { network } from 'virtual:msw'
 import Core, { type Meta, type UppyFile } from '@uppy/core'
 import { HttpResponse, http } from 'msw'
-import type { SetupWorker } from 'msw/browser'
-import { describe, expect, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
-import { test } from './test-utils/test-extend.js'
 
 const KB = 1024
 const MB = KB * KB
@@ -45,10 +44,7 @@ const s3Url = 'https://test-bucket.s3.us-east-1.amazonaws.com/:key'
 /**
  * Creates signRequest + MSW handler state for multipart upload tests.
  */
-function createMultipartMocks(
-  worker: SetupWorker,
-  opts: { uploadId?: string; key?: string } = {},
-) {
+function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
   const uploadId = opts.uploadId ?? 'test-upload-id'
   const key = opts.key ?? 'test-key'
 
@@ -72,7 +68,7 @@ function createMultipartMocks(
     const maybeHang = () =>
       hangNonCreate ? (new Promise(() => {}) as Promise<any>) : null
 
-    worker.use(
+    network.use(
       http.post(s3Url, ({ request }) => {
         const hasUploadId = new URL(request.url).searchParams.has('uploadId')
         if (!hasUploadId) {
@@ -128,6 +124,13 @@ function createMultipartMocks(
 
   return { signRequest, operations, uploadId, key, registerHandlers }
 }
+
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => {
+  network.resetHandlers()
+})
 
 describe('AwsS3', () => {
   test('Registers AwsS3 upload plugin', () => {
@@ -234,11 +237,9 @@ describe('AwsS3', () => {
       expect(shouldUseMultipart(createFile(400 * 1024 * MB))).toBe(true) // 400GB
     })
 
-    test('uses multipart for a file below the 5 MiB part minimum when asked to', async ({
-      worker,
-    }) => {
+    test('uses multipart for a file below the 5 MiB part minimum when asked to', async () => {
       const { signRequest, operations, registerHandlers } =
-        createMultipartMocks(worker)
+        createMultipartMocks()
       registerHandlers()
 
       const core = new Core().use(AwsS3, {
@@ -263,11 +264,9 @@ describe('AwsS3', () => {
       ])
     })
 
-    test('sends an empty file with a single PUT even when asked for multipart', async ({
-      worker,
-    }) => {
+    test('sends an empty file with a single PUT even when asked for multipart', async () => {
       const { signRequest, operations, registerHandlers } =
-        createMultipartMocks(worker)
+        createMultipartMocks()
       registerHandlers()
 
       const core = new Core().use(AwsS3, {
@@ -294,10 +293,8 @@ describe('AwsS3', () => {
   describe('server-generated object key (#6496)', () => {
     const bucketUrl = 'https://test-bucket.s3.us-east-1.amazonaws.com'
 
-    test('single-part: reports the key the signer actually used', async ({
-      worker,
-    }) => {
-      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+    test('single-part: reports the key the signer actually used', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
       registerHandlers()
       signRequest.mockImplementation(async (req: any) => {
         const serverKey = `server-${req.key}`
@@ -331,11 +328,9 @@ describe('AwsS3', () => {
       expect(response.uploadURL).toBe(`${bucketUrl}/server-client-photo.jpg`)
     })
 
-    test('multipart: uses the key returned on create for every later request', async ({
-      worker,
-    }) => {
+    test('multipart: uses the key returned on create for every later request', async () => {
       const serverKey = 'server-big.dat'
-      const { signRequest, registerHandlers } = createMultipartMocks(worker, {
+      const { signRequest, registerHandlers } = createMultipartMocks({
         key: serverKey,
       })
       registerHandlers()
@@ -381,11 +376,9 @@ describe('AwsS3', () => {
       expect(keys.slice(1).every((k: string) => k === serverKey)).toBe(true)
     })
 
-    test('multipart: persists the key returned on create in s3Multipart', async ({
-      worker,
-    }) => {
+    test('multipart: persists the key returned on create in s3Multipart', async () => {
       const serverKey = 'server-big.dat'
-      const { signRequest, registerHandlers } = createMultipartMocks(worker, {
+      const { signRequest, registerHandlers } = createMultipartMocks({
         key: serverKey,
       })
       registerHandlers({ hangNonCreate: true })
@@ -422,12 +415,10 @@ describe('AwsS3', () => {
       await uploadPromise
     })
 
-    test('multipart: a signer that only returns url keeps getting the client key', async ({
-      worker,
-    }) => {
+    test('multipart: a signer that only returns url keeps getting the client key', async () => {
       // Prefixes on every request. Works today because the client key is
       // re-sent each time, so the plugin must not adopt S3's echoed <Key>.
-      const { signRequest, registerHandlers } = createMultipartMocks(worker, {
+      const { signRequest, registerHandlers } = createMultipartMocks({
         key: 'dir-client-big.dat',
       })
       registerHandlers()
@@ -462,8 +453,8 @@ describe('AwsS3', () => {
     test.for([
       '',
       '   ',
-    ])('ignores a blank key from the signer (%j)', async (key, { worker }) => {
-      const { signRequest, registerHandlers } = createMultipartMocks(worker)
+    ])('ignores a blank key from the signer (%j)', async (key) => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
       registerHandlers()
       signRequest.mockImplementation(async (req: any) => ({
         url: `${bucketUrl}/${req.key}?method=${req.method}`,
@@ -493,9 +484,9 @@ describe('AwsS3', () => {
   })
 
   describe('signed headers (#6548)', () => {
-    test('sends the headers returned by the signer', async ({ worker }) => {
+    test('sends the headers returned by the signer', async () => {
       let seen: Headers | undefined
-      worker.use(
+      network.use(
         http.put(s3Url, ({ request }) => {
           seen = request.headers
           return new HttpResponse('', {
@@ -535,11 +526,9 @@ describe('AwsS3', () => {
       expect(seen?.get('content-type')).toBe('application/pdf')
     })
 
-    test('falls back to the file type when the signer sends no headers', async ({
-      worker,
-    }) => {
+    test('falls back to the file type when the signer sends no headers', async () => {
       let seen: Headers | undefined
-      worker.use(
+      network.use(
         http.put(s3Url, ({ request }) => {
           seen = request.headers
           return new HttpResponse('', {
@@ -574,9 +563,7 @@ describe('AwsS3', () => {
   })
 
   describe('POST policy (#6536)', () => {
-    test('uploads with a multipart/form-data POST when the signer returns fields', async ({
-      worker,
-    }) => {
+    test('uploads with a multipart/form-data POST when the signer returns fields', async () => {
       const rawKey = 'uploads/a b#1/../ü.jpg'
       const seen: {
         method: string
@@ -584,7 +571,7 @@ describe('AwsS3', () => {
         extra: string | null
         entries: string[]
       }[] = []
-      worker.use(
+      network.use(
         http.post('https://bucket.test/', async ({ request }) => {
           const form = await request.formData()
           seen.push({
@@ -645,10 +632,8 @@ describe('AwsS3', () => {
       )
     })
 
-    test('keeps a leading slash from fields.key in the location', async ({
-      worker,
-    }) => {
-      worker.use(
+    test('keeps a leading slash from fields.key in the location', async () => {
+      network.use(
         http.post(
           'https://bucket.test/',
           () => new HttpResponse('', { status: 204 }),
@@ -713,11 +698,9 @@ describe('AwsS3', () => {
       expect(onError.mock.calls[0][1].message).toContain(message)
     })
 
-    test('rejects fields returned for a request other than PutObject', async ({
-      worker,
-    }) => {
+    test('rejects fields returned for a request other than PutObject', async () => {
       const { signRequest, operations, registerHandlers } =
-        createMultipartMocks(worker)
+        createMultipartMocks()
       registerHandlers()
       signRequest.mockImplementation(async (req: any) => ({
         url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}?method=${req.method}`,
@@ -875,11 +858,8 @@ describe('AwsS3', () => {
   })
 
   describe('Golden Retriever resume state (s3Multipart)', () => {
-    test('persists s3Multipart on file state after creating multipart upload', async ({
-      worker,
-    }) => {
-      const { signRequest, uploadId, registerHandlers } =
-        createMultipartMocks(worker)
+    test('persists s3Multipart on file state after creating multipart upload', async () => {
+      const { signRequest, uploadId, registerHandlers } = createMultipartMocks()
       // After createMultipart succeeds, hang on subsequent requests so we can inspect state
       registerHandlers({ hangNonCreate: true })
 
@@ -912,11 +892,9 @@ describe('AwsS3', () => {
       await uploadPromise
     })
 
-    test('aborts the multipart upload in S3 when cancelled via cancelAll', async ({
-      worker,
-    }) => {
+    test('aborts the multipart upload in S3 when cancelled via cancelAll', async () => {
       const { signRequest, operations, registerHandlers } =
-        createMultipartMocks(worker, {
+        createMultipartMocks({
           uploadId: 'cancel-test-id',
           key: 'cancel-key',
         })
@@ -954,13 +932,11 @@ describe('AwsS3', () => {
       })
     })
 
-    test('uses persisted s3Multipart key for resume (listParts, not createMultipart)', async ({
-      worker,
-    }) => {
+    test('uses persisted s3Multipart key for resume (listParts, not createMultipart)', async () => {
       const persistedKey = 'persisted-object-key'
       const persistedUploadId = 'persisted-upload-id'
       const { signRequest, operations, registerHandlers } =
-        createMultipartMocks(worker, {
+        createMultipartMocks({
           uploadId: persistedUploadId,
           key: persistedKey,
         })
