@@ -44,6 +44,7 @@
     { "path": "./examples/aws-php/tsconfig.json" },
     { "path": "./examples/companion/tsconfig.json" },
     { "path": "./examples/companion-custom-provider/tsconfig.json" },
+    { "path": "./examples/companion-digitalocean-spaces/tsconfig.json" },
     { "path": "./examples/nextjs/tsconfig.json" },
     { "path": "./examples/react/tsconfig.json" },
     { "path": "./examples/reactrouter/tsconfig.json" },
