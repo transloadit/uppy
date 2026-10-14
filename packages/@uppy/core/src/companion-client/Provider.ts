@@ -5,7 +5,7 @@ import type {
   UnknownProviderPlugin,
   Uppy,
 } from '../index.js'
-import { getErrorMessage, getSocketHost } from '../utils/index.js'
+import { getErrorMessage, getSocketHost, isAbortError } from '../utils/index.js'
 import { isAuthError } from './AuthError.js'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, {
@@ -193,25 +193,26 @@ export default class Provider<
     authFormData: unknown
     signal: AbortSignal
   }): Promise<void> {
-    await this.ensurePreAuth()
-    signal.throwIfAborted()
-
-    // Important: We need to do this synchronously, or else browsers might block the popup.
-    // (We cannot wait until the websocket connection is established).
-    // This opens up a race condtition if the websocket is not connected before the user
-    // completes(or cancels) authentication, but that’s a small compromose we gotta make.
     const authCallbackToken = crypto.randomUUID()
-
-    const link = this.authUrl({
-      query: { uppyVersions },
-      authFormData,
-      authCallbackToken,
-    })
-    const authWindow = window.open(link, '_blank')
+    let authWindow: Window | null = null
     let interval: number | undefined
     let webSocket: WebSocket | undefined
 
     try {
+      await this.ensurePreAuth()
+      signal.throwIfAborted()
+
+      // Important: We need to do this synchronously, or else browsers might block the popup.
+      // (We cannot wait until the websocket connection is established).
+      // This opens up a race condition if the websocket is not connected before the user
+      // completes (or cancels) authentication, but that’s a small compromise we gotta make.
+      const link = this.authUrl({
+        query: { uppyVersions },
+        authFormData,
+        authCallbackToken,
+      })
+      authWindow = window.open(link, '_blank')
+
       const host = getSocketHost(this.opts.companionUrl)
 
       // Note that this promise is not guaranteed to settle in all cases
@@ -247,15 +248,30 @@ export default class Provider<
           }
         })
 
-        signal.addEventListener('abort', () =>
-          reject(new Error('Authentication was aborted')),
+        if (signal.aborted) {
+          reject(new DOMException('Authentication was aborted', 'AbortError'))
+        }
+
+        signal.addEventListener(
+          'abort',
+          () =>
+            reject(
+              new DOMException('Authentication was aborted', 'AbortError'),
+            ),
+          { once: true },
         )
 
         // poll for user closure of the window, so we can reject when it happens
-        if (authWindow) {
+        const currentWindow = authWindow
+        if (currentWindow) {
           interval = window.setInterval(() => {
-            if (authWindow.closed) {
-              reject(new Error('Auth window was closed by the user'))
+            if (currentWindow.closed) {
+              reject(
+                new DOMException(
+                  'Auth window was closed by the user',
+                  'AbortError',
+                ),
+              )
             }
           }, 500)
         }
@@ -263,8 +279,17 @@ export default class Provider<
 
       this.setAuthToken(token)
     } catch (err) {
-      const message = this.uppy.i18n('authAborted')
-      this.uppy.info({ message }, 'warning', 5000)
+      if (
+        isAbortError(err) ||
+        (err instanceof Error &&
+          (err.message === 'Auth window was closed by the user' ||
+            err.message === 'Authentication was aborted'))
+      ) {
+        const message = this.uppy.i18n('authAborted')
+        this.uppy.info({ message }, 'warning', 5000)
+        this.uppy.log('Authentication aborted', 'warning')
+        throw new DOMException('Authentication was aborted', 'AbortError')
+      }
       this.uppy.log(`Authentication failed: ${getErrorMessage(err)}`, 'warning')
       throw err
     } finally {

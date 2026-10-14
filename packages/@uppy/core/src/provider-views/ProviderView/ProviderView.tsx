@@ -918,7 +918,16 @@ export default class ProviderView<M extends Meta, B extends Body> {
         currentFolderId: folderId,
         searchString: '',
       })
-    }).catch(handleError(this.plugin.uppy))
+    }).catch((err) => {
+      if (
+        !isAbortError(err) &&
+        folderId === this.plugin.rootFolderId &&
+        !clickedFolder?.cached
+      ) {
+        this.plugin.setPluginState({ authenticated: false })
+      }
+      handleError(this.plugin.uppy)(err)
+    })
 
     this.#doneLoading()
   }
@@ -963,7 +972,10 @@ export default class ProviderView<M extends Meta, B extends Body> {
         this.provider.fetchPreAuthToken(),
         this.openFolder(this.plugin.rootFolderId),
       ])
-    }).catch(handleError(this.plugin.uppy))
+    }).catch((err) => {
+      this.plugin.setPluginState({ authenticated: false })
+      handleError(this.plugin.uppy)(err)
+    })
     this.#doneLoading()
   }
 
