@@ -151,11 +151,14 @@ describe('ProviderView Search E2E', () => {
     const firstBreadcrumb = page.getByRole('button', { name: 'first' })
     await firstBreadcrumb.click()
 
-    const hasSecondFolder = await page.getByRole('button', {
-      name: 'second',
-      exact: true,
-    })
-    expect(hasSecondFolder).toBeVisible()
+    await expect
+      .element(
+        page.getByRole('button', {
+          name: 'Open folder second',
+          exact: true,
+        }),
+      )
+      .toBeVisible()
   })
 
   test('Check folder in browse mode, search for nested item -> nested item should be checked', async ({
