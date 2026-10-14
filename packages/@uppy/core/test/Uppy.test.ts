@@ -28,21 +28,21 @@ async function fetchTestImage(): Promise<File> {
 
 describe('src/Core', () => {
   it('should expose a class', () => {
-    const core = new Core()
+    using core = new Core()
     expect(core.constructor.name).toEqual('Uppy')
   })
 
   it('should have a string `id` option that defaults to "uppy"', () => {
-    const core = new Core()
+    using core = new Core()
     expect(core.getID()).toEqual('uppy')
 
-    const core2 = new Core({ id: 'profile' })
+    using core2 = new Core({ id: 'profile' })
     expect(core2.getID()).toEqual('profile')
   })
 
   describe('plugins', () => {
     it('should add a plugin to the plugin stack', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AcquirerPlugin1)
       expect(
         // @ts-expect-error untyped
@@ -113,7 +113,7 @@ describe('src/Core', () => {
     })
 
     it('should prevent the same plugin from being added more than once', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AcquirerPlugin1)
 
       expect(() => {
@@ -122,7 +122,7 @@ describe('src/Core', () => {
     })
 
     it('should not be able to add an invalid plugin', () => {
-      const core = new Core()
+      using core = new Core()
 
       expect(() => {
         // @ts-expect-error expected
@@ -131,7 +131,7 @@ describe('src/Core', () => {
     })
 
     it('should not be able to add a plugin that has no id', () => {
-      const core = new Core()
+      using core = new Core()
 
       expect(() =>
         core.use(InvalidPluginWithoutId),
@@ -139,7 +139,7 @@ describe('src/Core', () => {
     })
 
     it('should not be able to add a plugin that has no type', () => {
-      const core = new Core()
+      using core = new Core()
 
       expect(() =>
         core.use(InvalidPluginWithoutType),
@@ -147,7 +147,7 @@ describe('src/Core', () => {
     })
 
     it('should return the plugin that matches the specified name', () => {
-      const core = new Core()
+      using core = new Core()
       expect(core.getPlugin('foo')).toEqual(undefined)
 
       core.use(AcquirerPlugin1)
@@ -157,7 +157,7 @@ describe('src/Core', () => {
     })
 
     it('should call the specified method on all the plugins', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
       core.iteratePlugins((plugin) => {
@@ -187,7 +187,7 @@ describe('src/Core', () => {
     })
 
     it('should uninstall and the remove the specified plugin', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
       expect(
@@ -215,7 +215,7 @@ describe('src/Core', () => {
 
   describe('state', () => {
     it('should update all the plugins with the new state when the updateAll method is called', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AcquirerPlugin1)
       core.use(AcquirerPlugin2)
       core.updateAll({ foo: 'bar' })
@@ -242,7 +242,7 @@ describe('src/Core', () => {
     })
 
     it('should update the state', () => {
-      const core = new Core()
+      using core = new Core()
       const stateUpdateEventMock = vi.fn()
       core.on('state-update', stateUpdateEventMock)
       core.use(AcquirerPlugin1)
@@ -325,7 +325,7 @@ describe('src/Core', () => {
     })
 
     it('should get the state', () => {
-      const core = new Core()
+      using core = new Core()
 
       core.setState({ foo: 'bar' })
 
@@ -335,12 +335,12 @@ describe('src/Core', () => {
 
   it('should cancel all when the `cancelAll` method is called', () => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
-    const core = new Core({
+    using core = new Core({
       store: DeepFrozenStore(),
     })
-    // const corePauseEventMock = vi.fn()
-    const coreCancelEventMock = vi.fn()
-    const coreStateUpdateEventMock = vi.fn()
+    // using corePauseEventMock = vi.fn()
+    using coreCancelEventMock = vi.fn()
+    using coreStateUpdateEventMock = vi.fn()
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
@@ -376,7 +376,7 @@ describe('src/Core', () => {
   })
 
   it('should clear all uploads and files on cancelAll()', async () => {
-    const core = new Core()
+    using core = new Core()
 
     core.addFile({
       source: 'vi',
@@ -406,7 +406,7 @@ describe('src/Core', () => {
   })
 
   it('should allow remove all uploads when individualCancellation is disabled', async () => {
-    const core = new Core()
+    using core = new Core()
 
     const { capabilities } = core.getState()
     core.setState({
@@ -444,7 +444,7 @@ describe('src/Core', () => {
   })
 
   it('should disallow remove one upload when individualCancellation is disabled', async () => {
-    const core = new Core()
+    using core = new Core()
 
     const { capabilities } = core.getState()
     core.setState({
@@ -484,7 +484,7 @@ describe('src/Core', () => {
   })
 
   it('should allow remove one upload when individualCancellation is enabled', async () => {
-    const core = new Core()
+    using core = new Core()
 
     const { capabilities } = core.getState()
     core.setState({
@@ -521,15 +521,15 @@ describe('src/Core', () => {
     expect(Object.keys(core.getState().files).length).toEqual(1)
   })
 
-  it('should close, reset and uninstall when the close method is called', () => {
+  it('should close, reset and uninstall when the instance id', () => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
     const core = new Core({
       store: DeepFrozenStore(),
     })
     core.use(AcquirerPlugin1)
 
-    const coreCancelEventMock = vi.fn()
-    const coreStateUpdateEventMock = vi.fn()
+    using coreCancelEventMock = vi.fn()
+    using coreStateUpdateEventMock = vi.fn()
     // @ts-expect-error
     const plugin = core[Symbol.for('uppy test: getPlugins')]('acquirer')[0]
 
@@ -572,7 +572,7 @@ describe('src/Core', () => {
 
   describe('upload hooks', () => {
     it('should add data returned from upload hooks to the .upload() result', async () => {
-      const core = new Core()
+      using core = new Core()
       core.addPreProcessor((_, uploadID) => {
         core.addResultData(uploadID, { pre: 'ok' })
       })
@@ -593,7 +593,7 @@ describe('src/Core', () => {
 
   describe('preprocessors', () => {
     it('should add and remove preprocessor', () => {
-      const core = new Core()
+      using core = new Core()
       const preprocessor = () => {}
       expect(core.removePreProcessor(preprocessor)).toBe(false)
       core.addPreProcessor(preprocessor)
@@ -602,7 +602,7 @@ describe('src/Core', () => {
     })
 
     it('should execute all the preprocessors when uploading a file', async () => {
-      const core = new Core()
+      using core = new Core()
       const preprocessor1 = vi.fn()
       const preprocessor2 = vi.fn()
       core.addPreProcessor(preprocessor1)
@@ -628,7 +628,7 @@ describe('src/Core', () => {
     })
 
     it('should not pass removed file IDs to next step', async () => {
-      const core = new Core()
+      using core = new Core()
       const uploader = vi.fn()
       core.addPreProcessor((fileIDs) => {
         core.removeFile(fileIDs[0])
@@ -658,7 +658,7 @@ describe('src/Core', () => {
     })
 
     it('should update the file progress state when preprocess-progress event is fired', async () => {
-      const core = new Core()
+      using core = new Core()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
@@ -684,7 +684,7 @@ describe('src/Core', () => {
     })
 
     it('should update the file progress state when preprocess-complete event is fired', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -712,7 +712,7 @@ describe('src/Core', () => {
 
   describe('postprocessors', () => {
     it('should add and remove postprocessor', () => {
-      const core = new Core()
+      using core = new Core()
       const postprocessor = () => {}
       expect(core.removePostProcessor(postprocessor)).toBe(false)
       core.addPostProcessor(postprocessor)
@@ -721,7 +721,7 @@ describe('src/Core', () => {
     })
 
     it('should execute all the postprocessors when uploading a file', async () => {
-      const core = new Core()
+      using core = new Core()
       const postprocessor1 = vi.fn()
       const postprocessor2 = vi.fn()
       core.addPostProcessor(postprocessor1)
@@ -753,7 +753,7 @@ describe('src/Core', () => {
     })
 
     it('should update the file progress state when postprocess-progress event is fired', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -780,7 +780,7 @@ describe('src/Core', () => {
     })
 
     it('should update the file progress state when postprocess-complete event is fired', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -809,7 +809,7 @@ describe('src/Core', () => {
 
   describe('uploaders', () => {
     it('should add and remove uploader', () => {
-      const core = new Core()
+      using core = new Core()
       const uploader = () => {}
       expect(core.removeUploader(uploader)).toBe(false)
       core.addUploader(uploader)
@@ -822,7 +822,7 @@ describe('src/Core', () => {
     it('should call onBeforeFileAdded if it was specified in the options when initialising the class', async () => {
       const onBeforeFileAdded = vi.fn()
 
-      const core = new Core({
+      using core = new Core({
         // need to capture a snapshot of files, because files will change in the next tick, thus failing the expect below
         onBeforeFileAdded: (file, files) =>
           onBeforeFileAdded(file, { ...files }),
@@ -841,7 +841,7 @@ describe('src/Core', () => {
     })
 
     it('should allow uploading duplicate file if explicitly allowed in onBeforeFileAdded', async () => {
-      const core = new Core({ onBeforeFileAdded: () => true })
+      using core = new Core({ onBeforeFileAdded: () => true })
       const sameFileBlob = await fetchTestImage()
 
       core.addFile({
@@ -862,7 +862,7 @@ describe('src/Core', () => {
     it('should add a file', async () => {
       const fileData = await fetchTestImage()
       const fileAddedEventMock = vi.fn()
-      const core = new Core()
+      using core = new Core()
       core.on('file-added', fileAddedEventMock)
 
       const fileId = core.addFile({
@@ -898,14 +898,14 @@ describe('src/Core', () => {
 
     it('should add a file from a File object', async () => {
       const fileData = await fetchTestImage()
-      const core = new Core()
+      using core = new Core()
 
       const fileId = core.addFile(fileData)
       expect(core.getFile(fileId).id).toEqual(fileId)
     })
 
     it('should not allow a file that does not meet the restrictions', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           allowedFileTypes: ['image/gif', 'video/webm'],
         },
@@ -935,7 +935,7 @@ describe('src/Core', () => {
     })
 
     it('should not allow a dupicate file, a file with the same id', async () => {
-      const core = new Core()
+      using core = new Core()
       const sameFileBlob = await fetchTestImage()
       core.addFile({
         source: 'vi',
@@ -958,7 +958,7 @@ describe('src/Core', () => {
     })
 
     it('should allow a duplicate file if its relativePath is different, thus the id is different', async () => {
-      const core = new Core()
+      using core = new Core()
       // The same File instance for both: `generateFileID` folds in
       // `data.lastModified`, and every `new File()` stamps `Date.now()`, so two
       // separate images would get different ids no matter what `relativePath`
@@ -983,7 +983,7 @@ describe('src/Core', () => {
     })
 
     it('should not allow a file if onBeforeFileAdded returned false', async () => {
-      const core = new Core({
+      using core = new Core({
         onBeforeFileAdded: (file) => {
           if (file.source === 'vi') {
             return false
@@ -1007,7 +1007,7 @@ describe('src/Core', () => {
 
     describe('with allowMultipleUploadBatches: false', () => {
       it('allows no new files after upload', async () => {
-        const core = new Core({ allowMultipleUploadBatches: false })
+        using core = new Core({ allowMultipleUploadBatches: false })
         core.addFile({
           source: 'vi',
           name: 'foo.jpg',
@@ -1029,7 +1029,7 @@ describe('src/Core', () => {
       })
 
       it('allows no new files after upload with legacy allowMultipleUploads option', async () => {
-        const core = new Core({ allowMultipleUploads: false })
+        using core = new Core({ allowMultipleUploads: false })
         core.addFile({
           source: 'vi',
           name: 'foo.jpg',
@@ -1051,7 +1051,7 @@ describe('src/Core', () => {
       })
 
       it('does not allow new files after the removeFile() if some file is still present', async () => {
-        const core = new Core({ allowMultipleUploadBatches: false })
+        using core = new Core({ allowMultipleUploadBatches: false })
 
         // adding 2 files
         const fileId1 = core.addFile({
@@ -1074,7 +1074,7 @@ describe('src/Core', () => {
       })
 
       it('allows new files after the last removeFile()', async () => {
-        const core = new Core({ allowMultipleUploadBatches: false })
+        using core = new Core({ allowMultipleUploadBatches: false })
 
         // adding 2 files
         const fileId1 = core.addFile({
@@ -1099,7 +1099,7 @@ describe('src/Core', () => {
     })
 
     it('does not dedupe different files', async () => {
-      const core = new Core()
+      using core = new Core()
       const response = await fetch(sampleImage)
       expect(response.ok).toBe(true)
       const data = await response.blob()
@@ -1131,7 +1131,7 @@ describe('src/Core', () => {
 
   describe('uploading a file', () => {
     it('should return a { successful, failed } pair containing file objects', async () => {
-      const core = new Core()
+      using core = new Core()
       core.addUploader(() => Promise.resolve())
 
       core.addFile({
@@ -1147,7 +1147,7 @@ describe('src/Core', () => {
         data: await fetchTestImage(),
       })
 
-      return expect(core.upload()).resolves.toMatchObject({
+      await expect(core.upload()).resolves.toMatchObject({
         successful: [{ name: 'foo.jpg' }, { name: 'bar.jpg' }],
         failed: [],
       })
@@ -1155,7 +1155,7 @@ describe('src/Core', () => {
 
     it('should return files with errors in the { failed } key', async () => {
       // use DeepFrozenStore in some tests to make sure we are not mutating things
-      const core = new Core({
+      using core = new Core({
         store: DeepFrozenStore(),
       })
       core.addUploader((fileIDs) => {
@@ -1185,7 +1185,7 @@ describe('src/Core', () => {
         data: await fetchTestImage(),
       })
 
-      return expect(core.upload()).resolves.toMatchObject({
+      await expect(core.upload()).resolves.toMatchObject({
         successful: [{ name: 'foo.jpg' }],
         failed: [
           { name: 'bar.jpg', error: 'This is bar and I do not like bar' },
@@ -1194,7 +1194,7 @@ describe('src/Core', () => {
     })
 
     it('should only upload files that are not already assigned to another upload id', async () => {
-      const core = new Core()
+      using core = new Core()
       // @ts-expect-error
       core.store.state.currentUploads = {
         upload1: {
@@ -1247,7 +1247,7 @@ describe('src/Core', () => {
     })
 
     it('should not upload if onBeforeUpload returned false', async () => {
-      const core = new Core({
+      using core = new Core({
         onBeforeUpload: (files) => {
           for (const fileId in files) {
             if (files[fileId].name === '123.foo') {
@@ -1283,7 +1283,7 @@ describe('src/Core', () => {
     })
 
     it('only allows a single upload() batch when allowMultipleUploadBatches: false', async () => {
-      const core = new Core({ allowMultipleUploadBatches: false })
+      using core = new Core({ allowMultipleUploadBatches: false })
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
@@ -1304,7 +1304,7 @@ describe('src/Core', () => {
     })
 
     it('allows new files again with allowMultipleUploadBatches: false after cancelAll() was called', async () => {
-      const core = new Core({ allowMultipleUploadBatches: false })
+      using core = new Core({ allowMultipleUploadBatches: false })
 
       core.addFile({
         source: 'vi',
@@ -1329,7 +1329,7 @@ describe('src/Core', () => {
       const onUpload = vi.fn()
       const onRetryAll = vi.fn()
       const onUploadError = vi.fn()
-      const core = new Core()
+      using core = new Core()
       let hasError = false
 
       core.addUploader((fileIDs) => {
@@ -1399,7 +1399,7 @@ describe('src/Core', () => {
     it('should remove the file', async () => {
       const fileRemovedEventMock = vi.fn()
 
-      const core = new Core()
+      using core = new Core()
       core.on('file-removed', fileRemovedEventMock)
 
       core.addFile({
@@ -1429,7 +1429,7 @@ describe('src/Core', () => {
       const onUpload = vi.fn()
       const onRetryAll = vi.fn()
 
-      const core = new Core()
+      using core = new Core()
       core.on('upload', onUpload)
       core.on('retry-all', onRetryAll)
 
@@ -1451,7 +1451,7 @@ describe('src/Core', () => {
     it('should not start a new upload if there are no failed files', async () => {
       const onUpload = vi.fn()
 
-      const core = new Core()
+      using core = new Core()
       core.on('upload', onUpload)
 
       core.addFile({
@@ -1470,7 +1470,7 @@ describe('src/Core', () => {
         const onUpload = vi.fn()
         const onRetryAll = vi.fn()
 
-        const core = new Core({
+        using core = new Core({
           restrictions: {
             requiredMetaFields: ['caption'],
           },
@@ -1511,7 +1511,7 @@ describe('src/Core', () => {
         const onUpload = vi.fn()
         const onRetryAll = vi.fn()
 
-        const core = new Core({
+        using core = new Core({
           restrictions: {
             requiredMetaFields: ['caption'],
           },
@@ -1563,7 +1563,7 @@ describe('src/Core', () => {
         const onUpload = vi.fn()
         const onRetryAll = vi.fn()
 
-        const core = new Core({
+        using core = new Core({
           restrictions: {
             requiredMetaFields: ['caption'],
           },
@@ -1640,7 +1640,7 @@ describe('src/Core', () => {
 
   describe('get a file', () => {
     it('should get the specified file', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -1658,13 +1658,13 @@ describe('src/Core', () => {
 
   describe('getFiles', () => {
     it('should return an empty array if there are no files', () => {
-      const core = new Core()
+      using core = new Core()
 
       expect(core.getFiles()).toEqual([])
     })
 
     it('should return all files as an array', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -1694,7 +1694,7 @@ describe('src/Core', () => {
 
   describe('setOptions', () => {
     it('should change options on the fly', () => {
-      const core = new Core()
+      using core = new Core()
       core.setOptions({
         id: 'lolUppy',
         autoProceed: true,
@@ -1707,7 +1707,7 @@ describe('src/Core', () => {
     })
 
     it('should change locale on the fly', () => {
-      const core = new Core()
+      using core = new Core()
       expect(core.i18n('cancel')).toEqual('Cancel')
 
       core.setOptions({
@@ -1723,7 +1723,7 @@ describe('src/Core', () => {
     })
 
     it('should change meta on the fly', () => {
-      const core = new Core<{ foo: string; beep: string }, any>({
+      using core = new Core<{ foo: string; beep: string }, any>({
         meta: { foo: 'bar', beep: '' },
       })
 
@@ -1756,7 +1756,7 @@ describe('src/Core', () => {
           return 1
         },
       }
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           allowedFileTypes: ['image/jpeg'],
           maxNumberOfFiles: 2,
@@ -1826,7 +1826,7 @@ describe('src/Core', () => {
   describe('meta data', () => {
     it('should set meta data by calling setMeta', () => {
       // use DeepFrozenStore in some tests to make sure we are not mutating things
-      const core = new Core<
+      using core = new Core<
         {
           foo: string
           boo: string
@@ -1850,7 +1850,7 @@ describe('src/Core', () => {
     })
 
     it('should update meta data for a file by calling updateMeta', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -1872,7 +1872,7 @@ describe('src/Core', () => {
     })
 
     it('should merge meta data when add file', async () => {
-      const core = new Core({
+      using core = new Core({
         meta: { foo2: 'bar2' },
       })
       core.addFile({
@@ -1897,7 +1897,7 @@ describe('src/Core', () => {
 
   describe('progress', () => {
     it('should calculate the progress of a file upload', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -1940,7 +1940,7 @@ describe('src/Core', () => {
     })
 
     it('should work with unsized files', async () => {
-      const core = new Core()
+      using core = new Core()
       let proceedUpload: (value?: unknown) => void
       let finishUpload: (value?: unknown) => void
       const progressPromise = new Promise((resolve) => {
@@ -2013,12 +2013,10 @@ describe('src/Core', () => {
       })
 
       await uploadPromise
-
-      core.destroy()
     })
 
     it('should estimate progress for unsized files', () => {
-      const core = new Core()
+      using core = new Core()
 
       core.once('file-added', (file) => {
         core.emit('upload-start', [file])
@@ -2057,13 +2055,11 @@ describe('src/Core', () => {
 
       // foo.jpg at 35%, bar.jpg has unknown size and will not be counted
       expect(core.getState().totalProgress).toBe(36)
-
-      core.destroy()
     })
 
     it('should calculate the total progress of all file uploads', async () => {
       // use DeepFrozenStore in some tests to make sure we are not mutating things
-      const core = new Core({
+      using core = new Core({
         store: DeepFrozenStore(),
       })
 
@@ -2109,7 +2105,7 @@ describe('src/Core', () => {
     })
 
     it('should emit the progress', async () => {
-      const core = new Core()
+      using core = new Core()
 
       core.addFile({
         source: 'vi',
@@ -2158,7 +2154,7 @@ describe('src/Core', () => {
 
   describe('clear', () => {
     it('should reset state to default', async () => {
-      const core = new Core()
+      using core = new Core()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
@@ -2182,7 +2178,7 @@ describe('src/Core', () => {
     })
 
     it('should throw error if plugin does not allow removing files during an upload', () => {
-      const core = new Core()
+      using core = new Core()
       const newState = {
         capabilities: {
           individualCancellation: false,
@@ -2209,7 +2205,7 @@ describe('src/Core', () => {
 
   describe('checkRestrictions', () => {
     it('should enforce the maxNumberOfFiles rule', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           maxNumberOfFiles: 1,
         },
@@ -2240,7 +2236,7 @@ describe('src/Core', () => {
     })
 
     it('should not enforce the maxNumberOfFiles rule for ghost files', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           maxNumberOfFiles: 1,
         },
@@ -2271,7 +2267,7 @@ describe('src/Core', () => {
     it.skip('should enforce the minNumberOfFiles rule')
 
     it('should enforce the allowedFileTypes rule', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           allowedFileTypes: ['image/gif', 'image/png'],
         },
@@ -2298,7 +2294,7 @@ describe('src/Core', () => {
     })
 
     it('should enforce the allowedFileTypes rule with file extensions', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           allowedFileTypes: ['.gif', '.jpg', '.jpeg'],
         },
@@ -2334,7 +2330,7 @@ describe('src/Core', () => {
     })
 
     it('should enforce the maxFileSize rule', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           maxFileSize: 1234,
         },
@@ -2360,7 +2356,7 @@ describe('src/Core', () => {
     })
 
     it('should enforce the minFileSize rule', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           minFileSize: 1073741824,
         },
@@ -2386,7 +2382,7 @@ describe('src/Core', () => {
     })
 
     it('should enforce the maxTotalFileSize rule', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           maxTotalFileSize: 20000,
         },
@@ -2416,13 +2412,13 @@ describe('src/Core', () => {
     })
 
     it('should report error on validateSingleFile', async () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           minFileSize: 300000,
         },
       })
 
-      const core2 = new Core({
+      using core2 = new Core({
         restrictions: {
           allowedFileTypes: ['image/png'],
         },
@@ -2451,7 +2447,7 @@ describe('src/Core', () => {
 
     it('should emit `restriction-failed` event when some rule is violated', () => {
       const maxFileSize = 100
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           maxFileSize,
         },
@@ -2486,13 +2482,13 @@ describe('src/Core', () => {
 
   describe('actions', () => {
     it('should update the state when receiving the error event', () => {
-      const core = new Core()
+      using core = new Core()
       core.emit('error', new Error('foooooo'))
       expect(core.getState().error).toEqual('foooooo')
     })
 
     it('should update the state when receiving the upload-error event', () => {
-      const core = new Core()
+      using core = new Core()
       core.setState({
         files: {
           // @ts-expect-error
@@ -2517,7 +2513,7 @@ describe('src/Core', () => {
     })
 
     it('should reset the error state when receiving the upload event', () => {
-      const core = new Core()
+      using core = new Core()
       // @ts-expect-error test does not care about missing properties
       core.emit('error', { foo: 'bar' })
       // @ts-expect-error test does not care about missing properties
@@ -2545,7 +2541,7 @@ describe('src/Core', () => {
       const onlineEventMock = vi.fn()
       const offlineEventMock = vi.fn()
       const backOnlineEventMock = vi.fn()
-      const core = new Core()
+      using core = new Core()
       core.on('is-offline', offlineEventMock)
       core.on('is-online', onlineEventMock)
       core.on('back-online', backOnlineEventMock)
@@ -2573,7 +2569,7 @@ describe('src/Core', () => {
   describe('info', () => {
     it('should set a string based message to be displayed infinitely', () => {
       const infoVisibleEvent = vi.fn()
-      const core = new Core()
+      using core = new Core()
       core.on('info-visible', infoVisibleEvent)
 
       core.info('This is the message', 'info', 0)
@@ -2589,7 +2585,7 @@ describe('src/Core', () => {
 
     it('should set a object based message to be displayed infinitely', () => {
       const infoVisibleEvent = vi.fn()
-      const core = new Core()
+      using core = new Core()
       core.on('info-visible', infoVisibleEvent)
 
       core.info(
@@ -2617,7 +2613,7 @@ describe('src/Core', () => {
     it('should set an info message to be displayed for a period of time before hiding', async () => {
       const infoVisibleEvent = vi.fn()
       const infoHiddenEvent = vi.fn()
-      const core = new Core()
+      using core = new Core()
       core.on('info-visible', infoVisibleEvent)
       core.on('info-hidden', infoHiddenEvent)
 
@@ -2632,7 +2628,7 @@ describe('src/Core', () => {
     it('should hide an info message', () => {
       const infoVisibleEvent = vi.fn()
       const infoHiddenEvent = vi.fn()
-      const core = new Core()
+      using core = new Core()
       core.on('info-visible', infoVisibleEvent)
       core.on('info-hidden', infoHiddenEvent)
 
@@ -2646,7 +2642,7 @@ describe('src/Core', () => {
     it('should support multiple messages', () => {
       const infoVisibleEvent = vi.fn()
       const infoHiddenEvent = vi.fn()
-      const core = new Core()
+      using core = new Core()
 
       core.on('info-visible', infoVisibleEvent)
       core.on('info-hidden', infoHiddenEvent)
@@ -2686,7 +2682,7 @@ describe('src/Core', () => {
 
   describe('createUpload', () => {
     it('should assign the specified files to a new upload', async () => {
-      const core = new Core()
+      using core = new Core()
       core.addFile({
         source: 'vi',
         name: 'foo.jpg',
@@ -2711,7 +2707,7 @@ describe('src/Core', () => {
 
   describe('i18n', () => {
     it('merges in custom locale strings', () => {
-      const core = new Core({
+      using core = new Core({
         locale: {
           strings: {
             test: 'beep boop',
@@ -2729,7 +2725,7 @@ describe('src/Core', () => {
 
   describe('default restrictions', () => {
     it('should be merged with supplied restrictions', () => {
-      const core = new Core({
+      using core = new Core({
         restrictions: {
           maxNumberOfFiles: 3,
         },
@@ -2748,7 +2744,7 @@ describe('src/Core', () => {
         error: vi.fn(),
       }
 
-      const core = new Core({
+      using core = new Core({
         logger: myTestLogger,
       })
 
@@ -2774,7 +2770,7 @@ describe('src/Core', () => {
         error: vi.fn(),
       }
 
-      const core = new Core({
+      using core = new Core({
         logger: myTestLogger,
         debug: true,
       })
@@ -2800,7 +2796,7 @@ describe('src/Core', () => {
       console.debug = vi.fn()
       console.error = vi.fn()
 
-      const core = new Core({
+      using core = new Core({
         logger: debugLogger,
       })
 
@@ -2820,7 +2816,7 @@ describe('src/Core', () => {
       // @ts-expect-error
       console.error.mockClear()
 
-      const core2 = new Core({
+      using core2 = new Core({
         debug: true,
       })
 
@@ -2840,7 +2836,7 @@ describe('src/Core', () => {
       console.debug = vi.fn()
       console.error = vi.fn()
 
-      const core = new Core()
+      using core = new Core()
 
       core.log('test test')
       core.log('beep boop')

@@ -15,13 +15,11 @@ type MockUploadRequest = {
   fileNames: string[]
 }
 
-let uppy: Uppy | undefined
-
 function createUppy({ bundle = false }: { bundle?: boolean } = {}) {
   const target = document.createElement('div')
   document.body.appendChild(target)
 
-  uppy = new Uppy({ debug: true })
+  return new Uppy({ debug: true })
     .use(Dashboard, {
       target,
       inline: true,
@@ -30,8 +28,6 @@ function createUppy({ bundle = false }: { bundle?: boolean } = {}) {
       endpoint: 'http://localhost/upload',
       bundle,
     })
-
-  return uppy
 }
 
 function createMockFile(name: string, size: number = 16) {
@@ -55,11 +51,6 @@ beforeEach(() => {
   document.body.innerHTML = ''
 })
 
-afterEach(() => {
-  uppy?.destroy()
-  uppy = undefined
-})
-
 describe('XHRUpload browser mode', () => {
   it('uploads a file in non-bundle mode', async () => {
     const requests: MockUploadRequest[] = []
@@ -79,7 +70,7 @@ describe('XHRUpload browser mode', () => {
       }),
     )
 
-    const uppy = createUppy()
+    using uppy = createUppy()
     const completePromise = waitForUploadComplete(uppy)
     const fileInput = document.querySelector('.uppy-Dashboard-input')!
 
@@ -121,7 +112,7 @@ describe('XHRUpload browser mode', () => {
       }),
     )
 
-    const uppy = createUppy({ bundle: true })
+    using uppy = createUppy({ bundle: true })
     const completePromise = waitForUploadComplete(uppy)
     const fileInput = document.querySelector('.uppy-Dashboard-input')!
 

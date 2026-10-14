@@ -134,7 +134,7 @@ afterEach(() => {
 
 describe('AwsS3', () => {
   test('Registers AwsS3 upload plugin', () => {
-    const core = new Core().use(AwsS3, {
+    using core = new Core().use(AwsS3, {
       region: 'us-east-1',
       s3Endpoint: 'https://companion.example.com',
       companionEndpoint: 'https://companion.example.com',
@@ -149,8 +149,9 @@ describe('AwsS3', () => {
 
   describe('configuration validation', () => {
     test('throws if no signing method is provided', () => {
+      using core = new Core()
+
       expect(() => {
-        const core = new Core()
         // @ts-expect-error - testing runtime validation, so omit required options
         core.use(AwsS3, {
           s3Endpoint: 'https://companion.example.com',
@@ -162,7 +163,7 @@ describe('AwsS3', () => {
     })
 
     test('accepts endpoint option', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
@@ -172,7 +173,7 @@ describe('AwsS3', () => {
     })
 
     test('accepts signRequest option', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
@@ -182,7 +183,7 @@ describe('AwsS3', () => {
     })
 
     test('accepts getCredentials option', () => {
-      const core = new Core()
+      using core = new Core()
       core.use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
@@ -204,7 +205,7 @@ describe('AwsS3', () => {
       }) as unknown as UppyFile<Meta, AwsBody>
 
     test('defaults to multipart for files > 100MB', () => {
-      const core = new Core<Meta, AwsBody>().use(AwsS3, {
+      using core = new Core<Meta, AwsBody>().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         companionEndpoint: 'https://companion.example.com',
@@ -223,7 +224,7 @@ describe('AwsS3', () => {
     })
 
     test('handles very large files', () => {
-      const core = new Core<Meta, AwsBody>().use(AwsS3, {
+      using core = new Core<Meta, AwsBody>().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         companionEndpoint: 'https://companion.example.com',
@@ -242,7 +243,7 @@ describe('AwsS3', () => {
         createMultipartMocks()
       registerHandlers()
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -269,7 +270,7 @@ describe('AwsS3', () => {
         createMultipartMocks()
       registerHandlers()
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -304,7 +305,7 @@ describe('AwsS3', () => {
         }
       })
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: bucketUrl,
         region: 'us-east-1',
         signRequest,
@@ -350,7 +351,7 @@ describe('AwsS3', () => {
         }
       })
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: bucketUrl,
         region: 'us-east-1',
         signRequest,
@@ -391,7 +392,7 @@ describe('AwsS3', () => {
         }
       })
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: bucketUrl,
         region: 'us-east-1',
         signRequest,
@@ -430,7 +431,7 @@ describe('AwsS3', () => {
         return { url: `${bucketUrl}/dir-${req.key}?${params}` }
       })
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: bucketUrl,
         region: 'us-east-1',
         signRequest,
@@ -461,7 +462,7 @@ describe('AwsS3', () => {
         key,
       }))
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: bucketUrl,
         region: 'us-east-1',
         signRequest,
@@ -496,7 +497,7 @@ describe('AwsS3', () => {
         }),
       )
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
         region: 'us-east-1',
         signRequest: async (req) => ({
@@ -538,7 +539,7 @@ describe('AwsS3', () => {
         }),
       )
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
         region: 'us-east-1',
         signRequest: async (req) => ({
@@ -587,7 +588,7 @@ describe('AwsS3', () => {
         }),
       )
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://bucket.test',
         region: 'us-east-1',
         signRequest: async (req) => {
@@ -639,7 +640,7 @@ describe('AwsS3', () => {
           () => new HttpResponse('', { status: 204 }),
         ),
       )
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://bucket.test',
         region: 'us-east-1',
         signRequest: async () => ({
@@ -676,7 +677,7 @@ describe('AwsS3', () => {
       [{ key: 'a', Success_Action_Redirect: 'x' }, 'success_action_status'],
       [{ key: 'a', redirect: 'x' }, 'success_action_status'],
     ] as const)('rejects unsafe fields %o', async ([fields, message]) => {
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://bucket.test',
         region: 'us-east-1',
         signRequest: async () => ({ url: 'https://bucket.test/', fields }),
@@ -707,7 +708,7 @@ describe('AwsS3', () => {
         fields: { key: req.key, policy: 'p' },
       }))
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
         region: 'us-east-1',
         signRequest,
@@ -738,7 +739,7 @@ describe('AwsS3', () => {
     test('emits upload-start when upload begins', async () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Test stop'))
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -767,7 +768,7 @@ describe('AwsS3', () => {
     test('emits upload-error on failure', async () => {
       const signRequest = vi.fn().mockRejectedValue(new Error('Sign failed'))
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -802,7 +803,7 @@ describe('AwsS3', () => {
           () => new Promise((resolve) => setTimeout(resolve, 100)),
         )
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -833,7 +834,7 @@ describe('AwsS3', () => {
           () => new Promise((resolve) => setTimeout(resolve, 100)),
         )
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -863,7 +864,7 @@ describe('AwsS3', () => {
       // After createMultipart succeeds, hang on subsequent requests so we can inspect state
       registerHandlers({ hangNonCreate: true })
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -900,7 +901,7 @@ describe('AwsS3', () => {
         })
       registerHandlers({ hangNonCreate: true })
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,
@@ -942,7 +943,7 @@ describe('AwsS3', () => {
         })
       registerHandlers()
 
-      const core = new Core().use(AwsS3, {
+      using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://companion.example.com',
         region: 'us-east-1',
         signRequest,

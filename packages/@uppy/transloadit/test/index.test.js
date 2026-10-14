@@ -14,7 +14,7 @@ afterEach(() => {
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', async () => {
     const error = new Error('expected failure')
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions() {
         return Promise.reject(error)
@@ -35,7 +35,7 @@ describe('Transloadit', () => {
   })
 
   it('Does not leave lingering progress if creating assembly fails', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -162,7 +162,7 @@ describe('Transloadit', () => {
       }),
     )
 
-    const uppy = new Core()
+    using uppy = new Core()
     const successSpy = vi.fn()
     uppy.on('complete', successSpy)
     uppy.use(Transloadit, {
@@ -240,7 +240,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on preprocessor error', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -274,7 +274,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on cancel-all', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -296,7 +296,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on error event', () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
