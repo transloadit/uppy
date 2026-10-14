@@ -7417,13 +7417,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^17.4.2":
-  version: 17.4.2
-  resolution: "dotenv@npm:17.4.2"
-  checksum: 10/ca1b6f54d58e39914901e1518958e86083aca8deb5aa2e7f2a51acd53291d97852479b0ab26ed949b6a45a0e9adcc7b0d1c3c72375e8ea670f7005e341c6daba
-  languageName: node
-  linkType: hard
-
 "dunder-proto@npm:^1.0.1":
   version: 1.0.1
   resolution: "dunder-proto@npm:1.0.1"
@@ -7921,7 +7914,6 @@ __metadata:
     "@uppy/google-drive": "workspace:*"
     "@uppy/tus": "workspace:*"
     body-parser: "npm:^2.2.2"
-    dotenv: "npm:^17.4.2"
     express: "npm:^5.2.1"
     express-session: "npm:^1.15.6"
     npm-run-all2: "npm:^9.0.3"
@@ -7939,7 +7931,6 @@ __metadata:
     "@uppy/dashboard": "workspace:*"
     body-parser: "npm:^2.2.2"
     cors: "npm:^2.8.5"
-    dotenv: "npm:^17.4.2"
     express: "npm:^5.2.1"
     vite: "npm:^8.2.2"
   languageName: unknown
@@ -11770,12 +11761,12 @@ __metadata:
   linkType: hard
 
 "postcss-selector-parser@npm:^7.0.0, postcss-selector-parser@npm:^7.1.2":
-  version: 7.1.4
-  resolution: "postcss-selector-parser@npm:7.1.4"
+  version: 7.1.6
+  resolution: "postcss-selector-parser@npm:7.1.6"
   dependencies:
     cssesc: "npm:^3.0.0"
     util-deprecate: "npm:^1.0.2"
-  checksum: 10/c6d36b37defd387d65b5e0b778cd441303d147eb4a4b7135c6a0452fa777310027218db3ff71a19fb831d067bcdf45a776c6ed71d83bd2ced8afc2e3d5b03385
+  checksum: 10/8b00b63c8ae9eab8567bebf2710971dcd832a7a20a9cae7059d92aee3df38fbcd13ce454bdc09c54e777dbddd0df38966227000091c88002741b8575f3878f05
   languageName: node
   linkType: hard
 
