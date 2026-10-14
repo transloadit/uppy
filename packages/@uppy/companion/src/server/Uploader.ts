@@ -328,7 +328,7 @@ export default class Uploader {
     return this.options.protocol || PROTOCOLS.multipart
   }
 
-  async _uploadByProtocol(
+  _uploadByProtocol(
     req: Request,
     stream: NodeReadableStream,
   ): Promise<UploadResult> {
@@ -666,7 +666,7 @@ export default class Uploader {
     emitter().emit(this.token, emitData)
   }
 
-  async #emitError(err: unknown): Promise<void> {
+  #emitError(err: unknown): void {
     const error = toError(err)
     // delete stack to avoid sending server info to client
     // see PR discussion https://github.com/transloadit/uppy/pull/3832

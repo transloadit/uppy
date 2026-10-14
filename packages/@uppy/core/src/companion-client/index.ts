@@ -32,4 +32,11 @@ export {
   type RequestOptions,
 } from './RequestClient.js'
 export { default as SearchProvider } from './SearchProvider.js'
-export * as tokenStorage from './tokenStorage.js'
+
+import * as deprecatedTokenStorage from './tokenStorage.js'
+
+/**
+ * @deprecated
+ *   Use global `localStorage` instead.
+ */
+export const tokenStorage = deprecatedTokenStorage

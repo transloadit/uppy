@@ -493,6 +493,7 @@ describe('S3 provider', () => {
       't/p-copy.txt': { ContentLength: 3, ETag: '"placeholder"' },
     }
     const makeMoveProvider = () => {
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       const send = vi.fn(async (cmd: unknown) => {
         if (cmd instanceof HeadObjectCommand) {
           const head = heads[(cmd as unknown as Cmd).input['Key'] as string]
@@ -595,6 +596,7 @@ describe('S3 provider', () => {
 
     test('a source replaced after the copy is kept and reported as a conflict', async () => {
       const { provider, send } = makeMoveProvider()
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       send.mockImplementation(async (cmd: unknown) => {
         if (cmd instanceof HeadObjectCommand) {
           const key = (cmd as unknown as Cmd).input['Key'] as string
@@ -622,6 +624,7 @@ describe('S3 provider', () => {
         ['t/a.txt', 'a'],
         ['t/b.txt', 'b'],
       ])
+      // biome-ignore lint/suspicious/useAwait: This mocks an asynchronous function.
       const send = vi.fn(async (cmd: unknown) => {
         const input = (cmd as unknown as Cmd).input
         const key = input['Key'] as string
@@ -974,9 +977,7 @@ describe('S3 provider', () => {
       $metadata: { httpStatusCode: 403 },
     })
     let error: unknown = denied
-    const send = vi.fn(async () => {
-      throw error
-    })
+    const send = vi.fn().mockRejectedValue(error)
     const provider = makeProvider(send)
     const list = () =>
       provider.list({

@@ -11,7 +11,6 @@ import {
   type CompanionPluginOptions,
   getAllowedHosts,
   SearchProvider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { SearchProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
@@ -47,7 +46,7 @@ export default class Unsplash<M extends Meta, B extends Body>
     super(uppy, opts)
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || localStorage
     this.id = this.opts.id || 'Unsplash'
 
     this.defaultLocale = locale

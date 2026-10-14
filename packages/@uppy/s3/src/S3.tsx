@@ -18,7 +18,6 @@ import {
   type CompanionPluginOptions,
   isAuthError,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import {
   type ProviderAction,
@@ -376,7 +375,7 @@ export default class S3<M extends Meta, B extends Body>
     this.id = this.opts.id || 'S3'
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || localStorage
 
     this.defaultLocale = locale
     this.i18nInit()

@@ -11,7 +11,6 @@ import {
   type CompanionPluginOptions,
   getAllowedHosts,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
@@ -46,7 +45,7 @@ export default class Box<M extends Meta, B extends Body>
     super(uppy, opts)
     this.id = this.opts.id || 'Box'
     this.type = 'acquirer'
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || localStorage
     this.files = []
     this.icon = () => (
       <svg

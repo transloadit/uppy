@@ -58,7 +58,7 @@ test('Upload, pause, and resume functionality', async () => {
     hideProgressAfterFinish: false, // Keep StatusBar visible after completion
   })
 
-  uppy.addUploader(async (fileIDs) => {
+  uppy.addUploader((fileIDs) => {
     const files = fileIDs.map((id) => uppy.getFile(id))
 
     // Emit upload-start event

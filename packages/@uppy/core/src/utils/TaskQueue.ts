@@ -1,3 +1,5 @@
+import type { Promisable } from 'type-fest'
+
 /**
  * A promise that can be aborted.
  */
@@ -245,7 +247,7 @@ export class TaskQueue {
    * will reject it, but it will not automatically cancel work inside the wrapped
    * function unless that function is wired to an external AbortSignal.
    */
-  wrapPromiseFunction<T extends (...args: any[]) => Promise<any>>(
+  wrapPromiseFunction<T extends (...args: any[]) => Promisable<any>>(
     fn: T,
   ): (...args: Parameters<T>) => AbortablePromise<Awaited<ReturnType<T>>> {
     return (...args: Parameters<T>) => {

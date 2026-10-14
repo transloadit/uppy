@@ -4,7 +4,6 @@ import {
   type CompanionPluginOptions,
   type GooglePickerState,
   RequestClient,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { GoogleDriveIcon, GooglePickerView } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
@@ -46,7 +45,7 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
   constructor(uppy: Uppy<M, B>, opts: GoogleDrivePickerOptions) {
     super(uppy, opts)
     this.id = this.opts.id || 'GoogleDrivePicker'
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || localStorage
 
     this.defaultLocale = locale
     this.i18nInit()
