@@ -104,20 +104,30 @@ describe('Provider preauthorization', () => {
   test('authenticates on a successful listing and shows login on session expiry', async ({
     worker,
   }) => {
+    const preauthHeaders = Promise.withResolvers<Headers>()
+    const listingHeaders = Promise.withResolvers<Headers>()
     const onRefresh = vi.fn(() => new HttpResponse(null, { status: 401 }))
     worker.use(
-      http.post(`${COMPANION}/dropbox/preauth/`, () =>
-        HttpResponse.json({ token: 'test-preauth-token' }),
-      ),
+      http.post(`${COMPANION}/dropbox/preauth/`, ({ request }) => {
+        preauthHeaders.resolve(request.headers)
+        return HttpResponse.json({ token: 'test-preauth-token' })
+      }),
       http.get(`${COMPANION}/dropbox/list/`, ({ request }) => {
-        expect(request.headers.get('uppy-auth-token')).toBe('test-session')
+        listingHeaders.resolve(request.headers)
         return HttpResponse.json(LISTING)
       }),
       http.post(`${COMPANION}/dropbox/refresh-token`, onRefresh),
     )
     const plugin = initializeUppy()
+    plugin.provider.setCompanionHeaders({ 'x-test-companion': 'preserved' })
     await plugin.provider.setAuthToken('test-session')
     await page.getByRole('tab', { name: 'Dropbox' }).click()
+    const headers = await preauthHeaders.promise
+    expect(headers.get('uppy-auth-token')).toBeNull()
+    expect(headers.get('x-test-companion')).toBe('preserved')
+    expect((await listingHeaders.promise).get('uppy-auth-token')).toBe(
+      'test-session',
+    )
     await expect.poll(() => plugin.getPluginState().authenticated).toBe(true)
     await expect.poll(() => plugin.getPluginState().loading).toBe(false)
     expect(plugin.getPluginState().authenticated).toBe(true)

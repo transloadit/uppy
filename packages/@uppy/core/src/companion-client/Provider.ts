@@ -355,11 +355,12 @@ export default class Provider<
 
     try {
       // Preauth configures app credentials, not the user's provider session.
-      // Bypass provider auth state and token refresh, but keep host discovery.
+      // Bypass provider headers, auth state, and refresh, but keep host discovery.
       const res = await super.request<{ token: string }>({
         path: `${this.id}/preauth/`,
         method: 'POST',
         data: { params: this.companionKeysParams },
+        headers: await super.headers(),
         onReceiveResponse: super.onReceiveResponse,
       })
       this.preAuthToken = res.token

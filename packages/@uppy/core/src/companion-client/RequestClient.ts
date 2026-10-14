@@ -187,6 +187,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     path,
     method = 'GET',
     data,
+    headers: requestHeaders,
     skipPostResponse,
     onReceiveResponse = this.onReceiveResponse,
     signal,
@@ -194,12 +195,13 @@ export default class RequestClient<M extends Meta, B extends Body> {
     path: string
     method?: string
     data?: Record<string, unknown>
+    headers?: Record<string, string>
     skipPostResponse?: boolean
     onReceiveResponse?: (response: Response) => void
     signal?: AbortSignal
   }): Promise<ResBody> {
     try {
-      const headers = await this.headers(!data)
+      const headers = requestHeaders ?? (await this.headers(!data))
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
         signal,
