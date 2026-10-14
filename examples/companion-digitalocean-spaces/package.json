@@ -10,12 +10,11 @@
     "cors": "^2.8.5"
   },
   "devDependencies": {
-    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "vite": "^8.2.2"
   },
   "private": true,
   "scripts": {
-    "start": "node ./server.cjs"
+    "start": "node ./server.ts"
   }
 }
