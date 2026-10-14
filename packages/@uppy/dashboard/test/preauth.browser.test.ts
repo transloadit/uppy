@@ -1,10 +1,10 @@
+import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import { HttpResponse, http } from 'msw'
-import { afterEach, describe, expect, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { page } from 'vitest/browser'
-import { test } from './test-extend.js'
 
 const COMPANION = 'http://companion.test'
 const DISCOVERED_COMPANION = 'http://discovered-companion.test'
@@ -12,12 +12,10 @@ const LISTING = { username: 'test-user', items: [], nextPagePath: null }
 const loginButton = () =>
   page.getByRole('button', { name: 'Connect to Dropbox' })
 
-let uppy: Uppy | undefined
-
 function initializeUppy() {
   document.body.innerHTML = '<div id="app"></div>'
   const tokens = new Map<string, string>()
-  uppy = new Uppy()
+  return new Uppy()
     .use(Dashboard, { target: '#app', inline: true })
     .use(Dropbox, {
       companionUrl: COMPANION,
@@ -32,34 +30,28 @@ function initializeUppy() {
         },
       },
     })
-  return uppy.getPlugin('Dropbox')!
 }
 
-afterEach(() => {
-  // Unmount the panel before removing the provider it renders.
-  const dashboard = uppy?.getPlugin('Dashboard')
-  if (dashboard) uppy?.removePlugin(dashboard)
-  uppy?.destroy()
-  uppy = undefined
-  vi.restoreAllMocks()
-})
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => network.resetHandlers())
 
 describe('Provider preauthorization', () => {
   for (const firstResponse of ['list', 'preauth'] as const) {
-    test(`keeps the login button when ${firstResponse} responds first`, async ({
-      worker,
-    }) => {
+    test(`keeps the login button when ${firstResponse} responds first`, async () => {
       const preauth = Promise.withResolvers<Response>()
       const list = Promise.withResolvers<Response>()
       const onPreauth = vi.fn(() => preauth.promise)
       const onList = vi.fn(() => list.promise)
-      worker.use(
+      network.use(
         http.post(`${COMPANION}/dropbox/preauth/`, onPreauth),
         http.get(`${COMPANION}/dropbox/list/`, onList),
       )
-      const plugin = initializeUppy()
-      const fetchPreauth = vi.spyOn(plugin.provider, 'fetchPreAuthToken')
-      const openFolder = vi.spyOn(plugin.view, 'openFolder')
+      using uppy = initializeUppy()
+      const plugin = uppy.getPlugin('Dropbox')!
+      using fetchPreauth = vi.spyOn(plugin.provider, 'fetchPreAuthToken')
+      using openFolder = vi.spyOn(plugin.view, 'openFolder')
       await page.getByRole('tab', { name: 'Dropbox' }).click()
       await expect
         .poll(() => [onPreauth.mock.calls.length, onList.mock.calls.length])
@@ -101,13 +93,11 @@ describe('Provider preauthorization', () => {
     })
   }
 
-  test('authenticates on a successful listing and shows login on session expiry', async ({
-    worker,
-  }) => {
+  test('authenticates on a successful listing and shows login on session expiry', async () => {
     const preauthHeaders = Promise.withResolvers<Headers>()
     const listingHeaders = Promise.withResolvers<Headers>()
     const onRefresh = vi.fn(() => new HttpResponse(null, { status: 401 }))
-    worker.use(
+    network.use(
       http.post(`${COMPANION}/dropbox/preauth/`, ({ request }) => {
         preauthHeaders.resolve(request.headers)
         return HttpResponse.json({ token: 'test-preauth-token' })
@@ -118,7 +108,8 @@ describe('Provider preauthorization', () => {
       }),
       http.post(`${COMPANION}/dropbox/refresh-token`, onRefresh),
     )
-    const plugin = initializeUppy()
+    using uppy = initializeUppy()
+    const plugin = uppy.getPlugin('Dropbox')!
     plugin.provider.setCompanionHeaders({ 'x-test-companion': 'preserved' })
     await plugin.provider.setAuthToken('test-session')
     await page.getByRole('tab', { name: 'Dropbox' }).click()
@@ -133,7 +124,7 @@ describe('Provider preauthorization', () => {
     expect(plugin.getPluginState().authenticated).toBe(true)
     await expect.element(loginButton()).not.toBeInTheDocument()
 
-    worker.use(
+    network.use(
       http.get(
         `${COMPANION}/dropbox/list/`,
         () => new HttpResponse(null, { status: 401 }),
@@ -150,25 +141,24 @@ describe('Provider preauthorization', () => {
     await expect.element(loginButton()).toBeVisible()
   })
 
-  test('does not expire or refresh a provider session when preauthorization returns 401', async ({
-    worker,
-  }) => {
+  test('does not expire or refresh a provider session when preauthorization returns 401', async () => {
     const onRefresh = vi.fn(() => new HttpResponse(null, { status: 401 }))
-    worker.use(
+    network.use(
       http.post(`${COMPANION}/dropbox/preauth/`, () =>
         HttpResponse.json({ token: 'test-preauth-token' }),
       ),
       http.get(`${COMPANION}/dropbox/list/`, () => HttpResponse.json(LISTING)),
       http.post(`${COMPANION}/dropbox/refresh-token`, onRefresh),
     )
-    const plugin = initializeUppy()
+    using uppy = initializeUppy()
+    const plugin = uppy.getPlugin('Dropbox')!
     await plugin.provider.setAuthToken('test-session')
     await page.getByRole('tab', { name: 'Dropbox' }).click()
     await expect.poll(() => plugin.getPluginState().authenticated).toBe(true)
     await expect.poll(() => plugin.getPluginState().loading).toBe(false)
     expect(plugin.getPluginState().authenticated).toBe(true)
 
-    worker.use(
+    network.use(
       http.post(
         `${COMPANION}/dropbox/preauth/`,
         () => new HttpResponse(null, { status: 401 }),

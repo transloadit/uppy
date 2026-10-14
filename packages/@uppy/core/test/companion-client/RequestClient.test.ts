@@ -1,6 +1,13 @@
-import { describe, expect, it, vi } from 'vitest'
+import { network } from 'virtual:msw'
+import { HttpResponse, http } from 'msw'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import RequestClient from '../../lib/companion-client/RequestClient.js'
 import Uppy from '../../lib/index.js'
+
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => network.resetHandlers())
 
 describe('RequestClient', () => {
   it('has a hostname without trailing slash', () => {
@@ -17,24 +24,21 @@ describe('RequestClient', () => {
   })
 
   it('skips host discovery as well as response hooks with skipPostResponse', async () => {
-    const uppy = new Uppy()
+    using uppy = new Uppy()
     const client = new RequestClient(uppy, {
       companionUrl: 'http://companion.test',
     })
-    const responseHook = vi.spyOn(client, 'onReceiveResponse')
-    const fetch = vi
-      .spyOn(globalThis, 'fetch')
-      .mockResolvedValue(
-        Response.json({}, { headers: { 'i-am': 'http://discovered.test' } }),
-      )
-    try {
-      await client.get('test', { skipPostResponse: true })
-      expect(responseHook).not.toHaveBeenCalled()
-      expect(client.hostname).toBe('http://companion.test')
-    } finally {
-      fetch.mockRestore()
-      responseHook.mockRestore()
-      uppy.destroy()
-    }
+    using responseHook = vi.spyOn(client, 'onReceiveResponse')
+    network.use(
+      http.get('http://companion.test/test', () =>
+        HttpResponse.json(
+          {},
+          { headers: { 'i-am': 'http://discovered.test' } },
+        ),
+      ),
+    )
+    await client.get('test', { skipPostResponse: true })
+    expect(responseHook).not.toHaveBeenCalled()
+    expect(client.hostname).toBe('http://companion.test')
   })
 })
