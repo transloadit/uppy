@@ -1,12 +1,12 @@
+import { network } from 'virtual:msw'
 import Uppy, { type UppyEventMap } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { HttpResponse, http } from 'msw'
-import { beforeEach, describe, expect } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
 import XHRUpload from '@uppy/xhr-upload'
-import { it } from './test-extend.js'
 
 type UploadCompleteResult = Parameters<UppyEventMap<any, any>['complete']>[0]
 
@@ -40,14 +40,21 @@ function waitForUploadComplete(uppy: Uppy<any, any>) {
   )
 }
 
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => {
+  network.resetHandlers()
+})
+
 beforeEach(() => {
   document.body.innerHTML = ''
 })
 
 describe('XHRUpload browser mode', () => {
-  it('uploads a file in non-bundle mode', async ({ worker }) => {
+  it('uploads a file in non-bundle mode', async () => {
     const requests: MockUploadRequest[] = []
-    worker.use(
+    network.use(
       http.post('http://localhost/upload', async ({ request }) => {
         const formData = await request.formData()
         const uploadedFiles = Array.from(formData.entries()).filter(
@@ -87,11 +94,9 @@ describe('XHRUpload browser mode', () => {
       .toBeVisible()
   })
 
-  it('uploads files in a single request with bundle: true', async ({
-    worker,
-  }) => {
+  it('uploads files in a single request with bundle: true', async () => {
     const requests: MockUploadRequest[] = []
-    worker.use(
+    network.use(
       http.post('http://localhost/upload', async ({ request }) => {
         const formData = await request.formData()
         const uploadedFiles = Array.from(formData.entries()).filter(
