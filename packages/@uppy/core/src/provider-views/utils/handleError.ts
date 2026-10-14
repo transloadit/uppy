@@ -18,6 +18,17 @@ const handleError =
     }
     uppy.log(error, 'error')
 
+    // Local file-selection / addFiles failures already report their own errors;
+    // do not relabel them as Companion connection failures.
+    if (
+      (typeof AggregateError === 'function' &&
+        error instanceof AggregateError) ||
+      ('errors' in error && Array.isArray((error as any).errors)) ||
+      (error as any).isRestriction
+    ) {
+      return
+    }
+
     if (error.name === 'UserFacingApiError') {
       uppy.info(
         {
@@ -27,7 +38,11 @@ const handleError =
         'warning',
         5000,
       )
+      return
     }
+
+    // Connection failure without a structured error: show exactly one sanitized, translated warning
+    uppy.info(uppy.i18n('companionError'), 'warning', 5000)
   }
 
 export default handleError

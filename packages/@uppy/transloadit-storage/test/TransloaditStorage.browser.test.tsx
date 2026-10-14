@@ -2,10 +2,11 @@ import Uppy, { BasePlugin, type PluginOpts } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import {
   createMockS3Companion,
+  handleFetchRequest,
   mockGrant,
   toMswHandlers,
 } from '@uppy-dev/s3-mock-companion'
-import { http } from 'msw'
+import { HttpResponse, http } from 'msw'
 import type { SetupWorker } from 'msw/browser'
 import { afterEach, beforeEach, describe, expect, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
@@ -252,5 +253,141 @@ describe('Transloadit Storage in the browser', () => {
       { name: 'hello.txt', isFolder: false, size: 12, mimeType: 'text/plain' },
     ])
     expect(companion.folders.has('docs/')).toBe(false)
+  })
+
+  it('shows safe companionError when getGrant rejects with private sentinel and allows retry', async ({
+    worker,
+  }) => {
+    let shouldFail = true
+    const getGrant = vi.fn(async () => {
+      if (shouldFail) {
+        throw new Error('private-diagnostic-sentinel')
+      }
+      return mockGrant({ bucket: 'my-bucket' })
+    })
+
+    setup(worker, { getGrant })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+
+    await expect
+      .element(page.getByText('Connection with Companion failed').first())
+      .toBeVisible()
+
+    const info = uppy?.getState().info
+    expect(info).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message: 'Connection with Companion failed',
+          type: 'warning',
+        }),
+      ]),
+    )
+    expect(document.body.textContent).not.toContain(
+      'private-diagnostic-sentinel',
+    )
+
+    const connectButton = page.getByRole('button', {
+      name: 'Connect to Transloadit Storage',
+    })
+    await expect.element(connectButton).toBeVisible()
+
+    shouldFail = false
+    await connectButton.click()
+
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+  })
+
+  it('shows safe companionError on network fetch rejection and allows retry', async ({
+    worker,
+  }) => {
+    let failNetwork = true
+    const companion = setup(worker)
+    worker.use(
+      http.post(
+        `${COMPANION}/transloadit-storage/simple-auth`,
+        async ({ request }) => {
+          if (failNetwork) {
+            return HttpResponse.error()
+          }
+          return (await handleFetchRequest(companion, request)) ?? undefined
+        },
+      ),
+    )
+
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+
+    await expect
+      .element(page.getByText('Connection with Companion failed').first())
+      .toBeVisible()
+
+    const info = uppy?.getState().info
+    expect(info).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message: 'Connection with Companion failed',
+          type: 'warning',
+        }),
+      ]),
+    )
+
+    const connectButton = page.getByRole('button', {
+      name: 'Connect to Transloadit Storage',
+    })
+    await expect.element(connectButton).toBeVisible()
+
+    failNetwork = false
+    await connectButton.click()
+
+    await expect.element(page.getByText('readme.md')).toBeVisible()
+  })
+
+  it('shows safe companionError on plain-text HTTP 503 response without leaking body, and allows retry', async ({
+    worker,
+  }) => {
+    let failHttp = true
+    const companion = setup(worker)
+    worker.use(
+      http.post(
+        `${COMPANION}/transloadit-storage/simple-auth`,
+        async ({ request }) => {
+          if (failHttp) {
+            return new HttpResponse('upstream-503-diagnostic-sentinel', {
+              status: 503,
+              headers: { 'Content-Type': 'text/plain' },
+            })
+          }
+          return (await handleFetchRequest(companion, request)) ?? undefined
+        },
+      ),
+    )
+
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+
+    await expect
+      .element(page.getByText('Connection with Companion failed').first())
+      .toBeVisible()
+
+    const info = uppy?.getState().info
+    expect(info).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message: 'Connection with Companion failed',
+          type: 'warning',
+        }),
+      ]),
+    )
+    expect(document.body.textContent).not.toContain(
+      'upstream-503-diagnostic-sentinel',
+    )
+
+    const connectButton = page.getByRole('button', {
+      name: 'Connect to Transloadit Storage',
+    })
+    await expect.element(connectButton).toBeVisible()
+
+    failHttp = false
+    await connectButton.click()
+
+    await expect.element(page.getByText('readme.md')).toBeVisible()
   })
 })
