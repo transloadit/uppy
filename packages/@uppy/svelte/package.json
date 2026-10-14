@@ -55,9 +55,9 @@
     "@uppy/components": "workspace:^"
   },
   "devDependencies": {
-    "@sveltejs/package": "^2.5.7",
+    "@sveltejs/package": "^3.0.0",
     "@uppy/core": "workspace:^",
-    "svelte": "^5.56.5",
+    "svelte": "^5.57.1",
     "svelte-check": "^4.7.6",
     "tslib": "^2.8.1",
     "typescript": "^6.0.3"
