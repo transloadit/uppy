@@ -2096,6 +2096,10 @@ export class Uppy<
     }
   }
 
+  [Symbol.dispose](): void {
+    this.destroy()
+  }
+
   hideInfo(): void {
     const { info } = this.getState()
 

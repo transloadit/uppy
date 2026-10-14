@@ -6,16 +6,15 @@ import {
   toMswHandlers,
 } from '@uppy-dev/s3-mock-companion'
 import { http } from 'msw'
-import type { SetupWorker } from 'msw/browser'
-import { afterEach, beforeEach, describe, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import { network } from 'virtual:msw'
 import TransloaditStorage, {
   type TransloaditStorageOptions,
 } from '../lib/TransloaditStorage.js'
-import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
@@ -25,12 +24,9 @@ const TOKEN = 'test-auth-token'
  * The mock serves the `transloadit-storage` provider under its own path, with
  * native folder moves — the only thing that differs from generic S3.
  */
-function setup(
-  worker: SetupWorker,
-  options: Partial<TransloaditStorageOptions> = {},
-) {
+function setup(options: Partial<TransloaditStorageOptions> = {}) {
   const companion = createMockS3Companion({ token: TOKEN })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   const target = document.createElement('div')
   document.body.appendChild(target)
   uppy = new Uppy()
@@ -53,9 +49,16 @@ class FixtureUploader extends BasePlugin<
   }
 }
 
+network.configure({ context: { quiet: true } })
+await network.enable()
+
 beforeEach(() => {
   document.body.innerHTML = ''
   localStorage.clear()
+})
+
+afterEach(() => {
+  network.resetHandlers()
 })
 
 afterEach(() => {
@@ -64,11 +67,9 @@ afterEach(() => {
 })
 
 describe('Transloadit Storage in the browser', () => {
-  it('offers the custom upload action in picker mode, and hands it the open folder', async ({
-    worker,
-  }) => {
+  it('offers the custom upload action in picker mode, and hands it the open folder', async () => {
     const onUploadRequest = vi.fn()
-    setup(worker, { onUploadRequest })
+    setup({ onUploadRequest })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
 
@@ -113,11 +114,9 @@ describe('Transloadit Storage in the browser', () => {
     expect(uploader?.opts.locale).toEqual(uploaderLocale)
   })
 
-  it('Storage uses its own provider and keeps original downloads available to read-only users', async ({
-    worker,
-  }) => {
+  it('Storage uses its own provider and keeps original downloads available to read-only users', async () => {
     const getDownloadUrl = vi.fn(async () => '/authorized-original/readme')
-    const companion = setup(worker, {
+    const companion = setup({
       mode: 'manager',
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
@@ -164,10 +163,8 @@ describe('Transloadit Storage in the browser', () => {
     }
   })
 
-  it('takes files dropped on its panel when it stores uploads', async ({
-    worker,
-  }) => {
-    worker.use(
+  it('takes files dropped on its panel when it stores uploads', async () => {
+    network.use(
       ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
         http,
       }),
@@ -222,10 +219,8 @@ describe('Transloadit Storage in the browser', () => {
       .toEqual(['dropped.txt'])
   })
 
-  it('renames a folder in one native move instead of walking it', async ({
-    worker,
-  }) => {
-    const companion = setup(worker, { mode: 'manager' })
+  it('renames a folder in one native move instead of walking it', async () => {
+    const companion = setup({ mode: 'manager' })
     await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
     await expect.element(page.getByText('readme.md')).toBeVisible()
 
