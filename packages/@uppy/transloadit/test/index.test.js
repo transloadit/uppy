@@ -527,9 +527,7 @@ describe('Transloadit', () => {
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
 
-  it("leaves a newer upload's Assembly alone when cancelling one whose files were reserved", async ({
-    worker,
-  }) => {
+  it("leaves a newer upload's Assembly alone when cancelling one whose files were reserved", async () => {
     const status = (id) => ({
       assembly_id: id,
       ok: 'ASSEMBLY_UPLOADING',
@@ -540,7 +538,7 @@ describe('Transloadit', () => {
       results: {},
     })
     // The newer upload connects to its Assembly.
-    worker.use(
+    network.use(
       http.get(
         'https://api2.transloadit.com/ws',
         () => new HttpResponse(null, { status: 204 }),
