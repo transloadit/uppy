@@ -213,12 +213,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/compiler@npm:^22.1.1":
-  version: 22.1.5
-  resolution: "@angular/compiler@npm:22.1.5"
+"@angular/compiler@npm:^22.2.1":
+  version: 22.2.1
+  resolution: "@angular/compiler@npm:22.2.1"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/543c98c6a18ece1f72956b09879b1ded5debc41787e99c6361607ace8b20964e113637bffd7f3b8201706673eb23348705ca45547dd1ada0e1eecea4140bfb76
+  checksum: 10/782a7fbe5b2c0b942c2553ce17ebc69f310d27694de0d0c999f71671d704911b22062c8265d5dd3502f6cedd6c0270f5f7aa288460094b915d864689115b1582
   languageName: node
   linkType: hard
 
@@ -5032,7 +5032,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/angular@workspace:packages/@uppy/angular"
   dependencies:
-    "@angular/compiler": "npm:^22.1.1"
+    "@angular/compiler": "npm:^22.2.1"
     "@angular/compiler-cli": "npm:^22.1.1"
     "@angular/core": "npm:^22.2.1"
     "@uppy-dev/tsconfig": "workspace:^"
@@ -7833,7 +7833,7 @@ __metadata:
     "@angular/build": "npm:^22.1.7"
     "@angular/cli": "npm:^22.1.1"
     "@angular/common": "npm:^22.1.4"
-    "@angular/compiler": "npm:^22.1.1"
+    "@angular/compiler": "npm:^22.2.1"
     "@angular/compiler-cli": "npm:^22.1.1"
     "@angular/core": "npm:^22.2.1"
     "@angular/forms": "npm:^22.1.1"
