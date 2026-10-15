@@ -138,7 +138,8 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     config: ResolvedConfig<ParsedTransloaditStorageOptions>,
     bucket: string,
   ): { cacheKey: string; clientOptions: S3ClientOptions } {
-    if (config.native.credentialsSecret != null) {
+    const { apiEndpoint, credentialsSecret } = config.native
+    if (credentialsSecret != null) {
       const ownOptions = withOwnCredentials(config.clientOptions)
       return {
         cacheKey: bucket,
@@ -147,8 +148,9 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
           awsClientOptions: {
             ...ownOptions.awsClientOptions,
             credentials: async () => {
-              const { key, secret } = await workspaceCredentials(
-                config.native,
+              const { key, secret } = await fetchCredentials(
+                apiEndpoint,
+                credentialsSecret,
                 bucket,
               )
               return {

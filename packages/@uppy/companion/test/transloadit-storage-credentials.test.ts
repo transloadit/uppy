@@ -13,7 +13,12 @@ const secret = 'local-test-server-key-not-a-browser-capability'
 const workspace = 'a'.repeat(32)
 
 async function fixture(
-  options: { wrongWorkspace?: boolean; status?: number; body?: unknown } = {},
+  options: {
+    wrongWorkspace?: boolean
+    status?: number
+    body?: unknown
+    apiEndpoint?: string
+  } = {},
 ) {
   const lookups: string[] = []
   const s3Keys: string[] = []
@@ -72,7 +77,7 @@ async function fixture(
     key: undefined,
     grantSecret: secret,
     credentialsSecret: secret,
-    apiEndpoint: endpoint,
+    apiEndpoint: options.apiEndpoint ?? endpoint,
     endpoint,
     region: 'auto',
     forcePathStyle: true,
@@ -151,17 +156,20 @@ test('reuses unexpired credentials across S3 operations without repeated broker 
   expect(lookups).toEqual([workspace])
 })
 
+const outage = { name: 'ProviderApiError', statusCode: 502 }
+
 test.each([
-  { wrongWorkspace: true },
-  { status: 403 },
-  { status: 500 },
-  { body: { workspace } },
-])('refuses credential-service denials or wrong Workspace without S3 fallback (%j)', async (options) => {
+  [{ status: 403 }, userError('S3_REQUEST_FAILED')],
+  [{ wrongWorkspace: true }, outage],
+  [{ status: 500 }, outage],
+  [{ body: { workspace } }, outage],
+  [{ apiEndpoint: 'http://127.0.0.1:1' }, outage],
+])('refuses credential-service denials, bad answers and outages without S3 fallback (%j)', async (options, expected) => {
   const { provider, companion, s3Keys, grantSession } = await fixture(options)
   const session = await grantSession()
   await expect(
     provider.list({ companion, providerUserSession: session }),
-  ).rejects.toThrow()
+  ).rejects.toMatchObject(expected)
   expect(s3Keys).toEqual([])
 })
 
