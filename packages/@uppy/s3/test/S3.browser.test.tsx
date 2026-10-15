@@ -488,7 +488,7 @@ describe('S3 provider in the browser', () => {
       dialog.dispatchEvent(new MouseEvent('click', outside))
     }
 
-    await page.getByRole('button', { name: 'New folder' }).click()
+    await page.getByRole('button', { name: 'New folder…' }).click()
     const prompt = page.getByRole('dialog', { name: 'New folder' })
     await expect.element(prompt).toBeVisible()
     // Selecting text inside and releasing outside is not a dismissal.
@@ -725,7 +725,7 @@ describe('S3 provider in the browser', () => {
       )
       ?.openModal()
     await openBucket()
-    await page.getByRole('button', { name: 'New folder' }).click()
+    await page.getByRole('button', { name: 'New folder…' }).click()
     await expect
       .element(page.getByRole('dialog', { name: 'New folder' }))
       .toBeVisible()
@@ -772,7 +772,7 @@ describe('S3 provider in the browser', () => {
     const { companion } = setup({ mode: 'manager' })
     await openBucket()
 
-    await page.getByRole('button', { name: 'New folder' }).click()
+    await page.getByRole('button', { name: 'New folder…' }).click()
     await expect.element(page.getByRole('dialog')).toBeVisible()
     await page.getByLabelText('Name of the new folder:').fill('reports')
     await userEvent.keyboard('{Enter}')
@@ -956,7 +956,7 @@ describe('S3 provider in the browser', () => {
       expect(companion.session).toMatchObject({ bucket: 'my-bucket' })
       // Mutations are available: the grant carries the write scope.
       await expect
-        .element(page.getByRole('button', { name: 'New folder' }))
+        .element(page.getByRole('button', { name: 'New folder…' }))
         .toBeVisible()
     })
 
@@ -1042,7 +1042,7 @@ describe('S3 provider in the browser', () => {
       await openBucket()
       expect(companion.session?.scopes).toEqual(['read'])
       await expect
-        .element(page.getByRole('button', { name: 'New folder' }))
+        .element(page.getByRole('button', { name: 'New folder…' }))
         .not.toBeInTheDocument()
       await expect
         .element(page.getByRole('button', { name: 'Actions for readme.md' }))

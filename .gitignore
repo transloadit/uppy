@@ -18,8 +18,7 @@ yarn-error.log
 *.tsbuildinfo
 .svelte-kit
 .turbo
-__screenshots__
-.vitest-attachments
+.vitest/
 
 dist/
 lib/
