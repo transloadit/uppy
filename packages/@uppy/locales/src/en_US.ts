@@ -330,7 +330,7 @@ en_US.strings = {
   },
   xTimeLeft: '%{time} left',
   youCanOnlyUploadFileTypes:
-    '%{file} type is not permitted. You can only upload: %{types}',
+    'File %{file} is not permitted. You can only upload: %{types}',
   youCanOnlyUploadX: {
     '0': 'You can only upload %{smart_count} file',
     '1': 'You can only upload %{smart_count} files',

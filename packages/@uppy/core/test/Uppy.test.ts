@@ -920,8 +920,8 @@ describe('src/Core', () => {
           type: 'image/jpeg',
           data,
         })
-      }).toThrow(
-        'foo.jpg type is not permitted. You can only upload: image/gif, video/webm',
+      }      ).toThrow(
+        'File foo.jpg is not permitted. You can only upload: image/gif, video/webm',
       )
 
       expect(() => {
@@ -1781,7 +1781,7 @@ describe('src/Core', () => {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err).toHaveProperty(
           'message',
-          'foo1.png type is not permitted. You can only upload: image/jpeg',
+          'File foo1.png is not permitted. You can only upload: image/jpeg',
         )
       }
 
@@ -2297,10 +2297,10 @@ describe('src/Core', () => {
         expect(err).toBeInstanceOf(RestrictionError)
         expect(err).toHaveProperty(
           'message',
-          'foo2.jpg type is not permitted. You can only upload: image/gif, image/png',
+          'File foo2.jpg is not permitted. You can only upload: image/gif, image/png',
         )
         expect(core.getState().info[0].message).toEqual(
-          'foo2.jpg type is not permitted. You can only upload: image/gif, image/png',
+          'File foo2.jpg is not permitted. You can only upload: image/gif, image/png',
         )
       }
     })
@@ -2323,10 +2323,10 @@ describe('src/Core', () => {
       } catch (err) {
         expect(err).toHaveProperty(
           'message',
-          'foo2.png type is not permitted. You can only upload: .gif, .jpg, .jpeg',
+          'File foo2.png is not permitted. You can only upload: .gif, .jpg, .jpeg',
         )
         expect(core.getState().info[0].message).toEqual(
-          'foo2.png type is not permitted. You can only upload: .gif, .jpg, .jpeg',
+          'File foo2.png is not permitted. You can only upload: .gif, .jpg, .jpeg',
         )
       }
 
@@ -2348,20 +2348,15 @@ describe('src/Core', () => {
         },
       })
 
-      try {
+      const data = await fetchTestImage()
+      expect(() => {
         core.addFile({
           source: 'vi',
           name: 'document.exe',
           type: 'application/x-msdownload',
-          data: await fetchTestImage(),
+          data,
         })
-        throw new Error('should have thrown')
-      } catch (err) {
-        expect(err).toHaveProperty(
-          'message',
-          'document.exe type is not permitted. You can only upload: .png, .jpg',
-        )
-      }
+      }).toThrow('File document.exe is not permitted. You can only upload: .png, .jpg')
     })
 
     it('should enforce the maxFileSize rule', async () => {
@@ -2478,7 +2473,7 @@ describe('src/Core', () => {
         'This file is smaller than the allowed size of 293 KB',
       )
       expect(validateRestrictions2).toEqual(
-        'foo1.jpg type is not permitted. You can only upload: image/png',
+        'File foo1.jpg is not permitted. You can only upload: image/png',
       )
     })
 
