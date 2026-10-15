@@ -4,7 +4,14 @@ import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-network.configure({ context: { quiet: true } })
+network.configure({
+  context: { quiet: true },
+  // No test may reach Transloadit: a request no test handler answers fails.
+  handlers: [
+    http.all('https://api2.transloadit.com/*', () => HttpResponse.error()),
+    http.all('https://transloaditstatus.com/*', () => HttpResponse.error()),
+  ],
+})
 await network.enable()
 
 afterEach(() => {
@@ -489,11 +496,9 @@ describe('Transloadit', () => {
     expect(ids(cancelled)).toEqual(['A1'])
     expect(plugin.assembly?.status.assembly_id).toBe('A2')
 
-    const newer = plugin.assembly
     uppy.cancelAll()
     uploading.resolve()
     await second.catch(() => {})
-    newer.close()
   })
 
   it('cancels the Assembly of an upload whose reservation fails after it was cancelled', async () => {
@@ -535,6 +540,7 @@ describe('Transloadit', () => {
     const plugin = uppy.getPlugin('Transloadit')
     plugin.client.createAssembly = vi.fn(async () => assemblyStatus('R1'))
     plugin.client.reserveFile = vi.fn(async () => {})
+    plugin.client.cancelAssembly = vi.fn(async () => {})
     // The failure is reported to Transloadit; not under test here.
     plugin.client.submitError = vi.fn(async () => {})
     const uploading = Promise.withResolvers()
@@ -572,7 +578,6 @@ describe('Transloadit', () => {
     uppy.cancelAll()
     uploading.resolve()
     await retry.catch(() => {})
-    running.close()
   })
 
   it('creates no Assembly for an upload without files cancelled while its options were fetched', async () => {
@@ -668,7 +673,7 @@ describe('Transloadit', () => {
     running.close()
   })
 
-  it('allows new uploads after a retry whose uploader rejects after reporting its files', async () => {
+  it('lets go of the Assembly and allows new uploads after a retry whose uploader rejects before reporting its files', async () => {
     serveAssemblies()
     const uppy = new Core()
     uppy.use(Transloadit, {
@@ -679,15 +684,12 @@ describe('Transloadit', () => {
     const plugin = uppy.getPlugin('Transloadit')
     plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
     plugin.client.reserveFile = vi.fn(async () => {})
-    // The failure is reported to Transloadit; not under test here.
-    plugin.client.submitError = vi.fn(async () => {})
-    // Like XHRUpload with `bundle: true`: report each file, then reject.
-    uppy.addUploader(async (fileIDs) => {
-      const error = new Error('upload failed')
-      for (const id of fileIDs) {
-        uppy.emit('upload-error', uppy.getFile(id), error)
-      }
-      throw error
+    // Like XHRUpload with `bundle: true` whose `endpoint()` rejects: no file
+    // is reported, so no `upload-error` or `error` event.
+    let running
+    uppy.addUploader(async () => {
+      running = plugin.assembly
+      throw new Error('upload failed')
     })
     const failed = uppy.addFile({
       source: 'test',
@@ -704,6 +706,9 @@ describe('Transloadit', () => {
     expect(uppy.getState().allowNewUpload).toBe(true)
     // Nor another update: the Dashboard would keep hiding "Add more".
     expect(uppy.getPlugin('Rendered').state.allowNewUpload).toBe(true)
+    // Its Assembly goes with it: the next upload gets one of its own.
+    expect(running.closed).toBe(true)
+    expect(plugin.assembly).toBeUndefined()
   })
 
   it("leaves a newer upload's Assembly alone when a cancelled one fails late", async () => {
@@ -728,13 +733,17 @@ describe('Transloadit', () => {
     const encoding = vi.fn()
     uppy.on('postprocess-progress', encoding)
     uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
-    uppy.upload().catch(() => {})
+    const first = uppy.upload()
     // Uploaded, and waiting for its Assembly.
     await vi.waitFor(() => expect(encoding).toHaveBeenCalled())
     const old = plugin.assembly
     uppy.cancelAll()
+    // Cancelled: nothing of it is awaited any more, so it stops updating,
+    // and the upload waiting for it ends.
+    expect(old.closed).toBe(true)
+    await first
     uppy.addFile({ source: 'test', name: 'b.txt', data: new Blob(['b']) })
-    uppy.upload().catch(() => {})
+    const second = uppy.upload()
     await vi.waitFor(() =>
       expect(plugin.assembly?.status.assembly_id).toBe('A2'),
     )
@@ -749,8 +758,7 @@ describe('Transloadit', () => {
     expect(uppy.getState().allowNewUpload).toBe(false)
 
     uppy.cancelAll()
-    old.close()
-    running.close()
+    await second
   })
 
   it("allows new uploads once an upload's only file is removed while its options are fetched", async () => {
@@ -791,5 +799,281 @@ describe('Transloadit', () => {
     // The dropped attempt still creates nothing.
     expect(plugin.client.createAssembly).not.toHaveBeenCalled()
     expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('lets a retry create its own Assembly after a restored one could not reserve its files', async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      importFromUploadURLs: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+    // The restored Assembly rejects every reservation.
+    plugin.client.reserveFile = vi.fn(async ({ assembly_id }) => {
+      if (assembly_id === 'R1') throw new Error('reservation rejected')
+    })
+    // The failure is reported to Transloadit; not under test here.
+    plugin.client.submitError = vi.fn(async () => {})
+    uppy.addUploader(async () => {})
+    const id = uppy.addFile({
+      source: 'test',
+      name: 'a.txt',
+      data: new Blob(['a']),
+    })
+    // Recovered with Golden Retriever: set up before any upload runs.
+    uppy.emit('restored', {
+      Transloadit: { assemblyResponse: assemblyStatus('R1') },
+    })
+    await plugin.restored
+    const restored = plugin.assembly
+
+    await expect(uppy.upload()).rejects.toThrow('reservation rejected')
+
+    // The failed upload lets go of it, so the retry does not run into the
+    // same rejection again and again.
+    expect(restored.closed).toBe(true)
+    expect(plugin.assembly).toBeUndefined()
+    await uppy.retryUpload(id)
+    expect(plugin.client.createAssembly).toHaveBeenCalledOnce()
+    expect(uppy.getFile(id).error).toBeFalsy()
+  })
+
+  it("keeps a waiting batch's Assembly when another upload() is refused meanwhile", async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      // The test's uploader instead of Transloadit's own Tus one.
+      importFromUploadURLs: true,
+      waitForEncoding: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+    plugin.client.reserveFile = vi.fn(async () => {})
+    // The refusal is reported to Transloadit; not under test here.
+    plugin.client.submitError = vi.fn(async () => {})
+    uppy.addUploader(async () => {})
+    const encoding = vi.fn()
+    uppy.on('postprocess-progress', encoding)
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+    const upload = uppy.upload()
+    // Uploaded, and waiting for its Assembly.
+    await vi.waitFor(() => expect(encoding).toHaveBeenCalled())
+    const running = plugin.assembly
+
+    // Core refuses it with an `error` event, which is not the batch's.
+    await expect(uppy.upload()).rejects.toThrow('Cannot create a new upload')
+
+    expect(plugin.assembly).toBe(running)
+    expect(running.closed).toBe(false)
+    expect(uppy.getState().allowNewUpload).toBe(false)
+
+    uppy.emit('transloadit:complete', running.status)
+    await upload
+    expect(running.closed).toBe(true)
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('gives a retry its own Assembly while another upload is running', async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      // The test's uploader instead of Transloadit's own Tus one.
+      importFromUploadURLs: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    let created = 0
+    plugin.client.createAssembly = vi.fn(async () =>
+      assemblyStatus(`A${++created}`),
+    )
+    plugin.client.reserveFile = vi.fn(async () => {})
+    // Holds the upload; the retry passes.
+    const uploading = Promise.withResolvers()
+    const newer = uppy.addFile({
+      source: 'test',
+      name: 'new.txt',
+      data: new Blob(['new']),
+    })
+    uppy.addUploader((fileIDs) =>
+      fileIDs.includes(newer) ? uploading.promise : Promise.resolve(),
+    )
+    const failed = uppy.addFile({
+      source: 'test',
+      name: 'failed.txt',
+      data: new Blob(['failed']),
+    })
+    // Uploaded once before, so upload() leaves it out.
+    uppy.setFileState(failed, {
+      progress: { ...uppy.getFile(failed).progress, uploadStarted: 1 },
+    })
+
+    const upload = uppy.upload()
+    await vi.waitFor(() =>
+      expect(plugin.assembly?.status.assembly_id).toBe('A1'),
+    )
+    const running = plugin.assembly
+    uppy.setFileState(failed, { error: 'earlier failure' })
+    await uppy.retryUpload(failed)
+
+    // Not added to the running upload's Assembly, which goes on.
+    expect(plugin.client.createAssembly).toHaveBeenCalledTimes(2)
+    expect(running.closed).toBe(false)
+    expect(uppy.getState().allowNewUpload).toBe(false)
+    // The live Assembly (the UI's) is the running one again, which reports
+    // each status once.
+    expect(plugin.assembly).toBe(running)
+    const changed = vi.fn()
+    uppy.on('restore:plugin-data-changed', changed)
+    running.status = { ...running.status, ok: 'ASSEMBLY_EXECUTING' }
+    expect(changed).toHaveBeenCalledOnce()
+    expect(uppy.getState().plugins.Transloadit.assemblyStatus.ok).toBe(
+      'ASSEMBLY_EXECUTING',
+    )
+
+    uploading.resolve()
+    await upload
+    expect(running.closed).toBe(true)
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it("goes on when a file's upload URL arrives after a sibling's failure let go of the Assembly", async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      importFromUploadURLs: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+    plugin.client.reserveFile = vi.fn(async () => {})
+    plugin.client.addFile = vi.fn(async () => {})
+    // The failure is reported to Transloadit; not under test here.
+    plugin.client.submitError = vi.fn(async () => {})
+    // One file fails, then the other is uploaded, as with XHRUpload.
+    uppy.addUploader(async ([a, b]) => {
+      uppy.emit('upload-error', uppy.getFile(a), new Error('upload failed'))
+      uppy.emit('upload-success', uppy.getFile(b), {
+        uploadURL: 'https://example.com/b',
+      })
+    })
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+    uppy.addFile({ source: 'test', name: 'b.txt', data: new Blob(['b']) })
+
+    const result = await uppy.upload()
+
+    expect(result.failed).toHaveLength(1)
+    // Nothing to add it to: the Assembly cannot complete without its sibling.
+    expect(plugin.client.addFile).not.toHaveBeenCalled()
+  })
+
+  it('fails the files instead of waiting forever when the final status of a finished Assembly cannot be fetched', async () => {
+    network.use(
+      http.get(
+        'https://api2.transloadit.com/ws',
+        () => new HttpResponse(null, { status: 204 }),
+      ),
+      // Finished from the first poll on: polling sees nothing new after that.
+      http.get('https://api2.transloadit.com/assemblies/:id', ({ params }) =>
+        HttpResponse.json({
+          ...assemblyStatus(params.id),
+          ok: 'ASSEMBLY_COMPLETED',
+        }),
+      ),
+    )
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      // The test's uploader instead of Transloadit's own Tus one.
+      importFromUploadURLs: true,
+      waitForEncoding: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+    plugin.client.reserveFile = vi.fn(async () => {})
+    // The final status, requested once the Assembly is finished.
+    plugin.client.getAssemblyStatus = vi.fn(async () => {
+      throw new Error('status unavailable')
+    })
+    // The failure is reported to Transloadit; not under test here.
+    plugin.client.submitError = vi.fn(async () => {})
+    uppy.addUploader(async () => {})
+    const encoding = vi.fn()
+    uppy.on('postprocess-progress', encoding)
+    const id = uppy.addFile({
+      source: 'test',
+      name: 'a.txt',
+      data: new Blob(['a']),
+    })
+    const upload = uppy.upload()
+    // Uploaded, and waiting for its Assembly.
+    await vi.waitFor(() => expect(encoding).toHaveBeenCalled())
+    await plugin.assembly.update()
+
+    const result = await upload
+
+    expect(result.failed).toHaveLength(1)
+    expect(uppy.getFile(id).error).toBe('status unavailable')
+    expect(plugin.assembly).toBeUndefined()
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
+  it('reports encoding progress on restored files', async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      waitForEncoding: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    const tusUploadUrl = 'https://api2.transloadit.com/resumable/files/a'
+    const id = uppy.addFile({
+      source: 'test',
+      name: 'a.txt',
+      data: new Blob(['a']),
+    })
+    uppy.setFileState(id, { uploadURL: tusUploadUrl })
+    const encoding = vi.fn()
+    uppy.on('postprocess-progress', encoding)
+    uppy.emit('restored', {
+      Transloadit: {
+        assemblyResponse: {
+          ...assemblyStatus('R1'),
+          uploads: [{ id: 'tl-a', tus_upload_url: tusUploadUrl }],
+        },
+      },
+    })
+    await plugin.restored
+
+    plugin.assembly.emit('execution-progress', { progress_combined: 50 })
+
+    // On the Uppy file, not on the Assembly's upload id.
+    expect(encoding).toHaveBeenCalledOnce()
+    expect(encoding.mock.lastCall.slice(0, 2)).toEqual([
+      expect.objectContaining({ id }),
+      expect.objectContaining({ value: 0.5 }),
+    ])
+    plugin.assembly.close()
+  })
+
+  it('stops listening once uninstalled', () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      importFromUploadURLs: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.submitError = vi.fn(async () => {})
+    uppy.removePlugin(plugin)
+
+    uppy.emit('upload-error', undefined, new Error('tus: upload failed'))
+    uppy.emit('restored', {
+      Transloadit: { assemblyResponse: assemblyStatus('R1') },
+    })
+
+    expect(plugin.client.submitError).not.toHaveBeenCalled()
+    expect(plugin.assembly).toBeUndefined()
   })
 })
