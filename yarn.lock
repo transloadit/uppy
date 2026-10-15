@@ -5012,6 +5012,11 @@ __metadata:
 "@uppy-dev/msw-setup@workspace:^, @uppy-dev/msw-setup@workspace:private/msw-setup":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/msw-setup@workspace:private/msw-setup"
+  dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
+    msw: "npm:^3.0.2"
+    typescript: "npm:^6.0.3"
+    vitest: "npm:^4.1.11"
   peerDependencies:
     msw: ^3.0.2
     vitest: ^4.1.11

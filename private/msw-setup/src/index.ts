@@ -1,3 +1,5 @@
+/// <reference types="msw/vite/client" />
+
 // Enables MSW network mocking for the importing browser test file (needs the
 // `msw()` Vite plugin). Tests add handlers with `network.use()`; file-wide
 // defaults go through `network.resetHandlers(...handlers)` so they survive the
