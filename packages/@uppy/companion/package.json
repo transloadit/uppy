@@ -37,7 +37,7 @@
     "@aws-sdk/client-s3": "^3.1134.0",
     "@aws-sdk/client-sts": "^3.1139.0",
     "@aws-sdk/lib-storage": "^3.1134.0",
-    "@aws-sdk/s3-presigned-post": "^3.1134.0",
+    "@aws-sdk/s3-presigned-post": "^3.1147.0",
     "@aws-sdk/s3-request-presigner": "^3.1134.0",
     "connect-redis": "^7.1.1",
     "content-disposition": "^2.0.1",
@@ -95,7 +95,7 @@
     "nock": "^14.0.16",
     "supertest": "^7.2.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   },
   "files": [
     "dist/",

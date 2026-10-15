@@ -120,7 +120,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const searchInput = document.querySelector(
@@ -175,7 +175,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const firstFolderItem = Array.from(
@@ -229,7 +229,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const searchInput = document.querySelector(
@@ -259,7 +259,7 @@ describe('ProviderView Search E2E', () => {
     await clearSearchButton.click()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const firstFolderItem = Array.from(
@@ -294,7 +294,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const searchInput = document.querySelector(
@@ -327,7 +327,7 @@ describe('ProviderView Search E2E', () => {
     await clearSearchButton.click()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const firstFolderItem = Array.from(
@@ -371,14 +371,16 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
-    const firstFolderButton = page.getByRole('button', { name: 'first' })
+    const firstFolderButton = page.getByRole('button', {
+      name: 'Open folder first',
+    })
     await firstFolderButton.click()
 
     await expect
-      .element(page.getByRole('button', { name: 'second' }))
+      .element(page.getByRole('button', { name: 'Open folder second' }))
       .toBeVisible()
     // Normal mode (ListItem.tsx): files render as checkboxes with corresponding <label>; scope by role=checkbox. refer to a commment at the top of the file for more detailed explanation.
     await expect
@@ -428,7 +430,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     // Normal mode (ListItem.tsx): file is a checkbox; assert by role=checkbox. refer to a commment at the top of the file for more detailed explanation.
@@ -511,10 +513,12 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
     await expect
-      .element(page.getByRole('checkbox', { name: 'workspace' }))
+      .element(
+        page.getByRole('checkbox', { name: 'All files from folder workspace' }),
+      )
       .toBeVisible()
     await expect
       .element(page.getByRole('checkbox', { name: 'readme.md' }))
@@ -550,7 +554,7 @@ describe('ProviderView Search E2E', () => {
 
     await userEvent.clear(searchInput)
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const allItems = Array.from(
