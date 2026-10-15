@@ -1,5 +1,5 @@
 import got from 'got'
-import { prepareStream } from '../../helpers/utils.js'
+import { parseSize, prepareStream } from '../../helpers/utils.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -154,19 +154,12 @@ export default class Box extends Provider<BoxUserSession> {
   override async size({
     id,
     providerUserSession: { accessToken: token },
-  }: ProviderSizeOptions<BoxUserSession>): Promise<number> {
+  }: ProviderSizeOptions<BoxUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
         .get(`files/${id}`, { responseType: 'json' })
         .json<Record<string, unknown>>()
-      const sizeValue = file['size']
-      const sizeStr =
-        typeof sizeValue === 'string'
-          ? sizeValue
-          : typeof sizeValue === 'number'
-            ? `${sizeValue}`
-            : '0'
-      return parseInt(sizeStr, 10)
+      return parseSize(file['size'])
     })
   }
 

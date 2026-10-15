@@ -5,7 +5,7 @@
 
 import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { parseSize, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import { refreshAccessToken } from '../oauth.js'
 import Provider, {
@@ -306,7 +306,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
   override async size({
     id,
     providerUserSession: { accessToken: token },
-  }: ProviderSizeOptions<DropboxUserSession>): Promise<number> {
+  }: ProviderSizeOptions<DropboxUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.dropbox.size.error', async () => {
       const meta = await (await getClient({ token, namespaced: true })).client
         .post('files/get_metadata', {
@@ -314,14 +314,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
           responseType: 'json',
         })
         .json<{ size?: unknown }>()
-      const sizeValue = meta?.size
-      const sizeStr =
-        typeof sizeValue === 'string'
-          ? sizeValue
-          : typeof sizeValue === 'number'
-            ? String(sizeValue)
-            : ''
-      return parseInt(sizeStr, 10)
+      return parseSize(meta?.size)
     })
   }
 

@@ -1,5 +1,5 @@
 import got from 'got'
-import { prepareStream } from '../../helpers/utils.js'
+import { parseSize, prepareStream } from '../../helpers/utils.js'
 import { refreshAccessToken } from '../oauth.js'
 import Provider, {
   type ProviderDownloadOptions,
@@ -131,8 +131,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
           responseType: 'json',
         })
         .json<Record<string, unknown>>()
-      const size = body['size']
-      return typeof size === 'number' ? size : undefined
+      return parseSize(body['size'])
     })
   }
 

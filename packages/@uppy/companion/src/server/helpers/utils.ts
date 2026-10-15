@@ -364,6 +364,12 @@ export function s3WriteParams({
   }
 }
 
+/** A file size from a provider response (a number or numeric string), else undefined. */
+export const parseSize = (value: unknown): number | undefined => {
+  const size = typeof value === 'string' ? Number.parseInt(value, 10) : value
+  return typeof size === 'number' && Number.isFinite(size) ? size : undefined
+}
+
 /**
  * The `nextPagePath` of a list response: `path` with the current query and the
  * provider's cursor for the next page.
