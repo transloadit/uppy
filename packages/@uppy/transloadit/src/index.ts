@@ -1035,6 +1035,8 @@ export default class Transloadit<
    * rejects after reporting its files (XHRUpload with `bundle: true`, say)
    * ends with no `error` after the drop, and skips `#afterUpload`. So the
    * admission this plugin closed is checked again when an upload goes.
+   * Once the update is done: core hands `next` to the UI plugins after this
+   * event, which would render over a state set from in here.
    */
   #onStateUpdate: UppyEventMap<M, B>['state-update'] = (prev, next) => {
     if (
@@ -1044,7 +1046,9 @@ export default class Transloadit<
       Object.keys(next.currentUploads).length <
         Object.keys(prev.currentUploads).length
     ) {
-      this.#allowNewUploadIfIdle()
+      queueMicrotask(() => {
+        if (this.#closedAdmission) this.#allowNewUploadIfIdle()
+      })
     }
   }
 

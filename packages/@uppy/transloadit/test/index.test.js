@@ -1,5 +1,5 @@
 import { network } from 'virtual:msw'
-import Core from '@uppy/core'
+import Core, { BasePlugin } from '@uppy/core'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
 import { afterEach, describe, expect, it, vi } from 'vitest'
@@ -10,6 +10,18 @@ await network.enable()
 afterEach(() => {
   network.resetHandlers()
 })
+
+/**
+ * What a UI plugin renders: it renders the state of the last `update()`,
+ * which may be older than `getState()`.
+ */
+class Rendered extends BasePlugin {
+  id = 'Rendered'
+  type = 'presenter'
+  update(state) {
+    this.state = state
+  }
+}
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', async () => {
@@ -1057,12 +1069,15 @@ describe('Transloadit', () => {
       data: new Blob(['failed']),
     })
     uppy.setFileState(failed, { error: 'earlier failure' })
+    uppy.use(Rendered)
 
     await expect(uppy.retryUpload(failed)).rejects.toThrow('upload failed')
 
     // Nothing else runs, and core dropped the retry without another event.
     expect(uppy.getState().currentUploads).toEqual({})
     expect(uppy.getState().allowNewUpload).toBe(true)
+    // Nor another update: the Dashboard would keep hiding "Add more".
+    expect(uppy.getPlugin('Rendered').state.allowNewUpload).toBe(true)
   })
 
   /**
@@ -1166,12 +1181,16 @@ describe('Transloadit', () => {
       progress: { ...uppy.getFile(earlier).progress, uploadStarted: 1 },
     })
 
+    uppy.use(Rendered)
+
     const upload = uppy.upload()
     await vi.waitFor(() => expect(uppy.getState().allowNewUpload).toBe(false))
     // Removing its only file drops the upload: nothing runs any more. Core
-    // does not reopen admission here (a file is left), the plugin does.
+    // does not reopen admission here (a file is left), the plugin does,
+    // once the removal's update is done.
     uppy.removeFile(id)
-    expect(uppy.getState().allowNewUpload).toBe(true)
+    await vi.waitFor(() => expect(uppy.getState().allowNewUpload).toBe(true))
+    expect(uppy.getPlugin('Rendered').state.allowNewUpload).toBe(true)
     signing.resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
     await upload
 
