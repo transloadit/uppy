@@ -2094,9 +2094,7 @@ export class Uppy<
     }
   }
 
-  [Symbol.dispose](): void {
-    this.destroy()
-  }
+  declare [Symbol.dispose]: () => void
 
   hideInfo(): void {
     const { info } = this.getState()
@@ -2457,5 +2455,7 @@ export class Uppy<
     }
   }
 }
+
+Uppy.prototype[Symbol.dispose] = Uppy.prototype.destroy
 
 export default Uppy
