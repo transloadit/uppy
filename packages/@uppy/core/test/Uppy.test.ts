@@ -920,7 +920,7 @@ describe('src/Core', () => {
           type: 'image/jpeg',
           data,
         })
-      }      ).toThrow(
+      }).toThrow(
         'File foo.jpg is not permitted. You can only upload: image/gif, video/webm',
       )
 
@@ -2356,7 +2356,9 @@ describe('src/Core', () => {
           type: 'application/x-msdownload',
           data,
         })
-      }).toThrow('File document.exe is not permitted. You can only upload: .png, .jpg')
+      }).toThrow(
+        'File document.exe is not permitted. You can only upload: .png, .jpg',
+      )
     })
 
     it('should enforce the maxFileSize rule', async () => {
