@@ -798,11 +798,28 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       const { partialTree } = this.plugin.getPluginState()
       const newPartialTree: PartialTree = [...partialTree]
+      const searchResultIds: string[] = []
 
       for (const file of items) {
         // Decode URI and split into path segments
         const decodedPath = decodeURIComponent(file.requestPath)
         const segments = decodedPath.split('/').filter((s) => s.length > 0)
+
+        // Node ids below are rebuilt from the path segments, so skip results whose
+        // requestPath doesn't round-trip to that id: they would never be found in the
+        // partialTree. E.g. Dropbox omits `path_lower` for unmounted shared items,
+        // which Companion turns into the requestPath "undefined".
+        if (
+          segments.length === 0 ||
+          encodeURIComponent(`/${segments.join('/')}`) !== file.requestPath
+        ) {
+          this.plugin.uppy.log(
+            `[ProviderView] Skipping search result with unsupported requestPath: ${file.requestPath}`,
+            'warning',
+          )
+          continue
+        }
+        searchResultIds.push(file.requestPath)
 
         // Start from root
         let parentId: PartialTreeId = this.plugin.rootFolderId
@@ -880,7 +897,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       this.plugin.setPluginState({
         partialTree: newPartialTree,
-        searchResults: items.map((item) => item.requestPath),
+        searchResults: searchResultIds,
       })
     }).catch(handleError(this.plugin.uppy))
     this.#doneLoading()
@@ -1195,12 +1212,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
       }
     })
 
-    // the search results view needs data from the partial tree,
-    const searchResults = ids!.map((id) => {
-      const partialTreeItem = itemsById.get(id)
-      if (partialTreeItem == null) throw new Error('Partial tree not complete')
-      return partialTreeItem
-    })
+    // the search results view needs data from the partial tree.
+    // Skip ids missing from it rather than throwing: a throw here happens during
+    // render and takes down the whole Dashboard.
+    const searchResults = ids!
+      .map((id) => itemsById.get(id))
+      .filter((partialTreeItem) => partialTreeItem != null)
 
     return (
       <GlobalSearchView
