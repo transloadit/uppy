@@ -218,3 +218,19 @@ test.each([
     }),
   ).toThrow('set exactly one of workspaces or credentialsSecret')
 })
+
+test.each([
+  ['http://api2.transloadit.com', false],
+  ['https://api2.transloadit.com', true],
+  ['http://localhost:3000', true],
+  ['http://127.0.0.1:3000', true],
+])('credentialsSecret with apiEndpoint %s is accepted: %s', (apiEndpoint, ok) => {
+  const parse = () =>
+    parseTransloaditStorageProviderOptions({
+      grantSecret: secret,
+      credentialsSecret: secret,
+      apiEndpoint,
+    })
+  if (ok) expect(parse).not.toThrow()
+  else expect(parse).toThrow('credentialsSecret needs an https apiEndpoint')
+})

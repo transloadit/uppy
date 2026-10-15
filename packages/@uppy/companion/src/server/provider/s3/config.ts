@@ -109,6 +109,16 @@ const s3ProviderOptionsSchema = z
   })
 
 /** Native Transloadit Storage: grants only, and a key pair per Workspace. */
+/** Https, or http on the loopback interface (local development and tests). */
+const isSecureEndpoint = (url: string): boolean => {
+  const { protocol, hostname } = new URL(url)
+  return (
+    protocol === 'https:' ||
+    (protocol === 'http:' &&
+      ['localhost', '127.0.0.1', '[::1]'].includes(hostname))
+  )
+}
+
 const transloaditStorageProviderOptionsSchema = z
   .object({
     ...grantKeyFields,
@@ -146,6 +156,15 @@ const transloaditStorageProviderOptionsSchema = z
       ctx.addIssue({
         code: 'custom',
         message: 'set exactly one of workspaces or credentialsSecret',
+      })
+      return z.NEVER
+    }
+    if (credentialsSecret != null && !isSecureEndpoint(apiEndpoint)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['apiEndpoint'],
+        message:
+          'credentialsSecret needs an https apiEndpoint (http only for localhost)',
       })
       return z.NEVER
     }
