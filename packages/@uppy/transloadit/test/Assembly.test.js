@@ -291,6 +291,26 @@ describe('Transloadit/Assembly', () => {
       expect(events).toEqual(['executing', 'metadata', 'finished'])
     })
 
+    it('emits metadata for an assembly first seen executing', () => {
+      // No crossing into EXECUTING is ever observed here, so deriving
+      // 'metadata' from the transition would emit nothing and strand a
+      // `waitForMetadata` upload. Approximating it from the status instead
+      // means it can precede `assembly_upload_meta_data_extracted`.
+      const base = { uploads: {}, results: {} }
+      const assembly = new Assembly(
+        { ...base, ok: 'ASSEMBLY_EXECUTING' },
+        new RateLimitedQueue(),
+      )
+      const events = []
+      for (const name of ['executing', 'metadata', 'finished']) {
+        assembly.on(name, () => events.push(name))
+      }
+
+      assembly.updateStatus({ ...base, ok: 'ASSEMBLY_EXECUTING' })
+
+      expect(events).toEqual(['executing', 'metadata'])
+    })
+
     it('emits no status from an errored polling update', () => {
       // #diffStatus routes the errored status through #onError, which closes
       // the assembly; updateStatus must not store it on a closed assembly.

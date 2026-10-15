@@ -290,6 +290,15 @@ class TransloaditAssembly extends Emitter {
     // The below checks run in this order, that way even if we jump from
     // UPLOADING straight to FINISHED all the events are emitted as expected.
 
+    // The API sends no metadata marker on the polling path, so both events are
+    // approximated from the status: they fire on the first status we see at or
+    // past EXECUTING, not on the crossing into it. `#emitOnce` keeps that to
+    // one emit each. Deriving them from the crossing instead would emit
+    // nothing at all whenever we never observe it — a restore, or an assembly
+    // already executing when we first see it — which strands uploads that
+    // complete off these events. The cost is that over SSE, where
+    // `assembly_uploading_finished` precedes `assembly_upload_meta_data_extracted`,
+    // a status landing between the two makes 'metadata' slightly early.
     const executing = isStatus(nextStatus, ASSEMBLY_EXECUTING)
     if (executing) {
       // Without SSE, this is our only way to tell if uploading finished.
