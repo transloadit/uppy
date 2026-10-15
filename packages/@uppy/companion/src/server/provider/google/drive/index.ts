@@ -31,7 +31,7 @@ import {
 // For testing refresh token:
 // first run a download with mockAccessTokenExpiredError = true
 // then when you want to test expiry, set to mockAccessTokenExpiredError to the logged access token
-// This will trigger companion/nodemon to restart, and it will respond with a simulated invalid token response
+// This will trigger companion to restart, and it will respond with a simulated invalid token response
 const mockAccessTokenExpiredError: string | true | undefined = undefined
 // const mockAccessTokenExpiredError = true
 // const mockAccessTokenExpiredError = ''

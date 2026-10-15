@@ -1,5 +1,6 @@
 import { fetcher } from '@uppy/core/utils'
 import type * as IT from './types.js'
+import * as U from './utils.js'
 
 abstract class S3Client {
   readonly requestAbortTimeout?: number
@@ -120,6 +121,45 @@ abstract class S3Client {
         }
       },
     })
+  }
+
+  /** Uploads `data` with an S3 POST policy: a `multipart/form-data` POST of `fields` to the bucket `url`. */
+  protected async postObject({
+    url,
+    fields,
+    headers,
+    data,
+    onProgress,
+    signal,
+  }: {
+    url: string
+    fields: Record<string, string>
+    headers?: Record<string, string>
+    data: Blob
+    onProgress?: IT.OnProgressFn
+    signal?: AbortSignal
+  }) {
+    const xhr = await this.xhr({
+      url,
+      method: 'POST',
+      data: U.buildPostPolicyForm(fields, data),
+      // a Content-Type header would replace the form boundary the browser sets
+      headers: U.omitContentType(headers),
+      // the form envelope adds bytes, so scale progress to the file
+      onProgress:
+        onProgress &&
+        ((loaded, total) =>
+          onProgress(
+            Math.min(data.size, Math.round((loaded / total) * data.size)),
+            data.size,
+          )),
+      signal,
+    })
+    return {
+      location: U.postObjectLocation(url, fields.key),
+      etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
+      key: fields.key,
+    }
   }
 
   public abstract putObject(params: IT.PutObjectParams): Promise<{

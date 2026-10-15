@@ -48,7 +48,7 @@
   ],
   "scripts": {
     "build": "svelte-package",
-    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css && cp ../components/dist/image-editor.css.map dist/image-editor.css.map",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {

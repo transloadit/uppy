@@ -1,13 +1,20 @@
+import { network } from 'virtual:msw'
 import Core from '@uppy/core'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, vi } from 'vitest'
-import { it } from './test-extend.ts'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => {
+  network.resetHandlers()
+})
 
 describe('Transloadit', () => {
-  it('Does not leave lingering progress if getAssemblyOptions fails', () => {
+  it('Does not leave lingering progress if getAssemblyOptions fails', async () => {
     const error = new Error('expected failure')
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions() {
         return Promise.reject(error)
@@ -20,21 +27,15 @@ describe('Transloadit', () => {
       data: new Uint8Array(100),
     })
 
-    return uppy
-      .upload()
-      .then(() => {
-        throw new Error('Should not have succeeded')
-      })
-      .catch((err) => {
-        const fileID = Object.keys(uppy.getState().files)[0]
+    await expect(uppy.upload()).rejects.toBe(error)
 
-        expect(err).toBe(error)
-        expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
-      })
+    const fileID = Object.keys(uppy.getState().files)[0]
+
+    expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
   })
 
-  it('Does not leave lingering progress if creating assembly fails', () => {
-    const uppy = new Core()
+  it('Does not leave lingering progress if creating assembly fails', async () => {
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -53,22 +54,16 @@ describe('Transloadit', () => {
       data: new Uint8Array(100),
     })
 
-    return uppy.upload().then(
-      () => {
-        throw new Error('Should not have succeeded')
-      },
-      (err) => {
-        const fileID = Object.keys(uppy.getState().files)[0]
-
-        expect(err.message).toBe(
-          'Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION',
-        )
-        expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
-      },
+    await expect(uppy.upload()).rejects.toThrow(
+      'Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION',
     )
+
+    const fileID = Object.keys(uppy.getState().files)[0]
+
+    expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
   })
 
-  it('should complete when resuming after pause', async ({ worker }) => {
+  it('should complete when resuming after pause', async () => {
     const assemblyStatusBase = {
       assembly_id: 'test-assembly-id',
       websocket_url: 'ws://localhost:8080',
@@ -81,7 +76,7 @@ describe('Transloadit', () => {
     let uploadIndex = 0
     const tusBaseUrl = 'http://localhost/resumable/files/'
 
-    worker.use(
+    network.use(
       http.options('http://localhost/resumable/files*', () => {
         return new HttpResponse(null, {
           status: 204,
@@ -167,7 +162,7 @@ describe('Transloadit', () => {
       }),
     )
 
-    const uppy = new Core()
+    using uppy = new Core()
     const successSpy = vi.fn()
     uppy.on('complete', successSpy)
     uppy.use(Transloadit, {
@@ -245,7 +240,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on preprocessor error', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -279,7 +274,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on cancel-all', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -301,7 +296,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on error event', () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {

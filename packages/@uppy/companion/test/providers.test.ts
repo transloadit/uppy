@@ -32,12 +32,6 @@ vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
   encodeState: () => 'some-cool-nice-encrytpion',
 }))
 
-vi.mock('../../dist/server/helpers/request.js', () => {
-  return {
-    getURLMeta: () => Promise.resolve({ size: 758051 }),
-  }
-})
-
 const getServerWithEnv = async () =>
   getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 const OAUTH_STATE = 'some-cool-nice-encrytpion'
@@ -107,21 +101,20 @@ describe('list provider files', () => {
     const providerFixture = fixtureProviders[providerName]?.expects ?? {}
     const listPath =
       'listPath' in providerFixture ? providerFixture.listPath : ''
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .get(`/${providerName}/list/${listPath}`)
       .set('uppy-auth-token', token)
       .expect(200)
-      .then((res) => {
-        expect(res.header['i-am']).toBe('http://localhost:3020')
 
-        return {
-          username: res.body.username,
-          items: Array.isArray(res.body.items)
-            ? res.body.items.filter(isRecord)
-            : [],
-          providerFixture,
-        }
-      })
+    expect(res.header['i-am']).toBe('http://localhost:3020')
+
+    return {
+      username: res.body.username,
+      items: Array.isArray(res.body.items)
+        ? res.body.items.filter(isRecord)
+        : [],
+      providerFixture,
+    }
   }
 
   function expect1({

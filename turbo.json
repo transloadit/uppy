@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["private/tsconfig/tsconfig*.json"],
+  "noUpdateNotifier": true,
   "tasks": {
     "build": {
       "outputLogs": "new-only",
@@ -30,13 +31,13 @@
       "outputLogs": "new-only",
       "dependsOn": ["^build:css"],
       "inputs": ["src/**/*.scss"],
-      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+      "outputs": ["lib/**/*.css", "dist/**/*.css", "dist/**/*.css.map"]
     },
     "build:css": {
       "outputLogs": "new-only",
       "dependsOn": ["^build:css"],
       "inputs": ["src/**/*.scss"],
-      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+      "outputs": ["lib/**/*.css", "dist/**/*.css", "dist/**/*.css.map"]
     },
     "typecheck": {
       "outputLogs": "new-only",
