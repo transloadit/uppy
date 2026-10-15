@@ -697,14 +697,6 @@ export default class S3Provider<
     )
   }
 
-  override async thumbnail(): Promise<never> {
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.s3.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
-  }
-
   /**
    * Companion's own errors pass through. A misconfiguration and S3's "not
    * found" are the user's business (the details of the former are in the

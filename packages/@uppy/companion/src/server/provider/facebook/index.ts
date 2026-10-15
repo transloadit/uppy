@@ -2,7 +2,6 @@ import crypto from 'node:crypto'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
 import { HttpError, prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -10,7 +9,6 @@ import Provider, {
   type ProviderListResponse,
   type ProviderLogoutOptions,
   type ProviderLogoutResponse,
-  type ProviderThumbnailResponse,
 } from '../Provider.js'
 import { jsonStringAt, withProviderErrorHandling } from '../providerErrors.js'
 import { adaptData, type FacebookListResponse, sortImages } from './adapter.js'
@@ -198,15 +196,6 @@ export default class Facebook extends Provider<FacebookUserSession> {
         return { stream, size }
       },
     )
-  }
-
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
-    // not implementing this because a public thumbnail from facebook will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.facebook.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
   }
 
   override async logout({

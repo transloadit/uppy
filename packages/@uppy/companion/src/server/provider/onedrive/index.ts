@@ -1,6 +1,5 @@
 import got from 'got'
 import { prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -10,7 +9,6 @@ import Provider, {
   type ProviderRefreshTokenOptions,
   type ProviderRefreshTokenResponse,
   type ProviderSizeOptions,
-  type ProviderThumbnailResponse,
   type Query,
 } from '../Provider.js'
 import {
@@ -123,15 +121,6 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
         return { stream, size }
       },
     )
-  }
-
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
-    // not implementing this because a public thumbnail from onedrive will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.onedrive.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
   }
 
   override async size({
