@@ -14,6 +14,7 @@ import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import {
   createMockS3Companion,
@@ -106,9 +107,6 @@ afterEach(() => {
   uppy?.destroy()
   uppy = undefined
 })
-
-network.configure({ context: { quiet: true } })
-await network.enable()
 
 describe('S3 provider in the browser', () => {
   it('auto-connects and lists the bucket Companion serves', async () => {

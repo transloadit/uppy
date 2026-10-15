@@ -5009,6 +5009,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy-dev/msw-setup@workspace:^, @uppy-dev/msw-setup@workspace:private/msw-setup":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/msw-setup@workspace:private/msw-setup"
+  peerDependencies:
+    msw: ^3.0.2
+    vitest: ^4.1.11
+  languageName: unknown
+  linkType: soft
+
 "@uppy-dev/s3-mock-companion@workspace:^, @uppy-dev/s3-mock-companion@workspace:private/s3-mock-companion":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/s3-mock-companion@workspace:private/s3-mock-companion"
@@ -5078,6 +5087,7 @@ __metadata:
   dependencies:
     "@aws-sdk/client-sts": "npm:^3.1139.0"
     "@types/node": "npm:^22.20.1"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^4.1.11"
@@ -5263,6 +5273,7 @@ __metadata:
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
     "@transloadit/prettier-bytes": "npm:^2.0.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dropbox": "workspace:^"
@@ -5363,6 +5374,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -5541,6 +5553,7 @@ __metadata:
   resolution: "@uppy/s3@workspace:packages/@uppy/s3"
   dependencies:
     "@transloadit/utils": "npm:^4.8.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/s3-mock-companion": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
@@ -5640,6 +5653,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage"
   dependencies:
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/s3-mock-companion": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
@@ -5661,6 +5675,7 @@ __metadata:
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
     "@transloadit/types": "npm:^4.4.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/tus": "workspace:^"
@@ -5791,6 +5806,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -7980,6 +7996,7 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.3.0"
     "@types/react": "npm:^19.3.0"
     "@types/react-dom": "npm:^19.3.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy/core": "workspace:*"
     "@uppy/google-drive-picker": "workspace:*"
     "@uppy/google-photos-picker": "workspace:*"
@@ -8039,6 +8056,7 @@ __metadata:
     "@sveltejs/kit": "npm:^2.70.2"
     "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
     "@tailwindcss/vite": "npm:^4.0.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
@@ -8081,6 +8099,7 @@ __metadata:
   resolution: "example-vue@workspace:examples/vue"
   dependencies:
     "@tailwindcss/vite": "npm:^4.1.11"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy/core": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"

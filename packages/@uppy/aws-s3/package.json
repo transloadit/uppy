@@ -40,6 +40,7 @@
   "devDependencies": {
     "@aws-sdk/client-sts": "^3.1139.0",
     "@types/node": "^22.20.1",
+    "@uppy-dev/msw-setup": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.11",

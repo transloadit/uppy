@@ -1,0 +1,14 @@
+{
+  "name": "@uppy-dev/msw-setup",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Enables MSW network mocking for a browser test file. Import it for its side effect; requires the `msw()` Vite plugin.",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "peerDependencies": {
+    "msw": "^3.0.2",
+    "vitest": "^4.1.11"
+  }
+}

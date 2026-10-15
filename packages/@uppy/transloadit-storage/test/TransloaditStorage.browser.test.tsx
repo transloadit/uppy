@@ -11,6 +11,7 @@ import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import TransloaditStorage, {
   type TransloaditStorageOptions,
@@ -49,16 +50,9 @@ class FixtureUploader extends BasePlugin<
   }
 }
 
-network.configure({ context: { quiet: true } })
-await network.enable()
-
 beforeEach(() => {
   document.body.innerHTML = ''
   localStorage.clear()
-})
-
-afterEach(() => {
-  network.resetHandlers()
 })
 
 afterEach(() => {
