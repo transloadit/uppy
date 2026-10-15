@@ -1,4 +1,4 @@
-import querystring from 'node:querystring'
+import { getNextPagePath } from '../../helpers/utils.js'
 
 type FacebookImage = { width: number; source: string }
 
@@ -71,7 +71,7 @@ const getItemThumbnailUrl = (item: FacebookItem): string | null => {
   return isFolder(item) ? null : (sortImages(item.images)[0]?.source ?? null)
 }
 
-const getNextPagePath = (
+const getFacebookNextPagePath = (
   data: FacebookListResponse,
   currentQuery: Record<string, string>,
   currentPath: string | undefined,
@@ -83,8 +83,7 @@ const getNextPagePath = (
   const after = data.paging.cursors.after
   if (after == null || after.length === 0) return null
 
-  const query = { ...currentQuery, cursor: after }
-  return `${currentPath || ''}?${querystring.stringify(query)}`
+  return getNextPagePath(currentPath || '', currentQuery, after)
 }
 
 export const adaptData = (
@@ -105,6 +104,6 @@ export const adaptData = (
     modifiedDate: getItemModifiedDate(item),
   }))
 
-  const nextPagePath = getNextPagePath(res, currentQuery, directory)
+  const nextPagePath = getFacebookNextPagePath(res, currentQuery, directory)
   return { username, items, nextPagePath }
 }

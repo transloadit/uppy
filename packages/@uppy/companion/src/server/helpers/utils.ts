@@ -1,4 +1,5 @@
 import crypto from 'node:crypto'
+import querystring from 'node:querystring'
 import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
 import type { Request } from 'express'
 import type {
@@ -362,6 +363,17 @@ export function s3WriteParams({
     ...(awsSseKmsKeyId != null && { SSEKMSKeyId: awsSseKmsKeyId }),
   }
 }
+
+/**
+ * The `nextPagePath` of a list response: `path` with the current query and the
+ * provider's cursor for the next page.
+ */
+export const getNextPagePath = (
+  path: string,
+  query: object,
+  cursor: string | number | undefined,
+): string =>
+  `${path}?${querystring.stringify({ ...query, cursor } as querystring.ParsedUrlQueryInput)}`
 
 export const truncateFilename = (
   filename: string,
