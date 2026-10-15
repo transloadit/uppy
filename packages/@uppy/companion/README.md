@@ -79,7 +79,8 @@ companion.socket(server, options)
 The `transloadit-storage` provider accepts either its existing server-side `workspaces` credential
 map or a `credentialsSecret`, never both. Dynamic mode uses the configured `apiEndpoint` to resolve
 credentials for the immutable Workspace ID in a verified browser grant. It requires a matching
-API2 File Library credential resolver and a server-only shared secret of at least 32 characters.
+API2 File Library credential resolver, a server-only shared secret of at least 32 characters, and an
+`https:` `apiEndpoint` (plain `http:` is accepted only for `localhost`).
 Do not send this secret or Workspace Auth Secrets to the browser. Browser grants remain the only
 client-supplied authorization, with their existing expiry, prefix and scope checks.
 

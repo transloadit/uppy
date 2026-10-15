@@ -1,12 +1,11 @@
 import { createHmac } from 'node:crypto'
-import got, { type Response } from 'got'
+import got, { type OptionsInit, type Response } from 'got'
 import { z } from 'zod'
 import type { S3ClientOptions } from '../../../schemas/companion.js'
 import logger from '../../logger.js'
 import { ProviderApiError } from '../error.js'
 import { userError } from '../errorCodes.js'
 import {
-  type NativeStorage,
   type ParsedTransloaditStorageOptions,
   parseTransloaditStorageProviderOptions,
   S3ConfigError,
@@ -24,54 +23,41 @@ const moveResponseSchema = z.object({
   path: z.string().min(1),
 })
 
-/** The key pair Companion holds for a Workspace. */
-const workspaceCredentials = async (
-  native: NativeStorage,
-  workspace: string,
-): Promise<{ key: string; secret: string }> => {
-  if (native.credentialsSecret != null) {
-    if (!/^[a-f0-9]{32}$/.test(workspace)) throw userError('S3_INVALID_GRANT')
-    const timestamp = Math.floor(Date.now() / 1000)
-    const signature = createHmac('sha256', native.credentialsSecret)
-      .update(`file-library-credentials:v1:${timestamp}:${workspace}`)
-      .digest('hex')
-    // The endpoint is operator configuration, never a URL from the session or browser.
-    // Do not log got errors: their request options contain the server proof.
-    let response: Response<unknown>
-    try {
-      response = await got.post(
-        new URL('/internal/file-library/credentials', native.apiEndpoint),
-        {
-          json: { workspace },
-          headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
-          timeout: { request: 5000 },
-          retry: { limit: 0 },
-          followRedirect: false,
-          throwHttpErrors: false,
-          responseType: 'json',
-        },
-      )
-    } catch {
-      throw new ProviderApiError('Storage is temporarily unavailable', 502)
-    }
-    if (response.statusCode === 403) throw userError('S3_REQUEST_FAILED')
-    const credentials = z
-      .object({
-        workspace: z.literal(workspace),
-        authKey: z.string().min(1).max(256),
-        authSecret: z.string().min(1).max(1024),
-      })
-      .safeParse(response.body)
-    if (response.statusCode !== 200 || !credentials.success) {
-      throw new ProviderApiError('Storage is temporarily unavailable', 502)
-    }
-    return {
-      key: credentials.data.authKey,
-      secret: credentials.data.authSecret,
-    }
+type Credentials = { key: string; secret: string }
+
+const unavailable = () =>
+  new ProviderApiError('Storage is temporarily unavailable', 502)
+
+/**
+ * One POST to Transloadit's API: a single attempt, no redirects, JSON back and
+ * HTTP errors left to the caller. A transport failure reads as an outage, and
+ * the got error is not logged: its request options carry the signature.
+ */
+const callApi = async (
+  apiEndpoint: string,
+  path: string,
+  options: Pick<OptionsInit, 'json' | 'form' | 'headers' | 'timeout'>,
+): Promise<Response<unknown>> => {
+  try {
+    return await got.post<unknown>(new URL(path, apiEndpoint), {
+      ...options,
+      retry: { limit: 0 },
+      followRedirect: false,
+      throwHttpErrors: false,
+      responseType: 'json',
+    })
+  } catch {
+    throw unavailable()
   }
-  const credentials = Object.hasOwn(native.workspaces, workspace)
-    ? native.workspaces[workspace]
+}
+
+/** A Workspace's key pair from the static `workspaces` map. */
+const staticCredentials = (
+  workspaces: Record<string, Credentials>,
+  workspace: string,
+): Credentials => {
+  const credentials = Object.hasOwn(workspaces, workspace)
+    ? workspaces[workspace]
     : undefined
   if (credentials == null) {
     throw new S3ConfigError(
@@ -79,6 +65,39 @@ const workspaceCredentials = async (
     )
   }
   return credentials
+}
+
+/** A Workspace's key pair from API2's credential resolver. */
+const fetchCredentials = async (
+  apiEndpoint: string,
+  credentialsSecret: string,
+  workspace: string,
+): Promise<Credentials> => {
+  if (!/^[a-f0-9]{32}$/.test(workspace)) throw userError('S3_INVALID_GRANT')
+  const timestamp = Math.floor(Date.now() / 1000)
+  const signature = createHmac('sha256', credentialsSecret)
+    .update(`file-library-credentials:v1:${timestamp}:${workspace}`)
+    .digest('hex')
+  // The endpoint is operator configuration, never a URL from the session or browser.
+  const response = await callApi(
+    apiEndpoint,
+    '/internal/file-library/credentials',
+    {
+      json: { workspace },
+      headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
+      timeout: { request: 5000 },
+    },
+  )
+  if (response.statusCode === 403) throw userError('S3_REQUEST_FAILED')
+  const credentials = z
+    .object({
+      workspace: z.literal(workspace),
+      authKey: z.string().min(1).max(256),
+      authSecret: z.string().min(1).max(1024),
+    })
+    .safeParse(response.body)
+  if (response.statusCode !== 200 || !credentials.success) throw unavailable()
+  return { key: credentials.data.authKey, secret: credentials.data.authSecret }
 }
 
 /**
@@ -109,7 +128,8 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     config: ResolvedConfig<ParsedTransloaditStorageOptions>,
     bucket: string,
   ): { cacheKey: string; clientOptions: S3ClientOptions } {
-    if (config.native.credentialsSecret != null) {
+    const { apiEndpoint, credentialsSecret } = config.native
+    if (credentialsSecret != null) {
       const ownOptions = withOwnCredentials(config.clientOptions)
       return {
         cacheKey: bucket,
@@ -118,8 +138,9 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
           awsClientOptions: {
             ...ownOptions.awsClientOptions,
             credentials: async () => {
-              const { key, secret } = await workspaceCredentials(
-                config.native,
+              const { key, secret } = await fetchCredentials(
+                apiEndpoint,
+                credentialsSecret,
                 bucket,
               )
               return {
@@ -134,12 +155,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
         },
       }
     }
-    const credentials = Object.hasOwn(config.native.workspaces, bucket)
-      ? config.native.workspaces[bucket]
-      : undefined
-    if (!credentials)
-      throw new S3ConfigError(`No credentials for Workspace "${bucket}"`)
-    const { key, secret } = credentials
+    const { key, secret } = staticCredentials(config.native.workspaces, bucket)
     return {
       cacheKey: bucket,
       clientOptions: withOwnCredentials({
@@ -155,34 +171,25 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
    * and keeps asset identity; it never falls back to S3 copy/delete.
    */
   protected override async move(
-    {
-      bucket: workspace,
-      config: { native },
-    }: S3Session<ParsedTransloaditStorageOptions>,
+    { client, config: { native } }: S3Session<ParsedTransloaditStorageOptions>,
     id: string,
     destination: string,
   ): Promise<ItemRef> {
-    const { key, secret } = await workspaceCredentials(native, workspace)
+    // Sign with the Workspace key pair the session's S3 client uses: in dynamic
+    // mode the SDK has it cached, so a move costs no extra resolver call.
+    const { accessKeyId: key, secretAccessKey: secret } =
+      await client.config.credentials()
     const params = JSON.stringify({
       auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
       source: id,
       destination,
     })
     const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
-    const response = await got.post(
-      new URL('/dam/entries/move', native.apiEndpoint),
-      {
-        form: { params, signature },
-        timeout: { request: 30_000 },
-        retry: { limit: 0 },
-        followRedirect: false,
-        throwHttpErrors: false,
-        responseType: 'json',
-      },
-    )
-    if (response.statusCode >= 500) {
-      throw new ProviderApiError('Storage is temporarily unavailable', 502)
-    }
+    const response = await callApi(native.apiEndpoint, '/dam/entries/move', {
+      form: { params, signature },
+      timeout: { request: 30_000 },
+    })
+    if (response.statusCode >= 500) throw unavailable()
     if (response.statusCode !== 200) {
       logger.warn(
         `native Storage move refused: ${response.statusCode}`,
