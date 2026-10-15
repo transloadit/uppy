@@ -1,4 +1,3 @@
-import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import { HttpResponse, http } from 'msw'
 import { describe, expect, test } from 'vitest'
@@ -17,32 +16,39 @@ const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
  *
  * See https://tus.io/protocols/resumable-upload#protocol
  */
-network.resetHandlers(
-  http.post(TUS_ENDPOINT, ({ request }) => {
-    const uploadLength = request.headers.get('Upload-Length') || '0'
-    return new HttpResponse(null, {
-      status: 201,
-      headers: {
-        Location: `${TUS_ENDPOINT}mock-upload-id`,
-        'Tus-Resumable': '1.0.0',
-        'Upload-Offset': '0',
-        'Upload-Length': uploadLength,
-      },
-    })
-  }),
-  http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
-    const uploadOffset = request.headers.get('Upload-Offset') || '0'
-    const body = await request.arrayBuffer()
-    const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
-    return new HttpResponse(null, {
-      status: 204,
-      headers: {
-        'Tus-Resumable': '1.0.0',
-        'Upload-Offset': String(newOffset),
-      },
-    })
-  }),
-)
+network.configure({
+  context: { quiet: true },
+  // An unmocked request must fail the test rather than escape to the network.
+  onUnhandledFrame: 'error',
+  handlers: [
+    http.post(TUS_ENDPOINT, ({ request }) => {
+      const uploadLength = request.headers.get('Upload-Length') || '0'
+      return new HttpResponse(null, {
+        status: 201,
+        headers: {
+          Location: `${TUS_ENDPOINT}mock-upload-id`,
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': '0',
+          'Upload-Length': uploadLength,
+        },
+      })
+    }),
+    http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
+      const uploadOffset = request.headers.get('Upload-Offset') || '0'
+      const body = await request.arrayBuffer()
+      const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
+      return new HttpResponse(null, {
+        status: 204,
+        headers: {
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': String(newOffset),
+        },
+      })
+    }),
+  ],
+})
+
+await network.enable()
 
 const createMockFile = (name: string, type: string) => {
   return new File(['test content'], name, { type })
