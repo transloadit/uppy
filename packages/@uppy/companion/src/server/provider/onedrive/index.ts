@@ -1,5 +1,4 @@
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import Provider, {
@@ -14,7 +13,11 @@ import Provider, {
   type ProviderThumbnailResponse,
   type Query,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import {
+  isUnauthorized,
+  jsonStringAt,
+  withProviderErrorHandling,
+} from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 type OneDriveClient = ReturnType<typeof got.extend>
@@ -193,7 +196,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       fn,
       tag,
       providerName: OneDrive.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      isAuthError: isUnauthorized,
       isUserFacingError: (response) =>
         typeof response.statusCode === 'number' &&
         [400, 403].includes(response.statusCode),
@@ -202,12 +205,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       // without an Office365 licence or OneDrive account setup completed
       // 400: Tenant does not have a SPO license
       // 403: You do not have access to create this personal site or you do not have a valid license
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const err = body['error']
-        if (!isRecord(err)) return undefined
-        return typeof err['message'] === 'string' ? err['message'] : undefined
-      },
+      getJsonErrorMessage: jsonStringAt('error', 'message'),
     })
   }
 }

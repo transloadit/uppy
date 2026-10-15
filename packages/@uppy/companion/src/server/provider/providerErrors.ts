@@ -14,6 +14,22 @@ type ProviderHttpError = {
   body: unknown
 }
 
+/** `getJsonErrorMessage` for providers whose error body has a string at `path`. */
+export const jsonStringAt =
+  (...path: string[]) =>
+  (body: unknown): string | undefined => {
+    let value = body
+    for (const key of path) {
+      if (!isRecord(value)) return undefined
+      value = value[key]
+    }
+    return typeof value === 'string' ? value : undefined
+  }
+
+/** `isAuthError` for providers that answer an expired token with HTTP 401. */
+export const isUnauthorized = ({ statusCode }: ProviderHttpError): boolean =>
+  statusCode === 401
+
 type ProviderErrorHandlingOptions<T> = {
   fn: () => Promise<T>
   tag: string
@@ -89,16 +105,10 @@ export async function withGoogleErrorHandling<T>(
     tag,
     providerName,
     isAuthError: (response) =>
-      response.statusCode === 401 ||
+      isUnauthorized(response) ||
       (response.statusCode === 400 &&
         isRecord(response.body) &&
         response.body['error'] === 'invalid_grant'), // Refresh token has expired or been revoked
-    getJsonErrorMessage: (body) => {
-      if (!isRecord(body)) return undefined
-      const error = body['error']
-      if (!isRecord(error)) return undefined
-      const message = error['message']
-      return typeof message === 'string' ? message : undefined
-    },
+    getJsonErrorMessage: jsonStringAt('error', 'message'),
   })
 }

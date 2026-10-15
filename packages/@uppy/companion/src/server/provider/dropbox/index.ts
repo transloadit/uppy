@@ -5,7 +5,6 @@
 
 import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
-import { isRecord } from '../../helpers/type-guards.js'
 import { prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import Provider, {
@@ -24,7 +23,11 @@ import Provider, {
   type ProviderThumbnailResponse,
   type Query,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import {
+  isUnauthorized,
+  jsonStringAt,
+  withProviderErrorHandling,
+} from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 const charsToEncode = /[\u007f-\uffff]/g
@@ -373,12 +376,8 @@ export default class Dropbox extends Provider<DropboxUserSession> {
       fn,
       tag,
       providerName: Dropbox.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const summary = body['error_summary']
-        return typeof summary === 'string' ? summary : undefined
-      },
+      isAuthError: isUnauthorized,
+      getJsonErrorMessage: jsonStringAt('error_summary'),
     })
   }
 }

@@ -12,7 +12,7 @@ import Provider, {
   type ProviderLogoutResponse,
   type ProviderThumbnailResponse,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import { jsonStringAt, withProviderErrorHandling } from '../providerErrors.js'
 import { adaptData, type FacebookListResponse, sortImages } from './adapter.js'
 
 type FacebookBatchRequest = {
@@ -241,13 +241,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
         isRecord(response.body) &&
         isRecord(response.body['error']) &&
         response.body['error']['code'] === 190, // Invalid OAuth 2.0 Access Token
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const error = body['error']
-        if (!isRecord(error)) return undefined
-        const message = error['message']
-        return typeof message === 'string' ? message : undefined
-      },
+      getJsonErrorMessage: jsonStringAt('error', 'message'),
     })
   }
 }
