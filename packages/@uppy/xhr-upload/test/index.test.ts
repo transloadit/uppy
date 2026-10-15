@@ -1,15 +1,22 @@
+import { network } from 'virtual:msw'
 import Core, { type UppyEventMap } from '@uppy/core'
 import XHRUpload from '@uppy/xhr-upload'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, vi } from 'vitest'
-import { it } from './test-extend.js'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
 const corsHeaders = { 'access-control-allow-origin': '*' }
 
+network.configure({ context: { quiet: true } })
+await network.enable()
+
+afterEach(() => {
+  network.resetHandlers()
+})
+
 describe('XHRUpload', () => {
-  it('should leverage hooks from fetcher', async ({ worker }) => {
+  it('should leverage hooks from fetcher', async () => {
     let postCount = 0
-    worker.use(
+    network.use(
       http.post('https://fake-endpoint.uppy.io/', () => {
         postCount += 1
         // First attempt fails (triggers a retry), second succeeds.
@@ -23,7 +30,7 @@ describe('XHRUpload', () => {
       }),
     )
 
-    const core = new Core<any, { url: string }>()
+    using core = new Core<any, { url: string }>()
     const shouldRetry = vi.fn(() => true)
     const onBeforeRequest = vi.fn(() => {})
     const onAfterResponse = vi.fn(() => {})
@@ -65,10 +72,8 @@ describe('XHRUpload', () => {
     })
   })
 
-  it('should send response object over upload-error event', async ({
-    worker,
-  }) => {
-    worker.use(
+  it('should send response object over upload-error event', async () => {
+    network.use(
       http.post('https://fake-endpoint.uppy.io/', () =>
         HttpResponse.json(
           { status: 400, message: 'Oh no' },
@@ -77,7 +82,7 @@ describe('XHRUpload', () => {
       ),
     )
 
-    const core = new Core()
+    using core = new Core()
     const shouldRetry = vi.fn(() => false)
 
     core.use(XHRUpload, {
@@ -127,10 +132,10 @@ describe('XHRUpload', () => {
   })
 
   describe('headers', () => {
-    it('can be a function', async ({ worker }) => {
+    it('can be a function', async () => {
       let postCount = 0
       let receivedHeader: string | null = null
-      worker.use(
+      network.use(
         http.post('https://fake-endpoint.uppy.io/', ({ request }) => {
           postCount += 1
           receivedHeader = request.headers.get('x-sample-header')
@@ -138,7 +143,7 @@ describe('XHRUpload', () => {
         }),
       )
 
-      const core = new Core()
+      using core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: 'https://fake-endpoint.uppy.io',
@@ -161,16 +166,16 @@ describe('XHRUpload', () => {
   })
 
   describe('endpoint', () => {
-    it('can be a function', async ({ worker }) => {
+    it('can be a function', async () => {
       let postCount = 0
-      worker.use(
+      network.use(
         http.post('https://fake-endpoint.uppy.io/upload/test.jpg', () => {
           postCount += 1
           return HttpResponse.json({}, { status: 200, headers: corsHeaders })
         }),
       )
 
-      const core = new Core()
+      using core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: (file) =>
@@ -191,9 +196,9 @@ describe('XHRUpload', () => {
       expect(postCount).toBe(1)
     })
 
-    it('can be a function (bundle)', async ({ worker }) => {
+    it('can be a function (bundle)', async () => {
       let postCount = 0
-      worker.use(
+      network.use(
         http.post(
           'https://fake-endpoint.uppy.io/upload-bundle/test.jpg,test2.jpg',
           () => {
@@ -203,7 +208,7 @@ describe('XHRUpload', () => {
         ),
       )
 
-      const core = new Core()
+      using core = new Core()
       core.use(XHRUpload, {
         id: 'XHRUpload',
         endpoint: (file) =>

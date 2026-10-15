@@ -1,11 +1,14 @@
-const fs = require('node:fs')
-const path = require('node:path')
-const crypto = require('node:crypto')
+import fs from 'node:fs'
+import path from 'node:path'
+import * as companion from '@uppy/companion'
+import bodyParser from 'body-parser'
+import cors from 'cors'
+import express from 'express'
+import { createServer } from 'vite'
 
-require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') })
+process.loadEnvFile(path.resolve(import.meta.dirname, '..', '..', '..', '.env'))
 
-const app = require('express')()
-const companion = require('../../packages/@uppy/companion')
+const app = express()
 
 /**
  * Environment variables:
@@ -38,13 +41,13 @@ if (!process.env.COMPANION_AWS_BUCKET)
 const PORT = process.env.PORT || 3452
 const host = `localhost:${PORT}`
 
-const DATA_DIR = path.join(__dirname, 'tmp')
+const DATA_DIR = path.join(import.meta.dirname, 'tmp')
 
 fs.mkdirSync(DATA_DIR, { recursive: true })
 
 // Set up the /params endpoint that will create signed URLs for us.
-app.use(require('cors')())
-app.use(require('body-parser').json())
+app.use(cors())
+app.use(bodyParser.json())
 
 const { app: companionApp } = companion.app({
   s3: {
@@ -61,16 +64,16 @@ const { app: companionApp } = companion.app({
   server: { host },
   filePath: DATA_DIR,
   secret: 'blah blah',
-  debug: true,
 })
 
 app.use('/companion', companionApp)
 
-require('vite')
-  .createServer({ clearScreen: false, server: { middlewareMode: true } })
-  .then(({ middlewares }) => {
-    app.use(middlewares)
-    app.listen(PORT, () => {
-      console.log(`Listening on http://localhost:${PORT}/...`)
-    })
-  })
+const { middlewares } = await createServer({
+  clearScreen: false,
+  server: { middlewareMode: true },
+})
+
+app.use(middlewares)
+app.listen(PORT, () => {
+  console.log(`Listening on http://localhost:${PORT}/...`)
+})
