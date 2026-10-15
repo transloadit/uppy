@@ -682,6 +682,7 @@ export function createGooglePickerController({
   let abortController = new AbortController()
   let initPromise: Promise<void> | undefined
   let pickingSession: PickingSession | undefined
+  let showing = false
 
   const handleFilesPicked = async (
     files: PickedItem[],
@@ -734,6 +735,22 @@ export function createGooglePickerController({
   }
 
   async function showPicker() {
+    // Guard against concurrent invocations. GooglePickerView auto-calls show()
+    // on mount and also renders a button that calls it, and the button is only
+    // disabled once `loading` flips (which happens after an `await`). Without
+    // this guard, two near-simultaneous calls each build and open a Google
+    // Picker, stacking multiple dialogs on top of each other. This only blocks
+    // overlapping calls; reopening after the picker is closed stays allowed.
+    if (showing) return
+    showing = true
+    try {
+      await runShowPicker()
+    } finally {
+      showing = false
+    }
+  }
+
+  async function runShowPicker() {
     await init()
 
     let newAccessToken = store.getSnapshot().accessToken
@@ -827,6 +844,7 @@ export function createGooglePickerController({
 
     pickingSession = undefined
     initPromise = undefined
+    showing = false
     store.setState((s) => ({ ...s, accessToken: undefined, loading: false }))
   }
 
