@@ -48,6 +48,7 @@ type DashboardUIProps<M extends Meta, B extends Body> = {
   processingFiles: UppyFile<M, B>[]
   isUploadStarted: boolean
   isAllComplete: boolean
+  isAllErrored: boolean
   isAllPaused: boolean
   totalFileCount: number
   totalProgress: number
