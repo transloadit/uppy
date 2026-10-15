@@ -61,9 +61,9 @@ export type S3ManagerSnapshot = {
   state: S3ManagerState
   /** Open a folder by item id. */
   open: (folderId: PartialTreeId) => Promise<void>
-  /** Open a folder by key (e.g. `docs/photos/`); false when it doesn't exist. */
+  /** Open a folder by key (e.g. `docs/photos/`); false when it doesn't exist or while busy. */
   openPath: (key: string | null) => Promise<boolean>
-  /** Load the open folder's next page; false when there is none. */
+  /** Load the open folder's next page; false when there is none or while busy. */
   loadMore: () => Promise<boolean>
   /** Relist the open folder. Selections in other folders are kept. */
   refresh: () => Promise<void>
@@ -105,7 +105,11 @@ type StoragePlugin = UnknownProviderPlugin<any, any> & {
   openFolderPath(key: string | null): Promise<boolean>
 }
 
-/** @experimental See `S3ManagerSnapshot`. */
+/**
+ * @experimental See `S3ManagerSnapshot`. Controllers of the same plugin share
+ * its state (open folder, selection): each one's mount opens its own
+ * `initialFolderKey`, after a move or bulk change that is running ends.
+ */
 export function createS3ManagerController(
   uppy: Uppy<any, any>,
   pluginId: string,
@@ -121,13 +125,39 @@ export function createS3ManagerController(
   const view = plugin.view as ProviderViews<any, any>
   const subscribers = new Subscribers()
   let didFirstRender = false
+  // The walk to `initialFolderKey`, put off while an operation runs.
+  let walkPending = false
+  let walkTimer: ReturnType<typeof setTimeout> | undefined
+
+  // Logs in when needed and lists the folder without a rendered panel.
+  const walk = () => {
+    plugin.openFolderPath(initialFolderKey).catch((err: unknown) => {
+      uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
+    })
+  }
+
+  // A put-off walk waits until nothing runs, checked a macrotask later: an
+  // action relists its folder a few promise ticks after its operation ends,
+  // and that listing would abort the walk's. (An action that sends more
+  // requests before relisting still can; serialising listings in
+  // ProviderView would close that.)
+  const walkWhenIdle = () => {
+    clearTimeout(walkTimer)
+    walkTimer = setTimeout(() => {
+      if (view.canCancelOperation || plugin.getPluginState().loading) return
+      walkPending = false
+      walk()
+    })
+  }
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     prev,
     next,
   ) => {
     // `setPluginState` puts every plugin in the patch: compare ours instead.
-    if (prev.plugins[pluginId] !== next.plugins[pluginId]) subscribers.emit()
+    if (prev.plugins[pluginId] === next.plugins[pluginId]) return
+    if (walkPending) walkWhenIdle()
+    subscribers.emit()
   }
 
   /** `command`, unless a cancellable operation runs: a request now would abort it. */
@@ -203,17 +233,20 @@ export function createS3ManagerController(
 
   const mount = () => {
     uppy.on('state-update', onStateUpdate)
-    // Once per controller: React StrictMode unmounts and mounts again with
-    // the same one, and a second walk would abort the first.
-    if (didFirstRender) return
-    didFirstRender = true
-    // Logs in when needed and lists the folder without a rendered panel.
-    plugin.openFolderPath(initialFolderKey).catch((err: unknown) => {
-      uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
-    })
+    if (!didFirstRender) {
+      // Once per controller: React StrictMode unmounts and mounts again with
+      // the same one, and a second walk would abort the first.
+      didFirstRender = true
+      // A remount mid-move: listing now would abort the operation.
+      if (view.canCancelOperation) walkPending = true
+      else walk()
+    } else if (walkPending) {
+      walkWhenIdle()
+    }
   }
 
   const unmount = () => {
+    clearTimeout(walkTimer)
     uppy.off('state-update', onStateUpdate)
   }
 

@@ -145,12 +145,79 @@ it('refuses to navigate while an operation can be cancelled', async () => {
   expect(await manager.getSnapshot().openPath('docs/')).toBe(false)
   expect(await manager.getSnapshot().loadMore()).toBe(false)
   expect(manager.getSnapshot().state.currentFolderId).toBe(null)
+  // Nor does a remount: its walk to `docs/` would list it and abort the move.
+  const remount = createS3ManagerController(uppy, 'S3', {
+    initialFolderKey: 'docs/',
+  })
+  remount.mount()
+  expect(walk).toHaveBeenCalledOnce()
 
   finish()
   await operation
+  // It walks once the operation is over.
+  await vi.waitFor(() => expect(walk).toHaveBeenCalledTimes(2))
+  expect(await walk.mock.results[1]!.value).toBe(true)
+  expect(remount.getSnapshot().state.currentFolderId).toBe(docs.id)
+  remount.unmount()
+
+  await manager.getSnapshot().open(null)
   await manager.getSnapshot().open(docs.id)
   expect(manager.getSnapshot().state.currentFolderId).toBe(docs.id)
   manager.unmount()
+})
+
+it('walks to its folder after a running action and its refresh', async () => {
+  const companion = createMockS3Companion({ token: 'test-token' })
+  // Holds the delete request, so the operation runs until `finish()`.
+  let finish!: () => void
+  const deleting = new Promise<void>((resolve) => {
+    finish = resolve
+  })
+  network.use(
+    http.post(`${COMPANION}/s3/mutate/delete`, async () => {
+      await deleting
+    }),
+    ...toMswHandlers(companion, COMPANION, { http }),
+  )
+  uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
+  const plugin = uppy.getPlugin<S3<any, any>>('S3')!
+  const walk = vi.spyOn(plugin, 'openFolderPath')
+  const manager = createS3ManagerController(uppy, 'S3')
+  manager.mount()
+  await walk.mock.results[0]!.value
+
+  // A built-in action: it relists the folder a few promise ticks after its
+  // operation ends, and that listing must not abort the walk below.
+  const { state } = manager.getSnapshot()
+  const readme = state.partialTree.find(
+    (item) => item.data.name === 'readme.md',
+  )!
+  const remove = state.actions.find((action) => action.id === 's3:delete')!
+  const done = manager.getSnapshot().runAction(remove, readme)
+  await vi.waitFor(() =>
+    expect(manager.getSnapshot().state.dialog?.kind).toBe('confirm'),
+  )
+  manager.getSnapshot().submitDialog()
+  await vi.waitFor(() =>
+    expect(manager.getSnapshot().state.cancellable).toBe(true),
+  )
+
+  // The user comes back mid-operation, through a link to docs/.
+  manager.unmount()
+  const remount = createS3ManagerController(uppy, 'S3', {
+    initialFolderKey: 'docs/',
+  })
+  remount.mount()
+  expect(walk).toHaveBeenCalledOnce()
+
+  finish()
+  await done
+  await vi.waitFor(() => expect(walk).toHaveBeenCalledTimes(2))
+  expect(await walk.mock.results[1]!.value).toBe(true)
+  expect(remount.getSnapshot().state.currentFolderId).toBe(
+    encodeURIComponent('docs/'),
+  )
+  remount.unmount()
 })
 
 it('keeps selections in other folders across a refresh', async () => {
