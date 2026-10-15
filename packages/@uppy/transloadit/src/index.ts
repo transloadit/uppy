@@ -112,12 +112,14 @@ type PersistentState = {
 
 /**
  * An Assembly in use: by the upload that got it (none yet for a restored
- * one), with the watcher that settles once the Assembly is done.
+ * one), with the watcher that settles once the Assembly is done, and the
+ * imports of its uploaded files (`importFromUploadURLs`) still running.
  */
 type AssemblyUse<M extends Meta, B extends Body> = {
   assembly: Assembly
   uploadID?: string
   watcher: AssemblyWatcher<M, B>
+  imports: Promise<void>[]
 }
 
 declare module '@uppy/core' {
@@ -631,10 +633,15 @@ export default class Transloadit<
 
     const { status } = use.assembly
 
-    this.client.addFile(status, file).catch((err) => {
-      this.uppy.log(err)
-      this.uppy.emit('transloadit:import-error', status, file.id, err)
-    })
+    use.imports.push(
+      this.client.addFile(status, file).then(
+        () => {},
+        (err) => {
+          this.uppy.log(err)
+          this.uppy.emit('transloadit:import-error', status, file.id, err)
+        },
+      ),
+    )
   }
 
   #findFile(uploadedFile: AssemblyFile) {
@@ -662,7 +669,8 @@ export default class Transloadit<
     return undefined
   }
 
-  #onFileUploadComplete(assemblyId: string, uploadedFile: AssemblyFile) {
+  #onFileUploadComplete(assembly: Assembly, uploadedFile: AssemblyFile) {
+    const assemblyId = ensureAssemblyId(assembly.status)
     const state = this.getPluginState()
     const file = this.#findFile(uploadedFile)
     if (!file) {
@@ -681,10 +689,12 @@ export default class Transloadit<
         },
       },
     })
-    this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly()!)
+    // Its own status: the live one may be another upload's.
+    this.uppy.emit('transloadit:upload', uploadedFile, assembly.status)
   }
 
-  #onResult(assemblyId: string, stepName: string, result: AssemblyResult) {
+  #onResult(assembly: Assembly, stepName: string, result: AssemblyResult) {
+    const assemblyId = ensureAssemblyId(assembly.status)
     const state = this.getPluginState()
 
     if (!('id' in result)) {
@@ -710,7 +720,7 @@ export default class Transloadit<
       'transloadit:result',
       stepName,
       entry.result,
-      this.getAssembly()!,
+      assembly.status,
     )
   }
 
@@ -847,15 +857,24 @@ export default class Transloadit<
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = (ids: string[]) => {
       const assembly = this.assembly!
-      // The upload being restored uses it; if core restored none, the next
-      // upload to prepare claims it.
-      const [uploadID] = Object.keys(this.uppy.getState().currentUploads)
+      const assemblyID = ensureAssemblyId(previousAssembly)
+      // The restored upload whose files are in it (another may be restored
+      // too, and only the live Assembly is saved): all of them, else any. If
+      // core restored none, the next upload to prepare claims it.
+      const inIt = new Set(this.getAssemblyFiles(assemblyID).map((f) => f.id))
+      const uploads = Object.entries(this.uppy.getState().currentUploads)
+      const [uploadID] =
+        uploads.find(
+          ([, { fileIDs }]) =>
+            fileIDs.length > 0 && fileIDs.every((id) => inIt.has(id)),
+        ) ??
+        uploads.find(([, { fileIDs }]) => fileIDs.some((id) => inIt.has(id))) ??
+        []
       this.#inUse.add({
         assembly,
         uploadID,
-        watcher: this.#createAssemblyWatcher(
-          ensureAssemblyId(previousAssembly),
-        ),
+        watcher: this.#createAssemblyWatcher(assemblyID),
+        imports: [],
       })
       this.#connectAssembly(assembly, ids)
     }
@@ -880,11 +899,8 @@ export default class Transloadit<
   }
 
   #connectAssembly(assembly: Assembly, ids: UppyFile<M, B>['id'][]) {
-    const { status } = assembly
-    const id = ensureAssemblyId(status)
-
     assembly.on('upload', (file: AssemblyFile) => {
-      this.#onFileUploadComplete(id, file)
+      this.#onFileUploadComplete(assembly, file)
     })
     assembly.on('error', (error: AssemblyError) => {
       error.assembly = assembly.status
@@ -923,7 +939,7 @@ export default class Transloadit<
 
     if (this.opts.waitForEncoding) {
       assembly.on('result', (stepName: string, result: AssemblyResult) => {
-        this.#onResult(id, stepName, result)
+        this.#onResult(assembly, stepName, result)
       })
     }
 
@@ -1026,6 +1042,7 @@ export default class Transloadit<
           watcher: this.#createAssemblyWatcher(
             ensureAssemblyId(created.status),
           ),
+          imports: [],
         })
         this.assembly = created
         this.#connectAssembly(created, fileIDs)
@@ -1135,6 +1152,15 @@ export default class Transloadit<
       // the socket immediately and finish the upload.
       if (!this.#shouldWaitAfterUpload()) {
         closeSocketConnections()
+        // Its files are only in once their imports are: a failed one fails
+        // its file (through the watcher, which goes once this upload ends).
+        // Unless the Assembly is let go of meanwhile (cancelled, say).
+        if (use) {
+          await Promise.race([
+            Promise.allSettled(use.imports),
+            use.watcher.promise,
+          ])
+        }
         const status = assembly?.status
         if (status != null) {
           this.uppy.addResultData(uploadID, {
