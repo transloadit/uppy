@@ -767,7 +767,19 @@ describe('S3 provider', () => {
   describe('transloadit-storage (native moves)', () => {
     const makeNative = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
       const provider = new TransloaditStorageProvider({ allowLocalUrls: true })
-      vi.spyOn(provider, 'getClient').mockReturnValue({ send } as never)
+      // Like a real client, sign with the key pair it was built with.
+      vi.spyOn(provider, 'getClient').mockImplementation(
+        ({ key, secret }) =>
+          ({
+            send,
+            config: {
+              credentials: async () => ({
+                accessKeyId: key,
+                secretAccessKey: secret,
+              }),
+            },
+          }) as never,
+      )
       return provider
     }
     const nativeCompanion = (apiEndpoint: string) =>

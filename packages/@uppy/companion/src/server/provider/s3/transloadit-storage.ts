@@ -6,7 +6,6 @@ import logger from '../../logger.js'
 import { ProviderApiError } from '../error.js'
 import { userError } from '../errorCodes.js'
 import {
-  type NativeStorage,
   type ParsedTransloaditStorageOptions,
   parseTransloaditStorageProviderOptions,
   S3ConfigError,
@@ -101,15 +100,6 @@ const fetchCredentials = async (
   return { key: credentials.data.authKey, secret: credentials.data.authSecret }
 }
 
-/** The key pair Companion holds for, or resolves at runtime for, a Workspace. */
-const workspaceCredentials = async (
-  native: NativeStorage,
-  workspace: string,
-): Promise<Credentials> =>
-  native.credentialsSecret != null
-    ? fetchCredentials(native.apiEndpoint, native.credentialsSecret, workspace)
-    : staticCredentials(native.workspaces, workspace)
-
 /**
  * Transloadit Storage: the S3 provider on Storage's S3-compatible endpoint,
  * with native catalog moves and one key pair per Workspace (a grant names the
@@ -181,14 +171,14 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
    * and keeps asset identity; it never falls back to S3 copy/delete.
    */
   protected override async move(
-    {
-      bucket: workspace,
-      config: { native },
-    }: S3Session<ParsedTransloaditStorageOptions>,
+    { client, config: { native } }: S3Session<ParsedTransloaditStorageOptions>,
     id: string,
     destination: string,
   ): Promise<ItemRef> {
-    const { key, secret } = await workspaceCredentials(native, workspace)
+    // Sign with the Workspace key pair the session's S3 client uses: in dynamic
+    // mode the SDK has it cached, so a move costs no extra resolver call.
+    const { accessKeyId: key, secretAccessKey: secret } =
+      await client.config.credentials()
     const params = JSON.stringify({
       auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
       source: id,

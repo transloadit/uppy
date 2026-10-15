@@ -183,9 +183,10 @@ test('refuses a Workspace that is not an ID without asking the resolver', async 
   expect(s3Keys).toEqual([])
 })
 
-test('signs native moves with the resolved Workspace key pair', async () => {
-  const { provider, companion, moves, grantSession } = await fixture()
+test('signs native moves with the cached Workspace key pair', async () => {
+  const { provider, companion, moves, lookups, grantSession } = await fixture()
   const session = await grantSession({ scopes: ['read', 'write'] })
+  await provider.list({ companion, providerUserSession: session })
   await provider.moveItem({
     companion,
     providerUserSession: session,
@@ -198,7 +199,8 @@ test('signs native moves with the resolved Workspace key pair', async () => {
   })
   expect(moves[0]?.get('signature')).toBe(
     `sha256:${createHmac('sha256', 'local-workspace-secret').update(params).digest('hex')}`,
-  )
+  ) // The move reuses the S3 client's credentials: one resolver call in total.
+  expect(lookups).toEqual([workspace])
 })
 
 test.each([
