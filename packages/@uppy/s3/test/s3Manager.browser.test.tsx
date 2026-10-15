@@ -168,7 +168,17 @@ it('refuses to navigate while an operation can be cancelled', async () => {
 
 it('walks to its folder after a running action and its refresh', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  network.use(...toMswHandlers(companion, COMPANION, { http }))
+  // Holds the delete request, so the operation runs until `finish()`.
+  let finish!: () => void
+  const deleting = new Promise<void>((resolve) => {
+    finish = resolve
+  })
+  network.use(
+    http.post(`${COMPANION}/s3/mutate/delete`, async () => {
+      await deleting
+    }),
+    ...toMswHandlers(companion, COMPANION, { http }),
+  )
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
   const plugin = uppy.getPlugin<S3<any, any>>('S3')!
   const walk = vi.spyOn(plugin, 'openFolderPath')
@@ -176,19 +186,22 @@ it('walks to its folder after a running action and its refresh', async () => {
   manager.mount()
   await walk.mock.results[0]!.value
 
-  // An action with a long operation, which relists the folder when it ends.
-  let finish!: () => void
-  const action = plugin.view.runToolbarAction({
-    id: 'test:long',
-    label: 'Long operation',
-    run: () =>
-      plugin.view.runWithProgress(
-        () =>
-          new Promise<void>((resolve) => {
-            finish = resolve
-          }),
-      ),
-  })
+  // A built-in action: it relists the folder a few promise ticks after its
+  // operation ends, and that listing must not abort the walk below.
+  const { state } = manager.getSnapshot()
+  const readme = state.partialTree.find(
+    (item) => item.data.name === 'readme.md',
+  )!
+  const remove = state.actions.find((action) => action.id === 's3:delete')!
+  const done = manager.getSnapshot().runAction(remove, readme)
+  await vi.waitFor(() =>
+    expect(manager.getSnapshot().state.dialog?.kind).toBe('confirm'),
+  )
+  manager.getSnapshot().submitDialog()
+  await vi.waitFor(() =>
+    expect(manager.getSnapshot().state.cancellable).toBe(true),
+  )
+
   // The user comes back mid-operation, through a link to docs/.
   manager.unmount()
   const remount = createS3ManagerController(uppy, 'S3', {
@@ -198,7 +211,7 @@ it('walks to its folder after a running action and its refresh', async () => {
   expect(walk).toHaveBeenCalledOnce()
 
   finish()
-  await action
+  await done
   await vi.waitFor(() => expect(walk).toHaveBeenCalledTimes(2))
   expect(await walk.mock.results[1]!.value).toBe(true)
   expect(remount.getSnapshot().state.currentFolderId).toBe(

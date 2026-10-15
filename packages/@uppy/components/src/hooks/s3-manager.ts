@@ -127,11 +127,26 @@ export function createS3ManagerController(
   let didFirstRender = false
   // The walk to `initialFolderKey`, put off while an operation runs.
   let walkPending = false
+  let walkTimer: ReturnType<typeof setTimeout> | undefined
 
   // Logs in when needed and lists the folder without a rendered panel.
   const walk = () => {
     plugin.openFolderPath(initialFolderKey).catch((err: unknown) => {
       uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
+    })
+  }
+
+  // A put-off walk waits until nothing runs, checked a macrotask later: an
+  // action relists its folder a few promise ticks after its operation ends,
+  // and that listing would abort the walk's. (An action that sends more
+  // requests before relisting still can; serialising listings in
+  // ProviderView would close that.)
+  const walkWhenIdle = () => {
+    clearTimeout(walkTimer)
+    walkTimer = setTimeout(() => {
+      if (view.canCancelOperation || plugin.getPluginState().loading) return
+      walkPending = false
+      walk()
     })
   }
 
@@ -141,14 +156,7 @@ export function createS3ManagerController(
   ) => {
     // `setPluginState` puts every plugin in the patch: compare ours instead.
     if (prev.plugins[pluginId] === next.plugins[pluginId]) return
-    if (walkPending && !view.canCancelOperation) {
-      // An action's follow-up refresh starts before the walk's first listing,
-      // which then aborts it (the walk relists anyway). An action that awaits
-      // more after its operation could start that refresh later and abort the
-      // walk instead; serialising listings in ProviderView would close that.
-      walkPending = false
-      walk()
-    }
+    if (walkPending) walkWhenIdle()
     subscribers.emit()
   }
 
@@ -225,16 +233,20 @@ export function createS3ManagerController(
 
   const mount = () => {
     uppy.on('state-update', onStateUpdate)
-    // Once per controller: React StrictMode unmounts and mounts again with
-    // the same one, and a second walk would abort the first.
-    if (didFirstRender) return
-    didFirstRender = true
-    // A remount mid-move: listing now would abort the operation.
-    if (view.canCancelOperation) walkPending = true
-    else walk()
+    if (!didFirstRender) {
+      // Once per controller: React StrictMode unmounts and mounts again with
+      // the same one, and a second walk would abort the first.
+      didFirstRender = true
+      // A remount mid-move: listing now would abort the operation.
+      if (view.canCancelOperation) walkPending = true
+      else walk()
+    } else if (walkPending) {
+      walkWhenIdle()
+    }
   }
 
   const unmount = () => {
+    clearTimeout(walkTimer)
     uppy.off('state-update', onStateUpdate)
   }
 
