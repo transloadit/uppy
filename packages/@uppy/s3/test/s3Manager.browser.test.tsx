@@ -1,3 +1,4 @@
+import { network } from 'virtual:msw'
 import { createS3ManagerController } from '@uppy/components'
 import Uppy, { BasePlugin } from '@uppy/core'
 import {
@@ -5,9 +6,8 @@ import {
   toMswHandlers,
 } from '@uppy-dev/s3-mock-companion'
 import { http } from 'msw'
-import { afterEach, expect, vi } from 'vitest'
+import { afterEach, expect, it, vi } from 'vitest'
 import S3 from '../lib/S3.js'
-import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 let uppy: Uppy | undefined
@@ -16,7 +16,11 @@ afterEach(() => {
   uppy?.destroy()
   uppy = undefined
   localStorage.clear()
+  network.resetHandlers()
 })
+
+network.configure({ context: { quiet: true } })
+await network.enable()
 
 /** Any other plugin: its state changes must not reach the manager. */
 class Other extends BasePlugin<any, any, any> {
@@ -24,9 +28,9 @@ class Other extends BasePlugin<any, any, any> {
   override type = 'acquirer'
 }
 
-it('browses and deletes without a rendered panel', async ({ worker }) => {
+it('browses and deletes without a rendered panel', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
   const manager = createS3ManagerController(uppy, 'S3', {
     initialFolderKey: 'docs/',
@@ -63,11 +67,9 @@ it('browses and deletes without a rendered panel', async ({ worker }) => {
   manager.unmount()
 })
 
-it('finds the detail item anywhere in the tree, for a recreated controller too', async ({
-  worker,
-}) => {
+it('finds the detail item anywhere in the tree, for a recreated controller too', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
   const manager = createS3ManagerController(uppy, 'S3', {
     initialFolderKey: 'docs/',
@@ -98,11 +100,9 @@ it('refuses a plugin that is not a manager-mode storage browser', () => {
   )
 })
 
-it('walks to the initial folder once, StrictMode remounts included', async ({
-  worker,
-}) => {
+it('walks to the initial folder once, StrictMode remounts included', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
   const walk = vi.spyOn(uppy.getPlugin<S3<any, any>>('S3')!, 'openFolderPath')
   const manager = createS3ManagerController(uppy, 'S3', {
@@ -118,11 +118,9 @@ it('walks to the initial folder once, StrictMode remounts included', async ({
   manager.unmount()
 })
 
-it('refuses to navigate while an operation can be cancelled', async ({
-  worker,
-}) => {
+it('refuses to navigate while an operation can be cancelled', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
   const plugin = uppy.getPlugin<S3<any, any>>('S3')!
   const walk = vi.spyOn(plugin, 'openFolderPath')
@@ -155,9 +153,9 @@ it('refuses to navigate while an operation can be cancelled', async ({
   manager.unmount()
 })
 
-it('keeps selections in other folders across a refresh', async ({ worker }) => {
+it('keeps selections in other folders across a refresh', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
   const walk = vi.spyOn(uppy.getPlugin<S3<any, any>>('S3')!, 'openFolderPath')
   const manager = createS3ManagerController(uppy, 'S3')
@@ -178,11 +176,9 @@ it('keeps selections in other folders across a refresh', async ({ worker }) => {
   manager.unmount()
 })
 
-it('emits for its own plugin only, and survives the plugin being removed', async ({
-  worker,
-}) => {
+it('emits for its own plugin only, and survives the plugin being removed', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy()
     .use(S3, { companionUrl: COMPANION, mode: 'manager' })
     .use(Other)
@@ -205,9 +201,9 @@ it('emits for its own plugin only, and survives the plugin being removed', async
   manager.unmount()
 })
 
-it('passes login form data through, such as a grant', async ({ worker }) => {
+it('passes login form data through, such as a grant', async () => {
   const companion = createMockS3Companion({ token: 'test-token' })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   uppy = new Uppy().use(S3, { companionUrl: COMPANION, mode: 'manager' })
   const plugin = uppy.getPlugin<S3<any, any>>('S3')!
   const manager = createS3ManagerController(uppy, 'S3')
