@@ -61,9 +61,9 @@ export type S3ManagerSnapshot = {
   state: S3ManagerState
   /** Open a folder by item id. */
   open: (folderId: PartialTreeId) => Promise<void>
-  /** Open a folder by key (e.g. `docs/photos/`); false when it doesn't exist. */
+  /** Open a folder by key (e.g. `docs/photos/`); false when it doesn't exist or while busy. */
   openPath: (key: string | null) => Promise<boolean>
-  /** Load the open folder's next page; false when there is none. */
+  /** Load the open folder's next page; false when there is none or while busy. */
   loadMore: () => Promise<boolean>
   /** Relist the open folder. Selections in other folders are kept. */
   refresh: () => Promise<void>
@@ -105,7 +105,11 @@ type StoragePlugin = UnknownProviderPlugin<any, any> & {
   openFolderPath(key: string | null): Promise<boolean>
 }
 
-/** @experimental See `S3ManagerSnapshot`. */
+/**
+ * @experimental See `S3ManagerSnapshot`. Controllers of the same plugin share
+ * its state (open folder, selection): each one's mount opens its own
+ * `initialFolderKey`.
+ */
 export function createS3ManagerController(
   uppy: Uppy<any, any>,
   pluginId: string,
@@ -152,16 +156,18 @@ export function createS3ManagerController(
     bulkActions: view.opts.bulkActions ?? [],
   })
 
+  const openPath = unlessBusy(
+    (key: string | null) => plugin.openFolderPath(key),
+    false,
+  )
+
   // Cached so the reference stays stable while nothing changed, as
   // `useSyncExternalStore` expects.
   let lastPluginState = plugin.getPluginState()
   let cachedSnapshot: S3ManagerSnapshot = {
     state: readState(lastPluginState),
     open: unlessBusy(view.openFolder, undefined),
-    openPath: unlessBusy(
-      (key: string | null) => plugin.openFolderPath(key),
-      false,
-    ),
+    openPath,
     loadMore: unlessBusy(() => view.loadNextPage(), false),
     // Only the open folder is relisted: selections elsewhere survive, like
     // the plugin's own refreshListing().
@@ -208,7 +214,8 @@ export function createS3ManagerController(
     if (didFirstRender) return
     didFirstRender = true
     // Logs in when needed and lists the folder without a rendered panel.
-    plugin.openFolderPath(initialFolderKey).catch((err: unknown) => {
+    // Skipped while an operation runs (a remount mid-move), like `openPath`.
+    openPath(initialFolderKey).catch((err: unknown) => {
       uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
     })
   }

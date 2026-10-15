@@ -147,6 +147,13 @@ it('refuses to navigate while an operation can be cancelled', async ({
   expect(await manager.getSnapshot().openPath('docs/')).toBe(false)
   expect(await manager.getSnapshot().loadMore()).toBe(false)
   expect(manager.getSnapshot().state.currentFolderId).toBe(null)
+  // Nor does a remount: its walk to `docs/` would list it and abort the move.
+  const remount = createS3ManagerController(uppy, 'S3', {
+    initialFolderKey: 'docs/',
+  })
+  remount.mount()
+  expect(walk).toHaveBeenCalledOnce()
+  remount.unmount()
 
   finish()
   await operation
