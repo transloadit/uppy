@@ -25,6 +25,10 @@ async function fetchKeys(
     const { credentials } = await got
       .post(url, {
         json: { provider: providerName, parameters: credentialRequestParams },
+        // The endpoint is operator configuration: never follow it elsewhere,
+        // and don't hold the OAuth request open on a slow endpoint.
+        timeout: { request: 10_000 },
+        followRedirect: false,
       })
       .json<{ credentials?: CredentialsFetchResponse }>()
 
