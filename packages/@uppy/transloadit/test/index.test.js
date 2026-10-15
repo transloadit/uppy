@@ -956,6 +956,80 @@ describe('Transloadit', () => {
     expect(plugin.assembly).toBeUndefined()
   })
 
+  /**
+   * An upload without files waits for its signing, is cancelled (core keeps
+   * it in `currentUploads`), and a newer upload of `b.txt` starts. The
+   * uploader holds files until `release()`; an upload without files passes.
+   */
+  async function cancelFilelessThenUploadAgain() {
+    serveAssemblies()
+    const signer = deferredSignings(2)
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      // The test's uploader instead of Transloadit's own Tus one.
+      importFromUploadURLs: true,
+      assemblyOptions: signer.assemblyOptions,
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A2'))
+    plugin.client.reserveFile = vi.fn(async () => {})
+    const held = Promise.withResolvers()
+    uppy.addUploader((fileIDs) =>
+      fileIDs.length > 0 ? held.promise : Promise.resolve(),
+    )
+
+    const fileless = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(1))
+    uppy.cancelAll()
+    uppy.addFile({ source: 'test', name: 'b.txt', data: new Blob(['b']) })
+    const newer = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+    signer.signings[1].resolve({
+      params: { auth: { key: 'k' }, template_id: 't' },
+    })
+    await vi.waitFor(() =>
+      expect(plugin.assembly?.status.assembly_id).toBe('A2'),
+    )
+    const settleFileless = () => {
+      signer.signings[0].resolve({
+        params: { auth: { key: 'k' }, template_id: 't' },
+      })
+      return fileless.catch(() => {})
+    }
+    return { uppy, plugin, newer, release: held.resolve, settleFileless }
+  }
+
+  it('allows new uploads after a newer batch ends while a cancelled upload without files still waits for signing', async () => {
+    const { uppy, plugin, newer, release, settleFileless } =
+      await cancelFilelessThenUploadAgain()
+    const running = plugin.assembly
+
+    release()
+    await newer
+
+    // The cancelled upload is still signing, but it no longer counts.
+    expect(uppy.getState().allowNewUpload).toBe(true)
+
+    await settleFileless()
+    running.close()
+  })
+
+  it("leaves a newer upload's Assembly alone when a cancelled upload without files resumes", async () => {
+    const { plugin, newer, release, settleFileless } =
+      await cancelFilelessThenUploadAgain()
+    const running = plugin.assembly
+
+    // Its signing settles: core still runs its later steps.
+    await settleFileless()
+
+    expect(plugin.assembly).toBe(running)
+    expect(running.closed).toBe(false)
+
+    release()
+    await newer
+    running.close()
+  })
+
   it('allows new uploads after a retry whose uploader rejects after reporting its files', async () => {
     serveAssemblies()
     const uppy = new Core()

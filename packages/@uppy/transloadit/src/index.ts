@@ -714,6 +714,12 @@ export default class Transloadit<
    */
   #onCancelAll = async () => {
     this.#cancels += 1
+    // Every upload ends here, but core keeps one without files (a Template
+    // importing its own inputs) in `currentUploads`: it must not hold
+    // admission closed, nor have later steps run for it.
+    for (const id of Object.keys(this.uppy.getState().currentUploads)) {
+      this.#endedUploads.add(id)
+    }
     const { assembly } = this
     if (assembly) {
       // Detached before the request: an upload started before it returns
@@ -1045,6 +1051,10 @@ export default class Transloadit<
   #afterUpload = async (fileIDs: string[], uploadID: string): Promise<void> => {
     let assembly: Assembly | undefined
     try {
+      // Cancelled while it was prepared (one without files, which core keeps
+      // and goes on with): it has no Assembly, and the current one may be a
+      // newer upload's.
+      if (this.#endedUploads.has(uploadID)) return
       // If we're still restoring state, wait for that to be done.
       await this.restored
       // This upload's Assembly. By the time it is done, a newer upload may
