@@ -7,6 +7,7 @@ import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
 import { prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
+import { refreshAccessToken } from '../oauth.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -103,11 +104,6 @@ async function getClient({
     userInfo,
   }
 }
-
-const getOauthClient = () =>
-  got.extend({
-    prefixUrl: 'https://api.dropboxapi.com/oauth2',
-  })
 
 async function list({
   client,
@@ -344,30 +340,11 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     )
   }
 
-  override async refreshToken({
-    clientId,
-    clientSecret,
-    refreshToken,
-  }: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
-    return this.#withErrorHandling(
-      'provider.dropbox.token.refresh.error',
-      async () => {
-        const tokenRes = await getOauthClient()
-          .post('token', {
-            form: {
-              refresh_token: refreshToken,
-              grant_type: 'refresh_token',
-              client_id: clientId,
-              client_secret: clientSecret,
-            },
-          })
-          .json<{ access_token?: unknown }>()
-        const accessToken = tokenRes.access_token
-        if (typeof accessToken !== 'string' || accessToken.length === 0) {
-          throw new Error('Missing access_token')
-        }
-        return { accessToken }
-      },
+  override async refreshToken(
+    options: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
+    return this.#withErrorHandling('provider.dropbox.token.refresh.error', () =>
+      refreshAccessToken('https://api.dropboxapi.com/oauth2/token', options),
     )
   }
 

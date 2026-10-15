@@ -1,5 +1,6 @@
 import got from 'got'
 import { prepareStream } from '../../helpers/utils.js'
+import { refreshAccessToken } from '../oauth.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -26,11 +27,6 @@ const getClient = ({ token }: { token: string }): OneDriveClient =>
     headers: {
       authorization: `Bearer ${token}`,
     },
-  })
-
-const getOauthClient = () =>
-  got.extend({
-    prefixUrl: 'https://login.live.com',
   })
 
 function getQueryRecord(query: Query | undefined) {
@@ -148,35 +144,19 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     }
   }
 
-  override async refreshToken({
-    clientId,
-    clientSecret,
-    refreshToken,
-    redirectUri,
-  }: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
+  override async refreshToken(
+    options: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
     return this.#withErrorHandling(
       'provider.onedrive.token.refresh.error',
-      async () => {
-        const body = await getOauthClient()
-          .post('oauth20_token.srf', {
-            responseType: 'json',
-            form: {
-              refresh_token: refreshToken,
-              grant_type: 'refresh_token',
-              client_id: clientId,
-              client_secret: clientSecret,
-              redirect_uri: redirectUri,
-            },
-          })
-          .json<Record<string, unknown>>()
-
-        const accessToken =
-          typeof body['access_token'] === 'string' ? body['access_token'] : null
-        if (!accessToken) {
-          throw new Error('Unexpected OneDrive token refresh response')
-        }
-        return { accessToken }
-      },
+      () =>
+        refreshAccessToken(
+          'https://login.live.com/oauth20_token.srf',
+          options,
+          {
+            redirect_uri: options.redirectUri,
+          },
+        ),
     )
   }
 
