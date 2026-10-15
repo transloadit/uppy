@@ -127,28 +127,6 @@ export default function FileProgress<M extends Meta, B extends Body>(
     return null
   }
 
-  if (props.file.progress.percentage === undefined) {
-    return null
-  }
-
-  // Green checkmark when complete
-  if (props.isUploaded) {
-    return (
-      <div className="uppy-Dashboard-Item-progress">
-        <div className="uppy-Dashboard-Item-progressIndicator">
-          <ProgressCircleContainer>
-            <circle r="15" cx="18" cy="18" fill="#1bb240" />
-            <polygon
-              className="uppy-Dashboard-Item-progressIcon--check"
-              transform="translate(2, 3)"
-              points="14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634"
-            />
-          </ProgressCircleContainer>
-        </div>
-      </div>
-    )
-  }
-
   if (props.recoveredState) {
     return null
   }
@@ -171,6 +149,28 @@ export default function FileProgress<M extends Meta, B extends Body>(
           <path d="M10.657 2.621l1.414 1.415L8.536 7.57 7.12 6.157z" />
         </svg>
       </ProgressIndicatorButton>
+    )
+  }
+
+  if (props.file.progress.percentage === undefined) {
+    return null
+  }
+
+  // Green checkmark when complete
+  if (props.isUploaded) {
+    return (
+      <div className="uppy-Dashboard-Item-progress">
+        <div className="uppy-Dashboard-Item-progressIndicator">
+          <ProgressCircleContainer>
+            <circle r="15" cx="18" cy="18" fill="#1bb240" />
+            <polygon
+              className="uppy-Dashboard-Item-progressIcon--check"
+              transform="translate(2, 3)"
+              points="14 22.5 7 15.2457065 8.99985857 13.1732815 14 18.3547104 22.9729883 9 25 11.1005634"
+            />
+          </ProgressCircleContainer>
+        </div>
+      </div>
     )
   }
 
