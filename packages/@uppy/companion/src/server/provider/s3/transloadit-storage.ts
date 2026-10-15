@@ -1,5 +1,5 @@
 import { createHmac } from 'node:crypto'
-import got, { type Response } from 'got'
+import got, { type OptionsInit, type Response } from 'got'
 import { z } from 'zod'
 import type { S3ClientOptions } from '../../../schemas/companion.js'
 import logger from '../../logger.js'
@@ -25,6 +25,32 @@ const moveResponseSchema = z.object({
 })
 
 type Credentials = { key: string; secret: string }
+
+const unavailable = () =>
+  new ProviderApiError('Storage is temporarily unavailable', 502)
+
+/**
+ * One POST to Transloadit's API: a single attempt, no redirects, JSON back and
+ * HTTP errors left to the caller. A transport failure reads as an outage, and
+ * the got error is not logged: its request options carry the signature.
+ */
+const callApi = async (
+  apiEndpoint: string,
+  path: string,
+  options: Pick<OptionsInit, 'json' | 'form' | 'headers' | 'timeout'>,
+): Promise<Response<unknown>> => {
+  try {
+    return await got.post<unknown>(new URL(path, apiEndpoint), {
+      ...options,
+      retry: { limit: 0 },
+      followRedirect: false,
+      throwHttpErrors: false,
+      responseType: 'json',
+    })
+  } catch {
+    throw unavailable()
+  }
+}
 
 /** A Workspace's key pair from the static `workspaces` map. */
 const staticCredentials = (
@@ -54,24 +80,15 @@ const fetchCredentials = async (
     .update(`file-library-credentials:v1:${timestamp}:${workspace}`)
     .digest('hex')
   // The endpoint is operator configuration, never a URL from the session or browser.
-  // Do not log got errors: their request options contain the server proof.
-  let response: Response<unknown>
-  try {
-    response = await got.post(
-      new URL('/internal/file-library/credentials', apiEndpoint),
-      {
-        json: { workspace },
-        headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
-        timeout: { request: 5000 },
-        retry: { limit: 0 },
-        followRedirect: false,
-        throwHttpErrors: false,
-        responseType: 'json',
-      },
-    )
-  } catch {
-    throw new ProviderApiError('Storage is temporarily unavailable', 502)
-  }
+  const response = await callApi(
+    apiEndpoint,
+    '/internal/file-library/credentials',
+    {
+      json: { workspace },
+      headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
+      timeout: { request: 5000 },
+    },
+  )
   if (response.statusCode === 403) throw userError('S3_REQUEST_FAILED')
   const credentials = z
     .object({
@@ -80,9 +97,7 @@ const fetchCredentials = async (
       authSecret: z.string().min(1).max(1024),
     })
     .safeParse(response.body)
-  if (response.statusCode !== 200 || !credentials.success) {
-    throw new ProviderApiError('Storage is temporarily unavailable', 502)
-  }
+  if (response.statusCode !== 200 || !credentials.success) throw unavailable()
   return { key: credentials.data.authKey, secret: credentials.data.authSecret }
 }
 
@@ -178,20 +193,11 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
       destination,
     })
     const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
-    const response = await got.post(
-      new URL('/dam/entries/move', native.apiEndpoint),
-      {
-        form: { params, signature },
-        timeout: { request: 30_000 },
-        retry: { limit: 0 },
-        followRedirect: false,
-        throwHttpErrors: false,
-        responseType: 'json',
-      },
-    )
-    if (response.statusCode >= 500) {
-      throw new ProviderApiError('Storage is temporarily unavailable', 502)
-    }
+    const response = await callApi(native.apiEndpoint, '/dam/entries/move', {
+      form: { params, signature },
+      timeout: { request: 30_000 },
+    })
+    if (response.statusCode >= 500) throw unavailable()
     if (response.statusCode !== 200) {
       logger.warn(
         `native Storage move refused: ${response.statusCode}`,

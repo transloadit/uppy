@@ -945,6 +945,13 @@ describe('S3 provider', () => {
       await expect(provider.moveItem(args)).rejects.toEqual(
         userError('S3_REQUEST_FAILED'),
       )
+      // Unreachable: a transport failure is an outage too, never a raw got error.
+      await expect(
+        provider.moveItem({
+          ...args,
+          companion: nativeCompanion('http://127.0.0.1:1'),
+        }),
+      ).rejects.toMatchObject({ name: 'ProviderApiError', statusCode: 502 })
     })
   })
 
