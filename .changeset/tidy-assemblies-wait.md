@@ -2,8 +2,10 @@
 "@uppy/transloadit": patch
 ---
 
-A rejected `assemblyOptions()` now fails the files and allows new uploads, as a failed Assembly creation does. Before, it left `allowNewUpload` off with no error on the files, which stranded a `retryUpload()` or `retryAll()`.
+A rejected `assemblyOptions()` now fails the files and allows new uploads, as a failed Assembly creation does. Before, it left `allowNewUpload` off with no error on the files, which stranded a `retryUpload()` or `retryAll()`. When such a retry fails while another upload is running, that upload keeps its Assembly.
 
-Cancelling an upload while its Assembly options were fetched no longer lets the running preprocessor create an Assembly for it. That Assembly attached to a file added again meanwhile (which has the same id) and was reused by the next upload, whatever folder that one was signed for.
+An upload cancelled while its Assembly options are fetched, its Assembly is created, or its files are reserved (`importFromUploadURLs`) no longer leaves an Assembly behind: it is cancelled on the server, so a file added again meanwhile (it has the same id) cannot attach to it and the next upload cannot reuse it with the cancelled one's options or signature. Removing every file of an upload while it is prepared now ends that upload quietly; before, `upload()` rejected with "All files were canceled after assembly was created".
 
-The same holds for an upload cancelled while its files were reserved (`importFromUploadURLs`), without touching the Assembly of a newer upload. And a failure no longer reopens admission for new files while an upload is still preparing or running: that includes a file failing mid-batch, after which files can be added again once the batch ends rather than at the failure.
+After `cancelAll()`, an upload started before the cancel request returns gets its own Assembly instead of the one being cancelled.
+
+A failure no longer allows new files while another upload is still preparing or running. That includes a file failing mid-batch: files can be added again once its batch ends, not at the failure.
