@@ -24,6 +24,6 @@
   "scripts": {
     "start": "npm-run-all --parallel start:server start:client",
     "start:client": "vite",
-    "start:server": "node server/index.cjs"
+    "start:server": "node server/index.ts"
   }
 }
