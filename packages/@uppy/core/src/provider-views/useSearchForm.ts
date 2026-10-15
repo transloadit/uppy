@@ -34,7 +34,7 @@ export function useSearchForm(onSubmit: () => void): { formId: string } {
     form.addEventListener('submit', submit)
     return () => {
       form.removeEventListener('submit', submit)
-      document.body.removeChild(form)
+      form.remove()
     }
   }, [form, submit])
 

@@ -1,5 +1,7 @@
 // We use locale.ts in all packages.
 // They need to be combined into a single file (en_US.ts).
+// Node strips types when importing `.ts`, so we read `src/` directly: the
+// result doesn't depend on which packages happen to have a (fresh) `lib/`.
 
 import { readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
@@ -14,7 +16,7 @@ const templatePath = path.join(localesPath, 'template.ts')
 const englishLocalePath = path.join(localesPath, 'src', 'en_US.ts')
 
 async function getLocalesAndCombinedLocale() {
-  const locales = await getLocales(`${root}/packages/@uppy/**/lib/locale.js`)
+  const locales = await getLocales(`${root}/packages/@uppy/*/src/locale.ts`)
 
   const combinedLocale = {}
   for (const [, locale] of Object.entries(locales)) {

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/transloadit",
   "description": "The Transloadit plugin can be used to upload files to Transloadit for all kinds of processing, such as transcoding video, resizing images, zipping/unzipping, and more",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -53,7 +53,7 @@
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^4.1.11",
-    "msw": "^2.10.4",
+    "msw": "^3.0.2",
     "playwright": "1.61.1",
     "typescript": "^6.0.3",
     "vitest": "^4.1.11"

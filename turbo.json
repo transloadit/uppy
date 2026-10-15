@@ -1,12 +1,13 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["private/tsconfig/tsconfig*.json"],
+  "noUpdateNotifier": true,
   "tasks": {
     "build": {
       "outputLogs": "new-only",
       "dependsOn": ["^build"],
       "inputs": [
-        "src/**/*.{js,ts,jsx,tsx}",
+        "src/**/*.{js,ts,jsx,tsx,svelte}",
         "package.json",
         "tsconfig.json",
         "tsconfig.build.json"
@@ -19,6 +20,8 @@
       "inputs": [
         "src/**/*.{js,ts,jsx,tsx}",
         "package.json",
+        "tsconfig.json",
+        "tsconfig.build.json",
         "bundle.mjs",
         "build-bundle.mjs"
       ],
@@ -28,12 +31,13 @@
       "outputLogs": "new-only",
       "dependsOn": ["^build:css"],
       "inputs": ["src/**/*.scss"],
-      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+      "outputs": ["lib/**/*.css", "dist/**/*.css", "dist/**/*.css.map"]
     },
     "build:css": {
       "outputLogs": "new-only",
+      "dependsOn": ["^build:css"],
       "inputs": ["src/**/*.scss"],
-      "outputs": ["lib/**/*.css", "dist/**/*.css"]
+      "outputs": ["lib/**/*.css", "dist/**/*.css", "dist/**/*.css.map"]
     },
     "typecheck": {
       "outputLogs": "new-only",

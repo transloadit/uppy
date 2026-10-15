@@ -1,7 +1,7 @@
 {
   "name": "@uppy/audio",
   "description": "Uppy plugin that records audio using the device’s microphone.",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "license": "MIT",
   "style": "dist/style.min.css",
   "keywords": [
@@ -61,7 +61,7 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano --map -o dist/style.min.css",
     "typecheck": "tsc --build",
     "test": "vitest run --silent='passed-only'"
   }

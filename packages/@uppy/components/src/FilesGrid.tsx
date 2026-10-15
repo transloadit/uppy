@@ -32,8 +32,8 @@ export default function FilesGrid(props: FilesGridProps) {
 
   useEffect(() => {
     const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-      prev,
-      next,
+      _prev,
+      _next,
       patch,
     ) => {
       if (patch?.files) {

@@ -1,6 +1,9 @@
 services:
   minio:
-    image: quay.io/minio/minio:RELEASE.2025-07-23T15-54-02Z-cpuv1
+    # quay.io/minio/minio (and minio/minio on Docker Hub) are no longer
+    # publicly pullable. pgsty/minio is a community build that bundles both
+    # `minio` and `mc`; pinned by digest since it's a third-party image.
+    image: pgsty/minio:RELEASE.2026-08-04T00-00-00Z@sha256:b6bfe7239bfc83fb90d31612d9704d86039dd714f7904b3f1ad68f211e602372
     ports:
       - 9002:9002
       - 9003:9003

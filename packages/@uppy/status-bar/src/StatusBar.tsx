@@ -162,7 +162,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     }) as () => undefined)
   }
 
-  render(state: State<M, B>): ComponentChild {
+  override render(state: State<M, B>): ComponentChild {
     const {
       capabilities,
       files,
@@ -255,7 +255,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  onMount(): void {
+  override onMount(): void {
     // Set the text direction if the page has not defined one.
     const element = this.el!
     const direction = getTextDirection(element)
@@ -285,7 +285,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
     this.#previousUploadedBytes = 0
   }
 
-  install(): void {
+  override install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
@@ -300,7 +300,7 @@ export default class StatusBar<M extends Meta, B extends Body> extends UIPlugin<
       .reduce((pv, file) => pv + (file.progress.bytesUploaded as number), 0)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.unmount()
     this.uppy.off('upload', this.#onUploadStart)
   }

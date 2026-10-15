@@ -260,8 +260,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   private dashboardIsDisabled!: boolean
 
-  private savedScrollPosition!: number
-
   private savedActiveElement!: HTMLElement
 
   private resizeObserver!: ResizeObserver
@@ -308,7 +306,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     })
   }
 
-  addTarget = (plugin: UnknownPlugin<M, B>): HTMLElement | null => {
+  override addTarget = (plugin: UnknownPlugin<M, B>): HTMLElement | null => {
     const callerPluginId = plugin.id || plugin.constructor.name
     const callerPluginName =
       (plugin as any as { title: string }).title || callerPluginId
@@ -437,8 +435,6 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
 
   openModal = (): Promise<void> => {
     const { promise, resolve } = createPromise<void>()
-    // save scroll position
-    this.savedScrollPosition = window.pageYOffset
     // save active element, so we can restore focus when modal is closed
     this.savedActiveElement = document.activeElement as HTMLElement
 
@@ -1085,7 +1081,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  readonly afterUpdate = (): void => {
+  override readonly afterUpdate = (): void => {
     if (this.opts.disabled && !this.dashboardIsDisabled) {
       this.disableInteractiveElements(true)
       return
@@ -1144,7 +1140,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       .map(this.#attachRenderFunctionToTarget)
   }
 
-  render = (state: State<M, B>) => {
+  override render = (state: State<M, B>) => {
     const pluginState = this.getPluginState()
     const { files, capabilities, allowNewUpload } = state
     const {
@@ -1328,7 +1324,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
   }
 
-  setOptions(opts: Partial<DashboardOptions<M, B>>) {
+  override setOptions(opts: Partial<DashboardOptions<M, B>>) {
     super.setOptions(opts)
     this.uppy
       .getPlugin(this.#getThumbnailGeneratorId())
@@ -1339,7 +1335,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     return `${this.id}:ThumbnailGenerator`
   }
 
-  install = (): void => {
+  override install = (): void => {
     // Set default state for Dashboard
     this.setPluginState({
       isHidden: true,
@@ -1409,7 +1405,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     this.initEvents()
   }
 
-  uninstall = (): void => {
+  override uninstall = (): void => {
     if (!this.opts.disableThumbnailGenerator) {
       const thumbnail = this.uppy.getPlugin(`${this.id}:ThumbnailGenerator`)
       if (thumbnail) this.uppy.removePlugin(thumbnail)

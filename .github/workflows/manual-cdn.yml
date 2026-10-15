@@ -37,15 +37,9 @@ jobs:
       - name: Install upload-to-cdn dependencies
         if: ${{ inputs.version }}
         run: corepack yarn workspaces focus uppy
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
       - name: Install all dependencies
         if: ${{ !inputs.version }}
         run: corepack yarn install --immutable
-        env:
-          # https://docs.cypress.io/guides/references/advanced-installation#Skipping-installation
-          CYPRESS_INSTALL_BINARY: 0
       - name: Build before publishing
         if: ${{ !inputs.version }}
         run: corepack yarn run build

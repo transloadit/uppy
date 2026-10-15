@@ -20,7 +20,6 @@ import {
   nockZoomRevoke,
   expects as zoomExpects,
 } from './fixtures/zoom.js'
-import mockOauthState from './mockoauthstate.js'
 import { getServer } from './mockserver.js'
 
 const { localZoomKey, localZoomSecret } = zoomExpects
@@ -28,13 +27,10 @@ const { localZoomKey, localZoomSecret } = zoomExpects
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
 
-mockOauthState()
-
-vi.mock('../../dist/server/helpers/request.js', () => {
-  return {
-    getURLMeta: () => Promise.resolve({ size: 758051 }),
-  }
-})
+vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
+  ...(await vi.importActual('../dist/server/helpers/oauth-state.js')),
+  encodeState: () => 'some-cool-nice-encrytpion',
+}))
 
 const getServerWithEnv = async () =>
   getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
@@ -105,21 +101,20 @@ describe('list provider files', () => {
     const providerFixture = fixtureProviders[providerName]?.expects ?? {}
     const listPath =
       'listPath' in providerFixture ? providerFixture.listPath : ''
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .get(`/${providerName}/list/${listPath}`)
       .set('uppy-auth-token', token)
       .expect(200)
-      .then((res) => {
-        expect(res.header['i-am']).toBe('http://localhost:3020')
 
-        return {
-          username: res.body.username,
-          items: Array.isArray(res.body.items)
-            ? res.body.items.filter(isRecord)
-            : [],
-          providerFixture,
-        }
-      })
+    expect(res.header['i-am']).toBe('http://localhost:3020')
+
+    return {
+      username: res.body.username,
+      items: Array.isArray(res.body.items)
+        ? res.body.items.filter(isRecord)
+        : [],
+      providerFixture,
+    }
   }
 
   function expect1({

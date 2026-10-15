@@ -33,7 +33,6 @@
     }
   ],
   "compilerOptions": {
-    "exactOptionalPropertyTypes": false,
-    "noImplicitOverride": false
+    "exactOptionalPropertyTypes": false
   }
 }

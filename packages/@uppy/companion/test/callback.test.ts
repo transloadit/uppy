@@ -1,15 +1,10 @@
 import request from 'supertest'
-import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import * as tokenService from '../dist/server/helpers/jwt.js'
 
 const secret = 'secret'
 
-beforeEach(() => {
-  vi.mock('express-prom-bundle')
-
-  vi.resetModules()
-  vi.clearAllMocks()
-})
+vi.mock('express-prom-bundle')
 
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', async () => {
@@ -53,7 +48,7 @@ describe('test authentication callback', () => {
     const callbackToken = 'auth-callback-token'
 
     const oauthState = await import('../dist/server/helpers/oauth-state.js')
-    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((_state, key) => {
       if (key === 'authCallbackToken') return callbackToken
 
       return 'http://localhost:3020'
@@ -85,7 +80,7 @@ describe('test authentication callback', () => {
 
   test('the token gets sent via legacy html mechanism', async () => {
     const oauthState = await import('../dist/server/helpers/oauth-state.js')
-    vi.spyOn(oauthState, 'getFromState').mockImplementation((state, key) => {
+    vi.spyOn(oauthState, 'getFromState').mockImplementation((_state, key) => {
       if (key === 'authCallbackToken') return undefined
 
       return 'http://localhost:3020'

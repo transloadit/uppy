@@ -83,9 +83,6 @@ export const setDefaultEnv = () => updateEnv(defaultEnv)
 
 export const grantToken = 'fake token'
 
-// companion stores certain global state, so the user needs to reset modules for each test
-// todo rewrite companion to not use global state
-// https://github.com/transloadit/uppy/issues/3284
 export const getServerWithEmitter = async (
   extraEnv: Record<string, string | number | undefined> = {},
 ) => {
@@ -103,7 +100,7 @@ export const getServerWithEmitter = async (
   authServer.use(
     session({ secret: 'grant', resave: true, saveUninitialized: true }),
   )
-  authServer.all('{*splat}/callback', (req, res, next) => {
+  authServer.all('{*splat}/callback', (req, _res, next) => {
     if (req.session) {
       req.session['grant'] = {
         response: { access_token: grantToken },
@@ -113,7 +110,7 @@ export const getServerWithEmitter = async (
   })
   authServer.all(
     ['{*splat}/send-token', '{*splat}/redirect'],
-    (req, res, next) => {
+    (req, _res, next) => {
       const state =
         typeof req.query['state'] === 'string' ? req.query['state'] : null
       if (req.session) {

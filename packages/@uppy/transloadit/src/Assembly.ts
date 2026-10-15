@@ -2,7 +2,7 @@ import type {
   RateLimitedQueue,
   WrapPromiseFunctionType,
 } from '@uppy/core/utils'
-import { fetchWithNetworkError, NetworkError } from '@uppy/core/utils'
+import { fetchWithNetworkError, NetworkError, toError } from '@uppy/core/utils'
 import Emitter from 'component-emitter'
 import {
   type AssemblyFile,
@@ -223,7 +223,7 @@ class TransloaditAssembly extends Emitter {
         this.status = status
       }
     } catch (err) {
-      this.#onError(err)
+      this.#onError(toError(err))
     }
   }
 

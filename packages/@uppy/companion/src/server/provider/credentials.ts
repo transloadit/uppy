@@ -190,7 +190,9 @@ export const getCredentialsOverrideMiddleware = (
       res.locals['grant'] = { dynamic }
 
       const gateway = credentials.transloadit_gateway
-      if (typeof gateway === 'string') {
+      // The Transloadit console stores an unset gateway as an empty string, which
+      // must not be treated as a base URL (`new URL(path, '')` throws).
+      if (typeof gateway === 'string' && gateway.trim() !== '') {
         const redirectPath = getRedirectPath(providerName)
         const fullRedirectPath = getURLBuilder(companionOptions)(
           redirectPath,

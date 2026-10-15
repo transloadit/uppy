@@ -1,13 +1,16 @@
 import crypto from 'node:crypto'
-import type { Readable } from 'node:stream'
 import got from 'got'
 import { isRecord } from '../../helpers/type-guards.js'
 import { HttpError, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
 import Provider, {
-  type CompanionLike,
+  type ProviderDownloadOptions,
+  type ProviderDownloadResponse,
+  type ProviderListOptions,
   type ProviderListResponse,
-  type Query,
+  type ProviderLogoutOptions,
+  type ProviderLogoutResponse,
+  type ProviderThumbnailResponse,
 } from '../Provider.js'
 import { withProviderErrorHandling } from '../providerErrors.js'
 import { adaptData, type FacebookListResponse, sortImages } from './adapter.js'
@@ -126,12 +129,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     providerUserSession: { accessToken: token },
     query,
     companion,
-  }: {
-    directory?: string | undefined
-    providerUserSession: FacebookUserSession
-    query?: Query | undefined
-    companion: CompanionLike
-  }): Promise<ProviderListResponse> {
+  }: ProviderListOptions<FacebookUserSession>): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.facebook.list.error', async () => {
       const qs: Record<string, string> = {
         fields: 'name,cover_photo,created_time,type',
@@ -185,11 +183,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     companion,
     id,
     providerUserSession: { accessToken: token },
-  }: {
-    companion: CompanionLike
-    id: string
-    providerUserSession: FacebookUserSession
-  }): Promise<{ stream: Readable; size: number | undefined }> {
+  }: ProviderDownloadOptions<FacebookUserSession>): Promise<ProviderDownloadResponse> {
     return this.#withErrorHandling(
       'provider.facebook.download.error',
       async () => {
@@ -206,10 +200,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<{
-    stream: Readable
-    contentType: string
-  }> {
+  override async thumbnail(): Promise<ProviderThumbnailResponse> {
     // not implementing this because a public thumbnail from facebook will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -221,10 +212,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
   override async logout({
     companion,
     providerUserSession: { accessToken: token },
-  }: {
-    companion: CompanionLike
-    providerUserSession: FacebookUserSession
-  }): Promise<{ revoked: true }> {
+  }: ProviderLogoutOptions<FacebookUserSession>): Promise<ProviderLogoutResponse> {
     return this.#withErrorHandling(
       'provider.facebook.logout.error',
       async () => {

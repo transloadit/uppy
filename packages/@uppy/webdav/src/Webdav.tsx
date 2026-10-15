@@ -25,7 +25,7 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   M,
   B
 > {
-  async login({
+  override async login({
     authFormData,
     uppyVersions = '',
     signal,
@@ -37,7 +37,7 @@ class WebdavSimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     return this.loginSimpleAuth({ uppyVersions, authFormData, signal })
   }
 
-  async logout<ResBody>(): Promise<ResBody> {
+  override async logout<ResBody>(): Promise<ResBody> {
     await this.removeAuthToken()
     return {
       ok: true,
@@ -132,7 +132,7 @@ export default class Webdav<M extends Meta, B extends Body>
     this.render = this.render.bind(this)
   }
 
-  install() {
+  override install() {
     this.view = new ProviderViews(this, {
       provider: this.provider,
       viewType: 'list',
@@ -150,12 +150,12 @@ export default class Webdav<M extends Meta, B extends Body>
     }
   }
 
-  uninstall() {
+  override uninstall() {
     this.view.tearDown()
     this.unmount()
   }
 
-  render(state: unknown): ComponentChild {
+  override render(state: unknown): ComponentChild {
     return this.view.render(state)
   }
 }
