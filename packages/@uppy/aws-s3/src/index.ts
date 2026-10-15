@@ -129,7 +129,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3Client
-  #queue!: TaskQueue
+  #queue = new TaskQueue({ concurrency: this.opts.limit })
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -140,8 +140,6 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
 
   override install(): void {
     this.#setResumableUploadsCapability(true)
-    // Create the queue before anything that can throw, so `uninstall()` can always clear it.
-    this.#queue = new TaskQueue({ concurrency: this.opts.limit })
     this.#initS3Client()
     this.uppy.addUploader(this.#upload)
     this.uppy.on('cancel-all', this.#handleCancelAll)
