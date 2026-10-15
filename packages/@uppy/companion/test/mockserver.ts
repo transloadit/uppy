@@ -83,9 +83,6 @@ export const setDefaultEnv = () => updateEnv(defaultEnv)
 
 export const grantToken = 'fake token'
 
-// companion stores certain global state, so the user needs to reset modules for each test
-// todo rewrite companion to not use global state
-// https://github.com/transloadit/uppy/issues/3284
 export const getServerWithEmitter = async (
   extraEnv: Record<string, string | number | undefined> = {},
 ) => {

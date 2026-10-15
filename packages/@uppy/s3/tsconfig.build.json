@@ -11,6 +11,9 @@
       "path": "../../../private/s3-mock-companion/tsconfig.build.json"
     },
     {
+      "path": "../components/tsconfig.build.json"
+    },
+    {
       "path": "../core/tsconfig.build.json"
     },
     {
