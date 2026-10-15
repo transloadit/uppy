@@ -806,6 +806,126 @@ describe('Transloadit', () => {
     newer.close()
   })
 
+  it('cancels an Assembly whose upload is cancelled as the Assembly is announced', async () => {
+    serveAssemblies()
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    const cancelled = vi.fn()
+    uppy.on('transloadit:assembly-cancelled', cancelled)
+    // An app that cancels as soon as it hears of the Assembly.
+    uppy.once('transloadit:assembly-created', () => uppy.cancelAll())
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+
+    await uppy.upload()
+
+    expect(plugin.client.cancelAssembly).toHaveBeenCalledOnce()
+    expect(cancelled.mock.calls[0]?.[0].assembly_id).toBe('A1')
+    expect(plugin.assembly).toBeUndefined()
+    plugin.assembly?.close()
+  })
+
+  it("keeps a running retry's Assembly when an upload's options fail", async () => {
+    serveAssemblies()
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('R1'))
+    // The failure is reported to Transloadit; not under test here.
+    plugin.client.submitError = vi.fn(async () => {})
+    const uploading = Promise.withResolvers()
+    uppy.addUploader(() => uploading.promise)
+    uppy.addFile({ source: 'test', name: 'new.txt', data: new Blob(['new']) })
+    const failed = uppy.addFile({
+      source: 'test',
+      name: 'failed.txt',
+      data: new Blob(['failed']),
+    })
+    // Uploaded once before, so upload() leaves it out.
+    uppy.setFileState(failed, {
+      progress: { ...uppy.getFile(failed).progress, uploadStarted: 1 },
+    })
+
+    const upload = uppy.upload()
+    await vi.waitFor(() => expect(signer.calls).toBe(1))
+    uppy.setFileState(failed, { error: 'earlier failure' })
+    const retry = uppy.retryUpload(failed)
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+    signings[1].resolve({ params: { auth: { key: 'k' }, template_id: 't' } })
+    await vi.waitFor(() =>
+      expect(plugin.assembly?.status.assembly_id).toBe('R1'),
+    )
+    const running = plugin.assembly
+
+    // upload() fails, and core reports that again once it drops the upload.
+    signings[0].reject(new Error('signing unavailable'))
+    await expect(upload).rejects.toThrow('signing unavailable')
+
+    expect(plugin.assembly).toBe(running)
+    expect(running.closed).toBe(false)
+    expect(uppy.getState().allowNewUpload).toBe(false)
+
+    uppy.cancelAll()
+    uploading.resolve()
+    await retry.catch(() => {})
+    running.close()
+  })
+
+  it('cancels the Assembly of an upload whose reservation fails after it was cancelled', async () => {
+    const uppy = new Core()
+    uppy.use(Transloadit, {
+      importFromUploadURLs: true,
+      assemblyOptions: { params: { auth: { key: 'k' }, template_id: 't' } },
+    })
+    const plugin = uppy.getPlugin('Transloadit')
+    plugin.client.createAssembly = vi.fn(async () => assemblyStatus('A1'))
+    const reserving = Promise.withResolvers()
+    plugin.client.reserveFile = vi.fn(() => reserving.promise)
+    plugin.client.cancelAssembly = vi.fn(async () => {})
+    uppy.addFile({ source: 'test', name: 'a.txt', data: new Blob(['a']) })
+
+    const upload = uppy.upload()
+    await vi.waitFor(() =>
+      expect(plugin.client.reserveFile).toHaveBeenCalledOnce(),
+    )
+    uppy.cancelAll()
+    reserving.reject(new Error('reservation failed'))
+    await upload
+
+    expect(plugin.client.cancelAssembly).toHaveBeenCalledOnce()
+    expect(plugin.client.cancelAssembly.mock.calls[0][0].assembly_id).toBe('A1')
+    expect(plugin.assembly).toBeUndefined()
+  })
+
+  it('allows new uploads when two retries fail to sign at once', async () => {
+    const signer = deferredSignings(2)
+    const { signings } = signer
+    const uppy = new Core()
+    uppy.use(Transloadit, { assemblyOptions: signer.assemblyOptions })
+    uppy.getPlugin('Transloadit').client.createAssembly = vi.fn()
+    const ids = ['a.txt', 'b.txt'].map((name) => {
+      const id = uppy.addFile({ source: 'test', name, data: new Blob([name]) })
+      uppy.setFileState(id, { error: 'earlier failure' })
+      return id
+    })
+    const retries = ids.map((id) => uppy.retryUpload(id))
+    await vi.waitFor(() => expect(signer.calls).toBe(2))
+    expect(uppy.getState().allowNewUpload).toBe(false)
+
+    // Both fail in the same turn: each sees the other still running.
+    signings[0].reject(new Error('signing unavailable'))
+    signings[1].reject(new Error('signing unavailable'))
+    await Promise.allSettled(retries)
+
+    expect(uppy.getState().allowNewUpload).toBe(true)
+  })
+
   it("allows new uploads once an upload's only file is removed while its options are fetched", async () => {
     const signing = Promise.withResolvers()
     const uppy = new Core()
