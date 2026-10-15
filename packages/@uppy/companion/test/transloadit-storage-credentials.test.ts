@@ -3,18 +3,21 @@ import { createServer } from 'node:http'
 import { expect, onTestFinished, test } from 'vitest'
 import { defaultOptions } from '../src/config/companion.js'
 import type { TransloaditStorageProviderOptions } from '../src/schemas/companion.js'
+import { userError } from '../src/server/provider/errorCodes.js'
 import type { CompanionLike } from '../src/server/provider/Provider.js'
+import { parseTransloaditStorageProviderOptions } from '../src/server/provider/s3/config.js'
 import TransloaditStorageProvider from '../src/server/provider/s3/transloadit-storage.js'
-import { claims, mint } from './fixtures/s3.js'
+import { claims, type GrantClaims, mint } from './fixtures/s3.js'
 
 const secret = 'local-test-server-key-not-a-browser-capability'
 const workspace = 'a'.repeat(32)
 
 async function fixture(
-  options: { wrongWorkspace?: boolean; status?: number } = {},
+  options: { wrongWorkspace?: boolean; status?: number; body?: unknown } = {},
 ) {
   const lookups: string[] = []
   const s3Keys: string[] = []
+  const moves: URLSearchParams[] = []
   const server = createServer(async (request, response) => {
     if (request.url === '/internal/file-library/credentials') {
       let body = ''
@@ -33,12 +36,24 @@ async function fixture(
         'content-type': 'application/json',
       })
       response.end(
-        JSON.stringify({
-          workspace: options.wrongWorkspace ? 'c'.repeat(32) : requested,
-          authKey: `key-${requested}`,
-          authSecret: 'local-workspace-secret',
-        }),
+        JSON.stringify(
+          options.body ?? {
+            workspace: options.wrongWorkspace ? 'c'.repeat(32) : requested,
+            authKey: `key-${requested}`,
+            authSecret: 'local-workspace-secret',
+          },
+        ),
       )
+      return
+    }
+    if (request.url === '/dam/entries/move') {
+      let body = ''
+      for await (const chunk of request) body += chunk
+      const form = new URLSearchParams(body)
+      moves.push(form)
+      const { destination } = JSON.parse(form.get('params') ?? '{}')
+      response.writeHead(200, { 'content-type': 'application/json' })
+      response.end(JSON.stringify({ ok: 'DAM_ENTRY_MOVED', path: destination }))
       return
     }
     s3Keys.push(request.headers.authorization ?? '')
@@ -84,31 +99,26 @@ async function fixture(
     server.closeAllConnections()
     await new Promise<void>((resolve) => server.close(() => resolve()))
   })
-  return {
-    companion,
-    lookups,
-    s3Keys,
-    provider: new TransloaditStorageProvider({ allowLocalUrls: true }),
-  }
+  const provider = new TransloaditStorageProvider({ allowLocalUrls: true })
+  const grantSession = (overrides: GrantClaims = {}) =>
+    provider.simpleAuth({
+      companion,
+      requestBody: {
+        form: {
+          grant: mint(claims({ bucket: workspace, ...overrides }), secret),
+        },
+      },
+    })
+  return { companion, lookups, s3Keys, moves, provider, grantSession }
 }
 
 test('new Workspaces need no credential map or restart and get separate S3 signing keys', async () => {
-  const { provider, companion, lookups, s3Keys } = await fixture()
-  const session = await provider.simpleAuth({
-    companion,
-    requestBody: {
-      form: { grant: mint(claims({ bucket: workspace }), secret) },
-    },
-  })
+  const { provider, companion, lookups, s3Keys, grantSession } = await fixture()
+  const session = await grantSession()
   expect(JSON.stringify(session)).not.toContain(secret)
   expect(JSON.stringify(session)).not.toContain('local-workspace-secret')
   await provider.list({ companion, providerUserSession: session })
-  const other = await provider.simpleAuth({
-    companion,
-    requestBody: {
-      form: { grant: mint(claims({ bucket: 'b'.repeat(32) }), secret) },
-    },
-  })
+  const other = await grantSession({ bucket: 'b'.repeat(32) })
   await provider.list({ companion, providerUserSession: other })
   expect(new Set(lookups)).toEqual(new Set([workspace, 'b'.repeat(32)]))
   expect(s3Keys).toEqual([
@@ -133,13 +143,8 @@ test('does not resolve credentials for a forged grant', async () => {
 })
 
 test('reuses unexpired credentials across S3 operations without repeated broker calls', async () => {
-  const { provider, companion, lookups, s3Keys } = await fixture()
-  const session = await provider.simpleAuth({
-    companion,
-    requestBody: {
-      form: { grant: mint(claims({ bucket: workspace }), secret) },
-    },
-  })
+  const { provider, companion, lookups, s3Keys, grantSession } = await fixture()
+  const session = await grantSession()
   await provider.list({ companion, providerUserSession: session })
   await provider.list({ companion, providerUserSession: session })
   expect(s3Keys).toHaveLength(2)
@@ -150,18 +155,56 @@ test.each([
   { wrongWorkspace: true },
   { status: 403 },
   { status: 500 },
+  { body: { workspace } },
 ])('refuses credential-service denials or wrong Workspace without S3 fallback (%j)', async (options) => {
-  const { provider, companion, s3Keys } = await fixture(options)
-  const session = await provider.simpleAuth({
-    companion,
-    requestBody: {
-      form: {
-        grant: mint(claims({ bucket: workspace }), secret),
-      },
-    },
-  })
+  const { provider, companion, s3Keys, grantSession } = await fixture(options)
+  const session = await grantSession()
   await expect(
     provider.list({ companion, providerUserSession: session }),
   ).rejects.toThrow()
   expect(s3Keys).toEqual([])
+})
+
+test('refuses a Workspace that is not an ID without asking the resolver', async () => {
+  const { provider, companion, lookups, s3Keys, grantSession } = await fixture()
+  const session = await grantSession({ bucket: 'my-workspace' })
+  await expect(
+    provider.list({ companion, providerUserSession: session }),
+  ).rejects.toEqual(userError('S3_INVALID_GRANT'))
+  expect(lookups).toEqual([])
+  expect(s3Keys).toEqual([])
+})
+
+test('signs native moves with the resolved Workspace key pair', async () => {
+  const { provider, companion, moves, grantSession } = await fixture()
+  const session = await grantSession({ scopes: ['read', 'write'] })
+  await provider.moveItem({
+    companion,
+    providerUserSession: session,
+    id: 'tenant-1/a.jpg',
+    destination: 'tenant-1/b.jpg',
+  })
+  const params = moves[0]?.get('params') ?? ''
+  expect(JSON.parse(params)).toMatchObject({
+    auth: { key: `key-${workspace}` },
+  })
+  expect(moves[0]?.get('signature')).toBe(
+    `sha256:${createHmac('sha256', 'local-workspace-secret').update(params).digest('hex')}`,
+  )
+})
+
+test.each([
+  {
+    workspaces: { [workspace]: { key: 'k', secret: 's' } },
+    credentialsSecret: secret,
+  },
+  {},
+])('takes exactly one of workspaces or credentialsSecret (%j)', (credentials) => {
+  expect(() =>
+    parseTransloaditStorageProviderOptions({
+      grantSecret: secret,
+      apiEndpoint: 'https://api2.transloadit.com',
+      ...credentials,
+    }),
+  ).toThrow('set exactly one of workspaces or credentialsSecret')
 })

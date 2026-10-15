@@ -24,54 +24,15 @@ const moveResponseSchema = z.object({
   path: z.string().min(1),
 })
 
-/** The key pair Companion holds for a Workspace. */
-const workspaceCredentials = async (
-  native: NativeStorage,
+type Credentials = { key: string; secret: string }
+
+/** A Workspace's key pair from the static `workspaces` map. */
+const staticCredentials = (
+  workspaces: Record<string, Credentials>,
   workspace: string,
-): Promise<{ key: string; secret: string }> => {
-  if (native.credentialsSecret != null) {
-    if (!/^[a-f0-9]{32}$/.test(workspace)) throw userError('S3_INVALID_GRANT')
-    const timestamp = Math.floor(Date.now() / 1000)
-    const signature = createHmac('sha256', native.credentialsSecret)
-      .update(`file-library-credentials:v1:${timestamp}:${workspace}`)
-      .digest('hex')
-    // The endpoint is operator configuration, never a URL from the session or browser.
-    // Do not log got errors: their request options contain the server proof.
-    let response: Response<unknown>
-    try {
-      response = await got.post(
-        new URL('/internal/file-library/credentials', native.apiEndpoint),
-        {
-          json: { workspace },
-          headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
-          timeout: { request: 5000 },
-          retry: { limit: 0 },
-          followRedirect: false,
-          throwHttpErrors: false,
-          responseType: 'json',
-        },
-      )
-    } catch {
-      throw new ProviderApiError('Storage is temporarily unavailable', 502)
-    }
-    if (response.statusCode === 403) throw userError('S3_REQUEST_FAILED')
-    const credentials = z
-      .object({
-        workspace: z.literal(workspace),
-        authKey: z.string().min(1).max(256),
-        authSecret: z.string().min(1).max(1024),
-      })
-      .safeParse(response.body)
-    if (response.statusCode !== 200 || !credentials.success) {
-      throw new ProviderApiError('Storage is temporarily unavailable', 502)
-    }
-    return {
-      key: credentials.data.authKey,
-      secret: credentials.data.authSecret,
-    }
-  }
-  const credentials = Object.hasOwn(native.workspaces, workspace)
-    ? native.workspaces[workspace]
+): Credentials => {
+  const credentials = Object.hasOwn(workspaces, workspace)
+    ? workspaces[workspace]
     : undefined
   if (credentials == null) {
     throw new S3ConfigError(
@@ -80,6 +41,59 @@ const workspaceCredentials = async (
   }
   return credentials
 }
+
+/** A Workspace's key pair from API2's credential resolver. */
+const fetchCredentials = async (
+  apiEndpoint: string,
+  credentialsSecret: string,
+  workspace: string,
+): Promise<Credentials> => {
+  if (!/^[a-f0-9]{32}$/.test(workspace)) throw userError('S3_INVALID_GRANT')
+  const timestamp = Math.floor(Date.now() / 1000)
+  const signature = createHmac('sha256', credentialsSecret)
+    .update(`file-library-credentials:v1:${timestamp}:${workspace}`)
+    .digest('hex')
+  // The endpoint is operator configuration, never a URL from the session or browser.
+  // Do not log got errors: their request options contain the server proof.
+  let response: Response<unknown>
+  try {
+    response = await got.post(
+      new URL('/internal/file-library/credentials', apiEndpoint),
+      {
+        json: { workspace },
+        headers: { authorization: `FileLibrary ${timestamp}:${signature}` },
+        timeout: { request: 5000 },
+        retry: { limit: 0 },
+        followRedirect: false,
+        throwHttpErrors: false,
+        responseType: 'json',
+      },
+    )
+  } catch {
+    throw new ProviderApiError('Storage is temporarily unavailable', 502)
+  }
+  if (response.statusCode === 403) throw userError('S3_REQUEST_FAILED')
+  const credentials = z
+    .object({
+      workspace: z.literal(workspace),
+      authKey: z.string().min(1).max(256),
+      authSecret: z.string().min(1).max(1024),
+    })
+    .safeParse(response.body)
+  if (response.statusCode !== 200 || !credentials.success) {
+    throw new ProviderApiError('Storage is temporarily unavailable', 502)
+  }
+  return { key: credentials.data.authKey, secret: credentials.data.authSecret }
+}
+
+/** The key pair Companion holds for, or resolves at runtime for, a Workspace. */
+const workspaceCredentials = async (
+  native: NativeStorage,
+  workspace: string,
+): Promise<Credentials> =>
+  native.credentialsSecret != null
+    ? fetchCredentials(native.apiEndpoint, native.credentialsSecret, workspace)
+    : staticCredentials(native.workspaces, workspace)
 
 /**
  * Transloadit Storage: the S3 provider on Storage's S3-compatible endpoint,
@@ -134,12 +148,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
         },
       }
     }
-    const credentials = Object.hasOwn(config.native.workspaces, bucket)
-      ? config.native.workspaces[bucket]
-      : undefined
-    if (!credentials)
-      throw new S3ConfigError(`No credentials for Workspace "${bucket}"`)
-    const { key, secret } = credentials
+    const { key, secret } = staticCredentials(config.native.workspaces, bucket)
     return {
       cacheKey: bucket,
       clientOptions: withOwnCredentials({

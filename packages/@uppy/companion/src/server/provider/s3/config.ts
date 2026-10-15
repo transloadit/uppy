@@ -136,22 +136,20 @@ const transloaditStorageProviderOptionsSchema = z
       return z.NEVER
     }
     const { apiEndpoint, workspaces, credentialsSecret } = own
-    if ((workspaces == null) === (credentialsSecret == null)) {
+    const native: NativeStorage | undefined =
+      credentialsSecret != null
+        ? { apiEndpoint, credentialsSecret }
+        : workspaces != null
+          ? { apiEndpoint, workspaces }
+          : undefined
+    if (native == null || (workspaces != null && credentialsSecret != null)) {
       ctx.addIssue({
         code: 'custom',
         message: 'set exactly one of workspaces or credentialsSecret',
       })
       return z.NEVER
     }
-    if (credentialsSecret != null) {
-      return {
-        mode: 'grant',
-        keys: own,
-        native: { apiEndpoint, credentialsSecret },
-      }
-    }
-    if (workspaces == null) return z.NEVER
-    return { mode: 'grant', keys: own, native: { apiEndpoint, workspaces } }
+    return { mode: 'grant', keys: own, native }
   })
 
 function parseOrThrow<T>(
