@@ -48,6 +48,7 @@
   "devDependencies": {
     "@uppy-dev/s3-mock-companion": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
+    "@uppy/components": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
     "@vitest/browser-playwright": "^4.1.11",
