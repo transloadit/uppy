@@ -521,19 +521,15 @@ describe('src/Core', () => {
     expect(Object.keys(core.getState().files).length).toEqual(1)
   })
 
-  it('should destroy itself when disposed with `using`', () => {
-    const core = new Core()
-    const destroy = vi.spyOn(core, 'destroy')
-
-    {
-      using _core = core
-      expect(destroy).not.toHaveBeenCalled()
-    }
-
-    expect(destroy).toHaveBeenCalledOnce()
-  })
-
-  it('should close, reset and uninstall when the destroy method is called', () => {
+  it.each([
+    ['the destroy method is called', (core: Core) => core.destroy()],
+    [
+      'it is disposed with `using`',
+      (core: Core) => {
+        using _core = core
+      },
+    ],
+  ])('should close, reset and uninstall when %s', (_, teardown) => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
     const core = new Core({
       store: DeepFrozenStore(),
@@ -548,7 +544,7 @@ describe('src/Core', () => {
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
 
-    core.destroy()
+    teardown(core)
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
       undefined,
