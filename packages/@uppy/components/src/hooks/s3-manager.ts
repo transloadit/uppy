@@ -108,7 +108,7 @@ type StoragePlugin = UnknownProviderPlugin<any, any> & {
 /**
  * @experimental See `S3ManagerSnapshot`. Controllers of the same plugin share
  * its state (open folder, selection): each one's mount opens its own
- * `initialFolderKey`.
+ * `initialFolderKey`, after a move or bulk change that is running ends.
  */
 export function createS3ManagerController(
   uppy: Uppy<any, any>,
@@ -125,13 +125,31 @@ export function createS3ManagerController(
   const view = plugin.view as ProviderViews<any, any>
   const subscribers = new Subscribers()
   let didFirstRender = false
+  // The walk to `initialFolderKey`, put off while an operation runs.
+  let walkPending = false
+
+  // Logs in when needed and lists the folder without a rendered panel.
+  const walk = () => {
+    plugin.openFolderPath(initialFolderKey).catch((err: unknown) => {
+      uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
+    })
+  }
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     prev,
     next,
   ) => {
     // `setPluginState` puts every plugin in the patch: compare ours instead.
-    if (prev.plugins[pluginId] !== next.plugins[pluginId]) subscribers.emit()
+    if (prev.plugins[pluginId] === next.plugins[pluginId]) return
+    if (walkPending && !view.canCancelOperation) {
+      // An action's follow-up refresh starts before the walk's first listing,
+      // which then aborts it (the walk relists anyway). An action that awaits
+      // more after its operation could start that refresh later and abort the
+      // walk instead; serialising listings in ProviderView would close that.
+      walkPending = false
+      walk()
+    }
+    subscribers.emit()
   }
 
   /** `command`, unless a cancellable operation runs: a request now would abort it. */
@@ -156,18 +174,16 @@ export function createS3ManagerController(
     bulkActions: view.opts.bulkActions ?? [],
   })
 
-  const openPath = unlessBusy(
-    (key: string | null) => plugin.openFolderPath(key),
-    false,
-  )
-
   // Cached so the reference stays stable while nothing changed, as
   // `useSyncExternalStore` expects.
   let lastPluginState = plugin.getPluginState()
   let cachedSnapshot: S3ManagerSnapshot = {
     state: readState(lastPluginState),
     open: unlessBusy(view.openFolder, undefined),
-    openPath,
+    openPath: unlessBusy(
+      (key: string | null) => plugin.openFolderPath(key),
+      false,
+    ),
     loadMore: unlessBusy(() => view.loadNextPage(), false),
     // Only the open folder is relisted: selections elsewhere survive, like
     // the plugin's own refreshListing().
@@ -213,11 +229,9 @@ export function createS3ManagerController(
     // the same one, and a second walk would abort the first.
     if (didFirstRender) return
     didFirstRender = true
-    // Logs in when needed and lists the folder without a rendered panel.
-    // Skipped while an operation runs (a remount mid-move), like `openPath`.
-    openPath(initialFolderKey).catch((err: unknown) => {
-      uppy.log(`[${pluginId}] could not open the folder: ${err}`, 'warning')
-    })
+    // A remount mid-move: listing now would abort the operation.
+    if (view.canCancelOperation) walkPending = true
+    else walk()
   }
 
   const unmount = () => {
