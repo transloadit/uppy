@@ -44,6 +44,12 @@ function Uploader() {
 }
 ```
 
+## Installation
+
+```bash
+$ npm install @uppy/drop-target
+```
+
 ## Documentation
 
 The components and hooks are documented with each framework:
