@@ -521,15 +521,12 @@ describe('src/Core', () => {
     expect(Object.keys(core.getState().files).length).toEqual(1)
   })
 
-  it.each([
-    ['the destroy method is called', (core: Core) => core.destroy()],
-    [
-      'it is disposed with `using`',
-      (core: Core) => {
-        using _core = core
-      },
-    ],
-  ])('should close, reset and uninstall when %s', (_, teardown) => {
+  it('should alias Symbol.dispose to destroy', () => {
+    using core = new Core()
+    expect(core[Symbol.dispose]).toBe(core.destroy)
+  })
+
+  it('should close, reset and uninstall when the instance id', () => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
     const core = new Core({
       store: DeepFrozenStore(),
@@ -544,7 +541,7 @@ describe('src/Core', () => {
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
 
-    teardown(core)
+    core.destroy()
 
     expect(coreCancelEventMock).toHaveBeenCalledWith(
       undefined,
