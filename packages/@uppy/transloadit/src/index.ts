@@ -10,6 +10,7 @@ import type {
   Meta,
   PluginOpts,
   Uppy,
+  UppyEventMap,
   UppyFile,
 } from '@uppy/core'
 import { BasePlugin } from '@uppy/core'
@@ -107,6 +108,18 @@ type TransloaditState = {
  */
 type PersistentState = {
   assemblyResponse: AssemblyResponse
+}
+
+/**
+ * An Assembly in use: by the upload that got it (none yet for a restored
+ * one), with the watcher that settles once the Assembly is done, and the
+ * imports of its uploaded files (`importFromUploadURLs`) still running.
+ */
+type AssemblyUse<M extends Meta, B extends Body> = {
+  assembly: Assembly
+  uploadID?: string
+  watcher: AssemblyWatcher<M, B>
+  imports: Promise<void>[]
 }
 
 declare module '@uppy/core' {
@@ -263,11 +276,29 @@ export default class Transloadit<
 
   #assembly?: Assembly
 
-  #watcher!: AssemblyWatcher<M, B>
+  /**
+   * The Assemblies in use. An upload gets one of its own (or claims one
+   * restored with Golden Retriever that no upload has yet) and lets go of it
+   * however it ends, so that no other upload's is touched on its account, and
+   * none is left behind for the next upload to take.
+   */
+  #inUse = new Set<AssemblyUse<M, B>>()
 
   completedFiles: Record<string, boolean>
 
   restored: Promise<void> | null = null
+
+  /** How many times all uploads were cancelled; an attempt notes it at its start. */
+  #cancels = 0
+
+  /** Whether admission is closed by this plugin (and so may be reopened by it). */
+  #closedAdmission = false
+
+  /**
+   * Attempts that have ended (failed, cancelled, nothing left) but that core
+   * may not have dropped yet: they no longer hold admission closed.
+   */
+  #endedUploads = new Set<string>()
 
   constructor(uppy: Uppy<M, B>, opts?: TransloaditOptions<M, B>) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -398,6 +429,7 @@ export default class Transloadit<
   async #createAssembly(
     fileIDs: string[],
     assemblyOptions: OptionsWithRestructuredFields,
+    cancelled: () => boolean,
   ) {
     this.uppy.log('[Transloadit] Create Assembly')
 
@@ -411,8 +443,8 @@ export default class Transloadit<
         .getFiles()
         .filter(({ id }) => fileIDs.includes(id))
 
-      if (files.length === 0 && fileIDs.length !== 0) {
-        // All files have been removed, cancelling.
+      if ((files.length === 0 && fileIDs.length !== 0) || cancelled()) {
+        // All files have been removed, or the upload was cancelled: cancelling.
         await this.client.cancelAssembly(newAssembly)
         return null
       }
@@ -472,29 +504,68 @@ export default class Transloadit<
     })
 
     watcher.on('assembly-error', (id: string, error: Error) => {
-      // Clear postprocessing state for all our files.
-      const filesFromAssembly = this.getAssemblyFiles(id)
-      filesFromAssembly.forEach((file) => {
-        // TODO Maybe make a postprocess-error event here?
-
-        this.uppy.emit('upload-error', file, error)
-        this.uppy.emit('postprocess-complete', file)
-      })
-
-      // Reset `tus` key in the file state, so when the upload is retried,
-      // old tus upload is not re-used — Assebmly expects a new upload, can't currently
-      // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
-      // and `onReceiveUploadUrl` in @uppy/tus
-      const files = { ...this.uppy.getState().files }
-      filesFromAssembly.forEach((file) => {
-        delete files[file.id].tus
-      })
-      this.uppy.setState({ files })
-
-      this.uppy.emit('error', error)
+      // Its upload ends with the error, so nothing waits for it any more. A
+      // late error of an older (cancelled) Assembly finds nothing in use.
+      const use = this.#inUseWithId(id)
+      if (use) this.#release(use)
+      this.#reportAssemblyError(id, error)
     })
 
-    this.#watcher = watcher
+    return watcher
+  }
+
+  /** The Assembly upload `uploadID` is using, if any. */
+  #inUseBy(uploadID: string) {
+    for (const use of this.#inUse) {
+      if (use.uploadID === uploadID) return use
+    }
+    return undefined
+  }
+
+  /** The Assembly `id` in use, if any. */
+  #inUseWithId(id: string | undefined) {
+    for (const use of this.#inUse) {
+      if (use.assembly.status.assembly_id === id) return use
+    }
+    return undefined
+  }
+
+  /**
+   * Done with an Assembly, however its upload ended: it stops updating, and
+   * the next upload creates its own rather than take it. The live one (the
+   * UI's) is another in use, if any; clearing it also clears `assemblyStatus`.
+   */
+  #release(use: AssemblyUse<M, B>) {
+    this.#inUse.delete(use)
+    use.assembly.close()
+    use.watcher.stop()
+    if (this.assembly === use.assembly) {
+      this.assembly = this.#inUse.values().next().value?.assembly
+    }
+  }
+
+  /** Fails the files of Assembly `id` and reports the error. */
+  #reportAssemblyError(id: string, error: Error) {
+    // Clear postprocessing state for all our files.
+    const filesFromAssembly = this.getAssemblyFiles(id)
+    filesFromAssembly.forEach((file) => {
+      // TODO Maybe make a postprocess-error event here?
+
+      this.uppy.emit('upload-error', file, error)
+      this.uppy.emit('postprocess-complete', file)
+    })
+
+    // Reset `tus` key in the file state, so when the upload is retried,
+    // old tus upload is not re-used — Assebmly expects a new upload, can't currently
+    // re-use the old one. See: https://github.com/transloadit/uppy/issues/4412
+    // and `onReceiveUploadUrl` in @uppy/tus
+    const files = { ...this.uppy.getState().files }
+    filesFromAssembly.forEach((file) => {
+      delete files[file.id].tus
+    })
+    this.uppy.setState({ files })
+
+    this.uppy.emit('error', error)
   }
 
   #shouldWaitAfterUpload() {
@@ -538,16 +609,13 @@ export default class Transloadit<
     return this.#assembly
   }
   set assembly(newAssembly: Assembly | undefined) {
-    if (!newAssembly && this.assembly) {
-      this.assembly.off('status', this.#handleAssemblyStatusUpdate)
-    }
+    // Only the live one reports its status (another one may still be in use).
+    this.#assembly?.off('status', this.#handleAssemblyStatusUpdate)
     this.#assembly = newAssembly
 
     this.#handleAssemblyStatusUpdate(newAssembly?.status)
 
-    if (newAssembly) {
-      newAssembly.on('status', this.#handleAssemblyStatusUpdate)
-    }
+    newAssembly?.on('status', this.#handleAssemblyStatusUpdate)
   }
 
   /**
@@ -556,16 +624,24 @@ export default class Transloadit<
    */
   #onFileUploadURLAvailable = (rawFile: UppyFile<M, B> | undefined) => {
     const file = this.uppy.getFile(rawFile!.id)
-    if (!file?.transloadit?.assembly) {
+    // Its Assembly, which may have been let go of meanwhile (another of its
+    // files failed, say): nothing to add the file to then.
+    const use = this.#inUseWithId(file?.transloadit?.assembly)
+    if (!use) {
       return
     }
 
-    const { status } = this.assembly!
+    const { status } = use.assembly
 
-    this.client.addFile(status, file).catch((err) => {
-      this.uppy.log(err)
-      this.uppy.emit('transloadit:import-error', status, file.id, err)
-    })
+    use.imports.push(
+      this.client.addFile(status, file).then(
+        () => {},
+        (err) => {
+          this.uppy.log(err)
+          this.uppy.emit('transloadit:import-error', status, file.id, err)
+        },
+      ),
+    )
   }
 
   #findFile(uploadedFile: AssemblyFile) {
@@ -593,7 +669,8 @@ export default class Transloadit<
     return undefined
   }
 
-  #onFileUploadComplete(assemblyId: string, uploadedFile: AssemblyFile) {
+  #onFileUploadComplete(assembly: Assembly, uploadedFile: AssemblyFile) {
+    const assemblyId = ensureAssemblyId(assembly.status)
     const state = this.getPluginState()
     const file = this.#findFile(uploadedFile)
     if (!file) {
@@ -612,10 +689,12 @@ export default class Transloadit<
         },
       },
     })
-    this.uppy.emit('transloadit:upload', uploadedFile, this.getAssembly()!)
+    // Its own status: the live one may be another upload's.
+    this.uppy.emit('transloadit:upload', uploadedFile, assembly.status)
   }
 
-  #onResult(assemblyId: string, stepName: string, result: AssemblyResult) {
+  #onResult(assembly: Assembly, stepName: string, result: AssemblyResult) {
+    const assemblyId = ensureAssemblyId(assembly.status)
     const state = this.getPluginState()
 
     if (!('id' in result)) {
@@ -641,7 +720,7 @@ export default class Transloadit<
       'transloadit:result',
       stepName,
       entry.result,
-      this.getAssembly()!,
+      assembly.status,
     )
   }
 
@@ -651,38 +730,55 @@ export default class Transloadit<
    */
   #onAssemblyFinished(assembly: Assembly) {
     const url = getAssemblyUrlSsl(assembly.status)
-    this.client.getAssemblyStatus(url).then((finalStatus) => {
-      assembly.status = finalStatus
-      this.uppy.emit('transloadit:complete', finalStatus)
-    })
+    this.client.getAssemblyStatus(url).then(
+      (finalStatus) => {
+        assembly.status = finalStatus
+        this.uppy.emit('transloadit:complete', finalStatus)
+      },
+      (err) => {
+        // Without the final status the upload would wait forever: it fails
+        // as it does when a status request fails while polling.
+        this.uppy.emit(
+          'transloadit:assembly-error',
+          assembly.status,
+          toError(err),
+        )
+      },
+    )
   }
 
-  async #cancelAssembly(assembly: AssemblyResponse) {
-    await this.client.cancelAssembly(assembly)
+  async #cancelAssembly(assembly: Assembly) {
+    await this.client.cancelAssembly(assembly.status)
     // TODO bubble this through AssemblyWatcher so its event handlers can clean up correctly
 
-    // if assemblyStatus has been updated after the cancellation was triggered, emit the updated assemblyStatus - fallback to the method argument
-    const updatedAssemblyStatus = this.assembly?.status ?? assembly
-    this.uppy.emit('transloadit:assembly-cancelled', updatedAssemblyStatus)
-    this.assembly = undefined
+    // Its status may have been updated after the cancellation was triggered.
+    this.uppy.emit('transloadit:assembly-cancelled', assembly.status)
   }
 
   /**
    * When all files are removed, cancel in-progress Assemblies.
    */
   #onCancelAll = async () => {
-    if (this.assembly) {
+    this.#cancels += 1
+    // Every upload ends here, but core keeps one without files (a Template
+    // importing its own inputs) in `currentUploads`: it must not hold
+    // admission closed, nor have later steps run for it.
+    for (const id of Object.keys(this.uppy.getState().currentUploads)) {
+      this.#endedUploads.add(id)
+    }
+    // Let go of before the requests: an upload started before they return
+    // must create its own Assembly, not take one of these.
+    const uses = [...this.#inUse]
+    for (const use of uses) this.#release(use)
+    for (const { assembly } of uses) {
       try {
-        await this.#cancelAssembly(this.assembly.status)
+        await this.#cancelAssembly(assembly)
       } catch (err) {
         this.uppy.log(err)
       }
     }
-    // `assemblyStatus` is cleared automatically when `this.assembly = undefined`
-    // (via `#cancelAssembly` above, or by `#afterUpload`'s finally block).
-
-    // Reset allowNewUpload when upload is cancelled
-    this.uppy.setState({ allowNewUpload: true })
+    // Reopen admission, unless an upload started meanwhile holds it.
+    this.#allowNewUploadIfIdle()
   }
 
   #onRestored = (pluginData: Record<string, PersistentState>) => {
@@ -760,8 +856,27 @@ export default class Transloadit<
 
     // Set up the Assembly instances and AssemblyWatchers for existing Assemblies.
     const restoreAssemblies = (ids: string[]) => {
-      this.#createAssemblyWatcher(ensureAssemblyId(previousAssembly))
-      this.#connectAssembly(this.assembly!, ids)
+      const assembly = this.assembly!
+      const assemblyID = ensureAssemblyId(previousAssembly)
+      // The restored upload whose files are in it (another may be restored
+      // too, and only the live Assembly is saved): all of them, else any. If
+      // core restored none, the next upload to prepare claims it.
+      const inIt = new Set(this.getAssemblyFiles(assemblyID).map((f) => f.id))
+      const uploads = Object.entries(this.uppy.getState().currentUploads)
+      const [uploadID] =
+        uploads.find(
+          ([, { fileIDs }]) =>
+            fileIDs.length > 0 && fileIDs.every((id) => inIt.has(id)),
+        ) ??
+        uploads.find(([, { fileIDs }]) => fileIDs.some((id) => inIt.has(id))) ??
+        []
+      this.#inUse.add({
+        assembly,
+        uploadID,
+        watcher: this.#createAssemblyWatcher(assemblyID),
+        imports: [],
+      })
+      this.#connectAssembly(assembly, ids)
     }
 
     // Force-update Assembly to check for missed events.
@@ -772,7 +887,8 @@ export default class Transloadit<
     // Restore all Assembly state.
     this.restored = (async () => {
       const files = restoreState()
-      restoreAssemblies(Object.keys(files))
+      // By their Uppy ids, as `#connectAssembly` reports progress on them.
+      restoreAssemblies(Object.values(files).map(({ id }) => id))
       await updateAssembly()
       this.restored = null
     })()
@@ -783,11 +899,8 @@ export default class Transloadit<
   }
 
   #connectAssembly(assembly: Assembly, ids: UppyFile<M, B>['id'][]) {
-    const { status } = assembly
-    const id = ensureAssemblyId(status)
-
     assembly.on('upload', (file: AssemblyFile) => {
-      this.#onFileUploadComplete(id, file)
+      this.#onFileUploadComplete(assembly, file)
     })
     assembly.on('error', (error: AssemblyError) => {
       error.assembly = assembly.status
@@ -826,7 +939,7 @@ export default class Transloadit<
 
     if (this.opts.waitForEncoding) {
       assembly.on('result', (stepName: string, result: AssemblyResult) => {
-        this.#onResult(id, stepName, result)
+        this.#onResult(assembly, stepName, result)
       })
     }
 
@@ -850,77 +963,205 @@ export default class Transloadit<
     return assembly
   }
 
-  #prepareUpload = async (fileIDs: string[]) => {
+  #prepareUpload = async (fileIDs: string[], uploadID: string) => {
     // Prevent adding/dropping files during upload to avoid creating multiple assemblies
     // TODO we should rewrite to instead infer allowNewUpload based on upload state
     this.uppy.setState({ allowNewUpload: false })
-
-    const assemblyOptions = (
-      typeof this.opts.assemblyOptions === 'function'
-        ? await this.opts.assemblyOptions()
-        : this.opts.assemblyOptions
-    ) as OptionsWithRestructuredFields
-
-    assemblyOptions.fields = {
-      ...(assemblyOptions.fields ?? {}),
-    }
-    validateParams(assemblyOptions.params)
+    this.#closedAdmission = true
+    // Cancelled while waiting below. Core does not stop a running preprocessor,
+    // and a file added again meanwhile has the id of the removed one, so the
+    // files alone cannot tell: an Assembly created now would attach to that
+    // file and be reused by the next batch, whatever it was signed for. An
+    // upload without files (a Template importing its own inputs) even stays
+    // in `currentUploads` when all are cancelled.
+    const cancelsAtStart = this.#cancels
+    const cancelled = () =>
+      this.#cancels !== cancelsAtStart ||
+      !(uploadID in this.uppy.getState().currentUploads)
+    // This attempt's Assembly: a restored one it claims, or one it creates.
+    // The latter is `created` as well: it is cancelled on the server if the
+    // attempt is.
+    let assembly: Assembly | undefined
+    let created: Assembly | undefined
 
     try {
-      const assembly =
-        // this.assembly can already be defined if we recovered files with Golden Retriever (this.#onRestored)
-        this.assembly ?? (await this.#createAssembly(fileIDs, assemblyOptions))
+      // Fetching the options can fail like creating the Assembly can; both
+      // must fail the files and allow new uploads, as a retry has no `error`
+      // event to fall back on.
+      const assemblyOptions = (
+        typeof this.opts.assemblyOptions === 'function'
+          ? await this.opts.assemblyOptions()
+          : this.opts.assemblyOptions
+      ) as OptionsWithRestructuredFields
 
-      if (assembly == null)
-        throw new Error('All files were canceled after assembly was created')
+      assemblyOptions.fields = {
+        ...(assemblyOptions.fields ?? {}),
+      }
+      validateParams(assemblyOptions.params)
 
-      if (this.opts.importFromUploadURLs) {
+      // Restored with Golden Retriever (#onRestored): for this upload, or for
+      // none yet. Claimed before anything is awaited, so that another upload
+      // preparing meanwhile creates its own.
+      const restored =
+        this.#inUseBy(uploadID) ??
+        [...this.#inUse].find((use) => use.uploadID == null)
+      if (restored) {
+        restored.uploadID = uploadID
+        assembly = restored.assembly
+      } else if (!cancelled()) {
+        created =
+          (await this.#createAssembly(fileIDs, assemblyOptions, cancelled)) ??
+          undefined
+        assembly = created
+      }
+      if (assembly != null && this.opts.importFromUploadURLs && !cancelled()) {
         await this.#reserveFiles(assembly, fileIDs)
+      }
+
+      if (assembly == null || cancelled()) {
+        // Nothing left to upload: every file was removed, or the upload was
+        // cancelled while its options were fetched, its Assembly was created
+        // or announced (an `assembly-created` listener), or its files were
+        // reserved. An Assembly made for this attempt is cancelled on the
+        // server, so the next batch cannot pick it up. One in use already (a
+        // restored one) was let go of by the cancel, or is as the upload was
+        // dropped (`#onStateUpdate`).
+        if (created) await this.#cancelAssembly(created)
+        this.#allowNewUploadIfIdle(uploadID)
+        return
       }
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
         this.uppy.emit('preprocess-complete', file)
       })
-      this.#createAssemblyWatcher(ensureAssemblyId(assembly.status))
-      this.assembly = assembly
-      this.#connectAssembly(assembly, fileIDs)
+      // A restored one has been watched and connected since the restore.
+      if (created) {
+        this.#inUse.add({
+          assembly: created,
+          uploadID,
+          watcher: this.#createAssemblyWatcher(
+            ensureAssemblyId(created.status),
+          ),
+          imports: [],
+        })
+        this.assembly = created
+        this.#connectAssembly(created, fileIDs)
+      }
     } catch (err) {
+      const error = toError(err)
+      if (cancelled()) {
+        // Its files are gone, or belong to a newer upload by now, which owns
+        // their error state and admission: this attempt has nothing to report.
+        this.uppy.log(
+          `[Transloadit] A cancelled upload could not be prepared: ${error.message}`,
+          'warning',
+        )
+        // Its reservation failed, say: the Assembly is still this attempt's.
+        if (created) {
+          await this.#cancelAssembly(created).catch((cancelError) =>
+            this.uppy.log(cancelError),
+          )
+        }
+        this.#allowNewUploadIfIdle(uploadID)
+        return
+      }
+      // The Assembly it failed with (a restored one whose reservation was
+      // rejected, say) goes as core drops the upload (`#onStateUpdate`), so
+      // a retry does not fail with it again.
       fileIDs.forEach((fileID) => {
         const file = this.uppy.getFile(fileID)
         // Clear preprocessing state when the Assembly could not be created,
         // otherwise the UI gets confused about the lingering progress keys
         this.uppy.emit('preprocess-complete', file)
-        this.uppy.emit('upload-error', file, toError(err))
+        this.uppy.emit('upload-error', file, error)
       })
-      // Reset allowNewUpload on error
-      this.uppy.setState({ allowNewUpload: true })
-      throw err
+      // Reopen admission, unless another upload still holds it closed.
+      this.#allowNewUploadIfIdle(uploadID)
+      throw error
     }
   }
 
-  #afterUpload = async (fileIDs: string[], uploadID: string): Promise<void> => {
-    try {
-      // If we're still restoring state, wait for that to be done.
-      await this.restored
+  /**
+   * Files may be added again once an attempt ends with nothing to upload or
+   * fails, unless another upload is preparing or running meanwhile and holds
+   * that. `endedUploadID` is the attempt itself. Core only drops it once its
+   * preprocessor has thrown, so it does not count, and neither does any other
+   * attempt that has ended meanwhile (two retries failing in the same turn
+   * each still see the other).
+   */
+  #allowNewUploadIfIdle(endedUploadID?: string) {
+    if (endedUploadID) this.#endedUploads.add(endedUploadID)
+    const { currentUploads } = this.uppy.getState()
+    for (const id of this.#endedUploads) {
+      // Dropped by core by now: nothing left to discount.
+      if (!(id in currentUploads)) this.#endedUploads.delete(id)
+    }
+    const running = Object.keys(currentUploads).filter(
+      (id) => !this.#endedUploads.has(id),
+    )
+    if (running.length === 0) {
+      this.#closedAdmission = false
+      this.uppy.setState({ allowNewUpload: true })
+    }
+  }
 
+  /**
+   * Core drops an upload without an event of its own: a retry whose uploader
+   * rejects (XHRUpload with `bundle: true`, say) ends with no `error` after
+   * the drop, as does one whose last file is removed, and both skip
+   * `#afterUpload`. So the Assembly such an upload was using is let go of
+   * here, and the admission this plugin closed is checked again.
+   * Once the update is done: core hands `next` to the UI plugins after this
+   * event, which would render over a state set from in here.
+   */
+  #onStateUpdate: UppyEventMap<M, B>['state-update'] = (prev, next) => {
+    if (prev.currentUploads === next.currentUploads) return
+    const dropped = [...this.#inUse].filter(
+      ({ uploadID }) => uploadID != null && !(uploadID in next.currentUploads),
+    )
+    const reopen =
+      this.#closedAdmission &&
+      !next.allowNewUpload &&
+      Object.keys(next.currentUploads).length <
+        Object.keys(prev.currentUploads).length
+    if (dropped.length === 0 && !reopen) return
+    queueMicrotask(() => {
+      for (const use of dropped) this.#release(use)
+      if (this.#closedAdmission) this.#allowNewUploadIfIdle()
+    })
+  }
+
+  #afterUpload = async (fileIDs: string[], uploadID: string): Promise<void> => {
+    // If we're still restoring state, wait for that to be done.
+    await this.restored
+    // This upload's Assembly, if it got one: a cancelled or failed one has
+    // none, and the live one may be another upload's.
+    const use = this.#inUseBy(uploadID)
+    const assembly = use?.assembly
+    try {
       const files = fileIDs
         .map((fileID) => this.uppy.getFile(fileID))
         // Only use files without errors
         .filter((file) => !file.error)
 
-      const assemblyID = this.assembly
-        ? ensureAssemblyId(this.assembly.status)
-        : undefined
-
       const closeSocketConnections = () => {
-        this.assembly?.close()
+        assembly?.close()
       }
 
       // If we don't have to wait for encoding metadata or results, we can close
       // the socket immediately and finish the upload.
       if (!this.#shouldWaitAfterUpload()) {
         closeSocketConnections()
-        const status = this.assembly?.status
+        // Its files are only in once their imports are: a failed one fails
+        // its file (through the watcher, which goes once this upload ends).
+        // Unless the Assembly is let go of meanwhile (cancelled, say).
+        if (use) {
+          await Promise.race([
+            Promise.allSettled(use.imports),
+            use.watcher.promise,
+          ])
+        }
+        const status = assembly?.status
         if (status != null) {
           this.uppy.addResultData(uploadID, {
             transloadit: [status],
@@ -931,7 +1172,7 @@ export default class Transloadit<
 
       // If no Assemblies were created for this upload, we also do not have to wait.
       // There's also no sockets or anything to close, so just return immediately.
-      if (!assemblyID) {
+      if (!use) {
         this.uppy.addResultData(uploadID, { transloadit: [] })
         return
       }
@@ -946,10 +1187,12 @@ export default class Transloadit<
         })
       })
 
-      await this.#watcher.promise
+      // Settles once the Assembly is done or has failed, or once it is let go
+      // of (cancelled, or its upload dropped by core) while waited for.
+      await use.watcher.promise
       // assembly is now done processing!
       closeSocketConnections()
-      const status = this.assembly?.status
+      const status = assembly?.status
       if (status != null) {
         this.uppy.addResultData(uploadID, {
           transloadit: [status],
@@ -959,31 +1202,36 @@ export default class Transloadit<
       // in case allowMultipleUploadBatches is true and the user wants to upload again,
       // we need to allow a new assembly to be created.
       // see https://github.com/transloadit/uppy/issues/5397
-      this.assembly = undefined
-      // Allow new uploads now that this upload is complete
-      this.uppy.setState({ allowNewUpload: true })
+      if (use) this.#release(use)
+      // Allow new uploads now that this upload is complete, unless another
+      // one is still preparing or running.
+      this.#allowNewUploadIfIdle(uploadID)
     }
   }
 
-  #closeAssemblyIfExists = () => {
-    this.assembly?.close()
-  }
-
+  /**
+   * Not every `error` is an upload's (core refuses an `upload()` with one
+   * while a batch runs, say), and one that is was reported with its file
+   * (`#onTusError`) or its Assembly (the watcher) first: no Assembly is let
+   * go of here.
+   */
   #onError = (err: { name: string; message: string; details?: string }) => {
-    this.#closeAssemblyIfExists()
-    this.assembly = undefined
-
     this.client
       .submitError(err)
       // if we can't report the error that sucks
       .catch(sendErrorToConsole(err))
 
-    // Reset allowNewUpload when upload encounters an error
-    this.uppy.setState({ allowNewUpload: true })
+    // Reopen admission after a failed upload (core has dropped it by now),
+    // unless another one is still preparing or running.
+    this.#allowNewUploadIfIdle()
   }
 
-  #onTusError = (_: UppyFile<M, B> | undefined, err: Error) => {
-    this.#closeAssemblyIfExists()
+  #onTusError = (file: UppyFile<M, B> | undefined, err: Error) => {
+    // Its Assembly cannot complete without it: its upload stops waiting for
+    // that. Another upload's Assembly is not touched; a file that failed
+    // before it got one (a failed preparation) has none.
+    const use = this.#inUseWithId(file?.transloadit?.assembly)
+    if (use) this.#release(use)
     if (err?.message?.startsWith('tus: ')) {
       const endpoint = (
         err as TusDetailedError
@@ -999,11 +1247,12 @@ export default class Transloadit<
     this.uppy.addPreProcessor(this.#prepareUpload)
     this.uppy.addPostProcessor(this.#afterUpload)
 
-    // We may need to close socket.io connections on error.
+    // Errors are reported to Transloadit.
     this.uppy.on('error', this.#onError)
 
     // Handle cancellation.
     this.uppy.on('cancel-all', this.#onCancelAll)
+    this.uppy.on('state-update', this.#onStateUpdate)
 
     this.uppy.on('upload-error', this.#onTusError)
 
@@ -1060,6 +1309,9 @@ export default class Transloadit<
     this.uppy.removePostProcessor(this.#afterUpload)
     this.uppy.off('error', this.#onError)
     this.uppy.off('cancel-all', this.#onCancelAll)
+    this.uppy.off('state-update', this.#onStateUpdate)
+    this.uppy.off('upload-error', this.#onTusError)
+    this.uppy.off('restored', this.#onRestored)
 
     if (this.opts.importFromUploadURLs) {
       this.uppy.off('upload-success', this.#onFileUploadURLAvailable)
