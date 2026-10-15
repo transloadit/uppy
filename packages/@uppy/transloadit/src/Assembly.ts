@@ -18,14 +18,9 @@ const ASSEMBLY_COMPLETED = 'ASSEMBLY_COMPLETED'
 const statusOrder = [ASSEMBLY_UPLOADING, ASSEMBLY_EXECUTING, ASSEMBLY_COMPLETED]
 
 /**
- * Check that an assembly status is equal to or larger than some desired status.
- * It checks for things that are larger so that a comparison like this works,
- * when the old assembly status is UPLOADING but the new is FINISHED:
- *
- * !isStatus(oldStatus, ASSEMBLY_EXECUTING) && isStatus(newState, ASSEMBLY_EXECUTING)
- *
- * …so that we can emit the 'executing' event even if the execution step was so
- * fast that we missed it.
+ * Check that an assembly status is equal to or larger than some desired status,
+ * so that we can emit the 'executing' event even if the execution step was so
+ * fast that we jumped from UPLOADING straight to COMPLETED.
  */
 function isStatus(status: unknown, test: string) {
   if (typeof status !== 'string') {
@@ -44,18 +39,15 @@ class TransloaditAssembly extends Emitter {
 
   #sse: EventSource | null = null
 
-  #status: AssemblyResponse
-
   /**
-   * When the SSE `assembly_uploading_finished` handler advances `ok` itself,
-   * the `ok` it replaced. `#diffStatus` compares against this instead of the
-   * current status, because a client-advanced `ok` would make the
-   * uploading -> executing transition look like it already happened and
-   * suppress the derived `'executing'` and `'metadata'` events. Losing
-   * `'metadata'` strands `waitForMetadata` uploads, which complete off that
-   * event alone. Cleared as soon as a server status lands.
+   * Lifecycle events already emitted. Each can be derived both from an SSE
+   * marker and from a polled status, and a client-advanced `ok` or a late poll
+   * must neither repeat nor suppress one. A restored assembly starts empty, so
+   * the new page gets them all again.
    */
-  #okBeforeClientAdvance: AssemblyResponse['ok'] | undefined
+  #emitted = new Set<'executing' | 'metadata' | 'finished'>()
+
+  #status: AssemblyResponse
 
   pollInterval: ReturnType<typeof setInterval> | null
 
@@ -82,8 +74,14 @@ class TransloaditAssembly extends Emitter {
     this.#beginPolling()
   }
 
+  #emitOnce(event: 'executing' | 'metadata' | 'finished') {
+    if (this.#emitted.has(event)) return
+    this.#emitted.add(event)
+    this.emit(event)
+  }
+
   #onFinished() {
-    this.emit('finished')
+    this.#emitOnce('finished')
     this.close()
   }
 
@@ -92,10 +90,13 @@ class TransloaditAssembly extends Emitter {
   }
   set status(status: AssemblyResponse) {
     // `progress_combined` only arrives over SSE; a full status fetched from
-    // the server never carries it, so keep the last value we saw.
+    // the server never carries it, so keep the last value we saw while
+    // executing. Past that it would only be stale.
     const { progress_combined } = this.#status
     this.#status =
-      progress_combined == null ? status : { progress_combined, ...status }
+      progress_combined != null && status.ok === ASSEMBLY_EXECUTING
+        ? { progress_combined, ...status }
+        : status
     this.emit('status', this.#status)
   }
 
@@ -125,18 +126,17 @@ class TransloaditAssembly extends Emitter {
         // here. UPLOADING is the only state this marker can legitimately
         // leave; a refetch may already have moved on (or errored).
         if (this.status.ok === ASSEMBLY_UPLOADING) {
-          this.#okBeforeClientAdvance = this.status.ok
           // `AssemblyStatus` is a union; overriding `ok` on a spread needs a cast.
           this.status = {
             ...this.status,
             ok: ASSEMBLY_EXECUTING,
           } as AssemblyResponse
         }
-        this.emit('executing')
+        this.#emitOnce('executing')
       }
 
       if (e.data === 'assembly_upload_meta_data_extracted') {
-        this.emit('metadata')
+        this.#emitOnce('metadata')
         this.#fetchStatus({ diff: false })
       }
     })
@@ -180,24 +180,10 @@ class TransloaditAssembly extends Emitter {
       } catch {
         this.#onError(new Error(e.data))
       }
-      // Refetch for updated status code
-      this.#fetchStatus({ diff: false })
     })
   }
 
   #onError(assemblyOrError: AssemblyResponse | NetworkError | Error) {
-    if (
-      typeof assemblyOrError === 'object' &&
-      !(assemblyOrError instanceof Error)
-    ) {
-      // An errored envelope from the API: fold it into the status so that
-      // `status` (and the plugin state mirroring it) shows the failure
-      // instead of the last good state. The API omits `ok` on an error, so
-      // drop the previous one rather than leaving `ok: ASSEMBLY_EXECUTING`
-      // sitting next to the error.
-      const { ok: _previousOk, ...withoutOk } = this.status
-      this.status = { ...withoutOk, ...assemblyOrError } as AssemblyResponse
-    }
     this.emit(
       'error',
       Object.assign(new Error(assemblyOrError.message), assemblyOrError),
@@ -236,7 +222,6 @@ class TransloaditAssembly extends Emitter {
       const statusUrl = getAssemblyUrlSsl(this.status)
 
       const response = await this.#fetchWithNetworkError(statusUrl)
-      this.#previousFetchStatusStillPending = false
 
       if (this.closed) return
 
@@ -258,13 +243,14 @@ class TransloaditAssembly extends Emitter {
       if (diff) {
         this.updateStatus(status)
       } else {
-        this.#okBeforeClientAdvance = undefined
         this.status = status
       }
     } catch (err) {
       // A fetch that was in flight when we closed is nobody's business.
       if (this.closed) return
       this.#onError(toError(err))
+    } finally {
+      this.#previousFetchStatusStillPending = false
     }
   }
 
@@ -277,28 +263,22 @@ class TransloaditAssembly extends Emitter {
    * emitted for status changes, new files, and new results.
    */
   updateStatus(next: AssemblyResponse): void {
-    // An errored status goes through `#onError`, which stores it and closes
-    // the assembly itself. Assigning it again here would emit a second
-    // `'status'` event, and do it on an already-closed assembly.
-    if (this.#diffStatus(this.status, next)) return
-    this.#okBeforeClientAdvance = undefined
+    this.#diffStatus(this.status, next)
+    // An errored status closed the assembly in `#onError`; don't emit a
+    // 'status' from a closed assembly.
+    if (this.closed) return
     this.status = next
   }
 
   /**
    * Diff two assembly statuses, and emit the events necessary to go from `prev`
    * to `next`.
-   *
-   * Returns whether `next` was routed through `#onError`, which already stored
-   * it, so the caller must not store it a second time.
    */
-  #diffStatus(prev: AssemblyResponse, next: AssemblyResponse): boolean {
-    const prevStatus = this.#okBeforeClientAdvance ?? prev.ok
+  #diffStatus(prev: AssemblyResponse, next: AssemblyResponse) {
     const nextStatus = next.ok
 
     if (next.error && !prev.error) {
-      this.#onError(next)
-      return true
+      return this.#onError(next)
     }
 
     // Desired emit order:
@@ -310,15 +290,22 @@ class TransloaditAssembly extends Emitter {
     // The below checks run in this order, that way even if we jump from
     // UPLOADING straight to FINISHED all the events are emitted as expected.
 
-    const nowExecuting =
-      isStatus(nextStatus, ASSEMBLY_EXECUTING) &&
-      !isStatus(prevStatus, ASSEMBLY_EXECUTING)
-    if (nowExecuting) {
+    // The API sends no metadata marker on the polling path, so both events are
+    // approximated from the status: they fire on the first status we see at or
+    // past EXECUTING, not on the crossing into it. `#emitOnce` keeps that to
+    // one emit each. Deriving them from the crossing instead would emit
+    // nothing at all whenever we never observe it — a restore, or an assembly
+    // already executing when we first see it — which strands uploads that
+    // complete off these events. The cost is that over SSE, where
+    // `assembly_uploading_finished` precedes `assembly_upload_meta_data_extracted`,
+    // a status landing between the two makes 'metadata' slightly early.
+    const executing = isStatus(nextStatus, ASSEMBLY_EXECUTING)
+    if (executing) {
       // Without SSE, this is our only way to tell if uploading finished.
       // Hence, we emit this just before the 'upload's and before the 'metadata'
       // event for the most intuitive ordering, corresponding to the _usual_
       // ordering (if not guaranteed) that you'd get on SSE.
-      this.emit('executing')
+      this.#emitOnce('executing')
     }
 
     // Only emit if the upload is new (not in prev.uploads).
@@ -333,8 +320,8 @@ class TransloaditAssembly extends Emitter {
         })
     }
 
-    if (nowExecuting) {
-      this.emit('metadata')
+    if (executing) {
+      this.#emitOnce('metadata')
     }
 
     // Find new results.
@@ -353,14 +340,11 @@ class TransloaditAssembly extends Emitter {
       })
     }
 
-    if (
-      isStatus(nextStatus, ASSEMBLY_COMPLETED) &&
-      !isStatus(prevStatus, ASSEMBLY_COMPLETED)
-    ) {
-      this.emit('finished')
+    if (isStatus(nextStatus, ASSEMBLY_COMPLETED)) {
+      this.#emitOnce('finished')
     }
 
-    return false
+    return undefined
   }
 
   /**

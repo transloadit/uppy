@@ -385,7 +385,11 @@ describe('Transloadit', () => {
     results: {},
   }
 
-  async function restoreConnectedAssembly(worker, getStatus) {
+  async function restoreConnectedAssembly(
+    worker,
+    getStatus,
+    { opts = { waitForEncoding: true }, saved = finishedStatus } = {},
+  ) {
     worker.use(
       http.get('https://api2.transloadit.com/assemblies/*', () =>
         HttpResponse.json(getStatus()),
@@ -393,7 +397,7 @@ describe('Transloadit', () => {
     )
     const uppy = new Core()
     uppy.use(Transloadit, {
-      waitForEncoding: true,
+      ...opts,
       assemblyOptions: {
         params: { auth: { key: 'test-auth-key' }, template_id: 'test' },
       },
@@ -401,7 +405,7 @@ describe('Transloadit', () => {
     const plugin = uppy.getPlugin('Transloadit')
     plugin.client.cancelAssembly = () => Promise.resolve()
     uppy.emit('restored', {
-      Transloadit: { assemblyResponse: finishedStatus },
+      Transloadit: { assemblyResponse: saved },
     })
     await plugin.restored
     return { uppy, plugin, assembly: plugin.assembly }
@@ -425,6 +429,46 @@ describe('Transloadit', () => {
     await settle()
 
     expect(events).toEqual([])
+  })
+
+  it('completes a restored waitForMetadata upload saved as executing', async ({
+    worker,
+  }) => {
+    // SSE advances `ok` to EXECUTING before the metadata is extracted, and
+    // that status is what gets saved. After a reload the refetch must still
+    // produce 'metadata', which is all `waitForMetadata` completes off.
+    const completed = []
+    const { uppy } = await restoreConnectedAssembly(
+      worker,
+      () => finishedStatus,
+      { opts: { waitForMetadata: true } },
+    )
+    uppy.on('transloadit:complete', (a) => completed.push(a.ok))
+    await settle()
+
+    expect(completed).toEqual(['ASSEMBLY_EXECUTING'])
+  })
+
+  it('reports an error when the final-status request fails', async ({
+    worker,
+  }) => {
+    // Without a terminal event the AssemblyWatcher never settles, and
+    // `uppy.upload()` hangs.
+    const { uppy, plugin, assembly } = await restoreConnectedAssembly(
+      worker,
+      () => finishedStatus,
+    )
+    plugin.client.getAssemblyStatus = () => Promise.reject(new Error('offline'))
+    const errors = []
+    uppy.on('transloadit:assembly-error', (_status, error) =>
+      errors.push(error.message),
+    )
+
+    assembly.emit('finished')
+    await settle()
+
+    expect(errors).toEqual(['offline'])
+    expect(uppy.getState().plugins.Transloadit.error?.message).toBe('offline')
   })
 
   it('still emits complete when the assembly ended by cancellation', async ({
@@ -566,11 +610,10 @@ describe('Transloadit', () => {
 
     const state = uppy.getState().plugins.Transloadit
     expect(state.error?.message).toBe('One of the files is broken')
-    expect(state.error?.assembly?.error).toBe('INVALID_FILE_META_DATA')
-    // The live slot is gone; the last status and the error keep the failure
-    // until a new assembly starts.
+    expect(state.error?.error).toBe('INVALID_FILE_META_DATA')
+    // The live slot is gone; the error keeps the failure until a new
+    // assembly starts.
     expect(state.assemblyStatus).toBeUndefined()
-    expect(state.lastAssemblyStatus?.error).toBe('INVALID_FILE_META_DATA')
 
     plugin.assembly = new Assembly(status, new RateLimitedQueue())
     expect(uppy.getState().plugins.Transloadit.error).toBeUndefined()
