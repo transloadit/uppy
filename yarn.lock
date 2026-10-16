@@ -4790,10 +4790,10 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     msw: "npm:^3.0.2"
     typescript: "npm:^6.0.3"
-    vitest: "npm:^4.1.11"
+    vitest: "npm:^5.0.3"
   peerDependencies:
     msw: ^3.0.2
-    vitest: ^4.1.11
+    vitest: ^5.0.3
   languageName: unknown
   linkType: soft
 
