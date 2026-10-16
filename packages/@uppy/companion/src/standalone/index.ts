@@ -20,15 +20,15 @@ import {
   getCompanionOptions,
 } from './helper.js'
 
-interface Server {
+export interface StandaloneServer {
   app: Express
-  companionOptions: companion.CompanionInitOptions
+  companionOptions: CompanionInitOptions
   emitter: EmitterLike
 }
 
 export default function server(
   inputCompanionOptions?: CompanionInitOptions,
-): Server {
+): StandaloneServer {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
