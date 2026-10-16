@@ -1,15 +1,18 @@
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import Core from '@uppy/core'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-network.configure({ context: { quiet: true } })
-await network.enable()
-
-afterEach(() => {
-  network.resetHandlers()
-})
+// Transloadit reports client-side upload failures to this endpoint. Several
+// tests deliberately fail an upload, so mock it for every test to keep the
+// beacon from reaching the real service.
+network.resetHandlers(
+  http.post('https://transloaditstatus.com/client_error', () =>
+    HttpResponse.json({ ok: true }),
+  ),
+)
 
 describe('Transloadit', () => {
   it('Does not leave lingering progress if getAssemblyOptions fails', async () => {
@@ -156,9 +159,6 @@ describe('Transloadit', () => {
           ok: 'ASSEMBLY_COMPLETED',
           results: {},
         })
-      }),
-      http.post('https://transloaditstatus.com/client_error', () => {
-        return HttpResponse.json({})
       }),
     )
 

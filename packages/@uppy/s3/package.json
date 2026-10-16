@@ -46,6 +46,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/msw-setup": "workspace:^",
     "@uppy-dev/s3-mock-companion": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/components": "workspace:^",

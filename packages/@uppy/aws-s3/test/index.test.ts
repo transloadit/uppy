@@ -1,7 +1,8 @@
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import Core, { type Meta, type UppyFile } from '@uppy/core'
 import { HttpResponse, http } from 'msw'
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
 
 const KB = 1024
@@ -124,13 +125,6 @@ function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
 
   return { signRequest, operations, uploadId, key, registerHandlers }
 }
-
-network.configure({ context: { quiet: true } })
-await network.enable()
-
-afterEach(() => {
-  network.resetHandlers()
-})
 
 describe('AwsS3', () => {
   test('Registers AwsS3 upload plugin', () => {
