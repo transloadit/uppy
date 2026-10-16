@@ -1,0 +1,77 @@
+.lockup {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	margin-right: 1.5rem;
+	min-width: 0;
+}
+
+.uppy {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--u-ink-900);
+	font-weight: 600;
+	font-size: 1.125rem;
+	/* Optical: the mark's pink kite reads large, so pull the wordmark tight. */
+	letter-spacing: -0.015em;
+}
+
+.uppy:hover {
+	color: var(--u-ink-900);
+	text-decoration: none;
+}
+
+.uppy img {
+	/* The beaver sits slightly low in its viewBox. */
+	margin-top: -1px;
+}
+
+.divider {
+	width: 1px;
+	height: 1.1rem;
+	background: var(--u-line-strong);
+	flex: none;
+}
+
+/* The parent is an asset, not a footnote — so it renders at full contrast. */
+.transloadit {
+	display: flex;
+	align-items: center;
+	gap: 0.375rem;
+	opacity: 1;
+	transition: opacity 150ms var(--u-ease);
+}
+
+.transloadit:hover {
+	opacity: 0.7;
+	text-decoration: none;
+}
+
+.by {
+	font-size: 0.8125rem;
+	color: var(--u-ink-500);
+	/* Baseline-align "by" with the wordmark rather than centring the boxes. */
+	transform: translateY(0.5px);
+}
+
+.transloadit img {
+	display: block;
+}
+
+/* On phones the lockup shrinks rather than dropping the parent: "Uppy |
+   Transloadit" still fits, and it's half the reason the header exists. */
+@media screen and (max-width: 600px) {
+	.lockup {
+		gap: 0.5rem;
+		margin-right: 0.5rem;
+	}
+
+	.by {
+		display: none;
+	}
+
+	.transloadit img {
+		height: 14px;
+	}
+}

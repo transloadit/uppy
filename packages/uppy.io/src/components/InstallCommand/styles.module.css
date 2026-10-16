@@ -1,0 +1,89 @@
+.wrapper {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.25rem;
+	/* Recessed well: the light source is above, so the top edge is in shadow. */
+	background: var(--u-ink-50);
+	border: 1px solid var(--u-line);
+	border-radius: var(--u-radius-md);
+	box-shadow: inset 0 1px 2px rgb(13 21 38 / 4%);
+	padding: 0.25rem 0.25rem 0.25rem 0.875rem;
+	max-width: 100%;
+}
+
+.command {
+	font-family: var(--ifm-font-family-monospace);
+	font-size: 0.875rem;
+	color: var(--u-ink-800);
+	background: none;
+	border: none;
+	padding: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	letter-spacing: -0.005em;
+}
+
+/* Ellipsising the command hides the thing you came to copy, so on narrow
+   screens it wraps instead. */
+@media screen and (max-width: 45rem) {
+	.wrapper {
+		align-items: flex-start;
+		padding-top: 0.5rem;
+		padding-bottom: 0.5rem;
+	}
+
+	.command {
+		white-space: normal;
+		overflow-wrap: anywhere;
+		padding-top: 0.15rem;
+	}
+}
+
+.prompt {
+	color: var(--u-pink-500);
+	margin-right: 0.625rem;
+	user-select: none;
+}
+
+.copy {
+	flex: none;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	/* Concentric with the 10px outer radius minus 4px of padding. */
+	border-radius: var(--u-radius-sm);
+	border: none;
+	background: transparent;
+	color: var(--u-ink-500);
+	cursor: pointer;
+	transition:
+		background-color 150ms var(--u-ease),
+		color 150ms var(--u-ease);
+}
+
+.copy svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+.copy:hover {
+	background: var(--u-ink-200);
+	color: var(--u-ink-800);
+}
+
+.copy:active {
+	transform: scale(0.94);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.copy {
+		transition: none;
+	}
+
+	.copy:active {
+		transform: none;
+	}
+}
