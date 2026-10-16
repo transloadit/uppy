@@ -147,7 +147,7 @@ corepack yarn workspace uppy-io test # needs a build
 
 `packages/uppy.io/static` only holds site assets such as icons and fonts (CI
 rejects files over 100 KB). Blog images and videos are served from Transloadit's
-Smart CDN at `https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/<path>`,
+Smart CDN at `https://uppy-io-static.tlcdn.com/static/img/blog/<path>`,
 which imports them from the `static` folder of the archived
 [transloadit/uppy.io](https://github.com/transloadit/uppy.io) repository. To add
 new media, ask a maintainer to host it.
