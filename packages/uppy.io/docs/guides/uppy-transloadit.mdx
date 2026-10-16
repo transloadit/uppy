@@ -1,0 +1,342 @@
+---
+sidebar_position: 2
+slug: /guides/uppy-transloadit
+title: Uppy + Transloadit framework guide
+---
+
+# Use Uppy with Transloadit
+
+This is the canonical browser integration for sending user-selected files to a
+Transloadit Assembly—one execution of your Template. The same integration works
+in JavaScript, React, Next.js, Vue, and Angular.
+
+## Know which part owns what
+
+- **Uppy is the open-source browser uploader.** It owns file selection, UI,
+  restrictions, upload progress, and upload orchestration. You can use Uppy
+  without Transloadit and point it at other upload destinations.
+- **Transloadit is the managed processing backend.** It receives files, runs the
+  Assembly Instructions in your Template, and exports the results. A Transloadit
+  account is required for this part.
+- **`@uppy/transloadit` is the bridge.** It creates an Assembly, configures the
+  resumable upload, and can follow processing events from the browser.
+
+The Transloadit Auth Key and Template ID identify the account and workflow. The
+Auth Secret authorizes requests and **must never be included in browser code**.
+In production, have your server select an allowed Template and return signed,
+short-lived Assembly options to Uppy.
+
+## 1. Create a Template
+
+Create a [Transloadit Template][first-app] before adding Uppy. Templates keep
+processing instructions on the managed backend, where browser users cannot
+replace the workflow. Copy its Template ID and set these server environment
+variables:
+
+```shell
+TRANSLOADIT_KEY=your-auth-key
+TRANSLOADIT_SECRET=your-auth-secret
+TRANSLOADIT_TEMPLATE_ID=your-template-id
+```
+
+Do not prefix the secret with a framework convention that exposes environment
+variables to the browser, such as `NEXT_PUBLIC_`.
+
+## 2. Sign Assembly options on your server
+
+Install the Transloadit Node SDK in the server application:
+
+```shell
+npm install transloadit
+```
+
+This helper sets a one-hour expiration, then uses the SDK to add the Auth Key
+and calculate the signature over the exact serialized `params` value:
+
+```ts title="server/transloadit-options.ts"
+import { Transloadit } from 'transloadit';
+
+const authKey = process.env.TRANSLOADIT_KEY;
+const authSecret = process.env.TRANSLOADIT_SECRET;
+const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
+
+if (!authKey || !authSecret || !templateId) {
+	throw new Error('Missing Transloadit server configuration');
+}
+
+const transloadit = new Transloadit({ authKey, authSecret });
+
+export function createAssemblyOptions() {
+	const expires = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+	const { params, signature } = transloadit.calcSignature({
+		auth: { expires },
+		template_id: templateId,
+	});
+
+	return { params, signature };
+}
+```
+
+Expose the return value from an authenticated `POST /api/transloadit-params`
+route. The route should enforce the current user’s upload permissions, rate
+limits, and allowed Template. Do not accept arbitrary `template_id`, `steps`, or
+storage credentials from the browser and sign them without validation.
+
+The signed options expire after one hour. Adjust that lifetime to the shortest
+window that still accommodates your users’ uploads. Every client example below
+uses the same function. Save it as `fetch-assembly-options.js` in a plain
+JavaScript application:
+
+```ts title="fetch-assembly-options.ts"
+export async function fetchAssemblyOptions() {
+	const response = await fetch('/api/transloadit-params', { method: 'POST' });
+
+	if (!response.ok) {
+		throw new Error(`Could not prepare the upload (${response.status})`);
+	}
+
+	return response.json();
+}
+```
+
+## 3. Add the browser integration
+
+### JavaScript
+
+```shell
+npm install @uppy/core @uppy/dashboard @uppy/transloadit
+```
+
+```js title="uploader.js"
+import Uppy from '@uppy/core';
+import Dashboard from '@uppy/dashboard';
+import Transloadit from '@uppy/transloadit';
+
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+
+import { fetchAssemblyOptions } from './fetch-assembly-options.js';
+
+const uppy = new Uppy()
+	.use(Dashboard, {
+		inline: true,
+		target: '#uppy',
+	})
+	.use(Transloadit, {
+		assemblyOptions: fetchAssemblyOptions,
+		// Keep the UI waiting only when browser code needs the final results.
+		waitForEncoding: true,
+	});
+
+uppy.on('transloadit:complete', (assembly) => {
+	// Results are keyed by the Step names declared in your Template.
+	console.log('Assembly results:', assembly.results);
+});
+```
+
+```html title="index.html"
+<div id="uppy"></div>
+<script type="module" src="/uploader.js"></script>
+```
+
+### React
+
+```shell
+npm install @uppy/core @uppy/dashboard @uppy/react @uppy/transloadit
+```
+
+```tsx title="Uploader.tsx"
+import Uppy from '@uppy/core';
+import Dashboard from '@uppy/react/dashboard';
+import Transloadit from '@uppy/transloadit';
+import { useState, type ReactNode } from 'react';
+
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+
+import { fetchAssemblyOptions } from './fetch-assembly-options';
+
+function createUppy() {
+	return new Uppy().use(Transloadit, {
+		assemblyOptions: fetchAssemblyOptions,
+	});
+}
+
+export function Uploader(): ReactNode {
+	const [uppy] = useState(createUppy);
+
+	return <Dashboard uppy={uppy} />;
+}
+```
+
+Create the Uppy instance once. Recreating it during a render loses selected
+files and may interrupt active uploads. Lift the instance to a longer-lived
+provider if uploads must continue while routes change.
+
+### Next.js
+
+```shell
+npm install @uppy/core @uppy/dashboard @uppy/react @uppy/transloadit transloadit
+```
+
+Keep the signing helper in server-only code, then expose it with an App Router
+route:
+
+```ts title="app/api/transloadit-params/route.ts"
+import { NextResponse } from 'next/server';
+
+import { createAssemblyOptions } from '../../../server/transloadit-options';
+
+export async function POST(): Promise<NextResponse> {
+	// Authenticate the request and authorize this upload before signing.
+	return NextResponse.json(createAssemblyOptions());
+}
+```
+
+The Uppy component needs the client boundary because it uses browser APIs:
+
+```tsx title="app/upload/Uploader.tsx"
+'use client';
+
+import Uppy from '@uppy/core';
+import Dashboard from '@uppy/react/dashboard';
+import Transloadit from '@uppy/transloadit';
+import { useState, type ReactNode } from 'react';
+
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+
+import { fetchAssemblyOptions } from './fetch-assembly-options';
+
+function createUppy() {
+	return new Uppy().use(Transloadit, {
+		assemblyOptions: fetchAssemblyOptions,
+	});
+}
+
+export function Uploader(): ReactNode {
+	const [uppy] = useState(createUppy);
+
+	return <Dashboard uppy={uppy} />;
+}
+```
+
+### Vue
+
+```shell
+npm install @uppy/core @uppy/dashboard @uppy/transloadit @uppy/vue
+```
+
+```vue title="Uploader.vue"
+<script setup lang="ts">
+import Uppy from '@uppy/core';
+import Transloadit from '@uppy/transloadit';
+import Dashboard from '@uppy/vue/dashboard';
+import { onBeforeUnmount } from 'vue';
+
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+
+import { fetchAssemblyOptions } from './fetch-assembly-options';
+
+const uppy = new Uppy().use(Transloadit, {
+	assemblyOptions: fetchAssemblyOptions,
+});
+
+onBeforeUnmount(() => uppy.destroy());
+</script>
+
+<template>
+	<Dashboard :uppy="uppy" />
+</template>
+```
+
+### Angular
+
+```shell
+npm install @uppy/angular @uppy/core @uppy/dashboard @uppy/transloadit
+```
+
+```ts title="uploader.component.ts"
+import { Component, type OnDestroy } from '@angular/core';
+import { DashboardComponent } from '@uppy/angular';
+import Uppy from '@uppy/core';
+import Transloadit from '@uppy/transloadit';
+
+import { fetchAssemblyOptions } from './fetch-assembly-options';
+
+@Component({
+	selector: 'app-uploader',
+	standalone: true,
+	imports: [DashboardComponent],
+	template: '<uppy-dashboard [uppy]="uppy"></uppy-dashboard>',
+})
+export class UploaderComponent implements OnDestroy {
+	readonly uppy = new Uppy().use(Transloadit, {
+		assemblyOptions: fetchAssemblyOptions,
+	});
+
+	ngOnDestroy(): void {
+		this.uppy.destroy();
+	}
+}
+```
+
+Load the Uppy styles once in the application’s global stylesheet:
+
+```css title="styles.css"
+@import '@uppy/core/css/style.min.css';
+@import '@uppy/dashboard/css/style.min.css';
+```
+
+The React, Next.js, Vue, and Angular examples intentionally use the default
+`waitForEncoding: false`. Only the JavaScript example opts in to waiting because
+it demonstrates reading final results in browser code.
+
+## 4. Decide when the UI is finished
+
+The default `waitForEncoding: false` marks the Uppy upload complete after the
+files reach Transloadit, while the Assembly may still be processing. For long
+jobs, configure a [`notify_url`][webhooks] in your server-owned Assembly
+Instructions or Template—not as an Uppy plugin option. Verify the notification
+signature on your server and update your application asynchronously. Use
+`waitForEncoding: true` only when the user should remain on the page until the
+final Assembly results are available.
+
+Listen to [`transloadit:result` and `transloadit:complete`][plugin-events] when
+waiting in the browser; these events are emitted only with
+`waitForEncoding: true`. To reconcile processing after a navigation or
+connection loss, listen to `transloadit:assembly-created` and save
+`assembly.assembly_id` in your application.
+
+## 5. Add remote sources only when needed
+
+Dropbox, Google Drive, URL imports, and similar sources need Companion. A
+Transloadit plan includes a hosted Companion service. Point each remote-source
+provider plugin at it by assigning the `COMPANION_URL` and
+`COMPANION_ALLOWED_HOSTS` constants exported by `@uppy/transloadit` to the
+plugin’s `companionUrl` and `companionAllowedHosts` options. See the [Companion
+configuration example][companion]. Local-device uploads do not need Companion.
+
+Google Drive is the one source that does not work out of the box: Google has
+blocked Transloadit’s shared OAuth app, so you must register your own and store
+it as a Transloadit credential. See [Google Drive: Use with
+Transloadit][google-drive-transloadit], or use the [Google Drive
+Picker][google-drive-picker] plugin, which uses a non-restricted scope and needs
+no Google verification (it still needs your own Google client ID, API key and
+app ID).
+
+Continue with the [complete plugin API][plugin-api], the [runnable Transloadit
+example][runnable-example], or the [Transloadit-side Uppy
+guide][transloadit-uppy].
+
+[first-app]: https://transloadit.com/docs/getting-started/my-first-app/
+[companion]: /docs/transloadit#use-with-companion
+[google-drive-transloadit]: /docs/google-drive#use-with-transloadit
+[google-drive-picker]: /docs/google-drive-picker
+[plugin-api]: /docs/transloadit
+[plugin-events]: /docs/transloadit#events
+[runnable-example]:
+	https://github.com/transloadit/uppy/tree/main/examples/transloadit
+[transloadit-uppy]: https://transloadit.com/docs/sdks/uppy/
+[webhooks]: https://transloadit.com/docs/topics/webhooks/

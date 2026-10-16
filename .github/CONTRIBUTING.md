@@ -117,3 +117,40 @@ Authenticates and Uploads from Dropbox through Companion:
 
 For more information about how to contribute to translations, see
 [the `@uppy/locales` contributing guide](https://uppy.io/docs/locales/#contributing-a-new-language).
+
+## Uppy.io website
+
+The [uppy.io](https://uppy.io/) website, docs and blog live in
+[`packages/uppy.io`](../packages/uppy.io) and are built with
+[Docusaurus](https://docusaurus.io/). The site uses the Uppy packages from this
+repository, so build those first:
+
+```sh
+corepack yarn
+corepack yarn build
+```
+
+Start a development server (most changes are reflected live):
+
+```sh
+corepack yarn workspace uppy-io dev
+```
+
+Format, lint, test and build:
+
+```sh
+corepack yarn workspace uppy-io format
+corepack yarn workspace uppy-io lint
+corepack yarn workspace uppy-io build
+corepack yarn workspace uppy-io test # needs a build
+```
+
+`packages/uppy.io/static` only holds site assets such as icons and fonts (CI
+rejects files over 100 KB). Blog images and videos are served from Transloadit's
+Smart CDN at `https://uppy-io-static.tlcdn.com/static/img/blog/<path>`,
+which imports them from the `static` folder of the archived
+[transloadit/uppy.io](https://github.com/transloadit/uppy.io) repository. To add
+new media, ask a maintainer to host it.
+
+Pushes to `main` deploy the site to GitHub Pages
+([`deploy-website.yml`](./workflows/deploy-website.yml)).

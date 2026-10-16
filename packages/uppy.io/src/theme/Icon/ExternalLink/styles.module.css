@@ -1,0 +1,10 @@
+.icon {
+	margin-left: 0.3rem;
+	/* Optically centred on the x-height rather than the line box. */
+	vertical-align: -1px;
+	opacity: 0.5;
+}
+
+a:hover > .icon {
+	opacity: 0.85;
+}
