@@ -224,15 +224,6 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<never> {
-    // not implementing this because a public thumbnail from webdav will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.webdav.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
-  }
-
   protected override mapProviderError(err: unknown): unknown {
     const status = isRecord(err) ? err['status'] : undefined
     if (status === 401) return new ProviderAuthError()

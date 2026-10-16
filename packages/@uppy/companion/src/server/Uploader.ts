@@ -25,6 +25,7 @@ import {
   hasUploadUrlMatch,
   jsonStringify,
   rfc2047EncodeMetadata,
+  s3WriteParams,
   truncateFilename,
 } from './helpers/utils.js'
 import * as logger from './logger.js'
@@ -910,15 +911,7 @@ export default class Uploader {
       ContentType: metadata.type,
       Metadata: rfc2047EncodeMetadata(metadata),
       Body: stream,
-      ...(options['acl'] != null && {
-        ACL: options['acl'],
-      }),
-      ...(options['awsSse'] != null && {
-        ServerSideEncryption: options['awsSse'],
-      }),
-      ...(options['awsSseKmsKeyId'] != null && {
-        SSEKMSKeyId: options['awsSseKmsKeyId'],
-      }),
+      ...s3WriteParams(options),
     }
 
     const upload = new Upload({

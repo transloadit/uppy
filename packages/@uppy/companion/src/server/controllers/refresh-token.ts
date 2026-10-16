@@ -16,7 +16,6 @@ export default async function refreshToken(
     res.sendStatus(400)
     return
   }
-  const { secret } = req.companion.options
 
   const providerConfig = req.companion.options.providerOptions?.[providerName]
   const clientId = providerConfig?.key
@@ -55,16 +54,10 @@ export default async function refreshToken(
       undefined,
       req.id,
     )
-    const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-      { [providerName]: req.companion.providerUserSession },
-      secret,
-      providerClass.authStateExpiry,
-    )
-
-    tokenService.addToCookiesIfNeeded(
+    const uppyAuthToken = tokenService.issueAuthToken(
       req,
       res,
-      uppyAuthToken,
+      providerName,
       providerClass.authStateExpiry,
     )
 

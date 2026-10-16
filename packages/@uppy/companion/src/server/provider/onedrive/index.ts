@@ -1,7 +1,6 @@
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
-import logger from '../../logger.js'
+import { parseSize, prepareStream } from '../../helpers/utils.js'
+import { refreshAccessToken } from '../oauth.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -11,10 +10,13 @@ import Provider, {
   type ProviderRefreshTokenOptions,
   type ProviderRefreshTokenResponse,
   type ProviderSizeOptions,
-  type ProviderThumbnailResponse,
   type Query,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import {
+  isUnauthorized,
+  jsonStringAt,
+  withProviderErrorHandling,
+} from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 type OneDriveClient = ReturnType<typeof got.extend>
@@ -25,11 +27,6 @@ const getClient = ({ token }: { token: string }): OneDriveClient =>
     headers: {
       authorization: `Bearer ${token}`,
     },
-  })
-
-const getOauthClient = () =>
-  got.extend({
-    prefixUrl: 'https://login.live.com',
   })
 
 function getQueryRecord(query: Query | undefined) {
@@ -122,15 +119,6 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
-    // not implementing this because a public thumbnail from onedrive will be used instead
-    logger.error(
-      'call to thumbnail is not implemented',
-      'provider.onedrive.thumbnail.error',
-    )
-    throw new Error('call to thumbnail is not implemented')
-  }
-
   override async size({
     id,
     query,
@@ -143,8 +131,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
           responseType: 'json',
         })
         .json<Record<string, unknown>>()
-      const size = body['size']
-      return typeof size === 'number' ? size : undefined
+      return parseSize(body['size'])
     })
   }
 
@@ -156,35 +143,19 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     }
   }
 
-  override async refreshToken({
-    clientId,
-    clientSecret,
-    refreshToken,
-    redirectUri,
-  }: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
+  override async refreshToken(
+    options: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
     return this.#withErrorHandling(
       'provider.onedrive.token.refresh.error',
-      async () => {
-        const body = await getOauthClient()
-          .post('oauth20_token.srf', {
-            responseType: 'json',
-            form: {
-              refresh_token: refreshToken,
-              grant_type: 'refresh_token',
-              client_id: clientId,
-              client_secret: clientSecret,
-              redirect_uri: redirectUri,
-            },
-          })
-          .json<Record<string, unknown>>()
-
-        const accessToken =
-          typeof body['access_token'] === 'string' ? body['access_token'] : null
-        if (!accessToken) {
-          throw new Error('Unexpected OneDrive token refresh response')
-        }
-        return { accessToken }
-      },
+      () =>
+        refreshAccessToken(
+          'https://login.live.com/oauth20_token.srf',
+          options,
+          {
+            redirect_uri: options.redirectUri,
+          },
+        ),
     )
   }
 
@@ -193,7 +164,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       fn,
       tag,
       providerName: OneDrive.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
+      isAuthError: isUnauthorized,
       isUserFacingError: (response) =>
         typeof response.statusCode === 'number' &&
         [400, 403].includes(response.statusCode),
@@ -202,12 +173,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
       // without an Office365 licence or OneDrive account setup completed
       // 400: Tenant does not have a SPO license
       // 403: You do not have access to create this personal site or you do not have a valid license
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const err = body['error']
-        if (!isRecord(err)) return undefined
-        return typeof err['message'] === 'string' ? err['message'] : undefined
-      },
+      getJsonErrorMessage: jsonStringAt('error', 'message'),
     })
   }
 }

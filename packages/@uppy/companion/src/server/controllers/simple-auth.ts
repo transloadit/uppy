@@ -33,7 +33,6 @@ export default async function simpleAuth(
     res.sendStatus(400)
     return
   }
-  const { secret } = req.companion.options
   const { provider, providerClass } = req.companion
   if (!provider || !providerClass) {
     res.sendStatus(400)
@@ -56,17 +55,12 @@ export default async function simpleAuth(
       undefined,
       req.id,
     )
-    const maxAge = getTokenMaxAge(
-      providerClass,
-      req.companion.providerUserSession,
+    const uppyAuthToken = tokenService.issueAuthToken(
+      req,
+      res,
+      providerName,
+      getTokenMaxAge(providerClass, req.companion.providerUserSession),
     )
-    const uppyAuthToken = tokenService.generateEncryptedAuthToken(
-      { [providerName]: req.companion.providerUserSession },
-      secret,
-      maxAge,
-    )
-
-    tokenService.addToCookiesIfNeeded(req, res, uppyAuthToken, maxAge)
 
     res.send({ uppyAuthToken })
   } catch (err) {

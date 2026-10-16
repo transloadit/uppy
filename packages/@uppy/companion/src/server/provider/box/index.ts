@@ -1,6 +1,5 @@
 import got from 'got'
-import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { parseSize, prepareStream } from '../../helpers/utils.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -13,7 +12,11 @@ import Provider, {
   type ProviderThumbnailResponse,
   type Query,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import {
+  isUnauthorized,
+  jsonStringAt,
+  withProviderErrorHandling,
+} from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 const BOX_FILES_FIELDS = 'id,modified_at,name,permissions,size,type'
@@ -151,19 +154,12 @@ export default class Box extends Provider<BoxUserSession> {
   override async size({
     id,
     providerUserSession: { accessToken: token },
-  }: ProviderSizeOptions<BoxUserSession>): Promise<number> {
+  }: ProviderSizeOptions<BoxUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.box.size.error', async () => {
       const file = await getClient({ token })
         .get(`files/${id}`, { responseType: 'json' })
         .json<Record<string, unknown>>()
-      const sizeValue = file['size']
-      const sizeStr =
-        typeof sizeValue === 'string'
-          ? sizeValue
-          : typeof sizeValue === 'number'
-            ? `${sizeValue}`
-            : '0'
-      return parseInt(sizeStr, 10)
+      return parseSize(file['size'])
     })
   }
 
@@ -192,12 +188,8 @@ export default class Box extends Provider<BoxUserSession> {
       fn,
       tag,
       providerName: Box.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const msg = body['message']
-        return typeof msg === 'string' ? msg : undefined
-      },
+      isAuthError: isUnauthorized,
+      getJsonErrorMessage: jsonStringAt('message'),
     })
   }
 }

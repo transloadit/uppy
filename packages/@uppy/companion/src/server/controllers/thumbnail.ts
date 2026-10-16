@@ -1,33 +1,15 @@
-import type { NextFunction, Request, Response } from 'express'
-import { respondWithError } from '../provider/error.js'
+import withProvider from './with-provider.js'
 
-async function thumbnail(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export default withProvider(async (req, res, provider) => {
   const id = req.params['id']
   if (typeof id !== 'string' || id.length === 0) {
     res.sendStatus(400)
     return
   }
-  const { provider, providerUserSession } = req.companion
-  if (!provider) {
-    res.sendStatus(400)
-    return
-  }
-
-  try {
-    const { stream, contentType } = await provider.thumbnail({
-      id,
-      providerUserSession,
-    })
-    if (contentType != null) res.set('Content-Type', contentType)
-    stream.pipe(res)
-  } catch (err) {
-    if (respondWithError(err, res)) return
-    next(err)
-  }
-}
-
-export default thumbnail
+  const { stream, contentType } = await provider.thumbnail({
+    id,
+    providerUserSession: req.companion.providerUserSession,
+  })
+  if (contentType != null) res.set('Content-Type', contentType)
+  stream.pipe(res)
+})

@@ -5,9 +5,9 @@
 
 import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../helpers/jwt.js'
-import { isRecord } from '../../helpers/type-guards.js'
-import { prepareStream } from '../../helpers/utils.js'
+import { parseSize, prepareStream } from '../../helpers/utils.js'
 import logger from '../../logger.js'
+import { refreshAccessToken } from '../oauth.js'
 import Provider, {
   type ProviderDownloadOptions,
   type ProviderDownloadResponse,
@@ -24,7 +24,11 @@ import Provider, {
   type ProviderThumbnailResponse,
   type Query,
 } from '../Provider.js'
-import { withProviderErrorHandling } from '../providerErrors.js'
+import {
+  isUnauthorized,
+  jsonStringAt,
+  withProviderErrorHandling,
+} from '../providerErrors.js'
 import adaptData from './adapter.js'
 
 const charsToEncode = /[\u007f-\uffff]/g
@@ -100,11 +104,6 @@ async function getClient({
     userInfo,
   }
 }
-
-const getOauthClient = () =>
-  got.extend({
-    prefixUrl: 'https://api.dropboxapi.com/oauth2',
-  })
 
 async function list({
   client,
@@ -307,7 +306,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
   override async size({
     id,
     providerUserSession: { accessToken: token },
-  }: ProviderSizeOptions<DropboxUserSession>): Promise<number> {
+  }: ProviderSizeOptions<DropboxUserSession>): Promise<number | undefined> {
     return this.#withErrorHandling('provider.dropbox.size.error', async () => {
       const meta = await (await getClient({ token, namespaced: true })).client
         .post('files/get_metadata', {
@@ -315,14 +314,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
           responseType: 'json',
         })
         .json<{ size?: unknown }>()
-      const sizeValue = meta?.size
-      const sizeStr =
-        typeof sizeValue === 'string'
-          ? sizeValue
-          : typeof sizeValue === 'number'
-            ? String(sizeValue)
-            : ''
-      return parseInt(sizeStr, 10)
+      return parseSize(meta?.size)
     })
   }
 
@@ -341,30 +333,11 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     )
   }
 
-  override async refreshToken({
-    clientId,
-    clientSecret,
-    refreshToken,
-  }: ProviderRefreshTokenOptions): Promise<ProviderRefreshTokenResponse> {
-    return this.#withErrorHandling(
-      'provider.dropbox.token.refresh.error',
-      async () => {
-        const tokenRes = await getOauthClient()
-          .post('token', {
-            form: {
-              refresh_token: refreshToken,
-              grant_type: 'refresh_token',
-              client_id: clientId,
-              client_secret: clientSecret,
-            },
-          })
-          .json<{ access_token?: unknown }>()
-        const accessToken = tokenRes.access_token
-        if (typeof accessToken !== 'string' || accessToken.length === 0) {
-          throw new Error('Missing access_token')
-        }
-        return { accessToken }
-      },
+  override async refreshToken(
+    options: ProviderRefreshTokenOptions,
+  ): Promise<ProviderRefreshTokenResponse> {
+    return this.#withErrorHandling('provider.dropbox.token.refresh.error', () =>
+      refreshAccessToken('https://api.dropboxapi.com/oauth2/token', options),
     )
   }
 
@@ -373,12 +346,8 @@ export default class Dropbox extends Provider<DropboxUserSession> {
       fn,
       tag,
       providerName: Dropbox.oauthProvider,
-      isAuthError: (response) => response.statusCode === 401,
-      getJsonErrorMessage: (body) => {
-        if (!isRecord(body)) return undefined
-        const summary = body['error_summary']
-        return typeof summary === 'string' ? summary : undefined
-      },
+      isAuthError: isUnauthorized,
+      getJsonErrorMessage: jsonStringAt('error_summary'),
     })
   }
 }
