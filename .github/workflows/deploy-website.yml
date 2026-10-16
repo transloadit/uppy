@@ -5,9 +5,16 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'packages/uppy.io/**'
+      - 'packages/@uppy/**'
+      - 'packages/uppy/**'
+      - 'yarn.lock'
+      - '.github/workflows/deploy-website.yml'
 
 env:
   NODE_VERSION: lts/*
+  YARN_ENABLE_GLOBAL_CACHE: false
 
 permissions:
   actions: read
@@ -32,12 +39,19 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/configure-pages@v6
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
       - uses: actions/setup-node@v7
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: yarn
-        env:
-          SKIP_YARN_COREPACK_CHECK: 1
 
       - name: Install dependencies
         run: corepack yarn install --immutable
