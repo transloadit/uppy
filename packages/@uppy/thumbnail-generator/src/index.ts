@@ -340,7 +340,10 @@ export default class ThumbnailGenerator<
   }
 
   addToQueue(fileID: string): void {
-    this.queue.push(fileID)
+    const id = String(fileID)
+    if (!this.queue.includes(id)) {
+      this.queue.push(id)
+    }
     if (this.queueProcessing === false) {
       this.processQueue()
     }
@@ -349,13 +352,14 @@ export default class ThumbnailGenerator<
   processQueue(): Promise<void> {
     this.queueProcessing = true
     if (this.queue.length > 0) {
-      const current = this.uppy.getFile(this.queue.shift() as string)
+      const fileID = this.queue.shift() as string
+      const current = this.uppy.getFile(fileID)
       if (!current) {
         this.uppy.log(
-          '[ThumbnailGenerator] file was removed before a thumbnail could be generated, but not removed from the queue. This is probably a bug',
+          `[ThumbnailGenerator] file ${fileID} was removed before a thumbnail could be generated, but not removed from the queue. This is probably a bug`,
           'error',
         )
-        return Promise.resolve()
+        return this.processQueue()
       }
       return this.requestThumbnail(current)
         .catch(() => {})
@@ -375,6 +379,10 @@ export default class ThumbnailGenerator<
         this.opts.thumbnailHeight,
       )
         .then((preview) => {
+          if (!this.uppy.getFile(file.id)) {
+            URL.revokeObjectURL(preview)
+            return
+          }
           this.setPreviewURL(file.id, preview)
           this.uppy.log(
             `[ThumbnailGenerator] Generated thumbnail for ${file.id}`,
@@ -386,6 +394,9 @@ export default class ThumbnailGenerator<
           )
         })
         .catch((err) => {
+          if (!this.uppy.getFile(file.id)) {
+            return
+          }
           this.uppy.log(
             `[ThumbnailGenerator] Failed thumbnail for ${file.id}:`,
             'warning',
@@ -412,7 +423,7 @@ export default class ThumbnailGenerator<
    * Cancel a lazy request for a thumbnail if the thumbnail has not yet been generated.
    */
   onCancelRequest = (file: UppyFile<M, B>): void => {
-    const index = this.queue.indexOf(file.id)
+    const index = this.queue.findIndex((id) => String(id) === String(file.id))
     if (index !== -1) {
       this.queue.splice(index, 1)
     }
@@ -422,7 +433,7 @@ export default class ThumbnailGenerator<
    * Clean up the thumbnail for a file. Cancel lazy requests and free the thumbnail URL.
    */
   onFileRemoved = (file: UppyFile<M, B>): void => {
-    const index = this.queue.indexOf(file.id)
+    const index = this.queue.findIndex((id) => String(id) === String(file.id))
     if (index !== -1) {
       this.queue.splice(index, 1)
     }
