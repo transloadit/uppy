@@ -117,3 +117,33 @@ Authenticates and Uploads from Dropbox through Companion:
 
 For more information about how to contribute to translations, see
 [the `@uppy/locales` contributing guide](https://uppy.io/docs/locales/#contributing-a-new-language).
+
+## Uppy.io website
+
+The [uppy.io](https://uppy.io/) website, docs and blog live in
+[`packages/uppy.io`](../packages/uppy.io) and are built with
+[Docusaurus](https://docusaurus.io/). The site uses the Uppy packages from this
+repository, so build those first:
+
+```sh
+corepack yarn
+corepack yarn build
+```
+
+Start a development server (most changes are reflected live):
+
+```sh
+corepack yarn workspace uppy-io dev
+```
+
+Format, lint, test and build:
+
+```sh
+corepack yarn workspace uppy-io format
+corepack yarn workspace uppy-io lint
+corepack yarn workspace uppy-io build
+corepack yarn workspace uppy-io test # needs a build
+```
+
+Pushes to `main` deploy the site to GitHub Pages
+([`deploy-website.yml`](./workflows/deploy-website.yml)).

@@ -66,8 +66,8 @@ curl -s -H 'Accept: application/json' -w '\n%{http_code}\n' https://uppy.io/does
 ## Tests
 
 The pure negotiation logic is unit-tested without a network or a Cloudflare
-runtime. From the repository root, run:
+runtime. From the monorepo root, run:
 
 ```sh
-corepack yarn test
+corepack yarn workspace uppy-io test
 ```

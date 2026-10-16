@@ -1,0 +1,54 @@
+name: Website
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  SKIP_YARN_COREPACK_CHECK: true
+
+jobs:
+  lint:
+    name: Lint (uppy.io)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: yarn
+      - name: Install dependencies
+        run: corepack yarn workspaces focus uppy-io
+      - name: Lint
+        run: corepack yarn workspace uppy-io lint
+
+  build:
+    name: Build and test (uppy.io)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+          cache: yarn
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Build Uppy
+        run: corepack yarn build
+      - name: Build website
+        run: corepack yarn workspace uppy-io build
+      - name: Test website
+        run: corepack yarn workspace uppy-io test

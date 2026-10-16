@@ -12,6 +12,7 @@
       "examples/**",
       "scripts/**",
       "private/**",
+      "!packages/uppy.io",
       "!packages/**/{angular/src,dist,lib}",
       "!node_modules",
       "!.svelte-kit",

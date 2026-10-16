@@ -117,7 +117,7 @@ export function jsonError(status, url, origin) {
 					410: 'This resource has been permanently removed and will not return. Check https://uppy.io/llms.txt for current documentation.',
 					403: 'Access to this resource is denied; retrying the same request will not succeed.',
 				}[status] ??
-				'Retry the request. If it keeps failing, open an issue at https://github.com/transloadit/uppy.io/issues.',
+				'Retry the request. If it keeps failing, open an issue at https://github.com/transloadit/uppy/issues.',
 			documentation: 'https://uppy.io/llms.txt',
 		},
 	};

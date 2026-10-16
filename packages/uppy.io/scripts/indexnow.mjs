@@ -8,6 +8,7 @@ import { promisify } from 'node:util';
 const ORIGIN = 'https://uppy.io';
 const STATE_FILE = 'indexnow-state.json';
 const ARTIFACT = 'indexnow-production-state';
+const REPOSITORY = 'transloadit/uppy';
 const exec = promisify(execFile);
 const defaults = {
 	buildDir: 'build',
@@ -214,7 +215,7 @@ async function restoreArtifact({ stateDir }) {
 		'gh',
 		[
 			'api',
-			'repos/transloadit/uppy.io/actions/artifacts',
+			`repos/${REPOSITORY}/actions/artifacts`,
 			'-X',
 			'GET',
 			'-f',
@@ -243,7 +244,7 @@ async function restoreArtifact({ stateDir }) {
 			'download',
 			String(artifact.workflow_run.id),
 			'--repo',
-			'transloadit/uppy.io',
+			REPOSITORY,
 			'--name',
 			ARTIFACT,
 			'--dir',
@@ -414,7 +415,7 @@ if (
 ) {
 	try {
 		const production =
-			process.env.GITHUB_REPOSITORY === 'transloadit/uppy.io' &&
+			process.env.GITHUB_REPOSITORY === REPOSITORY &&
 			process.env.GITHUB_REF === 'refs/heads/main' &&
 			['push', 'workflow_dispatch'].includes(process.env.GITHUB_EVENT_NAME);
 		if (!production)

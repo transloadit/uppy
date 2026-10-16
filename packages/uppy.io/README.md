@@ -2,64 +2,12 @@
 
 Website and documentation for [uppy.io](https://uppy.io).
 
-Code for [uppy.io/blog](https://uppy.io/blog) lives in this repo.  
-Code for [uppy.io/docs](https://uppy.io/docs/quick-start) lives in
-[github.com/transloadit/uppy](https://github.com/transloadit/uppy).
-
 ## Developer guide
 
-If you want to edit [uppy.io/blog](https://uppy.io/blog), edit the files in this
-repo.
+See the
+[contributing guide](https://github.com/transloadit/uppy/blob/main/.github/CONTRIBUTING.md#uppyio-website).
 
-If you want to edit [uppy.io/docs](https://uppy.io/docs/quick-start), then you
-should:
-
-1. Clone both the **uppy** repo and **uppy.io** repo.
-
-2. Then, from your `uppy.io` clone, run:
-
-   ```sh
-   ln -s /path-to-your-uppy-repo/docs docs
-   ```
-
-   Now, treat **/uppy/docs** as your working directory, but run the build/lint
-   scripts from your **/uppy.io** directory - **/uppy.io** will pick up your
-   changes.
-
-### Install Dependencies
-
-```sh
-corepack yarn
-```
-
-### Local Development
-
-```sh
-corepack yarn dev
-```
-
-This command builds **/uppy/docs** and **/uppy.io**, and shows them in a
-browser. Most changes are reflected live without having to restart the server.
-
-### Lint
-
-```sh
-corepack yarn run format
-corepack yarn lint
-```
-
-This command lints **/uppy/docs** and **/uppy.io**.
-
-### Build
-
-```sh
-corepack yarn build
-```
-
-This command generates static content into the `build` directory and can be
-served using any static contents hosting service.
-
-### IndexNow notifications
+## IndexNow notifications
 
 After a successful production deployment from `main`, GitHub Actions notifies
 [IndexNow](https://www.indexnow.org/documentation) about added, edited and
@@ -90,8 +38,3 @@ imported client code or assets may be absent from the sitemap diff.
 
 Repeated 400/403/422 responses need the ownership key or payload corrected; the
 queue stays intact instead of silently discarding rejected updates.
-
----
-
-This website is built using [Docusaurus 2](https://docusaurus.io/), a modern
-static website generator.

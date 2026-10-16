@@ -18,4 +18,4 @@ experience your application needs:
 - [Browse working examples](/examples)
 
 For instructions on linting or previewing these docs locally, see the
-[uppy.io repository](https://github.com/transloadit/uppy.io).
+[contributing guide](https://github.com/transloadit/uppy/blob/main/.github/CONTRIBUTING.md#uppyio-website).
