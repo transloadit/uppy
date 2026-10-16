@@ -73,14 +73,14 @@ export default function Item(props: ItemProps): h.JSX.Element {
     ),
     isDisabled,
     restrictionError,
-    actionsMenu,
   }
 
   switch (viewType) {
     case 'grid':
       return <GridItem {...ourProps} />
     case 'list':
-      return <ListItem {...ourProps} />
+      // The grid view does not lay out the item menu.
+      return <ListItem {...ourProps} actionsMenu={actionsMenu} />
     case 'unsplash':
       return (
         <GridItem {...ourProps}>

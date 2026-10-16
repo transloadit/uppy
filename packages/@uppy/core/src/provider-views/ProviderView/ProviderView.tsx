@@ -502,11 +502,12 @@ export default class ProviderView<M extends Meta, B extends Body> {
   #cancelLongOperation: (() => void) | undefined
 
   /**
-   * Runs a long write operation (a folder move, a bulk delete) behind the
-   * loading screen, with a Cancel button and progress text. `signal` aborts
-   * when the user cancels, the panel closes or uploads are cancelled; pass it
-   * to every request. The operation should throw an `AbortError` when it
-   * stops early, which `#run` treats as a cancel rather than a failure.
+   * Runs a long write operation (a folder move, a bulk delete) with progress
+   * text in `loading`, cancellable with `cancelLongOperation()` (the hook's
+   * `cancelOperation`). `signal` aborts when it is cancelled, the panel
+   * closes or uploads are cancelled; pass it to every request. The operation
+   * should throw an `AbortError` when it stops early, which `#run` treats as
+   * a cancel rather than a failure.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -727,8 +728,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
   /**
    * Ends a listing's loading state, unless a long operation (`runWithProgress`)
-   * has taken the screen over meanwhile: the listing it aborted must not wipe
-   * the progress screen on its way out.
+   * has started meanwhile: the listing it aborted must not wipe the
+   * operation's progress text on its way out.
    */
   #doneLoading(): void {
     if (this.#cancelLongOperation === undefined) this.setLoading(false)
