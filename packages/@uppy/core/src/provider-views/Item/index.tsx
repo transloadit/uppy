@@ -25,7 +25,6 @@ type ItemProps = {
   menuOpen?: boolean
   /** Opens or closes this item's actions menu; no menu without it. */
   toggleMenu?: ((anchor: HTMLElement) => void) | undefined
-  selectable?: boolean
 }
 
 export default function Item(props: ItemProps): h.JSX.Element {
@@ -40,7 +39,6 @@ export default function Item(props: ItemProps): h.JSX.Element {
     actions = [],
     menuOpen = false,
     toggleMenu,
-    selectable = true,
   } = props
 
   const actionsMenu =
@@ -75,15 +73,14 @@ export default function Item(props: ItemProps): h.JSX.Element {
     ),
     isDisabled,
     restrictionError,
-    actionsMenu,
-    selectable,
   }
 
   switch (viewType) {
     case 'grid':
       return <GridItem {...ourProps} />
     case 'list':
-      return <ListItem {...ourProps} />
+      // The grid view does not lay out the item menu.
+      return <ListItem {...ourProps} actionsMenu={actionsMenu} />
     case 'unsplash':
       return (
         <GridItem {...ourProps}>

@@ -277,7 +277,6 @@ en_US.strings = {
   startRecording: 'Begin video recording',
   stopAudioRecording: 'Stop audio recording',
   stopCapturing: 'Stop screen capturing',
-  stopOperation: 'Stop',
   stopRecording: 'Stop video recording',
   storageNotConnected: 'Connect to Transloadit Storage before uploading',
   storing: 'Storing…',

@@ -22,8 +22,6 @@ type ListItemProps = {
   showTitles: boolean
   i18n: any
   actionsMenu?: h.JSX.Element | null
-  /** Picker mode: rows are checkboxes. Manager mode lists files as plain rows. */
-  selectable?: boolean
 }
 
 export default function ListItem({
@@ -36,20 +34,7 @@ export default function ListItem({
   showTitles,
   i18n,
   actionsMenu = null,
-  selectable = true,
 }: ListItemProps): h.JSX.Element {
-  const fileContent = (
-    <>
-      <div className="uppy-ProviderBrowserItem-iconWrap">
-        <ItemIcon itemIconString={file.data.icon} />
-      </div>
-      {showTitles && (
-        <span className="uppy-truncate-text">
-          {file.data.name ?? i18n('unnamed')}
-        </span>
-      )}
-    </>
-  )
   return (
     <li
       className={className}
@@ -59,26 +44,24 @@ export default function ListItem({
           : undefined
       }
     >
-      {selectable && (
-        <input
-          type="checkbox"
-          className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
-          onChange={toggleCheckbox}
-          // for the <label/>
-          name="listitem"
-          id={file.id}
-          checked={file.status === 'checked'}
-          aria-label={
-            file.data.isFolder
-              ? i18n('allFilesFromFolderNamed', {
-                  name: file.data.name ?? i18n('unnamed'),
-                })
-              : null
-          }
-          disabled={isDisabled}
-          data-uppy-super-focusable
-        />
-      )}
+      <input
+        type="checkbox"
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox"
+        onChange={toggleCheckbox}
+        // for the <label/>
+        name="listitem"
+        id={file.id}
+        checked={file.status === 'checked'}
+        aria-label={
+          file.data.isFolder
+            ? i18n('allFilesFromFolderNamed', {
+                name: file.data.name ?? i18n('unnamed'),
+              })
+            : null
+        }
+        disabled={isDisabled}
+        data-uppy-super-focusable
+      />
 
       {file.data.isFolder ? (
         // button to open a folder
@@ -99,19 +82,21 @@ export default function ListItem({
             i18n('unnamed')
           )}
         </button>
-      ) : selectable ? (
+      ) : (
         // label for a checkbox
         <label
           htmlFor={file.id}
           className="uppy-u-reset uppy-ProviderBrowserItem-inner"
         >
-          {fileContent}
+          <div className="uppy-ProviderBrowserItem-iconWrap">
+            <ItemIcon itemIconString={file.data.icon} />
+          </div>
+          {showTitles && (
+            <span className="uppy-truncate-text">
+              {file.data.name ?? i18n('unnamed')}
+            </span>
+          )}
         </label>
-      ) : (
-        // manager mode: files are not picked; their actions are in the menu
-        <div className="uppy-u-reset uppy-ProviderBrowserItem-inner">
-          {fileContent}
-        </div>
       )}
       {actionsMenu}
     </li>

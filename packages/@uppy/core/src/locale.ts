@@ -42,8 +42,6 @@ export default {
     openFolderNamed: 'Open folder %{name}',
     itemActionsNamed: 'Actions for %{name}',
     cancel: 'Cancel',
-    // Stops a long operation (moving or deleting many files) midway.
-    stopOperation: 'Stop',
     dialogConfirm: 'OK',
     logOut: 'Log out',
     logIn: 'Log in',

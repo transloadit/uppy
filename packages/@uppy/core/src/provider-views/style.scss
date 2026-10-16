@@ -30,10 +30,6 @@
   color: variables.$gray-500;
 }
 
-.uppy-Provider-loadingCancel {
-  margin-top: 12px;
-}
-
 .uppy-Provider-empty {
   color: variables.$gray-500;
 }
@@ -158,13 +154,8 @@
     cursor: default;
   }
 
-  &:not(:last-of-type):not(:disabled):hover {
+  &:not(:last-of-type):hover {
     cursor: pointer;
-  }
-
-  // While a long operation runs (see ProviderView.runWithProgress).
-  &:disabled {
-    opacity: 0.5;
   }
 
   [data-uppy-theme='dark'] & {
@@ -280,10 +271,6 @@
     display: none;
   }
 
-  &:disabled {
-    opacity: 0.6;
-  }
-
   [data-uppy-theme='dark'] & {
     color: variables.$gray-200;
     background-color: variables.$gray-900;
@@ -350,13 +337,8 @@
   border-radius: 3px;
   cursor: pointer;
 
-  &:not(:disabled):hover {
+  &:hover {
     text-decoration: underline;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: default;
   }
 
   [data-uppy-theme='dark'] & {
@@ -401,11 +383,6 @@
   font-weight: 500;
   font-size: 13px;
   cursor: pointer;
-}
-
-// Manager mode lists files as plain rows: nothing to click.
-div.uppy-ProviderBrowserItem-inner {
-  cursor: default;
 }
 
 .uppy-ProviderBrowser-footer {
@@ -571,12 +548,8 @@ div.uppy-ProviderBrowserItem-inner {
   border: 1px solid rgba(variables.$blue, 0.4);
   border-radius: 4px;
 
-  &:not(:disabled):hover {
+  &:hover {
     background-color: rgba(variables.$blue, 0.08);
-  }
-
-  &:disabled {
-    opacity: 0.5;
   }
 
   // Like the "Log out" link next to it.
@@ -586,7 +559,7 @@ div.uppy-ProviderBrowserItem-inner {
     color: variables.$gray-200;
     border-color: variables.$gray-600;
 
-    &:not(:disabled):hover {
+    &:hover {
       background-color: variables.$gray-800;
     }
   }
