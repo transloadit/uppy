@@ -39,6 +39,8 @@
     "@aws-sdk/lib-storage": "^3.1134.0",
     "@aws-sdk/s3-presigned-post": "^3.1147.0",
     "@aws-sdk/s3-request-presigner": "^3.1134.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "connect-redis": "^7.1.1",
     "content-disposition": "^2.0.1",
     "cookie-parser": "^1.4.7",
@@ -74,8 +76,6 @@
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
     "@types/express-interceptor": "^1.2.0",
     "@types/express-session": "^1.19.0",
     "@types/http-proxy": "^1.17.17",
