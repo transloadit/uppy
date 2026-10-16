@@ -7,20 +7,13 @@ import App from '../src/App'
 
 const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 
-/**
- * MSW handlers that mock the tus resumable upload protocol.
- *
- * Handles the tus v1 flow used by the example tests:
- * 1. POST /files/ — create upload, return Location header
- * 2. PATCH /files/:id — receive chunk, return new Upload-Offset
- *
- * See https://tus.io/protocols/resumable-upload#protocol
- */
 network.configure({
   context: { quiet: true },
   // An unmocked request must fail the test rather than escape to the network.
   onUnhandledFrame: 'error',
+  // Mock the tus v1 upload flow: https://tus.io/protocols/resumable-upload#protocol
   handlers: [
+    // Create the upload and return its Location.
     http.post(TUS_ENDPOINT, ({ request }) => {
       const uploadLength = request.headers.get('Upload-Length') || '0'
       return new HttpResponse(null, {
@@ -33,6 +26,7 @@ network.configure({
         },
       })
     }),
+    // Accept a chunk and return the new Upload-Offset.
     http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
       const uploadOffset = request.headers.get('Upload-Offset') || '0'
       const body = await request.arrayBuffer()
