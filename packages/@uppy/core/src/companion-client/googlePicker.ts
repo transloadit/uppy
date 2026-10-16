@@ -781,7 +781,10 @@ export function createGooglePickerController({
             uppy.info(uppy.i18n('failedToAddFiles'), 'error')
           },
           onPickerFailed: () => {
-            uppy.log('Google Drive Picker failed to load', 'error')
+            uppy.log(
+              'Google Drive Picker failed to load. Possible causes: third-party cookies blocked, API key restrictions not matching this origin, Google Picker API not enabled, or apiKey/clientId/appId from different Google Cloud projects.',
+              'error',
+            )
             uppy.info(uppy.i18n('googleDrivePickerFailed'), 'error', 15_000)
           },
         })

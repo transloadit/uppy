@@ -111,7 +111,7 @@ en_US.strings = {
   generating5: 'Creating magic...',
   generatingThumbnails: 'Generating thumbnails...',
   googleDrivePickerFailed:
-    'Google Drive could not be loaded. This usually happens when your browser blocks third-party cookies. Please allow third-party cookies for this site and try again.',
+    'Google Drive could not be loaded. If this keeps happening, try allowing third-party cookies for this site.',
   import: 'Import',
   importFiles: 'Import files from:',
   importFrom: 'Import from %{name}',
