@@ -89,6 +89,15 @@ const fetchCredentials = async (
     },
   )
   if (response.statusCode === 403) throw userError('S3_REQUEST_FAILED')
+  if (response.statusCode === 401) {
+    // API2 rejected Companion's own proof: a `credentialsSecret` mismatch or clock skew
+    // beyond its 30-second window. The user still sees an outage; operators need the cause.
+    logger.warn(
+      'native Storage credential resolver rejected the server proof: check credentialsSecret and clock sync',
+      'provider.transloadit-storage.credentials',
+    )
+    throw unavailable()
+  }
   const credentials = z
     .object({
       workspace: z.literal(workspace),

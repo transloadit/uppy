@@ -1,8 +1,9 @@
 import { createHmac } from 'node:crypto'
 import { createServer } from 'node:http'
-import { expect, onTestFinished, test } from 'vitest'
+import { expect, onTestFinished, test, vi } from 'vitest'
 import { defaultOptions } from '../src/config/companion.js'
 import type { TransloaditStorageProviderOptions } from '../src/schemas/companion.js'
+import logger from '../src/server/logger.js'
 import { userError } from '../src/server/provider/errorCodes.js'
 import type { CompanionLike } from '../src/server/provider/Provider.js'
 import { parseTransloaditStorageProviderOptions } from '../src/server/provider/s3/config.js'
@@ -160,6 +161,7 @@ const outage = { name: 'ProviderApiError', statusCode: 502 }
 
 test.each([
   [{ status: 403 }, userError('S3_REQUEST_FAILED')],
+  [{ status: 401 }, outage],
   [{ wrongWorkspace: true }, outage],
   [{ status: 500 }, outage],
   [{ body: { workspace } }, outage],
@@ -170,6 +172,23 @@ test.each([
   await expect(
     provider.list({ companion, providerUserSession: session }),
   ).rejects.toMatchObject(expected)
+  expect(s3Keys).toEqual([])
+})
+
+test('warns operators when the resolver rejects the server proof', async () => {
+  const warn = vi.spyOn(logger, 'warn').mockImplementation(() => {})
+  onTestFinished(() => warn.mockRestore())
+  const { provider, companion, s3Keys, grantSession } = await fixture({
+    status: 401,
+  })
+  const session = await grantSession()
+  await expect(
+    provider.list({ companion, providerUserSession: session }),
+  ).rejects.toMatchObject(outage)
+  expect(warn).toHaveBeenCalledWith(
+    expect.stringContaining('credentialsSecret'),
+    'provider.transloadit-storage.credentials',
+  )
   expect(s3Keys).toEqual([])
 })
 
