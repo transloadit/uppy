@@ -31,6 +31,7 @@ export function createGooglePickerPluginAdapter(
 
   const apiKey = 'apiKey' in opts ? opts.apiKey : undefined
   const appId = 'appId' in opts ? opts.appId : undefined
+  const selectFolders = 'selectFolders' in opts ? opts.selectFolders : undefined
   const { requestClientId } = plugin
 
   return {
@@ -47,6 +48,7 @@ export function createGooglePickerPluginAdapter(
       clientId,
       apiKey,
       appId,
+      selectFolders,
       requestClientId,
     },
   }
