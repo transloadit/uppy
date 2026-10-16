@@ -504,7 +504,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
   /**
    * Runs a long write operation (a folder move, a bulk delete) with progress
    * text in `loading`, cancellable with `cancelLongOperation()` (the hook's
-   * `cancelOperation`). `signal` aborts when it is cancelled, the panel
+   * `cancelOperation`). For manager mode: the picker panel shows the progress
+   * text but offers no way to stop it. `signal` aborts when it is cancelled, the panel
    * closes or uploads are cancelled; pass it to every request. The operation
    * should throw an `AbortError` when it stops early, which `#run` treats as
    * a cancel rather than a failure.
@@ -705,10 +706,13 @@ export default class ProviderView<M extends Meta, B extends Body> {
       abortController.abort()
     }
     try {
-      // @ts-expect-error this should be typed in @uppy/dashboard.
-      // Even then I don't think we can make this work without adding dashboard
-      // as a dependency to provider-views.
-      this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
+      // A headless manager has no Dashboard panel: closing one is not about it.
+      if (this.opts.mode !== 'manager') {
+        // @ts-expect-error this should be typed in @uppy/dashboard.
+        // Even then I don't think we can make this work without adding dashboard
+        // as a dependency to provider-views.
+        this.plugin.uppy.on('dashboard:close-panel', cancelRequest)
+      }
       this.plugin.uppy.on('cancel-all', cancelRequest)
 
       await op(abortController.signal)
@@ -1190,7 +1194,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       if (!this.#warnedManagerRender) {
         this.#warnedManagerRender = true
         this.plugin.uppy.log(
-          `[${this.plugin.id}] manager mode is headless: render it with useS3Manager, not in a Dashboard`,
+          `[${this.plugin.id}] manager mode has no panel UI: render it headlessly`,
           'warning',
         )
       }

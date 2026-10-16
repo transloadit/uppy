@@ -104,10 +104,18 @@ function itemOf(plugin: TestPlugin, id: string) {
   return item
 }
 
-function actionOf(plugin: TestPlugin, id: string) {
-  const action = plugin.view.opts.actions?.find((a) => a.id === id)
-  if (!action) throw new Error(`Missing action ${id}`)
-  return action
+type ActionList = 'actions' | 'toolbarActions' | 'bulkActions'
+
+/** The plugin's action with this id, from `opts.actions` unless told otherwise. */
+function actionOf<L extends ActionList = 'actions'>(
+  plugin: TestPlugin,
+  id: string,
+  list: L = 'actions' as L,
+) {
+  const actions = plugin.view.opts[list] as { id: string }[] | undefined
+  const action = actions?.find((a) => a.id === id)
+  if (!action) throw new Error(`Missing ${list} ${id}`)
+  return action as NonNullable<TestPlugin['view']['opts'][L]>[number]
 }
 
 /** The prompt or confirm an action opened, once it is open. */
@@ -262,21 +270,34 @@ describe('S3 provider in the browser', () => {
     expect(plugin.builtInBulkActions()).toEqual([])
   })
 
-  it('renders nothing in a Dashboard in manager mode: it is headless', async () => {
+  it('has no Dashboard tab in manager mode: it is headless', async () => {
     const { companion } = setup({ mode: 'manager' })
-    const log = vi.spyOn(uppy!, 'log')
-    await page.getByRole('tab', { name: 'S3' }).click()
     await expect
-      .poll(() =>
-        log.mock.calls.some(
-          ([message, type]) =>
-            type === 'warning' && String(message).includes('useS3Manager'),
-        ),
-      )
-      .toBe(true)
-    await expect.element(page.getByText('readme.md')).not.toBeInTheDocument()
-    // Nor does it connect or list for an empty panel.
+      .poll(() => document.querySelector('.uppy-Dashboard'))
+      .toBeTruthy()
+    // S3 is the only acquirer: without it the Dashboard has no tabs at all.
+    expect(document.querySelectorAll('[role="tab"]')).toHaveLength(0)
     expect(companion.calls).toEqual([])
+  })
+
+  it("keeps a headless manager's folder and operation when a Dashboard panel closes", async () => {
+    const { plugin } = setup({ mode: 'manager' })
+    expect(await plugin.openFolderPath('docs/')).toBe(true)
+    const operation = plugin.view
+      .runWithProgress(
+        ({ signal }) =>
+          new Promise((_, reject) =>
+            signal.addEventListener('abort', () => reject(signal.reason)),
+          ),
+      )
+      .catch((err: unknown) => err)
+
+    uppy!.emit('dashboard:close-panel', 'Webcam')
+    expect(plugin.view.canCancelOperation).toBe(true)
+    expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
+
+    plugin.view.cancelLongOperation()
+    expect(await operation).toMatchObject({ name: 'AbortError' })
   })
 
   it('replaces an open prompt without keeping its previous input', async () => {
@@ -391,12 +412,7 @@ describe('S3 provider in the browser', () => {
     const { companion, plugin } = await setupHeadless()
     await plugin.view.openFolder('docs%2F')
     await plugin.view.openFolder(null)
-    const folder = plugin
-      .getPluginState()
-      .partialTree.find((node) => node.id === 'docs%2F')
-    if (!folder || folder.type !== 'folder')
-      throw new Error('Missing docs folder')
-    plugin.view.toggleCheckbox(folder, false)
+    plugin.view.toggleCheckbox(itemOf(plugin, 'docs%2F'), false)
     const selections: string[][] = []
     await plugin.view.runBulkAction({
       id: 'test:partial',
@@ -417,11 +433,7 @@ describe('S3 provider in the browser', () => {
   it('selecting the only child never makes its propagated parent a mutation target', async () => {
     const { companion, plugin } = await setupHeadless()
     await plugin.view.openFolder('docs%2F')
-    const file = plugin
-      .getPluginState()
-      .partialTree.find((node) => node.id === 'docs%2Fhello.txt')
-    if (!file || file.type !== 'file') throw new Error('Missing hello.txt')
-    plugin.view.toggleCheckbox(file, false)
+    plugin.view.toggleCheckbox(itemOf(plugin, 'docs%2Fhello.txt'), false)
     companion.folders
       .get('docs/')
       ?.push({ name: 'new-unselected.txt', isFolder: false })
@@ -587,13 +599,8 @@ describe('S3 provider in the browser', () => {
     // With docs listed, its file is checked along with it: still one item.
     await plugin.view.openFolder('docs%2F')
     await plugin.view.openFolder(null)
-    const { partialTree } = plugin.getPluginState()
-    const docs = partialTree.find((node) => node.id === 'docs%2F')
-    const readme = partialTree.find((node) => node.id === 'readme.md')
-    if (docs?.type !== 'folder' || readme?.type !== 'file')
-      throw new Error('Missing docs or readme.md')
-    plugin.view.toggleCheckbox(docs, false)
-    plugin.view.toggleCheckbox(readme, false)
+    plugin.view.toggleCheckbox(itemOf(plugin, 'docs%2F'), false)
+    plugin.view.toggleCheckbox(itemOf(plugin, 'readme.md'), false)
     expect(
       plugin.view
         .getBulkActionItems()
@@ -601,12 +608,9 @@ describe('S3 provider in the browser', () => {
         .sort(),
     ).toEqual(['docs%2F', 'readme.md'])
 
-    const bulkAction = (id: string) => {
-      const action = plugin.view.opts.bulkActions?.find((a) => a.id === id)
-      if (!action) throw new Error(`Missing bulk action ${id}`)
-      return action
-    }
-    const deleting = plugin.view.runBulkAction(bulkAction('s3:bulkDelete'))
+    const deleting = plugin.view.runBulkAction(
+      actionOf(plugin, 's3:bulkDelete', 'bulkActions'),
+    )
     expect(await dialogOf(plugin)).toMatchObject({
       kind: 'confirm',
       title: 'Delete 2 items?',
@@ -616,7 +620,9 @@ describe('S3 provider in the browser', () => {
     plugin.view.cancelDialog()
     await deleting
 
-    const moving = plugin.view.runBulkAction(bulkAction('s3:bulkMove'))
+    const moving = plugin.view.runBulkAction(
+      actionOf(plugin, 's3:bulkMove', 'bulkActions'),
+    )
     expect(await dialogOf(plugin)).toMatchObject({
       kind: 'prompt',
       title: 'Move 2 items',
@@ -763,11 +769,9 @@ describe('S3 provider in the browser', () => {
 
   it('creates a folder and refreshes the listing', async () => {
     const { companion, plugin, toasts } = await setupHeadless()
-    const newFolder = plugin.view.opts.toolbarActions?.find(
-      (action) => action.id === 's3:newFolder',
+    const creating = plugin.view.runToolbarAction(
+      actionOf(plugin, 's3:newFolder', 'toolbarActions'),
     )
-    if (!newFolder) throw new Error('Missing new folder action')
-    const creating = plugin.view.runToolbarAction(newFolder)
     expect(await dialogOf(plugin)).toMatchObject({
       kind: 'prompt',
       label: 'Name of the new folder:',
@@ -1002,19 +1006,15 @@ describe('S3 provider in the browser', () => {
     })
 
     it('hides the mutation actions for a read-only grant', async () => {
-      const { companion } = setup({
+      const { companion, plugin } = await setupHeadless({
         getGrant: async () =>
           mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       })
-
-      await openBucket()
       expect(companion.session?.scopes).toEqual(['read'])
-      await expect
-        .element(page.getByRole('button', { name: 'New folder…' }))
-        .not.toBeInTheDocument()
-      await expect
-        .element(page.getByRole('button', { name: 'Actions for readme.md' }))
-        .not.toBeInTheDocument()
+      expect(plugin.canWrite).toBe(false)
+      expect(plugin.builtInActions()).toEqual([])
+      expect(plugin.builtInToolbarActions()).toEqual([])
+      expect(plugin.builtInBulkActions()).toEqual([])
     })
   })
 })
