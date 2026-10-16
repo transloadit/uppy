@@ -158,7 +158,7 @@ Click "New Application" to create a new application. For the sake of this
 tutorial, I am naming my application "companion-provider". Once it is created,
 your page should look something like this:
 
-![The Unsplash Developers dashboard, with an arrow pointing at the "companion-provider" application's status, which reads "Demo"](/img/blog/custom-providers/unsplash-api-dashboard.png)
+![The Unsplash Developers dashboard, with an arrow pointing at the "companion-provider" application's status, which reads "Demo"](https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/custom-providers/unsplash-api-dashboard.png)
 
 ### Writing the custom provider
 
@@ -610,7 +610,7 @@ module.exports = (api) => {
 You can now load the URL of your client on your browser to see it running. When
 I run mine, it looks something like this:
 
-![The Uppy Dashboard with the custom provider in place, offering My Device, Dropbox and a "MyUnsplash" source](/img/blog/custom-providers/dashboard-preview.png)
+![The Uppy Dashboard with the custom provider in place, offering My Device, Dropbox and a "MyUnsplash" source](https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/custom-providers/dashboard-preview.png)
 
 In order to use this with our Companion implementation, we need to also start
 our Companion server by running `node server/index.js`.

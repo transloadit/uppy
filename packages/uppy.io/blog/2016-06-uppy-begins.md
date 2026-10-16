@@ -9,7 +9,7 @@ For the past six months, we have been working hard on uppy.io. We feel that it
 is high time we gave you a look behind the scenes: what are we working on, and
 why.
 
-<img alt="The Uppy Dashboard" src="/img/blog/uppy-begins/uppy-dashboard.jpg" />
+<img alt="The Uppy Dashboard" src="https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/uppy-begins/uppy-dashboard.jpg" />
 
 The way uploading works has not changed in a meaningful way since the days of
 our trusty old 56 kbit/s modems. Of course, files have gotten bigger and speeds

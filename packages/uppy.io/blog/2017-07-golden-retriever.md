@@ -2,7 +2,7 @@
 title: 'The Golden Retriever: Making uploads survive browser crashes'
 date: 2017-07-31
 authors: ['arturi']
-image: 'http://uppy.io/img/blog/golden-retriever/uppy-team-kong.jpg'
+image: 'https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/golden-retriever/uppy-team-kong.jpg'
 published: true
 slug: '2017/07/golden-retriever'
 ---
@@ -40,7 +40,7 @@ dreaded Blue Screen of Death! (if that is still a thing ;)
 First off, let’s show you a demo 📹 of Uppy surviving a browser crash and
 picking up right where we left it:
 
-<figure class="wide"><video alt="Demo video showing the Golden Retriever file restoring plugin in action" controls><source src="/img/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4" type="video/mp4" />Your browser does not support the video tag, you can <a href="https://uppy.io/img/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4">download the video</a> to watch it.</video></figure>
+<figure class="wide"><video alt="Demo video showing the Golden Retriever file restoring plugin in action" controls><source src="https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4" type="video/mp4" />Your browser does not support the video tag, you can <a href="https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/golden-retriever/uppy-golden-retriever-crash-demo-2.mp4">download the video</a> to watch it.</video></figure>
 
 <a name="uppy"></a>
 
@@ -65,7 +65,7 @@ limo rides, Indian food and Mario Kart 64. More on that on the
 [Transloadit blog](https://transloadit.com/blog/2017/08/team-meetup-2017/).
 
 <figure class="wide">
-  <img alt="The Uppy team at the 2017 Transloadit meetup" src="/img/blog/golden-retriever/uppy-team-kong.jpg" />
+  <img alt="The Uppy team at the 2017 Transloadit meetup" src="https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/golden-retriever/uppy-team-kong.jpg" />
 </figure>
 
 While enjoying some world-famous-in-Germany “Flammkuchen”, we were thinking
@@ -78,7 +78,7 @@ and came up with something neat.
 Uppy has a new friend to play with. Meet the Golden Retriever, our file recovery
 plugin:
 
-<center><img src="/img/blog/golden-retriever/catch-fail-2.gif" alt="Golden Retriever failing to catch something" title="Good try, girl!" /></center>
+<center><img src="https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/golden-retriever/catch-fail-2.gif" alt="Golden Retriever failing to catch something" title="Good try, girl!" /></center>
 
 As you can see, we’re not yet fully done with training her, but we’re getting
 there! 😄
@@ -89,7 +89,7 @@ from poor network conditions. However, if your browser suddenly decided to
 crash, Uppy would have no idea about what it was doing before, and you would
 have to re-select and edit your files all over.
 
-<center><img src="/img/blog/golden-retriever/no-idea-dog-3.gif" alt="Dog has no idea what he is doing" title="Keep trying, buddy!" /></center>
+<center><img src="https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/golden-retriever/no-idea-dog-3.gif" alt="Dog has no idea what he is doing" title="Keep trying, buddy!" /></center>
 
 For those cases, our Golden Retriever now comes to the rescue! It saves Uppy’s
 memory (state) in browser cache with every move you make. This means that when
@@ -158,7 +158,7 @@ Our current idea is that we could present the user with “ghost files” for th
 edge cases, and ask them to re-add such files. Here’s an early mockup, but we
 would love more feedback on this:
 
-<img src="/img/blog/golden-retriever/desktop-ghost.png" alt="Design mockup with ghosts" title="Design mockup with ghosts" />
+<img src="https://uppy-io-static.tlcdn.com/uppy-io-static/img/blog/golden-retriever/desktop-ghost.png" alt="Design mockup with ghosts" title="Design mockup with ghosts" />
 
 For the remaining cases, if an upload was already in progress before the
 crash/refresh, and especially if it was resumable (via [tus](https://tus.io),

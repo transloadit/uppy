@@ -28,6 +28,15 @@ jobs:
         with:
           node-version: lts/*
           cache: yarn
+      - name: Check static file sizes
+        # Media belongs on the Smart CDN, see CONTRIBUTING.md
+        run: |
+          large=$(find packages/uppy.io/static -type f -size +100k -not -name '*.woff2')
+          if [ -n "$large" ]; then
+            echo "::error::Files over 100 KB in packages/uppy.io/static:"
+            echo "$large"
+            exit 1
+          fi
       - name: Install dependencies
         run: corepack yarn workspaces focus uppy-io
       - name: Lint
