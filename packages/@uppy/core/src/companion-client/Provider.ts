@@ -354,8 +354,13 @@ export default class Provider<
     }
 
     try {
-      const res = await this.post<{ token: string }>(`${this.id}/preauth/`, {
-        params: this.companionKeysParams,
+      // Preauth configures app credentials, not the user's provider session.
+      // Bypass provider headers, auth state, and refresh, but keep host discovery.
+      const res = await super.request<{ token: string }>({
+        path: `${this.id}/preauth/`,
+        method: 'POST',
+        data: { params: this.companionKeysParams },
+        skipSubclassHooks: true,
       })
       this.preAuthToken = res.token
     } catch (err) {
