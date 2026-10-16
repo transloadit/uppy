@@ -121,6 +121,13 @@ export function createS3ManagerController(
     )
   }
   const view = plugin.view as ProviderViews<any, any>
+  if (view.opts.mode !== 'manager') {
+    // Picker mode offers no file changes and picks rather than selects.
+    uppy.log(
+      `[${pluginId}] is in picker mode: pass \`mode: 'manager'\` for a file manager`,
+      'warning',
+    )
+  }
   const subscribers = new Subscribers()
   let didFirstRender = false
   // The walk to `initialFolderKey`, put off while an operation runs.

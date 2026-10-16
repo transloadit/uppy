@@ -7,6 +7,7 @@ import type {
   AsyncStore,
   Body,
   Meta,
+  PluginTarget,
   UnknownProviderPlugin,
   UnknownProviderPluginState,
   Uppy,
@@ -684,7 +685,7 @@ export default class S3<M extends Meta, B extends Body>
    * Companion endpoints will change incompatibly, also in minor releases.
    */
   get acceptsFileDrops(): boolean {
-    return true
+    return this.opts.mode !== 'manager'
   }
 
   /** Both Companion and the grant must allow changes; nothing may before the first listing. */
@@ -857,7 +858,30 @@ export default class S3<M extends Meta, B extends Body>
       this.setPluginState({ detailItemId: undefined })
     }
     Object.assign(this.view.opts, this.#viewOptions())
+    this.#syncResetOnClose()
     this.#applyActions()
+  }
+
+  /**
+   * A picker starts over when the Dashboard panel closes. A headless manager
+   * has no panel (closing another one must not wipe it), and
+   * `keepStateOnClose` comes back to the same folder.
+   */
+  #syncResetOnClose(): void {
+    this.uppy.off('dashboard:close-panel', this.view.resetPluginState)
+    if (!this.opts.keepStateOnClose && this.opts.mode !== 'manager') {
+      this.uppy.on('dashboard:close-panel', this.view.resetPluginState)
+    }
+  }
+
+  /** Manager mode is headless (`useS3Manager`): no Dashboard tab or panel. */
+  override mount<Me extends Meta, Bo extends Body>(
+    target: PluginTarget<Me, Bo>,
+    plugin: UIPlugin<any, Me, Bo>,
+  ): HTMLElement {
+    if (this.opts.mode !== 'manager') return super.mount(target, plugin)
+    this.uppy.log(`[${this.id}] manager mode is headless: not mounted`)
+    return this.el!
   }
 
   override install() {
@@ -874,12 +898,7 @@ export default class S3<M extends Meta, B extends Body>
       ...this.#viewOptions(),
     })
     this.#applyActions()
-
-    if (this.opts.keepStateOnClose) {
-      // ProviderViews resets its state when the Dashboard panel closes; a
-      // management UI wants to come back to the same folder instead.
-      this.uppy.off('dashboard:close-panel', this.view.resetPluginState)
-    }
+    this.#syncResetOnClose()
 
     const { target } = this.opts
     if (target) {

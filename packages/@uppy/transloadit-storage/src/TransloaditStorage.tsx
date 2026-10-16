@@ -151,7 +151,10 @@ export default class TransloaditStorage<
    * minor releases.
    */
   override get acceptsFileDrops(): boolean {
-    return this.opts.storeUploads == null || this.canWrite
+    return (
+      this.opts.mode !== 'manager' &&
+      (this.opts.storeUploads == null || this.canWrite)
+    )
   }
 
   override builtInActions(): ProviderAction<M, B>[] {
@@ -285,10 +288,13 @@ export default class TransloaditStorage<
       } catch {
         // Some uploaders refuse to clear mid-flight; the refresh matters more.
       }
-      const dashboard = this.uppy.getPlugin('Dashboard') as
-        | { showPanel?: (id: string) => void }
-        | undefined
-      dashboard?.showPanel?.(this.id)
+      // A headless manager has no panel to return to.
+      if (this.opts.mode !== 'manager') {
+        const dashboard = this.uppy.getPlugin('Dashboard') as
+          | { showPanel?: (id: string) => void }
+          | undefined
+        dashboard?.showPanel?.(this.id)
+      }
       this.view.refreshCurrentFolder()
     }, 0)
   }
