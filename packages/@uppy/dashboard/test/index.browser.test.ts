@@ -23,7 +23,9 @@ test('Basic Dashboard functionality works in the browser', async () => {
     metaFields: [{ id: 'license', name: 'License' }],
   })
 
-  await expect.element(page.getByText('Drop files here')).toBeVisible()
+  await expect
+    .element(page.getByText('Drop files here or browse files'))
+    .toBeVisible()
   const fileInput = document.querySelector(
     '.uppy-Dashboard-input',
   ) as HTMLInputElement

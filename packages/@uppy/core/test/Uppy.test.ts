@@ -338,9 +338,9 @@ describe('src/Core', () => {
     using core = new Core({
       store: DeepFrozenStore(),
     })
-    // using corePauseEventMock = vi.fn()
-    using coreCancelEventMock = vi.fn()
-    using coreStateUpdateEventMock = vi.fn()
+    // const corePauseEventMock = vi.fn()
+    const coreCancelEventMock = vi.fn()
+    const coreStateUpdateEventMock = vi.fn()
     core.on('cancel-all', coreCancelEventMock)
     core.on('state-update', coreStateUpdateEventMock)
     core.setState({ foo: 'bar', totalProgress: 30 })
@@ -521,6 +521,11 @@ describe('src/Core', () => {
     expect(Object.keys(core.getState().files).length).toEqual(1)
   })
 
+  it('should alias Symbol.dispose to destroy', () => {
+    using core = new Core()
+    expect(core[Symbol.dispose]).toBe(core.destroy)
+  })
+
   it('should close, reset and uninstall when the instance id', () => {
     // use DeepFrozenStore in some tests to make sure we are not mutating things
     const core = new Core({
@@ -528,8 +533,8 @@ describe('src/Core', () => {
     })
     core.use(AcquirerPlugin1)
 
-    using coreCancelEventMock = vi.fn()
-    using coreStateUpdateEventMock = vi.fn()
+    const coreCancelEventMock = vi.fn()
+    const coreStateUpdateEventMock = vi.fn()
     // @ts-expect-error
     const plugin = core[Symbol.for('uppy test: getPlugins')]('acquirer')[0]
 

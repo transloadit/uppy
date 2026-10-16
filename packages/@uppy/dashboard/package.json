@@ -59,15 +59,15 @@
     "@uppy/google-drive": "workspace:^",
     "@uppy/url": "workspace:^",
     "@uppy/webcam": "workspace:^",
-    "@vitest/browser-playwright": "^4.1.11",
+    "@vitest/browser-playwright": "^5.0.3",
     "cssnano": "^8.0.1",
     "msw": "^3.0.2",
-    "playwright": "1.61.1",
+    "playwright": "1.64.0",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

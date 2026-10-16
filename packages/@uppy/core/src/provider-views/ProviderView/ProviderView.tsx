@@ -449,6 +449,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
         partialTree: PartialTreeUtils.afterToggleCheckbox(
           refreshedTree,
           survivors,
+          this.opts.mode === 'manager',
         ),
       })
     }
@@ -592,6 +593,24 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.plugin.setPluginState({ detailItemId: undefined })
   }
 
+  /**
+   * The item of the open detail modal: as it is in the tree, or as last seen
+   * while a refresh relists its folder. `undefined` once the modal is closed.
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  getDetailItem = (): PartialTreeFile | PartialTreeFolderNode | undefined => {
+    const { partialTree, detailItemId } = this.plugin.getPluginState()
+    if (!detailItemId) return undefined
+    this.#detailItem =
+      partialTree.find(
+        (node): node is PartialTreeFile | PartialTreeFolderNode =>
+          node.type !== 'root' && node.id === detailItemId,
+      ) ?? this.#detailItem
+    return this.#detailItem?.id === detailItemId ? this.#detailItem : undefined
+  }
+
   // Checkbox aggregation also checks parents of selected children. Only user-selected folders
   // (and their selected descendants) may become folder mutation targets.
   #selectionRoots = new Set<string>()
@@ -659,6 +678,25 @@ export default class ProviderView<M extends Meta, B extends Body> {
    */
   confirm(options: ConfirmOptions): Promise<boolean> {
     return this.#dialogs.confirm(options)
+  }
+
+  /**
+   * Answer the open dialog from a headless UI (`value` is the prompt's input).
+   *
+   * @experimental Part of the file-management API added for `@uppy/s3`: it
+   * will change incompatibly, also in minor releases.
+   */
+  submitDialog = (value?: string): void => this.#dialogs.submit(value)
+
+  /** @experimental See `submitDialog`. */
+  cancelDialog = (): void => this.#dialogs.cancel()
+
+  /** @experimental Stop the running `runWithProgress` operation, if any. */
+  cancelLongOperation = (): void => this.#cancelLongOperation?.()
+
+  /** @experimental Whether `cancelLongOperation` has something to stop. */
+  get canCancelOperation(): boolean {
+    return this.#cancelLongOperation !== undefined
   }
 
   tearDown(): void {
@@ -1059,15 +1097,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
     this.#doneLoading()
   }
 
+  /**
+   * `visibleOrder` is the rows as a custom UI shows them (sorted, filtered),
+   * so a shift-click range matches what the user sees.
+   */
   toggleCheckbox(
     ourItem: PartialTreeFolderNode | PartialTreeFile,
     isShiftKeyPressed: boolean,
+    visibleOrder: (
+      | PartialTreeFolderNode
+      | PartialTreeFile
+    )[] = this.getDisplayedPartialTree(),
   ) {
     const { partialTree } = this.plugin.getPluginState()
 
     const clickedRange = getClickedRange(
       ourItem.id,
-      this.getDisplayedPartialTree(),
+      visibleOrder,
       isShiftKeyPressed,
       this.previousCheckbox,
     )
@@ -1075,6 +1121,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const newPartialTree = PartialTreeUtils.afterToggleCheckbox(
       partialTree,
       clickedRange,
+      this.opts.mode === 'manager',
     )
 
     const statusById = new Map(
@@ -1200,7 +1247,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       searchResults,
       dialog,
       selectionActive = false,
-      detailItemId,
     } = this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
     const isManager = opts.mode === 'manager'
@@ -1216,15 +1262,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       !partialTree.some(
         (node) => node.type !== 'root' && node.parentId === currentFolderId,
       )
-    if (detailItemId) {
-      this.#detailItem =
-        partialTree.find(
-          (node): node is PartialTreeFile | PartialTreeFolderNode =>
-            node.type !== 'root' && node.id === detailItemId,
-        ) ?? this.#detailItem
-    }
-    const detailItem =
-      this.#detailItem?.id === detailItemId ? this.#detailItem : undefined
+    const detailItem = this.getDetailItem()
 
     return (
       <div
