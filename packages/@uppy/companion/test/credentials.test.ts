@@ -96,6 +96,30 @@ describe('providers requests with remote oauth keys', () => {
   })
 })
 
+test('does not follow a redirecting credentials endpoint', async () => {
+  const elsewhere = nock('http://localhost:2111')
+    .post('/zoom-keys')
+    .reply(302, '', { location: 'http://localhost:2111/elsewhere' })
+    .post('/elsewhere')
+    .reply(200, {
+      credentials: { key: remoteZoomKey, secret: remoteZoomSecret },
+    })
+  const encodedParams = Buffer.from(
+    JSON.stringify({ params: 'ZOOM-CREDENTIALS-PARAMS' }),
+  ).toString('base64')
+  const res = await request(await getZoomServer())
+    .get('/zoom/logout/')
+    .set('uppy-auth-token', token)
+    .set('uppy-credentials-params', encodedParams)
+  expect(res.status).toBe(500)
+  expect(res.body.message).toBe(
+    'Credentials endpoint responded with a 302 redirect to http://localhost:2111/elsewhere; configure its final URL',
+  )
+  expect(elsewhere.pendingMocks()).toEqual([
+    'POST http://localhost:2111/elsewhere',
+  ])
+})
+
 describe('remote credentials with transloadit_gateway', () => {
   const getDropboxServer = () =>
     getServer({
