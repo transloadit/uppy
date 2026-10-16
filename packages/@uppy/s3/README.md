@@ -10,9 +10,10 @@
 > make way for a standalone file manager.
 
 Browse an S3-compatible bucket (AWS S3, Cloudflare R2, MinIO) from the
-Dashboard and pick files from it. With `mode: 'manager'`, users can also rename,
-move and delete files and create folders, when Companion allows the session to
-write.
+Dashboard and pick files from it. With `mode: 'manager'`, a file library you
+render with `useS3Manager` from `@uppy/react` can also rename, move and delete
+files and create folders, when Companion allows the session to write. Manager
+mode is headless: the Dashboard panel renders nothing in it.
 
 This is not the uploader: to upload to S3, use
 [`@uppy/aws-s3`](https://www.npmjs.com/package/@uppy/aws-s3).

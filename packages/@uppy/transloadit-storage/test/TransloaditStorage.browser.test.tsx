@@ -7,7 +7,7 @@ import {
 } from '@uppy-dev/s3-mock-companion'
 import { http } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { page, userEvent } from 'vitest/browser'
+import { page } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
@@ -117,7 +117,6 @@ describe('Transloadit Storage in the browser', () => {
   it('Storage uses its own provider and keeps original downloads available to read-only users', async () => {
     const getDownloadUrl = vi.fn(async () => '/authorized-original/readme')
     const companion = setup({
-      mode: 'manager',
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       getDownloadUrl,
@@ -136,9 +135,6 @@ describe('Transloadit Storage in the browser', () => {
       .element(page.getByRole('button', { name: 'Upload files' }))
       .not.toBeInTheDocument()
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-    await expect
-      .element(page.getByRole('menuitem', { name: 'Rename or move…' }))
-      .not.toBeInTheDocument()
     await expect
       .element(page.getByRole('menuitem', { name: 'Download', exact: true }))
       .toBeVisible()
@@ -220,20 +216,29 @@ describe('Transloadit Storage in the browser', () => {
   })
 
   it('renames a folder in one native move instead of walking it', async () => {
-    const companion = setup({ mode: 'manager' })
-    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
-    await expect.element(page.getByText('readme.md')).toBeVisible()
+    // Manager mode is headless, as in a file library using `useS3Manager`.
+    const companion = createMockS3Companion({ token: TOKEN })
+    network.use(...toMswHandlers(companion, COMPANION, { http }))
+    uppy = new Uppy().use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      mode: 'manager',
+    })
+    const plugin =
+      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+    await plugin.openFolderPath(null)
+    const docs = plugin
+      .getPluginState()
+      .partialTree.find((node) => node.id === 'docs%2F')
+    const rename = plugin.view.opts.actions?.find((a) => a.id === 's3:rename')
+    if (docs?.type !== 'folder' || !rename) throw new Error('Missing docs')
+    const renaming = plugin.view.runAction(rename, docs)
+    await vi.waitFor(() => expect(plugin.getPluginState().dialog).toBeDefined())
+    plugin.view.submitDialog('archive')
+    await renaming
 
-    await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
-    await page
-      .getByLabelText('New name, or a path relative to the root folder:')
-      .fill('archive')
-    await userEvent.keyboard('{Enter}')
-
-    await expect
-      .element(page.getByText('archive', { exact: true }))
-      .toBeVisible()
+    expect(
+      plugin.view.getDisplayedPartialTree().map((item) => item.data.name),
+    ).toContain('archive')
     // One call moved the whole subtree: no per-file moves, no folder bookkeeping.
     expect(
       companion.calls

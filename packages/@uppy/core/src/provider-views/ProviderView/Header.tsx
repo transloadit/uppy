@@ -18,18 +18,12 @@ type HeaderProps<M extends Meta, B extends Body> = {
   i18n: I18n
   toolbarActions?: ProviderToolbarAction<M, B>[]
   runToolbarAction?: (action: ProviderToolbarAction<M, B>) => void
-  /**
-   * A long operation runs (`ProviderView.runWithProgress`): anything that
-   * would start another request, and so abort it, is disabled.
-   */
-  busy?: boolean
 }
 
 export default function Header<M extends Meta, B extends Body>(
   props: HeaderProps<M, B>,
 ) {
   const toolbarActions = props.toolbarActions ?? []
-  const busy = props.busy ?? false
   return (
     <div className="uppy-ProviderBrowser-header">
       <div
@@ -45,7 +39,6 @@ export default function Header<M extends Meta, B extends Body>(
             breadcrumbsIcon={props.pluginIcon?.()}
             title={props.title}
             i18n={props.i18n}
-            disabled={busy}
           />
         )}
         {toolbarActions.length > 0 && (
@@ -56,7 +49,6 @@ export default function Header<M extends Meta, B extends Body>(
                 type="button"
                 className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-toolbarBtn"
                 onClick={() => props.runToolbarAction?.(action)}
-                disabled={busy}
               >
                 {action.label}
               </button>
@@ -67,7 +59,6 @@ export default function Header<M extends Meta, B extends Body>(
           logout={props.logout}
           username={props.username}
           i18n={props.i18n}
-          disabled={busy}
         />
       </div>
     </div>

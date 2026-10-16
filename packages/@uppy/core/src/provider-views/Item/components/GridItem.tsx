@@ -12,7 +12,6 @@ type GridItemProps = {
   children?: h.JSX.Element | null
   i18n: any
   actionsMenu?: h.JSX.Element | null
-  selectable?: boolean
 }
 
 function GridItem({
@@ -25,39 +24,30 @@ function GridItem({
   children = null,
   i18n,
   actionsMenu = null,
-  selectable = true,
 }: GridItemProps): h.JSX.Element {
-  const name = file.data.name ?? i18n('unnamed')
-  const content = (
-    <>
-      <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
-      {showTitles && name}
-      {children}
-    </>
-  )
   return (
     <li
       className={className}
       title={isDisabled && restrictionError ? restrictionError : undefined}
     >
-      {selectable && (
-        <input
-          type="checkbox"
-          className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
-          onChange={toggleCheckbox}
-          name="listitem"
-          id={file.id}
-          checked={file.status === 'checked'}
-          disabled={isDisabled}
-          data-uppy-super-focusable
-        />
-      )}
+      <input
+        type="checkbox"
+        className="uppy-u-reset uppy-ProviderBrowserItem-checkbox uppy-ProviderBrowserItem-checkbox--grid"
+        onChange={toggleCheckbox}
+        name="listitem"
+        id={file.id}
+        checked={file.status === 'checked'}
+        disabled={isDisabled}
+        data-uppy-super-focusable
+      />
       <label
-        htmlFor={selectable ? file.id : undefined}
-        aria-label={name}
+        htmlFor={file.id}
+        aria-label={file.data.name ?? i18n('unnamed')}
         className="uppy-u-reset uppy-ProviderBrowserItem-inner"
       >
-        {content}
+        <ItemIcon itemIconString={file.data.thumbnail || file.data.icon} />
+        {showTitles && (file.data.name ?? i18n('unnamed'))}
+        {children}
       </label>
       {actionsMenu}
     </li>

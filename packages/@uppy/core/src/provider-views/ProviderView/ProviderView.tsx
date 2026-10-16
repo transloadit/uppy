@@ -218,10 +218,9 @@ export interface Opts<M extends Meta, B extends Body> {
   /**
    * 'picker' (default): rows are checkboxes and the footer adds the selection
    * to Uppy. 'manager' (file-library UIs, until a dedicated file manager
-   * plugin replaces it): files are not picked, the plugin's `actions` change
-   * them, and a headless UI (`useS3Manager`) selects them for `bulkActions`.
-   * This panel has no selection UI in manager mode. List view only for now
-   * (`viewType: 'list'`): the grid view does not lay out its items.
+   * plugin replaces it): headless. A file library renders it with
+   * `useS3Manager`, which runs the plugin's actions and selects items for
+   * `bulkActions`; this panel renders nothing in manager mode.
    *
    * @experimental Part of the file-management API added for `@uppy/s3`: it
    * will change incompatibly, also in minor releases.
@@ -1180,7 +1179,23 @@ export default class ProviderView<M extends Meta, B extends Body> {
     )
   }
 
+  #warnedManagerRender = false
+
   render(_state: unknown, viewOptions: RenderOpts<M, B> = {}): h.JSX.Element {
+    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
+    // Manager mode has no UI of its own: a file library renders it with
+    // `useS3Manager`. Nothing is listed for an empty panel either.
+    if (opts.mode === 'manager') {
+      if (!this.#warnedManagerRender) {
+        this.#warnedManagerRender = true
+        this.plugin.uppy.log(
+          `[${this.plugin.id}] manager mode is headless: render it with useS3Manager, not in a Dashboard`,
+          'warning',
+        )
+      }
+      return <div className="uppy-ProviderBrowser" />
+    }
+
     const { didFirstRender } = this.plugin.getPluginState()
     const { i18n } = this.plugin.uppy
 
@@ -1190,7 +1205,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
       this.openFolder(this.plugin.rootFolderId)
     }
 
-    const opts: Opts<M, B> = { ...this.opts, ...viewOptions }
     const { authenticated, loading } = this.plugin.getPluginState()
     const pluginIcon = this.plugin.icon || defaultPickerIcon
 
@@ -1210,10 +1224,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, username, searchString, searchResults, dialog } =
       this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-    const isManager = opts.mode === 'manager'
-    // A long operation owns the screen: anything that would start another
-    // request (and so abort it) is disabled or hidden meanwhile.
-    const busy = this.#cancelLongOperation !== undefined
 
     return (
       <div
@@ -1233,7 +1243,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
           i18n={i18n}
           toolbarActions={opts.toolbarActions ?? []}
           runToolbarAction={this.runToolbarAction}
-          busy={busy}
         />
         {opts.showFilter && (
           <FilterInput
@@ -1242,7 +1251,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
             onSubmit={() => {}}
             inputLabel={i18n('filter')}
             i18n={i18n}
-            disabled={busy}
           />
         )}
 
@@ -1260,23 +1268,19 @@ export default class ProviderView<M extends Meta, B extends Body> {
             showTitles={opts.showTitles}
             i18n={this.plugin.uppy.i18n}
             isLoading={loading}
-            onCancelLoading={this.#cancelLongOperation}
             utmSource="Companion"
             actions={opts.actions ?? []}
             runAction={this.runAction}
-            selectable={!isManager}
           />
         )}
 
-        {busy || isManager ? null : (
-          <FooterActions
-            partialTree={partialTree}
-            donePicking={this.donePicking}
-            cancelSelection={this.cancelSelection}
-            i18n={i18n}
-            validateAggregateRestrictions={this.validateAggregateRestrictions}
-          />
-        )}
+        <FooterActions
+          partialTree={partialTree}
+          donePicking={this.donePicking}
+          cancelSelection={this.cancelSelection}
+          i18n={i18n}
+          validateAggregateRestrictions={this.validateAggregateRestrictions}
+        />
         {dialog && (
           <ProviderDialog
             key={this.#dialogs.revision}

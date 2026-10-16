@@ -299,10 +299,9 @@ export type S3Options<M extends Meta = Meta, B extends Body = Body> = Omit<
   /**
    * 'picker' (default): rows are checkboxes and the selection is added to
    * Uppy; files can be browsed, not changed. 'manager' (file-library UIs,
-   * until a dedicated file manager plugin replaces it): files can be renamed,
-   * moved and deleted, and a headless UI (`useS3Manager`) selects them for
-   * bulk actions and shows their details. Uppy's own panel has no selection
-   * or detail view in this mode.
+   * until a dedicated file manager plugin replaces it): headless. Render it
+   * with `useS3Manager`, where files can be renamed, moved and deleted; the
+   * Dashboard panel renders nothing in this mode.
    */
   mode?: 'picker' | 'manager'
   /** Manager mode: extra bulk actions, appended to the built-in ones. */
@@ -938,7 +937,13 @@ export default class S3<M extends Meta, B extends Body>
    * be invalid after all.
    */
   #maybeAutoConnect(): void {
-    if (this.#autoConnectAttempted || this.opts.autoConnect === false) return
+    if (
+      this.#autoConnectAttempted ||
+      this.opts.autoConnect === false ||
+      // Headless: `useS3Manager` connects through `openFolderPath`.
+      this.opts.mode === 'manager'
+    )
+      return
     if (!this.#needsLogin) {
       const { authenticated, didFirstRender } = this.getPluginState()
       if (!didFirstRender || authenticated !== false) return

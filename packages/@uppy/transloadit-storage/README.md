@@ -11,8 +11,8 @@ application server; browser-provided paths are not authorization.
 In the Dashboard the plugin is a picker by default: files can be browsed and picked, and, with
 `storeUploads` or `onUploadRequest`, uploaded into the open folder (also by dropping them on the
 panel). Renaming, moving, deleting and new folders need `mode: 'manager'`, a stopgap until a
-dedicated file manager plugin. For a file library of your own, pass `mode: 'manager'` and render it
-with `useS3Manager` from `@uppy/react`.
+dedicated file manager plugin. Manager mode is headless: render your file library with
+`useS3Manager` from `@uppy/react`. The Dashboard panel renders nothing in that mode.
 
 ## Upload results are the durable handoff
 
