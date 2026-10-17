@@ -131,8 +131,9 @@ async function handleAuthCallbackSocketConnection({
     else replay().catch(onError)
   }
 
-  function onError(err: unknown) {
-    logger.error(err, 'socket.auth.redis.error', Uploader.shortenToken(token))
+  function onError() {
+    // Subscription errors include the callback token in command arguments.
+    logger.error('Auth callback failed', 'socket.auth.redis.error')
     ws.close()
   }
 
@@ -150,8 +151,8 @@ async function handleAuthCallbackSocketConnection({
       return
     }
     await replay()
-  } catch (err) {
-    onError(err)
+  } catch {
+    onError()
   }
 }
 
@@ -218,8 +219,9 @@ export default function setupSockets(
 
     if (authCallbackToken) {
       logger.info(
-        `Auth callback token connection received from ${authCallbackToken}`,
+        'Auth callback token connection received',
         'socket.auth.callback.connect',
+        Uploader.shortenToken(authCallbackToken),
       )
 
       handleAuthCallbackSocketConnection({

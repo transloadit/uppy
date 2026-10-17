@@ -580,6 +580,8 @@ describe('uploader', () => {
     uploader
       .awaitReady(60000)
       .then(() => uploader.tryUploadStream(stream, requireMockReq()))
+    await Emitter().once(uploadToken, () => {})
+    await Emitter().once(`connection:${uploadToken}`, () => {})
     socketClient.connect(uploadToken)
 
     return new Promise<void>((resolve, reject) => {

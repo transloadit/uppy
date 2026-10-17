@@ -160,6 +160,18 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     }
   }
 
+  async function connectSubscribed(flow: Awaited<ReturnType<typeof start>>) {
+    const ready = Promise.withResolvers<void>()
+    const on = flow.subscriber.on.bind(flow.subscriber)
+    vi.spyOn(flow.subscriber, 'on').mockImplementation(async (...args) => {
+      await on(...args)
+      ready.resolve()
+    })
+    const result = flow.connect()
+    await ready.promise
+    return { result }
+  }
+
   run('delivers a callback completed before the socket connects', async () => {
     const flow = await start()
     await flow.callback()
@@ -168,44 +180,41 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
 
   run('preserves delivery to an already subscribed socket', async () => {
     const flow = await start()
-    const ready = Promise.withResolvers<void>()
-    const on = flow.subscriber.on.bind(flow.subscriber)
-    vi.spyOn(flow.subscriber, 'on').mockImplementation(async (...args) => {
-      await on(...args)
-      ready.resolve()
-    })
-    const result = flow.connect()
-    await ready.promise
+    const { result } = await connectSubscribed(flow)
     await flow.callback()
     expect(await result).toEqual({ token })
   })
 
   run('accepts the unchanged payload from an older publisher', async () => {
     const flow = await start()
-    const ready = Promise.withResolvers<void>()
-    const on = flow.subscriber.on.bind(flow.subscriber)
-    vi.spyOn(flow.subscriber, 'on').mockImplementation(async (...args) => {
-      await on(...args)
-      ready.resolve()
-    })
-    const result = flow.connect()
-    await ready.promise
+    const { result } = await connectSubscribed(flow)
     await flow.publisher.emit(flow.callbackToken, { token })
     expect(await result).toEqual({ token })
+  })
+
+  run('redacts callback tokens from subscription errors', async () => {
+    const flow = await start()
+    const log = vi.spyOn(console, 'log').mockImplementation(() => {})
+    vi.spyOn(flow.subscriber, 'on').mockRejectedValueOnce(
+      Object.assign(new Error('Subscription unavailable'), {
+        command: { name: 'psubscribe', args: [flow.callbackToken] },
+      }),
+    )
+    const controller = new AbortController()
+    const result = flow.connect(controller.signal)
+    void result.catch(() => {})
+    await once(sockets.at(-1)!, 'close')
+    controller.abort()
+    const output = log.mock.calls.flat().join(' ')
+    expect(output).toContain('socket.auth.redis.error')
+    expect(output).not.toContain(flow.callbackToken)
   })
 
   if (mode === 'redis')
     run('preserves live delivery when retention fails', async () => {
       const flow = await start()
-      const ready = Promise.withResolvers<void>()
-      const on = flow.subscriber.on.bind(flow.subscriber)
-      vi.spyOn(flow.subscriber, 'on').mockImplementation(async (...args) => {
-        await on(...args)
-        ready.resolve()
-      })
-      const result = flow.connect()
+      const { result } = await connectSubscribed(flow)
       void result.catch(() => {})
-      await ready.promise
       const log = vi.spyOn(console, 'log').mockImplementation(() => {})
       vi.spyOn(storage!, 'set').mockRejectedValueOnce(
         Object.assign(new Error('Retained writes unavailable'), {
