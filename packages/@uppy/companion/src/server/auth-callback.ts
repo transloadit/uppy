@@ -34,16 +34,18 @@ export async function publishAuthCallback(
   } catch {
     // Pub/sub may still work when Redis rejects writes (for example, on OOM).
     // Redis errors include SET arguments, so never log the error or token.
-    logger.error(
-      'Could not retain OAuth callback result',
-      'auth.callback.retain.error',
-    )
+    logger.error('OAuth retention failed', 'auth.callback.retain.error')
   }
 
   // Keep the first argument compatible with older socket workers. The second
   // marks retained results so new workers consume storage instead of replaying
   // the publication after another socket already consumed it.
-  await emitter().emit(token, data, retained)
+  try {
+    await emitter().emit(token, data, retained)
+  } catch {
+    // Keep command arguments out of the request error handler and response.
+    throw new Error('OAuth callback publication failed')
+  }
 }
 
 export async function takeAuthCallback(

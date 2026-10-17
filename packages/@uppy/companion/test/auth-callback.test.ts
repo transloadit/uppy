@@ -2,7 +2,7 @@ import { EventEmitter, once } from 'node:events'
 import { createServer, type Server } from 'node:http'
 import express from 'express'
 import session from 'express-session'
-import { Redis } from 'ioredis'
+import { Pipeline, Redis } from 'ioredis'
 import request from 'supertest'
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { WebSocket } from 'ws'
@@ -44,31 +44,16 @@ const token = generateEncryptedAuthToken(
 
 afterEach(async () => {
   vi.useRealTimers()
-  await Promise.all(
-    sockets.splice(0).map(async (socket) => {
-      if (socket.readyState === WebSocket.CLOSED) return
-      const closed = once(socket, 'close')
-      socket.close()
-      await closed
-    }),
-  )
-  await Promise.all(
-    servers
-      .splice(0)
-      .map(
-        (server) =>
-          new Promise<void>((resolve) => server.close(() => resolve())),
-      ),
-  )
+  for (const item of [...sockets.splice(0), ...servers.splice(0)]) {
+    if ('readyState' in item && item.readyState === WebSocket.CLOSED) continue
+    const closed = once(item, 'close')
+    item.close()
+    await closed
+  }
   await Promise.all(removals.splice(0))
-  const quitting = await Promise.allSettled(
-    clients.splice(0).map((client) => client.quit()),
-  )
+  for (const client of clients.splice(0)) client.disconnect()
   storage = undefined
   vi.restoreAllMocks()
-  for (const result of quitting) {
-    if (result.status === 'rejected') throw result.reason
-  }
 })
 
 describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
@@ -192,14 +177,13 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     expect(await result).toEqual({ token })
   })
 
-  run('redacts callback tokens from subscription errors', async () => {
+  run('redacts callback tokens from delivery errors', async () => {
     const flow = await start()
     const log = vi.spyOn(console, 'log').mockImplementation(() => {})
-    vi.spyOn(flow.subscriber, 'on').mockRejectedValueOnce(
-      Object.assign(new Error('Subscription unavailable'), {
-        command: { name: 'psubscribe', args: [flow.callbackToken] },
-      }),
-    )
+    const failure = Object.assign(new Error('Redis unavailable'), {
+      command: { args: [flow.callbackToken, token] },
+    })
+    vi.spyOn(flow.subscriber, 'on').mockRejectedValueOnce(failure)
     const controller = new AbortController()
     const result = flow.connect(controller.signal)
     void result.catch(() => {})
@@ -208,26 +192,36 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     const output = log.mock.calls.flat().join(' ')
     expect(output).toContain('socket.auth.redis.error')
     expect(output).not.toContain(flow.callbackToken)
+    bus = flow.publisher
+    vi.spyOn(flow.publisher, 'emit').mockRejectedValueOnce(failure)
+    const promise = publishAuthCallback(flow.callbackToken, { token }, options)
+    const published = await promise.catch((error: unknown) => error)
+    expect(published).toBeInstanceOf(Error)
+    expect(JSON.stringify(published)).not.toContain(token)
+    expect(JSON.stringify(published)).not.toContain(flow.callbackToken)
   })
 
   if (mode === 'redis')
-    run('preserves live delivery when retention fails', async () => {
+    run.each([true, false])('live with SET failure %s', async (setFails) => {
       const flow = await start()
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {})
+      vi.spyOn(Pipeline.prototype, 'exec').mockRejectedValue(new Error())
       const { result } = await connectSubscribed(flow)
       void result.catch(() => {})
-      const log = vi.spyOn(console, 'log').mockImplementation(() => {})
-      vi.spyOn(storage!, 'set').mockRejectedValueOnce(
-        Object.assign(new Error('Retained writes unavailable'), {
-          command: {
-            name: 'set',
-            args: ['callback-key', JSON.stringify({ token })],
-          },
-        }),
-      )
+      if (setFails)
+        vi.spyOn(storage!, 'set').mockRejectedValueOnce(
+          Object.assign(new Error('Retained writes unavailable'), {
+            command: {
+              name: 'set',
+              args: ['callback-key', JSON.stringify({ token })],
+            },
+          }),
+        )
       await flow.callback()
       expect(await result).toEqual({ token })
       const output = log.mock.calls.flat().join(' ')
-      expect(output).toContain('auth.callback.retain.error')
+      expect(output).toContain('socket.auth.redis.error')
+      if (setFails) expect(output).toContain('auth.callback.retain.error')
       expect(output).not.toContain(token)
     })
 

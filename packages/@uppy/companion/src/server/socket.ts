@@ -128,7 +128,7 @@ async function handleAuthCallbackSocketConnection({
   function onMessage(...args: unknown[]) {
     // Older publishers only emit the payload, without retaining it.
     if (args[1] !== true) send(args[0])
-    else replay().catch(onError)
+    else replay().catch(() => send(args[0]))
   }
 
   function onError() {
@@ -150,7 +150,10 @@ async function handleAuthCallbackSocketConnection({
       events.removeListener(token, onMessage)
       return
     }
-    await replay()
+    await replay().catch(() => {
+      // Storage is best effort; keep live delivery available if replay fails.
+      logger.error('Auth callback replay failed', 'socket.auth.redis.error')
+    })
   } catch {
     onError()
   }
