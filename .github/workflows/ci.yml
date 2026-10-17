@@ -67,18 +67,16 @@ jobs:
   unit_tests:
     name: Tests
     runs-on: ubuntu-latest
-    services:
-      redis:
-        image: redis:7.4
-        ports:
-          - 6379:6379
-        options: --health-cmd "redis-cli ping" --health-interval 1s --health-timeout 5s --health-retries 10
     strategy:
       matrix:
         node-version: [lts/*]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
+      - name: Start Redis
+        run: |
+          docker run --detach --name companion-test-redis --publish 6379:6379 redis:7.4
+          timeout 30s bash -c 'until docker exec companion-test-redis redis-cli ping; do sleep 1; done'
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
