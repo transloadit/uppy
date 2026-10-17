@@ -19,8 +19,8 @@ export async function publishAuthCallback(
   const key = storageKey(token, options)
   const storage = redis.client()
   let retained = false
-  // Finish retention before publishing. A late write after a local timeout
-  // could recreate an already consumed result; use Redis command deadlines.
+  // Bound waits with redisOptions.commandTimeout and enableOfflineQueue: false.
+  // Local timeouts can let a late SET recreate an already consumed result.
   try {
     if (storage) {
       await storage.set(key, jsonStringify(data), 'EX', expirySeconds)

@@ -122,6 +122,7 @@ async function handleAuthCallbackSocketConnection({
     const data = await takeAuthCallback(token, options)
     // Consumption is final if the socket closes during this read. Clients
     // already reject closed login sockets instead of reconnecting them.
+    // A miss may mean eviction or prior consumption; do not replay live data.
     if (data !== undefined) send(data)
   }
 
