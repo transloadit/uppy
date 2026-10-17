@@ -113,7 +113,7 @@ function CancelBtn<M extends Meta, B extends Body>(
       type="button"
       className="uppy-u-reset uppy-StatusBar-actionCircleBtn"
       title={i18n('cancel')}
-      aria-label={i18n('cancel')}
+      aria-label={i18n('cancelAllUploads')}
       onClick={(): void => uppy.cancelAll()}
       data-cy="cancel"
       data-uppy-super-focusable
@@ -151,6 +151,9 @@ function PauseResumeButton<M extends Meta, B extends Body>(
 ) {
   const { isAllPaused, i18n, isAllComplete, resumableUploads, uppy } = props
   const title = isAllPaused ? i18n('resume') : i18n('pause')
+  const ariaLabel = isAllPaused
+    ? i18n('resumeAllUploads')
+    : i18n('pauseAllUploads')
 
   function togglePauseResume(): void {
     if (isAllComplete) return
@@ -171,7 +174,7 @@ function PauseResumeButton<M extends Meta, B extends Body>(
   return (
     <button
       title={title}
-      aria-label={title}
+      aria-label={ariaLabel}
       className="uppy-u-reset uppy-StatusBar-actionCircleBtn"
       type="button"
       onClick={togglePauseResume}
