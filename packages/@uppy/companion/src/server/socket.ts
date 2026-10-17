@@ -2,6 +2,7 @@ import type { Server as HttpServer } from 'node:http'
 import type { Server as HttpsServer } from 'node:https'
 import { type WebSocket, WebSocketServer } from 'ws'
 import type { CompanionInitOptions } from '../schemas/companion.js'
+import { takeAuthCallback } from './auth-callback.js'
 import emitter from './emitter/index.js'
 import { isRecord } from './helpers/type-guards.js'
 import { getURLBuilder, jsonStringify } from './helpers/utils.js'
@@ -91,14 +92,21 @@ function handleUploadSocketConnection({
   })
 }
 
-function handleAuthCallbackSocketConnection({
+async function handleAuthCallbackSocketConnection({
   token,
   ws,
+  options,
 }: {
   token: string
   ws: WebSocket
+  options: CompanionInitOptions
 }) {
+  const events = emitter()
+  let closed = false
+  let sent = false
   function send(data: unknown) {
+    if (closed || sent) return
+    sent = true
     ws.send(jsonStringify(data), (err) => {
       if (err)
         logger.error(
@@ -109,14 +117,42 @@ function handleAuthCallbackSocketConnection({
     })
   }
 
-  // todo we should use a unique prefix for these and upload tokens, so that we can easily distinguish them in the emitter and avoid any potential conflicts.
-  // but it's a breaking change so let's not do it now
-  // it's unlikely there will be any collision
-  emitter().on(token, send)
+  async function replay() {
+    if (closed || sent) return
+    const data = await takeAuthCallback(token, options)
+    // Consumption is final if the socket closes during this read. Clients
+    // already reject closed login sockets instead of reconnecting them.
+    if (data !== undefined) send(data)
+  }
+
+  function onMessage(...args: unknown[]) {
+    // Older publishers only emit the payload, without retaining it.
+    if (args[1] !== true) send(args[0])
+    else replay().catch(onError)
+  }
+
+  function onError(err: unknown) {
+    logger.error(err, 'socket.auth.redis.error', Uploader.shortenToken(token))
+    ws.close()
+  }
 
   ws.on('close', () => {
-    emitter().removeListener(token, send)
+    closed = true
+    events.removeListener(token, onMessage)
   })
+
+  try {
+    // HTTP 101 precedes Redis subscription readiness. Subscribe first, then
+    // consume storage, covering callbacks both before and during subscription.
+    await events.on(token, onMessage)
+    if (closed) {
+      events.removeListener(token, onMessage)
+      return
+    }
+    await replay()
+  } catch (err) {
+    onError(err)
+  }
 }
 
 export default function setupSockets(
@@ -186,7 +222,11 @@ export default function setupSockets(
         'socket.auth.callback.connect',
       )
 
-      handleAuthCallbackSocketConnection({ token: authCallbackToken, ws })
+      handleAuthCallbackSocketConnection({
+        token: authCallbackToken,
+        ws,
+        options: companionOptions,
+      })
       return
     }
 

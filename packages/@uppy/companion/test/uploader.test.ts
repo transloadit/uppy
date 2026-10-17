@@ -271,9 +271,15 @@ describe('uploader', () => {
       onProgress(message)
     })
     socketClient.onUploadError(uploadToken, onUploadError)
-    socketClient.onUploadSuccess(uploadToken, onUploadSuccess)
+    const completed = new Promise<void>((resolve) => {
+      socketClient.onUploadSuccess(uploadToken, (message) => {
+        onUploadSuccess(message)
+        resolve()
+      })
+    })
     await promise
     await uploader.tryUploadStream(stream, requireMockReq())
+    await completed
     expect(getTusMockLastUploadFile()).toBeInstanceOf(Readable)
 
     expect(onUploadError).not.toHaveBeenCalled()

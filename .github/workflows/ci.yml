@@ -67,6 +67,12 @@ jobs:
   unit_tests:
     name: Tests
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7.4
+        ports:
+          - 6379:6379
+        options: --health-cmd "redis-cli ping" --health-interval 1s --health-timeout 5s --health-retries 10
     strategy:
       matrix:
         node-version: [lts/*]

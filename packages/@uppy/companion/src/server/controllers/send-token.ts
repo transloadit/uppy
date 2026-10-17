@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
-import emitter from '../emitter/index.js'
+import { publishAuthCallback } from '../auth-callback.js'
 import {
   authCallbackSuccessHtml,
   legacyAuthCallbackHtml,
@@ -7,11 +7,11 @@ import {
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isOriginAllowed } from './connect.js'
 
-export default function sendToken(
+export default async function sendToken(
   req: Request,
   res: Response,
   next: NextFunction,
-): void {
+): Promise<void> {
   const companion = req.companion
   const uppyAuthToken = companion.authToken
   const { secret } = companion.options
@@ -49,7 +49,11 @@ export default function sendToken(
   // only new Uppy clients will set an authCallbackToken in the state
   // in that case, we send the token through the emitter.
   if (authCallbackToken) {
-    emitter().emit(authCallbackToken, { token: uppyAuthToken })
+    await publishAuthCallback(
+      authCallbackToken,
+      { token: uppyAuthToken },
+      companion.options,
+    )
     res.send(authCallbackSuccessHtml())
   } else {
     // This is backwards compatible with old Uppy clients:
