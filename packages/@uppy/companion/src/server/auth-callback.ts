@@ -19,6 +19,8 @@ export async function publishAuthCallback(
   const key = storageKey(token, options)
   const storage = redis.client()
   let retained = false
+  // Finish retention before publishing. A late write after a local timeout
+  // could recreate an already consumed result; use Redis command deadlines.
   try {
     if (storage) {
       await storage.set(key, jsonStringify(data), 'EX', expirySeconds)
@@ -29,9 +31,13 @@ export async function publishAuthCallback(
       pending.set(key, { data, timer })
     }
     retained = true
-  } catch (err) {
+  } catch {
     // Pub/sub may still work when Redis rejects writes (for example, on OOM).
-    logger.error(err, 'auth.callback.retain.error')
+    // Redis errors include SET arguments, so never log the error or token.
+    logger.error(
+      'Could not retain OAuth callback result',
+      'auth.callback.retain.error',
+    )
   }
 
   // Keep the first argument compatible with older socket workers. The second

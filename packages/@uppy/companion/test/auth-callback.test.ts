@@ -206,11 +206,20 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
       const result = flow.connect()
       void result.catch(() => {})
       await ready.promise
+      const log = vi.spyOn(console, 'log').mockImplementation(() => {})
       vi.spyOn(storage!, 'set').mockRejectedValueOnce(
-        new Error('Retained writes unavailable'),
+        Object.assign(new Error('Retained writes unavailable'), {
+          command: {
+            name: 'set',
+            args: ['callback-key', JSON.stringify({ token })],
+          },
+        }),
       )
       await flow.callback()
       expect(await result).toEqual({ token })
+      const output = log.mock.calls.flat().join(' ')
+      expect(output).toContain('auth.callback.retain.error')
+      expect(output).not.toContain(token)
     })
 
   run(
