@@ -6,7 +6,7 @@ on:
     paths-ignore:
       - '**.md'
       - 'assets/**'
-      - 'packages/uppy.io/**'
+      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
   pull_request:
@@ -14,7 +14,7 @@ on:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
-      - 'packages/uppy.io/**'
+      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
 

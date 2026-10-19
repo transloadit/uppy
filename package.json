@@ -8,7 +8,7 @@
     "examples/*",
     "packages/@uppy/*",
     "packages/uppy",
-    "packages/uppy.io",
+    "website",
     "private/*"
   ],
   "scripts": {

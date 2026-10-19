@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - 'packages/uppy.io/**'
+      - 'website/**'
       - 'packages/@uppy/**'
       - 'packages/uppy/**'
       - 'yarn.lock'
@@ -12,7 +12,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
-      - 'packages/uppy.io/**'
+      - 'website/**'
       - 'packages/@uppy/**'
       - 'packages/uppy/**'
       - 'yarn.lock'
@@ -52,9 +52,9 @@ jobs:
       - name: Check static file sizes
         # Media belongs on the Smart CDN, see CONTRIBUTING.md
         run: |
-          large=$(find packages/uppy.io/static -type f -size +100k -not -name '*.woff2')
+          large=$(find website/static -type f -size +100k -not -name '*.woff2')
           if [ -n "$large" ]; then
-            echo "::error::Files over 100 KB in packages/uppy.io/static:"
+            echo "::error::Files over 100 KB in website/static:"
             echo "$large"
             exit 1
           fi

@@ -130,13 +130,11 @@ const config = {
 					breadcrumbs: false,
 					remarkPlugins: [require('./src/remark/comparison-icons.cjs')],
 					sidebarPath: require.resolve('./sidebars.js'),
-					editUrl:
-						'https://github.com/transloadit/uppy/blob/main/packages/uppy.io/',
+					editUrl: 'https://github.com/transloadit/uppy/blob/main/website/',
 				},
 				blog: {
 					showReadingTime: true,
-					editUrl:
-						'https://github.com/transloadit/uppy/tree/main/packages/uppy.io/',
+					editUrl: 'https://github.com/transloadit/uppy/tree/main/website/',
 					blogSidebarCount: 0,
 				},
 				theme: {

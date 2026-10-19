@@ -11,7 +11,7 @@ on:
       - '**.d.ts'
       - 'examples/**'
       - 'private/**'
-      - 'packages/uppy.io/**'
+      - 'website/**'
       - '.github/**'
       - '!.github/workflows/bundlers.yml'
 

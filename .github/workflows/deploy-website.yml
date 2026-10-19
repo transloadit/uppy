@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - 'packages/uppy.io/**'
+      - 'website/**'
       - 'packages/@uppy/**'
       - 'packages/uppy/**'
       - 'yarn.lock'
@@ -67,7 +67,7 @@ jobs:
         continue-on-error: true
         uses: actions/cache/restore@v6
         with:
-          path: packages/uppy.io/.cache-loader/indexnow/state.json
+          path: website/.cache-loader/indexnow/state.json
           key:
             indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: indexnow-production-
@@ -81,13 +81,13 @@ jobs:
         timeout-minutes: 2
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        working-directory: packages/uppy.io
+        working-directory: website
         run: node scripts/indexnow.mjs prepare
 
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
-          path: packages/uppy.io/build
+          path: website/build
 
       - name: Deploy to GitHub Pages
         id: deployment
@@ -99,7 +99,7 @@ jobs:
           'success' && github.ref == 'refs/heads/main'
         continue-on-error: true
         timeout-minutes: 2
-        working-directory: packages/uppy.io
+        working-directory: website
         run: node scripts/indexnow.mjs submit
 
       - name: Save IndexNow production state
@@ -109,7 +109,7 @@ jobs:
         continue-on-error: true
         uses: actions/cache/save@v6
         with:
-          path: packages/uppy.io/.cache-loader/indexnow/state.json
+          path: website/.cache-loader/indexnow/state.json
           key:
             indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
 
@@ -121,7 +121,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: indexnow-production-state
-          path: packages/uppy.io/.cache-loader/indexnow/state.json
+          path: website/.cache-loader/indexnow/state.json
           include-hidden-files: true
           retention-days: 90
           if-no-files-found: ignore

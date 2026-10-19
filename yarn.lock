@@ -26438,9 +26438,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uppy-io@workspace:packages/uppy.io":
+"uppy-io@workspace:website":
   version: 0.0.0-use.local
-  resolution: "uppy-io@workspace:packages/uppy.io"
+  resolution: "uppy-io@workspace:website"
   dependencies:
     "@docusaurus/core": "npm:^3.9.2"
     "@docusaurus/eslint-plugin": "npm:^3.9.2"
