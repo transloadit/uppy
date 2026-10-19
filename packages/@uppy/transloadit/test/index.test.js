@@ -1,15 +1,25 @@
+import '@uppy-dev/msw-setup'
+import { network } from 'virtual:msw'
 import Core from '@uppy/core'
 import { RateLimitedQueue } from '@uppy/core/utils'
 import Transloadit from '@uppy/transloadit'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import Assembly from '../lib/Assembly.js'
-import { it } from './test-extend.ts'
+
+// Transloadit reports client-side upload failures to this endpoint. Several
+// tests deliberately fail an upload, so mock it for every test to keep the
+// beacon from reaching the real service.
+network.resetHandlers(
+  http.post('https://transloaditstatus.com/client_error', () =>
+    HttpResponse.json({ ok: true }),
+  ),
+)
 
 describe('Transloadit', () => {
-  it('Does not leave lingering progress if getAssemblyOptions fails', () => {
+  it('Does not leave lingering progress if getAssemblyOptions fails', async () => {
     const error = new Error('expected failure')
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions() {
         return Promise.reject(error)
@@ -22,21 +32,15 @@ describe('Transloadit', () => {
       data: new Uint8Array(100),
     })
 
-    return uppy
-      .upload()
-      .then(() => {
-        throw new Error('Should not have succeeded')
-      })
-      .catch((err) => {
-        const fileID = Object.keys(uppy.getState().files)[0]
+    await expect(uppy.upload()).rejects.toBe(error)
 
-        expect(err).toBe(error)
-        expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
-      })
+    const fileID = Object.keys(uppy.getState().files)[0]
+
+    expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
   })
 
-  it('Does not leave lingering progress if creating assembly fails', () => {
-    const uppy = new Core()
+  it('Does not leave lingering progress if creating assembly fails', async () => {
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -55,22 +59,16 @@ describe('Transloadit', () => {
       data: new Uint8Array(100),
     })
 
-    return uppy.upload().then(
-      () => {
-        throw new Error('Should not have succeeded')
-      },
-      (err) => {
-        const fileID = Object.keys(uppy.getState().files)[0]
-
-        expect(err.message).toBe(
-          'Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION',
-        )
-        expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
-      },
+    await expect(uppy.upload()).rejects.toThrow(
+      'Transloadit: Could not create Assembly: VIDEO_ENCODE_VALIDATION',
     )
+
+    const fileID = Object.keys(uppy.getState().files)[0]
+
+    expect(uppy.getFile(fileID).progress.uploadStarted).toBe(null)
   })
 
-  it('should complete when resuming after pause', async ({ worker }) => {
+  it('should complete when resuming after pause', async () => {
     const assemblyStatusBase = {
       assembly_id: 'test-assembly-id',
       websocket_url: 'ws://localhost:8080',
@@ -83,7 +81,7 @@ describe('Transloadit', () => {
     let uploadIndex = 0
     const tusBaseUrl = 'http://localhost/resumable/files/'
 
-    worker.use(
+    network.use(
       http.options('http://localhost/resumable/files*', () => {
         return new HttpResponse(null, {
           status: 204,
@@ -164,12 +162,9 @@ describe('Transloadit', () => {
           results: {},
         })
       }),
-      http.post('https://transloaditstatus.com/client_error', () => {
-        return HttpResponse.json({})
-      }),
     )
 
-    const uppy = new Core()
+    using uppy = new Core()
     const successSpy = vi.fn()
     uppy.on('complete', successSpy)
     uppy.use(Transloadit, {
@@ -247,7 +242,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on preprocessor error', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -281,7 +276,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on cancel-all', async () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -303,7 +298,7 @@ describe('Transloadit', () => {
   })
 
   it('resets allowNewUpload to true on error event', () => {
-    const uppy = new Core()
+    using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {
         params: {
@@ -386,11 +381,10 @@ describe('Transloadit', () => {
   }
 
   async function restoreConnectedAssembly(
-    worker,
     getStatus,
     { opts = { waitForEncoding: true }, saved = finishedStatus } = {},
   ) {
-    worker.use(
+    network.use(
       http.get('https://api2.transloadit.com/assemblies/*', () =>
         HttpResponse.json(getStatus()),
       ),
@@ -413,14 +407,9 @@ describe('Transloadit', () => {
 
   const settle = () => new Promise((resolve) => setTimeout(resolve, 50))
 
-  it('does not emit complete for an assembly cancelled mid-request', async ({
-    worker,
-  }) => {
+  it('does not emit complete for an assembly cancelled mid-request', async () => {
     const status = { ...finishedStatus, ok: 'ASSEMBLY_COMPLETED' }
-    const { uppy, assembly } = await restoreConnectedAssembly(
-      worker,
-      () => status,
-    )
+    const { uppy, assembly } = await restoreConnectedAssembly(() => status)
     const events = []
     uppy.on('transloadit:complete', () => events.push('complete'))
 
@@ -431,31 +420,24 @@ describe('Transloadit', () => {
     expect(events).toEqual([])
   })
 
-  it('completes a restored waitForMetadata upload saved as executing', async ({
-    worker,
-  }) => {
+  it('completes a restored waitForMetadata upload saved as executing', async () => {
     // SSE advances `ok` to EXECUTING before the metadata is extracted, and
     // that status is what gets saved. After a reload the refetch must still
     // produce 'metadata', which is all `waitForMetadata` completes off.
     const completed = []
-    const { uppy } = await restoreConnectedAssembly(
-      worker,
-      () => finishedStatus,
-      { opts: { waitForMetadata: true } },
-    )
+    const { uppy } = await restoreConnectedAssembly(() => finishedStatus, {
+      opts: { waitForMetadata: true },
+    })
     uppy.on('transloadit:complete', (a) => completed.push(a.ok))
     await settle()
 
     expect(completed).toEqual(['ASSEMBLY_EXECUTING'])
   })
 
-  it('reports an error when the final-status request fails', async ({
-    worker,
-  }) => {
+  it('reports an error when the final-status request fails', async () => {
     // Without a terminal event the AssemblyWatcher never settles, and
     // `uppy.upload()` hangs.
     const { uppy, plugin, assembly } = await restoreConnectedAssembly(
-      worker,
       () => finishedStatus,
     )
     plugin.client.getAssemblyStatus = () => Promise.reject(new Error('offline'))
@@ -471,18 +453,13 @@ describe('Transloadit', () => {
     expect(uppy.getState().plugins.Transloadit.error?.message).toBe('offline')
   })
 
-  it('still emits complete when the assembly ended by cancellation', async ({
-    worker,
-  }) => {
+  it('still emits complete when the assembly ended by cancellation', async () => {
     // `transloadit:complete` mirrors `assembly_finished`, which the API sends
     // on cancellation and failure too. Narrowing it to successes only would
     // silently strip terminal notifications from existing consumers, so the
     // event keeps firing and hands over the status to inspect.
     let status = { ...finishedStatus }
-    const { uppy, assembly } = await restoreConnectedAssembly(
-      worker,
-      () => status,
-    )
+    const { uppy, assembly } = await restoreConnectedAssembly(() => status)
     const completed = []
     uppy.on('transloadit:complete', (a) => completed.push(a.ok))
 
@@ -493,14 +470,12 @@ describe('Transloadit', () => {
     expect(completed).toEqual(['ASSEMBLY_CANCELED'])
   })
 
-  it('ignores status from an assembly that was replaced', async ({
-    worker,
-  }) => {
+  it('ignores status from an assembly that was replaced', async () => {
     const {
       uppy,
       plugin,
       assembly: first,
-    } = await restoreConnectedAssembly(worker, () => ({ ...finishedStatus }))
+    } = await restoreConnectedAssembly(() => ({ ...finishedStatus }))
 
     const second = new Assembly(
       { ...finishedStatus, assembly_id: 'second-assembly' },
@@ -524,9 +499,7 @@ describe('Transloadit', () => {
     expect(state.lastAssemblyStatus?.error).toBeUndefined()
   })
 
-  it('ignores the error of an assembly that is no longer current', async ({
-    worker,
-  }) => {
+  it('ignores the error of an assembly that is no longer current', async () => {
     const status = {
       assembly_id: 'test-assembly-id',
       assembly_ssl_url:
@@ -536,7 +509,7 @@ describe('Transloadit', () => {
       uploads: [],
       results: {},
     }
-    worker.use(
+    network.use(
       http.get('https://api2.transloadit.com/assemblies/*', () =>
         HttpResponse.json(status),
       ),
@@ -573,7 +546,7 @@ describe('Transloadit', () => {
     expect(errorEvents).toEqual(['error'])
   })
 
-  it('exposes the assembly error in plugin state', async ({ worker }) => {
+  it('exposes the assembly error in plugin state', async () => {
     const status = {
       assembly_id: 'test-assembly-id',
       assembly_ssl_url:
@@ -583,7 +556,7 @@ describe('Transloadit', () => {
       uploads: [],
       results: {},
     }
-    worker.use(
+    network.use(
       http.get('https://api2.transloadit.com/assemblies/*', () =>
         HttpResponse.json({
           ...status,

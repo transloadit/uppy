@@ -1,7 +1,7 @@
 {
   "name": "@uppy/audio",
   "description": "Uppy plugin that records audio using the device’s microphone.",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "license": "MIT",
   "style": "dist/style.min.css",
   "keywords": [
@@ -44,14 +44,14 @@
   },
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
-    "@vitest/browser-playwright": "^4.1.11",
+    "@vitest/browser-playwright": "^5.0.3",
     "cssnano": "^8.0.1",
-    "playwright": "1.61.1",
+    "playwright": "1.64.0",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",
     "sass": "^1.89.2",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"
@@ -61,7 +61,7 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano --map -o dist/style.min.css",
     "typecheck": "tsc --build",
     "test": "vitest run --silent='passed-only'"
   }

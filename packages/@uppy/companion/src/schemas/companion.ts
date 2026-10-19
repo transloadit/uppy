@@ -135,8 +135,10 @@ export interface TransloaditStorageProviderOptions
   extends Omit<S3ProviderOptions, 'bucket' | 'prefix' | 'key' | 'secret'> {
   /** Transloadit API endpoint, e.g. `https://api2.transloadit.com`. */
   apiEndpoint: string
-  /** Credentials per Workspace slug. */
-  workspaces: Record<string, { key: string; secret: string }>
+  /** Static credentials per Workspace; mutually exclusive with credentialsSecret. */
+  workspaces?: Record<string, { key: string; secret: string }>
+  /** Server-only key for API2's credential resolver; never a browser grant or Auth Key. */
+  credentialsSecret?: string
 }
 
 type ProviderConstructor = typeof Provider

@@ -188,16 +188,20 @@ export default class RequestClient<M extends Meta, B extends Body> {
     method = 'GET',
     data,
     skipPostResponse,
+    skipSubclassHooks,
     signal,
   }: {
     path: string
     method?: string
     data?: Record<string, unknown>
     skipPostResponse?: boolean
+    /** Use RequestClient's own `headers` and `onReceiveResponse`, ignoring subclass overrides. */
+    skipSubclassHooks?: boolean
     signal?: AbortSignal
   }): Promise<ResBody> {
+    const hooks = skipSubclassHooks ? RequestClient.prototype : this
     try {
-      const headers = await this.headers(!data)
+      const headers = await hooks.headers.call(this, !data)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
         signal,
@@ -205,7 +209,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       })
-      if (!skipPostResponse) this.onReceiveResponse(response)
+      if (!skipPostResponse) hooks.onReceiveResponse.call(this, response)
 
       return await handleJSONResponse<ResBody>(response)
     } catch (err) {

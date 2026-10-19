@@ -34,3 +34,6 @@ CMD ["node","/app/dist/bin/companion.js"]
 # This can be overruled later
 EXPOSE 3020
 USER node
+
+HEALTHCHECK --start-period=30s --start-interval=1s \
+  CMD node -e "fetch('http://localhost:' + (process.env.COMPANION_PORT || process.env.PORT || 3020) + (process.env.COMPANION_PATH || '') + '/health').then((res) => process.exit(res.ok ? 0 : 1), () => process.exit(1))"

@@ -1,8 +1,8 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { DefinePluginOpts, PluginOpts } from '@uppy/core'
 import { BasePlugin, type Uppy } from '@uppy/core'
-import type { Body, LocalUppyFile, Meta, UppyFile } from '@uppy/core/utils'
-import { getFileNameAndExtension, RateLimitedQueue } from '@uppy/core/utils'
+import type { Body, Meta, UppyFile } from '@uppy/core/utils'
+import { getFileNameAndExtension, TaskQueue } from '@uppy/core/utils'
 import CompressorJS from 'compressorjs'
 import locale from './locale.js'
 
@@ -13,6 +13,22 @@ declare module '@uppy/core' {
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     Compressor: Compressor<M, B>
   }
+}
+
+/**
+ * Convert image type to extension.
+ *
+ * @param contentType The content type to convert.
+ * @returns The file extension extension.
+ */
+function toFileExtension(contentType: string): string {
+  const [, extension] = contentType.split('/')
+
+  if (extension === 'jpeg') {
+    return 'jpg'
+  }
+
+  return extension!
 }
 
 export interface CompressorOpts extends PluginOpts, CompressorJS.Options {
@@ -34,7 +50,7 @@ export default class Compressor<
   M,
   B
 > {
-  #RateLimitedQueue
+  #queue = new TaskQueue({ concurrency: this.opts.limit })
 
   constructor(uppy: Uppy<M, B>, opts?: CompressorOpts) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -42,8 +58,6 @@ export default class Compressor<
     this.type = 'modifier'
 
     this.defaultLocale = locale
-
-    this.#RateLimitedQueue = new RateLimitedQueue(this.opts.limit)
 
     this.i18nInit()
 
@@ -64,50 +78,10 @@ export default class Compressor<
   async prepareUpload(fileIDs: string[]): Promise<void> {
     let totalCompressedSize = 0
     const compressedFiles: UppyFile<M, B>[] = []
-    const compressAndApplyResult = this.#RateLimitedQueue.wrapPromiseFunction(
-      async (file: LocalUppyFile<M, B>) => {
-        try {
-          if (file.data == null) throw new Error('File data is empty')
-          const compressedBlob = await this.compress(file.data)
-          const compressedSavingsSize = file.data.size - compressedBlob.size
-          this.uppy.log(
-            `[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`,
-          )
-          totalCompressedSize += compressedSavingsSize
-          const { name, type, size } = compressedBlob as File
 
-          const compressedFileName = getFileNameAndExtension(name)
-          const metaFileName = getFileNameAndExtension(file.meta.name)
+    const promises: Promise<void>[] = []
 
-          // Name (file.meta.name) might have been changed by user, so we update only the extension
-          const newMetaName = `${metaFileName.name}.${compressedFileName.extension}`
-
-          this.uppy.setFileState(file.id, {
-            ...(name && { name }),
-            ...(compressedFileName.extension && {
-              extension: compressedFileName.extension,
-            }),
-            ...(type && { type }),
-            ...(size && { size }),
-            data: compressedBlob,
-            meta: {
-              ...file.meta,
-              type,
-              name: newMetaName,
-            },
-          })
-          compressedFiles.push(file)
-        } catch (err) {
-          this.uppy.log(
-            `[Image Compressor] Failed to compress ${file.id}:`,
-            'warning',
-          )
-          this.uppy.log(err, 'warning')
-        }
-      },
-    )
-
-    const promises = fileIDs.map((fileID) => {
+    for (const fileID of fileIDs) {
       const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
@@ -115,7 +89,7 @@ export default class Compressor<
       })
 
       if (file.isRemote) {
-        return Promise.resolve()
+        continue
       }
 
       // Some browsers (Firefox) add blobs with empty file type, when files are
@@ -126,11 +100,54 @@ export default class Compressor<
       }
 
       if (!file.type?.startsWith('image/')) {
-        return Promise.resolve()
+        continue
       }
 
-      return compressAndApplyResult(file)
-    })
+      promises.push(
+        this.#queue.add(async () => {
+          try {
+            if (file.data == null) throw new Error('File data is empty')
+            const compressedBlob = await this.compress(file.data)
+            const compressedSavingsSize = file.data.size - compressedBlob.size
+            this.uppy.log(
+              `[Image Compressor] Image ${file.id} compressed by ${prettierBytes(compressedSavingsSize)}`,
+            )
+            totalCompressedSize += compressedSavingsSize
+            let { name, type, size } = compressedBlob as File
+
+            const compressedFileName = getFileNameAndExtension(name)
+            const { extension = toFileExtension(type) } = compressedFileName
+            if (!name.endsWith(`.${extension}`)) {
+              name += `.${extension}`
+            }
+            const metaFileName = getFileNameAndExtension(file.meta.name)
+
+            // Name (file.meta.name) might have been changed by user, so we update only the extension
+            const newMetaName = `${metaFileName.name}.${extension}`
+
+            this.uppy.setFileState(file.id, {
+              ...(name && { name }),
+              extension,
+              ...(type && { type }),
+              ...(size && { size }),
+              data: compressedBlob,
+              meta: {
+                ...file.meta,
+                type,
+                name: newMetaName,
+              },
+            })
+            compressedFiles.push(file)
+          } catch (err) {
+            this.uppy.log(
+              `[Image Compressor] Failed to compress ${file.id}:`,
+              'warning',
+            )
+            this.uppy.log(err, 'warning')
+          }
+        }),
+      )
+    }
 
     // Why emit `preprocess-complete` for all files at once, instead of
     // above when each is processed?
