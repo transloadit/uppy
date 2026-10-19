@@ -5,6 +5,11 @@
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
+  "exports": {
+    "./*.js": "./lib/*.js",
+    "./*": "./lib/*.js",
+    "./package.json": "./package.json"
+  },
   "scripts": {
     "build": "yarn node script/build-en_US.mjs && tsc --build tsconfig.build.json && yarn format",
     "format": "cd ../../ && yarn check packages/@uppy/locales/src/en_US.ts",
