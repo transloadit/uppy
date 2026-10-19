@@ -1,5 +1,29 @@
 # @uppy/drop-target
 
+## 5.0.1
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+- 78970b1: Add a README, so the npm page is no longer empty.
+
+## 5.0.0
+
+### Patch Changes
+
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/core@6.0.0
+
 ## 4.1.0
 
 ### Minor Changes

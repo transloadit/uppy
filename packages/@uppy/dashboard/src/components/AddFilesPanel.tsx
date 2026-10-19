@@ -1,9 +1,15 @@
 import classNames from 'classnames'
+import type { ComponentChildren } from 'preact'
+import type { AddFilesProps } from './AddFiles.js'
 import AddFiles from './AddFiles.js'
 
-type $TSFixMe = any
+interface AddFilesPanelProps extends AddFilesProps {
+  className?: string | undefined
+  showAddFilesPanel: boolean
+  toggleAddFilesPanel: (enabled: boolean) => void
+}
 
-const AddFilesPanel = (props: $TSFixMe): $TSFixMe => {
+const AddFilesPanel = (props: AddFilesPanelProps): ComponentChildren => {
   return (
     <div
       className={classNames('uppy-Dashboard-AddFilesPanel', props.className)}
@@ -26,7 +32,6 @@ const AddFilesPanel = (props: $TSFixMe): $TSFixMe => {
           {props.i18n('back')}
         </button>
       </div>
-      {}
       <AddFiles {...props} />
     </div>
   )

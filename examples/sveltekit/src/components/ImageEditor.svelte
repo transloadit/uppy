@@ -42,75 +42,86 @@ const editor = useImageEditor({ file })
   </div>
 
   <div class="flex gap-2 flex-wrap mb-4">
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getRotateButtonProps(-90)}
+      type="button"
     >
       ↶ -90°
     </button>
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getRotateButtonProps(90)}
+      type="button"
     >
       ↷ +90°
     </button>
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getFlipHorizontalButtonProps()}
+      type="button"
     >
       ⇆ Flip
     </button>
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getZoomButtonProps(0.1)}
+      type="button"
     >
       + Zoom
     </button>
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getZoomButtonProps(-0.1)}
+      type="button"
     >
       - Zoom
     </button>
   </div>
 
   <div class="flex gap-2 flex-wrap mb-4">
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getCropSquareButtonProps()}
+      type="button"
     >
       1:1
     </button>
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getCropLandscapeButtonProps()}
+      type="button"
     >
       16:9
     </button>
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getCropPortraitButtonProps()}
+      type="button"
     >
       9:16
     </button>
-    <button type="button"
+    <button
       class="bg-gray-200 px-3 py-1 rounded disabled:opacity-50"
       {...editor.getResetButtonProps()}
+      type="button"
     >
       Reset
     </button>
   </div>
 
   <div class="flex gap-4 justify-end">
-    <button type="button"
+    <button
       class="bg-gray-500 text-white px-4 py-2 rounded-md"
       {...editor.getCancelButtonProps({ onClick: close })}
+      type="button"
     >
       Cancel
     </button>
-    <button type="button"
+    <button
       class="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
       {...editor.getSaveButtonProps({ onClick: close })}
+      type="button"
     >
       Save
     </button>

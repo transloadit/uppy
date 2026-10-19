@@ -1,5 +1,79 @@
 # @uppy/locales
 
+## 5.3.1
+
+### Patch Changes
+
+- 6088195: Google Drive Picker: close Google's picker dialog and show an error toast when it fails to load (e.g. because third-party cookies are blocked), instead of leaving an un-closable overlay over the page.
+- 54d543c: **Experimental** manager mode is now headless: a file library renders it with `useS3Manager`. In manager mode the plugin no longer mounts into the Dashboard (no tab, no file drops, no `reopenAfterUpload` panel), and closing a Dashboard panel no longer resets its state or aborts its requests. `useS3Manager` warns when given a plugin in picker mode. Removed: the item detail dialog (opened by a click on a file) and S3's `getPreviewUrl`; the "Select multiple" toggle and the bulk-actions footer, with the `selectionActive` plugin state and `ProviderView.toggleSelectionMode()`; the core strings `openFileNamed`, `itemsSelected`, `selectMultiple`, `cancelSelection`, `close`, `detailSize`, `detailType` and `detailModified`; and the `--uppy-color-secondary` theming variable. `useS3Manager` and `createS3ManagerController` no longer have `state.selectionActive` or `toggleSelectionMode()`: a headless UI keeps its own selection mode and clears the selection with `cancelSelection()`.
+  
+  The `standalone` option is removed: the Dashboard shows its "Import from …" bar with Cancel, and the panel its Log out row, again. TransloaditStorage plugins that relied on `standalone` for manager mode now start in picker mode: pass `mode: 'manager'`.
+  
+  With the panel gone, so is what only it needed: the progress screen's Stop button (and the `stopOperation` string), and the busy state that disabled the header, filter and breadcrumbs during a long operation. Long operations, their progress text and `cancelLongOperation()` remain for `useS3Manager`. Picker mode is unchanged, including the item menu, toolbar actions and dialogs that Transloadit Storage's picker actions use.
+  
+  If an app runs manager mode inside a Dashboard with `@uppy/s3` 0.1.x or `@uppy/transloadit-storage` 0.1.x, the panel will be empty once its `^6.2.0` range picks up `@uppy/core` 6.3. Those plugins stay on 0.1.x, because a caret range on a 0.x version doesn't cross minors. Nothing throws. Render manager mode with `useS3Manager`, or keep `@uppy/core` on 6.2 until then. Picker mode is unaffected.
+- Updated dependencies [b47ca2d]
+- Updated dependencies [715eb80]
+- Updated dependencies [6088195]
+- Updated dependencies [54d543c]
+- Updated dependencies [a7a7997]
+- Updated dependencies [a17c84d]
+  - @uppy/core@6.3.0
+
+## 5.3.0
+
+### Minor Changes
+
+- 480e44c: **Experimental:** both plugins, and the Companion endpoints they use, will change incompatibly
+  (also in minor releases) as they make way for a standalone file manager. Both log a warning when
+  installed.
+
+  New `@uppy/s3` plugin: browse an S3-compatible bucket from the Dashboard and pick files from it (`autoConnect`, `keepStateOnClose`), or, with `mode: 'manager'`, manage it: rename/move, delete, new folder, bulk move/delete. Picker mode never changes existing files. What the user may see and change comes from Companion, either from the bucket it is configured with or from the storage grant your server issued. Moving a folder runs item by item from the client, so progress is visible and a failure stops at a known point. New `@uppy/transloadit-storage` plugin: the same browser pointed at a Transloadit Storage workspace, with a "Copy Smart CDN URL" action supplied by the application's authenticated server callback. Secrets stay on the server.
+
+  Storage uploads default to refusing collisions. Opt into renaming or overwriting explicitly, and
+  save the returned Workspace, asset ID, version ID and final path. The package README explains how
+  to use canonical stored results and version-pinned Viewer delivery without treating S3 listing
+  paths as immutable references.
+
+### Patch Changes
+
+- Updated dependencies [480e44c]
+  - @uppy/core@6.1.0
+
+## 5.2.1
+
+### Patch Changes
+
+- c2982bc: Add the Azerbaijani (`az_AZ`) locale.
+- Updated dependencies [c011da4]
+  - @uppy/core@6.0.2
+
+## 5.2.0
+
+### Minor Changes
+
+- 1230ab6: Add Mongolian locale support
+- 12de077: Remove @uppy/instagram references from all the packages
+- 2608043: @uppy/locales: add Norwegian Nynorsk (nn_NO) locale, and reword `uploadStalled` in Norwegian Bokmål (nb_NO)
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- 32b9f06: @uppy/locales: update Norwegian Bokmål (nb_NO)
+- 2608044: Fix the smart_count placeholder in the ja_JP folderAdded string.
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/core@6.0.0
+
 ## 5.1.1
 
 ### Patch Changes

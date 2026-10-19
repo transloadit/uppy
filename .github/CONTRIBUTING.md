@@ -42,6 +42,7 @@ yarn build
 - `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
 - `yarn start:companion` - Start only Companion server at http://localhost:3020
 - `yarn build:watch` - Build packages in watch mode
+- `yarn build:examples` - Build and type-check the examples and the dev playground
 - `yarn test` - Run tests for all packages
 - `yarn test:watch` - Run tests in watch mode
 - `yarn typecheck` - Run TypeScript type checking
@@ -76,8 +77,8 @@ yarn run start:companion
 ```
 
 This would get the Companion instance running on `http://localhost:3020`. It
-uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart
-when files are changed.
+recompiles with `tsc --watch` and runs under `node --watch`, so it will
+automatically restart when files are changed.
 
 ### How the Authentication and Token mechanism works
 

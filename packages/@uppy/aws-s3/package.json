@@ -1,14 +1,14 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "5.1.0",
+  "version": "6.3.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "typecheck": "tsc --build",
-    "test": "vitest run --environment=jsdom --silent='passed-only'"
+    "test": "vitest run --silent='passed-only'"
   },
   "keywords": [
     "file uploader",
@@ -38,17 +38,16 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.362.0",
-    "@aws-sdk/client-sts": "^3.362.0",
-    "@aws-sdk/s3-request-presigner": "^3.362.0",
-    "@types/node": "^20.19.0",
+    "@aws-sdk/client-sts": "^3.1139.0",
+    "@types/node": "^22.20.1",
+    "@uppy-dev/msw-setup": "workspace:^",
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@vitest/browser-playwright": "^4.1.6",
-    "jsdom": "^29.1.1",
-    "playwright": "1.61.1",
+    "@vitest/browser-playwright": "^5.0.3",
+    "msw": "^3.0.2",
+    "playwright": "1.64.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6",
-    "whatwg-fetch": "3.6.20"
+    "vitest": "^5.0.3"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

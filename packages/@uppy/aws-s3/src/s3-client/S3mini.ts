@@ -21,7 +21,7 @@ import * as U from './utils.js'
  *       method: 'POST',
  *       body: JSON.stringify({ method, key, uploadId, partNumber }),
  *     });
- *     return resp.json(); // { url }
+ *     return resp.json(); // { url }, { url, key, headers }, or { url, fields } for a POST policy
  *   },
  * });
  *
@@ -185,19 +185,35 @@ class S3mini extends S3Client {
   }: IT.PutObjectParams) {
     this._checkKey(key)
 
-    const { xhr, url } = await this.request({
-      request: { method: 'PUT', key },
-      data,
-      onProgress,
+    const request = { method: 'PUT', key, contentType: fileType } as const
+    return this.signed({
+      request,
       signal,
-      contentType: fileType,
+      send: async (presigned) => {
+        const { url, fields, headers } = presigned
+        if (fields) {
+          return this.postObject({
+            url,
+            fields,
+            headers,
+            data,
+            onProgress,
+            signal,
+          })
+        }
+        const { xhr, resolvedKey } = await this.send(request, presigned, {
+          data,
+          onProgress,
+          signal,
+          contentType: fileType,
+        })
+        return {
+          location: U.removeQueryString(url),
+          etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
+          key: resolvedKey,
+        }
+      },
     })
-
-    return {
-      location: U.removeQueryString(url),
-      etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key,
-    }
   }
 
   /** Initiates a multipart upload and returns the upload ID. */
@@ -212,7 +228,7 @@ class S3mini extends S3Client {
       throw new TypeError(`${C.ERROR_PREFIX}fileType must be a string`)
     }
 
-    const { xhr } = await this.request({
+    const { xhr, resolvedKey } = await this.request({
       request: { method: 'POST', key },
       contentType: fileType,
       signal,
@@ -231,7 +247,7 @@ class S3mini extends S3Client {
         const uploadId = uploadResult.uploadId || uploadResult.UploadId
 
         if (uploadId && typeof uploadId === 'string') {
-          return { uploadId, key }
+          return { uploadId, key: resolvedKey }
         }
       }
     }
@@ -276,28 +292,25 @@ class S3mini extends S3Client {
   }
 
   /**
-   * Core XHR upload implementation using @uppy/core/utils fetcher.
+   * Signs `request` and hands the result to `send`, mapping S3 errors.
    *
    * Features:
    * - Automatic retry with exponential backoff (3 attempts)
    * - Offline detection with automatic resume on reconnect
    * - Stall detection via ProgressTimeout
+   * - One re-sign with fresh credentials on an expired token
    */
-  private async request({
+  private async signed<T>({
     request,
-    data,
-    onProgress,
     signal,
-    contentType,
+    send,
     shouldRetryCredentials = true,
   }: {
     request: IT.PresignableRequest
-    data?: XMLHttpRequestBodyInit
-    onProgress?: IT.OnProgressFn
     signal?: AbortSignal
-    contentType?: string
+    send: (presigned: IT.PresignedResponse) => Promise<T>
     shouldRetryCredentials?: boolean
-  }): Promise<{ xhr: XMLHttpRequest; url: string }> {
+  }): Promise<T> {
     // Wait for online before starting
     await this.waitForOnline(signal)
 
@@ -307,18 +320,7 @@ class S3mini extends S3Client {
     }
 
     try {
-      const { url } = await this.signRequest(request)
-
-      const xhr = await this.xhr({
-        url,
-        method: request.method,
-        data,
-        onProgress,
-        signal,
-        contentType,
-      })
-
-      return { xhr, url }
+      return await send(await this.signRequest(request))
     } catch (err: unknown) {
       // NetworkError or errors with attached XHR (from onAfterResponse throws)
       if (
@@ -352,12 +354,10 @@ class S3mini extends S3Client {
           this.clearCachedCredentials()
 
           // Retry with fresh credentials
-          return this.request({
+          return this.signed({
             request,
-            data,
-            onProgress,
             signal,
-            contentType,
+            send,
             shouldRetryCredentials: false, // prevent infinite recursion
           })
         }
@@ -372,6 +372,65 @@ class S3mini extends S3Client {
 
       throw err
     }
+  }
+
+  /** Sends `request` as signed, with `data` as its body. */
+  private async send(
+    request: IT.PresignableRequest,
+    { url, key: signerKey, headers, fields }: IT.PresignedResponse,
+    {
+      data,
+      onProgress,
+      signal,
+      contentType,
+    }: {
+      data?: XMLHttpRequestBodyInit
+      onProgress?: IT.OnProgressFn
+      signal?: AbortSignal
+      contentType?: string
+    },
+  ): Promise<{
+    xhr: XMLHttpRequest
+    url: string
+    /** Key the request was signed for. Differs from the requested key when the signer returns its own. */
+    resolvedKey: string
+  }> {
+    if (fields) {
+      throw new TypeError(
+        `${C.ERROR_PREFIX}signRequest may only return fields for the PutObject request`,
+      )
+    }
+    const xhr = await this.xhr({
+      url,
+      method: request.method,
+      data,
+      onProgress,
+      signal,
+      contentType,
+      headers,
+    })
+    // A blank key from the signer is not an override.
+    const resolvedKey = signerKey?.trim() ? signerKey : request.key
+    return { xhr, url, resolvedKey }
+  }
+
+  /** Signs and sends one S3 request. */
+  private request({
+    request,
+    signal,
+    ...body
+  }: {
+    request: IT.PresignableRequest
+    data?: XMLHttpRequestBodyInit
+    onProgress?: IT.OnProgressFn
+    signal?: AbortSignal
+    contentType?: string
+  }) {
+    return this.signed({
+      request,
+      signal,
+      send: (presigned) => this.send(request, presigned, { signal, ...body }),
+    })
   }
 
   /** Lists uploaded parts for a multipart upload. */
@@ -516,7 +575,7 @@ class S3mini extends S3Client {
   }
 
   /** Deletes an object from the bucket. Returns true on success. */
-  public override async deleteObject({ key, signal }: IT.DeleteObjectParams) {
+  public async deleteObject({ key, signal }: IT.DeleteObjectParams) {
     const { xhr } = await this.request({
       request: { method: 'DELETE', key },
       signal,

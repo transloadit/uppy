@@ -1,7 +1,7 @@
 {
   "name": "@uppy/status-bar",
   "description": "A progress bar for Uppy, with many bells and whistles.",
-  "version": "5.1.0",
+  "version": "6.0.1",
   "license": "MIT",
   "style": "dist/style.min.css",
   "type": "module",
@@ -10,7 +10,7 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano --map -o dist/style.min.css",
     "typecheck": "tsc --build"
   },
   "keywords": [
@@ -46,7 +46,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "@transloadit/prettier-bytes": "^1.1.0",
+    "@transloadit/prettier-bytes": "^2.0.0",
     "classnames": "^2.5.1",
     "preact": "^10.29.2"
   },
@@ -54,6 +54,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "cssnano": "^8.0.1",
     "postcss": "^8.5.23",
     "postcss-cli": "^11.0.1",

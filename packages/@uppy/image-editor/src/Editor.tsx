@@ -25,7 +25,7 @@ export default class Editor<M extends Meta, B extends Body> extends Component<
 > {
   imgElement!: HTMLImageElement
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     const { initCropper } = this.props
     if (this.imgElement) {
       initCropper(this.imgElement)

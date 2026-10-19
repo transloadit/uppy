@@ -1,7 +1,7 @@
 {
   "name": "@uppy/components",
   "description": "Headless Uppy components, made in Preact",
-  "version": "1.2.0",
+  "version": "2.1.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -30,7 +30,7 @@
   ],
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css && postcss ../image-editor/src/cropper.scss -u cssnano -o ./dist/image-editor.css",
+    "build:css": "tailwindcss -m -i ./src/input.css -o ./dist/styles.css && postcss ../image-editor/src/cropper.scss -u cssnano --map -o ./dist/image-editor.css",
     "migrate": "node migrate.mjs",
     "typecheck": "tsc --build"
   },
@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@tailwindcss/cli": "^4.0.6",
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "cssnano": "^8.0.1",
     "postcss": "^8.5.23",

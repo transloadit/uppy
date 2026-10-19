@@ -1,9 +1,8 @@
 {
   "name": "@uppy/webdav",
   "description": "Import files from WebDAV into Uppy.",
-  "version": "1.1.1",
+  "version": "2.0.1",
   "license": "MIT",
-  "types": "types/index.d.ts",
   "type": "module",
   "sideEffects": false,
   "scripts": {
@@ -44,6 +43,7 @@
     "@uppy/core": "workspace:^"
   },
   "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "typescript": "^6.0.3"
   }

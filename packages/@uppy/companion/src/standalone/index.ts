@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import qs from 'node:querystring'
 import { URL } from 'node:url'
 import RedisStore from 'connect-redis'
-import type { NextFunction, Request, Response } from 'express'
+import type { Express, NextFunction, Request, Response } from 'express'
 import express from 'express'
 import type { SessionOptions } from 'express-session'
 import session from 'express-session'
@@ -10,6 +10,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import * as companion from '../companion.js'
 import type { CompanionInitOptions } from '../schemas/index.js'
+import type { EmitterLike } from '../server/emitter/index.js'
 import { isRecord, toError } from '../server/helpers/type-guards.js'
 import logger from '../server/logger.js'
 import * as redis from '../server/redis.js'
@@ -19,7 +20,15 @@ import {
   getCompanionOptions,
 } from './helper.js'
 
-export default function server(inputCompanionOptions?: CompanionInitOptions) {
+export interface StandaloneServer {
+  app: Express
+  companionOptions: CompanionInitOptions
+  emitter: EmitterLike
+}
+
+export default function server(
+  inputCompanionOptions?: CompanionInitOptions,
+): StandaloneServer {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -159,7 +168,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
 
   // Routes
   if (process.env['COMPANION_HIDE_WELCOME'] !== 'true') {
-    router.get('/', (req, res) => {
+    router.get('/', (_req, res) => {
       res.setHeader('Content-Type', 'text/plain')
       res.send(buildHelpfulStartupMessage(companionOptions))
     })
@@ -182,7 +191,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
   ) {
     router.get(
       '/.well-known/microsoft-identity-association.json',
-      (req, res) => {
+      (_req, res) => {
         const content = JSON.stringify({
           associatedApplications: [
             { applicationId: process.env['COMPANION_ONEDRIVE_KEY'] },
@@ -198,7 +207,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
     )
   }
 
-  app.use((req, res) => {
+  app.use((_req, res) => {
     return res.status(404).json({ message: 'Not Found' })
   })
 

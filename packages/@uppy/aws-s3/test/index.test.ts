@@ -1,0 +1,970 @@
+import '@uppy-dev/msw-setup'
+import { network } from 'virtual:msw'
+import Core, { type Meta, type UppyFile } from '@uppy/core'
+import { HttpResponse, http } from 'msw'
+import { describe, expect, test, vi } from 'vitest'
+import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
+
+const KB = 1024
+const MB = KB * KB
+
+// ---------------------------------------------------------------------------
+// Helpers for multipart upload tests
+// ---------------------------------------------------------------------------
+
+/** Minimal XML responses that S3 returns for multipart operations */
+const s3Responses = {
+  createMultipart: (uploadId: string, key: string) =>
+    `<?xml version="1.0" encoding="UTF-8"?>
+     <InitiateMultipartUploadResult>
+       <UploadId>${uploadId}</UploadId>
+       <Key>${key}</Key>
+     </InitiateMultipartUploadResult>`,
+
+  uploadPart: () => '',
+
+  listParts: (parts: { partNumber: number; etag: string }[]) =>
+    `<?xml version="1.0" encoding="UTF-8"?>
+     <ListPartsResult>
+       ${parts.map((p) => `<Part><PartNumber>${p.partNumber}</PartNumber><ETag>${p.etag}</ETag></Part>`).join('')}
+     </ListPartsResult>`,
+
+  completeMultipart: (location: string, key: string) =>
+    `<?xml version="1.0" encoding="UTF-8"?>
+     <CompleteMultipartUploadResult>
+       <Location>${location}</Location>
+       <Key>${key}</Key>
+       <Bucket>test-bucket</Bucket>
+     </CompleteMultipartUploadResult>`,
+
+  abortMultipart: () => '',
+}
+
+const s3Url = 'https://test-bucket.s3.us-east-1.amazonaws.com/:key'
+
+/**
+ * Creates signRequest + MSW handler state for multipart upload tests.
+ */
+function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
+  const uploadId = opts.uploadId ?? 'test-upload-id'
+  const key = opts.key ?? 'test-key'
+
+  // signRequest encodes operation details in the URL for MSW routing
+  const signRequest = vi.fn().mockImplementation(async (req: any) => {
+    const params = new URLSearchParams()
+    if (req.uploadId) params.set('uploadId', req.uploadId)
+    if (req.partNumber != null) params.set('partNumber', String(req.partNumber))
+    params.set('method', req.method)
+    return {
+      url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key || key}?${params}`,
+    }
+  })
+
+  const operations: string[] = []
+
+  const registerHandlers = ({
+    hangNonCreate = false,
+    listParts = [] as { partNumber: number; etag: string }[],
+  } = {}) => {
+    const maybeHang = () =>
+      hangNonCreate ? (new Promise(() => {}) as Promise<any>) : null
+
+    network.use(
+      http.post(s3Url, ({ request }) => {
+        const hasUploadId = new URL(request.url).searchParams.has('uploadId')
+        if (!hasUploadId) {
+          operations.push('createMultipart')
+          return new HttpResponse(s3Responses.createMultipart(uploadId, key), {
+            status: 200,
+            headers: { 'Content-Type': 'application/xml' },
+          })
+        }
+
+        operations.push('completeMultipart')
+        const hung = maybeHang()
+        if (hung) return hung
+
+        return new HttpResponse(
+          s3Responses.completeMultipart(
+            `https://test-bucket.s3.amazonaws.com/${key}`,
+            key,
+          ),
+          { status: 200, headers: { 'Content-Type': 'application/xml' } },
+        )
+      }),
+      http.put(s3Url, () => {
+        operations.push('uploadPart')
+        const hung = maybeHang()
+        if (hung) return hung
+        return new HttpResponse('', {
+          status: 200,
+          headers: { ETag: '"etag-1"' },
+        })
+      }),
+      http.get(s3Url, ({ request }) => {
+        const hasUploadId = new URL(request.url).searchParams.has('uploadId')
+        if (!hasUploadId) {
+          return new HttpResponse('Not Found', { status: 404 })
+        }
+
+        operations.push('listParts')
+        const hung = maybeHang()
+        if (hung) return hung
+
+        return new HttpResponse(s3Responses.listParts(listParts), {
+          status: 200,
+          headers: { 'Content-Type': 'application/xml' },
+        })
+      }),
+      http.delete(s3Url, () => {
+        operations.push('abortMultipart')
+        return new HttpResponse('', { status: 204 })
+      }),
+    )
+  }
+
+  return { signRequest, operations, uploadId, key, registerHandlers }
+}
+
+describe('AwsS3', () => {
+  test('Registers AwsS3 upload plugin', () => {
+    using core = new Core().use(AwsS3, {
+      region: 'us-east-1',
+      s3Endpoint: 'https://companion.example.com',
+      companionEndpoint: 'https://companion.example.com',
+    })
+
+    // @ts-expect-error TODO fix this type error
+    const pluginNames = core[Symbol.for('uppy test: getPlugins')](
+      'uploader',
+    ).map((plugin: AwsS3<Meta, AwsBody>) => plugin.constructor.name)
+    expect(pluginNames).toContain('AwsS3')
+  })
+
+  describe('configuration validation', () => {
+    test('throws if no signing method is provided', () => {
+      using core = new Core()
+
+      expect(() => {
+        // @ts-expect-error - testing runtime validation, so omit required options
+        core.use(AwsS3, {
+          s3Endpoint: 'https://companion.example.com',
+          region: 'us-east-1',
+        })
+      }).toThrow(
+        'One of options `companionEndpoint`, `signRequest`, or `getCredentials` is required',
+      )
+    })
+
+    test('accepts endpoint option', () => {
+      using core = new Core()
+      core.use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        companionEndpoint: 'https://companion.example.com',
+      })
+      expect(core.getPlugin('AwsS3')).toBeDefined()
+    })
+
+    test('accepts signRequest option', () => {
+      using core = new Core()
+      core.use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest: vi.fn(),
+      })
+      expect(core.getPlugin('AwsS3')).toBeDefined()
+    })
+
+    test('accepts getCredentials option', () => {
+      using core = new Core()
+      core.use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        getCredentials: vi.fn(),
+      })
+      expect(core.getPlugin('AwsS3')).toBeDefined()
+    })
+  })
+
+  describe('shouldUseMultipart', () => {
+    const MULTIPART_THRESHOLD = 100 * MB
+
+    // Helper that creates a mock file without allocating memory
+    const createFile = (size: number): UppyFile<Meta, AwsBody> =>
+      ({
+        name: 'test.dat',
+        size,
+        data: { size } as Blob,
+      }) as unknown as UppyFile<Meta, AwsBody>
+
+    test('defaults to multipart for files > 100MB', () => {
+      using core = new Core<Meta, AwsBody>().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        companionEndpoint: 'https://companion.example.com',
+      })
+      const opts = core.getPlugin('AwsS3')!.opts as AwsS3Options<Meta, AwsBody>
+      const shouldUseMultipart = opts.shouldUseMultipart as (
+        file: UppyFile<Meta, AwsBody>,
+      ) => boolean
+
+      expect(shouldUseMultipart(createFile(MULTIPART_THRESHOLD + 1))).toBe(true)
+      expect(shouldUseMultipart(createFile(MULTIPART_THRESHOLD))).toBe(false)
+      expect(shouldUseMultipart(createFile(MULTIPART_THRESHOLD - 1))).toBe(
+        false,
+      )
+      expect(shouldUseMultipart(createFile(0))).toBe(false)
+    })
+
+    test('handles very large files', () => {
+      using core = new Core<Meta, AwsBody>().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        companionEndpoint: 'https://companion.example.com',
+      })
+      const opts = core.getPlugin('AwsS3')!.opts as AwsS3Options<Meta, AwsBody>
+      const shouldUseMultipart = opts.shouldUseMultipart as (
+        file: UppyFile<Meta, AwsBody>,
+      ) => boolean
+
+      expect(shouldUseMultipart(createFile(70 * 1024 * MB))).toBe(true) // 70GB
+      expect(shouldUseMultipart(createFile(400 * 1024 * MB))).toBe(true) // 400GB
+    })
+
+    test('uses multipart for a file below the 5 MiB part minimum when asked to', async () => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks()
+      registerHandlers()
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'small.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'small.txt'),
+      })
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+      expect(operations).toEqual([
+        'createMultipart',
+        'uploadPart',
+        'completeMultipart',
+      ])
+    })
+
+    test('sends an empty file with a single PUT even when asked for multipart', async () => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks()
+      registerHandlers()
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'empty.txt',
+        type: 'text/plain',
+        data: new File([], 'empty.txt'),
+      })
+
+      const result = await core.upload()
+      expect(result?.successful).toHaveLength(1)
+      // A multipart upload of zero parts cannot be completed, so expect one
+      // plain PUT (the mock logs every PUT as 'uploadPart').
+      expect(operations).toEqual(['uploadPart'])
+    })
+  })
+
+  describe('server-generated object key (#6496)', () => {
+    const bucketUrl = 'https://test-bucket.s3.us-east-1.amazonaws.com'
+
+    test('single-part: reports the key the signer actually used', async () => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+      signRequest.mockImplementation(async (req: any) => {
+        const serverKey = `server-${req.key}`
+        return {
+          url: `${bucketUrl}/${serverKey}?method=${req.method}`,
+          key: serverKey,
+        }
+      })
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: bucketUrl,
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+        generateObjectKey: () => 'client-photo.jpg',
+      })
+      core.addFile({
+        source: 'test',
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        data: new File([new Uint8Array(KB)], 'photo.jpg'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      const response = onSuccess.mock.calls[0][1]
+      expect(response.body.key).toBe('server-client-photo.jpg')
+      expect(response.uploadURL).toBe(`${bucketUrl}/server-client-photo.jpg`)
+    })
+
+    test('multipart: uses the key returned on create for every later request', async () => {
+      const serverKey = 'server-big.dat'
+      const { signRequest, registerHandlers } = createMultipartMocks({
+        key: serverKey,
+      })
+      registerHandlers()
+      // Mints the key on create, then only signs for that key.
+      signRequest.mockImplementation(async (req: any) => {
+        const isCreate = req.method === 'POST' && !req.uploadId
+        if (!isCreate && req.key !== serverKey) {
+          throw new Error(`unexpected key: ${req.key}`)
+        }
+        const params = new URLSearchParams({ method: req.method })
+        if (req.uploadId) params.set('uploadId', req.uploadId)
+        if (req.partNumber != null)
+          params.set('partNumber', String(req.partNumber))
+        return {
+          url: `${bucketUrl}/${serverKey}?${params}`,
+          ...(isCreate ? { key: serverKey } : {}),
+        }
+      })
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: bucketUrl,
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+        generateObjectKey: () => 'client-big.dat',
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(onSuccess.mock.calls[0][1].body.key).toBe(serverKey)
+      const keys = signRequest.mock.calls.map((c: any) => c[0].key)
+      expect(keys[0]).toBe('client-big.dat')
+      expect(keys.length).toBeGreaterThan(1)
+      expect(keys.slice(1).every((k: string) => k === serverKey)).toBe(true)
+    })
+
+    test('multipart: persists the key returned on create in s3Multipart', async () => {
+      const serverKey = 'server-big.dat'
+      const { signRequest, registerHandlers } = createMultipartMocks({
+        key: serverKey,
+      })
+      registerHandlers({ hangNonCreate: true })
+      signRequest.mockImplementation(async (req: any) => {
+        const params = new URLSearchParams({ method: req.method })
+        if (req.uploadId) params.set('uploadId', req.uploadId)
+        return {
+          url: `${bucketUrl}/${serverKey}?${params}`,
+          ...(req.uploadId ? {} : { key: serverKey }),
+        }
+      })
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: bucketUrl,
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+        generateObjectKey: () => 'client-big.dat',
+      })
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart?.key).toBe(serverKey),
+        { timeout: 10_000 },
+      )
+
+      core.cancelAll()
+      await uploadPromise
+    })
+
+    test('multipart: a signer that only returns url keeps getting the client key', async () => {
+      // Prefixes on every request. Works today because the client key is
+      // re-sent each time, so the plugin must not adopt S3's echoed <Key>.
+      const { signRequest, registerHandlers } = createMultipartMocks({
+        key: 'dir-client-big.dat',
+      })
+      registerHandlers()
+      signRequest.mockImplementation(async (req: any) => {
+        const params = new URLSearchParams({ method: req.method })
+        if (req.uploadId) params.set('uploadId', req.uploadId)
+        if (req.partNumber != null)
+          params.set('partNumber', String(req.partNumber))
+        return { url: `${bucketUrl}/dir-${req.key}?${params}` }
+      })
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: bucketUrl,
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+        generateObjectKey: () => 'client-big.dat',
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+      await core.upload()
+
+      const keys = signRequest.mock.calls.map((c: any) => c[0].key)
+      expect(keys.length).toBeGreaterThan(1)
+      expect(keys.every((k: string) => k === 'client-big.dat')).toBe(true)
+    })
+
+    test.for([
+      '',
+      '   ',
+    ])('ignores a blank key from the signer (%j)', async (key) => {
+      const { signRequest, registerHandlers } = createMultipartMocks()
+      registerHandlers()
+      signRequest.mockImplementation(async (req: any) => ({
+        url: `${bucketUrl}/${req.key}?method=${req.method}`,
+        key,
+      }))
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: bucketUrl,
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+        generateObjectKey: () => 'client-photo.jpg',
+      })
+      core.addFile({
+        source: 'test',
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        data: new File([new Uint8Array(KB)], 'photo.jpg'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess.mock.calls[0][1].body.key).toBe('client-photo.jpg')
+    })
+  })
+
+  describe('signed headers (#6548)', () => {
+    test('sends the headers returned by the signer', async () => {
+      let seen: Headers | undefined
+      network.use(
+        http.put(s3Url, ({ request }) => {
+          seen = request.headers
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest: async (req) => ({
+          url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}`,
+          headers: {
+            'Content-Disposition': 'inline; filename="a.pdf"',
+            // lowercase on purpose: it must replace the built-in header, not
+            // be appended to it
+            'content-type': 'application/pdf',
+          },
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.pdf',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.pdf'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(seen?.get('content-disposition')).toBe('inline; filename="a.pdf"')
+      expect(seen?.get('content-type')).toBe('application/pdf')
+    })
+
+    test('falls back to the file type when the signer sends no headers', async () => {
+      let seen: Headers | undefined
+      network.use(
+        http.put(s3Url, ({ request }) => {
+          seen = request.headers
+          return new HttpResponse('', {
+            status: 200,
+            headers: { ETag: '"etag-1"' },
+          })
+        }),
+      )
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest: async (req) => ({
+          url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}`,
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.pdf',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.pdf'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      expect(seen?.get('content-type')).toBe('text/plain')
+    })
+  })
+
+  describe('POST policy (#6536)', () => {
+    test('uploads with a multipart/form-data POST when the signer returns fields', async () => {
+      const rawKey = 'uploads/a b#1/../ü.jpg'
+      const seen: {
+        method: string
+        contentType: string
+        extra: string | null
+        entries: string[]
+      }[] = []
+      network.use(
+        http.post('https://bucket.test/', async ({ request }) => {
+          const form = await request.formData()
+          seen.push({
+            method: request.method,
+            contentType: request.headers.get('content-type') ?? '',
+            extra: request.headers.get('x-extra'),
+            entries: [...form.keys()],
+          })
+          return new HttpResponse('', {
+            status: 204,
+            headers: { ETag: '"post-etag"' },
+          })
+        }),
+      )
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://bucket.test',
+        region: 'us-east-1',
+        signRequest: async (req) => {
+          // the signer needs the type to put it in the policy
+          expect(req).toMatchObject({
+            method: 'PUT',
+            contentType: 'image/jpeg',
+          })
+          return {
+            url: 'https://bucket.test/',
+            fields: { key: rawKey, policy: 'p', 'x-amz-signature': 's' },
+            // Content-Type is dropped on the POST path (it would replace the
+            // form boundary); any other header still goes out.
+            headers: { 'Content-Type': 'image/jpeg', 'X-Extra': 'yes' },
+          }
+        },
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'photo.jpg',
+        type: 'image/jpeg',
+        data: new File([new Uint8Array(KB)], 'photo.jpg'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      expect(seen).toHaveLength(1)
+      expect(seen[0].method).toBe('POST')
+      expect(seen[0].contentType).toMatch(/^multipart\/form-data; boundary=/)
+      expect(seen[0].extra).toBe('yes')
+      expect(seen[0].entries).toContain('policy')
+      expect(seen[0].entries.at(-1)).toBe('file')
+
+      expect(onSuccess).toHaveBeenCalledTimes(1)
+      const response = onSuccess.mock.calls[0][1]
+      expect(response.body.key).toBe(rawKey)
+      expect(response.uploadURL).toBe(
+        'https://bucket.test/uploads/a%20b%231/../%C3%BC.jpg',
+      )
+    })
+
+    test('keeps a leading slash from fields.key in the location', async () => {
+      network.use(
+        http.post(
+          'https://bucket.test/',
+          () => new HttpResponse('', { status: 204 }),
+        ),
+      )
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://bucket.test',
+        region: 'us-east-1',
+        signRequest: async () => ({
+          url: 'https://bucket.test/',
+          fields: { key: '/leading.txt', policy: 'p' },
+        }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'leading.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'leading.txt'),
+      })
+
+      const onSuccess = vi.fn()
+      core.on('upload-success', onSuccess)
+      await core.upload()
+
+      // `/leading.txt` is the object's exact key; the double slash is real.
+      expect(onSuccess.mock.calls[0][1].body.key).toBe('/leading.txt')
+      expect(onSuccess.mock.calls[0][1].uploadURL).toBe(
+        'https://bucket.test//leading.txt',
+      )
+    })
+
+    test.for([
+      [{ key: '' }, 'fields.key must be a concrete object key'],
+      [
+        { key: 'u/\u0024{filename}' },
+        'fields.key must be a concrete object key',
+      ],
+      [{ key: 'a', FILE: 'x' }, 'fields must not contain "file"'],
+      [{ key: 'a', Success_Action_Redirect: 'x' }, 'success_action_status'],
+      [{ key: 'a', redirect: 'x' }, 'success_action_status'],
+    ] as const)('rejects unsafe fields %o', async ([fields, message]) => {
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://bucket.test',
+        region: 'us-east-1',
+        signRequest: async () => ({ url: 'https://bucket.test/', fields }),
+        shouldUseMultipart: false,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'a.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(KB)], 'a.txt'),
+      })
+
+      const onError = vi.fn()
+      core.on('upload-error', onError)
+      await core.upload()
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      expect(onError.mock.calls[0][1]).toBeInstanceOf(TypeError)
+      expect(onError.mock.calls[0][1].message).toContain(message)
+    })
+
+    test('rejects fields returned for a request other than PutObject', async () => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks()
+      registerHandlers()
+      signRequest.mockImplementation(async (req: any) => ({
+        url: `https://test-bucket.s3.us-east-1.amazonaws.com/${req.key}?method=${req.method}`,
+        fields: { key: req.key, policy: 'p' },
+      }))
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://test-bucket.s3.us-east-1.amazonaws.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+      core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const onError = vi.fn()
+      core.on('upload-error', onError)
+      await core.upload()
+
+      expect(onError).toHaveBeenCalledTimes(1)
+      const error = onError.mock.calls[0][1]
+      expect(error).toBeInstanceOf(TypeError)
+      expect(error.message).toContain(
+        'signRequest may only return fields for the PutObject request',
+      )
+      expect(operations).toHaveLength(0)
+    })
+  })
+
+  describe('upload events', () => {
+    test('emits upload-start when upload begins', async () => {
+      const signRequest = vi.fn().mockRejectedValue(new Error('Test stop'))
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(1024)], 'test.txt'),
+      })
+
+      const uploadStartHandler = vi.fn()
+      core.on('upload-start', uploadStartHandler)
+
+      try {
+        await core.upload()
+      } catch {
+        // Expected
+      }
+
+      expect(uploadStartHandler).toHaveBeenCalledTimes(1)
+    })
+
+    test('emits upload-error on failure', async () => {
+      const signRequest = vi.fn().mockRejectedValue(new Error('Sign failed'))
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(1024)], 'test.txt'),
+      })
+
+      const uploadErrorHandler = vi.fn()
+      core.on('upload-error', uploadErrorHandler)
+
+      try {
+        await core.upload()
+      } catch {
+        // Expected
+      }
+
+      expect(uploadErrorHandler).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('abort', () => {
+    test('aborts when file is removed', async () => {
+      const signRequest = vi
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => setTimeout(resolve, 100)),
+        )
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(1024)], 'test.txt'),
+      })
+
+      const fileId = Object.keys(core.getState().files)[0]
+      const uploadPromise = core.upload()
+      setTimeout(() => core.removeFile(fileId), 10)
+
+      const result = await uploadPromise
+      // When a file is removed mid-upload, it should not appear in successful uploads
+      expect(result).toBeDefined()
+      expect(result?.successful).toHaveLength(0)
+    })
+
+    test('aborts when cancelAll is called', async () => {
+      const signRequest = vi
+        .fn()
+        .mockImplementation(
+          () => new Promise((resolve) => setTimeout(resolve, 100)),
+        )
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(1024)], 'test.txt'),
+      })
+
+      const uploadPromise = core.upload()
+      setTimeout(() => core.cancelAll(), 10)
+
+      const result = await uploadPromise
+      // When cancelAll is called, no files should complete successfully
+      expect(result).toBeDefined()
+      expect(result?.successful).toHaveLength(0)
+    })
+  })
+
+  describe('Golden Retriever resume state (s3Multipart)', () => {
+    test('persists s3Multipart on file state after creating multipart upload', async () => {
+      const { signRequest, uploadId, registerHandlers } = createMultipartMocks()
+      // After createMultipart succeeds, hang on subsequent requests so we can inspect state
+      registerHandlers({ hangNonCreate: true })
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+
+      // Wait for createMultipart to complete and state to be persisted
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart).toBeDefined(),
+        { timeout: 10_000 },
+      )
+
+      expect(core.getFile(fileId).s3Multipart?.uploadId).toBe(uploadId)
+
+      // Clean up
+      core.cancelAll()
+      await uploadPromise
+    })
+
+    test('aborts the multipart upload in S3 when cancelled via cancelAll', async () => {
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks({
+          uploadId: 'cancel-test-id',
+          key: 'cancel-key',
+        })
+      registerHandlers({ hangNonCreate: true })
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: true,
+      })
+
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      const uploadPromise = core.upload()
+
+      // Wait for createMultipart to persist state, then cancel
+      await vi.waitFor(
+        () => expect(core.getFile(fileId).s3Multipart).toBeDefined(),
+        { timeout: 10_000 },
+      )
+      core.cancelAll()
+      await uploadPromise
+
+      // cancelAll removes the file; the multipart upload must be aborted in S3
+      // so a dead uploadId is not left behind.
+      expect(core.getFile(fileId)).toBeUndefined()
+      await vi.waitFor(() => expect(operations).toContain('abortMultipart'), {
+        timeout: 10_000,
+      })
+    })
+
+    test('uses persisted s3Multipart key for resume (listParts, not createMultipart)', async () => {
+      const persistedKey = 'persisted-object-key'
+      const persistedUploadId = 'persisted-upload-id'
+      const { signRequest, operations, registerHandlers } =
+        createMultipartMocks({
+          uploadId: persistedUploadId,
+          key: persistedKey,
+        })
+      registerHandlers()
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false, // Would normally be simple upload
+      })
+
+      const fileId = core.addFile({
+        source: 'test',
+        name: 'big.dat',
+        type: 'application/octet-stream',
+        data: new File([new Uint8Array(6 * MB)], 'big.dat'),
+      })
+
+      // Simulate Golden Retriever restoring s3Multipart state
+      core.setFileState(fileId, {
+        s3Multipart: { uploadId: persistedUploadId, key: persistedKey },
+      })
+
+      await core.upload()
+
+      // Should have resumed (listParts) instead of creating a new multipart upload
+      expect(operations).toContain('listParts')
+      expect(operations).not.toContain('createMultipart')
+
+      // The signRequest calls should use the persisted key, not a generated one
+      const signedKeys = signRequest.mock.calls.map((call: any) => call[0].key)
+      expect(signedKeys.every((k: string) => k === persistedKey)).toBe(true)
+    })
+  })
+})

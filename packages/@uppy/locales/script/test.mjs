@@ -4,7 +4,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import chalk from 'chalk'
+import { styleText } from 'node:util'
 import { globSync } from 'glob'
 
 import {
@@ -106,7 +106,7 @@ function warnings({ leadingLocale, followerLocales }) {
 
     summary.push(
       [
-        chalk.cyan(name.padEnd(16)),
+        styleText('cyan', name.padEnd(16)),
         `${String(missing.length).padStart(3)} missing`,
         `${String(excess.length).padStart(3)} excess`,
         `(of ${total} keys in ${leadingLocaleName})`,
@@ -127,9 +127,9 @@ function warnings({ leadingLocale, followerLocales }) {
 
       details.push(
         [
-          `${chalk.cyan(name)} locale has missing string: '${chalk.red(key)}'`,
-          `that is present in ${chalk.cyan(leadingLocaleName)}`,
-          `with value: ${chalk.yellow(value)}`,
+          `${styleText('cyan', name)} locale has missing string: '${styleText('red', key)}'`,
+          `that is present in ${styleText('cyan', leadingLocaleName)}`,
+          `with value: ${styleText('yellow', value)}`,
         ].join(' '),
       )
     }
@@ -141,9 +141,9 @@ function warnings({ leadingLocale, followerLocales }) {
     for (const key of excess) {
       details.push(
         [
-          `${chalk.cyan(name)} locale has excess string:`,
-          `'${chalk.yellow(key)}' that is not present`,
-          `in ${chalk.cyan(leadingLocaleName)}.`,
+          `${styleText('cyan', name)} locale has excess string:`,
+          `'${styleText('yellow', key)}' that is not present`,
+          `in ${styleText('cyan', leadingLocaleName)}.`,
         ].join(' '),
       )
     }
@@ -157,14 +157,16 @@ function warnings({ leadingLocale, followerLocales }) {
   console.log(`--> Locale coverage relative to ${leadingLocaleName}\n`)
   console.log(summary.join('\n'))
   console.log(
-    `\n${chalk.bold(`${entries.length} locales`)}: ${chalk.red(
+    `\n${styleText('bold', `${entries.length} locales`)}: ${styleText(
+      'red',
       `${missingTotal} missing`,
-    )}, ${chalk.yellow(`${excessTotal} excess`)} string(s) in total.`,
+    )}, ${styleText('yellow', `${excessTotal} excess`)} string(s) in total.`,
   )
 
   if (!verbose && missingTotal + excessTotal > 0) {
     console.log(
-      chalk.dim(
+      styleText(
+        'dim',
         'Re-run with --verbose to list the individual keys. This check is advisory and does not fail the build.',
       ),
     )
@@ -223,8 +225,8 @@ function placeholders({ leadingLocale, followerLocales }) {
 
       for (const [form, string] of getForms(value)) {
         const where = [
-          chalk.cyan(name),
-          `→ ${chalk.yellow(key)}${form == null ? '' : `['${form}']`}`,
+          styleText('cyan', name),
+          `→ ${styleText('yellow', key)}${form == null ? '' : `['${form}']`}`,
         ].join(' ')
         const found = getPlaceholders(string)
 
@@ -235,16 +237,16 @@ function placeholders({ leadingLocale, followerLocales }) {
           if (malformed) {
             errors.push(
               [
-                `${where}: malformed placeholder ${chalk.red(malformed)},`,
-                `expected ${chalk.green(`%{${placeholder}}`)}.`,
+                `${where}: malformed placeholder ${styleText('red', malformed)},`,
+                `expected ${styleText('green', `%{${placeholder}}`)}.`,
                 `It will not interpolate and is rendered as-is:\n    ${string}`,
               ].join(' '),
             )
           } else {
             logs.push(
               [
-                `${where}: missing placeholder ${chalk.red(`%{${placeholder}}`)}`,
-                `that ${chalk.cyan(leadingLocaleName)} has:\n    ${string}`,
+                `${where}: missing placeholder ${styleText('red', `%{${placeholder}}`)}`,
+                `that ${styleText('cyan', leadingLocaleName)} has:\n    ${string}`,
               ].join(' '),
             )
           }
@@ -255,8 +257,8 @@ function placeholders({ leadingLocale, followerLocales }) {
 
           logs.push(
             [
-              `${where}: unknown placeholder ${chalk.red(`%{${placeholder}}`)}`,
-              `that ${chalk.cyan(leadingLocaleName)} does not have,`,
+              `${where}: unknown placeholder ${styleText('red', `%{${placeholder}}`)}`,
+              `that ${styleText('cyan', leadingLocaleName)} does not have,`,
               `so no value is passed for it and it is rendered as-is:\n    ${string}`,
             ].join(' '),
           )
@@ -267,7 +269,9 @@ function placeholders({ leadingLocale, followerLocales }) {
 
   if (logs.length) {
     console.log(logs.join('\n'))
-    console.log(`\n${chalk.yellow(`${logs.length} placeholder warning(s).`)}`)
+    console.log(
+      `\n${styleText('yellow', `${logs.length} placeholder warning(s).`)}`,
+    )
   }
 
   if (errors.length) {

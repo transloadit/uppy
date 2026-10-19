@@ -1,0 +1,85 @@
+import { readdir, readFile } from 'node:fs/promises'
+import { expect, test } from 'vitest'
+
+const ignore = ['angular', 'svelte']
+
+const projectRoot = new URL('../../../', import.meta.url)
+
+const packages = (
+  await readdir(new URL('packages/@uppy/', projectRoot), {
+    withFileTypes: true,
+  })
+)
+  .filter((entry) => entry.isDirectory() && !ignore.includes(entry.name))
+  .map((entry) => entry.name)
+  .sort()
+
+async function readJSON(path: string): Promise<any> {
+  return JSON.parse(await readFile(new URL(path, projectRoot), 'utf8'))
+}
+
+test('tsconfig.json', async () => {
+  const tsconfig = await readJSON('tsconfig.json')
+  expect(tsconfig).toStrictEqual({
+    files: [],
+    references: [
+      ...packages.map((name) => ({
+        path: `./packages/@uppy/${name}/tsconfig.json`,
+      })),
+      { path: './packages/uppy/tsconfig.json' },
+      { path: './examples/aws-companion/tsconfig.json' },
+      { path: './examples/aws-nodejs/tsconfig.json' },
+      { path: './examples/aws-php/tsconfig.json' },
+      { path: './examples/companion/tsconfig.json' },
+      { path: './examples/companion-custom-provider/tsconfig.json' },
+      { path: './examples/companion-digitalocean-spaces/tsconfig.json' },
+      { path: './examples/nextjs/tsconfig.json' },
+      { path: './examples/react/tsconfig.json' },
+      { path: './examples/reactrouter/tsconfig.json' },
+      { path: './examples/vue/tsconfig.json' },
+      { path: './examples/xhr-bundle/tsconfig.json' },
+      { path: './examples/xhr-node/tsconfig.json' },
+      { path: './examples/xhr-php/tsconfig.json' },
+      { path: './examples/xhr-python/tsconfig.json' },
+    ],
+  })
+})
+
+test.each(packages)('packages/@uppy/%s/tsconfig.build.json', async (name) => {
+  const pkg = await readJSON(`packages/@uppy/${name}/package.json`)
+  const tsconfigBuild = await readJSON(
+    `packages/@uppy/${name}/tsconfig.build.json`,
+  )
+
+  let expected: { path: string }[] | undefined
+  if (pkg.dependencies || pkg.devDependencies || pkg.peerDependencies) {
+    const references = Object.keys({
+      ...pkg.dependencies,
+      ...pkg.devDependencies,
+      ...pkg.peerDependencies,
+    })
+      .filter((dep) => dep.startsWith('@uppy') && dep !== '@uppy-dev/tsconfig')
+      .sort()
+      .map((dep) => ({
+        path: dep.startsWith('@uppy-dev/')
+          ? `../../../private/${dep.replace(/^@uppy-dev\//, '')}/tsconfig.build.json`
+          : `../${dep.replace(/^@uppy\//, '')}/tsconfig.build.json`,
+      }))
+
+    if (references.length) {
+      expected = references
+    }
+  }
+
+  expect(tsconfigBuild.extends).toBe('@uppy-dev/tsconfig/build')
+  expect(tsconfigBuild.references).toStrictEqual(expected)
+})
+
+test.each(packages)('packages/@uppy/%s/tsconfig.json', async (name) => {
+  const tsconfigBuild = await readJSON(`packages/@uppy/${name}/tsconfig.json`)
+
+  expect(tsconfigBuild.extends).toBe('@uppy-dev/tsconfig')
+  expect(tsconfigBuild.references).toStrictEqual([
+    { path: './tsconfig.build.json' },
+  ])
+})

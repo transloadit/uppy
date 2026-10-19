@@ -1,22 +1,18 @@
 {
   "name": "@uppy-dev/dev",
   "version": "0.0.0",
-  "aliasify": {
-    "aliases": {
-      "@uppy": "../../packages/@uppy"
-    }
-  },
-  "dependencies": {
-    "@uppy/companion": "workspace:^"
-  },
   "devDependencies": {
-    "vite": "^8.1.5"
+    "@transloadit/utils": "^4.6.0",
+    "@uppy-dev/tsconfig": "workspace:^",
+    "typescript": "^6.0.3",
+    "vite": "^8.3.0"
   },
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --clearScreen false",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "typecheck": "tsc --build"
   }
 }

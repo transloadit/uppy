@@ -1,3 +1,5 @@
+import type { Body, Meta, State } from '@uppy/core'
+import type { I18n, Translator, UppyFile } from '@uppy/core/utils'
 import {
   useCallback,
   useEffect,
@@ -6,14 +8,30 @@ import {
 } from '@uppy/core/utils/preact/hooks'
 import classNames from 'classnames'
 import { nanoid } from 'nanoid/non-secure'
+import type { ComponentChildren, TargetedMouseEvent } from 'preact'
+import type { DashboardState } from '../../Dashboard.js'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.js'
 import ignoreEvent from '../../utils/ignoreEvent.js'
 import FilePreview from '../FilePreview.js'
 import RenderMetaFields from './RenderMetaFields.js'
 
-type $TSFixMe = any
+interface FileCardProps<M extends Meta, B extends Body> {
+  canEditFile: (file: UppyFile<M, B>) => boolean
+  className?: string | undefined
+  fileCardFor: string
+  files: State<M, B>['files']
+  i18n: I18n
+  i18nArray: Translator['translateArray']
+  metaFields: DashboardState<M, B>['metaFields']
+  openFileEditor: (file: UppyFile<M, B>) => void
+  requiredMetaFields: string[]
+  saveFileCard: (meta: M, fileID: string) => void
+  toggleFileCard: (show: boolean, fileID: string) => void
+}
 
-export default function FileCard(props: $TSFixMe) {
+export default function FileCard<M extends Meta, B extends Body>(
+  props: FileCardProps<M, B>,
+): ComponentChildren {
   const {
     files,
     fileCardFor,
@@ -38,22 +56,23 @@ export default function FileCard(props: $TSFixMe) {
   const computedMetaFields = getMetaFields() ?? []
   const showEditButton = canEditFile(file)
 
-  const storedMetaData: Record<string, string> = {}
-  computedMetaFields.forEach((field: $TSFixMe) => {
+  const storedMetaData = {} as M
+  computedMetaFields.forEach((field) => {
+    // @ts-expect-error TODO fix me
     storedMetaData[field.id] = file.meta[field.id] ?? ''
   })
 
   const [formState, setFormState] = useState(storedMetaData)
 
   const handleSave = useCallback(
-    (ev: $TSFixMe) => {
+    (ev: SubmitEvent | TargetedMouseEvent<HTMLElement>) => {
       ev.preventDefault()
       saveFileCard(formState, fileCardFor)
     },
     [saveFileCard, formState, fileCardFor],
   )
 
-  const updateMeta = (newVal: $TSFixMe, name: $TSFixMe) => {
+  const updateMeta = (newVal: string, name: string) => {
     setFormState({
       ...formState,
       [name]: newVal,
@@ -61,7 +80,7 @@ export default function FileCard(props: $TSFixMe) {
   }
 
   const handleCancel = () => {
-    toggleFileCard(false)
+    toggleFileCard(false, fileCardFor)
   }
 
   const [form] = useState(() => {
@@ -152,7 +171,7 @@ export default function FileCard(props: $TSFixMe) {
             <button
               type="button"
               className="uppy-u-reset uppy-c-btn uppy-Dashboard-FileCard-edit"
-              onClick={(event: $TSFixMe) => {
+              onClick={(event) => {
                 // When opening the image editor we want to save any meta fields changes.
                 // Otherwise it's confusing for the user to click save in the editor,
                 // but the changes here are discarded. This bypasses validation,
@@ -175,6 +194,7 @@ export default function FileCard(props: $TSFixMe) {
             requiredMetaFields={requiredMetaFields}
             updateMeta={updateMeta}
             form={form}
+            // @ts-expect-error TODO fix me
             formState={formState}
           />
         </div>

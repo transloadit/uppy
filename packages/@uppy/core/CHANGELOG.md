@@ -1,5 +1,138 @@
 # @uppy/core
 
+## 6.3.0
+
+### Minor Changes
+
+- b47ca2d: Implement `Symbol.dispose` in `Uppy`. This means instances now clean up themselves if the `using` keyword is used.
+- 54d543c: **Experimental** manager mode is now headless: a file library renders it with `useS3Manager`. In manager mode the plugin no longer mounts into the Dashboard (no tab, no file drops, no `reopenAfterUpload` panel), and closing a Dashboard panel no longer resets its state or aborts its requests. `useS3Manager` warns when given a plugin in picker mode. Removed: the item detail dialog (opened by a click on a file) and S3's `getPreviewUrl`; the "Select multiple" toggle and the bulk-actions footer, with the `selectionActive` plugin state and `ProviderView.toggleSelectionMode()`; the core strings `openFileNamed`, `itemsSelected`, `selectMultiple`, `cancelSelection`, `close`, `detailSize`, `detailType` and `detailModified`; and the `--uppy-color-secondary` theming variable. `useS3Manager` and `createS3ManagerController` no longer have `state.selectionActive` or `toggleSelectionMode()`: a headless UI keeps its own selection mode and clears the selection with `cancelSelection()`.
+  
+  The `standalone` option is removed: the Dashboard shows its "Import from …" bar with Cancel, and the panel its Log out row, again. TransloaditStorage plugins that relied on `standalone` for manager mode now start in picker mode: pass `mode: 'manager'`.
+  
+  With the panel gone, so is what only it needed: the progress screen's Stop button (and the `stopOperation` string), and the busy state that disabled the header, filter and breadcrumbs during a long operation. Long operations, their progress text and `cancelLongOperation()` remain for `useS3Manager`. Picker mode is unchanged, including the item menu, toolbar actions and dialogs that Transloadit Storage's picker actions use.
+  
+  If an app runs manager mode inside a Dashboard with `@uppy/s3` 0.1.x or `@uppy/transloadit-storage` 0.1.x, the panel will be empty once its `^6.2.0` range picks up `@uppy/core` 6.3. Those plugins stay on 0.1.x, because a caret range on a 0.x version doesn't cross minors. Nothing throws. Render manager mode with `useS3Manager`, or keep `@uppy/core` on 6.2 until then. Picker mode is unaffected.
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+- 6088195: Google Drive Picker: close Google's picker dialog and show an error toast when it fails to load (e.g. because third-party cookies are blocked), instead of leaving an un-closable overlay over the page.
+- a7a7997: Add an experimental `useS3Manager` hook and `createS3ManagerController` for `@uppy/s3` (and `@uppy/transloadit-storage`) in manager mode, so apps can render their own file manager instead of the ProviderView UI. ProviderView now exposes `submitDialog`, `cancelDialog`, `cancelLongOperation`, `canCancelOperation` and `getDetailItem` for headless UIs, and `toggleCheckbox` takes the rows in the order the UI shows them for shift-click ranges. A range can span folders: each folder's checked state is recomputed.
+  
+  The hook and the controller are experimental: they can change incompatibly in a minor release of `@uppy/react` or `@uppy/components`. Pin them with `~` if you depend on them.
+  
+  In manager mode, selecting every loaded item of a folder no longer marks the folder as fully selected while it has more pages, so the next page doesn't come in selected and a bulk action can't reach files nobody saw.
+- a17c84d: Keep provider authentication state independent of preauthorization responses so the OAuth login button remains available with custom Companion credentials.
+
+## 6.2.0
+
+### Minor Changes
+
+- 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
+  
+  - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
+  - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
+  - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
+
+### Patch Changes
+
+- 4895bcc: Fix `target` option type to accept any plugin class (e.g. `target: Dashboard`).
+
+## 6.1.0
+
+### Minor Changes
+
+- 480e44c: **Experimental** (marked `@experimental` in the types): the file-management additions below exist
+  for `@uppy/s3` and will change incompatibly, also in minor releases.
+
+  ProviderViews can now show per-item actions (`actions`, rendered as a "⋯" menu) and header `toolbarActions`, refresh the open folder with `refreshCurrentFolder()`, and ask the user for input with inline `prompt()` / `confirm()` dialogs. A new `mode: 'manager'` (a file library: clicking opens an item's details, multi-select behind a toggle, the selection feeds `bulkActions`) is a stopgap until a dedicated file manager plugin; `bulkActions` only exist there. The Companion client gained `deleteItem()`, `moveItem()` and `createFolder()` for providers that support mutations.
+
+## 6.0.2
+
+### Patch Changes
+
+- c011da4: `fetcher` now folds header names that differ only in case into one entry (last
+  one wins) instead of letting `XMLHttpRequest` combine their values.
+
+## 6.0.1
+
+### Patch Changes
+
+- a4823a2: Deprecate `AbortController`, `AbortSignal`, and `createAbortError` exports. Users can use the builtin global equivalents instead.
+- f31b3c5: Deprecate `hasProperty`. Use `Object.hasOwn` instead.
+
+## 6.0.0
+
+### Major Changes
+
+- 7e8e04f: `@uppy/utils`, `@uppy/store-default`, `@uppy/companion-client` and `@uppy/provider-views`
+  have been merged into `@uppy/core`
+  ([#6370](https://github.com/transloadit/uppy/pull/6370)). No new versions of them will be
+  published: their existing releases stay on npm but are deprecated in favour of the
+  `@uppy/core` subpaths.
+
+  | Removed package          | New import                    |
+  | ------------------------ | ----------------------------- |
+  | `@uppy/utils`            | `@uppy/core/utils`            |
+  | `@uppy/store-default`    | `@uppy/core/store-default`    |
+  | `@uppy/companion-client` | `@uppy/core/companion-client` |
+  | `@uppy/provider-views`   | `@uppy/core/provider-views`   |
+
+  Remove them from your `package.json` — every Uppy plugin already depends on `@uppy/core`, so
+  there is now a single source of truth instead of a sub-dependency that could be pinned to
+  an older copy in your lockfile.
+
+  Also breaking:
+
+  - Provider CSS moved: `@uppy/provider-views/css/style.min.css` →
+    `@uppy/core/provider-views/css/style.min.css`. Most apps don't import this directly —
+    it ships bundled in `@uppy/dashboard`'s CSS.
+  - `RequestOptions` moved from `@uppy/utils` to `@uppy/core/companion-client`.
+  - `CompanionClientProvider` and `CompanionClientSearchProvider` are removed. They were
+    hand-maintained stand-ins that existed only because `@uppy/utils` could not see the
+    real provider classes. Import `Provider` from `@uppy/core/companion-client` instead.
+
+  Through the `uppy` meta-package or the CDN bundle, nothing changes: `server`
+  (companion-client), `views.ProviderView` and `DefaultStore` keep their names and are
+  repointed at the `@uppy/core` subpaths internally. Only direct imports of the four
+  packages need the table above.
+
+- ad4050b: Send token using websocket instead of window.opener.
+  Breaking in `@uppy/core` because it needs newest version of Companion in order to work.
+  Breaking in `@uppy/companion` because `companion.socket()` now requires `companionOptions` to be passed as the second argument.
+- 4a0e6c9: Remove `isTouchDevice`
+
+### Minor Changes
+
+- ddffd2c: Narrow a number of `any` types to real types. Some affect the public interface.
+
+  This also fixes some bugs the new types revealed:
+
+  - The "copy link" helper now actually applies its styles to the temporary textarea it creates. Previously the style object was stringified to `"[object Object]"`, leaving the textarea unstyled and able to scroll the page when selected.
+  - Cancelling the file card now emits `dashboard:file-edit-complete` with the file being edited, instead of `undefined`.
+  - The "missing required meta fields" message now passes the file to a `metaFields` callback, which previously received `undefined`, and no longer throws when a field listed in the `requiredMetaFields` restriction has no matching entry in `metaFields`.
+
+- 84ad853: Import Preact from @uppy/core utilities to guarantee a single version across packages.
+
+### Patch Changes
+
+- 675697d: Add `useGooglePicker` react hook and remove unused `RequestClient` options `name`, `pluginId` and `provider`.
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- 2608032: Export the `Processor` type so consumers can type functions passed to `addPreProcessor`, `addPostProcessor`, and `addUploader`
+- 260804f: Type `name` and `mimeType` on `PickedItemBase` as optional, matching what the
+  Google Picker actually returns. `@types/google.picker` v0.0.52 corrected these
+  to be optional because views other than Drive documents may omit them. Files
+  picked without a name or mime type are passed through and resolved by Companion
+  rather than failing the whole selection.
+
+  `name` is now also optional on `MinimalRequiredUppyFile` (the type accepted by
+  `uppy.addFile()`/`addFiles()`), which matches the existing runtime behaviour —
+  `getFileName` already falls back to the mime type or `noname` when a file
+  descriptor has no name.
+
+- 7ac2623: uploadRemoteFile() now queues token request and websocket request as a single job in the request queue.
+- 1a1aef3: Keep remote provider views within the Dashboard when breadcrumbs and filenames are long.
+
 ## 5.2.0
 
 ### Minor Changes

@@ -92,7 +92,8 @@ export type AwsS3Options<M extends Meta, B extends Body> = PluginOpts & {
     | {
         /**
          * Custom function to sign requests.
-         * Called with request details, should return signed headers.
+         * Called with one request, returns the presigned URL for it (see
+         * `PresignedResponse` for the optional `key`, `headers` and `fields`).
          * Alternative to using Companion endpoint.
          */
         signRequest: IT.SignRequestFn
@@ -128,7 +129,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
   static VERSION = packageJson.version
 
   #s3Client!: S3Client
-  #queue!: TaskQueue
+  #queue = new TaskQueue({ concurrency: this.opts.limit })
   #uploaders: Record<string, S3Uploader<M, B> | null> = {}
 
   constructor(uppy: Uppy<M, B>, opts: AwsS3Options<M, B>) {
@@ -137,15 +138,14 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
     this.id = this.opts.id || 'AwsS3'
   }
 
-  install(): void {
+  override install(): void {
     this.#setResumableUploadsCapability(true)
     this.#initS3Client()
-    this.#queue = new TaskQueue({ concurrency: this.opts.limit })
     this.uppy.addUploader(this.#upload)
     this.uppy.on('cancel-all', this.#handleCancelAll)
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.#setResumableUploadsCapability(false)
     this.uppy.removeUploader(this.#upload)
     this.uppy.off('cancel-all', this.#handleCancelAll)
@@ -270,7 +270,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
           s3Client: this.#s3Client,
           file,
           metadata: this.#getAllowedMeta(file),
-          key: this.#generateKey(file),
+          requestedKey: this.#generateKey(file),
           shouldUseMultipart: this.#shouldUseMultipart(file),
           getChunkSize: this.opts.getChunkSize,
           log: (...args) => this.uppy.log(...args),
@@ -401,4 +401,19 @@ export type { AwsS3Options as AwsS3MultipartOptions }
 export interface AwsBody extends Body {
   location: string
   key: string
+}
+
+/** Persisted S3 multipart state for Golden Retriever resume support */
+interface S3MultipartState {
+  uploadId: string
+  key: string
+}
+
+declare module '@uppy/core/utils' {
+  export interface LocalUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
+  export interface RemoteUppyFile<M extends Meta, B extends Body> {
+    s3Multipart?: S3MultipartState
+  }
 }

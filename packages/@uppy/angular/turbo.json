@@ -2,16 +2,19 @@
   "extends": ["//"],
   "tasks": {
     "build": {
-      "dependsOn": ["@uppy/core#build", "@uppy/dashboard#build"],
-      "inputs": [
-        "projects/uppy/angular/src/**/*.{js,ts,jsx,tsx}",
-        "package.json",
-        "angular.json",
-        "projects/uppy/angular/ng-package.json",
-        "projects/uppy/angular/tsconfig.lib.json",
-        "projects/uppy/angular/tsconfig.lib.prod.json"
+      "dependsOn": [
+        "@uppy/core#build",
+        "@uppy/dashboard#build",
+        "@uppy/status-bar#build"
       ],
-      "outputs": ["dist/uppy/angular/**"]
+      "inputs": [
+        "src/**/*.{js,ts,jsx,tsx}",
+        "package.json",
+        "ng-package.json",
+        "tsconfig.lib.json",
+        "tsconfig.lib.prod.json"
+      ],
+      "outputs": ["dist/**", "fesm2022/**", "types/**"]
     }
   }
 }

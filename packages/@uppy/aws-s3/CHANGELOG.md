@@ -1,5 +1,104 @@
 # @uppy/aws-s3
 
+## 6.3.0
+
+### Minor Changes
+
+- ec0c114: **Behaviour change for single-request uploads through Companion:** the `location` in the upload response now has the object key URL-escaped, with `/` kept (for example, a space becomes `%20`), because Companion and `signRequest` POST uploads now share one code path. If you store or compare `location`, or work out the key from it, decode it first.
+  
+  `signRequest` may return `fields` to upload with an S3 POST policy. This works for single-request (non-multipart) uploads only. The signer also now receives `contentType` on the PutObject request.
+
+### Patch Changes
+
+- b47ca2d: Don’t throw when destroying an Uppy instance where `AwsS3` is misconfigured.
+
+## 6.2.2
+
+### Patch Changes
+
+- 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
+  
+  - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
+  - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
+  - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
+
+## 6.2.1
+
+### Patch Changes
+
+- e89c8de: `shouldUseMultipart: true` (or a function returning `true`) is now honored for files of 5 MiB or smaller, as it was in v5. S3 only requires 5 MiB for parts other than the last, so a small file is a valid one-part multipart upload. Empty files are still sent with a single PUT.
+
+## 6.2.0
+
+### Minor Changes
+
+- c011da4: `signRequest` may return `headers` to send with the presigned request, e.g. a signed `Content-Disposition`.
+
+### Patch Changes
+
+- 5660fb9: A blank `key` returned by `signRequest` is now treated as no override; the requested key is used instead.
+
+## 6.1.0
+
+### Minor Changes
+
+- 24e96ee: `signRequest` can now return the object key it signed for, as `key` next to `url`. When a signing server stores the object under a different key than the one Uppy proposed (a directory prefix, a server-generated name), returning `{ url, key }` from the request that creates the upload, the single-part `PUT`, or the multipart create, makes Uppy use that key for the rest of the upload and report it in `upload-success`. Previously the client-generated key was reported even when the server had stored the object elsewhere (#6496).
+
+  `key` is optional. Signers that return only `{ url }` are unchanged. Requests that carry an `uploadId` must be signed for the key they receive; a `key` returned on those requests is ignored.
+
+### Patch Changes
+
+- Updated dependencies [a4823a2]
+- Updated dependencies [f31b3c5]
+  - @uppy/core@6.0.1
+
+## 6.0.0
+
+### Major Changes
+
+- dc32b3d: `@uppy/aws-s3` has been rewritten from scratch ([#6345](https://github.com/transloadit/uppy/pull/6345)).
+
+  The plugin is now built on a standalone S3 client and configuration is reduced to three
+  mutually exclusive signing modes:
+
+  - `getCredentials` — client-side SigV4 signing using temporary AWS credentials
+  - `signRequest` — bring your own signer (client side or server side)
+  - `companionEndpoint` — Companion signing (as before)
+
+  It is now much easier to use the S3 plugin without relying on Companion. Any S3-compatible
+  service (R2, MinIO, DigitalOcean Spaces) now works in every signing mode, including
+  client-side signing, which previously hardcoded `*.amazonaws.com` and could only target AWS.
+
+  **Removed options:** `endpoint`, `headers`, `cookiesRule`,
+  `getTemporarySecurityCredentials`, `getUploadParameters`, `signPart`,
+  `createMultipartUpload`, `listParts`, `abortMultipartUpload`,
+  `completeMultipartUpload`, `uploadPartBytes`, `retryDelays`.
+
+  **New options:** `s3Endpoint`, `region`, `getCredentials`, `signRequest`,
+  `companionEndpoint`, `generateObjectKey`.
+
+  **Unchanged:** `shouldUseMultipart`, `getChunkSize`, `allowedMetaFields`, `limit`.
+
+  See the migration guide for before/after examples for each signing mode.
+
+### Patch Changes
+
+- 675697d: Add `useGooglePicker` react hook and remove unused `RequestClient` options `name`, `pluginId` and `provider`.
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- d9d44ce: Improve type
+- Updated dependencies [675697d]
+- Updated dependencies [7e8e04f]
+- Updated dependencies [c3c7cef]
+- Updated dependencies [ddffd2c]
+- Updated dependencies [2608032]
+- Updated dependencies [260804f]
+- Updated dependencies [7ac2623]
+- Updated dependencies [ad4050b]
+- Updated dependencies [4a0e6c9]
+- Updated dependencies [84ad853]
+- Updated dependencies [1a1aef3]
+  - @uppy/core@6.0.0
+
 ## 5.1.0
 
 ### Minor Changes

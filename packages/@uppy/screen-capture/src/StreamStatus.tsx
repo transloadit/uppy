@@ -1,6 +1,15 @@
-type $TSFixMe = any
+import type { I18n } from '@uppy/core/utils'
+import type { ComponentChildren } from 'preact'
 
-export default function StreamStatus({ streamActive, i18n }: $TSFixMe) {
+interface StreamStatusProps {
+  i18n: I18n
+  streamActive: boolean
+}
+
+export default function StreamStatus({
+  streamActive,
+  i18n,
+}: StreamStatusProps): ComponentChildren {
   if (streamActive) {
     return (
       <div

@@ -1,25 +1,4 @@
 {
-  "extends": "../../../tsconfig.shared",
-  "compilerOptions": {
-    "emitDeclarationOnly": false,
-    "noEmit": true
-  },
-  "include": ["./package.json", "./src/**/*.*"],
-  "references": [
-    {
-      "path": "../thumbnail-generator/tsconfig.build.json"
-    },
-    {
-      "path": "../core/tsconfig.build.json"
-    },
-    {
-      "path": "../google-drive/tsconfig.build.json"
-    },
-    {
-      "path": "../url/tsconfig.build.json"
-    },
-    {
-      "path": "../webcam/tsconfig.build.json"
-    }
-  ]
+  "extends": "@uppy-dev/tsconfig",
+  "references": [{ "path": "./tsconfig.build.json" }]
 }

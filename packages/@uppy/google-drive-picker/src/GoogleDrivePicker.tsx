@@ -33,13 +33,13 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
 
   static requestClientId = GoogleDrivePicker.name
 
-  type = 'acquirer'
+  override type = 'acquirer'
 
   icon = GoogleDriveIcon
 
   storage: AsyncStore
 
-  defaultLocale = locale
+  override defaultLocale = locale
 
   requestClientId = GoogleDrivePicker.requestClientId
 
@@ -73,18 +73,18 @@ export default class GoogleDrivePicker<M extends Meta, B extends Body>
     )
   }
 
-  install(): void {
+  override install(): void {
     const { target } = this.opts
     if (target) {
       this.mount(target, this)
     }
   }
 
-  uninstall(): void {
+  override uninstall(): void {
     this.unmount()
   }
 
-  render = () => (
+  override render = () => (
     <GooglePickerView
       getPluginState={this.getPluginState}
       setPluginState={this.setPluginState}

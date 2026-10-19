@@ -1,17 +1,26 @@
 import nock from 'nock'
 import request from 'supertest'
 import { afterAll, afterEach, describe, expect, it, test, vi } from 'vitest'
+import * as tokenService from '../dist/server/helpers/jwt.js'
+import { isRecord } from '../dist/server/helpers/type-guards.js'
 import packageJson from '../package.json' with { type: 'json' }
-import * as tokenService from '../src/server/helpers/jwt.js'
-import { isRecord } from '../src/server/helpers/type-guards.js'
 import * as defaults from './fixtures/constants.js'
 import { nockGoogleDownloadFile } from './fixtures/drive.js'
-import mockOauthState from './mockoauthstate.js'
 import { getServer } from './mockserver.js'
 
 vi.mock('express-prom-bundle')
 vi.mock('tus-js-client')
-mockOauthState()
+
+vi.mock('../dist/server/helpers/oauth-state.js', async () => ({
+  ...(await vi.importActual('../dist/server/helpers/oauth-state.js')),
+  getFromState: (state: string) => {
+    if (state === 'state-with-invalid-instance-url') {
+      return 'http://localhost:3452'
+    }
+
+    return 'http://localhost:3020'
+  },
+}))
 
 const fakeLocalhost = 'localhost.com'
 
@@ -74,7 +83,7 @@ describe('validate upload data', () => {
         },
       })
 
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -84,17 +93,16 @@ describe('validate upload data', () => {
         httpMethod: 'POST',
       })
       .expect(401)
-      .then((res) =>
-        expect(res.body.message).toBe(
-          'HTTP 401: invalid access token detected by Provider',
-        ),
-      )
+
+    expect(res.body.message).toBe(
+      'HTTP 401: invalid access token detected by Provider',
+    )
   })
 
   test('invalid upload protocol gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -103,15 +111,14 @@ describe('validate upload data', () => {
         protocol: 'tusInvalid',
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.message).toBe('unsupported protocol specified'),
-      )
+
+    expect(res.body.message).toBe('unsupported protocol specified')
   })
 
   test('invalid upload fieldname gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -121,15 +128,14 @@ describe('validate upload data', () => {
         fieldname: 390,
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.message).toBe('fieldname must be a string'),
-      )
+
+    expect(res.body.message).toBe('fieldname must be a string')
   })
 
   test('invalid upload metadata gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -139,15 +145,14 @@ describe('validate upload data', () => {
         metadata: 'I am a string instead of object',
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.message).toBe('metadata must be an object'),
-      )
+
+    expect(res.body.message).toBe('metadata must be an object')
   })
 
   test('invalid upload headers get rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -157,13 +162,14 @@ describe('validate upload data', () => {
         headers: 'I am a string instead of object',
       })
       .expect(400)
-      .then((res) => expect(res.body.message).toBe('headers must be an object'))
+
+    expect(res.body.message).toBe('headers must be an object')
   })
 
   test('invalid upload HTTP Method gets rejected', async () => {
     nockGoogleDownloadFile()
 
-    return request(await getServerWithEnv())
+    const res = await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -173,15 +179,14 @@ describe('validate upload data', () => {
         httpMethod: 'DELETE',
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.message).toBe('unsupported HTTP METHOD specified'),
-      )
+
+    expect(res.body.message).toBe('unsupported HTTP METHOD specified')
   })
 
   test('valid upload data is allowed - tus', async () => {
     nockGoogleDownloadFile()
 
-    return request(await getServerWithEnv())
+    await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -203,7 +208,7 @@ describe('validate upload data', () => {
   test('valid upload data is allowed - s3-multipart', async () => {
     nockGoogleDownloadFile()
 
-    return request(await getServerWithEnv())
+    await request(await getServerWithEnv())
       .post('/drive/get/DUMMY-FILE-ID')
       .set('uppy-auth-token', token)
       .set('Content-Type', 'application/json')
@@ -239,7 +244,7 @@ describe('handle main oauth redirect', async () => {
   })
 
   test('do not redirect to invalid uppy instances', () => {
-    const state = 'state-with-invalid-instance-url' // see mock ../../src/server/helpers/oauth-state above
+    const state = 'state-with-invalid-instance-url' // see mock ../../dist/server/helpers/oauth-state above
     return request(serverWithMainOauth)
       .get(`/dropbox/redirect?state=${state}`)
       .set('uppy-auth-token', token)
@@ -314,6 +319,48 @@ describe('respects allowLocalUrls, valid hostname that resolves to localhost', (
 })
 
 describe('S3 controller', () => {
+  const getS3Server = () =>
+    getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+  test.each([
+    ['get', '/s3/multipart/upload-1'],
+    ['get', '/s3/multipart/upload-1/batch?partNumbers=1'],
+    ['get', '/s3/multipart/upload-1/1'],
+    ['delete', '/s3/multipart/upload-1'],
+    ['post', '/s3/multipart/upload-1/complete'],
+  ] as const)('multipart %s %s rejects a missing key', async (method, path) => {
+    const res = await request(await getS3Server())
+      [method](path)
+      .send({ parts: [{ PartNumber: 1, ETag: 'etag' }] })
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    )
+  })
+
+  test('completeMultipartUpload checks the key before the parts', async () => {
+    const res = await request(await getS3Server())
+      .post('/s3/multipart/upload-1/complete')
+      .send({ parts: 'nope' })
+      .expect(400)
+    expect(res.body.error).toMatch(/object key must be passed/)
+  })
+
+  test('completeMultipartUpload rejects malformed parts', async () => {
+    const res = await request(await getS3Server())
+      .post('/s3/multipart/upload-1/complete?key=a.jpg')
+      .send({ parts: [{ PartNumber: '1' }] })
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: `parts` must be an array of {ETag, PartNumber} objects.',
+    )
+  })
+
   test('createMultipartUpload rejects missing filename', async () => {
     const server = await getServer({
       COMPANION_AWS_KEY: 'test_key',
@@ -322,7 +369,7 @@ describe('S3 controller', () => {
       COMPANION_AWS_REGION: 'us-east-1',
     })
 
-    return request(server)
+    const res = await request(server)
       .post('/s3/multipart')
       .send({
         type: 'image/png',
@@ -330,11 +377,10 @@ describe('S3 controller', () => {
         // filename is intentionally missing
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.error).toBe(
-          's3: the "filename" field is required and must be a non-empty string',
-        ),
-      )
+
+    expect(res.body.error).toBe(
+      's3: the "filename" field is required and must be a non-empty string',
+    )
   })
 
   test('createMultipartUpload rejects empty filename', async () => {
@@ -345,7 +391,7 @@ describe('S3 controller', () => {
       COMPANION_AWS_REGION: 'us-east-1',
     })
 
-    return request(server)
+    const res = await request(server)
       .post('/s3/multipart')
       .send({
         type: 'image/png',
@@ -353,11 +399,10 @@ describe('S3 controller', () => {
         filename: '',
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.error).toBe(
-          's3: the "filename" field is required and must be a non-empty string',
-        ),
-      )
+
+    expect(res.body.error).toBe(
+      's3: the "filename" field is required and must be a non-empty string',
+    )
   })
 
   test('createMultipartUpload rejects non-string filename', async () => {
@@ -368,7 +413,7 @@ describe('S3 controller', () => {
       COMPANION_AWS_REGION: 'us-east-1',
     })
 
-    return request(server)
+    const res = await request(server)
       .post('/s3/multipart')
       .send({
         type: 'image/png',
@@ -376,11 +421,10 @@ describe('S3 controller', () => {
         filename: 12345,
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.error).toBe(
-          's3: the "filename" field is required and must be a non-empty string',
-        ),
-      )
+
+    expect(res.body.error).toBe(
+      's3: the "filename" field is required and must be a non-empty string',
+    )
   })
 
   test('getUploadParameters rejects missing filename', async () => {
@@ -391,18 +435,17 @@ describe('S3 controller', () => {
       COMPANION_AWS_REGION: 'us-east-1',
     })
 
-    return request(server)
+    const res = await request(server)
       .get('/s3/params')
       .query({
         type: 'image/png',
         // filename is intentionally missing
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.error).toBe(
-          's3: the "filename" query parameter is required and must be a non-empty string',
-        ),
-      )
+
+    expect(res.body.error).toBe(
+      's3: the "filename" query parameter is required and must be a non-empty string',
+    )
   })
 
   test('getUploadParameters rejects empty filename', async () => {
@@ -413,18 +456,17 @@ describe('S3 controller', () => {
       COMPANION_AWS_REGION: 'us-east-1',
     })
 
-    return request(server)
+    const res = await request(server)
       .get('/s3/params')
       .query({
         type: 'image/png',
         filename: '',
       })
       .expect(400)
-      .then((res) =>
-        expect(res.body.error).toBe(
-          's3: the "filename" query parameter is required and must be a non-empty string',
-        ),
-      )
+
+    expect(res.body.error).toBe(
+      's3: the "filename" query parameter is required and must be a non-empty string',
+    )
   })
 
   test('getUploadParameters supports bracket metadata query format', async () => {
@@ -435,7 +477,7 @@ describe('S3 controller', () => {
       COMPANION_AWS_REGION: 'us-east-1',
     })
 
-    return request(server)
+    const res = await request(server)
       .get('/s3/params')
       .query({
         filename: 'test.txt',
@@ -443,9 +485,79 @@ describe('S3 controller', () => {
         'metadata[name]': 'demo-file',
       })
       .expect(200)
-      .then((res) => {
-        const fields = res.body.fields as Record<string, string>
-        expect(fields['x-amz-meta-name']).toBe('demo-file')
+
+    const fields = res.body.fields as Record<string, string>
+    expect(fields['x-amz-meta-name']).toBe('demo-file')
+  })
+
+  test('getUploadParameters includes SSE-KMS fields when configured', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+      COMPANION_AWS_SSE: 'aws:kms',
+      COMPANION_AWS_SSE_KMS_KEY_ID: 'test-kms-key-id',
+    })
+
+    const res = await request(server)
+      .get('/s3/params')
+      .query({
+        filename: 'test.txt',
+        type: 'text/plain',
       })
+      .expect(200)
+
+    const fields = res.body.fields as Record<string, string>
+    expect(fields['x-amz-server-side-encryption']).toBe('aws:kms')
+    expect(fields['x-amz-server-side-encryption-aws-kms-key-id']).toBe(
+      'test-kms-key-id',
+    )
+  })
+
+  test('getUploadParameters omits SSE fields by default', async () => {
+    const server = await getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+    const res = await request(server)
+      .get('/s3/params')
+      .query({
+        filename: 'test.txt',
+        type: 'text/plain',
+      })
+      .expect(200)
+
+    const fields = res.body.fields as Record<string, string>
+    expect(fields['x-amz-server-side-encryption']).toBeUndefined()
+    expect(
+      fields['x-amz-server-side-encryption-aws-kms-key-id'],
+    ).toBeUndefined()
+  })
+})
+
+describe('provider mutations', () => {
+  test('a provider without mutations is rejected before the body is read', async () =>
+    request(await getServerWithEnv())
+      .post('/webdav/mutate/delete')
+      .set('Content-Type', 'application/json')
+      .send({ id: 'some-file' })
+      .expect(400))
+
+  test('an unknown operation is a 404', async () => {
+    const s3Token = tokenService.generateEncryptedAuthToken(
+      { s3: { bucket: 'some-bucket', prefix: '' } },
+      secret,
+    )
+
+    await request(await getServerWithEnv())
+      .post('/s3/mutate/frobnicate')
+      .set('uppy-auth-token', s3Token)
+      .set('Content-Type', 'application/json')
+      .send({ id: 'some-file' })
+      .expect(404)
   })
 })

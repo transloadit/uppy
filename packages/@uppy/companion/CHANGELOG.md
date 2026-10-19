@@ -1,5 +1,177 @@
 # @uppy/companion
 
+## 7.2.0
+
+### Minor Changes
+
+- 86d6567: Allow the native Transloadit Storage provider to resolve Workspace credentials from API2 at runtime,
+  using a server-only `credentialsSecret` instead of a static `workspaces` map. Existing static
+  configurations remain supported. This avoids a Companion restart when enabling another Workspace.
+
+### Patch Changes
+
+- a94cf2c: Ship `@types/express` and `@types/cors` as dependencies, since they are referenced by the public type declarations.
+- c0e17d5: Make the init option `s3.expires` optional.
+- c0e17d5: Expose the `ProviderListResponse` type.
+- a94cf2c: Fix the return type of `server()`. It was inferred as `import("express-serve-static-core").Express`, a transitive dependency that consumers can't always resolve; it is now explicitly typed as `Express` from `express`.
+- c0e17d5: Export the `CompanionInitOptions` type.
+
+## 7.1.1
+
+### Patch Changes
+
+- 452b52b: Reuse shared option and response types for all Companion provider methods. Some provider method types were widened to match the base `Provider` class:
+  
+  - `logout()` of Box, Dropbox, Facebook and S3 now returns `{ revoked: boolean }` instead of `{ revoked: true }`.
+  - Zoom `deauthorizationCallback()` headers may now be `string | string[]`.
+  - Zoom `list()` query is now the generic `Query` type instead of `{ cursor?: string | null }`.
+  - WebDAV `thumbnail()` no longer declares its unused parameters.
+- d85c649: Fix WebDAV provider bypassing SSRF protection: requests to private, loopback and link-local addresses are now blocked unless `allowLocalUrls` is enabled.
+
+## 7.1.0
+
+### Minor Changes
+
+- 480e44c: **Experimental:** the S3 and Transloadit Storage providers' options and HTTP API (`/s3/*`,
+  `/transloadit-storage/*`) will change incompatibly, also in minor releases. Companion logs a
+  warning at startup when either is configured. The `{ code }` error bodies are not part of that:
+  they are the stable way providers report user-facing errors.
+
+  Add an S3 provider (`/s3/*`) for browsing and managing S3-compatible object storage (AWS S3,
+  Cloudflare R2, MinIO, Transloadit Storage) from the Dashboard. It is configured under
+  `providerOptions.s3` (`COMPANION_S3_PROVIDER_*`), with its own optional credentials, region and
+  endpoint that fall back to the `s3` upload block, so browsing and uploading can use different
+  accounts and buckets.
+
+  The provider stays disabled until it is given one of two modes. Single-tenant: `bucket` (and
+  optionally `prefix`) names the one bucket everybody browses, so Companion has to sit behind your own
+  authentication. Multi-tenant: your server mints a short-lived storage grant per user after it
+  authenticated them, naming the bucket, the prefix they may see and whether they may write, and
+  Companion verifies it with `grantSecret` (HS256, several accepted so keys can be rotated) or
+  `grantPublicKey` (asymmetric, so Companion can verify grants but not mint them). The two modes are
+  exclusive: Companion refuses to start with both a grant key and `bucket`/`prefix`, or with neither. What the provider's credentials may reach at all
+  belongs in an IAM or bucket policy; Companion only enforces the prefix a grant carries.
+
+  Mutations — delete, rename/move a single file, and create folder — are exposed as
+  `POST /:provider/mutate/{delete,move,create-folder}` and are refused unless the grant carries write
+  scope. Moving a folder is orchestrated by the client, which walks the folder and moves its entries
+  one by one.
+
+  Single-file moves copy with `IfNoneMatch: *` and `CopySourceIfMatch`, and delete with `IfMatch`,
+  so an endpoint that honours conditional requests never overwrites a destination or deletes a
+  source that changed meanwhile (`s3Conflict`). User-facing failures are sent as `{ code }` (`S3_NOT_FOUND`, ...), which
+  `@uppy/core` maps to the locale string it shows; `{ message }` stays for text forwarded verbatim
+  from a provider's own API, which is all older Uppy versions read. Listings carry a `session` object (`bucket`, `prefix`, `canWrite`, `supportsMoveFolder`)
+  so the client can hide write actions and resolve typed paths. Downloads must name the bucket the
+  file was selected in (`?bucket=`), so a queued import cannot be read from a later session.
+
+  A second provider, `transloadit-storage` (configured under `providerOptions['transloadit-storage']`
+  with `apiEndpoint` and per-Workspace `workspaces` credentials, grants only), browses Transloadit
+  Storage over S3 and moves files and whole folders through the native catalog API, preserving asset
+  identity.
+
+  Also changes how the webdav provider classifies a 401. Moving its error mapping into `mapProviderError` turned the old assign-then-overwrite into early returns, and because the `webdav` package sets both `status` and `response` on every non-2xx response the auth branch used to be dead code. A 401 while listing or downloading now surfaces as an auth error (HTTP 401) rather than a generic `ProviderApiError` (HTTP 424), so the client drops the session and re-prompts instead of showing a plain failure.
+
+### Patch Changes
+
+- 029694a: Refresh dependencies: `@aws-sdk/*` 3.1047.0 → 3.1134.0 (now requires `^3.1134.0`, fixing an unmet `@aws-sdk/lib-storage` peer dependency on `@aws-sdk/client-s3`), `ipaddr.js` 2.5.0, `serialize-javascript` 7.1.1, `ws` 8.21.3, `moment-timezone` 0.6.4, `morgan` 1.12.1 and `p-map` 7.0.8.
+- 029694a: Unpin all dependencies. All dependencies now use caret ranges.
+
+## 7.0.3
+
+### Patch Changes
+
+- 5cd9512: Ignore an empty (or whitespace-only) `transloadit_gateway` in fetched provider credentials again. Since 7.0.0 an empty string was passed to `new URL()`, which threw `Invalid URL` and turned every OAuth login using such credentials into a "Could not fetch credentials" page.
+- 071d167: Requests naming an unknown provider (for example `/nonexistent/list/`, or `/instagram/list/` now that Instagram is gone) are answered with a 400 again instead of being left without a response. The provider middleware stopped calling `next()` on that path in the TypeScript port, so such requests hung until the client gave up.
+
+## 7.0.2
+
+### Patch Changes
+
+- f3831a7: Match the `uploadUrls` and `server.validHosts` allowlists literally.
+
+  **This is a security fix, and it changes behaviour: if any allowlist entry is
+  written as a regular expression, it stops matching until you anchor it with
+  `^`.** See the migration below. It ships as a patch so that the fix reaches
+  everyone, but check your config before upgrading.
+
+  String entries used to be compiled into regular expressions and matched
+  anywhere in the value, so any destination that merely _contained_ an allowed
+  URL passed validation — `uploadUrls` is the only gate in front of the upload
+  leg, so this let a caller point Companion at an internal host
+  ([#6480](https://github.com/transloadit/uppy/issues/6480)).
+
+  A string entry is now compared literally: for `uploadUrls` the origin must be
+  identical and the path must match at a path boundary (so an allowed endpoint
+  still admits the upload id appended to it), and for `validHosts` the hostname
+  must match exactly, case-insensitively.
+
+  To keep matching with a pattern, pass a `RegExp` when configuring Companion
+  programmatically. Standalone config can only hold strings, so an entry that
+  starts with `^` is read as a pattern there — in `COMPANION_UPLOAD_URLS` and
+  `COMPANION_DOMAINS`, or in the JSON config file:
+
+  ```diff
+  -COMPANION_UPLOAD_URLS="https://api2-(\w+)\.example\.com/files/"
+  +COMPANION_UPLOAD_URLS="^https://api2-(\w+)\.example\.com/files/"
+
+  -COMPANION_DOMAINS="(\w+).example.com"
+  +COMPANION_DOMAINS="^(\w+)\.example\.com$"
+  ```
+
+  Patterns are matched as written, so anchor the tail end too where it matters:
+  `^(\w+)\.example\.com` still matches `sub.example.com.evil.com`. Companion
+  warns at startup about a `RegExp` with no `^`. A value that starts with `^` is
+  not split on `,`, so combine several patterns with `|` rather than listing
+  them.
+
+  An entry left as an unanchored pattern is now a literal that matches nothing,
+  and Companion cannot detect that — it is a valid URL or hostname as far as it
+  can tell. It fails closed, so uploads and OAuth redirects break visibly rather
+  than going somewhere unintended.
+
+  Also: `validHosts` no longer matches a host carrying a port against an entry
+  without one, and both options widen to `(string | RegExp)[]`.
+
+## 7.0.1
+
+### Patch Changes
+
+- 2608196: Fix Unsplash downloads failing since `unsplash.com` was put behind bot
+  protection. `download()` streamed `links.download`, which points at
+  `unsplash.com/photos/{id}/download`, so the bot challenge page ended up being
+  piped into the upload instead of the image.
+
+  Companion now downloads the photo from the `url` returned by the
+  `download_location` endpoint — the request it already made to increment the
+  download count for attribution — which points at `images.unsplash.com` and is
+  Unsplash's documented download path.
+
+## 7.0.0
+
+### Major Changes
+
+- 2608241: Companion now requires Node.js 22 or newer (was Node.js 20).
+- 12de077: Remove @uppy/instagram references from all the packages
+- ad4050b: Send token using websocket instead of window.opener.
+  Breaking in `@uppy/core` because it needs newest version of Companion in order to work.
+  Breaking in `@uppy/companion` because `companion.socket()` now requires `companionOptions` to be passed as the second argument.
+- d9d44ce: Upgrade to express 5 - Companion no longer works when used as a middleware with Express 4.
+
+### Minor Changes
+
+- 260811d: Add optional SSE-KMS support for S3 uploads in Companion
+
+### Patch Changes
+
+- c3c7cef: Bump shared runtime dependencies (preact, nanoid, lodash, classnames, shallow-equal, pretty-bytes, p-queue, tus-js-client, @transloadit/types @transloadit/prettier-bytes v1, is-mobile, exifr, compressorjs, rxjs, tslib). Also includes type-only fixes in `@uppy/companion`'s `jwt.ts` and `request.ts` to track `@types/jsonwebtoken` v9 and `@types/node`.
+- 8c5814b: Upgrade runtime dependencies. Companion moves to `ws` 8.21.1, `morgan` 1.11.0,
+  `helmet` 8.3.0, `ioredis` 5.11.1, `serialize-javascript` 7.0.7,
+  `content-disposition` 2.0.1 and `p-map` 7.0.5. `@uppy/angular` moves to
+  `zone.js` ~0.16.2, matching its Angular 21 peer range.
+- 3b08374: Reduce companion redis key timeouts to 10 min - In theory this shouldn't affect users
+- e99a17f: Port Companion to TypeScript. Not really a breaking change but there could be some unexpected breakage.
+
 ## 6.2.2
 
 ### Patch Changes

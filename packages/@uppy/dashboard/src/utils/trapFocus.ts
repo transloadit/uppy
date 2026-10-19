@@ -1,9 +1,7 @@
 import { FOCUSABLE_ELEMENTS, toArray } from '@uppy/core/utils'
 import getActiveOverlayEl from './getActiveOverlayEl.js'
 
-type $TSFixMe = any
-
-function focusOnFirstNode(event: $TSFixMe, nodes: $TSFixMe) {
+function focusOnFirstNode(event: Event, nodes: HTMLElement[]) {
   const node = nodes[0]
   if (node) {
     node.focus()
@@ -11,7 +9,7 @@ function focusOnFirstNode(event: $TSFixMe, nodes: $TSFixMe) {
   }
 }
 
-function focusOnLastNode(event: $TSFixMe, nodes: $TSFixMe) {
+function focusOnLastNode(event: Event, nodes: HTMLElement[]) {
   const node = nodes[nodes.length - 1]
   if (node) {
     node.focus()
@@ -23,21 +21,23 @@ function focusOnLastNode(event: $TSFixMe, nodes: $TSFixMe) {
 //    Firefox thinks <ul> is focusable, but we don't have <ul>s in our FOCUSABLE_ELEMENTS. Which means that if we tab into
 //    the <ul>, code will think that we are not in the active overlay, and we should focusOnFirstNode() of the currently
 //    active overlay!
-function isFocusInOverlay(activeOverlayEl: $TSFixMe) {
+function isFocusInOverlay(activeOverlayEl: HTMLElement) {
   return activeOverlayEl.contains(document.activeElement)
 }
 
 function trapFocus(
-  event: $TSFixMe,
-  activeOverlayType: $TSFixMe,
-  dashboardEl: $TSFixMe,
+  event: KeyboardEvent,
+  activeOverlayType: string | null | undefined,
+  dashboardEl: HTMLElement,
 ): void {
   const activeOverlayEl = getActiveOverlayEl(dashboardEl, activeOverlayType)
   const focusableNodes = toArray(
-    activeOverlayEl.querySelectorAll(FOCUSABLE_ELEMENTS),
+    activeOverlayEl.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS.join(',')),
   )
 
-  const focusedItemIndex = focusableNodes.indexOf(document.activeElement)
+  const focusedItemIndex = focusableNodes.indexOf(
+    document.activeElement as HTMLElement,
+  )
 
   // If we pressed tab, and focus is not yet within the current overlay - focus on
   // the first element within the current overlay.
@@ -63,9 +63,9 @@ export { trapFocus as forModal }
 
 // Traps focus inside of the currently open overlay, unless overlay is null - then let the user tab away.
 export function forInline(
-  event: $TSFixMe,
-  activeOverlayType: $TSFixMe,
-  dashboardEl: $TSFixMe,
+  event: KeyboardEvent,
+  activeOverlayType: string | null,
+  dashboardEl: HTMLElement,
 ): void {
   // ___When we're in the bare 'Drop files here, paste, browse or import from' screen
   if (activeOverlayType === null) {

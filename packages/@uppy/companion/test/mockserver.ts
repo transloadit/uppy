@@ -67,6 +67,8 @@ const defaultEnv = {
   COMPANION_AWS_SECRET: '',
   COMPANION_AWS_REGION: '',
   COMPANION_AWS_BUCKET: '',
+  COMPANION_AWS_SSE: undefined,
+  COMPANION_AWS_SSE_KMS_KEY_ID: undefined,
 } satisfies Record<string, string | number | undefined>
 
 function updateEnv(env: Record<string, string | number | undefined>): void {
@@ -81,13 +83,10 @@ export const setDefaultEnv = () => updateEnv(defaultEnv)
 
 export const grantToken = 'fake token'
 
-// companion stores certain global state, so the user needs to reset modules for each test
-// todo rewrite companion to not use global state
-// https://github.com/transloadit/uppy/issues/3284
 export const getServerWithEmitter = async (
   extraEnv: Record<string, string | number | undefined> = {},
 ) => {
-  const { default: standalone } = await import('../src/standalone/index.js')
+  const { default: standalone } = await import('../dist/standalone/index.js')
 
   const env = {
     ...defaultEnv,
@@ -101,7 +100,7 @@ export const getServerWithEmitter = async (
   authServer.use(
     session({ secret: 'grant', resave: true, saveUninitialized: true }),
   )
-  authServer.all('{*splat}/callback', (req, res, next) => {
+  authServer.all('{*splat}/callback', (req, _res, next) => {
     if (req.session) {
       req.session['grant'] = {
         response: { access_token: grantToken },
@@ -111,7 +110,7 @@ export const getServerWithEmitter = async (
   })
   authServer.all(
     ['{*splat}/send-token', '{*splat}/redirect'],
-    (req, res, next) => {
+    (req, _res, next) => {
       const state =
         typeof req.query['state'] === 'string' ? req.query['state'] : null
       if (req.session) {
