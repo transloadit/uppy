@@ -241,36 +241,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@angular/forms@npm:^22.2.1":
-  version: 22.2.1
-  resolution: "@angular/forms@npm:22.2.1"
-  dependencies:
-    "@standard-schema/spec": "npm:^1.0.0"
-    tslib: "npm:^2.3.0"
-    zod: "npm:^4.0.10"
-  peerDependencies:
-    "@angular/common": 22.2.1
-    "@angular/core": 22.2.1
-    "@angular/platform-browser": 22.2.1
-    rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/61189a98828675d81121ef93e116b910087f45000628954f73e829c365e9acd28ce86018316ddeb71778eeb645d002fff3152818422b4faf9a1fefc370b4b08f
-  languageName: node
-  linkType: hard
-
-"@angular/platform-browser-dynamic@npm:^22.2.1":
-  version: 22.2.1
-  resolution: "@angular/platform-browser-dynamic@npm:22.2.1"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/common": 22.2.1
-    "@angular/compiler": 22.2.1
-    "@angular/core": 22.2.1
-    "@angular/platform-browser": 22.2.1
-  checksum: 10/49f2fe8c3af69a2fe005a066866765d0e01f1c65477d0c7dd3d390178e3afbdfa536d89d8e737ec26a35ff92d3cfc9ace60f40b91c4cd2af30195f03a59b4e94
-  languageName: node
-  linkType: hard
-
 "@angular/platform-browser@npm:^22.2.1":
   version: 22.2.1
   resolution: "@angular/platform-browser@npm:22.2.1"
@@ -284,20 +254,6 @@ __metadata:
     "@angular/animations":
       optional: true
   checksum: 10/2170b2fc58476b82f903caa39992854c69afca57f671982462681ca72e8523bb4d339b971e65fe61322767d4592ba9c38ea6ae1e68aaaff183c8abc4a996bc2f
-  languageName: node
-  linkType: hard
-
-"@angular/router@npm:^22.2.1":
-  version: 22.2.1
-  resolution: "@angular/router@npm:22.2.1"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/common": 22.2.1
-    "@angular/core": 22.2.1
-    "@angular/platform-browser": 22.2.1
-    rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/8b92273d9d513f9a3e64d89c51c6a55bb025ce2337e36bf76bbb7097a9a99b83ebdb63845a0183fa9de10a29093c5ab1bebd4788b36c52f0395e88e6cd7a2690
   languageName: node
   linkType: hard
 
@@ -7858,10 +7814,7 @@ __metadata:
     "@angular/compiler": "npm:^22.2.1"
     "@angular/compiler-cli": "npm:^22.2.1"
     "@angular/core": "npm:^22.2.1"
-    "@angular/forms": "npm:^22.2.1"
     "@angular/platform-browser": "npm:^22.2.1"
-    "@angular/platform-browser-dynamic": "npm:^22.2.1"
-    "@angular/router": "npm:^22.2.1"
     "@uppy/angular": "workspace:*"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
@@ -14700,7 +14653,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:4.6.5, zod@npm:^4.0.10, zod@npm:^4.2.0, zod@npm:^4.4.3":
+"zod@npm:4.6.5, zod@npm:^4.2.0, zod@npm:^4.4.3":
   version: 4.6.5
   resolution: "zod@npm:4.6.5"
   checksum: 10/db004952e4dc6eab38b70f0cdef9251a65da84f5d08c5a0ef85e2590cfa9c477544ce734161ff5c05f89a15f0967137607a7feb16716195e04965f030db47213
