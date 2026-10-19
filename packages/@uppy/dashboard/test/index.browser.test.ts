@@ -23,7 +23,9 @@ test('Basic Dashboard functionality works in the browser', async () => {
     metaFields: [{ id: 'license', name: 'License' }],
   })
 
-  await expect.element(page.getByText('Drop files here')).toBeVisible()
+  await expect
+    .element(page.getByText('Drop files here or browse files'))
+    .toBeVisible()
   const fileInput = document.querySelector(
     '.uppy-Dashboard-input',
   ) as HTMLInputElement
@@ -47,7 +49,7 @@ test('Upload, pause, and resume functionality', async () => {
   let isPaused = false
   let progress = 0
 
-  const uppy = new Uppy({
+  using uppy = new Uppy({
     // Enable resumable uploads capability for pause/resume functionality
     restrictions: { maxNumberOfFiles: 1 },
   }).use(Dashboard, {

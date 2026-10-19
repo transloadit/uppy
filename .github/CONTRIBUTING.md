@@ -77,8 +77,8 @@ yarn run start:companion
 ```
 
 This would get the Companion instance running on `http://localhost:3020`. It
-uses [nodemon](https://github.com/remy/nodemon) so it will automatically restart
-when files are changed.
+recompiles with `tsc --watch` and runs under `node --watch`, so it will
+automatically restart when files are changed.
 
 ### How the Authentication and Token mechanism works
 

@@ -192,6 +192,43 @@ describe('moveFolder', () => {
   })
 })
 
+describe('forEachFile', () => {
+  it('hands out no more files after a failure and settles once the busy workers are done', async () => {
+    const stuck = Promise.withResolvers<void>()
+    const deleted: string[] = []
+    const files = ['a', 'b', 'c', 'd', 'e'].map((name) => `docs/${name}`)
+    const provider: FolderMoveProvider = {
+      ...createFakeProvider({ '': ['docs/'], 'docs/': files }),
+      async deleteItem(id) {
+        deleted.push(id)
+        if (id === 'docs/a') throw userError('S3_ACCESS_DENIED')
+        if (id === 'docs/b') await stuck.promise
+        return { ok: true }
+      },
+    }
+
+    let settled = false
+    const operation = deleteFolder({
+      provider,
+      folder: 'docs/',
+      concurrency: 2,
+    }).catch((error: unknown) => {
+      settled = true
+      throw error
+    })
+    await vi.waitFor(() => expect(deleted).toEqual(['docs/a', 'docs/b']))
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    // `a` failed while `b` is still in flight: nothing else starts, and the
+    // failure is only reported once `b` is done too.
+    expect(deleted).toEqual(['docs/a', 'docs/b'])
+    expect(settled).toBe(false)
+
+    stuck.resolve()
+    await expect(operation).rejects.toThrow('S3_ACCESS_DENIED')
+    expect(deleted).toEqual(['docs/a', 'docs/b'])
+  })
+})
+
 describe('moveFolder guards', () => {
   it('refuses a target that already exists instead of merging into it', async () => {
     const provider = createFakeProvider({

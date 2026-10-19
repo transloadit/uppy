@@ -1,3 +1,4 @@
+import { ERROR_PREFIX } from './consts.js'
 import type { XmlMap, XmlValue } from './types.js'
 
 export const sanitizeXmlETag = (etag: string): string =>
@@ -5,6 +6,50 @@ export const sanitizeXmlETag = (etag: string): string =>
 
 export const sanitizeETag = (etag: string | null): string | undefined =>
   etag?.replace(/^"+|"+$/g, '')
+
+/**
+ * Builds the `multipart/form-data` body of an S3 POST policy upload.
+ * Rejects fields that would make S3 store elsewhere or redirect.
+ */
+export function buildPostPolicyForm(
+  fields: Record<string, string>,
+  data: Blob,
+): FormData {
+  if (!fields.key?.trim() || /\$\{filename\}/.test(fields.key)) {
+    throw new TypeError(
+      `${ERROR_PREFIX}fields.key must be a concrete object key`,
+    )
+  }
+  // S3 matches form field names case-insensitively
+  const names = Object.keys(fields).map((k) => k.toLowerCase())
+  if (names.includes('file')) {
+    throw new TypeError(`${ERROR_PREFIX}fields must not contain "file"`)
+  }
+  if (names.includes('success_action_redirect') || names.includes('redirect')) {
+    throw new TypeError(
+      `${ERROR_PREFIX}fields must use success_action_status, not success_action_redirect`,
+    )
+  }
+  const form = new FormData()
+  for (const [k, v] of Object.entries(fields)) form.set(k, v)
+  // must be last: S3 ignores fields after `file`
+  form.set('file', data)
+  return form
+}
+
+/** Object URL of a POST policy upload: the action URL is the bucket. */
+export const postObjectLocation = (url: string, key: string): string =>
+  `${removeQueryString(url).replace(/\/+$/, '')}/${uriResourceEscape(key)}`
+
+/** Drops any case of `content-type` from a header map. */
+export function omitContentType(
+  headers: Record<string, string> | undefined,
+): Record<string, string> | undefined {
+  if (!headers) return headers
+  return Object.fromEntries(
+    Object.entries(headers).filter(([k]) => k.toLowerCase() !== 'content-type'),
+  )
+}
 
 /** Strips query string and hash from a URL to derive the object location. */
 export function removeQueryString(urlString: string): string {

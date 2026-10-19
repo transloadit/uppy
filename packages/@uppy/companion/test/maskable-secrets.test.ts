@@ -11,6 +11,7 @@ describe('getMaskableSecrets', () => {
         s3: { grantSecret: ['next', ' ', 'previous'], grantPublicKey: 'pem' },
         'transloadit-storage': {
           grantSecret: 'ts-grant',
+          credentialsSecret: 'server-only-credential-key',
           apiEndpoint: 'https://api.example',
           workspaces: {
             a: { key: 'k', secret: 'ws-a' },
@@ -29,6 +30,7 @@ describe('getMaskableSecrets', () => {
         'next',
         'previous',
         'ts-grant',
+        'server-only-credential-key',
         'ws-a',
         'ws-b',
         'custom-secret',

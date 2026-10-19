@@ -1,6 +1,6 @@
 {
   "name": "@uppy/svelte",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Uppy plugin that helps integrate Uppy into your Svelte project.",
   "type": "module",
   "sideEffects": [
@@ -48,7 +48,7 @@
   ],
   "scripts": {
     "build": "svelte-package",
-    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css",
+    "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css && cp ../components/dist/image-editor.css.map dist/image-editor.css.map",
     "typecheck": "svelte-check --tsconfig ./tsconfig.json"
   },
   "dependencies": {

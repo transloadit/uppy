@@ -156,19 +156,28 @@ async function forEachFile(
 ): Promise<void> {
   let done = 0
   let next = 0
+  // The first failure (an abort included) stops the hand-out. The workers busy
+  // at that moment finish their file, so nothing is still running once this
+  // settles and the caller refreshes or starts something else.
+  let failure: { error: unknown } | undefined
   onProgress?.(0, files.length)
   const workers = Array.from(
     { length: Math.max(1, Math.min(concurrency, files.length)) },
     async () => {
-      while (next < files.length) {
-        throwIfAborted(signal)
-        await perFile(files[next++])
-        done += 1
-        onProgress?.(done, files.length)
+      try {
+        while (failure === undefined && next < files.length) {
+          throwIfAborted(signal)
+          await perFile(files[next++])
+          done += 1
+          onProgress?.(done, files.length)
+        }
+      } catch (error) {
+        failure ??= { error }
       }
     },
   )
   await Promise.all(workers)
+  if (failure) throw failure.error
 }
 
 /** Deletes the (by now empty) folders, deepest first, then `root` itself. */

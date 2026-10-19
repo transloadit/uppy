@@ -1,5 +1,12 @@
 # @uppy/webdav
 
+## 2.0.1
+
+### Patch Changes
+
+- 78970b1: Add a README, so the npm page is no longer empty.
+- c054368: Remove invalid `"types"` field from `package.json`.
+
 ## 2.0.0
 
 ### Minor Changes

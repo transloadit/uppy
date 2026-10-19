@@ -20,21 +20,20 @@ const getServerWithDynamicOauth = async () =>
 
 describe('handle preauth endpoint', () => {
   test('happy path', async () => {
-    return (
-      request(await getServerWithDynamicOauth())
-        .post('/dropbox/preauth')
-        .set('Content-Type', 'application/json')
-        .send({
-          params: 'param value',
-        })
-        .expect(200)
-        // see jwt.generateEncryptedToken mock above
-        .then((res) => expect(res.body.token).toBe('dummy token'))
-    )
+    const res = await request(await getServerWithDynamicOauth())
+      .post('/dropbox/preauth')
+      .set('Content-Type', 'application/json')
+      .send({
+        params: 'param value',
+      })
+      .expect(200)
+
+    // see jwt.generateEncryptedToken mock above
+    expect(res.body.token).toBe('dummy token')
   })
 
   test('preauth request without params in body', async () => {
-    return request(await getServerWithDynamicOauth())
+    await request(await getServerWithDynamicOauth())
       .post('/dropbox/preauth')
       .set('Content-Type', 'application/json')
       .send({
@@ -44,7 +43,7 @@ describe('handle preauth endpoint', () => {
   })
 
   test('providers with dynamic credentials disabled', async () => {
-    return request(await getServerWithDynamicOauth())
+    await request(await getServerWithDynamicOauth())
       .post('/drive/preauth')
       .set('Content-Type', 'application/json')
       .send({
@@ -54,7 +53,7 @@ describe('handle preauth endpoint', () => {
   })
 
   test('server with dynamic credentials disabled', async () => {
-    return request(await getServer())
+    await request(await getServer())
       .post('/dropbox/preauth')
       .set('Content-Type', 'application/json')
       .send({

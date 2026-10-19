@@ -10,8 +10,9 @@ application server; browser-provided paths are not authorization.
 
 In the Dashboard the plugin is a picker by default: files can be browsed and picked, and, with
 `storeUploads` or `onUploadRequest`, uploaded into the open folder (also by dropping them on the
-panel). Renaming, moving, deleting and new folders need `mode: 'manager'` (the default with
-`standalone`), a stopgap until a dedicated file manager plugin.
+panel). Renaming, moving, deleting and new folders need `mode: 'manager'`, a stopgap until a
+dedicated file manager plugin. Manager mode is headless: render your file library with
+`useS3Manager` from `@uppy/react`. The Dashboard panel renders nothing in that mode.
 
 ## Upload results are the durable handoff
 
@@ -122,7 +123,7 @@ imports need to be selected again.
 
 A folder moves as one native operation on this provider. On the generic `@uppy/s3` provider
 Companion moves one file at a time, so the browser walks the folder and moves its files itself,
-behind a progress screen with a Stop button; a multi-selection is a sequence either way, so
+as an operation `useS3Manager` reports progress for and can cancel (`cancelOperation`); a multi-selection is a sequence either way, so
 partial failures refresh the listing before a retry. Generic S3 moves need no configuration: they
 are always available and use conditional copy/delete headers (`If-None-Match`, `CopySourceIfMatch`,
 `If-Match`) where the endpoint supports them.

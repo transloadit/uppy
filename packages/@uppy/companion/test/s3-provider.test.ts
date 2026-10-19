@@ -767,7 +767,19 @@ describe('S3 provider', () => {
   describe('transloadit-storage (native moves)', () => {
     const makeNative = (send: (cmd: unknown) => Promise<unknown> = vi.fn()) => {
       const provider = new TransloaditStorageProvider({ allowLocalUrls: true })
-      vi.spyOn(provider, 'getClient').mockReturnValue({ send } as never)
+      // Like a real client, sign with the key pair it was built with.
+      vi.spyOn(provider, 'getClient').mockImplementation(
+        ({ key, secret }) =>
+          ({
+            send,
+            config: {
+              credentials: async () => ({
+                accessKeyId: key,
+                secretAccessKey: secret,
+              }),
+            },
+          }) as never,
+      )
       return provider
     }
     const nativeCompanion = (apiEndpoint: string) =>
@@ -945,6 +957,13 @@ describe('S3 provider', () => {
       await expect(provider.moveItem(args)).rejects.toEqual(
         userError('S3_REQUEST_FAILED'),
       )
+      // Unreachable: a transport failure is an outage too, never a raw got error.
+      await expect(
+        provider.moveItem({
+          ...args,
+          companion: nativeCompanion('http://127.0.0.1:1'),
+        }),
+      ).rejects.toMatchObject({ name: 'ProviderApiError', statusCode: 502 })
     })
   })
 

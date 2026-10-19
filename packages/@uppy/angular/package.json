@@ -45,11 +45,11 @@
     }
   },
   "devDependencies": {
-    "@angular/compiler": "^22.1.1",
-    "@angular/compiler-cli": "^22.1.1",
-    "@angular/core": "^22.1.1",
+    "@angular/compiler": "^22.2.1",
+    "@angular/compiler-cli": "^22.2.1",
+    "@angular/core": "^22.2.1",
     "@uppy-dev/tsconfig": "workspace:^",
-    "ng-packagr": "^22.1.1",
+    "ng-packagr": "^22.2.4",
     "rxjs": "~7.8.0",
     "typescript": "^6.0.3"
   },
