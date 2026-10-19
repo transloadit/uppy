@@ -1,10 +1,11 @@
 import Uppy, { type UppyEventMap, type UppyOptions } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import XHRUpload from '@uppy/xhr-upload'
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import GoldenRetriever from '@uppy/golden-retriever'
 import { HttpResponse, http } from 'msw'
@@ -47,13 +48,6 @@ function createUppy(
     ...opts,
   })
 }
-
-network.configure({ context: { quiet: true } })
-await network.enable()
-
-afterEach(() => {
-  network.resetHandlers()
-})
 
 beforeEach(async () => {
   // @ts-expect-error dunno

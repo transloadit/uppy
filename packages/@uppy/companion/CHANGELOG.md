@@ -1,5 +1,21 @@
 # @uppy/companion
 
+## 7.2.0
+
+### Minor Changes
+
+- 86d6567: Allow the native Transloadit Storage provider to resolve Workspace credentials from API2 at runtime,
+  using a server-only `credentialsSecret` instead of a static `workspaces` map. Existing static
+  configurations remain supported. This avoids a Companion restart when enabling another Workspace.
+
+### Patch Changes
+
+- a94cf2c: Ship `@types/express` and `@types/cors` as dependencies, since they are referenced by the public type declarations.
+- c0e17d5: Make the init option `s3.expires` optional.
+- c0e17d5: Expose the `ProviderListResponse` type.
+- a94cf2c: Fix the return type of `server()`. It was inferred as `import("express-serve-static-core").Express`, a transitive dependency that consumers can't always resolve; it is now explicitly typed as `Express` from `express`.
+- c0e17d5: Export the `CompanionInitOptions` type.
+
 ## 7.1.1
 
 ### Patch Changes

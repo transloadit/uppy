@@ -1,3 +1,4 @@
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import { ProviderViews } from '@uppy/core/provider-views'
@@ -49,8 +50,7 @@ function initializeUppy(sources: SourceName[] = ['Dropbox']) {
   return instance
 }
 
-network.configure({ context: { quiet: true } })
-await network.enable()
+network.resetHandlers(...handlers)
 
 // Removed shared beforeEach initialization. Each test initializes its own Uppy instance.
 
@@ -72,7 +72,6 @@ afterEach(async () => {
 
 describe('ProviderView Search E2E', () => {
   test('Search for nested file in Dropbox and verify results', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
     await expect
       .element(page.getByRole('presentation').getByText('Dropbox'))
@@ -134,7 +133,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -189,7 +187,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -243,7 +240,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search for nested item, check it, go back to normal view -> parent should be partial', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -308,7 +304,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search for nested item, check then uncheck it, go back to normal view -> parent should be unchecked', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -385,7 +380,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Navigate into folder and perform scoped search -> should find nested files at multiple levels', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -444,7 +438,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('No duplicate items when searching and then browsing to the same file', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -527,7 +520,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Client-side filtering works for providers without server-side search (Google Drive)', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['GoogleDrive'])
 
     await expect

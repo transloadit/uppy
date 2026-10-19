@@ -4783,6 +4783,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@uppy-dev/msw-setup@workspace:^, @uppy-dev/msw-setup@workspace:private/msw-setup":
+  version: 0.0.0-use.local
+  resolution: "@uppy-dev/msw-setup@workspace:private/msw-setup"
+  dependencies:
+    "@uppy-dev/tsconfig": "workspace:^"
+    msw: "npm:^3.0.2"
+    typescript: "npm:^6.0.3"
+    vitest: "npm:^5.0.3"
+  peerDependencies:
+    msw: ^3.0.2
+    vitest: ^5.0.3
+  languageName: unknown
+  linkType: soft
+
 "@uppy-dev/s3-mock-companion@workspace:^, @uppy-dev/s3-mock-companion@workspace:private/s3-mock-companion":
   version: 0.0.0-use.local
   resolution: "@uppy-dev/s3-mock-companion@workspace:private/s3-mock-companion"
@@ -4852,6 +4866,7 @@ __metadata:
   dependencies:
     "@aws-sdk/client-sts": "npm:^3.1139.0"
     "@types/node": "npm:^22.20.1"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
@@ -5038,6 +5053,7 @@ __metadata:
   resolution: "@uppy/dashboard@workspace:packages/@uppy/dashboard"
   dependencies:
     "@transloadit/prettier-bytes": "npm:^2.0.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dropbox": "workspace:^"
@@ -5138,6 +5154,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/golden-retriever@workspace:packages/@uppy/golden-retriever"
   dependencies:
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
@@ -5316,6 +5333,7 @@ __metadata:
   resolution: "@uppy/s3@workspace:packages/@uppy/s3"
   dependencies:
     "@transloadit/utils": "npm:^4.8.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/s3-mock-companion": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/components": "workspace:^"
@@ -5416,6 +5434,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/transloadit-storage@workspace:packages/@uppy/transloadit-storage"
   dependencies:
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/s3-mock-companion": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
@@ -5437,6 +5456,7 @@ __metadata:
   resolution: "@uppy/transloadit@workspace:packages/@uppy/transloadit"
   dependencies:
     "@transloadit/types": "npm:^4.4.0"
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/tus": "workspace:^"
@@ -5567,6 +5587,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/xhr-upload@workspace:packages/@uppy/xhr-upload"
   dependencies:
+    "@uppy-dev/msw-setup": "workspace:^"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"

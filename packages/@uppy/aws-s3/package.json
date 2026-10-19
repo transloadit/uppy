@@ -1,7 +1,7 @@
 {
   "name": "@uppy/aws-s3",
   "description": "Upload to Amazon S3 with Uppy",
-  "version": "6.2.2",
+  "version": "6.3.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
@@ -40,6 +40,7 @@
   "devDependencies": {
     "@aws-sdk/client-sts": "^3.1139.0",
     "@types/node": "^22.20.1",
+    "@uppy-dev/msw-setup": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@vitest/browser-playwright": "^5.0.3",

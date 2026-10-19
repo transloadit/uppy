@@ -1,17 +1,11 @@
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import Core, { type UppyEventMap } from '@uppy/core'
 import XHRUpload from '@uppy/xhr-upload'
 import { HttpResponse, http } from 'msw'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
 const corsHeaders = { 'access-control-allow-origin': '*' }
-
-network.configure({ context: { quiet: true } })
-await network.enable()
-
-afterEach(() => {
-  network.resetHandlers()
-})
 
 describe('XHRUpload', () => {
   it('should leverage hooks from fetcher', async () => {
