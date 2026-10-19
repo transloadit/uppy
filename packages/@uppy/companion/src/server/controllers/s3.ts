@@ -1,4 +1,3 @@
-import assert from 'node:assert'
 import type { Part, S3Client } from '@aws-sdk/client-s3'
 import {
   AbortMultipartUploadCommand,
@@ -56,6 +55,34 @@ export default function s3(
         error: 'This Companion server does not support uploading to S3',
       })
     return client
+  }
+
+  /**
+   * The client and target of a multipart upload request (`:uploadId` and
+   * `?key=`), or undefined after answering with an error. The bucket is left
+   * to the caller, so a `bucket` function only runs for requests that pass
+   * the caller's own checks.
+   */
+  function getMultipartTarget(
+    req: Request,
+    res: Response,
+  ): { client: S3Client; uploadId: string; key: string } | undefined {
+    const client = getS3Client(req, res)
+    if (!client) return undefined
+    const uploadId = req.params['uploadId']
+    const key = req.query['key']
+    if (typeof uploadId !== 'string' || uploadId.length === 0) {
+      res.status(400).json({ error: 's3: uploadId must be provided.' })
+      return undefined
+    }
+    if (typeof key !== 'string') {
+      res.status(400).json({
+        error:
+          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+      })
+      return undefined
+    }
+    return { client, uploadId, key }
   }
 
   /**
@@ -252,37 +279,19 @@ export default function s3(
    *     - Size - size of this part.
    */
   function getUploadedParts(req: Request, res: Response, next: NextFunction) {
-    const client = getS3Client(req, res)
-    if (!client) return
-    const s3Client = client
-
-    const { uploadId } = req.params
-    const { key } = req.query
-
-    assert(
-      typeof uploadId === 'string' && uploadId.length > 0,
-      's3: uploadId must be provided.',
-    )
-
-    if (typeof key !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
-      return
-    }
-    const keyStr = key
-
+    const target = getMultipartTarget(req, res)
+    if (!target) return
+    const { client, uploadId, key } = target
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     const parts: Part[] = []
 
     const listPartsPage = (startAt?: string) => {
-      s3Client
+      client
         .send(
           new ListPartsCommand({
             Bucket: bucket,
-            Key: keyStr,
+            Key: key,
             UploadId: uploadId,
             PartNumberMarker: startAt,
           }),
@@ -313,24 +322,11 @@ export default function s3(
    *  - url - The URL to upload to, including signed query parameters.
    */
   function signPartUpload(req: Request, res: Response, next: NextFunction) {
-    const client = getS3Client(req, res)
-    if (!client) return
+    const target = getMultipartTarget(req, res)
+    if (!target) return
+    const { client, uploadId, key } = target
 
-    const uploadId = req.params['uploadId']
     const partNumber = req.params['partNumber']
-    const key = req.query['key']
-
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
-      res.status(400).json({ error: 's3: uploadId must be provided.' })
-      return
-    }
-    if (typeof key !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
-      return
-    }
     if (typeof partNumber !== 'string' || !parseInt(partNumber, 10)) {
       res.status(400).json({
         error: 's3: the part number must be a number between 1 and 10000.',
@@ -373,26 +369,11 @@ export default function s3(
     res: Response,
     next: NextFunction,
   ) {
-    const client = getS3Client(req, res)
-    if (!client) return
+    const target = getMultipartTarget(req, res)
+    if (!target) return
+    const { client, uploadId, key } = target
 
-    const uploadId = req.params['uploadId']
-    const key = req.query['key']
     const partNumbers = req.query['partNumbers']
-
-    if (typeof uploadId !== 'string' || uploadId.length === 0) {
-      res.status(400).json({ error: 's3: uploadId must be provided.' })
-      return
-    }
-
-    if (typeof key !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
-      return
-    }
-
     if (typeof partNumbers !== 'string') {
       res.status(400).json({
         error:
@@ -454,25 +435,9 @@ export default function s3(
     res: Response,
     next: NextFunction,
   ) {
-    const client = getS3Client(req, res)
-    if (!client) return
-
-    const { uploadId } = req.params
-    const { key } = req.query
-
-    assert(
-      typeof uploadId === 'string' && uploadId.length > 0,
-      's3: uploadId must be provided.',
-    )
-
-    if (typeof key !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
-      return
-    }
-
+    const target = getMultipartTarget(req, res)
+    if (!target) return
+    const { client, uploadId, key } = target
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
     client
@@ -503,25 +468,11 @@ export default function s3(
     res: Response,
     next: NextFunction,
   ) {
-    const client = getS3Client(req, res)
-    if (!client) return
+    const target = getMultipartTarget(req, res)
+    if (!target) return
+    const { client, uploadId, key } = target
 
-    const { uploadId } = req.params
-    const { key } = req.query
     const { parts }: { parts: unknown } = req.body
-
-    assert(
-      typeof uploadId === 'string' && uploadId.length > 0,
-      's3: uploadId must be provided.',
-    )
-
-    if (typeof key !== 'string') {
-      res.status(400).json({
-        error:
-          's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
-      })
-      return
-    }
     if (
       !Array.isArray(parts) ||
       !parts.every(

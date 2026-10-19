@@ -176,9 +176,7 @@ export type UnknownProviderPluginState = {
   username: string | null
   searchResults?: string[] | undefined
   dialog?: ProviderDialogState | undefined
-  /** Manager mode: whether the multi-select toggle is currently on. */
-  selectionActive?: boolean
-  /** Manager mode: the item whose detail modal is open. */
+  /** Manager mode: the detail item a headless UI shows. */
   detailItemId?: string | undefined
 }
 

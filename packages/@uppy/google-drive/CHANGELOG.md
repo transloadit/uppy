@@ -1,5 +1,11 @@
 # @uppy/google-drive
 
+## 6.0.1
+
+### Patch Changes
+
+- a7a7997: Google Drive passes `toggleCheckbox`'s optional `visibleOrder` on, so shift-click ranges in a custom UI follow the order it shows there too.
+
 ## 6.0.0
 
 ### Minor Changes
