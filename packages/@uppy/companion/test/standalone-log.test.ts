@@ -20,6 +20,10 @@ describe('accessLogUrl', () => {
     expect(accessLogUrl({ originalUrl: '/x?access_token=s' })).toBe(
       '/x?access_token=********',
     )
+    // a repeated key parses to an array
+    expect(
+      accessLogUrl({ originalUrl: '/x?uppyAuthToken=a&uppyAuthToken=b' }),
+    ).toBe('/x?uppyAuthToken=********')
   })
 
   test('leaves other query strings as they were sent', () => {

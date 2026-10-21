@@ -90,6 +90,46 @@ describe('downloadURL', () => {
     })
   })
 
+  test('keeps credential headers on a same-origin redirect but drops them across origins', async () => {
+    // got stripped authorization/cookie on cross-origin redirects; the manual
+    // hop loop must do the same (Google Picker passes a bearer token).
+    const seen: Array<{ origin: string; authorization: string | undefined }> =
+      []
+    const other = http.createServer((req, res) => {
+      seen.push({ origin: 'other', authorization: req.headers.authorization })
+      res.writeHead(200, { 'content-length': '0' })
+      res.end()
+    })
+    await new Promise<void>((resolve) => other.listen(0, '127.0.0.1', resolve))
+    const otherUrl = `http://127.0.0.1:${(other.address() as AddressInfo).port}`
+    try {
+      handler = (req, res) => {
+        if (req.url === '/same') {
+          seen.push({
+            origin: 'same',
+            authorization: req.headers.authorization,
+          })
+          res.writeHead(200, { 'content-length': '0' })
+          res.end()
+          return
+        }
+        res.writeHead(302, {
+          location: req.url === '/to-same' ? `${baseUrl}/same` : `${otherUrl}/`,
+        })
+        res.end()
+      }
+      const headers = { authorization: 'Bearer secret', 'x-other': '1' }
+      await downloadURL(`${baseUrl}/to-same`, true, undefined, { headers })
+      await downloadURL(`${baseUrl}/to-other`, true, undefined, { headers })
+      expect(seen).toEqual([
+        { origin: 'same', authorization: 'Bearer secret' },
+        { origin: 'other', authorization: undefined },
+      ])
+    } finally {
+      other.close()
+    }
+  })
+
   test('follows a redirect', async () => {
     handler = (req, res) => {
       if (req.url === '/final') {

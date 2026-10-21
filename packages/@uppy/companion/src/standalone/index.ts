@@ -42,6 +42,11 @@ function censorQuery(rawQuery: Record<string, unknown>): {
   Object.keys(rawQuery).forEach((key) => {
     const value = rawQuery[key]
     if (typeof value !== 'string') {
+      // A repeated sensitive key parses to an array; still hide it.
+      if (Array.isArray(value) && sensitiveKeys.has(key)) {
+        query[key] = '********'
+        censored = true
+      }
       return
     }
     if (sensitiveKeys.has(key)) {

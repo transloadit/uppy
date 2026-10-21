@@ -3,6 +3,7 @@ import type { Request, Response } from 'express'
 import type { Promisable } from 'type-fest'
 import logger from '../logger.js'
 import Uploader from '../Uploader.js'
+import { toError } from './type-guards.js'
 
 export async function startDownUpload({
   req,
@@ -17,6 +18,17 @@ export async function startDownUpload({
 }): Promise<void> {
   logger.debug('Starting download stream.', undefined, req.id)
   const { stream, size: maybeSize } = await download()
+  // The stream sits idle until the client's progress socket connects, and a
+  // Readable that emits 'error' with no listener is an uncaught exception. Keep
+  // one attached for its whole life; Uploader checks `destroyed` when it starts.
+  // Message only: a got error object carries the request headers.
+  stream.on('error', (err) => {
+    logger.warn(
+      `download stream error: ${toError(err).message}`,
+      'controller.download.stream.error',
+      req.id,
+    )
+  })
 
   // if we already know the size from the GET response content-length header, we can use that
   let size: number | null | undefined =

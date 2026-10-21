@@ -26,6 +26,10 @@ const defaultDirectory = '/'
  * small gzip body into hundreds of megabytes and abort the process.
  * node-fetch enforces `size` only when a body is consumed whole, so file
  * downloads (which stream `response.body`) are not limited by this.
+ *
+ * The webdav patcher is a package-wide singleton, so this applies to every
+ * webdav client in the process, and a later `getPatcher().patch('fetch', …)`
+ * by an embedding app would replace it.
  */
 export const MAX_WEBDAV_RESPONSE_BYTES = 5 * 1024 * 1024
 

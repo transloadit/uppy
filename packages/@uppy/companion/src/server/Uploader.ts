@@ -444,6 +444,14 @@ export default class Uploader {
 
       const activeStream = this.readStream
       if (!activeStream) throw new Error('No readable stream available')
+      if (activeStream.destroyed) {
+        // The download errored or closed while we waited for the client's
+        // socket; surface that instead of reading from a dead stream.
+        throw (
+          activeStream.errored ??
+          new Error('Download stream closed before the upload started')
+        )
+      }
 
       const { url, extraData } = await Promise.race([
         this._uploadByProtocol(req, activeStream),

@@ -169,6 +169,17 @@ export { getProtectedGot }
 
 export const MAX_REDIRECTS = 10
 
+const CREDENTIAL_HEADERS = new Set(['authorization', 'cookie', 'host'])
+
+function stripCredentialHeaders(headers: unknown): Record<string, unknown> {
+  if (headers == null || typeof headers !== 'object') return {}
+  return Object.fromEntries(
+    Object.entries(headers).filter(
+      ([name]) => !CREDENTIAL_HEADERS.has(name.toLowerCase()),
+    ),
+  )
+}
+
 /**
  * Opens a got stream to a client-chosen URL and resolves once response headers
  * are in, following redirects here rather than in got.
@@ -187,9 +198,10 @@ export async function openProtectedStream(
 ): Promise<{ stream: ReturnType<typeof got.stream>; response: Response }> {
   const protectedGot = getProtectedGot({ allowLocalIPs })
   let currentUrl = url
+  let hopOptions = options
   for (let hop = 0; ; hop++) {
     const stream = protectedGot.stream(currentUrl, {
-      ...options,
+      ...hopOptions,
       throwHttpErrors: false,
       followRedirect: false,
     })
@@ -202,10 +214,19 @@ export async function openProtectedStream(
     if (statusCode >= 300 && statusCode < 400 && location != null) {
       stream.destroy()
       if (hop >= MAX_REDIRECTS) throw new Error('Too many redirects')
-      currentUrl = new URL(location, currentUrl).href
-      if (!validateURL(currentUrl, allowLocalIPs)) {
+      const nextUrl = new URL(location, currentUrl)
+      if (!validateURL(nextUrl.href, allowLocalIPs)) {
         throw new Error('Redirected to an invalid URL')
       }
+      if (nextUrl.origin !== new URL(currentUrl).origin) {
+        // Like got: credentials given for one origin must not follow a
+        // redirect to another (e.g. the Google Photos bearer token).
+        hopOptions = {
+          ...hopOptions,
+          headers: stripCredentialHeaders(hopOptions['headers']),
+        }
+      }
+      currentUrl = nextUrl.href
       continue
     }
     return { stream, response }

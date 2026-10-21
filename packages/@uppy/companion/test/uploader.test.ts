@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import http from 'node:http'
 import type { AddressInfo } from 'node:net'
-import { Readable } from 'node:stream'
+import { PassThrough, Readable } from 'node:stream'
 import type { Request } from 'express'
 import express from 'express'
 import nock from 'nock'
@@ -19,6 +19,7 @@ import {
 import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
+import { startDownUpload } from '../dist/server/helpers/upload.js'
 import Uploader, {
   toClientError,
   ValidationError,
@@ -430,6 +431,41 @@ describe('uploader', () => {
     return uploader.uploadStream(stream, requireMockReq())
   }
 
+  test('a download stream that errors before the socket connects fails the upload cleanly', async () => {
+    // startDownUpload holds the stream until the client's progress socket
+    // connects. An 'error' on it in that window had no listener and exited
+    // the process.
+    const req = requireMockReq()
+    const stream = new PassThrough()
+    const json = vi.fn()
+    const res = { status: () => ({ json }) } as never
+    req.body = { endpoint: 'http://url.myendpoint.com/files', protocol: 'tus' }
+    try {
+      await startDownUpload({
+        req,
+        res,
+        getSize: undefined,
+        download: async () => ({ stream, size: 5 }),
+      })
+    } finally {
+      req.body = undefined
+    }
+    const token = (json.mock.calls[0]?.[0] as { token: string }).token
+
+    stream.destroy(new Error('boom'))
+    // Let the 'error' event fire before anything else happens, as it would
+    // while a real client is still opening its socket.
+    await new Promise((resolve) => setImmediate(resolve))
+
+    const errorMessage = new Promise((resolve) =>
+      socketClient.onUploadError(token, resolve),
+    )
+    socketClient.connect(token)
+    await expect(errorMessage).resolves.toMatchObject({
+      payload: { error: { message: 'boom' } },
+    })
+  })
+
   test('does not retry a failed PUT upload', async () => {
     // got retries PUT (not POST) on network errors by default. The body here is
     // a one-shot stream, so the retry threw out of band after the promise had
@@ -472,6 +508,7 @@ describe('uploader', () => {
       expect(requests).toBe(1)
     } finally {
       endpoint.close()
+      nock.enableNetConnect()
     }
   }, 10_000)
 
