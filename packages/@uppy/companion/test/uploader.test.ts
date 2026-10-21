@@ -17,7 +17,10 @@ import {
 import { defaultOptions } from '../dist/config/companion.js'
 import Emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
-import Uploader, { ValidationError } from '../dist/server/Uploader.js'
+import Uploader, {
+  toClientError,
+  ValidationError,
+} from '../dist/server/Uploader.js'
 import standalone from '../dist/standalone/index.js'
 import * as socketClient from './mocksocket.js'
 
@@ -584,8 +587,14 @@ describe('uploader', () => {
     return new Promise<void>((resolve, reject) => {
       socketClient.onUploadError(uploadToken, (message) => {
         try {
-          expect(message).toMatchObject({
-            payload: { error: { message: 'maxFileSize exceeded' } },
+          expect(message).toEqual({
+            action: 'error',
+            payload: {
+              error: {
+                name: 'Error',
+                message: 'maxFileSize exceeded',
+              },
+            },
           })
           resolve()
         } catch (err) {
@@ -594,5 +603,50 @@ describe('uploader', () => {
       })
       socketClient.connect(uploadToken).catch(reject)
     })
+  })
+})
+
+test('toClientError keeps only name and message', () => {
+  const err = Object.assign(new Error('upload failed'), {
+    cause: { options: { headers: { authorization: 'Bearer victim' } } },
+    options: { headers: { authorization: 'Bearer victim' } },
+  })
+  expect(toClientError(err)).toEqual({
+    name: 'Error',
+    message: 'upload failed',
+  })
+})
+
+test("toClientError passes on the destination's answer to a failed upload", () => {
+  const err = Object.assign(new Error('Bad Request'), {
+    extraData: {
+      status: 400,
+      statusText: 'Bad Request',
+      responseText: '{"error":"too big"}',
+      headers: { 'content-type': 'application/json' },
+      request: { headers: { authorization: 'Bearer victim' } },
+    },
+    cause: { options: { headers: { authorization: 'Bearer victim' } } },
+  })
+  expect(toClientError(err)).toEqual({
+    name: 'Error',
+    message: 'Bad Request',
+    extraData: {
+      status: 400,
+      statusText: 'Bad Request',
+      responseText: '{"error":"too big"}',
+      headers: { 'content-type': 'application/json' },
+    },
+  })
+})
+
+test('toClientError on non-Error throwables', () => {
+  expect(toClientError({ message: { nested: true } })).toEqual({
+    name: 'Error',
+    message: 'Unknown error',
+  })
+  expect(toClientError('plain string')).toEqual({
+    name: 'Error',
+    message: 'plain string',
   })
 })

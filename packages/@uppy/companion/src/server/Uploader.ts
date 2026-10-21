@@ -13,7 +13,6 @@ import type { OptionsOfTextResponseBody, Response } from 'got'
 import got from 'got'
 import type { Redis } from 'ioredis'
 import throttle from 'lodash/throttle.js'
-import { serializeError } from 'serialize-error'
 import tus from 'tus-js-client'
 import validator from 'validator'
 import type { CompanionRuntimeOptions } from '../types/companion-options.js'
@@ -98,6 +97,35 @@ function exceedsMaxFileSize(
   size: number | undefined,
 ): boolean {
   return maxFileSize !== undefined && size !== undefined && size > maxFileSize
+}
+
+// Only what the client reads (RequestClient.ts). A serialised error can carry
+// request options, headers and streams from this and other users' uploads.
+// Apps read a failed multipart upload's destination answer as
+// err.cause.extraData: pass on those fields of it, and nothing else.
+export function toClientError(err: unknown): {
+  name: string
+  message: string
+  extraData?: UploadExtraDataResponse
+} {
+  const error = toError(err)
+  const extraData = Reflect.get(error, 'extraData')
+  if (!isRecord(extraData)) return { name: error.name, message: error.message }
+  const { status, statusText, responseText, headers } = extraData
+  return {
+    name: error.name,
+    message: error.message,
+    extraData: {
+      ...(typeof status === 'number' && { status }),
+      ...(typeof statusText === 'string' && { statusText }),
+      ...(typeof responseText === 'string' && { responseText }),
+      ...(isRecord(headers) && {
+        headers: Object.fromEntries(
+          Object.entries(headers).filter(([, v]) => typeof v === 'string'),
+        ),
+      }),
+    },
+  }
 }
 
 export class ValidationError extends Error {
@@ -667,13 +695,9 @@ export default class Uploader {
   }
 
   #emitError(err: unknown): void {
-    const error = toError(err)
-    // delete stack to avoid sending server info to client
-    // see PR discussion https://github.com/transloadit/uppy/pull/3832
-    const { stack, ...serializedErr } = serializeError(error)
     const dataToEmit = {
       action: 'error',
-      payload: { error: serializedErr },
+      payload: { error: toClientError(err) },
     }
     this.saveState(dataToEmit)
     emitter().emit(this.token, dataToEmit)

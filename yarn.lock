@@ -8930,7 +8930,6 @@ __metadata:
     node-schedule: "npm:^2.1.1"
     p-map: "npm:^7.0.5"
     prom-client: "npm:^15.1.3"
-    serialize-error: "npm:^13.0.1"
     serialize-javascript: "npm:^7.1.3"
     supertest: "npm:^7.2.2"
     tus-js-client: "npm:^4.3.1"
@@ -19594,13 +19593,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"non-error@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "non-error@npm:0.1.0"
-  checksum: 10/c8140db92f2054f1789e2523cb1ac872adbe231642b8ab9c6a2c6295ea33f9ad7093a5adfc54ac07ac8cd86c245ee186ecc918d11c9b9ae3c6fa9b2e0ec7197c
-  languageName: node
-  linkType: hard
-
 "nopt@npm:^10.0.0, nopt@npm:^10.0.1":
   version: 10.0.1
   resolution: "nopt@npm:10.0.1"
@@ -24342,16 +24334,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serialize-error@npm:^13.0.1":
-  version: 13.0.1
-  resolution: "serialize-error@npm:13.0.1"
-  dependencies:
-    non-error: "npm:^0.1.0"
-    type-fest: "npm:^5.4.1"
-  checksum: 10/a31fd603d2b4f6f33f11acc2cabfa451f2efb2257c5bcbb2ea7fd9b2016da5ea4b4c3a81152481740e54c575ef6e351ddd262b68793c09d9b8fd396ce4a5c52c
-  languageName: node
-  linkType: hard
-
 "serialize-javascript@npm:^6.0.0, serialize-javascript@npm:^6.0.1":
   version: 6.0.2
   resolution: "serialize-javascript@npm:6.0.2"
@@ -25952,7 +25934,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"type-fest@npm:^5.10.0, type-fest@npm:^5.4.1, type-fest@npm:^5.5.0":
+"type-fest@npm:^5.10.0, type-fest@npm:^5.5.0":
   version: 5.10.0
   resolution: "type-fest@npm:5.10.0"
   dependencies:
