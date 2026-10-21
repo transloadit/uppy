@@ -607,14 +607,18 @@ export default function s3(
       .Router()
       .get('/sts', getTemporarySecurityCredentials)
       .get('/params', getUploadParameters)
-      .post('/multipart', express.json(), createMultipartUpload)
+      .post(
+        '/multipart',
+        express.json({ inflate: false }),
+        createMultipartUpload,
+      )
       .get('/multipart/:uploadId', getUploadedParts)
       .get('/multipart/:uploadId/batch', batchSignPartsUpload)
       .get('/multipart/:uploadId/:partNumber', signPartUpload)
       // limit 1mb because maybe large upload with a lot of parts, see https://github.com/transloadit/uppy/issues/1945
       .post(
         '/multipart/:uploadId/complete',
-        express.json({ limit: '1mb' }),
+        express.json({ limit: '1mb', inflate: false }),
         completeMultipartUpload,
       )
       .delete('/multipart/:uploadId', abortMultipartUpload)

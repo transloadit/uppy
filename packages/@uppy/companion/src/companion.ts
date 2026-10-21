@@ -151,7 +151,7 @@ export function app(optionsArg: CompanionInitOptions): {
   // See https://github.com/simov/grant#dynamic-http
   app.use(
     '/connect/:oauthProvider{/:override}',
-    express.urlencoded({ extended: false }),
+    express.urlencoded({ extended: false, inflate: false }),
     getCredentialsOverrideMiddleware(
       providers as Record<string, typeof Provider>,
       options,
@@ -178,8 +178,8 @@ export function app(optionsArg: CompanionInitOptions): {
 
   app.post(
     '/:providerName/preauth',
-    express.json(),
-    express.urlencoded({ extended: false }),
+    express.json({ inflate: false }),
+    express.urlencoded({ extended: false, inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.hasBody,
     middlewares.hasOAuthProvider,
@@ -212,7 +212,7 @@ export function app(optionsArg: CompanionInitOptions): {
   )
   app.post(
     '/:providerName/deauthorization/callback',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.hasBody,
     middlewares.hasOAuthProvider,
@@ -235,7 +235,7 @@ export function app(optionsArg: CompanionInitOptions): {
 
   app.post(
     '/:providerName/simple-auth',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.hasBody,
     middlewares.hasSimpleAuthProvider,
@@ -264,7 +264,7 @@ export function app(optionsArg: CompanionInitOptions): {
 
   app.post(
     '/:providerName/get/:id',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.get,
@@ -273,7 +273,7 @@ export function app(optionsArg: CompanionInitOptions): {
   // Mutations (delete / move / create folder) for providers that support them
   app.post(
     '/:providerName/mutate/:operation',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.hasMutationProvider,
     middlewares.verifyToken,
@@ -282,7 +282,7 @@ export function app(optionsArg: CompanionInitOptions): {
   // backwards compat:
   app.post(
     '/search/:providerName/get/:id',
-    express.json(),
+    express.json({ inflate: false }),
     middlewares.hasSessionAndProvider,
     middlewares.verifyToken,
     controllers.get,
