@@ -69,10 +69,15 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [lts/*]
+        node-version: ['^24.22.1']
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{matrix.node-version}}
+          check-latest: true
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -85,10 +90,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{matrix.node-version}}
       - name: Install dependencies
         run:
           corepack yarn install --immutable
@@ -117,6 +118,11 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '^24.22.1'
+          check-latest: true
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -129,10 +135,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
       - name: Install dependencies
         run:
           corepack yarn install --immutable
@@ -150,7 +152,8 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version: '^24.22.1'
+          check-latest: true
       - name: Install dependencies
         run:
           corepack yarn workspaces focus @uppy-dev/build
