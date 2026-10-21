@@ -8,6 +8,8 @@
   "exports": {
     "./*.js": "./lib/*.js",
     "./*": "./lib/*.js",
+    "./lib/*.js": "./lib/*.js",
+    "./lib/*": "./lib/*.js",
     "./package.json": "./package.json"
   },
   "scripts": {
