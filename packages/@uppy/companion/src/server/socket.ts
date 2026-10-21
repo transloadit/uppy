@@ -20,6 +20,16 @@ function isSocketMessage(value: unknown): value is SocketMessage {
   )
 }
 
+// Uppy and Companion both mint these with randomUUID(). Anything else must not
+// reach the emitter: EventEmitter has reserved names and the Redis emitter
+// subscribes with glob patterns.
+export const SOCKET_TOKEN_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+function validToken(token: string | undefined): string | undefined {
+  return token && SOCKET_TOKEN_RE.test(token) ? token : undefined
+}
+
 function handleUploadSocketConnection({
   token,
   ws,
@@ -181,13 +191,13 @@ export default function setupSockets(
 
     // authentication callback token?
     const authCallbackTokenMatch = path?.match(
-      /^\/api2\/auth-callback\/token\/([^/]+)/,
+      /^\/api2\/auth-callback\/token\/([^/?#]+)$/,
     )
-    const authCallbackToken = authCallbackTokenMatch?.[1]
+    const authCallbackToken = validToken(authCallbackTokenMatch?.[1])
 
     // or token that identifies which ongoing upload's progress, the socket connection wishes to listen to.
-    const uploadTokenMatch = path?.match(/^\/api\/([^/]+)/)
-    const uploadToken = uploadTokenMatch?.[1]
+    const uploadTokenMatch = path?.match(/^\/api\/([^/?#]+)$/)
+    const uploadToken = validToken(uploadTokenMatch?.[1])
 
     ws.on('error', (err) => {
       // https://github.com/websockets/ws/issues/1543
@@ -213,8 +223,9 @@ export default function setupSockets(
 
     if (uploadToken) {
       logger.info(
-        `Upload token connection received from ${uploadToken}`,
+        'Upload token connection received',
         'socket.upload.connect',
+        Uploader.shortenToken(uploadToken),
       )
 
       handleUploadSocketConnection({ token: uploadToken, ws })
@@ -236,6 +247,6 @@ export default function setupSockets(
       return
     }
 
-    ws.close()
+    ws.close(1008)
   })
 }
