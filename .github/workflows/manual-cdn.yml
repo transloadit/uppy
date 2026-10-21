@@ -20,8 +20,40 @@ on:
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
 
+permissions:
+  actions: read # Inspect required reviewers before an uppy upload
+  contents: read
+
 jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    outputs:
+      approval_required: ${{ steps.plan.outputs.approval_required }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+      - name: Show CDN candidate and check approval protection
+        id: plan
+        run: node scripts/release-approval.mjs prepare-cdn
+        env:
+          PACKAGE: ${{ inputs.package }}
+          VERSION: ${{ inputs.version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMPANION_OAUTH_CANARY_URL: ${{ vars.COMPANION_OAUTH_CANARY_URL }}
+
+  approve_uppy:
+    needs: preflight
+    if: needs.preflight.outputs.approval_required == 'true'
+    runs-on: ubuntu-latest
+    environment: oauth-client-publication
+    steps:
+      - run: echo 'Protected approval granted; upload will recheck the environment.'
+
   upload:
+    needs: [preflight, approve_uppy]
+    if: ${{ !cancelled() && needs.preflight.result == 'success' && (needs.approve_uppy.result == 'success' || (needs.preflight.outputs.approval_required == 'false' && needs.approve_uppy.result == 'skipped')) }}
     runs-on: ubuntu-latest
     env:
       AWS_REGION: auto
@@ -43,6 +75,11 @@ jobs:
       - name: Build before publishing
         if: ${{ !inputs.version }}
         run: corepack yarn run build
+      - name: Recheck approval protection before uploading uppy
+        if: ${{ inputs.package == 'uppy' }}
+        run: node scripts/release-approval.mjs verify-protection
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload "${{ inputs.package }}" to CDN
         if: ${{ !inputs.force }}
         run: corepack yarn workspace uppy node upload-to-cdn.js "$PACKAGE" "$VERSION"
