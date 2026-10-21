@@ -10,6 +10,8 @@ import * as logger from './logger.js'
 import * as redis from './redis.js'
 import Uploader from './Uploader.js'
 
+const SOCKET_MAX_PAYLOAD_BYTES = 1024
+
 type SocketMessage = { action: string; payload: Record<string, unknown> }
 
 function isSocketMessage(value: unknown): value is SocketMessage {
@@ -174,7 +176,13 @@ export default function setupSockets(
   server: HttpServer | HttpsServer,
   companionOptions: CompanionInitOptions,
 ) {
-  const wss = new WebSocketServer({ server })
+  // Clients only send ~32-byte pause/resume/cancel messages. Without a cap, ws
+  // accepts 100 MiB and JSON.parse of a deeply nested array aborts the process
+  // on heap exhaustion, which no try/catch can prevent.
+  const wss = new WebSocketServer({
+    server,
+    maxPayload: SOCKET_MAX_PAYLOAD_BYTES,
+  })
 
   const urlBuilder = getURLBuilder(companionOptions)
 
