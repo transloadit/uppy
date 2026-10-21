@@ -827,6 +827,10 @@ export default class Uploader {
       isStream: false,
       resolveBodyOnly: false,
       responseType: 'text',
+      // The body is a one-shot stream (or FormData wrapping one). got retries
+      // PUT on network errors by default; the retry fired after this promise
+      // had settled and threw outside any handler, taking the process down.
+      retry: { limit: 0 },
     }
 
     if (this.options.useFormData) {

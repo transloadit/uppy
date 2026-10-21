@@ -1,4 +1,6 @@
 import fs from 'node:fs'
+import http from 'node:http'
+import type { AddressInfo } from 'node:net'
 import { Readable } from 'node:stream'
 import type { Request } from 'express'
 import express from 'express'
@@ -427,6 +429,51 @@ describe('uploader', () => {
     const uploader = new Uploader(opts)
     return uploader.uploadStream(stream, requireMockReq())
   }
+
+  test('does not retry a failed PUT upload', async () => {
+    // got retries PUT (not POST) on network errors by default. The body here is
+    // a one-shot stream, so the retry threw out of band after the promise had
+    // settled and took the process down.
+    nock.enableNetConnect('127.0.0.1')
+    let requests = 0
+    const endpoint = http.createServer((req) => {
+      requests++
+      req.socket.destroy()
+    })
+    await new Promise<void>((resolve) =>
+      endpoint.listen(0, '127.0.0.1', resolve),
+    )
+    const { port } = endpoint.address() as AddressInfo
+
+    try {
+      const fileContent = Buffer.from('Some file content')
+      const stream = Readable.from([fileContent])
+      stream.pause()
+      const uploader = new Uploader({
+        companionOptions: {
+          ...companionOptions,
+          streamingUpload: true,
+          uploadUrls: [`http://127.0.0.1:${port}/`],
+        },
+        endpoint: `http://127.0.0.1:${port}/`,
+        protocol: 'multipart',
+        httpMethod: 'PUT',
+        useFormData: true,
+        size: fileContent.length,
+        metadata: {},
+        pathPrefix,
+      })
+
+      await expect(
+        uploader.uploadStream(stream, requireMockReq()),
+      ).rejects.toThrow()
+      // got's first retry would fire after ~1 s.
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      expect(requests).toBe(1)
+    } finally {
+      endpoint.close()
+    }
+  }, 10_000)
 
   test('upload functions with xhr protocol', async () => {
     nock('http://localhost').post('/').reply(200, 'OK')
