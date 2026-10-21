@@ -1,6 +1,7 @@
 import type { Readable } from 'node:stream'
+import fetch, { type RequestInfo, type RequestInit } from 'node-fetch'
 import type { WebDAVClientOptions } from 'webdav'
-import { AuthType, createClient } from 'webdav'
+import { AuthType, createClient, getPatcher } from 'webdav'
 import { getProtectedHttpAgent, validateURL } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import logger from '../../logger.js'
@@ -16,6 +17,24 @@ import Provider, {
 } from '../Provider.js'
 
 const defaultDirectory = '/'
+
+/**
+ * Upper bound on a WebDAV response that Companion buffers in memory
+ * (PROPFIND listings and stat calls). The `webdav` package reads those with
+ * `response.text()` after decompression and parses them synchronously, so an
+ * anonymous caller pointing simple-auth at a hostile server could inflate a
+ * small gzip body into hundreds of megabytes and abort the process.
+ * node-fetch enforces `size` only when a body is consumed whole, so file
+ * downloads (which stream `response.body`) are not limited by this.
+ */
+export const MAX_WEBDAV_RESPONSE_BYTES = 5 * 1024 * 1024
+
+getPatcher().patch('fetch', (url: unknown, options: unknown) =>
+  fetch(url as RequestInfo, {
+    ...(options as RequestInit),
+    size: MAX_WEBDAV_RESPONSE_BYTES,
+  }),
+)
 
 type WebdavUserSession = { webdavUrl?: string }
 type WebdavClient = ReturnType<typeof createClient>
@@ -151,7 +170,6 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
   override list({
     providerUserSession,
     query,
-    directory,
   }: ProviderListOptions<WebdavUserSession>): Promise<ProviderListResponse> {
     return this.withErrorHandling('provider.webdav.list.error', async () => {
       if (!this.isAuthenticated({ providerUserSession })) {
@@ -169,9 +187,10 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
 
       dir.forEach((item) => {
         const isFolder = item.type === 'directory'
-        const requestPath = encodeURIComponent(
-          `${directory || ''}/${item.basename}`,
-        )
+        // The server's own path for the item. Prefixing the client-supplied
+        // route id instead let one request allocate (id length × item count)
+        // bytes of strings, enough to exhaust the heap.
+        const requestPath = encodeURIComponent(item.filename)
 
         let modifiedDate: string | undefined
         try {
@@ -218,8 +237,15 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         const client = await this.getClient({ providerUserSession })
         const statResult = await client.stat(id)
         const stat = 'data' in statResult ? statResult.data : statResult
-        const stream = client.createReadStream(`/${id}`) as Readable
-        return { stream, size: stat.size }
+        // createReadStream() returns a PassThrough before the GET is answered
+        // and reports a refused GET as an 'error' event on it; nothing listens
+        // until the client's progress socket connects, so the event was fatal.
+        // Await the GET instead so a non-2xx rejects here and gets mapped.
+        const response = await client.customRequest(`/${id}`, { method: 'GET' })
+        // webdav types its Response minimally; under Node it is node-fetch's,
+        // whose body is a Readable.
+        const { body } = response as unknown as { body: Readable }
+        return { stream: body, size: stat.size }
       },
     )
   }

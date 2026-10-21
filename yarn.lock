@@ -8927,6 +8927,7 @@ __metadata:
     moment-timezone: "npm:^0.6.5"
     morgan: "npm:^1.12.0"
     nock: "npm:^14.0.16"
+    node-fetch: "npm:^3.3.2"
     node-schedule: "npm:^2.1.1"
     p-map: "npm:^7.0.5"
     prom-client: "npm:^15.1.3"
