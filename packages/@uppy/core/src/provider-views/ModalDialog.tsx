@@ -7,11 +7,6 @@ type ModalDialogProps = Omit<
 > & {
   /** Escape, a click on the backdrop, or another close request (`cancel`). */
   onDismiss: () => void
-  /**
-   * Where focus goes on close when the element that had it at open is gone
-   * (e.g. a refresh re-rendered it); the dialog is still in the document.
-   */
-  restoreFocus?: (dialog: HTMLDialogElement) => HTMLElement | null | undefined
   children: ComponentChildren
 }
 
@@ -46,7 +41,6 @@ const isOnBackdrop = (event: MouseEvent): boolean => {
  */
 export default function ModalDialog({
   onDismiss,
-  restoreFocus,
   children,
   ...attributes
 }: ModalDialogProps): h.JSX.Element {
@@ -54,9 +48,6 @@ export default function ModalDialog({
   // Only a click that also started on the backdrop dismisses: selecting text
   // in the dialog and releasing outside it is not one.
   const pressedBackdrop = useRef(false)
-  // Read at close, which the effect below runs once for.
-  const restoreFocusRef = useRef(restoreFocus)
-  restoreFocusRef.current = restoreFocus
 
   useEffect(() => {
     const dialog = ref.current
@@ -79,10 +70,7 @@ export default function ModalDialog({
       const { activeElement } = document
       if (activeElement !== document.body && !dialog.contains(activeElement))
         return
-      const target = opener?.isConnected
-        ? opener
-        : restoreFocusRef.current?.(dialog)
-      target?.focus()
+      if (opener?.isConnected) opener.focus()
     }
   }, [])
 

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/compressor",
   "description": "Uppy plugin that compresses images before upload, saving up to 60% in size",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "license": "MIT",
   "keywords": [
     "file uploader",
@@ -46,7 +46,7 @@
     "@vitest/browser-playwright": "^5.0.3",
     "playwright": "1.64.0",
     "typescript": "^6.0.3",
-    "vite": "^8.3.0",
+    "vite": "^8.3.3",
     "vitest": "^5.0.3"
   },
   "scripts": {
