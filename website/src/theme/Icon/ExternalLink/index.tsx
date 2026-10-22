@@ -1,12 +1,12 @@
-import React from 'react';
-import { translate } from '@docusaurus/Translate';
+import React from 'react'
+import { translate } from '@docusaurus/Translate'
 
-import styles from './styles.module.css';
+import styles from './styles.module.css'
 
 type Props = {
-  width?: number;
-  height?: number;
-};
+  width?: number
+  height?: number
+}
 
 /**
  * Replaces the theme's boxed-arrow sprite with Lucide's `arrow-up-right`:
@@ -36,5 +36,5 @@ export default function IconExternalLink({
       <path d="M7 17 17 7" />
       <path d="M8 7h9v9" />
     </svg>
-  );
+  )
 }

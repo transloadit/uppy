@@ -79,14 +79,14 @@ the browser using SigV4. No server round-trip per request.
 new Uppy().use(AwsS3, {
   s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
   getCredentials: async () => {
-    const res = await fetch('/api/s3/credentials');
-    return res.json();
+    const res = await fetch('/api/s3/credentials')
+    return res.json()
     // {
     //   credentials: { accessKeyId, secretAccessKey, sessionToken },
     //   region: 'us-east-1',
     // }
   },
-});
+})
 ```
 
 The `region` used for signing comes from the `getCredentials` response. You can
@@ -107,10 +107,10 @@ new Uppy().use(AwsS3, {
     const res = await fetch('/api/s3/sign', {
       method: 'POST',
       body: JSON.stringify({ method, key, uploadId, partNumber }),
-    });
-    return res.json(); // { url: 'https://presigned-url.example' }, key is optional
+    })
+    return res.json() // { url: 'https://presigned-url.example' }, key is optional
   },
-});
+})
 ```
 
 ### `companionEndpoint` : Companion signing
@@ -120,7 +120,7 @@ Point the plugin at your Companion server. Nothing else to configure.
 ```js
 new Uppy().use(AwsS3, {
   companionEndpoint: 'https://companion.example',
-});
+})
 ```
 
 Options like `shouldUseMultipart`, `getChunkSize`, `limit`, `generateObjectKey`,
@@ -151,13 +151,13 @@ else that speaks the S3 protocol:
 new Uppy().use(AwsS3, {
   s3Endpoint: 'https://<account-id>.r2.cloudflarestorage.com/my-bucket',
   getCredentials: () => fetchR2Credentials(),
-});
+})
 
 // AWS S3 with Transfer Acceleration
 new Uppy().use(AwsS3, {
   s3Endpoint: 'https://my-bucket.s3-accelerate.amazonaws.com',
   getCredentials: () => fetchCredentials(),
-});
+})
 ```
 
 ## Reliability improvements
@@ -193,12 +193,12 @@ contributors can reproduce signing bugs locally without hitting AWS.
 // Before
 new Uppy().use(AwsS3, {
   endpoint: 'https://companion.example',
-});
+})
 
 // After
 new Uppy().use(AwsS3, {
   companionEndpoint: 'https://companion.example',
-});
+})
 ```
 
 ### From `getTemporarySecurityCredentials`
@@ -208,17 +208,17 @@ new Uppy().use(AwsS3, {
 new Uppy().use(AwsS3, {
   endpoint: 'https://companion.example',
   getTemporarySecurityCredentials: true,
-});
+})
 
 // After
 new Uppy().use(AwsS3, {
   s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
   region: 'us-east-1',
   getCredentials: async () => {
-    const res = await fetch('/api/s3/sts');
-    return res.json();
+    const res = await fetch('/api/s3/sts')
+    return res.json()
   },
-});
+})
 ```
 
 ### From custom callbacks
@@ -250,7 +250,7 @@ new Uppy().use(AwsS3, {
   listParts: (file, data) => {
     /* ... */
   },
-});
+})
 
 // After: one callback that switches on the operation
 new Uppy().use(AwsS3, {
@@ -258,10 +258,10 @@ new Uppy().use(AwsS3, {
     const res = await fetch('/api/s3/sign', {
       method: 'POST',
       body: JSON.stringify({ method, key, uploadId, partNumber }),
-    });
-    return res.json(); // { url } or { url, key }
+    })
+    return res.json() // { url } or { url, key }
   },
-});
+})
 ```
 
 Your `/api/s3/sign` endpoint receives `{ method, key, uploadId, partNumber }`

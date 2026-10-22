@@ -1,24 +1,24 @@
-import React from 'react';
-import Heading from '@theme/Heading';
-import Link from '@docusaurus/Link';
+import React from 'react'
+import Heading from '@theme/Heading'
+import Link from '@docusaurus/Link'
 
-import IconNextjs from '../../../static/img/nextjs.svg';
-import IconReact from '../../../static/img/react.svg';
-import IconVue from '../../../static/img/vue.svg';
-import IconSvelte from '../../../static/img/svelte.svg';
-import IconAngular from '../../../static/img/angular.svg';
-import IconReactRouter from '../../../static/img/react-router.svg';
+import IconNextjs from '../../../static/img/nextjs.svg'
+import IconReact from '../../../static/img/react.svg'
+import IconVue from '../../../static/img/vue.svg'
+import IconSvelte from '../../../static/img/svelte.svg'
+import IconAngular from '../../../static/img/angular.svg'
+import IconReactRouter from '../../../static/img/react-router.svg'
 
-import styles from './styles.module.css';
+import styles from './styles.module.css'
 
 type Props = {
   items: Array<{
-    name: string;
-    description: string;
-    link: string;
-    icon?: React.ReactNode;
-  }>;
-};
+    name: string
+    description: string
+    link: string
+    icon?: React.ReactNode
+  }>
+}
 
 export const QuickStartLinks = (props: Props) => {
   return (
@@ -32,8 +32,8 @@ export const QuickStartLinks = (props: Props) => {
         </Link>
       ))}
     </section>
-  );
-};
+  )
+}
 
 export const Frameworks = () => {
   return (
@@ -105,5 +105,5 @@ export const Frameworks = () => {
         </div>
       </Link>
     </section>
-  );
-};
+  )
+}

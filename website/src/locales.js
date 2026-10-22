@@ -1,43 +1,43 @@
-import zh_TW from '@uppy/locales/lib/zh_TW';
-import zh_CN from '@uppy/locales/lib/zh_CN';
-import vi_VN from '@uppy/locales/lib/vi_VN';
-import uz_UZ from '@uppy/locales/lib/uz_UZ';
-import uk_UA from '@uppy/locales/lib/uk_UA';
-import tr_TR from '@uppy/locales/lib/tr_TR';
-import th_TH from '@uppy/locales/lib/th_TH';
-import sv_SE from '@uppy/locales/lib/sv_SE';
-import sr_RS_Latin from '@uppy/locales/lib/sr_RS_Latin';
-import sr_RS_Cyrillic from '@uppy/locales/lib/sr_RS_Cyrillic';
-import sk_SK from '@uppy/locales/lib/sk_SK';
-import ru_RU from '@uppy/locales/lib/ru_RU';
-import ro_RO from '@uppy/locales/lib/ro_RO';
-import pt_PT from '@uppy/locales/lib/pt_PT';
-import pt_BR from '@uppy/locales/lib/pt_BR';
-import pl_PL from '@uppy/locales/lib/pl_PL';
-import nl_NL from '@uppy/locales/lib/nl_NL';
-import nb_NO from '@uppy/locales/lib/nb_NO';
-import ko_KR from '@uppy/locales/lib/ko_KR';
-import ja_JP from '@uppy/locales/lib/ja_JP';
-import it_IT from '@uppy/locales/lib/it_IT';
-import is_IS from '@uppy/locales/lib/is_IS';
-import id_ID from '@uppy/locales/lib/id_ID';
-import hu_HU from '@uppy/locales/lib/hu_HU';
-import hr_HR from '@uppy/locales/lib/hr_HR';
-import hi_IN from '@uppy/locales/lib/hi_IN';
-import he_IL from '@uppy/locales/lib/he_IL';
-import gl_ES from '@uppy/locales/lib/gl_ES';
-import fr_FR from '@uppy/locales/lib/fr_FR';
-import fi_FI from '@uppy/locales/lib/fi_FI';
-import fa_IR from '@uppy/locales/lib/fa_IR';
-import es_MX from '@uppy/locales/lib/es_MX';
-import es_ES from '@uppy/locales/lib/es_ES';
-import en_US from '@uppy/locales/lib/en_US';
-import el_GR from '@uppy/locales/lib/el_GR';
-import de_DE from '@uppy/locales/lib/de_DE';
-import da_DK from '@uppy/locales/lib/da_DK';
-import cs_CZ from '@uppy/locales/lib/cs_CZ';
-import bg_BG from '@uppy/locales/lib/bg_BG';
-import ar_SA from '@uppy/locales/lib/ar_SA';
+import zh_TW from '@uppy/locales/lib/zh_TW'
+import zh_CN from '@uppy/locales/lib/zh_CN'
+import vi_VN from '@uppy/locales/lib/vi_VN'
+import uz_UZ from '@uppy/locales/lib/uz_UZ'
+import uk_UA from '@uppy/locales/lib/uk_UA'
+import tr_TR from '@uppy/locales/lib/tr_TR'
+import th_TH from '@uppy/locales/lib/th_TH'
+import sv_SE from '@uppy/locales/lib/sv_SE'
+import sr_RS_Latin from '@uppy/locales/lib/sr_RS_Latin'
+import sr_RS_Cyrillic from '@uppy/locales/lib/sr_RS_Cyrillic'
+import sk_SK from '@uppy/locales/lib/sk_SK'
+import ru_RU from '@uppy/locales/lib/ru_RU'
+import ro_RO from '@uppy/locales/lib/ro_RO'
+import pt_PT from '@uppy/locales/lib/pt_PT'
+import pt_BR from '@uppy/locales/lib/pt_BR'
+import pl_PL from '@uppy/locales/lib/pl_PL'
+import nl_NL from '@uppy/locales/lib/nl_NL'
+import nb_NO from '@uppy/locales/lib/nb_NO'
+import ko_KR from '@uppy/locales/lib/ko_KR'
+import ja_JP from '@uppy/locales/lib/ja_JP'
+import it_IT from '@uppy/locales/lib/it_IT'
+import is_IS from '@uppy/locales/lib/is_IS'
+import id_ID from '@uppy/locales/lib/id_ID'
+import hu_HU from '@uppy/locales/lib/hu_HU'
+import hr_HR from '@uppy/locales/lib/hr_HR'
+import hi_IN from '@uppy/locales/lib/hi_IN'
+import he_IL from '@uppy/locales/lib/he_IL'
+import gl_ES from '@uppy/locales/lib/gl_ES'
+import fr_FR from '@uppy/locales/lib/fr_FR'
+import fi_FI from '@uppy/locales/lib/fi_FI'
+import fa_IR from '@uppy/locales/lib/fa_IR'
+import es_MX from '@uppy/locales/lib/es_MX'
+import es_ES from '@uppy/locales/lib/es_ES'
+import en_US from '@uppy/locales/lib/en_US'
+import el_GR from '@uppy/locales/lib/el_GR'
+import de_DE from '@uppy/locales/lib/de_DE'
+import da_DK from '@uppy/locales/lib/da_DK'
+import cs_CZ from '@uppy/locales/lib/cs_CZ'
+import bg_BG from '@uppy/locales/lib/bg_BG'
+import ar_SA from '@uppy/locales/lib/ar_SA'
 
 export default [
   { name: 'English (United States)', locale: en_US },
@@ -80,4 +80,4 @@ export default [
   { name: 'Ukrainian (Ukraine)', locale: uk_UA },
   { name: 'Uzbek (Uzbekistan)', locale: uz_UZ },
   { name: 'Vietnamese (Vietnam)', locale: vi_VN },
-];
+]

@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { UppyContextProvider, Dropzone } from '@uppy/react';
-import { Uppy } from 'uppy';
+import React, { useState } from 'react'
+import { UppyContextProvider, Dropzone } from '@uppy/react'
+import { Uppy } from 'uppy'
 
-import { BrowserWindow } from './BrowserWindow';
+import { BrowserWindow } from './BrowserWindow'
 
-import '@uppy/react/css/style.css';
+import '@uppy/react/css/style.css'
 
-import styles from './dropzone.module.css';
+import styles from './dropzone.module.css'
 
 export default function DropzoneDemo() {
-  const [uppy] = useState(() => new Uppy());
+  const [uppy] = useState(() => new Uppy())
 
   return (
     <BrowserWindow>
@@ -19,5 +19,5 @@ export default function DropzoneDemo() {
         </div>
       </UppyContextProvider>
     </BrowserWindow>
-  );
+  )
 }

@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 type Props = {
-  copied: boolean;
-  className?: string;
-};
+  copied: boolean
+  className?: string
+}
 
 /**
  * The two halves of a copy button's feedback. Both glyphs are drawn in the same
@@ -39,5 +39,5 @@ export default function CopyStateIcon({ copied, className }: Props) {
           strokeWidth="1.5"
           strokeLinecap="round"
         />
-      </svg>;
+      </svg>
 }

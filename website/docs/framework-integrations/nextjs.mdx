@@ -2,8 +2,8 @@
 slug: /nextjs
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
 # Next.js
 
@@ -50,27 +50,27 @@ and server integration to work. We will be using [tus Node.js][].
 Checkout the [`@uppy/tus` docs](/docs/tus) for more information.
 
 ```tsx
-'use client';
+'use client'
 
-import Uppy from '@uppy/core';
+import Uppy from '@uppy/core'
 // For now, if you do not want to install UI components you
 // are not using import from lib directly.
-import Dashboard from '@uppy/react/lib/Dashboard';
-import Tus from '@uppy/tus';
-import { useState } from 'react';
+import Dashboard from '@uppy/react/lib/Dashboard'
+import Tus from '@uppy/tus'
+import { useState } from 'react'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 function createUppy() {
-  return new Uppy().use(Tus, { endpoint: '/api/upload' });
+  return new Uppy().use(Tus, { endpoint: '/api/upload' })
 }
 
 export default function UppyDashboard() {
   // Important: use an initializer function to prevent the state from recreating.
-  const [uppy] = useState(createUppy);
+  const [uppy] = useState(createUppy)
 
-  return <Dashboard theme="dark" uppy={uppy} />;
+  return <Dashboard theme="dark" uppy={uppy} />
 }
 ```
 
@@ -82,9 +82,9 @@ Attach the tus server handler to a Next.js route handler in an
 `/pages/api/upload/[[...file]].ts`
 
 ```ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { Server, Upload } from '@tus/server';
-import { FileStore } from '@tus/file-store';
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { Server, Upload } from '@tus/server'
+import { FileStore } from '@tus/file-store'
 
 /**
  * !Important. This will tell Next.js NOT Parse the body as tus requires
@@ -94,16 +94,16 @@ export const config = {
   api: {
     bodyParser: false,
   },
-};
+}
 
 const tusServer = new Server({
   // `path` needs to match the route declared by the next file router
   path: '/api/upload',
   datastore: new FileStore({ directory: './files' }),
-});
+})
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  return tusServer.handle(req, res);
+  return tusServer.handle(req, res)
 }
 ```
 
@@ -112,23 +112,23 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 `/app/api/upload/[[...slug]]/route.ts`
 
 ```ts
-import { Server } from '@tus/server';
-import { FileStore } from '@tus/file-store';
-import { NextRequest } from 'next/server';
+import { Server } from '@tus/server'
+import { FileStore } from '@tus/file-store'
+import { NextRequest } from 'next/server'
 
 const server = new Server({
   // `path` needs to match the route declared by the next file router
   // ie /api/upload
   path: '/api/upload',
   datastore: new FileStore({ directory: './files' }),
-});
+})
 
-export const GET = async (req: NextRequest) => server.handleWeb(req);
-export const PATCH = async (req: NextRequest) => server.handleWeb(req);
-export const POST = async (req: NextRequest) => server.handleWeb(req);
-export const DELETE = async (req: NextRequest) => server.handleWeb(req);
-export const OPTIONS = async (req: NextRequest) => server.handleWeb(req);
-export const HEAD = async (req: NextRequest) => server.handleWeb(req);
+export const GET = async (req: NextRequest) => server.handleWeb(req)
+export const PATCH = async (req: NextRequest) => server.handleWeb(req)
+export const POST = async (req: NextRequest) => server.handleWeb(req)
+export const DELETE = async (req: NextRequest) => server.handleWeb(req)
+export const OPTIONS = async (req: NextRequest) => server.handleWeb(req)
+export const HEAD = async (req: NextRequest) => server.handleWeb(req)
 ```
 
 ## Transloadit
@@ -170,33 +170,33 @@ Generating a signature should be done on the server to avoid leaking secrets.
 `/app/api/transloadit/route.ts`
 
 ```ts
-import { NextResponse, NextRequest } from 'next/server';
-import crypto from 'crypto';
+import { NextResponse, NextRequest } from 'next/server'
+import crypto from 'crypto'
 
 function utcDateString(ms: number): string {
   return new Date(ms)
     .toISOString()
     .replace(/-/g, '/')
     .replace(/T/, ' ')
-    .replace(/\.\d+Z$/, '+00:00');
+    .replace(/\.\d+Z$/, '+00:00')
 }
 
 export async function POST(request: NextRequest) {
   // expire 1 hour from now (this must be milliseconds)
-  const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
-  const authKey = process.env.TRANSLOADIT_KEY;
-  const authSecret = process.env.TRANSLOADIT_SECRET;
-  const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
+  const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000)
+  const authKey = process.env.TRANSLOADIT_KEY
+  const authSecret = process.env.TRANSLOADIT_SECRET
+  const templateId = process.env.TRANSLOADIT_TEMPLATE_ID
 
   // Typically, here you would also deny generating a signature for improper use
   if (!authKey || !authSecret || !templateId) {
     return NextResponse.json(
       { error: 'Missing Transloadit credentials' },
       { status: 500 },
-    );
+    )
   }
 
-  const body = await request.json();
+  const body = await request.json()
   const params = JSON.stringify({
     auth: {
       key: authKey,
@@ -209,17 +209,17 @@ export async function POST(request: NextRequest) {
       customValue: body.customValue,
     },
     // your other params like notify_url, etc.
-  });
+  })
 
   const signatureBytes = crypto
     .createHmac('sha384', authSecret)
-    .update(Buffer.from(params, 'utf-8'));
+    .update(Buffer.from(params, 'utf-8'))
   // The final signature needs the hash name in front, so
   // the hashing algorithm can be updated in a backwards-compatible
   // way when old algorithms become insecure.
-  const signature = `sha384:${signatureBytes.digest('hex')}`;
+  const signature = `sha384:${signatureBytes.digest('hex')}`
 
-  return NextResponse.json({ expires, signature, params });
+  return NextResponse.json({ expires, signature, params })
 }
 ```
 
@@ -230,31 +230,31 @@ export async function POST(request: NextRequest) {
 `/pages/api/transloadit/params.ts`
 
 ```ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import crypto from 'node:crypto';
+import type { NextApiRequest, NextApiResponse } from 'next'
+import crypto from 'node:crypto'
 
 function utcDateString(ms: number): string {
   return new Date(ms)
     .toISOString()
     .replace(/-/g, '/')
     .replace(/T/, ' ')
-    .replace(/\.\d+Z$/, '+00:00');
+    .replace(/\.\d+Z$/, '+00:00')
 }
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   // Typically, here you would also deny generating a signature for improper use
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' })
   }
 
   // expire 1 hour from now (this must be milliseconds)
-  const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
-  const authKey = process.env.TRANSLOADIT_KEY;
-  const authSecret = process.env.TRANSLOADIT_SECRET;
-  const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
+  const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000)
+  const authKey = process.env.TRANSLOADIT_KEY
+  const authSecret = process.env.TRANSLOADIT_SECRET
+  const templateId = process.env.TRANSLOADIT_TEMPLATE_ID
 
   if (!authKey || !authSecret || !templateId) {
-    return res.status(500).json({ error: 'Missing Transloadit credentials' });
+    return res.status(500).json({ error: 'Missing Transloadit credentials' })
   }
 
   const params = JSON.stringify({
@@ -269,17 +269,17 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       customValue: req.body.customValue,
     },
     // your other params like notify_url, etc.
-  });
+  })
 
   const signatureBytes = crypto
     .createHmac('sha384', authSecret)
-    .update(Buffer.from(params, 'utf-8'));
+    .update(Buffer.from(params, 'utf-8'))
   // The final signature needs the hash name in front, so
   // the hashing algorithm can be updated in a backwards-compatible
   // way when old algorithms become insecure.
-  const signature = `sha384:${signatureBytes.digest('hex')}`;
+  const signature = `sha384:${signatureBytes.digest('hex')}`
 
-  res.status(200).json({ expires, signature, params });
+  res.status(200).json({ expires, signature, params })
 }
 ```
 
@@ -294,29 +294,29 @@ can use in your template as global variables.
 ```js
 // ...
 function createUppy() {
-  const uppy = new Uppy();
+  const uppy = new Uppy()
   uppy.use(Transloadit, {
     async assemblyOptions() {
       // You can send meta data along for use in your template.
       // https://transloadit.com/docs/topics/assembly-instructions/#form-fields-in-instructions
-      const { meta } = uppy.getState();
-      const body = JSON.stringify({ customValue: meta.customValue });
-      const res = await fetch('/transloadit-params', { method: 'POST', body });
-      return response.json();
+      const { meta } = uppy.getState()
+      const body = JSON.stringify({ customValue: meta.customValue })
+      const res = await fetch('/transloadit-params', { method: 'POST', body })
+      return response.json()
     },
-  });
-  return uppy;
+  })
+  return uppy
 }
 
 function Component({ customValue }) {
   // IMPORTANT: passing an initializer function to prevent the state from recreating.
-  const [uppy] = useState(createUppy);
+  const [uppy] = useState(createUppy)
 
   useEffect(() => {
     if (customValue) {
-      uppy.setOptions({ meta: { customValue } });
+      uppy.setOptions({ meta: { customValue } })
     }
-  }, [uppy, customValue]);
+  }, [uppy, customValue])
 }
 ```
 
@@ -337,37 +337,37 @@ the `formData` or `bundle` options.
   <TabItem value="app" label="App Router" default>
 
 ```ts
-import { NextRequest, NextResponse } from 'next/server';
-import { writeFile } from 'node:fs/promises';
-import path from 'node:path';
+import { NextRequest, NextResponse } from 'next/server'
+import { writeFile } from 'node:fs/promises'
+import path from 'node:path'
 
 export const config = {
   api: {
     bodyParser: false,
   },
-};
+}
 
 export async function POST(request: NextRequest) {
-  const formData = await request.formData();
-  const file = formData.get('file') as File | null;
+  const formData = await request.formData()
+  const file = formData.get('file') as File | null
 
   if (!file) {
-    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
+    return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const filename = file.name.replace(/\s/g, '-');
-  const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
+  const buffer = Buffer.from(await file.arrayBuffer())
+  const filename = file.name.replace(/\s/g, '-')
+  const filepath = path.join(process.cwd(), 'public', 'uploads', filename)
 
   try {
-    await writeFile(filepath, buffer);
+    await writeFile(filepath, buffer)
     return NextResponse.json({
       message: 'File uploaded successfully',
       filename,
-    });
+    })
   } catch (error) {
-    console.error('Error saving file:', error);
-    return NextResponse.json({ error: 'Error saving file' }, { status: 500 });
+    console.error('Error saving file:', error)
+    return NextResponse.json({ error: 'Error saving file' }, { status: 500 })
   }
 }
 ```
@@ -377,36 +377,36 @@ export async function POST(request: NextRequest) {
   <TabItem value="pages" label="Pages Router">
 
 ```ts
-import type { NextApiRequest, NextApiResponse } from 'next';
-import { createWriteStream } from 'fs';
-import { pipeline } from 'stream/promises';
-import path from 'path';
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { createWriteStream } from 'fs'
+import { pipeline } from 'stream/promises'
+import path from 'path'
 
 export const config = {
   api: {
     bodyParser: false,
   },
-};
+}
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method Not Allowed' });
+    return res.status(405).json({ error: 'Method Not Allowed' })
   }
 
   try {
-    const filename = `file-${Date.now()}.txt`;
-    const filepath = path.join(process.cwd(), 'public', 'uploads', filename);
-    const writeStream = createWriteStream(filepath);
+    const filename = `file-${Date.now()}.txt`
+    const filepath = path.join(process.cwd(), 'public', 'uploads', filename)
+    const writeStream = createWriteStream(filepath)
 
-    await pipeline(req, writeStream);
+    await pipeline(req, writeStream)
 
-    res.status(200).json({ message: 'File uploaded successfully', filename });
+    res.status(200).json({ message: 'File uploaded successfully', filename })
   } catch (error) {
-    console.error('Error saving file:', error);
-    res.status(500).json({ error: 'Error saving file' });
+    console.error('Error saving file:', error)
+    res.status(500).json({ error: 'Error saving file' })
   }
 }
 ```
@@ -415,27 +415,27 @@ export default async function handler(
 </Tabs>
 
 ```tsx
-'use client';
+'use client'
 
-import Uppy from '@uppy/core';
+import Uppy from '@uppy/core'
 // For now, if you do not want to install UI components you
 // are not using import from lib directly.
-import Dashboard from '@uppy/react/lib/Dashboard';
-import Xhr from '@uppy/xhr-upload';
-import { useState } from 'react';
+import Dashboard from '@uppy/react/lib/Dashboard'
+import Xhr from '@uppy/xhr-upload'
+import { useState } from 'react'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 function createUppy() {
-  return new Uppy().use(Xhr, { endpoint: '/api/upload' });
+  return new Uppy().use(Xhr, { endpoint: '/api/upload' })
 }
 
 export default function UppyDashboard() {
   // Important: use an initializer function to prevent the state from recreating.
-  const [uppy] = useState(createUppy);
+  const [uppy] = useState(createUppy)
 
-  return <Dashboard theme="dark" uppy={uppy} />;
+  return <Dashboard theme="dark" uppy={uppy} />
 }
 ```
 

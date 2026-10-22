@@ -10,7 +10,7 @@
  */
 
 /** U+FE0F, which trails the emoji markers and would break an equality check. */
-const VARIATION_SELECTOR = /️/g;
+const VARIATION_SELECTOR = /️/g
 
 const MARKERS = [
   ['✅', { variant: 'yes', label: 'Yes' }],
@@ -18,7 +18,7 @@ const MARKERS = [
   ['⚠️', { variant: 'warning', label: 'Warning' }],
   ['x', { variant: 'no', label: 'No' }],
   ['?', { variant: 'unknown', label: 'Unknown' }],
-].map(([marker, meta]) => [marker.replace(VARIATION_SELECTOR, ''), meta]);
+].map(([marker, meta]) => [marker.replace(VARIATION_SELECTOR, ''), meta])
 
 function iconNode({ variant, label }) {
   return {
@@ -34,7 +34,7 @@ function iconNode({ variant, label }) {
       { type: 'mdxJsxAttribute', name: 'aria-label', value: label },
     ],
     children: [],
-  };
+  }
 }
 
 /**
@@ -42,16 +42,16 @@ function iconNode({ variant, label }) {
  * "✅ ¹"), in which case the trailing text is kept as-is.
  */
 function splitMarker(value) {
-  const text = value.replace(VARIATION_SELECTOR, '');
+  const text = value.replace(VARIATION_SELECTOR, '')
 
   for (const [marker, meta] of MARKERS) {
-    if (text === marker) return { meta, rest: '' };
+    if (text === marker) return { meta, rest: '' }
     if (text.startsWith(`${marker} `)) {
-      return { meta, rest: text.slice(marker.length) };
+      return { meta, rest: text.slice(marker.length) }
     }
   }
 
-  return null;
+  return null
 }
 
 /**
@@ -60,34 +60,34 @@ function splitMarker(value) {
  * it is the first thing in its parent.
  */
 function replaceMarkers(node) {
-  if (!Array.isArray(node.children)) return;
+  if (!Array.isArray(node.children)) return
 
   node.children = node.children.flatMap((child, index) => {
     if (child.type === 'text' && index === 0) {
-      const hit = splitMarker(child.value);
+      const hit = splitMarker(child.value)
 
       if (hit) {
-        const icon = iconNode(hit.meta);
-        return hit.rest ? [icon, { type: 'text', value: hit.rest }] : [icon];
+        const icon = iconNode(hit.meta)
+        return hit.rest ? [icon, { type: 'text', value: hit.rest }] : [icon]
       }
     }
 
-    replaceMarkers(child);
-    return [child];
-  });
+    replaceMarkers(child)
+    return [child]
+  })
 }
 
 module.exports = function comparisonIcons() {
   return (tree) => {
     const visit = (node) => {
       if (node.type === 'tableCell') {
-        replaceMarkers(node);
-        return;
+        replaceMarkers(node)
+        return
       }
 
-      for (const child of node.children ?? []) visit(child);
-    };
+      for (const child of node.children ?? []) visit(child)
+    }
 
-    visit(tree);
-  };
-};
+    visit(tree)
+  }
+}

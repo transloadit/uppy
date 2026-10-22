@@ -1,8 +1,8 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
-import Heading from '@theme/Heading';
+import React from 'react'
+import Link from '@docusaurus/Link'
+import Heading from '@theme/Heading'
 
-import styles from './index.module.css';
+import styles from './index.module.css'
 
 const columns = [
   {
@@ -51,7 +51,7 @@ const columns = [
       { label: 'tus.io', href: 'https://tus.io/' },
     ],
   },
-];
+]
 
 function Footer() {
   return (
@@ -104,7 +104,7 @@ function Footer() {
         </p>
       </div>
     </footer>
-  );
+  )
 }
 
-export default React.memo(Footer);
+export default React.memo(Footer)

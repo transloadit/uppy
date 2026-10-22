@@ -3,10 +3,10 @@ sidebar_position: 4
 slug: /status-bar
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Status bar
 
@@ -61,13 +61,13 @@ yarn add @uppy/status-bar
 ## Use
 
 ```js showLineNumbers
-import Uppy from '@uppy/core';
-import StatusBar from '@uppy/status-bar';
+import Uppy from '@uppy/core'
+import StatusBar from '@uppy/status-bar'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/status-bar/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/status-bar/css/style.min.css'
 
-new Uppy().use(StatusBar, { target: '#status-bar' });
+new Uppy().use(StatusBar, { target: '#status-bar' })
 ```
 
 ## API
@@ -142,9 +142,9 @@ Dashboard plugin, which uses Status Bar internally, sets:
 
 ```js
 const doneButtonHandler = () => {
-  this.uppy.reset();
-  this.requestCloseModal();
-};
+  this.uppy.reset()
+  this.requestCloseModal()
+}
 ```
 
 #### `locale`
@@ -198,5 +198,5 @@ export default {
     },
     showErrorDetails: 'Show error details',
   },
-};
+}
 ```

@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   UppyContextProvider,
   Dropzone,
   FilesList,
   UploadButton,
-} from '@uppy/react';
-import { Tus, Uppy } from 'uppy';
+} from '@uppy/react'
+import { Tus, Uppy } from 'uppy'
 
-import { BrowserWindow } from './BrowserWindow';
+import { BrowserWindow } from './BrowserWindow'
 
-import '@uppy/react/dist/styles.css';
+import '@uppy/react/dist/styles.css'
 
 export default function BasicUploadDemo() {
   const [uppy] = useState(() =>
     new Uppy().use(Tus, {
       endpoint: 'https://tusd.tusdemo.net/files/',
     }),
-  );
+  )
 
   return (
     <BrowserWindow>
@@ -32,5 +32,5 @@ export default function BasicUploadDemo() {
         </div>
       </UppyContextProvider>
     </BrowserWindow>
-  );
+  )
 }

@@ -1,10 +1,10 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState, Fragment } from 'react'
 
-import Layout from '@theme/Layout';
-import Head from '@docusaurus/Head';
-import Heading from '@theme/Heading';
-import Link from '@docusaurus/Link';
-import BrowserOnly from '@docusaurus/BrowserOnly';
+import Layout from '@theme/Layout'
+import Head from '@docusaurus/Head'
+import Heading from '@theme/Heading'
+import Link from '@docusaurus/Link'
+import BrowserOnly from '@docusaurus/BrowserOnly'
 
 import {
   Uppy,
@@ -21,32 +21,32 @@ import {
   Tus,
   GoogleDrivePicker,
   GooglePhotosPicker,
-} from 'uppy';
-import Dashboard from '@uppy/react/dashboard';
+} from 'uppy'
+import Dashboard from '@uppy/react/dashboard'
 
-import InstallCommand from '../components/InstallCommand';
-import AgentPrompt from '../components/AgentPrompt';
+import InstallCommand from '../components/InstallCommand'
+import AgentPrompt from '../components/AgentPrompt'
 
-import IconUpload from '../../static/img/upload.svg';
-import IconLanguage from '../../static/img/language.svg';
-import IconSparkles from '../../static/img/sparkles.svg';
-import IconFolder from '../../static/img/folder.svg';
-import IconWrench from '../../static/img/wrench.svg';
-import IconPencil from '../../static/img/pencil.svg';
-import IconPointer from '../../static/img/pointer.svg';
-import IconBlocks from '../../static/img/blocks.svg';
-import IconBolt from '../../static/img/bolt.svg';
+import IconUpload from '../../static/img/upload.svg'
+import IconLanguage from '../../static/img/language.svg'
+import IconSparkles from '../../static/img/sparkles.svg'
+import IconFolder from '../../static/img/folder.svg'
+import IconWrench from '../../static/img/wrench.svg'
+import IconPencil from '../../static/img/pencil.svg'
+import IconPointer from '../../static/img/pointer.svg'
+import IconBlocks from '../../static/img/blocks.svg'
+import IconBolt from '../../static/img/bolt.svg'
 
-import 'uppy/dist/uppy.min.css';
+import 'uppy/dist/uppy.min.css'
 
-import styles from './index.module.css';
+import styles from './index.module.css'
 
-const companionUrl = 'https://companion.uppy.io';
-const endpoint = 'https://tusd.tusdemo.net/files/';
+const companionUrl = 'https://companion.uppy.io'
+const endpoint = 'https://tusd.tusdemo.net/files/'
 const googlePickerClientId =
-  '458443975467-fiplebcb8bdnplqo8hlfs9pagmseo5nk.apps.googleusercontent.com';
-const googlePickerApiKey = 'AIzaSyC6m6CZEFiTtSkBfNf_-PvtCxmDMiAgfag';
-const googlePickerAppId = '458443975467';
+  '458443975467-fiplebcb8bdnplqo8hlfs9pagmseo5nk.apps.googleusercontent.com'
+const googlePickerApiKey = 'AIzaSyC6m6CZEFiTtSkBfNf_-PvtCxmDMiAgfag'
+const googlePickerAppId = '458443975467'
 
 /**
  * Package sets are taken verbatim from each framework's own docs page, so the
@@ -92,7 +92,7 @@ const installTargets = [
     docs: '/docs/dashboard',
     docsLabel: 'Dashboard',
   },
-];
+]
 
 /**
  * Ambient upload sparks: 1px pink lines rising behind the hero.
@@ -144,7 +144,7 @@ const sparks = [
   { x: 91, len: 69, dur: 3.0, delay: 44.1, o: 0.9, w: 1 },
   { x: 93, len: 80, dur: 2.6, delay: 45.5, o: 0.45, w: 2 },
   { x: 96, len: 34, dur: 6.2, delay: 46.8, o: 0.7, w: 1 },
-];
+]
 
 /**
  * The hand-off, drawn. The diagram is two owned lanes rather than one neutral
@@ -188,12 +188,12 @@ const lanes = [
       { label: 'Deliver', at: 500 / 6 },
     ],
   },
-];
+]
 
 const packageManagers = [
   { name: 'npm', prefix: 'npm install' },
   { name: 'yarn', prefix: 'yarn add' },
-];
+]
 
 /**
  * Companion's sources, wrapping the Uppy mark — files coming in from everywhere,
@@ -230,7 +230,7 @@ const sources = [
   { file: 'facebook.svg', name: 'Facebook', x: 55.5, y: 83.6, mark: 33 },
   { file: 'zoom.svg', name: 'Zoom', x: 31.9, y: 90.2, mark: 57 },
   { file: 'unsplash.svg', name: 'Unsplash', x: 13.2, y: 73.1, mark: 32 },
-];
+]
 
 /**
  * The cluster's geometry, shared by the tiles, the core and the wires that join
@@ -240,9 +240,9 @@ const sources = [
  * Units are the box the SVG draws in: 100 wide by 88 tall. `x` is a percentage
  * of the width and `y` a percentage of the height, so `y * 0.88` converts.
  */
-const BOX = { w: 100, h: 88 };
-const CORE = { x: 39, y: BOX.h / 2, r: 11.5 };
-const TILE_R = 7;
+const BOX = { w: 100, h: 88 }
+const CORE = { x: 39, y: BOX.h / 2, r: 11.5 }
+const TILE_R = 7
 
 /**
  * A wire from the core's edge to one tile's edge, bowed rather than straight.
@@ -251,29 +251,29 @@ const TILE_R = 7;
  * the short ones, so the set stopped reading as one hand.
  */
 function wire({ x, y }: { x: number; y: number }) {
-  const target = { x, y: (y / 100) * BOX.h };
-  const dx = target.x - CORE.x;
-  const dy = target.y - CORE.y;
-  const len = Math.hypot(dx, dy);
-  const ux = dx / len;
-  const uy = dy / len;
+  const target = { x, y: (y / 100) * BOX.h }
+  const dx = target.x - CORE.x
+  const dy = target.y - CORE.y
+  const len = Math.hypot(dx, dy)
+  const ux = dx / len
+  const uy = dy / len
 
   const from = {
     x: CORE.x + ux * (CORE.r + 1.5),
     y: CORE.y + uy * (CORE.r + 1.5),
-  };
+  }
   const to = {
     x: target.x - ux * (TILE_R + 1.5),
     y: target.y - uy * (TILE_R + 1.5),
-  };
-  const bend = 1.8;
+  }
+  const bend = 1.8
   const control = {
     x: (from.x + to.x) / 2 - uy * bend,
     y: (from.y + to.y) / 2 + ux * bend,
-  };
+  }
 
-  const r = (n: number) => Math.round(n * 10) / 10;
-  return `M${r(from.x)} ${r(from.y)} Q${r(control.x)} ${r(control.y)} ${r(to.x)} ${r(to.y)}`;
+  const r = (n: number) => Math.round(n * 10) / 10
+  return `M${r(from.x)} ${r(from.y)} Q${r(control.x)} ${r(control.y)} ${r(to.x)} ${r(to.y)}`
 }
 
 const capabilities = [
@@ -376,13 +376,13 @@ const capabilities = [
       </>
     ),
   },
-];
+]
 
 export default function Home(): JSX.Element {
-  const [target, setTarget] = useState(installTargets[0].name);
-  const [manager, setManager] = useState(packageManagers[0].name);
-  const activeTarget = installTargets.find((t) => t.name === target);
-  const activeManager = packageManagers.find((p) => p.name === manager);
+  const [target, setTarget] = useState(installTargets[0].name)
+  const [manager, setManager] = useState(packageManagers[0].name)
+  const activeTarget = installTargets.find((t) => t.name === target)
+  const activeManager = packageManagers.find((p) => p.name === manager)
 
   return (
     <Layout description="Uppy is the open source JavaScript file uploader. Resumable uploads from disk, Dropbox or Google Drive, for React, Next.js, Vue, Svelte and Angular.">
@@ -465,10 +465,10 @@ export default function Home(): JSX.Element {
                     .use(GooglePhotosPicker, {
                       companionUrl,
                       clientId: googlePickerClientId,
-                    });
+                    })
 
                   // Expose for easier debugging
-                  globalThis.uppy = uppy;
+                  globalThis.uppy = uppy
 
                   return (
                     <Dashboard
@@ -485,7 +485,7 @@ export default function Home(): JSX.Element {
                         'ImageEditor',
                       ]}
                     />
-                  );
+                  )
                 }}
               </BrowserOnly>
             </div>
@@ -772,5 +772,5 @@ export default function Home(): JSX.Element {
         </section>
       </main>
     </Layout>
-  );
+  )
 }

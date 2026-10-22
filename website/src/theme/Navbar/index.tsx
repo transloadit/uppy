@@ -1,12 +1,12 @@
-import React from 'react';
-import Navbar from '@theme-original/Navbar';
-import type NavbarType from '@theme/Navbar';
-import type { WrapperProps } from '@docusaurus/types';
-import Link from '@docusaurus/Link';
+import React from 'react'
+import Navbar from '@theme-original/Navbar'
+import type NavbarType from '@theme/Navbar'
+import type { WrapperProps } from '@docusaurus/types'
+import Link from '@docusaurus/Link'
 
-import styles from './index.module.css';
+import styles from './index.module.css'
 
-type Props = WrapperProps<typeof NavbarType>;
+type Props = WrapperProps<typeof NavbarType>
 
 export default function NavbarWrapper(props: Props): JSX.Element {
   return (
@@ -27,5 +27,5 @@ export default function NavbarWrapper(props: Props): JSX.Element {
       </aside>
       <Navbar {...props} />
     </>
-  );
+  )
 }

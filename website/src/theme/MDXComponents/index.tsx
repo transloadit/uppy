@@ -1,5 +1,5 @@
-import React from 'react';
-import MDXComponents from '@theme-original/MDXComponents';
+import React from 'react'
+import MDXComponents from '@theme-original/MDXComponents'
 
 /**
  * GitHub-flavoured task lists (`- [x] done`) render as bare disabled
@@ -18,14 +18,14 @@ function MDXInput(props: React.ComponentProps<'input'>): JSX.Element {
   const isTaskListCheckbox =
     props.type === 'checkbox' &&
     props.disabled &&
-    props['aria-label'] === undefined;
+    props['aria-label'] === undefined
 
-  if (!isTaskListCheckbox) return <input {...props} />;
+  if (!isTaskListCheckbox) return <input {...props} />
 
-  return <input {...props} aria-label={props.checked ? 'Done' : 'Not done'} />;
+  return <input {...props} aria-label={props.checked ? 'Done' : 'Not done'} />
 }
 
 export default {
   ...MDXComponents,
   input: MDXInput,
-};
+}

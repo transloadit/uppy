@@ -2,10 +2,10 @@
 sidebar_position: 11
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Golden Retriever
 
@@ -80,13 +80,13 @@ yarn add @uppy/golden-retriever
 ## Use
 
 ```js {7} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import GoldenRetriever from '@uppy/golden-retriever';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GoldenRetriever from '@uppy/golden-retriever'
 
 new Uppy()
   .use(Dashboard, { inline: true, target: '#dashboard' })
-  .use(GoldenRetriever);
+  .use(GoldenRetriever)
 ```
 
 By default, Golden Retriever stores metadata, state, and local files up to 10
@@ -129,14 +129,14 @@ store references to large files.
    :::
 
    ```js title="sw.js"
-   import '@uppy/golden-retriever/lib/ServiceWorker.js';
+   import '@uppy/golden-retriever/lib/ServiceWorker.js'
    ```
 
 2. Register it in your app’s entry point:
 
    ```js
    // you app.js entry point
-   uppy.use(GoldenRetriever, { serviceWorker: true });
+   uppy.use(GoldenRetriever, { serviceWorker: true })
 
    if ('serviceWorker' in navigator) {
      navigator.serviceWorker
@@ -145,11 +145,11 @@ store references to large files.
          console.log(
            'ServiceWorker registration successful with scope: ',
            registration.scope,
-         );
+         )
        })
        .catch((error) => {
-         console.log(`Registration failed with ${error}`);
-       });
+         console.log(`Registration failed with ${error}`)
+       })
    }
    ```
 

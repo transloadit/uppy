@@ -1,11 +1,11 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
+import React from 'react'
+import Link from '@docusaurus/Link'
 
-import useLiveCount, { compact } from '../../hooks/useLiveCount';
+import useLiveCount, { compact } from '../../hooks/useLiveCount'
 
-import styles from './styles.module.css';
+import styles from './styles.module.css'
 
-export const REPO = 'transloadit/uppy';
+export const REPO = 'transloadit/uppy'
 
 /** Shared by the navbar pill and the homepage CTA, so one fetch serves both. */
 export function useGitHubStars(): number {
@@ -14,16 +14,16 @@ export function useGitHubStars(): number {
     url: `https://api.github.com/repos/${REPO}`,
     select: (data) => data?.stargazers_count,
     fallback: 30_900,
-  });
+  })
 }
 
 type Props = {
   /** 'lg' is the same pill at CTA scale — one component, two sizes. */
-  size?: 'md' | 'lg';
-};
+  size?: 'md' | 'lg'
+}
 
 export default function GitHubStars({ size = 'md' }: Props): JSX.Element {
-  const stars = useGitHubStars();
+  const stars = useGitHubStars()
 
   return (
     <Link
@@ -48,5 +48,5 @@ export default function GitHubStars({ size = 'md' }: Props): JSX.Element {
       </svg>
       <span className={styles.count}>{compact(stars)}</span>
     </Link>
-  );
+  )
 }
