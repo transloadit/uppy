@@ -11,6 +11,7 @@ on:
       - '**.d.ts'
       - 'examples/**'
       - 'private/**'
+      - 'website/**'
       - '.github/**'
       - '!.github/workflows/bundlers.yml'
 

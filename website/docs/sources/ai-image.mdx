@@ -1,0 +1,249 @@
+---
+sidebar_position: 4
+slug: /ai-image
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+import UppyCdnExample from '/src/components/UppyCdnExample';
+
+# AI image generator
+
+The `@uppy/image-generator` plugin lets users generate images from text prompts
+using
+[Transloadit’s 🤖 `/image/generate` Robot](https://transloadit.com/docs/robots/image-generate/).
+Under the hood it asks your backend for signed Transloadit parameters, sends
+those to Transloadit, and then lets users pick the generated images as if they
+were regular files.
+
+You can learn more about the underlying AI service and common use cases in
+Transloadit’s blog post
+[“Generate stunning images from text using AI”](https://transloadit.com/blog/2025/04/ai-image-generation/).
+
+::::tip
+
+The plugin focuses on wiring Uppy into Transloadit’s AI image generation. It
+does **not** manage your Transloadit Templates for you — instead, you send
+`steps` at runtime from your server, similar to the “overruling templates at
+runtime” flow described
+[in the Transloadit docs](https://transloadit.com/docs/topics/templates/#overruling-templates-at-runtime).
+
+::::
+
+## When should I use this?
+
+Use `@uppy/image-generator` when you want users to generate images on the fly
+instead of uploading existing files. Typical examples:
+
+- Product mockups or marketing visuals where users describe the scene instead of
+  uploading photos.
+- Illustrations for documents, blog posts, or educational content.
+- Quick concept art, avatars, or backgrounds that are generated as part of your
+  app’s flow.
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/image-generator
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/image-generator
+```
+
+  </TabItem>
+
+  <TabItem value="cdn" label="CDN">
+    <UppyCdnExample>
+      {`
+        import { Uppy, Dashboard, ImageGenerator } from "{{UPPY_JS_URL}}"
+
+        const uppy = new Uppy()
+        uppy.use(Dashboard, { inline: true, target: 'body' })
+        uppy.use(ImageGenerator, {
+          assemblyOptions: async (prompt) => {
+            const res = await fetch(\`/assembly-options?prompt=\${encodeURIComponent(prompt)}\`)
+            return res.json()
+          },
+        })
+      `}
+    </UppyCdnExample>
+
+  </TabItem>
+</Tabs>
+
+## Use
+
+The integration has **two parts**:
+
+1. **Client-side Uppy configuration**, where you register the plugin and provide
+   an `assemblyOptions` callback.
+2. **A server-side endpoint** that returns a signed `{ params, signature }` pair
+   for Transloadit.
+
+### 1. Client-side Uppy setup
+
+```js {3,7,11,17} showLineNumbers
+import Uppy from '@uppy/core';
+import Dashboard from '@uppy/dashboard';
+import ImageGenerator from '@uppy/image-generator';
+
+import '@uppy/core/css/style.min.css';
+import '@uppy/dashboard/css/style.min.css';
+import '@uppy/image-generator/css/style.min.css';
+
+const uppy = new Uppy();
+
+uppy.use(Dashboard, { inline: true, target: 'body' }).use(ImageGenerator, {
+	// Called every time the user submits a new prompt
+	assemblyOptions: async (prompt) => {
+		const res = await fetch(
+			`/assembly-options?prompt=${encodeURIComponent(prompt)}`,
+		);
+
+		if (!res.ok) {
+			throw new Error('Failed to load Transloadit options');
+		}
+
+		// Should resolve to: { params, signature }
+		return res.json();
+	},
+});
+```
+
+When the user enters a prompt in the Image Generator view, Uppy:
+
+1. Calls your `assemblyOptions(prompt)` function.
+2. Expects it to resolve with a `{ params, signature }` object.
+3. Uses those values to start a Transloadit Assembly that runs the 🤖
+   `/image/generate` Robot.
+4. Displays the generated images so users can pick which ones to add to their
+   upload.
+
+::::note
+
+Because we send `steps` directly from the browser, **you must use signature
+authentication** on your server to keep your Transloadit secret key safe. The
+`assemblyOptions` callback only ever sees the final `{ params, signature }`
+pair.
+
+For language-specific examples (PHP, Ruby, Go, etc.), see
+[Transloadit’s authentication docs](https://transloadit.com/docs/api/authentication/).
+
+::::
+
+### 2. Server-side: signing Transloadit parameters (Node.js)
+
+Below is a Node.js example that:
+
+- Signs Transloadit `params` using your `TRANSLOADIT_KEY` and
+  `TRANSLOADIT_SECRET`.
+- Sends a single 🤖 `/image/generate` step.
+- Returns `{ params, signature }` to the browser.
+
+```js showLineNumbers
+import crypto from 'node:crypto';
+
+function utcDateString(ms) {
+	return new Date(ms)
+		.toISOString()
+		.replace(/-/g, '/')
+		.replace(/T/, ' ')
+		.replace(/\.\d+Z$/, '+00:00');
+}
+
+export function createAiImageAssemblyOptions(prompt) {
+	// Expire 1 hour from now (value in milliseconds)
+	const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
+
+	const authKey = process.env.TRANSLOADIT_KEY;
+	const authSecret = process.env.TRANSLOADIT_SECRET;
+
+	const params = JSON.stringify({
+		auth: {
+			key: authKey,
+			expires,
+		},
+		// Must not contain any more steps; the only step here should be /image/generate
+		steps: {
+			generated_image: {
+				// You can name this step however you like
+				robot: '/image/generate',
+				result: true, // required so the generated files are returned
+
+				// These are up to you; see the /image/generate docs for all options
+				aspect_ratio: '2:3',
+				model: 'flux-1.1-pro-ultra',
+
+				// The text prompt coming from the browser (required)
+				prompt,
+
+				// How many variants to generate
+				num_outputs: 2,
+			},
+		},
+	});
+
+	const signatureBytes = crypto
+		.createHmac('sha384', authSecret)
+		.update(Buffer.from(params, 'utf-8'));
+
+	// Prefix the hash with the algorithm so Transloadit knows how to verify it
+	const signature = `sha384:${signatureBytes.digest('hex')}`;
+
+	return { params, signature };
+}
+```
+
+You can now expose this logic via a small HTTP endpoint:
+
+For a complete overview of all parameters (such as `format`, `height`, `width`,
+`seed`, `style`, and `aspect_ratio`) and supported models, see the
+[`/image/generate` Robot documentation](https://transloadit.com/docs/robots/image-generate/).
+The blog post
+[`Generate stunning images from text using AI`](https://transloadit.com/blog/2025/04/ai-image-generation/)
+also has more guidance on crafting prompts and choosing models.
+
+## API
+
+### Options
+
+#### `id`
+
+A unique identifier for this plugin (`string`, default: `'ImageGenerator'`).
+
+#### `target`
+
+DOM element, CSS selector, or plugin to place the Image Generator view into
+(`string`, `Element`, `Function`, or `UIPlugin`, default:
+[`Dashboard`](/docs/dashboard)).
+
+#### `assemblyOptions`
+
+Callback that returns Transloadit parameters and signature for a given prompt
+(`(prompt: string) => Promise<{ params, signature }>`; **required**).
+
+```js
+uppy.use(ImageGenerator, {
+	assemblyOptions: async (prompt) => {
+		const res = await fetch(
+			`/assembly-options?prompt=${encodeURIComponent(prompt)}`,
+		);
+		return res.json(); // { params, signature }
+	},
+});
+```
+
+This gives you full control over:
+
+- Which Transloadit account / key to use.
+- Which AI model, aspect ratio, and number of outputs to request.
+- How you structure your `steps` (as long as they use 🤖 `/image/generate`).
