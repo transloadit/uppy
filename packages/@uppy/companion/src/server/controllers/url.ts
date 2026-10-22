@@ -8,6 +8,14 @@ import { startDownUpload } from '../helpers/upload.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
 
+const getValidURL = (req: Request): string | undefined => {
+  const { url } = asRecord(req.body)
+  return typeof url === 'string' &&
+    validateURL(url, req.companion.options.allowLocalUrls)
+    ? url
+    : undefined
+}
+
 /**
  * Fetch the size and content type of a URL.
  */
@@ -15,8 +23,8 @@ const meta = async (req: Request, res: Response): Promise<void> => {
   try {
     logger.debug('URL file import handler running', undefined, req.id)
     const { allowLocalUrls } = req.companion.options
-    const { url } = asRecord(req.body)
-    if (!validateURL(url, allowLocalUrls)) {
+    const url = getValidURL(req)
+    if (!url) {
       logger.debug(
         'Invalid request body detected. Exiting url meta handler.',
         undefined,
@@ -41,8 +49,8 @@ const meta = async (req: Request, res: Response): Promise<void> => {
 const get = async (req: Request, res: Response): Promise<void> => {
   logger.debug('URL file import handler running', undefined, req.id)
   const { allowLocalUrls } = req.companion.options
-  const { url } = asRecord(req.body)
-  if (!validateURL(url, allowLocalUrls)) {
+  const url = getValidURL(req)
+  if (!url) {
     logger.debug(
       'Invalid request body detected. Exiting url import handler.',
       undefined,

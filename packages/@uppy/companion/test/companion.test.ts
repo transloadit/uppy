@@ -361,6 +361,22 @@ describe('S3 controller', () => {
     )
   })
 
+  test.each([
+    [
+      '/s3/multipart',
+      's3: the "filename" field is required and must be a non-empty string',
+    ],
+    [
+      '/s3/multipart/upload-1/complete?key=a.jpg',
+      's3: `parts` must be an array of {ETag, PartNumber} objects.',
+    ],
+  ])('POST %s without a JSON body returns 400', async (path, error) => {
+    const res = await request(await getS3Server())
+      .post(path)
+      .expect(400)
+    expect(res.body.error).toBe(error)
+  })
+
   test('createMultipartUpload rejects missing filename', async () => {
     const server = await getServer({
       COMPANION_AWS_KEY: 'test_key',
