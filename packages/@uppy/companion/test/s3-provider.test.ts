@@ -971,13 +971,13 @@ describe('S3 provider', () => {
   })
 
   test('S3 errors reach the browser only as "not found" or a generic failure', async () => {
-    const denied = new S3ServiceException({
-      name: 'AccessDenied',
-      $fault: 'client',
-      $metadata: { httpStatusCode: 403 },
-    })
-    let error: unknown = denied
-    const send = vi.fn().mockRejectedValue(error)
+    const send = vi.fn().mockRejectedValue(
+      new S3ServiceException({
+        name: 'AccessDenied',
+        $fault: 'client',
+        $metadata: { httpStatusCode: 403 },
+      }),
+    )
     const provider = makeProvider(send)
     const list = () =>
       provider.list({
@@ -985,15 +985,17 @@ describe('S3 provider', () => {
         providerUserSession: bucketSession,
       })
     await expect(list()).rejects.toEqual(userError('S3_REQUEST_FAILED'))
-    error = notFound()
+    send.mockRejectedValue(notFound())
     await expect(list()).rejects.toEqual(userError('S3_NOT_FOUND'))
-    error = new S3ServiceException({
-      name: 'PreconditionFailed',
-      $fault: 'client',
-      $metadata: { httpStatusCode: 412 },
-    })
+    send.mockRejectedValue(
+      new S3ServiceException({
+        name: 'PreconditionFailed',
+        $fault: 'client',
+        $metadata: { httpStatusCode: 412 },
+      }),
+    )
     await expect(list()).rejects.toEqual(userError('S3_CONFLICT'))
-    error = new ProviderUserError({ message: 'passthrough' })
+    send.mockRejectedValue(new ProviderUserError({ message: 'passthrough' }))
     await expect(list()).rejects.toEqual(
       expect.objectContaining({ json: { message: 'passthrough' } }),
     )
