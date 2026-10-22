@@ -78,8 +78,8 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(Dropbox, { companionUrl: 'https://your-companion.com' });
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(Dropbox, { companionUrl: 'https://your-companion.com' });
 ```
 
 ### Use with Transloadit
@@ -89,8 +89,8 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Dropbox from '@uppy/dropbox';
 
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 });
 ```
 
@@ -108,12 +108,12 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Dropbox from '@uppy/dropbox';
 
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'my_companion_dropbox_creds',
-	},
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
 });
 ```
 
@@ -163,12 +163,12 @@ When using the Companion Node.js API, configure these options:
 
 ```js
 companion.app({
-	providerOptions: {
-		dropbox: {
-			key: 'Dropbox API key',
-			secret: 'Dropbox API secret',
-		},
-	},
+  providerOptions: {
+    dropbox: {
+      key: 'Dropbox API key',
+      secret: 'Dropbox API secret',
+    },
+  },
 });
 ```
 
@@ -179,4 +179,4 @@ companion.app({
 <CompanionOptions />
 
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/

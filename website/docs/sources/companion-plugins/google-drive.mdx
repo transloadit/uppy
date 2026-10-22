@@ -85,8 +85,8 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(GoogleDrive, { companionUrl: 'https://your-companion.com' });
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(GoogleDrive, { companionUrl: 'https://your-companion.com' });
 ```
 
 ### Use with Transloadit
@@ -153,12 +153,12 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import GoogleDrive from '@uppy/google-drive';
 
 uppy.use(GoogleDrive, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'google_drive_own',
-	},
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'google_drive_own',
+  },
 });
 ```
 
@@ -225,12 +225,12 @@ When using the Companion Node.js API, configure these options:
 
 ```js
 companion.app({
-	providerOptions: {
-		drive: {
-			key: 'Google OAuth client ID',
-			secret: 'Google OAuth client secret',
-		},
-	},
+  providerOptions: {
+    drive: {
+      key: 'Google OAuth client ID',
+      secret: 'Google OAuth client secret',
+    },
+  },
 });
 ```
 

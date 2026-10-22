@@ -66,8 +66,8 @@ import '@uppy/dashboard/css/style.min.css';
 import '@uppy/image-editor/css/style.min.css';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(ImageEditor);
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(ImageEditor);
 ```
 
 ## API
@@ -125,16 +125,16 @@ actions are visible. Or enable/disable them individually:
 
 ```js
 export default {
-	strings: {
-		revert: 'Revert',
-		rotate: 'Rotate',
-		zoomIn: 'Zoom in',
-		zoomOut: 'Zoom out',
-		flipHorizontal: 'Flip horizontal',
-		aspectRatioSquare: 'Crop square',
-		aspectRatioLandscape: 'Crop landscape (16:9)',
-		aspectRatioPortrait: 'Crop portrait (9:16)',
-	},
+  strings: {
+    revert: 'Revert',
+    rotate: 'Rotate',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    flipHorizontal: 'Flip horizontal',
+    aspectRatioSquare: 'Crop square',
+    aspectRatioLandscape: 'Crop landscape (16:9)',
+    aspectRatioPortrait: 'Crop portrait (9:16)',
+  },
 };
 ```
 
@@ -153,7 +153,7 @@ Emitted when `selectFile(file)` is called.
 
 ```js
 uppy.on('file-editor:start', (file) => {
-	console.log(file);
+  console.log(file);
 });
 ```
 
@@ -163,7 +163,7 @@ Emitted after `save(blob)` is called.
 
 ```js
 uppy.on('file-editor:complete', (updatedFile) => {
-	console.log(updatedFile);
+  console.log(updatedFile);
 });
 ```
 
@@ -174,6 +174,6 @@ discarded.
 
 ```js
 uppy.on('file-editor:cancel', (file) => {
-	console.log(file);
+  console.log(file);
 });
 ```

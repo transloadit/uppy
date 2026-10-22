@@ -71,7 +71,7 @@ import '@uppy/drop-target/css/style.css';
 
 const uppy = new Uppy();
 uppy.use(DropTarget, {
-	target: document.body,
+  target: document.body,
 });
 ```
 
@@ -85,10 +85,10 @@ Event listener for the [`dragleave` event][].
 
 ```js {3-5} showLineNumbers
 uppy.use(DropTarget, {
-	target: document.body,
-	onDragLeave: (event) => {
-		event.stopPropagation();
-	},
+  target: document.body,
+  onDragLeave: (event) => {
+    event.stopPropagation();
+  },
 });
 ```
 
@@ -106,8 +106,8 @@ DOM element, CSS selector, or plugin to place the drag and drop area into
 (`string`, `Element`, `Function`, or `UIPlugin`, default: `null`).
 
 [`dragover` event]:
-	https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragover_event
+  https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragover_event
 [`dragleave` event]:
-	https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragleave_event
+  https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragleave_event
 [`drop` event]:
-	https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drop_event
+  https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drop_event

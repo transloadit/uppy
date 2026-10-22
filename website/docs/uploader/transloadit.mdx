@@ -89,15 +89,15 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 
 const uppy = new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(Transloadit, {
-		assemblyOptions: {
-			params: {
-				auth: { key: 'your-transloadit-key' },
-				template_id: 'your-template-id',
-			},
-		},
-	});
+  .use(Dashboard, { inline: true, target: 'body' })
+  .use(Transloadit, {
+    assemblyOptions: {
+      params: {
+        auth: { key: 'your-transloadit-key' },
+        template_id: 'your-template-id',
+      },
+    },
+  });
 // Optionally listen to events
 uppy.on('transloadit:assembly-created', (assembly, fileIDs) => {});
 uppy.on('transloadit:upload', (file, assembly) => {});
@@ -124,8 +124,8 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Dropbox from '@uppy/dropbox';
 
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 });
 ```
 
@@ -149,12 +149,12 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Dropbox from '@uppy/dropbox';
 
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'my_companion_dropbox_creds',
-	},
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
 });
 ```
 
@@ -254,10 +254,10 @@ signature and return your configuration.
 
 ```js
 uppy.use(Transloadit, {
-	async assemblyOptions() {
-		const res = await fetch('/transloadit-params');
-		return res.json();
-	},
+  async assemblyOptions() {
+    const res = await fetch('/transloadit-params');
+    return res.json();
+  },
 });
 ```
 
@@ -268,9 +268,9 @@ directly.
 
 ```js
 uppy.use(Transloadit, {
-	assemblyOptions: {
-		params: { auth: { key: 'transloadit-key' } },
-	},
+  assemblyOptions: {
+    params: { auth: { key: 'transloadit-key' } },
+  },
 });
 ```
 
@@ -350,20 +350,20 @@ For example, to upload files to an S3 bucket and then transcode them:
 
 ```js
 uppy.use(AwsS3, {
-	getUploadParameters(file) {
-		return {
-			/* upload parameters */
-		};
-	},
+  getUploadParameters(file) {
+    return {
+      /* upload parameters */
+    };
+  },
 });
 uppy.use(Transloadit, {
-	importFromUploadURLs: true,
-	assemblyOptions: {
-		params: {
-			auth: { key: 'YOUR_API_KEY' },
-			template_id: 'YOUR_TEMPLATE_ID',
-		},
-	},
+  importFromUploadURLs: true,
+  assemblyOptions: {
+    params: {
+      auth: { key: 'YOUR_API_KEY' },
+      template_id: 'YOUR_TEMPLATE_ID',
+    },
+  },
 });
 ```
 
@@ -393,15 +393,15 @@ to download the files from elsewhere, for example, for a bulk transcoding job.
 
 ```js
 export default {
-	strings: {
-		// Shown while Assemblies are being created for an upload.
-		creatingAssembly: 'Preparing upload...',
-		// Shown if an Assembly could not be created.
-		creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
-		// Shown after uploads have succeeded, but when the Assembly is still executing.
-		// This only shows if `waitForMetadata` or `waitForEncoding` was enabled.
-		encoding: 'Encoding...',
-	},
+  strings: {
+    // Shown while Assemblies are being created for an upload.
+    creatingAssembly: 'Preparing upload...',
+    // Shown if an Assembly could not be created.
+    creatingAssemblyFailed: 'Transloadit: Could not create Assembly',
+    // Shown after uploads have succeeded, but when the Assembly is still executing.
+    // This only shows if `waitForMetadata` or `waitForEncoding` was enabled.
+    encoding: 'Encoding...',
+  },
 };
 ```
 
@@ -440,19 +440,19 @@ The `auth.key` Assembly parameter is required. You can also use the `steps` or
 
 ```js
 uppy.use(Transloadit, {
-	params: {
-		auth: { key: 'YOUR_TRANSLOADIT_KEY' },
-		steps: {
-			encode: {
-				robot: '/video/encode',
-				use: {
-					steps: [':original'],
-					fields: ['file_input_field2'],
-				},
-				preset: 'iphone',
-			},
-		},
-	},
+  params: {
+    auth: { key: 'YOUR_TRANSLOADIT_KEY' },
+    steps: {
+      encode: {
+        robot: '/video/encode',
+        use: {
+          steps: [':original'],
+          fields: ['file_input_field2'],
+        },
+        preset: 'iphone',
+      },
+    },
+  },
 });
 ```
 
@@ -475,10 +475,10 @@ and values are field values. See also the Transloadit documentation on
 
 ```js
 uppy.use(Transloadit, {
-	// ...
-	fields: {
-		message: 'This is a form field',
-	},
+  // ...
+  fields: {
+    message: 'This is a form field',
+  },
 });
 ```
 
@@ -494,10 +494,10 @@ fields:
 ```js
 uppy.use(Form, { target: 'form#upload-form', getMetaFromForm: true });
 uppy.use(Transloadit, {
-	fields: ['field_name', 'other_field_name'],
-	params: {
-		/* ... */
-	},
+  fields: ['field_name', 'other_field_name'],
+  params: {
+    /* ... */
+  },
 });
 ```
 
@@ -515,8 +515,8 @@ render Assembly progress without wiring up event listeners. Read it with
 
 ```js
 const { assemblyStatus, lastAssemblyStatus } = uppy
-	.getPlugin('Transloadit')
-	.getPluginState();
+  .getPlugin('Transloadit')
+  .getPluginState();
 ```
 
 #### `assemblyStatus`
@@ -555,7 +555,7 @@ import Dropbox from '@uppy/dropbox';
 import { COMPANION_URL } from '@uppy/transloadit';
 
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
+  companionUrl: COMPANION_URL,
 });
 ```
 
@@ -569,7 +569,7 @@ appending `/companion`:
 
 ```js
 uppy.use(Dropbox, {
-	companionUrl: 'https://api2-us-east-1.transloadit.com/companion',
+  companionUrl: 'https://api2-us-east-1.transloadit.com/companion',
 });
 ```
 
@@ -587,7 +587,7 @@ import Dropbox from '@uppy/dropbox';
 import { COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 
 uppy.use(Dropbox, {
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 });
 ```
 
@@ -610,11 +610,11 @@ Fired when an Assembly is created.
 
 ```js
 uppy.on('transloadit:assembly-created', (assembly, fileIDs) => {
-	console.group('Created', assembly.assembly_id, 'for files:');
-	for (const id of fileIDs) {
-		console.log(uppy.getFile(id).name);
-	}
-	console.groupEnd();
+  console.group('Created', assembly.assembly_id, 'for files:');
+  for (const id of fileIDs) {
+    console.log(uppy.getFile(id).name);
+  }
+  console.groupEnd();
 });
 ```
 
@@ -655,13 +655,13 @@ Fired when a result came in from an Assembly. Requires
 
 ```js
 uppy.on('transloadit:result', (stepName, result) => {
-	const file = uppy.getFile(result.localId);
-	document.body.appendChild(html`
-		<div>
-			<h2>From ${file.name}</h2>
-			<a href=${result.ssl_url}> View </a>
-		</div>
-	`);
+  const file = uppy.getFile(result.localId);
+  document.body.appendChild(html`
+    <div>
+      <h2>From ${file.name}</h2>
+      <a href=${result.ssl_url}> View </a>
+    </div>
+  `);
 });
 ```
 
@@ -677,8 +677,8 @@ to be set.
 
 ```js
 uppy.on('transloadit:complete', (assembly) => {
-	// Could do something fun with this!
-	console.log(assembly.results);
+  // Could do something fun with this!
+  console.log(assembly.results);
 });
 ```
 
@@ -691,10 +691,10 @@ Assembly Status on the error object’s `assembly` property.
 
 ```js
 uppy.on('error', (error) => {
-	if (error.assembly) {
-		console.log(`Assembly ID ${error.assembly.assembly_id} failed!`);
-		console.log(error.assembly);
-	}
+  if (error.assembly) {
+    console.log(`Assembly ID ${error.assembly.assembly_id} failed!`);
+    console.log(error.assembly);
+  }
 });
 ```
 
@@ -706,6 +706,6 @@ manually cancels the upload any running assemblies will be cancelled.
 
 [assembly-status]: https://transloadit.com/docs/api/#assembly-status-response
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/
 [transloadit-services]: https://transloadit.com/services/
 [transloadit-concepts]: https://transloadit.com/docs/getting-started/concepts/

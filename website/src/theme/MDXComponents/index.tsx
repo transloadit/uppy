@@ -15,17 +15,17 @@ import MDXComponents from '@theme-original/MDXComponents';
  * whatever attributes it was given.
  */
 function MDXInput(props: React.ComponentProps<'input'>): JSX.Element {
-	const isTaskListCheckbox =
-		props.type === 'checkbox' &&
-		props.disabled &&
-		props['aria-label'] === undefined;
+  const isTaskListCheckbox =
+    props.type === 'checkbox' &&
+    props.disabled &&
+    props['aria-label'] === undefined;
 
-	if (!isTaskListCheckbox) return <input {...props} />;
+  if (!isTaskListCheckbox) return <input {...props} />;
 
-	return <input {...props} aria-label={props.checked ? 'Done' : 'Not done'} />;
+  return <input {...props} aria-label={props.checked ? 'Done' : 'Not done'} />;
 }
 
 export default {
-	...MDXComponents,
-	input: MDXInput,
+  ...MDXComponents,
+  input: MDXInput,
 };

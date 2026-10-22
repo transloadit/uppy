@@ -1,9 +1,9 @@
 import React from 'react';
 import clsx from 'clsx';
 import {
-	PageMetadata,
-	HtmlClassNameProvider,
-	ThemeClassNames,
+  PageMetadata,
+  HtmlClassNameProvider,
+  ThemeClassNames,
 } from '@docusaurus/theme-common';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import BlogLayout from '@theme/BlogLayout';
@@ -31,45 +31,45 @@ import styles from './index.module.css';
  * node_modules/@docusaurus/theme-classic/lib/theme/BlogListPage/index.js.
  */
 function BlogListPageMetadata(props: Props): JSX.Element {
-	const { metadata } = props;
-	const {
-		siteConfig: { title: siteTitle },
-	} = useDocusaurusContext();
-	const { blogDescription, blogTitle, permalink } = metadata;
-	const isBlogOnlyMode = permalink === '/';
-	const title = isBlogOnlyMode ? siteTitle : blogTitle;
-	return (
-		<>
-			<PageMetadata title={title} description={blogDescription} />
-			<SearchMetadata tag="blog_posts_list" />
-		</>
-	);
+  const { metadata } = props;
+  const {
+    siteConfig: { title: siteTitle },
+  } = useDocusaurusContext();
+  const { blogDescription, blogTitle, permalink } = metadata;
+  const isBlogOnlyMode = permalink === '/';
+  const title = isBlogOnlyMode ? siteTitle : blogTitle;
+  return (
+    <>
+      <PageMetadata title={title} description={blogDescription} />
+      <SearchMetadata tag="blog_posts_list" />
+    </>
+  );
 }
 
 function BlogListPageContent(props: Props): JSX.Element {
-	const { metadata, items, sidebar } = props;
-	return (
-		<BlogLayout sidebar={sidebar}>
-			<Heading as="h1" className={styles.srOnly}>
-				{metadata.blogTitle}
-			</Heading>
-			<BlogPostItems items={items} />
-			<BlogListPaginator metadata={metadata} />
-		</BlogLayout>
-	);
+  const { metadata, items, sidebar } = props;
+  return (
+    <BlogLayout sidebar={sidebar}>
+      <Heading as="h1" className={styles.srOnly}>
+        {metadata.blogTitle}
+      </Heading>
+      <BlogPostItems items={items} />
+      <BlogListPaginator metadata={metadata} />
+    </BlogLayout>
+  );
 }
 
 export default function BlogListPage(props: Props): JSX.Element {
-	return (
-		<HtmlClassNameProvider
-			className={clsx(
-				ThemeClassNames.wrapper.blogPages,
-				ThemeClassNames.page.blogListPage,
-			)}
-		>
-			<BlogListPageMetadata {...props} />
-			<BlogListPageStructuredData {...props} />
-			<BlogListPageContent {...props} />
-		</HtmlClassNameProvider>
-	);
+  return (
+    <HtmlClassNameProvider
+      className={clsx(
+        ThemeClassNames.wrapper.blogPages,
+        ThemeClassNames.page.blogListPage,
+      )}
+    >
+      <BlogListPageMetadata {...props} />
+      <BlogListPageStructuredData {...props} />
+      <BlogListPageContent {...props} />
+    </HtmlClassNameProvider>
+  );
 }
