@@ -7149,14 +7149,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standard-schema/spec@npm:^1.0.0":
+"@standard-schema/spec@npm:^1.1.0":
   version: 1.1.0
   resolution: "@standard-schema/spec@npm:1.1.0"
   checksum: 10/a209615c9e8b2ea535d7db0a5f6aa0f962fd4ab73ee86a46c100fb78116964af1f55a27c1794d4801e534a196794223daa25ff5135021e03c7828aa3d95e1763
   languageName: node
   linkType: hard
 
-"@sveltejs/acorn-typescript@npm:^1.0.10, @sveltejs/acorn-typescript@npm:^1.0.9":
+"@sveltejs/acorn-typescript@npm:^1.0.10":
   version: 1.0.11
   resolution: "@sveltejs/acorn-typescript@npm:1.0.11"
   peerDependencies:
@@ -7174,28 +7174,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sveltejs/kit@npm:^2.70.2":
-  version: 2.70.2
-  resolution: "@sveltejs/kit@npm:2.70.2"
+"@sveltejs/kit@npm:^3.1.0":
+  version: 3.1.0
+  resolution: "@sveltejs/kit@npm:3.1.0"
   dependencies:
-    "@standard-schema/spec": "npm:^1.0.0"
-    "@sveltejs/acorn-typescript": "npm:^1.0.9"
-    "@types/cookie": "npm:^0.6.0"
-    acorn: "npm:^8.16.0"
-    cookie: "npm:^0.6.0"
-    devalue: "npm:^5.8.1"
+    "@rolldown/pluginutils": "npm:^1.0.1"
+    "@standard-schema/spec": "npm:^1.1.0"
+    cookie: "npm:^2.0.1"
+    devalue: "npm:^5.9.4"
     esm-env: "npm:^1.2.2"
-    kleur: "npm:^4.1.5"
-    magic-string: "npm:^0.30.5"
-    mrmime: "npm:^2.0.0"
-    set-cookie-parser: "npm:^3.0.0"
-    sirv: "npm:^3.0.0"
+    magic-string: "npm:^1.2.3"
+    mrmime: "npm:^2.0.1"
+    sirv: "npm:^3.0.2"
   peerDependencies:
     "@opentelemetry/api": ^1.0.0
-    "@sveltejs/vite-plugin-svelte": ^3.0.0 || ^4.0.0-next.1 || ^5.0.0 || ^6.0.0-next.0 || ^7.0.0
-    svelte: ^4.0.0 || ^5.0.0-next.0
-    typescript: ^5.3.3 || ^6.0.0
-    vite: ^5.0.3 || ^6.0.0 || ^7.0.0-beta.0 || ^8.0.0
+    "@sveltejs/vite-plugin-svelte": ^7.0.0
+    svelte: ^5.57.1
+    typescript: ^6.0.0
+    vite: ^8.0.12
   peerDependenciesMeta:
     "@opentelemetry/api":
       optional: true
@@ -7203,7 +7199,7 @@ __metadata:
       optional: true
   bin:
     svelte-kit: svelte-kit.js
-  checksum: 10/19aa80869068ff4daca1a3da1efa11a1dec52bfb58149e8a6cf754fb3d152b2c1139a512a3baf2ca8ad50e494567000a726ce26a803560554c56e6e3dd944964
+  checksum: 10/9398c69dc31dc2085428d9dced742e399ef365fc5985ad9f5e9f10bc92c337d2d9ee2d296a978a99c4efe9632c8f6f85d8b116acbcbb338fa470e2d6e018c5d7
   languageName: node
   linkType: hard
 
@@ -7872,13 +7868,6 @@ __metadata:
   peerDependencies:
     "@types/express": "*"
   checksum: 10/1f37b5a4115dbfd4b7bbea2d874fbf9495eca8c3e8c87fa7e38c50f9fff66222377c911cfdc7a1ea08855e822919c5534ebbcc4bf25b596bc6f7270e403483d9
-  languageName: node
-  linkType: hard
-
-"@types/cookie@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "@types/cookie@npm:0.6.0"
-  checksum: 10/b883348d5bf88695fbc2c2276b1c49859267a55cae3cf11ea1dccc1b3be15b466e637ce3242109ba27d616c77c6aa4efe521e3d557110b4fdd9bc332a12445c2
   languageName: node
   linkType: hard
 
@@ -11957,13 +11946,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cookie@npm:^0.6.0":
-  version: 0.6.0
-  resolution: "cookie@npm:0.6.0"
-  checksum: 10/c1f8f2ea7d443b9331680598b0ae4e6af18a618c37606d1bbdc75bec8361cce09fe93e727059a673f2ba24467131a9fb5a4eec76bb1b149c1b3e1ccb268dc583
-  languageName: node
-  linkType: hard
-
 "cookie@npm:^2.0.1":
   version: 2.0.1
   resolution: "cookie@npm:2.0.1"
@@ -12791,7 +12773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"devalue@npm:^5.8.1":
+"devalue@npm:^5.8.1, devalue@npm:^5.9.4":
   version: 5.9.4
   resolution: "devalue@npm:5.9.4"
   checksum: 10/0cc1125e5d2e6c40d92b33fde5671106b07aa33a2b9d7cee47aa7b49e7ea38ffc3d37b3203cdfccfe81e864e71d6cb62e7ee459b61b6ddac2724c08208a18f13
@@ -14077,7 +14059,7 @@ __metadata:
   resolution: "example-sveltekit@workspace:examples/sveltekit"
   dependencies:
     "@sveltejs/adapter-auto": "npm:^7.0.1"
-    "@sveltejs/kit": "npm:^2.70.2"
+    "@sveltejs/kit": "npm:^3.1.0"
     "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
     "@tailwindcss/vite": "npm:^4.0.0"
     "@uppy/core": "workspace:*"
@@ -17770,7 +17752,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"magic-string@npm:^0.30.11, magic-string@npm:^0.30.21, magic-string@npm:^0.30.5":
+"magic-string@npm:^0.30.11, magic-string@npm:^0.30.21":
   version: 0.30.21
   resolution: "magic-string@npm:0.30.21"
   dependencies:
@@ -19105,7 +19087,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mrmime@npm:2.0.1, mrmime@npm:^2.0.0":
+"mrmime@npm:2.0.1, mrmime@npm:^2.0.0, mrmime@npm:^2.0.1":
   version: 2.0.1
   resolution: "mrmime@npm:2.0.1"
   checksum: 10/1f966e2c05b7264209c4149ae50e8e830908eb64dd903535196f6ad72681fa109b794007288a3c2814f7a1ecf9ca192769909c0c374d974d604a8de5fc095d4a
@@ -24418,7 +24400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"set-cookie-parser@npm:^3.0.0, set-cookie-parser@npm:^3.0.1":
+"set-cookie-parser@npm:^3.0.1":
   version: 3.1.2
   resolution: "set-cookie-parser@npm:3.1.2"
   checksum: 10/ce7159bcd64838ec873e8a49bc1aeb4bc60e1d3576a7cea9eee6c4412e77503a0f433bfb44babd03043cdadedf1586476eaf50aeaf21900d6450dad9d8cc5789
@@ -24708,7 +24690,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sirv@npm:^3.0.0, sirv@npm:^3.0.2":
+"sirv@npm:^3.0.2":
   version: 3.0.2
   resolution: "sirv@npm:3.0.2"
   dependencies:
