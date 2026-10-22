@@ -1,4 +1,5 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+import type { Request } from '../../types/express.js'
 import * as tokenService from '../helpers/jwt.js'
 import { isRecord } from '../helpers/type-guards.js'
 import logger from '../logger.js'

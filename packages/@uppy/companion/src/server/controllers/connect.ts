@@ -1,5 +1,6 @@
 import type { CorsOptions } from 'cors'
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
+import type { Request } from '../../types/express.js'
 import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord } from '../helpers/type-guards.js'
 

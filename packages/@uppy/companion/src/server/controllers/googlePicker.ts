@@ -1,6 +1,7 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
 import express from 'express'
 import { z } from 'zod'
+import type { Request } from '../../types/express.js'
 import { downloadURL } from '../download.js'
 import { validateURL } from '../helpers/request.js'
 import { startDownUpload } from '../helpers/upload.js'

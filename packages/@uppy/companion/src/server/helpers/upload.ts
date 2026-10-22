@@ -1,5 +1,6 @@
 import type { Readable } from 'node:stream'
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+import type { Request } from '../../types/express.js'
 import logger from '../logger.js'
 import Uploader from '../Uploader.js'
 

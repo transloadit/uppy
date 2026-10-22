@@ -1,5 +1,6 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
 import express from 'express'
+import type { Request } from '../../types/express.js'
 import { downloadURL } from '../download.js'
 import { getURLMeta, validateURL } from '../helpers/request.js'
 import { asRecord } from '../helpers/type-guards.js'

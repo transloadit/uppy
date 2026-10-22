@@ -10,9 +10,10 @@ import {
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
 import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-import type { NextFunction, Request, Response, Router } from 'express'
+import type { NextFunction, Response, Router } from 'express'
 import express from 'express'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
+import type { Request } from '../../types/express.js'
 import { asRecord, isRecord } from '../helpers/type-guards.js'
 import {
   getBucket,
