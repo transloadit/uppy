@@ -1,0 +1,92 @@
+.pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	height: 2.25rem;
+	padding: 0 0.75rem;
+	border: 1px solid var(--u-line);
+	border-radius: var(--u-radius-md);
+	background: #fff;
+	color: var(--u-ink-700);
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 1;
+	white-space: nowrap;
+	box-shadow: var(--u-shadow-xs);
+	transition:
+		border-color 150ms var(--u-ease),
+		background-color 150ms var(--u-ease),
+		color 150ms var(--u-ease);
+}
+
+.pill:hover {
+	color: var(--u-ink-900);
+	border-color: var(--u-line-strong);
+	background: var(--u-ink-50);
+	text-decoration: none;
+}
+
+.pill:active {
+	background: var(--u-ink-100);
+}
+
+.mark {
+	width: 1.0625rem;
+	height: 1.0625rem;
+	flex: none;
+	/* Icons carry more visual weight than text at the same colour. */
+	color: var(--u-ink-600);
+}
+
+.rule {
+	width: 1px;
+	height: 1rem;
+	background: var(--u-line);
+	flex: none;
+}
+
+.star {
+	width: 1.0625rem;
+	height: 1.0625rem;
+	flex: none;
+	color: var(--u-pink-500);
+}
+
+.count {
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.01em;
+	/* Reserve the widest realistic count so the navbar never reflows. */
+	min-width: 2.6ch;
+}
+
+/* Same pill at call-to-action scale. */
+.lg {
+	height: 3rem;
+	gap: 0.625rem;
+	padding: 0 1.25rem;
+	font-size: 1rem;
+	border-radius: var(--u-radius-md);
+}
+
+.lg .mark {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.lg .star {
+	width: 1.1875rem;
+	height: 1.1875rem;
+}
+
+.lg .rule {
+	height: 1.25rem;
+}
+
+/* Once the navbar collapses to a burger, the lockup and search already fill the
+   bar — the pill only crowds it, so it steps out. The CTA pill on the homepage
+   has a row to itself and is unaffected. */
+@media screen and (max-width: 996px) {
+	.pill:not(.lg) {
+		display: none;
+	}
+}

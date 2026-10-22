@@ -25,7 +25,7 @@
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "typescript": "^6.0.3",
-    "vue": "^3.5.14"
+    "vue": "^3.5.43"
   },
   "exports": {
     ".": "./lib/index.js",

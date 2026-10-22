@@ -1,0 +1,127 @@
+name: Deploy uppy.io
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'website/**'
+      - 'packages/@uppy/**'
+      - 'packages/uppy/**'
+      - 'yarn.lock'
+      - '.github/workflows/deploy-website.yml'
+
+env:
+  NODE_VERSION: lts/*
+  YARN_ENABLE_GLOBAL_CACHE: false
+
+permissions:
+  actions: read
+  contents: read
+  id-token: write
+  pages: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.repository == 'transloadit/uppy'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/configure-pages@v6
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Build Uppy
+        run: corepack yarn build
+      - name: Build website
+        run: corepack yarn workspace uppy-io build
+
+      - name: Restore IndexNow production state
+        if:
+          github.repository == 'transloadit/uppy' && github.ref ==
+          'refs/heads/main'
+        continue-on-error: true
+        uses: actions/cache/restore@v6
+        with:
+          path: website/.cache-loader/indexnow/state.json
+          key:
+            indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: indexnow-production-
+
+      - name: Prepare changed URLs for IndexNow
+        id: indexnow
+        if:
+          github.repository == 'transloadit/uppy' && github.ref ==
+          'refs/heads/main'
+        continue-on-error: true
+        timeout-minutes: 2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        working-directory: website
+        run: node scripts/indexnow.mjs prepare
+
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: website/build
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      - name: Submit changed URLs to IndexNow
+        if:
+          steps.indexnow.outcome == 'success' && steps.deployment.outcome ==
+          'success' && github.ref == 'refs/heads/main'
+        continue-on-error: true
+        timeout-minutes: 2
+        working-directory: website
+        run: node scripts/indexnow.mjs submit
+
+      - name: Save IndexNow production state
+        if:
+          always() && steps.deployment.outcome == 'success' && github.ref ==
+          'refs/heads/main'
+        continue-on-error: true
+        uses: actions/cache/save@v6
+        with:
+          path: website/.cache-loader/indexnow/state.json
+          key:
+            indexnow-production-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Archive IndexNow production state
+        if:
+          always() && steps.deployment.outcome == 'success' && github.ref ==
+          'refs/heads/main'
+        continue-on-error: true
+        uses: actions/upload-artifact@v7
+        with:
+          name: indexnow-production-state
+          path: website/.cache-loader/indexnow/state.json
+          include-hidden-files: true
+          retention-days: 90
+          if-no-files-found: ignore

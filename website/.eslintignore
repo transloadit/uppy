@@ -1,0 +1,19 @@
+# Dependencies
+/node_modules
+
+# Production
+/build
+
+/docs/quick-start.mdx
+/docs/locales.mdx
+
+# Blog
+
+blog/201*.md
+blog/2020-*.md
+blog/2021-01-*.md
+blog/2021-02-*.md
+blog/2021-03-*.md
+blog/2021-04-*.md
+blog/2021-05-*.md
+blog/2021-06-*.md
