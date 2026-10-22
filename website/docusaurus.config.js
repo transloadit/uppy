@@ -1,7 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const { themes } = require('prism-react-renderer');
+const { themes } = require('prism-react-renderer')
 
 /**
  * prism-react-renderer's github theme sets five token colours that miss 4.5:1
@@ -25,17 +25,17 @@ const accessibleTokenColors = {
   '#36acaa': '#16605e', // number, boolean, constant, property, regex…
   '#00a4db': '#00618a', // atrule, keyword, attr-name, selector
   '#d73a49': '#c11a26', // function, deleted, tag
-};
+}
 
 const lightCodeTheme = {
   ...themes.github,
   styles: themes.github.styles.map((entry) => {
-    const replacement = accessibleTokenColors[entry.style.color];
+    const replacement = accessibleTokenColors[entry.style.color]
     return replacement ?
         { ...entry, style: { ...entry.style, color: replacement } }
-      : entry;
+      : entry
   }),
-};
+}
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
@@ -266,6 +266,6 @@ const config = {
         theme: lightCodeTheme,
       },
     }),
-};
+}
 
-module.exports = config;
+module.exports = config

@@ -3,11 +3,11 @@ sidebar_position: 1
 slug: /remote-sources
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
-import GoogleOwnCredentials from '../sources/companion-plugins/_google-own-credentials.mdx';
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import GoogleOwnCredentials from '../sources/companion-plugins/_google-own-credentials.mdx'
 
 # Remote sources
 
@@ -85,13 +85,13 @@ new Uppy();
 ### Use with Transloadit
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import RemoteSources from '@uppy/remote-sources';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import RemoteSources from '@uppy/remote-sources'
 
 uppy.use(RemoteSources, {
   companionUrl: COMPANION_URL,
   companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-});
+})
 ```
 
 <GoogleOwnCredentials />
@@ -108,8 +108,8 @@ key. The [Google Drive page](/docs/google-drive#use-with-transloadit) has the
 full setup for Google.
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import RemoteSources from '@uppy/remote-sources';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import RemoteSources from '@uppy/remote-sources'
 
 uppy.use(RemoteSources, {
   companionUrl: COMPANION_URL,
@@ -125,7 +125,7 @@ uppy.use(RemoteSources, {
     },
     // ...etc
   },
-});
+})
 ```
 
 ## API
@@ -149,7 +149,7 @@ option is for you.
 uppy.use(RemoteSources, {
   companionUrl: 'https://your-companion-url',
   sources: ['Dropbox', 'GoogleDrive', 'Unsplash', 'Url'],
-});
+})
 ```
 
 #### `companionUrl`

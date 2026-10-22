@@ -33,13 +33,13 @@ The plugin constructor receives the Uppy instance in the first parameter, and
 any options passed to `uppy.use()` in the second parameter.
 
 ```js
-import BasePlugin from '@uppy/core';
+import BasePlugin from '@uppy/core'
 
 export default class MyPlugin extends BasePlugin {
   constructor(uppy, opts) {
-    super(uppy, opts);
-    this.id = opts.id || 'MyPlugin';
-    this.type = 'example';
+    super(uppy, opts)
+    this.id = opts.id || 'MyPlugin'
+    this.type = 'example'
   }
 }
 ```
@@ -62,8 +62,8 @@ or adding [upload hooks](#upload-hooks).
 export default class MyPlugin extends UIPlugin {
   // ...
   install() {
-    this.uppy.on('upload-progress', this.onProgress);
-    this.uppy.addPostProcessor(this.afterUpload);
+    this.uppy.on('upload-progress', this.onProgress)
+    this.uppy.addPostProcessor(this.afterUpload)
   }
 }
 ```
@@ -77,8 +77,8 @@ undo all the work done in the `install()` method.
 export default class MyPlugin extends UIPlugin {
   // ...
   uninstall() {
-    this.uppy.off('upload-progress', this.onProgress);
-    this.uppy.removePostProcessor(this.afterUpload);
+    this.uppy.off('upload-progress', this.onProgress)
+    this.uppy.removePostProcessor(this.afterUpload)
   }
 }
 ```
@@ -155,23 +155,23 @@ will be impossible to remove. For example:
 ```js
 class MyPlugin extends BasePlugin {
   constructor(uppy, opts) {
-    super(uppy, opts);
-    this.id = opts.id || 'MyPlugin';
-    this.type = 'example';
-    this.prepareUpload = this.prepareUpload.bind(this); // ← this!
+    super(uppy, opts)
+    this.id = opts.id || 'MyPlugin'
+    this.type = 'example'
+    this.prepareUpload = this.prepareUpload.bind(this) // ← this!
   }
 
   prepareUpload(fileIDs) {
-    console.log(this); // `this` refers to the `MyPlugin` instance.
-    return Promise.resolve();
+    console.log(this) // `this` refers to the `MyPlugin` instance.
+    return Promise.resolve()
   }
 
   install() {
-    this.uppy.addPreProcessor(this.prepareUpload);
+    this.uppy.addPreProcessor(this.prepareUpload)
   }
 
   uninstall() {
-    this.uppy.removePreProcessor(this.prepareUpload);
+    this.uppy.removePreProcessor(this.prepareUpload)
   }
 }
 ```
@@ -181,23 +181,23 @@ Or you can define the method as a class field:
 ```js
 class MyPlugin extends UIPlugin {
   constructor(uppy, opts) {
-    super(uppy, opts);
-    this.id = opts.id || 'MyPlugin';
-    this.type = 'example';
+    super(uppy, opts)
+    this.id = opts.id || 'MyPlugin'
+    this.type = 'example'
   }
 
   prepareUpload = (fileIDs) => {
     // ← this!
-    console.log(this); // `this` refers to the `MyPlugin` instance.
-    return Promise.resolve();
-  };
+    console.log(this) // `this` refers to the `MyPlugin` instance.
+    return Promise.resolve()
+  }
 
   install() {
-    this.uppy.addPreProcessor(this.prepareUpload);
+    this.uppy.addPreProcessor(this.prepareUpload)
   }
 
   uninstall() {
-    this.uppy.removePreProcessor(this.prepareUpload);
+    this.uppy.removePreProcessor(this.prepareUpload)
   }
 }
 ```
@@ -238,14 +238,14 @@ Babel and JSX.
 
 ```jsx
 /** @jsx h */
-import { UIPlugin } from '@uppy/core';
-import { h } from 'preact';
+import { UIPlugin } from '@uppy/core'
+import { h } from 'preact'
 
 class NumFiles extends UIPlugin {
   render() {
-    const numFiles = Object.keys(this.uppy.state.files).length;
+    const numFiles = Object.keys(this.uppy.state.files).length
 
-    return <div>Number of files: {numFiles}</div>;
+    return <div>Number of files: {numFiles}</div>
   }
 }
 ```
@@ -265,7 +265,7 @@ this.defaultLocale = {
       2: 'You can only upload %{smart_count} files',
     },
   },
-};
+}
 ```
 
 This allows them to be overridden by Locale Packs, or directly when users pass
@@ -284,32 +284,32 @@ like calling an external API.
 <!-- eslint-disable consistent-return -->
 
 ```js
-import { UIPlugin } from '@uppy/core';
-import { Translator } from '@uppy/core/utils';
-import Compressor from 'compressorjs/dist/compressor.esm.js';
+import { UIPlugin } from '@uppy/core'
+import { Translator } from '@uppy/core/utils'
+import Compressor from 'compressorjs/dist/compressor.esm.js'
 
 class UppyImageCompressor extends UIPlugin {
   constructor(uppy, opts) {
     const defaultOptions = {
       quality: 0.6,
-    };
-    super(uppy, { ...defaultOptions, ...opts });
+    }
+    super(uppy, { ...defaultOptions, ...opts })
 
-    this.id = this.opts.id || 'ImageCompressor';
-    this.type = 'modifier';
+    this.id = this.opts.id || 'ImageCompressor'
+    this.type = 'modifier'
 
     this.defaultLocale = {
       strings: {
         compressingImages: 'Compressing images...',
       },
-    };
+    }
 
     // we use those internally in `this.compress`, so they
     // should not be overridden
-    delete this.opts.success;
-    delete this.opts.error;
+    delete this.opts.success
+    delete this.opts.error
 
-    this.i18nInit();
+    this.i18nInit()
   }
 
   compress(blob) {
@@ -318,65 +318,65 @@ class UppyImageCompressor extends UIPlugin {
         new Compressor(blob, {
           ...this.opts,
           success(result) {
-            return resolve(result);
+            return resolve(result)
           },
           error(err) {
-            return reject(err);
+            return reject(err)
           },
         }),
-    );
+    )
   }
 
   prepareUpload = (fileIDs) => {
     const promises = fileIDs.map((fileID) => {
-      const file = this.uppy.getFile(fileID);
+      const file = this.uppy.getFile(fileID)
       this.uppy.emit('preprocess-progress', file, {
         mode: 'indeterminate',
         message: this.i18n('compressingImages'),
-      });
+      })
 
       if (!file.type.startsWith('image/')) {
-        return;
+        return
       }
 
       return this.compress(file.data)
         .then((compressedBlob) => {
           this.uppy.log(
             `[Image Compressor] Image ${file.id} size before/after compression: ${file.data.size} / ${compressedBlob.size}`,
-          );
-          this.uppy.setFileState(fileID, { data: compressedBlob });
+          )
+          this.uppy.setFileState(fileID, { data: compressedBlob })
         })
         .catch((err) => {
           this.uppy.log(
             `[Image Compressor] Failed to compress ${file.id}:`,
             'warning',
-          );
-          this.uppy.log(err, 'warning');
-        });
-    });
+          )
+          this.uppy.log(err, 'warning')
+        })
+    })
 
     const emitPreprocessCompleteForAll = () => {
       fileIDs.forEach((fileID) => {
-        const file = this.uppy.getFile(fileID);
-        this.uppy.emit('preprocess-complete', file);
-      });
-    };
+        const file = this.uppy.getFile(fileID)
+        this.uppy.emit('preprocess-complete', file)
+      })
+    }
 
     // Why emit `preprocess-complete` for all files at once, instead of
     // above when each is processed?
     // Because it leads to StatusBar showing a weird “upload 6 files” button,
     // while waiting for all the files to complete pre-processing.
-    return Promise.all(promises).then(emitPreprocessCompleteForAll);
-  };
+    return Promise.all(promises).then(emitPreprocessCompleteForAll)
+  }
 
   install() {
-    this.uppy.addPreProcessor(this.prepareUpload);
+    this.uppy.addPreProcessor(this.prepareUpload)
   }
 
   uninstall() {
-    this.uppy.removePreProcessor(this.prepareUpload);
+    this.uppy.removePreProcessor(this.prepareUpload)
   }
 }
 
-export default UppyImageCompressor;
+export default UppyImageCompressor
 ```

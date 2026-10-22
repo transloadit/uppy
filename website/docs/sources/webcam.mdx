@@ -3,10 +3,10 @@ sidebar_position: 1
 slug: /webcam
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Webcam
 
@@ -69,15 +69,15 @@ through many hoops during development.
 :::
 
 ```js {3,7,11} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import Webcam from '@uppy/webcam';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Webcam from '@uppy/webcam'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
-import '@uppy/webcam/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+import '@uppy/webcam/css/style.min.css'
 
-new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(Webcam);
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(Webcam)
 ```
 
 ## API
@@ -248,5 +248,5 @@ export default {
     allowAccessDescription:
       'In order to take pictures or record video with your camera, please allow camera access for this site.',
   },
-};
+}
 ```

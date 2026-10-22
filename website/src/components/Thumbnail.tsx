@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { UppyContextProvider, Thumbnail, useUppyState } from '@uppy/react';
-import { Uppy } from 'uppy';
+import React, { useEffect, useState } from 'react'
+import { UppyContextProvider, Thumbnail, useUppyState } from '@uppy/react'
+import { Uppy } from 'uppy'
 
-import { BrowserWindow } from './BrowserWindow';
+import { BrowserWindow } from './BrowserWindow'
 
-import '@uppy/react/css/style.css';
+import '@uppy/react/css/style.css'
 
-import styles from './thumbnail.module.css';
+import styles from './thumbnail.module.css'
 
 export default function ThumbnailDemo() {
-  const [uppy] = useState(() => new Uppy());
-  const files = useUppyState(uppy, (state) => Object.values(state.files));
+  const [uppy] = useState(() => new Uppy())
+  const files = useUppyState(uppy, (state) => Object.values(state.files))
 
   useEffect(() => {
     // Add fake image file
@@ -22,7 +22,7 @@ export default function ThumbnailDemo() {
       data: new Blob(['fake image data'], { type: 'image/jpeg' }),
       source: 'Local',
       isRemote: false,
-    };
+    }
 
     // Add fake PDF file
     const pdfFile = {
@@ -33,11 +33,11 @@ export default function ThumbnailDemo() {
       data: new Blob(['fake pdf data'], { type: 'application/pdf' }),
       source: 'Local',
       isRemote: false,
-    };
+    }
 
-    uppy.addFile(imageFile);
-    uppy.addFile(pdfFile);
-  }, [uppy]);
+    uppy.addFile(imageFile)
+    uppy.addFile(pdfFile)
+  }, [uppy])
 
   return (
     <BrowserWindow>
@@ -52,5 +52,5 @@ export default function ThumbnailDemo() {
         </div>
       </UppyContextProvider>
     </BrowserWindow>
-  );
+  )
 }

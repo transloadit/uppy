@@ -86,13 +86,13 @@ To do so each provider plugin must be configured with Transloadit’s Companion
 URLs:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Dropbox from '@uppy/dropbox';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Dropbox from '@uppy/dropbox'
 
 uppy.use(Dropbox, {
   companionUrl: COMPANION_URL,
   companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-});
+})
 ```
 
 You may also hit rate limits, because the OAuth application is shared between
@@ -106,8 +106,8 @@ secret. Then pass the name of the credential to that provider plugin together
 with your Transloadit API key:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Dropbox from '@uppy/dropbox';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Dropbox from '@uppy/dropbox'
 
 uppy.use(Dropbox, {
   companionUrl: COMPANION_URL,
@@ -116,7 +116,7 @@ uppy.use(Dropbox, {
     key: 'YOUR_TRANSLOADIT_API_KEY',
     credentialsName: 'my_companion_dropbox_creds',
   },
-});
+})
 ```
 
 ## Installation & use
@@ -204,20 +204,20 @@ module in your project, because Companion already includes it. Use the
 `corsOrigins` Companion option to customise CORS behavior.
 
 ```js
-import express from 'express';
-import bodyParser from 'body-parser';
-import session from 'express-session';
-import * as companion from '@uppy/companion';
+import express from 'express'
+import bodyParser from 'body-parser'
+import session from 'express-session'
+import * as companion from '@uppy/companion'
 
-const app = express();
+const app = express()
 
 // Companion requires body-parser and express-session middleware.
 // You can add it like this if you use those throughout your app.
 //
 // If you are using something else in your app, you can add these
 // middlewares in the same subpath as Companion instead.
-app.use(bodyParser.json());
-app.use(session({ secret: 'some secrety secret' }));
+app.use(bodyParser.json())
+app.use(session({ secret: 'some secrety secret' }))
 
 const companionOptions = {
   secret: 'some secret',
@@ -241,10 +241,10 @@ const companionOptions = {
     // path: '/companion',
   },
   filePath: '/path/to/folder/',
-};
+}
 
-const { app: companionApp } = companion.app(companionOptions);
-app.use(companionApp);
+const { app: companionApp } = companion.app(companionOptions)
+app.use(companionApp)
 ```
 
 Companion uses WebSockets to communicate progress, errors, and successes to the
@@ -253,9 +253,9 @@ client. This is what Uppy listens to to update it’s internal state and UI.
 Add the Companion WebSocket server using the `companion.socket` function:
 
 ```js
-const server = app.listen(PORT);
+const server = app.listen(PORT)
 
-companion.socket(server, companionOptions);
+companion.socket(server, companionOptions)
 ```
 
 :::note
@@ -356,7 +356,7 @@ const options = {
   streamingUpload: true,
   clientSocketConnectTimeout: 60000,
   metrics: true,
-};
+}
 ```
 
 </details>
@@ -372,9 +372,9 @@ A secret string which Companion uses to generate authorization tokens. You
 should generate a long random string for this. For example:
 
 ```js
-const crypto = require('node:crypto');
+const crypto = require('node:crypto')
 
-const secret = crypto.randomBytes(64).toString('hex');
+const secret = crypto.randomBytes(64).toString('hex')
 ```
 
 :::caution
@@ -597,7 +597,7 @@ This function should return a string `key`. The `req` parameter can be used to
 upload to a user-specific folder in your bucket, for example:
 
 ```js
-app.use(authenticationMiddleware);
+app.use(authenticationMiddleware)
 app.use(
   uppy.app({
     providerOptions: {
@@ -607,7 +607,7 @@ app.use(
       },
     },
   }),
-);
+)
 ```
 
 The default implementation returns the `filename`, so all files will be uploaded
@@ -622,7 +622,7 @@ app.use(
       },
     },
   }),
-);
+)
 ```
 
 When signing on the client, this function will only be called for multipart
@@ -790,23 +790,23 @@ which is an `EventEmitter` that emits the following events:
 Example code for using the `EventEmitter` to handle a finished file upload:
 
 ```js
-const companionApp = companion.app(options);
-const { companionEmitter: emitter } = companionApp;
+const companionApp = companion.app(options)
+const { companionEmitter: emitter } = companionApp
 
 emitter.on('upload-start', ({ token }) => {
-  console.log('Upload started', token);
+  console.log('Upload started', token)
 
   function onUploadEvent({ action, payload }) {
     if (action === 'success') {
-      emitter.off(token, onUploadEvent); // avoid listener leak
-      console.log('Upload finished', token, payload.url);
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.log('Upload finished', token, payload.url)
     } else if (action === 'error') {
-      emitter.off(token, onUploadEvent); // avoid listener leak
-      console.error('Upload failed', payload);
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.error('Upload failed', payload)
     }
   }
-  emitter.on(token, onUploadEvent);
-});
+  emitter.on(token, onUploadEvent)
+})
 ```
 
 <!--retext-simplify ignore frequently-->
@@ -893,7 +893,7 @@ The custom provider is expected to support Oauth 1 or 2 for
 authentication/authorization.
 
 ```javascript
-import providerModule from './path/to/provider/module';
+import providerModule from './path/to/provider/module'
 
 const options = {
   customProviders: {
@@ -909,9 +909,9 @@ const options = {
       module: providerModule,
     },
   },
-};
+}
 
-uppy.app(options);
+uppy.app(options)
 ```
 
 The `customProviders` option should be an object containing each custom

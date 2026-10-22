@@ -2,11 +2,11 @@
 slug: /google-photos-picker
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
-import CompanionOptions from './_companion-options.mdx';
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import CompanionOptions from './_companion-options.mdx'
 
 # Google Photos Picker
 
@@ -78,32 +78,32 @@ Create a project for your app if you don’t have one yet.
 ### Use in Uppy
 
 ```js {10-13} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import GooglePhotosPicker from '@uppy/google-photos-picker';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GooglePhotosPicker from '@uppy/google-photos-picker'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy()
   .use(Dashboard, { inline: true, target: '#dashboard' })
   .use(GooglePhotosPicker, {
     companionUrl: 'https://your-companion.com',
     clientId: 'From Google Developer Console',
-  });
+  })
 ```
 
 ### Use with Transloadit
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import GooglePhotosPicker from '@uppy/google-photos-picker';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import GooglePhotosPicker from '@uppy/google-photos-picker'
 
 uppy.use(GooglePhotosPicker, {
   companionUrl: COMPANION_URL,
   companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
   clientId: 'From Google Developer Console',
-});
+})
 ```
 
 ### Use in Companion

@@ -3,10 +3,10 @@ sidebar_position: 1
 slug: /dashboard
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Dashboard
 
@@ -70,13 +70,13 @@ yarn add @uppy/core @uppy/dashboard
 ## Use
 
 ```js showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
-new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' });
+new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' })
 ```
 
 :::note
@@ -229,9 +229,9 @@ This is what the Dashboard sets by default:
 
 ```js
 const doneButtonHandler = () => {
-  this.uppy.cancelAll();
-  this.requestCloseModal();
-};
+  this.uppy.cancelAll()
+  this.requestCloseModal()
+}
 ```
 
 Set to `null` to disable the “Done” button.
@@ -262,9 +262,9 @@ Example:
 ```js
 uppy.on('file-removed', (file, reason) => {
   if (reason === 'removed-by-user') {
-    sendDeleteRequestForFile(file);
+    sendDeleteRequestForFile(file)
   }
-});
+})
 ```
 
 For an implementation example, please see
@@ -349,11 +349,11 @@ uppy.use(Dashboard, {
           form,
           onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
           defaultChecked: value === 'on',
-        });
+        })
       },
     },
   ],
-});
+})
 ```
 
 </details>
@@ -365,10 +365,10 @@ uppy.use(Dashboard, {
 uppy.use(Dashboard, {
   trigger: '#pick-files',
   metaFields: (file) => {
-    const fields = [{ id: 'name', name: 'File name' }];
+    const fields = [{ id: 'name', name: 'File name' }]
     if (file.type.startsWith('image/')) {
-      fields.push({ id: 'location', name: 'Photo Location' });
-      fields.push({ id: 'alt', name: 'Alt text' });
+      fields.push({ id: 'location', name: 'Photo Location' })
+      fields.push({ id: 'alt', name: 'Alt text' })
       fields.push({
         id: 'public',
         name: 'Public',
@@ -379,13 +379,13 @@ uppy.use(Dashboard, {
             defaultChecked: value === 'on',
             required,
             form,
-          });
+          })
         },
-      });
+      })
     }
-    return fields;
+    return fields
   },
-});
+})
 ```
 
 </details>
@@ -563,7 +563,7 @@ module.exports = {
       1: 'Missing required meta fields: %{fields}.',
     },
   },
-};
+}
 ```
 
 #### `theme`
@@ -603,12 +603,12 @@ conditionally enable/disable file uploading or manipulation, based on a
 condition in your app. Can be set on init or via API:
 
 ```js
-const dashboard = uppy.getPlugin('Dashboard');
-dashboard.setOptions({ disabled: true });
+const dashboard = uppy.getPlugin('Dashboard')
+dashboard.setOptions({ disabled: true })
 
 userNameInput.addEventListener('change', () => {
-  dashboard.setOptions({ disabled: false });
-});
+  dashboard.setOptions({ disabled: false })
+})
 ```
 
 #### `disableLocalFiles`
@@ -658,9 +658,9 @@ Hides the Dashboard modal. Use it like this:
 Returns `true` if the Dashboard modal is open, `false` otherwise.
 
 ```js
-const dashboard = uppy.getPlugin('Dashboard');
+const dashboard = uppy.getPlugin('Dashboard')
 if (dashboard.isModalOpen()) {
-  dashboard.closeModal();
+  dashboard.closeModal()
 }
 ```
 
@@ -679,8 +679,8 @@ Fired when the Dashboard modal is open.
 
 ```js
 uppy.on('dashboard:modal-open', () => {
-  console.log('Modal is open');
-});
+  console.log('Modal is open')
+})
 ```
 
 #### `dashboard:modal-closed`

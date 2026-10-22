@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { UppyContextProvider, ProviderIcon } from '@uppy/react';
-import { Uppy } from 'uppy';
+import React, { useState } from 'react'
+import { UppyContextProvider, ProviderIcon } from '@uppy/react'
+import { Uppy } from 'uppy'
 
-import { BrowserWindow } from './BrowserWindow';
+import { BrowserWindow } from './BrowserWindow'
 
-import '@uppy/react/css/style.css';
+import '@uppy/react/css/style.css'
 
-import styles from './provider-icon.module.css';
+import styles from './provider-icon.module.css'
 
 export default function ProviderIconDemo() {
-  const [uppy] = useState(() => new Uppy());
+  const [uppy] = useState(() => new Uppy())
 
   const providers = [
     { id: 'device', name: 'Device' },
@@ -21,7 +21,7 @@ export default function ProviderIconDemo() {
     { id: 'onedrive', name: 'OneDrive' },
     { id: 'googlephotos', name: 'Google Photos' },
     { id: 'googledrive', name: 'Google Drive' },
-  ] as const;
+  ] as const
 
   return (
     <BrowserWindow>
@@ -36,5 +36,5 @@ export default function ProviderIconDemo() {
         </div>
       </UppyContextProvider>
     </BrowserWindow>
-  );
+  )
 }

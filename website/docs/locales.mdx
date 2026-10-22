@@ -2,7 +2,7 @@
 sidebar_position: 10
 ---
 
-import Link from '@docusaurus/Link';
+import Link from '@docusaurus/Link'
 
 # Internationalisation
 
@@ -27,13 +27,13 @@ npm i @uppy/core @uppy/locales
 ```
 
 ```js
-import Uppy from '@uppy/core';
-import German from '@uppy/locales/lib/de_DE';
+import Uppy from '@uppy/core'
+import German from '@uppy/locales/lib/de_DE'
 // see below for the full list of locales
 const uppy = new Uppy({
   debug: true,
   locale: German,
-});
+})
 ```
 
 ## Using a locale pack from CDN
@@ -50,7 +50,7 @@ will attach itself to the `Uppy.locales` object.
   var uppy = new Uppy.Uppy({
     debug: true,
     locale: Uppy.locales.de_DE,
-  });
+  })
 </script>
 ```
 
@@ -62,15 +62,15 @@ a specific plugin, regardless of whether you are using locale pack or not. See
 the plugin documentation for the list of locale strings it uses.
 
 ```js
-import Uppy from '@uppy/core';
-import DragDrop from '@uppy/drag-drop';
-import Russian from '@uppy/locales/lib/ru_RU';
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
+import Russian from '@uppy/locales/lib/ru_RU'
 
 const uppy = new Uppy({
   debug: true,
   autoProceed: true,
   locale: Russian,
-});
+})
 uppy.use(DragDrop, {
   target: '.UppyDragDrop',
   // We are using the ru_RU locale pack (set above in Uppy options),
@@ -80,7 +80,7 @@ uppy.use(DragDrop, {
       browse: 'выберите ;-)',
     },
   },
-});
+})
 ```
 
 ## List of locales

@@ -110,21 +110,21 @@ Manages screen capture functionality for capturing screen image / video.
 ```typescript
 {
   state: {
-    streamActive: boolean;
-    audioStreamActive: boolean;
-    recording: boolean;
-    recordedVideo: string | null;
-    screenRecError: Error | null;
-    capturedScreenshotUrl: string | null;
-    status: 'init' | 'ready' | 'recording' | 'captured' | 'error';
+    streamActive: boolean
+    audioStreamActive: boolean
+    recording: boolean
+    recordedVideo: string | null
+    screenRecError: Error | null
+    capturedScreenshotUrl: string | null
+    status: 'init' | 'ready' | 'recording' | 'captured' | 'error'
   }
-  stop: Function;
-  start: Function;
-  getVideoProps: Function;
-  getScreenshotButtonProps: Function;
-  getRecordButtonProps: Function;
-  getStopRecordingButtonProps: Function;
-  getSubmitButtonProps: Function;
-  getDiscardButtonProps: Function;
+  stop: Function
+  start: Function
+  getVideoProps: Function
+  getScreenshotButtonProps: Function
+  getRecordButtonProps: Function
+  getStopRecordingButtonProps: Function
+  getSubmitButtonProps: Function
+  getDiscardButtonProps: Function
 }
 ```

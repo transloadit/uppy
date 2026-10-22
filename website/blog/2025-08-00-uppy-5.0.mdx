@@ -8,16 +8,16 @@ published: true
 toc_max_heading_level: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import CodeBlock from '@theme/CodeBlock';
-import UploadButton from '/src/components/UploadButton';
-import ThumbnailDemo from '/src/components/Thumbnail';
-import ProviderIconDemo from '/src/components/ProviderIcon';
-import FilesListDemo from '/src/components/FilesList';
-import DropzoneDemo from '/src/components/Dropzone';
-import FilesGridDemo from '/src/components/FilesGrid';
-import { BrowserWindow } from '/src/components/BrowserWindow';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+import UploadButton from '/src/components/UploadButton'
+import ThumbnailDemo from '/src/components/Thumbnail'
+import ProviderIconDemo from '/src/components/ProviderIcon'
+import FilesListDemo from '/src/components/FilesList'
+import DropzoneDemo from '/src/components/Dropzone'
+import FilesGridDemo from '/src/components/FilesGrid'
+import { BrowserWindow } from '/src/components/BrowserWindow'
 
 <img
   src="https://uppy-io-static.tlcdn.com/static/img/blog/5.0/og-image.png"
@@ -115,14 +115,14 @@ hooks.
   <TabItem value="react" label="React">
 
 ```tsx
-import { useState } from 'react';
-import Uppy from '@uppy/core';
-import { UppyContextProvider } from '@uppy/react';
+import { useState } from 'react'
+import Uppy from '@uppy/core'
+import { UppyContextProvider } from '@uppy/react'
 
 function App() {
-  const [uppy] = useState(() => new Uppy());
+  const [uppy] = useState(() => new Uppy())
 
-  return <UppyContextProvider uppy={uppy}>{/* ... */}</UppyContextProvider>;
+  return <UppyContextProvider uppy={uppy}>{/* ... */}</UppyContextProvider>
 }
 ```
 
@@ -137,11 +137,11 @@ function App() {
 </template>
 
 <script setup lang="ts">
-  import Uppy from '@uppy/core';
-  import { UppyContextProvider } from '@uppy/vue';
-  import { computed } from 'vue';
+  import Uppy from '@uppy/core'
+  import { UppyContextProvider } from '@uppy/vue'
+  import { computed } from 'vue'
 
-  const uppy = computed(() => new Uppy());
+  const uppy = computed(() => new Uppy())
 </script>
 ```
 
@@ -154,10 +154,10 @@ function App() {
 </UppyContextProvider>
 
 <script lang="ts">
-  import Uppy from '@uppy/core';
-  import { UppyContextProvider } from '@uppy/svelte';
+  import Uppy from '@uppy/core'
+  import { UppyContextProvider } from '@uppy/svelte'
 
-  const uppy = new Uppy();
+  const uppy = new Uppy()
 </script>
 ```
 
@@ -290,16 +290,16 @@ Here is an example that uses hooks to exactly mimic the `<Dropzone />`
 component.
 
 ```tsx
-import clsx from 'clsx';
-import { useDropzone } from '@uppy/react';
+import clsx from 'clsx'
+import { useDropzone } from '@uppy/react'
 
 type DropzoneProps = {
-  note?: string;
-  noClick?: boolean;
-};
+  note?: string
+  noClick?: boolean
+}
 
 export function Dropzone({ note, noClick }: DropzoneProps) {
-  const { getRootProps, getInputProps } = useDropzone({ noClick });
+  const { getRootProps, getInputProps } = useDropzone({ noClick })
 
   return (
     <div data-uppy-element="dropzone" role="presentation">
@@ -329,7 +329,7 @@ export function Dropzone({ note, noClick }: DropzoneProps) {
         : null}
       </div>
     </div>
-  );
+  )
 }
 ```
 
@@ -341,22 +341,22 @@ Create a file input button that opens a file picker when clicked and add the
 selected files to Uppy.
 
 ```tsx
-import { useFileInput } from '@uppy/react';
+import { useFileInput } from '@uppy/react'
 
 type FileInputProps = {
-  multiple?: boolean;
-  accept?: string;
-};
+  multiple?: boolean
+  accept?: string
+}
 
 export function FileInput({ multiple, accept }: FileInputProps) {
-  const { getButtonProps, getInputProps } = useFileInput({ multiple, accept });
+  const { getButtonProps, getInputProps } = useFileInput({ multiple, accept })
 
   return (
     <div>
       <input {...getInputProps()} className="hidden" />
       <button {...getButtonProps()}>Add files</button>
     </div>
-  );
+  )
 }
 ```
 
@@ -391,15 +391,15 @@ instance.
 </BrowserWindow>
 
 ```tsx
-import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core';
-import { useRemoteSource } from '@uppy/react';
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
+import { useRemoteSource } from '@uppy/react'
 
 function File({
   item,
   checkbox,
 }: {
-  item: PartialTreeFile;
-  checkbox: (item: PartialTreeFile, checked: boolean) => void;
+  item: PartialTreeFile
+  checkbox: (item: PartialTreeFile, checked: boolean) => void
 }) {
   return (
     <li className="flex items-center gap-2 mb-2">
@@ -411,7 +411,7 @@ function File({
       {/* thumbnail, name, date... */}
       <div className="truncate">{item.data.name}</div>
     </li>
-  );
+  )
 }
 
 function Folder({
@@ -419,9 +419,9 @@ function Folder({
   checkbox,
   open,
 }: {
-  item: PartialTreeFolderNode;
-  checkbox: (item: PartialTreeFolderNode, checked: boolean) => void;
-  open: (folderId: string | null) => Promise<void>;
+  item: PartialTreeFolderNode
+  checkbox: (item: PartialTreeFolderNode, checked: boolean) => void
+  open: (folderId: string | null) => Promise<void>
 }) {
   return (
     <li className="flex items-center gap-2 mb-2">
@@ -432,13 +432,13 @@ function Folder({
       />
       <button onClick={() => open(item.id)}>📁 {item.data.name}</button>
     </li>
-  );
+  )
 }
 
 export function Dropbox({ close }: { close: () => void }) {
   // The main hook that provides all the remote source functionality
   const { state, login, logout, checkbox, open, done, cancel } =
-    useRemoteSource('Dropbox');
+    useRemoteSource('Dropbox')
 
   // Show login button if not authenticated
   if (!state.authenticated) {
@@ -446,7 +446,7 @@ export function Dropbox({ close }: { close: () => void }) {
       <div className="p-4">
         <button onClick={() => login()}>Login</button>
       </div>
-    );
+    )
   }
 
   return (
@@ -461,8 +461,8 @@ export function Dropbox({ close }: { close: () => void }) {
         ))}
         <button
           onClick={() => {
-            logout();
-            close();
+            logout()
+            close()
           }}
         >
           Logout
@@ -475,7 +475,7 @@ export function Dropbox({ close }: { close: () => void }) {
           <p>loading...</p>
         : state.partialTree.map((item) => {
             if (item.type === 'file') {
-              return <File key={item.id} item={item} checkbox={checkbox} />;
+              return <File key={item.id} item={item} checkbox={checkbox} />
             }
             if (item.type === 'folder') {
               return (
@@ -485,9 +485,9 @@ export function Dropbox({ close }: { close: () => void }) {
                   checkbox={checkbox}
                   open={open}
                 />
-              );
+              )
             }
-            return null;
+            return null
           })
         }
       </ul>
@@ -497,8 +497,8 @@ export function Dropbox({ close }: { close: () => void }) {
         <div className="flex items-center gap-4 bg-gray-100 p-2">
           <button
             onClick={() => {
-              done();
-              close();
+              done()
+              close()
             }}
           >
             Done
@@ -508,7 +508,7 @@ export function Dropbox({ close }: { close: () => void }) {
         </div>
       )}
     </div>
-  );
+  )
 }
 ```
 
@@ -521,7 +521,7 @@ This hook can be used to build a UI for the [`webcam`](/docs/webcam/) plugin.
 You also need to install `@uppy/webcam` and initialize it on the Uppy instance.
 
 ```tsx
-import { useWebcam } from '@uppy/react';
+import { useWebcam } from '@uppy/react'
 
 export function Webcam() {
   const {
@@ -534,14 +534,14 @@ export function Webcam() {
     getSubmitButtonProps,
     getDiscardButtonProps,
     state,
-  } = useWebcam({ onSubmit: () => {} });
+  } = useWebcam({ onSubmit: () => {} })
 
   useEffect(() => {
-    start();
+    start()
     return () => {
-      stop();
-    };
-  }, [start, stop]);
+      stop()
+    }
+  }, [start, stop])
 
   return (
     <div className="p-4 max-w-lg w-full">
@@ -585,7 +585,7 @@ export function Webcam() {
         </button>
       </div>
     </div>
-  );
+  )
 }
 ```
 
@@ -600,7 +600,7 @@ You also need to install `@uppy/screen-capture` and initialize it on the Uppy
 instance.
 
 ```tsx
-import { useScreenCapture } from '@uppy/react';
+import { useScreenCapture } from '@uppy/react'
 
 export function ScreenCapture() {
   const {
@@ -613,14 +613,14 @@ export function ScreenCapture() {
     getSubmitButtonProps,
     getDiscardButtonProps,
     state,
-  } = useScreenCapture({ onSubmit: () => {} });
+  } = useScreenCapture({ onSubmit: () => {} })
 
   useEffect(() => {
-    start();
+    start()
     return () => {
-      stop();
-    };
-  }, [start, stop]);
+      stop()
+    }
+  }, [start, stop])
 
   return (
     <div className="p-4 max-w-lg w-full">
@@ -664,7 +664,7 @@ export function ScreenCapture() {
         </button>
       </div>
     </div>
-  );
+  )
 }
 ```
 
@@ -730,13 +730,13 @@ dependencies you need.
 Before:
 
 ```javascript
-import { Dashboard } from '@uppy/react';
+import { Dashboard } from '@uppy/react'
 ```
 
 Now:
 
 ```javascript
-import Dashboard from '@uppy/react/dashboard';
+import Dashboard from '@uppy/react/dashboard'
 ```
 
 ## Deprecations
