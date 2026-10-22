@@ -419,33 +419,35 @@ allows `https://uploads.example.com/files/<id>`, which a resumable upload needs,
 but not `https://uploads.example.com/filesomething`.
 
 Configuring Companion programmatically, an entry may also be a `RegExp`.
-Standalone config is strings all the way down, so prefix an entry with `re:`
-instead if you need a regular expression — in `COMPANION_UPLOAD_URLS` or in the
-JSON config file.
+Standalone config can only hold strings, so there an entry that starts with `^`
+is read as a regular expression — in `COMPANION_UPLOAD_URLS` or in the JSON
+config file. A value that starts with `^` is not split on `,`, so combine
+several patterns with `|`.
 
 ```sh
 COMPANION_UPLOAD_URLS="https://uploads.example.com/files/,https://other.example.com/files/"
-COMPANION_UPLOAD_URLS="re:^https://(?:api2-[a-z0-9]+|api2)\\.example\\.com/files/"
+COMPANION_UPLOAD_URLS="^https://(?:api2-[a-z0-9]+|api2)\\.example\\.com/files/"
 ```
+
+An entry without a leading `^` is a literal, so a pattern you forgot to anchor
+matches nothing and uploads fail rather than going somewhere unintended.
 
 A pattern is matched against the whole URL as written, so the pattern itself
-carries the security property. Three mistakes let an attacker choose the host
-Companion uploads to, and none of them stops uploads working:
+carries the security property. These mistakes let an attacker choose the host
+Companion uploads to, and neither stops uploads working:
 
 ```
-re:https://uploads\.example\.com/     # not anchored: allows
-                                      # http://169.254.169.254/?x=https://uploads.example.com/
-re:^https://.*\.example\.com/         # "." spans "/" and "@": allows
-                                      # https://evil.example/x.example.com/y
-re:^https://[a-z0-9]+\.example\.com   # host not terminated: allows
-                                      # https://a.example.com.evil.example/
-                                      # and https://a.example.com@evil.example/
+^https://.*\.example\.com/         # "." spans "/" and "@": allows
+                                   # https://evil.example/x.example.com/y
+^https://[a-z0-9]+\.example\.com   # host not terminated: allows
+                                   # https://a.example.com.evil.example/
+                                   # and https://a.example.com@evil.example/
 ```
 
 Example safe regular expression:
 
 ```
-re:^https://[a-z0-9-]+\.example\.com/files/
+^https://[a-z0-9-]+\.example\.com/files/
 ```
 
 #### `COMPANION_PORT`
@@ -515,11 +517,11 @@ case-insensitively. A port is part of the hostname, so `example.com` does not
 match `example.com:3020`.
 
 As with `uploadUrls`, a `validHosts` entry may be a `RegExp` programmatically,
-or carry a `re:` prefix in `COMPANION_DOMAINS` or the JSON config file.
+or start with `^` in `COMPANION_DOMAINS` or the JSON config file.
 
 ```sh
 COMPANION_DOMAINS="sub1.example.com,sub2.example.com"
-COMPANION_DOMAINS="re:^(\\w+)\\.example\\.com$"
+COMPANION_DOMAINS="^(\\w+)\\.example\\.com$"
 ```
 
 A pattern is matched as written, so end it with `$` as well as starting it with
