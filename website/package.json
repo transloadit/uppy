@@ -73,6 +73,7 @@
 		"retext-profanities": "^8.0.0",
 		"retext-quotes": "^6.0.2",
 		"retext-syntax-mentions": "^4.0.0",
+		"simplematter": "^1.0.1",
 		"typescript": "^5.9.3",
 		"unified": "^11.0.5",
 		"unified-message-control": "^5.0.0",

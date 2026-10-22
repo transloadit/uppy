@@ -24672,6 +24672,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"simplematter@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "simplematter@npm:1.0.1"
+  dependencies:
+    smol-toml: "npm:^1.0.0"
+    yaml: "npm:^2.0.0"
+  checksum: 10/2d076979ed62932a77922003b32bbb3210dda5f4d0208060465cec603e997246ac6e46b5a3a780fc9201d4f1953748b2de8d62708677b2587df6cad52b808cfb
+  languageName: node
+  linkType: hard
+
 "sirv@npm:^2.0.3":
   version: 2.0.4
   resolution: "sirv@npm:2.0.4"
@@ -24759,6 +24769,13 @@ __metadata:
   version: 4.2.0
   resolution: "smart-buffer@npm:4.2.0"
   checksum: 10/927484aa0b1640fd9473cee3e0a0bcad6fce93fd7bbc18bac9ad0c33686f5d2e2c422fba24b5899c184524af01e11dd2bd051c2bf2b07e47aff8ca72cbfc60d2
+  languageName: node
+  linkType: hard
+
+"smol-toml@npm:^1.0.0":
+  version: 1.9.1
+  resolution: "smol-toml@npm:1.9.1"
+  checksum: 10/0bdcd39bbaa2bdca88f9418cbf0b0b9dd220d9e39b6d298916a4ce1e49a8c8dc84d30f0e49910355203bff3a64da7b06771037dc0d2f8007df406f14dc768c10
   languageName: node
   linkType: hard
 
@@ -26405,6 +26422,7 @@ __metadata:
     retext-profanities: "npm:^8.0.0"
     retext-quotes: "npm:^6.0.2"
     retext-syntax-mentions: "npm:^4.0.0"
+    simplematter: "npm:^1.0.1"
     typescript: "npm:^5.9.3"
     unified: "npm:^11.0.5"
     unified-message-control: "npm:^5.0.0"
