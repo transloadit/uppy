@@ -8746,7 +8746,7 @@ __metadata:
     "@transloadit/utils": "npm:^4.6.0"
     "@uppy-dev/tsconfig": "workspace:^"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -8972,7 +8972,7 @@ __metadata:
     compressorjs: "npm:^1.3.0"
     playwright: "npm:1.64.0"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -9010,7 +9010,7 @@ __metadata:
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
   languageName: unknown
   linkType: soft
@@ -13894,7 +13894,7 @@ __metadata:
     express: "npm:^5.2.1"
     express-session: "npm:^1.17.3"
     npm-run-all2: "npm:^9.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -13942,7 +13942,7 @@ __metadata:
     express-session: "npm:^1.15.6"
     npm-run-all2: "npm:^9.0.3"
     preact: "npm:^10.29.2"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -13956,7 +13956,7 @@ __metadata:
     body-parser: "npm:^2.2.2"
     cors: "npm:^2.8.5"
     express: "npm:^5.2.1"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -13968,7 +13968,7 @@ __metadata:
     body-parser: "npm:^2.2.2"
     express: "npm:^5.2.1"
     express-session: "npm:^1.15.6"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -14019,7 +14019,7 @@ __metadata:
     react-dom: "npm:^19.3.0"
     tailwindcss: "npm:^4.0.9"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
     vitest-browser-react: "npm:^2.3.0"
   languageName: unknown
@@ -14050,7 +14050,7 @@ __metadata:
     react-dom: "npm:^19.3.0"
     react-router: "npm:^8.4.0"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -14076,7 +14076,7 @@ __metadata:
     svelte-check: "npm:^4.7.6"
     tailwindcss: "npm:^4.0.0"
     typescript: "npm:^6.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
     vitest-browser-svelte: "npm:^3.1.0"
   languageName: unknown
@@ -14095,7 +14095,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     he: "npm:^1.2.0"
     npm-run-all2: "npm:^9.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -14115,7 +14115,7 @@ __metadata:
     msw: "npm:^3.0.2"
     playwright: "npm:1.64.0"
     tailwindcss: "npm:^4.0.0"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
     vitest-browser-vue: "npm:^3.1.0"
     vue: "npm:^3.5.43"
@@ -14135,7 +14135,7 @@ __metadata:
     express: "npm:^5.2.1"
     multer: "npm:^2.4.0"
     npm-run-all2: "npm:^9.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -14150,7 +14150,7 @@ __metadata:
     "@uppy/xhr-upload": "workspace:*"
     formidable: "npm:^3.2.4"
     npm-run-all2: "npm:^9.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -14163,7 +14163,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all2: "npm:^9.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -14176,7 +14176,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@uppy/xhr-upload": "workspace:*"
     npm-run-all2: "npm:^9.0.3"
-    vite: "npm:^8.3.3"
+    vite: "npm:^8.3.4"
   languageName: unknown
   linkType: soft
 
@@ -21979,7 +21979,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.21, postcss@npm:^8.4.24, postcss@npm:^8.4.33, postcss@npm:^8.4.47, postcss@npm:^8.4.49, postcss@npm:^8.5.16, postcss@npm:^8.5.23, postcss@npm:^8.5.28, postcss@npm:^8.5.4":
+"postcss@npm:^8.4.21, postcss@npm:^8.4.24, postcss@npm:^8.4.33, postcss@npm:^8.4.47, postcss@npm:^8.4.49, postcss@npm:^8.5.16, postcss@npm:^8.5.23, postcss@npm:^8.5.28, postcss@npm:^8.5.29, postcss@npm:^8.5.4":
   version: 8.5.31
   resolution: "postcss@npm:8.5.31"
   dependencies:
@@ -23540,7 +23540,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rolldown@npm:^1.2.0, rolldown@npm:~1.2.11, rolldown@npm:~1.2.6":
+"rolldown@npm:^1.2.0, rolldown@npm:~1.2.12, rolldown@npm:~1.2.6":
   version: 1.2.14
   resolution: "rolldown@npm:1.2.14"
   dependencies:
@@ -26761,15 +26761,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vite@npm:^8.3.3":
-  version: 8.3.3
-  resolution: "vite@npm:8.3.3"
+"vite@npm:^8.3.4":
+  version: 8.3.4
+  resolution: "vite@npm:8.3.4"
   dependencies:
     fsevents: "npm:~2.3.3"
     lightningcss: "npm:^1.33.0"
     picomatch: "npm:^4.0.7"
-    postcss: "npm:^8.5.28"
-    rolldown: "npm:~1.2.11"
+    postcss: "npm:^8.5.29"
+    rolldown: "npm:~1.2.12"
     tinyglobby: "npm:^0.2.17"
   peerDependencies:
     "@types/node": ^20.19.0 || >=22.12.0
@@ -26814,7 +26814,7 @@ __metadata:
       optional: true
   bin:
     vite: bin/vite.js
-  checksum: 10/61f8f07c3e941ca71133023b77b29afd91c003d58232b03d5f6fc89bb46cad2b234ef5c627c15b56ce0de2554fb911123b492c2e1319468ce423a19b98df8b98
+  checksum: 10/b1f7cbae6aae9ce8851c5ac86fde04b2193379d33eca99da653d4a4cff61705381a954bacc5a985aacad65ee72e783b19c12a2eca95ef3c97aeb91f147f371de
   languageName: node
   linkType: hard
 
