@@ -12,10 +12,13 @@ export default {
     retry: 'Retry',
     // Used as the label for the button that cancels an upload.
     cancel: 'Cancel',
+    cancelAllUploads: 'Cancel all uploads',
     // Used as the label for the button that pauses an upload.
     pause: 'Pause',
+    pauseAllUploads: 'Pause all uploads',
     // Used as the label for the button that resumes an upload.
     resume: 'Resume',
+    resumeAllUploads: 'Resume all uploads',
     // Used as the label for the button that resets the upload state after an upload
     done: 'Done',
     // When `showProgressDetails` is set, shows the number of files that have been fully uploaded so far.
