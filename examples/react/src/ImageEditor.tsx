@@ -127,5 +127,3 @@ export function ImageEditor({ file, close }: ImageEditorProps) {
     </div>
   )
 }
-
-export default ImageEditor
