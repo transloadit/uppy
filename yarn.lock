@@ -4896,7 +4896,7 @@ __metadata:
     jsonwebtoken: "npm:^9.0.3"
     lodash: "npm:^4.18.1"
     mime-types: "npm:^3.0.2"
-    moment-timezone: "npm:^0.6.2"
+    moment-timezone: "npm:^0.6.5"
     morgan: "npm:^1.12.0"
     nock: "npm:^14.0.16"
     node-schedule: "npm:^2.1.1"
@@ -10317,12 +10317,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"moment-timezone@npm:^0.6.2":
-  version: 0.6.4
-  resolution: "moment-timezone@npm:0.6.4"
+"moment-timezone@npm:^0.6.5":
+  version: 0.6.5
+  resolution: "moment-timezone@npm:0.6.5"
   dependencies:
     moment: "npm:^2.29.4"
-  checksum: 10/efa60fc46c83278e01921a229399883ddb2128df078fe282384f929fec7ed71f6101e6e21a14cb36ba8d03febfd9a769dff9e7ed017245d8b65e042abb71de39
+  checksum: 10/2ab437fa7ac3468eb8eaef968f5c3896ec429b8b9aa4b04cba1d36c368988f684afb7a0f0450621667916705608cf0e898050bb77a17438bd1afb5a7662d129e
   languageName: node
   linkType: hard
 
