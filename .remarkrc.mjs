@@ -48,6 +48,7 @@ const messageControlPreset = () => (tree, file) =>
 
 export default {
 	settings: {
+    bullet: '-',
 		emphasis: '_',
 		strong: '*',
 		'tab-size': 1,

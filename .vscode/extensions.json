@@ -1,3 +1,6 @@
 {
-  "recommendations": ["biomejs.biome"]
+  "recommendations": [
+    "biomejs.biome",
+    "unifiedjs.vscode-remark"
+  ]
 }

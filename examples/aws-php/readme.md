@@ -4,7 +4,7 @@ This example uses a server-side PHP endpoint to sign uploads to S3.
 
 ## Running It
 
-To run this example, make sure you've correctly installed the **repository
+To run this example, make sure you’ve correctly installed the **repository
 root**:
 
 ```bash
@@ -34,7 +34,7 @@ Then, again in the **repository root**, start this example by doing:
 corepack yarn workspace example-aws-php start
 ```
 
-The demo should now be available at http://localhost:8080.
+The demo should now be available at <http://localhost:8080>.
 
 You can use a different S3-compatible service like GCS by configuring that
 service in `~/.aws/config` and `~/.aws/credentials`, and then providing

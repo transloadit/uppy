@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@uppy/s3.svg?style=flat-square)](https://www.npmjs.com/package/@uppy/s3)
 
-> [!WARNING]
+> \[!WARNING]
 > Experimental. This plugin, `@uppy/transloadit-storage` and the Companion
 > endpoints they use will change incompatibly, also in minor releases, as they
 > make way for a standalone file manager.
