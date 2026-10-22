@@ -228,7 +228,7 @@ describe(
       const dropbox = read('docs/dropbox.md')
       assert.match(dropbox, /companionUrl/)
       assert.ok(
-        dropbox.includes('new RegExp(`^${value}$`);'),
+        dropbox.includes('new RegExp(`^${value}$`)'),
         'partial replacement changed JavaScript replacement tokens',
       )
       assert.equal(
