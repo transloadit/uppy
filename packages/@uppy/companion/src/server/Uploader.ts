@@ -19,7 +19,7 @@ import validator from 'validator'
 import type { CompanionRuntimeOptions } from '../types/companion-options.js'
 import emitter from './emitter/index.js'
 import headerSanitize from './header-blacklist.js'
-import { isRecord, toError } from './helpers/type-guards.js'
+import { asRecord, isRecord, toError } from './helpers/type-guards.js'
 import {
   getBucket,
   hasUploadUrlMatch,
@@ -476,7 +476,7 @@ export default class Uploader {
   }
 
   static reqToOptions(req: Request, size: number | undefined): UploaderOptions {
-    const body: Record<string, unknown> = isRecord(req.body) ? req.body : {}
+    const body = asRecord(req.body)
 
     const useFormDataValue = body['useFormData']
     const useFormData =

@@ -34,6 +34,7 @@ const invalids = [
   // no url at all or unsupported protocol
   null,
   '',
+  123,
   'ftp://url.myendpoint.com/files',
 ]
 
@@ -60,6 +61,14 @@ describe('url meta', () => {
       .send({
         url: urlCase,
       })
+      .expect(400)
+
+    expect(res.body.error).toBe('Invalid request body')
+  })
+
+  test('return 400 when there is no JSON body', async () => {
+    const res = await request(await getMockServer())
+      .post('/url/meta')
       .expect(400)
 
     expect(res.body.error).toBe('Invalid request body')
@@ -96,6 +105,14 @@ describe('url get', () => {
         endpoint: 'http://tusd.tusdemo.net/files',
         protocol: 'tus',
       })
+      .expect(400)
+
+    expect(res.body.error).toBe('Invalid request body')
+  })
+
+  test('return 400 when there is no JSON body', async () => {
+    const res = await request(await getMockServer())
+      .post('/url/get')
       .expect(400)
 
     expect(res.body.error).toBe('Invalid request body')

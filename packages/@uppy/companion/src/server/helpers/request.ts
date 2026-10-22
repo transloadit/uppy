@@ -23,11 +23,8 @@ const isDisallowedIP = (ipAddress: string): boolean =>
  * @param url - The URL to validate.
  * @param allowLocalUrls - Whether to allow local addresses.
  */
-const validateURL = (
-  url: string | null | undefined,
-  allowLocalUrls: boolean,
-): boolean => {
-  if (!url) {
+const validateURL = (url: unknown, allowLocalUrls: boolean): url is string => {
+  if (typeof url !== 'string' || !url) {
     return false
   }
 
