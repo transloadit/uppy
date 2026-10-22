@@ -77,8 +77,8 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' });
+  .use(Dashboard, { inline: true, target: 'body' })
+  .use(Tus, { endpoint: 'https://tusd.tusdemo.net/files/' });
 ```
 
 ### TypeScript
@@ -91,11 +91,11 @@ If you want the `response` argument on the `upload-success` event and
 import Tus, { type TusBody } from '@uppy/tus';
 
 type MyMeta = {
-	/* your added meta data */
+  /* your added meta data */
 };
 
 const uppy = new Uppy<MyMeta, TusBody>().use(Tus, {
-	endpoint: 'https://tusd.tusdemo.net/files/',
+  endpoint: 'https://tusd.tusdemo.net/files/',
 });
 
 const [firstFile] = uppy.getFiles();
@@ -138,7 +138,7 @@ Keys are header names, values are header values.
 
 ```js
 const headers = {
-	authorization: `Bearer ${window.getCurrentUserToken()}`,
+  authorization: `Bearer ${window.getCurrentUserToken()}`,
 };
 ```
 
@@ -148,10 +148,10 @@ header names, and values are header values.
 
 ```js
 const headers = (file) => {
-	return {
-		authorization: `Bearer ${window.getCurrentUserToken()}`,
-		expires: file.meta.expires,
-	};
+  return {
+    authorization: `Bearer ${window.getCurrentUserToken()}`,
+    expires: file.meta.expires,
+  };
 };
 ```
 
@@ -213,22 +213,22 @@ requests (to retrieve a new authentication token):
 import Uppy from '@uppy/core';
 import Tus from '@uppy/tus';
 new Uppy().use(Tus, {
-	endpoint: '',
-	async onBeforeRequest(req) {
-		const token = await getAuthToken();
-		req.setHeader('Authorization', `Bearer ${token}`);
-	},
-	onShouldRetry(err, retryAttempt, options, next) {
-		if (err?.originalResponse?.getStatus() === 401) {
-			return true;
-		}
-		return next(err);
-	},
-	async onAfterResponse(req, res) {
-		if (res.getStatus() === 401) {
-			await refreshAuthToken();
-		}
-	},
+  endpoint: '',
+  async onBeforeRequest(req) {
+    const token = await getAuthToken();
+    req.setHeader('Authorization', `Bearer ${token}`);
+  },
+  onShouldRetry(err, retryAttempt, options, next) {
+    if (err?.originalResponse?.getStatus() === 401) {
+      return true;
+    }
+    return next(err);
+  },
+  async onAfterResponse(req, res) {
+    if (res.getStatus() === 401) {
+      await refreshAuthToken();
+    }
+  },
 });
 ```
 
@@ -258,8 +258,8 @@ holding the underlying `xhr`.
 
 ```js
 uppy.on('upload-error', (file, error, response) => {
-	console.log(response?.status); // for instance 403
-	console.log(response?.body.xhr.responseText); // what the server sent back
+  console.log(response?.status); // for instance 403
+  console.log(response?.body.xhr.responseText); // what the server sent back
 });
 ```
 
@@ -290,22 +290,22 @@ the original file name and other meta data:
 
 ```json
 {
-	"ID": "00007a99d16d4eeb5a3e3c080b6f69da+JHZavdqPSK4VMtarg2yYcNiP8t_kDjN51lBYMJdEyr_wqEotVl8ZBRBSTnWKWenZBwHvbLNz5tQXYp2N7Vdol.04ysQAuw__suTJ4IsCljj0rjyWA6LvV4IwF5P2oom2",
-	"Size": 1679852,
-	"SizeIsDeferred": false,
-	"Offset": 0,
-	"MetaData": {
-		"filename": "cat.jpg",
-		"filetype": "image/jpeg"
-	},
-	"IsPartial": false,
-	"IsFinal": false,
-	"PartialUploads": null,
-	"Storage": {
-		"Bucket": "your-bucket",
-		"Key": "some-key",
-		"Type": "s3store"
-	}
+  "ID": "00007a99d16d4eeb5a3e3c080b6f69da+JHZavdqPSK4VMtarg2yYcNiP8t_kDjN51lBYMJdEyr_wqEotVl8ZBRBSTnWKWenZBwHvbLNz5tQXYp2N7Vdol.04ysQAuw__suTJ4IsCljj0rjyWA6LvV4IwF5P2oom2",
+  "Size": 1679852,
+  "SizeIsDeferred": false,
+  "Offset": 0,
+  "MetaData": {
+    "filename": "cat.jpg",
+    "filetype": "image/jpeg"
+  },
+  "IsPartial": false,
+  "IsFinal": false,
+  "PartialUploads": null,
+  "Storage": {
+    "Bucket": "your-bucket",
+    "Key": "some-key",
+    "Type": "s3store"
+  }
 }
 ```
 

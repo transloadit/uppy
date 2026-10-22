@@ -84,9 +84,9 @@ A unique identifier for this plugin (`string`, default: `'ThumbnailGenerator'`).
 
 ```js
 export default {
-	strings: {
-		generatingThumbnails: 'Generating thumbnails...',
-	},
+  strings: {
+    generatingThumbnails: 'Generating thumbnails...',
+  },
 };
 ```
 
@@ -160,9 +160,9 @@ Emitted with `file` and `preview` local url as arguments:
 
 ```js
 uppy.on('thumbnail:generated', (file, preview) => {
-	const img = document.createElement('img');
-	img.src = preview;
-	img.width = 100;
-	document.body.appendChild(img);
+  const img = document.createElement('img');
+  img.src = preview;
+  img.width = 100;
+  document.body.appendChild(img);
 });
 ```

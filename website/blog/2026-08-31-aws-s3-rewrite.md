@@ -77,15 +77,15 @@ the browser using SigV4. No server round-trip per request.
 
 ```js
 new Uppy().use(AwsS3, {
-	s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
-	getCredentials: async () => {
-		const res = await fetch('/api/s3/credentials');
-		return res.json();
-		// {
-		//   credentials: { accessKeyId, secretAccessKey, sessionToken },
-		//   region: 'us-east-1',
-		// }
-	},
+  s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
+  getCredentials: async () => {
+    const res = await fetch('/api/s3/credentials');
+    return res.json();
+    // {
+    //   credentials: { accessKeyId, secretAccessKey, sessionToken },
+    //   region: 'us-east-1',
+    // }
+  },
 });
 ```
 
@@ -103,13 +103,13 @@ the upload.
 
 ```js
 new Uppy().use(AwsS3, {
-	signRequest: async ({ method, key, uploadId, partNumber }) => {
-		const res = await fetch('/api/s3/sign', {
-			method: 'POST',
-			body: JSON.stringify({ method, key, uploadId, partNumber }),
-		});
-		return res.json(); // { url: 'https://presigned-url.example' }, key is optional
-	},
+  signRequest: async ({ method, key, uploadId, partNumber }) => {
+    const res = await fetch('/api/s3/sign', {
+      method: 'POST',
+      body: JSON.stringify({ method, key, uploadId, partNumber }),
+    });
+    return res.json(); // { url: 'https://presigned-url.example' }, key is optional
+  },
 });
 ```
 
@@ -119,7 +119,7 @@ Point the plugin at your Companion server. Nothing else to configure.
 
 ```js
 new Uppy().use(AwsS3, {
-	companionEndpoint: 'https://companion.example',
+  companionEndpoint: 'https://companion.example',
 });
 ```
 
@@ -149,14 +149,14 @@ else that speaks the S3 protocol:
 ```js
 // Cloudflare R2
 new Uppy().use(AwsS3, {
-	s3Endpoint: 'https://<account-id>.r2.cloudflarestorage.com/my-bucket',
-	getCredentials: () => fetchR2Credentials(),
+  s3Endpoint: 'https://<account-id>.r2.cloudflarestorage.com/my-bucket',
+  getCredentials: () => fetchR2Credentials(),
 });
 
 // AWS S3 with Transfer Acceleration
 new Uppy().use(AwsS3, {
-	s3Endpoint: 'https://my-bucket.s3-accelerate.amazonaws.com',
-	getCredentials: () => fetchCredentials(),
+  s3Endpoint: 'https://my-bucket.s3-accelerate.amazonaws.com',
+  getCredentials: () => fetchCredentials(),
 });
 ```
 
@@ -192,12 +192,12 @@ contributors can reproduce signing bugs locally without hitting AWS.
 ```js
 // Before
 new Uppy().use(AwsS3, {
-	endpoint: 'https://companion.example',
+  endpoint: 'https://companion.example',
 });
 
 // After
 new Uppy().use(AwsS3, {
-	companionEndpoint: 'https://companion.example',
+  companionEndpoint: 'https://companion.example',
 });
 ```
 
@@ -206,18 +206,18 @@ new Uppy().use(AwsS3, {
 ```js
 // Before
 new Uppy().use(AwsS3, {
-	endpoint: 'https://companion.example',
-	getTemporarySecurityCredentials: true,
+  endpoint: 'https://companion.example',
+  getTemporarySecurityCredentials: true,
 });
 
 // After
 new Uppy().use(AwsS3, {
-	s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
-	region: 'us-east-1',
-	getCredentials: async () => {
-		const res = await fetch('/api/s3/sts');
-		return res.json();
-	},
+  s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
+  region: 'us-east-1',
+  getCredentials: async () => {
+    const res = await fetch('/api/s3/sts');
+    return res.json();
+  },
 });
 ```
 
@@ -232,35 +232,35 @@ operation.
 ```js
 // Before: 6 separate callbacks
 new Uppy().use(AwsS3, {
-	getUploadParameters: (file) => {
-		/* ... */
-	},
-	createMultipartUpload: (file) => {
-		/* ... */
-	},
-	signPart: (file, partData) => {
-		/* ... */
-	},
-	completeMultipartUpload: (file, data) => {
-		/* ... */
-	},
-	abortMultipartUpload: (file, data) => {
-		/* ... */
-	},
-	listParts: (file, data) => {
-		/* ... */
-	},
+  getUploadParameters: (file) => {
+    /* ... */
+  },
+  createMultipartUpload: (file) => {
+    /* ... */
+  },
+  signPart: (file, partData) => {
+    /* ... */
+  },
+  completeMultipartUpload: (file, data) => {
+    /* ... */
+  },
+  abortMultipartUpload: (file, data) => {
+    /* ... */
+  },
+  listParts: (file, data) => {
+    /* ... */
+  },
 });
 
 // After: one callback that switches on the operation
 new Uppy().use(AwsS3, {
-	signRequest: async ({ method, key, uploadId, partNumber }) => {
-		const res = await fetch('/api/s3/sign', {
-			method: 'POST',
-			body: JSON.stringify({ method, key, uploadId, partNumber }),
-		});
-		return res.json(); // { url } or { url, key }
-	},
+  signRequest: async ({ method, key, uploadId, partNumber }) => {
+    const res = await fetch('/api/s3/sign', {
+      method: 'POST',
+      body: JSON.stringify({ method, key, uploadId, partNumber }),
+    });
+    return res.json(); // { url } or { url, key }
+  },
 });
 ```
 

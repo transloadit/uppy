@@ -82,19 +82,19 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/drag-drop/css/style.min.css';
 
 new Uppy().use(Form, {
-	target: '#my-form',
+  target: '#my-form',
 });
 ```
 
 ```html title="index.html"
 <form id="my-form" action="/submit" method="get">
-	<label for="name">Enter your name: </label>
-	<input type="text" name="name" required />
+  <label for="name">Enter your name: </label>
+  <input type="text" name="name" required />
 
-	<label for="dob">Date of birth: </label>
-	<input type="date" name="dob" />
+  <label for="dob">Date of birth: </label>
+  <input type="date" name="dob" />
 
-	<input type="submit" value="Save" />
+  <input type="submit" value="Save" />
 </form>
 ```
 

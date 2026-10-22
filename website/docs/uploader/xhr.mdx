@@ -68,8 +68,8 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(XHR, { endpoint: 'https://your-domain.com/upload' });
+  .use(Dashboard, { inline: true, target: 'body' })
+  .use(XHR, { endpoint: 'https://your-domain.com/upload' });
 ```
 
 ## API
@@ -133,7 +133,7 @@ names, values are header values.
 
 ```js
 const headers = {
-	authorization: `Bearer ${window.getCurrentUserToken()}`,
+  authorization: `Bearer ${window.getCurrentUserToken()}`,
 };
 ```
 
@@ -143,10 +143,10 @@ header names, and values are header values.
 
 ```js
 const headers = (file) => {
-	return {
-		authorization: `Bearer ${window.getCurrentUserToken()}`,
-		expires: file.meta.expires,
-	};
+  return {
+    authorization: `Bearer ${window.getCurrentUserToken()}`,
+    expires: file.meta.expires,
+  };
 };
 ```
 
@@ -189,7 +189,7 @@ To upload files on different fields, use
 
 ```js
 uppy.setFileState(fileID, {
-	xhrUpload: { fieldName: 'pic0' },
+  xhrUpload: { fieldName: 'pic0' },
 });
 ```
 
@@ -249,10 +249,10 @@ An optional function that will be called after a HTTP response has been received
 
 ```js
 export default {
-	strings: {
-		// Shown in the Informer if an upload is being canceled because it stalled for too long.
-		timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
-	},
+  strings: {
+    // Shown in the Informer if an upload is being canceled because it stalled for too long.
+    timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
+  },
 };
 ```
 
@@ -277,25 +277,25 @@ import XHR from '@uppy/xhr-upload';
 let token = null;
 
 async function getAuthToken() {
-	const res = await fetch('/auth/token');
-	const json = await res.json();
-	return json.token;
+  const res = await fetch('/auth/token');
+  const json = await res.json();
+  return json.token;
 }
 
 new Uppy().use(XHR, {
-	endpoint: '<your-endpoint>',
-	// Called again for every retry too.
-	async onBeforeRequest(xhr) {
-		if (!token) {
-			token = await getAuthToken();
-		}
-		xhr.setRequestHeader('Authorization', `Bearer ${token}`);
-	},
-	async onAfterResponse(xhr) {
-		if (xhr.status === 401) {
-			token = await getAuthToken();
-		}
-	},
+  endpoint: '<your-endpoint>',
+  // Called again for every retry too.
+  async onBeforeRequest(xhr) {
+    if (!token) {
+      token = await getAuthToken();
+    }
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+  },
+  async onAfterResponse(xhr) {
+    if (xhr.status === 401) {
+      token = await getAuthToken();
+    }
+  },
 });
 ```
 
@@ -313,9 +313,9 @@ do this:
 
 ```js
 uppy.on('file-added', (file) => {
-	uppy.setFileMeta(file.id, {
-		size: file.size,
-	});
+  uppy.setFileMeta(file.id, {
+    size: file.size,
+  });
 });
 ```
 
@@ -330,8 +330,8 @@ that should be sent.
 
 ```js
 uppy.use(XHRUpload, {
-	// Only send our own `size` metadata field.
-	allowedMetaFields: ['size'],
+  // Only send our own `size` metadata field.
+  allowedMetaFields: ['size'],
 });
 ```
 
@@ -364,8 +364,8 @@ convoluted:
 ```js
 // app.js
 uppy.use(XHRUpload, {
-	endpoint: '/upload.php',
-	fieldName: 'my_file',
+  endpoint: '/upload.php',
+  fieldName: 'my_file',
 });
 ```
 
@@ -380,12 +380,12 @@ move_uploaded_file($file_path, $_SERVER['DOCUMENT_ROOT'] . '/img/' . basename($f
 
 [formdata]: https://developer.mozilla.org/en-US/docs/Web/API/FormData
 [xhr.timeout]:
-	https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
+  https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/timeout
 [xhr.responsetype]:
-	https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
+  https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/responseType
 [uppy file]: /docs/uppy/#working-with-uppy-files
 [php.file-upload]: https://secure.php.net/manual/en/features.file-upload.php
 [php.multiple]:
-	https://secure.php.net/manual/en/features.file-upload.multiple.php
+  https://secure.php.net/manual/en/features.file-upload.multiple.php
 [tus-node-server]: https://github.com/tus/tus-node-server
 [tus]: https://tus.io/
