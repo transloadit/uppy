@@ -46,6 +46,14 @@ function resetTusMockState(): void {
   reset()
 }
 
+function setNextTusRequestUrl(url: string | undefined): void {
+  const setter = Reflect.get(tusClient, '__setNextRequestUrl')
+  if (typeof setter !== 'function') {
+    throw new Error('Expected tus mock to expose __setNextRequestUrl()')
+  }
+  setter(url)
+}
+
 afterEach(() => {
   nock.cleanAll()
   resetTusMockState()
@@ -442,12 +450,14 @@ describe('uploader', () => {
     includeSize = true,
     address = 'localhost',
     extraCompanionOpts,
+    headers,
   }: {
     metadata?: Record<string, unknown>
     useFormData?: boolean
     includeSize?: boolean
     address?: string
     extraCompanionOpts?: Record<string, unknown>
+    headers?: Record<string, unknown>
   } = {}) {
     const fileContent = Buffer.from('Some file content')
     const stream = Readable.from([fileContent])
@@ -464,6 +474,7 @@ describe('uploader', () => {
       metadata: metadata ?? {},
       pathPrefix,
       ...(useFormData != null && { useFormData }),
+      ...(headers != null && { headers }),
     }
 
     stream.pause()
@@ -699,6 +710,69 @@ describe('uploader', () => {
       }))
   })
 
+  describe('server-supplied upload URLs', () => {
+    const tusOpts = (uploadUrls: Array<string | RegExp> | undefined) =>
+      ({
+        companionOptions: {
+          ...companionOptions,
+          streamingUpload: true,
+          ...(uploadUrls && { uploadUrls }),
+        },
+        endpoint: 'https://tus.endpoint/files/',
+        protocol: 'tus',
+        size: 17,
+        metadata: {},
+        pathPrefix,
+      }) satisfies ConstructorParameters<typeof Uploader>[0]
+
+    const runTus = (uploadUrls: Array<string | RegExp> | undefined) => {
+      const stream = Readable.from([Buffer.alloc(17)])
+      stream.pause()
+      return new Uploader(tusOpts(uploadUrls)).uploadStream(
+        stream,
+        requireMockReq(),
+      )
+    }
+
+    test('a tus Location outside uploadUrls is refused', async () => {
+      setNextTusRequestUrl('http://127.0.0.1:9000/internal')
+      await expect(runTus(['https://tus.endpoint/files/'])).rejects.toThrow(
+        /allowed destinations/,
+      )
+    })
+
+    test('a tus Location inside uploadUrls still uploads', async () => {
+      setNextTusRequestUrl('https://tus.endpoint/files/abc')
+      await expect(
+        runTus(['https://tus.endpoint/files/']),
+      ).resolves.toMatchObject({ url: expect.any(String) })
+    })
+
+    test('any tus Location uploads when uploadUrls is unset', async () => {
+      setNextTusRequestUrl('http://anywhere.local/x')
+      await expect(runTus(undefined)).resolves.toMatchObject({
+        url: expect.any(String),
+      })
+    })
+
+    test('a multipart redirect outside uploadUrls is not followed', async () => {
+      nock('http://localhost')
+        .post('/')
+        .reply(302, '', { location: 'http://internal.local/admin' })
+      const internal = nock('http://internal.local')
+        .get('/admin')
+        .reply(200, 'secret')
+      await expect(
+        runMultipartTest({
+          useFormData: false,
+          extraCompanionOpts: { uploadUrls: ['http://localhost/'] },
+        }),
+      ).rejects.toThrow()
+      expect(internal.isDone()).toBe(false)
+      nock.cleanAll()
+    })
+  })
+
   test('upload functions with xhr protocol', async () => {
     nock('http://localhost').post('/').reply(200, 'OK')
     const ret = await runMultipartTest()
@@ -732,6 +806,25 @@ describe('uploader', () => {
         ? ret.extraData['response']['headers']
         : null
     expect(responseHeaders?.['header-a']).toBeUndefined() // headers sent to destination, not received back
+  })
+
+  test('a client cannot set forwarding headers, the operator can', async () => {
+    nock('http://localhost', { badheaders: ['forwarded', 'x-forwarded-host'] })
+      .post('/')
+      .matchHeader('x-forwarded-proto', 'https')
+      .matchHeader('x-client', 'kept')
+      .reply(200, () => '')
+
+    await expect(
+      runMultipartTest({
+        extraCompanionOpts: { uploadHeaders: { 'X-Forwarded-Proto': 'https' } },
+        headers: {
+          Forwarded: 'host=evil.example',
+          'X-Forwarded-Host': 'evil.example',
+          'x-client': 'kept',
+        },
+      }),
+    ).resolves.toMatchObject({ extraData: { bytesUploaded: 17 } })
   })
 
   const formDataNoMetaMatch =

@@ -328,11 +328,19 @@ export default class Uploader {
   constructor(optionsIn: UploaderOptions) {
     const destinations = validateOptions(optionsIn)
 
+    // A client must not set forwarding headers: the upload server builds its
+    // Location URLs from them. The operator's uploadHeaders may.
+    const isForwarding = (name: string) =>
+      /^(?:forwarded|x-forwarded-.*)$/i.test(name)
     const options = {
       ...optionsIn,
       ...destinations,
       headers: {
-        ...optionsIn.headers,
+        ...Object.fromEntries(
+          Object.entries(optionsIn.headers ?? {}).filter(
+            ([name]) => !isForwarding(name),
+          ),
+        ),
         ...optionsIn.companionOptions.uploadHeaders,
       },
     } satisfies UploaderOptions
@@ -419,6 +427,20 @@ export default class Uploader {
   #uploadState = states.idle
 
   #canceled = false
+
+  /**
+   * uploadUrls is checked once, on the endpoint the client named. The tus
+   * server's creation response can then point the upload at a different
+   * absolute URL (e.g. via a client-chosen X-Forwarded-Host), and got would
+   * follow a multipart redirect, with no further check. Re-check every URL we
+   * are about to connect to.
+   */
+  #assertAllowedDestination(url: string): void {
+    const allowedUrls = this.options.companionOptions.uploadUrls
+    if (allowedUrls && !hasUploadUrlMatch(url, allowedUrls)) {
+      throw new Error('upload URL does not match any allowed destinations')
+    }
+  }
 
   abortReadStream(err: Error): void {
     this.#uploadState = states.done
@@ -820,6 +842,9 @@ export default class Uploader {
         chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
+        onBeforeRequest: (req: { getURL: () => string }) => {
+          this.#assertAllowedDestination(req.getURL())
+        },
         metadata: {
           // file name and type as required by the tusd tus server
           // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646
@@ -924,6 +949,18 @@ export default class Uploader {
       // PUT on network errors by default; the retry fired after this promise
       // had settled and threw outside any handler, taking the process down.
       retry: { limit: 0 },
+      hooks: {
+        beforeRedirect: [
+          (options) => {
+            const { url } = options
+            if (url != null) {
+              this.#assertAllowedDestination(
+                typeof url === 'string' ? url : url.href,
+              )
+            }
+          },
+        ],
+      },
     }
 
     if (this.options.useFormData) {
