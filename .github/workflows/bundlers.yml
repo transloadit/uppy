@@ -28,8 +28,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '^24.22.1'
-          check-latest: true
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -92,8 +93,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '^24.22.1'
-          check-latest: true
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -138,8 +140,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '^24.22.1'
-          check-latest: true
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -186,8 +189,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '^24.22.1'
-          check-latest: true
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -222,8 +226,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '^24.22.1'
-          check-latest: true
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
@@ -253,8 +258,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '^24.22.1'
-          check-latest: true
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Download uppy tarball
         uses: actions/download-artifact@v7
         with:
