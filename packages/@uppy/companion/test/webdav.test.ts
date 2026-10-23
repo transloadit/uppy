@@ -130,6 +130,26 @@ describe('webdav download', () => {
     expect((err as ProviderApiError).statusCode).toBe(404)
   })
 
+  test('destroying the download stream closes the upstream connection', async () => {
+    let upstreamClosed = false
+    handler = statThenGet((req, res) => {
+      req.socket.once('close', () => {
+        upstreamClosed = true
+      })
+      res.writeHead(200, { 'content-type': 'application/octet-stream' })
+      // trickle, never end, so the body is still arriving when we abandon it
+      res.write(Buffer.alloc(16 * 1024))
+    })
+    const { stream } = await provider().download({
+      id: 'big.bin',
+      providerUserSession: { webdavUrl },
+    } as never)
+    await new Promise<void>((resolve) => stream.once('data', () => resolve()))
+    stream.destroy()
+    await new Promise((r) => setTimeout(r, 200))
+    expect(upstreamClosed).toBe(true)
+  })
+
   test('streams a successful GET', async () => {
     handler = statThenGet((_req, res) => {
       res.writeHead(200, { 'content-type': 'text/plain' })

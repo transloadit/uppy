@@ -36,34 +36,51 @@ export async function startDownUpload({
       ? maybeSize
       : undefined
 
-  // if not, we may need to explicitly get the size
-  // note that getSize might also return undefined/null, which is usually fine, it just means that
-  // the size is unknown and we cannot send the size to the Uploader
-  if (size == null && getSize != null) {
-    size = await getSize()
-  }
-  const { clientSocketConnectTimeout } = req.companion.options
+  // download() opened the stream before the Uploader validated the request.
+  // Anything thrown from here on (a refused destination, a size lookup error)
+  // must destroy the stream, or its socket and decompressor leak until restart.
+  let uploader: Uploader
+  try {
+    // if not, we may need to explicitly get the size
+    // note that getSize might also return undefined/null, which is usually fine, it just means that
+    // the size is unknown and we cannot send the size to the Uploader
+    if (size == null && getSize != null) {
+      size = await getSize()
+    }
 
-  logger.debug('Instantiating uploader.', undefined, req.id)
-  const uploader = new Uploader(Uploader.reqToOptions(req, size ?? undefined))
+    logger.debug('Instantiating uploader.', undefined, req.id)
+    uploader = new Uploader(Uploader.reqToOptions(req, size ?? undefined))
+  } catch (err) {
+    stream.destroy()
+    throw err
+  }
+
+  const { clientSocketConnectTimeout } = req.companion.options
 
   // "Forking" off the upload operation to background, so we can return the http request:
   ;(async () => {
-    // wait till the client has connected to the socket, before starting
-    // the download, so that the client can receive all download/upload progress.
-    logger.debug(
-      'Waiting for socket connection before beginning remote download/upload.',
-      undefined,
-      req.id,
-    )
-    await uploader.awaitReady(clientSocketConnectTimeout)
-    logger.debug(
-      'Socket connection received. Starting remote download/upload.',
-      undefined,
-      req.id,
-    )
+    try {
+      // wait till the client has connected to the socket, before starting
+      // the download, so that the client can receive all download/upload progress.
+      logger.debug(
+        'Waiting for socket connection before beginning remote download/upload.',
+        undefined,
+        req.id,
+      )
+      await uploader.awaitReady(clientSocketConnectTimeout)
+      logger.debug(
+        'Socket connection received. Starting remote download/upload.',
+        undefined,
+        req.id,
+      )
 
-    await uploader.tryUploadStream(stream, req)
+      await uploader.tryUploadStream(stream, req)
+    } catch (err) {
+      // e.g. the client's socket never connected within the timeout. The
+      // stream was never handed to tryUploadStream, so destroy it here.
+      if (!stream.destroyed) stream.destroy()
+      throw err
+    }
   })().catch((err) => logger.error(err))
 
   // Respond the request

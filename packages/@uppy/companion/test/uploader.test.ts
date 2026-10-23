@@ -466,6 +466,62 @@ describe('uploader', () => {
     })
   })
 
+  test('a refused import destroys the download stream', async () => {
+    // download() runs before the Uploader validates options. A refused import
+    // must not leave the opened stream and its socket behind.
+    const req = requireMockReq()
+    const prevBody = req.body
+    const prevCompanion = req.companion
+    req.body = { endpoint: 'http://not-allowed.local/files', protocol: 'tus' }
+    req.companion = {
+      ...prevCompanion,
+      options: { ...runtimeOptions, uploadUrls: ['http://allowed.local/'] },
+    }
+    const stream = new PassThrough()
+    try {
+      await expect(
+        startDownUpload({
+          req,
+          res: { status: () => ({ json: vi.fn() }) } as never,
+          getSize: undefined,
+          download: async () => ({ stream, size: 1 }),
+        }),
+      ).rejects.toThrow(ValidationError)
+      expect(stream.destroyed).toBe(true)
+    } finally {
+      req.body = prevBody
+      req.companion = prevCompanion
+    }
+  })
+
+  test('an import whose socket never connects destroys the download stream', async () => {
+    const req = requireMockReq()
+    const prevBody = req.body
+    const prevCompanion = req.companion
+    req.body = { endpoint: 'http://url.myendpoint.com/files', protocol: 'tus' }
+    req.companion = {
+      ...prevCompanion,
+      options: { ...runtimeOptions, clientSocketConnectTimeout: 1 },
+    }
+    const stream = new PassThrough()
+    const json = vi.fn()
+    try {
+      await startDownUpload({
+        req,
+        res: { status: () => ({ json }) } as never,
+        getSize: undefined,
+        download: async () => ({ stream, size: 1 }),
+      })
+      // The forked upload waits for the socket, times out after 1 ms and must
+      // destroy the never-claimed stream.
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      expect(stream.destroyed).toBe(true)
+    } finally {
+      req.body = prevBody
+      req.companion = prevCompanion
+    }
+  })
+
   test('does not retry a failed PUT upload', async () => {
     // got retries PUT (not POST) on network errors by default. The body here is
     // a one-shot stream, so the retry threw out of band after the promise had
