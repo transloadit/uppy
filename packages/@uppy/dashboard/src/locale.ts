@@ -47,6 +47,18 @@ export default {
     retryUpload: 'Retry upload',
     // Used as the hover text and screen reader label for the buttons to cancel uploads.
     cancelUpload: 'Cancel upload',
+    // Used as the screen reader label for the buttons to pause uploads for a specific file.
+    pauseUploadWithFilename: 'Pause upload %{file}',
+    // Used as the screen reader label for the buttons to resume uploads for a specific file.
+    resumeUploadWithFilename: 'Resume upload %{file}',
+    // Used as the screen reader label for the buttons to cancel uploads for a specific file.
+    cancelUploadWithFilename: 'Cancel upload %{file}',
+    // Used as the screen reader label for the button to cancel all uploads.
+    cancelAllUploads: 'Cancel all uploads',
+    // Used as the screen reader label for the button to pause all uploads.
+    pauseAllUploads: 'Pause all uploads',
+    // Used as the screen reader label for the button to resume all uploads.
+    resumeAllUploads: 'Resume all uploads',
     // Used in a title, how many files are currently selected
     xFilesSelected: {
       0: '%{smart_count} file selected',
