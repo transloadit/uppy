@@ -59,6 +59,7 @@ type WebdavListItem = {
  * Adapter for WebDAV servers that support simple auth (non-OAuth).
  */
 export default class WebdavProvider extends Provider<WebdavUserSession> {
+  requestTimeoutMs = 30_000
   static override get hasSimpleAuth() {
     return true
   }
@@ -130,7 +131,9 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
 
       const client = await this.getClient({ providerUserSession })
       // call the list operation as a way to validate the url
-      await client.getDirectoryContents(defaultDirectory)
+      await client.getDirectoryContents(defaultDirectory, {
+        signal: AbortSignal.timeout(this.requestTimeoutMs),
+      })
 
       return providerUserSession
     } catch (err) {
@@ -187,6 +190,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         (typeof query?.['directory'] === 'string'
           ? query?.['directory']
           : undefined) || '/',
+        { signal: AbortSignal.timeout(this.requestTimeoutMs) },
       )
 
       dir.forEach((item) => {
@@ -239,7 +243,9 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       'provider.webdav.download.error',
       async () => {
         const client = await this.getClient({ providerUserSession })
-        const statResult = await client.stat(id)
+        const statResult = await client.stat(id, {
+          signal: AbortSignal.timeout(this.requestTimeoutMs),
+        })
         const stat = 'data' in statResult ? statResult.data : statResult
         // createReadStream() returns a PassThrough before the GET is answered
         // and reports a refused GET as an 'error' event on it; nothing listens

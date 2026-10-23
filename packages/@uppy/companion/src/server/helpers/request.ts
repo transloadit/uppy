@@ -153,6 +153,20 @@ function getProtectedHttpAgent({
 
 export { getProtectedHttpAgent }
 
+/**
+ * Timeouts for requests to client-chosen servers (URL import, WebDAV). A
+ * server that accepts the connection and never answers used to pin a socket
+ * and its memory indefinitely. These bound the phases up to the response
+ * headers; `read` is deliberately left unbounded, since a legitimate download
+ * may be slow.
+ */
+export const UPSTREAM_TIMEOUTS = {
+  lookup: 10_000,
+  connect: 10_000,
+  secureConnect: 10_000,
+  response: 30_000,
+} as const
+
 function getProtectedGot({ allowLocalIPs }: { allowLocalIPs: boolean }) {
   const HttpAgent = getProtectedHttpAgent({ protocol: 'http', allowLocalIPs })
   const HttpsAgent = getProtectedHttpAgent({
@@ -162,7 +176,10 @@ function getProtectedGot({ allowLocalIPs }: { allowLocalIPs: boolean }) {
   const httpAgent = new HttpAgent()
   const httpsAgent = new HttpsAgent()
 
-  return got.extend({ agent: { http: httpAgent, https: httpsAgent } })
+  return got.extend({
+    agent: { http: httpAgent, https: httpsAgent },
+    timeout: { ...UPSTREAM_TIMEOUTS },
+  })
 }
 
 export { getProtectedGot }

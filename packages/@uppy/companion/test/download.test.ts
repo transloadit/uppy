@@ -3,6 +3,11 @@ import type { AddressInfo } from 'node:net'
 import { createGzip } from 'node:zlib'
 import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
 import { downloadURL } from '../dist/server/download.js'
+import {
+  getProtectedGot,
+  openProtectedStream,
+  UPSTREAM_TIMEOUTS,
+} from '../dist/server/helpers/request.js'
 
 type Handler = (req: http.IncomingMessage, res: http.ServerResponse) => void
 
@@ -128,6 +133,25 @@ describe('downloadURL', () => {
     } finally {
       other.close()
     }
+  })
+
+  test('got clients carry header timeouts but no read timeout', () => {
+    const { timeout } = getProtectedGot({ allowLocalIPs: true }).defaults
+      .options
+    expect(timeout).toMatchObject(UPSTREAM_TIMEOUTS)
+    expect(timeout.request).toBeUndefined()
+    expect(timeout.read).toBeUndefined()
+  })
+
+  test('a server that never answers times out instead of pinning the request', async () => {
+    handler = () => {
+      // accept the connection, never respond
+    }
+    await expect(
+      openProtectedStream(`${baseUrl}/hole`, true, {
+        timeout: { response: 200 },
+      }),
+    ).rejects.toThrow(/timed out|Timeout/i)
   })
 
   test('follows a redirect', async () => {

@@ -106,6 +106,22 @@ describe('webdav response bounds', () => {
   })
 })
 
+describe('webdav request timeouts', () => {
+  test('simpleAuth times out on a server that never answers', async () => {
+    handler = () => {
+      // accept, never respond
+    }
+    const provider = new WebdavProvider({ allowLocalUrls: true })
+    provider.requestTimeoutMs = 200
+    await expect(
+      provider.simpleAuth({
+        requestBody: { form: { webdavUrl } },
+        companion: {} as never,
+      }),
+    ).rejects.toThrow(/abort|timed out|timeout/i)
+  })
+})
+
 describe('webdav download', () => {
   const statThenGet = (onGet: Handler): Handler => {
     return (req, res) => {
