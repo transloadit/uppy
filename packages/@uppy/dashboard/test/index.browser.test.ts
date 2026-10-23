@@ -218,7 +218,9 @@ test('onDrop runs while the drop event is dispatched', async () => {
     },
   })
 
-  await expect.element(page.getByText('Drop files here')).toBeVisible()
+  await expect
+    .element(page.getByText('Drop files here or browse files'))
+    .toBeVisible()
   const dataTransfer = new DataTransfer()
   dataTransfer.items.add(new File(['Hello, World!'], 'test.txt'))
   document
