@@ -38,6 +38,6 @@ import * as deprecatedTokenStorage from './tokenStorage.js'
 
 /**
  * @deprecated
- *   Use global `localStorage` instead.
+ *   Use `defaultStorage` instead.
  */
 export const tokenStorage = deprecatedTokenStorage
