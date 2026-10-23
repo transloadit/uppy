@@ -3,7 +3,11 @@ import { once } from 'node:events'
 import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { EventEmitter, Readable as NodeReadableStream } from 'node:stream'
+import {
+  type EventEmitter,
+  type Readable as NodeReadableStream,
+  Transform,
+} from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
@@ -226,6 +230,49 @@ function validateOptions(
     ...(endpoint != null && { endpoint }),
     ...(uploadUrl != null && { uploadUrl }),
   }
+}
+
+/**
+ * Caps a one-shot body stream at the announced Content-Length. got sends the
+ * length we set and pipes the stream; nothing stopped surplus bytes going out
+ * on the same keep-alive socket (the destination read them as the next
+ * request) or caught a body that ended early (the destination waited). Fail
+ * the upload on either mismatch before the extra bytes are written.
+ */
+function limitToAnnouncedSize(
+  stream: NodeReadableStream,
+  size: number,
+  onFramingError: (err: Error) => void,
+): NodeReadableStream {
+  let seen = 0
+  const limiter = new Transform({
+    transform(chunk: Buffer, _enc, cb) {
+      seen += chunk.length
+      if (seen > size) {
+        const err = new Error(
+          `source sent more than the announced ${size} bytes`,
+        )
+        onFramingError(err)
+        cb(err)
+        return
+      }
+      cb(null, chunk)
+    },
+    flush(cb) {
+      if (seen < size) {
+        const err = new Error(
+          `source sent ${seen} of the announced ${size} bytes`,
+        )
+        onFramingError(err)
+        cb(err)
+        return
+      }
+      cb()
+    },
+  })
+  stream.on('error', (err) => limiter.destroy(err))
+  stream.pipe(limiter)
+  return limiter
 }
 
 const states = {
@@ -867,6 +914,7 @@ export default class Uploader {
     })
 
     const url = this.options.endpoint
+    let framingError: Error | undefined
     const reqOptions: OptionsOfTextResponseBody = {
       headers: headerSanitize(this.options.headers),
       isStream: false,
@@ -904,7 +952,12 @@ export default class Uploader {
           'content-length': `${this.size}`,
         }
       }
-      reqOptions.body = stream
+      reqOptions.body =
+        this.size != null
+          ? limitToAnnouncedSize(stream, this.size, (err) => {
+              framingError = err
+            })
+          : stream
     }
 
     try {
@@ -931,6 +984,9 @@ export default class Uploader {
         extraData: { response: getRespObj(response), bytesUploaded },
       }
     } catch (err) {
+      // A body that did not match the announced size is our own error; surface
+      // it rather than got's generic request failure.
+      if (framingError) throw framingError
       logger.error(err, 'upload.multipart.error')
       const errObj = isRecord(err) ? err : null
       const response =

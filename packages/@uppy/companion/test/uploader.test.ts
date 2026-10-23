@@ -641,6 +641,64 @@ describe('uploader', () => {
     }
   }, 10_000)
 
+  describe('raw multipart body framing', () => {
+    async function withServer(
+      fn: (url: string, seen: string[]) => Promise<void>,
+    ) {
+      const seen: string[] = []
+      const server = http.createServer((req, res) => {
+        seen.push(req.url ?? '')
+        req.resume()
+        req.on('end', () => res.end('ok'))
+      })
+      await new Promise<void>((r) => server.listen(0, '127.0.0.1', r))
+      try {
+        await fn(
+          `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
+          seen,
+        )
+      } finally {
+        server.close()
+      }
+    }
+    const upload = (url: string, chunks: Buffer[], size: number) => {
+      const stream = Readable.from(chunks)
+      stream.pause() // as download.ts hands it over
+      return new Uploader({
+        companionOptions: { ...companionOptions, streamingUpload: true },
+        endpoint: url,
+        protocol: 'multipart',
+        useFormData: false,
+        size,
+        metadata: {},
+        pathPrefix,
+      }).uploadStream(stream, requireMockReq())
+    }
+
+    test('bytes beyond the announced size never reach the destination', () =>
+      withServer(async (url, seen) => {
+        // With a keep-alive connection, surplus bytes after Content-Length
+        // are parsed by the destination as the next request.
+        const body = Buffer.from('Some file content') // 17 bytes
+        const extra = Buffer.from('GET /smuggled HTTP/1.1\r\nHost: x\r\n\r\n')
+        await expect(upload(url, [body, extra], body.length)).rejects.toThrow(
+          /more than the announced 17 bytes/,
+        )
+        await new Promise((r) => setTimeout(r, 200))
+        // The upload may or may not reach the server as a request at all,
+        // depending on when the abort lands; what must never happen is the
+        // surplus bytes being parsed there as a second (smuggled) request.
+        expect(seen).not.toContain('/smuggled')
+      }))
+
+    test('a body shorter than announced fails instead of leaving the destination waiting', () =>
+      withServer(async (url) => {
+        await expect(upload(url, [Buffer.from('short')], 17)).rejects.toThrow(
+          /sent 5 of the announced 17 bytes/,
+        )
+      }))
+  })
+
   test('upload functions with xhr protocol', async () => {
     nock('http://localhost').post('/').reply(200, 'OK')
     const ret = await runMultipartTest()
