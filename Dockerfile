@@ -5,7 +5,7 @@ RUN if [ "$(uname -m)" = 'aarch64' ]; then mkdir -p /usr/local/sbin/ && ln -s /u
 
 RUN apk add --no-cache --virtual .build-deps build-base python3 libgcc libstdc++ git
 
-RUN npm install --global corepack@latest
+RUN npm install --global corepack@0.36.0
 RUN corepack enable
 
 COPY . /app/
