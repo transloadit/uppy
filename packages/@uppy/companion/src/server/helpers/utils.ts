@@ -377,3 +377,14 @@ export const truncateFilename = (
   }
   return filename.slice(maxFilenameLength * -1)
 }
+
+/**
+ * An id as one URL path segment. Encoding leaves `.` and `..` as they are,
+ * and URL resolution would turn them into steps up the provider's API path.
+ */
+export function pathSegment(id: string): string {
+  if (id === '.' || id === '..') {
+    throw Object.assign(new Error('Invalid id'), { name: 'ValidationError' })
+  }
+  return encodeURIComponent(id)
+}
