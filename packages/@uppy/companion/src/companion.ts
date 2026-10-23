@@ -55,13 +55,20 @@ export function setLoggerProcessName({
   }
 }
 
+// Only grant's OAuth callback response needs the error-body rewrite below.
+// express-interceptor replaces res.write on every response it is mounted on
+// with one that returns undefined, which strips backpressure from streamed
+// responses (e.g. thumbnails), so it must run on this path alone.
+export const shouldInterceptGrantError = (path: string): boolean =>
+  /^\/connect\/\w+\/callback/.test(path)
+
 // intercepts grantJS' default response error when something goes
 // wrong during oauth process.
 const interceptGrantErrorResponse = interceptor((req, res) => {
   return {
     isInterceptable: () => {
       // match grant.js' callback url
-      return /^\/connect\/\w+\/callback/.test(req.path)
+      return shouldInterceptGrantError(req.path)
     },
     intercept: (body, send) => {
       const unwantedBody =
@@ -144,7 +151,11 @@ export function app(optionsArg: CompanionInitOptions): {
 
   app.use(cookieParser()) // server tokens are added to cookies
 
-  app.use(interceptGrantErrorResponse)
+  app.use((req, res, next) =>
+    shouldInterceptGrantError(req.path)
+      ? interceptGrantErrorResponse(req, res, next)
+      : next(),
+  )
 
   // override provider credentials at request time
   // Making `POST` request to the `/connect/:provider{/:override}` route requires a form body parser middleware:
