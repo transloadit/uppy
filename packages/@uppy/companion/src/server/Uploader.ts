@@ -132,7 +132,20 @@ export class ValidationError extends Error {
   override name = 'ValidationError'
 }
 
-function validateOptions(options: UploaderOptions): void {
+/**
+ * Validates the upload options and returns the destination URLs normalized
+ * through WHATWG URL serialization.
+ *
+ * The allowlist check parsed the URL with `new URL()` while the raw string
+ * went on to tus-js-client / Node, which parse with legacy `url.parse()`. The
+ * two disagree on some spellings (`http://\\x@host/`), so a destination could
+ * pass the check as one host and be connected as another. Checking and
+ * connecting with the same normalized string removes the gap; it also
+ * resolves `..` segments before a path-anchored RegExp entry sees them.
+ */
+function validateOptions(
+  options: UploaderOptions,
+): Pick<UploaderOptions, 'endpoint' | 'uploadUrl'> {
   // validate HTTP Method (optional)
   if (options.httpMethod) {
     if (typeof options.httpMethod !== 'string') {
@@ -172,34 +185,46 @@ function validateOptions(options: UploaderOptions): void {
     throw new ValidationError('unsupported protocol specified')
   }
 
+  if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
+    throw new ValidationError('incorrect chunkSize')
+  }
+
   // s3 uploads don't require upload destination
   // validation, because the destination is determined
   // by the server's s3 config
-  if (options.protocol !== PROTOCOLS.s3Multipart) {
-    if (!options.endpoint && !options.uploadUrl) {
-      throw new ValidationError('no destination specified')
-    }
+  if (options.protocol === PROTOCOLS.s3Multipart) return {}
 
-    const validateUrl = (url: string | undefined): void => {
-      if (url == null) return
-      const validatorOpts = { require_protocol: true, require_tld: false }
-      if (!validator.isURL(url, validatorOpts)) {
-        throw new ValidationError('invalid destination url')
-      }
-
-      const allowedUrls = options.companionOptions.uploadUrls
-      if (allowedUrls && !hasUploadUrlMatch(url, allowedUrls)) {
-        throw new ValidationError(
-          'upload destination does not match any allowed destinations',
-        )
-      }
-    }
-
-    ;[options.endpoint, options.uploadUrl].forEach(validateUrl)
+  if (!options.endpoint && !options.uploadUrl) {
+    throw new ValidationError('no destination specified')
   }
 
-  if (options.chunkSize != null && typeof options.chunkSize !== 'number') {
-    throw new ValidationError('incorrect chunkSize')
+  const normalizeUrl = (url: string | undefined): string | undefined => {
+    if (url == null) return undefined
+    const validatorOpts = { require_protocol: true, require_tld: false }
+    if (!validator.isURL(url, validatorOpts)) {
+      throw new ValidationError('invalid destination url')
+    }
+    let normalized: string
+    try {
+      normalized = new URL(url).href
+    } catch {
+      throw new ValidationError('invalid destination url')
+    }
+
+    const allowedUrls = options.companionOptions.uploadUrls
+    if (allowedUrls && !hasUploadUrlMatch(normalized, allowedUrls)) {
+      throw new ValidationError(
+        'upload destination does not match any allowed destinations',
+      )
+    }
+    return normalized
+  }
+
+  const endpoint = normalizeUrl(options.endpoint)
+  const uploadUrl = normalizeUrl(options.uploadUrl)
+  return {
+    ...(endpoint != null && { endpoint }),
+    ...(uploadUrl != null && { uploadUrl }),
   }
 }
 
@@ -254,10 +279,11 @@ export default class Uploader {
    * @param optionsIn
    */
   constructor(optionsIn: UploaderOptions) {
-    validateOptions(optionsIn)
+    const destinations = validateOptions(optionsIn)
 
     const options = {
       ...optionsIn,
+      ...destinations,
       headers: {
         ...optionsIn.headers,
         ...optionsIn.companionOptions.uploadHeaders,

@@ -208,6 +208,47 @@ describe('uploader', () => {
     new Uploader(opts) // no validation error
   })
 
+  test('uploader matches and stores the normalized destination', () => {
+    // WHATWG URL and legacy url.parse disagree on this spelling; Companion
+    // must match and connect with one and the same string.
+    const uploader = new Uploader({
+      companionOptions: {
+        ...companionOptions,
+        uploadUrls: ['http://tusd.internal:1080/files/'],
+      },
+      endpoint: 'http://\\x@tusd.internal:1080/files/',
+      protocol: 'tus',
+      size: 1,
+      pathPrefix,
+      metadata: {},
+    })
+    expect(uploader.options.endpoint).toBe('http://x@tusd.internal:1080/files/')
+  })
+
+  test.each([
+    'https://uploads.myendpoint.com/files/../admin',
+    'https://uploads.myendpoint.com/files/%2e%2e/admin',
+  ])('uploader resolves dot segments before matching uploadUrls: %s', (endpoint) => {
+    expect(
+      () =>
+        new Uploader({
+          companionOptions: {
+            ...companionOptions,
+            uploadUrls: [/^https:\/\/uploads\.myendpoint\.com\/files\//],
+          },
+          endpoint,
+          protocol: 'tus',
+          size: 1,
+          pathPrefix,
+          metadata: {},
+        }),
+    ).toThrow(
+      new ValidationError(
+        'upload destination does not match any allowed destinations',
+      ),
+    )
+  })
+
   test('uploader validates uploadUrl in addition to endpoint', () => {
     const opts = {
       companionOptions: {
