@@ -521,8 +521,8 @@ export default function Home(): JSX.Element {
                 <AgentPrompt className={styles.heroAgent} />
               : <>
                   {/* The package manager is a property of the command, so it docks
-                    to the field as a tab strip rather than repeating the pill
-                    treatment used for the framework choice above. */}
+                      to the field as a tab strip rather than repeating the pill
+                      treatment used for the framework choice above. */}
                   <div className={styles.field}>
                     <div
                       className={styles.managers}
