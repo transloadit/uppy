@@ -40,6 +40,7 @@
     "remark-directive": "^4.0.0",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
+    "remark-lint-no-undefined-references": "^5.0.0",
     "remark-preset-lint-recommended": "^7.0.1",
     "remark-retext": "^6.0.1",
     "retext-english": "^5.0.0",
