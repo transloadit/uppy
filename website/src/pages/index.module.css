@@ -10,7 +10,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   /* pink-700, not pink-600: at 14px this is small text, so it needs 4.5:1, and
-	   pink-600 lands on 4.44 against the band's ink-50 ground. */
+     pink-600 lands on 4.44 against the band's ink-50 ground. */
   color: var(--u-pink-700);
   margin: 0 0 0.75rem;
 }
@@ -99,10 +99,10 @@
   position: relative;
   isolation: isolate;
   /* Bottom padding is not decoration: the hero clips overflow (for .glow), and
-	   without it the uploader card's drop shadow is cut off along its bottom
-	   edge and the card stops reading as lifted. */
+     without it the uploader card's drop shadow is cut off along its bottom
+     edge and the card stops reading as lifted. */
   /* The hero owns the run-out to the next section, so the ambient layers have
-	   room to dissolve instead of stopping on a hard edge. */
+     room to dissolve instead of stopping on a hard edge. */
   padding: 5rem 1.5rem 9rem;
   text-align: center;
   overflow: hidden;
@@ -144,8 +144,8 @@
   pointer-events: none;
   contain: layout paint;
   /* Two masks intersected: sparks dissolve at the top and bottom of the band,
-	   and also toward the left and right edges so no lone 1px tick is left
-	   stranded in the page margin looking like a stray border. */
+     and also toward the left and right edges so no lone 1px tick is left
+     stranded in the page margin looking like a stray border. */
   mask-image:
     linear-gradient(
       to bottom,
@@ -185,7 +185,7 @@
   top: 100%;
   width: 1px;
   /* Four stops: transparent tail, body, bright head, then back to transparent
-	   so the leading tip fades instead of ending on a guillotined 1px cap. */
+     so the leading tip fades instead of ending on a guillotined 1px cap. */
   background: linear-gradient(
     to top,
     rgb(255 51 119 / 0%) 0%,
@@ -250,7 +250,7 @@
   opacity: 0.035;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   /* Without this the texture ends on the hero's bottom edge and draws a
-	   visible seam across the page. It has to dissolve, not stop. */
+     visible seam across the page. It has to dissolve, not stop. */
   mask-image: linear-gradient(to bottom, #000 45%, transparent 92%);
   -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 92%);
 }
@@ -355,7 +355,7 @@
   color: var(--u-ink-500);
   cursor: pointer;
   /* Covers the strip's bottom hairline so the active tab merges into the
-	   field below it. */
+     field below it. */
   margin-bottom: -1px;
   padding-bottom: calc(0.4rem + 1px);
   border-right: 1px solid var(--u-line);
@@ -541,10 +541,10 @@
   }
 
   /* Optical, not structural: dead-centre against the uploader sits a touch low
-	   next to the framework pills, so the block rides 12px high. Deliberately px
-	   — the root font-size is 18px here, so 0.75rem would have been 13.5. And a
-	   transform rather than a margin because the column is centred: a margin
-	   would only move it half as far, being shared between the two sides. */
+     next to the framework pills, so the block rides 12px high. Deliberately px
+     — the root font-size is 18px here, so 0.75rem would have been 13.5. And a
+     transform rather than a margin because the column is centred: a margin
+     would only move it half as far, being shared between the two sides. */
   .showcase .install {
     transform: translateY(-12px);
   }
@@ -719,13 +719,13 @@
   width: 100%;
   max-width: 38rem;
   /* Nine tiles of one size, none overlapping and no wire crossing another, needs
-	   this much room — the geometry is solved against the box, so the ratio and the
-	   coordinates in index.tsx go together. */
+     this much room — the geometry is solved against the box, so the ratio and the
+     coordinates in index.tsx go together. */
   aspect-ratio: 100 / 88;
   margin: 2.5rem auto 0;
   /* One faint pink pool behind the core. A white layer over it drew a visible
-	   edge through the artwork, and at ΔL* 1.6 across a 600px field it was too
-	   faint to be structure and too present to be nothing. */
+     edge through the artwork, and at ΔL* 1.6 across a 600px field it was too
+     faint to be structure and too present to be nothing. */
   background: radial-gradient(
     32% 36% at 39% 50%,
     rgb(255 51 119 / 8%),
@@ -767,7 +767,7 @@
   display: grid;
   place-items: center;
   /* Squircles, not circles: the radius language the rest of the page uses, and
-	   the one these services use for their own app icons. */
+     the one these services use for their own app icons. */
   border-radius: 26%;
   background: #fff;
   aspect-ratio: 1;
@@ -825,10 +825,10 @@
   }
 
   /* The cluster is the taller column here, so the copy centres against it.
-	   The band keeps the page container's width — capping it moved the copy off
-	   the left edge every other section aligns to, which is worse than any
-	   amount of air. The cluster is capped and pushed to the right edge instead,
-	   so both columns land on an actual alignment. */
+     The band keeps the page container's width — capping it moved the copy off
+     the left edge every other section aligns to, which is worse than any
+     amount of air. The cluster is capped and pushed to the right edge instead,
+     so both columns land on an actual alignment. */
   .band .split {
     grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
     gap: 5rem;
@@ -876,7 +876,7 @@
   flex: none;
   color: var(--u-pink-500);
   /* Optically aligned to the heading's cap height rather than its line box, so
-	   the icon sits level with the text instead of with the leading above it. */
+     the icon sits level with the text instead of with the leading above it. */
   margin-top: calc(0.15rem - 4px);
 }
 
@@ -992,15 +992,15 @@
   --loop: 4.4s;
   --logo-h: 2rem;
   /* Where the rail line sits inside its box. The file rides above the line and
-	   overflows this box upward into the row gap; reserving its full height
-	   instead left a conspicuous hollow band in whichever lane wasn't holding
-	   it. */
+     overflows this box upward into the row gap; reserving its full height
+     instead left a conspicuous hollow band in whichever lane wasn't holding
+     it. */
   --rail-y: 1.75rem;
 
   display: flex;
   align-items: flex-start;
   /* Wide enough that the two cards read as two places with a hand-off between
-	   them rather than as one split rectangle. The chevron sits in here. */
+     them rather than as one split rectangle. The chevron sits in here. */
   gap: 1.75rem;
 }
 
@@ -1012,8 +1012,8 @@
    treatment either lane owns. */
 .lineLane {
   /* Relative so the hand-off chevron can centre itself on the card rather
-	   than on the rail — the rail sits low in the lane, and a chevron pinned to
-	   it read as hanging off the bottom of the two shapes it joins. */
+     than on the rail — the rail sits low in the lane, and a chevron pinned to
+     it read as hanging off the bottom of the two shapes it joins. */
   position: relative;
   display: grid;
   grid-template-areas:
@@ -1026,8 +1026,8 @@
   padding: 1.25rem 1rem 1.125rem;
   border-radius: var(--u-radius-md);
   /* The page's card treatment, lifted from the panel that used to sit around
-	   the pair. The lanes are unfilled, so this is a shadow around an outline —
-	   which is all a card is on a white page anyway. */
+     the pair. The lanes are unfilled, so this is a shadow around an outline —
+     which is all a card is on a white page anyway. */
   box-shadow:
     inset 0 0 0 1px var(--ring),
     0 1px 2px rgb(13 21 38 / 5%),
@@ -1054,7 +1054,7 @@
   --leg-start: 0;
   --leg-len: 32;
   /* Carrying the boundary alone, so a good deal stronger than it was over a
-	   6% wash — at 12% the outline disappeared into the page it sits on. */
+     6% wash — at 12% the outline disappeared into the page it sits on. */
   --ring: rgb(255 51 119 / 28%);
 
   flex: 0 0 39.7%;
@@ -1064,7 +1064,7 @@
   --leg-start: 41.2;
   --leg-len: 46.8;
   /* Lighter than the pink one at face value, level with it on the page: a
-	   neutral hairline reads harder than a coloured one at the same alpha. */
+     neutral hairline reads harder than a coloured one at the same alpha. */
   --ring: rgb(13 21 38 / 16%);
 
   flex: 1;
@@ -1108,8 +1108,8 @@
   grid-area: rail;
   position: relative;
   /* Deep enough below the line for the labels in their new position: they end
-	   30px under it, and a box that stopped at 28 clipped nothing but did leave
-	   them sitting on the card's padding. */
+     30px under it, and a box that stopped at 28 clipped nothing but did leave
+     them sitting on the card's padding. */
   height: 3.75rem;
 }
 
@@ -1154,8 +1154,8 @@
   width: 0.375rem;
   height: 0.375rem;
   /* A step darker than the rail it sits on: this is the one mark carrying
-	   direction, and in the still frame it was the palest thing on a card whose
-	   every station is saturated pink. */
+     direction, and in the still frame it was the palest thing on a card whose
+     every station is saturated pink. */
   border-top: 1.5px solid var(--u-ink-400);
   border-right: 1.5px solid var(--u-ink-400);
   translate: calc(-50% - var(--nib)) -50%;
@@ -1182,13 +1182,13 @@
   background: #fff;
   box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--u-ink-400) 60%, #fff);
   /* Longhands: a `var()` inside the `animation` shorthand is opaque to the CSS
-	   minifier, which warns and skips the declaration. */
+     minifier, which warns and skips the declaration. */
   animation-name: station;
   animation-duration: var(--loop);
   animation-timing-function: ease-out;
   animation-iteration-count: infinite;
   /* The moment the file reaches this station, derived rather than written
-	   down: how far into the lane's leg it sits, as a share of the loop. */
+     down: how far into the lane's leg it sits, as a share of the loop. */
   animation-delay: calc(
     (var(--leg-start) + var(--leg-len) * var(--at-frac)) * var(--loop) / 100
   );
@@ -1197,8 +1197,8 @@
 .lineStation em {
   position: absolute;
   /* Clear of the dot rather than tucked under it: at 0.75rem the label's
-	   cap-height started 8px below an 8px dot and the two read as one stacked
-	   mark. */
+     cap-height started 8px below an 8px dot and the two read as one stacked
+     mark. */
   top: 1rem;
   font-size: 0.75rem;
   font-style: normal;
@@ -1236,19 +1236,19 @@
   color: var(--u-pink-500);
   filter: drop-shadow(0 2px 3px rgb(255 51 119 / 28%));
   /* Linear, not the page's ease: a conveyor runs at constant speed. With an
-	   ease-out the file was flung two-thirds of the way in the first third of
-	   the loop and then crawled. The arc over the hand-off is the one eased
-	   thing here, and it is a second animation precisely so this one can stay
-	   linear — a timing function inside a keyframe applies to every property in
-	   that segment, so easing the hop in `travel-browser` would have eased the
-	   travel along with it.
+     ease-out the file was flung two-thirds of the way in the first third of
+     the loop and then crawled. The arc over the hand-off is the one eased
+     thing here, and it is a second animation precisely so this one can stay
+     linear — a timing function inside a keyframe applies to every property in
+     that segment, so easing the hop in `travel-browser` would have eased the
+     travel along with it.
 
-	   Both animations run off the same duration, timing function and count:
-	   with one value against two names, the list repeats.
+     Both animations run off the same duration, timing function and count:
+     with one value against two names, the list repeats.
 
-	   Longhands because the name is set per lane below: the shorthand would
-	   reset `animation-name` to none here, leaving the whole thing standing on
-	   source order, and it makes the minifier warn about a nameless value. */
+     Longhands because the name is set per lane below: the shorthand would
+     reset `animation-name` to none here, leaving the whole thing standing on
+     source order, and it makes the minifier warn about a nameless value. */
   animation-duration: var(--loop);
   animation-timing-function: linear;
   animation-iteration-count: infinite;
@@ -1300,16 +1300,16 @@
     opacity: 1;
   }
   /* End of its own rail at 32%, then on across the gap — 3.75rem is the
-	   distance between the two rails (this lane's right padding, the flex gap,
-	   the next lane's left padding), so at 41.2% the file is sitting exactly on
-	   the far rail's left edge, which is where the other one takes over. */
+     distance between the two rails (this lane's right padding, the flex gap,
+     the next lane's left padding), so at 41.2% the file is sitting exactly on
+     the far rail's left edge, which is where the other one takes over. */
   32% {
     left: 100%;
   }
   /* `step-start` makes the rest of the loop take its end values the moment it
-	   begins, so this file is gone AT 41.2% rather than over the milliseconds
-	   after it. `left` doesn't move across that segment, so stepping it costs
-	   nothing; opacity is the whole point. */
+     begins, so this file is gone AT 41.2% rather than over the milliseconds
+     after it. `left` doesn't move across that segment, so stepping it costs
+     nothing; opacity is the whole point. */
   41.2% {
     left: calc(100% + 3.75rem);
     opacity: 1;
@@ -1370,9 +1370,9 @@
     opacity: 0;
   }
   /* Picks up exactly where the other one left off, at the same point on
-	   screen and the same speed, so the hand-off is one unbroken glide. Opaque
-	   from 41.2% but arriving at it a hundredth of a percent early, so it is
-	   already there when the other one steps off. */
+     screen and the same speed, so the hand-off is one unbroken glide. Opaque
+     from 41.2% but arriving at it a hundredth of a percent early, so it is
+     already there when the other one steps off. */
   41.2% {
     left: 0;
     opacity: 1;
@@ -1426,7 +1426,7 @@
   }
 
   /* One file, at the end of the last lane — two chips would contradict the
-	   single file the animation follows. */
+     single file the animation follows. */
   .lineFile {
     opacity: 0;
   }
@@ -1453,7 +1453,7 @@
   .line {
     flex-direction: column;
     /* Cross axis is now horizontal: without this the lanes shrink to their
-		   content and the two cards come out different widths. */
+       content and the two cards come out different widths. */
     align-items: stretch;
   }
 
@@ -1462,19 +1462,19 @@
   }
 
   /* The hand-off is now a drop down the page, so the chevron turns to match and
-	   moves to the middle of the vertical gap between the two cards. */
+     moves to the middle of the vertical gap between the two cards. */
   .lineLane:first-child::after {
     top: calc(100% + 0.875rem);
     left: 50%;
     /* Pointing down now, so the ink is all in the bottom half — the same
-		   correction, turned with it. */
+       correction, turned with it. */
     translate: -50% calc(-50% - var(--nib));
     rotate: 135deg;
   }
 
   /* Stacked, both rails are the lane's full width, so equal-length legs are
-	   what keeps the file at one speed — the side-by-side 32/46.8 split would run
-	   it across the top row nearly twice as fast as the bottom one. */
+     what keeps the file at one speed — the side-by-side 32/46.8 split would run
+     it across the top row nearly twice as fast as the bottom one. */
   .lineLane[data-owner='uppy'] {
     --leg-len: 38;
   }
@@ -1547,7 +1547,7 @@
    draw anything in. This waits until there is enough width for both. */
 @media screen and (min-width: 72rem) {
   /* Centred rather than top-aligned: the card summarises the whole paragraph,
-	   not its first line. */
+     not its first line. */
   .provenance {
     display: grid;
     grid-template-columns: minmax(0, 31em) minmax(0, 1fr);
@@ -1567,12 +1567,12 @@
 /* Full-bleed and lit, so the close has more presence than the footer under it. */
 .closing {
   /* Inside <main> now, so it breaks out of .main's gutter the way .band does —
-	   otherwise the ground change stops 1.5rem short of each edge. */
+     otherwise the ground change stops 1.5rem short of each edge. */
   margin: 8rem -1.5rem 0;
   padding: 6rem 1.5rem;
   text-align: center;
   /* Light from above, same as the hero. The ground change is the separator —
-	   no hairline needed at either end. */
+     no hairline needed at either end. */
   background: linear-gradient(180deg, var(--u-pink-50), #fff);
 }
 

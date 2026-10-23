@@ -121,10 +121,10 @@ only target AWS.
 
 ```diff
  uppy.use(AwsS3, {
--	endpoint: 'https://companion.example.com',
--	headers: { authorization: `Bearer ${token}` },
--	cookiesRule: 'include',
-+	companionEndpoint: 'https://companion.example.com',
+-  endpoint: 'https://companion.example.com',
+-  headers: { authorization: `Bearer ${token}` },
+-  cookiesRule: 'include',
++  companionEndpoint: 'https://companion.example.com',
  });
 ```
 
@@ -327,10 +327,10 @@ branched on that, update it:
 
 ```diff
  uppy.on('upload-error', (file, error, response) => {
--	// response was always undefined
-+	// response.status now holds what the server sent, and
-+	// response.body.xhr is the underlying XMLHttpRequest
- 	console.log(response?.status, response?.body?.xhr.responseText);
+-  // response was always undefined
++  // response.status now holds what the server sent, and
++  // response.body.xhr is the underlying XMLHttpRequest
+   console.log(response?.status, response?.body?.xhr.responseText);
  });
 ```
 

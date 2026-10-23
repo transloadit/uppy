@@ -31,7 +31,7 @@ export default function AgentPrompt({ className }: Props): JSX.Element {
       </pre>
 
       {/* The label holds still and only the icon acknowledges the click, so the
-			    button doesn't change width under the cursor. */}
+          button doesn't change width under the cursor. */}
       <button type="button" className={styles.copy} onClick={copy}>
         <CopyStateIcon copied={copied} className={styles.icon} />
         Copy prompt

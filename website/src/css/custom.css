@@ -84,39 +84,39 @@
   --u-radius-xl: 20px;
 
   /* One gutter for the whole site: navbar, every section, the docs layout and
-	   the footer share a left edge. Deliberately px, not rem — the root
-	   font-size drops to 16px between 1000 and 1300px, which would have quietly
-	   shrunk the layout width along with it. */
+     the footer share a left edge. Deliberately px, not rem — the root
+     font-size drops to 16px between 1000 and 1300px, which would have quietly
+     shrunk the layout width along with it. */
   --u-container: 1400px;
 
   --u-ease: cubic-bezier(0.2, 0, 0, 1);
 
   /* Status colours for the comparison tables. Muted rather than signal-bright:
-	   a hundred of them appear on one page, and the pink still has to lead. */
+     a hundred of them appear on one page, and the pink still has to lead. */
   --u-yes: #18a06a;
   --u-no: #dc4b4b;
   --u-warn: #dc9a1e;
 
   /* Tints behind the glyphs. Kept very pale: a hundred filled circles on one
-	   page would otherwise read as confetti. */
+     page would otherwise read as confetti. */
   --u-yes-50: #e6f6ef;
   --u-no-50: #fdeaea;
   --u-warn-50: #fdf2e0;
 
   /* Table status glyphs, masked so each takes its own colour from the class
-	   that uses it. Stroke-only — the `h.01` paths are dots — and drawn heavy,
-	   since they render at 14px inside their disc. */
+     that uses it. Stroke-only — the `h.01` paths are dots — and drawn heavy,
+     since they render at 14px inside their disc. */
   --u-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
   --u-icon-cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
   --u-icon-question: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
   --u-icon-warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
 
   /* Stroked chevron, masked so it takes currentColor. Points up, matching the
-	   orientation Infima's caret rotations are written against. */
+     orientation Infima's caret rotations are written against. */
   --u-chevron-up: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 10 8 5.5l4.5 4.5'/%3E%3C/svg%3E");
 
   /* Its own token rather than a rotated `--u-chevron-up`, so anything using it
-	   keeps `transform` free for hover motion. */
+     keeps `transform` free for hover motion. */
   --u-chevron-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3.5 10.5 8 6 12.5'/%3E%3C/svg%3E");
 }
 
@@ -141,8 +141,8 @@
   /* Semibold, not bold — Inter's 700 is heavy enough to shout at display sizes. */
   --ifm-heading-font-weight: 600;
   /* Left at Infima's default: 10% black over the code block's #f6f8fa lands on
-	   #dddfe1, and the palette in docusaurus.config.js is picked to clear 4.5:1
-	   on that darker ground as well as on the code block's own. */
+     #dddfe1, and the palette in docusaurus.config.js is picked to clear 4.5:1
+     on that darker ground as well as on the code block's own. */
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
   --ifm-avatar-photo-size: 1.2rem;
   --ifm-avatar-intro-margin: 0.5rem;
@@ -150,8 +150,8 @@
   --ifm-heading-color: var(--u-ink-900);
   --ifm-font-color-base: var(--u-ink-700);
   /* Infima ships this as `transparent`, so the page was white only because
-	   that's what the browser canvas defaults to. Anything reading the variable
-	   for an opaque fill — a sticky table column, say — got nothing. */
+     that's what the browser canvas defaults to. Anything reading the variable
+     for an opaque fill — a sticky table column, say — got nothing. */
   --ifm-background-color: #fff;
   --ifm-navbar-height: 4rem;
   --ifm-navbar-shadow: none;
@@ -164,9 +164,9 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Contextual alternates fix Inter's "ft"/"tt" pairs. Optical sizing is left
-	   on `auto` and deliberately NOT pinned via font-variation-settings: that
-	   property overrides font-optical-sizing, which would render 13px sidebar
-	   text with letterforms drawn for 24px display use. */
+     on `auto` and deliberately NOT pinned via font-variation-settings: that
+     property overrides font-optical-sizing, which would render 13px sidebar
+     text with letterforms drawn for 24px display use. */
   font-feature-settings:
     'kern' 1,
     'calt' 1;
@@ -295,7 +295,7 @@ div[class*=' admonitionHeading'] {
 
 .navbar {
   /* Opaque by default: the translucent treatment only works where the blur is
-	   applied, and the blur can't be used on mobile (see below). */
+     applied, and the blur can't be used on mobile (see below). */
   background-color: #fff;
   border-bottom: 1px solid var(--u-line);
   padding-inline: 1rem;
@@ -303,8 +303,8 @@ div[class*=' admonitionHeading'] {
 
 @media screen and (min-width: 997px) {
   /* Desktop only: backdrop-filter makes the navbar a containing block for its
-	   position:fixed descendants, and the mobile sidebar is one of them — with
-	   the blur applied it gets trapped inside the 4rem bar and can't open. */
+     position:fixed descendants, and the mobile sidebar is one of them — with
+     the blur applied it gets trapped inside the 4rem bar and can't open. */
   .navbar {
     background-color: rgb(255 255 255 / 80%);
     backdrop-filter: saturate(180%) blur(12px);
@@ -317,7 +317,7 @@ div[class*=' admonitionHeading'] {
   }
 
   /* The brand and the links share one flex row, so the link group is centred
-	   with auto margins rather than by splitting the container. */
+     with auto margins rather than by splitting the container. */
   .navbar__items:not(.navbar__items--right) {
     flex: 1;
   }
@@ -331,8 +331,8 @@ div[class*=' admonitionHeading'] {
   }
 
   /* Links fill the bar's height so the active underline has the bottom border
-	   to sit on. Below 997px Infima hides these items entirely (the sidebar
-	   takes over), so this only ever applies where the bar is a row. */
+     to sit on. Below 997px Infima hides these items entirely (the sidebar
+     takes over), so this only ever applies where the bar is a row. */
   .navbar__items > .navbar__link {
     display: flex;
     align-items: center;
@@ -387,7 +387,7 @@ div[class*=' admonitionHeading'] {
 .navbar__items > .navbar__link--active:not([target='_blank'])::after {
   clip-path: inset(0 0 0 0);
   /* Longhands: a `var()` inside the `animation` shorthand is opaque to the CSS
-	   minifier, which warns and skips the declaration. */
+     minifier, which warns and skips the declaration. */
   animation-name: navbar-underline;
   animation-duration: 260ms;
   animation-timing-function: var(--u-ease);
@@ -599,7 +599,7 @@ div[data-uppy-element='dropzone'] p {
   width: 2.25rem;
   height: 2.25rem;
   /* White ring, hairline, and a very tight contact shadow — enough to lift the
-	   photo off the page without reading as a glow. */
+     photo off the page without reading as a glow. */
   border: 2px solid #fff;
   box-shadow:
     0 0 0 1px var(--u-line),
@@ -671,7 +671,7 @@ div[data-uppy-element='dropzone'] p {
   }
 
   /* The contents list is marginalia. Out of flow, it stops dragging the
-	   reading column off the page's centre line. */
+     reading column off the page's centre line. */
   .blog-wrapper .container > .row > .col--2 {
     position: absolute;
     top: 0;
@@ -694,8 +694,8 @@ div[data-uppy-element='dropzone'] p {
   }
 
   /* The placeholder and shortcut keys are hidden at this width, so the
-	   asymmetric padding that suits the full search box leaves the magnifier
-	   sitting off-centre in what is now a square button. */
+     asymmetric padding that suits the full search box leaves the magnifier
+     sitting off-centre in what is now a square button. */
   .navbar .DocSearch-Button {
     width: 2.25rem;
     padding: 0;
@@ -743,16 +743,16 @@ div[data-uppy-element='dropzone'] p {
 @media screen and (min-width: 997px) {
   .docs-wrapper div[class*='docRoot'] {
     /* The gutter plus the navbar's own 1rem padding. Without matching that
-		   padding here, the docs run 18px wider than the header on viewports
-		   narrower than the container. */
+       padding here, the docs run 18px wider than the header on viewports
+       narrower than the container. */
     max-width: calc(var(--u-container) + 2rem);
     padding-inline: 1rem;
     margin: 0 auto;
   }
 
   /* Capping the row costs horizontal room, so the two side columns give some
-	   back: a slimmer sidebar and a wider contents list, which was wrapping
-	   every entry onto four lines. */
+     back: a slimmer sidebar and a wider contents list, which was wrapping
+     every entry onto four lines. */
   .docs-wrapper div[class*='docSidebarContainer'] {
     --doc-sidebar-width: 236px;
   }
@@ -1164,9 +1164,9 @@ div[data-uppy-element='dropzone'] p {
   left: 0;
   z-index: 2;
   /* Has to be opaque or the scrolling cells show straight through — which they
-	   did, until the page background stopped being `transparent` (see the token
-	   block). The shadow gives the column an edge for them to disappear under,
-	   which also hints there is more table to the right. */
+     did, until the page background stopped being `transparent` (see the token
+     block). The shadow gives the column an edge for them to disappear under,
+     which also hints there is more table to the right. */
   background: var(--ifm-background-color);
   border-right: 1px solid var(--u-line);
   box-shadow: 6px 0 8px -6px rgb(13 21 38 / 12%);

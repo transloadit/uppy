@@ -387,7 +387,7 @@ export default function Home(): JSX.Element {
   return (
     <Layout description="Uppy is the open source JavaScript file uploader. Resumable uploads from disk, Dropbox or Google Drive, for React, Next.js, Vue, Svelte and Angular.">
       {/* Title is set verbatim rather than through Layout's title prop, which
-			    would append " | Uppy" and undo the lockup. */}
+          would append " | Uppy" and undo the lockup. */}
       <Head>
         <title>
           {'Uppy by Transloadit - Open source JavaScript file uploader'}
@@ -492,7 +492,7 @@ export default function Home(): JSX.Element {
           </div>
 
           {/* The install path sits beside the product: what it is on the
-					    left, how you get it on the right. */}
+              left, how you get it on the right. */}
           <div className={styles.install}>
             <div
               className={styles.targets}
@@ -521,8 +521,8 @@ export default function Home(): JSX.Element {
                 <AgentPrompt className={styles.heroAgent} />
               : <>
                   {/* The package manager is a property of the command, so it docks
-								    to the field as a tab strip rather than repeating the pill
-								    treatment used for the framework choice above. */}
+                      to the field as a tab strip rather than repeating the pill
+                      treatment used for the framework choice above. */}
                   <div className={styles.field}>
                     <div
                       className={styles.managers}
@@ -562,7 +562,7 @@ export default function Home(): JSX.Element {
         </div>
 
         {/* Centred under both columns, because it applies to the whole thing:
-				    what happens after the upload, for the projects that need it. */}
+            what happens after the upload, for the projects that need it. */}
         <div className={styles.heroHandoff}>
           <p>Need to resize, encode, optimize, store or deliver your files?</p>
           <Link href="https://transloadit.com/">
@@ -574,7 +574,7 @@ export default function Home(): JSX.Element {
       <main className={styles.main}>
         {/* ----------------------------------------------------- Companion */}
         {/* The page's one horizontal break: a change of ground marks the
-				    shift from "here's the thing" to "here's how it gets files". */}
+            shift from "here's the thing" to "here's how it gets files". */}
         <div className={styles.band}>
           <section className={`${styles.section} ${styles.split}`}>
             <div className={styles.sectionHead}>
@@ -593,11 +593,11 @@ export default function Home(): JSX.Element {
             </div>
 
             {/* The logos are the content here, so each keeps its name as alt
-						    text and the list says what it is — together that is the whole
-						    of what a screen reader gets from this. */}
+                text and the list says what it is — together that is the whole
+                of what a screen reader gets from this. */}
             <div className={styles.cluster}>
               {/* Wires first so the discs paint over their ends. The viewBox
-							    matches the container's 5:4, so nothing is distorted. */}
+                  matches the container's 5:4, so nothing is distorted. */}
               <svg
                 className={styles.wires}
                 viewBox="0 0 100 88"
@@ -663,10 +663,10 @@ export default function Home(): JSX.Element {
 
         {/* ------------------------------------------------------ Provenance */}
         {/* The page's own section signature — pink eyebrow, ink-900 heading,
-				    ink-600 prose — at a smaller heading step, above a rule.
-				
-				    The card on the right draws the division of labour the paragraph
-				    describes: two owned lanes with a file crossing them. */}
+            ink-600 prose — at a smaller heading step, above a rule.
+
+            The card on the right draws the division of labour the paragraph
+            describes: two owned lanes with a file crossing them. */}
         <section className={`${styles.section} ${styles.provenance}`}>
           <div>
             <p className={styles.eyebrow}>Who makes Uppy</p>
@@ -685,9 +685,9 @@ export default function Home(): JSX.Element {
 
           <figure className={styles.lineage}>
             {/* Two territories with one line running through them: Uppy uploads
-						    from the browser, then hands the file to Transloadit, which
-						    resizes, encodes and delivers it. Not "the file arrives at
-						    Transloadit" — that reading is what the lanes exist to prevent. */}
+                from the browser, then hands the file to Transloadit, which
+                resizes, encodes and delivers it. Not "the file arrives at
+                Transloadit" — that reading is what the lanes exist to prevent. */}
             <div className={styles.line}>
               {lanes.map(({ owner, logo, steps }) => (
                 <div
@@ -703,7 +703,7 @@ export default function Home(): JSX.Element {
                   }
                 >
                   {/* Mark then rail, the same way round in both lanes: each reads
-									    "[who] — [what they do]". */}
+                      "[who] — [what they do]". */}
                   <span className={styles.lineLogo}>
                     <img {...logo} />
                   </span>
@@ -748,7 +748,7 @@ export default function Home(): JSX.Element {
 
         {/* ------------------------------------------------------- Closing */}
         {/* Inside <main>: left as a sibling it was page content sitting outside
-				    every landmark, so landmark navigation skipped straight past it. */}
+            every landmark, so landmark navigation skipped straight past it. */}
         <section className={styles.closing}>
           <div className={styles.closingInner}>
             <Heading as="h2">Start uploading in a minute</Heading>
