@@ -77,7 +77,7 @@ export default function NotFoundContent({ className }: Props): ReactNode {
             {machineReadableLinks.map(({ href, label, hint }) => (
               <li key={href}>
                 {/* Plain anchors: these are static files, and Docusaurus'
-								    Link would append the site's trailing slash. */}
+                    Link would append the site's trailing slash. */}
                 <a href={href}>{label}</a> — {hint}
               </li>
             ))}

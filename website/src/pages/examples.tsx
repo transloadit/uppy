@@ -101,12 +101,12 @@ const options = [
     heading: 'Remote sources',
     options: [
       // {
-      // 	label: 'Google Drive',
-      // 	value: 'GoogleDrive',
-      // 	type: 'plugins',
-      // 	title:
-      // 		'Temporarily disabled until our credentials are approved again. You can still use the plugin yourself.',
-      // 	disabled: true,
+      //   label: 'Google Drive',
+      //   value: 'GoogleDrive',
+      //   type: 'plugins',
+      //   title:
+      //     'Temporarily disabled until our credentials are approved again. You can still use the plugin yourself.',
+      //   disabled: true,
       // },
       {
         label: 'Google Drive Picker',
@@ -419,7 +419,7 @@ function Page() {
 
             <div className={styles['options-locale']}>
               {/* The visible heading is the field's name, so it is pointed at
-							    rather than duplicated in an aria-label. */}
+                  rather than duplicated in an aria-label. */}
               <Heading className={styles['h3']} as="h3" id="locale-label">
                 Locale
               </Heading>
@@ -456,7 +456,7 @@ function Page() {
           <div>
             <Tabs>
               {/* Each frame needs its own name — three untitled editors are
-							    three identical "frame" entries in a screen reader's list. */}
+                  three identical "frame" entries in a screen reader's list. */}
               <TabItem value="react" label="React">
                 <iframe
                   title="React headless components example on StackBlitz"

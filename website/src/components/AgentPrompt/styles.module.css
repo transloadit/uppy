@@ -10,7 +10,7 @@
 .prompt {
   margin: 0;
   /* Roughly eight lines: enough to see what kind of thing this is, short
-	   enough that it doesn't take the hero over. */
+     enough that it doesn't take the hero over. */
   max-height: 11rem;
   overflow-y: auto;
   padding: 0.875rem 1rem 3rem;

@@ -39,7 +39,7 @@ export default function GitHubStars({ size = 'md' }: Props): JSX.Element {
       </svg>
       <span className={styles.rule} aria-hidden />
       {/* GitHub's own star-fill octicon — same design system as the mark
-			    beside it, rather than a hand-drawn approximation. */}
+          beside it, rather than a hand-drawn approximation. */}
       <svg viewBox="0 0 16 16" className={styles.star} aria-hidden>
         <path
           fill="currentColor"

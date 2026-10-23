@@ -15,7 +15,7 @@ section a:hover {
   height: 100%;
   position: relative;
   /* Right padding leaves the chevron its own lane, so a long title never runs
-	   underneath it. */
+     underneath it. */
   padding: 1rem 2.75rem 1rem 1.125rem;
   background: #fff;
   border: 1px solid var(--u-line);
