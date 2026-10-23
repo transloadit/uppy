@@ -9,6 +9,8 @@ on:
       - 'packages/uppy/**'
       - 'yarn.lock'
       - '.github/workflows/website.yml'
+      - '.remarkrc.mjs'
+      - '.remarkignore'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
@@ -17,6 +19,8 @@ on:
       - 'packages/uppy/**'
       - 'yarn.lock'
       - '.github/workflows/website.yml'
+      - '.remarkrc.mjs'
+      - '.remarkignore'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
