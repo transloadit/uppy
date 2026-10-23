@@ -32,7 +32,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version: '^24.22.1'
+          check-latest: true
           registry-url: "https://registry.npmjs.org"
 
       # Allow yarn to make changes during release

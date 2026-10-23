@@ -33,7 +33,8 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version: '^24.22.1'
+          check-latest: true
       - name: Install upload-to-cdn dependencies
         if: ${{ inputs.version }}
         run: corepack yarn workspaces focus uppy
