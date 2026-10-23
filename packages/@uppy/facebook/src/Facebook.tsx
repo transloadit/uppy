@@ -9,6 +9,7 @@ import type {
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   Provider,
 } from '@uppy/core/companion-client'
@@ -51,7 +52,7 @@ export default class Facebook<M extends Meta, B extends Body>
     super(uppy, opts)
     this.id = this.opts.id || 'Facebook'
     this.type = 'acquirer'
-    this.storage = this.opts.storage || localStorage
+    this.storage = this.opts.storage || defaultStorage
     this.files = []
     this.icon = () => (
       <svg

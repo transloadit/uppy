@@ -9,6 +9,7 @@ import type {
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   SearchProvider,
 } from '@uppy/core/companion-client'
@@ -46,7 +47,7 @@ export default class Unsplash<M extends Meta, B extends Body>
     super(uppy, opts)
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || localStorage
+    this.storage = this.opts.storage || defaultStorage
     this.id = this.opts.id || 'Unsplash'
 
     this.defaultLocale = locale

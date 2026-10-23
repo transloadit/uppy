@@ -16,6 +16,7 @@ import type {
 import { UIPlugin, UserFacingApiError } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   isAuthError,
   Provider,
 } from '@uppy/core/companion-client'
@@ -375,7 +376,7 @@ export default class S3<M extends Meta, B extends Body>
     this.id = this.opts.id || 'S3'
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || localStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()
