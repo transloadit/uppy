@@ -26,6 +26,15 @@ describe('accessLogUrl', () => {
     ).toBe('/x?uppyAuthToken=********')
   })
 
+  test('censors the OAuth code and the auth-callback token', () => {
+    expect(
+      accessLogUrl({ originalUrl: '/dropbox/redirect?code=abc&state=s' }),
+    ).toBe('/dropbox/redirect?code=********&state=s')
+    expect(
+      accessLogUrl({ originalUrl: '/dropbox/connect?authCallbackToken=t' }),
+    ).toBe('/dropbox/connect?authCallbackToken=********')
+  })
+
   test('leaves other query strings as they were sent', () => {
     expect(accessLogUrl({ originalUrl: '/x?b=1&c=%20' })).toBe('/x?b=1&c=%20')
   })

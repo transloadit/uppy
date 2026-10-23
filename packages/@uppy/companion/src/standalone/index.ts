@@ -21,7 +21,12 @@ import {
 } from './helper.js'
 
 // Query string keys whose values should not end up in logging output.
-const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
+const sensitiveKeys = new Set([
+  'access_token',
+  'uppyAuthToken',
+  'authCallbackToken',
+  'code',
+])
 
 /**
  * Obscure the contents of query string keys listed in `sensitiveKeys`.
