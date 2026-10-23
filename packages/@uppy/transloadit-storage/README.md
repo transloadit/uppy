@@ -1,6 +1,6 @@
 # `@uppy/transloadit-storage`
 
-> \[!WARNING]
+> [!WARNING]
 > Experimental. This plugin, `@uppy/s3` and the Companion endpoints they use will change
 > incompatibly, also in minor releases, as they make way for a standalone file manager.
 

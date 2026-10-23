@@ -39,15 +39,15 @@ yarn build
 
 ### Development Commands
 
-* `yarn dev` - Start development server at <http://localhost:5174>
-* `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
-* `yarn start:companion` - Start only Companion server at <http://localhost:3020>
-* `yarn build:watch` - Build packages in watch mode
-* `yarn build:examples` - Build and type-check the examples and the dev playground
-* `yarn test` - Run tests for all packages
-* `yarn test:watch` - Run tests in watch mode
-* `yarn typecheck` - Run TypeScript type checking
-* `yarn check` - Run Biome linting and formatting
+- `yarn dev` - Start development server at <http://localhost:5174>
+- `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
+- `yarn start:companion` - Start only Companion server at <http://localhost:3020>
+- `yarn build:watch` - Build packages in watch mode
+- `yarn build:examples` - Build and type-check the examples and the dev playground
+- `yarn test` - Run tests for all packages
+- `yarn test:watch` - Run tests in watch mode
+- `yarn typecheck` - Run TypeScript type checking
+- `yarn check` - Run Biome linting and formatting
 
 ### Running minio tests
 
@@ -91,28 +91,28 @@ throughout this section.
 The following steps describe the actions that take place when a user
 Authenticates and Uploads from Dropbox through Companion:
 
-* The visitor to a website with Uppy clicks `Connect to Dropbox`.
-* Uppy sends a request to Companion, which in turn sends an OAuth request to
+- The visitor to a website with Uppy clicks `Connect to Dropbox`.
+- Uppy sends a request to Companion, which in turn sends an OAuth request to
   Dropbox (Requires that OAuth credentials from Dropbox have been added to
   Companion).
-* Dropbox asks the visitor to log in, and whether the Website should be allowed
+- Dropbox asks the visitor to log in, and whether the Website should be allowed
   to access your files
-* If the visitor agrees, Companion will receive a token from Dropbox, with which
+- If the visitor agrees, Companion will receive a token from Dropbox, with which
   we can temporarily download files.
-* Companion encrypts the token with a secret key and sends the encrypted token
+- Companion encrypts the token with a secret key and sends the encrypted token
   to Uppy (client)
-* Every time the visitor clicks on a folder in Uppy, it asks Companion for the
+- Every time the visitor clicks on a folder in Uppy, it asks Companion for the
   new list of files, with this question, the token (still encrypted by
   Companion) is sent along.
-* Companion decrypts the token, requests the list of files from Dropbox and
+- Companion decrypts the token, requests the list of files from Dropbox and
   sends it to Uppy.
-* When a file is selected for upload, Companion receives the token again
+- When a file is selected for upload, Companion receives the token again
   according to this procedure, decrypts it again, and thereby downloads the file
   from Dropbox.
-* As the bytes arrive, Companion uploads the bytes to the final destination
+- As the bytes arrive, Companion uploads the bytes to the final destination
   (depending on the configuration: Apache, a Tus server, S3 bucket, etc).
-* Companion reports progress to Uppy, as if it were a local upload.
-* Completed!
+- Companion reports progress to Uppy, as if it were a local upload.
+- Completed!
 
 ## I18n and locales
 
