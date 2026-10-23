@@ -67,8 +67,12 @@ function routeFor(relPath, slug) {
 const IMPORT_RE = /^import\s+(\w+)\s+from\s+['"]([^'"]+)['"];?\s*$/
 
 function inlinePartials(body, fileDir, loadPartial) {
+  // One statement is a single line, or a braced specifier list spanning lines
+  // (`import {\n  a,\n} from 'b'`). Semicolons are optional, so a statement
+  // must never extend past its own braces: a later prose line that happens to
+  // start with "from" would otherwise swallow the page up to that line.
   const statement =
-    /^\s*(?:import|export)\s(?:[^\n]*?;\s*$|[\s\S]*?^\s*\}?\s*from\s[^\n]*$|[^\n]*$)/m
+    /^\s*(?:import|export)\s(?:[^\n{]*\{[^}]*\}\s*from\s[^\n]*|[^\n]*)$/m
 
   const partials = new Map()
   let rest = body.replace(/^\s+/, '')
