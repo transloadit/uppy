@@ -406,27 +406,29 @@ which has only the secret, nothing else.
 
 :::
 
-#### `uploadUrls` `COMPANION_UPLOAD_URLS`
+#### `uploadUrls` `COMPANION_UPLOAD_URLS` {#uploadurls}
 
-Companion will only accept uploads to these URLs. This ensures that your
+An allowlist (array) of the URLs Companion may upload to. This ensures that your
 Companion instance is only allowed to upload to your trusted servers and
 prevents [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery)
-attacks.
+attacks. Companion refuses to start without it when `NODE_ENV=production`.
 
 Entries are matched **literally**: the origin must be identical, and the path
 must match at a path boundary. So `https://uploads.example.com/files/` also
 allows `https://uploads.example.com/files/<id>`, which a resumable upload needs,
-but not `https://uploads.example.com/filesomething`.
+but not `https://uploads.example.com/filesomething`. An entry without a path
+(`https://uploads.example.com`) allows its whole origin. A string entry must be
+an absolute URL, or Companion refuses to start.
 
-Configuring Companion programmatically, an entry may also be a `RegExp`.
+When configuring Companion programmatically, an entry may also be a `RegExp`.
 Standalone config can only hold strings, so there an entry that starts with `^`
 is read as a regular expression — in `COMPANION_UPLOAD_URLS` or in the JSON
-config file. A value that starts with `^` is not split on `,`, so combine
-several patterns with `|`.
+config file. A `COMPANION_UPLOAD_URLS` value that starts with `^` is not split
+on `,`, so combine several patterns with `|`.
 
 ```sh
-COMPANION_UPLOAD_URLS="https://uploads.example.com/files/,https://other.example.com/files/"
-COMPANION_UPLOAD_URLS="^https://(?:api2-[a-z0-9]+|api2)\\.example\\.com/files/"
+COMPANION_UPLOAD_URLS='https://uploads.example.com/files/,https://other.example.com/files/'
+COMPANION_UPLOAD_URLS='^https://(?:api2-[a-z0-9]+|api2)\.example\.com/files/'
 ```
 
 An entry without a leading `^` is a literal, so a pattern you forgot to anchor
@@ -449,6 +451,9 @@ Example safe regular expression:
 ```
 ^https://[a-z0-9-]+\.example\.com/files/
 ```
+
+Patterns see the URL as sent, without normalizing `..` path segments, so prefer
+literal entries where you can.
 
 #### `COMPANION_PORT`
 
@@ -512,16 +517,17 @@ Configuration options for the underlying server.
 
 If you are setting an `oauthDomain`, you need to specify this option, so the
 oauth handler can validate the host of the Uppy instance requesting the
-authentication. Entries are hostnames, compared literally and
-case-insensitively. A port is part of the hostname, so `example.com` does not
-match `example.com:3020`.
+authentication. Entries are hosts (a hostname plus any non-default port, such as
+`example.com:3020`), compared literally and case-insensitively, so `example.com`
+does not match `example.com:3020`. When `COMPANION_DOMAINS` is not set,
+`COMPANION_DOMAIN` is used.
 
 As with `uploadUrls`, a `validHosts` entry may be a `RegExp` programmatically,
 or start with `^` in `COMPANION_DOMAINS` or the JSON config file.
 
 ```sh
-COMPANION_DOMAINS="sub1.example.com,sub2.example.com"
-COMPANION_DOMAINS="^(\\w+)\\.example\\.com$"
+COMPANION_DOMAINS='sub1.example.com,sub2.example.com'
+COMPANION_DOMAINS='^(\w+)\.example\.com$'
 ```
 
 A pattern is matched as written, so end it with `$` as well as starting it with
