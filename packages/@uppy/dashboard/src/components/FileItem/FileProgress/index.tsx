@@ -57,6 +57,36 @@ function progressIndicatorTitle<M extends Meta, B extends Body>(
   return ''
 }
 
+function progressIndicatorAriaLabel<M extends Meta, B extends Body>(
+  props: Props<M, B>,
+) {
+  if (props.isUploaded) {
+    return props.i18n('uploadComplete')
+  }
+
+  if (props.error) {
+    return props.i18n('retryUpload')
+  }
+
+  if (props.resumableUploads) {
+    if (props.file.isPaused) {
+      return props.i18n('resumeUploadWithFilename', {
+        file: props.file.meta.name,
+      })
+    }
+    return props.i18n('pauseUploadWithFilename', {
+      file: props.file.meta.name,
+    })
+  }
+  if (props.individualCancellation) {
+    return props.i18n('cancelUploadWithFilename', {
+      file: props.file.meta.name,
+    })
+  }
+
+  return ''
+}
+
 function ProgressIndicatorButton<M extends Meta, B extends Body>(
   props: Props<M, B> & { children: ComponentChild },
 ) {
@@ -65,7 +95,7 @@ function ProgressIndicatorButton<M extends Meta, B extends Body>(
       <button
         className="uppy-u-reset uppy-c-btn uppy-Dashboard-Item-progressIndicator"
         type="button"
-        aria-label={progressIndicatorTitle(props)}
+        aria-label={progressIndicatorAriaLabel(props)}
         title={progressIndicatorTitle(props)}
         onClick={() => onPauseResumeCancelRetry(props)}
       >

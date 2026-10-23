@@ -175,6 +175,13 @@ test('Upload, pause, and resume functionality', async () => {
     page.getByRole('button', { name: 'Upload 1 file' }),
   ).toBeInTheDocument()
 
+  // Verify TopBar cancel button accessible name and visible text
+  const topBarCancelButton = page.getByRole('button', {
+    name: 'Cancel all uploads',
+  })
+  await expect.element(topBarCancelButton).toBeVisible()
+  expect(topBarCancelButton.element().textContent?.trim()).toBe('Cancel')
+
   // Start the upload
   await page.getByRole('button', { name: 'Upload 1 file' }).click()
 
@@ -184,10 +191,44 @@ test('Upload, pause, and resume functionality', async () => {
   // Verify upload has started by checking StatusBar state
   await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
 
+  // Verify accessible names and tooltip titles while uploading
+  const globalPauseButton = page.getByRole('button', {
+    name: 'Pause all uploads',
+  })
+  await expect.element(globalPauseButton).toBeVisible()
+  expect(globalPauseButton.element().getAttribute('title')).toBe('Pause')
+
+  const globalCancelButton = page
+    .getByRole('button', {
+      name: 'Cancel all uploads',
+    })
+    .last()
+  await expect.element(globalCancelButton).toBeVisible()
+  expect(globalCancelButton.element().getAttribute('title')).toBe('Cancel')
+
+  const filePauseButton = page.getByRole('button', {
+    name: 'Pause upload test.txt',
+  })
+  await expect.element(filePauseButton).toBeVisible()
+  expect(filePauseButton.element().getAttribute('title')).toBe('Pause upload')
+
   // Find and click pause button
   const pauseButton = page.getByTitle('Pause', { exact: true })
   await expect(pauseButton).toBeVisible()
   await pauseButton.click()
+
+  // Verify accessible names and tooltip titles while paused
+  const globalResumeButton = page.getByRole('button', {
+    name: 'Resume all uploads',
+  })
+  await expect.element(globalResumeButton).toBeVisible()
+  expect(globalResumeButton.element().getAttribute('title')).toBe('Resume')
+
+  const fileResumeButton = page.getByRole('button', {
+    name: 'Resume upload test.txt',
+  })
+  await expect.element(fileResumeButton).toBeVisible()
+  expect(fileResumeButton.element().getAttribute('title')).toBe('Resume upload')
 
   // Find and click resume button
   const resumeButton = page.getByTitle('Resume', { exact: true })
@@ -205,4 +246,84 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload completion state using Playwright selector
   await expect(page.getByText('Complete', { exact: true })).toBeVisible()
+})
+
+test('Accessible name for non-resumable upload individual cancellation', async () => {
+  render('<div id="uppy"></div>')
+
+  let cancelUploadResolve = () => {}
+  const cancelUploadPromise = new Promise<void>((resolve) => {
+    cancelUploadResolve = resolve
+  })
+
+  using uppy = new Uppy({
+    restrictions: { maxNumberOfFiles: 1 },
+  }).use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.addUploader(async (fileIDs) => {
+    const files = fileIDs.map((id) => uppy.getFile(id))
+    uppy.emit('upload-start', files)
+
+    fileIDs.forEach((fileID) => {
+      const file = uppy.getFile(fileID)
+      if (file) {
+        uppy.setFileState(fileID, {
+          progress: {
+            ...file.progress,
+            uploadStarted: Date.now(),
+            uploadComplete: false,
+            percentage: 25,
+            bytesUploaded: 250,
+            bytesTotal: 1000,
+          },
+        })
+      }
+    })
+
+    return cancelUploadPromise
+  })
+
+  const fileInput = document.querySelector(
+    '.uppy-Dashboard-input',
+  ) as HTMLInputElement
+  await userEvent.upload(
+    fileInput,
+    new File(['sample-data'], 'test file (1).pdf'),
+  )
+
+  await expect.element(page.getByText('test file (1).pdf')).toBeVisible()
+  await page.getByRole('button', { name: 'Upload 1 file' }).click()
+
+  // Wait for upload to start
+  await new Promise((resolve) => setTimeout(resolve, 300))
+
+  // Check individual cancel button accessible name and title
+  const fileCancelButton = page.getByRole('button', {
+    name: 'Cancel upload test file (1).pdf',
+  })
+  await expect.element(fileCancelButton).toBeVisible()
+  expect(fileCancelButton.element().getAttribute('title')).toBe('Cancel upload')
+
+  // Check global cancel button accessible name and title in StatusBar
+  const statusBarCancelButton = page
+    .getByRole('button', {
+      name: 'Cancel all uploads',
+    })
+    .last()
+  await expect.element(statusBarCancelButton).toBeVisible()
+  expect(statusBarCancelButton.element().getAttribute('title')).toBe('Cancel')
+
+  // Check global cancel button in TopBar
+  const topBarCancelButton = page
+    .getByRole('button', {
+      name: 'Cancel all uploads',
+    })
+    .first()
+  await expect.element(topBarCancelButton).toBeVisible()
+  expect(topBarCancelButton.element().textContent?.trim()).toBe('Cancel')
+
+  cancelUploadResolve()
 })
