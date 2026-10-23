@@ -86,8 +86,8 @@ import '@uppy/dashboard/css/style.min.css';
 import '@uppy/url/css/style.min.css';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(Url, { companionUrl: 'https://your-companion.com' });
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(Url, { companionUrl: 'https://your-companion.com' });
 ```
 
 ### Use with Transloadit
@@ -97,8 +97,8 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Url from '@uppy/url';
 
 uppy.use(Url, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
 });
 ```
 
@@ -116,12 +116,12 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import Url from '@uppy/url';
 
 uppy.use(Url, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'my_companion_dropbox_creds',
-	},
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
 });
 ```
 
@@ -137,4 +137,4 @@ Companion with the `enableUrlEndpoint` / `COMPANION_ENABLE_URL_ENDPOINT` option.
 <CompanionOptions />
 
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/

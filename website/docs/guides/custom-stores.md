@@ -24,7 +24,7 @@ the Uppy constructor:
 import DefaultStore from '@uppy/core/store-default';
 
 const uppy = new Uppy({
-	store: new DefaultStore(),
+  store: new DefaultStore(),
 });
 ```
 
@@ -50,26 +50,26 @@ The default store implementation, for example, looks a bit like this:
 
 ```js
 function createDefaultStore() {
-	let state = {};
-	const listeners = new Set();
+  let state = {};
+  const listeners = new Set();
 
-	return {
-		getState: () => state,
-		setState: (patch) => {
-			const prevState = state;
-			const nextState = { ...prevState, ...patch };
+  return {
+    getState: () => state,
+    setState: (patch) => {
+      const prevState = state;
+      const nextState = { ...prevState, ...patch };
 
-			state = nextState;
+      state = nextState;
 
-			listeners.forEach((listener) => {
-				listener(prevState, nextState, patch);
-			});
-		},
-		subscribe: (listener) => {
-			listeners.add(listener);
-			return () => listeners.delete(listener);
-		},
-	};
+      listeners.forEach((listener) => {
+        listener(prevState, nextState, patch);
+      });
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+  };
 }
 ```
 

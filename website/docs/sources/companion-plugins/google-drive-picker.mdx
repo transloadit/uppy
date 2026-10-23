@@ -113,13 +113,13 @@ import '@uppy/core/css/style.min.css';
 import '@uppy/dashboard/css/style.min.css';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(GoogleDrivePicker, {
-		companionUrl: 'https://your-companion.com',
-		clientId: 'From Google Developer Console',
-		apiKey: 'From Google Developer Console',
-		appId: 'From Google Developer Console',
-	});
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(GoogleDrivePicker, {
+    companionUrl: 'https://your-companion.com',
+    clientId: 'From Google Developer Console',
+    apiKey: 'From Google Developer Console',
+    appId: 'From Google Developer Console',
+  });
 ```
 
 ### Use with Transloadit
@@ -129,11 +129,11 @@ import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
 import GoogleDrivePicker from '@uppy/google-drive-picker';
 
 uppy.use(GoogleDrivePicker, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	clientId: 'From Google Developer Console',
-	apiKey: 'From Google Developer Console',
-	appId: 'From Google Developer Console',
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  clientId: 'From Google Developer Console',
+  apiKey: 'From Google Developer Console',
+  appId: 'From Google Developer Console',
 });
 ```
 

@@ -89,7 +89,7 @@ override the styles with data attributes, for example with `UploadButton`:
 
 ```css
 button[data-uppy-element='upload-button'][data-state='uploading'] {
-	background-color: lightblue;
+  background-color: lightblue;
 }
 ```
 
@@ -100,14 +100,14 @@ status/progress.
 
 ```svelte
 <script>
-	import { UppyContextProvider } from '@uppy/svelte';
-	import Uppy from '@uppy/core';
+  import { UppyContextProvider } from '@uppy/svelte';
+  import Uppy from '@uppy/core';
 
-	const uppy = new Uppy();
+  const uppy = new Uppy();
 </script>
 
 <UppyContextProvider {uppy}>
-	<!-- Your components and/or Uppy components -->
+  <!-- Your components and/or Uppy components -->
 </UppyContextProvider>
 ```
 

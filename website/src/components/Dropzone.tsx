@@ -9,15 +9,15 @@ import '@uppy/react/css/style.css';
 import styles from './dropzone.module.css';
 
 export default function DropzoneDemo() {
-	const [uppy] = useState(() => new Uppy());
+  const [uppy] = useState(() => new Uppy());
 
-	return (
-		<BrowserWindow>
-			<UppyContextProvider uppy={uppy}>
-				<div className={styles.wrapper}>
-					<Dropzone />
-				</div>
-			</UppyContextProvider>
-		</BrowserWindow>
-	);
+  return (
+    <BrowserWindow>
+      <UppyContextProvider uppy={uppy}>
+        <div className={styles.wrapper}>
+          <Dropzone />
+        </div>
+      </UppyContextProvider>
+    </BrowserWindow>
+  );
 }

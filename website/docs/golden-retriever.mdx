@@ -85,8 +85,8 @@ import Dashboard from '@uppy/dashboard';
 import GoldenRetriever from '@uppy/golden-retriever';
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(GoldenRetriever);
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(GoldenRetriever);
 ```
 
 By default, Golden Retriever stores metadata, state, and local files up to 10
@@ -139,17 +139,17 @@ store references to large files.
    uppy.use(GoldenRetriever, { serviceWorker: true });
 
    if ('serviceWorker' in navigator) {
-   	navigator.serviceWorker
-   		.register('/sw.js', { type: 'module' }) // path to your bundled service worker which imports GoldenRetriever service worker
-   		.then((registration) => {
-   			console.log(
-   				'ServiceWorker registration successful with scope: ',
-   				registration.scope,
-   			);
-   		})
-   		.catch((error) => {
-   			console.log(`Registration failed with ${error}`);
-   		});
+     navigator.serviceWorker
+       .register('/sw.js', { type: 'module' }) // path to your bundled service worker which imports GoldenRetriever service worker
+       .then((registration) => {
+         console.log(
+           'ServiceWorker registration successful with scope: ',
+           registration.scope,
+         );
+       })
+       .catch((error) => {
+         console.log(`Registration failed with ${error}`);
+       });
    }
    ```
 

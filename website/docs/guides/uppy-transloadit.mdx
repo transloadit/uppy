@@ -61,19 +61,19 @@ const authSecret = process.env.TRANSLOADIT_SECRET;
 const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
 
 if (!authKey || !authSecret || !templateId) {
-	throw new Error('Missing Transloadit server configuration');
+  throw new Error('Missing Transloadit server configuration');
 }
 
 const transloadit = new Transloadit({ authKey, authSecret });
 
 export function createAssemblyOptions() {
-	const expires = new Date(Date.now() + 60 * 60 * 1000).toISOString();
-	const { params, signature } = transloadit.calcSignature({
-		auth: { expires },
-		template_id: templateId,
-	});
+  const expires = new Date(Date.now() + 60 * 60 * 1000).toISOString();
+  const { params, signature } = transloadit.calcSignature({
+    auth: { expires },
+    template_id: templateId,
+  });
 
-	return { params, signature };
+  return { params, signature };
 }
 ```
 
@@ -89,13 +89,13 @@ JavaScript application:
 
 ```ts title="fetch-assembly-options.ts"
 export async function fetchAssemblyOptions() {
-	const response = await fetch('/api/transloadit-params', { method: 'POST' });
+  const response = await fetch('/api/transloadit-params', { method: 'POST' });
 
-	if (!response.ok) {
-		throw new Error(`Could not prepare the upload (${response.status})`);
-	}
+  if (!response.ok) {
+    throw new Error(`Could not prepare the upload (${response.status})`);
+  }
 
-	return response.json();
+  return response.json();
 }
 ```
 
@@ -118,19 +118,19 @@ import '@uppy/dashboard/css/style.min.css';
 import { fetchAssemblyOptions } from './fetch-assembly-options.js';
 
 const uppy = new Uppy()
-	.use(Dashboard, {
-		inline: true,
-		target: '#uppy',
-	})
-	.use(Transloadit, {
-		assemblyOptions: fetchAssemblyOptions,
-		// Keep the UI waiting only when browser code needs the final results.
-		waitForEncoding: true,
-	});
+  .use(Dashboard, {
+    inline: true,
+    target: '#uppy',
+  })
+  .use(Transloadit, {
+    assemblyOptions: fetchAssemblyOptions,
+    // Keep the UI waiting only when browser code needs the final results.
+    waitForEncoding: true,
+  });
 
 uppy.on('transloadit:complete', (assembly) => {
-	// Results are keyed by the Step names declared in your Template.
-	console.log('Assembly results:', assembly.results);
+  // Results are keyed by the Step names declared in your Template.
+  console.log('Assembly results:', assembly.results);
 });
 ```
 
@@ -157,15 +157,15 @@ import '@uppy/dashboard/css/style.min.css';
 import { fetchAssemblyOptions } from './fetch-assembly-options';
 
 function createUppy() {
-	return new Uppy().use(Transloadit, {
-		assemblyOptions: fetchAssemblyOptions,
-	});
+  return new Uppy().use(Transloadit, {
+    assemblyOptions: fetchAssemblyOptions,
+  });
 }
 
 export function Uploader(): ReactNode {
-	const [uppy] = useState(createUppy);
+  const [uppy] = useState(createUppy);
 
-	return <Dashboard uppy={uppy} />;
+  return <Dashboard uppy={uppy} />;
 }
 ```
 
@@ -188,8 +188,8 @@ import { NextResponse } from 'next/server';
 import { createAssemblyOptions } from '../../../server/transloadit-options';
 
 export async function POST(): Promise<NextResponse> {
-	// Authenticate the request and authorize this upload before signing.
-	return NextResponse.json(createAssemblyOptions());
+  // Authenticate the request and authorize this upload before signing.
+  return NextResponse.json(createAssemblyOptions());
 }
 ```
 
@@ -209,15 +209,15 @@ import '@uppy/dashboard/css/style.min.css';
 import { fetchAssemblyOptions } from './fetch-assembly-options';
 
 function createUppy() {
-	return new Uppy().use(Transloadit, {
-		assemblyOptions: fetchAssemblyOptions,
-	});
+  return new Uppy().use(Transloadit, {
+    assemblyOptions: fetchAssemblyOptions,
+  });
 }
 
 export function Uploader(): ReactNode {
-	const [uppy] = useState(createUppy);
+  const [uppy] = useState(createUppy);
 
-	return <Dashboard uppy={uppy} />;
+  return <Dashboard uppy={uppy} />;
 }
 ```
 
@@ -240,14 +240,14 @@ import '@uppy/dashboard/css/style.min.css';
 import { fetchAssemblyOptions } from './fetch-assembly-options';
 
 const uppy = new Uppy().use(Transloadit, {
-	assemblyOptions: fetchAssemblyOptions,
+  assemblyOptions: fetchAssemblyOptions,
 });
 
 onBeforeUnmount(() => uppy.destroy());
 </script>
 
 <template>
-	<Dashboard :uppy="uppy" />
+  <Dashboard :uppy="uppy" />
 </template>
 ```
 
@@ -266,19 +266,19 @@ import Transloadit from '@uppy/transloadit';
 import { fetchAssemblyOptions } from './fetch-assembly-options';
 
 @Component({
-	selector: 'app-uploader',
-	standalone: true,
-	imports: [DashboardComponent],
-	template: '<uppy-dashboard [uppy]="uppy"></uppy-dashboard>',
+  selector: 'app-uploader',
+  standalone: true,
+  imports: [DashboardComponent],
+  template: '<uppy-dashboard [uppy]="uppy"></uppy-dashboard>',
 })
 export class UploaderComponent implements OnDestroy {
-	readonly uppy = new Uppy().use(Transloadit, {
-		assemblyOptions: fetchAssemblyOptions,
-	});
+  readonly uppy = new Uppy().use(Transloadit, {
+    assemblyOptions: fetchAssemblyOptions,
+  });
 
-	ngOnDestroy(): void {
-		this.uppy.destroy();
-	}
+  ngOnDestroy(): void {
+    this.uppy.destroy();
+  }
 }
 ```
 
@@ -337,6 +337,6 @@ guide][transloadit-uppy].
 [plugin-api]: /docs/transloadit
 [plugin-events]: /docs/transloadit#events
 [runnable-example]:
-	https://github.com/transloadit/uppy/tree/main/examples/transloadit
+  https://github.com/transloadit/uppy/tree/main/examples/transloadit
 [transloadit-uppy]: https://transloadit.com/docs/sdks/uppy/
 [webhooks]: https://transloadit.com/docs/topics/webhooks/
