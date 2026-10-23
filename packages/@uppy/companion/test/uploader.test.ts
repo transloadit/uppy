@@ -522,6 +522,38 @@ describe('uploader', () => {
     }
   })
 
+  test('an import whose socket never connects removes its emitter listeners', async () => {
+    const req = requireMockReq()
+    const prevBody = req.body
+    const prevCompanion = req.companion
+    req.body = { endpoint: 'http://url.myendpoint.com/files', protocol: 'tus' }
+    req.companion = {
+      ...prevCompanion,
+      options: { ...runtimeOptions, clientSocketConnectTimeout: 1 },
+    }
+    const stream = new PassThrough()
+    const json = vi.fn()
+    // Works for both emitters: the Redis one has no listenerCount.
+    const removeAll = vi.spyOn(Emitter(), 'removeAllListeners')
+    try {
+      await startDownUpload({
+        req,
+        res: { status: () => ({ json }) } as never,
+        getSize: undefined,
+        download: async () => ({ stream, size: 1 }),
+      })
+      const { token } = json.mock.calls[0]?.[0] as { token: string }
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      for (const event of ['cancel', 'pause', 'resume']) {
+        expect(removeAll).toHaveBeenCalledWith(`${event}:${token}`)
+      }
+    } finally {
+      removeAll.mockRestore()
+      req.body = prevBody
+      req.companion = prevCompanion
+    }
+  })
+
   test('does not retry a failed PUT upload', async () => {
     // got retries PUT (not POST) on network errors by default. The body here is
     // a one-shot stream, so the retry threw out of band after the promise had

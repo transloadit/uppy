@@ -496,10 +496,21 @@ export default class Uploader {
       logger.error(err, 'uploader.error', this.shortToken)
       this.#emitError(err)
     } finally {
-      emitter().removeAllListeners(`pause:${this.token}`)
-      emitter().removeAllListeners(`resume:${this.token}`)
-      emitter().removeAllListeners(`cancel:${this.token}`)
+      this.removeEmitterListeners()
     }
+  }
+
+  /**
+   * Remove the process-wide emitter listeners this Uploader registered in its
+   * constructor. tryUploadStream does this in its finally, but an import whose
+   * client socket never connects never reaches tryUploadStream, so the caller
+   * must call this to avoid leaking the listeners (and the Uploader they close
+   * over) for the life of the process.
+   */
+  removeEmitterListeners(): void {
+    emitter().removeAllListeners(`pause:${this.token}`)
+    emitter().removeAllListeners(`resume:${this.token}`)
+    emitter().removeAllListeners(`cancel:${this.token}`)
   }
 
   /**

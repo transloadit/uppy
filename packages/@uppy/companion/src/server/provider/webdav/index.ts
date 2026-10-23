@@ -251,7 +251,26 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
         // and reports a refused GET as an 'error' event on it; nothing listens
         // until the client's progress socket connects, so the event was fatal.
         // Await the GET instead so a non-2xx rejects here and gets mapped.
-        const response = await client.customRequest(`/${id}`, { method: 'GET' })
+        // Bound only the wait for response headers: a server that accepts the
+        // connection and never answers must not pin the request. The body that
+        // follows is deliberately left unbounded (a real download may be slow),
+        // so clear the timer once headers are in.
+        const ac = new AbortController()
+        const timer = setTimeout(() => ac.abort(), this.requestTimeoutMs)
+        let response: Awaited<ReturnType<typeof client.customRequest>>
+        try {
+          response = await client.customRequest(`/${id}`, {
+            method: 'GET',
+            signal: ac.signal,
+          })
+        } catch (err) {
+          // A refused GET still has its body on the wire, and nothing reads
+          // it: drop the connection rather than let the server trickle on.
+          ac.abort()
+          throw err
+        } finally {
+          clearTimeout(timer)
+        }
         // webdav types its Response minimally; under Node it is node-fetch's,
         // whose body is a Readable.
         const { body } = response as unknown as { body: Readable }

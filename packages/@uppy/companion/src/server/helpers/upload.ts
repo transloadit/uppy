@@ -77,8 +77,11 @@ export async function startDownUpload({
       await uploader.tryUploadStream(stream, req)
     } catch (err) {
       // e.g. the client's socket never connected within the timeout. The
-      // stream was never handed to tryUploadStream, so destroy it here.
+      // stream was never handed to tryUploadStream, so destroy it and remove
+      // the emitter listeners the Uploader registered (both would otherwise
+      // leak until the process restarts).
       if (!stream.destroyed) stream.destroy()
+      uploader.removeEmitterListeners()
       throw err
     }
   })().catch((err) => logger.error(err))

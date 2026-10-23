@@ -1,7 +1,15 @@
 import http from 'node:http'
 import type { AddressInfo } from 'node:net'
 import { gzipSync } from 'node:zlib'
-import { afterAll, beforeAll, beforeEach, describe, expect, test } from 'vitest'
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  test,
+  vi,
+} from 'vitest'
 import { FORBIDDEN_IP_ADDRESS } from '../dist/server/helpers/request.js'
 import { ProviderApiError } from '../dist/server/provider/error.js'
 import WebdavProvider from '../dist/server/provider/webdav/index.js'
@@ -134,6 +142,19 @@ describe('webdav download', () => {
     }
   }
 
+  test('times out a GET that accepts the connection but never sends headers', async () => {
+    handler = (req, res) => {
+      if (req.method === 'GET') return // hang: no headers, ever
+      res.writeHead(207, { 'content-type': 'application/xml' })
+      res.end(multistatus(fileResponse('/a.txt')))
+    }
+    const p = new WebdavProvider({ allowLocalUrls: true })
+    p.requestTimeoutMs = 200
+    await expect(
+      p.download({ id: 'a.txt', providerUserSession: { webdavUrl } } as never),
+    ).rejects.toThrow(/abort|timed out|timeout/i)
+  })
+
   test('rejects a download whose GET is refused', async () => {
     handler = statThenGet((_req, res) => {
       res.writeHead(404)
@@ -144,6 +165,25 @@ describe('webdav download', () => {
       .catch((e: unknown) => e)
     expect(err).toBeInstanceOf(ProviderApiError)
     expect((err as ProviderApiError).statusCode).toBe(404)
+  })
+
+  test('a refused GET closes the upstream connection', async () => {
+    let upstreamClosed = false
+    handler = statThenGet((req, res) => {
+      req.socket.once('close', () => {
+        upstreamClosed = true
+      })
+      res.writeHead(500, { 'content-type': 'text/plain' })
+      // trickle an error body that never ends
+      res.write('error ')
+    })
+    await expect(
+      provider().download({
+        id: 'a.txt',
+        providerUserSession: { webdavUrl },
+      } as never),
+    ).rejects.toThrow()
+    await vi.waitFor(() => expect(upstreamClosed).toBe(true))
   })
 
   test('destroying the download stream closes the upstream connection', async () => {
