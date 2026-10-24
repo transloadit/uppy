@@ -84,7 +84,7 @@ API2 File Library credential resolver, a server-only shared secret of at least 3
 Do not send this secret or Workspace Auth Secrets to the browser. Browser grants remain the only
 client-supplied authorization, with their existing expiry, prefix and scope checks.
 
-Dynamic credentials are refreshed by the cached S3 client's credential provider. Enrolling another
+Dynamic credentials are refreshed by the cached S3 client’s credential provider. Enrolling another
 Workspace therefore needs no Companion restart; API2 owns admission and checks it on each request.
 Resolver errors fail closed, without falling back to a static map or global S3 credentials.
 

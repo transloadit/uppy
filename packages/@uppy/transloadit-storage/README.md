@@ -4,7 +4,7 @@
 > Experimental. This plugin, `@uppy/s3` and the Companion endpoints they use will change
 > incompatibly, also in minor releases, as they make way for a standalone file manager.
 
-Browse a Workspace's Storage through an authenticated Companion grant, and upload into the open
+Browse a Workspace’s Storage through an authenticated Companion grant, and upload into the open
 directory with `@uppy/transloadit`. Keep grants, Assembly signing and Smart CDN signing on your
 application server; browser-provided paths are not authorization.
 
@@ -26,16 +26,16 @@ files stored before the failure may already exist. Inspect the Assembly before r
 `'rename'` when ordinary filename collisions should not abort a multi-file upload.
 
 After `ASSEMBLY_COMPLETED`, save the canonical stored result from `results[producingStep][i]`
-with your application's owner/project record. A store step annotating `:original` reports in
+with your application’s owner/project record. A store step annotating `:original` reports in
 `results[':original']`, not necessarily under the name `stored`. Verify the completed Assembly
 server-side; do not trust a browser-supplied receipt. Uppy preserves the returned result fields.
 
 Save `workspace`, `asset_id`, `version_id`, the **returned** `path`, `size`, `mime`, available
 checksums and image dimensions. Explicit collision renaming can change the requested filename.
-The native catalog API and `@transloadit/node`'s `getStoredAsset()` return that same record.
+The native catalog API and `@transloadit/node`’s `getStoredAsset()` return that same record.
 `getStoredAssemblyResults({ assemblyId, workspace })` fetches and validates all stored results,
 including video, audio and documents, with their Assembly/step/result/input provenance. First bind
-the Assembly to the authenticated application's upload record. Register idempotently by
+the Assembly to the authenticated application’s upload record. Register idempotently by
 Assembly/step/result ID (or asset/version), not by filename or webhook count.
 `getStoredImageReceipt()` additionally verifies trusted upload metadata for image rendering.
 
@@ -45,7 +45,7 @@ Assembly/step/result ID (or asset/version), not by filename or webhook count.
 - `asset_id` follows the logical asset and selects its current version.
 - `asset_id` plus `version_id` selects exact retained bytes, without falling back after overwrite.
 
-Identity survives a **native catalog move or rename**. This plugin uses Companion's separate
+Identity survives a **native catalog move or rename**. This plugin uses Companion’s separate
 `transloadit-storage` provider: file and folder moves call the native catalog endpoint, preserving
 retained references. If that endpoint or its Workspace credentials are unavailable, the action
 fails; it never falls back to copy/delete. The generic `@uppy/s3` provider keeps S3 copy/delete
@@ -62,7 +62,7 @@ Use those exclusive selectors with `/transloadit/import` in the same authenticat
 Deleting an asset or removing its retained version makes the reference unavailable. IDs are not
 authorization or a backup. Keep permissions attached to stable asset identity where possible.
 
-`getSmartCdnUrl(key)` receives the current browser listing's **path**, not an asset/version ID.
+`getSmartCdnUrl(key)` receives the current browser listing’s **path**, not an asset/version ID.
 Its server endpoint must authorize the user and resolve the selected path through a bounded
 native catalog query (`listStoredAssets({ prefix: key, limit: 1 })`, checking exact returned path).
 Then build delivery from the returned receipt. Do not insert the mutable key or its hash into a
@@ -110,7 +110,7 @@ server-side for both source and destination.
 
 The browser never names a bucket: `@uppy/s3` and this plugin have no `bucket` option, and the
 session sees whatever Companion (or the grant) decides. Each listing carries a `session` object:
-the `bucket`, the session's root `prefix`, `canWrite`, and whether the server moves folders itself
+the `bucket`, the session’s root `prefix`, `canWrite`, and whether the server moves folders itself
 (`supportsMoveFolder`, true for this provider); the browser hides the file changes and uploads when the
 server says the session is read-only, and resolves paths typed into the move dialogs relative to
 that browsing root. Older servers that report no session show read actions only — upgrade
@@ -136,7 +136,7 @@ preserves its locale overrides, and enables `waitForEncoding` so completion incl
 Step and reports its failures. If your application already owns an Assembly pipeline, call
 `createStoreAssemblyOptions(uppy, { signAssembly, storagePluginId })` explicitly and compose it
 deliberately; the widget will not overwrite that pipeline. Uploads at the browsing root use the
-authenticated grant's prefix, initializing the session first even if the panel has not been opened.
+authenticated grant’s prefix, initializing the session first even if the panel has not been opened.
 An authentication failure stops the upload before requesting a signature. `onUploadRequest` can
 also expose an app-owned upload flow without enabling `storeUploads`.
 Your signing endpoint must independently authorize that destination
@@ -145,5 +145,5 @@ and restrict the allowed Steps; client-side folder selection is not an authoriza
 This contract requires the matching API2 catalog/Built-in deployment and SDK/types release before
 production rollout. `@transloadit/viewer` is an unpublished private preview, not yet an npm install;
 maintainers can follow the [local packing and devdock guide](https://github.com/transloadit/node-sdk/blob/img-onboard/docs/img-dogfood.md).
-Companion's S3 listing protocol remains path-based; this package does not
+Companion’s S3 listing protocol remains path-based; this package does not
 invent Storage IDs for arbitrary S3 providers or fetch metadata for every listed file.

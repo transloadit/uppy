@@ -21,6 +21,7 @@ corepack enable
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
+
 [Yarn]: https://yarnpkg.com/
 
 ## Development
@@ -39,9 +40,9 @@ yarn build
 
 ### Development Commands
 
-- `yarn dev` - Start development server at http://localhost:5174
+- `yarn dev` - Start development server at <http://localhost:5174>
 - `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
-- `yarn start:companion` - Start only Companion server at http://localhost:3020
+- `yarn start:companion` - Start only Companion server at <http://localhost:3020>
 - `yarn build:watch` - Build packages in watch mode
 - `yarn build:examples` - Build and type-check the examples and the dev playground
 - `yarn test` - Run tests for all packages
@@ -147,7 +148,7 @@ corepack yarn workspace uppy-io test # needs a build
 ```
 
 `website/static` only holds site assets such as icons and fonts (CI
-rejects files over 100 KB). Blog images and videos are served from Transloadit's
+rejects files over 100 KB). Blog images and videos are served from Transloadit’s
 Smart CDN at `https://uppy-io-static.tlcdn.com/static/img/blog/<path>`,
 which imports them from the `static` folder of the archived
 [transloadit/uppy.io](https://github.com/transloadit/uppy.io) repository. To add

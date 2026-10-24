@@ -8,6 +8,7 @@ import remarkDirective from 'remark-directive'
 import remarkGfm from 'remark-gfm'
 import remarkRetext from 'remark-retext'
 import remarkPresetRecommended from 'remark-preset-lint-recommended'
+import remarkLintNoUndefinedReferences from 'remark-lint-no-undefined-references'
 
 import retextEnglish from 'retext-english'
 import retextEquality from 'retext-equality'
@@ -48,6 +49,7 @@ const messageControlPreset = () => (tree, file) =>
 
 export default {
   settings: {
+    bullet: '-',
     emphasis: '_',
     strong: '*',
     'tab-size': 1,
@@ -57,6 +59,11 @@ export default {
     remarkGfm, // GitHub Flavored Markdown
     remarkDirective, // Admonitions
     remarkPresetRecommended,
+    // Allow GitHub alerts such as `> [!WARNING]`
+    [
+      remarkLintNoUndefinedReferences,
+      { allow: [/^!(note|tip|important|warning|caution)$/i] },
+    ],
     retextPreset,
     messageControlPreset,
   ],
