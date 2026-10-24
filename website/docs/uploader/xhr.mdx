@@ -3,9 +3,9 @@ sidebar_position: 5
 slug: /xhr-upload
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # XHR
 
@@ -60,16 +60,16 @@ yarn add @uppy/xhr-upload
 A quick overview of the complete API.
 
 ```js {10} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import XHR from '@uppy/xhr-upload';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import XHR from '@uppy/xhr-upload'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy()
   .use(Dashboard, { inline: true, target: 'body' })
-  .use(XHR, { endpoint: 'https://your-domain.com/upload' });
+  .use(XHR, { endpoint: 'https://your-domain.com/upload' })
 ```
 
 ## API
@@ -134,7 +134,7 @@ names, values are header values.
 ```js
 const headers = {
   authorization: `Bearer ${window.getCurrentUserToken()}`,
-};
+}
 ```
 
 Header values can also be derived from file data by providing a function. The
@@ -146,8 +146,8 @@ const headers = (file) => {
   return {
     authorization: `Bearer ${window.getCurrentUserToken()}`,
     expires: file.meta.expires,
-  };
-};
+  }
+}
 ```
 
 :::note
@@ -190,7 +190,7 @@ To upload files on different fields, use
 ```js
 uppy.setFileState(fileID, {
   xhrUpload: { fieldName: 'pic0' },
-});
+})
 ```
 
 #### `timeout: 30 * 1000`
@@ -253,7 +253,7 @@ export default {
     // Shown in the Informer if an upload is being canceled because it stalled for too long.
     timedOut: 'Upload stalled for %{seconds} seconds, aborting.',
   },
-};
+}
 ```
 
 #### `getResponseData`
@@ -271,15 +271,15 @@ to make it typesafe when using TS.
 ### How can I refresh auth tokens after they expire?
 
 ```js
-import Uppy from '@uppy/core';
-import XHR from '@uppy/xhr-upload';
+import Uppy from '@uppy/core'
+import XHR from '@uppy/xhr-upload'
 
-let token = null;
+let token = null
 
 async function getAuthToken() {
-  const res = await fetch('/auth/token');
-  const json = await res.json();
-  return json.token;
+  const res = await fetch('/auth/token')
+  const json = await res.json()
+  return json.token
 }
 
 new Uppy().use(XHR, {
@@ -287,16 +287,16 @@ new Uppy().use(XHR, {
   // Called again for every retry too.
   async onBeforeRequest(xhr) {
     if (!token) {
-      token = await getAuthToken();
+      token = await getAuthToken()
     }
-    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`)
   },
   async onAfterResponse(xhr) {
     if (xhr.status === 401) {
-      token = await getAuthToken();
+      token = await getAuthToken()
     }
   },
-});
+})
 ```
 
 ### How to send along meta data with the upload?
@@ -315,8 +315,8 @@ do this:
 uppy.on('file-added', (file) => {
   uppy.setFileMeta(file.id, {
     size: file.size,
-  });
-});
+  })
+})
 ```
 
 Now, a form field named `size` will be sent along to the [`endpoint`](#endpoint)
@@ -332,7 +332,7 @@ that should be sent.
 uppy.use(XHRUpload, {
   // Only send our own `size` metadata field.
   allowedMetaFields: ['size'],
-});
+})
 ```
 
 ### How to upload to a PHP server?
@@ -366,7 +366,7 @@ convoluted:
 uppy.use(XHRUpload, {
   endpoint: '/upload.php',
   fieldName: 'my_file',
-});
+})
 ```
 
 ```php

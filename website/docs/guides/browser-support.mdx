@@ -2,10 +2,10 @@
 sidebar_position: 7
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Supporting IE11
 
@@ -36,16 +36,16 @@ yarn add core-js whatwg-fetch abortcontroller-polyfill md-gum-polyfill resize-ob
 </Tabs>
 
 ```js
-import 'core-js';
-import 'whatwg-fetch';
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
+import 'core-js'
+import 'whatwg-fetch'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 // Order matters: AbortController needs fetch which needs Promise (provided by core-js).
 
-import 'md-gum-polyfill';
-import ResizeObserver from 'resize-observer-polyfill';
+import 'md-gum-polyfill'
+import ResizeObserver from 'resize-observer-polyfill'
 
-window.ResizeObserver ??= ResizeObserver;
+window.ResizeObserver ??= ResizeObserver
 
-export { default } from '@uppy/core';
-export * from '@uppy/core';
+export { default } from '@uppy/core'
+export * from '@uppy/core'
 ```

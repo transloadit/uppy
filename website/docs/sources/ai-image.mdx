@@ -3,10 +3,10 @@ sidebar_position: 4
 slug: /ai-image
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # AI image generator
 
@@ -92,31 +92,31 @@ The integration has **two parts**:
 ### 1. Client-side Uppy setup
 
 ```js {3,7,11,17} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import ImageGenerator from '@uppy/image-generator';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import ImageGenerator from '@uppy/image-generator'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
-import '@uppy/image-generator/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+import '@uppy/image-generator/css/style.min.css'
 
-const uppy = new Uppy();
+const uppy = new Uppy()
 
 uppy.use(Dashboard, { inline: true, target: 'body' }).use(ImageGenerator, {
   // Called every time the user submits a new prompt
   assemblyOptions: async (prompt) => {
     const res = await fetch(
       `/assembly-options?prompt=${encodeURIComponent(prompt)}`,
-    );
+    )
 
     if (!res.ok) {
-      throw new Error('Failed to load Transloadit options');
+      throw new Error('Failed to load Transloadit options')
     }
 
     // Should resolve to: { params, signature }
-    return res.json();
+    return res.json()
   },
-});
+})
 ```
 
 When the user enters a prompt in the Image Generator view, Uppy:
@@ -150,22 +150,22 @@ Below is a Node.js example that:
 - Returns `{ params, signature }` to the browser.
 
 ```js showLineNumbers
-import crypto from 'node:crypto';
+import crypto from 'node:crypto'
 
 function utcDateString(ms) {
   return new Date(ms)
     .toISOString()
     .replace(/-/g, '/')
     .replace(/T/, ' ')
-    .replace(/\.\d+Z$/, '+00:00');
+    .replace(/\.\d+Z$/, '+00:00')
 }
 
 export function createAiImageAssemblyOptions(prompt) {
   // Expire 1 hour from now (value in milliseconds)
-  const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
+  const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000)
 
-  const authKey = process.env.TRANSLOADIT_KEY;
-  const authSecret = process.env.TRANSLOADIT_SECRET;
+  const authKey = process.env.TRANSLOADIT_KEY
+  const authSecret = process.env.TRANSLOADIT_SECRET
 
   const params = JSON.stringify({
     auth: {
@@ -190,16 +190,16 @@ export function createAiImageAssemblyOptions(prompt) {
         num_outputs: 2,
       },
     },
-  });
+  })
 
   const signatureBytes = crypto
     .createHmac('sha384', authSecret)
-    .update(Buffer.from(params, 'utf-8'));
+    .update(Buffer.from(params, 'utf-8'))
 
   // Prefix the hash with the algorithm so Transloadit knows how to verify it
-  const signature = `sha384:${signatureBytes.digest('hex')}`;
+  const signature = `sha384:${signatureBytes.digest('hex')}`
 
-  return { params, signature };
+  return { params, signature }
 }
 ```
 
@@ -236,10 +236,10 @@ uppy.use(ImageGenerator, {
   assemblyOptions: async (prompt) => {
     const res = await fetch(
       `/assembly-options?prompt=${encodeURIComponent(prompt)}`,
-    );
-    return res.json(); // { params, signature }
+    )
+    return res.json() // { params, signature }
   },
-});
+})
 ```
 
 This gives you full control over:

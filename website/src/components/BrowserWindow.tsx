@@ -1,9 +1,9 @@
-import React from 'react';
-import styles from './browser-window.module.css';
+import React from 'react'
+import styles from './browser-window.module.css'
 
 interface BrowserWindowProps {
-  children: React.ReactNode;
-  className?: string;
+  children: React.ReactNode
+  className?: string
 }
 
 export const BrowserWindow: React.FC<BrowserWindowProps> = ({
@@ -24,5 +24,5 @@ export const BrowserWindow: React.FC<BrowserWindowProps> = ({
       {/* Content area */}
       <div className={styles.content}>{children}</div>
     </div>
-  );
-};
+  )
+}

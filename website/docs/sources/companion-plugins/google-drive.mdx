@@ -2,12 +2,12 @@
 slug: /google-drive
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
-import CompanionOptions from './_companion-options.mdx';
-import GoogleOwnCredentials from './_google-own-credentials.mdx';
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import CompanionOptions from './_companion-options.mdx'
+import GoogleOwnCredentials from './_google-own-credentials.mdx'
 
 # Google Drive
 
@@ -77,16 +77,16 @@ Using Google Drive requires setup in both Uppy and Companion.
 ### Use in Uppy
 
 ```js {10-13} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import GoogleDrive from '@uppy/google-drive';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GoogleDrive from '@uppy/google-drive'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy()
   .use(Dashboard, { inline: true, target: '#dashboard' })
-  .use(GoogleDrive, { companionUrl: 'https://your-companion.com' });
+  .use(GoogleDrive, { companionUrl: 'https://your-companion.com' })
 ```
 
 ### Use with Transloadit
@@ -149,8 +149,8 @@ URL as a workaround.
 #### 3. Point the plugin at the credential
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import GoogleDrive from '@uppy/google-drive';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import GoogleDrive from '@uppy/google-drive'
 
 uppy.use(GoogleDrive, {
   companionUrl: COMPANION_URL,
@@ -159,7 +159,7 @@ uppy.use(GoogleDrive, {
     key: 'YOUR_TRANSLOADIT_API_KEY',
     credentialsName: 'google_drive_own',
   },
-});
+})
 ```
 
 `companionUrl` has to be `COMPANION_URL`, which is
@@ -231,7 +231,7 @@ companion.app({
       secret: 'Google OAuth client secret',
     },
   },
-});
+})
 ```
 
 ## API

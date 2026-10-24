@@ -21,11 +21,11 @@ To use a store, pass an instance to the [`store` option](/docs/uppy/#store) in
 the Uppy constructor:
 
 ```js
-import DefaultStore from '@uppy/core/store-default';
+import DefaultStore from '@uppy/core/store-default'
 
 const uppy = new Uppy({
   store: new DefaultStore(),
-});
+})
 ```
 
 ### `DefaultStore`
@@ -50,26 +50,26 @@ The default store implementation, for example, looks a bit like this:
 
 ```js
 function createDefaultStore() {
-  let state = {};
-  const listeners = new Set();
+  let state = {}
+  const listeners = new Set()
 
   return {
     getState: () => state,
     setState: (patch) => {
-      const prevState = state;
-      const nextState = { ...prevState, ...patch };
+      const prevState = state
+      const nextState = { ...prevState, ...patch }
 
-      state = nextState;
+      state = nextState
 
       listeners.forEach((listener) => {
-        listener(prevState, nextState, patch);
-      });
+        listener(prevState, nextState, patch)
+      })
     },
     subscribe: (listener) => {
-      listeners.add(listener);
-      return () => listeners.delete(listener);
+      listeners.add(listener)
+      return () => listeners.delete(listener)
     },
-  };
+  }
 }
 ```
 

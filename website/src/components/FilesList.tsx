@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { UppyContextProvider, FilesList } from '@uppy/react';
-import { Uppy } from 'uppy';
+import React, { useEffect, useState } from 'react'
+import { UppyContextProvider, FilesList } from '@uppy/react'
+import { Uppy } from 'uppy'
 
-import { BrowserWindow } from './BrowserWindow';
+import { BrowserWindow } from './BrowserWindow'
 
-import '@uppy/react/css/style.css';
+import '@uppy/react/css/style.css'
 
-import styles from './files-list.module.css';
+import styles from './files-list.module.css'
 
-type UploadableFile = Parameters<InstanceType<typeof Uppy>['addFile']>[0];
+type UploadableFile = Parameters<InstanceType<typeof Uppy>['addFile']>[0]
 
 const fakeFiles = [
   {
@@ -43,19 +43,19 @@ const fakeFiles = [
     isRemote: false,
   },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-] satisfies UploadableFile[];
+] satisfies UploadableFile[]
 
 export default function FilesListDemo() {
-  const [uppy] = useState(() => new Uppy());
-  const [files, setFiles] = useState<UploadableFile[]>([]);
+  const [uppy] = useState(() => new Uppy())
+  const [files, setFiles] = useState<UploadableFile[]>([])
 
   useEffect(() => {
-    setFiles(fakeFiles);
-  }, [uppy]);
+    setFiles(fakeFiles)
+  }, [uppy])
 
   useEffect(() => {
-    files.forEach((file) => uppy.addFile(file));
-  }, [files]);
+    files.forEach((file) => uppy.addFile(file))
+  }, [files])
 
   return (
     <BrowserWindow>
@@ -65,5 +65,5 @@ export default function FilesListDemo() {
         </div>
       </UppyContextProvider>
     </BrowserWindow>
-  );
+  )
 }

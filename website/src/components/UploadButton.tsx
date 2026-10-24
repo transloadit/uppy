@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 import {
   UppyContextProvider,
   UploadButton as UppyUploadButton,
   useFileInput,
-} from '@uppy/react';
-import { Tus, Uppy } from 'uppy';
+} from '@uppy/react'
+import { Tus, Uppy } from 'uppy'
 
-import { BrowserWindow } from './BrowserWindow';
+import { BrowserWindow } from './BrowserWindow'
 
-import '@uppy/react/css/style.css';
+import '@uppy/react/css/style.css'
 
-import styles from './button.module.css';
+import styles from './button.module.css'
 
 function FileInput() {
-  const { getInputProps, getButtonProps } = useFileInput();
+  const { getInputProps, getButtonProps } = useFileInput()
   return (
     <div style={{ margin: '1rem 0' }}>
       <input style={{ display: 'none' }} {...getInputProps()} />
       <button {...getButtonProps()}>Add files</button>
     </div>
-  );
+  )
 }
 
 export default function UploadButton() {
@@ -27,7 +27,7 @@ export default function UploadButton() {
     new Uppy().use(Tus, {
       endpoint: 'https://tusd.tusdemo.net/files/',
     }),
-  );
+  )
 
   return (
     <BrowserWindow>
@@ -38,5 +38,5 @@ export default function UploadButton() {
         </div>
       </UppyContextProvider>
     </BrowserWindow>
-  );
+  )
 }

@@ -1,13 +1,13 @@
-import React from 'react';
+import React from 'react'
 
-import CopyStateIcon from '../CopyStateIcon';
-import { useCopyToClipboard } from '../../hooks/useCopyToClipboard';
-import { agentPrompt } from './prompt';
-import styles from './styles.module.css';
+import CopyStateIcon from '../CopyStateIcon'
+import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
+import { agentPrompt } from './prompt'
+import styles from './styles.module.css'
 
 type Props = {
-  className?: string;
-};
+  className?: string
+}
 
 /**
  * The prompt is long by design — it is a brief, not a snippet — so the panel
@@ -16,7 +16,7 @@ type Props = {
  * thing, whatever is scrolled into view.
  */
 export default function AgentPrompt({ className }: Props): JSX.Element {
-  const { copied, copy } = useCopyToClipboard(agentPrompt);
+  const { copied, copy } = useCopyToClipboard(agentPrompt)
 
   return (
     <div className={[styles.wrapper, className].filter(Boolean).join(' ')}>
@@ -42,5 +42,5 @@ export default function AgentPrompt({ className }: Props): JSX.Element {
         {copied ? 'Prompt copied to clipboard' : ''}
       </span>
     </div>
-  );
+  )
 }

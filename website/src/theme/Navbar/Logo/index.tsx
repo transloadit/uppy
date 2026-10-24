@@ -1,7 +1,7 @@
-import React from 'react';
-import Link from '@docusaurus/Link';
+import React from 'react'
+import Link from '@docusaurus/Link'
 
-import styles from './index.module.css';
+import styles from './index.module.css'
 
 /**
  * Brand lockup: Uppy owns the mark, Transloadit is named right beside it so the
@@ -28,5 +28,5 @@ export default function NavbarLogo(): JSX.Element {
         <img src="/img/transloadit.svg" alt="Transloadit" height={17} />
       </Link>
     </div>
-  );
+  )
 }

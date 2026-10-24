@@ -1,9 +1,9 @@
-import React, { type ReactNode } from 'react';
-import clsx from 'clsx';
-import Translate from '@docusaurus/Translate';
-import Link from '@docusaurus/Link';
-import type { Props } from '@theme/NotFound/Content';
-import Heading from '@theme/Heading';
+import React, { type ReactNode } from 'react'
+import clsx from 'clsx'
+import Translate from '@docusaurus/Translate'
+import Link from '@docusaurus/Link'
+import type { Props } from '@theme/NotFound/Content'
+import Heading from '@theme/Heading'
 
 // These are static files, not routes; `<Link>` would append the configured
 // trailing slash and turn /llms.txt into /llms.txt/, which 404s.
@@ -20,7 +20,7 @@ const recoveryLinks = [
   { to: '/docs/companion', label: 'Companion', hint: 'The server component' },
   { to: '/examples', label: 'Examples', hint: 'Live, runnable demos' },
   { to: '/blog', label: 'Blog', hint: 'Releases and announcements' },
-];
+]
 
 const machineReadableLinks = [
   { href: '/llms.txt', label: '/llms.txt', hint: 'Index of the docs for LLMs' },
@@ -39,7 +39,7 @@ const machineReadableLinks = [
     label: '/sitemap.xml',
     hint: 'Every page on this site',
   },
-];
+]
 
 export default function NotFoundContent({ className }: Props): ReactNode {
   return (
@@ -100,5 +100,5 @@ export default function NotFoundContent({ className }: Props): ReactNode {
         </div>
       </div>
     </main>
-  );
+  )
 }

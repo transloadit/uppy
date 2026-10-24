@@ -3,10 +3,10 @@ sidebar_position: 3
 slug: /audio
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Audio
 
@@ -59,15 +59,15 @@ yarn add @uppy/audio
 ## Use
 
 ```js {3,7,11} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import Audio from '@uppy/audio';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Audio from '@uppy/audio'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
-import '@uppy/audio/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+import '@uppy/audio/css/style.min.css'
 
-new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(Audio);
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(Audio)
 ```
 
 ### API
@@ -129,5 +129,5 @@ export default {
     // This is not visibly rendered but is picked up by screen readers.
     discardRecordedFile: 'Discard recorded file',
   },
-};
+}
 ```

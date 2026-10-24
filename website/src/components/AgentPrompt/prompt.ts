@@ -113,4 +113,4 @@ Or drop to hooks — \`useDropzone\`, \`useUppyState\`, \`useUppyEvent\` — and
 Docs index: https://uppy.io/docs/quick-start/
 Breaking changes: https://uppy.io/docs/guides/migration-guides/
 Runnable examples: https://github.com/transloadit/uppy/tree/main/examples
-`;
+`
