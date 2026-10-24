@@ -1,5 +1,11 @@
 # @uppy/tus
 
+## 6.0.1
+
+### Patch Changes
+
+- f58058d: Allow various asynchronous interfaces and callbacks to be synchronous. Some methods that never awaited anything are no longer `async`; for example `Webcam#getVideo()` now returns its value directly.
+
 ## 6.0.0
 
 ### Major Changes
@@ -77,7 +83,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

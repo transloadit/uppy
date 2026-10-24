@@ -1,5 +1,34 @@
 # uppy
 
+## 6.0.6
+
+### Patch Changes
+
+- Updated dependencies [f58058d]
+- Updated dependencies [f58058d]
+- Updated dependencies [f58058d]
+- Updated dependencies [a8e8b28]
+- Updated dependencies [a16a4bf]
+  - @uppy/core@6.3.1
+  - @uppy/aws-s3@6.3.1
+  - @uppy/golden-retriever@6.0.1
+  - @uppy/transloadit@6.0.2
+  - @uppy/tus@6.0.1
+  - @uppy/webcam@6.0.3
+  - @uppy/box@5.0.1
+  - @uppy/dropbox@6.0.1
+  - @uppy/facebook@6.0.1
+  - @uppy/google-drive@6.0.2
+  - @uppy/google-drive-picker@2.0.1
+  - @uppy/google-photos-picker@2.0.1
+  - @uppy/onedrive@6.0.1
+  - @uppy/unsplash@6.0.1
+  - @uppy/webdav@2.0.2
+  - @uppy/zoom@5.0.1
+  - @uppy/dashboard@6.0.3
+  - @uppy/drag-drop@6.0.2
+  - @uppy/drop-target@5.0.2
+
 ## 6.0.5
 
 ### Patch Changes
@@ -419,7 +448,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 
