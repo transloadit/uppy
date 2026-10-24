@@ -13,7 +13,7 @@ export default function FooterActions<M extends Meta, B extends Body>({
   validateAggregateRestrictions,
 }: {
   cancelSelection: ProviderView<M, B>['cancelSelection']
-  donePicking: ProviderView<M, B>['donePicking']
+  donePicking: () => void
   i18n: I18n
   partialTree: PartialTree
   validateAggregateRestrictions: ProviderView<
