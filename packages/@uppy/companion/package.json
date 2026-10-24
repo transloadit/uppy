@@ -73,7 +73,7 @@
     "validator": "^13.15.35",
     "webdav": "^5.10.0",
     "ws": "^8.21.1",
-    "zod": "^4.4.3"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
