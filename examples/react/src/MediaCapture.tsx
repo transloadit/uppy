@@ -102,5 +102,3 @@ export function MediaCapture({
     </div>
   )
 }
-
-export default MediaCapture

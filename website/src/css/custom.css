@@ -1,0 +1,1298 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: normal;
+  font-display: swap;
+  src:
+    local('IBM Plex Mono'),
+    local('IBMPlexMono'),
+    url('/fonts/IBMPlexMono-Regular.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src:
+    local('IBM Plex Mono SemiBold'),
+    local('IBMPlexMono-SemiBold'),
+    url('/fonts/IBMPlexMono-SemiBold.woff2') format('woff2');
+}
+
+/* Inter, self-hosted as a variable font so the whole 100–900 weight range
+   costs a single file. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/InterVariable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Inter';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('/fonts/InterVariable-Italic.woff2') format('woff2');
+}
+
+/* ==========================================================================
+   Design tokens
+   One accent (Uppy pink) on a slate-tinted neutral ramp shared with
+   transloadit.com, so the two sites read as one family.
+   ========================================================================== */
+
+:root {
+  /* Brand pink — the single accent. */
+  --u-pink-50: #fff5f8;
+  --u-pink-100: #ffe4ee;
+  --u-pink-500: #f37; /* the mark */
+  --u-pink-600: #e6005c;
+  --u-pink-700: #b8004a;
+
+  /* Neutrals — cool/slate, matching the Transloadit wordmark (#1e293b). */
+  --u-ink-50: #f8fafc;
+  --u-ink-100: #f1f5f9;
+  --u-ink-200: #e6ebf1;
+  --u-ink-400: #94a3b8;
+  --u-ink-500: #64748b;
+  --u-ink-600: #475569;
+  --u-ink-700: #334155;
+  --u-ink-800: #1e293b;
+  --u-ink-900: #0d1526;
+
+  /* Hairlines: borders are a last resort, and thin when used. */
+  --u-line: #e6ebf1;
+  --u-line-strong: #d6dee8;
+
+  /* Elevation — two-part, tinted toward the slate ambient. */
+  --u-shadow-xs: 0 1px 2px rgb(13 21 38 / 6%);
+  --u-shadow-md: 0 1px 2px rgb(13 21 38 / 6%), 0 6px 14px rgb(13 21 38 / 6%);
+  --u-shadow-lg: 0 2px 4px rgb(13 21 38 / 6%), 0 14px 32px rgb(13 21 38 / 8%);
+
+  /* Radii — concentric scale. */
+  --u-radius-sm: 6px;
+  --u-radius-md: 10px;
+  --u-radius-lg: 14px;
+  --u-radius-xl: 20px;
+
+  /* One gutter for the whole site: navbar, every section, the docs layout and
+     the footer share a left edge. Deliberately px, not rem — the root
+     font-size drops to 16px between 1000 and 1300px, which would have quietly
+     shrunk the layout width along with it. */
+  --u-container: 1400px;
+
+  --u-ease: cubic-bezier(0.2, 0, 0, 1);
+
+  /* Status colours for the comparison tables. Muted rather than signal-bright:
+     a hundred of them appear on one page, and the pink still has to lead. */
+  --u-yes: #18a06a;
+  --u-no: #dc4b4b;
+  --u-warn: #dc9a1e;
+
+  /* Tints behind the glyphs. Kept very pale: a hundred filled circles on one
+     page would otherwise read as confetti. */
+  --u-yes-50: #e6f6ef;
+  --u-no-50: #fdeaea;
+  --u-warn-50: #fdf2e0;
+
+  /* Table status glyphs, masked so each takes its own colour from the class
+     that uses it. Stroke-only — the `h.01` paths are dots — and drawn heavy,
+     since they render at 14px inside their disc. */
+  --u-icon-check: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E");
+  --u-icon-cross: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
+  --u-icon-question: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='3.25' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+  --u-icon-warning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m21.7 18-8-14a2 2 0 0 0-3.4 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3'/%3E%3Cpath d='M12 9v4'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E");
+
+  /* Stroked chevron, masked so it takes currentColor. Points up, matching the
+     orientation Infima's caret rotations are written against. */
+  --u-chevron-up: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.5 10 8 5.5l4.5 4.5'/%3E%3C/svg%3E");
+
+  /* Its own token rather than a rotated `--u-chevron-up`, so anything using it
+     keeps `transform` free for hover motion. */
+  --u-chevron-right: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 3.5 10.5 8 6 12.5'/%3E%3C/svg%3E");
+}
+
+/* You can override the default Infima variables here. */
+:root {
+  tab-size: 2;
+  /* Link/primary pink is darkened from the mark so body links clear 4.5:1. */
+  --ifm-color-primary: #d1004f;
+  --ifm-color-primary-dark: #bc0047;
+  --ifm-color-primary-darker: #b10043;
+  --ifm-color-primary-darkest: #920038;
+  --ifm-color-primary-light: #e60057;
+  --ifm-color-primary-lighter: #f0005c;
+  --ifm-color-primary-lightest: #ff1a6b;
+  --ifm-code-font-size: 95%;
+  --ifm-font-size-base: 18px;
+  --ifm-font-family-base:
+    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ifm-font-family-monospace: 'IBM Plex Mono', mono-space;
+  --ifm-heading-font-family:
+    'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Semibold, not bold — Inter's 700 is heavy enough to shout at display sizes. */
+  --ifm-heading-font-weight: 600;
+  /* Left at Infima's default: 10% black over the code block's #f6f8fa lands on
+     #dddfe1, and the palette in docusaurus.config.js is picked to clear 4.5:1
+     on that darker ground as well as on the code block's own. */
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-avatar-photo-size: 1.2rem;
+  --ifm-avatar-intro-margin: 0.5rem;
+
+  --ifm-heading-color: var(--u-ink-900);
+  --ifm-font-color-base: var(--u-ink-700);
+  /* Infima ships this as `transparent`, so the page was white only because
+     that's what the browser canvas defaults to. Anything reading the variable
+     for an opaque fill — a sticky table column, say — got nothing. */
+  --ifm-background-color: #fff;
+  --ifm-navbar-height: 4rem;
+  --ifm-navbar-shadow: none;
+  --ifm-toc-border-color: var(--u-line);
+  --ifm-hr-border-color: var(--u-line);
+  --ifm-footer-background-color: transparent;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Contextual alternates fix Inter's "ft"/"tt" pairs. Optical sizing is left
+     on `auto` and deliberately NOT pinned via font-variation-settings: that
+     property overrides font-optical-sizing, which would render 13px sidebar
+     text with letterforms drawn for 24px display use. */
+  font-feature-settings:
+    'kern' 1,
+    'calt' 1;
+  font-optical-sizing: auto;
+}
+
+::selection {
+  background: var(--u-pink-100);
+  color: var(--u-pink-700);
+}
+
+/* Focus is never removed — only replaced with an on-brand ring. */
+:focus-visible {
+  outline: 2px solid var(--u-pink-500);
+  outline-offset: 2px;
+  border-radius: var(--u-radius-sm);
+}
+
+/* @uppy/dashboard ships its "Powered by Uppy" credit at #939393 on the panel's
+   #f4f4f4 footer — 2.79:1, and at 11px it needs 4.5. Darkened here rather than
+   left to the library, so the two Dashboards this site embeds pass. */
+/* Uppy's headless components set --uppy-color-blue-500 to #3280ff and use it as
+   link text on white, which is 3.71:1. Stepped to the library's own blue-600,
+   which is 5.25:1 either way round — as text on white, and behind white text.
+   Uppy declares its tokens inside a cascade layer, so this unlayered rule wins
+   without needing a specificity fight. */
+:root {
+  --uppy-color-blue-500: #155dfc;
+}
+
+/* DocSearch's muted grey is #9698c3 — 2.77:1 on white, and it sets the search
+   page's "Powered by" attribution. Stepped to DocSearch's own secondary text
+   colour, same violet family, 6:1.
+   `html:root` rather than `:root`: @docsearch/css declares this on :root too and
+   loads after this file, so an equal-specificity rule here would lose the tie. */
+html:root {
+  --docsearch-muted-color: #5a5e9a;
+}
+
+/* The `html` prefix is doing real work: uppy.min.css is imported from the page
+   components, so it lands in a chunk that loads after this file, and matching
+   its `a.uppy-Dashboard-poweredBy` specificity would lose the later-wins tie. */
+html a.uppy-Dashboard-poweredBy,
+html .uppy-Dashboard-poweredByUppy {
+  color: #6b6b6b;
+}
+
+/* The arrow glyph sits inside the same lockup, so it tracks the text it's set
+   with rather than staying at the lighter grey. */
+html .uppy-Dashboard-poweredByIcon {
+  stroke: #6b6b6b;
+}
+
+/* A link sitting inside a sentence can't be signalled by colour alone (WCAG
+   1.4.1). The escape hatch is 3:1 between link and body text, and pink on slate
+   is 1.37:1 — no pink that clears 3:1 against slate is still legible on white —
+   so running text takes an underline instead.
+
+   Scoped to running text on purpose: nav, footer, cards, pills and the standalone
+   "Set up Companion →" links are not links *in a block of text*, so the rule
+   doesn't reach them and they keep the undecorated treatment.
+
+   Hairline at rest and full-strength on hover, so the signal is always present
+   but only asserts itself under the cursor. `:has(img)` opts out the links that
+   wrap a logo or screenshot, where an underline would just underline the image. */
+.markdown :is(p, li, td, th, blockquote) a:not(:has(img)),
+[class*='mdxPageWrapper']
+  article
+  :is(p, li, td, th, blockquote)
+  a:not(:has(img)) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  text-decoration-color: color-mix(in srgb, currentcolor 40%, transparent);
+  transition: text-decoration-color 150ms var(--u-ease);
+}
+
+.markdown :is(p, li, td, th, blockquote) a:not(:has(img)):hover,
+[class*='mdxPageWrapper']
+  article
+  :is(p, li, td, th, blockquote)
+  a:not(:has(img)):hover {
+  text-decoration-color: currentcolor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .markdown :is(p, li, td, th, blockquote) a,
+  [class*='mdxPageWrapper'] article :is(p, li, td, th, blockquote) a {
+    transition: none;
+  }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1300px) {
+  :root {
+    --ifm-font-size-base: 16px;
+  }
+}
+
+.markdown > h4:not(:first-of-type) {
+  margin-top: calc(
+    var(--ifm-heading-vertical-rhythm-top) * var(--ifm-leading) * 2
+  );
+}
+
+code {
+  border: none;
+  vertical-align: initial !important;
+}
+
+p > code {
+  vertical-align: initial !important;
+}
+
+/*
+* Admonitions have long generated class names.
+* We want to change the heading font, but it's not an config option.
+*/
+div[class^='admonitionHeading'],
+div[class*=' admonitionHeading'] {
+  font-family: var(--ifm-font-family-base);
+}
+
+/* ==========================================================================
+   Site chrome — navbar
+   ========================================================================== */
+
+.navbar {
+  /* Opaque by default: the translucent treatment only works where the blur is
+     applied, and the blur can't be used on mobile (see below). */
+  background-color: #fff;
+  border-bottom: 1px solid var(--u-line);
+  padding-inline: 1rem;
+}
+
+@media screen and (min-width: 997px) {
+  /* Desktop only: backdrop-filter makes the navbar a containing block for its
+     position:fixed descendants, and the mobile sidebar is one of them — with
+     the blur applied it gets trapped inside the 4rem bar and can't open. */
+  .navbar {
+    background-color: rgb(255 255 255 / 80%);
+    backdrop-filter: saturate(180%) blur(12px);
+    -webkit-backdrop-filter: saturate(180%) blur(12px);
+  }
+
+  .navbar__inner {
+    max-width: var(--u-container);
+    margin: 0 auto;
+  }
+
+  /* The brand and the links share one flex row, so the link group is centred
+     with auto margins rather than by splitting the container. */
+  .navbar__items:not(.navbar__items--right) {
+    flex: 1;
+  }
+
+  .navbar__items:not(.navbar__items--right) > .navbar__link:first-of-type {
+    margin-left: auto;
+  }
+
+  .navbar__items:not(.navbar__items--right) > .navbar__link:last-of-type {
+    margin-right: auto;
+  }
+
+  /* Links fill the bar's height so the active underline has the bottom border
+     to sit on. Below 997px Infima hides these items entirely (the sidebar
+     takes over), so this only ever applies where the bar is a row. */
+  .navbar__items > .navbar__link {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+  }
+}
+
+/* Inter Medium, a step down from the old 16.875px: the nav is orientation, not
+   content, so it shouldn't compete with the page's own type. */
+.navbar__item,
+.navbar__link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--u-ink-600);
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: var(--u-ink-900);
+  text-decoration: none;
+}
+
+/* Active nav gets an accent underline rather than a colour swap. It sits on the
+   navbar's own bottom border — overlapping that 1px hairline — so the accent
+   reads as part of the chrome rather than a mark hovering above it.
+   Two things stand between the link and that border: the link only fills the
+   bar's height because of the stretch rule in the desktop block above, and the
+   navbar keeps its own vertical padding (9px at this root size) below the inner
+   row. Both have to be crossed, and the padding is read from the variable so it
+   still lands when the root font-size steps down at mid widths. */
+/* Every internal item carries the indicator, clipped shut, and the active one
+   reveals it. Clipping rather than animating width keeps the bar at full length
+   throughout, so it wipes in instead of growing out of a stub.
+
+   Forum and Support are `target="_blank"`: they leave the page, so there is no
+   state to animate and they never take an indicator. */
+.navbar__items > .navbar__link:not([target='_blank'])::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0.75rem;
+  bottom: calc(-1 * var(--ifm-navbar-padding-vertical) - 1px);
+  height: 2px;
+  border-radius: 2px 2px 0 0;
+  background: var(--u-pink-500);
+  clip-path: inset(0 100% 0 0);
+}
+
+/* An animation, not a transition: Docusaurus replaces every navbar link on a
+   route change, so the newly active one is created already active and a
+   transition has no previous value to run from. A keyframe animation plays on
+   mount, which is exactly when the wipe should happen. */
+.navbar__items > .navbar__link--active:not([target='_blank'])::after {
+  clip-path: inset(0 0 0 0);
+  /* Longhands: a `var()` inside the `animation` shorthand is opaque to the CSS
+     minifier, which warns and skips the declaration. */
+  animation-name: navbar-underline;
+  animation-duration: 260ms;
+  animation-timing-function: var(--u-ease);
+  animation-fill-mode: both;
+}
+
+@keyframes navbar-underline {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar__items > .navbar__link--active:not([target='_blank'])::after {
+    animation: none;
+  }
+}
+
+.navbar__link {
+  position: relative;
+}
+
+.navbar__items--right {
+  gap: 0.25rem;
+}
+
+/* No external-link glyphs in the header. Five nav items with two arrows among
+   them reads as inconsistency, not information — and the destination is
+   obvious from the label. They stay in prose, where they earn their place. */
+.navbar__link > svg {
+  display: none;
+}
+
+/* Algolia search — built to match the GitHub pill exactly, so the two controls
+   on the right read as a pair rather than as one borrowed widget. */
+.navbar .DocSearch-Button {
+  height: 2.25rem;
+  margin: 0;
+  padding: 0 0.625rem 0 0.75rem;
+  background: #fff;
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-md);
+  box-shadow: var(--u-shadow-xs);
+  color: var(--u-ink-500);
+  transition:
+    background-color 150ms var(--u-ease),
+    border-color 150ms var(--u-ease);
+}
+
+.navbar .DocSearch-Button:hover,
+.navbar .DocSearch-Button:focus-visible {
+  background: var(--u-ink-50);
+  border-color: var(--u-line-strong);
+  box-shadow: var(--u-shadow-xs);
+}
+
+.navbar .DocSearch-Search-Icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--u-ink-400);
+  stroke-width: 2;
+}
+
+.navbar .DocSearch-Button-Placeholder {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--u-ink-500);
+  padding: 0 0.75rem 0 0.5rem;
+}
+
+.navbar .DocSearch-Button-Keys {
+  gap: 0.125rem;
+  min-width: auto;
+}
+
+.navbar .DocSearch-Button-Key {
+  background: var(--u-ink-100);
+  border: none;
+  border-radius: 4px;
+  box-shadow: none;
+  color: var(--u-ink-500);
+  width: auto;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 0.25rem;
+  margin: 0;
+  font-size: 0.6875rem;
+  top: 0;
+}
+
+.navbar-sidebar {
+  backdrop-filter: none;
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+/* Blog */
+
+.avatar__name {
+  font-weight: 500;
+}
+
+/* Post titles are links, so Infima paints them with the accent. A headline is
+   a headline — the accent is reserved for things you click on purpose. */
+h1 > a[class*='title'],
+h2 > a[class*='title'] {
+  color: var(--u-ink-900);
+  letter-spacing: -0.025em;
+}
+
+h1 > a[class*='title']:hover,
+h2 > a[class*='title']:hover {
+  color: var(--u-ink-900);
+  text-decoration: none;
+}
+
+/* Content Body */
+
+.markdown video,
+.markdown img {
+  max-width: 100%;
+}
+
+.markdown img.border {
+  border: 1px solid rgba(165, 165, 165, 0.3);
+}
+
+div[data-uppy-element='dropzone'] p {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Blog
+   Scoped to .blog-wrapper — docs use the same <article><header> shape.
+   ========================================================================== */
+
+/* The post title carries the same treatment as the homepage headline. */
+.blog-wrapper article > header h1,
+.blog-wrapper article > header h2 {
+  font-size: clamp(1.875rem, 3.6vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.032em;
+  color: var(--u-ink-900);
+  margin-bottom: 0;
+  text-wrap: balance;
+}
+
+.blog-wrapper article > header h2 a,
+.blog-wrapper article > header h2 a:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Date and reading time: tertiary, and kept close to the title it belongs to. */
+.blog-wrapper article > header div[class*='container'] {
+  margin: 0.875rem 0 0 !important;
+  font-size: 0.875rem;
+  color: var(--u-ink-500);
+}
+
+/* The byline sits a clear step below the meta — between-group gap beats
+   within-group gap, or the header reads as one undifferentiated block.
+   The theme puts each author in a half-width grid column, which strands them
+   at opposite ends of the measure; an inline row keeps the group together. */
+.blog-wrapper article > header .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.875rem 1.75rem;
+  margin: 1.75rem 0 0 !important;
+}
+
+.blog-wrapper article > header .row > [class*='authorCol'] {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  padding-inline: 0 !important;
+}
+
+.blog-wrapper article > header .row .avatar {
+  margin-bottom: 0 !important;
+}
+
+/* Docusaurus renders an empty socials div beneath the name; left in place it
+   adds height inside the intro and pushes the name off the avatar's centre. */
+.blog-wrapper div[class*='authorSocials']:empty {
+  display: none;
+}
+
+.blog-wrapper .avatar {
+  align-items: center;
+  column-gap: 0.75rem;
+}
+
+.blog-wrapper .avatar__intro {
+  justify-content: center;
+}
+
+.blog-wrapper .avatar__photo {
+  width: 2.25rem;
+  height: 2.25rem;
+  /* White ring, hairline, and a very tight contact shadow — enough to lift the
+     photo off the page without reading as a glow. */
+  border: 2px solid #fff;
+  box-shadow:
+    0 0 0 1px var(--u-line),
+    0 1px 2px rgb(13 21 38 / 12%);
+}
+
+.blog-wrapper .avatar__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Names are links, but in a dense byline weight carries them better than
+   colour would — the accent stays for things you go out of your way to click. */
+.blog-wrapper .avatar__name a {
+  color: var(--u-ink-800);
+}
+
+.blog-wrapper .avatar__name a:hover {
+  color: var(--u-ink-900);
+  text-decoration: none;
+}
+
+/* Body copy starts well clear of the byline. */
+.blog-wrapper article .markdown {
+  margin-top: 2.75rem;
+}
+
+/* Media picks up the same radius language as the rest of the site. */
+.blog-wrapper article .markdown img,
+.blog-wrapper article .markdown video {
+  display: block;
+  border-radius: var(--u-radius-lg);
+}
+
+/* Standalone media is its own beat — the copy after it needs more than the
+   ordinary paragraph gap. These sit as direct children, not inside a <p>. */
+.blog-wrapper article .markdown > img,
+.blog-wrapper article .markdown > video,
+.blog-wrapper article .markdown > p:has(> img) {
+  margin-bottom: 2.5rem;
+}
+
+/* A centred reading column. The theme offsets main by one grid unit, which
+   pushes the measure off the page's axis. */
+.blog-wrapper .container > .row {
+  justify-content: center;
+}
+
+.blog-wrapper .container > .row > main {
+  margin-left: 0 !important;
+}
+
+/* ~75 characters at 18px — the top of the comfortable measure. Left to the
+   column width the line ran past 100. */
+.blog-wrapper article {
+  max-width: 38rem;
+  margin-inline: auto;
+}
+
+/* Air above the title: the post should not start hard against the navbar. */
+.blog-wrapper .container.margin-vert--lg {
+  margin-top: 4.5rem !important;
+}
+
+@media screen and (min-width: 997px) {
+  .blog-wrapper .container > .row {
+    position: relative;
+  }
+
+  /* The contents list is marginalia. Out of flow, it stops dragging the
+     reading column off the page's centre line. */
+  .blog-wrapper .container > .row > .col--2 {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 15rem;
+    max-width: 15rem;
+  }
+}
+
+/* ----- Mobile chrome ----- */
+
+@media screen and (max-width: 996px) {
+  .navbar__toggle {
+    margin-right: 0.25rem;
+  }
+
+  .navbar__toggle svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* The placeholder and shortcut keys are hidden at this width, so the
+     asymmetric padding that suits the full search box leaves the magnifier
+     sitting off-centre in what is now a square button. */
+  .navbar .DocSearch-Button {
+    width: 2.25rem;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .navbar .DocSearch-Button-Placeholder,
+  .navbar .DocSearch-Button-Keys {
+    display: none;
+  }
+
+  .navbar .DocSearch-Search-Icon {
+    margin: 0;
+  }
+}
+
+/* ==========================================================================
+   Docs
+   Scoped to .docs-wrapper (set on <html>). Styling only — nothing here moves
+   or removes content.
+   ========================================================================== */
+
+/* Prose was running ~90 characters per line. 36rem lands it near 68, comfortably
+   inside the readable range, without squeezing code blocks unusably.
+   Applied to the item container rather than the markdown alone so the page
+   footer and the prev/next pagination sit on the same measure, and centred so
+   the column isn't stranded against the sidebar with a gap before the
+   contents list. */
+.docs-wrapper div[class*='docItemContainer'] {
+  max-width: 36rem;
+  margin-inline: auto;
+}
+
+/* The page title sat hard against the navbar. This moves the content column
+   and the table of contents down together, since they share the row. */
+.docs-wrapper main[class*='docMainContainer'] > .container {
+  padding-top: 3.25rem !important;
+}
+
+/* The docs layout ran full-bleed while the navbar was capped at the shared
+   container, so the sidebar, the prose and the contents list all sat on
+   different axes to the header above them. Capping the row that holds the
+   sidebar and the main column lands its left edge on exactly the same pixel
+   as the navbar's logo. */
+@media screen and (min-width: 997px) {
+  .docs-wrapper div[class*='docRoot'] {
+    /* The gutter plus the navbar's own 1rem padding. Without matching that
+       padding here, the docs run 18px wider than the header on viewports
+       narrower than the container. */
+    max-width: calc(var(--u-container) + 2rem);
+    padding-inline: 1rem;
+    margin: 0 auto;
+  }
+
+  /* Capping the row costs horizontal room, so the two side columns give some
+     back: a slimmer sidebar and a wider contents list, which was wrapping
+     every entry onto four lines. */
+  .docs-wrapper div[class*='docSidebarContainer'] {
+    --doc-sidebar-width: 236px;
+  }
+
+  .docs-wrapper main[class*='docMainContainer'] .row > .col--3 {
+    --ifm-col-width: 30%;
+  }
+}
+
+/* ----- Headings: a real step between levels, not three shades of large ---- */
+
+/* Docusaurus lifts the leading `# ` out of the markdown into a <header>, so the
+   page title is a grandchild here while in-body h1s stay direct children. */
+.docs-wrapper .theme-doc-markdown > h1,
+.docs-wrapper .theme-doc-markdown > header > h1 {
+  font-size: clamp(1.75rem, 2.6vw, 2rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.25rem;
+}
+
+.docs-wrapper .theme-doc-markdown > h2 {
+  font-size: 1.3125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-top: 3rem;
+}
+
+.docs-wrapper .theme-doc-markdown > h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.012em;
+  margin-top: 2.25rem;
+}
+
+.docs-wrapper .theme-doc-markdown > h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.008em;
+}
+
+/* Inline code sits inside running text, so it needs to read as a token
+   without punching a hole in the paragraph. */
+.docs-wrapper .theme-doc-markdown :not(pre) > code {
+  background: var(--u-ink-100);
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-sm);
+  padding: 0.1em 0.35em;
+  font-size: 0.875em;
+  color: var(--u-ink-800);
+}
+
+/* ----- Sidebar ----- */
+
+.docs-wrapper .theme-doc-sidebar-container {
+  border-right: 1px solid var(--u-line);
+}
+
+.docs-wrapper .menu {
+  padding: 1.5rem 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Nested entries step down again — they're subordinate, and the smaller size
+   is what lets the sidebar give width back to the content column. */
+.docs-wrapper .menu__list .menu__list .menu__link {
+  font-size: 0.8125rem;
+}
+
+.docs-wrapper .menu__link {
+  color: var(--u-ink-600);
+  border-radius: var(--u-radius-sm);
+  padding: 0.35rem 0.625rem;
+  line-height: 1.4;
+}
+
+.docs-wrapper .menu__link:hover {
+  background: var(--u-ink-50);
+  color: var(--u-ink-900);
+}
+
+.docs-wrapper .menu__link--active {
+  color: var(--u-pink-700);
+  background: var(--u-pink-50);
+  font-weight: 600;
+}
+
+.docs-wrapper .menu__link--active:hover {
+  background: var(--u-pink-100);
+}
+
+/* The carets are navigation furniture, not content — they shouldn't carry the
+   same weight as the labels they sit beside. Infima draws a filled Material
+   caret at 2rem inside a 1.25rem box, which reads heavy next to 13px labels;
+   a thin stroked chevron in a smaller box sits quieter. Masking it lets the
+   glyph take currentColor, so the caret tracks the label in both themes and
+   Infima's dark-mode invert filter is no longer needed.
+
+   Note: no transform here — Infima owns it (rotate(180deg) when open,
+   rotateZ(90deg) when collapsed), and overriding it freezes the caret. */
+.docs-wrapper .menu__caret::before,
+.docs-wrapper .menu__link--sublist-caret::after {
+  width: 0.75rem;
+  min-width: 0.75rem;
+  height: 0.75rem;
+  background: currentColor;
+  filter: none;
+  opacity: 0.4;
+  -webkit-mask: var(--u-chevron-up) center / contain no-repeat;
+  mask: var(--u-chevron-up) center / contain no-repeat;
+}
+
+.docs-wrapper .menu__caret:hover::before,
+.docs-wrapper .menu__link--sublist-caret:hover::after {
+  opacity: 0.7;
+}
+
+.docs-wrapper .menu__list .menu__list {
+  border-left: 1px solid var(--u-line);
+  margin-left: 0.75rem;
+  padding-left: 0.375rem;
+}
+
+/* ----- Table of contents ----- */
+
+.docs-wrapper .table-of-contents {
+  font-size: 0.8125rem;
+  border-left: 1px solid var(--u-line);
+}
+
+.docs-wrapper .table-of-contents__link {
+  color: var(--u-ink-500);
+  line-height: 1.45;
+}
+
+/* An inline-code chip inside a TOC line drops the ground under ink-500 from
+   white to #f6f7f8, which is the difference between 4.76:1 and 4.44:1. The
+   entry is one 12px line either way, so the chip goes rather than the colour —
+   it was noise at this size. */
+.docs-wrapper .table-of-contents__link code {
+  background: none;
+  border: 0;
+  padding: 0;
+}
+
+.docs-wrapper .table-of-contents__link:hover {
+  color: var(--u-ink-900);
+  text-decoration: none;
+}
+
+.docs-wrapper .table-of-contents__link--active,
+.docs-wrapper .table-of-contents__link--active code {
+  color: var(--u-pink-700);
+  font-weight: 600;
+}
+
+/* ----- "On this page", mobile -----
+   Docusaurus ships this as a grey block with the same heavy filled caret the
+   sidebar used. Given a card and the stroked chevron it matches the rest of the
+   redesign. Transform is left to Docusaurus, which flips the caret when the
+   panel opens. */
+
+.docs-wrapper .theme-doc-toc-mobile {
+  background: #fff;
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-lg);
+  box-shadow: var(--u-shadow-xs);
+  margin: 1.5rem 0;
+  overflow: hidden;
+}
+
+.docs-wrapper .theme-doc-toc-mobile button {
+  padding: 0.75rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--u-ink-800);
+}
+
+.docs-wrapper .theme-doc-toc-mobile button::after {
+  width: 0.8125rem;
+  min-width: 0.8125rem;
+  height: 0.8125rem;
+  background: currentcolor;
+  filter: none;
+  opacity: 0.45;
+  -webkit-mask: var(--u-chevron-up) center / contain no-repeat;
+  mask: var(--u-chevron-up) center / contain no-repeat;
+}
+
+.docs-wrapper .theme-doc-toc-mobile > div > ul {
+  border-top: 1px solid var(--u-line);
+  padding: 0.375rem 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.docs-wrapper .theme-doc-toc-mobile li {
+  margin: 0;
+}
+
+.docs-wrapper .theme-doc-toc-mobile a {
+  padding: 0.3125rem 0.5rem;
+  border-radius: var(--u-radius-sm);
+  color: var(--u-ink-600);
+}
+
+.docs-wrapper .theme-doc-toc-mobile a:hover {
+  background: var(--u-ink-50);
+  color: var(--u-ink-900);
+}
+
+/* ----- Code blocks and tabs ----- */
+
+.docs-wrapper div[class*='codeBlockContainer'] {
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-lg);
+  box-shadow: none;
+}
+
+.docs-wrapper div[class*='codeBlockTitle'] {
+  border-bottom: 1px solid var(--u-line);
+  font-size: 0.8125rem;
+  color: var(--u-ink-600);
+}
+
+/* Underlined tabs rather than filled pills: they label the panel below them,
+   so they shouldn't read as buttons. */
+.docs-wrapper .tabs {
+  border-bottom: 1px solid var(--u-line);
+  gap: 0.25rem;
+}
+
+.docs-wrapper .tabs__item {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--u-ink-500);
+  padding: 0.5rem 0.75rem;
+  border-radius: 0;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 150ms var(--u-ease);
+}
+
+.docs-wrapper .tabs__item:hover {
+  background: transparent;
+  color: var(--u-ink-900);
+}
+
+.docs-wrapper .tabs__item--active {
+  color: var(--u-pink-700);
+  background: transparent;
+  border-bottom-color: var(--u-pink-500);
+}
+
+/* ----- Admonitions ----- */
+
+/* A tinted panel, because the whole job of an admonition is to break the
+   reading rhythm — but tinted flat and hairlined rather than washed and
+   left-barred, and with the type's colour carried by the icon in a disc, as in
+   the comparison tables. The disc goes white so it lifts off the tint.
+
+   Flat is also what separates these from the link cards, which are white and
+   raised: a tip is something to read, not something to click.
+
+   Each variant sets four custom properties. */
+.docs-wrapper .theme-admonition {
+  --u-adm: var(--u-ink-600);
+  --u-adm-tint: #fff;
+  --u-adm-bg: var(--u-ink-50);
+  --u-adm-border: var(--u-line);
+
+  border: 1px solid var(--u-adm-border);
+  border-radius: var(--u-radius-lg);
+  box-shadow: none;
+  background: var(--u-adm-bg);
+  color: var(--u-ink-700);
+  padding: 1rem 1.125rem;
+}
+
+.docs-wrapper .theme-admonition div[class*='admonitionHeading'] {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  /* Caps need air; these labels are short enough to stay legible. */
+  letter-spacing: 0.06em;
+  color: var(--u-adm);
+  margin-bottom: 0.625rem;
+}
+
+/* The icon carries the whole colour signal now, so it gets the disc. */
+.docs-wrapper .theme-admonition span[class*='admonitionIcon'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  margin: 0;
+  border-radius: 50%;
+  background: var(--u-adm-tint);
+}
+
+.docs-wrapper .theme-admonition span[class*='admonitionIcon'] svg {
+  width: 0.875rem;
+  height: 0.875rem;
+  fill: var(--u-adm);
+}
+
+/* Infima underlines links inside alerts with --ifm-alert-border-color, so a tip
+   ended up with green underlines under pink links. Let the underline follow the
+   link colour instead, as it does in body text. */
+.docs-wrapper .theme-admonition a {
+  color: var(--ifm-color-primary);
+  text-decoration-color: currentcolor;
+}
+
+/* tip */
+.docs-wrapper .theme-admonition.alert--success {
+  --u-adm: var(--u-pink-700);
+  --u-adm-bg: var(--u-pink-50);
+  --u-adm-border: var(--u-pink-100);
+}
+
+/* info */
+.docs-wrapper .theme-admonition.alert--info {
+  --u-adm: #2f6ad9;
+  --u-adm-bg: #f1f6fe;
+  --u-adm-border: #dbe7fb;
+}
+
+/* warning */
+.docs-wrapper .theme-admonition.alert--warning {
+  /* Was #b3760f — 3.63:1 on this admonition's own #fff9ef ground. */
+  --u-adm: #8a5a00;
+  --u-adm-bg: #fff9ef;
+  --u-adm-border: #f7e6c8;
+}
+
+/* danger */
+.docs-wrapper .theme-admonition.alert--danger {
+  --u-adm: var(--u-no);
+  --u-adm-bg: #fff5f5;
+  --u-adm-border: #f7d9d9;
+}
+
+/* ----- Tables ----- */
+
+.docs-wrapper .theme-doc-markdown table {
+  display: table;
+  width: 100%;
+  max-width: 100%;
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-md);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  font-size: 0.9375rem;
+}
+
+/* Long tokens (a bare URL, a wide option name) shouldn't be able to push a
+   column past the content measure. */
+.docs-wrapper .theme-doc-markdown table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+/* The comparison tables run to eight columns — one label plus seven products —
+   so there is no width at which they wrap gracefully: squeezing them breaks
+   "Uppy" across two lines. They scroll sideways instead, inside the content
+   column rather than dragging the whole page with them. `display: block` is
+   what gives us that scroll container; the border then wraps the viewport, and
+   the table inside it is free to be wider. */
+.docs-wrapper .theme-doc-markdown table:has(th:nth-child(6)) {
+  --ifm-table-cell-padding: 0.5rem 0.75rem;
+
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  font-size: 0.8125rem;
+  /* Momentum scrolling shouldn't take the page with it once the table ends. */
+  overscroll-behavior-x: contain;
+}
+
+.docs-wrapper .theme-doc-markdown table:has(th:nth-child(6)) :is(th, td) {
+  white-space: nowrap;
+}
+
+/* Every column but the label column holds a single status icon, which belongs
+   under the middle of its heading rather than jammed against the left edge. The
+   heading centres with it so the two read as one column. */
+.docs-wrapper
+  .theme-doc-markdown
+  table:has(th:nth-child(6))
+  tr
+  > :not(:first-child) {
+  text-align: center;
+}
+
+/* Scrolling a comparison table sideways is useless if the row label scrolls out
+   with it, so the first column stays put. It needs an opaque background to
+   cover the cells passing underneath. */
+.docs-wrapper .theme-doc-markdown table:has(th:nth-child(6)) tr > :first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  /* Has to be opaque or the scrolling cells show straight through — which they
+     did, until the page background stopped being `transparent` (see the token
+     block). The shadow gives the column an edge for them to disappear under,
+     which also hints there is more table to the right. */
+  background: var(--ifm-background-color);
+  border-right: 1px solid var(--u-line);
+  box-shadow: 6px 0 8px -6px rgb(13 21 38 / 12%);
+}
+
+.docs-wrapper
+  .theme-doc-markdown
+  table:has(th:nth-child(6))
+  tr
+  > th:first-child {
+  background: var(--u-ink-50);
+}
+
+/* ----- Table status icons (see src/remark/comparison-icons.cjs) ----- */
+
+/* The span is the disc; the glyph is drawn by the pseudo-element inside it,
+   since the mask that cuts the glyph would otherwise eat the background. */
+.cmp-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  background: var(--cmp-tint);
+  vertical-align: middle;
+}
+
+.cmp-icon::before {
+  content: '';
+  width: 0.875rem;
+  height: 0.875rem;
+  background: currentcolor;
+  -webkit-mask: var(--cmp-glyph) center / contain no-repeat;
+  mask: var(--cmp-glyph) center / contain no-repeat;
+}
+
+.cmp-icon--yes {
+  --cmp-glyph: var(--u-icon-check);
+  --cmp-tint: var(--u-yes-50);
+
+  color: var(--u-yes);
+}
+
+/* Something the product only does through a paid add-on: the same check, but
+   neutral, so it doesn't read as a plain yes at a glance. */
+.cmp-icon--partial {
+  --cmp-glyph: var(--u-icon-check);
+  --cmp-tint: var(--u-ink-100);
+
+  color: var(--u-ink-500);
+}
+
+.cmp-icon--no {
+  --cmp-glyph: var(--u-icon-cross);
+  --cmp-tint: var(--u-no-50);
+
+  color: var(--u-no);
+}
+
+.cmp-icon--unknown {
+  --cmp-glyph: var(--u-icon-question);
+  --cmp-tint: var(--u-ink-100);
+
+  color: var(--u-ink-500);
+}
+
+.cmp-icon--warning {
+  --cmp-glyph: var(--u-icon-warning);
+  --cmp-tint: var(--u-warn-50);
+
+  color: var(--u-warn);
+}
+
+.docs-wrapper .theme-doc-markdown table th {
+  background: var(--u-ink-50);
+  color: var(--u-ink-800);
+  font-weight: 600;
+  border: none;
+  border-bottom: 1px solid var(--u-line);
+}
+
+.docs-wrapper .theme-doc-markdown table td {
+  border: none;
+  border-bottom: 1px solid var(--u-line);
+}
+
+.docs-wrapper .theme-doc-markdown table tr:last-child td {
+  border-bottom: none;
+}
+
+.docs-wrapper .theme-doc-markdown table tr:nth-child(2n) {
+  background: transparent;
+}
+
+/* ----- Footer chrome ----- */
+
+.docs-wrapper .pagination-nav__link {
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-lg);
+  transition:
+    border-color 150ms var(--u-ease),
+    background-color 150ms var(--u-ease);
+}
+
+.docs-wrapper .pagination-nav__link:hover {
+  border-color: var(--u-line-strong);
+  background: var(--u-ink-50);
+}
+
+.docs-wrapper .pagination-nav__sublabel {
+  color: var(--u-ink-500);
+  font-size: 0.8125rem;
+}
+
+.docs-wrapper .pagination-nav__label {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.docs-wrapper .theme-edit-this-page {
+  font-size: 0.875rem;
+  color: var(--u-ink-500);
+}
+
+.docs-wrapper .theme-edit-this-page:hover {
+  color: var(--u-ink-900);
+  text-decoration: none;
+}

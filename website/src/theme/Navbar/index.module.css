@@ -1,0 +1,90 @@
+.banner {
+  display: flex;
+  justify-content: center;
+  background: var(--u-pink-50);
+  border-bottom: 1px solid var(--u-pink-100);
+  padding: 0.5rem 1rem;
+  /* The headline never wraps on desktop, so the bar — not the document —
+     absorbs any overflow. */
+  overflow: hidden;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.8125rem;
+  color: var(--u-ink-700);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.link:hover {
+  text-decoration: none;
+  color: var(--u-ink-900);
+}
+
+.tag {
+  flex: none;
+  /* inline-block rather than inline-flex: with a flex box the line is centred
+     inside the content box, which swallows any padding bias — and a bias is
+     exactly what digits need here. */
+  display: inline-block;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1;
+  color: #fff;
+  /* pink-600, not the mark's pink-500: white on pink-500 is 3.5:1, and at 11px
+     this is small text needing 4.5:1. pink-600 clears it at 4.65. */
+  background: var(--u-pink-600);
+  border-radius: 999px;
+  /* The 2px is measured, not guessed. Digits have no descenders, but the line
+     box still reserves the space, so with even padding the ink lands ~2px above
+     the pill's centre. Biasing the top padding by 2px puts it dead centre
+     (7.9px of clearance above and below, at this size). The rule this replaced
+     biased the bottom instead, which tipped the digits further up. */
+  padding: calc(0.3rem + 2px) 0.5rem 0.3rem;
+  letter-spacing: 0.01em;
+}
+
+.text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.arrow {
+  flex: none;
+  color: var(--u-pink-600);
+  transition: transform 150ms var(--u-ease);
+}
+
+.link:hover .arrow {
+  transform: translateX(2px);
+}
+
+/* Never ellipsis the announcement — a truncated launch message loses exactly
+   the words it was written for. Let it wrap instead. */
+@media screen and (max-width: 34rem) {
+  .link {
+    align-items: flex-start;
+  }
+
+  .text {
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .tag,
+  .arrow {
+    margin-top: 0.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow {
+    transition: none;
+  }
+}
