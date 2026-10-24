@@ -8,7 +8,7 @@
     "@uppy/xhr-upload": "workspace:*",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "multer": "^2.4.0"
+    "multer": "^2.5.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
