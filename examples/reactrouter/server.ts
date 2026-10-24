@@ -65,7 +65,7 @@ async function startServer() {
     })
 
     // Graceful shutdown handling
-    const shutdown = async (signal: string) => {
+    const shutdown = (signal: string) => {
       console.log(`\n${signal} received. Shutting down gracefully...`)
 
       server.close(async (err) => {

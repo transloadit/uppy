@@ -29,7 +29,7 @@ const getClient = ({ token }: { token: string }) =>
     },
   })
 
-async function getUserInfo({
+function getUserInfo({
   token,
 }: {
   token: string
@@ -39,7 +39,7 @@ async function getUserInfo({
     .json<{ login?: string }>()
 }
 
-async function list({
+function list({
   directory,
   query,
   token,
@@ -86,7 +86,7 @@ export default class Box extends Provider<BoxUserSession> {
    * @param options.providerUserSession
    * @param options.companion
    */
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
@@ -102,7 +102,7 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<BoxUserSession>): Promise<ProviderDownloadResponse> {
@@ -116,7 +116,7 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async thumbnail({
+  override thumbnail({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderThumbnailOptions<BoxUserSession>): Promise<ProviderThumbnailResponse> {
@@ -148,7 +148,7 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async size({
+  override size({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderSizeOptions<BoxUserSession>): Promise<number> {
@@ -167,7 +167,7 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<BoxUserSession>): Promise<ProviderLogoutResponse> {
@@ -187,7 +187,7 @@ export default class Box extends Provider<BoxUserSession> {
     })
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

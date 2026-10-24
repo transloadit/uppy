@@ -9,9 +9,9 @@ import type {
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
@@ -52,7 +52,7 @@ export default class Facebook<M extends Meta, B extends Body>
     super(uppy, opts)
     this.id = this.opts.id || 'Facebook'
     this.type = 'acquirer'
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
     this.files = []
     this.icon = () => (
       <svg

@@ -273,7 +273,7 @@ describe('Transloadit', () => {
     expect(uppy.getState().allowNewUpload).toBe(true)
   })
 
-  it('resets allowNewUpload to true on cancel-all', async () => {
+  it('resets allowNewUpload to true on cancel-all', () => {
     using uppy = new Core()
     uppy.use(Transloadit, {
       assemblyOptions: {

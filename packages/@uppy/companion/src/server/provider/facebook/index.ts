@@ -124,7 +124,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     return 'facebook'
   }
 
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
@@ -179,7 +179,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     })
   }
 
-  override async download({
+  override download({
     companion,
     id,
     providerUserSession: { accessToken: token },
@@ -200,7 +200,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
+  override thumbnail(): Promise<ProviderThumbnailResponse> {
     // not implementing this because a public thumbnail from facebook will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -209,7 +209,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<FacebookUserSession>): Promise<ProviderLogoutResponse> {
@@ -232,7 +232,7 @@ export default class Facebook extends Provider<FacebookUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

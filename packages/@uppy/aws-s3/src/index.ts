@@ -246,7 +246,7 @@ export default class AwsS3<M extends Meta, B extends Body> extends BasePlugin<
         if (!currentFile) {
           return
         }
-        return this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
+        await this.#uploadLocalFile(currentFile as LocalUppyFile<M, B>) // assume it's still a local file since remote files aren't queued
       })
     })
 

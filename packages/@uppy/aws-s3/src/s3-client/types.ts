@@ -1,3 +1,5 @@
+import type { Promisable } from 'type-fest'
+
 export interface PresignableRequestBase {
   key: string
   expiresIn?: number
@@ -81,7 +83,7 @@ export type PresignedResponse = {
 /** Function that generates a pre-signed URL for a request */
 export type SignRequestFn = (
   request: PresignableRequest,
-) => Promise<PresignedResponse>
+) => Promisable<PresignedResponse>
 
 /**
  * Temporary security credentials from STS or similar service.
@@ -107,7 +109,7 @@ export interface CredentialsResponse {
 /** Function that retrieves temporary credentials */
 export type GetCredentialsFn = (options?: {
   signal?: AbortSignal
-}) => CredentialsResponse | Promise<CredentialsResponse>
+}) => Promisable<CredentialsResponse>
 
 /** Base configuration shared by both signing approaches */
 type S3ConfigBase = {
