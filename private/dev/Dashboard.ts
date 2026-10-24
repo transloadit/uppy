@@ -50,7 +50,7 @@ const companionAllowedHosts =
 const RESTORE = false
 const COMPRESS = false
 
-async function assemblyOptions() {
+function assemblyOptions() {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
     auth: {
       key: TRANSLOADIT_KEY,

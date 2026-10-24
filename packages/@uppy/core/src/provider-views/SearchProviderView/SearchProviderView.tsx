@@ -210,7 +210,7 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  async donePicking(): Promise<void> {
+  donePicking(): void {
     const { partialTree } = this.plugin.getPluginState()
 
     // 1. Add files

@@ -83,7 +83,7 @@ describe('XHRUpload', () => {
       id: 'XHRUpload',
       endpoint: 'https://fake-endpoint.uppy.io',
       shouldRetry,
-      async onAfterResponse(xhr) {
+      onAfterResponse(xhr) {
         if (xhr.status === 400) {
           // We want to test that we can define our own error message
           throw new Error(JSON.parse(xhr.responseText).message)
