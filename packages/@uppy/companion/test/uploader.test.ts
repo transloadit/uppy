@@ -82,7 +82,7 @@ beforeAll(async () => {
 })
 
 describe('uploader', () => {
-  test('uploader respects uploadUrls', async () => {
+  test('uploader respects uploadUrls', () => {
     const opts = {
       companionOptions: {
         ...companionOptions,
@@ -102,7 +102,7 @@ describe('uploader', () => {
     )
   })
 
-  test('uploader respects uploadUrls, valid', async () => {
+  test('uploader respects uploadUrls, valid', () => {
     const opts = {
       companionOptions: {
         ...companionOptions,
@@ -118,7 +118,7 @@ describe('uploader', () => {
     new Uploader(opts) // no validation error
   })
 
-  test('uploader respects uploadUrls, localhost', async () => {
+  test('uploader respects uploadUrls, localhost', () => {
     const opts = {
       companionOptions: {
         ...companionOptions,
@@ -145,7 +145,7 @@ describe('uploader', () => {
     'https://evil.com/https://uploads.myendpoint.com/files/',
     'https://uploads.myendpoint.com/filesomething',
     'http://uploads.myendpoint.com/files/',
-  ])('uploader rejects string uploadUrls that only contain an allowed URL: %s', async (endpoint) => {
+  ])('uploader rejects string uploadUrls that only contain an allowed URL: %s', (endpoint) => {
     const opts = {
       companionOptions: {
         ...companionOptions,
@@ -170,7 +170,7 @@ describe('uploader', () => {
     'https://uploads.myendpoint.com/files/nested/file.txt',
     'https://UPLOADS.myendpoint.com/files/',
     'https://uploads.myendpoint.com:443/files/',
-  ])('uploader accepts string uploadUrls literally: %s', async (endpoint) => {
+  ])('uploader accepts string uploadUrls literally: %s', (endpoint) => {
     const opts = {
       companionOptions: {
         ...companionOptions,
@@ -186,7 +186,7 @@ describe('uploader', () => {
     new Uploader(opts) // no validation error
   })
 
-  test('uploader accepts an origin-only string uploadUrl for that origin', async () => {
+  test('uploader accepts an origin-only string uploadUrl for that origin', () => {
     const opts = {
       companionOptions: {
         ...companionOptions,
@@ -202,7 +202,7 @@ describe('uploader', () => {
     new Uploader(opts) // no validation error
   })
 
-  test('uploader validates uploadUrl in addition to endpoint', async () => {
+  test('uploader validates uploadUrl in addition to endpoint', () => {
     const opts = {
       companionOptions: {
         ...companionOptions,
@@ -310,7 +310,7 @@ describe('uploader', () => {
     })
   })
 
-  test('upload functions with tus protocol without size', async () => {
+  test('upload functions with tus protocol without size', () => {
     const fileContent = Buffer.alloc(1e6)
     const stream = Readable.from([fileContent])
     const opts: ConstructorParameters<typeof Uploader>[0] = {
@@ -389,7 +389,7 @@ describe('uploader', () => {
     })
   })
 
-  async function runMultipartTest({
+  function runMultipartTest({
     metadata,
     useFormData,
     includeSize = true,
@@ -528,7 +528,7 @@ describe('uploader', () => {
     )
   })
 
-  test('uploader respects maxFileSize', async () => {
+  test('uploader respects maxFileSize', () => {
     const opts = {
       endpoint: 'http://url.myendpoint.com/files',
       companionOptions: { ...companionOptions, maxFileSize: 100 },
@@ -543,7 +543,7 @@ describe('uploader', () => {
     )
   })
 
-  test('uploader respects maxFileSize correctly', async () => {
+  test('uploader respects maxFileSize correctly', () => {
     const opts = {
       endpoint: 'http://url.myendpoint.com/files',
       companionOptions: { ...companionOptions, maxFileSize: 100 },
@@ -556,7 +556,7 @@ describe('uploader', () => {
     new Uploader(opts) // no validation error
   })
 
-  test('uploader respects maxFileSize with unknown size', async () => {
+  test('uploader respects maxFileSize with unknown size', () => {
     const fileContent = Buffer.alloc(10000)
     const stream = Readable.from([fileContent])
 

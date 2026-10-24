@@ -1,4 +1,5 @@
 import type { Readable } from 'node:stream'
+import type { Promisable } from 'type-fest'
 import type {
   CompanionContext,
   GrantDynamic,
@@ -201,7 +202,7 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async list(_options: ProviderListOptions<US>): Promise<ProviderListResponse> {
+  list(_options: ProviderListOptions<US>): Promisable<ProviderListResponse> {
     throw new Error('method not implemented')
   }
 
@@ -210,9 +211,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async search(
+  search(
     _options: ProviderSearchOptions<US>,
-  ): Promise<ProviderSearchResponse> {
+  ): Promisable<ProviderSearchResponse> {
     throw new Error('method not implemented')
   }
 
@@ -221,9 +222,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async download(
+  download(
     _options: ProviderDownloadOptions<US>,
-  ): Promise<ProviderDownloadResponse> {
+  ): Promisable<ProviderDownloadResponse> {
     throw new Error('method not implemented')
   }
 
@@ -232,9 +233,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async thumbnail(
+  thumbnail(
     _options: ProviderThumbnailOptions<US>,
-  ): Promise<ProviderThumbnailResponse> {
+  ): Promisable<ProviderThumbnailResponse> {
     throw new Error('method not implemented')
   }
 
@@ -243,7 +244,7 @@ export default class Provider<US = unknown> {
    * if that fails, it will call this method to get the size.
    * So if your provider has a different method for getting the size, you can return the size here
    */
-  async size(_options: ProviderSizeOptions<US>): Promise<number | undefined> {
+  size(_options: ProviderSizeOptions<US>): Promisable<number | undefined> {
     return undefined
   }
 
@@ -252,18 +253,18 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async deauthorizationCallback(
+  deauthorizationCallback(
     _options: ProviderDeauthorizationCallbackOptions,
-  ): Promise<ProviderDeauthorizationCallbackResponse> {
+  ): Promisable<ProviderDeauthorizationCallbackResponse> {
     throw new Error('method not implemented')
   }
 
   /**
    * Generate a new access token based on the refresh token
    */
-  async refreshToken(
+  refreshToken(
     _options: ProviderRefreshTokenOptions,
-  ): Promise<ProviderRefreshTokenResponse> {
+  ): Promisable<ProviderRefreshTokenResponse> {
     throw new Error('method not implemented')
   }
 
@@ -272,9 +273,9 @@ export default class Provider<US = unknown> {
    *
    * This method should be overridden by provider implementations.
    */
-  async logout(
+  logout(
     _options: ProviderLogoutOptions<US>,
-  ): Promise<ProviderLogoutResponse> {
+  ): Promisable<ProviderLogoutResponse> {
     throw new Error('method not implemented')
   }
 
@@ -287,7 +288,7 @@ export default class Provider<US = unknown> {
    * The returned object is the provider's session, stored in the token and
    * handed back on every later request as `providerUserSession`.
    */
-  async simpleAuth(_options: ProviderSimpleAuthOptions): Promise<object> {
+  simpleAuth(_options: ProviderSimpleAuthOptions): Promisable<object> {
     throw new Error('method not implemented')
   }
 
@@ -299,7 +300,7 @@ export default class Provider<US = unknown> {
    * Storage): options, endpoints and methods will change incompatibly, also
    * in minor releases.
    */
-  async deleteItem(_options: ProviderDeleteItemOptions<US>): Promise<void> {
+  deleteItem(_options: ProviderDeleteItemOptions<US>): Promisable<void> {
     throw new Error('method not implemented')
   }
 
@@ -314,9 +315,9 @@ export default class Provider<US = unknown> {
    * Storage): options, endpoints and methods will change incompatibly, also
    * in minor releases.
    */
-  async moveItem(
+  moveItem(
     _options: ProviderMoveItemOptions<US>,
-  ): Promise<ProviderMoveItemResponse> {
+  ): Promisable<ProviderMoveItemResponse> {
     throw new Error('method not implemented')
   }
 
@@ -327,9 +328,9 @@ export default class Provider<US = unknown> {
    * Storage): options, endpoints and methods will change incompatibly, also
    * in minor releases.
    */
-  async createFolder(
+  createFolder(
     _options: ProviderCreateFolderOptions<US>,
-  ): Promise<ProviderCreateFolderResponse> {
+  ): Promisable<ProviderCreateFolderResponse> {
     throw new Error('method not implemented')
   }
 
@@ -341,7 +342,7 @@ export default class Provider<US = unknown> {
    */
   protected async withErrorHandling<T>(
     tag: string,
-    fn: () => Promise<T>,
+    fn: () => Promisable<T>,
   ): Promise<T> {
     try {
       return await fn()
