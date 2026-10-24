@@ -12,7 +12,8 @@ cd uppy
 ```
 
 We are using [Corepack][] to manage versions of [Yarn][]. Corepack comes
-pre-installed with Node.js >=16.x, or can be installed through `npm`:
+pre-installed with Node.js 16.x to 24.x. Node.js 25 and later no longer bundle
+it, so install it through `npm`:
 
 ```sh
 corepack -v || npm i -g corepack

@@ -2,11 +2,11 @@
 slug: /zoom
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
-import CompanionOptions from './_companion-options.mdx';
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import CompanionOptions from './_companion-options.mdx'
 
 # Zoom
 
@@ -73,28 +73,28 @@ Using Zoom requires setup in both Uppy and Companion.
 ### Use in Uppy
 
 ```js {10-13} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import Zoom from '@uppy/zoom';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Zoom from '@uppy/zoom'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(Zoom, { companionUrl: 'https://your-companion.com' });
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(Zoom, { companionUrl: 'https://your-companion.com' })
 ```
 
 ### Use with Transloadit
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Zoom from '@uppy/zoom';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Zoom from '@uppy/zoom'
 
 uppy.use(Zoom, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+})
 ```
 
 You may also hit rate limits, because the OAuth application is shared between
@@ -107,17 +107,17 @@ OAuth” for the service, and enter the key and secret for the provider you want
 to use. Then you can pass the name of the new credentials to that provider:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Zoom from '@uppy/zoom';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Zoom from '@uppy/zoom'
 
 uppy.use(Zoom, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'my_companion_dropbox_creds',
-	},
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
+})
 ```
 
 ### Use in Companion
@@ -144,13 +144,13 @@ To sign up for API keys, go through the following steps:
 
    ```js
    companion.app({
-   	providerOptions: {
-   		zoom: {
-   			key: 'Zoom API key',
-   			secret: 'Zoom API secret',
-   		},
-   	},
-   });
+     providerOptions: {
+       zoom: {
+         key: 'Zoom API key',
+         secret: 'Zoom API secret',
+       },
+     },
+   })
    ```
 
 4. In the “Basic Information” tab, set “OAuth Redirect URL” input field to:
@@ -176,4 +176,4 @@ To sign up for API keys, go through the following steps:
 <CompanionOptions />
 
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/

@@ -54,17 +54,17 @@ with all that done, my package.json file looks something like this:
 
 ```json
 {
-	"name": "custom-provider",
-	"dependencies": {
-		"body-parser": "^1.18.2",
-		"express": "^4.16.2",
-		"express-session": "^1.15.6",
-		"request": "^2.88.0",
-		"uppy": "^1.16.1",
-		"@uppy/companion": "^2.0.0"
-	},
-	"private": true,
-	"scripts": {}
+  "name": "custom-provider",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-session": "^1.15.6",
+    "request": "^2.88.0",
+    "uppy": "^1.16.1",
+    "@uppy/companion": "^2.0.0"
+  },
+  "private": true,
+  "scripts": {}
 }
 ```
 
@@ -72,63 +72,63 @@ with all that done, my package.json file looks something like this:
    express server
 
 ```js
-const express = require('express');
-const companion = require('@uppy/companion');
-const bodyParser = require('body-parser');
-const session = require('express-session');
+const express = require('express')
+const companion = require('@uppy/companion')
+const bodyParser = require('body-parser')
+const session = require('express-session')
 
-const app = express();
+const app = express()
 
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 app.use(
-	session({
-		secret: 'some-secret',
-		resave: true,
-		saveUninitialized: true,
-	}),
-);
+  session({
+    secret: 'some-secret',
+    resave: true,
+    saveUninitialized: true,
+  }),
+)
 
 app.use((req, res, next) => {
-	res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*');
-	res.setHeader(
-		'Access-Control-Allow-Methods',
-		'GET, POST, OPTIONS, PUT, PATCH, DELETE',
-	);
-	res.setHeader(
-		'Access-Control-Allow-Headers',
-		'Authorization, Origin, Content-Type, Accept',
-	);
-	next();
-});
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*')
+  res.setHeader(
+    'Access-Control-Allow-Methods',
+    'GET, POST, OPTIONS, PUT, PATCH, DELETE',
+  )
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Authorization, Origin, Content-Type, Accept',
+  )
+  next()
+})
 
 // initialize uppy
 const companionOptions = {
-	providerOptions: {
-		dropbox: {
-			key: 'your Dropbox key',
-			secret: 'your Dropbox secret',
-		},
-	},
-	server: {
-		host: 'localhost:3020',
-		protocol: 'http',
-	},
-	filePath: './output',
-	secret: 'some-secret',
-	debug: true,
-};
+  providerOptions: {
+    dropbox: {
+      key: 'your Dropbox key',
+      secret: 'your Dropbox secret',
+    },
+  },
+  server: {
+    host: 'localhost:3020',
+    protocol: 'http',
+  },
+  filePath: './output',
+  secret: 'some-secret',
+  debug: true,
+}
 
-app.use(companion.app(companionOptions));
+app.use(companion.app(companionOptions))
 
 // handle 404
 app.use((req, res, next) => {
-	return res.status(404).json({ message: 'Not Found' });
-});
+  return res.status(404).json({ message: 'Not Found' })
+})
 
-companion.socket(app.listen(3020));
+companion.socket(app.listen(3020))
 
-console.log('Welcome to Companion!');
-console.log(`Listening on http://0.0.0.0:3020`);
+console.log('Welcome to Companion!')
+console.log(`Listening on http://0.0.0.0:3020`)
 ```
 
 The code snippet above sets up an express server and plugs Companion into it.
@@ -174,8 +174,8 @@ The constructor of our class will look something like this:
 
 ```js
 class MyCustomProvider {
-	static authProvider = 'google'; // the name of the OAuth provider to use (lowercased)
-	// ...
+  static authProvider = 'google' // the name of the OAuth provider to use (lowercased)
+  // ...
 }
 ```
 
@@ -296,109 +296,109 @@ download ({ id, token }, onData) {
 With all of this put together the entire file would look something like this:
 
 ```js
-const request = require('request');
+const request = require('request')
 
-const BASE_URL = 'https://api.unsplash.com';
+const BASE_URL = 'https://api.unsplash.com'
 
 class MyCustomProvider {
-	static authProvider = 'unsplash'; // the name of the OAuth provider to use (lowercased)
+  static authProvider = 'unsplash' // the name of the OAuth provider to use (lowercased)
 
-	list({ token, directory }, done) {
-		const path = directory ? `/${directory}/photos` : '';
-		const options = {
-			url: `${BASE_URL}/collections${path}`,
-			method: 'GET',
-			json: true,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		};
+  list({ token, directory }, done) {
+    const path = directory ? `/${directory}/photos` : ''
+    const options = {
+      url: `${BASE_URL}/collections${path}`,
+      method: 'GET',
+      json: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
 
-		request(options, (err, resp, body) => {
-			if (err) {
-				console.log(err);
-				done(err);
-				return;
-			}
+    request(options, (err, resp, body) => {
+      if (err) {
+        console.log(err)
+        done(err)
+        return
+      }
 
-			done(null, this._adaptData(body));
-		});
-	}
+      done(null, this._adaptData(body))
+    })
+  }
 
-	download({ id, token }, onData) {
-		const options = {
-			url: `${BASE_URL}/photos/${id}`,
-			method: 'GET',
-			json: true,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		};
+  download({ id, token }, onData) {
+    const options = {
+      url: `${BASE_URL}/photos/${id}`,
+      method: 'GET',
+      json: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
 
-		request(options, (err, resp, body) => {
-			if (err) {
-				console.log(err);
-				return;
-			}
+    request(options, (err, resp, body) => {
+      if (err) {
+        console.log(err)
+        return
+      }
 
-			const url = body.links.download;
-			request
-				.get(url)
-				.on('data', (chunk) => onData(null, chunk))
-				.on('end', () => onData(null, null))
-				.on('error', (err) => console.log(err));
-		});
-	}
+      const url = body.links.download
+      request
+        .get(url)
+        .on('data', (chunk) => onData(null, chunk))
+        .on('end', () => onData(null, null))
+        .on('error', (err) => console.log(err))
+    })
+  }
 
-	size({ id, token }, done) {
-		const options = {
-			url: `${BASE_URL}/photos/${id}`,
-			method: 'GET',
-			json: true,
-			headers: {
-				Authorization: `Bearer ${token}`,
-			},
-		};
+  size({ id, token }, done) {
+    const options = {
+      url: `${BASE_URL}/photos/${id}`,
+      method: 'GET',
+      json: true,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
 
-		request(options, (err, resp, body) => {
-			if (err) {
-				console.log(err);
-				done(err);
-				return;
-			}
+    request(options, (err, resp, body) => {
+      if (err) {
+        console.log(err)
+        done(err)
+        return
+      }
 
-			done(null, body.width * body.height);
-		});
-	}
+      done(null, body.width * body.height)
+    })
+  }
 
-	_adaptData(res) {
-		const data = {
-			username: null,
-			items: [],
-			nextPagePath: null,
-		};
+  _adaptData(res) {
+    const data = {
+      username: null,
+      items: [],
+      nextPagePath: null,
+    }
 
-		const items = res;
-		items.forEach((item) => {
-			const isFolder = !!item.published_at;
-			data.items.push({
-				isFolder,
-				icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
-				name: item.title || item.description,
-				mimeType: isFolder ? null : 'image/jpeg',
-				id: item.id,
-				thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
-				requestPath: item.id,
-				modifiedDate: item.updated_at,
-				size: null,
-			});
-		});
+    const items = res
+    items.forEach((item) => {
+      const isFolder = !!item.published_at
+      data.items.push({
+        isFolder,
+        icon: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+        name: item.title || item.description,
+        mimeType: isFolder ? null : 'image/jpeg',
+        id: item.id,
+        thumbnail: isFolder ? item.cover_photo.urls.thumb : item.urls.thumb,
+        requestPath: item.id,
+        modifiedDate: item.updated_at,
+        size: null,
+      })
+    })
 
-		return data;
-	}
+    return data
+  }
 }
 
-module.exports = MyCustomProvider;
+module.exports = MyCustomProvider
 ```
 
 Now we can go back to `server/index.js` to enable our custom provider:
@@ -406,34 +406,34 @@ Now we can go back to `server/index.js` to enable our custom provider:
 ```js
 // initialize uppy
 const uppyOptions = {
-	providerOptions: {
-		dropbox: {
-			key: 'your Dropbox key',
-			secret: 'your Dropbox secret',
-		},
-	},
-	customProviders: {
-		myunsplash: {
-			config: {
-				// source https://unsplash.com/documentation#user-authentication
-				authorize_url: 'https://unsplash.com/oauth/authorize',
-				access_url: 'https://unsplash.com/oauth/token',
-				oauth: 2,
-				key: 'YOUR UNSPLASH API KEY',
-				secret: 'YOUR UNSPLASH API SECRET',
-			},
-			// you provider module
-			module: require('./customprovider'),
-		},
-	},
-	server: {
-		host: 'localhost:3020',
-		protocol: 'http',
-	},
-	filePath: './output',
-	secret: 'some-secret',
-	debug: true,
-};
+  providerOptions: {
+    dropbox: {
+      key: 'your Dropbox key',
+      secret: 'your Dropbox secret',
+    },
+  },
+  customProviders: {
+    myunsplash: {
+      config: {
+        // source https://unsplash.com/documentation#user-authentication
+        authorize_url: 'https://unsplash.com/oauth/authorize',
+        access_url: 'https://unsplash.com/oauth/token',
+        oauth: 2,
+        key: 'YOUR UNSPLASH API KEY',
+        secret: 'YOUR UNSPLASH API SECRET',
+      },
+      // you provider module
+      module: require('./customprovider'),
+    },
+  },
+  server: {
+    host: 'localhost:3020',
+    protocol: 'http',
+  },
+  filePath: './output',
+  secret: 'some-secret',
+  debug: true,
+}
 ```
 
 You can find your unsplash API key on your Unsplash
@@ -449,68 +449,68 @@ instructions [here](https://uppy.io/docs/guides/building-plugins/), our Uppy
 Plugin (aka `client/MyCustomProvider.js` file) could look something like this:
 
 ```js
-const { UIPlugin } = require('@uppy/core');
-const { Provider } = require('@uppy/companion-client');
-const { ProviderViews } = require('@uppy/provider-views');
-const { h } = require('preact');
+const { UIPlugin } = require('@uppy/core')
+const { Provider } = require('@uppy/companion-client')
+const { ProviderViews } = require('@uppy/provider-views')
+const { h } = require('preact')
 
 module.exports = class MyCustomProvider extends UIPlugin {
-	constructor(uppy, opts) {
-		super(uppy, opts);
-		this.type = 'acquirer';
-		this.id = this.opts.id || 'MyCustomProvider';
-		Provider.initPlugin(this, opts);
+  constructor(uppy, opts) {
+    super(uppy, opts)
+    this.type = 'acquirer'
+    this.id = this.opts.id || 'MyCustomProvider'
+    Provider.initPlugin(this, opts)
 
-		this.title = 'MyUnsplash';
-		this.icon = () => (
-			<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
-				<path
-					d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"
-					fill="#000000"
-					fill-rule="nonzero"
-				/>
-			</svg>
-		);
+    this.title = 'MyUnsplash'
+    this.icon = () => (
+      <svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+        <path
+          d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"
+          fill="#000000"
+          fill-rule="nonzero"
+        />
+      </svg>
+    )
 
-		this.provider = new Provider(uppy, {
-			companionUrl: this.opts.companionUrl,
-			companionHeaders: this.opts.companionHeaders,
-			provider: 'myunsplash',
-			pluginId: this.id,
-		});
+    this.provider = new Provider(uppy, {
+      companionUrl: this.opts.companionUrl,
+      companionHeaders: this.opts.companionHeaders,
+      provider: 'myunsplash',
+      pluginId: this.id,
+    })
 
-		this.files = [];
-		this.onFirstRender = this.onFirstRender.bind(this);
-		this.render = this.render.bind(this);
+    this.files = []
+    this.onFirstRender = this.onFirstRender.bind(this)
+    this.render = this.render.bind(this)
 
-		// merge default options with the ones set by user
-		this.opts = { ...opts };
-	}
+    // merge default options with the ones set by user
+    this.opts = { ...opts }
+  }
 
-	install() {
-		this.view = new ProviderViews(this, {
-			provider: this.provider,
-		});
+  install() {
+    this.view = new ProviderViews(this, {
+      provider: this.provider,
+    })
 
-		const { target } = this.opts;
-		if (target) {
-			this.mount(target, this);
-		}
-	}
+    const { target } = this.opts
+    if (target) {
+      this.mount(target, this)
+    }
+  }
 
-	uninstall() {
-		this.view.tearDown();
-		this.unmount();
-	}
+  uninstall() {
+    this.view.tearDown()
+    this.unmount()
+  }
 
-	onFirstRender() {
-		return this.view.getFolder();
-	}
+  onFirstRender() {
+    return this.view.getFolder()
+  }
 
-	render(state) {
-		return this.view.render(state);
-	}
-};
+  render(state) {
+    return this.view.render(state)
+  }
+}
 ```
 
 Asides from implementing the methods required by the Uppy Plugin, we are also
@@ -527,31 +527,31 @@ With that done, we can now use our new plugin with Uppy. Create a file
 `client/main.js` and initiate Uppy in there like so:
 
 ```js
-const Uppy = require('@uppy/core');
-const Dropbox = require('@uppy/dropbox');
-const Tus = require('@uppy/tus');
-const Dashboard = require('@uppy/dashboard');
-const MyCustomProvider = require('./MyCustomProvider');
+const Uppy = require('@uppy/core')
+const Dropbox = require('@uppy/dropbox')
+const Tus = require('@uppy/tus')
+const Dashboard = require('@uppy/dashboard')
+const MyCustomProvider = require('./MyCustomProvider')
 
 const uppy = Uppy({
-	debug: true,
-});
+  debug: true,
+})
 
 uppy.use(Dropbox, {
-	companionUrl: 'http://localhost:3020',
-});
+  companionUrl: 'http://localhost:3020',
+})
 
 uppy.use(MyCustomProvider, {
-	companionUrl: 'http://localhost:3020',
-});
+  companionUrl: 'http://localhost:3020',
+})
 
 uppy.use(Dashboard, {
-	inline: true,
-	target: 'body',
-	plugins: ['Dropbox', 'MyCustomProvider'],
-});
+  inline: true,
+  target: 'body',
+  plugins: ['Dropbox', 'MyCustomProvider'],
+})
 
-uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' });
+uppy.use(Tus, { endpoint: 'https://master.tus.io/files/' })
 ```
 
 Now we need to bundle the file so it can be loaded on the browser. To do this,
@@ -562,22 +562,22 @@ we'd install [budo](https://www.npmjs.com/package/budo):
 
 ```js
 module.exports = (api) => {
-	api.env('test');
-	return {
-		presets: [
-			[
-				'@babel/preset-env',
-				{
-					modules: false,
-					loose: true,
-				},
-			],
-		],
-		plugins: [['@babel/plugin-transform-react-jsx', { pragma: 'h' }]].filter(
-			Boolean,
-		),
-	};
-};
+  api.env('test')
+  return {
+    presets: [
+      [
+        '@babel/preset-env',
+        {
+          modules: false,
+          loose: true,
+        },
+      ],
+    ],
+    plugins: [['@babel/plugin-transform-react-jsx', { pragma: 'h' }]].filter(
+      Boolean,
+    ),
+  }
+}
 ```
 
 3. Add an `index.html` file (in the root of the project) that uses a bundle file
@@ -586,18 +586,18 @@ module.exports = (api) => {
 ```html
 <!doctype html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Uppy Custom provider Example</title>
-		<link
-			href="https://releases.transloadit.com/uppy/v1.15.0/uppy.min.css"
-			rel="stylesheet"
-		/>
-	</head>
-	<body>
-		<script src="bundle.js"></script>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Uppy Custom provider Example</title>
+    <link
+      href="https://releases.transloadit.com/uppy/v1.15.0/uppy.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <script src="bundle.js"></script>
+  </body>
 </html>
 ```
 

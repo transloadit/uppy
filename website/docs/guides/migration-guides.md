@@ -89,7 +89,7 @@ The move was not wholesale. `isTouchDevice` was deleted outright, not moved to
 
 ```js
 const isTouchDevice = () =>
-	'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  'ontouchstart' in window || navigator.maxTouchPoints > 0
 ```
 
 #### The `uppy` meta-package: no change
@@ -99,7 +99,7 @@ If you use the meta-package or the CDN bundle, nothing changes. `server`,
 the `@uppy/core` subpaths internally:
 
 ```js
-import { DefaultStore, server, Uppy, views } from 'uppy'; // still works
+import { DefaultStore, server, Uppy, views } from 'uppy' // still works
 // window.Uppy.DefaultStore still works
 ```
 
@@ -121,10 +121,10 @@ only target AWS.
 
 ```diff
  uppy.use(AwsS3, {
--	endpoint: 'https://companion.example.com',
--	headers: { authorization: `Bearer ${token}` },
--	cookiesRule: 'include',
-+	companionEndpoint: 'https://companion.example.com',
+-  endpoint: 'https://companion.example.com',
+-  headers: { authorization: `Bearer ${token}` },
+-  cookiesRule: 'include',
++  companionEndpoint: 'https://companion.example.com',
  });
 ```
 
@@ -152,38 +152,38 @@ credentials) is also gone. Either let Companion sign every request through
 
 ```js
 uppy.use(AwsS3, {
-	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
-	async getTemporarySecurityCredentials({ signal }) {
-		const response = await fetch('/sts-token', { signal });
-		if (!response.ok) throw new Error('Failed to fetch STS');
-		// { credentials: { AccessKeyId, … }, bucket, region }
-		return response.json();
-	},
-});
+  shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
+  async getTemporarySecurityCredentials({ signal }) {
+    const response = await fetch('/sts-token', { signal })
+    if (!response.ok) throw new Error('Failed to fetch STS')
+    // { credentials: { AccessKeyId, … }, bucket, region }
+    return response.json()
+  },
+})
 ```
 
 **After:**
 
 ```js
 uppy.use(AwsS3, {
-	s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
-	region: 'us-east-1',
-	shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
-	async getCredentials() {
-		const response = await fetch('/sts-token');
-		if (!response.ok) throw new Error('Failed to fetch STS');
-		const { credentials } = await response.json();
-		return {
-			credentials: {
-				accessKeyId: credentials.AccessKeyId,
-				secretAccessKey: credentials.SecretAccessKey,
-				sessionToken: credentials.SessionToken,
-				expiration: credentials.Expiration,
-			},
-			region: 'us-east-1',
-		};
-	},
-});
+  s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
+  region: 'us-east-1',
+  shouldUseMultipart: (file) => file.size > 100 * 2 ** 20,
+  async getCredentials() {
+    const response = await fetch('/sts-token')
+    if (!response.ok) throw new Error('Failed to fetch STS')
+    const { credentials } = await response.json()
+    return {
+      credentials: {
+        accessKeyId: credentials.AccessKeyId,
+        secretAccessKey: credentials.SecretAccessKey,
+        sessionToken: credentials.SessionToken,
+        expiration: credentials.Expiration,
+      },
+      region: 'us-east-1',
+    }
+  },
+})
 ```
 
 The credential fields are camelCase now:
@@ -212,31 +212,31 @@ presigns URLs.
 
 ```js
 uppy.use(AwsS3, {
-	getUploadParameters: (file) => fetchUploadParameters(file),
-	createMultipartUpload: (file) => fetchCreateMultipartUpload(file),
-	listParts: (file, { uploadId, key }) => fetchListParts(uploadId, key),
-	signPart: (file, { uploadId, key, partNumber }) =>
-		fetchSignPart(uploadId, key, partNumber),
-	abortMultipartUpload: (file, { uploadId, key }) => fetchAbort(uploadId, key),
-	completeMultipartUpload: (file, { uploadId, key, parts }) =>
-		fetchComplete(uploadId, key, parts),
-});
+  getUploadParameters: (file) => fetchUploadParameters(file),
+  createMultipartUpload: (file) => fetchCreateMultipartUpload(file),
+  listParts: (file, { uploadId, key }) => fetchListParts(uploadId, key),
+  signPart: (file, { uploadId, key, partNumber }) =>
+    fetchSignPart(uploadId, key, partNumber),
+  abortMultipartUpload: (file, { uploadId, key }) => fetchAbort(uploadId, key),
+  completeMultipartUpload: (file, { uploadId, key, parts }) =>
+    fetchComplete(uploadId, key, parts),
+})
 ```
 
 **After:**
 
 ```js
 uppy.use(AwsS3, {
-	async signRequest(request) {
-		const response = await fetch('/s3/sign', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify(request),
-		});
-		if (!response.ok) throw new Error('Failed to sign request');
-		return response.json(); // { url }, or { url, key, headers } (see below)
-	},
-});
+  async signRequest(request) {
+    const response = await fetch('/s3/sign', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(request),
+    })
+    if (!response.ok) throw new Error('Failed to sign request')
+    return response.json() // { url }, or { url, key, headers } (see below)
+  },
+})
 ```
 
 `signRequest` receives one request object and returns the presigned URL for it.
@@ -244,18 +244,18 @@ Which fields are present depends on the operation:
 
 ```ts
 type PresignableRequest = {
-	method: 'GET' | 'PUT' | 'POST' | 'DELETE';
-	key: string;
-	uploadId?: string;
-	partNumber?: number;
-	expiresIn?: number;
-};
+  method: 'GET' | 'PUT' | 'POST' | 'DELETE'
+  key: string
+  uploadId?: string
+  partNumber?: number
+  expiresIn?: number
+}
 
 type PresignedResponse = {
-	url: string;
-	key?: string;
-	headers?: Record<string, string>;
-};
+  url: string
+  key?: string
+  headers?: Record<string, string>
+}
 ```
 
 The object key is now generated on the client (via `generateObjectKey`, by
@@ -327,10 +327,10 @@ branched on that, update it:
 
 ```diff
  uppy.on('upload-error', (file, error, response) => {
--	// response was always undefined
-+	// response.status now holds what the server sent, and
-+	// response.body.xhr is the underlying XMLHttpRequest
- 	console.log(response?.status, response?.body?.xhr.responseText);
+-  // response was always undefined
++  // response.status now holds what the server sent, and
++  // response.body.xhr is the underlying XMLHttpRequest
+   console.log(response?.status, response?.body?.xhr.responseText);
  });
 ```
 
@@ -395,9 +395,9 @@ functionality that can be replicated with Uppy’s built-in state management.
 **Before:**
 
 ```js
-import ProgressBar from '@uppy/progress-bar';
+import ProgressBar from '@uppy/progress-bar'
 
-uppy.use(ProgressBar, { target: '#progress' });
+uppy.use(ProgressBar, { target: '#progress' })
 ```
 
 **After:**
@@ -405,17 +405,17 @@ uppy.use(ProgressBar, { target: '#progress' });
 ```js
 // Custom progress bar using Uppy state
 uppy.on('upload-progress', (file, progress) => {
-	const progressElement = document.getElementById('progress');
-	progressElement.style.width = `${progress.percentage}%`;
-	progressElement.textContent = `${progress.percentage}%`;
-});
+  const progressElement = document.getElementById('progress')
+  progressElement.style.width = `${progress.percentage}%`
+  progressElement.textContent = `${progress.percentage}%`
+})
 
 // Or listen to total progress
 uppy.on('progress', (progress) => {
-	const progressElement = document.getElementById('progress');
-	progressElement.style.width = `${progress}%`;
-	progressElement.textContent = `${progress}%`;
-});
+  const progressElement = document.getElementById('progress')
+  progressElement.style.width = `${progress}%`
+  progressElement.textContent = `${progress}%`
+})
 ```
 
 **Migration steps:**
@@ -444,12 +444,12 @@ shown below.
 **Before:**
 
 ```js
-import DragDrop from '@uppy/drag-drop';
-import FileInput from '@uppy/file-input';
+import DragDrop from '@uppy/drag-drop'
+import FileInput from '@uppy/file-input'
 
 uppy
-	.use(DragDrop, { target: '#drag-drop' })
-	.use(FileInput, { target: '#file-input' });
+  .use(DragDrop, { target: '#drag-drop' })
+  .use(FileInput, { target: '#file-input' })
 ```
 
 **After:**
@@ -457,56 +457,56 @@ uppy
 Example is for React but the same components and hooks exist for Vue and Svelte.
 
 ```jsx
-import { Dropzone } from '@uppy/react';
+import { Dropzone } from '@uppy/react'
 
 function Component() {
-	return <Dropzone />;
+  return <Dropzone />
 }
 ```
 
 Or with hooks
 
 ```tsx
-import clsx from 'clsx';
-import { useDropzone } from '@uppy/react';
+import clsx from 'clsx'
+import { useDropzone } from '@uppy/react'
 
 type DropzoneProps = {
-	note?: string;
-	noClick?: boolean;
-};
+  note?: string
+  noClick?: boolean
+}
 
 export function Dropzone({ note, noClick }: DropzoneProps) {
-	const { getRootProps, getInputProps } = useDropzone({ noClick });
+  const { getRootProps, getInputProps } = useDropzone({ noClick })
 
-	return (
-		<div data-uppy-element="dropzone" role="presentation">
-			<input
-				{...getInputProps()}
-				tabIndex={-1}
-				name="uppy-dropzone-file-input"
-				className="hidden"
-			/>
-			<div
-				{...getRootProps()}
-				tabIndex={0}
-				className={clsx(
-					'border-2 border-dashed border-gray-300',
-					'rounded-lg p-6 bg-gray-50',
-					'transition-colors duration-200',
-					{
-						'cursor-pointer hover:bg-blue-50': !noClick,
-					},
-				)}
-			>
-				<div className="flex flex-col items-center justify-center h-full space-y-3">
-					<p className="text-gray-600">Drop files here or click to add them</p>
-				</div>
-				{note ?
-					<div className="text-sm text-gray-500">{note}</div>
-				:	null}
-			</div>
-		</div>
-	);
+  return (
+    <div data-uppy-element="dropzone" role="presentation">
+      <input
+        {...getInputProps()}
+        tabIndex={-1}
+        name="uppy-dropzone-file-input"
+        className="hidden"
+      />
+      <div
+        {...getRootProps()}
+        tabIndex={0}
+        className={clsx(
+          'border-2 border-dashed border-gray-300',
+          'rounded-lg p-6 bg-gray-50',
+          'transition-colors duration-200',
+          {
+            'cursor-pointer hover:bg-blue-50': !noClick,
+          },
+        )}
+      >
+        <div className="flex flex-col items-center justify-center h-full space-y-3">
+          <p className="text-gray-600">Drop files here or click to add them</p>
+        </div>
+        {note ?
+          <div className="text-sm text-gray-500">{note}</div>
+        : null}
+      </div>
+    </div>
+  )
 }
 ```
 
@@ -516,12 +516,12 @@ Showing the “vanilla” JS version, Dashboard is also exported for all framewo
 
 ```js
 // If you want a complete UI solution, use Dashboard instead
-import Dashboard from '@uppy/dashboard';
+import Dashboard from '@uppy/dashboard'
 
 uppy.use(Dashboard, {
-	target: '#uppy-dashboard',
-	inline: true,
-});
+  target: '#uppy-dashboard',
+  inline: true,
+})
 ```
 
 **Migration steps:**
@@ -561,14 +561,14 @@ dependencies you need.
 **Before:**
 
 ```javascript
-import { Dashboard, StatusBar } from '@uppy/react';
+import { Dashboard, StatusBar } from '@uppy/react'
 ```
 
 **Now:**
 
 ```javascript
-import Dashboard from '@uppy/react/dashboard';
-import StatusBar from '@uppy/react/status-bar';
+import Dashboard from '@uppy/react/dashboard'
+import StatusBar from '@uppy/react/status-bar'
 ```
 
 ### @uppy/status-bar merged into @uppy/dashboard
@@ -597,22 +597,22 @@ All StatusBar configuration options are now available as Dashboard options:
 
 ```js
 // Before - separate StatusBar plugin
-import StatusBar from '@uppy/status-bar';
+import StatusBar from '@uppy/status-bar'
 uppy.use(StatusBar, {
-	target: '#status-bar',
-	hideProgressDetails: true,
-	hideUploadButton: false,
-	hideAfterFinish: true,
-});
+  target: '#status-bar',
+  hideProgressDetails: true,
+  hideUploadButton: false,
+  hideAfterFinish: true,
+})
 
 // After - use Dashboard with StatusBar options
-import Dashboard from '@uppy/dashboard';
+import Dashboard from '@uppy/dashboard'
 uppy.use(Dashboard, {
-	target: '#dashboard',
-	hideProgressDetails: false,
-	hideUploadButton: false,
-	hideAfterFinish: true,
-});
+  target: '#dashboard',
+  hideProgressDetails: false,
+  hideUploadButton: false,
+  hideAfterFinish: true,
+})
 ```
 
 ## Migrate from Companion 4.x to 5.x
@@ -700,32 +700,32 @@ One important thing to note are the new generics on `@uppy/core`.
 <!-- eslint-disable @typescript-eslint/no-non-null-assertion -->
 
 ```ts
-import Uppy from '@uppy/core';
+import Uppy from '@uppy/core'
 // xhr-upload is for uploading to your own backend.
-import XHRUpload from '@uppy/xhr-upload';
+import XHRUpload from '@uppy/xhr-upload'
 
 // Your own metadata on files
-type Meta = { myCustomMetadata: string };
+type Meta = { myCustomMetadata: string }
 // The response from your server
-type Body = { someThingMyBackendReturns: string };
+type Body = { someThingMyBackendReturns: string }
 
 const uppy = new Uppy<Meta, Body>().use(XHRUpload, {
-	endpoint: '/upload',
-});
+  endpoint: '/upload',
+})
 
 const id = uppy.addFile({
-	name: 'example.jpg',
-	data: new Blob(),
-	meta: { myCustomMetadata: 'foo' },
-});
+  name: 'example.jpg',
+  data: new Blob(),
+  meta: { myCustomMetadata: 'foo' },
+})
 
 // This is now typed
-const { myCustomMetadata } = uppy.getFile(id).meta;
+const { myCustomMetadata } = uppy.getFile(id).meta
 
-await uppy.upload();
+await uppy.upload()
 
 // This is strictly typed too
-const { someThingMyBackendReturns } = uppy.getFile(id).response.body!;
+const { someThingMyBackendReturns } = uppy.getFile(id).response.body!
 ```
 
 ### `@uppy/aws-s3` and `@uppy/aws-s3-multipart`
@@ -862,57 +862,57 @@ You can also checkout how we migrated the Robodog example ourselves in this
 [commit](https://github.com/transloadit/uppy/commit/089aaed615c77bafaf905e291b6b4e82aaeb2f6f).
 
 ```js
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import RemoteSources from '@uppy/remote-sources';
-import Webcam from '@uppy/webcam';
-import ScreenCapture from '@uppy/screen-capture';
-import GoldenRetriever from '@uppy/golden-retriever';
-import ImageEditor from '@uppy/image-editor';
-import Audio from '@uppy/audio';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import RemoteSources from '@uppy/remote-sources'
+import Webcam from '@uppy/webcam'
+import ScreenCapture from '@uppy/screen-capture'
+import GoldenRetriever from '@uppy/golden-retriever'
+import ImageEditor from '@uppy/image-editor'
+import Audio from '@uppy/audio'
 import Transloadit, {
-	COMPANION_URL,
-	COMPANION_ALLOWED_HOSTS,
-} from '@uppy/transloadit';
+  COMPANION_URL,
+  COMPANION_ALLOWED_HOSTS,
+} from '@uppy/transloadit'
 
-import '@uppy/core/css/style.css';
-import '@uppy/dashboard/css/style.css';
-import '@uppy/audio/css/style.css';
-import '@uppy/screen-capture/css/style.css';
-import '@uppy/image-editor/css/style.css';
+import '@uppy/core/css/style.css'
+import '@uppy/dashboard/css/style.css'
+import '@uppy/audio/css/style.css'
+import '@uppy/screen-capture/css/style.css'
+import '@uppy/image-editor/css/style.css'
 
 new Uppy()
-	.use(Dashboard, {
-		inline: true,
-		target: '#app',
-		showProgressDetails: true,
-		proudlyDisplayPoweredByUppy: true,
-	})
-	.use(RemoteSources, {
-		companionUrl: COMPANION_URL,
-		companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	})
-	.use(Webcam, {
-		showVideoSourceDropdown: true,
-		showRecordingLength: true,
-	})
-	.use(Audio, {
-		showRecordingLength: true,
-	})
-	.use(ScreenCapture)
-	.use(ImageEditor)
-	.use(Transloadit, {
-		service: 'https://api2.transloadit.com',
-		async getAssemblyOptions(file) {
-			// This is where you configure your auth key, auth secret, and template ID
-			// /uppy/docs/transloadit/#getAssemblyOptions-file
-			//
-			// It is important to set the secret in production:
-			// https://transloadit.com/docs/topics/signature-authentication/
-			const response = await fetch('/some-endpoint');
-			return response.json();
-		},
-	});
+  .use(Dashboard, {
+    inline: true,
+    target: '#app',
+    showProgressDetails: true,
+    proudlyDisplayPoweredByUppy: true,
+  })
+  .use(RemoteSources, {
+    companionUrl: COMPANION_URL,
+    companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  })
+  .use(Webcam, {
+    showVideoSourceDropdown: true,
+    showRecordingLength: true,
+  })
+  .use(Audio, {
+    showRecordingLength: true,
+  })
+  .use(ScreenCapture)
+  .use(ImageEditor)
+  .use(Transloadit, {
+    service: 'https://api2.transloadit.com',
+    async getAssemblyOptions(file) {
+      // This is where you configure your auth key, auth secret, and template ID
+      // /uppy/docs/transloadit/#getAssemblyOptions-file
+      //
+      // It is important to set the secret in production:
+      // https://transloadit.com/docs/topics/signature-authentication/
+      const response = await fetch('/some-endpoint')
+      return response.json()
+    },
+  })
 ```
 
 ## Migrate from Uppy 2.x to 3.x
@@ -981,13 +981,13 @@ These are properties can now be imported and used for remote sources plugins
 when using Transloadit:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
 
 // ...
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+})
 ```
 
 ### `@uppy/aws-s3-multipart`
@@ -1159,18 +1159,18 @@ bundle:
 If you’re using a bundler, you need import these before Uppy:
 
 ```js
-import 'core-js';
-import 'whatwg-fetch';
-import 'abortcontroller-polyfill/dist/polyfill-patch-fetch';
+import 'core-js'
+import 'whatwg-fetch'
+import 'abortcontroller-polyfill/dist/polyfill-patch-fetch'
 // Order matters here: AbortController needs fetch, which needs Promise (provided by core-js).
 
-import 'md-gum-polyfill';
-import ResizeObserver from 'resize-observer-polyfill';
+import 'md-gum-polyfill'
+import ResizeObserver from 'resize-observer-polyfill'
 
-window.ResizeObserver ??= ResizeObserver;
+window.ResizeObserver ??= ResizeObserver
 
-export { default } from '@uppy/core';
-export * from '@uppy/core';
+export { default } from '@uppy/core'
+export * from '@uppy/core'
 ```
 
 If you’re using Uppy from a CDN, we now provide two bundles: one for up-to-date
@@ -1184,11 +1184,11 @@ support:
 
 <!-- Legacy browsers (IE11+) -->
 <script
-	nomodule
-	src="https://releases.transloadit.com/uppy/v3.17.0/uppy.legacy.min.js"
+  nomodule
+  src="https://releases.transloadit.com/uppy/v3.17.0/uppy.legacy.min.js"
 ></script>
 <script type="module">
-	import 'https://releases.transloadit.com/uppy/v3.17.0/uppy.min.js';
+  import 'https://releases.transloadit.com/uppy/v3.17.0/uppy.min.js'
 </script>
 ```
 
@@ -1209,7 +1209,7 @@ user interfaces.
 You can import them from [`@uppy/core`][core]:
 
 ```js
-import { BasePlugin, UIPlugin } from '@uppy/core';
+import { BasePlugin, UIPlugin } from '@uppy/core'
 ```
 
 **Note:** some bundlers will include `UIPlugin` (and thus Preact) if you import
@@ -1217,8 +1217,8 @@ from `@uppy/core`. To make sure this does not happen, you can import `Uppy` and
 `BasePlugin` directly:
 
 ```js
-import Uppy from '@uppy/core/lib/Uppy.js';
-import BasePlugin from '@uppy/core/lib/BasePlugin.js';
+import Uppy from '@uppy/core/lib/Uppy.js'
+import BasePlugin from '@uppy/core/lib/BasePlugin.js'
 ```
 
 ### Use the latest Preact for your Uppy plugins
@@ -1236,25 +1236,25 @@ You should set your plugin title from the `locale` property.
 Before
 
 ```js
-import Webcam from '@uppy/webcam';
+import Webcam from '@uppy/webcam'
 
 uppy.use(Webcam, {
-	title: 'Some title',
-});
+  title: 'Some title',
+})
 ```
 
 After
 
 ```js
-import Webcam from '@uppy/webcam';
+import Webcam from '@uppy/webcam'
 
 uppy.use(Webcam, {
-	locale: {
-		strings: {
-			title: 'Some title',
-		},
-	},
-});
+  locale: {
+    strings: {
+      title: 'Some title',
+    },
+  },
+})
 ```
 
 ### Initialize Uppy with the `new` keyword
@@ -1263,11 +1263,11 @@ The default export `Uppy` is no longer callable as a function. This means you
 construct the `Uppy` instance using the `new` keyword.
 
 ```js
-import Uppy from '@uppy/core';
+import Uppy from '@uppy/core'
 
-const uppy = new Uppy(); // correct.
+const uppy = new Uppy() // correct.
 
-const otherUppy = Uppy(); // incorrect, will throw.
+const otherUppy = Uppy() // incorrect, will throw.
 ```
 
 ### Rename `allowMultipleUploads` to `allowMultipleUploadBatches`
@@ -1283,8 +1283,8 @@ and not whether a user can choose multiple files for one upload.
 
 ```js
 const uppy = new Uppy({
-	allowMultipleUploadBatches: true,
-});
+  allowMultipleUploadBatches: true,
+})
 ```
 
 ### New default limits for [`@uppy/xhr-upload`][xhr] and [`@uppy/tus`][tus]
@@ -1296,16 +1296,16 @@ You can change the limit on the Tus and XHR plugin options.
 
 ```js
 uppy.use(Tus, {
-	// ...
-	limit: 10,
-});
+  // ...
+  limit: 10,
+})
 ```
 
 ```js
 uppy.use(XHRUpload, {
-	// ...
-	limit: 10,
-});
+  // ...
+  limit: 10,
+})
 ```
 
 ### TypeScript changes
@@ -1315,14 +1315,14 @@ default export was a function that returned the `Uppy` class, and the types came
 bundled with the default export (`Uppy.SomeType`).
 
 ```ts
-import Uppy from '@uppy/core';
-import Tus from '@uppy/tus';
+import Uppy from '@uppy/core'
+import Tus from '@uppy/tus'
 
-const uppy = Uppy<Uppy.StrictTypes>();
+const uppy = Uppy<Uppy.StrictTypes>()
 
 uppy.use(Tus, {
-	invalidOption: null, // this will make the compilation fail!
-});
+  invalidOption: null, // this will make the compilation fail!
+})
 ```
 
 Uppy is now strictly typed by default and loose types have been removed.
@@ -1330,11 +1330,11 @@ Uppy is now strictly typed by default and loose types have been removed.
 ```ts
 // ...
 
-const uppy = new Uppy();
+const uppy = new Uppy()
 
 uppy.use(Tus, {
-	invalidOption: null, // this will make the compilation fail!
-});
+  invalidOption: null, // this will make the compilation fail!
+})
 ```
 
 Uppy types are now individual exports and should be imported separately.
@@ -1342,7 +1342,7 @@ Uppy types are now individual exports and should be imported separately.
 <!-- eslint-disable @typescript-eslint/no-unused-vars -->
 
 ```ts
-import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core';
+import type { PluginOptions, UIPlugin, PluginTarget } from '@uppy/core'
 ```
 
 #### Event types
@@ -1357,28 +1357,28 @@ and allowed for invalid events to be passed, such as
 ```ts
 // Before:
 
-type Meta = { myCustomMetadata: string };
+type Meta = { myCustomMetadata: string }
 
 // Invalid event
 uppy.on<Meta>('upload-errrOOOoooOOOOOrrrr', () => {
-	// ...
-});
+  // ...
+})
 
 // After:
 
 // Normal event signature
 uppy.on('complete', (result) => {
-	const successResults = result.successful;
-});
+  const successResults = result.successful
+})
 
 // Custom signature
-type Meta = { myCustomMetadata: string };
+type Meta = { myCustomMetadata: string }
 
 // Notice how the custom type has now become the second argument
 uppy.on<'complete', Meta>('complete', (result) => {
-	// The passed type is now merged into the `meta` types.
-	const meta = result.successful[0].meta.myCustomMetadata;
-});
+  // The passed type is now merged into the `meta` types.
+  const meta = result.successful[0].meta.myCustomMetadata
+})
 ```
 
 Plugins that add their own events can merge with existing ones in `@uppy/core`
@@ -1390,8 +1390,8 @@ For instance, when using [`@uppy/dashboard`][dashboard]:
 
 ```ts
 uppy.on('dashboard:file-edit-start', (file) => {
-	const fileName = file.name;
-});
+  const fileName = file.name
+})
 ```
 
 ### Changes to pre-signing URLs for [`@uppy/aws-s3`][aws-s3]
