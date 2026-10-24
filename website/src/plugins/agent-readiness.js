@@ -1,34 +1,9 @@
+const { simplematter } = require('simplematter')
 const fs = require('node:fs/promises')
 const path = require('node:path')
 
 const DOCS_DIR = 'docs'
 const ROUTE_BASE = '/docs'
-
-// Limitation: this is a hand-rolled scalar-only frontmatter reader. We only read
-// `title`, `description` and `slug`, as inline or continued plain strings. Swap
-// in `gray-matter` if a doc ever needs nested or structured frontmatter.
-function splitFrontmatter(raw) {
-  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?/.exec(raw)
-  if (!match) return { data: {}, body: raw }
-
-  const data = {}
-  let continuedKey = null
-  for (const line of match[1].split(/\r?\n/)) {
-    const kv = /^([A-Za-z0-9_-]+):\s*(.*)$/.exec(line)
-    if (kv) {
-      const value = kv[2].trim().replace(/^['"]|['"]$/g, '')
-      data[kv[1]] = value
-      continuedKey = value ? null : kv[1]
-      continue
-    }
-    if (continuedKey && /^\s+\S/.test(line)) {
-      data[continuedKey] = `${data[continuedKey]} ${line.trim()}`.trim()
-      continue
-    }
-    continuedKey = null
-  }
-  return { data, body: raw.slice(match[0].length) }
-}
 
 async function walk(dir) {
   const out = []
@@ -461,7 +436,7 @@ module.exports = function agentReadiness(context) {
       const loadPartial = (partialPath) => {
         if (!partialCache.has(partialPath)) {
           const raw = require('node:fs').readFileSync(partialPath, 'utf8')
-          const { body } = splitFrontmatter(raw)
+          const [, body] = simplematter(raw)
           partialCache.set(
             partialPath,
             inlinePartials(body, path.dirname(partialPath), loadPartial),
@@ -473,7 +448,9 @@ module.exports = function agentReadiness(context) {
       for (const file of files) {
         const relPath = path.relative(docsRoot, file).split(path.sep).join('/')
         const raw = await fs.readFile(file, 'utf8')
-        const { data, body } = splitFrontmatter(raw)
+        const [frontmatter, body] = simplematter(raw)
+        // Empty or comment-only frontmatter parses to `null`, not `undefined`.
+        const data = frontmatter ?? {}
         const route = routeFor(relPath, data.slug)
 
         // The built HTML is the source of truth for which routes exist. If a
