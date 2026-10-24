@@ -4,6 +4,7 @@ import throttle from 'lodash/throttle.js'
 import ee from 'namespace-emitter'
 import { nanoid } from 'nanoid/non-secure'
 import type { h } from 'preact'
+import type { Promisable } from 'type-fest'
 import packageJson from '../package.json' with { type: 'json' }
 import type BasePlugin from './BasePlugin.js'
 import type Provider from './companion-client/Provider.js'
@@ -186,9 +187,9 @@ export interface PluginTypeRegistry<M extends Meta, B extends Body>
   extends Record<never, [M, B]> {}
 
 export interface AsyncStore {
-  getItem: (key: string) => Promise<string | null>
-  setItem: (key: string, value: string) => Promise<void>
-  removeItem: (key: string) => Promise<void>
+  getItem: (key: string) => Promisable<string | null>
+  setItem: (key: string, value: string) => Promisable<void>
+  removeItem: (key: string) => Promisable<void>
 }
 
 /**
@@ -1491,7 +1492,7 @@ export class Uppy<
     })
   }
 
-  async #doRetryAll(): Promise<UploadResult<M, B> | undefined> {
+  #doRetryAll(): Promisable<UploadResult<M, B> | undefined> {
     const filesToRetry = this.#getFilesToRetry()
 
     const updatedFiles = { ...this.getState().files }

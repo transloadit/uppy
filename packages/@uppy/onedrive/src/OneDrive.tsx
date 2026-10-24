@@ -9,9 +9,9 @@ import type {
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   Provider,
-  tokenStorage,
 } from '@uppy/core/companion-client'
 import { ProviderViews } from '@uppy/core/provider-views'
 import type { LocaleStrings } from '@uppy/core/utils'
@@ -46,7 +46,7 @@ export default class OneDrive<M extends Meta, B extends Body>
     super(uppy, opts)
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || tokenStorage
+    this.storage = this.opts.storage || defaultStorage
     this.id = this.opts.id || 'OneDrive'
     this.icon = () => (
       <svg

@@ -38,7 +38,7 @@ function createFakeProvider(
     get maxInFlight() {
       return state.maxInFlight
     },
-    async list(directory) {
+    list(directory) {
       const [encodedFolder = '', query = ''] = (directory ?? '').split('?')
       const folder = decodeURIComponent(encodedFolder)
       const page = Number(new URLSearchParams(query).get('page') ?? '0')
@@ -56,7 +56,7 @@ function createFakeProvider(
           : null,
       }
     },
-    async createFolder(parentId, name) {
+    createFolder(parentId, name) {
       const parent = parentId ?? ''
       const key = `${parent}${name}/`
       if ((state.tree[parent] ?? []).includes(key)) {
@@ -87,7 +87,7 @@ function createFakeProvider(
         inFlight -= 1
       }
     },
-    async deleteItem(id) {
+    deleteItem(id) {
       if (id.endsWith('/') && (state.tree[id] ?? []).length > 0) {
         throw userError('S3_FOLDER_NOT_EMPTY')
       }
@@ -180,7 +180,7 @@ describe('moveFolder', () => {
     const provider = createFakeProvider(tree())
     const failing: FolderMoveProvider = {
       ...provider,
-      moveItem: async () => {
+      moveItem() {
         throw userError('S3_FILE_TOO_LARGE_TO_MOVE')
       },
     }
@@ -332,7 +332,7 @@ describe('deleteFolder', () => {
     const provider = createFakeProvider(tree())
     const order: string[] = []
     const deleteItem = provider.deleteItem.bind(provider)
-    provider.deleteItem = async (id, options) => {
+    provider.deleteItem = (id, options) => {
       order.push(id)
       return deleteItem(id, options)
     }

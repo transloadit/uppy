@@ -65,7 +65,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
    * @param options.query
    * @param options.providerUserSession
    */
-  override async list({
+  override list({
     directory,
     providerUserSession: { accessToken: token },
     query,
@@ -103,7 +103,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
     query,
@@ -122,7 +122,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<ProviderThumbnailResponse> {
+  override thumbnail(): Promise<ProviderThumbnailResponse> {
     // not implementing this because a public thumbnail from onedrive will be used instead
     logger.error(
       'call to thumbnail is not implemented',
@@ -131,7 +131,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     throw new Error('call to thumbnail is not implemented')
   }
 
-  override async size({
+  override size({
     id,
     query,
     providerUserSession: { accessToken: token },
@@ -148,7 +148,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     })
   }
 
-  override async logout(): Promise<ProviderLogoutResponse> {
+  override logout(): ProviderLogoutResponse {
     // apparently M$ doesn't support programmatic oauth2 revoke
     return {
       revoked: false,
@@ -156,7 +156,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     }
   }
 
-  override async refreshToken({
+  override refreshToken({
     clientId,
     clientSecret,
     refreshToken,
@@ -188,7 +188,7 @@ export default class OneDrive extends Provider<OneDriveUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

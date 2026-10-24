@@ -327,7 +327,7 @@ export default class S3Provider<
     }
   }
 
-  override async logout(): Promise<ProviderLogoutResponse> {
+  override logout(): ProviderLogoutResponse {
     return { revoked: true }
   }
 
@@ -369,7 +369,7 @@ export default class S3Provider<
     }
   }
 
-  override async list({
+  override list({
     companion,
     providerUserSession,
     query,
@@ -458,7 +458,7 @@ export default class S3Provider<
     })
   }
 
-  override async download({
+  override download({
     companion,
     id,
     query,
@@ -526,7 +526,7 @@ export default class S3Provider<
     )
   }
 
-  override async deleteItem({
+  override deleteItem({
     companion,
     id,
     providerUserSession,
@@ -551,13 +551,13 @@ export default class S3Provider<
    * prefix, so the client walks it and moves its files one by one); a backend
    * that `supportsMoveFolder` gets folders too, with a normalised target.
    */
-  override async moveItem({
+  override moveItem({
     companion,
     id,
     destination,
     providerUserSession,
   }: ProviderMoveItemOptions<S3UserSession>): Promise<ProviderMoveItemResponse> {
-    return this.withErrorHandling('provider.s3.move.error', async () => {
+    return this.withErrorHandling('provider.s3.move.error', () => {
       const session = this.session(companion, providerUserSession, {
         requireWrite: true,
         keys: [id, destination],
@@ -641,7 +641,7 @@ export default class S3Provider<
     return itemRef(destination)
   }
 
-  override async createFolder({
+  override createFolder({
     companion,
     parentId,
     name,
@@ -697,7 +697,7 @@ export default class S3Provider<
     )
   }
 
-  override async thumbnail(): Promise<never> {
+  override thumbnail(): Promise<never> {
     logger.error(
       'call to thumbnail is not implemented',
       'provider.s3.thumbnail.error',
