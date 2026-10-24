@@ -8,7 +8,8 @@ const expirySeconds = 60
 const pending = new Map<string, { data: object; timer: NodeJS.Timeout }>()
 
 function storageKey(token: string, options: CompanionInitOptions) {
-  return `${options.redisPubSubScope ?? ''}:companion:auth-callback:${token}`
+  const prefix = options.redisPubSubScope ? `${options.redisPubSubScope}:` : ''
+  return `${prefix}companion:auth-callback:${token}`
 }
 
 export async function publishAuthCallback(

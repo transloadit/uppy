@@ -6,6 +6,7 @@ on:
     paths-ignore:
       - '**.md'
       - 'assets/**'
+      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
   pull_request:
@@ -13,6 +14,7 @@ on:
     types: [opened, synchronize, reopened]
     paths-ignore:
       - '**.md'
+      - 'website/**'
       - '.github/**'
       - '!.github/workflows/ci.yml'
 
@@ -67,16 +69,29 @@ jobs:
   unit_tests:
     name: Tests
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7.4
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     strategy:
       matrix:
-        node-version: [lts/*]
+        # Current Node is covered separately in node26.yml.
+        node-version: ['22.23.4', '24.22.1']
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
-      - name: Start Redis
-        run: |
-          docker run --detach --name companion-test-redis --publish 6379:6379 redis:7.4
-          timeout 30s bash -c 'until docker exec companion-test-redis redis-cli ping; do sleep 1; done'
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{matrix.node-version}}
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -89,10 +104,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: ${{matrix.node-version}}
       - name: Install dependencies
         run:
           corepack yarn install --immutable
@@ -121,6 +132,12 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -133,10 +150,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - name: Install Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
       - name: Install dependencies
         run:
           corepack yarn install --immutable
@@ -154,7 +167,9 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Install dependencies
         run:
           corepack yarn workspaces focus @uppy-dev/build

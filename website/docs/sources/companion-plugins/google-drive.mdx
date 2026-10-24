@@ -1,0 +1,241 @@
+---
+slug: /google-drive
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import CompanionOptions from './_companion-options.mdx'
+import GoogleOwnCredentials from './_google-own-credentials.mdx'
+
+# Google Drive
+
+The `@uppy/google-drive` plugin lets users import files from their
+[Google Drive](https://drive.google.com) account.
+
+A [Companion](/docs/companion) instance is required for the Google Drive plugin
+to work. Companion handles authentication with Google Drive, downloads the
+files, and uploads them to the destination. This saves the user bandwidth,
+especially helpful if they are on a mobile connection.
+
+You can self-host Companion or get a hosted version with any
+[Transloadit plan](https://transloadit.com/pricing/). Either way you need your
+own Google OAuth app. Transloadit no longer provides one for Google Drive.
+
+<GoogleOwnCredentials />
+
+## When should I use this?
+
+When you want to let users import files from their
+[Google Drive](https://drive.google.com) account.
+
+You should use this plugin over the
+[Google Drive Picker plugin](/docs/google-drive-picker) if you prefer a UI with
+more controls, a leaner bundle size, and a more consistent user experience.
+
+The downside is it needs the restricted `drive.readonly` scope. Using that scope
+in production requires Google’s app verification, which can take months and may
+involve a third-party CASA Tier 2 security assessment. Until your app is
+verified, only the test users you list in the Google Cloud console can sign in.
+This applies whether you self-host Companion or use Transloadit’s hosted one.
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+```shell
+npm install @uppy/google-drive
+```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/google-drive
+```
+
+  </TabItem>
+
+  <TabItem value="cdn" label="CDN">
+    <UppyCdnExample>
+      {`
+        import { Uppy, GoogleDrive } from "{{UPPY_JS_URL}}"
+        const uppy = new Uppy()
+        uppy.use(GoogleDrive, {
+          // Options
+        })
+      `}
+    </UppyCdnExample>
+  </TabItem>
+</Tabs>
+
+## Use
+
+Using Google Drive requires setup in both Uppy and Companion.
+
+### Use in Uppy
+
+```js {10-13} showLineNumbers
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import GoogleDrive from '@uppy/google-drive'
+
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+
+new Uppy()
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(GoogleDrive, { companionUrl: 'https://your-companion.com' })
+```
+
+### Use with Transloadit
+
+Transloadit’s own Google OAuth app
+[no longer works](https://transloadit.com/blog/2025/02/the-new-google-situation/),
+so hosted Companion can only sign users in to Google Drive with an OAuth app
+that you register and store as a Transloadit credential.
+
+#### 1. Create a Google OAuth app
+
+In the [Google Cloud console](https://console.cloud.google.com/):
+
+- Create a project (or pick one) and enable the Google Drive API.
+- Configure the OAuth consent screen and add the scope
+  `https://www.googleapis.com/auth/drive.readonly`.
+- While the app is unverified, its publishing status is “Testing” and only the
+  test users you add on the consent screen can sign in. Add your own Google
+  account to test with. Production use needs
+  [Google’s verification](https://support.google.com/cloud/answer/13463073) for
+  this restricted scope.
+- Create an OAuth client ID of type “Web application” and add this authorized
+  redirect URI:
+
+  ```
+  https://api2.transloadit.com/companion/drive/redirect
+  ```
+
+  Leave “Authorized JavaScript origins” empty. Companion exchanges the
+  authorization code for tokens on the server, and JavaScript origins are only
+  needed for browser-side token flows such as the Google Drive Picker.
+
+Google gives you a client ID and a client secret.
+
+#### 2. Store it as a Transloadit credential
+
+On the [Credentials page](https://transloadit.com/c/template-credentials/) of
+the Transloadit console, under **Third-party Credentials**, click **New
+Credential** and fill in:
+
+| Field                   | Value                                                                                                                                         |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Service                 | Companion OAuth                                                                                                                               |
+| Name                    | 3 to 255 characters: letters, digits, dots, dashes or underscores, e.g. `google_drive_own`. You pass this to the plugin as `credentialsName`. |
+| Provider Name           | Google Drive                                                                                                                                  |
+| Allowed Origins         | Optional, can be left empty.                                                                                                                  |
+| OAuth Key               | The Google client ID                                                                                                                          |
+| OAuth Secret            | The Google client secret                                                                                                                      |
+| Transloadit Gateway URL | Optional. Leave empty unless you run your own Transloadit Gateway (a proxy that white-labels the API endpoints).                              |
+
+:::note
+
+Companion 7.0.0 to 7.0.2 rejected an empty gateway URL and login failed with
+“Could not fetch credentials” (fixed in the next Companion release). If you
+self-host one of those versions, set the field to your Companion’s public base
+URL as a workaround.
+
+:::
+
+#### 3. Point the plugin at the credential
+
+```js
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import GoogleDrive from '@uppy/google-drive'
+
+uppy.use(GoogleDrive, {
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'google_drive_own',
+  },
+})
+```
+
+`companionUrl` has to be `COMPANION_URL`, which is
+`https://api2.transloadit.com/companion`. Using a regional hostname such as
+`api2-eu-west-1.transloadit.com` starts the OAuth flow on one host and returns
+to another, and login fails with “Cannot find state in session”.
+
+`key` is your Transloadit API key, not the Google client ID. The plugin sends
+`key` and `credentialsName` to Companion, which looks up the credential on the
+Transloadit side when the login popup opens. Nothing is checked before that, so
+a typo only shows up when a user tries to sign in.
+
+Until Google has verified your app’s branding, the consent dialog shows the
+domain of the redirect URI rather than your app name, so it says
+“transloadit.com wants to access your Google Account”. After
+[brand verification](https://support.google.com/cloud/answer/15549049) it shows
+the app name from your
+[Google Cloud console](https://console.cloud.google.com/auth/branding).
+
+#### Errors you can run into
+
+| What the user sees                                                                | Cause                                                                                                                                                                                                                                                           |
+| --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Google page “This app is blocked”                                                 | `companionKeysParams` is missing, so the login used Transloadit’s shared Google app, which some Google accounts (for example those with Advanced Protection) refuse.                                                                                            |
+| Google page “Access blocked: … has not completed the Google verification process” | Your app is unverified and this Google account is not on its test user list.                                                                                                                                                                                    |
+| Companion page “Could not fetch credentials”                                      | Wrong `key` or `credentialsName`: the credential could not be looked up in the workspace that `key` belongs to.                                                                                                                                                 |
+| Companion page “Cannot find state in session”                                     | `companionUrl` points at a regional hostname (for example `api2-eu-west-1.transloadit.com`) while the OAuth callback returns through the global `api2.transloadit.com`; the two can land in different regions, and the login session lives in only one of them. |
+| Requests fail with 401 right after switching credentials                          | The browser still has an auth token from the earlier login. Sign out in the plugin UI, which clears the stored token, and sign in again.                                                                                                                        |
+
+### Use with self-hosted Companion
+
+To sign up for API keys, go to the
+[Google Developer Console](https://console.developers.google.com/).
+
+Create a project for your app if you don’t have one yet.
+
+- On the project’s dashboard,
+  [enable the Google Drive API](https://developers.google.com/drive/api/v3/enable-drive-api).
+- [Set up OAuth authorization](https://developers.google.com/drive/api/v3/about-auth).
+  - Under scopes, add the `https://www.googleapis.com/auth/drive.readonly` Drive
+    API scope.
+  - This is a restricted scope, so your app must complete Google’s OAuth app
+    verification before anyone other than your test users can sign in. See the
+    [OAuth App Verification Help Center](https://support.google.com/cloud/answer/13463073).
+
+The app page has a `"Redirect URIs"` field. Here, add:
+
+```
+https://$YOUR_COMPANION_HOST_NAME/drive/redirect
+```
+
+Google will give you an OAuth client ID and client secret.
+
+Configure the Google key and secret in Companion. With the standalone Companion
+server, specify environment variables:
+
+```shell
+export COMPANION_GOOGLE_KEY="Google OAuth client ID"
+export COMPANION_GOOGLE_SECRET="Google OAuth client secret"
+```
+
+When using the Companion Node.js API, configure these options:
+
+```js
+companion.app({
+  providerOptions: {
+    drive: {
+      key: 'Google OAuth client ID',
+      secret: 'Google OAuth client secret',
+    },
+  },
+})
+```
+
+## API
+
+### Options
+
+<CompanionOptions />

@@ -1,0 +1,115 @@
+/* One column at every width — for both the quick-start cards and the framework
+   list. Two columns made each card's copy wrap early and turned a short list
+   into a block to scan in two directions. */
+.section {
+  display: grid;
+  grid-gap: 0.75rem;
+  align-items: stretch;
+}
+
+section a:hover {
+  text-decoration: none;
+}
+
+.item {
+  height: 100%;
+  position: relative;
+  /* Right padding leaves the chevron its own lane, so a long title never runs
+     underneath it. */
+  padding: 1rem 2.75rem 1rem 1.125rem;
+  background: #fff;
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-lg);
+  box-shadow: var(--u-shadow-xs);
+  transition:
+    border-color 150ms var(--u-ease),
+    box-shadow 150ms var(--u-ease),
+    transform 150ms var(--u-ease);
+}
+
+.item svg {
+  width: 2rem;
+  height: 2rem;
+  flex: none;
+}
+
+.item[data-framework] {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+}
+
+.item[data-framework='react'] svg {
+  color: #61dafb;
+}
+.item[data-framework='vue'] svg {
+  color: #4fc08d;
+}
+.item[data-framework='svelte'] svg {
+  color: #ff3e00;
+}
+.item[data-framework='angular'] svg {
+  color: #dd0031;
+}
+
+.item h2 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: var(--u-ink-900);
+  font-family: var(--ifm-font-family-base);
+  margin: 0;
+}
+
+/* Small chevron on the right: these cards all navigate, and without it a card
+   reads as a panel rather than a link. */
+.item::after {
+  content: '';
+  position: absolute;
+  right: 1.125rem;
+  top: 50%;
+  width: 0.8125rem;
+  height: 0.8125rem;
+  margin-top: -0.40625rem;
+  background: var(--u-ink-400);
+  -webkit-mask: var(--u-chevron-right) center / contain no-repeat;
+  mask: var(--u-chevron-right) center / contain no-repeat;
+  transition: transform 150ms var(--u-ease);
+}
+
+/* A card lifts a millimetre on hover — a border shift plus a 1px raise, not a
+   shadow that jumps off the page. */
+.item:hover {
+  border-color: var(--u-line-strong);
+  box-shadow: var(--u-shadow-md);
+  transform: translateY(-1px);
+}
+
+.item:hover::after {
+  transform: translateX(2px);
+  background: var(--u-ink-500);
+}
+
+.item p {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--u-ink-500);
+}
+
+.item[data-framework] p {
+  margin-top: 0.125rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .item::after {
+    transition: none;
+  }
+
+  .item:hover,
+  .item:hover::after {
+    transform: none;
+  }
+}
