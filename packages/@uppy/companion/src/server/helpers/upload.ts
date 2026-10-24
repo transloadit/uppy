@@ -1,5 +1,6 @@
 import type { Readable } from 'node:stream'
 import type { Request, Response } from 'express'
+import type { Promisable } from 'type-fest'
 import logger from '../logger.js'
 import Uploader from '../Uploader.js'
 
@@ -11,8 +12,8 @@ export async function startDownUpload({
 }: {
   req: Request
   res: Response
-  getSize?: (() => Promise<number | null | undefined>) | undefined
-  download: () => Promise<{ stream: Readable; size: number | undefined }>
+  getSize?: (() => Promisable<number | null | undefined>) | undefined
+  download: () => Promisable<{ stream: Readable; size: number | undefined }>
 }): Promise<void> {
   logger.debug('Starting download stream.', undefined, req.id)
   const { stream, size: maybeSize } = await download()

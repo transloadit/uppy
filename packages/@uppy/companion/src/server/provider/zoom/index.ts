@@ -108,7 +108,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     return 'zoom'
   }
 
-  override async list(
+  override list(
     options: ProviderListOptions<ZoomUserSession>,
   ): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.zoom.list.error', async () => {
@@ -254,7 +254,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -293,7 +293,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async size({
+  override size({
     id: meetingId,
     providerUserSession: { accessToken: token },
     query,
@@ -322,7 +322,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async logout({
+  override logout({
     companion,
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<ZoomUserSession>): Promise<ProviderLogoutResponse> {
@@ -341,7 +341,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  override async deauthorizationCallback({
+  override deauthorizationCallback({
     companion,
     body,
     headers,
@@ -384,7 +384,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
     })
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     const authErrorCodes = [
       124, // expired token
       401,

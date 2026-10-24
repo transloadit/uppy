@@ -16,7 +16,7 @@ export default async function get(req: Request, res: Response): Promise<void> {
     return
   }
 
-  const getSize = async () =>
+  const getSize = () =>
     provider.size({ id, providerUserSession, query: req.query })
 
   const download = () =>

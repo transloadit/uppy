@@ -1,3 +1,4 @@
+import type { Promisable } from 'type-fest'
 import type {
   Body,
   Meta,
@@ -98,15 +99,15 @@ export default class Provider<
   }
 
   async setAuthToken(token: string): Promise<void> {
-    return this.#getPlugin().storage.setItem(this.tokenKey, token)
+    await this.#getPlugin().storage.setItem(this.tokenKey, token)
   }
 
-  async #getAuthToken(): Promise<string | null> {
+  #getAuthToken(): Promisable<string | null> {
     return this.#getPlugin().storage.getItem(this.tokenKey)
   }
 
   protected async removeAuthToken(): Promise<void> {
-    return this.#getPlugin().storage.removeItem(this.tokenKey)
+    await this.#getPlugin().storage.removeItem(this.tokenKey)
   }
 
   #getPlugin() {
@@ -277,7 +278,7 @@ export default class Provider<
     }
   }
 
-  async login({
+  login({
     uppyVersions = '',
     authFormData,
     signal,
