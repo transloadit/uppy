@@ -8,20 +8,20 @@ published: true
 toc_max_heading_level: 3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import CodeBlock from '@theme/CodeBlock';
-import UploadButton from '/src/components/UploadButton';
-import ThumbnailDemo from '/src/components/Thumbnail';
-import ProviderIconDemo from '/src/components/ProviderIcon';
-import FilesListDemo from '/src/components/FilesList';
-import DropzoneDemo from '/src/components/Dropzone';
-import FilesGridDemo from '/src/components/FilesGrid';
-import { BrowserWindow } from '/src/components/BrowserWindow';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import CodeBlock from '@theme/CodeBlock'
+import UploadButton from '/src/components/UploadButton'
+import ThumbnailDemo from '/src/components/Thumbnail'
+import ProviderIconDemo from '/src/components/ProviderIcon'
+import FilesListDemo from '/src/components/FilesList'
+import DropzoneDemo from '/src/components/Dropzone'
+import FilesGridDemo from '/src/components/FilesGrid'
+import { BrowserWindow } from '/src/components/BrowserWindow'
 
 <img
-	src="https://uppy-io-static.tlcdn.com/static/img/blog/5.0/og-image.png"
-	alt="Annoucement image for 5.0, showing a new component in the background"
+  src="https://uppy-io-static.tlcdn.com/static/img/blog/5.0/og-image.png"
+  alt="Annoucement image for 5.0, showing a new component in the background"
 />
 
 The dog didn’t eat _our_ homework, so we’re here to show you what we’ve been up
@@ -115,14 +115,14 @@ hooks.
   <TabItem value="react" label="React">
 
 ```tsx
-import { useState } from 'react';
-import Uppy from '@uppy/core';
-import { UppyContextProvider } from '@uppy/react';
+import { useState } from 'react'
+import Uppy from '@uppy/core'
+import { UppyContextProvider } from '@uppy/react'
 
 function App() {
-	const [uppy] = useState(() => new Uppy());
+  const [uppy] = useState(() => new Uppy())
 
-	return <UppyContextProvider uppy={uppy}>{/* ... */}</UppyContextProvider>;
+  return <UppyContextProvider uppy={uppy}>{/* ... */}</UppyContextProvider>
 }
 ```
 
@@ -131,17 +131,17 @@ function App() {
 
 ```html
 <template>
-	<UppyContextProvider :uppy="uppy">
-		<!-- ... -->
-	</UppyContextProvider>
+  <UppyContextProvider :uppy="uppy">
+    <!-- ... -->
+  </UppyContextProvider>
 </template>
 
 <script setup lang="ts">
-	import Uppy from '@uppy/core';
-	import { UppyContextProvider } from '@uppy/vue';
-	import { computed } from 'vue';
+  import Uppy from '@uppy/core'
+  import { UppyContextProvider } from '@uppy/vue'
+  import { computed } from 'vue'
 
-	const uppy = computed(() => new Uppy());
+  const uppy = computed(() => new Uppy())
 </script>
 ```
 
@@ -150,14 +150,14 @@ function App() {
 
 ```html
 <UppyContextProvider {uppy}>
-	<!-- ... -->
+  <!-- ... -->
 </UppyContextProvider>
 
 <script lang="ts">
-	import Uppy from '@uppy/core';
-	import { UppyContextProvider } from '@uppy/svelte';
+  import Uppy from '@uppy/core'
+  import { UppyContextProvider } from '@uppy/svelte'
 
-	const uppy = new Uppy();
+  const uppy = new Uppy()
 </script>
 ```
 
@@ -262,20 +262,20 @@ CSS targeting.
 
 ```css
 button[data-uppy-element='upload-button'][data-state='init'] {
-	background-color: #3b82f6;
+  background-color: #3b82f6;
 }
 
 button[data-uppy-element='upload-button'][data-state='uploading'] {
-	background-color: #f59e0b;
-	cursor: wait;
+  background-color: #f59e0b;
+  cursor: wait;
 }
 
 button[data-uppy-element='upload-button'][data-state='complete'] {
-	background-color: #10b981;
+  background-color: #10b981;
 }
 
 button[data-uppy-element='upload-button'][data-state='error'] {
-	background-color: #ef4444;
+  background-color: #ef4444;
 }
 ```
 
@@ -290,46 +290,46 @@ Here is an example that uses hooks to exactly mimic the `<Dropzone />`
 component.
 
 ```tsx
-import clsx from 'clsx';
-import { useDropzone } from '@uppy/react';
+import clsx from 'clsx'
+import { useDropzone } from '@uppy/react'
 
 type DropzoneProps = {
-	note?: string;
-	noClick?: boolean;
-};
+  note?: string
+  noClick?: boolean
+}
 
 export function Dropzone({ note, noClick }: DropzoneProps) {
-	const { getRootProps, getInputProps } = useDropzone({ noClick });
+  const { getRootProps, getInputProps } = useDropzone({ noClick })
 
-	return (
-		<div data-uppy-element="dropzone" role="presentation">
-			<input
-				{...getInputProps()}
-				tabIndex={-1}
-				name="uppy-dropzone-file-input"
-				className="hidden"
-			/>
-			<div
-				{...getRootProps()}
-				tabIndex={0}
-				className={clsx(
-					'border-2 border-dashed border-gray-300',
-					'rounded-lg p-6 bg-gray-50',
-					'transition-colors duration-200',
-					{
-						'cursor-pointer hover:bg-blue-50': !noClick,
-					},
-				)}
-			>
-				<div className="flex flex-col items-center justify-center h-full space-y-3">
-					<p className="text-gray-600">Drop files here or click to add them</p>
-				</div>
-				{note ?
-					<div className="text-sm text-gray-500">{note}</div>
-				:	null}
-			</div>
-		</div>
-	);
+  return (
+    <div data-uppy-element="dropzone" role="presentation">
+      <input
+        {...getInputProps()}
+        tabIndex={-1}
+        name="uppy-dropzone-file-input"
+        className="hidden"
+      />
+      <div
+        {...getRootProps()}
+        tabIndex={0}
+        className={clsx(
+          'border-2 border-dashed border-gray-300',
+          'rounded-lg p-6 bg-gray-50',
+          'transition-colors duration-200',
+          {
+            'cursor-pointer hover:bg-blue-50': !noClick,
+          },
+        )}
+      >
+        <div className="flex flex-col items-center justify-center h-full space-y-3">
+          <p className="text-gray-600">Drop files here or click to add them</p>
+        </div>
+        {note ?
+          <div className="text-sm text-gray-500">{note}</div>
+        : null}
+      </div>
+    </div>
+  )
 }
 ```
 
@@ -341,22 +341,22 @@ Create a file input button that opens a file picker when clicked and add the
 selected files to Uppy.
 
 ```tsx
-import { useFileInput } from '@uppy/react';
+import { useFileInput } from '@uppy/react'
 
 type FileInputProps = {
-	multiple?: boolean;
-	accept?: string;
-};
+  multiple?: boolean
+  accept?: string
+}
 
 export function FileInput({ multiple, accept }: FileInputProps) {
-	const { getButtonProps, getInputProps } = useFileInput({ multiple, accept });
+  const { getButtonProps, getInputProps } = useFileInput({ multiple, accept })
 
-	return (
-		<div>
-			<input {...getInputProps()} className="hidden" />
-			<button {...getButtonProps()}>Add files</button>
-		</div>
-	);
+  return (
+    <div>
+      <input {...getInputProps()} className="hidden" />
+      <button {...getButtonProps()}>Add files</button>
+    </div>
+  )
 }
 ```
 
@@ -374,141 +374,141 @@ For this hook to work, you must have the
 instance.
 
 <BrowserWindow>
-	<div
-		style={{
-			display: 'flex',
-			justifyContent: 'center',
-			alignItems: 'center',
-			height: '100%',
-		}}
-	>
-		<img
-			src="https://uppy-io-static.tlcdn.com/static/img/blog/5.0/remote-source.png"
-			width="600"
-			alt="Remote source demo"
-		/>
-	</div>
+  <div
+    style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100%',
+    }}
+  >
+    <img
+      src="https://uppy-io-static.tlcdn.com/static/img/blog/5.0/remote-source.png"
+      width="600"
+      alt="Remote source demo"
+    />
+  </div>
 </BrowserWindow>
 
 ```tsx
-import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core';
-import { useRemoteSource } from '@uppy/react';
+import type { PartialTreeFile, PartialTreeFolderNode } from '@uppy/core'
+import { useRemoteSource } from '@uppy/react'
 
 function File({
-	item,
-	checkbox,
+  item,
+  checkbox,
 }: {
-	item: PartialTreeFile;
-	checkbox: (item: PartialTreeFile, checked: boolean) => void;
+  item: PartialTreeFile
+  checkbox: (item: PartialTreeFile, checked: boolean) => void
 }) {
-	return (
-		<li className="flex items-center gap-2 mb-2">
-			<input
-				type="checkbox"
-				onChange={() => checkbox(item, false)}
-				checked={item.status === 'checked'}
-			/>
-			{/* thumbnail, name, date... */}
-			<div className="truncate">{item.data.name}</div>
-		</li>
-	);
+  return (
+    <li className="flex items-center gap-2 mb-2">
+      <input
+        type="checkbox"
+        onChange={() => checkbox(item, false)}
+        checked={item.status === 'checked'}
+      />
+      {/* thumbnail, name, date... */}
+      <div className="truncate">{item.data.name}</div>
+    </li>
+  )
 }
 
 function Folder({
-	item,
-	checkbox,
-	open,
+  item,
+  checkbox,
+  open,
 }: {
-	item: PartialTreeFolderNode;
-	checkbox: (item: PartialTreeFolderNode, checked: boolean) => void;
-	open: (folderId: string | null) => Promise<void>;
+  item: PartialTreeFolderNode
+  checkbox: (item: PartialTreeFolderNode, checked: boolean) => void
+  open: (folderId: string | null) => Promise<void>
 }) {
-	return (
-		<li className="flex items-center gap-2 mb-2">
-			<input
-				type="checkbox"
-				onChange={() => checkbox(item, false)}
-				checked={item.status === 'checked'}
-			/>
-			<button onClick={() => open(item.id)}>📁 {item.data.name}</button>
-		</li>
-	);
+  return (
+    <li className="flex items-center gap-2 mb-2">
+      <input
+        type="checkbox"
+        onChange={() => checkbox(item, false)}
+        checked={item.status === 'checked'}
+      />
+      <button onClick={() => open(item.id)}>📁 {item.data.name}</button>
+    </li>
+  )
 }
 
 export function Dropbox({ close }: { close: () => void }) {
-	// The main hook that provides all the remote source functionality
-	const { state, login, logout, checkbox, open, done, cancel } =
-		useRemoteSource('Dropbox');
+  // The main hook that provides all the remote source functionality
+  const { state, login, logout, checkbox, open, done, cancel } =
+    useRemoteSource('Dropbox')
 
-	// Show login button if not authenticated
-	if (!state.authenticated) {
-		return (
-			<div className="p-4">
-				<button onClick={() => login()}>Login</button>
-			</div>
-		);
-	}
+  // Show login button if not authenticated
+  if (!state.authenticated) {
+    return (
+      <div className="p-4">
+        <button onClick={() => login()}>Login</button>
+      </div>
+    )
+  }
 
-	return (
-		<div className="w-screen h-screen max-w-3xl max-h-96">
-			{/* Breadcrumb navigation */}
-			<div className="flex justify-between items-center bg-gray-100 p-2">
-				{state.breadcrumbs.map((breadcrumb, index) => (
-					<span key={breadcrumb.id}>
-						{/* ... breadcrumb rendering logic ... */}
-						{breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name}
-					</span>
-				))}
-				<button
-					onClick={() => {
-						logout();
-						close();
-					}}
-				>
-					Logout
-				</button>
-			</div>
+  return (
+    <div className="w-screen h-screen max-w-3xl max-h-96">
+      {/* Breadcrumb navigation */}
+      <div className="flex justify-between items-center bg-gray-100 p-2">
+        {state.breadcrumbs.map((breadcrumb, index) => (
+          <span key={breadcrumb.id}>
+            {/* ... breadcrumb rendering logic ... */}
+            {breadcrumb.type === 'root' ? 'Dropbox' : breadcrumb.data.name}
+          </span>
+        ))}
+        <button
+          onClick={() => {
+            logout()
+            close()
+          }}
+        >
+          Logout
+        </button>
+      </div>
 
-			{/* File/folder list */}
-			<ul className="p-4 flex-1 overflow-y-auto">
-				{state.loading ?
-					<p>loading...</p>
-				:	state.partialTree.map((item) => {
-						if (item.type === 'file') {
-							return <File key={item.id} item={item} checkbox={checkbox} />;
-						}
-						if (item.type === 'folder') {
-							return (
-								<Folder
-									key={item.id}
-									item={item}
-									checkbox={checkbox}
-									open={open}
-								/>
-							);
-						}
-						return null;
-					})
-				}
-			</ul>
+      {/* File/folder list */}
+      <ul className="p-4 flex-1 overflow-y-auto">
+        {state.loading ?
+          <p>loading...</p>
+        : state.partialTree.map((item) => {
+            if (item.type === 'file') {
+              return <File key={item.id} item={item} checkbox={checkbox} />
+            }
+            if (item.type === 'folder') {
+              return (
+                <Folder
+                  key={item.id}
+                  item={item}
+                  checkbox={checkbox}
+                  open={open}
+                />
+              )
+            }
+            return null
+          })
+        }
+      </ul>
 
-			{/* Action bar when items are selected */}
-			{state.selectedAmount > 0 && (
-				<div className="flex items-center gap-4 bg-gray-100 p-2">
-					<button
-						onClick={() => {
-							done();
-							close();
-						}}
-					>
-						Done
-					</button>
-					<button onClick={() => cancel()}>Cancel</button>
-					<p>Selected {state.selectedAmount} items</p>
-				</div>
-			)}
-		</div>
-	);
+      {/* Action bar when items are selected */}
+      {state.selectedAmount > 0 && (
+        <div className="flex items-center gap-4 bg-gray-100 p-2">
+          <button
+            onClick={() => {
+              done()
+              close()
+            }}
+          >
+            Done
+          </button>
+          <button onClick={() => cancel()}>Cancel</button>
+          <p>Selected {state.selectedAmount} items</p>
+        </div>
+      )}
+    </div>
+  )
 }
 ```
 
@@ -521,71 +521,71 @@ This hook can be used to build a UI for the [`webcam`](/docs/webcam/) plugin.
 You also need to install `@uppy/webcam` and initialize it on the Uppy instance.
 
 ```tsx
-import { useWebcam } from '@uppy/react';
+import { useWebcam } from '@uppy/react'
 
 export function Webcam() {
-	const {
-		start,
-		stop,
-		getVideoProps,
-		getSnapshotButtonProps,
-		getRecordButtonProps,
-		getStopRecordingButtonProps,
-		getSubmitButtonProps,
-		getDiscardButtonProps,
-		state,
-	} = useWebcam({ onSubmit: () => {} });
+  const {
+    start,
+    stop,
+    getVideoProps,
+    getSnapshotButtonProps,
+    getRecordButtonProps,
+    getStopRecordingButtonProps,
+    getSubmitButtonProps,
+    getDiscardButtonProps,
+    state,
+  } = useWebcam({ onSubmit: () => {} })
 
-	useEffect(() => {
-		start();
-		return () => {
-			stop();
-		};
-	}, [start, stop]);
+  useEffect(() => {
+    start()
+    return () => {
+      stop()
+    }
+  }, [start, stop])
 
-	return (
-		<div className="p-4 max-w-lg w-full">
-			<ErrorDisplay error={state.cameraError} />
-			<video
-				className="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
-				{...getVideoProps()}
-			>
-				<track kind="captions" />
-			</video>
-			<div className="flex gap-4 flex-wrap mt-4">
-				<button
-					className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
-					{...getSnapshotButtonProps()}
-				>
-					Snapshot
-				</button>
-				<button
-					className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
-					{...getRecordButtonProps()}
-				>
-					Record
-				</button>
-				<button
-					className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-red-300"
-					{...getStopRecordingButtonProps()}
-				>
-					Stop
-				</button>
-				<button
-					className="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
-					{...getSubmitButtonProps()}
-				>
-					Submit
-				</button>
-				<button
-					className="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
-					{...getDiscardButtonProps()}
-				>
-					Discard
-				</button>
-			</div>
-		</div>
-	);
+  return (
+    <div className="p-4 max-w-lg w-full">
+      <ErrorDisplay error={state.cameraError} />
+      <video
+        className="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
+        {...getVideoProps()}
+      >
+        <track kind="captions" />
+      </video>
+      <div className="flex gap-4 flex-wrap mt-4">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
+          {...getSnapshotButtonProps()}
+        >
+          Snapshot
+        </button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
+          {...getRecordButtonProps()}
+        >
+          Record
+        </button>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-red-300"
+          {...getStopRecordingButtonProps()}
+        >
+          Stop
+        </button>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
+          {...getSubmitButtonProps()}
+        >
+          Submit
+        </button>
+        <button
+          className="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
+          {...getDiscardButtonProps()}
+        >
+          Discard
+        </button>
+      </div>
+    </div>
+  )
 }
 ```
 
@@ -600,71 +600,71 @@ You also need to install `@uppy/screen-capture` and initialize it on the Uppy
 instance.
 
 ```tsx
-import { useScreenCapture } from '@uppy/react';
+import { useScreenCapture } from '@uppy/react'
 
 export function ScreenCapture() {
-	const {
-		start,
-		stop,
-		getVideoProps,
-		getSnapshotButtonProps,
-		getRecordButtonProps,
-		getStopRecordingButtonProps,
-		getSubmitButtonProps,
-		getDiscardButtonProps,
-		state,
-	} = useScreenCapture({ onSubmit: () => {} });
+  const {
+    start,
+    stop,
+    getVideoProps,
+    getSnapshotButtonProps,
+    getRecordButtonProps,
+    getStopRecordingButtonProps,
+    getSubmitButtonProps,
+    getDiscardButtonProps,
+    state,
+  } = useScreenCapture({ onSubmit: () => {} })
 
-	useEffect(() => {
-		start();
-		return () => {
-			stop();
-		};
-	}, [start, stop]);
+  useEffect(() => {
+    start()
+    return () => {
+      stop()
+    }
+  }, [start, stop])
 
-	return (
-		<div className="p-4 max-w-lg w-full">
-			<ErrorDisplay error={state.cameraError} />
-			<video
-				className="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
-				{...getVideoProps()}
-			>
-				<track kind="captions" />
-			</video>
-			<div className="flex gap-4 flex-wrap mt-4">
-				<button
-					className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
-					{...getSnapshotButtonProps()}
-				>
-					Snapshot
-				</button>
-				<button
-					className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
-					{...getRecordButtonProps()}
-				>
-					Record
-				</button>
-				<button
-					className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-red-300"
-					{...getStopRecordingButtonProps()}
-				>
-					Stop
-				</button>
-				<button
-					className="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
-					{...getSubmitButtonProps()}
-				>
-					Submit
-				</button>
-				<button
-					className="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
-					{...getDiscardButtonProps()}
-				>
-					Discard
-				</button>
-			</div>
-		</div>
-	);
+  return (
+    <div className="p-4 max-w-lg w-full">
+      <ErrorDisplay error={state.cameraError} />
+      <video
+        className="border-2 w-full rounded-lg data-[uppy-mirrored=true]:scale-x-[-1]"
+        {...getVideoProps()}
+      >
+        <track kind="captions" />
+      </video>
+      <div className="flex gap-4 flex-wrap mt-4">
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
+          {...getSnapshotButtonProps()}
+        >
+          Snapshot
+        </button>
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-blue-300"
+          {...getRecordButtonProps()}
+        >
+          Record
+        </button>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-red-300"
+          {...getStopRecordingButtonProps()}
+        >
+          Stop
+        </button>
+        <button
+          className="bg-green-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-green-300"
+          {...getSubmitButtonProps()}
+        >
+          Submit
+        </button>
+        <button
+          className="bg-gray-500 text-white px-4 py-2 rounded-md disabled:opacity-50 disabled:bg-gray-300"
+          {...getDiscardButtonProps()}
+        >
+          Discard
+        </button>
+      </div>
+    </div>
+  )
 }
 ```
 
@@ -678,27 +678,27 @@ frameworks. These examples are also available on Uppy’s
 [GitHub](https://github.com/transloadit/uppy/tree/main/examples).
 
 <Tabs>
-	<TabItem value="react" label="React">
-		<iframe
-			title="React headless components example on StackBlitz"
-			style={{ width: '100%', height: '600px' }}
-			src="https://stackblitz.com/github/transloadit/uppy/tree/main/examples/react?embed=1&view=editor&showSidebar=1&hideTerminal=1&ctl=1&file=src%2FApp.tsx"
-		></iframe>
-	</TabItem>
-	<TabItem value="vue" label="Vue">
-		<iframe
-			title="Vue headless components example on StackBlitz"
-			style={{ width: '100%', height: '600px' }}
-			src="https://stackblitz.com/github/transloadit/uppy/tree/main/examples/vue?embed=1&view=editor&showSidebar=1&hideTerminal=1&ctl=1&file=src%2FApp.vue"
-		></iframe>
-	</TabItem>
-	<TabItem value="svelte" label="Svelte">
-		<iframe
-			title="Svelte headless components example on StackBlitz"
-			style={{ width: '100%', height: '600px' }}
-			src="https://stackblitz.com/github/transloadit/uppy/tree/main/examples/sveltekit?embed=1&view=editor&showSidebar=1&hideTerminal=1&ctl=1&file=src%2Froutes%2F%2Bpage.svelte"
-		></iframe>
-	</TabItem>
+  <TabItem value="react" label="React">
+    <iframe
+      title="React headless components example on StackBlitz"
+      style={{ width: '100%', height: '600px' }}
+      src="https://stackblitz.com/github/transloadit/uppy/tree/main/examples/react?embed=1&view=editor&showSidebar=1&hideTerminal=1&ctl=1&file=src%2FApp.tsx"
+    ></iframe>
+  </TabItem>
+  <TabItem value="vue" label="Vue">
+    <iframe
+      title="Vue headless components example on StackBlitz"
+      style={{ width: '100%', height: '600px' }}
+      src="https://stackblitz.com/github/transloadit/uppy/tree/main/examples/vue?embed=1&view=editor&showSidebar=1&hideTerminal=1&ctl=1&file=src%2FApp.vue"
+    ></iframe>
+  </TabItem>
+  <TabItem value="svelte" label="Svelte">
+    <iframe
+      title="Svelte headless components example on StackBlitz"
+      style={{ width: '100%', height: '600px' }}
+      src="https://stackblitz.com/github/transloadit/uppy/tree/main/examples/sveltekit?embed=1&view=editor&showSidebar=1&hideTerminal=1&ctl=1&file=src%2Froutes%2F%2Bpage.svelte"
+    ></iframe>
+  </TabItem>
 </Tabs>
 
 ### Give feedback
@@ -730,13 +730,13 @@ dependencies you need.
 Before:
 
 ```javascript
-import { Dashboard } from '@uppy/react';
+import { Dashboard } from '@uppy/react'
 ```
 
 Now:
 
 ```javascript
-import Dashboard from '@uppy/react/dashboard';
+import Dashboard from '@uppy/react/dashboard'
 ```
 
 ## Deprecations

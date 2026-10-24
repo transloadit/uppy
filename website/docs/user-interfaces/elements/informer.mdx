@@ -3,10 +3,10 @@ sidebar_position: 3
 slug: /informer
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Informer
 
@@ -62,15 +62,15 @@ yarn add @uppy/informer
 ## Use
 
 ```js
-import Uppy from '@uppy/core';
-import Informer from '@uppy/informer';
+import Uppy from '@uppy/core'
+import Informer from '@uppy/informer'
 
 // The `@uppy/informer` plugin includes some basic styles.
 // You can also choose not to use it and provide your own styles instead.
-import '@uppy/core/css/style.min.css';
-import '@uppy/informer/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/informer/css/style.min.css'
 
-new Uppy().use(Informer, { target: '#informer' });
+new Uppy().use(Informer, { target: '#informer' })
 ```
 
 Informer gets its data from `uppy.state.info`, which is updated by various
@@ -79,8 +79,8 @@ plugins via [`uppy.info`](/docs/uppy#infomessage-type-duration) method.
 In the [compressor](/docs/compressor) plugin we use it like this for instance:
 
 ```js
-const size = prettierBytes(totalCompressedSize);
-this.uppy.info(this.i18n('compressedX', { size }), 'info');
+const size = prettierBytes(totalCompressedSize)
+this.uppy.info(this.i18n('compressedX', { size }), 'info')
 ```
 
 When calling `uppy.info`, [Uppy](/docs/uppy) emits

@@ -3,10 +3,10 @@ sidebar_position: 3
 slug: /uppy
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Uppy core
 
@@ -184,9 +184,9 @@ Depending on server configuration it may not be accessible or correct.
 ## `new Uppy(options?)`
 
 ```js
-import Uppy from '@uppy/core';
+import Uppy from '@uppy/core'
 
-const uppy = new Uppy();
+const uppy = new Uppy()
 ```
 
 ### Options
@@ -263,10 +263,10 @@ Here’s an example of a `logger` that does nothing:
 
 ```js
 const nullLogger = {
-	debug: (...args) => {},
-	warn: (...args) => {},
-	error: (...args) => {},
-};
+  debug: (...args) => {},
+  warn: (...args) => {},
+  error: (...args) => {},
+}
 ```
 
 :::
@@ -430,17 +430,17 @@ Abort a file:
 
 ```js
 const uppy = new Uppy({
-	// ...
-	onBeforeFileAdded: (currentFile, files) => {
-		if (!currentFile.type) {
-			// log to console
-			uppy.log(`Skipping file because it has no type`);
-			// show error message to the user
-			uppy.info(`Skipping file because it has no type`, 'error', 500);
-			return false;
-		}
-	},
-});
+  // ...
+  onBeforeFileAdded: (currentFile, files) => {
+    if (!currentFile.type) {
+      // log to console
+      uppy.log(`Skipping file because it has no type`)
+      // show error message to the user
+      uppy.info(`Skipping file because it has no type`, 'error', 500)
+      return false
+    }
+  },
+})
 ```
 
 </details>
@@ -481,41 +481,41 @@ Change all file names:
 
 ```js
 const uppy = new Uppy({
-	// ...
-	onBeforeUpload: (files) => {
-		// We’ll be careful to return a new object, not mutating the original `files`
-		const updatedFiles = {};
-		Object.keys(files).forEach((fileID) => {
-			updatedFiles[fileID] = {
-				...files[fileID],
-				name: `${myCustomPrefix}__${files[fileID].name}`,
-			};
-		});
-		return updatedFiles;
-	},
-});
+  // ...
+  onBeforeUpload: (files) => {
+    // We’ll be careful to return a new object, not mutating the original `files`
+    const updatedFiles = {}
+    Object.keys(files).forEach((fileID) => {
+      updatedFiles[fileID] = {
+        ...files[fileID],
+        name: `${myCustomPrefix}__${files[fileID].name}`,
+      }
+    })
+    return updatedFiles
+  },
+})
 ```
 
 Abort an upload:
 
 ```js
 const uppy = new Uppy({
-	// ...
-	onBeforeUpload: (files) => {
-		if (Object.keys(files).length < 2) {
-			// log to console
-			uppy.log(
-				`Aborting upload because only ${
-					Object.keys(files).length
-				} files were selected`,
-			);
-			// show error message to the user
-			uppy.info(`You have to select at least 2 files`, 'error', 500);
-			return false;
-		}
-		return true;
-	},
-});
+  // ...
+  onBeforeUpload: (files) => {
+    if (Object.keys(files).length < 2) {
+      // log to console
+      uppy.log(
+        `Aborting upload because only ${
+          Object.keys(files).length
+        } files were selected`,
+      )
+      // show error message to the user
+      uppy.info(`You have to select at least 2 files`, 'error', 500)
+      return false
+    }
+    return true
+  },
+})
 ```
 
 </details>
@@ -539,63 +539,63 @@ If you want a different language it’s better to use [locales](/docs/locales).
 
 ```js
 module.exports = {
-	strings: {
-		addBulkFilesFailed: {
-			0: 'Failed to add %{smart_count} file due to an internal error',
-			1: 'Failed to add %{smart_count} files due to internal errors',
-		},
-		youCanOnlyUploadX: {
-			0: 'You can only upload %{smart_count} file',
-			1: 'You can only upload %{smart_count} files',
-		},
-		youHaveToAtLeastSelectX: {
-			0: 'You have to select at least %{smart_count} file',
-			1: 'You have to select at least %{smart_count} files',
-		},
-		exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
-		missingRequiredMetaField: 'Missing required meta fields',
-		missingRequiredMetaFieldOnFile:
-			'Missing required meta fields in %{fileName}',
-		inferiorSize: 'This file is smaller than the allowed size of %{size}',
-		youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
-		noMoreFilesAllowed: 'Cannot add more files',
-		noDuplicates:
-			"Cannot add the duplicate file '%{fileName}', it already exists",
-		companionError: 'Connection with Companion failed',
-		authAborted: 'Authentication aborted',
-		companionUnauthorizeHint:
-			'To unauthorize to your %{provider} account, please go to %{url}',
-		failedToUpload: 'Failed to upload %{file}',
-		noInternetConnection: 'No Internet connection',
-		connectedToInternet: 'Connected to the Internet',
-		// Strings for remote providers
-		noFilesFound: 'You have no files or folders here',
-		selectX: {
-			0: 'Select %{smart_count}',
-			1: 'Select %{smart_count}',
-		},
-		allFilesFromFolderNamed: 'All files from folder %{name}',
-		openFolderNamed: 'Open folder %{name}',
-		cancel: 'Cancel',
-		logOut: 'Log out',
-		filter: 'Filter',
-		resetFilter: 'Reset filter',
-		loading: 'Loading...',
-		authenticateWithTitle:
-			'Please authenticate with %{pluginName} to select files',
-		authenticateWith: 'Connect to %{pluginName}',
-		signInWithGoogle: 'Sign in with Google',
-		searchImages: 'Search for images',
-		enterTextToSearch: 'Enter text to search for images',
-		search: 'Search',
-		emptyFolderAdded: 'No files were added from empty folder',
-		folderAlreadyAdded: 'The folder "%{folder}" was already added',
-		folderAdded: {
-			0: 'Added %{smart_count} file from %{folder}',
-			1: 'Added %{smart_count} files from %{folder}',
-		},
-	},
-};
+  strings: {
+    addBulkFilesFailed: {
+      0: 'Failed to add %{smart_count} file due to an internal error',
+      1: 'Failed to add %{smart_count} files due to internal errors',
+    },
+    youCanOnlyUploadX: {
+      0: 'You can only upload %{smart_count} file',
+      1: 'You can only upload %{smart_count} files',
+    },
+    youHaveToAtLeastSelectX: {
+      0: 'You have to select at least %{smart_count} file',
+      1: 'You have to select at least %{smart_count} files',
+    },
+    exceedsSize: '%{file} exceeds maximum allowed size of %{size}',
+    missingRequiredMetaField: 'Missing required meta fields',
+    missingRequiredMetaFieldOnFile:
+      'Missing required meta fields in %{fileName}',
+    inferiorSize: 'This file is smaller than the allowed size of %{size}',
+    youCanOnlyUploadFileTypes: 'You can only upload: %{types}',
+    noMoreFilesAllowed: 'Cannot add more files',
+    noDuplicates:
+      "Cannot add the duplicate file '%{fileName}', it already exists",
+    companionError: 'Connection with Companion failed',
+    authAborted: 'Authentication aborted',
+    companionUnauthorizeHint:
+      'To unauthorize to your %{provider} account, please go to %{url}',
+    failedToUpload: 'Failed to upload %{file}',
+    noInternetConnection: 'No Internet connection',
+    connectedToInternet: 'Connected to the Internet',
+    // Strings for remote providers
+    noFilesFound: 'You have no files or folders here',
+    selectX: {
+      0: 'Select %{smart_count}',
+      1: 'Select %{smart_count}',
+    },
+    allFilesFromFolderNamed: 'All files from folder %{name}',
+    openFolderNamed: 'Open folder %{name}',
+    cancel: 'Cancel',
+    logOut: 'Log out',
+    filter: 'Filter',
+    resetFilter: 'Reset filter',
+    loading: 'Loading...',
+    authenticateWithTitle:
+      'Please authenticate with %{pluginName} to select files',
+    authenticateWith: 'Connect to %{pluginName}',
+    signInWithGoogle: 'Sign in with Google',
+    searchImages: 'Search for images',
+    enterTextToSearch: 'Enter text to search for images',
+    search: 'Search',
+    emptyFolderAdded: 'No files were added from empty folder',
+    folderAlreadyAdded: 'The folder "%{folder}" was already added',
+    folderAdded: {
+      0: 'Added %{smart_count} file from %{folder}',
+      1: 'Added %{smart_count} files from %{folder}',
+    },
+  },
+}
 ```
 
 #### `store`
@@ -620,11 +620,11 @@ default: `5000`).
 Add a plugin to Uppy, with an optional plugin options object.
 
 ```js
-import Uppy from '@uppy/core';
-import DragDrop from '@uppy/drag-drop';
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
 
-const uppy = new Uppy();
-uppy.use(DragDrop, { target: 'body' });
+const uppy = new Uppy()
+uppy.use(DragDrop, { target: 'body' })
 ```
 
 #### `removePlugin(instance)`
@@ -656,17 +656,17 @@ abort the whole batch.
 
 ```js
 uppy.addFile({
-	name: 'my-file.jpg', // file name
-	type: 'image/jpeg', // file type
-	data: blob, // file blob
-	meta: {
-		// optional, store the directory path of a file so Uppy can tell identical files in different directories apart.
-		relativePath: webkitFileSystemEntry.relativePath,
-	},
-	source: 'Local', // optional, determines the source of the file, for example, Dropbox.
-	isRemote: false, // optional, set to true if actual file is not in the browser, but on some remote server, for example,
-	// when using companion in combination with Dropbox.
-});
+  name: 'my-file.jpg', // file name
+  type: 'image/jpeg', // file type
+  data: blob, // file blob
+  meta: {
+    // optional, store the directory path of a file so Uppy can tell identical files in different directories apart.
+    relativePath: webkitFileSystemEntry.relativePath,
+  },
+  source: 'Local', // optional, determines the source of the file, for example, Dropbox.
+  isRemote: false, // optional, set to true if actual file is not in the browser, but on some remote server, for example,
+  // when using companion in combination with Dropbox.
+})
 ```
 
 :::note
@@ -714,9 +714,9 @@ takes the same shape as the argument to [`addFile`](#addfilefile).
 
 ```js
 uppy.addFiles([
-	{ name: 'photo-1.jpg', type: 'image/jpeg', data: blob1 },
-	{ name: 'photo-2.jpg', type: 'image/jpeg', data: blob2 },
-]);
+  { name: 'photo-1.jpg', type: 'image/jpeg', data: blob1 },
+  { name: 'photo-2.jpg', type: 'image/jpeg', data: blob2 },
+])
 ```
 
 Events and errors behave differently from a loop of `addFile` calls, which is
@@ -747,7 +747,7 @@ Remove a file from Uppy. Removing a file that is already being uploaded cancels
 that upload.
 
 ```js
-uppy.removeFile('uppyteamkongjpg1501851828779');
+uppy.removeFile('uppyteamkongjpg1501851828779')
 ```
 
 #### `clear()`
@@ -763,7 +763,7 @@ Upload plugins may choose to throw an error if called during an upload.
 Get a specific [Uppy file](#working-with-uppy-files) by its ID.
 
 ```js
-const file = uppy.getFile('uppyteamkongjpg1501851828779');
+const file = uppy.getFile('uppyteamkongjpg1501851828779')
 ```
 
 #### `getFiles()`
@@ -771,7 +771,7 @@ const file = uppy.getFile('uppyteamkongjpg1501851828779');
 Get an array of all added [Uppy files](#working-with-uppy-files).
 
 ```js
-const files = uppy.getFiles();
+const files = uppy.getFiles()
 ```
 
 #### `upload()`
@@ -787,15 +787,15 @@ uploaded files:
 
 ```js
 uppy.upload().then((result) => {
-	console.info('Successful uploads:', result.successful);
+  console.info('Successful uploads:', result.successful)
 
-	if (result.failed.length > 0) {
-		console.error('Errors:');
-		result.failed.forEach((file) => {
-			console.error(file.error);
-		});
-	}
-});
+  if (result.failed.length > 0) {
+    console.error('Errors:')
+    result.failed.forEach((file) => {
+      console.error(file.error)
+    })
+  }
+})
 ```
 
 #### `pauseResume(fileID)`
@@ -837,26 +837,26 @@ Uppy’s default state on initialization:
 
 ```js
 const state = {
-	plugins: {},
-	files: {},
-	currentUploads: {},
-	capabilities: {
-		resumableUploads: false,
-	},
-	totalProgress: 0,
-	meta: { ...this.opts.meta },
-	info: {
-		isHidden: true,
-		type: 'info',
-		message: '',
-	},
-};
+  plugins: {},
+  files: {},
+  currentUploads: {},
+  capabilities: {
+    resumableUploads: false,
+  },
+  totalProgress: 0,
+  meta: { ...this.opts.meta },
+  info: {
+    isHidden: true,
+    type: 'info',
+    message: '',
+  },
+}
 ```
 
 Updating state:
 
 ```js
-uppy.setState({ smth: true });
+uppy.setState({ smth: true })
 ```
 
 :::note
@@ -888,7 +888,7 @@ and gets merged with all newly added files. Calling `setMeta` will also merge
 newly added meta data with files that had been selected before.
 
 ```js
-uppy.setMeta({ resize: 1500, token: 'ab5kjfg' });
+uppy.setMeta({ resize: 1500, token: 'ab5kjfg' })
 ```
 
 #### `setFileMeta(fileID, data)`
@@ -896,7 +896,7 @@ uppy.setMeta({ resize: 1500, token: 'ab5kjfg' });
 Update metadata for a specific file.
 
 ```js
-uppy.setFileMeta('myfileID', { resize: 1500 });
+uppy.setFileMeta('myfileID', { resize: 1500 })
 ```
 
 #### `setOptions(opts)`
@@ -904,20 +904,20 @@ uppy.setFileMeta('myfileID', { resize: 1500 });
 Change the options Uppy initialized with.
 
 ```js
-const uppy = new Uppy();
+const uppy = new Uppy()
 
 uppy.setOptions({
-	restrictions: { maxNumberOfFiles: 3 },
-	autoProceed: true,
-});
+  restrictions: { maxNumberOfFiles: 3 },
+  autoProceed: true,
+})
 
 uppy.setOptions({
-	locale: {
-		strings: {
-			cancel: 'Отмена',
-		},
-	},
-});
+  locale: {
+    strings: {
+      cancel: 'Отмена',
+    },
+  },
+})
 ```
 
 You can also change options for plugin:
@@ -925,8 +925,8 @@ You can also change options for plugin:
 ```js
 // Change width of the Dashboard drag-and-drop aread on the fly
 uppy.getPlugin('Dashboard').setOptions({
-	width: 300,
-});
+  width: 300,
+})
 ```
 
 #### `destroy()`
@@ -953,7 +953,7 @@ security.
 See [`logger`](#logger) docs for details.
 
 ```js
-uppy.log('[Dashboard] adding files...');
+uppy.log('[Dashboard] adding files...')
 ```
 
 #### `info(message, type, duration)`
@@ -972,19 +972,19 @@ included by default in Dashboard.
 should be visible or hidden.
 
 ```js
-this.info('Oh my, something good happened!', 'success', 3000);
+this.info('Oh my, something good happened!', 'success', 3000)
 ```
 
 ```js
 this.info(
-	{
-		message: 'Oh no, something bad happened!',
-		details:
-			'File couldn’t be uploaded because there is no internet connection',
-	},
-	'error',
-	5000,
-);
+  {
+    message: 'Oh no, something bad happened!',
+    details:
+      'File couldn’t be uploaded because there is no internet connection',
+  },
+  'error',
+  5000,
+)
 ```
 
 #### `addPreProcessor(fn)`
@@ -1057,8 +1057,8 @@ Fired each time a file is added.
 
 ```js
 uppy.on('file-added', (file) => {
-	console.log('Added file', file);
-});
+  console.log('Added file', file)
+})
 ```
 
 #### `files-added`
@@ -1086,15 +1086,15 @@ Fired each time a file is removed.
 
 ```js
 uppy.on('file-removed', (file) => {
-	console.log('Removed file', file);
-});
+  console.log('Removed file', file)
+})
 ```
 
 ```js
 uppy.on('file-removed', (file) => {
-	removeFileFromUploadingCounterUI(file);
-	sendDeleteRequestForFile(file);
-});
+  removeFileFromUploadingCounterUI(file)
+  sendDeleteRequestForFile(file)
+})
 ```
 
 #### `upload`
@@ -1134,9 +1134,9 @@ Fired each time the total upload progress is updated:
 
 ```js
 uppy.on('progress', (progress) => {
-	// progress: integer (total progress percentage)
-	console.log(progress);
-});
+  // progress: integer (total progress percentage)
+  console.log(progress)
+})
 ```
 
 #### `upload-progress`
@@ -1152,10 +1152,10 @@ Fired each time an individual file upload progress is available:
 
 ```js
 uppy.on('upload-progress', (file, progress) => {
-	// file: { id, name, type, ... }
-	// progress: { uploader, bytesUploaded, bytesTotal }
-	console.log(file.id, progress.bytesUploaded, progress.bytesTotal);
-});
+  // file: { id, name, type, ... }
+  // progress: { uploader, bytesUploaded, bytesTotal }
+  console.log(file.id, progress.bytesUploaded, progress.bytesTotal)
+})
 ```
 
 #### `upload-pause`
@@ -1197,9 +1197,9 @@ For `@uppy/xhr-upload`, the shape is:
 
 ```json
 {
-	"status": 200, // HTTP status code (0, 200, 300)
-	"body": "…", // response body
-	"uploadURL": "…" // the file url, if it was returned
+  "status": 200, // HTTP status code (0, 200, 300)
+  "body": "…", // response body
+  "uploadURL": "…" // the file url, if it was returned
 }
 ```
 
@@ -1207,13 +1207,13 @@ For `@uppy/xhr-upload`, the shape is:
 
 ```js
 uppy.on('upload-success', (file, response) => {
-	console.log(file.name, response.uploadURL);
-	const img = new Image();
-	img.width = 300;
-	img.alt = file.id;
-	img.src = response.uploadURL;
-	document.body.appendChild(img);
-});
+  console.log(file.name, response.uploadURL)
+  const img = new Image()
+  img.width = 300
+  img.alt = file.id
+  img.src = response.uploadURL
+  document.body.appendChild(img)
+})
 ```
 
 #### `complete`
@@ -1228,9 +1228,9 @@ files, as in [`uppy.upload()`](#upload)’s return value.
 
 ```js
 uppy.on('complete', (result) => {
-	console.log('successful files:', result.successful);
-	console.log('failed files:', result.failed);
-});
+  console.log('successful files:', result.successful)
+  console.log('failed files:', result.failed)
+})
 ```
 
 #### `error`
@@ -1245,8 +1245,8 @@ Fired when Uppy fails to upload/encode the entire upload.
 
 ```js
 uppy.on('error', (error) => {
-	console.error(error.stack);
-});
+  console.error(error.stack)
+})
 ```
 
 #### `upload-error`
@@ -1267,8 +1267,8 @@ For `@uppy/xhr-upload`, the shape is:
 
 ```json
 {
-	"status": 200, // HTTP status code (0, 200, 300)
-	"body": "…" // response body
+  "status": 200, // HTTP status code (0, 200, 300)
+  "body": "…" // response body
 }
 ```
 
@@ -1276,9 +1276,9 @@ For `@uppy/xhr-upload`, the shape is:
 
 ```js
 uppy.on('upload-error', (file, error, response) => {
-	console.log('error with file:', file.id);
-	console.log('error message:', error);
-});
+  console.log('error with file:', file.id)
+  console.log('error message:', error)
+})
 ```
 
 If the error is related to network conditions (endpoint unreachable due to
@@ -1288,12 +1288,12 @@ network errors:
 
 ```js
 uppy.on('upload-error', (file, error, response) => {
-	if (error.isNetworkError) {
-		// Let your users know that file upload could have failed
-		// due to firewall or ISP issues
-		alertUserAboutPossibleFirewallOrISPIssues(error);
-	}
-});
+  if (error.isNetworkError) {
+    // Let your users know that file upload could have failed
+    // due to firewall or ISP issues
+    alertUserAboutPossibleFirewallOrISPIssues(error)
+  }
+})
 ```
 
 #### `upload-retry`
@@ -1315,8 +1315,8 @@ the `retry-all` event instead.
 
 ```js
 uppy.on('upload-retry', (fileID) => {
-	console.log('upload retried:', fileID);
-});
+  console.log('upload retried:', fileID)
+})
 ```
 
 #### `upload-stalled`
@@ -1328,15 +1328,15 @@ the upload.
 
 ```js
 uppy.on('upload-stalled', (error, files) => {
-	console.log('upload seems stalled', error, files);
-	const noLongerStalledEventHandler = (file) => {
-		if (files.includes(file)) {
-			console.log('upload is no longer stalled');
-			uppy.off('upload-progress', noLongerStalledEventHandler);
-		}
-	};
-	uppy.on('upload-progress', noLongerStalledEventHandler);
-});
+  console.log('upload seems stalled', error, files)
+  const noLongerStalledEventHandler = (file) => {
+    if (files.includes(file)) {
+      console.log('upload is no longer stalled')
+      uppy.off('upload-progress', noLongerStalledEventHandler)
+    }
+  }
+  uppy.on('upload-progress', noLongerStalledEventHandler)
+})
 ```
 
 #### `retry-all`
@@ -1351,8 +1351,8 @@ Fired when all failed uploads are retried
 
 ```js
 uppy.on('retry-all', (fileIDs) => {
-	console.log('upload retried:', fileIDs);
-});
+  console.log('upload retried:', fileIDs)
+})
 ```
 
 #### `info-visible`
@@ -1363,15 +1363,15 @@ You can use this event to show messages in your custom UI:
 
 ```js
 uppy.on('info-visible', () => {
-	const { info } = uppy.getState();
-	// info: {
-	//  isHidden: false,
-	//  type: 'error',
-	//  message: 'Failed to upload',
-	//  details: 'Error description'
-	// }
-	console.log(`${info.message} ${info.details}`);
-});
+  const { info } = uppy.getState()
+  // info: {
+  //  isHidden: false,
+  //  type: 'error',
+  //  message: 'Failed to upload',
+  //  details: 'Error description'
+  // }
+  console.log(`${info.message} ${info.details}`)
+})
 ```
 
 #### `info-hidden`
@@ -1392,8 +1392,8 @@ upload restrictions.
 
 ```js
 uppy.on('restriction-failed', (file, error) => {
-	// do some customized logic like showing system notice to users
-});
+  // do some customized logic like showing system notice to users
+})
 ```
 
 ## `new BasePlugin(uppy, options?)`
@@ -1434,9 +1434,9 @@ You should pass the options to `super` in your plugin class:
 
 ```js
 class MyPlugin extends BasePlugin {
-	constructor(uppy, opts) {
-		super(uppy, opts);
-	}
+  constructor(uppy, opts) {
+    super(uppy, opts)
+  }
 }
 ```
 
@@ -1556,9 +1556,9 @@ You should pass the options to `super` in your plugin class:
 
 ```js
 class MyPlugin extends UIPlugin {
-	constructor(uppy, opts) {
-		super(uppy, opts);
-	}
+  constructor(uppy, opts) {
+    super(uppy, opts)
+  }
 }
 ```
 
@@ -1616,9 +1616,9 @@ want to build a UI plugin using something other than Preact.
 Logger with extra debug and warning logs for during development.
 
 ```js
-import { Uppy, debugLogger } from '@uppy/core';
+import { Uppy, debugLogger } from '@uppy/core'
 
-new Uppy({ logger: debugLogger });
+new Uppy({ logger: debugLogger })
 ```
 
 :::info
@@ -1634,10 +1634,10 @@ this:
 // Swallow all logs, except errors.
 // default if logger is not set or debug: false
 const justErrorsLogger = {
-	debug: () => {},
-	warn: () => {},
-	error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
-};
+  debug: () => {},
+  warn: () => {},
+  error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
+}
 ```
 
 `debugLogger` sends extra debugging and warning logs which could be helpful
@@ -1647,10 +1647,10 @@ during development:
 // Print logs to console with namespace + timestamp,
 // set by logger: Uppy.debugLogger or debug: true
 const debugLogger = {
-	debug: (...args) => console.debug(`[Uppy] [${getTimeStamp()}]`, ...args),
-	warn: (...args) => console.warn(`[Uppy] [${getTimeStamp()}]`, ...args),
-	error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
-};
+  debug: (...args) => console.debug(`[Uppy] [${getTimeStamp()}]`, ...args),
+  warn: (...args) => console.warn(`[Uppy] [${getTimeStamp()}]`, ...args),
+  error: (...args) => console.error(`[Uppy] [${getTimeStamp()}]`, ...args),
+}
 ```
 
 ## Frequently asked questions
