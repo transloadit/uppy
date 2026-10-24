@@ -526,7 +526,9 @@ uppy.use(Dashboard, {
 
 **Migration steps:**
 
-1. Remove `@uppy/drag-drop` and `@uppy/file-input` from your dependencies
+1. Remove `@uppy/file-input` from your dependencies. Remove `@uppy/drag-drop`
+   too if you used it through a framework wrapper; if you use it directly with
+   `uppy.use(DragDrop, { target })`, you can keep it.
 2. Choose one of these approaches:
    - Use the framework-specific hooks (`@uppy/react`, `@uppy/vue`,
      `@uppy/svelte`) for maximum flexibility
