@@ -21,24 +21,24 @@ class TestPlugin<M extends Meta, B extends Body> extends UIPlugin<Opts, M, B> {
   }
 }
 
-test('can add locale strings without type error', async () => {
+test('can add locale strings without type error', () => {
   new Uppy().use(TestPlugin, {
     foo: 'bar',
     locale: { strings: { bar: '' } },
   })
 })
 
-test('can use Uppy class without generics', async () => {
+test('can use Uppy class without generics', () => {
   using core = new Uppy()
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
 })
 
-test('can .use() a plugin', async () => {
+test('can .use() a plugin', () => {
   using core = new Uppy().use(TestPlugin)
   expectTypeOf(core).toEqualTypeOf<Uppy<Meta, Record<string, never>>>()
 })
 
-test('can .getPlugin() with a generic', async () => {
+test('can .getPlugin() with a generic', () => {
   using core = new Uppy().use(TestPlugin)
   const plugin = core.getPlugin<TestPlugin<any, any>>('TestPlugin')
   const plugin2 = core.getPlugin('TestPlugin')

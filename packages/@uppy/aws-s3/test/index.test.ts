@@ -50,7 +50,7 @@ function createMultipartMocks(opts: { uploadId?: string; key?: string } = {}) {
   const key = opts.key ?? 'test-key'
 
   // signRequest encodes operation details in the URL for MSW routing
-  const signRequest = vi.fn().mockImplementation(async (req: any) => {
+  const signRequest = vi.fn().mockImplementation((req: any) => {
     const params = new URLSearchParams()
     if (req.uploadId) params.set('uploadId', req.uploadId)
     if (req.partNumber != null) params.set('partNumber', String(req.partNumber))
@@ -291,7 +291,7 @@ describe('AwsS3', () => {
     test('single-part: reports the key the signer actually used', async () => {
       const { signRequest, registerHandlers } = createMultipartMocks()
       registerHandlers()
-      signRequest.mockImplementation(async (req: any) => {
+      signRequest.mockImplementation((req: any) => {
         const serverKey = `server-${req.key}`
         return {
           url: `${bucketUrl}/${serverKey}?method=${req.method}`,
@@ -330,7 +330,7 @@ describe('AwsS3', () => {
       })
       registerHandlers()
       // Mints the key on create, then only signs for that key.
-      signRequest.mockImplementation(async (req: any) => {
+      signRequest.mockImplementation((req: any) => {
         const isCreate = req.method === 'POST' && !req.uploadId
         if (!isCreate && req.key !== serverKey) {
           throw new Error(`unexpected key: ${req.key}`)
@@ -377,7 +377,7 @@ describe('AwsS3', () => {
         key: serverKey,
       })
       registerHandlers({ hangNonCreate: true })
-      signRequest.mockImplementation(async (req: any) => {
+      signRequest.mockImplementation((req: any) => {
         const params = new URLSearchParams({ method: req.method })
         if (req.uploadId) params.set('uploadId', req.uploadId)
         return {
@@ -417,7 +417,7 @@ describe('AwsS3', () => {
         key: 'dir-client-big.dat',
       })
       registerHandlers()
-      signRequest.mockImplementation(async (req: any) => {
+      signRequest.mockImplementation((req: any) => {
         const params = new URLSearchParams({ method: req.method })
         if (req.uploadId) params.set('uploadId', req.uploadId)
         if (req.partNumber != null)
@@ -585,7 +585,7 @@ describe('AwsS3', () => {
       using core = new Core().use(AwsS3, {
         s3Endpoint: 'https://bucket.test',
         region: 'us-east-1',
-        signRequest: async (req) => {
+        signRequest: (req) => {
           // the signer needs the type to put it in the policy
           expect(req).toMatchObject({
             method: 'PUT',

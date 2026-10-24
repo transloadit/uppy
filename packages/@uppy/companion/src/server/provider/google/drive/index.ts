@@ -168,7 +168,7 @@ export class Drive extends Provider<GoogleUserSession> {
     return refreshToken(args)
   }
 
-  override async list({
+  override list({
     directory: directoryIn,
     providerUserSession: { accessToken: token },
     query,
@@ -223,7 +223,7 @@ export class Drive extends Provider<GoogleUserSession> {
           return response
         }
 
-        async function fetchFiles() {
+        function fetchFiles() {
           // Shared with me items in root don't have any parents
           const q = isVirtualSharedDirRoot
             ? `sharedWithMe and trashed=false`
@@ -246,7 +246,7 @@ export class Drive extends Provider<GoogleUserSession> {
             .json<DriveListResponse>()
         }
 
-        async function fetchAbout() {
+        function fetchAbout() {
           const searchParams = { fields: 'user' }
 
           return client
@@ -272,7 +272,7 @@ export class Drive extends Provider<GoogleUserSession> {
     )
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<GoogleUserSession>): Promise<ProviderDownloadResponse> {
@@ -288,9 +288,7 @@ export class Drive extends Provider<GoogleUserSession> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.download.error',
-      async () => {
-        return streamGoogleFile({ token, id })
-      },
+      () => streamGoogleFile({ token, id }),
     )
   }
 }
