@@ -437,7 +437,8 @@ functionality but with maximum customization freedom.
 JavaScript framework or build step, such as server-rendered apps (PHP, Rails,
 Django) using the CDN bundle or plain `<script>` tags. Its framework wrappers
 were not restored: in React, Vue, or Svelte, use `Dropzone` or `useDropzone` as
-shown below.
+shown below. In Angular, use the plugin directly with
+`uppy.use(DragDrop, { target })`.
 
 :::
 
@@ -527,8 +528,9 @@ uppy.use(Dashboard, {
 **Migration steps:**
 
 1. Remove `@uppy/file-input` from your dependencies. Remove `@uppy/drag-drop`
-   too if you used it through a framework wrapper; if you use it directly with
-   `uppy.use(DragDrop, { target })`, you can keep it.
+   too if you used it through the React, Vue, or Svelte wrapper. Otherwise you
+   can keep it and use it directly with `uppy.use(DragDrop, { target })`, which
+   in Angular replaces `UppyAngularDragDropModule`.
 2. Choose one of these approaches:
    - Use the framework-specific hooks (`@uppy/react`, `@uppy/vue`,
      `@uppy/svelte`) for maximum flexibility
