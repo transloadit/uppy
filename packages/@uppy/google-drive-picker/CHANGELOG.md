@@ -1,5 +1,11 @@
 # @uppy/google-drive-picker
 
+## 2.0.1
+
+### Patch Changes
+
+- f58058d: Only access `localStorage` when a provider plugin's default token storage is used, so the plugins can be constructed during server-side rendering again.
+
 ## 2.0.0
 
 ### Patch Changes
@@ -66,7 +72,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 

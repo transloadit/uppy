@@ -1,5 +1,12 @@
 # @uppy/companion
 
+## 7.2.1
+
+### Patch Changes
+
+- f58058d: Allow various asynchronous interfaces and callbacks to be synchronous. Some methods that never awaited anything are no longer `async`; for example `Webcam#getVideo()` now returns its value directly.
+- 0b66920: Retain OAuth callback results briefly so login succeeds when the callback arrives before the WebSocket subscription is ready.
+
 ## 7.2.0
 
 ### Minor Changes
@@ -21,11 +28,11 @@
 ### Patch Changes
 
 - 452b52b: Reuse shared option and response types for all Companion provider methods. Some provider method types were widened to match the base `Provider` class:
-  
   - `logout()` of Box, Dropbox, Facebook and S3 now returns `{ revoked: boolean }` instead of `{ revoked: true }`.
   - Zoom `deauthorizationCallback()` headers may now be `string | string[]`.
   - Zoom `list()` query is now the generic `Query` type instead of `{ cursor?: string | null }`.
   - WebDAV `thumbnail()` no longer declares its unused parameters.
+
 - d85c649: Fix WebDAV provider bypassing SSRF protection: requests to private, loopback and link-local addresses are now blocked unless `allowLocalUrls` is enabled.
 
 ## 7.1.0
@@ -223,7 +230,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 
