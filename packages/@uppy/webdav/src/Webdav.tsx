@@ -10,6 +10,7 @@ import type {
 import { UIPlugin } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   Provider,
 } from '@uppy/core/companion-client'
 import { ProviderViews, SearchView } from '@uppy/core/provider-views'
@@ -97,7 +98,7 @@ export default class Webdav<M extends Meta, B extends Body>
     this.id = this.opts.id || 'WebDav'
     this.type = 'acquirer'
     this.files = []
-    this.storage = this.opts.storage || localStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()

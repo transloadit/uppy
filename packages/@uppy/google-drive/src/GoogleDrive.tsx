@@ -9,6 +9,7 @@ import type {
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   getAllowedHosts,
   Provider,
 } from '@uppy/core/companion-client'
@@ -51,7 +52,7 @@ export default class GoogleDrive<M extends Meta, B extends Body>
   constructor(uppy: Uppy<M, B>, opts: GoogleDriveOptions) {
     super(uppy, opts)
     this.type = 'acquirer'
-    this.storage = this.opts.storage || localStorage
+    this.storage = this.opts.storage || defaultStorage
     this.files = []
     this.id = this.opts.id || 'GoogleDrive'
     this.icon = () => (

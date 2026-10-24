@@ -2,6 +2,7 @@ import type { AsyncStore, BaseProviderPlugin, Body, Meta } from '@uppy/core'
 import { UIPlugin, type Uppy } from '@uppy/core'
 import {
   type CompanionPluginOptions,
+  defaultStorage,
   type GooglePickerState,
   RequestClient,
 } from '@uppy/core/companion-client'
@@ -43,7 +44,7 @@ export default class GooglePhotosPicker<M extends Meta, B extends Body>
   constructor(uppy: Uppy<M, B>, opts: GooglePhotosPickerOptions) {
     super(uppy, opts)
     this.id = this.opts.id || 'GooglePhotosPicker'
-    this.storage = this.opts.storage || localStorage
+    this.storage = this.opts.storage || defaultStorage
 
     this.defaultLocale = locale
     this.i18nInit()

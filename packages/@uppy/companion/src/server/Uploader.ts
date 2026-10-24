@@ -458,7 +458,7 @@ export default class Uploader {
         return
       }
       logger.error(err, 'uploader.error', this.shortToken)
-      await this.#emitError(err)
+      this.#emitError(err)
     } finally {
       emitter().removeAllListeners(`pause:${this.token}`)
       emitter().removeAllListeners(`resume:${this.token}`)

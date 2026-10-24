@@ -1,5 +1,6 @@
 import type { Uppy, UppyEventMap } from '../index.js'
 import type { Meta } from '../utils/index.js'
+import { defaultStorage } from './defaultStorage.js'
 import type { CompanionPluginOptions, RequestClientOptions } from './index.js'
 
 export type GooglePickerType = 'drive' | 'photos'
@@ -684,7 +685,7 @@ export interface GooglePickerOptions
 export function createGooglePickerController({
   uppy,
   store,
-  storage: persistentStore = localStorage,
+  storage: persistentStore = defaultStorage,
   pickerType,
   companionUrl,
   requestClientId = pickerType === 'drive'

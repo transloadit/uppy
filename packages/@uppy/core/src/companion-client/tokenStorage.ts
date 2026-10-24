@@ -5,7 +5,7 @@
 
 /**
  * @deprecated
- *   Use global `localStorage` instead.
+ *   Use `defaultStorage` instead.
  */
 // biome-ignore lint/suspicious/useAwait: Preserved for backward compatibility
 export async function setItem(key: string, value: string): Promise<void> {
@@ -14,7 +14,7 @@ export async function setItem(key: string, value: string): Promise<void> {
 
 /**
  * @deprecated
- *   Use global `localStorage` instead.
+ *   Use `defaultStorage` instead.
  */
 // biome-ignore lint/suspicious/useAwait: Preserved for backward compatibility
 export async function getItem(key: string): Promise<string | null> {
@@ -23,7 +23,7 @@ export async function getItem(key: string): Promise<string | null> {
 
 /**
  * @deprecated
- *   Use global `localStorage` instead.
+ *   Use `defaultStorage` instead.
  */
 // biome-ignore lint/suspicious/useAwait: Preserved for backward compatibility
 export async function removeItem(key: string): Promise<void> {

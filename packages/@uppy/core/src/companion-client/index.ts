@@ -4,6 +4,7 @@
 
 export { isAuthError } from './AuthError.js'
 export type { CompanionPluginOptions } from './CompanionPluginOptions.js'
+export { defaultStorage } from './defaultStorage.js'
 export type { CompanionErrorCode } from './errorCodes.js'
 export { default as getAllowedHosts } from './getAllowedHosts.js'
 export type {
@@ -37,6 +38,6 @@ import * as deprecatedTokenStorage from './tokenStorage.js'
 
 /**
  * @deprecated
- *   Use global `localStorage` instead.
+ *   Use `defaultStorage` instead.
  */
 export const tokenStorage = deprecatedTokenStorage

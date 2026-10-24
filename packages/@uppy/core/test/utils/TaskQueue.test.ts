@@ -111,6 +111,23 @@ describe('TaskQueue', () => {
     expect(order).toEqual(['first', 'wrapped:hello'])
   })
 
+  it('wrapPromiseFunction accepts synchronous functions', async () => {
+    const queue = new TaskQueue({ concurrency: 1 })
+
+    const double = queue.wrapPromiseFunction((value: number) => value * 2)
+    await expect(double(21)).resolves.toBe(42)
+
+    const reason = new Error('nope')
+    const fail = queue.wrapPromiseFunction(() => {
+      throw reason
+    })
+    await expect(fail()).rejects.toBe(reason)
+
+    // The queue slots were released.
+    expect(queue.running).toBe(0)
+    await expect(double(1)).resolves.toBe(2)
+  })
+
   it('updates concurrency via setter and starts additional tasks', async () => {
     const queue = new TaskQueue({ concurrency: 1 })
     const started1 = Promise.withResolvers<void>()
