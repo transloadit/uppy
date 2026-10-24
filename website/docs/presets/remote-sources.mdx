@@ -3,11 +3,11 @@ sidebar_position: 1
 slug: /remote-sources
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
-import GoogleOwnCredentials from '../sources/companion-plugins/_google-own-credentials.mdx';
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import GoogleOwnCredentials from '../sources/companion-plugins/_google-own-credentials.mdx'
 
 # Remote sources
 
@@ -85,13 +85,13 @@ new Uppy();
 ### Use with Transloadit
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import RemoteSources from '@uppy/remote-sources';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import RemoteSources from '@uppy/remote-sources'
 
 uppy.use(RemoteSources, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+})
 ```
 
 <GoogleOwnCredentials />
@@ -108,24 +108,24 @@ key. The [Google Drive page](/docs/google-drive#use-with-transloadit) has the
 full setup for Google.
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import RemoteSources from '@uppy/remote-sources';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import RemoteSources from '@uppy/remote-sources'
 
 uppy.use(RemoteSources, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		GoogleDrive: {
-			key: 'YOUR_TRANSLOADIT_API_KEY',
-			credentialsName: 'google_drive_own',
-		},
-		Dropbox: {
-			key: 'YOUR_TRANSLOADIT_API_KEY',
-			credentialsName: 'dropbox_own',
-		},
-		// ...etc
-	},
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    GoogleDrive: {
+      key: 'YOUR_TRANSLOADIT_API_KEY',
+      credentialsName: 'google_drive_own',
+    },
+    Dropbox: {
+      key: 'YOUR_TRANSLOADIT_API_KEY',
+      credentialsName: 'dropbox_own',
+    },
+    // ...etc
+  },
+})
 ```
 
 ## API
@@ -147,9 +147,9 @@ option is for you.
 
 ```js
 uppy.use(RemoteSources, {
-	companionUrl: 'https://your-companion-url',
-	sources: ['Dropbox', 'GoogleDrive', 'Unsplash', 'Url'],
-});
+  companionUrl: 'https://your-companion-url',
+  sources: ['Dropbox', 'GoogleDrive', 'Unsplash', 'Url'],
+})
 ```
 
 #### `companionUrl`
@@ -186,6 +186,6 @@ DOM element, CSS selector, or plugin to place the drag and drop area into
 [`Dashboard`](/docs/dashboard)).
 
 [`request.credentials` value]:
-	https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
+  https://developer.mozilla.org/en-US/docs/Web/API/Request/credentials
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/

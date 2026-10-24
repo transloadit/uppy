@@ -2,11 +2,11 @@
 slug: /url
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
-import CompanionOptions from './_companion-options.mdx';
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import CompanionOptions from './_companion-options.mdx'
 
 # Import from URL
 
@@ -77,29 +77,29 @@ Using `@uppy/url` only requires setup in Uppy.
 ### Use in Uppy
 
 ```js {10-13} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import Url from '@uppy/url';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Url from '@uppy/url'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
-import '@uppy/url/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+import '@uppy/url/css/style.min.css'
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(Url, { companionUrl: 'https://your-companion.com' });
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(Url, { companionUrl: 'https://your-companion.com' })
 ```
 
 ### Use with Transloadit
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Url from '@uppy/url';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Url from '@uppy/url'
 
 uppy.use(Url, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+})
 ```
 
 You may also hit rate limits, because the OAuth application is shared between
@@ -112,17 +112,17 @@ OAuth” for the service, and enter the key and secret for the provider you want
 to use. Then you can pass the name of the new credentials to that provider:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Url from '@uppy/url';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Url from '@uppy/url'
 
 uppy.use(Url, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'my_companion_dropbox_creds',
-	},
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
+})
 ```
 
 ### Use in Companion
@@ -137,4 +137,4 @@ Companion with the `enableUrlEndpoint` / `COMPANION_ENABLE_URL_ENDPOINT` option.
 <CompanionOptions />
 
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/

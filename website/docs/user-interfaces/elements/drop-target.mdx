@@ -3,10 +3,10 @@ sidebar_position: 2
 slug: /drop-target
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Drop target
 
@@ -63,16 +63,16 @@ yarn add @uppy/drop-target
 This module has one default export: the `DropTarget` plugin class.
 
 ```js {8-10} showLineNumbers
-import Uppy from '@uppy/core';
-import DropTarget from '@uppy/drop-target';
+import Uppy from '@uppy/core'
+import DropTarget from '@uppy/drop-target'
 
-import '@uppy/core/css/style.css';
-import '@uppy/drop-target/css/style.css';
+import '@uppy/core/css/style.css'
+import '@uppy/drop-target/css/style.css'
 
-const uppy = new Uppy();
+const uppy = new Uppy()
 uppy.use(DropTarget, {
-	target: document.body,
-});
+  target: document.body,
+})
 ```
 
 ## API
@@ -85,11 +85,11 @@ Event listener for the [`dragleave` event][].
 
 ```js {3-5} showLineNumbers
 uppy.use(DropTarget, {
-	target: document.body,
-	onDragLeave: (event) => {
-		event.stopPropagation();
-	},
-});
+  target: document.body,
+  onDragLeave: (event) => {
+    event.stopPropagation()
+  },
+})
 ```
 
 #### `onDragOver`
@@ -106,8 +106,8 @@ DOM element, CSS selector, or plugin to place the drag and drop area into
 (`string`, `Element`, `Function`, or `UIPlugin`, default: `null`).
 
 [`dragover` event]:
-	https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragover_event
+  https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragover_event
 [`dragleave` event]:
-	https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragleave_event
+  https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dragleave_event
 [`drop` event]:
-	https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drop_event
+  https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/drop_event

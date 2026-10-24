@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react'
 
 /**
  * Copy text and report it for a beat, so a button can acknowledge the click.
@@ -8,21 +8,21 @@ import { useEffect, useRef, useState } from 'react';
  * reached the clipboard.
  */
 export function useCopyToClipboard(text: string, resetAfter = 2000) {
-	const [copied, setCopied] = useState(false);
-	const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [copied, setCopied] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
-	useEffect(() => () => clearTimeout(timer.current), []);
+  useEffect(() => () => clearTimeout(timer.current), [])
 
-	async function copy() {
-		try {
-			await navigator.clipboard.writeText(text);
-		} catch {
-			return;
-		}
-		setCopied(true);
-		clearTimeout(timer.current);
-		timer.current = setTimeout(() => setCopied(false), resetAfter);
-	}
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      return
+    }
+    setCopied(true)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setCopied(false), resetAfter)
+  }
 
-	return { copied, copy };
+  return { copied, copy }
 }
