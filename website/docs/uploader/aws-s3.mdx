@@ -3,9 +3,9 @@ sidebar_position: 4
 slug: /aws-s3
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # AWS S3
 
@@ -105,26 +105,26 @@ Your server returns a presigned URL for each S3 operation, and the browser sends
 the request to that URL. Credentials never leave your server.
 
 ```js {9-18} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import AwsS3 from '@uppy/aws-s3';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3 from '@uppy/aws-s3'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(AwsS3, {
-	async signRequest({ method, key, uploadId, partNumber }) {
-		const response = await fetch('/s3/presign', {
-			method: 'POST',
-			headers: { 'content-type': 'application/json' },
-			body: JSON.stringify({ method, key, uploadId, partNumber }),
-		});
-		if (!response.ok) throw new Error('Failed to sign S3 request');
-		// The server responds with `{ "url": "https://…" }`,
-		// optionally with a `key` if it stored the object elsewhere
-		return response.json();
-	},
-});
+  async signRequest({ method, key, uploadId, partNumber }) {
+    const response = await fetch('/s3/presign', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ method, key, uploadId, partNumber }),
+    })
+    if (!response.ok) throw new Error('Failed to sign S3 request')
+    // The server responds with `{ "url": "https://…" }`,
+    // optionally with a `key` if it stored the object elsewhere
+    return response.json()
+  },
+})
 ```
 
 There is no `s3Endpoint` in this mode: the URL you return determines the host,
@@ -141,31 +141,31 @@ and the browser signs every S3 request itself with SigV4. The credentials are
 requested once and reused until S3 rejects them as expired.
 
 ```js {9-11} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import AwsS3 from '@uppy/aws-s3';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3 from '@uppy/aws-s3'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(AwsS3, {
-	s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
-	region: 'us-east-1',
-	async getCredentials() {
-		const response = await fetch('/s3/sts');
-		if (!response.ok) throw new Error('Failed to fetch STS credentials');
-		const { credentials, region } = await response.json();
-		return {
-			credentials: {
-				accessKeyId: credentials.AccessKeyId,
-				secretAccessKey: credentials.SecretAccessKey,
-				sessionToken: credentials.SessionToken,
-				expiration: credentials.Expiration,
-			},
-			region,
-		};
-	},
-});
+  s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
+  region: 'us-east-1',
+  async getCredentials() {
+    const response = await fetch('/s3/sts')
+    if (!response.ok) throw new Error('Failed to fetch STS credentials')
+    const { credentials, region } = await response.json()
+    return {
+      credentials: {
+        accessKeyId: credentials.AccessKeyId,
+        secretAccessKey: credentials.SecretAccessKey,
+        sessionToken: credentials.SessionToken,
+        expiration: credentials.Expiration,
+      },
+      region,
+    }
+  },
+})
 ```
 
 :::caution
@@ -196,16 +196,16 @@ Drive). Otherwise it’s not worth the hosting effort.
 :::
 
 ```js {9} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import AwsS3 from '@uppy/aws-s3';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3 from '@uppy/aws-s3'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(AwsS3, {
-	companionEndpoint: 'https://companion.uppy.io',
-});
+  companionEndpoint: 'https://companion.uppy.io',
+})
 ```
 
 Companion decides the bucket, the region, and the object key, so
@@ -228,11 +228,11 @@ that is uploaded with the corresponding `UppyFile` instance as argument
 
 ```js
 uppy.use(AwsS3, {
-	// …
-	shouldUseMultipart(file) {
-		return file.size > 100 * 2 ** 20;
-	},
-});
+  // …
+  shouldUseMultipart(file) {
+    return file.size > 100 * 2 ** 20
+  },
+})
 ```
 
 When it returns `true`, the file is uploaded as multipart whatever its size.
@@ -262,11 +262,11 @@ means fewer requests, at the cost of re-uploading more data when a part fails.
 
 ```js
 uppy.use(AwsS3, {
-	// …
-	getChunkSize(file) {
-		return Math.max(5 * 2 ** 20, file.size / 1000);
-	},
-});
+  // …
+  getChunkSize(file) {
+    return Math.max(5 * 2 ** 20, file.size / 1000)
+  },
+})
 ```
 
 #### `generateObjectKey(file)`
@@ -276,9 +276,9 @@ default: `` `${crypto.randomUUID()}-${file.name}` ``).
 
 ```js
 uppy.use(AwsS3, {
-	// …
-	generateObjectKey: (file) => `uploads/${Date.now()}-${file.name}`,
-});
+  // …
+  generateObjectKey: (file) => `uploads/${Date.now()}-${file.name}`,
+})
 ```
 
 The key generated here is a proposal. With [`signRequest`](#signrequestrequest),
@@ -426,20 +426,20 @@ Cloudflare R2:
 
 ```js
 uppy.use(AwsS3, {
-	s3Endpoint: 'https://<account-id>.r2.cloudflarestorage.com/my-bucket',
-	region: 'auto',
-	getCredentials,
-});
+  s3Endpoint: 'https://<account-id>.r2.cloudflarestorage.com/my-bucket',
+  region: 'auto',
+  getCredentials,
+})
 ```
 
 MinIO, or another self-hosted service:
 
 ```js
 uppy.use(AwsS3, {
-	s3Endpoint: 'https://minio.my-app.com/my-bucket',
-	region: 'us-east-1',
-	getCredentials,
-});
+  s3Endpoint: 'https://minio.my-app.com/my-bucket',
+  region: 'us-east-1',
+  getCredentials,
+})
 ```
 
 ## Bucket and CORS setup
@@ -460,18 +460,18 @@ The configuration required for Uppy is this:
 
 ```json
 [
-	{
-		"AllowedOrigins": ["https://my-app.com"],
-		"AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
-		"MaxAgeSeconds": 3000,
-		"AllowedHeaders": ["content-type"],
-		"ExposeHeaders": ["ETag", "Location"]
-	},
-	{
-		"AllowedOrigins": ["*"],
-		"AllowedMethods": ["GET"],
-		"MaxAgeSeconds": 3000
-	}
+  {
+    "AllowedOrigins": ["https://my-app.com"],
+    "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
+    "MaxAgeSeconds": 3000,
+    "AllowedHeaders": ["content-type"],
+    "ExposeHeaders": ["ETag", "Location"]
+  },
+  {
+    "AllowedOrigins": ["*"],
+    "AllowedMethods": ["GET"],
+    "MaxAgeSeconds": 3000
+  }
 ]
 ```
 
@@ -506,27 +506,27 @@ this to be type safe with `@uppy/aws-s3`, you can import the `AwsBody` type and
 pass it as the second generic to `Uppy`.
 
 ```ts {3,12} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import AwsS3, { type AwsBody } from '@uppy/aws-s3';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3, { type AwsBody } from '@uppy/aws-s3'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 // Set this to `any` or `Record<string, unknown>`
 // if you do not set any metadata yourself
-type Meta = { license: string };
+type Meta = { license: string }
 
 const uppy = new Uppy<Meta, AwsBody>()
-	.use(Dashboard, { inline: true, target: 'body' })
-	.use(AwsS3, { companionEndpoint: 'https://companion.uppy.io' });
+  .use(Dashboard, { inline: true, target: 'body' })
+  .use(AwsS3, { companionEndpoint: 'https://companion.uppy.io' })
 
-const id = uppy.addFile(/* … */);
+const id = uppy.addFile(/* … */)
 
-await uppy.upload();
+await uppy.upload()
 
-const body = uppy.getFile(id).response.body!;
-const { location, key } = body; // This is now type safe
+const body = uppy.getFile(id).response.body!
+const { location, key } = body // This is now type safe
 ```
 
 [`shouldusemultipart`]: #shouldusemultipartfile
