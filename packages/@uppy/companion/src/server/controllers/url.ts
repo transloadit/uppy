@@ -1,10 +1,20 @@
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
 import express from 'express'
+import type { Request } from '../../types/express.js'
 import { downloadURL } from '../download.js'
 import { getURLMeta, validateURL } from '../helpers/request.js'
+import { asRecord } from '../helpers/type-guards.js'
 import { startDownUpload } from '../helpers/upload.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'
+
+const getValidURL = (req: Request): string | undefined => {
+  const { url } = asRecord(req.body)
+  return typeof url === 'string' &&
+    validateURL(url, req.companion.options.allowLocalUrls)
+    ? url
+    : undefined
+}
 
 /**
  * Fetch the size and content type of a URL.
@@ -13,7 +23,8 @@ const meta = async (req: Request, res: Response): Promise<void> => {
   try {
     logger.debug('URL file import handler running', undefined, req.id)
     const { allowLocalUrls } = req.companion.options
-    if (!validateURL(req.body.url, allowLocalUrls)) {
+    const url = getValidURL(req)
+    if (!url) {
       logger.debug(
         'Invalid request body detected. Exiting url meta handler.',
         undefined,
@@ -23,7 +34,7 @@ const meta = async (req: Request, res: Response): Promise<void> => {
       return
     }
 
-    const urlMeta = await getURLMeta(req.body.url, allowLocalUrls)
+    const urlMeta = await getURLMeta(url, allowLocalUrls)
     res.json(urlMeta)
   } catch (err) {
     logger.error(err, 'controller.url.meta.error', req.id)
@@ -38,7 +49,8 @@ const meta = async (req: Request, res: Response): Promise<void> => {
 const get = async (req: Request, res: Response): Promise<void> => {
   logger.debug('URL file import handler running', undefined, req.id)
   const { allowLocalUrls } = req.companion.options
-  if (!validateURL(req.body.url, allowLocalUrls)) {
+  const url = getValidURL(req)
+  if (!url) {
     logger.debug(
       'Invalid request body detected. Exiting url import handler.',
       undefined,
@@ -48,7 +60,7 @@ const get = async (req: Request, res: Response): Promise<void> => {
     return
   }
 
-  const download = () => downloadURL(req.body.url, allowLocalUrls, req.id)
+  const download = () => downloadURL(url, allowLocalUrls, req.id)
 
   try {
     await startDownUpload({ req, res, download, getSize: undefined })

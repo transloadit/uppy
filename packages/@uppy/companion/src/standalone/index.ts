@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import qs from 'node:querystring'
 import { URL } from 'node:url'
 import RedisStore from 'connect-redis'
-import type { Express, NextFunction, Request, Response } from 'express'
+import type { Express, NextFunction, Response } from 'express'
 import express from 'express'
 import type { SessionOptions } from 'express-session'
 import session from 'express-session'
@@ -14,6 +14,7 @@ import type { EmitterLike } from '../server/emitter/index.js'
 import { isRecord, toError } from '../server/helpers/type-guards.js'
 import logger from '../server/logger.js'
 import * as redis from '../server/redis.js'
+import type { Request } from '../types/express.js'
 import {
   buildHelpfulStartupMessage,
   generateSecret,

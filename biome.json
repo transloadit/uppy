@@ -84,6 +84,29 @@
       }
     },
     {
+      "includes": [
+        "packages/@uppy/companion/src/**",
+        "!packages/@uppy/companion/src/types/express.ts"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": {
+              "level": "error",
+              "options": {
+                "paths": {
+                  "express": {
+                    "importNames": ["Request", "RequestHandler"],
+                    "message": "Import Request/RequestHandler from src/types/express.ts, which types req.body as unknown."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
       "includes": ["**/*.vue", "**/*.svelte", "packages/@uppy/vue/**/*.ts"],
       "linter": {
         "rules": {
