@@ -444,7 +444,9 @@ module.exports = function agentReadiness(context) {
 			for (const file of files) {
 				const relPath = path.relative(docsRoot, file).split(path.sep).join('/');
 				const raw = await fs.readFile(file, 'utf8');
-				const [data = {}, body] = simplematter(raw);
+				const [frontmatter, body] = simplematter(raw);
+				// Empty or comment-only frontmatter parses to `null`, not `undefined`.
+				const data = frontmatter ?? {};
 				const route = routeFor(relPath, data.slug);
 
 				// The built HTML is the source of truth for which routes exist. If a
