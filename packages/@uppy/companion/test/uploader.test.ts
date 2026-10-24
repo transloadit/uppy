@@ -253,8 +253,6 @@ describe('uploader', () => {
     emitter.on(uploadToken, onUploadEvent)
 
     const promise = uploader.awaitReady(60000)
-    // emulate socket connection
-    socketClient.connect(uploadToken)
     socketClient.onProgress(uploadToken, (message) => {
       const payload = isRecord(message['payload']) ? message['payload'] : {}
       const bytesUploaded =
@@ -277,6 +275,8 @@ describe('uploader', () => {
         resolve()
       })
     })
+    // emulate socket connection
+    await socketClient.connect(uploadToken)
     await promise
     await uploader.tryUploadStream(stream, requireMockReq())
     await completed
@@ -358,8 +358,6 @@ describe('uploader', () => {
 
       let firstReceivedProgress: number | undefined
 
-      // emulate socket connection
-      socketClient.connect(uploadToken)
       socketClient.onProgress(uploadToken, (message) => {
         const payload = isRecord(message['payload']) ? message['payload'] : {}
         const bytesUploaded =
@@ -385,6 +383,9 @@ describe('uploader', () => {
           reject(err)
         }
       })
+
+      // emulate socket connection
+      socketClient.connect(uploadToken).catch(reject)
     })
   })
 
@@ -580,10 +581,6 @@ describe('uploader', () => {
     uploader
       .awaitReady(60000)
       .then(() => uploader.tryUploadStream(stream, requireMockReq()))
-    await Emitter().once(uploadToken, () => {})
-    await Emitter().once(`connection:${uploadToken}`, () => {})
-    socketClient.connect(uploadToken)
-
     return new Promise<void>((resolve, reject) => {
       socketClient.onUploadError(uploadToken, (message) => {
         try {
@@ -595,6 +592,7 @@ describe('uploader', () => {
           reject(err)
         }
       })
+      socketClient.connect(uploadToken).catch(reject)
     })
   })
 })
