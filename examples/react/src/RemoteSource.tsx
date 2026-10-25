@@ -44,9 +44,9 @@ function Folder({
   const ref = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (ref.current && item.status === 'partial') {
+    if (ref.current) {
       // Can only be set via JS
-      ref.current.indeterminate = true
+      ref.current.indeterminate = item.status === 'partial'
     }
   }, [item.status])
 
@@ -80,18 +80,27 @@ export function RemoteSource({
   id: AvailablePluginsKeys
 }) {
   const { state, login, logout, checkbox, open, done, cancel } =
-    useRemoteSource(id)
+    useRemoteSource(id, { onClose: close })
 
   if (!state.authenticated) {
     return (
       <div className="p-4 pt-0 min-w-xl min-h-96">
-        <button
-          type="button"
-          className="block ml-auto text-blue-500"
-          onClick={() => login()}
-        >
-          Login
-        </button>
+        <div className="flex justify-end gap-2">
+          <button
+            type="button"
+            className="text-blue-500"
+            onClick={() => login()}
+          >
+            Login
+          </button>
+          <button
+            type="button"
+            className="text-blue-500"
+            onClick={() => close()}
+          >
+            Close
+          </button>
+        </div>
       </div>
     )
   }
@@ -129,6 +138,13 @@ export function RemoteSource({
           >
             Logout
           </button>
+          <button
+            type="button"
+            className="text-blue-500"
+            onClick={() => close()}
+          >
+            Close
+          </button>
         </div>
       </div>
 
@@ -159,26 +175,27 @@ export function RemoteSource({
         <div className="flex items-center gap-4 bg-gray-100 py-2 px-4 absolute bottom-0 left-0 right-0">
           <button
             type="button"
-            className="text-blue-500"
-            onClick={() => {
-              done()
-              close()
-            }}
+            className="text-blue-500 disabled:text-gray-400"
+            disabled={state.error !== null}
+            onClick={() => done()}
           >
             Done
           </button>
           <button
             type="button"
             className="text-blue-500"
-            onClick={() => {
-              cancel()
-            }}
+            onClick={() => cancel()}
           >
             Cancel
           </button>
           <p className="text-gray-500 text-sm">
             Selected {state.selectedAmount} items
           </p>
+          {state.error && (
+            <p role="alert" className="text-red-500 text-sm">
+              {state.error}
+            </p>
+          )}
         </div>
       )}
     </div>
