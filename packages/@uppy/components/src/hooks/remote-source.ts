@@ -29,8 +29,14 @@ export type RemoteSourceSnapshot = {
   logout: ProviderViews<any, any>['logout']
   open: ProviderViews<any, any>['openFolder']
   checkbox: ProviderViews<any, any>['toggleCheckbox']
-  done: ProviderViews<any, any>['donePicking']
-  cancel: ProviderViews<any, any>['cancelSelection']
+  /** Adds the selected files, then calls `onClose` if they were added. */
+  done: () => Promise<void>
+  /** Clears the selection, then calls `onClose`. */
+  cancel: () => void
+}
+
+export type RemoteSourceOptions = {
+  onClose?: (() => void) | undefined
 }
 
 export type RemoteSourceStore = {
@@ -43,6 +49,7 @@ export type RemoteSourceStore = {
 export function createRemoteSourceController(
   uppy: Uppy,
   sourceId: RemoteSourceKeys,
+  options?: RemoteSourceOptions,
 ): RemoteSourceStore {
   const plugin = uppy.getPlugin<UnknownProviderPlugin<any, any>>(sourceId)
   if (!plugin) {
@@ -52,14 +59,28 @@ export function createRemoteSourceController(
   }
   const subscribers = new Subscribers()
   const view = plugin.view as ProviderViews<any, any>
-  let didFirstRender = false
+  let mounted = false
+
+  const cancel = () => {
+    view.cancelSelection()
+    options?.onClose?.()
+  }
+
+  const done = async () => {
+    // The consumer may have unmounted while files were added, and `onClose`
+    // could now close something else
+    if ((await view.donePicking()) && mounted) options?.onClose?.()
+  }
 
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
-    _prev,
-    _next,
-    patch,
+    prev,
+    next,
   ) => {
-    if (patch?.plugins?.[sourceId]) {
+    // `error` also depends on the files already added to Uppy
+    if (
+      prev.plugins[sourceId] !== next.plugins[sourceId] ||
+      prev.files !== next.files
+    ) {
       subscribers.emit()
     }
   }
@@ -82,8 +103,8 @@ export function createRemoteSourceController(
     logout: view?.logout,
     open: view?.openFolder,
     checkbox: view?.toggleCheckbox,
-    done: view?.donePicking,
-    cancel: view?.cancelSelection,
+    done,
+    cancel,
   }
   const getSnapshot = () => {
     const nextSnapshot = {
@@ -109,15 +130,15 @@ export function createRemoteSourceController(
   const mount = () => {
     uppy.on('state-update', onStateUpdate)
 
-    if (!didFirstRender) {
+    if (!mounted) {
       view.openFolder?.(plugin.rootFolderId)
       view.provider.fetchPreAuthToken?.()
-      didFirstRender = true
+      mounted = true
     }
   }
 
   const unmount = () => {
-    didFirstRender = false
+    mounted = false
     uppy.off('state-update', onStateUpdate)
   }
 
