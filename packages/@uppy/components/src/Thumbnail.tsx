@@ -43,12 +43,12 @@ export default function Thumbnail(props: ThumbnailProps) {
   const showThumbnail = props.images && isImage && objectUrl
 
   useEffect(() => {
+    // A remote file's `preview` belongs to the caller
+    if (!objectUrl || props.file.isRemote) return undefined
     return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl)
-      }
+      URL.revokeObjectURL(objectUrl)
     }
-  }, [objectUrl])
+  }, [objectUrl, props.file.isRemote])
 
   return (
     <div
