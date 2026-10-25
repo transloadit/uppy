@@ -24,5 +24,12 @@ export default function FilesList(props: Omit<FilesListProps, 'ctx'>) {
     }
   }, [ctx, props])
 
+  useEffect(() => {
+    const container = ref.current
+    return () => {
+      if (container) preactRender(null, container)
+    }
+  }, [])
+
   return <div ref={ref} />
 }
