@@ -1,6 +1,6 @@
 import { network } from 'virtual:msw'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, test } from 'vitest'
+import { describe, expect, onTestFinished, test, vi } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-svelte'
 import PropsReactivity from '../src/components/test/props-reactivity.svelte'
@@ -123,6 +123,30 @@ describe('ScreenCapture Component', () => {
 })
 
 describe('Webcam Component', () => {
+  test('stops the camera when the dialog is closed with Escape', async () => {
+    onTestFinished(() => {
+      vi.restoreAllMocks()
+    })
+    const stream = document.createElement('canvas').captureStream()
+    vi.spyOn(navigator.mediaDevices, 'enumerateDevices').mockResolvedValue([
+      { kind: 'videoinput', deviceId: 'cam' } as MediaDeviceInfo,
+    ])
+    vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockResolvedValue(stream)
+    const screen = await render(App)
+
+    await screen.getByRole('button', { name: 'Webcam', exact: true }).click()
+    await expect
+      .poll(() => document.querySelector('video')?.srcObject)
+      .toBe(stream)
+
+    await userEvent.keyboard('{Escape}')
+
+    await expect.poll(() => stream.getTracks()[0]?.readyState).toBe('ended')
+    await expect
+      .element(screen.getByRole('heading', { name: 'Camera' }))
+      .not.toBeInTheDocument()
+  })
+
   test('renders with title, control buttons, and close functionality works', async () => {
     const screen = await render(App)
 
