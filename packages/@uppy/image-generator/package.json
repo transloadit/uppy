@@ -1,7 +1,7 @@
 {
   "name": "@uppy/image-generator",
   "description": "AI-powered image generation for Uppy",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "license": "MIT",
   "sideEffects": false,
   "type": "module",
@@ -35,7 +35,7 @@
   },
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
-    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano -o dist/style.min.css",
+    "build:css": "sass --load-path=../../ src/style.scss dist/style.css && postcss dist/style.css -u cssnano --map -o dist/style.min.css",
     "typecheck": "tsc --build"
   },
   "dependencies": {

@@ -16,15 +16,14 @@
   "devDependencies": {
     "@uppy/companion": "workspace:*",
     "body-parser": "^2.2.2",
-    "dotenv": "^17.4.2",
     "express": "^5.2.1",
     "express-session": "^1.15.6",
     "npm-run-all2": "^9.0.3",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   },
   "scripts": {
     "start": "npm-run-all --parallel start:server start:client",
     "start:client": "vite",
-    "start:server": "node server/index.cjs"
+    "start:server": "node server/index.ts"
   }
 }

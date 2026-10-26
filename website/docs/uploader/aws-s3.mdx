@@ -1,0 +1,533 @@
+---
+sidebar_position: 4
+slug: /aws-s3
+---
+
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
+import UppyCdnExample from '/src/components/UppyCdnExample'
+
+# AWS S3
+
+The `@uppy/aws-s3` plugin uploads files from the browser directly to an S3
+bucket, or to any S3-compatible service such as Cloudflare R2, MinIO, or
+DigitalOcean Spaces.
+
+Small files are sent in a single request (a presigned `PUT` in the direct modes,
+a `POST` form upload through Companion), large files as a multipart upload.
+Every request to S3 has to be signed, and you choose how that happens:
+
+| Option              | Who signs                    | What you run                                        |
+| ------------------- | ---------------------------- | --------------------------------------------------- |
+| `getCredentials`    | the browser, with SigV4      | an endpoint handing out temporary credentials       |
+| `signRequest`       | your own code                | an endpoint returning a presigned URL per operation |
+| `companionEndpoint` | [Companion](/docs/companion) | Companion                                           |
+
+The three modes are mutually exclusive. Pass exactly one: the plugin throws if
+you pass none.
+
+:::note
+
+Upgrading from Uppy 5.x? All signing options changed names and shapes. See the
+[migration guide](/docs/guides/migration-guides/).
+
+:::
+
+## When should I use it?
+
+:::tip
+
+Not sure which uploader is best for you? Read
+“[Choosing the uploader you need](/docs/guides/choosing-uploader)”.
+
+:::
+
+Use this plugin when you prefer a _client-to-storage_ over a
+_client-to-server-to-storage_ (such as [Transloadit](/docs/transloadit) or
+[Tus](/docs/tus)) setup. This may in some cases be preferable, for instance, to
+reduce costs or the complexity of running a server and load balancer with
+[Tus](/docs/tus).
+
+Multipart uploads become valuable for larger files, as the object is uploaded as
+a set of parts. Only failed parts have to be retried, and an interrupted upload
+can resume where it stopped instead of starting over. The downside is request
+overhead: creation, signing, and completion requests on top of the upload
+requests themselves. For a file of a couple of kilobytes with 100&nbsp;ms
+roundtrip latency, that overhead is most of the upload. We recommend keeping the
+default [`shouldUseMultipart`][], which uses multipart only for large files.
+
+Which signing mode to pick:
+
+- [`signRequest`](#signrequestrequest) keeps your credentials on your server and
+  is the safest default.
+- [`getCredentials`](#getcredentials) removes one round trip per S3 operation,
+  because the browser signs locally. In exchange, the browser holds credentials
+  that are valid for whatever your policy grants, so scope that policy tightly.
+- [`companionEndpoint`](#companionendpoint) is worth it if you already run
+  [Companion][companion docs] for remote sources such as Google Drive.
+
+## Install
+
+<Tabs>
+  <TabItem value="npm" label="NPM" default>
+
+    ```shell
+    npm install @uppy/aws-s3
+    ```
+
+  </TabItem>
+
+  <TabItem value="yarn" label="Yarn">
+
+```shell
+yarn add @uppy/aws-s3
+```
+
+  </TabItem>
+
+  <TabItem value="cdn" label="CDN">
+    <UppyCdnExample>
+      {`
+        import { Uppy, AwsS3 } from "{{UPPY_JS_URL}}"
+        new Uppy().use(AwsS3, { /* see options */ })
+      `}
+    </UppyCdnExample>
+  </TabItem>
+</Tabs>
+
+## Use
+
+Whichever mode you pick, your bucket needs [CORS rules](#bucket-and-cors-setup).
+
+### Sign on your server
+
+Your server returns a presigned URL for each S3 operation, and the browser sends
+the request to that URL. Credentials never leave your server.
+
+```js {9-18} showLineNumbers
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3 from '@uppy/aws-s3'
+
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(AwsS3, {
+  async signRequest({ method, key, uploadId, partNumber }) {
+    const response = await fetch('/s3/presign', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ method, key, uploadId, partNumber }),
+    })
+    if (!response.ok) throw new Error('Failed to sign S3 request')
+    // The server responds with `{ "url": "https://…" }`,
+    // optionally with a `key` if it stored the object elsewhere
+    return response.json()
+  },
+})
+```
+
+There is no `s3Endpoint` in this mode: the URL you return determines the host,
+bucket, and object key. See [`signRequest`](#signrequestrequest) for the
+operations your endpoint has to handle, and the
+[Node.js example](https://github.com/transloadit/uppy/tree/main/examples/aws-nodejs)
+for a working `/s3/presign` route built on the AWS SDK.
+
+### Sign on the client
+
+Your server hands out short-lived credentials (on AWS, from
+[STS](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_request.html)),
+and the browser signs every S3 request itself with SigV4. The credentials are
+requested once and reused until S3 rejects them as expired.
+
+```js {9-11} showLineNumbers
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3 from '@uppy/aws-s3'
+
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(AwsS3, {
+  s3Endpoint: 'https://my-bucket.s3.us-east-1.amazonaws.com',
+  region: 'us-east-1',
+  async getCredentials() {
+    const response = await fetch('/s3/sts')
+    if (!response.ok) throw new Error('Failed to fetch STS credentials')
+    const { credentials, region } = await response.json()
+    return {
+      credentials: {
+        accessKeyId: credentials.AccessKeyId,
+        secretAccessKey: credentials.SecretAccessKey,
+        sessionToken: credentials.SessionToken,
+        expiration: credentials.Expiration,
+      },
+      region,
+    }
+  },
+})
+```
+
+:::caution
+
+The credentials are handed to the browser, so the policy you attach to them is
+the only thing standing between your users and your bucket. Grant the smallest
+possible set of actions on the smallest possible resource, and keep the lifetime
+short. Read
+[Requesting temporary security credentials](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_temp_request.html)
+before using this mode.
+
+:::
+
+### Use with Companion
+
+[Companion][companion docs] has S3 routes built in, and signs the uploads with
+its own bucket configuration. This is also the mode to use for files coming from
+remote sources such as Google Drive, which Companion uploads server-side.
+
+:::caution
+
+Generally it’s better for access control, observability, and scaling to
+integrate `@uppy/aws-s3` with your own server. You may want to use
+[Companion](/docs/companion) for creating, signing, and completing your S3
+uploads if you already need Companion for remote files (such as from Google
+Drive). Otherwise it’s not worth the hosting effort.
+
+:::
+
+```js {9} showLineNumbers
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3 from '@uppy/aws-s3'
+
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(AwsS3, {
+  companionEndpoint: 'https://companion.uppy.io',
+})
+```
+
+Companion decides the bucket, the region, and the object key, so
+[`s3Endpoint`](#s3endpoint), [`region`](#region), and
+[`generateObjectKey`](#generateobjectkeyfile) are not used in this mode.
+
+## API
+
+### Options
+
+#### `id`
+
+A unique identifier for this plugin (`string`, default: `'AwsS3'`).
+
+#### `shouldUseMultipart(file)`
+
+A boolean, or a function that returns a boolean which is called for each file
+that is uploaded with the corresponding `UppyFile` instance as argument
+(`boolean | function`, default: files larger than 100&nbsp;MiB).
+
+```js
+uppy.use(AwsS3, {
+  // …
+  shouldUseMultipart(file) {
+    return file.size > 100 * 2 ** 20
+  },
+})
+```
+
+When it returns `true`, the file is uploaded as multipart whatever its size.
+S3’s 5&nbsp;MiB minimum part size does not apply to the last part, so a smaller
+file becomes a multipart upload with a single part. The exception is an empty
+file, which is always uploaded in a single request, since there is no part to
+send.
+
+#### `limit`
+
+The maximum number of files to upload in parallel (`number`, default: `6`).
+
+The parts of a single file are uploaded one after the other, so this is also the
+number of concurrent requests to S3. The default matches the number of
+connections browsers open per host over HTTP/1.1.
+
+#### `getChunkSize(file)`
+
+A function that returns the part size in bytes to use when uploading the given
+file as multipart (`function`, default: the file size divided by 10,000). It
+receives an object with only a `size` property, not the full Uppy file.
+
+S3 requires a minimum part size of 5&nbsp;MiB and supports at most 10,000 parts
+per upload. If `getChunkSize()` returns something smaller, or something that
+would produce more than 10,000 parts, the plugin corrects it. A larger part size
+means fewer requests, at the cost of re-uploading more data when a part fails.
+
+```js
+uppy.use(AwsS3, {
+  // …
+  getChunkSize(file) {
+    return Math.max(5 * 2 ** 20, file.size / 1000)
+  },
+})
+```
+
+#### `generateObjectKey(file)`
+
+A function that returns the object key to store the file under (`function`,
+default: `` `${crypto.randomUUID()}-${file.name}` ``).
+
+```js
+uppy.use(AwsS3, {
+  // …
+  generateObjectKey: (file) => `uploads/${Date.now()}-${file.name}`,
+})
+```
+
+The key generated here is a proposal. With [`signRequest`](#signrequestrequest),
+your server can store the object under a different key by returning it as `key`.
+
+Not used with [`companionEndpoint`](#companionendpoint): Companion generates the
+key.
+
+#### `signRequest(request)`
+
+A function that returns a presigned URL for one S3 operation (`function`).
+Required unless you use [`getCredentials`](#getcredentials) or
+[`companionEndpoint`](#companionendpoint).
+
+It receives an object with:
+
+- `method`: `'PUT' | 'POST' | 'GET' | 'DELETE'`, the HTTP method of the request.
+- `key`: `string`, the object key.
+- `uploadId`: `string`, only present for multipart operations.
+- `partNumber`: `number`, only present when uploading a part.
+
+It must return a promise for an object with:
+
+- `url`: `string`, the presigned URL.
+- `key`: `string`, optional. The key your server stored the object under. Uppy
+  uses it for the rest of the upload and reports it in `upload-success`. Leave
+  it out if the server used the key Uppy sent.
+- `headers`: `object`, optional. The headers this URL was signed with, from its
+  `X-Amz-SignedHeaders`, with the values you signed. Uppy sends them with the
+  request. A `Content-Type` here replaces the one Uppy sets from the file’s
+  type. Leave out `host` and `content-length`: the browser sends those itself.
+  Don’t sign headers the browser won’t let JavaScript set, such as `date`, since
+  a URL signed with one can’t be used from a browser. Each header must also be
+  in your bucket’s CORS `AllowedHeaders` (see
+  [Bucket and CORS setup](#bucket-and-cors-setup)).
+
+These are the operations your endpoint has to sign:
+
+| Request                                        | S3 operation            |
+| ---------------------------------------------- | ----------------------- |
+| `{ method: 'PUT', key }`                       | PutObject               |
+| `{ method: 'POST', key }`                      | CreateMultipartUpload   |
+| `{ method: 'PUT', key, uploadId, partNumber }` | UploadPart              |
+| `{ method: 'GET', key, uploadId }`             | ListParts               |
+| `{ method: 'POST', key, uploadId }`            | CompleteMultipartUpload |
+| `{ method: 'DELETE', key, uploadId }`          | AbortMultipartUpload    |
+
+If [`shouldUseMultipart`](#shouldusemultipartfile) is `false` for every file,
+the first row is the only one you need.
+
+To generate the object key on your server instead, change it only on the request
+that creates the object: the single-part `PUT`, or the `POST` without an
+`uploadId`. Return the key you used as `key` there. Every request that carries
+an `uploadId` must be signed for exactly the key it arrives with. That key was
+fixed when the upload was created, and a `key` returned on those requests is
+ignored. A server that derives the key again on every request prefixes a key
+that is already prefixed, and S3 answers with `NoSuchUpload`. The
+[Node.js](https://github.com/transloadit/uppy/blob/main/examples/aws-nodejs/routes/presign.js)
+and
+[PHP](https://github.com/transloadit/uppy/blob/main/examples/aws-php/s3-sign.php)
+signer examples show how to do this correctly.
+
+The same goes for `headers`: return only what that request was signed with.
+`Content-Disposition` and `Content-Type` belong on the request that creates the
+object. Returning them on every request sends them where they were not signed,
+and a `Content-Type` on the `POST` that completes a multipart upload replaces
+the `application/xml` Uppy needs there.
+
+#### `getCredentials()`
+
+A function that returns temporary security credentials for client-side signing
+(`function`). Required, together with [`s3Endpoint`](#s3endpoint), unless you
+use [`signRequest`](#signrequestrequest) or
+[`companionEndpoint`](#companionendpoint).
+
+It must return an object (or a promise for one) with:
+
+- `credentials`: `object`
+  - `accessKeyId`: `string`
+  - `secretAccessKey`: `string`
+  - `sessionToken`: `string`
+  - `expiration`: `string`, optional ISO 8601 date.
+- `region`: `string`, the region to sign for. Takes precedence over
+  [`region`](#region).
+
+The result is cached for the lifetime of the plugin, so your endpoint is hit
+once instead of once per request. When S3 answers with `ExpiredToken` or
+`InvalidAccessKeyId`, the plugin drops the cache, calls `getCredentials()`
+again, and retries the request once.
+
+AWS STS returns `AccessKeyId`, `SecretAccessKey`, and `SessionToken` in
+PascalCase; map them to the camelCase keys above, as in the
+[example](#sign-on-the-client).
+
+#### `s3Endpoint`
+
+The URL of the bucket to upload to (`string`). Required with
+[`getCredentials`](#getcredentials), unused in the other modes.
+
+Both the virtual-hosted style (`https://my-bucket.s3.us-east-1.amazonaws.com`)
+and the path style (`https://s3.us-east-1.amazonaws.com/my-bucket`) work. The
+object key is appended to it.
+
+#### `region`
+
+The region to sign requests for (`string`, default: `'auto'`). Used with
+[`getCredentials`](#getcredentials), and overridden by the `region` that
+`getCredentials()` returns.
+
+`'auto'` is what S3-compatible services that have no regions, such as Cloudflare
+R2, expect. AWS S3 needs the real region of the bucket.
+
+#### `companionEndpoint`
+
+The URL of your [Companion][companion docs] instance (`string`). Required unless
+you use [`signRequest`](#signrequestrequest) or
+[`getCredentials`](#getcredentials).
+
+#### `allowedMetaFields`
+
+Pass an array of field names to limit the metadata fields that are sent to
+Companion, which stores them as S3 object metadata (`boolean | Array`, default:
+`true`).
+
+- Set it to `false` to not send any fields (or an empty array).
+- Set it to `['name']` to only send the `name` field.
+- Set it to `true` (the default) to send _all_ metadata fields.
+
+:::note
+
+Object metadata is only sent in the [Companion](#companionendpoint) mode. The
+two direct signing modes upload the file contents and nothing else.
+
+:::
+
+## S3-compatible services
+
+Any service that speaks the S3 API works in every signing mode. For
+[`signRequest`](#signrequestrequest) there is nothing to configure, as your
+signer decides the host. For [`getCredentials`](#getcredentials), point
+[`s3Endpoint`](#s3endpoint) at the service and set the [`region`](#region) it
+expects.
+
+Cloudflare R2:
+
+```js
+uppy.use(AwsS3, {
+  s3Endpoint: 'https://<account-id>.r2.cloudflarestorage.com/my-bucket',
+  region: 'auto',
+  getCredentials,
+})
+```
+
+MinIO, or another self-hosted service:
+
+```js
+uppy.use(AwsS3, {
+  s3Endpoint: 'https://minio.my-app.com/my-bucket',
+  region: 'us-east-1',
+  getCredentials,
+})
+```
+
+## Bucket and CORS setup
+
+S3 buckets do not allow public uploads for security reasons. To allow Uppy and
+the browser to upload directly to a bucket, its CORS permissions need to be
+configured.
+
+CORS permissions can be found in the
+[S3 Management Console](https://console.aws.amazon.com/s3/home). Click the
+bucket that will receive the uploads, then go into the `Permissions` tab and
+select the `CORS configuration` button. A JSON document will be shown that
+defines the CORS configuration. (AWS used to use XML but now only allow JSON).
+More information about the
+[S3 CORS format here](https://docs.amazonaws.cn/en_us/AmazonS3/latest/userguide/ManageCorsUsing.html).
+
+The configuration required for Uppy is this:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://my-app.com"],
+    "AllowedMethods": ["GET", "PUT", "POST", "DELETE"],
+    "MaxAgeSeconds": 3000,
+    "AllowedHeaders": ["content-type"],
+    "ExposeHeaders": ["ETag", "Location"]
+  },
+  {
+    "AllowedOrigins": ["*"],
+    "AllowedMethods": ["GET"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+A good practice is to use two CORS rules: one for uploading files (the first
+object in the array) and one for viewing them from the browser (the second).
+CORS only controls which origins the browser lets read the responses. Whether an
+object can be viewed at all is decided by your bucket policy and ACLs, not by
+this rule.
+
+`ExposeHeaders` has to include `ETag`, or multipart uploads cannot be completed:
+the browser needs to read the `ETag` of every part it uploads. `DELETE` is used
+to abort a multipart upload when the user cancels one, and `GET` to list the
+parts of an upload that is being resumed.
+
+`AllowedHeaders` has to list every header Uppy sets on the request. That is
+`content-type`, plus any header your [`signRequest`](#signrequestrequest)
+returns, such as `content-disposition`. A header missing here fails the CORS
+preflight before the upload starts.
+
+If you are using an IAM policy to allow access to the S3 bucket, the policy
+needs at least the `s3:PutObject`, `s3:ListMultipartUploadParts` (listing parts
+when an upload resumes), and `s3:AbortMultipartUpload` (cancelling an upload)
+permissions scoped to the bucket in question. Add `s3:PutObjectAcl` only if you
+configure an ACL on uploads. In-depth documentation about CORS rules is
+available on the
+[AWS documentation site](https://docs.aws.amazon.com/AmazonS3/latest/dev/cors.html).
+
+## Use with TypeScript
+
+Uppy always puts the response to an upload in `file.response.body`. If you want
+this to be type safe with `@uppy/aws-s3`, you can import the `AwsBody` type and
+pass it as the second generic to `Uppy`.
+
+```ts {3,12} showLineNumbers
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import AwsS3, { type AwsBody } from '@uppy/aws-s3'
+
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+
+// Set this to `any` or `Record<string, unknown>`
+// if you do not set any metadata yourself
+type Meta = { license: string }
+
+const uppy = new Uppy<Meta, AwsBody>()
+  .use(Dashboard, { inline: true, target: 'body' })
+  .use(AwsS3, { companionEndpoint: 'https://companion.uppy.io' })
+
+const id = uppy.addFile(/* … */)
+
+await uppy.upload()
+
+const body = uppy.getFile(id).response.body!
+const { location, key } = body // This is now type safe
+```
+
+[`shouldusemultipart`]: #shouldusemultipartfile
+[companion docs]: /docs/companion

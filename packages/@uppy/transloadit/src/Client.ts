@@ -102,7 +102,7 @@ export default class Client<M extends Meta, B extends Body> {
     return response.json()
   }
 
-  async createAssembly({
+  createAssembly({
     params,
     fields,
     signature,
@@ -135,7 +135,7 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Reserve resources for a file in an Assembly. Then addFile can be used later.
    */
-  async reserveFile(
+  reserveFile(
     assembly: AssemblyResponse,
     file: UppyFile<M, B>,
   ): Promise<AssemblyResponse> {
@@ -153,7 +153,7 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Import a remote file to an Assembly.
    */
-  async addFile(
+  addFile(
     assembly: AssemblyResponse,
     file: UppyFile<M, B>,
   ): Promise<AssemblyResponse> {
@@ -190,13 +190,13 @@ export default class Client<M extends Meta, B extends Body> {
   /**
    * Get the current status for an assembly.
    */
-  async getAssemblyStatus(url: string): Promise<AssemblyResponse> {
+  getAssemblyStatus(url: string): Promise<AssemblyResponse> {
     return this.#fetchJSON(url, { headers: this.#headers }).catch((err) =>
       this.#reportError(err, { url, type: 'STATUS_ERROR' }),
     )
   }
 
-  async submitError(
+  submitError(
     err: { message?: string; details?: string },
     {
       endpoint,

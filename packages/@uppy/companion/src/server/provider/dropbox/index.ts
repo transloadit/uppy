@@ -44,7 +44,7 @@ type DropboxUserInfo = {
   }
 }
 
-async function getUserInfo({
+function getUserInfo({
   client,
 }: {
   client: DropboxClient
@@ -106,7 +106,7 @@ const getOauthClient = () =>
     prefixUrl: 'https://api.dropboxapi.com/oauth2',
   })
 
-async function list({
+function list({
   client,
   directory,
   query,
@@ -210,7 +210,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
   /**
    * Search entries
    */
-  override async search(
+  override search(
     options: ProviderSearchOptions<DropboxUserSession>,
   ): Promise<ProviderSearchResponse> {
     return this.#withErrorHandling(
@@ -232,7 +232,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
   /**
    * List folder entries
    */
-  override async list(
+  override list(
     options: ProviderListOptions<DropboxUserSession>,
   ): Promise<ProviderListResponse> {
     return this.#withErrorHandling('provider.dropbox.list.error', async () => {
@@ -251,7 +251,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<DropboxUserSession>): Promise<ProviderDownloadResponse> {
@@ -276,7 +276,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     )
   }
 
-  override async thumbnail({
+  override thumbnail({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderThumbnailOptions<DropboxUserSession>): Promise<ProviderThumbnailResponse> {
@@ -304,7 +304,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     )
   }
 
-  override async size({
+  override size({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderSizeOptions<DropboxUserSession>): Promise<number> {
@@ -326,7 +326,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     })
   }
 
-  override async logout({
+  override logout({
     providerUserSession: { accessToken: token },
   }: ProviderLogoutOptions<DropboxUserSession>): Promise<ProviderLogoutResponse> {
     return this.#withErrorHandling(
@@ -341,7 +341,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     )
   }
 
-  override async refreshToken({
+  override refreshToken({
     clientId,
     clientSecret,
     refreshToken,
@@ -368,7 +368,7 @@ export default class Dropbox extends Provider<DropboxUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

@@ -35,9 +35,9 @@ describe('TaskQueue', () => {
       started.push('first')
       await runningBlocker.promise
     })
-    const queued = queue.add(async () => {
+    const queued = queue.add(() => {
       started.push('second')
-      return 'second'
+      return Promise.resolve('second')
     })
 
     const reason = new Error('nope')
@@ -89,14 +89,14 @@ describe('TaskQueue', () => {
     queue.pause()
 
     const order: string[] = []
-    const makeTask = (label: string) => async () => {
+    const makeTask = (label: string) => () => {
       order.push(label)
-      return label
+      return Promise.resolve(label)
     }
 
-    const wrapped = queue.wrapPromiseFunction(async (value: string) => {
+    const wrapped = queue.wrapPromiseFunction((value: string) => {
       order.push(`wrapped:${value}`)
-      return value.toUpperCase()
+      return Promise.resolve(value.toUpperCase())
     })
 
     const first = queue.add(makeTask('first'))
@@ -109,6 +109,23 @@ describe('TaskQueue', () => {
     await expect(first).resolves.toBe('first')
     await expect(wrappedPromise).resolves.toBe('HELLO')
     expect(order).toEqual(['first', 'wrapped:hello'])
+  })
+
+  it('wrapPromiseFunction accepts synchronous functions', async () => {
+    const queue = new TaskQueue({ concurrency: 1 })
+
+    const double = queue.wrapPromiseFunction((value: number) => value * 2)
+    await expect(double(21)).resolves.toBe(42)
+
+    const reason = new Error('nope')
+    const fail = queue.wrapPromiseFunction(() => {
+      throw reason
+    })
+    await expect(fail()).rejects.toBe(reason)
+
+    // The queue slots were released.
+    expect(queue.running).toBe(0)
+    await expect(double(1)).resolves.toBe(2)
   })
 
   it('updates concurrency via setter and starts additional tasks', async () => {
@@ -222,9 +239,9 @@ describe('TaskQueue', () => {
       return 'first'
     })
 
-    const second = queue.add(async () => {
+    const second = queue.add(() => {
       started2.resolve()
-      return 'second'
+      return Promise.resolve('second')
     })
 
     await started1.promise

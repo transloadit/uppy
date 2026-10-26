@@ -1,0 +1,97 @@
+name: Website
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'website/**'
+      - 'packages/@uppy/**'
+      - 'packages/uppy/**'
+      - 'yarn.lock'
+      - '.github/workflows/website.yml'
+      - '.remarkrc.mjs'
+      - '.remarkignore'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'website/**'
+      - 'packages/@uppy/**'
+      - 'packages/uppy/**'
+      - 'yarn.lock'
+      - '.github/workflows/website.yml'
+      - '.remarkrc.mjs'
+      - '.remarkignore'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
+jobs:
+  lint:
+    name: Lint (uppy.io)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+      - name: Check static file sizes
+        # Media belongs on the Smart CDN, see CONTRIBUTING.md
+        run: |
+          large=$(find website/static -type f -size +100k -not -name '*.woff2')
+          if [ -n "$large" ]; then
+            echo "::error::Files over 100 KB in website/static:"
+            echo "$large"
+            exit 1
+          fi
+      - name: Install dependencies
+        run: corepack yarn workspaces focus uppy-io
+      - name: Lint
+        run: corepack yarn workspace uppy-io lint
+
+  build:
+    name: Build and test (uppy.io)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run:
+          echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - uses: actions/setup-node@v7
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Build Uppy
+        run: corepack yarn build
+      - name: Build website
+        run: corepack yarn workspace uppy-io build
+      - name: Test website
+        run: corepack yarn workspace uppy-io test

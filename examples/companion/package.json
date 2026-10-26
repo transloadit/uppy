@@ -6,7 +6,7 @@
     "body-parser": "^2.2.2",
     "express": "^5.2.1",
     "express-session": "^1.15.6",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   },
   "license": "ISC",
   "main": "index.js",

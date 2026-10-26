@@ -4,15 +4,9 @@ type UserProps = {
   i18n: (phrase: string) => string
   logout: () => void
   username: string | null
-  disabled?: boolean
 }
 
-export default function User({
-  i18n,
-  logout,
-  username,
-  disabled = false,
-}: UserProps) {
+export default function User({ i18n, logout, username }: UserProps) {
   return (
     <Fragment>
       {username && (
@@ -23,7 +17,6 @@ export default function User({
       <button
         type="button"
         onClick={logout}
-        disabled={disabled}
         className="uppy-u-reset uppy-c-btn uppy-ProviderBrowser-userLogout"
         key="logout"
       >

@@ -10,13 +10,14 @@
     "formidable": "^3.2.4"
   },
   "devDependencies": {
+    "@types/formidable": "^3.5.1",
     "npm-run-all2": "^9.0.3",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   },
   "private": true,
   "scripts": {
     "start": "npm-run-all --parallel start:server start:client",
     "start:client": "vite",
-    "start:server": "node server.js"
+    "start:server": "node server.ts"
   }
 }

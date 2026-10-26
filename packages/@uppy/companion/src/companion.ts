@@ -40,6 +40,9 @@ import * as redis from './server/redis.js'
 import socket from './server/socket.js'
 import type { CompanionRuntimeOptions } from './types/companion-options.js'
 
+export type { ProviderListResponse } from './server/provider/Provider.js'
+export type { CompanionInitOptions }
+
 export { socket }
 
 const grantConfig = grantConfigFn()

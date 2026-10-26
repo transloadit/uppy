@@ -8,6 +8,7 @@
  * it. Doing that in the browser keeps each server request short-lived, lets
  * the user cancel, and lets an interrupted operation be re-run.
  */
+import type { Promisable } from 'type-fest'
 import { splitKey } from './keys.js'
 
 /** One entry of a Companion listing; only what the walk needs. */
@@ -33,18 +34,21 @@ type RequestOptions = { signal?: AbortSignal | undefined }
  * them) and URL-encoded keys for `list()` (as Companion's listing reports them).
  */
 export type FolderMoveProvider = {
-  list(directory: string | null, options: RequestOptions): Promise<ListResponse>
+  list(
+    directory: string | null,
+    options: RequestOptions,
+  ): Promisable<ListResponse>
   createFolder(
     parentId: string | null,
     name: string,
     options?: RequestOptions,
-  ): Promise<unknown>
+  ): Promisable<unknown>
   moveItem(
     id: string,
     destination: string,
     options?: RequestOptions,
-  ): Promise<unknown>
-  deleteItem(id: string, options?: RequestOptions): Promise<unknown>
+  ): Promisable<unknown>
+  deleteItem(id: string, options?: RequestOptions): Promisable<unknown>
 }
 
 /** What `moveFolder` and `deleteFolder` share. */
@@ -152,23 +156,32 @@ async function walkFolder(
 async function forEachFile(
   files: string[],
   { concurrency = 4, signal, onProgress }: FolderOperationOptions,
-  perFile: (file: string) => Promise<unknown>,
+  perFile: (file: string) => Promisable<unknown>,
 ): Promise<void> {
   let done = 0
   let next = 0
+  // The first failure (an abort included) stops the hand-out. The workers busy
+  // at that moment finish their file, so nothing is still running once this
+  // settles and the caller refreshes or starts something else.
+  let failure: { error: unknown } | undefined
   onProgress?.(0, files.length)
   const workers = Array.from(
     { length: Math.max(1, Math.min(concurrency, files.length)) },
     async () => {
-      while (next < files.length) {
-        throwIfAborted(signal)
-        await perFile(files[next++])
-        done += 1
-        onProgress?.(done, files.length)
+      try {
+        while (failure === undefined && next < files.length) {
+          throwIfAborted(signal)
+          await perFile(files[next++])
+          done += 1
+          onProgress?.(done, files.length)
+        }
+      } catch (error) {
+        failure ??= { error }
       }
     },
   )
   await Promise.all(workers)
+  if (failure) throw failure.error
 }
 
 /** Deletes the (by now empty) folders, deepest first, then `root` itself. */

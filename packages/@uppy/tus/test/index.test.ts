@@ -53,7 +53,7 @@ vi.mock('tus-js-client', async (importOriginal) => {
 
 describe('Tus', () => {
   it('Throws errors if autoRetry option is true', () => {
-    const uppy = new Core()
+    using uppy = new Core()
 
     expect(() => {
       // @ts-expect-error removed
@@ -64,7 +64,7 @@ describe('Tus', () => {
   })
 
   it('Throws errors if autoRetry option is false', () => {
-    const uppy = new Core()
+    using uppy = new Core()
 
     expect(() => {
       // @ts-expect-error removed
@@ -75,7 +75,7 @@ describe('Tus', () => {
   })
 
   it('Throws errors if autoRetry option is `undefined`', () => {
-    const uppy = new Core()
+    using uppy = new Core()
 
     expect(() => {
       // @ts-expect-error removed
@@ -86,7 +86,7 @@ describe('Tus', () => {
   })
 
   it('propagates the TusBody type', () => {
-    const uppy = new Core<any, TusBody>()
+    using uppy = new Core<any, TusBody>()
     const id = uppy.addFile({ name: 'test.jpg', data: { size: 1024 } })
     const file = uppy.getFile(id)
     expectTypeOf(file.response?.body).toEqualTypeOf<
@@ -96,7 +96,7 @@ describe('Tus', () => {
 
   describe('upload-error response', () => {
     it('sends the server response over the upload-error event', async () => {
-      const core = new Core<any, TusBody>()
+      using core = new Core<any, TusBody>()
       core.use(Tus, {
         endpoint: 'https://fake-endpoint.uppy.io/files/',
         retryDelays: [],
