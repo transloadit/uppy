@@ -34,6 +34,39 @@ describe('handleError', () => {
     )
   })
 
+  it('never includes nested request URLs or response bodies in user feedback', () => {
+    const uppy = createUppy()
+    const error = new ErrorWithCause('Failed POST https://private.example/token', {
+      cause: new Error('upstream-body-with-secret'),
+    })
+
+    handleError(uppy)(error)
+
+    expect(uppy.info).toHaveBeenCalledExactlyOnceWith(
+      'translated:companionError',
+      'warning',
+      5000,
+    )
+    const notices = JSON.stringify(uppy.info.mock.calls)
+    expect(notices).not.toContain('private.example')
+    expect(notices).not.toContain('upstream-body-with-secret')
+  })
+
+  it('reports one warning per separate failed connection attempt', () => {
+    const uppy = createUppy()
+    const report = handleError(uppy)
+
+    report(new ErrorWithCause('request failed', { cause: new Error('first') }))
+    expect(uppy.info).toHaveBeenCalledTimes(1)
+    report(new ErrorWithCause('request failed', { cause: new Error('second') }))
+
+    expect(uppy.info).toHaveBeenCalledTimes(2)
+    expect(uppy.info.mock.calls).toEqual([
+      ['translated:companionError', 'warning', 5000],
+      ['translated:companionError', 'warning', 5000],
+    ])
+  })
+
   it('keeps non-request errors out of the Companion warning path', () => {
     const uppy = createUppy()
 
