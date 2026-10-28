@@ -6,6 +6,7 @@ type UploadOptions = {
 
 let lastUploadFile: unknown
 let nextRequestUrl: string | undefined
+let hang = false
 
 export function __getLastUploadFile(): unknown {
   return lastUploadFile
@@ -15,9 +16,15 @@ export function __setNextRequestUrl(url: string | undefined): void {
   nextRequestUrl = url
 }
 
+/** Make uploads never finish, like a tus-js-client waiting on its source. */
+export function __setHang(value: boolean): void {
+  hang = value
+}
+
 export function __resetTusMockState(): void {
   lastUploadFile = undefined
   nextRequestUrl = undefined
+  hang = false
 }
 
 export class Upload {
@@ -50,10 +57,11 @@ export class Upload {
       if (typeof onError === 'function') onError(err)
       return
     }
+    if (hang) return
     setTimeout(this._triggerProgressThenSuccess.bind(this), 100)
   }
 
-  abort() {
+  async abort() {
     // noop
   }
 }

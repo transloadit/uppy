@@ -11,6 +11,7 @@ import {
   afterAll,
   afterEach,
   beforeAll,
+  beforeEach,
   describe,
   expect,
   test,
@@ -21,6 +22,8 @@ import Emitter from '../dist/server/emitter/index.js'
 import { isRecord } from '../dist/server/helpers/type-guards.js'
 import { startDownUpload } from '../dist/server/helpers/upload.js'
 import Uploader, {
+  PAUSED_TIMEOUT_MS,
+  STALL_TIMEOUT_MS,
   toClientError,
   ValidationError,
 } from '../dist/server/Uploader.js'
@@ -36,6 +39,14 @@ function getTusMockLastUploadFile(): unknown {
     throw new Error('Expected tus mock to expose __getLastUploadFile()')
   }
   return getter()
+}
+
+function setTusHang(value: boolean): void {
+  const setter = Reflect.get(tusClient, '__setHang')
+  if (typeof setter !== 'function') {
+    throw new Error('Expected tus mock to expose __setHang()')
+  }
+  setter(value)
 }
 
 function resetTusMockState(): void {
@@ -604,6 +615,82 @@ describe('uploader', () => {
       req.body = prevBody
       req.companion = prevCompanion
     }
+  })
+
+  describe('tus transfers that stop moving', () => {
+    const startHangingUpload = () => {
+      setTusHang(true)
+      const uploader = new Uploader({
+        companionOptions: { ...companionOptions, streamingUpload: true },
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        size: 1000,
+        pathPrefix,
+        metadata: { name: 'file.txt', type: 'text/plain' },
+      })
+      const stream = new PassThrough()
+      const upload = uploader.uploadStream(stream, requireMockReq())
+      upload.catch(() => {})
+      return { uploader, stream, upload }
+    }
+
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['setInterval', 'clearInterval', 'Date'] })
+    })
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    test('a transfer whose source stops sending is abandoned', async () => {
+      const { uploader, upload } = startHangingUpload()
+      await vi.advanceTimersByTimeAsync(2 * STALL_TIMEOUT_MS)
+      await expect(upload).rejects.toThrow('Upload stalled')
+      uploader.removeEmitterListeners()
+    })
+
+    test('a transfer whose source keeps sending is left alone', async () => {
+      const { uploader, stream, upload } = startHangingUpload()
+      const settled = vi.fn()
+      upload.then(settled, settled)
+      for (let i = 0; i < 4; i++) {
+        stream.write(Buffer.alloc(10))
+        await vi.advanceTimersByTimeAsync(STALL_TIMEOUT_MS)
+      }
+      expect(settled).not.toHaveBeenCalled()
+      Emitter().emit(`cancel:${uploader.token}`)
+      await expect(upload).rejects.toThrow('Canceled')
+      uploader.removeEmitterListeners()
+    })
+
+    test('a transfer paused and never resumed is abandoned', async () => {
+      const { uploader, upload } = startHangingUpload()
+      // The Redis emitter delivers asynchronously: let the pause land before
+      // the clock moves. Our listener runs after the uploader's.
+      const paused = Promise.withResolvers<void>()
+      await Emitter().on(`pause:${uploader.token}`, () => paused.resolve())
+      Emitter().emit(`pause:${uploader.token}`)
+      await paused.promise
+      await vi.advanceTimersByTimeAsync(PAUSED_TIMEOUT_MS - STALL_TIMEOUT_MS)
+      const settled = vi.fn()
+      upload.then(settled, settled)
+      await vi.advanceTimersByTimeAsync(0)
+      expect(settled).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(2 * STALL_TIMEOUT_MS)
+      await expect(upload).rejects.toThrow('Upload was paused for too long')
+      uploader.removeEmitterListeners()
+    })
+
+    test('cancel settles the upload even when the source already closed', async () => {
+      const { uploader, stream, upload } = startHangingUpload()
+      await vi.advanceTimersByTimeAsync(0)
+      stream.destroy()
+      // The Redis emitter subscribes asynchronously; once a later subscription
+      // on the same connection is in place, the uploader's is too.
+      await Emitter().on(`cancel:${uploader.token}`, () => {})
+      Emitter().emit(`cancel:${uploader.token}`)
+      await expect(upload).rejects.toThrow('Canceled')
+      uploader.removeEmitterListeners()
+    })
   })
 
   test('does not retry a failed PUT upload', async () => {

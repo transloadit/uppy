@@ -275,6 +275,11 @@ function limitToAnnouncedSize(
   return limiter
 }
 
+// A tus transfer keeps up to a whole chunk of the source in memory, so one that
+// stops moving must not wait forever.
+export const STALL_TIMEOUT_MS = 2 * 60 * 1000
+export const PAUSED_TIMEOUT_MS = 10 * 60 * 1000
+
 const states = {
   idle: 'idle',
   uploading: 'uploading',
@@ -377,6 +382,7 @@ export default class Uploader {
         logger.debug('Received from client: pause', 'uploader', this.shortToken)
         if (this.#uploadState !== states.uploading) return
         this.#uploadState = states.paused
+        this.#pausedAt = Date.now()
         if (this.tus) {
           this.tus.abort()
         }
@@ -428,6 +434,45 @@ export default class Uploader {
 
   #canceled = false
 
+  #pausedAt = 0
+
+  #lastBytesUploaded = 0
+
+  /** Rejects the upload in progress; see uploadStream. */
+  #rejectUpload: ((err: Error) => void) | undefined
+
+  /**
+   * Abandons a tus transfer that has been paused for PAUSED_TIMEOUT_MS, or that
+   * made no progress, neither reading the source nor sending, for
+   * STALL_TIMEOUT_MS. A source that keeps trickling in counts as progress.
+   * Samples are STALL_TIMEOUT_MS apart, so a stall is caught after 2-4 minutes
+   * and a pause after 10-12.
+   *
+   * readableLength sees the source being read because tus-js-client reads
+   * the stream with read(chunkSize): bytes wait in this stream's buffer until a
+   * whole chunk is there, instead of being copied out as they arrive.
+   */
+  #watchTusTransfer(): () => void {
+    let last: string | undefined
+    const timer = setInterval(() => {
+      if (this.#uploadState === states.paused) {
+        last = undefined
+        if (Date.now() - this.#pausedAt < PAUSED_TIMEOUT_MS) return
+        this.abortReadStream(new Error('Upload was paused for too long'))
+        return
+      }
+      const now = `${this.#lastBytesUploaded}:${this.readStream?.readableLength}`
+      if (now !== last) {
+        last = now
+        return
+      }
+      this.tus?.abort().catch(() => {})
+      this.abortReadStream(new Error('Upload stalled'))
+    }, STALL_TIMEOUT_MS)
+    timer.unref()
+    return () => clearInterval(timer)
+  }
+
   /**
    * uploadUrls is checked once, on the endpoint the client named. The tus
    * server's creation response can then point the upload at a different
@@ -445,6 +490,8 @@ export default class Uploader {
   abortReadStream(err: Error): void {
     this.#uploadState = states.done
     if (this.readStream) this.readStream.destroy(err)
+    // A stream that already ended emits no 'error', so settle the upload here.
+    this.#rejectUpload?.(err)
   }
 
   _getUploadProtocol(): UploadProtocol {
@@ -515,6 +562,7 @@ export default class Uploader {
     stream: NodeReadableStream,
     req: Request,
   ): Promise<UploadResult | undefined> {
+    let stopWatching: (() => void) | undefined
     try {
       if (this.#uploadState !== states.idle)
         throw new Error('Can only start an upload in the idle state')
@@ -548,15 +596,23 @@ export default class Uploader {
         )
       }
 
+      if (this._getUploadProtocol() === PROTOCOLS.tus) {
+        stopWatching = this.#watchTusTransfer()
+      }
       const { url, extraData } = await Promise.race([
         this._uploadByProtocol(req, activeStream),
         // If we don't handle stream errors, we get unhandled error in node.
         new Promise<never>((_resolve, reject) =>
           activeStream.on('error', reject),
         ),
+        new Promise<never>((_resolve, reject) => {
+          this.#rejectUpload = reject
+        }),
       ])
       return { url, extraData }
     } finally {
+      stopWatching?.()
+      this.#rejectUpload = undefined
       this.#uploadState = states.done
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed)
@@ -756,6 +812,7 @@ export default class Uploader {
     bytesUploaded = 0,
     bytesTotalIn: number | null | undefined = 0,
   ): void {
+    this.#lastBytesUploaded = bytesUploaded
     const bytesTotal = bytesTotalIn || this.size || 0
 
     // If fully downloading before uploading, combine downloaded and uploaded bytes
