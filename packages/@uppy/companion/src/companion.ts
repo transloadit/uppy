@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import cookieParser from 'cookie-parser'
-import type { Express } from 'express'
+import type { Express, RequestHandler } from 'express'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
@@ -157,12 +157,40 @@ export function app(optionsArg: CompanionInitOptions): {
       : next(),
   )
 
+  // Grant stores an OAuth2 callback without `code` as the provider's response
+  // unchecked, and compares `state` only when the session has one. Let through
+  // only real authorization codes from a flow this session started, and errors.
+  const rejectUnstartedOAuthCallback: RequestHandler<{
+    oauthProvider: string
+    override?: string
+  }> = (req, res, next) => {
+    const { oauthProvider, override } = req.params
+    // override === 'callback' is Grant's own callback URL, matched the way Grant matches it
+    if (override !== 'callback' || grantConfig[oauthProvider]?.oauth === 1) {
+      next()
+      return
+    }
+    // same input object Grant reads
+    const input: Record<string, unknown> =
+      Object.keys(req.query).length > 0 ? req.query : (req.body ?? {})
+    if (input['code'] ? !req.session?.grant?.state : !input['error']) {
+      // Also what an expired session looks like: tell the user to retry.
+      res
+        .status(400)
+        .send('This login did not start here or has expired. Please try again.')
+      return
+    }
+    next()
+  }
+
   // override provider credentials at request time
   // Making `POST` request to the `/connect/:provider{/:override}` route requires a form body parser middleware:
   // See https://github.com/simov/grant#dynamic-http
   app.use(
     '/connect/:oauthProvider{/:override}',
     express.urlencoded({ extended: false, inflate: false }),
+    // before the credentials middleware, which fetches provider keys
+    rejectUnstartedOAuthCallback,
     getCredentialsOverrideMiddleware(
       providers as Record<string, typeof Provider>,
       options,

@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto'
 import type { NextFunction, Request, Response } from 'express'
 import { publishAuthCallback } from '../auth-callback.js'
 import {
@@ -15,6 +16,20 @@ export default async function sendToken(
   const companion = req.companion
   const uppyAuthToken = companion.authToken
   const { secret } = companion.options
+
+  // Only the token this session's own OAuth callback minted, and only once.
+  const grant = req.session?.grant
+  const pending = Buffer.from(grant?.pendingAuthToken ?? '')
+  const given = Buffer.from(uppyAuthToken ?? '')
+  if (
+    pending.length === 0 ||
+    pending.length !== given.length ||
+    !timingSafeEqual(pending, given)
+  ) {
+    next()
+    return
+  }
+  delete grant?.pendingAuthToken
 
   const { state } = oAuthState.getGrantDynamicFromRequest(req)
   if (!state) {
