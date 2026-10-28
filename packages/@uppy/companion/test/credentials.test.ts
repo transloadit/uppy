@@ -144,3 +144,38 @@ describe('remote credentials with transloadit_gateway', () => {
     )
   })
 })
+
+describe('credentials endpoint failures', () => {
+  const zoomCredentialsParams = Buffer.from(
+    JSON.stringify({ params: 'ZOOM-CREDENTIALS-PARAMS' }),
+  ).toString('base64')
+
+  test('the endpoint error body is not passed on to the client', async () => {
+    nock('http://localhost:2111')
+      .post('/zoom-keys')
+      .reply(500, 'Traceback: internal detail')
+    const res = await request(await getZoomServer())
+      .post('/zoom/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'any')
+      .set('uppy-credentials-params', zoomCredentialsParams)
+      .send({ event: 'app_deauthorized', payload: {} })
+    expect(res.status).toBe(502)
+    expect(res.text).not.toContain('internal detail')
+    expect(res.body).toEqual({
+      message: 'HTTP 500: Could not fetch credentials',
+    })
+  })
+
+  test('the endpoint URL is not passed on to the client', async () => {
+    nock('http://localhost:2111').post('/zoom-keys').reply(200, 'not json')
+    const res = await request(await getZoomServer())
+      .post('/zoom/deauthorization/callback')
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'any')
+      .set('uppy-credentials-params', zoomCredentialsParams)
+      .send({ event: 'app_deauthorized', payload: {} })
+    expect(res.status).toBe(500)
+    expect(res.text).not.toContain('localhost:2111')
+  })
+})
