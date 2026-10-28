@@ -1,4 +1,5 @@
 import dns from 'node:dns'
+import { Resolver } from 'node:dns/promises'
 import http from 'node:http'
 import https from 'node:https'
 import type { LookupFunction } from 'node:net'
@@ -45,6 +46,101 @@ const validateURL = (
 
 export { validateURL }
 
+// dns.lookup() runs getaddrinfo() on libuv's small thread pool, where a lookup
+// can neither be cancelled nor timed out, so a few slow names chosen by clients
+// would stall every lookup in the process. Ask the DNS servers directly instead.
+const resolver = new Resolver({ timeout: 2000, tries: 2 })
+
+type Lookup = (
+  hostname: string,
+  options: dns.LookupOptions,
+  callback: (
+    err: NodeJS.ErrnoException | null,
+    address: string | dns.LookupAddress[],
+    family?: number,
+  ) => void,
+) => void
+
+// c-ares applies timeout x tries to every configured DNS server, and a server
+// may drop AAAA (or A) queries entirely. So once one address family has
+// answered, wait only briefly for the other, and give up on a name after a
+// deadline, well within got's lookup timeout.
+const OTHER_FAMILY_GRACE_MS = 300
+const RESOLVE_DEADLINE_MS = 5_000
+
+export async function resolveAddresses(
+  hostname: string,
+  family: 0 | 4 | 6,
+): Promise<dns.LookupAddress[]> {
+  const queries: [4 | 6, Promise<string[]>][] = []
+  if (family !== 6) queries.push([4, resolver.resolve4(hostname)])
+  if (family !== 4) queries.push([6, resolver.resolve6(hostname)])
+  const found: Record<4 | 6, string[]> = { 4: [], 6: [] }
+  const errors: unknown[] = []
+  let settled = 0
+  await new Promise<void>((resolve) => {
+    let grace: NodeJS.Timeout | undefined
+    const deadline = setTimeout(resolve, RESOLVE_DEADLINE_MS)
+    const finish = () => {
+      clearTimeout(deadline)
+      clearTimeout(grace)
+      resolve()
+    }
+    for (const [queryFamily, query] of queries) {
+      query.then(
+        (addresses) => {
+          found[queryFamily] = addresses
+          settled++
+          if (settled === queries.length) finish()
+          else if (addresses.length > 0) {
+            grace ??= setTimeout(finish, OTHER_FAMILY_GRACE_MS)
+          }
+        },
+        (err: unknown) => {
+          errors.push(err)
+          settled++
+          if (settled === queries.length) finish()
+        },
+      )
+    }
+  })
+  const addresses = [
+    ...found[4].map((address) => ({ address, family: 4 })),
+    ...found[6].map((address) => ({ address, family: 6 })),
+  ]
+  if (addresses.length > 0) return addresses
+  // like dns.lookup(): a name without addresses is ENOTFOUND
+  const timedOut =
+    settled < queries.length ||
+    errors.some(
+      (err) => (err as NodeJS.ErrnoException | undefined)?.code === 'ETIMEOUT',
+    )
+  const code = timedOut ? 'ETIMEOUT' : 'ENOTFOUND'
+  throw Object.assign(new Error(`getaddrinfo ${code} ${hostname}`), {
+    code,
+    hostname,
+  })
+}
+
+const resolveFromDnsServers: Lookup = (hostname, options, callback) => {
+  const { family } = options
+  resolveAddresses(
+    hostname,
+    family === 4 || family === 'IPv4'
+      ? 4
+      : family === 6 || family === 'IPv6'
+        ? 6
+        : 0,
+  ).then(
+    (addresses) => {
+      const [first] = addresses
+      if (options.all || !first) callback(null, addresses)
+      else callback(null, first.address, first.family)
+    },
+    (err) => callback(err, options.all ? [] : ''),
+  )
+}
+
 /**
  * Returns http Agent that will prevent requests to private IPs (to prevent SSRF)
  */
@@ -76,8 +172,10 @@ function getProtectedHttpAgent({
   protocol: string
   allowLocalIPs: boolean
 }): typeof http.Agent | typeof https.Agent {
+  // Allowed local IPs mean a dev setup, where names often live in /etc/hosts.
+  const lookup: Lookup = allowLocalIPs ? dns.lookup : resolveFromDnsServers
   const dnsLookup: LookupFunction = (hostname, options, callback) => {
-    dns.lookup(hostname, options, (err, addresses, maybeFamily) => {
+    lookup(hostname, options, (err, addresses, maybeFamily) => {
       if (err) {
         callback(err, addresses, maybeFamily)
         return
@@ -85,7 +183,7 @@ function getProtectedHttpAgent({
 
       const toValidate = Array.isArray(addresses)
         ? addresses
-        : [{ address: addresses, family: maybeFamily }]
+        : [{ address: addresses, family: maybeFamily ?? 0 }]
 
       // because dns.lookup seems to be called with option `all: true`, if we are on an ipv6 system,
       // `addresses` could contain a list of ipv4 addresses as well as ipv6 mapped addresses (rfc6052) which we cannot allow
