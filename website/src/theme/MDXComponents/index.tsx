@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import React from 'react'
 import MDXComponents from '@theme-original/MDXComponents'
 
@@ -14,7 +15,7 @@ import MDXComponents from '@theme-original/MDXComponents'
  * Only task-list checkboxes are touched. Any other input written into MDX keeps
  * whatever attributes it was given.
  */
-function MDXInput(props: React.ComponentProps<'input'>): JSX.Element {
+function MDXInput(props: React.ComponentProps<'input'>): ReactNode {
   const isTaskListCheckbox =
     props.type === 'checkbox' &&
     props.disabled &&

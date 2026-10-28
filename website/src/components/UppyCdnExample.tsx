@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import React from 'react'
 import CodeBlock from '@theme/CodeBlock'
 import Admonition from '@theme/Admonition'
@@ -7,12 +8,18 @@ import packageJson from 'uppy/package.json'
 
 const { version: uppyVersion } = packageJson
 
+interface UppyCdnExampleProps {
+  children: ReactNode
+  uppyCssName: string
+  uppyJsName: string
+}
+
 export default function UppyCdnExample({
   children,
   uppyCssName = 'uppy.min.css',
   uppyJsName = 'uppy.min.mjs',
-}) {
-  let lines = []
+}: UppyCdnExampleProps): ReactNode {
+  let lines: string[] = []
 
   React.Children.toArray(children).forEach((child) => {
     lines = [

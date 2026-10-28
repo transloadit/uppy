@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import React from 'react'
 import { translate } from '@docusaurus/Translate'
 
@@ -15,7 +16,7 @@ type Props = {
 export default function IconExternalLink({
   width = 14,
   height = 14,
-}: Props): JSX.Element {
+}: Props): ReactNode {
   return (
     <svg
       width={width}

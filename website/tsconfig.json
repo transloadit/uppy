@@ -1,9 +1,16 @@
 {
-  // This file is not used in compilation. It is here just for a nice editor experience.
   "extends": "@tsconfig/docusaurus",
+  "references": [
+    { "path": "../packages/@uppy/drag-drop/tsconfig.build.json" },
+    { "path": "../packages/@uppy/react/tsconfig.build.json" },
+    { "path": "../packages/uppy/tsconfig.build.json" }
+  ],
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": null,
     "resolveJsonModule": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@site/*": ["./*"]
+    }
   }
 }

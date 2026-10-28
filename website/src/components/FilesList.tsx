@@ -54,6 +54,7 @@ export default function FilesListDemo() {
   }, [uppy])
 
   useEffect(() => {
+    // @ts-expect-error This should not be an error.
     files.forEach((file) => uppy.addFile(file))
   }, [files])
 

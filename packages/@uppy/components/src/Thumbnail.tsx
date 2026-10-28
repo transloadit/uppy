@@ -1,9 +1,9 @@
-import type { Body, Meta, UppyFile } from '@uppy/core'
+import type { Meta, UppyFile } from '@uppy/core'
 import { useEffect, useMemo } from '@uppy/core/utils/preact/hooks'
 import type { UppyContext } from './types.js'
 
 export type ThumbnailProps = {
-  file: UppyFile<Meta, Body>
+  file: UppyFile<Meta, Record<string, never>>
   width?: string
   height?: string
   images?: boolean
