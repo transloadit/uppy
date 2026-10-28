@@ -8734,6 +8734,7 @@ __metadata:
     "@changesets/changelog-github": "npm:^1.0.1"
     "@changesets/cli": "npm:^3.0.2"
     mdast-comment-marker: "npm:^3.0.0"
+    mdxlint: "npm:^1.0.0"
     npm-run-all2: "npm:^9.0.3"
     remark-cli: "npm:^12.0.1"
     remark-directive: "npm:^4.0.0"
@@ -18152,6 +18153,22 @@ __metadata:
   version: 2.27.1
   resolution: "mdn-data@npm:2.27.1"
   checksum: 10/5046dc83a961b8ea82a5d6d8331d07df6b15faec61519ce2f83e49766702358e7e6af96413be977ff89080534be6762c1d5963b5dd1180c208a47c0a663226b2
+  languageName: node
+  linkType: hard
+
+"mdxlint@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "mdxlint@npm:1.0.0"
+  dependencies:
+    "@types/mdast": "npm:^4.0.0"
+    remark-mdx: "npm:^3.0.0"
+    remark-parse: "npm:^11.0.0"
+    remark-stringify: "npm:^11.0.0"
+    unified: "npm:^11.0.0"
+    unified-args: "npm:^11.0.0"
+  bin:
+    mdxlint: lib/bin.js
+  checksum: 10/fcbed3a48d847edeb2da5a4c3849bf2259c09024ff62009321f01eaf37b481017a849c176a465f65fd79598b4f04738a24909024cede81b3ac4bfd6601cfc57d
   languageName: node
   linkType: hard
 
