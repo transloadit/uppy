@@ -1231,30 +1231,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, username, searchString, searchResults, dialog } =
       this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-    const isManager = opts.mode === 'manager'
-    const selectable = !isManager || selectionActive
-    // A long operation owns the screen: anything that would start another
-    // request (and so abort it) is disabled or hidden meanwhile.
-    const busy =
-      this.#cancelLongOperation !== undefined || Boolean(loading)
-    // Nothing to select in a folder we know is empty (unlike one being listed).
-    const currentFolder = partialTree.find(({ id }) => id === currentFolderId)
-    const isEmptyFolder =
-      currentFolder?.type !== 'file' &&
-      currentFolder?.cached === true &&
-      !partialTree.some(
-        (node) => node.type !== 'root' && node.parentId === currentFolderId,
-      )
-    if (detailItemId) {
-      this.#detailItem =
-        partialTree.find(
-          (node): node is PartialTreeFile | PartialTreeFolderNode =>
-            node.type !== 'root' && node.id === detailItemId,
-        ) ?? this.#detailItem
-    }
-    const detailItem =
-      this.#detailItem?.id === detailItemId ? this.#detailItem : undefined
-
     return (
       <div
         className={classNames(

@@ -14,6 +14,34 @@ panel). Renaming, moving, deleting and new folders need `mode: 'manager'`, a sto
 dedicated file manager plugin. Manager mode is headless: render your file library with
 `useS3Manager` from `@uppy/react`. The Dashboard panel renders nothing in that mode.
 
+## Standalone file library
+
+The plugin extends `@uppy/core` and must be installed on a Uppy instance. It does not mount its own
+DOM in `mode: 'manager'`; use the framework-independent manager controller from `@uppy/components`,
+or the React `useS3Manager` hook. `@uppy/dashboard` is not required for this usage.
+
+```ts
+import { createS3ManagerController } from '@uppy/components'
+import Uppy from '@uppy/core'
+import TransloaditStorage from '@uppy/transloadit-storage'
+
+const uppy = new Uppy().use(TransloaditStorage, {
+  companionUrl: 'https://your-uppy-companion.example.com',
+  mode: 'manager',
+  getGrant: () => fetch('/api/storage/grant').then((r) => r.text()),
+})
+
+const manager = createS3ManagerController(uppy, 'TransloaditStorage', {
+  initialFolderKey: 'assets/',
+})
+manager.mount()
+```
+
+`mode: 'picker'` is the default for a Dashboard integration. There is no `standalone` option in the
+current API; manager mode deliberately has no rendered Dashboard panel. The browser still needs an
+authenticated Companion session or grant. Companion configuration and Workspace permissions remain
+server-side; the plugin itself does not accept a Workspace credential pair or bucket.
+
 ## Upload results are the durable handoff
 
 `storeUploads` and `buildStoreAssemblyParams()` default to `conflictStrategy: 'error'`.
