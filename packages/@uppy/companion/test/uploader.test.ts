@@ -376,6 +376,43 @@ describe('uploader', () => {
     })
   })
 
+  test('a tus upload paused while downloading the file first waits for resume', async () => {
+    const uploader = new Uploader({
+      companionOptions: { ...companionOptions, streamingUpload: false },
+      endpoint: 'http://url.myendpoint.com/files',
+      protocol: 'tus',
+      size: 17,
+      pathPrefix,
+      metadata: { name: 'file.txt', type: 'text/plain' },
+    })
+    const stream = new PassThrough()
+    const upload = uploader.uploadStream(stream, requireMockReq())
+    const settled = vi.fn()
+    upload.then(settled, settled)
+
+    // The Redis emitter delivers asynchronously; our listeners run after the
+    // uploader's.
+    const paused = Promise.withResolvers<void>()
+    await Emitter().on(`pause:${uploader.token}`, () => paused.resolve())
+    Emitter().emit(`pause:${uploader.token}`)
+    await paused.promise
+    // The download ends while paused. This used to drop the upload and open
+    // the temp file after deleting it: an unhandled ENOENT.
+    stream.end(Buffer.from('Some file content'))
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    expect(settled).not.toHaveBeenCalled()
+    expect(getTusMockLastUploadFile()).toBeInstanceOf(fs.ReadStream)
+
+    const resumed = Promise.withResolvers<void>()
+    await Emitter().on(`resume:${uploader.token}`, () => resumed.resolve())
+    Emitter().emit(`resume:${uploader.token}`)
+    await resumed.promise
+    await expect(upload).resolves.toMatchObject({
+      url: 'https://tus.endpoint/files/foo-bar',
+    })
+    uploader.removeEmitterListeners()
+  })
+
   test('upload functions with tus protocol without size', () => {
     const fileContent = Buffer.alloc(1e6)
     const stream = Readable.from([fileContent])

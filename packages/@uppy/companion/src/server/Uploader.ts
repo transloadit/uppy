@@ -569,6 +569,9 @@ export default class Uploader {
 
     this.size = size
 
+    // Canceled meanwhile: nothing will read the file, so don't open it.
+    if (this.#uploadState === states.done) return
+
     const fileStream = createReadStream(this.tmpPath)
     this.readStream = fileStream
   }
@@ -602,7 +605,9 @@ export default class Uploader {
         // The stream will then typically come from a "Transfer-Encoding: chunked" response
         await this._downloadStreamAsFile(this.readStream)
       }
-      if (this.#uploadState !== states.uploading) return undefined
+      // A tus upload paused while we downloaded goes on paused: resume starts
+      // it, and the paused timeout abandons it, as during a transfer.
+      if (this.#uploadState === states.done) return undefined
 
       let activeStream = this.readStream
       if (!activeStream) throw new Error('No readable stream available')
@@ -985,7 +990,7 @@ export default class Uploader {
 
       this.tus = new tus.Upload(stream, tusOptions)
 
-      this.tus.start()
+      if (this.#uploadState === states.uploading) this.tus.start()
     })
 
     if (this.tus != null && this.size != null) {
