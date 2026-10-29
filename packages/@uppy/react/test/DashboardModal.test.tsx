@@ -85,3 +85,37 @@ it('stops the camera when an open Camera panel is unmounted', async () => {
 
   expect(stop).toHaveBeenCalled()
 })
+
+it('restores focus when an open modal is unmounted', async () => {
+  using uppy = new Uppy()
+  const opener = document.createElement('button')
+  document.body.append(opener)
+  try {
+    opener.focus()
+    const { unmount } = render(<DashboardModal uppy={uppy} open />)
+    await vi.waitFor(() => {
+      expect(document.activeElement).not.toBe(opener)
+    })
+
+    unmount()
+
+    expect(document.activeElement).toBe(opener)
+  } finally {
+    opener.remove()
+  }
+})
+
+it('does not restore focus to an element removed with the modal', async () => {
+  using uppy = new Uppy()
+  const opener = document.createElement('button')
+  document.body.append(opener)
+  opener.focus()
+  const { unmount } = render(<DashboardModal uppy={uppy} open />)
+  await vi.waitFor(() => {
+    expect(document.activeElement).not.toBe(opener)
+  })
+  opener.remove()
+
+  expect(() => unmount()).not.toThrow()
+  expect(document.activeElement).toBe(document.body)
+})
