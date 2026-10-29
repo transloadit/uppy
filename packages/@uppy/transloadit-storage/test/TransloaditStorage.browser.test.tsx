@@ -247,4 +247,91 @@ describe('Transloadit Storage in the browser', () => {
     ])
     expect(companion.folders.has('docs/')).toBe(false)
   })
+
+  it('hides the Upload files button while a folder listing is in flight', async () => {
+    // PR 1: builtInToolbarActions() must return [] when loading is truthy, so
+    // the toolbar button is absent until navigation settles.
+    network.use(
+      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
+        http,
+      }),
+    )
+    uppy = new Uppy()
+      .use(FixtureUploader, {})
+      .use(Dashboard, {
+        target: document.createElement('div'),
+        inline: true,
+      })
+      .use(TransloaditStorage, {
+        companionUrl: COMPANION,
+        storeUploads: {
+          signAssembly: async (params) => ({ params, signature: 'test' }),
+        },
+      })
+    document.body.appendChild(
+      uppy.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
+        'Dashboard',
+      )!.el as Element,
+    )
+
+    const plugin =
+      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+
+    // Simulate navigation in flight: set loading to true.
+    plugin.setPluginState({ loading: true })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+
+    await expect
+      .element(page.getByRole('button', { name: 'Upload files' }))
+      .not.toBeInTheDocument()
+
+    // Simulate navigation complete: loading back to false.
+    plugin.setPluginState({ loading: false, authenticated: true })
+    await expect
+      .element(page.getByRole('button', { name: 'Upload files' }))
+      .toBeVisible()
+  })
+
+  it('rejects file drops during navigation and does not add files to the queue', async () => {
+    // PR 3: acceptsFileDrops must be false while loading is truthy, so a drop
+    // event that arrives during navigation cannot land in the stale folder.
+    network.use(
+      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
+        http,
+      }),
+    )
+    const signAssembly = vi.fn(async (params: any) => ({
+      params,
+      signature: 'test',
+    }))
+    uppy = new Uppy()
+      .use(FixtureUploader, {})
+      .use(Dashboard, {
+        target: document.createElement('div'),
+        inline: true,
+      })
+      .use(TransloaditStorage, {
+        companionUrl: COMPANION,
+        storeUploads: { signAssembly },
+      })
+    document.body.appendChild(
+      uppy.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
+        'Dashboard',
+      )!.el as Element,
+    )
+
+    const plugin =
+      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+
+    // Mark navigation as in-flight.
+    plugin.setPluginState({ loading: true })
+
+    // acceptsFileDrops must be false while navigating.
+    expect(plugin.acceptsFileDrops).toBe(false)
+
+    // A drop during navigation must not reach signAssembly.
+    expect(signAssembly).not.toHaveBeenCalled()
+    // No files should be in the queue.
+    expect(uppy.getFiles()).toHaveLength(0)
+  })
 })

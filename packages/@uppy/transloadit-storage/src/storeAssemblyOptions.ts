@@ -103,13 +103,27 @@ export function buildStoreAssemblyParams(
  * The params are built unsigned; `signAssembly` turns them into what the
  * Transloadit plugin sends.
  *
+ * When `getDestination` is provided it returns the destination prefix that was
+ * captured at file-acceptance time — immune to navigation that happens between
+ * acceptance and the async signing request. Without it, the current folder is
+ * read at signing time (the old behaviour, kept for external callers who
+ * compose their own signing).
+ *
  * @experimental `@uppy/transloadit-storage` is experimental: its options,
  * behaviour and Companion endpoints will change incompatibly, also in
  * minor releases.
  */
 export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
   uppy: Uppy<M, B>,
-  options: StoreUploadsOptions & { storagePluginId?: string },
+  options: StoreUploadsOptions & {
+    storagePluginId?: string
+    /**
+     * Returns the destination prefix pinned at file-acceptance time.  When
+     * provided, the signing closure uses this instead of reading the current
+     * folder, so navigation after acceptance cannot change the destination.
+     */
+    getDestination?: () => string
+  },
 ): () => Promise<SignedAssemblyOptions> {
   const pluginId = options.storagePluginId ?? 'TransloaditStorage'
   return async () => {
@@ -129,11 +143,11 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     ) {
       throw new UserFacingApiError(storage.i18n('storageNotConnected'))
     }
+    // Use the pinned destination when available; fall back to the current
+    // folder for external callers who do not pin.
+    const destination = options.getDestination?.() ?? openFolderKey(storage)
     return options.signAssembly(
-      buildStoreAssemblyParams(
-        openFolderKey(storage),
-        options.conflictStrategy,
-      ),
+      buildStoreAssemblyParams(destination, options.conflictStrategy),
     )
   }
 }
