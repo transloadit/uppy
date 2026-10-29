@@ -32,6 +32,7 @@ const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
 afterEach(() => {
   nock.cleanAll()
+  nock.enableNetConnect()
 })
 afterAll(() => {
   nock.restore()
@@ -93,6 +94,60 @@ describe('providers requests with remote oauth keys', () => {
       .set('uppy-auth-token', token)
       .set('uppy-credentials-params', encodedParams)
       .expect(424)
+  })
+})
+
+test('refreshes Dropbox tokens with request-time credentials instead of configured defaults', async () => {
+  nock.disableNetConnect()
+  nock.enableNetConnect(/^(127\.0\.0\.1|localhost)(:|$)/)
+  nock('http://localhost:2111')
+    .post('/dropbox-keys')
+    .reply(200, {
+      credentials: { key: 'runtime-key', secret: 'runtime-secret' },
+    })
+  const refresh = nock('https://api.dropboxapi.com')
+    .post('/oauth2/token', {
+      refresh_token: 'fixture-refresh-token',
+      grant_type: 'refresh_token',
+      client_id: 'runtime-key',
+      client_secret: 'runtime-secret',
+    })
+    .reply(200, { access_token: 'refreshed-access-token' })
+  const authToken = tokenService.generateEncryptedAuthToken(
+    {
+      dropbox: {
+        accessToken: 'expired-access-token',
+        refreshToken: 'fixture-refresh-token',
+      },
+    },
+    secret,
+  )
+  const response = await request(
+    await getServer({
+      COMPANION_DROPBOX_KEYS_ENDPOINT: 'http://localhost:2111/dropbox-keys',
+    }),
+  )
+    .post('/dropbox/refresh-token')
+    .set('uppy-auth-token', authToken)
+    .set(
+      'uppy-credentials-params',
+      Buffer.from(JSON.stringify({ params: 'runtime-account' })).toString(
+        'base64',
+      ),
+    )
+    .expect(200)
+  expect(refresh.isDone()).toBe(true)
+  expect(
+    tokenService.verifyEncryptedAuthToken(
+      response.body.uppyAuthToken,
+      secret,
+      'dropbox',
+    ),
+  ).toMatchObject({
+    dropbox: {
+      accessToken: 'refreshed-access-token',
+      refreshToken: 'fixture-refresh-token',
+    },
   })
 })
 

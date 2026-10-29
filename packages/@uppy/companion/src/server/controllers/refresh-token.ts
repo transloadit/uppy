@@ -18,9 +18,6 @@ export default async function refreshToken(
   }
   const { secret } = req.companion.options
 
-  const providerConfig = req.companion.options.providerOptions?.[providerName]
-  const clientId = providerConfig?.key
-  const clientSecret = providerConfig?.secret
   const redirectUri = req.companion.providerGrantConfig?.redirect_uri
 
   const { provider, providerClass } = req.companion
@@ -38,6 +35,9 @@ export default async function refreshToken(
   }
 
   try {
+    const credentials = await req.companion.getProviderCredentials?.()
+    const clientId = credentials?.key
+    const clientSecret = credentials?.secret
     const { accessToken } = await provider.refreshToken({
       redirectUri,
       clientId,

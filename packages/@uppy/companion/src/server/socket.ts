@@ -129,32 +129,55 @@ async function handleAuthCallbackSocketConnection({
   function onMessage(...args: unknown[]) {
     // Older publishers only emit the payload, without retaining it.
     if (args[1] !== true) send(args[0])
-    else replay().catch(() => send(args[0]))
+    else replay().catch(onError)
   }
 
   function onError() {
     // Subscription errors include the callback token in command arguments.
     logger.error('Auth callback failed', 'socket.auth.redis.error')
+    closed = true
     ws.close()
   }
 
   ws.on('close', () => {
     closed = true
     events.removeListener(token, onMessage)
+    events.removeListener('redis:disconnect', onError)
   })
 
   try {
+    // Pub/sub cannot replay notifications lost during a disconnect. Settle the
+    // pending attempt instead of waiting forever for a publication already lost.
+    if (redis.client()) await events.on('redis:disconnect', onError)
     // HTTP 101 precedes Redis subscription readiness. Subscribe first, then
     // consume storage, covering callbacks both before and during subscription.
-    await events.on(token, onMessage)
+    // Bound this login's wait without changing shared upload retry behavior.
+    // Late readiness must remove any listener registered after socket closure.
+    const subscribed = Promise.resolve(events.on(token, onMessage)).then(
+      async () => {
+        if (closed) await events.removeListener(token, onMessage)
+      },
+    )
+    let subscriptionTimer: NodeJS.Timeout | undefined
+    try {
+      await Promise.race([
+        subscribed,
+        new Promise<never>((_resolve, reject) => {
+          subscriptionTimer = setTimeout(
+            () => reject(new Error('Auth callback subscription timed out')),
+            5000,
+          )
+          subscriptionTimer.unref()
+        }),
+      ])
+    } finally {
+      clearTimeout(subscriptionTimer)
+    }
     if (closed) {
       events.removeListener(token, onMessage)
       return
     }
-    await replay().catch(() => {
-      // Storage is best effort; keep live delivery available if replay fails.
-      logger.error('Auth callback replay failed', 'socket.auth.redis.error')
-    })
+    await replay()
   } catch {
     onError()
   }

@@ -1,3 +1,4 @@
+import { runInNewContext } from 'node:vm'
 import request from 'supertest'
 import { describe, expect, test, vi } from 'vitest'
 import * as tokenService from '../dist/server/helpers/jwt.js'
@@ -5,6 +6,30 @@ import * as tokenService from '../dist/server/helpers/jwt.js'
 const secret = 'secret'
 
 vi.mock('express-prom-bundle')
+
+test('keeps the successful callback popup open for token delivery and closes failed callbacks', async () => {
+  const { authCallbackSuccessHtml, authCallbackErrorHtml } = await import(
+    '../src/server/helpers/html.js'
+  )
+  function load(html: string) {
+    const ready: (() => void)[] = []
+    const close = vi.fn()
+    for (const [, script] of html.matchAll(/<script>([\s\S]*?)<\/script>/g)) {
+      if (script == null) throw new Error('Missing inline script')
+      runInNewContext(script, {
+        window: { close },
+        document: {
+          addEventListener: (_name: string, handler: () => void) =>
+            ready.push(handler),
+        },
+      })
+    }
+    for (const handler of ready) handler()
+    return close
+  }
+  expect(load(authCallbackSuccessHtml())).not.toHaveBeenCalled()
+  expect(load(authCallbackErrorHtml())).toHaveBeenCalledOnce()
+})
 
 describe('test authentication callback', () => {
   test('authentication callback redirects to send-token url', async () => {
