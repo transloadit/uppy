@@ -10,8 +10,8 @@ const { version: uppyVersion } = packageJson
 
 interface UppyCdnExampleProps {
   children: ReactNode
-  uppyCssName: string
-  uppyJsName: string
+  uppyCssName?: string
+  uppyJsName?: string
 }
 
 export default function UppyCdnExample({

@@ -5,6 +5,7 @@
     { "path": "../packages/@uppy/react/tsconfig.build.json" },
     { "path": "../packages/uppy/tsconfig.build.json" }
   ],
+  "exclude": ["build", "node_modules"],
   "compilerOptions": {
     "baseUrl": null,
     "resolveJsonModule": true,
