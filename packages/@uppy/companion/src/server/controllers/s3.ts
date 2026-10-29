@@ -1,3 +1,4 @@
+import type { Socket } from 'node:net'
 import type { Part, S3Client } from '@aws-sdk/client-s3'
 import {
   AbortMultipartUploadCommand,
@@ -19,12 +20,188 @@ import {
   s3WriteParams,
   truncateFilename,
 } from '../helpers/utils.js'
+import logger from '../logger.js'
 
 const maxBatchPartNumbers = 100
 
 /** An integer from 1 to 10000, the part numbers S3 accepts. */
 const isPartNumber = (value: string) =>
   /^[1-9]\d{0,4}$/.test(value) && Number(value) <= 10000
+
+// Listings that need more than one ListParts page (over 1000 parts) take one
+// of these process-wide slots for their remaining pages, so at most this many
+// listings page through S3 at once. The first page never waits, so ordinary
+// listings don't queue behind big ones.
+const maxPagedListings = 4
+let pagedListings = 0
+const pagedListingWaiters = new Set<() => void>()
+
+// The client has gone when its response closes, or its connection does:
+// Node 22 never closes a response still queued behind another one on the
+// same connection.
+const clientGone = (res: Response) => res.destroyed || res.req.socket.destroyed
+
+/** Calls `fn` once the client has gone; returns a function that stops that. */
+function onClientGone(res: Response, fn: () => void): () => void {
+  const { socket } = res.req
+  if (clientGone(res)) {
+    // not synchronously: callers name the returned stop in `fn`
+    queueMicrotask(fn)
+    return () => {}
+  }
+  const gone = () => {
+    stop()
+    fn()
+  }
+  const stop = () => {
+    res.off('close', gone)
+    socket.off('close', gone)
+  }
+  res.once('close', gone)
+  socket.once('close', gone)
+  return stop
+}
+
+/** Resolves with false, holding no slot, if `res` closes before one is free. */
+function takePagedListingSlot(res: Response): Promise<boolean> {
+  if (pagedListings < maxPagedListings) {
+    pagedListings++
+    return Promise.resolve(true)
+  }
+  return new Promise((resolve) => {
+    const take = () => {
+      stop()
+      resolve(true)
+    }
+    pagedListingWaiters.add(take)
+    const stop = onClientGone(res, () => {
+      pagedListingWaiters.delete(take)
+      resolve(false)
+    })
+  })
+}
+
+function releasePagedListingSlot() {
+  const [next] = pagedListingWaiters
+  if (next) {
+    // hand the slot straight to the longest waiter
+    pagedListingWaiters.delete(next)
+    next()
+  } else {
+    pagedListings--
+  }
+}
+
+// Each connection runs one listing at a time, and starts the next only once
+// the previous answer has been written out and the socket has drained.
+// Pipelined requests are answered in order anyway, so a client loses nothing,
+// and a connection that doesn't read holds at most one listing's answer.
+const connectionListings = new WeakMap<Socket, Promise<void>>()
+
+/** Resolves once `res` has been written out, or has closed. */
+const responseDone = (res: Response) =>
+  new Promise<void>((resolve) => {
+    if (res.writableFinished) {
+      resolve()
+      return
+    }
+    const done = () => {
+      res.off('finish', done)
+      stop()
+      resolve()
+    }
+    res.once('finish', done)
+    const stop = onClientGone(res, done)
+  })
+
+/** Resolves with false if `res` closes before `socket` has drained. */
+const socketDrained = (socket: Socket, res: Response) =>
+  new Promise<boolean>((resolve) => {
+    if (clientGone(res)) {
+      resolve(false)
+      return
+    }
+    if (!socket.writableNeedDrain) {
+      resolve(true)
+      return
+    }
+    const onDrain = () => {
+      stop()
+      resolve(true)
+    }
+    socket.once('drain', onDrain)
+    const stop = onClientGone(res, () => {
+      socket.off('drain', onDrain)
+      resolve(false)
+    })
+  })
+
+/**
+ * Every part of a multipart upload, or undefined if the client of `res` went
+ * away first, in which case nothing more is fetched and the ListParts call in
+ * flight is cancelled.
+ */
+function listAllParts(
+  client: S3Client,
+  input: { Bucket: string; Key: string; UploadId: string },
+  req: Request,
+  res: Response,
+): Promise<Part[] | undefined> {
+  const { socket } = req
+  const previous = connectionListings.get(socket) ?? Promise.resolve()
+  const listing = previous.then(async () =>
+    (await socketDrained(socket, res))
+      ? fetchAllParts(client, input, res)
+      : undefined,
+  )
+  connectionListings.set(
+    socket,
+    listing.then(
+      () => responseDone(res),
+      () => responseDone(res),
+    ),
+  )
+  return listing
+}
+
+async function fetchAllParts(
+  client: S3Client,
+  input: { Bucket: string; Key: string; UploadId: string },
+  res: Response,
+): Promise<Part[] | undefined> {
+  const abort = new AbortController()
+  const stopWatching = onClientGone(res, () => abort.abort())
+  const listPage = (PartNumberMarker?: string) =>
+    client.send(new ListPartsCommand({ ...input, PartNumberMarker }), {
+      abortSignal: abort.signal,
+    })
+  let holdsSlot = false
+  try {
+    let page = await listPage()
+    if (clientGone(res)) return undefined
+    const parts = page.Parts ?? []
+    if (!page.IsTruncated) return parts
+
+    holdsSlot = await takePagedListingSlot(res)
+    if (!holdsSlot) return undefined
+    while (page.IsTruncated) {
+      page = await listPage(page.NextPartNumberMarker)
+      if (clientGone(res)) return undefined
+      if (page.Parts) parts.push(...page.Parts)
+    }
+    return parts
+  } catch (err) {
+    // the call was cancelled because the client has gone
+    if (clientGone(res)) {
+      logger.debug(err, 's3.listParts.client.gone', res.req.id)
+      return undefined
+    }
+    throw err
+  } finally {
+    stopWatching()
+    if (holdsSlot) releasePagedListingSlot()
+  }
+}
 
 export default function s3(
   config: Pick<
@@ -290,30 +467,15 @@ export default function s3(
     const { client, uploadId, key } = target
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
 
-    const parts: Part[] = []
-
-    const listPartsPage = (startAt?: string) => {
-      client
-        .send(
-          new ListPartsCommand({
-            Bucket: bucket,
-            Key: key,
-            UploadId: uploadId,
-            PartNumberMarker: startAt,
-          }),
-        )
-        .then(({ Parts, IsTruncated, NextPartNumberMarker }) => {
-          if (Parts) parts.push(...Parts)
-
-          if (IsTruncated) {
-            // Get the next page.
-            listPartsPage(NextPartNumberMarker)
-          } else {
-            res.json(parts)
-          }
-        }, next)
-    }
-    listPartsPage()
+    listAllParts(
+      client,
+      { Bucket: bucket, Key: key, UploadId: uploadId },
+      req,
+      res,
+    ).then((parts) => {
+      // undefined: the client has gone, so there is no one to answer
+      if (parts) res.json(parts)
+    }, next)
   }
 
   /**
