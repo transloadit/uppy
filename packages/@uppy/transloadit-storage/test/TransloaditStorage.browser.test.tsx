@@ -101,6 +101,19 @@ describe('Transloadit Storage in the browser', () => {
     expect(onUploadRequest).toHaveBeenCalledWith({ prefix: '' })
   })
 
+  it('waits for folder navigation before reporting the upload destination', async ({
+    worker,
+  }) => {
+    const onUploadRequest = vi.fn()
+    setup(worker, { onUploadRequest })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    expect(onUploadRequest).toHaveBeenCalledWith({ prefix: 'docs/' })
+  })
+
   it('storeUploads refuses to overwrite explicit Assembly configuration', () => {
     const assemblyOptions = { params: { template_id: 'owned-template' } }
     uppy = new Uppy().use(FixtureUploader, { assemblyOptions })

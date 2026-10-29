@@ -129,6 +129,7 @@ export function createStoreAssemblyOptions<M extends Meta, B extends Body>(
     ) {
       throw new UserFacingApiError(storage.i18n('storageNotConnected'))
     }
+    await storage.waitForSettledListing()
     return options.signAssembly(
       buildStoreAssemblyParams(
         openFolderKey(storage),

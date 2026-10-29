@@ -689,6 +689,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   #abortController: AbortController | undefined
+  #listingGeneration = 0
 
   async #withAbort(op: (signal: AbortSignal) => Promise<void>) {
     // prevent multiple requests in parallel from causing race conditions
@@ -866,6 +867,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async openFolder(folderId: PartialTreeId): Promise<void> {
+    const listingGeneration = ++this.#listingGeneration
     // always switch away from the search view when opening a folder, whether it happens from the search view or by clicking breadcrumbs
     this.clearSearchState()
 
@@ -920,7 +922,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       })
     }).catch(handleError(this.plugin.uppy))
 
-    this.#doneLoading()
+    if (listingGeneration === this.#listingGeneration) this.#doneLoading()
   }
 
   /**
@@ -1207,7 +1209,8 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const selectable = !isManager || selectionActive
     // A long operation owns the screen: anything that would start another
     // request (and so abort it) is disabled or hidden meanwhile.
-    const busy = this.#cancelLongOperation !== undefined
+    const busy =
+      this.#cancelLongOperation !== undefined || Boolean(loading)
     // Nothing to select in a folder we know is empty (unlike one being listed).
     const currentFolder = partialTree.find(({ id }) => id === currentFolderId)
     const isEmptyFolder =

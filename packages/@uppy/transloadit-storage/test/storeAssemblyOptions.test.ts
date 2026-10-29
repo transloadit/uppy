@@ -21,6 +21,7 @@ function fakeUppy({
   return {
     getPlugin: () => ({
       getPluginState: () => ({ authenticated: true, currentFolderId }),
+      waitForSettledListing: vi.fn(async () => {}),
       rootPrefix,
     }),
   } as unknown as Uppy<Meta, Body>
@@ -41,6 +42,7 @@ describe('createStoreAssemblyOptions', () => {
     const storage = {
       rootPrefix: '',
       getPluginState: () => ({ authenticated, currentFolderId: null }),
+      waitForSettledListing: vi.fn(async () => {}),
       openFolderPath: vi.fn(async () => {
         authenticated = true
         storage.rootPrefix = 'tenant/'

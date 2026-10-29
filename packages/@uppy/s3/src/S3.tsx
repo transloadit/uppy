@@ -516,6 +516,11 @@ export default class S3<M extends Meta, B extends Body>
     })
   }
 
+  /** Wait until any folder listing currently in progress has settled. */
+  async waitForSettledListing(): Promise<void> {
+    await this.#settledListing()
+  }
+
   /**
    * Re-list the folder that is open — e.g. after uploads that happened
    * outside the browser panel (an app-owned upload modal). Busts the
