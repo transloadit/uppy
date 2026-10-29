@@ -595,4 +595,96 @@ describe('uploader', () => {
       socketClient.connect(uploadToken).catch(reject)
     })
   })
+
+  describe('maxFileSize in streaming mode', () => {
+    const maxFileSize = 10_000
+
+    // Emits `totalBytes` in small chunks, keeping track of how much was read
+    function createSourceStream(totalBytes: number) {
+      const source = { bytesRead: 0 }
+      const stream = Readable.from(
+        (function* generate() {
+          while (source.bytesRead < totalBytes) {
+            const chunk = Buffer.alloc(
+              Math.min(1000, totalBytes - source.bytesRead),
+            )
+            source.bytesRead += chunk.length
+            yield chunk
+          }
+        })(),
+      )
+      return { stream, source }
+    }
+
+    async function runStreamingUpload({
+      protocol,
+      totalBytes,
+      size,
+    }: {
+      protocol: 'tus' | 'multipart'
+      totalBytes: number
+      size?: number
+    }) {
+      if (protocol === 'multipart')
+        nock('http://localhost').post('/').reply(200)
+
+      const { stream, source } = createSourceStream(totalBytes)
+      const uploader = new Uploader({
+        companionOptions: {
+          ...companionOptions,
+          maxFileSize,
+          streamingUpload: true,
+          tusDeferredUploadLength: true,
+        },
+        endpoint: 'http://localhost',
+        protocol,
+        ...(size != null && { size }),
+        pathPrefix,
+        metadata: {},
+      })
+      const uploadToken = uploader.token
+
+      const result = new Promise<socketClient.UploadMessage>((resolve) => {
+        socketClient.onUploadError(uploadToken, resolve)
+        socketClient.onUploadSuccess(uploadToken, resolve)
+      })
+      const ready = uploader.awaitReady(60000)
+      await socketClient.connect(uploadToken)
+      await ready
+      await uploader.tryUploadStream(stream, requireMockReq())
+      return { message: await result, source }
+    }
+
+    test.each([
+      ['tus', undefined],
+      ['multipart', undefined],
+      ['tus', 100],
+      ['multipart', 100],
+    ] as const)('%s upload of an oversized stream with declared size %s is aborted', async (protocol, size) => {
+      const totalBytes = 1e6
+      const { message, source } = await runStreamingUpload({
+        protocol,
+        totalBytes,
+        ...(size != null && { size }),
+      })
+      expect(message).toMatchObject({
+        action: 'error',
+        payload: { error: { message: 'maxFileSize exceeded' } },
+      })
+      // the source must not have been read until the end
+      expect(source.bytesRead).toBeLessThan(totalBytes)
+    })
+
+    test.each([
+      'tus',
+      'multipart',
+    ] as const)('%s upload of a stream within maxFileSize succeeds', async (protocol) => {
+      const { message, source } = await runStreamingUpload({
+        protocol,
+        totalBytes: maxFileSize,
+      })
+      expect(message).toMatchObject({ action: 'success' })
+      expect(source.bytesRead).toBe(maxFileSize)
+    })
+  })
 })
