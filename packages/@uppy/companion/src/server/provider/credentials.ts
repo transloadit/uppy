@@ -98,6 +98,7 @@ export const getCredentialsOverrideMiddleware = (
     res: Response<unknown, CompanionExpressLocals>,
     next: NextFunction,
   ) => {
+    let fromCredentialsService = false
     try {
       const { oauthProvider, override } = req.params
       if (oauthProvider == null || oauthProvider.length === 0) {
@@ -149,6 +150,9 @@ export const getCredentialsOverrideMiddleware = (
         return
       }
 
+      // From here on a failure is the credentials service's: it could not be
+      // reached, or sent credentials we cannot use. Anything else is ours.
+      fromCredentialsService = true
       const credentials = await fetchProviderKeys(
         providerName,
         companionOptions,
@@ -207,12 +211,18 @@ export const getCredentialsOverrideMiddleware = (
         }
       }
 
+      fromCredentialsService = false
       next()
     } catch (keyErr) {
       const error = toError(keyErr)
-      logger.error(error, 'credentials.override.fail', req.id)
-      // 424 Failed Dependency, same as ProviderApiError for remote credentials
-      res.status(424).send(`
+      // the name and message only: a got error holds the request and response
+      logger.error(
+        `${error.name}: ${error.message}`,
+        'credentials.override.fail',
+        req.id,
+      )
+      // 424 Failed Dependency, as ProviderApiError reports remote credentials
+      res.status(fromCredentialsService ? 424 : 500).send(`
         <!DOCTYPE html>
         <html>
         <head>

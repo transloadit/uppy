@@ -442,7 +442,13 @@ export default class Uploader {
 
   #abortTus(shouldTerminate: boolean): void {
     this.tus?.abort(shouldTerminate).catch((err) => {
-      logger.warn(err, 'uploader.tus.abort.error', this.shortToken)
+      // a tus DetailedError holds the request, upload headers included
+      const { name, message } = toError(err)
+      logger.warn(
+        `${name}: ${message}`,
+        'uploader.tus.abort.error',
+        this.shortToken,
+      )
     })
   }
 
