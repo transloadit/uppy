@@ -49,18 +49,24 @@
   "scripts": {
     "build": "svelte-package",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css && cp ../components/dist/image-editor.css.map dist/image-editor.css.map",
-    "typecheck": "svelte-check --tsconfig ./tsconfig.json"
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run --silent='passed-only'"
   },
   "dependencies": {
     "@uppy/components": "workspace:^"
   },
   "devDependencies": {
     "@sveltejs/package": "^2.5.7",
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@uppy/core": "workspace:^",
+    "@vitest/browser-playwright": "^5.0.3",
+    "playwright": "1.64.0",
     "svelte": "^5.56.5",
     "svelte-check": "^4.7.6",
     "tslib": "^2.8.1",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3",
+    "vitest-browser-svelte": "^3.1.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^",

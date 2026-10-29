@@ -11,6 +11,11 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext"
   },
-  "include": ["./package.json", "./src/**/*.*"],
+  "include": [
+    "./package.json",
+    "./src/**/*.*",
+    "./test/**/*.*",
+    "./vitest.config.ts"
+  ],
   "exclude": ["node_modules/*", "./src/lib/empty.ts"]
 }

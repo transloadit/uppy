@@ -1,16 +1,10 @@
 import { expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-svelte'
-import ThumbnailUnmount from '../src/components/test/thumbnail-unmount.svelte'
+import ThumbnailUnmount from './ThumbnailUnmount.svelte'
 
-const isUsable = (url: string) =>
-  fetch(url).then(
-    () => true,
-    () => false,
-  )
-
-// Preact runs effects after paint, which is when Thumbnail registers the
-// cleanup that revokes its URL.
+// Thumbnail registers the cleanup that revokes its URL in an effect. Preact runs
+// effects in a setTimeout queued from requestAnimationFrame, so wait for both.
 const afterPaint = () =>
   new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve)))
 
@@ -19,10 +13,10 @@ test('Thumbnail revokes its object URL when it unmounts', async () => {
   const img = screen.getByAltText('cat.png')
   await expect.element(img).toBeInTheDocument()
   const url = img.element().getAttribute('src')!
-  expect(await isUsable(url)).toBe(true)
+  expect(await fetch(url)).toBeDefined()
   await afterPaint()
 
   await userEvent.click(screen.getByText('Toggle thumbnail'))
 
-  await expect.poll(() => isUsable(url)).toBe(false)
+  await expect(fetch(url)).rejects.toThrow()
 })
