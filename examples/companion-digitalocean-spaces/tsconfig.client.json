@@ -1,0 +1,10 @@
+{
+  "include": ["main.ts"],
+  "compilerOptions": {
+    "composite": true,
+    "noEmit": true,
+    "module": "preserve",
+    "target": "esnext",
+    "types": ["vite/client"]
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "@uppy/react",
   "description": "React component wrappers around Uppy's official UI plugins.",
-  "version": "6.0.0",
+  "version": "6.1.0",
   "license": "MIT",
   "type": "module",
   "sideEffects": [
@@ -40,17 +40,17 @@
   },
   "devDependencies": {
     "@testing-library/dom": "^10.4.0",
-    "@testing-library/react": "^16.0.0",
+    "@testing-library/react": "^16.3.3",
     "@types/react": "^19.3.0",
     "@types/use-sync-external-store": "^1.5.0",
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
-    "@vitest/browser-playwright": "^4.1.11",
-    "playwright": "1.61.1",
+    "@vitest/browser-playwright": "^5.0.3",
+    "playwright": "1.64.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   },
   "exports": {
     ".": "./lib/index.js",

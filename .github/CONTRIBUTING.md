@@ -12,7 +12,8 @@ cd uppy
 ```
 
 We are using [Corepack][] to manage versions of [Yarn][]. Corepack comes
-pre-installed with Node.js >=16.x, or can be installed through `npm`:
+pre-installed with Node.js 16.x to 24.x. Node.js 25 and later no longer bundle
+it, so install it through `npm`:
 
 ```sh
 corepack -v || npm i -g corepack
@@ -20,6 +21,7 @@ corepack enable
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
+
 [Yarn]: https://yarnpkg.com/
 
 ## Development
@@ -38,9 +40,9 @@ yarn build
 
 ### Development Commands
 
-- `yarn dev` - Start development server at http://localhost:5174
+- `yarn dev` - Start development server at <http://localhost:5174>
 - `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
-- `yarn start:companion` - Start only Companion server at http://localhost:3020
+- `yarn start:companion` - Start only Companion server at <http://localhost:3020>
 - `yarn build:watch` - Build packages in watch mode
 - `yarn build:examples` - Build and type-check the examples and the dev playground
 - `yarn test` - Run tests for all packages
@@ -117,3 +119,40 @@ Authenticates and Uploads from Dropbox through Companion:
 
 For more information about how to contribute to translations, see
 [the `@uppy/locales` contributing guide](https://uppy.io/docs/locales/#contributing-a-new-language).
+
+## Uppy.io website
+
+The [uppy.io](https://uppy.io/) website, docs and blog live in
+[`website`](../website) and are built with
+[Docusaurus](https://docusaurus.io/). The site uses the Uppy packages from this
+repository, so build those first:
+
+```sh
+corepack yarn
+corepack yarn build
+```
+
+Start a development server (most changes are reflected live):
+
+```sh
+corepack yarn workspace uppy-io dev
+```
+
+Format, lint, test and build:
+
+```sh
+corepack yarn workspace uppy-io format
+corepack yarn workspace uppy-io lint
+corepack yarn workspace uppy-io build
+corepack yarn workspace uppy-io test # needs a build
+```
+
+`website/static` only holds site assets such as icons and fonts (CI
+rejects files over 100 KB). Blog images and videos are served from Transloadit’s
+Smart CDN at `https://uppy-io-static.tlcdn.com/static/img/blog/<path>`,
+which imports them from the `static` folder of the archived
+[transloadit/uppy.io](https://github.com/transloadit/uppy.io) repository. To add
+new media, ask a maintainer to host it.
+
+Pushes to `main` deploy the site to GitHub Pages
+([`deploy-website.yml`](./workflows/deploy-website.yml)).

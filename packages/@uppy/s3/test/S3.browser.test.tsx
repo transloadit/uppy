@@ -1,19 +1,21 @@
 import Uppy from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import { HttpResponse, http } from 'msw'
-import type { SetupWorker } from 'msw/browser'
 import {
   afterEach,
   beforeEach,
   describe,
   expect,
   expectTypeOf,
+  it,
   vi,
 } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import '@uppy/core/css/style.css'
 import '@uppy/core/provider-views/css/style.css'
 import '@uppy/dashboard/css/style.css'
+import '@uppy-dev/msw-setup'
+import { network } from 'virtual:msw'
 import {
   createMockS3Companion,
   type MockS3Companion,
@@ -22,7 +24,6 @@ import {
   toMswHandlers,
 } from '@uppy-dev/s3-mock-companion'
 import S3, { type S3Options } from '../lib/S3.js'
-import { it } from './test-extend.js'
 
 const COMPANION = 'http://localhost:3020'
 const TOKEN = 'test-auth-token'
@@ -39,21 +40,18 @@ const pluginOf = (app: Uppy): TestPlugin => {
 }
 
 /** Serves a mock Companion through msw. */
-function serveCompanion(worker: SetupWorker, options?: MockS3CompanionOptions) {
+function serveCompanion(options?: MockS3CompanionOptions) {
   const companion = createMockS3Companion({ token: TOKEN, ...options })
-  worker.use(...toMswHandlers(companion, COMPANION, { http }))
+  network.use(...toMswHandlers(companion, COMPANION, { http }))
   return companion
 }
 
 /** Serves a mock Companion and installs the plugin into an inline Dashboard. */
-function setup(
-  worker: SetupWorker,
-  {
-    companion: companionOptions,
-    ...options
-  }: Partial<S3Options> & { companion?: MockS3CompanionOptions } = {},
-) {
-  const companion = serveCompanion(worker, companionOptions)
+function setup({
+  companion: companionOptions,
+  ...options
+}: Partial<S3Options> & { companion?: MockS3CompanionOptions } = {}) {
+  const companion = serveCompanion(companionOptions)
   const target = document.createElement('div')
   document.body.appendChild(target)
   uppy = new Uppy().use(Dashboard, { target, inline: true }).use(S3, {
@@ -66,6 +64,65 @@ function setup(
 async function openBucket() {
   await page.getByRole('tab', { name: 'S3' }).click()
   await expect.element(page.getByText('readme.md')).toBeVisible()
+}
+
+/**
+ * Installs the plugin without a Dashboard, in manager mode unless told
+ * otherwise (as a file library using `useS3Manager` does), and lists the root.
+ */
+async function setupHeadless({
+  companion: companionOptions,
+  ...options
+}: Partial<S3Options> & { companion?: MockS3CompanionOptions } = {}) {
+  const companion = serveCompanion(companionOptions)
+  uppy = new Uppy().use(S3, {
+    companionUrl: COMPANION,
+    mode: 'manager',
+    ...options,
+  })
+  const plugin = pluginOf(uppy)
+  const info = vi.spyOn(uppy, 'info')
+  await plugin.openFolderPath(null)
+  /** The toasts shown so far, one per line. */
+  const toasts = () =>
+    info.mock.calls
+      .map(([message]) =>
+        typeof message === 'string' ? message : message.message,
+      )
+      .join('\n')
+  return { companion, plugin, toasts }
+}
+
+/** The names of the open folder's items. */
+const names = (plugin: TestPlugin) =>
+  plugin.view.getDisplayedPartialTree().map((item) => item.data.name)
+
+function itemOf(plugin: TestPlugin, id: string) {
+  const item = plugin
+    .getPluginState()
+    .partialTree.find((node) => node.id === id)
+  if (!item || item.type === 'root') throw new Error(`Missing ${id}`)
+  return item
+}
+
+type ActionList = 'actions' | 'toolbarActions' | 'bulkActions'
+
+/** The plugin's action with this id, from `opts.actions` unless told otherwise. */
+function actionOf<L extends ActionList = 'actions'>(
+  plugin: TestPlugin,
+  id: string,
+  list: L = 'actions' as L,
+) {
+  const actions = plugin.view.opts[list] as { id: string }[] | undefined
+  const action = actions?.find((a) => a.id === id)
+  if (!action) throw new Error(`Missing ${list} ${id}`)
+  return action as NonNullable<TestPlugin['view']['opts'][L]>[number]
+}
+
+/** The prompt or confirm an action opened, once it is open. */
+async function dialogOf(plugin: TestPlugin) {
+  await vi.waitFor(() => expect(plugin.getPluginState().dialog).toBeDefined())
+  return plugin.getPluginState().dialog
 }
 
 /** The first listing came after the login, without an unauthenticated probe. */
@@ -111,10 +168,8 @@ afterEach(() => {
 })
 
 describe('S3 provider in the browser', () => {
-  it('auto-connects and lists the bucket Companion serves', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker)
+  it('auto-connects and lists the bucket Companion serves', async () => {
+    const { companion } = setup()
 
     await openBucket()
     await expect.element(page.getByText('docs', { exact: true })).toBeVisible()
@@ -123,21 +178,17 @@ describe('S3 provider in the browser', () => {
     expectLoginBeforeListing(companion)
   })
 
-  it('reuses a stored session instead of connecting again', async ({
-    worker,
-  }) => {
+  it('reuses a stored session instead of connecting again', async () => {
     localStorage.setItem('companion-S3-auth-token', TOKEN)
-    const { companion } = setup(worker)
+    const { companion } = setup()
 
     await openBucket()
     expect(companion.lastCall('/s3/simple-auth')).toBeUndefined()
     expect(companion.calls.every((call) => call.token === TOKEN)).toBe(true)
   })
 
-  it('pins a queued import URL to the bucket where the file was selected', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker)
+  it('pins a queued import URL to the bucket where the file was selected', async () => {
+    const { plugin } = setup()
     await openBucket()
     const queuedUrl = new URL(plugin.provider.fileUrl('readme.md'))
     expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
@@ -151,8 +202,8 @@ describe('S3 provider in the browser', () => {
     expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
   })
 
-  it('opens a folder beyond the first listing page', async ({ worker }) => {
-    const { plugin } = setup(worker, {
+  it('opens a folder beyond the first listing page', async () => {
+    const { plugin } = setup({
       companion: {
         pageSize: 1,
         folders: {
@@ -168,10 +219,8 @@ describe('S3 provider in the browser', () => {
     expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
   })
 
-  it('normalizes grant roots before deriving customer paths', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, {
+  it('normalizes grant roots before deriving customer paths', async () => {
+    const { plugin } = setup({
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: '/tenant' }),
     })
@@ -179,8 +228,8 @@ describe('S3 provider in the browser', () => {
     expect(plugin.rootPrefix).toBe('tenant/')
   })
 
-  it('forgets the session on logout', async ({ worker }) => {
-    const { plugin } = setup(worker, {
+  it('forgets the session on logout', async () => {
+    const { plugin } = setup({
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
     })
@@ -192,59 +241,65 @@ describe('S3 provider in the browser', () => {
     expect(plugin.canWrite).toBe(false)
   })
 
-  it('keeps a cancelled rename from discarding its listing', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
-    await openBucket()
-    const item = plugin
-      .getPluginState()
-      .partialTree.find((entry) => entry.id === 'readme.md')
-    if (!item || item.type !== 'file') throw new Error('Missing readme')
+  it('keeps a cancelled rename from discarding its listing', async () => {
+    const { plugin } = await setupHeadless()
     vi.spyOn(plugin.view, 'prompt').mockResolvedValue(null)
     const refresh = vi.spyOn(plugin.view, 'refreshCurrentFolder')
-    const rename = plugin
-      .builtInActions()
-      .find((action) => action.id === 's3:rename')
-    if (!rename) throw new Error('Missing rename action')
-    await plugin.view.runAction(rename, item)
+    await plugin.view.runAction(
+      actionOf(plugin, 's3:rename'),
+      itemOf(plugin, 'readme.md'),
+    )
     expect(refresh).not.toHaveBeenCalled()
   })
 
-  it('hides write actions when Companion reports a read-only session', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, {
-      mode: 'manager',
-      companion: { canWrite: false },
-    })
-    await openBucket()
+  it('hides write actions when Companion reports a read-only session', async () => {
+    const { plugin } = await setupHeadless({ companion: { canWrite: false } })
     expect(plugin.canWrite).toBe(false)
     expect(plugin.builtInActions()).toEqual([])
-    await expect
-      .element(page.getByRole('button', { name: 'New folder…', exact: true }))
-      .not.toBeInTheDocument()
-    // Nothing to do with a selection either.
-    await expect
-      .element(page.getByRole('button', { name: 'Select multiple' }))
-      .not.toBeInTheDocument()
+    expect(plugin.builtInToolbarActions()).toEqual([])
+    expect(plugin.builtInBulkActions()).toEqual([])
   })
 
-  it('offers no built-in file changes with enableActions: false', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager', enableActions: false })
-    await openBucket()
+  it('offers no built-in file changes with enableActions: false', async () => {
+    const { plugin } = await setupHeadless({ enableActions: false })
     expect(plugin.canWrite).toBe(true)
     expect(plugin.builtInActions()).toEqual([])
     expect(plugin.builtInToolbarActions()).toEqual([])
     expect(plugin.builtInBulkActions()).toEqual([])
   })
 
-  it('replaces an open prompt without keeping its previous input', async ({
-    worker,
-  }) => {
-    const { view } = setup(worker).plugin
+  it('has no Dashboard tab in manager mode: it is headless', async () => {
+    const { companion } = setup({ mode: 'manager' })
+    await expect
+      .poll(() => document.querySelector('.uppy-Dashboard'))
+      .toBeTruthy()
+    // S3 is the only acquirer: without it the Dashboard has no tabs at all.
+    expect(document.querySelectorAll('[role="tab"]')).toHaveLength(0)
+    expect(companion.calls).toEqual([])
+  })
+
+  it("keeps a headless manager's folder and operation when a Dashboard panel closes", async () => {
+    const { plugin } = setup({ mode: 'manager' })
+    expect(await plugin.openFolderPath('docs/')).toBe(true)
+    const operation = plugin.view
+      .runWithProgress(
+        ({ signal }) =>
+          new Promise((_, reject) =>
+            signal.addEventListener('abort', () => reject(signal.reason)),
+          ),
+      )
+      .catch((err: unknown) => err)
+
+    uppy!.emit('dashboard:close-panel', 'Webcam')
+    expect(plugin.view.canCancelOperation).toBe(true)
+    expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
+
+    plugin.view.cancelLongOperation()
+    expect(await operation).toMatchObject({ name: 'AbortError' })
+  })
+
+  it('replaces an open prompt without keeping its previous input', async () => {
+    const { view } = setup().plugin
     await openBucket()
     const first = view.prompt({ title: 'First name', defaultValue: 'old.txt' })
     await expect
@@ -296,8 +351,8 @@ describe('S3 provider in the browser', () => {
   ])('the mock preserves a same-named folder when %s a file', async ([
     ,
     mutate,
-  ], { worker }) => {
-    const { companion, plugin } = setup(worker, {
+  ]) => {
+    const { companion, plugin } = setup({
       companion: {
         folders: {
           '': [
@@ -321,10 +376,8 @@ describe('S3 provider in the browser', () => {
     })
   })
 
-  it('restores a session scoped to a prefix and opens its nested folder', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, {
+  it('restores a session scoped to a prefix and opens its nested folder', async () => {
+    const { plugin } = setup({
       autoConnect: false,
       companion: {
         // Companion confines this session to a prefix and reports it in the
@@ -343,10 +396,8 @@ describe('S3 provider in the browser', () => {
     expect(await plugin.openFolderPath('outside/')).toBe(false)
   })
 
-  it('opens a headless folder without waiting for a panel to start the listing', async ({
-    worker,
-  }) => {
-    serveCompanion(worker)
+  it('opens a headless folder without waiting for a panel to start the listing', async () => {
+    serveCompanion()
     uppy = new Uppy().use(S3, { companionUrl: COMPANION })
     const plugin = pluginOf(uppy)
     const started = performance.now()
@@ -355,24 +406,16 @@ describe('S3 provider in the browser', () => {
     expect(plugin.getPluginState().currentFolderId).toBe('docs%2F')
   }, 20000)
 
-  it('bulk actions receive only topmost selected entries and refresh after partial failure', async ({
-    worker,
-  }) => {
-    const { companion, plugin } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('bulk actions receive only topmost selected entries and refresh after partial failure', async () => {
+    const { companion, plugin } = await setupHeadless()
     await plugin.view.openFolder('docs%2F')
     await plugin.view.openFolder(null)
-    const folder = plugin
-      .getPluginState()
-      .partialTree.find((node) => node.id === 'docs%2F')
-    if (!folder || folder.type !== 'folder')
-      throw new Error('Missing docs folder')
-    plugin.view.toggleCheckbox(folder, false)
+    plugin.view.toggleCheckbox(itemOf(plugin, 'docs%2F'), false)
     const selections: string[][] = []
     await plugin.view.runBulkAction({
       id: 'test:partial',
       label: 'Move',
-      run: async ({ items }) => {
+      run({ items }) {
         selections.push(items.map((item) => item.id))
         companion.folders
           .get('docs/')
@@ -382,22 +425,13 @@ describe('S3 provider in the browser', () => {
     })
     expect(selections).toEqual([['docs%2F']])
     await plugin.view.openFolder('docs%2F')
-    await expect
-      .element(page.getByText('added.txt', { exact: true }))
-      .toBeVisible()
+    expect(names(plugin)).toContain('added.txt')
   })
 
-  it('selecting the only child never makes its propagated parent a mutation target', async ({
-    worker,
-  }) => {
-    const { companion, plugin } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('selecting the only child never makes its propagated parent a mutation target', async () => {
+    const { companion, plugin } = await setupHeadless()
     await plugin.view.openFolder('docs%2F')
-    const file = plugin
-      .getPluginState()
-      .partialTree.find((node) => node.id === 'docs%2Fhello.txt')
-    if (!file || file.type !== 'file') throw new Error('Missing hello.txt')
-    plugin.view.toggleCheckbox(file, false)
+    plugin.view.toggleCheckbox(itemOf(plugin, 'docs%2Fhello.txt'), false)
     companion.folders
       .get('docs/')
       ?.push({ name: 'new-unselected.txt', isFolder: false })
@@ -416,11 +450,8 @@ describe('S3 provider in the browser', () => {
     )
   })
 
-  it('resolves typed move destinations relative to the granted root', async ({
-    worker,
-  }) => {
-    const { companion, plugin } = setup(worker, {
-      mode: 'manager',
+  it('resolves typed move destinations relative to the granted root', async () => {
+    const { companion, plugin, toasts } = await setupHeadless({
       getGrant: async () =>
         mockGrant({ bucket: 'my-bucket', prefix: 'tenant/' }),
       companion: {
@@ -433,61 +464,24 @@ describe('S3 provider in the browser', () => {
         },
       },
     })
-    await page.getByRole('tab', { name: 'S3' }).click()
-    await page.getByRole('button', { name: 'Actions for photo.jpg' }).click()
-    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
-    await page
-      .getByRole('dialog')
-      .getByRole('textbox')
-      .fill('archive/photo.jpg')
-    await page.getByRole('button', { name: 'Save', exact: true }).click()
-    await expect
-      .poll(() => companion.lastCall('/s3/mutate/move')?.body)
-      .toEqual({
-        id: 'tenant/photo.jpg',
-        destination: 'tenant/archive/photo.jpg',
-      })
-    // The toast shows the path as typed, not the key with the root prefix.
-    await expect
-      .element(page.getByText('Moved to "archive/photo.jpg"').first())
-      .toBeVisible()
-    // Wait for the refresh the move triggers, so nothing is in flight after.
-    await expect
-      .poll(() => plugin.getPluginState().partialTree.map((node) => node.id))
-      .not.toContain('tenant%2Fphoto.jpg')
-    await expect.poll(() => plugin.getPluginState().loading).toBeFalsy()
-  })
-
-  it('shows plain chrome when standalone', async ({ worker }) => {
-    setup(worker, {
-      mode: 'manager',
-      standalone: true,
-    })
-    await openBucket()
-
-    const panel = page.getByRole('tabpanel')
-    // The page around the plugin owns the heading and the session.
-    await expect
-      .element(panel.getByRole('heading', { level: 1 }))
-      .not.toBeInTheDocument()
-    await expect
-      .element(panel.getByRole('button', { name: 'Cancel' }))
-      .not.toBeInTheDocument()
-    await expect
-      .element(panel.getByRole('button', { name: 'Log out' }))
-      .not.toBeInTheDocument()
-    await expect
-      .element(panel.getByRole('button', { name: 'New folder' }))
-      .toBeVisible()
-  })
-
-  it('dismisses dialogs on a backdrop click and previews an item once', async ({
-    worker,
-  }) => {
-    const getPreviewUrl = vi.fn(
-      async () => 'data:image/gif;base64,R0lGODlhAQABAAAAACw=',
+    const moving = plugin.view.runAction(
+      actionOf(plugin, 's3:rename'),
+      itemOf(plugin, 'tenant%2Fphoto.jpg'),
     )
-    const { plugin } = setup(worker, { mode: 'manager', getPreviewUrl })
+    await dialogOf(plugin)
+    plugin.view.submitDialog('archive/photo.jpg')
+    await moving
+    expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
+      id: 'tenant/photo.jpg',
+      destination: 'tenant/archive/photo.jpg',
+    })
+    // The toast shows the path as typed, not the key with the root prefix.
+    expect(toasts()).toContain('Moved to "archive/photo.jpg"')
+    expect(names(plugin)).not.toContain('photo.jpg')
+  })
+
+  it('dismisses a dialog on a backdrop click, not on a click that only ends there', async () => {
+    const { view } = setup().plugin
     await openBucket()
 
     /** A click on the `::backdrop` (outside the box), and one that only ends there. */
@@ -509,32 +503,34 @@ describe('S3 provider in the browser', () => {
       dialog.dispatchEvent(new MouseEvent('click', outside))
     }
 
-    await page.getByRole('button', { name: 'Open readme.md' }).click()
-    const details = page.getByRole('dialog', { name: 'readme.md' })
-    await expect.element(details).toBeVisible()
-    // A listing update replaces the item object, not the dialog's preview.
-    await plugin.view.refreshCurrentFolder(true)
-    await expect.element(details).toBeVisible()
-    expect(getPreviewUrl).toHaveBeenCalledTimes(1)
-
-    // Selecting text inside and releasing outside is not a dismissal.
-    click(details.element(), { startInside: true })
-    await expect.element(details).toBeVisible()
-    click(details.element())
-    await expect.element(details).not.toBeInTheDocument()
-
-    await page.getByRole('button', { name: 'New folder' }).click()
+    const answered = view.prompt({ title: 'New folder' })
     const prompt = page.getByRole('dialog', { name: 'New folder' })
+    await expect.element(prompt).toBeVisible()
+    // Selecting text inside and releasing outside is not a dismissal.
+    click(prompt.element(), { startInside: true })
     await expect.element(prompt).toBeVisible()
     click(prompt.element())
     await expect.element(prompt).not.toBeInTheDocument()
+    await expect(answered).resolves.toBeNull()
   })
 
-  it('says a failed action failed, and blames Companion only for its requests', async ({
-    worker,
-  }) => {
-    setup(worker, {
-      mode: 'manager',
+  it('starts a destructive confirm on Cancel', async () => {
+    const { view } = setup().plugin
+    await openBucket()
+    const confirmed = view.confirm({ title: 'Delete it?', danger: true })
+    await expect
+      .element(
+        page
+          .getByRole('dialog', { name: 'Delete it?' })
+          .getByRole('button', { name: 'Cancel' }),
+      )
+      .toHaveFocus()
+    await userEvent.keyboard('{Escape}')
+    await expect(confirmed).resolves.toBe(false)
+  })
+
+  it('says a failed action failed, and blames Companion only for its requests', async () => {
+    const { plugin, toasts } = await setupHeadless({
       actions: [
         {
           id: 'broken',
@@ -546,61 +542,41 @@ describe('S3 provider in the browser', () => {
         },
       ],
     })
-    await openBucket()
-    const runAction = async (name: string) => {
-      await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-      await page.getByRole('menuitem', { name }).click()
-    }
+    const readme = itemOf(plugin, 'readme.md')
 
-    await runAction('Broken')
-    await expect
-      .element(page.getByText('The action failed').first())
-      .toBeVisible()
-    expect(document.body.textContent).not.toContain('internal detail')
+    await plugin.view.runAction(actionOf(plugin, 'broken'), readme)
+    expect(toasts()).toContain('The action failed')
+    expect(toasts()).not.toContain('internal detail')
 
-    worker.use(
+    network.use(
       http.post(`${COMPANION}/s3/mutate/delete`, () =>
         HttpResponse.json({}, { status: 500 }),
       ),
     )
-    await runAction('Delete')
-    await page
-      .getByRole('dialog')
-      .getByRole('button', { name: 'Delete', exact: true })
-      .click()
-    await expect
-      .element(page.getByText('Connection with Companion failed').first())
-      .toBeVisible()
+    const deleting = plugin.view.runAction(
+      actionOf(plugin, 's3:delete'),
+      readme,
+    )
+    await dialogOf(plugin)
+    plugin.view.submitDialog()
+    await deleting
+    expect(toasts()).toContain('Connection with Companion failed')
   })
 
-  it('keeps the details open through overlapping refreshes and refocuses the item', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
-    await openBucket()
-    await page.getByRole('button', { name: 'Open readme.md' }).click()
-    const details = page.getByRole('dialog', { name: 'readme.md' })
-    await expect.element(details).toBeVisible()
+  it('keeps the detail item through overlapping refreshes', async () => {
+    const { plugin } = await setupHeadless()
+    plugin.view.openItemDetail(itemOf(plugin, 'readme.md'))
 
     // The second refresh aborts the first one's listing.
     await Promise.all([
       plugin.view.refreshCurrentFolder(true),
       plugin.view.refreshCurrentFolder(true),
     ])
-    await expect.element(details).toBeVisible()
-
-    // The row that opened it was re-rendered by the refresh.
-    await userEvent.keyboard('{Escape}')
-    await expect.element(details).not.toBeInTheDocument()
-    expect(document.activeElement?.getAttribute('aria-label')).toBe(
-      'Open readme.md',
-    )
+    expect(plugin.view.getDetailItem()?.id).toBe('readme.md')
   })
 
-  it('adds files dropped on its panel to the uploads, like a drop on the Dashboard', async ({
-    worker,
-  }) => {
-    setup(worker)
+  it('adds files dropped on its panel to the uploads, like a drop on the Dashboard', async () => {
+    setup()
     await openBucket()
     const panel = document.querySelector('[data-uppy-panelType="PickerPanel"]')
     if (!panel) throw new Error('Missing picker panel')
@@ -616,80 +592,45 @@ describe('S3 provider in the browser', () => {
       .toEqual(['dropped.txt'])
   })
 
-  it('toggles selection mode with a button that says what it does', async ({
-    worker,
-  }) => {
-    setup(worker, { mode: 'manager' })
-    await openBucket()
-    await page.getByRole('button', { name: 'Select multiple' }).click()
-    await page.getByRole('checkbox', { name: 'readme.md' }).click()
-    await page.getByRole('button', { name: 'Cancel selection' }).click()
-    await expect
-      .element(page.getByRole('button', { name: 'Select multiple' }))
-      .toBeVisible()
-    await expect
-      .element(page.getByRole('checkbox', { name: 'readme.md' }))
-      .not.toBeInTheDocument()
-  })
-
-  it('counts the selection as the bulk actions get it and warns about folder contents', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('counts the selection as the bulk actions get it and warns about folder contents', async () => {
+    const { plugin } = await setupHeadless()
     // With docs listed, its file is checked along with it: still one item.
     await plugin.view.openFolder('docs%2F')
     await plugin.view.openFolder(null)
-    await page.getByRole('button', { name: 'Select multiple' }).click()
-    await page.getByRole('checkbox', { name: /docs/ }).click()
-    await page.getByRole('checkbox', { name: 'readme.md' }).click()
-    await expect.element(page.getByText('2 selected')).toBeVisible()
+    plugin.view.toggleCheckbox(itemOf(plugin, 'docs%2F'), false)
+    plugin.view.toggleCheckbox(itemOf(plugin, 'readme.md'), false)
+    expect(
+      plugin.view
+        .getBulkActionItems()
+        .map((item) => item.id)
+        .sort(),
+    ).toEqual(['docs%2F', 'readme.md'])
 
-    await page.getByRole('button', { name: 'Delete', exact: true }).click()
-    const dialog = page.getByRole('dialog', { name: 'Delete 2 items?' })
-    await expect
-      .element(
-        dialog.getByText(
-          'The selected folder and everything in it will be deleted.',
-        ),
-      )
-      .toBeVisible()
-    // A destructive confirm starts on Cancel.
-    await expect
-      .element(dialog.getByRole('button', { name: 'Cancel' }))
-      .toHaveFocus()
-    await userEvent.keyboard('{Escape}')
-
-    await page.getByRole('button', { name: 'Move…' }).click()
-    await expect
-      .element(page.getByRole('dialog', { name: 'Move 2 items' }))
-      .toBeVisible()
-    await userEvent.keyboard('{Escape}')
-  })
-
-  it('offers no multi-select in an empty folder', async ({ worker }) => {
-    setup(worker, {
-      mode: 'manager',
-      companion: { folders: { '': [{ name: 'empty', isFolder: true }] } },
+    const deleting = plugin.view.runBulkAction(
+      actionOf(plugin, 's3:bulkDelete', 'bulkActions'),
+    )
+    expect(await dialogOf(plugin)).toMatchObject({
+      kind: 'confirm',
+      title: 'Delete 2 items?',
+      message: 'The selected folder and everything in it will be deleted.',
+      danger: true,
     })
-    await page.getByRole('tab', { name: 'S3' }).click()
-    const toggle = page.getByRole('button', { name: 'Select multiple' })
-    await expect.element(toggle).toBeVisible()
-    await page.getByRole('button', { name: 'Open folder empty' }).click()
-    await expect
-      .element(page.getByText('You have no files or folders here'))
-      .toBeVisible()
-    await expect.element(toggle).not.toBeInTheDocument()
+    plugin.view.cancelDialog()
+    await deleting
+
+    const moving = plugin.view.runBulkAction(
+      actionOf(plugin, 's3:bulkMove', 'bulkActions'),
+    )
+    expect(await dialogOf(plugin)).toMatchObject({
+      kind: 'prompt',
+      title: 'Move 2 items',
+    })
+    plugin.view.cancelDialog()
+    await moving
   })
 
-  it('keeps the controls that would abort a long operation disabled while it runs', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker, { mode: 'manager' })
-    await openBucket()
-    await page.getByRole('button', { name: 'Select multiple' }).click()
-    await page.getByRole('checkbox', { name: 'readme.md' }).click()
-
+  it("reports a long operation's progress and stops it on request", async () => {
+    const { plugin } = await setupHeadless()
     const operation = plugin.view
       .runWithProgress(({ signal, setProgress }) => {
         setProgress('Moving 1 of 2 files…')
@@ -698,54 +639,49 @@ describe('S3 provider in the browser', () => {
         )
       })
       .catch((err: unknown) => err)
-    await expect.element(page.getByText('Moving 1 of 2 files…')).toBeVisible()
-    for (const name of ['Cancel selection', 'New folder…', 'Log out']) {
-      await expect.element(page.getByRole('button', { name })).toBeDisabled()
-    }
-    await expect.element(page.getByRole('searchbox')).toBeDisabled()
-    await expect
-      .element(page.getByRole('button', { name: 'Move…' }))
-      .not.toBeInTheDocument()
+    expect(plugin.getPluginState().loading).toBe('Moving 1 of 2 files…')
+    expect(plugin.view.canCancelOperation).toBe(true)
 
-    await page.getByRole('button', { name: 'Stop', exact: true }).click()
+    plugin.view.cancelLongOperation()
     expect(await operation).toMatchObject({ name: 'AbortError' })
-    await expect
-      .element(page.getByRole('button', { name: 'New folder…' }))
-      .toBeEnabled()
-    await expect.element(page.getByRole('searchbox')).toBeEnabled()
+    expect(plugin.view.canCancelOperation).toBe(false)
+    expect(plugin.getPluginState().loading).toBe(false)
   })
 
-  it('applies mode and enableActions changed with setOptions right away', async ({
-    worker,
-  }) => {
-    const { plugin } = setup(worker)
-    await openBucket()
-    const newFolder = page.getByRole('button', {
-      name: 'New folder…',
-      exact: true,
-    })
-    await expect.element(newFolder).not.toBeInTheDocument()
+  it('applies mode and enableActions changed with setOptions right away', async () => {
+    const { plugin } = await setupHeadless({ mode: 'picker' })
+    const toolbar = () => plugin.view.opts.toolbarActions?.map((a) => a.id)
+    expect(toolbar()).toEqual([])
 
     plugin.setOptions({ mode: 'manager' })
-    await expect.element(newFolder).toBeVisible()
-    await expect
-      .element(page.getByRole('button', { name: 'Open readme.md' }))
-      .toBeVisible()
+    expect(plugin.view.opts.mode).toBe('manager')
+    expect(toolbar()).toEqual(['s3:newFolder'])
 
     plugin.setOptions({ enableActions: false })
-    await expect.element(newFolder).not.toBeInTheDocument()
+    expect(toolbar()).toEqual([])
 
     plugin.setOptions({ mode: 'picker', enableActions: true })
-    await expect
-      .element(page.getByRole('checkbox', { name: 'readme.md' }))
-      .toBeVisible()
-    await expect.element(newFolder).not.toBeInTheDocument()
+    expect(plugin.view.opts.mode).toBe('picker')
+    expect(toolbar()).toEqual([])
   })
 
-  it('opens one item menu at a time and closes it with Escape', async ({
-    worker,
-  }) => {
-    setup(worker, { mode: 'manager' })
+  it('keeps the selection when setOptions repeats the default mode', async () => {
+    const { plugin } = setup()
+    await openBucket()
+    await page.getByRole('checkbox', { name: 'readme.md' }).click()
+    expect(plugin.view.getSelectedAmount()).toBe(1)
+
+    plugin.setOptions({ mode: 'picker' })
+    expect(plugin.view.getSelectedAmount()).toBe(1)
+  })
+
+  it('opens one item menu at a time and closes it with Escape', async () => {
+    // Picker mode shows the menu too, for the plugin's own actions.
+    setup({
+      actions: [
+        { id: 'test:noop', label: 'Do nothing', refresh: false, run() {} },
+      ],
+    })
     await openBucket()
 
     await page.getByRole('button', { name: 'Actions for readme.md' }).click()
@@ -768,15 +704,15 @@ describe('S3 provider in the browser', () => {
   })
 
   /**
-   * Opens the details of readme.md in a manager inside a Dashboard *modal*
-   * (the inline harness never hits the Dashboard's document-level Escape
-   * handler); resolves to a spy on the modal closing.
+   * Opens a "New folder" prompt in a picker inside a Dashboard *modal* (the
+   * inline harness never hits the Dashboard's document-level Escape handler);
+   * resolves to a spy on the modal closing.
    */
-  async function openDetailsInDashboardModal(worker: SetupWorker) {
-    serveCompanion(worker)
+  async function openPromptInDashboardModal() {
+    serveCompanion()
     uppy = new Uppy()
       .use(Dashboard, { inline: false })
-      .use(S3, { companionUrl: COMPANION, mode: 'manager' })
+      .use(S3, { companionUrl: COMPANION })
     // The close is animated, so watch for the request rather than the state.
     const modalClosed = vi.fn()
     uppy.on('dashboard:modal-closed', modalClosed)
@@ -786,29 +722,25 @@ describe('S3 provider in the browser', () => {
       )
       ?.openModal()
     await openBucket()
-    await page.getByRole('button', { name: 'Open readme.md' }).click()
+    void pluginOf(uppy).view.prompt({ title: 'New folder' })
     await expect
-      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .element(page.getByRole('dialog', { name: 'New folder' }))
       .toBeVisible()
     return modalClosed
   }
 
-  it('closes the item detail dialog with Escape without closing the Dashboard modal', async ({
-    worker,
-  }) => {
-    const modalClosed = await openDetailsInDashboardModal(worker)
+  it('closes a prompt with Escape without closing the Dashboard modal', async () => {
+    const modalClosed = await openPromptInDashboardModal()
 
     await userEvent.keyboard('{Escape}')
     await expect
-      .element(page.getByRole('dialog', { name: 'readme.md' }))
+      .element(page.getByRole('dialog', { name: 'New folder' }))
       .not.toBeInTheDocument()
     // The same key press must not fall through to the Dashboard's own Escape handler.
     expect(modalClosed).not.toHaveBeenCalled()
   })
 
-  it('closes the item detail dialog with Escape on engines without showModal()', async ({
-    worker,
-  }) => {
+  it('closes a prompt with Escape on engines without showModal()', async () => {
     // Safari < 15.4 has no showModal(); the dialog then opens non-modal and
     // never fires `cancel` on Escape.
     const showModal = Object.getOwnPropertyDescriptor(
@@ -821,11 +753,11 @@ describe('S3 provider in the browser', () => {
       configurable: true,
     })
     try {
-      const modalClosed = await openDetailsInDashboardModal(worker)
+      const modalClosed = await openPromptInDashboardModal()
 
       await userEvent.keyboard('{Escape}')
       await expect
-        .element(page.getByRole('dialog', { name: 'readme.md' }))
+        .element(page.getByRole('dialog', { name: 'New folder' }))
         .not.toBeInTheDocument()
       expect(modalClosed).not.toHaveBeenCalled()
     } finally {
@@ -833,80 +765,69 @@ describe('S3 provider in the browser', () => {
     }
   })
 
-  it('creates a folder through the inline dialog and refreshes the listing', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('creates a folder and refreshes the listing', async () => {
+    const { companion, plugin, toasts } = await setupHeadless()
+    const creating = plugin.view.runToolbarAction(
+      actionOf(plugin, 's3:newFolder', 'toolbarActions'),
+    )
+    expect(await dialogOf(plugin)).toMatchObject({
+      kind: 'prompt',
+      label: 'Name of the new folder:',
+    })
+    plugin.view.submitDialog('reports')
+    await creating
 
-    await page.getByRole('button', { name: 'New folder' }).click()
-    await expect.element(page.getByRole('dialog')).toBeVisible()
-    await page.getByLabelText('Name of the new folder:').fill('reports')
-    await userEvent.keyboard('{Enter}')
-
-    await expect
-      .element(page.getByText('reports', { exact: true }))
-      .toBeVisible()
-    await expect.element(page.getByRole('dialog')).not.toBeInTheDocument()
+    expect(names(plugin)).toContain('reports')
+    expect(plugin.getPluginState().dialog).toBeUndefined()
     expect(companion.lastCall('/s3/mutate/create-folder')?.body).toEqual({
       parentId: null,
       name: 'reports',
     })
-    // Toasts go through the Dashboard Informer (which the Dashboard renders twice)
-    await expect
-      .element(page.getByText(/Created folder "reports"/).first())
-      .toBeVisible()
+    expect(toasts()).toContain('Created folder "reports"')
   })
 
-  it('renames in place and moves with a path', async ({ worker }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('renames in place and moves with a path', async () => {
+    const { companion, plugin } = await setupHeadless()
+    const rename = actionOf(plugin, 's3:rename')
 
     // Bare name → rename in the current folder
-    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
-    const input = page.getByLabelText(RENAME_LABEL)
-    await expect.element(input).toHaveValue('readme.md')
-    await input.fill('notes.md')
-    await page.getByRole('button', { name: 'Save', exact: true }).click()
-    await expect.element(page.getByText('notes.md')).toBeVisible()
+    let renaming = plugin.view.runAction(rename, itemOf(plugin, 'readme.md'))
+    expect(await dialogOf(plugin)).toMatchObject({
+      label: RENAME_LABEL,
+      defaultValue: 'readme.md',
+    })
+    plugin.view.submitDialog('notes.md')
+    await renaming
+    expect(names(plugin)).toContain('notes.md')
     expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
       id: 'readme.md',
       destination: 'notes.md',
     })
 
     // A path moves the file
-    await page.getByRole('button', { name: 'Actions for notes.md' }).click()
-    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
-    await input.fill('docs/notes.md')
-    await userEvent.keyboard('{Enter}')
-    // The list hides behind the progress screen while the move runs, so wait
-    // for the request itself rather than for the row to disappear.
-    await expect
-      .poll(() => companion.lastCall('/s3/mutate/move')?.body)
-      .toEqual({ id: 'notes.md', destination: 'docs/notes.md' })
-    await expect
-      .element(page.getByText('notes.md', { exact: true }))
-      .not.toBeInTheDocument()
+    renaming = plugin.view.runAction(rename, itemOf(plugin, 'notes.md'))
+    await dialogOf(plugin)
+    plugin.view.submitDialog('docs/notes.md')
+    await renaming
+    expect(companion.lastCall('/s3/mutate/move')?.body).toEqual({
+      id: 'notes.md',
+      destination: 'docs/notes.md',
+    })
+    expect(names(plugin)).not.toContain('notes.md')
   })
 
-  it('renames a folder by moving its contents one by one', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('renames a folder by moving its contents one by one', async () => {
+    const { companion, plugin, toasts } = await setupHeadless()
+    const renaming = plugin.view.runAction(
+      actionOf(plugin, 's3:rename'),
+      itemOf(plugin, 'docs%2F'),
+    )
+    await dialogOf(plugin)
+    plugin.view.submitDialog('archive')
+    await renaming
 
-    await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
-    await page.getByLabelText(RENAME_LABEL).fill('archive')
-    await userEvent.keyboard('{Enter}')
-
-    await expect
-      .element(page.getByText('archive', { exact: true }))
-      .toBeVisible()
-    await expect
-      .element(page.getByText('docs', { exact: true }))
-      .not.toBeInTheDocument()
+    expect(names(plugin)).toContain('archive')
+    expect(names(plugin)).not.toContain('docs')
     // Companion only ever moved files; the folders were created and deleted.
     expect(
       companion.calls
@@ -917,73 +838,56 @@ describe('S3 provider in the browser', () => {
       { name: 'hello.txt', isFolder: false, size: 12, mimeType: 'text/plain' },
     ])
     expect(companion.folders.has('docs/')).toBe(false)
-    await expect
-      .element(page.getByText(/Renamed to "archive"/).first())
-      .toBeVisible()
+    expect(toasts()).toContain('Renamed to "archive"')
   })
 
-  it('refuses to move a folder into itself', async ({ worker }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('refuses to move a folder into itself', async () => {
+    const { companion, plugin, toasts } = await setupHeadless()
+    const moving = plugin.view.runAction(
+      actionOf(plugin, 's3:rename'),
+      itemOf(plugin, 'docs%2F'),
+    )
+    await dialogOf(plugin)
+    plugin.view.submitDialog('docs/inner')
+    await moving
 
-    await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Rename or move…' }).click()
-    await page.getByLabelText(RENAME_LABEL).fill('docs/inner')
-    await userEvent.keyboard('{Enter}')
-
-    await expect
-      .element(page.getByText('A folder cannot be moved into itself').first())
-      .toBeVisible()
+    expect(toasts()).toContain('A folder cannot be moved into itself')
     expect(companion.lastCall('/s3/mutate/move')).toBeUndefined()
     expect(companion.lastCall('/s3/mutate/create-folder')).toBeUndefined()
   })
 
-  it('deletes files after confirmation and folders with their contents', async ({
-    worker,
-  }) => {
-    const { companion } = setup(worker, { mode: 'manager' })
-    await openBucket()
+  it('deletes files after confirmation and folders with their contents', async () => {
+    const { companion, plugin, toasts } = await setupHeadless()
+    const remove = actionOf(plugin, 's3:delete')
 
     // Cancel leaves everything alone
-    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-    await page.getByRole('menuitem', { name: 'Delete' }).click()
-    const dialog = page.getByRole('dialog')
-    await expect.element(dialog).toBeVisible()
-    await dialog.getByRole('button', { name: 'Cancel' }).click()
-    await expect.element(dialog).not.toBeInTheDocument()
+    let deleting = plugin.view.runAction(remove, itemOf(plugin, 'readme.md'))
+    await dialogOf(plugin)
+    plugin.view.cancelDialog()
+    await deleting
     expect(companion.lastCall('/s3/mutate/delete')).toBeUndefined()
 
-    // Confirm deletes the file and says so. (`exact`, because the toast text
-    // contains the file name too.)
-    await page.getByRole('button', { name: 'Actions for readme.md' }).click()
-    await page.getByRole('menuitem', { name: 'Delete' }).click()
-    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
-    // (The loading screen hides the list while the request is in flight, so
-    // wait for the toast before looking at the calls.)
-    await expect
-      .element(page.getByText(/Deleted "readme.md"/).first())
-      .toBeVisible()
+    // Confirm deletes the file and says so.
+    deleting = plugin.view.runAction(remove, itemOf(plugin, 'readme.md'))
+    await dialogOf(plugin)
+    plugin.view.submitDialog()
+    await deleting
+    expect(toasts()).toContain('Deleted "readme.md"')
     expect(companion.lastCall('/s3/mutate/delete')?.body).toEqual({
       id: 'readme.md',
     })
-    await expect
-      .element(page.getByText('readme.md', { exact: true }))
-      .not.toBeInTheDocument()
+    expect(names(plugin)).not.toContain('readme.md')
 
     // A folder is emptied first (Companion only deletes empty folders), then
     // deleted itself.
-    await page.getByRole('button', { name: 'Actions for docs' }).click()
-    await page.getByRole('menuitem', { name: 'Delete' }).click()
-    await expect
-      .element(
-        dialog.getByText('The folder and everything in it will be deleted.'),
-      )
-      .toBeVisible()
-    await dialog.getByRole('button', { name: 'Delete', exact: true }).click()
-    await expect.element(page.getByText(/Deleted "docs"/).first()).toBeVisible()
-    await expect
-      .element(page.getByText('docs', { exact: true }))
-      .not.toBeInTheDocument()
+    deleting = plugin.view.runAction(remove, itemOf(plugin, 'docs%2F'))
+    expect(await dialogOf(plugin)).toMatchObject({
+      message: 'The folder and everything in it will be deleted.',
+    })
+    plugin.view.submitDialog()
+    await deleting
+    expect(toasts()).toContain('Deleted "docs"')
+    expect(names(plugin)).not.toContain('docs')
     expect(
       companion.calls
         .filter((call) => call.path === '/s3/mutate/delete')
@@ -993,10 +897,8 @@ describe('S3 provider in the browser', () => {
     expect(companion.folders.has('docs/')).toBe(false)
   })
 
-  it('offers no file changes in picker mode: picking is not changing', async ({
-    worker,
-  }) => {
-    setup(worker)
+  it('offers no file changes in picker mode: picking is not changing', async () => {
+    setup()
     await openBucket()
 
     await page.getByRole('checkbox', { name: /docs/ }).click()
@@ -1012,17 +914,10 @@ describe('S3 provider in the browser', () => {
   })
 
   describe('server-issued grants', () => {
-    it('connects with a grant instead of a plain session', async ({
-      worker,
-    }) => {
+    it('connects with a grant instead of a plain session', async () => {
       const grant = mockGrant({ bucket: 'my-bucket' })
       const getGrant = vi.fn(async () => grant)
-      const { companion } = setup(worker, {
-        mode: 'manager',
-        getGrant,
-      })
-
-      await openBucket()
+      const { companion, plugin } = await setupHeadless({ getGrant })
       expect(getGrant).toHaveBeenCalledTimes(1)
       expect(companion.lastCall('/s3/simple-auth')?.body).toEqual({
         form: { grant },
@@ -1030,32 +925,27 @@ describe('S3 provider in the browser', () => {
       expectLoginBeforeListing(companion)
       expect(companion.session).toMatchObject({ bucket: 'my-bucket' })
       // Mutations are available: the grant carries the write scope.
-      await expect
-        .element(page.getByRole('button', { name: 'New folder' }))
-        .toBeVisible()
+      expect(plugin.builtInToolbarActions().map((action) => action.id)).toEqual(
+        ['s3:newFolder'],
+      )
     })
 
-    it('does not restore a session when a pending grant resolves after logout', async ({
-      worker,
-    }) => {
+    it('does not restore a session when a pending grant resolves after logout', async () => {
       let now = Math.floor(Date.now() / 1000)
       const { getGrant, finishRenewal } = grantWithPendingRenewal(() => now)
-      const { companion, plugin } = setup(worker, {
+      const { companion, plugin } = setup({
         getGrant,
         companion: { nowSeconds: () => now },
       })
       await openBucket()
       now += 901
-      const request = plugin.provider
-        .list(null, { signal: new AbortController().signal })
-        .then(
-          (result) => ({ result }),
-          (error: unknown) => ({ error }),
-        )
+      const request = plugin.provider.list(null, {
+        signal: new AbortController().signal,
+      })
       await vi.waitFor(() => expect(getGrant).toHaveBeenCalledTimes(2))
       await plugin.view.logout()
       finishRenewal()
-      expect(await request).toHaveProperty('error')
+      await expect(request).rejects.toThrow()
       expect(await plugin.storage.getItem(plugin.provider.tokenKey)).toBeNull()
       expect(plugin.getPluginState().authenticated).toBe(false)
       expect(
@@ -1063,12 +953,10 @@ describe('S3 provider in the browser', () => {
       ).toHaveLength(1)
     })
 
-    it('shares renewal across concurrent expired requests and does not inherit a caller abort', async ({
-      worker,
-    }) => {
+    it('shares renewal across concurrent expired requests and does not inherit a caller abort', async () => {
       let now = Math.floor(Date.now() / 1000)
       const { getGrant, finishRenewal } = grantWithPendingRenewal(() => now)
-      const { companion, plugin } = setup(worker, {
+      const { companion, plugin } = setup({
         getGrant,
         companion: { nowSeconds: () => now },
       })
@@ -1082,11 +970,6 @@ describe('S3 provider in the browser', () => {
       const second = plugin.provider.list(null, {
         signal: new AbortController().signal,
       })
-      // Attach rejection handling immediately: a broken concurrent renewal must not be unhandled.
-      const secondResult = second.then(
-        (result) => ({ result }),
-        (error: unknown) => ({ error }),
-      )
       await vi.waitFor(() =>
         expect(
           companion.calls.filter((call) => call.status === 401),
@@ -1095,18 +978,16 @@ describe('S3 provider in the browser', () => {
       canceled.abort()
       finishRenewal()
       await first
-      expect(await secondResult).toHaveProperty('result')
+      await second
       expect(getGrant).toHaveBeenCalledTimes(2)
     })
 
-    it('fetches a new grant when the session expires mid-way', async ({
-      worker,
-    }) => {
+    it('fetches a new grant when the session expires mid-way', async () => {
       let now = Math.floor(Date.now() / 1000)
       const getGrant = vi.fn(async () =>
         mockGrant({ bucket: 'my-bucket', exp: now + 900 }),
       )
-      const { companion } = setup(worker, {
+      const { companion } = setup({
         getGrant,
         companion: { nowSeconds: () => now },
       })
@@ -1122,22 +1003,16 @@ describe('S3 provider in the browser', () => {
       ).toHaveLength(2)
     })
 
-    it('hides the mutation actions for a read-only grant', async ({
-      worker,
-    }) => {
-      const { companion } = setup(worker, {
+    it('hides the mutation actions for a read-only grant', async () => {
+      const { companion, plugin } = await setupHeadless({
         getGrant: async () =>
           mockGrant({ bucket: 'my-bucket', scopes: ['read'] }),
       })
-
-      await openBucket()
       expect(companion.session?.scopes).toEqual(['read'])
-      await expect
-        .element(page.getByRole('button', { name: 'New folder' }))
-        .not.toBeInTheDocument()
-      await expect
-        .element(page.getByRole('button', { name: 'Actions for readme.md' }))
-        .not.toBeInTheDocument()
+      expect(plugin.canWrite).toBe(false)
+      expect(plugin.builtInActions()).toEqual([])
+      expect(plugin.builtInToolbarActions()).toEqual([])
+      expect(plugin.builtInBulkActions()).toEqual([])
     })
   })
 })

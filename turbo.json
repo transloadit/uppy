@@ -1,6 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalDependencies": ["private/tsconfig/tsconfig*.json"],
+  "noUpdateNotifier": true,
   "tasks": {
     "build": {
       "outputLogs": "new-only",
@@ -59,7 +60,7 @@
     "test": {
       "dependsOn": ["^test"],
       "cache": false,
-      "passThroughEnv": ["VITE_MINIO_CONFIG"]
+      "passThroughEnv": ["VITE_MINIO_CONFIG", "COMPANION_REDIS_URL"]
     },
     "test:e2e": {
       "dependsOn": ["^test:e2e"],

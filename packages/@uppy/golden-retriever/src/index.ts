@@ -290,7 +290,7 @@ export default class GoldenRetriever<
   }
 
   async [Symbol.for('uppy test: deleteBlobs')](fileIDs: UppyFileId[]) {
-    return this.#deleteBlobs(fileIDs)
+    await this.#deleteBlobs(fileIDs)
   }
 
   #addBlobToStores = async (file: UppyFile<M, B>): Promise<void> => {

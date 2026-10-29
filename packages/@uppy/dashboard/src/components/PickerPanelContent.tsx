@@ -36,16 +36,12 @@ function PickerPanelContent<M extends Meta, B extends Body>({
 }: PickerPanelContentProps<M, B>): ComponentChildren {
   const ref = useRef<HTMLDivElement>(null)
   const activePlugin = uppy.getPlugin(activePickerPanel.id) as
-    | (UIPlugin<UIPluginOptions & { standalone?: boolean }, M, B> & {
-        // `standalone` and `acceptsFileDrops` are experimental, for the
-        // file-management plugins (`@uppy/s3`); they will change.
+    | (UIPlugin<UIPluginOptions, M, B> & {
+        // `acceptsFileDrops` is experimental, for the file-management
+        // plugins (`@uppy/s3`); it will change.
         acceptsFileDrops?: boolean
       })
     | undefined
-  // A plugin that is the whole page (a file library rather than a picker)
-  // asks for no chrome: the page around it owns the heading, and there is
-  // nothing to cancel.
-  const standalone = Boolean(activePlugin?.opts.standalone)
   // A picker's panel ignores dropped files: they would not end up where it
   // shows (a Google Drive folder, say). A plugin can opt in with
   // `acceptsFileDrops` (a storage browser); then the Dashboard takes a drag of
@@ -83,24 +79,22 @@ function PickerPanelContent<M extends Meta, B extends Body>({
       onDrop={ignoreDrag}
       onPaste={ignoreEvent}
     >
-      {!standalone && (
-        <div className="uppy-DashboardContent-bar">
-          <div
-            className="uppy-DashboardContent-title"
-            role="heading"
-            aria-level={1}
-          >
-            {i18n('importFrom', { name: activePickerPanel.name })}
-          </div>
-          <button
-            className="uppy-DashboardContent-back"
-            type="button"
-            onClick={hideAllPanels}
-          >
-            {i18n('cancel')}
-          </button>
+      <div className="uppy-DashboardContent-bar">
+        <div
+          className="uppy-DashboardContent-title"
+          role="heading"
+          aria-level={1}
+        >
+          {i18n('importFrom', { name: activePickerPanel.name })}
         </div>
-      )}
+        <button
+          className="uppy-DashboardContent-back"
+          type="button"
+          onClick={hideAllPanels}
+        >
+          {i18n('cancel')}
+        </button>
+      </div>
 
       <div ref={ref} className="uppy-DashboardContent-panelBody">
         {/* The panel can still be rendered once while its plugin is being

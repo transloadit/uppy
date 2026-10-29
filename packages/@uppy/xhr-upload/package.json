@@ -39,14 +39,15 @@
     "./package.json": "./package.json"
   },
   "devDependencies": {
+    "@uppy-dev/msw-setup": "workspace:^",
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
     "@uppy/dashboard": "workspace:^",
-    "@vitest/browser-playwright": "^4.1.11",
-    "msw": "^2.15.0",
-    "playwright": "1.61.1",
+    "@vitest/browser-playwright": "^5.0.3",
+    "msw": "^3.0.2",
+    "playwright": "1.64.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.3"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

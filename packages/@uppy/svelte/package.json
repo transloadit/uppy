@@ -1,6 +1,6 @@
 {
   "name": "@uppy/svelte",
-  "version": "6.0.0",
+  "version": "6.0.1",
   "description": "Uppy plugin that helps integrate Uppy into your Svelte project.",
   "type": "module",
   "sideEffects": [
@@ -58,7 +58,7 @@
     "@sveltejs/package": "^2.5.7",
     "@uppy/core": "workspace:^",
     "svelte": "^5.56.5",
-    "svelte-check": "^4.7.6",
+    "svelte-check": "^4.7.7",
     "tslib": "^2.8.1",
     "typescript": "^6.0.3"
   },

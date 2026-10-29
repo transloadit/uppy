@@ -1,5 +1,11 @@
 # @uppy/webcam
 
+## 6.0.2
+
+### Patch Changes
+
+- 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
+
 ## 6.0.1
 
 ### Patch Changes

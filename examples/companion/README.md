@@ -5,7 +5,7 @@ uppy client.
 
 ## Test it
 
-To run this example, make sure you've correctly installed the **repository
+To run this example, make sure you’ve correctly installed the **repository
 root**:
 
 ```bash

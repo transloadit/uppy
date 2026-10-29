@@ -1,4 +1,5 @@
 import pRetry, { AbortError } from 'p-retry'
+import type { Promisable } from 'type-fest'
 import packageJson from '../../package.json' with { type: 'json' }
 import type Uppy from '../index.js'
 import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
@@ -10,6 +11,7 @@ import {
   toError,
   UserFacingApiError,
 } from '../utils/index.js'
+import stripTrailingSlash from '../utils/stripTrailingSlash.js'
 import AuthError, { isAuthError } from './AuthError.js'
 
 export type RequestOptions = {
@@ -28,11 +30,6 @@ export type Opts = {
   companionCookiesRule?: 'same-origin' | 'include' | 'omit'
   companionHeaders?: CompanionHeaders
   companionKeysParams?: Record<string, string>
-}
-
-// Remove the trailing slash so we can always safely append /xyz.
-function stripSlash(url: string) {
-  return url.replace(/\/$/, '')
 }
 
 const retryCount = 10 // set to a low number, like 2 to test manual user retries
@@ -142,10 +139,10 @@ export default class RequestClient<M extends Meta, B extends Body> {
   get hostname(): string {
     const { companion } = this.uppy.getState()
     const host = this.opts.companionUrl
-    return stripSlash(companion?.[host] ? companion[host] : host)
+    return stripTrailingSlash(companion?.[host] ? companion[host] : host)
   }
 
-  async headers(emptyBody = false): Promise<Record<string, string>> {
+  headers(emptyBody = false): Promisable<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
       ...(emptyBody
@@ -188,16 +185,20 @@ export default class RequestClient<M extends Meta, B extends Body> {
     method = 'GET',
     data,
     skipPostResponse,
+    skipSubclassHooks,
     signal,
   }: {
     path: string
     method?: string
     data?: Record<string, unknown>
     skipPostResponse?: boolean
+    /** Use RequestClient's own `headers` and `onReceiveResponse`, ignoring subclass overrides. */
+    skipSubclassHooks?: boolean
     signal?: AbortSignal
   }): Promise<ResBody> {
+    const hooks = skipSubclassHooks ? RequestClient.prototype : this
     try {
-      const headers = await this.headers(!data)
+      const headers = await hooks.headers.call(this, !data)
       const response = await fetchWithNetworkError(this.#getUrl(path), {
         method,
         signal,
@@ -205,7 +206,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
         credentials: this.opts.companionCookiesRule || 'same-origin',
         body: data ? JSON.stringify(data) : null,
       })
-      if (!skipPostResponse) this.onReceiveResponse(response)
+      if (!skipPostResponse) hooks.onReceiveResponse.call(this, response)
 
       return await handleJSONResponse<ResBody>(response)
     } catch (err) {
@@ -223,14 +224,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
     }
   }
 
-  async get<PostBody>(
-    path: string,
-    options?: RequestOptions,
-  ): Promise<PostBody> {
+  get<PostBody>(path: string, options?: RequestOptions): Promise<PostBody> {
     return this.request({ ...options, path })
   }
 
-  async post<PostBody>(
+  post<PostBody>(
     path: string,
     data: Record<string, unknown>,
     options?: RequestOptions,
@@ -238,7 +236,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
-  async delete<T>(
+  delete<T>(
     path: string,
     data?: Record<string, unknown>,
     options?: RequestOptions,
@@ -265,7 +263,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       const queue = getQueue()
 
       return await pRetry(
-        async () => {
+        () => {
           const queueRemoteUploadAttempt = queue.wrapPromiseFunction(
             async () => {
               const currentFile = this.uppy.getFile(file.id) as

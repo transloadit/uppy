@@ -65,7 +65,7 @@ abstract class S3Client {
     })
   }
 
-  protected async xhr({
+  protected xhr({
     url,
     method,
     data,

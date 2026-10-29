@@ -5,7 +5,7 @@
     "@transloadit/utils": "^4.6.0",
     "@uppy-dev/tsconfig": "workspace:^",
     "typescript": "^6.0.3",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   },
   "private": true,
   "type": "module",

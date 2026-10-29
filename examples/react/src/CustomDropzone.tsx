@@ -105,5 +105,3 @@ export function CustomDropzone({ openModal }: CustomDropzoneProps) {
     </div>
   )
 }
-
-export default CustomDropzone

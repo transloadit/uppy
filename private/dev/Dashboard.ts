@@ -50,7 +50,7 @@ const companionAllowedHosts =
 const RESTORE = false
 const COMPRESS = false
 
-async function assemblyOptions() {
+function assemblyOptions() {
   return generateSignatureIfSecret(TRANSLOADIT_SECRET, {
     auth: {
       key: TRANSLOADIT_KEY,
@@ -268,9 +268,6 @@ export default () => {
     const cdnEndpoint = import.meta.env.VITE_TRANSLOADIT_STORAGE_CDN_ENDPOINT
     uppyDashboard.use(TransloaditStorage, {
       target: Dashboard,
-      // Manager mode: the file changes (rename, move, delete, new folder)
-      // only exist there; picker mode only browses and picks.
-      mode: 'manager',
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
       // The harness signs in the browser with the dev secret; a real app signs
@@ -306,7 +303,6 @@ export default () => {
   } else {
     uppyDashboard.use(S3, {
       target: Dashboard,
-      mode: 'manager',
       companionUrl: COMPANION_URL,
       companionAllowedHosts,
     })

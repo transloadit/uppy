@@ -1,54 +1,48 @@
+import { network } from 'virtual:msw'
 import { HttpResponse, http } from 'msw'
-import { setupWorker } from 'msw/browser'
-import { afterAll, beforeAll, describe, expect, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { userEvent } from 'vitest/browser'
 import { render } from 'vitest-browser-vue'
 import App from '../src/App.vue'
 
 const TUS_ENDPOINT = 'https://tusd.tusdemo.net/files/'
 
-/**
- * MSW handlers that mock the tus resumable upload protocol.
- *
- * Handles the tus v1 flow used by the example tests:
- * 1. POST /files/ — create upload, return Location header
- * 2. PATCH /files/:id — receive chunk, return new Upload-Offset
- *
- * See https://tus.io/protocols/resumable-upload#protocol
- */
-const worker = setupWorker(
-  http.post(TUS_ENDPOINT, ({ request }) => {
-    const uploadLength = request.headers.get('Upload-Length') || '0'
-    return new HttpResponse(null, {
-      status: 201,
-      headers: {
-        Location: `${TUS_ENDPOINT}mock-upload-id`,
-        'Tus-Resumable': '1.0.0',
-        'Upload-Offset': '0',
-        'Upload-Length': uploadLength,
-      },
-    })
-  }),
-  http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
-    const uploadOffset = request.headers.get('Upload-Offset') || '0'
-    const body = await request.arrayBuffer()
-    const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
-    return new HttpResponse(null, {
-      status: 204,
-      headers: {
-        'Tus-Resumable': '1.0.0',
-        'Upload-Offset': String(newOffset),
-      },
-    })
-  }),
-)
+network.configure({
+  context: { quiet: true },
+  // An unmocked request must fail the test rather than escape to the network.
+  onUnhandledFrame: 'error',
+  // Mock the tus v1 upload flow: https://tus.io/protocols/resumable-upload#protocol
+  handlers: [
+    // Create the upload and return its Location.
+    http.post(TUS_ENDPOINT, ({ request }) => {
+      const uploadLength = request.headers.get('Upload-Length') || '0'
+      return new HttpResponse(null, {
+        status: 201,
+        headers: {
+          Location: `${TUS_ENDPOINT}mock-upload-id`,
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': '0',
+          'Upload-Length': uploadLength,
+        },
+      })
+    }),
+    // Accept a chunk and return the new Upload-Offset.
+    http.patch(`${TUS_ENDPOINT}:id`, async ({ request }) => {
+      const uploadOffset = request.headers.get('Upload-Offset') || '0'
+      const body = await request.arrayBuffer()
+      const newOffset = Number.parseInt(uploadOffset, 10) + body.byteLength
+      return new HttpResponse(null, {
+        status: 204,
+        headers: {
+          'Tus-Resumable': '1.0.0',
+          'Upload-Offset': String(newOffset),
+        },
+      })
+    }),
+  ],
+})
 
-beforeAll(async () => {
-  await worker.start({ onUnhandledRequest: 'error' })
-})
-afterAll(() => {
-  worker.stop()
-})
+await network.enable()
 
 const createMockFile = (name: string, type: string) => {
   return new File(['test content'], name, { type })
