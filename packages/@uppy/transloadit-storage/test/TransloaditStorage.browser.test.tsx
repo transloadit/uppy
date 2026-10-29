@@ -1,3 +1,4 @@
+import { createS3ManagerController } from '@uppy/components'
 import Uppy, { BasePlugin, type PluginOpts } from '@uppy/core'
 import Dashboard from '@uppy/dashboard'
 import {
@@ -61,6 +62,29 @@ afterEach(() => {
 })
 
 describe('Transloadit Storage in the browser', () => {
+  it('mounts independently in manager mode without Dashboard', async () => {
+    network.use(
+      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
+        http,
+      }),
+    )
+    uppy = new Uppy().use(TransloaditStorage, {
+      companionUrl: COMPANION,
+      mode: 'manager',
+    })
+    expect(uppy.getPlugin('Dashboard')).toBeUndefined()
+
+    const manager = createS3ManagerController(uppy, 'TransloaditStorage')
+    manager.mount()
+    await vi.waitFor(() => {
+      expect(
+        manager.getSnapshot().state.partialTree.map(({ data }) => data.name),
+      ).toContain('readme.md')
+    })
+    expect(manager.getSnapshot().state.actions.length).toBeGreaterThan(0)
+    manager.unmount()
+  })
+
   it('offers the custom upload action in picker mode, and hands it the open folder', async () => {
     const onUploadRequest = vi.fn()
     setup({ onUploadRequest })
@@ -69,6 +93,17 @@ describe('Transloadit Storage in the browser', () => {
 
     await page.getByRole('button', { name: 'Upload files' }).click()
     expect(onUploadRequest).toHaveBeenCalledWith({ prefix: '' })
+  })
+
+  it('waits for folder navigation before reporting the upload destination', async () => {
+    const onUploadRequest = vi.fn()
+    setup({ onUploadRequest })
+    await page.getByRole('tab', { name: 'Transloadit Storage' }).click()
+    await page.getByText('docs', { exact: true }).click()
+    await expect.element(page.getByText('hello.txt')).toBeVisible()
+
+    await page.getByRole('button', { name: 'Upload files' }).click()
+    expect(onUploadRequest).toHaveBeenCalledWith({ prefix: 'docs/' })
   })
 
   it('storeUploads refuses to overwrite explicit Assembly configuration', () => {

@@ -215,7 +215,8 @@ export default class TransloaditStorage<
         // sources); otherwise a plain file picker owned by the widget. Either
         // way files go into the folder that is open (storeUploads builds the
         // Assembly params).
-        run: () => {
+        run: async () => {
+          await this.waitForSettledListing()
           if (onUploadRequest) onUploadRequest({ prefix: openFolderKey(this) })
           else this.#pickFiles()
         },

@@ -696,6 +696,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   #abortController: AbortController | undefined
+  #listingGeneration = 0
 
   async #withAbort(op: (signal: AbortSignal) => Promise<void>) {
     // prevent multiple requests in parallel from causing race conditions
@@ -876,6 +877,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
   }
 
   async openFolder(folderId: PartialTreeId): Promise<void> {
+    const listingGeneration = ++this.#listingGeneration
     // always switch away from the search view when opening a folder, whether it happens from the search view or by clicking breadcrumbs
     this.clearSearchState()
 
@@ -930,7 +932,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
       })
     }).catch(handleError(this.plugin.uppy))
 
-    this.#doneLoading()
+    if (listingGeneration === this.#listingGeneration) this.#doneLoading()
   }
 
   /**
@@ -1229,7 +1231,6 @@ export default class ProviderView<M extends Meta, B extends Body> {
     const { partialTree, username, searchString, searchResults, dialog } =
       this.plugin.getPluginState()
     const breadcrumbs = this.getBreadcrumbs()
-
     return (
       <div
         className={classNames(
