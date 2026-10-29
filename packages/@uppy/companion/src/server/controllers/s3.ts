@@ -20,6 +20,12 @@ import {
   truncateFilename,
 } from '../helpers/utils.js'
 
+const maxBatchPartNumbers = 100
+
+/** An integer from 1 to 10000, the part numbers S3 accepts. */
+const isPartNumber = (value: string) =>
+  /^[1-9]\d{0,4}$/.test(value) && Number(value) <= 10000
+
 export default function s3(
   config: Pick<
     CompanionRuntimeOptions['s3'],
@@ -383,7 +389,14 @@ export default function s3(
     }
 
     const partNumbersArray = partNumbers.split(',')
-    if (!partNumbersArray.every((partNumber) => parseInt(partNumber, 10))) {
+    // Signing is synchronous CPU work, so a long list would block the event loop.
+    if (partNumbersArray.length > maxBatchPartNumbers) {
+      res.status(400).json({
+        error: `s3: at most ${maxBatchPartNumbers} part numbers can be signed per request.`,
+      })
+      return
+    }
+    if (!partNumbersArray.every(isPartNumber)) {
       res.status(400).json({
         error: 's3: the part numbers must be a number between 1 and 10000.',
       })
