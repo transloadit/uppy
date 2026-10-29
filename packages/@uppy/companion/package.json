@@ -42,7 +42,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "connect-redis": "^7.1.1",
-    "content-disposition": "^2.0.1",
+    "content-disposition": "^3.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "escape-goat": "^4.0.0",
