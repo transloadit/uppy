@@ -93,6 +93,7 @@ function App() {
 
         <dialog
           ref={dialogRef}
+          onClose={closeModal}
           className="backdrop:bg-gray-500/50 rounded-lg shadow-xl p-0 fixed inset-0 m-auto"
         >
           {(() => {
