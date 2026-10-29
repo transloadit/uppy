@@ -9379,7 +9379,7 @@ __metadata:
     "@uppy/components": "workspace:^"
     "@uppy/core": "workspace:^"
     svelte: "npm:^5.56.5"
-    svelte-check: "npm:^4.7.6"
+    svelte-check: "npm:^4.7.7"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   peerDependencies:
@@ -14093,7 +14093,7 @@ __metadata:
     msw: "npm:^3.0.2"
     playwright: "npm:1.64.0"
     svelte: "npm:^5.56.5"
-    svelte-check: "npm:^4.7.6"
+    svelte-check: "npm:^4.7.7"
     tailwindcss: "npm:^4.0.0"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.4"
@@ -25437,9 +25437,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"svelte-check@npm:^4.7.6":
-  version: 4.7.6
-  resolution: "svelte-check@npm:4.7.6"
+"svelte-check@npm:^4.7.7":
+  version: 4.7.7
+  resolution: "svelte-check@npm:4.7.7"
   dependencies:
     "@jridgewell/trace-mapping": "npm:^0.3.25"
     "@sveltejs/load-config": "npm:^0.2.3"
@@ -25452,7 +25452,7 @@ __metadata:
     typescript: ^5.0.0 || ^6.0.0
   bin:
     svelte-check: bin/svelte-check
-  checksum: 10/a32c374cbab1288d0f39e310bb3811126738dea8e521c9c35e78ae0c937ca18026122fbb3ae3de0feb4c02fd71554c61b704d95da1c59060e130cc5d5288e894
+  checksum: 10/3ceebcf3c039f31043543f996677fc57525f0e3fb4928e7fa301ee8d6b2591241305ac5d21da0a64641a13b67a068184cf5aa2f5746896124c1f3bade8566c7f
   languageName: node
   linkType: hard
 
