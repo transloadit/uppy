@@ -6,7 +6,7 @@ trap 'kill $TSC_WATCH_PID 2>/dev/null || true' EXIT
 
 # Load local env vars. In CI, these are injected.
 if [ -f ../../../.env ]; then
-  DOTENV_CONFIG_PATH=../../../.env node --watch -r dotenv/config dist/standalone/start-server.js
+  node --watch --env-file=../../../.env dist/standalone/start-server.js
 else
   env \
     COMPANION_DATADIR="./output" \
