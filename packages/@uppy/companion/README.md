@@ -98,6 +98,21 @@ companion as a standalone server.
 $ companion
 ```
 
+Standalone configuration can also come from `COMPANION_CONFIG_JSON` (a JSON object),
+`COMPANION_CONFIG_FILE` (a JSON file path), or `companion --config path/to/config.json`
+(`-c` also works). A command-line path takes precedence over `COMPANION_CONFIG_FILE`.
+Choose either inline JSON or a file; setting both is an error. Configuration values
+override environment-derived options, and explicit options passed to `standalone()`
+override both.
+
+OAuth callback results are retained for at most 60 seconds and consumed once. With
+Redis, they are shared across workers in the configured `redisPubSubScope` and deleted
+atomically when consumed. Without Redis, they stay in the current process, with a
+limit of 1,000 pending results (oldest first). Each result is limited to 64 KiB.
+OAuth Redis commands and subscription readiness have a five-second deadline. If
+retention or replay fails, the login attempt fails; Companion does not fall back to
+live delivery of an unconsumed result. Users can retry signing in.
+
 If you cloned the repo from GitHub and want to run it as a standalone server,
 you may also run the following command from within its directory
 

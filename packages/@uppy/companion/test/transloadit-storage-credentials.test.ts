@@ -59,7 +59,12 @@ async function fixture(
       moves.push(form)
       const { destination } = JSON.parse(form.get('params') ?? '{}')
       response.writeHead(200, { 'content-type': 'application/json' })
-      response.end(JSON.stringify({ ok: 'DAM_ENTRY_MOVED', path: destination }))
+      response.end(
+        JSON.stringify({
+          ok: 'DAM_ENTRY_MOVED',
+          path: destination.normalize('NFC'),
+        }),
+      )
       return
     }
     s3Keys.push(request.headers.authorization ?? '')
@@ -215,11 +220,32 @@ test('signs native moves with the cached Workspace key pair', async () => {
   const params = moves[0]?.get('params') ?? ''
   expect(JSON.parse(params)).toMatchObject({
     auth: { key: `key-${workspace}` },
+    file_library: true,
   })
   expect(moves[0]?.get('signature')).toBe(
     `sha256:${createHmac('sha256', 'local-workspace-secret').update(params).digest('hex')}`,
   ) // The move reuses the S3 client's credentials: one resolver call in total.
   expect(lookups).toEqual([workspace])
+})
+
+test('normalizes native move paths before signing and comparing the catalog response', async () => {
+  const { provider, companion, moves, grantSession } = await fixture()
+  const session = await grantSession({ scopes: ['read', 'write'] })
+  const moved = await provider.moveItem({
+    companion,
+    providerUserSession: session,
+    id: 'tenant-1/cafe\u0301.jpg',
+    destination: 'tenant-1/renamed-cafe\u0301.jpg',
+  })
+  expect(JSON.parse(moves[0]?.get('params') ?? '{}')).toMatchObject({
+    source: 'tenant-1/café.jpg',
+    destination: 'tenant-1/renamed-café.jpg',
+    file_library: true,
+  })
+  expect(moved).toEqual({
+    id: 'tenant-1/renamed-café.jpg',
+    requestPath: encodeURIComponent('tenant-1/renamed-café.jpg'),
+  })
 })
 
 test.each([

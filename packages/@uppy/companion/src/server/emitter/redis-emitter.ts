@@ -25,6 +25,8 @@ export default function redisEmitter(
   const getPrefixedEventName = (eventName: string) => `${prefix}${eventName}`
 
   const errorEmitter = new EventEmitter()
+  // Pending login sockets listen for disconnect and remove the listener on close.
+  errorEmitter.setMaxListeners(0)
   const handleError = (err: unknown) => errorEmitter.emit('error', err)
 
   async function makeRedis() {
@@ -36,6 +38,7 @@ export default function redisEmitter(
     subscriber.on('error', (err) =>
       logger.error('subscriber redis error', err.toString()),
     )
+    subscriber.on('close', () => errorEmitter.emit('redis:disconnect'))
     await publisher.connect()
     await subscriber.connect()
     return { subscriber, publisher }
@@ -76,8 +79,8 @@ export default function redisEmitter(
   type Handler = (...args: unknown[]) => unknown
 
   async function removeListener(eventName: string, handler: Handler) {
-    if (eventName === 'error') {
-      errorEmitter.removeListener('error', handler)
+    if (eventName === 'error' || eventName === 'redis:disconnect') {
+      errorEmitter.removeListener(eventName, handler)
       return
     }
 
@@ -113,9 +116,9 @@ export default function redisEmitter(
     handler: Handler,
     _once = false,
   ) {
-    if (eventName === 'error') {
-      if (_once) errorEmitter.once('error', handler)
-      else errorEmitter.addListener('error', handler)
+    if (eventName === 'error' || eventName === 'redis:disconnect') {
+      if (_once) errorEmitter.once(eventName, handler)
+      else errorEmitter.addListener(eventName, handler)
       return
     }
 
@@ -207,7 +210,7 @@ export default function redisEmitter(
    * @param eventName name of the event
    */
   async function removeAllListeners(eventName: string) {
-    if (eventName === 'error') {
+    if (eventName === 'error' || eventName === 'redis:disconnect') {
       errorEmitter.removeAllListeners(eventName)
       return
     }

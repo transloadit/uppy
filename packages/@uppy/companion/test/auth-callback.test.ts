@@ -4,19 +4,13 @@ import express from 'express'
 import session from 'express-session'
 import { Pipeline, Redis } from 'ioredis'
 import request from 'supertest'
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { WebSocket } from 'ws'
 import { defaultOptions } from '../dist/config/companion.js'
-import {
-  publishAuthCallback,
-  takeAuthCallback,
-} from '../dist/server/auth-callback.js'
-import sendToken from '../dist/server/controllers/send-token.js'
 import type { EmitterLike } from '../dist/server/emitter/index.js'
 import redisEmitter from '../dist/server/emitter/redis-emitter.js'
 import { generateEncryptedAuthToken } from '../dist/server/helpers/jwt.js'
 import { encodeState } from '../dist/server/helpers/oauth-state.js'
-import setupSockets from '../dist/server/socket.js'
 
 // Flows are sequential: establish or hold the subscription before switching
 // this mocked process singleton to the independent publishing worker.
@@ -25,6 +19,23 @@ let storage: Redis | undefined
 vi.mock('../dist/server/emitter/index.js', () => ({ default: () => bus }))
 vi.mock('../dist/server/redis.js', () => ({ client: () => storage }))
 vi.mock('express-prom-bundle')
+
+let publishAuthCallback: typeof import('../dist/server/auth-callback.js').publishAuthCallback
+let takeAuthCallback: typeof import('../dist/server/auth-callback.js').takeAuthCallback
+let sendToken: typeof import('../dist/server/controllers/send-token.js').default
+let setupSockets: typeof import('../dist/server/socket.js').default
+
+beforeEach(async () => {
+  // Each simulated process gets a fresh dedicated OAuth Redis connection.
+  vi.resetModules()
+  ;({ publishAuthCallback, takeAuthCallback } = await import(
+    '../dist/server/auth-callback.js'
+  ))
+  ;({ default: sendToken } = await import(
+    '../dist/server/controllers/send-token.js'
+  ))
+  ;({ default: setupSockets } = await import('../dist/server/socket.js'))
+})
 
 const clients: Redis[] = []
 const sockets: WebSocket[] = []
@@ -128,9 +139,9 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
       callbackToken,
       publisher,
       subscriber,
-      async callback() {
+      callback(status = 200) {
         bus = publisher
-        await request(app).get('/send-token').expect(200)
+        return request(app).get('/send-token').expect(status)
       },
       connect(signal = AbortSignal.timeout(2000)) {
         bus = subscriber
@@ -150,7 +161,7 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     const on = flow.subscriber.on.bind(flow.subscriber)
     vi.spyOn(flow.subscriber, 'on').mockImplementation(async (...args) => {
       await on(...args)
-      ready.resolve()
+      if (args[0] === flow.callbackToken) ready.resolve()
     })
     const result = flow.connect()
     await ready.promise
@@ -193,7 +204,9 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
     expect(output).toContain('socket.auth.redis.error')
     expect(output).not.toContain(flow.callbackToken)
     bus = flow.publisher
-    vi.spyOn(flow.publisher, 'emit').mockRejectedValueOnce(failure)
+    if (mode === 'redis')
+      vi.spyOn(Redis.prototype, 'publish').mockRejectedValueOnce(failure)
+    else vi.spyOn(flow.publisher, 'emit').mockRejectedValueOnce(failure)
     const promise = publishAuthCallback(flow.callbackToken, { token }, options)
     const published = await promise.catch((error: unknown) => error)
     expect(published).toBeInstanceOf(Error)
@@ -202,27 +215,71 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
   })
 
   if (mode === 'redis')
-    run.each([true, false])('live with SET failure %s', async (setFails) => {
+    run('retains results on Redis without SET PXAT support', async () => {
+      const flow = await start()
+      const sendCommand = Redis.prototype.sendCommand
+      vi.spyOn(Redis.prototype, 'sendCommand').mockImplementation(function (
+        this: Redis,
+        command,
+        ...args
+      ) {
+        if (command.name === 'set' && command.args.includes('PXAT')) {
+          return Promise.reject(new Error('ERR syntax error'))
+        }
+        return sendCommand.call(this, command, ...args)
+      })
+      await flow.callback()
+      expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
+        token,
+      })
+    })
+
+  if (mode === 'redis')
+    run(
+      'recovers after the dedicated OAuth connection ends',
+      async () => {
+        const flow = await start()
+        await flow.callback()
+        expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
+          token,
+        })
+        const authClient = clients.find(
+          (client) => client.options.enableOfflineQueue === false,
+        )
+        expect(authClient).toBeDefined()
+        const ended = once(authClient!, 'end', {
+          signal: AbortSignal.timeout(1000),
+        })
+        authClient!.disconnect()
+        await ended
+        await flow.callback()
+        expect(await takeAuthCallback(flow.callbackToken, options)).toEqual({
+          token,
+        })
+      },
+      10_000,
+    )
+
+  if (mode === 'redis')
+    run('responds with a generic error when retention fails', async () => {
       const flow = await start()
       const log = vi.spyOn(console, 'log').mockImplementation(() => {})
-      vi.spyOn(Pipeline.prototype, 'exec').mockRejectedValue(new Error())
-      const { result } = await connectSubscribed(flow)
-      void result.catch(() => {})
-      if (setFails)
-        vi.spyOn(storage!, 'set').mockRejectedValueOnce(
-          Object.assign(new Error('Retained writes unavailable'), {
-            command: {
-              name: 'set',
-              args: ['callback-key', JSON.stringify({ token })],
-            },
-          }),
-        )
-      await flow.callback()
-      expect(await result).toEqual({ token })
+      vi.spyOn(Pipeline.prototype, 'exec').mockRejectedValueOnce(
+        Object.assign(new Error('Retained writes unavailable'), {
+          command: {
+            name: 'set',
+            args: [flow.callbackToken, JSON.stringify({ token })],
+          },
+        }),
+      )
+      const response = await flow.callback(500)
+      expect(response.status).toBe(500)
+      expect(response.text).not.toContain(token)
+      expect(response.text).not.toContain(flow.callbackToken)
       const output = log.mock.calls.flat().join(' ')
-      expect(output).toContain('socket.auth.redis.error')
-      if (setFails) expect(output).toContain('auth.callback.retain.error')
+      expect(output).toContain('auth.callback.retain.error')
       expect(output).not.toContain(token)
+      expect(output).not.toContain(flow.callbackToken)
     })
 
   run(
@@ -235,6 +292,7 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
       const cleaned = Promise.withResolvers<void>()
       const on = flow.subscriber.on.bind(flow.subscriber)
       vi.spyOn(flow.subscriber, 'on').mockImplementation(async (...args) => {
+        if (args[0] !== flow.callbackToken) return on(...args)
         subscribing.resolve()
         await proceed.promise
         return on(...args)
@@ -246,7 +304,8 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
       vi.spyOn(flow.subscriber, 'removeListener').mockImplementation(
         async (...args) => {
           await remove(...args)
-          if (++removals === 2) cleaned.resolve()
+          if (args[0] === flow.callbackToken && ++removals === 2)
+            cleaned.resolve()
         },
       )
       const controller = new AbortController()
@@ -310,6 +369,7 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
       const proceed = Promise.withResolvers<void>()
       const on = flow.subscriber.on.bind(flow.subscriber)
       vi.spyOn(flow.subscriber, 'on').mockImplementation(async (...args) => {
+        if (args[0] !== flow.callbackToken) return on(...args)
         subscribing.resolve()
         await proceed.promise
         return on(...args)
