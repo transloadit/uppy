@@ -1015,6 +1015,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     this.stopListeningToResize()
+    document.removeEventListener('keydown', this.handleKeyDownInModal)
     document.removeEventListener('paste', this.handlePasteOnBody)
     window.removeEventListener('popstate', this.handlePopState, false)
 
