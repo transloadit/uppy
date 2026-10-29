@@ -65,3 +65,23 @@ it('stops rendering an open Camera panel after unmount', async () => {
     start.mockRestore()
   }
 })
+
+it('stops the camera when an open Camera panel is unmounted', async () => {
+  using uppy = new Uppy().use(Webcam)
+  const webcam = uppy.getPlugin<Webcam<any, any>>('Webcam')!
+  // Show the camera screen without requesting camera access.
+  vi.spyOn(webcam, 'start').mockResolvedValue()
+  webcam.setPluginState({ cameraReady: true, hasCamera: true })
+  const stop = vi.spyOn(webcam, 'stop').mockResolvedValue()
+  const { unmount } = render(<DashboardModal uppy={uppy} open />)
+  const dashboard = uppy.getPlugin<Dashboard<any, any>>('DashboardModal')!
+
+  act(() => dashboard.showPanel('Webcam'))
+  await vi.waitFor(() => {
+    expect(document.querySelector('.uppy-Webcam-container')).not.toBeNull()
+  })
+  stop.mockClear()
+  unmount()
+
+  expect(stop).toHaveBeenCalled()
+})
