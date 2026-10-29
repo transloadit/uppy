@@ -1,15 +1,9 @@
 <script lang="ts">
-import Uppy from '@uppy/core'
+import type Uppy from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
 import { Thumbnail, UppyContextProvider } from '@uppy/svelte'
 
-const uppy = new Uppy()
-const file = uppy.getFile(
-  uppy.addFile({
-    name: 'cat.png',
-    type: 'image/png',
-    data: new Blob([new Uint8Array([137, 80, 78, 71])], { type: 'image/png' }),
-  }),
-)
+let { uppy, file }: { uppy: Uppy; file: UppyFile<any, any> } = $props()
 let shown = $state(true)
 </script>
 

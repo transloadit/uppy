@@ -1,33 +1,31 @@
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render } from '@testing-library/react'
 import Uppy, { type UppyFile } from '@uppy/core'
 import { Thumbnail, UppyContextProvider } from '@uppy/react'
 import { afterEach, describe, expect, it } from 'vitest'
+import { page } from 'vitest/browser'
 
-const instances: Uppy[] = []
+afterEach(cleanup)
 
-afterEach(() => {
-  cleanup()
-  for (const uppy of instances.splice(0)) uppy.destroy()
-})
+const cat = {
+  name: 'cat.png',
+  type: 'image/png',
+  data: new Blob([new Uint8Array([137, 80, 78, 71])], { type: 'image/png' }),
+}
 
-function setup() {
-  const uppy = new Uppy()
-  instances.push(uppy)
-  const file = uppy.getFile(
-    uppy.addFile({
-      name: 'cat.png',
-      type: 'image/png',
-      data: new Blob([new Uint8Array([137, 80, 78, 71])], {
-        type: 'image/png',
-      }),
-    }),
-  )
-  const ui = (width: string) => (
+function TestUI({
+  uppy,
+  file,
+  width,
+}: {
+  uppy: Uppy
+  file: UppyFile<any, any>
+  width: string
+}) {
+  return (
     <UppyContextProvider uppy={uppy}>
-      <Thumbnail file={file as UppyFile<any, any>} images width={width} />
+      <Thumbnail file={file} images width={width} />
     </UppyContextProvider>
   )
-  return { ui }
 }
 
 // Thumbnail registers the cleanup that revokes its URL in an effect. Preact runs
@@ -35,25 +33,30 @@ function setup() {
 const afterPaint = () =>
   new Promise((resolve) => requestAnimationFrame(() => setTimeout(resolve)))
 
-const shownUrl = () =>
-  screen.findByAltText('cat.png').then((img) => img.getAttribute('src')!)
-
 describe('Thumbnail', () => {
   it('keeps its object URL across re-renders', async () => {
-    const { ui } = setup()
-    const { rerender } = render(ui('100px'))
-    const url = await shownUrl()
+    using uppy = new Uppy()
+    const file = uppy.getFile(uppy.addFile(cat))
+    const { rerender } = render(
+      <TestUI uppy={uppy} file={file} width="100px" />,
+    )
+    const img = page.getByAltText('cat.png')
+    await expect.element(img).toBeInTheDocument()
+    const url = img.element().getAttribute('src')!
 
-    rerender(ui('200px'))
+    rerender(<TestUI uppy={uppy} file={file} width="200px" />)
 
-    expect(await shownUrl()).toBe(url)
+    await expect.element(img).toHaveAttribute('src', url)
     expect(await fetch(url)).toBeDefined()
   })
 
   it('revokes its object URL when it unmounts', async () => {
-    const { ui } = setup()
-    const { unmount } = render(ui('100px'))
-    const url = await shownUrl()
+    using uppy = new Uppy()
+    const file = uppy.getFile(uppy.addFile(cat))
+    const { unmount } = render(<TestUI uppy={uppy} file={file} width="100px" />)
+    const img = page.getByAltText('cat.png')
+    await expect.element(img).toBeInTheDocument()
+    const url = img.element().getAttribute('src')!
     expect(await fetch(url)).toBeDefined()
     await afterPaint()
 
