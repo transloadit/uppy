@@ -895,6 +895,26 @@ describe('uploader', () => {
     expect(responseHeaders?.['header-a']).toBeUndefined() // headers sent to destination, not received back
   })
 
+  test('a client header cannot override uploadHeaders by changing its case', async () => {
+    nock('http://localhost')
+      .post('/')
+      .matchHeader('x-tenant', 'operator')
+      .matchHeader('x-client', 'kept')
+      .reply(200, () => '')
+
+    await expect(
+      runMultipartTest({
+        extraCompanionOpts: { uploadHeaders: { 'X-Tenant': 'operator' } },
+        headers: {
+          'X-Tenant': 'client',
+          'x-tenant': 'client',
+          'X-TENANT': 'client',
+          'x-client': 'kept',
+        },
+      }),
+    ).resolves.toMatchObject({ extraData: { bytesUploaded: 17 } })
+  })
+
   test('a client cannot set forwarding headers, the operator can', async () => {
     nock('http://localhost', { badheaders: ['forwarded', 'x-forwarded-host'] })
       .post('/')

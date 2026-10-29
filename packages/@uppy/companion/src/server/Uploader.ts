@@ -333,8 +333,14 @@ export default class Uploader {
   constructor(optionsIn: UploaderOptions) {
     const destinations = validateOptions(optionsIn)
 
-    // A client must not set forwarding headers: the upload server builds its
-    // Location URLs from them. The operator's uploadHeaders may.
+    // Header names are case-insensitive: drop every client spelling of a
+    // header the operator fixed, or a differently cased copy would win. A
+    // client must not set forwarding headers either: the upload server builds
+    // its Location URLs from them. The operator's uploadHeaders may.
+    const { uploadHeaders } = optionsIn.companionOptions
+    const fixedNames = new Set(
+      Object.keys(uploadHeaders ?? {}).map((name) => name.toLowerCase()),
+    )
     const isForwarding = (name: string) =>
       /^(?:forwarded|x-forwarded-.*)$/i.test(name)
     const options = {
@@ -343,10 +349,11 @@ export default class Uploader {
       headers: {
         ...Object.fromEntries(
           Object.entries(optionsIn.headers ?? {}).filter(
-            ([name]) => !isForwarding(name),
+            ([name]) =>
+              !fixedNames.has(name.toLowerCase()) && !isForwarding(name),
           ),
         ),
-        ...optionsIn.companionOptions.uploadHeaders,
+        ...uploadHeaders,
       },
     } satisfies UploaderOptions
 
