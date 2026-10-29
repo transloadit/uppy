@@ -129,6 +129,9 @@ function limitStreamSize(
       }
     },
   })
+  // Start paused like the source streams (see `prepareStream`), otherwise attaching a progress
+  // 'data' listener before the upload consumes the stream would make data flow (and get lost).
+  limiter.pause()
   // errors are propagated to (and handled on) the returned stream
   return pipelineCb(stream, limiter, () => {})
 }
@@ -454,6 +457,7 @@ export default class Uploader {
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed)
         this.readStream.destroy()
+      if (!stream.destroyed) stream.destroy()
       await this.tryDeleteTmpPath()
     }
   }

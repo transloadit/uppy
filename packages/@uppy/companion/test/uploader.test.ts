@@ -620,13 +620,21 @@ describe('uploader', () => {
       protocol,
       totalBytes,
       size,
+      useFormData = false,
     }: {
       protocol: 'tus' | 'multipart'
       totalBytes: number
       size?: number
+      useFormData?: boolean
     }) {
+      let requestBody: unknown
       if (protocol === 'multipart')
-        nock('http://localhost').post('/').reply(200)
+        nock('http://localhost')
+          .post('/')
+          .reply(200, (_uri, body) => {
+            requestBody = body
+            return ''
+          })
 
       const { stream, source } = createSourceStream(totalBytes)
       const uploader = new Uploader({
@@ -638,6 +646,7 @@ describe('uploader', () => {
         },
         endpoint: 'http://localhost',
         protocol,
+        useFormData,
         ...(size != null && { size }),
         pathPrefix,
         metadata: {},
@@ -652,7 +661,11 @@ describe('uploader', () => {
       await socketClient.connect(uploadToken)
       await ready
       await uploader.tryUploadStream(stream, requireMockReq())
-      return { message: await result, source }
+      return {
+        message: await result,
+        source,
+        getRequestBody: () => requestBody,
+      }
     }
 
     test.each([
@@ -685,6 +698,33 @@ describe('uploader', () => {
       })
       expect(message).toMatchObject({ action: 'success' })
       expect(source.bytesRead).toBe(maxFileSize)
+    })
+
+    test('multipart form-data upload of a stream within maxFileSize sends the whole file', async () => {
+      const { message, getRequestBody } = await runStreamingUpload({
+        protocol: 'multipart',
+        totalBytes: maxFileSize,
+        useFormData: true,
+      })
+      expect(message).toMatchObject({ action: 'success' })
+      const body = getRequestBody()
+      expect(typeof body).toBe('string')
+      // the file consists of zero bytes only, the rest of the form-data body is text
+      expect(String(body).match(/\0/g)).toHaveLength(maxFileSize)
+    })
+
+    test('multipart form-data upload of an oversized stream is aborted', async () => {
+      const totalBytes = 1e6
+      const { message, source } = await runStreamingUpload({
+        protocol: 'multipart',
+        totalBytes,
+        useFormData: true,
+      })
+      expect(message).toMatchObject({
+        action: 'error',
+        payload: { error: { message: 'maxFileSize exceeded' } },
+      })
+      expect(source.bytesRead).toBeLessThan(totalBytes)
     })
   })
 })
