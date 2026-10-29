@@ -66,7 +66,7 @@ jobs:
             exit 1
           fi
       - name: Install dependencies
-        run: corepack yarn workspaces focus uppy-io
+        run: corepack yarn install --immutable
       - name: Lint
         run: corepack yarn workspace uppy-io lint
 
