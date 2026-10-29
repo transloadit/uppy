@@ -618,10 +618,14 @@ describe('uploader', () => {
   })
 
   describe('tus transfers that stop moving', () => {
-    const startHangingUpload = () => {
+    const startHangingUpload = (extraCompanionOpts = {}) => {
       setTusHang(true)
       const uploader = new Uploader({
-        companionOptions: { ...companionOptions, streamingUpload: true },
+        companionOptions: {
+          ...companionOptions,
+          streamingUpload: true,
+          ...extraCompanionOpts,
+        },
         endpoint: 'http://url.myendpoint.com/files',
         protocol: 'tus',
         size: 1000,
@@ -648,8 +652,13 @@ describe('uploader', () => {
       uploader.removeEmitterListeners()
     })
 
-    test('a transfer whose source keeps sending is left alone', async () => {
-      const { uploader, stream, upload } = startHangingUpload()
+    test.each([
+      {},
+      // maxFileSize puts a byte counter between the source and tus.
+      { maxFileSize: 1e6 },
+    ])('a transfer whose source keeps sending is left alone: %o', async (extraCompanionOpts) => {
+      const { uploader, stream, upload } =
+        startHangingUpload(extraCompanionOpts)
       const settled = vi.fn()
       upload.then(settled, settled)
       for (let i = 0; i < 4; i++) {
@@ -795,6 +804,56 @@ describe('uploader', () => {
           /sent 5 of the announced 17 bytes/,
         )
       }))
+  })
+
+  describe('maxFileSize on streamed bytes', () => {
+    // validateOptions sees only the size the source announces; a chunked
+    // response announces none, a lying one understates it.
+    test.each([
+      { useFormData: false, size: undefined },
+      { useFormData: true, size: undefined },
+      { useFormData: true, size: 100 },
+    ])('a source sending more than maxFileSize fails the upload: %o', async ({
+      useFormData,
+      size,
+    }) => {
+      let received = 0
+      const server = http.createServer((req, res) => {
+        req.on('data', (chunk: Buffer) => {
+          received += chunk.length
+        })
+        req.on('end', () => res.end('ok'))
+      })
+      await new Promise<void>((r) => server.listen(0, '127.0.0.1', r))
+      try {
+        const total = 10 * 1000
+        const stream = Readable.from(
+          Array.from({ length: 10 }, () => Buffer.alloc(1000)),
+        )
+        stream.pause()
+        const uploader = new Uploader({
+          companionOptions: {
+            ...companionOptions,
+            streamingUpload: true,
+            maxFileSize: 2500,
+          },
+          endpoint: `http://127.0.0.1:${(server.address() as AddressInfo).port}/`,
+          protocol: 'multipart',
+          useFormData,
+          ...(size != null && { size }),
+          metadata: {},
+          pathPrefix,
+        })
+        await expect(
+          uploader.uploadStream(stream, requireMockReq()),
+        ).rejects.toThrow('maxFileSize exceeded')
+        await new Promise((r) => setTimeout(r, 200))
+        expect(received).toBeLessThan(total)
+        expect(stream.destroyed).toBe(true)
+      } finally {
+        server.close()
+      }
+    })
   })
 
   describe('server-supplied upload URLs', () => {

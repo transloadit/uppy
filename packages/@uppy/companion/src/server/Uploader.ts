@@ -233,6 +233,37 @@ function validateOptions(
 }
 
 /**
+ * Passes a one-shot body stream through a byte count. `check` gets the count
+ * so far after each chunk, and once more with `ended` when the source ends;
+ * an error it returns fails the stream before that chunk is passed on.
+ * Destroying the returned stream destroys the source too.
+ */
+function countBytes(
+  stream: NodeReadableStream,
+  check: (seen: number, ended: boolean) => Error | undefined,
+): NodeReadableStream {
+  let seen = 0
+  const counter = new Transform({
+    transform(chunk: Buffer, _enc, cb) {
+      seen += chunk.length
+      const err = check(seen, false)
+      if (err) {
+        cb(err)
+        return
+      }
+      cb(null, chunk)
+    },
+    flush(cb) {
+      cb(check(seen, true))
+    },
+  })
+  stream.on('error', (err) => counter.destroy(err))
+  counter.once('close', () => stream.destroy())
+  stream.pipe(counter)
+  return counter
+}
+
+/**
  * Caps a one-shot body stream at the announced Content-Length. got sends the
  * length we set and pipes the stream; nothing stopped surplus bytes going out
  * on the same keep-alive socket (the destination read them as the next
@@ -244,35 +275,16 @@ function limitToAnnouncedSize(
   size: number,
   onFramingError: (err: Error) => void,
 ): NodeReadableStream {
-  let seen = 0
-  const limiter = new Transform({
-    transform(chunk: Buffer, _enc, cb) {
-      seen += chunk.length
-      if (seen > size) {
-        const err = new Error(
-          `source sent more than the announced ${size} bytes`,
-        )
-        onFramingError(err)
-        cb(err)
-        return
-      }
-      cb(null, chunk)
-    },
-    flush(cb) {
-      if (seen < size) {
-        const err = new Error(
-          `source sent ${seen} of the announced ${size} bytes`,
-        )
-        onFramingError(err)
-        cb(err)
-        return
-      }
-      cb()
-    },
+  return countBytes(stream, (seen, ended) => {
+    let err: Error | undefined
+    if (seen > size) {
+      err = new Error(`source sent more than the announced ${size} bytes`)
+    } else if (ended && seen < size) {
+      err = new Error(`source sent ${seen} of the announced ${size} bytes`)
+    }
+    if (err) onFramingError(err)
+    return err
   })
-  stream.on('error', (err) => limiter.destroy(err))
-  stream.pipe(limiter)
-  return limiter
 }
 
 // A tus transfer keeps up to a whole chunk of the source in memory, so one that
@@ -592,7 +604,7 @@ export default class Uploader {
       }
       if (this.#uploadState !== states.uploading) return undefined
 
-      const activeStream = this.readStream
+      let activeStream = this.readStream
       if (!activeStream) throw new Error('No readable stream available')
       if (activeStream.destroyed) {
         // The download errored or closed while we waited for the client's
@@ -601,6 +613,21 @@ export default class Uploader {
           activeStream.errored ??
           new Error('Download stream closed before the upload started')
         )
+      }
+
+      const { maxFileSize } = this.options.companionOptions
+      if (this._canStream() && maxFileSize != null) {
+        // validateOptions could only check the size the source announced,
+        // which it may omit or understate. Count the bytes that arrive, as
+        // _downloadStreamAsFile does.
+        activeStream = countBytes(activeStream, (seen) => {
+          if (!exceedsMaxFileSize(maxFileSize, seen)) return undefined
+          const err = new Error('maxFileSize exceeded')
+          this.abortReadStream(err)
+          return err
+        })
+        // The stream tus reads from, as the stall watcher expects.
+        this.readStream = activeStream
       }
 
       if (this._getUploadProtocol() === PROTOCOLS.tus) {
