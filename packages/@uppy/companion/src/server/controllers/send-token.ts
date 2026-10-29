@@ -71,7 +71,20 @@ export default async function sendToken(
     )
     res.send(authCallbackSuccessHtml())
   } else {
+    // postMessage() delivers to the scheme://host:port of its target origin, so
+    // that must be all the state holds (a trailing slash aside), not a longer
+    // string that matched corsOrigins. A configured corsOrigins string lands
+    // here as written, so its case and an explicit default port are kept.
+    if (!/^[a-z][a-z\d+.-]*:\/\/[^/?#@\\]+\/?$/i.test(clientOrigin)) {
+      next()
+      return
+    }
     // This is backwards compatible with old Uppy clients:
-    res.send(legacyAuthCallbackHtml({ token: uppyAuthToken }, clientOrigin))
+    res.send(
+      legacyAuthCallbackHtml(
+        { token: uppyAuthToken },
+        clientOrigin.replace(/\/$/, ''),
+      ),
+    )
   }
 }
