@@ -1146,14 +1146,18 @@ Fired each time an individual file upload progress is available:
 **Parameters**
 
 - `file` - The [Uppy file](#working-with-uppy-files) that has progressed.
-- `progress` - The same object as in `file.progress`.
+- `progress` - An object containing `uploadStarted`, `bytesUploaded`, and
+  `bytesTotal` (`null` if the size is unknown). This is not the full
+  `file.progress` object; fields such as `percentage` and `uploadComplete` are
+  not included by the uploaders. Use `uppy.getFile(file.id).progress` to read
+  the stored progress for the file.
 
 **Example**
 
 ```js
 uppy.on('upload-progress', (file, progress) => {
   // file: { id, name, type, ... }
-  // progress: { uploader, bytesUploaded, bytesTotal }
+  // progress: { uploadStarted, bytesUploaded, bytesTotal }
   console.log(file.id, progress.bytesUploaded, progress.bytesTotal)
 })
 ```
