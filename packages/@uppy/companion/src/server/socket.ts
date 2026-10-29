@@ -5,7 +5,11 @@ import type { CompanionInitOptions } from '../schemas/companion.js'
 import { takeAuthCallback } from './auth-callback.js'
 import emitter from './emitter/index.js'
 import { isRecord } from './helpers/type-guards.js'
-import { getURLBuilder, jsonStringify } from './helpers/utils.js'
+import {
+  getURLBuilder,
+  jsonStringify,
+  SOCKET_TOKEN_RE,
+} from './helpers/utils.js'
 import * as logger from './logger.js'
 import * as redis from './redis.js'
 import Uploader from './Uploader.js'
@@ -21,12 +25,6 @@ function isSocketMessage(value: unknown): value is SocketMessage {
     isRecord(value['payload'])
   )
 }
-
-// Uppy and Companion both mint these with randomUUID(). Anything else must not
-// reach the emitter: EventEmitter has reserved names and the Redis emitter
-// subscribes with glob patterns.
-export const SOCKET_TOKEN_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 function validToken(token: string | undefined): string | undefined {
   return token && SOCKET_TOKEN_RE.test(token) ? token : undefined

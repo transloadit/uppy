@@ -126,4 +126,41 @@ describe('OAuth token hand-off', () => {
     await logout(req, res as unknown as Response, vi.fn() as NextFunction)
     expect(req.session.grant).toBeUndefined()
   })
+
+  test('the OAuth state keeps non-ASCII text when decoded and re-encoded', async () => {
+    const oauthState = await import('../dist/server/helpers/oauth-state.js')
+    const state = { id: 'é ü €', origin: 'http://localhost:3020' }
+    const once = oauthState.decodeState(
+      oauthState.encodeState(state, 'secret'),
+      'secret',
+    )
+    const twice = oauthState.decodeState(
+      oauthState.encodeState(once, 'secret'),
+      'secret',
+    )
+    expect(once).toEqual(state)
+    expect(twice).toEqual(state)
+  })
+
+  test('connect keeps only an authCallbackToken the auth callback socket accepts', async () => {
+    const oauthState = await import('../dist/server/helpers/oauth-state.js')
+    const { getServer } = await import('./mockserver.js')
+    const server = await getServer()
+    const connect = async (authCallbackToken: string) => {
+      const res = await request(server)
+        .get('/dropbox/connect')
+        .query({ authCallbackToken })
+        .expect(302)
+      const location = new URL(res.header['location'] ?? '')
+      return oauthState.decodeState(
+        location.searchParams.get('state') ?? '',
+        'secret',
+      ).authCallbackToken
+    }
+
+    const uuid = crypto.randomUUID()
+    expect(await connect(uuid)).toBe(uuid)
+    expect(await connect('not-a-uuid')).toBeUndefined()
+    expect(await connect('é'.repeat(100))).toBeUndefined()
+  })
 })

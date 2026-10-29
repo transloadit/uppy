@@ -378,6 +378,12 @@ export const truncateFilename = (
   return filename.slice(maxFilenameLength * -1)
 }
 
+// Uppy and Companion both mint these with randomUUID(). Anything else must not
+// reach the emitter: EventEmitter has reserved names and the Redis emitter
+// subscribes with glob patterns.
+export const SOCKET_TOKEN_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
 /**
  * An id as one URL path segment. Encoding leaves `.` and `..` as they are,
  * and URL resolution would turn them into steps up the provider's API path.
