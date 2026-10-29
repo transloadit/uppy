@@ -33,6 +33,10 @@ function getMediaDevices() {
   return window.MediaRecorder && navigator.mediaDevices
 }
 
+function stopTracks(stream: MediaStream) {
+  for (const track of stream.getTracks()) track.stop()
+}
+
 // Add supported image types
 const SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
 type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number]
@@ -124,6 +128,9 @@ export default class ScreenCapture<
 
   recordingChunks: Blob[] | null = null
 
+  // Bumped by `stop()`, so streams that resolve after it are discarded
+  #stopCount = 0
+
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
@@ -203,9 +210,10 @@ export default class ScreenCapture<
 
     this.selectAudioStreamSource()
 
+    const isStale = this.#staleCheck()
     return this.selectVideoStreamSource().then((res) => {
       // something happened in start -> return
-      if (res === false) {
+      if (res === false && !isStale()) {
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
@@ -225,10 +233,16 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
+    const isStale = this.#staleCheck()
 
     return this.mediaDevices
       .getDisplayMedia(this.opts.displayMediaConstraints)
       .then((videoStream) => {
+        if (isStale()) {
+          stopTracks(videoStream)
+          return false
+        }
+
         this.videoStream = videoStream
 
         // add event listener to stop recording if stream is interrupted
@@ -245,6 +259,8 @@ export default class ScreenCapture<
         return videoStream
       })
       .catch((err) => {
+        if (isStale()) return false
+
         this.setPluginState({
           screenRecError: err,
           status: 'error',
@@ -267,10 +283,16 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
+    const isStale = this.#staleCheck()
 
     return this.mediaDevices
       .getUserMedia(this.opts.userMediaConstraints)
       .then((audioStream) => {
+        if (isStale()) {
+          stopTracks(audioStream)
+          return false
+        }
+
         this.audioStream = audioStream
 
         this.setPluginState({
@@ -448,7 +470,14 @@ export default class ScreenCapture<
     }
   }
 
+  #staleCheck(): () => boolean {
+    const stopCount = this.#stopCount
+    return () => stopCount !== this.#stopCount
+  }
+
   stop(): void {
+    this.#stopCount++
+
     // flush video stream
     if (this.videoStream) {
       for (const track of this.videoStream.getVideoTracks()) {

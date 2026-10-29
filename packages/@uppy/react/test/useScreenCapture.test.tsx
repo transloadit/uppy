@@ -2,7 +2,7 @@ import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import Uppy from '@uppy/core'
 import { UppyContextProvider, useScreenCapture } from '@uppy/react'
 import ScreenCapture from '@uppy/screen-capture'
-import { useEffect, useState } from 'react'
+import { StrictMode, useEffect, useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 function fakeScreen() {
@@ -152,5 +152,42 @@ describe('useScreenCapture', () => {
 
     await click('discard')
     await waitForReady()
+  })
+
+  it('stops the stream of a superseded start in StrictMode', async () => {
+    const uppy = new Uppy().use(ScreenCapture)
+    render(
+      <StrictMode>
+        <UppyContextProvider uppy={uppy}>
+          <Capture />
+        </UppyContextProvider>
+      </StrictMode>,
+    )
+    await waitForReady()
+
+    expect(display.streams.map(isLive)).toEqual([false, true])
+
+    cleanup()
+    expect(display.streams.map(isLive)).toEqual([false, false])
+  })
+
+  it('stops a stream that resolves after unmounting', async () => {
+    let resolve!: () => void
+    display.getDisplayMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        resolve = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.streams.push(stream)
+      return stream
+    })
+    const { unmount } = setup(<Capture />)
+    await waitFor(() => expect(resolve).toBeDefined())
+
+    unmount()
+    await act(async () => resolve())
+
+    await waitFor(() => expect(display.streams).toHaveLength(1))
+    expect(isLive(display.streams[0]!)).toBe(false)
   })
 })
