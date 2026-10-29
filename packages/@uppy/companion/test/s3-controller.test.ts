@@ -1,6 +1,12 @@
 import http from 'node:http'
 import net, { type AddressInfo } from 'node:net'
-import { S3Client } from '@aws-sdk/client-s3'
+import {
+  AbortMultipartUploadCommand,
+  CompleteMultipartUploadCommand,
+  CreateMultipartUploadCommand,
+  ListPartsCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import express from 'express'
 import request from 'supertest'
 import { describe, expect, onTestFinished, test, vi } from 'vitest'
@@ -328,5 +334,145 @@ describe('getUploadedParts', () => {
     await vi.waitFor(() => expect(serverSocket.destroyed).toBe(true))
     await tick()
     expect(send).toHaveBeenCalledTimes(1)
+  })
+})
+
+/** S3 for the multipart routes; uploads are as in `fakeListParts`. */
+const fakeS3 = () => {
+  const { send: listParts } = fakeListParts()
+  const send = vi.fn(async (cmd: Cmd) => {
+    if (cmd instanceof ListPartsCommand) return await listParts(cmd)
+    if (cmd instanceof CreateMultipartUploadCommand) {
+      return { Key: cmd.input['Key'], UploadId: 'upload-1', Bucket: 'b' }
+    }
+    if (cmd instanceof CompleteMultipartUploadCommand) {
+      return { Location: 'https://b/a.jpg', Key: 'a.jpg', Bucket: 'b' }
+    }
+    return {}
+  })
+  const sent = (type: unknown) =>
+    send.mock.calls.filter(([cmd]) => cmd instanceof (type as never)).length
+  return { send, sent }
+}
+
+describe('s3.conditions on multipart uploads', () => {
+  test.each([
+    [['content-length-range', 0, undefined]],
+    [['content-length-range', 0, '10MB']],
+    [['content-length-range', 0, null]],
+    [['content-length-range', 10, 5]],
+    [['content-length-range', -1, 5]],
+  ])('refuses %j when the router is built', (condition) => {
+    expect(() =>
+      makeApp(undefined, { conditions: [condition] as never }),
+    ).toThrow('content-length-range')
+  })
+
+  test('accepts a content-length-range given as numeric strings', () => {
+    expect(() =>
+      makeApp(undefined, {
+        conditions: [['content-length-range', '0', '1000']] as never,
+      }),
+    ).not.toThrow()
+  })
+
+  const create = (conditions: unknown[], type: string) => {
+    const { send, sent } = fakeS3()
+    const app = makeApp(send, { conditions: conditions as never })
+    return {
+      sent,
+      response: request(app)
+        .post('/s3/multipart')
+        .send({ filename: 'a.jpg', type, metadata: {} }),
+    }
+  }
+
+  test.each([
+    [['starts-with', '$Content-Type', 'image/'], 'image/png', 200],
+    [['starts-with', '$Content-Type', 'image/'], 'image/png, image/gif', 200],
+    [['starts-with', '$Content-Type', 'image/'], 'text/html', 400],
+    [['starts-with', '$Content-Type', 'image/'], 'image/png,text/html', 400],
+    [['starts-with', '$Content-Type', ''], 'text/html', 200],
+    [['eq', '$content-type', 'image/png'], 'image/png', 200],
+    [['eq', '$content-type', 'image/png'], 'image/pngx', 400],
+    [{ 'Content-Type': 'image/png' }, 'image/png', 200],
+    [{ 'content-type': 'image/png' }, 'text/html', 400],
+    [['starts-with', '$key', 'uploads/'], 'text/html', 200],
+    [['content-length-range', 0, 1], 'text/html', 200],
+  ])('creating with %j and type %j answers %d', async (condition, type, status) => {
+    const { response, sent } = create([condition], type)
+    const res = await response.expect(status)
+    if (status === 400) {
+      expect(res.body.error).toBe('s3: this content type is not allowed')
+    }
+    expect(sent(CreateMultipartUploadCommand)).toBe(status === 200 ? 1 : 0)
+  })
+
+  const complete = (
+    conditions: unknown[],
+    uploadId: string,
+    parts: { PartNumber: number; ETag: string }[],
+  ) => {
+    const { send, sent } = fakeS3()
+    const app = makeApp(send, { conditions: conditions as never })
+    return {
+      sent,
+      response: request(app)
+        .post(`/s3/multipart/${uploadId}/complete`)
+        .query({ key: 'a.jpg' })
+        .send({ parts }),
+    }
+  }
+  // as @uppy/aws-s3 sends them, without quotes
+  const clientParts = (n: number) =>
+    partsUpTo(n).map(({ PartNumber, ETag }) => ({
+      PartNumber,
+      ETag: ETag.replaceAll('"', ''),
+    }))
+  const range = ['content-length-range', 1, 10]
+
+  test('completes an upload within content-length-range', async () => {
+    const { response, sent } = complete([range], 'upload-2', clientParts(2))
+    await response.expect(200)
+    expect(sent(CompleteMultipartUploadCommand)).toBe(1)
+  })
+
+  test('counts only the parts being combined', async () => {
+    const { response, sent } = complete([range], 'upload-3', clientParts(2))
+    await response.expect(200)
+    expect(sent(CompleteMultipartUploadCommand)).toBe(1)
+  })
+
+  test('aborts an upload larger than content-length-range', async () => {
+    const { response, sent } = complete([range], 'upload-3', clientParts(3))
+    const res = await response.expect(400)
+    expect(res.body.error).toBe(
+      's3: the file size is outside the allowed range',
+    )
+    expect(sent(AbortMultipartUploadCommand)).toBe(1)
+    expect(sent(CompleteMultipartUploadCommand)).toBe(0)
+  })
+
+  test.each([
+    ['an unknown ETag', [{ PartNumber: 1, ETag: 'other' }]],
+    ['a missing part', clientParts(3)],
+    ['a repeated part', [...clientParts(1), ...clientParts(1)]],
+  ])('refuses %s without completing', async (_, parts) => {
+    const { response, sent } = complete([range], 'upload-2', parts)
+    const res = await response.expect(400)
+    expect(res.body.error).toBe('s3: `parts` do not match the uploaded parts.')
+    expect(sent(AbortMultipartUploadCommand)).toBe(0)
+    expect(sent(CompleteMultipartUploadCommand)).toBe(0)
+  })
+
+  test('lists no parts without content-length-range', async () => {
+    const { response, sent } = complete(
+      [['starts-with', '$Content-Type', 'image/']],
+      'upload-30',
+      clientParts(30),
+    )
+    await response.expect(200)
+    expect(sent(ListPartsCommand)).toBe(0)
+    expect(sent(CompleteMultipartUploadCommand)).toBe(1)
   })
 })

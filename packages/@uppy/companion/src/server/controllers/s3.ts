@@ -8,7 +8,10 @@ import {
   UploadPartCommand,
 } from '@aws-sdk/client-s3'
 import { GetFederationTokenCommand, STSClient } from '@aws-sdk/client-sts'
-import { createPresignedPost } from '@aws-sdk/s3-presigned-post'
+import {
+  createPresignedPost,
+  type PresignedPostOptions,
+} from '@aws-sdk/s3-presigned-post'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import type { NextFunction, Request, Response, Router } from 'express'
 import express from 'express'
@@ -203,6 +206,55 @@ async function fetchAllParts(
   }
 }
 
+type Conditions = PresignedPostOptions['Conditions']
+
+/**
+ * Whether `contentType` passes the Content-Type conditions, as an S3 POST
+ * policy checks them. Other conditions are ignored.
+ */
+function contentTypeAllowed(conditions: Conditions, contentType: string) {
+  return (conditions ?? []).every((condition) => {
+    if (!Array.isArray(condition)) {
+      return Object.entries(condition).every(
+        ([field, value]) =>
+          field.toLowerCase() !== 'content-type' || contentType === value,
+      )
+    }
+    const [operator, field, value] = condition
+    if (String(field).toLowerCase() !== '$content-type') return true
+    switch (String(operator).toLowerCase()) {
+      case 'eq':
+        return contentType === value
+      case 'starts-with':
+        // a comma-separated list passes only if every type in it does
+        return contentType
+          .split(',')
+          .every((type) => type.trim().startsWith(String(value)))
+      default:
+        return true
+    }
+  })
+}
+
+// NaN unless a number or a numeric string; null, '' and booleans don't count
+const toLength = (value: unknown) =>
+  typeof value === 'number' ||
+  (typeof value === 'string' && value.trim() !== '')
+    ? Number(value)
+    : Number.NaN
+
+/** The [min, max] of each `content-length-range` condition. */
+const contentLengthRanges = (conditions: Conditions) =>
+  (conditions ?? []).flatMap((condition) =>
+    Array.isArray(condition) &&
+    String(condition[0]).toLowerCase() === 'content-length-range'
+      ? [[toLength(condition[1]), toLength(condition[2])] as const]
+      : [],
+  )
+
+// ListParts quotes ETags; Uppy sends them without.
+const unquote = (etag: string) => etag.replace(/^"|"$/g, '')
+
 export default function s3(
   config: Pick<
     CompanionRuntimeOptions['s3'],
@@ -223,6 +275,14 @@ export default function s3(
   }
   if (typeof config.getKey !== 'function') {
     throw new TypeError('s3: The `getKey` option must be a function')
+  }
+  // A range no size can satisfy would abort every multipart upload on completion.
+  for (const [min, max] of contentLengthRanges(config.conditions)) {
+    if (!(min >= 0 && max >= min && Number.isFinite(max))) {
+      throw new TypeError(
+        's3: A `content-length-range` condition needs a minimum and maximum size, with 0 <= minimum <= maximum',
+      )
+    }
   }
 
   function getS3Client(
@@ -430,6 +490,11 @@ export default function s3(
       res.status(400).json({ error: 's3: content type must be a string' })
       return
     }
+    // S3 applies `conditions` to /s3/params uploads only, so check what we can.
+    if (!contentTypeAllowed(config.conditions, type)) {
+      res.status(400).json({ error: 's3: this content type is not allowed' })
+      return
+    }
 
     const params = {
       Bucket: bucket,
@@ -627,6 +692,51 @@ export default function s3(
   }
 
   /**
+   * Whether the parts to combine add up to a size the `content-length-range`
+   * conditions allow, which S3 doesn't check for multipart uploads. If not,
+   * this aborts the upload and answers the request; it also answers when the
+   * parts don't match the uploaded ones, and gives up if the client has gone.
+   */
+  async function partsSizeAllowed(
+    client: S3Client,
+    input: { Bucket: string; Key: string; UploadId: string },
+    parts: { PartNumber: number; ETag: string }[],
+    req: Request,
+    res: Response,
+  ): Promise<boolean> {
+    const ranges = contentLengthRanges(config.conditions)
+    if (ranges.length === 0) return true
+
+    const uploaded = await listAllParts(client, input, req, res)
+    if (!uploaded) return false
+    const byNumber = new Map(uploaded.map((part) => [part.PartNumber, part]))
+    let size = 0
+    for (const { PartNumber, ETag } of parts) {
+      const part = byNumber.get(PartNumber)
+      // matching ETags makes the size checked the size S3 combines
+      if (
+        part?.ETag == null ||
+        part.Size == null ||
+        unquote(part.ETag) !== unquote(ETag)
+      ) {
+        res.status(400).json({
+          error: 's3: `parts` do not match the uploaded parts.',
+        })
+        return false
+      }
+      size += part.Size
+      byNumber.delete(PartNumber) // each part counts once
+    }
+    if (ranges.every(([min, max]) => size >= min && size <= max)) return true
+
+    await client.send(new AbortMultipartUploadCommand(input))
+    res.status(400).json({
+      error: 's3: the file size is outside the allowed range',
+    })
+    return false
+  }
+
+  /**
    * Complete a multipart upload, combining all the parts into a single object in the S3 bucket.
    *
    * Expected URL parameters:
@@ -664,25 +774,26 @@ export default function s3(
     }
 
     const bucket = getBucket({ bucketOrFn: config.bucket, req })
+    const input = { Bucket: bucket, Key: key, UploadId: uploadId }
 
-    client
-      .send(
-        new CompleteMultipartUploadCommand({
-          Bucket: bucket,
-          Key: key,
-          UploadId: uploadId,
-          MultipartUpload: {
-            Parts: parts,
-          },
-        }),
-      )
-      .then((data) => {
+    partsSizeAllowed(client, input, parts, req, res)
+      .then(async (allowed) => {
+        if (!allowed) return
+        const data = await client.send(
+          new CompleteMultipartUploadCommand({
+            ...input,
+            MultipartUpload: {
+              Parts: parts,
+            },
+          }),
+        )
         res.json({
           location: data.Location,
           key: data.Key,
           bucket: data.Bucket,
         })
-      }, next)
+      })
+      .catch(next)
   }
 
   const policy = {
