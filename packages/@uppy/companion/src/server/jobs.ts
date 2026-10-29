@@ -27,6 +27,11 @@ const cleanUpFinishedUploads = (dirPath: string): void => {
         logger.info(`skipping file ${file}`, 'jobs.cleanup.skip')
         return
       }
+      // A download can stall for hours without touching its file's mtime.
+      if (Uploader.isTmpFileInUse(file)) {
+        logger.info(`skipping file ${file} in use`, 'jobs.cleanup.skip')
+        return
+      }
       const fullPath = path.join(dirPath, file)
 
       fs.stat(fullPath, (err2, stats) => {

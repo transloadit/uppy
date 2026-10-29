@@ -304,6 +304,13 @@ export default class Uploader {
 
   static STORAGE_PREFIX = 'companion'
 
+  /** Temp files an Uploader in this process still uses; see jobs.ts. */
+  static #tmpFilesInUse = new Set<string>()
+
+  static isTmpFileInUse(fileName: string): boolean {
+    return Uploader.#tmpFilesInUse.has(fileName)
+  }
+
   storage: Redis | null | undefined
 
   providerName: string | undefined
@@ -537,6 +544,7 @@ export default class Uploader {
 
   async _downloadStreamAsFile(stream: NodeReadableStream): Promise<void> {
     this.tmpPath = join(this.options.pathPrefix, this.fileName)
+    Uploader.#tmpFilesInUse.add(this.fileName)
 
     logger.debug('fully downloading file', 'uploader.download', this.shortToken)
     const writeStream = createWriteStream(this.tmpPath)
@@ -573,6 +581,11 @@ export default class Uploader {
     if (this.#uploadState === states.done) return
 
     const fileStream = createReadStream(this.tmpPath)
+    // uploadStream fails the upload on this stream's errors; this keeps one
+    // outside that window (the file deleted under us) from exiting the process.
+    fileStream.on('error', (err) => {
+      logger.debug(err, 'uploader.download.tmpfile', this.shortToken)
+    })
     this.readStream = fileStream
   }
 
@@ -665,6 +678,7 @@ export default class Uploader {
     try {
       await unlink(this.tmpPath)
     } catch {}
+    Uploader.#tmpFilesInUse.delete(this.fileName)
   }
 
   async tryUploadStream(
