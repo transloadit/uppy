@@ -3,13 +3,22 @@
     v-if="!remoteSource.state.authenticated"
     class="p-4 pt-0 min-w-xl min-h-96"
   >
-    <button
-      type="button"
-      class="block ml-auto text-blue-500"
-      @click="() => remoteSource.login()"
-    >
-      Login
-    </button>
+    <div class="flex justify-end gap-2">
+      <button
+        type="button"
+        class="text-blue-500"
+        @click="() => remoteSource.login()"
+      >
+        Login
+      </button>
+      <button
+        type="button"
+        class="text-blue-500"
+        @click="() => props.close()"
+      >
+        Close
+      </button>
+    </div>
   </div>
 
   <div
@@ -48,6 +57,13 @@
           "
         >
           Logout
+        </button>
+        <button
+          type="button"
+          class="text-blue-500"
+          @click="() => props.close()"
+        >
+          Close
         </button>
       </div>
     </div>
@@ -107,13 +123,9 @@
     >
       <button
         type="button"
-        class="text-blue-500"
-        @click="
-          () => {
-            remoteSource.done()
-            props.close()
-          }
-        "
+        class="text-blue-500 disabled:text-gray-400"
+        :disabled="remoteSource.state.error !== null"
+        @click="() => remoteSource.done()"
       >
         Done
       </button>
@@ -126,6 +138,13 @@
       </button>
       <p class="text-gray-500 text-sm">
         Selected {{ remoteSource.state.selectedAmount }} items
+      </p>
+      <p
+        v-if="remoteSource.state.error"
+        role="alert"
+        class="text-red-500 text-sm"
+      >
+        {{ remoteSource.state.error }}
       </p>
     </div>
   </div>
@@ -141,7 +160,7 @@ const props = defineProps<{
   id: AvailablePluginsKeys
 }>()
 
-const remoteSource = useRemoteSource(props.id)
+const remoteSource = useRemoteSource(props.id, { onClose: props.close })
 const dtf = new Intl.DateTimeFormat('en-US', {
   dateStyle: 'short',
   timeStyle: 'short',
@@ -150,8 +169,8 @@ const setIndeterminate = (
   el: HTMLInputElement | null,
   item: PartialTreeFolderNode,
 ) => {
-  if (el && item.status === 'partial') {
-    el.indeterminate = true
+  if (el) {
+    el.indeterminate = item.status === 'partial'
   }
 }
 </script>
