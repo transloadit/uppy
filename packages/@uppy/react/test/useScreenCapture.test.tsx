@@ -190,4 +190,27 @@ describe('useScreenCapture', () => {
     await waitFor(() => expect(display.streams).toHaveLength(1))
     expect(isLive(display.streams[0]!)).toBe(false)
   })
+
+  it('stops a stream that resolves after the plugin is removed', async () => {
+    let resolve!: () => void
+    display.getDisplayMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        resolve = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.streams.push(stream)
+      return stream
+    })
+    const uppy = new Uppy().use(ScreenCapture)
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    const started = plugin.start()
+    await waitFor(() => expect(resolve).toBeDefined())
+
+    uppy.removePlugin(plugin)
+    resolve()
+    await started
+
+    expect(display.streams).toHaveLength(1)
+    expect(isLive(display.streams[0]!)).toBe(false)
+  })
 })

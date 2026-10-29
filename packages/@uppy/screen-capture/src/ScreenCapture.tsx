@@ -194,9 +194,8 @@ export default class ScreenCapture<
   }
 
   override uninstall(): void {
-    if (this.videoStream) {
-      this.stop()
-    }
+    // Also when a request is pending or only the microphone stream is live
+    this.stop()
 
     this.unmount()
   }
@@ -302,6 +301,8 @@ export default class ScreenCapture<
         return audioStream
       })
       .catch((err) => {
+        if (isStale()) return false
+
         if (err.name === 'NotAllowedError') {
           this.uppy.info(this.i18n('micDisabled'), 'error', 5000)
           this.uppy.log(this.i18n('micDisabled'), 'warning')
