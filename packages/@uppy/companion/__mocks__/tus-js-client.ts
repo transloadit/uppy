@@ -7,6 +7,8 @@ type UploadOptions = {
 let lastUploadFile: unknown
 let nextRequestUrl: string | undefined
 let hang = false
+let sentRequests: string[] = []
+let startGate: Promise<void> | undefined
 
 export function __getLastUploadFile(): unknown {
   return lastUploadFile
@@ -21,16 +23,30 @@ export function __setHang(value: boolean): void {
   hang = value
 }
 
+/** Methods of the requests onBeforeRequest let through, in order. */
+export function __getSentRequests(): string[] {
+  return sentRequests
+}
+
+/** Hold every start() before its first request until `gate` settles. */
+export function __setStartGate(gate: Promise<void> | undefined): void {
+  startGate = gate
+}
+
 export function __resetTusMockState(): void {
   lastUploadFile = undefined
   nextRequestUrl = undefined
   hang = false
+  sentRequests = []
+  startGate = undefined
 }
 
 export class Upload {
   url: string
 
   options: UploadOptions
+
+  _aborted = false
 
   constructor(file: unknown, options: UploadOptions) {
     lastUploadFile = file
@@ -43,26 +59,37 @@ export class Upload {
     setTimeout(() => this.options.onSuccess(), 100)
   }
 
+  async _send(method: string, url: string) {
+    const onBeforeRequest = this.options['onBeforeRequest']
+    if (typeof onBeforeRequest === 'function') {
+      await onBeforeRequest({ getURL: () => url, getMethod: () => method })
+    }
+    sentRequests.push(method)
+  }
+
   async start() {
-    // Mirror the real client: invoke onBeforeRequest with the request it is
-    // about to send. A throw there (our uploadUrls check) aborts the upload.
-    const url = nextRequestUrl ?? this.url
+    // Mirror the real client: the first request goes out a turn later (after
+    // its fingerprint stat), start() clears the aborted flag, and
+    // onBeforeRequest sees each request. A throw there (our uploadUrls check)
+    // fails the upload unless it was aborted.
+    await new Promise((resolve) => setImmediate(resolve))
+    await startGate
+    this._aborted = false
     try {
-      const onBeforeRequest = this.options['onBeforeRequest']
-      if (typeof onBeforeRequest === 'function') {
-        await onBeforeRequest({ getURL: () => url })
-      }
+      await this._send('POST', nextRequestUrl ?? this.url)
     } catch (err) {
       const onError = this.options['onError']
-      if (typeof onError === 'function') onError(err)
+      if (!this._aborted && typeof onError === 'function') onError(err)
       return
     }
     if (hang) return
     setTimeout(this._triggerProgressThenSuccess.bind(this), 100)
   }
 
-  async abort() {
-    // noop
+  async abort(shouldTerminate?: boolean) {
+    this._aborted = true
+    // The real client's terminate() goes through onBeforeRequest too.
+    if (shouldTerminate) await this._send('DELETE', this.url)
   }
 }
 

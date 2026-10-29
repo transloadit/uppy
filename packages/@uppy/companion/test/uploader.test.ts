@@ -49,6 +49,22 @@ function setTusHang(value: boolean): void {
   setter(value)
 }
 
+function getTusSentRequests(): string[] {
+  const getter = Reflect.get(tusClient, '__getSentRequests')
+  if (typeof getter !== 'function') {
+    throw new Error('Expected tus mock to expose __getSentRequests()')
+  }
+  return getter()
+}
+
+function setTusStartGate(gate: Promise<void> | undefined): void {
+  const setter = Reflect.get(tusClient, '__setStartGate')
+  if (typeof setter !== 'function') {
+    throw new Error('Expected tus mock to expose __setStartGate()')
+  }
+  setter(gate)
+}
+
 function resetTusMockState(): void {
   const reset = Reflect.get(tusClient, '__resetTusMockState')
   if (typeof reset !== 'function') {
@@ -411,6 +427,74 @@ describe('uploader', () => {
       url: 'https://tus.endpoint/files/foo-bar',
     })
     uploader.removeEmitterListeners()
+  })
+
+  describe('tus requests after pause or cancel', () => {
+    // The Redis emitter delivers asynchronously; a listener added after the
+    // uploader's runs after it.
+    const deliver = async (event: string, token: string) => {
+      const delivered = Promise.withResolvers<void>()
+      await Emitter().on(`${event}:${token}`, () => delivered.resolve())
+      Emitter().emit(`${event}:${token}`)
+      await delivered.promise
+    }
+    const startTusUpload = async (streamingUpload: boolean) => {
+      setTusHang(true)
+      const uploader = new Uploader({
+        companionOptions: { ...companionOptions, streamingUpload },
+        endpoint: 'http://url.myendpoint.com/files',
+        protocol: 'tus',
+        size: 17,
+        pathPrefix,
+        metadata: { name: 'file.txt', type: 'text/plain' },
+      })
+      const stream = new PassThrough()
+      const upload = uploader.uploadStream(stream, requireMockReq())
+      upload.catch(() => {})
+      stream.end(Buffer.from('Some file content'))
+      await vi.waitFor(() => expect(getTusSentRequests()).toEqual(['POST']))
+      return { uploader, upload }
+    }
+
+    test.each([
+      true,
+      false,
+    ])('a resume pending at cancel sends nothing after the DELETE (streamingUpload: %s)', async (streamingUpload) => {
+      const { uploader, upload } = await startTusUpload(streamingUpload)
+      await deliver('pause', uploader.token)
+      // The start() that resume issues is still on its way to a request
+      // (the real client stats the file first) when the cancel lands.
+      const pending = Promise.withResolvers<void>()
+      setTusStartGate(pending.promise)
+      await deliver('resume', uploader.token)
+      await deliver('cancel', uploader.token)
+      await expect(upload).rejects.toThrow('Canceled')
+      pending.resolve()
+      await new Promise((resolve) => setTimeout(resolve, 50))
+      expect(getTusSentRequests()).toEqual(['POST', 'DELETE'])
+      uploader.removeEmitterListeners()
+    })
+
+    test('a paused upload can still be canceled and terminated', async () => {
+      const { uploader, upload } = await startTusUpload(true)
+      await deliver('pause', uploader.token)
+      await deliver('cancel', uploader.token)
+      await expect(upload).rejects.toThrow('Canceled')
+      expect(getTusSentRequests()).toEqual(['POST', 'DELETE'])
+      uploader.removeEmitterListeners()
+    })
+
+    test('a paused upload resumes', async () => {
+      const { uploader, upload } = await startTusUpload(true)
+      await deliver('pause', uploader.token)
+      setTusHang(false)
+      await deliver('resume', uploader.token)
+      await expect(upload).resolves.toMatchObject({
+        url: 'https://tus.endpoint/files/foo-bar',
+      })
+      expect(getTusSentRequests()).toEqual(['POST', 'POST'])
+      uploader.removeEmitterListeners()
+    })
   })
 
   test('upload functions with tus protocol without size', () => {

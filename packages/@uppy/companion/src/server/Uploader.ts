@@ -938,7 +938,22 @@ export default class Uploader {
         chunkSize,
         headers: headerSanitize(this.options.headers),
         addRequestId: true,
-        onBeforeRequest: (req: { getURL: () => string }) => {
+        onBeforeRequest: (req: {
+          getURL: () => string
+          getMethod: () => string
+        }) => {
+          // abort() only stops the request in flight: a start() still waiting
+          // on its first request clears tus-js-client's aborted flag and goes
+          // on, creating uploads after a cancel's DELETE and reading a temp
+          // file we deleted. Refuse every request but that DELETE once the
+          // upload is paused or over; aborting first keeps tus quiet about it.
+          if (
+            this.#uploadState !== states.uploading &&
+            req.getMethod() !== 'DELETE'
+          ) {
+            this.tus?.abort().catch(() => {})
+            throw new Error('Upload is not running')
+          }
           this.#assertAllowedDestination(req.getURL())
         },
         metadata: {
