@@ -9,6 +9,11 @@ updates:
       interval: 'weekly'
     cooldown:
       default-days: 7
+    groups:
+      angular:
+        patterns:
+          - '@angular*'
+          - 'ng-*'
 
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: 'github-actions'
