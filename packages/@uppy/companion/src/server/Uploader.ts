@@ -136,6 +136,9 @@ export class ValidationError extends Error {
   override name = 'ValidationError'
 }
 
+/** A request Companion refuses before sending it: retrying it gets the same. */
+class RefusedRequestError extends Error {}
+
 /**
  * Validates the upload options and returns the destination URLs normalized
  * through WHATWG URL serialization.
@@ -509,7 +512,9 @@ export default class Uploader {
   #assertAllowedDestination(url: string): void {
     const allowedUrls = this.options.companionOptions.uploadUrls
     if (allowedUrls && !hasUploadUrlMatch(url, allowedUrls)) {
-      throw new Error('upload URL does not match any allowed destinations')
+      throw new RefusedRequestError(
+        'upload URL does not match any allowed destinations',
+      )
     }
   }
 
@@ -966,10 +971,31 @@ export default class Uploader {
             req.getMethod() !== 'DELETE'
           ) {
             this.tus?.abort().catch(() => {})
-            throw new Error('Upload is not running')
+            throw new RefusedRequestError('Upload is not running')
           }
           this.#assertAllowedDestination(req.getURL())
         },
+        // Check where the server sends the upload as soon as it says, before
+        // tus reads any of the file for it: refused in onBeforeRequest, that
+        // read would be left to fail on a temp file we have deleted.
+        onAfterResponse: (req, res) => {
+          const location = res.getHeader('Location')
+          if (req.getMethod() !== 'POST' || !location) return
+          try {
+            this.#assertAllowedDestination(
+              new URL(location, this.options.endpoint).toString(),
+            )
+          } catch (err) {
+            this.tus?.abort().catch(() => {})
+            this.#rejectUpload?.(toError(err))
+          }
+        },
+        // tus-js-client retries any request that failed without a response,
+        // which includes the ones refused above.
+        onShouldRetry: (err, retryAttempt, options) =>
+          !(err.causingError instanceof RefusedRequestError) &&
+          (tus.defaultOptions?.onShouldRetry?.(err, retryAttempt, options) ??
+            true),
         metadata: {
           // file name and type as required by the tusd tus server
           // https://github.com/tus/tusd/blob/5b376141903c1fd64480c06dde3dfe61d191e53d/unrouted_handler.go#L614-L646

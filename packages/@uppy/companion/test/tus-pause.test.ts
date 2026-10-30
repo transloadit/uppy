@@ -18,17 +18,19 @@ let close: () => void
 let requests: string[]
 let endpoint: string
 let holdPatch: PromiseWithResolvers<void> | undefined
+let location: string
 
 beforeEach(async () => {
   dir = mkdtempSync(join(tmpdir(), 'companion-tus-pause-'))
   requests = []
+  location = '/files/1'
   let deleted = false
   const server = createServer((req, res) => {
     requests.push(req.method ?? '')
     req.on('error', () => {})
     const tus = { 'Tus-Resumable': '1.0.0' }
     if (req.method === 'POST') {
-      res.writeHead(201, { ...tus, Location: '/files/1' }).end()
+      res.writeHead(201, { ...tus, Location: location }).end()
     } else if (req.method === 'HEAD') {
       if (deleted) res.writeHead(404, tus).end()
       else
@@ -109,5 +111,33 @@ test('a cancel that races a resume sends nothing after the DELETE', async () => 
   await expect(upload).rejects.toThrow('Canceled')
   await new Promise((resolve) => setTimeout(resolve, 300))
   expect(requests).toEqual(['POST', 'PATCH', 'DELETE'])
+  uploader.removeEmitterListeners()
+})
+
+test('a request refused for its upload URL is not retried', async () => {
+  // the server sends the upload to a host uploadUrls doesn't allow
+  location = endpoint.replace('127.0.0.1', 'localhost')
+  const uploader = new Uploader({
+    companionOptions: {
+      ...defaultOptions,
+      streamingUpload: false,
+      uploadUrls: [new RegExp(`^${endpoint.replaceAll('.', '\\.')}`)],
+    },
+    endpoint,
+    protocol: 'tus',
+    size: 17,
+    pathPrefix: dir,
+    metadata: { name: 'file.txt' },
+  })
+  const started = Date.now()
+  await expect(
+    uploader.uploadStream(
+      Readable.from([Buffer.from('Some file content')]),
+      {} as Request,
+    ),
+  ).rejects.toThrow('upload URL does not match any allowed destinations')
+  // tus-js-client would retry after 0, 1, 3 and 5 seconds
+  expect(Date.now() - started).toBeLessThan(900)
+  expect(requests).toEqual(['POST'])
   uploader.removeEmitterListeners()
 })
