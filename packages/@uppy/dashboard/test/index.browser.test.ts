@@ -31,6 +31,22 @@ test('Basic Dashboard functionality works in the browser', async () => {
   ) as HTMLInputElement
   await userEvent.upload(fileInput, new File(['Hello, World!'], 'test.txt'))
   await expect.element(page.getByText('test.txt')).toBeVisible()
+  await expect
+    .element(
+      page.getByRole('button', {
+        name: 'Cancel all uploads',
+        exact: true,
+      }),
+    )
+    .toBeVisible()
+  await expect
+    .element(
+      page.getByRole('button', {
+        name: 'Remove file test.txt',
+        exact: true,
+      }),
+    )
+    .toBeVisible()
   await page.getByTitle('Edit file test.txt').click()
   const licenseInput = page.getByLabelText('License')
   await expect.element(licenseInput).toBeVisible()
@@ -183,11 +199,48 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload has started by checking StatusBar state
   await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
+  await expect
+    .element(
+      page.getByRole('button', {
+        name: 'Pause upload test.txt',
+        exact: true,
+      }),
+    )
+    .toBeVisible()
+  await expect
+    .element(
+      page.getByRole('button', {
+        name: 'Pause all uploads',
+        exact: true,
+      }),
+    )
+    .toBeVisible()
+  const cancelButtons = await page
+    .getByRole('button', { name: 'Cancel all uploads', exact: true })
+    .all()
+  expect(cancelButtons).toHaveLength(2)
 
   // Find and click pause button
   const pauseButton = page.getByTitle('Pause', { exact: true })
   await expect(pauseButton).toBeVisible()
   await pauseButton.click()
+
+  await expect
+    .element(
+      page.getByRole('button', {
+        name: 'Resume upload test.txt',
+        exact: true,
+      }),
+    )
+    .toBeVisible()
+  await expect
+    .element(
+      page.getByRole('button', {
+        name: 'Resume all uploads',
+        exact: true,
+      }),
+    )
+    .toBeVisible()
 
   // Find and click resume button
   const resumeButton = page.getByTitle('Resume', { exact: true })
@@ -233,4 +286,46 @@ test('onDrop runs while the drop event is dispatched', async () => {
   // so onDrop must run before the handler awaits anything.
   expect(droppedFileCount).toBe(1)
   await expect.element(page.getByText('test.txt')).toBeVisible()
+})
+
+test('Non-resumable upload controls identify the affected file', async () => {
+  render('<div id="uppy"></div>')
+
+  using uppy = new Uppy().use(Dashboard, {
+    target: '#uppy',
+    inline: true,
+  })
+
+  uppy.setState({
+    capabilities: {
+      ...uppy.getState().capabilities,
+      individualCancellation: true,
+    },
+  })
+
+  const fileInput = document.querySelector(
+    '.uppy-Dashboard-input',
+  ) as HTMLInputElement
+  await userEvent.upload(fileInput, new File(['Hello, World!'], 'test.txt'))
+
+  const file = uppy.getFiles()[0]!
+  uppy.setFileState(file.id, {
+    progress: {
+      ...file.progress,
+      uploadStarted: Date.now(),
+      uploadComplete: false,
+      percentage: 25,
+      bytesUploaded: 3,
+      bytesTotal: file.size,
+    },
+  })
+
+  await expect
+    .element(
+      page.getByRole('button', {
+        name: 'Cancel upload test.txt',
+        exact: true,
+      }),
+    )
+    .toBeVisible()
 })

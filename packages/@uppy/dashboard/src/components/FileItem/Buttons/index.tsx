@@ -71,7 +71,7 @@ function RemoveButton<M extends Meta, B extends Body>({
     <button
       className="uppy-u-reset uppy-Dashboard-Item-action uppy-Dashboard-Item-action--remove"
       type="button"
-      aria-label={i18n('removeFile', { file: file.meta.name })}
+      aria-label={i18n('removeFileWithFilename', { file: file.meta.name })}
       title={i18n('removeFile', { file: file.meta.name })}
       onClick={() => onClick()}
     >
