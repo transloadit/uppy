@@ -1,6 +1,7 @@
 import { EventEmitter } from 'node:events'
 import safeStringify from 'fast-safe-stringify'
 import type { Redis } from 'ioredis'
+import { toError } from '../helpers/type-guards.js'
 import * as logger from '../logger.js'
 import type { EmitterLike } from './index.js'
 
@@ -25,37 +26,62 @@ export default function redisEmitter(
   const getPrefixedEventName = (eventName: string) => `${prefix}${eventName}`
 
   const errorEmitter = new EventEmitter()
-  const handleError = (err: unknown) => errorEmitter.emit('error', err)
-
-  async function makeRedis() {
-    const publisher = redisClient.duplicate({ lazyConnect: true })
-    publisher.on('error', (err) =>
-      logger.error('publisher redis error', err.toString()),
-    )
-    const subscriber = publisher.duplicate()
-    subscriber.on('error', (err) =>
-      logger.error('subscriber redis error', err.toString()),
-    )
-    await publisher.connect()
-    await subscriber.connect()
-    return { subscriber, publisher }
+  // Redis errors carry their command's arguments, which name the channel and
+  // so its token: pass on only the name and message.
+  const describe = (err: unknown): string => {
+    const { name, message } = toError(err)
+    // a failed connect is an AggregateError of one error per address tried
+    if (err instanceof AggregateError) {
+      return `${name}: ${err.errors.map(describe).join('; ')}`
+    }
+    return `${name}: ${message}`
+  }
+  // Fail the call that ran the command, and hand the error to 'error'
+  // listeners (an import waiting for its socket listens), so nobody waits for
+  // an event that cannot arrive.
+  const handleError = (err: unknown): never => {
+    const error = new Error(`Redis pub/sub failed: ${describe(err)}`)
+    logger.error(error.message, 'redis.emitter.error')
+    if (errorEmitter.listenerCount('error') > 0)
+      errorEmitter.emit('error', error)
+    throw error
   }
 
-  const redisPromise = makeRedis()
-  redisPromise.catch((err) => handleError(err))
+  // Event names end in an upload or auth-callback token; log only its start,
+  // as Uploader.shortenToken does.
+  const shortEventName = (eventName: string) =>
+    eventName.replace(/[^:]*$/, (token) => token.slice(0, 8))
 
-  /**
-   *
-   * @param fn
-   */
+  // ioredis connects on the first command, queues commands while it
+  // (re)connects and fails them after maxRetriesPerRequest, so a Redis that is
+  // down at startup or restarts later needs no handling here. That holds while
+  // retryStrategy keeps retrying: one that returns null ends the client, and
+  // every later call fails.
+  const publisher = redisClient.duplicate({ lazyConnect: true })
+  publisher.on('error', (err) =>
+    logger.error(`publisher redis error: ${describe(err)}`),
+  )
+  const subscriber = publisher.duplicate()
+  subscriber.on('error', (err) =>
+    logger.error(`subscriber redis error: ${describe(err)}`),
+  )
+
   async function runWhenConnected(
     fn: (clients: { subscriber: Redis; publisher: Redis }) => unknown,
   ): Promise<void> {
     try {
-      await fn(await redisPromise)
+      await fn({ subscriber, publisher })
     } catch (err) {
       handleError(err)
     }
+  }
+
+  // events.once() and fire-and-forget callers don't await these calls: a
+  // failure must not become an unhandled rejection. Awaiting callers still
+  // see it.
+  const handled = <T>(promise: Promise<T>) => {
+    promise.catch(() => {})
+    return promise
   }
 
   // because each event can have multiple listeners, we need to keep track of them
@@ -124,7 +150,6 @@ export default function redisEmitter(
         return
       }
 
-      if (_once) removeListener(eventName, handler)
       let args: unknown[]
       try {
         const parsed: unknown = JSON.parse(message)
@@ -133,14 +158,16 @@ export default function redisEmitter(
         }
         args = parsed
       } catch (_ex) {
-        handleError(
-          new Error(
-            `Invalid JSON received! Channel: ${eventName} Message: ${message}`,
-          ),
+        // Not something emit() published. Drop it: as an 'error' it would
+        // fail every import waiting on the emitter.
+        logger.warn(
+          `Dropped a message that is not a JSON array on ${shortEventName(eventName)}`,
+          'redis.emitter.invalid.message',
         )
         return
       }
 
+      if (_once) handled(removeListener(eventName, handler))
       handler(...args)
     }
 
@@ -149,11 +176,22 @@ export default function redisEmitter(
       actualHandlerByHandler = new Map()
       handlersByEventName.set(eventName, actualHandlerByHandler)
     }
-    actualHandlerByHandler.set(handler, actualHandler)
+    const handlers = actualHandlerByHandler
+    handlers.set(handler, actualHandler)
 
     await runWhenConnected(async ({ subscriber }) => {
       subscriber.on('pmessage', actualHandler)
-      await subscriber.psubscribe(getPrefixedEventName(eventName))
+      try {
+        await subscriber.psubscribe(getPrefixedEventName(eventName))
+      } catch (err) {
+        // a failed on() must leave no listener behind
+        subscriber.off('pmessage', actualHandler)
+        if (handlers.get(handler) === actualHandler) {
+          handlers.delete(handler)
+          if (handlers.size === 0) handlersByEventName.delete(eventName)
+        }
+        throw err
+      }
     })
   }
 
@@ -221,11 +259,12 @@ export default function redisEmitter(
   }
 
   return {
-    on,
-    off,
-    once,
-    emit,
-    removeListener,
-    removeAllListeners,
+    on: (eventName, handler) => handled(on(eventName, handler)),
+    off: (eventName, handler) => handled(off(eventName, handler)),
+    once: (eventName, handler) => handled(once(eventName, handler)),
+    emit: (eventName, ...args) => handled(emit(eventName, ...args)),
+    removeListener: (eventName, handler) =>
+      handled(removeListener(eventName, handler)),
+    removeAllListeners: (eventName) => handled(removeAllListeners(eventName)),
   }
 }
