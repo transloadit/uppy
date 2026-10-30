@@ -61,6 +61,50 @@ afterEach(() => {
 })
 
 describe('Transloadit Storage in the browser', () => {
+  it('shows one safe Companion warning for a failed Storage grant', async () => {
+    setup({
+      autoConnect: false,
+      getGrant: async () => {
+        throw new Error('private-storage-grant-sentinel')
+      },
+    })
+    const plugin = uppy?.getPlugin<
+      TransloaditStorage<Record<string, unknown>, Record<string, never>>
+    >('TransloaditStorage')
+    if (!plugin) throw new Error('Missing Transloadit Storage plugin')
+    const info = vi.spyOn(uppy!, 'info')
+
+    await plugin.view.handleAuth({})
+
+    expect(info).toHaveBeenCalledTimes(1)
+    expect(info).toHaveBeenCalledWith(
+      'Connection with Companion failed',
+      'warning',
+      5000,
+    )
+    expect(info.mock.calls.flat().join(' ')).not.toContain(
+      'private-storage-grant-sentinel',
+    )
+  })
+
+  it('keeps cancelled Storage grant requests silent', async () => {
+    setup({
+      autoConnect: false,
+      getGrant: async () => {
+        throw Object.assign(new Error('aborted'), { name: 'AbortError' })
+      },
+    })
+    const plugin = uppy?.getPlugin<
+      TransloaditStorage<Record<string, unknown>, Record<string, never>>
+    >('TransloaditStorage')
+    if (!plugin) throw new Error('Missing Transloadit Storage plugin')
+    const info = vi.spyOn(uppy!, 'info')
+
+    await plugin.view.handleAuth({})
+
+    expect(info).not.toHaveBeenCalled()
+  })
+
   it('offers the custom upload action in picker mode, and hands it the open folder', async () => {
     const onUploadRequest = vi.fn()
     setup({ onUploadRequest })

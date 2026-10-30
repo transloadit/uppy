@@ -1,7 +1,7 @@
 import { isAuthError } from '../../companion-client/AuthError.js'
 import { describeCompanionError } from '../../companion-client/errorCodes.js'
 import type Uppy from '../../index.js'
-import { isAbortError, toError } from '../../utils/index.js'
+import { ErrorWithCause, isAbortError, toError } from '../../utils/index.js'
 
 const handleError =
   (uppy: Uppy<any, any>) =>
@@ -27,6 +27,11 @@ const handleError =
         'warning',
         5000,
       )
+    } else if (error instanceof ErrorWithCause) {
+      // RequestClient wraps unstructured Companion failures with their request
+      // context. Show a translated fallback instead of exposing that context or
+      // the upstream response body to the user.
+      uppy.info(uppy.i18n('companionError'), 'warning', 5000)
     }
   }
 
