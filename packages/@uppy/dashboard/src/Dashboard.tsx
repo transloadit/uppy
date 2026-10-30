@@ -1015,6 +1015,7 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
     }
 
     this.stopListeningToResize()
+    document.removeEventListener('keydown', this.handleKeyDownInModal)
     document.removeEventListener('paste', this.handlePasteOnBody)
     window.removeEventListener('popstate', this.handlePopState, false)
 
@@ -1425,7 +1426,17 @@ export default class Dashboard<M extends Meta, B extends Body> extends UIPlugin<
       document.body.classList.remove('uppy-Dashboard-isFixed')
     }
 
+    // Like closeModal(), give focus back to where it was before the modal
+    // opened, unless that element has been removed along with the modal.
+    const elementToFocus =
+      !this.opts.inline && this.isModalOpen()
+        ? this.savedActiveElement
+        : undefined
+    this.superFocus.cancel()
+
     this.unmount()
     this.removeEvents()
+
+    if (elementToFocus?.isConnected) elementToFocus.focus()
   }
 }
