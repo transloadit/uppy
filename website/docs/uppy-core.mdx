@@ -1147,10 +1147,10 @@ Fired each time an individual file upload progress is available:
 
 - `file` - The [Uppy file](#working-with-uppy-files) that has progressed.
 - `progress` - An object containing `uploadStarted`, `bytesUploaded`, and
-  `bytesTotal` (`null` if the size is unknown). This is not the full
-  `file.progress` object; fields such as `percentage` and `uploadComplete` are
-  not included by the uploaders. Use `uppy.getFile(file.id).progress` to read
-  the stored progress for the file.
+  `bytesTotal` (`null` or `0` if the size is unknown; uploads through Companion
+  report `0`). This is not the full `file.progress` object; fields such as
+  `percentage` and `uploadComplete` are not included by the uploaders. Use
+  `uppy.getFile(file.id).progress` to read the stored progress for the file.
 
 **Example**
 
