@@ -13,7 +13,7 @@ on:
       - '.github/workflows/deploy-website.yml'
 
 env:
-  NODE_VERSION: lts/*
+  NODE_VERSION: '26.12.1'
   YARN_ENABLE_GLOBAL_CACHE: false
 
 permissions:
@@ -39,6 +39,12 @@ jobs:
         with:
           fetch-depth: 0
       - uses: actions/configure-pages@v6
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -49,9 +55,6 @@ jobs:
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           restore-keys: |
             ${{ runner.os }}-yarn-
-      - uses: actions/setup-node@v7
-        with:
-          node-version: ${{ env.NODE_VERSION }}
 
       - name: Install dependencies
         run: corepack yarn install --immutable
