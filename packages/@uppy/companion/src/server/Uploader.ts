@@ -3,7 +3,12 @@ import { once } from 'node:events'
 import { createReadStream, createWriteStream, ReadStream } from 'node:fs'
 import { stat, unlink } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { EventEmitter, Readable as NodeReadableStream } from 'node:stream'
+import {
+  type EventEmitter,
+  type Readable as NodeReadableStream,
+  pipeline as pipelineCb,
+  Transform,
+} from 'node:stream'
 import { pipeline } from 'node:stream/promises'
 import type { PutObjectCommandInput, S3Client } from '@aws-sdk/client-s3'
 import { Upload } from '@aws-sdk/lib-storage'
@@ -102,6 +107,33 @@ function exceedsMaxFileSize(
 
 export class ValidationError extends Error {
   override name = 'ValidationError'
+}
+
+/**
+ * Enforce maxFileSize on the bytes actually read from `stream`, because the declared size
+ * can be missing or wrong. Errors (and destroys the source) as soon as the limit is crossed.
+ */
+function limitStreamSize(
+  stream: NodeReadableStream,
+  maxFileSize: number | undefined,
+): NodeReadableStream {
+  if (maxFileSize == null) return stream
+  let bytesRead = 0
+  const limiter = new Transform({
+    transform(chunk: Buffer, _encoding, callback) {
+      bytesRead += chunk.length
+      if (exceedsMaxFileSize(maxFileSize, bytesRead)) {
+        callback(new ValidationError('maxFileSize exceeded'))
+      } else {
+        callback(null, chunk)
+      }
+    },
+  })
+  // Start paused like the source streams (see `prepareStream`), otherwise attaching a progress
+  // 'data' listener before the upload consumes the stream would make data flow (and get lost).
+  limiter.pause()
+  // errors are propagated to (and handled on) the returned stream
+  return pipelineCb(stream, limiter, () => {})
 }
 
 function validateOptions(options: UploaderOptions): void {
@@ -356,14 +388,6 @@ export default class Uploader {
       const len =
         typeof chunk === 'string' ? Buffer.byteLength(chunk) : chunk.length
       this.downloadedBytes += len
-      if (
-        exceedsMaxFileSize(
-          this.options.companionOptions.maxFileSize,
-          this.downloadedBytes,
-        )
-      ) {
-        this.abortReadStream(new Error('maxFileSize exceeded'))
-      }
       this.onProgress(0, undefined)
     }
 
@@ -399,7 +423,10 @@ export default class Uploader {
 
       this.#uploadState = states.uploading
 
-      this.readStream = stream
+      this.readStream = limitStreamSize(
+        stream,
+        this.options.companionOptions.maxFileSize,
+      )
 
       if (!this._canStream()) {
         logger.debug(
@@ -430,6 +457,7 @@ export default class Uploader {
       logger.debug('cleanup', this.shortToken)
       if (this.readStream && !this.readStream.destroyed)
         this.readStream.destroy()
+      if (!stream.destroyed) stream.destroy()
       await this.tryDeleteTmpPath()
     }
   }
