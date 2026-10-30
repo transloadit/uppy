@@ -65,6 +65,15 @@ export class Upload {
       await onBeforeRequest({ getURL: () => url, getMethod: () => method })
     }
     sentRequests.push(method)
+    // The server answers at once: in hang mode the upload then waits for its
+    // source, as the real client does while it reads the next chunk.
+    const onAfterResponse = this.options['onAfterResponse']
+    if (typeof onAfterResponse === 'function') {
+      await onAfterResponse(
+        { getURL: () => url, getMethod: () => method },
+        { getHeader: () => undefined, getStatus: () => 204 },
+      )
+    }
   }
 
   async start() {

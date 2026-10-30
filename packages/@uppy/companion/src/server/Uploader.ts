@@ -470,6 +470,12 @@ export default class Uploader {
   /** Rejects the upload in progress; see uploadStream. */
   #rejectUpload: ((err: Error) => void) | undefined
 
+  /** A tus request has been sent and its response has not arrived yet. */
+  #tusRequestPending = false
+
+  /** When the tus transfer last moved: a request, a response, or progress. */
+  #tusActivityAt = 0
+
   /**
    * Abandons a tus transfer that has been paused for PAUSED_TIMEOUT_MS, or that
    * made no progress, neither reading the source nor sending, for
@@ -480,6 +486,11 @@ export default class Uploader {
    * readableLength sees the source being read because tus-js-client reads
    * the stream with read(chunkSize): bytes wait in this stream's buffer until a
    * whole chunk is there, instead of being copied out as they arrive.
+   *
+   * Once a chunk is sent, neither number moves until the server has stored it,
+   * which can take minutes, so a request waiting for its response gets
+   * PAUSED_TIMEOUT_MS instead. tus-js-client has no request timeout, so this
+   * is also what ends a request the server never answers.
    */
   #watchTusTransfer(): () => void {
     let last: string | undefined
@@ -493,8 +504,13 @@ export default class Uploader {
       const now = `${this.#lastBytesUploaded}:${this.readStream?.readableLength}`
       if (now !== last) {
         last = now
+        this.#tusActivityAt = Date.now()
         return
       }
+      const limit = this.#tusRequestPending
+        ? PAUSED_TIMEOUT_MS
+        : STALL_TIMEOUT_MS
+      if (Date.now() - this.#tusActivityAt < limit) return
       this.tus?.abort().catch(() => {})
       this.abortReadStream(new Error('Upload stalled'))
     }, STALL_TIMEOUT_MS)
@@ -974,11 +990,15 @@ export default class Uploader {
             throw new RefusedRequestError('Upload is not running')
           }
           this.#assertAllowedDestination(req.getURL())
+          this.#tusRequestPending = true
+          this.#tusActivityAt = Date.now()
         },
         // Check where the server sends the upload as soon as it says, before
         // tus reads any of the file for it: refused in onBeforeRequest, that
         // read would be left to fail on a temp file we have deleted.
         onAfterResponse: (req, res) => {
+          this.#tusRequestPending = false
+          this.#tusActivityAt = Date.now()
           const location = res.getHeader('Location')
           if (req.getMethod() !== 'POST' || !location) return
           try {
