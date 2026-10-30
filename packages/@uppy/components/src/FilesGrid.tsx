@@ -14,9 +14,7 @@ export type FilesGridProps = {
 }
 
 export default function FilesGrid(props: FilesGridProps) {
-  const [files, setFiles] = useState<UppyFile<Meta, Record<string, never>>[]>(
-    () => [],
-  )
+  const [files, setFiles] = useState<UppyFile<Meta, Body>[]>(() => [])
   const { ctx, editFile, imageThumbnail = true } = props
 
   function gridColsClass() {

@@ -19,7 +19,7 @@
     "serve": "docusaurus serve",
     "test": "node --test test/*.test.mjs",
     "swizzle": "docusaurus swizzle",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --build",
     "write-heading-ids": "docusaurus write-heading-ids",
     "write-translations": "docusaurus write-translations"
   },
