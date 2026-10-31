@@ -1,5 +1,14 @@
 # @uppy/screen-capture
 
+## 6.0.3
+
+### Patch Changes
+
+- dc82e9c: Fix several `useScreenCapture` lifecycle bugs.
+  - Mounted components now show the stopped state after `stop()`.
+  - Submit no longer stops the capture or calls `onSubmit` when restrictions reject the captured file. `ScreenCapture#submit()` now returns whether the file was added.
+  - In React, passing a new inline `onSubmit` no longer recreates `start` and `stop`, so effects that depend on them no longer restart the capture.
+
 ## 6.0.2
 
 ### Patch Changes
@@ -11,7 +20,6 @@
 ### Patch Changes
 
 - 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
-  
   - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
   - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
   - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
@@ -23,7 +31,6 @@
 - ddffd2c: Narrow a number of `any` types to real types. Some affect the public interface.
 
   This also fixes some bugs the new types revealed:
-
   - The "copy link" helper now actually applies its styles to the temporary textarea it creates. Previously the style object was stringified to `"[object Object]"`, leaving the textarea unstyled and able to scroll the page when selected.
   - Cancelling the file card now emits `dashboard:file-edit-complete` with the file being edited, instead of `undefined`.
   - The "missing required meta fields" message now passes the file to a `metaFields` callback, which previously received `undefined`, and no longer throws when a field listed in the `requiredMetaFields` restriction has no matching entry in `metaFields`.
@@ -79,7 +86,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 
