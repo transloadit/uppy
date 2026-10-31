@@ -9,7 +9,8 @@
   "scripts": {
     "build": "tsc --build tsconfig.build.json",
     "build:css": "mkdir -p dist && cp ../components/dist/styles.css dist/styles.css && cp ../components/dist/image-editor.css dist/image-editor.css && cp ../components/dist/image-editor.css.map dist/image-editor.css.map",
-    "typecheck": "tsc --build"
+    "typecheck": "tsc --build",
+    "test": "vitest run --silent='passed-only'"
   },
   "files": [
     "src",
@@ -24,7 +25,11 @@
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
     "@uppy/core": "workspace:^",
+    "@vitest/browser-playwright": "^5.0.3",
+    "playwright": "1.64.0",
     "typescript": "^6.0.3",
+    "vitest": "^5.0.3",
+    "vitest-browser-vue": "^3.1.0",
     "vue": "^3.5.43"
   },
   "exports": {
