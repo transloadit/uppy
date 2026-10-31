@@ -1,16 +1,25 @@
 # @uppy/core
 
+## 6.3.1
+
+### Patch Changes
+
+- f58058d: Deprecate the `tokenStorage` export. Use `defaultStorage` from `@uppy/core/companion-client` instead.
+- f58058d: Allow various asynchronous interfaces and callbacks to be synchronous. Some methods that never awaited anything are no longer `async`; for example `Webcam#getVideo()` now returns its value directly.
+- f58058d: Only access `localStorage` when a provider plugin's default token storage is used, so the plugins can be constructed during server-side rendering again.
+- a16a4bf: Strip all trailing slashes from `companionUrl` (previously only one was stripped for HTTP requests, and none for websockets), so a `companionUrl` ending in `/` no longer produces `ws://host//api/...` and breaks remote uploads.
+
 ## 6.3.0
 
 ### Minor Changes
 
 - b47ca2d: Implement `Symbol.dispose` in `Uppy`. This means instances now clean up themselves if the `using` keyword is used.
 - 54d543c: **Experimental** manager mode is now headless: a file library renders it with `useS3Manager`. In manager mode the plugin no longer mounts into the Dashboard (no tab, no file drops, no `reopenAfterUpload` panel), and closing a Dashboard panel no longer resets its state or aborts its requests. `useS3Manager` warns when given a plugin in picker mode. Removed: the item detail dialog (opened by a click on a file) and S3's `getPreviewUrl`; the "Select multiple" toggle and the bulk-actions footer, with the `selectionActive` plugin state and `ProviderView.toggleSelectionMode()`; the core strings `openFileNamed`, `itemsSelected`, `selectMultiple`, `cancelSelection`, `close`, `detailSize`, `detailType` and `detailModified`; and the `--uppy-color-secondary` theming variable. `useS3Manager` and `createS3ManagerController` no longer have `state.selectionActive` or `toggleSelectionMode()`: a headless UI keeps its own selection mode and clears the selection with `cancelSelection()`.
-  
+
   The `standalone` option is removed: the Dashboard shows its "Import from …" bar with Cancel, and the panel its Log out row, again. TransloaditStorage plugins that relied on `standalone` for manager mode now start in picker mode: pass `mode: 'manager'`.
-  
+
   With the panel gone, so is what only it needed: the progress screen's Stop button (and the `stopOperation` string), and the busy state that disabled the header, filter and breadcrumbs during a long operation. Long operations, their progress text and `cancelLongOperation()` remain for `useS3Manager`. Picker mode is unchanged, including the item menu, toolbar actions and dialogs that Transloadit Storage's picker actions use.
-  
+
   If an app runs manager mode inside a Dashboard with `@uppy/s3` 0.1.x or `@uppy/transloadit-storage` 0.1.x, the panel will be empty once its `^6.2.0` range picks up `@uppy/core` 6.3. Those plugins stay on 0.1.x, because a caret range on a 0.x version doesn't cross minors. Nothing throws. Render manager mode with `useS3Manager`, or keep `@uppy/core` on 6.2 until then. Picker mode is unaffected.
 
 ### Patch Changes
@@ -18,10 +27,11 @@
 - 715eb80: Move the source map of the minified CSS into a separate file. The `.min.css` files, and `image-editor.css` in `@uppy/components`, `@uppy/react`, `@uppy/vue` and `@uppy/svelte`, embedded it inline and were larger than the unminified CSS. They now link to an external `.css.map` instead, at about half the gzipped size.
 - 6088195: Google Drive Picker: close Google's picker dialog and show an error toast when it fails to load (e.g. because third-party cookies are blocked), instead of leaving an un-closable overlay over the page.
 - a7a7997: Add an experimental `useS3Manager` hook and `createS3ManagerController` for `@uppy/s3` (and `@uppy/transloadit-storage`) in manager mode, so apps can render their own file manager instead of the ProviderView UI. ProviderView now exposes `submitDialog`, `cancelDialog`, `cancelLongOperation`, `canCancelOperation` and `getDetailItem` for headless UIs, and `toggleCheckbox` takes the rows in the order the UI shows them for shift-click ranges. A range can span folders: each folder's checked state is recomputed.
-  
+
   The hook and the controller are experimental: they can change incompatibly in a minor release of `@uppy/react` or `@uppy/components`. Pin them with `~` if you depend on them.
-  
+
   In manager mode, selecting every loaded item of a folder no longer marks the folder as fully selected while it has more pages, so the next page doesn't come in selected and a bulk action can't reach files nobody saw.
+
 - a17c84d: Keep provider authentication state independent of preauthorization responses so the OAuth login button remains available with custom Companion credentials.
 
 ## 6.2.0
@@ -29,7 +39,6 @@
 ### Minor Changes
 
 - 3f1aca3: Stricter TypeScript: caught errors are typed as `unknown`, and `noImplicitOverride` and `noImplicitReturns` are enabled for all packages.
-  
   - `@uppy/core/utils`: add `toError`, `getErrorMessage`, `isAbortError` and `isRestrictionError` helpers. `@uppy/core/companion-client`: export `isAuthError`.
   - `@uppy/webcam`: `icon` is now public, like on other acquirer plugins. `start()` now returns a promise that settles once the camera is ready, instead of `undefined`.
   - `@uppy/url`: `handleRootDrop` and `handleRootPaste` are now public, as Dashboard and DropTarget call them. The failed-fetch notification's `details` is now the error message instead of the Error object.
@@ -83,7 +92,6 @@
   an older copy in your lockfile.
 
   Also breaking:
-
   - Provider CSS moved: `@uppy/provider-views/css/style.min.css` →
     `@uppy/core/provider-views/css/style.min.css`. Most apps don't import this directly —
     it ships bundled in `@uppy/dashboard`'s CSS.
@@ -107,7 +115,6 @@
 - ddffd2c: Narrow a number of `any` types to real types. Some affect the public interface.
 
   This also fixes some bugs the new types revealed:
-
   - The "copy link" helper now actually applies its styles to the temporary textarea it creates. Previously the style object was stringified to `"[object Object]"`, leaving the textarea unstyled and able to scroll the page when selected.
   - Cancelling the file card now emits `dashboard:file-edit-complete` with the file being edited, instead of `undefined`.
   - The "missing required meta fields" message now passes the file to a `metaFields` callback, which previously received `undefined`, and no longer throws when a field listed in the `requiredMetaFields` restriction has no matching entry in `metaFields`.
@@ -205,7 +212,6 @@
 - c5b51f6: ### Export maps for all packages
 
   All packages now have export maps. This is a breaking change in two cases:
-
   1. The css imports have changed from `@uppy[package]/dist/styles.min.css` to `@uppy[package]/css/styles.min.css`
   2. You were importing something that wasn't exported from the root, for instance `@uppy/core/lib/foo.js`. You can now only import things we explicitly exported.
 
