@@ -138,7 +138,17 @@ export async function streamGoogleFile({
     })
   }
 
-  const { size } = await prepareStream(stream)
+  const { size: contentLength } = await prepareStream(stream)
+
+  // Google doesn't send a Content-Length for `alt=media` downloads, so fall back
+  // to the size from the file metadata. GSuite exports have no fixed size.
+  const statsSize = Number(stats.size)
+  const size =
+    contentLength ??
+    (!isGsuiteFile(mimeType) && Number.isFinite(statsSize) && statsSize > 0
+      ? statsSize
+      : undefined)
+
   return { stream, size }
 }
 
