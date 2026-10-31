@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import React, { useState, Fragment } from 'react'
 
 import Layout from '@theme/Layout'
@@ -378,7 +379,7 @@ const capabilities = [
   },
 ]
 
-export default function Home(): JSX.Element {
+export default function Home(): ReactNode {
   const [target, setTarget] = useState(installTargets[0].name)
   const [manager, setManager] = useState(packageManagers[0].name)
   const activeTarget = installTargets.find((t) => t.name === target)
@@ -517,7 +518,7 @@ export default function Home(): JSX.Element {
 
             {/* One box for both variants — see .installBody. */}
             <div className={styles.installBody}>
-              {activeTarget.agent ?
+              {activeTarget?.agent ?
                 <AgentPrompt className={styles.heroAgent} />
               : <>
                   {/* The package manager is a property of the command, so it docks
@@ -546,13 +547,13 @@ export default function Home(): JSX.Element {
                     </div>
 
                     <InstallCommand
-                      command={`${activeManager.prefix} ${activeTarget.packages}`}
+                      command={`${activeManager!.prefix} ${activeTarget!.packages}`}
                       className={styles.heroInstall}
                     />
                   </div>
 
-                  <Link className={styles.installDocs} to={activeTarget.docs}>
-                    Then wire it up in the {activeTarget.docsLabel} docs{' '}
+                  <Link className={styles.installDocs} to={activeTarget!.docs}>
+                    Then wire it up in the {activeTarget!.docsLabel} docs{' '}
                     <span aria-hidden>→</span>
                   </Link>
                 </>

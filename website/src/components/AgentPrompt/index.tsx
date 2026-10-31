@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import React from 'react'
 
 import CopyStateIcon from '../CopyStateIcon'
@@ -15,7 +16,7 @@ type Props = {
  * page; they copy it into an agent. The copy button always takes the whole
  * thing, whatever is scrolled into view.
  */
-export default function AgentPrompt({ className }: Props): JSX.Element {
+export default function AgentPrompt({ className }: Props): ReactNode {
   const { copied, copy } = useCopyToClipboard(agentPrompt)
 
   return (

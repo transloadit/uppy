@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import React from 'react'
 import clsx from 'clsx'
 import {
@@ -30,7 +31,7 @@ import styles from './index.module.css'
  * If a Docusaurus upgrade changes BlogListPage, re-sync this file against
  * node_modules/@docusaurus/theme-classic/lib/theme/BlogListPage/index.js.
  */
-function BlogListPageMetadata(props: Props): JSX.Element {
+function BlogListPageMetadata(props: Props): ReactNode {
   const { metadata } = props
   const {
     siteConfig: { title: siteTitle },
@@ -46,7 +47,7 @@ function BlogListPageMetadata(props: Props): JSX.Element {
   )
 }
 
-function BlogListPageContent(props: Props): JSX.Element {
+function BlogListPageContent(props: Props): ReactNode {
   const { metadata, items, sidebar } = props
   return (
     <BlogLayout sidebar={sidebar}>
@@ -59,7 +60,7 @@ function BlogListPageContent(props: Props): JSX.Element {
   )
 }
 
-export default function BlogListPage(props: Props): JSX.Element {
+export default function BlogListPage(props: Props): ReactNode {
   return (
     <HtmlClassNameProvider
       className={clsx(
