@@ -33,8 +33,8 @@ function getMediaDevices() {
   return window.MediaRecorder && navigator.mediaDevices
 }
 
-function stopTracks(stream: MediaStream) {
-  for (const track of stream.getTracks()) track.stop()
+function stopTracks(stream: MediaStream | null | undefined) {
+  for (const track of stream?.getTracks() ?? []) track.stop()
 }
 
 // Add supported image types
@@ -387,6 +387,9 @@ export default class ScreenCapture<
       this.stopRecording()
     }
 
+    // The microphone is a separate stream that stays live when the user ends
+    // screen sharing from the browser UI
+    stopTracks(this.audioStream)
     this.videoStream = null
     this.audioStream = null
 
@@ -479,38 +482,12 @@ export default class ScreenCapture<
   stop(): void {
     this.#stopCount++
 
-    // flush video stream
-    if (this.videoStream) {
-      for (const track of this.videoStream.getVideoTracks()) {
-        track.stop()
-      }
-      for (const track of this.videoStream.getAudioTracks()) {
-        track.stop()
-      }
-      this.videoStream = null
-    }
-
-    // flush audio stream
-    if (this.audioStream) {
-      for (const track of this.audioStream.getAudioTracks()) {
-        track.stop()
-      }
-      for (const track of this.audioStream.getVideoTracks()) {
-        track.stop()
-      }
-      this.audioStream = null
-    }
-
-    // flush output stream
-    if (this.outputStream) {
-      for (const track of this.outputStream.getAudioTracks()) {
-        track.stop()
-      }
-      for (const track of this.outputStream.getVideoTracks()) {
-        track.stop()
-      }
-      this.outputStream = null
-    }
+    stopTracks(this.videoStream)
+    stopTracks(this.audioStream)
+    stopTracks(this.outputStream)
+    this.videoStream = null
+    this.audioStream = null
+    this.outputStream = null
 
     // Clean up screenshot URL
     const { capturedScreenshotUrl, recordedVideo } = this.getPluginState()

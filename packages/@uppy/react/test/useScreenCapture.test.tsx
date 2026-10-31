@@ -21,13 +21,16 @@ function fakeScreen() {
       streams.push(stream)
       return Promise.resolve(stream)
     })
-  vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockImplementation(() =>
-    Promise.resolve(canvas.captureStream()),
-  )
+  const micStreams: MediaStream[] = []
+  vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockImplementation(() => {
+    const stream = canvas.captureStream()
+    micStreams.push(stream)
+    return Promise.resolve(stream)
+  })
   // Synthetic clicks grant no user activation, so Chromium rejects the
   // unmuted play() in captureScreenshot()
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue()
-  return { streams, getDisplayMedia }
+  return { streams, micStreams, getDisplayMedia }
 }
 
 const isLive = (stream: MediaStream) =>
@@ -212,5 +215,19 @@ describe('useScreenCapture', () => {
 
     expect(display.streams).toHaveLength(1)
     expect(isLive(display.streams[0]!)).toBe(false)
+  })
+
+  it('stops the microphone when screen sharing is ended from the browser', async () => {
+    setup(<Capture />)
+    await waitForReady()
+    expect(display.micStreams).toHaveLength(1)
+    const stopMic = vi.spyOn(display.micStreams[0]!.getTracks()[0]!, 'stop')
+
+    // Like the browser's "Stop sharing" button: the screen stream goes inactive
+    for (const track of display.streams[0]!.getTracks()) track.stop()
+
+    await waitFor(() => expect(button('screenshot').disabled).toBe(true))
+    expect(stopMic).toHaveBeenCalled()
+    expect(isLive(display.micStreams[0]!)).toBe(false)
   })
 })
