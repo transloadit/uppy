@@ -32,6 +32,14 @@ function getTusMockLastUploadFile(): unknown {
   return getter()
 }
 
+function getTusMockLastUploadedBytes(): number {
+  const getter = Reflect.get(tusClient, '__getLastUploadedBytes')
+  if (typeof getter !== 'function') {
+    throw new Error('Expected tus mock to expose __getLastUploadedBytes()')
+  }
+  return getter()
+}
+
 function resetTusMockState(): void {
   const reset = Reflect.get(tusClient, '__resetTusMockState')
   if (typeof reset !== 'function') {
@@ -621,11 +629,13 @@ describe('uploader', () => {
       totalBytes,
       size,
       useFormData = false,
+      tusDeferredUploadLength = true,
     }: {
       protocol: 'tus' | 'multipart'
       totalBytes: number
       size?: number
       useFormData?: boolean
+      tusDeferredUploadLength?: boolean
     }) {
       let requestBody: unknown
       if (protocol === 'multipart')
@@ -642,7 +652,7 @@ describe('uploader', () => {
           ...companionOptions,
           maxFileSize,
           streamingUpload: true,
-          tusDeferredUploadLength: true,
+          tusDeferredUploadLength,
         },
         endpoint: 'http://localhost',
         protocol,
@@ -688,16 +698,59 @@ describe('uploader', () => {
       expect(source.bytesRead).toBeLessThan(totalBytes)
     })
 
+    test('tus upload of a stream without declared size requires tusDeferredUploadLength', async () => {
+      const { message } = await runStreamingUpload({
+        protocol: 'tus',
+        totalBytes: 1e6,
+        tusDeferredUploadLength: false,
+      })
+      expect(message).toMatchObject({
+        action: 'error',
+        payload: {
+          error: {
+            message:
+              'tusDeferredUploadLength needs to be enabled if no file size is provided by the provider',
+          },
+        },
+      })
+    })
+
+    test('tus upload of an oversized stream with understated declared size never uploads more than maxFileSize', async () => {
+      const totalBytes = 1e6
+      const size = 100
+      const { message, source } = await runStreamingUpload({
+        protocol: 'tus',
+        totalBytes,
+        size,
+        tusDeferredUploadLength: false,
+      })
+      // tus stops reading after the declared size, but the limiter reads ahead of it and may
+      // cross maxFileSize first, so the outcome races. Either way, no more than allowed is uploaded.
+      expect(['success', 'error']).toContain(message.action)
+      if (message.action === 'error') {
+        expect(message).toMatchObject({
+          payload: { error: { message: 'maxFileSize exceeded' } },
+        })
+      }
+      expect(getTusMockLastUploadedBytes()).toBeLessThanOrEqual(size)
+      expect(source.bytesRead).toBeLessThan(totalBytes)
+    })
+
     test.each([
-      'tus',
-      'multipart',
-    ] as const)('%s upload of a stream within maxFileSize succeeds', async (protocol) => {
+      ['tus', true, undefined],
+      ['tus', false, maxFileSize],
+      ['multipart', true, undefined],
+    ] as const)('%s upload (tusDeferredUploadLength %s) of a stream within maxFileSize with declared size %s succeeds', async (protocol, tusDeferredUploadLength, size) => {
       const { message, source } = await runStreamingUpload({
         protocol,
         totalBytes: maxFileSize,
+        tusDeferredUploadLength,
+        ...(size != null && { size }),
       })
       expect(message).toMatchObject({ action: 'success' })
       expect(source.bytesRead).toBe(maxFileSize)
+      if (protocol === 'tus')
+        expect(getTusMockLastUploadedBytes()).toBe(maxFileSize)
     })
 
     test('multipart form-data upload of a stream within maxFileSize sends the whole file', async () => {

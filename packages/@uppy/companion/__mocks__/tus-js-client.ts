@@ -9,13 +9,19 @@ type UploadOptions = {
 } & Record<string, unknown>
 
 let lastUploadFile: unknown
+let lastUploadedBytes = 0
 
 export function __getLastUploadFile(): unknown {
   return lastUploadFile
 }
 
+export function __getLastUploadedBytes(): number {
+  return lastUploadedBytes
+}
+
 export function __resetTusMockState(): void {
   lastUploadFile = undefined
+  lastUploadedBytes = 0
 }
 
 export class Upload {
@@ -32,15 +38,26 @@ export class Upload {
     this.options = options
   }
 
-  // Consume the source like tus-js-client does, so that stream errors are
-  // reported through onError.
+  // Consume the source like tus-js-client's StreamSource does, so that stream errors are
+  // reported through onError: until the end if the length is deferred, otherwise only
+  // `uploadSize` bytes (leaving the rest of the stream unread).
   async _readFile(): Promise<number> {
-    if (!(this.file instanceof Readable)) return this.options.uploadSize
-    let bytesRead = 0
-    for await (const chunk of this.file) bytesRead += chunk.length
-    return this.options.uploadLengthDeferred
-      ? bytesRead
-      : Math.min(bytesRead, this.options.uploadSize)
+    const { uploadSize, uploadLengthDeferred } = this.options
+    if (!(this.file instanceof Readable)) return uploadSize
+    let bytesUploaded = 0
+    for await (const chunk of this.file.iterator({ destroyOnReturn: false })) {
+      bytesUploaded += uploadLengthDeferred
+        ? chunk.length
+        : Math.min(chunk.length, uploadSize - bytesUploaded)
+      lastUploadedBytes = bytesUploaded
+      if (!uploadLengthDeferred && bytesUploaded >= uploadSize) break
+    }
+    if (!uploadLengthDeferred && bytesUploaded !== uploadSize) {
+      throw new Error(
+        `upload was configured with a size of ${uploadSize} bytes, but the source is done after ${bytesUploaded} bytes`,
+      )
+    }
+    return bytesUploaded
   }
 
   _triggerProgressThenSuccess() {

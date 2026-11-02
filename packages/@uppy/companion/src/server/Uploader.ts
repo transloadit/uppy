@@ -129,8 +129,8 @@ function limitStreamSize(
       }
     },
   })
-  // Start paused like the source streams (see `prepareStream`), otherwise attaching a progress
-  // 'data' listener before the upload consumes the stream would make data flow (and get lost).
+  // Keep the limiter's output paused until the upload consumes it, otherwise a progress 'data'
+  // listener attached first would make it flow and chunks would be lost.
   limiter.pause()
   // errors are propagated to (and handled on) the returned stream
   return pipelineCb(stream, limiter, () => {})
