@@ -103,6 +103,35 @@ describe('ProviderView Search E2E', () => {
     expect(targetPdfItem).toBeTruthy()
   })
 
+  test('Search results with a requestPath that is not a path (Dropbox unmounted shared item) are skipped', async () => {
+    network.use(...handlers)
+    uppy = initializeUppy(['Dropbox'])
+    await expect
+      .element(page.getByRole('presentation').getByText('Dropbox'))
+      .toBeVisible()
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+
+    const panel = page.getByRole('tabpanel')
+    await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
+
+    const searchInput = document.querySelector(
+      '.uppy-ProviderBrowser-searchFilterInput',
+    ) as HTMLInputElement
+
+    // Used to throw 'Partial tree not complete' while rendering the search results
+    await userEvent.type(searchInput, 'shared')
+    await expect
+      .element(
+        page.getByRole('button', { name: 'shared-readme.md', exact: true }),
+      )
+      .toBeVisible()
+    await expect
+      .element(
+        page.getByRole('button', { name: 'unmounted-shared.pdf', exact: true }),
+      )
+      .not.toBeInTheDocument()
+  })
+
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
     uppy = initializeUppy(['Dropbox'])
 
