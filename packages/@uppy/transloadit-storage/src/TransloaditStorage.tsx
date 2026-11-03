@@ -113,6 +113,12 @@ export default class TransloaditStorage<
 
   declare opts: TransloaditStorageOptions<M, B>
 
+  /** Tracks the previous loading state so we only reset the toast on settling. */
+  #lastLoading: boolean | string = false
+
+  /** Tracks whether we already showed the "drop while navigating" toast. */
+  #dropRejectionToastShown = false
+
   constructor(uppy: Uppy<M, B>, opts: TransloaditStorageOptions<M, B>) {
     // Fail before Uppy registers a half-installed provider with no view to tear down.
     if (opts.storeUploads) {
@@ -141,6 +147,17 @@ export default class TransloaditStorage<
     this.icon = () => <StorageIcon color="#0d8ceb" />
   }
 
+  #onStateUpdate = (): void => {
+    const loading = this.getPluginState().loading
+    if (loading !== this.#lastLoading) {
+      const wasLoading = Boolean(this.#lastLoading)
+      this.#lastLoading = loading
+      // Reset the drop-rejection toast flag when navigation settles, so the
+      // next pending navigation can show it again.
+      if (wasLoading && !loading) this.#dropRejectionToastShown = false
+    }
+  }
+
   /**
    * With `storeUploads`, files dropped on the panel are stored in the folder
    * that is open, which only a session that can write may do. Without it they
@@ -151,8 +168,22 @@ export default class TransloaditStorage<
    * minor releases.
    */
   override get acceptsFileDrops(): boolean {
+    // Drop admission requires a resolved folder: never accept while a listing
+    // is in flight, otherwise the dropped files would target the old folder.
+    const navigating = Boolean(this.getPluginState().loading)
+    if (
+      navigating &&
+      this.opts.storeUploads &&
+      !this.#dropRejectionToastShown
+    ) {
+      // Show the toast once per pending navigation so the user knows why the
+      // drop cursor changed.
+      this.#dropRejectionToastShown = true
+      this.uppy.info(this.i18n('dropWhileNavigating'), 'warning', 4000)
+    }
     return (
       this.opts.mode !== 'manager' &&
+      !navigating &&
       (this.opts.storeUploads == null || this.canWrite)
     )
   }
@@ -267,9 +298,11 @@ export default class TransloaditStorage<
     }
     super.install()
     if (reopenAfterUpload) this.uppy.on('complete', this.#reopenAfterUpload)
+    this.uppy.on('state-update', this.#onStateUpdate)
   }
 
   override uninstall(): void {
+    this.uppy.off('state-update', this.#onStateUpdate)
     this.uppy.off('complete', this.#reopenAfterUpload)
     super.uninstall()
   }
