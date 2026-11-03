@@ -8771,11 +8771,11 @@ __metadata:
   resolution: "@uppy-dev/msw-setup@workspace:private/msw-setup"
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     typescript: "npm:^6.0.3"
     vitest: "npm:^5.0.3"
   peerDependencies:
-    msw: ^3.0.2
+    msw: ^3.0.3
     vitest: ^5.0.3
   languageName: unknown
   linkType: soft
@@ -8853,7 +8853,7 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     type-fest: "npm:^5.10.0"
     typescript: "npm:^6.0.3"
@@ -9017,7 +9017,7 @@ __metadata:
     deep-freeze: "npm:^0.0.1"
     lodash: "npm:^4.18.1"
     mime-match: "npm:^1.0.2"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^6.0.1"
     p-queue: "npm:^9.3.3"
@@ -9051,7 +9051,7 @@ __metadata:
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
     lodash: "npm:^4.18.1"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     nanoid: "npm:^6.0.1"
     playwright: "npm:1.64.0"
     postcss: "npm:^8.5.23"
@@ -9326,7 +9326,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     preact: "npm:^10.29.2"
     type-fest: "npm:^5.10.0"
@@ -9428,7 +9428,7 @@ __metadata:
     "@uppy/dashboard": "workspace:^"
     "@uppy/s3": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     preact: "npm:^10.29.2"
     typescript: "npm:^6.0.3"
@@ -9449,7 +9449,7 @@ __metadata:
     "@uppy/tus": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
     component-emitter: "npm:^2.0.0"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     typescript: "npm:^6.0.3"
     vitest: "npm:^5.0.3"
@@ -9579,7 +9579,7 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/dashboard": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     typescript: "npm:^6.0.3"
     vitest: "npm:^5.0.3"
@@ -14022,7 +14022,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-react": "npm:^6.1.2"
     "@vitest/browser-playwright": "npm:^5.0.3"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     react: "npm:^19.3.0"
     react-dom: "npm:^19.3.0"
@@ -14079,7 +14079,7 @@ __metadata:
     "@uppy/tus": "workspace:*"
     "@uppy/webcam": "workspace:*"
     "@vitest/browser-playwright": "npm:^5.0.3"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     svelte: "npm:^5.56.5"
     svelte-check: "npm:^4.7.7"
@@ -14121,7 +14121,7 @@ __metadata:
     "@uppy/webcam": "workspace:*"
     "@vitejs/plugin-vue": "npm:^6.0.10"
     "@vitest/browser-playwright": "npm:^5.0.3"
-    msw: "npm:^3.0.2"
+    msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
     tailwindcss: "npm:^4.0.0"
     vite: "npm:^8.3.4"
@@ -19169,9 +19169,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"msw@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "msw@npm:3.0.2"
+"msw@npm:^3.0.3":
+  version: 3.0.3
+  resolution: "msw@npm:3.0.3"
   dependencies:
     "@inquirer/confirm": "npm:^6.0.11"
     "@msw/url": "npm:^0.1.2"
@@ -19198,7 +19198,7 @@ __metadata:
       optional: true
   bin:
     msw: cli/index.js
-  checksum: 10/79a0ba1b00e64092b021812f1e0d7de53f26690f662c3ec0eef7bb85e6c633a062acaccba9169688cc528022ada8c8e6fcae80815db05432b7e6684ba703af09
+  checksum: 10/c3ba3e26a8e6a4eebb91831778aa067c5e268e55882455e5fee9f5682a444eb8fcdca857226cd459080299a4a5443aa41eda6c80aaf5f4f4875d6efd419803b5
   languageName: node
   linkType: hard
 
