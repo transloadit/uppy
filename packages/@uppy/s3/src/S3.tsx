@@ -85,8 +85,11 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   /** Called when the session ends (`logout()`), before the token is removed. */
   onLogout?: () => void
 
-  /** Bucket each listed item was listed in, so a later listing can't repoint it. */
-  #bucketByPath = new Map<string, string>()
+  /**
+   * Bucket each listed item was listed in, so a later listing can't repoint it.
+   * `null`: listed in two buckets this session, so the selection is ambiguous.
+   */
+  #bucketByPath = new Map<string, string | null>()
 
   /** True between a successful login and a logout: only then is a 401 an *expired* session. */
   #hasSession = false
@@ -113,8 +116,12 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
     const bucket = session?.bucket ?? username
     if (typeof bucket === 'string') {
       for (const { requestPath } of items ?? []) {
-        if (typeof requestPath === 'string')
-          this.#bucketByPath.set(requestPath, bucket)
+        if (typeof requestPath !== 'string') continue
+        const known = this.#bucketByPath.get(requestPath)
+        this.#bucketByPath.set(
+          requestPath,
+          known === undefined || known === bucket ? bucket : null,
+        )
       }
     }
     this.onSession?.({
@@ -133,6 +140,10 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
    */
   override fileUrl(id: string): string {
     const bucket = this.#bucketByPath.get(id)
+    if (bucket === null)
+      throw new Error(
+        'This file was listed in two buckets; log out and select it again.',
+      )
     if (!bucket)
       throw new Error('Browse the storage folder before selecting files.')
     const url = new URL(super.fileUrl(id))

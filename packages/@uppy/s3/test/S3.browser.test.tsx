@@ -223,6 +223,16 @@ describe('S3 provider in the browser', () => {
         new URL(plugin.provider.fileUrl(id)).searchParams.get('bucket')
       expect(bucketOf('readme.md')).toBe('bucket-a')
       expect(bucketOf('other.md')).toBe('bucket-b')
+
+      // the same key in both buckets: which one was selected is unknown
+      list.mockResolvedValueOnce({
+        session: { bucket: 'bucket-b' },
+        items: [{ requestPath: 'readme.md' }],
+      })
+      await plugin.provider.list('', {})
+      expect(() => plugin.provider.fileUrl('readme.md')).toThrow(
+        'listed in two buckets',
+      )
     } finally {
       list.mockRestore()
     }
