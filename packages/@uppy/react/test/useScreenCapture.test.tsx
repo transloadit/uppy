@@ -1,5 +1,6 @@
 import { act, cleanup, render, screen, waitFor } from '@testing-library/react'
 import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
 import { UppyContextProvider, useScreenCapture } from '@uppy/react'
 import ScreenCapture from '@uppy/screen-capture'
 import { StrictMode, useEffect, useState } from 'react'
@@ -229,5 +230,59 @@ describe('useScreenCapture', () => {
     await waitFor(() => expect(button('screenshot').disabled).toBe(true))
     expect(stopMic).toHaveBeenCalled()
     expect(isLive(display.micStreams[0]!)).toBe(false)
+  })
+
+  it('ignores the old stream going inactive after stop() and start()', async () => {
+    const { uppy } = setup(<Capture />)
+    await waitForReady()
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+
+    await act(() => {
+      plugin.stop()
+      return plugin.start()
+    })
+    await waitForReady()
+    expect(display.streams).toHaveLength(2)
+    expect(display.micStreams).toHaveLength(2)
+
+    // `stop()` makes the old stream inactive; dispatch the event explicitly so
+    // it is guaranteed to arrive after the new stream is set
+    await act(() => {
+      display.streams[0]!.dispatchEvent(new Event('inactive'))
+    })
+
+    expect(plugin.videoStream).toBe(display.streams[1])
+    expect(plugin.audioStream).toBe(display.micStreams[1])
+    expect(isLive(display.streams[1]!)).toBe(true)
+    expect(isLive(display.micStreams[1]!)).toBe(true)
+    expect(plugin.getPluginState()).toMatchObject({
+      status: 'ready',
+      streamActive: true,
+      audioStreamActive: true,
+    })
+    expect(button('screenshot').disabled).toBe(false)
+  })
+
+  it('does not touch state or the Dashboard when a stream goes inactive after removing the plugin', async () => {
+    const target = document.createElement('div')
+    document.body.appendChild(target)
+    const uppy = new Uppy()
+      .use(Dashboard, { inline: true, target })
+      .use(ScreenCapture, { target: Dashboard })
+    const dashboard = uppy.getPlugin<Dashboard<any, any>>('Dashboard')!
+    const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    await plugin.start()
+    expect(display.streams).toHaveLength(1)
+    const hideAllPanels = vi.spyOn(dashboard, 'hideAllPanels')
+
+    uppy.removePlugin(plugin)
+    expect(uppy.getState().plugins.ScreenCapture).toBeUndefined()
+    display.streams[0]!.dispatchEvent(new Event('inactive'))
+
+    expect(uppy.getState().plugins.ScreenCapture).toBeUndefined()
+    expect(hideAllPanels).not.toHaveBeenCalled()
+
+    uppy.destroy()
+    target.remove()
   })
 })
