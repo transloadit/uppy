@@ -4,7 +4,15 @@ import Dashboard from '@uppy/dashboard'
 import { UppyContextProvider, useScreenCapture } from '@uppy/react'
 import ScreenCapture from '@uppy/screen-capture'
 import { StrictMode, useEffect, useState } from 'react'
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  onTestFinished,
+  vi,
+} from 'vitest'
 
 function fakeScreen() {
   const canvas = document.createElement('canvas')
@@ -70,7 +78,15 @@ function setup(
   const result = render(
     <UppyContextProvider uppy={uppy}>{ui}</UppyContextProvider>,
   )
-  return { uppy, ...result }
+  return {
+    uppy,
+    ...result,
+    // Unmount first, the hook reads the plugin's state while mounted
+    [Symbol.dispose]() {
+      result.unmount()
+      uppy.destroy()
+    },
+  }
 }
 
 const button = (name: string) =>
@@ -97,7 +113,7 @@ describe('useScreenCapture', () => {
   })
 
   it('shows the stopped state when stop() is called while mounted', async () => {
-    setup(<Capture />)
+    using _ = setup(<Capture />)
     await waitForReady()
 
     await click('stop capture')
@@ -123,7 +139,7 @@ describe('useScreenCapture', () => {
         </>
       )
     }
-    setup(<Parent />)
+    using _ = setup(<Parent />)
     await waitForReady()
 
     await click('rerender')
@@ -140,9 +156,10 @@ describe('useScreenCapture', () => {
 
   it('does not call onSubmit or drop the preview when restrictions reject the capture', async () => {
     const onSubmit = vi.fn()
-    const { uppy } = setup(<Capture onSubmit={onSubmit} />, {
+    using rendered = setup(<Capture onSubmit={onSubmit} />, {
       restrictions: { allowedFileTypes: ['application/pdf'] },
     })
+    const { uppy } = rendered
     await waitForReady()
 
     await click('screenshot')
@@ -159,7 +176,7 @@ describe('useScreenCapture', () => {
   })
 
   it('stops the stream of a superseded start in StrictMode', async () => {
-    const uppy = new Uppy().use(ScreenCapture)
+    using uppy = new Uppy().use(ScreenCapture)
     render(
       <StrictMode>
         <UppyContextProvider uppy={uppy}>
@@ -185,7 +202,8 @@ describe('useScreenCapture', () => {
       display.streams.push(stream)
       return stream
     })
-    const { unmount } = setup(<Capture />)
+    using rendered = setup(<Capture />)
+    const { unmount } = rendered
     await waitFor(() => expect(resolve).toBeDefined())
 
     unmount()
@@ -205,7 +223,7 @@ describe('useScreenCapture', () => {
       display.streams.push(stream)
       return stream
     })
-    const uppy = new Uppy().use(ScreenCapture)
+    using uppy = new Uppy().use(ScreenCapture)
     const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
     const started = plugin.start()
     await waitFor(() => expect(resolve).toBeDefined())
@@ -219,7 +237,7 @@ describe('useScreenCapture', () => {
   })
 
   it('stops the microphone when screen sharing is ended from the browser', async () => {
-    setup(<Capture />)
+    using _ = setup(<Capture />)
     await waitForReady()
     expect(display.micStreams).toHaveLength(1)
     const stopMic = vi.spyOn(display.micStreams[0]!.getTracks()[0]!, 'stop')
@@ -233,7 +251,8 @@ describe('useScreenCapture', () => {
   })
 
   it('ignores the old stream going inactive after stop() and start()', async () => {
-    const { uppy } = setup(<Capture />)
+    using rendered = setup(<Capture />)
+    const { uppy } = rendered
     await waitForReady()
     const plugin = uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
 
@@ -266,7 +285,8 @@ describe('useScreenCapture', () => {
   it('does not touch state or the Dashboard when a stream goes inactive after removing the plugin', async () => {
     const target = document.createElement('div')
     document.body.appendChild(target)
-    const uppy = new Uppy()
+    onTestFinished(() => target.remove())
+    using uppy = new Uppy()
       .use(Dashboard, { inline: true, target })
       .use(ScreenCapture, { target: Dashboard })
     const dashboard = uppy.getPlugin<Dashboard<any, any>>('Dashboard')!
@@ -281,8 +301,5 @@ describe('useScreenCapture', () => {
 
     expect(uppy.getState().plugins.ScreenCapture).toBeUndefined()
     expect(hideAllPanels).not.toHaveBeenCalled()
-
-    uppy.destroy()
-    target.remove()
   })
 })
