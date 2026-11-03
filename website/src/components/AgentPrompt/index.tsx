@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
-import React from 'react'
-
-import CopyStateIcon from '../CopyStateIcon'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
+import CopyStateIcon from '../CopyStateIcon'
 import { agentPrompt } from './prompt'
 import styles from './styles.module.css'
 
@@ -24,6 +22,7 @@ export default function AgentPrompt({ className }: Props): ReactNode {
       {/* Focusable so the panel can be scrolled from the keyboard. */}
       <pre
         className={styles.prompt}
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: scrollable regions must be keyboard-focusable
         tabIndex={0}
         role="group"
         aria-label="Prompt for adding Uppy with a coding agent"

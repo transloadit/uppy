@@ -11,6 +11,7 @@ on:
       - '.github/workflows/website.yml'
       - '.remarkrc.mjs'
       - '.remarkignore'
+      - 'biome.json'
   pull_request:
     types: [opened, synchronize, reopened]
     paths:
@@ -21,6 +22,7 @@ on:
       - '.github/workflows/website.yml'
       - '.remarkrc.mjs'
       - '.remarkignore'
+      - 'biome.json'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -66,9 +68,9 @@ jobs:
             exit 1
           fi
       - name: Install dependencies
-        run: corepack yarn install --immutable
+        run: corepack yarn workspaces focus @uppy-dev/build
       - name: Lint
-        run: corepack yarn workspace uppy-io lint
+        run: corepack yarn exec biome ci website
 
   build:
     name: Build and test (uppy.io)

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { UppyContextProvider, Dropzone } from '@uppy/react'
+import { Dropzone, UppyContextProvider } from '@uppy/react'
+import { useState } from 'react'
 import { Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
