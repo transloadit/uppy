@@ -233,18 +233,18 @@ In Uppy, our code ended up looking like this:
 
 ```javascript
 function getScalingFactor(w, h, rotationAngle) {
-	const α = Math.abs(toRadians(rotationAngle));
+  const α = Math.abs(toRadians(rotationAngle))
 
-	const scalingFactor = Math.max(
-		(Math.sin(α) * w + Math.cos(α) * h) / h,
-		(Math.sin(α) * h + Math.cos(α) * w) / w,
-	);
+  const scalingFactor = Math.max(
+    (Math.sin(α) * w + Math.cos(α) * h) / h,
+    (Math.sin(α) * h + Math.cos(α) * w) / w,
+  )
 
-	return scalingFactor;
+  return scalingFactor
 }
-const image = cropper.getImageData();
-const scaleFactor = getScalingFactor(image.width, image.height, rotationAngle);
-cropper.scale(scaleFactor);
+const image = cropper.getImageData()
+const scaleFactor = getScalingFactor(image.width, image.height, rotationAngle)
+cropper.scale(scaleFactor)
 ```
 
 You can see the full version

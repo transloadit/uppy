@@ -2,11 +2,11 @@
 slug: /facebook
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
-import CompanionOptions from './_companion-options.mdx';
+import UppyCdnExample from '/src/components/UppyCdnExample'
+import CompanionOptions from './_companion-options.mdx'
 
 # Facebook
 
@@ -70,16 +70,16 @@ Using Facebook requires setup in both Uppy and Companion.
 ### Use in Uppy
 
 ```js {10-13} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import Facebook from '@uppy/facebook';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import Facebook from '@uppy/facebook'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
 new Uppy()
-	.use(Dashboard, { inline: true, target: '#dashboard' })
-	.use(Facebook, { companionUrl: 'https://your-companion.com' });
+  .use(Dashboard, { inline: true, target: '#dashboard' })
+  .use(Facebook, { companionUrl: 'https://your-companion.com' })
 ```
 
 ### Use with Transloadit
@@ -91,17 +91,17 @@ OAuth” for the service, and enter the key and secret for the provider you want
 to use. Then you can pass the name of the new credentials to that provider:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Facebook from '@uppy/facebook';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Facebook from '@uppy/facebook'
 
 uppy.use(Facebook, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'my_companion_dropbox_creds',
-	},
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
+})
 ```
 
 ### Use in Companion
@@ -143,13 +143,13 @@ When using the Companion Node.js API, configure these options:
 
 ```js
 companion.app({
-	providerOptions: {
-		facebook: {
-			key: 'Facebook API key',
-			secret: 'Facebook API secret',
-		},
-	},
-});
+  providerOptions: {
+    facebook: {
+      key: 'Facebook API key',
+      secret: 'Facebook API secret',
+    },
+  },
+})
 ```
 
 ## API
@@ -159,4 +159,4 @@ companion.app({
 <CompanionOptions />
 
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/

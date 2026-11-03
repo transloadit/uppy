@@ -48,11 +48,11 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     return providerUserSession.webdavUrl != null
   }
 
-  async getClient({
+  getClient({
     providerUserSession,
   }: {
     providerUserSession: WebdavUserSession
-  }): Promise<WebdavClient> {
+  }): WebdavClient {
     const webdavUrl = providerUserSession?.webdavUrl
     const { allowLocalUrls } = this
     if (
@@ -87,7 +87,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     })
   }
 
-  override async logout(): Promise<ProviderLogoutResponse> {
+  override logout(): ProviderLogoutResponse {
     return { revoked: true }
   }
 
@@ -124,10 +124,10 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     }
   }
 
-  async getClientHelper({
+  getClientHelper({
     url,
     ...options
-  }: { url: string } & WebDAVClientOptions): Promise<WebdavClient> {
+  }: { url: string } & WebDAVClientOptions): WebdavClient {
     const { allowLocalUrls } = this
     if (!validateURL(url, allowLocalUrls)) {
       throw new Error('invalid webdav url')
@@ -148,7 +148,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     })
   }
 
-  override async list({
+  override list({
     providerUserSession,
     query,
     directory,
@@ -208,7 +208,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession,
   }: ProviderDownloadOptions<WebdavUserSession>): Promise<ProviderDownloadResponse> {
@@ -224,7 +224,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
     )
   }
 
-  override async thumbnail(): Promise<never> {
+  override thumbnail(): Promise<never> {
     // not implementing this because a public thumbnail from webdav will be used instead
     logger.error(
       'call to thumbnail is not implemented',

@@ -40,7 +40,8 @@
   },
   "dependencies": {
     "@transloadit/utils": "^4.8.0",
-    "preact": "^10.29.2"
+    "preact": "^10.29.2",
+    "type-fest": "^5.10.0"
   },
   "peerDependencies": {
     "@uppy/core": "workspace:^"

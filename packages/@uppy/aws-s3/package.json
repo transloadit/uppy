@@ -37,6 +37,9 @@
     ".": "./lib/index.js",
     "./package.json": "./package.json"
   },
+  "dependencies": {
+    "type-fest": "^5.10.0"
+  },
   "devDependencies": {
     "@aws-sdk/client-sts": "^3.1139.0",
     "@types/node": "^22.20.1",

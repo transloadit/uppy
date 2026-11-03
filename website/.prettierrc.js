@@ -1,7 +1,7 @@
 module.exports = {
-	proseWrap: 'always',
-	singleQuote: true,
-	trailingComma: 'all',
-	useTabs: true,
-	experimentalTernaries: true,
-};
+  proseWrap: 'always',
+  semi: false,
+  singleQuote: true,
+  trailingComma: 'all',
+  experimentalTernaries: true,
+}

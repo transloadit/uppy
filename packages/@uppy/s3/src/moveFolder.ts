@@ -8,6 +8,7 @@
  * it. Doing that in the browser keeps each server request short-lived, lets
  * the user cancel, and lets an interrupted operation be re-run.
  */
+import type { Promisable } from 'type-fest'
 import { splitKey } from './keys.js'
 
 /** One entry of a Companion listing; only what the walk needs. */
@@ -33,18 +34,21 @@ type RequestOptions = { signal?: AbortSignal | undefined }
  * them) and URL-encoded keys for `list()` (as Companion's listing reports them).
  */
 export type FolderMoveProvider = {
-  list(directory: string | null, options: RequestOptions): Promise<ListResponse>
+  list(
+    directory: string | null,
+    options: RequestOptions,
+  ): Promisable<ListResponse>
   createFolder(
     parentId: string | null,
     name: string,
     options?: RequestOptions,
-  ): Promise<unknown>
+  ): Promisable<unknown>
   moveItem(
     id: string,
     destination: string,
     options?: RequestOptions,
-  ): Promise<unknown>
-  deleteItem(id: string, options?: RequestOptions): Promise<unknown>
+  ): Promisable<unknown>
+  deleteItem(id: string, options?: RequestOptions): Promisable<unknown>
 }
 
 /** What `moveFolder` and `deleteFolder` share. */
@@ -152,7 +156,7 @@ async function walkFolder(
 async function forEachFile(
   files: string[],
   { concurrency = 4, signal, onProgress }: FolderOperationOptions,
-  perFile: (file: string) => Promise<unknown>,
+  perFile: (file: string) => Promisable<unknown>,
 ): Promise<void> {
   let done = 0
   let next = 0

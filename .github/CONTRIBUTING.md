@@ -12,7 +12,8 @@ cd uppy
 ```
 
 We are using [Corepack][] to manage versions of [Yarn][]. Corepack comes
-pre-installed with Node.js >=16.x, or can be installed through `npm`:
+pre-installed with Node.js 16.x to 24.x. Node.js 25 and later no longer bundle
+it, so install it through `npm`:
 
 ```sh
 corepack -v || npm i -g corepack
@@ -20,6 +21,7 @@ corepack enable
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
+
 [Yarn]: https://yarnpkg.com/
 
 ## Development
@@ -38,9 +40,9 @@ yarn build
 
 ### Development Commands
 
-- `yarn dev` - Start development server at http://localhost:5174
+- `yarn dev` - Start development server at <http://localhost:5174>
 - `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
-- `yarn start:companion` - Start only Companion server at http://localhost:3020
+- `yarn start:companion` - Start only Companion server at <http://localhost:3020>
 - `yarn build:watch` - Build packages in watch mode
 - `yarn build:examples` - Build and type-check the examples and the dev playground
 - `yarn test` - Run tests for all packages
@@ -146,11 +148,12 @@ corepack yarn workspace uppy-io test # needs a build
 ```
 
 `website/static` only holds site assets such as icons and fonts (CI
-rejects files over 100 KB). Blog images and videos are served from Transloadit's
-Smart CDN at `https://uppy-io-static.tlcdn.com/static/img/blog/<path>`,
-which imports them from the `static` folder of the archived
-[transloadit/uppy.io](https://github.com/transloadit/uppy.io) repository. To add
-new media, ask a maintainer to host it.
+rejects files over 100 KB). Blog images and videos live in
+[transloadit/uppy-media](https://github.com/transloadit/uppy-media) and are
+served from Transloadit’s Smart CDN at
+`https://uppy-io-static.tlcdn.com/static/<path in that repo>`. To add media,
+open a PR there first and use the CDN URL in the website once it’s merged; see
+its README.
 
 Pushes to `main` deploy the site to GitHub Pages
 ([`deploy-website.yml`](./workflows/deploy-website.yml)).

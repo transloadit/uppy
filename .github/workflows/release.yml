@@ -32,8 +32,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: lts/*
+          node-version: '26.12.1'
           registry-url: "https://registry.npmjs.org"
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
 
       # Allow yarn to make changes during release
       - run: corepack yarn config set enableHardenedMode false

@@ -1,16 +1,16 @@
 .footer {
-	margin: 0 1rem;
-	border-radius: var(--ifm-pagination-nav-border-radius);
-	list-style: none;
-	border-color: lightgray;
-	border-style: solid;
-	border-width: 1px;
-	padding: 1rem;
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
-	text-align: center;
+  margin: 0 1rem;
+  border-radius: var(--ifm-pagination-nav-border-radius);
+  list-style: none;
+  border-color: lightgray;
+  border-style: solid;
+  border-width: 1px;
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  text-align: center;
 }
 
 .blogPostFooterDetailsFull {
-	flex-direction: column;
+  flex-direction: column;
 }

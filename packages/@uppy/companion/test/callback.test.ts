@@ -60,11 +60,12 @@ describe('test authentication callback', () => {
     }
     const token = tokenService.generateEncryptedAuthToken(authData, secret)
 
-    const onEmitted = vi.fn()
+    const emitted = Promise.withResolvers<unknown>()
 
     const { getServerWithEmitter } = await import('./mockserver.js')
     const { server, emitter } = await getServerWithEmitter()
-    emitter.on(callbackToken, onEmitted)
+    // Older socket workers forward only the first argument of a publication.
+    await emitter.on(callbackToken, (data) => emitted.resolve(data))
 
     await request(server)
       .get(`/dropbox/send-token?uppyAuthToken=${encodeURIComponent(token)}`)
@@ -73,9 +74,7 @@ describe('test authentication callback', () => {
         expect(res.text).toMatch('Authentication successful')
       })
 
-    expect(onEmitted).toHaveBeenLastCalledWith({
-      token,
-    })
+    expect(await emitted.promise).toEqual({ token })
   })
 
   test('the token gets sent via legacy html mechanism', async () => {

@@ -41,7 +41,7 @@ Strings are evaluated as regular expressions too and will be wrapped in a RegExp
 like so:
 
 ```js
-new RegExp(`^${value}$`);
+new RegExp(`^${value}$`)
 ```
 
 **Important:** You must escape regex characters like `.`, or you might open your
@@ -72,8 +72,8 @@ Transloadit’s shared one (`Object`, default: `undefined`). It has two fields:
 
 ```js
 companionKeysParams: {
-	key: 'YOUR_TRANSLOADIT_API_KEY',
-	credentialsName: 'google_drive_own',
+  key: 'YOUR_TRANSLOADIT_API_KEY',
+  credentialsName: 'google_drive_own',
 }
 ```
 
@@ -103,9 +103,9 @@ Example:
 
 ```js
 {
-	strings: {
-		someKey: 'Some English string',
-	},
+  strings: {
+    someKey: 'Some English string',
+  },
 }
 ```
 

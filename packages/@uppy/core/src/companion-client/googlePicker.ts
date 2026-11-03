@@ -1,10 +1,7 @@
 import type { Uppy, UppyEventMap } from '../index.js'
 import type { Meta } from '../utils/index.js'
-import {
-  type CompanionPluginOptions,
-  type RequestClientOptions,
-  tokenStorage,
-} from './index.js'
+import { defaultStorage } from './defaultStorage.js'
+import type { CompanionPluginOptions, RequestClientOptions } from './index.js'
 
 export type GooglePickerType = 'drive' | 'photos'
 
@@ -688,7 +685,7 @@ export interface GooglePickerOptions
 export function createGooglePickerController({
   uppy,
   store,
-  storage: persistentStore = tokenStorage,
+  storage: persistentStore = defaultStorage,
   pickerType,
   companionUrl,
   requestClientId = pickerType === 'drive'
@@ -706,10 +703,7 @@ export function createGooglePickerController({
   let initPromise: Promise<void> | undefined
   let pickingSession: PickingSession | undefined
 
-  const handleFilesPicked = async (
-    files: PickedItem[],
-    accessToken: string,
-  ) => {
+  const handleFilesPicked = (files: PickedItem[], accessToken: string) => {
     uppy.addFiles(
       files.map((file) =>
         mapPickerFile({ requestClientId, accessToken, companionUrl }, file),

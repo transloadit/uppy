@@ -3,10 +3,10 @@ sidebar_position: 2
 slug: /drag-drop
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Drag & Drop
 
@@ -69,13 +69,13 @@ yarn add @uppy/core @uppy/drag-drop
 ## Use
 
 ```js showLineNumbers
-import Uppy from '@uppy/core';
-import DragDrop from '@uppy/drag-drop';
+import Uppy from '@uppy/core'
+import DragDrop from '@uppy/drag-drop'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/drag-drop/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/drag-drop/css/style.min.css'
 
-new Uppy().use(DragDrop, { target: '#drag-drop' });
+new Uppy().use(DragDrop, { target: '#drag-drop' })
 ```
 
 :::info
@@ -129,14 +129,14 @@ example: `'Images and video only, 2–3 files, up to 1 MB'`.
 
 ```js
 export default {
-	strings: {
-		// Text to show on the droppable area.
-		// `%{browse}` is replaced with a link that opens the system file selection dialog.
-		dropHereOr: 'Drop here or %{browse}',
-		// Used as the label for the link that opens the system file selection dialog.
-		browse: 'browse',
-	},
-};
+  strings: {
+    // Text to show on the droppable area.
+    // `%{browse}` is replaced with a link that opens the system file selection dialog.
+    dropHereOr: 'Drop here or %{browse}',
+    // Used as the label for the link that opens the system file selection dialog.
+    browse: 'browse',
+  },
+}
 ```
 
 #### `onDragOver(event)`
@@ -152,8 +152,8 @@ Callback for the [`ondragleave`][ondragleave] event handler.
 Callback for the [`ondrop`][ondrop] event handler.
 
 [ondragover]:
-	https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
+  https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
 [ondragleave]:
-	https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
+  https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
 [ondrop]:
-	https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop
+  https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop

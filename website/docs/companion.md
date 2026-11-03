@@ -86,13 +86,13 @@ To do so each provider plugin must be configured with Transloadit’s Companion
 URLs:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Dropbox from '@uppy/dropbox';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Dropbox from '@uppy/dropbox'
 
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+})
 ```
 
 You may also hit rate limits, because the OAuth application is shared between
@@ -106,17 +106,17 @@ secret. Then pass the name of the credential to that provider plugin together
 with your Transloadit API key:
 
 ```js
-import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit';
-import Dropbox from '@uppy/dropbox';
+import { COMPANION_URL, COMPANION_ALLOWED_HOSTS } from '@uppy/transloadit'
+import Dropbox from '@uppy/dropbox'
 
 uppy.use(Dropbox, {
-	companionUrl: COMPANION_URL,
-	companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
-	companionKeysParams: {
-		key: 'YOUR_TRANSLOADIT_API_KEY',
-		credentialsName: 'my_companion_dropbox_creds',
-	},
-});
+  companionUrl: COMPANION_URL,
+  companionAllowedHosts: COMPANION_ALLOWED_HOSTS,
+  companionKeysParams: {
+    key: 'YOUR_TRANSLOADIT_API_KEY',
+    credentialsName: 'my_companion_dropbox_creds',
+  },
+})
 ```
 
 ## Installation & use
@@ -204,47 +204,47 @@ module in your project, because Companion already includes it. Use the
 `corsOrigins` Companion option to customise CORS behavior.
 
 ```js
-import express from 'express';
-import bodyParser from 'body-parser';
-import session from 'express-session';
-import * as companion from '@uppy/companion';
+import express from 'express'
+import bodyParser from 'body-parser'
+import session from 'express-session'
+import * as companion from '@uppy/companion'
 
-const app = express();
+const app = express()
 
 // Companion requires body-parser and express-session middleware.
 // You can add it like this if you use those throughout your app.
 //
 // If you are using something else in your app, you can add these
 // middlewares in the same subpath as Companion instead.
-app.use(bodyParser.json());
-app.use(session({ secret: 'some secrety secret' }));
+app.use(bodyParser.json())
+app.use(session({ secret: 'some secrety secret' }))
 
 const companionOptions = {
-	secret: 'some secret',
-	// the origin(s) your Uppy app runs on; required
-	corsOrigins: ['https://my-app.com'],
-	// where uploads are allowed to go; required in production
-	uploadUrls: ['https://my-app.com/uploads'],
-	providerOptions: {
-		drive: {
-			key: 'GOOGLE_DRIVE_KEY',
-			secret: 'GOOGLE_DRIVE_SECRET',
-		},
-	},
-	server: {
-		host: 'localhost:3020',
-		protocol: 'http',
-		// Default installations normally don't need a path.
-		// However if you specify a `path`, you MUST specify
-		// the same path in `app.use()` below,
-		// e.g. app.use('/companion', companionApp)
-		// path: '/companion',
-	},
-	filePath: '/path/to/folder/',
-};
+  secret: 'some secret',
+  // the origin(s) your Uppy app runs on; required
+  corsOrigins: ['https://my-app.com'],
+  // where uploads are allowed to go; required in production
+  uploadUrls: ['https://my-app.com/uploads'],
+  providerOptions: {
+    drive: {
+      key: 'GOOGLE_DRIVE_KEY',
+      secret: 'GOOGLE_DRIVE_SECRET',
+    },
+  },
+  server: {
+    host: 'localhost:3020',
+    protocol: 'http',
+    // Default installations normally don't need a path.
+    // However if you specify a `path`, you MUST specify
+    // the same path in `app.use()` below,
+    // e.g. app.use('/companion', companionApp)
+    // path: '/companion',
+  },
+  filePath: '/path/to/folder/',
+}
 
-const { app: companionApp } = companion.app(companionOptions);
-app.use(companionApp);
+const { app: companionApp } = companion.app(companionOptions)
+app.use(companionApp)
 ```
 
 Companion uses WebSockets to communicate progress, errors, and successes to the
@@ -253,9 +253,9 @@ client. This is what Uppy listens to to update it’s internal state and UI.
 Add the Companion WebSocket server using the `companion.socket` function:
 
 ```js
-const server = app.listen(PORT);
+const server = app.listen(PORT)
 
-companion.socket(server, companionOptions);
+companion.socket(server, companionOptions)
 ```
 
 :::note
@@ -338,25 +338,25 @@ environment variables or only as a JS option.
 
 ```javascript
 const options = {
-	server: {
-		protocol: 'http',
-		path: '',
-	},
-	providerOptions: {},
-	s3: {
-		endpoint: 'https://{service}.{region}.amazonaws.com',
-		conditions: [],
-		useAccelerateEndpoint: false,
-		getKey: ({ filename }) => `${crypto.randomUUID()}-${filename}`,
-		expires: 800, // seconds
-	},
-	allowLocalUrls: false,
-	logClientVersion: true,
-	periodicPingUrls: [],
-	streamingUpload: true,
-	clientSocketConnectTimeout: 60000,
-	metrics: true,
-};
+  server: {
+    protocol: 'http',
+    path: '',
+  },
+  providerOptions: {},
+  s3: {
+    endpoint: 'https://{service}.{region}.amazonaws.com',
+    conditions: [],
+    useAccelerateEndpoint: false,
+    getKey: ({ filename }) => `${crypto.randomUUID()}-${filename}`,
+    expires: 800, // seconds
+  },
+  allowLocalUrls: false,
+  logClientVersion: true,
+  periodicPingUrls: [],
+  streamingUpload: true,
+  clientSocketConnectTimeout: 60000,
+  metrics: true,
+}
 ```
 
 </details>
@@ -372,9 +372,9 @@ A secret string which Companion uses to generate authorization tokens. You
 should generate a long random string for this. For example:
 
 ```js
-const crypto = require('node:crypto');
+const crypto = require('node:crypto')
 
-const secret = crypto.randomBytes(64).toString('hex');
+const secret = crypto.randomBytes(64).toString('hex')
 ```
 
 :::caution
@@ -406,12 +406,54 @@ which has only the secret, nothing else.
 
 :::
 
-#### `uploadUrls` `COMPANION_UPLOAD_URLS`
+#### `uploadUrls` `COMPANION_UPLOAD_URLS` {#uploadurls}
 
-An allowlist (array) of strings (exact URLs) or regular expressions. Companion
-will only accept uploads to these URLs. This ensures that your Companion
-instance is only allowed to upload to your trusted servers and prevents
-[SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery) attacks.
+An allowlist (array) of the URLs Companion may upload to. This ensures that your
+Companion instance is only allowed to upload to your trusted servers and
+prevents [SSRF](https://en.wikipedia.org/wiki/Server-side_request_forgery)
+attacks. Companion refuses to start without it when `NODE_ENV=production`.
+
+Entries are matched **literally**: the origin must be identical, and the path
+must match at a path boundary. So `https://uploads.example.com/files/` also
+allows `https://uploads.example.com/files/<id>`, which a resumable upload needs,
+but not `https://uploads.example.com/filesomething`. An entry without a path
+(`https://uploads.example.com`) allows its whole origin. A string entry must be
+an absolute URL, or Companion refuses to start.
+
+When configuring Companion programmatically, an entry may also be a `RegExp`.
+Standalone config can only hold strings, so there an entry that starts with `^`
+is read as a regular expression — in `COMPANION_UPLOAD_URLS` or in the JSON
+config file. A `COMPANION_UPLOAD_URLS` value that starts with `^` is not split
+on `,`, so combine several patterns with `|`.
+
+```sh
+COMPANION_UPLOAD_URLS='https://uploads.example.com/files/,https://other.example.com/files/'
+COMPANION_UPLOAD_URLS='^https://(?:api2-[a-z0-9]+|api2)\.example\.com/files/'
+```
+
+An entry without a leading `^` is a literal, so a pattern you forgot to anchor
+matches nothing and uploads fail rather than going somewhere unintended.
+
+A pattern is matched against the whole URL as written, so the pattern itself
+carries the security property. These mistakes let an attacker choose the host
+Companion uploads to, and neither stops uploads working:
+
+```
+^https://.*\.example\.com/         # "." spans "/" and "@": allows
+                                   # https://evil.example/x.example.com/y
+^https://[a-z0-9]+\.example\.com   # host not terminated: allows
+                                   # https://a.example.com.evil.example/
+                                   # and https://a.example.com@evil.example/
+```
+
+Example safe regular expression:
+
+```
+^https://[a-z0-9-]+\.example\.com/files/
+```
+
+Patterns see the URL as sent, without normalizing `..` path segments, so prefer
+literal entries where you can.
 
 #### `COMPANION_PORT`
 
@@ -470,7 +512,28 @@ Configuration options for the underlying server.
 | `oauthDomain` `COMPANION_OAUTH_DOMAIN`   | `String`          | If you have several instances of Companion with different (and perhaps dynamic) subdomains, you can set a single fixed subdomain and server (such as `sub1.example.com`) to handle your OAuth authentication for you. This would then redirect back to the correct instance with the required credentials on completion. This way you only need to configure a single callback URL for OAuth providers.                                      |
 | `path` `COMPANION_PATH`                  | `String`          | The server path to where the Companion app is sitting. For instance, if Companion is at `example.com/companion`, then the path would be `/companion`).                                                                                                                                                                                                                                                                                       |
 | `implicitPath` `COMPANION_IMPLICIT_PATH` | `String`          | If the URL’s path in your reverse proxy is different from your Companion path in your express app, then you need to set this path as `implicitPath`. For instance, if your Companion URL is `example.com/mypath/companion`. Where the path `/mypath` is defined in your NGINX server, while `/companion` is set in your express app. Then you need to set the option `implicitPath` to `/mypath`, and set the `path` option to `/companion`. |
-| `validHosts` `COMPANION_DOMAINS`         | `Array`           | If you are setting an `oauthDomain`, you need to set a list of valid hosts, so the oauth handler can validate the host of the Uppy instance requesting the authentication. This is essentially a list of valid domains running your Companion instances. The list may also contain regex patterns. e.g `['sub2.example.com', 'sub3.example.com', '(\\w+).example.com']`                                                                      |
+
+##### `server`.`validHosts` `COMPANION_DOMAINS`
+
+If you are setting an `oauthDomain`, you need to specify this option, so the
+oauth handler can validate the host of the Uppy instance requesting the
+authentication. Entries are hosts (a hostname plus any non-default port, such as
+`example.com:3020`), compared literally and case-insensitively, so `example.com`
+does not match `example.com:3020`. When `COMPANION_DOMAINS` is not set,
+`COMPANION_DOMAIN` is used.
+
+As with `uploadUrls`, a `validHosts` entry may be a `RegExp` programmatically,
+or start with `^` in `COMPANION_DOMAINS` or the JSON config file.
+
+```sh
+COMPANION_DOMAINS='sub1.example.com,sub2.example.com'
+COMPANION_DOMAINS='^(\w+)\.example\.com$'
+```
+
+A pattern is matched as written, so end it with `$` as well as starting it with
+`^` — a host is either in the set or it is not, and an unanchored pattern would
+let `example.com` admit `example.com.evil.com`. Note that `.` matches any
+character unless escaped.
 
 #### `sendSelfEndpoint` `COMPANION_SELF_ENDPOINT`
 
@@ -484,10 +547,10 @@ Object to enable providers with their keys and secrets. For example:
 
 ```json
 {
-	"drive": {
-		"key": "***",
-		"secret": "***"
-	}
+  "drive": {
+    "key": "***",
+    "secret": "***"
+  }
 }
 ```
 
@@ -597,17 +660,17 @@ This function should return a string `key`. The `req` parameter can be used to
 upload to a user-specific folder in your bucket, for example:
 
 ```js
-app.use(authenticationMiddleware);
+app.use(authenticationMiddleware)
 app.use(
-	uppy.app({
-		providerOptions: {
-			s3: {
-				getKey: ({ req, filename, metadata }) => `${req.user.id}/${filename}`,
-				/* auth options */
-			},
-		},
-	}),
-);
+  uppy.app({
+    providerOptions: {
+      s3: {
+        getKey: ({ req, filename, metadata }) => `${req.user.id}/${filename}`,
+        /* auth options */
+      },
+    },
+  }),
+)
 ```
 
 The default implementation returns the `filename`, so all files will be uploaded
@@ -615,14 +678,14 @@ to the root of the bucket as their original file name.
 
 ```js
 app.use(
-	uppy.app({
-		providerOptions: {
-			s3: {
-				getKey: ({ filename, metadata }) => filename,
-			},
-		},
-	}),
-);
+  uppy.app({
+    providerOptions: {
+      s3: {
+        getKey: ({ filename, metadata }) => filename,
+      },
+    },
+  }),
+)
 ```
 
 When signing on the client, this function will only be called for multipart
@@ -790,23 +853,23 @@ which is an `EventEmitter` that emits the following events:
 Example code for using the `EventEmitter` to handle a finished file upload:
 
 ```js
-const companionApp = companion.app(options);
-const { companionEmitter: emitter } = companionApp;
+const companionApp = companion.app(options)
+const { companionEmitter: emitter } = companionApp
 
 emitter.on('upload-start', ({ token }) => {
-	console.log('Upload started', token);
+  console.log('Upload started', token)
 
-	function onUploadEvent({ action, payload }) {
-		if (action === 'success') {
-			emitter.off(token, onUploadEvent); // avoid listener leak
-			console.log('Upload finished', token, payload.url);
-		} else if (action === 'error') {
-			emitter.off(token, onUploadEvent); // avoid listener leak
-			console.error('Upload failed', payload);
-		}
-	}
-	emitter.on(token, onUploadEvent);
-});
+  function onUploadEvent({ action, payload }) {
+    if (action === 'success') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.log('Upload finished', token, payload.url)
+    } else if (action === 'error') {
+      emitter.off(token, onUploadEvent) // avoid listener leak
+      console.error('Upload failed', payload)
+    }
+  }
+  emitter.on(token, onUploadEvent)
+})
 ```
 
 <!--retext-simplify ignore frequently-->
@@ -893,25 +956,25 @@ The custom provider is expected to support Oauth 1 or 2 for
 authentication/authorization.
 
 ```javascript
-import providerModule from './path/to/provider/module';
+import providerModule from './path/to/provider/module'
 
 const options = {
-	customProviders: {
-		myprovidername: {
-			config: {
-				authorize_url: 'https://mywebsite.com/authorize',
-				access_url: 'https://mywebsite.com/token',
-				oauth: 2,
-				key: '***',
-				secret: '***',
-				scope: ['read', 'write'],
-			},
-			module: providerModule,
-		},
-	},
-};
+  customProviders: {
+    myprovidername: {
+      config: {
+        authorize_url: 'https://mywebsite.com/authorize',
+        access_url: 'https://mywebsite.com/token',
+        oauth: 2,
+        key: '***',
+        secret: '***',
+        scope: ['read', 'write'],
+      },
+      module: providerModule,
+    },
+  },
+}
 
-uppy.app(options);
+uppy.app(options)
 ```
 
 The `customProviders` option should be an object containing each custom
@@ -968,41 +1031,41 @@ See also
 
 ```json
 {
-	// username or email of the user whose provider account is being accessed
-	"username": "johndoe",
-	// list of files and folders in the directory. An item is considered a folder
-	//  if it mainly exists as a collection to contain sub-items
-	"items": [
-		{
-			// boolean value of whether or NOT it's a folder
-			"isFolder": false,
-			// icon image URL
-			"icon": "https://random-api.url.com/fileicon.jpg",
-			// name of the item
-			"name": "myfile.jpg",
-			// the mime type of the item. Only relevant if the item is NOT a folder
-			"mimeType": "image/jpg",
-			// the id (in string) of the item
-			"id": "uniqueitemid",
-			// thumbnail image URL. Only relevant if the item is NOT a folder
-			"thumbnail": "https://random-api.url.com/filethumbnail.jpg",
-			// for folders this is typically the value that will be passed as "directory" in the list(...) method.
-			// For files, this is the value that will be passed as id in the download(...) method.
-			"requestPath": "file-or-folder-requestpath",
-			// datetime string (in ISO 8601 format) of when this item was last modified
-			"modifiedDate": "2020-06-29T19:59:58Z",
-			// the size in bytes of the item. Only relevant if the item is NOT a folder
-			"size": 278940,
-			"custom": {
-				// an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
-				"customData1": "the value",
-				"customData2": "the value"
-			}
-			// more items here
-		}
-	],
-	// if the "items" list is paginated, this is the request path needed to fetch the next page.
-	"nextPagePath": "directory-name?cursor=cursor-to-next-page"
+  // username or email of the user whose provider account is being accessed
+  "username": "johndoe",
+  // list of files and folders in the directory. An item is considered a folder
+  //  if it mainly exists as a collection to contain sub-items
+  "items": [
+    {
+      // boolean value of whether or NOT it's a folder
+      "isFolder": false,
+      // icon image URL
+      "icon": "https://random-api.url.com/fileicon.jpg",
+      // name of the item
+      "name": "myfile.jpg",
+      // the mime type of the item. Only relevant if the item is NOT a folder
+      "mimeType": "image/jpg",
+      // the id (in string) of the item
+      "id": "uniqueitemid",
+      // thumbnail image URL. Only relevant if the item is NOT a folder
+      "thumbnail": "https://random-api.url.com/filethumbnail.jpg",
+      // for folders this is typically the value that will be passed as "directory" in the list(...) method.
+      // For files, this is the value that will be passed as id in the download(...) method.
+      "requestPath": "file-or-folder-requestpath",
+      // datetime string (in ISO 8601 format) of when this item was last modified
+      "modifiedDate": "2020-06-29T19:59:58Z",
+      // the size in bytes of the item. Only relevant if the item is NOT a folder
+      "size": 278940,
+      "custom": {
+        // an object that may contain some more custom fields that you may need to send to the client. Only add this object if you have a need for it.
+        "customData1": "the value",
+        "customData2": "the value"
+      }
+      // more items here
+    }
+  ],
+  // if the "items" list is paginated, this is the request path needed to fetch the next page.
+  "nextPagePath": "directory-name?cursor=cursor-to-next-page"
 }
 ```
 
@@ -1047,4 +1110,4 @@ automatically restart when files are changed.
 [zoom]: /docs/zoom
 [transloadit]: https://transloadit.com
 [template-credentials]:
-	https://transloadit.com/docs/topics/template-credentials/
+  https://transloadit.com/docs/topics/template-credentials/

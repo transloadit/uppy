@@ -21,11 +21,11 @@ function initializeUppy() {
       companionUrl: COMPANION,
       companionKeysParams: { key: 'test-key', credentialsName: 'test-app' },
       storage: {
-        getItem: async (key) => tokens.get(key) ?? null,
-        setItem: async (key, value) => {
+        getItem: (key) => tokens.get(key) ?? null,
+        setItem(key, value) {
           tokens.set(key, value)
         },
-        removeItem: async (key) => {
+        removeItem(key) {
           tokens.delete(key)
         },
       },
