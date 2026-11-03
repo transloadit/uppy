@@ -23,11 +23,23 @@ async function fetchKeys(
   credentialRequestParams: unknown | null,
 ) {
   try {
-    const { credentials } = await got
-      .post(url, {
-        json: { provider: providerName, parameters: credentialRequestParams },
-      })
-      .json<{ credentials?: CredentialsFetchResponse }>()
+    const response = await got.post(url, {
+      json: { provider: providerName, parameters: credentialRequestParams },
+      // The endpoint is operator configuration: never follow it elsewhere,
+      // and don't hold the OAuth request open on a slow endpoint.
+      timeout: { request: 10_000 },
+      followRedirect: false,
+    })
+    // Without followRedirect, got hands 3xx responses back as successful.
+    if (response.statusCode >= 300) {
+      const { location } = response.headers
+      throw new Error(
+        `Credentials endpoint responded with a ${response.statusCode} redirect${location ? ` to ${location}` : ''}; configure its final URL`,
+      )
+    }
+    const { credentials } = JSON.parse(response.body) as {
+      credentials?: CredentialsFetchResponse
+    }
 
     if (!isRecord(credentials))
       throw new Error('Received no remote credentials')
