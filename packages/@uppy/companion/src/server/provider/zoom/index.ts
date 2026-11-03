@@ -1,6 +1,7 @@
 import got from 'got'
 import moment from 'moment-timezone'
 import pMap from 'p-map'
+import { getProtectedGot } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import {
   getBasicAuthHeader,
@@ -288,8 +289,10 @@ export default class Zoom extends Provider<ZoomUserSession> {
       const url = foundFile?.download_url
       if (!url) throw new Error('Download URL not found')
 
-      const stream = client.stream.get(`${url}?access_token=${token}`, {
-        prefixUrl: '',
+      const stream = getProtectedGot({
+        allowLocalIPs: this.allowLocalUrls,
+      }).stream.get(`${url}?access_token=${token}`, {
+        headers: { authorization: `Bearer ${token}` },
         responseType: 'json',
       })
       const { size } = await prepareStream(stream)

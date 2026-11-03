@@ -1,4 +1,5 @@
 import got from 'got'
+import { getProtectedGot } from '../../helpers/request.js'
 import { isRecord } from '../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../helpers/utils.js'
 import { ProviderApiError } from '../error.js'
@@ -92,7 +93,9 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
           throw new Error('Unexpected Unsplash response: missing download url')
         }
 
-        const stream = got.stream.get(url)
+        const stream = getProtectedGot({
+          allowLocalIPs: this.allowLocalUrls,
+        }).stream.get(url)
         const { size } = await prepareStream(stream)
 
         // finally, stream on!

@@ -63,7 +63,10 @@ const getItemThumbnailUrl = (item: BoxItem): string => {
   return `/box/thumbnail/${getItemRequestPath(item)}`
 }
 
-const getNextPagePath = (data: BoxListResponse): string | null => {
+const getNextPagePath = (
+  data: BoxListResponse,
+  directory: string | undefined,
+): string | null => {
   if (
     data.total_count < data.limit ||
     data.offset + data.limit > data.total_count
@@ -71,13 +74,15 @@ const getNextPagePath = (data: BoxListResponse): string | null => {
     return null
   }
   const query = { cursor: data.offset + data.limit }
-  return `?${querystring.stringify(query)}`
+  // the client lists `${nextPagePath}` as the folder, so it must name it
+  return `${directory ?? ''}?${querystring.stringify(query)}`
 }
 
 const adaptData = function adaptData(
   res: BoxListResponse,
   username: string | undefined,
   companion: CompanionLike,
+  directory?: string,
 ) {
   const items = getItemSubList(res).map((item) => ({
     isFolder: isFolder(item),
@@ -91,7 +96,7 @@ const adaptData = function adaptData(
     size: getItemSize(item),
   }))
 
-  const nextPagePath = getNextPagePath(res)
+  const nextPagePath = getNextPagePath(res, directory)
 
   return { username, items, nextPagePath }
 }
