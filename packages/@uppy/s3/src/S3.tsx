@@ -85,8 +85,8 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   /** Called when the session ends (`logout()`), before the token is removed. */
   onLogout?: () => void
 
-  /** Bucket of the session, as the latest listing reported it. */
-  #bucket: string | undefined
+  /** Bucket each listed item was listed in, so a later listing can't repoint it. */
+  #bucketByPath = new Map<string, string>()
 
   /** True between a successful login and a logout: only then is a 401 an *expired* session. */
   #hasSession = false
@@ -103,14 +103,20 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   ): Promise<ResBody> {
     const response = await super.list<ResBody>(...args)
     // The wire shape is `ProviderListResponse['session']` on the Companion side.
-    const { session, username } = (response ?? {}) as {
+    const { session, username, items } = (response ?? {}) as {
       session?: Partial<S3Session>
       username?: unknown
+      items?: { requestPath?: unknown }[]
     }
     // Defensive for a Companion that sends no session: the bucket is still
     // the username, and nothing may be changed.
     const bucket = session?.bucket ?? username
-    if (typeof bucket === 'string') this.#bucket = bucket
+    if (typeof bucket === 'string') {
+      for (const { requestPath } of items ?? []) {
+        if (typeof requestPath === 'string')
+          this.#bucketByPath.set(requestPath, bucket)
+      }
+    }
     this.onSession?.({
       bucket: typeof bucket === 'string' ? bucket : '',
       prefix: session?.prefix ?? '',
@@ -126,10 +132,11 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
    * whatever bucket a later session happens to see.
    */
   override fileUrl(id: string): string {
-    if (!this.#bucket)
+    const bucket = this.#bucketByPath.get(id)
+    if (!bucket)
       throw new Error('Browse the storage folder before selecting files.')
     const url = new URL(super.fileUrl(id))
-    url.searchParams.set('bucket', this.#bucket)
+    url.searchParams.set('bucket', bucket)
     return url.href
   }
 
@@ -240,7 +247,7 @@ class S3SimpleAuthProvider<M extends Meta, B extends Body> extends Provider<
   override async logout<ResBody>(): Promise<ResBody> {
     this.#sessionAbort.abort()
     this.#regranting = undefined
-    this.#bucket = undefined
+    this.#bucketByPath.clear()
     this.#hasSession = false
     this.onLogout?.()
     await this.removeAuthToken()
