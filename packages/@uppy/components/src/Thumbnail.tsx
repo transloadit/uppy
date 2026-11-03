@@ -1,9 +1,11 @@
-import type { Body, Meta, UppyFile } from '@uppy/core'
+import type { UppyFile } from '@uppy/core'
 import { useEffect, useMemo } from '@uppy/core/utils/preact/hooks'
 import type { UppyContext } from './types.js'
 
 export type ThumbnailProps = {
-  file: UppyFile<Meta, Body>
+  // `any`: UppyFile is invariant in its generics, so a concrete type would
+  // reject files from an Uppy instance with a different Meta or Body.
+  file: UppyFile<any, any>
   width?: string
   height?: string
   images?: boolean

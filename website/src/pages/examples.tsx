@@ -33,6 +33,7 @@ import 'uppy/dist/uppy.min.css'
 import styles from './examples.module.css'
 import Heading from '@theme/Heading'
 import Link from '@docusaurus/Link'
+import { Locale } from '@uppy/core/utils'
 
 const restrictions = {
   maxFileSize: 1000000,
@@ -47,14 +48,13 @@ type State = {
   small: boolean
   restrictions?: typeof restrictions
   disabled: boolean
-  theme: string
-  // theme: 'light' | 'dark' | 'auto';
+  theme: 'light' | 'dark' | 'auto'
   plugins: string[]
 }
 
 const initialState: State = {
   small: false,
-  restrictions: null,
+  restrictions: undefined,
   disabled: false,
   theme: 'light',
   plugins: [
@@ -70,14 +70,14 @@ const initialState: State = {
   ],
 }
 
-function reducer(state: State, action: Action) {
+function reducer(state: State, action: Action): State {
   switch (action.type) {
     case 'small':
-      return { ...state, small: action.checked }
+      return { ...state, small: Boolean(action.checked) }
     case 'theme':
       return { ...state, theme: action.checked ? 'dark' : 'light' }
     case 'disabled':
-      return { ...state, disabled: action.checked }
+      return { ...state, disabled: Boolean(action.checked) }
     case 'restrictions':
       return {
         ...state,
@@ -96,7 +96,20 @@ function reducer(state: State, action: Action) {
   }
 }
 
-const options = [
+interface OptionOption {
+  label: string
+  value?: string
+  type: keyof State
+  disabled?: boolean
+  title?: string
+}
+
+interface Option {
+  heading: string
+  options: OptionOption[]
+}
+
+const options: Option[] = [
   {
     heading: 'Remote sources',
     options: [
@@ -175,11 +188,17 @@ const options = [
   },
 ]
 
-const Uppy = ({ state, locale }) => {
+interface UppyProps {
+  locale: Locale<number> | undefined
+  state: State
+}
+
+const Uppy = ({ state, locale }: UppyProps) => {
   const disabled = (value: string) =>
     options.some((section) =>
       section.options.some(
-        (option) => value === option.value && option.disabled,
+        (option) =>
+          value === option.value && 'disabled' in option && option.disabled,
       ),
     )
   const createUppy = useCallback(() => {
@@ -305,7 +324,7 @@ function Page() {
     'uppy-examples-state',
     initialState,
   )
-  const [locale, setLocale] = useState(null)
+  const [locale, setLocale] = useState<Locale>()
   const dispatch = useCallback(
     (action: Action) => setPersistentState(reducer(state, action)),
     [state],
@@ -392,17 +411,17 @@ function Page() {
                               // Forgive me for this logic
                               disabled ? false
                               : Array.isArray(state[type]) ?
-                                state[type].includes(value)
+                                state[type].includes(value!)
                               : type === 'theme' ?
                                 state.theme === 'dark'
-                              : state[type]
+                              : Boolean(state[type])
                             }
                             disabled={disabled}
                             onChange={(event) =>
                               dispatch({
                                 type: type,
                                 checked: event.target.checked,
-                                value,
+                                value: value!,
                               })
                             }
                           />
@@ -428,7 +447,7 @@ function Page() {
                 aria-labelledby="locale-label"
                 onChange={(e) => {
                   setLocale(
-                    locales.find((locale) => locale.name === e.target.value)
+                    locales.find((locale) => locale.name === e.target.value)!
                       .locale,
                   )
                 }}

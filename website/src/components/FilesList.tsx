@@ -8,7 +8,7 @@ import '@uppy/react/css/style.css'
 
 import styles from './files-list.module.css'
 
-type UploadableFile = Parameters<InstanceType<typeof Uppy>['addFile']>[0]
+type UploadableFile = Parameters<Uppy['addFile']>[0]
 
 const fakeFiles = [
   {

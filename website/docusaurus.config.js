@@ -18,6 +18,8 @@ const { themes } = require('prism-react-renderer')
  * Patched here rather than in CSS because prism-react-renderer writes these as
  * inline styles on each span, which no stylesheet can override without
  * `!important` on every token type.
+ *
+ * @type {Record<string, string>}
  */
 const accessibleTokenColors = {
   '#999988': '#575f69', // comment, prolog, doctype, cdata
@@ -30,7 +32,8 @@ const accessibleTokenColors = {
 const lightCodeTheme = {
   ...themes.github,
   styles: themes.github.styles.map((entry) => {
-    const replacement = accessibleTokenColors[entry.style.color]
+    const replacement =
+      accessibleTokenColors[/** @type {string} */ (entry.style.color)]
     return replacement ?
         { ...entry, style: { ...entry.style, color: replacement } }
       : entry

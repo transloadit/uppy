@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import React from 'react'
 import clsx from 'clsx'
 import Layout from '@theme/Layout'
@@ -18,7 +19,7 @@ import type { Props } from '@theme/BlogLayout'
  * If a Docusaurus upgrade changes BlogLayout, re-sync this file against
  * node_modules/@docusaurus/theme-classic/lib/theme/BlogLayout/index.js.
  */
-export default function BlogLayout(props: Props): JSX.Element {
+export default function BlogLayout(props: Props): ReactNode {
   const { sidebar, toc, children, ...layoutProps } = props
   const hasSidebar = sidebar && sidebar.items.length > 0
 
