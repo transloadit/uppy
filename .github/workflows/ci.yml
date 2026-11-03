@@ -7,8 +7,13 @@ on:
     # We want all branches so we configure types to be the GH default again
     types: [opened, synchronize, reopened]
 
+# Key on the PR number, not `head_ref`: branch names from different forks
+# (e.g. two `patch-1` PRs) would otherwise cancel each other's required runs.
+# `workflow_ref` keeps a ruleset-sourced run of this file (from main) and the
+# PR's own run in separate groups. Pushes to main fall back to `run_id`, so
+# they are never cancelled.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 permissions:
@@ -122,8 +127,11 @@ jobs:
       # The @uppy/url browser tests start Companion behind a load balancer
       # with Redis (multi-instance), so they need the build and the Redis
       # service above. This uncached task needs the Companion fixture
-      # environment in Turbo.
+      # environment in Turbo. `yarn test` above already runs the same
+      # browser project on every Node version, so run this once only, on the
+      # leg that used to run it in node26.yml.
       - name: Run end-to-end tests
+        if: matrix.node-version == '26.12.1'
         run: corepack yarn test:e2e
         env:
           TURBO_ENV_MODE: loose
