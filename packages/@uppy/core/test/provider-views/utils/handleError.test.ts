@@ -1,31 +1,43 @@
 import { describe, expect, it } from 'vitest'
+import AuthError from '../../../lib/companion-client/AuthError.js'
 import Core from '../../../lib/index.js'
 import handleError from '../../../lib/provider-views/utils/handleError.js'
-import { UserFacingApiError } from '../../../lib/utils/index.js'
+import { ErrorWithCause, UserFacingApiError } from '../../../lib/utils/index.js'
 
-const shownMessages = (err: unknown, opts?: { alwaysNotify?: boolean }) => {
+const shown = (err: unknown) => {
   const uppy = new Core()
-  handleError(uppy, opts)(err)
-  return uppy.getState().info.map(({ message }) => message)
+  handleError(uppy)(err)
+  return uppy.getState().info.map(({ message, details }) => ({
+    message,
+    details,
+  }))
 }
 
 describe('handleError()', () => {
-  it('shows a UserFacingApiError', () => {
-    expect(shownMessages(new UserFacingApiError('Quota exceeded'))).toEqual([
-      'Connection with Companion failed',
+  it('shows a UserFacingApiError with its message as details', () => {
+    expect(shown(new UserFacingApiError('Quota exceeded'))).toEqual([
+      {
+        message: 'Connection with Companion failed',
+        details: 'Quota exceeded',
+      },
     ])
   })
 
-  it('only logs other errors, unless alwaysNotify is set', () => {
-    const err = new Error('Request failed with status 500')
-    expect(shownMessages(err)).toEqual([])
-    expect(shownMessages(err, { alwaysNotify: true })).toEqual([
-      'Connection with Companion failed',
+  it('shows any other failed Companion request, without its URL', () => {
+    const err = new ErrorWithCause('Could not GET http://companion.test/x', {
+      cause: new Error('Request failed with status 500'),
+    })
+    expect(shown(err)).toEqual([
+      { message: 'Connection with Companion failed', details: null },
     ])
   })
 
-  it('never shows a cancelled request', () => {
-    const err = new DOMException('Aborted', 'AbortError')
-    expect(shownMessages(err, { alwaysNotify: true })).toEqual([])
+  it('only logs an error that did not involve Companion', () => {
+    expect(shown(new Error('a `file-added` listener threw'))).toEqual([])
+  })
+
+  it('shows nothing for a cancel or a missing login', () => {
+    expect(shown(new DOMException('Aborted', 'AbortError'))).toEqual([])
+    expect(shown(new AuthError())).toEqual([])
   })
 })

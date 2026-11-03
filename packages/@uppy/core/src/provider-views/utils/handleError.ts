@@ -1,15 +1,10 @@
 import { isAuthError } from '../../companion-client/AuthError.js'
 import { describeCompanionError } from '../../companion-client/errorCodes.js'
 import type Uppy from '../../index.js'
-import { isAbortError, toError } from '../../utils/index.js'
+import { ErrorWithCause, isAbortError, toError } from '../../utils/index.js'
 
-/**
- * Logs a failed provider operation, and tells the user when Companion sent a
- * `UserFacingApiError`. `alwaysNotify` tells them about any other failure too,
- * for an operation that would otherwise end with no visible change.
- */
 const handleError =
-  (uppy: Uppy<any, any>, { alwaysNotify = false } = {}) =>
+  (uppy: Uppy<any, any>) =>
   (err: unknown): void => {
     // authError just means we're not authenticated, don't report it
     if (isAuthError(err)) {
@@ -23,6 +18,10 @@ const handleError =
     }
     uppy.log(error, 'error')
 
+    // Only Companion's failures are shown: a `UserFacingApiError` with its
+    // details, any other failed request (the request client wraps those) as
+    // such. Anything else did not involve Companion (a closed auth popup, a
+    // throwing `file-added` listener), so it is only logged.
     if (error.name === 'UserFacingApiError') {
       uppy.info(
         {
@@ -32,7 +31,7 @@ const handleError =
         'warning',
         5000,
       )
-    } else if (alwaysNotify) {
+    } else if (error instanceof ErrorWithCause) {
       uppy.info(uppy.i18n('companionError'), 'warning', 5000)
     }
   }

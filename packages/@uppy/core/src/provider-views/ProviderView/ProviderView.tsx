@@ -1057,7 +1057,7 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
       // 4. Reset state
       this.resetPluginState()
-    }).catch(handleError(this.plugin.uppy, { alwaysNotify: true }))
+    }).catch(handleError(this.plugin.uppy))
     this.#doneLoading()
   }
 
