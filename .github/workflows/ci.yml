@@ -8,12 +8,10 @@ on:
     types: [opened, synchronize, reopened]
 
 # Key on the PR number, not `head_ref`: branch names from different forks
-# (e.g. two `patch-1` PRs) would otherwise cancel each other's required runs.
-# `workflow_ref` keeps a ruleset-sourced run of this file (from main) and the
-# PR's own run in separate groups. Pushes to main fall back to `run_id`, so
-# they are never cancelled.
+# (e.g. two `patch-1` PRs) would otherwise cancel each other's runs. Pushes
+# to main fall back to `run_id`, so they are never cancelled.
 concurrency:
-  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 permissions:
