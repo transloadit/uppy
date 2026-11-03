@@ -8903,7 +8903,7 @@ __metadata:
     "@types/ws": "npm:^8.18.1"
     "@uppy-dev/tsconfig": "workspace:^"
     connect-redis: "npm:^7.1.1"
-    content-disposition: "npm:^2.0.1"
+    content-disposition: "npm:^3.0.0"
     cookie-parser: "npm:^1.4.7"
     cors: "npm:^2.8.6"
     escape-goat: "npm:^4.0.0"
@@ -11870,10 +11870,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"content-disposition@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "content-disposition@npm:2.0.1"
-  checksum: 10/d3981346fdcc5c72514c3b44e08137312f6969b55d151840222e0a75ecfe295e506cc1f4f4339eaad20c170634cbc673913a04d836089fbfe5a08cd4468f2e23
+"content-disposition@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "content-disposition@npm:3.0.0"
+  checksum: 10/3ce58867a5b25b9043d70ff9a7c922f162f009f381c72983349736ed315c89fcbb578471c24e2d42d640fbd71603389bcdb1c7b71f49a87e0f84f9f93c86eee0
   languageName: node
   linkType: hard
 
