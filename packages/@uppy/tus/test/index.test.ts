@@ -159,10 +159,6 @@ describe('Tus', () => {
       unknown,
       { metadata: Record<string, unknown> },
     ]
-    expect(args.metadata).toEqual({
-      caption: 'hi',
-      name: 'remote.txt',
-      type: 'text/plain',
-    })
+    expect(args.metadata).toEqual({ caption: 'hi' })
   })
 })

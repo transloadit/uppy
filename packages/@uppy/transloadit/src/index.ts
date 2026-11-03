@@ -256,7 +256,7 @@ const COMPANION_URL = 'https://api2.transloadit.com/companion'
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
 const TL_COMPANION =
-  /^https?:\/\/api2(?:-[\w-]+)?\.transloadit\.com\/companion\/?$/
+  /^https:\/\/api2(?:-[\w-]+)?\.transloadit\.com\/companion\/?$/
 
 /**
  * Upload files to Transloadit using Tus.

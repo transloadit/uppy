@@ -594,6 +594,10 @@ describe('Transloadit', () => {
 
   it.each([
     [
+      'http://api2.transloadit.com/companion',
+      'https://api2.transloadit.com/companion',
+    ],
+    [
       'https://api2.transloadit.com.evil.example/companion',
       'https://api2.transloadit.com/companion',
     ],
