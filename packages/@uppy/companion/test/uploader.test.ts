@@ -245,6 +245,9 @@ describe('uploader', () => {
         url: 'https://tus.endpoint/files/foo-bar',
         abort: () => Promise.reject(failure),
       } as never
+      // With Redis the uploader subscribes asynchronously; subscriptions on
+      // one connection complete in order, so once ours is in, so is its.
+      await Emitter().on(`cancel:${uploader.token}`, () => {})
       Emitter().emit(`cancel:${uploader.token}`)
       await vi.waitFor(() =>
         expect(warn).toHaveBeenCalledWith(

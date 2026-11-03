@@ -20,27 +20,33 @@ function fakeRedis({ failSubscribes = 0 } = {}) {
     const patterns = new Set<string>()
     const client = Object.assign(new EventEmitter(), {
       duplicate: () => make(),
-      connect: async () => {
-        if (failures > 0) throw new Error('connect ECONNREFUSED')
-      },
-      psubscribe: async (pattern: string) => {
+      connect: () =>
+        failures > 0
+          ? Promise.reject(new Error('connect ECONNREFUSED'))
+          : Promise.resolve(),
+      psubscribe: (pattern: string) => {
         if (failures > 0) {
           failures--
-          throw Object.assign(new Error('NOPERM psubscribe'), {
-            command: { name: 'psubscribe', args: [pattern] },
-          })
+          return Promise.reject(
+            Object.assign(new Error('NOPERM psubscribe'), {
+              command: { name: 'psubscribe', args: [pattern] },
+            }),
+          )
         }
         // like Redis: subscribing to a pattern twice delivers once
-        if (patterns.has(pattern)) return
-        patterns.add(pattern)
-        bus.on('message', (channel: string, message: string) => {
-          if (channel === pattern)
-            client.emit('pmessage', pattern, channel, message)
-        })
+        if (!patterns.has(pattern)) {
+          patterns.add(pattern)
+          bus.on('message', (channel: string, message: string) => {
+            if (channel === pattern)
+              client.emit('pmessage', pattern, channel, message)
+          })
+        }
+        return Promise.resolve()
       },
-      punsubscribe: async () => {},
-      publish: async (channel: string, message: string) => {
+      punsubscribe: () => Promise.resolve(),
+      publish: (channel: string, message: string) => {
         bus.emit('message', channel, message)
+        return Promise.resolve()
       },
     })
     clients.push(client)
