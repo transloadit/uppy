@@ -18,21 +18,23 @@ const handleError =
     }
     uppy.log(error, 'error')
 
+    const message = uppy.i18n('companionError')
+    // Once is enough: a failed action's refresh, or each retry of a scroll,
+    // would show it again while it is still up.
+    if (uppy.getState().info.some((info) => info.message === message)) return
+
     // Only Companion's failures are shown: a `UserFacingApiError` with its
     // details, any other failed request (the request client wraps those) as
     // such. Anything else did not involve Companion (a closed auth popup, a
     // throwing `file-added` listener), so it is only logged.
     if (error.name === 'UserFacingApiError') {
       uppy.info(
-        {
-          message: uppy.i18n('companionError'),
-          details: describeCompanionError(uppy.i18n, error),
-        },
+        { message, details: describeCompanionError(uppy.i18n, error) },
         'warning',
         5000,
       )
     } else if (error instanceof ErrorWithCause) {
-      uppy.info(uppy.i18n('companionError'), 'warning', 5000)
+      uppy.info(message, 'warning', 5000)
     }
   }
 

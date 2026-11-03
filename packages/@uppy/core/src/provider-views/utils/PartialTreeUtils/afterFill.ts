@@ -30,6 +30,8 @@ const recursivelyFetch = async (
     ? poorFolder.nextPagePath
     : poorFolder.id
   while (currentPath) {
+    // in case the last page ignored the abort
+    signal.throwIfAborted()
     const response = await apiList(currentPath, signal)
     items = items.concat(response.items)
     currentPath = response.nextPagePath

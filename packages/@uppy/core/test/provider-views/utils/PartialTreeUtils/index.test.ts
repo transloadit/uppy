@@ -381,17 +381,23 @@ describe('afterFill()', () => {
       _folder('bad', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
     const boom = new Error('boom')
+    const listed: string[] = []
     let slowSignal: AbortSignal | undefined
     let slowSettled = false
     const mock: ApiList = (path, signal) => {
+      listed.push(path as string)
       if (path === 'bad') return Promise.reject(boom)
       slowSignal = signal
-      // ignores the abort, and settles long after 'bad' has failed
+      // ignores the abort, and settles long after 'bad' has failed, pointing
+      // to a second page
       return new Promise((resolve) =>
         setTimeout(() => {
           slowSettled = true
-          resolve({ nextPagePath: null, items: [] })
-        }, 500),
+          resolve({
+            nextPagePath: path === 'slow' ? 'slow_page2' : null,
+            items: [],
+          })
+        }, 100),
       )
     }
 
@@ -405,6 +411,9 @@ describe('afterFill()', () => {
     ).rejects.toBe(boom)
     expect(slowSettled).toBe(false)
     expect(slowSignal?.aborted).toBe(true)
+    // and once it settles, its second page is not requested
+    await vi.waitFor(() => expect(slowSettled).toBe(true))
+    expect(listed.sort()).toEqual(['bad', 'slow'])
   })
 
   it('rejects with the cancel when `signal` aborts after a failure', async () => {
