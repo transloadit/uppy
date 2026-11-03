@@ -126,8 +126,8 @@ export default class ScreenCapture<
 
   recordingChunks: Blob[] | null = null
 
-  // Bumped by `stop()`, so streams that resolve after it are discarded
-  #stopCount = 0
+  // Bumped by `#releaseStreams()`, so streams that resolve after it are discarded
+  #releaseCount = 0
 
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
@@ -388,10 +388,8 @@ export default class ScreenCapture<
     }
 
     // The microphone is a separate stream that stays live when the user ends
-    // screen sharing from the browser UI
-    stopTracks(this.audioStream)
-    this.videoStream = null
-    this.audioStream = null
+    // screen sharing from the browser UI, and may still be pending
+    this.#releaseStreams()
 
     this.setPluginState({
       streamActive: false,
@@ -475,18 +473,22 @@ export default class ScreenCapture<
   }
 
   #staleCheck(): () => boolean {
-    const stopCount = this.#stopCount
-    return () => stopCount !== this.#stopCount
+    const releaseCount = this.#releaseCount
+    return () => releaseCount !== this.#releaseCount
+  }
+
+  /** Stops the screen and microphone streams, including pending ones. */
+  #releaseStreams(): void {
+    this.#releaseCount++
+    stopTracks(this.videoStream)
+    stopTracks(this.audioStream)
+    this.videoStream = null
+    this.audioStream = null
   }
 
   stop(): void {
-    this.#stopCount++
-
-    stopTracks(this.videoStream)
-    stopTracks(this.audioStream)
+    this.#releaseStreams()
     stopTracks(this.outputStream)
-    this.videoStream = null
-    this.audioStream = null
     this.outputStream = null
 
     // Clean up screenshot URL

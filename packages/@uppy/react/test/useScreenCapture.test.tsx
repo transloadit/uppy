@@ -31,15 +31,17 @@ function fakeScreen() {
       return Promise.resolve(stream)
     })
   const micStreams: MediaStream[] = []
-  vi.spyOn(navigator.mediaDevices, 'getUserMedia').mockImplementation(() => {
-    const stream = canvas.captureStream()
-    micStreams.push(stream)
-    return Promise.resolve(stream)
-  })
+  const getUserMedia = vi
+    .spyOn(navigator.mediaDevices, 'getUserMedia')
+    .mockImplementation(() => {
+      const stream = canvas.captureStream()
+      micStreams.push(stream)
+      return Promise.resolve(stream)
+    })
   // Synthetic clicks grant no user activation, so Chromium rejects the
   // unmuted play() in captureScreenshot()
   vi.spyOn(HTMLMediaElement.prototype, 'play').mockResolvedValue()
-  return { streams, micStreams, getDisplayMedia }
+  return { streams, micStreams, getDisplayMedia, getUserMedia }
 }
 
 const isLive = (stream: MediaStream) =>
@@ -248,6 +250,40 @@ describe('useScreenCapture', () => {
     await waitFor(() => expect(button('screenshot').disabled).toBe(true))
     expect(stopMic).toHaveBeenCalled()
     expect(isLive(display.micStreams[0]!)).toBe(false)
+  })
+
+  it('stops a microphone stream that resolves after screen sharing was ended', async () => {
+    let grantMic!: () => void
+    display.getUserMedia.mockImplementationOnce(async () => {
+      await new Promise<void>((r) => {
+        grantMic = r
+      })
+      const stream = document.createElement('canvas').captureStream()
+      display.micStreams.push(stream)
+      return stream
+    })
+    using rendered = setup(<Capture />)
+    const plugin =
+      rendered.uppy.getPlugin<ScreenCapture<any, any>>('ScreenCapture')!
+    await waitForReady()
+    expect(grantMic).toBeDefined()
+
+    // "Stop sharing" while the microphone prompt is still open, then grant it
+    for (const track of display.streams[0]!.getTracks()) track.stop()
+    await waitFor(() => expect(button('screenshot').disabled).toBe(true))
+    await act(async () => grantMic())
+
+    await waitFor(() => expect(display.micStreams).toHaveLength(1))
+    await waitFor(() => expect(isLive(display.micStreams[0]!)).toBe(false))
+    expect(plugin.audioStream).toBeNull()
+    expect(plugin.getPluginState().audioStreamActive).toBe(false)
+
+    await click('start capture')
+    await waitForReady()
+    await waitFor(() => expect(plugin.audioStream).toBe(display.micStreams[1]))
+    expect(plugin.videoStream).toBe(display.streams[1])
+    expect(isLive(display.streams[1]!)).toBe(true)
+    expect(isLive(display.micStreams[1]!)).toBe(true)
   })
 
   it('ignores the old stream going inactive after stop() and start()', async () => {
