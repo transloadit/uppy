@@ -594,7 +594,16 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
       protocol: 'tus',
       size: file.data!.size,
       headers: opts.headers,
-      metadata: file.meta,
+      metadata: {
+        ...Object.fromEntries(
+          getAllowedMetaFields(opts.allowedMetaFields, file.meta).map(
+            (name) => [name, file.meta[name]],
+          ),
+        ),
+        // always sent: Companion names the tus upload and sets its filetype from these
+        name: file.meta.name,
+        type: file.meta.type,
+      },
     }
   }
 

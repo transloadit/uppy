@@ -255,7 +255,8 @@ const COMPANION_URL = 'https://api2.transloadit.com/companion'
 // Regex matching acceptable postMessage() origins for authentication feedback from companion.
 const COMPANION_ALLOWED_HOSTS = /\.transloadit\.com$/
 // Regex used to check if a Companion address is run by Transloadit.
-const TL_COMPANION = /https?:\/\/api2(?:-\w+)?\.transloadit\.com\/companion/
+const TL_COMPANION =
+  /^https?:\/\/api2(?:-[\w-]+)?\.transloadit\.com\/companion\/?$/
 
 /**
  * Upload files to Transloadit using Tus.
@@ -380,7 +381,14 @@ export default class Transloadit<
     if ('remote' in file && file.remote) {
       ;({ remote } = file)
 
-      if (status.companion_url && TL_COMPANION.test(file.remote.companionUrl)) {
+      // Both ends must be Transloadit's: the status comes from whatever server
+      // the Assembly was created on, and the remote file's requests carry its
+      // Companion credentials.
+      if (
+        status.companion_url &&
+        TL_COMPANION.test(status.companion_url) &&
+        TL_COMPANION.test(file.remote.companionUrl)
+      ) {
         const newHost = status.companion_url.replace(/\/$/, '')
         const path = file.remote.url
           .replace(file.remote.companionUrl, '')

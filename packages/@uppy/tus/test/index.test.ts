@@ -135,4 +135,34 @@ describe('Tus', () => {
       )
     })
   })
+
+  it('sends only allowedMetaFields to Companion for remote files', async () => {
+    using uppy = new Core().use(Tus, {
+      endpoint: 'https://tus.example.com/files/',
+      allowedMetaFields: ['caption'],
+    })
+    const uploadRemoteFile = vi.fn(async () => {})
+    uppy.registerRequestClient('companion', { uploadRemoteFile })
+    uppy.addFile({
+      name: 'remote.txt',
+      data: { size: 1 } as any,
+      isRemote: true,
+      remote: { requestClientId: 'companion', url: '', companionUrl: '' },
+      type: 'text/plain',
+      meta: { caption: 'hi', secret: 'do not send' },
+    } as any)
+
+    await uppy.upload()
+
+    expect(uploadRemoteFile).toHaveBeenCalledOnce()
+    const [, args] = uploadRemoteFile.mock.calls[0] as unknown as [
+      unknown,
+      { metadata: Record<string, unknown> },
+    ]
+    expect(args.metadata).toEqual({
+      caption: 'hi',
+      name: 'remote.txt',
+      type: 'text/plain',
+    })
+  })
 })
