@@ -4,7 +4,8 @@ import type { S3ClientOptions } from '../schemas/companion.js'
 export type { S3ClientOptions }
 
 /**
- * instantiates the aws-sdk s3 client that will be used for s3 uploads.
+ * Instantiates an aws-sdk S3 client: for uploads (the top-level `s3` option)
+ * or for an S3 provider (`providerOptions.s3`, `providerOptions['transloadit-storage']`).
  *
  * @param companionOptions the companion options object
  * @param createPresignedPostMode whether this s3 client is for createPresignedPost
@@ -18,7 +19,7 @@ export default function s3Client(
   if (s3) {
     if (s3['accessKeyId'] || s3['secretAccessKey']) {
       throw new Error(
-        'Found `providerOptions.s3.accessKeyId` or `providerOptions.s3.secretAccessKey` configuration, but Companion requires `key` and `secret` option names instead. Please use the `key` property instead of `accessKeyId` and the `secret` property instead of `secretAccessKey`.',
+        'Found `accessKeyId` or `secretAccessKey` in the S3 options, but Companion requires the option names `key` and `secret` instead.',
       )
     }
 
@@ -27,7 +28,7 @@ export default function s3Client(
       s3['awsClientOptions']?.['secretAccessKey']
     ) {
       throw new Error(
-        'Found unsupported `providerOptions.s3.awsClientOptions.accessKeyId` or `providerOptions.s3.awsClientOptions.secretAccessKey` configuration. Please use the `providerOptions.s3.key` and `providerOptions.s3.secret` options instead.',
+        'Found unsupported `awsClientOptions.accessKeyId` or `awsClientOptions.secretAccessKey` in the S3 options. Use the `key` and `secret` options next to `awsClientOptions` instead.',
       )
     }
 
