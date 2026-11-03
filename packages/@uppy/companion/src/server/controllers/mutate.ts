@@ -1,4 +1,5 @@
 import type { NextFunction, Request, Response } from 'express'
+import type { Promisable } from 'type-fest'
 import { z } from 'zod'
 import type { CompanionContext } from '../../types/express.js'
 import { respondWithError } from '../provider/error.js'
@@ -28,7 +29,7 @@ function mutation<S extends z.ZodType>(
       providerUserSession: CompanionContext['providerUserSession']
     },
     input: z.infer<S>,
-  ) => Promise<unknown>,
+  ) => Promisable<unknown>,
 ) {
   return async (
     req: Request,

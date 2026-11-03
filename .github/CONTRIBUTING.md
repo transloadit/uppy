@@ -12,7 +12,8 @@ cd uppy
 ```
 
 We are using [Corepack][] to manage versions of [Yarn][]. Corepack comes
-pre-installed with Node.js >=16.x, or can be installed through `npm`:
+pre-installed with Node.js 16.x to 24.x. Node.js 25 and later no longer bundle
+it, so install it through `npm`:
 
 ```sh
 corepack -v || npm i -g corepack
@@ -20,6 +21,7 @@ corepack enable
 ```
 
 [Corepack]: https://nodejs.org/api/corepack.html
+
 [Yarn]: https://yarnpkg.com/
 
 ## Development
@@ -38,9 +40,9 @@ yarn build
 
 ### Development Commands
 
-- `yarn dev` - Start development server at http://localhost:5174
+- `yarn dev` - Start development server at <http://localhost:5174>
 - `yarn dev:with-companion` - Start dev server with Companion for cloud integrations
-- `yarn start:companion` - Start only Companion server at http://localhost:3020
+- `yarn start:companion` - Start only Companion server at <http://localhost:3020>
 - `yarn build:watch` - Build packages in watch mode
 - `yarn build:examples` - Build and type-check the examples and the dev playground
 - `yarn test` - Run tests for all packages

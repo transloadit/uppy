@@ -58,7 +58,8 @@
     "nanoid": "^6.0.1",
     "p-queue": "^9.3.3",
     "p-retry": "^8.0.0",
-    "preact": "^10.29.2"
+    "preact": "^10.29.2",
+    "type-fest": "^5.10.0"
   },
   "devDependencies": {
     "@types/deep-freeze": "^0",

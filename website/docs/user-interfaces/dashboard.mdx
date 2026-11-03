@@ -3,10 +3,10 @@ sidebar_position: 1
 slug: /dashboard
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Dashboard
 
@@ -70,13 +70,13 @@ yarn add @uppy/core @uppy/dashboard
 ## Use
 
 ```js showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
 
-new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' });
+new Uppy().use(Dashboard, { inline: true, target: '#uppy-dashboard' })
 ```
 
 :::note
@@ -229,9 +229,9 @@ This is what the Dashboard sets by default:
 
 ```js
 const doneButtonHandler = () => {
-	this.uppy.cancelAll();
-	this.requestCloseModal();
-};
+  this.uppy.cancelAll()
+  this.requestCloseModal()
+}
 ```
 
 Set to `null` to disable the “Done” button.
@@ -261,10 +261,10 @@ Example:
 
 ```js
 uppy.on('file-removed', (file, reason) => {
-	if (reason === 'removed-by-user') {
-		sendDeleteRequestForFile(file);
-	}
-});
+  if (reason === 'removed-by-user') {
+    sendDeleteRequestForFile(file)
+  }
+})
 ```
 
 For an implementation example, please see
@@ -330,30 +330,30 @@ Each object can contain:
 
 ```js
 uppy.use(Dashboard, {
-	trigger: '#pick-files',
-	metaFields: [
-		{ id: 'name', name: 'Name', placeholder: 'file name' },
-		{ id: 'license', name: 'License', placeholder: 'specify license' },
-		{
-			id: 'caption',
-			name: 'Caption',
-			placeholder: 'describe what the image is about',
-		},
-		{
-			id: 'public',
-			name: 'Public',
-			render({ value, onChange, required, form }, h) {
-				return h('input', {
-					type: 'checkbox',
-					required,
-					form,
-					onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
-					defaultChecked: value === 'on',
-				});
-			},
-		},
-	],
-});
+  trigger: '#pick-files',
+  metaFields: [
+    { id: 'name', name: 'Name', placeholder: 'file name' },
+    { id: 'license', name: 'License', placeholder: 'specify license' },
+    {
+      id: 'caption',
+      name: 'Caption',
+      placeholder: 'describe what the image is about',
+    },
+    {
+      id: 'public',
+      name: 'Public',
+      render({ value, onChange, required, form }, h) {
+        return h('input', {
+          type: 'checkbox',
+          required,
+          form,
+          onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
+          defaultChecked: value === 'on',
+        })
+      },
+    },
+  ],
+})
 ```
 
 </details>
@@ -363,29 +363,29 @@ uppy.use(Dashboard, {
 
 ```js
 uppy.use(Dashboard, {
-	trigger: '#pick-files',
-	metaFields: (file) => {
-		const fields = [{ id: 'name', name: 'File name' }];
-		if (file.type.startsWith('image/')) {
-			fields.push({ id: 'location', name: 'Photo Location' });
-			fields.push({ id: 'alt', name: 'Alt text' });
-			fields.push({
-				id: 'public',
-				name: 'Public',
-				render: ({ value, onChange, required, form }, h) => {
-					return h('input', {
-						type: 'checkbox',
-						onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
-						defaultChecked: value === 'on',
-						required,
-						form,
-					});
-				},
-			});
-		}
-		return fields;
-	},
-});
+  trigger: '#pick-files',
+  metaFields: (file) => {
+    const fields = [{ id: 'name', name: 'File name' }]
+    if (file.type.startsWith('image/')) {
+      fields.push({ id: 'location', name: 'Photo Location' })
+      fields.push({ id: 'alt', name: 'Alt text' })
+      fields.push({
+        id: 'public',
+        name: 'Public',
+        render: ({ value, onChange, required, form }, h) => {
+          return h('input', {
+            type: 'checkbox',
+            onChange: (ev) => onChange(ev.target.checked ? 'on' : ''),
+            defaultChecked: value === 'on',
+            required,
+            form,
+          })
+        },
+      })
+    }
+    return fields
+  },
+})
 ```
 
 </details>
@@ -477,93 +477,93 @@ disable the `ThumbnailGenerator` and/or provide your own custom solution.
 
 ```js
 module.exports = {
-	strings: {
-		// When `inline: false`, used as the screen reader label for the button that closes the modal.
-		closeModal: 'Close Modal',
-		// Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
-		addMoreFiles: 'Add more files',
-		addingMoreFiles: 'Adding more files',
-		// Used as the header for import panels, e.g., “Import from Google Drive”.
-		importFrom: 'Import from %{name}',
-		// When `inline: false`, used as the screen reader label for the dashboard modal.
-		dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
-		// When `inline: true`, used as the screen reader label for the dashboard area.
-		dashboardTitle: 'Uppy Dashboard',
-		// Shown in the Informer when a link to a file was copied to the clipboard.
-		copyLinkToClipboardSuccess: 'Link copied to clipboard.',
-		// Used when a link cannot be copied automatically. The user has to select the text from the
-		// input element below this string.
-		copyLinkToClipboardFallback: 'Copy the URL below',
-		// Used as the hover title and screen reader label for buttons that copy a file link.
-		copyLink: 'Copy link',
-		back: 'Back',
-		// Used as the screen reader label for buttons that remove a file.
-		removeFile: 'Remove file',
-		// Used as the screen reader label for buttons that open the metadata editor panel for a file.
-		editFile: 'Edit file',
-		// Shown in the panel header for the metadata editor. Rendered as “Editing image.png”.
-		editing: 'Editing %{file}',
-		// Used as the screen reader label for the button that saves metadata edits and returns to the
-		// file list view.
-		finishEditingFile: 'Finish editing file',
-		saveChanges: 'Save changes',
-		// Used as the label for the tab button that opens the system file selection dialog.
-		myDevice: 'My Device',
-		dropHint: 'Drop your files here',
-		// Used as the hover text and screen reader label for file progress indicators when
-		// they have been fully uploaded.
-		uploadComplete: 'Upload complete',
-		uploadPaused: 'Upload paused',
-		// Used as the hover text and screen reader label for the buttons to resume paused uploads.
-		resumeUpload: 'Resume upload',
-		// Used as the hover text and screen reader label for the buttons to pause uploads.
-		pauseUpload: 'Pause upload',
-		// Used as the hover text and screen reader label for the buttons to retry failed uploads.
-		retryUpload: 'Retry upload',
-		// Used as the hover text and screen reader label for the buttons to cancel uploads.
-		cancelUpload: 'Cancel upload',
-		// Used in a title, how many files are currently selected
-		xFilesSelected: {
-			0: '%{smart_count} file selected',
-			1: '%{smart_count} files selected',
-		},
-		uploadingXFiles: {
-			0: 'Uploading %{smart_count} file',
-			1: 'Uploading %{smart_count} files',
-		},
-		processingXFiles: {
-			0: 'Processing %{smart_count} file',
-			1: 'Processing %{smart_count} files',
-		},
-		// The "powered by Uppy" link at the bottom of the Dashboard.
-		poweredBy: 'Powered by %{uppy}',
-		addMore: 'Add more',
-		editFileWithFilename: 'Edit file %{file}',
-		save: 'Save',
-		cancel: 'Cancel',
-		dropPasteFiles: 'Drop files here or %{browseFiles}',
-		dropPasteFolders: 'Drop files here or %{browseFolders}',
-		dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
-		dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
-		dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
-		dropPasteImportBoth:
-			'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
-		importFiles: 'Import files from:',
-		browseFiles: 'browse files',
-		browseFolders: 'browse folders',
-		recoveredXFiles: {
-			0: 'We could not fully recover 1 file. Please re-select it and resume the upload.',
-			1: 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
-		},
-		recoveredAllFiles: 'We restored all files. You can now resume the upload.',
-		sessionRestored: 'Session restored',
-		reSelect: 'Re-select',
-		missingRequiredMetaFields: {
-			0: 'Missing required meta field: %{fields}.',
-			1: 'Missing required meta fields: %{fields}.',
-		},
-	},
-};
+  strings: {
+    // When `inline: false`, used as the screen reader label for the button that closes the modal.
+    closeModal: 'Close Modal',
+    // Used as the screen reader label for the plus (+) button that shows the “Add more files” screen
+    addMoreFiles: 'Add more files',
+    addingMoreFiles: 'Adding more files',
+    // Used as the header for import panels, e.g., “Import from Google Drive”.
+    importFrom: 'Import from %{name}',
+    // When `inline: false`, used as the screen reader label for the dashboard modal.
+    dashboardWindowTitle: 'Uppy Dashboard Window (Press escape to close)',
+    // When `inline: true`, used as the screen reader label for the dashboard area.
+    dashboardTitle: 'Uppy Dashboard',
+    // Shown in the Informer when a link to a file was copied to the clipboard.
+    copyLinkToClipboardSuccess: 'Link copied to clipboard.',
+    // Used when a link cannot be copied automatically. The user has to select the text from the
+    // input element below this string.
+    copyLinkToClipboardFallback: 'Copy the URL below',
+    // Used as the hover title and screen reader label for buttons that copy a file link.
+    copyLink: 'Copy link',
+    back: 'Back',
+    // Used as the screen reader label for buttons that remove a file.
+    removeFile: 'Remove file',
+    // Used as the screen reader label for buttons that open the metadata editor panel for a file.
+    editFile: 'Edit file',
+    // Shown in the panel header for the metadata editor. Rendered as “Editing image.png”.
+    editing: 'Editing %{file}',
+    // Used as the screen reader label for the button that saves metadata edits and returns to the
+    // file list view.
+    finishEditingFile: 'Finish editing file',
+    saveChanges: 'Save changes',
+    // Used as the label for the tab button that opens the system file selection dialog.
+    myDevice: 'My Device',
+    dropHint: 'Drop your files here',
+    // Used as the hover text and screen reader label for file progress indicators when
+    // they have been fully uploaded.
+    uploadComplete: 'Upload complete',
+    uploadPaused: 'Upload paused',
+    // Used as the hover text and screen reader label for the buttons to resume paused uploads.
+    resumeUpload: 'Resume upload',
+    // Used as the hover text and screen reader label for the buttons to pause uploads.
+    pauseUpload: 'Pause upload',
+    // Used as the hover text and screen reader label for the buttons to retry failed uploads.
+    retryUpload: 'Retry upload',
+    // Used as the hover text and screen reader label for the buttons to cancel uploads.
+    cancelUpload: 'Cancel upload',
+    // Used in a title, how many files are currently selected
+    xFilesSelected: {
+      0: '%{smart_count} file selected',
+      1: '%{smart_count} files selected',
+    },
+    uploadingXFiles: {
+      0: 'Uploading %{smart_count} file',
+      1: 'Uploading %{smart_count} files',
+    },
+    processingXFiles: {
+      0: 'Processing %{smart_count} file',
+      1: 'Processing %{smart_count} files',
+    },
+    // The "powered by Uppy" link at the bottom of the Dashboard.
+    poweredBy: 'Powered by %{uppy}',
+    addMore: 'Add more',
+    editFileWithFilename: 'Edit file %{file}',
+    save: 'Save',
+    cancel: 'Cancel',
+    dropPasteFiles: 'Drop files here or %{browseFiles}',
+    dropPasteFolders: 'Drop files here or %{browseFolders}',
+    dropPasteBoth: 'Drop files here, %{browseFiles} or %{browseFolders}',
+    dropPasteImportFiles: 'Drop files here, %{browseFiles} or import from:',
+    dropPasteImportFolders: 'Drop files here, %{browseFolders} or import from:',
+    dropPasteImportBoth:
+      'Drop files here, %{browseFiles}, %{browseFolders} or import from:',
+    importFiles: 'Import files from:',
+    browseFiles: 'browse files',
+    browseFolders: 'browse folders',
+    recoveredXFiles: {
+      0: 'We could not fully recover 1 file. Please re-select it and resume the upload.',
+      1: 'We could not fully recover %{smart_count} files. Please re-select them and resume the upload.',
+    },
+    recoveredAllFiles: 'We restored all files. You can now resume the upload.',
+    sessionRestored: 'Session restored',
+    reSelect: 'Re-select',
+    missingRequiredMetaFields: {
+      0: 'Missing required meta field: %{fields}.',
+      1: 'Missing required meta fields: %{fields}.',
+    },
+  },
+}
 ```
 
 #### `theme`
@@ -603,12 +603,12 @@ conditionally enable/disable file uploading or manipulation, based on a
 condition in your app. Can be set on init or via API:
 
 ```js
-const dashboard = uppy.getPlugin('Dashboard');
-dashboard.setOptions({ disabled: true });
+const dashboard = uppy.getPlugin('Dashboard')
+dashboard.setOptions({ disabled: true })
 
 userNameInput.addEventListener('change', () => {
-	dashboard.setOptions({ disabled: false });
-});
+  dashboard.setOptions({ disabled: false })
+})
 ```
 
 #### `disableLocalFiles`
@@ -658,9 +658,9 @@ Hides the Dashboard modal. Use it like this:
 Returns `true` if the Dashboard modal is open, `false` otherwise.
 
 ```js
-const dashboard = uppy.getPlugin('Dashboard');
+const dashboard = uppy.getPlugin('Dashboard')
 if (dashboard.isModalOpen()) {
-	dashboard.closeModal();
+  dashboard.closeModal()
 }
 ```
 
@@ -679,8 +679,8 @@ Fired when the Dashboard modal is open.
 
 ```js
 uppy.on('dashboard:modal-open', () => {
-	console.log('Modal is open');
-});
+  console.log('Modal is open')
+})
 ```
 
 #### `dashboard:modal-closed`
@@ -772,8 +772,8 @@ all Uppy plugins.
 - [`@uppy/vue`](/docs/vue): Dashboard component for [Vue](https://vuejs.org/).
 
 [ondragover]:
-	https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
+  https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragover
 [ondragleave]:
-	https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
+  https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondragleave
 [ondrop]:
-	https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop
+  https://developer.mozilla.org/en-US/docs/Web/API/GlobalEventHandlers/ondrop

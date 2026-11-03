@@ -1,6 +1,7 @@
 import { htmlEscape } from 'escape-goat'
 import type { NextFunction, Request, Response } from 'express'
 import got from 'got'
+import type { Promisable } from 'type-fest'
 import type { CredentialsFetchResponse } from '../../schemas/companion.js'
 import type { CompanionRuntimeOptions } from '../../types/companion-options.js'
 import type { CompanionExpressLocals } from '../../types/express.js'
@@ -48,11 +49,11 @@ async function fetchKeys(
  * @param companionOptions the companion options object
  * @param credentialRequestParams the params that should be sent if an http request is required.
  */
-async function fetchProviderKeys(
+function fetchProviderKeys(
   providerName: string,
   companionOptions: CompanionRuntimeOptions,
   credentialRequestParams: unknown,
-): Promise<CredentialsFetchResponse | null> {
+): Promisable<CredentialsFetchResponse | null> {
   let providerConfig = companionOptions.providerOptions[providerName]
   if (!providerConfig) {
     providerConfig = companionOptions.customProviders?.[providerName]?.config
@@ -241,7 +242,7 @@ export const getCredentialsResolver = (
   providerName: string,
   companionOptions: CompanionRuntimeOptions,
   req: Request,
-): (() => Promise<CredentialsFetchResponse | null>) => {
+): (() => Promisable<CredentialsFetchResponse | null>) => {
   const credentialsResolver = () => {
     const encodedCredentialsParams = req.header('uppy-credentials-params')
     let credentialRequestParams: unknown = null

@@ -36,7 +36,7 @@ interface UnsplashUserSession {
  * Adapter for API https://api.unsplash.com
  */
 export default class Unsplash extends Provider<UnsplashUserSession> {
-  override async list({
+  override list({
     providerUserSession: { accessToken: token },
     query,
   }: ProviderListOptions<UnsplashUserSession>): Promise<ProviderListResponse> {
@@ -58,7 +58,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
     })
   }
 
-  override async download({
+  override download({
     id,
     providerUserSession: { accessToken: token },
   }: ProviderDownloadOptions<UnsplashUserSession>): Promise<ProviderDownloadResponse> {
@@ -101,7 +101,7 @@ export default class Unsplash extends Provider<UnsplashUserSession> {
     )
   }
 
-  async #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
+  #withErrorHandling<T>(tag: string, fn: () => Promise<T>): Promise<T> {
     return withProviderErrorHandling({
       fn,
       tag,

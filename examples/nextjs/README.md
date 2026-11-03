@@ -3,7 +3,7 @@
 This example exercises Uppy upload destinations in a Next.js App Router
 application, including Transloadit. For the focused production integration,
 follow the canonical [Next.js + Uppy + Transloadit
-guide](https://uppy.io/docs/guides/uppy-transloadit/#nextjs). The guide's
+guide](https://uppy.io/docs/guides/uppy-transloadit/#nextjs). The guide’s
 Next.js integration keeps the Transloadit Auth Secret on the server and returns
 signed Assembly options to the browser.
 
@@ -24,7 +24,7 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000> with your browser to see the result.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
@@ -41,6 +41,6 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

@@ -3,10 +3,10 @@ sidebar_position: 2
 slug: /screen-capture
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Screen capture
 
@@ -71,15 +71,15 @@ yarn add @uppy/screen-capture
 ## Use
 
 ```js {3,7,11} showLineNumbers
-import Uppy from '@uppy/core';
-import Dashboard from '@uppy/dashboard';
-import ScreenCapture from '@uppy/screen-capture';
+import Uppy from '@uppy/core'
+import Dashboard from '@uppy/dashboard'
+import ScreenCapture from '@uppy/screen-capture'
 
-import '@uppy/core/css/style.min.css';
-import '@uppy/dashboard/css/style.min.css';
-import '@uppy/screen-capture/css/style.min.css';
+import '@uppy/core/css/style.min.css'
+import '@uppy/dashboard/css/style.min.css'
+import '@uppy/screen-capture/css/style.min.css'
 
-new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(ScreenCapture);
+new Uppy().use(Dashboard, { inline: true, target: 'body' }).use(ScreenCapture)
 ```
 
 ### API
@@ -137,14 +137,14 @@ if any.
 
 ```js
 export default {
-	strings: {
-		startCapturing: 'Begin screen capturing',
-		stopCapturing: 'Stop screen capturing',
-		submitRecordedFile: 'Submit recorded file',
-		streamActive: 'Stream active',
-		streamPassive: 'Stream passive',
-		micDisabled: 'Microphone access denied by user',
-		recording: 'Recording',
-	},
-};
+  strings: {
+    startCapturing: 'Begin screen capturing',
+    stopCapturing: 'Stop screen capturing',
+    submitRecordedFile: 'Submit recorded file',
+    streamActive: 'Stream active',
+    streamPassive: 'Stream passive',
+    micDisabled: 'Microphone access denied by user',
+    recording: 'Recording',
+  },
+}
 ```

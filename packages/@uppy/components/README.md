@@ -8,7 +8,7 @@ Headless Uppy components, such as `Dropzone`, `FilesList` and `FilesGrid`, and
 the controllers behind hooks like `useDropzone`. Use them to build your own
 upload UI instead of the Dashboard.
 
-You normally don't install this package yourself. The framework packages,
+You normally don’t install this package yourself. The framework packages,
 [`@uppy/react`](https://www.npmjs.com/package/@uppy/react),
 [`@uppy/vue`](https://www.npmjs.com/package/@uppy/vue) and
 [`@uppy/svelte`](https://www.npmjs.com/package/@uppy/svelte), depend on it and

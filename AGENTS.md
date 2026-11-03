@@ -4,7 +4,7 @@ This file provides repository guidance for coding agents. Maintain shared instru
 
 ## Repository Overview
 
-Uppy is a modular JavaScript file uploader that integrates seamlessly with any application. It's
+Uppy is a modular JavaScript file uploader that integrates seamlessly with any application. It’s
 built using a monorepo structure with Yarn workspaces, Turbo for build orchestration, and Biome for
 linting/formatting.
 
@@ -86,7 +86,7 @@ The build system uses Turbo (turbo.json) for task orchestration:
 - Builds have dependency ordering (`dependsOn: ["^build"]`)
 - TypeScript builds output to `lib/` and `dist/` directories
 - CSS builds process SCSS files to CSS
-- Special handling for the main `uppy` package bundle
+- Specific handling for the main `uppy` package bundle
 
 ### TypeScript Configuration
 
@@ -112,7 +112,7 @@ The build system uses Turbo (turbo.json) for task orchestration:
 
 - All plugins extend `BasePlugin` or `UIPlugin`
 - Plugins must have unique IDs and specify their type
-- State management through Uppy's store system
+- State management through Uppy’s store system
 - Event-driven architecture using namespace-emitter
 
 ## Testing

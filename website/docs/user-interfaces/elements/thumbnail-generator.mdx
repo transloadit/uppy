@@ -3,10 +3,10 @@ sidebar_position: 2
 slug: /thumbnail-generator
 ---
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+import Tabs from '@theme/Tabs'
+import TabItem from '@theme/TabItem'
 
-import UppyCdnExample from '/src/components/UppyCdnExample';
+import UppyCdnExample from '/src/components/UppyCdnExample'
 
 # Thumbnail generator
 
@@ -63,13 +63,13 @@ If you use the [Dashboard](/docs/dashboard) then it’s already installed. If yo
 want to use it programmatically for your own UI:
 
 ```js showLineNumbers
-import Uppy from '@uppy/core';
-import ThumbnailGenerator from '@uppy/thumbnail-generator';
+import Uppy from '@uppy/core'
+import ThumbnailGenerator from '@uppy/thumbnail-generator'
 
-const uppy = new Uppy();
+const uppy = new Uppy()
 
-uppy.use(ThumbnailGenerator);
-uppy.on('thumbnail:generated', (file, preview) => doSomething(file, preview));
+uppy.use(ThumbnailGenerator)
+uppy.on('thumbnail:generated', (file, preview) => doSomething(file, preview))
 ```
 
 ## API
@@ -84,10 +84,10 @@ A unique identifier for this plugin (`string`, default: `'ThumbnailGenerator'`).
 
 ```js
 export default {
-	strings: {
-		generatingThumbnails: 'Generating thumbnails...',
-	},
-};
+  strings: {
+    generatingThumbnails: 'Generating thumbnails...',
+  },
+}
 ```
 
 #### `thumbnailWidth`
@@ -111,14 +111,14 @@ only width is taken into account.
 Produce a 300px height thumbnail with calculated width to match ratio:
 
 ```js
-uppy.use(ThumbnailGenerator, { thumbnailHeight: 300 });
+uppy.use(ThumbnailGenerator, { thumbnailHeight: 300 })
 ```
 
 Produce a 300px width thumbnail with calculated height to match ratio (and
 ignore the given height):
 
 ```js
-uppy.use(ThumbnailGenerator, { thumbnailWidth: 300, thumbnailHeight: 300 });
+uppy.use(ThumbnailGenerator, { thumbnailWidth: 300, thumbnailHeight: 300 })
 ```
 
 See issue [#979](https://github.com/transloadit/uppy/issues/979) and
@@ -160,9 +160,9 @@ Emitted with `file` and `preview` local url as arguments:
 
 ```js
 uppy.on('thumbnail:generated', (file, preview) => {
-	const img = document.createElement('img');
-	img.src = preview;
-	img.width = 100;
-	document.body.appendChild(img);
-});
+  const img = document.createElement('img')
+  img.src = preview
+  img.width = 100
+  document.body.appendChild(img)
+})
 ```

@@ -89,57 +89,57 @@ to generate the signature and params:
 
 ```ts
 // src/routes/transloadit-params/+server.ts
-import type { RequestHandler } from '@sveltejs/kit';
-import crypto from 'crypto';
+import type { RequestHandler } from '@sveltejs/kit'
+import crypto from 'crypto'
 
 function utcDateString(ms: number): string {
-	return new Date(ms)
-		.toISOString()
-		.replace(/-/g, '/')
-		.replace(/T/, ' ')
-		.replace(/\.\d+Z$/, '+00:00');
+  return new Date(ms)
+    .toISOString()
+    .replace(/-/g, '/')
+    .replace(/T/, ' ')
+    .replace(/\.\d+Z$/, '+00:00')
 }
 
 export const POST: RequestHandler = async ({ request }) => {
-	// Expire 1 hour from now (this must be milliseconds)
-	const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000);
-	const authKey = process.env.TRANSLOADIT_KEY;
-	const authSecret = process.env.TRANSLOADIT_SECRET;
-	const templateId = process.env.TRANSLOADIT_TEMPLATE_ID;
+  // Expire 1 hour from now (this must be milliseconds)
+  const expires = utcDateString(Date.now() + 1 * 60 * 60 * 1000)
+  const authKey = process.env.TRANSLOADIT_KEY
+  const authSecret = process.env.TRANSLOADIT_SECRET
+  const templateId = process.env.TRANSLOADIT_TEMPLATE_ID
 
-	if (!authKey || !authSecret || !templateId) {
-		return new Response(
-			JSON.stringify({ error: 'Missing Transloadit credentials' }),
-			{ status: 500 },
-		);
-	}
+  if (!authKey || !authSecret || !templateId) {
+    return new Response(
+      JSON.stringify({ error: 'Missing Transloadit credentials' }),
+      { status: 500 },
+    )
+  }
 
-	const body = await request.json();
-	const params = JSON.stringify({
-		auth: {
-			key: authKey,
-			expires,
-		},
-		template_id: templateId,
-		fields: {
-			// You can use this in your template.
-			customValue: body.customValue,
-		},
-		// Your other params like notify_url, etc.
-	});
+  const body = await request.json()
+  const params = JSON.stringify({
+    auth: {
+      key: authKey,
+      expires,
+    },
+    template_id: templateId,
+    fields: {
+      // You can use this in your template.
+      customValue: body.customValue,
+    },
+    // Your other params like notify_url, etc.
+  })
 
-	const signatureBytes = crypto
-		.createHmac('sha384', authSecret)
-		.update(Buffer.from(params, 'utf-8'));
-	// The final signature needs the hash name in front, so
-	// the hashing algorithm can be updated in a backwards-compatible
-	// way when old algorithms become insecure.
-	const signature = `sha384:${signatureBytes.digest('hex')}`;
+  const signatureBytes = crypto
+    .createHmac('sha384', authSecret)
+    .update(Buffer.from(params, 'utf-8'))
+  // The final signature needs the hash name in front, so
+  // the hashing algorithm can be updated in a backwards-compatible
+  // way when old algorithms become insecure.
+  const signature = `sha384:${signatureBytes.digest('hex')}`
 
-	return new Response(JSON.stringify({ expires, signature, params }), {
-		headers: { 'Content-Type': 'application/json' },
-	});
-};
+  return new Response(JSON.stringify({ expires, signature, params }), {
+    headers: { 'Content-Type': 'application/json' },
+  })
+}
 ```
 
 On the client, we want to fetch the signature and params from the server. You
@@ -190,30 +190,30 @@ If you want to handle uploads yourself, you can use
 Create an endpoint, such as `src/routes/upload/+server.ts`:
 
 ```ts
-import type { RequestHandler } from '@sveltejs/kit';
-import { requireUser } from '$lib/auth'; // Your optional logic
-import fs from 'fs';
-import path from 'path';
+import type { RequestHandler } from '@sveltejs/kit'
+import { requireUser } from '$lib/auth' // Your optional logic
+import fs from 'fs'
+import path from 'path'
 
 export const POST: RequestHandler = async ({ request }) => {
-	const user = await requireUser(request); // Your optional logic
+  const user = await requireUser(request) // Your optional logic
 
-	const formData = await request.formData();
-	const files = formData.getAll('files[]'); // Assuming 'files[]' is the field name used
+  const formData = await request.formData()
+  const files = formData.getAll('files[]') // Assuming 'files[]' is the field name used
 
-	for (const file of files) {
-		if (file instanceof File) {
-			const arrayBuffer = await file.arrayBuffer();
-			const buffer = Buffer.from(arrayBuffer);
-			const storageKey = `user-${user.id}-avatar-${file.name}`;
-			const uploadPath = path.join('uploads', storageKey);
-			fs.writeFileSync(uploadPath, buffer);
-			console.log(`Saved file to ${uploadPath}`);
-		}
-	}
+  for (const file of files) {
+    if (file instanceof File) {
+      const arrayBuffer = await file.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+      const storageKey = `user-${user.id}-avatar-${file.name}`
+      const uploadPath = path.join('uploads', storageKey)
+      fs.writeFileSync(uploadPath, buffer)
+      console.log(`Saved file to ${uploadPath}`)
+    }
+  }
 
-	return new Response(null);
-};
+  return new Response(null)
+}
 ```
 
 Create a page with your Uppy instance:

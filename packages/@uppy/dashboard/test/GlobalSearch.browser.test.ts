@@ -22,7 +22,7 @@ let uppy: Uppy | undefined
  * whereas, in Search mode, we need to scope the query to the checkbox role instead when searching for a file
  */
 
-beforeAll(async () => {
+beforeAll(() => {
   // Disable search debounce inside ProviderView during tests to avoid long sleeps
   // @ts-expect-error test-only hook
   ProviderViews[Symbol.for('uppy test: searchDebounceMs')] = 0

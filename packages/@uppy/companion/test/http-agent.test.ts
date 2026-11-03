@@ -23,7 +23,7 @@ afterEach(() => {
 })
 
 describe('test protected request Agent', () => {
-  test('allows URLs without IP addresses', async () => {
+  test('allows URLs without IP addresses', () => {
     nock.activate()
     nock('https://transloadit.com').get('/').reply(200)
     const url = 'https://transloadit.com'

@@ -415,7 +415,7 @@ describe('S3 provider in the browser', () => {
     await plugin.view.runBulkAction({
       id: 'test:partial',
       label: 'Move',
-      run: async ({ items }) => {
+      run({ items }) {
         selections.push(items.map((item) => item.id))
         companion.folders
           .get('docs/')
