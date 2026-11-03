@@ -37,11 +37,6 @@ const addFiles = <M extends Meta, B extends Body>(
     }
   })
 
-  if (filesToAdd.length > 0) {
-    plugin.uppy.info(
-      plugin.uppy.i18n('addedNumFiles', { numFiles: filesToAdd.length }),
-    )
-  }
   if (filesAlreadyAdded.length > 0) {
     plugin.uppy.info(
       `Not adding ${filesAlreadyAdded.length} files because they already exist`,
@@ -58,6 +53,11 @@ const addFiles = <M extends Meta, B extends Body>(
     plugin.uppy.addFiles(filesToAdd)
   } finally {
     plugin.uppy.off('files-added', onFilesAdded)
+  }
+  if (addedCount > 0) {
+    plugin.uppy.info(
+      plugin.uppy.i18n('addedNumFiles', { numFiles: addedCount }),
+    )
   }
   return filesToAdd.length === 0 || addedCount > 0
 }

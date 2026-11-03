@@ -61,7 +61,7 @@
         <button
           type="button"
           class="text-blue-500"
-          @click="() => props.close()"
+          @click="() => remoteSource.cancel()"
         >
           Close
         </button>

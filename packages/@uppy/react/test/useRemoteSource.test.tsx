@@ -4,6 +4,7 @@ import Uppy, { BasePlugin } from '@uppy/core'
 import type { CompanionFile } from '@uppy/core/utils'
 import Dropbox from '@uppy/dropbox'
 import { UppyContextProvider, useRemoteSource } from '@uppy/react'
+import Unsplash from '@uppy/unsplash'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 type Listing = CompanionFile[] | Promise<CompanionFile[]>
@@ -211,6 +212,8 @@ describe('useRemoteSource', () => {
     expect(uppy.getFiles()).toHaveLength(0)
     expect(selected()).toBe('1')
     expect(onClose).not.toHaveBeenCalled()
+    // no "Added 1 file" for a file that was not added
+    expect(uppy.getState().info).toEqual([])
   })
 
   it('done() whose onBeforeFileAdded changes the file id still closes once', async () => {
@@ -330,5 +333,82 @@ describe('useRemoteSource', () => {
 
     act(() => picker.source().checkbox(picker.item('a.txt'), false))
     expect(picker.renders()).toBeGreaterThan(before)
+  })
+
+  it('state.error follows restrictions changed with setOptions()', async () => {
+    const { uppy } = setup({
+      '': [companionItem('a.txt'), companionItem('b.txt')],
+    })
+    const picker = await renderPicker(uppy, 'a.txt')
+
+    act(() => picker.source().checkbox(picker.item('a.txt'), false))
+    act(() => picker.source().checkbox(picker.item('b.txt'), false))
+    expect(error()).toBe('')
+
+    act(() => uppy.setOptions({ restrictions: { maxNumberOfFiles: 1 } }))
+    expect(error()).not.toBe('')
+  })
+
+  it('state.error follows the size of a file already in Uppy', async () => {
+    const { uppy } = setup(
+      { '': [companionItem('a.txt')] },
+      { restrictions: { maxTotalFileSize: 2 } },
+    )
+    let id!: string
+    act(() => {
+      id = uppy.addFile({ name: 'first.txt', data: new Blob(['xx']) })
+    })
+    const picker = await renderPicker(uppy, 'a.txt')
+
+    act(() => picker.source().checkbox(picker.item('a.txt'), false))
+    expect(error()).not.toBe('')
+
+    // e.g. the image editor or compressor shrinking a file
+    act(() => uppy.setFileState(id, { size: 1 }))
+    expect(error()).toBe('')
+  })
+
+  it('does not recompute for upload progress of files already in Uppy', async () => {
+    const { uppy } = setup({ '': [companionItem('a.txt')] })
+    let id!: string
+    act(() => {
+      id = uppy.addFile({ name: 'first.txt', data: new Blob(['x']) })
+    })
+    await renderPicker(uppy, 'a.txt')
+    const view = uppy.getPlugin('Dropbox')!.view as any
+    const validate = vi.spyOn(view, 'validateAggregateRestrictions')
+
+    act(() =>
+      uppy.setFileState(id, {
+        progress: { ...uppy.getFile(id).progress, percentage: 1 },
+      }),
+    )
+    expect(validate).not.toHaveBeenCalled()
+  })
+
+  it('SearchProviderView.donePicking() (Unsplash) reports whether files were added', async () => {
+    let reject = true
+    const uppy = new Uppy({ onBeforeFileAdded: () => !reject }).use(Unsplash, {
+      companionUrl: 'https://companion.test',
+    })
+    instances.push(uppy)
+    const plugin = uppy.getPlugin('Unsplash') as any
+    vi.spyOn(plugin.provider, 'search').mockResolvedValue({
+      items: [companionItem('cat.txt')],
+      nextPageQuery: null,
+    })
+    plugin.setPluginState({ searchString: 'cat' })
+    await plugin.view.search()
+    const [file] = plugin.view.getDisplayedPartialTree()
+    plugin.view.toggleCheckbox(file, false)
+
+    // every file rejected: nothing added, selection kept
+    expect(plugin.view.donePicking()).toBe(false)
+    expect(uppy.getFiles()).toHaveLength(0)
+    expect(plugin.view.getDisplayedPartialTree()[0].status).toBe('checked')
+
+    reject = false
+    expect(plugin.view.donePicking()).toBe(true)
+    expect(uppy.getFiles().map((f) => f.name)).toEqual(['cat.txt'])
   })
 })

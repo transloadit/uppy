@@ -46,6 +46,23 @@ export type RemoteSourceStore = {
   unmount: () => void
 }
 
+type Files = ReturnType<Uppy['getState']>['files']
+
+/** Whether the files the restrictions look at (which, their size, ghosts) are unchanged. */
+const sameFilesForRestrictions = (a: Files, b: Files) => {
+  if (a === b) return true
+  const ids = Object.keys(b)
+  return (
+    Object.keys(a).length === ids.length &&
+    ids.every(
+      (id) =>
+        a[id] !== undefined &&
+        a[id].size === b[id]!.size &&
+        a[id].isGhost === b[id]!.isGhost,
+    )
+  )
+}
+
 export function createRemoteSourceController(
   uppy: Uppy,
   sourceId: RemoteSourceKeys,
@@ -75,14 +92,19 @@ export function createRemoteSourceController(
   const onStateUpdate: UppyEventMap<any, any>['state-update'] = (
     prev,
     next,
+    patch,
   ) => {
-    // `error` also depends on the files already added to Uppy
+    // `error` also depends on the files in Uppy (not their progress), and on
+    // restrictions and locale, which `setOptions()` changes with an empty patch
     if (
-      prev.plugins[sourceId] !== next.plugins[sourceId] ||
-      prev.files !== next.files
+      patch &&
+      prev.plugins[sourceId] === next.plugins[sourceId] &&
+      sameFilesForRestrictions(prev.files, next.files)
     ) {
-      subscribers.emit()
+      return
     }
+    const prevSnapshot = cachedSnapshot
+    if (getSnapshot() !== prevSnapshot) subscribers.emit()
   }
 
   // Keep a cached snapshot so that the reference stays stable when nothing

@@ -210,15 +210,17 @@ export default class SearchProviderView<M extends Meta, B extends Body> {
     }
   }
 
-  donePicking(): void {
+  /** Returns `true` when the checked files were added to Uppy, like `ProviderView`. */
+  donePicking(): boolean {
     const { partialTree } = this.plugin.getPluginState()
 
-    // 1. Add files
+    // 1. Add files, keeping the selection when every file was rejected
     const companionFiles = getCheckedFilesWithPaths(partialTree)
-    addFiles(companionFiles, this.plugin, this.provider)
+    if (!addFiles(companionFiles, this.plugin, this.provider)) return false
 
     // 2. Reset state
     this.resetPluginState()
+    return true
   }
 
   toggleCheckbox(

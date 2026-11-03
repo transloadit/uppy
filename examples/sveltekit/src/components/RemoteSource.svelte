@@ -88,7 +88,7 @@ function setFolderCheckboxIndeterminate(
         <button
           type="button"
           class="text-blue-500"
-          onclick={() => close()}
+          onclick={() => remoteSource.cancel()}
         >
           Close
         </button>

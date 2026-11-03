@@ -16,7 +16,9 @@ export function useRemoteSource(
   // A new controller would open the root folder again, so an inline `onClose`
   // must not recreate it.
   const onCloseRef = useRef(options?.onClose)
-  onCloseRef.current = options?.onClose
+  useEffect(() => {
+    onCloseRef.current = options?.onClose
+  })
 
   const controller = useMemo(
     () =>

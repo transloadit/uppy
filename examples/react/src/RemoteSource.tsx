@@ -141,7 +141,7 @@ export function RemoteSource({
           <button
             type="button"
             className="text-blue-500"
-            onClick={() => close()}
+            onClick={() => cancel()}
           >
             Close
           </button>
