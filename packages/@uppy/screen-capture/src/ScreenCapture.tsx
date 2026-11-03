@@ -242,9 +242,11 @@ export default class ScreenCapture<
 
         this.videoStream = videoStream
 
-        // add event listener to stop recording if stream is interrupted
+        // add event listener to stop recording if stream is interrupted.
+        // `stop()` also makes the stream inactive, so ignore streams that
+        // are no longer the current one
         this.videoStream.addEventListener('inactive', () => {
-          this.streamInactivated()
+          if (this.videoStream === videoStream) this.streamInactivated()
         })
 
         this.setPluginState({
