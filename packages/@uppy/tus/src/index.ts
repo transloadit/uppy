@@ -220,9 +220,7 @@ export default class Tus<M extends Meta, B extends Body> extends BasePlugin<
    *    up a spot in the queue.
    *
    */
-  async #uploadLocalFile(
-    file: LocalUppyFile<M, B>,
-  ): Promise<tus.Upload | string> {
+  #uploadLocalFile(file: LocalUppyFile<M, B>): Promise<tus.Upload | string> {
     this.#abortUploader(file.id)
     this.#resetUploaderReferences(file.id)
 

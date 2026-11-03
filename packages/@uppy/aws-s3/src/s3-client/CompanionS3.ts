@@ -65,25 +65,8 @@ class S3Companion extends S3Client {
     const { url, fields }: { url: string; fields: Record<string, string> } =
       await response.json()
 
-    const formData = new FormData()
-    Object.entries(fields).forEach(([key, value]) => {
-      formData.set(key, value)
-    })
-    formData.set('file', data)
-
-    const xhr = await this._request({
-      url,
-      method: 'POST',
-      data: formData,
-      onProgress,
-      signal,
-    })
-
-    return {
-      location: `${url}${fields.key}`, // `url` is returned by the signer as the bucket URL without any path, but trailing slash, so we need to add the key (path) to get the full object URL
-      etag: U.sanitizeETag(xhr.getResponseHeader('etag')),
-      key: fields.key,
-    }
+    await this.waitForOnline(signal)
+    return this.postObject({ url, fields, data, onProgress, signal })
   }
 
   public override async createMultipartUpload({

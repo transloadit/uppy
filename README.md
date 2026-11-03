@@ -31,7 +31,7 @@ a versatile API to handle any file in your app.
 
 <table>
 <tr><th>Tests</th><td><img src="https://github.com/transloadit/uppy/workflows/CI/badge.svg" alt="CI status for Uppy tests"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion/badge.svg" alt="CI status for Companion tests"></td></tr>
-<tr><th>Deploys</th><td><img src="https://github.com/transloadit/uppy/workflows/Release/badge.svg" alt="CI status for CDN deployment"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion%20Edge%20Deploy/badge.svg" alt="CI status for Companion deployment"></td><td><img src="https://github.com/transloadit/uppy.io/workflows/Deploy%20to%20GitHub%20Pages/badge.svg" alt="CI status for website deployment"></td></tr>
+<tr><th>Deploys</th><td><img src="https://github.com/transloadit/uppy/workflows/Release/badge.svg" alt="CI status for CDN deployment"></td><td><img src="https://github.com/transloadit/uppy/workflows/Companion%20Edge%20Deploy/badge.svg" alt="CI status for Companion deployment"></td><td><img src="https://github.com/transloadit/uppy/actions/workflows/deploy-website.yml/badge.svg" alt="CI status for website deployment"></td></tr>
 </table>
 
 ## Example
@@ -104,7 +104,7 @@ npm install @uppy/core @uppy/dashboard @uppy/tus
 ```
 
 Add CSS
-[uppy.min.css](https://releases.transloadit.com/uppy/v6.0.4/uppy.min.css),
+[uppy.min.css](https://releases.transloadit.com/uppy/v6.0.5/uppy.min.css),
 either to your HTML page’s `<head>` or include in JS, if your bundler of choice
 supports it.
 
@@ -118,7 +118,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
 ```html
 <!-- 1. Add CSS to `<head>` -->
 <link
-  href="https://releases.transloadit.com/uppy/v6.0.4/uppy.min.css"
+  href="https://releases.transloadit.com/uppy/v6.0.5/uppy.min.css"
   rel="stylesheet"
 />
 
@@ -129,7 +129,7 @@ CDN. In that case `Uppy` will attach itself to the global `window.Uppy` object.
     Uppy,
     Dashboard,
     Tus,
-  } from 'https://releases.transloadit.com/uppy/v6.0.4/uppy.min.mjs'
+  } from 'https://releases.transloadit.com/uppy/v6.0.5/uppy.min.mjs'
 
   const uppy = new Uppy()
   uppy.use(Dashboard, { target: '#files-drag-drop' })

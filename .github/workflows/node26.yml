@@ -1,0 +1,87 @@
+# The required CI workflow is sourced from main by the organization ruleset.
+# A separate PR workflow qualifies Node 26 before these changes reach main.
+name: Node 26
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'assets/**'
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths-ignore:
+      - '**.md'
+      - 'assets/**'
+
+permissions:
+  contents: read
+
+env:
+  YARN_ENABLE_GLOBAL_CACHE: false
+
+jobs:
+  node26:
+    name: Build, tests, types and lint (26.12.1)
+    runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 30
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      # Node 26 no longer bundles Corepack.
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
+      - name: Report tool versions
+        run: |
+          node --version
+          corepack --version
+          corepack yarn --version
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "dir=$(corepack yarn config get cacheFolder)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v6
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install dependencies
+        run: corepack yarn install --immutable
+      - name: Install Playwright Browsers
+        run: corepack yarn workspace @uppy/dashboard playwright install --with-deps chromium
+      - name: Lint
+        run: corepack yarn check:ci
+      - name: Types
+        run: corepack yarn typecheck
+      - name: Build
+        run: corepack yarn build
+      # Companion unit tests mock synchronous in-memory events. Redis is
+      # exercised by the multi-instance end-to-end tests below.
+      - name: Run tests
+        run: corepack yarn test
+        env:
+          VITE_MINIO_CONFIG: "test_user,test_password,http://localhost:9002/test-bucket,us-east-1"
+      # This uncached task needs the Companion fixture environment in Turbo.
+      - name: Run end-to-end tests
+        run: corepack yarn test:e2e
+        env:
+          TURBO_ENV_MODE: loose
+          COMPANION_PROTOCOL: http
+          COMPANION_REDIS_URL: redis://localhost:6379
+      - name: Build and check examples
+        run: corepack yarn build:examples

@@ -5,7 +5,7 @@ file system.
 
 ## Run it
 
-To run this example, make sure you've correctly installed the **repository
+To run this example, make sure you’ve correctly installed the **repository
 root**:
 
 ```sh

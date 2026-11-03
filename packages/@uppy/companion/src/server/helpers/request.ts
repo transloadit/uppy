@@ -186,7 +186,7 @@ export async function getURLMeta(
     statusCode: number
   }
 
-  async function requestWithMethod(method: 'HEAD' | 'GET') {
+  function requestWithMethod(method: 'HEAD' | 'GET') {
     const protectedGot = getProtectedGot({ allowLocalIPs })
     const stream = protectedGot.stream(url, {
       method,

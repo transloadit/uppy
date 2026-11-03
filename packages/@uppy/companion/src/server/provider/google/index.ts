@@ -20,7 +20,7 @@ const getOauthClient = () =>
     prefixUrl: 'https://oauth2.googleapis.com',
   })
 
-export async function refreshToken({
+export function refreshToken({
   clientId,
   clientSecret,
   refreshToken: theRefreshToken,
@@ -49,7 +49,7 @@ export async function refreshToken({
   )
 }
 
-export async function logout({
+export function logout({
   providerUserSession: { accessToken: token },
 }: ProviderLogoutOptions<GoogleUserSession>): Promise<ProviderLogoutResponse> {
   return withGoogleErrorHandling(
