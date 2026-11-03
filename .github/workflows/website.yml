@@ -97,7 +97,7 @@ jobs:
         run: corepack yarn install --immutable
       - name: Build Uppy
         run: corepack yarn build
-      - name: Type check website
+      - name: Build website
         run: corepack yarn workspace uppy-io build
       - name: Test website
         run: corepack yarn workspace uppy-io test
