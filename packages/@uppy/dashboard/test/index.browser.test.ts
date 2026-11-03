@@ -31,22 +31,19 @@ test('Basic Dashboard functionality works in the browser', async () => {
   ) as HTMLInputElement
   await userEvent.upload(fileInput, new File(['Hello, World!'], 'test.txt'))
   await expect.element(page.getByText('test.txt')).toBeVisible()
-  await expect
-    .element(
-      page.getByRole('button', {
-        name: 'Cancel all uploads',
-        exact: true,
-      }),
-    )
-    .toBeVisible()
-  await expect
-    .element(
-      page.getByRole('button', {
-        name: 'Remove file test.txt',
-        exact: true,
-      }),
-    )
-    .toBeVisible()
+  // Accessible names are more specific, but visible text and tooltips stay short.
+  const cancelAllButton = page.getByRole('button', {
+    name: 'Cancel all uploads',
+    exact: true,
+  })
+  await expect.element(cancelAllButton).toBeVisible()
+  await expect.element(cancelAllButton).toHaveTextContent('Cancel')
+  const removeButton = page.getByRole('button', {
+    name: 'Remove file test.txt',
+    exact: true,
+  })
+  await expect.element(removeButton).toBeVisible()
+  await expect.element(removeButton).toHaveAttribute('title', 'Remove file')
   await page.getByTitle('Edit file test.txt').click()
   const licenseInput = page.getByLabelText('License')
   await expect.element(licenseInput).toBeVisible()
@@ -199,48 +196,48 @@ test('Upload, pause, and resume functionality', async () => {
 
   // Verify upload has started by checking StatusBar state
   await expect(page.getByText(/Uploading: \d+%/)).toBeVisible()
+  const filePauseButton = page.getByRole('button', {
+    name: 'Pause upload test.txt',
+    exact: true,
+  })
+  await expect.element(filePauseButton).toBeVisible()
+  await expect.element(filePauseButton).toHaveAttribute('title', 'Pause upload')
+  const pauseAllButton = page.getByRole('button', {
+    name: 'Pause all uploads',
+    exact: true,
+  })
+  await expect.element(pauseAllButton).toBeVisible()
+  await expect.element(pauseAllButton).toHaveAttribute('title', 'Pause')
+  const cancelAllButtons = page.getByRole('button', {
+    name: 'Cancel all uploads',
+    exact: true,
+  })
+  expect(await cancelAllButtons.all()).toHaveLength(2)
+  // The top bar button keeps its visible text, the StatusBar button its tooltip.
+  await expect.element(cancelAllButtons.first()).toHaveTextContent('Cancel')
   await expect
-    .element(
-      page.getByRole('button', {
-        name: 'Pause upload test.txt',
-        exact: true,
-      }),
-    )
-    .toBeVisible()
-  await expect
-    .element(
-      page.getByRole('button', {
-        name: 'Pause all uploads',
-        exact: true,
-      }),
-    )
-    .toBeVisible()
-  const cancelButtons = await page
-    .getByRole('button', { name: 'Cancel all uploads', exact: true })
-    .all()
-  expect(cancelButtons).toHaveLength(2)
+    .element(cancelAllButtons.last())
+    .toHaveAttribute('title', 'Cancel')
 
   // Find and click pause button
   const pauseButton = page.getByTitle('Pause', { exact: true })
   await expect(pauseButton).toBeVisible()
   await pauseButton.click()
 
+  const fileResumeButton = page.getByRole('button', {
+    name: 'Resume upload test.txt',
+    exact: true,
+  })
+  await expect.element(fileResumeButton).toBeVisible()
   await expect
-    .element(
-      page.getByRole('button', {
-        name: 'Resume upload test.txt',
-        exact: true,
-      }),
-    )
-    .toBeVisible()
-  await expect
-    .element(
-      page.getByRole('button', {
-        name: 'Resume all uploads',
-        exact: true,
-      }),
-    )
-    .toBeVisible()
+    .element(fileResumeButton)
+    .toHaveAttribute('title', 'Resume upload')
+  const resumeAllButton = page.getByRole('button', {
+    name: 'Resume all uploads',
+    exact: true,
+  })
+  await expect.element(resumeAllButton).toBeVisible()
+  await expect.element(resumeAllButton).toHaveAttribute('title', 'Resume')
 
   // Find and click resume button
   const resumeButton = page.getByTitle('Resume', { exact: true })
@@ -320,12 +317,12 @@ test('Non-resumable upload controls identify the affected file', async () => {
     },
   })
 
+  const fileCancelButton = page.getByRole('button', {
+    name: 'Cancel upload test.txt',
+    exact: true,
+  })
+  await expect.element(fileCancelButton).toBeVisible()
   await expect
-    .element(
-      page.getByRole('button', {
-        name: 'Cancel upload test.txt',
-        exact: true,
-      }),
-    )
-    .toBeVisible()
+    .element(fileCancelButton)
+    .toHaveAttribute('title', 'Cancel upload')
 })
