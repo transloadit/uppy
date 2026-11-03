@@ -8,9 +8,9 @@ import '@uppy/react/css/style.css'
 
 import styles from './files-grid.module.css'
 
-type UploadableFile = Parameters<InstanceType<typeof Uppy>['addFile']>[0]
+type UploadableFile = Parameters<Uppy['addFile']>[0]
 
-const fakeFiles = [
+const fakeFiles: UploadableFile[] = [
   {
     id: '2',
     name: 'how-to-talk-to-cats.pdf',
@@ -33,8 +33,7 @@ const fakeFiles = [
     source: 'Local',
     isRemote: false,
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-] satisfies UploadableFile[]
+]
 
 export default function FilesGridDemo() {
   const [files, setFiles] = useState<UploadableFile[]>([])
