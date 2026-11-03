@@ -329,7 +329,7 @@ describe('afterFill()', () => {
     ).rejects.toBeUndefined()
   })
 
-  it('rejects with the first failure and starts no listings after it', async () => {
+  it('rejects with the first failure and does no work after it', async () => {
     // eight checked folders; the queue runs six at a time
     const ids = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8']
     const tree: PartialTree = [
@@ -358,40 +358,40 @@ describe('afterFill()', () => {
       )
     }
 
+    const reportProgress = vi.fn()
+
     await expect(
-      afterFill(
-        tree,
-        mock,
-        () => null,
-        () => {},
-      ),
+      afterFill(tree, mock, () => null, reportProgress),
     ).rejects.toBe(first)
     // neither the queued f7/f8 nor the subfolders revealed by f3..f6 are listed
     expect(listed.sort()).toEqual(['f1', 'f2', 'f3', 'f4', 'f5', 'f6'])
+    // and no task completes after the failure, so the view does not re-render
+    expect(reportProgress).not.toHaveBeenCalled()
   })
 
-  it('fetches no further page of a running listing after a failure', async () => {
+  it('aborts the running requests on a failure, without waiting for them', async () => {
     // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
-      _folder('big', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+      _folder('slow', {
+        parentId: 'ourRoot',
+        cached: false,
+        status: 'checked',
+      }),
       _folder('bad', { parentId: 'ourRoot', cached: false, status: 'checked' }),
     ]
     const boom = new Error('boom')
-    const listed: string[] = []
-    const mock: ApiList = (path) => {
-      listed.push(path as string)
+    let slowSignal: AbortSignal | undefined
+    let slowSettled = false
+    const mock: ApiList = (path, signal) => {
       if (path === 'bad') return Promise.reject(boom)
-      if (path === 'big_page2') {
-        return Promise.resolve({ nextPagePath: null, items: [_cFile('big_2')] })
-      }
-      // the first page settles after 'bad' has failed, and points to a second
+      slowSignal = signal
+      // ignores the abort, and settles long after 'bad' has failed
       return new Promise((resolve) =>
-        setTimeout(
-          () =>
-            resolve({ nextPagePath: 'big_page2', items: [_cFile('big_1')] }),
-          20,
-        ),
+        setTimeout(() => {
+          slowSettled = true
+          resolve({ nextPagePath: null, items: [] })
+        }, 500),
       )
     }
 
@@ -403,7 +403,38 @@ describe('afterFill()', () => {
         () => {},
       ),
     ).rejects.toBe(boom)
-    expect(listed.sort()).toEqual(['bad', 'big'])
+    expect(slowSettled).toBe(false)
+    expect(slowSignal?.aborted).toBe(true)
+  })
+
+  it('rejects with the cancel when `signal` aborts after a failure', async () => {
+    // prettier-ignore
+    const tree: PartialTree = [
+      _root('ourRoot'),
+      _folder('slow', {
+        parentId: 'ourRoot',
+        cached: false,
+        status: 'checked',
+      }),
+      _folder('bad', { parentId: 'ourRoot', cached: false, status: 'checked' }),
+    ]
+    const user = new AbortController()
+    const mock: ApiList = (path, signal) => {
+      if (path === 'bad') return Promise.reject(new Error('boom'))
+      // the user cancels just as the failure aborts this request
+      signal.addEventListener('abort', () => user.abort())
+      return new Promise(() => {})
+    }
+
+    await expect(
+      afterFill(
+        tree,
+        mock,
+        () => null,
+        () => {},
+        user.signal,
+      ),
+    ).rejects.toHaveProperty('name', 'AbortError')
   })
 })
 
