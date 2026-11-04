@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { UppyContextProvider, FilesGrid } from '@uppy/react'
+import { FilesGrid, UppyContextProvider } from '@uppy/react'
+import { useEffect, useState } from 'react'
 import { Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
@@ -8,7 +8,7 @@ import '@uppy/react/css/style.css'
 
 import styles from './files-grid.module.css'
 
-type UploadableFile = Parameters<Uppy['addFile']>[0]
+type UploadableFile = Parameters<Uppy['addFiles']>[0][number]
 
 const fakeFiles: UploadableFile[] = [
   {
@@ -36,19 +36,11 @@ const fakeFiles: UploadableFile[] = [
 ]
 
 export default function FilesGridDemo() {
-  const [files, setFiles] = useState<UploadableFile[]>([])
-  const [uppy] = useState(() => {
-    const uppy = new Uppy()
-    return uppy
-  })
+  const [uppy] = useState(() => new Uppy())
 
   useEffect(() => {
-    setFiles(fakeFiles)
+    uppy.addFiles(fakeFiles)
   }, [uppy])
-
-  useEffect(() => {
-    files.forEach((file) => uppy.addFile(file))
-  }, [files])
 
   return (
     <BrowserWindow>

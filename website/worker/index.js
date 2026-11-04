@@ -108,9 +108,9 @@ export function jsonError(status, url, origin) {
       code: codes[status] ?? 'http_error',
       status,
       message:
-        status === 404 ?
-          `No page exists at ${new URL(url).pathname}`
-        : `Request failed with status ${status}`,
+        status === 404
+          ? `No page exists at ${new URL(url).pathname}`
+          : `Request failed with status ${status}`,
       resolution:
         {
           404: 'Check https://uppy.io/llms.txt for the documentation index, or https://uppy.io/sitemap.xml for every URL on this site.',

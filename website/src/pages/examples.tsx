@@ -1,18 +1,20 @@
-import React, { useCallback, useEffect, useReducer, useState } from 'react'
-import { useLocalStorage } from '@uidotdev/usehooks'
+import BrowserOnly from '@docusaurus/BrowserOnly'
+import Admonition from '@theme/Admonition'
 
 import Layout from '@theme/Layout'
-import Admonition from '@theme/Admonition'
-import BrowserOnly from '@docusaurus/BrowserOnly'
+import TabItem from '@theme/TabItem'
+import Tabs from '@theme/Tabs'
+import { useLocalStorage } from '@uidotdev/usehooks'
 import Dashboard from '@uppy/react/dashboard'
+import { useCallback, useEffect, useState } from 'react'
 import {
   Audio,
   Box,
   Dropbox,
+  GoldenRetriever,
   GoogleDrive,
   GoogleDrivePicker,
   GooglePhotosPicker,
-  GoldenRetriever,
   ImageEditor,
   OneDrive,
   ScreenCapture,
@@ -23,17 +25,15 @@ import {
   Webcam,
   Zoom,
 } from 'uppy'
-import Tabs from '@theme/Tabs'
-import TabItem from '@theme/TabItem'
 
 import locales from '../locales.js'
 
 import 'uppy/dist/uppy.min.css'
 
-import styles from './examples.module.css'
-import Heading from '@theme/Heading'
 import Link from '@docusaurus/Link'
-import { Locale } from '@uppy/core/utils'
+import Heading from '@theme/Heading'
+import type { Locale } from '@uppy/core/utils'
+import styles from './examples.module.css'
 
 const restrictions = {
   maxFileSize: 1000000,
@@ -188,19 +188,20 @@ const options: Option[] = [
   },
 ]
 
+const disabled = (value: string) =>
+  options.some((section) =>
+    section.options.some(
+      (option) =>
+        value === option.value && 'disabled' in option && option.disabled,
+    ),
+  )
+
 interface UppyProps {
   locale: Locale<number> | undefined
   state: State
 }
 
 const Uppy = ({ state, locale }: UppyProps) => {
-  const disabled = (value: string) =>
-    options.some((section) =>
-      section.options.some(
-        (option) =>
-          value === option.value && 'disabled' in option && option.disabled,
-      ),
-    )
   const createUppy = useCallback(() => {
     const uppy = new UppyCore({
       restrictions: state.restrictions,
@@ -292,14 +293,14 @@ const Uppy = ({ state, locale }: UppyProps) => {
         theme={state.theme}
         disabled={state.disabled}
         note={
-          state.restrictions ?
-            'Images and video only, 2–3 files, up to 1 MB'
-          : null
+          state.restrictions
+            ? 'Images and video only, 2–3 files, up to 1 MB'
+            : null
         }
         metaFields={
-          state.restrictions ?
-            [{ id: 'caption', name: 'Caption', placeholder: 'Add a Caption' }]
-          : undefined
+          state.restrictions
+            ? [{ id: 'caption', name: 'Caption', placeholder: 'Add a Caption' }]
+            : undefined
         }
       />
     </div>
@@ -327,13 +328,13 @@ function Page() {
   const [locale, setLocale] = useState<Locale>()
   const dispatch = useCallback(
     (action: Action) => setPersistentState(reducer(state, action)),
-    [state],
+    [state, setPersistentState],
   )
 
   return (
     <Layout>
-      <main className={styles['main']}>
-        <Heading className={styles['h1']} as="h1">
+      <main className={styles.main}>
+        <Heading className={styles.h1} as="h1">
           Examples
         </Heading>
         <Admonition type="note">
@@ -388,11 +389,11 @@ function Page() {
           acquire plugins, such as Google Drive and Webcam, under one roof.
         </p>
         <section className={styles['options-and-uppy']}>
-          <div className={styles['options']}>
+          <div className={styles.options}>
             {options.map((section) => {
               return (
                 <div key={section.heading}>
-                  <Heading className={styles['h3']} as="h3">
+                  <Heading className={styles.h3} as="h3">
                     {section.heading}
                   </Heading>
                   <div
@@ -409,12 +410,13 @@ function Page() {
                             title={title}
                             checked={
                               // Forgive me for this logic
-                              disabled ? false
-                              : Array.isArray(state[type]) ?
-                                state[type].includes(value!)
-                              : type === 'theme' ?
-                                state.theme === 'dark'
-                              : Boolean(state[type])
+                              disabled
+                                ? false
+                                : Array.isArray(state[type])
+                                  ? state[type].includes(value!)
+                                  : type === 'theme'
+                                    ? state.theme === 'dark'
+                                    : Boolean(state[type])
                             }
                             disabled={disabled}
                             onChange={(event) =>
@@ -439,7 +441,7 @@ function Page() {
             <div className={styles['options-locale']}>
               {/* The visible heading is the field's name, so it is pointed at
                   rather than duplicated in an aria-label. */}
-              <Heading className={styles['h3']} as="h3" id="locale-label">
+              <Heading className={styles.h3} as="h3" id="locale-label">
                 Locale
               </Heading>
               <select

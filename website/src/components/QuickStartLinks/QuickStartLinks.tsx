@@ -1,13 +1,12 @@
-import React from 'react'
-import Heading from '@theme/Heading'
 import Link from '@docusaurus/Link'
-
+import Heading from '@theme/Heading'
+import type React from 'react'
+import IconAngular from '../../../static/img/angular.svg'
 import IconNextjs from '../../../static/img/nextjs.svg'
 import IconReact from '../../../static/img/react.svg'
-import IconVue from '../../../static/img/vue.svg'
-import IconSvelte from '../../../static/img/svelte.svg'
-import IconAngular from '../../../static/img/angular.svg'
 import IconReactRouter from '../../../static/img/react-router.svg'
+import IconSvelte from '../../../static/img/svelte.svg'
+import IconVue from '../../../static/img/vue.svg'
 
 import styles from './styles.module.css'
 
@@ -23,8 +22,9 @@ type Props = {
 export const QuickStartLinks = (props: Props) => {
   return (
     <section className={styles.section}>
-      {props.items.map((item) => (
-        <Link to={item.link}>
+      {props.items.map((item, idx) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: Items don’t have a unique identifier.
+        <Link key={idx} to={item.link}>
           <div className={styles.item}>
             <Heading as="h2">{item.name}</Heading>
             <p>{item.description}</p>
