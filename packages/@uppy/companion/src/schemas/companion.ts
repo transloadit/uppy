@@ -135,8 +135,10 @@ export interface TransloaditStorageProviderOptions
   extends Omit<S3ProviderOptions, 'bucket' | 'prefix' | 'key' | 'secret'> {
   /** Transloadit API endpoint, e.g. `https://api2.transloadit.com`. */
   apiEndpoint: string
-  /** Credentials per Workspace slug. */
-  workspaces: Record<string, { key: string; secret: string }>
+  /** Static credentials per Workspace; mutually exclusive with credentialsSecret. */
+  workspaces?: Record<string, { key: string; secret: string }>
+  /** Server-only key for API2's credential resolver; never a browser grant or Auth Key. */
+  credentialsSecret?: string
 }
 
 type ProviderConstructor = typeof Provider
@@ -198,6 +200,15 @@ export interface CompanionInitOptions {
   s3?: S3ClientOptions &
     S3ObjectWriteOptions & {
       getKey?: GetKeyFn | undefined
+      /**
+       * POST policy conditions for `/s3/params` uploads, where S3 applies
+       * them all. On `/s3/multipart` uploads Companion applies only these:
+       * Content-Type conditions (`eq`, `starts-with` and the
+       * `{ 'Content-Type': value }` form) when the upload is created, and
+       * `content-length-range` when it is completed (the upload is aborted
+       * if its size is outside the range). `/s3/sts` credentials and
+       * server-side imports (from providers and URLs) ignore all conditions.
+       */
       conditions?: PresignedPostOptions['Conditions'] | undefined
       expires?: number | undefined
     }

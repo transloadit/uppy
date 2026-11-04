@@ -1,0 +1,24 @@
+{
+  "name": "@uppy-dev/msw-setup",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Enables MSW network mocking for a browser test file. Import it for its side effect; requires the `msw()` Vite plugin.",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "build": "tsc --build tsconfig.build.json",
+    "typecheck": "tsc --build"
+  },
+  "peerDependencies": {
+    "msw": "^3.0.2",
+    "vitest": "^5.0.3"
+  },
+  "devDependencies": {
+    "@uppy-dev/tsconfig": "workspace:^",
+    "msw": "^3.0.2",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.3"
+  }
+}

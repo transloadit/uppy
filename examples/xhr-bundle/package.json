@@ -8,13 +8,13 @@
     "@uppy/xhr-upload": "workspace:*",
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "multer": "^2.4.0"
+    "multer": "^2.5.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/multer": "^2.2.0",
     "npm-run-all2": "^9.0.3",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   },
   "private": true,
   "scripts": {

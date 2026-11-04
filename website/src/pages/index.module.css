@@ -1,0 +1,1611 @@
+/* ==========================================================================
+   Homepage
+   Light throughout. One accent (Uppy pink), one light source (from above),
+   one card treatment reused everywhere.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------ Shared */
+
+.eyebrow {
+  font-size: 0.875rem;
+  font-weight: 600;
+  /* pink-700, not pink-600: at 14px this is small text, so it needs 4.5:1, and
+     pink-600 lands on 4.44 against the band's ink-50 ground. */
+  color: var(--u-pink-700);
+  margin: 0 0 0.75rem;
+}
+
+/* The one emitting element on the page. The trailing chevron carries its own
+   whitespace, so the right padding is cut back to make the two sides *look*
+   equal rather than measure equal. */
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.3rem;
+  height: 3rem;
+  padding: 0 1.15rem 0 1.5rem;
+  border-radius: var(--u-radius-md);
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #fff;
+  background: linear-gradient(180deg, #ff4a86, var(--u-pink-500));
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 28%),
+    0 1px 2px rgb(184 0 74 / 30%),
+    0 6px 18px rgb(255 51 119 / 24%);
+  transition:
+    background-color 150ms var(--u-ease),
+    box-shadow 150ms var(--u-ease),
+    transform 150ms var(--u-ease);
+}
+
+.chevron {
+  width: 1.0625rem;
+  height: 1.0625rem;
+  flex: none;
+  opacity: 0.75;
+}
+
+.primary:hover {
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 28%),
+    0 1px 2px rgb(184 0 74 / 30%),
+    0 10px 24px rgb(255 51 119 / 30%);
+}
+
+.primary:active {
+  transform: translateY(0);
+  box-shadow:
+    inset 0 1px 2px rgb(184 0 74 / 25%),
+    0 1px 1px rgb(184 0 74 / 20%);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ifm-color-primary);
+}
+
+.textLink span {
+  transition: transform 150ms var(--u-ease);
+}
+
+.textLink:hover {
+  text-decoration: none;
+}
+
+.textLink:hover span {
+  transform: translateX(3px);
+}
+
+/* -------------------------------------------------------------------- Hero */
+
+.hero {
+  position: relative;
+  isolation: isolate;
+  /* Bottom padding is not decoration: the hero clips overflow (for .glow), and
+     without it the uploader card's drop shadow is cut off along its bottom
+     edge and the card stops reading as lifted. */
+  /* The hero owns the run-out to the next section, so the ambient layers have
+     room to dissolve instead of stopping on a hard edge. */
+  padding: 5rem 1.5rem 9rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+@media screen and (max-width: 45rem) {
+  .hero {
+    padding: 3.25rem 1.5rem 5rem;
+  }
+}
+
+/* The light source: a soft pink wash behind the headline, falling off fast. */
+.glow {
+  position: absolute;
+  z-index: -3;
+  top: -24rem;
+  left: 50%;
+  width: min(78rem, 150vw);
+  height: 46rem;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    closest-side,
+    rgb(255 51 119 / 20%),
+    rgb(255 51 119 / 7%) 55%,
+    rgb(255 51 119 / 0%) 100%
+  );
+  pointer-events: none;
+}
+
+/* ------------------------------------------------------------------ Sparks */
+
+/* Uploads, made ambient: 1px lines drifting up behind the hero. The field is
+   masked at both ends so sparks emerge and dissolve instead of clipping. */
+.sparks {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: layout paint;
+  /* Two masks intersected: sparks dissolve at the top and bottom of the band,
+     and also toward the left and right edges so no lone 1px tick is left
+     stranded in the page margin looking like a stray border. */
+  mask-image:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 7%,
+      #000 84%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to right,
+      transparent 0%,
+      #000 8%,
+      #000 92%,
+      transparent 100%
+    );
+  mask-composite: intersect;
+  -webkit-mask-image:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000 7%,
+      #000 84%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to right,
+      transparent 0%,
+      #000 8%,
+      #000 92%,
+      transparent 100%
+    );
+  -webkit-mask-composite: source-in;
+}
+
+.spark {
+  position: absolute;
+  top: 100%;
+  width: 1px;
+  /* Four stops: transparent tail, body, bright head, then back to transparent
+     so the leading tip fades instead of ending on a guillotined 1px cap. */
+  background: linear-gradient(
+    to top,
+    rgb(255 51 119 / 0%) 0%,
+    rgb(255 51 119 / 45%) 55%,
+    rgb(255 51 119 / 100%) 90%,
+    rgb(255 51 119 / 0%) 100%
+  );
+  opacity: 0;
+  animation-name: rise;
+  /* Launch and settle, like an ember losing momentum. */
+  animation-timing-function: cubic-bezier(0.05, 0.72, 0.28, 1);
+  animation-iteration-count: infinite;
+}
+
+/* Brightness decays to nothing by 62%, leaving each track dark for the rest of
+   its cycle — otherwise the field is a set of permanently lit columns. */
+@keyframes rise {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  6% {
+    opacity: var(--peak, 0.6);
+  }
+  45% {
+    opacity: calc(var(--peak, 0.6) * 0.55);
+  }
+  70% {
+    opacity: 0;
+  }
+  100% {
+    transform: translate3d(0, -62rem, 0);
+    opacity: 0;
+  }
+}
+
+/* Below this the uploader card spans nearly the full width, so the field would
+   be paid for and never seen. */
+@media screen and (max-width: 58rem) {
+  .sparks {
+    display: none;
+  }
+}
+
+/* Motion is the whole point here, so it goes away entirely rather than
+   freezing into a set of stray lines. */
+@media (prefers-reduced-motion: reduce) {
+  .sparks {
+    display: none;
+  }
+}
+
+/* Grain — kills the gradient banding and adds tooth. Felt, not seen. Sits
+   above the glow it de-bands, but below the sparks: noise over a 1px hairline
+   makes a clean line look like sensor dirt. */
+.hero::after {
+  content: '';
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  /* Without this the texture ends on the hero's bottom edge and draws a
+     visible seam across the page. It has to dissolve, not stop. */
+  mask-image: linear-gradient(to bottom, #000 45%, transparent 92%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 45%, transparent 92%);
+}
+
+.heroInner {
+  /* Wide enough to hold the headline on one line at its largest size. */
+  max-width: 52rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mark {
+  display: block;
+  margin: 0 auto 1.5rem;
+  width: 3.5rem;
+  height: auto;
+}
+
+.title {
+  font-size: clamp(2.125rem, 5vw, 3.25rem);
+  font-weight: 600;
+  line-height: 1.08;
+  /* Inter needs a firmer negative track at display sizes than Plex did. */
+  letter-spacing: -0.032em;
+  color: var(--u-ink-900);
+  margin: 0;
+  text-wrap: balance;
+}
+
+.lede {
+  margin: 1.5rem 0 0;
+  font-size: 1.1875rem;
+  line-height: 1.6;
+  color: var(--u-ink-600);
+  max-width: 36rem;
+  text-wrap: pretty;
+}
+
+/* ----------------------------------------------------------------- Install */
+
+/* Sits on the page, not in a panel — it's the caption to the uploader. */
+.install {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+/* Text labels rather than pills, so they need real space between them — and no
+   negative margin, since there is no pill padding left to cancel out. */
+.targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.125rem;
+}
+
+/* ---- The command field: tab strip docked to the input it configures ---- */
+
+/* Both tab variants live in here, and the box keeps one height across the swap:
+   the column is centred against the uploader, so a shorter variant would
+   recentre and drag the tab strip up with it. The floor is the taller of the
+   two — the prompt panel's 11rem scroller plus its 1px borders. Below the
+   side-by-side breakpoint the column isn't centred against anything, so the
+   floor would only add dead space. */
+.installBody {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+@media screen and (min-width: 58rem) {
+  .installBody {
+    min-height: calc(11rem + 2px);
+  }
+}
+
+.field {
+  width: 100%;
+  background: #fff;
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-md);
+}
+
+.managers {
+  display: flex;
+  background: var(--u-ink-50);
+  border-bottom: 1px solid var(--u-line);
+  border-radius: var(--u-radius-md) var(--u-radius-md) 0 0;
+  overflow: hidden;
+}
+
+.managerInput {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+}
+
+.managerInput + label {
+  padding: 0.4rem 0.95rem;
+  font-family: var(--ifm-font-family-monospace);
+  font-size: 0.75rem;
+  color: var(--u-ink-500);
+  cursor: pointer;
+  /* Covers the strip's bottom hairline so the active tab merges into the
+     field below it. */
+  margin-bottom: -1px;
+  padding-bottom: calc(0.4rem + 1px);
+  border-right: 1px solid var(--u-line);
+  transition:
+    background-color 150ms var(--u-ease),
+    color 150ms var(--u-ease);
+}
+
+.managerInput:not(:checked) + label:hover {
+  color: var(--u-ink-800);
+}
+
+.managerInput:checked + label {
+  background: #fff;
+  color: var(--u-ink-900);
+  font-weight: 600;
+}
+
+.managerInput:focus-visible + label {
+  outline: 2px solid var(--u-pink-500);
+  outline-offset: -2px;
+}
+
+.targetInput {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+}
+
+.targetInput + label {
+  position: relative;
+  /* Enough bottom padding to seat the rule clear of the descenders. */
+  padding: 0.25rem 0.125rem 0.5rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--u-ink-500);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 150ms var(--u-ease);
+}
+
+/* Every label carries its own rule, revealed by animating the clip rather than
+   the width — clipping leaves the bar at its final length the whole time, so it
+   wipes in instead of growing out of a 1px stub. Same pink as the navbar's
+   active indicator, so "you are here" reads the same in both places. */
+.targetInput + label::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--u-pink-500);
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 220ms var(--u-ease);
+}
+
+.targetInput:not(:checked) + label:hover {
+  color: var(--u-ink-800);
+}
+
+.targetInput:checked + label {
+  color: var(--u-ink-900);
+}
+
+.targetInput:checked + label::after {
+  clip-path: inset(0 0 0 0);
+}
+
+.targetInput:focus-visible + label {
+  outline: 2px solid var(--u-pink-500);
+  outline-offset: 2px;
+  border-radius: var(--u-radius-sm);
+}
+
+/* The field owns the border now, so the input inside is chromeless. */
+.heroInstall {
+  width: 100%;
+  justify-content: space-between;
+  border: none;
+  border-radius: 0 0 var(--u-radius-md) var(--u-radius-md);
+  background: transparent;
+  box-shadow: none;
+}
+
+.heroAgent {
+  width: 100%;
+}
+
+/* inline-block, not flex: when this wraps to two lines the arrow must follow the
+   last word rather than float to the far edge — but it still needs to be a block
+   box, because a purely inline one drops the top margin and the caption ends up
+   sitting right under the field on leading alone. */
+.installDocs {
+  display: inline-block;
+  margin-top: 15px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--ifm-color-primary);
+}
+
+.installDocs span {
+  display: inline-block;
+  transition: transform 150ms var(--u-ease);
+}
+
+.installDocs:hover {
+  text-decoration: none;
+}
+
+.installDocs:hover span {
+  transform: translateX(3px);
+}
+
+@media screen and (max-width: 58rem) {
+  .install {
+    margin-top: 2.5rem;
+    align-items: center;
+    text-align: center;
+  }
+
+  .targets {
+    justify-content: center;
+  }
+}
+
+/* ---------------------------------------------------------------- Showcase */
+
+/* Sits under both hero columns and centred on the page, because it speaks to the
+   whole thing rather than to the uploader or the install command. A small
+   headline with its own call to action, set well clear of the hero above so it
+   reads as its own beat rather than as a caption to the install block. */
+.heroHandoff {
+  max-width: 44rem;
+  margin: 7rem auto 0;
+}
+
+.heroHandoff p {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.018em;
+  color: var(--u-ink-900);
+  text-wrap: balance;
+}
+
+.heroHandoff a {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  white-space: nowrap;
+}
+
+.heroHandoff a span {
+  display: inline-block;
+  transition: transform 150ms var(--u-ease);
+}
+
+.heroHandoff a:hover {
+  text-decoration: none;
+}
+
+.heroHandoff a:hover span {
+  transform: translateX(3px);
+}
+
+/* No tray. The uploader is the object; the install block is text beside it. */
+.showcase {
+  max-width: var(--u-container);
+  margin: 3.5rem auto 0;
+  text-align: left;
+}
+
+@media screen and (min-width: 58rem) {
+  .showcase {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  /* Optical, not structural: dead-centre against the uploader sits a touch low
+     next to the framework pills, so the block rides 12px high. Deliberately px
+     — the root font-size is 18px here, so 0.75rem would have been 13.5. And a
+     transform rather than a margin because the column is centred: a margin
+     would only move it half as far, being shared between the two sides. */
+  .showcase .install {
+    transform: translateY(-12px);
+  }
+}
+
+.demoCol {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The one lifted surface on the page: faint top-lit gradient, hairline rim, and
+   a shadow that does the lifting.
+
+   The shadow is a ramp, not a single drop: each layer roughly doubles the blur
+   of the one before it and fades as it grows, which is how a real penumbra falls
+   off. Negative spreads on the wide layers pull them back under the card so the
+   near ones stay tight and only the far ones bloom, and the hairline ring plus
+   the inset top highlight give the edge something to sit on. All tinted with the
+   slate ink rather than black — a neutral shadow on a warm-white page reads as
+   dirt. */
+.demo {
+  width: 100%;
+  background: linear-gradient(180deg, #fff, #fdfdfe);
+  border: 1px solid var(--u-line);
+  border-radius: var(--u-radius-xl);
+  overflow: hidden;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgb(13 21 38 / 3%),
+    0 1px 1px rgb(13 21 38 / 4%),
+    0 3px 4px -1px rgb(13 21 38 / 4%),
+    0 8px 12px -3px rgb(13 21 38 / 5%),
+    0 20px 28px -8px rgb(13 21 38 / 6%),
+    0 40px 56px -16px rgb(13 21 38 / 7%),
+    0 72px 96px -32px rgb(13 21 38 / 8%);
+}
+
+/* Uppy ships its own chrome and a fixed 650px width; the tray is the frame
+   here, so let the Dashboard fill it edge to edge. */
+.demo :global(.uppy-Dashboard-inner) {
+  border: none;
+  border-radius: var(--u-radius-md);
+  background-color: #fff;
+}
+
+/* The 460px height is a desktop figure, set inline by the plugin — once the
+   card goes full width a shorter box suits the stacked source list. */
+@media screen and (max-width: 58rem) {
+  .demo :global(.uppy-Dashboard-inner) {
+    height: 380px !important;
+  }
+}
+
+/* Uppy's stock accent is blue. Inside the hero it sits two inches from the
+   brand pink, so re-tint it here only — docs and examples keep the default. */
+.demo :global(.uppy-Dashboard-browse) {
+  color: var(--ifm-color-primary);
+}
+
+.demo :global(.uppy-Dashboard-browse:hover) {
+  border-bottom-color: var(--ifm-color-primary);
+}
+
+.demo :global(.uppy-c-btn-primary) {
+  background-color: var(--u-pink-500);
+}
+
+/* Uppy's dashed drop outline would be a fourth nested rectangle inside 20px.
+   The panel edge already says "this is the drop area". */
+.demo :global(.uppy-Dashboard-AddFiles) {
+  border-color: transparent;
+}
+
+@media screen and (max-width: 45rem) {
+  .showcase {
+    padding: 0.5rem;
+    margin-top: 2rem;
+  }
+}
+
+/* -------------------------------------------------------------------- Main */
+
+.main {
+  padding: 0 1.5rem;
+}
+
+.section {
+  max-width: var(--u-container);
+  margin: 6rem auto 0;
+}
+
+/* A full-bleed change of ground. Breaks out of .main's gutter, then puts the
+   content back on the shared container. */
+.band {
+  margin: 6rem -1.5rem 0;
+  padding: 5rem 1.5rem;
+  background: var(--u-ink-50);
+  border-block: 1px solid var(--u-line);
+}
+
+.band .section {
+  margin-top: 0;
+}
+
+/* The band now follows the hero directly, and the hero already carries the
+   run-out — stacking its own top margin on top left a dead white slab. */
+.main > .band:first-child {
+  margin-top: 0;
+}
+
+/* Companion and Integrations are one idea — where files come from, where the
+   code goes — so they sit closer together than the sections around them. */
+.band + .section {
+  margin-top: 6rem;
+}
+
+.sectionHead {
+  max-width: 36rem;
+}
+
+.sectionHead h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.375rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--u-ink-900);
+  margin: 0 0 1rem;
+  text-wrap: balance;
+}
+
+.sectionHead p {
+  color: var(--u-ink-600);
+  line-height: 1.65;
+  margin: 0 0 1.25rem;
+}
+
+/* The colour has to be restated here: `.sectionHead p` outweighs `.eyebrow`, so
+   the section eyebrows were rendering slate and the copy column had no accent in
+   it at all. */
+.sectionHead .eyebrow {
+  color: var(--u-pink-700);
+  margin-bottom: 0.75rem;
+}
+
+@media screen and (min-width: 62rem) {
+  .section {
+    margin-top: 8rem;
+  }
+
+  .band {
+    margin-top: 8rem;
+  }
+
+  .band + .section {
+    margin-top: 6rem;
+  }
+}
+
+/* --------------------------------------------------------------- Providers */
+
+/* The sources fan out from the Uppy mark rather than ringing it — see the note
+   on `sources` in index.tsx for why the asymmetry is the point. 5:4 because a
+   square left dead corners once the arrangement stopped being radial.
+
+   Sized in container-query units so every proportion is derived from the one
+   width. Percentages against `rem` diameters is what put the inner discs 26px
+   *over* the core on a 320px phone. */
+.cluster {
+  position: relative;
+  container-type: inline-size;
+  width: 100%;
+  max-width: 38rem;
+  /* Nine tiles of one size, none overlapping and no wire crossing another, needs
+     this much room — the geometry is solved against the box, so the ratio and the
+     coordinates in index.tsx go together. */
+  aspect-ratio: 100 / 88;
+  margin: 2.5rem auto 0;
+  /* One faint pink pool behind the core. A white layer over it drew a visible
+     edge through the artwork, and at ΔL* 1.6 across a 600px field it was too
+     faint to be structure and too present to be nothing. */
+  background: radial-gradient(
+    32% 36% at 39% 50%,
+    rgb(255 51 119 / 8%),
+    rgb(255 51 119 / 0) 72%
+  );
+}
+
+/* The wires that tie every source back to the core. Hairline and non-scaling, so
+   they stay 1px whatever size the cluster renders at. */
+.wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.wires path {
+  fill: none;
+  stroke: #c2ccda;
+  stroke-width: 1;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.orbit {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Above the wires: a parent's ::after paints after its content, and the tiles
+   have to cover the ends of the lines that run under them. */
+.orbit li,
+.clusterCore {
+  position: absolute;
+  translate: -50% -50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  /* Squircles, not circles: the radius language the rest of the page uses, and
+     the one these services use for their own app icons. */
+  border-radius: 26%;
+  background: #fff;
+  aspect-ratio: 1;
+}
+
+/* All one size — nine tiles of equal weight, with the marks inside them sized per
+   brand instead. The page lights from above, so they carry the same top-lit ramp
+   as the hero card rather than floating as flat stickers. */
+.orbit li {
+  width: 14cqw;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgb(13 21 38 / 4%),
+    0 1px 2px rgb(13 21 38 / 5%),
+    0 4px 8px -2px rgb(13 21 38 / 6%),
+    0 10px 18px -6px rgb(13 21 38 / 7%);
+}
+
+/* Per-brand, from measured ink coverage — see `sources`. */
+.orbit img {
+  width: var(--mark, 40%);
+  height: auto;
+}
+
+/* The core keeps the circle: that difference is what says "this one is us, those
+   are them", and it costs nothing. */
+.clusterCore {
+  top: 50%;
+  left: 39%;
+  width: 23cqw;
+  border-radius: 50%;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 1px rgb(255 51 119 / 10%),
+    0 2px 4px rgb(13 21 38 / 5%),
+    0 8px 16px -4px rgb(13 21 38 / 6%),
+    0 20px 34px -10px rgb(255 51 119 / 14%),
+    0 40px 60px -24px rgb(13 21 38 / 10%);
+}
+
+.clusterCore img {
+  width: 46%;
+  height: auto;
+}
+
+/* ------------------------------------------------- Two-column text + panel */
+
+@media screen and (min-width: 58rem) {
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+    gap: 4.5rem;
+    /* Top-aligned: centring left a short panel floating in dead white. */
+    align-items: start;
+  }
+
+  /* The cluster is the taller column here, so the copy centres against it.
+     The band keeps the page container's width — capping it moved the copy off
+     the left edge every other section aligns to, which is worse than any
+     amount of air. The cluster is capped and pushed to the right edge instead,
+     so both columns land on an actual alignment. */
+  .band .split {
+    grid-template-columns: minmax(0, 26rem) minmax(0, 1fr);
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .band .split .cluster {
+    max-width: 38rem;
+    width: 100%;
+    margin: 0 0 0 auto;
+  }
+}
+
+/* ------------------------------------------------------------ Capabilities */
+
+/* Nine items, so three columns: auto-fit was choosing four on a wide viewport
+   and leaving the last row ragged. */
+.capabilities {
+  list-style: none;
+  margin: 3rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2.5rem 3rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+
+@media screen and (min-width: 58rem) {
+  .capabilities {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.capabilities li {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+/* Bare icons — no conjured tile — all in the accent. They sit at 22px against
+   17px headings, so the pink is a tint of the list rather than ten competing
+   focal points. */
+.capabilities li > svg {
+  width: 1.375rem;
+  height: 1.375rem;
+  flex: none;
+  color: var(--u-pink-500);
+  /* Optically aligned to the heading's cap height rather than its line box, so
+     the icon sits level with the text instead of with the leading above it. */
+  margin-top: calc(0.15rem - 4px);
+}
+
+.capabilities h3 {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--u-ink-900);
+  margin: 0 0 0.375rem;
+  letter-spacing: -0.01em;
+}
+
+.capabilities p {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--u-ink-600);
+}
+
+/* Same reasoning as the prose-link rule in custom.css: these sit inside
+   sentences, so colour alone can't carry them. The standalone links elsewhere on
+   this page — the section CTAs, the hand-off, the install docs line — are not in
+   a block of text and are deliberately left undecorated. */
+.capabilities p a,
+.provenance p a {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.16em;
+  text-decoration-color: color-mix(in srgb, currentcolor 40%, transparent);
+  transition: text-decoration-color 150ms var(--u-ease);
+}
+
+.capabilities p a:hover,
+.provenance p a:hover {
+  text-decoration-color: currentcolor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capabilities p a,
+  .provenance p a {
+    transition: none;
+  }
+}
+
+/* -------------------------------------------------------------- Provenance */
+
+/* End matter wearing the page's section signature: eyebrow, ink-900 heading,
+   ink-600 prose. Earlier versions dropped the heading and became the only unit
+   on the page with no dark title in first position, which is what read as
+   foreign even though every measurement inside them was sound.
+
+   29.25px is the page's own minor-heading step (42.75 / 29.25 / 19.125 / 16.875
+   / 15.75); it was unused only because the page had no minor section until now.
+
+   The rule is the footnote rule — it says what follows is of a different order
+   than what precedes, which spacing alone could not say. A hairline, not a third
+   tinted ground, so the end of the page doesn't become stripes. */
+.provenance {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid var(--u-line);
+}
+
+.provenance h2 {
+  font-size: 1.625rem;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--u-ink-900);
+  margin: 0 0 1rem;
+}
+
+/* Measure in `em`, not `rem`: the root font-size steps down between 1000 and
+   1300px, and a rem cap would let the line length drift with it. 31em holds ~65
+   characters at either root.
+
+   `:not(.eyebrow)` because this selector otherwise outweighs `.eyebrow` and
+   turns the label slate — the same specificity trap that had every section
+   eyebrow rendering the wrong colour. */
+.provenance p:not(.eyebrow) {
+  margin: 0;
+  max-width: 31em;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--u-ink-600);
+  text-wrap: pretty;
+}
+
+/* ---- The lineage card ---- */
+
+/* No card of its own: the two lanes ARE the cards. A panel around them put a
+   card inside a card, two nested rounded rectangles with the outer one adding
+   nothing but a second edge to read. The lanes carry the page's card treatment
+   instead, and the figure is just the box they lay out in. */
+.lineage {
+  /* The lanes stack off this box's width, not the viewport's. */
+  container-type: inline-size;
+  margin: 2.5rem 0 0;
+}
+
+/* Two lanes, each owning its logo, its rail and its steps. The file is handed
+   from one to the other across the gap between them.
+
+   Inside a lane the mark is centred over the rail that runs beneath it. The
+   mark led on narrow screens and trailed on wide ones in an earlier version,
+   which had the two breakpoints telling opposite stories: leading, Transloadit
+   reads as the party doing Resize/Encode/Deliver; trailing, it reads as the
+   place the file is being uploaded to, which is the one thing this section is
+   not saying. Now both lanes read [who] then [what they do] at every width, and
+   going narrow only turns the row into a column.
+
+   `--loop` is shared by both lanes' files and every station flash, so the whole
+   diagram runs off one clock. */
+.line {
+  --loop: 4.4s;
+  --logo-h: 2rem;
+  /* Where the rail line sits inside its box. The file rides above the line and
+     overflows this box upward into the row gap; reserving its full height
+     instead left a conspicuous hollow band in whichever lane wasn't holding
+     it. */
+  --rail-y: 1.75rem;
+
+  display: flex;
+  align-items: flex-start;
+  /* Wide enough that the two cards read as two places with a hand-off between
+     them rather than as one split rectangle. The chevron sits in here. */
+  gap: 1.75rem;
+}
+
+/* The ground is what answers "who does what": a step inside a lane is read as
+   that side's work, where steps floating between two logos were read as
+   neither's. Drawn rather than filled — an outline holds the territory just as
+   well as a wash, and the page keeps one surface instead of three. Pink is
+   Uppy's, slate is Transloadit's; `--ring` is the only part of the card
+   treatment either lane owns. */
+.lineLane {
+  /* Relative so the hand-off chevron can centre itself on the card rather
+     than on the rail — the rail sits low in the lane, and a chevron pinned to
+     it read as hanging off the bottom of the two shapes it joins. */
+  position: relative;
+  display: grid;
+  grid-template-areas:
+    'logo'
+    'rail';
+  align-items: center;
+  /* Wide enough for the file to clear the mark above it on its way past. */
+  gap: 1.5rem;
+  min-width: 0;
+  padding: 1.25rem 1rem 1.125rem;
+  border-radius: var(--u-radius-md);
+  /* The page's card treatment, lifted from the panel that used to sit around
+     the pair. The lanes are unfilled, so this is a shadow around an outline —
+     which is all a card is on a white page anyway. */
+  box-shadow:
+    inset 0 0 0 1px var(--ring),
+    0 1px 2px rgb(13 21 38 / 5%),
+    0 8px 16px -6px rgb(13 21 38 / 6%),
+    0 20px 32px -14px rgb(13 21 38 / 7%);
+}
+
+/* `--leg-start`/`--leg-len` are the window of the shared loop in which this
+   lane's file crosses its rail, as loop percentages. They set both the file's
+   keyframes and every station's delay, so the two can't drift apart; the gap
+   between one lane's leg ending and the next one starting is the hand-off.
+
+   The lengths are in proportion to the rail widths, which is what keeps the
+   file at one speed across the hand-off — 32% of the loop for a 236px rail and
+   46.8% for a 345px one both work out to ~167px/s. Change the split, the gap
+   between the cards, the lane padding or the figure's width and these have to
+   move with it.
+
+   Uppy's lane is the narrower of the two because it holds one step to
+   Transloadit's three. Roughly by how much work each does, not in proportion to
+   it — the ground is a territory, not a bar chart, and 1:3 would leave the lane
+   this site is about as a sliver. */
+.lineLane[data-owner='uppy'] {
+  --leg-start: 0;
+  --leg-len: 32;
+  /* Carrying the boundary alone, so a good deal stronger than it was over a
+     6% wash — at 12% the outline disappeared into the page it sits on. */
+  --ring: rgb(255 51 119 / 28%);
+
+  flex: 0 0 39.7%;
+}
+
+.lineLane[data-owner='transloadit'] {
+  --leg-start: 41.2;
+  --leg-len: 46.8;
+  /* Lighter than the pink one at face value, level with it on the page: a
+     neutral hairline reads harder than a coloured one at the same alpha. */
+  --ring: rgb(13 21 38 / 16%);
+
+  flex: 1;
+}
+
+/* The marks sit straight on their lane's ground, centred over the rail they
+   head. They wore a white chip each — a circle and a rounded rect — which put
+   two more shapes on a card that is already two grounds, a rail and a travelling
+   chip, and made the logos read as UI rather than as ownership. The ground is
+   tinted 4-6%, so both marks clear it on their own.
+
+   Both rows are one height, so the two rails start at the same y and the file
+   crosses the hand-off on a level line. */
+.lineLogo {
+  grid-area: logo;
+  justify-self: center;
+  display: grid;
+  place-items: center;
+  height: var(--logo-h);
+}
+
+/* Full row height: without the chip around it the roundel was carrying 26px
+   against a 91px wordmark, and the lane it heads is the one this whole site is
+   about. */
+.lineLane[data-owner='uppy'] .lineLogo img {
+  display: block;
+  height: var(--logo-h);
+  width: auto;
+}
+
+/* Small enough to be the Uppy roundel's peer rather than the loudest thing on a
+   card about Uppy: this is a near-black display wordmark against Inter, so it
+   carries far more ink per pixel than anything around it. */
+.lineLane[data-owner='transloadit'] .lineLogo img {
+  display: block;
+  height: 0.9375rem;
+  width: auto;
+}
+
+.lineRail {
+  grid-area: rail;
+  position: relative;
+  /* Deep enough below the line for the labels in their new position: they end
+     30px under it, and a box that stopped at 28 clipped nothing but did leave
+     them sitting on the card's padding. */
+  height: 3.75rem;
+}
+
+/* Dashed rather than solid: a conveyor reads as segments, and the dashes give
+   the file something to travel against. */
+.lineRail::before {
+  content: '';
+  position: absolute;
+  top: var(--rail-y);
+  inset-inline: 0;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    var(--u-line-strong) 0 4px,
+    transparent 4px 9px
+  );
+}
+
+/* The hand-off, drawn rather than left to timing. Between the two cards there
+   is only blank card, and for the 0.4s the file spends crossing it there is
+   nothing there at all — cold, that reads as two adjacent pipelines rather than
+   one file being passed from one party to the other. The chevron sits in the gap
+   and says "then".
+
+   Dead centre of the space between the two cards on both axes: half the flex
+   gap out from this lane's edge, and half the lane's own height down. Hung off
+   the lane rather than the rail, which sits low in it.
+
+   `--nib` is the difference between the box being centred and the mark looking
+   it. Two of the square's four borders are drawn, so after the 45° turn the ink
+   runs from 1.1px behind the box's centre to 5.3px past it, all of it in the
+   half the arrow points at — centring the box leaves the shape sitting 2.1px
+   into the second lane's share of the gap, which is exactly the amount you
+   notice and can't name. */
+.lineLane:first-child::after {
+  --nib: 2.1px;
+
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 0.875rem);
+  width: 0.375rem;
+  height: 0.375rem;
+  /* A step darker than the rail it sits on: this is the one mark carrying
+     direction, and in the still frame it was the palest thing on a card whose
+     every station is saturated pink. */
+  border-top: 1.5px solid var(--u-ink-400);
+  border-right: 1.5px solid var(--u-ink-400);
+  translate: calc(-50% - var(--nib)) -50%;
+  rotate: 45deg;
+}
+
+.lineStation {
+  position: absolute;
+  top: var(--rail-y);
+  left: var(--at-pos);
+  translate: -50% -50%;
+  display: grid;
+  justify-items: center;
+}
+
+/* The dot sits on the rail; it fills as the file reaches it and fades once the
+   file has passed, so the line reads as work being done rather than decoration.
+   Ringed a shade harder than the rail it sits on, or an unlit station is
+   indistinguishable from the dashes running through it. */
+.lineStation i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--u-ink-400) 60%, #fff);
+  /* Longhands: a `var()` inside the `animation` shorthand is opaque to the CSS
+     minifier, which warns and skips the declaration. */
+  animation-name: station;
+  animation-duration: var(--loop);
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+  /* The moment the file reaches this station, derived rather than written
+     down: how far into the lane's leg it sits, as a share of the loop. */
+  animation-delay: calc(
+    (var(--leg-start) + var(--leg-len) * var(--at-frac)) * var(--loop) / 100
+  );
+}
+
+.lineStation em {
+  position: absolute;
+  /* Clear of the dot rather than tucked under it: at 0.75rem the label's
+     cap-height started 8px below an 8px dot and the two read as one stacked
+     mark. */
+  top: 1rem;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.01em;
+  color: var(--u-ink-400);
+  white-space: nowrap;
+}
+
+/* ink-400 is a blue-grey, and on the warm pink ground it was the only cool thing
+   in the lane — the labels read as borrowed from the slate side. Warmed just
+   enough to belong, not enough to compete with the lit stations. */
+.lineLane[data-owner='uppy'] .lineStation em {
+  color: color-mix(in srgb, var(--u-pink-600) 35%, var(--u-ink-400));
+}
+
+/* Riding on the rail rather than centred on it. Centred, the file covered the
+   station dot at the exact moment that dot lit — the flash fired underneath it
+   and only a crescent showed. Sitting on the belt also happens to be what a
+   thing on a conveyor does.
+
+   The mark travels bare. It used to sit in a white rounded chip, which was one
+   more card on a drawing made of cards; without it the glyph can be half again
+   as big in the same space, and a file is a more legible shape than the box it
+   was in. The shadow is what's left of the chip — enough to say the thing is
+   being carried above the belt, not printed on it. */
+.lineFile {
+  position: absolute;
+  top: var(--rail-y);
+  left: 0;
+  translate: -50% calc(-100% - 16px);
+  display: grid;
+  place-items: center;
+  color: var(--u-pink-500);
+  filter: drop-shadow(0 2px 3px rgb(255 51 119 / 28%));
+  /* Linear, not the page's ease: a conveyor runs at constant speed. With an
+     ease-out the file was flung two-thirds of the way in the first third of
+     the loop and then crawled. The arc over the hand-off is the one eased
+     thing here, and it is a second animation precisely so this one can stay
+     linear — a timing function inside a keyframe applies to every property in
+     that segment, so easing the hop in `travel-browser` would have eased the
+     travel along with it.
+
+     Both animations run off the same duration, timing function and count:
+     with one value against two names, the list repeats.
+
+     Longhands because the name is set per lane below: the shorthand would
+     reset `animation-name` to none here, leaving the whole thing standing on
+     source order, and it makes the minifier warn about a nameless value. */
+  animation-duration: var(--loop);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.lineFile svg {
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* One file per lane, each crossing its own rail during its lane's leg of the
+   shared loop. Keyframe stops can't read a custom property, so these percentages
+   have to restate `--leg-start`/`--leg-len` above — the one place in the diagram
+   where a number is written twice.
+
+   The chip does not blink out between the lanes: the first one carries on past
+   the end of its rail and across the gap, and the second picks it up at the same
+   point and speed. One glide at 138px/s from the first dot to the last, with a
+   0.53s beat at the end of the loop. An earlier cut faded it out at each lane
+   boundary, which left the card empty for 0.4s of every loop — exactly over the
+   hand-off, the one relationship the drawing exists to show.
+
+   41.2% is the hand-off instant: both are on the far rail's left edge to the
+   pixel there, so which of the two is being drawn is not something the eye
+   can see — as long as one of them always is. The swap used to cost a tenth of a
+   percent of the loop, one chip fading out while the other faded in, and at the
+   midpoint of that window the two alphas summed to nothing: a hole roughly half
+   a frame wide, right at the hand-off, showing up as a blink whenever a frame
+   landed in it. The cure is an overlap instead of a crossfade — the incoming
+   chip goes fully opaque one hundredth of a percent BEFORE the instant, under
+   the outgoing one, which then leaves on a step rather than a fade. For those
+   0.44ms there are two chips 0.06px apart, which is nothing, and at no point in
+   the loop is there none. */
+.lineLane[data-owner='uppy'] .lineFile {
+  animation-name: travel-browser, hand-off-arc;
+}
+
+.lineLane[data-owner='transloadit'] .lineFile {
+  animation-name: travel-cloud;
+}
+
+@keyframes travel-browser {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  /* End of its own rail at 32%, then on across the gap — 3.75rem is the
+     distance between the two rails (this lane's right padding, the flex gap,
+     the next lane's left padding), so at 41.2% the file is sitting exactly on
+     the far rail's left edge, which is where the other one takes over. */
+  32% {
+    left: 100%;
+  }
+  /* `step-start` makes the rest of the loop take its end values the moment it
+     begins, so this file is gone AT 41.2% rather than over the milliseconds
+     after it. `left` doesn't move across that segment, so stepping it costs
+     nothing; opacity is the whole point. */
+  41.2% {
+    left: calc(100% + 3.75rem);
+    opacity: 1;
+    animation-timing-function: step-start;
+  }
+  100% {
+    left: calc(100% + 3.75rem);
+    opacity: 0;
+  }
+}
+
+/* The hop. Everywhere else the file is on a belt, so it runs at a flat constant
+   speed; the gap is the one stretch where it isn't on anything, and travelling
+   it in a straight line at that same speed read as the belt simply continuing
+   between the cards — the opposite of a hand-off. Here it is thrown.
+
+   Ballistic, not decorative: horizontal speed stays linear (that lives in
+   `travel-browser` and is untouched), and the whole arc is in the vertical,
+   fast off the launch and slowing into the apex, then the mirror image on the
+   way down.
+
+   The two curves are quadratic on purpose. Under gravity height goes with the
+   square of time, and ease-out-quad against a linear horizontal is exactly a
+   parabola — the pair that reads as a thrown object rather than as an eased
+   one. Quartic curves were the first thing tried here and they hold the apex
+   far too long: the file shot up, slid flat across the whole gap, and dropped,
+   which draws a table, not an arc.
+
+   The apex is at 36.6%, the midpoint of the 32%-to-41.2% crossing, and 1.5rem
+   is chosen rather than tuned by eye: at the old height the file passed
+   straight through the chevron, which is the one mark in the gap it should
+   clearly be going over.
+
+   It lands flat. The rotation and the lift both return to exactly zero at
+   41.2%, because that is the frame where the other lane's file takes over at
+   the same pixel — a hop that ended mid-tilt would show up as a jolt at the
+   very moment the drawing is trying to look seamless. */
+@keyframes hand-off-arc {
+  0%,
+  32% {
+    transform: translateY(0) rotate(0deg);
+    animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  36.6% {
+    transform: translateY(-1.5rem) rotate(6deg);
+    animation-timing-function: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  }
+  41.2%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+}
+
+@keyframes travel-cloud {
+  0%,
+  41.19% {
+    left: 0;
+    opacity: 0;
+  }
+  /* Picks up exactly where the other one left off, at the same point on
+     screen and the same speed, so the hand-off is one unbroken glide. Opaque
+     from 41.2% but arriving at it a hundredth of a percent early, so it is
+     already there when the other one steps off. */
+  41.2% {
+    left: 0;
+    opacity: 1;
+  }
+  88% {
+    left: 100%;
+    opacity: 1;
+  }
+  91%,
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+/* Lit on the first frame of the cycle, because the delay is the file's arrival
+   time — the station fires the instant the file lands on it, then fades.
+   The whole flash is over inside 0.53s, which is shorter than the tightest gap
+   between two stations (0.71s of travel), so only one is ever lit at a time.
+   An earlier version started the flash at 4% and held to 18%: each station lit
+   up after its file had already left and stayed lit for the whole next leg. */
+@keyframes station {
+  0%,
+  7% {
+    background: var(--u-pink-500);
+    box-shadow: 0 0 0 3px rgb(255 51 119 / 14%);
+  }
+  12%,
+  100% {
+    background: #fff;
+    box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--u-ink-400) 60%, #fff);
+  }
+}
+
+/* Motion off, so the still frame has to carry the whole story on its own. It
+   states the end of the loop, not the start: every station lit, and the file
+   resting on the last one. Parked instead at each lane's first station with
+   nothing lit — the obvious reading of "stopped" — it showed two files, both
+   apparently stuck at step one, with three stations never reached, which is the
+   opposite of what the animation says. Lit means done here, so lighting all of
+   them is the same sentence told in one frame. */
+@media (prefers-reduced-motion: reduce) {
+  .lineFile,
+  .lineStation i {
+    animation: none;
+  }
+
+  .lineStation i {
+    background: var(--u-pink-500);
+    box-shadow: 0 0 0 1.5px var(--u-pink-500);
+  }
+
+  /* One file, at the end of the last lane — two chips would contradict the
+     single file the animation follows. */
+  .lineFile {
+    opacity: 0;
+  }
+
+  .lineLane:last-child .lineFile {
+    left: var(--park);
+    opacity: 1;
+  }
+}
+
+/* Too narrow for two lanes abreast: stack them, and the hand-off becomes a step
+   down the page instead of a step across it. The lanes are unchanged internally
+   — the row of lanes just becomes a column.
+
+   Keyed to the figure, not the viewport, because its width doesn't track the
+   viewport: once the section goes two-column the figure is a grid track next to
+   a 31em measure, and a viewport query would call a 250px track "wide". In px
+   rather than rem so the threshold doesn't move when the root steps down to
+   16px between 1000 and 1300.
+
+   470px is the width of the lane row itself. Below it the long lane's rail is
+   under ~260px, which is where Resize/Encode/Deliver start touching. */
+@container (max-width: 470px) {
+  .line {
+    flex-direction: column;
+    /* Cross axis is now horizontal: without this the lanes shrink to their
+       content and the two cards come out different widths. */
+    align-items: stretch;
+  }
+
+  .lineLane {
+    flex: none;
+  }
+
+  /* The hand-off is now a drop down the page, so the chevron turns to match and
+     moves to the middle of the vertical gap between the two cards. */
+  .lineLane:first-child::after {
+    top: calc(100% + 0.875rem);
+    left: 50%;
+    /* Pointing down now, so the ink is all in the bottom half — the same
+       correction, turned with it. */
+    translate: -50% calc(-50% - var(--nib));
+    rotate: 135deg;
+  }
+
+  /* Stacked, both rails are the lane's full width, so equal-length legs are
+     what keeps the file at one speed — the side-by-side 32/46.8 split would run
+     it across the top row nearly twice as fast as the bottom one. */
+  .lineLane[data-owner='uppy'] {
+    --leg-len: 38;
+  }
+
+  .lineLane[data-owner='transloadit'] {
+    --leg-start: 47;
+    --leg-len: 38;
+  }
+
+  .lineLane[data-owner='uppy'] .lineFile {
+    animation-name: travel-browser-stacked;
+  }
+
+  .lineLane[data-owner='transloadit'] .lineFile {
+    animation-name: travel-cloud-stacked;
+  }
+}
+
+@keyframes travel-browser-stacked {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  38% {
+    left: 100%;
+    opacity: 1;
+  }
+  41%,
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+@keyframes travel-cloud-stacked {
+  0%,
+  47% {
+    left: 0;
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  85% {
+    left: 100%;
+    opacity: 1;
+  }
+  88%,
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Text left at its own measure, card right. Not at 58rem, where the text keeps
+   its full 31em and the card gets whatever is left — about 250px, too narrow to
+   draw anything in. This waits until there is enough width for both. */
+@media screen and (min-width: 72rem) {
+  /* Centred rather than top-aligned: the card summarises the whole paragraph,
+     not its first line. */
+  .provenance {
+    display: grid;
+    grid-template-columns: minmax(0, 31em) minmax(0, 1fr);
+    gap: 4.5rem;
+    align-items: center;
+  }
+
+  .lineage {
+    margin: 0 0 0 auto;
+    max-width: 38rem;
+    width: 100%;
+  }
+}
+
+/* ----------------------------------------------------------------- Closing */
+
+/* Full-bleed and lit, so the close has more presence than the footer under it. */
+.closing {
+  /* Inside <main> now, so it breaks out of .main's gutter the way .band does —
+     otherwise the ground change stops 1.5rem short of each edge. */
+  margin: 8rem -1.5rem 0;
+  padding: 6rem 1.5rem;
+  text-align: center;
+  /* Light from above, same as the hero. The ground change is the separator —
+     no hairline needed at either end. */
+  background: linear-gradient(180deg, var(--u-pink-50), #fff);
+}
+
+.closingInner {
+  max-width: 38rem;
+  margin: 0 auto;
+}
+
+.closingInner h2 {
+  font-size: clamp(1.75rem, 3.5vw, 2.375rem);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--u-ink-900);
+  margin: 0 0 1rem;
+}
+
+.closingInner p {
+  color: var(--u-ink-600);
+  line-height: 1.65;
+  margin: 0 0 2rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .primary,
+  .textLink span,
+  .heroHandoff a span,
+  .targetInput + label::after {
+    transition: none;
+  }
+
+  .primary:hover,
+  .textLink:hover span,
+  .heroHandoff a:hover span {
+    transform: none;
+  }
+}

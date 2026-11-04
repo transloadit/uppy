@@ -32,7 +32,8 @@
     "rules": {
       "recommended": true,
       "suspicious": {
-        "noExplicitAny": "off"
+        "noExplicitAny": "off",
+        "useAwait": "error"
       },
       "correctness": {
         "useExhaustiveDependencies": "error",

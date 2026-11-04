@@ -6,16 +6,15 @@
     "@uppy/aws-s3": "workspace:*",
     "@uppy/core": "workspace:*",
     "@uppy/dashboard": "workspace:*",
-    "body-parser": "^2.2.2",
+    "body-parser": "^2.4.0",
     "cors": "^2.8.5"
   },
   "devDependencies": {
-    "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   },
   "private": true,
   "scripts": {
-    "start": "node ./server.cjs"
+    "start": "node ./server.ts"
   }
 }

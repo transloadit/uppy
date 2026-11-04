@@ -14,13 +14,13 @@
     "@types/cors": "^2.8.19",
     "@types/express-session": "^1.19.0",
     "@uppy/companion": "workspace:*",
-    "body-parser": "^2.2.2",
+    "body-parser": "^2.4.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "express": "^5.2.1",
     "express-session": "^1.17.3",
     "npm-run-all2": "^9.0.3",
-    "vite": "^8.2.2"
+    "vite": "^8.3.4"
   },
   "private": true,
   "engines": {
