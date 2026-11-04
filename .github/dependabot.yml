@@ -44,3 +44,8 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+
+    groups:
+      Docker:
+        patterns:
+          - docker/*
