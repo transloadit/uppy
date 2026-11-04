@@ -62,8 +62,9 @@ export default function HomepageFeatures(): ReactNode {
     <section className={styles.features}>
       <div className="container">
         <div className="row">
-          {FeatureList.map((props) => (
-            <Feature key={props.title} {...props} />
+          {FeatureList.map((props, idx) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: Items don’t have a unique identifier.
+            <Feature key={idx} {...props} />
           ))}
         </div>
       </div>

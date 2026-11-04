@@ -22,8 +22,9 @@ type Props = {
 export const QuickStartLinks = (props: Props) => {
   return (
     <section className={styles.section}>
-      {props.items.map((item) => (
-        <Link key={item.link} to={item.link}>
+      {props.items.map((item, idx) => (
+        // biome-ignore lint/suspicious/noArrayIndexKey: Items don’t have a unique identifier.
+        <Link key={idx} to={item.link}>
           <div className={styles.item}>
             <Heading as="h2">{item.name}</Heading>
             <p>{item.description}</p>
