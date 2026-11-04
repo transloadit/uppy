@@ -2,4 +2,7 @@
 "@uppy/core": patch
 ---
 
-Remote providers: if a selected folder fails to load after pressing "Done" (for example Companion returns an error), or the pick is cancelled while folders are loading, no files are added: the picker stays open with the selection kept, and the error is logged. Previously the files that did load were added and the selection was cleared, as if everything had succeeded.
+Remote providers:
+
+- If a selected folder fails to load after pressing "Done", no files are added and the picker stays open with the selection kept. Previously the files that did load were added and the selection was cleared, as if everything had succeeded. Cancelling while folders load (`uppy.cancelAll()`) also adds nothing; closing the panel adds nothing and clears the selection.
+- A failed Companion request now shows "Connection with Companion failed" through `uppy.info()`, which the Dashboard displays, when pressing "Done", opening a folder, loading more items, searching, or logging in or out. Previously only Companion's user-facing errors were shown, and the rest were only logged. Errors that did not come from Companion are still only logged, and an expired login still shows the login screen.

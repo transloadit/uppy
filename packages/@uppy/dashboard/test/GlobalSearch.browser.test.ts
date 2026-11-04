@@ -3,6 +3,7 @@ import { ProviderViews } from '@uppy/core/provider-views'
 import Dashboard from '@uppy/dashboard'
 import Dropbox from '@uppy/dropbox'
 import GoogleDrive from '@uppy/google-drive'
+import { HttpResponse, http } from 'msw'
 import { afterEach, beforeAll, describe, expect } from 'vitest'
 import { page, userEvent } from 'vitest/browser'
 import { handlers } from './mocks/CompanionHandler.js'
@@ -582,5 +583,41 @@ describe('ProviderView Search E2E', () => {
       item.textContent?.includes('readme.md'),
     )
     expect(readmeFiltered).toBeTruthy()
+  })
+})
+
+describe('ProviderView Done E2E', () => {
+  test('Done with a folder Companion fails to list -> nothing added, selection kept, error shown', async ({
+    worker,
+  }) => {
+    worker.use(
+      // listed first, so tried first; returning nothing falls through to the
+      // mocks below for other paths
+      http.get('http://companion.test/:provider/list/*', ({ request }) =>
+        request.url.endsWith(encodeURIComponent('/first'))
+          ? HttpResponse.json({ message: 'boom' }, { status: 500 })
+          : undefined,
+      ),
+      ...handlers,
+    )
+    uppy = initializeUppy(['Dropbox'])
+    await page.getByRole('tab', { name: 'Dropbox' }).click()
+    await expect
+      .element(page.getByRole('button', { name: 'first' }))
+      .toBeVisible()
+
+    const firstFolderCheckbox = () =>
+      Array.from(document.querySelectorAll('.uppy-ProviderBrowserItem'))
+        .find((item) => item.textContent?.includes('first'))
+        ?.querySelector<HTMLInputElement>('input[type="checkbox"]')
+    await firstFolderCheckbox()!.click()
+    await page.getByRole('button', { name: 'Select 1' }).click()
+
+    // `.first()`: the Dashboard renders the Informer twice
+    await expect
+      .element(page.getByText('Connection with Companion failed').first())
+      .toBeVisible()
+    expect(uppy.getFiles()).toHaveLength(0)
+    expect(firstFolderCheckbox()!.checked).toBe(true)
   })
 })
