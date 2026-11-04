@@ -2,4 +2,4 @@
 "@uppy/companion": patch
 ---
 
-Security hardening: enforce `maxFileSize` on the bytes actually streamed from the source in streaming upload mode (the default), for all upload protocols. Previously only the size declared by the provider or remote URL was checked, so a file of unknown or understated size could bypass `maxFileSize` and be streamed to the destination in full. Such uploads are now aborted with `maxFileSize exceeded` as soon as the limit is crossed.
+Fix multipart form-data uploads (the default for XHR uploads through Companion) sending an empty or truncated file (missing its first bytes) and reporting success when `maxFileSize` is set in streaming upload mode, a regression in 7.2.1. The stream that counts bytes against `maxFileSize` started flowing before the form-data body read it, so those bytes were lost.

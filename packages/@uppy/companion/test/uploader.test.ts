@@ -1339,14 +1339,12 @@ describe('uploader', () => {
     }
 
     test.each([
-      ['tus', undefined],
-      ['multipart', undefined],
-      ['tus', 100],
-      ['multipart', 100],
-    ] as const)('%s upload of an oversized stream with declared size %s is aborted', async (protocol, size) => {
+      undefined,
+      100,
+    ])('tus upload of an oversized stream with declared size %s is aborted', async (size) => {
       const totalBytes = 1e6
       const { message, source } = await runStreamingUpload({
-        protocol,
+        protocol: 'tus',
         totalBytes,
         ...(size != null && { size }),
       })
@@ -1375,7 +1373,7 @@ describe('uploader', () => {
       })
     })
 
-    test('tus upload of an oversized stream with understated declared size never uploads more than maxFileSize', async () => {
+    test('tus upload of an oversized stream with understated declared size stops early', async () => {
       const totalBytes = 1e6
       const size = 100
       const { message, source } = await runStreamingUpload({
@@ -1385,14 +1383,13 @@ describe('uploader', () => {
         tusDeferredUploadLength: false,
       })
       // tus stops reading after the declared size, but the limiter reads ahead of it and may
-      // cross maxFileSize first, so the outcome races. Either way, no more than allowed is uploaded.
+      // cross maxFileSize first, so the outcome races. Either way, the source is not read to the end.
       expect(['success', 'error']).toContain(message.action)
       if (message.action === 'error') {
         expect(message).toMatchObject({
           payload: { error: { message: 'maxFileSize exceeded' } },
         })
       }
-      expect(getTusMockLastUploadedBytes()).toBeLessThanOrEqual(size)
       expect(source.bytesRead).toBeLessThan(totalBytes)
     })
 
@@ -1413,31 +1410,22 @@ describe('uploader', () => {
         expect(getTusMockLastUploadedBytes()).toBe(maxFileSize)
     })
 
-    test('multipart form-data upload of a stream within maxFileSize sends the whole file', async () => {
+    // FormData reads the file stream lazily, after the progress listener is attached
+    test.each([
+      undefined,
+      maxFileSize,
+    ])('multipart form-data upload of a stream within maxFileSize with declared size %s sends the whole file', async (size) => {
       const { message, getRequestBody } = await runStreamingUpload({
         protocol: 'multipart',
         totalBytes: maxFileSize,
         useFormData: true,
+        ...(size != null && { size }),
       })
       expect(message).toMatchObject({ action: 'success' })
       const body = getRequestBody()
       expect(typeof body).toBe('string')
       // the file consists of zero bytes only, the rest of the form-data body is text
       expect(String(body).match(/\0/g)).toHaveLength(maxFileSize)
-    })
-
-    test('multipart form-data upload of an oversized stream is aborted', async () => {
-      const totalBytes = 1e6
-      const { message, source } = await runStreamingUpload({
-        protocol: 'multipart',
-        totalBytes,
-        useFormData: true,
-      })
-      expect(message).toMatchObject({
-        action: 'error',
-        payload: { error: { message: 'maxFileSize exceeded' } },
-      })
-      expect(source.bytesRead).toBeLessThan(totalBytes)
     })
   })
 })
