@@ -48,6 +48,21 @@ describe('handleError()', () => {
     ])
   })
 
+  it('still shows a user-facing error while a generic failure is up', () => {
+    expect(
+      shown(
+        new ErrorWithCause('Could not GET http://companion.test/x'),
+        new UserFacingApiError('Quota exceeded'),
+      ),
+    ).toEqual([
+      { message: 'Connection with Companion failed', details: null },
+      {
+        message: 'Connection with Companion failed',
+        details: 'Quota exceeded',
+      },
+    ])
+  })
+
   it('only logs an error that did not involve Companion', () => {
     expect(shown(new Error('a `file-added` listener threw'))).toEqual([])
   })

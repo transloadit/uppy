@@ -363,6 +363,9 @@ describe('afterFill()', () => {
     await expect(
       afterFill(tree, mock, () => null, reportProgress),
     ).rejects.toBe(first)
+    // `afterFill` rejects before f3..f6 answer: let them, so that work they
+    // would start after the failure shows up below
+    await new Promise((resolve) => setTimeout(resolve, 50))
     // neither the queued f7/f8 nor the subfolders revealed by f3..f6 are listed
     expect(listed.sort()).toEqual(['f1', 'f2', 'f3', 'f4', 'f5', 'f6'])
     // and no task completes after the failure, so the view does not re-render
