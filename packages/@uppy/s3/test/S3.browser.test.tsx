@@ -202,6 +202,42 @@ describe('S3 provider in the browser', () => {
     expect(queuedUrl.searchParams.get('bucket')).toBe('my-bucket')
   })
 
+  it('keeps the bucket a file was listed in when a later listing reports another', async () => {
+    const { plugin } = setup()
+    // the provider's own list(), which S3 wraps
+    const base = Object.getPrototypeOf(Object.getPrototypeOf(plugin.provider))
+    const list = vi
+      .spyOn(base, 'list')
+      .mockResolvedValueOnce({
+        session: { bucket: 'bucket-a' },
+        items: [{ requestPath: 'readme.md' }],
+      })
+      .mockResolvedValueOnce({
+        session: { bucket: 'bucket-b' },
+        items: [{ requestPath: 'other.md' }],
+      })
+    try {
+      await plugin.provider.list('', {})
+      await plugin.provider.list('', {})
+      const bucketOf = (id: string) =>
+        new URL(plugin.provider.fileUrl(id)).searchParams.get('bucket')
+      expect(bucketOf('readme.md')).toBe('bucket-a')
+      expect(bucketOf('other.md')).toBe('bucket-b')
+
+      // the same key in both buckets: which one was selected is unknown
+      list.mockResolvedValueOnce({
+        session: { bucket: 'bucket-b' },
+        items: [{ requestPath: 'readme.md' }],
+      })
+      await plugin.provider.list('', {})
+      expect(() => plugin.provider.fileUrl('readme.md')).toThrow(
+        'listed in two buckets',
+      )
+    } finally {
+      list.mockRestore()
+    }
+  })
+
   it('opens a folder beyond the first listing page', async () => {
     const { plugin } = setup({
       companion: {
