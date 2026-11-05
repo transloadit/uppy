@@ -43,7 +43,7 @@
   },
   "devDependencies": {
     "@uppy-dev/tsconfig": "workspace:^",
-    "glob": "^13.0.6",
+    "glob": "^14.0.2",
     "typescript": "^6.0.3"
   }
 }
