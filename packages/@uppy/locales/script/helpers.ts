@@ -1,11 +1,7 @@
+import { glob } from 'node:fs/promises'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 import type { Locale } from '@uppy/core/utils'
-import { glob } from 'glob'
-
-export function getPaths(globPath: string): Promise<string[]> {
-  return glob(globPath)
-}
 
 export function sortObjectAlphabetically<Obj extends {}>(obj: Obj): Obj {
   return Object.fromEntries(
@@ -38,17 +34,13 @@ export async function getLocales(
   pathPattern: string,
   getKey = pluginNameFromLocalePath,
 ): Promise<Record<string, Locale>> {
-  const paths = await getPaths(pathPattern)
+  const locales: Record<string, Locale> = Object.create(null)
 
-  return Object.fromEntries(
-    await Promise.all(
-      paths.map(async (filePath) => {
-        const { default: locale } = await import(
-          String(pathToFileURL(filePath))
-        )
+  for await (const filePath of glob(pathPattern)) {
+    const { default: locale } = await import(String(pathToFileURL(filePath)))
 
-        return [getKey(filePath), locale]
-      }),
-    ),
-  )
+    locales[getKey(filePath)] = locale
+  }
+
+  return locales
 }
