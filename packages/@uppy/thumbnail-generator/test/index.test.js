@@ -183,6 +183,59 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         delete URL.revokeObjectURL
       }
     })
+
+    it('should continue processing queue even if a queued file is removed before processing', async () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      plugin.requestThumbnail = vi.fn(() => delay(50))
+      plugin.install()
+
+      const file1 = { id: 'file1', type: 'image/jpeg', data: new Blob() }
+      const file2 = { id: 'file2', type: 'image/jpeg', data: new Blob() }
+      const file3 = { id: 'file3', type: 'image/jpeg', data: new Blob() }
+
+      core.mockFile(file1.id, file1)
+      core.mockFile(file2.id, file2)
+      core.mockFile(file3.id, file3)
+      core.emit('file-added', file1)
+      core.emit('file-added', file2)
+      core.emit('file-added', file3)
+
+      expect(plugin.queue).toEqual(['file2', 'file3'])
+
+      core.mockFile(file2.id, undefined)
+
+      await delay(200)
+      expect(plugin.requestThumbnail).toHaveBeenCalledTimes(2)
+      expect(plugin.requestThumbnail).toHaveBeenCalledWith(file1)
+      expect(plugin.requestThumbnail).toHaveBeenCalledWith(file3)
+    })
+
+    it('should not update preview or emit events if file is removed while requestThumbnail is in progress', async () => {
+      const core = new MockCore()
+      const plugin = new ThumbnailGeneratorPlugin(core)
+      plugin.install()
+
+      URL.revokeObjectURL = vi.fn()
+
+      const file = { id: 'file1', type: 'image/png', data: new Blob() }
+      core.mockFile(file.id, file)
+
+      plugin.createThumbnail = vi.fn(async () => {
+        await delay(50)
+        return 'blob:preview'
+      })
+      plugin.setPreviewURL = vi.fn()
+
+      const p = plugin.requestThumbnail(file)
+      core.mockFile(file.id, undefined)
+      core.emit('file-removed', file)
+
+      await p
+
+      expect(plugin.setPreviewURL).not.toHaveBeenCalled()
+      expect(URL.revokeObjectURL).toHaveBeenCalledWith('blob:preview')
+    })
   })
 
   describe('events', () => {
@@ -290,6 +343,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       plugin.setPreviewURL = vi.fn()
 
       const file = { id: 'file1', type: 'image/png', isRemote: false }
+      core.mockFile(file.id, file)
       await plugin.requestThumbnail(file)
 
       expect(plugin.setPreviewURL).toHaveBeenCalledTimes(1)
