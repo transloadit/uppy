@@ -8864,7 +8864,6 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
-    glob: "npm:^13.0.6"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
