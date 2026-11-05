@@ -5,10 +5,16 @@ import type { CompanionInitOptions } from '../schemas/companion.js'
 import { takeAuthCallback } from './auth-callback.js'
 import emitter from './emitter/index.js'
 import { isRecord } from './helpers/type-guards.js'
-import { getURLBuilder, jsonStringify } from './helpers/utils.js'
+import {
+  getURLBuilder,
+  jsonStringify,
+  SOCKET_TOKEN_RE,
+} from './helpers/utils.js'
 import * as logger from './logger.js'
 import * as redis from './redis.js'
 import Uploader from './Uploader.js'
+
+const SOCKET_MAX_PAYLOAD_BYTES = 1024
 
 type SocketMessage = { action: string; payload: Record<string, unknown> }
 
@@ -18,6 +24,10 @@ function isSocketMessage(value: unknown): value is SocketMessage {
     typeof value['action'] === 'string' &&
     isRecord(value['payload'])
   )
+}
+
+function validToken(token: string | undefined): string | undefined {
+  return token && SOCKET_TOKEN_RE.test(token) ? token : undefined
 }
 
 function handleUploadSocketConnection({
@@ -164,7 +174,13 @@ export default function setupSockets(
   server: HttpServer | HttpsServer,
   companionOptions: CompanionInitOptions,
 ) {
-  const wss = new WebSocketServer({ server })
+  // Clients only send ~32-byte pause/resume/cancel messages. Without a cap, ws
+  // accepts 100 MiB and JSON.parse of a deeply nested array aborts the process
+  // on heap exhaustion, which no try/catch can prevent.
+  const wss = new WebSocketServer({
+    server,
+    maxPayload: SOCKET_MAX_PAYLOAD_BYTES,
+  })
 
   const urlBuilder = getURLBuilder(companionOptions)
 
@@ -181,13 +197,13 @@ export default function setupSockets(
 
     // authentication callback token?
     const authCallbackTokenMatch = path?.match(
-      /^\/api2\/auth-callback\/token\/([^/]+)/,
+      /^\/api2\/auth-callback\/token\/([^/?#]+)$/,
     )
-    const authCallbackToken = authCallbackTokenMatch?.[1]
+    const authCallbackToken = validToken(authCallbackTokenMatch?.[1])
 
     // or token that identifies which ongoing upload's progress, the socket connection wishes to listen to.
-    const uploadTokenMatch = path?.match(/^\/api\/([^/]+)/)
-    const uploadToken = uploadTokenMatch?.[1]
+    const uploadTokenMatch = path?.match(/^\/api\/([^/?#]+)$/)
+    const uploadToken = validToken(uploadTokenMatch?.[1])
 
     ws.on('error', (err) => {
       // https://github.com/websockets/ws/issues/1543
@@ -213,8 +229,9 @@ export default function setupSockets(
 
     if (uploadToken) {
       logger.info(
-        `Upload token connection received from ${uploadToken}`,
+        'Upload token connection received',
         'socket.upload.connect',
+        Uploader.shortenToken(uploadToken),
       )
 
       handleUploadSocketConnection({ token: uploadToken, ws })
@@ -236,6 +253,6 @@ export default function setupSockets(
       return
     }
 
-    ws.close()
+    ws.close(1008)
   })
 }
