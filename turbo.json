@@ -60,7 +60,7 @@
     "test": {
       "dependsOn": ["^test"],
       "cache": false,
-      "passThroughEnv": ["VITE_MINIO_CONFIG"]
+      "passThroughEnv": ["VITE_MINIO_CONFIG", "COMPANION_REDIS_URL"]
     },
     "test:e2e": {
       "dependsOn": ["^test:e2e"],

@@ -1,3 +1,4 @@
+import { pipeline } from 'node:stream/promises'
 import type { NextFunction, Response } from 'express'
 import type { Request } from '../../types/express.js'
 import { respondWithError } from '../provider/error.js'
@@ -24,8 +25,11 @@ async function thumbnail(
       providerUserSession,
     })
     if (contentType != null) res.set('Content-Type', contentType)
-    stream.pipe(res)
+    // pipeline (unlike pipe) destroys the provider stream when the client
+    // disconnects, so its socket returns to the agent instead of leaking.
+    await pipeline(stream, res)
   } catch (err) {
+    if (res.headersSent) return
     if (respondWithError(err, res)) return
     next(err)
   }

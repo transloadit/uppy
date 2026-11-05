@@ -1,5 +1,5 @@
 import express from 'express'
-import session from 'express-session'
+import session, { type Session } from 'express-session'
 import { expects as zoomExpects } from './fixtures/zoom.js'
 
 const { localZoomKey, localZoomSecret, localZoomVerificationToken } =
@@ -83,6 +83,8 @@ export const setDefaultEnv = () => updateEnv(defaultEnv)
 
 export const grantToken = 'fake token'
 
+type MockSession = Session & { mockCallbackSeeded?: boolean }
+
 export const getServerWithEmitter = async (
   extraEnv: Record<string, string | number | undefined> = {},
 ) => {
@@ -100,9 +102,13 @@ export const getServerWithEmitter = async (
   authServer.use(
     session({ secret: 'grant', resave: true, saveUninitialized: true }),
   )
+  // Like Grant, one OAuth exchange per session sets one response.
   authServer.all('{*splat}/callback', (req, _res, next) => {
-    if (req.session) {
-      req.session['grant'] = {
+    const session: MockSession | undefined = req.session
+    if (session && !session.mockCallbackSeeded) {
+      session.mockCallbackSeeded = true
+      session.grant = {
+        ...session.grant,
         response: { access_token: grantToken },
       }
     }
@@ -113,10 +119,19 @@ export const getServerWithEmitter = async (
     (req, _res, next) => {
       const state =
         typeof req.query['state'] === 'string' ? req.query['state'] : null
-      if (req.session) {
-        req.session['grant'] = {
+      const session: MockSession | undefined = req.session
+      if (session) {
+        const grant = {
+          ...session.grant,
           dynamic: { state: state ?? 'non-empty-value' },
         }
+        // A test that calls send-token directly stands in for the callback
+        // that would have minted the token in this session.
+        const token = req.query['uppyAuthToken']
+        if (!session.mockCallbackSeeded && typeof token === 'string') {
+          grant.pendingAuthToken = token
+        }
+        session.grant = grant
       }
       next()
     },

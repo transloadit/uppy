@@ -1,4 +1,5 @@
 import pRetry, { AbortError } from 'p-retry'
+import type { Promisable } from 'type-fest'
 import packageJson from '../../package.json' with { type: 'json' }
 import type Uppy from '../index.js'
 import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
@@ -141,7 +142,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return stripTrailingSlash(companion?.[host] ? companion[host] : host)
   }
 
-  async headers(emptyBody = false): Promise<Record<string, string>> {
+  headers(emptyBody = false): Promisable<Record<string, string>> {
     const defaultHeaders = {
       Accept: 'application/json',
       ...(emptyBody
@@ -223,14 +224,11 @@ export default class RequestClient<M extends Meta, B extends Body> {
     }
   }
 
-  async get<PostBody>(
-    path: string,
-    options?: RequestOptions,
-  ): Promise<PostBody> {
+  get<PostBody>(path: string, options?: RequestOptions): Promise<PostBody> {
     return this.request({ ...options, path })
   }
 
-  async post<PostBody>(
+  post<PostBody>(
     path: string,
     data: Record<string, unknown>,
     options?: RequestOptions,
@@ -238,7 +236,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
     return this.request<PostBody>({ ...options, path, method: 'POST', data })
   }
 
-  async delete<T>(
+  delete<T>(
     path: string,
     data?: Record<string, unknown>,
     options?: RequestOptions,
@@ -265,7 +263,7 @@ export default class RequestClient<M extends Meta, B extends Body> {
       const queue = getQueue()
 
       return await pRetry(
-        async () => {
+        () => {
           const queueRemoteUploadAttempt = queue.wrapPromiseFunction(
             async () => {
               const currentFile = this.uppy.getFile(file.id) as

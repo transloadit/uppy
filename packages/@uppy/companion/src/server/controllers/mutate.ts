@@ -1,4 +1,5 @@
 import type { NextFunction, Response } from 'express'
+import type { Promisable } from 'type-fest'
 import { z } from 'zod'
 import type { CompanionContext, Request } from '../../types/express.js'
 import { respondWithError } from '../provider/error.js'
@@ -28,7 +29,7 @@ function mutation<S extends z.ZodType>(
       providerUserSession: CompanionContext['providerUserSession']
     },
     input: z.infer<S>,
-  ) => Promise<unknown>,
+  ) => Promisable<unknown>,
 ) {
   return async (
     req: Request,
@@ -72,7 +73,9 @@ const operations = {
       provider.moveItem({ ...context, id, destination }),
   ),
   'create-folder': mutation(
-    z.object({ name: requiredString, parentId: parentIdField }),
+    // folder names, not paths. Only a bound on the work done per request: the
+    // storage enforces its own limit (S3: keys of at most 1024 bytes).
+    z.object({ name: requiredString.max(1024), parentId: parentIdField }),
     (provider, context, { name, parentId }) =>
       provider.createFolder({ ...context, parentId, name }),
   ),

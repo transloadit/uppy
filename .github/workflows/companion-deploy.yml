@@ -7,6 +7,7 @@ on:
   push:
     branches: ['main']
     paths:
+      - 'Dockerfile'
       - 'packages/@uppy/companion/**'
       - '.github/workflows/companion-deploy.yml'
 
@@ -20,6 +21,12 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
       - name: Set SHA commit in version
         run:
           (cd packages/@uppy/companion && node -e 'const
