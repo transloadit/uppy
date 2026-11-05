@@ -10,6 +10,7 @@ import * as oAuthState from '../helpers/oauth-state.js'
 import { isRecord, toError } from '../helpers/type-guards.js'
 import { getRedirectPath, getURLBuilder } from '../helpers/utils.js'
 import logger from '../logger.js'
+import { ProviderApiError, parseHttpError } from './error.js'
 import type Provider from './Provider.js'
 
 /**
@@ -35,7 +36,13 @@ async function fetchKeys(
     return credentials
   } catch (err) {
     logger.error(err, 'credentials.fetch.fail')
-    throw err
+    // The endpoint's error body, and got's messages naming its URL, are for the
+    // log only: callers pass this error on to anonymous clients.
+    const statusCode = parseHttpError(err)?.statusCode
+    if (statusCode != null) {
+      throw new ProviderApiError('Could not fetch credentials', statusCode)
+    }
+    throw new Error('Could not fetch credentials')
   }
 }
 
@@ -165,8 +172,10 @@ export const getCredentialsOverrideMiddleware = (
       // token through window.postMessage (see comment in connect.js).
       // postMessage happens in send-token.js, which is a different request, so we need to put the allowed origins
       // on the encrypted session state to access it later there.
+      // Only the session's own state (override requests): on the initial connect request the state is the client's,
+      // and Grant replaces the session there anyway, except on URLs it does not match, where the write would stick.
       const { origins } = credentials
-      if (Array.isArray(origins) && origins.length > 0) {
+      if (override && Array.isArray(origins) && origins.length > 0) {
         const decodedState = oAuthState.decodeState(state, secret)
         decodedState['customerDefinedAllowedOrigins'] = origins
         const newState = oAuthState.encodeState(decodedState, secret)

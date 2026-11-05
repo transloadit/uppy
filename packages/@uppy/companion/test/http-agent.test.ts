@@ -1,8 +1,10 @@
+import { Resolver } from 'node:dns/promises'
 import nock from 'nock'
-import { afterEach, beforeEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import {
   FORBIDDEN_IP_ADDRESS,
   getProtectedGot,
+  resolveAddresses,
 } from '../dist/server/helpers/request.js'
 
 // nock 14 activates HTTP interception (via @mswjs/interceptors) on import. The
@@ -18,6 +20,7 @@ beforeEach(() => {
   if (nock.isActive()) nock.restore()
 })
 afterEach(() => {
+  vi.restoreAllMocks()
   nock.cleanAll()
   if (nock.isActive()) nock.restore()
 })
@@ -31,10 +34,72 @@ describe('test protected request Agent', () => {
   })
 
   test('blocks url that resolves to forbidden IP', async () => {
-    const url = 'https://localhost'
+    vi.spyOn(Resolver.prototype, 'resolve4').mockResolvedValue(['127.0.0.1'])
+    vi.spyOn(Resolver.prototype, 'resolve6').mockResolvedValue([])
+    const url = 'https://forbidden.example.com'
     await expect(
       getProtectedGot({ allowLocalIPs: false }).get(url),
     ).rejects.toThrow(/^Forbidden resolved IP address/)
+  })
+
+  test('resolves client-chosen names from the DNS servers, not getaddrinfo', async () => {
+    const queryError = (code: string) =>
+      Object.assign(new Error(code), { code })
+    const resolve4 = vi.spyOn(Resolver.prototype, 'resolve4')
+    const resolve6 = vi.spyOn(Resolver.prototype, 'resolve6')
+
+    resolve4.mockResolvedValue(['192.0.2.1'])
+    resolve6.mockResolvedValue(['2001:db8::1'])
+    expect(await resolveAddresses('example.com', 0)).toEqual([
+      { address: '192.0.2.1', family: 4 },
+      { address: '2001:db8::1', family: 6 },
+    ])
+    expect(await resolveAddresses('example.com', 6)).toEqual([
+      { address: '2001:db8::1', family: 6 },
+    ])
+
+    resolve4.mockRejectedValue(queryError('ETIMEOUT'))
+    resolve6.mockRejectedValue(queryError('ETIMEOUT'))
+    await expect(resolveAddresses('slow.example.com', 0)).rejects.toMatchObject(
+      { code: 'ETIMEOUT' },
+    )
+    resolve4.mockRejectedValue(queryError('ENODATA'))
+    resolve6.mockRejectedValue(queryError('ENOTFOUND'))
+    await expect(resolveAddresses('none.example.com', 0)).rejects.toMatchObject(
+      { code: 'ENOTFOUND' },
+    )
+  })
+
+  test('does not wait long for an address family that never answers', async () => {
+    vi.spyOn(Resolver.prototype, 'resolve4').mockResolvedValue(['192.0.2.1'])
+    vi.spyOn(Resolver.prototype, 'resolve6').mockReturnValue(
+      new Promise(() => {}),
+    )
+    const started = Date.now()
+    expect(await resolveAddresses('example.com', 0)).toEqual([
+      { address: '192.0.2.1', family: 4 },
+    ])
+    expect(Date.now() - started).toBeLessThan(1000)
+  })
+
+  test('gives up on a name whose DNS servers never answer', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+    try {
+      vi.spyOn(Resolver.prototype, 'resolve4').mockReturnValue(
+        new Promise(() => {}),
+      )
+      vi.spyOn(Resolver.prototype, 'resolve6').mockReturnValue(
+        new Promise(() => {}),
+      )
+      const result = resolveAddresses('silent.example.com', 0)
+      const assertion = expect(result).rejects.toMatchObject({
+        code: 'ETIMEOUT',
+      })
+      await vi.advanceTimersByTimeAsync(5000)
+      await assertion
+    } finally {
+      vi.useRealTimers()
+    }
   })
 
   test('blocks private http IP address', async () => {

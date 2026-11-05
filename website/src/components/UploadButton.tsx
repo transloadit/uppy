@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
 import {
   UppyContextProvider,
   UploadButton as UppyUploadButton,
   useFileInput,
 } from '@uppy/react'
+import { useState } from 'react'
 import { Tus, Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
