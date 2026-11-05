@@ -1,6 +1,6 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import sampleImage from '../../compressor/fixtures/image.jpg'
 import BasePlugin, {
   type DefinePluginOpts,
