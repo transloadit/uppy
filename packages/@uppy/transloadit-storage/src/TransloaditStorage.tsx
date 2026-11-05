@@ -113,6 +113,13 @@ export default class TransloaditStorage<
 
   declare opts: TransloaditStorageOptions<M, B>
 
+  /**
+   * The destination prefix captured when the first file in a batch is accepted.
+   * Signing uses this snapshot instead of reading the current folder, so
+   * navigation after acceptance cannot change the destination.
+   */
+  #pinnedDestination: string | null = null
+
   constructor(uppy: Uppy<M, B>, opts: TransloaditStorageOptions<M, B>) {
     // Fail before Uppy registers a half-installed provider with no view to tear down.
     if (opts.storeUploads) {
@@ -226,6 +233,9 @@ export default class TransloaditStorage<
 
   /** Lets the user pick local files and adds them to Uppy. */
   #pickFiles(): void {
+    // Capture the destination before the async file picker, so navigating
+    // while the picker dialog is open does not change the target.
+    this.#pinDestination()
     const input = document.createElement('input')
     input.type = 'file'
     input.multiple = true
@@ -246,6 +256,43 @@ export default class TransloaditStorage<
     input.click()
   }
 
+  /**
+   * Capture the destination prefix once, at the moment files are first
+   * accepted.  Every subsequent signing request in this batch uses the
+   * pinned value instead of reading the (potentially changed) current folder.
+   */
+  #pinDestination(): void {
+    if (this.#pinnedDestination === null) {
+      this.#pinnedDestination = openFolderKey(this)
+    }
+  }
+
+  /** Provides the pinned (or current) destination to the signing closure. */
+  #getDestination = (): string => {
+    return this.#pinnedDestination ?? openFolderKey(this)
+  }
+
+  /**
+   * Pin the destination for any files added from this plugin (dropped or
+   * picked).  Called once via the `file-added` event — one pin per batch.
+   */
+  #onFileAdded = (file: { source?: string | null }): void => {
+    if (
+      this.opts.storeUploads &&
+      file.source === this.id &&
+      this.#pinnedDestination === null
+    ) {
+      this.#pinDestination()
+    }
+  }
+
+  /** Clear the pinned destination when the queue is empty or complete. */
+  #onClearDestination = (): void => {
+    if (this.uppy.getFiles().length === 0) {
+      this.#pinnedDestination = null
+    }
+  }
+
   override install(): void {
     const { storeUploads, reopenAfterUpload } = this.opts
     if (storeUploads) {
@@ -255,6 +302,7 @@ export default class TransloaditStorage<
         assemblyOptions: createStoreAssemblyOptions(this.uppy, {
           ...storeUploads,
           storagePluginId: this.id,
+          getDestination: this.#getDestination,
         }),
         locale: {
           ...transloadit.opts.locale,
@@ -267,9 +315,17 @@ export default class TransloaditStorage<
     }
     super.install()
     if (reopenAfterUpload) this.uppy.on('complete', this.#reopenAfterUpload)
+    // Pin the destination for dropped/picked files.
+    this.uppy.on('file-added', this.#onFileAdded)
+    // Clear the pin when the queue empties.
+    this.uppy.on('file-removed', this.#onClearDestination)
+    this.uppy.on('cancel-all', this.#onClearDestination)
   }
 
   override uninstall(): void {
+    this.uppy.off('cancel-all', this.#onClearDestination)
+    this.uppy.off('file-removed', this.#onClearDestination)
+    this.uppy.off('file-added', this.#onFileAdded)
     this.uppy.off('complete', this.#reopenAfterUpload)
     super.uninstall()
   }
@@ -281,6 +337,8 @@ export default class TransloaditStorage<
    * listeners (Dashboard's own success state) run on the final result first.
    */
   #reopenAfterUpload = (result: UploadResult<M, B>): void => {
+    // Clear the pinned destination regardless of outcome: the batch is done.
+    this.#pinnedDestination = null
     if (result.failed?.length) return
     setTimeout(() => {
       try {

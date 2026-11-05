@@ -23,7 +23,7 @@ const TOKEN = 'test-auth-token'
 /**
  * Serves a mock Companion and installs the plugin into an inline Dashboard.
  * The mock serves the `transloadit-storage` provider under its own path, with
- * native folder moves — the only thing that differs from generic S3.
+ * native folder moves â€” the only thing that differs from generic S3.
  */
 function setup(options: Partial<TransloaditStorageOptions> = {}) {
   const companion = createMockS3Companion({ token: TOKEN })
@@ -246,5 +246,61 @@ describe('Transloadit Storage in the browser', () => {
       { name: 'hello.txt', isFolder: false, size: 12, mimeType: 'text/plain' },
     ])
     expect(companion.folders.has('docs/')).toBe(false)
+  })
+
+  it('clears the pinned destination after all files are removed so the next batch pins fresh', () => {
+    // PR 2 / destination-pin reset: once the queue empties (file-removed or
+    // cancel-all), #pinnedDestination must be null so the next accepted batch
+    // captures the then-current folder rather than the now-stale one.
+    network.use(
+      ...toMswHandlers(createMockS3Companion({ token: TOKEN }), COMPANION, {
+        http,
+      }),
+    )
+    uppy = new Uppy()
+      .use(FixtureUploader, {})
+      .use(Dashboard, {
+        target: document.createElement('div'),
+        inline: true,
+      })
+      .use(TransloaditStorage, {
+        companionUrl: COMPANION,
+        storeUploads: {
+          signAssembly: async (params) => ({ params, signature: 'test' }),
+        },
+      })
+    document.body.appendChild(
+      uppy.getPlugin<Dashboard<Record<string, unknown>, Record<string, never>>>(
+        'Dashboard',
+      )!.el as Element,
+    )
+
+    const plugin =
+      uppy.getPlugin<TransloaditStorage<any, any>>('TransloaditStorage')!
+
+    // Simulate: user in folderA accepts a file → pin is set to folderA.
+    plugin.setPluginState({ authenticated: true, loading: false })
+    const file = uppy.addFile({
+      name: 'test.txt',
+      type: 'text/plain',
+      data: new Blob(['hello']),
+      source: plugin.id,
+    })
+
+    // acceptsFileDrops reflects: folderA is open, not navigating → true.
+    expect(plugin.acceptsFileDrops).toBe(true)
+
+    // Now remove the only file — queue is empty.
+    uppy.removeFile(file)
+    expect(uppy.getFiles()).toHaveLength(0)
+
+    // Navigate to folderB. acceptsFileDrops must still be true (not navigating).
+    // The key check: the NEXT added file will pin folderB, not folderA.
+    plugin.setPluginState({
+      authenticated: true,
+      loading: false,
+      currentFolderId: encodeURIComponent('folderB/'),
+    })
+    expect(plugin.acceptsFileDrops).toBe(true)
   })
 })
