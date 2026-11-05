@@ -1,6 +1,7 @@
 import type { Readable } from 'node:stream'
 import got from 'got'
 import { MAX_AGE_REFRESH_TOKEN } from '../../../helpers/jwt.js'
+import { getProtectedGot } from '../../../helpers/request.js'
 import { isRecord } from '../../../helpers/type-guards.js'
 import { pathSegment, prepareStream } from '../../../helpers/utils.js'
 import logger from '../../../logger.js'
@@ -88,9 +89,11 @@ async function getStats({ id, token }: { id: string; token: string }) {
 export async function streamGoogleFile({
   token,
   id: idIn,
+  allowLocalUrls,
 }: {
   token: string
   id: string
+  allowLocalUrls: boolean
 }) {
   const client = getClient({ token })
 
@@ -119,12 +122,21 @@ export async function streamGoogleFile({
         ? exportLinks[mimeType2]
         : undefined
     if (mimeTypeExportLink) {
-      stream = got.stream.get(mimeTypeExportLink, {
-        headers: {
-          authorization: `Bearer ${token}`,
+      // the link is a URL from the file's metadata, so it gets the same
+      // local-address protection as any other download
+      stream = getProtectedGot({ allowLocalIPs: allowLocalUrls }).stream.get(
+        mimeTypeExportLink,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+          responseType: 'json',
+          // Large exports are converted before Google answers, so drop the
+          // protected client's 30 s response timeout; lookup/connect stay bounded.
+          // @ts-expect-error got clears an inherited timeout with undefined
+          timeout: { response: undefined },
         },
-        responseType: 'json',
-      })
+      )
     } else {
       stream = client.stream.get(`files/${pathSegment(id)}/export`, {
         searchParams: { supportsAllDrives: true, mimeType: mimeType2 },
@@ -298,7 +310,8 @@ export class Drive extends Provider<GoogleUserSession> {
     return withGoogleErrorHandling(
       Drive.oauthProvider,
       'provider.drive.download.error',
-      () => streamGoogleFile({ token, id }),
+      () =>
+        streamGoogleFile({ token, id, allowLocalUrls: this.allowLocalUrls }),
     )
   }
 }

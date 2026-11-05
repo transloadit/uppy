@@ -98,7 +98,7 @@ export default class Box extends Provider<BoxUserSession> {
         list({ directory, query, token }),
       ])
 
-      return adaptData(files, userInfo.login, companion)
+      return adaptData(files, userInfo.login, companion, directory)
     })
   }
 
