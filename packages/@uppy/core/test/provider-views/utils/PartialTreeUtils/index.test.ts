@@ -274,7 +274,6 @@ describe('afterFill()', () => {
   })
 
   it('rejects when a subfolder listing fails, even though its sibling loads', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
@@ -308,7 +307,6 @@ describe('afterFill()', () => {
   })
 
   it('rejects even when the listing rejects without a reason', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('2', { parentId: 'ourRoot', cached: false, status: 'checked' }),
@@ -369,7 +367,6 @@ describe('afterFill()', () => {
   })
 
   it('aborts the running requests on a failure, without waiting for them', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('slow', {
@@ -416,7 +413,6 @@ describe('afterFill()', () => {
   })
 
   it('rejects with the cancel when `signal` aborts after a failure', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('slow', {

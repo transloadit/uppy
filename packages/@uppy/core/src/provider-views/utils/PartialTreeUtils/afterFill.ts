@@ -136,8 +136,11 @@ const afterFill = async (
     reportProgress(nOfFilesChecked)
   })
 
-  await queue.onIdle()
-  signal?.removeEventListener('abort', cancel)
+  try {
+    await queue.onIdle()
+  } finally {
+    signal?.removeEventListener('abort', cancel)
+  }
 
   // A cancel wins over an earlier failure: the user asked to stop.
   signal?.throwIfAborted()
