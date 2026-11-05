@@ -14,8 +14,8 @@ import type { CompanionRuntimeOptions } from './companion-options.js'
  * parsed). Type it as `unknown` so it has to be validated before use.
  */
 type Params = ExpressRequest['params']
-export type Request = ExpressRequest<Params, any, unknown>
-export type RequestHandler = ExpressRequestHandler<Params, any, unknown>
+export type Request<P = Params> = ExpressRequest<P, any, unknown>
+export type RequestHandler<P = Params> = ExpressRequestHandler<P, any, unknown>
 
 export type BuildUrl = (
   subPath: string,

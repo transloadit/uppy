@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import cookieParser from 'cookie-parser'
-import type { Express, RequestHandler } from 'express'
+import type { Express } from 'express'
 import express from 'express'
 import interceptor from 'express-interceptor'
 import grant from 'grant'
@@ -23,6 +23,7 @@ import searchController from './server/controllers/search.js'
 import url from './server/controllers/url.js'
 import type { EmitterLike } from './server/emitter/index.js'
 import createEmitter from './server/emitter/index.js'
+import { asRecord } from './server/helpers/type-guards.js'
 import { getURLBuilder } from './server/helpers/utils.js'
 import * as jobs from './server/jobs.js'
 import logger from './server/logger.js'
@@ -39,6 +40,7 @@ import { isOAuthProvider } from './server/provider/Provider.js'
 import * as redis from './server/redis.js'
 import socket from './server/socket.js'
 import type { CompanionRuntimeOptions } from './types/companion-options.js'
+import type { RequestHandler } from './types/express.js'
 
 export type { ProviderListResponse } from './server/provider/Provider.js'
 export type { CompanionInitOptions }
@@ -172,7 +174,7 @@ export function app(optionsArg: CompanionInitOptions): {
     }
     // same input object Grant reads
     const input: Record<string, unknown> =
-      Object.keys(req.query).length > 0 ? req.query : (req.body ?? {})
+      Object.keys(req.query).length > 0 ? req.query : asRecord(req.body)
     if (input['code'] ? !req.session?.grant?.state : !input['error']) {
       // Also what an expired session looks like: tell the user to retry.
       res
