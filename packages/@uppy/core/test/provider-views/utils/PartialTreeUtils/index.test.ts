@@ -68,7 +68,6 @@ const getFile = (tree: PartialTree, id: string) =>
 
 describe('afterFill()', () => {
   it('preserves .checked files in an already .cached folder', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -99,7 +98,6 @@ describe('afterFill()', () => {
   })
 
   it('fetches a .checked folder', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -131,7 +129,6 @@ describe('afterFill()', () => {
   })
 
   it('fetches remaining pages in a folder', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -164,7 +161,6 @@ describe('afterFill()', () => {
   })
 
   it('fetches a folder two levels deep', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -209,7 +205,6 @@ describe('afterFill()', () => {
   })
 
   it('complex situation', async () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -453,7 +448,6 @@ describe('afterFill()', () => {
 
 describe('afterOpenFolder()', () => {
   it('open "checked" folder - all discovered files are marked as "checked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -484,7 +478,6 @@ describe('afterOpenFolder()', () => {
   })
 
   it('open "unchecked" folder - all discovered files are marked as "unchecked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -517,7 +510,6 @@ describe('afterOpenFolder()', () => {
 
 describe('afterScrollFolder()', () => {
   it('scroll "checked" folder - all discovered files are marked as "checked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -547,7 +539,6 @@ describe('afterScrollFolder()', () => {
   })
 
   it('scroll "checked" folder - all discovered files are marked as "unchecked"', () => {
-    // prettier-ignore
     const oldPartialTree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -579,7 +570,6 @@ describe('afterScrollFolder()', () => {
 
 describe('afterToggleCheckbox()', () => {
   it('manager mode: loaded children do not check a folder with more pages', () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot', nextPagePath: 'page2' }),
@@ -603,7 +593,6 @@ describe('afterToggleCheckbox()', () => {
   })
 
   it('recomputes every parent of a range that spans folders', () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       _folder('1', { parentId: 'ourRoot' }),
@@ -616,7 +605,6 @@ describe('afterToggleCheckbox()', () => {
     expect(getFolder(toggled, '2').status).toEqual('checked')
   })
 
-  // prettier-ignore
   const oldPartialTree: PartialTree = [
     _root('ourRoot'),
     _folder('1', { parentId: 'ourRoot' }),
@@ -714,7 +702,6 @@ describe('afterToggleCheckbox()', () => {
 
 describe('getNumberOfSelectedFiles()', () => {
   it('gets all leaf items', () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       // leaf .checked folder
@@ -732,7 +719,6 @@ describe('getNumberOfSelectedFiles()', () => {
   })
 
   it('empty folder, even after being opened, counts as leaf node', () => {
-    // prettier-ignore
     const tree: PartialTree = [
       _root('ourRoot'),
       // empty .checked .cached folder
@@ -747,7 +733,6 @@ describe('getNumberOfSelectedFiles()', () => {
 
 describe('getCheckedFilesWithPaths()', () => {
   // Note that this is a tree that doesn't require any api calls, everything is cached already
-  // prettier-ignore
   const tree: PartialTree = [
     _root('ourRoot'),
     _folder('1', { parentId: 'ourRoot' }),
@@ -806,7 +791,6 @@ describe('getCheckedFilesWithPaths()', () => {
 })
 
 describe('getBreadcrumbs()', () => {
-  // prettier-ignore
   const tree: PartialTree = [
     _root('ourRoot'),
     _folder('1', { parentId: 'ourRoot' }),
@@ -838,7 +822,6 @@ describe('getBreadcrumbs()', () => {
   })
 
   it('returns folders when currentFolderId=null', () => {
-    // prettier-ignore
     const treeWithNullRoot: PartialTree = [
       _root(null!),
       _folder('1', { parentId: null }),

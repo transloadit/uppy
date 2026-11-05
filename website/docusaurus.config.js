@@ -34,8 +34,8 @@ const lightCodeTheme = {
   styles: themes.github.styles.map((entry) => {
     const replacement =
       accessibleTokenColors[/** @type {string} */ (entry.style.color)]
-    return replacement ?
-        { ...entry, style: { ...entry.style, color: replacement } }
+    return replacement
+      ? { ...entry, style: { ...entry.style, color: replacement } }
       : entry
   }),
 }

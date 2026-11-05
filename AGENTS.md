@@ -97,7 +97,7 @@ The build system uses Turbo (turbo.json) for task orchestration:
 
 ### Linting and Formatting
 
-- **Biome** is used for linting and formatting (replaces ESLint/Prettier)
+- **Biome** is used for linting and formatting
 - Configuration in `biome.json`
 - Use single quotes, semicolons as needed
 - 2-space indentation

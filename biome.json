@@ -12,6 +12,8 @@
       "examples/**",
       "scripts/**",
       "private/**",
+      "website/**",
+      "!website/static",
       "!packages/**/{angular/src,dist,lib}",
       "!node_modules",
       "!.svelte-kit",
@@ -91,6 +93,19 @@
           "correctness": {
             "useHookAtTopLevel": "off",
             "useExhaustiveDependencies": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["website/**/*.css"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noImportantStyles": "off"
+          },
+          "style": {
+            "noDescendingSpecificity": "off"
           }
         }
       }

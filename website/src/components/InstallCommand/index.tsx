@@ -1,8 +1,6 @@
 import type { ReactNode } from 'react'
-import React from 'react'
-
-import CopyStateIcon from '../CopyStateIcon'
 import { useCopyToClipboard } from '../../hooks/useCopyToClipboard'
+import CopyStateIcon from '../CopyStateIcon'
 import styles from './styles.module.css'
 
 type Props = {
