@@ -2,7 +2,7 @@ import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import Core, { type Meta, type UppyFile } from '@uppy/core'
 import { HttpResponse, http } from 'msw'
-import { describe, expect, test, vi } from 'vitest'
+import { describe, expect, onTestFinished, test, vi } from 'vitest'
 import AwsS3, { type AwsBody, type AwsS3Options } from '../lib/index.js'
 
 const KB = 1024
@@ -786,6 +786,43 @@ describe('AwsS3', () => {
       }
 
       expect(uploadErrorHandler).toHaveBeenCalledTimes(1)
+    })
+
+    test('emits upload-error when the upload fails before it starts', async () => {
+      const signRequest = vi.fn()
+
+      using core = new Core().use(AwsS3, {
+        s3Endpoint: 'https://companion.example.com',
+        region: 'us-east-1',
+        signRequest,
+        shouldUseMultipart: false,
+      })
+
+      core.addFile({
+        source: 'test',
+        name: 'test.txt',
+        type: 'text/plain',
+        data: new File([new Uint8Array(1024)], 'test.txt'),
+      })
+
+      const uploadErrorHandler = vi.fn()
+      core.on('upload-error', uploadErrorHandler)
+
+      // Insecure contexts (plain HTTP on a non-localhost host) have no `crypto.randomUUID`
+      vi.stubGlobal('crypto', {
+        getRandomValues: crypto.getRandomValues.bind(crypto),
+      })
+      onTestFinished(() => {
+        vi.unstubAllGlobals()
+      })
+      const result = await core.upload()
+
+      expect(signRequest).not.toHaveBeenCalled()
+      expect(uploadErrorHandler).toHaveBeenCalledTimes(1)
+      expect(uploadErrorHandler.mock.calls[0][1]).toBeInstanceOf(TypeError)
+      expect(uploadErrorHandler.mock.calls[0][1].message).toMatch(/randomUUID/)
+      expect(result?.successful).toHaveLength(0)
+      expect(result?.failed).toHaveLength(1)
     })
   })
 
