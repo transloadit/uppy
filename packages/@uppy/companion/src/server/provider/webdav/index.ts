@@ -137,8 +137,10 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
 
       return providerUserSession
     } catch (err) {
-      const errForLog = err instanceof Error ? err : new Error(String(err))
-      logger.error(errForLog, 'provider.webdav.error')
+      // The raw error's `response.url` is the WebDAV URL, which for a share
+      // link is itself the credential. Log and throw the mapped error instead.
+      const mapped = this.mapProviderError(err)
+      logger.error(mapped, 'provider.webdav.error')
       const code = isRecord(err) ? err['code'] : undefined
       if (
         typeof code === 'string' &&
@@ -146,7 +148,7 @@ export default class WebdavProvider extends Provider<WebdavUserSession> {
       ) {
         throw userError('WEBDAV_CANNOT_CONNECT', 'Cannot connect to server')
       }
-      throw err
+      throw mapped
     }
   }
 
