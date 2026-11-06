@@ -3,18 +3,19 @@ name: CI
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'assets/**'
-      - '.github/**'
-      - '!.github/workflows/ci.yml'
   pull_request:
     # We want all branches so we configure types to be the GH default again
     types: [opened, synchronize, reopened]
-    paths-ignore:
-      - '**.md'
-      - '.github/**'
-      - '!.github/workflows/ci.yml'
+
+# Key on the PR number, not `head_ref`: branch names from different forks
+# (e.g. two `patch-1` PRs) would otherwise cancel each other's runs. Pushes
+# to main fall back to `run_id`, so they are never cancelled.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 env:
   YARN_ENABLE_GLOBAL_CACHE: false
@@ -79,8 +80,7 @@ jobs:
           --health-retries 5
     strategy:
       matrix:
-        # Current Node is covered separately in node26.yml.
-        node-version: ['22.23.4', '24.22.1']
+        node-version: ['22.23.4', '24.22.1', '26.12.1']
     steps:
       - name: Checkout sources
         uses: actions/checkout@v7
@@ -90,6 +90,11 @@ jobs:
           node-version: ${{matrix.node-version}}
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
+      - name: Report tool versions
+        run: |
+          node --version
+          corepack --version
+          corepack yarn --version
       - name: Get yarn cache directory path
         id: yarn-cache-dir-path
         run:
@@ -117,6 +122,19 @@ jobs:
           COMPANION_PROTOCOL: http
           COMPANION_REDIS_URL: redis://localhost:6379
           VITE_MINIO_CONFIG: "test_user,test_password,http://localhost:9002/test-bucket,us-east-1"
+      # The @uppy/url browser tests start Companion behind a load balancer
+      # with Redis (multi-instance), so they need the build and the Redis
+      # service above. This uncached task needs the Companion fixture
+      # environment in Turbo. `yarn test` above already runs the same
+      # browser project on every Node version, so run this once only, on the
+      # leg that used to run it in node26.yml.
+      - name: Run end-to-end tests
+        if: matrix.node-version == '26.12.1'
+        run: corepack yarn test:e2e
+        env:
+          TURBO_ENV_MODE: loose
+          COMPANION_PROTOCOL: http
+          COMPANION_REDIS_URL: redis://localhost:6379
       # The examples aren't covered by `yarn build` (packages only) or
       # `yarn test` (react/vue/sveltekit only), so build and typecheck them
       # explicitly. Run it after the unit tests so an example-only breakage
@@ -194,3 +212,24 @@ jobs:
         run: corepack yarn workspaces focus @uppy-dev/build
       - name: Run linter
         run: corepack yarn run check:mdx
+
+  lint_md:
+    name: Lint (Markdown)
+    runs-on: ubuntu-latest
+    env:
+      SKIP_YARN_COREPACK_CHECK: true
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Install Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '26.12.1'
+      - name: Install Corepack
+        run: npm install --global corepack@0.36.0
+      - name: Install dependencies
+        run: corepack yarn workspaces focus @uppy-dev/build
+      - name: Run linter
+        run: corepack yarn run check:md
