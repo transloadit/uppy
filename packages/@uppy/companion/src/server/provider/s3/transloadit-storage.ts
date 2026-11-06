@@ -184,6 +184,9 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     id: string,
     destination: string,
   ): Promise<ItemRef> {
+    // The catalog stores NFC paths; compare its response with that representation.
+    id = id.normalize('NFC')
+    destination = destination.normalize('NFC')
     // Sign with the Workspace key pair the session's S3 client uses: in dynamic
     // mode the SDK has it cached, so a move costs no extra resolver call.
     const { accessKeyId: key, secretAccessKey: secret } =
@@ -192,6 +195,7 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
       auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
       source: id,
       destination,
+      file_library: true,
     })
     const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
     const response = await callApi(native.apiEndpoint, '/dam/entries/move', {
