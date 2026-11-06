@@ -138,7 +138,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
       const plugin = new ThumbnailGeneratorPlugin(core)
       plugin.install()
 
-      URL.revokeObjectURL = vi.fn(() => null)
+      vi.spyOn(URL, 'revokeObjectURL').mockImplementation(() => null)
 
       try {
         const file1 = {
@@ -180,7 +180,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         core.emit('file-removed', file1)
         expect(URL.revokeObjectURL).toHaveBeenCalledTimes(1)
       } finally {
-        delete URL.revokeObjectURL
+        URL.revokeObjectURL.mockRestore()
       }
     })
   })
@@ -386,6 +386,71 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
     })
   })
 
+  describe('createThumbnail', () => {
+    // A 400×300 JPEG with red, green / blue, yellow quadrants and an EXIF
+    // Orientation tag.
+    async function jpegWithOrientation(orientation) {
+      const canvas = document.createElement('canvas')
+      canvas.width = 400
+      canvas.height = 300
+      const ctx = canvas.getContext('2d')
+      for (const [color, x, y] of [
+        ['#f00', 0, 0],
+        ['#0f0', 200, 0],
+        ['#00f', 0, 150],
+        ['#ff0', 200, 150],
+      ]) {
+        ctx.fillStyle = color
+        ctx.fillRect(x, y, 200, 150)
+      }
+      const blob = await new Promise((resolve) =>
+        canvas.toBlob(resolve, 'image/jpeg', 1),
+      )
+      const jpeg = new Uint8Array(await blob.arrayBuffer())
+      // APP1 segment: marker and length, 'Exif\0\0', a little-endian TIFF
+      // header, then an IFD0 with one entry, Orientation (0x0112) as a SHORT.
+      const hex = `ffe10022 457869660000 49492a0008000000 0100 1201030001000000 0${orientation}000000 00000000`
+      const app1 = Uint8Array.from(hex.replaceAll(' ', '').match(/../g), (b) =>
+        Number.parseInt(b, 16),
+      )
+      return new File([jpeg.subarray(0, 2), app1, jpeg.subarray(2)], 'a.jpg', {
+        type: 'image/jpeg',
+      })
+    }
+
+    it.each([
+      // [orientation, thumbnail size, quadrant colours as RGB bits]
+      [1, [200, 150], ['100', '010', '001', '110']],
+      // 6 = rotate 90° clockwise to display: blue, red / yellow, green
+      [6, [200, 267], ['001', '100', '110', '010']],
+    ])('should draw EXIF orientation %i the way the browser displays it', async (orientation, size, colors) => {
+      const plugin = new ThumbnailGeneratorPlugin(new MockCore())
+      const file = await jpegWithOrientation(orientation)
+
+      const thumbnail = new Image()
+      thumbnail.src = await plugin.createThumbnail({ data: file }, 200, null)
+      await thumbnail.decode()
+      const [w, h] = [thumbnail.naturalWidth, thumbnail.naturalHeight]
+      expect([w, h]).toEqual(size)
+
+      const canvas = document.createElement('canvas')
+      canvas.width = w
+      canvas.height = h
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(thumbnail, 0, 0)
+      const bits = (x, y) =>
+        Array.from(ctx.getImageData(x, y, 1, 1).data.slice(0, 3))
+          .map((c) => (c > 127 ? 1 : 0))
+          .join('')
+      expect([
+        bits(w / 4, h / 4),
+        bits((3 * w) / 4, h / 4),
+        bits(w / 4, (3 * h) / 4),
+        bits((3 * w) / 4, (3 * h) / 4),
+      ]).toEqual(colors)
+    })
+  })
+
   describe('downScaleInSteps', () => {
     let originalDocumentCreateElement
     let originalURLCreateObjectURL
@@ -415,7 +480,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 0,
         getContext: vi.fn().mockReturnValue(context),
       }
-      document.createElement = vi.fn().mockReturnValue(canvas)
+      vi.spyOn(document, 'createElement').mockReturnValue(canvas)
       const result = plugin.downScaleInSteps(image, 3)
       const newImage = {
         getContext: canvas.getContext,
@@ -457,6 +522,10 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
   })
 
   describe('resizeImage', () => {
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
     it('should return a canvas with the resized image on it', () => {
       const core = new MockCore()
       const plugin = new ThumbnailGeneratorPlugin(core)
@@ -472,7 +541,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 0,
         getContext: vi.fn().mockReturnValue(context),
       }
-      document.createElement = vi.fn().mockReturnValue(canvas)
+      vi.spyOn(document, 'createElement').mockReturnValue(canvas)
 
       const result = plugin.resizeImage(image, 200, 160)
       expect(result).toEqual({
@@ -497,7 +566,7 @@ describe('uploader/ThumbnailGeneratorPlugin', () => {
         height: 0,
         getContext: vi.fn().mockReturnValue(context),
       }
-      document.createElement = vi.fn().mockReturnValue(canvas)
+      vi.spyOn(document, 'createElement').mockReturnValue(canvas)
 
       const result = plugin.resizeImage(image, 200, 160)
       expect(result).toEqual({

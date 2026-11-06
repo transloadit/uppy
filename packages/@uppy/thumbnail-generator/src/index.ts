@@ -6,8 +6,6 @@ import {
   isObjectURL,
   isPreviewSupported,
 } from '@uppy/core/utils'
-// @ts-expect-error untyped
-import { rotation } from 'exifr/dist/mini.esm.mjs'
 import packageJson from '../package.json' with { type: 'json' }
 import locale from './locale.js'
 
@@ -22,16 +20,6 @@ declare module '@uppy/core' {
   export interface PluginTypeRegistry<M extends Meta, B extends Body> {
     ThumbnailGenerator: ThumbnailGenerator<M, B>
   }
-}
-
-interface Rotation {
-  deg: number
-  rad: number
-  scaleX: number
-  scaleY: number
-  dimensionSwapped: boolean
-  css: boolean
-  canvas: boolean
 }
 
 /**
@@ -82,41 +70,13 @@ function canvasToBlob(
     })
 }
 
-function rotateImage(image: HTMLImageElement, translate: Rotation) {
-  let w = image.width
-  let h = image.height
-
-  if (translate.deg === 90 || translate.deg === 270) {
-    w = image.height
-    h = image.width
-  }
-
-  const canvas = document.createElement('canvas')
-  canvas.width = w
-  canvas.height = h
-
-  const context = canvas.getContext('2d')!
-  context.translate(w / 2, h / 2)
-  if (translate.canvas) {
-    context.rotate(translate.rad)
-    context.scale(translate.scaleX, translate.scaleY)
-  }
-  context.drawImage(
-    image,
-    -image.width / 2,
-    -image.height / 2,
-    image.width,
-    image.height,
-  )
-
-  return canvas
-}
-
 /**
  * Make sure the image doesn’t exceed browser/device canvas limits.
  * For ios with 256 RAM and ie
  */
-function protect(image: HTMLCanvasElement): HTMLCanvasElement {
+function protect(
+  image: HTMLCanvasElement | HTMLImageElement,
+): HTMLCanvasElement | HTMLImageElement {
   // https://stackoverflow.com/questions/6081483/maximum-size-of-a-canvas-element
 
   const ratio = image.width / image.height
@@ -226,21 +186,17 @@ export default class ThumbnailGenerator<
       })
     })
 
-    const orientationPromise = rotation(file.data).catch(
-      () => 1,
-    ) as Promise<Rotation>
-
-    return Promise.all([onload, orientationPromise])
-      .then(([image, orientation]) => {
+    // Browsers apply the EXIF orientation themselves, both to the image's
+    // dimensions and when drawing it to a canvas, so no rotation is needed here.
+    return onload
+      .then((image) => {
         const dimensions = this.getProportionalDimensions(
           image,
           targetWidth,
           targetHeight,
-          orientation.deg,
         )
-        const rotatedImage = rotateImage(image, orientation)
         const resizedImage = this.resizeImage(
-          rotatedImage,
+          image,
           dimensions.width,
           dimensions.height,
         )
@@ -256,17 +212,17 @@ export default class ThumbnailGenerator<
    * or height. If both width and height are given, only width is taken into
    * account. If neither width nor height are given, the default dimension
    * is used.
+   *
+   * The fourth parameter is ignored and only kept so existing callers still
+   * type-check: `img` already has the dimensions the browser displays.
    */
   getProportionalDimensions(
     img: HTMLImageElement,
     width: number | null,
     height: number | null,
-    deg: number,
+    _deg?: number,
   ): { width: number; height: number } {
-    let aspect = img.width / img.height
-    if (deg === 90 || deg === 270) {
-      aspect = img.height / img.width
-    }
+    const aspect = img.width / img.height
 
     if (width != null) {
       let targetWidth = width
@@ -301,7 +257,7 @@ export default class ThumbnailGenerator<
    * Returns a Canvas with the resized image on it.
    */
   resizeImage(
-    image: HTMLCanvasElement,
+    image: HTMLCanvasElement | HTMLImageElement,
     targetWidth: number,
     targetHeight: number,
   ): HTMLCanvasElement {
@@ -318,8 +274,11 @@ export default class ThumbnailGenerator<
     let sH = targetHeight * 2 ** (steps - 1)
     const x = 2
 
-    while (steps--) {
-      const canvas = document.createElement('canvas')
+    // `do…while` so this always returns a canvas, never the original <img>,
+    // even when `steps` is NaN (an image with zero width).
+    let canvas: HTMLCanvasElement
+    do {
+      canvas = document.createElement('canvas')
       canvas.width = sW
       canvas.height = sH
       canvas.getContext('2d')!.drawImage(img, 0, 0, sW, sH)
@@ -327,9 +286,9 @@ export default class ThumbnailGenerator<
 
       sW = Math.round(sW / x)
       sH = Math.round(sH / x)
-    }
+    } while (--steps > 0)
 
-    return img
+    return canvas
   }
 
   /**
