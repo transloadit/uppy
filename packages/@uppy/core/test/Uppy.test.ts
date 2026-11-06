@@ -1,6 +1,6 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
 import type { Body, Meta } from '@uppy/core'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import sampleImage from '../../compressor/fixtures/image.jpg'
 import BasePlugin, {
   type DefinePluginOpts,
@@ -2540,6 +2540,39 @@ describe('src/Core', () => {
     afterEach(() => {
       // @ts-expect-error readonly but whatever
       globalThis.window.navigator.onLine = RealNavigatorOnline
+    })
+
+    describe('initial online-status check', () => {
+      beforeEach(() => {
+        vi.useFakeTimers()
+        mockNavigatorOnline(true)
+      })
+
+      afterEach(() => {
+        vi.useRealTimers()
+      })
+
+      it('should not emit an online event after destruction', () => {
+        const core = new Core()
+        const onOnline = vi.fn()
+        core.on('is-online', onOnline)
+
+        core.destroy()
+        vi.advanceTimersByTime(3000)
+
+        expect(onOnline).not.toHaveBeenCalled()
+      })
+
+      it('should still check the online status of a live instance', () => {
+        const core = new Core()
+        const onOnline = vi.fn()
+        core.on('is-online', onOnline)
+
+        vi.advanceTimersByTime(3000)
+        core.destroy()
+
+        expect(onOnline).toHaveBeenCalledOnce()
+      })
     })
 
     it('should emit the correct event based on whether there is a network connection', () => {
