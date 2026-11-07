@@ -1,9 +1,9 @@
 import got from 'got'
 import moment from 'moment-timezone'
-import pMap from 'p-map'
 import { isRecord } from '../../helpers/type-guards.js'
 import {
   getBasicAuthHeader,
+  mapConcurrently,
   pathSegment,
   prepareStream,
 } from '../../helpers/utils.js'
@@ -159,7 +159,7 @@ export default class Zoom extends Provider<ZoomUserSession> {
 
         // Run each month in parallel:
         const allMeetingsInYear = (
-          await pMap(
+          await mapConcurrently(
             monthsToCheck,
             async (month) => {
               const startDate = moment

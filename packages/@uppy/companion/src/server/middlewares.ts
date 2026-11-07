@@ -181,6 +181,31 @@ export const gentleVerifyToken: RequestHandler = (req, _res, next) => {
   next()
 }
 
+/**
+ * Set `req.cookies` from the Cookie header, as cookie-parser does without a
+ * secret: the first value for a name wins, surrounding quotes are dropped and
+ * values are URI-decoded when possible. Values always stay strings.
+ */
+export const cookies: RequestHandler = (req, _res, next) => {
+  const parsed: Record<string, string> = Object.create(null)
+  const trim = (s: string) => s.replace(/^[ \t]+|[ \t]+$/g, '')
+  for (const pair of req.headers.cookie?.split(';') ?? []) {
+    const eq = pair.indexOf('=')
+    const name = trim(pair.slice(0, eq))
+    if (eq === -1 || !name || name in parsed) continue
+    let value = trim(pair.slice(eq + 1))
+    if (value.startsWith('"') && value.endsWith('"')) value = value.slice(1, -1)
+    try {
+      value = decodeURIComponent(value)
+    } catch {
+      // keep the raw value, like cookie-parser
+    }
+    parsed[name] = value
+  }
+  req.cookies = parsed
+  next()
+}
+
 export const cookieAuthToken: RequestHandler = (req, _res, next) => {
   const oauthProvider = req.companion.providerClass?.oauthProvider
   if (oauthProvider == null || oauthProvider.length === 0) {

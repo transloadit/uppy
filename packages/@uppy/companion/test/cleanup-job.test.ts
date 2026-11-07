@@ -16,15 +16,6 @@ import Emitter from '../dist/server/emitter/index.js'
 import { startCleanUpJob } from '../dist/server/jobs.js'
 import Uploader from '../dist/server/Uploader.js'
 
-const { scheduled } = vi.hoisted(() => ({
-  scheduled: [] as Array<() => void>,
-}))
-vi.mock('node-schedule', () => ({
-  default: {
-    scheduleJob: (_rule: string, fn: () => void) => scheduled.push(fn),
-  },
-}))
-
 test('the clean-up job leaves the temp file of a running upload alone', async () => {
   const dir = mkdtempSync(join(tmpdir(), 'companion-cleanup-'))
   try {
@@ -50,8 +41,13 @@ test('the clean-up job leaves the temp file of a running upload alone', async ()
     writeFileSync(leftover, '')
     utimesSync(leftover, old, old)
 
+    // Run the scheduled job now instead of at 23:00.
+    const timeout = vi.spyOn(globalThis, 'setTimeout')
     startCleanUpJob(dir)
-    scheduled.at(-1)?.()
+    const [runJob, delay] = timeout.mock.calls[0]!
+    timeout.mockRestore()
+    expect(delay).toBeLessThanOrEqual(24 * 60 * 60 * 1000)
+    ;(runJob as () => void)()
     await vi.waitFor(() => expect(existsSync(leftover)).toBe(false))
     await new Promise((resolve) => setTimeout(resolve, 100))
     expect(existsSync(inUse)).toBe(true)
