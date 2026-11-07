@@ -2417,16 +2417,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@changesets/changelog-github@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@changesets/changelog-github@npm:1.0.1"
-  dependencies:
-    "@changesets/get-github-info": "npm:^1.0.1"
-    "@changesets/types": "npm:^7.0.0"
-  checksum: 10/7ae2533348abdb4d503486e7cc165ff6be332e86a2a2652853148c2e6e310c9d8c9fea49442b2222f99aaeaf16ede0556de22a825307b1177c5ac8be29b225d8
-  languageName: node
-  linkType: hard
-
 "@changesets/cli@npm:^3.0.2":
   version: 3.0.2
   resolution: "@changesets/cli@npm:3.0.2"
@@ -2495,15 +2485,6 @@ __metadata:
     "@changesets/types": "npm:^7.0.0"
     semver: "npm:^7.8.1"
   checksum: 10/3b53b29bc316acc08f76351711b2e90f79237a8d5c1369e845c05f940b69b580d438404b7f53fce997a97f926279135b88995ce819fe6bb211a577a80b381804
-  languageName: node
-  linkType: hard
-
-"@changesets/get-github-info@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "@changesets/get-github-info@npm:1.0.1"
-  dependencies:
-    dataloader: "npm:^2.2.3"
-  checksum: 10/09f119ec9829bb4ef92b5f13f4a0b2c7cc9af10e8e54026fed13d1d77398d333b9f90612d8b6832f66ba6198310f9cd1bb3eb6fa4b7c1324185e1c0ca46bff2d
   languageName: node
   linkType: hard
 
@@ -7740,13 +7721,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/deep-freeze@npm:^0":
-  version: 0.1.5
-  resolution: "@types/deep-freeze@npm:0.1.5"
-  checksum: 10/7d46b4b24e50356f080eee19cf4fe08028114171b8142c49d3baffbac4db4dbc60a486432ccc5671d6f3f8f4e3678a386935c860931a29104765151e18e01c31
-  languageName: node
-  linkType: hard
-
 "@types/estree-jsx@npm:^1.0.0":
   version: 1.0.5
   resolution: "@types/estree-jsx@npm:1.0.5"
@@ -8361,7 +8335,6 @@ __metadata:
   resolution: "@uppy-dev/build@workspace:."
   dependencies:
     "@biomejs/biome": "npm:2.4.15"
-    "@changesets/changelog-github": "npm:^1.0.1"
     "@changesets/cli": "npm:^3.0.2"
     mdast-comment-marker: "npm:^3.0.0"
     mdxlint: "npm:^1.0.0"
@@ -8632,7 +8605,6 @@ __metadata:
   resolution: "@uppy/core@workspace:packages/@uppy/core"
   dependencies:
     "@transloadit/prettier-bytes": "npm:^2.0.0"
-    "@types/deep-freeze": "npm:^0"
     "@types/gapi": "npm:^0.0.47"
     "@types/google.accounts": "npm:^0.0.18"
     "@types/google.picker": "npm:^0.0.52"
@@ -9010,7 +8982,6 @@ __metadata:
     "@uppy/core": "workspace:^"
     svelte: "npm:^5.56.5"
     svelte-check: "npm:^4.7.7"
-    tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -12030,13 +12001,6 @@ __metadata:
   version: 4.0.1
   resolution: "data-uri-to-buffer@npm:4.0.1"
   checksum: 10/0d0790b67ffec5302f204c2ccca4494f70b4e2d940fea3d36b09f0bb2b8539c2e86690429eb1f1dc4bcc9e4df0644193073e63d9ee48ac9fce79ec1506e4aa4c
-  languageName: node
-  linkType: hard
-
-"dataloader@npm:^2.2.3":
-  version: 2.2.3
-  resolution: "dataloader@npm:2.2.3"
-  checksum: 10/83fe6259abe00ae64c5f48252ef59d8e5fcabda9fd4d26685f14a76eeca596bf6f9500d9f22a0094c50c3ea782a0977728f9367e232dfa0fdb5c9d646de279b2
   languageName: node
   linkType: hard
 
