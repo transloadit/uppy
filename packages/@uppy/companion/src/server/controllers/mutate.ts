@@ -1,7 +1,7 @@
-import type { NextFunction, Request, Response } from 'express'
+import type { NextFunction, Response } from 'express'
 import type { Promisable } from 'type-fest'
 import { z } from 'zod'
-import type { CompanionContext } from '../../types/express.js'
+import type { CompanionContext, Request } from '../../types/express.js'
 import { respondWithError } from '../provider/error.js'
 import type Provider from '../provider/Provider.js'
 

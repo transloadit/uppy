@@ -5,6 +5,7 @@ import type {
 } from '@aws-sdk/client-s3'
 import type { PresignedPostOptions } from '@aws-sdk/s3-presigned-post'
 import type { CorsOptions } from 'cors'
+// biome-ignore lint/style/noRestrictedImports: public option types keep Express's own Request so user callbacks aren't affected
 import type { Request } from 'express'
 import type { RedisOptions } from 'ioredis'
 import type Provider from '../server/provider/Provider.js'

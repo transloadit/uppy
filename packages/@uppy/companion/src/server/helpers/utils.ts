@@ -1,10 +1,10 @@
 import crypto from 'node:crypto'
 import type { ObjectCannedACL, ServerSideEncryption } from '@aws-sdk/client-s3'
-import type { Request } from 'express'
 import type {
   GetBucketFn,
   S3ObjectWriteOptions,
 } from '../../schemas/companion.js'
+import type { Request } from '../../types/express.js'
 
 const authTagLength = 16
 const nonceLength = 16

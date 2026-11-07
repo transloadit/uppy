@@ -1,5 +1,5 @@
-import type { NextFunction, Request, Response } from 'express'
-import type { ProviderUserSession } from '../../types/express.js'
+import type { NextFunction, Response } from 'express'
+import type { ProviderUserSession, Request } from '../../types/express.js'
 import * as tokenService from '../helpers/jwt.js'
 import logger from '../logger.js'
 import { respondWithError } from '../provider/error.js'

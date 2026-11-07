@@ -2,7 +2,8 @@
  * oAuth callback.  Encrypts the access token and sends the new token with the response,
  */
 
-import type { Request, Response } from 'express'
+import type { Response } from 'express'
+import type { Request } from '../../types/express.js'
 import emitter from '../emitter/index.js'
 import {
   authCallbackErrorHtml,
