@@ -582,11 +582,11 @@ providers like Dropbox and Google Drive directly into S3.
 
 ##### `s3.key` `COMPANION_AWS_KEY`
 
-The S3 access key ID.
+The S3 access key ID (optional).
 
 ##### `s3.secret` `COMPANION_AWS_SECRET` `COMPANION_AWS_SECRET_FILE`
 
-The S3 secret access key.
+The S3 secret access key (optional).
 
 :::note
 
@@ -594,6 +594,17 @@ Using a secret file means passing an absolute path to a file with any extension,
 which has only the secret, nothing else.
 
 :::
+
+If you leave out `s3.key` and `s3.secret`, Companion passes no credentials to
+the AWS SDK, so the SDK uses its
+[default credential provider chain](https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/setting-credentials-node.html).
+This lets Companion use an IAM role, for example an EC2 instance profile or an
+ECS task role, instead of long-term keys.
+
+The `/s3/sts` endpoint is the exception: it needs `s3.key`, `s3.secret` and
+`s3.region`, because it requests temporary credentials with
+[`GetFederationToken`](https://docs.aws.amazon.com/STS/latest/APIReference/API_GetFederationToken.html),
+which needs long-term IAM user keys. Without them it responds with an error.
 
 ##### `s3.endpoint` `COMPANION_AWS_ENDPOINT`
 
