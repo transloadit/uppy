@@ -7253,7 +7253,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/cli@npm:^4.0.6":
+"@tailwindcss/cli@npm:^4.3.3":
   version: 4.3.3
   resolution: "@tailwindcss/cli@npm:4.3.3"
   dependencies:
@@ -7421,7 +7421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/postcss@npm:^4":
+"@tailwindcss/postcss@npm:^4.3.3":
   version: 4.3.3
   resolution: "@tailwindcss/postcss@npm:4.3.3"
   dependencies:
@@ -7434,7 +7434,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tailwindcss/vite@npm:^4.0.0, @tailwindcss/vite@npm:^4.1.11, @tailwindcss/vite@npm:^4.3.0":
+"@tailwindcss/vite@npm:^4.3.3":
   version: 4.3.3
   resolution: "@tailwindcss/vite@npm:4.3.3"
   dependencies:
@@ -8462,8 +8462,8 @@ __metadata:
     "@vitest/browser-playwright": "npm:^5.0.3"
     cssnano: "npm:^8.0.1"
     playwright: "npm:1.64.0"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
@@ -8580,17 +8580,17 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@uppy/components@workspace:packages/@uppy/components"
   dependencies:
-    "@tailwindcss/cli": "npm:^4.0.6"
+    "@tailwindcss/cli": "npm:^4.3.3"
     "@uppy-dev/tsconfig": "workspace:^"
     "@uppy/core": "workspace:^"
     clsx: "npm:^2.1.1"
     cssnano: "npm:^8.0.1"
     dequal: "npm:^2.0.3"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     pretty-bytes: "npm:^7.1.0"
-    tailwindcss: "npm:^4.0.6"
+    tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@uppy/core": "workspace:^"
@@ -8653,8 +8653,8 @@ __metadata:
     p-queue: "npm:^9.3.3"
     p-retry: "npm:^8.0.0"
     playwright: "npm:1.64.0"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     type-fest: "npm:^5.10.0"
@@ -8684,8 +8684,8 @@ __metadata:
     msw: "npm:^3.0.3"
     nanoid: "npm:^6.0.1"
     playwright: "npm:1.64.0"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     shallow-equal: "npm:^3.1.0"
@@ -8702,8 +8702,8 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
@@ -8718,8 +8718,8 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
   peerDependencies:
@@ -8831,8 +8831,8 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     cropperjs: "npm:^1.6.2"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
@@ -8849,8 +8849,8 @@ __metadata:
     "@uppy/core": "workspace:^"
     "@uppy/transloadit": "workspace:^"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
   peerDependencies:
@@ -8973,8 +8973,8 @@ __metadata:
   dependencies:
     "@uppy-dev/tsconfig": "workspace:^"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
@@ -8991,8 +8991,8 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     classnames: "npm:^2.5.1"
     cssnano: "npm:^8.0.1"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
@@ -9127,8 +9127,8 @@ __metadata:
     cssnano: "npm:^8.0.1"
     nanoid: "npm:^6.0.1"
     playwright: "npm:1.64.0"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
@@ -9176,8 +9176,8 @@ __metadata:
     cssnano: "npm:^8.0.1"
     is-mobile: "npm:^5.0.0"
     playwright: "npm:1.64.0"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     preact: "npm:^10.29.2"
     sass: "npm:^1.89.2"
     typescript: "npm:^6.0.3"
@@ -10934,7 +10934,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
+"chokidar@npm:^3.0.0, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -11070,17 +11070,6 @@ __metadata:
   version: 0.0.1
   resolution: "client-only@npm:0.0.1"
   checksum: 10/0c16bf660dadb90610553c1d8946a7fdfb81d624adea073b8440b7d795d5b5b08beb3c950c6a2cf16279365a3265158a236876d92bce16423c485c322d7dfaf8
-  languageName: node
-  linkType: hard
-
-"cliui@npm:^8.0.1":
-  version: 8.0.1
-  resolution: "cliui@npm:8.0.1"
-  dependencies:
-    string-width: "npm:^4.2.0"
-    strip-ansi: "npm:^6.0.1"
-    wrap-ansi: "npm:^7.0.0"
-  checksum: 10/eaa5561aeb3135c2cddf7a3b3f562fc4238ff3b3fc666869ef2adf264be0f372136702f16add9299087fb1907c2e4ec5dbfe83bd24bce815c70a80c6c1a2e950
   languageName: node
   linkType: hard
 
@@ -13174,7 +13163,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-nextjs@workspace:examples/nextjs"
   dependencies:
-    "@tailwindcss/postcss": "npm:^4"
+    "@tailwindcss/postcss": "npm:^4.3.3"
     "@tus/file-store": "npm:latest"
     "@tus/server": "npm:latest"
     "@types/node": "npm:^22.20.1"
@@ -13189,7 +13178,7 @@ __metadata:
     next: "npm:^16.4.1"
     react: "npm:^19.3.0"
     react-dom: "npm:^19.3.0"
-    tailwindcss: "npm:^4"
+    tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
@@ -13198,7 +13187,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-react@workspace:examples/react"
   dependencies:
-    "@tailwindcss/vite": "npm:^4.3.0"
+    "@tailwindcss/vite": "npm:^4.3.3"
     "@types/react": "npm:^19.3.0"
     "@types/react-dom": "npm:^19.3.0"
     "@uppy/core": "workspace:*"
@@ -13215,7 +13204,7 @@ __metadata:
     playwright: "npm:1.64.0"
     react: "npm:^19.3.0"
     react-dom: "npm:^19.3.0"
-    tailwindcss: "npm:^4.0.9"
+    tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
@@ -13259,7 +13248,7 @@ __metadata:
     "@sveltejs/adapter-auto": "npm:^7.0.1"
     "@sveltejs/kit": "npm:^2.70.2"
     "@sveltejs/vite-plugin-svelte": "npm:^7.2.0"
-    "@tailwindcss/vite": "npm:^4.0.0"
+    "@tailwindcss/vite": "npm:^4.3.3"
     "@uppy/core": "workspace:*"
     "@uppy/dashboard": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
@@ -13272,7 +13261,7 @@ __metadata:
     playwright: "npm:1.64.0"
     svelte: "npm:^5.56.5"
     svelte-check: "npm:^4.7.7"
-    tailwindcss: "npm:^4.0.0"
+    tailwindcss: "npm:^4.3.3"
     typescript: "npm:^6.0.3"
     vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
@@ -13301,7 +13290,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "example-vue@workspace:examples/vue"
   dependencies:
-    "@tailwindcss/vite": "npm:^4.1.11"
+    "@tailwindcss/vite": "npm:^4.3.3"
     "@uppy/core": "workspace:*"
     "@uppy/remote-sources": "workspace:*"
     "@uppy/screen-capture": "workspace:*"
@@ -13312,7 +13301,7 @@ __metadata:
     "@vitest/browser-playwright": "npm:^5.0.3"
     msw: "npm:^3.0.3"
     playwright: "npm:1.64.0"
-    tailwindcss: "npm:^4.0.0"
+    tailwindcss: "npm:^4.3.3"
     vite: "npm:^8.3.4"
     vitest: "npm:^5.0.3"
     vitest-browser-vue: "npm:^3.1.0"
@@ -13957,7 +13946,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^11.0.0, fs-extra@npm:^11.1.1, fs-extra@npm:^11.2.0":
+"fs-extra@npm:^11.1.1, fs-extra@npm:^11.2.0":
   version: 11.4.1
   resolution: "fs-extra@npm:11.4.1"
   dependencies:
@@ -19349,26 +19338,25 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-cli@npm:^11.0.1":
-  version: 11.0.1
-  resolution: "postcss-cli@npm:11.0.1"
+"postcss-cli@npm:^12.0.0":
+  version: 12.0.0
+  resolution: "postcss-cli@npm:12.0.0"
   dependencies:
-    chokidar: "npm:^3.3.0"
+    chokidar: "npm:^5.0.0"
     dependency-graph: "npm:^1.0.0"
-    fs-extra: "npm:^11.0.0"
     picocolors: "npm:^1.0.0"
-    postcss-load-config: "npm:^5.0.0"
+    postcss-load-config: "npm:^6.0.0"
     postcss-reporter: "npm:^7.0.0"
     pretty-hrtime: "npm:^1.0.3"
     read-cache: "npm:^1.0.0"
     slash: "npm:^5.0.0"
     tinyglobby: "npm:^0.2.12"
-    yargs: "npm:^17.0.0"
+    yargs: "npm:^18.0.0"
   peerDependencies:
     postcss: ^8.0.0
   bin:
     postcss: index.js
-  checksum: 10/149f66f50d87421423a56a42fdbbd4d5d64d502af8f2641cc0cb4bdeba8b4cfe4783a2a1d6ca5b374235af51055640ffd67e21252796861a379538c38be4263a
+  checksum: 10/fbaa5dc6654e389f4a6595a2e20099a371dcc90f0e1d5234fe9734787a8a6bbdb2d7df5e5e6f16e66abb1ce0efda9e181843218ed8cac3fe447ebf78907a567d
   languageName: node
   linkType: hard
 
@@ -19682,16 +19670,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss-load-config@npm:^5.0.0":
-  version: 5.1.0
-  resolution: "postcss-load-config@npm:5.1.0"
+"postcss-load-config@npm:^6.0.0":
+  version: 6.0.1
+  resolution: "postcss-load-config@npm:6.0.1"
   dependencies:
     lilconfig: "npm:^3.1.1"
-    yaml: "npm:^2.4.2"
   peerDependencies:
     jiti: ">=1.21.0"
     postcss: ">=8.0.9"
     tsx: ^4.8.1
+    yaml: ^2.4.2
   peerDependenciesMeta:
     jiti:
       optional: true
@@ -19699,7 +19687,9 @@ __metadata:
       optional: true
     tsx:
       optional: true
-  checksum: 10/d67b7db7599929e9fb305b49b25024b02b694eff8acbd86ec99dc4a13820edd77b34ec8bbc07ed3497f43c728565fec3d4c53582ffbc2c1ce97fd8c84be8e49c
+    yaml:
+      optional: true
+  checksum: 10/1691cfc94948a9373d4f7b3b7a8500cfaf8cb2dcc2107c14f90f2a711a9892a362b0866894ac5bb723455fa685a15116d9ed3252188689c4502b137c19d6bdc4
   languageName: node
   linkType: hard
 
@@ -20509,7 +20499,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"postcss@npm:^8.4.21, postcss@npm:^8.4.24, postcss@npm:^8.4.33, postcss@npm:^8.4.47, postcss@npm:^8.4.49, postcss@npm:^8.5.16, postcss@npm:^8.5.23, postcss@npm:^8.5.28, postcss@npm:^8.5.30, postcss@npm:^8.5.4":
+"postcss@npm:^8.4.21, postcss@npm:^8.4.24, postcss@npm:^8.4.33, postcss@npm:^8.4.47, postcss@npm:^8.4.49, postcss@npm:^8.5.16, postcss@npm:^8.5.28, postcss@npm:^8.5.30, postcss@npm:^8.5.32, postcss@npm:^8.5.4":
   version: 8.5.32
   resolution: "postcss@npm:8.5.32"
   dependencies:
@@ -21710,13 +21700,6 @@ __metadata:
     qs: "npm:^6.9.6"
     uuid: "npm:^8.3.2"
   checksum: 10/6f89115a95e9e2275b976e31602916d84fc3eba41be33236b1f4defd88cb6a776d6bb1d9ff225023a013dcf4fb1114b938a14c7cda46694b15467081fa5a0566
-  languageName: node
-  linkType: hard
-
-"require-directory@npm:^2.1.1":
-  version: 2.1.1
-  resolution: "require-directory@npm:2.1.1"
-  checksum: 10/a72468e2589270d91f06c7d36ec97a88db53ae5d6fe3787fadc943f0b0276b10347f89b363b2a82285f650bdcc135ad4a257c61bdd4d00d6df1fa24875b0ddaf
   languageName: node
   linkType: hard
 
@@ -23363,7 +23346,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"string-width-cjs@npm:string-width@^4.2.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0, string-width@npm:^4.2.3":
+"string-width-cjs@npm:string-width@^4.2.0, string-width@npm:^4.1.0, string-width@npm:^4.2.0":
   version: 4.2.3
   resolution: "string-width@npm:4.2.3"
   dependencies:
@@ -23756,7 +23739,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tailwindcss@npm:4.3.3, tailwindcss@npm:^4, tailwindcss@npm:^4.0.0, tailwindcss@npm:^4.0.6, tailwindcss@npm:^4.0.9":
+"tailwindcss@npm:4.3.3, tailwindcss@npm:^4.3.3":
   version: 4.3.3
   resolution: "tailwindcss@npm:4.3.3"
   checksum: 10/f6e4972b37f1c411ef0bd89260aabd10d4d953b50c56979f327f5fc8a27bcaf5c62fd4bf55d196d7667085ad276842e1e15b1de1bbfd532da46c2e9073dc8e0d
@@ -24568,8 +24551,8 @@ __metadata:
     mime-types: "npm:^3.0.2"
     npm-packlist: "npm:^11.1.0"
     pacote: "npm:^22.0.0"
-    postcss: "npm:^8.5.23"
-    postcss-cli: "npm:^11.0.1"
+    postcss: "npm:^8.5.32"
+    postcss-cli: "npm:^12.0.0"
     sass: "npm:^1.89.2"
     tar: "npm:^7.5.21"
     typescript: "npm:^6.0.3"
@@ -25346,7 +25329,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0, wrap-ansi@npm:^7.0.0":
+"wrap-ansi-cjs@npm:wrap-ansi@^7.0.0":
   version: 7.0.0
   resolution: "wrap-ansi@npm:7.0.0"
   dependencies:
@@ -25523,19 +25506,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^2.0.0, yaml@npm:^2.4.2, yaml@npm:^2.9.0":
+"yaml@npm:^2.0.0, yaml@npm:^2.9.0":
   version: 2.9.1
   resolution: "yaml@npm:2.9.1"
   bin:
     yaml: bin.mjs
   checksum: 10/123c5e56a26f4962d3d5954971b2071a533d17041e00ae9ff6a5e634aed2503639bbdeea143b1610eac29613aad95a3a1d10f5fbda87b92203c039ce63934295
-  languageName: node
-  linkType: hard
-
-"yargs-parser@npm:^21.1.1":
-  version: 21.1.1
-  resolution: "yargs-parser@npm:21.1.1"
-  checksum: 10/9dc2c217ea3bf8d858041252d43e074f7166b53f3d010a8c711275e09cd3d62a002969a39858b92bbda2a6a63a585c7127014534a560b9c69ed2d923d113406e
   languageName: node
   linkType: hard
 
@@ -25557,21 +25533,6 @@ __metadata:
     y18n: "npm:^5.0.5"
     yargs-parser: "npm:^22.0.0"
   checksum: 10/b26d477c3f62b0a031d8f3fea16325e286375e6039e5fca5efb1ec1d64eab3cfe136edb2887e4f2e2c9a5e004d0eca735079ea0be4ca34273c6e949639c6177b
-  languageName: node
-  linkType: hard
-
-"yargs@npm:^17.0.0":
-  version: 17.7.2
-  resolution: "yargs@npm:17.7.2"
-  dependencies:
-    cliui: "npm:^8.0.1"
-    escalade: "npm:^3.1.1"
-    get-caller-file: "npm:^2.0.5"
-    require-directory: "npm:^2.1.1"
-    string-width: "npm:^4.2.3"
-    y18n: "npm:^5.0.5"
-    yargs-parser: "npm:^21.1.1"
-  checksum: 10/abb3e37678d6e38ea85485ed86ebe0d1e3464c640d7d9069805ea0da12f69d5a32df8e5625e370f9c96dd1c2dc088ab2d0a4dd32af18222ef3c4224a19471576
   languageName: node
   linkType: hard
 
