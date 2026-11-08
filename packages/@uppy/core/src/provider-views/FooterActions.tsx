@@ -1,6 +1,6 @@
-import classNames from 'classnames'
 import { useMemo } from 'preact/hooks'
 import type { Body, Meta, PartialTree } from '../index.js'
+import classNames from '../utils/classNames.js'
 import type { I18n } from '../utils/index.js'
 import type ProviderView from './ProviderView/ProviderView.js'
 import getNumberOfSelectedFiles from './utils/PartialTreeUtils/getNumberOfSelectedFiles.js'

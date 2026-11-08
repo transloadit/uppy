@@ -7,8 +7,8 @@ import type {
   Uppy,
 } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
+import { classNames } from '@uppy/core/utils'
 import { useRef } from '@uppy/core/utils/preact/hooks'
-import classNames from 'classnames'
 import type {
   ComponentChildren,
   MouseEventHandler,

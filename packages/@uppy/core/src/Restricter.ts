@@ -1,7 +1,7 @@
 import { prettierBytes } from '@transloadit/prettier-bytes'
-import match from 'mime-match'
 import type { NonNullableUppyOptions, State } from './Uppy.js'
 import type { Body, I18n, Meta, UppyFile } from './utils/index.js'
+import mimeMatch from './utils/mimeMatch.js'
 
 export type Restrictions = {
   maxFileSize: number | null
@@ -119,7 +119,7 @@ class Restricter<M extends Meta, B extends Body> {
         // check if this is a mime-type
         if (type.includes('/')) {
           if (!file.type) return false
-          return match(file.type.replace(/;.*?$/, ''), type)
+          return mimeMatch(file.type.replace(/;.*?$/, ''), type)
         }
 
         // otherwise this is likely an extension

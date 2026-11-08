@@ -1,13 +1,12 @@
 import type { Body, Meta, State } from '@uppy/core'
 import type { I18n, Translator, UppyFile } from '@uppy/core/utils'
+import { classNames, nanoid } from '@uppy/core/utils'
 import {
   useCallback,
   useEffect,
   useRef,
   useState,
 } from '@uppy/core/utils/preact/hooks'
-import classNames from 'classnames'
-import { nanoid } from 'nanoid/non-secure'
 import type { ComponentChildren, TargetedMouseEvent } from 'preact'
 import type { DashboardState } from '../../Dashboard.js'
 import getFileTypeIcon from '../../utils/getFileTypeIcon.js'

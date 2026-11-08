@@ -8,7 +8,7 @@
  * it. Doing that in the browser keeps each server request short-lived, lets
  * the user cancel, and lets an interrupted operation be re-run.
  */
-import type { Promisable } from 'type-fest'
+import type { Promisable } from '@uppy/core/utils'
 import { splitKey } from './keys.js'
 
 /** One entry of a Companion listing; only what the walk needs. */

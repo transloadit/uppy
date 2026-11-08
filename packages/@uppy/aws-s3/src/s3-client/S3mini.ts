@@ -3,7 +3,7 @@
  * Modified to make it work with Uppy.
  */
 
-import type { Promisable } from 'type-fest'
+import type { Promisable } from '@uppy/core/utils'
 import * as C from './consts.js'
 import S3Client from './S3Client.js'
 import { createSigV4Signer } from './signer.js'

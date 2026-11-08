@@ -1,5 +1,5 @@
-import { nanoid } from 'nanoid/non-secure'
 import { useCallback, useEffect, useState } from 'preact/hooks'
+import nanoid from '../utils/nanoid.js'
 
 /**
  * Hook to create a form element outside the component tree to avoid nested forms.

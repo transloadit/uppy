@@ -1,4 +1,4 @@
-import classNames from 'classnames'
+import { classNames } from '@uppy/core/utils'
 import type { ComponentChildren } from 'preact'
 import type { AddFilesProps } from './AddFiles.js'
 import AddFiles from './AddFiles.js'

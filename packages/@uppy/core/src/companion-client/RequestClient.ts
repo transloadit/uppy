@@ -1,5 +1,4 @@
 import pRetry, { AbortError } from 'p-retry'
-import type { Promisable } from 'type-fest'
 import packageJson from '../../package.json' with { type: 'json' }
 import type Uppy from '../index.js'
 import type { Body, Meta, RemoteUppyFile, UppyFile } from '../utils/index.js'
@@ -11,6 +10,7 @@ import {
   toError,
   UserFacingApiError,
 } from '../utils/index.js'
+import type { Promisable } from '../utils/Promisable.js'
 import stripTrailingSlash from '../utils/stripTrailingSlash.js'
 import AuthError, { isAuthError } from './AuthError.js'
 

@@ -6,6 +6,7 @@ export {
 export type { CompanionFile } from './CompanionFile.js'
 
 export { default as canvasToBlob } from './canvasToBlob.js'
+export { type ClassValue, default as classNames } from './classNames.js'
 export { default as dataURItoBlob } from './dataURItoBlob.js'
 export { default as dataURItoFile } from './dataURItoFile.js'
 
@@ -68,7 +69,9 @@ export { default as isRestrictionError } from './isRestrictionError.js'
 export { default as mimeTypes } from './mimeTypes.js'
 
 export { default as NetworkError } from './NetworkError.js'
+export { default as nanoid } from './nanoid.js'
 export { default as ProgressTimeout } from './ProgressTimeout.js'
+export type { Promisable } from './Promisable.js'
 export { default as prettyETA } from './prettyETA.js'
 export {
   type AbortablePromise,

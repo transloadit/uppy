@@ -1,4 +1,4 @@
-import type { Promisable } from 'type-fest'
+import type { Promisable } from './Promisable.js'
 
 /**
  * A promise that can be aborted.

@@ -1,7 +1,7 @@
-import classNames from 'classnames'
 import type { h } from 'preact'
 import { useEffect, useId, useRef, useState } from 'preact/hooks'
 import type { ProviderDialogState } from '../index.js'
+import classNames from '../utils/classNames.js'
 import type { I18n } from '../utils/index.js'
 import ModalDialog from './ModalDialog.js'
 

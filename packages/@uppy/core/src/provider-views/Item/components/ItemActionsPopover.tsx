@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import type { h, RefObject } from 'preact'
 import {
   useCallback,
@@ -13,6 +12,7 @@ import type {
   PartialTreeFile,
   PartialTreeFolderNode,
 } from '../../../index.js'
+import classNames from '../../../utils/classNames.js'
 import type { I18n } from '../../../utils/index.js'
 import { stopEscapePropagation } from '../../ModalDialog.js'
 import type ProviderView from '../../ProviderView/ProviderView.js'

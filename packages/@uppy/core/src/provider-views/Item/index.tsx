@@ -1,4 +1,3 @@
-import classNames from 'classnames'
 import type { h } from 'preact'
 import type {
   Body,
@@ -7,6 +6,7 @@ import type {
   PartialTreeFolderNode,
   PartialTreeId,
 } from '../../index.js'
+import classNames from '../../utils/classNames.js'
 import type { I18n } from '../../utils/index.js'
 import type { ProviderAction } from '../ProviderView/ProviderView.js'
 import GridItem from './components/GridItem.js'

@@ -1,10 +1,10 @@
 import type { Readable } from 'node:stream'
-import type { Promisable } from 'type-fest'
 import type {
   CompanionContext,
   GrantDynamic,
   ProviderGrantConfig,
 } from '../../types/express.js'
+import type { Promisable } from '../../types/promisable.js'
 import { MAX_AGE_24H } from '../helpers/jwt.js'
 import logger from '../logger.js'
 import { ProviderAuthError, ProviderUserError } from './error.js'

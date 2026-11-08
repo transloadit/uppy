@@ -45,7 +45,6 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "nanoid": "^6.0.1",
     "preact": "^10.29.2"
   },
   "peerDependencies": {

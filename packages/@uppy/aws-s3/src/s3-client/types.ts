@@ -1,4 +1,4 @@
-import type { Promisable } from 'type-fest'
+import type { Promisable } from '@uppy/core/utils'
 
 export interface PresignableRequestBase {
   key: string

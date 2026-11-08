@@ -1,4 +1,3 @@
-import type { Promisable } from 'type-fest'
 import type {
   Body,
   Meta,
@@ -7,6 +6,7 @@ import type {
   Uppy,
 } from '../index.js'
 import { getErrorMessage, getSocketHost } from '../utils/index.js'
+import type { Promisable } from '../utils/Promisable.js'
 import { isAuthError } from './AuthError.js'
 import type { CompanionPluginOptions } from './index.js'
 import RequestClient, {

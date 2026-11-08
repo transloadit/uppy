@@ -1,6 +1,6 @@
 import type { Body, Meta, State, Uppy, UppyFile } from '@uppy/core'
 import type { I18n } from '@uppy/core/utils'
-import classNames from 'classnames'
+import { classNames } from '@uppy/core/utils'
 import {
   CancelBtn,
   DoneBtn,
