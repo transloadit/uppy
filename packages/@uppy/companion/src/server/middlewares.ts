@@ -184,9 +184,14 @@ export const gentleVerifyToken: RequestHandler = (req, _res, next) => {
 /**
  * Set `req.cookies` from the Cookie header, as cookie-parser does without a
  * secret: the first value for a name wins, surrounding quotes are dropped and
- * values are URI-decoded when possible. Values always stay strings.
+ * values are URI-decoded when possible. Values always stay strings. A map set
+ * earlier, e.g. by the cookie parser of an app embedding Companion, is kept.
  */
 export const cookies: RequestHandler = (req, _res, next) => {
+  if (req.cookies) {
+    next()
+    return
+  }
   const parsed: Record<string, string> = Object.create(null)
   const trim = (s: string) => s.replace(/^[ \t]+|[ \t]+$/g, '')
   for (const pair of req.headers.cookie?.split(';') ?? []) {
