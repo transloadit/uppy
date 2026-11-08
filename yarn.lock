@@ -8050,13 +8050,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/namespace-emitter@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "@types/namespace-emitter@npm:2.0.0"
-  checksum: 10/226c068a055128612f7b623b1fd91e3bb49c81d8988c3d65524a73c9c092515abd8e559734c5defd46cf56e17f97cc73d1d320ef77f0f816490681d76b4ef2b8
-  languageName: node
-  linkType: hard
-
 "@types/nlcst@npm:^2.0.0":
   version: 2.0.3
   resolution: "@types/nlcst@npm:2.0.3"
@@ -8638,7 +8631,6 @@ __metadata:
     "@types/google.picker": "npm:^0.0.52"
     "@types/lodash": "npm:^4.17.25"
     "@types/mime-match": "npm:^1.0.0"
-    "@types/namespace-emitter": "npm:^2.0.0"
     "@types/node": "npm:^22.20.1"
     "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
@@ -8648,7 +8640,6 @@ __metadata:
     lodash: "npm:^4.18.1"
     mime-match: "npm:^1.0.2"
     msw: "npm:^3.0.3"
-    namespace-emitter: "npm:^2.0.1"
     nanoid: "npm:^6.0.1"
     p-queue: "npm:^9.3.3"
     p-retry: "npm:^8.0.0"
@@ -9038,7 +9029,6 @@ __metadata:
     "@uppy-dev/tsconfig": "workspace:^"
     "@vitest/browser-playwright": "npm:^5.0.3"
     exifr: "npm:^7.1.3"
-    namespace-emitter: "npm:2.0.1"
     playwright: "npm:1.64.0"
     typescript: "npm:^6.0.3"
     vitest: "npm:^5.0.3"
@@ -17909,13 +17899,6 @@ __metadata:
   version: 3.0.0
   resolution: "mute-stream@npm:3.0.0"
   checksum: 10/bee5db5c996a4585dbffc49e51fea10f3582d7f65441db9bc63126f16269541713c6ccb5a6fe37e08f627967b6eb28dd6b35e54a8dce53cf3837d7e010917b43
-  languageName: node
-  linkType: hard
-
-"namespace-emitter@npm:2.0.1, namespace-emitter@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "namespace-emitter@npm:2.0.1"
-  checksum: 10/996ba4c82a659ca523365e22ffa017a0156439384a3d0f1b8527a4ab6487277be7de6447474b7f77146ef931e8f6829be087352dfdbd586d4b7d0dd905953a18
   languageName: node
   linkType: hard
 
