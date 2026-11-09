@@ -263,6 +263,10 @@ function countBytes(
   stream.on('error', (err) => counter.destroy(err))
   counter.once('close', () => stream.destroy())
   stream.pipe(counter)
+  // Keep the output paused until the upload consumes it: a progress 'data'
+  // listener attached first would make it flow, and the bytes would be gone
+  // before a lazily read body (FormData) gets to them.
+  counter.pause()
   return counter
 }
 
