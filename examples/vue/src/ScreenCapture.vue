@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { useScreenCapture } from '@uppy/vue'
-import { onMounted } from 'vue'
+import { onBeforeUnmount, onMounted } from 'vue'
 import MediaCapture from './MediaCapture.vue'
 
 const props = defineProps<{
@@ -26,8 +26,9 @@ const screenCapture = useScreenCapture({ onSubmit: props.close })
 
 onMounted(() => {
   screenCapture.value.start()
-  return () => {
-    screenCapture.value.stop()
-  }
+})
+
+onBeforeUnmount(() => {
+  screenCapture.value.stop()
 })
 </script>

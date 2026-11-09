@@ -1,6 +1,7 @@
 import {
 	createRemoteSourceController,
 	type RemoteSourceKeys,
+	type RemoteSourceOptions,
 	type RemoteSourceSnapshot,
 } from "@uppy/components";
 import { onDestroy, onMount } from "svelte";
@@ -9,9 +10,10 @@ import { useExternalStore } from "./useSyncExternalStore.svelte.js";
 
 export function useRemoteSource(
 	sourceId: RemoteSourceKeys,
+	options?: RemoteSourceOptions,
 ): RemoteSourceSnapshot {
 	const ctx = getUppyContext();
-	const controller = createRemoteSourceController(ctx.uppy, sourceId);
+	const controller = createRemoteSourceController(ctx.uppy, sourceId, options);
 	const store = useExternalStore<RemoteSourceSnapshot>(
 		controller.getSnapshot,
 		controller.subscribe,

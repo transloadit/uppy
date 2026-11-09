@@ -30,13 +30,17 @@ Creates a file input for programmatic file selection using Uppy.
 - `getInputProps: Function`
 - `getButtonProps: Function`
 
-#### `useRemoteSource(sourceId)`
+#### `useRemoteSource(sourceId, options?)`
 
 Manages remote source connections (cloud storage providers).
 
 **Arguments**:
 
 - `sourceId: 'Box' | 'Dropbox' | 'Facebook' | 'GoogleDrive' | 'OneDrive' | 'Unsplash' | 'Url' | 'Zoom'`
+- `options.onClose?: () => void`: called by `cancel` after it clears the
+  selection, and by `done` after it adds the selected files. When restrictions or
+  `onBeforeFileAdded` reject every selected file, `done` keeps the selection
+  and does not call it.
 
 **Returns**:
 
@@ -58,8 +62,8 @@ Manages remote source connections (cloud storage providers).
   logout: Function
   open: Function
   checkbox: Function
-  done: Function
-  cancel: Function
+  done: () => Promise<void>
+  cancel: () => void
 }
 ```
 
