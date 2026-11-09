@@ -168,6 +168,42 @@ afterEach(() => {
 })
 
 describe('S3 provider in the browser', () => {
+  it('shows a safe warning when the grant callback rejects', async () => {
+    const { plugin } = setup({
+      autoConnect: false,
+      getGrant: async () => {
+        throw new Error('private-diagnostic-sentinel')
+      },
+    })
+    const info = vi.spyOn(uppy!, 'info')
+
+    await plugin.view.handleAuth({})
+
+    expect(info).toHaveBeenCalledTimes(1)
+    expect(info).toHaveBeenCalledWith(
+      'Connection with Companion failed',
+      'warning',
+      5000,
+    )
+    expect(info.mock.calls.flat().join(' ')).not.toContain(
+      'private-diagnostic-sentinel',
+    )
+  })
+
+  it('keeps grant callback cancellation silent', async () => {
+    const { plugin } = setup({
+      autoConnect: false,
+      getGrant: async () => {
+        throw Object.assign(new Error('aborted'), { name: 'AbortError' })
+      },
+    })
+    const info = vi.spyOn(uppy!, 'info')
+
+    await plugin.view.handleAuth({})
+
+    expect(info).not.toHaveBeenCalled()
+  })
+
   it('auto-connects and lists the bucket Companion serves', async () => {
     const { companion } = setup()
 
