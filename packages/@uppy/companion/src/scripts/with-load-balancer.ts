@@ -108,7 +108,7 @@ try {
   await Promise.all(companions)
 } finally {
   loadBalancer?.close()
-  companions.forEach((companion) => {
+  for (const companion of companions) {
     companion.kill()
-  })
+  }
 }

@@ -19,16 +19,12 @@ export default function UppyCdnExample({
   uppyCssName = 'uppy.min.css',
   uppyJsName = 'uppy.min.mjs',
 }: UppyCdnExampleProps): ReactNode {
-  let lines: string[] = []
+  const lines: string[] = []
 
-  React.Children.toArray(children).forEach((child) => {
-    lines = [
-      ...lines,
-      ...String(child)
-        .trim()
-        .split('\n')
-        .map((line) => line.trim()),
-    ]
+  React.Children.forEach(children, (child) => {
+    for (const line of String(child).trim().split('\n')) {
+      lines.push(line.trim())
+    }
   })
 
   const linesProcessed = lines.map((line) => `  ${line}`).join('\n')

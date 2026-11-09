@@ -1161,11 +1161,11 @@ export default class ProviderView<M extends Meta, B extends Body> {
 
     // todo memoize this so we don't have to do it on every render
     const itemsById = new Map<string, PartialTreeFile | PartialTreeFolderNode>()
-    partialTree.forEach((item) => {
+    for (const item of partialTree) {
       if (item.type !== 'root') {
         itemsById.set(item.id, item)
       }
-    })
+    }
 
     // the search results view needs data from the partial tree,
     const searchResults = ids!.map((id) => {

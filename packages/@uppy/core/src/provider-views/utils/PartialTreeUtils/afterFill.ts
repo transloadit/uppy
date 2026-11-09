@@ -64,11 +64,11 @@ const recursivelyFetch = async (
   poorFolder.nextPagePath = null
   poorTree.push(...files, ...folders)
 
-  folders.forEach((folder) => {
+  for (const folder of folders) {
     queue.add(() =>
       recursivelyFetch(queue, poorTree, folder, apiList, validateSingleFile),
     )
-  })
+  }
 }
 
 const afterFill = async (
@@ -81,25 +81,25 @@ const afterFill = async (
 
   // fill up the missing parts of a partialTree!
   const poorTree: PartialTree = shallowClone(partialTree)
-  const poorFolders = poorTree.filter(
-    (item) =>
-      item.type === 'folder' &&
-      item.status === 'checked' &&
-      // either "not yet cached at all" or "some pages are left to fetch"
-      (item.cached === false || item.nextPagePath),
-  ) as PartialTreeFolderNode[]
   // per each poor folder, recursively fetch all files and make them .checked!
-  poorFolders.forEach((poorFolder) => {
+  for (const item of poorTree) {
+    if (item.type !== 'folder') {
+      continue
+    }
+
+    if (item.status !== 'checked') {
+      continue
+    }
+
+    // // either "not yet cached at all" or "some pages are left to fetch"
+    if (item.cached !== false && !item.nextPagePath) {
+      continue
+    }
+
     queue.add(() =>
-      recursivelyFetch(
-        queue,
-        poorTree,
-        poorFolder,
-        apiList,
-        validateSingleFile,
-      ),
+      recursivelyFetch(queue, poorTree, item, apiList, validateSingleFile),
     )
-  })
+  }
 
   queue.on('completed', () => {
     const nOfFilesChecked = poorTree.filter(
