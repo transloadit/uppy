@@ -25,6 +25,9 @@ const moveResponseSchema = z.object({
 
 type Credentials = { key: string; secret: string }
 
+/** Transloadit's native catalog move; `callApi` resolves it against the endpoint's origin. */
+const MOVE_PATH = '/dam/entries/move'
+
 const unavailable = () =>
   new ProviderApiError('Storage is temporarily unavailable', 502)
 
@@ -189,12 +192,18 @@ export default class TransloaditStorageProvider extends S3Provider<ParsedTranslo
     const { accessKeyId: key, secretAccessKey: secret } =
       await client.config.credentials()
     const params = JSON.stringify({
-      auth: { key, expires: new Date(Date.now() + 60_000).toISOString() },
+      auth: {
+        key,
+        expires: new Date(Date.now() + 60_000).toISOString(),
+        // Storage requests sign the method and path they are made for.
+        method: 'POST',
+        path: MOVE_PATH,
+      },
       source: id,
       destination,
     })
     const signature = `sha256:${createHmac('sha256', secret).update(params, 'utf8').digest('hex')}`
-    const response = await callApi(native.apiEndpoint, '/dam/entries/move', {
+    const response = await callApi(native.apiEndpoint, MOVE_PATH, {
       form: { params, signature },
       timeout: { request: 30_000 },
     })
