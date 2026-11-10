@@ -1,6 +1,5 @@
-import type { ReactNode } from 'react'
-import React from 'react'
 import { translate } from '@docusaurus/Translate'
+import type { ReactNode } from 'react'
 
 import styles from './styles.module.css'
 

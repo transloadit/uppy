@@ -1,7 +1,7 @@
-import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import path from 'node:path'
+import { test } from 'node:test'
 import { prepare, submit } from '../scripts/indexnow.mjs'
 
 const origin = 'https://uppy.io'
@@ -49,7 +49,7 @@ async function state({ stateDir }) {
 test('first production run establishes a baseline without submitting history', async (t) => {
   const options = await fixture(t, { '/docs/one/': 'Existing doc' })
   const requests = []
-  options.fetchImpl = async (url) => {
+  options.fetchImpl = (url) => {
     requests.push(url)
     return new Response(null, { status: 404 })
   }
@@ -72,7 +72,7 @@ test('a deploy submits edited, added and removed URLs, excluding bundle churn', 
     '/docs/same/': 'Same',
     '/docs/removed/': 'Old',
   })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await build(options, {
     '/docs/one/': 'Edited',
@@ -90,7 +90,7 @@ test('a deploy submits edited, added and removed URLs, excluding bundle churn', 
   )
   assert.deepEqual((await state(options)).pending, expected)
   const posts = []
-  options.fetchImpl = async (url, init) => {
+  options.fetchImpl = (url, init) => {
     if (url === `${origin}/indexnow.txt`) return new Response(key)
     posts.push({ url, ...JSON.parse(init.body) })
     return new Response(null, { status: 202 })
@@ -110,13 +110,13 @@ test('a deploy submits edited, added and removed URLs, excluding bundle churn', 
 
 test('cache loss recovers the previous public snapshot and pending notifications', async (t) => {
   const options = await fixture(t, { '/docs/one/': 'Original' })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   const previous = await state(options)
   previous.pending = [`${origin}/docs/retry/`]
   await rm(options.stateDir, { recursive: true })
   await build(options, { '/docs/one/': 'Edited' })
-  options.fetchImpl = async () => Response.json(previous)
+  options.fetchImpl = () => Response.json(previous)
   await prepare(options)
   assert.deepEqual((await state(options)).pending, [
     `${origin}/docs/one/`,
@@ -129,7 +129,7 @@ test('missing rendered HTML falls back to the sitemap diff without replaying his
     '/docs/missing/': null,
     '/docs/one/': 'Same',
   })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await build(options, {
     '/docs/missing/': null,
@@ -142,24 +142,24 @@ test('missing rendered HTML falls back to the sitemap diff without replaying his
 
 test('failed requests and an unpublished ownership key retain URLs for the next deploy', async (t) => {
   const options = await fixture(t, { '/docs/one/': 'Original' })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await build(options, { '/docs/one/': 'Edited' })
   await prepare(options)
-  options.fetchImpl = async () => new Response('wrong key')
+  options.fetchImpl = () => new Response('wrong key')
   await assert.rejects(submit({ ...options, production: true }), /key/i)
   assert.deepEqual((await state(options)).pending, [`${origin}/docs/one/`])
-  options.fetchImpl = async (url) =>
-    url.endsWith('.txt') ?
-      new Response(key)
-    : new Response(null, { status: 429 })
+  options.fetchImpl = (url) =>
+    url.endsWith('.txt')
+      ? new Response(key)
+      : new Response(null, { status: 429 })
   await assert.rejects(submit({ ...options, production: true }), /429/)
   await prepare(options)
   assert.deepEqual((await state(options)).pending, [`${origin}/docs/one/`])
-  options.fetchImpl = async (url) =>
-    url.endsWith('.txt') ?
-      new Response(key)
-    : new Response(null, { status: 200 })
+  options.fetchImpl = (url) =>
+    url.endsWith('.txt')
+      ? new Response(key)
+      : new Response(null, { status: 200 })
   await submit({ ...options, production: true })
   assert.deepEqual((await state(options)).pending, [])
 })
@@ -179,7 +179,7 @@ test('pages without a main element still detect rendered content changes', async
       .replace('<main>', '<div>')
       .replace('</main>', '</div>'),
   )
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await writeFile(
     file,
@@ -201,7 +201,7 @@ test('homepage hero and JSON-LD edits each notify their URL', async (t) => {
         '<script type="application/ld+json">{"name":"Uppy"}</script></head>',
       ),
   )
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await writeFile(
     file,
@@ -238,7 +238,7 @@ test('generator, class, style and executable script changes do not notify unchan
       '<meta name="generator" content="Docusaurus v3.9.2"></head>',
     ),
   )
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await writeFile(
     file,
@@ -266,7 +266,7 @@ test('hoisted resource hints do not notify pages, while page image changes do', 
       )
       .replace('</body>', '</div></body>'),
   )
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await writeFile(
     file,
@@ -286,7 +286,7 @@ test('hoisted resource hints do not notify pages, while page image changes do', 
 
 test('a newer deployed snapshot recovers notices missing from a stale cache', async (t) => {
   const options = await fixture(t, { '/docs/one/': 'Same' })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   const cached = { ...(await state(options)), generation: 10 }
   await writeFile(
@@ -298,14 +298,14 @@ test('a newer deployed snapshot recovers notices missing from a stale cache', as
     generation: 20,
     pending: [`${origin}/docs/transient/`],
   }
-  options.fetchImpl = async () => Response.json(deployed)
+  options.fetchImpl = () => Response.json(deployed)
   await prepare(options)
   assert.deepEqual((await state(options)).pending, deployed.pending)
 })
 
 test('artifact recovery and a failed preparation preserve the last pending state', async (t) => {
   const options = await fixture(t, { '/docs/one/': 'Same' })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   const saved = {
     ...(await state(options)),
@@ -315,7 +315,7 @@ test('artifact recovery and a failed preparation preserve the last pending state
   await rm(options.stateDir, { recursive: true })
   await rm(path.join(options.buildDir, 'indexnow-state.json'))
   await writeFile(path.join(options.buildDir, 'sitemap.xml'), '<invalid/>')
-  options.fetchImpl = async () => {
+  options.fetchImpl = () => {
     throw new Error('Network timeout')
   }
   options.loadArtifact = async () => saved
@@ -334,7 +334,7 @@ test('artifact recovery and a failed preparation preserve the last pending state
 
 test('returning HTML after a sitemap-only snapshot detects its content', async (t) => {
   const options = await fixture(t, { '/docs/one/': null })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await build(options, { '/docs/one/': 'Rendered edit' })
   await prepare(options)
@@ -356,7 +356,7 @@ test('shared navigation, sidebar and footer edits do not submit otherwise unchan
         '<footer class="footer_example"><nav>Footer links</nav>2026</footer></body>',
       ),
   )
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await writeFile(
     file,
@@ -387,7 +387,7 @@ test('client-only pages use sitemap timestamps while preserving metadata edits',
       '<lastmod>2026-10-01T12:00:00Z</lastmod></url>',
     ),
   )
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await writeFile(
     sitemap,
@@ -422,7 +422,7 @@ test('malformed JSON-LD falls back to raw metadata without blocking all notices'
       '<script type="application/ld+json">{"broken":</script></head>',
     ),
   )
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   await writeFile(
     file,
@@ -447,13 +447,12 @@ test('noindex, redirect and noncanonical pages are excluded from the snapshot', 
   })) {
     const file = path.join(options.buildDir, route, 'index.html')
     let html = await readFile(file, 'utf8')
-    html =
-      tag ?
-        html.replace('</head>', `${tag}</head>`)
+    html = tag
+      ? html.replace('</head>', `${tag}</head>`)
       : html.replace(`${origin}${route}`, `${origin}/docs/public/`)
     await writeFile(file, html)
   }
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   assert.deepEqual(Object.keys((await state(options)).pages), [
     `${origin}/docs/public/`,
@@ -462,7 +461,7 @@ test('noindex, redirect and noncanonical pages are excluded from the snapshot', 
 
 test('search metadata changes are detected and uncertain previous state is preserved', async (t) => {
   const options = await fixture(t, { '/docs/one/': 'Same body' })
-  options.fetchImpl = async () => new Response(null, { status: 404 })
+  options.fetchImpl = () => new Response(null, { status: 404 })
   await prepare(options)
   const file = path.join(options.buildDir, 'docs/one/index.html')
   await writeFile(
@@ -476,7 +475,7 @@ test('search metadata changes are detected and uncertain previous state is prese
   assert.deepEqual((await state(options)).pending, [`${origin}/docs/one/`])
   const previous = await state(options)
   await rm(options.stateDir, { recursive: true })
-  options.fetchImpl = async () => new Response(null, { status: 503 })
+  options.fetchImpl = () => new Response(null, { status: 503 })
   await assert.rejects(prepare(options), /503/)
   assert.deepEqual(
     JSON.parse(
@@ -501,7 +500,7 @@ test('submissions respect the 10,000 URL limit and preserve a failed remainder',
     JSON.stringify({ version: 1, pages: {}, pending }),
   )
   let posts = 0
-  options.fetchImpl = async (url, init) => {
+  options.fetchImpl = (url, init) => {
     if (url.endsWith('.txt')) return new Response(key)
     posts++
     assert.equal(JSON.parse(init.body).urlList.length, posts === 1 ? 10000 : 1)

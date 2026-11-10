@@ -1,6 +1,6 @@
 {
   "name": "@uppy/companion",
-  "version": "7.2.0",
+  "version": "7.2.2",
   "description": "OAuth helper and remote fetcher for Uppy's (https://uppy.io) extensible file upload widget with support for drag&drop, resumable uploads, previews, restrictions, file processing/encoding, remote providers like Dropbox and Google Drive, S3 and more :dog:",
   "types": "dist/companion.d.ts",
   "author": "Transloadit.com",
@@ -63,10 +63,10 @@
     "mime-types": "^3.0.2",
     "moment-timezone": "^0.6.5",
     "morgan": "^1.12.0",
+    "node-fetch": "^3.3.2",
     "node-schedule": "^2.1.1",
     "p-map": "^7.0.5",
     "prom-client": "^15.1.3",
-    "serialize-error": "^13.0.1",
     "serialize-javascript": "^7.1.3",
     "tus-js-client": "^4.3.1",
     "type-fest": "^5.10.0",
@@ -96,7 +96,7 @@
     "nock": "^14.0.16",
     "supertest": "^7.2.2",
     "typescript": "^6.0.3",
-    "vitest": "^5.0.3"
+    "vitest": "^5.0.5"
   },
   "files": [
     "dist/",

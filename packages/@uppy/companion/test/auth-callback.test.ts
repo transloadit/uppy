@@ -114,7 +114,8 @@ describe.each(['memory', 'redis'] as const)('%s auth callback', (mode) => {
         authToken: token,
         s3ProviderClients: new Map(),
       }
-      req.session.grant = { dynamic: { state } }
+      // what the OAuth callback leaves for send-token
+      req.session.grant = { dynamic: { state }, pendingAuthToken: token }
       return sendToken(req, res, next)
     })
     const server = createServer(app)

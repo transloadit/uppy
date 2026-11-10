@@ -691,6 +691,26 @@ app.use(
 When signing on the client, this function will only be called for multipart
 uploads.
 
+##### `s3.conditions`
+
+An array of
+[POST policy conditions](https://docs.aws.amazon.com/AmazonS3/latest/API/sigv4-HTTPPOSTConstructPolicy.html)
+for uploads signed with `/s3/params`, where S3 applies all of them. S3 does not
+apply them to multipart uploads, so Companion checks these itself on
+`/s3/multipart`:
+
+- Content-Type conditions (`["eq", "$Content-Type", …]`,
+  `["starts-with", "$Content-Type", …]` and `{ "Content-Type": … }`), when the
+  upload is created;
+- `["content-length-range", min, max]`, when the upload is completed. Companion
+  lists the parts to add up their size, which needs the
+  `s3:ListMultipartUploadParts` permission, and aborts the upload if it is out
+  of range.
+
+Other conditions are not applied to multipart uploads. Credentials from
+`/s3/sts`, and files that Companion uploads to S3 itself (from providers and
+URLs), ignore all conditions. **Default**: `[]`.
+
 #### `COMPANION_AWS_USE_ACCELERATE_ENDPOINT`
 
 Enable S3

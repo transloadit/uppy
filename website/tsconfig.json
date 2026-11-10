@@ -8,6 +8,7 @@
   "exclude": ["build", "node_modules"],
   "compilerOptions": {
     "baseUrl": null,
+    "jsx": "react-jsx",
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "paths": {

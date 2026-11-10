@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
 import {
-  UppyContextProvider,
   Dropzone,
   FilesList,
   UploadButton,
+  UppyContextProvider,
 } from '@uppy/react'
+import { useState } from 'react'
 import { Tus, Uppy } from 'uppy'
 
 import { BrowserWindow } from './BrowserWindow'
