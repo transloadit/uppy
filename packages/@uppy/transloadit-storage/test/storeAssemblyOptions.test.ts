@@ -41,7 +41,7 @@ describe('createStoreAssemblyOptions', () => {
     const storage = {
       rootPrefix: '',
       getPluginState: () => ({ authenticated, currentFolderId: null }),
-      openFolderPath: vi.fn(async () => {
+      openFolderPath: vi.fn(() => {
         authenticated = true
         storage.rootPrefix = 'tenant/'
         return true

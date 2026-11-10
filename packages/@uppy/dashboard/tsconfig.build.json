@@ -2,6 +2,9 @@
   "extends": "@uppy-dev/tsconfig/build",
   "references": [
     {
+      "path": "../../../private/msw-setup/tsconfig.build.json"
+    },
+    {
       "path": "../core/tsconfig.build.json"
     },
     {

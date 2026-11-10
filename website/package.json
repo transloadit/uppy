@@ -1,0 +1,50 @@
+{
+  "name": "uppy-io",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "docusaurus build",
+    "clear": "docusaurus clear",
+    "deploy": "docusaurus deploy",
+    "dev": "docusaurus start",
+    "serve": "docusaurus serve",
+    "test": "node --test test/*.test.mjs",
+    "swizzle": "docusaurus swizzle",
+    "typecheck": "tsc --build",
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "write-translations": "docusaurus write-translations"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.9.2",
+    "@docusaurus/plugin-client-redirects": "^3.9.2",
+    "@docusaurus/preset-classic": "^3.9.2",
+    "@mdx-js/react": "^3.1.1",
+    "@uidotdev/usehooks": "^2.4.1",
+    "@uppy/react": "workspace:*",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@docusaurus/module-type-aliases": "^3.9.2",
+    "@tsconfig/docusaurus": "^2.0.7",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "simplematter": "^1.0.1",
+    "typescript": "^5.9.3",
+    "uppy": "workspace:*"
+  }
+}

@@ -39,6 +39,28 @@ vi.mock('node:dns', () => ({
   },
 }))
 
+// client-chosen names are resolved with a Resolver, not dns.lookup
+vi.mock('node:dns/promises', () => ({
+  Resolver: class {
+    resolve4(hostname: string) {
+      if (hostname === fakeLocalhost) return Promise.resolve(['127.0.0.1'])
+      return Promise.reject(
+        Object.assign(new Error(`queryA ENOTFOUND ${hostname}`), {
+          code: 'ENOTFOUND',
+        }),
+      )
+    }
+
+    resolve6(hostname: string) {
+      return Promise.reject(
+        Object.assign(new Error(`queryAaaa ENODATA ${hostname}`), {
+          code: 'ENODATA',
+        }),
+      )
+    }
+  },
+}))
+
 const getServerWithEnv = async () =>
   getServer({ COMPANION_CLIENT_SOCKET_CONNECT_TIMEOUT: '0' })
 
@@ -319,6 +341,48 @@ describe('respects allowLocalUrls, valid hostname that resolves to localhost', (
 })
 
 describe('S3 controller', () => {
+  const getS3Server = () =>
+    getServer({
+      COMPANION_AWS_KEY: 'test_key',
+      COMPANION_AWS_SECRET: 'test_secret',
+      COMPANION_AWS_BUCKET: 'test-bucket',
+      COMPANION_AWS_REGION: 'us-east-1',
+    })
+
+  test.each([
+    ['get', '/s3/multipart/upload-1'],
+    ['get', '/s3/multipart/upload-1/batch?partNumbers=1'],
+    ['get', '/s3/multipart/upload-1/1'],
+    ['delete', '/s3/multipart/upload-1'],
+    ['post', '/s3/multipart/upload-1/complete'],
+  ] as const)('multipart %s %s rejects a missing key', async (method, path) => {
+    const res = await request(await getS3Server())
+      [method](path)
+      .send({ parts: [{ PartNumber: 1, ETag: 'etag' }] })
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: the object key must be passed as a query parameter. For example: "?key=abc.jpg"',
+    )
+  })
+
+  test('completeMultipartUpload checks the key before the parts', async () => {
+    const res = await request(await getS3Server())
+      .post('/s3/multipart/upload-1/complete')
+      .send({ parts: 'nope' })
+      .expect(400)
+    expect(res.body.error).toMatch(/object key must be passed/)
+  })
+
+  test('completeMultipartUpload rejects malformed parts', async () => {
+    const res = await request(await getS3Server())
+      .post('/s3/multipart/upload-1/complete?key=a.jpg')
+      .send({ parts: [{ PartNumber: '1' }] })
+      .expect(400)
+    expect(res.body.error).toBe(
+      's3: `parts` must be an array of {ETag, PartNumber} objects.',
+    )
+  })
+
   test('createMultipartUpload rejects missing filename', async () => {
     const server = await getServer({
       COMPANION_AWS_KEY: 'test_key',

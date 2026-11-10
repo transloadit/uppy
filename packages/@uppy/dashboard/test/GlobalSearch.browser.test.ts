@@ -1,3 +1,4 @@
+import '@uppy-dev/msw-setup'
 import { network } from 'virtual:msw'
 import Uppy from '@uppy/core'
 import { ProviderViews } from '@uppy/core/provider-views'
@@ -21,7 +22,7 @@ let uppy: Uppy | undefined
  * whereas, in Search mode, we need to scope the query to the checkbox role instead when searching for a file
  */
 
-beforeAll(async () => {
+beforeAll(() => {
   // Disable search debounce inside ProviderView during tests to avoid long sleeps
   // @ts-expect-error test-only hook
   ProviderViews[Symbol.for('uppy test: searchDebounceMs')] = 0
@@ -49,8 +50,7 @@ function initializeUppy(sources: SourceName[] = ['Dropbox']) {
   return instance
 }
 
-network.configure({ context: { quiet: true } })
-await network.enable()
+network.resetHandlers(...handlers)
 
 // Removed shared beforeEach initialization. Each test initializes its own Uppy instance.
 
@@ -72,7 +72,6 @@ afterEach(async () => {
 
 describe('ProviderView Search E2E', () => {
   test('Search for nested file in Dropbox and verify results', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
     await expect
       .element(page.getByRole('presentation').getByText('Dropbox'))
@@ -105,7 +104,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search deep folder -> open it -> click ancestor breadcrumb and navigate correctly', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -120,7 +118,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const searchInput = document.querySelector(
@@ -150,15 +148,16 @@ describe('ProviderView Search E2E', () => {
     const firstBreadcrumb = page.getByRole('button', { name: 'first' })
     await firstBreadcrumb.click()
 
-    const hasSecondFolder = await page.getByRole('button', {
-      name: 'second',
-      exact: true,
-    })
-    expect(hasSecondFolder).toBeVisible()
+    // Folder rows are named "Open folder <name>"; a bare "second" button is the stale breadcrumb.
+    await expect
+      .element(page.getByRole('button', { name: 'Open folder second' }))
+      .toBeVisible()
+    await expect
+      .element(page.getByRole('button', { name: 'second', exact: true }))
+      .not.toBeInTheDocument()
   })
 
   test('Check folder in browse mode, search for nested item -> nested item should be checked', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -173,7 +172,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const firstFolderItem = Array.from(
@@ -212,7 +211,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search for nested item, check it, go back to normal view -> parent should be partial', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -227,7 +225,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const searchInput = document.querySelector(
@@ -257,7 +255,7 @@ describe('ProviderView Search E2E', () => {
     await clearSearchButton.click()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const firstFolderItem = Array.from(
@@ -277,7 +275,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Search for nested item, check then uncheck it, go back to normal view -> parent should be unchecked', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -292,7 +289,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const searchInput = document.querySelector(
@@ -325,7 +322,7 @@ describe('ProviderView Search E2E', () => {
     await clearSearchButton.click()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const firstFolderItem = Array.from(
@@ -354,7 +351,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Navigate into folder and perform scoped search -> should find nested files at multiple levels', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -369,14 +365,16 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
-    const firstFolderButton = page.getByRole('button', { name: 'first' })
+    const firstFolderButton = page.getByRole('button', {
+      name: 'Open folder first',
+    })
     await firstFolderButton.click()
 
     await expect
-      .element(page.getByRole('button', { name: 'second' }))
+      .element(page.getByRole('button', { name: 'Open folder second' }))
       .toBeVisible()
     // Normal mode (ListItem.tsx): files render as checkboxes with corresponding <label>; scope by role=checkbox. refer to a commment at the top of the file for more detailed explanation.
     await expect
@@ -411,7 +409,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('No duplicate items when searching and then browsing to the same file', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['Dropbox'])
 
     await expect
@@ -426,7 +423,7 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     // Normal mode (ListItem.tsx): file is a checkbox; assert by role=checkbox. refer to a commment at the top of the file for more detailed explanation.
@@ -494,7 +491,6 @@ describe('ProviderView Search E2E', () => {
   })
 
   test('Client-side filtering works for providers without server-side search (Google Drive)', async () => {
-    network.use(...handlers)
     uppy = initializeUppy(['GoogleDrive'])
 
     await expect
@@ -509,10 +505,12 @@ describe('ProviderView Search E2E', () => {
     await expect.element(panel.getByText('test-user@example.com')).toBeVisible()
 
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
     await expect
-      .element(page.getByRole('checkbox', { name: 'workspace' }))
+      .element(
+        page.getByRole('checkbox', { name: 'All files from folder workspace' }),
+      )
       .toBeVisible()
     await expect
       .element(page.getByRole('checkbox', { name: 'readme.md' }))
@@ -548,7 +546,7 @@ describe('ProviderView Search E2E', () => {
 
     await userEvent.clear(searchInput)
     await expect
-      .element(page.getByRole('button', { name: 'first' }))
+      .element(page.getByRole('button', { name: 'Open folder first' }))
       .toBeVisible()
 
     const allItems = Array.from(

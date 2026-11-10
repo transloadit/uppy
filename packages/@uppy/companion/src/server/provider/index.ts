@@ -147,6 +147,7 @@ export function addCustomProviders(
         // requirement changes.
         callback: `/${providerName}/callback`,
         transport: 'session',
+        state: true, // CSRF check, as for the built-in providers
       }
     }
   })

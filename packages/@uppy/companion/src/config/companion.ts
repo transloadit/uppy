@@ -44,7 +44,7 @@ export const defaultOptions = {
 }
 
 /** A field holding one secret, or a list of them (grant signing secrets rotate). */
-const SECRET_FIELDS = new Set(['secret', 'grantSecret'])
+const SECRET_FIELDS = new Set(['secret', 'grantSecret', 'credentialsSecret'])
 
 /**
  * Every secret under `value`, at any depth (`customProviders.*.config.secret`,

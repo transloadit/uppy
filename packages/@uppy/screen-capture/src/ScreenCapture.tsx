@@ -431,17 +431,18 @@ export default class ScreenCapture<
     })
   }
 
-  submit(): void {
+  /** Returns whether the captured media was added to Uppy. */
+  submit(): boolean {
+    if (!this.capturedMediaFile) return false
     try {
-      // add recorded file to uppy
-      if (this.capturedMediaFile) {
-        this.uppy.addFile(this.capturedMediaFile)
-      }
+      this.uppy.addFile(this.capturedMediaFile)
+      return true
     } catch (err) {
       // Logging the error, exept restrictions, which is handled in Core
       if (!isRestrictionError(err)) {
         this.uppy.log(err, 'warning')
       }
+      return false
     }
   }
 

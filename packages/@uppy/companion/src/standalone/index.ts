@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto'
 import qs from 'node:querystring'
 import { URL } from 'node:url'
 import RedisStore from 'connect-redis'
-import type { NextFunction, Request, Response } from 'express'
+import type { Express, NextFunction, Request, Response } from 'express'
 import express from 'express'
 import type { SessionOptions } from 'express-session'
 import session from 'express-session'
@@ -10,6 +10,7 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import * as companion from '../companion.js'
 import type { CompanionInitOptions } from '../schemas/index.js'
+import type { EmitterLike } from '../server/emitter/index.js'
 import { isRecord, toError } from '../server/helpers/type-guards.js'
 import logger from '../server/logger.js'
 import * as redis from '../server/redis.js'
@@ -19,7 +20,80 @@ import {
   getCompanionOptions,
 } from './helper.js'
 
-export default function server(inputCompanionOptions?: CompanionInitOptions) {
+// Query string keys whose values should not end up in logging output.
+const sensitiveKeys = new Set([
+  'access_token',
+  'uppyAuthToken',
+  'authCallbackToken',
+  'code',
+])
+
+/**
+ * Obscure the contents of query string keys listed in `sensitiveKeys`.
+ *
+ * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
+ *
+ * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
+ * possible inputs :)
+ *
+ * @param rawQuery
+ */
+function censorQuery(rawQuery: Record<string, unknown>): {
+  query: Record<string, string>
+  censored: boolean
+} {
+  const query: Record<string, string> = {}
+  let censored = false
+  Object.keys(rawQuery).forEach((key) => {
+    const value = rawQuery[key]
+    if (typeof value !== 'string') {
+      // A repeated sensitive key parses to an array; still hide it.
+      if (Array.isArray(value) && sensitiveKeys.has(key)) {
+        query[key] = '********'
+        censored = true
+      }
+      return
+    }
+    if (sensitiveKeys.has(key)) {
+      // replace logged access token
+      query[key] = '********'
+      censored = true
+    } else {
+      query[key] = value
+    }
+  })
+  return { query, censored }
+}
+
+/**
+ * The access log's `url` token: the request target as sent, with sensitive
+ * query values censored.
+ *
+ * Built from the raw string on purpose. `req.query` and `req.path` are
+ * Express 5 getters that re-parse `req.url`; morgan logs from the socket
+ * error path when a client aborts, and a target the router has already
+ * rewritten (`//x@[a#`) made that re-parse throw ERR_INVALID_URL outside any
+ * handler, exiting the process.
+ */
+export function accessLogUrl(
+  req: Partial<Pick<Request, 'originalUrl' | 'url'>>,
+): string {
+  const raw = req.originalUrl || req.url || '-'
+  const queryStart = raw.indexOf('?')
+  if (queryStart === -1) return raw
+  const { query, censored } = censorQuery(qs.parse(raw.slice(queryStart + 1)))
+  return censored ? `${raw.slice(0, queryStart)}?${qs.stringify(query)}` : raw
+}
+
+export interface StandaloneServer {
+  app: Express
+  companionOptions: CompanionInitOptions
+  emitter: EmitterLike
+}
+
+export default function server(
+  inputCompanionOptions?: CompanionInitOptions,
+): StandaloneServer {
   const companionOptions = getCompanionOptions(inputCompanionOptions)
 
   companion.setLoggerProcessName(companionOptions)
@@ -40,41 +114,6 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
     app.use(router)
   }
 
-  // Query string keys whose values should not end up in logging output.
-  const sensitiveKeys = new Set(['access_token', 'uppyAuthToken'])
-
-  /**
-   * Obscure the contents of query string keys listed in `sensitiveKeys`.
-   *
-   * Returns a copy of the object with unknown types removed and sensitive values replaced by ***.
-   *
-   * The input type is more broad that it needs to be, this way typescript can help us guarantee that we're dealing with all
-   * possible inputs :)
-   *
-   * @param rawQuery
-   */
-  function censorQuery(rawQuery: Record<string, unknown>): {
-    query: Record<string, string>
-    censored: boolean
-  } {
-    const query: Record<string, string> = {}
-    let censored = false
-    Object.keys(rawQuery).forEach((key) => {
-      const value = rawQuery[key]
-      if (typeof value !== 'string') {
-        return
-      }
-      if (sensitiveKeys.has(key)) {
-        // replace logged access token
-        query[key] = '********'
-        censored = true
-      } else {
-        query[key] = value
-      }
-    })
-    return { query, censored }
-  }
-
   router.use((request, response, next) => {
     const headerName = 'X-Request-Id'
     const oldValue = request.get(headerName)
@@ -84,12 +123,7 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
   })
   // log server requests.
   router.use(morgan('combined'))
-  morgan.token<Request>('url', (req) => {
-    const { query, censored } = censorQuery(req.query)
-    return censored
-      ? `${req.path}?${qs.stringify(query)}`
-      : req.originalUrl || req.url || '-'
-  })
+  morgan.token<Request>('url', accessLogUrl)
 
   morgan.token('referrer', (req) => {
     const ref = req.headers['referer'] || req.headers['referrer']
@@ -205,6 +239,20 @@ export default function server(inputCompanionOptions?: CompanionInitOptions) {
   app.use((err: unknown, req: Request, res: Response, _next: NextFunction) => {
     const error = toError(err)
     const status = isRecord(err) ? err['status'] : undefined
+    // body-parser (and anything else built on http-errors) marks a client's
+    // mistake with `expose`: answer with its status (413, 415, …) instead of
+    // a 500, and don't raise an error-level alert for it.
+    if (
+      isRecord(err) &&
+      err['expose'] === true &&
+      typeof status === 'number' &&
+      status >= 400 &&
+      status < 500
+    ) {
+      logger.warn(error.message, 'root.error', req.id)
+      res.status(status).json({ message: error.message, requestId: req.id })
+      return
+    }
     if (app.get('env') === 'production') {
       // if the error is a URIError from the requested URL we only log the error message
       // to avoid uneccessary error alerts

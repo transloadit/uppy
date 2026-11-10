@@ -64,7 +64,7 @@ const recursivelyFetch = async (
   poorFolder.nextPagePath = null
   poorTree.push(...files, ...folders)
 
-  folders.forEach(async (folder) => {
+  folders.forEach((folder) => {
     queue.add(() =>
       recursivelyFetch(queue, poorTree, folder, apiList, validateSingleFile),
     )

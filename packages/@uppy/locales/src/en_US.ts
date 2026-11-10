@@ -44,9 +44,7 @@ en_US.strings = {
   browseFiles: 'browse files',
   browseFolders: 'browse folders',
   cancel: 'Cancel',
-  cancelSelection: 'Cancel selection',
   cancelUpload: 'Cancel upload',
-  close: 'Close',
   closeModal: 'Close Modal',
   companionError: 'Connection with Companion failed',
   companionUnauthorizeHint:
@@ -82,9 +80,6 @@ en_US.strings = {
   deletingItemFiles:
     'Deleting item %{item} of %{items}: %{done} of %{total} files…',
   deletingItems: 'Deleting %{done} of %{total} items…',
-  detailModified: 'Modified',
-  detailSize: 'Size',
-  detailType: 'Type',
   dialogConfirm: 'OK',
   discardMediaFile: 'Discard Media',
   discardRecordedFile: 'Discard recorded file',
@@ -138,6 +133,8 @@ en_US.strings = {
   generating4: 'AI is working...',
   generating5: 'Creating magic...',
   generatingThumbnails: 'Generating thumbnails...',
+  googleDrivePickerFailed:
+    'Google Drive could not be loaded. If this keeps happening, try allowing third-party cookies for this site.',
   import: 'Import',
   importFiles: 'Import files from:',
   importFrom: 'Import from %{name}',
@@ -153,10 +150,6 @@ en_US.strings = {
   itemsMoved: {
     '0': 'Moved %{smart_count} item',
     '1': 'Moved %{smart_count} items',
-  },
-  itemsSelected: {
-    '0': '%{smart_count} selected',
-    '1': '%{smart_count} selected',
   },
   loadedXFiles: 'Loaded %{numFiles} files',
   loading: 'Loading...',
@@ -197,7 +190,6 @@ en_US.strings = {
   noInternetConnection: 'No Internet connection',
   noMoreFilesAllowed: 'Cannot add more files',
   noSearchResults: 'Unfortunately, there are no results for this search',
-  openFileNamed: 'Open %{name}',
   openFolderNamed: 'Open folder %{name}',
   pause: 'Pause',
   paused: 'Paused',
@@ -273,7 +265,6 @@ en_US.strings = {
   saveChanges: 'Save changes',
   search: 'Search',
   searchImages: 'Search for images',
-  selectMultiple: 'Select multiple',
   selectX: {
     '0': 'Select %{smart_count}',
     '1': 'Select %{smart_count}',
@@ -288,7 +279,6 @@ en_US.strings = {
   startRecording: 'Begin video recording',
   stopAudioRecording: 'Stop audio recording',
   stopCapturing: 'Stop screen capturing',
-  stopOperation: 'Stop',
   stopRecording: 'Stop video recording',
   storageNotConnected: 'Connect to Transloadit Storage before uploading',
   storing: 'Storing…',
