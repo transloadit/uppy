@@ -13,7 +13,7 @@ on:
       - '.github/workflows/deploy-website.yml'
 
 env:
-  NODE_VERSION: '26.12.1'
+  NODE_VERSION: '26.13.1'
   YARN_ENABLE_GLOBAL_CACHE: false
 
 permissions:

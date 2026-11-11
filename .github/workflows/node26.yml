@@ -22,7 +22,7 @@ env:
 
 jobs:
   node26:
-    name: Build, tests, types and lint (26.12.1)
+    name: Build, tests, types and lint (26.13.1)
     runs-on: ubuntu-latest
     services:
       redis:
@@ -42,7 +42,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: '26.12.1'
+          node-version: '26.13.1'
       # Node 26 no longer bundles Corepack.
       - name: Install Corepack
         run: npm install --global corepack@0.36.0
