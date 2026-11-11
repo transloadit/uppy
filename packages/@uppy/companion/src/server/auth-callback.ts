@@ -1,3 +1,5 @@
+import { once } from 'node:events'
+import type { Redis } from 'ioredis'
 import type { CompanionInitOptions } from '../schemas/companion.js'
 import emitter from './emitter/index.js'
 import { jsonStringify } from './helpers/utils.js'
@@ -5,11 +7,61 @@ import * as logger from './logger.js'
 import * as redis from './redis.js'
 
 const expirySeconds = 60
-const pending = new Map<string, { data: object; timer: NodeJS.Timeout }>()
+/** How long a callback result stays retained for its socket to take. */
+export const authCallbackRetentionMs = expirySeconds * 1000
+const maxPending = 1000
+const maxPayloadBytes = 64 * 1024
+const commandTimeoutMs = 5000
+const pending = new Map<
+  string,
+  { data: string; timer: NodeJS.Timeout; expiresAt: number }
+>()
+
+// One wait per client: every login waiting on its own `once()` would add a
+// listener pair to the shared client and trip its max-listeners warning when
+// logins pile up during an outage.
+const readiness = new WeakMap<Redis, Promise<unknown>>()
+
+function whenReady(client: Redis): Promise<unknown> {
+  if (client.status === 'ready') return Promise.resolve()
+  let wait = readiness.get(client)
+  if (!wait) {
+    wait = once(client, 'ready', {
+      signal: AbortSignal.timeout(commandTimeoutMs),
+    }).finally(() => readiness.delete(client))
+    readiness.set(client, wait)
+  }
+  return wait
+}
+
+/**
+ * Run a token-bearing command on the shared client, bounded in time. Waiting
+ * for readiness first keeps the command out of the offline queue, so a login
+ * fails fast during an outage instead of holding the callback request open.
+ */
+async function bounded<T>(client: Redis, run: () => Promise<T>): Promise<T> {
+  let timer: NodeJS.Timeout | undefined
+  const timedOut = new Promise<never>((_resolve, reject) => {
+    timer = setTimeout(
+      () => reject(new Error('OAuth Redis command timed out')),
+      commandTimeoutMs,
+    )
+    timer.unref()
+  })
+  try {
+    return await Promise.race([whenReady(client).then(run), timedOut])
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+function scopePrefix(options: CompanionInitOptions) {
+  return options.redisPubSubScope ? `${options.redisPubSubScope}:` : ''
+}
 
 function storageKey(token: string, options: CompanionInitOptions) {
-  const prefix = options.redisPubSubScope ? `${options.redisPubSubScope}:` : ''
-  return `${prefix}companion:auth-callback:${token}`
+  // Preserve #6751's key so mixed-version workers consume the same result.
+  return `${scopePrefix(options)}companion:auth-callback:${token}`
 }
 
 export async function publishAuthCallback(
@@ -19,32 +71,63 @@ export async function publishAuthCallback(
 ): Promise<void> {
   const key = storageKey(token, options)
   const storage = redis.client()
-  let retained = false
-  // Bound waits with redisOptions.commandTimeout and enableOfflineQueue: false.
-  // Local timeouts can let a late SET recreate an already consumed result.
+  const serialized = jsonStringify(data)
   try {
+    if (Buffer.byteLength(serialized) > maxPayloadBytes)
+      throw new Error('OAuth result too large')
     if (storage) {
-      await storage.set(key, jsonStringify(data), 'EX', expirySeconds)
+      // A relative TTL is applied by Redis, so Companion's clock cannot skew it.
+      await bounded(storage, () =>
+        storage.set(key, serialized, 'PX', authCallbackRetentionMs),
+      )
     } else {
       clearTimeout(pending.get(key)?.timer)
-      const timer = setTimeout(() => pending.delete(key), expirySeconds * 1000)
+      pending.delete(key)
+      if (pending.size >= maxPending) {
+        const oldest = pending.keys().next().value
+        if (oldest !== undefined) {
+          clearTimeout(pending.get(oldest)?.timer)
+          pending.delete(oldest)
+        }
+      }
+      const timer = setTimeout(
+        () => pending.delete(key),
+        authCallbackRetentionMs,
+      )
       timer.unref()
-      pending.set(key, { data, timer })
+      const expiresAt = Date.now() + authCallbackRetentionMs
+      pending.set(key, { data: serialized, timer, expiresAt })
     }
-    retained = true
   } catch {
-    // Pub/sub may still work when Redis rejects writes (for example, on OOM).
     // Redis errors include SET arguments, so never log the error or token.
     logger.error('OAuth retention failed', 'auth.callback.retain.error')
+    throw new Error('OAuth callback retention failed')
   }
 
   // Keep the first argument compatible with older socket workers. The second
   // marks retained results so new workers consume storage instead of replaying
   // the publication after another socket already consumed it.
   try {
-    await emitter().emit(token, data, retained)
+    if (storage) {
+      // Same wire format as the emitter, whose emit() swallows Redis errors.
+      await bounded(storage, () =>
+        storage.publish(
+          `${scopePrefix(options)}${token}`,
+          jsonStringify([data, true]),
+        ),
+      )
+    } else {
+      await emitter().emit(token, data, true)
+    }
   } catch {
+    // Do not leave a result behind a failure page. Best effort: Redis may be gone.
+    if (storage) await bounded(storage, () => storage.del(key)).catch(() => {})
+    else {
+      clearTimeout(pending.get(key)?.timer)
+      pending.delete(key)
+    }
     // Keep command arguments out of the request error handler and response.
+    logger.error('OAuth publication failed', 'auth.callback.publish.error')
     throw new Error('OAuth callback publication failed')
   }
 }
@@ -57,7 +140,9 @@ export async function takeAuthCallback(
   const storage = redis.client()
   if (storage) {
     // MULTI makes reading and deleting atomic, including on Redis before GETDEL.
-    const results = await storage.multi().get(key).del(key).exec()
+    const results = await bounded(storage, () =>
+      storage.multi().get(key).del(key).exec(),
+    )
     const [error, data] = results?.[0] ?? []
     if (error) throw error
     return typeof data === 'string' ? JSON.parse(data) : undefined
@@ -67,5 +152,5 @@ export async function takeAuthCallback(
   if (!result) return undefined
   pending.delete(key)
   clearTimeout(result.timer)
-  return result.data
+  return result.expiresAt > Date.now() ? JSON.parse(result.data) : undefined
 }
