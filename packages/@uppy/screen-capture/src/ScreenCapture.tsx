@@ -31,6 +31,10 @@ function getMediaDevices() {
   return window.MediaRecorder && navigator.mediaDevices
 }
 
+function stopTracks(stream: MediaStream | null | undefined) {
+  for (const track of stream?.getTracks() ?? []) track.stop()
+}
+
 // Add supported image types
 const SUPPORTED_IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'] as const
 type SupportedImageType = (typeof SUPPORTED_IMAGE_TYPES)[number]
@@ -122,6 +126,9 @@ export default class ScreenCapture<
 
   recordingChunks: Blob[] | null = null
 
+  // Bumped by `#releaseStreams()`, so streams that resolve after it are discarded
+  #releaseCount = 0
+
   constructor(uppy: Uppy<M, B>, opts?: ScreenCaptureOptions) {
     super(uppy, { ...defaultOptions, ...opts })
     this.mediaDevices = getMediaDevices()
@@ -185,9 +192,8 @@ export default class ScreenCapture<
   }
 
   override uninstall(): void {
-    if (this.videoStream) {
-      this.stop()
-    }
+    // Also when a request is pending or only the microphone stream is live
+    this.stop()
 
     this.unmount()
   }
@@ -201,9 +207,10 @@ export default class ScreenCapture<
 
     this.selectAudioStreamSource()
 
+    const isStale = this.#staleCheck()
     return this.selectVideoStreamSource().then((res) => {
       // something happened in start -> return
-      if (res === false) {
+      if (res === false && !isStale()) {
         // Close the Dashboard panel if plugin is installed
         // into Dashboard (could be other parent UI plugin)
         // @ts-expect-error we can't know Dashboard types here
@@ -223,15 +230,23 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
+    const isStale = this.#staleCheck()
 
     return this.mediaDevices
       .getDisplayMedia(this.opts.displayMediaConstraints)
       .then((videoStream) => {
+        if (isStale()) {
+          stopTracks(videoStream)
+          return false
+        }
+
         this.videoStream = videoStream
 
-        // add event listener to stop recording if stream is interrupted
+        // add event listener to stop recording if stream is interrupted.
+        // `stop()` also makes the stream inactive, so ignore streams that
+        // are no longer the current one
         this.videoStream.addEventListener('inactive', () => {
-          this.streamInactivated()
+          if (this.videoStream === videoStream) this.streamInactivated()
         })
 
         this.setPluginState({
@@ -243,6 +258,8 @@ export default class ScreenCapture<
         return videoStream
       })
       .catch((err) => {
+        if (isStale()) return false
+
         this.setPluginState({
           screenRecError: err,
           status: 'error',
@@ -265,10 +282,16 @@ export default class ScreenCapture<
     }
 
     // ask user to select source to record and get mediastream from that
+    const isStale = this.#staleCheck()
 
     return this.mediaDevices
       .getUserMedia(this.opts.userMediaConstraints)
       .then((audioStream) => {
+        if (isStale()) {
+          stopTracks(audioStream)
+          return false
+        }
+
         this.audioStream = audioStream
 
         this.setPluginState({
@@ -278,6 +301,8 @@ export default class ScreenCapture<
         return audioStream
       })
       .catch((err) => {
+        if (isStale()) return false
+
         if (err.name === 'NotAllowedError') {
           this.uppy.info(this.i18n('micDisabled'), 'error', 5000)
           this.uppy.log(this.i18n('micDisabled'), 'warning')
@@ -362,8 +387,9 @@ export default class ScreenCapture<
       this.stopRecording()
     }
 
-    this.videoStream = null
-    this.audioStream = null
+    // The microphone is a separate stream that stays live when the user ends
+    // screen sharing from the browser UI, and may still be pending
+    this.#releaseStreams()
 
     this.setPluginState({
       streamActive: false,
@@ -446,39 +472,24 @@ export default class ScreenCapture<
     }
   }
 
+  #staleCheck(): () => boolean {
+    const releaseCount = this.#releaseCount
+    return () => releaseCount !== this.#releaseCount
+  }
+
+  /** Stops the screen and microphone streams, including pending ones. */
+  #releaseStreams(): void {
+    this.#releaseCount++
+    stopTracks(this.videoStream)
+    stopTracks(this.audioStream)
+    this.videoStream = null
+    this.audioStream = null
+  }
+
   stop(): void {
-    // flush video stream
-    if (this.videoStream) {
-      this.videoStream.getVideoTracks().forEach((track) => {
-        track.stop()
-      })
-      this.videoStream.getAudioTracks().forEach((track) => {
-        track.stop()
-      })
-      this.videoStream = null
-    }
-
-    // flush audio stream
-    if (this.audioStream) {
-      this.audioStream.getAudioTracks().forEach((track) => {
-        track.stop()
-      })
-      this.audioStream.getVideoTracks().forEach((track) => {
-        track.stop()
-      })
-      this.audioStream = null
-    }
-
-    // flush output stream
-    if (this.outputStream) {
-      this.outputStream.getAudioTracks().forEach((track) => {
-        track.stop()
-      })
-      this.outputStream.getVideoTracks().forEach((track) => {
-        track.stop()
-      })
-      this.outputStream = null
-    }
+    this.#releaseStreams()
+    stopTracks(this.outputStream)
+    this.outputStream = null
 
     // Clean up screenshot URL
     const { capturedScreenshotUrl, recordedVideo } = this.getPluginState()
