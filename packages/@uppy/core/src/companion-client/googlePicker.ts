@@ -745,10 +745,13 @@ export function createGooglePickerController({
     // overlapping calls; reopening after the picker is closed stays allowed.
     if (showing) return
     showing = true
+    const showPromise = runShowPicker()
+    const showInitPromise = initPromise
     try {
-      await runShowPicker()
+      await showPromise
     } finally {
-      showing = false
+      // A reset may have started a newer show that still owns the guard.
+      if (initPromise === showInitPromise) showing = false
     }
   }
 
